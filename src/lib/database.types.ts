@@ -11549,6 +11549,7 @@ export type Database = {
       };
       has_invisible_characters: { Args: { name: string }; Returns: boolean };
       has_parental_consent: { Args: { target_user_id: string }; Returns: boolean };
+      has_workspace_account: { Args: { account_id: string; domain: string }; Returns: boolean };
       hash_email: { Args: { email: string }; Returns: string };
       held_message_ids: {
         Args: Record<PropertyKey, never>;
@@ -12384,6 +12385,7 @@ export type Database = {
           area: string;
         }[];
       };
+      my_staff_sign_in: { Args: Record<PropertyKey, never>; Returns: Json };
       my_statements: { Args: Record<PropertyKey, never>; Returns: Json };
       my_story_character: {
         Args: { target_character_id: string };
@@ -14131,6 +14133,7 @@ export type Database = {
         Returns: string[];
       };
       sponsor_review_checks: { Args: Record<PropertyKey, never>; Returns: string[] };
+      staff_email_domain: { Args: Record<PropertyKey, never>; Returns: string };
       staff_house_ad_for_slot: {
         Args: { used_keys: string[]; wanted_page_key: string; wanted_slot_key: string };
         Returns: Json;
@@ -14586,6 +14589,7 @@ export type Database = {
       withdraw_contest_entry: { Args: { target_contest_id: string }; Returns: undefined };
       word_total: { Args: { any_text: string }; Returns: number };
       working_days_after: { Args: { day_count: number; start_moment: string }; Returns: string };
+      workspace_sign_in_holds: { Args: Record<PropertyKey, never>; Returns: boolean };
       write_class_certificate: {
         Args: {
           clean_programme: string;

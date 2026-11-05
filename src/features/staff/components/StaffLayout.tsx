@@ -7,10 +7,13 @@
  * bundle (architecture 1.8.1).
  * What it shows: for a person with a staff role, the bar with only the areas the database allows
  * them (useMyStaffAccess → my_staff_areas()) and the page. For a visitor or a member, the
- * "This part is for staff" page instead of any staff page. The server refuses everything on its
+ * "This part is for staff" page instead of any staff page. For a staff member whose session isn't
+ * a Google Workspace sign-in once the staff domain is set (S1-E2-07b), the page that asks them to
+ * sign in with Google (StaffWorkspaceSignIn). The server refuses everything on its
  * own as well: every staff read and write goes through policies and admin_* functions that ask
  * staff_may(); this frame only keeps a member from seeing empty staff screens.
- * What it calls: useMyStaffAccess, staffAreas.ts (which areas have a page).
+ * What it calls: useMyStaffAccess, staffAreas.ts (which areas have a page), StaffAccessRefused
+ * and StaffWorkspaceSignIn.
  */
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router';
@@ -29,6 +32,7 @@ import { pagesForAreas } from '../staffAreas';
 
 import { StaffAccessRefused } from './StaffAccessRefused';
 import { StaffFooter } from './StaffFooter';
+import { StaffWorkspaceSignIn } from './StaffWorkspaceSignIn';
 
 /**
  * The roles under the person's name, for example "Owner · Admin".
@@ -71,7 +75,18 @@ export function StaffLayout() {
     return <StaffAccessRefused reason={isSignedIn ? 'not_staff' : 'signed_out'} />;
   }
 
-  // Step 3: staff get the bar with their own areas, the page and the footer.
+  // Step 3: staff whose session isn't a Google Workspace sign-in are asked for one first
+  // (S1-E2-07b); until then the server allows them no staff action anyway.
+  if (access.workspace.isNeeded && access.workspace.domain !== null) {
+    return (
+      <StaffWorkspaceSignIn
+        domain={access.workspace.domain}
+        isConnected={access.workspace.isConnected}
+      />
+    );
+  }
+
+  // Step 4: staff get the bar with their own areas, the page and the footer.
   const menuItems = pagesForAreas(access.areas.map((area) => area.area));
   return (
     <div className="flex min-h-dvh flex-col bg-paper text-ink">

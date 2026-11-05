@@ -30,7 +30,8 @@
       "not_staff": "Permisiunile sunt doar pentru echipă. Dă mai întâi un rol acestui cont.",
       "refused": "Schimbarea nu a fost salvată. Verifică contul și motivul, apoi încearcă din nou.",
       "unreachable": "Nu am putut ajunge la serverul nostru. Verifică-ți conexiunea și încearcă din nou.",
-      "picture_review_not_allowed": "Verificarea imaginilor este doar pentru membrii echipei de 18 ani sau peste care nu sunt stagiari."
+      "picture_review_not_allowed": "Verificarea imaginilor este doar pentru membrii echipei de 18 ani sau peste care nu sunt stagiari.",
+      "no_workspace_account": "Rolurile din echipă merg acum doar la conturi legate de un cont Google Workspace al echipei. Roagă persoana să își lege mai întâi contul Google de serviciu din Setări › Moduri de autentificare."
     },
     "reasonMissing": "Scrie mai întâi un motiv.",
     "staffAccountNote": "Un cont de echipă nu poate publica, comenta, posta sau trimite mesaje ca membru. Folosește un cont separat de scriitor pentru asta.",
@@ -98,6 +99,15 @@
     "not_staff": "Contul tău nu are un rol în echipă, așa că site-ul de administrare rămâne închis. Dacă lucrezi în echipă, cere unui proprietar sau administrator să dea un rol contului tău de echipă.",
     "signIn": "Conectare",
     "goHome": "Mergi la Acasă"
+  },
+  "workspace": {
+    "documentTitle": "Conectare cu Google · {{productName}}",
+    "heading": "Conectează-te cu contul Google Workspace",
+    "why": "Pentru drepturile de echipă ai nevoie acum de o conectare cu contul Google al echipei, pe @{{domain}}. Îl protejează verificarea în doi pași a Google, așa că nu îți cerem alt cod.",
+    "stepConnect": "Mai întâi leagă contul Google @{{domain}} de acest cont. Google te trimite înapoi aici; apoi continuă încă o dată cu Google ca să te conectezi.",
+    "stepSignIn": "Contul Google @{{domain}} e legat. Continuă cu Google ca să te conectezi cu el, apoi deschide din nou zona echipei.",
+    "buttonGroup": "Conectare la zona echipei",
+    "failed": "Conectarea cu Google nu a pornit. Încearcă din nou peste câteva momente; dacă se repetă, roagă un proprietar să verifice dacă e configurată conectarea cu Google."
   },
   "home": {
     "documentTitle": "Site de administrare · {{productName}}",

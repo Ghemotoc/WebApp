@@ -82,7 +82,7 @@ Why `set_my_locale()` and not an update policy on `profiles`: a policy would let
 | `is_active_member()` | may the signed-in user publish, comment, post or message; false until a new important version of the terms or privacy notice is accepted (`legal_acceptance_required`, S1-E14-01) | S1-E2-03 (consent), S1-E10-06 (sanctions) |
 | `account_state(user_id)` | why not (internal; clients can't call it) | same |
 | `is_staff(role)` | does the signed-in user hold that staff role (any role when empty) | S1-E2-07a (role hierarchy, permissions) |
-| `is_staff_session()` | may this session use staff powers (March: any staff role) | S1-E2-07b (Google Workspace sign-in) |
+| `is_staff_session()` | may this session use staff powers (any staff role until the Vault secret `staff_email_domain` is set; then a Google Workspace sign-in) | S1-E2-07b (built; switched on at GO-LIVE) |
 
 While the `adults_only` flag is on (the March test), under-18s are `minor_not_admitted` and adults are active once their email is confirmed and a username chosen (`handle_missing` until then, S1-E2-04), without the age check.
 
@@ -156,6 +156,14 @@ While the `adults_only` flag is on (the March test), under-18s are `minor_not_ad
 - **The menu:** `my_staff_areas()` returns the areas the caller's roles allow (architecture 1.8.3); the app shows only those that have a page. The server still refuses on its own.
 - **Sensitive reads:** `log_sensitive_read(kind, table, row, user)` with the kinds architecture 1.8.3 lists; later screens call it before showing the thing.
 - **Search and export:** `admin_search_audit_log()` (one page of up to 100, usernames and an 8-character target ID, never a full ID) and `admin_export_audit_log()` (up to 10,000 rows, logged as `audit_log.exported` with the filters), both owner and admin only.
+
+## Staff Google Workspace sign-in (S1-E2-07b)
+
+- **Off until the secret is set.** `staff_email_domain()` reads the Vault secret `staff_email_domain` (trimmed, lower case, no "@"). While it is missing, `workspace_sign_in_holds()` answers true and staff sign in as in March.
+- **Once it is set,** `is_staff_session()` also needs a provider sign-in (`"oauth"` in the token's `amr`) on an account whose Google identity in `auth.identities` has the domain in its `hd` claim (top level or under `custom_claims`), an email on the domain and a verified email (`has_workspace_account()`). A personal Google account has no `hd`, so it never counts.
+- **`my_staff_sign_in()`** tells the admin shell to show the Google page, and whether the account is linked yet. The domain is only returned to someone with a staff role.
+- **`admin_grant_role()`** refuses (`check_violation`) an account without a Workspace identity on the domain once the secret is set.
+- **Recovery:** deleting the secret brings the March sign-in back at once (`docs/runbooks/staff-sign-in.md`, ADR 0015). Database test 291.
 
 ## Invite links (S1-E11-17)
 
