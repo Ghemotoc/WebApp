@@ -8,7 +8,11 @@
  *     (the row is a focusable, labelled region).
  *   - The row fades on one side at a time with a CSS mask on the row itself, so cards and shadows
  *     fade together (useShelfScroll works out which side).
- * Board values: heading Bricolage 30 px, 18 px below it; cards 20 px apart; a 140 px fade.
+ *   - An arrow press moves by whole cards: the card the fade covered becomes fully visible
+ *     (Robert, 5 Nov 2026; shelfPaging.ts). The row doesn't snap, because snapping would pull
+ *     each press back to a card's edge and leave that card under the fade again.
+ * Board values: heading Bricolage 30 px, 18 px below it; cards 20 px apart; a 140 px fade (a
+ * fifth of the row on narrow screens, so a phone still shows a whole card clear of it).
  * Who uses it: Discover (S1-E5-01), Classics, Library, the website home page and /design.
  */
 import { useId, useRef, type ReactNode } from 'react';
@@ -42,11 +46,11 @@ export interface ShelfProps {
   totalCount?: number;
 }
 
-/** The CSS mask that fades one edge: 140 px wide, fully transparent at the edge (boards). */
-function fadeMask(fadeSide: ShelfScrollState['fadeSide']): string | undefined {
-  if (fadeSide === 'none') return undefined;
-  const towards = fadeSide === 'right' ? 'to right' : 'to left';
-  return `linear-gradient(${towards}, #000 0, #000 calc(100% - 140px), transparent 100%)`;
+/** The CSS mask that fades one edge, fully transparent at the edge (boards: 140 px wide). */
+function fadeMask(state: ShelfScrollState): string | undefined {
+  if (state.fadeSide === 'none') return undefined;
+  const towards = state.fadeSide === 'right' ? 'to right' : 'to left';
+  return `linear-gradient(${towards}, #000 0, #000 calc(100% - ${state.fadeWidth}px), transparent 100%)`;
 }
 
 /**
@@ -59,7 +63,7 @@ export function Shelf({ title, eyebrow, items, seeAllHref, totalCount }: ShelfPr
   const headingId = useId();
   const rowRef = useRef<HTMLDivElement>(null);
   const { state, scrollByPage } = useShelfScroll(rowRef);
-  const mask = fadeMask(state.fadeSide);
+  const mask = fadeMask(state);
 
   // Show the first 20; the rest are reached through the "View more" card.
   const visibleItems = items.slice(0, MAXIMUM_SHELF_ITEMS);
@@ -88,16 +92,16 @@ export function Shelf({ title, eyebrow, items, seeAllHref, totalCount }: ShelfPr
         role="region"
         tabIndex={0}
         aria-label={t('shelf.regionLabel', { title })}
-        className={`-mx-1 flex snap-x snap-mandatory scroll-px-1 scroll-smooth gap-5 overflow-x-auto px-1 pt-1 pb-4 ${state.overflows ? 'tmc-noscroll' : ''}`}
+        className={`-mx-1 flex scroll-px-1 scroll-smooth gap-5 overflow-x-auto px-1 pt-1 pb-4 ${state.overflows ? 'tmc-noscroll' : ''}`}
         style={{ maskImage: mask, WebkitMaskImage: mask }}
       >
         {visibleItems.map((item) => (
-          <div key={item.key} className="flex-none snap-start">
+          <div key={item.key} className="flex-none">
             {item.content}
           </div>
         ))}
         {hasMore && (
-          <div className="flex-none snap-start">
+          <div className="flex-none">
             <ViewMoreCard href={seeAllHref} shelfTitle={title} totalCount={listSize} />
           </div>
         )}
