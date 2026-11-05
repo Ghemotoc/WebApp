@@ -11549,6 +11549,7 @@ export type Database = {
       };
       has_invisible_characters: { Args: { name: string }; Returns: boolean };
       has_parental_consent: { Args: { target_user_id: string }; Returns: boolean };
+      has_unsafe_link: { Args: { body: string }; Returns: boolean };
       has_workspace_account: { Args: { account_id: string; domain: string }; Returns: boolean };
       hash_email: { Args: { email: string }; Returns: string };
       held_message_ids: {
