@@ -13092,6 +13092,15 @@ export type Database = {
           isSetofReturn: true;
         };
       };
+      readable_chapters_for_ranking: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          chapter_position: number;
+          id: string;
+          story_id: string;
+          user_id: string;
+        }[];
+      };
       reader_reached_chapter: { Args: { target_chapter_id: string }; Returns: boolean };
       reader_visible_story: {
         Args: { story_slug: string };

@@ -83,6 +83,20 @@ select pg_temp.time_once('Notifications',
   '10000000-0000-4000-8000-000000000005', 500);
 commit;
 
+-- The hourly ranking job (S1-E5-03), as pg_cron runs it: as postgres, once. Budget 15 s: it
+-- runs in the background, but a minute of work every hour holds the scores table (QA-2d).
+do $$
+declare
+  started timestamptz := clock_timestamp();
+begin
+  perform public.compute_story_scores();
+  insert into timings values ('Ranking job, compute_story_scores()',
+    round(extract(epoch from clock_timestamp() - started) * 1000, 1), 15000);
+exception when query_canceled then
+  insert into timings values ('Ranking job, compute_story_scores()', null, 15000, true);
+end;
+$$;
+
 -- The report, slowest first.
 select name, coalesce(milliseconds::text, 'stopped after 30 s') as milliseconds, budget,
   not stopped and milliseconds <= budget as ok
