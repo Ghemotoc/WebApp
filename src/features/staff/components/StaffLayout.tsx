@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router';
 
 import { StaffBar } from '@/app/shell/StaffBar';
+import { BrandTabIcon } from '@/features/branding/components/BrandTabIcon';
 import { signOutHere } from '@/features/auth/api/signIn';
 import { LanguageSelect } from '@/features/language/components/LanguageSelect';
 import { useAccountLanguage } from '@/features/language/hooks/useAccountLanguage';
@@ -80,6 +81,8 @@ export function StaffLayout() {
       >
         {t('shell.skipToContent')}
       </a>
+      {/* The approved emblem in the browser tab (BRAND-1b). */}
+      <BrandTabIcon />
       <StaffBar
         navigationItems={menuItems.map((page) => ({
           href: page.href,

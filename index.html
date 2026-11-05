@@ -10,6 +10,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>%BRAND_PRODUCT_NAME%</title>
+    <!-- The tab icon is the emblem (BRAND-1b): a small PNG for browsers that can't draw SVG, then the
+         light and dark emblems by the browser's own mode. BrandTabIcon swaps in an approved upload. -->
+    <link rel="icon" href="/brand/tab-icon-32.png" sizes="32x32" type="image/png" />
+    <link
+      rel="icon"
+      href="/brand/emblem-light.svg"
+      type="image/svg+xml"
+      media="(prefers-color-scheme: light)"
+      data-brand-icon="light"
+    />
+    <link
+      rel="icon"
+      href="/brand/emblem-dark.svg"
+      type="image/svg+xml"
+      media="(prefers-color-scheme: dark)"
+      data-brand-icon="dark"
+    />
     <!-- Picks light or night mode before anything draws, so night readers never see a white flash (S1-E1-03). -->
     <script src="/theme-init.js"></script>
   </head>

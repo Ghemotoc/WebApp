@@ -3,7 +3,8 @@
  *
  * Board values (Discover, Story, Reader, Search, Settings): a rounded island (2.1rem), 85% white
  * glass with a 12 px blur, a 1 px border and the nav shadow, 10 px padding (24 px on the left).
- * The wordmark is the product name as text in Bricolage 800, 22 px, from the brand config.
+ * The wordmark is the product name as text in Bricolage 800, 22 px, from the brand config, with
+ * the emblem before it; an uploaded logo replaces the text (BrandMark, bundle BRAND-1b).
  * The current page's link is plum, bold, with a 2 px gold underline and aria-current="page".
  * On phones the island wraps onto several rows, as the boards show; there is no hamburger menu.
  * Decisions: links appear only when their page exists (src/app/navigation.ts); there is no
@@ -17,7 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, NavLink } from 'react-router';
 
 import { primaryNavigation, type NavigationItem } from '@/app/navigation';
-import { brand } from '@/config/brand';
+import { BrandMark } from '@/features/branding/components/BrandMark';
 
 /** What the top bar needs. All optional: AppLayout uses the defaults. */
 export interface TopBarProps {
@@ -61,7 +62,7 @@ export function TopBar({
           to="/"
           className="inline-flex min-h-11 items-center font-heading text-[22px] font-extrabold tracking-[-0.01em] text-heading no-underline"
         >
-          {brand.productName}
+          <BrandMark />
         </Link>
         {navigationItems.length > 0 && (
           <ul className="m-0 flex flex-[1_1_420px] list-none flex-wrap justify-center gap-x-[30px] gap-y-1 p-0 text-[15px] tracking-[0.01em]">
