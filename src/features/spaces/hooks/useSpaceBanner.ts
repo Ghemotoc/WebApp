@@ -19,8 +19,8 @@ import type { Space } from '../api/spaces';
 
 import { spacesQueryKey } from './useSpaces';
 
-/** Signed addresses last an hour; the view is asked for again well before that. */
-const freshForMilliseconds = 30 * 60 * 1000;
+/** Signed addresses last 30 minutes (pictures/api/pictures.ts); the view is asked for again after 20. */
+const freshForMilliseconds = 20 * 60 * 1000;
 
 /**
  * Follows the banner picture's signed address.

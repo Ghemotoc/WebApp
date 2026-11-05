@@ -29,8 +29,8 @@ import { forumsQueryKey } from './useForumIndex';
 /** The query key every signature read starts with. */
 export const signaturesQueryKey = 'forum-signatures';
 
-/** Signed addresses last an hour; the view is asked for again well before that. */
-const freshForMilliseconds = 30 * 60 * 1000;
+/** Signed addresses last 30 minutes (pictures/api/pictures.ts); the view is asked for again after 20. */
+const freshForMilliseconds = 20 * 60 * 1000;
 
 /**
  * The failure a change ended with, as a SignatureError.

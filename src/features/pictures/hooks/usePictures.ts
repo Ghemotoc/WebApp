@@ -14,8 +14,8 @@ import { getSupabaseClient } from '@/lib/supabase';
 
 import { fetchStoryCoverPicture, retryPendingPictures } from '../api/pictures';
 
-/** Signed addresses last an hour; asking again after 50 minutes keeps them fresh. */
-const freshForMilliseconds = 50 * 60 * 1000;
+/** Signed addresses last 30 minutes (api/pictures.ts); asking again after 20 keeps them fresh. */
+const freshForMilliseconds = 20 * 60 * 1000;
 
 /**
  * Follows a story's uploaded cover.
@@ -30,6 +30,8 @@ export function useStoryCoverPicture(storySlug: string, isUpload: boolean) {
     enabled: isUpload,
     retry: false,
     staleTime: freshForMilliseconds,
+    // Read again while the page stays open, so the cover never shows an expired address.
+    refetchInterval: freshForMilliseconds,
     queryFn: async () => fetchStoryCoverPicture(await requireClient(), storySlug),
   });
 }
