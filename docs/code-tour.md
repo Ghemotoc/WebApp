@@ -625,7 +625,10 @@ The error page shows the first six characters of the stored row's ID as the code
                          the export itself logged as audit_log.exported) → lib/auditLogCsv.ts
   ▼
 …_s1_e11_01_admin_shell.sql
-  │  is_staff_session(): a staff role AND a session younger than staff_session_hours (12)
+  │  is_staff_session(): a staff role AND a session younger than staff_session_hours (12) AND,
+  │  once the Vault secret staff_email_domain is set, a Google sign-in on a Workspace account of
+  │  that domain (workspace_sign_in_holds(), …_s1_e2_07b_workspace_sign_in.sql, S1-E2-07b)
+  │  my_staff_sign_in(): tells StaffLayout to show StaffWorkspaceSignIn ("Continue with Google")
   │  staff_signed_in_recently(): a sign-in within staff_fresh_sign_in_minutes (15), from the
   │  token's amr claim; require_role_change_allowed() asks it before any role change
   │  my_staff_areas(): the areas the caller's roles allow (what the menu shows)
@@ -964,8 +967,8 @@ content/safety-contacts.json (research G4) → scripts/build-safety-contacts-mig
   ▼
 …_s1_e2_07a_staff_roles.sql
   │  staff_may(area, access): the caller's role in staff_role_areas (architecture 1.8.3), plus the
-  │  permission the row needs, AND is_staff_session() (true for any staff role in March; Google
-  │  Workspace sign-in from S1-E2-07b)
+  │  permission the row needs, AND is_staff_session() (any staff role until the Vault secret
+  │  staff_email_domain is set; then only a Google Workspace sign-in, S1-E2-07b)
   │  every staff policy and admin_* function asks staff_may(); every change → log_staff_action()
   ▼
 staff_roles, staff_permissions, audit_log; account_state() answers staff_account for staff

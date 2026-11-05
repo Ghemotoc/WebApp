@@ -14,7 +14,12 @@ import { getSupabaseClient } from '@/lib/supabase';
 import { fetchStaffAccess, type StaffAccess } from '../api/staffAccess';
 
 /** The empty answer: a member, a visitor or an ended staff session. */
-const noAccess: StaffAccess = { areas: [], roles: [], handle: null };
+const noAccess: StaffAccess = {
+  areas: [],
+  roles: [],
+  handle: null,
+  workspace: { isNeeded: false, domain: null, isConnected: false },
+};
 
 /** The cache key for one person's access. */
 const staffAccessKey = (userId: string | null) => ['staff-access', userId];

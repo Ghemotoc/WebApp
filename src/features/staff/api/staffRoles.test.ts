@@ -12,6 +12,9 @@ describe('failureFromRefusal', () => {
     expect(failureFromRefusal({ code: '23514', hint: 'no_such_account' })).toBe('no_such_account');
     expect(failureFromRefusal({ code: '23514', hint: 'not_staff' })).toBe('not_staff');
     expect(failureFromRefusal({ code: '42501', hint: 'own_role' })).toBe('own_role');
+    expect(failureFromRefusal({ code: '23514', hint: 'no_workspace_account' })).toBe(
+      'no_workspace_account',
+    );
   });
 
   it('falls back on the error code when there is no hint it knows', () => {

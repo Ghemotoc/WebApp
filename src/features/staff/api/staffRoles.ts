@@ -42,6 +42,7 @@ export const staffChangeFailures = [
   'last_owner',
   'not_staff',
   'picture_review_not_allowed',
+  'no_workspace_account',
   'refused',
   'unreachable',
 ] as const;
