@@ -8012,6 +8012,39 @@ export type Database = {
           },
         ];
       };
+      story_search_documents: {
+        Row: {
+          created_at: string;
+          document: unknown;
+          search_text: string;
+          story_id: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          document?: unknown;
+          search_text?: string;
+          story_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          document?: unknown;
+          search_text?: string;
+          story_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'story_search_documents_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: true;
+            referencedRelation: 'stories';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       story_tags: {
         Row: {
           created_at: string;
@@ -13059,6 +13092,15 @@ export type Database = {
           isSetofReturn: true;
         };
       };
+      readable_chapters_for_ranking: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          chapter_position: number;
+          id: string;
+          story_id: string;
+          user_id: string;
+        }[];
+      };
       reader_reached_chapter: { Args: { target_chapter_id: string }; Returns: boolean };
       reader_visible_story: {
         Args: { story_slug: string };
@@ -13109,6 +13151,7 @@ export type Database = {
           isSetofReturn: true;
         };
       };
+      rebuild_story_search_documents: { Args: Record<PropertyKey, never>; Returns: number };
       receive_support_email: { Args: { payload: string; signature: string }; Returns: Json };
       recently_banned_ip_matches: {
         Args: { new_user_id: string };
@@ -13175,6 +13218,7 @@ export type Database = {
         };
         Returns: undefined;
       };
+      refresh_story_search_document: { Args: { target_story_id: string }; Returns: undefined };
       refresh_writer_rank: { Args: { person_id: string }; Returns: undefined };
       register_atlas_picture: { Args: { target_path: string }; Returns: string };
       register_brand_picture: { Args: { target_path: string }; Returns: string };
