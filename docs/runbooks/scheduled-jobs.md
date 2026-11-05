@@ -39,7 +39,7 @@ from cron.job_run_details order by start_time desc limit 20;
 
 ## Change how often a job runs
 
-Never edit the job in the dashboard. Write a new migration (`npx supabase migration new <story-id>-<name>`) that schedules it again under the same name, for example every two minutes:
+Never edit the job in the dashboard. Write a new migration (`npm run migration:new -- <story_id>_<name>`) that schedules it again under the same name, for example every two minutes:
 
 ```sql
 select cron.schedule('publish-due-chapters', '*/2 * * * *', 'select public.publish_due_chapters()');

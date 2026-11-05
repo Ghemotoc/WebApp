@@ -165,7 +165,7 @@ For any story that touches both the database and a screen, Claude Code works in 
 
 | Step | What | Where | Command or check |
 | --- | --- | --- | --- |
-| 1 | Migration: tables, enums, RLS policies and function signatures (a function whose logic comes later raises `not implemented`) | `supabase/migrations/` | `npx supabase migration new <story-id>` |
+| 1 | Migration: tables, enums, RLS policies and function signatures (a function whose logic comes later raises `not implemented`) | `supabase/migrations/` | `npm run migration:new -- <story_id>_<slug>` (QA-4) |
 | 2 | pgTAP tests: an allowed and a denied test per policy | `supabase/tests/` | `npx supabase test db` |
 | 3 | Generate the types from the local database | `src/lib/database.types.ts` | `npm run types:gen` (runs `supabase gen types typescript --local`) |
 | 4 | Shared contracts: zod schemas for every edge function's request and response, plus helpers such as `Tables<'stories'>` and `Enums<'age_check_result'>` | `src/shared/contracts/`, imported by edge functions through their import map | `npm run typecheck` |
