@@ -6,26 +6,31 @@
  * points to one page component inside src/features/<feature>/.
  * Every new screen adds its route here, and a line to docs/code-tour.md.
  */
+import type { ComponentType } from 'react';
 import { Navigate, type RouteObject } from 'react-router';
 
-import { OnboardingPage } from '@/features/onboarding/components/OnboardingPage';
-import { ConfirmEmailPage } from '@/features/auth/components/ConfirmEmailPage';
-import { SocialReturnPage } from '@/features/auth/components/SocialReturnPage';
-import { ForgotPasswordPage } from '@/features/auth/components/ForgotPasswordPage';
-import { NotOpenPage } from '@/features/auth/components/NotOpenPage';
-import { ResetPasswordPage } from '@/features/auth/components/ResetPasswordPage';
-import { SignInPage } from '@/features/auth/components/SignInPage';
-import { SignUpPage } from '@/features/auth/components/SignUpPage';
 import { ErrorPage } from '@/features/errors/components/ErrorPage';
-import { LegalCentrePage } from '@/features/legal/components/LegalCentrePage';
 import { prefetchChapter } from '@/features/reading/api/chapterPrefetch';
-import { LandingPageScreen } from '@/features/landing-pages/components/LandingPageScreen';
-import { HelpCentrePage } from '@/features/website/components/HelpCentrePage';
-import { HelpPageView } from '@/features/website/components/HelpPageView';
-import { WebsiteHomePage } from '@/features/website/components/WebsiteHomePage';
 
 import { AppLayout } from './shell/AppLayout';
 import { NotFoundPage } from './shell/NotFoundPage';
+
+/**
+ * A page that is loaded only when someone opens it (QA-6, finding S4: the home page, help, landing pages, the
+ * Legal centre, sign-up, log-in and set-up used to be in the first download of every page, the
+ * chapter reader's included).
+ *
+ * @param path - the page's address
+ * @param loadPage - imports the page's module and returns its component
+ * @returns the route; nothing is shown for the moment the code downloads on a first visit
+ */
+function lazyPage(path: string, loadPage: () => Promise<ComponentType>): RouteObject {
+  return {
+    path,
+    HydrateFallback: () => null,
+    lazy: async () => ({ Component: await loadPage() }),
+  };
+}
 
 /**
  * Whether this build includes the /design components page: always in development, and on staging
@@ -1054,6 +1059,89 @@ const writeRoutes: RouteObject[] = [
 ];
 
 /**
+ * The website's own pages, all loaded when opened (QA-6): the home page, help, landing pages and
+ * the Legal centre. Their copy comes from the CMS or the legal documents, not the app's text.
+ */
+const websiteRoutes: RouteObject[] = [
+  // The public home page, all of its copy from the website CMS (S1-E5-08, S1-E11-06).
+  lazyPage(
+    '/',
+    async () => (await import('@/features/website/components/WebsiteHomePage')).WebsiteHomePage,
+  ),
+  // Help: the CMS help pages and questions for the visitor's market and language (S1-E11-12).
+  lazyPage(
+    '/help',
+    async () => (await import('@/features/website/components/HelpCentrePage')).HelpCentrePage,
+  ),
+  lazyPage(
+    '/help/:slug',
+    async () => (await import('@/features/website/components/HelpPageView')).HelpPageView,
+  ),
+  // S1-E11-14: a landing page for a contest, campaign or information, from the CMS.
+  lazyPage(
+    '/c/:slug',
+    async () =>
+      (await import('@/features/landing-pages/components/LandingPageScreen')).LandingPageScreen,
+  ),
+  // The Legal centre (S1-E14-01): /legal opens the terms; each document has its own address.
+  { path: '/legal', element: <Navigate to="/legal/terms" replace /> },
+  lazyPage(
+    '/legal/:documentSlug',
+    async () => (await import('@/features/legal/components/LegalCentrePage')).LegalCentrePage,
+  ),
+];
+
+/**
+ * Signing up, signing in and the first set-up, all loaded when opened (QA-6), so a reader who is
+ * already signed in never downloads them.
+ */
+const signInRoutes: RouteObject[] = [
+  // Sign-up (S1-E2-01): /join/<code> is an invite link (S1-E11-17); /auth/confirm is where the
+  // confirmation and log-in emails land (supabase/templates/).
+  lazyPage(
+    '/sign-up',
+    async () => (await import('@/features/auth/components/SignUpPage')).SignUpPage,
+  ),
+  lazyPage(
+    '/join/:code',
+    async () => (await import('@/features/auth/components/SignUpPage')).SignUpPage,
+  ),
+  lazyPage(
+    '/auth/confirm',
+    async () => (await import('@/features/auth/components/ConfirmEmailPage')).ConfirmEmailPage,
+  ),
+  // Where Google, Apple and Microsoft send the person back (S1-E2-09).
+  lazyPage(
+    '/auth/social-return',
+    async () => (await import('@/features/auth/components/SocialReturnPage')).SocialReturnPage,
+  ),
+  // Log in and password reset (S1-E2-05): /reset-password is where the reset email lands.
+  lazyPage(
+    '/sign-in',
+    async () => (await import('@/features/auth/components/SignInPage')).SignInPage,
+  ),
+  lazyPage(
+    '/forgot-password',
+    async () => (await import('@/features/auth/components/ForgotPasswordPage')).ForgotPasswordPage,
+  ),
+  lazyPage(
+    '/reset-password',
+    async () => (await import('@/features/auth/components/ResetPasswordPage')).ResetPasswordPage,
+  ),
+  // Once sign-up is public, a visitor from a closed market lands here (S1-E2-10).
+  lazyPage(
+    '/not-open',
+    async () => (await import('@/features/auth/components/NotOpenPage')).NotOpenPage,
+  ),
+  // Set up your profile (S1-E2-04, S1-E2-06): the steps after the email is confirmed (and, for
+  // under-18s, the age check); names are changed later in Settings.
+  lazyPage(
+    '/setup',
+    async () => (await import('@/features/onboarding/components/OnboardingPage')).OnboardingPage,
+  ),
+];
+
+/**
  * Every route in the app, in one list so a reader can see the whole map at a glance.
  * Exported separately from the router so tests can render a route in memory.
  */
@@ -1082,32 +1170,8 @@ export const appRoutes: RouteObject[] = [
  */
 function pageRoutes(): RouteObject[] {
   return [
-    // The public home page, all of its copy from the website CMS (S1-E5-08, S1-E11-06).
-    { path: '/', element: <WebsiteHomePage /> },
-    // Help: the CMS help pages and questions for the visitor's market and language (S1-E11-12).
-    { path: '/help', element: <HelpCentrePage /> },
-    { path: '/help/:slug', element: <HelpPageView /> },
-    // S1-E11-14: a landing page for a contest, campaign or information, from the CMS.
-    { path: '/c/:slug', element: <LandingPageScreen /> },
-    // The Legal centre (S1-E14-01): /legal opens the terms; each document has its own address.
-    { path: '/legal', element: <Navigate to="/legal/terms" replace /> },
-    { path: '/legal/:documentSlug', element: <LegalCentrePage /> },
-    // Sign-up (S1-E2-01): /join/<code> is an invite link (S1-E11-17); /auth/confirm is where the
-    // confirmation and log-in emails land (supabase/templates/).
-    { path: '/sign-up', element: <SignUpPage /> },
-    { path: '/join/:code', element: <SignUpPage /> },
-    { path: '/auth/confirm', element: <ConfirmEmailPage /> },
-    // Where Google, Apple and Microsoft send the person back (S1-E2-09).
-    { path: '/auth/social-return', element: <SocialReturnPage /> },
-    // Log in and password reset (S1-E2-05): /reset-password is where the reset email lands.
-    { path: '/sign-in', element: <SignInPage /> },
-    { path: '/forgot-password', element: <ForgotPasswordPage /> },
-    { path: '/reset-password', element: <ResetPasswordPage /> },
-    // Once sign-up is public, a visitor from a closed market lands here (S1-E2-10).
-    { path: '/not-open', element: <NotOpenPage /> },
-    // Set up your profile (S1-E2-04, S1-E2-06): the steps after the email is confirmed (and, for
-    // under-18s, the age check); names are changed later in Settings.
-    { path: '/setup', element: <OnboardingPage /> },
+    ...websiteRoutes,
+    ...signInRoutes,
     // Settings loads when opened (PEOPLE-1): its bio and blocked-accounts sections bring the
     // people feature, which the first download of every page (the chapter reader's included)
     // shouldn't carry.

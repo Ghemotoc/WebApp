@@ -1168,7 +1168,7 @@ ChapterReaderPage → useChapter → api/chapter.ts → get_chapter(story_slug, 
 useRecordRead → record_chapter_read(): +1 on today's chapter_reads total, once per tab
 ```
 
-Speed (S1-E4-01b): the route's loader in `src/app/router.tsx` calls `prefetchChapter()` (`api/chapterPrefetch.ts`) the moment the address matches, so the Supabase library, the session and `get_chapter()` load while the reader's code downloads; `useChapter` takes that answer. The banner slot, `ChapterBannerSlot`, comes after the `<article>` and shows nothing until `pick_banner()` (S1-E12-01; `hooks/useChapterBanner.ts`).
+Speed (S1-E4-01b): the route's loader in `src/app/router.tsx` calls `prefetchChapter()` (`api/chapterPrefetch.ts`) the moment the address matches, so the Supabase library, the session and `get_chapter()` load while the reader's code downloads; `useChapter` takes that answer. Every page except the 404 page is loaded only when opened (`lazyPage()` in the router, QA-6), so the first download is the frame alone; `npm run bundle:check` (`scripts/check-bundle-size.ts`, in CI after the build) fails when that download or the reader's grows past its budget. The banner slot, `ChapterBannerSlot`, comes after the `<article>` and shows nothing until `pick_banner()` (S1-E12-01; `hooks/useChapterBanner.ts`).
 
 Copying (S1-E4-06a): the text sits in `ProtectedChapterText`, which cancels `contextmenu`, `copy`, `cut` and `dragstart` on the chapter text only (no `user-select: none`, so selecting, find and screen readers still work); `CopyNotice` under the chapter says it makes copying harder and can't stop screenshots (Q9), and `copyWording.test.ts` keeps "can't be copied" out of every locale file. The Publish panel tells the writer the same (`publish.webReadingNote`).
 

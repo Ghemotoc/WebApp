@@ -9,8 +9,8 @@
  *   2 seconds" (a proposal): a cold load at phone size, with the CPU 4 times slower and Chrome's
  *   "Fast 4G" network (9 Mbit/s down, 1.5 Mbit/s up, 60 ms), shows the first paragraph in under
  *   2,000 ms. The median of three loads counts, so one slow load on a busy machine doesn't decide.
- * - The reader stays small: the script it adds beyond what the home page already loads is under
- *   40 KB (today about 11 KB), so a later change can't quietly make chapters slow.
+ * - The reader stays small: a cold chapter load downloads under READER_SCRIPT_BUDGET_KB of script
+ *   before compression (QA-6), so a later change can't quietly make chapters slow.
  * - 200% zoom (WCAG 1.4.4 and 1.4.10): a 1280 × 800 window at 200% is a 640 px wide page with
  *   twice the pixel density; nothing scrolls sideways and no text runs past the edge.
  * Test data: one long chapter on adult_writer's seed story; removed after.
@@ -26,8 +26,15 @@ const chapterAddress = '/s/statia-meteo-seed01/perfread';
 /** The budget for the first paragraph, in milliseconds (S1-E4-01, a proposal). */
 const FIRST_PARAGRAPH_BUDGET_MS = 2000;
 
-/** The most script, in KB before compression, the reader may add to the app's own. */
-const READER_SCRIPT_BUDGET_KB = 40;
+/**
+ * The most script, in KB before compression, a cold chapter load may download (QA-6, finding S4).
+ * Until QA-6 this test measured what the reader added to the home page's download; QA-6 made the
+ * home page lighter, so that difference grew without the reader getting any heavier. The whole
+ * cold download is what a reader on a phone waits for, so that is what is budgeted now. The
+ * compressed sizes are budgeted too, by `npm run bundle:check` (scripts/check-bundle-size.ts).
+ * Measured after QA-6: about 1,242 KB in 45 files (324 KB compressed); the budget leaves room.
+ */
+const READER_SCRIPT_BUDGET_KB = 1300;
 
 /** Chrome DevTools' "Fast 4G" profile, in the units the DevTools protocol takes. */
 const fast4g = {
@@ -146,16 +153,19 @@ test.describe('chapter reader: speed, size and zoom (S1-E4-01b)', () => {
     expect(median).toBeLessThan(FIRST_PARAGRAPH_BUDGET_MS);
   });
 
-  test('the reader adds under 40 KB of script to what the home page loads', async ({ browser }) => {
-    const home = await scriptsLoadedBy(browser, '/');
+  test('a cold chapter load downloads under 1,300 KB of script, before compression', async ({
+    browser,
+  }) => {
     const reader = await scriptsLoadedBy(browser, chapterAddress);
-    const added = [...reader].filter(([path]) => !home.has(path));
-    const addedKb = added.reduce((total, [, size]) => total + size, 0);
+    const totalKb = [...reader.values()].reduce((total, size) => total + size, 0);
+    const largest = [...reader].sort((first, second) => second[1] - first[1]).slice(0, 5);
     test.info().annotations.push({
       type: 'reader scripts',
-      description: added.map(([path, size]) => `${path} ${size.toFixed(1)} KB`).join('; '),
+      description: `${totalKb.toFixed(1)} KB in ${reader.size} files; largest: ${largest
+        .map(([path, size]) => `${path} ${size.toFixed(1)} KB`)
+        .join('; ')}`,
     });
-    expect(addedKb).toBeLessThan(READER_SCRIPT_BUDGET_KB);
+    expect(totalKb).toBeLessThan(READER_SCRIPT_BUDGET_KB);
   });
 
   test('at 200% zoom nothing scrolls sideways and no text runs past the edge', async ({

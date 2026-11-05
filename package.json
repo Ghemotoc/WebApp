@@ -25,6 +25,7 @@
     "migrations:check": "tsx scripts/check-migration-versions.ts",
     "migration:new": "tsx scripts/new-migration.ts",
     "scan:bundle": "tsx scripts/scan-bundle-for-secrets.ts",
+    "bundle:check": "tsx scripts/check-bundle-size.ts",
     "third-party:check": "tsx scripts/check-third-party.ts",
     "issues:sync": "tsx scripts/sync-story-issues.ts",
     "emails:build": "tsx scripts/build-auth-email-templates.ts",
