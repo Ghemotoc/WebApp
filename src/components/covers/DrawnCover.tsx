@@ -7,6 +7,8 @@
  *     length (src/lib/cover-title.ts), never an ellipsis or clipping.
  *   - The title is real text; the artwork behind it is decorative and hidden from screen readers.
  *   - Dark or light title text is chosen so it always reaches 4.5:1 on its surface.
+ *   - On a patterned design the words sit on a solid box, so no line crosses them (FIXES-1b;
+ *     titleSurfaceFor() in coverDesigns.ts).
  * Board values (NewStory 4.2, the `cover()` sizes): tile (in the picker) 6 px padding, 8 px
  * radius, 12 px title; preview 14 px padding, 16 px radius, 21 px title; card 22 px padding,
  * 16 px radius, 28 px title. The story card on shelves uses 18 px padding and a 21 px title
@@ -92,7 +94,7 @@ function CoverArtwork({ choice }: { choice: DrawnCoverChoice }) {
 
 /**
  * The words on the cover: the title, the accent line (plain designs) and the pen name, on a
- * small box when the pattern behind them is busy.
+ * solid box on every patterned design.
  *
  * @returns the title block
  */
@@ -107,7 +109,7 @@ function CoverWords({
   const { boxFill, surface } = titleSurfaceFor(choice);
   const textColour = titleColourOn(surface);
 
-  // On busy patterns a small paper or background box sits behind the words (the board's boxes).
+  // On every patterned design a solid box sits behind the words, so no line crosses them.
   const boxStyle: CSSProperties =
     boxFill === null
       ? {}

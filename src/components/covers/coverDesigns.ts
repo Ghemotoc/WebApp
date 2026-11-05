@@ -307,12 +307,17 @@ export function coverArtwork(kind: CoverDesignKind): CoverArtwork {
 }
 
 /**
- * Where the title sits on a design: on the background itself, on a paper box (busy patterns:
- * dots and waves), on a background-coloured box (stripes) or on the accent band (two-tone).
- * The board draws these boxes so the title never fights the pattern.
+ * Where the title sits on a design: on the background itself (plain designs only), or on a solid
+ * box that hides the pattern behind the words. Busy patterns (dots and waves) use a paper box, as
+ * the board draws them; two-tone uses its accent band's colour; the other patterns (stripes,
+ * grid, starry, doodles) use the background colour.
+ * Why every pattern has a box (bundle FIXES-1b; Robert, 5 Nov 2026): on the grid design the lines
+ * ran straight through the title, and when they were the title's colour the title couldn't be
+ * read; on two-tone a long title grew above the band onto a background it wasn't coloured for.
+ * With a solid box, the title is always read against one colour, at 4.5:1 or more.
  *
  * @param choice - the design and colours
- * @returns the title box fill (null when the title sits straight on the background) and the
+ * @returns the title box fill (null when the title sits straight on a plain background) and the
  *   colour the title is read against
  */
 export function titleSurfaceFor(choice: DrawnCoverChoice): {
@@ -322,8 +327,8 @@ export function titleSurfaceFor(choice: DrawnCoverChoice): {
   const { kind } = coverDesignByKey(choice.design);
   const background = coverPalette[choice.background];
   const accent = coverPalette[choice.accent];
-  if (kind === 'stripes') return { boxFill: background, surface: background };
+  if (kind === 'plain') return { boxFill: null, surface: background };
   if (kind === 'dots' || kind === 'waves') return { boxFill: lightText, surface: lightText };
-  if (kind === 'twotone') return { boxFill: null, surface: accent };
-  return { boxFill: null, surface: background };
+  if (kind === 'twotone') return { boxFill: accent, surface: accent };
+  return { boxFill: background, surface: background };
 }
