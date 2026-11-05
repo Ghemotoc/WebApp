@@ -113,6 +113,13 @@
   filter: brightness(0) invert(1);
 }
 
+/* A picture with a light and a night version, such as the logo and emblem (BRAND-1b): both are in
+   the page and the theme on <html> (public/theme-init.js) shows one, so a switch needs no read. */
+[data-theme='night'] .tmc-light-only,
+[data-theme='light'] .tmc-night-only {
+  display: none;
+}
+
 /* The chapter text, in the editor (S1-E3-02a) and the reader (S1-E4-01a): board 4.3's 18 px at
    1.75 line height, headings in Bricolage, quotes with a plum bar, the scene break centred. */
 .tmc-chapter-text {

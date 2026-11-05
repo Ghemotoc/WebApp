@@ -7,8 +7,9 @@
  * - an empty slot shows the default (Nicole's cat for the emblem, the name as text for the logo);
  * - an admin uploads a light-theme emblem; it goes through the picture check and waits for a
  *   moderator, and the page says the default shows until then (CLAUDE.md rule 19);
- * - once a moderator approves it, the page says the app shows it; "Use the default" empties the
- *   slot again;
+ * - once a moderator approves it, the page says the app shows it, and a visitor's top bar and
+ *   browser tab show it (part b) while the night theme keeps the default; "Use the default"
+ *   empties the slot again;
  * - a moderator is told the page isn't theirs;
  * - axe finds nothing serious at 390, 768 and 1440 px, light and night, Romanian and English.
  * Test data: the brand slots and brand pictures, cleared before and after (the audit log keeps its
@@ -96,7 +97,28 @@ test.describe('Staff › Website › Branding (BRAND-1a)', () => {
     await page.reload();
     await expect(emblem.getByText('The app shows this picture.')).toBeVisible();
 
-    // Step 4: "Use the default" empties the slot again.
+    // Step 4: a visitor's top bar and browser tab show the approved emblem (part b), on the light
+    // theme and in a light browser.
+    const visitorContext = await browser.newContext({ colorScheme: 'light' });
+    const visitor = await visitorContext.newPage();
+    await visitor.goto('/discover');
+    const topBarEmblem = visitor.locator('header img[data-brand-emblem="light"]');
+    await expect(topBarEmblem).toHaveAttribute(
+      'src',
+      /\/storage\/v1\/object\/sign\/brand-assets\/emblem_light\//,
+    );
+    await expect(visitor.locator('link[data-brand-icon="light"]')).toHaveAttribute(
+      'href',
+      /\/brand-assets\/emblem_light\//,
+    );
+    // The night emblem has no upload, so it keeps the bundled cat.
+    await expect(visitor.locator('header img[data-brand-emblem="dark"]')).toHaveAttribute(
+      'src',
+      '/brand/emblem-dark.svg',
+    );
+    await visitorContext.close();
+
+    // Step 5: "Use the default" empties the slot again.
     await emblem.getByRole('button', { name: 'Use the default' }).click();
     await expect(emblem.getByText('The app shows the default.')).toBeVisible();
     await expect(emblem.getByRole('button', { name: 'Use the default' })).toHaveCount(0);
