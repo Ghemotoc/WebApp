@@ -393,7 +393,8 @@
       "atlas_image": "Imagine din lumea poveștii",
       "signature_picture": "Imagine de semnătură",
       "landing_picture": "Imagine de pe o pagină de prezentare",
-      "sponsor_creative": "Imagine de la un sponsor"
+      "sponsor_creative": "Imagine de la un sponsor",
+      "brand_asset": "Logo sau emblemă"
     },
     "status": "Stare",
     "statuses": {

@@ -569,6 +569,61 @@ export type Database = {
           },
         ];
       };
+      brand_assets: {
+        Row: {
+          created_at: string;
+          earlier_picture_id: string | null;
+          id: string;
+          picture_id: string;
+          slot: Database['public']['Enums']['brand_asset_slot'];
+          updated_at: string;
+          user_id: string;
+          brand_shown_picture: string | null;
+          brand_slot_json: Json | null;
+        };
+        ComputedFields: 'brand_shown_picture' | 'brand_slot_json';
+        Insert: {
+          created_at?: string;
+          earlier_picture_id?: string | null;
+          id?: string;
+          picture_id: string;
+          slot: Database['public']['Enums']['brand_asset_slot'];
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          earlier_picture_id?: string | null;
+          id?: string;
+          picture_id?: string;
+          slot?: Database['public']['Enums']['brand_asset_slot'];
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'brand_assets_earlier_picture_id_fkey';
+            columns: ['earlier_picture_id'];
+            isOneToOne: false;
+            referencedRelation: 'picture_checks';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'brand_assets_picture_id_fkey';
+            columns: ['picture_id'];
+            isOneToOne: false;
+            referencedRelation: 'picture_checks';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'brand_assets_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       campaign_daily_stats: {
         Row: {
           campaign_id: string;
@@ -8831,6 +8886,7 @@ export type Database = {
         Returns: boolean;
       };
       admin_book_ad_slot: { Args: { fields: Json; target_campaign_id: string }; Returns: string };
+      admin_brand_assets: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_build_evidence_pack: {
         Args: { reason_given: string; target_case_id: string };
         Returns: Json;
@@ -8910,6 +8966,10 @@ export type Database = {
       admin_class_spaces: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_classic_chapter: { Args: { target_chapter_code: string }; Returns: Json };
       admin_classic_suggestions: { Args: Record<PropertyKey, never>; Returns: Json };
+      admin_clear_brand_asset: {
+        Args: { target_slot: Database['public']['Enums']['brand_asset_slot'] };
+        Returns: undefined;
+      };
       admin_close_account_for_abuse_image: {
         Args: { account_message: string; note_text: string; target_case_id: string };
         Returns: boolean;
@@ -9716,6 +9776,13 @@ export type Database = {
         };
         Returns: boolean;
       };
+      admin_set_brand_asset: {
+        Args: {
+          target_picture_id: string;
+          target_slot: Database['public']['Enums']['brand_asset_slot'];
+        };
+        Returns: undefined;
+      };
       admin_set_chapter_visibility: {
         Args: {
           reason_code: string;
@@ -10238,6 +10305,33 @@ export type Database = {
         Returns: Json;
       };
       bootstrap_first_owner: { Args: { target_user_id: string }; Returns: undefined };
+      brand_assets_published: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          bucket: string;
+          path: string;
+          slot: Database['public']['Enums']['brand_asset_slot'];
+        }[];
+      };
+      brand_picture_upload_allowed: { Args: { object_name: string }; Returns: boolean };
+      brand_shown_picture: {
+        Args: {
+          brand_row: Omit<
+            Database['public']['Tables']['brand_assets']['Row'],
+            Database['public']['Tables']['brand_assets']['ComputedFields']
+          >;
+        };
+        Returns: string;
+      };
+      brand_slot_json: {
+        Args: {
+          brand_row: Omit<
+            Database['public']['Tables']['brand_assets']['Row'],
+            Database['public']['Tables']['brand_assets']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
       browse_stories: {
         Args: {
           category_slug?: string;
@@ -13080,6 +13174,7 @@ export type Database = {
       };
       refresh_writer_rank: { Args: { person_id: string }; Returns: undefined };
       register_atlas_picture: { Args: { target_path: string }; Returns: string };
+      register_brand_picture: { Args: { target_path: string }; Returns: string };
       register_chapter_embed: {
         Args: {
           embed_author_name: string;
@@ -14578,6 +14673,7 @@ export type Database = {
       ai_disclosure: 'no_ai' | 'ai_brainstorming' | 'partly_ai_written';
       appeal_status: 'open' | 'upheld' | 'overturned';
       audit_actor: 'person' | 'system';
+      brand_asset_slot: 'logo_light' | 'logo_dark' | 'emblem_light' | 'emblem_dark';
       case_source:
         | 'report'
         | 'authority_order'
@@ -14659,7 +14755,8 @@ export type Database = {
         | 'atlas_image'
         | 'signature_picture'
         | 'landing_picture'
-        | 'sponsor_creative';
+        | 'sponsor_creative'
+        | 'brand_asset';
       picture_status: 'pending' | 'passed' | 'held' | 'approved' | 'removed';
       profile_audience: 'everyone' | 'members' | 'people_i_follow';
       reaction_kind: 'heart' | 'fire' | 'laugh' | 'wow' | 'sad' | 'star';
@@ -14948,6 +15045,7 @@ export const Constants = {
       ai_disclosure: ['no_ai', 'ai_brainstorming', 'partly_ai_written'],
       appeal_status: ['open', 'upheld', 'overturned'],
       audit_actor: ['person', 'system'],
+      brand_asset_slot: ['logo_light', 'logo_dark', 'emblem_light', 'emblem_dark'],
       case_source: [
         'report',
         'authority_order',
@@ -15040,6 +15138,7 @@ export const Constants = {
         'signature_picture',
         'landing_picture',
         'sponsor_creative',
+        'brand_asset',
       ],
       picture_status: ['pending', 'passed', 'held', 'approved', 'removed'],
       profile_audience: ['everyone', 'members', 'people_i_follow'],

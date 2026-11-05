@@ -19,7 +19,8 @@
     "interfaceText": "Textele aplicației",
     "emails": "Șabloane de email",
     "seasonal": "Desene de sezon",
-    "landingPages": "Pagini de prezentare"
+    "landingPages": "Pagini de prezentare",
+    "branding": "Identitate vizuală"
   },
   "picker": {
     "market": "Piața",
@@ -243,5 +244,42 @@
     "gapDays_one": "{{count}} zi fără desen",
     "gapDays_few": "{{count}} zile fără desen",
     "gapDays_other": "{{count}} de zile fără desen"
+  },
+  "branding": {
+    "heading": "Logo și emblemă",
+    "intro": "Încarcă logoul și emblema pentru tema luminoasă și pentru tema de noapte. Emblema stă lângă nume în bara de sus și este iconița din fila browserului. Fiecare imagine este verificată, iar un moderator o aprobă înainte să o vadă altcineva; până atunci, aplicația arată ce arată acum. Fiecare schimbare apare în jurnalul de audit.",
+    "upload": "Încarcă o imagine",
+    "hint": "Cel mai bine merge PNG sau WebP cu fundal transparent, de cel mult 2 MB. Latura cea mai lungă este redusă la 1.024 px.",
+    "useDefault": "Folosește varianta implicită",
+    "defaultAlt": "Emblema implicită: o pisică",
+    "uploadedAlt": "Imaginea încărcată pentru {{slot}}",
+    "slots": {
+      "logo_light": {
+        "title": "Logo, tema luminoasă",
+        "where": "Înlocuiește numele din bara de sus în tema luminoasă. Fără logo, numele apare ca text."
+      },
+      "logo_dark": {
+        "title": "Logo, tema de noapte",
+        "where": "Înlocuiește numele din bara de sus în tema de noapte. Fără logo, numele apare ca text."
+      },
+      "emblem_light": {
+        "title": "Emblemă, tema luminoasă",
+        "where": "Lângă nume în bara de sus în tema luminoasă și iconița din fila browserului când browserul este luminos."
+      },
+      "emblem_dark": {
+        "title": "Emblemă, tema de noapte",
+        "where": "Lângă nume în bara de sus în tema de noapte și iconița din fila browserului când browserul este întunecat."
+      }
+    },
+    "states": {
+      "default": "Aplicația arată varianta implicită.",
+      "visible": "Aplicația arată această imagine.",
+      "checking_earlier": "Imaginea este în verificare. Până o aprobă un moderator, apare imaginea de dinainte.",
+      "checking_default": "Imaginea este în verificare. Până o aprobă un moderator, apare varianta implicită.",
+      "waiting_for_person_earlier": "Imaginea așteaptă un moderator. Până atunci apare imaginea de dinainte.",
+      "waiting_for_person_default": "Imaginea așteaptă un moderator. Până atunci apare varianta implicită.",
+      "removed_earlier": "Un moderator a scos imaginea. În locul ei apare imaginea de dinainte.",
+      "removed_default": "Un moderator a scos imaginea. În locul ei apare varianta implicită."
+    }
   }
 }

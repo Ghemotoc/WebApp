@@ -30,6 +30,8 @@ export const longestSideFor = {
   landingPicture: 2400,
   // A sponsor's banner, at most 970 px wide on a sharp screen (S1-E12-02; board AdFormats).
   sponsorCreative: 1940,
+  // A logo or emblem (BRAND-1a): drawn at most 48 px tall, and as a 512 px browser tab icon.
+  brandPicture: 1024,
 } as const;
 
 /** The quality for WebP and JPEG: small files that still look sharp. */
