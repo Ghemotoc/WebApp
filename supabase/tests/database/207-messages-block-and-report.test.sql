@@ -30,12 +30,14 @@ update public.feature_flags set is_enabled = false where key = 'adults_only';
 
 /* ---------- Setup: 22 more messages in the seeded chat, taking it to 25 ---------- */
 
--- Message n is sent n minutes after the start, from adult_writer when n is even, teacher when odd.
+-- Message n is sent n minutes from now, from adult_writer when n is even, teacher when odd. Being
+-- the newest messages in the chat, they don't depend on what the seed or an earlier test (an e2e
+-- run, say) left in it (QA-3, finding A3).
 insert into public.messages (conversation_id, user_id, body, created_at)
 select '00000000-0000-4000-a000-000000000901',
   case when step % 2 = 0 then '00000000-0000-4000-8000-000000000001'::uuid
        else '00000000-0000-4000-8000-000000000007'::uuid end,
-  'Message ' || step, now() - interval '2 hours' + make_interval(mins => step)
+  'Message ' || step, now() + make_interval(mins => step)
 from generate_series(1, 22) as step;
 
 -- The labelled rows the tests use, readable by every role.
@@ -55,7 +57,14 @@ select ok((select report_reference from public.report_item('message', (select id
 select pg_temp.as_owner();
 insert into named select 'case', cases.id from public.cases
   where cases.item_type = 'message' and cases.item_id = (select id from named where label = 'reported');
-insert into named select 'other_case', cases.id from public.cases where cases.item_type <> 'message' limit 1;
+-- A case about something else, made here (QA-3, finding A3): picking "any case that isn't about
+-- a message" from existing rows made the test depend on what earlier tests left behind.
+select pg_temp.sign_in('07');
+select report_reference from public.report_item('profile', 'adult_writer', 'spam');
+select pg_temp.as_owner();
+insert into named select 'other_case', cases.id from public.cases
+  where cases.item_type = 'profile' and cases.item_id = '00000000-0000-4000-8000-000000000001'
+  order by cases.created_at desc limit 1;
 
 select pg_temp.sign_in('10');
 create temp table seen as select public.admin_case_message((select id from named where label = 'case')) as answer;
