@@ -48,6 +48,33 @@ describe('cover designs', () => {
     expect(weakPairs).toEqual([]);
   });
 
+  it('put a solid box behind the title on every patterned design, so no line crosses it', () => {
+    // Bundle FIXES-1b (Robert, 5 Nov 2026): the grid's lines used to run through the title.
+    const choices = coverDesigns.flatMap((design) =>
+      coverColourKeys.flatMap((background) =>
+        coverColourKeys.map((accent) => ({ design, background, accent })),
+      ),
+    );
+    for (const { design, background, accent } of choices) {
+      const { boxFill, surface } = titleSurfaceFor({ design: design.key, background, accent });
+      // A plain cover has no pattern, so no box; on every other design the box is the colour the
+      // title is read against.
+      const expectedBox = design.kind === 'plain' ? null : surface;
+      expect(boxFill).toBe(expectedBox);
+    }
+  });
+
+  it('read the grid design’s title clearly even when its lines are the title’s colour', () => {
+    // The case Robert saw: dark lines on paper, and a dark title on top of them.
+    const { boxFill, surface } = titleSurfaceFor({
+      design: 'grid',
+      background: 'paper',
+      accent: 'ink',
+    });
+    expect(boxFill).toBe(coverPalette.paper);
+    expect(contrastRatio(surface, titleColourOn(surface))).toBeGreaterThanOrEqual(4.5);
+  });
+
   it('gives each design its board default colours', () => {
     expect(defaultChoiceFor('stripes')).toEqual({
       design: 'stripes',
