@@ -29,6 +29,8 @@
     />
     <!-- Picks light or night mode before anything draws, so night readers never see a white flash (S1-E1-03). -->
     <script src="/theme-init.js"></script>
+    <!-- zod's settings, before any app code builds a schema: no eval under the security policy (QA-1c). -->
+    <script src="/zod-init.js"></script>
   </head>
   <body>
     <div id="root"></div>

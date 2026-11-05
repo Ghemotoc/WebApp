@@ -671,7 +671,7 @@ Removing one passage instead of the whole story is also in line with DSA art. 14
 | Access control | Deny by default; row-level security on every table; CI fails a migration that adds a table without RLS and policies |
 | Secrets | The service role key never reaches the client; secrets live in GitHub Actions secrets and Supabase's secret store; GitHub secret scanning and push protection on |
 | Staff accounts | Google Workspace sign-in only, accepting only accounts on themagiccoffin.com (`STAFF_EMAIL_DOMAIN`, decided 17 Oct 2026, 12:47), with Google's 2-Step Verification enforced for every staff account (decided 17 Oct 2026, 11:53); database policies check `is_staff_session()`; staff actions written to `audit_log` |
-| User input | Markdown subset only; sanitised on the server before saving and again before display; `rel="nofollow ugc noopener"` on links; strict Content Security Policy |
+| User input | Markdown subset only; sanitised on the server before saving and again before display; `rel="nofollow ugc noopener"` on links; strict Content Security Policy (no inline script, no eval, no framing; `server/security-headers.ts`, QA-1c) |
 | Files | Type and size checks, EXIF stripping, the picture check on upload (S1-E10-05); a flagged file stays private for a moderator |
 | Abuse | Rate limits per account and per action; lower limits for new accounts; accessible bot challenge on sign-up |
 | Dependencies | Dependabot or Renovate weekly; `npm audit` in CI fails on high or critical issues |

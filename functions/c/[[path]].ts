@@ -10,6 +10,7 @@
  * with (the same ones functions/s/[[path]].ts reads). Without them the page goes out without tags.
  */
 import { fetchLandingPreview, handleLandingLink } from '../../server/landing-preview';
+import { withSecurityHeaders } from '../../server/security-headers';
 
 /** What Cloudflare passes to a Pages Function; only these parts are used. */
 interface PagesContext {
@@ -28,8 +29,8 @@ interface PagesContext {
  * @param context - Cloudflare's request context
  * @returns the app's page with the link preview for that landing page
  */
-export const onRequestGet = (context: PagesContext): Promise<Response> =>
-  handleLandingLink(context.request, {
+export const onRequestGet = async (context: PagesContext): Promise<Response> => {
+  const answer = await handleLandingLink(context.request, {
     // The app's index.html, the page every address of the single-page app starts from.
     fetchIndexHtml: () => context.env.ASSETS.fetch(new Request(new URL('/', context.request.url))),
     findPreview: (slug) =>
@@ -41,3 +42,6 @@ export const onRequestGet = (context: PagesContext): Promise<Response> =>
         slug,
       ),
   });
+  // The security headers (QA-1c): Cloudflare's _headers file doesn't reach a function's answer.
+  return withSecurityHeaders(answer, context.env.VITE_SUPABASE_URL ?? '');
+};
