@@ -39,7 +39,7 @@ export function SignUpSteps({ includesAgeCheck }: SignUpStepsProps) {
           >
             <span
               aria-hidden="true"
-              className={`inline-flex size-5 items-center justify-center rounded-full text-[12px] ${isCurrent ? 'bg-gold text-ink' : 'bg-surface'}`}
+              className={`inline-flex size-5 items-center justify-center rounded-full text-[12px] ${isCurrent ? 'bg-gold text-on-gold' : 'bg-surface'}`}
             >
               {index + 1}
             </span>

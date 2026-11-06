@@ -109,7 +109,7 @@ function StoryRow({ story }: { story: ListedStory }) {
 /** A card with a heading and its rows, or the line that says how to fill it. */
 function FollowCard(props: { heading: string; emptyText: string; children: ReactNode[] }) {
   return (
-    <div className="flex flex-col gap-2 rounded-card border border-border bg-surface p-5 shadow-card">
+    <div className="flex min-w-0 flex-col gap-2 rounded-card border border-border bg-surface p-5 shadow-card">
       <h3 className="m-0 font-heading text-lg font-bold text-heading">{props.heading}</h3>
       {props.children.length === 0 ? (
         <p className="m-0 text-sm text-body">{props.emptyText}</p>
@@ -141,7 +141,7 @@ export function FollowingSection() {
         </h2>
         <p className="m-0 text-sm text-body">{t('following.intro')}</p>
       </div>
-      <div className="grid gap-5 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         <FollowCard
           heading={t('following.writers', { count: follows.writers.length })}
           emptyText={t('following.noWriters')}

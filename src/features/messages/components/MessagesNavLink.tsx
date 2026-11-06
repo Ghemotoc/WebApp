@@ -46,7 +46,7 @@ export function MessagesNavLink() {
         {unreadCount > 0 && (
           <span
             aria-hidden="true"
-            className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-gold px-1 text-[11px] leading-none font-bold text-ink"
+            className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-gold px-1 text-[11px] leading-none font-bold text-on-gold"
           >
             {bubble}
           </span>

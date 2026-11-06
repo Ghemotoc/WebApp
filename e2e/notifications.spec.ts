@@ -5,6 +5,7 @@
  * What it proves:
  * - new followers, a comment on the reader's chapter and a moderation decision reach the reader
  *   through the real triggers and the notification job (criteria 1 and 4);
+ * - in night mode the bell's count is dark on the gold badge (accessibility check, 6 Nov 2026);
  * - the bell's badge counts the unread ones, the filter chips narrow the list, a decision says
  *   "Always on", and "Mark all as read" clears the badge (criteria 2 and 3);
  * - the page has no serious axe issue and no sideways scroll at 390, 768 and 1440 px, in light
@@ -13,6 +14,8 @@
  * story and chapter, removed afterwards with everything that points at it.
  */
 import { expect, test, type Browser, type Page } from '@playwright/test';
+
+import { THEME_STORAGE_KEY } from '../src/lib/theme';
 
 import { checkScreen, everyView } from './support/accessibility';
 import { runSql } from './support/database';
@@ -83,6 +86,27 @@ test.describe('in-app notifications (S1-E7-01)', () => {
   test.describe.configure({ mode: 'serial' });
   test.beforeAll(seedNotifications);
   test.afterAll(cleanUp);
+
+  test('in night mode the bell’s count is dark on gold, readable at about 9:1', async ({
+    browser,
+  }) => {
+    // The accessibility check of 6 Nov 2026 found light text on the gold badge in night mode
+    // (1.5:1). The gold stays the same in both themes, so the count uses --on-gold (#26142e).
+    // axe can't see it: the badge is aria-hidden because the link's name already says the count.
+    const page = await openSignedIn(browser);
+    await page
+      .context()
+      .addInitScript(([key]) => localStorage.setItem(key, 'night'), [THEME_STORAGE_KEY] as const);
+    await page.goto('/discover');
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'night');
+    const badge = page
+      .getByRole('link', { name: /^Notifications, \d+ new$/ })
+      .locator('span[aria-hidden=true]')
+      .last();
+    await expect(badge).toHaveCSS('color', 'rgb(38, 20, 46)');
+    await expect(badge).toHaveCSS('background-color', 'rgb(230, 194, 76)');
+    await page.context().close();
+  });
 
   test('the bell counts what is new, the page lists it and "Mark all as read" clears it', async ({
     browser,
