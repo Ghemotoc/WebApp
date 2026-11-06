@@ -3,7 +3,7 @@
  * 3.5).
  *
  * Board values: a white card (20 px corners, #DED3E4 border, 18 px by 20 px inside) across the
- * whole row under the paragraph, labelled "Comments on paragraph N"; the Cutive title
+ * whole row under the paragraph, labelled "Comments on paragraph N"; the eyebrow title
  * "{n} comments on this paragraph" (or "No comments on this paragraph yet") with Close beside
  * it, the comments with fine lines between them, then the box "Comment on this paragraph" with
  * its Post button. The thread for an earlier version lists the comments left on paragraphs the
@@ -105,7 +105,7 @@ export function ParagraphThread({ id, address, place, onClose }: ParagraphThread
       className="tmc-paragraph-thread col-span-full mt-3 rounded-[20px] border border-border bg-surface px-5 py-[18px]"
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="m-0 font-eyebrow text-sm leading-[1.3] font-normal text-eyebrow">
+        <p className="m-0 eyebrow">
           {thread === null ? t('paragraph.loading') : t(...texts.title)}
         </p>
         <Button variant="secondary" onClick={onClose}>

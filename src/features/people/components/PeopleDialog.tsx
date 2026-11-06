@@ -47,7 +47,7 @@ export function PeopleDialog(props: PeopleDialogProps) {
         <div className="flex flex-col gap-5">
           <div className="flex items-start gap-3">
             <div className="flex min-w-0 flex-1 flex-col gap-2">
-              <p className="m-0 font-eyebrow text-sm text-eyebrow">{props.eyebrow}</p>
+              <p className="m-0 eyebrow">{props.eyebrow}</p>
               <h2
                 id={titleId}
                 className="m-0 font-heading text-[26px] font-bold break-words text-heading"

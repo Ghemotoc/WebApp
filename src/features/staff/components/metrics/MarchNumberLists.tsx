@@ -40,7 +40,7 @@ function NumberSection({
       aria-labelledby={headingId}
       className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface p-5 shadow-card"
     >
-      <span className="font-eyebrow text-sm text-eyebrow">{eyebrow}</span>
+      <span className="eyebrow">{eyebrow}</span>
       <h2 id={headingId} className="m-0 font-heading text-[22px] font-bold text-heading">
         {heading}
       </h2>

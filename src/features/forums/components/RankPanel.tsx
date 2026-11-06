@@ -1,7 +1,7 @@
 /**
  * RankPanel: the "Rank" card at the top of a profile's side column (story S1-E8-09; board 6.1).
  *
- * Board values: a white card with 24 px corners and 24 px padding, the Cutive eyebrow "Rank", the
+ * Board values: a white card with 24 px corners and 24 px padding, the eyebrow "Rank", the
  * rank's name as a 26 px Bricolage heading, the 15 px line saying where ranks come from (forum
  * posts never count, criterion 1), the ladder and the progress bar. The trophy doodle sits on the
  * card's top-right edge as a widget doodle and hides on phones. Nothing is drawn before the

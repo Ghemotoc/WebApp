@@ -33,7 +33,7 @@ export function HeroPreview({ page, language }: HeroPreviewProps) {
         lang={language}
         className="flex flex-col gap-4 rounded-3xl border border-border bg-paper p-6"
       >
-        <p className="m-0 font-eyebrow text-sm text-eyebrow">{withBrand(page.eyebrow)}</p>
+        <p className="m-0 eyebrow">{withBrand(page.eyebrow)}</p>
         <p className="m-0 font-heading text-[clamp(32px,4vw,52px)] leading-[0.94] font-extrabold tracking-[-0.025em] break-words text-heading">
           {/* Two lines as blocks with a space between, so the heading reads as one sentence. */}
           <span className="block">

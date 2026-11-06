@@ -160,9 +160,7 @@ export function StoryHeader({ story }: { story: StoryPageData }) {
       )}
       {story.labels.contentNote !== '' && (
         <div className="flex max-w-[640px] flex-col gap-1 rounded-card border border-border bg-tint px-4 py-3">
-          <p className="m-0 font-eyebrow text-sm text-eyebrow">
-            {t('storyPage.contentNoteHeading')}
-          </p>
+          <p className="m-0 eyebrow">{t('storyPage.contentNoteHeading')}</p>
           <p className="m-0 text-[15px] leading-normal text-body">{story.labels.contentNote}</p>
         </div>
       )}

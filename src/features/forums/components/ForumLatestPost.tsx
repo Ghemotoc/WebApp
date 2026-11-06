@@ -26,7 +26,7 @@ export function ForumLatestPost({ post }: { post: LatestPost | null }) {
   }
   return (
     <div className="flex min-w-0 flex-col gap-0.5 border-l border-border pl-3 text-sm">
-      <span className="font-eyebrow text-sm text-eyebrow">{t('latestPost')}</span>
+      <span className="eyebrow">{t('latestPost')}</span>
       <Link to={post.threadAddress} className="font-semibold break-words text-link underline">
         {post.threadTitle}
       </Link>

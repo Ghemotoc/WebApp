@@ -165,9 +165,7 @@ export function StorySideColumn({ story }: { story: StoryPageData }) {
         <ClassicAuthorCard author={story.writer.classicAuthor} />
       )}
       <div className="flex flex-col gap-3 rounded-card border border-border bg-surface p-6 shadow-card">
-        <h2 className="m-0 font-eyebrow text-sm font-normal text-eyebrow">
-          {t('storyPage.labelsHeading')}
-        </h2>
+        <h2 className="m-0 eyebrow">{t('storyPage.labelsHeading')}</h2>
         <LabelRows
           rows={[
             {

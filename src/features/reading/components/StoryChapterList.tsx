@@ -133,10 +133,7 @@ export function StoryChapterList({
       aria-labelledby="story-chapters-heading"
       className="flex flex-col gap-3 rounded-card border border-border bg-surface p-6 shadow-card"
     >
-      <h2
-        id="story-chapters-heading"
-        className="m-0 w-fit font-eyebrow text-sm font-normal text-eyebrow"
-      >
+      <h2 id="story-chapters-heading" className="m-0 w-fit eyebrow">
         {t('storyPage.chaptersHeading')}
       </h2>
       {chapters.length === 0 && isOwner && (

@@ -1,7 +1,8 @@
 /**
- * TypeSection: the four fonts and the type scale from the boards, on /design (story S1-E1-03).
- * Bricolage Grotesque for headings, Inter for body, Cutive for eyebrows (14 px, sentence case),
- * Shadows Into Light Two for handwriting (CLAUDE.md, Designs; DoD design rules).
+ * TypeSection: the fonts and the type scale from the boards, on /design (story S1-E1-03).
+ * Bricolage Grotesque for headings, Inter for body and for the parent company's eyebrows (Inter Bold,
+ * 12 px, capitals, 0.2em spacing; Robert, 6 Nov 2026) and Shadows Into Light Two for handwriting
+ * (CLAUDE.md, Designs; DoD design rules).
  * Who uses it: DesignPage. The e2e test reads the computed fonts from these samples.
  */
 import { useTranslation } from 'react-i18next';

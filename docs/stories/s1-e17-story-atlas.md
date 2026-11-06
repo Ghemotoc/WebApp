@@ -19,7 +19,7 @@ Story Atlas is the private planning side of every Ghemotoc story. It complements
 
 - Privacy: only the owner can edit their Story Atlas, and only the owner can read anything they haven't made public, enforced in RLS (CLAUDE.md rule 1). What is public follows the story's own reading rules: its rating (rule 18), blocks, moderation and whether the story is published.
 - Saving: changes save within about a second; a failed save says so in plain words and keeps the text.
-- Looks: matches Ghemotoc (plum ink on warm paper, Bricolage Grotesque headings, Inter body text, Cutive labels, pill buttons), in light and night themes.
+- Looks: matches Ghemotoc (plum ink on warm paper, Bricolage Grotesque headings, Inter body text, eyebrow labels as The Magic Coffin draws them, pill buttons), in light and night themes.
 - Devices: laptop first, fully usable at 390 px, no sideways page scrolling (CLAUDE.md rule 21).
 - Accessibility: WCAG 2.2 AA; real buttons and labels, visible focus, 44 px tap targets, contrast, no meaning by colour alone; every drag has a button alternative.
 

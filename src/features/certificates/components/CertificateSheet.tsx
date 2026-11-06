@@ -187,7 +187,7 @@ export function CertificateSheet({
         <h2 className="m-0 font-heading text-[clamp(28px,5vw,44px)] leading-tight font-extrabold text-heading">
           {t(isAchievement ? 'sheet.titleAchievement' : 'sheet.titleParticipation')}
         </h2>
-        <p className="m-0 font-eyebrow text-[14px] text-eyebrow">{t('sheet.awardedTo')}</p>
+        <p className="m-0 eyebrow">{t('sheet.awardedTo')}</p>
         <p className="m-0 font-heading text-[clamp(24px,4vw,36px)] font-bold break-words text-ink">
           {awardedName}
         </p>

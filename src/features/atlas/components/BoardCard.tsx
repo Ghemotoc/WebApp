@@ -82,7 +82,7 @@ export function BoardCard(props: BoardCardProps) {
         onDrop={props.onDropOnCard}
         className="flex cursor-grab flex-col gap-2 p-4"
       >
-        <p className="m-0 font-eyebrow text-sm text-eyebrow">{label}</p>
+        <p className="m-0 eyebrow">{label}</p>
         <Link
           to={`/write/s/${slug}/c/${chapter.code}`}
           className="font-heading text-lg leading-tight font-bold break-words text-heading"

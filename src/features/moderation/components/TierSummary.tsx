@@ -44,7 +44,7 @@ export function TierSummary({ openCases }: { openCases: QueueCase[] }) {
             key={tier}
             className={`flex flex-col gap-1 rounded-card border border-border border-l-4 bg-surface p-5 shadow-card ${edgeOf[tier]}`}
           >
-            <span className="font-eyebrow text-sm text-eyebrow">{t(`tiers.${tier}`)}</span>
+            <span className="eyebrow">{t(`tiers.${tier}`)}</span>
             <span className="font-heading text-[26px] font-bold text-heading">
               {t('tierSummary.open', { count })}
             </span>

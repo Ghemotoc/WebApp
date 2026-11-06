@@ -1,7 +1,7 @@
 /**
  * ChapterEnd: what follows a chapter's text (story S1-E4-01a; board 3.5).
  *
- * Board values: a Cutive line "End of chapter 14" between two fine rules, then "Read chapter 15 ›"
+ * Board values: an eyebrow-style line "End of chapter 14" between two fine rules, then "Read chapter 15 ›"
  * as the solid 48 px button. After the latest chapter: "That's the latest chapter so far." and
  * a way back to the story. The row starts with Like (S1-E6-03) and ends with "Report chapter":
  * the shared `<ReportButton>` (S1-E10-01; reportable type "chapter", with the chapter's row ID),
@@ -32,7 +32,7 @@ export function ChapterEnd({ chapter }: { chapter: ReaderChapter }) {
   const storyAddress = `/s/${chapter.story.slug}`;
   return (
     <>
-      <div className="mt-10 flex items-center gap-4 font-eyebrow text-sm leading-[1.3] text-meta lg:mr-20">
+      <div className="mt-10 flex items-center gap-4 eyebrow-type text-meta lg:mr-20">
         <span aria-hidden="true" className="h-px flex-1 bg-border" />
         <p className="m-0">{t('reader.endOfChapter', { number: chapter.number })}</p>
         <span aria-hidden="true" className="h-px flex-1 bg-border" />

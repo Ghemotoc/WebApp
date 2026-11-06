@@ -28,9 +28,7 @@ export function SpaceBannerChoice({
   const groupName = useId();
   return (
     <fieldset className="m-0 flex flex-col gap-2 border-0 p-0">
-      <legend className="mb-2 p-0 font-eyebrow text-sm leading-[1.3] font-normal text-eyebrow">
-        {t('form.banner')}
-      </legend>
+      <legend className="mb-2 p-0 eyebrow">{t('form.banner')}</legend>
       <div className="flex flex-wrap gap-x-6 gap-y-2">
         {spaceBanners.map((banner) => {
           const inputId = `${groupName}-${banner}`;

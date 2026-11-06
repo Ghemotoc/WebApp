@@ -64,7 +64,7 @@ export function ChapterPreviewDialog({
     >
       <div className="flex flex-col gap-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <p id="chapter-preview-heading" className="m-0 font-eyebrow text-sm text-eyebrow">
+          <p id="chapter-preview-heading" className="m-0 eyebrow">
             {t('preview.heading')}
           </p>
           <Button variant="secondary" onClick={onClose}>

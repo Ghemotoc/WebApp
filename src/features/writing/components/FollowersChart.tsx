@@ -2,7 +2,7 @@
  * FollowersChart: "Followers over time" on the writer dashboard (story S1-E3-07; board
  * WriterDashboard 4.1).
  *
- * Board values: a white card, Cutive eyebrow, the 26 px heading with the follower count, "+n this
+ * Board values: a white card, eyebrow, the 26 px heading with the follower count, "+n this
  * week" in green, eight bars 200 px high (gold, this week in plum) with the number above each and
  * the week's Monday below ("< 5" above a bar from fewer than 5), and the note "Weeks start on Monday." The chart is one image with a
  * text alternative listing every week's number (WCAG 1.1.1); the numbers on it are hidden from

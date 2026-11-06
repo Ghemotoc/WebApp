@@ -3,7 +3,7 @@
  * (bundle FORUMS-2, part b; S1-E8-07 criterion 1: "the owner chooses each moderator's powers").
  *
  * Real checkboxes in a fieldset, so a screen reader says the group's name with each one; the
- * legend is drawn as an eyebrow label (Cutive 14 px), as the DoD's form section labels are drawn.
+ * legend is drawn as an eyebrow label (the eyebrow style), as the DoD's form section labels are drawn.
  * Each row is at least 44 px tall.
  * Who uses it: SpaceModeratorsCard (adding a moderator and changing one's powers).
  */
@@ -30,9 +30,7 @@ export function SpacePowerChoices({ legend, value, onChange }: SpacePowerChoices
   const groupId = useId();
   return (
     <fieldset className="m-0 flex flex-col gap-1 border-0 p-0">
-      <legend className="mb-2 p-0 font-eyebrow text-sm leading-[1.3] font-normal text-eyebrow">
-        {legend}
-      </legend>
+      <legend className="mb-2 p-0 eyebrow">{legend}</legend>
       {spacePowers.map((power) => {
         const inputId = `${groupId}-${power}`;
         return (

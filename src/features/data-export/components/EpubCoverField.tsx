@@ -143,9 +143,7 @@ export function EpubCoverField(props: EpubCoverFieldProps) {
   const { t } = useDataExportTranslation();
   return (
     <fieldset className="m-0 flex min-w-0 flex-col gap-2 border-0 p-0">
-      <legend className="mb-1 font-eyebrow text-sm leading-[1.3] text-eyebrow">
-        {t('epub.coverLegend')}
-      </legend>
+      <legend className="mb-1 eyebrow">{t('epub.coverLegend')}</legend>
       <div className="flex flex-wrap items-start gap-4">
         <div className="flex min-w-0 flex-1 basis-[220px] flex-col gap-2">
           <CoverRadios usesFile={props.usesFile} onUsesFileChange={props.onUsesFileChange} />

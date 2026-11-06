@@ -35,9 +35,7 @@ function CardDetails({ view, title }: { view: EmbedView | undefined; title: stri
   const kind = embedKindOf(view.service);
   return (
     <>
-      <p className="m-0 font-eyebrow text-sm leading-[1.3] font-normal text-eyebrow">
-        {t(`embed.eyebrow.${kind}`, { service })}
-      </p>
+      <p className="m-0 eyebrow">{t(`embed.eyebrow.${kind}`, { service })}</p>
       <p className="m-0 font-heading text-xl leading-tight font-bold text-ink">
         {view.title ?? (title === '' ? service : title)}
       </p>

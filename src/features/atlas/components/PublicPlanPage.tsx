@@ -34,7 +34,7 @@ function PublicPlanBody({
   return (
     <>
       <header className="flex flex-col gap-2">
-        <p className="m-0 font-eyebrow text-sm text-eyebrow">{t('publicPlan.eyebrow')}</p>
+        <p className="m-0 eyebrow">{t('publicPlan.eyebrow')}</p>
         <h1 className="m-0 text-[clamp(36px,4.4vw,56px)] leading-[0.98] font-extrabold tracking-[-0.025em] break-words">
           <Link to={`/s/${plan.storySlug}`} className="text-heading no-underline hover:underline">
             {plan.storyTitle}
