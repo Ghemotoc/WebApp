@@ -409,7 +409,14 @@
       "heading": "Staff actions on @{{handle}}",
       "none": "No staff actions on this account yet.",
       "line": "{{when}} · {{who}} · {{action}}",
-      "more": "Search the whole audit log"
+      "more": "Open the audit log for this account",
+      "noMore": "No more staff actions on this account.",
+      "pages": "Pages of staff actions",
+      "failures": {
+        "not_allowed": "Only an owner or admin can read the staff actions on an account.",
+        "bad_filter": "This account's history couldn't be read. Reload the page to try again.",
+        "unreachable": "The staff actions couldn't be loaded. Check your connection and try again."
+      }
     },
     "messages": {
       "heading": "Private messages",
@@ -424,6 +431,25 @@
       "refused": "That wasn’t saved. The account may already have this sanction, or a field is missing.",
       "unreachable": "We couldn’t reach our server. Check your connection and try again.",
       "no_consent": "This account has no parental consent to withdraw."
+    },
+    "notes": {
+      "heading": "Staff notes",
+      "fieldLabel": "Add a note for the team",
+      "fieldHint": "Up to {{count}} characters. Notes stay for good and can't be changed. Write facts, not opinions: the person can ask to see what we hold about them.",
+      "add": "Add note",
+      "adding": "Adding…",
+      "none": "No notes on this account yet.",
+      "byline": "{{who}} · {{when}}",
+      "pages": "Pages of staff notes",
+      "failures": {
+        "not_allowed": "Only staff who can open accounts can read or add notes.",
+        "empty_or_long": "Write a note of up to 2,000 characters.",
+        "no_such_account": "This account no longer exists.",
+        "unreachable": "The notes couldn't be saved or loaded. Check your connection and try again."
+      }
+    },
+    "pager": {
+      "pageOf": "Page {{number}} of {{count}}"
     }
   },
   "metrics": {

@@ -141,6 +141,49 @@ export type Database = {
           },
         ];
       };
+      account_staff_notes: {
+        Row: {
+          author_user_id: string;
+          body: string;
+          created_at: string;
+          id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          author_user_id: string;
+          body: string;
+          created_at?: string;
+          id?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          author_user_id?: string;
+          body?: string;
+          created_at?: string;
+          id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'account_staff_notes_author_user_id_fkey';
+            columns: ['author_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'account_staff_notes_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       ad_blocked_categories: {
         Row: {
           category_key: string;
@@ -8817,6 +8860,17 @@ export type Database = {
         Returns: Json;
       };
       admin_abuse_image_evidence: { Args: { target_case_id: string }; Returns: Json };
+      admin_account_notes: {
+        Args: { page_number?: number; page_size?: number; target_user_id: string };
+        Returns: {
+          author_handle: string;
+          author_user_id_short: string;
+          body: string;
+          created_at: string;
+          id: string;
+          total_count: number;
+        }[];
+      };
       admin_account_open_cases: {
         Args: { target_user_id: string };
         Returns: {
@@ -8844,6 +8898,7 @@ export type Database = {
       };
       admin_acknowledge_on_call_alert: { Args: { alert_id: string }; Returns: boolean };
       admin_ad_placements: { Args: { week_count?: number }; Returns: Json };
+      admin_add_account_note: { Args: { body: string; target_user_id: string }; Returns: string };
       admin_add_ad_blocked_category: {
         Args: { label_en: string; label_ro: string; new_key: string };
         Returns: undefined;
@@ -12996,6 +13051,7 @@ export type Database = {
       purge_deleted_stories: { Args: Record<PropertyKey, never>; Returns: number };
       purge_expired_age_check_sessions: { Args: Record<PropertyKey, never>; Returns: number };
       purge_expired_exports: { Args: Record<PropertyKey, never>; Returns: number };
+      purge_old_account_staff_notes: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_age_check_attempts: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_audit_log: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_client_errors: { Args: Record<PropertyKey, never>; Returns: number };

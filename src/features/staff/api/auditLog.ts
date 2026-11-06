@@ -148,6 +148,8 @@ function entryFromRow(row: {
  * @param client - the shared Supabase client
  * @param filters - what to search for
  * @param pageNumber - from 1
+ * @param pageSize - rows per page (the database allows 1 to 100); the account page's staff
+ *   history asks for fewer than the Audit log page (LOGS-1b)
  * @returns the page's entries, newest first
  * Errors: throws AuditLogError('not_allowed') for anyone but owner and admin.
  */
@@ -155,10 +157,11 @@ export async function searchAuditLog(
   client: AppSupabaseClient,
   filters: AuditLogFilters,
   pageNumber: number,
+  pageSize: number = auditLogPageSize,
 ): Promise<AuditLogEntry[]> {
   const { data, error } = await client.rpc('admin_search_audit_log', {
     ...argumentsFor(filters),
-    page_size: auditLogPageSize,
+    page_size: pageSize,
     page_number: pageNumber,
   });
   if (error !== null) throw new AuditLogError(failureFromCode(error.code));
