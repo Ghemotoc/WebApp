@@ -5,6 +5,7 @@ writer: clasice
 author: Charles Dickens
 author_died: 1870
 source_edition: 1843
+first_published: 1843
 language: en
 category: fiction
 rating: all_ages

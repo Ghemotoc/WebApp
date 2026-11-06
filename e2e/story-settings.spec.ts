@@ -73,9 +73,11 @@ test.describe('story status, settings and deletion (S1-E3-05)', () => {
       ),
     ).toBe('completed false');
 
-    // The card shows the status; the filter keeps or drops it.
+    // A finished story shows no status pill (Robert, 6 Nov 2026: "Completed" is a filter, not
+    // a tag); the filter keeps or drops it.
     await page.goto('/write');
-    await expect(card.getByText('Completed')).toBeVisible();
+    await expect(card).toBeVisible();
+    await expect(card.getByText('Completed')).toHaveCount(0);
     await page.getByRole('radio', { name: 'Ongoing' }).click();
     await expect(card).toHaveCount(0);
     await page.getByRole('radio', { name: 'Completed' }).click();

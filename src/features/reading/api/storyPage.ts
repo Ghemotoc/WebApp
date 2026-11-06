@@ -130,6 +130,8 @@ export interface ClassicAuthor {
   sourceUrl: string | null;
   /** The translator, when the text is a translation. */
   translatorName: string | null;
+  /** The year the work was first published anywhere, when staff saved it (6 Nov 2026). */
+  firstPublishedYear: number | null;
 }
 
 /** The database's classic_author (story_classic_author()). */
@@ -139,6 +141,7 @@ interface ClassicAuthorRow {
   source_title?: string | null;
   source_url?: string | null;
   translator_name?: string | null;
+  first_published_year?: number | null;
 }
 
 /**
@@ -155,6 +158,7 @@ function classicAuthorFrom(author: ClassicAuthorRow | null | undefined): Classic
     sourceTitle: author.source_title ?? null,
     sourceUrl: author.source_url ?? null,
     translatorName: author.translator_name ?? null,
+    firstPublishedYear: author.first_published_year ?? null,
   };
 }
 

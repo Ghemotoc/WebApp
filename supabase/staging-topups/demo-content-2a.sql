@@ -11896,6 +11896,10 @@ update public.stories
 set classic_author_id = (select id from public.classic_authors where name = $demo$Ion Creangă$demo$)
 where stories.id = '00000000-0000-4000-9300-000100000000'::uuid
   and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Ion Creangă$demo$);
+update public.stories
+set completion_status = 'completed', first_published_year = 1875
+where stories.id = '00000000-0000-4000-9300-000100000000'::uuid
+  and (stories.completion_status <> 'completed' or stories.first_published_year is distinct from 1875);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -12810,6 +12814,10 @@ update public.stories
 set classic_author_id = (select id from public.classic_authors where name = $demo$Ion Creangă$demo$)
 where stories.id = '00000000-0000-4000-9300-000200000000'::uuid
   and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Ion Creangă$demo$);
+update public.stories
+set completion_status = 'completed', first_published_year = 1876
+where stories.id = '00000000-0000-4000-9300-000200000000'::uuid
+  and (stories.completion_status <> 'completed' or stories.first_published_year is distinct from 1876);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -13119,6 +13127,10 @@ update public.stories
 set classic_author_id = (select id from public.classic_authors where name = $demo$Ion Creangă$demo$)
 where stories.id = '00000000-0000-4000-9300-000300000000'::uuid
   and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Ion Creangă$demo$);
+update public.stories
+set completion_status = 'completed', first_published_year = 1880
+where stories.id = '00000000-0000-4000-9300-000300000000'::uuid
+  and (stories.completion_status <> 'completed' or stories.first_published_year is distinct from 1880);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -13357,6 +13369,10 @@ update public.stories
 set classic_author_id = (select id from public.classic_authors where name = $demo$Ion Creangă$demo$)
 where stories.id = '00000000-0000-4000-9300-000400000000'::uuid
   and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Ion Creangă$demo$);
+update public.stories
+set completion_status = 'completed', first_published_year = 1877
+where stories.id = '00000000-0000-4000-9300-000400000000'::uuid
+  and (stories.completion_status <> 'completed' or stories.first_published_year is distinct from 1877);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -13642,6 +13658,10 @@ update public.stories
 set classic_author_id = (select id from public.classic_authors where name = $demo$Ion Creangă$demo$)
 where stories.id = '00000000-0000-4000-9300-000500000000'::uuid
   and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Ion Creangă$demo$);
+update public.stories
+set completion_status = 'completed', first_published_year = 1876
+where stories.id = '00000000-0000-4000-9300-000500000000'::uuid
+  and (stories.completion_status <> 'completed' or stories.first_published_year is distinct from 1876);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -14996,6 +15016,10 @@ update public.stories
 set classic_author_id = (select id from public.classic_authors where name = $demo$Mihai Eminescu$demo$)
 where stories.id = '00000000-0000-4000-9300-000600000000'::uuid
   and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Mihai Eminescu$demo$);
+update public.stories
+set completion_status = 'completed', first_published_year = 1883
+where stories.id = '00000000-0000-4000-9300-000600000000'::uuid
+  and (stories.completion_status <> 'completed' or stories.first_published_year is distinct from 1883);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -17022,6 +17046,10 @@ update public.stories
 set classic_author_id = (select id from public.classic_authors where name = $demo$Mihai Eminescu$demo$)
 where stories.id = '00000000-0000-4000-9300-000700000000'::uuid
   and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Mihai Eminescu$demo$);
+update public.stories
+set completion_status = 'completed', first_published_year = 1873
+where stories.id = '00000000-0000-4000-9300-000700000000'::uuid
+  and (stories.completion_status <> 'completed' or stories.first_published_year is distinct from 1873);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -17339,6 +17367,10 @@ update public.stories
 set classic_author_id = (select id from public.classic_authors where name = $demo$Mihai Eminescu$demo$)
 where stories.id = '00000000-0000-4000-9300-000800000000'::uuid
   and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Mihai Eminescu$demo$);
+update public.stories
+set completion_status = 'completed', first_published_year = 1885
+where stories.id = '00000000-0000-4000-9300-000800000000'::uuid
+  and (stories.completion_status <> 'completed' or stories.first_published_year is distinct from 1885);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -17485,6 +17517,10 @@ update public.stories
 set classic_author_id = (select id from public.classic_authors where name = $demo$Mihai Eminescu$demo$)
 where stories.id = '00000000-0000-4000-9300-000900000000'::uuid
   and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Mihai Eminescu$demo$);
+update public.stories
+set completion_status = 'completed', first_published_year = 1876
+where stories.id = '00000000-0000-4000-9300-000900000000'::uuid
+  and (stories.completion_status <> 'completed' or stories.first_published_year is distinct from 1876);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -17606,6 +17642,10 @@ update public.stories
 set classic_author_id = (select id from public.classic_authors where name = $demo$Ion Luca Caragiale$demo$)
 where stories.id = '00000000-0000-4000-9300-001000000000'::uuid
   and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Ion Luca Caragiale$demo$);
+update public.stories
+set completion_status = 'completed', first_published_year = 1900
+where stories.id = '00000000-0000-4000-9300-001000000000'::uuid
+  and (stories.completion_status <> 'completed' or stories.first_published_year is distinct from 1900);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -18344,6 +18384,10 @@ update public.stories
 set classic_author_id = (select id from public.classic_authors where name = $demo$Ion Luca Caragiale$demo$)
 where stories.id = '00000000-0000-4000-9300-001100000000'::uuid
   and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Ion Luca Caragiale$demo$);
+update public.stories
+set completion_status = 'completed', first_published_year = null
+where stories.id = '00000000-0000-4000-9300-001100000000'::uuid
+  and (stories.completion_status <> 'completed' or stories.first_published_year is distinct from null);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -19010,6 +19054,10 @@ update public.stories
 set classic_author_id = (select id from public.classic_authors where name = $demo$George Coșbuc$demo$)
 where stories.id = '00000000-0000-4000-9300-001200000000'::uuid
   and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$George Coșbuc$demo$);
+update public.stories
+set completion_status = 'completed', first_published_year = null
+where stories.id = '00000000-0000-4000-9300-001200000000'::uuid
+  and (stories.completion_status <> 'completed' or stories.first_published_year is distinct from null);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -19583,6 +19631,10 @@ update public.stories
 set classic_author_id = (select id from public.classic_authors where name = $demo$George Topîrceanu$demo$)
 where stories.id = '00000000-0000-4000-9300-001300000000'::uuid
   and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$George Topîrceanu$demo$);
+update public.stories
+set completion_status = 'completed', first_published_year = null
+where stories.id = '00000000-0000-4000-9300-001300000000'::uuid
+  and (stories.completion_status <> 'completed' or stories.first_published_year is distinct from null);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -19813,6 +19865,10 @@ update public.stories
 set classic_author_id = (select id from public.classic_authors where name = $demo$Barbu Ștefănescu Delavrancea$demo$)
 where stories.id = '00000000-0000-4000-9300-001400000000'::uuid
   and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Barbu Ștefănescu Delavrancea$demo$);
+update public.stories
+set completion_status = 'completed', first_published_year = null
+where stories.id = '00000000-0000-4000-9300-001400000000'::uuid
+  and (stories.completion_status <> 'completed' or stories.first_published_year is distinct from null);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -21063,6 +21119,10 @@ update public.stories
 set classic_author_id = (select id from public.classic_authors where name = $demo$Charles Dickens$demo$)
 where stories.id = '00000000-0000-4000-9300-001500000000'::uuid
   and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Charles Dickens$demo$);
+update public.stories
+set completion_status = 'completed', first_published_year = 1843
+where stories.id = '00000000-0000-4000-9300-001500000000'::uuid
+  and (stories.completion_status <> 'completed' or stories.first_published_year is distinct from 1843);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -26802,6 +26862,10 @@ update public.stories
 set classic_author_id = (select id from public.classic_authors where name = $demo$Edgar Allan Poe$demo$)
 where stories.id = '00000000-0000-4000-9300-001600000000'::uuid
   and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Edgar Allan Poe$demo$);
+update public.stories
+set completion_status = 'completed', first_published_year = 1845
+where stories.id = '00000000-0000-4000-9300-001600000000'::uuid
+  and (stories.completion_status <> 'completed' or stories.first_published_year is distinct from 1845);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -27327,6 +27391,10 @@ update public.stories
 set classic_author_id = (select id from public.classic_authors where name = $demo$Edgar Allan Poe$demo$)
 where stories.id = '00000000-0000-4000-9300-001700000000'::uuid
   and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Edgar Allan Poe$demo$);
+update public.stories
+set completion_status = 'completed', first_published_year = 1839
+where stories.id = '00000000-0000-4000-9300-001700000000'::uuid
+  and (stories.completion_status <> 'completed' or stories.first_published_year is distinct from 1839);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -27989,6 +28057,10 @@ update public.stories
 set classic_author_id = (select id from public.classic_authors where name = $demo$Charlotte Perkins Gilman$demo$)
 where stories.id = '00000000-0000-4000-9300-001800000000'::uuid
   and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Charlotte Perkins Gilman$demo$);
+update public.stories
+set completion_status = 'completed', first_published_year = 1892
+where stories.id = '00000000-0000-4000-9300-001800000000'::uuid
+  and (stories.completion_status <> 'completed' or stories.first_published_year is distinct from 1892);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -30151,6 +30223,10 @@ update public.stories
 set classic_author_id = (select id from public.classic_authors where name = $demo$Samuel Taylor Coleridge$demo$)
 where stories.id = '00000000-0000-4000-9300-001900000000'::uuid
   and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Samuel Taylor Coleridge$demo$);
+update public.stories
+set completion_status = 'completed', first_published_year = 1798
+where stories.id = '00000000-0000-4000-9300-001900000000'::uuid
+  and (stories.completion_status <> 'completed' or stories.first_published_year is distinct from 1798);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -33291,6 +33367,10 @@ update public.stories
 set classic_author_id = (select id from public.classic_authors where name = $demo$Christina Rossetti$demo$)
 where stories.id = '00000000-0000-4000-9300-002000000000'::uuid
   and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Christina Rossetti$demo$);
+update public.stories
+set completion_status = 'completed', first_published_year = 1862
+where stories.id = '00000000-0000-4000-9300-002000000000'::uuid
+  and (stories.completion_status <> 'completed' or stories.first_published_year is distinct from 1862);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)

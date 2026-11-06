@@ -78,7 +78,9 @@ As a reader, I want Romanian classics on the platform from day one so that there
 
 - **Priority:** Should · **Size:** M · **Depends on:** S1-E3-03, S1-E5-09
 - **Updated:** 16 Oct 2026, late evening: decided, seed with any Romanian classics that are free (Q51).
+- **Updated:** 6 Nov 2026, 10:58 to 11:00 UTC (Robert): a classic is always Completed (its author is dead), names its real author everywhere, and shows the year the work was first published under "Labels from the writer".
 - **Acceptance criteria:**
+  - Given a classic, when a reader opens it, then the byline and the author card name its real author, it shows as Completed and, when staff saved the year, "First published" gives the year the work first came out (not the day it was added here).
   - Given an official platform account, when classics are imported, then each work is checked as public domain (the author's life plus 70 years has run out, counted from 1 January of the year after death, so in 2026 authors who died in 1955 or earlier; and the text used is not a protected modern edition or translation, which has its own copyright) and labelled "Public domain".
   - Given the classics shelf, when a reader opens it, then it works like any other shelf: one scrolling line of at most 20 with a "View more" card to its See all page (S1-E5-09).
 - **Legal and compliance:** copyright in Romania lasts 70 years after the author's death, counted from 1 January of the following year (Law 8/1996 art. 28(1) and art. 34; research G5); translations, modern editions and editors' notes may still be protected, so only texts we know are free are used. Early Wattpad added about 17,000 to 20,000 Project Gutenberg titles in early 2007 (fact check, master-plan/07).

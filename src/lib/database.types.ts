@@ -7089,6 +7089,7 @@ export type Database = {
           deals_with_abuse_or_coercion: boolean;
           deleted_at: string | null;
           first_published_at: string | null;
+          first_published_year: number | null;
           id: string;
           is_fan_fiction: boolean;
           is_parody: boolean;
@@ -7132,6 +7133,7 @@ export type Database = {
             deals_with_abuse_or_coercion: boolean;
             deleted_at: string | null;
             first_published_at: string | null;
+            first_published_year: number | null;
             id: string;
             is_fan_fiction: boolean;
             is_parody: boolean;
@@ -7179,6 +7181,7 @@ export type Database = {
           deals_with_abuse_or_coercion?: boolean;
           deleted_at?: string | null;
           first_published_at?: string | null;
+          first_published_year?: number | null;
           id?: string;
           is_fan_fiction?: boolean;
           is_parody?: boolean;
@@ -7219,6 +7222,7 @@ export type Database = {
           deals_with_abuse_or_coercion?: boolean;
           deleted_at?: string | null;
           first_published_at?: string | null;
+          first_published_year?: number | null;
           id?: string;
           is_fan_fiction?: boolean;
           is_parody?: boolean;
@@ -10004,6 +10008,7 @@ export type Database = {
           deals_with_abuse_or_coercion: boolean;
           deleted_at: string | null;
           first_published_at: string | null;
+          first_published_year: number | null;
           id: string;
           is_fan_fiction: boolean;
           is_parody: boolean;
@@ -11972,6 +11977,7 @@ export type Database = {
           deals_with_abuse_or_coercion: boolean;
           deleted_at: string | null;
           first_published_at: string | null;
+          first_published_year: number | null;
           id: string;
           is_fan_fiction: boolean;
           is_parody: boolean;
@@ -12132,6 +12138,7 @@ export type Database = {
       marketing_email_allowed: { Args: { target_user_id: string }; Returns: boolean };
       mask_email: { Args: { address: string }; Returns: string };
       masked_email: { Args: { address: string }; Returns: string };
+      may_change_own_avatar: { Args: Record<PropertyKey, never>; Returns: boolean };
       may_keep_writing: { Args: { other_id: string; writer_id: string }; Returns: boolean };
       may_review_pictures: { Args: Record<PropertyKey, never>; Returns: boolean };
       may_see_case: { Args: { case_is_safeguarding: boolean }; Returns: boolean };
@@ -13197,6 +13204,7 @@ export type Database = {
           deals_with_abuse_or_coercion: boolean;
           deleted_at: string | null;
           first_published_at: string | null;
+          first_published_year: number | null;
           id: string;
           is_fan_fiction: boolean;
           is_parody: boolean;
@@ -14361,6 +14369,7 @@ export type Database = {
           deals_with_abuse_or_coercion: boolean;
           deleted_at: string | null;
           first_published_at: string | null;
+          first_published_year: number | null;
           id: string;
           is_fan_fiction: boolean;
           is_parody: boolean;

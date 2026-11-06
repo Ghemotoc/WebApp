@@ -124,9 +124,11 @@ function StoryCardSummary({ story, cover }: { story: MyStory; cover: DrawnCoverC
           <InfoPill tone="plum">
             {t(`categories.${story.categorySlug}`, { defaultValue: story.categorySlug })}
           </InfoPill>
-          <InfoPill tone={story.completionStatus === 'completed' ? 'gold' : 'sage'}>
-            {t(`status.${story.completionStatus}`)}
-          </InfoPill>
+          {/* Robert, 6 Nov 2026: only "Ongoing" shows as a pill; the Completed filter above the
+              list still finds the finished ones. */}
+          {story.completionStatus === 'ongoing' && (
+            <InfoPill tone="sage">{t('status.ongoing')}</InfoPill>
+          )}
           <InfoPill tone="neutral">
             <span lang={story.languageCode}>
               {t(`languages.${story.languageCode}`, { defaultValue: story.languageCode })}

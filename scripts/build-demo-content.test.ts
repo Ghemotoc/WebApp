@@ -179,6 +179,7 @@ writer: clasice
 author: Mihai Eminescu
 author_died: 1889
 source_edition: 1883
+first_published: 1883
 source_note: Text: Wikisource, https://ro.wikisource.org/w/index.php?oldid=148561, CC BY-SA 4.0; formatare adaptată.
 language: ro
 category: poetry
@@ -253,6 +254,29 @@ describe('a public-domain classic', () => {
     expect(storyProblems(gutenbergStyle)).toContain(
       'source_edition is blank; only a Wikisource text (with its source_note) may leave it blank',
     );
+  });
+
+  it('is saved as Completed with the year it was first published (Robert, 6 Nov 2026)', () => {
+    const sql = buildTopUpSql([], [classic]);
+
+    expect(sql).toContain("set completion_status = 'completed', first_published_year = 1883");
+  });
+
+  it('leaves an unconfirmed first publication year blank, and refuses one after the edition', () => {
+    const unconfirmed = parseStory(
+      classicFile.replace('first_published: 1883', 'first_published:'),
+      3,
+    );
+    const tooLate = parseStory(
+      classicFile.replace('first_published: 1883', 'first_published: 1890'),
+      3,
+    );
+
+    expect(storyProblems(unconfirmed)).toEqual([]);
+    expect(buildTopUpSql([], [unconfirmed])).toContain(
+      "set completion_status = 'completed', first_published_year = null",
+    );
+    expect(storyProblems(tooLate)).toContain('first_published can’t be later than source_edition');
   });
 
   it('has its own ids, address and chapter codes, apart from the demo stories', () => {

@@ -5,6 +5,7 @@ writer: clasice
 author: Ion Luca Caragiale
 author_died: 1912
 source_edition: 1901
+first_published:
 source_note: Text: Wikisource, https://ro.wikisource.org/w/index.php?oldid=129152, CC BY-SA 4.0; formatare adaptată.
 language: ro
 category: fiction

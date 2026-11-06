@@ -5,6 +5,7 @@ writer: clasice
 author: George Topîrceanu
 author_died: 1937
 source_edition: 
+first_published:
 source_note: Text: Wikisource, https://ro.wikisource.org/w/index.php?oldid=134554, CC BY-SA 4.0; formatare adaptată.
 language: ro
 category: poetry

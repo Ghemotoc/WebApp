@@ -46,9 +46,10 @@ export function ListedStoryCard(props: {
       )}
       pill={
         <span className="flex flex-wrap gap-1.5">
-          <InfoPill tone={story.completionStatus === 'completed' ? 'gold' : 'sage'}>
-            {t(`status.${story.completionStatus}`, { ns: 'writing' })}
-          </InfoPill>
+          {/* Robert, 6 Nov 2026: only "Ongoing" shows as a pill; "Completed" is a filter. */}
+          {story.completionStatus === 'ongoing' && (
+            <InfoPill tone="sage">{t('status.ongoing', { ns: 'writing' })}</InfoPill>
+          )}
           {story.writer.rank !== null && <RankChip rank={story.writer.rank} isCompact />}
         </span>
       }

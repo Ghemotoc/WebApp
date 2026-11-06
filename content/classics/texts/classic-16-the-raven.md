@@ -5,6 +5,7 @@ writer: clasice
 author: Edgar Allan Poe
 author_died: 1849
 source_edition: 1845
+first_published: 1845
 language: en
 category: poetry
 rating: 13_plus

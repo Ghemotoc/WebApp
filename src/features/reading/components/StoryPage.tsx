@@ -11,7 +11,7 @@
  * note (S1-E3-06), Follow, Library and Like (S1-E6-05, S1-E4-03, S1-E6-03), the writer card's
  * numbers and "See profile" (S1-E5-05), the breadcrumb (S1-E5-01), the wide ad slot under the
  * chapter list (S1-E12-01; none on a class-only story, Q70), "Web and app" (S1-E3-08), "The story's world" (the plan's public parts, S1-E17-33). Doodles:
- * the music notes by the header and the mug and mushroom by
+ * the music notes under the cover (StoryHeader) and the mug and mushroom by
  * the side column, as on the board; the chapter card's book and puppy come with the list.
  * A signed-out visitor on a 16+ or 18+ story gets its title and NoPreviewNotice instead of "not
  * available" (S1-E4-04; they count as under 16, Q6).
@@ -21,7 +21,6 @@
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router';
 
-import { Doodle } from '@/components/ui/Doodle';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
@@ -141,14 +140,6 @@ export function StoryPage() {
           {/* The parts of the plan the writer shares (S1-E17-33). */}
           <StoryWorldLinks storySlug={story.slug} />
           <StoryAdSlot story={story} />
-          {/* Beside the cover, in the space to its right: below the cover the pills and the
-              title move with the story's state, so a doodle there would end up over them. */}
-          <Doodle
-            name="music-notes"
-            kind="background"
-            hideBelow="wide"
-            className="absolute top-6 left-[300px] w-28 -rotate-6"
-          />
         </div>
         <div className="relative w-full flex-[1_1_300px] lg:max-w-[340px]">
           <StorySideColumn story={story} />

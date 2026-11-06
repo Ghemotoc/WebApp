@@ -71,8 +71,8 @@ select is(pg_temp.card_of(public.browse_stories('new'), 'statia-meteo-seed01') -
   'Ion Creangă', 'a classic''s card names its real author');
 select is(pg_temp.card_of(public.browse_stories('new'), 'statia-meteo-seed01') -> 'writer' -> 'classic_author',
   jsonb_build_object('name', 'Ion Creangă', 'died_year', 1889, 'source_title', null,
-    'source_url', null, 'translator_name', null),
-  'and says it is a classic, with the year of death (the source comes with S1-E11-16)');
+    'source_url', null, 'translator_name', null, 'first_published_year', null),
+  'and says it is a classic, with the year of death (the source comes with S1-E11-16, the first publication year on 6 Nov 2026)');
 select is(pg_temp.card_of(public.browse_stories('new'), 'the-girl-who-fixed-radios-seed02') -> 'writer' -> 'classic_author',
   'null'::jsonb, 'a writer''s own story is no classic');
 select isnt(pg_temp.card_of(public.browse_stories('new'), 'the-girl-who-fixed-radios-seed02') -> 'writer' ->> 'display_name',

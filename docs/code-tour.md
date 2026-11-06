@@ -1236,8 +1236,11 @@ delete_my_story(): deleted_at = now(); restore within content_purge_days (30);
   │  null unless: not deleted, first_published_at set (or the caller owns it) and
   │  not is_moderated_away('story', id) (Lane C's contract) and rating_allows(rating) (S1-E3-06)
   ▼
-StoryHeader (cover from resolveCoverChoice(), pills, title, "by <pen name>", blurb, tags) and
-StorySideColumn (the writer, "Labels from the writer", and for readers Lane C's shared
+StoryHeader (cover from resolveCoverChoice() on the left, and beside it the pills ("Ongoing"
+only while unfinished), title, "by <pen name>", the buttons, blurb and tags) and
+StorySideColumn (the writer, "Labels from the writer" with "First published": a classic's
+first_published_year, copied from classic_works by a trigger, or the year of first_published_at;
+and for readers Lane C's shared
 <ReportButton itemType="story"> → report_item('story', id), S1-E10-01)
 ```
 

@@ -5,6 +5,7 @@ writer: clasice
 author: Mihai Eminescu
 author_died: 1889
 source_edition: 1883
+first_published: 1883
 source_note: Text: Wikisource, https://ro.wikisource.org/w/index.php?oldid=148561, CC BY-SA 4.0; formatare adaptată.
 language: ro
 category: poetry

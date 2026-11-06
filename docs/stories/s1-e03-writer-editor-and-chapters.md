@@ -67,8 +67,11 @@ As a writer, I want to reorder, edit and delete chapters so that my story reads 
 As a writer, I want to mark a story as ongoing or completed and control comments so that readers know what to expect.
 
 - **Priority:** Must · **Size:** S · **Depends on:** S1-E3-01
+- **Updated:** 6 Nov 2026, 11:03 UTC (Robert): only "Ongoing" shows as a pill on pages; "Completed" is a filter and a line under "Labels from the writer", never a pill. The labels also show "First published": the year of the story's first published chapter, filled in by itself. On desktop the title, buttons and blurb sit beside the cover (board Story 3.4).
 - **Acceptance criteria:**
-  - Given story settings, when the writer sets "Completed" or "Ongoing", then the status shows on the story card and works as a filter.
+  - Given story settings, when the writer sets "Ongoing", then an "Ongoing" pill shows on the story card and the story page; when the writer sets "Completed", then no status pill shows, and both work as a filter.
+  - Given a published story, when a reader opens its page, then "Labels from the writer" shows its status and the year its first chapter was published.
+  - Given a desktop screen, when a reader opens a story page, then the title, "Start reading", "Follow story" and the blurb sit beside the cover; on a phone they follow under it.
   - Given comments are switched off, when a reader opens a chapter, then existing comments are hidden and new ones can't be added.
   - Given a story is deleted, when the writer confirms twice, then the story and all chapters follow the 30-day soft delete.
 - **Legal and compliance:** none beyond the global checklist.

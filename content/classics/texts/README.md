@@ -43,6 +43,7 @@ writer: clasice
 author: Mihai Eminescu
 author_died: 1889
 source_edition: 1883
+first_published: 1883
 source_note: Text: Wikisource, https://ro.wikisource.org/w/index.php?oldid=148561, CC BY-SA 4.0; formatare adaptată.
 language: ro
 category: poetry
@@ -59,6 +60,7 @@ A fost odată ca-n povești,
 ```
 
 - `author` and `author_died` come from the CSV row; `source_edition` as above; `source_note` only for Wikisource texts.
+- `first_published` (6 Nov 2026): the year the work first came out anywhere, shown as "First published" under "Labels from the writer". Not later than `source_edition`. Left blank when it can't be confirmed, and the row is then left out; the 4 blank today (Bubico, Iarna pe uliță, Balada unui greier mic, Neghiniță) are to verify.
 - `rating` is a proposal for Robert to check (S1-E11-16: staff choose it; for example *Ion* is not All ages).
 - Long works are split at the work's own divisions (Dickens's staves, Coleridge's seven parts); a poem or a short tale is one chapter. Classics keep the author's length: the demo stories' word limits don't apply.
 - The blurb plus its credit line must fit in 500 characters.

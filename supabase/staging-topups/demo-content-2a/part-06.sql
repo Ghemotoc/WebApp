@@ -3121,6 +3121,10 @@ update public.stories
 set classic_author_id = (select id from public.classic_authors where name = $demo$Edgar Allan Poe$demo$)
 where stories.id = '00000000-0000-4000-9300-001600000000'::uuid
   and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Edgar Allan Poe$demo$);
+update public.stories
+set completion_status = 'completed', first_published_year = 1845
+where stories.id = '00000000-0000-4000-9300-001600000000'::uuid
+  and (stories.completion_status <> 'completed' or stories.first_published_year is distinct from 1845);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -3646,4 +3650,8 @@ update public.stories
 set classic_author_id = (select id from public.classic_authors where name = $demo$Edgar Allan Poe$demo$)
 where stories.id = '00000000-0000-4000-9300-001700000000'::uuid
   and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Edgar Allan Poe$demo$);
+update public.stories
+set completion_status = 'completed', first_published_year = 1839
+where stories.id = '00000000-0000-4000-9300-001700000000'::uuid
+  and (stories.completion_status <> 'completed' or stories.first_published_year is distinct from 1839);
 commit;
