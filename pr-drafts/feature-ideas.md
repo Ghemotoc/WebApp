@@ -10,6 +10,10 @@ Format when sent: a user story (As a, I want, so that), Given/When/Then criteria
 
 ## Sent
 
+### Sent 6 Nov 2026 (/mnt/project-files/06_feature-ideas/2026-11-06_feature-ideas_daily.md; doc tab "6 Nov 2026")
+
+11 ideas, IDEA-20261106-1 to 11: poem mode, who can comment, topics I'd rather not see, pin one comment, class anthology, stories set in my county, Romanian literary calendar, first-chapter checklist, editor opens where I stopped, "Feedback I'm looking for", chapter summaries.
+
 ### Sent 5 Nov 2026 (/mnt/project-files/feature-ideas/2026-11-05.md; doc tab "5 Nov 2026")
 
 12 ideas, IDEA-20261105-1 to 12: book clubs, reader-made reading lists, spoiler tags, staff picks, "Tell me when it's finished", name check against the Atlas, Romanian name ideas, dedication page, due dates for class assignments, keyboard shortcuts, public safety report page, readability check before publishing.
