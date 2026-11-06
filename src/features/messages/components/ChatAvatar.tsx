@@ -1,12 +1,11 @@
 /**
- * ChatAvatar: the small round picture beside a chat, the person's initials on plum with their
- * profile picture over it when they have one (story S1-E9-01; board Messages 5.5).
+ * ChatAvatar: the small round picture beside a chat (story S1-E9-01; board Messages 5.5): the
+ * shared PersonAvatar at 44 px, so chats match posts and comments (LOOK-7).
  *
  * Decorative: the name is always written beside it, so it is hidden from screen readers.
- * Who shows it: ChatListItem and ChatPanel. What it calls: AvatarImage (S1-E5-05).
+ * Who shows it: ChatListItem and ChatPanel. What it calls: PersonAvatar (AVATAR-1, LOOK-7).
  */
-import { AvatarImage } from '@/features/avatars/components/AvatarImage';
-import { initialsOf } from '@/features/people/lib/formatting';
+import { PersonAvatar } from '@/features/avatars/components/PersonAvatar';
 
 /**
  * Renders the avatar.
@@ -16,14 +15,5 @@ import { initialsOf } from '@/features/people/lib/formatting';
  * @returns a 44 px circle
  */
 export function ChatAvatar({ name, handle }: { name: string; handle: string }) {
-  return (
-    <span aria-hidden="true" className="relative inline-flex size-11 flex-none">
-      <span className="inline-flex size-full items-center justify-center rounded-full bg-[linear-gradient(140deg,#4D1B5E,#9A5BB8)] font-heading text-base font-extrabold text-white">
-        {initialsOf(name)}
-      </span>
-      <span className="absolute inset-0 overflow-hidden rounded-full">
-        <AvatarImage handle={handle} />
-      </span>
-    </span>
-  );
+  return <PersonAvatar name={name} handle={handle} size="large" />;
 }

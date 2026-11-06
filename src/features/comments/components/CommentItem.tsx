@@ -1,12 +1,12 @@
 /**
  * CommentItem: one comment, with its replies one level deep (story S1-E6-01; board 3.5).
  *
- * Board values: a 40 px round initial (34 px on a reply), the author's name as a link to their
- * profile (15 px bold), the "Writer" pill on the story's writer's comments, the date ("2 days
- * ago", 13 px), then the words in 16 px. A reply sits under its comment after a fine line, 18 px
- * in. Each part is a real <article> with the author named, so a screen reader can move from
- * comment to comment. A comment on one paragraph says which ("On paragraph 4", 13 px, 600, in the
- * link colour; S1-E6-06), or that the writer has since changed it.
+ * Board values: a 40 px round avatar (34 px on a reply; PersonAvatar, LOOK-7), the author's name as
+ * a link to their profile (15 px bold), the "Writer" pill on the story's writer's comments, the
+ * date ("2 days ago", 13 px), then the words in 16 px. A reply sits under its comment after a fine
+ * line, 18 px in. Each part is a real <article> with the author named, so a screen reader can move
+ * from comment to comment. A comment on one paragraph says which ("On paragraph 4", 13 px, 600, in
+ * the link colour; S1-E6-06), or that the writer has since changed it.
  * Who uses it: CommentsSection (and itself, for replies). What it calls: CommentBody,
  * CommentActions (with CommentReactions at the start of its row, S1-E6-02), CommentComposer (the
  * reply box).
@@ -14,7 +14,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 
-import { initialsOf } from '@/features/people/lib/formatting';
+import { PersonAvatar } from '@/features/avatars/components/PersonAvatar';
 import type { ChapterAddress } from '@/features/reading/api/likes';
 import { cn } from '@/lib/utils';
 
@@ -108,15 +108,11 @@ export function CommentItem({
         isReply ? 'mt-4 border-t border-hairline pt-4 pl-[18px]' : 'py-5',
       )}
     >
-      <span
-        aria-hidden="true"
-        className={cn(
-          'inline-flex flex-none items-center justify-center rounded-full bg-[linear-gradient(140deg,#4D1B5E,#9A5BB8)] font-heading font-bold text-white',
-          isReply ? 'size-[34px] text-sm' : 'size-10 text-base',
-        )}
-      >
-        {initialsOf(name)}
-      </span>
+      <PersonAvatar
+        name={name}
+        handle={comment.author.handle}
+        size={isReply ? 'small' : 'medium'}
+      />
       <div className="min-w-0 flex-1">
         {!isReply && <ParagraphLabel paragraph={comment.paragraph} />}
         <CommentHeader comment={comment} />

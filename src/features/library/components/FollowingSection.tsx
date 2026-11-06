@@ -17,6 +17,7 @@ import { DrawnCover } from '@/components/covers/DrawnCover';
 import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { InfoPill } from '@/components/ui/InfoPill';
+import { PersonAvatar } from '@/features/avatars/components/PersonAvatar';
 import { timeAgo } from '@/features/comments/lib/timeAgo';
 import type { ListedStory } from '@/features/discovery/api/storyLists';
 import { FollowButton } from '@/features/people/components/FollowButton';
@@ -52,12 +53,7 @@ function WriterRow({ writer }: { writer: FollowedWriter }) {
   const lastUpdate = useLastUpdate();
   return (
     <li className="flex items-center gap-3 border-t border-border py-3 first:border-t-0">
-      <span
-        aria-hidden="true"
-        className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary font-heading font-bold text-on-primary"
-      >
-        {writer.displayName.slice(0, 1).toLocaleUpperCase()}
-      </span>
+      <PersonAvatar name={writer.displayName} handle={writer.handle} />
       <div className="flex min-w-0 flex-1 flex-col">
         <Link
           to={`/u/${encodeURIComponent(writer.handle)}`}

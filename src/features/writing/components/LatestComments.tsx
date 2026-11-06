@@ -15,7 +15,7 @@ import { Link } from 'react-router';
 
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { timeAgo } from '@/features/comments/lib/timeAgo';
-import { initialsOf } from '@/features/people/lib/formatting';
+import { PersonAvatar } from '@/features/avatars/components/PersonAvatar';
 
 import type { LatestComment } from '../api/dashboard';
 
@@ -26,12 +26,7 @@ function LatestCommentCard({ comment }: { comment: LatestComment }) {
   return (
     <li className="flex flex-col gap-3 rounded-3xl border border-border bg-surface p-5 shadow-card">
       <span className="flex items-center gap-3">
-        <span
-          aria-hidden="true"
-          className="inline-flex size-10 flex-none items-center justify-center rounded-full bg-primary font-heading font-bold text-on-primary"
-        >
-          {initialsOf(comment.displayName)}
-        </span>
+        <PersonAvatar name={comment.displayName} handle={comment.handle} />
         <span className="flex min-w-0 flex-col">
           <Link
             to={`/u/${comment.handle}`}
