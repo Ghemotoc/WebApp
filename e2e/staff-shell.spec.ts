@@ -63,6 +63,7 @@ test.describe('admin shell (S1-E11-01)', () => {
   });
 
   test('each staff persona sees only the areas its role allows', async ({ browser }) => {
+    // Featured (LOOK-4a) is for the owner and admins only.
     const ownerPage = await openAs(browser, 'owner', '/staff');
     expect(await menuLinks(ownerPage)).toEqual([
       'Moderation',
@@ -74,6 +75,7 @@ test.describe('admin shell (S1-E11-01)', () => {
       'On call',
       'Users',
       'Stories',
+      'Featured',
       'Classics',
       'Support tickets',
       'Data requests',
@@ -101,6 +103,7 @@ test.describe('admin shell (S1-E11-01)', () => {
       'On call',
       'Users',
       'Stories',
+      'Featured',
       'Classics',
       'Support tickets',
       'Data requests',

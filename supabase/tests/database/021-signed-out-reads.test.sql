@@ -119,6 +119,8 @@ select results_eq(
        -- Download my data: each person's own (S1-E13-02).
        ('exports', 0::bigint),
        ('feature_flags', (select count(*) from public.feature_flags where is_public)),
+       -- Featured this week: staff with the Featured area only; visitors read featured_stories_now() (LOOK-4a).
+       ('featured_picks', 0::bigint),
        ('finished_thanks', 0::bigint),
        ('follows_stories', 0::bigint),
        ('follows_users', 0::bigint),
@@ -222,6 +224,8 @@ select results_eq(
        ('story_marketing', 0::bigint),
        ('story_plan_acts', 0::bigint),
        ('story_plans', 0::bigint),
+       -- Daily ranks for the Featured screen: staff with the Featured area only (LOOK-4a).
+       ('story_rank_snapshots', 0::bigint),
        ('story_restrictions', 0::bigint),
        ('story_revisions', 0::bigint),
        ('story_scores', 0::bigint),

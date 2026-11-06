@@ -96,5 +96,17 @@
     "evening": "Bună seara, {{name}}.",
     "birthdayMonth": "Lună de naștere fericită, {{name}}!",
     "anniversary": "La mulți ani pe {{productName}}, {{name}}!"
+  },
+  "featured": {
+    "carousel": "carusel",
+    "slide": "diapozitiv",
+    "label": "Recomandatele săptămânii",
+    "eyebrow": "Recomandatele săptămânii",
+    "slideLabel": "{{position}} din {{count}}: {{title}}",
+    "readStory": "Citește povestea",
+    "showSlide": "Arată povestea {{position}}: {{title}}",
+    "previous": "Povestea anterioară",
+    "next": "Povestea următoare",
+    "pause": "Oprește derularea poveștilor"
   }
 }

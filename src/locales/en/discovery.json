@@ -96,5 +96,17 @@
     "evening": "Good evening, {{name}}.",
     "birthdayMonth": "Happy birthday month, {{name}}!",
     "anniversary": "Happy {{productName}} anniversary, {{name}}!"
+  },
+  "featured": {
+    "carousel": "carousel",
+    "slide": "slide",
+    "label": "Featured this week",
+    "eyebrow": "Featured this week",
+    "slideLabel": "{{position}} of {{count}}: {{title}}",
+    "readStory": "Read the story",
+    "showSlide": "Show story {{position}}: {{title}}",
+    "previous": "Previous story",
+    "next": "Next story",
+    "pause": "Pause the stories"
   }
 }

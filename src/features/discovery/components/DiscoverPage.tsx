@@ -13,10 +13,12 @@
  * personalised feed in Stage 1; S1-E5-09's legal note).
  * Popular ranks by totals only (reads, likes, comments; never downvotes), the same for everyone.
  * A signed-in reader first sees GreetingLine (S1-E2-13: good morning, or their birthday or joining
- * anniversary). The wide ad slot sits after the first shelf (S1-E12-01; board 3.1). The board's
- * featured story, continue reading, draft card, "Popular in your area" and "Writers to follow" come with their own stories (S1-E4-03) or after
- * March, so they aren't drawn. Search (S1-E5-04) is after March.
- * What it calls: GreetingLine, SeasonalDoodle (S1-E5-07), SearchForm (S1-E5-04), DiscoverShelf (useStoryShelf → browse_stories()) and CategoryLinks.
+ * anniversary). The wide ad slot sits after the first shelf (S1-E12-01; board 3.1). Featured this
+ * week (S1-E5-10) opens the page when staff have picked stories this reader may see. The board's
+ * continue reading, draft card, "Popular in your area" and "Writers to follow" come with their own
+ * stories (S1-E4-03, LOOK-4b, LOOK-4c), so they aren't drawn yet.
+ * What it calls: FeaturedBand (featured_stories_now()), GreetingLine, SeasonalDoodle (S1-E5-07),
+ * SearchForm (S1-E5-04), DiscoverShelf (useStoryShelf → browse_stories()) and CategoryLinks.
  */
 import { Fragment } from 'react';
 import { Link } from 'react-router';
@@ -41,6 +43,7 @@ import { SearchForm } from '@/features/search/components/SearchForm';
 
 import { CategoryLinks } from './CategoryLinks';
 import { DiscoverShelf } from './DiscoverShelf';
+import { FeaturedBand } from './FeaturedBand';
 import { GreetingLine } from './GreetingLine';
 
 /**
@@ -184,6 +187,8 @@ export function DiscoverPage() {
   return (
     <PageContainer className="tmc-rise flex flex-col gap-10 pt-10 pb-14">
       <title>{t('discover.documentTitle', { productName: brand.productName })}</title>
+      {/* Featured this week, picked by staff (S1-E5-10); not drawn when nothing is picked. */}
+      <FeaturedBand />
       <div className="flex flex-col gap-4">
         <GreetingLine />
         <DiscoverHeader />

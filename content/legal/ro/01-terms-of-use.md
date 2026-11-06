@@ -159,6 +159,8 @@ Descoperă este pagina principală a Ghemotoc. Amestecă mai multe rafturi, de e
 
 Populare. Locul unei povești în listele Populare vine din ce fac cititorii cu ea: citiri, aprecieri, comentarii, distribuiri și câți cititori îi termină capitolele. Activitatea recentă contează mai mult decât cea veche. Voturile negative private nu sunt folosite niciodată la ordonare.
 
+Recomandatele săptămânii sunt alese de echipa noastră, cu ajutorul clasamentului.
+
 Ce nu folosim. Niciun raft nu folosește istoricul tău de citire și nimic nu e ales dintr-un profil făcut despre tine. Toată lumea vede aceleași liste pentru aceleași alegeri.
 
 Ce alegi tu. Categoriile și etichetele pe care le alegi când îți configurezi contul sau mai târziu în Setări decid ce rafturi vezi primele. Le poți schimba oricând.

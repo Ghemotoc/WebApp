@@ -89,6 +89,13 @@ export const staffAreaPages: StaffAreaPage[] = [
     labelKey: 'nav.stories',
     descriptionKey: 'home.areas.stories',
   },
+  // Stories › Featured (S1-E5-10): owner and admin pick Featured this week from the ranking.
+  {
+    area: 'featured',
+    href: '/staff/featured',
+    labelKey: 'nav.featured',
+    descriptionKey: 'home.areas.featured',
+  },
   // Stories › Classics (S1-E11-16): owner and admin, beside the Stories list (S1-E11-07).
   {
     area: 'classics',

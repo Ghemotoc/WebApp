@@ -47,7 +47,8 @@ export type NotificationKind =
   | 'picture_opened_by_staff'
   | 'landing_entries_open'
   | 'rank_reached'
-  | 'space_handover_offered';
+  | 'space_handover_offered'
+  | 'story_featured';
 
 /** The board's filter chips (All is every category). */
 export type NotificationCategory = 'replies' | 'follows' | 'stories' | 'staff';

@@ -40,7 +40,8 @@
     "yourAccount": "Contul tău:",
     "yourLibrary": "Biblioteca ta:",
     "reminder": "Mementoul tău:",
-    "rank": "Rangul tău:"
+    "rank": "Rangul tău:",
+    "ourTeam": "Echipa noastră:"
   },
   "chapterOfStory": "capitolul {{position}} din {{story}}",
   "what": {
@@ -86,7 +87,8 @@
     "contestCertificateIssued": "ai primit o diplomă de la „{{title}}”. O găsești în Diplomele mele.",
     "certificateIssuedPlain": "ai primit o diplomă nouă. O găsești în Diplomele mele.",
     "rankReached": "acum ai rangul {{rank}}. Felicitări!",
-    "spaceHandoverOffered": "ți-a oferit {{space}}. Deschide-l ca să accepți sau să refuzi."
+    "spaceHandoverOffered": "ți-a oferit {{space}}. Deschide-l ca să accepți sau să refuzi.",
+    "storyFeatured": "povestea ta „{{story}}” este printre Recomandatele săptămânii, pe Descoperă."
   },
   "grouped": {
     "reactions_one": "{{count}} reacție",

@@ -85,7 +85,8 @@
     "stories": "Povești",
     "supportTickets": "Tichete de suport",
     "dataRequests": "Cereri privind datele",
-    "pictures": "Imagini de verificat"
+    "pictures": "Imagini de verificat",
+    "featured": "Recomandate"
   },
   "shell": {
     "eyebrow": "Echipă",
@@ -136,7 +137,8 @@
       "stories": "Găsește orice poveste după titlu, nume de utilizator sau ID de utilizator și deschide-o ca să vezi detaliile și capitolele.",
       "support_tickets": "Fiecare cerere de ajutor venită pe email, prin Contactează-ne sau din aplicație, ca tichet numerotat.",
       "data_requests": "Înregistrează și rezolvă cererile de a vedea, muta, corecta sau șterge datele cuiva, fiecare în termenul ei.",
-      "pictures": "Imaginile din poveștile pentru toate vârstele și 13+ și imaginile de la cei sub 16 ani, care așteaptă un moderator."
+      "pictures": "Imaginile din poveștile pentru toate vârstele și 13+ și imaginile de la cei sub 16 ani, care așteaptă un moderator.",
+      "featured": "Alege Recomandatele săptămânii pentru Descoperă, din clasament."
     },
     "pictureOpenings": {
       "heading": "Imagini încărcate deschise de echipă",
@@ -1213,6 +1215,94 @@
       "explain": "Folosește asta doar pentru conținut ilegal sau datele personale ale cuiva. Restul capitolului rămâne cum este, cuvintele originale sunt păstrate pentru echipă, iar persoana care scrie primește o declarație de motive.",
       "confirm": "Elimină pasajul",
       "done": "Eliminat. Persoana care scrie a primit o declarație de motive."
+    }
+  },
+  "featured": {
+    "heading": "Recomandatele săptămânii",
+    "intro": "Toate poveștile active acum, cu locul lor în clasament și cum le primesc cititorii. Alege cel mult cinci pentru banda din capul paginii Descoperă. Amestecă povești cunoscute cu unele promițătoare. Ordonarea de aici schimbă doar lista aceasta: locurile din clasament sunt aceleași pentru toți.",
+    "loading": "Se încarcă clasamentul…",
+    "notAllowed": "Doar administratorii și proprietarul pot alege Recomandatele săptămânii.",
+    "viewLabel": "Vedere",
+    "views": {
+      "all": "Tot clasamentul",
+      "rising": "În urcare",
+      "new_writers": "Scriitori noi",
+      "promising": "Promițătoare"
+    },
+    "viewHints": {
+      "all": "Fiecare poveste cu un capitol apărut în ultimele 60 de zile, de la primul loc în jos.",
+      "rising": "Poveștile care au urcat cel mai mult în ultimele 7 zile.",
+      "new_writers": "Povești ale scriitorilor a căror primă poveste a apărut în ultimele 90 de zile.",
+      "promising": "Cel puțin 60% dintre cititori ajung la ultimul capitol, cu mai puține citiri săptămâna aceasta decât majoritatea poveștilor."
+    },
+    "sortLabel": "Ordonează după",
+    "sorts": {
+      "rank": "Loc, de sus în jos",
+      "rankChange": "Urcare săptămâna aceasta, cea mai mare întâi",
+      "readsThisWeek": "Citiri săptămâna aceasta, cele mai multe întâi",
+      "readThrough": "Citire până la capăt, cea mai mare întâi",
+      "followers": "Urmăritori, cei mai mulți întâi",
+      "firstPublishedAt": "Primul capitol, cel mai nou întâi"
+    },
+    "total_one": "{{count}} poveste în această vedere.",
+    "total_few": "{{count}} povești în această vedere.",
+    "total_other": "{{count}} de povești în această vedere.",
+    "noneInView": "Nicio poveste nu se potrivește acum cu această vedere.",
+    "tableCaption": "Poveștile active acum și dacă fiecare poate fi recomandată",
+    "columns": {
+      "pick": "Alege",
+      "story": "Poveste",
+      "rank": "Loc",
+      "rankChange": "Schimbare în 7 zile",
+      "readsThisWeek": "Citiri săptămâna aceasta",
+      "readThrough": "Citire până la capăt",
+      "followers": "Urmăritori",
+      "firstPublishedAt": "Primul capitol",
+      "rating": "Clasificare",
+      "canFeature": "Poate fi recomandată"
+    },
+    "notRanked": "Încă fără loc",
+    "change": {
+      "new": "Fără loc acum o săptămână",
+      "same": "Nicio schimbare",
+      "up_one": "Urcă {{count}} loc",
+      "up_few": "Urcă {{count}} locuri",
+      "up_other": "Urcă {{count}} de locuri",
+      "down_one": "Coboară {{count}} loc",
+      "down_few": "Coboară {{count}} locuri",
+      "down_other": "Coboară {{count}} de locuri"
+    },
+    "newWriter": "scriitor nou",
+    "canFeature": "Da",
+    "reasons": {
+      "not_found": "Nu, povestea nu mai există",
+      "not_public": "Nu, nu e publică pe web",
+      "moderated": "Nu, moderatorii au ascuns-o",
+      "restricted": "Nu, e restricționată",
+      "no_chapter": "Nu, niciun capitol nu poate fi citit",
+      "writer_not_active": "Nu, contul scriitorului nu e activ",
+      "writer_under_16": "Nu, scriitorul are sub 16 ani",
+      "writer_age_unknown": "Nu, nu știm vârsta scriitorului"
+    },
+    "pickLabel": "Alege „{{title}}”",
+    "picks": {
+      "heading": "Alese: {{count}} din {{max}}",
+      "empty": "Nimic nu e ales, așa că pagina Descoperă nu arată banda.",
+      "notCurrent": "O poveste care nu mai e activă",
+      "moveUp": "Mută „{{title}}” mai sus",
+      "moveDown": "Mută „{{title}}” mai jos",
+      "remove": "Scoate",
+      "removeLabel": "Scoate „{{title}}”",
+      "noYoungerPick": "Niciuna dintre aceste povești nu e clasificată Toate vârstele sau 13+, așa că cititorii de 13–15 ani și vizitatorii neconectați nu vor vedea banda.",
+      "reason": "De ce schimbi Recomandatele săptămânii?",
+      "reasonHint": "Pentru jurnalul de audit. Fiecare scriitor ales nou primește o notificare.",
+      "save": "Salvează Recomandatele săptămânii",
+      "saved": "Salvat. Descoperă arată lista nouă de la următoarea încărcare a paginii."
+    },
+    "failures": {
+      "not_allowed": "Doar administratorii și proprietarul pot schimba Recomandatele săptămânii.",
+      "refused": "Nu se poate salva. Poate o poveste nu mai e permisă sau lista e prea lungă. Verifică lista și încearcă din nou.",
+      "unreachable": "Nu am putut ajunge la baza de date. Încearcă din nou peste puțin timp."
     }
   }
 }
