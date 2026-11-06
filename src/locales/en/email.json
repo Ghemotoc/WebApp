@@ -93,7 +93,17 @@
     "withdrawnSubject": "You withdrew your consent for @{{handle}}",
     "withdrawnBody": "We’ve made @{{handle}}’s account read-only. They can still read stories, but can’t publish, comment, post or send messages. If you have questions about what happens next, reply to this email.",
     "refusedSubject": "Your account won’t be activated",
-    "refusedBody": "Your parent or guardian didn’t agree, so we won’t activate your {{productName}} account, and we’ve deleted it and its data. You can sign up again later and ask another parent or guardian."
+    "refusedBody": "Your parent or guardian didn’t agree, so we won’t activate your {{productName}} account, and we’ve deleted it and its data. You can sign up again later and ask another parent or guardian.",
+    "agreedSpotlight": "You also agreed that we may suggest @{{handle}} and their stories to other readers, for example in New and rising writers. To take back only that, use this page: {{spotlightLink}}",
+    "spotlightRequestSubject": "May we suggest @{{handle}} to other readers?",
+    "spotlightRequestBody": "@{{handle}} would like {{productName}} to suggest them and their stories to other readers, for example in New and rising writers. They’re under 16, so we only do this if you say yes. Saying no changes nothing else about their account.",
+    "spotlightRequestAction": "Read what it means and answer here: {{link}}",
+    "spotlightRequestNoAnswer": "If you don’t answer, we don’t suggest them. You can change your mind at any time from the same page.",
+    "spotlightAgreedSubject": "You agreed that we may suggest @{{handle}}",
+    "spotlightAgreedBody": "Thank you. You agreed on {{date}}, so other readers may now see @{{handle}} and their stories among our suggestions.",
+    "spotlightAgreedWithdraw": "You can take this back at any time from the same page: {{link}}",
+    "spotlightWithdrawnSubject": "We’ve stopped suggesting @{{handle}}",
+    "spotlightWithdrawnBody": "You withdrew your yes on {{date}}. We no longer suggest @{{handle}} or their stories to other readers. Their account and stories stay as they are."
   },
   "dataRequestParent": {
     "askSubject": "Did you ask for @{{handle}}’s data?",

@@ -354,7 +354,8 @@
         "sign_out_everywhere": "Deconectează peste tot",
         "approve_username": "Aprobă un nume",
         "correct_birthday": "Corectează ziua de naștere",
-        "withdraw_parental_consent": "Retrage acordul părintelui"
+        "withdraw_parental_consent": "Retrage acordul părintelui",
+        "withdraw_spotlight_consent": "Retrage acordul pentru recomandări"
       },
       "explain": {
         "warning": "Avertismentul rămâne în istoricul contului. Nu oprește persoana să facă ceva.",
@@ -364,7 +365,8 @@
         "sign_out_everywhere": "Toate dispozitivele conectate la acest cont sunt deconectate. O pagină deja deschisă mai merge până la o oră.",
         "approve_username": "Folosește asta când verificarea cuvintelor a refuzat din greșeală un nume nevinovat. Persoana salvează apoi singură numele.",
         "correct_birthday": "Folosește asta doar când persoana a cerut-o. Alege ziua de naștere pe care ți-a dat-o; „Nesetată” o șterge. Anul nașterii nu se schimbă niciodată.",
-        "withdraw_parental_consent": "Folosește asta doar când părintele sau tutorele ne-a cerut. Contul devine doar pentru citit imediat, iar autorul e anunțat; nu se șterge nimic."
+        "withdraw_parental_consent": "Folosește asta doar când părintele sau tutorele ne-a cerut. Contul devine doar pentru citit imediat, iar autorul e anunțat; nu se șterge nimic.",
+        "withdraw_spotlight_consent": "Folosește asta doar când părintele sau tutorele ne-a cerut. Nu mai recomandăm autorul altor cititori, imediat, iar autorul e anunțat; contul în sine nu se schimbă."
       },
       "howLong": "Cât timp",
       "days_1": "24 de ore",
@@ -385,7 +387,8 @@
         "sign_out_everywhere": "Deconectează peste tot",
         "approve_username": "Aprobă numele",
         "correct_birthday": "Salvează ziua de naștere",
-        "withdraw_parental_consent": "Retrage acordul"
+        "withdraw_parental_consent": "Retrage acordul",
+        "withdraw_spotlight_consent": "Retrage acordul"
       },
       "done": {
         "warning": "Gata. Avertismentul e pe cont.",
@@ -395,7 +398,8 @@
         "sign_out_everywhere": "Gata. Toate sesiunile s-au închis.",
         "approve_username": "Gata. Persoana poate salva acum numele.",
         "correct_birthday": "Gata. Ziua de naștere e salvată.",
-        "withdraw_parental_consent": "Gata. Acordul e retras, iar contul e doar pentru citit."
+        "withdraw_parental_consent": "Gata. Acordul e retras, iar contul e doar pentru citit.",
+        "withdraw_spotlight_consent": "Gata. Nu mai recomandăm acest autor altor cititori."
       },
       "dataRequests": "Exportul și ștergerea datelor: în timpul testului pe bază de invitație, oamenii cer prin email și răspundem de mână. Zona Cereri de date vine mai târziu.",
       "message": "Ce îi spunem persoanei",
@@ -432,7 +436,8 @@
       "no_pen_name": "Contul nu are pseudonim.",
       "refused": "N-am salvat. Contul poate avea deja această sancțiune sau lipsește un câmp.",
       "unreachable": "Nu am putut ajunge la server. Verifică conexiunea și încearcă din nou.",
-      "no_consent": "Contul nu are un acord al părintelui de retras."
+      "no_consent": "Contul nu are un acord al părintelui de retras.",
+      "no_spotlight": "Acest cont nu are un acord pentru recomandări de retras."
     },
     "notes": {
       "heading": "Notițele echipei",
@@ -1281,6 +1286,7 @@
       "restricted": "Nu, e restricționată",
       "no_chapter": "Nu, niciun capitol nu poate fi citit",
       "writer_not_active": "Nu, contul scriitorului nu e activ",
+      "writer_not_suggested": "Nu, scriitorul a oprit recomandarea către alți oameni",
       "writer_under_16": "Nu, scriitorul are sub 16 ani",
       "writer_age_unknown": "Nu, nu știm vârsta scriitorului"
     },

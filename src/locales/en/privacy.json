@@ -73,5 +73,25 @@
     "messages": "Private messages: until both people delete the chat.",
     "fullList": "The full list is in the privacy notice",
     "loadFailed": "We couldn’t load this list. Please try again in a minute."
+  },
+  "suggest": {
+    "label": "Suggest me and my stories to other people",
+    "hint": "Readers may then meet you in Writers to follow and New and rising writers. Turning it off takes you out of them at once. It starts on for adults and off for anyone under 18.",
+    "askParent": "You’re under 16, so we suggest you only if your parent or guardian also says yes. We’ll email them one question.",
+    "askButton": "Ask my parent",
+    "waiting": "Waiting for your parent. We don’t suggest you until they say yes.",
+    "askAgain": "Send the email again",
+    "sent": "Sent. We emailed your parent or guardian.",
+    "parentAgreed": "Your parent or guardian agreed, so readers may see you among our suggestions.",
+    "failures": {
+      "signed_out": "Log in again, then try once more.",
+      "not_needed": "There’s nothing to ask your parent right now.",
+      "too_soon": "We emailed them less than an hour ago. Try again later.",
+      "unavailable": "We couldn’t send the email. Try again in a moment.",
+      "invalid": "Something went wrong. Try again in a moment.",
+      "own_email": "Something went wrong. Try again in a moment.",
+      "gone": "Something went wrong. Try again in a moment.",
+      "already_answered": "Your parent or guardian has already answered."
+    }
   }
 }

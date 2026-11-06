@@ -19,7 +19,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(30);
+select plan(31);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -84,6 +84,9 @@ select throws_ok($$ insert into public.featured_picks (story_id, position, user_
 reset role;
 select public.compute_story_scores();
 select public.snapshot_story_ranks();
+-- LOOK-4c: a writer is put on show only with "Suggest me" on, which is off for minors until they
+-- turn it on; the 17-year-old here has turned it on.
+update public.profiles set suggest_me = true where id = '00000000-0000-4000-8000-000000000002';
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000009');
 select isnt_empty($$ select 1 from public.story_rank_snapshots $$,
@@ -100,6 +103,16 @@ select is(
   (select rows ->> 'ineligible_reason' from jsonb_array_elements(public.admin_featured_candidates() -> 'stories') as rows
    where rows ->> 'slug' = 'featured-c-qa303'),
   null, 'a 17-year-old''s story can be featured');
+reset role;
+update public.profiles set suggest_me = false where id = '00000000-0000-4000-8000-000000000002';
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000009');
+select is(
+  (select rows ->> 'ineligible_reason' from jsonb_array_elements(public.admin_featured_candidates() -> 'stories') as rows
+   where rows ->> 'slug' = 'featured-c-qa303'),
+  'writer_not_suggested', 'with "Suggest me" off, the screen says the 17-year-old''s story can''t be featured, and why');
+reset role;
+update public.profiles set suggest_me = true where id = '00000000-0000-4000-8000-000000000002';
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000009');
 select ok(
   (select bool_and(rows ? 'rank' and rows ? 'rank_change' and rows ? 'reads_7d' and rows ? 'read_through'
      and rows ? 'followers' and rows ? 'first_published_at' and not rows ? 'user_id')

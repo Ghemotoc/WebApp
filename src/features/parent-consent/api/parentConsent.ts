@@ -8,7 +8,11 @@
  * - POST /api/parent-consent/request (server/parent-consent.ts) with the writer's own sign-in: our
  *   server makes the link and emails it, so the app never sees the token (criterion 1);
  * - parental_consent_request(token): the parent's side, read with the link's token;
- * - POST /api/parent-consent/answer: the parent's yes, no or withdrawal (criteria 2, 3 and 5).
+ * - POST /api/parent-consent/answer: the parent's yes, no or withdrawal (criteria 2, 3 and 5),
+ *   with the optional suggestions box (S1-E2-03b);
+ * - POST /api/parent-consent/spotlight-request, parental_spotlight_request(token) and
+ *   POST /api/parent-consent/spotlight-answer: the parent's separate yes to suggestions
+ *   (story S1-E2-03b; server/parent-consent/spotlight.ts).
  */
 import type { AppSupabaseClient } from '@/lib/supabase';
 
@@ -18,6 +22,7 @@ import {
   type ConsentFailure,
   type ConsentLanguage,
   type ConsentRequest,
+  type SpotlightAnswer,
 } from '../../../schemas/parentConsent';
 
 /** Where a request stands: waiting for the parent, or what they answered. */
@@ -197,4 +202,61 @@ export async function sendConsentRequest(
  */
 export async function sendConsentAnswer(answer: ConsentAnswer): Promise<void> {
   await postToServer('answer', answer);
+}
+
+/**
+ * A 13 to 15-year-old asks their parent whether they may be suggested to other readers; our
+ * server makes the link and emails it (S1-E2-03b).
+ *
+ * @param client - the shared Supabase client (for the writer's sign-in token)
+ * @throws ParentConsentError signed_out, not_needed, too_soon (one email an hour) or unavailable
+ */
+export async function sendSpotlightRequest(client: AppSupabaseClient): Promise<void> {
+  const { data } = await client.auth.getSession();
+  const token = data.session?.access_token;
+  if (token === undefined) throw new ParentConsentError('signed_out');
+  await postToServer('spotlight-request', {}, token);
+}
+
+/** What the one-question suggestions page shows. */
+export interface SpotlightRequestDetails {
+  handle: string;
+  language: ConsentLanguage;
+  /** True while the parent's yes stands. */
+  isAgreed: boolean;
+}
+
+/**
+ * Reads what a suggestions link points to (it works signed out: the token is the key).
+ *
+ * @param client - the shared Supabase client
+ * @param token - the token from the link
+ * @returns the details, or null for a link that no longer works
+ * Errors: throws when the database can't be reached.
+ */
+export async function fetchSpotlightRequest(
+  client: AppSupabaseClient,
+  token: string,
+): Promise<SpotlightRequestDetails | null> {
+  const answer = await client.rpc('parental_spotlight_request', { token });
+  if (answer.error !== null)
+    throw new Error(`Could not read the suggestions request: ${answer.error.message}`);
+  const row = answer.data as unknown as {
+    outcome: string;
+    handle: string;
+    language: ConsentLanguage;
+    is_agreed: boolean;
+  };
+  if (row.outcome !== 'ok') return null;
+  return { handle: row.handle, language: row.language, isAgreed: row.is_agreed };
+}
+
+/**
+ * Sends the parent's yes to suggestions, or its withdrawal.
+ *
+ * @param answer - the token, agree or withdraw, and the page's language
+ * @throws ParentConsentError invalid, gone, already_answered or unavailable
+ */
+export async function sendSpotlightAnswer(answer: SpotlightAnswer): Promise<void> {
+  await postToServer('spotlight-answer', answer);
 }

@@ -99,6 +99,8 @@ Verificarea vârstei. Anul nașterii, verificarea Yoti și protecțiile potrivit
 
 Acordul părintelui sau tutorelui pentru cei sub 16 ani. Cererea lui, înregistrarea lui și verificarea cererii unui părinte față de el. Temei legal: legea ne obligă să-l obținem și să putem arăta că l-am obținut.
 
+Recomandarea scriitorilor altor cititori. Afișarea numelui de utilizator sau a pseudonimului, a avatarului și a poveștilor publicate în liste precum Scriitori noi în ascensiune și Scriitori de urmărit, doar cât timp opțiunea „Recomandă-mă pe mine și poveștile mele altor oameni” e pornită în Setări › Confidențialitate. E pornită pentru adulți și oprită pentru cei sub 18 ani. Dacă ai sub 16 ani, trebuie să spună da și părintele sau tutorele tău, separat de acordul pentru cont, iar acesta își poate retrage acordul oricând. Temei legal: consimțământul tău și, sub 16 ani, al părintelui sau tutorelui tău.
+
 Siguranța oamenilor. Citirea raportărilor, verificarea fiecărei imagini la încărcare, moderarea, avertismentele și suspendările, motivările și contestațiile. Temei legal: obligațiile noastre legale din legislația UE privind platformele și interesul nostru legitim de a ține Ghemotoc în siguranță, mai ales pentru tineri. [Avocatul confirmă temeiul pentru verificarea imaginilor]
 
 Protejarea cuiva aflat în pericol. Dacă viața sau siguranța cuiva este în pericol, putem împărtăși ce este necesar cu poliția sau serviciile de urgență. Temei legal: obligația noastră legală de a raporta amenințările la adresa vieții sau siguranței și protejarea intereselor vitale ale cuiva.

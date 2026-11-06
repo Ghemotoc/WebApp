@@ -453,6 +453,16 @@ const parentConsentRoutes: RouteObject[] = [
       return { Component: ParentAnswerPage };
     },
   },
+  // The parent's separate yes to suggestions (S1-E2-03b, LOOK-4c): works signed out.
+  {
+    path: '/parent-consent/spotlight',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { ParentSpotlightPage } =
+        await import('@/features/parent-consent/components/ParentSpotlightPage');
+      return { Component: ParentSpotlightPage };
+    },
+  },
   // A data request's link for an under-16's parent or guardian (ADMIN-2c3): works signed out.
   {
     path: '/data-request/parent',

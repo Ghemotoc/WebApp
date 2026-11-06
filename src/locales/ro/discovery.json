@@ -108,5 +108,13 @@
     "previous": "Povestea anterioară",
     "next": "Povestea următoare",
     "pause": "Oprește derularea poveștilor"
+  },
+  "writersToFollow": {
+    "eyebrow": "În ascensiune",
+    "title": "Scriitori de urmărit săptămâna asta",
+    "growth_one": "+{{count}} urmăritor săptămâna asta",
+    "growth_few": "+{{count}} urmăritori săptămâna asta",
+    "growth_other": "+{{count}} de urmăritori săptămâna asta",
+    "latest": "Cea mai nouă:"
   }
 }

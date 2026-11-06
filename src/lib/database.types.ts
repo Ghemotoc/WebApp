@@ -4757,6 +4757,10 @@ export type Database = {
           language: string;
           parent_email: string;
           privacy_version_id: string | null;
+          spotlight_agreed_at: string | null;
+          spotlight_requested_at: string | null;
+          spotlight_token_hash: string | null;
+          spotlight_withdrawn_at: string | null;
           status: string;
           terms_version_id: string | null;
           token_hash: string;
@@ -4774,6 +4778,10 @@ export type Database = {
           language: string;
           parent_email: string;
           privacy_version_id?: string | null;
+          spotlight_agreed_at?: string | null;
+          spotlight_requested_at?: string | null;
+          spotlight_token_hash?: string | null;
+          spotlight_withdrawn_at?: string | null;
           status?: string;
           terms_version_id?: string | null;
           token_hash: string;
@@ -4790,6 +4798,10 @@ export type Database = {
           language?: string;
           parent_email?: string;
           privacy_version_id?: string | null;
+          spotlight_agreed_at?: string | null;
+          spotlight_requested_at?: string | null;
+          spotlight_token_hash?: string | null;
+          spotlight_withdrawn_at?: string | null;
           status?: string;
           terms_version_id?: string | null;
           token_hash?: string;
@@ -4970,6 +4982,7 @@ export type Database = {
           shows_online_status: boolean;
           signature: string | null;
           signature_picture_id: string | null;
+          suggest_me: boolean | null;
           teacher_badge_since: string | null;
           updated_at: string;
           age_check_can_ask_manual: boolean | null;
@@ -5029,6 +5042,7 @@ export type Database = {
           shows_online_status?: boolean;
           signature?: string | null;
           signature_picture_id?: string | null;
+          suggest_me?: boolean | null;
           teacher_badge_since?: string | null;
           updated_at?: string;
         };
@@ -5069,6 +5083,7 @@ export type Database = {
           shows_online_status?: boolean;
           signature?: string | null;
           signature_picture_id?: string | null;
+          suggest_me?: boolean | null;
           teacher_badge_since?: string | null;
           updated_at?: string;
         };
@@ -10321,6 +10336,10 @@ export type Database = {
         Args: { reason_given: string; target_user_id: string };
         Returns: boolean;
       };
+      admin_withdraw_spotlight_consent: {
+        Args: { reason_given: string; target_user_id: string };
+        Returns: boolean;
+      };
       ads_are_barred: { Args: { context: Json }; Returns: boolean };
       age_band: {
         Args: Record<PropertyKey, never>;
@@ -10405,7 +10424,13 @@ export type Database = {
         Returns: Json;
       };
       answer_parental_consent: {
-        Args: { decision: string; page_language: string; signature: string; token: string };
+        Args: {
+          allow_spotlight?: boolean;
+          decision: string;
+          page_language: string;
+          signature: string;
+          token: string;
+        };
         Returns: Json;
       };
       answer_report_detail_request: {
@@ -10413,6 +10438,10 @@ export type Database = {
         Returns: undefined;
       };
       answer_space_handover: { Args: { accept: boolean; slug: string }; Returns: Json };
+      answer_spotlight_consent: {
+        Args: { decision: string; signature: string; token: string };
+        Returns: Json;
+      };
       apply_support_change: {
         Args: {
           after_value: Json;
@@ -10486,6 +10515,7 @@ export type Database = {
         Args: { language: string; parent_email: string; signature: string; token_hash: string };
         Returns: Json;
       };
+      begin_spotlight_request: { Args: { signature: string; token_hash: string }; Returns: Json };
       begin_teacher_email_check: {
         Args: { school_domain: string; signature: string; token_hash: string };
         Returns: Json;
@@ -10585,6 +10615,7 @@ export type Database = {
           shows_online_status: boolean;
           signature: string | null;
           signature_picture_id: string | null;
+          suggest_me: boolean | null;
           teacher_badge_since: string | null;
           updated_at: string;
         };
@@ -11353,6 +11384,10 @@ export type Database = {
           language: string;
           parent_email: string;
           privacy_version_id: string | null;
+          spotlight_agreed_at: string | null;
+          spotlight_requested_at: string | null;
+          spotlight_token_hash: string | null;
+          spotlight_withdrawn_at: string | null;
           status: string;
           terms_version_id: string | null;
           token_hash: string;
@@ -11777,6 +11812,7 @@ export type Database = {
       has_html_tag: { Args: { body: string }; Returns: boolean };
       has_invisible_characters: { Args: { name: string }; Returns: boolean };
       has_parental_consent: { Args: { target_user_id: string }; Returns: boolean };
+      has_spotlight_consent: { Args: { person_id: string }; Returns: boolean };
       has_unsafe_link: { Args: { body: string }; Returns: boolean };
       has_workspace_account: { Args: { account_id: string; domain: string }; Returns: boolean };
       hash_email: { Args: { email: string }; Returns: string };
@@ -12264,6 +12300,7 @@ export type Database = {
       may_review_pictures: { Args: Record<PropertyKey, never>; Returns: boolean };
       may_see_case: { Args: { case_is_safeguarding: boolean }; Returns: boolean };
       may_see_march_numbers: { Args: Record<PropertyKey, never>; Returns: boolean };
+      may_spotlight_writer: { Args: { person_id: string }; Returns: boolean };
       message_age_group: {
         Args: {
           person: Omit<
@@ -12351,6 +12388,7 @@ export type Database = {
           shows_online_status: boolean;
           signature: string | null;
           signature_picture_id: string | null;
+          suggest_me: boolean | null;
           teacher_badge_since: string | null;
           updated_at: string;
         };
@@ -12917,6 +12955,10 @@ export type Database = {
           language: string;
           parent_email: string;
           privacy_version_id: string | null;
+          spotlight_agreed_at: string | null;
+          spotlight_requested_at: string | null;
+          spotlight_token_hash: string | null;
+          spotlight_withdrawn_at: string | null;
           status: string;
           terms_version_id: string | null;
           token_hash: string;
@@ -12938,6 +12980,7 @@ export type Database = {
         Returns: boolean;
       };
       parental_consent_request: { Args: { token: string }; Returns: Json };
+      parental_spotlight_request: { Args: { token: string }; Returns: Json };
       passage_discussion_allowed: {
         Args: { chapter_code: string; story_slug: string };
         Returns: boolean;
@@ -13096,6 +13139,7 @@ export type Database = {
           shows_online_status: boolean;
           signature: string | null;
           signature_picture_id: string | null;
+          suggest_me: boolean | null;
           teacher_badge_since: string | null;
           updated_at: string;
         }[];
@@ -13712,6 +13756,7 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      rising_writers: { Args: { page_size?: number }; Returns: Json };
       romania_today: { Args: Record<PropertyKey, never>; Returns: string };
       run_daily_metrics: { Args: Record<PropertyKey, never>; Returns: number };
       run_email_worker: { Args: Record<PropertyKey, never>; Returns: boolean };
@@ -13937,6 +13982,7 @@ export type Database = {
         Args: { owner_id: string; tag_names: string[]; target_story_id: string };
         Returns: undefined;
       };
+      set_suggest_me: { Args: { should_suggest: boolean }; Returns: undefined };
       setting_value: { Args: { setting_key: string }; Returns: Json };
       setting_value_problem: { Args: { new_value: Json; old_value: Json }; Returns: string };
       share_options: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
@@ -14378,6 +14424,35 @@ export type Database = {
         Returns: string[];
       };
       sponsor_review_checks: { Args: Record<PropertyKey, never>; Returns: string[] };
+      spotlight_consent_by_token: {
+        Args: { token: string };
+        Returns: {
+          created_at: string;
+          decided_at: string | null;
+          id: string;
+          is_guardian_confirmed: boolean;
+          language: string;
+          parent_email: string;
+          privacy_version_id: string | null;
+          spotlight_agreed_at: string | null;
+          spotlight_requested_at: string | null;
+          spotlight_token_hash: string | null;
+          spotlight_withdrawn_at: string | null;
+          status: string;
+          terms_version_id: string | null;
+          token_hash: string;
+          updated_at: string;
+          user_id: string;
+          withdrawn_at: string | null;
+          withdrawn_by: string | null;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'parental_consents';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       staff_email_domain: { Args: Record<PropertyKey, never>; Returns: string };
       staff_house_ad_for_slot: {
         Args: { used_keys: string[]; wanted_page_key: string; wanted_slot_key: string };
@@ -14668,6 +14743,7 @@ export type Database = {
         }[];
       };
       submit_teacher_proof: { Args: { proof_path: string }; Returns: Json };
+      suggests_me: { Args: { person_id: string }; Returns: boolean };
       support_assignee_id: { Args: { assignee_handle: string }; Returns: string };
       support_email_json: {
         Args: {
@@ -14995,7 +15071,9 @@ export type Database = {
         | 'landing_entries_open'
         | 'rank_reached'
         | 'space_handover_offered'
-        | 'story_featured';
+        | 'story_featured'
+        | 'spotlight_consent_agreed'
+        | 'spotlight_consent_withdrawn';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -15378,6 +15456,8 @@ export const Constants = {
         'rank_reached',
         'space_handover_offered',
         'story_featured',
+        'spotlight_consent_agreed',
+        'spotlight_consent_withdrawn',
       ],
       picture_kind: [
         'cover',

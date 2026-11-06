@@ -94,9 +94,15 @@ function WaitingCard({ state, request }: { state: ConsentState; request: Consent
         deadline={request.deadline}
         isAnswering={state.isAnswering}
         failure={state.answerFailure}
-        onAnswer={(decision, isGuardian) => {
+        onAnswer={(decision, isGuardian, allowSpotlight) => {
           void state
-            .answer({ token: state.token, decision, language: request.language, isGuardian })
+            .answer({
+              token: state.token,
+              decision,
+              language: request.language,
+              isGuardian,
+              allowSpotlight,
+            })
             .catch(errorShownByHook);
         }}
       />
@@ -134,7 +140,13 @@ function AnsweredCard({ state, request }: { state: ConsentState; request: Consen
         onWithdraw={() => {
           const language = i18n.language === 'en' ? 'en' : 'ro';
           void state
-            .answer({ token: state.token, decision: 'withdraw', language, isGuardian: false })
+            .answer({
+              token: state.token,
+              decision: 'withdraw',
+              language,
+              isGuardian: false,
+              allowSpotlight: false,
+            })
             .catch(errorShownByHook);
         }}
       />

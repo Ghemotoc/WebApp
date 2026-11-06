@@ -167,6 +167,25 @@ As a staff member, I want to see how every active story ranks and pick a few for
 - **Screens:** the Discover band (board Discover top): a plum card with the eyebrow, title, blurb, "Read the story", byline and the tilted cover pair, with dots, arrows and a pause control; it never moves by itself under `prefers-reduced-motion` or while the focus or pointer is inside it. Stories › Featured is a plain staff table (no doodles).
 - **Legal and compliance:** staff curation of minors' work. The 16+ writer rule is Robert's decision, 6 Nov 2026. The writer is told, and the "Suggest me" setting (LOOK-4c) lets them opt out.
 
+##### S1-E5-11 New and rising writers, and "Suggest me"
+
+As a reader, I want to meet new writers worth following, and as a writer I want to choose whether I am suggested to strangers, so that new voices are found without anyone being put on show against their will.
+
+- **Priority:** Should · **Size:** M · **Depends on:** S1-E5-03 (story_scores), S1-E5-05 (profiles, blocks), S1-E6-05 (follows), S1-E2-03b · **Bundles:** LOOK-4c (the rule, the function, the Discover shelf and the switch), LOOK-3 (the home page section)
+- **Added:** 6 Nov 2026 (Robert, answers in the LOOK brief): D4 "writers 16 and over; under-16s only with their parent's expressed consent"; "Suggest me" on for 18+ and off for under-18s, who turn it on themselves.
+- **Data touched:** `profiles.suggest_me` (null means "not chosen": on for 18+, off for under-18s, so a writer who turns 18 follows the adult default unless they chose). No new table; follower gains come from `follows_users.created_at`.
+- **Database functions:** `may_spotlight_writer(person_id)` (internal: the one rule for every suggestion: active, the switch on, 16 or over, or 13 to 15 with an agreed consent and the parent's separate yes; the classics account always), `may_feature_writer()` rebuilt on it (16 or over only), `suggests_me()`, `set_suggest_me(should_suggest)`, `my_privacy_settings()` (adds `suggest_me`, `parent_spotlight` and `can_ask_parent`), `rising_writers(page_size)` (visitors and members: first chapter within `rising_writer_days`, best summed score then followers gained in 7 days, at most 20, no blocks either way, never the reader, the latest story one the reader may read, followers only when 5 or more, never a user ID). The word `writers` joins `discover_shelves` after `rising`.
+- **Acceptance criteria:**
+  - Given `adult_writer` is a new writer, when a visitor reads the list, then they appear (pgTAP).
+  - Given `teen_17` has not turned the switch on, when anyone reads the list, then they are not in it; once they turn it on, they can be (pgTAP).
+  - Given `kid_14_ok` turned the switch on but the parent has not said yes, when the list is read, then they are not in it; once the parent says yes they can be; when the parent withdraws they drop out at once (pgTAP).
+  - Given `suspended_user`, a blocked writer or the reader themselves, when the list is read, then none appear (pgTAP).
+  - Given a writer gained fewer than 5 followers this week, when their card shows, then there is no follower line.
+  - Given Discover, when `writers` is in `discover_shelves`, then "Writers to follow this week" is one scrolling row of cards with Follow buttons (e2e).
+  - Given Settings › Privacy, when a writer turns "Suggest me and my stories to other people" off, then they leave every suggestion at once (e2e).
+- **Screens:** Discover's "Writers to follow this week" (board Discover, shelf 3: 248 px cards, a 48 px avatar, the name and category, the growth line, the latest story and Follow); the switch in Settings › Privacy.
+- **Legal and compliance:** shows minors' pen names publicly only with the parent's separate yes (GDPR art. 8). Under-18 default off (DoD privacy). The privacy notice gains the purpose "Suggesting writers to other readers"; points for the lawyer in `docs/for-the-lawyer.md`.
+
 ##### S1-E5-QA Epic check: Discovery, search and profiles
 
 As the founder, I want every story in this epic tested together end to end so that the pieces work with each other, not just alone.

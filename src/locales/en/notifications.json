@@ -88,7 +88,9 @@
     "certificateIssuedPlain": "you have a new certificate. It’s in My certificates.",
     "rankReached": "you’re now a {{rank}}. Well done.",
     "spaceHandoverOffered": "offered you {{space}}. Open it to accept or decline.",
-    "storyFeatured": "your story “{{story}}” is in Featured this week on Discover."
+    "storyFeatured": "your story “{{story}}” is in Featured this week on Discover.",
+    "spotlightAgreed": "your parent or guardian agreed that we may suggest you and your stories to other readers.",
+    "spotlightWithdrawn": "we no longer suggest you or your stories to other readers, because the yes from your parent or guardian was withdrawn."
   },
   "grouped": {
     "reactions_one": "{{count}} reaction",
@@ -151,7 +153,8 @@
     "downloadDataRequestCopy": "Download it",
     "openAuditLog": "Open the audit log",
     "openLandingPage": "Open the page",
-    "seeMyRank": "See your rank"
+    "seeMyRank": "See your rank",
+    "seePrivacy": "See your privacy settings"
   },
   "alwaysOn": "Always on",
   "unread": "Unread",

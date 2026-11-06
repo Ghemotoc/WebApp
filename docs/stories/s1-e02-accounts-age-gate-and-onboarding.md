@@ -90,6 +90,24 @@ As a parent or guardian of a user under 16, I want to give or refuse consent by 
   - Given the `parental_consent` flag, when staff look at it, then it is on; it stays only as an emergency switch and turning it off is owner-only and logged.
 - **Legal and compliance:** GDPR Art 8 (Romania's digital consent age is 16) with consent as the legal basis (decided 16 Oct 2026, late evening). How the parent or guardian is verified is **OPEN** for an avocat (section 6); email alone is weak. Romania's digital majority bill (PL-x 356/2025) is still pending. 16 and 17-year-olds join and accept the Terms without a parent (decided 17 Oct 2026, 10:23); the Civil Code art. 41 risk (capacity from 14 to 18) is on the lawyer's list (section 6). This story is part of the launch gate (section 1.7.8).
 
+##### S1-E2-03b A parent's separate yes before an under-16 is suggested to strangers
+
+As a parent of a writer aged 13 to 15, I want to decide separately whether my child's pen name and stories may be suggested to strangers, so that agreeing to the account does not also mean agreeing to publicity.
+
+- **Priority:** Should · **Size:** S · **Depends on:** S1-E2-03 · **Bundle:** LOOK-4c
+- **Added:** 6 Nov 2026 (Robert, D4 in the LOOK brief).
+- **Data touched:** `parental_consents.spotlight_agreed_at`, `spotlight_withdrawn_at`, `spotlight_token_hash` (only the SHA-256 of the emailed link) and `spotlight_requested_at`. RLS unchanged: they follow the row.
+- **Database functions:** `has_spotlight_consent()` (internal), `begin_spotlight_request(token_hash, signature)` (the child, signed by our server, one an hour), `parental_spotlight_request(token)` and `answer_spotlight_consent(token, decision, signature)` (the parent, signed out; either the spotlight link or the consent email's own link works), `answer_parental_consent()` gains `allow_spotlight` (signed into the answer, counts only with a yes), `admin_withdraw_spotlight_consent(user, reason)` (owner, admin and moderator; audit log `parental_spotlight.withdrawn`). Two notification kinds, `spotlight_consent_agreed` and `spotlight_consent_withdrawn`, in the account group.
+- **Server:** `POST /api/parent-consent/spotlight-request` and `spotlight-answer` (`server/parent-consent/spotlight.ts`); emails in the `parentConsent` group of `email.json` (`spotlightRequest*`, `spotlightAgreed*`, `spotlightWithdrawn*`, `agreedSpotlight`), admin-editable with locked placeholders.
+- **Acceptance criteria:**
+  - Given the consent page, when the parent agrees without ticking the optional box, then the account works and the child is never suggested (pgTAP).
+  - Given the parent ticks the box, when the child's switch is also on, then `may_spotlight_writer()` is true; without the child's switch it stays false (pgTAP).
+  - Given a box the server didn't sign, when the answer arrives, then it is refused (pgTAP).
+  - Given a child whose parent agreed earlier, when they turn the switch on and press "Ask my parent", then the parent gets one email with a link to a one-question page and the switch shows "Waiting for your parent" (unit, pgTAP, e2e).
+  - Given the parent withdraws from the page or the consent email's link, when the next list is read, then the child is gone, and both get a plain confirmation (pgTAP, unit).
+  - Given staff with the Users area, when a parent writes to us, then they withdraw it from the account page with a reason, and it is logged; support can't (pgTAP).
+- **Legal and compliance:** a separate, specific consent for a separate purpose (GDPR art. 6(1)(a), 7 and 8), as easy to withdraw as to give (art. 7(3)). The lawyer's list has the points.
+
 ##### S1-E2-04 Username and optional pen name
 
 As a writer, I want to choose a username and an optional pen name so that I can publish without using my real name.

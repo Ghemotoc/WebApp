@@ -718,7 +718,10 @@ CREATE TYPE "public"."notification_kind" AS ENUM (
     'picture_opened_by_staff',
     'landing_entries_open',
     'rank_reached',
-    'space_handover_offered'
+    'space_handover_offered',
+    'story_featured',
+    'spotlight_consent_agreed',
+    'spotlight_consent_withdrawn'
 );
 
 
@@ -5331,6 +5334,74 @@ COMMENT ON FUNCTION "public"."admin_extend_data_request"("target_request_id" "uu
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_featured_candidates"("view" "text" DEFAULT 'all'::"text", "category_slug" "text" DEFAULT NULL::"text", "rating" "public"."story_rating" DEFAULT NULL::"public"."story_rating", "page_size" integer DEFAULT 200, "page_offset" integer DEFAULT 0) RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  promising_through double precision :=
+    (public.setting_value('featured_promising_read_through'))::text::double precision;
+  first_row integer := greatest(page_offset, 0);
+  last_row integer := greatest(page_offset, 0) + least(greatest(page_size, 1), 500);
+  answer jsonb;
+begin
+  -- Step 1: admins and the owner only, in a staff session.
+  if not public.staff_may('featured', 'view') then
+    raise exception 'Only admins can open Featured this week.' using errcode = 'insufficient_privilege';
+  end if;
+  if view not in ('all', 'rising', 'new_writers', 'promising') then
+    raise exception 'Unknown view: %', view using errcode = 'invalid_parameter_value';
+  end if;
+  -- Step 2: the candidates once; the median of this week's reads across all of them; then the
+  -- view and filters, numbered in the view's order (rising: biggest climb first; else by rank).
+  with candidate_rows as materialized (
+    select * from public.featured_candidate_rows()
+  ),
+  median as (
+    select coalesce(percentile_cont(0.5) within group (order by candidate_rows.reads_7d), 0) as reads
+    from candidate_rows
+  ),
+  chosen as (
+    select candidate_rows.*,
+      row_number() over (order by
+        case when view = 'rising' then -coalesce(candidate_rows.rank_change, 0) end,
+        candidate_rows.rank nulls last, candidate_rows.title) as sort_order,
+      count(*) over () as matching_total
+    from candidate_rows, median
+    where (admin_featured_candidates.category_slug is null
+           or candidate_rows.category_slug = admin_featured_candidates.category_slug)
+      and (admin_featured_candidates.rating is null
+           or candidate_rows.rating = admin_featured_candidates.rating)
+      and (view <> 'rising' or coalesce(candidate_rows.rank_change, 0) > 0)
+      and (view <> 'new_writers' or candidate_rows.is_new_writer)
+      and (view <> 'promising'
+           or (candidate_rows.read_through >= promising_through and candidate_rows.reads_7d < median.reads))
+  )
+  -- Step 3: one page, with the totals and the current picks so the screen can tick them.
+  select jsonb_build_object(
+    'total', coalesce((select max(chosen.matching_total) from chosen), 0),
+    'median_reads_7d', (select median.reads from median),
+    'featured_max', (public.setting_value('featured_max'))::text::integer,
+    'picks', coalesce((select jsonb_agg(featured_picks.story_id order by featured_picks.position)
+                       from public.featured_picks where featured_picks.removed_at is null), '[]'::jsonb),
+    'stories', coalesce((select jsonb_agg(
+        (to_jsonb(chosen) - 'story_id' - 'sort_order' - 'matching_total')
+          || jsonb_build_object('id', chosen.story_id)
+        order by chosen.sort_order)
+      from chosen where chosen.sort_order > first_row and chosen.sort_order <= last_row), '[]'::jsonb))
+  into answer;
+  return answer;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_featured_candidates"("view" "text", "category_slug" "text", "rating" "public"."story_rating", "page_size" integer, "page_offset" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_featured_candidates"("view" "text", "category_slug" "text", "rating" "public"."story_rating", "page_size" integer, "page_offset" integer) IS 'Admins and the owner: every current active story with its rank, signals and whether it can be featured (S1-E5-10).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admin_find_accounts"("search_text" "text") RETURNS TABLE("user_id" "uuid", "handle" "text", "pen_name" "text", "email_masked" "text", "matched_by" "text", "staff_roles" "public"."staff_role"[])
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -9621,6 +9692,70 @@ COMMENT ON FUNCTION "public"."admin_set_evidence_hold"("evidence_id" "uuid", "sh
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_set_featured_picks"("story_ids" "uuid"[], "reason" "text") RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  picks uuid[] := coalesce(story_ids, '{}');
+  before_list uuid[];
+  refused text;
+  pick_position integer;
+begin
+  -- Step 1: admins and the owner only, in a staff session, with a reason.
+  if not public.staff_may('featured', 'act') then
+    raise exception 'Only admins can change Featured this week.' using errcode = 'insufficient_privilege';
+  end if;
+  if reason is null or btrim(reason) = '' then
+    raise exception 'Say why you are changing Featured this week.' using errcode = 'check_violation';
+  end if;
+  -- Step 2: the list's shape: not too long, no story twice.
+  if cardinality(picks) > (public.setting_value('featured_max'))::text::integer then
+    raise exception 'Featured this week holds at most % stories.',
+      (public.setting_value('featured_max'))::text using errcode = 'check_violation';
+  end if;
+  if cardinality(picks) <> (select count(distinct pick) from unnest(picks) as pick) then
+    raise exception 'A story is in the list twice.' using errcode = 'check_violation';
+  end if;
+  -- Step 3: every story must be one we may put on show (Robert, 6 Nov 2026: 16 or over).
+  select public.featured_ineligible_reason(pick) into refused
+  from unnest(picks) as pick
+  where public.featured_ineligible_reason(pick) is not null
+  limit 1;
+  if refused is not null then
+    raise exception 'A story in the list can''t be featured: %.', refused using errcode = 'check_violation';
+  end if;
+  -- Step 4: take the old list out (kept as a record) and put the new one in, in order.
+  select coalesce(array_agg(featured_picks.story_id order by featured_picks.position), '{}')
+  into before_list
+  from public.featured_picks where featured_picks.removed_at is null;
+  update public.featured_picks set removed_at = now(), updated_at = now() where removed_at is null;
+  for pick_position in 1 .. cardinality(picks) loop
+    insert into public.featured_picks (story_id, position, user_id)
+    values (picks[pick_position], pick_position, (select auth.uid()));
+  end loop;
+  -- Step 5: the audit row with both lists, in the same transaction.
+  perform public.log_staff_action('featured.picks_set', 'featured_picks', null, null, reason,
+    jsonb_build_object('story_ids', to_jsonb(before_list)),
+    jsonb_build_object('story_ids', to_jsonb(picks)));
+  -- Step 6: tell each newly picked writer (not the classics account), once per story.
+  insert into public.notifications (user_id, kind, actor_user_ids, actor_count, story_id, is_required)
+  select stories.user_id, 'story_featured', '{}'::uuid[], 0, stories.id, false
+  from public.stories
+  where stories.id = any (picks)
+    and not (stories.id = any (before_list))
+    and not public.is_classics_account(stories.user_id);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_set_featured_picks"("story_ids" "uuid"[], "reason" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_set_featured_picks"("story_ids" "uuid"[], "reason" "text") IS 'Admins and the owner: replace Featured this week, logged with before and after; new writers are told (S1-E5-10).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admin_set_flag"("flag_key" "text", "turn_on" boolean) RETURNS boolean
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -11223,6 +11358,47 @@ COMMENT ON FUNCTION "public"."admin_withdraw_parental_consent"("target_user_id" 
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_withdraw_spotlight_consent"("target_user_id" "uuid", "reason_given" "text") RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  consent public.parental_consents;
+begin
+  -- Step 1: staff who act on accounts, with a reason.
+  if not public.staff_may('users', 'act') then
+    raise exception 'Only the owner, admins and moderators can do this.'
+      using errcode = 'insufficient_privilege', hint = 'not_allowed';
+  end if;
+  if coalesce(trim(reason_given), '') = '' then
+    raise exception 'Say why.' using errcode = 'check_violation', hint = 'reason_missing';
+  end if;
+  -- Step 2: a yes in force.
+  select * into consent from public.parental_consents
+  where user_id = target_user_id and status = 'agreed'
+    and spotlight_agreed_at is not null and spotlight_withdrawn_at is null
+  for update;
+  if consent.id is null then
+    raise exception 'There is no yes to suggestions to withdraw.' using errcode = 'check_violation', hint = 'no_spotlight';
+  end if;
+  -- Step 3: withdraw, log and tell the writer.
+  update public.parental_consents set spotlight_withdrawn_at = now() where id = consent.id;
+  perform public.log_staff_action('parental_spotlight.withdrawn', 'parental_consents', consent.id::text,
+    target_user_id, trim(reason_given), jsonb_build_object('spotlight', 'agreed'),
+    jsonb_build_object('spotlight', 'withdrawn'));
+  perform public.notify(target_user_id, 'spotlight_consent_withdrawn', null, '{}'::jsonb);
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_withdraw_spotlight_consent"("target_user_id" "uuid", "reason_given" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_withdraw_spotlight_consent"("target_user_id" "uuid", "reason_given" "text") IS 'Staff with the Users area withdraw a parent''s yes to suggestions, logged (S1-E2-03b).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."ads_are_barred"("context" "jsonb") RETURNS boolean
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -11424,6 +11600,7 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     "message_quiet_from" time without time zone,
     "message_quiet_until" time without time zone,
     "highest_rank_notified" "public"."writer_rank",
+    "suggest_me" boolean,
     CONSTRAINT "profiles_avatar_recipe_shape" CHECK ("public"."avatar_recipe_valid"("avatar_recipe")),
     CONSTRAINT "profiles_bio_length" CHECK (("char_length"("bio") <= 300)),
     CONSTRAINT "profiles_birth_month_is_a_month" CHECK ((("birth_month" >= 1) AND ("birth_month" <= 12))),
@@ -11568,6 +11745,10 @@ COMMENT ON COLUMN "public"."profiles"."message_quiet_until" IS 'When message qui
 
 
 COMMENT ON COLUMN "public"."profiles"."highest_rank_notified" IS 'The highest rank the writer was already told about; a rank reached again after a drop is not announced twice (IDEAS-3a).';
+
+
+
+COMMENT ON COLUMN "public"."profiles"."suggest_me" IS 'The writer''s "Suggest me and my stories to other people" switch; null: not chosen, which is on for 18+ and off for under-18s (S1-E5-11; Robert, 6 Nov 2026).';
 
 
 
@@ -11895,17 +12076,24 @@ COMMENT ON FUNCTION "public"."answer_message_request"("sender_handle" "text", "s
 
 
 
-CREATE OR REPLACE FUNCTION "public"."answer_parental_consent"("token" "text", "decision" "text", "page_language" "text", "signature" "text") RETURNS "jsonb"
+CREATE OR REPLACE FUNCTION "public"."answer_parental_consent"("token" "text", "decision" "text", "page_language" "text", "signature" "text", "allow_spotlight" boolean DEFAULT false) RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
 declare
   request public.parental_consents;
   answer jsonb;
+  -- The box counts only with a yes (GDPR art. 7: a separate, specific consent).
+  wants_spotlight boolean := coalesce(allow_spotlight, false) and decision = 'agree';
+  signed_message text;
 begin
-  -- Step 1: the request came through our server.
-  if not public.parental_consent_is_signed('answer|'
-      || encode(extensions.digest(coalesce(token, ''), 'sha256'), 'hex') || '|' || decision, signature) then
+  -- Step 1: the request came through our server; a ticked box is part of what it signed.
+  signed_message := 'answer|' || encode(extensions.digest(coalesce(token, ''), 'sha256'), 'hex')
+    || '|' || decision;
+  if wants_spotlight then
+    signed_message := signed_message || '|spotlight';
+  end if;
+  if not public.parental_consent_is_signed(signed_message, signature) then
     raise exception 'This answer wasn''t signed by our server.' using errcode = 'insufficient_privilege';
   end if;
   -- Step 2: a live request; agree and refuse need a waiting one, withdraw an agreed one.
@@ -11922,19 +12110,26 @@ begin
   -- Step 3: who to write to, read before a refusal erases the writer's address.
   select jsonb_build_object('outcome', 'ok', 'decision', decision, 'writer_email', users.email,
       'writer_language', coalesce(profiles.locale, 'ro'), 'handle', profiles.handle,
-      'parent_email', request.parent_email, 'parent_language', request.language)
+      'parent_email', request.parent_email, 'parent_language', request.language,
+      'allow_spotlight', wants_spotlight)
     into answer
   from public.profiles join auth.users on users.id = profiles.id
   where profiles.id = request.user_id;
   -- Step 4: the answer itself.
   if decision = 'agree' then
     perform public.parental_consent_agree(request, coalesce(nullif(page_language, ''), request.language));
+    if wants_spotlight then
+      update public.parental_consents
+      set spotlight_agreed_at = now(), spotlight_withdrawn_at = null
+      where id = request.id;
+    end if;
   elsif decision = 'refuse' then
     update public.parental_consents set status = 'refused', decided_at = now() where id = request.id;
     perform public.erase_unchecked_account(request.user_id);
   else
     update public.parental_consents
-    set status = 'withdrawn', withdrawn_at = now(), withdrawn_by = 'parent'
+    set status = 'withdrawn', withdrawn_at = now(), withdrawn_by = 'parent',
+        spotlight_withdrawn_at = case when spotlight_agreed_at is not null then now() end
     where id = request.id;
     perform public.notify(request.user_id, 'parental_consent_withdrawn', null, '{}'::jsonb);
   end if;
@@ -11943,10 +12138,10 @@ end;
 $$;
 
 
-ALTER FUNCTION "public"."answer_parental_consent"("token" "text", "decision" "text", "page_language" "text", "signature" "text") OWNER TO "postgres";
+ALTER FUNCTION "public"."answer_parental_consent"("token" "text", "decision" "text", "page_language" "text", "signature" "text", "allow_spotlight" boolean) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."answer_parental_consent"("token" "text", "decision" "text", "page_language" "text", "signature" "text") IS 'A parent''s or guardian''s answer from the consent link, signed by our server (S1-E2-03).';
+COMMENT ON FUNCTION "public"."answer_parental_consent"("token" "text", "decision" "text", "page_language" "text", "signature" "text", "allow_spotlight" boolean) IS 'A parent''s or guardian''s answer from the consent link, with the optional suggestions box, signed by our server (S1-E2-03, S1-E2-03b).';
 
 
 
@@ -12014,6 +12209,49 @@ ALTER FUNCTION "public"."answer_space_handover"("slug" "text", "accept" boolean)
 
 
 COMMENT ON FUNCTION "public"."answer_space_handover"("slug" "text", "accept" boolean) IS 'The moderator a space was offered to accepts (becoming its owner) or declines; logged (IDEA-20261102-7).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."answer_spotlight_consent"("token" "text", "decision" "text", "signature" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  consent public.parental_consents := public.spotlight_consent_by_token(token);
+  is_agreed boolean := consent.spotlight_agreed_at is not null and consent.spotlight_withdrawn_at is null;
+begin
+  -- Step 1: the answer came through our server.
+  if not public.parental_consent_is_signed('spotlight-answer|'
+      || encode(extensions.digest(coalesce(token, ''), 'sha256'), 'hex') || '|' || decision, signature) then
+    raise exception 'This answer wasn''t signed by our server.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 2: a live link, and an answer that changes something.
+  if consent.id is null or exists (select 1 from public.profiles
+                                   where id = consent.user_id and deleted_at is not null) then
+    return jsonb_build_object('outcome', 'gone');
+  end if;
+  if decision not in ('agree', 'withdraw') or (decision = 'agree') = is_agreed then
+    return jsonb_build_object('outcome', 'already_answered');
+  end if;
+  -- Step 3: the answer, then the writer is told.
+  if decision = 'agree' then
+    update public.parental_consents set spotlight_agreed_at = now(), spotlight_withdrawn_at = null
+    where id = consent.id;
+    perform public.notify(consent.user_id, 'spotlight_consent_agreed', null, '{}'::jsonb);
+  else
+    update public.parental_consents set spotlight_withdrawn_at = now() where id = consent.id;
+    perform public.notify(consent.user_id, 'spotlight_consent_withdrawn', null, '{}'::jsonb);
+  end if;
+  return jsonb_build_object('outcome', 'ok', 'decision', decision, 'parent_email', consent.parent_email,
+    'language', consent.language, 'handle', (select handle from public.profiles where id = consent.user_id));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."answer_spotlight_consent"("token" "text", "decision" "text", "signature" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."answer_spotlight_consent"("token" "text", "decision" "text", "signature" "text") IS 'The parent''s yes to suggestions, or its withdrawal, from the one-question page; signed by our server (S1-E2-03b).';
 
 
 
@@ -12675,6 +12913,47 @@ ALTER FUNCTION "public"."begin_parental_consent"("parent_email" "text", "languag
 
 
 COMMENT ON FUNCTION "public"."begin_parental_consent"("parent_email" "text", "language" "text", "token_hash" "text", "signature" "text") IS 'Stores a signed request to a parent or guardian for the signed-in writer (S1-E2-03).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."begin_spotlight_request"("token_hash" "text", "signature" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  me uuid := (select auth.uid());
+  consent public.parental_consents;
+begin
+  -- Step 1: signed in, and the link came from our server.
+  if me is null or not public.parental_consent_is_signed(
+      'spotlight|' || me || '|' || begin_spotlight_request.token_hash, signature) then
+    raise exception 'This request wasn''t signed by our server.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 2: only for a 13 to 15-year-old with an agreed consent, the switch on, no yes yet.
+  select * into consent from public.parental_consents
+  where parental_consents.user_id = me and parental_consents.status = 'agreed' for update;
+  if consent.id is null or public.age_band_of(me) <> '13_to_15'
+     or not coalesce(public.suggests_me(me), false) or public.has_spotlight_consent(me) then
+    return jsonb_build_object('outcome', 'not_needed');
+  end if;
+  -- Step 3: no flood of emails to a parent.
+  if consent.spotlight_requested_at > now() - interval '1 hour' then
+    raise exception 'Wait an hour before asking again.' using errcode = 'check_violation', hint = 'too_soon';
+  end if;
+  -- Step 4: the new link counts; an older one stops working.
+  update public.parental_consents
+  set spotlight_token_hash = lower(begin_spotlight_request.token_hash), spotlight_requested_at = now()
+  where id = consent.id;
+  return jsonb_build_object('outcome', 'ok', 'parent_email', consent.parent_email,
+    'language', consent.language, 'handle', (select handle from public.profiles where id = me));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."begin_spotlight_request"("token_hash" "text", "signature" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."begin_spotlight_request"("token_hash" "text", "signature" "text") IS 'The server stores the link it emails a parent asking whether their child may be suggested to other people (S1-E2-03b).';
 
 
 
@@ -17409,6 +17688,7 @@ CREATE OR REPLACE FUNCTION "public"."data_export_held_tables"() RETURNS TABLE("t
     ('compliance_log_entries', false, 'user_id is the staff member who logged an authority order, not data about their account'),
     ('copied_work_notes', true, null),
     ('data_requests', true, null),
+    ('featured_picks', false, 'user_id is the staff member who picked a story for Featured this week, not data about their account; the writer is told by a notification, which is in their export'),
     ('interface_text_overrides', false, 'user_id is the admin who edited interface text, not data about their account'),
     ('moderated_items', true, null),
     ('on_call_rota', true, null),
@@ -17427,7 +17707,7 @@ $$;
 ALTER FUNCTION "public"."data_export_held_tables"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."data_export_held_tables"() IS 'Internal: every staff table with a user_id and whether Download my data''s "held_about_you" includes it, or why not (QA-7, LOGS-1a; GDPR art. 15).';
+COMMENT ON FUNCTION "public"."data_export_held_tables"() IS 'Internal: every staff table with a user_id and whether Download my data''s "held_about_you" includes it, or why not (QA-7, LOGS-1a, LOOK-4a; GDPR art. 15).';
 
 
 
@@ -17632,6 +17912,10 @@ CREATE TABLE IF NOT EXISTS "public"."parental_consents" (
     "withdrawn_by" "text",
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "spotlight_agreed_at" timestamp with time zone,
+    "spotlight_withdrawn_at" timestamp with time zone,
+    "spotlight_token_hash" "text",
+    "spotlight_requested_at" timestamp with time zone,
     CONSTRAINT "parental_consents_email_looks_right" CHECK (((("length"("parent_email") >= 6) AND ("length"("parent_email") <= 254)) AND ("parent_email" ~ '^[^@\s]+@[^@\s]+\.[^@\s]+$'::"text"))),
     CONSTRAINT "parental_consents_language_is_known" CHECK (("language" = ANY (ARRAY['ro'::"text", 'en'::"text"]))),
     CONSTRAINT "parental_consents_status_is_known" CHECK (("status" = ANY (ARRAY['waiting'::"text", 'agreed'::"text", 'refused'::"text", 'withdrawn'::"text", 'replaced'::"text"]))),
@@ -17644,6 +17928,22 @@ ALTER TABLE "public"."parental_consents" OWNER TO "postgres";
 
 COMMENT ON TABLE "public"."parental_consents" IS 'kind: user_action
 A parent''s or guardian''s consent for a writer under 16 (S1-E2-03; GDPR art. 8): who was asked, when they answered, which notice versions they saw. Never the token itself.';
+
+
+
+COMMENT ON COLUMN "public"."parental_consents"."spotlight_agreed_at" IS 'When the parent last agreed that the child may be suggested to other people (S1-E2-03b; GDPR art. 8).';
+
+
+
+COMMENT ON COLUMN "public"."parental_consents"."spotlight_withdrawn_at" IS 'When that yes was last withdrawn, by the parent or by staff; a later yes clears it (S1-E2-03b).';
+
+
+
+COMMENT ON COLUMN "public"."parental_consents"."spotlight_token_hash" IS 'SHA-256 of the link in the latest "may we suggest your child?" email; the link itself is never stored (S1-E2-03b).';
+
+
+
+COMMENT ON COLUMN "public"."parental_consents"."spotlight_requested_at" IS 'When that email was last sent, so a child can''t send it again and again (S1-E2-03b).';
 
 
 
@@ -19587,6 +19887,153 @@ ALTER FUNCTION "public"."export_upload_allowed"("object_name" "text") OWNER TO "
 
 
 COMMENT ON FUNCTION "public"."export_upload_allowed"("object_name" "text") IS 'True when the file is the caller''s own export that is still being built (S1-E13-02).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."featured_candidate_rows"() RETURNS TABLE("story_id" "uuid", "slug" "text", "title" "text", "writer_handle" "text", "writer_pen_name" "text", "rank" integer, "rank_change" integer, "score" double precision, "reads_7d" bigint, "read_through" double precision, "followers" bigint, "first_published_at" timestamp with time zone, "rating" "public"."story_rating", "category_slug" "text", "is_new_writer" boolean, "ineligible_reason" "text")
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  with today as (
+    select (now() at time zone 'Europe/Bucharest')::date as day
+  ),
+  current_ranks as (
+    select story_scores.story_id, story_scores.score,
+      rank() over (order by story_scores.score desc)::integer as rank
+    from public.story_scores
+  ),
+  candidates as (
+    select stories.* from public.stories
+    where stories.deleted_at is null
+      and stories.visibility = 'public'
+      and not stories.class_only
+      and stories.last_chapter_published_at >= now()
+        - make_interval(days => (public.setting_value('featured_active_days'))::text::integer)
+      and not public.is_moderated_away('story', stories.id)
+      and public.story_has_readable_chapter(stories.id)
+  ),
+  writer_firsts as (
+    select stories.user_id, min(stories.first_published_at) as first_at
+    from public.stories where stories.deleted_at is null
+    group by stories.user_id
+  )
+  select candidates.id, candidates.slug, candidates.title,
+    profiles.handle, profiles.pen_name,
+    current_ranks.rank,
+    -- A positive change means the story climbed (rank 9 a week ago, 4 today: +5).
+    (select snapshots.rank from public.story_rank_snapshots as snapshots, today
+     where snapshots.story_id = candidates.id and snapshots.snapshot_on = today.day - 7)
+      - current_ranks.rank,
+    coalesce(current_ranks.score, 0),
+    coalesce((select sum(reads.total) from public.chapter_reads as reads
+              join public.chapters on chapters.id = reads.chapter_id, today
+              where chapters.story_id = candidates.id and reads.read_on > today.day - 7), 0)::bigint,
+    coalesce(signals.read_through, 0),
+    (select count(*) from public.follows_users where follows_users.followed_user_id = candidates.user_id),
+    candidates.first_published_at,
+    candidates.rating,
+    categories.slug,
+    coalesce(writer_firsts.first_at >= now()
+      - make_interval(days => (public.setting_value('rising_writer_days'))::text::integer), false),
+    public.featured_ineligible_reason(candidates.id)
+  from candidates
+  join public.profiles on profiles.id = candidates.user_id
+  join public.categories on categories.id = candidates.category_id
+  left join current_ranks on current_ranks.story_id = candidates.id
+  left join public.story_signals() as signals on signals.story_id = candidates.id
+  left join writer_firsts on writer_firsts.user_id = candidates.user_id;
+$$;
+
+
+ALTER FUNCTION "public"."featured_candidate_rows"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."featured_candidate_rows"() IS 'Internal: every current active story with its rank, signals and whether it can be featured (S1-E5-10).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."featured_ineligible_reason"("target_story_id" "uuid") RETURNS "text"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target public.stories%rowtype;
+  writer_band public.age_band;
+begin
+  -- Step 1: the story itself must be open to everyone on the web.
+  select * into target from public.stories where stories.id = target_story_id;
+  if not found then
+    return 'not_found';
+  end if;
+  if target.deleted_at is not null or target.visibility <> 'public' or target.class_only then
+    return 'not_public';
+  end if;
+  -- Step 2: moderators haven't hidden or restricted it, and it has a chapter to read.
+  if public.is_moderated_away('story', target.id) then
+    return 'moderated';
+  end if;
+  if exists (select 1 from public.story_restrictions
+             where story_restrictions.story_id = target.id and story_restrictions.lifted_at is null) then
+    return 'restricted';
+  end if;
+  if not public.story_has_readable_chapter(target.id) then
+    return 'no_chapter';
+  end if;
+  -- Step 3: the writer (the classics account always passes).
+  if public.may_feature_writer(target.user_id) then
+    return null;
+  end if;
+  if public.account_state(target.user_id) <> 'active' then
+    return 'writer_not_active';
+  end if;
+  writer_band := public.age_band_of(target.user_id);
+  if writer_band in ('under_13', '13_to_15') then
+    return 'writer_under_16';
+  end if;
+  -- Step 4 (LOOK-4c): old enough, but their own "Suggest me" switch is off.
+  if not coalesce(public.suggests_me(target.user_id), false) then
+    return 'writer_not_suggested';
+  end if;
+  return 'writer_age_unknown';
+end;
+$$;
+
+
+ALTER FUNCTION "public"."featured_ineligible_reason"("target_story_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."featured_ineligible_reason"("target_story_id" "uuid") IS 'Internal: why a story can''t be featured, or null when it can (S1-E5-10).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."featured_stories_now"() RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  with caller as (
+    select (select auth.uid()) as id
+  ),
+  blocked as (
+    select blocks.blocked_user_id as person_id from public.blocks, caller where blocks.user_id = caller.id
+    union
+    select blocks.user_id from public.blocks, caller where blocks.blocked_user_id = caller.id
+  )
+  select coalesce(jsonb_agg(public.story_card_json(stories.id) order by featured_picks.position), '[]'::jsonb)
+  from public.featured_picks
+  join public.stories on stories.id = featured_picks.story_id
+  where featured_picks.removed_at is null
+    -- The story is still open to everyone and nothing has taken it off show.
+    and public.featured_ineligible_reason(stories.id) is null
+    -- CLAUDE.md rule 18: never above the reader's rating; rule 6: never across a block.
+    and public.rating_allows(stories.rating)
+    and not exists (select 1 from blocked where blocked.person_id = stories.user_id);
+$$;
+
+
+ALTER FUNCTION "public"."featured_stories_now"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."featured_stories_now"() IS 'The Featured this week cards this reader may see, in the staff''s order; empty hides the band (S1-E5-10).';
 
 
 
@@ -21581,6 +22028,26 @@ COMMENT ON FUNCTION "public"."has_parental_consent"("target_user_id" "uuid") IS 
 
 
 
+CREATE OR REPLACE FUNCTION "public"."has_spotlight_consent"("person_id" "uuid") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select exists (
+    select 1 from public.parental_consents
+    where parental_consents.user_id = person_id
+      and parental_consents.status = 'agreed'
+      and parental_consents.spotlight_agreed_at is not null
+      and parental_consents.spotlight_withdrawn_at is null);
+$$;
+
+
+ALTER FUNCTION "public"."has_spotlight_consent"("person_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."has_spotlight_consent"("person_id" "uuid") IS 'Internal: true while a parent''s separate yes to suggestions is in force (S1-E2-03b; GDPR art. 8).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."has_unsafe_link"("body" "text") RETURNS boolean
     LANGUAGE "plpgsql" IMMUTABLE
     SET "search_path" TO ''
@@ -22007,6 +22474,25 @@ ALTER FUNCTION "public"."is_blocked_with"("other_user_id" "uuid") OWNER TO "post
 
 
 COMMENT ON FUNCTION "public"."is_blocked_with"("other_user_id" "uuid") IS 'True when the caller and this person block each other in either direction (S1-E5-05).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."is_classics_account"("person_id" "uuid") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select exists (
+    select 1 from public.profiles
+    where profiles.id = person_id
+      and profiles.handle = (public.setting_value('classics_account_handle') #>> '{}')
+      and profiles.deleted_at is null);
+$$;
+
+
+ALTER FUNCTION "public"."is_classics_account"("person_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."is_classics_account"("person_id" "uuid") IS 'Internal: true for the classics account, false when it does not exist yet (S1-E5-10).';
 
 
 
@@ -24320,6 +24806,24 @@ COMMENT ON FUNCTION "public"."may_change_own_avatar"() IS 'Internal: true when t
 
 
 
+CREATE OR REPLACE FUNCTION "public"."may_feature_writer"("person_id" "uuid") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select person_id is not null and (
+    public.is_classics_account(person_id)
+    or (public.may_spotlight_writer(person_id)
+        and public.age_band_of(person_id) in ('16_to_17', '18_plus')));
+$$;
+
+
+ALTER FUNCTION "public"."may_feature_writer"("person_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."may_feature_writer"("person_id" "uuid") IS 'Internal: true when a writer may be featured: may_spotlight_writer() and 16 or over (S1-E5-10, S1-E5-11).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."may_keep_writing"("writer_id" "uuid", "other_id" "uuid") RETURNS boolean
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -24386,6 +24890,28 @@ ALTER FUNCTION "public"."may_see_march_numbers"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."may_see_march_numbers"() IS 'Owner or admin in a staff session: may read the March test numbers (S1-E15-02).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."may_spotlight_writer"("person_id" "uuid") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select person_id is not null and (
+    public.is_classics_account(person_id)
+    or (public.account_state(person_id) = 'active'
+        and coalesce(public.suggests_me(person_id), false)
+        and (public.age_band_of(person_id) in ('16_to_17', '18_plus')
+             or (public.age_band_of(person_id) = '13_to_15'
+                 and public.has_parental_consent(person_id)
+                 and public.has_spotlight_consent(person_id)))));
+$$;
+
+
+ALTER FUNCTION "public"."may_spotlight_writer"("person_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."may_spotlight_writer"("person_id" "uuid") IS 'Internal: the one rule for suggesting a writer to strangers: active, switch on, 16+ or 13-15 with the parent''s separate yes (S1-E5-11, S1-E2-03b; Robert, 6 Nov 2026).';
 
 
 
@@ -25935,7 +26461,19 @@ CREATE OR REPLACE FUNCTION "public"."my_privacy_settings"() RETURNS "jsonb"
     'library_audience', profiles.library_visible_to,
     'shows_online_status', profiles.shows_online_status,
     'message_audience', public.message_audience_of(profiles),
-    'is_under_18', public.message_age_group(profiles) <> 'adult')
+    'is_under_18', public.message_age_group(profiles) <> 'adult',
+    'suggest_me', coalesce(public.suggests_me(profiles.id), false),
+    'parent_spotlight', case
+      when public.age_band_of(profiles.id) <> '13_to_15' then 'not_needed'
+      when public.has_spotlight_consent(profiles.id) then 'agreed'
+      when exists (select 1 from public.parental_consents
+                   where parental_consents.user_id = profiles.id and parental_consents.status = 'agreed'
+                     and parental_consents.spotlight_requested_at is not null
+                     and parental_consents.spotlight_requested_at
+                         > coalesce(parental_consents.spotlight_withdrawn_at, '-infinity')) then 'asked'
+      else 'none'
+    end,
+    'can_ask_parent', public.age_band_of(profiles.id) = '13_to_15' and public.has_parental_consent(profiles.id))
   from public.profiles where profiles.id = public.require_live_profile();
 $$;
 
@@ -25943,7 +26481,7 @@ $$;
 ALTER FUNCTION "public"."my_privacy_settings"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."my_privacy_settings"() IS 'The caller''s own privacy choices with the defaults filled in (S1-E13-01).';
+COMMENT ON FUNCTION "public"."my_privacy_settings"() IS 'The signed-in member''s privacy settings, with Suggest me and the parent''s separate yes (S1-E13-01, S1-E5-11, S1-E2-03b).';
 
 
 
@@ -26896,6 +27434,9 @@ CREATE OR REPLACE FUNCTION "public"."notification_category"("kind" "public"."not
     when 'landing_entries_open' then 'stories'
     when 'rank_reached' then 'stories'
     when 'space_handover_offered' then 'follows'
+    when 'story_featured' then 'stories'
+    when 'spotlight_consent_agreed' then 'staff'
+    when 'spotlight_consent_withdrawn' then 'staff'
     else 'replies'
   end;
 $$;
@@ -28271,6 +28812,32 @@ ALTER FUNCTION "public"."parental_consent_request"("token" "text") OWNER TO "pos
 
 
 COMMENT ON FUNCTION "public"."parental_consent_request"("token" "text") IS 'What a parent or guardian sees from the consent link, read with its token (S1-E2-03).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."parental_spotlight_request"("token" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  consent public.parental_consents := public.spotlight_consent_by_token(token);
+  writer_handle text;
+begin
+  select profiles.handle into writer_handle from public.profiles
+  where profiles.id = consent.user_id and profiles.deleted_at is null;
+  if consent.id is null or writer_handle is null then
+    return jsonb_build_object('outcome', 'gone');
+  end if;
+  return jsonb_build_object('outcome', 'ok', 'handle', writer_handle, 'language', consent.language,
+    'is_agreed', consent.spotlight_agreed_at is not null and consent.spotlight_withdrawn_at is null);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."parental_spotlight_request"("token" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."parental_spotlight_request"("token" "text") IS 'The parent''s one-question page: whose account, and whether the yes to suggestions stands (S1-E2-03b).';
 
 
 
@@ -33659,6 +34226,77 @@ COMMENT ON FUNCTION "public"."reusable_stories_export"("owner_id" "uuid", "wante
 
 
 
+CREATE OR REPLACE FUNCTION "public"."rising_writers"("page_size" integer DEFAULT 20) RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  with caller as (
+    select (select auth.uid()) as id
+  ),
+  blocked as (
+    select blocks.blocked_user_id as person_id from public.blocks, caller where blocks.user_id = caller.id
+    union
+    select blocks.user_id from public.blocks, caller where blocks.blocked_user_id = caller.id
+  ),
+  -- Stories anyone may find: public, not class-only, readable, not moderated or restricted.
+  open_stories as (
+    select stories.* from public.stories
+    where stories.deleted_at is null and stories.visibility = 'public' and not stories.class_only
+      and public.story_has_readable_chapter(stories.id)
+      and not public.is_moderated_away('story', stories.id)
+      and not exists (select 1 from public.story_restrictions
+                      where story_restrictions.story_id = stories.id and story_restrictions.lifted_at is null)
+  ),
+  writers as (
+    select open_stories.user_id,
+      min(open_stories.first_published_at) as first_at,
+      coalesce(sum(story_scores.score), 0) as score
+    from open_stories left join public.story_scores on story_scores.story_id = open_stories.id
+    group by open_stories.user_id
+  ),
+  rising as (
+    select writers.*, profiles.handle, coalesce(nullif(profiles.pen_name, ''), profiles.handle) as display_name,
+      (select count(*) from public.follows_users
+       where follows_users.followed_user_id = writers.user_id
+         and follows_users.created_at > now() - interval '7 days') as gained
+    from writers
+    join public.profiles on profiles.id = writers.user_id and profiles.deleted_at is null
+    where writers.first_at >= now()
+        - make_interval(days => (public.setting_value('rising_writer_days'))::text::integer)
+      and profiles.handle is not null
+      and writers.user_id is distinct from (select caller.id from caller)
+      and not exists (select 1 from blocked where blocked.person_id = writers.user_id)
+      and public.may_spotlight_writer(writers.user_id)
+    order by writers.score desc, gained desc, profiles.handle
+    limit least(greatest(coalesce(page_size, 20), 1), 20)
+  )
+  select coalesce(jsonb_agg(jsonb_build_object(
+      'handle', rising.handle,
+      'display_name', rising.display_name,
+      'category_slug', (select categories.slug from open_stories
+                        join public.categories on categories.id = open_stories.category_id
+                        where open_stories.user_id = rising.user_id
+                        group by categories.slug order by count(*) desc, categories.slug limit 1),
+      'latest_story', (select public.story_card_json(open_stories.id) from open_stories
+                       where open_stories.user_id = rising.user_id
+                         and public.rating_allows(open_stories.rating)
+                       order by open_stories.last_chapter_published_at desc nulls last limit 1),
+      'followers_this_week', case when rising.gained >= 5 then rising.gained end,
+      'is_following', exists (select 1 from public.follows_users, caller
+                              where follows_users.user_id = caller.id
+                                and follows_users.followed_user_id = rising.user_id))
+    order by rising.score desc, rising.gained desc, rising.handle), '[]'::jsonb)
+  from rising;
+$$;
+
+
+ALTER FUNCTION "public"."rising_writers"("page_size" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."rising_writers"("page_size" integer) IS 'New and rising writers: first chapter within rising_writer_days, best first, for this reader; never a user ID (S1-E5-11).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."romania_today"() RETURNS "date"
     LANGUAGE "sql" STABLE
     SET "search_path" TO ''
@@ -36332,6 +36970,22 @@ COMMENT ON FUNCTION "public"."set_story_tags"("target_story_id" "uuid", "owner_i
 
 
 
+CREATE OR REPLACE FUNCTION "public"."set_suggest_me"("should_suggest" boolean) RETURNS "void"
+    LANGUAGE "sql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  update public.profiles set suggest_me = coalesce(should_suggest, false), updated_at = now()
+  where profiles.id = public.require_live_profile();
+$$;
+
+
+ALTER FUNCTION "public"."set_suggest_me"("should_suggest" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_suggest_me"("should_suggest" boolean) IS 'The signed-in writer turns Suggest me on or off (S1-E5-11).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."set_updated_at"() RETURNS "trigger"
     LANGUAGE "plpgsql"
     SET "search_path" TO ''
@@ -36856,6 +37510,36 @@ ALTER FUNCTION "public"."signed_up_reader_count"("for_day" "date") OWNER TO "pos
 
 
 COMMENT ON FUNCTION "public"."signed_up_reader_count"("for_day" "date") IS 'Internal: confirmed, live, non-staff accounts by the end of a day (S1-E15-02).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."snapshot_story_ranks"() RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  today date := (now() at time zone 'Europe/Bucharest')::date;
+  stored integer;
+begin
+  -- Step 1: today's ranks; running twice in a day replaces the morning's values.
+  insert into public.story_rank_snapshots (story_id, snapshot_on, rank, score)
+  select story_scores.story_id, today,
+    rank() over (order by story_scores.score desc), story_scores.score
+  from public.story_scores
+  on conflict (story_id, snapshot_on) do update
+    set rank = excluded.rank, score = excluded.score, updated_at = now();
+  get diagnostics stored = row_count;
+  -- Step 2: keep 35 days, enough for the 7-day change with room to spare.
+  delete from public.story_rank_snapshots where snapshot_on < today - 35;
+  return stored;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."snapshot_story_ranks"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."snapshot_story_ranks"() IS 'Internal: stores today''s story ranks and keeps 35 days of them, for the Featured screen (S1-E5-10).';
 
 
 
@@ -38027,6 +38711,28 @@ ALTER FUNCTION "public"."sponsor_review_checks"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."sponsor_review_checks"() IS 'The four checks every sponsor creative needs before approval (S1-E12-02 criterion 2).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."spotlight_consent_by_token"("token" "text") RETURNS "public"."parental_consents"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  -- Either link works: the "may we suggest your child?" email's, or the consent email's own link,
+  -- so a parent who ticked the box on the consent page can take that yes back on its own
+  -- (GDPR art. 7(3): as easy to withdraw as to give).
+  select parental_consents.* from public.parental_consents
+  where encode(extensions.digest(coalesce(token, ''), 'sha256'), 'hex')
+          in (parental_consents.spotlight_token_hash, parental_consents.token_hash)
+    and parental_consents.status = 'agreed'
+  limit 1;
+$$;
+
+
+ALTER FUNCTION "public"."spotlight_consent_by_token"("token" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."spotlight_consent_by_token"("token" "text") IS 'Internal: the agreed parental consent a spotlight link belongs to (S1-E2-03b).';
 
 
 
@@ -40241,6 +40947,22 @@ ALTER FUNCTION "public"."submit_teacher_proof"("proof_path" "text") OWNER TO "po
 
 
 COMMENT ON FUNCTION "public"."submit_teacher_proof"("proof_path" "text") IS 'Puts an uploaded proof that someone teaches in the staff queue (S1-E2-11).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."suggests_me"("person_id" "uuid") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(profiles.suggest_me, public.age_band_of(profiles.id) = '18_plus')
+  from public.profiles where profiles.id = person_id;
+$$;
+
+
+ALTER FUNCTION "public"."suggests_me"("person_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."suggests_me"("person_id" "uuid") IS 'Internal: the writer''s Suggest me switch, defaulting to on for 18+ and off for under-18s (S1-E5-11).';
 
 
 
@@ -43376,6 +44098,30 @@ Feature switches (architecture 1.11). Changed by migration until S1-E11-03.';
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."featured_picks" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "story_id" "uuid" NOT NULL,
+    "position" integer NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "removed_at" timestamp with time zone,
+    CONSTRAINT "featured_picks_position_range" CHECK ((("position" >= 1) AND ("position" <= 20)))
+);
+
+
+ALTER TABLE "public"."featured_picks" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."featured_picks" IS 'kind: staff
+The stories staff put in Featured this week, in order. A save replaces the list: old rows get removed_at, new rows are added (S1-E5-10; Robert, 6 Nov 2026).';
+
+
+
+COMMENT ON COLUMN "public"."featured_picks"."user_id" IS 'The staff member who picked the story.';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."finished_thanks" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "user_id" "uuid" NOT NULL,
@@ -44794,6 +45540,25 @@ COMMENT ON COLUMN "public"."story_plans"."public_areas" IS 'The plan''s areas re
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."story_rank_snapshots" (
+    "story_id" "uuid" NOT NULL,
+    "snapshot_on" "date" NOT NULL,
+    "rank" integer NOT NULL,
+    "score" double precision NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "story_rank_snapshots_rank_positive" CHECK (("rank" >= 1))
+);
+
+
+ALTER TABLE "public"."story_rank_snapshots" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."story_rank_snapshots" IS 'kind: platform
+Each story''s rank and score once a day, kept 35 days, so Stories › Featured can show how far a story moved in 7 days (S1-E5-10). No personal data beyond story_scores.';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."story_restrictions" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "user_id" "uuid" NOT NULL,
@@ -45519,6 +46284,11 @@ ALTER TABLE ONLY "public"."feature_flags"
 
 
 
+ALTER TABLE ONLY "public"."featured_picks"
+    ADD CONSTRAINT "featured_picks_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."finished_thanks"
     ADD CONSTRAINT "finished_thanks_once_a_story" UNIQUE ("user_id", "story_id");
 
@@ -46189,6 +46959,11 @@ ALTER TABLE ONLY "public"."story_plans"
 
 
 
+ALTER TABLE ONLY "public"."story_rank_snapshots"
+    ADD CONSTRAINT "story_rank_snapshots_pkey" PRIMARY KEY ("story_id", "snapshot_on");
+
+
+
 ALTER TABLE ONLY "public"."story_restrictions"
     ADD CONSTRAINT "story_restrictions_pkey" PRIMARY KEY ("id");
 
@@ -46684,6 +47459,18 @@ CREATE INDEX "exports_user_id" ON "public"."exports" USING "btree" ("user_id", "
 
 
 
+CREATE UNIQUE INDEX "featured_picks_current_position_idx" ON "public"."featured_picks" USING "btree" ("position") WHERE ("removed_at" IS NULL);
+
+
+
+CREATE UNIQUE INDEX "featured_picks_current_story_idx" ON "public"."featured_picks" USING "btree" ("story_id") WHERE ("removed_at" IS NULL);
+
+
+
+CREATE INDEX "featured_picks_user_idx" ON "public"."featured_picks" USING "btree" ("user_id");
+
+
+
 CREATE INDEX "finished_thanks_story_id_fk_idx" ON "public"."finished_thanks" USING "btree" ("story_id");
 
 
@@ -46925,6 +47712,10 @@ CREATE INDEX "on_call_alerts_created_at_idx" ON "public"."on_call_alerts" USING 
 
 
 CREATE UNIQUE INDEX "parental_consents_one_live" ON "public"."parental_consents" USING "btree" ("user_id") WHERE ("status" = ANY (ARRAY['waiting'::"text", 'agreed'::"text"]));
+
+
+
+CREATE UNIQUE INDEX "parental_consents_spotlight_token_idx" ON "public"."parental_consents" USING "btree" ("spotlight_token_hash") WHERE ("spotlight_token_hash" IS NOT NULL);
 
 
 
@@ -47293,6 +48084,10 @@ CREATE INDEX "story_plan_acts_user_id_fk_idx" ON "public"."story_plan_acts" USIN
 
 
 CREATE INDEX "story_plans_user_id_fk_idx" ON "public"."story_plans" USING "btree" ("user_id");
+
+
+
+CREATE INDEX "story_rank_snapshots_day_idx" ON "public"."story_rank_snapshots" USING "btree" ("snapshot_on");
 
 
 
@@ -48950,6 +49745,16 @@ ALTER TABLE ONLY "public"."exports"
 
 
 
+ALTER TABLE ONLY "public"."featured_picks"
+    ADD CONSTRAINT "featured_picks_story_id_fkey" FOREIGN KEY ("story_id") REFERENCES "public"."stories"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."featured_picks"
+    ADD CONSTRAINT "featured_picks_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
 ALTER TABLE ONLY "public"."finished_thanks"
     ADD CONSTRAINT "finished_thanks_story_id_fkey" FOREIGN KEY ("story_id") REFERENCES "public"."stories"("id") ON DELETE CASCADE;
 
@@ -49860,6 +50665,11 @@ ALTER TABLE ONLY "public"."story_plans"
 
 
 
+ALTER TABLE ONLY "public"."story_rank_snapshots"
+    ADD CONSTRAINT "story_rank_snapshots_story_id_fkey" FOREIGN KEY ("story_id") REFERENCES "public"."stories"("id") ON DELETE CASCADE;
+
+
+
 ALTER TABLE ONLY "public"."story_restrictions"
     ADD CONSTRAINT "story_restrictions_lifted_by_user_id_fkey" FOREIGN KEY ("lifted_by_user_id") REFERENCES "public"."profiles"("id");
 
@@ -50612,6 +51422,17 @@ CREATE POLICY "feature_flags_select_public" ON "public"."feature_flags" FOR SELE
 
 
 COMMENT ON POLICY "feature_flags_select_public" ON "public"."feature_flags" IS 'Allows anyone, signed out included, to read flags marked public; the app needs them before sign-in.';
+
+
+
+ALTER TABLE "public"."featured_picks" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "featured_picks_select_featured_staff" ON "public"."featured_picks" FOR SELECT TO "authenticated" USING (( SELECT "public"."staff_may"('featured'::"text", 'view'::"text") AS "staff_may"));
+
+
+
+COMMENT ON POLICY "featured_picks_select_featured_staff" ON "public"."featured_picks" IS 'Allows staff with the Featured area (owner, admin) to read the picks (S1-E5-10).';
 
 
 
@@ -51575,6 +52396,17 @@ COMMENT ON POLICY "story_plans_select_own" ON "public"."story_plans" IS 'Allows 
 
 
 
+ALTER TABLE "public"."story_rank_snapshots" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "story_rank_snapshots_select_featured_staff" ON "public"."story_rank_snapshots" FOR SELECT TO "authenticated" USING (( SELECT "public"."staff_may"('featured'::"text", 'view'::"text") AS "staff_may"));
+
+
+
+COMMENT ON POLICY "story_rank_snapshots_select_featured_staff" ON "public"."story_rank_snapshots" IS 'Allows staff with the Featured area (owner, admin) to read the daily ranks (S1-E5-10).';
+
+
+
 ALTER TABLE "public"."story_restrictions" ENABLE ROW LEVEL SECURITY;
 
 
@@ -52310,6 +53142,11 @@ GRANT ALL ON FUNCTION "public"."admin_extend_data_request"("target_request_id" "
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_featured_candidates"("view" "text", "category_slug" "text", "rating" "public"."story_rating", "page_size" integer, "page_offset" integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_featured_candidates"("view" "text", "category_slug" "text", "rating" "public"."story_rating", "page_size" integer, "page_offset" integer) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_find_accounts"("search_text" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_find_accounts"("search_text" "text") TO "authenticated";
 
@@ -52876,6 +53713,11 @@ GRANT ALL ON FUNCTION "public"."admin_set_evidence_hold"("evidence_id" "uuid", "
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_set_featured_picks"("story_ids" "uuid"[], "reason" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_set_featured_picks"("story_ids" "uuid"[], "reason" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_set_flag"("flag_key" "text", "turn_on" boolean) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_set_flag"("flag_key" "text", "turn_on" boolean) TO "authenticated";
 
@@ -53103,6 +53945,11 @@ GRANT ALL ON FUNCTION "public"."admin_withdraw_parental_consent"("target_user_id
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_withdraw_spotlight_consent"("target_user_id" "uuid", "reason_given" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_withdraw_spotlight_consent"("target_user_id" "uuid", "reason_given" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."ads_are_barred"("context" "jsonb") FROM PUBLIC;
 
 
@@ -53177,9 +54024,9 @@ GRANT ALL ON FUNCTION "public"."answer_message_request"("sender_handle" "text", 
 
 
 
-REVOKE ALL ON FUNCTION "public"."answer_parental_consent"("token" "text", "decision" "text", "page_language" "text", "signature" "text") FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."answer_parental_consent"("token" "text", "decision" "text", "page_language" "text", "signature" "text") TO "anon";
-GRANT ALL ON FUNCTION "public"."answer_parental_consent"("token" "text", "decision" "text", "page_language" "text", "signature" "text") TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."answer_parental_consent"("token" "text", "decision" "text", "page_language" "text", "signature" "text", "allow_spotlight" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."answer_parental_consent"("token" "text", "decision" "text", "page_language" "text", "signature" "text", "allow_spotlight" boolean) TO "anon";
+GRANT ALL ON FUNCTION "public"."answer_parental_consent"("token" "text", "decision" "text", "page_language" "text", "signature" "text", "allow_spotlight" boolean) TO "authenticated";
 
 
 
@@ -53190,6 +54037,12 @@ GRANT ALL ON FUNCTION "public"."answer_report_detail_request"("target_request_id
 
 REVOKE ALL ON FUNCTION "public"."answer_space_handover"("slug" "text", "accept" boolean) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."answer_space_handover"("slug" "text", "accept" boolean) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."answer_spotlight_consent"("token" "text", "decision" "text", "signature" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."answer_spotlight_consent"("token" "text", "decision" "text", "signature" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."answer_spotlight_consent"("token" "text", "decision" "text", "signature" "text") TO "authenticated";
 
 
 
@@ -53276,6 +54129,11 @@ GRANT ALL ON FUNCTION "public"."begin_age_check"("yoti_session_id" "text", "thre
 
 REVOKE ALL ON FUNCTION "public"."begin_parental_consent"("parent_email" "text", "language" "text", "token_hash" "text", "signature" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."begin_parental_consent"("parent_email" "text", "language" "text", "token_hash" "text", "signature" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."begin_spotlight_request"("token_hash" "text", "signature" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."begin_spotlight_request"("token_hash" "text", "signature" "text") TO "authenticated";
 
 
 
@@ -54286,6 +55144,20 @@ GRANT ALL ON FUNCTION "public"."export_upload_allowed"("object_name" "text") TO 
 
 
 
+REVOKE ALL ON FUNCTION "public"."featured_candidate_rows"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."featured_ineligible_reason"("target_story_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."featured_stories_now"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."featured_stories_now"() TO "anon";
+GRANT ALL ON FUNCTION "public"."featured_stories_now"() TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."fill_ad_slot"("wanted_slot_key" "text", "slot_format" "public"."ad_format", "wanted_page_key" "text", "context" "jsonb", "used_keys" "text"[]) FROM PUBLIC;
 
 
@@ -54535,6 +55407,10 @@ REVOKE ALL ON FUNCTION "public"."has_parental_consent"("target_user_id" "uuid") 
 
 
 
+REVOKE ALL ON FUNCTION "public"."has_spotlight_consent"("person_id" "uuid") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."has_unsafe_link"("body" "text") FROM PUBLIC;
 
 
@@ -54590,6 +55466,10 @@ REVOKE ALL ON FUNCTION "public"."invite_new_adults_to_age_check"() FROM PUBLIC;
 
 REVOKE ALL ON FUNCTION "public"."is_blocked_with"("other_user_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."is_blocked_with"("other_user_id" "uuid") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."is_classics_account"("person_id" "uuid") FROM PUBLIC;
 
 
 
@@ -54945,6 +55825,10 @@ REVOKE ALL ON FUNCTION "public"."may_change_own_avatar"() FROM PUBLIC;
 
 
 
+REVOKE ALL ON FUNCTION "public"."may_feature_writer"("person_id" "uuid") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."may_keep_writing"("writer_id" "uuid", "other_id" "uuid") FROM PUBLIC;
 
 
@@ -54961,6 +55845,10 @@ GRANT ALL ON FUNCTION "public"."may_see_case"("case_is_safeguarding" boolean) TO
 
 REVOKE ALL ON FUNCTION "public"."may_see_march_numbers"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."may_see_march_numbers"() TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."may_spotlight_writer"("person_id" "uuid") FROM PUBLIC;
 
 
 
@@ -55533,6 +56421,12 @@ REVOKE ALL ON FUNCTION "public"."parental_consent_is_signed"("payload" "text", "
 REVOKE ALL ON FUNCTION "public"."parental_consent_request"("token" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."parental_consent_request"("token" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."parental_consent_request"("token" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."parental_spotlight_request"("token" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."parental_spotlight_request"("token" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."parental_spotlight_request"("token" "text") TO "authenticated";
 
 
 
@@ -56306,6 +57200,12 @@ REVOKE ALL ON FUNCTION "public"."reusable_stories_export"("owner_id" "uuid", "wa
 
 
 
+REVOKE ALL ON FUNCTION "public"."rising_writers"("page_size" integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."rising_writers"("page_size" integer) TO "anon";
+GRANT ALL ON FUNCTION "public"."rising_writers"("page_size" integer) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."run_daily_metrics"() FROM PUBLIC;
 
 
@@ -56642,6 +57542,11 @@ REVOKE ALL ON FUNCTION "public"."set_story_tags"("target_story_id" "uuid", "owne
 
 
 
+REVOKE ALL ON FUNCTION "public"."set_suggest_me"("should_suggest" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_suggest_me"("should_suggest" boolean) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."set_updated_at"() FROM PUBLIC;
 
 
@@ -56728,6 +57633,10 @@ GRANT ALL ON FUNCTION "public"."signature_picture_file_may_go"("object_name" "te
 
 
 REVOKE ALL ON FUNCTION "public"."signed_up_reader_count"("for_day" "date") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."snapshot_story_ranks"() FROM PUBLIC;
 
 
 
@@ -56919,6 +57828,10 @@ GRANT ALL ON FUNCTION "public"."sponsor_credit"("credit_kind" "text", "credit_ke
 
 
 GRANT ALL ON FUNCTION "public"."sponsor_review_checks"() TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."spotlight_consent_by_token"("token" "text") FROM PUBLIC;
 
 
 
@@ -57233,6 +58146,10 @@ GRANT ALL ON FUNCTION "public"."submit_public_notice"("payload" "text", "signatu
 
 REVOKE ALL ON FUNCTION "public"."submit_teacher_proof"("proof_path" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."submit_teacher_proof"("proof_path" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."suggests_me"("person_id" "uuid") FROM PUBLIC;
 
 
 
@@ -57733,6 +58650,11 @@ GRANT SELECT ON TABLE "public"."feature_flags" TO "authenticated";
 
 
 
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."featured_picks" TO "service_role";
+GRANT SELECT ON TABLE "public"."featured_picks" TO "authenticated";
+
+
+
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."finished_thanks" TO "service_role";
 GRANT SELECT ON TABLE "public"."finished_thanks" TO "authenticated";
 
@@ -58053,6 +58975,11 @@ GRANT SELECT ON TABLE "public"."story_plan_acts" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."story_plans" TO "service_role";
 GRANT SELECT ON TABLE "public"."story_plans" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."story_rank_snapshots" TO "service_role";
+GRANT SELECT ON TABLE "public"."story_rank_snapshots" TO "authenticated";
 
 
 

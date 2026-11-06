@@ -7,7 +7,7 @@
  * Decorative: the name is always written beside it, so it is hidden from screen readers.
  * The large picture on a profile page is ProfileAvatar, in the same style.
  * Who shows it: forum posts, comments, chats, the Library's followed writers and the writer
- * dashboard's latest comments. What it calls: AvatarImage.
+ * dashboard's latest comments and the Writers to follow cards. What it calls: AvatarImage.
  */
 import { initialsOf } from '@/features/people/lib/formatting';
 import { cn } from '@/lib/utils';
@@ -19,6 +19,7 @@ const sizeClasses = {
   small: 'size-[34px] text-sm',
   medium: 'size-10 text-base',
   large: 'size-11 text-base',
+  xlarge: 'size-12 text-lg',
 } as const;
 
 /** What the avatar needs. */
@@ -27,7 +28,10 @@ export interface PersonAvatarProps {
   name: string;
   /** The username, for the drawn avatar; null for a deleted account. */
   handle: string | null;
-  /** small 34 px (replies), medium 40 px (posts, comments, rows), large 44 px (chats, top bar). */
+  /**
+   * small 34 px (replies), medium 40 px (posts, comments, rows), large 44 px (chats, top bar),
+   * xlarge 48 px (Writers to follow cards, LOOK-4c).
+   */
   size?: keyof typeof sizeClasses;
 }
 

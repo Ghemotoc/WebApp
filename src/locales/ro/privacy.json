@@ -73,5 +73,25 @@
     "messages": "Mesajele private: până când ambele persoane șterg conversația.",
     "fullList": "Lista completă e în nota de confidențialitate",
     "loadFailed": "Nu am putut încărca lista. Încearcă din nou peste un minut."
+  },
+  "suggest": {
+    "label": "Recomandă-mă pe mine și poveștile mele altor oameni",
+    "hint": "Așa te pot găsi cititorii în Scriitori de urmărit și Scriitori noi în ascensiune. Dacă o oprești, ieși imediat din aceste liste. E pornită pentru adulți și oprită pentru cei sub 18 ani.",
+    "askParent": "Ai sub 16 ani, așa că te recomandăm doar dacă spune da și părintele sau tutorele tău. Îi trimitem o singură întrebare pe email.",
+    "askButton": "Întreabă-mi părintele",
+    "waiting": "Așteptăm răspunsul părintelui tău. Nu te recomandăm până nu spune da.",
+    "askAgain": "Trimite emailul din nou",
+    "sent": "Trimis. I-am scris părintelui sau tutorelui tău.",
+    "parentAgreed": "Părintele sau tutorele tău a fost de acord, așa că cititorii te pot vedea printre recomandările noastre.",
+    "failures": {
+      "signed_out": "Conectează-te din nou, apoi mai încearcă.",
+      "not_needed": "Acum nu e nimic de întrebat.",
+      "too_soon": "I-am scris acum mai puțin de o oră. Mai încearcă mai târziu.",
+      "unavailable": "N-am putut trimite emailul. Mai încearcă puțin mai târziu.",
+      "invalid": "Ceva n-a mers. Mai încearcă puțin mai târziu.",
+      "own_email": "Ceva n-a mers. Mai încearcă puțin mai târziu.",
+      "gone": "Ceva n-a mers. Mai încearcă puțin mai târziu.",
+      "already_answered": "Părintele sau tutorele tău a răspuns deja."
+    }
   }
 }

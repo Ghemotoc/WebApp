@@ -48,7 +48,9 @@ export type NotificationKind =
   | 'landing_entries_open'
   | 'rank_reached'
   | 'space_handover_offered'
-  | 'story_featured';
+  | 'story_featured'
+  | 'spotlight_consent_agreed'
+  | 'spotlight_consent_withdrawn';
 
 /** The board's filter chips (All is every category). */
 export type NotificationCategory = 'replies' | 'follows' | 'stories' | 'staff';

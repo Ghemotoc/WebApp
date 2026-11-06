@@ -44,6 +44,7 @@ import { SearchForm } from '@/features/search/components/SearchForm';
 import { CategoryLinks } from './CategoryLinks';
 import { DiscoverShelf } from './DiscoverShelf';
 import { FeaturedBand } from './FeaturedBand';
+import { RisingWritersShelf } from './RisingWritersShelf';
 import { GreetingLine } from './GreetingLine';
 
 /**
@@ -125,7 +126,9 @@ function ShelfFromSetting({ word, isSignedIn }: { word: string; isSignedIn: bool
       />
     ));
   }
-  // Step 2: any other word is a list; an unknown word (a typo in the setting) shows nothing.
+  // Step 2: "writers" is Writers to follow this week (S1-E5-11), a shelf of people, not stories.
+  if (word === 'writers') return <RisingWritersShelf />;
+  // Step 3: any other word is a list; an unknown word (a typo in the setting) shows nothing.
   const kind = shelfKindFrom(word);
   if (kind === null) return null;
   // The follows shelf and "Picked for you" (S1-E2-06) belong to someone signed in.

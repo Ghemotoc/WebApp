@@ -252,6 +252,27 @@ function adultInviteText(t: TFunction): NotificationText {
 }
 
 /**
+ * The parent's separate yes to suggestions was given or withdrawn (S1-E2-03b, LOOK-4c). Staff can
+ * also withdraw it, so the row says what changed, not who did it. Both lead to Settings › Privacy,
+ * where the Suggest me switch shows where it stands.
+ *
+ * @param t - the notifications translation function
+ * @param notification - the row; its kind says which
+ * @returns the row's words
+ */
+function spotlightConsentText(t: TFunction, notification: AppNotification): NotificationText {
+  const isAgreed = notification.kind === 'spotlight_consent_agreed';
+  return {
+    who: t('who.yourAccount'),
+    what: isAgreed ? t('what.spotlightAgreed') : t('what.spotlightWithdrawn'),
+    quote: null,
+    grouped: null,
+    actionLabel: t('actions.seePrivacy'),
+    href: '/settings#privacy',
+  };
+}
+
+/**
  * A parent or guardian agreed or withdrew their consent (S1-E2-03, criteria 2 and 5). Both lead
  * to the writer's consent page, which says what the account can do now.
  *
@@ -574,6 +595,8 @@ const teamTextFor: Partial<
   rank_reached: rankReachedText,
   space_handover_offered: spaceHandoverOfferedText,
   story_featured: storyFeaturedText,
+  spotlight_consent_agreed: spotlightConsentText,
+  spotlight_consent_withdrawn: spotlightConsentText,
 };
 
 /**
