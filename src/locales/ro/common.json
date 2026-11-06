@@ -154,6 +154,7 @@
   },
   "website": {
     "whyEyebrow": "De ce să scrii aici",
+    "coverWall": "Coperte de povești de pe {{productName}}: {{titles}}",
     "trending": "Populare săptămâna asta",
     "trendingEyebrow": "Populare",
     "completed": "Povești terminate",

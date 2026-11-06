@@ -2381,6 +2381,40 @@ COMMENT ON FUNCTION "public"."admin_abuse_image_evidence"("target_case_id" "uuid
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_account_notes"("target_user_id" "uuid", "page_number" integer DEFAULT 1, "page_size" integer DEFAULT 20) RETURNS TABLE("id" "uuid", "body" "text", "author_handle" "text", "author_user_id_short" "text", "created_at" timestamp with time zone, "total_count" bigint)
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  -- Step 1: keep the page size and number sensible whatever the screen sends.
+  rows_per_page integer := least(greatest(coalesce(page_size, 20), 1), 50);
+  rows_to_skip integer := (greatest(coalesce(page_number, 1), 1) - 1) * rows_per_page;
+begin
+  -- Step 2: only staff who may open accounts, in a staff session.
+  if not public.staff_may('users', 'view') then
+    raise exception 'Only staff with the Users area can read notes on an account.'
+      using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 3: the page, with the count of every note on the account beside each row.
+  return query
+    select notes.id, notes.body, authors.handle, left(notes.author_user_id::text, 8),
+           notes.created_at, count(*) over ()
+    from public.account_staff_notes as notes
+    left join public.profiles as authors on authors.id = notes.author_user_id
+    where notes.user_id = target_user_id
+    order by notes.created_at desc, notes.id
+    limit rows_per_page offset rows_to_skip;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_account_notes"("target_user_id" "uuid", "page_number" integer, "page_size" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_account_notes"("target_user_id" "uuid", "page_number" integer, "page_size" integer) IS 'One page of the staff notes on an account, newest first, for staff with the Users area (LOGS-1a).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admin_account_open_cases"("target_user_id" "uuid") RETURNS TABLE("case_id" "uuid", "reference" "text", "item_type" "public"."reportable_type", "top_reason" "public"."report_reason", "tier" "public"."case_tier", "deadline_at" timestamp with time zone)
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -2507,6 +2541,44 @@ ALTER FUNCTION "public"."admin_ad_placements"("week_count" integer) OWNER TO "po
 
 
 COMMENT ON FUNCTION "public"."admin_ad_placements"("week_count" integer) IS 'Every ad slot against the next weeks (Booked, House ad, Ad network or Free) and the bookings; owner and admin only (S1-E12-05).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_add_account_note"("target_user_id" "uuid", "body" "text") RETURNS "uuid"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  clean_body text;
+  new_note_id uuid;
+begin
+  -- Step 1: only staff who may open accounts, in a staff session.
+  if not public.staff_may('users', 'view') then
+    raise exception 'Only staff with the Users area can leave notes on an account.'
+      using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 2: the account must exist.
+  if not exists (select 1 from public.profiles where profiles.id = target_user_id) then
+    raise exception 'There is no such account.' using errcode = 'no_data_found';
+  end if;
+  -- Step 3: trim the note and refuse an empty or too long one, with a plain message.
+  clean_body := public.clean_mail_text(body, 2000);
+  -- Step 4: store it, with the signed-in staff member as its author.
+  insert into public.account_staff_notes (user_id, author_user_id, body)
+  values (target_user_id, (select auth.uid()), clean_body)
+  returning id into new_note_id;
+  -- Step 5: the audit row, in the same transaction, without the words.
+  perform public.log_staff_action('account.note_added', 'account_staff_notes',
+    new_note_id::text, target_user_id, null, null, null);
+  return new_note_id;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_add_account_note"("target_user_id" "uuid", "body" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_add_account_note"("target_user_id" "uuid", "body" "text") IS 'Staff with the Users area leave a note on an account; logged without the words (LOGS-1a).';
 
 
 
@@ -15742,6 +15814,7 @@ CREATE OR REPLACE FUNCTION "public"."cms_home_page_problems"("page" "jsonb") RET
 declare
   problems text[] := array[]::text[];
   headline text := coalesce(page ->> 'headlineFirst', '') || ' ' || coalesce(page ->> 'headlineSecond', '');
+  rights_card jsonb := coalesce(page -> 'rightsCard', '{}'::jsonb);
   position integer;
 begin
   -- Step 1: the hero (limits proposed in S1-E11-06: 50, 40 across both lines, 170, 20, 30).
@@ -15759,14 +15832,23 @@ begin
   for position in 0..2 loop
     problems := problems || public.cms_text_problem(page -> 'points' ->> position, 'points.' || position, 30);
   end loop;
-  -- Step 3: why write here, four cards.
+  -- Step 3: the "Your rights" card (LOOK-2). Optional: all three empty means no card; once one
+  -- field has words, all three are needed, so the card never shows half written.
+  if btrim(coalesce(rights_card ->> 'eyebrow', '') || coalesce(rights_card ->> 'title', '')
+       || coalesce(rights_card ->> 'body', '')) <> '' then
+    problems := problems
+      || public.cms_text_problem(rights_card ->> 'eyebrow', 'rightsCard.eyebrow', 30)
+      || public.cms_text_problem(rights_card ->> 'title', 'rightsCard.title', 60)
+      || public.cms_text_problem(rights_card ->> 'body', 'rightsCard.body', 60);
+  end if;
+  -- Step 4: why write here, four cards.
   problems := problems || public.cms_text_problem(page ->> 'whyHeading', 'whyHeading', 60);
   for position in 0..3 loop
     problems := problems
       || public.cms_text_problem(page -> 'whyCards' -> position ->> 'title', 'whyCards.' || position || '.title', 60)
       || public.cms_text_problem(page -> 'whyCards' -> position ->> 'body', 'whyCards.' || position || '.body', 260);
   end loop;
-  -- Step 4: the safety block and the questions heading.
+  -- Step 5: the safety block and the questions heading.
   problems := problems || public.cms_text_problem(page ->> 'safetyHeading', 'safetyHeading', 60);
   for position in 0..1 loop
     problems := problems || public.cms_text_problem(page -> 'safetyLines' ->> position, 'safetyLines.' || position, 200);
@@ -15780,7 +15862,7 @@ $$;
 ALTER FUNCTION "public"."cms_home_page_problems"("page" "jsonb") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."cms_home_page_problems"("page" "jsonb") IS 'Internal: the home page''s field checks (S1-E11-06).';
+COMMENT ON FUNCTION "public"."cms_home_page_problems"("page" "jsonb") IS 'Internal: the home page''s field checks (S1-E11-06), with the optional "Your rights" card (LOOK-2).';
 
 
 
@@ -17291,6 +17373,7 @@ CREATE OR REPLACE FUNCTION "public"."data_export_held_tables"() RETURNS TABLE("t
     AS $$
   values
     ('abuse_image_evidence', false, 'evidence kept for the police about a suspected child abuse image; handing it out could harm an investigation (GDPR art. 23; lawyer to check)'),
+    ('account_staff_notes', false, 'staff notes can name other people (a reporter, a linked account) or a safeguarding concern, so they are not in the automatic file; when the person asks for their data, staff copy the notes in by hand after taking out other people''s details (GDPR art. 15(4) and art. 23; lawyer to check)'),
     ('audit_log', false, 'the record of what staff did; the changes it records about the person are in the groups below'),
     ('brand_assets', false, 'user_id is the staff member who chose a logo, not data about their account'),
     ('case_account_links', false, 'a moderator''s note that two accounts may be one person, kept to spot banned accounts coming back; telling the person would defeat it (GDPR art. 23; lawyer to check)'),
@@ -17317,7 +17400,7 @@ $$;
 ALTER FUNCTION "public"."data_export_held_tables"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."data_export_held_tables"() IS 'Internal: every staff table with a user_id and whether Download my data''s "held_about_you" includes it, or why not (QA-7, GDPR art. 15).';
+COMMENT ON FUNCTION "public"."data_export_held_tables"() IS 'Internal: every staff table with a user_id and whether Download my data''s "held_about_you" includes it, or why not (QA-7, LOGS-1a; GDPR art. 15).';
 
 
 
@@ -29574,6 +29657,29 @@ ALTER FUNCTION "public"."purge_expired_exports"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."purge_expired_exports"() IS 'Job: deletes expired exports and exports left half-made for a day (S1-E13-04).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."purge_old_account_staff_notes"() RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  keep_years integer := coalesce((public.setting_value('audit_log_keep_years'))::integer, 3);
+  deleted_rows integer;
+begin
+  delete from public.account_staff_notes as notes
+  where notes.created_at < now() - make_interval(years => keep_years);
+  get diagnostics deleted_rows = row_count;
+  return deleted_rows;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."purge_old_account_staff_notes"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."purge_old_account_staff_notes"() IS 'Nightly: deletes staff notes older than audit_log_keep_years (3), as the audit log (LOGS-1a).';
 
 
 
@@ -42366,6 +42472,33 @@ COMMENT ON COLUMN "public"."account_deletions"."user_id" IS 'The account being d
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."account_staff_notes" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "author_user_id" "uuid" NOT NULL,
+    "body" "text" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "account_staff_notes_body_length" CHECK ((("char_length"("btrim"("body")) >= 1) AND ("char_length"("btrim"("body")) <= 2000)))
+);
+
+
+ALTER TABLE "public"."account_staff_notes" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."account_staff_notes" IS 'kind: staff
+Notes staff leave on an account for each other: plain text, never edited or deleted, kept 3 years like the audit log (LOGS-1a; Robert, 6 Nov 2026).';
+
+
+
+COMMENT ON COLUMN "public"."account_staff_notes"."user_id" IS 'The account the note is about.';
+
+
+
+COMMENT ON COLUMN "public"."account_staff_notes"."author_user_id" IS 'The staff member who wrote the note.';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."ad_blocked_categories" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "category_key" "text" NOT NULL,
@@ -44920,6 +45053,11 @@ ALTER TABLE ONLY "public"."account_deletions"
 
 
 
+ALTER TABLE ONLY "public"."account_staff_notes"
+    ADD CONSTRAINT "account_staff_notes_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."ad_blocked_categories"
     ADD CONSTRAINT "ad_blocked_categories_category_key_key" UNIQUE ("category_key");
 
@@ -46141,6 +46279,14 @@ CREATE UNIQUE INDEX "account_deletions_one_open" ON "public"."account_deletions"
 
 
 CREATE INDEX "account_deletions_user_id_fk_idx" ON "public"."account_deletions" USING "btree" ("user_id");
+
+
+
+CREATE INDEX "account_staff_notes_account_idx" ON "public"."account_staff_notes" USING "btree" ("user_id", "created_at" DESC);
+
+
+
+CREATE INDEX "account_staff_notes_created_at_idx" ON "public"."account_staff_notes" USING "btree" ("created_at");
 
 
 
@@ -48229,6 +48375,16 @@ ALTER TABLE ONLY "public"."account_deletions"
 
 
 
+ALTER TABLE ONLY "public"."account_staff_notes"
+    ADD CONSTRAINT "account_staff_notes_author_user_id_fkey" FOREIGN KEY ("author_user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."account_staff_notes"
+    ADD CONSTRAINT "account_staff_notes_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
 ALTER TABLE ONLY "public"."ad_blocked_categories"
     ADD CONSTRAINT "ad_blocked_categories_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE SET NULL;
 
@@ -49834,6 +49990,17 @@ CREATE POLICY "account_deletions_select_own" ON "public"."account_deletions" FOR
 
 
 COMMENT ON POLICY "account_deletions_select_own" ON "public"."account_deletions" IS 'Allows a signed-in person to read only their own deletion requests (S1-E13-03).';
+
+
+
+ALTER TABLE "public"."account_staff_notes" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "account_staff_notes_select_staff" ON "public"."account_staff_notes" FOR SELECT TO "authenticated" USING (( SELECT "public"."staff_may"('users'::"text", 'view'::"text") AS "staff_may"));
+
+
+
+COMMENT ON POLICY "account_staff_notes_select_staff" ON "public"."account_staff_notes" IS 'Allows staff with the Users area (owner, admin, moderator, support), in a staff session, to read the notes on any account (LOGS-1a).';
 
 
 
@@ -51703,6 +51870,11 @@ GRANT ALL ON FUNCTION "public"."admin_abuse_image_evidence"("target_case_id" "uu
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_account_notes"("target_user_id" "uuid", "page_number" integer, "page_size" integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_account_notes"("target_user_id" "uuid", "page_number" integer, "page_size" integer) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_account_open_cases"("target_user_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_account_open_cases"("target_user_id" "uuid") TO "authenticated";
 
@@ -51720,6 +51892,11 @@ GRANT ALL ON FUNCTION "public"."admin_acknowledge_on_call_alert"("alert_id" "uui
 
 REVOKE ALL ON FUNCTION "public"."admin_ad_placements"("week_count" integer) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_ad_placements"("week_count" integer) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_add_account_note"("target_user_id" "uuid", "body" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_add_account_note"("target_user_id" "uuid", "body" "text") TO "authenticated";
 
 
 
@@ -55534,6 +55711,10 @@ REVOKE ALL ON FUNCTION "public"."purge_expired_exports"() FROM PUBLIC;
 
 
 
+REVOKE ALL ON FUNCTION "public"."purge_old_account_staff_notes"() FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."purge_old_age_check_attempts"() FROM PUBLIC;
 
 
@@ -57290,6 +57471,11 @@ REVOKE ALL ON FUNCTION "public"."writers_published_by_market"("for_day" "date") 
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."account_deletions" TO "service_role";
 GRANT SELECT ON TABLE "public"."account_deletions" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."account_staff_notes" TO "service_role";
+GRANT SELECT ON TABLE "public"."account_staff_notes" TO "authenticated";
 
 
 

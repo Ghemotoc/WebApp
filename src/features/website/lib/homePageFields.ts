@@ -5,7 +5,11 @@
  * Who calls it: HomePageEditor. The paths are the database's field names, so a field the server
  * refuses is named the same way here.
  */
-import { homePageLimits, type HomePageContent } from '@/schemas/websiteContent';
+import {
+  homePageLimits,
+  type HomePageContent,
+  type HomeRightsCard,
+} from '@/schemas/websiteContent';
 
 /** One field: its path, its limit and whether it is a few lines long. */
 export interface HomePageField {
@@ -33,6 +37,10 @@ export const heroFields: HomePageField[] = [
   field('primaryButton', homePageLimits.button),
   field('secondaryButton', homePageLimits.button),
   ...[0, 1, 2].map((index) => field(`points.${String(index)}`, homePageLimits.point)),
+  // The gold "Your rights" card on the cover wall (LOOK-2). Leave all three empty to hide it.
+  field('rightsCard.eyebrow', homePageLimits.rightsEyebrow),
+  field('rightsCard.title', homePageLimits.rightsTitle),
+  field('rightsCard.body', homePageLimits.rightsLine),
 ];
 
 /** The fields below the hero: why write here, safety and the questions heading. */
@@ -49,6 +57,15 @@ export const sectionFields: HomePageField[] = [
 ];
 
 /**
+ * An empty "Your rights" card, so the editor's fields have somewhere to write.
+ *
+ * @returns the card with every field empty
+ */
+export function emptyRightsCard(): HomeRightsCard {
+  return { eyebrow: '', title: '', body: '' };
+}
+
+/**
  * An empty home page, for a market and language with no version yet.
  *
  * @returns the content with every field empty
@@ -63,6 +80,7 @@ export function emptyHomePage(): HomePageContent {
     primaryButton: '',
     secondaryButton: '',
     points: ['', '', ''],
+    rightsCard: emptyRightsCard(),
     whyHeading: '',
     whyCards: [0, 1, 2, 3].map(() => ({ title: '', body: '' })),
     safetyHeading: '',

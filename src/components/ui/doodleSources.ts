@@ -1,7 +1,7 @@
 /**
  * The doodle files the app has copied from design/assets/ so far (story S1-E3-01; the seasonal
  * ones, from bee to sunny face, came with S1-E11-11; the four rank stickers and the trophy with
- * S1-E8-09).
+ * S1-E8-09; the jar lantern and the three "Why write here" doodles with LOOK-2).
  *
  * Who uses it: Doodle (src/components/ui/Doodle.tsx). Add a line here, and the file to
  * src/assets/doodles/ with a readable name, when a screen needs another doodle. Kept apart from
@@ -13,6 +13,7 @@ import booksAndPlant from '@/assets/doodles/books-and-plant.svg';
 import butterfly from '@/assets/doodles/butterfly.svg';
 import candle from '@/assets/doodles/candle.svg';
 import cherryBlossom from '@/assets/doodles/cherry-blossom.svg';
+import cloudAndMoon from '@/assets/doodles/cloud-and-moon.svg';
 import croissant from '@/assets/doodles/croissant.svg';
 import daisy from '@/assets/doodles/daisy.svg';
 import deskLamp from '@/assets/doodles/desk-lamp.svg';
@@ -23,6 +24,7 @@ import hotAirBalloon from '@/assets/doodles/hot-air-balloon.svg';
 import hotChocolate from '@/assets/doodles/hot-chocolate.svg';
 import ideasNotepad from '@/assets/doodles/ideas-notepad.svg';
 import jackOLantern from '@/assets/doodles/jack-o-lantern.svg';
+import jarLantern from '@/assets/doodles/jar-lantern.svg';
 import kite from '@/assets/doodles/kite.svg';
 import mug from '@/assets/doodles/mug.svg';
 import mushroom from '@/assets/doodles/mushroom.svg';
@@ -40,10 +42,12 @@ import rankPencil from '@/assets/doodles/rank-pencil.svg';
 import rankQuillAndInk from '@/assets/doodles/rank-quill-and-ink.svg';
 import rainbow from '@/assets/doodles/rainbow.svg';
 import rocket from '@/assets/doodles/rocket.svg';
+import shieldWithHeart from '@/assets/doodles/shield-with-heart.svg';
 import sleepingCat from '@/assets/doodles/sleeping-cat.svg';
 import sunnyFace from '@/assets/doodles/sunny-face.svg';
 import toteBagOfBooks from '@/assets/doodles/tote-bag-of-books.svg';
 import trophy from '@/assets/doodles/trophy.svg';
+import twoChatBubbles from '@/assets/doodles/two-chat-bubbles.svg';
 import typewriter from '@/assets/doodles/typewriter.svg';
 
 /** Each doodle's name and the file it comes from. */
@@ -54,6 +58,7 @@ export const doodleSources = {
   butterfly,
   candle,
   'cherry-blossom': cherryBlossom,
+  'cloud-and-moon': cloudAndMoon,
   croissant,
   daisy,
   'desk-lamp': deskLamp,
@@ -64,6 +69,7 @@ export const doodleSources = {
   'hot-chocolate': hotChocolate,
   'ideas-notepad': ideasNotepad,
   'jack-o-lantern': jackOLantern,
+  'jar-lantern': jarLantern,
   kite,
   mug,
   mushroom,
@@ -81,10 +87,12 @@ export const doodleSources = {
   'rank-quill-and-ink': rankQuillAndInk,
   rainbow,
   rocket,
+  'shield-with-heart': shieldWithHeart,
   'sleeping-cat': sleepingCat,
   'sunny-face': sunnyFace,
   'tote-bag-of-books': toteBagOfBooks,
   trophy,
+  'two-chat-bubbles': twoChatBubbles,
   typewriter,
 } as const;
 

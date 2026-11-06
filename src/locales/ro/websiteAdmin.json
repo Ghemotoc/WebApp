@@ -106,9 +106,14 @@
         "title": "Cardul {{number}}: titlu",
         "body": "Cardul {{number}}: text"
       },
-      "safetyHeading": "Siguranță: titlu",
+      "safetyHeading": "Siguranță: linkul spre întrebări",
       "safetyLines": "Rândul de siguranță {{number}}",
-      "questionsHeading": "Întrebări: titlu"
+      "questionsHeading": "Întrebări: titlu",
+      "rightsCard": {
+        "eyebrow": "Cartonașul „Drepturile tale”: eticheta mică",
+        "title": "Cartonașul „Drepturile tale”: titlul (lasă cartonașul gol ca să nu apară)",
+        "body": "Cartonașul „Drepturile tale”: rândul de sub titlu"
+      }
     }
   },
   "notices": {

@@ -106,9 +106,14 @@
         "title": "Card {{number}}: title",
         "body": "Card {{number}}: text"
       },
-      "safetyHeading": "Safety: heading",
+      "safetyHeading": "Safety: link to the questions",
       "safetyLines": "Safety line {{number}}",
-      "questionsHeading": "Questions: heading"
+      "questionsHeading": "Questions: heading",
+      "rightsCard": {
+        "eyebrow": "“Your rights” card: small label",
+        "title": "“Your rights” card: title (leave the card empty to hide it)",
+        "body": "“Your rights” card: line"
+      }
     }
   },
   "notices": {
