@@ -33,7 +33,7 @@ The SQL Editor refuses the single file as too large, so the build also writes th
 
 ## Removing the demo stories (6 Nov 2026)
 
-`remove-demo-stories.sql` is a clean-up, not a top-up (Robert, 6 Nov 2026: keep only the classics, and keep `adult_writer`, "Lia Scrie", as the account for demos). It deletes the 36 demo stories and the three seed stories by their fixed ids, the way an account deletion deletes stories (anything a moderation case holds is hidden instead), and deletes the five synthetic demo writers through `delete_account_data()`, so their user IDs are never reused. It keeps the 20 classics, the classics account, every seed persona and any story written by hand on staging. Run `classic-authors.sql` first. Safe to run twice; refuses production. To undo it, run part 2a and `S1-E3-01.sql` again. After it, don't run part 2b (it refuses without 2a's stories) or part 2a (it would bring the demo stories back).
+`remove-demo-stories.sql` is a clean-up, not a top-up (Robert, 6 Nov 2026: keep only the classics, and keep `adult_writer`, "Lia Scrie", as the account for demos, with her seven stories). It deletes every other demo and seed story by its fixed id, the way an account deletion deletes stories (anything a moderation case holds is hidden instead), and deletes the five synthetic demo writers through `delete_account_data()`, so their user IDs are never reused. It keeps the 20 classics, the classics account, every seed persona and any story written by hand on staging. Run `classic-authors.sql` first. Safe to run twice; refuses production. To undo it, run part 2a and `S1-E3-01.sql` again. After it, don't run part 2b (it refuses without 2a's stories) or part 2a (it would bring the demo stories back).
 
 ## Demo content part 2b (TOOL-3, 25 Oct 2026)
 

@@ -4,8 +4,8 @@
 --
 -- What it does, on a staging database that ran demo content part 2a (and maybe 2b):
 --   1. refuses production (the 16 seed personas exist only on local and staging databases);
---   2. deletes the 36 demo stories (the 9100 id block, from demo-content-2a.sql) and the three seed
---      stories (the 9000 id block, from S1-E3-01.sql), with their chapters, comments, likes,
+--   2. deletes the demo stories (the 9100 id block, from demo-content-2a.sql) and the seed
+--      stories (the 9000 id block, from S1-E3-01.sql), except Lia's, with their chapters, comments, likes,
 --      reactions, follows and read totals, the same way an account deletion deletes stories
 --      (delete_account_stories(), S1-E13-03): anything a moderation case holds is hidden, not
 --      deleted;
@@ -13,12 +13,13 @@
 --      radu_din_deal, sofia_cerneala) through delete_account_data(), the nightly purge's own
 --      function, so their user IDs are kept and never reused.
 -- What it keeps: the 20 classics and the classics account; the seed personas, including
--- adult_writer ("Lia Scrie"), the account kept for demos; any story anyone wrote by hand on
+-- adult_writer ("Lia Scrie"), the account kept for demos, with her seven stories (five demo, two
+-- seed; Robert, 17:21 UTC: "I'd like a few stories from Lia"); any story anyone wrote by hand on
 -- staging (only the fixed demo and seed ids are touched).
 -- Run classic-authors.sql first, so the classics' bylines show their real authors.
 -- Rules (supabase/staging-topups/README.md): safe to run twice (a second run finds nothing to
 -- delete); never production (step 1). Undo: run demo-content-2a.sql and S1-E3-01.sql again.
--- How to check it worked: the last query shows demo_stories 0, seed_stories 0, demo_writers 0,
+-- How to check it worked: the last query shows other_demo_stories 0, lia_stories 7, demo_writers 0,
 -- classics 20.
 begin;
 
@@ -31,12 +32,15 @@ begin
 end;
 $$;
 
--- The stories to remove: the demo block and the seed block, never the classics (9300 block).
+-- The stories to remove: the demo block and the seed block, never the classics (9300 block) and
+-- never Lia's.
 create temporary table stories_to_remove on commit drop as
 select stories.id
 from public.stories
-where stories.id::text like '00000000-0000-4000-9100-%'
-   or stories.id::text like '00000000-0000-4000-9000-%';
+where (stories.id::text like '00000000-0000-4000-9100-%'
+       or stories.id::text like '00000000-0000-4000-9000-%')
+  -- Lia (adult_writer) keeps her stories for demos (Robert, 6 Nov 2026, 17:21 UTC).
+  and stories.user_id <> '00000000-0000-4000-8000-000000000001'::uuid;
 
 -- 2a. Every chapter of those stories that no moderation case holds (revisions, embeds, comments,
 --     likes and reactions go with it).
@@ -81,10 +85,11 @@ commit;
 
 -- 4. The check: what is left (the SQL Editor shows the last result).
 select json_build_object(
-  'demo_stories', (select count(*) from public.stories
-                   where id::text like '00000000-0000-4000-9100-%' and deleted_at is null),
-  'seed_stories', (select count(*) from public.stories
-                   where id::text like '00000000-0000-4000-9000-%' and deleted_at is null),
+  'other_demo_stories', (select count(*) from public.stories
+                   where (id::text like '00000000-0000-4000-9100-%' or id::text like '00000000-0000-4000-9000-%')
+                     and user_id <> '00000000-0000-4000-8000-000000000001'::uuid and deleted_at is null),
+  'lia_stories', (select count(*) from public.stories
+                  where user_id = '00000000-0000-4000-8000-000000000001'::uuid and deleted_at is null),
   'demo_writers', (select count(*) from public.profiles
                    where id::text like '00000000-0000-4000-8000-0000000001__'
                      and id <> '00000000-0000-4000-8000-000000000100'::uuid
