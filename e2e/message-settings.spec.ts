@@ -42,7 +42,7 @@ async function openAs(browser: Browser, persona: SignInPersonaName, address: str
   return page;
 }
 
-/** Puts the settings, the seeded chat and the locales back as the seed has them. */
+/** Puts the settings, the seeded chat, teen_17's follow and the locales back as the seed has them. */
 function resetMessages() {
   runSql(`
     update public.profiles set messages_from = null, adults_may_message = false
@@ -50,6 +50,13 @@ function resetMessages() {
     delete from public.conversations where id <> '${seededChatId}';
     update public.conversation_members set deleted_at = null where conversation_id = '${seededChatId}';
     delete from public.rate_limit_events where action in ('message', 'new_conversation');
+    -- The seed's follow (teen_17 follows adult_writer), which other files can remove before this
+    -- one runs; the 17-year-old's test depends on it.
+    insert into public.follows_users (user_id, followed_user_id)
+      select '00000000-0000-4000-8000-000000000002', '00000000-0000-4000-8000-000000000001'
+      where not exists (select 1 from public.follows_users
+        where user_id = '00000000-0000-4000-8000-000000000002'
+          and followed_user_id = '00000000-0000-4000-8000-000000000001');
     update public.profiles set locale = 'ro' where handle in ('adult_writer', 'teacher', 'teen_17', 'blocker');`);
 }
 
