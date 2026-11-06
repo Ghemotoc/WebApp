@@ -66,6 +66,7 @@
   "nav": {
     "moderation": "Moderation",
     "roles": "Roles",
+    "logs": "Logs",
     "auditLog": "Audit log",
     "invites": "Invites",
     "users": "Users",
@@ -118,6 +119,7 @@
     "comingAreas": "Appeals, Stories, Website and the other areas arrive with their own stories; the menu shows an area as soon as its page exists.",
     "areas": {
       "roles": "Who on the team holds which role and permission.",
+      "call_log": "Every call the app made, where it failed, and the browser's crashes, for 30 days.",
       "audit_log": "Every staff action and sensitive read, searchable and exportable.",
       "users": "Find an account, see its status and sanctions, and act on it. Invite links are a tab here.",
       "metrics": "The March test numbers against their targets, counted each night.",
@@ -148,6 +150,81 @@
       "row_few": "{{count}} pictures, last on {{last}}",
       "row_other": "{{count}} pictures, last on {{last}}",
       "auditLog": "Open the audit log"
+    }
+  },
+  "logs": {
+    "documentTitle": "Logs · Staff",
+    "eyebrow": "Staff",
+    "heading": "Logs",
+    "intro": "Every call the app made to the back end in the last 30 days, the calls that failed, and errors the browser hit. Nothing that was sent or came back is kept. Looking at one person's calls is written in the audit log.",
+    "viewsLabel": "Show",
+    "loading": "Loading…",
+    "notAllowed": "Only an owner or admin can read the logs.",
+    "failures": {
+      "no_such_account": "There is no account with that username.",
+      "unreachable": "We couldn't load the log. Check your connection and try again.",
+      "intro": "Failed calls of the last 7 days, grouped by what failed and how, the most frequent first. To see the calls, search Calls by the name with \"Only failures\" ticked.",
+      "none": "No call failed in the last 7 days.",
+      "columns": {
+        "call": "Call",
+        "result": "Status and code",
+        "failures": "Failures",
+        "accounts": "Accounts",
+        "firstSeen": "First",
+        "lastSeen": "Last"
+      }
+    },
+    "views": {
+      "calls": "Calls",
+      "failures": "Failures",
+      "crashes": "Crashes"
+    },
+    "kinds": {
+      "rpc": "Function",
+      "table": "Table",
+      "auth": "Sign-in",
+      "function": "Edge function",
+      "storage": "Files",
+      "api": "Our server"
+    },
+    "calls": {
+      "searchForm": "Search the calls",
+      "kind": "Kind of call",
+      "allKinds": "All kinds",
+      "name": "Name",
+      "nameHint": "Part of the name, for example my_discover_cards.",
+      "person": "Username",
+      "personHint": "One account's calls, for example @lia. This is written in the audit log.",
+      "onlyFailures": "Only failures",
+      "search": "Search",
+      "none": "No calls match.",
+      "visitor": "Visitor",
+      "noAnswer": "No answer",
+      "milliseconds": "{{milliseconds}} ms",
+      "pages": "Pages of calls",
+      "newer": "Newer",
+      "older": "Older",
+      "page": "Page {{number}}",
+      "columns": {
+        "time": "Time",
+        "who": "Who",
+        "call": "Call",
+        "result": "Result",
+        "duration": "Took",
+        "page": "Page",
+        "version": "Version"
+      }
+    },
+    "crashes": {
+      "intro": "Errors the browser hit that nothing in the app caught, in the last 7 days, without anything that says who.",
+      "none": "No crashes in the last 7 days.",
+      "columns": {
+        "time": "Time",
+        "error": "Error",
+        "page": "Page",
+        "version": "Version",
+        "browser": "Browser"
+      }
     }
   },
   "auditLog": {

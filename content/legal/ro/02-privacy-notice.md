@@ -67,6 +67,7 @@ Ce primim de la alții:
 - Părintele sau tutorele tău, dacă ai sub 16 ani: adresa lui de email și răspunsul lui, cu data și versiunea acestei note pe care a văzut-o.
 - Google, Apple sau Microsoft, dacă te conectezi cu ele: adresa ta de email și, doar dacă permiți, numele tău. Ele nu ne spun vârsta ta.
 - Conexiunea ta: când te înscrii, îți citim țara din conexiunea la internet și păstrăm doar codul țării. Pentru siguranță îți păstrăm adresa IP doar într-o formă amestecată, timp de 30 de zile. Dacă un cont nou se înscrie de pe aceeași adresă amestecată ca un cont interzis în ultimele 30 de zile, un moderator se uită la el; nimeni nu este blocat din cauza asta, pentru că școlile și familiile folosesc aceeași conexiune. [de verificat de avocat]
+- Cum funcționează aplicația pentru tine: de fiecare dată când aplicația cere ceva serverelor noastre, notăm ce fel de cerere a fost, dacă a mers, codul erorii, cât a durat, pagina pe care erai și versiunea aplicației, cu ID-ul contului tău dacă ești conectat. Niciodată ce ai trimis sau ce ai văzut. Doar proprietarul și administratorii se pot uita, fiecare privire la cererile unei persoane se notează, iar după 30 de zile ștergem totul. [de verificat de avocat]
 - Alți oameni: raportări despre tine sau conținutul tău și, într-un spațiu de clasă, ce adaugă profesorul tău.
 - Autorități: ordinele și cererile pe care ni le trimit.
 - Echipa noastră: notițe scurte pe care membrii echipei le lasă unii altora pe contul tău, de exemplu ce ai întrebat la asistență sau ce a verificat un moderator. Notițele sunt fapte, nu se arată nimănui public și poți cere să le vezi. [de verificat de avocat]
@@ -108,6 +109,8 @@ Protejarea cuiva aflat în pericol. Dacă viața sau siguranța cuiva este în p
 Ordine ale autorităților. Respectarea ordinelor de eliminare și a altor ordine și păstrarea conținutului eliminat cum cere legea. Temei legal: obligație legală.
 
 Securitate și oprirea spamului. Adrese IP amestecate, limite la conectare și limite pentru spam. Temei legal: interesul nostru legitim de a ține conturile și Ghemotoc în siguranță.
+
+Ca aplicația să funcționeze. Evidența cererilor aplicației (mai sus), ca să găsim și să reparăm defecte și să urmărim o problemă despre care ne spui. Temei legal: interesul nostru legitim de a avea o aplicație care funcționează. [de verificat de avocat]
 
 Țara ta. Citirea țării din conexiunea ta, ca să deschidem Ghemotoc doar acolo unde suntem pregătiți și să aplicăm regulile locale potrivite. Temei legal: interesul nostru legitim.
 
@@ -233,6 +236,7 @@ Siguranță
 
 Securitate
 
+- Evidența cererilor aplicației: 30 de zile.
 - Adresele IP: amestecate, apoi șterse după 30 de zile, cu excepția adresei amestecate de pe care a fost încărcată o imagine sexuală suspectă cu un copil, care se păstrează împreună cu dovezile ei (mai sus). [de verificat de avocat]
 - Lista dispozitivelor pe care ești conectat: [DESCHIS: de stabilit]
 

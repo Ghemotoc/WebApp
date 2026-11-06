@@ -66,6 +66,7 @@
   "nav": {
     "moderation": "Moderare",
     "roles": "Roluri",
+    "logs": "Jurnale",
     "auditLog": "Jurnal de audit",
     "invites": "Invitații",
     "users": "Utilizatori",
@@ -118,6 +119,7 @@
     "comingAreas": "Contestațiile, Poveștile, Site-ul și celelalte zone vin cu propriile lor povești; meniul arată o zonă imediat ce pagina ei există.",
     "areas": {
       "roles": "Cine din echipă are ce rol și ce permisiuni.",
+      "call_log": "Fiecare apel făcut de aplicație, unde a eșuat și erorile din browser, pentru 30 de zile.",
       "audit_log": "Fiecare acțiune a echipei și fiecare citire sensibilă, cu căutare și export.",
       "users": "Găsește un cont, vezi starea și sancțiunile lui și acționează. Linkurile de invitație sunt o filă aici.",
       "metrics": "Cifrele testului din martie față de ținte, numărate în fiecare noapte.",
@@ -148,6 +150,81 @@
       "row_few": "{{count}} imagini, ultima pe {{last}}",
       "row_other": "{{count}} de imagini, ultima pe {{last}}",
       "auditLog": "Deschide jurnalul de audit"
+    }
+  },
+  "logs": {
+    "documentTitle": "Jurnale · Echipa",
+    "eyebrow": "Echipa",
+    "heading": "Jurnale",
+    "intro": "Fiecare apel făcut de aplicație către server în ultimele 30 de zile, apelurile eșuate și erorile din browser. Nu păstrăm nimic din ce s-a trimis sau s-a primit. Când te uiți la apelurile unei persoane, se scrie în jurnalul de audit.",
+    "viewsLabel": "Arată",
+    "loading": "Se încarcă…",
+    "notAllowed": "Doar proprietarul sau un administrator pot citi jurnalele.",
+    "failures": {
+      "no_such_account": "Nu există niciun cont cu acest nume de utilizator.",
+      "unreachable": "Nu am putut încărca jurnalul. Verifică conexiunea și încearcă din nou.",
+      "intro": "Apelurile eșuate din ultimele 7 zile, grupate după ce a eșuat și cum, cele mai dese primele. Ca să vezi apelurile, caută în Apeluri după nume, cu „Doar eșecuri” bifat.",
+      "none": "Niciun apel nu a eșuat în ultimele 7 zile.",
+      "columns": {
+        "call": "Apel",
+        "result": "Stare și cod",
+        "failures": "Eșecuri",
+        "accounts": "Conturi",
+        "firstSeen": "Primul",
+        "lastSeen": "Ultimul"
+      }
+    },
+    "views": {
+      "calls": "Apeluri",
+      "failures": "Eșecuri",
+      "crashes": "Erori din browser"
+    },
+    "kinds": {
+      "rpc": "Funcție",
+      "table": "Tabel",
+      "auth": "Conectare",
+      "function": "Funcție de server",
+      "storage": "Fișiere",
+      "api": "Serverul nostru"
+    },
+    "calls": {
+      "searchForm": "Caută în apeluri",
+      "kind": "Tipul apelului",
+      "allKinds": "Toate tipurile",
+      "name": "Nume",
+      "nameHint": "O parte din nume, de exemplu my_discover_cards.",
+      "person": "Nume de utilizator",
+      "personHint": "Apelurile unui singur cont, de exemplu @lia. Se scrie în jurnalul de audit.",
+      "onlyFailures": "Doar eșecuri",
+      "search": "Caută",
+      "none": "Niciun apel nu se potrivește.",
+      "visitor": "Vizitator",
+      "noAnswer": "Fără răspuns",
+      "milliseconds": "{{milliseconds}} ms",
+      "pages": "Pagini de apeluri",
+      "newer": "Mai noi",
+      "older": "Mai vechi",
+      "page": "Pagina {{number}}",
+      "columns": {
+        "time": "Ora",
+        "who": "Cine",
+        "call": "Apel",
+        "result": "Rezultat",
+        "duration": "Durată",
+        "page": "Pagina",
+        "version": "Versiune"
+      }
+    },
+    "crashes": {
+      "intro": "Erorile din browser pe care aplicația nu le-a prins, în ultimele 7 zile, fără nimic care să spună cine.",
+      "none": "Nicio eroare în ultimele 7 zile.",
+      "columns": {
+        "time": "Ora",
+        "error": "Eroare",
+        "page": "Pagina",
+        "version": "Versiune",
+        "browser": "Browser"
+      }
     }
   },
   "auditLog": {

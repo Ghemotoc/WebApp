@@ -3406,6 +3406,34 @@ COMMENT ON FUNCTION "public"."admin_build_evidence_pack"("target_case_id" "uuid"
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_call_failures"("since" timestamp with time zone DEFAULT ("now"() - '7 days'::interval)) RETURNS TABLE("call_kind" "text", "call_name" "text", "status_code" integer, "error_code" "text", "failures" integer, "accounts" integer, "first_seen" timestamp with time zone, "last_seen" timestamp with time zone)
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  if not public.staff_may('call_log', 'view') then
+    raise exception 'Only an owner or admin can read the call log.' using errcode = 'insufficient_privilege';
+  end if;
+  return query
+    select calls.call_kind, calls.call_name, calls.status_code, calls.error_code,
+      count(*)::integer, count(distinct calls.user_id)::integer,
+      min(calls.called_at), max(calls.called_at)
+    from public.call_log as calls
+    where calls.outcome <> 'ok' and calls.called_at >= admin_call_failures.since
+    group by calls.call_kind, calls.call_name, calls.status_code, calls.error_code
+    order by count(*) desc, max(calls.called_at) desc
+    limit 200;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_call_failures"("since" timestamp with time zone) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_call_failures"("since" timestamp with time zone) IS 'Failed calls grouped by kind, name, status and error code, for owner and admin (LOGS-1).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admin_cancel_ad_booking"("target_booking_id" "uuid", "reason" "text") RETURNS "void"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -5828,6 +5856,54 @@ ALTER FUNCTION "public"."admin_link_returning_user"("target_case_id" "uuid", "ot
 
 
 COMMENT ON FUNCTION "public"."admin_link_returning_user"("target_case_id" "uuid", "other_handle" "text", "reason_given" "text") IS 'Moderation staff: links another account to a case''s account as a possible returning user, with a reason, logged (part f2).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_list_calls"("since" timestamp with time zone DEFAULT ("now"() - '24:00:00'::interval), "only_failures" boolean DEFAULT false, "kind" "text" DEFAULT NULL::"text", "name_contains" "text" DEFAULT NULL::"text", "person_handle" "text" DEFAULT NULL::"text", "before" timestamp with time zone DEFAULT NULL::timestamp with time zone, "max_rows" integer DEFAULT 100) RETURNS TABLE("id" "uuid", "called_at" timestamp with time zone, "user_id" "uuid", "handle" "text", "call_kind" "text", "call_name" "text", "http_method" "text", "outcome" "text", "status_code" integer, "error_code" "text", "duration_ms" integer, "route_path" "text", "app_version" "text")
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  person_id uuid;
+begin
+  -- Step 1: owner and admin only, in a staff session.
+  if not public.staff_may('call_log', 'view') then
+    raise exception 'Only an owner or admin can read the call log.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 2: one person's calls: find the account and write the audit row.
+  if nullif(btrim(person_handle), '') is not null then
+    select profiles.id into person_id from public.profiles
+    where lower(profiles.handle) = lower(btrim(ltrim(person_handle, '@')));
+    if person_id is null then
+      raise exception 'There is no account with that username.' using errcode = 'no_data_found';
+    end if;
+    perform public.log_staff_action('call_log.viewed_for_account', 'call_log', null, person_id,
+      null, null, null);
+  end if;
+  -- Step 3: the page of rows.
+  return query
+    select calls.id, calls.called_at, calls.user_id, profiles.handle, calls.call_kind,
+      calls.call_name, calls.http_method, calls.outcome, calls.status_code, calls.error_code,
+      calls.duration_ms, calls.route_path, calls.app_version
+    from public.call_log as calls
+    left join public.profiles on profiles.id = calls.user_id
+    where calls.called_at >= admin_list_calls.since
+      and (admin_list_calls.before is null or calls.called_at < admin_list_calls.before)
+      and (not coalesce(only_failures, false) or calls.outcome <> 'ok')
+      and (admin_list_calls.kind is null or calls.call_kind = admin_list_calls.kind)
+      and (nullif(btrim(name_contains), '') is null
+           or calls.call_name ilike '%' || btrim(name_contains) || '%')
+      and (person_id is null or calls.user_id = person_id)
+    order by calls.called_at desc
+    limit least(greatest(coalesce(max_rows, 100), 1), 500);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_list_calls"("since" timestamp with time zone, "only_failures" boolean, "kind" "text", "name_contains" "text", "person_handle" "text", "before" timestamp with time zone, "max_rows" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_list_calls"("since" timestamp with time zone, "only_failures" boolean, "kind" "text", "name_contains" "text", "person_handle" "text", "before" timestamp with time zone, "max_rows" integer) IS 'One page of the call log, newest first, with filters, for owner and admin; one person''s calls are audited (LOGS-1).';
 
 
 
@@ -11535,21 +11611,28 @@ CREATE OR REPLACE FUNCTION "public"."avatar_recipe_valid"("recipe" "jsonb") RETU
     jsonb_typeof(recipe) = 'object'
     -- Step 1: exactly these keys, no more and no fewer.
     and (select array_agg(key order by key) from jsonb_object_keys(recipe) as key)
-      = array['accessory', 'background', 'clothes', 'expression', 'facialHair', 'hairColour',
-              'head', 'skin', 'style', 'version']
+      = array['background', 'earrings', 'extrasColour', 'eyebrows', 'eyes', 'facialHair',
+              'glasses', 'hair', 'hairColour', 'mouth', 'nose', 'shirt', 'shirtColour', 'skin',
+              'style', 'version']
     -- Step 2: the art and the recipe's version.
-    and recipe ->> 'style' = 'open-peeps'
+    and recipe ->> 'style' = 'micah'
     and recipe -> 'version' = '1'::jsonb
     -- Step 3: colours are six hex digits.
     and coalesce(recipe ->> 'skin', '') ~ '^[0-9a-f]{6}$'
     and coalesce(recipe ->> 'hairColour', '') ~ '^[0-9a-f]{6}$'
-    and coalesce(recipe ->> 'clothes', '') ~ '^[0-9a-f]{6}$'
+    and coalesce(recipe ->> 'extrasColour', '') ~ '^[0-9a-f]{6}$'
+    and coalesce(recipe ->> 'shirtColour', '') ~ '^[0-9a-f]{6}$'
     and coalesce(recipe ->> 'background', '') ~ '^[0-9a-f]{6}$'
-    -- Step 4: parts are short plain words ('none' for no facial hair or accessory).
-    and coalesce(recipe ->> 'head', '') ~ '^[A-Za-z0-9]{1,24}$'
-    and coalesce(recipe ->> 'expression', '') ~ '^[A-Za-z0-9]{1,24}$'
+    -- Step 4: parts are short plain words ('none' for no glasses, earrings or facial hair).
+    and coalesce(recipe ->> 'hair', '') ~ '^[A-Za-z0-9]{1,24}$'
+    and coalesce(recipe ->> 'eyebrows', '') ~ '^[A-Za-z0-9]{1,24}$'
+    and coalesce(recipe ->> 'eyes', '') ~ '^[A-Za-z0-9]{1,24}$'
+    and coalesce(recipe ->> 'mouth', '') ~ '^[A-Za-z0-9]{1,24}$'
+    and coalesce(recipe ->> 'nose', '') ~ '^[A-Za-z0-9]{1,24}$'
     and coalesce(recipe ->> 'facialHair', '') ~ '^[A-Za-z0-9]{1,24}$'
-    and coalesce(recipe ->> 'accessory', '') ~ '^[A-Za-z0-9]{1,24}$'
+    and coalesce(recipe ->> 'glasses', '') ~ '^[A-Za-z0-9]{1,24}$'
+    and coalesce(recipe ->> 'earrings', '') ~ '^[A-Za-z0-9]{1,24}$'
+    and coalesce(recipe ->> 'shirt', '') ~ '^[A-Za-z0-9]{1,24}$'
   );
 $_$;
 
@@ -11557,7 +11640,7 @@ $_$;
 ALTER FUNCTION "public"."avatar_recipe_valid"("recipe" "jsonb") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."avatar_recipe_valid"("recipe" "jsonb") IS 'True for null or a recipe of the known shape: known keys, hex colours, plain part names (ADMIN-2g).';
+COMMENT ON FUNCTION "public"."avatar_recipe_valid"("recipe" "jsonb") IS 'True for null or a Micah recipe of the known shape: known keys, hex colours, plain part names (ADMIN-2g; AVATAR-1, 6 Nov 2026).';
 
 
 
@@ -13300,6 +13383,105 @@ ALTER FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", 
 
 
 COMMENT ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer) IS 'One page of a story list (Discover shelves, category, tag and See all pages) with its total, in the reader''s sort; popular by default (S1-E5-01, S1-E5-02, S1-E5-03).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."call_log_entry_is_valid"("entry" "jsonb") RETURNS boolean
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $_$
+  select jsonb_typeof(entry) = 'object'
+    and coalesce(entry ->> 'kind', '') in ('rpc', 'table', 'auth', 'function', 'storage', 'api')
+    and coalesce(entry ->> 'name', '') ~ '^[A-Za-z0-9_.:/-]{1,100}$'
+    and coalesce(entry ->> 'method', '') in ('GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'HEAD')
+    and coalesce(entry ->> 'status', '') ~ '^[0-9]{1,3}$'
+    and (entry ->> 'status')::integer <= 599
+    and (entry ->> 'error_code' is null or entry ->> 'error_code' ~ '^[A-Za-z0-9_.-]{1,40}$')
+    and coalesce(entry ->> 'duration_ms', '') ~ '^[0-9]{1,6}$'
+    and (entry ->> 'duration_ms')::integer <= 600000;
+$_$;
+
+
+ALTER FUNCTION "public"."call_log_entry_is_valid"("entry" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."call_log_entry_is_valid"("entry" "jsonb") IS 'Whether one call log entry from the browser has the right shape (LOGS-1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."call_log_outcome_of"("status_code" integer) RETURNS "text"
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select case
+    when status_code = 0 then 'network_error'
+    when status_code >= 500 then 'server_error'
+    when status_code >= 400 then 'client_error'
+    else 'ok'
+  end;
+$$;
+
+
+ALTER FUNCTION "public"."call_log_outcome_of"("status_code" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."call_log_outcome_of"("status_code" integer) IS 'The call log outcome for an HTTP status: ok, client_error, server_error or network_error (LOGS-1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."call_log_room_left"("caller_id" "uuid") RETURNS integer
+    LANGUAGE "plpgsql" STABLE
+    SET "search_path" TO ''
+    AS $$
+declare
+  allowed integer;
+  used integer;
+begin
+  if caller_id is null then
+    allowed := coalesce((public.setting_value('call_log_per_minute_visitors'))::integer, 3000);
+    select count(*) into used from public.call_log as calls
+    where calls.user_id is null and calls.created_at > now() - interval '1 minute';
+  else
+    allowed := coalesce((public.setting_value('call_log_per_minute_member'))::integer, 600);
+    select count(*) into used from public.call_log as calls
+    where calls.user_id = caller_id and calls.created_at > now() - interval '1 minute';
+  end if;
+  return greatest(allowed - used, 0);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."call_log_room_left"("caller_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."call_log_room_left"("caller_id" "uuid") IS 'How many more call log rows the caller (or all visitors together) may store this minute (LOGS-1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."call_log_time_of"("raw_time" "text") RETURNS timestamp with time zone
+    LANGUAGE "plpgsql" STABLE
+    SET "search_path" TO ''
+    AS $$
+declare
+  parsed timestamptz;
+begin
+  begin
+    parsed := raw_time::timestamptz;
+  exception when others then
+    return now();
+  end;
+  if parsed is null or parsed > now() + interval '1 minute' or parsed < now() - interval '1 day' then
+    return now();
+  end if;
+  return parsed;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."call_log_time_of"("raw_time" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."call_log_time_of"("raw_time" "text") IS 'The browser''s time for a call when it is within the last day and not in the future, otherwise now (LOGS-1).';
 
 
 
@@ -15986,6 +16168,56 @@ COMMENT ON FUNCTION "public"."close_finished_safety_checks"("target_country" "te
 
 
 
+CREATE OR REPLACE FUNCTION "public"."cms_band_problems"("band" "jsonb", "field_prefix" "text", "has_points" boolean) RETURNS "text"[]
+    LANGUAGE "plpgsql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+declare
+  problems text[] := array[]::text[];
+  every_word text := '';
+  position integer;
+begin
+  -- Step 1: an empty band (every field blank) is hidden on the page, so nothing is needed.
+  every_word := coalesce(band ->> 'eyebrow', '') || coalesce(band ->> 'heading', '')
+    || coalesce(band ->> 'lede', '') || coalesce(band ->> 'button', '')
+    || coalesce(band ->> 'secondaryButton', '');
+  if has_points then
+    for position in 0..3 loop
+      every_word := every_word || coalesce(band -> 'points' -> position ->> 'title', '')
+        || coalesce(band -> 'points' -> position ->> 'body', '');
+    end loop;
+  end if;
+  if btrim(every_word) = '' then return problems; end if;
+  -- Step 2: the band's own fields, so it never shows half written.
+  problems := problems
+    || public.cms_text_problem(band ->> 'eyebrow', field_prefix || '.eyebrow', 30)
+    || public.cms_text_problem(band ->> 'heading', field_prefix || '.heading', 60)
+    || public.cms_text_problem(band ->> 'lede', field_prefix || '.lede', 300)
+    || public.cms_text_problem(band ->> 'button', field_prefix || '.button', 30);
+  -- Step 3: the second button is optional, but has a limit.
+  if char_length(coalesce(band ->> 'secondaryButton', '')) > 30 then
+    problems := problems || (field_prefix || '.secondaryButton:too_long');
+  end if;
+  -- Step 4: the writers' band's four points.
+  if has_points then
+    for position in 0..3 loop
+      problems := problems
+        || public.cms_text_problem(band -> 'points' -> position ->> 'title', field_prefix || '.points.' || position || '.title', 60)
+        || public.cms_text_problem(band -> 'points' -> position ->> 'body', field_prefix || '.points.' || position || '.body', 200);
+    end loop;
+  end if;
+  return array_remove(problems, null);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."cms_band_problems"("band" "jsonb", "field_prefix" "text", "has_points" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."cms_band_problems"("band" "jsonb", "field_prefix" "text", "has_points" boolean) IS 'Internal: the checks for one optional home page band (LOOK-3).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."cms_versions" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "content_kind" "text" NOT NULL,
@@ -16117,8 +16349,7 @@ begin
   for position in 0..2 loop
     problems := problems || public.cms_text_problem(page -> 'points' ->> position, 'points.' || position, 30);
   end loop;
-  -- Step 3: the "Your rights" card (LOOK-2). Optional: all three empty means no card; once one
-  -- field has words, all three are needed, so the card never shows half written.
+  -- Step 3: the "Your rights" card (LOOK-2): all empty hides it, otherwise all three are needed.
   if btrim(coalesce(rights_card ->> 'eyebrow', '') || coalesce(rights_card ->> 'title', '')
        || coalesce(rights_card ->> 'body', '')) <> '' then
     problems := problems
@@ -16139,6 +16370,16 @@ begin
     problems := problems || public.cms_text_problem(page -> 'safetyLines' ->> position, 'safetyLines.' || position, 200);
   end loop;
   problems := problems || public.cms_text_problem(page ->> 'questionsHeading', 'questionsHeading', 60);
+  -- Step 6: the four bands (LOOK-3), each optional, in the page's order.
+  problems := problems
+    || public.cms_band_problems(page -> 'writeBand', 'writeBand', true)
+    || public.cms_band_problems(page -> 'communityBand', 'communityBand', false)
+    || public.cms_band_problems(page -> 'firstStoryBand', 'firstStoryBand', false)
+    || public.cms_band_problems(page -> 'appsBand', 'appsBand', false);
+  -- Step 7: the footer note (LOOK-3), optional.
+  if char_length(coalesce(page ->> 'footerNote', '')) > 300 then
+    problems := problems || 'footerNote:too_long'::text;
+  end if;
   return array_remove(problems, null);
 end;
 $$;
@@ -16147,7 +16388,7 @@ $$;
 ALTER FUNCTION "public"."cms_home_page_problems"("page" "jsonb") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."cms_home_page_problems"("page" "jsonb") IS 'Internal: the home page''s field checks (S1-E11-06), with the optional "Your rights" card (LOOK-2).';
+COMMENT ON FUNCTION "public"."cms_home_page_problems"("page" "jsonb") IS 'Internal: the home page''s field checks (S1-E11-06), with the optional "Your rights" card (LOOK-2), four bands and the footer note (LOOK-3).';
 
 
 
@@ -24193,6 +24434,50 @@ COMMENT ON FUNCTION "public"."log_account_change"("target_user_id" "uuid", "acti
 
 
 
+CREATE OR REPLACE FUNCTION "public"."log_calls"("entries" "jsonb") RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $_$
+declare
+  caller_id uuid := (select auth.uid());
+  room_left integer;
+  stored_rows integer;
+begin
+  -- Step 1: only an array, at most 50 entries a batch.
+  if jsonb_typeof(entries) <> 'array' or jsonb_array_length(entries) > 50 then
+    raise exception 'Send at most 50 calls at a time, as a list.' using errcode = 'invalid_parameter_value';
+  end if;
+  -- Step 2: over the per-minute limit, store nothing more (the browser doesn't retry).
+  room_left := public.call_log_room_left(caller_id);
+  if room_left = 0 then
+    return 0;
+  end if;
+  -- Step 3: store the valid entries, cleaned again: route and version as in the error log
+  -- (S1-E1-05), the outcome from the status, and the time kept only when it is plausible.
+  insert into public.call_log (user_id, call_kind, call_name, http_method, outcome, status_code,
+    error_code, duration_ms, route_path, app_version, called_at)
+  select caller_id, entry ->> 'kind', entry ->> 'name', entry ->> 'method',
+    public.call_log_outcome_of((entry ->> 'status')::integer), (entry ->> 'status')::integer,
+    entry ->> 'error_code', (entry ->> 'duration_ms')::integer,
+    public.scrub_route_path(entry ->> 'route'),
+    case when entry ->> 'version' ~ '^[A-Za-z0-9._+-]{1,40}$' then entry ->> 'version' else 'unknown' end,
+    public.call_log_time_of(entry ->> 'called_at')
+  from jsonb_array_elements(entries) as entry
+  where public.call_log_entry_is_valid(entry)
+  limit room_left;
+  get diagnostics stored_rows = row_count;
+  return stored_rows;
+end;
+$_$;
+
+
+ALTER FUNCTION "public"."log_calls"("entries" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."log_calls"("entries" "jsonb") IS 'Stores a batch of up to 50 calls the browser made, under the caller''s own user ID (LOGS-1).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."log_sensitive_read"("read_kind" "text", "target_table" "text", "target_row_id" "text" DEFAULT NULL::"text", "affected_user_id" "uuid" DEFAULT NULL::"uuid") RETURNS "uuid"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -25189,6 +25474,53 @@ ALTER FUNCTION "public"."metric_on"("for_day" "date", "wanted_metric" "text", "w
 
 
 COMMENT ON FUNCTION "public"."metric_on"("for_day" "date", "wanted_metric" "text", "wanted_market" "text") IS 'Internal: one stored daily number (S1-E15-02).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."micah_recipe_from_open_peeps"("old" "jsonb") RETURNS "jsonb"
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select jsonb_build_object(
+    'style', 'micah',
+    'version', 1,
+    'skin', old ->> 'skin',
+    -- Step 1: the closest hairstyle: shaved or bald, mohawk, long, fringe, covered, short.
+    'hair', case
+      when old ->> 'head' ~ '^(noHair|shaved)' then 'mrClean'
+      when old ->> 'head' ~ '^mohawk' then 'mrT'
+      when old ->> 'head' ~ '^(long|afro|dreads|twists|bantuKnots|cornrows|bun|buns|grayBun)' then 'full'
+      when old ->> 'head' ~ '^(bangs|mediumBangs|medium)' then 'pixie'
+      when old ->> 'head' in ('hijab', 'turban', 'hatBeanie', 'hatHip') then 'turban'
+      when old ->> 'head' ~ '^(short|flatTop|pomp|grayShort)' then 'fonze'
+      else 'dannyPhantom'
+    end,
+    'hairColour', old ->> 'hairColour',
+    'eyebrows', 'up',
+    'eyes', 'eyes',
+    'mouth', 'smile',
+    'nose', 'curve',
+    -- Step 2: a moustache becomes stubble, any other facial hair a beard.
+    'facialHair', case
+      when old ->> 'facialHair' = 'none' then 'none'
+      when old ->> 'facialHair' ~ '^moustache' then 'scruff'
+      else 'beard'
+    end,
+    -- Step 3: any glasses or sunglasses become round glasses; an eyepatch has no match.
+    'glasses', case when old ->> 'accessory' ~ '^(glasses|sunglasses)' then 'round' else 'none' end,
+    'earrings', 'none',
+    'extrasColour', '2c1b18',
+    'shirt', 'crew',
+    'shirtColour', old ->> 'clothes',
+    'background', old ->> 'background'
+  );
+$$;
+
+
+ALTER FUNCTION "public"."micah_recipe_from_open_peeps"("old" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."micah_recipe_from_open_peeps"("old" "jsonb") IS 'The nearest Micah recipe to an Open Peeps one; used once by the AVATAR-1 migration (6 Nov 2026).';
 
 
 
@@ -30458,6 +30790,29 @@ ALTER FUNCTION "public"."purge_old_audit_log"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."purge_old_audit_log"() IS 'Job: deletes audit log rows older than audit_log_keep_years (3), the one allowed delete (S1-E13-04).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."purge_old_call_log"() RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  keep_days integer := coalesce((public.setting_value('call_log_keep_days'))::integer, 30);
+  deleted_rows integer;
+begin
+  delete from public.call_log as calls
+  where calls.created_at < now() - make_interval(days => keep_days);
+  get diagnostics deleted_rows = row_count;
+  return deleted_rows;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."purge_old_call_log"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."purge_old_call_log"() IS 'Deletes call log rows older than call_log_keep_days (30); run nightly by pg_cron (LOGS-1).';
 
 
 
@@ -43639,6 +43994,41 @@ Who blocks whom (S1-E5-05, B21). A block hides each side from the other everywhe
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."call_log" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid",
+    "call_kind" "text" NOT NULL,
+    "call_name" "text" NOT NULL,
+    "http_method" "text" NOT NULL,
+    "outcome" "text" NOT NULL,
+    "status_code" integer NOT NULL,
+    "error_code" "text",
+    "duration_ms" integer NOT NULL,
+    "route_path" "text" NOT NULL,
+    "app_version" "text" NOT NULL,
+    "called_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "call_log_duration_range" CHECK ((("duration_ms" >= 0) AND ("duration_ms" <= 600000))),
+    CONSTRAINT "call_log_error_code_shape" CHECK ((("error_code" IS NULL) OR ("error_code" ~ '^[A-Za-z0-9_.-]{1,40}$'::"text"))),
+    CONSTRAINT "call_log_kind_is_known" CHECK (("call_kind" = ANY (ARRAY['rpc'::"text", 'table'::"text", 'auth'::"text", 'function'::"text", 'storage'::"text", 'api'::"text"]))),
+    CONSTRAINT "call_log_method_is_known" CHECK (("http_method" = ANY (ARRAY['GET'::"text", 'POST'::"text", 'PATCH'::"text", 'PUT'::"text", 'DELETE'::"text", 'HEAD'::"text"]))),
+    CONSTRAINT "call_log_name_shape" CHECK (("call_name" ~ '^[A-Za-z0-9_.:/-]{1,100}$'::"text")),
+    CONSTRAINT "call_log_outcome_is_known" CHECK (("outcome" = ANY (ARRAY['ok'::"text", 'client_error'::"text", 'server_error'::"text", 'network_error'::"text"]))),
+    CONSTRAINT "call_log_route_is_a_path" CHECK ((("route_path" ~ '^/[^?#]*$'::"text") AND ("char_length"("route_path") <= 200))),
+    CONSTRAINT "call_log_status_range" CHECK ((("status_code" >= 0) AND ("status_code" <= 599))),
+    CONSTRAINT "call_log_version_shape" CHECK (("app_version" ~ '^[A-Za-z0-9._+-]{1,40}$'::"text"))
+);
+
+
+ALTER TABLE "public"."call_log" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."call_log" IS 'kind: platform
+Every call the app made to the back end: kind, name, outcome, status, error code, duration, route pattern, app version and the user ID (empty for visitors); no bodies, emails, IPs or user text; kept 30 days (LOGS-1).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."campaign_daily_stats" (
     "campaign_id" "uuid" NOT NULL,
     "counted_on" "date" NOT NULL,
@@ -46083,6 +46473,11 @@ ALTER TABLE ONLY "public"."brand_assets"
 
 
 
+ALTER TABLE ONLY "public"."call_log"
+    ADD CONSTRAINT "call_log_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."campaign_daily_stats"
     ADD CONSTRAINT "campaign_daily_stats_pkey" PRIMARY KEY ("campaign_id", "counted_on");
 
@@ -47286,6 +47681,22 @@ CREATE INDEX "blocks_blocked_user_id" ON "public"."blocks" USING "btree" ("block
 
 
 
+CREATE INDEX "call_log_called_at_idx" ON "public"."call_log" USING "btree" ("called_at" DESC);
+
+
+
+CREATE INDEX "call_log_created_at_idx" ON "public"."call_log" USING "btree" ("created_at");
+
+
+
+CREATE INDEX "call_log_failures_idx" ON "public"."call_log" USING "btree" ("called_at" DESC) WHERE ("outcome" <> 'ok'::"text");
+
+
+
+CREATE INDEX "call_log_user_id_idx" ON "public"."call_log" USING "btree" ("user_id", "called_at" DESC);
+
+
+
 CREATE INDEX "case_account_links_case_id_fk_idx" ON "public"."case_account_links" USING "btree" ("case_id");
 
 
@@ -48390,6 +48801,10 @@ CREATE OR REPLACE TRIGGER "blocks_set_updated_at" BEFORE UPDATE ON "public"."blo
 
 
 
+CREATE OR REPLACE TRIGGER "call_log_set_updated_at" BEFORE UPDATE ON "public"."call_log" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
 CREATE OR REPLACE TRIGGER "canva_connections_refuse_user_id_change" BEFORE UPDATE ON "public"."canva_connections" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"('user_id');
 
 
@@ -49441,6 +49856,11 @@ ALTER TABLE ONLY "public"."brand_assets"
 
 ALTER TABLE ONLY "public"."brand_assets"
     ADD CONSTRAINT "brand_assets_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."call_log"
+    ADD CONSTRAINT "call_log_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE SET NULL;
 
 
 
@@ -51097,6 +51517,17 @@ CREATE POLICY "brand_assets_select_website_staff" ON "public"."brand_assets" FOR
 
 
 COMMENT ON POLICY "brand_assets_select_website_staff" ON "public"."brand_assets" IS 'Allows owner and admin to read the brand slots; changes go only through admin_* functions (BRAND-1a).';
+
+
+
+ALTER TABLE "public"."call_log" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "call_log_select_admin" ON "public"."call_log" FOR SELECT TO "authenticated" USING (( SELECT "public"."staff_may"('call_log'::"text", 'view'::"text") AS "staff_may"));
+
+
+
+COMMENT ON POLICY "call_log_select_admin" ON "public"."call_log" IS 'Allows owner and admin, in a staff session, to read the call log (LOGS-1).';
 
 
 
@@ -52995,6 +53426,11 @@ GRANT ALL ON FUNCTION "public"."admin_build_evidence_pack"("target_case_id" "uui
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_call_failures"("since" timestamp with time zone) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_call_failures"("since" timestamp with time zone) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_cancel_ad_booking"("target_booking_id" "uuid", "reason" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_cancel_ad_booking"("target_booking_id" "uuid", "reason" "text") TO "authenticated";
 
@@ -53313,6 +53749,11 @@ GRANT ALL ON FUNCTION "public"."admin_lift_sanction"("target_sanction_id" "uuid"
 
 REVOKE ALL ON FUNCTION "public"."admin_link_returning_user"("target_case_id" "uuid", "other_handle" "text", "reason_given" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_link_returning_user"("target_case_id" "uuid", "other_handle" "text", "reason_given" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_list_calls"("since" timestamp with time zone, "only_failures" boolean, "kind" "text", "name_contains" "text", "person_handle" "text", "before" timestamp with time zone, "max_rows" integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_list_calls"("since" timestamp with time zone, "only_failures" boolean, "kind" "text", "name_contains" "text", "person_handle" "text", "before" timestamp with time zone, "max_rows" integer) TO "authenticated";
 
 
 
@@ -54307,6 +54748,22 @@ GRANT ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "
 
 
 
+REVOKE ALL ON FUNCTION "public"."call_log_entry_is_valid"("entry" "jsonb") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."call_log_outcome_of"("status_code" integer) FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."call_log_room_left"("caller_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."call_log_time_of"("raw_time" "text") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."caller_profile_for_teacher_check"() FROM PUBLIC;
 
 
@@ -54701,6 +55158,10 @@ REVOKE ALL ON FUNCTION "public"."close_customisation_requests_on_change"() FROM 
 
 
 REVOKE ALL ON FUNCTION "public"."close_finished_safety_checks"("target_country" "text") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."cms_band_problems"("band" "jsonb", "field_prefix" "text", "has_points" boolean) FROM PUBLIC;
 
 
 
@@ -55840,6 +56301,12 @@ REVOKE ALL ON FUNCTION "public"."log_account_change"("target_user_id" "uuid", "a
 
 
 
+REVOKE ALL ON FUNCTION "public"."log_calls"("entries" "jsonb") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."log_calls"("entries" "jsonb") TO "anon";
+GRANT ALL ON FUNCTION "public"."log_calls"("entries" "jsonb") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."log_sensitive_read"("read_kind" "text", "target_table" "text", "target_row_id" "text", "affected_user_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."log_sensitive_read"("read_kind" "text", "target_table" "text", "target_row_id" "text", "affected_user_id" "uuid") TO "authenticated";
 
@@ -56009,6 +56476,10 @@ REVOKE ALL ON FUNCTION "public"."messaging_partner"("wanted_handle" "text") FROM
 
 
 REVOKE ALL ON FUNCTION "public"."metric_on"("for_day" "date", "wanted_metric" "text", "wanted_market" "text") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."micah_recipe_from_open_peeps"("old" "jsonb") FROM PUBLIC;
 
 
 
@@ -56802,6 +57273,10 @@ REVOKE ALL ON FUNCTION "public"."purge_old_age_check_attempts"() FROM PUBLIC;
 
 
 REVOKE ALL ON FUNCTION "public"."purge_old_audit_log"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."purge_old_call_log"() FROM PUBLIC;
 
 
 
@@ -58632,6 +59107,11 @@ GRANT SELECT ON TABLE "public"."banned_email_hashes" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."blocks" TO "service_role";
 GRANT SELECT ON TABLE "public"."blocks" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."call_log" TO "service_role";
+GRANT SELECT ON TABLE "public"."call_log" TO "authenticated";
 
 
 

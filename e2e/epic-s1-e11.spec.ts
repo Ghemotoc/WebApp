@@ -159,6 +159,7 @@ test.describe('epic S1-E11 journeys', () => {
       'Settings',
       'Forums',
       'Metrics',
+      'Logs',
       'Audit log',
     ]);
     const moderator = await openAs(browser, 'moderator', '/staff');

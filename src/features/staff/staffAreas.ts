@@ -181,6 +181,14 @@ export const staffAreaPages: StaffAreaPage[] = [
     labelKey: 'nav.metrics',
     descriptionKey: 'home.areas.metrics',
   },
+  // The app's logs: every call, its failures and the browser's crashes (LOGS-1; Robert, 6 Nov
+  // 2026). Owner and admin only, like the audit log after it.
+  {
+    area: 'call_log',
+    href: '/staff/logs',
+    labelKey: 'nav.logs',
+    descriptionKey: 'home.areas.call_log',
+  },
   {
     area: 'audit_log',
     href: '/staff/audit-log',
