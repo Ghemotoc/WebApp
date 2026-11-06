@@ -32,16 +32,21 @@ export const primaryNavigation: NavigationItem[] = [
  * (S1-E10-02), and the accessibility statement (S1-E14-03). Coming: Help (S1-E11-12).
  */
 export const footerNavigation: NavigationItem[] = [
-  { href: '/legal/guidelines', labelKey: 'nav.guidelines' },
-  { href: '/legal/terms', labelKey: 'nav.terms' },
-  { href: '/legal/privacy', labelKey: 'nav.privacy' },
+  // The board's order (Main.dc.html, LOOK-7): Help, the legal texts, Contact us, the community
+  // guidelines and Report content. The board's single "Legal" link is Terms and Privacy here,
+  // because there is no legal centre page yet (/legal opens the terms).
   // Help: the CMS help pages and questions (S1-E11-12).
   { href: '/help', labelKey: 'nav.help' },
-  // Contact us, the form (S1-E14-04), before the legal contact page.
+  { href: '/legal/terms', labelKey: 'nav.terms' },
+  { href: '/legal/privacy', labelKey: 'nav.privacy' },
+  // The one "Contact us": the form (S1-E14-04).
   { href: '/contact', labelKey: 'nav.contactUs' },
-  { href: '/legal/contact', labelKey: 'nav.contact' },
+  { href: '/legal/guidelines', labelKey: 'nav.guidelines' },
   // Report without an account (S1-E10-02): DSA art. 16 asks for it to be easy to find.
   { href: '/report', labelKey: 'nav.reportContent' },
+  // The contact points for authorities and users and the company details, one tap from every page
+  // (S1-E14-02; DSA arts. 11 and 12). Named for what it holds, so it isn't a second "Contact".
+  { href: '/legal/contact', labelKey: 'nav.contact' },
   // The accessibility statement (S1-E14-03): linked from every page, as statements usually are.
   { href: '/legal/accessibility', labelKey: 'nav.accessibility' },
 ];

@@ -23,8 +23,11 @@ test('the contact page lists every contact point, the languages and the company 
 }) => {
   await page.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
   await page.goto('/');
-  // Exact: the footer also has "Contact us", the form (S1-E14-04).
-  await page.getByRole('contentinfo').getByRole('link', { name: 'Contact', exact: true }).click();
+  // The footer's one "Contact us" is the form (S1-E14-04); this page has its own name (LOOK-7).
+  await page
+    .getByRole('contentinfo')
+    .getByRole('link', { name: 'Company and legal contacts' })
+    .click();
   await expect(page).toHaveURL(/\/legal\/contact$/);
   await expect(
     page.getByRole('heading', { name: 'Contact and company details', level: 2 }),
