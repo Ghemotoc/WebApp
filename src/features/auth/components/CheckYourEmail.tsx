@@ -10,7 +10,9 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import mailIcon from '@/assets/icons/mail.svg';
 import { Button } from '@/components/ui/Button';
+import { Doodle } from '@/components/ui/Doodle';
 
 /** What the step needs. */
 interface CheckYourEmailProps {
@@ -43,9 +45,25 @@ export function CheckYourEmail({ email, isLinkSignUp, onResend }: CheckYourEmail
 
   return (
     <div role="status" className="flex flex-col gap-3">
-      <h3 className="m-0 font-heading text-[22px] font-bold text-heading">
-        {t('signUp.sent.heading')}
-      </h3>
+      <div className="flex items-center gap-3">
+        {/* The board's mail icon on a soft plum square, and its smiling heart (LOOK-6). */}
+        <span
+          aria-hidden="true"
+          className="inline-flex size-14 flex-none items-center justify-center rounded-2xl bg-tint"
+        >
+          <img src={mailIcon} alt="" width={38} height={38} className="block size-[38px]" />
+        </span>
+        <h3 className="m-0 min-w-0 font-heading text-[22px] font-bold text-heading">
+          {t('signUp.sent.heading')}
+        </h3>
+        <Doodle
+          name="smiling-heart"
+          kind="widget"
+          on="Check your email"
+          hideBelow="phone"
+          className="ml-auto w-14 shrink-0 rotate-6"
+        />
+      </div>
       <p className="m-0 text-body">
         {t(isLinkSignUp ? 'signUp.sent.bodyLink' : 'signUp.sent.body', { email })}
       </p>

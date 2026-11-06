@@ -31,6 +31,7 @@ import { useSignUpMarket, type SignUpMarket } from '../hooks/useSignUpMarket';
 import type { InviteGateReason } from './InviteGate';
 import { SignUpCardFlow } from './SignUpCardFlow';
 import { SignUpHero } from './SignUpHero';
+import { SignUpWhatNext } from './SignUpWhatNext';
 import { SignUpSteps } from './SignUpSteps';
 
 /**
@@ -111,37 +112,44 @@ export function SignUpPage() {
   if (market.isClosed) return <Navigate to="/not-open" replace />;
 
   return (
-    <PageContainer className="tmc-rise grid grid-cols-[repeat(auto-fit,minmax(min(100%,460px),1fr))] gap-14 pt-12 pb-7">
+    <PageContainer className="tmc-rise flex flex-col pt-12 pb-7">
       <title>{t('signUp.documentTitle')}</title>
-      <SignUpHero />
-      <section
-        aria-labelledby="sign-up-heading"
-        className="flex w-full max-w-[480px] flex-col gap-5 justify-self-center rounded-card border border-border bg-surface p-8 shadow-card"
-      >
-        <SignUpSteps includesAgeCheck={!isAdultsOnly} />
-        <div className="flex flex-col gap-2">
-          <Eyebrow>{t('signUp.eyebrow')}</Eyebrow>
-          <h2 id="sign-up-heading" className="m-0 font-heading text-[30px] font-bold text-heading">
-            {t('signUp.heading')}
-          </h2>
-          <p className="m-0 text-body">{t('signUp.subheading')}</p>
-        </div>
-        <SignUpCardFlow
-          gateReason={gateReason}
-          inviteCode={inviteCode}
-          form={form}
-          context={context}
-          legalFailed={legalFailed}
-          includesAgeCheck={!isAdultsOnly}
-        />
-        {/* "Already have an account? Log in" (S1-E2-05). */}
-        <p className="m-0 text-sm text-body">
-          {t('signIn.haveAccount')}{' '}
-          <Link to="/sign-in" className="text-link underline">
-            {t('signIn.logInLink')}
-          </Link>
-        </p>
-      </section>
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,460px),1fr))] gap-14">
+        <SignUpHero />
+        <section
+          aria-labelledby="sign-up-heading"
+          className="flex w-full max-w-[480px] flex-col gap-5 justify-self-center rounded-card border border-border bg-surface p-8 shadow-card"
+        >
+          <SignUpSteps includesAgeCheck={!isAdultsOnly} />
+          <div className="flex flex-col gap-2">
+            <Eyebrow>{t('signUp.eyebrow')}</Eyebrow>
+            <h2
+              id="sign-up-heading"
+              className="m-0 font-heading text-[30px] font-bold text-heading"
+            >
+              {t('signUp.heading')}
+            </h2>
+            <p className="m-0 text-body">{t('signUp.subheading')}</p>
+          </div>
+          <SignUpCardFlow
+            gateReason={gateReason}
+            inviteCode={inviteCode}
+            form={form}
+            context={context}
+            legalFailed={legalFailed}
+            includesAgeCheck={!isAdultsOnly}
+          />
+          {/* "Already have an account? Log in" (S1-E2-05). */}
+          <p className="m-0 text-sm text-body">
+            {t('signIn.haveAccount')}{' '}
+            <Link to="/sign-in" className="text-link underline">
+              {t('signIn.logInLink')}
+            </Link>
+          </p>
+        </section>
+      </div>
+      {/* What can happen after "Create account" (board 2.1; LOOK-6). */}
+      <SignUpWhatNext isAdultsOnly={isAdultsOnly} />
     </PageContainer>
   );
 }

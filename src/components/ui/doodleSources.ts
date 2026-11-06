@@ -2,7 +2,7 @@
  * The doodle files the app has copied from design/assets/ so far (story S1-E3-01; the seasonal
  * ones, from bee to sunny face, came with S1-E11-11; the four rank stickers and the trophy with
  * S1-E8-09; the jar lantern and the three "Why write here" doodles with LOOK-2; the thirteen from the
- * puppy to the map with LOOK-5).
+ * puppy to the map with LOOK-5; the teacup with LOOK-6).
  *
  * Who uses it: Doodle (src/components/ui/Doodle.tsx). Add a line here, and the file to
  * src/assets/doodles/ with a readable name, when a screen needs another doodle. Kept apart from
@@ -59,6 +59,7 @@ import sleepingCat from '@/assets/doodles/sleeping-cat.svg';
 import smilingHeart from '@/assets/doodles/smiling-heart.svg';
 import snail from '@/assets/doodles/snail.svg';
 import sunnyFace from '@/assets/doodles/sunny-face.svg';
+import teacup from '@/assets/doodles/teacup.svg';
 import toteBagOfBooks from '@/assets/doodles/tote-bag-of-books.svg';
 import trophy from '@/assets/doodles/trophy.svg';
 import twoChatBubbles from '@/assets/doodles/two-chat-bubbles.svg';
@@ -117,6 +118,7 @@ export const doodleSources = {
   'smiling-heart': smilingHeart,
   snail,
   'sunny-face': sunnyFace,
+  teacup,
   'tote-bag-of-books': toteBagOfBooks,
   trophy,
   'two-chat-bubbles': twoChatBubbles,

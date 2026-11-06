@@ -5,14 +5,25 @@
  * headline "Write stories. Get read." (Q5) with a gold hand-drawn underline under the last words,
  * a lead line and four benefits. The tag on the board says "for writers aged 13 and up"; in March
  * the test is for invited adults (decided 17 Oct 2026, 12:44), so it says that instead.
- * The benefit icons on the board are doodles; they come with the doodle set (pull request
- * Follow-ups), so the benefits are text only for now.
+ * Each benefit has the board's doodle icon in a white rounded square, and the tag ends with the
+ * board's smiling heart (LOOK-6). Both are decorative: the words say it all.
  * Who uses it: SignUpPage.
  */
 import { useTranslation } from 'react-i18next';
 
-/** The four benefits, in the board's order. */
-const benefitKeys = ['free', 'yours', 'noTracking', 'person'] as const;
+import certificateIcon from '@/assets/icons/certificate.svg';
+import flagIcon from '@/assets/icons/flag.svg';
+import openBookIcon from '@/assets/icons/open-book.svg';
+import shieldIcon from '@/assets/icons/shield.svg';
+import { Doodle } from '@/components/ui/Doodle';
+
+/** The four benefits, in the board's order, each with the board's icon. */
+const benefits = [
+  { key: 'free', icon: openBookIcon },
+  { key: 'yours', icon: certificateIcon },
+  { key: 'noTracking', icon: shieldIcon },
+  { key: 'person', icon: flagIcon },
+] as const;
 
 /**
  * Renders the hero.
@@ -23,9 +34,17 @@ export function SignUpHero() {
   const { t } = useTranslation('auth');
   return (
     <div className="flex max-w-[600px] flex-col gap-5">
-      <p className="m-0 -rotate-2 font-hand text-[19px] text-eyebrow">
-        {t('signUp.hero.tagMarch')}
-      </p>
+      <div className="flex origin-left -rotate-2 items-center gap-2">
+        <p className="m-0 font-hand text-[19px] text-eyebrow">{t('signUp.hero.tagMarch')}</p>
+        {/* The board's smiling heart after the handwritten tag, outside its words' box. */}
+        <Doodle
+          name="smiling-heart"
+          kind="widget"
+          on="The handwritten tag"
+          hideBelow="phone"
+          className="-my-3 w-10 rotate-[8deg]"
+        />
+      </div>
       <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-extrabold tracking-[-0.025em] break-words">
         {t('signUp.hero.headingStart')}{' '}
         <span className="relative inline-block">
@@ -49,13 +68,22 @@ export function SignUpHero() {
         </span>
       </h1>
       <p className="m-0 text-lg leading-[1.6] text-body">{t('signUp.hero.lead')}</p>
-      <ul className="m-0 flex list-none flex-col gap-4 p-0">
-        {benefitKeys.map((key) => (
-          <li key={key} className="flex flex-col gap-1">
-            <span className="font-heading text-[19px] font-bold text-heading">
-              {t(`signUp.hero.benefits.${key}.title`)}
+      <ul className="m-0 mt-3 flex list-none flex-col gap-[22px] p-0">
+        {benefits.map(({ key, icon }) => (
+          <li key={key} className="flex items-start gap-4">
+            {/* The board's icon in a white rounded square; decorative. */}
+            <span
+              aria-hidden="true"
+              className="inline-flex size-12 flex-none items-center justify-center rounded-2xl border border-border bg-surface"
+            >
+              <img src={icon} alt="" width={34} height={34} className="block size-[34px]" />
             </span>
-            <span className="text-base text-body">{t(`signUp.hero.benefits.${key}.body`)}</span>
+            <span className="flex flex-col gap-1">
+              <span className="font-heading text-[19px] font-bold text-heading">
+                {t(`signUp.hero.benefits.${key}.title`)}
+              </span>
+              <span className="text-base text-body">{t(`signUp.hero.benefits.${key}.body`)}</span>
+            </span>
           </li>
         ))}
       </ul>
