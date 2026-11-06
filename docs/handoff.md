@@ -49,7 +49,7 @@ Read @docs/architecture.md and @docs/definition-of-done.md before planning.
 - Dev: npx supabase start && npm run dev
 - Checks (run all before saying you're done): npm run lint && npm run typecheck && npm run types:check && npm test && npx supabase test db && npm run test:e2e && npm run i18n:check
 - Regenerate database types after a migration: npm run types:gen
-- New migration: npx supabase migration new <name>
+- New migration: npm run migration:new -- <story_id>_<slug> (QA-4)
 
 ## Non-negotiable rules
 1. Every table has RLS on and explicit policies. Every policy gets an allowed and a denied pgTAP test.

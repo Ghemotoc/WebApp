@@ -58,6 +58,9 @@ jobs:
       - run: npm test
       - run: npm run i18n:check
       # No two migrations may share a version number: Supabase keys them by it (24 Oct 2026).
+      # A new migration must also come after the newest one on main (QA-4), so main's file list
+      # is fetched first (the checkout is shallow and has no origin/main of its own).
+      - run: git fetch --depth=1 origin main:refs/remotes/origin/main
       - run: npm run migrations:check
       # Lane B (23 Oct 2026): no doodle under design/assets may hold a raw hex colour; every colour
       # is a token with its light value as the fallback (scripts/doodle-tokens.ts).
@@ -95,6 +98,8 @@ jobs:
       - run: npx supabase test db
       # Regenerate the database types and fail if they differ from the committed file (rule 14).
       - run: npm run types:check
+      # supabase/schema.sql must match what the migrations build (QA-4).
+      - run: npm run schema:check
 
   e2e:
     name: End-to-end and accessibility smoke test

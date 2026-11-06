@@ -3,7 +3,8 @@
 The database side of the app: schema changes, database tests, seed data and (later) edge functions. Built by S1-E1-01 (folder) and S1-E1-02 (database baseline).
 
 - `config.toml`: local Supabase settings. Supabase's GitHub integration applies `migrations/` to the staging project when `main` changes; never push migrations from a session (CLAUDE.md).
-- `migrations/`: every schema change, oldest first (`npx supabase migration new <name>`). The only way the database changes (rule 3). Every file's 14-digit version must be its own: Supabase keys migrations by it, so `npm run migrations:check` (in CI) fails when two files share one; pick an unused later time on the same day.
+- `migrations/`: every schema change, oldest first. Create one with `npm run migration:new -- <story_id>_<slug>`, not `npx supabase migration new`: the versions run ahead of the calendar, so the CLI's "now" would sort before existing files. The only way the database changes (rule 3). Every file's 14-digit version must be its own and a real date and time, and a new file's must be later than the newest on main ("newest plus one"): Supabase keys migrations by it, so `npm run migrations:check` (in CI) fails otherwise (QA-4).
+- `schema.sql`: the whole public schema as the migrations leave it, generated (`npm run schema:gen` after `npx supabase db reset`) and checked (`npm run schema:check`). Search it to see the live version of a function, table or policy; it is never applied. Why the migrations aren't squashed yet: `docs/runbooks/migration-squash.md`.
 - `tests/database/`: pgTAP tests, run with `npx supabase test db`.
 - `seed.sql`: the synthetic seed personas. Never real data.
 - `functions/`: edge functions (Deno), the only code that may hold secrets. None yet.
@@ -23,7 +24,7 @@ The database side of the app: schema changes, database tests, seed data and (lat
    ```
    Never grant `truncate`, `references`, `trigger` or `maintain` (RLS doesn't cover them). Test `003` fails when a policy lacks its grant, a grant lacks a policy, or a new table starts with any privileges. Without the grant the API answers 401 "permission denied for table".
 5. **Functions** use `set search_path = ''` and name every schema. Functions that could reveal other people's data are not executable by `anon` or `authenticated`. A function the app calls is granted by name (`grant execute on function … to authenticated`), never left to a default.
-6. After a migration: `npm run types:gen`, and commit `src/lib/database.types.ts`. CI's `types:check` fails if you forget.
+6. After a migration: `npm run types:gen` and `npm run schema:gen`, and commit `src/lib/database.types.ts` and `supabase/schema.sql`. CI's `types:check` and `schema:check` fail if you forget.
 
 ## Functions the app calls
 

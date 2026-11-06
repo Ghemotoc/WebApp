@@ -23,8 +23,8 @@ Decisions with dates and sources are in docs/decisions.md. Stories are in docs/s
 - Install: npm ci. Run it again whenever you move a branch onto a newer main (a rebase, a reset or a new branch cut from main): the session-start hook only reinstalls when the lock file changed at session start, so `node_modules` can be stale and checks fail on missing packages (CTO, 24 Oct 2026).
 - Dev: npx supabase start && npm run dev
 - Checks (run all before saying you're done): `npm run checks`, which runs npm run lint && npm run typecheck && npm run types:check && npm test && npx supabase db reset && npx supabase test db && npm run test:e2e && npm run i18n:check && npm run migrations:check. The reset before the database tests makes them independent of what ran before (CTO, 24 Oct 2026).
-- Regenerate database types after a migration: npm run types:gen
-- New migration: npx supabase migration new <name>
+- Regenerate database types and the current-schema file after a migration: npm run types:gen && npm run schema:gen (supabase/schema.sql shows what is live; QA-4)
+- New migration: npm run migration:new -- <story_id>_<slug> (never `npx supabase migration new`: versions run ahead of the calendar, and migrations:check refuses a version older than main's newest; QA-4)
 
 ## Non-negotiable rules
 1. Every table has RLS on and explicit policies. Every policy gets an allowed and a denied pgTAP test.
