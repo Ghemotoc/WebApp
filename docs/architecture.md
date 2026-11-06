@@ -752,7 +752,7 @@ Keep a list in `docs/accounts.md` (account, owner, recovery email, 2FA holder, r
 **Observability**
 
 - Error tracking with personal data scrubbing and release tagging.
-- Uptime checks on the web app, the teaser route and the authorities' contact mailbox flow.
+- Uptime checks on the web app, the teaser route and the authorities' contact mailbox flow. What counts as up is `scripts/ops/check-uptime.ts`; the monitor itself is set up by hand at GO-LIVE (`docs/runbooks/uptime-checks.md`, QA-8).
 - Alerts to the on-call phone for: an authority order received, a same-day safeguarding case, a moderation queue item past its SLA, error spikes and failed backups.
 - A daily metrics job (S1-E15-02) for the March test numbers.
 - Supabase logs for database and auth; no user content in application logs.
@@ -762,7 +762,7 @@ Keep a list in `docs/accounts.md` (account, owner, recovery email, 2FA holder, r
 - Supabase Pro daily database backups (check the current retention on your plan), plus point-in-time recovery once real users arrive (a paid add-on; budget approved 16 Oct 2026, late evening, Q53).
 - Your own nightly encrypted `pg_dump` to an EU storage bucket in a separate account, kept 30 days, so a lost Supabase account isn't a lost company.
 - Storage files (covers and avatars) copied nightly to the same backup bucket, because database backups don't include them.
-- A restore drill every quarter into a scratch project, written up in `docs/runbooks/restore.md`.
+- A restore drill every quarter into a scratch project, written up in `docs/runbooks/restore.md`, checked with `scripts/ops/compare-restore.sh` (QA-8). As of 6 Nov 2026 the nightly dump and the storage copy are not built yet (GO-LIVE).
 
 ### 1.13 Delivery plan by iteration
 
