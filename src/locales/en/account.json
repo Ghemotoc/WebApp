@@ -60,7 +60,19 @@
     "signedOut": "Log in to see your settings.",
     "noHandle": "Choose a username first.",
     "contactLink": "Contact and company details",
-    "contactUsLink": "Contact us"
+    "contactUsLink": "Contact us",
+    "groupsLabel": "Settings sections",
+    "myReportsLink": "My reports",
+    "groups": {
+      "profile": "Profile",
+      "account": "Email and sign-in",
+      "privacy": "Privacy",
+      "notifications": "Notifications",
+      "messages": "Messages",
+      "download-my-data": "Download my data",
+      "support": "Help and support",
+      "delete-account": "Delete account"
+    }
   },
   "notice": {
     "heading": "Choose a username",

@@ -59,7 +59,7 @@ test('a signed-in person reaches the contact page from Settings in one tap', asy
   const context = await browser.newContext();
   await useSessionInBrowser(context, (await signInPersona('adult_writer')).session);
   const page = await context.newPage();
-  await page.goto('/settings');
+  await page.goto('/settings#support');
   // The legal contact page, not "Contact us" (the form, S1-E14-04), which sits beside it.
   await page
     .getByRole('link', { name: /company details|datele companiei/ })

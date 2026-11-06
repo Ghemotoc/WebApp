@@ -163,9 +163,9 @@ test.describe('ways to log in', () => {
     const context = await browser.newContext();
     await useSessionInBrowser(context, session);
     const settings = await context.newPage();
-    await settings.goto('/settings');
+    await settings.goto('/settings#account');
     await expect(
-      settings.getByRole('heading', { name: /Blocked accounts|Conturi blocate/ }),
+      settings.getByRole('heading', { name: /Signed-in devices|Dispozitive conectate/ }),
     ).toBeVisible();
     await expect(settings.locator('#ways-to-log-in')).toHaveCount(0);
     await context.close();

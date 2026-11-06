@@ -115,7 +115,7 @@ test.describe('email address in Settings (S1-E2-05)', () => {
     await signUpAndConfirm(page);
 
     // Settings shows the account its own address, and says only it can see it.
-    await page.goto('/settings');
+    await page.goto('/settings#account');
     const panel = page.getByRole('region', { name: 'Email address' });
     await expect(panel.getByText(oldAddress)).toBeVisible();
     await expect(panel.getByText(/Only you can see it/)).toBeVisible();
@@ -126,7 +126,7 @@ test.describe('email address in Settings (S1-E2-05)', () => {
     await expect(page.getByText(oldAddress)).toHaveCount(0);
 
     // The same address is refused in words; a new one sends a code to both addresses.
-    await page.goto('/settings');
+    await page.goto('/settings#account');
     await panel.getByLabel('New email address').fill(oldAddress);
     await panel.getByRole('button', { name: 'Change email' }).click();
     await expect(panel.getByText('That’s already your email address.')).toBeVisible();
@@ -143,7 +143,7 @@ test.describe('email address in Settings (S1-E2-05)', () => {
       await checkScreen(page, view);
     }
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/settings');
+    await page.goto('/settings#account');
 
     // A wrong code is refused in words and nothing changes.
     const oldCode = codeFromEmail((await waitForEmail(oldAddress, 15_000, 'code')).HTML);
@@ -162,8 +162,8 @@ test.describe('email address in Settings (S1-E2-05)', () => {
     expect(runSql(`select count(*) from auth.users where email = '${newAddress}'`)).toBe('1');
 
     // Settings shows the new address, and the account logs in with it.
-    await page.goto('/settings');
-    await expect(panel.getByText(newAddress)).toBeVisible();
+    await page.goto('/settings#account');
+    await expect(panel.getByText(newAddress, { exact: true })).toBeVisible();
     await page.getByRole('button', { name: 'Your account' }).click();
     await page.getByRole('button', { name: 'Log out', exact: true }).click();
     await logIn(page, newAddress);

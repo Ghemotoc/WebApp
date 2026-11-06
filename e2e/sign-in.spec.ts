@@ -114,6 +114,8 @@ test('a person logs in, sees their devices and logs the others out', async ({ br
     // The laptop opens Settings through the account menu.
     await laptop.getByRole('button', { name: 'Your account' }).click();
     await laptop.getByRole('link', { name: 'Settings' }).click();
+    // The devices sit in the "Email and sign-in" group (PROFILE-1).
+    await laptop.getByRole('link', { name: 'Email and sign-in' }).click();
     const devices = laptop.getByRole('region', { name: 'Signed-in devices' });
     await expect(devices.getByText('This device')).toBeVisible();
     await expect(devices.getByRole('listitem')).toHaveCount(2);

@@ -141,7 +141,7 @@ test.describe('writer profile and blocks (S1-E5-05)', () => {
     await page.goto('/s/statia-meteo-seed01');
     await expect(page.getByRole('heading', { name: 'This story isn’t available' })).toBeVisible();
 
-    await page.goto('/settings');
+    await page.goto('/settings#privacy');
     const blockedSection = page.getByRole('region', { name: 'Blocked accounts' });
     await blockedSection.getByRole('button', { name: 'Unblock @adult_writer' }).click();
     await expect(blockedSection.getByText('You don’t block anyone.')).toBeVisible();

@@ -1,85 +1,69 @@
 /**
- * SettingsPage: Settings, screen 6.3 (story S1-E2-04 starts it; design/boards/Settings.dc.html).
+ * SettingsPage: Settings, screen 6.3 (story S1-E2-04 starts it; design/boards/Settings.dc.html;
+ * split into groups with a side menu by bundle PROFILE-1, 6 Nov 2026: Robert, 11:21 UTC, "it's
+ * very long, you need to scroll a lot, so I will need it to be compartmentalized a bit better").
  *
  * Who shows it: the router, at /settings; the top bar links here while signed in.
- * What it shows today: "Signed in as …", the Account panel (username and pen name), "About you"
- * (the bio), the profile picture, "Forum signature" (S1-E8-08), "What you like" (the county, likes and adult messages from setup, S1-E2-06), the Email address panel (S1-E2-05, added 25 Oct 2026: only the owner sees it),
- * Ways to log in (Google, Apple, Microsoft and passkeys, S1-E2-09, while their flags are on),
- * Privacy (who sees the profile and the library, online status, S1-E13-01), Notifications (the
- * notification emails, S1-E7-02), Messages (S1-E9-04), "Blocked accounts" (S1-E5-05), Canva
- * (S1-E3-12, while it applies), Signed-in devices (S1-E2-05), Download my data (S1-E13-02), Data
- * requests (S1-E11-09, once the person has one), Your support requests (S1-E11-13),
- * Delete account (S1-E13-03) and the Legal panel. The board's
- * other tabs (Language, My certificates) arrive with their stories, so only what works is shown
+ * What it shows: "Signed in as …", a moderator's question about one of the person's reports when
+ * there is one (S1-E10-08; above the menu, so it is never missed), then the menu
+ * (SettingsNav) and the open group's panels (SettingsGroupPanel, which lists them). The address
+ * says which group is open (/settings#privacy) and every older link to a panel
+ * (/settings#teacher-badge) opens its group (hooks/useSettingsGroup.ts). The board's other tabs
+ * (Language, My certificates) arrive with their stories, so only what works is shown
  * (docs/board-fixes.md).
- * Signed out, it says to log in; without a username, it links to setup.
+ * Signed out, it says to log in; without a username, Profile links to setup.
  */
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
 
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 
-import { CanvaSettingsSection } from '@/features/canva/components/CanvaSettingsSection';
-import { DeleteAccountSection } from '@/features/account-deletion/components/DeleteAccountSection';
-import { DownloadMyDataSection } from '@/features/data-export/components/DownloadMyDataSection';
-import { MyDataRequestsSection } from '@/features/data-requests/components/MyDataRequestsSection';
-import { SignatureSettingsSection } from '@/features/forums/components/SignatureSettingsSection';
-import { MessageSettingsSection } from '@/features/messages/components/MessageSettingsSection';
-import { ParentConsentSummary } from '@/features/parent-consent/components/ParentConsentSummary';
-import { LikesSettingsSection } from '@/features/onboarding/components/LikesSettingsSection';
-import { NotificationEmailsSection } from '@/features/notifications/components/NotificationEmailsSection';
-import { AvatarBuilderSection } from '@/features/avatars/components/AvatarBuilderSection';
-import { PrivacySettingsSection } from '@/features/privacy/components/PrivacySettingsSection';
 import { ReportQuestionsSection } from '@/features/reporting/components/ReportQuestionsSection';
-import { SupportRequestsSection } from '@/features/support/components/SupportRequestsSection';
-import { TeacherBadgeSection } from '@/features/teacher-badge/components/TeacherBadgeSection';
 
+import { settingsPanelId, useSettingsGroup } from '../hooks/useSettingsGroup';
 import { useMyNames } from '../hooks/useMyNames';
 import { displayName } from '../lib/nameRules';
 
-import { AccountNamesSection } from './AccountNamesSection';
-import { BioSettingsSection } from './BioSettingsSection';
-import { BirthdaySettingsSection } from './BirthdaySettingsSection';
-import { BlockedAccountsSection } from './BlockedAccountsSection';
-import { EmailSettingsSection } from './EmailSettingsSection';
-import { LegalLinksSection } from './LegalLinksSection';
-import { LoginMethodsSection } from './LoginMethodsSection';
-import { SignedInDevicesSection } from './SignedInDevicesSection';
+import { SettingsGroupPanel } from './SettingsGroupPanel';
+import { SettingsNav } from './SettingsNav';
 
 /**
- * The parts that need a username: names, bio, picture, forum signature and likes.
+ * The menu and the open group, side by side on a wide screen and stacked on a narrow one.
  *
- * @param props.account - useMyNames's result
- * @param props.names - the person's names
- * @param props.handle - their username
- * @returns the sections
+ * @param props.account - useMyNames's result, loaded
+ * @returns the menu and the panel
  */
-function ProfileSections({
-  account,
-  names,
-  handle,
-}: {
-  account: ReturnType<typeof useMyNames>;
-  names: NonNullable<ReturnType<typeof useMyNames>['names']>;
-  handle: string;
-}) {
+function SettingsGroups({ account }: { account: ReturnType<typeof useMyNames> }) {
+  const { group } = useSettingsGroup();
+  const panel = useRef<HTMLDivElement>(null);
+  const { names } = account;
+  if (names === null) return null;
+
+  /** After a pick, the focus moves to the group, so a keyboard or screen reader user lands there. */
+  function focusPanel() {
+    window.requestAnimationFrame(() => panel.current?.focus({ preventScroll: true }));
+  }
+
   return (
-    <>
-      <AccountNamesSection account={account} names={names} />
-      <BioSettingsSection handle={handle} />
-      <AvatarBuilderSection handle={handle} />
-      {/* The line under one's forum posts (S1-E8-08). */}
-      <SignatureSettingsSection />
-      {/* The county, likes and (16 and 17) adult messages chosen in setup (S1-E2-06). */}
-      <LikesSettingsSection />
-    </>
+    <div className="flex flex-wrap items-start gap-6">
+      <SettingsNav open={group} onPick={focusPanel} />
+      {/* Not a named region: each panel inside is one already, with the same names as the menu. */}
+      <div
+        ref={panel}
+        id={settingsPanelId}
+        tabIndex={-1}
+        className="flex min-w-0 flex-[999_1_560px] flex-col gap-6 outline-none"
+      >
+        <SettingsGroupPanel group={group} account={account} names={names} />
+      </div>
+    </div>
   );
 }
 
 /**
- * What goes under the heading: a wait, a message, or the panels.
+ * What goes under the heading: a wait, a message, or the groups.
  *
  * @param props.account - useMyNames's result
  * @returns the page's body
@@ -94,14 +78,7 @@ function SettingsBody({ account }: { account: ReturnType<typeof useMyNames> }) {
   const { names } = account;
   return (
     <>
-      {names.handle === null ? (
-        <p className="m-0 text-body">
-          {t('settings.noHandle')}{' '}
-          <Link to="/setup" className="text-link underline">
-            {t('notice.action')}
-          </Link>
-        </p>
-      ) : (
+      {names.handle !== null && (
         <p className="m-0 text-body">
           {t('settings.signedInAs', {
             name: displayName(names.handle, names.penName),
@@ -109,38 +86,11 @@ function SettingsBody({ account }: { account: ReturnType<typeof useMyNames> }) {
           })}
         </p>
       )}
-      {names.handle !== null && (
-        <ProfileSections account={account} names={names} handle={names.handle} />
-      )}
-      {/* The Teacher badge for adults (S1-E2-11): ask later, see where it stands. */}
-      <TeacherBadgeSection />
-      {/* Every signed-in account sees and can change its own address, minors included. */}
-      <EmailSettingsSection />
-      {/* Google, Apple, Microsoft and passkeys (S1-E2-09); hidden while their flags are off. */}
-      <LoginMethodsSection />
-      <BirthdaySettingsSection />
-      {/* What a parent or guardian agreed to, for a member who needed it (IDEAS-2 idea 8). */}
-      <ParentConsentSummary />
-      {/* Who sees the profile and the library, and online status (S1-E13-01). */}
-      <PrivacySettingsSection />
-      {/* What we email, per kind (S1-E7-02); every email's footer links to it. */}
-      <NotificationEmailsSection />
-      <MessageSettingsSection />
       {/* A moderator's question about one of the person's reports (S1-E10-08). */}
-      <ReportQuestionsSection />
-      <BlockedAccountsSection />
-      {/* Canva, while it can be used or is still connected (S1-E3-12). */}
-      <CanvaSettingsSection />
-      <SignedInDevicesSection />
-      {/* A copy of everything about the account, as one ZIP (S1-E13-02). */}
-      <DownloadMyDataSection />
-      {/* Asking the support team for help, and their answers (S1-E11-13; ADMIN-2h1). */}
-      <SupportRequestsSection />
-      {/* Requests about the person's data, and "Was it you?" (S1-E11-09; ADMIN-2c1). */}
-      <MyDataRequestsSection />
-      {/* Close the account now, deleted for good 14 days later (S1-E13-03). */}
-      <DeleteAccountSection />
-      <LegalLinksSection />
+      <div className="max-w-[720px] empty:hidden">
+        <ReportQuestionsSection />
+      </div>
+      <SettingsGroups account={account} />
     </>
   );
 }
@@ -162,9 +112,7 @@ export function SettingsPage() {
           {t('settings.heading')}
         </h1>
       </div>
-      <div className="flex max-w-[720px] flex-col gap-6">
-        <SettingsBody account={account} />
-      </div>
+      <SettingsBody account={account} />
     </PageContainer>
   );
 }

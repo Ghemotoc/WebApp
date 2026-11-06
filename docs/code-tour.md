@@ -492,6 +492,17 @@ ChatPanel → ChatHeader                                                    src/
 
 The context is read from the chat when staff open the case; the safeguarding evidence pack gets the same messages through `case_item_content()`. Tests: `207` in `supabase/tests/database/`, `e2e/messages-block-and-report.spec.ts`.
 
+## Settings groups (PROFILE-1)
+
+```
+/settings#<group> → SettingsPage → useSettingsGroup (the hash) → settingsGroupOfHash()   src/features/account/
+  SettingsNav (links to #profile, #account, #privacy …, and My reports)
+  SettingsGroupPanel → only the open group's panels (each a feature's own section)
+/settings#teacher-badge (an older panel address) → the group that holds it, then scrolls to it
+```
+
+Settings shows one group at a time (Profile, Email and sign-in, Privacy, Notifications, Messages, Download my data, Help and support, Delete account). Which panel sits in which group is in `SettingsGroupPanel.tsx`; the older panel addresses each group holds are in `lib/settingsGroups.ts`, so a link in an email keeps working. To add a panel, put it in a group there, and if other screens link to it, add its anchor to that group. Tests: `src/features/account/lib/settingsGroups.test.ts`, `e2e/settings-groups.spec.ts`.
+
 ## Message settings and Delete chat (S1-E9-04)
 
 ```
