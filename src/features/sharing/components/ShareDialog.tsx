@@ -43,9 +43,7 @@ function ChatPreview({ chapter }: { chapter: SharedChapter }) {
   const { t } = useTranslation('sharing');
   return (
     <div className="flex flex-col gap-2">
-      <h3 className="m-0 font-eyebrow text-sm font-normal text-eyebrow">
-        {t('dialog.previewHeading')}
-      </h3>
+      <h3 className="m-0 eyebrow">{t('dialog.previewHeading')}</h3>
       <div className="flex flex-col gap-1 rounded-[14px] border border-border bg-paper p-4">
         <p className="m-0 text-xs text-meta">{brand.siteDomain}</p>
         <p className="m-0 text-[15px] font-semibold text-heading">
@@ -87,9 +85,7 @@ export function ShareDialog({ isOpen, onClose, chapter, wasCopied }: ShareDialog
       <ShareLinkRow link={link} wasCopied={wasCopied} />
       <SharePrivacyNote text={t('dialog.privacy')} />
       <div className="flex flex-col gap-2">
-        <h3 className="m-0 font-eyebrow text-sm font-normal text-eyebrow">
-          {t('dialog.otherWays')}
-        </h3>
+        <h3 className="m-0 eyebrow">{t('dialog.otherWays')}</h3>
         <p className="m-0 text-sm text-body">{t('dialog.quoteHint')}</p>
         <p className="m-0 text-sm text-body">{t('dialog.deviceNote')}</p>
       </div>

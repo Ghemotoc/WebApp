@@ -2,7 +2,7 @@
  * NotificationEmailsSection: "Notifications" in Settings: what we email, per kind (story
  * S1-E7-02; board Settings 6.3, the Notifications tab).
  *
- * Board values: Cutive eyebrow, the heading and intro, a table of Type and Email with one
+ * Board values: eyebrow, the heading and intro, a table of Type and Email with one
  * drop-down per kind (Instant, Daily digest, Off), a last row "Account, safety and legal: Always
  * sent", and the notes about marketing and the one-click unsubscribe. Rows have a fine line
  * between them (DoD label rows). The board's Push column and quiet-hours note wait for push

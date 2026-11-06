@@ -2,8 +2,8 @@
  * DashboardTotals: "How readers respond", the five tiles at the top of the writer dashboard
  * (story S1-E3-07; board WriterDashboard 4.1, "Totals for all stories").
  *
- * Board values: Cutive eyebrow "All your stories", the 28 px heading, a "Last 30 days / All time"
- * choice, five white tiles (24 px corners, the label in Cutive, the number in 40 px Bricolage
+ * Board values: eyebrow "All your stories", the 28 px heading, a "Last 30 days / All time"
+ * choice, five white tiles (24 px corners, the label in the eyebrow style, the number in 40 px Bricolage
  * with a 40 px doodle-set icon, a 14 px note) and the lilac "These are totals only" panel.
  * A count from fewer than 5 readers reads "fewer than 5" (criterion 2); the numbers are totals,
  * never a list of readers (criterion 3).

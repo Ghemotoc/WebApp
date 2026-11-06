@@ -32,7 +32,7 @@ export function ShareLinkRow({ link, wasCopied }: ShareLinkRowProps) {
   if (copied === false) status = t('dialog.copyFailed');
   return (
     <div className="flex flex-col gap-2">
-      <label htmlFor="share-link" className="font-eyebrow text-sm text-eyebrow">
+      <label htmlFor="share-link" className="eyebrow">
         {t('dialog.linkLabel')}
       </label>
       <div className="flex flex-wrap items-center gap-3">

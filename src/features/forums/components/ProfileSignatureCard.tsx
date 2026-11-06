@@ -2,7 +2,7 @@
  * ProfileSignatureCard: "Forum signature" on a writer's profile (story S1-E8-08; board 6.1, the
  * side column's second card).
  *
- * Board values: a white card with 24 px corners, the Cutive eyebrow "Forum signature" (the
+ * Board values: a white card with 24 px corners, the eyebrow "Forum signature" (the
  * heading itself is for screen readers only, as the board draws it), the signature box and a
  * 13 px line saying where it shows ("Shows under inkwolf’s forum posts on bigger screens").
  * Nothing is drawn when the person has no signature, or the reader may not see their profile.
@@ -34,10 +34,7 @@ export function ProfileSignatureCard({ handle, name }: ProfileSignatureCardProps
   return (
     <Card>
       <section aria-labelledby="profile-signature-heading" className="flex flex-col gap-3.5">
-        <p
-          aria-hidden="true"
-          className="m-0 font-eyebrow text-sm leading-[1.3] font-normal text-eyebrow"
-        >
+        <p aria-hidden="true" className="m-0 eyebrow">
           {t('signature.eyebrow')}
         </p>
         <h2 id="profile-signature-heading" className="sr-only">

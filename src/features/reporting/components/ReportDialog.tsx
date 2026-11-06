@@ -257,7 +257,7 @@ export function ReportDialog(props: ReportDialogProps) {
         <div className="flex flex-col gap-5">
           <div className="flex items-start gap-3">
             <div className="flex min-w-0 flex-1 flex-col gap-2">
-              <p className="m-0 font-eyebrow text-sm text-eyebrow">{t('dialog.eyebrow')}</p>
+              <p className="m-0 eyebrow">{t('dialog.eyebrow')}</p>
               <h2
                 id="report-dialog-title"
                 className="m-0 font-heading text-[26px] font-bold text-heading"

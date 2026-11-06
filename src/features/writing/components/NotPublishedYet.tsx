@@ -3,7 +3,7 @@
  * WriterDashboard 4.1).
  *
  * Board values: a white card with the pencil-cup widget doodle at its top right (from 1000 px,
- * where the card sits beside the chart; stacked under it, the doodle would touch the chart), Cutive eyebrow,
+ * where the card sits beside the chart; stacked under it, the doodle would touch the chart), eyebrow,
  * the 26 px heading, and one sand row per waiting chapter: a gold "Draft" or sky "Scheduled" pill,
  * "Chapter n: title", the story, words and when it was saved (or when it publishes, Romania time)
  * and an "Edit" or "Reschedule" link to the editor. Newest first, at most four.

@@ -60,7 +60,7 @@ export function BackgroundPicker({ chosen, onChoose }: BackgroundPickerProps) {
   const coloursId = useId();
   return (
     <div role="group" aria-labelledby={headingId} className="flex flex-col gap-3">
-      <p id={headingId} className="m-0 font-eyebrow text-sm text-eyebrow">
+      <p id={headingId} className="m-0 eyebrow">
         {t('quote.background')}
       </p>
       <div>

@@ -158,9 +158,7 @@ export function ChapterEmbed(props: ChapterEmbedProps) {
         onPlay={play}
       />
       <div className="flex min-w-0 flex-[1_1_260px] flex-col gap-1.5 px-5 py-4">
-        <p className="m-0 font-eyebrow text-sm leading-[1.3] font-normal text-eyebrow">
-          {t(`embed.eyebrow.${kind}`, { service })}
-        </p>
+        <p className="m-0 eyebrow">{t(`embed.eyebrow.${kind}`, { service })}</p>
         <p className="m-0 font-heading text-xl leading-tight font-bold text-ink">{title}</p>
         <p className="m-0 text-sm text-body">{t('embed.cookies', { service })}</p>
         <p className="m-0 text-[13px] text-meta">{t('embed.terms', { service })}</p>

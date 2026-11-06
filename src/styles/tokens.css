@@ -253,7 +253,8 @@
 @theme {
   --font-heading: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', system-ui, sans-serif;
   --font-body: 'Inter Variable', 'Inter', system-ui, sans-serif;
-  --font-eyebrow: 'Cutive', 'Courier New', serif;
+  /* Eyebrows use Inter, as the parent company's do (Robert, 6 Nov 2026; Cutive before). */
+  --font-eyebrow: 'Inter Variable', 'Inter', system-ui, sans-serif;
   --font-hand: 'Shadows Into Light Two', cursive;
 
   --radius-nav: 2.1rem;

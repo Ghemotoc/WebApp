@@ -38,10 +38,7 @@ export function TextSizeSlider({ chosenSize, deviceSize, onChange }: TextSizeSli
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-baseline justify-between gap-3">
-        <label
-          htmlFor={inputId}
-          className="font-eyebrow text-sm leading-[1.3] font-normal text-eyebrow"
-        >
+        <label htmlFor={inputId} className="eyebrow">
           {t('settings.textSize')}
         </label>
         <span className="text-right text-[13px] font-semibold text-meta">{valueText}</span>
