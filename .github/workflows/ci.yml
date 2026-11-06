@@ -71,6 +71,8 @@ jobs:
         run: test -f dist/index.html && test -f dist/_redirects
       # No service role key or secret API key may reach the browser bundle (CLAUDE.md rule 2).
       - run: npm run scan:bundle
+      # The first download every page needs, and the chapter reader's, stay within budget (QA-6).
+      - run: npm run bundle:check
       # Nothing in the build may point at a site nobody reviewed (CLAUDE.md rule 7; S1-E14-03).
       - run: npm run third-party:check
 
