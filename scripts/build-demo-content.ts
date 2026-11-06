@@ -36,6 +36,10 @@ export const topUpPath = fileURLToPath(
 export const classicAuthorsPath = fileURLToPath(
   new URL('../supabase/staging-topups/classic-authors.sql', import.meta.url),
 );
+/** Only the drawn covers, for staging after part 2a (bundle LOOK-1). */
+export const coversPath = fileURLToPath(
+  new URL('../supabase/staging-topups/look-1-covers.sql', import.meta.url),
+);
 /** The same top-up in parts the SQL Editor accepts (scripts/demo-content-parts.ts). */
 export const topUpPartsFolder = fileURLToPath(
   new URL('../supabase/staging-topups/demo-content-2a', import.meta.url),
@@ -724,7 +728,59 @@ select ${sqlValue(fixedId(story))}::uuid, ${sqlValue(writer.userId)}::uuid, ${sq
   now() - interval '${daysAgo(story)} days', now() - interval '${lastChapterDaysAgo} days', now() - interval '${daysAgo(story) + 2} days'
 where not exists (select 1 from public.stories where stories.id = ${sqlValue(fixedId(story))}::uuid);
 select public.set_story_tags(${sqlValue(fixedId(story))}::uuid, ${sqlValue(writer.userId)}::uuid, array[${tags}]);
-${classicAuthorSql(story)}`;
+${drawnCoverSql(story)}${classicAuthorSql(story)}`;
+}
+
+/**
+ * The SQL that brings an existing story's drawn cover in line with its file (bundle LOOK-1,
+ * 6 Nov 2026: the demo covers that were flat colours became patterned ones, so no card looks
+ * empty). Empty for a story with an automatic cover. Safe to run twice: it changes a story only
+ * while its stored cover differs from the file.
+ *
+ * @param story - the story
+ * @returns SQL, ending with a newline, or ''
+ */
+export function drawnCoverSql(story: DemoStory): string {
+  if (story.cover.kind === 'automatic') return '';
+  const design = sqlValue(story.cover.design);
+  const background = sqlValue(story.cover.background);
+  const accent = sqlValue(story.cover.accent);
+  return `update public.stories
+set cover_kind = 'drawn', cover_design = ${design}, cover_background = ${background}, cover_accent = ${accent}
+where stories.id = ${sqlValue(fixedId(story))}::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', ${design}, ${background}, ${accent});
+`;
+}
+
+/**
+ * The small top-up for a staging database that already has part 2a: only the drawn covers
+ * (bundle LOOK-1), so nothing else has to run again.
+ *
+ * @param stories - the demo stories and the classics
+ * @returns the SQL file's contents
+ */
+export function buildCoversSql(stories: DemoStory[]): string {
+  const drawnCount = stories.filter((story) => story.cover.kind === 'drawn').length;
+  return `-- Staging top-up: the demo stories' drawn covers (bundle LOOK-1; Robert, 6 Nov 2026, D3). GENERATED FILE.
+--
+-- Made by \`npm run demo:build\` from content/demo-stories and content/classics/texts; edit those
+-- files, not this one. What it does: sets each of the ${drawnCount} drawn covers to what its file says,
+-- so the demo stories that had a flat colour get a patterned design. Needs part 2a. Adds no
+-- accounts and touches no story with an automatic cover.
+-- Rules (supabase/staging-topups/README.md): safe to run twice; never production (step 1).
+-- How to check it worked: the last query shows flat_drawn_covers 0.
+begin;
+
+${guardSql}
+${stories.map(drawnCoverSql).join('')}commit;
+
+select json_build_object(
+  'flat_drawn_covers', (select count(*) from public.stories
+    where cover_kind = 'drawn' and cover_design in ('plum', 'ink', 'violet', 'gold', 'lilac', 'blush', 'sky', 'sage', 'paper')
+      and user_id in (select id from auth.users where email like '%@personas.test'))
+)::text as after_look_1_covers;
+`;
 }
 
 /**
@@ -935,6 +991,8 @@ function main(): void {
   writeFileSync(topUpPath, buildTopUpSql(demo.stories, classics.stories));
   // Only the classics' authors, for a staging database that already ran part 2a (S1-E5-06).
   writeFileSync(classicAuthorsPath, buildClassicAuthorsSql(classics.stories));
+  // Only the drawn covers, for a staging database that already ran part 2a (LOOK-1).
+  writeFileSync(coversPath, buildCoversSql([...demo.stories, ...classics.stories]));
   // The same top-up in parts under 500 KB, for the SQL Editor (CTO, 24 Oct 2026).
   const parts = splitIntoParts(topUpPieces(demo.stories, classics.stories));
   writeParts(topUpPartsFolder, parts);

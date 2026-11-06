@@ -9,7 +9,7 @@ language: en
 category: poetry
 rating: 13_plus
 tags: domeniu public, classic, poetry, gothic
-cover: drawn:ink/ink/lilac
+cover: drawn:starry/ink/lilac
 blurb: At midnight a grieving scholar hears a tapping at his door. A raven walks in, and to every question answers with one word.
 ---
 

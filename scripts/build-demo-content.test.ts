@@ -2,15 +2,19 @@
  * Tests for the demo content build (Lane B, "Staging top-up: demo content", 23 Oct 2026).
  * Proves: a story file is read into its parts; every rule in content/demo-stories/README.md is
  * checked with a plain message; the SQL uses fixed ids, skips rows that exist and refuses a
- * database without the seed personas; the committed SQL file matches the story files.
+ * database without the seed personas; the committed SQL file matches the story files; every demo
+ * and classic drawn cover is patterned, and the covers top-up brings staging in line (LOOK-1).
  */
 import { existsSync, readFileSync } from 'node:fs';
 
 import { describe, expect, it } from 'vitest';
 
 import {
+  buildCoversSql,
   buildTopUpSql,
   classicsTextsFolder,
+  coversPath,
+  drawnCoverSql,
   countWords,
   demoStoriesFolder,
   fileNumber,
@@ -271,5 +275,35 @@ describe('the committed top-up', () => {
     expect(demo.stories.filter((candidate) => candidate.isSample)).toHaveLength(5);
     expect(existsSync(topUpPath)).toBe(true);
     expect(readFileSync(topUpPath, 'utf8')).toBe(buildTopUpSql(demo.stories, classics.stories));
+  });
+});
+
+describe('the drawn covers (LOOK-1)', () => {
+  const demo = readStories(demoStoriesFolder, /^demo-\d\d\.md$/);
+  const classics = readStories(classicsTextsFolder, /^classic-.*\.md$/);
+  const allStories = [...demo.stories, ...classics.stories];
+
+  it('no demo story or classic draws a flat colour, so no card looks empty', () => {
+    const flat = ['plum', 'ink', 'violet', 'gold', 'lilac', 'blush', 'sky', 'sage', 'paper'];
+    const flatOnes = allStories.filter(
+      (story) => story.cover.kind === 'drawn' && flat.includes(story.cover.design),
+    );
+    expect(flatOnes.map((story) => story.id)).toEqual([]);
+  });
+
+  it('updates a drawn cover only while it differs, and leaves an automatic one alone', () => {
+    const drawn = parseStory(goodStory, 7);
+    const sql = drawnCoverSql(drawn);
+    expect(sql).toContain(`where stories.id = '${fixedId(drawn)}'::uuid`);
+    expect(sql).toContain("is distinct from ('drawn', 'waves', 'sky', 'violet')");
+    const automatic = parseStory(goodStory.replace(/^cover: .*$/m, 'cover: automatic'), 7);
+    expect(drawnCoverSql(automatic)).toBe('');
+  });
+
+  it('the committed covers top-up matches the files and refuses a production database', () => {
+    if (demo.stories.length === 0) return;
+    const sql = readFileSync(coversPath, 'utf8');
+    expect(sql).toBe(buildCoversSql(allStories));
+    expect(sql).toContain("email like '%@personas.test'");
   });
 });
