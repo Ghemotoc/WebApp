@@ -51,6 +51,8 @@ select results_eq(
        ('abuse_image_evidence', 0::bigint),
        -- Delete my account: each person's own requests (S1-E13-03).
        ('account_deletions', 0::bigint),
+       -- Staff notes on an account: staff with the Users area only (LOGS-1a).
+       ('account_staff_notes', 0::bigint),
        -- Slot bookings and our own house ads: owner and admin only (SPONSORS-e1).
        ('ad_bookings', 0::bigint),
        -- The ad slot catalogue: which slots exist, no personal data (SPONSORS-a1, S1-E12-01).

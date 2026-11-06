@@ -409,7 +409,14 @@
       "heading": "Acțiunile echipei pe @{{handle}}",
       "none": "Încă nicio acțiune a echipei pe acest cont.",
       "line": "{{when}} · {{who}} · {{action}}",
-      "more": "Caută în tot jurnalul de audit"
+      "more": "Deschide jurnalul de audit pentru acest cont",
+      "noMore": "Nu mai sunt alte acțiuni ale echipei pe acest cont.",
+      "pages": "Paginile cu acțiunile echipei",
+      "failures": {
+        "not_allowed": "Doar un proprietar sau un administrator poate citi acțiunile echipei pe un cont.",
+        "bad_filter": "Istoricul acestui cont nu a putut fi citit. Reîncarcă pagina și încearcă din nou.",
+        "unreachable": "Acțiunile echipei nu s-au putut încărca. Verifică-ți conexiunea și încearcă din nou."
+      }
     },
     "messages": {
       "heading": "Mesaje private",
@@ -424,6 +431,25 @@
       "refused": "N-am salvat. Contul poate avea deja această sancțiune sau lipsește un câmp.",
       "unreachable": "Nu am putut ajunge la server. Verifică conexiunea și încearcă din nou.",
       "no_consent": "Contul nu are un acord al părintelui de retras."
+    },
+    "notes": {
+      "heading": "Notițele echipei",
+      "fieldLabel": "Adaugă o notiță pentru echipă",
+      "fieldHint": "Cel mult {{count}} de caractere. Notițele rămân pentru totdeauna și nu pot fi modificate. Scrie fapte, nu păreri: persoana poate cere să vadă ce date avem despre ea.",
+      "add": "Adaugă notița",
+      "adding": "Se adaugă…",
+      "none": "Încă nu sunt notițe pe acest cont.",
+      "byline": "{{who}} · {{when}}",
+      "pages": "Paginile cu notițele echipei",
+      "failures": {
+        "not_allowed": "Doar membrii echipei care pot deschide conturi pot citi sau adăuga notițe.",
+        "empty_or_long": "Scrie o notiță de cel mult 2.000 de caractere.",
+        "no_such_account": "Acest cont nu mai există.",
+        "unreachable": "Notițele nu s-au putut salva sau încărca. Verifică-ți conexiunea și încearcă din nou."
+      }
+    },
+    "pager": {
+      "pageOf": "Pagina {{number}} din {{count}}"
     }
   },
   "metrics": {

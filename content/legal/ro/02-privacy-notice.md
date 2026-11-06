@@ -69,6 +69,7 @@ Ce primim de la alții:
 - Conexiunea ta: când te înscrii, îți citim țara din conexiunea la internet și păstrăm doar codul țării. Pentru siguranță îți păstrăm adresa IP doar într-o formă amestecată, timp de 30 de zile. Dacă un cont nou se înscrie de pe aceeași adresă amestecată ca un cont interzis în ultimele 30 de zile, un moderator se uită la el; nimeni nu este blocat din cauza asta, pentru că școlile și familiile folosesc aceeași conexiune. [de verificat de avocat]
 - Alți oameni: raportări despre tine sau conținutul tău și, într-un spațiu de clasă, ce adaugă profesorul tău.
 - Autorități: ordinele și cererile pe care ni le trimit.
+- Echipa noastră: notițe scurte pe care membrii echipei le lasă unii altora pe contul tău, de exemplu ce ai întrebat la asistență sau ce a verificat un moderator. Notițele sunt fapte, nu se arată nimănui public și poți cere să le vezi. [de verificat de avocat]
 
 ID-ul tău de utilizator. Fiecare cont primește un ID aleatoriu și permanent care leagă tot ce creezi pe Ghemotoc. Nimeni altcineva nu îl vede vreodată. Îl găsești în propriile descărcări ale datelor tale.
 
@@ -225,6 +226,7 @@ Siguranță
 - Conținutul eliminat după un ordin de eliminare a conținutului terorist: păstrat 6 luni, cum cere legea, dacă o autoritate nu cere mai mult.
 - Conținutul dintr-un proces în desfășurare: păstrat până se termină procesul.
 - Dovezile păstrate pentru poliție într-un caz de siguranță a unui copil: [DESCHIS: de stabilit cu avocatul]
+- Notițele echipei noastre pe contul tău: 3 ani de la scrierea fiecărei notițe, la fel ca evidența a ceea ce a făcut echipa.
 - O imagine sexuală suspectă cu un copil: imaginea în sine se șterge imediat și nu se păstrează. Păstrăm dovezile 5 ani: cazul, contul, când a fost încărcată și găsită, amprenta fișierului (un hash SHA-256), adresa IP amestecată de pe care a fost încărcată și o scurtă descriere a unui moderator pentru poliție. O păstrăm mai mult doar dacă poliția ne-o cere în acest timp. [de verificat de avocat]
 
 Securitate
