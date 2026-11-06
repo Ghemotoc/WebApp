@@ -415,7 +415,7 @@
   "appeals": {
     "documentTitle": "Contestații · {{productName}}",
     "heading": "Contestații",
-    "intro": "Oamenii pot contesta o decizie timp de șase luni. Decide un alt moderator, când se poate. Schimbarea deciziei readuce ce a fost ascuns sau eliminat și ridică sancțiunea; persoana e anunțată în ambele cazuri.",
+    "intro": "Oamenii pot contesta o decizie timp de șase luni. Decide un alt moderator, când se poate; când nu poate altcineva, decide și contestația moderatorul care a luat decizia, iar contestația e marcată și o verifică proprietarul. Schimbarea deciziei readuce ce a fost ascuns sau eliminat și ridică sancțiunea; persoana e anunțată în ambele cazuri.",
     "notAllowed": "Doar echipa care decide contestațiile poate vedea pagina.",
     "loading": "Se încarcă contestațiile…",
     "none": "Nicio contestație nu se potrivește filtrului.",
@@ -439,6 +439,11 @@
     "originalDecider": "Decizia inițială a luat-o",
     "decidedBy": "Contestația a decis-o",
     "notYours": "Tu ai luat decizia inițială, așa că altcineva decide contestația.",
+    "sameDecider": "Același moderator",
+    "ownerReviewNeeded": "Moderatorul care a luat decizia inițială a decis și contestația, pentru că nu putea altcineva. Proprietarul o verifică.",
+    "ownerReviewed": "Proprietarul a verificat această decizie.",
+    "markReviewed": "Marchează ca verificată",
+    "marking": "Se salvează…",
     "formLabel": "Decide contestația {{reference}}",
     "outcome": "Rezultat",
     "outcomes": {

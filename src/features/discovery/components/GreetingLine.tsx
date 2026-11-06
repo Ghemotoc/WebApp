@@ -3,10 +3,11 @@
  * with S1-E2-12; board Discover 3.1's personal greeting).
  *
  * On an ordinary day it says good morning, afternoon or evening by the reader's own clock (the
- * board's rule: nothing about place is used). On their birthday it says "Happy birthday", all
- * through their birthday month "Happy birthday month", and in the month they joined, from the
- * first anniversary on, "Happy <product> anniversary" (Robert, 25 Oct 2026, 07:07 to 07:11). The
- * birthday wins over the anniversary (proposal, in the database).
+ * board's rule: nothing about place is used). All through their birthday month it says "Happy
+ * birthday month" (the month only since QA-7, 6 Nov 2026: no birthday day is stored, CLAUDE.md
+ * rule 5), and in the month they joined, from the first anniversary on, "Happy <product>
+ * anniversary" (Robert, 25 Oct 2026, 07:07 to 07:11). The birthday month wins over the
+ * anniversary (proposal, in the database).
  * Who shows it: DiscoverPage. What it calls: useMyNames (the pen name, or the username) and
  * useMyGreeting (which greeting today). Signed out, or before the name loads, it shows nothing.
  * The wording is interface text in discovery.json (admins may override it with S1-E11-18).

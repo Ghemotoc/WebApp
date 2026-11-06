@@ -1,15 +1,14 @@
 /**
- * The optional birthday and the Discover greeting in a real browser (stories S1-E2-12 and
- * S1-E2-13; Robert, 25 Oct 2026, 07:07 to 07:11).
+ * The optional birthday month and the Discover greeting in a real browser (stories S1-E2-12 and
+ * S1-E2-13; Robert, 25 Oct 2026, 07:07 to 07:11; QA-7, 6 Nov 2026: the month only, never a day).
  *
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase started first).
  * What it proves:
- * - a signed-in person saves today's day and month (Romanian date) in Settings › Birthday, and
- *   Discover says "Happy birthday" to them by name;
- * - with only this month saved, Discover says "Happy birthday month";
+ * - a signed-in person saves this month (Romanian date) in Settings › Birthday, and Discover says
+ *   "Happy birthday month" to them by name; the panel offers no day at all;
  * - with no birthday, in the month they joined (from the first anniversary on), Discover says
  *   "Happy … anniversary"; on any other day it says good morning, afternoon or evening;
- * - a moderator corrects the birthday from the account page, with a reason, and it lands in the
+ * - a moderator corrects the birthday month from the account page, with a reason, and it lands in the
  *   audit log;
  * - Settings with the Birthday panel passes axe and doesn't scroll sideways at 390, 768 and
  *   1440 px.
@@ -25,16 +24,14 @@ import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './su
 const adultWriterId = '00000000-0000-4000-8000-000000000001';
 const stamp = `e2e birthday ${Date.now()}`;
 
-/** Today's month and day on the Romanian calendar, as the database counts them. */
-function romanianToday(): { month: string; day: string } {
-  const parts = new Intl.DateTimeFormat('en-GB', {
+/** This month on the Romanian calendar, as the database counts it ('1' to '12'). */
+function romanianMonth(): string {
+  const month = new Intl.DateTimeFormat('en-GB', {
     timeZone: 'Europe/Bucharest',
     month: 'numeric',
-    day: 'numeric',
-  }).formatToParts(new Date());
-  const valueOf = (type: string) => parts.find((part) => part.type === type)?.value ?? '';
-  // Some ICU versions pad the day ("01"); the selects' values are plain numbers ("1").
-  return { month: String(Number(valueOf('month'))), day: String(Number(valueOf('day'))) };
+  }).format(new Date());
+  // Some ICU versions pad the month ("03"); the select's values are plain numbers ("3").
+  return String(Number(month));
 }
 
 /** Opens an address in English as a persona, in a fresh browser context. */
@@ -64,28 +61,20 @@ test.describe('birthday and anniversary greetings (S1-E2-12, S1-E2-13)', () => {
   });
 
   test.afterAll(() => {
-    runSql(`update public.profiles set birthday_month = null, birthday_day = null,
+    runSql(`update public.profiles set birthday_month = null,
         created_at = '${joinedAt}'
       where id = '${adultWriterId}';
       update public.profiles set locale = 'ro' where handle in ('adult_writer', 'moderator');`);
   });
 
-  test('a birthday saved for today gets "Happy birthday" on Discover', async ({ browser }) => {
-    const today = romanianToday();
+  test('this month saved gets "Happy birthday month", and no day is ever asked', async ({
+    browser,
+  }) => {
     const page = await openAs(browser, 'adult_writer', '/settings');
     const panel = page.getByRole('region', { name: 'Birthday' });
-    await panel.getByLabel('Month').selectOption(today.month);
-    await panel.getByLabel('Day (optional)').selectOption(today.day);
-    await panel.getByRole('button', { name: 'Save birthday' }).click();
-    await expect(panel.getByText('Saved.')).toBeVisible();
-    await page.goto('/discover');
-    await expect(greeting(page)).toHaveText('Happy birthday, Lia Scrie!');
-  });
-
-  test('only the month gets "Happy birthday month"', async ({ browser }) => {
-    const page = await openAs(browser, 'adult_writer', '/settings');
-    const panel = page.getByRole('region', { name: 'Birthday' });
-    await panel.getByLabel('Day (optional)').selectOption('');
+    // CLAUDE.md rule 5 (QA-7): a day beside the year of birth would be a full date of birth.
+    await expect(panel.getByLabel(/^Day/)).toHaveCount(0);
+    await panel.getByLabel('Month').selectOption(romanianMonth());
     await panel.getByRole('button', { name: 'Save birthday' }).click();
     await expect(panel.getByText('Saved.')).toBeVisible();
     await page.goto('/discover');
@@ -96,7 +85,7 @@ test.describe('birthday and anniversary greetings (S1-E2-12, S1-E2-13)', () => {
     browser,
   }) => {
     // No birthday, and an account that joined two years ago this month.
-    runSql(`update public.profiles set birthday_month = null, birthday_day = null,
+    runSql(`update public.profiles set birthday_month = null,
       created_at = now() - interval '2 years' where id = '${adultWriterId}';`);
     const page = await openAs(browser, 'adult_writer', '/discover');
     await expect(greeting(page)).toContainText('anniversary, Lia Scrie!');
@@ -107,19 +96,17 @@ test.describe('birthday and anniversary greetings (S1-E2-12, S1-E2-13)', () => {
     await expect(greeting(page)).toHaveText(/^Good (morning|afternoon|evening), Lia Scrie\.$/);
   });
 
-  test('a moderator corrects the birthday with a reason, logged', async ({ browser }) => {
+  test('a moderator corrects the birthday month with a reason, logged', async ({ browser }) => {
     const page = await openAs(browser, 'moderator', `/staff/users/${adultWriterId}`);
     const actions = page.getByRole('region', { name: 'Actions' });
     await actions.getByRole('button', { name: 'Correct birthday' }).click();
     await actions.getByLabel('Month').selectOption('3');
-    await actions.getByLabel('Day (optional)').selectOption('14');
     await actions.getByLabel('Reason (required)').fill(`${stamp}: they wrote to support.`);
     await actions.getByRole('button', { name: 'Save the birthday' }).click();
     await expect(actions.getByText('Done. The birthday is saved.')).toBeVisible();
     expect(
-      runSql(`select birthday_month || '-' || birthday_day from public.profiles
-        where id = '${adultWriterId}';`),
-    ).toBe('3-14');
+      runSql(`select birthday_month from public.profiles where id = '${adultWriterId}';`),
+    ).toBe('3');
     expect(
       runSql(`select count(*) from public.audit_log where action = 'account.birthday_corrected'
         and reason like '${stamp}%';`),

@@ -183,8 +183,8 @@
   },
   "appealOutcomes": {
     "open": "your appeal {{reference}} is waiting for a moderator.",
-    "upheld": "a different moderator looked at your appeal {{reference}} again. The decision stands.",
-    "overturned": "a different moderator looked at your appeal {{reference}} again and changed the decision."
+    "upheld": "we looked at your appeal {{reference}} again. The decision stands.",
+    "overturned": "we looked at your appeal {{reference}} again and changed the decision."
   },
   "emailSettings": {
     "eyebrow": "Notifications",

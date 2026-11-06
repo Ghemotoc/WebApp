@@ -196,7 +196,7 @@ export type AccountAction =
   | { kind: 'sign_out_everywhere'; reason: string }
   | { kind: 'approve_username'; nameKind: 'handle' | 'pen_name'; name: string; reason: string }
   // S1-E2-12: the person asked staff to fix their birthday; null month clears it.
-  | { kind: 'correct_birthday'; month: number | null; day: number | null; reason: string }
+  | { kind: 'correct_birthday'; month: number | null; reason: string }
   // S1-E2-03: a parent or guardian asked staff to withdraw their consent.
   | { kind: 'withdraw_parental_consent'; reason: string };
 
@@ -253,7 +253,6 @@ async function callForAction(client: AppSupabaseClient, userId: string, action: 
       target_user_id: userId,
       reason_given: action.reason,
       wanted_month: action.month ?? undefined,
-      wanted_day: action.day ?? undefined,
     });
     return answer.error;
   }

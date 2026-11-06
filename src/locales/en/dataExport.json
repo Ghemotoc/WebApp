@@ -284,7 +284,8 @@
       "story_plans": "Your story plans from Story Atlas.",
       "story_tags": "The tags on your stories.",
       "support_tickets": "Your messages to support and our answers.",
-      "teacher_checks": "Your request for the Teacher badge."
+      "teacher_checks": "Your request for the Teacher badge.",
+      "held_about_you": "What we hold about you: sanctions on your account, what moderators hid or removed of yours, staff changes to your stories and the reasons, restrictions, copied-work notes, your data requests, the scrambled address from sign-up and, if you work for us, your staff roles. Staff names and internal notes are left out."
     },
     "empty": "(empty)",
     "help": "Questions? Write to {{contactEmail}}."

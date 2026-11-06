@@ -367,12 +367,15 @@ export type Database = {
         Row: {
           created_at: string;
           decided_at: string | null;
+          decided_by_original_decider: boolean;
           decided_by_user_id: string | null;
           decision_note: string | null;
           explanation: string;
           id: string;
           message_to_person: string | null;
           original_decider_user_id: string | null;
+          owner_reviewed_at: string | null;
+          owner_reviewed_by_user_id: string | null;
           reference: string;
           statement_id: string;
           status: Database['public']['Enums']['appeal_status'];
@@ -383,12 +386,15 @@ export type Database = {
         Insert: {
           created_at?: string;
           decided_at?: string | null;
+          decided_by_original_decider?: boolean;
           decided_by_user_id?: string | null;
           decision_note?: string | null;
           explanation: string;
           id?: string;
           message_to_person?: string | null;
           original_decider_user_id?: string | null;
+          owner_reviewed_at?: string | null;
+          owner_reviewed_by_user_id?: string | null;
           reference: string;
           statement_id: string;
           status?: Database['public']['Enums']['appeal_status'];
@@ -398,12 +404,15 @@ export type Database = {
         Update: {
           created_at?: string;
           decided_at?: string | null;
+          decided_by_original_decider?: boolean;
           decided_by_user_id?: string | null;
           decision_note?: string | null;
           explanation?: string;
           id?: string;
           message_to_person?: string | null;
           original_decider_user_id?: string | null;
+          owner_reviewed_at?: string | null;
+          owner_reviewed_by_user_id?: string | null;
           reference?: string;
           statement_id?: string;
           status?: Database['public']['Enums']['appeal_status'];
@@ -421,6 +430,13 @@ export type Database = {
           {
             foreignKeyName: 'appeals_original_decider_user_id_fkey';
             columns: ['original_decider_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'appeals_owner_reviewed_by_user_id_fkey';
+            columns: ['owner_reviewed_by_user_id'];
             isOneToOne: false;
             referencedRelation: 'profiles';
             referencedColumns: ['id'];
@@ -4838,7 +4854,6 @@ export type Database = {
           bio: string;
           birth_month: number | null;
           birth_year: number | null;
-          birthday_day: number | null;
           birthday_month: number | null;
           country_code: string | null;
           created_at: string;
@@ -4898,7 +4913,6 @@ export type Database = {
           bio?: string;
           birth_month?: number | null;
           birth_year?: number | null;
-          birthday_day?: number | null;
           birthday_month?: number | null;
           country_code?: string | null;
           created_at?: string;
@@ -4939,7 +4953,6 @@ export type Database = {
           bio?: string;
           birth_month?: number | null;
           birth_year?: number | null;
-          birthday_day?: number | null;
           birthday_month?: number | null;
           country_code?: string | null;
           created_at?: string;
@@ -8856,12 +8869,15 @@ export type Database = {
           created_at: string;
           decided_at: string;
           decided_by_handle: string;
+          decided_by_original_decider: boolean;
           decision_note: string;
           explanation: string;
           id: string;
           item_summary: string;
           may_decide: boolean;
+          may_mark_reviewed: boolean;
           message_to_person: string;
+          needs_owner_review: boolean;
           original_decider_handle: string;
           reference: string;
           statement_action: Database['public']['Enums']['statement_action'];
@@ -9369,6 +9385,7 @@ export type Database = {
         }[];
       };
       admin_march_numbers: { Args: { days?: number }; Returns: Json };
+      admin_mark_appeal_reviewed: { Args: { target_appeal_id: string }; Returns: boolean };
       admin_mark_contest_prize_sent: {
         Args: { parent_consent_on_file: boolean; target_entry_id: string };
         Returns: undefined;
@@ -9801,12 +9818,7 @@ export type Database = {
         Returns: string;
       };
       admin_set_birthday: {
-        Args: {
-          reason_given: string;
-          target_user_id: string;
-          wanted_day?: number;
-          wanted_month?: number;
-        };
+        Args: { reason_given: string; target_user_id: string; wanted_month?: number };
         Returns: boolean;
       };
       admin_set_brand_asset: {
@@ -10390,7 +10402,6 @@ export type Database = {
           bio: string;
           birth_month: number | null;
           birth_year: number | null;
-          birthday_day: number | null;
           birthday_month: number | null;
           country_code: string | null;
           created_at: string;
@@ -10632,7 +10643,7 @@ export type Database = {
       character_sheet_keys: { Args: Record<PropertyKey, never>; Returns: string[] };
       chat_cleared_at: { Args: { chat_id: string; person_id: string }; Returns: string };
       check_bible_text: { Args: { body: string }; Returns: string };
-      check_birthday: { Args: { wanted_day: number; wanted_month: number }; Returns: undefined };
+      check_birthday: { Args: { wanted_month: number }; Returns: undefined };
       check_certificate_class: {
         Args: {
           space: Omit<
@@ -11099,6 +11110,14 @@ export type Database = {
           doodle: Database['public']['Enums']['seasonal_doodle'];
         }[];
       };
+      data_export_held_tables: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          is_included: boolean;
+          table_name: string;
+          why_left_out: string;
+        }[];
+      };
       data_export_tables: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -11342,6 +11361,7 @@ export type Database = {
         };
         Returns: string;
       };
+      export_held_about_of: { Args: { owner_id: string }; Returns: Json };
       export_library_of: { Args: { owner_id: string }; Returns: Json };
       export_parent_link_open_allowed: { Args: { object_name: string }; Returns: boolean };
       export_row_for_owner: { Args: { stored_row: Json }; Returns: Json };
@@ -11572,12 +11592,7 @@ export type Database = {
       get_writer_profile: { Args: { wanted_handle: string }; Returns: Json };
       grant_teacher_badge: { Args: { target_user_id: string }; Returns: undefined };
       greeting_for: {
-        Args: {
-          birthday_day: number;
-          birthday_month: number;
-          greeting_day: string;
-          joined_at: string;
-        };
+        Args: { birthday_month: number; greeting_day: string; joined_at: string };
         Returns: string;
       };
       has_html_tag: { Args: { body: string }; Returns: boolean };
@@ -12126,7 +12141,6 @@ export type Database = {
           bio: string;
           birth_month: number | null;
           birth_year: number | null;
-          birthday_day: number | null;
           birthday_month: number | null;
           country_code: string | null;
           created_at: string;
@@ -12872,7 +12886,6 @@ export type Database = {
           bio: string;
           birth_month: number | null;
           birth_year: number | null;
-          birthday_day: number | null;
           birthday_month: number | null;
           country_code: string | null;
           created_at: string;
@@ -13699,7 +13712,7 @@ export type Database = {
       };
       set_my_avatar_recipe: { Args: { recipe: Json }; Returns: Json };
       set_my_bio: { Args: { new_bio: string }; Returns: string };
-      set_my_birthday: { Args: { wanted_day?: number; wanted_month?: number }; Returns: Json };
+      set_my_birthday: { Args: { wanted_month?: number }; Returns: Json };
       set_my_handle: { Args: { new_handle: string }; Returns: string };
       set_my_locale: { Args: { new_locale: string }; Returns: string };
       set_my_pen_name: { Args: { new_pen_name: string }; Returns: string };

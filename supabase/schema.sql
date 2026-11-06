@@ -2662,21 +2662,29 @@ COMMENT ON FUNCTION "public"."admin_add_reserved_name"("new_name" "text", "how_i
 
 
 
-CREATE OR REPLACE FUNCTION "public"."admin_appeals_queue"("status_filter" "public"."appeal_status" DEFAULT NULL::"public"."appeal_status") RETURNS TABLE("id" "uuid", "reference" "text", "status" "public"."appeal_status", "statement_reference" "text", "statement_action" "public"."statement_action", "item_summary" "text", "case_reference" "text", "appellant_handle" "text", "explanation" "text", "created_at" timestamp with time zone, "original_decider_handle" "text", "may_decide" boolean, "decided_by_handle" "text", "decided_at" timestamp with time zone, "decision_note" "text", "message_to_person" "text")
+CREATE OR REPLACE FUNCTION "public"."admin_appeals_queue"("status_filter" "public"."appeal_status" DEFAULT NULL::"public"."appeal_status") RETURNS TABLE("id" "uuid", "reference" "text", "status" "public"."appeal_status", "statement_reference" "text", "statement_action" "public"."statement_action", "item_summary" "text", "case_reference" "text", "appellant_handle" "text", "explanation" "text", "created_at" timestamp with time zone, "original_decider_handle" "text", "may_decide" boolean, "decided_by_handle" "text", "decided_at" timestamp with time zone, "decision_note" "text", "message_to_person" "text", "decided_by_original_decider" boolean, "needs_owner_review" boolean, "may_mark_reviewed" boolean)
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
+declare
+  caller_is_owner boolean;
 begin
+  -- Step 1: only staff who decide appeals.
   if not public.staff_may('appeals', 'act') then
     raise exception 'Only staff who decide appeals can see them.' using errcode = 'insufficient_privilege';
   end if;
+  caller_is_owner := public.is_staff('owner');
+  -- Step 2: the appeals the caller may see (safeguarding ones need that permission).
   return query
     select appeals.id, appeals.reference, appeals.status, statements_of_reasons.reference,
       statements_of_reasons.action, statements_of_reasons.item_summary, cases.reference,
       appellant.handle, appeals.explanation, appeals.created_at, original.handle,
       appeals.status = 'open' and (appeals.original_decider_user_id is distinct from (select auth.uid())
                                    or not public.another_appeals_decider_exists()),
-      decider.handle, appeals.decided_at, appeals.decision_note, appeals.message_to_person
+      decider.handle, appeals.decided_at, appeals.decision_note, appeals.message_to_person,
+      appeals.decided_by_original_decider,
+      appeals.decided_by_original_decider and appeals.owner_reviewed_at is null,
+      caller_is_owner and appeals.decided_by_original_decider and appeals.owner_reviewed_at is null
     from public.appeals
     join public.statements_of_reasons on statements_of_reasons.id = appeals.statement_id
     join public.profiles as appellant on appellant.id = appeals.user_id
@@ -2694,7 +2702,7 @@ $$;
 ALTER FUNCTION "public"."admin_appeals_queue"("status_filter" "public"."appeal_status") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."admin_appeals_queue"("status_filter" "public"."appeal_status") IS 'Appeals for staff: open ones oldest first, with who may decide each (S1-E10-07).';
+COMMENT ON FUNCTION "public"."admin_appeals_queue"("status_filter" "public"."appeal_status") IS 'Appeals for staff: open ones oldest first, with who may decide each and whether the owner must review a same-moderator decision (S1-E10-07; QA-7).';
 
 
 
@@ -4702,6 +4710,7 @@ CREATE OR REPLACE FUNCTION "public"."admin_decide_appeal"("target_appeal_id" "uu
 declare
   appeal public.appeals;
   statement public.statements_of_reasons;
+  is_same_decider boolean;
 begin
   -- Step 1: may decide appeals, may see this one, and it's open.
   select * into appeal from public.appeals where id = target_appeal_id for update;
@@ -4713,8 +4722,9 @@ begin
   if appeal.status <> 'open' then
     raise exception 'This appeal is already decided.' using errcode = 'check_violation';
   end if;
-  -- Step 2: a different moderator where possible (criterion 2).
-  if appeal.original_decider_user_id = (select auth.uid()) and public.another_appeals_decider_exists() then
+  -- Step 2: a different moderator where possible (criterion 2); otherwise the same one, marked.
+  is_same_decider := appeal.original_decider_user_id = (select auth.uid());
+  if is_same_decider and public.another_appeals_decider_exists() then
     raise exception 'You made this decision, so another moderator decides the appeal.' using errcode = 'insufficient_privilege';
   end if;
   if outcome not in ('upheld', 'overturned') or btrim(coalesce(note_text, '')) = ''
@@ -4726,14 +4736,17 @@ begin
   if outcome = 'overturned' then
     perform public.undo_decision_for_appeal(statement, appeal.reference);
   end if;
-  -- Step 4: the appeal, the person told, the audit row.
+  -- Step 4: the appeal, the person told, the audit row (with same_decider, QA-7).
   update public.appeals set status = outcome, decided_by_user_id = (select auth.uid()), decided_at = now(),
-    decision_note = btrim(note_text), message_to_person = btrim(admin_decide_appeal.message_to_person)
+    decision_note = btrim(note_text), message_to_person = btrim(admin_decide_appeal.message_to_person),
+    decided_by_original_decider = coalesce(is_same_decider, false)
   where id = appeal.id;
   perform public.notify(appeal.user_id, 'appeal_decided', null,
     jsonb_build_object('appeal_id', appeal.id, 'statement_id', statement.id));
   perform public.log_staff_action('appeal.decided', 'appeals', appeal.id::text, appeal.user_id, btrim(note_text),
-    jsonb_build_object('status', 'open'), jsonb_build_object('status', outcome, 'statement', statement.reference));
+    jsonb_build_object('status', 'open'),
+    jsonb_build_object('status', outcome, 'statement', statement.reference,
+      'same_decider', coalesce(is_same_decider, false)));
   return true;
 end;
 $$;
@@ -6060,6 +6073,42 @@ ALTER FUNCTION "public"."admin_march_numbers"("days" integer) OWNER TO "postgres
 
 
 COMMENT ON FUNCTION "public"."admin_march_numbers"("days" integer) IS 'The staff Metrics page: the March test numbers, totals only, for the owner and admins (S1-E15-02).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_mark_appeal_reviewed"("target_appeal_id" "uuid") RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  appeal public.appeals;
+begin
+  -- Step 1: an owner who decides appeals and may see this one.
+  select * into appeal from public.appeals where id = target_appeal_id for update;
+  if appeal.id is null or not public.staff_may('appeals', 'act') or not public.is_staff('owner')
+     or not public.may_see_case(coalesce((select cases.is_safeguarding from public.cases
+       join public.statements_of_reasons on statements_of_reasons.case_id = cases.id
+       where statements_of_reasons.id = appeal.statement_id), false)) then
+    raise exception 'Only an owner can review this appeal.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 2: only an appeal the original decider decided, reviewed once.
+  if not appeal.decided_by_original_decider or appeal.owner_reviewed_at is not null then
+    raise exception 'This appeal doesn''t need a review.' using errcode = 'check_violation';
+  end if;
+  -- Step 3: the review and its audit row, in the same transaction.
+  update public.appeals set owner_reviewed_at = now(), owner_reviewed_by_user_id = (select auth.uid())
+    where id = appeal.id;
+  perform public.log_staff_action('appeal.owner_reviewed', 'appeals', appeal.id::text, appeal.user_id,
+    null, jsonb_build_object('owner_reviewed', false), jsonb_build_object('owner_reviewed', true));
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_mark_appeal_reviewed"("target_appeal_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_mark_appeal_reviewed"("target_appeal_id" "uuid") IS 'The owner marks a same-moderator appeal decision as reviewed, logged (QA-7; DSA art. 20(6)).';
 
 
 
@@ -9225,39 +9274,35 @@ COMMENT ON FUNCTION "public"."admin_set_ai_undisclosed_label"("target_story_id" 
 
 
 
-CREATE OR REPLACE FUNCTION "public"."admin_set_birthday"("target_user_id" "uuid", "reason_given" "text", "wanted_month" integer DEFAULT NULL::integer, "wanted_day" integer DEFAULT NULL::integer) RETURNS boolean
+CREATE OR REPLACE FUNCTION "public"."admin_set_birthday"("target_user_id" "uuid", "reason_given" "text", "wanted_month" integer DEFAULT NULL::integer) RETURNS boolean
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
 declare
   before_month smallint;
-  before_day smallint;
 begin
-  -- Step 1: the shared account-action checks, then the birthday itself.
+  -- Step 1: the shared account-action checks, then the month itself.
   perform public.require_account_action_allowed(target_user_id, reason_given);
-  perform public.check_birthday(wanted_month, wanted_day);
-  -- Step 2: the change, keeping the old values for the log.
-  select profiles.birthday_month, profiles.birthday_day into before_month, before_day
+  perform public.check_birthday(wanted_month);
+  -- Step 2: the change, keeping the old value for the log.
+  select profiles.birthday_month into before_month
     from public.profiles where profiles.id = target_user_id for update;
-  update public.profiles
-    set birthday_month = wanted_month, birthday_day = case when wanted_month is null then null else wanted_day end
-    where profiles.id = target_user_id;
+  update public.profiles set birthday_month = wanted_month where profiles.id = target_user_id;
   -- Step 3: the audit row, in the same transaction.
   perform public.log_staff_action(
     'account.birthday_corrected', 'profiles', target_user_id::text, target_user_id, btrim(reason_given),
-    jsonb_build_object('birthday_month', before_month, 'birthday_day', before_day),
-    jsonb_build_object('birthday_month', wanted_month,
-      'birthday_day', case when wanted_month is null then null else wanted_day end)
+    jsonb_build_object('birthday_month', before_month),
+    jsonb_build_object('birthday_month', wanted_month)
   );
   return true;
 end;
 $$;
 
 
-ALTER FUNCTION "public"."admin_set_birthday"("target_user_id" "uuid", "reason_given" "text", "wanted_month" integer, "wanted_day" integer) OWNER TO "postgres";
+ALTER FUNCTION "public"."admin_set_birthday"("target_user_id" "uuid", "reason_given" "text", "wanted_month" integer) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."admin_set_birthday"("target_user_id" "uuid", "reason_given" "text", "wanted_month" integer, "wanted_day" integer) IS 'Staff correct an account''s optional birthday on request, with a reason, logged (S1-E2-12).';
+COMMENT ON FUNCTION "public"."admin_set_birthday"("target_user_id" "uuid", "reason_given" "text", "wanted_month" integer) IS 'Staff correct an account''s optional birthday month on request, with a reason, logged (S1-E2-12; QA-7).';
 
 
 
@@ -11283,7 +11328,6 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     "bio" "text" DEFAULT ''::"text" NOT NULL,
     "shows_online_status" boolean DEFAULT false NOT NULL,
     "birthday_month" smallint,
-    "birthday_day" smallint,
     "avatar_picture_id" "uuid",
     "marketing_email_opt_in" boolean DEFAULT false NOT NULL,
     "onboarded_at" timestamp with time zone,
@@ -11307,8 +11351,6 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     CONSTRAINT "profiles_birth_month_is_a_month" CHECK ((("birth_month" >= 1) AND ("birth_month" <= 12))),
     CONSTRAINT "profiles_birth_year_is_plausible" CHECK ((("birth_year" >= 1900) AND ("birth_year" <= 2100))),
     CONSTRAINT "profiles_birth_year_while_live" CHECK ((("birth_year" IS NOT NULL) OR ("deleted_at" IS NOT NULL))),
-    CONSTRAINT "profiles_birthday_day_check" CHECK ((("birthday_day" >= 1) AND ("birthday_day" <= 31))),
-    CONSTRAINT "profiles_birthday_is_a_real_day" CHECK ((("birthday_day" IS NULL) OR (("birthday_month" IS NOT NULL) AND ("birthday_day" <= (ARRAY[31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31])["birthday_month"])))),
     CONSTRAINT "profiles_birthday_month_check" CHECK ((("birthday_month" >= 1) AND ("birthday_month" <= 12))),
     CONSTRAINT "profiles_country_code_is_alpha2" CHECK (("country_code" ~ '^[A-Z]{2}$'::"text")),
     CONSTRAINT "profiles_handle_length" CHECK ((("handle" IS NULL) OR (("char_length"("handle") >= 3) AND ("char_length"("handle") <= 30)))),
@@ -11375,11 +11417,7 @@ COMMENT ON COLUMN "public"."profiles"."shows_online_status" IS 'The opt-in to sh
 
 
 
-COMMENT ON COLUMN "public"."profiles"."birthday_month" IS 'Optional birthday month (1 to 12), never with a year; only the owner reads it (S1-E2-12, 25 Oct 2026).';
-
-
-
-COMMENT ON COLUMN "public"."profiles"."birthday_day" IS 'Optional birthday day, only with a month; never with a year (S1-E2-12, 25 Oct 2026).';
+COMMENT ON COLUMN "public"."profiles"."birthday_month" IS 'Optional birthday month (1 to 12), never with a day or a year, so it never makes a full date of birth with birth_year (CLAUDE.md rule 5); only the owner reads it (S1-E2-12; QA-7, 6 Nov 2026).';
 
 
 
@@ -14287,25 +14325,22 @@ COMMENT ON FUNCTION "public"."check_bible_text"("body" "text") IS 'Internal: ref
 
 
 
-CREATE OR REPLACE FUNCTION "public"."check_birthday"("wanted_month" integer, "wanted_day" integer) RETURNS "void"
+CREATE OR REPLACE FUNCTION "public"."check_birthday"("wanted_month" integer) RETURNS "void"
     LANGUAGE "plpgsql" IMMUTABLE
     SET "search_path" TO ''
     AS $$
 begin
-  if (wanted_day is not null and wanted_month is null)
-     or (wanted_month is not null and wanted_month not between 1 and 12)
-     or (wanted_day is not null and (wanted_day < 1 or wanted_day >
-         (array[31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31])[wanted_month])) then
-    raise exception 'That isn''t a real day and month.' using errcode = 'check_violation', hint = 'birthday_invalid';
+  if wanted_month is not null and wanted_month not between 1 and 12 then
+    raise exception 'That isn''t a real month.' using errcode = 'check_violation', hint = 'birthday_invalid';
   end if;
 end;
 $$;
 
 
-ALTER FUNCTION "public"."check_birthday"("wanted_month" integer, "wanted_day" integer) OWNER TO "postgres";
+ALTER FUNCTION "public"."check_birthday"("wanted_month" integer) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."check_birthday"("wanted_month" integer, "wanted_day" integer) IS 'Internal: refuses a birthday that isn''t a real day and month (S1-E2-12).';
+COMMENT ON FUNCTION "public"."check_birthday"("wanted_month" integer) IS 'Internal: refuses a birthday month that isn''t 1 to 12 (S1-E2-12; QA-7).';
 
 
 
@@ -17250,6 +17285,42 @@ COMMENT ON FUNCTION "public"."current_seasonal_doodle"("on_date" "date", "place"
 
 
 
+CREATE OR REPLACE FUNCTION "public"."data_export_held_tables"() RETURNS TABLE("table_name" "text", "is_included" boolean, "why_left_out" "text")
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  values
+    ('abuse_image_evidence', false, 'evidence kept for the police about a suspected child abuse image; handing it out could harm an investigation (GDPR art. 23; lawyer to check)'),
+    ('audit_log', false, 'the record of what staff did; the changes it records about the person are in the groups below'),
+    ('brand_assets', false, 'user_id is the staff member who chose a logo, not data about their account'),
+    ('case_account_links', false, 'a moderator''s note that two accounts may be one person, kept to spot banned accounts coming back; telling the person would defeat it (GDPR art. 23; lawyer to check)'),
+    ('case_actions', false, 'user_id is the staff member who decided; the decisions reach the person as statements of reasons, which are included'),
+    ('cases', false, 'open moderation cases; decisions reach the person as statements of reasons, which are included, and an open case may be held back while it is looked into (GDPR art. 23; lawyer to check)'),
+    ('compliance_log_entries', false, 'user_id is the staff member who logged an authority order, not data about their account'),
+    ('copied_work_notes', true, null),
+    ('data_requests', true, null),
+    ('interface_text_overrides', false, 'user_id is the admin who edited interface text, not data about their account'),
+    ('moderated_items', true, null),
+    ('on_call_rota', true, null),
+    ('removed_passages', false, 'the exact words staff removed, which may be someone else''s personal data removed to protect them; the removal itself is in story_revisions'),
+    ('safeguarding_referrals', false, 'referrals to the police or a prosecutor; handing them out could harm an investigation (GDPR art. 23; lawyer to check)'),
+    ('sanctions', true, null),
+    ('sign_up_ips', true, null),
+    ('staff_interns', true, null),
+    ('staff_permissions', true, null),
+    ('staff_roles', true, null),
+    ('story_restrictions', true, null),
+    ('story_revisions', true, null);
+$$;
+
+
+ALTER FUNCTION "public"."data_export_held_tables"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."data_export_held_tables"() IS 'Internal: every staff table with a user_id and whether Download my data''s "held_about_you" includes it, or why not (QA-7, GDPR art. 15).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_name" "text", "is_included" boolean, "why_left_out" "text")
     LANGUAGE "sql" IMMUTABLE
     SET "search_path" TO ''
@@ -18915,7 +18986,7 @@ begin
   update public.profiles
   set deleted_at = coalesce(profiles.deleted_at, now()), birth_year = null, birth_month = null,
       age_checked_at = null, age_check_method = null, pen_name = null, pen_name_changed_at = null,
-      bio = '', birthday_day = null, birthday_month = null, region_code = null, country_code = null,
+      bio = '', birthday_month = null, region_code = null, country_code = null,
       shows_online_status = false, last_active_at = null, marketing_email_opt_in = false,
       teacher_badge_since = null, messages_from = null, profile_visible_to = null
   where profiles.id = target_user_id;
@@ -19126,6 +19197,74 @@ COMMENT ON FUNCTION "public"."export_file_extension"("kind" "public"."export_kin
 
 
 
+CREATE OR REPLACE FUNCTION "public"."export_held_about_of"("owner_id" "uuid") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select jsonb_build_object(
+    -- Warnings, suspensions, bans and reporting pauses on the account (DSA art. 23).
+    'sanctions', coalesce((select jsonb_agg(jsonb_build_object(
+        'kind', held.kind, 'starts_at', held.starts_at, 'ends_at', held.ends_at,
+        'lifted_at', held.lifted_at, 'created_at', held.created_at) order by held.created_at)
+      from public.sanctions as held where held.user_id = owner_id), '[]'::jsonb),
+    -- What staff hid or removed of theirs, and when it was put back.
+    'moderated_items', coalesce((select jsonb_agg(jsonb_build_object(
+        'item_type', held.item_type, 'item_id', held.item_id, 'state', held.state,
+        'restored_at', held.restored_at, 'created_at', held.created_at) order by held.created_at)
+      from public.moderated_items as held where held.user_id = owner_id), '[]'::jsonb),
+    -- Staff changes to their stories with the reason they were given. A removed passage's
+    -- before and after are left out: they may hold the words removed to protect someone else.
+    'story_revisions', coalesce((select jsonb_agg(jsonb_build_object(
+        'story_id', held.story_id, 'chapter_id', held.chapter_id, 'change_kind', held.change_kind,
+        'reason_code', held.reason_code, 'reason_text', held.reason_text,
+        'before_values', case when held.change_kind = 'passage' then null else held.before_values end,
+        'after_values', case when held.change_kind = 'passage' then null else held.after_values end,
+        'created_at', held.created_at) order by held.created_at)
+      from public.story_revisions as held where held.user_id = owner_id), '[]'::jsonb),
+    -- Stories staff left out of Discover, shelves and search.
+    'story_restrictions', coalesce((select jsonb_agg(jsonb_build_object(
+        'story_id', held.story_id, 'reason', held.reason, 'lifted_at', held.lifted_at,
+        'created_at', held.created_at) order by held.created_at)
+      from public.story_restrictions as held where held.user_id = owner_id), '[]'::jsonb),
+    -- The public "copies a published work" notes on their stories.
+    'copied_work_notes', coalesce((select jsonb_agg(jsonb_build_object(
+        'story_id', held.story_id, 'created_at', held.created_at) order by held.created_at)
+      from public.copied_work_notes as held where held.user_id = owner_id), '[]'::jsonb),
+    -- Their own requests to see, move, correct or delete their data.
+    'data_requests', coalesce((select jsonb_agg(jsonb_build_object(
+        'reference', held.reference, 'request_type', held.request_type, 'channel', held.channel,
+        'received_on', held.received_on, 'due_on', held.due_on, 'extended_to', held.extended_to,
+        'extension_reason', held.extension_reason, 'state', held.state, 'outcome', held.outcome,
+        'closed_at', held.closed_at, 'created_at', held.created_at) order by held.created_at)
+      from public.data_requests as held where held.user_id = owner_id), '[]'::jsonb),
+    -- The scrambled sign-up address (a keyed hash, never the address; kept 30 days, Q48).
+    'sign_up_ips', coalesce((select jsonb_agg(jsonb_build_object(
+        'ip_scrambled', held.ip_scrambled, 'ip_period', held.ip_period,
+        'created_at', held.created_at) order by held.created_at)
+      from public.sign_up_ips as held where held.user_id = owner_id), '[]'::jsonb),
+    -- For someone who works for us: their staff roles, permissions, intern mark and on-call turns.
+    'staff_roles', coalesce((select jsonb_agg(jsonb_build_object(
+        'role', held.role, 'created_at', held.created_at) order by held.created_at)
+      from public.staff_roles as held where held.user_id = owner_id), '[]'::jsonb),
+    'staff_permissions', coalesce((select jsonb_agg(jsonb_build_object(
+        'permission', held.permission, 'created_at', held.created_at) order by held.created_at)
+      from public.staff_permissions as held where held.user_id = owner_id), '[]'::jsonb),
+    'staff_interns', coalesce((select jsonb_agg(jsonb_build_object(
+        'created_at', held.created_at) order by held.created_at)
+      from public.staff_interns as held where held.user_id = owner_id), '[]'::jsonb),
+    'on_call_rota', coalesce((select jsonb_agg(jsonb_build_object(
+        'starts_at', held.starts_at, 'ends_at', held.ends_at) order by held.starts_at)
+      from public.on_call_rota as held where held.user_id = owner_id), '[]'::jsonb));
+$$;
+
+
+ALTER FUNCTION "public"."export_held_about_of"("owner_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."export_held_about_of"("owner_id" "uuid") IS 'Internal: what staff tables hold about one person, without staff names or internal notes, for their data export (QA-7, GDPR art. 15).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."export_library_of"("owner_id" "uuid") RETURNS "jsonb"
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -19298,6 +19437,7 @@ declare
   entry record;
   table_rows jsonb;
 begin
+  -- Step 1: every included table of data_export_tables(), the person's own rows.
   for entry in select listed.table_name from public.data_export_tables() as listed
                where listed.is_included order by listed.table_name loop
     execute format(
@@ -19306,7 +19446,9 @@ begin
       into table_rows using owner_id;
     result := result || jsonb_build_object(entry.table_name, table_rows);
   end loop;
-  return result || jsonb_build_object('support_tickets', public.export_support_tickets_of(owner_id));
+  -- Step 2: the support tickets, then what staff tables hold about them (QA-7).
+  result := result || jsonb_build_object('support_tickets', public.export_support_tickets_of(owner_id));
+  return result || jsonb_build_object('held_about_you', public.export_held_about_of(owner_id));
 end;
 $_$;
 
@@ -19314,7 +19456,7 @@ $_$;
 ALTER FUNCTION "public"."export_tables_of"("owner_id" "uuid") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."export_tables_of"("owner_id" "uuid") IS 'Internal: the person''s rows of every table Download my data includes (S1-E13-02).';
+COMMENT ON FUNCTION "public"."export_tables_of"("owner_id" "uuid") IS 'Internal: the person''s rows of every table Download my data includes, their support tickets and what staff tables hold about them (S1-E13-02, QA-7).';
 
 
 
@@ -21174,25 +21316,18 @@ COMMENT ON FUNCTION "public"."grant_teacher_badge"("target_user_id" "uuid") IS '
 
 
 
-CREATE OR REPLACE FUNCTION "public"."greeting_for"("birthday_month" integer, "birthday_day" integer, "joined_at" timestamp with time zone, "greeting_day" "date") RETURNS "text"
+CREATE OR REPLACE FUNCTION "public"."greeting_for"("birthday_month" integer, "joined_at" timestamp with time zone, "greeting_day" "date") RETURNS "text"
     LANGUAGE "plpgsql" IMMUTABLE
     SET "search_path" TO ''
     AS $$
 declare
   joined_day date := (joined_at at time zone 'Europe/Bucharest')::date;
-  is_leap_year boolean := extract(day from (date_trunc('year', greeting_day) + interval '2 months' - interval '1 day')) = 29;
-  greeted_day integer := birthday_day;
 begin
-  -- A 29 February birthday is greeted on 28 February when the year has no 29th.
-  if birthday_month = 2 and birthday_day = 29 and not is_leap_year then
-    greeted_day := 28;
-  end if;
+  -- Step 1: the birthday month, all month.
   if birthday_month = extract(month from greeting_day) then
-    if greeted_day = extract(day from greeting_day) then
-      return 'birthday';
-    end if;
     return 'birthday_month';
   end if;
+  -- Step 2: the joining anniversary, from the first full year on.
   if extract(month from joined_day) = extract(month from greeting_day)
      and extract(year from greeting_day) > extract(year from joined_day) then
     return 'anniversary';
@@ -21202,10 +21337,10 @@ end;
 $$;
 
 
-ALTER FUNCTION "public"."greeting_for"("birthday_month" integer, "birthday_day" integer, "joined_at" timestamp with time zone, "greeting_day" "date") OWNER TO "postgres";
+ALTER FUNCTION "public"."greeting_for"("birthday_month" integer, "joined_at" timestamp with time zone, "greeting_day" "date") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."greeting_for"("birthday_month" integer, "birthday_day" integer, "joined_at" timestamp with time zone, "greeting_day" "date") IS 'Internal: birthday, birthday_month, anniversary or null for one account on one day (S1-E2-12, S1-E2-13).';
+COMMENT ON FUNCTION "public"."greeting_for"("birthday_month" integer, "joined_at" timestamp with time zone, "greeting_day" "date") IS 'Internal: birthday_month, anniversary or null for one account on one day (S1-E2-12, S1-E2-13; QA-7).';
 
 
 
@@ -25172,7 +25307,7 @@ CREATE OR REPLACE FUNCTION "public"."my_greeting"() RETURNS "jsonb"
     AS $$
   select coalesce(
     (select jsonb_build_object(
-       'kind', public.greeting_for(profiles.birthday_month, profiles.birthday_day, profiles.created_at,
+       'kind', public.greeting_for(profiles.birthday_month, profiles.created_at,
          (now() at time zone 'Europe/Bucharest')::date),
        'years', extract(year from (now() at time zone 'Europe/Bucharest'))::integer
          - extract(year from (profiles.created_at at time zone 'Europe/Bucharest'))::integer)
@@ -25185,7 +25320,7 @@ $$;
 ALTER FUNCTION "public"."my_greeting"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."my_greeting"() IS 'What the signed-in greeting line says today: birthday, birthday_month, anniversary or null (S1-E2-12, S1-E2-13).';
+COMMENT ON FUNCTION "public"."my_greeting"() IS 'What the signed-in greeting line says today: birthday_month, anniversary or null (S1-E2-12, S1-E2-13; QA-7).';
 
 
 
@@ -35332,30 +35467,29 @@ COMMENT ON FUNCTION "public"."set_my_bio"("new_bio" "text") IS 'Saves the signed
 
 
 
-CREATE OR REPLACE FUNCTION "public"."set_my_birthday"("wanted_month" integer DEFAULT NULL::integer, "wanted_day" integer DEFAULT NULL::integer) RETURNS "jsonb"
+CREATE OR REPLACE FUNCTION "public"."set_my_birthday"("wanted_month" integer DEFAULT NULL::integer) RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
 declare
   caller_id uuid := (select auth.uid());
 begin
+  -- Step 1: only a signed-in person, and only a real month.
   if caller_id is null then
     raise exception 'Sign in to save a birthday.' using errcode = 'insufficient_privilege';
   end if;
-  perform public.check_birthday(wanted_month, wanted_day);
-  update public.profiles
-    set birthday_month = wanted_month, birthday_day = case when wanted_month is null then null else wanted_day end
-    where profiles.id = caller_id;
-  return jsonb_build_object('month', wanted_month,
-    'day', case when wanted_month is null then null else wanted_day end);
+  perform public.check_birthday(wanted_month);
+  -- Step 2: save it on their own row.
+  update public.profiles set birthday_month = wanted_month where profiles.id = caller_id;
+  return jsonb_build_object('month', wanted_month);
 end;
 $$;
 
 
-ALTER FUNCTION "public"."set_my_birthday"("wanted_month" integer, "wanted_day" integer) OWNER TO "postgres";
+ALTER FUNCTION "public"."set_my_birthday"("wanted_month" integer) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."set_my_birthday"("wanted_month" integer, "wanted_day" integer) IS 'Saves or clears the caller''s own optional birthday (day and month, never a year) (S1-E2-12).';
+COMMENT ON FUNCTION "public"."set_my_birthday"("wanted_month" integer) IS 'Saves or clears the caller''s own optional birthday month (never a day or a year) (S1-E2-12; QA-7).';
 
 
 
@@ -42387,8 +42521,12 @@ CREATE TABLE IF NOT EXISTS "public"."appeals" (
     "decided_at" timestamp with time zone,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "decided_by_original_decider" boolean DEFAULT false NOT NULL,
+    "owner_reviewed_at" timestamp with time zone,
+    "owner_reviewed_by_user_id" "uuid",
     CONSTRAINT "appeals_decided_fields_go_together" CHECK ((("status" = 'open'::"public"."appeal_status") = (("decided_by_user_id" IS NULL) AND ("decided_at" IS NULL) AND ("decision_note" IS NULL)))),
-    CONSTRAINT "appeals_explanation_length" CHECK ((("char_length"("btrim"("explanation")) >= 1) AND ("char_length"("btrim"("explanation")) <= 4000)))
+    CONSTRAINT "appeals_explanation_length" CHECK ((("char_length"("btrim"("explanation")) >= 1) AND ("char_length"("btrim"("explanation")) <= 4000))),
+    CONSTRAINT "appeals_owner_review_fields_go_together" CHECK (((("owner_reviewed_at" IS NULL) = ("owner_reviewed_by_user_id" IS NULL)) AND (("owner_reviewed_at" IS NULL) OR "decided_by_original_decider")))
 );
 
 
@@ -42397,6 +42535,18 @@ ALTER TABLE "public"."appeals" OWNER TO "postgres";
 
 COMMENT ON TABLE "public"."appeals" IS 'kind: user_action
 Appeals against moderation decisions, decided by a different moderator where possible (S1-E10-07; DSA art. 20).';
+
+
+
+COMMENT ON COLUMN "public"."appeals"."decided_by_original_decider" IS 'True when the moderator who made the original decision also decided the appeal, because nobody else could; the owner reviews it (QA-7; DSA art. 20(6)).';
+
+
+
+COMMENT ON COLUMN "public"."appeals"."owner_reviewed_at" IS 'When the owner reviewed an appeal decided by the original decider (QA-7).';
+
+
+
+COMMENT ON COLUMN "public"."appeals"."owner_reviewed_by_user_id" IS 'The owner who reviewed it; staff only, never shown publicly (rule 15; QA-7).';
 
 
 
@@ -48120,6 +48270,11 @@ ALTER TABLE ONLY "public"."appeals"
 
 
 ALTER TABLE ONLY "public"."appeals"
+    ADD CONSTRAINT "appeals_owner_reviewed_by_user_id_fkey" FOREIGN KEY ("owner_reviewed_by_user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."appeals"
     ADD CONSTRAINT "appeals_statement_id_fkey" FOREIGN KEY ("statement_id") REFERENCES "public"."statements_of_reasons"("id") ON DELETE CASCADE;
 
 
@@ -52038,6 +52193,11 @@ GRANT ALL ON FUNCTION "public"."admin_march_numbers"("days" integer) TO "authent
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_mark_appeal_reviewed"("target_appeal_id" "uuid") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_mark_appeal_reviewed"("target_appeal_id" "uuid") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_mark_contest_prize_sent"("target_entry_id" "uuid", "parent_consent_on_file" boolean) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_mark_contest_prize_sent"("target_entry_id" "uuid", "parent_consent_on_file" boolean) TO "authenticated";
 
@@ -52454,8 +52614,8 @@ GRANT ALL ON FUNCTION "public"."admin_set_ai_undisclosed_label"("target_story_id
 
 
 
-REVOKE ALL ON FUNCTION "public"."admin_set_birthday"("target_user_id" "uuid", "reason_given" "text", "wanted_month" integer, "wanted_day" integer) FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."admin_set_birthday"("target_user_id" "uuid", "reason_given" "text", "wanted_month" integer, "wanted_day" integer) TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."admin_set_birthday"("target_user_id" "uuid", "reason_given" "text", "wanted_month" integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_set_birthday"("target_user_id" "uuid", "reason_given" "text", "wanted_month" integer) TO "authenticated";
 
 
 
@@ -53150,7 +53310,7 @@ REVOKE ALL ON FUNCTION "public"."check_bible_text"("body" "text") FROM PUBLIC;
 
 
 
-REVOKE ALL ON FUNCTION "public"."check_birthday"("wanted_month" integer, "wanted_day" integer) FROM PUBLIC;
+REVOKE ALL ON FUNCTION "public"."check_birthday"("wanted_month" integer) FROM PUBLIC;
 
 
 
@@ -53568,6 +53728,10 @@ GRANT ALL ON FUNCTION "public"."current_seasonal_doodle"("on_date" "date", "plac
 
 
 
+REVOKE ALL ON FUNCTION "public"."data_export_held_tables"() FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."data_export_tables"() FROM PUBLIC;
 
 
@@ -53850,6 +54014,10 @@ REVOKE ALL ON FUNCTION "public"."export_file_extension"("kind" "public"."export_
 
 
 
+REVOKE ALL ON FUNCTION "public"."export_held_about_of"("owner_id" "uuid") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."export_library_of"("owner_id" "uuid") FROM PUBLIC;
 
 
@@ -54116,7 +54284,7 @@ REVOKE ALL ON FUNCTION "public"."grant_teacher_badge"("target_user_id" "uuid") F
 
 
 
-REVOKE ALL ON FUNCTION "public"."greeting_for"("birthday_month" integer, "birthday_day" integer, "joined_at" timestamp with time zone, "greeting_day" "date") FROM PUBLIC;
+REVOKE ALL ON FUNCTION "public"."greeting_for"("birthday_month" integer, "joined_at" timestamp with time zone, "greeting_day" "date") FROM PUBLIC;
 
 
 
@@ -56146,8 +56314,8 @@ GRANT ALL ON FUNCTION "public"."set_my_bio"("new_bio" "text") TO "authenticated"
 
 
 
-REVOKE ALL ON FUNCTION "public"."set_my_birthday"("wanted_month" integer, "wanted_day" integer) FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."set_my_birthday"("wanted_month" integer, "wanted_day" integer) TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."set_my_birthday"("wanted_month" integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_my_birthday"("wanted_month" integer) TO "authenticated";
 
 
 
