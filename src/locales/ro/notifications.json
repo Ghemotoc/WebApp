@@ -12,7 +12,8 @@
     "showOlder": "Arată notificări mai vechi",
     "aboutLabel": "Despre notificări",
     "signedOut": "Intră în cont ca să-ți vezi notificările.",
-    "logIn": "Intră în cont"
+    "logIn": "Intră în cont",
+    "settings": "Setări"
   },
   "filters": {
     "label": "Arată",

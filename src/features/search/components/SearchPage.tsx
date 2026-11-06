@@ -12,6 +12,7 @@
  */
 import { useSearchParams } from 'react-router';
 
+import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { brand } from '@/config/brand';
@@ -51,9 +52,19 @@ export function SearchPage() {
       <title>{t('page.documentTitle', { productName: brand.productName })}</title>
       <header className="flex flex-col gap-2">
         <Eyebrow>{t('page.eyebrow')}</Eyebrow>
-        <h1 className="m-0 font-heading text-[clamp(32px,5vw,56px)] leading-[1.05] font-extrabold tracking-[-0.02em] break-words text-heading">
-          {heading}
-        </h1>
+        <div className="flex items-center gap-8">
+          <h1 className="m-0 min-w-0 font-heading text-[clamp(32px,5vw,56px)] leading-[1.05] font-extrabold tracking-[-0.02em] break-words text-heading">
+            {heading}
+          </h1>
+          {/* The board's magnifying glass just after the heading, above the field (LOOK-5). */}
+          <Doodle
+            name="magnifying-glass"
+            kind="widget"
+            on="The search heading"
+            hideBelow="wide"
+            className="w-[96px] shrink-0 rotate-[8deg]"
+          />
+        </div>
       </header>
       {/* A new term starts the field afresh, so the key is the term. */}
       <SearchForm key={term} initialTerm={term} showsHint />

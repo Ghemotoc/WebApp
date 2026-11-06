@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { Link } from 'react-router';
 
 import { Chip } from '@/components/ui/Chip';
+import { Doodle } from '@/components/ui/Doodle';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Notice } from '@/components/ui/Notice';
 
@@ -25,18 +26,28 @@ import { SearchGroupShelf } from './SearchGroupShelf';
 function NothingFound({ term }: { term: string }) {
   const { t } = useSearchTranslation();
   return (
-    <EmptyState
-      title={t('empty.title', { term })}
-      description={t('empty.description')}
-      action={
-        <Link
-          to="/discover"
-          className="inline-flex h-11 w-fit items-center rounded-full bg-primary px-5 text-sm font-semibold text-on-primary no-underline hover:opacity-90"
-        >
-          {t('empty.browse')}
-        </Link>
-      }
-    />
+    <div className="flex flex-col">
+      {/* The board's friendly ghost peeks over the card (LOOK-5). */}
+      <Doodle
+        name="friendly-ghost"
+        kind="widget"
+        on="No results"
+        hideBelow="phone"
+        className="mr-10 -mb-6 w-[84px] self-end rotate-[8deg]"
+      />
+      <EmptyState
+        title={t('empty.title', { term })}
+        description={t('empty.description')}
+        action={
+          <Link
+            to="/discover"
+            className="inline-flex h-11 w-fit items-center rounded-full bg-primary px-5 text-sm font-semibold text-on-primary no-underline hover:opacity-90"
+          >
+            {t('empty.browse')}
+          </Link>
+        }
+      />
+    </div>
   );
 }
 

@@ -22,6 +22,7 @@ import { usePeopleTranslation } from '../registerPeopleTranslations';
 import { Link } from 'react-router';
 
 import { Card } from '@/components/ui/Card';
+import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { OnlineDot } from '@/features/privacy/components/OnlineDot';
 import { useOnlineHandles } from '@/features/privacy/hooks/useOnlineStatus';
@@ -101,7 +102,15 @@ function ProfileBio({ profile }: { profile: WriterProfile }) {
 export function ProfileHeader({ profile }: { profile: WriterProfile }) {
   const { t } = usePeopleTranslation();
   return (
-    <Card className="flex flex-col gap-6 p-[clamp(20px,4vw,40px)] md:flex-row md:items-start">
+    <Card className="relative flex flex-col gap-6 p-[clamp(20px,4vw,40px)] md:flex-row md:items-start">
+      {/* The board's open book with sparkles, peeking over the avatar (LOOK-5). */}
+      <Doodle
+        name="rank-open-book-sparkles"
+        kind="widget"
+        on="profile header"
+        hideBelow="phone"
+        className="absolute -top-9 left-9 w-[62px] -rotate-12"
+      />
       <ProfileAvatar name={profile.displayName} handle={profile.handle} />
       <div className="flex min-w-0 flex-col gap-3 md:flex-[999_1_420px]">
         <Eyebrow>{t('profile.eyebrow')}</Eyebrow>

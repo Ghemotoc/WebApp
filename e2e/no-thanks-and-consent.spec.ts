@@ -19,6 +19,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
+import { waitForAnimationsToFinish } from './support/animations';
 import { runSql } from './support/database';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
@@ -145,6 +146,8 @@ test.describe('"No thanks" and what a parent agreed to (IDEAS-2c2)', () => {
       const page = await openAs(browser, 'kid_14_ok', '/settings#parent-consent');
       await page.setViewportSize({ width, height: 900 });
       await expect(page.locator('#parent-consent')).toBeVisible();
+      // Settings rises into place (tmc-rise); axe reads colours only once it has settled.
+      await waitForAnimationsToFinish(page);
       const results = await new AxeBuilder({ page })
         .include('#parent-consent')
         .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])
