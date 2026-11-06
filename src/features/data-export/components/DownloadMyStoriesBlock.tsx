@@ -84,7 +84,7 @@ function StoryPicker({ stories, choices }: { stories: LiveStory[]; choices: Down
   return (
     <div className="flex min-w-0 flex-col gap-2">
       {/* The board's eyebrow label; the drop-down carries the same name for screen readers. */}
-      <span aria-hidden="true" className="font-eyebrow text-sm leading-[1.3] text-eyebrow">
+      <span aria-hidden="true" className="eyebrow">
         {t('stories.storyLabel')}
       </span>
       <Select

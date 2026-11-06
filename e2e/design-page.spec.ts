@@ -95,9 +95,7 @@ test('reduce motion removes the entrance animation', async ({ page }) => {
   expect(animationName).toBe('none');
 });
 
-test('headings, body, eyebrows and handwriting use the four fonts from the DoD', async ({
-  page,
-}) => {
+test('headings, body, eyebrows and handwriting use the fonts from the DoD', async ({ page }) => {
   await page.goto('/design');
   const fontOf = (selector: string) =>
     page
@@ -107,9 +105,13 @@ test('headings, body, eyebrows and handwriting use the four fonts from the DoD',
 
   expect((await fontOf('h1')).fontFamily).toContain('Bricolage Grotesque');
   expect((await fontOf('body')).fontFamily).toContain('Inter');
-  const eyebrow = await fontOf('[data-testid="type-samples"] p.font-eyebrow');
-  expect(eyebrow.fontFamily).toContain('Cutive');
-  expect(eyebrow.fontSize).toBe('14px');
+  // Eyebrows are drawn as the parent company's: Inter Bold, 12 px, capitals, 0.2em (6 Nov 2026).
+  const eyebrow = await fontOf('[data-testid="type-samples"] p.eyebrow');
+  expect(eyebrow.fontFamily).toContain('Inter');
+  expect(eyebrow.fontSize).toBe('12px');
+  expect(eyebrow.fontWeight).toBe('700');
+  expect(eyebrow.textTransform).toBe('uppercase');
+  expect(eyebrow.letterSpacing).toBe('2.4px');
   expect((await fontOf('[data-testid="type-samples"] p.font-hand')).fontFamily).toContain(
     'Shadows Into Light Two',
   );

@@ -1,7 +1,7 @@
 /**
  * SharingModal: the frame every sharing dialog uses (stories S1-E4-05 and S1-E4-07; board 3.6).
  *
- * Board values: a white 20 px-radius card, a Cutive eyebrow ("Share", "Share a quote"), the
+ * Board values: a white 20 px-radius card, a eyebrow ("Share", "Share a quote"), the
  * heading in Bricolage Grotesque and a corner "×" named "Close". No doodles on sharing screens
  * (DoD design rules).
  * How it is a dialog: the browser's own <dialog> with showModal(), which traps focus, closes on
@@ -87,9 +87,7 @@ export function SharingModal(props: SharingModalProps) {
         <div className="flex flex-col gap-5">
           <div className="flex items-start gap-3">
             <div className="flex min-w-0 flex-1 flex-col gap-1">
-              {props.eyebrow !== undefined && (
-                <p className="m-0 font-eyebrow text-sm text-eyebrow">{props.eyebrow}</p>
-              )}
+              {props.eyebrow !== undefined && <p className="m-0 eyebrow">{props.eyebrow}</p>}
               <h2
                 id={titleId}
                 className="m-0 font-heading text-[26px] leading-tight font-bold text-heading"

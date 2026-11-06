@@ -39,9 +39,7 @@ export function StoriesFileChoices({ choices, onChange }: StoriesFileChoicesProp
   const { t } = useDataExportTranslation();
   return (
     <fieldset className="m-0 flex min-w-0 flex-col border-0 p-0">
-      <legend className="mb-1 font-eyebrow text-sm leading-[1.3] text-eyebrow">
-        {t('stories.include.legend')}
-      </legend>
+      <legend className="mb-1 eyebrow">{t('stories.include.legend')}</legend>
       {choiceKeys.map(({ choice, key }) => (
         <div
           key={choice}

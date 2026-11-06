@@ -32,7 +32,7 @@ export interface ChoiceChipsProps {
   /** The group's accessible name; shown on screen when isLabelVisible. */
   label: string;
   isLabelVisible?: boolean;
-  /** Shows the visible label as an eyebrow (Cutive 14 px), as form section labels are drawn. */
+  /** Shows the visible label as an eyebrow (the eyebrow style), as form section labels are drawn. */
   isLabelEyebrow?: boolean;
   options: ChoiceOption[];
   value: string;
@@ -74,7 +74,7 @@ function chipClasses(isChosen: boolean, isDisabled: boolean): string {
 /** The label's classes: hidden, plain or an eyebrow (DoD: form section labels are eyebrows). */
 function labelClasses(isVisible: boolean, isEyebrow: boolean): string {
   if (!isVisible) return 'sr-only';
-  if (isEyebrow) return 'font-eyebrow text-sm leading-[1.3] font-normal text-eyebrow';
+  if (isEyebrow) return 'eyebrow';
   return 'text-sm font-semibold text-ink';
 }
 

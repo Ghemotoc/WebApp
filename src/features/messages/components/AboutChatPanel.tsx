@@ -65,7 +65,7 @@ export function AboutChatPanel({ chat }: { chat: Conversation }) {
   return (
     <aside aria-labelledby="about-chat-heading" className="flex min-w-0 flex-col p-4 text-sm">
       <div className="flex flex-col gap-1 border-b border-border pb-3">
-        <h2 id="about-chat-heading" className="m-0 font-eyebrow text-sm font-normal text-eyebrow">
+        <h2 id="about-chat-heading" className="m-0 eyebrow">
           {t('about.title')}
         </h2>
         <Link to={`/u/${chat.handle}`} className="w-fit font-semibold text-link underline">

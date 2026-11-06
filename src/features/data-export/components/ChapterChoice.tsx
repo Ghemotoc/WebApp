@@ -121,9 +121,7 @@ export function ChapterChoice(props: ChapterChoiceProps) {
   const { t } = useDataExportTranslation();
   return (
     <fieldset className="m-0 flex min-w-0 flex-col gap-1 border-0 p-0">
-      <legend className="mb-1 font-eyebrow text-sm leading-[1.3] text-eyebrow">
-        {t('stories.chapters.legend')}
-      </legend>
+      <legend className="mb-1 eyebrow">{t('stories.chapters.legend')}</legend>
       <ModeRadios onlyChosen={props.onlyChosen} onModeChange={props.onModeChange} />
       {props.onlyChosen && (
         <ChapterBoxes

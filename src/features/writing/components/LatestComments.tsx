@@ -2,7 +2,7 @@
  * LatestComments: "Latest on your chapters" on the writer dashboard (story S1-E3-07; board
  * WriterDashboard 4.1, "Latest comments").
  *
- * Board values: Cutive eyebrow "Comments", the 30 px heading, and up to three white cards: the
+ * Board values: eyebrow "Comments", the 30 px heading, and up to three white cards: the
  * commenter's initial in a circle, their name, "on chapter n · 2 hours ago", the words, and a
  * "Reply" link to the comments under that chapter. These are the public comments the writer can
  * already read under the chapter, with the same rules (deleted, blocked and moderated comments

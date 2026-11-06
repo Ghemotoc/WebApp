@@ -2,7 +2,7 @@
  * NotificationList: the notifications under their day headings, Today, Yesterday, Earlier this
  * week and Older (story S1-E7-01; board 6.2), or the empty state.
  *
- * Board values: each day is a section with a Cutive heading and a white card of rows (24 px
+ * Board values: each day is a section with an eyebrow heading and a white card of rows (24 px
  * radius, 1 px border, the card shadow). Who uses it: NotificationsPage. What it calls:
  * lib/dayGroups.ts and NotificationRow.
  */
@@ -44,10 +44,7 @@ export function NotificationList({ notifications, ownHandle, onOpen }: Notificat
           aria-labelledby={`notifications-${group}`}
           className="flex flex-col gap-2.5"
         >
-          <h2
-            id={`notifications-${group}`}
-            className="m-0 font-eyebrow text-sm leading-[1.3] font-normal text-eyebrow"
-          >
+          <h2 id={`notifications-${group}`} className="m-0 eyebrow">
             {t(`days.${group}`)}
           </h2>
           <ul className="m-0 list-none overflow-hidden rounded-card border border-border bg-surface p-0 shadow-card">

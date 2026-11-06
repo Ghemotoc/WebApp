@@ -3,7 +3,7 @@
  * (bundle FORUMS-2, part a; S1-E8-06; the board's "Who can post" and "How people join" choices).
  *
  * Real radio buttons, so arrow keys move between choices and a screen reader says "1 of 2";
- * the legend is drawn as an eyebrow label (Cutive 14 px), as the DoD's form section labels are drawn. Each choice's row is
+ * the legend is drawn as an eyebrow label (the eyebrow style), as the DoD's form section labels are drawn. Each choice's row is
  * at least 44 px tall.
  * Who uses it: SpaceForm.
  */
@@ -39,9 +39,7 @@ export function SpaceRadioGroup<Value extends string>({
   const groupName = useId();
   return (
     <fieldset className="m-0 flex flex-col gap-2 border-0 p-0">
-      <legend className="mb-2 p-0 font-eyebrow text-sm leading-[1.3] font-normal text-eyebrow">
-        {legend}
-      </legend>
+      <legend className="mb-2 p-0 eyebrow">{legend}</legend>
       {options.map((option) => {
         const inputId = `${groupName}-${option.value}`;
         const noteId = option.note === undefined ? undefined : `${inputId}-note`;

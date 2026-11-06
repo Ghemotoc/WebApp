@@ -31,9 +31,7 @@ export function DocumentFormatChoice({ value, onChange }: DocumentFormatChoicePr
       className="m-0 flex min-w-0 flex-col border-0 p-0"
       aria-describedby="download-format-hint"
     >
-      <legend className="mb-1 font-eyebrow text-sm leading-[1.3] text-eyebrow">
-        {t('stories.format.legend')}
-      </legend>
+      <legend className="mb-1 eyebrow">{t('stories.format.legend')}</legend>
       <div className="flex flex-wrap gap-x-6 gap-y-1">
         {formats.map((format) => (
           <div key={format} className="flex min-h-11 items-center gap-2.5">

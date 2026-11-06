@@ -40,7 +40,7 @@ export function MetricsCard({
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex min-w-0 flex-col gap-1">
-          <span className="font-eyebrow text-sm text-eyebrow">{eyebrow}</span>
+          <span className="eyebrow">{eyebrow}</span>
           <h2 id={headingId} className="m-0 font-heading text-[22px] font-bold text-heading">
             {heading}
           </h2>

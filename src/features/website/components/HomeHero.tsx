@@ -2,7 +2,7 @@
  * HomeHero: the top of the public home page (stories S1-E5-08 and S1-E11-06; board
  * Website-Home, 1.1).
  *
- * Board values: a Cutive eyebrow, the Bricolage headline on two lines with a gold underline under
+ * Board values: a eyebrow, the Bricolage headline on two lines with a gold underline under
  * the chosen word, the lede, two pill buttons and three short points. Every word comes from the
  * published CMS version (never the locale files, decided 17 Oct 2026, 19:14); the `lang`
  * attribute is the copy's language, which can differ from the interface after a fallback
