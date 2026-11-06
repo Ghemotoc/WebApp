@@ -1,8 +1,9 @@
 /**
- * "Surprise me": a random avatar from the builder's choices (bundle ADMIN-2, part g).
+ * "Surprise me": a random avatar from the builder's choices (bundle ADMIN-2, part g; the Micah
+ * parts since bundle AVATAR-1).
  *
- * Facial hair and accessories come up only now and then (one time in four), so most surprises
- * show the face plainly. Who calls it: AvatarBuilderSection. What it calls: nothing.
+ * Facial hair, glasses and earrings come up only now and then (one time in four each), so most
+ * surprises show the face plainly. Who calls it: useAvatarDraft. What it calls: nothing.
  */
 import type { AvatarRecipe } from '@/schemas/avatarRecipe';
 
@@ -41,15 +42,21 @@ function pickSometimes(list: readonly string[], random: RandomNumber): string {
  */
 export function randomRecipe(random: RandomNumber = Math.random): AvatarRecipe {
   return {
-    style: 'open-peeps',
+    style: 'micah',
     version: 1,
     skin: pick(avatarChoices.skin, random),
-    head: pick(avatarChoices.head, random),
+    hair: pick(avatarChoices.hair, random),
     hairColour: pick(avatarChoices.hairColour, random),
-    expression: pick(avatarChoices.expression, random),
+    eyebrows: pick(avatarChoices.eyebrows, random),
+    eyes: pick(avatarChoices.eyes, random),
+    mouth: pick(avatarChoices.mouth, random),
+    nose: pick(avatarChoices.nose, random),
     facialHair: pickSometimes(avatarChoices.facialHair, random),
-    accessory: pickSometimes(avatarChoices.accessory, random),
-    clothes: pick(avatarChoices.clothes, random),
+    glasses: pickSometimes(avatarChoices.glasses, random),
+    earrings: pickSometimes(avatarChoices.earrings, random),
+    extrasColour: pick(avatarChoices.extrasColour, random),
+    shirt: pick(avatarChoices.shirt, random),
+    shirtColour: pick(avatarChoices.shirtColour, random),
     background: pick(avatarChoices.background, random),
   };
 }
