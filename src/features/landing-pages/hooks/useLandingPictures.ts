@@ -13,7 +13,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { requireClient } from '@/features/account/hooks/useMyNames';
 import { uploadLandingPicture } from '@/features/pictures/api/pictures';
 
-import { fetchLandingPictureStates } from '../api/landingPages';
+import { fetchLandingPictureStates } from '../api/staff/landingPagesAdmin';
 
 /** How often the states are read again while a picture isn't ready. */
 const recheckMilliseconds = 15 * 1000;

@@ -17,7 +17,7 @@ import { useVisitorCountry } from '@/features/safety/hooks/useVisitorCountry';
 import { getSupabaseClient } from '@/lib/supabase';
 import type { WebsiteContentKind } from '@/schemas/websiteContent';
 
-import { appDatabaseStore, type LiveEntry } from '../api/websiteContentStore';
+import { appDatabaseReader, type LiveEntry } from '../api/websiteContentStore';
 import { recallContent, rememberContent } from '../lib/lastKnownContent';
 
 /** How long a read stays fresh: a publish shows within a minute (S1-E11-06 criterion 6). */
@@ -67,7 +67,7 @@ export function useWebsiteContent<Content>(kind: WebsiteContentKind, schema: Zod
       // Step 1: read through the store, then keep a copy for a day the read fails.
       const client = await getSupabaseClient();
       if (client === null) throw new Error('The app is not connected to its database.');
-      const entries = await appDatabaseStore(client).readLive(kind, {
+      const entries = await appDatabaseReader(client).readLive(kind, {
         country: countryCode,
         language,
       });

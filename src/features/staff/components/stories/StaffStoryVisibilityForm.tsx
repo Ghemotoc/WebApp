@@ -25,6 +25,7 @@ import { completeReason, emptyReason } from '../../lib/staffStorySettingsDiff';
 
 import { StoryChangeFeedback } from './StoryChangeFeedback';
 import { StoryChangeReasonFields } from './StoryChangeReasonFields';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** The three states staff can choose here. */
 const choices = ['shown', 'restricted', 'hidden'] as const;
@@ -57,7 +58,7 @@ export function StaffStoryVisibilityForm({ story, changer }: StaffStoryVisibilit
     await changer
       .change({ kind: 'visibility', visibility: wanted, reason: complete })
       .then(() => setReason(emptyReason))
-      .catch(() => undefined);
+      .catch(errorShownByHook);
   }
 
   return (

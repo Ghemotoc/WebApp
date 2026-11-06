@@ -47,6 +47,17 @@ describe('romaniaTimeToInstant', () => {
     expect(romaniaTimeToInstant('', '18:00')).toBeNull();
     expect(romaniaTimeToInstant('2026-10-17', '6pm')).toBeNull();
   });
+
+  it('refuses a day the month does not have and a time past 23:59 (QA-5)', () => {
+    expect(romaniaTimeToInstant('2027-02-30', '10:00')).toBeNull();
+    expect(romaniaTimeToInstant('2027-02-29', '10:00')).toBeNull();
+    expect(romaniaTimeToInstant('2027-13-01', '10:00')).toBeNull();
+    expect(romaniaTimeToInstant('2026-11-05', '24:00')).toBeNull();
+    expect(romaniaTimeToInstant('2026-11-05', '18:60')).toBeNull();
+    expect(romaniaTimeToInstant('2028-02-29', '10:00')?.toISOString()).toBe(
+      '2028-02-29T08:00:00.000Z',
+    );
+  });
 });
 
 describe('the fields and the label', () => {

@@ -15,6 +15,7 @@ import type { MarketsAdminState } from '../hooks/useMarketsAdmin';
 import { languageNameOf, openingStatuses } from '../lib/marketNames';
 
 import { SettingsFailureNotice } from './SettingsFailureNotice';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /**
  * One language with its details and status chips.
@@ -47,7 +48,7 @@ function LanguageItem({ language, state }: { language: LanguageRow; state: Marke
         onChange={(status) =>
           void state
             .change({ kind: 'language', code: language.code, status: status as OpeningStatus })
-            .catch(() => undefined)
+            .catch(errorShownByHook)
         }
       />
       {failed && <SettingsFailureNotice failure={state.changeFailure} />}

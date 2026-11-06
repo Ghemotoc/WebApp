@@ -26,6 +26,7 @@ import {
   type MessagesFailure,
   type RequestAnswer,
 } from '../api/messages';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** How often each part asks again, in milliseconds. */
 const refreshEvery = { chat: 5_000, list: 15_000, topBar: 60_000 } as const;
@@ -105,7 +106,7 @@ function useMarkReadOnNewMessages(handle: string, newestMessageAt: string | null
         if (isCurrent) await queryClient.invalidateQueries({ queryKey: messagesKeys.list });
       })
       // A failed mark only leaves the dot until the next visit; the chat itself still shows.
-      .catch(() => undefined);
+      .catch(errorShownByHook);
     return () => {
       isCurrent = false;
     };

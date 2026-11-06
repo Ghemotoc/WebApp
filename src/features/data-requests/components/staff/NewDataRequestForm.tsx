@@ -26,6 +26,7 @@ import { useOpenDataRequest } from '../../hooks/useStaffDataRequests';
 import { useDataRequestsTranslation } from '../../registerDataRequestsTranslations';
 
 import { DataRequestPersonPicker } from './DataRequestPersonPicker';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /**
  * The form's fields and their setters, starting with a copy asked for by email today.
@@ -122,7 +123,7 @@ export function NewDataRequestForm() {
       .open({ userId, requestType, channel, receivedOn, note })
       .then((made) => navigate(`/staff/data-requests/${made.id}`))
       // The failure is shown from opening.failure below.
-      .catch(() => undefined);
+      .catch(errorShownByHook);
   }
 
   return (

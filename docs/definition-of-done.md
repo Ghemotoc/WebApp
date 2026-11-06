@@ -105,6 +105,7 @@
 **Documentation**
 
 - [ ] `docs/` updated where behaviour changed (architecture, runbooks, help page).
+- [ ] No docs drift: search `docs/`, `CLAUDE.md` and the README files for the names, numbers and file paths this change touched (a function, a limit, a route, a story ID), and fix every line that no longer matches. A doc that says something the code no longer does is a bug (CLAUDE.md, Readable code; QA-5, finding A4).
 - [ ] A new ADR if the story made an architectural decision.
 - [ ] The pull request description lists the story ID, what changed, how it was tested and any follow-up.
 

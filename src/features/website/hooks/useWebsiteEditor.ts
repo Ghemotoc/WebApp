@@ -13,12 +13,8 @@ import { useState } from 'react';
 import { requireClient } from '@/features/account/hooks/useMyNames';
 import type { WebsiteContentKind } from '@/schemas/websiteContent';
 
-import {
-  appDatabaseStore,
-  WebsiteContentError,
-  type DraftInput,
-  type EntryPlace,
-} from '../api/websiteContentStore';
+import { appDatabaseStore } from '../api/staff/websiteContentEditor';
+import { WebsiteContentError, type DraftInput, type EntryPlace } from '../api/websiteContentStore';
 
 /** One editor action. */
 export type EditorAction =

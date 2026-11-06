@@ -15,6 +15,7 @@ import { Notice } from '@/components/ui/Notice';
 import type { TeacherBadgeFailure } from '../api/teacherBadge';
 
 import { TeacherBadgePill } from './TeacherBadgePill';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the way needs. */
 export interface ProofWayProps {
@@ -59,7 +60,7 @@ export function ProofWay({ idPrefix, isSending, failure, onSend }: ProofWayProps
   /** Sends the chosen file, or says to choose one. */
   function send() {
     setIsMissing(file === null);
-    if (file !== null) void onSend(file).catch(() => undefined);
+    if (file !== null) void onSend(file).catch(errorShownByHook);
   }
 
   return (

@@ -21,6 +21,7 @@ import { useArchiveClass } from '@/features/spaces/hooks/useClassTools';
 
 import type { StaffClassSpace } from '../../api/staffClassSpaces';
 import { staffClassSpacesKey } from '../../hooks/useStaffClassSpaces';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** A pilot code works for 30 days and admits 40, the teacher's own defaults (CLASSES-a). */
 const pilotCode = { validDays: 30, admits: 40 };
@@ -34,7 +35,7 @@ function ArchiveAction({ space }: { space: StaffClassSpace }) {
 
   /** Archives the class, then reads the list again so its status changes. */
   async function archive() {
-    await archiving.archive().catch(() => undefined);
+    await archiving.archive().catch(errorShownByHook);
     await queryClient.invalidateQueries({ queryKey: staffClassSpacesKey });
   }
 
@@ -84,7 +85,7 @@ export function StaffClassActions({ space }: { space: StaffClassSpace }) {
         {!space.isLocked && (
           <Button
             disabled={invite.isRunning}
-            onClick={() => void invite.make(pilotCode).catch(() => undefined)}
+            onClick={() => void invite.make(pilotCode).catch(errorShownByHook)}
           >
             {t('classSpaces.makeCode')}
           </Button>

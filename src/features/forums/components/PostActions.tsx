@@ -22,6 +22,7 @@ import { useDeletePost } from '../hooks/useForumWrites';
 import type { QuotePicks } from '../hooks/useQuotePicks';
 import { failureText } from '../lib/forumFailures';
 import { useForumsTranslation } from '../registerForumsTranslations';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the row needs. */
 export interface PostActionsProps {
@@ -94,7 +95,7 @@ function AnswerButton({ post, threadNumber }: { post: ForumPost; threadNumber: n
         variant="text"
         aria-label={t(`answer.${key}Label`, { number: post.number })}
         disabled={marking.isRunning}
-        onClick={() => void marking.run({ threadNumber, postNumber }).catch(() => undefined)}
+        onClick={() => void marking.run({ threadNumber, postNumber }).catch(errorShownByHook)}
       >
         {t(`answer.${key}`)}
       </Button>

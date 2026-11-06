@@ -20,6 +20,7 @@ import { TextInput } from '@/components/ui/TextInput';
 import type { MessageEmailChoices } from '../api/messageEmails';
 import { useSaveMessageEmails } from '../hooks/useMessageSettings';
 import { useMessagesTranslation } from '../registerMessagesTranslations';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the form needs: the saved choices. */
 interface MessageEmailSettingsProps {
@@ -120,7 +121,7 @@ export function MessageEmailSettings({ choices }: MessageEmailSettingsProps) {
     await saving
       .save({ ...draft, quietHoursOn: draft.mustKeepQuietHours || draft.quietHoursOn })
       .then(() => setIsChanged(false))
-      .catch(() => undefined);
+      .catch(errorShownByHook);
   }
 
   const showsHours = draft.mustKeepQuietHours || draft.quietHoursOn;

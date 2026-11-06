@@ -3,18 +3,21 @@
  * with clickable links").
  *
  * Safety (CLAUDE.md rule 8, sanitised before display; the server checked it on save with
- * check_bible_text()): react-markdown never renders raw HTML (skipHtml); only paragraphs, line
+ * check_bible_text()): SafeMarkdown (src/components/ui/) never renders raw HTML (skipHtml); only paragraphs, line
  * breaks, bold, italic, headings, lists, quotes and links are drawn, anything else is unwrapped to
  * its words; links keep only http, https and mailto addresses, get rel="nofollow ugc noopener"
  * and open in a new tab. Headings drop to h3 and h4, under the entry's own heading.
  * [[Name]] cross-links (S1-E17-31) become links to the character, entry or chapter they name, or
  * read "not found yet": before drawing, each [[Name]] is turned into a link to the address
  * "#atlas-link:<name>", which only this component's link drawing understands.
- * Who uses it: BibleEntryView. What it calls: react-markdown, lib/crossLinks.ts,
+ * Who uses it: BibleEntryView. What it calls: SafeMarkdown, lib/crossLinks.ts,
  * useCrossLinks and CrossLink. On a readers' page (S1-E17-33) the same text resolves against the
  * public items only, so a private one reads as plain words.
  */
-import Markdown, { type Components } from 'react-markdown';
+import type { Components } from 'react-markdown';
+
+import { SafeLink, SafeMarkdown } from '@/components/ui/SafeMarkdown';
+import { safeMarkdownElements } from '@/components/ui/safeMarkdownElements';
 
 import { isAllowedLink } from '@/lib/safe-links';
 
@@ -38,26 +41,9 @@ function withCrossLinks(text: string): string {
 }
 
 /** Keeps safe addresses and the cross-link ones; anything else becomes no address. */
-function keptAddress(url: string): string {
-  return url.startsWith(crossLinkPrefix) || isAllowedLink(url) ? url : '';
+function isKeptAddress(url: string): boolean {
+  return url.startsWith(crossLinkPrefix) || isAllowedLink(url);
 }
-
-/** The elements an entry may contain. */
-const allowedElements = [
-  'p',
-  'br',
-  'strong',
-  'em',
-  'a',
-  'h1',
-  'h2',
-  'h3',
-  'h4',
-  'ul',
-  'ol',
-  'li',
-  'blockquote',
-];
 
 /** Headings sit under the entry's title, so every level the writer types becomes h3 or h4. */
 const components: Components = {
@@ -92,12 +78,8 @@ function linkComponent(slug: string, index: LinkIndex | null): Components['a'] {
       const target = index === null ? undefined : resolveCrossLink(name, index);
       return <CrossLink slug={slug} name={name} target={target} />;
     }
-    if (href === undefined || !isAllowedLink(href)) return <>{children}</>;
-    return (
-      <a href={href} rel="nofollow ugc noopener" target="_blank" className="text-link underline">
-        {children}
-      </a>
-    );
+    // Any other address is drawn by the shared member link (safe only, never followed).
+    return <SafeLink href={href}>{children}</SafeLink>;
   };
 }
 
@@ -113,15 +95,12 @@ export function BibleMarkdown({ text }: { text: string }) {
   const { slug, index, isLoaded } = useCrossLinks();
   return (
     <div className="flex flex-col gap-3 text-base leading-[1.6] break-words text-ink">
-      <Markdown
-        skipHtml
-        allowedElements={allowedElements}
-        unwrapDisallowed
-        urlTransform={keptAddress}
+      <SafeMarkdown
+        text={withCrossLinks(text)}
+        elements={safeMarkdownElements.storyWorldEntry}
+        keepAddress={isKeptAddress}
         components={{ ...components, a: linkComponent(slug, isLoaded ? index : null) }}
-      >
-        {withCrossLinks(text)}
-      </Markdown>
+      />
     </div>
   );
 }

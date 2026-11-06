@@ -26,6 +26,7 @@ import { spaceFailureText } from '../lib/spaceFailures';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
 import { SpaceFormCard } from './SpaceFormCard';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /**
  * The open offer: to whom, since when, and "Take back the offer".
@@ -49,7 +50,7 @@ function OpenOffer({ slug, handover }: { slug: string; handover: SpaceHandover }
         variant="secondary"
         className="self-start"
         disabled={cancelling.isRunning}
-        onClick={() => void cancelling.run().catch(() => undefined)}
+        onClick={() => void cancelling.run().catch(errorShownByHook)}
       >
         {t('handover.cancel')}
       </Button>
@@ -94,7 +95,7 @@ function OfferForm({ slug }: { slug: string }) {
       <Button
         className="self-start"
         disabled={offering.isRunning || handle === ''}
-        onClick={() => void offering.run(handle).catch(() => undefined)}
+        onClick={() => void offering.run(handle).catch(errorShownByHook)}
       >
         {t('handover.offer')}
       </Button>

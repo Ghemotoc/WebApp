@@ -23,6 +23,7 @@ import { completeReason, emptyReason } from '../../lib/staffStorySettingsDiff';
 
 import { StoryChangeFeedback } from './StoryChangeFeedback';
 import { StoryChangeReasonFields } from './StoryChangeReasonFields';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What one part's row needs. */
 interface PresentationPartProps {
@@ -71,7 +72,7 @@ function PresentationPart({ part, isHidden, canHide, changer }: PresentationPart
         setIsOpen(false);
         setReason(emptyReason);
       })
-      .catch(() => undefined);
+      .catch(errorShownByHook);
   }
 
   const state = partState(isHidden, canHide);

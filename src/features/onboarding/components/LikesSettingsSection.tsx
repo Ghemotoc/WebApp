@@ -21,6 +21,7 @@ import { useOnboardingChoices } from '../hooks/useOnboardingChoices';
 
 import { LikesFields } from './LikesFields';
 import { RegionSelect } from './RegionSelect';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the form needs. */
 interface LikesFormProps {
@@ -57,7 +58,7 @@ function LikesForm({ onboarding, state }: LikesFormProps) {
     <form
       noValidate
       className="flex flex-col gap-5"
-      onSubmit={(event) => void handleSubmit(event).catch(() => undefined)}
+      onSubmit={(event) => void handleSubmit(event).catch(errorShownByHook)}
     >
       <RegionSelect
         id="settings-region"

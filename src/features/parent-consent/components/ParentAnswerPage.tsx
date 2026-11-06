@@ -27,6 +27,7 @@ import { ContactLine } from './ContactLine';
 import { ParentAnswerDetails } from './ParentAnswerDetails';
 import { ParentAnswerForm } from './ParentAnswerForm';
 import { ParentAnswerOutcome } from './ParentAnswerOutcome';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** useConsentRequest's result, passed down once. */
 type ConsentState = ReturnType<typeof useConsentRequest>;
@@ -96,7 +97,7 @@ function WaitingCard({ state, request }: { state: ConsentState; request: Consent
         onAnswer={(decision, isGuardian) => {
           void state
             .answer({ token: state.token, decision, language: request.language, isGuardian })
-            .catch(() => undefined);
+            .catch(errorShownByHook);
         }}
       />
     </AnswerCard>
@@ -134,7 +135,7 @@ function AnsweredCard({ state, request }: { state: ConsentState; request: Consen
           const language = i18n.language === 'en' ? 'en' : 'ro';
           void state
             .answer({ token: state.token, decision: 'withdraw', language, isGuardian: false })
-            .catch(() => undefined);
+            .catch(errorShownByHook);
         }}
       />
     </AnswerCard>

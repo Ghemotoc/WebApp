@@ -7,33 +7,22 @@
  * Who calls it: every component in src/features/spaces/components, through
  * useSpacesTranslation().
  */
-import type { i18n as I18nInstance } from 'i18next';
-import { useTranslation } from 'react-i18next';
-
+import { createNamespaceTranslations } from '@/lib/namespace-translations';
 import englishSpaces from '@/locales/en/spaces.json';
 import romanianSpaces from '@/locales/ro/spaces.json';
+
+const spacesTranslations = createNamespaceTranslations('spaces', romanianSpaces, englishSpaces);
 
 /**
  * Registers the space texts once; calling it again does nothing.
  *
  * @param i18n - the app's translation instance (from useTranslation())
  */
-export function registerSpacesTranslations(i18n: I18nInstance): void {
-  if (i18n.hasResourceBundle('ro', 'spaces')) return;
-  i18n.addResourceBundle('ro', 'spaces', romanianSpaces);
-  i18n.addResourceBundle('en', 'spaces', englishSpaces);
-}
+export const registerSpacesTranslations = spacesTranslations.register;
 
 /**
  * useTranslation('spaces'), after making sure the space texts are registered.
  *
  * @returns what useTranslation('spaces') returns: t and the i18n instance
  */
-export function useSpacesTranslation() {
-  // Step 1: the instance this component renders with (the app's, or a test's).
-  const { i18n } = useTranslation();
-  // Step 2: add the space texts to it the first time any space component renders.
-  registerSpacesTranslations(i18n);
-  // Step 3: hand back the usual translation helpers for the "spaces" namespace.
-  return useTranslation('spaces');
-}
+export const useSpacesTranslation = spacesTranslations.useNamespaceTranslation;

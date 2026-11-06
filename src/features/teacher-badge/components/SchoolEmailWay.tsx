@@ -21,6 +21,7 @@ import {
   type TeacherLinkRequest,
 } from '../../../schemas/teacherCheck';
 import type { TeacherBadgeFailure } from '../api/teacherBadge';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the way needs. */
 export interface SchoolEmailWayProps {
@@ -69,7 +70,7 @@ export function SchoolEmailWay({ idPrefix, isSending, failure, onSend }: SchoolE
       return;
     }
     setLocalFailure(null);
-    void onSend(parsed.data).catch(() => undefined);
+    void onSend(parsed.data).catch(errorShownByHook);
   }
 
   return (

@@ -579,6 +579,13 @@ Stage 1 staff roles are **owner**, **admin**, **moderator**, **support** and **c
 | Settings and flags | Act | Act | None | None | None |
 | Markets: open a market | Act | None | None | None | None |
 | Metrics and logs | View | View | View (queue numbers) | None | None |
+| Compliance log (S1-E11-04) | Act | Act | None | None | None |
+| Error log (S1-E1-05) | View | View | None | None | None |
+| Contests (S1-E11-15) | Act | Act | None | None | None |
+| Invites (S1-E11-17) | Act | Act | None | None | None |
+| On-call rota (S1-E10-09) | Act | Act | View | View | None |
+| Safety contacts (S1-E10-13) | Act | Act | View | Act | None |
+| Support tickets (S1-E11-13) | Act | Act | None | Act | None |
 | Audit log | View and export | View and export | None | None | None |
 
 Classics are managed only by staff with the admin role (and the owner); content editors will also hold the admin role (decided 17 Oct 2026, 12:44). The same goes for the website CMS and interface text: most content not written by writers (website pages, questions and help, notice banners and interface text) is edited and published only by the admin role and the owner, and wording with legal weight (age, consent, privacy, reporting, messaging rules) is admin-only in any case (decided 17 Oct 2026, 19:19). The content editor role therefore has no area of its own for now; whether to keep it as a separate role is **OPEN** for Robert. Opening a market is owner-only in this proposal because it carries the legal check (S1-E11-05). Nobody can change their own role, and nobody, owner included, can edit or delete the audit log.

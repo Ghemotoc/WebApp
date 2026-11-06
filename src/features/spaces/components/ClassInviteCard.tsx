@@ -25,6 +25,7 @@ import { useSpacesTranslation } from '../registerSpacesTranslations';
 import { ClassInviteFields, type ClassInviteValues } from './ClassInviteFields';
 import { NewClassInviteCode } from './NewClassInviteCode';
 import { SpaceFormCard } from './SpaceFormCard';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /**
  * The line saying whether a code works now.
@@ -100,7 +101,7 @@ export function ClassInviteCard({ space }: { space: Space }) {
     }
     setProblem(null);
     // A refusal shows from changes.failure; nothing else to do here.
-    await changes.make({ validDays: Number(values.validDays), admits }).catch(() => undefined);
+    await changes.make({ validDays: Number(values.validDays), admits }).catch(errorShownByHook);
   }
 
   return (
@@ -135,7 +136,7 @@ export function ClassInviteCard({ space }: { space: Space }) {
         <InviteButtons
           hasCode={working !== null}
           isRunning={changes.isRunning}
-          onEnd={() => void changes.end().catch(() => undefined)}
+          onEnd={() => void changes.end().catch(errorShownByHook)}
         />
       </form>
     </SpaceFormCard>

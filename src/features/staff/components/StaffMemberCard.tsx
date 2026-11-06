@@ -18,6 +18,7 @@ import type { StaffChange, StaffMember } from '../api/staffRoles';
 
 import { PermissionChecks } from './PermissionChecks';
 import { StaffLanguages } from './StaffLanguages';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What a card needs. */
 interface StaffMemberCardProps {
@@ -43,7 +44,7 @@ export function StaffMemberCard({ member, isChanging, onChange }: StaffMemberCar
     if (reason.trim() === '') return setReasonMissing(true);
     setReasonMissing(false);
     // The reason goes without spaces at either end, whichever control sent the change.
-    void onChange({ ...change, reason: change.reason.trim() }).catch(() => undefined);
+    void onChange({ ...change, reason: change.reason.trim() }).catch(errorShownByHook);
   }
 
   return (

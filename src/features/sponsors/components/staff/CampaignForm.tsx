@@ -28,6 +28,7 @@ import {
   type SetCampaignField,
 } from './CampaignFieldGroups';
 import { ChangeOutcome } from './ChangeOutcome';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the form needs. */
 export interface CampaignFormProps {
@@ -116,12 +117,12 @@ export function CampaignForm(props: CampaignFormProps) {
       .then((saved) => {
         if (campaign === null && saved !== null) onCreated(saved.id);
       })
-      .catch(() => undefined);
+      .catch(errorShownByHook);
   };
   // Step 2: send the saved campaign for review.
   const submit = () => {
     if (campaign === null) return;
-    void changes.change({ kind: 'submit', campaignId: campaign.id }).catch(() => undefined);
+    void changes.change({ kind: 'submit', campaignId: campaign.id }).catch(errorShownByHook);
   };
   const successText =
     changes.lastChange?.kind === 'submit' ? t('editor.submitted') : t('editor.saved');

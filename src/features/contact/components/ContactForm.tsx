@@ -29,6 +29,7 @@ import {
 } from '@/schemas/contact';
 
 import type { ContactFailure, SenderIdentity } from '../api/contact';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the form needs. */
 export interface ContactFormProps {
@@ -227,7 +228,7 @@ export function ContactForm({ sender, language, isSending, failure, onSend }: Co
       handle: sender?.handle ?? undefined,
       userId: sender?.userId,
       website: website === '' ? undefined : website,
-    }).catch(() => undefined);
+    }).catch(errorShownByHook);
   }
 
   return (

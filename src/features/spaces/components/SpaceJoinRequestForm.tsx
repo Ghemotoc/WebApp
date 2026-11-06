@@ -15,6 +15,7 @@ import { Textarea } from '@/components/ui/Textarea';
 
 import type { useMembership } from '../hooks/useSpaces';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** The longest note, in characters (the setting space_join_note_max_characters). */
 const joinNoteMaxCharacters = 200;
@@ -44,7 +45,7 @@ export function SpaceJoinRequestForm({
   /** Sends the request with the note; a refusal keeps the form open with the words. */
   async function send(event: FormEvent) {
     event.preventDefault();
-    await membership.join(note).catch(() => undefined);
+    await membership.join(note).catch(errorShownByHook);
   }
 
   if (!isOpen) {

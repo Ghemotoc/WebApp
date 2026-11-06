@@ -21,6 +21,7 @@ import { FormSection } from '@/features/writing/components/FormSection';
 import type { StoryClassShare } from '../api/classStories';
 import { useSetStoryClass, useStoryClassShare } from '../hooks/useClassStories';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** The outcome of the last change, under the buttons. */
 function ChangeNotice({ change }: { change: ReturnType<typeof useSetStoryClass> }) {
@@ -52,7 +53,7 @@ function SharedState(props: {
           type="button"
           variant="secondary"
           disabled={change.isRunning}
-          onClick={() => void change.change(null).catch(() => undefined)}
+          onClick={() => void change.change(null).catch(errorShownByHook)}
         >
           {t('storyClass.makePublic')}
         </Button>
@@ -84,7 +85,7 @@ function PublicState(props: {
         <Button
           type="button"
           disabled={change.isRunning || classSlug === ''}
-          onClick={() => void change.change(classSlug).catch(() => undefined)}
+          onClick={() => void change.change(classSlug).catch(errorShownByHook)}
         >
           {t('storyClass.share')}
         </Button>

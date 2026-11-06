@@ -20,6 +20,7 @@ import { useArchiveClass } from '../hooks/useClassTools';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
 import { SpaceFormCard } from './SpaceFormCard';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** The archive call, as useArchiveClass() gives it. */
 type Archiving = ReturnType<typeof useArchiveClass>;
@@ -47,7 +48,7 @@ function ArchiveButtons({ archiving }: { archiving: Archiving }) {
         <Button
           variant="destructive"
           disabled={archiving.isRunning}
-          onClick={() => void archiving.archive().catch(() => undefined)}
+          onClick={() => void archiving.archive().catch(errorShownByHook)}
         >
           {t('classArchive.yes')}
         </Button>

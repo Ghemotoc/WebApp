@@ -15,6 +15,7 @@ import { LabelRows } from '@/components/ui/LabelRows';
 import { Textarea } from '@/components/ui/Textarea';
 
 import type { StaffSafetyContact } from '../api/staffSafetyContacts';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the card needs. */
 export interface SafetyContactAdminCardProps {
@@ -59,7 +60,7 @@ function RemoveStep({
         <Button
           variant="destructive"
           disabled={reason.trim() === '' || isChanging}
-          onClick={() => void onRemove(reason).catch(() => undefined)}
+          onClick={() => void onRemove(reason).catch(errorShownByHook)}
         >
           {t('admin.removeConfirm')}
         </Button>
@@ -126,7 +127,7 @@ export function SafetyContactAdminCard(props: SafetyContactAdminCardProps) {
           <Button
             disabled={isChanging}
             aria-label={t('admin.confirmLabel', { label: contact.label })}
-            onClick={() => void props.onConfirm().catch(() => undefined)}
+            onClick={() => void props.onConfirm().catch(errorShownByHook)}
           >
             {t('admin.confirm')}
           </Button>

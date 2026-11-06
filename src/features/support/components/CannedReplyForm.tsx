@@ -14,6 +14,7 @@ import { Textarea } from '@/components/ui/Textarea';
 import { cannedReplyLimits, type CannedReplyDraft } from '../api/cannedReplies';
 import { placeholderWords } from '../lib/fillCannedReply';
 import { useSupportTranslation } from '../registerSupportTranslations';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the form needs. */
 export interface CannedReplyFormProps {
@@ -40,7 +41,7 @@ export function CannedReplyForm({ initial, isBusy, onSave, onCancel }: CannedRep
   /** Saves the draft; the page closes the form once it is saved. */
   function submit(event: FormEvent) {
     event.preventDefault();
-    if (isComplete) void onSave(draft).catch(() => undefined);
+    if (isComplete) void onSave(draft).catch(errorShownByHook);
   }
 
   return (

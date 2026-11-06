@@ -14,6 +14,7 @@ import { Textarea } from '@/components/ui/Textarea';
 import { useDataRequestsTranslation } from '../../registerDataRequestsTranslations';
 
 import { DataRequestSection } from './DataRequestSection';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the form needs. */
 interface DataRequestCloseFormProps {
@@ -33,7 +34,7 @@ export function DataRequestCloseForm({ isActing, onClose }: DataRequestCloseForm
   /** Sends the outcome; a refusal is shown on the page from the hook. */
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    onClose(outcome).catch(() => undefined);
+    onClose(outcome).catch(errorShownByHook);
   }
 
   return (

@@ -6,18 +6,19 @@
  * reader's bundle (architecture 1.8.1), so its text arrives with it, as the staff namespace does.
  * Who calls it: ModerationQueuePage and CasePage, before they render anything.
  */
-import type { i18n as I18nInstance } from 'i18next';
-
+import { createNamespaceTranslations } from '@/lib/namespace-translations';
 import englishModeration from '@/locales/en/moderation.json';
 import romanianModeration from '@/locales/ro/moderation.json';
+
+const moderationTranslations = createNamespaceTranslations(
+  'moderation',
+  romanianModeration,
+  englishModeration,
+);
 
 /**
  * Registers the moderation texts once; calling it again does nothing.
  *
  * @param i18n - the app's translation instance (from useTranslation())
  */
-export function registerModerationTranslations(i18n: I18nInstance): void {
-  if (i18n.hasResourceBundle('ro', 'moderation')) return;
-  i18n.addResourceBundle('ro', 'moderation', romanianModeration);
-  i18n.addResourceBundle('en', 'moderation', englishModeration);
-}
+export const registerModerationTranslations = moderationTranslations.register;

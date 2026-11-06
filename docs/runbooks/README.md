@@ -13,7 +13,7 @@ Step-by-step instructions for things that go wrong or happen rarely. Created by 
 | [`scheduled-jobs.md`](scheduled-jobs.md) (written) | The pg_cron jobs, how to see what ran, how to change a job's timing by migration, and what to check when a scheduled chapter didn't go live | S1-E3-03 |
 | [`staff-sign-in.md`](staff-sign-in.md) (written) | Switching staff powers to Google Workspace sign-in with the Vault secret `staff_email_domain`, checking the `hd` claim first, and the recovery: deleting the secret | S1-E2-07b |
 | [`notice-form.md`](notice-form.md) (written) | The public report form's shared secret (Vault and Cloudflare), its rate-limit rule and a check that orders reach the support inbox and the queue | S1-E10-02 |
-| `restore.md` | Quarterly restore drill into a scratch project from Supabase backups and the nightly `pg_dump` | architecture.md 1.12, before real users |
+| `restore.md` (not written yet: QA-8) | Quarterly restore drill into a scratch project from Supabase backups and the nightly `pg_dump` | architecture.md 1.12, before real users |
 | `incident-and-breach.md` | Who decides, the GDPR 72-hour notice to ANSPDCP (Art 33) and telling users (Art 34) | architecture.md 1.9, before real users |
 | `key-rotation.md` | Rotating the Supabase keys, Edge Function secrets and Cloudflare tokens | architecture.md 1.9, before real users |
 | `removal-order.md` | Terrorist content removal within one hour of an authority order, on-call alert and "Emergency disable" | S1-E10-09 |

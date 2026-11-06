@@ -8,33 +8,26 @@
  * Who calls it: every component in src/features/notifications/components, through
  * useNotificationsTranslation().
  */
-import type { i18n as I18nInstance } from 'i18next';
-import { useTranslation } from 'react-i18next';
-
+import { createNamespaceTranslations } from '@/lib/namespace-translations';
 import englishNotifications from '@/locales/en/notifications.json';
 import romanianNotifications from '@/locales/ro/notifications.json';
+
+const notificationsTranslations = createNamespaceTranslations(
+  'notifications',
+  romanianNotifications,
+  englishNotifications,
+);
 
 /**
  * Registers the notifications texts once; calling it again does nothing.
  *
  * @param i18n - the app's translation instance (from useTranslation())
  */
-export function registerNotificationsTranslations(i18n: I18nInstance): void {
-  if (i18n.hasResourceBundle('ro', 'notifications')) return;
-  i18n.addResourceBundle('ro', 'notifications', romanianNotifications);
-  i18n.addResourceBundle('en', 'notifications', englishNotifications);
-}
+export const registerNotificationsTranslations = notificationsTranslations.register;
 
 /**
  * useTranslation('notifications'), after making sure the texts are registered.
  *
  * @returns what useTranslation('notifications') returns: t and the i18n instance
  */
-export function useNotificationsTranslation() {
-  // Step 1: the instance this component renders with (the app's, or a test's).
-  const { i18n } = useTranslation();
-  // Step 2: add the notifications texts to it the first time a notifications component renders.
-  registerNotificationsTranslations(i18n);
-  // Step 3: hand back the usual translation helpers for the "notifications" namespace.
-  return useTranslation('notifications');
-}
+export const useNotificationsTranslation = notificationsTranslations.useNamespaceTranslation;

@@ -15,6 +15,7 @@ import { Textarea } from '@/components/ui/Textarea';
 
 import { useMyReportQuestions, type ReportQuestion } from '../hooks/useMyReportQuestions';
 import { registerReportingTranslations } from '../registerReportingTranslations';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** The longest answer the database keeps. */
 const longestAnswer = 4000;
@@ -54,7 +55,7 @@ function QuestionItem({
       <div>
         <Button
           disabled={questions.isAnswering || text.trim() === ''}
-          onClick={() => void questions.answer(question.id, text.trim()).catch(() => undefined)}
+          onClick={() => void questions.answer(question.id, text.trim()).catch(errorShownByHook)}
         >
           {t('questions.send')}
         </Button>

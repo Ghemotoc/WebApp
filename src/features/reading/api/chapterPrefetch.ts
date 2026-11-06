@@ -16,6 +16,7 @@
 import { getSupabaseClient } from '@/lib/supabase';
 
 import { fetchChapter, type ReaderChapter } from './chapter';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** The answers started early, by "story/chapter"; each is taken once. */
 const startedReads = new Map<string, Promise<ReaderChapter | null>>();
@@ -39,7 +40,7 @@ export function prefetchChapter(storySlug: string, chapterCode: string): void {
   })();
   // A failure here is handled by whoever takes it (useChapter shows "couldn't load"); until then
   // it must not surface as an unhandled rejection.
-  read.catch(() => undefined);
+  read.catch(errorShownByHook);
   startedReads.set(addressKey(storySlug, chapterCode), read);
 }
 

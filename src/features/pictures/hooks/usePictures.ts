@@ -13,6 +13,7 @@ import { requireClient } from '@/features/account/hooks/useMyNames';
 import { getSupabaseClient } from '@/lib/supabase';
 
 import { fetchStoryCoverPicture, retryPendingPictures } from '../api/pictures';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** Signed addresses last 30 minutes (api/pictures.ts); asking again after 20 keeps them fresh. */
 const freshForMilliseconds = 20 * 60 * 1000;
@@ -56,7 +57,7 @@ export function usePendingPictureRetry(userId: string | null): void {
           void queryClient.invalidateQueries({ queryKey: ['story-cover-picture'] });
         }
       })
-      .catch(() => undefined);
+      .catch(errorShownByHook);
     return () => {
       isMounted = false;
     };

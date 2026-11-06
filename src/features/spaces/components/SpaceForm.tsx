@@ -27,6 +27,7 @@ import { useSpacesTranslation } from '../registerSpacesTranslations';
 import { SpaceBannerChoice } from './SpaceBannerChoice';
 import { SpaceNameField } from './SpaceNameField';
 import { SpaceRadioGroup } from './SpaceRadioGroup';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the form needs. */
 export interface SpaceFormProps {
@@ -196,7 +197,7 @@ export function SpaceForm(props: SpaceFormProps) {
     // by its members (spaces_class_is_private), so it keeps the settings it has.
     let readers = settings.readers;
     if (props.ageGroup === '16_plus' && props.isClass !== true) readers = 'everybody';
-    void props.onSubmit({ ...settings, readers }).catch(() => undefined);
+    void props.onSubmit({ ...settings, readers }).catch(errorShownByHook);
   }
 
   return (

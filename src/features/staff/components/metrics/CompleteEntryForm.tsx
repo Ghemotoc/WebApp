@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { Textarea } from '@/components/ui/Textarea';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the form needs. */
 interface CompleteEntryFormProps {
@@ -44,7 +45,7 @@ export function CompleteEntryForm({
     event.preventDefault();
     if (action.trim() === '') return setProblem(t('metrics.compliance.problems.empty'));
     setProblem(null);
-    await onSave(action.trim()).catch(() => undefined);
+    await onSave(action.trim()).catch(errorShownByHook);
   }
 
   const shownProblem = problem ?? saveProblem;

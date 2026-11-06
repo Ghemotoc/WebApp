@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 
 import { useDecisionEmails } from '../hooks/useCaseStatements';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /**
  * Renders the panel.
@@ -46,7 +47,7 @@ export function DecisionEmailsPanel() {
         <div>
           <Button
             disabled={emails.isSending}
-            onClick={() => void emails.send().catch(() => undefined)}
+            onClick={() => void emails.send().catch(errorShownByHook)}
           >
             {t(emails.isSending ? 'decisionEmails.sending' : 'decisionEmails.send')}
           </Button>

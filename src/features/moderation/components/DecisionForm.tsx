@@ -24,6 +24,7 @@ import { Constants } from '@/lib/database.types';
 import { cn } from '@/lib/utils';
 
 import type { Decision, ModerationAction, ModerationFailure } from '../api/moderationQueue';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the form needs. */
 export interface DecisionFormProps {
@@ -271,7 +272,7 @@ export function DecisionForm({ itemType, onDecide, isDeciding, failure }: Decisi
       messageToPerson: action === 'no_action' ? undefined : message.trim(),
     };
     // The failure is shown from the hook's state (failure below), so nothing is lost here.
-    await onDecide(decision).catch(() => undefined);
+    await onDecide(decision).catch(errorShownByHook);
   }
 
   return (

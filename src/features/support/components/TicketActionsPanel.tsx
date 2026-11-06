@@ -16,6 +16,7 @@ import type { SupportFailure } from '../api/supportTickets';
 import { supportFailureOf } from '../hooks/useMySupport';
 import type { StaffTicketChange } from '../hooks/useStaffSupport';
 import { useSupportTranslation } from '../registerSupportTranslations';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the panel needs. */
 export interface TicketActionsPanelProps {
@@ -41,7 +42,7 @@ function MergeForm({ ticket, isBusy, onChange }: TicketActionsPanelProps) {
     if (!isValid) return;
     void onChange({ kind: 'merge', into: target })
       .then(() => setTargetText(''))
-      .catch(() => undefined);
+      .catch(errorShownByHook);
   }
 
   return (
@@ -97,7 +98,9 @@ export function TicketActionsPanel(props: TicketActionsPanelProps) {
         variant={ticket.isSpam ? 'secondary' : 'destructive'}
         className="w-fit"
         disabled={isBusy}
-        onClick={() => void onChange({ kind: 'spam', spam: !ticket.isSpam }).catch(() => undefined)}
+        onClick={() =>
+          void onChange({ kind: 'spam', spam: !ticket.isSpam }).catch(errorShownByHook)
+        }
       >
         {ticket.isSpam ? t('staff.actions.notSpam') : t('staff.actions.markSpam')}
       </Button>

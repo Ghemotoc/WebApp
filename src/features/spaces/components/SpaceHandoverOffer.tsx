@@ -16,6 +16,7 @@ import type { Space } from '../api/spaces';
 import { useAnswerHandover } from '../hooks/useSpaceHandover';
 import { spaceFailureText } from '../lib/spaceFailures';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /**
  * Renders the offer.
@@ -44,14 +45,14 @@ export function SpaceHandoverOffer({ space }: { space: Space }) {
       <div className="flex flex-wrap gap-3">
         <Button
           disabled={answering.isRunning}
-          onClick={() => void answering.run(true).catch(() => undefined)}
+          onClick={() => void answering.run(true).catch(errorShownByHook)}
         >
           {t('handover.accept')}
         </Button>
         <Button
           variant="secondary"
           disabled={answering.isRunning}
-          onClick={() => void answering.run(false).catch(() => undefined)}
+          onClick={() => void answering.run(false).catch(errorShownByHook)}
         >
           {t('handover.decline')}
         </Button>

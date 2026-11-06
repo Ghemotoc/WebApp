@@ -17,6 +17,7 @@
  * events address, from the VITE_ANALYTICS_* build variables (analyticsConfigFrom()).
  */
 import type { AnalyticsEventName, AnalyticsEventProperties } from './catalogue';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** The providers the adapter can talk to. 'off' sends nothing. */
 export type AnalyticsProvider = 'off' | 'plausible' | 'umami';
@@ -124,5 +125,5 @@ export function trackEvent<Name extends AnalyticsEventName>(
     credentials: 'omit',
     keepalive: true,
     body,
-  }).catch(() => undefined);
+  }).catch(errorShownByHook);
 }

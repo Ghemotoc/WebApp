@@ -14,6 +14,7 @@ import { useSponsorTranslation } from '../../registerSponsorTranslations';
 
 import { ChangeOutcome } from './ChangeOutcome';
 import { ReviewCard } from './ReviewCard';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /**
  * Renders the queue.
@@ -48,7 +49,7 @@ export function ReviewQueue({ campaigns }: { campaigns: StaffCampaign[] }) {
               campaign={campaign}
               isRunning={changes.isRunning}
               onDecide={(review) =>
-                void changes.change({ kind: 'review', ...review }).catch(() => undefined)
+                void changes.change({ kind: 'review', ...review }).catch(errorShownByHook)
               }
             />
           ))}

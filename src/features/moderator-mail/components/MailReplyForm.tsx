@@ -13,6 +13,7 @@ import { Textarea } from '@/components/ui/Textarea';
 
 import { mailLimits, type MailFailure } from '../api/moderatorMail';
 import { useMailTranslation } from '../registerMailTranslations';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the form needs. */
 export interface MailReplyFormProps {
@@ -48,7 +49,7 @@ export function MailReplyForm({
     if (body.trim() === '') return;
     await onSend(body.trim(), isNote)
       .then(() => setBody(''))
-      .catch(() => undefined);
+      .catch(errorShownByHook);
   }
 
   return (

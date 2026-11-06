@@ -23,6 +23,7 @@ import { LikesStep } from './LikesStep';
 import { NameStep } from './NameStep';
 import { SafetyStep } from './SafetyStep';
 import { StepHeader } from './StepHeader';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** Which step 3 the person gets, by age group, or none. */
 type StepThree = 'safety' | 'teacher' | null;
@@ -91,7 +92,7 @@ export function OnboardingSteps(props: {
     await props.state.save({ kind: 'finish' });
     await navigate('/discover');
   }
-  const onFinish = () => void finish().catch(() => undefined);
+  const onFinish = () => void finish().catch(errorShownByHook);
 
   return (
     <section aria-labelledby={headingId} className="flex flex-col gap-5">

@@ -8,18 +8,15 @@
  * Who calls it: ShareButton, QuoteShareBar, LoadedShareDialog and LoadedQuoteDialog, before they
  * render anything.
  */
-import type { i18n as I18nInstance } from 'i18next';
-
+import { createNamespaceTranslations } from '@/lib/namespace-translations';
 import englishSharing from '@/locales/en/sharing.json';
 import romanianSharing from '@/locales/ro/sharing.json';
+
+const sharingTranslations = createNamespaceTranslations('sharing', romanianSharing, englishSharing);
 
 /**
  * Registers the sharing texts once; calling it again does nothing.
  *
  * @param i18n - the app's translation instance (from useTranslation())
  */
-export function registerSharingTranslations(i18n: I18nInstance): void {
-  if (i18n.hasResourceBundle('ro', 'sharing')) return;
-  i18n.addResourceBundle('ro', 'sharing', romanianSharing);
-  i18n.addResourceBundle('en', 'sharing', englishSharing);
-}
+export const registerSharingTranslations = sharingTranslations.register;

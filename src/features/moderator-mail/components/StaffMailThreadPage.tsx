@@ -23,6 +23,7 @@ import { useMailTranslation } from '../registerMailTranslations';
 
 import { MailMessages } from './MailMessages';
 import { MailReplyForm } from './MailReplyForm';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /**
  * Assign and status, side by side.
@@ -52,7 +53,7 @@ function ThreadControls({
           variant="secondary"
           disabled={state.isChanging}
           onClick={() =>
-            void state.change({ kind: 'assign', handle: assignee.trim() }).catch(() => undefined)
+            void state.change({ kind: 'assign', handle: assignee.trim() }).catch(errorShownByHook)
           }
         >
           {t('staff.assign')}
@@ -64,7 +65,7 @@ function ThreadControls({
         isLabelVisible
         value={thread.status}
         onChange={(value) =>
-          void state.change({ kind: 'status', status: value as MailStatus }).catch(() => undefined)
+          void state.change({ kind: 'status', status: value as MailStatus }).catch(errorShownByHook)
         }
         options={[
           { value: 'open', label: t('statuses.open') },

@@ -4,18 +4,15 @@
  * its text travels with it, as the reporting namespace does.
  * Who calls it: SafetyContactsBlock, before it renders anything.
  */
-import type { i18n as I18nInstance } from 'i18next';
-
+import { createNamespaceTranslations } from '@/lib/namespace-translations';
 import englishSafety from '@/locales/en/safety.json';
 import romanianSafety from '@/locales/ro/safety.json';
+
+const safetyTranslations = createNamespaceTranslations('safety', romanianSafety, englishSafety);
 
 /**
  * Registers the safety texts once; calling it again does nothing.
  *
  * @param i18n - the app's translation instance (from useTranslation())
  */
-export function registerSafetyTranslations(i18n: I18nInstance): void {
-  if (i18n.hasResourceBundle('ro', 'safety')) return;
-  i18n.addResourceBundle('ro', 'safety', romanianSafety);
-  i18n.addResourceBundle('en', 'safety', englishSafety);
-}
+export const registerSafetyTranslations = safetyTranslations.register;

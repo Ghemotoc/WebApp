@@ -21,6 +21,7 @@ import {
   type ConsentLanguage,
   type ConsentRequest,
 } from '../../../schemas/parentConsent';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the form needs. */
 export interface AskParentFormProps {
@@ -47,7 +48,7 @@ export function AskParentForm({ initialLanguage, isSending, failure, onSend }: A
     event.preventDefault();
     const parsed = consentRequestSchema.safeParse({ parentEmail: email, language });
     setIsEmailWrong(!parsed.success);
-    if (parsed.success) void onSend(parsed.data).catch(() => undefined);
+    if (parsed.success) void onSend(parsed.data).catch(errorShownByHook);
   }
 
   return (

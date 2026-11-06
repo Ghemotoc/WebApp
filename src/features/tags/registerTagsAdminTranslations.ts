@@ -4,18 +4,19 @@
  * bundle, as the website editors' does.
  * Who calls it: TagsAdminPage, before it renders anything.
  */
-import type { i18n as I18nInstance } from 'i18next';
-
+import { createNamespaceTranslations } from '@/lib/namespace-translations';
 import englishTagsAdmin from '@/locales/en/tagsAdmin.json';
 import romanianTagsAdmin from '@/locales/ro/tagsAdmin.json';
+
+const tagsAdminTranslations = createNamespaceTranslations(
+  'tagsAdmin',
+  romanianTagsAdmin,
+  englishTagsAdmin,
+);
 
 /**
  * Registers the tag queue's texts once; calling it again does nothing.
  *
  * @param i18n - the app's translation instance (from useTranslation())
  */
-export function registerTagsAdminTranslations(i18n: I18nInstance): void {
-  if (i18n.hasResourceBundle('ro', 'tagsAdmin')) return;
-  i18n.addResourceBundle('ro', 'tagsAdmin', romanianTagsAdmin);
-  i18n.addResourceBundle('en', 'tagsAdmin', englishTagsAdmin);
-}
+export const registerTagsAdminTranslations = tagsAdminTranslations.register;

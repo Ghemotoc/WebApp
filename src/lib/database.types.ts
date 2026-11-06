@@ -11580,6 +11580,7 @@ export type Database = {
         };
         Returns: string;
       };
+      has_html_tag: { Args: { body: string }; Returns: boolean };
       has_invisible_characters: { Args: { name: string }; Returns: boolean };
       has_parental_consent: { Args: { target_user_id: string }; Returns: boolean };
       has_unsafe_link: { Args: { body: string }; Returns: boolean };

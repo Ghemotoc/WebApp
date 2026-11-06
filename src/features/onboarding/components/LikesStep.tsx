@@ -17,6 +17,7 @@ import type { MyOnboarding, Preferences } from '../api/onboarding';
 import type { useMyOnboarding } from '../hooks/useMyOnboarding';
 
 import { LikesFields } from './LikesFields';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the step needs. */
 export interface LikesStepProps {
@@ -55,7 +56,7 @@ export function LikesStep({ onboarding, state, onNext, isLast }: LikesStepProps)
         <Button variant="secondary" disabled={state.isSaving} onClick={onNext}>
           {t('onboarding.skip')}
         </Button>
-        <Button disabled={state.isSaving} onClick={() => void next().catch(() => undefined)}>
+        <Button disabled={state.isSaving} onClick={() => void next().catch(errorShownByHook)}>
           {isLast ? t('onboarding.goToDiscover') : t('onboarding.next')}
         </Button>
       </div>

@@ -18,6 +18,7 @@ import { useNudgeWords, type NudgeWordsState } from '../hooks/useNudgeWords';
 
 import { SettingsFailureNotice } from './SettingsFailureNotice';
 import { SettingsSection } from './SettingsSection';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /**
  * The form that adds a phrase to the chosen list.
@@ -35,7 +36,7 @@ function AddNudgeWord({ state, language }: { state: NudgeWordsState; language: s
     void state
       .change({ kind: 'add', language, phrase: phrase.trim() })
       .then(() => setPhrase(''))
-      .catch(() => undefined);
+      .catch(errorShownByHook);
   }
 
   return (
@@ -81,7 +82,7 @@ function NudgeWordList({ state }: { state: NudgeWordsState }) {
               disabled={state.isChanging}
               aria-label={t('words.remove', { word: word.phrase })}
               onClick={() =>
-                void state.change({ kind: 'remove', id: word.id }).catch(() => undefined)
+                void state.change({ kind: 'remove', id: word.id }).catch(errorShownByHook)
               }
             >
               {word.phrase} ×

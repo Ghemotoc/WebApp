@@ -19,6 +19,7 @@ import { useSponsorTranslation } from '../../../registerSponsorTranslations';
 import { ChangeOutcome } from '../ChangeOutcome';
 
 import { HouseAdForm } from './HouseAdForm';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What one house ad's row needs. */
 interface HouseAdItemProps {
@@ -64,7 +65,7 @@ function HouseAdItem({ houseAd, onEdit, changes }: HouseAdItemProps) {
           onClick={() =>
             void changes
               .change({ kind: 'archive_house', houseAdId: houseAd.id })
-              .catch(() => undefined)
+              .catch(errorShownByHook)
           }
         >
           {t('houseAds.archive')}

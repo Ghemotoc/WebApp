@@ -7,18 +7,15 @@
  * loaded DesignPage, so the text arrives with the page.
  * Who calls it: DesignPage, before it renders anything.
  */
-import type { i18n as I18nInstance } from 'i18next';
-
+import { createNamespaceTranslations } from '@/lib/namespace-translations';
 import englishDesign from '@/locales/en/design.json';
 import romanianDesign from '@/locales/ro/design.json';
+
+const designTranslations = createNamespaceTranslations('design', romanianDesign, englishDesign);
 
 /**
  * Registers the design texts once; calling it again does nothing.
  *
  * @param i18n - the app's translation instance (from useTranslation())
  */
-export function registerDesignTranslations(i18n: I18nInstance): void {
-  if (i18n.hasResourceBundle('ro', 'design')) return;
-  i18n.addResourceBundle('ro', 'design', romanianDesign);
-  i18n.addResourceBundle('en', 'design', englishDesign);
-}
+export const registerDesignTranslations = designTranslations.register;

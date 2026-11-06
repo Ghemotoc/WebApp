@@ -6,18 +6,15 @@
  * reader's bundle (architecture 1.8.1), so its text arrives with it, as the /design page does.
  * Who calls it: StaffRolesPage, before it renders anything.
  */
-import type { i18n as I18nInstance } from 'i18next';
-
+import { createNamespaceTranslations } from '@/lib/namespace-translations';
 import englishStaff from '@/locales/en/staff.json';
 import romanianStaff from '@/locales/ro/staff.json';
+
+const staffTranslations = createNamespaceTranslations('staff', romanianStaff, englishStaff);
 
 /**
  * Registers the staff texts once; calling it again does nothing.
  *
  * @param i18n - the app's translation instance (from useTranslation())
  */
-export function registerStaffTranslations(i18n: I18nInstance): void {
-  if (i18n.hasResourceBundle('ro', 'staff')) return;
-  i18n.addResourceBundle('ro', 'staff', romanianStaff);
-  i18n.addResourceBundle('en', 'staff', englishStaff);
-}
+export const registerStaffTranslations = staffTranslations.register;

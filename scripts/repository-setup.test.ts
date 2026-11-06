@@ -77,6 +77,6 @@ describe('repository setup', () => {
     expect(codeTour).toMatch(/^## Where the app starts$/m);
     expect(codeTour).toMatch(/^## How a click travels$/m);
     expect(codeTour).toMatch(/^## Where things live$/m);
-    expect(codeTour).toMatch(/^## Start here$/m);
+    expect(codeTour).toMatch(/^## Start here\b/m);
   });
 });
