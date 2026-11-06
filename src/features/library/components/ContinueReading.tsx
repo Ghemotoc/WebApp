@@ -9,6 +9,7 @@
 import type { ContinueReadingItem } from '../api/library';
 import { useLibraryTranslation } from '../registerLibraryTranslations';
 
+import { Doodle } from '@/components/ui/Doodle';
 import { ContinueReadingCard } from './ContinueReadingCard';
 
 /**
@@ -21,12 +22,22 @@ export function ContinueReading({ items }: { items: ContinueReadingItem[] }) {
   const { t } = useLibraryTranslation();
   return (
     <section aria-labelledby="library-continue-heading" className="flex flex-col gap-4">
-      <h2
-        id="library-continue-heading"
-        className="m-0 font-heading text-[28px] font-bold text-heading"
-      >
-        {t('continue.heading')}
-      </h2>
+      <div className="flex items-center gap-8">
+        <h2
+          id="library-continue-heading"
+          className="m-0 font-heading text-[28px] font-bold text-heading"
+        >
+          {t('continue.heading')}
+        </h2>
+        {/* The board's reading glasses, just after the heading (LOOK-5). */}
+        <Doodle
+          name="reading-glasses"
+          kind="widget"
+          on="Continue reading"
+          hideBelow="wide"
+          className="w-[72px] shrink-0 -rotate-8"
+        />
+      </div>
       {items.length === 0 ? (
         <p className="m-0 text-[15px] text-body">{t('continue.empty')}</p>
       ) : (

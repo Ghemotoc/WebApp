@@ -21,6 +21,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
+import { waitForAnimationsToFinish } from './support/animations';
 import { runSql } from './support/database';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
@@ -133,6 +134,8 @@ test.describe('Message emails with quiet hours (IDEAS-2c1)', () => {
     }) => {
       const page = await openSettings(browser, 'teen_17');
       await page.setViewportSize({ width, height: 900 });
+      // Settings rises into place (tmc-rise); axe reads colours only once it has settled.
+      await waitForAnimationsToFinish(page);
       const results = await new AxeBuilder({ page })
         .include('#messages')
         .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])

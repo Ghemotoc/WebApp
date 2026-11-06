@@ -137,6 +137,9 @@ test.describe('in-app notifications (S1-E7-01)', () => {
     await expect(page.getByText('You’re all caught up.')).toBeVisible();
     await expect(page.getByRole('link', { name: 'Notifications', exact: true })).toBeVisible();
     await expectNoDoodleOverlap(page);
+    // Step 5: the header's Settings link opens Settings › Notifications (LOOK-5; board 6.2).
+    await page.getByRole('main').getByRole('link', { name: 'Settings', exact: true }).click();
+    await expect(page).toHaveURL(/\/settings#notifications$/);
     await page.context().close();
   });
 

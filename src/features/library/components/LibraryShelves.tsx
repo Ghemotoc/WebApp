@@ -12,6 +12,7 @@
 import { useState } from 'react';
 
 import { designsForRow, resolveCoverChoice } from '@/components/covers/automaticCover';
+import { Doodle } from '@/components/ui/Doodle';
 import { ChoiceChips } from '@/components/ui/ChoiceChips';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Eyebrow } from '@/components/ui/Eyebrow';
@@ -105,6 +106,14 @@ export function LibraryShelves({ overview }: { overview: LibraryOverview }) {
             {t('shelves.heading')}
           </h2>
         </div>
+        {/* The board's books and plant between the heading and the shelf chips (LOOK-5). */}
+        <Doodle
+          name="books-and-plant"
+          kind="widget"
+          on="Stories in your library"
+          hideBelow="wide"
+          className="mr-auto w-[88px] shrink-0 rotate-[4deg]"
+        />
         <ChoiceChips
           label={t('shelves.choose')}
           options={libraryShelves.map((name) => ({

@@ -71,7 +71,11 @@ export function MessagesPage() {
         </h1>
         <p className="m-0 text-lg leading-relaxed text-body">{t('lead')}</p>
         {isKnown && userId !== null && (
-          <MessageSettingsLink text={t('settings.pageLink')} label={t('settings.pageLink')} />
+          <MessageSettingsLink
+            text={t('settings.pageLink')}
+            label={t('settings.pageLink')}
+            withIcon
+          />
         )}
       </header>
       {isKnown && userId === null && (

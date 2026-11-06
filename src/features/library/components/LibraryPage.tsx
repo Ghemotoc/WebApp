@@ -46,7 +46,7 @@ function LibraryHeader() {
         name="tote-bag-of-books"
         kind="background"
         hideBelow="wide"
-        className="absolute -top-6 right-0 w-[64px] rotate-6"
+        className="absolute -top-8 right-10 w-[112px] rotate-6"
       />
     </header>
   );

@@ -7,6 +7,7 @@
  */
 import { Link } from 'react-router';
 
+import { Doodle } from '@/components/ui/Doodle';
 import type { ForumPerson } from '@/features/forums/api/forumThreads';
 import { nameOf } from '@/features/forums/lib/forumPeople';
 
@@ -56,9 +57,19 @@ export function SpaceRunsCard({ space }: { space: Space }) {
       aria-labelledby="space-runs-heading"
       className="flex flex-col gap-3 rounded-card border border-border bg-surface px-6 py-5"
     >
-      <h2 id="space-runs-heading" className="m-0 font-heading text-xl font-bold text-heading">
-        {t('runs.title')}
-      </h2>
+      <div className="flex items-center justify-between gap-4">
+        <h2 id="space-runs-heading" className="m-0 font-heading text-xl font-bold text-heading">
+          {t('runs.title')}
+        </h2>
+        {/* The board's owl reading glasses beside the heading (LOOK-5). */}
+        <Doodle
+          name="owl-reading-glasses"
+          kind="widget"
+          on="Who runs it"
+          hideBelow="phone"
+          className="w-12 shrink-0 -rotate-6"
+        />
+      </div>
       <ul className="m-0 list-none p-0">
         <RunsPerson person={space.owner} role={t('runs.owner')} />
         {(moderators.data ?? []).map((moderator) => (

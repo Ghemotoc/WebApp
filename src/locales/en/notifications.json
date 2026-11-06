@@ -12,7 +12,8 @@
     "aboutLabel": "About notifications",
     "signedOut": "Log in to see your notifications.",
     "logIn": "Log in",
-    "newSince_few": "{{count}} new since you last looked."
+    "newSince_few": "{{count}} new since you last looked.",
+    "settings": "Settings"
   },
   "filters": {
     "label": "Show",
