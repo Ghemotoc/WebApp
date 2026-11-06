@@ -378,6 +378,14 @@ const staffRoutes: RouteObject = {
         return { Component: MarchNumbersPage };
       },
     },
+    // The app's logs: calls, failures and crashes, for owner and admin (LOGS-1).
+    {
+      path: 'logs',
+      lazy: async () => {
+        const { LogsPage } = await import('@/features/staff/components/logs/LogsPage');
+        return { Component: LogsPage };
+      },
+    },
     // The audit log: search and CSV export for owner and admin (S1-E11-01).
     {
       path: 'audit-log',

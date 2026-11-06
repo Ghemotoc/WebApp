@@ -683,6 +683,66 @@ export type Database = {
           },
         ];
       };
+      call_log: {
+        Row: {
+          app_version: string;
+          call_kind: string;
+          call_name: string;
+          called_at: string;
+          created_at: string;
+          duration_ms: number;
+          error_code: string | null;
+          http_method: string;
+          id: string;
+          outcome: string;
+          route_path: string;
+          status_code: number;
+          updated_at: string;
+          user_id: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          app_version: string;
+          call_kind: string;
+          call_name: string;
+          called_at?: string;
+          created_at?: string;
+          duration_ms: number;
+          error_code?: string | null;
+          http_method: string;
+          id?: string;
+          outcome: string;
+          route_path: string;
+          status_code: number;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Update: {
+          app_version?: string;
+          call_kind?: string;
+          call_name?: string;
+          called_at?: string;
+          created_at?: string;
+          duration_ms?: number;
+          error_code?: string | null;
+          http_method?: string;
+          id?: string;
+          outcome?: string;
+          route_path?: string;
+          status_code?: number;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'call_log_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       campaign_daily_stats: {
         Row: {
           campaign_id: string;
@@ -9096,6 +9156,19 @@ export type Database = {
         Args: { reason_given: string; target_case_id: string };
         Returns: Json;
       };
+      admin_call_failures: {
+        Args: { since?: string };
+        Returns: {
+          accounts: number;
+          call_kind: string;
+          call_name: string;
+          error_code: string;
+          failures: number;
+          first_seen: string;
+          last_seen: string;
+          status_code: number;
+        }[];
+      };
       admin_cancel_ad_booking: {
         Args: { reason: string; target_booking_id: string };
         Returns: undefined;
@@ -9438,6 +9511,32 @@ export type Database = {
       admin_link_returning_user: {
         Args: { other_handle: string; reason_given: string; target_case_id: string };
         Returns: string;
+      };
+      admin_list_calls: {
+        Args: {
+          before?: string;
+          kind?: string;
+          max_rows?: number;
+          name_contains?: string;
+          only_failures?: boolean;
+          person_handle?: string;
+          since?: string;
+        };
+        Returns: {
+          app_version: string;
+          call_kind: string;
+          call_name: string;
+          called_at: string;
+          duration_ms: number;
+          error_code: string;
+          handle: string;
+          http_method: string;
+          id: string;
+          outcome: string;
+          route_path: string;
+          status_code: number;
+          user_id: string;
+        }[];
       };
       admin_list_classic_authors: {
         Args: Record<PropertyKey, never>;
@@ -10576,6 +10675,10 @@ export type Database = {
         };
         Returns: Json;
       };
+      call_log_entry_is_valid: { Args: { entry: Json }; Returns: boolean };
+      call_log_outcome_of: { Args: { status_code: number }; Returns: string };
+      call_log_room_left: { Args: { caller_id: string }; Returns: number };
+      call_log_time_of: { Args: { raw_time: string }; Returns: string };
       caller_profile_for_teacher_check: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -10973,6 +11076,10 @@ export type Database = {
         Returns: boolean;
       };
       close_finished_safety_checks: { Args: { target_country: string }; Returns: undefined };
+      cms_band_problems: {
+        Args: { band: Json; field_prefix: string; has_points: boolean };
+        Returns: string[];
+      };
       cms_content_problems: {
         Args: {
           version_row: Omit<
@@ -12208,6 +12315,7 @@ export type Database = {
         };
         Returns: undefined;
       };
+      log_calls: { Args: { entries: Json }; Returns: number };
       log_sensitive_read: {
         Args: {
           affected_user_id?: string;
@@ -12403,6 +12511,7 @@ export type Database = {
         Args: { for_day: string; wanted_market?: string; wanted_metric: string };
         Returns: number;
       };
+      micah_recipe_from_open_peeps: { Args: { old: Json }; Returns: Json };
       moderate_item: {
         Args: {
           item_id: string;
@@ -13228,6 +13337,7 @@ export type Database = {
       purge_old_account_staff_notes: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_age_check_attempts: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_audit_log: { Args: Record<PropertyKey, never>; Returns: number };
+      purge_old_call_log: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_client_errors: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_notifications: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_public_notices: { Args: Record<PropertyKey, never>; Returns: number };

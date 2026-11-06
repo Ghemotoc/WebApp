@@ -298,6 +298,7 @@ Five tables exist, each with row-level security and only read policies; every wr
 | `staff_roles` | which staff role each team member holds | the person themselves; owner and admin see all |
 | `feature_flags`, `settings` | switches and values (`invite_only`, `adults_only` on for March) | anyone, for rows marked public; owner and admin see all |
 | `audit_log` | every staff action, written only by `log_staff_action()`; nobody can change or delete a row | owner and admin |
+| `call_log` | every call the app made to the back end (LOGS-1): kind, name, outcome, status, error code, duration, route pattern, app version and the user ID (empty for visitors); written only by `log_calls()`, kept 30 days | owner and admin |
 | `account_staff_notes` | notes staff leave on an account for each other (LOGS-1a); added only by `admin_add_account_note()`, never changed or deleted, kept 3 years like the audit log | staff with the Users area (owner, admin, moderator, support) |
 | `legal_documents`, `legal_document_versions` (S1-E14-01) | the Legal centre's documents and every live version, per language; written only by migrations | anyone, for live versions; owner and admin also see versions not live yet |
 | `consents` (S1-E14-01) | which version of the terms and privacy notice each person accepted, and when | the person themselves; written only by the sign-up trigger (S1-E2-01) and `accept_current_legal_versions()` |
@@ -794,6 +795,18 @@ a page that fails to draw → the router's errorElement            src/app/route
   ▼  api/clientErrors.ts → rpc report_client_error()
 …_s1_e1_05_client_errors.sql: scrubs again, shared limit of 60 a minute, insert into client_errors
   (no user_id); pg_cron deletes rows after 30 days; admin_list_client_errors() for owner and admin
+
+Every call to the back end (LOGS-1, the call log):
+src/main.tsx → installCallRecorder() wraps window.fetch before the Supabase client is made
+  │  lib/describeCall.ts: rpc, table, auth, function, storage or /api, and a name with IDs as ":id";
+  │  anything else (fonts, pictures) and log_calls itself are left alone
+  │  lib/callRecorder.ts: status, error code (failed answers only, never the message), duration,
+  │  route pattern, app version; batches of 25 or every 15 seconds, and when the tab is hidden
+  ▼  api/callLog.ts → rpc log_calls(entries)
+…_logs1_02_call_log.sql: checks each entry, user_id = auth.uid() (never from the batch), limits
+  per account and for visitors, insert into call_log; pg_cron deletes rows after 30 days
+Staff › Logs (/staff/logs, owner and admin): Calls (admin_list_calls(), one person's calls are
+  audited), Failures (admin_call_failures(), grouped) and Crashes (admin_list_client_errors())
 
 AppLayout: TopBar → OfflineBanner (navigator.onLine) → <main> MaintenanceGate → notices + page
   MaintenanceGate: maintenance_mode on (read every minute) and not is_staff_session() and not a

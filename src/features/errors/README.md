@@ -10,4 +10,6 @@ Our own simple error log, and the page shown when a page fails to draw. Built by
 - `lib/currentRoute.ts` and `hooks/useTrackRoutePattern.ts`: remember the page on screen as a pattern such as `/join/:code`, never the address.
 - `api/clientErrors.ts`: calls `report_client_error()`; the table is `public.client_errors` (no user ID, email, IP or user text; kept 30 days).
 
-Owner and admin read the log with `select * from public.admin_list_client_errors();` until the admin site (S1-E11-01) gives it a screen.
+- `lib/callRecorder.ts`, `lib/describeCall.ts` and `api/callLog.ts` (LOGS-1): the call log. `src/main.tsx` installs the recorder, which notes every call to the back end (kind, name, outcome, status, error code, duration, route pattern, app version) and sends batches to `log_calls()`; the database adds the caller's user ID. Never a body or a query string.
+
+Owner and admin read both logs in Staff › Logs (`/staff/logs`, `src/features/staff/components/logs/`).

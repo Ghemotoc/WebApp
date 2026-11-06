@@ -13,6 +13,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router';
 
 import { AppProviders } from '@/app/AppProviders';
 import { appRoutes } from '@/app/router';
+import { installCallRecorder } from '@/features/errors/lib/callRecorder';
 import { installGlobalErrorHandlers } from '@/features/errors/lib/installGlobalErrorHandlers';
 import { createI18n, syncDocumentLanguage } from '@/lib/i18n';
 import { installInterfaceTextOverrides } from '@/lib/interface-text-overrides';
@@ -29,6 +30,10 @@ if (rootElement === null) {
 // Step 2: report errors nothing else catches to our own error log, scrubbed of anything personal
 // (S1-E1-05). Errors while a page draws go to the router's error page instead.
 installGlobalErrorHandlers();
+// Then note every call to the back end for the staff's call log (LOGS-1; Robert, 6 Nov 2026):
+// kind, name, outcome, error code and duration, never what was sent or came back. It goes in
+// before the Supabase client is made, so the client's calls pass through it.
+installCallRecorder();
 
 // Step 3: start the translations in the language this browser last chose (Romanian on a first
 // visit, whatever the browser's own language; S1-E1-04) and keep <html lang> in step with it.

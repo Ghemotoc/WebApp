@@ -67,6 +67,7 @@ What we get from others:
 - Your parent or guardian, if you’re under 16: their email address and their answer, with the date and the version of this notice they saw.
 - Google, Apple or Microsoft, if you sign in with them: your email address and, only if you allow it, your name. They don’t tell us your age.
 - Your connection: when you sign up, we read your country from your internet connection and keep only the country code. For security we keep your IP address only in a scrambled form, for 30 days. If a new account signs up from the same scrambled address as an account banned in the last 30 days, a moderator looks at it; nobody is blocked because of it, since schools and families share connections. [lawyer to check]
+- How the app works for you: each time the app asks our servers for something, we note what kind of request it was, whether it worked, its error code, how long it took, the page you were on and the app version, with your account’s ID if you’re signed in. Never what you sent or what you saw. Only the owner and administrators can look, each look at one person’s requests is logged, and we delete it all after 30 days. [lawyer to check]
 - Other people: reports about you or your content, and, in a class space, what your teacher adds.
 - Authorities: orders and requests they send us.
 - Our staff: short notes they leave on your account for each other, for example what you asked support or what a moderator checked. Notes are facts, never shown publicly, and you can ask to see them. [lawyer to check]
@@ -108,6 +109,8 @@ Protecting someone in danger. If someone’s life or safety is at risk, we may s
 Orders from authorities. Acting on removal orders and other orders, and keeping removed content as the law requires. Legal basis: legal obligation.
 
 Security and stopping spam. Scrambled IP addresses, sign-in limits and spam limits. Legal basis: our legitimate interest in keeping accounts and Ghemotoc secure.
+
+Keeping the app working. The record of the app’s requests (above), to find and fix faults and to trace a problem you tell us about. Legal basis: our legitimate interest in an app that works. [lawyer to check]
 
 Your country. Reading your country from your connection, so that we only open Ghemotoc where we’re ready and apply the right local rules. Legal basis: our legitimate interest.
 
@@ -233,6 +236,7 @@ Safety
 
 Security
 
+- The record of the app’s requests: 30 days.
 - IP addresses: scrambled, then deleted after 30 days, except the scrambled address a suspected sexual image of a child was uploaded from, which is kept with its evidence (above). [lawyer to check]
 - The list of devices you’re signed in on: [OPEN: to be set]
 
@@ -336,6 +340,7 @@ Every new script or stored item is checked before it goes live, so this list sta
 - Section 4 (Who else sees it): Writer stats show “fewer than 5” below five readers (S1-E3-07). Staff need-to-know and logged sensitive reads: CTO pack 1.8.3.
 - Section 4 (Who else sees it): Authorities: DSA art. 18, TCO, court orders; Law 506/2004 art. 12^1(1^1) 48-hour disclosure duty for some hosting providers (research A2) may need a mention; please check whether it applies.
 - Section 5 (How long we keep it): GDPR art. 13(2)(a) and art. 5(1)(e). The schedule must match docs/retention.md (S1-E13-04).
+- Sections 2, 3 and 5: the record of the app’s requests (the call log, LOGS-1): Robert decided on 6 Nov 2026 that it keeps the user ID and is kept 30 days; owner and admin only; reads of one person’s calls go in the audit log.
 - Section 5 (How long we keep it): Sources: 14-day deletion grace (S1-E13-03); unverified accounts purged after 7 days and soft-deleted content after 30 days (S1-E13-04); no passed age check within 14 days (S1-E2-08); no parental consent within 14 days or refusal (S1-E2-03); under-13 nothing kept (17 Oct 2026); session link deleted (S1-E2-08); Yoti 6 months (research F1); reports 3 years after closing (Robert, 17 Oct 2026, S1-E10-02, Civil Code art. 2517); TCO preservation 6 months (Regulation (EU) 2021/784 art. 6; S1-E10-09); legal case hold (S1-E13-03); IPs 30 days (Q48); exports 7 days (S1-E11-09, S1-E13-04); tickets 2 years is a proposal (S1-E11-13); teacher proof (S1-E2-11); certificates (S1-E8-12); accounting records Law 82/1991 art. 25 as amended by Law 36/2023 (research A4).
 - Section 5 (How long we keep it): Two clocks run at sign-up: 7 days for an unverified email (S1-E13-04) and 14 days for the age check (S1-E2-08). Both are kept; please confirm they are meant to differ.
 - Section 5 (How long we keep it): Reported messages: S1-E9-04 points to “the retention period in the retention schedule”, which is not set; aligning with the 3-year report rule is a proposal only.
