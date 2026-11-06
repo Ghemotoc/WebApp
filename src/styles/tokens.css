@@ -42,6 +42,10 @@
 
   /* Accents and actions */
   --gold: #e6c24c;
+  /* Text on a gold fill (count badges, the current sign-up step). It stays dark in both themes,
+   * because the gold does not change in night mode: --ink there is light and read 1.5:1 on it
+   * (accessibility check, 6 Nov 2026). #26142e on #e6c24c is about 9:1. */
+  --on-gold: #26142e;
   --primary: #2a0e33;
   --on-primary: #fbf7ec;
   --chip-on: #481c5f;
@@ -145,6 +149,7 @@
   --destructive: #f2a7b3;
 
   --gold: #e6c24c;
+  --on-gold: #26142e;
   --primary: #e9ddf0;
   --on-primary: #2a0e33;
   --chip-on: #e9ddf0;
@@ -235,6 +240,7 @@
   --color-link-hover: var(--link-hover);
   --color-destructive: var(--destructive);
   --color-gold: var(--gold);
+  --color-on-gold: var(--on-gold);
   --color-primary: var(--primary);
   --color-on-primary: var(--on-primary);
   --color-chip-on: var(--chip-on);
