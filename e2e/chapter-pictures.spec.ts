@@ -51,6 +51,9 @@ function cleanUp() {
     with removed as (delete from public.picture_checks where chapter_id = '${chapterId}' returning case_id)
     delete from public.cases where id in (select case_id from removed);
     delete from public.rate_limit_events where user_id = '${writerId}';
+    -- Publishing queued a chapter_published job; left behind, it points at a chapter that no
+    -- longer exists and breaks the next spec that runs the job queue (QA-3).
+    delete from public.jobs where payload ->> 'chapter_id' = '${chapterId}';
     delete from public.chapters where id = '${chapterId}';
     update public.profiles set locale = 'ro' where handle in ('adult_writer', 'teen_17');`);
 }

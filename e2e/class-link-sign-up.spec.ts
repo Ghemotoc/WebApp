@@ -35,6 +35,9 @@ function cleanUp() {
     delete from public.invites where space_id in ${space};
     delete from public.space_members where space_id in ${space};
     delete from public.spaces where slug = '${classSlug}';
+    -- The teacher's space_create count: class-pilot-setup starts a class as the same teacher, so
+    -- without this the two specs in one run hit the limit (QA-3).
+    delete from public.rate_limit_events where user_id = '${teacherId}';
     delete from public.consents where user_id in (select id from auth.users where email = '${studentEmail}');
     delete from public.profiles where id in (select id from auth.users where email = '${studentEmail}')
       and id not in (select user_id from public.audit_log where user_id is not null);

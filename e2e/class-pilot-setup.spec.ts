@@ -35,6 +35,8 @@ function cleanUp() {
     delete from public.invites where space_id in ${space};
     delete from public.space_members where space_id in ${space};
     delete from public.spaces where slug = '${classSlug}';
+    -- The teacher's space_create count, shared with class-link-sign-up (QA-3).
+    delete from public.rate_limit_events where user_id in (select id from public.profiles where handle = 'teacher');
     update public.profiles set locale = 'ro' where handle in ('teacher', 'moderator');`);
 }
 

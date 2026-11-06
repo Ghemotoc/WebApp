@@ -1,0 +1,179 @@
+[
+  {
+    "id": "M01",
+    "fn": "public.age_band_from_birth(integer,integer,age_check_result,date)",
+    "desc": "age_band_from_birth: birthday month counted as already passed (<= becomes <)",
+    "subs": [["<= birth_month", "< birth_month"]]
+  },
+  {
+    "id": "M02",
+    "fn": "public.age_band_from_birth(integer,integer,age_check_result,date)",
+    "desc": "age_band_from_birth: 16 boundary moved to 15",
+    "subs": [["youngest_possible_age < 16", "youngest_possible_age < 15"]]
+  },
+  {
+    "id": "M03",
+    "fn": "public.age_band_from_birth(integer,integer,age_check_result,date)",
+    "desc": "age_band_from_birth: '13 or over' age check no longer caps an 18+ year at 16-17",
+    "subs": [["band = '18_plus' and check_result = '13_or_over'", "false"]]
+  },
+  {
+    "id": "M04",
+    "fn": "public.age_band_from_birth(integer,integer,age_check_result,date)",
+    "desc": "age_band_from_birth: unknown month no longer treated as birthday not yet passed",
+    "subs": [["birth_month is null or ", ""]]
+  },
+  {
+    "id": "M05",
+    "fn": "public.account_state(uuid)",
+    "desc": "account_state: suspension check removed",
+    "subs": [["(public.active_sanction(target_user_id, 'suspension')).id is not null", "false"]]
+  },
+  {
+    "id": "M06",
+    "fn": "public.account_state(uuid)",
+    "desc": "account_state: parental consent check removed",
+    "subs": [["and not public.has_parental_consent(target_user_id)", "and false"]]
+  },
+  {
+    "id": "M07",
+    "fn": "public.account_state(uuid)",
+    "desc": "account_state: legal re-acceptance check removed",
+    "subs": [["public.needs_legal_acceptance(target_user_id)", "false"]]
+  },
+  {
+    "id": "M08",
+    "fn": "public.ages_allow_messages(profiles,profiles)",
+    "desc": "ages_allow_messages: teen's 'let adults message me' switch ignored (always on)",
+    "subs": [["return first_person.adults_may_message;", "return true;"]]
+  },
+  {
+    "id": "M09",
+    "fn": "public.ages_allow_messages(profiles,profiles)",
+    "desc": "ages_allow_messages: under-16 and adult block removed",
+    "subs": [
+      [
+        "if first_group = 'child' or second_group = 'child' then\n    return false;",
+        "if false then\n    return false;"
+      ]
+    ]
+  },
+  {
+    "id": "M10",
+    "fn": "public.can_message(uuid,uuid)",
+    "desc": "can_message: blocks ignored",
+    "subs": [
+      ["if exists (select 1 from public.blocks", "if false and exists (select 1 from public.blocks"]
+    ]
+  },
+  {
+    "id": "M11",
+    "fn": "public.can_message(uuid,uuid)",
+    "desc": "can_message: 'people I follow' checks the wrong direction",
+    "subs": [
+      [
+        "follows_users.user_id = recipient_id and follows_users.followed_user_id = sender_id",
+        "follows_users.user_id = sender_id and follows_users.followed_user_id = recipient_id"
+      ]
+    ]
+  },
+  {
+    "id": "M12",
+    "fn": "public.can_message(uuid,uuid)",
+    "desc": "can_message: 'nobody' audience ignored",
+    "subs": [
+      [
+        "if audience = 'nobody' then\n    return false;",
+        "if audience = 'nobody' then\n    return true;"
+      ]
+    ]
+  },
+  {
+    "id": "M13",
+    "fn": "public.rating_allows(story_rating)",
+    "desc": "rating_allows: 16+ open to 13-15",
+    "subs": [
+      [
+        "return band in ('16_to_17', '18_plus');",
+        "return band in ('13_to_15', '16_to_17', '18_plus');"
+      ]
+    ]
+  },
+  {
+    "id": "M14",
+    "fn": "public.rating_allows(story_rating)",
+    "desc": "rating_allows: 18+ no longer needs an 18-or-over age check after March",
+    "subs": [["return check_result = '18_or_over';", "return true;"]]
+  },
+  {
+    "id": "M15",
+    "fn": "public.rating_allows(story_rating)",
+    "desc": "rating_allows: 13+ no longer open to signed-out visitors (unknown)",
+    "subs": [["'18_plus', 'unknown');", "'18_plus');"]]
+  },
+  {
+    "id": "M16",
+    "fn": "public.is_moderated_away(reportable_type,uuid)",
+    "desc": "is_moderated_away: always false",
+    "subs": [["select public.moderated_state_of(item_type, item_id) is not null;", "select false;"]]
+  },
+  {
+    "id": "M17",
+    "fn": "public.moderated_state_of(reportable_type,uuid)",
+    "desc": "moderated_state_of: restored items still counted as removed",
+    "subs": [["and moderated_items.restored_at is null;", ";"]]
+  },
+  {
+    "id": "M18",
+    "fn": "public.get_chapter(text,text)",
+    "desc": "get_chapter: signed-out visitors get the full chapter instead of the teaser",
+    "subs": [["if caller_id is not null then", "if true then"]]
+  },
+  {
+    "id": "M19",
+    "fn": "public.reader_visible_story(text)",
+    "desc": "reader_visible_story: blocks ignored",
+    "subs": [["and not public.is_blocked_with(stories.user_id)", ""]]
+  },
+  {
+    "id": "M20",
+    "fn": "public.chapter_is_readable(uuid)",
+    "desc": "chapter_is_readable: drafts readable (published check removed)",
+    "subs": [["chapters.status = 'published'", "true"]]
+  },
+  {
+    "id": "M21",
+    "fn": "public.compute_story_scores()",
+    "desc": "ranking: comments weight ignored",
+    "subs": [["+ signals.comments * comments_weight", ""]]
+  },
+  {
+    "id": "M22",
+    "fn": "public.compute_story_scores()",
+    "desc": "ranking: unreadable stories no longer removed from scores",
+    "subs": [
+      [
+        "delete from public.story_scores\n  where not public.story_has_readable_chapter(story_scores.story_id);",
+        ""
+      ]
+    ]
+  },
+  {
+    "id": "M23",
+    "fn": "public.compute_story_scores()",
+    "desc": "ranking: read-through multiplier removed",
+    "subs": [["* (1 + signals.read_through * through_weight)", ""]]
+  },
+  {
+    "id": "M24",
+    "fn": "public.check_chapter_text(text)",
+    "desc": "check_chapter_text: javascript/data links allowed",
+    "subs": [["if clean_body ~* '(javascript|data|vbscript)\\s*:' then", "if false then"]]
+  },
+  {
+    "id": "M25",
+    "fn": "public.check_chapter_text(text)",
+    "desc": "check_chapter_text: length limit off by a lot",
+    "subs": [["char_length(clean_body) > longest", "char_length(clean_body) > longest * 10"]]
+  }
+]

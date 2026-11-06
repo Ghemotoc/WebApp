@@ -113,9 +113,15 @@ jobs:
     # main doesn't skip it.
     if: "!cancelled() && github.event_name == 'push'"
     runs-on: ubuntu-latest
-    # The suite runs on one worker (playwright.config.ts) and grows with every screen: about
-    # 19 minutes with the chapter editor (S1-E3-02a), so 20 cut it off. 40 leaves room.
-    timeout-minutes: 40
+    # The suite runs on one worker (playwright.config.ts) and takes over 2 hours on one machine
+    # (5 Nov 2026), so it is split into 4 shards, each on its own runner with its own local
+    # Supabase: the shards share no database, so the tests' shared personas and flags can't clash
+    # (QA-3, finding S5). Each shard is about 40 minutes; 60 leaves room.
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -128,11 +134,11 @@ jobs:
       # playwright.config.ts reads its address and public anon key from `supabase status`.
       # Mailpit stays on: sign-up and password-reset tests read their emails from it (S1-E2-01).
       - run: npx supabase start -x studio,imgproxy,storage-api,realtime,edge-runtime,logflare,vector,supavisor
-      - run: npm run test:e2e
+      - run: npm run test:e2e -- --shard=${{ matrix.shard }}/4
       # Keep the report for a week when something fails, so the failure can be looked at.
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.shard }}
           path: playwright-report/
           retention-days: 7

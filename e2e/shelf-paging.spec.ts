@@ -120,9 +120,18 @@ for (const width of [1440, 390]) {
 test('at the very end, the last card is fully visible', async ({ page }) => {
   const { shelf, row } = await openShelf(page, 1440);
   const forward = shelf.getByRole('button', { name: 'Derulează înainte' });
-  // Press forward until the arrow is disabled at the end.
+  // Press forward until the arrow is disabled at the end. After each press, wait until the row
+  // has moved and the arrow agrees with where the row now is: the arrow's state follows the
+  // row's scroll event, so reading it straight after the click saw the old state and pressed a
+  // button that was about to be disabled (QA-3: this failed on every run, on main too).
+  const scrollLeft = () => row.evaluate((element) => element.scrollLeft);
+  const isAtEnd = () =>
+    row.evaluate((element) => element.scrollLeft + element.clientWidth >= element.scrollWidth - 1);
   for (let press = 0; press < 30 && (await forward.isEnabled()); press += 1) {
+    const leftBefore = await scrollLeft();
     await forward.click();
+    await expect.poll(scrollLeft).toBeGreaterThan(leftBefore);
+    await expect.poll(async () => (await isAtEnd()) === (await forward.isDisabled())).toBe(true);
   }
   await expect(forward).toBeDisabled();
   const end = await measureRow(row);

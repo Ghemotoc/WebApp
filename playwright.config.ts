@@ -69,8 +69,11 @@ export default defineConfig({
   // versions), so 2 workers would save about 1.5 minutes. A real gain needs a test persona and
   // story per worker first.
   workers: 1,
-  // One retry in CI, so a slow runner is told apart from a real failure in the report.
+  // One retry in CI, so a slow runner is told apart from a real failure in the report. A test
+  // that only passes on its retry is flaky, and a flaky test fails the run instead of passing
+  // quietly (QA-3, finding A3): the list reporter names it, and it gets fixed.
   retries: process.env.CI === undefined ? 0 : 1,
+  failOnFlakyTests: process.env.CI !== undefined,
   reporter: process.env.CI === undefined ? 'list' : [['list'], ['html', { open: 'never' }]],
   use: {
     baseURL: previewUrl,
