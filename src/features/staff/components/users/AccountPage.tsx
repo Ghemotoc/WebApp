@@ -5,8 +5,9 @@
  * What it shows, top to bottom: the username and pen name; the label rows (short user ID with
  * Copy, status, masked email with "Show (logged)", age group and age check, roles); the Actions
  * panel (owner, admin, moderator); "Ask for a change" to the person's forum signature (S1-E8-08,
- * moderation staff); the sanctions history with Lift; the open cases; the newest
- * audit rows (owner and admin); and the private messages line. Each part shows only for a role
+ * moderation staff); the sanctions history with Lift; the open cases; the staff notes (every
+ * staff member who may open the account, LOGS-1a); every staff action on the account, paged
+ * (owner and admin, LOGS-1b); and the private messages line. Each part shows only for a role
  * that may see it (architecture 1.8.3), and the database checks every one again.
  * Private messages (story criterion 3): this page reads no message, ever; a moderator sees one
  * only on the case page of a report it belongs to (S1-E9, after March).
@@ -27,7 +28,9 @@ import { useAccount } from '../../hooks/useAccount';
 import { useAccountActions } from '../../hooks/useAccountActions';
 
 import { AccountActions } from './AccountActions';
-import { AccountAuditRows, AccountOpenCases } from './AccountCasesAndLog';
+import { AccountNotes } from './AccountNotes';
+import { AccountOpenCases } from './AccountOpenCases';
+import { AccountStaffHistory } from './AccountStaffHistory';
 import { AccountSummaryRows } from './AccountSummaryRows';
 
 /** useAccount's result, passed down once. */
@@ -58,7 +61,8 @@ function AccountSections({ account, userId }: { account: Account; userId: string
         />
       )}
       {account.openCases !== null && <AccountOpenCases cases={account.openCases} />}
-      {summary.mayReadAuditLog && <AccountAuditRows handle={handle} rows={account.auditRows} />}
+      <AccountNotes userId={userId} />
+      {summary.mayReadAuditLog && <AccountStaffHistory userId={userId} handle={handle} />}
       <section aria-labelledby="account-messages-heading" className="flex flex-col gap-2">
         <h2
           id="account-messages-heading"

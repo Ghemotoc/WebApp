@@ -1,6 +1,7 @@
 /**
  * ShelfSection: a short shelf that fits (no arrows) and a long one with 25 stories (arrows, a
- * one-side fade and a "View more" card after 20) on /design (story S1-E1-03).
+ * fade at each edge with cards hidden past it and a "View more" card after 20) on /design
+ * (story S1-E1-03).
  * Who uses it: DesignPage. The e2e test checks the arrows and the 20-item limit here.
  */
 import { useTranslation } from 'react-i18next';

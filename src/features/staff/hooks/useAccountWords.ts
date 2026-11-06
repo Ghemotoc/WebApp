@@ -15,7 +15,7 @@ import type { Enums } from '@/lib/database.types';
 /**
  * The word helpers.
  *
- * @returns status(), ageBand(), ageCheck(), sanctionKinds() and date()
+ * @returns status(), ageBand(), ageCheck(), sanctionKinds(), date() and dateTime()
  */
 export function useAccountWords() {
   const { t, i18n } = useTranslation('staff');
@@ -25,8 +25,15 @@ export function useAccountWords() {
   const date = (isoTime: string) =>
     new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium' }).format(new Date(isoTime));
 
+  /** A date and time in the page's language, for staff notes and history (LOGS-1). */
+  const dateTime = (isoTime: string) =>
+    new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium', timeStyle: 'short' }).format(
+      new Date(isoTime),
+    );
+
   return {
     date,
+    dateTime,
     status: (status: Enums<'account_status'>) => t(`users.statuses.${status}`),
     ageBand: (band: Enums<'age_band'>) => t(`users.ageBands.${band}`),
     // "18 or over · 5 Oct 2026", or only the result while there is no date.

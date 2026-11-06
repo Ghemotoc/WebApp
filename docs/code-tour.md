@@ -258,7 +258,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `src/features/discovery/` | Discover (`/discover`), and one list page for every See all, category, tag and writer list (`/discover/all/:listKind`, `/discover/c/:categorySlug`, `/discover/t/:tag`, `/u/:handle/stories`), all through `browse_stories()`; filters and sort live in the address; see its README | S1-E5-01, S1-E5-09, S1-E5-02 |
 | `src/components/covers/` | `DrawnCover` (every cover we draw: the 16 designs, the 9-colour palette, the full title at every size), `coverDesigns.ts` (the designs, colours and pattern artwork from the NewStory board) and `automaticCover.ts` (a skipped cover gets a design from the story's ID; `designsForRow()` keeps two neighbours in a row apart) | S1-E3-01, S1-E3-13 |
 | `src/components/ui/Doodle.tsx`, `src/assets/doodles/` | The decorative doodles (`data-doodle="background"` or `"widget"`, hidden under 1000 or 600 px), copied from design/assets with readable names; `e2e/support/doodles.ts` fails a screen when a doodle meets text or a control | S1-E3-01 |
-| `src/components/ui/Shelf.tsx`, `useShelfScroll.ts`, `shelfPaging.ts` | Every sideways row of stories: the one-side fade, and arrows that move by whole cards (`pageTarget()`), so the card the fade covered is shown fully after one press; tests in `shelfPaging.test.ts` and `e2e/shelf-paging.spec.ts` | S1-E1-03, FIXES-1a |
+| `src/components/ui/Shelf.tsx`, `useShelfScroll.ts`, `shelfPaging.ts` | Every sideways row of stories: the edge fades (each edge fades while cards are hidden past it, so both in the middle of a row), and arrows that move by whole cards (`pageTarget()`), so the card a fade covered is shown fully between the fades after one press; tests in `shelfPaging.test.ts` and `e2e/shelf-paging.spec.ts` | S1-E1-03, FIXES-1a |
 | `src/features/<feature>/` | One folder per feature: `components/` (screens), `hooks/` (data hooks), `api/` (Supabase calls) and a `README.md` | each feature story; `home/` by S1-E1-01 |
 | `src/lib/` | Shared helpers: `i18n.ts` (translations), `utils.ts` (`cn` for class names), `database.types.ts` (generated, never edited by hand), `supabase.ts` (the one browser client, loaded on demand; null without settings), `language-preference.ts` (the language kept in this browser), `romanian-text.ts` (ş and ţ become ș and ț), `query-retry.ts` (a refused read, 401 or 403, isn't retried; api/ functions keep the response status as the error's cause), and later `platform/` adapters | S1-E1-01, S1-E1-02, S1-E1-04, S1-E2-QA |
 | `src/locales/ro/`, `src/locales/en/` | All interface text, one JSON file per namespace; same keys in both | S1-E1-01, S1-E1-04 |
@@ -296,6 +296,7 @@ Five tables exist, each with row-level security and only read policies; every wr
 | `staff_roles` | which staff role each team member holds | the person themselves; owner and admin see all |
 | `feature_flags`, `settings` | switches and values (`invite_only`, `adults_only` on for March) | anyone, for rows marked public; owner and admin see all |
 | `audit_log` | every staff action, written only by `log_staff_action()`; nobody can change or delete a row | owner and admin |
+| `account_staff_notes` | notes staff leave on an account for each other (LOGS-1a); added only by `admin_add_account_note()`, never changed or deleted, kept 3 years like the audit log | staff with the Users area (owner, admin, moderator, support) |
 | `legal_documents`, `legal_document_versions` (S1-E14-01) | the Legal centre's documents and every live version, per language; written only by migrations | anyone, for live versions; owner and admin also see versions not live yet |
 | `consents` (S1-E14-01) | which version of the terms and privacy notice each person accepted, and when | the person themselves; written only by the sign-up trigger (S1-E2-01) and `accept_current_legal_versions()` |
 
@@ -798,9 +799,15 @@ The error page shows the first six characters of the stored row's ID as the code
   ├─ /staff/roles      StaffRolesPage (S1-E2-07a, below)
   ├─ /staff/users      UsersPage (S1-E11-02): search → useUserLookup → admin_user_lookup()
   ├─ /staff/users/:id  AccountPage: useAccount → admin_user_account(), admin_account_open_cases(),
-  │                      admin_account_sanctions(), admin_search_audit_log(), admin_reveal_email();
+  │                      admin_account_sanctions(), admin_reveal_email();
   │                      AccountActions → useAccountActions → admin_apply_sanction(),
-  │                      admin_reset_pen_name(), admin_sign_out_everywhere(), admin_approve_username()
+  │                      admin_reset_pen_name(), admin_sign_out_everywhere(), admin_approve_username();
+  │                      AccountNotes (LOGS-1a, every staff member who may open the account) →
+  │                      useAccountNotes → api/accountNotes.ts → admin_account_notes() /
+  │                      admin_add_account_note() → account_staff_notes (append-only) + audit_log;
+  │                      AccountStaffHistory (LOGS-1b, owner and admin) → useAccountStaffHistory
+  │                      → admin_search_audit_log() for the account, 20 a page; its link opens
+  │                      /staff/audit-log?target=<user ID>
   ├─ /staff/users/invites  InvitesPage (S1-E11-17), the Users area's second tab (/staff/invites
   │                      redirects): MakeInviteForm → useInviteLinks → api/inviteLinks.ts
   │                      admin_create_invite() (the code once, hashed in invites) / admin_list_invites()

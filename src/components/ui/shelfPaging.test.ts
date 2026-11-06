@@ -1,11 +1,18 @@
 /**
  * Unit tests for shelfPaging (bundle FIXES-1, part a): an arrow press moves a row by whole cards,
- * so the card the fade covered becomes fully visible (Robert, 5 Nov 2026).
+ * so the card a fade covered becomes fully visible (Robert, 5 Nov 2026), between the left and the
+ * right fade that both show in the middle of a row (Robert, 6 Nov 2026).
  * Who runs it: `npm test` (Vitest).
  */
 import { describe, expect, it } from 'vitest';
 
-import { fadeWidthFor, pageTarget, type CardEdges, type RowPosition } from './shelfPaging';
+import {
+  fadeWidthFor,
+  pageTarget,
+  widestCardOf,
+  type CardEdges,
+  type RowPosition,
+} from './shelfPaging';
 
 /**
  * A row of equal cards 20 px apart, starting 4 px in (the row's padding).
@@ -34,7 +41,7 @@ function onScreen(card: CardEdges, scrollLeft: number): { left: number; right: n
  * @returns the card
  */
 function firstFadedOnTheRight(cards: CardEdges[], row: RowPosition): CardEdges {
-  const fade = fadeWidthFor(row.clientWidth);
+  const fade = fadeWidthFor(row.clientWidth, widestCardOf(cards));
   const card = cards.find((each) => each.end > row.scrollLeft + row.clientWidth - fade + 1);
   if (card === undefined) throw new Error('no card under the fade');
   return card;
@@ -49,13 +56,22 @@ describe('shelfPaging', () => {
     expect(fadeWidthFor(358)).toBe(72);
   });
 
+  it('narrows the fade on a small phone so the widest card fits between two fades', () => {
+    // 296 px of row and a 196 px card: 50 px is left on each side of the card.
+    expect(fadeWidthFor(296, 196)).toBe(50);
+    // A wide row keeps the board's 140 px whatever the card.
+    expect(fadeWidthFor(1280, 196)).toBe(140);
+    // Never thinner than 24 px, even when the card can't fit.
+    expect(fadeWidthFor(300, 400)).toBe(24);
+  });
+
   it('a forward press shows the card that was half faded on the right fully', () => {
     const row = { scrollLeft: 0, clientWidth: 1000, scrollWidth };
     const faded = firstFadedOnTheRight(cards, row);
     const target = pageTarget(cards, row, 'forward');
     const place = onScreen(faded, target);
-    // Fully clear of the right fade, which stays on the right while moving forward.
-    expect(place.left).toBeGreaterThanOrEqual(0);
+    // Fully clear of both fades: the left one shows once the row has moved, the right one stays.
+    expect(place.left).toBeGreaterThanOrEqual(140);
     expect(place.right).toBeLessThanOrEqual(1000 - 140);
   });
 
@@ -77,7 +93,7 @@ describe('shelfPaging', () => {
     if (touched === undefined) throw new Error('no card under the fade');
     const place = onScreen(touched, target);
     expect(place.left).toBeGreaterThanOrEqual(140);
-    expect(place.right).toBeLessThanOrEqual(1000);
+    expect(place.right).toBeLessThanOrEqual(1000 - 140);
   });
 
   it('works on a phone, where the fade is narrower', () => {
@@ -85,8 +101,17 @@ describe('shelfPaging', () => {
     const row = { scrollLeft: 0, clientWidth: 358, scrollWidth: (phoneCards.at(-1)?.end ?? 0) + 4 };
     const faded = firstFadedOnTheRight(phoneCards, row);
     const place = onScreen(faded, pageTarget(phoneCards, row, 'forward'));
-    expect(place.left).toBeGreaterThanOrEqual(0);
+    expect(place.left).toBeGreaterThanOrEqual(72);
     expect(place.right).toBeLessThanOrEqual(358 - 72);
+  });
+
+  it('on a small phone, the card is still fully clear of both fades', () => {
+    const smallCards = cardsOf(20, 196);
+    const row = { scrollLeft: 0, clientWidth: 296, scrollWidth: (smallCards.at(-1)?.end ?? 0) + 4 };
+    const faded = firstFadedOnTheRight(smallCards, row);
+    const place = onScreen(faded, pageTarget(smallCards, row, 'forward'));
+    expect(place.left).toBeGreaterThanOrEqual(50);
+    expect(place.right).toBeLessThanOrEqual(296 - 50);
   });
 
   it('never moves past either end of the row', () => {

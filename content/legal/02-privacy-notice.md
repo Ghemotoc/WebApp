@@ -69,6 +69,7 @@ What we get from others:
 - Your connection: when you sign up, we read your country from your internet connection and keep only the country code. For security we keep your IP address only in a scrambled form, for 30 days. If a new account signs up from the same scrambled address as an account banned in the last 30 days, a moderator looks at it; nobody is blocked because of it, since schools and families share connections. [lawyer to check]
 - Other people: reports about you or your content, and, in a class space, what your teacher adds.
 - Authorities: orders and requests they send us.
+- Our staff: short notes they leave on your account for each other, for example what you asked support or what a moderator checked. Notes are facts, never shown publicly, and you can ask to see them. [lawyer to check]
 
 Your user ID. Every account gets a random, permanent ID that links everything you make on Ghemotoc. Nobody else ever sees it. You’ll find it in your own data downloads.
 
@@ -225,6 +226,7 @@ Safety
 - Content removed after an order to remove terrorist content: kept for 6 months, as the law requires, unless an authority asks for longer.
 - Content under an open legal case: kept until the case ends.
 - Evidence kept for the police in a child safety case: [OPEN: to be set with the lawyer]
+- Notes our staff leave on your account: 3 years from when each note was written, the same as the record of what our staff did.
 - A suspected sexual image of a child: the image itself is deleted at once and never kept. We keep the evidence for 5 years: the case, the account, when it was uploaded and found, the file’s fingerprint (a SHA-256 hash), the scrambled IP address it was uploaded from and a moderator’s short description for the police. We keep it longer only if the police ask for it within that time. [lawyer to check]
 
 Security

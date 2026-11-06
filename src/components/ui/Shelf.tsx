@@ -6,13 +6,14 @@
  *   - Arrows show only when the row overflows, and the one pointing at an end is disabled.
  *   - A row with arrows hides its scrollbar but stays scrollable by swipe, trackpad and keyboard
  *     (the row is a focusable, labelled region).
- *   - The row fades on one side at a time with a CSS mask on the row itself, so cards and shadows
- *     fade together (useShelfScroll works out which side).
- *   - An arrow press moves by whole cards: the card the fade covered becomes fully visible
+ *   - Each edge fades while cards are hidden past it, so in the middle of a long row both edges
+ *     fade (Robert, 6 Nov 2026). The fade is a CSS mask on the row itself, so cards and shadows
+ *     fade together (useShelfScroll works out which edges).
+ *   - An arrow press moves by whole cards: the card a fade covered becomes fully visible
  *     (Robert, 5 Nov 2026; shelfPaging.ts). The row doesn't snap, because snapping would pull
  *     each press back to a card's edge and leave that card under the fade again.
- * Board values: heading Bricolage 30 px, 18 px below it; cards 20 px apart; a 140 px fade (a
- * fifth of the row on narrow screens, so a phone still shows a whole card clear of it).
+ * Board values: heading Bricolage 30 px, 18 px below it; cards 20 px apart; a 140 px fade on
+ * each faded edge (narrower on small screens, so a whole card still fits between two fades).
  * Who uses it: Discover (S1-E5-01), Classics, Library, the website home page and /design.
  */
 import { useId, useRef, type ReactNode } from 'react';
@@ -46,11 +47,32 @@ export interface ShelfProps {
   totalCount?: number;
 }
 
-/** The CSS mask that fades one edge, fully transparent at the edge (boards: 140 px wide). */
+/**
+ * The CSS mask that fades the row's edges: fully transparent at a faded edge, solid from one fade
+ * width in (boards: 140 px). An edge that doesn't fade gets a width of 0, so it stays solid.
+ *
+ * @param state - which edges fade and how wide
+ * @returns the mask, or undefined when neither edge fades
+ */
 function fadeMask(state: ShelfScrollState): string | undefined {
-  if (state.fadeSide === 'none') return undefined;
-  const towards = state.fadeSide === 'right' ? 'to right' : 'to left';
-  return `linear-gradient(${towards}, #000 0, #000 calc(100% - ${state.fadeWidth}px), transparent 100%)`;
+  const { left, right } = state.fadeEdges;
+  if (!left && !right) return undefined;
+  const leftWidth = left ? state.fadeWidth : 0;
+  const rightWidth = right ? state.fadeWidth : 0;
+  return `linear-gradient(to right, transparent 0, #000 ${leftWidth}px, #000 calc(100% - ${rightWidth}px), transparent 100%)`;
+}
+
+/**
+ * The faded edges as a word list for the row's data-fade attribute ("left right", "right", or
+ * "none"), so tests and the browser's inspector can read them without parsing the mask.
+ *
+ * @returns the word list
+ */
+function fadeEdgesLabel(state: ShelfScrollState): string {
+  const edges = [];
+  if (state.fadeEdges.left) edges.push('left');
+  if (state.fadeEdges.right) edges.push('right');
+  return edges.length === 0 ? 'none' : edges.join(' ');
 }
 
 /**
@@ -94,6 +116,8 @@ export function Shelf({ title, eyebrow, items, seeAllHref, totalCount }: ShelfPr
         aria-label={t('shelf.regionLabel', { title })}
         className={`-mx-1 flex scroll-px-1 scroll-smooth gap-5 overflow-x-auto px-1 pt-1 pb-4 ${state.overflows ? 'tmc-noscroll' : ''}`}
         style={{ maskImage: mask, WebkitMaskImage: mask }}
+        data-fade={fadeEdgesLabel(state)}
+        data-fade-width={state.fadeWidth}
       >
         {/* Each cell is "relative", so nothing absolutely positioned inside a card (a
             screen-reader-only label, a badge) can escape the row and widen the page (17 CHECK). */}

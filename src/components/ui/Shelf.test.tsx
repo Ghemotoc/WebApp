@@ -8,7 +8,7 @@ import { describe, expect, it } from 'vitest';
 import { renderWithProviders } from '@/test/renderWithProviders';
 
 import { Shelf, type ShelfItem } from './Shelf';
-import { chooseFadeSide } from './useShelfScroll';
+import { chooseFadeEdges } from './useShelfScroll';
 
 /** Plain sample items. */
 function items(count: number): ShelfItem[] {
@@ -55,18 +55,17 @@ describe('Shelf', () => {
   });
 });
 
-describe('chooseFadeSide', () => {
-  it('fades nothing when the row fits on screen', () => {
-    expect(chooseFadeSide(false, true, true, 'forward')).toBe('none');
+describe('chooseFadeEdges', () => {
+  it('fades neither edge when the row fits on screen', () => {
+    expect(chooseFadeEdges(false, true, true)).toEqual({ left: false, right: false });
   });
 
   it('fades only the right edge at the start and only the left edge at the end', () => {
-    expect(chooseFadeSide(true, true, false, 'back')).toBe('right');
-    expect(chooseFadeSide(true, false, true, 'forward')).toBe('left');
+    expect(chooseFadeEdges(true, true, false)).toEqual({ left: false, right: true });
+    expect(chooseFadeEdges(true, false, true)).toEqual({ left: true, right: false });
   });
 
-  it('fades the side the reader is moving towards in between', () => {
-    expect(chooseFadeSide(true, false, false, 'forward')).toBe('right');
-    expect(chooseFadeSide(true, false, false, 'back')).toBe('left');
+  it('fades both edges in the middle of a long row, whichever way the reader moved', () => {
+    expect(chooseFadeEdges(true, false, false)).toEqual({ left: true, right: true });
   });
 });
