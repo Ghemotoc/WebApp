@@ -1,7 +1,7 @@
 /**
  * Which words the Discover greeting line uses (stories S1-E2-12 and S1-E2-13).
  *
- * Who calls it: components/GreetingLine.tsx. What it calls: nothing; the keys are in
+ * Who calls it: components/GreetingHeading.tsx. What it calls: nothing; the keys are in
  * src/locales/<language>/discovery.json under "greeting".
  */
 

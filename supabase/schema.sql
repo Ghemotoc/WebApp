@@ -25870,6 +25870,71 @@ COMMENT ON FUNCTION "public"."my_data_requests"() IS 'The signed-in person''s ow
 
 
 
+CREATE OR REPLACE FUNCTION "public"."my_discover_cards"() RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  continuing jsonb;
+  draft jsonb;
+begin
+  if caller_id is null then
+    raise exception 'Log in to see your cards.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 1: the unfinished story read most recently, among those the reader may still read.
+  select jsonb_build_object(
+      'story', public.story_card_json(found.id),
+      'place', found.place,
+      -- "Chapter n is out": the next readable chapter came out after the reader last read.
+      'new_chapter_number', case
+        when exists (select 1 from public.chapters as later
+                     where later.code = found.place ->> 'next_code'
+                       and later.first_published_at > (found.place ->> 'saved_at')::timestamptz)
+        then (found.place ->> 'number')::integer + 1
+      end)
+  into continuing
+  from (
+    select listed.id, public.latest_place_json(listed.id) as place
+    from public.listed_stories('library', 'reading', null, null, null) as listed
+  ) as found
+  where found.place is not null
+    -- A story read to the end of its last chapter is finished, not unfinished (95%, the same
+    -- line the Library uses for a finished chapter: src/features/library/lib/places.ts).
+    and not ((found.place ->> 'percent')::numeric >= 95 and found.place ->> 'next_code' is null)
+  order by found.place ->> 'saved_at' desc
+  limit 1;
+  -- Step 2: the draft chapter saved most recently, in a story the member still has.
+  select jsonb_build_object(
+      'story_slug', stories.slug,
+      'story_title', stories.title,
+      'chapter_code', chapters.code,
+      'title', chapters.draft_title,
+      'number', (select count(*) from public.chapters as earlier
+                 where earlier.story_id = chapters.story_id and earlier.deleted_at is null
+                   and earlier.position <= chapters.position),
+      'word_count', chapters.word_count,
+      'saved_at', chapters.updated_at)
+  into draft
+  from public.chapters
+  join public.stories on stories.id = chapters.story_id and stories.deleted_at is null
+  where chapters.user_id = caller_id and chapters.status = 'draft' and chapters.deleted_at is null
+  order by chapters.updated_at desc
+  limit 1;
+  -- Step 3: the three answers together.
+  return jsonb_build_object('continue_reading', continuing, 'draft', draft,
+    'may_write', public.is_active_member());
+end;
+$$;
+
+
+ALTER FUNCTION "public"."my_discover_cards"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."my_discover_cards"() IS 'Discover''s cards for the caller: the latest unfinished story, the latest draft chapter and whether they may write (S1-E5-12).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."my_embeds"("embed_ids" "uuid"[]) RETURNS "jsonb"
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -55994,6 +56059,11 @@ GRANT ALL ON FUNCTION "public"."my_data_export"() TO "authenticated";
 
 REVOKE ALL ON FUNCTION "public"."my_data_requests"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."my_data_requests"() TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."my_discover_cards"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."my_discover_cards"() TO "authenticated";
 
 
 

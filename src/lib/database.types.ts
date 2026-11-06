@@ -12538,6 +12538,7 @@ export type Database = {
       };
       my_data_export: { Args: Record<PropertyKey, never>; Returns: Json };
       my_data_requests: { Args: Record<PropertyKey, never>; Returns: Json };
+      my_discover_cards: { Args: Record<PropertyKey, never>; Returns: Json };
       my_embeds: { Args: { embed_ids: string[] }; Returns: Json };
       my_followers: {
         Args: Record<PropertyKey, never>;

@@ -75,8 +75,8 @@ export interface StoryLibraryState {
   thanksSent: boolean;
 }
 
-/** The database's JSON for a place. */
-interface PlaceRow {
+/** The database's JSON for a place (also read by Discover's Continue reading card, LOOK-4b). */
+export interface PlaceRow {
   chapter_code: string;
   number: number;
   total: number;
@@ -92,7 +92,7 @@ interface PlaceRow {
  * @param row - from latest_place_json()
  * @returns the place
  */
-function toPlace(row: PlaceRow): StoryPlace {
+export function toPlace(row: PlaceRow): StoryPlace {
   return {
     chapterCode: row.chapter_code,
     number: row.number,

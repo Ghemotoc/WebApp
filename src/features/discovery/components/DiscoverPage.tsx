@@ -1,25 +1,31 @@
 /**
- * DiscoverPage: Discover, screen 3.1 (story S1-E5-01; design/boards/Discover.dc.html).
+ * DiscoverPage: Discover, screen 3.1 (stories S1-E5-01 and S1-E5-12; design/boards/Discover.dc.html).
  *
  * Who shows it: the router, at /discover; the top bar's "Discover" link.
- * What it shows: the eyebrow and heading with "How ranking works" (a link to the terms' ranking
- * section, DSA art. 27; S1-E5-03), "Browse by category", then the shelves in the order of the
- * public setting discover_shelves (S1-E5-03, Q46: changed without a release): New from writers
- * you follow (signed in), Popular, New and rising, Most shared this week (IDEAS-1e), New stories,
- * Completed, Recently updated and one per category.
+ * What it shows, top to bottom:
+ * - Featured this week (S1-E5-10), when staff picked stories this reader may see;
+ * - the heading: for a visitor "Discover" and "Find your next story"; for someone signed in the
+ *   dated eyebrow and "Good morning, <name>." (GreetingHeading; S1-E2-13, S1-E5-12). The seasonal
+ *   doodle sits beside it (S1-E5-07), and the line under it links "How ranking works" (the terms'
+ *   ranking section, DSA art. 27; S1-E5-03);
+ * - search (S1-E5-04) and the category chips ("Browse by category");
+ * - "Your dashboard" for a member (DiscoverCards, S1-E5-12): Continue reading, Your draft and the
+ *   gold "Start a new story" card, each only when it has something to show;
+ * - the shelves in the order of the public setting discover_shelves (S1-E5-03, Q46: changed
+ *   without a release). Since LOOK-4b (Robert, 6 Nov 2026, D5) it holds the board's five: New from
+ *   writers you follow (signed in), Popular, New and rising, Public-domain classics and Writers to
+ *   follow this week (S1-E5-11). The other words (picked, shared, new, completed, updated,
+ *   categories) still work if staff put them back.
  * Every shelf is one line of at most 20 with "View more" (CLAUDE.md rule 20), and the database
  * leaves out what this reader may not see: ratings above their age (rule 18), writers either side
  * blocks, drafts and moderated stories. Nothing is chosen from what the reader has read (no
- * personalised feed in Stage 1; S1-E5-09's legal note).
+ * personalised feed in Stage 1; S1-E5-09's legal note); the cards show only the member's own
+ * places and drafts.
  * Popular ranks by totals only (reads, likes, comments; never downvotes), the same for everyone.
- * A signed-in reader first sees GreetingLine (S1-E2-13: good morning, or their birthday or joining
- * anniversary). The wide ad slot sits after the first shelf (S1-E12-01; board 3.1). Featured this
- * week (S1-E5-10) opens the page when staff have picked stories this reader may see. The board's
- * continue reading, draft card, "Popular in your area" and "Writers to follow" come with their own
- * stories (S1-E4-03, LOOK-4b, LOOK-4c), so they aren't drawn yet.
- * What it calls: FeaturedBand (featured_stories_now()), GreetingLine, SeasonalDoodle (S1-E5-07),
- * SearchForm (S1-E5-04), DiscoverShelf (useStoryShelf → browse_stories()) and CategoryLinks.
- */
+ * The wide ad slot sits after the first shelf (S1-E12-01; board 3.1).
+ * What it calls: FeaturedBand, GreetingHeading, SeasonalDoodle, SearchForm, CategoryLinks,
+ * DiscoverCards, DiscoverShelf (useStoryShelf → browse_stories()) and RisingWritersShelf.
+ * */
 import { Fragment } from 'react';
 import { Link } from 'react-router';
 
@@ -29,6 +35,8 @@ import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { brand } from '@/config/brand';
 import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
+import { useMyNames } from '@/features/account/hooks/useMyNames';
+import { displayName } from '@/features/account/lib/nameRules';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { usePublicSettings } from '@/features/flags/hooks/usePublicSettings';
 import { SeasonalDoodle } from '@/features/seasonal/components/SeasonalDoodle';
@@ -42,27 +50,17 @@ import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
 import { SearchForm } from '@/features/search/components/SearchForm';
 
 import { CategoryLinks } from './CategoryLinks';
+import { DiscoverCards } from './DiscoverCards';
 import { DiscoverShelf } from './DiscoverShelf';
 import { FeaturedBand } from './FeaturedBand';
+import { GreetingHeading } from './GreetingHeading';
 import { RisingWritersShelf } from './RisingWritersShelf';
-import { GreetingLine } from './GreetingLine';
 
 /**
- * The decided shelf order, used until the setting arrives or if it can't be read (S1-E5-03).
- * "categories" stands for one shelf per category.
+ * The decided shelf order, used until the setting arrives or if it can't be read (S1-E5-03;
+ * the board's five since LOOK-4b, D5). "categories" would stand for one shelf per category.
  */
-const defaultShelfOrder = [
-  'following',
-  'picked',
-  'popular',
-  'rising',
-  'shared',
-  'new',
-  'completed',
-  'updated',
-  'classics',
-  'categories',
-] as const;
+const defaultShelfOrder = ['following', 'popular', 'rising', 'classics', 'writers'] as const;
 
 /**
  * Turns one word of the setting into a list, if it names one.
@@ -74,28 +72,53 @@ function shelfKindFrom(word: string): ListKind | null {
   return discoverListKinds.find((kind) => kind === word) ?? null;
 }
 
+/** The h1's type, the same for the visitor's heading and the greeting (board 3.1). */
+const headingClass =
+  'm-0 min-w-0 font-heading text-[clamp(36px,5.6vw,80px)] leading-[0.98] font-extrabold tracking-[-0.025em] text-heading';
+
 /**
- * The heading block: eyebrow, heading and the line under it.
+ * The visitor's eyebrow and heading, also shown while a member's name loads.
+ *
+ * @returns the eyebrow and the h1
+ */
+function VisitorHeading() {
+  const { t } = useDiscoveryTranslation();
+  return (
+    <>
+      <Eyebrow>{t('discover.eyebrow')}</Eyebrow>
+      <h1 className={headingClass}>{t('discover.heading')}</h1>
+    </>
+  );
+}
+
+/**
+ * The heading block: eyebrow, heading (a greeting for someone signed in) and the line under it.
  *
  * @returns the header
  */
 function DiscoverHeader() {
   const { t } = useDiscoveryTranslation();
+  const { names } = useMyNames();
+  // The pen name, or the username; null for a visitor or while it loads (rule 5: no real name).
+  const name = names === null ? null : displayName(names.handle, names.penName);
   return (
     <header className="flex flex-col gap-3">
-      <Eyebrow>{t('discover.eyebrow')}</Eyebrow>
       {/* The seasonal doodle sits beside the heading, never over it (S1-E5-07; board 3.1). */}
       <div className="flex items-center gap-[clamp(10px,1.4vw,20px)]">
-        <h1 className="m-0 min-w-0 font-heading text-[clamp(36px,6vw,64px)] leading-[1.05] font-extrabold tracking-[-0.02em] text-heading">
-          {t('discover.heading')}
-        </h1>
+        <div className="flex min-w-0 flex-col gap-3">
+          {name === null ? (
+            <VisitorHeading />
+          ) : (
+            <GreetingHeading name={name} className={headingClass} />
+          )}
+        </div>
         <SeasonalDoodle
           place="discover"
           on="discover-heading"
-          className="size-[clamp(56px,5.4vw,76px)] flex-none rotate-6"
+          className="size-[clamp(56px,5.4vw,76px)] flex-none rotate-6 self-end"
         />
       </div>
-      <p className="m-0 max-w-[620px] text-base leading-relaxed text-body">
+      <p className="m-0 max-w-[640px] text-base leading-relaxed text-body">
         {t('discover.intro', { productName: brand.productName })}{' '}
         <Link to="/legal/terms#section-5" className="font-semibold underline underline-offset-2">
           {t('discover.howRanking')}
@@ -192,13 +215,12 @@ export function DiscoverPage() {
       <title>{t('discover.documentTitle', { productName: brand.productName })}</title>
       {/* Featured this week, picked by staff (S1-E5-10); not drawn when nothing is picked. */}
       <FeaturedBand />
-      <div className="flex flex-col gap-4">
-        <GreetingLine />
-        <DiscoverHeader />
-      </div>
+      <DiscoverHeader />
       {/* Search stories, writers and tags (S1-E5-04; board 3.1's search field). */}
       <SearchForm />
       <CategoryLinks />
+      {/* Continue reading, Your draft and Start a new story, for a member (S1-E5-12). */}
+      <DiscoverCards />
       <DiscoverShelves />
     </PageContainer>
   );
