@@ -2,7 +2,7 @@
  * StaffBar: the top bar of the admin site (story S1-E1-03; mounted by S1-E11-01).
  *
  * Board values (AdminUsers, AdminSponsors): the same floating island as the public top bar, with
- * the wordmark and a "Staff" pill, the staff areas in a wrapping row, then the person's name and
+ * the emblem and wordmark (BrandMark, LOGO-1) and a "Staff" pill, the staff areas in a wrapping row, then the person's name and
  * role, and Sign out. Staff screens use plain components and no doodles (CLAUDE.md, Designs).
  * Showing an area in this menu is a convenience, never the protection: the database checks the
  * role on every staff action (architecture 1.8.1).
@@ -16,7 +16,7 @@ import { NavLink } from 'react-router';
 import type { NavigationItem } from '@/app/navigation';
 import { Button } from '@/components/ui/Button';
 import { InfoPill } from '@/components/ui/InfoPill';
-import { brand } from '@/config/brand';
+import { BrandMark } from '@/features/branding/components/BrandMark';
 
 /** What the staff bar needs. */
 export interface StaffBarProps {
@@ -57,8 +57,9 @@ export function StaffBar({
         className="mx-auto flex max-w-[1280px] flex-wrap items-center gap-x-6 gap-y-4 rounded-nav border border-border bg-(--nav-glass) py-2.5 pr-2.5 pl-6 shadow-nav backdrop-blur-md"
       >
         <span className="inline-flex min-h-11 items-center gap-2.5">
-          <span className="font-heading text-[22px] font-extrabold tracking-[-0.01em] text-heading">
-            {brand.productName}
+          {/* The emblem and the name, as in the public top bar (LOGO-1: the logo on every platform). */}
+          <span className="inline-flex font-heading text-[22px] font-extrabold tracking-[-0.01em] text-heading">
+            <BrandMark />
           </span>
           <InfoPill tone="plum">{t('staff.pill')}</InfoPill>
         </span>
