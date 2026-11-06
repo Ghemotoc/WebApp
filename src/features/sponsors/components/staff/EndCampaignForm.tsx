@@ -14,6 +14,7 @@ import { useSponsorChanges } from '../../hooks/useSponsorsAdmin';
 import { useSponsorTranslation } from '../../registerSponsorTranslations';
 
 import { ChangeOutcome } from './ChangeOutcome';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /**
  * Renders the button, then the reason and the confirmation.
@@ -48,7 +49,7 @@ export function EndCampaignForm({ campaignId }: { campaignId: string }) {
           variant="destructive"
           disabled={changes.isRunning}
           onClick={() =>
-            void changes.change({ kind: 'end', campaignId, reason }).catch(() => undefined)
+            void changes.change({ kind: 'end', campaignId, reason }).catch(errorShownByHook)
           }
         >
           {t('editor.confirmEnd')}

@@ -22,8 +22,8 @@ import {
   publishLandingDraft,
   restoreLandingVersion,
   saveLandingDraft,
-  type LandingDraftInput,
-} from '../api/landingPages';
+} from '../api/staff/landingPagesAdmin';
+import type { LandingDraftInput } from '../api/landingPages';
 
 /** One editor action on a page. */
 export type LandingEditorAction =

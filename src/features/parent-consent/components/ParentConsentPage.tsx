@@ -26,6 +26,7 @@ import { useMyParentConsent } from '../hooks/useMyParentConsent';
 
 import { AskParentForm } from './AskParentForm';
 import { ConsentSentPanel } from './ConsentSentPanel';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** The class of a link drawn as a secondary button. */
 const linkButtonClass =
@@ -77,7 +78,7 @@ function AskingPanel({ state, consent }: { state: Consent; consent: MyParentCons
           setHasResent(true);
           void state
             .send({ parentEmail: consent.parentEmail ?? '', language: consent.language ?? 'ro' })
-            .catch(() => undefined);
+            .catch(errorShownByHook);
         }}
         onChange={() => setIsChanging(true)}
       />

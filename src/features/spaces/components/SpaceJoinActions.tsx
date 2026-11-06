@@ -24,6 +24,7 @@ import { spaceFailureText } from '../lib/spaceFailures';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
 import { SpaceJoinRequestForm } from './SpaceJoinRequestForm';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /**
  * The line under the buttons, for a signed-in reader.
@@ -64,7 +65,7 @@ function MembershipButton({
     return (
       <Button
         variant="secondary"
-        onClick={() => void membership.leave().catch(() => undefined)}
+        onClick={() => void membership.leave().catch(errorShownByHook)}
         disabled={membership.isRunning}
       >
         {label}
@@ -75,7 +76,7 @@ function MembershipButton({
   if (space.joining === 'approve') return <SpaceJoinRequestForm membership={membership} />;
   return (
     <Button
-      onClick={() => void membership.join().catch(() => undefined)}
+      onClick={() => void membership.join().catch(errorShownByHook)}
       disabled={membership.isRunning}
     >
       {t('join.join')}

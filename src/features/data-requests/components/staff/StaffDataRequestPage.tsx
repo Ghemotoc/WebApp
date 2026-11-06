@@ -24,6 +24,7 @@ import { DataRequestDetails } from './DataRequestDetails';
 import { DataRequestExtendForm } from './DataRequestExtendForm';
 import { DataRequestIdentityPanel } from './DataRequestIdentityPanel';
 import { DataRequestSection } from './DataRequestSection';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** useStaffDataRequest's result, passed down once. */
 type OneRequest = ReturnType<typeof useStaffDataRequest>;
@@ -49,8 +50,8 @@ function OpenRequestActions({ one, request }: { one: OneRequest; request: DataRe
       <DataRequestIdentityPanel
         request={request}
         isActing={one.isActing}
-        onAsk={() => void one.act({ kind: 'ask' }).catch(() => undefined)}
-        onAskParent={() => void one.act({ kind: 'askParent' }).catch(() => undefined)}
+        onAsk={() => void one.act({ kind: 'ask' }).catch(errorShownByHook)}
+        onAskParent={() => void one.act({ kind: 'askParent' }).catch(errorShownByHook)}
       />
       {asksForACopy(request) && <DataRequestCopyPanel request={request} />}
       <DataRequestExtendForm

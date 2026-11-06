@@ -19,6 +19,7 @@ import { Constants } from '@/lib/database.types';
 
 import type { SafetyContactKind } from '../api/safetyContacts';
 import type { SafetyContactDraft } from '../api/staffSafetyContacts';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the form needs. */
 export interface SafetyContactFormProps {
@@ -152,9 +153,7 @@ export function SafetyContactForm({ initial, isSaving, onSave, onCancel }: Safet
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
     if (!isComplete) return;
-    void onSave(draft)
-      .then(onCancel)
-      .catch(() => undefined);
+    void onSave(draft).then(onCancel).catch(errorShownByHook);
   }
 
   return (

@@ -25,6 +25,7 @@ import { completeReason, emptyReason } from '../../lib/staffStorySettingsDiff';
 
 import { StoryChangeFeedback } from './StoryChangeFeedback';
 import { StoryChangeReasonFields } from './StoryChangeReasonFields';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the fields need. */
 export interface PassageRemovalFieldsProps {
@@ -159,7 +160,7 @@ export function PassageRemovalFields(props: PassageRemovalFieldsProps) {
     await changer
       .change({ kind: 'passage', chapterId: chapter.chapterId, passage: wanted, reason: complete })
       .then(() => setPassage(null))
-      .catch(() => undefined);
+      .catch(errorShownByHook);
   }
 
   const isMine = (last: StaffStoryChange) =>

@@ -3,8 +3,8 @@
  * writer's preview; the reader uses it from S1-E4-01a; pictures from S1-E3-09; music and video
  * cards from S1-E3-10).
  *
- * Safety (CLAUDE.md rule 8, sanitised before display): react-markdown never renders raw HTML
- * (skipHtml); only the chapter's allowed elements are drawn (paragraphs, headings 2 and 3, bold,
+ * Safety (CLAUDE.md rule 8, sanitised before display), through SafeMarkdown (src/components/ui/):
+ * raw HTML is never rendered; only the chapter's allowed elements are drawn (paragraphs, headings 2 and 3, bold,
  * italic, quote, lists, the scene break, links, line breaks and chapter pictures), anything else
  * is unwrapped to its words; links keep only http, https and mailto addresses and get
  * rel="nofollow ugc noopener" and open in a new tab.
@@ -22,7 +22,7 @@
  * Who uses it: ChapterPreviewDialog (src/features/writing/); the chapter reader.
  */
 import type { Element, ElementContent } from 'hast';
-import Markdown, { type Components, type ExtraProps, type Options } from 'react-markdown';
+import type { Components, ExtraProps, Options } from 'react-markdown';
 import {
   createContext,
   Suspense,
@@ -32,6 +32,8 @@ import {
   type ComponentType,
 } from 'react';
 
+import { SafeMarkdown } from '@/components/ui/SafeMarkdown';
+import { safeMarkdownElements } from '@/components/ui/safeMarkdownElements';
 import type { EmbedView } from '@/features/embeds/api/embeds';
 import { ChapterEmbed } from '@/features/embeds/components/ChapterEmbed';
 import type { PictureView } from '@/features/pictures/api/pictures';
@@ -42,23 +44,6 @@ import { pictureIdFromAddress } from '@/lib/chapter-pictures';
 import { isAllowedLink } from '@/lib/safe-links';
 
 import { numberBlocks } from '../lib/numberBlocks';
-
-/** The elements a chapter may contain (ADR 0005; img only for pictures and cards, S1-E3-09, S1-E3-10). */
-const allowedElements = [
-  'p',
-  'h2',
-  'h3',
-  'strong',
-  'em',
-  'blockquote',
-  'ul',
-  'ol',
-  'li',
-  'hr',
-  'a',
-  'br',
-  'img',
-];
 
 /**
  * Whether an image address is one of ours: a chapter picture or a music or video card.
@@ -71,14 +56,13 @@ function isMediaAddress(address: string): boolean {
 }
 
 /**
- * Keeps an address only when it is a safe link, a chapter picture or a music or video card.
+ * Whether to keep an address: only a safe link, a chapter picture or a music or video card.
  *
  * @param url - the address from the Markdown
- * @returns the address, or '' to drop it
+ * @returns true to keep it; SafeMarkdown drops the rest
  */
-function keepSafeAddress(url: string): string {
-  if (isAllowedLink(url) || isMediaAddress(url)) return url;
-  return '';
+function isKeptAddress(url: string): boolean {
+  return isAllowedLink(url) || isMediaAddress(url);
 }
 
 /**
@@ -276,16 +260,13 @@ export function ChapterText({
   return (
     <div lang={language} className={`tmc-chapter-text ${className}`}>
       <ChapterMediaContext.Provider value={media}>
-        <Markdown
-          skipHtml
-          allowedElements={[...allowedElements, 'h1']}
-          unwrapDisallowed
-          urlTransform={keepSafeAddress}
+        <SafeMarkdown
+          text={markdown}
+          elements={[...safeMarkdownElements.chapter, 'h1']}
+          keepAddress={isKeptAddress}
           rehypePlugins={rehypePlugins}
           components={chapterComponents}
-        >
-          {markdown}
-        </Markdown>
+        />
       </ChapterMediaContext.Provider>
     </div>
   );

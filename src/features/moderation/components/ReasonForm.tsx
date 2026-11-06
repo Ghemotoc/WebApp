@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
 import { TextInput } from '@/components/ui/TextInput';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the form needs. */
 export interface ReasonFormProps {
@@ -47,7 +48,7 @@ export function ReasonForm({
   async function confirm() {
     if (reason.trim() === '') return setProblem(t('reason.missing'));
     setProblem(null);
-    await onConfirm(reason.trim()).catch(() => undefined);
+    await onConfirm(reason.trim()).catch(errorShownByHook);
   }
 
   return (

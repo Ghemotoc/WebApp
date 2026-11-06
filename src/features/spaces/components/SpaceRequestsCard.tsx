@@ -26,6 +26,7 @@ import type { JoinRequestOutcome, Space, SpaceJoinNote, SpaceJoinRequest } from 
 import { useDecideJoinRequest, useJoinRequests } from '../hooks/useSpaces';
 import { spaceFailureText } from '../lib/spaceFailures';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** The words for each outcome. */
 const outcomeKeys: Record<JoinRequestOutcome, string> = {
@@ -122,7 +123,7 @@ export function SpaceRequestsCard({ space }: { space: Space }) {
   function decide(person: ForumPerson, approve: boolean) {
     if (person === null) return;
     setLastName(person.displayName);
-    void deciding.run({ handle: person.handle, approve }).catch(() => undefined);
+    void deciding.run({ handle: person.handle, approve }).catch(errorShownByHook);
   }
 
   const list = requests.data ?? [];

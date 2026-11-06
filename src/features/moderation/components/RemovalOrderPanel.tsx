@@ -20,6 +20,7 @@ import { Textarea } from '@/components/ui/Textarea';
 
 import type { OrderTimeline } from '../api/removalOrders';
 import { useRemovalOrder } from '../hooks/useRemovalOrder';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** The hook's result, passed down once. */
 type OrderState = ReturnType<typeof useRemovalOrder>;
@@ -79,7 +80,7 @@ function DisableForm({ order }: { order: OrderState }) {
     // A refusal is shown from the hook's state below.
     await order
       .disable({ note: note.trim(), messageToPerson: message.trim(), tellUploader })
-      .catch(() => undefined);
+      .catch(errorShownByHook);
   }
 
   return (

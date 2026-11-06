@@ -17,6 +17,7 @@ import { Textarea } from '@/components/ui/Textarea';
 import { ticketReportReasons, type ReportDraft, type ReportReason } from '../api/ticketLinks';
 import type { useTicketLinks } from '../hooks/useTicketLinks';
 import { useSupportTranslation } from '../registerSupportTranslations';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** An empty form; a worry about a minor is the first reason, because it matters most. */
 const emptyDraft: ReportDraft = { address: '', reason: 'threat_to_minor', explanation: '' };
@@ -62,7 +63,7 @@ export function ConvertToReportForm({ state }: { state: ReturnType<typeof useTic
     void state.convert
       .mutateAsync(draft)
       .then(() => setDraft(emptyDraft))
-      .catch(() => undefined);
+      .catch(errorShownByHook);
   }
 
   return (

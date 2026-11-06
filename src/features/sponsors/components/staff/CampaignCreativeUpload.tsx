@@ -18,6 +18,7 @@ import { errorKeyOf } from '../../lib/sponsorWords';
 import { useSponsorTranslation } from '../../registerSponsorTranslations';
 
 import { CampaignPicture } from './CampaignPicture';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** The upload's outcome: uploading, done, or why it failed. */
 function UploadOutcome({ changes }: { changes: ReturnType<typeof useSponsorChanges> }) {
@@ -49,7 +50,7 @@ export function CampaignCreativeUpload({ campaign }: { campaign: StaffCampaign |
     if (file === undefined) return;
     void changes
       .change({ kind: 'upload_creative', campaignId: campaign.id, file })
-      .catch(() => undefined);
+      .catch(errorShownByHook);
   };
   return (
     <div className="flex flex-col gap-3">

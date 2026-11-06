@@ -18,6 +18,7 @@ import type { MarketsAdminState } from '../hooks/useMarketsAdmin';
 import { languageNameOf, openingStatuses } from '../lib/marketNames';
 
 import { SettingsFailureNotice } from './SettingsFailureNotice';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** The legal check's steps, in order. */
 const legalChecks: LegalCheckStatus[] = ['not_started', 'in_progress', 'done'];
@@ -44,7 +45,7 @@ function MarketItem({ market, state, canOpenMarket }: MarketItemProps) {
   const save = (status: OpeningStatus, legalCheck: LegalCheckStatus) =>
     void state
       .change({ kind: 'market', market: { countryCode: market.countryCode, status, legalCheck } })
-      .catch(() => undefined);
+      .catch(errorShownByHook);
   return (
     <li className="flex min-w-0 flex-col gap-2 rounded-card border border-border p-4">
       <h4 className="m-0 text-base font-bold text-heading">{name}</h4>

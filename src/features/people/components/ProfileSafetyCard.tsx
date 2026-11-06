@@ -21,6 +21,7 @@ import type { WriterProfile } from '../api/writerProfile';
 import { useBlock } from '../hooks/useBlock';
 
 import { BlockDialog } from './BlockDialog';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** The card when the reader blocks this person: what that means, and Unblock. */
 function BlockedCard({ profile }: { profile: WriterProfile }) {
@@ -37,7 +38,7 @@ function BlockedCard({ profile }: { profile: WriterProfile }) {
         <Button
           variant="secondary"
           disabled={block.isSaving}
-          onClick={() => void block.change(profile.handle, false).catch(() => undefined)}
+          onClick={() => void block.change(profile.handle, false).catch(errorShownByHook)}
         >
           {t('safety.unblock', { name: profile.displayName })}
         </Button>

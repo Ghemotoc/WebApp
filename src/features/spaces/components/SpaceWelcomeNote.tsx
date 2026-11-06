@@ -14,6 +14,7 @@ import type { Space } from '../api/spaces';
 import { useDismissWelcomeNote } from '../hooks/useSpaceWelcome';
 import { spaceFailureText } from '../lib/spaceFailures';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /**
  * Renders the note.
@@ -41,7 +42,7 @@ export function SpaceWelcomeNote({ space }: { space: Space }) {
       <Button
         className="self-start"
         disabled={dismissing.isRunning}
-        onClick={() => void dismissing.run().catch(() => undefined)}
+        onClick={() => void dismissing.run().catch(errorShownByHook)}
       >
         {t('welcome.gotIt')}
       </Button>

@@ -19,6 +19,7 @@ import { usePlacementChanges } from '../../../hooks/usePlacements';
 import { houseAdFieldsOf, romanianToday } from '../../../lib/placementWords';
 import { useSponsorTranslation } from '../../../registerSponsorTranslations';
 import { ChangeOutcome } from '../ChangeOutcome';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What every field group gets. */
 interface GroupProps {
@@ -123,7 +124,7 @@ export function HouseAdForm({ houseAd, slots, onClose }: HouseAdFormProps) {
     event.preventDefault();
     void changes
       .change({ kind: 'save_house', houseAdId: houseAd?.id ?? null, fields })
-      .catch(() => undefined);
+      .catch(errorShownByHook);
   };
   return (
     <form

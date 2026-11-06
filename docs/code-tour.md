@@ -2,14 +2,191 @@
 
 The map for a new developer: where the app starts, how one click travels to the database and back, where each kind of thing lives, and what to read first. Created by S1-E1-01. Every story that adds a feature, table, edge function or job adds a few lines here in the same pull request (CLAUDE.md, Readable code).
 
-Today the app is a skeleton: one home page, the brand config, translations and CI (S1-E1-01), the database baseline with its seed personas (S1-E1-02), the design tokens, light and night mode, the app shell and the /design components page (S1-E1-03), the Romanian and English interface with the language saved to the account (S1-E1-04), the Legal centre with versioned terms, privacy notice and guidelines (S1-E14-01), and invite-only sign-up with email confirmation (S1-E2-01). Sections below say which later story fills in each part, so you can tell what exists from what is planned.
+Today the app is the whole of Stage 1 (writing, reading, discovery, comments, forums and spaces, messages, reporting and moderation, the admin site and the website CMS); a few pieces wait for decisions or outside accounts and say so where they are described. This file grows by one section per feature, in the order they were built, so use the list below to find your way, then search for a function or file name. For the commonest changes (a new field end to end, a setting, a wording, a migration, finding the live version of a function), go straight to `docs/recipes.md`.
+
+## Start here (read this first)
+
+Read in this order; each file's header comment says what it is for and where things go next.
+
+1. `CLAUDE.md`: the rules, then `docs/architecture.md` sections 1.5 to 1.7 and `docs/definition-of-done.md`.
+2. `index.html` → `src/main.tsx` → `src/app/AppProviders.tsx` → `src/app/router.tsx`: how the app starts.
+3. `src/features/website/components/HelpPageView.tsx` and `hooks/useWebsiteContent.ts`: a small public page, from the URL to the database and back.
+4. `src/config/brand.ts` and `src/lib/i18n.ts`: where the name and the words come from.
+5. `src/locales/ro/common.json` and `src/locales/en/common.json`: the interface text.
+6. `src/styles/tokens.css`, `src/components/ui/README.md` and `/design` in the running app (`npm run dev`, then open /design): how screens look and which components to reuse.
+7. `supabase/README.md`, then `supabase/schema.sql` (the schema as it is now; the migrations in `supabase/migrations/` are its history), `supabase/seed.sql` and `supabase/tests/database/010-profiles.test.sql`: the database side and how a policy is tested.
+8. `.github/workflows/ci.yml`: what has to pass before anything merges, and when the long jobs run (only after a merge to main, Robert, 1 Nov 2026; e2e in 4 shards, QA-3).
+9. `src/features/language/`: the first feature that saves to the database, from drop-down to SQL function (traced in "One round trip: saving the language" below).
+10. `e2e/home.spec.ts`, `e2e/language.spec.ts` and `scripts/`: how the checks prove each rule.
+
+## Contents
+
+Every section, in the order it was built (QA-5, finding R4). Search this list for the feature you are changing; the recipes in `docs/recipes.md` cover the commonest changes step by step.
+
+<details>
+<summary>All sections</summary>
+
+- [Where the app starts](#where-the-app-starts)
+- [How a click travels](#how-a-click-travels)
+- [Where things live](#where-things-live)
+- [The database baseline (S1-E1-02)](#the-database-baseline-s1-e1-02)
+- [One round trip: saving the language (S1-E1-04)](#one-round-trip-saving-the-language-s1-e1-04)
+- [The Legal centre and "accept before posting again" (S1-E14-01)](#the-legal-centre-and-accept-before-posting-again-s1-e14-01)
+- [Signing up (S1-E2-01)](#signing-up-s1-e2-01)
+- [The country from the connection (S1-E2-10)](#the-country-from-the-connection-s1-e2-10)
+- [Checking one's age with Yoti (S1-E2-08a, added 5 Nov 2026; ADR 0010)](#checking-ones-age-with-yoti-s1-e2-08a-added-5-nov-2026-adr-0010)
+- [Parental consent (S1-E2-03, ADR 0011)](#parental-consent-s1-e2-03-adr-0011)
+- [Who may message whom (S1-E9-03)](#who-may-message-whom-s1-e9-03)
+- [Private messages (S1-E9-01)](#private-messages-s1-e9-01)
+- [Block and report inside messages (S1-E9-02)](#block-and-report-inside-messages-s1-e9-02)
+- [Message settings and Delete chat (S1-E9-04)](#message-settings-and-delete-chat-s1-e9-04)
+- [Privacy settings (S1-E13-01)](#privacy-settings-s1-e13-01)
+- [Download my data and the shared Word builder (S1-E13-02)](#download-my-data-and-the-shared-word-builder-s1-e13-02)
+- [Download my stories (S1-E13-05)](#download-my-stories-s1-e13-05)
+  - [The EPUB of a completed story (S1-E13-05, PRIVACY part f)](#the-epub-of-a-completed-story-s1-e13-05-privacy-part-f)
+- [Delete my account (S1-E13-03)](#delete-my-account-s1-e13-03)
+- [The retention clean-ups (S1-E13-04)](#the-retention-clean-ups-s1-e13-04)
+  - [One journey through the whole epic (S1-E13-QA)](#one-journey-through-the-whole-epic-s1-e13-qa)
+- [The Teacher badge (S1-E2-11)](#the-teacher-badge-s1-e2-11)
+- [Onboarding (S1-E2-06)](#onboarding-s1-e2-06)
+- [Google, Apple, Microsoft and passkeys (S1-E2-09)](#google-apple-microsoft-and-passkeys-s1-e2-09)
+- [Logging in (S1-E2-05)](#logging-in-s1-e2-05)
+- [Seeing and changing one's own email address (S1-E2-05, added 25 Oct 2026)](#seeing-and-changing-ones-own-email-address-s1-e2-05-added-25-oct-2026)
+- [An optional birthday (S1-E2-12, added 26 Oct 2026)](#an-optional-birthday-s1-e2-12-added-26-oct-2026)
+- [Adding a public-domain classic (S1-E11-16, part 16a, added 26 Oct 2026)](#adding-a-public-domain-classic-s1-e11-16-part-16a-added-26-oct-2026)
+  - [The classics shelf, research lists, 1 January and typo fixes (S1-E5-06, S1-E11-16 part 16b)](#the-classics-shelf-research-lists-1-january-and-typo-fixes-s1-e5-06-s1-e11-16-part-16b)
+- [When something goes wrong: errors, offline and maintenance (S1-E1-05)](#when-something-goes-wrong-errors-offline-and-maintenance-s1-e1-05)
+- [The admin shell (S1-E11-01)](#the-admin-shell-s1-e11-01)
+- [Reporting something (S1-E10-01)](#reporting-something-s1-e10-01)
+- [The moderation queue (S1-E10-03a)](#the-moderation-queue-s1-e10-03a)
+- [Sanctions, and what a decision does (S1-E10-06)](#sanctions-and-what-a-decision-does-s1-e10-06)
+- [Statements of reasons, removal orders and safeguarding (SAFE-3: S1-E10-04, S1-E10-09, S1-E10-10)](#statements-of-reasons-removal-orders-and-safeguarding-safe-3-s1-e10-04-s1-e10-09-s1-e10-10)
+- [Safety round two: pictures, appeals, moderator mail and limits (SAFE-4)](#safety-round-two-pictures-appeals-moderator-mail-and-limits-safe-4)
+- [Writing to us (S1-E14-04)](#writing-to-us-s1-e14-04)
+- [Reporting without an account and removal orders (S1-E10-02)](#reporting-without-an-account-and-removal-orders-s1-e10-02)
+- [Copied-work reports (S1-E10-08)](#copied-work-reports-s1-e10-08)
+- [The helplines for the reader's country (S1-E10-13a)](#the-helplines-for-the-readers-country-s1-e10-13a)
+- [Staff roles (S1-E2-07a)](#staff-roles-s1-e2-07a)
+- [Usernames and pen names (S1-E2-04)](#usernames-and-pen-names-s1-e2-04)
+- [Creating a story (S1-E3-01)](#creating-a-story-s1-e3-01)
+- [Story settings, deletion and the story page (S1-E3-05)](#story-settings-deletion-and-the-story-page-s1-e3-05)
+- [Ratings and labels (S1-E3-06)](#ratings-and-labels-s1-e3-06)
+- [The chapter editor and the autosave (S1-E3-02a)](#the-chapter-editor-and-the-autosave-s1-e3-02a)
+- [Reading a chapter (S1-E4-01a)](#reading-a-chapter-s1-e4-01a)
+- [A shared link, before and after it opens (S1-E4-04)](#a-shared-link-before-and-after-it-opens-s1-e4-04)
+- [A writer's profile, blocks and follows (S1-E5-05, S1-E6-05)](#a-writers-profile-blocks-and-follows-s1-e5-05-s1-e6-05)
+- [Likes, comments, reactions and downvotes on a chapter (S1-E6-03, S1-E6-01, S1-E6-02, S1-E6-04)](#likes-comments-reactions-and-downvotes-on-a-chapter-s1-e6-03-s1-e6-01-s1-e6-02-s1-e6-04)
+- [Notifications (S1-E7-01)](#notifications-s1-e7-01)
+- [Notification emails (S1-E7-02)](#notification-emails-s1-e7-02)
+- [Discover and the story lists (S1-E5-01, S1-E5-09, S1-E5-02)](#discover-and-the-story-lists-s1-e5-01-s1-e5-09-s1-e5-02)
+  - [Popularity (S1-E5-03)](#popularity-s1-e5-03)
+- [The March test numbers (S1-E15-02)](#the-march-test-numbers-s1-e15-02)
+- [Live numbers and the compliance log (S1-E11-04)](#live-numbers-and-the-compliance-log-s1-e11-04)
+- [Epic S1-E1 at a glance (checked by S1-E1-QA)](#epic-s1-e1-at-a-glance-checked-by-s1-e1-qa)
+- [Epic S1-E2 at a glance (checked by S1-E2-QA)](#epic-s1-e2-at-a-glance-checked-by-s1-e2-qa)
+- [Epic S1-E3 at a glance (checked by S1-E3-QA)](#epic-s1-e3-at-a-glance-checked-by-s1-e3-qa)
+- [Demo content (Lane B, 23 Oct 2026)](#demo-content-lane-b-23-oct-2026)
+- [Epic S1-E4 at a glance (checked by S1-E4-QA)](#epic-s1-e4-at-a-glance-checked-by-s1-e4-qa)
+- [Epic S1-E6 at a glance (checked by S1-E6-QA)](#epic-s1-e6-at-a-glance-checked-by-s1-e6-qa)
+- [Epic S1-E7 at a glance (checked by S1-E7-QA)](#epic-s1-e7-at-a-glance-checked-by-s1-e7-qa)
+- [Epic S1-E5 at a glance (checked by S1-E5-QA)](#epic-s1-e5-at-a-glance-checked-by-s1-e5-qa)
+- [Epic S1-E15 at a glance (checked by S1-E15-QA)](#epic-s1-e15-at-a-glance-checked-by-s1-e15-qa)
+- [Epic S1-E10 at a glance (checked by S1-E10-QA)](#epic-s1-e10-at-a-glance-checked-by-s1-e10-qa)
+- [Content settings, markets and languages (S1-E11-03, S1-E11-05; CMS-1a)](#content-settings-markets-and-languages-s1-e11-03-s1-e11-05-cms-1a)
+- [The website CMS, notices and help (S1-E11-06, S1-E11-10, S1-E11-12, S1-E5-08; CMS-1b)](#the-website-cms-notices-and-help-s1-e11-06-s1-e11-10-s1-e11-12-s1-e5-08-cms-1b)
+- [Interface text and email templates (S1-E11-18, S1-E11-19; CMS-1c)](#interface-text-and-email-templates-s1-e11-18-s1-e11-19-cms-1c)
+- [Seasonal doodles (S1-E11-11, S1-E5-07; CMS-1d)](#seasonal-doodles-s1-e11-11-s1-e5-07-cms-1d)
+- [Logo and emblem (BRAND-1a, BRAND-1b)](#logo-and-emblem-brand-1a-brand-1b)
+- [Landing pages (S1-E11-14; CONTESTS-13a1)](#landing-pages-s1-e11-14-contests-13a1)
+  - [Pictures and featured stories (CONTESTS-13a2a)](#pictures-and-featured-stories-contests-13a2a)
+  - [Remind me (CONTESTS-13a2b)](#remind-me-contests-13a2b)
+  - [Link previews and links to landing pages (CONTESTS-13a2c)](#link-previews-and-links-to-landing-pages-contests-13a2c)
+- [Contests (S1-E11-15; CONTESTS-13b1)](#contests-s1-e11-15-contests-13b1)
+  - [Entries and disqualifying (CONTESTS-13b2a)](#entries-and-disqualifying-contests-13b2a)
+  - [Judging, results and prizes (CONTESTS-13b2b)](#judging-results-and-prizes-contests-13b2b)
+  - [Contest certificates (CONTESTS-13b2c)](#contest-certificates-contests-13b2c)
+- [Tags: approval and names in each language (CMS-1e)](#tags-approval-and-names-in-each-language-cms-1e)
+  - [Rank badges on the cover (CMS-1g)](#rank-badges-on-the-cover-cms-1g)
+- [Search (S1-E5-04)](#search-s1-e5-04)
+- [The library and the reader's place (S1-E4-03; READ-4a)](#the-library-and-the-readers-place-s1-e4-03-read-4a)
+- [Reading settings (S1-E4-02; READ-4b)](#reading-settings-s1-e4-02-read-4b)
+- [Reading place and comfort (IDEAS-1 part a)](#reading-place-and-comfort-ideas-1-part-a)
+- [The private reading streak (IDEAS-1 part b)](#the-private-reading-streak-ideas-1-part-b)
+- [Readers to writers (IDEAS-1 part c)](#readers-to-writers-ideas-1-part-c)
+- [Lines and stops, for writers (IDEAS-1 part d)](#lines-and-stops-for-writers-ideas-1-part-d)
+- [Paragraph links and "Most shared this week" (IDEAS-1 part e)](#paragraph-links-and-most-shared-this-week-ideas-1-part-e)
+- [Library shelves in Download my data (IDEAS-1 part f)](#library-shelves-in-download-my-data-ideas-1-part-f)
+- [Sharing a chapter and the quote card (S1-E4-05, S1-E4-07; READ-4c)](#sharing-a-chapter-and-the-quote-card-s1-e4-05-s1-e4-07-read-4c)
+- [Forum categories, forums and subforums (S1-E8-01; FORUMS-1a)](#forum-categories-forums-and-subforums-s1-e8-01-forums-1a)
+- [Forum threads and posts (S1-E8-02; FORUMS-1b)](#forum-threads-and-posts-s1-e8-02-forums-1b)
+- [Forum quotes and the quick reply (S1-E8-03; FORUMS-1c)](#forum-quotes-and-the-quick-reply-s1-e8-03-forums-1c)
+- [Read and unread in the forums (S1-E8-04; FORUMS-1d)](#read-and-unread-in-the-forums-s1-e8-04-forums-1d)
+- [Sticky and locked threads, and "Don't bump" (S1-E8-05; FORUMS-1e)](#sticky-and-locked-threads-and-dont-bump-s1-e8-05-forums-1e)
+- [Forum search (S1-E8-10; FORUMS-1f)](#forum-search-s1-e8-10-forums-1f)
+- [Sharing a passage or a picture (S1-E4-11; WRITE-5e)](#sharing-a-passage-or-a-picture-s1-e4-11-write-5e)
+- [Cookieless analytics and the event catalogue (S1-E15-01, S1-E15-03; READ-4f)](#cookieless-analytics-and-the-event-catalogue-s1-e15-01-s1-e15-03-read-4f)
+- [Epic S1-E11 at a glance (checked by S1-E11-QA)](#epic-s1-e11-at-a-glance-checked-by-s1-e11-qa)
+- [Doodles through the tokens (Lane B, 23 Oct 2026)](#doodles-through-the-tokens-lane-b-23-oct-2026)
+- [Comments on a paragraph (S1-E6-06; WRITE-5f)](#comments-on-a-paragraph-s1-e6-06-write-5f)
+- [Story Atlas: a story's plan (S1-E17-01 to S1-E17-06; ATLAS-a)](#story-atlas-a-storys-plan-s1-e17-01-to-s1-e17-06-atlas-a)
+- [Story Atlas: characters (S1-E17-08 to S1-E17-13; ATLAS-b)](#story-atlas-characters-s1-e17-08-to-s1-e17-13-atlas-b)
+- [Story Atlas: connections (S1-E17-14 to S1-E17-16; ATLAS-c)](#story-atlas-connections-s1-e17-14-to-s1-e17-16-atlas-c)
+- [Story Atlas: the bible (S1-E17-17 and S1-E17-18; ATLAS-d)](#story-atlas-the-bible-s1-e17-17-and-s1-e17-18-atlas-d)
+- [Story Atlas: chapter planning and the writing view (S1-E17-23 to S1-E17-26; ATLAS-e)](#story-atlas-chapter-planning-and-the-writing-view-s1-e17-23-to-s1-e17-26-atlas-e)
+- [Story Atlas: the storyline (S1-E17-19 to S1-E17-22; ATLAS-f)](#story-atlas-the-storyline-s1-e17-19-to-s1-e17-22-atlas-f)
+- [Story Atlas: questions and ideas, and marketing (S1-E17-27 to S1-E17-29; ATLAS-g)](#story-atlas-questions-and-ideas-and-marketing-s1-e17-27-to-s1-e17-29-atlas-g)
+- [Story Atlas: search and [[Name]] cross-links (S1-E17-30, S1-E17-31 and S1-E17-12; ATLAS-h)](#story-atlas-search-and-name-cross-links-s1-e17-30-s1-e17-31-and-s1-e17-12-atlas-h)
+- [Story Atlas for readers (S1-E17-32 to S1-E17-35; ATLAS-i)](#story-atlas-for-readers-s1-e17-32-to-s1-e17-35-atlas-i)
+- [Spaces people create (S1-E8-06; FORUMS-2a)](#spaces-people-create-s1-e8-06-forums-2a)
+- [Space moderators (S1-E8-07; FORUMS-2b)](#space-moderators-s1-e8-07-forums-2b)
+- [Space banners, join notifications and search by space (S1-E8-06, S1-E8-10; FORUMS-2c)](#space-banners-join-notifications-and-search-by-space-s1-e8-06-s1-e8-10-forums-2c)
+- [Private class spaces and invite codes (S1-E8-11; CLASSES-a)](#private-class-spaces-and-invite-codes-s1-e8-11-classes-a)
+  - [The end of the school year, the waiting list and typing a code (CLASSES-b)](#the-end-of-the-school-year-the-waiting-list-and-typing-a-code-classes-b)
+  - [Stories shared only with a class (CLASSES-c)](#stories-shared-only-with-a-class-classes-c)
+  - [The staff pilot set-up and archiving a class (CLASSES-d)](#the-staff-pilot-set-up-and-archiving-a-class-classes-d)
+  - [Writing certificates (CLASSES-e; S1-E8-12)](#writing-certificates-classes-e-s1-e8-12)
+- [Forum signatures and moderators' change requests (S1-E8-08; FORUMS-2d)](#forum-signatures-and-moderators-change-requests-s1-e8-08-forums-2d)
+- [Writer ranks (S1-E8-09; FORUMS-2e)](#writer-ranks-s1-e8-09-forums-2e)
+  - [One journey through the whole epic (S1-E8-QA)](#one-journey-through-the-whole-epic-s1-e8-qa)
+- [Every story in the admin site (S1-E11-07; ADMIN-2a)](#every-story-in-the-admin-site-s1-e11-07-admin-2a)
+- [Staff change a story (S1-E11-08, part 08a; ADMIN-2b1)](#staff-change-a-story-s1-e11-08-part-08a-admin-2b1)
+- [A story's version history, Restore and removing a passage (S1-E11-08, part 08b; ADMIN-2b2)](#a-storys-version-history-restore-and-removing-a-passage-s1-e11-08-part-08b-admin-2b2)
+- [Staff hide a story's title or cover (S1-E11-08; ADMIN-2b3)](#staff-hide-a-storys-title-or-cover-s1-e11-08-admin-2b3)
+- [Data requests: the log, the deadline and the identity check (S1-E11-09, part 09a; ADMIN-2c1)](#data-requests-the-log-the-deadline-and-the-identity-check-s1-e11-09-part-09a-admin-2c1)
+- [Data requests: building and sending the copy (S1-E11-09, part 09a; ADMIN-2c2; ADR 0012)](#data-requests-building-and-sending-the-copy-s1-e11-09-part-09a-admin-2c2-adr-0012)
+- [Data requests: the parent's or guardian's path for under-16s (S1-E11-09 criterion 5; ADMIN-2c3)](#data-requests-the-parents-or-guardians-path-for-under-16s-s1-e11-09-criterion-5-admin-2c3)
+- [Ad slots on public pages (S1-E12-01; SPONSORS-a1)](#ad-slots-on-public-pages-s1-e12-01-sponsors-a1)
+- [Sponsor campaigns (S1-E12-02; SPONSORS-b1)](#sponsor-campaigns-s1-e12-02-sponsors-b1)
+- [Staff › Sponsors (S1-E12-02; SPONSORS-b2)](#staff--sponsors-s1-e12-02-sponsors-b2)
+- [A sponsor's ad on the pages (S1-E12-02; SPONSORS-b3)](#a-sponsors-ad-on-the-pages-s1-e12-02-sponsors-b3)
+- [Sponsor reports (S1-E12-03; SPONSORS-c)](#sponsor-reports-s1-e12-03-sponsors-c)
+- [The ad network (S1-E12-04; SPONSORS-d; ADR 0014)](#the-ad-network-s1-e12-04-sponsors-d-adr-0014)
+- [Booking sponsors into slots and our own house ads (S1-E12-05; SPONSORS-e1)](#booking-sponsors-into-slots-and-our-own-house-ads-s1-e12-05-sponsors-e1)
+- [Staff › Sponsors › Placements (S1-E12-05; SPONSORS-e2)](#staff--sponsors--placements-s1-e12-05-sponsors-e2)
+- [Why a story is 16+ or 18+, and the network ads it keeps off (S1-E3-06, S1-E12-04; SPONSORS-f)](#why-a-story-is-16-or-18-and-the-network-ads-it-keeps-off-s1-e3-06-s1-e12-04-sponsors-f)
+- [Epic check: banners and sponsor slots (S1-E12-QA)](#epic-check-banners-and-sponsor-slots-s1-e12-qa)
+- [Who can read a story: Public, Unlisted or Private (NEW-1)](#who-can-read-a-story-public-unlisted-or-private-new-1)
+- [Downloads and privacy: the guide, saving stories before deleting, how long we keep things (IDEAS-2a)](#downloads-and-privacy-the-guide-saving-stories-before-deleting-how-long-we-keep-things-ideas-2a)
+- [A sample EPUB for beta readers and "About the writer" (IDEAS-2b)](#a-sample-epub-for-beta-readers-and-about-the-writer-ideas-2b)
+- [An email when a private message arrives, with quiet hours (IDEAS-2c1)](#an-email-when-a-private-message-arrives-with-quiet-hours-ideas-2c1)
+- [A kind "No thanks" and what a teen's parent agreed to (IDEAS-2c2)](#a-kind-no-thanks-and-what-a-teens-parent-agreed-to-ideas-2c2)
+- [The furthest place and a Canva cover that arrives by itself (IDEAS-2d)](#the-furthest-place-and-a-canva-cover-that-arrives-by-itself-ideas-2d)
+- [Picture links show the picture in chat previews (IDEAS-2f)](#picture-links-show-the-picture-in-chat-previews-ideas-2f)
+- [A notice when a writer's rank goes up, and the rank on story cards (IDEAS-3a)](#a-notice-when-a-writers-rank-goes-up-and-the-rank-on-story-cards-ideas-3a)
+- [A printable class invite sheet and "Who has replied" (IDEAS-3b)](#a-printable-class-invite-sheet-and-who-has-replied-ideas-3b)
+- [The class link as the invitation (IDEAS-3c)](#the-class-link-as-the-invitation-ideas-3c)
+- [Joining spaces: a welcome note and a note with a request (IDEAS-3d)](#joining-spaces-a-welcome-note-and-a-note-with-a-request-ideas-3d)
+- [Help threads with an answer, and threads from a chapter passage (IDEAS-3f)](#help-threads-with-an-answer-and-threads-from-a-chapter-passage-ideas-3f)
+- [Handing a space over to a moderator (IDEAS-3e)](#handing-a-space-over-to-a-moderator-ideas-3e)
+
+</details>
 
 ## Where the app starts
 
 1. **`index.html`** is the only HTML page. The browser loads it first. Its `<head>` runs `public/theme-init.js`, which picks light or night mode before anything draws. Then `public/zod-init.js` sets zod to work without eval, before any schema is built (QA-1c). It holds an empty `<div id="root">` and loads `src/main.tsx`. Its `<title>` is filled in from the brand config at build time by `vite.config.ts`.
 2. **`src/main.tsx`** starts the app in four steps: find the root element, start the translations (`src/lib/i18n.ts`) in the language this browser last chose, or Romanian on a first visit (`src/lib/language-preference.ts`), build the router from `src/app/router.tsx`, and draw everything inside `src/app/AppProviders.tsx`.
 3. **`src/app/AppProviders.tsx`** wraps every screen with the shared services: TanStack Query (the data cache that hooks use to talk to Supabase) and i18next (translations).
-4. **`src/app/router.tsx`** lists every address and the page it shows. Every public page sits inside **`src/app/shell/AppLayout.tsx`**: a "Skip to content" link, the `TopBar`, the page in `<main>`, then the `Footer` with the Device / Light / Night drop-down. The English / Română drop-down sits in both the top bar and the footer, and `useAccountLanguage` shows a signed-in person's account language (S1-E1-04). Today: `/` shows the website home page (`WebsiteHomePage`, text from the CMS, S1-E5-08); `/design` shows every component (development and staging only); any other address goes back to `/` until S1-E1-05 adds a 404 page.
+4. **`src/app/router.tsx`** lists every address and the page it shows. Every public page sits inside **`src/app/shell/AppLayout.tsx`**: a "Skip to content" link, the `TopBar`, the page in `<main>`, then the `Footer` with the Device / Light / Night drop-down. The English / Română drop-down sits in both the top bar and the footer, and `useAccountLanguage` shows a signed-in person's account language (S1-E1-04). Today: `/` shows the website home page (`WebsiteHomePage`, text from the CMS, S1-E5-08); `/design` shows every component (development and staging only); any other address shows "We can't find that page" (`NotFoundPage`, S1-E1-05).
 5. **`src/features/<feature>/components/<Page>.tsx`** is the page itself, for example `src/features/website/components/WebsiteHomePage.tsx`. Pages build on the shared components in `src/components/ui/`.
 
 The product name, site, email addresses and social handle come from **`src/config/brand.ts`** only (decided 17 Oct 2026, 12:47). Translations say `{{productName}}` and i18next fills it in from that file. A test (`scripts/find-hard-coded-brand-values.test.ts`) fails if any of those values is typed anywhere else in `src/`, `supabase/`, `public/`, `e2e/` or `index.html`.
@@ -50,6 +227,9 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `src/main.tsx`, `src/app/` | Start-up, providers and the route list | S1-E1-01 |
 | `src/app/shell/`, `src/app/navigation.ts` | The frame around pages: top bar, footer, staff bar, and the links each one shows (only pages that exist); `NotFoundPage.tsx` for any unknown address | S1-E1-03, S1-E2-QA |
 | `src/components/ui/`, `src/components/icons/` | Shared components (buttons, drop-down, fields, pills, chips, cards, shelves, notices, ad slots) and the few plain icons; see its README | S1-E1-03 |
+| `src/components/ui/SafeMarkdown.tsx`, `safeMarkdownElements.ts` | The one renderer for text a member wrote (comments, forum posts, Story world entries, chapters): no raw HTML, only the preset's elements, safe links only. Its SQL partners are `has_html_tag()` and `has_unsafe_link()`, which every `check_*_text()` calls on save | QA-5 |
+| `src/lib/namespace-translations.ts` | `createNamespaceTranslations()`: the register function and hook every feature's own text file uses | QA-5 |
+| `scripts/mutation/` | The SQL mutation script, run by hand: it breaks a safety rule on purpose and checks a database test notices | QA-3 |
 | `src/features/theme/` | Light and night mode: the footer drop-down and the hook that applies it | S1-E1-03 |
 | `src/features/language/` | The English / Română drop-downs, the hooks that switch and save the language, and the Supabase calls for `profiles.locale` | S1-E1-04 |
 | `src/features/reporting/` | The shared Report button and dialog (`<ReportButton>`), the one report form; see its README and architecture 1.7.11 | S1-E10-01 |
@@ -103,7 +283,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 
 **Where the app runs.** Locally: Vite's dev server plus the Supabase CLI in Docker. Staging: Cloudflare Pages project `ghemotoc` builds `main` (`npm run build`, output `dist`) and gives each pull request a preview link; Supabase's GitHub integration applies migrations to the staging project. Production: a tagged release, approved in GitHub (`.github/workflows/release-production.yml`, switched off until a production project exists).
 
-**Checks.** `npm run checks` (`scripts/run-all-checks.sh`) runs `npm run lint`, `npm run typecheck`, `npm run types:check`, `npm test`, a reset of the local database, `npx supabase test db`, `npm run test:e2e` and `npm run i18n:check`; after a build, also run `npm run scan:bundle`. The reset keeps the database tests independent of what ran before, and e2e puts the seed personas' language back when it ends (`e2e/support/global-teardown.ts`). Run them all locally before you mark a pull request ready for review. CI (`.github/workflows/ci.yml`) runs lint, types, unit tests, i18n and the build on every push to a pull request, drafts included. The two long jobs, database and e2e (about 19 minutes), are skipped on pull requests and run after every merge to main, so the full local run before merging is what guards main. A skipped job counts as passed for the merge rules, so open pull requests as drafts and mark them ready once the local run is green (Robert, 1 Nov 2026: GitHub Actions minutes; before that the CTO's rule of 24 Oct 2026 also ran them on the pull request).
+**Checks.** `npm run checks` (`scripts/run-all-checks.sh`) runs `npm run lint`, `npm run typecheck`, `npm run types:check`, `npm test`, a reset of the local database, `npx supabase test db`, `npm run test:e2e` and `npm run i18n:check`; after a build, also run `npm run scan:bundle`. The reset keeps the database tests independent of what ran before, and e2e puts the seed personas' language back when it ends (`e2e/support/global-teardown.ts`). Run them all locally before you mark a pull request ready for review. CI (`.github/workflows/ci.yml`) runs lint, types, unit tests, i18n and the build on every push to a pull request, drafts included. The two long jobs, database (about a minute) and e2e (over 2 hours on one machine, so it runs in 4 shards, QA-3), are skipped on pull requests and run after every merge to main, so the full local run before merging is what guards main. A skipped job counts as passed for the merge rules, so open pull requests as drafts and mark them ready once the local run is green (Robert, 1 Nov 2026: GitHub Actions minutes; before that the CTO's rule of 24 Oct 2026 also ran them on the pull request).
 
 ## The database baseline (S1-E1-02)
 
@@ -1036,7 +1216,8 @@ first_published_at and get_story_page() (S1-E3-05) serves the public page (ADR 0
   ▼
 update_my_story(): is_active_member(), my_live_story_id() (the caller's own live story),
   check_story_basics() (shared with create_story()), check_story_cover(), set_story_tags();
-  the slug never changes                                           …_s1_e3_05_story_settings.sql
+  the slug never changes          (built in s1_e3_05; later migrations replaced it: the live
+                                   version is in supabase/schema.sql)
 delete_my_story(): deleted_at = now(); restore within content_purge_days (30);
   purge_deleted_stories() runs nightly (pg_cron) and skips content_is_held_for_moderation()
   ▼
@@ -1866,21 +2047,6 @@ CI: npm run doodles:check  →  fails on any raw hex, a fallback that drifted or
 - When new doodles arrive from the canvas: drop the files in `design/assets/`, run `npm run doodles:tokens`. A colour with no token stops the script and names the file; add the token to both theme blocks in `tokens.css` and to the map in the script, then run it again.
 - Tests: `scripts/doodle-tokens.test.ts` (the rewrite and the check), `src/features/design-system/components/DoodleSection.test.tsx` (three samples resolve in both themes), `e2e/doodles.spec.ts` (the colours the browser really draws).
 - Night values are a proposal signed off on the /design sheet; change them in `tokens.css` only, never in the SVG files.
-
-## Start here
-
-Read in this order; each file's header comment says what it is for and where things go next.
-
-1. `CLAUDE.md`: the rules, then `docs/architecture.md` sections 1.5 to 1.7 and `docs/definition-of-done.md`.
-2. `index.html` → `src/main.tsx` → `src/app/AppProviders.tsx` → `src/app/router.tsx`: how the app starts.
-3. `src/features/website/components/HelpPageView.tsx` and `hooks/useWebsiteContent.ts`: a small public page, from the URL to the database and back.
-4. `src/config/brand.ts` and `src/lib/i18n.ts`: where the name and the words come from.
-5. `src/locales/ro/common.json` and `src/locales/en/common.json`: the interface text.
-6. `src/styles/tokens.css`, `src/components/ui/README.md` and `/design` in the running app (`npm run dev`, then open /design): how screens look and which components to reuse.
-7. `supabase/README.md`, then `supabase/migrations/` in order, `supabase/seed.sql` and `supabase/tests/database/010-profiles.test.sql`: the database side and how a policy is tested.
-8. `.github/workflows/ci.yml`: what has to pass before anything merges, and when the long jobs run (not on drafts, not for documentation-only changes).
-9. `src/features/language/`: the first feature that saves to the database, from drop-down to SQL function (traced above).
-10. `e2e/home.spec.ts`, `e2e/language.spec.ts` and `scripts/`: how the checks prove each rule.
 
 ## Comments on a paragraph (S1-E6-06; WRITE-5f)
 

@@ -26,6 +26,7 @@ import { tagsFromText } from '../../../lib/campaignFields';
 import { emptyBookingFields, romanianToday } from '../../../lib/placementWords';
 import { useSponsorTranslation } from '../../../registerSponsorTranslations';
 import { ChangeOutcome } from '../ChangeOutcome';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the form needs from the section. */
 interface BookSlotFormProps {
@@ -204,7 +205,7 @@ export function BookSlotForm(props: BookSlotFormProps) {
   // Step 3: "Check and book" sends it; the server refuses a clash and says with what.
   const book = (event: FormEvent) => {
     event.preventDefault();
-    void changes.change({ kind: 'book', campaignId, fields }).catch(() => undefined);
+    void changes.change({ kind: 'book', campaignId, fields }).catch(errorShownByHook);
   };
   return (
     <form

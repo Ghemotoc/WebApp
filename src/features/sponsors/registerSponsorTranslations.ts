@@ -7,30 +7,26 @@
  * with the campaign, never in these files.
  * Who calls it: every component in this folder, through useSponsorTranslation().
  */
-import type { i18n as I18nInstance } from 'i18next';
-import { useTranslation } from 'react-i18next';
-
+import { createNamespaceTranslations } from '@/lib/namespace-translations';
 import englishSponsors from '@/locales/en/sponsors.json';
 import romanianSponsors from '@/locales/ro/sponsors.json';
+
+const sponsorTranslations = createNamespaceTranslations(
+  'sponsors',
+  romanianSponsors,
+  englishSponsors,
+);
 
 /**
  * Registers the texts once; calling it again does nothing.
  *
  * @param i18n - the app's translation instance (from useTranslation())
  */
-export function registerSponsorTranslations(i18n: I18nInstance): void {
-  if (i18n.hasResourceBundle('ro', 'sponsors')) return;
-  i18n.addResourceBundle('ro', 'sponsors', romanianSponsors);
-  i18n.addResourceBundle('en', 'sponsors', englishSponsors);
-}
+export const registerSponsorTranslations = sponsorTranslations.register;
 
 /**
  * The translation hook for this folder: registers the texts first, then reads them.
  *
  * @returns useTranslation('sponsors')
  */
-export function useSponsorTranslation() {
-  const { i18n } = useTranslation();
-  registerSponsorTranslations(i18n);
-  return useTranslation('sponsors');
-}
+export const useSponsorTranslation = sponsorTranslations.useNamespaceTranslation;

@@ -16,6 +16,7 @@ import { useSponsorChanges } from '../../hooks/useSponsorsAdmin';
 import { useSponsorTranslation } from '../../registerSponsorTranslations';
 
 import { ChangeOutcome } from './ChangeOutcome';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** The add form. */
 function AddSponsorForm() {
@@ -32,7 +33,7 @@ function AddSponsorForm() {
         setName('');
         setWebsiteUrl('');
       })
-      .catch(() => undefined);
+      .catch(errorShownByHook);
   };
   return (
     <form onSubmit={submit} className="flex flex-col gap-3">

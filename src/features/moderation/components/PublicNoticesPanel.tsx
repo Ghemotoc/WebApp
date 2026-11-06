@@ -22,6 +22,7 @@ import { useQueueNotices } from '../hooks/usePublicNotices';
 import { useAcknowledgeAlert } from '../hooks/useRemovalOrder';
 
 import { ReasonForm } from './ReasonForm';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** How far back the orders list looks. */
 const recentOrderDays = 7;
@@ -74,7 +75,7 @@ function AlertState({ alert }: { alert: OnCallAlert }) {
         variant="secondary"
         disabled={isAcknowledging}
         aria-label={t('orders.acknowledgeLabel', { reference: alert.noticeReference ?? '' })}
-        onClick={() => void acknowledge(alert.id).catch(() => undefined)}
+        onClick={() => void acknowledge(alert.id).catch(errorShownByHook)}
       >
         {t('orders.acknowledge')}
       </Button>

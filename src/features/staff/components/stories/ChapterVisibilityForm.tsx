@@ -20,6 +20,7 @@ import { completeReason, emptyReason } from '../../lib/staffStorySettingsDiff';
 
 import { StoryChangeFeedback } from './StoryChangeFeedback';
 import { StoryChangeReasonFields } from './StoryChangeReasonFields';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the form needs. */
 export interface ChapterVisibilityFormProps {
@@ -49,7 +50,7 @@ export function ChapterVisibilityForm({ chapter, changer }: ChapterVisibilityFor
     await changer
       .change({ kind: 'chapter', chapterId: chapter.id, visibility: wanted, reason: complete })
       .then(() => setIsOpen(false))
-      .catch(() => undefined);
+      .catch(errorShownByHook);
   }
 
   const isMine = (last: StaffStoryChange) =>

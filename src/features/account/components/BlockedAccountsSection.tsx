@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { useBlock } from '@/features/people/hooks/useBlock';
 import { useMyBlockedAccounts } from '@/features/people/hooks/useMyBlockedAccounts';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** The list, its empty state or its error. */
 function BlockedList() {
@@ -42,7 +43,7 @@ function BlockedList() {
               variant="secondary"
               aria-label={t('settings.unblockLabel', { handle: account.handle })}
               disabled={block.isSaving}
-              onClick={() => void block.change(account.handle, false).catch(() => undefined)}
+              onClick={() => void block.change(account.handle, false).catch(errorShownByHook)}
             >
               {t('settings.unblock')}
             </Button>

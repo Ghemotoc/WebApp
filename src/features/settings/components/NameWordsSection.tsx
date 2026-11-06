@@ -15,6 +15,7 @@ import { TextInput } from '@/components/ui/TextInput';
 import type { NameRulesState } from '../hooks/useNameRules';
 
 import { SettingsSection } from './SettingsSection';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the section needs: the shared hook's state and the chosen list and search. */
 interface NameWordsSectionProps {
@@ -41,7 +42,7 @@ function AddNameWord({ state, language }: { state: NameRulesState; language: str
     void state
       .change({ kind: 'add_word', language, word: word.trim(), matchRule: 'anywhere' })
       .then(() => setWord(''))
-      .catch(() => undefined);
+      .catch(errorShownByHook);
   }
 
   return (
@@ -110,7 +111,7 @@ export function NameWordsSection(props: NameWordsSectionProps) {
               disabled={state.isChanging}
               aria-label={t('words.remove', { word: word.word })}
               onClick={() =>
-                void state.change({ kind: 'remove_word', id: word.id }).catch(() => undefined)
+                void state.change({ kind: 'remove_word', id: word.id }).catch(errorShownByHook)
               }
             >
               {word.word} ×

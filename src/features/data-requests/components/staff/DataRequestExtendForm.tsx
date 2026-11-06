@@ -18,6 +18,7 @@ import { extensionChoices } from '../../lib/dataRequestDates';
 import { useDataRequestsTranslation } from '../../registerDataRequestsTranslations';
 
 import { DataRequestSection } from './DataRequestSection';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the form needs. */
 interface DataRequestExtendFormProps {
@@ -49,7 +50,7 @@ function useExtendFields(choices: Array<1 | 2>, onExtend: DataRequestExtendFormP
       onExtend(months, reason)
         .then(() => setReason(''))
         // The failure is shown on the page from the hook.
-        .catch(() => undefined);
+        .catch(errorShownByHook);
     },
   };
 }

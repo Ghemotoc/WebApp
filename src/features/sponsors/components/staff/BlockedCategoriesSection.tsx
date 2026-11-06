@@ -18,6 +18,7 @@ import { useSponsorChanges } from '../../hooks/useSponsorsAdmin';
 import { useSponsorTranslation } from '../../registerSponsorTranslations';
 
 import { ChangeOutcome } from './ChangeOutcome';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** Remove with a reason, for a category staff added. */
 function RemoveCategory({ category, label }: { category: BlockedCategory; label: string }) {
@@ -47,7 +48,7 @@ function RemoveCategory({ category, label }: { category: BlockedCategory; label:
           onClick={() =>
             void changes
               .change({ kind: 'remove_blocked', key: category.key, reason })
-              .catch(() => undefined)
+              .catch(errorShownByHook)
           }
         >
           {t('blocked.confirmRemove')}
@@ -68,7 +69,7 @@ function AddCategoryForm() {
     void changes
       .change({ kind: 'add_blocked', ...draft })
       .then(() => setDraft({ key: '', labelRo: '', labelEn: '' }))
-      .catch(() => undefined);
+      .catch(errorShownByHook);
   };
   const fields = [
     { name: 'key', lang: undefined },

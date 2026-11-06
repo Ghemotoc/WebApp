@@ -14,6 +14,7 @@ import { Notice } from '@/components/ui/Notice';
 
 import type { MessagesFailure, RequestAnswer } from '../api/messages';
 import { useMessagesTranslation } from '../registerMessagesTranslations';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the actions need. */
 export interface RequestActionsProps {
@@ -31,7 +32,7 @@ export interface RequestActionsProps {
 export function RequestActions({ otherName, isAnswering, failure, onAnswer }: RequestActionsProps) {
   const { t } = useMessagesTranslation();
   /** Sends one answer; a refusal shows below, from the hook's state. */
-  const answer = (chosen: RequestAnswer) => void onAnswer(chosen).catch(() => undefined);
+  const answer = (chosen: RequestAnswer) => void onAnswer(chosen).catch(errorShownByHook);
   return (
     <div className="flex flex-col gap-3 border-t border-border p-4">
       <h3 className="m-0 text-base font-semibold text-heading">

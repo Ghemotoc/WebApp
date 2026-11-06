@@ -4,18 +4,19 @@
  * out of the reader's bundle, as the tag queue's does.
  * Who calls it: ForumsAdminPage, before it renders anything.
  */
-import type { i18n as I18nInstance } from 'i18next';
-
+import { createNamespaceTranslations } from '@/lib/namespace-translations';
 import englishForumsAdmin from '@/locales/en/forumsAdmin.json';
 import romanianForumsAdmin from '@/locales/ro/forumsAdmin.json';
+
+const forumsAdminTranslations = createNamespaceTranslations(
+  'forumsAdmin',
+  romanianForumsAdmin,
+  englishForumsAdmin,
+);
 
 /**
  * Registers the staff forum texts once; calling it again does nothing.
  *
  * @param i18n - the app's translation instance (from useTranslation())
  */
-export function registerForumsAdminTranslations(i18n: I18nInstance): void {
-  if (i18n.hasResourceBundle('ro', 'forumsAdmin')) return;
-  i18n.addResourceBundle('ro', 'forumsAdmin', romanianForumsAdmin);
-  i18n.addResourceBundle('en', 'forumsAdmin', englishForumsAdmin);
-}
+export const registerForumsAdminTranslations = forumsAdminTranslations.register;

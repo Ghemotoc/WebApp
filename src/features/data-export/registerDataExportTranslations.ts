@@ -6,33 +6,26 @@
  * Privacy's does. Who calls it: every component and hook in this folder, through
  * useDataExportTranslation().
  */
-import type { i18n as I18nInstance } from 'i18next';
-import { useTranslation } from 'react-i18next';
-
+import { createNamespaceTranslations } from '@/lib/namespace-translations';
 import englishDataExport from '@/locales/en/dataExport.json';
 import romanianDataExport from '@/locales/ro/dataExport.json';
+
+const dataExportTranslations = createNamespaceTranslations(
+  'dataExport',
+  romanianDataExport,
+  englishDataExport,
+);
 
 /**
  * Registers the texts once; calling it again does nothing.
  *
  * @param i18n - the app's translation instance (from useTranslation())
  */
-export function registerDataExportTranslations(i18n: I18nInstance): void {
-  if (i18n.hasResourceBundle('ro', 'dataExport')) return;
-  i18n.addResourceBundle('ro', 'dataExport', romanianDataExport);
-  i18n.addResourceBundle('en', 'dataExport', englishDataExport);
-}
+export const registerDataExportTranslations = dataExportTranslations.register;
 
 /**
  * The translation hook for this folder: registers the texts first, then reads them.
  *
  * @returns useTranslation('dataExport')
  */
-export function useDataExportTranslation() {
-  // Step 1: the instance this component renders with (the app's, or a test's).
-  const { i18n } = useTranslation();
-  // Step 2: add the texts to it the first time a component here renders.
-  registerDataExportTranslations(i18n);
-  // Step 3: the usual helpers for the "dataExport" namespace.
-  return useTranslation('dataExport');
-}
+export const useDataExportTranslation = dataExportTranslations.useNamespaceTranslation;

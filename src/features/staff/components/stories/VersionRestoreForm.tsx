@@ -19,6 +19,7 @@ import { completeReason, emptyReason } from '../../lib/staffStorySettingsDiff';
 
 import { StoryChangeFeedback } from './StoryChangeFeedback';
 import { StoryChangeReasonFields } from './StoryChangeReasonFields';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the form needs. */
 export interface VersionRestoreFormProps {
@@ -48,7 +49,7 @@ export function VersionRestoreForm({ versionId, changer }: VersionRestoreFormPro
     await changer
       .change({ kind: 'restore', versionId, reason: complete })
       .then(() => setIsOpen(false))
-      .catch(() => undefined);
+      .catch(errorShownByHook);
   }
 
   if (!isOpen) {

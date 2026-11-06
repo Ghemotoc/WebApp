@@ -3,7 +3,8 @@
  *
  * Who runs it: `npm run lint`, and CI on every pull request.
  * Why these rules: CLAUDE.md "Readable code" (decided 17 Oct 2026, 12:26). The size limits below are
- * a proposal from CLAUDE.md: complexity 10, max-depth 3, max-lines-per-function 60, max-params 4.
+ * a proposal from CLAUDE.md: complexity 10, max-depth 3, max-lines-per-function 60, max-params 4;
+ * files in src/ over 300 lines get a warning (QA-5).
  * Accessibility rules (jsx-a11y) back up WCAG 2.2 AA (CLAUDE.md rule 9).
  * Prettier handles formatting, so eslint-config-prettier switches off rules that would clash with it.
  */
@@ -59,6 +60,15 @@ export default tseslint.config(
       // role="region", so focusable regions are allowed as well as tab panels.
       'jsx-a11y/no-noninteractive-tabindex': ['error', { roles: ['tabpanel', 'region'] }],
     },
+  },
+  {
+    // A file with over 300 lines of code is a sign it holds more than one job: a warning, not an
+    // error, so the six files over it on 5 Nov 2026 (router.tsx the largest) can be split one at a
+    // time (QA-5, finding R6). Comments and blank lines don't count; the generated database types
+    // are exempt.
+    files: ['src/**/*.{ts,tsx}'],
+    ignores: ['src/lib/database.types.ts', '**/*.test.{ts,tsx}'],
+    rules: { 'max-lines': ['warn', { max: 300, skipBlankLines: true, skipComments: true }] },
   },
   {
     // Test files describe many cases in one `describe` block, so the function length limit is off.

@@ -23,6 +23,7 @@ import {
   emptyComplianceForm,
   type ComplianceFormValues,
 } from '../../lib/complianceEntryForm';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** The kinds, in the order the drop-down lists them. */
 const kinds: ComplianceEntryKind[] = ['legal_request', 'authority_order', 'launch_notice'];
@@ -173,7 +174,7 @@ export function ComplianceEntryForm({
     if (typeof entry === 'string') return setProblem(t(`metrics.compliance.problems.${entry}`));
     setProblem(null);
     // A refusal arrives as saveProblem from the section; nothing else to do here.
-    await onSave(entry).catch(() => undefined);
+    await onSave(entry).catch(errorShownByHook);
   }
 
   const shownProblem = problem ?? saveProblem;

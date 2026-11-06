@@ -19,6 +19,7 @@ import { formatRomaniaDate } from '@/lib/romania-time';
 import type { LaunchTask } from '../../api/complianceLog';
 
 import { MetricsCard } from './MetricsCard';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the card needs. */
 interface LaunchTaskCardProps {
@@ -68,7 +69,7 @@ export function LaunchTaskCard({
   /** Saves the date; a failure shows under the field. */
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    if (launchDate !== '') await onSaveDate(launchDate).catch(() => undefined);
+    if (launchDate !== '') await onSaveDate(launchDate).catch(errorShownByHook);
   }
 
   return (

@@ -25,6 +25,7 @@ import type { useMyOnboarding } from '../hooks/useMyOnboarding';
 import { useOnboardingChoices } from '../hooks/useOnboardingChoices';
 
 import { RegionSelect } from './RegionSelect';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** The two interface languages, each named in its own language (WCAG 3.1.2). */
 const languageOptions = [
@@ -102,7 +103,7 @@ function LanguageAndRegion(props: {
       <Button
         className="self-start"
         disabled={props.state.isSaving}
-        onClick={() => void next().catch(() => undefined)}
+        onClick={() => void next().catch(errorShownByHook)}
       >
         {props.state.isSaving ? t('onboarding.saving') : t('onboarding.next')}
       </Button>

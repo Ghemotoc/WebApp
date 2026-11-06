@@ -16,6 +16,7 @@ import { TextInput } from '@/components/ui/TextInput';
 import type { InviteLink } from '../../api/inviteLinks';
 
 import { InviteStatusPill } from './InviteStatusPill';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What a row needs. */
 interface InviteRowProps {
@@ -38,7 +39,7 @@ function RevokeForm({ link, isRevoking, onRevoke }: InviteRowProps) {
   async function confirm() {
     if (reason.trim() === '') return setProblem(t('invites.revoke.reasonMissing'));
     setProblem(null);
-    await onRevoke(link.id, reason.trim()).catch(() => undefined);
+    await onRevoke(link.id, reason.trim()).catch(errorShownByHook);
   }
 
   return (

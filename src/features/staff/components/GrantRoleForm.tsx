@@ -19,6 +19,7 @@ import type { AccountMatch } from '../api/accountSearch';
 import type { StaffChange, StaffRole } from '../api/staffRoles';
 
 import { AccountPicker } from './AccountPicker';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** The roles an admin may give; an owner may also give owner and admin. */
 const adminRoles: StaffRole[] = ['moderator', 'support', 'content_editor'];
@@ -56,7 +57,7 @@ export function GrantRoleForm({ isOwner, isChanging, onChange }: GrantRoleFormPr
       userId: account.userId,
       role,
       reason: reason.trim(),
-    }).catch(() => undefined);
+    }).catch(errorShownByHook);
   }
 
   return (

@@ -27,6 +27,7 @@ import {
 import { StaffStorySettingsFields } from './StaffStorySettingsFields';
 import { StoryChangeFeedback } from './StoryChangeFeedback';
 import { StoryChangeReasonFields } from './StoryChangeReasonFields';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the form needs. */
 export interface StaffStorySettingsFormProps {
@@ -57,7 +58,7 @@ export function StaffStorySettingsForm({ story, changer }: StaffStorySettingsFor
     await changer
       .change({ kind: 'settings', change, reason: complete })
       .then(() => setReason(emptyReason))
-      .catch(() => undefined);
+      .catch(errorShownByHook);
   }
 
   return (

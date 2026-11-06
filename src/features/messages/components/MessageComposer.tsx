@@ -14,6 +14,7 @@ import { Notice } from '@/components/ui/Notice';
 
 import { longestMessage, type MessagesFailure } from '../api/messages';
 import { useMessagesTranslation } from '../registerMessagesTranslations';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the composer needs. */
 export interface MessageComposerProps {
@@ -45,7 +46,7 @@ export function MessageComposer({
     if (body.trim() === '') return;
     void onSend(body.trim())
       .then(() => setBody(''))
-      .catch(() => undefined);
+      .catch(errorShownByHook);
   }
 
   return (

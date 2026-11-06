@@ -14267,7 +14267,7 @@ begin
     raise exception 'An entry holds at most 100,000 characters.' using errcode = 'check_violation', hint = 'too_long';
   end if;
   -- Step 2: no raw HTML; escaped text ("\<b\>") is the literal words, as for chapters and comments.
-  if regexp_replace(clean_body, '\\.', '', 'g') ~ '<[[:alpha:]/!?]' then
+  if public.has_html_tag(clean_body) then
     raise exception 'HTML tags are not allowed in an entry (CLAUDE.md rule 8).' using errcode = 'check_violation', hint = 'html';
   end if;
   -- Step 3: no unsafe link addresses (has_unsafe_link()).
@@ -14413,11 +14413,8 @@ begin
   if char_length(clean_body) > longest then
     raise exception 'A chapter can have at most % characters (S1-E3-02a).', longest using errcode = 'check_violation';
   end if;
-  -- Step 2: no raw HTML. The Markdown subset never needs a tag, so any "<letter" or "</" is refused;
-  -- a plain "<" between numbers ("3 < 4") is fine, and so is escaped text ("\<script\>" is the
-  -- literal words): the backslash pairs are taken out before looking, so "\\<script>" (an escaped
-  -- backslash and then a real tag) is still caught.
-  if regexp_replace(clean_body, '\\.', '', 'g') ~ '<[[:alpha:]/!?]' then
+  -- Step 2: no raw HTML (has_html_tag(): a "<" between numbers and escaped text are fine).
+  if public.has_html_tag(clean_body) then
     raise exception 'HTML tags are not allowed in a chapter (CLAUDE.md rule 8).' using errcode = 'check_violation';
   end if;
   -- Step 3: link addresses may not be javascript:, data: or vbscript: (has_unsafe_link()); the
@@ -14489,7 +14486,7 @@ begin
     raise exception 'A comment can have at most % characters.', longest using errcode = 'check_violation';
   end if;
   -- Step 2: no raw HTML; escaped text ("\<b\>") is the literal words (as check_chapter_text()).
-  if regexp_replace(clean_body, '\\.', '', 'g') ~ '<[[:alpha:]/!?]' then
+  if public.has_html_tag(clean_body) then
     raise exception 'HTML tags are not allowed in a comment (CLAUDE.md rule 8).' using errcode = 'check_violation';
   end if;
   -- Step 3: no unsafe link addresses (has_unsafe_link()).
@@ -14543,7 +14540,7 @@ begin
     raise exception 'A post can have at most % characters.', longest using errcode = 'check_violation', hint = 'body:too_long';
   end if;
   -- Step 2: no raw HTML; escaped text ("\<b\>") is the literal words (as check_comment_text()).
-  if regexp_replace(clean_body, '\\.', '', 'g') ~ '<[[:alpha:]/!?]' then
+  if public.has_html_tag(clean_body) then
     raise exception 'HTML tags are not allowed in a post (CLAUDE.md rule 8).' using errcode = 'check_violation', hint = 'body:html';
   end if;
   -- Step 3: no unsafe link addresses (has_unsafe_link()).
@@ -21281,6 +21278,21 @@ ALTER FUNCTION "public"."handle_new_auth_user"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."handle_new_auth_user"() IS 'Trigger on auth.users: refuses a banned email or a throwaway domain, then checks a sign-up and creates the profile, or leaves a provider account for finish_social_sign_up() (S1-E2-01, 02, 04, 09, 10, S1-E11-17, S1-E10-06, ADMIN-2 part f1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."has_html_tag"("body" "text") RETURNS boolean
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(regexp_replace(body, '\\.', '', 'g') ~ '<[[:alpha:]/!?]', false);
+$$;
+
+
+ALTER FUNCTION "public"."has_html_tag"("body" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."has_html_tag"("body" "text") IS 'True when Markdown text holds a raw HTML tag; escaped text and "3 < 4" are fine (QA-5, CLAUDE.md rule 8).';
 
 
 
@@ -54113,6 +54125,10 @@ REVOKE ALL ON FUNCTION "public"."guard_identity_link"() FROM PUBLIC;
 
 
 REVOKE ALL ON FUNCTION "public"."handle_new_auth_user"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."has_html_tag"("body" "text") FROM PUBLIC;
 
 
 

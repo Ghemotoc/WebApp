@@ -3,11 +3,13 @@
  * S1-E11-06, S1-E11-10 and S1-E11-12; architecture 1.8.6, B31).
  *
  * Who calls it: the public home page, the notice strip and Help (through hooks/useWebsiteContent.ts)
- * and the staff editors (through hooks/useWebsiteEditor.ts).
- * What it calls next: for March the only store is appDatabaseStore(), which uses the app's own
- * database: website_content() for visitors, the cms_versions table for staff (RLS lets only owner
- * and admin read it) and the admin_*_cms_* functions in …_s1_e11_06_website_cms.sql, which check
- * the role and write the audit log. When the website gets its own database (set-up OPEN), a
+ * use appDatabaseReader() here; the staff editors (through hooks/useWebsiteEditor.ts) use the
+ * staff half, api/staff/websiteContentEditor.ts (QA-5: staff calls stay out of the reader's
+ * download). This file also holds the shared types and errors.
+ * What it calls next: for March the only store uses the app's own database: website_content()
+ * for visitors, the cms_versions table for staff (RLS lets only owner and admin read it) and the
+ * admin_*_cms_* functions in …_s1_e11_06_website_cms.sql, which check the role and write the
+ * audit log. When the website gets its own database (set-up OPEN), a
  * second store with the same interface writes there and nothing that uses the store changes
  * (decided 17 Oct 2026, 19:16).
  */
@@ -136,10 +138,14 @@ export interface EntryPlace {
   languageCode: string | null;
 }
 
-/** The contract every store keeps (architecture 1.8.6). */
-export interface WebsiteContentStore {
+/** What the public pages need: the live content (architecture 1.8.6). */
+export interface WebsiteContentReader {
   /** What a visitor sees of one kind, with the market and language fallbacks. */
   readLive(kind: WebsiteContentKind, visitor: Visitor): Promise<LiveEntry[]>;
+}
+
+/** What the staff editors need (owner and admin only; api/staff/websiteContentEditor.ts). */
+export interface WebsiteContentEditor {
   /** Every version of one kind in one market (staff). */
   listVersions(kind: WebsiteContentKind, marketCode: string): Promise<ContentVersion[]>;
   /** Saves the entry's draft; returns its id. */
@@ -152,44 +158,11 @@ export interface WebsiteContentStore {
   remove(place: EntryPlace): Promise<void>;
 }
 
-/** A cms_versions row as the table gives it. */
-interface VersionRow {
-  id: string;
-  content_kind: string;
-  entry_key: string;
-  market_code: string;
-  language_code: string | null;
-  content: Json;
-  status: string;
-  is_removal: boolean;
-  show_from: string | null;
-  show_until: string | null;
-  published_at: string | null;
-  updated_at: string;
-}
-
 /**
- * Shapes one table row for the editors.
- *
- * @param row - the row
- * @returns the version
+ * The contract every store keeps (architecture 1.8.6): the reader and the editor together. They
+ * are two halves so the reader's download never carries the staff calls (QA-5, finding R5).
  */
-function versionFromRow(row: VersionRow): ContentVersion {
-  return {
-    id: row.id,
-    kind: row.content_kind as WebsiteContentKind,
-    entryKey: row.entry_key,
-    marketCode: row.market_code,
-    languageCode: row.language_code,
-    content: row.content,
-    status: row.status === 'draft' ? 'draft' : 'published',
-    isRemoval: row.is_removal,
-    showFrom: row.show_from,
-    showUntil: row.show_until,
-    publishedAt: row.published_at,
-    updatedAt: row.updated_at,
-  };
-}
+export type WebsiteContentStore = WebsiteContentReader & WebsiteContentEditor;
 
 /** A website_content() row as the database gives it. */
 interface LiveRow {
@@ -218,17 +191,13 @@ function liveEntryFromRow(row: LiveRow): LiveEntry {
   };
 }
 
-/** The cms_versions columns the editors read. */
-const versionColumns =
-  'id, content_kind, entry_key, market_code, language_code, content, status, is_removal, show_from, show_until, published_at, updated_at';
-
 /**
- * The store for March: the CMS tables in the app's own database.
+ * The public half of the store for March: website_content() in the app's own database.
  *
  * @param client - the shared Supabase client
- * @returns the store
+ * @returns the reader
  */
-export function appDatabaseStore(client: AppSupabaseClient): WebsiteContentStore {
+export function appDatabaseReader(client: AppSupabaseClient): WebsiteContentReader {
   return {
     async readLive(kind, visitor) {
       const { data, error } = await client.rpc('website_content', {
@@ -238,53 +207,6 @@ export function appDatabaseStore(client: AppSupabaseClient): WebsiteContentStore
       });
       if (error !== null) throw websiteErrorFrom(error);
       return data.map(liveEntryFromRow);
-    },
-    async listVersions(kind, marketCode) {
-      const { data, error } = await client
-        .from('cms_versions')
-        .select(versionColumns)
-        .eq('content_kind', kind)
-        .eq('market_code', marketCode)
-        .order('updated_at', { ascending: false });
-      if (error !== null) throw websiteErrorFrom(error);
-      return data.map(versionFromRow);
-    },
-    async saveDraft(draft) {
-      const { data, error } = await client.rpc('admin_save_cms_draft', {
-        content_kind: draft.kind,
-        entry_key: draft.entryKey,
-        market_code: draft.marketCode,
-        // The database reads an empty language as none: a notice holds every language.
-        language_code: draft.languageCode ?? '',
-        new_content: draft.content,
-        new_show_from: draft.showFrom ?? undefined,
-        new_show_until: draft.showUntil ?? undefined,
-      });
-      if (error !== null) throw websiteErrorFrom(error);
-      return data;
-    },
-    async publish(versionId) {
-      const { data, error } = await client.rpc('admin_publish_cms_version', {
-        version_id: versionId,
-      });
-      if (error !== null) throw websiteErrorFrom(error);
-      return data;
-    },
-    async restore(versionId) {
-      const { data, error } = await client.rpc('admin_restore_cms_version', {
-        version_id: versionId,
-      });
-      if (error !== null) throw websiteErrorFrom(error);
-      return data;
-    },
-    async remove(place) {
-      const { error } = await client.rpc('admin_remove_cms_entry', {
-        content_kind: place.kind,
-        entry_key: place.entryKey,
-        market_code: place.marketCode,
-        language_code: place.languageCode ?? '',
-      });
-      if (error !== null) throw websiteErrorFrom(error);
     },
   };
 }

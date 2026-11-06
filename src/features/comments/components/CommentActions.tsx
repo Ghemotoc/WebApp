@@ -23,6 +23,7 @@ import { useDeleteComment } from '../hooks/useCommentActions';
 import { useCommentsTranslation } from '../registerCommentsTranslations';
 
 import { DownvoteButton } from './DownvoteButton';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the row needs. */
 export interface CommentActionsProps {
@@ -80,7 +81,7 @@ function DeleteControl({ address, comment }: { address: ChapterAddress; comment:
         <DeleteQuestion
           isBusy={deleting.isDeleting}
           onKeep={() => setIsAsking(false)}
-          onDelete={() => void deleting.remove(comment.id).catch(() => undefined)}
+          onDelete={() => void deleting.remove(comment.id).catch(errorShownByHook)}
         />
       )}
       {deleting.failure !== null && (

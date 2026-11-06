@@ -75,11 +75,29 @@ function wallClockMinutes(reading: ClockReading): number {
 }
 
 /**
+ * Says whether a clock reading names a real date and time.
+ *
+ * @param reading - the date and time as typed
+ * @returns false for a day the month doesn't have, a month outside 1 to 12, or a time past 23:59
+ */
+function isRealClockReading(reading: ClockReading): boolean {
+  // Step 1: the time of day.
+  if (reading.hour > 23 || reading.minute > 59) return false;
+  // Step 2: the date; Date.UTC rolls 30 February into March, so compare the day it lands on.
+  const landed = new Date(Date.UTC(reading.year, reading.month - 1, reading.day));
+  return (
+    landed.getUTCFullYear() === reading.year &&
+    landed.getUTCMonth() === reading.month - 1 &&
+    landed.getUTCDate() === reading.day
+  );
+}
+
+/**
  * Turns a date and time typed as Romania time into the moment it means.
  *
  * @param date - "YYYY-MM-DD", as an <input type="date"> gives it
  * @param time - "HH:MM", as an <input type="time"> gives it
- * @returns the moment, or null when the text isn't a date and time
+ * @returns the moment, or null when the text isn't a real date and time (30 February, 24:00)
  * Notes: on the night the clocks go back, 03:00–03:59 happens twice; the first (summer time) is
  *   used. On the night they go forward, 03:00–03:59 never happens; the time is moved an hour on.
  */
@@ -89,6 +107,9 @@ export function romaniaTimeToInstant(date: string, time: string): Date | null {
   if (dateMatch === null || timeMatch === null) return null;
   const [year, month, day] = [Number(dateMatch[1]), Number(dateMatch[2]), Number(dateMatch[3])];
   const [hour, minute] = [Number(timeMatch[1]), Number(timeMatch[2])];
+  // A day that doesn't exist (30 February) or a time past 23:59 is no moment at all: Date.UTC
+  // would quietly roll it into the next month or day (QA-5, finding A5).
+  if (!isRealClockReading({ year, month, day, hour, minute })) return null;
   const wanted = wallClockMinutes({ year, month, day, hour, minute });
   // Step 1: start from Romania's summer offset (UTC+3), the earlier of the two readings.
   let guess = new Date((wanted - 180) * 60_000);

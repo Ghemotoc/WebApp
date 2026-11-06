@@ -16,6 +16,7 @@ import { Textarea } from '@/components/ui/Textarea';
 import { supportLimits, type SupportFailure } from '../api/supportTickets';
 import { withInsertedText } from '../lib/fillCannedReply';
 import { useSupportTranslation } from '../registerSupportTranslations';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the form needs. */
 export interface SupportReplyFormProps {
@@ -72,7 +73,7 @@ export function SupportReplyForm(props: SupportReplyFormProps) {
     await props
       .onSend(body.trim(), isNote)
       .then(() => setBody(''))
-      .catch(() => undefined);
+      .catch(errorShownByHook);
   }
 
   /** Adds inserted words to the box, keeping what is there, and focuses it for editing. */

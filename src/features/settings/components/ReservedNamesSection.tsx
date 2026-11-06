@@ -16,6 +16,7 @@ import type { MatchRule, ReservedName } from '../api/nameRules';
 import type { NameRulesState } from '../hooks/useNameRules';
 
 import { SettingsSection } from './SettingsSection';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** The match rules a staff member can pick for a reserved name. */
 const nameRules: MatchRule[] = ['whole_name', 'whole_word', 'anywhere'];
@@ -41,7 +42,7 @@ function ReservedNameItem({ name, state }: { name: ReservedName; state: NameRule
           variant="secondary"
           disabled={state.isChanging}
           onClick={() =>
-            void state.change({ kind: 'remove_name', id: name.id }).catch(() => undefined)
+            void state.change({ kind: 'remove_name', id: name.id }).catch(errorShownByHook)
           }
         >
           {t('names.remove', { name: name.name })}
@@ -68,7 +69,7 @@ function AddReservedName({ state }: { state: NameRulesState }) {
     void state
       .change({ kind: 'add_name', name: name.trim(), matchRule })
       .then(() => setName(''))
-      .catch(() => undefined);
+      .catch(errorShownByHook);
   }
 
   return (

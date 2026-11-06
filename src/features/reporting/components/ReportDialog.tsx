@@ -40,6 +40,7 @@ import { useReportItem } from '../hooks/useReportItem';
 import { CopySourceFields } from './CopySourceFields';
 import { ReportReasonList } from './ReportReasonList';
 import { ReportSent } from './ReportSent';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the dialog needs. */
 export interface ReportDialogProps {
@@ -153,7 +154,7 @@ function ReportForm(props: ReportDialogProps & { report: ReturnType<typeof useRe
         details,
         copyDetails,
       })
-      .catch(() => undefined);
+      .catch(errorShownByHook);
   }
 
   return (

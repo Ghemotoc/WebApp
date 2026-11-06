@@ -4,18 +4,19 @@
  * its text stays out of the reader's bundle, as the settings namespace does.
  * Who calls it: WebsiteAdminPage, before it renders anything.
  */
-import type { i18n as I18nInstance } from 'i18next';
-
+import { createNamespaceTranslations } from '@/lib/namespace-translations';
 import englishWebsiteAdmin from '@/locales/en/websiteAdmin.json';
 import romanianWebsiteAdmin from '@/locales/ro/websiteAdmin.json';
+
+const websiteAdminTranslations = createNamespaceTranslations(
+  'websiteAdmin',
+  romanianWebsiteAdmin,
+  englishWebsiteAdmin,
+);
 
 /**
  * Registers the website editors' texts once; calling it again does nothing.
  *
  * @param i18n - the app's translation instance (from useTranslation())
  */
-export function registerWebsiteAdminTranslations(i18n: I18nInstance): void {
-  if (i18n.hasResourceBundle('ro', 'websiteAdmin')) return;
-  i18n.addResourceBundle('ro', 'websiteAdmin', romanianWebsiteAdmin);
-  i18n.addResourceBundle('en', 'websiteAdmin', englishWebsiteAdmin);
-}
+export const registerWebsiteAdminTranslations = websiteAdminTranslations.register;

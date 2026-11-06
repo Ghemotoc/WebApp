@@ -17,6 +17,7 @@ import { usePlacementChanges } from '../../../hooks/usePlacements';
 import { sponsorDayInWords } from '../../../lib/sponsorWords';
 import { useSponsorTranslation } from '../../../registerSponsorTranslations';
 import { ChangeOutcome } from '../ChangeOutcome';
+import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** The pages a booking matches, in words: "Poetry · ro", or "Any page". */
 function useBookingPagesInWords() {
@@ -67,7 +68,7 @@ function CancelBooking({ booking, changes }: { booking: AdBooking; changes: Plac
           onClick={() =>
             void changes
               .change({ kind: 'cancel', bookingId: booking.id, reason })
-              .catch(() => undefined)
+              .catch(errorShownByHook)
           }
         >
           {t('booking.confirmCancel')}
