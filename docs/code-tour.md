@@ -1568,6 +1568,14 @@ Tests: `155-story-scores.test.sql`, `e2e/ranking.spec.ts`.
 - **Reader side:** `src/features/discovery/components/FeaturedBand.tsx` opens Discover. `useFeaturedStories` calls `featured_stories_now()`, which re-checks every pick for this reader (rating, blocks, moderation, the writer still 16 or over and active) each time, so nothing needs undoing by hand. `useFeaturedRotation` turns the band every 7 seconds unless reduced motion, the pause button, or the focus or pointer inside it stops it.
 - **Tests:** `supabase/tests/database/303-featured-this-week.test.sql` and `e2e/featured-this-week.spec.ts`.
 
+### Writers to follow and "Suggest me" (S1-E5-11, S1-E2-03b, LOOK-4c)
+
+- **The one rule:** `may_spotlight_writer()` decides whether a person may be suggested to strangers anywhere (Writers to follow, New and rising writers, Featured): active, their own `profiles.suggest_me` switch on (null means on for 18+, off for under-18s), and 16 or over, or 13 to 15 with the parent's separate yes (`has_spotlight_consent()`). `may_feature_writer()` adds "16 or over".
+- **Reader side:** `src/features/discovery/components/RisingWritersShelf.tsx` draws the `writers` word of `discover_shelves` with `WriterToFollowCard`; `useRisingWriters` calls `rising_writers()`, which applies the rule, blocks and ratings for this reader.
+- **The writer's switch:** `src/features/privacy/components/SuggestMeSwitch.tsx` in Settings › Privacy saves with `set_suggest_me()`. For a 13 to 15-year-old it shows where the parent's yes stands and "Ask my parent", which posts to `/api/parent-consent/spotlight-request`.
+- **The parent's side:** the consent page's optional box (`ParentAnswerForm`, signed into `answer_parental_consent()` by `server/parent-consent.ts`), and the one-question page `/parent-consent/spotlight#<token>` (`ParentSpotlightPage`, `useSpotlightRequest`), answered through `server/parent-consent/spotlight.ts` → `answer_spotlight_consent()`. Staff withdraw it on the account page (`withdraw_spotlight_consent` in `AccountActions`).
+- **Tests:** `supabase/tests/database/304-rising-writers-and-spotlight-consent.test.sql`, `server/parent-consent/spotlight.test.ts` and `e2e/writers-to-follow.spec.ts`.
+
 ## The March test numbers (S1-E15-02)
 
 `/staff/metrics` for the owner and admins (board AdminMetrics, screen 8.7):

@@ -320,7 +320,9 @@
       "withdrawnBody": "Contul lui @{{handle}} e doar pentru citit. Dacă ai întrebări despre ce urmează, scrie-ne.",
       "goneHeading": "Linkul nu mai funcționează",
       "goneBody": "Poate l-a înlocuit un email mai nou sau contul a fost șters. Dacă crezi că e o greșeală, scrie-ne.",
-      "loading": "Se încarcă…"
+      "loading": "Se încarcă…",
+      "spotlightBox": "Opțional: puteți recomanda și copilul meu și poveștile sale altor cititori.",
+      "spotlightHint": "De exemplu în Scriitori noi în ascensiune. Dacă nu bifați, contul rămâne la fel. Puteți spune da mai târziu sau vă puteți retrage acordul oricând."
     },
     "summary": {
       "heading": "La ce și-a dat acordul părintele sau tutorele tău",
@@ -336,6 +338,18 @@
       "stillKept": "să-ți găsești poveștile, salvate cum erau;",
       "stillReport": "să raportezi orice te îngrijorează și să blochezi pe oricine;",
       "stillData": "să-ți descarci datele sau să-ți ștergi contul, mai jos."
+    },
+    "spotlight": {
+      "documentTitle": "Recomandări către alți cititori",
+      "heading": "Putem recomanda contul copilului dvs. altor cititori?",
+      "intro": "@{{handle}} ar vrea să recomandăm contul și poveștile sale altor cititori. Are sub 16 ani, așa că facem asta doar dacă spuneți da.",
+      "whereShown": "Unde: în liste precum Scriitori noi în ascensiune și Scriitori de urmărit.",
+      "whatShown": "Ce văd cititorii: numele de utilizator sau pseudonimul, avatarul și poveștile publicate.",
+      "whatNot": "Niciodată emailul, vârsta sau ceva privat. Dacă spuneți nu, contul rămâne exact cum e.",
+      "agree": "Da, puteți recomanda contul",
+      "withdraw": "Nu mai recomandați contul",
+      "agreedNow": "Ați spus da, așa că cititorii pot vedea contul @{{handle}} printre recomandările noastre.",
+      "noAnswer": "Vă puteți răzgândi oricând, de pe această pagină."
     }
   },
   "onboarding": {

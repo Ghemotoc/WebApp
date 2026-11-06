@@ -1,7 +1,8 @@
 /**
  * The parental consent emails (story S1-E2-03; ADR 0011): the request to a parent or guardian,
  * the confirmation after a yes (with the link to withdraw later), the confirmation after a
- * withdrawal, and the email that tells a writer their parent said no.
+ * withdrawal, and the email that tells a writer their parent said no; plus the separate
+ * "may we suggest your child?" request and its confirmations (S1-E2-03b).
  *
  * The words are the "parentConsent" group of email.json, ro and en, with the admins' wording laid
  * over them ("email:parentConsent.*" overrides, S1-E11-19). Placeholders such as {{handle}} and
@@ -21,14 +22,38 @@ type EmailTexts = Record<string, string | Record<string, string>>;
 const defaultTexts: Record<ConsentLanguage, EmailTexts> = { ro: romanianEmail, en: englishEmail };
 
 /** Which email, and the values its placeholders take. */
-export type ConsentEmailKind = 'request' | 'agreed' | 'withdrawn' | 'refused';
+export type ConsentEmailKind =
+  | 'request'
+  | 'agreed'
+  | 'agreedSpotlight'
+  | 'withdrawn'
+  | 'refused'
+  | 'spotlightRequest'
+  | 'spotlightAgreed'
+  | 'spotlightWithdrawn';
 
 /** The lines of each email, after the subject, as email.json names them. */
 const bodyLines: Record<ConsentEmailKind, string[]> = {
   request: ['requestBody', 'requestAction', 'requestDeadline'],
   agreed: ['agreedBody', 'agreedWithdraw'],
+  agreedSpotlight: ['agreedBody', 'agreedSpotlight', 'agreedWithdraw'],
   withdrawn: ['withdrawnBody'],
   refused: ['refusedBody'],
+  spotlightRequest: ['spotlightRequestBody', 'spotlightRequestAction', 'spotlightRequestNoAnswer'],
+  spotlightAgreed: ['spotlightAgreedBody', 'spotlightAgreedWithdraw'],
+  spotlightWithdrawn: ['spotlightWithdrawnBody'],
+};
+
+/** The subject of each email, as email.json names it; a yes with the box shares the yes's. */
+const subjectOf: Record<ConsentEmailKind, string> = {
+  request: 'requestSubject',
+  agreed: 'agreedSubject',
+  agreedSpotlight: 'agreedSubject',
+  withdrawn: 'withdrawnSubject',
+  refused: 'refusedSubject',
+  spotlightRequest: 'spotlightRequestSubject',
+  spotlightAgreed: 'spotlightAgreedSubject',
+  spotlightWithdrawn: 'spotlightWithdrawnSubject',
 };
 
 /** What every email needs to be written. */
@@ -40,7 +65,7 @@ export interface ConsentEmailContext {
 }
 
 /**
- * Fills {{handle}}, {{link}}, {{deadline}} and {{date}} in one text.
+ * Fills {{handle}}, {{link}}, {{spotlightLink}}, {{deadline}} and {{date}} in one text.
  *
  * @returns the text with every known placeholder filled
  */
@@ -90,5 +115,5 @@ export function consentEmail(
   // Step 2: the lines, separated by a blank line, then the sign-off.
   const lines = bodyLines[kind].map((line) => read(`parentConsent.${line}`));
   const text = [...lines, read('signOff'), read('madeBy')].join('\n\n');
-  return { to, subject: read(`parentConsent.${kind}Subject`), text };
+  return { to, subject: read(`parentConsent.${subjectOf[kind]}`), text };
 }

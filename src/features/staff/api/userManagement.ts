@@ -5,7 +5,8 @@
  * Who calls it: hooks/useUserLookup.ts, hooks/useAccount.ts and hooks/useAccountActions.ts.
  * What it calls next: admin_user_lookup(), admin_user_account(), admin_account_open_cases(),
  * admin_reset_pen_name() and admin_sign_out_everywhere() (…_s1_e11_02_user_management.sql),
- * admin_apply_sanction() (S1-E10-06) and admin_approve_username() (S1-E2-04). Every function
+ * admin_apply_sanction() (S1-E10-06), admin_approve_username() (S1-E2-04),
+ * admin_withdraw_parental_consent() (S1-E2-03) and admin_withdraw_spotlight_consent() (S1-E2-03b). Every function
  * checks the caller's role and staff session itself and writes the audit log; this file only
  * passes the answers on. Staff may use user IDs (architecture 1.6); members never see them.
  */
@@ -23,6 +24,8 @@ export const userManagementFailures = [
   'no_pen_name',
   // S1-E2-03: there is no live parental consent to withdraw.
   'no_consent',
+  // S1-E2-03b: there is no yes to suggestions to withdraw.
+  'no_spotlight',
   'refused',
   'unreachable',
 ] as const;
@@ -198,7 +201,9 @@ export type AccountAction =
   // S1-E2-12: the person asked staff to fix their birthday; null month clears it.
   | { kind: 'correct_birthday'; month: number | null; reason: string }
   // S1-E2-03: a parent or guardian asked staff to withdraw their consent.
-  | { kind: 'withdraw_parental_consent'; reason: string };
+  | { kind: 'withdraw_parental_consent'; reason: string }
+  // S1-E2-03b: a parent asked staff to withdraw only their yes to suggestions.
+  | { kind: 'withdraw_spotlight_consent'; reason: string };
 
 /** The actions that take only the account and a reason, and the function each one calls. */
 const reasonOnlyFunctions = {
@@ -206,6 +211,8 @@ const reasonOnlyFunctions = {
   sign_out_everywhere: 'admin_sign_out_everywhere',
   // S1-E2-03: the account becomes read-only; the database logs it and tells the writer.
   withdraw_parental_consent: 'admin_withdraw_parental_consent',
+  // S1-E2-03b: the writer stops being suggested at once; the database logs it and tells them.
+  withdraw_spotlight_consent: 'admin_withdraw_spotlight_consent',
 } as const;
 
 /** The kinds in reasonOnlyFunctions. */

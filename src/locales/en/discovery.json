@@ -108,5 +108,13 @@
     "previous": "Previous story",
     "next": "Next story",
     "pause": "Pause the stories"
+  },
+  "writersToFollow": {
+    "eyebrow": "Rising",
+    "title": "Writers to follow this week",
+    "growth_one": "+{{count}} follower this week",
+    "growth_few": "+{{count}} followers this week",
+    "growth_other": "+{{count}} followers this week",
+    "latest": "Latest:"
   }
 }

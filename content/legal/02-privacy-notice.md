@@ -99,6 +99,8 @@ Checking your age. Your year of birth, the Yoti check and the protections that f
 
 Parent or guardian consent for under-16s. Asking for it, recording it and checking a parent’s request against it. Legal basis: the law requires us to get it and to be able to show we got it.
 
+Suggesting writers to other readers. Showing your username or pen name, avatar and published stories in lists such as New and rising writers and Writers to follow, only while “Suggest me and my stories to other people” is on in Settings › Privacy. It starts on for adults and off for anyone under 18. If you’re under 16, your parent or guardian must also say yes, separately from the account’s consent, and can take it back at any time. Legal basis: your consent and, under 16, your parent’s or guardian’s.
+
 Keeping people safe. Reading reports, checking every picture on upload, moderating, warnings and suspensions, statements of reasons and appeals. Legal basis: our legal duties under EU platform law, and our legitimate interest in keeping Ghemotoc safe, especially for young people. [Lawyer to confirm the basis for the picture checks]
 
 Protecting someone in danger. If someone’s life or safety is at risk, we may share what’s needed with the police or emergency services. Legal basis: our legal duty to report threats to life or safety, and protecting someone’s vital interests.

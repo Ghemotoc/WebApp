@@ -4,7 +4,8 @@
  * Who calls it: the hooks in ../hooks (Settings › Privacy, the heartbeat and the online dot).
  * What it calls next: my_privacy_settings(), set_profile_audience(), set_library_audience(),
  * set_shows_online_status(), note_i_am_online() and who_is_online()
- * (supabase/migrations/…_s1_e13_01_privacy_settings.sql). The database fills in each setting's
+ * (supabase/migrations/…_s1_e13_01_privacy_settings.sql), and set_suggest_me() for "Suggest me
+ * and my stories to other people" (…_look4c_02_rising_writers.sql, story S1-E5-11). The database fills in each setting's
  * default for the person's age group, so an under-18 starts on the most private value.
  */
 import type { Database } from '@/lib/database.types';
@@ -41,7 +42,16 @@ export interface PrivacySettings {
   messageAudience: MessageAudience;
   /** Shows the note that every setting started at its most private choice (criterion 2). */
   isUnder18: boolean;
+  /** "Suggest me and my stories to other people": on for 18+, off for under-18s until chosen. */
+  suggestMe: boolean;
+  /** For 13 to 15-year-olds, where the parent's separate yes stands (S1-E2-03b). */
+  parentSpotlight: ParentSpotlight;
+  /** True when a 13 to 15-year-old's parent already agreed to the account, so can be asked. */
+  canAskParent: boolean;
 }
+
+/** not_needed (16 and over), agreed, asked (email sent, no answer yet) or none. */
+export type ParentSpotlight = 'not_needed' | 'agreed' | 'asked' | 'none';
 
 /** The answer of my_privacy_settings(), as JSON. */
 interface PrivacySettingsRow {
@@ -50,6 +60,9 @@ interface PrivacySettingsRow {
   shows_online_status: boolean;
   message_audience: MessageAudience;
   is_under_18: boolean;
+  suggest_me: boolean;
+  parent_spotlight: ParentSpotlight;
+  can_ask_parent: boolean;
 }
 
 /**
@@ -69,6 +82,9 @@ export async function fetchPrivacySettings(client: AppSupabaseClient): Promise<P
     showsOnlineStatus: row.shows_online_status,
     messageAudience: row.message_audience,
     isUnder18: row.is_under_18,
+    suggestMe: row.suggest_me,
+    parentSpotlight: row.parent_spotlight,
+    canAskParent: row.can_ask_parent,
   };
 }
 
@@ -109,6 +125,20 @@ export async function saveShowsOnlineStatus(
 ): Promise<void> {
   const { error } = await client.rpc('set_shows_online_status', { should_show: shouldShow });
   if (error !== null) throw new Error(`Could not save your online status: ${error.message}`);
+}
+
+/**
+ * Turns "Suggest me and my stories to other people" on or off (S1-E5-11). For a 13 to
+ * 15-year-old, on means nothing until their parent also agrees (S1-E2-03b).
+ *
+ * @throws Error with Supabase's message when the save is refused
+ */
+export async function saveSuggestMe(
+  client: AppSupabaseClient,
+  shouldSuggest: boolean,
+): Promise<void> {
+  const { error } = await client.rpc('set_suggest_me', { should_suggest: shouldSuggest });
+  if (error !== null) throw new Error(`Could not save Suggest me: ${error.message}`);
 }
 
 /**

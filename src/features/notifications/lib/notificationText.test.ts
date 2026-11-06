@@ -546,4 +546,29 @@ describe('notificationText', () => {
     expect(text.actionLabel).toBe('Open the story');
     expect(text.href).toBe('/s/the-salt-mine-choir');
   });
+
+  it('the parent’s yes to suggestions, and its withdrawal, lead to Settings › Privacy (S1-E2-03b)', () => {
+    const spotlightRow: AppNotification = {
+      ...newChapter,
+      kind: 'spotlight_consent_agreed',
+      category: 'staff',
+      actors: [],
+      actorCount: 0,
+      chapter: null,
+      story: null,
+    };
+    const agreed = notificationText(englishT(), spotlightRow, 'ana');
+    expect(agreed.who).toBe('Your account:');
+    expect(agreed.what).toBe(
+      'your parent or guardian agreed that we may suggest you and your stories to other readers.',
+    );
+    expect(agreed.href).toBe('/settings#privacy');
+    const withdrawn = notificationText(
+      englishT(),
+      { ...spotlightRow, kind: 'spotlight_consent_withdrawn' },
+      'ana',
+    );
+    expect(withdrawn.what).toContain('we no longer suggest you');
+    expect(withdrawn.actionLabel).toBe('See your privacy settings');
+  });
 });

@@ -10,6 +10,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
 import { useSession } from '@/features/auth/hooks/useSession';
+import { risingWritersQueryKey } from '@/features/discovery/hooks/useRisingWriters';
 import { storyListQueryKey } from '@/features/discovery/hooks/useStoryShelf';
 import { writerProfileQueryKey } from '@/features/people/hooks/useWriterProfile';
 
@@ -19,6 +20,7 @@ import {
   saveLibraryAudience,
   saveProfileAudience,
   saveShowsOnlineStatus,
+  saveSuggestMe,
   type LibraryAudience,
   type ProfileAudience,
 } from '../api/privacy';
@@ -44,10 +46,10 @@ export function usePrivacySettings() {
 }
 
 /**
- * Saving the three privacy choices.
+ * Saving the privacy choices.
  *
- * @returns saveProfile(audience), saveLibrary(audience), saveOnline(shouldShow), isSaving and
- *   hasFailed
+ * @returns saveProfile(audience), saveLibrary(audience), saveOnline(shouldShow),
+ *   saveSuggest(shouldSuggest), isSaving and hasFailed
  */
 export function useSavePrivacySettings() {
   const queryClient = useQueryClient();
@@ -57,6 +59,7 @@ export function useSavePrivacySettings() {
     await queryClient.invalidateQueries({ queryKey: privacySettingsKey(userId) });
     await queryClient.invalidateQueries({ queryKey: [writerProfileQueryKey] });
     await queryClient.invalidateQueries({ queryKey: [storyListQueryKey] });
+    await queryClient.invalidateQueries({ queryKey: [risingWritersQueryKey] });
   };
   const profile = useMutation({
     mutationFn: async (audience: ProfileAudience) =>
@@ -73,12 +76,18 @@ export function useSavePrivacySettings() {
       saveShowsOnlineStatus(await requireClient(), shouldShow),
     onSuccess: refresh,
   });
+  const suggest = useMutation({
+    mutationFn: async (shouldSuggest: boolean) =>
+      saveSuggestMe(await requireClient(), shouldSuggest),
+    onSuccess: refresh,
+  });
   return {
+    saveSuggest: (shouldSuggest: boolean) => suggest.mutateAsync(shouldSuggest),
     saveProfile: (audience: ProfileAudience) => profile.mutateAsync(audience),
     saveLibrary: (audience: LibraryAudience) => library.mutateAsync(audience),
     saveOnline: (shouldShow: boolean) => online.mutateAsync(shouldShow),
-    isSaving: profile.isPending || library.isPending || online.isPending,
-    hasFailed: profile.isError || library.isError || online.isError,
+    isSaving: profile.isPending || library.isPending || online.isPending || suggest.isPending,
+    hasFailed: profile.isError || library.isError || online.isError || suggest.isError,
   };
 }
 

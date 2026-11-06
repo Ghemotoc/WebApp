@@ -24,6 +24,7 @@ export type IneligibleReason =
   | 'restricted'
   | 'no_chapter'
   | 'writer_not_active'
+  | 'writer_not_suggested'
   | 'writer_under_16'
   | 'writer_age_unknown';
 

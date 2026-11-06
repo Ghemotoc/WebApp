@@ -320,7 +320,9 @@
       "withdrawnBody": "@{{handle}}’s account is read-only. If you have questions about what happens next, write to us.",
       "goneHeading": "This link no longer works",
       "goneBody": "A newer email may have replaced it, or the account was deleted. If you think this is wrong, write to us.",
-      "loading": "Loading…"
+      "loading": "Loading…",
+      "spotlightBox": "Optional: you may also suggest my child and their stories to other readers.",
+      "spotlightHint": "For example in New and rising writers. Leave it unticked and nothing changes for the account. You can say yes later, or take it back at any time."
     },
     "summary": {
       "heading": "What your parent or guardian agreed to",
@@ -336,6 +338,18 @@
       "stillKept": "find your own stories, saved as they were;",
       "stillReport": "report anything that worries you, and block anyone;",
       "stillData": "download your data or delete your account, below."
+    },
+    "spotlight": {
+      "documentTitle": "Suggestions to other readers",
+      "heading": "May we suggest your child to other readers?",
+      "intro": "@{{handle}} would like us to suggest them and their stories to other readers. They’re under 16, so we only do this if you say yes.",
+      "whereShown": "Where: in lists such as New and rising writers and Writers to follow.",
+      "whatShown": "What readers see: their username or pen name, their avatar and the stories they’ve published.",
+      "whatNot": "Never their email, their age or anything private. Saying no changes nothing else about their account.",
+      "agree": "Yes, you may suggest them",
+      "withdraw": "Stop suggesting them",
+      "agreedNow": "You said yes, so readers may see @{{handle}} among our suggestions.",
+      "noAnswer": "You can change your mind at any time from this page."
     }
   },
   "onboarding": {

@@ -38,8 +38,11 @@ export interface ShelfProps {
   title: string;
   eyebrow?: string;
   items: ShelfItem[];
-  /** The See all page for this shelf (S1-E5-09). */
-  seeAllHref: string;
+  /**
+   * The See all page for this shelf (S1-E5-09); left out for a shelf that never holds more
+   * than 20 (Writers to follow, S1-E5-11).
+   */
+  seeAllHref?: string;
   /**
    * How many the whole list holds, when the caller has only its first page (S1-E5-01's shelves
    * load 21); defaults to the number of items.
@@ -126,7 +129,7 @@ export function Shelf({ title, eyebrow, items, seeAllHref, totalCount }: ShelfPr
             {item.content}
           </div>
         ))}
-        {hasMore && (
+        {hasMore && seeAllHref !== undefined && (
           <div className="relative flex-none">
             <ViewMoreCard href={seeAllHref} shelfTitle={title} totalCount={listSize} />
           </div>

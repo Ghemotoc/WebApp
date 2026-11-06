@@ -88,7 +88,9 @@
     "certificateIssuedPlain": "ai primit o diplomă nouă. O găsești în Diplomele mele.",
     "rankReached": "acum ai rangul {{rank}}. Felicitări!",
     "spaceHandoverOffered": "ți-a oferit {{space}}. Deschide-l ca să accepți sau să refuzi.",
-    "storyFeatured": "povestea ta „{{story}}” este printre Recomandatele săptămânii, pe Descoperă."
+    "storyFeatured": "povestea ta „{{story}}” este printre Recomandatele săptămânii, pe Descoperă.",
+    "spotlightAgreed": "părintele sau tutorele tău a fost de acord să te recomandăm, pe tine și poveștile tale, altor cititori.",
+    "spotlightWithdrawn": "nu te mai recomandăm altor cititori, nici poveștile tale, pentru că acordul părintelui sau tutorelui tău a fost retras."
   },
   "grouped": {
     "reactions_one": "{{count}} reacție",
@@ -151,7 +153,8 @@
     "downloadDataRequestCopy": "Descarc-o",
     "openAuditLog": "Deschide jurnalul de audit",
     "openLandingPage": "Deschide pagina",
-    "seeMyRank": "Vezi rangul tău"
+    "seeMyRank": "Vezi rangul tău",
+    "seePrivacy": "Vezi setările de confidențialitate"
   },
   "alwaysOn": "Mereu pornite",
   "unread": "Necitită",

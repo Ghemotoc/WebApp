@@ -93,7 +93,17 @@
     "withdrawnSubject": "Ți-ai retras acordul pentru @{{handle}}",
     "withdrawnBody": "Am făcut contul lui @{{handle}} doar pentru citit. Poate citi în continuare povești, dar nu poate publica, comenta, posta sau trimite mesaje. Dacă ai întrebări despre ce urmează, răspunde la acest email.",
     "refusedSubject": "Contul tău nu va fi activat",
-    "refusedBody": "Părintele sau tutorele tău nu a fost de acord, așa că nu îți activăm contul {{productName}} și l-am șters, împreună cu datele lui. Te poți înscrie din nou mai târziu și poți ruga un alt părinte sau tutore."
+    "refusedBody": "Părintele sau tutorele tău nu a fost de acord, așa că nu îți activăm contul {{productName}} și l-am șters, împreună cu datele lui. Te poți înscrie din nou mai târziu și poți ruga un alt părinte sau tutore.",
+    "agreedSpotlight": "Ați fost de acord și să recomandăm contul @{{handle}} și poveștile lui altor cititori, de exemplu în Scriitori noi în ascensiune. Ca să retrageți doar acest acord, folosiți pagina: {{spotlightLink}}",
+    "spotlightRequestSubject": "Putem recomanda contul @{{handle}} altor cititori?",
+    "spotlightRequestBody": "@{{handle}} ar vrea ca {{productName}} să-i recomande contul și poveștile altor cititori, de exemplu în Scriitori noi în ascensiune. Are sub 16 ani, așa că facem asta doar dacă spuneți da. Dacă spuneți nu, contul rămâne exact cum e.",
+    "spotlightRequestAction": "Citiți ce înseamnă și răspundeți aici: {{link}}",
+    "spotlightRequestNoAnswer": "Dacă nu răspundeți, nu recomandăm contul. Vă puteți răzgândi oricând, de pe aceeași pagină.",
+    "spotlightAgreedSubject": "Ați fost de acord să recomandăm contul @{{handle}}",
+    "spotlightAgreedBody": "Vă mulțumim. Ați fost de acord pe {{date}}, așa că alți cititori pot vedea acum contul @{{handle}} și poveștile lui printre recomandările noastre.",
+    "spotlightAgreedWithdraw": "Puteți retrage acordul oricând, de pe aceeași pagină: {{link}}",
+    "spotlightWithdrawnSubject": "Nu mai recomandăm contul @{{handle}}",
+    "spotlightWithdrawnBody": "Ați retras acordul pe {{date}}. Nu mai recomandăm contul @{{handle}} și nici poveștile lui altor cititori. Contul și poveștile rămân așa cum sunt."
   },
   "dataRequestParent": {
     "askSubject": "Ai cerut datele contului @{{handle}}?",
