@@ -26,9 +26,10 @@ create function pg_temp.sign_out() returns void language sql as $$
 $$;
 -- A recipe the builder could have made.
 create function pg_temp.recipe() returns jsonb language sql as $$
-  select '{"style": "open-peeps", "version": 1, "skin": "d08b5b", "head": "afro", "hairColour": "2c1b18",
-           "expression": "smile", "facialHair": "none", "accessory": "glasses", "clothes": "8fa7df",
-           "background": "f1eaf4"}'::jsonb;
+  select '{"style": "micah", "version": 1, "skin": "d08b5b", "hair": "full", "hairColour": "2c1b18",
+           "eyebrows": "up", "eyes": "eyes", "mouth": "smile", "nose": "curve", "facialHair": "none",
+           "glasses": "round", "earrings": "none", "extrasColour": "2c1b18", "shirt": "crew",
+           "shirtColour": "8fa7df", "background": "f1eaf4"}'::jsonb;
 $$;
 
 /* ---------- 1. The year a classic was first published ---------- */

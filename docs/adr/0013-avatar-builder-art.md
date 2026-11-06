@@ -1,7 +1,7 @@
 # ADR 0013: Drawn avatars use DiceBear's Open Peeps art, drawn in the browser
 
 - **Date:** 3 November 2026
-- **Status:** Proposed by the builder (ADMIN-2g). Robert asked for "a local open-source library such as DiceBear, with a style whose art licence allows commercial use" and for the licence to be recorded here (bundle-12 brief, section 7, 2 Nov 2026, 08:36).
+- **Status:** Replaced by ADR 0016 (Micah art, 6 Nov 2026). Was proposed by the builder (ADMIN-2g). Robert asked for "a local open-source library such as DiceBear, with a style whose art licence allows commercial use" and for the licence to be recorded here (bundle-12 brief, section 7, 2 Nov 2026, 08:36).
 
 ## Context
 Avatars can no longer be uploaded: they are built with the avatar builder or are the initials (Robert, 2 Nov 2026, 08:41 to 08:50). The builder saves a small recipe on the profile (`profiles.avatar_recipe`) and the browser draws it as SVG. The brief asks for a full range of skin tones, no gendered default, no free text, a live preview, "Surprise me" and undo, and says our own doodle-style parts can replace the art later.

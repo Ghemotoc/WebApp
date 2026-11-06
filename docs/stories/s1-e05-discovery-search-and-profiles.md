@@ -66,10 +66,14 @@ As a reader, I want to search by title, tag or pen name so that I can find a spe
 As a reader, I want a writer's profile with their stories so that I can follow them.
 
 - **Priority:** Must · **Size:** M · **Depends on:** S1-E2-04
+- **Updated:** 2 Nov 2026: avatars are never uploaded; they are built with the avatar builder or are the initials (Robert; bundle ADMIN-2g). 6 Nov 2026: the builder uses DiceBear's Micah art, close up, with tabs of picture tiles and colour swatches and no drop-downs, and credits the art's designer (Robert, 11:03 to 11:16 UTC; bundle AVATAR-1, ADR 0016).
 - **Acceptance criteria:**
   - Given a profile, when it opens, then it shows pen name or handle, avatar, a bio of up to 300 characters (proposal), published stories, rank chip, follow button, report and block.
   - Given any profile, when it is viewed by another user, then year of birth, age check result, email and online status are never shown unless the owner opted in to online status.
-  - Given an avatar upload, when it is saved, then the same file rules and the picture check on upload apply as for covers (S1-E10-05).
+  - ~~Given an avatar upload, when it is saved, then the same file rules and the picture check on upload apply as for covers (S1-E10-05).~~ Replaced on 2 Nov 2026: there are no avatar uploads.
+  - Given Settings › Profile, when a person builds an avatar, then each part is a named picture tile or colour swatch on one of four tabs (Face; Hair; Glasses and earrings; Clothes and background), every hairstyle takes any hair colour, glasses, earrings and beard start at none, and the tabs and tiles work by keyboard (AVATAR-1).
+  - Given the avatar editor, when it shows, then the art is credited under it ("Avatar Illustration System" by Micah Lanier, CC BY 4.0, with a link to the licence), and every drawn avatar's SVG carries the same credit (AVATAR-1).
+  - Given an avatar saved in the old Open Peeps shape, when the AVATAR-1 migration runs, then it becomes the nearest Micah avatar with the same colours, and the old shape is refused from then on (AVATAR-1).
 - **Legal and compliance:** banners on spaces only, no profile banners (decided 16 Oct 2026, late evening, Q50).
 
 ##### S1-E5-06 Public-domain classics shelf

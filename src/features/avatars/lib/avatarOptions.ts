@@ -1,30 +1,63 @@
 /**
  * The choices the avatar builder offers, part by part (bundle ADMIN-2, part g; Robert's brief of
  * 2 Nov 2026, section 7: "Offer a full range of skin tones, no gendered default and no free
- * text").
+ * text"; bundle AVATAR-1, 6 Nov 2026: the Micah art, picked by Robert at 11:09 UTC, where every
+ * hairstyle takes any colour).
  *
- * The parts are the Open Peeps art's own names (@dicebear/open-peeps, CC0; ADR 0013). A few of its
- * expressions are left out because they look angry, scared or monstrous, and the bear hat because
- * it hides the face. Each choice's name on screen is `avatars.<part>.<value>` in the locale files.
- * Colours are six hex digits; the database checks the same shape (avatar_recipe_valid()).
- * Who uses it: AvatarBuilderSection (the drop-downs), randomRecipe (Surprise me), drawAvatar.
+ * The shapes are the Micah art's own names (@dicebear/micah, art CC BY 4.0 by Micah Lanier; ADR
+ * 0014). Each choice's name on screen is `avatars.<part>.<value>` in the locale files. Colours
+ * are six hex digits; the database checks the same shape (avatar_recipe_valid()).
+ * The parts are grouped into the editor's tabs (avatarTabs), and each part is either a row of
+ * picture tiles (a shape) or a row of round swatches (a colour).
+ * Who uses it: the editor (AvatarEditorTabs, AvatarPartTiles, AvatarColourSwatches),
+ * randomRecipe (Surprise me) and drawAvatar.
  */
 import type { AvatarRecipe } from '@/schemas/avatarRecipe';
 
-/** The recipe's parts the builder lets a person choose, in the order of the drop-downs. */
-export const avatarParts = [
-  'skin',
-  'head',
-  'hairColour',
-  'expression',
+/** The parts that are shapes, drawn as picture tiles. */
+export const avatarShapeParts = [
+  'hair',
+  'eyebrows',
+  'eyes',
+  'mouth',
+  'nose',
   'facialHair',
-  'accessory',
-  'clothes',
+  'glasses',
+  'earrings',
+  'shirt',
+] as const;
+
+/** The parts that are colours, drawn as round swatches. */
+export const avatarColourParts = [
+  'skin',
+  'hairColour',
+  'extrasColour',
+  'shirtColour',
   'background',
 ] as const;
 
+/** Every part the builder lets a person choose. */
+export const avatarParts = [...avatarShapeParts, ...avatarColourParts] as const;
+
 /** One part's name. */
 export type AvatarPart = (typeof avatarParts)[number];
+
+/** A shape part's name. */
+export type AvatarShapePart = (typeof avatarShapeParts)[number];
+
+/** A colour part's name. */
+export type AvatarColourPart = (typeof avatarColourParts)[number];
+
+/** The editor's tabs and the parts on each, in order (Robert, 6 Nov 2026: "not with dropdowns"). */
+export const avatarTabs = [
+  { key: 'face', parts: ['skin', 'eyes', 'eyebrows', 'mouth', 'nose'] },
+  { key: 'hair', parts: ['hair', 'hairColour', 'facialHair'] },
+  { key: 'extras', parts: ['glasses', 'earrings', 'extrasColour'] },
+  { key: 'clothes', parts: ['shirt', 'shirtColour', 'background'] },
+] as const satisfies readonly { key: string; parts: readonly AvatarPart[] }[];
+
+/** One tab's key. */
+export type AvatarTabKey = (typeof avatarTabs)[number]['key'];
 
 /** Skin tones from the lightest to the deepest. */
 const skinTones = [
@@ -39,58 +72,7 @@ const skinTones = [
   '4b3328',
 ];
 
-/** Hair and head-covering shapes (everything Open Peeps draws except the bear hat). */
-const heads = [
-  'afro',
-  'bangs',
-  'bangs2',
-  'bantuKnots',
-  'bun',
-  'bun2',
-  'buns',
-  'cornrows',
-  'cornrows2',
-  'dreads1',
-  'dreads2',
-  'flatTop',
-  'flatTopLong',
-  'grayBun',
-  'grayMedium',
-  'grayShort',
-  'hatBeanie',
-  'hatHip',
-  'hijab',
-  'long',
-  'longAfro',
-  'longBangs',
-  'longCurly',
-  'medium1',
-  'medium2',
-  'medium3',
-  'mediumBangs',
-  'mediumBangs2',
-  'mediumBangs3',
-  'mediumStraight',
-  'mohawk',
-  'mohawk2',
-  'noHair1',
-  'noHair2',
-  'noHair3',
-  'pomp',
-  'shaved1',
-  'shaved2',
-  'shaved3',
-  'short1',
-  'short2',
-  'short3',
-  'short4',
-  'short5',
-  'turban',
-  'twists',
-  'twists2',
-];
-
-/** Hair colours, natural ones first. */
+/** Hair colours, natural ones first; every hairstyle takes any of them. */
 const hairColours = [
   '2c1b18',
   '4a312c',
@@ -106,67 +88,11 @@ const hairColours = [
   '8e5bb8',
 ];
 
-/** Friendly expressions (eyes and mouth together, as the art draws them). */
-const expressions = [
-  'smile',
-  'smileBig',
-  'smileLOL',
-  'smileTeethGap',
-  'lovingGrin1',
-  'lovingGrin2',
-  'cute',
-  'cheeky',
-  'calm',
-  'blank',
-  'serious',
-  'solemn',
-  'driven',
-  'explaining',
-  'eatingHappy',
-  'awe',
-  'concerned',
-  'suspicious',
-  'eyesClosed',
-  'tired',
-  'old',
-];
+/** Colours for glasses and earrings. */
+const extrasColours = ['2c1b18', '815e18', 'e6c24c', 'c0c0c0', '8e5bb8', '5b7fd6', 'e78276'];
 
-/** Facial hair; "none" first. */
-const facialHair = [
-  'none',
-  'chin',
-  'full',
-  'full2',
-  'full3',
-  'full4',
-  'goatee1',
-  'goatee2',
-  'moustache1',
-  'moustache2',
-  'moustache3',
-  'moustache4',
-  'moustache5',
-  'moustache6',
-  'moustache7',
-  'moustache8',
-  'moustache9',
-];
-
-/** Glasses and the like; "none" first. */
-const accessories = [
-  'none',
-  'glasses',
-  'glasses2',
-  'glasses3',
-  'glasses4',
-  'glasses5',
-  'sunglasses',
-  'sunglasses2',
-  'eyepatch',
-];
-
-/** Clothes colours. */
-const clothesColours = [
+/** Shirt colours. */
+const shirtColours = [
   'e78276',
   'ffcf77',
   'fdea6b',
@@ -182,31 +108,45 @@ const clothesColours = [
 /** Backgrounds: the pastel tints of the design tokens (plum, sage, gold, sky, blush, neutral). */
 const backgrounds = ['f1eaf4', 'e8f1ec', 'fbf3da', 'e6eef6', 'f6e9eb', 'f4f0ec'];
 
-/** Every part's choices. */
+/** Every part's choices: the Micah art draws all of these. */
 export const avatarChoices: Record<AvatarPart, readonly string[]> = {
+  // Shapes.
+  hair: ['dannyPhantom', 'fonze', 'full', 'pixie', 'mrT', 'dougFunny', 'mrClean', 'turban'],
+  eyebrows: ['up', 'down', 'eyelashesUp', 'eyelashesDown'],
+  eyes: ['eyes', 'round', 'smiling', 'eyesShadow', 'smilingShadow'],
+  mouth: ['smile', 'laughing', 'smirk', 'surprised', 'nervous', 'pucker', 'sad', 'frown'],
+  nose: ['curve', 'pointed', 'tound'],
+  facialHair: ['none', 'scruff', 'beard'],
+  glasses: ['none', 'round', 'square'],
+  earrings: ['none', 'stud', 'hoop'],
+  shirt: ['crew', 'collared', 'open'],
+  // Colours.
   skin: skinTones,
-  head: heads,
   hairColour: hairColours,
-  expression: expressions,
-  facialHair,
-  accessory: accessories,
-  clothes: clothesColours,
+  extrasColour: extrasColours,
+  shirtColour: shirtColours,
   background: backgrounds,
 };
 
 /**
- * Where the builder starts for someone without an avatar: a middle skin tone, medium hair, a
- * smile, no facial hair and no accessory, so nothing assumes a gender.
+ * Where the builder starts for someone without an avatar: a middle skin tone, swept hair, a
+ * smile and no facial hair, glasses or earrings, so nothing assumes a gender.
  */
 export const startingRecipe: AvatarRecipe = {
-  style: 'open-peeps',
+  style: 'micah',
   version: 1,
   skin: 'd08b5b',
-  head: 'medium1',
+  hair: 'dannyPhantom',
   hairColour: '4a312c',
-  expression: 'smile',
+  eyebrows: 'up',
+  eyes: 'eyes',
+  mouth: 'smile',
+  nose: 'curve',
   facialHair: 'none',
-  accessory: 'none',
-  clothes: '8fa7df',
+  glasses: 'none',
+  earrings: 'none',
+  extrasColour: '2c1b18',
+  shirt: 'crew',
+  shirtColour: '8fa7df',
   background: 'f1eaf4',
 };

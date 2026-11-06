@@ -1,11 +1,10 @@
 {
   "builder": {
     "heading": "Your avatar",
-    "intro": "Build a drawn avatar for your profile and messages. Nothing is uploaded. Until you save one, your initials show.",
+    "intro": "Build a drawn avatar for your profile and messages: pick a tab, then tap a picture or a colour. Nothing is uploaded. Until you save one, your initials show.",
     "previewAlt": "Preview of the avatar you are building",
     "showingInitials": "Others see your initials.",
     "showingAvatar": "Others see your saved avatar.",
-    "partsLegend": "Choose each part of your avatar",
     "surprise": "Surprise me",
     "undo": "Undo",
     "save": "Save avatar",
@@ -18,17 +17,91 @@
       "not_allowed": "Your account can’t change its profile right now.",
       "invalid": "That avatar couldn’t be saved. Try another choice.",
       "unreachable": "We couldn’t reach our server. Check your connection and try again."
-    }
+    },
+    "tabsLabel": "Parts of your avatar",
+    "tabs": {
+      "face": "Face",
+      "hair": "Hair",
+      "extras": "Glasses and earrings",
+      "clothes": "Clothes and background"
+    },
+    "choice": "{{part}}: {{choice}}",
+    "credit": "Avatar art: “Avatar Illustration System” by Micah Lanier, CC BY 4.0, drawn with DiceBear.",
+    "creditLink": "About the licence"
   },
   "parts": {
+    "hair": "Hairstyle",
+    "eyebrows": "Eyebrows",
+    "eyes": "Eyes",
+    "mouth": "Mouth",
+    "nose": "Nose",
+    "facialHair": "Beard",
+    "glasses": "Glasses",
+    "earrings": "Earrings",
+    "shirt": "Top",
     "skin": "Skin tone",
-    "head": "Hair or head covering",
     "hairColour": "Hair colour",
-    "expression": "Expression",
-    "facialHair": "Facial hair",
-    "accessory": "Glasses and more",
-    "clothes": "Clothes colour",
+    "extrasColour": "Glasses and earrings colour",
+    "shirtColour": "Top colour",
     "background": "Background"
+  },
+  "hair": {
+    "dannyPhantom": "Swept",
+    "fonze": "Quiff",
+    "full": "Long and full",
+    "pixie": "Bob",
+    "mrT": "Mohawk",
+    "dougFunny": "A few curls",
+    "mrClean": "Shaved",
+    "turban": "Head wrap"
+  },
+  "eyebrows": {
+    "up": "Raised",
+    "down": "Relaxed",
+    "eyelashesUp": "Raised, with lashes",
+    "eyelashesDown": "Relaxed, with lashes"
+  },
+  "eyes": {
+    "eyes": "Open",
+    "round": "Round",
+    "smiling": "Smiling",
+    "eyesShadow": "Open, with eye shadow",
+    "smilingShadow": "Smiling, with eye shadow"
+  },
+  "mouth": {
+    "smile": "Smile",
+    "laughing": "Laughing",
+    "smirk": "Smirk",
+    "surprised": "Surprised",
+    "nervous": "Nervous",
+    "pucker": "Pucker",
+    "sad": "Sad",
+    "frown": "Frown"
+  },
+  "nose": {
+    "curve": "Curved",
+    "pointed": "Pointed",
+    "tound": "Round"
+  },
+  "facialHair": {
+    "none": "None",
+    "scruff": "Stubble",
+    "beard": "Beard"
+  },
+  "glasses": {
+    "none": "None",
+    "round": "Round",
+    "square": "Square"
+  },
+  "earrings": {
+    "none": "None",
+    "stud": "Studs",
+    "hoop": "Hoops"
+  },
+  "shirt": {
+    "crew": "Round neck",
+    "collared": "Collar",
+    "open": "Open neck"
   },
   "skin": {
     "ffdbb4": "Tone 1 (lightest)",
@@ -40,55 +113,6 @@
     "8a4b2a": "Tone 7",
     "694d3d": "Tone 8",
     "4b3328": "Tone 9 (deepest)"
-  },
-  "head": {
-    "afro": "Afro",
-    "bangs": "Fringe",
-    "bangs2": "Fringe 2",
-    "bantuKnots": "Bantu knots",
-    "bun": "Bun",
-    "bun2": "Bun 2",
-    "buns": "Two buns",
-    "cornrows": "Cornrows",
-    "cornrows2": "Cornrows 2",
-    "dreads1": "Locs",
-    "dreads2": "Locs 2",
-    "flatTop": "Flat top",
-    "flatTopLong": "Long flat top",
-    "grayBun": "Grey bun",
-    "grayMedium": "Grey, medium",
-    "grayShort": "Grey, short",
-    "hatBeanie": "Beanie",
-    "hatHip": "Cap",
-    "hijab": "Hijab",
-    "long": "Long",
-    "longAfro": "Long afro",
-    "longBangs": "Long with a fringe",
-    "longCurly": "Long and curly",
-    "medium1": "Medium",
-    "medium2": "Medium 2",
-    "medium3": "Medium 3",
-    "mediumBangs": "Medium with a fringe",
-    "mediumBangs2": "Medium with a fringe 2",
-    "mediumBangs3": "Medium with a fringe 3",
-    "mediumStraight": "Medium and straight",
-    "mohawk": "Mohawk",
-    "mohawk2": "Mohawk 2",
-    "noHair1": "No hair",
-    "noHair2": "No hair 2",
-    "noHair3": "No hair 3",
-    "pomp": "Quiff",
-    "shaved1": "Shaved",
-    "shaved2": "Shaved 2",
-    "shaved3": "Shaved 3",
-    "short1": "Short",
-    "short2": "Short 2",
-    "short3": "Short 3",
-    "short4": "Short 4",
-    "short5": "Short 5",
-    "turban": "Turban",
-    "twists": "Twists",
-    "twists2": "Twists 2"
   },
   "hairColour": {
     "2c1b18": "Black",
@@ -104,60 +128,16 @@
     "5b7fd6": "Blue",
     "8e5bb8": "Purple"
   },
-  "expression": {
-    "smile": "Smile",
-    "smileBig": "Big smile",
-    "smileLOL": "Laughing",
-    "smileTeethGap": "Gap-toothed smile",
-    "lovingGrin1": "Loving grin",
-    "lovingGrin2": "Loving grin 2",
-    "cute": "Sweet",
-    "cheeky": "Cheeky",
-    "calm": "Calm",
-    "blank": "Neutral",
-    "serious": "Serious",
-    "solemn": "Solemn",
-    "driven": "Determined",
-    "explaining": "Explaining",
-    "eatingHappy": "Happily eating",
-    "awe": "Amazed",
-    "concerned": "Worried",
-    "suspicious": "Suspicious",
-    "eyesClosed": "Eyes closed",
-    "tired": "Tired",
-    "old": "Wise"
+  "extrasColour": {
+    "2c1b18": "Black",
+    "815e18": "Bronze",
+    "e6c24c": "Gold",
+    "c0c0c0": "Silver",
+    "8e5bb8": "Purple",
+    "5b7fd6": "Blue",
+    "e78276": "Coral"
   },
-  "facialHair": {
-    "none": "None",
-    "chin": "Chin beard",
-    "full": "Full beard",
-    "full2": "Full beard 2",
-    "full3": "Full beard 3",
-    "full4": "Full beard 4",
-    "goatee1": "Goatee",
-    "goatee2": "Goatee 2",
-    "moustache1": "Moustache",
-    "moustache2": "Moustache 2",
-    "moustache3": "Moustache 3",
-    "moustache4": "Moustache 4",
-    "moustache5": "Moustache 5",
-    "moustache6": "Moustache 6",
-    "moustache7": "Moustache 7",
-    "moustache8": "Moustache 8",
-    "moustache9": "Moustache 9"
-  },
-  "accessory": {
-    "none": "None",
-    "glasses": "Glasses",
-    "glasses2": "Glasses 2",
-    "glasses3": "Glasses 3",
-    "glasses4": "Glasses 4",
-    "glasses5": "Glasses 5",
-    "sunglasses": "Sunglasses",
-    "sunglasses2": "Sunglasses 2",
-    "eyepatch": "Eye patch"
-  },
-  "clothes": {
+  "shirtColour": {
     "e78276": "Coral",
     "ffcf77": "Apricot",
     "fdea6b": "Yellow",

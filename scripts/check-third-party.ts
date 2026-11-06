@@ -60,11 +60,12 @@ const reviewedHosts: Record<string, string> = {
   'open.spotify.com': 'the Spotify player; only after play (ADR 0008)',
   'embed.music.apple.com': 'the Apple Music player; only after play (ADR 0008)',
   'music.apple.com': 'a writer’s clean source link for moderators; never loaded',
-  // The avatar builder (ADMIN-2g, ADR 0013): DiceBear writes the Open Peeps art's source,
-  // designer and CC0 licence into each drawn SVG's metadata; none is ever loaded.
-  'www.openpeeps.com': 'the Open Peeps art’s source in each avatar’s SVG metadata; never loaded',
-  'twitter.com': 'the Open Peeps designer’s page in each avatar’s SVG metadata; never loaded',
-  'creativecommons.org': 'the CC0 licence link in each avatar’s SVG metadata; never loaded',
+  // The avatar builder (ADMIN-2g; the Micah art since AVATAR-1, ADR 0016): DiceBear writes the
+  // art's source and its CC BY 4.0 licence into each drawn SVG's metadata, and the editor links
+  // to the licence under the credit; none is ever loaded by the app.
+  'www.figma.com': 'the Micah art’s source in each avatar’s SVG metadata; never loaded',
+  'dribbble.com': 'the Micah designer’s page in the art’s metadata; never loaded',
+  'creativecommons.org': 'the CC BY 4.0 licence: SVG metadata and the credit’s link; never loaded',
   // Story Atlas (S1-E17): the writer's Markdown help shows a sample link; never loaded.
   'example.com': 'the sample link in the Atlas text help; never loaded',
   // The ad network (S1-E12-04; ADR 0014): Google AdSense's script, added only when a network ad's

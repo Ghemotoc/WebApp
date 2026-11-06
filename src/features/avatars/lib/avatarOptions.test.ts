@@ -1,6 +1,6 @@
 /**
- * Unit tests for the avatar builder's choices, Surprise me and the drawing options (bundle
- * ADMIN-2, part g).
+ * Unit tests for the avatar builder's choices, tabs, Surprise me and the drawing options (bundle
+ * ADMIN-2, part g; the Micah art and the visual editor since bundle AVATAR-1).
  */
 import { describe, expect, it } from 'vitest';
 
@@ -8,8 +8,8 @@ import englishAvatars from '@/locales/en/avatars.json';
 import romanianAvatars from '@/locales/ro/avatars.json';
 import { avatarRecipeSchema } from '@/schemas/avatarRecipe';
 
-import { avatarChoices, avatarParts, startingRecipe } from './avatarOptions';
-import { openPeepsOptionsOf } from './drawAvatar';
+import { avatarChoices, avatarParts, avatarTabs, startingRecipe } from './avatarOptions';
+import { micahOptionsOf } from './drawAvatar';
 import { randomRecipe } from './randomRecipe';
 
 /** The label of one choice in a locale file, or undefined. */
@@ -31,9 +31,17 @@ describe('the avatar builder', () => {
     }
   });
 
-  it('starts from a valid recipe with no facial hair, so nothing assumes a gender', () => {
+  it('puts every part on exactly one tab', () => {
+    const onTabs = avatarTabs.flatMap((tab) => [...tab.parts]);
+    expect([...onTabs].sort()).toEqual([...avatarParts].sort());
+    expect(new Set(onTabs).size).toBe(onTabs.length);
+  });
+
+  it('starts from a valid recipe with no facial hair, glasses or earrings, so nothing assumes a gender', () => {
     expect(avatarRecipeSchema.parse(startingRecipe)).toEqual(startingRecipe);
     expect(startingRecipe.facialHair).toBe('none');
+    expect(startingRecipe.glasses).toBe('none');
+    expect(startingRecipe.earrings).toBe('none');
   });
 
   it('makes a valid recipe from the offered choices every time it surprises', () => {
@@ -44,17 +52,30 @@ describe('the avatar builder', () => {
     }
   });
 
-  it('draws exactly the chosen parts, and "none" draws nothing', () => {
-    const options = openPeepsOptionsOf({ ...startingRecipe, accessory: 'glasses' });
-    expect(options.head).toEqual(['medium1']);
+  it('draws exactly the chosen parts, close up, and "none" draws nothing', () => {
+    const options = micahOptionsOf({ ...startingRecipe, glasses: 'round', hairColour: '5b7fd6' });
+    expect(options.hair).toEqual(['dannyPhantom']);
+    expect(options.hairColor).toEqual(['5b7fd6']);
     expect(options.facialHairProbability).toBe(0);
-    expect(options.accessories).toEqual(['glasses']);
-    expect(options.accessoriesProbability).toBe(100);
+    expect(options.glasses).toEqual(['round']);
+    expect(options.glassesProbability).toBe(100);
+    expect(options.earringsProbability).toBe(0);
     expect(options.backgroundColor).toEqual(['f1eaf4']);
+    expect(options.scale).toBeGreaterThan(100);
+  });
+
+  it('gives a beard the hair colour, so the two always match', () => {
+    const options = micahOptionsOf({
+      ...startingRecipe,
+      facialHair: 'beard',
+      hairColour: 'c93305',
+    });
+    expect(options.facialHair).toEqual(['beard']);
+    expect(options.facialHairColor).toEqual(['c93305']);
   });
 
   it('falls back to the starting part for a value the builder does not offer', () => {
-    const options = openPeepsOptionsOf({ ...startingRecipe, head: 'bear' });
-    expect(options.head).toEqual(['medium1']);
+    const options = micahOptionsOf({ ...startingRecipe, hair: 'bear' });
+    expect(options.hair).toEqual(['dannyPhantom']);
   });
 });
