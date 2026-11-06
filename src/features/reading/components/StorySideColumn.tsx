@@ -4,7 +4,7 @@
  *
  * Board values: the writer card (name, 22 px, the bio, Follow and "See profile"; S1-E5-05 and
  * S1-E6-05; the writer's numbers stay on the profile), the label rows with a fine line between them (LabelRows: language,
- * rating, labels, AI, status, comments; "Where to read" joins with S1-E3-08) and the "Report
+ * rating, labels, AI, status, first published (6 Nov 2026), comments; "Where to read" joins with S1-E3-08) and the "Report
  * this story" link. The content note sits in StoryHeader, under the blurb. The mug and the mushroom doodles sit on the card
  * corners as on the board.
  * Report button (CLAUDE.md rule 6): Lane C's shared <ReportButton> (S1-E10-01; architecture
@@ -151,6 +151,36 @@ function aiRowText(labels: StoryPageData['labels'], t: TFunction<'reading'>) {
 }
 
 /**
+ * The year shown as "First published" (Robert, 6 Nov 2026): for a classic, the year the work was
+ * first published anywhere, as staff saved it (none while it isn't confirmed); for a writer's own
+ * story, the year its first chapter went out here, so it fills itself in the moment the story
+ * starts.
+ *
+ * @param story - the story page's data
+ * @returns the year, or null while nothing is published yet (the row is then left out)
+ */
+function firstPublishedYear(story: StoryPageData): number | null {
+  // Step 1: a classic shows only its real publication year, never the day we added it here;
+  // a classic whose year isn't confirmed yet shows no row.
+  const classicAuthor = story.writer.classicAuthor;
+  if (classicAuthor !== null) return classicAuthor.firstPublishedYear;
+  // Step 2: otherwise the year of the first published chapter, in the reader's own time zone.
+  if (story.firstPublishedAt === null) return null;
+  return new Date(story.firstPublishedAt).getFullYear();
+}
+
+/**
+ * The "First published" row, or nothing while the story has no published chapter.
+ *
+ * @returns zero or one label row
+ */
+function firstPublishedRows(story: StoryPageData, t: TFunction<'reading'>) {
+  const year = firstPublishedYear(story);
+  if (year === null) return [];
+  return [{ label: t('storyPage.firstPublishedLabel'), value: String(year) }];
+}
+
+/**
  * Renders the column.
  *
  * @returns the side column
@@ -189,6 +219,7 @@ export function StorySideColumn({ story }: { story: StoryPageData }) {
               label: t('storyPage.statusLabel'),
               value: t(`status.${story.completionStatus}`, { ns: 'writing' }),
             },
+            ...firstPublishedRows(story, t),
             {
               label: t('storyPage.commentsLabel'),
               value: story.commentsEnabled ? t('storyPage.commentsOn') : t('storyPage.commentsOff'),

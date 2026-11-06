@@ -5,6 +5,7 @@ writer: clasice
 author: Christina Rossetti
 author_died: 1894
 source_edition: 1913
+first_published: 1862
 language: en
 category: poetry
 rating: 13_plus

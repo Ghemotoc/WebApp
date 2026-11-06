@@ -5,6 +5,7 @@ writer: clasice
 author: Samuel Taylor Coleridge
 author_died: 1834
 source_edition: 1798
+first_published: 1798
 language: en
 category: poetry
 rating: 13_plus

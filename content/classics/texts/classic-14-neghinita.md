@@ -5,6 +5,7 @@ writer: clasice
 author: Barbu Ștefănescu Delavrancea
 author_died: 1918
 source_edition: 
+first_published:
 source_note: Text: Wikisource, https://ro.wikisource.org/w/index.php?oldid=123622, CC BY-SA 4.0; formatare adaptată.
 language: ro
 category: fiction

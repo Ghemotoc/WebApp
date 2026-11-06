@@ -5,6 +5,7 @@ writer: clasice
 author: Charlotte Perkins Gilman
 author_died: 1935
 source_edition: 1892
+first_published: 1892
 language: en
 category: fiction
 rating: 16_plus

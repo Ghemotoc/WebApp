@@ -2884,6 +2884,7 @@ CREATE TABLE IF NOT EXISTS "public"."stories" (
     "cover_hidden_at" timestamp with time zone,
     "rating_reasons" "public"."story_rating_reason"[] DEFAULT '{}'::"public"."story_rating_reason"[] NOT NULL,
     "visibility" "public"."story_visibility" DEFAULT 'public'::"public"."story_visibility" NOT NULL,
+    "first_published_year" integer,
     CONSTRAINT "stories_abuse_needs_rating_and_note" CHECK (((NOT "deals_with_abuse_or_coercion") OR (("rating" = ANY (ARRAY['16_plus'::"public"."story_rating", '18_plus'::"public"."story_rating"])) AND ("btrim"("content_note") <> ''::"text")))),
     CONSTRAINT "stories_blurb_length" CHECK (("char_length"("blurb") <= 500)),
     CONSTRAINT "stories_card_colour_on_palette" CHECK ((("card_colour" IS NULL) OR ("card_colour" = ANY (ARRAY['plum'::"text", 'violet'::"text", 'gold'::"text", 'ink'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text"])))),
@@ -2898,6 +2899,7 @@ CASE "cover_kind"
     ELSE NULL::boolean
 END),
     CONSTRAINT "stories_cover_design_is_approved" CHECK ((("cover_design" IS NULL) OR ("cover_design" = ANY (ARRAY['plum'::"text", 'ink'::"text", 'violet'::"text", 'gold'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text", 'stripes'::"text", 'dots'::"text", 'grid'::"text", 'waves'::"text", 'starry'::"text", 'doodles'::"text", 'twotone'::"text"])))),
+    CONSTRAINT "stories_first_published_year_range" CHECK ((("first_published_year" >= 1) AND ("first_published_year" <= 2100))),
     CONSTRAINT "stories_language_code_shape" CHECK (("language_code" ~ '^[a-z]{2}(-[A-Z]{2})?$'::"text")),
     CONSTRAINT "stories_rank_badge_tag_ids_check" CHECK ((("rank_badge_tag_ids" IS NULL) OR ("cardinality"("rank_badge_tag_ids") <= 3))),
     CONSTRAINT "stories_slug_shape" CHECK ((("slug" ~ '^[a-z0-9]+(-[a-z0-9]+)*$'::"text") AND ("char_length"("slug") <= 80))),
@@ -2986,6 +2988,10 @@ COMMENT ON COLUMN "public"."stories"."rating_reasons" IS 'Why the story is 16+ o
 
 
 COMMENT ON COLUMN "public"."stories"."visibility" IS 'kind: setting. Who can read the story: public, unlisted (link only, in no list) or private (the writer only) (NEW-1).';
+
+
+
+COMMENT ON COLUMN "public"."stories"."first_published_year" IS 'The year the work was first published anywhere; set for classics from classic_works (copied by a trigger). Null for a writer''s own story, whose first chapter''s year is shown instead.';
 
 
 
@@ -16899,6 +16905,27 @@ COMMENT ON FUNCTION "public"."conversation_with"("other_handle" "text") IS 'One 
 
 
 
+CREATE OR REPLACE FUNCTION "public"."copy_classic_first_published_year"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  update public.stories
+  set first_published_year = new.first_published_year
+  where stories.id = new.story_id
+    and stories.first_published_year is distinct from new.first_published_year;
+  return new;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."copy_classic_first_published_year"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."copy_classic_first_published_year"() IS 'Trigger: copies a classic''s first publication year from classic_works onto its story (6 Nov 2026).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."count_links"("body" "text") RETURNS integer
     LANGUAGE "sql" IMMUTABLE
     SET "search_path" TO ''
@@ -24272,6 +24299,24 @@ ALTER FUNCTION "public"."masked_email"("address" "text") OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."masked_email"("address" "text") IS 'Hides most of an email address''s first part (S1-E11-13).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."may_change_own_avatar"() RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(
+    public.account_state((select auth.uid())) in ('active', 'staff_account'),
+    false
+  );
+$$;
+
+
+ALTER FUNCTION "public"."may_change_own_avatar"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."may_change_own_avatar"() IS 'Internal: true when the caller may save their own drawn avatar: an active member or a staff account (6 Nov 2026).';
 
 
 
@@ -35522,8 +35567,8 @@ CREATE OR REPLACE FUNCTION "public"."set_my_avatar_recipe"("recipe" "jsonb") RET
     SET "search_path" TO ''
     AS $$
 begin
-  -- Step 1: only an account that may write (architecture 1.7.8), like the bio.
-  if not public.is_active_member() then
+  -- Step 1: an active member, or a staff account (6 Nov 2026: staff may set their own look).
+  if not public.may_change_own_avatar() then
     raise exception 'Your account can''t change its profile right now.' using errcode = 'insufficient_privilege';
   end if;
   -- Step 2: only a recipe the builder could have made.
@@ -35540,7 +35585,7 @@ $$;
 ALTER FUNCTION "public"."set_my_avatar_recipe"("recipe" "jsonb") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."set_my_avatar_recipe"("recipe" "jsonb") IS 'Saves or clears the signed-in person''s drawn avatar (ADMIN-2g).';
+COMMENT ON FUNCTION "public"."set_my_avatar_recipe"("recipe" "jsonb") IS 'Saves or clears the signed-in person''s drawn avatar; staff accounts too since 6 Nov 2026 (ADMIN-2g).';
 
 
 
@@ -38816,7 +38861,8 @@ CREATE OR REPLACE FUNCTION "public"."story_classic_author"("target_story_id" "uu
     AS $$
   select jsonb_build_object('name', classic_authors.name, 'died_year', classic_authors.died_year,
     'source_title', works.source_title, 'source_url', works.source_url,
-    'translator_name', works.translator_name)
+    'translator_name', works.translator_name,
+    'first_published_year', stories.first_published_year)
   from public.stories
   join public.classic_authors on classic_authors.id = stories.classic_author_id
   left join public.classic_works as works on works.story_id = stories.id
@@ -38827,7 +38873,7 @@ $$;
 ALTER FUNCTION "public"."story_classic_author"("target_story_id" "uuid") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."story_classic_author"("target_story_id" "uuid") IS 'Internal: a classic''s real author {name, died_year}, or null (S1-E5-06).';
+COMMENT ON FUNCTION "public"."story_classic_author"("target_story_id" "uuid") IS 'Internal: a classic''s real author {name, died_year, source, first_published_year}, or null (S1-E5-06; 6 Nov 2026).';
 
 
 
@@ -47542,6 +47588,10 @@ CREATE OR REPLACE TRIGGER "classic_authors_set_updated_at" BEFORE UPDATE ON "pub
 
 
 
+CREATE OR REPLACE TRIGGER "classic_works_copy_first_published_year" AFTER INSERT OR UPDATE OF "first_published_year" ON "public"."classic_works" FOR EACH ROW EXECUTE FUNCTION "public"."copy_classic_first_published_year"();
+
+
+
 CREATE OR REPLACE TRIGGER "classic_works_set_updated_at" BEFORE UPDATE ON "public"."classic_works" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
@@ -53842,6 +53892,10 @@ GRANT ALL ON FUNCTION "public"."conversation_with"("other_handle" "text") TO "au
 
 
 
+REVOKE ALL ON FUNCTION "public"."copy_classic_first_published_year"() FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."count_links"("body" "text") FROM PUBLIC;
 
 
@@ -54884,6 +54938,10 @@ REVOKE ALL ON FUNCTION "public"."mask_email"("address" "text") FROM PUBLIC;
 
 REVOKE ALL ON FUNCTION "public"."masked_email"("address" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."masked_email"("address" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."may_change_own_avatar"() FROM PUBLIC;
 
 
 

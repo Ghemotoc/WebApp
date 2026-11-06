@@ -5,6 +5,7 @@ writer: clasice
 author: George Coșbuc
 author_died: 1918
 source_edition: 1896
+first_published:
 source_note: Text: Wikisource, https://ro.wikisource.org/w/index.php?oldid=127242, CC BY-SA 4.0; formatare adaptată.
 language: ro
 category: poetry

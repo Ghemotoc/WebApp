@@ -51,10 +51,11 @@ export function ProfileStories({ profile }: { profile: WriterProfile }) {
             wrapCover={(drawn) => (
               <StoryCoverArt story={story} drawn={drawn} className="w-[165px]" />
             )}
+            // Robert, 6 Nov 2026: only "Ongoing" shows as a pill; "Completed" is a filter.
             pill={
-              <InfoPill tone={story.completionStatus === 'completed' ? 'gold' : 'sage'}>
-                {t(`status.${story.completionStatus}`, { ns: 'writing' })}
-              </InfoPill>
+              story.completionStatus === 'ongoing' ? (
+                <InfoPill tone="sage">{t('status.ongoing', { ns: 'writing' })}</InfoPill>
+              ) : undefined
             }
           />
         ),

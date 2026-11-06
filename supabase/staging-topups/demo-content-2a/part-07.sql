@@ -675,6 +675,10 @@ update public.stories
 set classic_author_id = (select id from public.classic_authors where name = $demo$Charlotte Perkins Gilman$demo$)
 where stories.id = '00000000-0000-4000-9300-001800000000'::uuid
   and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Charlotte Perkins Gilman$demo$);
+update public.stories
+set completion_status = 'completed', first_published_year = 1892
+where stories.id = '00000000-0000-4000-9300-001800000000'::uuid
+  and (stories.completion_status <> 'completed' or stories.first_published_year is distinct from 1892);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -2837,6 +2841,10 @@ update public.stories
 set classic_author_id = (select id from public.classic_authors where name = $demo$Samuel Taylor Coleridge$demo$)
 where stories.id = '00000000-0000-4000-9300-001900000000'::uuid
   and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Samuel Taylor Coleridge$demo$);
+update public.stories
+set completion_status = 'completed', first_published_year = 1798
+where stories.id = '00000000-0000-4000-9300-001900000000'::uuid
+  and (stories.completion_status <> 'completed' or stories.first_published_year is distinct from 1798);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -5977,4 +5985,8 @@ update public.stories
 set classic_author_id = (select id from public.classic_authors where name = $demo$Christina Rossetti$demo$)
 where stories.id = '00000000-0000-4000-9300-002000000000'::uuid
   and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Christina Rossetti$demo$);
+update public.stories
+set completion_status = 'completed', first_published_year = 1862
+where stories.id = '00000000-0000-4000-9300-002000000000'::uuid
+  and (stories.completion_status <> 'completed' or stories.first_published_year is distinct from 1862);
 commit;

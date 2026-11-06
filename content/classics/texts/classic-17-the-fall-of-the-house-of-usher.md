@@ -5,6 +5,7 @@ writer: clasice
 author: Edgar Allan Poe
 author_died: 1849
 source_edition: 1839
+first_published: 1839
 language: en
 category: fiction
 rating: 13_plus

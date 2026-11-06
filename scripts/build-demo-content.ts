@@ -193,6 +193,8 @@ export interface DemoStory {
   author?: string;
   authorDied?: number;
   sourceEdition?: number;
+  /** The year the work was first published anywhere; blank when it couldn't be confirmed. */
+  firstPublished?: number;
   /** Classics from Wikisource: the attribution CC BY-SA asks for (link and licence). */
   sourceNote?: string;
   chapters: DemoChapter[];
@@ -330,6 +332,10 @@ export function parseStory(markdown: string, number: number): DemoStory {
     // leave it blank rather than guess).
     const edition = fields.get('source_edition') ?? '';
     story.sourceEdition = edition === '' ? undefined : Number(edition);
+    // The story page's "First published" row (Robert, 6 Nov 2026). Blank rather than a guess,
+    // like the edition year: the row is then left out.
+    const firstPublished = fields.get('first_published') ?? '';
+    story.firstPublished = firstPublished === '' ? undefined : Number(firstPublished);
     story.sourceNote = fields.get('source_note');
   }
   return story;
@@ -422,9 +428,28 @@ function classicProblems(story: DemoStory): string[] {
     problems.push(`author_died must be ${lastFreeDeathYear} or earlier to be public domain`);
   }
   problems.push(...editionProblems(story));
+  problems.push(...firstPublishedProblems(story));
   const allText = [story.blurb, ...story.chapters.map((chapter) => chapter.body)].join('\n');
   if (/gutenberg/i.test(allText)) problems.push('names Gutenberg; strip its licence and name');
   return problems;
+}
+
+/**
+ * The first publication year's rule (6 Nov 2026): blank, or a year no later than the edition the
+ * text was taken from, since a work can't be reprinted before it first came out.
+ *
+ * @param story - a classic
+ * @returns the problems
+ */
+function firstPublishedProblems(story: DemoStory): string[] {
+  if (story.firstPublished === undefined) return [];
+  if (!Number.isInteger(story.firstPublished) || story.firstPublished < 1500) {
+    return ['first_published must be the year the work first came out, or blank'];
+  }
+  if (story.sourceEdition !== undefined && story.firstPublished > story.sourceEdition) {
+    return ['first_published can’t be later than source_edition'];
+  }
+  return [];
 }
 
 /**
@@ -785,9 +810,10 @@ select json_build_object(
 
 /**
  * The SQL that names a classic's real author (S1-E5-06; Robert, 25 Oct 2026: classics show
- * "the real writers"): adds the author once, then sets the story's classic_author_id. Empty for
- * a demo story. Safe to run twice: the author is unique by name, and the update only changes a
- * story whose author is still missing or different.
+ * "the real writers"): adds the author once, then sets the story's classic_author_id. Since
+ * 6 Nov 2026 it also marks the classic Completed (its author is dead, so no chapter will follow)
+ * and sets the year it was first published. Empty for a demo story. Safe to run twice: the
+ * author is unique by name, and each update only changes a story that still differs.
  *
  * @param story - the story
  * @returns SQL, ending with a newline, or ''
@@ -795,12 +821,17 @@ select json_build_object(
 export function classicAuthorSql(story: DemoStory): string {
   if (story.author === undefined) return '';
   const author = sqlText(story.author);
+  const year = story.firstPublished === undefined ? 'null' : String(story.firstPublished);
   return `insert into public.classic_authors (name, died_year) values (${author}, ${story.authorDied})
 on conflict (name) do nothing;
 update public.stories
 set classic_author_id = (select id from public.classic_authors where name = ${author})
 where stories.id = ${sqlValue(fixedId(story))}::uuid
   and stories.classic_author_id is distinct from (select id from public.classic_authors where name = ${author});
+update public.stories
+set completion_status = 'completed', first_published_year = ${year}
+where stories.id = ${sqlValue(fixedId(story))}::uuid
+  and (stories.completion_status <> 'completed' or stories.first_published_year is distinct from ${year});
 `;
 }
 
@@ -813,14 +844,19 @@ where stories.id = ${sqlValue(fixedId(story))}::uuid
  */
 export function buildClassicAuthorsSql(classics: DemoStory[]): string {
   const authorCount = new Set(classics.map((story) => story.author)).size;
-  return `-- Staging top-up: the classics' real authors (part of S1-E5-06; Robert, 25 Oct 2026). GENERATED FILE.
+  const yearCount = classics.filter((story) => story.firstPublished !== undefined).length;
+  return `-- Staging top-up: the classics' real authors, Completed status and first publication year
+-- (S1-E5-06; Robert, 25 Oct and 6 Nov 2026). GENERATED FILE.
 --
 -- Made by \`npm run demo:build\` from content/classics/texts/*.md; edit those files, not this one.
 -- What it does: adds the ${authorCount} real authors to classic_authors and names each of the ${classics.length}
--- classics' author, so every byline shows "Ion Creangă" and not the classics account. Needs the
--- migration 20261028130001_s1_e5_06_classic_authors.sql and part 2a. Adds no accounts.
+-- classics' author, so every byline shows "Ion Creangă" and not the classics account; marks every
+-- classic Completed; and sets the year each was first published (${yearCount} of ${classics.length}; the rest are
+-- blank until confirmed). Needs the migrations 20261028130001_s1_e5_06_classic_authors.sql and
+-- 20270202110001_fix_classics_year_and_status.sql, and part 2a. Adds no accounts.
 -- Rules (supabase/staging-topups/README.md): safe to run twice; never production (step 1).
--- How to check it worked: the last query shows classics_with_author ${classics.length}, authors ${authorCount}.
+-- How to check it worked: the last query shows classics_with_author ${classics.length}, completed ${classics.length},
+-- with_year ${yearCount}, authors ${authorCount}.
 begin;
 
 ${guardSql}
@@ -828,6 +864,8 @@ ${classics.map(classicAuthorSql).join('')}commit;
 
 select json_build_object(
   'classics_with_author', (select count(*) from public.stories where slug like '%-classic' and classic_author_id is not null),
+  'completed', (select count(*) from public.stories where slug like '%-classic' and completion_status = 'completed'),
+  'with_year', (select count(*) from public.stories where slug like '%-classic' and first_published_year is not null),
   'authors', (select count(*) from public.classic_authors)
 )::text as after_classic_authors;
 `;

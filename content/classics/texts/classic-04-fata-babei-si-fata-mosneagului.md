@@ -5,6 +5,7 @@ writer: clasice
 author: Ion Creangă
 author_died: 1889
 source_edition: 1877
+first_published: 1877
 source_note: Text: Wikisource, https://ro.wikisource.org/w/index.php?oldid=134787, CC BY-SA 4.0; formatare adaptată.
 language: ro
 category: fiction

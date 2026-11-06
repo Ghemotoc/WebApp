@@ -115,19 +115,19 @@ test.describe('forum search (FORUMS-1f, S1-E8-10)', () => {
 
   test('without diacritics, and with the forum and author filters', async ({ browser }) => {
     const page = await openAs(browser, 'adult_writer', '/forums/search?q=povesti');
-    expect(await resultsShown(page)).toEqual([`Thread ${dragonTitle}`]);
+    await expect.poll(() => resultsShown(page)).toEqual([`Thread ${dragonTitle}`]);
     await page.goto('/forums/search?q=dragoni');
     await page.getByLabel('Forum', { exact: true }).selectOption('worldbuilding');
     await page.getByRole('button', { name: 'Search', exact: true }).click();
     await expect(page).toHaveURL(/forum=worldbuilding/);
-    expect(await resultsShown(page)).toEqual([`Post #1 ${mapTitle}`]);
+    await expect.poll(() => resultsShown(page)).toEqual([`Post #1 ${mapTitle}`]);
     await page.getByLabel('Forum', { exact: true }).selectOption('');
     await page.getByLabel('Author', { exact: true }).fill('@teacher');
     await page.getByRole('button', { name: 'Search', exact: true }).click();
     await expect(page).toHaveURL(/author=%40teacher/);
-    expect((await resultsShown(page)).sort()).toEqual(
-      [`Post #1 ${mapTitle}`, `Post #2 ${dragonTitle}`].sort(),
-    );
+    await expect
+      .poll(async () => (await resultsShown(page)).sort())
+      .toEqual([`Post #1 ${mapTitle}`, `Post #2 ${dragonTitle}`].sort());
     await page.context().close();
   });
 
