@@ -22,6 +22,7 @@ import { labelPartsOf, textAt, withTextAt } from '../../lib/contentPaths';
 import { problemAt } from '../../lib/fieldProblems';
 import {
   emptyHomePage,
+  emptyRightsCard,
   heroFields,
   sectionFields,
   type HomePageField,
@@ -46,7 +47,9 @@ interface HomePageEditorProps {
  */
 function homePageOf(version: ContentVersion | null): HomePageContent {
   const parsed = homePageContentSchema.safeParse(version?.content);
-  return parsed.success ? parsed.data : emptyHomePage();
+  if (!parsed.success) return emptyHomePage();
+  // A version saved before the "Your rights" card existed gets empty fields for it (LOOK-2).
+  return { ...parsed.data, rightsCard: parsed.data.rightsCard ?? emptyRightsCard() };
 }
 
 /**

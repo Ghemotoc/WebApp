@@ -18,7 +18,7 @@
  */
 import type { CSSProperties } from 'react';
 
-import { coverTitleSize } from '@/lib/cover-title';
+import { coverTitleSize, MINIMUM_COVER_TITLE_SIZE } from '@/lib/cover-title';
 import { cn } from '@/lib/utils';
 
 import {
@@ -31,7 +31,7 @@ import {
 } from './coverDesigns';
 
 /** The sizes a drawn cover is shown at, with the board's values for each. */
-export type DrawnCoverSize = 'tile' | 'preview' | 'card' | 'shelf';
+export type DrawnCoverSize = 'tile' | 'preview' | 'card' | 'shelf' | 'wall';
 
 /** Padding, radius, title size, pen name size and the accent bar for each size. */
 const sizeValues: Record<
@@ -42,7 +42,26 @@ const sizeValues: Record<
   preview: { padding: 14, radius: 16, title: 21, penName: 13, bar: [40, 3] },
   card: { padding: 22, radius: 16, title: 28, penName: 13, bar: [52, 3] },
   shelf: { padding: 18, radius: 16, title: 21, penName: 13, bar: [40, 3] },
+  // The home page's cover wall (board Website-Home, LOOK-2): its title shrinks with the screen.
+  wall: { padding: 12, radius: 16, title: 20, penName: 12, bar: [28, 3] },
 };
+
+/**
+ * The title's CSS font size. On the cover wall the size also follows the screen width, as on
+ * the board (clamp(15px, 1.5vw, 20px)), so the three narrow columns on a phone still show the
+ * whole title; it never goes below the DoD's 11 px floor.
+ *
+ * @param title - the story's title
+ * @param size - the cover's size
+ * @returns the font size, for example "21px" or "clamp(15px, 1.5vw, 20px)"
+ */
+function titleFontSize(title: string, size: DrawnCoverSize): string {
+  const largest = coverTitleSize(title, sizeValues[size].title);
+  if (size !== 'wall') return `${String(largest)}px`;
+  const smallest = Math.max(MINIMUM_COVER_TITLE_SIZE, Math.round(largest * 7.5) / 10);
+  const followingScreen = Math.round(largest * 0.75) / 10;
+  return `clamp(${String(smallest)}px, ${String(followingScreen)}vw, ${String(largest)}px)`;
+}
 
 /** What a DrawnCover needs. */
 export interface DrawnCoverProps {
@@ -126,7 +145,7 @@ function CoverWords({
       <span
         className="font-heading leading-[1.05] font-bold break-words"
         style={{
-          fontSize: `${coverTitleSize(title, values.title)}px`,
+          fontSize: titleFontSize(title, size),
           color: textColour,
           maxWidth: '100%',
         }}

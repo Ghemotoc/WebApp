@@ -28,10 +28,21 @@ export const homePageLimits = {
   cardTitle: 60,
   cardBody: 260,
   safetyLine: 200,
+  rightsEyebrow: 30,
+  rightsTitle: 60,
+  rightsLine: 60,
 } as const;
 
 /** One "Why write here" card. */
 const whyCardSchema = z.object({ title: z.string(), body: z.string() });
+
+/**
+ * The gold "Your rights" card on the hero's cover wall (board Website-Home; bundle LOOK-2).
+ * Optional, so versions saved before it existed still read; the page leaves it out while its
+ * title is empty.
+ */
+const rightsCardSchema = z.object({ eyebrow: z.string(), title: z.string(), body: z.string() });
+export type HomeRightsCard = z.infer<typeof rightsCardSchema>;
 
 /** The home page, one per market and language. */
 export const homePageContentSchema = z.object({
@@ -45,6 +56,7 @@ export const homePageContentSchema = z.object({
   secondaryButton: z.string(),
   /** Three short points under the buttons. */
   points: z.array(z.string()).length(3),
+  rightsCard: rightsCardSchema.optional(),
   whyHeading: z.string(),
   /** Four cards under "Why write here". */
   whyCards: z.array(whyCardSchema).length(4),

@@ -154,6 +154,7 @@
   },
   "website": {
     "whyEyebrow": "Why write here",
+    "coverWall": "Covers of stories on {{productName}}: {{titles}}",
     "trending": "Trending this week",
     "trendingEyebrow": "Trending",
     "completed": "Completed stories",

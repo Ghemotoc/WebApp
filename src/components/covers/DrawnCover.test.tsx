@@ -36,6 +36,16 @@ describe('DrawnCover', () => {
     expect(long).toBeLessThan(short);
   });
 
+  it('on the cover wall follows the screen width but never drops below the 11 px floor', () => {
+    render(<DrawnCover title="Zori" choice={defaultChoiceFor('plum')} size="wall" />);
+    render(<DrawnCover title={longTitle} choice={defaultChoiceFor('plum')} size="wall" />);
+    // The board's own sizing for the wall: clamp(15px, 1.5vw, 20px) for a short title.
+    expect(screen.getByText('Zori').style.fontSize).toBe('clamp(15px, 1.5vw, 20px)');
+    const longSize = screen.getByText(longTitle).style.fontSize;
+    const smallest = parseFloat(longSize.replace('clamp(', ''));
+    expect(smallest).toBeGreaterThanOrEqual(MINIMUM_COVER_TITLE_SIZE);
+  });
+
   it('draws every design without an error and hides the artwork from screen readers', () => {
     for (const design of coverDesigns) {
       const { container, unmount } = render(
