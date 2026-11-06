@@ -739,10 +739,10 @@ staff: /staff/users/<id> → AccountActions "Correct birthday" → admin_set_bir
 the year of birth from sign-up never changes (trigger profiles_birth_year_never_changes)
 ```
 
-Discover's greeting line (S1-E2-13):
+Discover's greeting heading (S1-E2-13, S1-E5-12):
 
 ```
-/discover → GreetingLine                                src/features/discovery/components/
+/discover → GreetingHeading                             src/features/discovery/components/
   │  useMyNames (pen name, else username) and useMyGreeting → api/greeting.ts → my_greeting()
   │  my_greeting() → greeting_for(month, joined, Romanian date): 'birthday_month' all that
   │     month, 'anniversary' in the joining month from year one, else null
@@ -1575,6 +1575,13 @@ Tests: `155-story-scores.test.sql`, `e2e/ranking.spec.ts`.
 - **The writer's switch:** `src/features/privacy/components/SuggestMeSwitch.tsx` in Settings › Privacy saves with `set_suggest_me()`. For a 13 to 15-year-old it shows where the parent's yes stands and "Ask my parent", which posts to `/api/parent-consent/spotlight-request`.
 - **The parent's side:** the consent page's optional box (`ParentAnswerForm`, signed into `answer_parental_consent()` by `server/parent-consent.ts`), and the one-question page `/parent-consent/spotlight#<token>` (`ParentSpotlightPage`, `useSpotlightRequest`), answered through `server/parent-consent/spotlight.ts` → `answer_spotlight_consent()`. Staff withdraw it on the account page (`withdraw_spotlight_consent` in `AccountActions`).
 - **Tests:** `supabase/tests/database/304-rising-writers-and-spotlight-consent.test.sql`, `server/parent-consent/spotlight.test.ts` and `e2e/writers-to-follow.spec.ts`.
+
+### Discover's greeting and cards (S1-E5-12, LOOK-4b)
+
+- **Heading:** `src/features/discovery/components/DiscoverPage.tsx` shows `GreetingHeading` once the member's name is known ("Good morning, <name>." with the gold line, under "Discover · <date>"), and the visitor's heading otherwise.
+- **Cards:** `DiscoverCards` draws "Your dashboard": `ContinueCard`, `DraftCard` and the gold `NewStoryCard`, each only when it has something to show. `useDiscoverCards` calls `my_discover_cards()` (`supabase/migrations/…_look4b_01_discover_cards.sql`), which reads only the member's own places and drafts.
+- **Shelves:** the same migration sets `discover_shelves` to the board's five; `DiscoverPage` keeps the same five as its fallback.
+- **Tests:** `supabase/tests/database/305-discover-cards.test.sql`, `src/features/discovery/api/discoverCards.test.ts` and `e2e/discover-cards.spec.ts`.
 
 ## The March test numbers (S1-E15-02)
 

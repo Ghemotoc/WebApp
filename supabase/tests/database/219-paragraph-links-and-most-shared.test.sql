@@ -134,8 +134,9 @@ select ok(public.browse_stories('shared')::text not like '%00000000-0000-4000-80
 
 reset role;
 select is(public.list_default_sort('shared'), 'shared', 'the list''s own order is this week''s shares');
-select ok((select value ? 'shared' from public.settings where key = 'discover_shelves'),
-  'the Discover setting has the new shelf');
+-- Since LOOK-4b Discover shows five shelves by default; "shared" stays a word staff can add back.
+select ok((select description like '%shared%' from public.settings where key = 'discover_shelves'),
+  'the Discover setting lists the new shelf among the words staff can use');
 select pg_temp.sign_out();
 select is(pg_temp.slugs(public.browse_stories('shared', sort_order => 'title_az')),
   'scrisori-din-cutia-postala-seed03,statia-meteo-seed01', 'and the reader can still pick another sort');

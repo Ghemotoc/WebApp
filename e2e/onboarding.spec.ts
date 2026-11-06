@@ -153,6 +153,10 @@ test.describe('onboarding (S1-E2-06)', () => {
     createTeen(accounts.teen);
     createNewAccount(accounts.axe);
     seedStories();
+    // Since LOOK-4b Discover shows the board's five shelves; staff can add "Picked for you" back
+    // in Settings, as this test does, and it is taken out again afterwards.
+    runSql(`update public.settings set value = value || '["picked"]'::jsonb
+      where key = 'discover_shelves' and not value ? 'picked';`);
   });
 
   test.afterAll(() => {
@@ -160,6 +164,7 @@ test.describe('onboarding (S1-E2-06)', () => {
       where key = 'adults_only';`);
     cleanUp();
     removeStories();
+    runSql(`update public.settings set value = value - 'picked' where key = 'discover_shelves';`);
   });
 
   test('a new adult goes through three steps and lands on Discover with their picks', async ({

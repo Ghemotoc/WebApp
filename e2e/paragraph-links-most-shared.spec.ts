@@ -111,8 +111,17 @@ async function openNotification(page: Page, quote: string) {
 
 test.describe('paragraph links and "Most shared this week" (IDEAS-1 part e)', () => {
   test.describe.configure({ mode: 'serial' });
-  test.beforeAll(seedData);
-  test.afterAll(cleanUp);
+  // Since LOOK-4b Discover shows the board's five shelves; staff can add "Most shared this week"
+  // back in Settings, as these tests do, and it is taken out again afterwards.
+  test.beforeAll(() => {
+    seedData();
+    runSql(`update public.settings set value = value || '["shared"]'::jsonb
+      where key = 'discover_shelves' and not value ? 'shared';`);
+  });
+  test.afterAll(() => {
+    cleanUp();
+    runSql(`update public.settings set value = value - 'shared' where key = 'discover_shelves';`);
+  });
 
   test("a notification about paragraph 2 opens that paragraph's thread", async ({ browser }) => {
     const page = await openAs(browser, 'adult_writer', '/notifications');

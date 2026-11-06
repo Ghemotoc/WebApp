@@ -8,7 +8,8 @@
     "loadFailed": "Nu am putut încărca poveștile. Verifică conexiunea și încearcă din nou.",
     "empty": "Încă nu e publicată nicio poveste. Fii primul: începe să scrii.",
     "writeLink": "Începe să scrii",
-    "howRanking": "Cum facem clasamentul"
+    "howRanking": "Cum facem clasamentul",
+    "eyebrowDated": "Descoperă · {{date}}"
   },
   "lists": {
     "following": "Noutăți de la scriitorii pe care îi urmărești",
@@ -91,11 +92,11 @@
     "shared": "Cele mai distribuite săptămâna asta"
   },
   "greeting": {
-    "morning": "Bună dimineața, {{name}}.",
-    "afternoon": "Bună ziua, {{name}}.",
-    "evening": "Bună seara, {{name}}.",
-    "birthdayMonth": "Lună de naștere fericită, {{name}}!",
-    "anniversary": "La mulți ani pe {{productName}}, {{name}}!"
+    "morning": "Bună dimineața, <name>{{name}}.</name>",
+    "afternoon": "Bună ziua, <name>{{name}}.</name>",
+    "evening": "Bună seara, <name>{{name}}.</name>",
+    "birthdayMonth": "Lună de naștere fericită, <name>{{name}}!</name>",
+    "anniversary": "La mulți ani pe {{productName}}, <name>{{name}}!</name>"
   },
   "featured": {
     "carousel": "carusel",
@@ -116,5 +117,24 @@
     "growth_few": "+{{count}} urmăritori săptămâna asta",
     "growth_other": "+{{count}} de urmăritori săptămâna asta",
     "latest": "Cea mai nouă:"
+  },
+  "cards": {
+    "label": "Panoul tău",
+    "continueEyebrow": "Continuă lectura",
+    "continueWhere": "de {{writer}} · Capitolul {{number}} din {{total}}",
+    "progress": "{{percent}}% din capitolul {{number}}.",
+    "newChapter": "A apărut capitolul {{number}}",
+    "continueButton": "Continuă",
+    "draftEyebrow": "Ciorna ta",
+    "untitled": "Capitolul {{number}}, fără titlu",
+    "words_one": "{{formatted}} cuvânt",
+    "words_few": "{{formatted}} cuvinte",
+    "words_other": "{{formatted}} de cuvinte",
+    "draftMeta": "{{story}} · {{words}} · salvată {{when}}",
+    "openDraft": "Deschide ciorna",
+    "writeEyebrow": "Scrie",
+    "newStoryTitle": "Începe o poveste nouă",
+    "newStoryText": "O poezie, un eseu sau primul capitol al unei povești noi. Nimeni nu vede nimic până nu publici.",
+    "newStoryLink": "Poveste nouă"
   }
 }

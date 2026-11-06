@@ -2,7 +2,7 @@
  * useMyGreeting: today's special greeting for the signed-in person, if any (stories S1-E2-12 and
  * S1-E2-13).
  *
- * Who calls it: the greeting line on Discover (src/features/discovery/components/GreetingLine.tsx).
+ * Who calls it: the greeting heading on Discover (src/features/discovery/components/GreetingHeading.tsx).
  * What it calls: api/greeting.ts. useMyBirthday reads it again after a birthday is saved (the
  * ['my-greeting', userId] key). Signed out, it never asks the database.
  */

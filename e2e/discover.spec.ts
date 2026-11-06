@@ -3,8 +3,9 @@
  *
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase started first).
  * What it proves:
- * - the top bar links to Discover, and Discover shows the shelves with this spec's stories; a 16+
- *   story is left out for a visitor (CLAUDE.md rule 18), and "View more" opens the See all page;
+ * - the top bar links to Discover, and Discover shows the board's shelves (five since LOOK-4b);
+ *   the See all page lists this spec's stories, leaving the 16+ one out for a visitor (CLAUDE.md
+ *   rule 18);
  * - a tag on the story page opens the tag page, whose filters go into the address and survive a
  *   reload (S1-E5-09, fourth criterion);
  * - an adult sees the 16+ story on the same page;
@@ -83,13 +84,18 @@ test.describe('Discover and story lists (S1-E5-01, S1-E5-09)', () => {
     await expect(
       page.getByRole('heading', { level: 1, name: 'Find your next story' }),
     ).toBeVisible();
-    const updated = page.getByRole('region', { name: 'Recently updated', exact: true });
-    await expect(updated.getByRole('link', { name: /Farul de la Sulina/ })).toBeVisible();
-    await expect(page.getByRole('link', { name: /Noaptea lungă/ })).toHaveCount(0);
-    // Every shelf leads to its See all page.
+    // The board's five shelves since LOOK-4b (D5); a visitor has no follows shelf.
+    await expect(page.getByRole('region', { name: 'Popular', exact: true })).toBeVisible();
+    await expect(page.getByRole('region', { name: 'New and rising', exact: true })).toBeVisible();
+    await expect(page.getByRole('region', { name: 'Recently updated', exact: true })).toHaveCount(
+      0,
+    );
+    // Every list keeps its See all page, which staff can still put back as a shelf.
     await page.goto('/discover/all/updated');
     await expect(page.getByRole('heading', { level: 1, name: 'Recently updated' })).toBeVisible();
+    await expect(page.getByRole('link', { name: /Farul de la Sulina/ })).toBeVisible();
     await expect(page.getByRole('link', { name: /Tide Tables/ })).toBeVisible();
+    await expect(page.getByRole('link', { name: /Noaptea lungă/ })).toHaveCount(0);
   });
 
   test('a tag opens its page, and the filters stay in the address', async ({ browser }) => {

@@ -8,7 +8,8 @@
     "loadFailed": "We couldn’t load the stories. Check your connection and try again.",
     "empty": "No stories are published yet. Be the first: start writing.",
     "writeLink": "Start writing",
-    "howRanking": "How ranking works"
+    "howRanking": "How ranking works",
+    "eyebrowDated": "Discover · {{date}}"
   },
   "lists": {
     "following": "New from writers you follow",
@@ -91,11 +92,11 @@
     "shared": "Most shared this week"
   },
   "greeting": {
-    "morning": "Good morning, {{name}}.",
-    "afternoon": "Good afternoon, {{name}}.",
-    "evening": "Good evening, {{name}}.",
-    "birthdayMonth": "Happy birthday month, {{name}}!",
-    "anniversary": "Happy {{productName}} anniversary, {{name}}!"
+    "morning": "Good morning, <name>{{name}}.</name>",
+    "afternoon": "Good afternoon, <name>{{name}}.</name>",
+    "evening": "Good evening, <name>{{name}}.</name>",
+    "birthdayMonth": "Happy birthday month, <name>{{name}}!</name>",
+    "anniversary": "Happy {{productName}} anniversary, <name>{{name}}!</name>"
   },
   "featured": {
     "carousel": "carousel",
@@ -116,5 +117,24 @@
     "growth_few": "+{{count}} followers this week",
     "growth_other": "+{{count}} followers this week",
     "latest": "Latest:"
+  },
+  "cards": {
+    "label": "Your dashboard",
+    "continueEyebrow": "Continue reading",
+    "continueWhere": "by {{writer}} · Chapter {{number}} of {{total}}",
+    "progress": "{{percent}}% through chapter {{number}}.",
+    "newChapter": "Chapter {{number}} is out",
+    "continueButton": "Continue",
+    "draftEyebrow": "Your draft",
+    "untitled": "Chapter {{number}}, untitled",
+    "words_one": "{{formatted}} word",
+    "words_few": "{{formatted}} words",
+    "words_other": "{{formatted}} words",
+    "draftMeta": "{{story}} · {{words}} · saved {{when}}",
+    "openDraft": "Open draft",
+    "writeEyebrow": "Write",
+    "newStoryTitle": "Start a new story",
+    "newStoryText": "A poem, an essay or chapter one of something new. Nobody sees it until you publish.",
+    "newStoryLink": "New story"
   }
 }

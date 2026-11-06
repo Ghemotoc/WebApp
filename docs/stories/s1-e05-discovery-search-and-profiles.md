@@ -186,6 +186,25 @@ As a reader, I want to meet new writers worth following, and as a writer I want 
 - **Screens:** Discover's "Writers to follow this week" (board Discover, shelf 3: 248 px cards, a 48 px avatar, the name and category, the growth line, the latest story and Follow); the switch in Settings › Privacy.
 - **Legal and compliance:** shows minors' pen names publicly only with the parent's separate yes (GDPR art. 8). Under-18 default off (DoD privacy). The privacy notice gains the purpose "Suggesting writers to other readers"; points for the lawyer in `docs/for-the-lawyer.md`.
 
+##### S1-E5-12 Discover greeting, "pick up where you left off" cards and five shelves
+
+As a signed-in reader, I want Discover to greet me and put my unfinished story and my draft first, so that I can carry on in one tap.
+
+- **Priority:** Should · **Size:** M (about 12 h) · **Depends on:** S1-E4-03 (reading places), S1-E3-02 (drafts), S1-E5-03 (discover_shelves) · **Bundle:** LOOK-4b
+- **Added:** 6 Nov 2026 (Robert's go for the design catch-up; design gap D5: Discover has 5 shelves, not 10).
+- **Data touched:** the public setting `discover_shelves` becomes `["following", "popular", "rising", "classics", "writers"]`; category shelves move to the category chips above them. Staff can change it back without a release (Q46). No new table.
+- **Database functions:** `my_discover_cards()` (members only; `insufficient_privilege` signed out). It reads only the caller's own rows: their unfinished story read most recently, only one they may still read (through `listed_stories()`: ratings, blocks, moderation), with "chapter n of N", how far in and, when a newer chapter came out after they last read, its number; a story read to the end of its last chapter is finished and left out. Then their draft chapter saved most recently, in a story they still have. Then whether they may write (`is_active_member()`).
+- **Acceptance criteria:**
+  - Given a signed-in reader, when Discover opens, then the h1 is "Good morning / afternoon / evening, <pen name, or the username if there is none>." by their device's clock (the birthday month and joining anniversary greetings of S1-E2-13 still win), with the board's gold line under the name. It never uses a real name (CLAUDE.md rule 5). The eyebrow reads "Discover · <weekday, day month>", in the reader's language (e2e).
+  - Given the reader has no unfinished story, when the cards draw, then Continue reading is not shown; the same for a reader with no draft. The gold "Start a new story" card shows for every member who may write (pgTAP and e2e).
+  - Given "Chapter n is out", when it shows, then a newer chapter really came out after the reader last read (pgTAP).
+  - Given a story across a block, when the cards draw, then it is not offered to carry on (pgTAP).
+  - Given a signed-out visitor, when Discover opens, then they see the heading without a name and none of the three cards (pgTAP and e2e).
+  - Given the five shelves, when Discover draws, then they follow the setting's order and every shelf keeps the 20 plus View more rule (e2e).
+- **Screens:** Discover's heading and "Your dashboard" (board Discover: Continue reading two columns wide with a 104 px cover, a progress line and Continue; Your draft with "Open draft"; the gold "Start a new story" card). Each card is one link.
+- **Board mismatches:** the board's line under the greeting counts updates from followed writers; Stage 1 has no such count, so the page keeps its own line with "How ranking works" (DSA art. 27). The board's Filters button beside search is left out: filtering lives on the See all pages (S1-E5-09).
+- **Legal and compliance:** none beyond the global list. No reading history leaves the reader's own account.
+
 ##### S1-E5-QA Epic check: Discovery, search and profiles
 
 As the founder, I want every story in this epic tested together end to end so that the pieces work with each other, not just alone.
