@@ -1,0 +1,25 @@
+{
+  "$comment": "Pairs each app route with the board render it should look like (LOOK-0). signedIn: which seed persona to sign in as, or null for a signed-out visitor. Boards are in design/renders/<desktop|phone>/<board>.jpg.",
+  "routes": [
+    { "route": "/", "board": "Website-Home", "signedIn": null },
+    { "route": "/sign-up", "board": "Main", "signedIn": null },
+    { "route": "/sign-in", "board": "SignIn", "signedIn": null },
+    { "route": "/discover", "board": "Discover", "signedIn": "adult_writer" },
+    { "route": "/search", "board": "Search", "signedIn": "adult_writer" },
+    { "route": "/s/painea-de-duminica-demo-01", "board": "Story", "signedIn": "adult_writer" },
+    {
+      "route": "/s/painea-de-duminica-demo-01/d001c001",
+      "board": "Reader",
+      "signedIn": "adult_writer"
+    },
+    { "route": "/library", "board": "Library", "signedIn": "adult_writer" },
+    { "route": "/forums", "board": "Forums", "signedIn": "adult_writer" },
+    { "route": "/spaces/fantasy-writers-circle", "board": "Space", "signedIn": "adult_writer" },
+    { "route": "/u/adult_writer", "board": "Profile", "signedIn": "adult_writer" },
+    { "route": "/write", "board": "WriterDashboard", "signedIn": "adult_writer" },
+    { "route": "/write/new", "board": "NewStory", "signedIn": "adult_writer" },
+    { "route": "/notifications", "board": "Notifications", "signedIn": "adult_writer" },
+    { "route": "/settings", "board": "Settings", "signedIn": "adult_writer" },
+    { "route": "/legal", "board": "Legal", "signedIn": null }
+  ]
+}
