@@ -1,6 +1,6 @@
 /**
- * MarketsList: each market with its languages, its minimum age, its legal check and its status
- * (story S1-E11-05, criteria 1, 3 and 4).
+ * MarketsList: each market with its languages, its legal check and its status (story S1-E11-05,
+ * criteria 1, 3 and 4). Its ages are in Age rules by country (MARKETS-1), linked from each row.
  *
  * The legal check is a drop-down and the status a row of chips; each saves when changed. Only the
  * owner may pick Open for a closed market (architecture 1.8.3), so for anyone else that chip is
@@ -51,7 +51,9 @@ function MarketItem({ market, state, canOpenMarket }: MarketItemProps) {
       <h4 className="m-0 text-base font-bold text-heading">{name}</h4>
       <p className="m-0 text-sm text-body">
         {t('markets.marketLanguages', { list: languages })} ·{' '}
-        {t('markets.minimumAge', { age: market.minimumAge })}
+        <a href="#age-rules" className="text-link underline">
+          {t('markets.ages')}
+        </a>
       </p>
       <Select
         id={`market-legal-${market.countryCode}`}

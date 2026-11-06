@@ -25,7 +25,8 @@
     "interface_language": "Interfața e în această limbă, așa că rămâne deschisă.",
     "legal_check_not_done": "Verificarea juridică a acestei piețe nu e gata.",
     "owner_only": "Doar proprietarul deschide o piață.",
-    "no_open_language": "Încă nu e deschisă nicio limbă a acestei piețe."
+    "no_open_language": "Încă nu e deschisă nicio limbă a acestei piețe.",
+    "reason_needed": "Spune de ce se schimbă regula."
   },
   "sections": {
     "flags": "Comutatoare",
@@ -36,7 +37,8 @@
     "names": "Nume rezervate",
     "words": "Liste de cuvinte pentru nume",
     "nudge": "Îndemn la cuvinte blânde",
-    "markets": "Piețe și limbi"
+    "markets": "Piețe și limbi",
+    "ageRules": "Reguli de vârstă pe țări"
   },
   "flags": {
     "intro": "Comutatoarele ne lasă să pornim ceva mai târziu, fără cod nou. Fiecare comutator se salvează imediat.",
@@ -247,7 +249,72 @@
     "interface": "Limbă a interfeței",
     "storiesOnly": "Doar pentru povești",
     "marketLanguages": "Limbi: {{list}}",
-    "minimumAge": "Deschisă persoanelor de {{age}} ani și peste",
-    "saveLegal": "Salvează verificarea juridică"
+    "saveLegal": "Salvează verificarea juridică",
+    "ages": "Vârstele urmează Regulile de vârstă pe țări"
+  },
+  "ageRules": {
+    "intro": "Vârstele care se aplică acolo unde locuiește fiecare membru: vârsta de la care se poate înscrie, vârsta sub care trebuie să fie de acord un părinte sau tutore și vârsta sub care înscrierea este blocată. O regiune cu lege proprie, cum ar fi Quebec, are prioritate față de țara ei; orice țară care nu e pe listă primește regula implicită cea mai strictă. O schimbare se aplică imediat înscrierilor noi, iar membrii cărora le cere de acum acordul unui părinte au 14 zile să-l ceară.",
+    "filterLabel": "Arată",
+    "filters": {
+      "all": "Toate ({{count}})",
+      "review": "De verificat"
+    },
+    "caption": "Reguli de vârstă pe țări",
+    "headings": {
+      "place": "Țara sau regiunea",
+      "join": "Înscriere de la",
+      "consent": "Acordul părintelui sub",
+      "blocked": "Blocat sub",
+      "source": "Sursa",
+      "checked": "Verificat",
+      "confidence": "Încredere",
+      "status": "Stare",
+      "notes": "Note",
+      "actions": "Acțiuni"
+    },
+    "defaultName": "Orice altă țară",
+    "never": "Niciodată",
+    "checkAgain": "De verificat din nou",
+    "confidences": {
+      "high": "Mare",
+      "medium": "Medie",
+      "low": "Mică"
+    },
+    "statuses": {
+      "to_verify": "De confirmat",
+      "verified": "Confirmată"
+    },
+    "edit": "Modifică {{name}}",
+    "editShort": "Modifică",
+    "editing": "Modifică {{name}}",
+    "add": "Adaugă o țară sau o regiune",
+    "editorLabel": "Regulă de vârstă",
+    "empty": "Nicio regulă de arătat.",
+    "fields": {
+      "countryCode": "Codul țării",
+      "regionCode": "Codul regiunii",
+      "name": "Numele",
+      "regionName": "Numele regiunii",
+      "minimumAge": "Înscriere de la vârsta",
+      "parentalConsentBelow": "Acordul părintelui sub vârsta",
+      "signupBlockedBelow": "Înscriere blocată sub vârsta",
+      "legalBasis": "Temeiul legal",
+      "source": "Sursa",
+      "dateChecked": "Data verificării",
+      "confidence": "Încredere",
+      "status": "Stare",
+      "notes": "Note",
+      "reason": "De ce se schimbă"
+    },
+    "hints": {
+      "countryCode": "Două litere, de exemplu RO sau GB.",
+      "regionCode": "Lasă gol pentru toată țara; de exemplu QC pentru Quebec.",
+      "blocked": "Lasă gol când înscrierea nu e blocată niciodată.",
+      "reason": "Rămâne în jurnalul de audit, cu valorile dinainte și de după."
+    },
+    "save": "Salvează regula",
+    "saving": "Se salvează…",
+    "cancel": "Renunță",
+    "saved": "Salvat. Înscrierile noi urmează de acum noua regulă."
   }
 }

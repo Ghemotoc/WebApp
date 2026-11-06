@@ -25,7 +25,8 @@
     "interface_language": "The interface is in this language, so it stays open.",
     "legal_check_not_done": "This market's legal check isn't done yet.",
     "owner_only": "Only the owner opens a market.",
-    "no_open_language": "None of this market's languages is open yet."
+    "no_open_language": "None of this market's languages is open yet.",
+    "reason_needed": "Say why the rule changes."
   },
   "sections": {
     "flags": "Feature flags",
@@ -36,7 +37,8 @@
     "names": "Reserved names",
     "words": "Username word lists",
     "nudge": "Kind-words nudge",
-    "markets": "Markets and languages"
+    "markets": "Markets and languages",
+    "ageRules": "Age rules by country"
   },
   "flags": {
     "intro": "Flags let us switch something on later without new code. Each switch saves at once.",
@@ -246,8 +248,73 @@
     "interface": "Interface language",
     "storiesOnly": "Stories only",
     "marketLanguages": "Languages: {{list}}",
-    "minimumAge": "Open to people {{age}} and over",
     "saveLegal": "Save the legal check",
-    "moderators_few": "{{count}} moderators read it"
+    "moderators_few": "{{count}} moderators read it",
+    "ages": "Ages follow Age rules by country"
+  },
+  "ageRules": {
+    "intro": "The ages that apply where each member lives: the age to join, the age below which a parent or guardian must agree, and the age below which sign-up is blocked. A region with its own law, such as Quebec, wins over its country; any country not listed gets the strictest default. A change applies to new sign-ups at once, and members it newly asks for a parent’s consent get 14 days to ask.",
+    "filterLabel": "Show",
+    "filters": {
+      "all": "All ({{count}})",
+      "review": "Needs a look"
+    },
+    "caption": "Age rules by country",
+    "headings": {
+      "place": "Country or region",
+      "join": "Join from",
+      "consent": "Parent agrees under",
+      "blocked": "Blocked under",
+      "source": "Source",
+      "checked": "Checked",
+      "confidence": "Confidence",
+      "status": "Status",
+      "notes": "Notes",
+      "actions": "Actions"
+    },
+    "defaultName": "Any other country",
+    "never": "Never",
+    "checkAgain": "Check again",
+    "confidences": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "statuses": {
+      "to_verify": "To verify",
+      "verified": "Verified"
+    },
+    "edit": "Edit {{name}}",
+    "editShort": "Edit",
+    "editing": "Edit {{name}}",
+    "add": "Add a country or region",
+    "editorLabel": "Age rule",
+    "empty": "No rules to show.",
+    "fields": {
+      "countryCode": "Country code",
+      "regionCode": "Region code",
+      "name": "Name",
+      "regionName": "Region name",
+      "minimumAge": "Join from age",
+      "parentalConsentBelow": "A parent agrees under age",
+      "signupBlockedBelow": "Sign-up blocked under age",
+      "legalBasis": "Legal basis",
+      "source": "Source",
+      "dateChecked": "Date checked",
+      "confidence": "Confidence",
+      "status": "Status",
+      "notes": "Notes",
+      "reason": "Why it changes"
+    },
+    "hints": {
+      "countryCode": "Two letters, such as RO or GB.",
+      "regionCode": "Leave empty for the whole country; for example QC for Quebec.",
+      "blocked": "Leave empty when sign-up is never blocked.",
+      "reason": "Kept in the audit log with the values before and after."
+    },
+    "save": "Save rule",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "saved": "Saved. New sign-ups follow the new rule now."
   }
 }

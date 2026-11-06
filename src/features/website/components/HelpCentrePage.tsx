@@ -82,6 +82,9 @@ export function HelpCentrePage() {
   const pages = useWebsiteContent('help_page', helpPageContentSchema);
   const questions = useWebsiteContent('question', questionContentSchema);
   const helpQuestions = questions.entries.filter((entry) => entry.content.showOn !== 'home');
+  // A country's own legal section ("legal-your-country", MARKETS-1) shows under the privacy
+  // notice and the terms, not in the Help list.
+  const helpPages = pages.entries.filter((page) => !page.entryKey.startsWith('legal-'));
   return (
     <PageContainer className="flex flex-col gap-8 pt-10 pb-16">
       <title>{t('website.help.documentTitle')}</title>
@@ -95,7 +98,7 @@ export function HelpCentrePage() {
       {(pages.readFailed || questions.readFailed) && (
         <Notice tone="error">{t('website.readFailed')}</Notice>
       )}
-      <HelpSections pages={pages.entries} />
+      <HelpSections pages={helpPages} />
       {helpQuestions.length > 0 && (
         <section aria-labelledby="help-questions" className="flex max-w-[860px] flex-col gap-3">
           <h2

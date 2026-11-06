@@ -1,8 +1,8 @@
 /**
  * useVisitorCountry: which country's contacts to show (story S1-E10-13a).
  *
- * Signed in: the account's country, taken from the connection at sign-up and never asked
- * (Q20; profiles.country_code, S1-E2-10). Signed out, or an account with no country recorded:
+ * Signed in: the account's country, the one the person says they live in (MARKETS-1; from the
+ * connection before then; profiles.country_code). Signed out, or an account with no country recorded:
  * the country of this connection, from the same Pages Function sign-up uses (/api/signup-context). Unknown (Tor, a VPN, a non-country):
  * null, and the block shows the fallback with "Not your country?".
  * Who calls it: SafetyContactsBlock. What it calls: the person's own profile row and

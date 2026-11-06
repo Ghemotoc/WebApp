@@ -21,11 +21,10 @@ export interface SignupCountry {
   ipToken: string | null;
 }
 
-/** One market: whether it is open and its minimum age. */
+/** One market: whether it is open. Its ages are in the age rules by country (MARKETS-1). */
 export interface Market {
   countryCode: string;
   isOpen: boolean;
-  minimumAge: number;
 }
 
 /**
@@ -57,11 +56,10 @@ export async function fetchSignupCountry(): Promise<SignupCountry> {
  * Errors: throws with Supabase's message when the database can't be reached.
  */
 export async function fetchMarkets(client: AppSupabaseClient): Promise<Market[]> {
-  const { data, error } = await client.from('markets').select('country_code, is_open, minimum_age');
+  const { data, error } = await client.from('markets').select('country_code, is_open');
   if (error !== null) throw new Error(`Could not read the markets: ${error.message}`);
   return data.map((market) => ({
     countryCode: market.country_code,
     isOpen: market.is_open,
-    minimumAge: market.minimum_age,
   }));
 }

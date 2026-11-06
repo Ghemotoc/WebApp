@@ -103,6 +103,8 @@ select results_eq(
        ('compliance_log_entries', 0::bigint),
        ('confusable_characters', 0::bigint),
        ('consents', 0::bigint),
+       -- The age rules by country are public: the sign-up form reads them (MARKETS-1).
+       ('country_age_rules', (select count(*) from public.country_age_rules)),
        ('customisation_change_requests', 0::bigint),
        -- Contests and entries: staff, and a writer's own entries (CONTESTS-13b1).
        ('contest_entries', 0::bigint),
@@ -247,7 +249,7 @@ select results_eq(
        ('username_word_lists', 0::bigint),
        ('writer_ranks', 0::bigint)
      ) as expected (table_name, visible_rows) order by 1 $$,
-  'a signed-out visitor sees only public flags, settings, markets, published legal documents, languages, categories, tags and counties, nothing else'
+  'a signed-out visitor sees only public flags, settings, markets, published legal documents, languages, categories, tags, counties and age rules by country, nothing else'
 );
 
 select * from finish();

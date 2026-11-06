@@ -2554,6 +2554,65 @@ export type Database = {
           },
         ];
       };
+      country_age_rules: {
+        Row: {
+          confidence: string;
+          country_code: string;
+          created_at: string;
+          date_checked: string;
+          id: string;
+          legal_basis: string;
+          minimum_age: number;
+          name: string;
+          notes: string;
+          parental_consent_below: number;
+          region_code: string;
+          region_name: string;
+          signup_blocked_below: number | null;
+          source: string;
+          status: string;
+          updated_at: string;
+          age_rule_needs_review: boolean | null;
+        };
+        ComputedFields: 'age_rule_needs_review';
+        Insert: {
+          confidence?: string;
+          country_code: string;
+          created_at?: string;
+          date_checked: string;
+          id?: string;
+          legal_basis?: string;
+          minimum_age?: number;
+          name: string;
+          notes?: string;
+          parental_consent_below?: number;
+          region_code?: string;
+          region_name?: string;
+          signup_blocked_below?: number | null;
+          source?: string;
+          status?: string;
+          updated_at?: string;
+        };
+        Update: {
+          confidence?: string;
+          country_code?: string;
+          created_at?: string;
+          date_checked?: string;
+          id?: string;
+          legal_basis?: string;
+          minimum_age?: number;
+          name?: string;
+          notes?: string;
+          parental_consent_below?: number;
+          region_code?: string;
+          region_name?: string;
+          signup_blocked_below?: number | null;
+          source?: string;
+          status?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       customisation_change_requests: {
         Row: {
           created_at: string;
@@ -5016,6 +5075,8 @@ export type Database = {
           birth_month: number | null;
           birth_year: number | null;
           birthday_month: number | null;
+          consent_grace_until: string | null;
+          country_chosen_at: string | null;
           country_code: string | null;
           created_at: string;
           deleted_at: string | null;
@@ -5026,6 +5087,7 @@ export type Database = {
           highest_rank_notified: Database['public']['Enums']['writer_rank'] | null;
           id: string;
           last_active_at: string | null;
+          legal_region_code: string;
           library_visible_to: Database['public']['Enums']['library_audience'];
           locale: string;
           marketing_email_opt_in: boolean;
@@ -5076,6 +5138,8 @@ export type Database = {
           birth_month?: number | null;
           birth_year?: number | null;
           birthday_month?: number | null;
+          consent_grace_until?: string | null;
+          country_chosen_at?: string | null;
           country_code?: string | null;
           created_at?: string;
           deleted_at?: string | null;
@@ -5086,6 +5150,7 @@ export type Database = {
           highest_rank_notified?: Database['public']['Enums']['writer_rank'] | null;
           id: string;
           last_active_at?: string | null;
+          legal_region_code?: string;
           library_visible_to?: Database['public']['Enums']['library_audience'];
           locale?: string;
           marketing_email_opt_in?: boolean;
@@ -5117,6 +5182,8 @@ export type Database = {
           birth_month?: number | null;
           birth_year?: number | null;
           birthday_month?: number | null;
+          consent_grace_until?: string | null;
+          country_chosen_at?: string | null;
           country_code?: string | null;
           created_at?: string;
           deleted_at?: string | null;
@@ -5127,6 +5194,7 @@ export type Database = {
           highest_rank_notified?: Database['public']['Enums']['writer_rank'] | null;
           id?: string;
           last_active_at?: string | null;
+          legal_region_code?: string;
           library_visible_to?: Database['public']['Enums']['library_audience'];
           locale?: string;
           marketing_email_opt_in?: boolean;
@@ -9967,6 +10035,7 @@ export type Database = {
           last_checked_on: string;
         }[];
       };
+      admin_save_age_rule: { Args: { reason: string; rule: Json }; Returns: string };
       admin_save_canned_reply: {
         Args: { body_en: string; body_ro: string; reply_id: string; title: string };
         Returns: string;
@@ -10495,6 +10564,51 @@ export type Database = {
         };
         Returns: number;
       };
+      age_rule_for: {
+        Args: { country_code: string; region_code?: string };
+        Returns: {
+          confidence: string;
+          country_code: string;
+          created_at: string;
+          date_checked: string;
+          id: string;
+          legal_basis: string;
+          minimum_age: number;
+          name: string;
+          notes: string;
+          parental_consent_below: number;
+          region_code: string;
+          region_name: string;
+          signup_blocked_below: number | null;
+          source: string;
+          status: string;
+          updated_at: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'country_age_rules';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      age_rule_needs_review: {
+        Args: {
+          rule: Omit<
+            Database['public']['Tables']['country_age_rules']['Row'],
+            Database['public']['Tables']['country_age_rules']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
+      age_rule_outcome: {
+        Args: {
+          birth_month: number;
+          birth_year: number;
+          country_code: string;
+          region_code?: string;
+        };
+        Returns: string;
+      };
       ages_allow_messages: {
         Args: {
           first_person: Omit<
@@ -10629,6 +10743,10 @@ export type Database = {
         Returns: string;
       };
       birth_year_needs_month: { Args: { birth_year: number; on_date: string }; Returns: boolean };
+      birth_year_needs_month_where: {
+        Args: { birth_year: number; country_code: string; on_date: string; region_code?: string };
+        Returns: boolean;
+      };
       blank_old_scrambled_ips: { Args: Record<PropertyKey, never>; Returns: number };
       booked_sponsor_ad_for_slot: {
         Args: { context: Json; used_keys: string[]; wanted_slot_key: string };
@@ -10692,6 +10810,8 @@ export type Database = {
           birth_month: number | null;
           birth_year: number | null;
           birthday_month: number | null;
+          consent_grace_until: string | null;
+          country_chosen_at: string | null;
           country_code: string | null;
           created_at: string;
           deleted_at: string | null;
@@ -10702,6 +10822,7 @@ export type Database = {
           highest_rank_notified: Database['public']['Enums']['writer_rank'] | null;
           id: string;
           last_active_at: string | null;
+          legal_region_code: string;
           library_visible_to: Database['public']['Enums']['library_audience'];
           locale: string;
           marketing_email_opt_in: boolean;
@@ -12470,6 +12591,8 @@ export type Database = {
           birth_month: number | null;
           birth_year: number | null;
           birthday_month: number | null;
+          consent_grace_until: string | null;
+          country_chosen_at: string | null;
           country_code: string | null;
           created_at: string;
           deleted_at: string | null;
@@ -12480,6 +12603,7 @@ export type Database = {
           highest_rank_notified: Database['public']['Enums']['writer_rank'] | null;
           id: string;
           last_active_at: string | null;
+          legal_region_code: string;
           library_visible_to: Database['public']['Enums']['library_audience'];
           locale: string;
           marketing_email_opt_in: boolean;
@@ -12862,6 +12986,7 @@ export type Database = {
         Args: { name: string; name_kind: string; target_user_id: string };
         Returns: string;
       };
+      needs_country_consent: { Args: { target_user_id: string }; Returns: boolean };
       needs_legal_acceptance: { Args: { target_user_id: string }; Returns: boolean };
       network_ad_for_slot: {
         Args: { slot_format: Database['public']['Enums']['ad_format']; used_keys: string[] };
@@ -13223,6 +13348,8 @@ export type Database = {
           birth_month: number | null;
           birth_year: number | null;
           birthday_month: number | null;
+          consent_grace_until: string | null;
+          country_chosen_at: string | null;
           country_code: string | null;
           created_at: string;
           deleted_at: string | null;
@@ -13233,6 +13360,7 @@ export type Database = {
           highest_rank_notified: Database['public']['Enums']['writer_rank'] | null;
           id: string;
           last_active_at: string | null;
+          legal_region_code: string;
           library_visible_to: Database['public']['Enums']['library_audience'];
           locale: string;
           marketing_email_opt_in: boolean;
@@ -14055,6 +14183,7 @@ export type Database = {
       set_my_avatar_recipe: { Args: { recipe: Json }; Returns: Json };
       set_my_bio: { Args: { new_bio: string }; Returns: string };
       set_my_birthday: { Args: { wanted_month?: number }; Returns: Json };
+      set_my_country: { Args: { country_code: string; region_code?: string }; Returns: Json };
       set_my_handle: { Args: { new_handle: string }; Returns: string };
       set_my_locale: { Args: { new_locale: string }; Returns: string };
       set_my_pen_name: { Args: { new_pen_name: string }; Returns: string };
@@ -14132,9 +14261,15 @@ export type Database = {
       sign_up_age_outcome: { Args: { birth_month?: number; birth_year: number }; Returns: string };
       sign_up_birth_month: { Args: { birth_year: number; sign_up_data: Json }; Returns: number };
       sign_up_birth_year: { Args: { sign_up_data: Json }; Returns: number };
+      sign_up_country: { Args: { sign_up_data: Json }; Returns: Json };
       sign_up_handle: { Args: { sign_up_data: Json }; Returns: string };
       sign_up_market_outcome: {
-        Args: { birth_month?: number; birth_year: number; country_code: string };
+        Args: {
+          birth_month?: number;
+          birth_year: number;
+          country_code: string;
+          region_code?: string;
+        };
         Returns: string;
       };
       sign_up_rule_of: { Args: { message: string }; Returns: string };
@@ -14573,6 +14708,7 @@ export type Database = {
       staff_may: { Args: { target_area: string; wanted_access?: string }; Returns: boolean };
       staff_session_started_at: { Args: Record<PropertyKey, never>; Returns: string };
       staff_signed_in_recently: { Args: Record<PropertyKey, never>; Returns: boolean };
+      start_consent_grace_for_rule: { Args: { rule_id: string }; Returns: number };
       start_conversation: {
         Args: { recipient_id: string; sender_id: string };
         Returns: {
@@ -15087,6 +15223,10 @@ export type Database = {
           market: string;
           writer_count: number;
         }[];
+      };
+      youngest_age: {
+        Args: { birth_month: number; birth_year: number; on_date: string };
+        Returns: number;
       };
     };
     Enums: {

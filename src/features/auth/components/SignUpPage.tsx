@@ -11,7 +11,8 @@
  * 3. otherwise: the steps, the heading and SignUpForm.
  * What it reads: the public flags (useFeatureFlags), the invite (useInviteCheck), the current terms
  * and privacy notice (useLegalVersions, so the sign-up records the versions shown) and the
- * country of the connection with its market (useSignUpMarket, S1-E2-10). Once sign-up is public,
+ * country of the connection with its market (useSignUpMarket, S1-E2-10), which starts the
+ * country picker, and the age rules by country (useAgeRules, MARKETS-1). Once sign-up is public,
  * a closed or unknown country goes to /not-open.
  */
 import { useTranslation } from 'react-i18next';
@@ -24,6 +25,7 @@ import { useLegalVersions } from '@/features/legal/hooks/useLegalVersions';
 import { chooseLegalVersion } from '@/features/legal/lib/chooseLegalVersion';
 
 import type { SignUpContext } from '../api/signUp';
+import { useAgeRules } from '../hooks/useAgeRules';
 import { useInviteCheck } from '../hooks/useInviteCheck';
 import { useSignUpForm } from '../hooks/useSignUpForm';
 import { useSignUpMarket, type SignUpMarket } from '../hooks/useSignUpMarket';
@@ -38,6 +40,7 @@ import { SignUpSteps } from './SignUpSteps';
  * Works out what sign-up sends besides the answers, once everything it needs has loaded.
  *
  * @param inviteCode - the code from the address, when invite_only is on
+ * @param market - the country of the connection and its tokens
  * @returns the context, or null while the legal versions are loading or can't be read
  */
 function useSignUpContext(
@@ -48,6 +51,8 @@ function useSignUpContext(
   legalFailed: boolean;
 } {
   const { i18n } = useTranslation();
+  // The age rules by country (MARKETS-1); if they can't be read, the database still applies them.
+  const ageRules = useAgeRules();
   const terms = useLegalVersions('terms');
   const privacy = useLegalVersions('privacy');
   const termsVersion = chooseLegalVersion(terms.data ?? [], i18n.language).current;
@@ -64,7 +69,7 @@ function useSignUpContext(
       signupToken: market.token,
       signupIpToken: market.ipToken,
       country: market.country,
-      marketMinimumAge: market.minimumAge,
+      ageRules: ageRules.data ?? [],
     },
     legalFailed: false,
   };

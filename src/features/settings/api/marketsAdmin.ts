@@ -34,7 +34,6 @@ export interface MarketRow {
   status: OpeningStatus;
   legalCheck: LegalCheckStatus;
   languages: string[];
-  minimumAge: number;
 }
 
 /**
@@ -65,7 +64,7 @@ export async function fetchLanguages(client: AppSupabaseClient): Promise<Languag
 export async function fetchMarkets(client: AppSupabaseClient): Promise<MarketRow[]> {
   const { data, error } = await client
     .from('markets')
-    .select('country_code, status, legal_check, languages, minimum_age')
+    .select('country_code, status, legal_check, languages')
     .order('is_open', { ascending: false })
     .order('country_code');
   if (error !== null) throw settingsErrorFrom(error);
@@ -74,7 +73,6 @@ export async function fetchMarkets(client: AppSupabaseClient): Promise<MarketRow
     status: row.status,
     legalCheck: row.legal_check,
     languages: row.languages,
-    minimumAge: row.minimum_age,
   }));
 }
 

@@ -11,6 +11,7 @@
 import { z } from 'zod';
 
 import { birthYearNeedsMonth, romanianToday } from '@/lib/age';
+import { ruleFor, ruleNeedsMonth, type AgeRule } from '@/lib/age-rules';
 
 /** At least 10 characters (canvas 2.1; also set in supabase/config.toml and on staging). */
 export const minimumPasswordLength = 10;
@@ -30,8 +31,13 @@ export const signUpSchema = z
     password: z.string(),
     confirmPassword: z.string(),
     birthYear: z.string().regex(/^\d{4}$/, 'signUp.errors.birthYearMissing'),
-    // '' when not asked; '1' to '12' when the year leaves the age unclear at 13 or 16 (S1-E2-02).
+    // '' when not asked; '1' to '12' when the year leaves the age unclear at 13 or 16 (S1-E2-02),
+    // or at one of the chosen country's own ages (MARKETS-1).
     birthMonth: z.string(),
+    // The country the person lives in, which sets the ages that apply (MARKETS-1, S1-E2-20).
+    country: z.string().regex(/^[A-Z]{2}$/, 'signUp.errors.countryMissing'),
+    // A region with its own age law (Quebec, Florida …), or '' for the rest of the country.
+    legalRegion: z.string(),
     acceptsTerms: z.literal(true, 'signUp.errors.termsNotAccepted'),
   })
   .superRefine((answers, context) => {
@@ -69,18 +75,42 @@ export type SignUpAnswers = z.infer<typeof signUpSchema>;
 export type SignUpProblems = Partial<Record<keyof SignUpAnswers, string>>;
 
 /**
+ * Whether the chosen country's own ages need the month although 13 and 16 don't (Quebec's 14,
+ * MARKETS-1). The schema itself only knows 13 and 16, because it has no rules to read.
+ *
+ * @param answers - what the form holds
+ * @param ageRules - the age rules by country
+ * @returns true when the month is missing and the country's rule needs it
+ */
+function countryNeedsMissingMonth(answers: unknown, ageRules: readonly AgeRule[]): boolean {
+  const draft = answers as Partial<SignUpAnswers>;
+  if (draft.birthMonth !== '' || draft.birthYear === undefined || !/^\d{4}$/.test(draft.birthYear))
+    return false;
+  const rule = ruleFor(ageRules, draft.country ?? null, draft.legalRegion ?? '');
+  return ruleNeedsMonth(rule, Number(draft.birthYear), romanianToday());
+}
+
+/**
  * Checks the answers and lists the first problem of each field.
  *
  * @param answers - what the form holds
+ * @param ageRules - the age rules by country, so the month is asked at a country's own ages
  * @returns the problems (an empty object when everything is fine)
  */
-export function findSignUpProblems(answers: unknown): SignUpProblems {
+export function findSignUpProblems(
+  answers: unknown,
+  ageRules: readonly AgeRule[] = [],
+): SignUpProblems {
   const result = signUpSchema.safeParse(answers);
-  if (result.success) return {};
   const problems: SignUpProblems = {};
-  for (const issue of result.error.issues) {
-    const field = issue.path[0] as keyof SignUpAnswers;
-    problems[field] ??= issue.message;
+  if (!result.success) {
+    for (const issue of result.error.issues) {
+      const field = issue.path[0] as keyof SignUpAnswers;
+      problems[field] ??= issue.message;
+    }
+  }
+  if (countryNeedsMissingMonth(answers, ageRules)) {
+    problems.birthMonth ??= 'signUp.errors.birthMonthMissing';
   }
   return problems;
 }

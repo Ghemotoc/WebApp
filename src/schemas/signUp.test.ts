@@ -14,10 +14,18 @@ const goodAnswers = {
   confirmPassword: 'a long passphrase',
   birthYear: '1990',
   birthMonth: '',
+  country: 'RO',
+  legalRegion: '',
   acceptsTerms: true,
 };
 
 describe('the sign-up rules', () => {
+  it('asks for the country the person lives in (MARKETS-1)', () => {
+    expect(findSignUpProblems({ ...goodAnswers, country: '' })).toEqual({
+      country: 'signUp.errors.countryMissing',
+    });
+  });
+
   it('accepts complete answers', () => {
     expect(findSignUpProblems(goodAnswers)).toEqual({});
   });

@@ -41,3 +41,7 @@ Google, Apple, Microsoft and passkeys (S1-E2-09), behind the `social_login` and 
 - `components/SocialReturnPage.tsx`: `/auth/social-return`, where the providers send the person back; `api/socialReturn.ts` decides what happens.
 - `api/socialSignIn.ts`: leaving for a provider, the answers kept in sessionStorage, `finish_social_sign_up()`, `cancel_social_sign_up()` and the passkey log-in.
 - Settings › Ways to log in lives in `src/features/account/` (`LoginMethodsSection`).
+
+The country and its age rules (MARKETS-1):
+- `components/CountryFields.tsx`: "Country you live in" and, where a region has its own law, "Province or state"; used at sign-up and in Settings.
+- `api/ageRules.ts` and `hooks/useAgeRules.ts`: the age rules by country (`country_age_rules`, public read); the rules themselves are mirrored in `src/lib/age-rules.ts`.

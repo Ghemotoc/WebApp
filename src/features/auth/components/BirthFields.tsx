@@ -2,7 +2,8 @@
  * BirthFields: the year of birth, the month when needed, and the age rules' inline alert
  * (stories S1-E2-01 and S1-E2-02; board 2.1).
  *
- * The month appears only when the chosen year leaves the age unclear at 13 or 16 (Q16); choosing
+ * The month appears only when the chosen year leaves the age unclear at 13 or 16 (Q16), or at one
+ * of the chosen country's own ages (MARKETS-1); choosing
  * another year clears it, so a month is never sent for a year that doesn't need it. When the
  * year (and month) make the person under 13, or under 18 while adults_only is on, the board's
  * inline alert says "Sorry, you can't create an account right now." straight away; pressing
@@ -12,6 +13,7 @@
 import { useTranslation } from 'react-i18next';
 
 import { birthYearNeedsMonth, romanianToday } from '@/lib/age';
+import { ruleNeedsMonth } from '@/lib/age-rules';
 
 import type { useSignUpForm } from '../hooks/useSignUpForm';
 
@@ -34,7 +36,10 @@ export function BirthFields({ form, includesAgeCheck }: BirthFieldsProps) {
   const { answers, setField, problems, ageOutcome } = form;
   const today = romanianToday();
   const year = Number(answers.birthYear);
-  const needsMonth = answers.birthYear !== '' && birthYearNeedsMonth(year, today);
+  // At 13 or 16, or at one of the chosen country's own ages (Quebec's 14, MARKETS-1).
+  const needsMonth =
+    answers.birthYear !== '' &&
+    (birthYearNeedsMonth(year, today) || ruleNeedsMonth(form.ageRule, year, today));
 
   /** A new year clears the month, so a month is only ever kept for a year that needs it. */
   function changeYear(value: string) {

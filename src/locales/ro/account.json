@@ -100,11 +100,24 @@
     "lagNote": "Un dispozitiv deconectat nu își mai poate reînnoi accesul; poate rămâne deschis cel mult o oră."
   },
   "country": {
-    "label": "Țara",
-    "value": "{{country}} · Din conexiunea ta",
-    "unknown": "Necunoscută",
-    "note": "O aflăm din conexiunea ta când te înscrii și nu o cerem niciodată. Crezi că e greșită?",
-    "contact": "Scrie-ne"
+    "label": "Țara în care locuiești",
+    "unknown": "Încă nu știm",
+    "note": "Legea locului în care trăiești stabilește unele vârste, de exemplu când trebuie să fie de acord un părinte.",
+    "change": "Schimbă țara",
+    "save": "Salvează țara",
+    "saving": "Se salvează…",
+    "cancel": "Renunță",
+    "saved": "Salvat. Acum se aplică regulile locului în care trăiești.",
+    "consentNeeded": "Salvat. Acolo unde locuiești, din cauza vârstei tale, trebuie să fie de acord un părinte sau tutore. Roagă-l până pe {{date}}. Până atunci poți scrie în continuare.",
+    "failures": {
+      "under_country_age": "Cei de vârsta ta nu pot folosi {{productName}} în acea țară, așa că nu am schimbat-o.",
+      "unknown_country": "Alege o țară din listă.",
+      "unreachable": "Nu am putut salva țara. Verifică conexiunea și încearcă din nou."
+    },
+    "question": {
+      "heading": "În ce țară locuiești?",
+      "body": "Legea locului în care trăiești stabilește unele vârste, de exemplu când trebuie să fie de acord un părinte. Te întrebăm o singură dată și o poți schimba oricând din Setări."
+    }
   },
   "sanction": {
     "suspension": {
@@ -279,10 +292,11 @@
     },
     "notice": {
       "heading": "Roagă un părinte sau tutore",
-      "body": "Ai sub 16 ani, așa că un părinte sau tutore trebuie să fie de acord înainte să poți publica, comenta, posta sau trimite mesaje.",
+      "body": "Din cauza vârstei tale și a locului în care trăiești, un părinte sau tutore trebuie să fie de acord înainte să poți publica, comenta, posta sau trimite mesaje.",
       "action": "Roagă-l",
       "withdrawnBody": "De acum contul tău poate doar citi. Poți în continuare să citești povești, să-ți păstrezi biblioteca, să raportezi orice te îngrijorează și să-ți descarci datele, iar poveștile tale rămân salvate. Nu poți publica, comenta, posta sau trimite mesaje decât dacă un părinte sau tutore își dă din nou acordul.",
-      "withdrawnAction": "Ce poți face în continuare"
+      "withdrawnAction": "Ce poți face în continuare",
+      "graceBody": "Regulile locului în care trăiești cer acum, din cauza vârstei tale, acordul unui părinte sau tutore. Roagă-l până pe {{date}}. Până atunci poți scrie în continuare; după aceea contul tău devine doar pentru citit până când este de acord."
     },
     "parent": {
       "documentTitle": "Părinte sau tutore",

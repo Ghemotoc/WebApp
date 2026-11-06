@@ -100,11 +100,24 @@
     "lagNote": "A device you log out can’t renew its access; it may stay open for up to an hour."
   },
   "country": {
-    "label": "Country",
-    "value": "{{country}} · From your connection",
-    "unknown": "Not known",
-    "note": "We take it from your connection when you join, and never ask. Think it’s wrong?",
-    "contact": "Contact us"
+    "label": "Country you live in",
+    "unknown": "Not known yet",
+    "note": "The law where you live sets some ages, such as when a parent has to agree.",
+    "change": "Change country",
+    "save": "Save country",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "saved": "Saved. The rules where you live now apply.",
+    "consentNeeded": "Saved. Where you live, a parent or guardian needs to agree because of your age. Ask them by {{date}}. Until then you can keep writing.",
+    "failures": {
+      "under_country_age": "People your age can’t use {{productName}} in that country, so we didn’t change it.",
+      "unknown_country": "Choose a country from the list.",
+      "unreachable": "We couldn’t save your country. Check your connection and try again."
+    },
+    "question": {
+      "heading": "Which country do you live in?",
+      "body": "The law where you live sets some ages, such as when a parent has to agree. We ask once, and you can change it later in Settings."
+    }
   },
   "sanction": {
     "suspension": {
@@ -279,10 +292,11 @@
     },
     "notice": {
       "heading": "Ask a parent or guardian",
-      "body": "You’re under 16, so a parent or guardian needs to agree before you can publish, comment, post or send messages.",
+      "body": "Because of your age and where you live, a parent or guardian needs to agree before you can publish, comment, post or send messages.",
       "action": "Ask them",
       "withdrawnBody": "Your account is read-only from now on. You can still read stories, keep your library, report anything that worries you and download your data, and your own stories stay saved. You can’t publish, comment, post or send messages unless a parent or guardian agrees again.",
-      "withdrawnAction": "What you can still do"
+      "withdrawnAction": "What you can still do",
+      "graceBody": "The rules where you live now ask a parent or guardian to agree, because of your age. Ask them by {{date}}. Until then you can keep writing; after that your account is read-only until they agree."
     },
     "parent": {
       "documentTitle": "Parent or guardian",

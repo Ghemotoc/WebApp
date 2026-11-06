@@ -100,9 +100,12 @@ function HiddenShelves({ hidden, onShow }: { hidden: string[]; onShow: (word: st
       {hidden.map((word) => {
         const name = t(`discover.shelves.${word}`, { defaultValue: word });
         return (
-          <li key={word}>
+          <li key={word} className="max-w-full">
+            {/* A long shelf name wraps on a phone instead of pushing the page sideways
+                (CLAUDE.md rule 21). */}
             <Button
               variant="secondary"
+              className="h-auto min-h-11 max-w-full py-2 text-left whitespace-normal"
               onClick={() => onShow(word)}
               aria-label={t('discover.showLabel', { name })}
             >

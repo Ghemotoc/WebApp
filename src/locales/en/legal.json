@@ -87,5 +87,24 @@
     "text": "Want to report illegal content? Anyone can use the report form.",
     "link": "Report illegal content",
     "orderLink": "Authorities: send a removal order"
+  },
+  "country": {
+    "heading": "Your country: {{place}}",
+    "yourCountry": "your country",
+    "joinFrom": "In {{place}} you can join from age {{age}}.",
+    "consentBelow": "Below {{age}}, a parent or guardian has to agree first.",
+    "noConsent": "No parent or guardian has to agree once you can join.",
+    "blockedBelow": "Below {{age}}, sign-up isn’t possible there, even with a parent’s or guardian’s agreement.",
+    "toVerify": "A lawyer is still checking this rule.",
+    "agesHeading": "Ages by country",
+    "agesIntro": "The age to join and the age below which a parent or guardian has to agree, wherever you live. A region with its own law has its own row. Any country not listed follows the strictest rule.",
+    "defaultName": "Any other country",
+    "never": "Never",
+    "columns": {
+      "place": "Country or region",
+      "join": "Join from",
+      "consent": "Parent agrees under",
+      "blocked": "Blocked under"
+    }
   }
 }

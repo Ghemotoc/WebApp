@@ -89,7 +89,7 @@ begin
     --    doesn't stop it at handle_missing; adult_writer also has a pen name.
     insert into public.profiles (
       id, birth_year, age_check_result, age_checked_at, age_check_method, handle, pen_name,
-      country_code
+      country_code, country_chosen_at
     )
     values (
       persona.user_id,
@@ -101,7 +101,9 @@ begin
       case when persona.persona_name = 'adult_writer' then 'Lia Scrie' end,
       -- Every persona joined from Romania, so country-specific blocks (safety contacts,
       -- S1-E10-13a) have a country to show; real sign-ups record it from the connection (S1-E2-10).
-      'RO'
+      'RO',
+      -- ... and chose it themselves, so the app doesn't ask them once more (MARKETS-1, S1-E2-21).
+      now()
     );
 
     -- 4. Staff personas get their role (S1-E2-07a later adds permissions).

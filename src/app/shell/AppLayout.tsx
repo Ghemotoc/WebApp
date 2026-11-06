@@ -23,33 +23,31 @@
  * Notifications (S1-E7-01): the bell with the unread count sits before "Write" while signed in.
  * Pictures (S1-E10-05): usePendingPictureRetry asks once per signed-in visit for the check of any
  * picture whose services were down when it was uploaded.
+ * The account notices (Terms, the country question, username, age check, consent and sanctions)
+ * live in AccountNotices, at the top of <main> (MARKETS-1 split them out).
  * Deleting an account (S1-E13-03): AccountClosingGate swaps the notices and the page for the
  * closing-account page ("Keep my account" or "Log out") while the account waits to be deleted.
  */
 import { useTranslation } from 'react-i18next';
 import { Outlet } from 'react-router';
 
-import { SanctionNotice } from '@/features/account/components/SanctionNotice';
 import { AccountClosingGate } from '@/features/account-deletion/components/AccountClosingGate';
-import { SetupProfileNotice } from '@/features/account/components/SetupProfileNotice';
-import { AgeCheckNotice } from '@/features/age-check/components/AgeCheckNotice';
 import { AccountLinks } from '@/features/auth/components/AccountLinks';
 import { BrandTabIcon } from '@/features/branding/components/BrandTabIcon';
 import { LanguageSelect } from '@/features/language/components/LanguageSelect';
 import { useTrackRoutePattern } from '@/features/errors/hooks/useTrackRoutePattern';
 import { useAccountLanguage } from '@/features/language/hooks/useAccountLanguage';
-import { LegalUpdateNotice } from '@/features/legal/components/LegalUpdateNotice';
 import { MaintenanceGate } from '@/features/maintenance/components/MaintenanceGate';
 import { MessagesNavLink } from '@/features/messages/components/MessagesNavLink';
 import { NotificationBell } from '@/features/notifications/components/NotificationBell';
 import { OfflineBanner } from '@/features/offline/components/OfflineBanner';
 import { PresenceHeartbeat } from '@/features/privacy/components/PresenceHeartbeat';
-import { ParentConsentNotice } from '@/features/parent-consent/components/ParentConsentNotice';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { usePendingPictureRetry } from '@/features/pictures/hooks/usePictures';
 import { NoticeStrip } from '@/features/website/components/NoticeStrip';
 import { WriteLink } from '@/features/writing/components/WriteLink';
 
+import { AccountNotices } from './AccountNotices';
 import { Footer } from './Footer';
 import { TopBar } from './TopBar';
 
@@ -102,16 +100,8 @@ export function AppLayout() {
         <MaintenanceGate>
           {/* While the account waits to be deleted, the closing page replaces the rest (S1-E13-03). */}
           <AccountClosingGate>
-            {/* "We've updated our Terms", for a signed-in person who must accept before posting (S1-E14-01). */}
-            <LegalUpdateNotice />
-            {/* "Choose a username", for a signed-in person who hasn't chosen one yet (S1-E2-04). */}
-            <SetupProfileNotice />
-            {/* "Confirm your age", for an account that waits for an age check (S1-E2-08). */}
-            <AgeCheckNotice />
-            {/* "Ask a parent or guardian", for an under-16 who waits for consent (S1-E2-03). */}
-            <ParentConsentNotice />
-            {/* A live suspension or reporting pause, said plainly on every page (S1-E10-06). */}
-            <SanctionNotice />
+            {/* The account notices: Terms, country, username, age check, consent, sanctions. */}
+            <AccountNotices />
             <Outlet />
           </AccountClosingGate>
         </MaintenanceGate>

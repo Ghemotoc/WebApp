@@ -34,6 +34,7 @@ Every section, in the order it was built (QA-5, finding R4). Search this list fo
 - [The Legal centre and "accept before posting again" (S1-E14-01)](#the-legal-centre-and-accept-before-posting-again-s1-e14-01)
 - [Signing up (S1-E2-01)](#signing-up-s1-e2-01)
 - [The country from the connection (S1-E2-10)](#the-country-from-the-connection-s1-e2-10)
+- [The age rules by country (MARKETS-1)](#the-age-rules-by-country-markets-1)
 - [Checking one's age with Yoti (S1-E2-08a, added 5 Nov 2026; ADR 0010)](#checking-ones-age-with-yoti-s1-e2-08a-added-5-nov-2026-adr-0010)
 - [Parental consent (S1-E2-03, ADR 0011)](#parental-consent-s1-e2-03-adr-0011)
 - [Who may message whom (S1-E9-03)](#who-may-message-whom-s1-e9-03)
@@ -298,6 +299,7 @@ Five tables exist, each with row-level security and only read policies; every wr
 | `staff_roles` | which staff role each team member holds | the person themselves; owner and admin see all |
 | `feature_flags`, `settings` | switches and values (`invite_only`, `adults_only` on for March) | anyone, for rows marked public; owner and admin see all |
 | `audit_log` | every staff action, written only by `log_staff_action()`; nobody can change or delete a row | owner and admin |
+| `country_age_rules` | the ages that apply in each country, and in each region with its own law (MARKETS-1): age to join, age below which a parent must agree, age below which sign-up is blocked, source, date checked, confidence, status, notes; changed only by `admin_save_age_rule()` | everyone reads; owner and admin change |
 | `call_log` | every call the app made to the back end (LOGS-1): kind, name, outcome, status, error code, duration, route pattern, app version and the user ID (empty for visitors); written only by `log_calls()`, kept 30 days | owner and admin |
 | `account_staff_notes` | notes staff leave on an account for each other (LOGS-1a); added only by `admin_add_account_note()`, never changed or deleted, kept 3 years like the audit log | staff with the Users area (owner, admin, moderator, support) |
 | `legal_documents`, `legal_document_versions` (S1-E14-01) | the Legal centre's documents and every live version, per language; written only by migrations | anyone, for live versions; owner and admin also see versions not live yet |
@@ -397,16 +399,45 @@ SignUpPage → useSignUpMarket                         src/features/auth/
   │                            LOCAL_FAKE_COUNTRY or a test's X-Fake-Country header)
   │     server/signup-context.ts: request.cf.country → { country, token } (HMAC-SHA256,
   │     SIGNUP_CONTEXT_SECRET, 10 minutes); the IP address is never read or kept
-  │  markets (public): is that country open, and its minimum age
+  │  markets (public): is that country open
   │  once sign-up is public: closed or unknown → /not-open (NotOpenPage)
   ▼
-signUp() sends signup_context = token
+signUp() sends signup_context = token, plus the country the person chose (MARKETS-1, below)
   ▼
-handle_new_auth_user() → verified_signup_country(token) with Vault's signup_context_secret
+handle_new_auth_user() → sign_up_country(data) (the person's choice) or
+  verified_signup_country(token) with Vault's signup_context_secret
   → sign_up_market_outcome() (always ok in the invited test, Q6) → profiles.country_code
 ```
 
-Settings › Account shows it as "Romania · From your connection" (`CountryRow`).
+Settings › Account shows it as "Country you live in", with "Change country" (`CountrySetting`, MARKETS-1).
+
+## The age rules by country (MARKETS-1)
+
+The ages that apply follow the law where a member lives (Robert, 6 Nov 2026; replaces Q20, "never asked"):
+
+```
+country_age_rules (public read; 57 seeded rows, "ZZ" = any other country)
+  │  age_rule_for(country, region)   a region with its own law (Quebec) wins over its country
+  │  age_rule_outcome(year, month, country, region) → ok | consent_needed | under_minimum | blocked
+  ▼
+sign-up        CountryFields (starts on the connection's country; a province or state only where
+               one has its own row) → sign_up_data.country and legal_region
+               → create_profile_from_sign_up(): profiles.country_code, legal_region_code,
+                 country_chosen_at; too young there → no account (S1-E2-22)
+the gate       account_state() step 6 → needs_country_consent(): below the place's consent age,
+               a parent's yes (S1-E2-03), after any consent_grace_until
+Settings       CountrySetting → CountryChangeForm → set_my_country(): the new rule is checked
+               first; a new need for consent starts 14 days' grace
+asked once     CountryQuestionNotice (AppLayout) while profiles.country_chosen_at is null
+staff          Staff › Settings › Age rules by country (AgeRulesSection, AgeRuleEditor)
+               → admin_save_age_rule(rule, reason): audited with before and after values;
+               start_consent_grace_for_rule() gives members newly asked for consent 14 days
+legal pages    CountryLegalSections under the privacy notice and the terms: "Your country"
+               (the CMS help page "legal-your-country" for that market and language, else the
+               rule in words) and "Ages by country" (AgesByCountryTable)
+```
+
+The browser mirrors the rules in `src/lib/age-rules.ts` so the form refuses and asks for the month straight away; the database is the authority. The country list for the pickers is `src/lib/country-codes.ts`. Migrations `…_markets1_01_country_age_rules.sql`, `…_markets1_02_country_age_rules_seed.sql` (from `05_product-and-build/builder/2026-11-06_markets-1-age-rules_seed.csv`) and `…_markets1_03_country_at_sign_up_and_gate.sql`. Tests: `supabase/tests/database/308-country-age-rules.test.sql`, `src/lib/age-rules.test.ts`, `src/features/auth/components/SignUpPage.test.tsx`, `e2e/country-ages.spec.ts`.
 
 ## Checking one's age with Yoti (S1-E2-08a, added 5 Nov 2026; ADR 0010)
 

@@ -6,10 +6,11 @@
  * 1. the form rules (src/schemas/signUp.ts): every field at once, so all problems show together;
  * 2. the leaked-password check (lib/passwordLeak.ts), for a password sign-up;
  * 3. api/signUp.ts → Supabase Auth → the sign-up trigger, which checks everything again.
- * Before any of that, the age rules (src/lib/age.ts): a year that makes the person under 13, or
- * under 18 while adults_only is on, or under their country's minimum age (16 in Australia,
- * S1-E2-10), is refused; every answer is cleared and nothing is sent ("We don't keep anything you
- * typed", S1-E2-02).
+ * Before any of that, the age rules (src/lib/age.ts, src/lib/age-rules.ts): a year that makes the
+ * person under 13, or under 18 while adults_only is on, or too young for the country they chose
+ * (blocked under 16 in Australia, MARKETS-1), is refused; every answer is cleared and nothing is
+ * sent ("We don't keep anything you typed", S1-E2-02).
+ * The country picker starts on the country of the connection; the person's own choice wins.
  * "Continue with Google" (or Apple or Microsoft, S1-E2-09) runs the same checks except the email
  * and password, then leaves for the provider (api/socialSignIn.ts); the return page finishes it.
  * What it returns: the answers and a setter per field, the problems to show (translation keys),
@@ -17,12 +18,8 @@
  */
 import { useState } from 'react';
 
-import {
-  isUnderMarketAge,
-  romanianToday,
-  signUpAgeOutcome,
-  type SignUpAgeOutcome,
-} from '@/lib/age';
+import { romanianToday, signUpAgeOutcome, type SignUpAgeOutcome } from '@/lib/age';
+import { ageRuleOutcome, joiningAge, ruleFor, type AgeRule } from '@/lib/age-rules';
 import { checkHandle } from '@/features/account/api/accountNames';
 import type { HandleOutcome } from '@/features/account/lib/nameRules';
 import { getSupabaseClient, type AppSupabaseClient } from '@/lib/supabase';
@@ -45,36 +42,59 @@ const emptyDraft: SignUpDraft = {
   confirmPassword: '',
   birthYear: '',
   birthMonth: '',
+  // '' until the person picks one: the country of the connection shows in its place.
+  country: '',
+  legalRegion: '',
   acceptsTerms: false,
 };
 
-/** The age outcomes that end sign-up; under_market_age is the country's own minimum (S1-E2-10). */
+/** The age outcomes that end sign-up; under_market_age is the chosen country's own (MARKETS-1). */
 export type AgeRefusalReason =
   Extract<SignUpAgeOutcome, 'under_13' | 'adults_only'> | 'under_market_age';
+
+/** A refusal, with the country and age its message names (they outlive the cleared form). */
+export interface SignUpRefusal {
+  reason: AgeRefusalReason;
+  country: string | null;
+  /** The age below which nobody may join in that country (16 in Australia). */
+  age: number;
+}
+
+/**
+ * The draft with the country of the connection in place of a country not chosen yet.
+ *
+ * @param draft - the form's answers
+ * @param hintCountry - the country of the connection, or null
+ * @returns the answers as they would be sent
+ */
+export function withCountryHint(draft: SignUpDraft, hintCountry: string | null): SignUpDraft {
+  return draft.country === '' ? { ...draft, country: hintCountry ?? '' } : draft;
+}
 
 /**
  * Which refusal, if any, applies before anything is sent.
  *
- * @param ageOutcome - the age rules' answer
- * @param answers - the form's answers
- * @param marketMinimumAge - the visitor's market's minimum age
- * @returns the reason, or null when the form may be sent
+ * @param ageOutcome - the product's own age rules' answer
+ * @param answers - the form's answers, with the country filled in
+ * @param ageRules - the age rules by country
+ * @returns the refusal, or null when the form may be sent
  */
 function refusalBeforeSending(
   ageOutcome: SignUpAgeOutcome,
   answers: SignUpDraft,
-  marketMinimumAge: number,
-): AgeRefusalReason | null {
-  if (ageOutcome === 'under_13' || ageOutcome === 'adults_only') return ageOutcome;
+  ageRules: readonly AgeRule[],
+): SignUpRefusal | null {
+  const country = answers.country === '' ? null : answers.country;
+  if (ageOutcome === 'under_13' || ageOutcome === 'adults_only') {
+    return { reason: ageOutcome, country, age: 13 };
+  }
   if (ageOutcome !== 'ok') return null;
+  // The chosen country's own ages (MARKETS-1, S1-E2-22): blocked or under its minimum.
+  const rule = ruleFor(ageRules, country, answers.legalRegion);
   const month = answers.birthMonth === '' ? null : Number(answers.birthMonth);
-  const isTooYoung = isUnderMarketAge(
-    Number(answers.birthYear),
-    month,
-    marketMinimumAge,
-    romanianToday(),
-  );
-  return isTooYoung ? 'under_market_age' : null;
+  const outcome = ageRuleOutcome(rule, Number(answers.birthYear), month, romanianToday());
+  if (rule === undefined || (outcome !== 'blocked' && outcome !== 'under_minimum')) return null;
+  return { reason: 'under_market_age', country, age: joiningAge(rule) };
 }
 
 /**
@@ -120,8 +140,8 @@ async function sendSignUp(
   draft: SignUpDraft,
   context: SignUpContext,
 ): Promise<SignUpProblems | null> {
-  // Step 1: the form rules.
-  const problems = findSignUpProblems(draft);
+  // Step 1: the form rules, the chosen country's month rule included.
+  const problems = findSignUpProblems(draft, context.ageRules);
   if (Object.keys(problems).length > 0) return problems;
   // Step 2: a leaked password is refused here; if the check can't be reached, sign-up goes on.
   if (draft.method === 'password' && (await checkPasswordLeak(draft.password)) === 'leaked') {
@@ -158,7 +178,10 @@ async function sendSocialSignUp(
   provider: SocialProvider,
 ): Promise<SignUpProblems | null> {
   // Step 1: the form rules, as for an emailed link, so no password is asked for.
-  const problems = findSignUpProblems({ ...draft, method: 'link', email: providerEmailStandIn });
+  const problems = findSignUpProblems(
+    { ...draft, method: 'link', email: providerEmailStandIn },
+    context.ageRules,
+  );
   if (Object.keys(problems).length > 0) return problems;
   // Step 2: the username's full check, so a refusal shows under the field before leaving.
   const client = await getSupabaseClient();
@@ -170,21 +193,27 @@ async function sendSocialSignUp(
   return null;
 }
 
+/** One way of sending the answers, given the loaded context: the problems found, or null. */
+type SendAnswers = (loaded: SignUpContext) => Promise<SignUpProblems | null>;
+
 /**
  * The form's state and actions.
  *
  * @param context - the invite, the legal versions and the language, or null while they load
  * @param isAdultsOnly - the adults_only flag (on in March)
- * @returns answers, setField, problems, ageOutcome, submit, continueWith, isSending, failure,
- *   refusedFor and sentTo
+ * @returns answers (with the country of the connection until one is chosen), setField, the age
+ *   rule of the chosen country, all the rules, problems, ageOutcome, submit, continueWith, isSending, failure,
+ *   refusal and sentTo
  */
 export function useSignUpForm(context: SignUpContext | null, isAdultsOnly: boolean) {
-  const [answers, setAnswers] = useState<SignUpDraft>(emptyDraft);
+  const [draft, setAnswers] = useState<SignUpDraft>(emptyDraft);
+  const answers = withCountryHint(draft, context?.country ?? null);
+  const ageRule = ruleFor(context?.ageRules ?? [], answers.country || null, answers.legalRegion);
   const [problems, setProblems] = useState<SignUpProblems>({});
   const [isSending, setIsSending] = useState(false);
   const [failure, setFailure] = useState<SignUpFailure | null>(null);
   const [sentTo, setSentTo] = useState<string | null>(null);
-  const [refusedFor, setRefusedFor] = useState<AgeRefusalReason | null>(null);
+  const [refusal, setRefusal] = useState<SignUpRefusal | null>(null);
   const ageOutcome = ageOutcomeOf(answers, isAdultsOnly);
 
   /** Changes one answer and clears that field's problem. */
@@ -196,23 +225,23 @@ export function useSignUpForm(context: SignUpContext | null, isAdultsOnly: boole
   /**
    * Runs the age rules, then one way of sending; shows the problems, or calls onSent.
    *
-   * @param send - sends the answers and returns the problems found, or null
+   * @param send - sends the answers with the loaded context and returns the problems found, or null
    * @param onSent - what happens once they went through
    */
-  async function checkThenSend(send: () => Promise<SignUpProblems | null>, onSent: () => void) {
+  async function checkThenSend(send: SendAnswers, onSent: () => void) {
     if (context === null || isSending) return;
-    // The age rules first, the market's own minimum age included: a refusal clears every answer
+    // The age rules first, the chosen country's own ages included: a refusal clears every answer
     // and sends nothing.
-    const refusal = refusalBeforeSending(ageOutcome, answers, context.marketMinimumAge);
-    if (refusal !== null) {
+    const tooYoung = refusalBeforeSending(ageOutcome, answers, context.ageRules);
+    if (tooYoung !== null) {
       setAnswers(emptyDraft);
-      setRefusedFor(refusal);
+      setRefusal(tooYoung);
       return;
     }
     setIsSending(true);
     setFailure(null);
     try {
-      const found = await send();
+      const found = await send(context);
       if (found === null) onSent();
       else setProblems(found);
     } catch (error) {
@@ -223,34 +252,32 @@ export function useSignUpForm(context: SignUpContext | null, isAdultsOnly: boole
   }
 
   /** Checks and sends the form; shows problems or the "check your email" step. */
-  async function submit() {
-    if (context === null) return;
-    await checkThenSend(
-      () => sendSignUp(answers, context),
+  const submit = () =>
+    checkThenSend(
+      (loaded) => sendSignUp(answers, loaded),
       () => setSentTo(answers.email),
     );
-  }
 
   /** "Continue with …": checks the answers and leaves for the provider (S1-E2-09). */
-  async function continueWith(provider: SocialProvider) {
-    if (context === null) return;
+  const continueWith = (provider: SocialProvider) =>
     // Nothing happens once sent: the browser is already leaving for the provider.
-    await checkThenSend(
-      () => sendSocialSignUp(answers, context, provider),
+    checkThenSend(
+      (loaded) => sendSocialSignUp(answers, loaded, provider),
       () => undefined,
     );
-  }
 
   return {
     answers,
     setField,
+    ageRule,
+    ageRules: context?.ageRules ?? [],
     problems,
     ageOutcome,
     submit,
     continueWith,
     isSending,
     failure,
-    refusedFor,
+    refusal,
     sentTo,
   };
 }

@@ -1,8 +1,8 @@
 /**
  * SettingsPage: /staff/settings, where the owner and admins change how the platform works without
  * a new release: feature flags, values and limits, the Discover mix, rate limits, categories,
- * reserved names, the username word lists, and markets and languages (stories S1-E11-03 and
- * S1-E11-05; board AdminSettings, 8.6).
+ * reserved names, the username word lists, markets and languages, and the age rules by country
+ * (stories S1-E11-03, S1-E11-05 and S1-E2-21; board AdminSettings, 8.6).
  *
  * Every change applies within a minute and is logged by the database with the before and after
  * values (criterion 1); the link at the top opens those log lines. Plain components, no doodles
@@ -24,6 +24,7 @@ import { useNameRules } from '../hooks/useNameRules';
 import { useSettingsAdmin } from '../hooks/useSettingsAdmin';
 import { registerSettingsTranslations } from '../registerSettingsTranslations';
 
+import { AgeRulesSection } from './AgeRulesSection';
 import { CategoriesSection } from './CategoriesSection';
 import { DiscoverMixEditor } from './DiscoverMixEditor';
 import { FlagsSection } from './FlagsSection';
@@ -46,6 +47,7 @@ const sectionIds = [
   ['words', 'words'],
   ['nudge', 'nudge'],
   ['markets', 'markets'],
+  ['age-rules', 'ageRules'],
 ] as const;
 
 /**
@@ -144,6 +146,7 @@ function SettingsSections({ canOpenMarket }: { canOpenMarket: boolean }) {
       <NameRuleSections />
       <NudgeWordsSection />
       <MarketsSection canOpenMarket={canOpenMarket} />
+      <AgeRulesSection />
     </>
   );
 }

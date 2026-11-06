@@ -22,3 +22,5 @@ values; the page links to those log lines (`/staff/audit-log?action=settings.`).
 The texts are the `settings` namespace, registered when the page opens
 (`registerSettingsTranslations.ts`). The languages a staff member reads are set on Staff › Roles
 (`features/staff/components/StaffLanguages.tsx`).
+
+Age rules by country (MARKETS-1, S1-E2-21): `components/AgeRulesSection.tsx` and `AgeRuleEditor.tsx`, `hooks/useAgeRulesAdmin.ts`, `api/ageRulesAdmin.ts` (`admin_save_age_rule()`).
