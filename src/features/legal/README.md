@@ -17,3 +17,5 @@ Where the text comes from: `content/legal/` (English drafts) and `content/legal/
 Database side: `supabase/migrations/…_s1_e14_01_legal_documents.sql` (tables and policies) and `…_s1_e14_01_legal_gate.sql` (the account gate's `legal_acceptance_required` and the two functions). Tests: `supabase/tests/database/015` to `017`, `src/features/legal/**/*.test.ts(x)`, `scripts/legal/prepare-legal-text.test.ts`, `e2e/legal.spec.ts`.
 
 Contact and company details (S1-E14-02): the fourth document, `contact`, at `/legal/contact`. `lib/fillBrandTokens.ts` turns every address into an email link; Settings (`LegalLinksSection`) and the footer link to the page.
+
+Your country and Ages by country (MARKETS-1, S1-E2-23): `components/CountryLegalSections.tsx` and `AgesByCountryTable.tsx`, under the privacy notice and the terms. A country's own text is a Website › Help page with the address `legal-your-country` in that country's market; the Help centre leaves `legal-` pages out of its list.

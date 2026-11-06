@@ -11,3 +11,7 @@ The signed-in person's own account: their username and pen name, setup after sig
 - `api/accountNames.ts`: `profiles`, the public settings, `check_handle()`, `set_my_handle()`, `set_my_pen_name()`.
 - `lib/nameRules.ts`: the quick rules the form answers at once, `displayName()` and `nextChangeDate()`; `lib/outcomeMessages.ts`: the sentences.
 - The database side: `supabase/README.md`, "Usernames and pen names".
+
+The country the member lives in (MARKETS-1):
+- `components/CountrySetting.tsx` (Settings › Account), `CountryQuestionNotice.tsx` (asked once, from AppLayout) and `CountryChangeForm.tsx` (the shared form).
+- `api/myCountry.ts` and `hooks/useMyCountry.ts`: `set_my_country()`, which checks the new country's age rule first.

@@ -1594,9 +1594,10 @@ begin
     return 'age_check_pending';
   end if;
 
-  -- Step 6: an under-16 needs a parent's or guardian's yes (S1-E2-03; GDPR art. 8).
-  if band = '13_to_15' and public.is_feature_enabled('parental_consent')
-     and not public.has_parental_consent(target_user_id) then
+  -- Step 6: below the age the country's rule sets, a parent's or guardian's yes (S1-E2-03,
+  -- MARKETS-1; GDPR art. 8 and local equivalents), after any grace the rules gave.
+  if public.needs_country_consent(target_user_id)
+     and coalesce(profile_row.consent_grace_until, '-infinity') <= now() then
     return 'awaiting_parental_consent';
   end if;
 
@@ -8774,6 +8775,66 @@ COMMENT ON FUNCTION "public"."admin_safety_contact_warnings"() IS 'Safety contac
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_save_age_rule"("rule" "jsonb", "reason" "text") RETURNS "uuid"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  wanted_country text := upper(btrim(coalesce(rule ->> 'country_code', '')));
+  wanted_region text := upper(btrim(coalesce(rule ->> 'region_code', '')));
+  before_row public.country_age_rules;
+  after_row public.country_age_rules;
+  graced integer;
+begin
+  -- Step 1: owner and admin only, in a staff session, with a reason.
+  if not public.staff_may('settings', 'act') then
+    raise exception 'Only an owner or admin can change the age rules.' using errcode = 'insufficient_privilege';
+  end if;
+  if char_length(btrim(coalesce(reason, ''))) = 0 then
+    raise exception 'Say why the rule changes.' using errcode = 'check_violation', hint = 'reason_needed';
+  end if;
+  -- Step 2: the row as it was, if any.
+  select * into before_row from public.country_age_rules
+  where country_age_rules.country_code = wanted_country and country_age_rules.region_code = wanted_region
+  for update;
+  -- Step 3: write it; the table's checks refuse values out of range.
+  insert into public.country_age_rules as rules (country_code, region_code, name, region_name,
+    minimum_age, parental_consent_below, signup_blocked_below, legal_basis, source, date_checked,
+    confidence, status, notes)
+  values (wanted_country, wanted_region, btrim(coalesce(rule ->> 'name', '')),
+    btrim(coalesce(rule ->> 'region_name', '')),
+    (rule ->> 'minimum_age')::smallint, (rule ->> 'parental_consent_below')::smallint,
+    nullif(rule ->> 'signup_blocked_below', '')::smallint,
+    btrim(coalesce(rule ->> 'legal_basis', '')), btrim(coalesce(rule ->> 'source', '')),
+    coalesce((rule ->> 'date_checked')::date, current_date),
+    coalesce(rule ->> 'confidence', 'medium'), coalesce(rule ->> 'status', 'to_verify'),
+    btrim(coalesce(rule ->> 'notes', '')))
+  on conflict (country_code, region_code) do update set
+    name = excluded.name, region_name = excluded.region_name, minimum_age = excluded.minimum_age,
+    parental_consent_below = excluded.parental_consent_below,
+    signup_blocked_below = excluded.signup_blocked_below, legal_basis = excluded.legal_basis,
+    source = excluded.source, date_checked = excluded.date_checked,
+    confidence = excluded.confidence, status = excluded.status, notes = excluded.notes
+  returning * into after_row;
+  -- Step 4: members newly asked for a parent's consent get 14 days (criterion 4).
+  graced := public.start_consent_grace_for_rule(after_row.id);
+  -- Step 5: the audit row, with the values before and after and how many got the grace.
+  perform public.log_staff_action('age_rule.saved', 'country_age_rules', after_row.id::text, null,
+    btrim(reason),
+    case when before_row.id is null then null else to_jsonb(before_row) - 'created_at' - 'updated_at' end,
+    (to_jsonb(after_row) - 'created_at' - 'updated_at') || jsonb_build_object('members_given_grace', graced));
+  return after_row.id;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_save_age_rule"("rule" "jsonb", "reason" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_save_age_rule"("rule" "jsonb", "reason" "text") IS 'Owner and admin add or change an age rule by country; audited with before and after (MARKETS-1, S1-E2-21).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admin_save_canned_reply"("reply_id" "uuid", "title" "text", "body_ro" "text", "body_en" "text") RETURNS "uuid"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -11684,6 +11745,9 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     "message_quiet_until" time without time zone,
     "highest_rank_notified" "public"."writer_rank",
     "suggest_me" boolean,
+    "legal_region_code" "text" DEFAULT ''::"text" NOT NULL,
+    "country_chosen_at" timestamp with time zone,
+    "consent_grace_until" timestamp with time zone,
     CONSTRAINT "profiles_avatar_recipe_shape" CHECK ("public"."avatar_recipe_valid"("avatar_recipe")),
     CONSTRAINT "profiles_bio_length" CHECK (("char_length"("bio") <= 300)),
     CONSTRAINT "profiles_birth_month_is_a_month" CHECK ((("birth_month" >= 1) AND ("birth_month" <= 12))),
@@ -11692,6 +11756,7 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     CONSTRAINT "profiles_birthday_month_check" CHECK ((("birthday_month" >= 1) AND ("birthday_month" <= 12))),
     CONSTRAINT "profiles_country_code_is_alpha2" CHECK (("country_code" ~ '^[A-Z]{2}$'::"text")),
     CONSTRAINT "profiles_handle_length" CHECK ((("handle" IS NULL) OR (("char_length"("handle") >= 3) AND ("char_length"("handle") <= 30)))),
+    CONSTRAINT "profiles_legal_region_shape" CHECK (("legal_region_code" ~ '^([A-Z0-9]{1,3})?$'::"text")),
     CONSTRAINT "profiles_locale_is_supported" CHECK (("locale" = ANY (ARRAY['ro'::"text", 'en'::"text"]))),
     CONSTRAINT "profiles_pen_name_length" CHECK ((("pen_name" IS NULL) OR (("char_length"("pen_name") >= 1) AND ("char_length"("pen_name") <= 50)))),
     CONSTRAINT "profiles_signature_short" CHECK ((("signature" IS NULL) OR ((("char_length"("signature") >= 1) AND ("char_length"("signature") <= 300)) AND ("array_length"("string_to_array"("signature", '
@@ -11835,6 +11900,18 @@ COMMENT ON COLUMN "public"."profiles"."suggest_me" IS 'The writer''s "Suggest me
 
 
 
+COMMENT ON COLUMN "public"."profiles"."legal_region_code" IS 'A region with its own age law where the person lives (Quebec, a US state), or ''''; not the county in region_code (MARKETS-1).';
+
+
+
+COMMENT ON COLUMN "public"."profiles"."country_chosen_at" IS 'When the person said which country they live in; empty for accounts made before MARKETS-1, who are asked once.';
+
+
+
+COMMENT ON COLUMN "public"."profiles"."consent_grace_until" IS 'Until when a member newly asked for a parent''s consent (the rules changed) keeps writing; 14 days (MARKETS-1, S1-E2-22).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."age_check_can_ask_manual"("person" "public"."profiles") RETURNS boolean
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -11963,6 +12040,112 @@ ALTER FUNCTION "public"."age_check_threshold_for"("person" "public"."profiles") 
 
 
 COMMENT ON FUNCTION "public"."age_check_threshold_for"("person" "public"."profiles") IS 'Internal: the age line a new Yoti check tests for a profile, 13 or 18 (S1-E2-08).';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."country_age_rules" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "country_code" "text" NOT NULL,
+    "region_code" "text" DEFAULT ''::"text" NOT NULL,
+    "name" "text" NOT NULL,
+    "region_name" "text" DEFAULT ''::"text" NOT NULL,
+    "minimum_age" smallint DEFAULT 13 NOT NULL,
+    "parental_consent_below" smallint DEFAULT 16 NOT NULL,
+    "signup_blocked_below" smallint,
+    "legal_basis" "text" DEFAULT ''::"text" NOT NULL,
+    "source" "text" DEFAULT ''::"text" NOT NULL,
+    "date_checked" "date" NOT NULL,
+    "confidence" "text" DEFAULT 'medium'::"text" NOT NULL,
+    "status" "text" DEFAULT 'to_verify'::"text" NOT NULL,
+    "notes" "text" DEFAULT ''::"text" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "country_age_rules_ages" CHECK (((("minimum_age" >= 13) AND ("minimum_age" <= 18)) AND (("parental_consent_below" >= 13) AND ("parental_consent_below" <= 18)) AND ("parental_consent_below" >= "minimum_age") AND (("signup_blocked_below" IS NULL) OR (("signup_blocked_below" >= 13) AND ("signup_blocked_below" <= 18))))),
+    CONSTRAINT "country_age_rules_confidence_known" CHECK (("confidence" = ANY (ARRAY['high'::"text", 'medium'::"text", 'low'::"text"]))),
+    CONSTRAINT "country_age_rules_country_shape" CHECK (("country_code" ~ '^[A-Z]{2}$'::"text")),
+    CONSTRAINT "country_age_rules_default_is_whole" CHECK ((("country_code" <> 'ZZ'::"text") OR ("region_code" = ''::"text"))),
+    CONSTRAINT "country_age_rules_name_size" CHECK ((("char_length"("btrim"("name")) >= 1) AND ("char_length"("btrim"("name")) <= 100))),
+    CONSTRAINT "country_age_rules_region_name" CHECK (((("region_code" = ''::"text") AND ("region_name" = ''::"text")) OR (("region_code" <> ''::"text") AND (("char_length"("btrim"("region_name")) >= 1) AND ("char_length"("btrim"("region_name")) <= 60))))),
+    CONSTRAINT "country_age_rules_region_shape" CHECK (("region_code" ~ '^([A-Z0-9]{1,3})?$'::"text")),
+    CONSTRAINT "country_age_rules_status_known" CHECK (("status" = ANY (ARRAY['to_verify'::"text", 'verified'::"text"]))),
+    CONSTRAINT "country_age_rules_texts_size" CHECK ((("char_length"("legal_basis") <= 300) AND ("char_length"("source") <= 500) AND ("char_length"("notes") <= 1000)))
+);
+
+
+ALTER TABLE "public"."country_age_rules" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."country_age_rules" IS 'kind: platform
+Age rules by country or region: minimum age, parental consent below, sign-up blocked below, with source, date checked, confidence and status; "ZZ" is the default (MARKETS-1, S1-E2-21).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."age_rule_for"("country_code" "text", "region_code" "text" DEFAULT ''::"text") RETURNS "public"."country_age_rules"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select rules.*
+  from public.country_age_rules as rules
+  where (rules.country_code = upper(coalesce(age_rule_for.country_code, ''))
+         and rules.region_code in ('', upper(coalesce(age_rule_for.region_code, ''))))
+     or rules.country_code = 'ZZ'
+  -- The most specific row first: the region, then the country, then the default.
+  order by (rules.country_code = 'ZZ'), (rules.region_code = '')
+  limit 1;
+$$;
+
+
+ALTER FUNCTION "public"."age_rule_for"("country_code" "text", "region_code" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."age_rule_for"("country_code" "text", "region_code" "text") IS 'The age rule for a country and region: the region''s row, else the country''s, else the default "ZZ" (MARKETS-1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."age_rule_needs_review"("rule" "public"."country_age_rules") RETURNS boolean
+    LANGUAGE "sql" STABLE
+    SET "search_path" TO ''
+    AS $$
+  select rule.confidence = 'low' or rule.date_checked < (now() - interval '6 months')::date;
+$$;
+
+
+ALTER FUNCTION "public"."age_rule_needs_review"("rule" "public"."country_age_rules") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."age_rule_needs_review"("rule" "public"."country_age_rules") IS 'True when an age rule has low confidence or was checked more than six months ago (MARKETS-1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."age_rule_outcome"("birth_year" integer, "birth_month" integer, "country_code" "text", "region_code" "text" DEFAULT ''::"text") RETURNS "text"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  rule public.country_age_rules := public.age_rule_for(country_code, region_code);
+  age integer := public.youngest_age(birth_year, birth_month, (now() at time zone 'Europe/Bucharest')::date);
+begin
+  if age is null then
+    return 'unknown';
+  end if;
+  if rule.signup_blocked_below is not null and age < rule.signup_blocked_below then
+    return 'blocked';
+  end if;
+  if age < rule.minimum_age then
+    return 'under_minimum';
+  end if;
+  if age < rule.parental_consent_below then
+    return 'consent_needed';
+  end if;
+  return 'ok';
+end;
+$$;
+
+
+ALTER FUNCTION "public"."age_rule_outcome"("birth_year" integer, "birth_month" integer, "country_code" "text", "region_code" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."age_rule_outcome"("birth_year" integer, "birth_month" integer, "country_code" "text", "region_code" "text") IS 'What a country''s age rule means for someone: blocked, under_minimum, consent_needed or ok (MARKETS-1).';
 
 
 
@@ -13115,6 +13298,27 @@ ALTER FUNCTION "public"."birth_year_needs_month"("birth_year" integer, "on_date"
 
 
 COMMENT ON FUNCTION "public"."birth_year_needs_month"("birth_year" integer, "on_date" "date") IS 'True when the year of birth leaves the age unclear at 13 or 16, so the month is asked (Q16, S1-E2-02).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."birth_year_needs_month_where"("birth_year" integer, "on_date" "date", "country_code" "text", "region_code" "text" DEFAULT ''::"text") RETURNS boolean
+    LANGUAGE "plpgsql" STABLE
+    SET "search_path" TO ''
+    AS $$
+declare
+  rule public.country_age_rules := public.age_rule_for(country_code, region_code);
+  year_age integer := extract(year from on_date)::integer - birth_year;
+begin
+  return public.birth_year_needs_month(birth_year, on_date)
+    or year_age in (rule.minimum_age, rule.parental_consent_below, coalesce(rule.signup_blocked_below, -1));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."birth_year_needs_month_where"("birth_year" integer, "on_date" "date", "country_code" "text", "region_code" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."birth_year_needs_month_where"("birth_year" integer, "on_date" "date", "country_code" "text", "region_code" "text") IS 'True when the year leaves the age unclear at 13, 16 or one of the country''s own ages (MARKETS-1).';
 
 
 
@@ -17682,13 +17886,14 @@ CREATE OR REPLACE FUNCTION "public"."create_profile_from_sign_up"("new_user_id" 
     AS $$
 declare
   chosen_locale text := sign_up_data ->> 'locale';
+  place jsonb := public.sign_up_country(sign_up_data);
   birth_year smallint;
   birth_month smallint;
   country text;
   chosen_handle text;
   outcome text;
 begin
-  -- Step 1: the year (and, where needed, the month) of birth and the age rules (S1-E2-02).
+  -- Step 1: the year (and month) of birth, and the product's own age rules (S1-E2-02).
   birth_year := public.sign_up_birth_year(sign_up_data);
   birth_month := public.sign_up_birth_month(sign_up_data, birth_year);
   outcome := public.sign_up_age_outcome(birth_year, birth_month);
@@ -17696,24 +17901,27 @@ begin
     raise exception 'Sign-up refused by the age rules: %.', outcome using errcode = 'check_violation';
   end if;
 
-  -- Step 2: the country from the signed token, and the market rules (S1-E2-10).
-  country := public.verified_signup_country(sign_up_data ->> 'signup_context');
-  outcome := public.sign_up_market_outcome(country, birth_year, birth_month);
+  -- Step 2: the country: the person's own answer, else the connection's (S1-E2-10), and its rules.
+  country := coalesce(place ->> 'country', public.verified_signup_country(sign_up_data ->> 'signup_context'));
+  outcome := public.sign_up_market_outcome(country, birth_year, birth_month, place ->> 'region');
   if outcome <> 'ok' then
     raise exception 'Sign-up refused by the market rules: %.', outcome using errcode = 'check_violation';
   end if;
 
-  -- Step 3: the username chosen on the form, checked by the same rules as setup (S1-E2-04).
+  -- Step 3: the username (S1-E2-04).
   chosen_handle := public.sign_up_handle(sign_up_data);
 
-  -- Step 4: the profile, with the form's language, the country and the username.
-  insert into public.profiles (id, birth_year, birth_month, locale, country_code, handle)
+  -- Step 4: the profile, with the form's language, the country (and region) and the username.
+  insert into public.profiles (id, birth_year, birth_month, locale, country_code, legal_region_code,
+    country_chosen_at, handle)
   values (
     new_user_id,
     birth_year,
     birth_month,
     case when chosen_locale in ('ro', 'en') then chosen_locale else 'ro' end,
     country,
+    place ->> 'region',
+    case when place ->> 'country' is not null then now() end,
     chosen_handle
   );
 
@@ -26713,23 +26921,25 @@ declare
   me uuid := (select auth.uid());
   latest public.parental_consents;
   needs_consent boolean;
+  grace_until timestamptz;
 begin
-  -- Step 1: signed in, with a live profile.
   if me is null then
     raise exception 'Sign in to ask a parent or guardian.' using errcode = 'insufficient_privilege';
   end if;
   if not exists (select 1 from public.profiles where id = me and deleted_at is null) then
     return jsonb_build_object('outcome', 'not_found');
   end if;
-  -- Step 2: the latest request that still counts (a replaced one never does).
   select * into latest from public.parental_consents
   where parental_consents.user_id = me and parental_consents.status <> 'replaced'
   order by parental_consents.created_at desc limit 1;
-  needs_consent := public.account_state(me) = 'awaiting_parental_consent';
-  -- Step 3: the answer; a writer may send while consent is needed and nobody withdrew it.
+  -- Needed now (read-only), or soon (the grace is running and the rule asks for it).
+  select profiles.consent_grace_until into grace_until from public.profiles where id = me;
+  needs_consent := public.account_state(me) = 'awaiting_parental_consent'
+    or (grace_until > now() and public.needs_country_consent(me));
   return jsonb_build_object(
     'outcome', 'ok',
     'needs_consent', needs_consent,
+    'grace_until', case when grace_until > now() and needs_consent then grace_until end,
     'status', latest.status,
     'parent_email', latest.parent_email,
     'language', latest.language,
@@ -27485,6 +27695,25 @@ ALTER FUNCTION "public"."name_word_check"("target_user_id" "uuid", "name_kind" "
 
 
 COMMENT ON FUNCTION "public"."name_word_check"("target_user_id" "uuid", "name_kind" "text", "name" "text") IS 'Internal: the staff, brand and swearword checks shared by usernames and pen names (S1-E2-04).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."needs_country_consent"("target_user_id" "uuid") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select public.is_feature_enabled('parental_consent')
+    and public.age_rule_outcome(profiles.birth_year, profiles.birth_month, profiles.country_code,
+          profiles.legal_region_code) = 'consent_needed'
+    and not public.has_parental_consent(target_user_id)
+  from public.profiles where profiles.id = target_user_id;
+$$;
+
+
+ALTER FUNCTION "public"."needs_country_consent"("target_user_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."needs_country_consent"("target_user_id" "uuid") IS 'True when the age rule where the person lives asks for a parent''s consent and none was given (MARKETS-1, S1-E2-22).';
 
 
 
@@ -29133,8 +29362,9 @@ CREATE OR REPLACE FUNCTION "public"."parental_consent_deadline"("target_user_id"
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
-  select greatest(users.created_at, coalesce(profiles.age_checked_at, users.created_at))
-    + interval '14 days'
+  select greatest(
+    greatest(users.created_at, coalesce(profiles.age_checked_at, users.created_at)) + interval '14 days',
+    coalesce(profiles.consent_grace_until + interval '14 days', '-infinity'))
   from public.profiles join auth.users on users.id = profiles.id
   where profiles.id = target_user_id;
 $$;
@@ -36756,6 +36986,54 @@ COMMENT ON FUNCTION "public"."set_my_birthday"("wanted_month" integer) IS 'Saves
 
 
 
+CREATE OR REPLACE FUNCTION "public"."set_my_country"("country_code" "text", "region_code" "text" DEFAULT ''::"text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  me uuid := (select auth.uid());
+  place jsonb := public.sign_up_country(jsonb_build_object('country', country_code, 'legal_region', region_code));
+  profile_row public.profiles;
+  outcome text;
+  needed_before boolean;
+  grace timestamptz;
+begin
+  -- Step 1: a signed-in member, and a real code.
+  if me is null then
+    raise exception 'Sign in to set your country.' using errcode = 'insufficient_privilege';
+  end if;
+  if place ->> 'country' is null then
+    raise exception 'Pick a country.' using errcode = 'check_violation', hint = 'unknown_country';
+  end if;
+  select * into profile_row from public.profiles where profiles.id = me for update;
+  -- Step 2: the new country's rule, checked before anything is saved (criterion 2).
+  outcome := public.age_rule_outcome(profile_row.birth_year, profile_row.birth_month,
+    place ->> 'country', place ->> 'region');
+  if outcome in ('blocked', 'under_minimum') then
+    raise exception 'People your age can''t use the app in that country.' using errcode = 'check_violation', hint = 'under_country_age';
+  end if;
+  -- Step 3: save it; a consent the old rule didn't ask for starts the 14 days' grace.
+  needed_before := coalesce(public.needs_country_consent(me), false);
+  update public.profiles set country_code = place ->> 'country', legal_region_code = place ->> 'region',
+    country_chosen_at = now()
+  where profiles.id = me;
+  if public.needs_country_consent(me) and not needed_before then
+    grace := now() + interval '14 days';
+    update public.profiles set consent_grace_until = grace where profiles.id = me;
+  end if;
+  return jsonb_build_object('outcome', 'ok', 'consent_needed', coalesce(public.needs_country_consent(me), false),
+    'grace_until', grace);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_my_country"("country_code" "text", "region_code" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_my_country"("country_code" "text", "region_code" "text") IS 'A member sets the country (and region) they live in, after checking its age rule; a new consent need starts 14 days'' grace (MARKETS-1).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."set_my_handle"("new_handle" "text") RETURNS "text"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -37756,14 +38034,15 @@ COMMENT ON FUNCTION "public"."sign_up_age_outcome"("birth_year" integer, "birth_
 
 
 CREATE OR REPLACE FUNCTION "public"."sign_up_birth_month"("sign_up_data" "jsonb", "birth_year" integer) RETURNS smallint
-    LANGUAGE "plpgsql" STABLE
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $_$
 declare
   month_text text := sign_up_data ->> 'birth_month';
+  place jsonb := public.sign_up_country(sign_up_data);
 begin
-  -- A month for a year that doesn't need it is never stored (data minimisation, GDPR Art 5(1)(c)).
-  if not public.birth_year_needs_month(birth_year, (now() at time zone 'Europe/Bucharest')::date)
+  if not public.birth_year_needs_month_where(birth_year, (now() at time zone 'Europe/Bucharest')::date,
+      place ->> 'country', place ->> 'region')
     or month_text is null then
     return null;
   end if;
@@ -37778,7 +38057,7 @@ $_$;
 ALTER FUNCTION "public"."sign_up_birth_month"("sign_up_data" "jsonb", "birth_year" integer) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."sign_up_birth_month"("sign_up_data" "jsonb", "birth_year" integer) IS 'Internal: the month of birth from the sign-up data, only when the year needs it (S1-E2-02).';
+COMMENT ON FUNCTION "public"."sign_up_birth_month"("sign_up_data" "jsonb", "birth_year" integer) IS 'The month of birth from the sign-up, kept only when the year leaves the age unclear at 13, 16 or the country''s ages (S1-E2-02, MARKETS-1).';
 
 
 
@@ -37803,6 +38082,33 @@ ALTER FUNCTION "public"."sign_up_birth_year"("sign_up_data" "jsonb") OWNER TO "p
 
 
 COMMENT ON FUNCTION "public"."sign_up_birth_year"("sign_up_data" "jsonb") IS 'Internal: the year of birth from the sign-up data, checked (S1-E2-01; S1-E2-02 adds the age rules).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."sign_up_country"("sign_up_data" "jsonb") RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $_$
+declare
+  chosen text := upper(btrim(coalesce(sign_up_data ->> 'country', '')));
+  region text := upper(btrim(coalesce(sign_up_data ->> 'legal_region', '')));
+begin
+  if chosen !~ '^[A-Z]{2}$' or chosen = 'ZZ' then
+    return jsonb_build_object('country', null, 'region', '');
+  end if;
+  if not exists (select 1 from public.country_age_rules as rules
+                 where rules.country_code = chosen and rules.region_code = region and region <> '') then
+    region := '';
+  end if;
+  return jsonb_build_object('country', chosen, 'region', region);
+end;
+$_$;
+
+
+ALTER FUNCTION "public"."sign_up_country"("sign_up_data" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."sign_up_country"("sign_up_data" "jsonb") IS 'The country (and region with its own age law) chosen at sign-up, checked (MARKETS-1, S1-E2-20).';
 
 
 
@@ -37835,28 +38141,24 @@ COMMENT ON FUNCTION "public"."sign_up_handle"("sign_up_data" "jsonb") IS 'Intern
 
 
 
-CREATE OR REPLACE FUNCTION "public"."sign_up_market_outcome"("country_code" "text", "birth_year" integer, "birth_month" integer DEFAULT NULL::integer) RETURNS "text"
+CREATE OR REPLACE FUNCTION "public"."sign_up_market_outcome"("country_code" "text", "birth_year" integer, "birth_month" integer DEFAULT NULL::integer, "region_code" "text" DEFAULT ''::"text") RETURNS "text"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
 declare
   market_row public.markets;
-  youngest_age_band public.age_band;
 begin
-  -- Step 1: the invited test admits any country (decided 17 Oct 2026, 19:43, Q6b and Q6c).
+  -- Step 1: the invited test admits adults from anywhere (Q6b, Q6c).
   if public.is_feature_enabled('invite_only') and public.is_feature_enabled('adults_only') then
     return 'ok';
   end if;
-  -- Step 2: once public, the country must be a known, open market.
+  -- Step 2: a closed or unknown market is closed.
   select * into market_row from public.markets where markets.country_code = sign_up_market_outcome.country_code;
   if not found or not market_row.is_open then
     return 'market_closed';
   end if;
-  -- Step 3: the market's own minimum age, by the younger possible age (S1-E2-02).
-  youngest_age_band := public.age_band_from_birth(
-    birth_year::smallint, birth_month::smallint, 'pending', (now() at time zone 'Europe/Bucharest')::date
-  );
-  if market_row.minimum_age >= 16 and youngest_age_band in ('under_13', '13_to_15') then
+  -- Step 3: the country's own ages (S1-E2-22).
+  if public.age_rule_outcome(birth_year, birth_month, country_code, region_code) in ('blocked', 'under_minimum') then
     return 'under_market_age';
   end if;
   return 'ok';
@@ -37864,10 +38166,10 @@ end;
 $$;
 
 
-ALTER FUNCTION "public"."sign_up_market_outcome"("country_code" "text", "birth_year" integer, "birth_month" integer) OWNER TO "postgres";
+ALTER FUNCTION "public"."sign_up_market_outcome"("country_code" "text", "birth_year" integer, "birth_month" integer, "region_code" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."sign_up_market_outcome"("country_code" "text", "birth_year" integer, "birth_month" integer) IS 'What sign-up says about a country and age: ok, market_closed or under_market_age; always ok in the invited test (S1-E2-10).';
+COMMENT ON FUNCTION "public"."sign_up_market_outcome"("country_code" "text", "birth_year" integer, "birth_month" integer, "region_code" "text") IS 'Whether someone this old may join from this country: ok, market_closed or under_market_age, from the country''s age rule (S1-E2-10, MARKETS-1).';
 
 
 
@@ -39322,6 +39624,32 @@ ALTER FUNCTION "public"."staff_signed_in_recently"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."staff_signed_in_recently"() IS 'True when the person signed in within staff_fresh_sign_in_minutes, from the token''s amr claim (S1-E11-01).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."start_consent_grace_for_rule"("rule_id" "uuid") RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  started integer;
+begin
+  update public.profiles set consent_grace_until = now() + interval '14 days'
+  where profiles.deleted_at is null
+    and profiles.consent_grace_until is null
+    and (public.age_rule_for(profiles.country_code, profiles.legal_region_code)).id = rule_id
+    and public.needs_country_consent(profiles.id)
+    and not exists (select 1 from public.staff_roles where staff_roles.user_id = profiles.id);
+  get diagnostics started = row_count;
+  return started;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."start_consent_grace_for_rule"("rule_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."start_consent_grace_for_rule"("rule_id" "uuid") IS 'Gives members a changed age rule newly asks for a parent''s consent 14 days to ask (MARKETS-1).';
 
 
 
@@ -43688,6 +44016,26 @@ COMMENT ON FUNCTION "public"."writers_published_by_market"("for_day" "date") IS 
 
 
 
+CREATE OR REPLACE FUNCTION "public"."youngest_age"("birth_year" integer, "birth_month" integer, "on_date" "date") RETURNS integer
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select case
+    when birth_year is null then null
+    when birth_month is null or extract(month from on_date)::integer <= birth_month
+      then extract(year from on_date)::integer - birth_year - 1
+    else extract(year from on_date)::integer - birth_year
+  end;
+$$;
+
+
+ALTER FUNCTION "public"."youngest_age"("birth_year" integer, "birth_month" integer, "on_date" "date") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."youngest_age"("birth_year" integer, "birth_month" integer, "on_date" "date") IS 'The youngest age someone born in a year (and month) can be on a date (MARKETS-1).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."account_deletions" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "user_id" "uuid" NOT NULL,
@@ -46718,6 +47066,16 @@ ALTER TABLE ONLY "public"."copied_work_notes"
 
 
 
+ALTER TABLE ONLY "public"."country_age_rules"
+    ADD CONSTRAINT "country_age_rules_one_row" UNIQUE ("country_code", "region_code");
+
+
+
+ALTER TABLE ONLY "public"."country_age_rules"
+    ADD CONSTRAINT "country_age_rules_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."customisation_change_requests"
     ADD CONSTRAINT "customisation_change_requests_pkey" PRIMARY KEY ("id");
 
@@ -49034,6 +49392,10 @@ CREATE OR REPLACE TRIGGER "conversations_set_updated_at" BEFORE UPDATE ON "publi
 
 
 CREATE OR REPLACE TRIGGER "copied_work_notes_set_updated_at" BEFORE UPDATE ON "public"."copied_work_notes" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "country_age_rules_set_updated_at" BEFORE UPDATE ON "public"."country_age_rules" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
 
@@ -51891,6 +52253,17 @@ COMMENT ON POLICY "copied_work_notes_select_own" ON "public"."copied_work_notes"
 
 
 
+ALTER TABLE "public"."country_age_rules" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "country_age_rules_select_public" ON "public"."country_age_rules" FOR SELECT TO "authenticated", "anon" USING (true);
+
+
+
+COMMENT ON POLICY "country_age_rules_select_public" ON "public"."country_age_rules" IS 'Allows anyone, signed out included, to read the age rules by country; nothing in it is personal (MARKETS-1).';
+
+
+
 ALTER TABLE "public"."customisation_change_requests" ENABLE ROW LEVEL SECURITY;
 
 
@@ -54158,6 +54531,11 @@ GRANT ALL ON FUNCTION "public"."admin_safety_contact_warnings"() TO "authenticat
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_save_age_rule"("rule" "jsonb", "reason" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_save_age_rule"("rule" "jsonb", "reason" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_save_canned_reply"("reply_id" "uuid", "title" "text", "body_ro" "text", "body_en" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_save_canned_reply"("reply_id" "uuid", "title" "text", "body_ro" "text", "body_en" "text") TO "authenticated";
 
@@ -54532,6 +54910,18 @@ GRANT SELECT ON TABLE "public"."profiles" TO "authenticated";
 
 
 
+GRANT SELECT("legal_region_code") ON TABLE "public"."profiles" TO "authenticated";
+
+
+
+GRANT SELECT("country_chosen_at") ON TABLE "public"."profiles" TO "authenticated";
+
+
+
+GRANT SELECT("consent_grace_until") ON TABLE "public"."profiles" TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."age_check_can_ask_manual"("person" "public"."profiles") FROM PUBLIC;
 
 
@@ -54553,6 +54943,30 @@ REVOKE ALL ON FUNCTION "public"."age_check_result_value"("threshold" smallint, "
 
 
 REVOKE ALL ON FUNCTION "public"."age_check_threshold_for"("person" "public"."profiles") FROM PUBLIC;
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."country_age_rules" TO "service_role";
+GRANT SELECT ON TABLE "public"."country_age_rules" TO "anon";
+GRANT SELECT ON TABLE "public"."country_age_rules" TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."age_rule_for"("country_code" "text", "region_code" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."age_rule_for"("country_code" "text", "region_code" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."age_rule_for"("country_code" "text", "region_code" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."age_rule_needs_review"("rule" "public"."country_age_rules") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."age_rule_needs_review"("rule" "public"."country_age_rules") TO "anon";
+GRANT ALL ON FUNCTION "public"."age_rule_needs_review"("rule" "public"."country_age_rules") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."age_rule_outcome"("birth_year" integer, "birth_month" integer, "country_code" "text", "region_code" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."age_rule_outcome"("birth_year" integer, "birth_month" integer, "country_code" "text", "region_code" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."age_rule_outcome"("birth_year" integer, "birth_month" integer, "country_code" "text", "region_code" "text") TO "authenticated";
 
 
 
@@ -56803,6 +57217,10 @@ REVOKE ALL ON FUNCTION "public"."name_word_check"("target_user_id" "uuid", "name
 
 
 
+REVOKE ALL ON FUNCTION "public"."needs_country_consent"("target_user_id" "uuid") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."needs_legal_acceptance"("target_user_id" "uuid") FROM PUBLIC;
 
 
@@ -58063,6 +58481,11 @@ GRANT ALL ON FUNCTION "public"."set_my_birthday"("wanted_month" integer) TO "aut
 
 
 
+REVOKE ALL ON FUNCTION "public"."set_my_country"("country_code" "text", "region_code" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_my_country"("country_code" "text", "region_code" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."set_my_handle"("new_handle" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_my_handle"("new_handle" "text") TO "authenticated";
 
@@ -58214,9 +58637,8 @@ REVOKE ALL ON FUNCTION "public"."sign_up_handle"("sign_up_data" "jsonb") FROM PU
 
 
 
-REVOKE ALL ON FUNCTION "public"."sign_up_market_outcome"("country_code" "text", "birth_year" integer, "birth_month" integer) FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."sign_up_market_outcome"("country_code" "text", "birth_year" integer, "birth_month" integer) TO "anon";
-GRANT ALL ON FUNCTION "public"."sign_up_market_outcome"("country_code" "text", "birth_year" integer, "birth_month" integer) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."sign_up_market_outcome"("country_code" "text", "birth_year" integer, "birth_month" integer, "region_code" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."sign_up_market_outcome"("country_code" "text", "birth_year" integer, "birth_month" integer, "region_code" "text") TO "authenticated";
 
 
 
@@ -58459,6 +58881,10 @@ REVOKE ALL ON FUNCTION "public"."staff_session_started_at"() FROM PUBLIC;
 
 REVOKE ALL ON FUNCTION "public"."staff_signed_in_recently"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."staff_signed_in_recently"() TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."start_consent_grace_for_rule"("rule_id" "uuid") FROM PUBLIC;
 
 
 
@@ -59046,6 +59472,12 @@ REVOKE ALL ON FUNCTION "public"."writer_reader_stops"("target_chapter_id" "uuid"
 
 
 REVOKE ALL ON FUNCTION "public"."writers_published_by_market"("for_day" "date") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."youngest_age"("birth_year" integer, "birth_month" integer, "on_date" "date") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."youngest_age"("birth_year" integer, "birth_month" integer, "on_date" "date") TO "anon";
+GRANT ALL ON FUNCTION "public"."youngest_age"("birth_year" integer, "birth_month" integer, "on_date" "date") TO "authenticated";
 
 
 

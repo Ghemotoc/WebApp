@@ -21,8 +21,8 @@ import {
   type NameChangeDays,
 } from '../api/accountNames';
 
-/** The cache key of the signed-in person's names. */
-const myNamesKey = (userId: string | null) => ['my-names', userId];
+/** The cache key of the signed-in person's names (the country setting refreshes it too). */
+export const myNamesKey = (userId: string | null) => ['my-names', userId];
 
 /**
  * Gets the shared client, or fails in plain words when the app has no database settings.

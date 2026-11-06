@@ -2,7 +2,9 @@
  * SignUpForm: the sign-up form, board 2.1 (story S1-E2-01).
  *
  * Fields (S1-E2-01 criterion 1): email; a password typed twice, or "Email me a log-in link
- * instead"; year of birth, and the month only when needed (S1-E2-02, BirthFields); and acceptance of the current terms with consent to the privacy notice.
+ * instead"; the country the person lives in (MARKETS-1, SignUpCountryField, starting on the country of
+ * the connection); year of birth, and the month only when needed (S1-E2-02, BirthFields); and
+ * acceptance of the current terms with consent to the privacy notice.
  * The username sits under the email, with the same live "is it free?" check as setup (Robert,
  * 25 Oct 2026: chosen with the password, so the account has a name from the start); the pen name
  * stays optional and comes in setup or Settings (S1-E2-04). Under "Create account", the Google,
@@ -26,6 +28,7 @@ import type { useSignUpForm } from '../hooks/useSignUpForm';
 
 import { BirthFields } from './BirthFields';
 import { PasswordFields } from './PasswordFields';
+import { SignUpCountryField } from './SignUpCountryField';
 import { SocialSignUp } from './SocialSignUp';
 import { TermsCheckbox } from './TermsCheckbox';
 
@@ -55,7 +58,6 @@ export function SignUpForm({ form, includesAgeCheck }: SignUpFormProps) {
   const { answers, setField, problems } = form;
   // Off in March: the buttons appear only once the providers are set up (S1-E2-09).
   const isSocialLoginOn = useFeatureFlags().isOn('social_login', false);
-  const problemText = (key: string | undefined) => (key === undefined ? undefined : t(key));
 
   /** Sends the form without reloading the page. */
   function handleSubmit(event: FormEvent) {
@@ -76,7 +78,7 @@ export function SignUpForm({ form, includesAgeCheck }: SignUpFormProps) {
         autoComplete="email"
         label={t('signUp.email.label')}
         hint={t('signUp.email.hint')}
-        errorMessage={problemText(problems.email)}
+        errorMessage={problems.email === undefined ? undefined : t(problems.email)}
         value={answers.email}
         onChange={(event) => setField('email', event.target.value)}
       />
@@ -99,6 +101,8 @@ export function SignUpForm({ form, includesAgeCheck }: SignUpFormProps) {
         onPasswordChange={(value) => setField('password', value)}
         onConfirmChange={(value) => setField('confirmPassword', value)}
       />
+      {/* The country before the year: its law can make the month matter (MARKETS-1). */}
+      <SignUpCountryField form={form} />
       <BirthFields form={form} includesAgeCheck={includesAgeCheck} />
       <TermsCheckbox
         isChecked={answers.acceptsTerms}

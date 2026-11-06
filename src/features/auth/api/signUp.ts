@@ -6,12 +6,14 @@
  * instead" uses signInWithOtp(), which makes the account on first use. Both send the same sign-up
  * data, which the sign-up trigger (…_s1_e2_01_sign_up_trigger.sql, updated by …_s1_e2_02_birth_checks.sql)
  * checks before the account exists: the invite, the year (and month) of birth, the accepted legal
- * versions, the language, the signed country (S1-E2-10) and the username (S1-E2-04, chosen on the
+ * versions, the language, the country the person chose and the signed country of the connection
+ * (S1-E2-10, MARKETS-1) and the username (S1-E2-04, chosen on the
  * form since 25 Oct 2026).
  * Either way Supabase emails a link (supabase/templates/), and the account can read but not write
  * until the email is confirmed.
  * Privacy: nothing here is logged (CLAUDE.md rule 12); errors carry Supabase's error code only.
  */
+import type { AgeRule } from '@/lib/age-rules';
 import type { AppSupabaseClient } from '@/lib/supabase';
 import type { SignUpAnswers } from '@/schemas/signUp';
 
@@ -28,10 +30,13 @@ export interface SignUpContext {
   signupToken: string | null;
   /** The signed scrambled IP token from /api/signup-context, or null (bundle ADMIN-2, part f2). */
   signupIpToken: string | null;
-  /** The visitor's country, for the words of a refusal only; the database reads the token. */
+  /**
+   * The country of the connection, the first answer in the country picker (MARKETS-1); the person
+   * may choose another, and the database reads their choice.
+   */
   country: string | null;
-  /** The country's minimum age (13; 16 in Australia, Q19). */
-  marketMinimumAge: number;
+  /** The age rules by country, so the form refuses and asks for the month as the database does. */
+  ageRules: AgeRule[];
 }
 
 /** Why a sign-up didn't work, in words the form can turn into a message. */
@@ -61,13 +66,16 @@ export function signUpFailureFromCode(code: string | undefined): SignUpFailure {
 }
 
 /** The answers the sign-up trigger (and finish_social_sign_up()) reads besides the email. */
-export type SignUpDataAnswers = Pick<SignUpAnswers, 'birthYear' | 'birthMonth' | 'handle'>;
+export type SignUpDataAnswers = Pick<
+  SignUpAnswers,
+  'birthYear' | 'birthMonth' | 'handle' | 'country' | 'legalRegion'
+>;
 
 /**
  * The data the sign-up trigger checks, in the database's names. A Google, Apple or Microsoft
  * sign-up sends the same data to finish_social_sign_up() (S1-E2-09), so both run the same rules.
  *
- * @param answers - the year and month of birth and the username from the form
+ * @param answers - the year and month of birth, the username and the country from the form
  * @param context - the invite, the legal versions, the language and the signed country
  * @returns the data, ready for Supabase Auth or the database function
  */
@@ -82,6 +90,10 @@ export function signUpData(answers: SignUpDataAnswers, context: SignUpContext) {
     locale: context.locale,
     // The username from the form; the trigger checks it with check_handle() (S1-E2-04).
     handle: answers.handle,
+    // The country the person lives in, and its region with its own age law if any: their ages
+    // follow it (MARKETS-1). The trigger checks both against country_age_rules.
+    country: answers.country,
+    legal_region: answers.legalRegion,
     // The country, signed by our Pages Function; the trigger checks it (S1-E2-10).
     signup_context: context.signupToken,
     // The scrambled IP address, signed; the trigger keeps it 30 days to spot a returning banned

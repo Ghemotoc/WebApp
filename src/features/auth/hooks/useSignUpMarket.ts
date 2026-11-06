@@ -1,6 +1,7 @@
 /**
- * useSignUpMarket: the visitor's country, whether sign-up is open there, its minimum age and the
- * signed token the sign-up sends (story S1-E2-10).
+ * useSignUpMarket: the visitor's country, whether sign-up is open there and the signed token the
+ * sign-up sends (story S1-E2-10). The ages that apply come from the country the person picks and
+ * the age rules by country (useAgeRules, MARKETS-1), no longer from the market.
  *
  * Who calls it: SignUpPage. What it calls: api/signupContext.ts.
  * Rules (decided 17 Oct 2026, 19:43, Q6): while invite_only and adults_only are both on (the March
@@ -28,8 +29,6 @@ export interface SignUpMarket {
   token: string | null;
   /** The signed scrambled IP token for the returning-user check (bundle ADMIN-2, part f2). */
   ipToken: string | null;
-  /** The market's minimum age (13 unless the market says otherwise, for example 16 in Australia). */
-  minimumAge: number;
   /** True once it is known that sign-up isn't open from here. */
   isClosed: boolean;
 }
@@ -49,7 +48,7 @@ function marketOf(markets: Market[], country: string | null): Market | undefined
  * Follows the visitor's market.
  *
  * @param isInvitedTest - invite_only and adults_only are both on
- * @returns the country, token, minimum age and whether sign-up is closed from here
+ * @returns the country, tokens and whether sign-up is closed from here
  */
 export function useSignUpMarket(isInvitedTest: boolean): SignUpMarket {
   const signupCountry = useQuery<SignupCountry>({
@@ -77,7 +76,6 @@ export function useSignUpMarket(isInvitedTest: boolean): SignUpMarket {
     country: answer.country,
     token: answer.token,
     ipToken: answer.ipToken,
-    minimumAge: market === undefined ? 13 : market.minimumAge,
     isClosed: !isInvitedTest && isLoaded && !isOpenHere,
   };
 }

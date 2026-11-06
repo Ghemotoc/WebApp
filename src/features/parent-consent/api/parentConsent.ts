@@ -30,8 +30,13 @@ export type ConsentStatus = 'waiting' | 'agreed' | 'refused' | 'withdrawn';
 
 /** What the writer's page knows. */
 export interface MyParentConsent {
-  /** The account waits for a parent or guardian before it can write. */
+  /** The account waits for a parent or guardian before it can write (or will, after the grace). */
   needsConsent: boolean;
+  /**
+   * Until when the member keeps writing while they ask, after the rules where they live changed
+   * (MARKETS-1); null otherwise.
+   */
+  graceUntil: string | null;
   /** The latest request's state, or null before the first email. */
   status: ConsentStatus | null;
   parentEmail: string | null;
@@ -48,6 +53,7 @@ export interface MyParentConsent {
 interface MyParentConsentRow {
   outcome: string;
   needs_consent: boolean;
+  grace_until: string | null;
   status: ConsentStatus | null;
   parent_email: string | null;
   language: ConsentLanguage | null;
@@ -106,6 +112,7 @@ export async function fetchMyParentConsent(
   if (row.outcome !== 'ok') return null;
   return {
     needsConsent: row.needs_consent,
+    graceUntil: row.grace_until ?? null,
     status: row.status,
     parentEmail: row.parent_email,
     language: row.language,

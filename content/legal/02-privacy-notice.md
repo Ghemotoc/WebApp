@@ -40,7 +40,7 @@ This notice may change. If we make an important change, we tell you on Ghemotoc 
 - Your email, password, year of birth (and birth month, if we needed it), username and pen name, if you add one. We store your password in a form nobody can read.
 - What you write, comment and send in messages, and the pictures you upload.
 - The result of your Yoti age check: passed or not. Never the photo.
-- Your country, which we work out from your connection. We never ask for it.
+- The country you live in, which you choose when you join (we suggest the one your connection shows), and the province or state if it has its own age rules, such as Quebec. We use it to apply the ages the law sets where you live. [lawyer to check]
 - The county you pick, if you pick one.
 
 *Suggested new short line, now that the full text fills the placeholder:*
@@ -66,7 +66,7 @@ What we get from others:
 - Yoti: the result of your age check (“13 or over”, “18 or over” or failed), how it was done (selfie estimate, ID document or a check by a person) and the date. Never the photo, the document or an estimated age.
 - Your parent or guardian, if you’re under 16: their email address and their answer, with the date and the version of this notice they saw.
 - Google, Apple or Microsoft, if you sign in with them: your email address and, only if you allow it, your name. They don’t tell us your age.
-- Your connection: when you sign up, we read your country from your internet connection and keep only the country code. For security we keep your IP address only in a scrambled form, for 30 days. If a new account signs up from the same scrambled address as an account banned in the last 30 days, a moderator looks at it; nobody is blocked because of it, since schools and families share connections. [lawyer to check]
+- Your connection: when you sign up, we read your country from your internet connection to suggest it, and keep only the country code. For security we keep your IP address only in a scrambled form, for 30 days. If a new account signs up from the same scrambled address as an account banned in the last 30 days, a moderator looks at it; nobody is blocked because of it, since schools and families share connections. [lawyer to check]
 - How the app works for you: each time the app asks our servers for something, we note what kind of request it was, whether it worked, its error code, how long it took, the page you were on and the app version, with your account’s ID if you’re signed in. Never what you sent or what you saw. Only the owner and administrators can look, each look at one person’s requests is logged, and we delete it all after 30 days. [lawyer to check]
 - Other people: reports about you or your content, and, in a class space, what your teacher adds.
 - Authorities: orders and requests they send us.
@@ -112,7 +112,7 @@ Security and stopping spam. Scrambled IP addresses, sign-in limits and spam limi
 
 Keeping the app working. The record of the app’s requests (above), to find and fix faults and to trace a problem you tell us about. Legal basis: our legitimate interest in an app that works. [lawyer to check]
 
-Your country. Reading your country from your connection, so that we only open Ghemotoc where we’re ready and apply the right local rules. Legal basis: our legitimate interest.
+Your country. The country you live in sets the ages that apply to you: the age to join and the age below which a parent or guardian has to agree. We also use it, and your connection’s country, to open Ghemotoc only where we’re ready. Legal basis: our legal duty to apply the age rules where you live, and our legitimate interest. [lawyer to check]
 
 Answering you. Support requests and data requests. Legal basis: your consent when you write to us, and our legal duty to answer requests about your data.
 

@@ -97,7 +97,7 @@ test.describe('epic S1-E2 journeys', () => {
       await page.getByRole('button', { name: 'Your account' }).click();
       await page.getByRole('link', { name: 'Settings' }).click();
       await expect(page.getByText(`Signed in as Epic Writer · @epic.${stamp}`)).toBeVisible();
-      await expect(page.getByText('Romania · From your connection')).toBeVisible();
+      await expect(page.getByText('Romania', { exact: true })).toBeVisible();
       // The devices sit in the "Email and sign-in" group (PROFILE-1).
       await page.getByRole('link', { name: 'Email and sign-in' }).click();
       await expect(

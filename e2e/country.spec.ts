@@ -4,7 +4,8 @@
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase with Mailpit started first).
  * What it proves:
  * - an invited adult's sign-up stores only the country code from the connection (signed by the
- *   local stand-in of our Pages Function), and Settings shows "Romania · From your connection";
+ *   local stand-in of our Pages Function) as the first answer of the country picker, and Settings
+ *   shows "Romania" (MARKETS-1);
  * - while invite_only and adults_only are on, an invitation works from a closed country too (Q6);
  * - once sign-up is public, a closed or unknown country sees "We're not open in your country yet",
  *   and an under-16 in a 16-and-over market (Australia, Q19) is refused with nothing kept;
@@ -95,7 +96,8 @@ test.describe('country from the connection (S1-E2-10)', () => {
       await page.getByRole('link', { name: 'Continue' }).click();
       await expect(page).toHaveURL(/\/$/);
       await page.goto('/settings');
-      await expect(page.getByText('Romania · From your connection')).toBeVisible();
+      // The country picker started on the connection's country (MARKETS-1).
+      await expect(page.getByText('Romania', { exact: true })).toBeVisible();
     } finally {
       removeAccount(address);
     }

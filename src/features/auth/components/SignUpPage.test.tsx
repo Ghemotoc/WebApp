@@ -13,6 +13,7 @@ import { useLegalVersions } from '@/features/legal/hooks/useLegalVersions';
 import { renderWithProviders } from '@/test/renderWithProviders';
 
 import { signUp } from '../api/signUp';
+import { useAgeRules } from '../hooks/useAgeRules';
 import { useInviteCheck } from '../hooks/useInviteCheck';
 import { checkPasswordLeak } from '../lib/passwordLeak';
 
@@ -22,6 +23,7 @@ vi.mock('@/features/account/api/accountNames', () => ({ checkHandle: vi.fn() }))
 vi.mock('@/features/flags/hooks/useFeatureFlags', () => ({ useFeatureFlags: vi.fn() }));
 vi.mock('@/features/legal/hooks/useLegalVersions', () => ({ useLegalVersions: vi.fn() }));
 vi.mock('../hooks/useInviteCheck', () => ({ useInviteCheck: vi.fn() }));
+vi.mock('../hooks/useAgeRules', () => ({ useAgeRules: vi.fn() }));
 vi.mock('../lib/passwordLeak', () => ({ checkPasswordLeak: vi.fn() }));
 vi.mock('../api/signUp', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../api/signUp')>()),
@@ -46,6 +48,38 @@ function inviteAnswer(status: 'valid' | 'ended' | 'unknown' | null) {
   } as unknown as ReturnType<typeof useInviteCheck>);
 }
 
+/** A few of the age rules by country (MARKETS-1), as country_age_rules holds them. */
+function ageRule(
+  country: string,
+  region: string,
+  consentBelow: number,
+  blockedBelow: number | null,
+) {
+  return {
+    id: `${country}${region}`,
+    countryCode: country,
+    regionCode: region,
+    name: country,
+    regionName: region === 'QC' ? 'Quebec' : '',
+    minimumAge: 13,
+    parentalConsentBelow: consentBelow,
+    signupBlockedBelow: blockedBelow,
+    legalBasis: '',
+    source: '',
+    dateChecked: '2026-11-06',
+    confidence: 'high' as const,
+    status: 'to_verify' as const,
+    notes: '',
+  };
+}
+const ageRules = [
+  ageRule('ZZ', '', 16, null),
+  ageRule('RO', '', 16, null),
+  ageRule('CA', '', 13, null),
+  ageRule('CA', 'QC', 14, null),
+  ageRule('AU', '', 15, 16),
+];
+
 /** Opens sign-up at an address. */
 function openSignUp(path: string) {
   const router = createMemoryRouter(
@@ -66,6 +100,7 @@ function fillForm() {
   fireEvent.change(screen.getByLabelText('Confirm password'), {
     target: { value: 'a long passphrase' },
   });
+  fireEvent.change(screen.getByLabelText('Country you live in'), { target: { value: 'RO' } });
   fireEvent.change(screen.getByLabelText('Year of birth'), { target: { value: '1990' } });
   fireEvent.click(screen.getByRole('checkbox'));
 }
@@ -89,6 +124,9 @@ beforeEach(() => {
   );
   vi.mocked(checkPasswordLeak).mockResolvedValue('not_leaked');
   vi.mocked(checkHandle).mockResolvedValue('ok');
+  vi.mocked(useAgeRules).mockReturnValue({ data: ageRules } as unknown as ReturnType<
+    typeof useAgeRules
+  >);
 });
 
 describe('SignUpPage while the test is invite only', () => {
@@ -178,8 +216,9 @@ describe('the sign-up form', () => {
       signupToken: null,
       signupIpToken: null,
       country: null,
-      marketMinimumAge: 13,
+      ageRules,
     });
+    expect(vi.mocked(signUp).mock.calls[0]?.[1]).toMatchObject({ country: 'RO', legalRegion: '' });
     expect(await screen.findByText(/We sent a link to new.writer@example.com/)).toBeInTheDocument();
   });
 
@@ -264,6 +303,46 @@ describe('the year of birth (S1-E2-02)', () => {
     expect(
       await screen.findByText(/This early test is for invited adults only/),
     ).toBeInTheDocument();
+    expect(signUp).not.toHaveBeenCalled();
+  });
+});
+
+describe('the country you live in (MARKETS-1)', () => {
+  beforeEach(() => inviteAnswer('valid'));
+
+  /** A year that makes the person this old by year this year. */
+  const yearsAgo = (years: number) => String(new Date().getFullYear() - years);
+
+  it('asks for the country and sends nothing without one', async () => {
+    openSignUp('/join/GOOD');
+    fillForm();
+    fireEvent.change(screen.getByLabelText('Country you live in'), { target: { value: '' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Create account' }));
+    expect(await screen.findByText('Choose the country you live in.')).toBeInTheDocument();
+    expect(signUp).not.toHaveBeenCalled();
+  });
+
+  it('asks for the province only where one has its own ages, and the month at Quebec’s 14', () => {
+    openSignUp('/join/GOOD');
+    fireEvent.change(screen.getByLabelText('Country you live in'), { target: { value: 'RO' } });
+    expect(screen.queryByLabelText('Province or state')).not.toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText('Country you live in'), { target: { value: 'CA' } });
+    fireEvent.change(screen.getByLabelText('Province or state'), { target: { value: 'QC' } });
+    fireEvent.change(screen.getByLabelText('Year of birth'), { target: { value: yearsAgo(14) } });
+    expect(screen.getByLabelText('Month of birth')).toBeInTheDocument();
+  });
+
+  it('once minors may join, refuses a 14-year-old in Australia by name and sends nothing', async () => {
+    vi.mocked(useFeatureFlags).mockReturnValue({
+      isOn: (key: string) => key === 'invite_only',
+      isLoaded: true,
+    });
+    openSignUp('/join/GOOD');
+    fillForm();
+    fireEvent.change(screen.getByLabelText('Country you live in'), { target: { value: 'AU' } });
+    fireEvent.change(screen.getByLabelText('Year of birth'), { target: { value: yearsAgo(15) } });
+    fireEvent.click(screen.getByRole('button', { name: 'Create account' }));
+    expect(await screen.findByText(/isn’t open to under-16s in Australia yet/)).toBeInTheDocument();
     expect(signUp).not.toHaveBeenCalled();
   });
 });

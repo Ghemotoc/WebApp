@@ -5,7 +5,7 @@
  * We don't keep anything you typed. You can try again once you turn 13." No device or IP block.
  * Under 18 while adults_only is on (the March test, decided 17 Oct 2026, 12:44): a kind note that
  * the test is for invited adults (copy accepted with the epic plan, 19:43).
- * Under the country's own minimum age (S1-E2-10; Australia is 16 and over, Q19): "{{productName}}
+ * Too young for the country the person chose (MARKETS-1; Australia blocks under-16s): "{{productName}}
  * isn't open to under-16s in Australia yet."
  * By the time this shows, the form's answers have been cleared and nothing was sent.
  * Who uses it: SignUpCardBody, in place of the form.
@@ -18,9 +18,9 @@ import type { AgeRefusalReason } from '../hooks/useSignUpForm';
 /** What the refusal needs. */
 interface AgeRefusalProps {
   reason: AgeRefusalReason;
-  /** The visitor's country code, named in the under_market_age message. */
+  /** The chosen country's code, named in the under_market_age message. */
   country: string | null;
-  /** The country's minimum age, named in the same message. */
+  /** The age below which nobody may join there, named in the same message. */
   minimumAge: number;
 }
 

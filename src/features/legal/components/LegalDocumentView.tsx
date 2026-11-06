@@ -22,6 +22,7 @@ import { parseLegalDocument } from '../lib/parseLegalDocument';
 
 import { LegalMarkdown } from './LegalMarkdown';
 import { LegalSectionCard } from './LegalSectionCard';
+import { CountryLegalSections } from './CountryLegalSections';
 import { LegalVersionHistory } from './LegalVersionHistory';
 
 /** What the view needs. */
@@ -120,6 +121,8 @@ export function LegalDocumentView({ documentSlug, chosen }: LegalDocumentViewPro
           />
         ))}
       </div>
+      {/* "Your country" and "Ages by country", under the privacy notice and the terms (MARKETS-1). */}
+      {(documentSlug === 'privacy' || documentSlug === 'terms') && <CountryLegalSections />}
       <LegalVersionHistory history={chosen.history} />
     </section>
   );

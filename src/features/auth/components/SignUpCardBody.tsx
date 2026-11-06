@@ -30,12 +30,12 @@ interface SignUpCardBodyProps {
  * @returns the form, the age refusal, or CheckYourEmail
  */
 export function SignUpCardBody({ form, context, includesAgeCheck }: SignUpCardBodyProps) {
-  if (form.refusedFor !== null) {
+  if (form.refusal !== null) {
     return (
       <AgeRefusal
-        reason={form.refusedFor}
-        country={context?.country ?? null}
-        minimumAge={context?.marketMinimumAge ?? 13}
+        reason={form.refusal.reason}
+        country={form.refusal.country}
+        minimumAge={form.refusal.age}
       />
     );
   }

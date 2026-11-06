@@ -19,8 +19,12 @@ export interface MyNames {
   penName: string | null;
   handleChangedAt: string | null;
   penNameChangedAt: string | null;
-  /** The country from the connection at sign-up (S1-E2-10), or null when unknown. */
+  /** The country the person lives in (MARKETS-1; from the connection before then), or null. */
   countryCode: string | null;
+  /** A region with its own age law (Quebec, Florida …), or ''. */
+  legalRegionCode: string;
+  /** When the person chose the country themselves; null asks them once (S1-E2-20). */
+  countryChosenAt: string | null;
 }
 
 /** The days between changes, from settings. */
@@ -42,7 +46,9 @@ const defaultChangeDays = 30;
 export async function fetchMyNames(client: AppSupabaseClient): Promise<MyNames | null> {
   const { data, error } = await client
     .from('profiles')
-    .select('handle, pen_name, handle_changed_at, pen_name_changed_at, country_code')
+    .select(
+      'handle, pen_name, handle_changed_at, pen_name_changed_at, country_code, legal_region_code, country_chosen_at',
+    )
     .maybeSingle();
   if (error !== null) throw new Error(`Could not read your names: ${error.message}`);
   if (data === null) return null;
@@ -53,6 +59,8 @@ export async function fetchMyNames(client: AppSupabaseClient): Promise<MyNames |
     handleChangedAt: data.handle_changed_at ?? null,
     penNameChangedAt: data.pen_name_changed_at ?? null,
     countryCode: data.country_code ?? null,
+    legalRegionCode: data.legal_region_code ?? '',
+    countryChosenAt: data.country_chosen_at ?? null,
   };
 }
 

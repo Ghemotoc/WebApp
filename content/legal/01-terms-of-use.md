@@ -19,7 +19,7 @@
 
 - You must be 13 or older.
 - When you sign up, we ask for your year of birth, and the month if we need it to work out your age. Then Yoti checks your age. We only get the result, never a photo.
-- If you’re under 16, a parent or guardian also has to say yes.
+- If you’re below the age the law sets where you live (16 in Romania, 13 in the UK), a parent or guardian also has to say yes. “Ages by country”, under these terms, lists every country. [lawyer to check]
 
 **Full text**
 
@@ -33,11 +33,11 @@ The age check. After you sign up, Yoti checks your age. You choose how: a quick 
 
 Stories rated 18+ and adult settings need an “18 or over” result. If your year of birth says you’re 18 or over but the check only confirms “13 or over”, the protections for under-18s stay on until an “18 or over” result comes through.
 
-If you’re under 16. A parent or guardian also has to say yes. You give us their email address and we send them a link. Until they agree, your account stays read-only. If they say no, or don’t answer within 14 days, we delete the account and its data, and we tell you. Your parent or guardian agrees to these terms together with you. If they withdraw their consent later, your account goes read-only and we tell you both what happens next. [OPEN: what happens to the account, its stories and its posts after a parent or guardian withdraws consent; lawyer to decide (L1, L2)]
+If you’re below your country’s age for consent. Where you live sets the age below which a parent or guardian also has to say yes: 16 in Romania, 13 in the UK, 14 in Quebec, and 16 in any country our table doesn’t list. [lawyer to check] You give us their email address and we send them a link. Until they agree, your account stays read-only. If they say no, or don’t answer within 14 days, we delete the account and its data, and we tell you. Your parent or guardian agrees to these terms together with you. If they withdraw their consent later, your account goes read-only and we tell you both what happens next. [OPEN: what happens to the account, its stories and its posts after a parent or guardian withdraws consent; lawyer to decide (L1, L2)]
 
 Google, Apple or Microsoft. You can sign up and log in with these accounts. The year of birth, the age check and, for under-16s, the parent or guardian step still apply, because these services don’t tell us how old you are.
 
-Where Ghemotoc is open. Ghemotoc opens one country at a time. We work out your country from your internet connection. We never ask for it. If Ghemotoc isn’t open in your country yet, you can’t sign up from there. In Australia, you must be 16 or older. [List of open countries and any country rules: link to be added]
+Where Ghemotoc is open. Ghemotoc opens one country at a time. When you sign up you tell us the country you live in (we suggest the one your connection shows), and its rules apply to you: some countries set a higher age to join, and in Australia you must be 16 or older. “Your country” and “Ages by country”, under these terms, show the rules. If Ghemotoc isn’t open in your country yet, you can’t sign up from there. [lawyer to check]
 
 Teachers. Adults with an “18 or over” result can ask for a Teacher badge by confirming a school email address or sending proof that they teach. Our staff check it and then delete the proof. A Teacher badge lets you create class spaces. It is not a background check, and teachers follow the same messaging rules as everyone else.
 

@@ -40,7 +40,7 @@ Această notă se poate schimba. Dacă facem o schimbare importantă, îți spun
 - Emailul, parola, anul nașterii (și luna nașterii, dacă ne-a trebuit), numele de utilizator și pseudonimul, dacă adaugi unul. Îți păstrăm parola într-o formă pe care nu o poate citi nimeni.
 - Ce scrii, comentezi și trimiți în mesaje și imaginile pe care le încarci.
 - Rezultatul verificării vârstei la Yoti: a trecut sau nu. Niciodată fotografia.
-- Țara ta, pe care o aflăm din conexiune. Nu te întrebăm niciodată.
+- Țara în care locuiești, pe care o alegi când te înscrii (îți propunem țara pe care o arată conexiunea), și provincia sau statul, dacă au reguli de vârstă proprii, cum ar fi Quebec. O folosim ca să aplicăm vârstele stabilite de lege acolo unde locuiești. [de verificat de avocat]
 - Județul pe care îl alegi, dacă alegi unul.
 
 *Rând scurt nou propus, acum că textul complet înlocuiește locul liber:*
@@ -66,7 +66,7 @@ Ce primim de la alții:
 - Yoti: rezultatul verificării vârstei („13 ani sau peste”, „18 ani sau peste” sau nereușită), cum s-a făcut (estimare din selfie, act de identitate sau verificare făcută de un om) și data. Niciodată fotografia, actul sau o vârstă estimată.
 - Părintele sau tutorele tău, dacă ai sub 16 ani: adresa lui de email și răspunsul lui, cu data și versiunea acestei note pe care a văzut-o.
 - Google, Apple sau Microsoft, dacă te conectezi cu ele: adresa ta de email și, doar dacă permiți, numele tău. Ele nu ne spun vârsta ta.
-- Conexiunea ta: când te înscrii, îți citim țara din conexiunea la internet și păstrăm doar codul țării. Pentru siguranță îți păstrăm adresa IP doar într-o formă amestecată, timp de 30 de zile. Dacă un cont nou se înscrie de pe aceeași adresă amestecată ca un cont interzis în ultimele 30 de zile, un moderator se uită la el; nimeni nu este blocat din cauza asta, pentru că școlile și familiile folosesc aceeași conexiune. [de verificat de avocat]
+- Conexiunea ta: când te înscrii, îți citim țara din conexiunea la internet ca să ți-o propunem și păstrăm doar codul țării. Pentru siguranță îți păstrăm adresa IP doar într-o formă amestecată, timp de 30 de zile. Dacă un cont nou se înscrie de pe aceeași adresă amestecată ca un cont interzis în ultimele 30 de zile, un moderator se uită la el; nimeni nu este blocat din cauza asta, pentru că școlile și familiile folosesc aceeași conexiune. [de verificat de avocat]
 - Cum funcționează aplicația pentru tine: de fiecare dată când aplicația cere ceva serverelor noastre, notăm ce fel de cerere a fost, dacă a mers, codul erorii, cât a durat, pagina pe care erai și versiunea aplicației, cu ID-ul contului tău dacă ești conectat. Niciodată ce ai trimis sau ce ai văzut. Doar proprietarul și administratorii se pot uita, fiecare privire la cererile unei persoane se notează, iar după 30 de zile ștergem totul. [de verificat de avocat]
 - Alți oameni: raportări despre tine sau conținutul tău și, într-un spațiu de clasă, ce adaugă profesorul tău.
 - Autorități: ordinele și cererile pe care ni le trimit.
@@ -112,7 +112,7 @@ Securitate și oprirea spamului. Adrese IP amestecate, limite la conectare și l
 
 Ca aplicația să funcționeze. Evidența cererilor aplicației (mai sus), ca să găsim și să reparăm defecte și să urmărim o problemă despre care ne spui. Temei legal: interesul nostru legitim de a avea o aplicație care funcționează. [de verificat de avocat]
 
-Țara ta. Citirea țării din conexiunea ta, ca să deschidem Ghemotoc doar acolo unde suntem pregătiți și să aplicăm regulile locale potrivite. Temei legal: interesul nostru legitim.
+Țara ta. Țara în care locuiești stabilește vârstele care ți se aplică: vârsta de la care te poți înscrie și vârsta sub care trebuie să fie de acord un părinte sau tutore. O folosim și pe ea, și țara conexiunii, ca să deschidem Ghemotoc doar acolo unde suntem pregătiți. Temei legal: obligația noastră legală de a aplica regulile de vârstă de acolo unde locuiești și interesul nostru legitim. [de verificat de avocat]
 
 Răspunsurile către tine. Cererile de suport și cererile despre date. Temei legal: acordul tău când ne scrii și obligația noastră legală de a răspunde cererilor despre datele tale.
 

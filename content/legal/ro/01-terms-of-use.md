@@ -19,7 +19,7 @@
 
 - Trebuie să ai cel puțin 13 ani.
 - Când te înscrii, te întrebăm anul nașterii și, dacă ne trebuie ca să-ți aflăm vârsta, și luna. Apoi Yoti îți verifică vârsta. Noi primim doar rezultatul, niciodată o fotografie.
-- Dacă ai sub 16 ani, e nevoie și de acordul unui părinte sau tutore.
+- Dacă ai sub vârsta stabilită de lege acolo unde locuiești (16 ani în România, 13 în Regatul Unit), e nevoie și de acordul unui părinte sau tutore. „Vârste pe țări”, sub acești termeni, arată fiecare țară. [de verificat de avocat]
 
 **Text complet**
 
@@ -33,11 +33,11 @@ Verificarea vârstei. După ce te înscrii, Yoti îți verifică vârsta. Tu ale
 
 Poveștile cu clasificarea 18+ și setările pentru adulți cer rezultatul „18 ani sau peste”. Dacă anul nașterii spune că ai 18 ani sau peste, dar verificarea confirmă doar „13 ani sau peste”, protecțiile pentru cei sub 18 ani rămân pornite până vine un rezultat „18 ani sau peste”.
 
-Dacă ai sub 16 ani. E nevoie și de acordul unui părinte sau tutore. Ne dai adresa lui de email și îi trimitem un link. Până când este de acord, contul tău poate doar să citească. Dacă spune nu sau nu răspunde în 14 zile, ștergem contul și datele lui și îți spunem. Părintele sau tutorele tău acceptă acești termeni împreună cu tine. Dacă își retrage mai târziu acordul, contul tău poate doar să citească și vă spunem amândurora ce urmează. [DESCHIS: ce se întâmplă cu contul, poveștile și postările lui după ce un părinte sau tutore își retrage acordul; decide avocatul (L1, L2)]
+Dacă ai sub vârsta de acord din țara ta. Locul în care trăiești stabilește vârsta sub care e nevoie și de acordul unui părinte sau tutore: 16 ani în România, 13 în Regatul Unit, 14 în Quebec și 16 în orice țară care nu e în tabelul nostru. [de verificat de avocat] Ne dai adresa lui de email și îi trimitem un link. Până când este de acord, contul tău poate doar să citească. Dacă spune nu sau nu răspunde în 14 zile, ștergem contul și datele lui și îți spunem. Părintele sau tutorele tău acceptă acești termeni împreună cu tine. Dacă își retrage mai târziu acordul, contul tău poate doar să citească și vă spunem amândurora ce urmează. [DESCHIS: ce se întâmplă cu contul, poveștile și postările lui după ce un părinte sau tutore își retrage acordul; decide avocatul (L1, L2)]
 
 Google, Apple sau Microsoft. Te poți înscrie și conecta cu aceste conturi. Anul nașterii, verificarea vârstei și, pentru cei sub 16 ani, pasul cu părintele sau tutorele rămân valabile, pentru că aceste servicii nu ne spun câți ani ai.
 
-Unde este deschis Ghemotoc. Ghemotoc se deschide țară cu țară. Îți aflăm țara din conexiunea la internet. Nu te întrebăm niciodată. Dacă Ghemotoc nu este încă deschis în țara ta, nu te poți înscrie de acolo. În Australia trebuie să ai cel puțin 16 ani. [Lista țărilor deschise și regulile fiecărei țări: link de adăugat]
+Unde este deschis Ghemotoc. Ghemotoc se deschide țară cu țară. Când te înscrii ne spui țara în care locuiești (îți propunem țara pe care o arată conexiunea) și ți se aplică regulile ei: unele țări cer o vârstă mai mare pentru înscriere, iar în Australia trebuie să ai cel puțin 16 ani. „Țara ta” și „Vârste pe țări”, sub acești termeni, arată regulile. Dacă Ghemotoc nu este încă deschis în țara ta, nu te poți înscrie de acolo. [de verificat de avocat]
 
 Profesori. Adulții cu rezultatul „18 ani sau peste” pot cere o insignă de Profesor confirmând o adresă de email a școlii sau trimițând o dovadă că predau. Echipa noastră o verifică și apoi șterge dovada. Insigna de Profesor îți permite să creezi spații de clasă. Nu este o verificare a trecutului unei persoane, iar profesorii respectă aceleași reguli despre mesaje ca toți ceilalți.
 
