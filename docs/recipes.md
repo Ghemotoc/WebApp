@@ -110,7 +110,10 @@ look like, at 1440, 768 and 390 px wide. Every LOOK pull request attaches these 
    `npx supabase start`, then
    `psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -f supabase/staging-topups/demo-content-2a.sql`
    and the same for `demo-content-2b.sql` and `classic-authors.sql`.
-2. Start the app: `npm run dev`.
+2. Start the app: `npm run dev`. It must point at the local stack: put `VITE_SUPABASE_URL` and
+   `VITE_SUPABASE_ANON_KEY` from `npx supabase status -o env` (`API_URL` and `ANON_KEY`, public local
+   values) in `.env.local`. Without them every signed-in screen fails at the log-in step, because
+   the app can't reach the database and the security headers block any other address.
 3. Run `npx tsx scripts/visual-compare.ts` for every screen, or name some:
    `npx tsx scripts/visual-compare.ts /discover /library`.
 4. The pictures are in `test-results/visual-compare/<width>-<board>.jpg`.
