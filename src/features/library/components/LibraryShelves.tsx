@@ -3,8 +3,8 @@
  * (story S1-E4-03, second and fifth criteria; board 3.7 Library).
  *
  * The chosen shelf is the shared Shelf: one scrolling line of at most 20 stories, then a "View
- * more" card to its See all page at /library/<shelf> (CLAUDE.md rule 20; S1-E5-09), a fade on
- * one side only and scroll arrows. Each card shows the full title on its cover and "Chapter 14 of
+ * more" card to its See all page at /library/<shelf> (CLAUDE.md rule 20; S1-E5-09), a fade at
+ * each edge with cards hidden past it and scroll arrows. Each card shows the full title on its cover and "Chapter 14 of
  * 15" under it, from the reader's place. The chips are a radiogroup with a tick on the chosen one
  * (DoD pill system), each with the shelf's size.
  * Who uses it: LibraryPage. What it calls: useStoryShelf → browse_stories('library', <shelf>).

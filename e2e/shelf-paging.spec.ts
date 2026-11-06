@@ -5,8 +5,10 @@
  *
  * Who runs it: `npm run test:e2e`.
  * What it proves, on /design's long shelf at 1440 and 390 px wide:
- * - a forward press shows the card that was half faded on the right fully, clear of the fade, and
- *   the card before it is part-shown at the left edge;
+ * - each edge fades while cards are hidden past it: only the right at the start, both in the
+ *   middle and only the left at the end (Robert, 6 Nov 2026, 06:25 UTC);
+ * - a forward press shows the card that was half faded on the right fully, clear of both fades,
+ *   and the card before it is part-shown at the left edge;
  * - a back press does the mirror image: the card under the left fade becomes fully visible;
  * - at the very end, the last card is fully visible.
  * Test data: none; /design draws sample stories.
@@ -19,20 +21,27 @@ interface CardPlace {
   right: number;
 }
 
-/** The row's width, its fade width and every card's place, read from the page. */
-async function measureRow(
-  row: Locator,
-): Promise<{ width: number; fade: number; cards: CardPlace[] }> {
-  return row.evaluate((element) => {
+/** What measureRow() reads: the row's width, its faded edges, the fade width and every card. */
+interface RowMeasure {
+  width: number;
+  /** The row's data-fade attribute: "right", "left right", "left" or "none". */
+  edges: string;
+  fade: number;
+  cards: CardPlace[];
+}
+
+/** The row's width, its fades and every card's place, read from the page. */
+async function measureRow(row: Locator): Promise<RowMeasure> {
+  return row.evaluate((element: HTMLElement) => {
     const rowBox = element.getBoundingClientRect();
-    // The fade width is in the mask: "... calc(100% - 140px) ...".
-    const mask = element.style.maskImage || element.style.getPropertyValue('-webkit-mask-image');
-    const fade = Number(/-\s*(\d+)px/.exec(mask)?.[1] ?? '0');
+    // The Shelf writes which edges fade, and how wide each fade is, on the row itself.
+    const edges = element.dataset.fade ?? 'none';
+    const fade = Number(element.dataset.fadeWidth ?? '0');
     const cards = Array.from(element.children).map((card) => {
       const box = card.getBoundingClientRect();
       return { left: box.left - rowBox.left, right: box.right - rowBox.left };
     });
-    return { width: rowBox.width, fade, cards };
+    return { width: rowBox.width, edges, fade, cards };
   });
 }
 
@@ -65,7 +74,7 @@ async function pressAndMeasure(
   shelf: Locator,
   row: Locator,
   move: { button: string; watchedIndex: number; leftBefore: number; forward: boolean },
-): Promise<{ width: number; fade: number; cards: CardPlace[] }> {
+): Promise<RowMeasure> {
   await shelf.getByRole('button', { name: move.button }).click();
   // Forward moves cards left; back moves them right.
   const leftNow = async () => cardAt((await measureRow(row)).cards, move.watchedIndex).left;
@@ -82,6 +91,8 @@ for (const width of [1440, 390]) {
     // Step 1: the first card the right fade covers.
     const before = await measureRow(row);
     expect(before.fade).toBeGreaterThan(0);
+    // At the start only the right edge fades, so the first card is never faded at rest.
+    expect(before.edges).toBe('right');
     const fadedIndex = before.cards.findIndex(
       (card) => card.right > before.width - before.fade + 1,
     );
@@ -96,7 +107,9 @@ for (const width of [1440, 390]) {
     });
     const shown = cardAt(after.cards, fadedIndex);
     const peeking = cardAt(after.cards, fadedIndex - 1);
-    expect(shown.left).toBeGreaterThanOrEqual(0);
+    // In the middle of the row both edges fade, and the card sits clear of both.
+    expect(after.edges).toBe('left right');
+    expect(shown.left).toBeGreaterThanOrEqual(after.fade - 1);
     expect(shown.right).toBeLessThanOrEqual(after.width - after.fade + 1);
     expect(peeking.right).toBeGreaterThan(0);
     expect(peeking.left).toBeLessThan(0);
@@ -138,5 +151,6 @@ test('at the very end, the last card is fully visible', async ({ page }) => {
   const last = end.cards.at(-1);
   expect(last?.right).toBeLessThanOrEqual(end.width + 1);
   // At the end only the left edge fades, so the last card sits clear of it.
+  expect(end.edges).toBe('left');
   expect(last?.left).toBeGreaterThanOrEqual(end.fade - 1);
 });
