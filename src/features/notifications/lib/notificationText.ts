@@ -433,6 +433,27 @@ function spaceHandoverOfferedText(t: TFunction, notification: AppNotification): 
 }
 
 /**
+ * Staff put the reader's story in Featured this week on Discover (S1-E5-10; Robert, 6 Nov 2026):
+ * "Our team: your story “The Salt Mine Choir” is in Featured this week", with "Open the story".
+ * It never names the staff member who picked it.
+ *
+ * @param t - the notifications translation function
+ * @param notification - a story_featured row
+ * @returns the row's words
+ */
+function storyFeaturedText(t: TFunction, notification: AppNotification): NotificationText {
+  const story = notification.story;
+  return {
+    who: t('who.ourTeam'),
+    what: t('what.storyFeatured', { story: story?.title ?? '' }),
+    quote: null,
+    grouped: null,
+    actionLabel: story === null ? null : t('actions.openStory'),
+    href: story === null ? null : `/s/${story.slug}`,
+  };
+}
+
+/**
  * A moderator asked the reader to change their forum signature or a space's banner picture within
  * 24 hours (S1-E8-08 criterion 3; Q29). The row quotes the reason and leads to the place to change
  * it: Settings › Forum signature, or the space's settings. It never names the moderator.
@@ -552,6 +573,7 @@ const teamTextFor: Partial<
   landing_entries_open: landingEntriesOpenText,
   rank_reached: rankReachedText,
   space_handover_offered: spaceHandoverOfferedText,
+  story_featured: storyFeaturedText,
 };
 
 /**

@@ -85,7 +85,8 @@
     "stories": "Stories",
     "supportTickets": "Support tickets",
     "dataRequests": "Data requests",
-    "pictures": "Pictures to check"
+    "pictures": "Pictures to check",
+    "featured": "Featured"
   },
   "shell": {
     "eyebrow": "Staff",
@@ -136,7 +137,8 @@
       "stories": "Find any story by title, username or user ID, and open it to see its details and chapters.",
       "support_tickets": "Every support request from email, Contact us and the app, as a numbered ticket.",
       "data_requests": "Log and answer requests to see, move, correct or delete someone’s data, each within its deadline.",
-      "pictures": "Pictures in All ages and 13+ stories, and pictures from under-16s, waiting for a moderator."
+      "pictures": "Pictures in All ages and 13+ stories, and pictures from under-16s, waiting for a moderator.",
+      "featured": "Pick Featured this week for Discover from the ranking."
     },
     "pictureOpenings": {
       "heading": "Uploaded pictures opened by staff",
@@ -1214,5 +1216,93 @@
       "confirm": "Remove the passage",
       "done": "Removed. The writer has been sent a statement of reasons."
     }
+  },
+  "featured": {
+    "heading": "Featured this week",
+    "intro": "Every current active story, with its rank and how readers are taking to it. Pick up to five for the band at the top of Discover. Mix well-known stories with promising ones. Sorting here only changes this list: ranks are the same for everyone.",
+    "loading": "Loading the ranking…",
+    "notAllowed": "Only admins and the owner can pick Featured this week.",
+    "viewLabel": "View",
+    "views": {
+      "all": "All ranked",
+      "rising": "Rising",
+      "new_writers": "New writers",
+      "promising": "Promising"
+    },
+    "viewHints": {
+      "all": "Every story with a chapter out in the last 60 days, top rank first.",
+      "rising": "Stories that climbed the most in the last 7 days.",
+      "new_writers": "Stories by writers whose first story came out in the last 90 days.",
+      "promising": "At least 60% of readers reach the latest chapter, with fewer reads this week than most stories."
+    },
+    "sortLabel": "Sort by",
+    "sorts": {
+      "rank": "Rank, top first",
+      "rankChange": "Climb this week, most first",
+      "readsThisWeek": "Reads this week, most first",
+      "readThrough": "Read-through, highest first",
+      "followers": "Followers, most first",
+      "firstPublishedAt": "First chapter, newest first"
+    },
+    "total_one": "{{count}} story in this view.",
+    "total_other": "{{count}} stories in this view.",
+    "noneInView": "No story fits this view right now.",
+    "tableCaption": "Current active stories and whether each can be featured",
+    "columns": {
+      "pick": "Pick",
+      "story": "Story",
+      "rank": "Rank",
+      "rankChange": "Change in 7 days",
+      "readsThisWeek": "Reads this week",
+      "readThrough": "Read-through",
+      "followers": "Followers",
+      "firstPublishedAt": "First chapter",
+      "rating": "Rating",
+      "canFeature": "Can be featured"
+    },
+    "notRanked": "Not ranked yet",
+    "change": {
+      "new": "No rank a week ago",
+      "same": "No change",
+      "up_one": "Up {{count}} place",
+      "up_other": "Up {{count}} places",
+      "down_one": "Down {{count}} place",
+      "down_other": "Down {{count}} places",
+      "up_few": "Up {{count}} places",
+      "down_few": "Down {{count}} places"
+    },
+    "newWriter": "new writer",
+    "canFeature": "Yes",
+    "reasons": {
+      "not_found": "No, the story is gone",
+      "not_public": "No, it isn’t public on the web",
+      "moderated": "No, moderators hid it",
+      "restricted": "No, it’s restricted",
+      "no_chapter": "No, no chapter can be read",
+      "writer_not_active": "No, the writer’s account isn’t active",
+      "writer_under_16": "No, the writer is under 16",
+      "writer_age_unknown": "No, we don’t know the writer’s age"
+    },
+    "pickLabel": "Pick “{{title}}”",
+    "picks": {
+      "heading": "Picked: {{count}} of {{max}}",
+      "empty": "Nothing is picked, so Discover doesn’t show the band.",
+      "notCurrent": "A story that’s no longer current",
+      "moveUp": "Move “{{title}}” up",
+      "moveDown": "Move “{{title}}” down",
+      "remove": "Remove",
+      "removeLabel": "Remove “{{title}}”",
+      "noYoungerPick": "None of these stories is rated All ages or 13+, so readers aged 13 to 15 and signed-out visitors will see no band.",
+      "reason": "Why are you changing Featured this week?",
+      "reasonHint": "For the audit log. Each newly picked writer gets a notification.",
+      "save": "Save Featured this week",
+      "saved": "Saved. Discover shows the new list from the next page load."
+    },
+    "failures": {
+      "not_allowed": "Only admins and the owner can change Featured this week.",
+      "refused": "That can’t be saved. A story may no longer be allowed, or the list is too long. Check the list and try again.",
+      "unreachable": "We couldn’t reach the database. Try again in a moment."
+    },
+    "total_few": "{{count}} stories in this view."
   }
 }

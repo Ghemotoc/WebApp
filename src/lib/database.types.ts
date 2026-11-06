@@ -2953,6 +2953,52 @@ export type Database = {
         };
         Relationships: [];
       };
+      featured_picks: {
+        Row: {
+          created_at: string;
+          id: string;
+          position: number;
+          removed_at: string | null;
+          story_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          position: number;
+          removed_at?: string | null;
+          story_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          position?: number;
+          removed_at?: string | null;
+          story_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'featured_picks_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: false;
+            referencedRelation: 'stories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'featured_picks_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       finished_thanks: {
         Row: {
           created_at: string;
@@ -7885,6 +7931,42 @@ export type Database = {
           },
         ];
       };
+      story_rank_snapshots: {
+        Row: {
+          created_at: string;
+          rank: number;
+          score: number;
+          snapshot_on: string;
+          story_id: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          rank: number;
+          score: number;
+          snapshot_on: string;
+          story_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          rank?: number;
+          score?: number;
+          snapshot_on?: string;
+          story_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'story_rank_snapshots_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: false;
+            referencedRelation: 'stories';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       story_restrictions: {
         Row: {
           created_at: string;
@@ -9296,6 +9378,16 @@ export type Database = {
         Args: { extra_months: number; reason: string; target_request_id: string };
         Returns: Json;
       };
+      admin_featured_candidates: {
+        Args: {
+          category_slug?: string;
+          page_offset?: number;
+          page_size?: number;
+          rating?: Database['public']['Enums']['story_rating'];
+          view?: string;
+        };
+        Returns: Json;
+      };
       admin_find_accounts: {
         Args: { search_text: string };
         Returns: {
@@ -9908,6 +10000,10 @@ export type Database = {
       admin_set_evidence_hold: {
         Args: { evidence_id: string; reason_given: string; should_hold: boolean };
         Returns: boolean;
+      };
+      admin_set_featured_picks: {
+        Args: { reason: string; story_ids: string[] };
+        Returns: undefined;
       };
       admin_set_flag: { Args: { flag_key: string; turn_on: boolean }; Returns: boolean };
       admin_set_forum_thread_sticky: {
@@ -11430,6 +11526,29 @@ export type Database = {
       export_support_tickets_of: { Args: { owner_id: string }; Returns: Json };
       export_tables_of: { Args: { owner_id: string }; Returns: Json };
       export_upload_allowed: { Args: { object_name: string }; Returns: boolean };
+      featured_candidate_rows: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          category_slug: string;
+          first_published_at: string;
+          followers: number;
+          ineligible_reason: string;
+          is_new_writer: boolean;
+          rank: number;
+          rank_change: number;
+          rating: Database['public']['Enums']['story_rating'];
+          read_through: number;
+          reads_7d: number;
+          score: number;
+          slug: string;
+          story_id: string;
+          title: string;
+          writer_handle: string;
+          writer_pen_name: string;
+        }[];
+      };
+      featured_ineligible_reason: { Args: { target_story_id: string }; Returns: string };
+      featured_stories_now: { Args: Record<PropertyKey, never>; Returns: Json };
       fill_ad_slot: {
         Args: {
           context: Json;
@@ -11764,6 +11883,7 @@ export type Database = {
       invite_new_adults_to_age_check: { Args: Record<PropertyKey, never>; Returns: number };
       is_active_member: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_blocked_with: { Args: { other_user_id: string }; Returns: boolean };
+      is_classics_account: { Args: { person_id: string }; Returns: boolean };
       is_email_banned: { Args: { email: string }; Returns: boolean };
       is_feature_enabled: { Args: { flag_key: string }; Returns: boolean };
       is_in_quiet_hours: { Args: { time_of_day: string }; Returns: boolean };
@@ -12139,6 +12259,7 @@ export type Database = {
       mask_email: { Args: { address: string }; Returns: string };
       masked_email: { Args: { address: string }; Returns: string };
       may_change_own_avatar: { Args: Record<PropertyKey, never>; Returns: boolean };
+      may_feature_writer: { Args: { person_id: string }; Returns: boolean };
       may_keep_writing: { Args: { other_id: string; writer_id: string }; Returns: boolean };
       may_review_pictures: { Args: Record<PropertyKey, never>; Returns: boolean };
       may_see_case: { Args: { case_is_safeguarding: boolean }; Returns: boolean };
@@ -13863,6 +13984,7 @@ export type Database = {
       signature_json: { Args: { person_id: string }; Returns: Json };
       signature_picture_file_may_go: { Args: { object_name: string }; Returns: boolean };
       signed_up_reader_count: { Args: { for_day: string }; Returns: number };
+      snapshot_story_ranks: { Args: Record<PropertyKey, never>; Returns: number };
       space_acts_as_platform: {
         Args: {
           target: Omit<
@@ -14872,7 +14994,8 @@ export type Database = {
         | 'picture_opened_by_staff'
         | 'landing_entries_open'
         | 'rank_reached'
-        | 'space_handover_offered';
+        | 'space_handover_offered'
+        | 'story_featured';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -15254,6 +15377,7 @@ export const Constants = {
         'landing_entries_open',
         'rank_reached',
         'space_handover_offered',
+        'story_featured',
       ],
       picture_kind: [
         'cover',

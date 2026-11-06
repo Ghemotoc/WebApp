@@ -40,7 +40,8 @@
     "yourAccount": "Your account:",
     "yourLibrary": "Your library:",
     "reminder": "Your reminder:",
-    "rank": "Your rank:"
+    "rank": "Your rank:",
+    "ourTeam": "Our team:"
   },
   "chapterOfStory": "Chapter {{position}} of {{story}}",
   "what": {
@@ -86,7 +87,8 @@
     "contestCertificateIssued": "you have a certificate from “{{title}}”. It’s in My certificates.",
     "certificateIssuedPlain": "you have a new certificate. It’s in My certificates.",
     "rankReached": "you’re now a {{rank}}. Well done.",
-    "spaceHandoverOffered": "offered you {{space}}. Open it to accept or decline."
+    "spaceHandoverOffered": "offered you {{space}}. Open it to accept or decline.",
+    "storyFeatured": "your story “{{story}}” is in Featured this week on Discover."
   },
   "grouped": {
     "reactions_one": "{{count}} reaction",

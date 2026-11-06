@@ -527,4 +527,23 @@ describe('notificationText', () => {
     expect(text.actionLabel).toBe('See your rank');
     expect(text.href).toBe('/u/corbu');
   });
+
+  it('a story in Featured this week names the story, not the staff member, and opens it (S1-E5-10)', () => {
+    const featuredRow: AppNotification = {
+      ...newChapter,
+      kind: 'story_featured',
+      category: 'stories',
+      actors: [],
+      actorCount: 0,
+      chapter: null,
+      story: { slug: 'the-salt-mine-choir', title: 'The Salt Mine Choir' },
+    };
+    const text = notificationText(englishT(), featuredRow, 'corbu');
+    expect(text.who).toBe('Our team:');
+    expect(text.what).toBe(
+      'your story “The Salt Mine Choir” is in Featured this week on Discover.',
+    );
+    expect(text.actionLabel).toBe('Open the story');
+    expect(text.href).toBe('/s/the-salt-mine-choir');
+  });
 });

@@ -147,6 +147,7 @@ test.describe('epic S1-E11 journeys', () => {
       'On call',
       'Users',
       'Stories',
+      'Featured',
       'Classics',
       'Support tickets',
       'Data requests',

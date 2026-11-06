@@ -431,3 +431,16 @@ begin
   on conflict on constraint space_members_once do nothing;
 end;
 $$;
+
+-- Featured this week (S1-E5-10, LOOK-4a): two picks, so Discover shows the band locally. Picked by
+-- the admin persona from the first two All ages stories that may be featured (adult_writer's).
+insert into public.featured_picks (story_id, position, user_id)
+select picked.id, picked.place, '00000000-0000-4000-8000-000000000009'
+from (
+  select stories.id, row_number() over (order by stories.id)::integer as place
+  from public.stories
+  where stories.rating = 'all_ages' and public.featured_ineligible_reason(stories.id) is null
+  order by stories.id
+  limit 2
+) as picked
+where not exists (select 1 from public.featured_picks where removed_at is null);

@@ -1560,6 +1560,14 @@ Popular is every list's default except New stories (newest), Recently updated an
 
 Tests: `155-story-scores.test.sql`, `e2e/ranking.spec.ts`.
 
+
+### Featured this week (S1-E5-10, LOOK-4a)
+
+- **Staff side:** Stories › Featured (`/staff/featured`, area `featured`: owner and admin) is `src/features/staff/components/featured/FeaturedPage.tsx`. It reads `admin_featured_candidates()` through `hooks/useFeaturedPicks.ts` and `api/featured.ts`, sorts the rows on screen only (`featuredColumns.tsx`) and saves with `admin_set_featured_picks()`, which checks the role, the staff session and `may_feature_writer()` (16 or over, active), writes `featured_picks`, the audit log and a `story_featured` notification in one transaction.
+- **The ranking's history:** `snapshot_story_ranks()` copies each story's rank from `story_scores` into `story_rank_snapshots` every night (pg_cron `snapshot-story-ranks`, kept 35 days), so the screen can show the change over 7 days.
+- **Reader side:** `src/features/discovery/components/FeaturedBand.tsx` opens Discover. `useFeaturedStories` calls `featured_stories_now()`, which re-checks every pick for this reader (rating, blocks, moderation, the writer still 16 or over and active) each time, so nothing needs undoing by hand. `useFeaturedRotation` turns the band every 7 seconds unless reduced motion, the pause button, or the focus or pointer inside it stops it.
+- **Tests:** `supabase/tests/database/303-featured-this-week.test.sql` and `e2e/featured-this-week.spec.ts`.
+
 ## The March test numbers (S1-E15-02)
 
 `/staff/metrics` for the owner and admins (board AdminMetrics, screen 8.7):

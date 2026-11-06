@@ -226,6 +226,13 @@
 
 /* Tailwind classes from the tokens: bg-paper, text-ink, border-control-border and so on. */
 @theme inline {
+  /* Featured this week on Discover (S1-E5-10; board Discover): the board's dark plum card with
+   * light text, the same in both themes; #faf8f5 on #2a0e33 is about 16:1, on #672786 about 9:1. */
+  --color-featured-from: #2a0e33;
+  --color-featured-via: #481c5f;
+  --color-featured-to: #672786;
+  --color-on-featured: #faf8f5;
+  --color-on-featured-soft: #e5d7ea;
   --color-paper: var(--paper);
   --color-surface: var(--surface);
   --color-tint: var(--tint);

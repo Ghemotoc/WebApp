@@ -159,6 +159,8 @@ Discover is the main page of Ghemotoc. It mixes several shelves, for example Pop
 
 Popular. A story’s place on Popular lists comes from what readers do with it: reads, likes, comments, shares and how many readers finish its chapters. Recent activity counts more than older activity. Private downvotes are never used for ranking.
 
+Featured this week is picked by our team, with help from the ranking.
+
 What we don’t use. No shelf uses your reading history, and nothing is chosen from a profile of you. Everyone sees the same lists for the same choices.
 
 What you choose. The categories and tags you pick when you set up your account, or later in Settings, decide which shelves you see first. You can change them at any time.

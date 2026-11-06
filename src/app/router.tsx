@@ -325,6 +325,15 @@ const staffRoutes: RouteObject = {
         return { Component: StaffDataRequestPage };
       },
     },
+    // Stories › Featured: the ranking and the picks for Featured this week (S1-E5-10): owner and
+    // admin.
+    {
+      path: 'featured',
+      lazy: async () => {
+        const { FeaturedPage } = await import('@/features/staff/components/featured/FeaturedPage');
+        return { Component: FeaturedPage };
+      },
+    },
     // Classics: add, check and publish public-domain works (S1-E11-16): owner and admin.
     {
       path: 'classics',

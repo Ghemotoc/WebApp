@@ -145,6 +145,28 @@ As a reader, I want a "View more" card at the end of a full shelf that opens a p
   - Given covers on the See all page, when they are shown, then the full title fits on every drawn or automatic cover (Definition of Done, design rules).
 - **Legal and compliance:** none beyond the global checklist; no personal reading history is used to fill a shelf.
 
+##### S1-E5-10 Featured this week, picked by staff with help from the ranking
+
+As a staff member, I want to see how every active story ranks and pick a few for the Featured band, so that readers meet both well-known stories and promising less-known ones.
+
+- **Priority:** Should · **Size:** M · **Depends on:** S1-E5-03 (story_scores), S1-E11-07 (Stories area), S1-E7-01 (notifications) · **Bundle:** LOOK-4a
+- **Added:** 6 Nov 2026 (Robert, answer D2 in the LOOK brief): "Staff pick it. They see the ranks of all current active stories and choose from them … The writer must be 16 or over." Admins and the owner pick; "active" means a chapter in the last 60 days; "promising" means at least 60% read-through with fewer reads than the median; an empty band is hidden.
+- **Data touched:** `featured_picks` (kind staff: the story, its place 1 to 5, the staff member who picked it as `user_id`, and a removed date when a later save takes it out); `story_rank_snapshots` (kind platform: each story's rank and score once a day, kept 35 days); settings `featured_max` (5), `featured_active_days` (60) and `featured_promising_read_through` (0.6); notification kind `story_featured`. Staff read both tables; nobody writes them directly.
+- **Database functions:** `admin_featured_candidates(view, category_slug, rating, page_size, page_offset)` (the ranking screen: rank, change in 7 days, score, reads this week, read-through, followers, first chapter, rating, new writer, and whether the story can be featured with the reason; views All ranked, Rising, New writers, Promising); `admin_set_featured_picks(story_ids, reason)` (replaces the list, refuses a story that can't be featured, duplicates and more than `featured_max`, logs before and after, tells each newly picked writer); `featured_stories_now()` (the band's cards for this reader); `may_feature_writer()` (active and 16 or over, or the classics account; LOOK-4c adds the writer's "Suggest me" switch).
+- **Acceptance criteria:**
+  - Given staff open Stories › Featured, when the page loads, then they see every current active story with its rank, rank change, score, reads this week, read-through, followers, first-chapter date, rating and whether it can be featured. A story that cannot be featured says why ("The writer is under 16", "Not public on the web").
+  - Given the ranking table, when staff sort or filter it, then only the view changes; ranks and scores are read-only and the same for everyone.
+  - Given staff tick up to five stories and save with a reason, when `admin_set_featured_picks()` runs, then the band shows them in that order on the next page load, the audit log has the before and after lists, and each newly picked writer gets a notification.
+  - Given a writer aged 13 to 15 (persona `kid_14_ok`), when staff try to pick their story, then the database refuses it (pgTAP denied test) and the screen shows the reason before saving.
+  - Given a picked story whose writer is later suspended or turns off "Suggest me", when anyone opens Discover, then that story is gone from the band without staff doing anything.
+  - Given a 14-year-old reader and a pick rated 16+, when they open Discover, then they do not see that pick (pgTAP and e2e).
+  - Given the picks contain no All ages or 13+ story, when staff save, then the screen warns that younger readers and signed-out visitors will see an empty band (a warning, not a block).
+  - Given no picks, when Discover opens, then the band is not shown. No automatic fallback.
+  - Given a support or moderator account, when it calls either admin function, then it is refused (pgTAP denied test).
+  - Given the "How ranking works" page, when it is read, then it has one plain line: "Featured this week is picked by our team, with help from the ranking." (DSA art. 27 as good practice).
+- **Screens:** the Discover band (board Discover top): a plum card with the eyebrow, title, blurb, "Read the story", byline and the tilted cover pair, with dots, arrows and a pause control; it never moves by itself under `prefers-reduced-motion` or while the focus or pointer is inside it. Stories › Featured is a plain staff table (no doodles).
+- **Legal and compliance:** staff curation of minors' work. The 16+ writer rule is Robert's decision, 6 Nov 2026. The writer is told, and the "Suggest me" setting (LOOK-4c) lets them opt out.
+
 ##### S1-E5-QA Epic check: Discovery, search and profiles
 
 As the founder, I want every story in this epic tested together end to end so that the pieces work with each other, not just alone.
