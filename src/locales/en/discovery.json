@@ -136,5 +136,9 @@
     "newStoryTitle": "Start a new story",
     "newStoryText": "A poem, an essay or chapter one of something new. Nobody sees it until you publish.",
     "newStoryLink": "New story"
+  },
+  "risingWriters": {
+    "eyebrow": "Rising",
+    "title": "New and rising writers"
   }
 }

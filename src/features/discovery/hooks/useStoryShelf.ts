@@ -5,7 +5,7 @@
  * 20 and ends with "View more" when the list holds more (CLAUDE.md rule 20); asking for 21 is how
  * it knows, and the total names the count ("View all 54 in Recently updated").
  */
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import { useSession } from '@/features/auth/hooks/useSession';
 import { getSupabaseClient } from '@/lib/supabase';
@@ -29,6 +29,9 @@ export function useStoryShelf(request: ListRequest) {
   const shelf = useQuery<StoryListPage>({
     // What each person sees differs (ratings, blocks, follows), so the key names them.
     queryKey: [storyListQueryKey, 'shelf', request, userId],
+    // A shelf whose filter changes (the home page's genre chips, LOOK-3) keeps its stories until
+    // the new ones arrive, so the row and its controls never vanish while it loads.
+    placeholderData: keepPreviousData,
     enabled: isKnown,
     queryFn: async () => {
       const client = await getSupabaseClient();

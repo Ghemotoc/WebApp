@@ -113,8 +113,27 @@
         "eyebrow": "Cartonașul „Drepturile tale”: eticheta mică",
         "title": "Cartonașul „Drepturile tale”: titlul (lasă cartonașul gol ca să nu apară)",
         "body": "Cartonașul „Drepturile tale”: rândul de sub titlu"
-      }
-    }
+      },
+      "band": {
+        "eyebrow": "{{band}}: eticheta mică",
+        "heading": "{{band}}: titlul (las-o goală ca să o ascunzi)",
+        "lede": "{{band}}: textul",
+        "button": "{{band}}: butonul",
+        "secondaryButton": "{{band}}: al doilea buton (opțional)",
+        "points": {
+          "title": "{{band}}: titlul punctului {{number}}",
+          "body": "{{band}}: textul punctului {{number}}"
+        }
+      },
+      "bandNames": {
+        "writeBand": "Banda pentru scriitori",
+        "communityBand": "Banda forumurilor",
+        "firstStoryBand": "Banda aurie „prima poveste”",
+        "appsBand": "Banda aplicațiilor"
+      },
+      "footerNote": "Subsol: câteva cuvinte despre site"
+    },
+    "bandsLegend": "Benzile de mai jos și subsolul"
   },
   "notices": {
     "new": "Anunț nou",

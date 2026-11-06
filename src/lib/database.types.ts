@@ -13175,6 +13175,7 @@ export type Database = {
         };
         Returns: Json;
       };
+      public_forum_highlights: { Args: { wanted_language?: string }; Returns: Json };
       public_notice_payload_is_signed: {
         Args: { payload: string; signature: string };
         Returns: boolean;

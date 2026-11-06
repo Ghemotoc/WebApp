@@ -113,8 +113,27 @@
         "eyebrow": "“Your rights” card: small label",
         "title": "“Your rights” card: title (leave the card empty to hide it)",
         "body": "“Your rights” card: line"
-      }
-    }
+      },
+      "band": {
+        "eyebrow": "{{band}}: small label",
+        "heading": "{{band}}: heading (leave the band empty to hide it)",
+        "lede": "{{band}}: text",
+        "button": "{{band}}: button",
+        "secondaryButton": "{{band}}: second button (optional)",
+        "points": {
+          "title": "{{band}}: point {{number}} title",
+          "body": "{{band}}: point {{number}} text"
+        }
+      },
+      "bandNames": {
+        "writeBand": "Writers’ band",
+        "communityBand": "Forums band",
+        "firstStoryBand": "Gold “first story” band",
+        "appsBand": "Apps band"
+      },
+      "footerNote": "Footer: a few words about the site"
+    },
+    "bandsLegend": "Bands lower down and the footer"
   },
   "notices": {
     "new": "New notice",

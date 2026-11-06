@@ -21,10 +21,12 @@ import { useWebsiteEditor, type WebsiteEditorState } from '../../hooks/useWebsit
 import { labelPartsOf, textAt, withTextAt } from '../../lib/contentPaths';
 import { problemAt } from '../../lib/fieldProblems';
 import {
+  bandFields,
+  bandNames,
   emptyHomePage,
-  emptyRightsCard,
   heroFields,
   sectionFields,
+  withEveryPart,
   type HomePageField,
 } from '../../lib/homePageFields';
 import { romaniaDateOf, sortEntryVersions } from '../../lib/versionState';
@@ -48,8 +50,9 @@ interface HomePageEditorProps {
 function homePageOf(version: ContentVersion | null): HomePageContent {
   const parsed = homePageContentSchema.safeParse(version?.content);
   if (!parsed.success) return emptyHomePage();
-  // A version saved before the "Your rights" card existed gets empty fields for it (LOOK-2).
-  return { ...parsed.data, rightsCard: parsed.data.rightsCard ?? emptyRightsCard() };
+  // A version saved before the "Your rights" card (LOOK-2) or the bands (LOOK-3) existed gets
+  // empty fields for them.
+  return withEveryPart(parsed.data);
 }
 
 /**
@@ -61,6 +64,13 @@ function useHomeFieldLabel() {
   const { t } = useTranslation('websiteAdmin');
   return (path: string) => {
     const { labelKey, number } = labelPartsOf(path);
+    // A band's field ("writeBand.points.2.title") shares one label with the band's name in it.
+    const [first, ...rest] = labelKey.split('.');
+    const isBand = bandNames.some((name) => name === first);
+    if (isBand) {
+      const band = t(`home.fields.bandNames.${first ?? ''}`);
+      return t(`home.fields.band.${rest.join('.')}`, { band, number: number ?? 1 });
+    }
     return t(`home.fields.${labelKey}`, { number: number ?? 1 });
   };
 }
@@ -144,6 +154,21 @@ function HomeFieldset({
 }
 
 /**
+ * The fields under the hero: the sections, then the bands and the footer note (LOOK-3).
+ *
+ * @returns the two fieldsets
+ */
+function LowerFieldsets(props: Omit<Parameters<typeof FieldGroup>[0], 'fields'>) {
+  const { t } = useTranslation('websiteAdmin');
+  return (
+    <>
+      <HomeFieldset legend={t('home.sectionsLegend')} fields={sectionFields} {...props} />
+      <HomeFieldset legend={t('home.bandsLegend')} fields={bandFields} {...props} />
+    </>
+  );
+}
+
+/**
  * The fields, the preview and the publish block for one version being edited.
  *
  * @returns the form
@@ -186,14 +211,7 @@ function HomePageForm({
           <HeroPreview page={page} language={language} />
         </div>
       </div>
-      <HomeFieldset
-        legend={t('home.sectionsLegend')}
-        fields={sectionFields}
-        page={page}
-        language={language}
-        state={state}
-        onChange={change}
-      />
+      <LowerFieldsets page={page} language={language} state={state} onChange={change} />
       <PublishControls
         idPrefix="home"
         draft={draft}

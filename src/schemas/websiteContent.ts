@@ -31,6 +31,14 @@ export const homePageLimits = {
   rightsEyebrow: 30,
   rightsTitle: 60,
   rightsLine: 60,
+  // The four bands lower down and the footer note (LOOK-3).
+  bandEyebrow: 30,
+  bandHeading: 60,
+  bandLede: 300,
+  bandButton: 30,
+  bandPointTitle: 60,
+  bandPointBody: 200,
+  footerNote: 300,
 } as const;
 
 /** One "Why write here" card. */
@@ -43,6 +51,25 @@ const whyCardSchema = z.object({ title: z.string(), body: z.string() });
  */
 const rightsCardSchema = z.object({ eyebrow: z.string(), title: z.string(), body: z.string() });
 export type HomeRightsCard = z.infer<typeof rightsCardSchema>;
+
+/** One of the writers' band's four short points (LOOK-3). */
+const bandPointSchema = z.object({ title: z.string(), body: z.string() });
+
+/**
+ * One band lower down the home page (board Website-Home; bundle LOOK-3): a small label, a heading,
+ * a paragraph and a button, with an optional second button. Optional, so versions saved before
+ * the bands existed still read; the page leaves a band out while its heading is empty. Only the
+ * writers' band has points.
+ */
+const homeBandSchema = z.object({
+  eyebrow: z.string(),
+  heading: z.string(),
+  lede: z.string(),
+  button: z.string(),
+  secondaryButton: z.string().default(''),
+  points: z.array(bandPointSchema).optional(),
+});
+export type HomeBand = z.infer<typeof homeBandSchema>;
 
 /** The home page, one per market and language. */
 export const homePageContentSchema = z.object({
@@ -64,6 +91,16 @@ export const homePageContentSchema = z.object({
   /** The Yoti line and the one messaging line (S1-E5-08). */
   safetyLines: z.array(z.string()).length(2),
   questionsHeading: z.string(),
+  /** "Post your story one chapter at a time", with four points (LOOK-3). */
+  writeBand: homeBandSchema.optional(),
+  /** "Talk about stories in the forums", beside the busiest threads (LOOK-3). */
+  communityBand: homeBandSchema.optional(),
+  /** The gold "Start your first story" band (LOOK-3). */
+  firstStoryBand: homeBandSchema.optional(),
+  /** "Desktop and phone apps come later" (LOOK-3). */
+  appsBand: homeBandSchema.optional(),
+  /** The few words about the site in the big footer (LOOK-3). */
+  footerNote: z.string().optional(),
 });
 export type HomePageContent = z.infer<typeof homePageContentSchema>;
 

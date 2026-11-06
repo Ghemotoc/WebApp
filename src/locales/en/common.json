@@ -173,6 +173,23 @@
       "pageTitle": "{{title}} · Help",
       "notFoundHeading": "We can't find that help page",
       "notFound": "It may have moved or been taken down. All help pages are on the Help page."
+    },
+    "allGenres": "All",
+    "genreChips": "Show trending stories by genre",
+    "noTrending": "No stories in this genre are trending yet. Try another one.",
+    "spacesLabel": "Spaces people started",
+    "busyThreads": "Busy threads this week",
+    "threadLine_one": "Started by {{name}} · {{count}} reply",
+    "threadLine_few": "Started by {{name}} · {{count}} replies",
+    "threadLine_other": "Started by {{name}} · {{count}} replies",
+    "footer": {
+      "label": "About {{productName}}",
+      "read": "Read",
+      "writeAndTalk": "Write and talk",
+      "helpAndLegal": "Help and legal",
+      "newWriters": "New writers",
+      "startWriting": "Start writing",
+      "firstStory": "Start your first story"
     }
   }
 }
