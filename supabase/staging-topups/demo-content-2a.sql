@@ -90,10 +90,15 @@ insert into public.stories (id, user_id, slug, title, blurb, language_code, cate
 select '00000000-0000-4000-9100-000100000000'::uuid, '00000000-0000-4000-8000-000000000001'::uuid, 'painea-de-duminica-demo-01',
   $demo$Pâinea de duminică$demo$, $demo$Irina se întoarce în orașul în care a crescut ca să țină brutăria tatălui ei o singură săptămână. Rețetele sunt toate în caiet, în afară de una: pâinea pe care o coace el doar duminica, pe care nu o vinde nimănui. Și tata nu vrea să-i spună de ce.$demo$, 'ro',
   (select id from public.categories where slug = 'fiction'),
-  'drawn', 'paper', 'gold', 'plum', 'all_ages', 'no_ai',
+  'drawn', 'doodles', 'gold', 'plum', 'all_ages', 'no_ai',
   now() - interval '38 days', now() - interval '32 days', now() - interval '40 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9100-000100000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9100-000100000000'::uuid, '00000000-0000-4000-8000-000000000001'::uuid, array['familie', 'brutărie', 'oraș mic', 'întoarcere acasă']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'doodles', cover_background = 'gold', cover_accent = 'plum'
+where stories.id = '00000000-0000-4000-9100-000100000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'doodles', 'gold', 'plum');
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -1148,6 +1153,11 @@ select '00000000-0000-4000-9100-000400000000'::uuid, '00000000-0000-4000-8000-00
   now() - interval '59 days', now() - interval '53 days', now() - interval '61 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9100-000400000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9100-000400000000'::uuid, '00000000-0000-4000-8000-000000000101'::uuid, array['fantasy urban', 'hărți', 'noapte', 'oraș', 'memorie']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'starry', cover_background = 'ink', cover_accent = 'gold'
+where stories.id = '00000000-0000-4000-9100-000400000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'starry', 'ink', 'gold');
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -1866,6 +1876,11 @@ select '00000000-0000-4000-9100-000600000000'::uuid, '00000000-0000-4000-8000-00
   now() - interval '43 days', now() - interval '37 days', now() - interval '45 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9100-000600000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9100-000600000000'::uuid, '00000000-0000-4000-8000-000000000101'::uuid, array['copii', 'stradă', 'hărți', 'pisici', 'aventură']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'dots', cover_background = 'lilac', cover_accent = 'gold'
+where stories.id = '00000000-0000-4000-9100-000600000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'dots', 'lilac', 'gold');
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -2265,6 +2280,11 @@ select '00000000-0000-4000-9100-000700000000'::uuid, '00000000-0000-4000-8000-00
   now() - interval '80 days', now() - interval '74 days', now() - interval '82 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9100-000700000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9100-000700000000'::uuid, '00000000-0000-4000-8000-000000000104'::uuid, array['sat', 'umor', 'poveste', 'fântână', 'bătrâni']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'doodles', cover_background = 'gold', cover_accent = 'plum'
+where stories.id = '00000000-0000-4000-9100-000700000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'doodles', 'gold', 'plum');
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -2943,6 +2963,11 @@ select '00000000-0000-4000-9100-000900000000'::uuid, '00000000-0000-4000-8000-00
   now() - interval '64 days', now() - interval '58 days', now() - interval '66 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9100-000900000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9100-000900000000'::uuid, '00000000-0000-4000-8000-000000000104'::uuid, array['sat', 'legendă', 'vară', 'ceață', 'prietenie', 'bunici']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'grid', cover_background = 'sage', cover_accent = 'violet'
+where stories.id = '00000000-0000-4000-9100-000900000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'grid', 'sage', 'violet');
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -3366,6 +3391,11 @@ select '00000000-0000-4000-9100-001000000000'::uuid, '00000000-0000-4000-8000-00
   now() - interval '11 days', now() - interval '5 days', now() - interval '13 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9100-001000000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9100-001000000000'::uuid, '00000000-0000-4000-8000-000000000105'::uuid, array['stație orbitală', 'oxigen', 'echipaj', 'minciună', 'supraviețuire']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'starry', cover_background = 'ink', cover_accent = 'gold'
+where stories.id = '00000000-0000-4000-9100-001000000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'starry', 'ink', 'gold');
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -4100,6 +4130,11 @@ select '00000000-0000-4000-9100-001200000000'::uuid, '00000000-0000-4000-8000-00
   now() - interval '85 days', now() - interval '82 days', now() - interval '87 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9100-001200000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9100-001200000000'::uuid, '00000000-0000-4000-8000-000000000105'::uuid, array['robot', 'prietenie', 'răsărit', 'cartier', 'colecție']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'dots', cover_background = 'sky', cover_accent = 'plum'
+where stories.id = '00000000-0000-4000-9100-001200000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'dots', 'sky', 'plum');
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -4793,6 +4828,11 @@ select '00000000-0000-4000-9100-001400000000'::uuid, '00000000-0000-4000-8000-00
   now() - interval '69 days', now() - interval '66 days', now() - interval '71 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9100-001400000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9100-001400000000'::uuid, '00000000-0000-4000-8000-000000000015'::uuid, array['aventură', 'bloc', 'hartă', 'copii', 'vacanță']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'stripes', cover_background = 'gold', cover_accent = 'sage'
+where stories.id = '00000000-0000-4000-9100-001400000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'stripes', 'gold', 'sage');
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -5701,6 +5741,11 @@ select '00000000-0000-4000-9100-001700000000'::uuid, '00000000-0000-4000-8000-00
   now() - interval '90 days', now() - interval '84 days', now() - interval '92 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9100-001700000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9100-001700000000'::uuid, '00000000-0000-4000-8000-000000000102'::uuid, array['noapte', 'paznic', 'depozit', 'frică', 'eseu', 'singurătate']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'twotone', cover_background = 'plum', cover_accent = 'paper'
+where stories.id = '00000000-0000-4000-9100-001700000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'twotone', 'plum', 'paper');
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -6066,6 +6111,11 @@ select '00000000-0000-4000-9100-001900000000'::uuid, '00000000-0000-4000-8000-00
   now() - interval '74 days', now() - interval '68 days', now() - interval '76 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9100-001900000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9100-001900000000'::uuid, '00000000-0000-4000-8000-000000000103'::uuid, array['noapte', 'oraș', 'fereastră', 'apă', 'poezie']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'waves', cover_background = 'ink', cover_accent = 'sky'
+where stories.id = '00000000-0000-4000-9100-001900000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'waves', 'ink', 'sky');
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -6692,6 +6742,11 @@ select '00000000-0000-4000-9100-002100000000'::uuid, '00000000-0000-4000-8000-00
   now() - interval '58 days', now() - interval '49 days', now() - interval '60 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9100-002100000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9100-002100000000'::uuid, '00000000-0000-4000-8000-000000000103'::uuid, array['noapte', 'oraș', 'insomnie', 'pierdere', 'poezie']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'starry', cover_background = 'plum', cover_accent = 'gold'
+where stories.id = '00000000-0000-4000-9100-002100000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'starry', 'plum', 'gold');
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -7226,6 +7281,11 @@ select '00000000-0000-4000-9100-002300000000'::uuid, '00000000-0000-4000-8000-00
   now() - interval '42 days', now() - interval '36 days', now() - interval '44 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9100-002300000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9100-002300000000'::uuid, '00000000-0000-4000-8000-000000000002'::uuid, array['liceu', 'prieteni', 'oraș', 'autobuz', 'poezie']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'dots', cover_background = 'blush', cover_accent = 'plum'
+where stories.id = '00000000-0000-4000-9100-002300000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'dots', 'blush', 'plum');
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -7916,6 +7976,11 @@ select '00000000-0000-4000-9100-002500000000'::uuid, '00000000-0000-4000-8000-00
   now() - interval '26 days', now() - interval '20 days', now() - interval '28 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9100-002500000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9100-002500000000'::uuid, '00000000-0000-4000-8000-000000000002'::uuid, array['prietenie', 'cartier', 'pană de curent', 'adolescență', 'plecare']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'grid', cover_background = 'sky', cover_accent = 'ink'
+where stories.id = '00000000-0000-4000-9100-002500000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'grid', 'sky', 'ink');
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -8123,6 +8188,11 @@ select '00000000-0000-4000-9100-002600000000'::uuid, '00000000-0000-4000-8000-00
   now() - interval '63 days', now() - interval '57 days', now() - interval '65 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9100-002600000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9100-002600000000'::uuid, '00000000-0000-4000-8000-000000000007'::uuid, array['copii', 'cărți', 'bunici', 'cartier', 'iarnă']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'doodles', cover_background = 'paper', cover_accent = 'sage'
+where stories.id = '00000000-0000-4000-9100-002600000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'doodles', 'paper', 'sage');
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -8489,6 +8559,11 @@ select '00000000-0000-4000-9100-002800000000'::uuid, '00000000-0000-4000-8000-00
   now() - interval '47 days', now() - interval '41 days', now() - interval '49 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9100-002800000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9100-002800000000'::uuid, '00000000-0000-4000-8000-000000000001'::uuid, array['family', 'grief', 'small town', 'winter', 'sisters and brothers']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'twotone', cover_background = 'plum', cover_accent = 'gold'
+where stories.id = '00000000-0000-4000-9100-002800000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'twotone', 'plum', 'gold');
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -9463,6 +9538,11 @@ select '00000000-0000-4000-9100-003000000000'::uuid, '00000000-0000-4000-8000-00
   now() - interval '31 days', now() - interval '22 days', now() - interval '33 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9100-003000000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9100-003000000000'::uuid, '00000000-0000-4000-8000-000000000105'::uuid, array['science fiction', 'moon', 'coming of age', 'radio', 'friendship']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'starry', cover_background = 'ink', cover_accent = 'sky'
+where stories.id = '00000000-0000-4000-9100-003000000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'starry', 'ink', 'sky');
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -10756,6 +10836,11 @@ select '00000000-0000-4000-9100-003300000000'::uuid, '00000000-0000-4000-8000-00
   now() - interval '52 days', now() - interval '46 days', now() - interval '54 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9100-003300000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9100-003300000000'::uuid, '00000000-0000-4000-8000-000000000007'::uuid, array['scrisori', 'copii', 'școală', 'prietenie', 'eseu']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'grid', cover_background = 'paper', cover_accent = 'plum'
+where stories.id = '00000000-0000-4000-9100-003300000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'grid', 'paper', 'plum');
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -11517,10 +11602,15 @@ insert into public.stories (id, user_id, slug, title, blurb, language_code, cate
 select '00000000-0000-4000-9100-003600000000'::uuid, '00000000-0000-4000-8000-000000000101'::uuid, 'orasul-care-se-pliaza-la-trei-demo-36',
   $demo$Orașul care se pliază la trei$demo$, $demo$În Strejna, la ora trei noaptea, străzile se mută. Mara lucrează la Biroul de Măsurători Nocturne și redesenează harta orașului în fiecare dimineață, ca să nu se piardă nimeni. Fratele ei s-a pierdut acum șapte ani, într-un pliu. Apoi primește o hartă desenată cu o cerneală care nu se usucă, și cineva e dispus să ucidă pentru ea.$demo$, 'ro',
   (select id from public.categories where slug = 'fiction'),
-  'drawn', 'ink', 'plum', 'gold', '16_plus', 'no_ai',
+  'drawn', 'stripes', 'ink', 'gold', '16_plus', 'no_ai',
   now() - interval '73 days', now() - interval '67 days', now() - interval '75 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9100-003600000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9100-003600000000'::uuid, '00000000-0000-4000-8000-000000000101'::uuid, array['hărți', 'oraș', 'fantasy urban', 'noapte', 'frați']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'stripes', cover_background = 'ink', cover_accent = 'gold'
+where stories.id = '00000000-0000-4000-9100-003600000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'stripes', 'ink', 'gold');
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -11795,6 +11885,11 @@ Ediția sursă: 1875. Text: Wikisource, https://ro.wikisource.org/w/index.php?ol
   now() - interval '38 days', now() - interval '38 days', now() - interval '40 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-000100000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9300-000100000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'clasic', 'basm', 'creangă']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'doodles', cover_background = 'sage', cover_accent = 'plum'
+where stories.id = '00000000-0000-4000-9300-000100000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'doodles', 'sage', 'plum');
 insert into public.classic_authors (name, died_year) values ($demo$Ion Creangă$demo$, 1889)
 on conflict (name) do nothing;
 update public.stories
@@ -12704,6 +12799,11 @@ Ediția sursă: 1876. Text: Wikisource, https://ro.wikisource.org/w/index.php?ol
   now() - interval '75 days', now() - interval '75 days', now() - interval '77 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-000200000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9300-000200000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'clasic', 'basm', 'creangă']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'dots', cover_background = 'gold', cover_accent = 'ink'
+where stories.id = '00000000-0000-4000-9300-000200000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'dots', 'gold', 'ink');
 insert into public.classic_authors (name, died_year) values ($demo$Ion Creangă$demo$, 1889)
 on conflict (name) do nothing;
 update public.stories
@@ -13246,6 +13346,11 @@ Ediția sursă: 1877. Text: Wikisource, https://ro.wikisource.org/w/index.php?ol
   now() - interval '59 days', now() - interval '59 days', now() - interval '61 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-000400000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9300-000400000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'clasic', 'basm', 'creangă']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'waves', cover_background = 'blush', cover_accent = 'plum'
+where stories.id = '00000000-0000-4000-9300-000400000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'waves', 'blush', 'plum');
 insert into public.classic_authors (name, died_year) values ($demo$Ion Creangă$demo$, 1889)
 on conflict (name) do nothing;
 update public.stories
@@ -14880,6 +14985,11 @@ Ediția sursă: 1883. Text: Wikisource, https://ro.wikisource.org/w/index.php?ol
   now() - interval '43 days', now() - interval '43 days', now() - interval '45 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-000600000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9300-000600000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'clasic', 'poezie', 'eminescu']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'starry', cover_background = 'ink', cover_accent = 'gold'
+where stories.id = '00000000-0000-4000-9300-000600000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'starry', 'ink', 'gold');
 insert into public.classic_authors (name, died_year) values ($demo$Mihai Eminescu$demo$, 1889)
 on conflict (name) do nothing;
 update public.stories
@@ -16897,10 +17007,15 @@ select '00000000-0000-4000-9300-000700000000'::uuid, '00000000-0000-4000-8000-00
 
 Ediția sursă: 1873. Text: Wikisource, https://ro.wikisource.org/w/index.php?oldid=116644, CC BY-SA 4.0; formatare adaptată.$demo$, 'ro',
   (select id from public.categories where slug = 'poetry'),
-  'drawn', 'paper', 'sky', 'plum', 'all_ages', 'no_ai',
+  'drawn', 'dots', 'sky', 'plum', 'all_ages', 'no_ai',
   now() - interval '80 days', now() - interval '80 days', now() - interval '82 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-000700000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9300-000700000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'clasic', 'poezie', 'eminescu']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'dots', cover_background = 'sky', cover_accent = 'plum'
+where stories.id = '00000000-0000-4000-9300-000700000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'dots', 'sky', 'plum');
 insert into public.classic_authors (name, died_year) values ($demo$Mihai Eminescu$demo$, 1889)
 on conflict (name) do nothing;
 update public.stories
@@ -17359,6 +17474,11 @@ Ediția sursă: 1884. Text: Wikisource, https://ro.wikisource.org/w/index.php?ol
   now() - interval '64 days', now() - interval '64 days', now() - interval '66 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-000900000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9300-000900000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'clasic', 'poezie', 'eminescu']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'waves', cover_background = 'sky', cover_accent = 'ink'
+where stories.id = '00000000-0000-4000-9300-000900000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'waves', 'sky', 'ink');
 insert into public.classic_authors (name, died_year) values ($demo$Mihai Eminescu$demo$, 1889)
 on conflict (name) do nothing;
 update public.stories
@@ -18213,6 +18333,11 @@ Ediția sursă: 1901. Text: Wikisource, https://ro.wikisource.org/w/index.php?ol
   now() - interval '48 days', now() - interval '48 days', now() - interval '50 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-001100000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9300-001100000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'clasic', 'schiță', 'caragiale']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'grid', cover_background = 'lilac', cover_accent = 'plum'
+where stories.id = '00000000-0000-4000-9300-001100000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'grid', 'lilac', 'plum');
 insert into public.classic_authors (name, died_year) values ($demo$Ion Luca Caragiale$demo$, 1912)
 on conflict (name) do nothing;
 update public.stories
@@ -18874,6 +18999,11 @@ Ediția sursă: 1896. Text: Wikisource, https://ro.wikisource.org/w/index.php?ol
   now() - interval '85 days', now() - interval '85 days', now() - interval '87 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-001200000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9300-001200000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'clasic', 'poezie', 'iarnă']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'stripes', cover_background = 'sky', cover_accent = 'paper'
+where stories.id = '00000000-0000-4000-9300-001200000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'stripes', 'sky', 'paper');
 insert into public.classic_authors (name, died_year) values ($demo$George Coșbuc$demo$, 1918)
 on conflict (name) do nothing;
 update public.stories
@@ -19672,6 +19802,11 @@ Text: Wikisource, https://ro.wikisource.org/w/index.php?oldid=123622, CC BY-SA 4
   now() - interval '69 days', now() - interval '69 days', now() - interval '71 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-001400000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9300-001400000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'clasic', 'basm', 'poveste']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'doodles', cover_background = 'gold', cover_accent = 'sage'
+where stories.id = '00000000-0000-4000-9300-001400000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'doodles', 'gold', 'sage');
 insert into public.classic_authors (name, died_year) values ($demo$Barbu Ștefănescu Delavrancea$demo$, 1918)
 on conflict (name) do nothing;
 update public.stories
@@ -20917,6 +21052,11 @@ Source edition: 1843.$demo$, 'en',
   now() - interval '16 days', now() - interval '1 days', now() - interval '18 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-001500000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9300-001500000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'classic', 'christmas', 'ghost story']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'starry', cover_background = 'plum', cover_accent = 'gold'
+where stories.id = '00000000-0000-4000-9300-001500000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'starry', 'plum', 'gold');
 insert into public.classic_authors (name, died_year) values ($demo$Charles Dickens$demo$, 1870)
 on conflict (name) do nothing;
 update public.stories
@@ -26647,10 +26787,15 @@ select '00000000-0000-4000-9300-001600000000'::uuid, '00000000-0000-4000-8000-00
 
 Source edition: 1845.$demo$, 'en',
   (select id from public.categories where slug = 'poetry'),
-  'drawn', 'ink', 'ink', 'lilac', '13_plus', 'no_ai',
+  'drawn', 'starry', 'ink', 'lilac', '13_plus', 'no_ai',
   now() - interval '53 days', now() - interval '53 days', now() - interval '55 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-001600000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9300-001600000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'classic', 'poetry', 'gothic']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'starry', cover_background = 'ink', cover_accent = 'lilac'
+where stories.id = '00000000-0000-4000-9300-001600000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'starry', 'ink', 'lilac');
 insert into public.classic_authors (name, died_year) values ($demo$Edgar Allan Poe$demo$, 1849)
 on conflict (name) do nothing;
 update public.stories
@@ -27833,6 +27978,11 @@ Source edition: 1892.$demo$, 'en',
   now() - interval '37 days', now() - interval '37 days', now() - interval '39 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-001800000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9300-001800000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'classic', 'short story', 'gothic']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'stripes', cover_background = 'gold', cover_accent = 'paper'
+where stories.id = '00000000-0000-4000-9300-001800000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'stripes', 'gold', 'paper');
 insert into public.classic_authors (name, died_year) values ($demo$Charlotte Perkins Gilman$demo$, 1935)
 on conflict (name) do nothing;
 update public.stories
@@ -29990,6 +30140,11 @@ Source edition: 1798.$demo$, 'en',
   now() - interval '74 days', now() - interval '56 days', now() - interval '76 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-001900000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9300-001900000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'classic', 'poetry', 'the sea']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'waves', cover_background = 'ink', cover_accent = 'sky'
+where stories.id = '00000000-0000-4000-9300-001900000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'waves', 'ink', 'sky');
 insert into public.classic_authors (name, died_year) values ($demo$Samuel Taylor Coleridge$demo$, 1834)
 on conflict (name) do nothing;
 update public.stories
@@ -33125,6 +33280,11 @@ Source edition: 1913.$demo$, 'en',
   now() - interval '21 days', now() - interval '21 days', now() - interval '23 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-002000000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9300-002000000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'classic', 'poetry', 'fairy tale']);
+update public.stories
+set cover_kind = 'drawn', cover_design = 'dots', cover_background = 'plum', cover_accent = 'gold'
+where stories.id = '00000000-0000-4000-9300-002000000000'::uuid
+  and (cover_kind, cover_design, cover_background, cover_accent)
+    is distinct from ('drawn', 'dots', 'plum', 'gold');
 insert into public.classic_authors (name, died_year) values ($demo$Christina Rossetti$demo$, 1894)
 on conflict (name) do nothing;
 update public.stories

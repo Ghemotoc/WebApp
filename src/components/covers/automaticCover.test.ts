@@ -1,17 +1,18 @@
 /**
  * Automatic covers: the same design for a story everywhere, never two neighbours alike
- * (story S1-E3-13).
+ * (story S1-E3-13), and only patterned designs (LOOK-1, D3).
  */
 import { describe, expect, it } from 'vitest';
 
 import {
   automaticCoverFor,
   automaticDesignChoices,
+  automaticDesignKeys,
   designsForRow,
   resolveCoverChoice,
   type CoverSource,
 } from './automaticCover';
-import { coverDesignKeys, defaultChoiceFor } from './coverDesigns';
+import { coverDesigns, defaultChoiceFor } from './coverDesigns';
 
 /** A made-up but valid-looking story ID. */
 function storyId(number: number): string {
@@ -28,19 +29,34 @@ describe('automaticCoverFor', () => {
     expect(automaticCoverFor(storyId(7))).toEqual(automaticCoverFor(storyId(7)));
   });
 
-  it('picks one of the 16 approved designs, with its board colours', () => {
+  it('picks one of the 7 patterned designs, with its board colours', () => {
     const cover = automaticCoverFor(storyId(42));
-    expect(coverDesignKeys).toContain(cover.design);
+    expect(automaticDesignKeys).toContain(cover.design);
     expect(cover).toEqual(defaultChoiceFor(cover.design));
   });
 
-  it('spreads 1,000 stories across every design, none taking more than a quarter', () => {
+  it('an automatic cover never uses a flat colour, so no card looks empty (D3)', () => {
+    const flatKeys = coverDesigns
+      .filter((design) => design.kind === 'plain')
+      .map((design) => design.key);
+    expect(automaticDesignKeys).toHaveLength(7);
+    for (let number = 0; number < 1000; number += 1) {
+      for (const design of automaticDesignChoices(storyId(number), 3)) {
+        expect(flatKeys).not.toContain(design);
+      }
+    }
+    // A row moves a clashing card to its second choice, which is patterned too.
+    const row = designsForRow(Array.from({ length: 300 }, (_, number) => automatic(number)));
+    for (const cover of row) expect(flatKeys).not.toContain(cover.design);
+  });
+
+  it('spreads 1,000 stories across every patterned design, none taking more than a quarter', () => {
     const counts = new Map<string, number>();
     for (let number = 0; number < 1000; number += 1) {
       const { design } = automaticCoverFor(storyId(number));
       counts.set(design, (counts.get(design) ?? 0) + 1);
     }
-    expect(counts.size).toBe(16);
+    expect(counts.size).toBe(7);
     expect(Math.max(...counts.values())).toBeLessThan(250);
   });
 });

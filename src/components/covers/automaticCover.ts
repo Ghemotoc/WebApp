@@ -5,6 +5,9 @@
  * it"; the clash rule accepted 23 Oct 2026, Q4).
  *
  * The rules:
+ *   - Only the 7 patterned designs are picked (stripes, dots, grid, waves, starry, doodles and
+ *     two-tone), never one of the 9 flat colours, so no automatic cover looks empty (Robert,
+ *     6 Nov 2026, D3, bundle LOOK-1). A writer can still choose a flat colour themselves.
  *   - The design comes from the story's ID, never from the title, so it is the same on every
  *     screen and never changes when the title or anything else changes. No cover file is stored.
  *   - The story page and the writer's own screens always show that first choice.
@@ -18,11 +21,19 @@
  * the form's "Right now: Sky, picked for you automatically" line.
  */
 import {
-  coverDesignKeys,
+  coverDesigns,
   defaultChoiceFor,
   type CoverDesignKey,
   type DrawnCoverChoice,
 } from './coverDesigns';
+
+/**
+ * The designs an automatic cover may use: every patterned one, in the board's order. The flat
+ * colours read as an empty card on a shelf, so they are left to writers who pick them (D3).
+ */
+export const automaticDesignKeys: readonly CoverDesignKey[] = coverDesigns
+  .filter((design) => design.kind !== 'plain')
+  .map((design) => design.key);
 
 /** A story as the cover code needs it: its ID, its cover kind and, for drawn covers, the choice. */
 export interface CoverSource {
@@ -59,7 +70,7 @@ function hashText(text: string, seed: number): number {
 export function automaticDesignChoices(storyId: string, count = 3): CoverDesignKey[] {
   const choices: CoverDesignKey[] = [];
   for (let seed = 0; choices.length < count; seed += 1) {
-    const key = coverDesignKeys[hashText(storyId, seed) % coverDesignKeys.length];
+    const key = automaticDesignKeys[hashText(storyId, seed) % automaticDesignKeys.length];
     if (key !== undefined && key !== choices[choices.length - 1]) choices.push(key);
   }
   return choices;
@@ -73,7 +84,7 @@ export function automaticDesignChoices(storyId: string, count = 3): CoverDesignK
  */
 export function automaticCoverFor(storyId: string): DrawnCoverChoice {
   const [first] = automaticDesignChoices(storyId, 1);
-  return defaultChoiceFor(first ?? 'plum');
+  return defaultChoiceFor(first ?? 'stripes');
 }
 
 /**
@@ -111,7 +122,7 @@ export function designsForRow(stories: CoverSource[]): DrawnCoverChoice[] {
     // The first choice from the ID, unless the card before shows the same design.
     const choices = automaticDesignChoices(story.id, 3);
     const design = choices.find((candidate) => candidate !== previous?.design) ?? choices[0];
-    covers.push(defaultChoiceFor(design ?? 'plum'));
+    covers.push(defaultChoiceFor(design ?? 'stripes'));
   }
   return covers;
 }

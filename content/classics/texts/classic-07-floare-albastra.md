@@ -10,7 +10,7 @@ language: ro
 category: poetry
 rating: all_ages
 tags: domeniu public, clasic, poezie, eminescu
-cover: drawn:paper/sky/plum
+cover: drawn:dots/sky/plum
 blurb: Ea îl cheamă din stele în pădure, la izvor, la o iubire pământească. El rămâne cu amintirea ei. Una dintre cele mai cunoscute poezii de dragoste din limba română.
 ---
 

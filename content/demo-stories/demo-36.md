@@ -6,7 +6,7 @@ language: ro
 category: fiction
 rating: 16_plus
 tags: hărți, oraș, fantasy urban, noapte, frați
-cover: drawn:ink/plum/gold
+cover: drawn:stripes/ink/gold
 blurb: În Strejna, la ora trei noaptea, străzile se mută. Mara lucrează la Biroul de Măsurători Nocturne și redesenează harta orașului în fiecare dimineață, ca să nu se piardă nimeni. Fratele ei s-a pierdut acum șapte ani, într-un pliu. Apoi primește o hartă desenată cu o cerneală care nu se usucă, și cineva e dispus să ucidă pentru ea.
 ---
 
