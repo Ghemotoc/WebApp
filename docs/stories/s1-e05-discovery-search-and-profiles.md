@@ -18,7 +18,7 @@ As a reader, I want to browse by category and tag so that I find stories I like.
   - Given a tag, when it is tapped, then a tag page lists every visible story with that tag.
   - Given a reader, when they browse, then stories rated above their age (16+ for under-16s, 18+ for anyone without an "18 or over" result) are hidden and can't be opened; signed-out visitors see All ages and 13+ only (proposal).
   - Given a blocked writer, when the reader browses, then that writer's stories are hidden.
-  - Given story cards on Discover, category and tag pages, when covers are shown, then the full title fits on every drawn or automatic cover and side-scrolling rows fade out on one side only, never both; every doodle and icon is an SVG file (Definition of Done, design rules).
+  - Given story cards on Discover, category and tag pages, when covers are shown, then the full title fits on every drawn or automatic cover and side-scrolling rows fade out at each edge with cards hidden past it (both edges in the middle of a row; Robert, 6 Nov 2026, replacing "one side only, never both"); every doodle and icon is an SVG file (Definition of Done, design rules).
   - Given any shelf on these pages, when it has more than 20 stories, then it shows 20 in one scrolling line and ends with a "View more" card that opens its See all page (S1-E5-09); a shelf is never a grid of several rows.
 - **Legal and compliance:** ratings hidden from anyone younger (decided 16 Oct 2026, late evening, Q17) follow DSA Art 28 (micro and small platforms are exempt, but the plan applies the minors' rules anyway).
 
@@ -114,7 +114,7 @@ As a visitor without an account, I want a public home page that explains Ghemoto
   - Given the questions section, when it loads, then the questions and answers are the published questions marked for the home page in the help and questions CMS (S1-E11-12) for the visitor's market and language, including "What is a class space?".
   - Given a visitor from a country with no page of its own, when the page loads, then it shows the Romanian market's English page, questions included (decided 17 Oct 2026, 19:16).
   - Given the top bar, the footer and the language menu, when they are shown, then they are interface text from the locale files (with admin overrides, S1-E11-18); the hero, safety lines and questions never come from the locale files (decided 17 Oct 2026, 19:14).
-  - Given the side-scrolling rows, when they are shown, then the row fades out on one side only, never both; every doodle and icon is an SVG file (Definition of Done, design rules).
+  - Given the side-scrolling rows, when they are shown, then the row fades out at each edge with cards hidden past it (both edges in the middle of a row; Robert, 6 Nov 2026); every doodle and icon is an SVG file (Definition of Done, design rules).
   - Given any visitor, when the page loads, then it sets no cookies and loads no third-party script apart from the cookieless analytics (S1-E15-01), and each language version has the right `lang` attribute and one `h1`.
 - **Legal and compliance:**
   - Consumer law: "free", "no tracking ads", "you keep your rights" and the Yoti line must stay true while they are live (Law 363/2007). The Yoti line is true only while S1-E2-08 stores the result and nothing else.

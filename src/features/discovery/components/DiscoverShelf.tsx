@@ -2,7 +2,8 @@
  * DiscoverShelf: one shelf on Discover, filled from one story list (story S1-E5-01; board 3.1).
  *
  * The shelf is the shared Shelf: one scrolling line of at most 20, then a "View more" card to the
- * list's See all page (S1-E5-09; CLAUDE.md rule 20), a fade on one side only and scroll arrows.
+ * list's See all page (S1-E5-09; CLAUDE.md rule 20), a fade at each edge with cards hidden
+ * past it and scroll arrows.
  * An empty list draws nothing, so Discover never shows an empty row; while it loads, nothing
  * either, so the page doesn't jump.
  * Who uses it: DiscoverPage. What it calls: useStoryShelf → browse_stories().
