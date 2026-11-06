@@ -6,7 +6,8 @@
  * file, which the browser downloads as audit-log-<date>.csv.
  * Typed filters are kept apart from the searched ones: the page changes only when the person
  * presses Search, so typing doesn't fire a query per keystroke. A link may start the page on one
- * kind of action with ?action=<prefix> (Staff › Settings links to "settings.", S1-E11-03).
+ * kind of action with ?action=<prefix> (Staff › Settings links to "settings.", S1-E11-03), and
+ * on one account with ?target=<user ID> (the account page's staff history links there, LOGS-1b).
  */
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -46,7 +47,11 @@ function failureOf(hasFailed: boolean, error: unknown): AuditLogFailure | null {
  */
 export function useAuditLog() {
   const [searchParams] = useSearchParams();
-  const startingFilters = { ...emptyFilters, actionPrefix: searchParams.get('action') ?? '' };
+  const startingFilters = {
+    ...emptyFilters,
+    actionPrefix: searchParams.get('action') ?? '',
+    targetUserId: searchParams.get('target') ?? '',
+  };
   const [typedFilters, setTypedFilters] = useState<AuditLogFilters>(startingFilters);
   const [searchedFilters, setSearchedFilters] = useState<AuditLogFilters>(startingFilters);
   const [pageNumber, setPageNumber] = useState(1);

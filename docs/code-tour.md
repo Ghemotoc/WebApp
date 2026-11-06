@@ -296,6 +296,7 @@ Five tables exist, each with row-level security and only read policies; every wr
 | `staff_roles` | which staff role each team member holds | the person themselves; owner and admin see all |
 | `feature_flags`, `settings` | switches and values (`invite_only`, `adults_only` on for March) | anyone, for rows marked public; owner and admin see all |
 | `audit_log` | every staff action, written only by `log_staff_action()`; nobody can change or delete a row | owner and admin |
+| `account_staff_notes` | notes staff leave on an account for each other (LOGS-1a); added only by `admin_add_account_note()`, never changed or deleted, kept 3 years like the audit log | staff with the Users area (owner, admin, moderator, support) |
 | `legal_documents`, `legal_document_versions` (S1-E14-01) | the Legal centre's documents and every live version, per language; written only by migrations | anyone, for live versions; owner and admin also see versions not live yet |
 | `consents` (S1-E14-01) | which version of the terms and privacy notice each person accepted, and when | the person themselves; written only by the sign-up trigger (S1-E2-01) and `accept_current_legal_versions()` |
 
@@ -798,9 +799,15 @@ The error page shows the first six characters of the stored row's ID as the code
   ├─ /staff/roles      StaffRolesPage (S1-E2-07a, below)
   ├─ /staff/users      UsersPage (S1-E11-02): search → useUserLookup → admin_user_lookup()
   ├─ /staff/users/:id  AccountPage: useAccount → admin_user_account(), admin_account_open_cases(),
-  │                      admin_account_sanctions(), admin_search_audit_log(), admin_reveal_email();
+  │                      admin_account_sanctions(), admin_reveal_email();
   │                      AccountActions → useAccountActions → admin_apply_sanction(),
-  │                      admin_reset_pen_name(), admin_sign_out_everywhere(), admin_approve_username()
+  │                      admin_reset_pen_name(), admin_sign_out_everywhere(), admin_approve_username();
+  │                      AccountNotes (LOGS-1a, every staff member who may open the account) →
+  │                      useAccountNotes → api/accountNotes.ts → admin_account_notes() /
+  │                      admin_add_account_note() → account_staff_notes (append-only) + audit_log;
+  │                      AccountStaffHistory (LOGS-1b, owner and admin) → useAccountStaffHistory
+  │                      → admin_search_audit_log() for the account, 20 a page; its link opens
+  │                      /staff/audit-log?target=<user ID>
   ├─ /staff/users/invites  InvitesPage (S1-E11-17), the Users area's second tab (/staff/invites
   │                      redirects): MakeInviteForm → useInviteLinks → api/inviteLinks.ts
   │                      admin_create_invite() (the code once, hashed in invites) / admin_list_invites()
