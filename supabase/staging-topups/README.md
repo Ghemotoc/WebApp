@@ -44,3 +44,7 @@ The SQL Editor refuses the single file as too large, so the build also writes th
 ## The seed invites' end dates (S1-E13-04, 1 Nov 2026)
 
 `S1-E13-04.sql` moves the expired and revoked test invites' end dates to yesterday (and puts them back if the retention job already deleted them), because the nightly job deletes an invite 90 days after it ends. Safe to run twice; run it again if the sign-up tests ever miss either code on staging.
+
+## Featured this week (S1-E5-10, LOOK-4a, 6 Nov 2026)
+
+`look-4a.sql` picks two All ages stories for Featured this week (demo stories first) as the admin persona, so the band shows on Discover. It does nothing once anything is picked, adds no accounts and refuses a database without the 16 personas. Run it after the LOOK-4a migrations reach staging.
