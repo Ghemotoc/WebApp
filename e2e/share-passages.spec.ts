@@ -192,6 +192,9 @@ test.describe('share a passage or a picture (S1-E4-11)', () => {
     browser,
   }) => {
     const page = await openAs(browser, 'blocked', `${chapterPath}/p2`);
+    // Reduce motion, as the other axe checks do: otherwise axe can measure the page while its
+    // entrance fade (tmc-rise) is still running and read the half-faded text as low contrast.
+    await page.emulateMedia({ reducedMotion: 'reduce' });
     await expect(
       page.getByText('You opened a link to a passage. It’s highlighted below.'),
     ).toBeVisible();
