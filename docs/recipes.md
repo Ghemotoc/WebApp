@@ -100,3 +100,21 @@ with a preset from `safeMarkdownElements.ts`, and checked on save with `has_html
 `has_unsafe_link()` in SQL. Calls that only staff may make go in `api/staff/` inside the feature, so the reader's
 download never carries them (QA-5). Don't copy `src/features/writing/` (it predates the pattern)
 or `src/features/design-system/` (no api or hooks).
+
+## Compare a screen with its board
+
+`scripts/visual-compare.ts` (LOOK-0) puts each app screen beside the design board render it should
+look like, at 1440, 768 and 390 px wide. Every LOOK pull request attaches these pictures.
+
+1. Start the local stack and load the demo stories, so the screens have real-looking content:
+   `npx supabase start`, then
+   `psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -f supabase/staging-topups/demo-content-2a.sql`
+   and the same for `demo-content-2b.sql` and `classic-authors.sql`.
+2. Start the app: `npm run dev`.
+3. Run `npx tsx scripts/visual-compare.ts` for every screen, or name some:
+   `npx tsx scripts/visual-compare.ts /discover /library`.
+4. The pictures are in `test-results/visual-compare/<width>-<board>.jpg`.
+
+The routes and their boards are listed in `scripts/visual-compare.routes.json`; add a line there
+when a new screen gets a board. The script signs in as the seed persona each route names, in
+English and the light theme, because the boards are drawn that way.
