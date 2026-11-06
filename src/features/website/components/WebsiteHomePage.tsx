@@ -1,23 +1,23 @@
 /**
  * WebsiteHomePage: the public home page at "/" (story S1-E5-08; board Website-Home, 1.1).
  *
- * What it shows, top to bottom: the hero with its cover wall (LOOK-2), "Why write here" with
- * the quiet safety row under it, the Trending and
- * Completed shelves and the questions marked for the home page. The hero, the cards, the safety
- * lines and the questions come only from the published CMS content for the visitor's market and
- * language (S1-E11-06, S1-E11-12; decided 17 Oct 2026, 19:14); the shelf titles and the top bar
- * are interface text from the locale files. The shelves are the shared Discover shelves, which
- * already keep to ratings, blocks and removed content (S1-E5-01) and end with "View more"
- * (S1-E5-09). The board's sample chapter, forums and apps bands wait for their features.
+ * What it shows, top to bottom, in the board's order: the hero with its cover wall (LOOK-2),
+ * "Why write here" with the quiet safety row, Trending this week with genre chips, Completed
+ * stories and New and rising writers (HomeShelves), the dark writers' band, the forums band, the
+ * gold "Start your first story" band, "Apps come later", the questions in two columns and the big
+ * footer (LOOK-3). Every word of the page comes only from the published CMS content for the
+ * visitor's market and language (S1-E11-06, S1-E11-12; decided 17 Oct 2026, 19:14); a band whose
+ * heading is empty is left out. Shelf titles, the footer's columns and the top bar are interface
+ * text from the locale files. The shelves keep to ratings, blocks and removed content
+ * (S1-E5-01) and end with "View more" (S1-E5-09).
  * Who shows it: the router for "/". What it calls: useWebsiteContent for the home page and the
- * questions, and DiscoverShelf for the rows.
+ * questions, HomeShelves, the four bands and HomeFooterColumns.
  */
 import { useTranslation } from 'react-i18next';
 
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
-import { DiscoverShelf } from '@/features/discovery/components/DiscoverShelf';
-import type { ListRequest } from '@/features/discovery/api/storyLists';
+import { Doodle } from '@/components/ui/Doodle';
 import {
   homePageContentSchema,
   questionContentSchema,
@@ -27,46 +27,18 @@ import {
 
 import { useWebsiteContent, type ParsedEntry } from '../hooks/useWebsiteContent';
 import { withBrand } from '../lib/brandText';
+import { hasBand } from '../lib/homeBands';
 
+import { AppsBand } from './AppsBand';
+import { CommunityBand } from './CommunityBand';
+import { FirstStoryBand } from './FirstStoryBand';
+import { HomeFooterColumns } from './HomeFooterColumns';
 import { HomeHero } from './HomeHero';
+import { HomeShelves } from './HomeShelves';
 import { QuestionList } from './QuestionList';
 import { homeQuestionsAnchor, SafetySection } from './SafetySection';
 import { WhyWriteSection } from './WhyWriteSection';
-
-/** A shelf's list, with no filters. */
-function shelfRequest(kind: ListRequest['kind']): ListRequest {
-  return {
-    kind,
-    key: null,
-    categorySlug: null,
-    completion: null,
-    languageCode: null,
-    sortOrder: null,
-  };
-}
-
-/**
- * The two rows of stories.
- *
- * @returns the shelves
- */
-function HomeShelves() {
-  const { t } = useTranslation();
-  return (
-    <>
-      <DiscoverShelf
-        eyebrow={t('website.trendingEyebrow')}
-        title={t('website.trending')}
-        request={shelfRequest('popular')}
-      />
-      <DiscoverShelf
-        eyebrow={t('website.completedEyebrow')}
-        title={t('website.completed')}
-        request={shelfRequest('completed')}
-      />
-    </>
-  );
-}
+import { WriteBand } from './WriteBand';
 
 /**
  * The questions marked for the home page (S1-E11-12). The same cached request serves the safety
@@ -96,16 +68,46 @@ function HomeQuestions({
     <section
       id={homeQuestionsAnchor}
       aria-labelledby="questions-heading"
-      className="flex max-w-[860px] scroll-mt-6 flex-col gap-4"
+      className="grid scroll-mt-6 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-12"
     >
-      <h2
-        id="questions-heading"
-        className="m-0 font-heading text-[clamp(28px,3vw,40px)] font-extrabold text-heading"
-      >
-        {withBrand(page.questionsHeading)}
-      </h2>
+      {/* The heading and the balloon on one side, the questions on the other (board, LOOK-3). */}
+      <div className="flex flex-col gap-6">
+        <h2
+          id="questions-heading"
+          className="m-0 font-heading text-[clamp(28px,3vw,40px)] font-extrabold text-heading"
+        >
+          {withBrand(page.questionsHeading)}
+        </h2>
+        <Doodle
+          name="hot-air-balloon"
+          kind="widget"
+          on="questions-heading"
+          hideBelow="wide"
+          className="w-[150px] -rotate-3"
+        />
+      </div>
       <QuestionList questions={questions} />
     </section>
+  );
+}
+
+/**
+ * The four bands lower down, each only when staff gave it a heading (LOOK-3).
+ *
+ * @returns the bands
+ */
+function HomeBands({ page, language }: { page: HomePageContent; language: string }) {
+  return (
+    <>
+      {hasBand(page.writeBand) && <WriteBand band={page.writeBand} language={language} />}
+      {hasBand(page.communityBand) && (
+        <CommunityBand band={page.communityBand} language={language} />
+      )}
+      {hasBand(page.firstStoryBand) && (
+        <FirstStoryBand band={page.firstStoryBand} language={language} />
+      )}
+      {hasBand(page.appsBand) && <AppsBand band={page.appsBand} language={language} />}
+    </>
   );
 }
 
@@ -126,7 +128,9 @@ function HomeSections({ entry }: { entry: ParsedEntry<HomePageContent> }) {
         <SafetySection page={page} language={languageCode} hasQuestions={questions.length > 0} />
       </div>
       <HomeShelves />
+      <HomeBands page={page} language={languageCode} />
       <HomeQuestions page={page} questions={questions} />
+      <HomeFooterColumns note={page.footerNote ?? ''} language={languageCode} />
     </>
   );
 }

@@ -29739,6 +29739,60 @@ COMMENT ON FUNCTION "public"."public_character_json"("target_character" "public"
 
 
 
+CREATE OR REPLACE FUNCTION "public"."public_forum_highlights"("wanted_language" "text" DEFAULT 'ro'::"text") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select jsonb_build_object(
+    -- Step 1: threads in the platform's forums, busiest this week first.
+    'threads', coalesce((
+      select jsonb_agg(picked.card order by picked.recent_posts desc, picked.last_post_at desc)
+      from (
+        select jsonb_build_object(
+            'forum_slug', forums.slug,
+            'forum_name', (select names.name from public.forum_name_in(forums.id, wanted_language) as names),
+            'number', threads.thread_number,
+            'title', threads.title,
+            'starter', public.forum_person_json(threads.user_id) - 'is_staff',
+            'reply_count', greatest(public.forum_live_post_count(threads.id) - 1, 0)) as card,
+          (select count(*) from public.forum_posts as posts
+           where posts.thread_id = threads.id and posts.deleted_at is null
+             and posts.created_at > now() - interval '7 days') as recent_posts,
+          threads.last_post_at
+        from public.forum_threads as threads
+        join public.forums on forums.id = threads.forum_id
+          and forums.deleted_at is null and forums.space_id is null
+        where public.forum_thread_is_shown(threads)
+          and not public.is_moderated_away('forum_thread', threads.id)
+          and public.may_spotlight_writer(threads.user_id)
+        order by recent_posts desc, threads.last_post_at desc
+        limit 4
+      ) as picked), '[]'::jsonb),
+    -- Step 2: public spaces for 16 and over, most recently active first.
+    'spaces', coalesce((
+      select jsonb_agg(jsonb_build_object('slug', listed.slug, 'name', listed.name)
+                       order by listed.active_at desc)
+      from (
+        select spaces.slug, spaces.name, public.space_latest_activity(spaces) as active_at
+        from public.spaces
+        where spaces.deleted_at is null and spaces.archived_at is null
+          and spaces.kind = 'open' and spaces.readers = 'everybody' and spaces.age_group = '16_plus'
+          and not public.is_moderated_away('space', spaces.id)
+          and not public.is_blocked_with(spaces.user_id)
+          and public.may_spotlight_writer(spaces.user_id)
+        order by active_at desc nulls last
+        limit 4
+      ) as listed), '[]'::jsonb));
+$$;
+
+
+ALTER FUNCTION "public"."public_forum_highlights"("wanted_language" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."public_forum_highlights"("wanted_language" "text") IS 'The home page''s forums band for anyone: busy threads in the platform''s own forums and public 16+ spaces, never a class, private or under-16 space (LOOK-3).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."public_notice_payload_is_signed"("payload" "text", "signature" "text") RETURNS boolean
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -56639,6 +56693,12 @@ REVOKE ALL ON FUNCTION "public"."profile_story_cards"("writer_id" "uuid", "is_ow
 
 
 REVOKE ALL ON FUNCTION "public"."public_character_json"("target_character" "public"."story_characters", "with_sheet" boolean, "as_preview" boolean) FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."public_forum_highlights"("wanted_language" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."public_forum_highlights"("wanted_language" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."public_forum_highlights"("wanted_language" "text") TO "authenticated";
 
 
 

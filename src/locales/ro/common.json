@@ -173,6 +173,23 @@
       "pageTitle": "{{title}} · Ajutor",
       "notFoundHeading": "Nu găsim această pagină de ajutor",
       "notFound": "Poate a fost mutată sau scoasă. Toate paginile de ajutor sunt pe pagina Ajutor."
+    },
+    "allGenres": "Toate",
+    "genreChips": "Arată poveștile populare pe genuri",
+    "noTrending": "Încă nu e populară nicio poveste din acest gen. Încearcă altul.",
+    "spacesLabel": "Spații pornite de oameni",
+    "busyThreads": "Discuții active săptămâna asta",
+    "threadLine_one": "Pornită de {{name}} · {{count}} răspuns",
+    "threadLine_few": "Pornită de {{name}} · {{count}} răspunsuri",
+    "threadLine_other": "Pornită de {{name}} · {{count}} de răspunsuri",
+    "footer": {
+      "label": "Despre {{productName}}",
+      "read": "Citește",
+      "writeAndTalk": "Scrie și discută",
+      "helpAndLegal": "Ajutor și informații legale",
+      "newWriters": "Scriitori noi",
+      "startWriting": "Începe să scrii",
+      "firstStory": "Începe prima ta poveste"
     }
   }
 }

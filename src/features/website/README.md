@@ -21,3 +21,4 @@ the locale files; the buttons and labels around it are interface text in `common
 
 The staff texts are the `websiteAdmin` namespace, registered when the page opens
 (`registerWebsiteAdminTranslations.ts`).
+- The home page's lower half (bundle LOOK-3): `components/HomeShelves.tsx` (Trending with genre chips, Completed, New and rising writers), the four bands `WriteBand`, `CommunityBand` (with `hooks/useForumHighlights.ts` and `api/forumHighlights.ts`), `FirstStoryBand` and `AppsBand`, sharing `BandText` and `BandButtons`, and the big footer `HomeFooterColumns`. Their words are the optional parts of the home page in `src/schemas/websiteContent.ts`, edited under "Bands lower down and the footer" in the staff Home page editor.

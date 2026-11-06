@@ -48,6 +48,10 @@ export interface ShelfProps {
    * load 21); defaults to the number of items.
    */
   totalCount?: number;
+  /** Controls between the heading and the row, such as the home page's genre chips (LOOK-3). */
+  toolbar?: ReactNode;
+  /** The section's id, for links to it from elsewhere on the page ("#trending"). */
+  anchorId?: string;
 }
 
 /**
@@ -79,11 +83,48 @@ function fadeEdgesLabel(state: ShelfScrollState): string {
 }
 
 /**
+ * The shelf's eyebrow and heading, with the arrows beside them when the row overflows.
+ *
+ * @returns the header row
+ */
+function ShelfHeader({
+  headingId,
+  eyebrow,
+  title,
+  arrows,
+}: {
+  headingId: string;
+  eyebrow: string | undefined;
+  title: string;
+  arrows: ReactNode;
+}) {
+  return (
+    <div className="mb-[18px] flex items-end justify-between gap-4">
+      <div>
+        {eyebrow !== undefined && <Eyebrow>{eyebrow}</Eyebrow>}
+        <h2 id={headingId} className="m-0 text-[30px] font-bold tracking-[-0.01em]">
+          {title}
+        </h2>
+      </div>
+      {arrows}
+    </div>
+  );
+}
+
+/**
  * Renders the heading, the arrows and the row.
  *
  * @returns the shelf section
  */
-export function Shelf({ title, eyebrow, items, seeAllHref, totalCount }: ShelfProps) {
+export function Shelf({
+  title,
+  eyebrow,
+  items,
+  seeAllHref,
+  totalCount,
+  toolbar,
+  anchorId,
+}: ShelfProps) {
   const { t } = useTranslation();
   const headingId = useId();
   const rowRef = useRef<HTMLDivElement>(null);
@@ -96,22 +137,22 @@ export function Shelf({ title, eyebrow, items, seeAllHref, totalCount }: ShelfPr
   const hasMore = listSize > MAXIMUM_SHELF_ITEMS;
 
   return (
-    <section aria-labelledby={headingId}>
-      <div className="mb-[18px] flex items-end justify-between gap-4">
-        <div>
-          {eyebrow !== undefined && <Eyebrow>{eyebrow}</Eyebrow>}
-          <h2 id={headingId} className="m-0 text-[30px] font-bold tracking-[-0.01em]">
-            {title}
-          </h2>
-        </div>
-        {state.overflows && (
-          <ShelfArrows
-            isBackDisabled={state.atStart}
-            isForwardDisabled={state.atEnd}
-            onScroll={scrollByPage}
-          />
-        )}
-      </div>
+    <section id={anchorId} aria-labelledby={headingId} className="scroll-mt-6">
+      <ShelfHeader
+        headingId={headingId}
+        eyebrow={eyebrow}
+        title={title}
+        arrows={
+          state.overflows ? (
+            <ShelfArrows
+              isBackDisabled={state.atStart}
+              isForwardDisabled={state.atEnd}
+              onScroll={scrollByPage}
+            />
+          ) : null
+        }
+      />
+      {toolbar !== undefined && <div className="mb-[18px]">{toolbar}</div>}
       <div
         ref={rowRef}
         role="region"

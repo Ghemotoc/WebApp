@@ -136,5 +136,9 @@
     "newStoryTitle": "Începe o poveste nouă",
     "newStoryText": "O poezie, un eseu sau primul capitol al unei povești noi. Nimeni nu vede nimic până nu publici.",
     "newStoryLink": "Poveste nouă"
+  },
+  "risingWriters": {
+    "eyebrow": "În ascensiune",
+    "title": "Scriitori noi și în ascensiune"
   }
 }
