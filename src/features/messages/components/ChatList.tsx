@@ -59,7 +59,7 @@ function ViewButton(props: {
       )}
       {props.label}
       {props.count !== undefined && props.count > 0 && (
-        <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-gold px-1 text-[11px] leading-none font-bold text-ink">
+        <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-gold px-1 text-[11px] leading-none font-bold text-on-gold">
           <span aria-hidden="true">{props.count}</span>
           <span className="sr-only">{t('list.requestsWaiting', { count: props.count })}</span>
         </span>

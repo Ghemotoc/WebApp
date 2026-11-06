@@ -12,7 +12,9 @@
  *   (second and fifth criteria);
  * - a visitor gets a log-in card, never anyone's library (third criterion);
  * - the Library passes axe at 390 px, light, ro and en, and its doodle touches no text or control
- *   at 1440, 768 and 390 px (DoD design rules).
+ *   at 1440, 768 and 390 px (DoD design rules);
+ * - with a writer and a story followed, the Following cards stay inside a 390 px screen (the
+ *   accessibility check of 6 Nov 2026 found them 19 px too wide; WCAG 1.4.10, CLAUDE.md rule 21).
  * Test data: adult_writer's story "Raftul bibliotecii" with two chapters (the first long enough to
  *   scroll); teen_17 reads it. All removed afterwards.
  */
@@ -30,6 +32,8 @@ const storySlug = 'library-e2e';
 function cleanUp() {
   runSql(`delete from public.reading_positions where user_id = '${readerId}';
     delete from public.library_entries where user_id = '${readerId}';
+    delete from public.follows_users where user_id = '${readerId}';
+    delete from public.follows_stories where user_id = '${readerId}';
     delete from public.chapters where code like 'libre2e%';
     delete from public.stories where slug = '${storySlug}';
     update public.profiles set locale = 'ro' where handle = 'teen_17';`);
@@ -156,6 +160,24 @@ test.describe('library and continue reading (S1-E4-03)', () => {
       await page.setViewportSize({ width, height: 900 });
       await expectNoDoodleOverlap(page);
     }
+  });
+
+  test('the Following cards fit a 390 px screen with a writer and a story followed', async ({
+    browser,
+  }) => {
+    // Step 1: the reader follows the story's writer and the story, so both cards have a row.
+    runSql(`insert into public.follows_users (user_id, followed_user_id)
+        values ('${readerId}', '00000000-0000-4000-8000-000000000001');
+      insert into public.follows_stories (user_id, story_id)
+        select '${readerId}', id from public.stories where slug = '${storySlug}';`);
+    // Step 2: the Library on a phone, with nothing scrolling sideways.
+    const page = await openAs(browser, 'teen_17', '/library');
+    await page.setViewportSize({ width: 390, height: 900 });
+    await expect(page.getByRole('heading', { level: 3, name: 'Stories (1)' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 3, name: 'Writers (1)' })).toBeVisible();
+    const pageWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+    expect(pageWidth).toBeLessThanOrEqual(390);
+    await page.context().close();
   });
 
   for (const language of ['ro', 'en'] as const) {
