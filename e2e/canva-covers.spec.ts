@@ -159,7 +159,7 @@ test.describe('design a cover in Canva (S1-E3-12)', () => {
   });
 
   test('Settings shows the connection, and Disconnect removes it', async ({ browser }) => {
-    const page = await openAsWriter(browser, '/settings');
+    const page = await openAsWriter(browser, '/settings#account');
     const section = page.getByRole('region', { name: 'Canva' });
     await expect(section.getByText(/Connected since/)).toBeVisible();
     await expectAccessibleAndFitting(page, 1440);
@@ -196,8 +196,8 @@ test.describe('design a cover in Canva (S1-E3-12)', () => {
     const page = await openAsWriter(browser, settingsAddress);
     await expect(page.getByText('Upload a picture').first()).toBeVisible();
     await expect(page.locator('a[href^="/canva/start"]')).toHaveCount(0);
-    await page.goto('/settings');
-    await expect(page.getByRole('heading', { name: 'Blocked accounts' })).toBeVisible();
+    await page.goto('/settings#account');
+    await expect(page.getByRole('region', { name: 'Email address' })).toBeVisible();
     await expect(page.getByRole('region', { name: 'Canva' })).toHaveCount(0);
     await page.context().close();
   });

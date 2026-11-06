@@ -70,7 +70,7 @@ test.describe('support tickets (S1-E11-13, ADMIN-2h1)', () => {
   });
 
   test('a member asks for help from Settings and gets a numbered ticket', async ({ browser }) => {
-    const page = await openAs(browser, 'adult_writer', '/settings');
+    const page = await openAs(browser, 'adult_writer', '/settings#support');
     await page.getByRole('link', { name: 'See your support requests' }).click();
     await page.getByRole('link', { name: 'Ask for help' }).click();
     await page.getByLabel('What is it about?').selectOption({ label: 'Writing' });

@@ -120,7 +120,8 @@ test.describe('usernames and pen names (S1-E2-04)', () => {
     await page.getByRole('button', { name: 'Save' }).first().click();
     await expect(page.getByText('You can change your username once every 30 days.')).toBeVisible();
 
-    // The Legal centre is one click away (Q8).
+    // The Legal centre is one click away (Q8), in the "Help and support" group (PROFILE-1).
+    await page.getByRole('link', { name: 'Help and support' }).click();
     await expect(page.getByRole('link', { name: 'Open the Legal centre' })).toHaveAttribute(
       'href',
       '/legal/terms',

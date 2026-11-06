@@ -262,7 +262,7 @@ test.describe('onboarding (S1-E2-06)', () => {
     expect(profileValue(accounts.teen, 'onboarded_at is not null')).toBe('t');
 
     // The switch is in Settings as well, as the step promised.
-    await page.goto('/settings');
+    await page.goto('/settings#messages');
     await expect(page.getByLabel('Let adults message me')).toBeChecked();
   });
 
