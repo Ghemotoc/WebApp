@@ -58,8 +58,18 @@ select is(public.my_data_export() ->> 'user_id', '00000000-0000-4000-8000-000000
   'the data file is kid_14_ok''s own');
 select is(
   (select count(*)::integer
-   from jsonb_each(public.my_data_export() -> 'tables') as listed,
-        jsonb_array_elements(listed.value) as stored
+   from (
+     -- Every list of rows: the person's own tables, and the tables staff keep about them, which sit
+     -- one level down under held_about_you (QA-7, finding P2).
+     select listed.value as rows_listed
+       from jsonb_each(public.my_data_export() -> 'tables') as listed
+      where jsonb_typeof(listed.value) = 'array'
+     union all
+     select held.value
+       from jsonb_each(public.my_data_export() #> '{tables,held_about_you}') as held
+      where jsonb_typeof(held.value) = 'array'
+   ) as every_list,
+        jsonb_array_elements(every_list.rows_listed) as stored
    where stored ? 'user_id' and stored ->> 'user_id' <> '00000000-0000-4000-8000-000000000003'),
   0, 'no row in it belongs to anyone else');
 

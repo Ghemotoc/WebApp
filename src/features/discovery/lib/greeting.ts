@@ -13,7 +13,6 @@
  * @returns a key under "greeting" in discovery.json
  */
 export function greetingKeyFor(kind: string | null, hour: number): string {
-  if (kind === 'birthday') return 'greeting.birthday';
   if (kind === 'birthday_month') return 'greeting.birthdayMonth';
   if (kind === 'anniversary') return 'greeting.anniversary';
   if (hour < 12) return 'greeting.morning';

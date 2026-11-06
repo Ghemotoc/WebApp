@@ -114,7 +114,7 @@
   },
   "appeals": {
     "until": "Poți contesta această decizie până pe {{date}} (șase luni). Contestația e gratuită.",
-    "how": "Spune-ne de ce decizia e greșită. Un alt moderator o analizează, când se poate, și îți scriem cu rezultatul.",
+    "how": "Spune-ne de ce decizia e greșită. Un alt moderator o analizează, când se poate; în echipa noastră mică nu se poate mereu, iar atunci verifică decizia și proprietarul serviciului. Îți scriem cu rezultatul.",
     "open_form": "Contestă decizia",
     "label": "De ce e greșită decizia?",
     "hint": "Spune ce am greșit. Poți adăuga orice ajută, de exemplu context pe care nu l-am avut.",

@@ -42,6 +42,8 @@ function AppealsList({ state }: { state: ReturnType<typeof useAppeals> }) {
           appeal={appeal}
           isDeciding={state.isDeciding}
           onDecide={state.decide}
+          isMarking={state.isMarking}
+          onMarkReviewed={state.markReviewed}
         />
       ))}
     </ul>
@@ -83,6 +85,9 @@ export function AppealsPage() {
       />
       {state.decideFailure !== null && (
         <Notice tone="error">{t(`failures.${state.decideFailure}`)}</Notice>
+      )}
+      {state.markFailure !== null && (
+        <Notice tone="error">{t(`failures.${state.markFailure}`)}</Notice>
       )}
       <AppealsList state={state} />
     </PageContainer>

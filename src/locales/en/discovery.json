@@ -94,7 +94,6 @@
     "morning": "Good morning, {{name}}.",
     "afternoon": "Good afternoon, {{name}}.",
     "evening": "Good evening, {{name}}.",
-    "birthday": "Happy birthday, {{name}}!",
     "birthdayMonth": "Happy birthday month, {{name}}!",
     "anniversary": "Happy {{productName}} anniversary, {{name}}!"
   }

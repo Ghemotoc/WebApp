@@ -94,7 +94,6 @@
     "morning": "Bună dimineața, {{name}}.",
     "afternoon": "Bună ziua, {{name}}.",
     "evening": "Bună seara, {{name}}.",
-    "birthday": "La mulți ani, {{name}}!",
     "birthdayMonth": "Lună de naștere fericită, {{name}}!",
     "anniversary": "La mulți ani pe {{productName}}, {{name}}!"
   }

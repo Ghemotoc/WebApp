@@ -284,7 +284,8 @@
       "story_plans": "Planurile poveștilor tale din Atlasul poveștii.",
       "story_tags": "Etichetele poveștilor tale.",
       "support_tickets": "Mesajele tale către asistență și răspunsurile noastre.",
-      "teacher_checks": "Cererea ta pentru insigna de profesor."
+      "teacher_checks": "Cererea ta pentru insigna de profesor.",
+      "held_about_you": "Ce păstrăm despre tine: sancțiunile contului, ce au ascuns sau eliminat moderatorii din ce ai scris, schimbările făcute de echipă la poveștile tale și motivele, restricțiile, notele despre texte copiate, cererile tale privind datele, adresa amestecată de la înscriere și, dacă lucrezi la noi, rolurile tale în echipă. Numele membrilor echipei și notele interne nu sunt incluse."
     },
     "empty": "(gol)",
     "help": "Ai întrebări? Scrie-ne la {{contactEmail}}."

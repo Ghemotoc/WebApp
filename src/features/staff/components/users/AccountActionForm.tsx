@@ -113,7 +113,7 @@ export function AccountActionForm({ kind, isBusy, onDo, onCancel }: AccountActio
   const [nameKind, setNameKind] = useState<'handle' | 'pen_name'>('handle');
   const [name, setName] = useState('');
   // Staff never see the saved birthday (owner only); they pick the one the person gave them.
-  const [birthday, setBirthday] = useState<BirthdayChoice>({ month: '', day: '' });
+  const [birthday, setBirthday] = useState<BirthdayChoice>({ month: '' });
   const [message, setMessage] = useState('');
   const isSanction = kind === 'warning' || kind === 'suspension' || kind === 'ban';
   return (

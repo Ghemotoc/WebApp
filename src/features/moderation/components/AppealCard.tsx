@@ -5,8 +5,9 @@
  * appealed and why, and who made the original decision. An open appeal shows the decision form,
  * unless the caller made the original decision while someone else could decide: then it says so
  * (DSA art. 20(6), a different person where possible). A decided one shows the outcome, the note
- * and what the person was told. Plain components, no doodles.
- * Who shows it: AppealsPage. What it calls: AppealDecisionForm.
+ * and what the person was told; one the original decider decided (nobody else could) carries the
+ * owner's review (QA-7). Plain components, no doodles.
+ * Who shows it: AppealsPage. What it calls: AppealDecisionForm and AppealOwnerReview.
  */
 import { useTranslation } from 'react-i18next';
 
@@ -16,12 +17,15 @@ import { LabelRows } from '@/components/ui/LabelRows';
 import type { AppealDecision, StaffAppeal } from '../api/appeals';
 
 import { AppealDecisionForm } from './AppealDecisionForm';
+import { AppealOwnerReview } from './AppealOwnerReview';
 
 /** What the card needs. */
 export interface AppealCardProps {
   appeal: StaffAppeal;
   isDeciding: boolean;
   onDecide: (appealId: string, decision: AppealDecision) => Promise<unknown>;
+  isMarking: boolean;
+  onMarkReviewed: (appealId: string) => void;
 }
 
 /**
@@ -76,7 +80,13 @@ function useAppealRows(appeal: StaffAppeal) {
  *
  * @returns a list item
  */
-export function AppealCard({ appeal, isDeciding, onDecide }: AppealCardProps) {
+export function AppealCard({
+  appeal,
+  isDeciding,
+  onDecide,
+  isMarking,
+  onMarkReviewed,
+}: AppealCardProps) {
   const { t } = useTranslation('moderation');
   const rows = useAppealRows(appeal);
   return (
@@ -90,6 +100,13 @@ export function AppealCard({ appeal, isDeciding, onDecide }: AppealCardProps) {
         </InfoPill>
       </div>
       <LabelRows rows={rows} />
+      {appeal.decidedByOriginalDecider && (
+        <AppealOwnerReview
+          appeal={appeal}
+          isMarking={isMarking}
+          onMarkReviewed={() => onMarkReviewed(appeal.id)}
+        />
+      )}
       {appeal.status === 'open' && !appeal.mayDecide && (
         <p className="m-0 text-sm text-body">{t('appeals.notYours')}</p>
       )}

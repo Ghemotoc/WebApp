@@ -1,10 +1,10 @@
 /**
  * BirthdayForm: Settings › Birthday's form (story S1-E2-12; Robert, 25 Oct 2026, 07:08 to 07:11).
  *
- * The month is enough; the day is optional. There is no year, ever. Choosing "Not set" as the
- * month and saving removes the birthday.
+ * A month only: no day and no year, ever (QA-7: with the year of birth beside them they would
+ * make a full date of birth, CLAUDE.md rule 5). Choosing "Not set" and saving removes it.
  * Who shows it: BirthdaySettingsSection, once the saved birthday has loaded.
- * What it calls: BirthdayPicker (the drop-downs) and useMyBirthday's save() through props.
+ * What it calls: BirthdayPicker (the month drop-down) and useMyBirthday's save() through props.
  */
 import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,7 +24,7 @@ export interface BirthdayFormProps {
 }
 
 /**
- * Renders the drop-downs, the notices and the Save button.
+ * Renders the drop-down, the notices and the Save button.
  *
  * @returns the form
  */
@@ -32,7 +32,6 @@ export function BirthdayForm({ saved, birthday }: BirthdayFormProps) {
   const { t } = useTranslation('account');
   const [choice, setChoice] = useState<BirthdayChoice>({
     month: saved.month === null ? '' : String(saved.month),
-    day: saved.day === null ? '' : String(saved.day),
   });
 
   /** Saves the choice. */

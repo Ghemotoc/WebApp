@@ -1,5 +1,5 @@
 /**
- * BirthdaySettingsSection: Settings › Birthday, an optional day and month for a birthday greeting
+ * BirthdaySettingsSection: Settings › Birthday, an optional birthday month for a greeting
  * (story S1-E2-12; Robert, 25 Oct 2026, 07:08 to 07:11).
  *
  * It explains what the birthday is for, that only the owner sees it and that it never has a
@@ -40,7 +40,7 @@ export function BirthdaySettingsSection() {
       <p className="m-0 text-[13px] text-meta">{t('birthday.private')}</p>
       {birthday.loadFailed && <Notice tone="error">{t('errors.loadFailed')}</Notice>}
       {saved !== null && (
-        <BirthdayForm key={`${saved.month}-${saved.day}`} saved={saved} birthday={birthday} />
+        <BirthdayForm key={String(saved.month)} saved={saved} birthday={birthday} />
       )}
     </section>
   );

@@ -3,12 +3,14 @@
  * architecture 1.8.4, screen 8.4).
  *
  * Who calls it: hooks/useAppeals.ts (AppealsPage).
- * What it calls next: admin_appeals_queue() and admin_decide_appeal() (…_s1_e10_07_appeals.sql).
+ * What it calls next: admin_appeals_queue(), admin_decide_appeal() and admin_mark_appeal_reviewed()
+ * (…_s1_e10_07_appeals.sql, …_qa7_03_same_moderator_appeals.sql).
  * Each checks the caller's role, staff session and, for a safeguarding case, the permission; the
  * decision refuses the moderator who made the original decision while someone else could decide
  * (art. 20(6): "not solely on the basis of automated means", and a different person where
  * possible). Overturning restores a hidden or removed item, lifts a sanction and approves a
- * removed picture; a raised rating stays. The person is told either way.
+ * removed picture; a raised rating stays. The person is told either way. When nobody else could
+ * decide, the original decider does, and the owner reviews that appeal afterwards (QA-7, M1).
  */
 import type { Enums } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
@@ -37,6 +39,12 @@ export interface StaffAppeal {
   decidedByHandle: string | null;
   decisionNote: string | null;
   messageToPerson: string | null;
+  /** True when the original decider decided the appeal, because nobody else could (QA-7). */
+  decidedByOriginalDecider: boolean;
+  /** Such an appeal, not yet reviewed by the owner. */
+  needsOwnerReview: boolean;
+  /** True only for an owner, on an appeal that needs the review. */
+  mayMarkReviewed: boolean;
 }
 
 /** A decision on an appeal. */
@@ -81,6 +89,9 @@ export async function listAppeals(
     decidedByHandle: row.decided_by_handle,
     decisionNote: row.decision_note,
     messageToPerson: row.message_to_person,
+    decidedByOriginalDecider: row.decided_by_original_decider,
+    needsOwnerReview: row.needs_owner_review,
+    mayMarkReviewed: row.may_mark_reviewed,
   }));
 }
 
@@ -104,5 +115,21 @@ export async function decideAppeal(
     note_text: decision.note,
     message_to_person: decision.messageToPerson,
   });
+  if (error !== null) throw new ModerationError(failureFromCode(error.code));
+}
+
+/**
+ * The owner marks an appeal the original decider decided as reviewed (QA-7, finding M1).
+ *
+ * @param client - the shared Supabase client
+ * @param appealId - the appeal's ID
+ * Errors: throws ModerationError: not_allowed (42501: not an owner), refused (23514: the appeal
+ *   needs no review, or had one already).
+ */
+export async function markAppealReviewed(
+  client: AppSupabaseClient,
+  appealId: string,
+): Promise<void> {
+  const { error } = await client.rpc('admin_mark_appeal_reviewed', { target_appeal_id: appealId });
   if (error !== null) throw new ModerationError(failureFromCode(error.code));
 }

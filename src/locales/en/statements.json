@@ -114,7 +114,7 @@
   },
   "appeals": {
     "until": "You can appeal this decision until {{date}} (six months). Appealing is free.",
-    "how": "Tell us why the decision is wrong. A different moderator looks at it where possible, and we write to you with the outcome.",
+    "how": "Tell us why the decision is wrong. A different moderator looks at it where possible; in our small team that isn’t always possible, and then the owner of the service checks the decision too. We write to you with the outcome.",
     "open_form": "Appeal this decision",
     "label": "Why is this decision wrong?",
     "hint": "Say what we got wrong. You can add anything that helps, such as context we didn't have.",

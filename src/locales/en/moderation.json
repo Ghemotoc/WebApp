@@ -415,7 +415,7 @@
   "appeals": {
     "documentTitle": "Appeals · {{productName}}",
     "heading": "Appeals",
-    "intro": "People can appeal a decision for six months. A different moderator decides where possible. Changing a decision restores what was hidden or removed and lifts a sanction; the person is told either way.",
+    "intro": "People can appeal a decision for six months. A different moderator decides where possible; when nobody else can, the moderator who made the decision decides the appeal too, it is marked and the owner reviews it. Changing a decision restores what was hidden or removed and lifts a sanction; the person is told either way.",
     "notAllowed": "Only staff who decide appeals can see this page.",
     "loading": "Loading the appeals…",
     "none": "No appeal matches this filter.",
@@ -439,6 +439,11 @@
     "originalDecider": "Original decision by",
     "decidedBy": "Appeal decided by",
     "notYours": "You made the original decision, so another moderator decides this appeal.",
+    "sameDecider": "Same moderator",
+    "ownerReviewNeeded": "The moderator who made the original decision also decided this appeal, because nobody else could. The owner reviews it.",
+    "ownerReviewed": "The owner reviewed this decision.",
+    "markReviewed": "Mark as reviewed",
+    "marking": "Saving…",
     "formLabel": "Decide appeal {{reference}}",
     "outcome": "Outcome",
     "outcomes": {

@@ -3,14 +3,14 @@
  * Robert, 25 Oct 2026, 07:07 to 07:11).
  *
  * Who calls it: hooks/useMyGreeting.ts. What it calls: my_greeting()
- * (supabase/migrations/…_s1_e2_12_birthday_and_anniversary.sql), which decides on the Romanian
- * date: the birthday day, then the birthday month, then the joining anniversary (from the first
+ * (supabase/migrations/…_qa7_01_birthday_month_only.sql), which decides on the Romanian
+ * date: the birthday month, then the joining anniversary (from the first
  * one on). The birthday itself never leaves the database here; only the kind of greeting does.
  */
 import type { AppSupabaseClient } from '@/lib/supabase';
 
 /** The special greetings, or null for an ordinary day. */
-export type GreetingKind = 'birthday' | 'birthday_month' | 'anniversary' | null;
+export type GreetingKind = 'birthday_month' | 'anniversary' | null;
 
 /** Today's greeting: its kind and, for the anniversary, how many years since joining. */
 export interface MyGreeting {
@@ -19,7 +19,7 @@ export interface MyGreeting {
 }
 
 /** The kinds the database may answer; anything else is treated as an ordinary day. */
-const knownKinds = ['birthday', 'birthday_month', 'anniversary'] as const;
+const knownKinds = ['birthday_month', 'anniversary'] as const;
 
 /**
  * Reads today's greeting for the signed-in person.

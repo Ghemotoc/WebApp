@@ -709,13 +709,14 @@ EmailCodesForm (two EmailCodeField boxes) → useEmailChangeCodes → checkEmail
 
 Tests: `e2e/email-change.spec.ts`, `src/features/account/api/emailAddress.test.ts`.
 
-## An optional birthday (S1-E2-12, added 26 Oct 2026)
+## An optional birthday month (S1-E2-12, added 26 Oct 2026; the month only since QA-7, 6 Nov 2026)
 
 ```
 /settings → BirthdaySettingsSection → BirthdayForm → BirthdayPicker   src/features/account/
-  │  useMyBirthday → api/birthday.ts fetchMyBirthday(): profiles.birthday_month and birthday_day
-  │     (profiles_select_own: only the owner reads them; no public view carries them)
-  │  Save → saveMyBirthday() → set_my_birthday(month, day): a day only with a month, never a year
+  │  useMyBirthday → api/birthday.ts fetchMyBirthday(): profiles.birthday_month
+  │     (profiles_select_own: only the owner reads it; no public view carries it)
+  │  Save → saveMyBirthday() → set_my_birthday(month): the month only, never a day or a year,
+  │     so it can't make a full date of birth with birth_year (CLAUDE.md rule 5; QA-7)
   ▼
 staff: /staff/users/<id> → AccountActions "Correct birthday" → admin_set_birthday()
   owner, admin and moderator only, with a reason; before and after go to the audit log
@@ -727,12 +728,14 @@ Discover's greeting line (S1-E2-13):
 ```
 /discover → GreetingLine                                src/features/discovery/components/
   │  useMyNames (pen name, else username) and useMyGreeting → api/greeting.ts → my_greeting()
-  │  my_greeting() → greeting_for(month, day, joined, Romanian date): 'birthday' on the day,
-  │     'birthday_month' all that month, 'anniversary' in the joining month from year one, else null
+  │  my_greeting() → greeting_for(month, joined, Romanian date): 'birthday_month' all that
+  │     month, 'anniversary' in the joining month from year one, else null
   ▼
 lib/greeting.ts greetingKeyFor(): the special words, or good morning, afternoon or evening by the
   reader's own clock (discovery.json "greeting")
 ```
+
+Download my data also carries "held_about_you" (QA-7): what staff tables hold about the person (sanctions, moderated items, staff story changes, restrictions, copied-work notes, data requests, the scrambled sign-up IP, staff roles), from `export_held_about_of()`; `data_export_held_tables()` lists every staff table with a `user_id` and why any is left out (test 298).
 
 Tests: `supabase/tests/database/159-birthday-and-anniversary.test.sql`, `src/features/account/api/birthday.test.ts`, `src/features/account/api/greeting.test.ts`, `src/features/discovery/lib/greeting.test.ts`, `e2e/birthday.spec.ts`.
 

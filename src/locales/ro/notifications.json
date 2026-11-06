@@ -183,8 +183,8 @@
   },
   "appealOutcomes": {
     "open": "contestația ta {{reference}} așteaptă un moderator.",
-    "upheld": "un alt moderator s-a uitat din nou la contestația ta {{reference}}. Decizia rămâne.",
-    "overturned": "un alt moderator s-a uitat din nou la contestația ta {{reference}} și a schimbat decizia."
+    "upheld": "ne-am uitat din nou la contestația ta {{reference}}. Decizia rămâne.",
+    "overturned": "ne-am uitat din nou la contestația ta {{reference}} și am schimbat decizia."
   },
   "emailSettings": {
     "eyebrow": "Notificări",
