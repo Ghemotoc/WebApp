@@ -115,7 +115,9 @@ test.describe('drawings in chapters (S1-E3-11)', () => {
     await dialog.getByRole('button', { name: 'Insert drawing' }).click();
     await expect(dialog.getByText('Draw something first.')).toBeVisible();
     await expect(dialog.getByText('Write alt text for the picture.')).toBeVisible();
-    await expect(dialog.getByText('Drawings and illustrations only, no photos.')).toBeVisible();
+    await expect(
+      dialog.getByText('Any picture, as long as it doesn’t show a real person.'),
+    ).toBeVisible();
     await expect(dialog.getByRole('checkbox')).toHaveCount(0);
     await dialog.getByRole('button', { name: 'Cancel' }).click();
     expect(

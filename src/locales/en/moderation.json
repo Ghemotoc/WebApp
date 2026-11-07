@@ -496,7 +496,7 @@
     "documentTitle": "Pictures to check · {{productName}}",
     "heading": "Pictures to check",
     "intro": "Every picture in an All ages or 13+ story, and every picture from someone under 16, waits here after the automatic check. Nobody else sees it until you decide.",
-    "guidance": "Approve drawings and illustrations that fit the story’s rating. No photographs, real people or celebrities. If a character could look under 18, press Reject.",
+    "guidance": "Approve any picture that fits the story’s rating: drawings, illustrations, vectors and photos of places and things. Reject a picture that shows a real person or a celebrity. Sexual pictures are allowed only as drawings in 18+ stories. If a character could look under 18, press Reject.",
     "notAllowed": "Only staff with the picture review permission can check pictures. An owner or admin gives it on Staff › Roles.",
     "loading": "Loading the pictures…",
     "none": "No pictures are waiting.",

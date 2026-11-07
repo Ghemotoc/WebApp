@@ -54,7 +54,7 @@ Niciodată permise și raportate autorităților acolo unde legea o cere:
 - conținutul care sprijină sau laudă terorismul ori grupările extremiste violente;
 - amenințările reale că vei răni pe cineva sau planurile de a face asta.
 
-Imagini. Nu încărca niciodată fotografii, oameni reali sau vedete. Imaginile sexuale sunt permise doar ca desene, în poveștile 18+. Dacă încarci o imagine sexuală cu cineva sub 18 ani, inclusiv cu tine, o ștergem imediat, îți închidem contul definitiv și o raportăm acolo unde cere legea. [de verificat de avocat]
+Imagini. Poți încărca orice imagine, inclusiv fotografii cu locuri și obiecte, cât timp nu arată niciodată o persoană reală sau o vedetă. Imaginile sexuale sunt permise doar ca desene, în poveștile 18+. Dacă încarci o imagine sexuală cu cineva sub 18 ani, inclusiv cu tine, o ștergem imediat, îți închidem contul definitiv și o raportăm acolo unde cere legea. [de verificat de avocat]
 
 Informații private. Nu împărți adresa, numărul de telefon, emailul, școala, numele real sau fotografiile cuiva fără permisiunea lui. Asta include și datele tale dacă ai sub 18 ani: ține-le departe de profilul tău și de postările publice.
 

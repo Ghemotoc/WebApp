@@ -6,8 +6,9 @@
  * _fail, _gore, _match or _down.
  * What it proves (with the picture_uploads flag switched on for the test):
  * - Insert › Picture asks for the file and the alt text before anything is inserted, and says
- *   drawings and illustrations only, no photos (criterion 1; no rights tick box since bundle
- *   ADMIN-2, part e1);
+ *   any picture as long as it doesn't show a real person, with one "i" tooltip listing what is
+ *   accepted that opens on keyboard focus and closes with Escape (criterion 1; PICTURES-1, Robert,
+ *   7 Nov 2026; no rights tick box since bundle ADMIN-2, part e1);
  * - the stored file has no location or camera data and is at most 1,600 px wide, though the
  *   chosen JPEG carried both and was 2,400 px wide (criterion 2);
  * - a clean picture in this All ages story waits for a moderator, then shows to readers; a flagged one shows "Picture being checked" and
@@ -172,7 +173,18 @@ test.describe('pictures in chapters (S1-E3-09)', () => {
     await dialog.getByRole('button', { name: 'Add the picture' }).click();
     await expect(dialog.getByText('Choose a picture.')).toBeVisible();
     await expect(dialog.getByText('Write alt text for the picture.')).toBeVisible();
-    await expect(dialog.getByText('Drawings and illustrations only, no photos.')).toBeVisible();
+    await expect(
+      dialog.getByText('Any picture, as long as it doesn’t show a real person.'),
+    ).toBeVisible();
+    // The one tooltip lists what is accepted: open on focus, close with Escape (DoD tooltip rule).
+    const infoButton = dialog.getByRole('button', { name: 'Which pictures are allowed' });
+    await infoButton.focus();
+    const tooltip = dialog.getByRole('tooltip');
+    await expect(tooltip).toContainText('photos of places and things');
+    await expect(tooltip).toContainText('Never a real person or a celebrity.');
+    await page.keyboard.press('Escape');
+    await expect(tooltip).toBeHidden();
+    await expect(infoButton).toBeFocused();
     await expect(dialog.getByRole('checkbox')).toHaveCount(0);
     await dialog.getByRole('button', { name: 'Cancel' }).click();
     // Nothing was uploaded or inserted.

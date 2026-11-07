@@ -141,9 +141,9 @@ test.describe('Pictures to check (ADMIN-2e1b)', () => {
     await expect(card.getByRole('alert')).toHaveText(
       'Choose what the image shows and write a note.',
     );
-    await card.getByLabel('What does this image show?').selectOption('photograph');
+    await card.getByLabel('What does this image show?').selectOption('real_person');
     await card.getByRole('textbox', { name: 'Note for the team' }).fill('A photo of a face.');
-    await expect(card.getByText(/it shows: a photograph/)).toBeVisible();
+    await expect(card.getByText(/it shows: a real person/)).toBeVisible();
     await card.getByRole('button', { name: 'Reject and remove' }).click();
     await expect(page.getByText('No pictures are waiting.')).toBeVisible();
 

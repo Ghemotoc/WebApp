@@ -12,7 +12,8 @@
  * Board values (design/boards/Main.dc.html): #26142E background, #FBF7EC text, 260 px wide.
  * Where it opens: under the row that holds the button, from the row's left edge; that row needs
  * the class `relative`.
- * Who uses it: YearOfBirthField and MonthOfBirthField (src/features/auth/components/).
+ * Who uses it: YearOfBirthField and MonthOfBirthField (src/features/auth/components/) and
+ * PictureRulesNote (src/features/pictures/components/), on every picture upload.
  */
 import { useState, type KeyboardEvent } from 'react';
 
@@ -34,9 +35,16 @@ export interface InfoTooltipProps {
 export function InfoTooltip({ tooltipId, buttonLabel, text }: InfoTooltipProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  /** Escape closes the tooltip and leaves focus where it is (WCAG 2.2, 1.4.13 "dismissible"). */
+  /**
+   * Escape closes the tooltip and leaves focus where it is (WCAG 2.2, 1.4.13 "dismissible").
+   * While the tooltip is open, that Escape is used up here, so a dialog around it (the chapter
+   * picture dialog, PICTURES-1) stays open; a second Escape then closes the dialog as usual.
+   */
   function handleKeyDown(event: KeyboardEvent) {
-    if (event.key === 'Escape') setIsOpen(false);
+    if (event.key !== 'Escape' || !isOpen) return;
+    event.preventDefault();
+    event.stopPropagation();
+    setIsOpen(false);
   }
 
   return (

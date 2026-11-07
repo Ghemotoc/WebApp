@@ -1027,8 +1027,9 @@ Story settings › Cover / Settings › Profile picture (only while the picture_
            reads the file with that token, asks server/picture-check/ (stub, or Arachnid Shield
            when PICTURE_CHECK=real; Sightengine too only if PICTURE_CHECK_SIGHTENGINE=on), then rpc record_picture_check() signed with
            PICTURE_CHECK_SECRET
-    The field says "Drawings and illustrations only, no photos." (PictureRulesNote, reading the
-    picture_allowed_kinds setting). Ratings: useRatingsIMayGive offers under-16s only All ages and
+    The field says "Any picture, as long as it doesn't show a real person." with one "i" tooltip
+    listing the accepted kinds (PictureRulesNote, reading the picture_allowed_kinds setting;
+    PICTURES-1, 7 Nov 2026). Ratings: useRatingsIMayGive offers under-16s only All ages and
     13+, and the stories_rating_fits_writer trigger refuses more in the database (ADMIN-2e1a).
     4. passed → the cover or avatar shows (StoryCoverArt, AvatarImage, signed short-lived URLs)
        held → a moderation case with the picture blurred (CasePicturePanel); a known abuse

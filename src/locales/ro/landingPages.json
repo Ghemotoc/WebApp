@@ -182,7 +182,7 @@
     "archived": "Pagina este arhivată. Adresa ei nu mai funcționează.",
     "picture": {
       "label": "Imagine (opțional)",
-      "hint": "Un desen sau o ilustrație: JPEG, PNG sau WebP, până la 5 MB. Este verificată, apoi un moderator o aprobă înainte ca pagina să poată fi publicată.",
+      "hint": "O imagine: JPEG, PNG sau WebP, până la 5 MB. Este verificată, apoi un moderator o aprobă înainte ca pagina să poată fi publicată.",
       "remove": "Elimină imaginea",
       "altHint": "Spune ce arată imaginea, pentru cei care nu o pot vedea."
     },
