@@ -3,11 +3,13 @@
  * parts since bundle AVATAR-1).
  *
  * Facial hair, glasses and earrings come up only now and then (one time in four each), so most
- * surprises show the face plainly. Who calls it: useAvatarDraft. What it calls: nothing.
+ * surprises show the face plainly. The top and its colour, which the editor no longer offers
+ * (Robert, 7 Nov 2026), stay the starting ones, so a surprise never changes what nobody can pick.
+ * Who calls it: useAvatarDraft. What it calls: nothing.
  */
 import type { AvatarRecipe } from '@/schemas/avatarRecipe';
 
-import { avatarChoices } from './avatarOptions';
+import { avatarChoices, startingRecipe } from './avatarOptions';
 
 /** A number from 0 (included) to 1 (excluded); Math.random by default, fixed in tests. */
 export type RandomNumber = () => number;
@@ -55,8 +57,8 @@ export function randomRecipe(random: RandomNumber = Math.random): AvatarRecipe {
     glasses: pickSometimes(avatarChoices.glasses, random),
     earrings: pickSometimes(avatarChoices.earrings, random),
     extrasColour: pick(avatarChoices.extrasColour, random),
-    shirt: pick(avatarChoices.shirt, random),
-    shirtColour: pick(avatarChoices.shirtColour, random),
+    shirt: startingRecipe.shirt,
+    shirtColour: startingRecipe.shirtColour,
     background: pick(avatarChoices.background, random),
   };
 }
