@@ -8,14 +8,20 @@
  * where they can change their profile and emails or delete the account. If the place can't be
  * read, the page shows as usual: the database still refuses what a waiting account may not do.
  * Who uses it: AppLayout, inside AccountClosingGate.
- * What it calls: useMyWaitlist; WaitlistHoldingPage.
+ * What it calls: useMyWaitlist; WaitlistHoldingPage, fetched only for someone who waits, so its
+ * code (the avatar builder, the likes picker) stays out of every member's first download (the
+ * 280 KB budget, scripts/check-bundle-size.ts; QA-6).
  */
-import type { ReactNode } from 'react';
+import { lazy, Suspense, type ReactNode } from 'react';
 import { useLocation } from 'react-router';
 
 import { useMyWaitlist } from '../hooks/useMyWaitlist';
 
-import { WaitlistHoldingPage } from './WaitlistHoldingPage';
+/** The holding page, in its own file, fetched the first time it is needed. */
+const WaitlistHoldingPage = lazy(async () => {
+  const module = await import('./WaitlistHoldingPage');
+  return { default: module.WaitlistHoldingPage };
+});
 
 /** Pages someone waiting can still open. */
 const waitlistOpenPathPrefixes = [
@@ -45,7 +51,12 @@ export function WaitlistGate({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
   const isOpenPath = waitlistOpenPathPrefixes.some((prefix) => pathname.startsWith(prefix));
   if (place.data?.on_list === true && place.data.waiting && !isOpenPath) {
-    return <WaitlistHoldingPage interest={place.data.interest} joinedAt={place.data.joined_at} />;
+    // Nothing shows for the moment the page's code takes to arrive, rather than the page behind it.
+    return (
+      <Suspense fallback={null}>
+        <WaitlistHoldingPage interest={place.data.interest} joinedAt={place.data.joined_at} />
+      </Suspense>
+    );
   }
   return <>{children}</>;
 }
