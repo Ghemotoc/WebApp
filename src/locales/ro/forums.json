@@ -293,10 +293,10 @@
     "chipTitle": "Rang după capitolele și cuvintele publicate",
     "prefix": "Rang:",
     "names": {
-      "new_writer": "Debut",
-      "writer": "Condei",
-      "storyteller": "Condei de povești",
-      "novelist": "Condei de roman"
+      "new_writer": "Debutant",
+      "writer": "Scriitor",
+      "storyteller": "Povestitor",
+      "novelist": "Romancier"
     },
     "rules": {
       "new_writer": "primul capitol",

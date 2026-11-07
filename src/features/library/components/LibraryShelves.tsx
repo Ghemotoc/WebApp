@@ -6,8 +6,10 @@
  * more" card to its See all page at /library/<shelf> (CLAUDE.md rule 20; S1-E5-09), a fade at
  * each edge with cards hidden past it and scroll arrows. Each card shows the full title on its cover and "Chapter 14 of
  * 15" under it, from the reader's place. The chips are a radiogroup with a tick on the chosen one
- * (DoD pill system), each with the shelf's size.
- * Who uses it: LibraryPage. What it calls: useStoryShelf → browse_stories('library', <shelf>).
+ * (DoD pill system), each with the shelf's size. A fourth chip, "My stories", shows the reader's
+ * own stories as a writer, drafts included (MyStoriesShelf; bundle NAV-1, Robert, 6 Nov 2026).
+ * Who uses it: LibraryPage. What it calls: useStoryShelf → browse_stories('library', <shelf>),
+ * and useMyStories for "My stories".
  */
 import { useState } from 'react';
 
@@ -23,9 +25,19 @@ import { listAddress, plainList } from '@/features/discovery/lib/listAddresses';
 import type { ListedStory } from '@/features/discovery/api/storyLists';
 import type { DrawnCoverChoice } from '@/components/covers/coverDesigns';
 import { StoryCoverArt } from '@/features/pictures/components/StoryCoverArt';
+import { useMyStories } from '@/features/writing/hooks/useMyStories';
 
 import { libraryShelves, type LibraryOverview, type LibraryShelf } from '../api/library';
+import { liveOwnStories } from '../lib/ownStories';
 import { useLibraryTranslation } from '../registerLibraryTranslations';
+
+import { MyStoriesShelf } from './MyStoriesShelf';
+
+/** A chip in the section: one of the reader's shelves, or "mine" for their own stories (NAV-1). */
+type LibraryTab = LibraryShelf | 'mine';
+
+/** The chips in the order they show: the three reading shelves, then My stories. */
+const libraryTabs: readonly LibraryTab[] = [...libraryShelves, 'mine'];
 
 /** One card: the cover, the title, the writer and how far the reader got. */
 function LibraryStoryCard(props: {
@@ -93,7 +105,13 @@ function ShelfStories({
  */
 export function LibraryShelves({ overview }: { overview: LibraryOverview }) {
   const { t } = useLibraryTranslation();
-  const [shelf, setShelf] = useState<LibraryShelf>('reading');
+  const [tab, setTab] = useState<LibraryTab>('reading');
+  const { stories } = useMyStories();
+  // The size on each chip: the reading shelves from the overview, My stories from the writer's list.
+  const counts: Record<LibraryTab, number> = {
+    ...overview.counts,
+    mine: liveOwnStories(stories).length,
+  };
   return (
     <section aria-labelledby="library-shelves-heading" className="flex flex-col gap-5">
       <div className="flex flex-wrap items-end justify-between gap-4">
@@ -116,18 +134,18 @@ export function LibraryShelves({ overview }: { overview: LibraryOverview }) {
         />
         <ChoiceChips
           label={t('shelves.choose')}
-          options={libraryShelves.map((name) => ({
+          options={libraryTabs.map((name) => ({
             value: name,
             label: t('shelves.option', {
-              name: t(`shelves.${name}`),
-              count: overview.counts[name],
+              name: name === 'mine' ? t('shelves.mine.label') : t(`shelves.${name}`),
+              count: counts[name],
             }),
           }))}
-          value={shelf}
-          onChange={(value) => setShelf(libraryShelves.find((name) => name === value) ?? 'reading')}
+          value={tab}
+          onChange={(value) => setTab(libraryTabs.find((name) => name === value) ?? 'reading')}
         />
       </div>
-      <ShelfStories shelf={shelf} places={overview.places} />
+      {tab === 'mine' ? <MyStoriesShelf /> : <ShelfStories shelf={tab} places={overview.places} />}
     </section>
   );
 }

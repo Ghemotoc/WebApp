@@ -44,7 +44,17 @@
     "empty": {
       "reading": "Nothing here yet. Open any chapter and the story joins this shelf.",
       "saved": "Nothing saved for later. Use “Library” on a story's page to save it.",
-      "finished": "Stories you read to the end land here."
+      "finished": "Stories you read to the end land here.",
+      "mine": "Stories you write show here, drafts included. Only you see this shelf."
+    },
+    "mine": {
+      "label": "My stories",
+      "draft": "Draft",
+      "ongoing": "Ongoing",
+      "completed": "Completed",
+      "yourWriting": "Open Your writing for numbers, comments and every story tool",
+      "newStory": "Start a new story",
+      "loadFailed": "We couldn’t load your stories. Check your connection and try again."
     }
   },
   "following": {

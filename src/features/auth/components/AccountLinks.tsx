@@ -3,8 +3,9 @@
  * account button).
  *
  * Signed out, it shows "Log in" and "Join for free" as on the board (design/boards/Main.dc.html,
- * SignIn.dc.html): a plain link, then the dark pill. Signed in, it shows AccountMenu (Settings,
- * Log out) with the first letter of the person's pen name or username.
+ * SignIn.dc.html): a plain link, then the dark pill. Signed in, it shows AccountMenu (the public
+ * profile, Edit profile, Settings, Log out; NAV-1) with the first letter of the person's pen name
+ * or username.
  * Who uses it: AppLayout, in the top bar's end slot, after the language drop-down.
  */
 import { useTranslation } from 'react-i18next';
@@ -18,14 +19,18 @@ import { useSession } from '../hooks/useSession';
 import { AccountMenu } from './AccountMenu';
 
 /**
- * The letter on the account button.
+ * The name, username and letter the account button and its panel show.
  *
- * @returns the first letter of the shown name, or "?" before a username is chosen
+ * @returns the shown name and username (null before a username is chosen) and the first letter
+ *   of the name, or "?" before then
  */
-function useInitial(): string {
+function useAccountNames() {
   const { names } = useMyNames();
   const name = names === null ? null : displayName(names.handle, names.penName);
-  return name === null ? '?' : ([...name][0] ?? '?');
+  const handle =
+    names === null || names.handle === null || names.handle === '' ? null : names.handle;
+  const initial = name === null ? '?' : ([...name][0] ?? '?');
+  return { name, handle, initial };
 }
 
 /**
@@ -37,9 +42,9 @@ function useInitial(): string {
 export function AccountLinks() {
   const { t } = useTranslation();
   const { userId, isKnown } = useSession();
-  const initial = useInitial();
+  const { name, handle, initial } = useAccountNames();
   if (!isKnown) return null;
-  if (userId !== null) return <AccountMenu initial={initial} />;
+  if (userId !== null) return <AccountMenu initial={initial} name={name} handle={handle} />;
   return (
     <>
       <Link

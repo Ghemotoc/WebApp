@@ -44,7 +44,17 @@
     "empty": {
       "reading": "Încă nimic aici. Deschide orice capitol și povestea ajunge pe acest raft.",
       "saved": "Nimic păstrat pentru mai târziu. Folosește „Bibliotecă” pe pagina unei povești ca s-o păstrezi.",
-      "finished": "Poveștile citite până la capăt ajung aici."
+      "finished": "Poveștile citite până la capăt ajung aici.",
+      "mine": "Poveștile pe care le scrii apar aici, inclusiv ciornele. Doar tu vezi acest raft."
+    },
+    "mine": {
+      "label": "Poveștile mele",
+      "draft": "Ciornă",
+      "ongoing": "În curs",
+      "completed": "Terminată",
+      "yourWriting": "Deschide Scrierile tale pentru cifre, comentarii și toate uneltele poveștii",
+      "newStory": "Începe o poveste nouă",
+      "loadFailed": "Nu ți-am putut încărca poveștile. Verifică-ți conexiunea și încearcă din nou."
     }
   },
   "following": {
