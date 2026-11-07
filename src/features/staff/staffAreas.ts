@@ -89,7 +89,8 @@ export const staffAreaPages: StaffAreaPage[] = [
     labelKey: 'nav.onCall',
     descriptionKey: 'home.areas.on_call_rota',
   },
-  // People: accounts, support tickets, data requests, teacher checks and staff roles.
+  // People: accounts, the waiting list, support tickets, data requests, teacher checks and staff
+  // roles.
   // Users (S1-E11-02): look-up and accounts, with Invites (S1-E11-17) as its second tab. Owner
   // and admin, the only roles with the invites area, also hold users, so they reach it there.
   {
@@ -98,6 +99,14 @@ export const staffAreaPages: StaffAreaPage[] = [
     group: 'people',
     labelKey: 'nav.users',
     descriptionKey: 'home.areas.users',
+  },
+  // The waiting list (WAITLIST-1): owner and admin let people in, one by one or in waves.
+  {
+    area: 'waitlist',
+    href: '/staff/waitlist',
+    group: 'people',
+    labelKey: 'nav.waitlist',
+    descriptionKey: 'home.areas.waitlist',
   },
   // Support tickets (S1-E11-13; ADMIN-2h1): owner, admin and support, just before Data requests
   // (architecture 1.8.2: "Support tickets, Data requests").

@@ -376,7 +376,9 @@ describe('SignUpPage with the waiting list (WAITLIST-1)', () => {
     waitlistFlags();
     openSignUp('/sign-up');
     expect(screen.getByRole('heading', { name: 'Join the waiting list' })).toBeInTheDocument();
-    expect(screen.getByRole('radiogroup', { name: 'What do you want to do here?' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('radiogroup', { name: 'What do you want to do here?' }),
+    ).toBeInTheDocument();
     expect(screen.queryByLabelText('Invitation code')).not.toBeInTheDocument();
   });
 

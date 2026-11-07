@@ -47,7 +47,9 @@ export function WaitlistInterestPicker({ interest }: { interest: WaitlistInteres
       />
       <p aria-live="polite" className="m-0 min-h-5 text-sm">
         {save.isSuccess && <span className="text-meta">{t('waitlist.holding.saved')}</span>}
-        {save.isError && <span className="text-destructive">{t('waitlist.holding.saveFailed')}</span>}
+        {save.isError && (
+          <span className="text-destructive">{t('waitlist.holding.saveFailed')}</span>
+        )}
       </p>
     </div>
   );

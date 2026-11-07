@@ -5,8 +5,8 @@
  * Why a gate: someone waiting can't write, read or post yet (account_state() 'waitlisted'), so
  * every other page would only show refusals. These stay reachable: logging in (someone else may
  * use this device), the legal pages, help, Contact us and their support tickets, and Settings,
- * where they can change their profile and emails or delete the account. If the place can't be read, the page shows as
- * usual: the database still refuses what a waiting account may not do.
+ * where they can change their profile and emails or delete the account. If the place can't be
+ * read, the page shows as usual: the database still refuses what a waiting account may not do.
  * Who uses it: AppLayout, inside AccountClosingGate.
  * What it calls: useMyWaitlist; WaitlistHoldingPage.
  */
@@ -18,7 +18,7 @@ import { useMyWaitlist } from '../hooks/useMyWaitlist';
 import { WaitlistHoldingPage } from './WaitlistHoldingPage';
 
 /** Pages someone waiting can still open. */
-export const waitlistOpenPathPrefixes = [
+const waitlistOpenPathPrefixes = [
   '/sign-in',
   '/sign-up',
   '/join',

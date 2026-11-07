@@ -73,7 +73,13 @@ export function signUpFailureFromCode(code: string | undefined): SignUpFailure {
 /** The answers the sign-up trigger (and finish_social_sign_up()) reads besides the email. */
 export type SignUpDataAnswers = Pick<
   SignUpAnswers,
-  'birthYear' | 'birthMonth' | 'handle' | 'country' | 'legalRegion' | 'waitlistInterest' | 'newsEmails'
+  | 'birthYear'
+  | 'birthMonth'
+  | 'handle'
+  | 'country'
+  | 'legalRegion'
+  | 'waitlistInterest'
+  | 'newsEmails'
 >;
 
 /**

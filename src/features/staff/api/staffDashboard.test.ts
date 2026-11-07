@@ -37,6 +37,13 @@ describe('dashboardTilesFromAnswer', () => {
     ]);
   });
 
+  it('counts the people waiting, never as a warning (WAITLIST-1)', () => {
+    const tiles = dashboardTilesFromAnswer({ waitlist: { waiting: 12 } });
+    expect(tiles).toEqual([
+      { key: 'waitlist.waiting', count: 12, href: '/staff/waitlist', isWarning: false },
+    ]);
+  });
+
   it('marks nothing when nothing is overdue or failing', () => {
     const tiles = dashboardTilesFromAnswer({
       dataRequests: { open: 1, overdue: 0 },

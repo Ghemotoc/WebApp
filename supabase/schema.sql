@@ -27819,7 +27819,11 @@ begin
   if entry.id is null then
     return jsonb_build_object('on_list', false);
   end if;
-  return jsonb_build_object('on_list', true, 'waiting', entry.admitted_at is null,
+  -- A staff account is never held on the list (account_state() step 4 comes first), so its holding
+  -- page never shows.
+  return jsonb_build_object('on_list', true,
+    'waiting', entry.admitted_at is null
+      and not exists (select 1 from public.staff_roles where staff_roles.user_id = entry.user_id),
     'interest', entry.interest, 'joined_at', entry.joined_at, 'admitted_at', entry.admitted_at);
 end;
 $$;

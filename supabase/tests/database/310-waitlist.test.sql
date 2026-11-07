@@ -18,7 +18,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(47);
+select plan(48);
 
 create temp table ids as select
   '00000000-0000-4000-8000-000000000001'::uuid as adult_writer,
@@ -213,6 +213,14 @@ reset role;
 select ok(exists (select 1 from public.data_export_tables() where table_name = 'waitlist_entries' and is_included)
   and exists (select 1 from public.account_deletion_rules() where table_name = 'waitlist_entries' and action = 'delete'),
   'Download my data includes the entry, and deleting the account deletes it');
+
+-- A staff account that also has an entry (signed up before being given a role) never sees the
+-- holding page, so staff can always reach Staff › Waitlist.
+insert into public.waitlist_entries (user_id) values ((select owner from ids));
+set local role authenticated;
+select pg_temp.sign_in_as((select owner from ids));
+select is((public.my_waitlist() ->> 'waiting')::boolean, false,
+  'a staff account with an entry is never shown as waiting');
 
 select * from finish();
 rollback;

@@ -50,6 +50,8 @@ const tileSources: TileSource[] = [
   { section: 'dataRequests', field: 'open', href: '/staff/data-requests', warnsAboveZero: false },
   { section: 'dataRequests', field: 'overdue', href: '/staff/data-requests', warnsAboveZero: true },
   { section: 'supportTickets', field: 'open', href: '/staff/support', warnsAboveZero: false },
+  // People waiting on the list, for owner and admin (WAITLIST-1).
+  { section: 'waitlist', field: 'waiting', href: '/staff/waitlist', warnsAboveZero: false },
   { section: 'metrics', field: 'signUpsThisWeek', href: '/staff/metrics', warnsAboveZero: false },
   { section: 'logs', field: 'failedCalls', href: '/staff/logs', warnsAboveZero: true },
   { section: 'logs', field: 'crashes', href: '/staff/logs', warnsAboveZero: true },

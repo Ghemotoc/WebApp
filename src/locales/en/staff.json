@@ -70,6 +70,7 @@
     "auditLog": "Audit log",
     "invites": "Invites",
     "users": "Users",
+    "waitlist": "Waitlist",
     "metrics": "Metrics",
     "classics": "Classics",
     "onCall": "On call",
@@ -122,6 +123,7 @@
       "call_log": "Every call the app made, where it failed, and the browser's crashes, for 30 days.",
       "audit_log": "Every staff action and sensitive read, searchable and exportable.",
       "users": "Find an account, see its status and sanctions, and act on it. Invite links are a tab here.",
+      "waitlist": "See who is waiting, by answer and country, and let people in one by one or in waves.",
       "metrics": "The March test numbers against their targets, counted each night.",
       "on_call_rota": "Who is on call for removal orders, the shifts ahead and the gaps.",
       "moderation": "The report queue by tier and deadline, and each case with its decision.",
@@ -535,6 +537,75 @@
     "pager": {
       "pageOf": "Page {{number}} of {{count}}"
     }
+  },
+  "waitlist": {
+    "documentTitle": "Waitlist · {{productName}}",
+    "eyebrow": "Staff · waitlist",
+    "heading": "Waitlist",
+    "intro": "Everyone who signed up without an invite waits here. Let people in one by one with the ticks, or in a wave: writers first, by country if you like. Each person gets a \"You're in\" email and a notice in the app. Every admission goes to the audit log.",
+    "notAllowed": "Only owners and admins can see the waiting list.",
+    "loadFailed": "The waiting list couldn't load just now. Try again in a moment.",
+    "loading": "Loading the waiting list…",
+    "unknownCountry": "Unknown country",
+    "noName": "No name yet",
+    "cancel": "Cancel",
+    "interest": {
+      "write": "Write",
+      "read": "Read",
+      "both": "Both"
+    },
+    "counts": {
+      "waiting_one": "{{count}} person waiting.",
+      "waiting_few": "{{count}} people waiting.",
+      "waiting_other": "{{count}} people waiting.",
+      "byAnswer": "Write: {{write}}, read: {{read}}, both: {{both}}.",
+      "admitted_one": "{{count}} let in so far.",
+      "admitted_few": "{{count}} let in so far.",
+      "admitted_other": "{{count}} let in so far."
+    },
+    "filters": {
+      "interestLabel": "Wants to",
+      "everyone": "Everyone",
+      "writers": "Write (includes both)",
+      "readers": "Read (includes both)",
+      "countryLabel": "Country",
+      "allCountries": "All countries"
+    },
+    "wave": {
+      "heading": "Let in a wave",
+      "intro_one": "{{count}} person waiting matches these filters. A wave lets in only people who confirmed their email, the oldest sign-ups first.",
+      "intro_few": "{{count}} people waiting match these filters. A wave lets in only people who confirmed their email, the oldest sign-ups first.",
+      "intro_other": "{{count}} people waiting match these filters. A wave lets in only people who confirmed their email, the oldest sign-ups first.",
+      "sizeLabel": "How many people",
+      "sizeInvalid": "Type a whole number from 1 to 1,000.",
+      "submit": "Let them in",
+      "confirm_one": "Let {{count}} person in now? They get the \"You're in\" email straight away.",
+      "confirm_few": "Let {{count}} people in now? They get the \"You're in\" email straight away.",
+      "confirm_other": "Let {{count}} people in now? They get the \"You're in\" email straight away.",
+      "confirmYes": "Yes, let them in"
+    },
+    "table": {
+      "tick": "Choose {{name}}",
+      "caption": "People on the waiting list, oldest first",
+      "tickColumn": "Choose",
+      "person": "Person",
+      "interest": "Wants to",
+      "country": "Country",
+      "joined": "Joined",
+      "email": "Email",
+      "confirmed": "Confirmed",
+      "notConfirmed": "Not confirmed yet",
+      "empty": "Nobody on the waiting list matches these filters."
+    },
+    "admitTicked_one": "Let in {{count}} chosen person",
+    "admitTicked_few": "Let in {{count}} chosen people",
+    "admitTicked_other": "Let in {{count}} chosen people",
+    "previousPage": "Previous page",
+    "nextPage": "Next page",
+    "admitted_one": "{{count}} person let in. They have been emailed.",
+    "admitted_few": "{{count}} people let in. They have been emailed.",
+    "admitted_other": "{{count}} people let in. They have been emailed.",
+    "admitFailed": "Nobody was let in. Try again in a moment."
   },
   "metrics": {
     "documentTitle": "Metrics · {{productName}}",
@@ -1430,6 +1501,9 @@
       },
       "supportTickets": {
         "open": "Open support tickets"
+      },
+      "waitlist": {
+        "waiting": "People on the waiting list"
       },
       "metrics": {
         "signUpsThisWeek": "Sign-ups in the last 7 days"

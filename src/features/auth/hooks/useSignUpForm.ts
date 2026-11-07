@@ -213,6 +213,19 @@ async function sendSocialSignUp(
   return null;
 }
 
+/**
+ * Whether the form asks the waiting list's question, and whether this sign-up joins the list
+ * (WAITLIST-1). Someone with an invite code skips the queue, so they never join it.
+ *
+ * @param context - the loaded context, or null while it loads
+ * @returns isWaitlistOn (the form shows "write, read or both") and joinsWaitlist (the
+ *   confirmation step says "You're on the list")
+ */
+function waitlistStateOf(context: SignUpContext | null) {
+  const isWaitlistOn = context?.isWaitlistOn ?? false;
+  return { isWaitlistOn, joinsWaitlist: isWaitlistOn && context?.inviteCode === null };
+}
+
 /** One way of sending the answers, given the loaded context: the problems found, or null. */
 type SendAnswers = (loaded: SignUpContext) => Promise<SignUpProblems | null>;
 
@@ -299,9 +312,6 @@ export function useSignUpForm(context: SignUpContext | null, isAdultsOnly: boole
     failure,
     refusal,
     sentTo,
-    // While on, the form asks the waiting list's question (WAITLIST-1).
-    isWaitlistOn: context?.isWaitlistOn ?? false,
-    // Whether this sign-up joins the list (no code), for "You're on the list".
-    joinsWaitlist: (context?.isWaitlistOn ?? false) && context?.inviteCode === null,
+    ...waitlistStateOf(context),
   };
 }

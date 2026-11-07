@@ -70,6 +70,7 @@
     "auditLog": "Jurnal de audit",
     "invites": "Invitații",
     "users": "Utilizatori",
+    "waitlist": "Listă de așteptare",
     "metrics": "Cifre",
     "classics": "Clasice",
     "onCall": "De gardă",
@@ -122,6 +123,7 @@
       "call_log": "Fiecare apel făcut de aplicație, unde a eșuat și erorile din browser, pentru 30 de zile.",
       "audit_log": "Fiecare acțiune a echipei și fiecare citire sensibilă, cu căutare și export.",
       "users": "Găsește un cont, vezi starea și sancțiunile lui și acționează. Linkurile de invitație sunt o filă aici.",
+      "waitlist": "Vezi cine așteaptă, după răspuns și țară, și lasă oamenii să intre unul câte unul sau în valuri.",
       "metrics": "Cifrele testului din martie față de ținte, numărate în fiecare noapte.",
       "on_call_rota": "Cine este de gardă pentru ordinele de eliminare, turele următoare și golurile.",
       "moderation": "Coada de raportări pe niveluri și termene, și fiecare caz cu decizia lui.",
@@ -535,6 +537,75 @@
     "pager": {
       "pageOf": "Pagina {{number}} din {{count}}"
     }
+  },
+  "waitlist": {
+    "documentTitle": "Listă de așteptare · {{productName}}",
+    "eyebrow": "Staff · listă de așteptare",
+    "heading": "Listă de așteptare",
+    "intro": "Aici așteaptă toți cei care s-au înscris fără invitație. Lasă oamenii să intre unul câte unul, bifându-i, sau în valuri: întâi scriitorii, pe țări dacă vrei. Fiecare primește un e-mail „Ai intrat” și o notificare în aplicație. Fiecare intrare ajunge în jurnalul de audit.",
+    "notAllowed": "Doar proprietarii și administratorii pot vedea lista de așteptare.",
+    "loadFailed": "Lista de așteptare nu s-a putut încărca acum. Încearcă din nou peste puțin timp.",
+    "loading": "Se încarcă lista de așteptare…",
+    "unknownCountry": "Țară necunoscută",
+    "noName": "Încă fără nume",
+    "cancel": "Renunță",
+    "interest": {
+      "write": "Să scrie",
+      "read": "Să citească",
+      "both": "Amândouă"
+    },
+    "counts": {
+      "waiting_one": "{{count}} persoană așteaptă.",
+      "waiting_few": "{{count}} persoane așteaptă.",
+      "waiting_other": "{{count}} de persoane așteaptă.",
+      "byAnswer": "Să scrie: {{write}}, să citească: {{read}}, amândouă: {{both}}.",
+      "admitted_one": "{{count}} persoană a intrat până acum.",
+      "admitted_few": "{{count}} persoane au intrat până acum.",
+      "admitted_other": "{{count}} de persoane au intrat până acum."
+    },
+    "filters": {
+      "interestLabel": "Vrea",
+      "everyone": "Toți",
+      "writers": "Să scrie (inclusiv amândouă)",
+      "readers": "Să citească (inclusiv amândouă)",
+      "countryLabel": "Țară",
+      "allCountries": "Toate țările"
+    },
+    "wave": {
+      "heading": "Lasă să intre un val",
+      "intro_one": "{{count}} persoană care așteaptă se potrivește cu aceste filtre. Un val lasă să intre doar cei care și-au confirmat e-mailul, întâi cei înscriși mai demult.",
+      "intro_few": "{{count}} persoane care așteaptă se potrivesc cu aceste filtre. Un val lasă să intre doar cei care și-au confirmat e-mailul, întâi cei înscriși mai demult.",
+      "intro_other": "{{count}} de persoane care așteaptă se potrivesc cu aceste filtre. Un val lasă să intre doar cei care și-au confirmat e-mailul, întâi cei înscriși mai demult.",
+      "sizeLabel": "Câte persoane",
+      "sizeInvalid": "Scrie un număr întreg de la 1 la 1.000.",
+      "submit": "Lasă-i să intre",
+      "confirm_one": "Lași {{count}} persoană să intre acum? Primește imediat e-mailul „Ai intrat”.",
+      "confirm_few": "Lași {{count}} persoane să intre acum? Primesc imediat e-mailul „Ai intrat”.",
+      "confirm_other": "Lași {{count}} de persoane să intre acum? Primesc imediat e-mailul „Ai intrat”.",
+      "confirmYes": "Da, lasă-i să intre"
+    },
+    "table": {
+      "tick": "Alege-l pe {{name}}",
+      "caption": "Oamenii de pe lista de așteptare, cei mai vechi primii",
+      "tickColumn": "Alege",
+      "person": "Persoană",
+      "interest": "Vrea",
+      "country": "Țară",
+      "joined": "Înscris",
+      "email": "E-mail",
+      "confirmed": "Confirmat",
+      "notConfirmed": "Încă neconfirmat",
+      "empty": "Nimeni de pe lista de așteptare nu se potrivește cu aceste filtre."
+    },
+    "admitTicked_one": "Lasă să intre {{count}} persoană aleasă",
+    "admitTicked_few": "Lasă să intre {{count}} persoane alese",
+    "admitTicked_other": "Lasă să intre {{count}} de persoane alese",
+    "previousPage": "Pagina anterioară",
+    "nextPage": "Pagina următoare",
+    "admitted_one": "A intrat {{count}} persoană. A primit e-mailul.",
+    "admitted_few": "Au intrat {{count}} persoane. Au primit e-mailul.",
+    "admitted_other": "Au intrat {{count}} de persoane. Au primit e-mailul.",
+    "admitFailed": "Nu a intrat nimeni. Încearcă din nou peste puțin timp."
   },
   "metrics": {
     "documentTitle": "Cifre · {{productName}}",
@@ -1430,6 +1501,9 @@
       },
       "supportTickets": {
         "open": "Tichete de suport deschise"
+      },
+      "waitlist": {
+        "waiting": "Oameni pe lista de așteptare"
       },
       "metrics": {
         "signUpsThisWeek": "Înscrieri în ultimele 7 zile"

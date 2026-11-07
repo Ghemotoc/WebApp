@@ -9,7 +9,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { requireClient } from '@/features/account/hooks/useMyNames';
 import { useSession } from '@/features/auth/hooks/useSession';
 
-import { fetchNewsEmails, NewsEmailsError, saveNewsEmails, type NewsEmailsFailure } from '../api/newsEmails';
+import {
+  fetchNewsEmails,
+  NewsEmailsError,
+  saveNewsEmails,
+  type NewsEmailsFailure,
+} from '../api/newsEmails';
 
 /**
  * Loads the choice and offers save().
