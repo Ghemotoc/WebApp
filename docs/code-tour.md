@@ -1864,7 +1864,7 @@ A small drawing beside Discover's heading changes with the season and on special
 
 ## Logo and emblem (BRAND-1a, BRAND-1b)
 
-The owner and admins upload a logo and an emblem for the light and the night theme; the emblem is also the browser tab icon (Robert, 4 Nov 2026). An empty slot shows the bundled default from `public/brand/`: Nicole Salazar's cat for the emblem (a placeholder) and the product name as text for the logo.
+The owner and admins upload a logo and an emblem for the light and the night theme; the emblem is also the browser tab icon (Robert, 4 Nov 2026). An empty slot shows the bundled default from `public/brand/`: the curled cat Robert chose as the logo for every platform (6 Nov 2026, LOGO-1), shown in the app and staff headers and the footers through `BrandMark`, and the product name as text for the logo.
 
 - **Where it starts (staff):** `/staff/website/branding` is `BrandingTab` inside `WebsiteAdminPage` (`src/features/branding/`). Each slot is a `BrandSlotCard` with a `BrandSlotPreview` on its theme's page colour.
 - **How one click travels:** "Upload a picture" → `useBrandUpload(slot)` → `uploadBrandPicture()` (private `brand-assets` bucket, folder = the slot) → `register_brand_picture()` → the picture check → `admin_set_brand_asset(slot, picture)` (logs `website.brand_asset_set`). `picture_needs_person()` holds every brand picture for a moderator. "Use the default" → `admin_clear_brand_asset()` (logs `website.brand_asset_cleared`).

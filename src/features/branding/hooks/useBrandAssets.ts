@@ -2,8 +2,8 @@
  * useBrandAssets: the logo and emblem the app shows right now, for each theme (bundle BRAND-1,
  * part b).
  *
- * An approved upload wins; otherwise the bundled default (lib/brandDefaults.ts): Nicole's cat for
- * the emblem, and no logo picture, so the name shows as text. While the read is loading, fails,
+ * An approved upload wins; otherwise the bundled default (lib/brandDefaults.ts): the curled cat
+ * logo (LOGO-1) for the emblem, and no logo picture, so the name shows as text. While the read is loading, fails,
  * or the app has no database (unit tests), the defaults show, so the top bar is never empty.
  * Who calls it: BrandMark (the top bar) and BrandTabIcon (the browser tab).
  * What it calls: fetchPublishedBrand() in api/publishedBrand.ts.

@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
 import { brand } from '@/config/brand';
+import { BrandMark } from '@/features/branding/components/BrandMark';
 
 import { withBrand } from '../lib/brandText';
 
@@ -86,7 +87,10 @@ export function HomeFooterColumns({ note, language }: { note: string; language: 
       className="grid gap-10 border-t border-border pt-12 md:grid-cols-[minmax(0,1.4fr)_repeat(3,minmax(0,1fr))]"
     >
       <div className="flex flex-col gap-3">
-        <p className="m-0 font-heading text-2xl font-extrabold text-heading">{brand.productName}</p>
+        {/* The emblem and the name (LOGO-1: the logo on every platform). */}
+        <p className="m-0 flex font-heading text-2xl font-extrabold text-heading">
+          <BrandMark />
+        </p>
         {note.trim() !== '' && (
           <p className="m-0 max-w-[360px] text-[15px] leading-relaxed text-body" lang={language}>
             {withBrand(note)}

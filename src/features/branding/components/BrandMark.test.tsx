@@ -14,7 +14,7 @@ import { brandPicturesFrom } from '../hooks/useBrandAssets';
 import { BrandMark } from './BrandMark';
 
 describe('BrandMark', () => {
-  it('shows the placeholder cat emblem for each theme and the name once as text by default', () => {
+  it('shows the curled cat emblem for each theme and the name once as text by default', () => {
     const { container } = renderWithProviders(<BrandMark />, 'en');
     expect(screen.getByText(brand.productName)).toBeInTheDocument();
     const light = container.querySelector('img[data-brand-emblem="light"]');

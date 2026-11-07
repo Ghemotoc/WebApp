@@ -12,6 +12,7 @@ import { Link } from 'react-router';
 import { InfoPill } from '@/components/ui/InfoPill';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { brand } from '@/config/brand';
+import { BrandMark } from '@/features/branding/components/BrandMark';
 import { LanguageSelect } from '@/features/language/components/LanguageSelect';
 import { ThemeSelect } from '@/features/theme/components/ThemeSelect';
 
@@ -31,8 +32,9 @@ export function StaffFooter({ menuItems }: { menuItems: StaffAreaPage[] }) {
       <PageContainer className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
           <span className="inline-flex items-center gap-2.5">
-            <span className="font-heading text-lg font-extrabold text-heading">
-              {brand.productName}
+            {/* The emblem and the name (LOGO-1: the logo on every platform). */}
+            <span className="inline-flex font-heading text-lg font-extrabold text-heading">
+              <BrandMark />
             </span>
             <InfoPill tone="plum">{t('staff.pill')}</InfoPill>
           </span>

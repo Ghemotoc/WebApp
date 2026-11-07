@@ -2,9 +2,10 @@
 
 The logo and the emblem, for the light and the night theme, that the owner and admins upload in
 Staff › Website › Branding (bundle BRAND-1; Robert, 4 Nov 2026, 14:25 UTC). The emblem is also the
-browser tab icon. An empty slot shows the bundled default: the cat Nicole Salazar drew (a
-placeholder until the new logo is chosen) for the emblem, and the product name as text for the
-logo.
+browser tab icon. An empty slot shows the bundled default: the curled cat Robert chose as the logo for
+every platform (6 Nov 2026, 18:34 UTC; bundle LOGO-1) for the emblem, and the product name as
+text for the logo. The app header, the staff header and the footers all show it through
+`BrandMark`.
 
 - `api/brandAssets.ts`: the four slots (`brand_asset_slot`), the staff read
   (`admin_brand_assets()`) and the `admin_set_brand_asset()` and `admin_clear_brand_asset()` calls.
