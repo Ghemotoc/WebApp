@@ -7,6 +7,8 @@
  * - Settings › Your avatar starts from the initials, with a live preview and tabs of picture
  *   tiles and colour swatches (no drop-downs), each named in words; the tabs work by keyboard;
  *   a choice can be undone, and "Surprise me" changes the avatar;
+ * - there is no clothes tab, and the background colour sits under the tabs whichever tab is open
+ *   (Robert, 7 Nov 2026);
  * - the art's designer is credited under the editor;
  * - nothing is uploaded: there is no file field any more;
  * - Save keeps the recipe on the profile and the drawn avatar shows on the writer's profile;
@@ -88,6 +90,17 @@ test.describe('the avatar builder (ADMIN-2g)', () => {
     await section.getByRole('tab', { name: 'Glasses and earrings' }).click();
     await section.getByRole('radio', { name: 'Glasses: Round' }).click();
 
+    // No clothes tab (avatars are close-ups); the background colour is under every tab.
+    await expect(section.getByRole('tab')).toHaveCount(3);
+    await expect(section.getByRole('tab', { name: /Clothes/ })).toHaveCount(0);
+    await expect(section.getByRole('radio', { name: /^Top/ })).toHaveCount(0);
+    await section.getByRole('radio', { name: 'Background colour: Sky' }).click();
+    await section.getByRole('tab', { name: 'Face' }).click();
+    await expect(section.getByRole('radio', { name: 'Background colour: Sky' })).toHaveAttribute(
+      'aria-checked',
+      'true',
+    );
+
     // Surprise me changes the avatar, and can be undone too.
     await section.getByRole('button', { name: 'Surprise me' }).click();
     await section.getByRole('button', { name: 'Undo' }).click();
@@ -103,6 +116,7 @@ test.describe('the avatar builder (ADMIN-2g)', () => {
     expect(savedPart('hair')).toBe('pixie');
     expect(savedPart('glasses')).toBe('round');
     expect(savedPart('style')).toBe('micah');
+    expect(savedPart('background')).toBe('e6eef6');
     await page.goto('/u/adult_writer');
     await expect(page.locator('img[src^="data:image/svg+xml"]').first()).toBeVisible();
 

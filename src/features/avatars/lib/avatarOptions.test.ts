@@ -8,7 +8,14 @@ import englishAvatars from '@/locales/en/avatars.json';
 import romanianAvatars from '@/locales/ro/avatars.json';
 import { avatarRecipeSchema } from '@/schemas/avatarRecipe';
 
-import { avatarChoices, avatarParts, avatarTabs, startingRecipe } from './avatarOptions';
+import {
+  avatarChoices,
+  avatarParts,
+  avatarPartsNotOffered,
+  avatarPartsUnderTabs,
+  avatarTabs,
+  startingRecipe,
+} from './avatarOptions';
 import { micahOptionsOf } from './drawAvatar';
 import { randomRecipe } from './randomRecipe';
 
@@ -31,10 +38,17 @@ describe('the avatar builder', () => {
     }
   });
 
-  it('puts every part on exactly one tab', () => {
-    const onTabs = avatarTabs.flatMap((tab) => [...tab.parts]);
-    expect([...onTabs].sort()).toEqual([...avatarParts].sort());
-    expect(new Set(onTabs).size).toBe(onTabs.length);
+  it('offers every part once, on one tab or under the tabs, except the top nobody sees', () => {
+    const onScreen = [...avatarTabs.flatMap((tab) => [...tab.parts]), ...avatarPartsUnderTabs];
+    const everyPart = [...onScreen, ...avatarPartsNotOffered];
+    expect([...everyPart].sort()).toEqual([...avatarParts].sort());
+    expect(new Set(everyPart).size).toBe(everyPart.length);
+  });
+
+  it('has no clothes tab and keeps the background colour under every tab', () => {
+    expect(avatarTabs.map((tab) => tab.key)).toEqual(['face', 'hair', 'extras']);
+    expect(avatarPartsUnderTabs).toEqual(['background']);
+    expect(avatarPartsNotOffered).toEqual(['shirt', 'shirtColour']);
   });
 
   it('starts from a valid recipe with no facial hair, glasses or earrings, so nothing assumes a gender', () => {
@@ -44,11 +58,13 @@ describe('the avatar builder', () => {
     expect(startingRecipe.earrings).toBe('none');
   });
 
-  it('makes a valid recipe from the offered choices every time it surprises', () => {
+  it('makes a valid recipe from the offered choices every time it surprises, leaving the top alone', () => {
     for (let attempt = 0; attempt < 50; attempt += 1) {
       const recipe = randomRecipe();
       expect(avatarRecipeSchema.safeParse(recipe).success).toBe(true);
       for (const part of avatarParts) expect(avatarChoices[part]).toContain(recipe[part]);
+      expect(recipe.shirt).toBe(startingRecipe.shirt);
+      expect(recipe.shirtColour).toBe(startingRecipe.shirtColour);
     }
   });
 

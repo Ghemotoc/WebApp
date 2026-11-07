@@ -22,8 +22,7 @@
     "tabs": {
       "face": "Fața",
       "hair": "Părul",
-      "extras": "Ochelari și cercei",
-      "clothes": "Haine și fundal"
+      "extras": "Ochelari și cercei"
     },
     "choice": "{{part}}: {{choice}}",
     "credit": "Desenele avatarelor: „Avatar Illustration System” de Micah Lanier, CC BY 4.0, desenate cu DiceBear.",
@@ -43,7 +42,7 @@
     "hairColour": "Culoarea părului",
     "extrasColour": "Culoarea ochelarilor și a cerceilor",
     "shirtColour": "Culoarea bluzei",
-    "background": "Fundal"
+    "background": "Culoarea fundalului"
   },
   "hair": {
     "dannyPhantom": "Pieptănat pe o parte",

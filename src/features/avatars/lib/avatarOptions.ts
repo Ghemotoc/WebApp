@@ -8,7 +8,9 @@
  * 0014). Each choice's name on screen is `avatars.<part>.<value>` in the locale files. Colours
  * are six hex digits; the database checks the same shape (avatar_recipe_valid()).
  * The parts are grouped into the editor's tabs (avatarTabs), and each part is either a row of
- * picture tiles (a shape) or a row of round swatches (a colour).
+ * picture tiles (a shape) or a row of round swatches (a colour). The background colour sits under
+ * the tabs instead (avatarPartsUnderTabs), and the top and its colour are no longer offered
+ * (avatarPartsNotOffered; Robert, 7 Nov 2026).
  * Who uses it: the editor (AvatarEditorTabs, AvatarPartTiles, AvatarColourSwatches),
  * randomRecipe (Surprise me) and drawAvatar.
  */
@@ -53,8 +55,24 @@ export const avatarTabs = [
   { key: 'face', parts: ['skin', 'eyes', 'eyebrows', 'mouth', 'nose'] },
   { key: 'hair', parts: ['hair', 'hairColour', 'facialHair'] },
   { key: 'extras', parts: ['glasses', 'earrings', 'extrasColour'] },
-  { key: 'clothes', parts: ['shirt', 'shirtColour', 'background'] },
 ] as const satisfies readonly { key: string; parts: readonly AvatarPart[] }[];
+
+/**
+ * The parts shown at the bottom of the editor whichever tab is open (Robert, 7 Nov 2026: "at
+ * the bottom of everything, regardless if you're in face or hairstyle or accessories").
+ */
+export const avatarPartsUnderTabs = ['background'] as const satisfies readonly AvatarColourPart[];
+
+/**
+ * Parts the recipe still holds but the editor no longer offers: every avatar is drawn close up,
+ * so the top barely shows (Robert, 7 Nov 2026: "we only check the face, there shouldn't be any
+ * clothes"). They stay in the recipe because the database checks its shape
+ * (avatar_recipe_valid()) and saved avatars keep drawing the same.
+ */
+export const avatarPartsNotOffered = [
+  'shirt',
+  'shirtColour',
+] as const satisfies readonly AvatarPart[];
 
 /** One tab's key. */
 export type AvatarTabKey = (typeof avatarTabs)[number]['key'];

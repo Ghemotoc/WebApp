@@ -22,8 +22,7 @@
     "tabs": {
       "face": "Face",
       "hair": "Hair",
-      "extras": "Glasses and earrings",
-      "clothes": "Clothes and background"
+      "extras": "Glasses and earrings"
     },
     "choice": "{{part}}: {{choice}}",
     "credit": "Avatar art: “Avatar Illustration System” by Micah Lanier, CC BY 4.0, drawn with DiceBear.",
@@ -43,7 +42,7 @@
     "hairColour": "Hair colour",
     "extrasColour": "Glasses and earrings colour",
     "shirtColour": "Top colour",
-    "background": "Background"
+    "background": "Background colour"
   },
   "hair": {
     "dannyPhantom": "Swept",
