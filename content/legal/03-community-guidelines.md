@@ -54,7 +54,7 @@ Never allowed, and reported to the authorities where the law says so:
 - content that supports or praises terrorism or violent extremist groups;
 - real threats to hurt someone, or plans to do so.
 
-Pictures. Never upload photographs, real people or celebrities. Sexual pictures are allowed only as drawings in 18+ stories. If you upload a sexual picture of anyone under 18, yourself included, we remove it at once, close your account for good and report it where the law requires. [lawyer to check]
+Pictures. Any picture is fine, photos of places and things included, as long as it never shows a real person or a celebrity. Sexual pictures are allowed only as drawings in 18+ stories. If you upload a sexual picture of anyone under 18, yourself included, we remove it at once, close your account for good and report it where the law requires. [lawyer to check]
 
 Private information. Don’t share anyone’s address, phone number, email, school, real name or photos without their permission. That includes your own if you’re under 18: keep it off your profile and out of public posts.
 
@@ -153,7 +153,7 @@ We always tell you what we did and why, and whether any automatic tool was invol
 - Section 2 (Keep people safe): Sexual content involving minors: Romanian Criminal Code provisions on child sexual abuse material (not researched in the files; L4). The board says “anyone under 18”; whether the rule extends to fictional characters is a policy choice for the founder, so it is marked.
 - Section 2 (Keep people safe): Grooming wording follows DSA art. 28 and the Commission Guidelines C/2025/5519 on contact risks (research A2).
 - Section 2 (Keep people safe): Terrorist content: Regulation (EU) 2021/784. Self-harm line: proposed default; Ofcom’s codes treat self-harm encouragement as primary priority content in the UK (research H1).
-- Section 2 (Keep people safe): Pictures: drawings only, sexual drawings only in 18+ stories (Robert, 2 Nov 2026, bundle-12 brief, sections 2 and 6).
+- Section 2 (Keep people safe): Pictures: any picture but never a real person (Robert, 7 Nov 2026, replacing "drawings only" of 2 Nov); sexual pictures only as drawings in 18+ stories (Robert, 2 Nov 2026, bundle-12 brief, sections 2 and 6).
 - Section 3 (Post your own work): Ratings and hiding: S1-E3-06 (Q17). Descriptions are a first draft because the exact wording is on the lawyer’s list (L14); Romanian rules on content harmful to minors were not researched.
 - Section 3 (Post your own work): Labels: fan fiction and parody (Q87), AI (Q24). Copied-work report: S1-E10-08.
 - Section 3 (Post your own work): Law 8/1996 art. 35(1)(b) and 35(4) quotation; art. 37(b) parody (research A3).

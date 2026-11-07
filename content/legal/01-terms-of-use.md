@@ -119,7 +119,7 @@ Our own team moderates Ghemotoc, in Romanian and English. We don’t use outside
 
 Reports. Anyone can report a story, chapter, comment, profile, space, thread, post, picture or message, with or without an account. A person on our team reads every report. We don’t scan your writing automatically and we don’t hold anything back before it is published: we act on reports. The most serious reports, such as anything that puts a child at risk, are dealt with first. How reports work, and what a good report includes, is in our Notice and action policy.
 
-Pictures. Never upload photographs, real people or celebrities. Sexual pictures are allowed only as drawings in 18+ stories. If you upload a sexual picture of anyone under 18, yourself included, we remove it at once, close your account for good and report it where the law requires. [lawyer to check]
+Pictures. Any picture is fine, photos of places and things included, as long as it never shows a real person or a celebrity. Sexual pictures are allowed only as drawings in 18+ stories. If you upload a sexual picture of anyone under 18, yourself included, we remove it at once, close your account for good and report it where the law requires. [lawyer to check]
 
 Every picture is checked automatically when it is uploaded: Arachnid Shield checks for known child sexual abuse images. A moderator looks at every picture in an All ages or 13+ story, and at every picture a writer under 16 uploads, before anyone else sees it (readers see “Picture being checked”). The automatic check only holds a picture back. A person makes every decision.
 

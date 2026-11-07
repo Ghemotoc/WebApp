@@ -182,7 +182,7 @@
     "archived": "This page is archived. Its address no longer works.",
     "picture": {
       "label": "Picture (optional)",
-      "hint": "A drawing or illustration: JPEG, PNG or WebP, up to 5 MB. It is checked, then a moderator approves it before the page can be published.",
+      "hint": "A picture: JPEG, PNG or WebP, up to 5 MB. It is checked, then a moderator approves it before the page can be published.",
       "remove": "Remove picture",
       "altHint": "Say what the picture shows, for people who can’t see it."
     },

@@ -32,8 +32,8 @@ grant execute on all functions in schema pg_temp to anon, authenticated;
 /* ---------- 1. The allowed kinds and the rights tick box ---------- */
 
 select is((select value from public.settings where key = 'picture_allowed_kinds' and is_public),
-  '["drawing", "illustration", "non_photographic_ai"]'::jsonb,
-  'drawings, illustrations and AI pictures that don''t look like photos are the allowed kinds, a public setting');
+  '["drawing", "illustration", "photo_of_places_and_things", "non_photographic_ai"]'::jsonb,
+  'any picture but a real person: drawings, illustrations, photos of places and things and AI pictures are the allowed kinds, a public setting (PICTURES-1)');
 select hasnt_function('public', 'register_chapter_picture', array['text', 'boolean'],
   'a chapter picture no longer asks for a rights tick');
 select has_function('public', 'register_chapter_picture', array['text'],

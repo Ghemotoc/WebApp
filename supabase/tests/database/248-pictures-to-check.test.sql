@@ -9,13 +9,14 @@
 --   moderation team only;
 -- - green approves; yellow raises the story first (never down, never 18+ for a picture from
 --   someone under 18, never past what the story owner's age allows); red removes it with a reason
---   from the admin-editable list and a statement of reasons the uploader is told about;
+--   from the admin-editable list (no longer "a photograph", PICTURES-1) and a statement of
+--   reasons the uploader is told about;
 -- - support staff can't decide pictures.
 begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(22);
+select plan(23);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -142,9 +143,12 @@ select throws_ok(format($$ select public.admin_approve_picture(%L, 'Suggestive.'
 select throws_ok(format($$ select public.admin_reject_picture(%L, 'nonsense', 'Removed.', 'Photo.') $$,
     pg_temp.case_of('00000000-0000-4000-9000-000000002483')), '23514', null,
   'a reject needs a reason from the list');
-select lives_ok(format($$ select public.admin_reject_picture(%L, 'photograph',
+select throws_ok(format($$ select public.admin_reject_picture(%L, 'photograph', 'Removed.', 'Photo.') $$,
+    pg_temp.case_of('00000000-0000-4000-9000-000000002483')), '23514', null,
+  'a photograph is no longer a reason to reject: photos of places and things are allowed (PICTURES-1)');
+select lives_ok(format($$ select public.admin_reject_picture(%L, 'real_person',
     'Your picture wasn''t approved because it doesn''t follow our community guidelines.', 'A photo of a face.') $$,
-  pg_temp.case_of('00000000-0000-4000-9000-000000002483')), 'a moderator rejects a photograph');
+  pg_temp.case_of('00000000-0000-4000-9000-000000002483')), 'a moderator rejects a picture of a real person');
 select is(pg_temp.status_of('00000000-0000-4000-9000-000000002483'), 'removed', 'the picture is removed');
 select is((select ground_key from public.statements_of_reasons
            where case_id = pg_temp.case_of('00000000-0000-4000-9000-000000002483')), 'picture_check',

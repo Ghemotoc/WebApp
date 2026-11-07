@@ -144,13 +144,15 @@
       "notLoaded": "Nu am putut încărca imaginea. Verifică-ți conexiunea și reîncarcă pagina."
     },
     "rules": {
-      "headline": "Doar desene și ilustrații, fără fotografii.",
+      "headline": "Orice imagine, cât timp nu arată o persoană reală.",
+      "infoLabel": "Ce imagini sunt permise",
       "allowed": "Sunt permise: {{kinds}}.",
-      "never": "Niciodată fotografii, oameni reali sau persoane celebre.",
+      "never": "Niciodată o persoană reală sau o vedetă.",
       "kinds": {
-        "drawing": "desene",
-        "illustration": "ilustrații",
-        "non_photographic_ai": "imagini făcute cu AI care nu arată ca fotografii"
+        "drawing": "desene și personaje desenate",
+        "illustration": "ilustrații și grafică vectorială",
+        "photo_of_places_and_things": "fotografii cu locuri și obiecte",
+        "non_photographic_ai": "imagini făcute cu AI care nu arată ca o persoană reală"
       }
     }
   },

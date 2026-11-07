@@ -119,7 +119,7 @@ Propria noastră echipă moderează Ghemotoc, în română și engleză. Nu folo
 
 Raportări. Oricine poate raporta o poveste, un capitol, un comentariu, un profil, un spațiu, o discuție, o postare, o imagine sau un mesaj, cu sau fără cont. Un om din echipa noastră citește fiecare raportare. Nu îți scanăm automat textele și nu oprim nimic înainte să fie publicat: acționăm pe baza raportărilor. Raportările cele mai grave, cum ar fi orice pune un copil în pericol, sunt tratate primele. Cum funcționează raportările și ce cuprinde o raportare bună sunt explicate în Politica noastră de notificare și acțiune.
 
-Imagini. Nu încărca niciodată fotografii, oameni reali sau vedete. Imaginile sexuale sunt permise doar ca desene, în poveștile 18+. Dacă încarci o imagine sexuală cu cineva sub 18 ani, inclusiv cu tine, o ștergem imediat, îți închidem contul definitiv și o raportăm acolo unde cere legea. [de verificat de avocat]
+Imagini. Poți încărca orice imagine, inclusiv fotografii cu locuri și obiecte, cât timp nu arată niciodată o persoană reală sau o vedetă. Imaginile sexuale sunt permise doar ca desene, în poveștile 18+. Dacă încarci o imagine sexuală cu cineva sub 18 ani, inclusiv cu tine, o ștergem imediat, îți închidem contul definitiv și o raportăm acolo unde cere legea. [de verificat de avocat]
 
 Fiecare imagine este verificată automat când este încărcată: Arachnid Shield verifică dacă este o imagine cunoscută cu abuz sexual asupra copiilor. Un moderator se uită la fiecare imagine dintr-o poveste „Toate vârstele” sau 13+ și la fiecare imagine încărcată de un scriitor sub 16 ani, înainte să o vadă altcineva (cititorii văd „Imagine în verificare”). Verificarea automată doar oprește o imagine. Fiecare decizie o ia un om.
 

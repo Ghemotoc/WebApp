@@ -2,7 +2,7 @@
  * Tests for the tooltip pattern (Definition of Done; WCAG 2.2, 1.4.13; story S1-E2-02).
  */
 import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { InfoTooltip } from './InfoTooltip';
 
@@ -50,5 +50,23 @@ describe('InfoTooltip', () => {
     expect(screen.getByRole('textbox', { name: 'Year' })).toHaveAccessibleDescription(
       'To pick the right safety settings.',
     );
+  });
+
+  it('uses up the Escape that closes it, so a dialog around it stays open', () => {
+    const onOuterKeyDown = vi.fn();
+    render(
+      // A wrapper that listens like a dialog would, to see which Escapes reach it.
+      // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+      <div onKeyDown={onOuterKeyDown}>
+        <InfoTooltip tooltipId="tip" buttonLabel="Which pictures" text="Any picture." />
+      </div>,
+    );
+    const button = screen.getByRole('button', { name: 'Which pictures' });
+    fireEvent.focus(button);
+    fireEvent.keyDown(button, { key: 'Escape' });
+    expect(onOuterKeyDown).not.toHaveBeenCalled();
+    // Closed now, so the next Escape goes through to the dialog.
+    fireEvent.keyDown(button, { key: 'Escape' });
+    expect(onOuterKeyDown).toHaveBeenCalledTimes(1);
   });
 });

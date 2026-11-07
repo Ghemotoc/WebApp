@@ -134,7 +134,7 @@ function DrawingFields(props: {
         hint={t('drawingDialog.altHint')}
         errorMessage={props.missing?.alt === true ? t('pictureDialog.missingAlt') : undefined}
       />
-      <PictureRulesNote />
+      <PictureRulesNote id="chapter-drawing-rules" />
       <p className="m-0 text-sm text-body">{t('drawingDialog.savedNote')}</p>
     </>
   );

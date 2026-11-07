@@ -144,13 +144,15 @@
       "notLoaded": "We couldn’t load this picture. Check your connection and refresh the page."
     },
     "rules": {
-      "headline": "Drawings and illustrations only, no photos.",
+      "headline": "Any picture, as long as it doesn’t show a real person.",
+      "infoLabel": "Which pictures are allowed",
       "allowed": "Allowed: {{kinds}}.",
-      "never": "Never photographs, real people or celebrities.",
+      "never": "Never a real person or a celebrity.",
       "kinds": {
-        "drawing": "drawings",
-        "illustration": "illustrations",
-        "non_photographic_ai": "AI pictures that don’t look like photos"
+        "drawing": "drawings and drawn characters",
+        "illustration": "illustrations and vectors",
+        "photo_of_places_and_things": "photos of places and things",
+        "non_photographic_ai": "AI pictures that don’t look like a real person"
       }
     }
   },

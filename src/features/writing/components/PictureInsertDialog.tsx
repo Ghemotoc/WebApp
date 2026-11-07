@@ -4,7 +4,7 @@
  *
  * What it does: a native <dialog> (focus stays inside, Escape closes) with the picture file
  * (JPEG, PNG or WebP up to 5 MB), its alt text (required, 300 characters) and the line on which
- * pictures are allowed (drawings and illustrations only; there is no rights tick box since bundle
+ * pictures are allowed (any picture but a real person, with an "i" tooltip; PICTURES-1; there is no rights tick box since bundle
  * ADMIN-2, part e1). "Add the picture" refuses until both fields are there, then
  * uploads it (metadata removed and resized first, its picture check straight after) and puts it
  * in the chapter where the cursor was. A refusal says why in plain words and keeps what was
@@ -131,7 +131,7 @@ function PictureFields({ form, missing, isUploading, onChange }: PictureFieldsPr
         hint={t('pictureDialog.altHint')}
         errorMessage={missing?.alt === true ? t('pictureDialog.missingAlt') : undefined}
       />
-      <PictureRulesNote />
+      <PictureRulesNote id="chapter-picture-rules" />
       <p className="m-0 text-sm text-body">{t('pictureDialog.checkNote')}</p>
     </>
   );
