@@ -22,7 +22,30 @@ interface WaitlistPeopleTableProps {
 }
 
 /**
- * One person's row.
+ * The words one row shows: the name, the country, the date they joined and the email's state.
+ *
+ * @param person - one person waiting
+ * @returns the texts, already in the interface language
+ */
+function usePersonTexts(person: WaitingPerson) {
+  const { t, i18n } = useTranslation('staff');
+  return {
+    // A pen name when there is one, else the username; the username line shows only beside a pen
+    // name, so it is never said twice.
+    name: person.display_name ?? person.handle ?? t('waitlist.noName'),
+    country: countryName(person.country, i18n.language, t),
+    joined: new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium' }).format(
+      new Date(person.joined_at),
+    ),
+    email: person.email_confirmed
+      ? t('waitlist.table.confirmed')
+      : t('waitlist.table.notConfirmed'),
+  };
+}
+
+/**
+ * One person's row. On a phone the country, date and email state sit under the name instead of in
+ * their own columns, so nothing is cut off at 390 px (CLAUDE.md rule 21).
  *
  * @returns the row
  */
@@ -35,11 +58,9 @@ function PersonRow({
   isTicked: boolean;
   onToggle: () => void;
 }) {
-  const { t, i18n } = useTranslation('staff');
-  const name = person.display_name ?? person.handle ?? t('waitlist.noName');
-  const joined = new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium' }).format(
-    new Date(person.joined_at),
-  );
+  const { t } = useTranslation('staff');
+  const texts = usePersonTexts(person);
+  const wideCell = 'hidden py-2.5 pr-4 text-body md:table-cell';
   return (
     <tr className="border-b border-hairline">
       <td className="py-2.5 pr-3">
@@ -47,22 +68,23 @@ function PersonRow({
           type="checkbox"
           checked={isTicked}
           onChange={onToggle}
-          aria-label={t('waitlist.table.tick', { name })}
+          aria-label={t('waitlist.table.tick', { name: texts.name })}
           className="size-6 cursor-pointer accent-(--link)"
         />
       </td>
       <th scope="row" className="py-2.5 pr-4 text-left font-semibold text-ink">
-        {name}
-        {person.handle !== null && (
-          <span className="block text-sm text-meta">@{person.handle}</span>
+        {texts.name}
+        {person.display_name !== null && person.handle !== null && (
+          <span className="block text-sm font-normal text-meta">@{person.handle}</span>
         )}
+        <span className="block text-sm font-normal text-meta md:hidden">
+          {texts.country} · {texts.joined} · {texts.email}
+        </span>
       </th>
       <td className="py-2.5 pr-4 text-body">{t(`waitlist.interest.${person.interest}`)}</td>
-      <td className="py-2.5 pr-4 text-body">{countryName(person.country, i18n.language, t)}</td>
-      <td className="py-2.5 pr-4 text-body">{joined}</td>
-      <td className="py-2.5 text-body">
-        {person.email_confirmed ? t('waitlist.table.confirmed') : t('waitlist.table.notConfirmed')}
-      </td>
+      <td className={wideCell}>{texts.country}</td>
+      <td className={wideCell}>{texts.joined}</td>
+      <td className="hidden py-2.5 text-body md:table-cell">{texts.email}</td>
     </tr>
   );
 }
@@ -90,13 +112,13 @@ export function WaitlistPeopleTable({ people, ticked, onToggle }: WaitlistPeople
             <th scope="col" className="py-2 pr-4">
               {t('waitlist.table.interest')}
             </th>
-            <th scope="col" className="py-2 pr-4">
+            <th scope="col" className="hidden py-2 pr-4 md:table-cell">
               {t('waitlist.table.country')}
             </th>
-            <th scope="col" className="py-2 pr-4">
+            <th scope="col" className="hidden py-2 pr-4 md:table-cell">
               {t('waitlist.table.joined')}
             </th>
-            <th scope="col" className="py-2">
+            <th scope="col" className="hidden py-2 md:table-cell">
               {t('waitlist.table.email')}
             </th>
           </tr>
