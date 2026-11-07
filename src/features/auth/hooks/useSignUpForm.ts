@@ -133,8 +133,9 @@ async function handleOutcomeBeforeSending(
 }
 
 /**
- * The form rules, plus the waiting list's question while the list is on (WAITLIST-1): "write,
- * read or both" must be answered, so staff can let writers in first.
+ * The form rules, plus the waiting list's question for someone who joins the list (WAITLIST-1):
+ * "write, read or both" must be answered, so staff can let writers in first. Someone with an
+ * invite code skips the queue, so they aren't asked.
  *
  * @param draft - the form's answers
  * @param context - the age rules and the waiting list's switch
@@ -142,7 +143,7 @@ async function handleOutcomeBeforeSending(
  */
 function problemsWithWaitlist(draft: SignUpDraft, context: SignUpContext): SignUpProblems {
   const problems = findSignUpProblems(draft, context.ageRules);
-  if (context.isWaitlistOn && draft.waitlistInterest === '') {
+  if (waitlistStateOf(context).joinsWaitlist && draft.waitlistInterest === '') {
     problems.waitlistInterest = 'signUp.errors.waitlistInterestMissing';
   }
   return problems;
@@ -218,8 +219,8 @@ async function sendSocialSignUp(
  * (WAITLIST-1). Someone with an invite code skips the queue, so they never join it.
  *
  * @param context - the loaded context, or null while it loads
- * @returns isWaitlistOn (the form shows "write, read or both") and joinsWaitlist (the
- *   confirmation step says "You're on the list")
+ * @returns isWaitlistOn (the list is on) and joinsWaitlist (no code: the form asks "write, read
+ *   or both" and the confirmation step says "You're on the list")
  */
 function waitlistStateOf(context: SignUpContext | null) {
   const isWaitlistOn = context?.isWaitlistOn ?? false;

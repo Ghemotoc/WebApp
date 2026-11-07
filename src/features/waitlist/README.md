@@ -1,0 +1,10 @@
+# Waitlist
+
+The waiting list (bundle WAITLIST-1, story S1-E2-24; Robert, 6 Nov 2026, 17:27 UTC). While the `waitlist` flag is on, someone who signs up without an invite code joins the list instead of the app: the same sign-up form asks "write, read or both" and a separate news opt-in (`src/features/auth/components/WaitlistFields.tsx`), the confirmation email says "You're on the list" (`server/send-email.ts`), and once confirmed they see the holding page until staff let them in. An invite code still skips the queue.
+
+- `components/WaitlistGate.tsx`: inside `AppLayout`, shows `WaitlistHoldingPage` instead of the page while the person waits; sign-in, legal, help, Contact us, support and Settings stay open.
+- `components/WaitlistHoldingPage.tsx`: "You're on the list", their answer (`WaitlistInterestPicker`), the avatar builder and favourite genres (the Settings sections, reused), a link to Settings and Log out.
+- `components/FoundingMemberPill.tsx`: the founding member badge on a writer's profile (`profiles.founding_member_since`, set for everyone who joins while the list is on, invited or not).
+- `hooks/useMyWaitlist.ts`, `api/waitlist.ts`: `my_waitlist()` and `set_my_waitlist_interest()`, plus the staff calls used by Staff › Waitlist (`admin_waitlist()`, `admin_admit_from_waitlist()`, `admin_admit_waitlist_wave()`).
+- Staff › Waitlist itself lives with the admin site: `src/features/staff/components/waitlist/` and `src/features/staff/hooks/useStaffWaitlist.ts`.
+- The database side: `supabase/migrations/…_waitlist1_02_waitlist.sql` (`waitlist_entries`, `account_state()` 'waitlisted', the "You're in" notice and email). Tests: `supabase/tests/database/310-waitlist.test.sql`, `api/waitlist.test.ts`, `e2e/waitlist-1.spec.ts`.

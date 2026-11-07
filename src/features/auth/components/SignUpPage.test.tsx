@@ -415,5 +415,8 @@ describe('SignUpPage with the waiting list (WAITLIST-1)', () => {
     openSignUp('/join/GOOD');
     expect(screen.getByRole('heading', { name: 'Create your account' })).toBeInTheDocument();
     expect(screen.getByText(/Invitation accepted/)).toBeInTheDocument();
+    expect(
+      screen.queryByRole('radiogroup', { name: 'What do you want to do here?' }),
+    ).not.toBeInTheDocument();
   });
 });

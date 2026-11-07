@@ -6,7 +6,8 @@
  *    in first (Staff › Waitlist). Drawn as ChoiceChips (a radio group).
  * 2. "Send me occasional news": a separate opt-in, never ticked for the person (consent; Law
  *    506/2004). The database keeps it only for someone 18 or over (Q50), so the label says so.
- * Who shows it: SignUpForm, only while the 'waitlist' flag is on.
+ * Who shows it: SignUpForm, only while the 'waitlist' flag is on and the person has no invite
+ * code (an invite skips the queue, so its question isn't needed).
  * What it calls: nothing; the answers go with the sign-up (api/signUp.ts, waitlistData()).
  */
 import { useTranslation } from 'react-i18next';

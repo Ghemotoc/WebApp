@@ -179,6 +179,7 @@ Every section, in the order it was built (QA-5, finding R4). Search this list fo
 - [Joining spaces: a welcome note and a note with a request (IDEAS-3d)](#joining-spaces-a-welcome-note-and-a-note-with-a-request-ideas-3d)
 - [Help threads with an answer, and threads from a chapter passage (IDEAS-3f)](#help-threads-with-an-answer-and-threads-from-a-chapter-passage-ideas-3f)
 - [Handing a space over to a moderator (IDEAS-3e)](#handing-a-space-over-to-a-moderator-ideas-3e)
+- [The waiting list (WAITLIST-1)](#the-waiting-list-waitlist-1)
 
 </details>
 
@@ -297,7 +298,7 @@ Five tables exist, each with row-level security and only read policies; every wr
 | --- | --- | --- |
 | `profiles` | one row per account: the user ID, year of birth (and month when needed), the age check result, and the interface language (`locale`, S1-E1-04; changed only through `set_my_locale()`) | the account's owner only |
 | `staff_roles` | which staff role each team member holds | the person themselves; owner and admin see all |
-| `feature_flags`, `settings` | switches and values (`invite_only`, `adults_only` on for March) | anyone, for rows marked public; owner and admin see all |
+| `feature_flags`, `settings` | switches and values (`invite_only`, `adults_only` on for March; `waitlist` on since WAITLIST-1, so sign-ups without a code join the waiting list) | anyone, for rows marked public; owner and admin see all |
 | `audit_log` | every staff action, written only by `log_staff_action()`; nobody can change or delete a row | owner and admin |
 | `country_age_rules` | the ages that apply in each country, and in each region with its own law (MARKETS-1): age to join, age below which a parent must agree, age below which sign-up is blocked, source, date checked, confidence, status, notes; changed only by `admin_save_age_rule()` | everyone reads; owner and admin change |
 | `call_log` | every call the app made to the back end (LOGS-1): kind, name, outcome, status, error code, duration, route pattern, app version and the user ID (empty for visitors); written only by `log_calls()`, kept 30 days | owner and admin |
@@ -2538,3 +2539,12 @@ The account gate is the one place minors are held back: while `adults_only` is o
 - The moderator sees `SpaceHandoverOffer` at the top of the space (`space_viewer_json()` → `handover`, shown only to the owner and the moderator it is for) and accepts or declines → `answer_space_handover()`. Accepting makes them the owner and the old owner a moderator with every power; the log says who handed over to whom.
 - The owner column: `spaces.user_id` is guarded by `refuse_space_owner_change()` instead of `refuse_user_id_change()`. It refuses every change except the one `answer_space_handover()` makes, which sets a transaction-local flag naming the space, and only to the person the offer was for (Robert, 4 Nov 2026; architecture 1.6).
 - Migrations `…_ideas3_e_enums.sql` and `…_ideas3_e_space_handover.sql`. Tests: `supabase/tests/database/289-space-handover.test.sql`, `src/features/notifications/lib/notificationText.test.ts`, `e2e/space-handover.spec.ts`.
+
+## The waiting list (WAITLIST-1)
+
+- Sign-up: while the `waitlist` flag is on, `SignUpPage` passes `isWaitlistOn` to `useSignUpForm`, and `SignUpForm` shows `WaitlistFields` ("write, read or both" and the separate news opt-in). `api/signUp.ts` (`waitlistData()`) sends `waitlist_interest`, `news_emails` and `joins_waitlist` with the sign-up. In the database, `create_profile_from_sign_up()` step 5 calls `join_waitlist_at_sign_up()`: an invite code is used up and the entry starts admitted; without one the entry waits. Everyone who joins while the list is on gets `profiles.founding_member_since` (the founding member badge, `FoundingMemberPill`). News emails are kept only for someone 18 or over (`marketing_email_opt_in`, Q50).
+- The emails: `server/send-email.ts` (`authEmailKindOf()`) words the confirmation email "You're on the list" when `joins_waitlist` is true. Letting someone in writes a `waitlist_admitted` notification that can't be switched off; `server/notification-emails.ts` sends "You're in" with a link to sign in, never a code.
+- Waiting: `account_state()` returns 'waitlisted' (after the staff check, so a staff account never waits), so `is_active_member()` is false and every write policy refuses. In the app, `WaitlistGate` (inside `AppLayout`) → `useMyWaitlist()` → `my_waitlist()` shows `WaitlistHoldingPage` instead of the page: the answer (`set_my_waitlist_interest()`), the avatar builder (`may_change_own_avatar()` allows 'waitlisted') and favourite genres. Sign-in, legal, help, Contact us, support and Settings stay open.
+- Staff › Waitlist (`/staff/waitlist`, owner and admin, People group): `StaffWaitlistPage` → `useStaffWaitlist()` → `admin_waitlist()` (counts, countries, one page of people; never the user ID or the email). Tick people → `admin_admit_from_waitlist()`; a wave → `admin_admit_waitlist_wave()` (confirmed emails only, oldest first, by answer and country). Both go through `admit_waitlist_entry()`, which sets `admitted_at`, writes the notice and the audit log (`waitlist.admitted`). The dashboard tile counts the people waiting (`staff_dashboard()` step 9).
+- Retention: an entry is deleted with the account; an account whose email is never confirmed is removed by `purge_unconfirmed_accounts()` after 7 days (`docs/retention.md`).
+- Migrations `…_waitlist1_01_kinds.sql` and `…_waitlist1_02_waitlist.sql`. Tests: `supabase/tests/database/310-waitlist.test.sql`, `src/features/waitlist/api/waitlist.test.ts`, `src/features/auth/api/signUp.test.ts`, `e2e/waitlist-1.spec.ts`.

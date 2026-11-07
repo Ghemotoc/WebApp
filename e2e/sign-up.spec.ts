@@ -3,7 +3,8 @@
  *
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase with Mailpit started first).
  * What it proves:
- * - without an invite code, sign-up explains the test is by invitation and stores nothing;
+ * - with the waiting list off, sign-up without an invite code explains the test is by invitation
+ *   and stores nothing (with it on, e2e/waitlist-1.spec.ts);
  * - with the seeded invite link, an adult signs up, gets the confirmation email (Mailpit), opens
  *   it and is confirmed; the profile, the consents and the invite place are in the database; then
  *   the username chosen on the form (S1-E2-04) is saved with it, so it is active at once;
@@ -69,15 +70,24 @@ async function openInEnglish(page: Page, path: string) {
   await page.goto(path);
 }
 
-test('without an invite code, sign-up explains the test is by invitation', async ({ page }) => {
-  await openInEnglish(page, '/');
-  await page.getByRole('link', { name: 'Join for free' }).click();
-  await expect(page.getByRole('heading', { name: 'The test is by invitation' })).toBeVisible();
-  await expect(page.getByRole('form', { name: 'Join with email' })).toHaveCount(0);
+test('with the waiting list off, sign-up without a code explains it is by invitation', async ({
+  page,
+}) => {
+  // The waiting list is on from its migration (WAITLIST-1; e2e/waitlist-1.spec.ts), so the old gate is
+  // checked with it off.
+  runSql(`update public.feature_flags set is_enabled = false where key = 'waitlist';`);
+  try {
+    await openInEnglish(page, '/');
+    await page.getByRole('link', { name: 'Join for free' }).click();
+    await expect(page.getByRole('heading', { name: 'The test is by invitation' })).toBeVisible();
+    await expect(page.getByRole('form', { name: 'Join with email' })).toHaveCount(0);
 
-  await page.getByLabel('Invitation code').fill('not-a-real-code');
-  await page.getByRole('button', { name: 'Continue' }).click();
-  await expect(page.getByText(/We don’t recognise this invitation code/)).toBeVisible();
+    await page.getByLabel('Invitation code').fill('not-a-real-code');
+    await page.getByRole('button', { name: 'Continue' }).click();
+    await expect(page.getByText(/We don’t recognise this invitation code/)).toBeVisible();
+  } finally {
+    runSql(`update public.feature_flags set is_enabled = true where key = 'waitlist';`);
+  }
 });
 
 test('an ended invitation says so', async ({ page }) => {

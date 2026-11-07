@@ -353,6 +353,8 @@ Full IDs are `00000000-0000-4000-8000-0000000000NN`. Tests sign a persona in by 
 
 Supabase Auth inserts a row into `auth.users`; the trigger `handle_new_auth_user()` then, in the same transaction, checks the year of birth and, only when the year leaves the age unclear at 13 or 16, the month (S1-E2-02: under 13 refused; under 18 refused while `adults_only` is on), creates the `profiles` row (its `id` is the user ID), takes a place on the invite (while `invite_only` is on; after the profile since S1-E11-17, so the audit row can name the account) and records the accepted terms and privacy notice in `consents`. Any refusal undoes the whole sign-up, so nothing is kept. Seed personas carry `"seed_persona": true` in their app metadata and make their own profiles.
 
+**The waiting list (WAITLIST-1, S1-E2-24).** While the `waitlist` flag is on, step 5 of `create_profile_from_sign_up()` calls `join_waitlist_at_sign_up()` instead of taking a place on an invite: with a code the invite is used and the `waitlist_entries` row starts admitted; without one the row waits, and `account_state()` says 'waitlisted' (staff never wait) until `admin_admit_from_waitlist()` or `admin_admit_waitlist_wave()` lets the person in. Tests: `tests/database/310-waitlist.test.sql`; tests that sign up without a code with the old "by invitation only" rule turn the flag off first (023, 203).
+
 **Test invite codes** (seeded by `seed.sql`, local and staging only, never production):
 
 | Code | State |

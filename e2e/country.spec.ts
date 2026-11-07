@@ -47,7 +47,7 @@ async function fillSignUp(page: Page, address: string, birthYear: string) {
   await page.getByLabel('Password', { exact: true }).fill('a long and private passphrase');
   await page.getByLabel('Confirm password').fill('a long and private passphrase');
   await page.getByRole('combobox', { name: 'Year of birth' }).selectOption(birthYear);
-  await page.getByRole('checkbox').check();
+  await page.getByRole('checkbox', { name: /I agree to the/ }).check();
 }
 
 /** Removes a test account and gives its invite place back. */
