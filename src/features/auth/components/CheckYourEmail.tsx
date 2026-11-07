@@ -5,6 +5,8 @@
  * It says where the link went and that, until it is opened, the account can read but not publish,
  * comment, post or message (is_active_member() is false while the email is unconfirmed). "Send the
  * link again" asks Supabase to resend it.
+ * On the waiting list (WAITLIST-1) the heading says "You're on the list" and a line says what
+ * happens next: confirm the email, then wait for the "You're in" email.
  * Who uses it: SignUpPage, in place of the form.
  */
 import { useState } from 'react';
@@ -21,6 +23,20 @@ interface CheckYourEmailProps {
   isLinkSignUp: boolean;
   /** Sends the link again; rejects when that fails. */
   onResend: () => Promise<void>;
+  /** True when the person joined the waiting list (WAITLIST-1): "You're on the list". */
+  joinsWaitlist?: boolean;
+}
+
+/**
+ * The first line: where the link went and what it does, for the way the person signed up.
+ *
+ * @param isLinkSignUp - an emailed log-in link instead of a password
+ * @param joinsWaitlist - the person joined the waiting list
+ * @returns the locale key
+ */
+function bodyKey(isLinkSignUp: boolean, joinsWaitlist: boolean): string {
+  if (joinsWaitlist) return 'signUp.sent.waitlistBody';
+  return isLinkSignUp ? 'signUp.sent.bodyLink' : 'signUp.sent.body';
 }
 
 /**
@@ -28,7 +44,12 @@ interface CheckYourEmailProps {
  *
  * @returns a status message with the resend button
  */
-export function CheckYourEmail({ email, isLinkSignUp, onResend }: CheckYourEmailProps) {
+export function CheckYourEmail({
+  email,
+  isLinkSignUp,
+  onResend,
+  joinsWaitlist = false,
+}: CheckYourEmailProps) {
   const { t } = useTranslation('auth');
   const [resendState, setResendState] = useState<'idle' | 'sending' | 'sent' | 'failed'>('idle');
 
@@ -54,7 +75,7 @@ export function CheckYourEmail({ email, isLinkSignUp, onResend }: CheckYourEmail
           <img src={mailIcon} alt="" width={38} height={38} className="block size-[38px]" />
         </span>
         <h3 className="m-0 min-w-0 font-heading text-[22px] font-bold text-heading">
-          {t('signUp.sent.heading')}
+          {t(joinsWaitlist ? 'signUp.sent.waitlistHeading' : 'signUp.sent.heading')}
         </h3>
         <Doodle
           name="smiling-heart"
@@ -64,9 +85,9 @@ export function CheckYourEmail({ email, isLinkSignUp, onResend }: CheckYourEmail
           className="ml-auto w-14 shrink-0 rotate-6"
         />
       </div>
-      <p className="m-0 text-body">
-        {t(isLinkSignUp ? 'signUp.sent.bodyLink' : 'signUp.sent.body', { email })}
-      </p>
+      <p className="m-0 text-body">{t(bodyKey(isLinkSignUp, joinsWaitlist), { email })}</p>
+      {/* On the list: confirming the email keeps the place; staff let people in (WAITLIST-1). */}
+      {joinsWaitlist && <p className="m-0 text-body">{t('signUp.sent.waitlistNext')}</p>}
       <p className="m-0 text-sm text-meta">{t('signUp.sent.spam')}</p>
       <Button
         variant="secondary"

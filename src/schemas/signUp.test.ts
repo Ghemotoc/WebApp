@@ -17,6 +17,9 @@ const goodAnswers = {
   country: 'RO',
   legalRegion: '',
   acceptsTerms: true,
+  // The waiting list's question is '' until asked (WAITLIST-1); news emails are a separate opt-in.
+  waitlistInterest: '',
+  newsEmails: false,
 };
 
 describe('the sign-up rules', () => {

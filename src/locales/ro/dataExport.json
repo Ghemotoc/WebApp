@@ -247,6 +247,7 @@
       "forum_read_marks": "Forumurile pe care le-ai marcat ca citite.",
       "forum_thread_reads": "Cât ai citit din fiecare discuție din forum.",
       "forum_threads": "Discuțiile din forum începute de tine.",
+      "held_about_you": "Ce păstrăm despre tine: sancțiunile contului, ce au ascuns sau eliminat moderatorii din ce ai scris, schimbările făcute de echipă la poveștile tale și motivele, restricțiile, notele despre texte copiate, cererile tale privind datele, adresa amestecată de la înscriere și, dacă lucrezi la noi, rolurile tale în echipă. Numele membrilor echipei și notele interne nu sunt incluse.",
       "invites": "Invitațiile create sau folosite de tine.",
       "landing_page_reminders": "Mementourile cerute pe paginile de concurs și campanie.",
       "library_entries": "Rafturile din biblioteca ta, așa cum sunt salvate în aplicație.",
@@ -285,7 +286,7 @@
       "story_tags": "Etichetele poveștilor tale.",
       "support_tickets": "Mesajele tale către asistență și răspunsurile noastre.",
       "teacher_checks": "Cererea ta pentru insigna de profesor.",
-      "held_about_you": "Ce păstrăm despre tine: sancțiunile contului, ce au ascuns sau eliminat moderatorii din ce ai scris, schimbările făcute de echipă la poveștile tale și motivele, restricțiile, notele despre texte copiate, cererile tale privind datele, adresa amestecată de la înscriere și, dacă lucrezi la noi, rolurile tale în echipă. Numele membrilor echipei și notele interne nu sunt incluse."
+      "waitlist_entries": "Locul tău pe lista de așteptare: când te-ai înscris, ce ai spus că vrei să faci (să scrii, să citești sau amândouă) și când ai fost primit."
     },
     "empty": "(gol)",
     "help": "Ai întrebări? Scrie-ne la {{contactEmail}}."

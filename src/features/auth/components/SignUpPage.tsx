@@ -7,6 +7,8 @@
  * column on a phone, with the card after the hero.
  * What the card shows, in order of priority:
  * 1. while invite_only is on (the March test) and there is no working invitation: InviteGate;
+ *    while the waiting list is on (WAITLIST-1), no code is needed: the heading says "Join the
+ *    waiting list" and the form asks "write, read or both";
  * 2. once the link has been sent: CheckYourEmail;
  * 3. otherwise: the steps, the heading and SignUpForm.
  * What it reads: the public flags (useFeatureFlags), the invite (useInviteCheck), the current terms
@@ -46,6 +48,7 @@ import { SignUpSteps } from './SignUpSteps';
 function useSignUpContext(
   inviteCode: string | null,
   market: SignUpMarket,
+  isWaitlistOn: boolean,
 ): {
   context: SignUpContext | null;
   legalFailed: boolean;
@@ -70,6 +73,7 @@ function useSignUpContext(
       signupIpToken: market.ipToken,
       country: market.country,
       ageRules: ageRules.data ?? [],
+      isWaitlistOn,
     },
     legalFailed: false,
   };
@@ -78,18 +82,20 @@ function useSignUpContext(
 /**
  * Says why the invite gate shows, or null when the form can show.
  *
- * @param isInviteOnly - the invite_only flag
+ * While the waiting list is on (WAITLIST-1) a code is optional: without one the form shows and
+ * the person joins the list; a code in the address is still checked, so a broken one can be fixed.
+ *
+ * @param needsCode - whether a code is needed: invite_only on and the waiting list off
  * @param inviteCode - the code from the address
  * @param invite - the invite check's result
  * @returns the gate's reason, or null
  */
 function inviteGateReason(
-  isInviteOnly: boolean,
+  needsCode: boolean,
   inviteCode: string | null,
   invite: ReturnType<typeof useInviteCheck>,
 ): InviteGateReason | 'checking' | null {
-  if (!isInviteOnly) return null;
-  if (inviteCode === null) return 'no_code';
+  if (inviteCode === null) return needsCode ? 'no_code' : null;
   if (invite.isPending) return 'checking';
   if (invite.isError) return 'unreachable';
   return invite.data === 'valid' ? null : invite.data;
@@ -105,14 +111,17 @@ export function SignUpPage() {
   const { code } = useParams();
   const flags = useFeatureFlags();
   const isInviteOnly = flags.isOn('invite_only', true);
-  const inviteCode = isInviteOnly ? (code ?? null) : null;
+  // The waiting list (WAITLIST-1): while on, a code skips the queue and nobody needs one.
+  const isWaitlistOn = flags.isOn('waitlist', false);
+  const inviteCode = isInviteOnly || isWaitlistOn ? (code ?? null) : null;
   const invite = useInviteCheck(inviteCode);
   const isAdultsOnly = flags.isOn('adults_only', true);
   // The country of the connection (S1-E2-10): any country may join the invited test (Q6).
   const market = useSignUpMarket(isInviteOnly && isAdultsOnly);
-  const { context, legalFailed } = useSignUpContext(inviteCode, market);
+  const { context, legalFailed } = useSignUpContext(inviteCode, market, isWaitlistOn);
   const form = useSignUpForm(context, isAdultsOnly);
-  const gateReason = inviteGateReason(isInviteOnly, inviteCode, invite);
+  const gateReason = inviteGateReason(isInviteOnly && !isWaitlistOn, inviteCode, invite);
+  const joinsWaitlist = isWaitlistOn && inviteCode === null;
   // Once sign-up is public, a closed or unknown country sees the "not open yet" page instead.
   if (market.isClosed) return <Navigate to="/not-open" replace />;
 
@@ -132,9 +141,11 @@ export function SignUpPage() {
               id="sign-up-heading"
               className="m-0 font-heading text-[30px] font-bold text-heading"
             >
-              {t('signUp.heading')}
+              {t(joinsWaitlist ? 'signUp.waitlist.heading' : 'signUp.heading')}
             </h2>
-            <p className="m-0 text-body">{t('signUp.subheading')}</p>
+            <p className="m-0 text-body">
+              {t(joinsWaitlist ? 'signUp.waitlist.subheading' : 'signUp.subheading')}
+            </p>
           </div>
           <SignUpCardFlow
             gateReason={gateReason}

@@ -116,6 +116,15 @@ describe('the Send Email hook', () => {
     expect(sent[0]?.text).toContain('Product');
   });
 
+  it('words the sign-up email "You’re on the list" for someone joining the waiting list (WAITLIST-1)', async () => {
+    const payload = payloadFor('signup', 'en');
+    payload.user.user_metadata = { locale: 'en', joins_waitlist: true };
+    const { sent } = await run(payload);
+    expect(sent[0]?.subject).toBe('You’re on the list: confirm your email');
+    expect(sent[0]?.text).toContain('https://example.test/auth/confirm?token_hash=hash&type=email');
+    expect(sent[0]?.text).toContain('keep your place');
+  });
+
   it("uses the admin's published wording over the file text", async () => {
     const overrides = new Map([['email:confirmation.heading', 'Welcome to {{productName}}']]);
     const { sent } = await run(payloadFor('signup', 'en'), overrides);

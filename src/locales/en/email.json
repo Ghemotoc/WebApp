@@ -9,6 +9,13 @@
     "button": "Confirm my email",
     "linkNote": "The link works once and expires after an hour."
   },
+  "waitlistConfirmation": {
+    "subject": "You’re on the list: confirm your email",
+    "heading": "You’re on the waiting list",
+    "body": "Thanks for joining the {{productName}} waiting list. Press the button to confirm your email address and keep your place. When your place comes up, we’ll email you to say you’re in.",
+    "button": "Confirm my email",
+    "linkNote": "The link works once and expires after an hour."
+  },
   "magicLink": {
     "subject": "Your log-in link",
     "heading": "Your log-in link",
@@ -80,7 +87,10 @@
     "newMessageRequest": "{{who}} sent you a message request.",
     "messageIntro": "You have something new in Messages on {{productName}}. We never put the words of a message in an email:",
     "messageOpen": "Open the chat: {{link}}",
-    "messageWhy": "You get these emails because of your choices in Settings, under Messages, where you can also set quiet hours: {{link}}"
+    "messageWhy": "You get these emails because of your choices in Settings, under Messages, where you can also set quiet hours: {{link}}",
+    "waitlistAdmitted": "Your place came up: your {{productName}} account is open. You can now write, read, comment and post.",
+    "subjectWaitlistAdmitted": "You’re in: your {{productName}} account is open",
+    "waitlistSignIn": "Log in to start: {{link}}"
   },
   "parentConsent": {
     "requestSubject": "@{{handle}} asked you to agree to their {{productName}} account",

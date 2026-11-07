@@ -268,6 +268,15 @@ const staffRoutes: RouteObject = {
         return { Component: ManualAgeChecksPage };
       },
     },
+    // The waiting list (WAITLIST-1): owner and admin let people in.
+    {
+      path: 'waitlist',
+      lazy: async () => {
+        const { StaffWaitlistPage } =
+          await import('@/features/staff/components/waitlist/StaffWaitlistPage');
+        return { Component: StaffWaitlistPage };
+      },
+    },
     {
       path: 'users/invites',
       lazy: async () => {

@@ -247,6 +247,7 @@
       "forum_read_marks": "Where you marked forums as read.",
       "forum_thread_reads": "How far you have read in each forum thread.",
       "forum_threads": "The forum threads you started.",
+      "held_about_you": "What we hold about you: sanctions on your account, what moderators hid or removed of yours, staff changes to your stories and the reasons, restrictions, copied-work notes, your data requests, the scrambled address from sign-up and, if you work for us, your staff roles. Staff names and internal notes are left out.",
       "invites": "Invitations you made or used.",
       "landing_page_reminders": "Reminders you asked for on contest and campaign pages.",
       "library_entries": "Your library shelves, as saved in the app.",
@@ -285,7 +286,7 @@
       "story_tags": "The tags on your stories.",
       "support_tickets": "Your messages to support and our answers.",
       "teacher_checks": "Your request for the Teacher badge.",
-      "held_about_you": "What we hold about you: sanctions on your account, what moderators hid or removed of yours, staff changes to your stories and the reasons, restrictions, copied-work notes, your data requests, the scrambled address from sign-up and, if you work for us, your staff roles. Staff names and internal notes are left out."
+      "waitlist_entries": "Your place on the waiting list: when you joined, what you said you came for (write, read or both) and when you were let in."
     },
     "empty": "(empty)",
     "help": "Questions? Write to {{contactEmail}}."

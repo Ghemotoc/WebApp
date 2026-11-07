@@ -38,6 +38,16 @@ describe('the staff side menu groups', () => {
     ]);
   });
 
+  it('puts Waitlist in People, right after Users (WAITLIST-1)', () => {
+    const groups = groupStaffPages(pagesForAreas(['users', 'waitlist', 'support_tickets']));
+    expect(groups[0]?.group).toBe('people');
+    expect(groups[0]?.pages.map((page) => page.href)).toEqual([
+      '/staff/users',
+      '/staff/waitlist',
+      '/staff/support',
+    ]);
+  });
+
   it('shows no group to a role with no area', () => {
     expect(groupStaffPages(pagesForAreas([]))).toEqual([]);
   });

@@ -9,6 +9,13 @@
     "button": "Confirm adresa de email",
     "linkNote": "Linkul merge o singură dată și expiră după o oră."
   },
+  "waitlistConfirmation": {
+    "subject": "Ești pe listă: confirmă-ți emailul",
+    "heading": "Ești pe lista de așteptare",
+    "body": "Mulțumim că te-ai înscris pe lista de așteptare pentru {{productName}}. Apasă butonul ca să-ți confirmi adresa de email și să-ți păstrezi locul. Când îți vine rândul, îți scriem pe email că ai intrat.",
+    "button": "Confirm adresa de email",
+    "linkNote": "Linkul merge o singură dată și expiră după o oră."
+  },
   "magicLink": {
     "subject": "Linkul tău de conectare",
     "heading": "Linkul tău de conectare",
@@ -80,7 +87,10 @@
     "newMessageRequest": "{{who}} ți-a trimis o cerere de mesaj.",
     "messageIntro": "Ai ceva nou la Mesaje pe {{productName}}. Nu punem niciodată cuvintele unui mesaj într-un email:",
     "messageOpen": "Deschide conversația: {{link}}",
-    "messageWhy": "Primești aceste emailuri pentru că așa ai ales în Setări, la Mesaje, unde poți seta și orele de liniște: {{link}}"
+    "messageWhy": "Primești aceste emailuri pentru că așa ai ales în Setări, la Mesaje, unde poți seta și orele de liniște: {{link}}",
+    "waitlistAdmitted": "Ți-a venit rândul: contul tău {{productName}} e deschis. Acum poți scrie, citi, comenta și posta.",
+    "subjectWaitlistAdmitted": "Ai intrat: contul tău {{productName}} e deschis",
+    "waitlistSignIn": "Conectează-te ca să începi: {{link}}"
   },
   "parentConsent": {
     "requestSubject": "@{{handle}} te roagă să fii de acord cu contul său {{productName}}",

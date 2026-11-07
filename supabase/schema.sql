@@ -35,7 +35,8 @@ CREATE TYPE "public"."account_status" AS ENUM (
     'staff_account',
     'legal_acceptance_required',
     'suspended',
-    'banned'
+    'banned',
+    'waitlisted'
 );
 
 
@@ -721,7 +722,8 @@ CREATE TYPE "public"."notification_kind" AS ENUM (
     'space_handover_offered',
     'story_featured',
     'spotlight_consent_agreed',
-    'spotlight_consent_withdrawn'
+    'spotlight_consent_withdrawn',
+    'waitlist_admitted'
 );
 
 
@@ -1291,6 +1293,20 @@ COMMENT ON TYPE "public"."tag_status" IS 'Where a tag is: waiting for staff, app
 
 
 
+CREATE TYPE "public"."waitlist_interest" AS ENUM (
+    'write',
+    'read',
+    'both'
+);
+
+
+ALTER TYPE "public"."waitlist_interest" OWNER TO "postgres";
+
+
+COMMENT ON TYPE "public"."waitlist_interest" IS 'What a person on the waiting list comes for: write, read or both (WAITLIST-1, S1-E2-24).';
+
+
+
 CREATE TYPE "public"."writer_rank" AS ENUM (
     'new_writer',
     'writer',
@@ -1455,6 +1471,7 @@ CREATE OR REPLACE FUNCTION "public"."account_deletion_rules"() RETURNS TABLE("ta
     ('story_tags', 'own_step', 0, 'deleted with their story, unless the story is kept for a case'),
     ('teacher_checks', 'delete', 1, null),
     ('username_approvals', 'delete', 1, null),
+    ('waitlist_entries', 'delete', 1, null),
     ('writer_ranks', 'delete', 1, null);
 $$;
 
@@ -1575,6 +1592,11 @@ begin
   -- Step 4: a staff account never writes as a member; a writer account stays separate (Q14a).
   if exists (select 1 from public.staff_roles where staff_roles.user_id = target_user_id) then
     return 'staff_account';
+  end if;
+
+  -- Step 4b: still waiting for a place (WAITLIST-1).
+  if public.is_on_waitlist(target_user_id) then
+    return 'waitlisted';
   end if;
 
   -- Step 5: the age rules (S1-E2-02, S1-E2-08), the age check before a parent is asked.
@@ -2735,6 +2757,83 @@ ALTER FUNCTION "public"."admin_add_reserved_name"("new_name" "text", "how_it_mat
 
 
 COMMENT ON FUNCTION "public"."admin_add_reserved_name"("new_name" "text", "how_it_matches" "text") IS 'Reserves a username or pen name; owner and admin only; logged (S1-E11-03, S1-E2-04).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_admit_from_waitlist"("entry_ids" "uuid"[]) RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  wanted uuid;
+  admitted integer := 0;
+begin
+  -- Step 1: owner and admin only, in a staff session.
+  if not public.staff_may('waitlist', 'act') then
+    raise exception 'Only an owner or admin can let people in.' using errcode = 'insufficient_privilege';
+  end if;
+  if coalesce(cardinality(entry_ids), 0) not between 1 and 100 then
+    raise exception 'Tick 1 to 100 people.' using errcode = 'check_violation', hint = 'pick_people';
+  end if;
+  -- Step 2: each person, in the order ticked.
+  foreach wanted in array entry_ids loop
+    if public.admit_waitlist_entry(wanted, 'one_by_one') then
+      admitted := admitted + 1;
+    end if;
+  end loop;
+  return admitted;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_admit_from_waitlist"("entry_ids" "uuid"[]) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_admit_from_waitlist"("entry_ids" "uuid"[]) IS 'Staff › Waitlist: lets the ticked people in and emails each "You''re in"; audited (WAITLIST-1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_admit_waitlist_wave"("wanted_interest" "text", "wanted_country" "text", "how_many" integer) RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  country_filter text := nullif(upper(btrim(coalesce(wanted_country, ''))), '');
+  interest_filter text := nullif(btrim(coalesce(wanted_interest, '')), '');
+  next_entry uuid;
+  admitted integer := 0;
+begin
+  -- Step 1: owner and admin only, in a staff session, with a sensible size.
+  if not public.staff_may('waitlist', 'act') then
+    raise exception 'Only an owner or admin can let people in.' using errcode = 'insufficient_privilege';
+  end if;
+  if coalesce(how_many, 0) not between 1 and 1000 then
+    raise exception 'A wave is 1 to 1,000 people.' using errcode = 'check_violation', hint = 'wave_size';
+  end if;
+  -- Step 2: the oldest confirmed people who fit, each let in and told.
+  for next_entry in
+    select entries.id from public.waitlist_entries as entries
+    join public.profiles on profiles.id = entries.user_id
+    join auth.users on users.id = entries.user_id
+    where entries.admitted_at is null and profiles.deleted_at is null and users.email_confirmed_at is not null
+      and public.waitlist_interest_matches(entries.interest, interest_filter)
+      and (country_filter is null or profiles.country_code = country_filter)
+    order by entries.joined_at, entries.id
+    limit how_many
+  loop
+    if public.admit_waitlist_entry(next_entry, 'wave') then
+      admitted := admitted + 1;
+    end if;
+  end loop;
+  return admitted;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_admit_waitlist_wave"("wanted_interest" "text", "wanted_country" "text", "how_many" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_admit_waitlist_wave"("wanted_interest" "text", "wanted_country" "text", "how_many" integer) IS 'Staff › Waitlist: lets the next confirmed people in, oldest first, by interest and country; audited (WAITLIST-1).';
 
 
 
@@ -11457,6 +11556,64 @@ COMMENT ON FUNCTION "public"."admin_waiting_decision_email_count"() IS 'Staff: h
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_waitlist"("wanted_interest" "text" DEFAULT NULL::"text", "wanted_country" "text" DEFAULT NULL::"text", "page_size" integer DEFAULT 50, "page_offset" integer DEFAULT 0) RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  country_filter text := nullif(upper(btrim(coalesce(wanted_country, ''))), '');
+  interest_filter text := nullif(btrim(coalesce(wanted_interest, '')), '');
+begin
+  -- Step 1: owner and admin only, in a staff session.
+  if not public.staff_may('waitlist', 'view') then
+    raise exception 'Only an owner or admin can see the waiting list.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 2: the counts, the countries, and one page of the people who fit the filters.
+  return jsonb_build_object(
+    'counts', (select jsonb_build_object(
+        'waiting', count(*) filter (where entries.admitted_at is null),
+        'write', count(*) filter (where entries.admitted_at is null and entries.interest = 'write'),
+        'read', count(*) filter (where entries.admitted_at is null and entries.interest = 'read'),
+        'both', count(*) filter (where entries.admitted_at is null and entries.interest = 'both'),
+        'admitted', count(*) filter (where entries.admitted_at is not null))
+      from public.waitlist_entries as entries),
+    'countries', coalesce((select jsonb_agg(jsonb_build_object('country', listed.country, 'waiting', listed.waiting)
+        order by listed.waiting desc, listed.country)
+      from (select coalesce(profiles.country_code, 'ZZ') as country, count(*) as waiting
+            from public.waitlist_entries as entries join public.profiles on profiles.id = entries.user_id
+            where entries.admitted_at is null and profiles.deleted_at is null
+            group by 1) as listed), '[]'::jsonb),
+    'matching', (select count(*) from public.waitlist_entries as entries
+      join public.profiles on profiles.id = entries.user_id
+      where entries.admitted_at is null and profiles.deleted_at is null
+        and public.waitlist_interest_matches(entries.interest, interest_filter)
+        and (country_filter is null or profiles.country_code = country_filter)),
+    'people', coalesce((select jsonb_agg(person.row_json order by person.joined_at, person.entry_id)
+      from (select entries.id as entry_id, entries.joined_at, jsonb_build_object(
+              'entry_id', entries.id, 'handle', profiles.handle,
+              'display_name', public.display_name(profiles.handle, profiles.pen_name),
+              'interest', entries.interest, 'country', profiles.country_code,
+              'joined_at', entries.joined_at, 'email_confirmed', users.email_confirmed_at is not null) as row_json
+            from public.waitlist_entries as entries
+            join public.profiles on profiles.id = entries.user_id
+            join auth.users on users.id = entries.user_id
+            where entries.admitted_at is null and profiles.deleted_at is null
+              and public.waitlist_interest_matches(entries.interest, interest_filter)
+              and (country_filter is null or profiles.country_code = country_filter)
+            order by entries.joined_at, entries.id
+            limit least(greatest(coalesce(page_size, 50), 1), 100)
+            offset greatest(coalesce(page_offset, 0), 0)) as person), '[]'::jsonb));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_waitlist"("wanted_interest" "text", "wanted_country" "text", "page_size" integer, "page_offset" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_waitlist"("wanted_interest" "text", "wanted_country" "text", "page_size" integer, "page_offset" integer) IS 'Staff › Waitlist: the people waiting, by interest and country, with counts; never the user ID or email (WAITLIST-1).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admin_withdraw_parental_consent"("target_user_id" "uuid", "reason_given" "text") RETURNS boolean
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -11533,6 +11690,41 @@ ALTER FUNCTION "public"."admin_withdraw_spotlight_consent"("target_user_id" "uui
 
 
 COMMENT ON FUNCTION "public"."admin_withdraw_spotlight_consent"("target_user_id" "uuid", "reason_given" "text") IS 'Staff with the Users area withdraw a parent''s yes to suggestions, logged (S1-E2-03b).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admit_waitlist_entry"("target_entry_id" "uuid", "how" "text") RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  entry public.waitlist_entries;
+begin
+  -- Step 1: only an entry still waiting, for a live account.
+  update public.waitlist_entries set admitted_at = now()
+  where waitlist_entries.id = target_entry_id and waitlist_entries.admitted_at is null
+    and exists (select 1 from public.profiles
+                where profiles.id = waitlist_entries.user_id and profiles.deleted_at is null)
+  returning * into entry;
+  if entry.id is null then
+    return false;
+  end if;
+  -- Step 2: the "You're in" notice; it can't be switched off, like an account notice.
+  insert into public.notifications (user_id, kind, is_required)
+  values (entry.user_id, 'waitlist_admitted', true);
+  -- Step 3: the audit row names who let the person in (architecture 1.8.1).
+  perform public.log_staff_action('waitlist.admitted', 'waitlist_entries', entry.id::text, entry.user_id,
+    null, jsonb_build_object('admitted_at', null),
+    jsonb_build_object('admitted_at', entry.admitted_at, 'interest', entry.interest, 'how', how));
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admit_waitlist_entry"("target_entry_id" "uuid", "how" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admit_waitlist_entry"("target_entry_id" "uuid", "how" "text") IS 'Internal: lets one waiting person in, sends "You''re in" and writes the audit row (WAITLIST-1).';
 
 
 
@@ -11748,6 +11940,7 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     "legal_region_code" "text" DEFAULT ''::"text" NOT NULL,
     "country_chosen_at" timestamp with time zone,
     "consent_grace_until" timestamp with time zone,
+    "founding_member_since" timestamp with time zone,
     CONSTRAINT "profiles_avatar_recipe_shape" CHECK ("public"."avatar_recipe_valid"("avatar_recipe")),
     CONSTRAINT "profiles_bio_length" CHECK (("char_length"("bio") <= 300)),
     CONSTRAINT "profiles_birth_month_is_a_month" CHECK ((("birth_month" >= 1) AND ("birth_month" <= 12))),
@@ -11909,6 +12102,10 @@ COMMENT ON COLUMN "public"."profiles"."country_chosen_at" IS 'When the person sa
 
 
 COMMENT ON COLUMN "public"."profiles"."consent_grace_until" IS 'Until when a member newly asked for a parent''s consent (the rules changed) keeps writing; 14 days (MARKETS-1, S1-E2-22).';
+
+
+
+COMMENT ON COLUMN "public"."profiles"."founding_member_since" IS 'When a person joined while the waiting list was on: shown publicly only as "Founding member" (WAITLIST-1).';
 
 
 
@@ -17925,10 +18122,12 @@ begin
     chosen_handle
   );
 
-  -- Step 5: the invite, while the test is invite only (S1-E11-17), after the profile so the
-  -- invite's audit row can name the new account. A class link counts too, and joins the class
-  -- (IDEAS-3c).
-  if public.is_feature_enabled('invite_only') then
+  -- Step 5: the waiting list (WAITLIST-1), else the invite while the test is invite only
+  -- (S1-E11-17), after the profile so the invite's audit row can name the new account. A class
+  -- link counts too, and joins the class (IDEAS-3c).
+  if public.is_feature_enabled('waitlist') then
+    perform public.join_waitlist_at_sign_up(new_user_id, sign_up_data);
+  elsif public.is_feature_enabled('invite_only') then
     perform public.use_sign_up_invite(sign_up_data ->> 'invite_code', new_user_id);
   end if;
 
@@ -18237,6 +18436,7 @@ CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_
     ('story_tags', true, null),
     ('teacher_checks', true, null),
     ('username_approvals', false, 'a moderator''s note that a name was refused by mistake; the name itself is in the profile'),
+    ('waitlist_entries', true, null),
     ('writer_ranks', false, 'worked out from the person''s published chapters, which are in the export; the rank itself shows on the profile');
 $$;
 
@@ -19411,7 +19611,7 @@ CREATE OR REPLACE FUNCTION "public"."email_delivery_for"("target_user_id" "uuid"
   select case
     when kind in ('moderation_decision', 'login_method_added', 'login_method_removed', 'class_archived',
                   'data_request_confirm', 'data_request_extended', 'data_request_copy_ready',
-                  'picture_opened_by_staff') then 'required'
+                  'picture_opened_by_staff', 'waitlist_admitted') then 'required'
     else coalesce(
       (select settings.delivery from public.notification_email_settings as settings
        where settings.user_id = target_user_id and settings.kind = email_delivery_for.kind),
@@ -22281,6 +22481,7 @@ begin
     'is_me', is_me,
     'i_blocked', i_blocked,
     'is_teacher', writer.teacher_badge_since is not null,
+    'is_founding_member', writer.founding_member_since is not null,
     'can_message', case when caller_id is null or is_me then null
                         else public.can_message(caller_id, writer.id) end,
     'library_open', not i_blocked and public.library_is_open_to(writer, caller_id),
@@ -23026,6 +23227,22 @@ COMMENT ON FUNCTION "public"."is_moderated_away"("item_type" "public"."reportabl
 
 
 
+CREATE OR REPLACE FUNCTION "public"."is_on_waitlist"("target_user_id" "uuid") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select exists (select 1 from public.waitlist_entries
+                 where waitlist_entries.user_id = target_user_id and waitlist_entries.admitted_at is null);
+$$;
+
+
+ALTER FUNCTION "public"."is_on_waitlist"("target_user_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."is_on_waitlist"("target_user_id" "uuid") IS 'Internal: true while the person''s waiting list entry waits for staff (WAITLIST-1).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."is_personal_email_domain"("domain" "text") RETURNS boolean
     LANGUAGE "sql" IMMUTABLE
     SET "search_path" TO ''
@@ -23422,6 +23639,39 @@ ALTER FUNCTION "public"."join_space"("slug" "text", "note" "text") OWNER TO "pos
 
 
 COMMENT ON FUNCTION "public"."join_space"("slug" "text", "note" "text") IS 'Joins a space, or asks its owner with an optional note, by the age rules (S1-E8-06, IDEA-20261102-9).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."join_waitlist_at_sign_up"("new_user_id" "uuid", "sign_up_data" "jsonb") RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  code text := nullif(btrim(coalesce(sign_up_data ->> 'invite_code', '')), '');
+begin
+  -- Step 1: a code still skips the queue (S1-E11-17, IDEAS-3c).
+  if code is not null then
+    perform public.use_sign_up_invite(code, new_user_id);
+  end if;
+  -- Step 2: the entry, already let in when a code was used.
+  insert into public.waitlist_entries (user_id, interest, admitted_at, admitted_by_code)
+  values (new_user_id, public.sign_up_waitlist_interest(sign_up_data),
+    case when code is not null then now() end, code is not null);
+  -- Step 3: the badge, and occasional news only for an adult who ticked it (Law 506/2004; Q50).
+  update public.profiles set
+    founding_member_since = now(),
+    marketing_email_opt_in = coalesce(sign_up_data ->> 'news_emails', '') = 'true'
+      and public.age_band_from_birth(profiles.birth_year, profiles.birth_month,
+        profiles.age_check_result, (now() at time zone 'Europe/Bucharest')::date) = '18_plus'
+  where profiles.id = new_user_id;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."join_waitlist_at_sign_up"("new_user_id" "uuid", "sign_up_data" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."join_waitlist_at_sign_up"("new_user_id" "uuid", "sign_up_data" "jsonb") IS 'Internal: puts a new account on the waiting list, or lets it in with a code; the badge and news opt-in (WAITLIST-1).';
 
 
 
@@ -25286,7 +25536,7 @@ CREATE OR REPLACE FUNCTION "public"."may_change_own_avatar"() RETURNS boolean
     SET "search_path" TO ''
     AS $$
   select coalesce(
-    public.account_state((select auth.uid())) in ('active', 'staff_account'),
+    public.account_state((select auth.uid())) in ('active', 'staff_account', 'waitlisted'),
     false
   );
 $$;
@@ -27555,6 +27805,37 @@ COMMENT ON FUNCTION "public"."my_unread_notification_count"() IS 'The bell''s ba
 
 
 
+CREATE OR REPLACE FUNCTION "public"."my_waitlist"() RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  entry public.waitlist_entries;
+begin
+  if (select auth.uid()) is null then
+    raise exception 'Sign in to see your place on the list.' using errcode = 'insufficient_privilege';
+  end if;
+  select * into entry from public.waitlist_entries where waitlist_entries.user_id = (select auth.uid());
+  if entry.id is null then
+    return jsonb_build_object('on_list', false);
+  end if;
+  -- A staff account is never held on the list (account_state() step 4 comes first), so its holding
+  -- page never shows.
+  return jsonb_build_object('on_list', true,
+    'waiting', entry.admitted_at is null
+      and not exists (select 1 from public.staff_roles where staff_roles.user_id = entry.user_id),
+    'interest', entry.interest, 'joined_at', entry.joined_at, 'admitted_at', entry.admitted_at);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."my_waitlist"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."my_waitlist"() IS 'The caller''s waiting list entry for the holding page; never a queue position (WAITLIST-1).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."name_has_listed_word"("name" "text") RETURNS boolean
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -28085,6 +28366,7 @@ CREATE OR REPLACE FUNCTION "public"."notification_category"("kind" "public"."not
     when 'story_featured' then 'stories'
     when 'spotlight_consent_agreed' then 'staff'
     when 'spotlight_consent_withdrawn' then 'staff'
+    when 'waitlist_admitted' then 'staff'
     else 'replies'
   end;
 $$;
@@ -37283,6 +37565,30 @@ COMMENT ON FUNCTION "public"."set_my_story_visibility"("story_slug" "text", "wan
 
 
 
+CREATE OR REPLACE FUNCTION "public"."set_my_waitlist_interest"("wanted" "public"."waitlist_interest") RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  if (select auth.uid()) is null then
+    raise exception 'Sign in to change your answer.' using errcode = 'insufficient_privilege';
+  end if;
+  update public.waitlist_entries set interest = coalesce(wanted, 'both')
+  where waitlist_entries.user_id = (select auth.uid()) and waitlist_entries.admitted_at is null;
+  if not found then
+    raise exception 'You''re not waiting on the list.' using errcode = 'check_violation', hint = 'not_on_list';
+  end if;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_my_waitlist_interest"("wanted" "public"."waitlist_interest") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_my_waitlist_interest"("wanted" "public"."waitlist_interest") IS 'The caller changes their "write, read or both" answer while they wait (WAITLIST-1).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."set_notification_email"("kind" "public"."notification_kind", "delivery" "public"."email_delivery") RETURNS "void"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -38213,6 +38519,23 @@ ALTER FUNCTION "public"."sign_up_rule_of"("message" "text") OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."sign_up_rule_of"("message" "text") IS 'Internal: names the rule behind a sign-up refusal (S1-E2-09).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."sign_up_waitlist_interest"("sign_up_data" "jsonb") RETURNS "public"."waitlist_interest"
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select case when sign_up_data ->> 'waitlist_interest' in ('write', 'read', 'both')
+    then (sign_up_data ->> 'waitlist_interest')::public.waitlist_interest
+    else 'both'::public.waitlist_interest end;
+$$;
+
+
+ALTER FUNCTION "public"."sign_up_waitlist_interest"("sign_up_data" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."sign_up_waitlist_interest"("sign_up_data" "jsonb") IS 'Internal: the sign-up''s "write, read or both" answer, both by default (WAITLIST-1).';
 
 
 
@@ -39612,6 +39935,14 @@ begin
           and call_log.outcome in ('server_error', 'network_error')),
       'crashes', (select count(*) from public.client_errors
         where client_errors.created_at > now() - interval '24 hours')));
+  end if;
+
+  -- Step 9: people still waiting on the list (WAITLIST-1).
+  if public.staff_may('waitlist', 'view') then
+    numbers := numbers || jsonb_build_object('waitlist', jsonb_build_object(
+      'waiting', (select count(*) from public.waitlist_entries
+        join public.profiles on profiles.id = waitlist_entries.user_id
+        where waitlist_entries.admitted_at is null and profiles.deleted_at is null)));
   end if;
 
   return numbers;
@@ -43433,6 +43764,21 @@ COMMENT ON FUNCTION "public"."wait_minutes_until_free"("oldest_in_window" timest
 
 
 
+CREATE OR REPLACE FUNCTION "public"."waitlist_interest_matches"("answer" "public"."waitlist_interest", "wanted" "text") RETURNS boolean
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select wanted is null or answer::text = wanted or answer = 'both';
+$$;
+
+
+ALTER FUNCTION "public"."waitlist_interest_matches"("answer" "public"."waitlist_interest", "wanted" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."waitlist_interest_matches"("answer" "public"."waitlist_interest", "wanted" "text") IS 'Internal: an answer fits a filter; write and read both include both (WAITLIST-1).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."website_content"("wanted_kind" "text", "visitor_country" "text" DEFAULT NULL::"text", "wanted_language" "text" DEFAULT NULL::"text") RETURNS TABLE("entry_key" "text", "market_code" "text", "language_code" "text", "content" "jsonb", "show_from" "date", "show_until" "date")
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -46805,6 +47151,27 @@ Swearwords refused in usernames and pen names, per language; drafts from content
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."waitlist_entries" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "interest" "public"."waitlist_interest" DEFAULT 'both'::"public"."waitlist_interest" NOT NULL,
+    "joined_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "admitted_at" timestamp with time zone,
+    "admitted_by_code" boolean DEFAULT false NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "waitlist_entries_code_means_admitted" CHECK (((NOT "admitted_by_code") OR ("admitted_at" IS NOT NULL)))
+);
+
+
+ALTER TABLE "public"."waitlist_entries" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."waitlist_entries" IS 'kind: user_action
+One person who signed up while the waiting list was on, what they come for and when they were let in (WAITLIST-1, S1-E2-24).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."writer_ranks" (
     "user_id" "uuid" NOT NULL,
     "rank" "public"."writer_rank" NOT NULL,
@@ -48060,6 +48427,16 @@ ALTER TABLE ONLY "public"."username_word_lists"
 
 
 
+ALTER TABLE ONLY "public"."waitlist_entries"
+    ADD CONSTRAINT "waitlist_entries_one_per_person" UNIQUE ("user_id");
+
+
+
+ALTER TABLE ONLY "public"."waitlist_entries"
+    ADD CONSTRAINT "waitlist_entries_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."writer_ranks"
     ADD CONSTRAINT "writer_ranks_pkey" PRIMARY KEY ("user_id");
 
@@ -49209,6 +49586,10 @@ CREATE INDEX "username_approvals_user_id_idx" ON "public"."username_approvals" U
 
 
 
+CREATE INDEX "waitlist_entries_waiting" ON "public"."waitlist_entries" USING "btree" ("joined_at") WHERE ("admitted_at" IS NULL);
+
+
+
 CREATE OR REPLACE TRIGGER "abuse_image_evidence_refuse_user_id_change" BEFORE UPDATE ON "public"."abuse_image_evidence" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"();
 
 
@@ -50202,6 +50583,14 @@ CREATE OR REPLACE TRIGGER "username_word_lists_fold" BEFORE INSERT OR UPDATE OF 
 
 
 CREATE OR REPLACE TRIGGER "username_word_lists_set_updated_at" BEFORE UPDATE ON "public"."username_word_lists" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "waitlist_entries_refuse_user_id_change" BEFORE UPDATE ON "public"."waitlist_entries" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"('user_id');
+
+
+
+CREATE OR REPLACE TRIGGER "waitlist_entries_set_updated_at" BEFORE UPDATE ON "public"."waitlist_entries" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
 
@@ -51842,6 +52231,11 @@ ALTER TABLE ONLY "public"."username_approvals"
 
 ALTER TABLE ONLY "public"."username_approvals"
     ADD CONSTRAINT "username_approvals_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."waitlist_entries"
+    ADD CONSTRAINT "waitlist_entries_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
 
 
 
@@ -53633,6 +54027,25 @@ COMMENT ON POLICY "username_word_lists_select_admin" ON "public"."username_word_
 
 
 
+ALTER TABLE "public"."waitlist_entries" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "waitlist_entries_select_own" ON "public"."waitlist_entries" FOR SELECT TO "authenticated" USING ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
+
+
+
+COMMENT ON POLICY "waitlist_entries_select_own" ON "public"."waitlist_entries" IS 'Allows a person to read their own waiting list entry (WAITLIST-1).';
+
+
+
+CREATE POLICY "waitlist_entries_select_staff" ON "public"."waitlist_entries" FOR SELECT TO "authenticated" USING (( SELECT "public"."staff_may"('waitlist'::"text", 'view'::"text") AS "staff_may"));
+
+
+
+COMMENT ON POLICY "waitlist_entries_select_staff" ON "public"."waitlist_entries" IS 'Allows owner and admin, in a staff session, to read every waiting list entry (WAITLIST-1).';
+
+
+
 ALTER TABLE "public"."writer_ranks" ENABLE ROW LEVEL SECURITY;
 
 
@@ -53841,6 +54254,16 @@ GRANT ALL ON FUNCTION "public"."admin_add_nudge_word"("word_language" "text", "n
 
 REVOKE ALL ON FUNCTION "public"."admin_add_reserved_name"("new_name" "text", "how_it_matches" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_add_reserved_name"("new_name" "text", "how_it_matches" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_admit_from_waitlist"("entry_ids" "uuid"[]) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_admit_from_waitlist"("entry_ids" "uuid"[]) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_admit_waitlist_wave"("wanted_interest" "text", "wanted_country" "text", "how_many" integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_admit_waitlist_wave"("wanted_interest" "text", "wanted_country" "text", "how_many" integer) TO "authenticated";
 
 
 
@@ -54992,6 +55415,11 @@ GRANT ALL ON FUNCTION "public"."admin_waiting_decision_email_count"() TO "authen
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_waitlist"("wanted_interest" "text", "wanted_country" "text", "page_size" integer, "page_offset" integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_waitlist"("wanted_interest" "text", "wanted_country" "text", "page_size" integer, "page_offset" integer) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_withdraw_parental_consent"("target_user_id" "uuid", "reason_given" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_withdraw_parental_consent"("target_user_id" "uuid", "reason_given" "text") TO "authenticated";
 
@@ -54999,6 +55427,10 @@ GRANT ALL ON FUNCTION "public"."admin_withdraw_parental_consent"("target_user_id
 
 REVOKE ALL ON FUNCTION "public"."admin_withdraw_spotlight_consent"("target_user_id" "uuid", "reason_given" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_withdraw_spotlight_consent"("target_user_id" "uuid", "reason_given" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admit_waitlist_entry"("target_entry_id" "uuid", "how" "text") FROM PUBLIC;
 
 
 
@@ -56603,6 +57035,10 @@ GRANT ALL ON FUNCTION "public"."is_moderated_away"("item_type" "public"."reporta
 
 
 
+REVOKE ALL ON FUNCTION "public"."is_on_waitlist"("target_user_id" "uuid") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."is_personal_email_domain"("domain" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."is_personal_email_domain"("domain" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."is_personal_email_domain"("domain" "text") TO "authenticated";
@@ -56658,6 +57094,10 @@ GRANT ALL ON FUNCTION "public"."join_class_space"("code" "text") TO "authenticat
 
 REVOKE ALL ON FUNCTION "public"."join_space"("slug" "text", "note" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."join_space"("slug" "text", "note" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."join_waitlist_at_sign_up"("new_user_id" "uuid", "sign_up_data" "jsonb") FROM PUBLIC;
 
 
 
@@ -57317,6 +57757,11 @@ GRANT ALL ON FUNCTION "public"."my_teacher_check"() TO "authenticated";
 
 REVOKE ALL ON FUNCTION "public"."my_unread_notification_count"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."my_unread_notification_count"() TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."my_waitlist"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."my_waitlist"() TO "authenticated";
 
 
 
@@ -58630,6 +59075,11 @@ GRANT ALL ON FUNCTION "public"."set_my_story_visibility"("story_slug" "text", "w
 
 
 
+REVOKE ALL ON FUNCTION "public"."set_my_waitlist_interest"("wanted" "public"."waitlist_interest") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_my_waitlist_interest"("wanted" "public"."waitlist_interest") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."set_notification_email"("kind" "public"."notification_kind", "delivery" "public"."email_delivery") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_notification_email"("kind" "public"."notification_kind", "delivery" "public"."email_delivery") TO "authenticated";
 
@@ -58762,6 +59212,10 @@ GRANT ALL ON FUNCTION "public"."sign_up_market_outcome"("country_code" "text", "
 
 
 REVOKE ALL ON FUNCTION "public"."sign_up_rule_of"("message" "text") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."sign_up_waitlist_interest"("sign_up_data" "jsonb") FROM PUBLIC;
 
 
 
@@ -59507,6 +59961,10 @@ REVOKE ALL ON FUNCTION "public"."wait_minutes_until_free"("oldest_in_window" tim
 
 
 
+REVOKE ALL ON FUNCTION "public"."waitlist_interest_matches"("answer" "public"."waitlist_interest", "wanted" "text") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."website_content"("wanted_kind" "text", "visitor_country" "text", "wanted_language" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."website_content"("wanted_kind" "text", "visitor_country" "text", "wanted_language" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."website_content"("wanted_kind" "text", "visitor_country" "text", "wanted_language" "text") TO "authenticated";
@@ -60208,6 +60666,11 @@ GRANT SELECT ON TABLE "public"."username_approvals" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."username_word_lists" TO "service_role";
 GRANT SELECT ON TABLE "public"."username_word_lists" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."waitlist_entries" TO "service_role";
+GRANT SELECT ON TABLE "public"."waitlist_entries" TO "authenticated";
 
 
 

@@ -252,6 +252,22 @@ As a user, I want the app to mark the month I joined so that coming back feels p
   - Given a birthday greeting on the same day, when both apply, then the birthday wins (proposal).
   - Given there is no greeting line yet, when this story lands, then it adds a small greeting line at the top of Discover for signed-in users; its wording is interface text that admins can edit (S1-E11-18).
 
+##### S1-E2-24 Waiting list
+
+As someone who hears about the app before it opens to everyone, I want to sign up and hold a place so that I get in as soon as there is room.
+
+- **Priority:** Must · **Size:** M · **Depends on:** S1-E2-01, S1-E2-04, S1-E7-01, S1-E11-01, S1-E11-17
+- **Added:** 6 Nov 2026, 17:27 UTC (Robert, chat; bundle WAITLIST-1). Replaces "the 'not open yet' page keeps no email" (Q15 of the epic plan) while the `waitlist` flag is on.
+- **Acceptance criteria:**
+  - Given the `waitlist` flag is on, when someone signs up without an invite code, then the same form asks "What do you want to do here?" (write, read or both) and offers a separate, unticked news box, and the confirmation email says "You're on the list".
+  - Given an invite code, when someone signs up, then they skip the queue and become an active member once their email is confirmed.
+  - Given a confirmed account on the list, when it opens the app, then a holding page shows instead of other pages: they can change their answer, build their avatar and pick favourite genres, and the database refuses writing, reading and posting (`account_state()` 'waitlisted'); sign-in, legal pages, help, Contact us, support and Settings stay open.
+  - Given an owner or admin, when they open Staff › Waitlist, then they see the counts by answer and country and a page of people (never the user ID or the email), can tick people and let them in, or let in a wave of the next confirmed people (writers first, by country), after a confirm step; a moderator is refused.
+  - Given someone is let in, then they get a "You're in" notice and email with a link to sign in (never a code), and the audit log names who let them in.
+  - Given someone joined while the list was on, then their profile shows a founding member badge.
+  - Given a staff account, then it is never shown as waiting.
+  - Given an account is deleted, then its place is deleted too, and Download my data includes it.
+
 ##### S1-E2-QA Epic check: Accounts, age gate and onboarding
 
 As the founder, I want every story in this epic tested together end to end so that the pieces work with each other, not just alone.

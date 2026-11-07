@@ -7,8 +7,11 @@
  * acceptance of the current terms with consent to the privacy notice.
  * The username sits under the email, with the same live "is it free?" check as setup (Robert,
  * 25 Oct 2026: chosen with the password, so the account has a name from the start); the pen name
- * stays optional and comes in setup or Settings (S1-E2-04). Under "Create account", the Google,
- * Apple and Microsoft buttons (SocialSignUp, S1-E2-09) show only while the social_login flag is on.
+ * stays optional and comes in setup or Settings (S1-E2-04). When the person joins the waiting
+ * list (no invite code), "write, read or both" and the news opt-in come before the terms
+ * (WaitlistFields, WAITLIST-1); the email field is SignUpEmailField. Under "Create account", the
+ * Google, Apple and Microsoft buttons (SocialSignUp, S1-E2-09) show only while the social_login
+ * flag is on.
  * What it calls: useSignUpForm (checks, the leaked-password check, Supabase Auth). Once the link
  * is sent, the parent shows CheckYourEmail instead.
  * Who uses it: SignUpPage.
@@ -18,7 +21,6 @@ import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
-import { TextInput } from '@/components/ui/TextInput';
 import { HandleField } from '@/features/account/components/HandleField';
 import { useFeatureFlags } from '@/features/flags/hooks/useFeatureFlags';
 import type { HandleOutcome } from '@/features/account/lib/nameRules';
@@ -28,9 +30,11 @@ import type { useSignUpForm } from '../hooks/useSignUpForm';
 
 import { BirthFields } from './BirthFields';
 import { PasswordFields } from './PasswordFields';
+import { SignUpEmailField } from './SignUpEmailField';
 import { SignUpCountryField } from './SignUpCountryField';
 import { SocialSignUp } from './SocialSignUp';
 import { TermsCheckbox } from './TermsCheckbox';
+import { WaitlistFields } from './WaitlistFields';
 
 /** The message key for each way a sign-up can fail. */
 const failureMessages: Record<SignUpFailure, string> = {
@@ -72,16 +76,7 @@ export function SignUpForm({ form, includesAgeCheck }: SignUpFormProps) {
       onSubmit={handleSubmit}
       className="flex flex-col gap-[18px]"
     >
-      <TextInput
-        id="sign-up-email"
-        type="email"
-        autoComplete="email"
-        label={t('signUp.email.label')}
-        hint={t('signUp.email.hint')}
-        errorMessage={problems.email === undefined ? undefined : t(problems.email)}
-        value={answers.email}
-        onChange={(event) => setField('email', event.target.value)}
-      />
+      <SignUpEmailField form={form} />
       <HandleField
         id="sign-up-handle"
         value={answers.handle}
@@ -104,6 +99,7 @@ export function SignUpForm({ form, includesAgeCheck }: SignUpFormProps) {
       {/* The country before the year: its law can make the month matter (MARKETS-1). */}
       <SignUpCountryField form={form} />
       <BirthFields form={form} includesAgeCheck={includesAgeCheck} />
+      {form.joinsWaitlist && <WaitlistFields form={form} />}
       <TermsCheckbox
         isChecked={answers.acceptsTerms}
         problem={problems.acceptsTerms}

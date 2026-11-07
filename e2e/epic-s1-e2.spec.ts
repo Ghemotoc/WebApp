@@ -26,6 +26,11 @@ import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessib
 import { runSql } from './support/database';
 import { appPathFromEmail, waitForEmail } from './support/mailpit';
 
+/** Turns the waiting list on or off (WAITLIST-1; on from its migration). */
+function setWaitlist(isOn: boolean) {
+  runSql(`update public.feature_flags set is_enabled = ${String(isOn)} where key = 'waitlist';`);
+}
+
 /** The seeded invite that works (supabase/seed.sql). */
 const workingInvite = 'PERSONAS-TEST-INVITE';
 
@@ -161,6 +166,10 @@ test.describe('epic S1-E2 journeys', () => {
 });
 
 test.describe('fixes from the staging check (17 Oct 2026)', () => {
+  // The invite-code gate shows only while the waiting list is off (WAITLIST-1), so these checks
+  // of that gate turn the list off and back on.
+  test.beforeAll(() => setWaitlist(false));
+  test.afterAll(() => setWaitlist(true));
   test.beforeEach(async ({ page }) => {
     await page.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
   });

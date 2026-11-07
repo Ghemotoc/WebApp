@@ -5,7 +5,8 @@
  * Who shows it: the router, at /not-open; SignUpPage sends a visitor here once sign-up is public
  * and their country's market is closed or unknown. During the invited March test nobody is sent
  * here (decided 17 Oct 2026, 19:43, Q6).
- * No email is kept: there is no waiting list (decided 17 Oct 2026, 19:43, Q15).
+ * No email is kept here. The waiting list (WAITLIST-1, which reversed Q15 on 6 Nov 2026) is on
+ * the sign-up form itself; a closed country can't join it, so this page only says to come back.
  * What it reads: the country of the connection (useSignUpMarket), only to name it.
  */
 import { useTranslation } from 'react-i18next';

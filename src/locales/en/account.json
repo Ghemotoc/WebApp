@@ -557,5 +557,26 @@
       "goToSettings": "Go to Settings"
     },
     "teacher": "Teacher"
+  },
+  "waitlist": {
+    "foundingMember": "Founding member",
+    "interest": {
+      "write": "Write",
+      "read": "Read",
+      "both": "Both"
+    },
+    "holding": {
+      "documentTitle": "You’re on the list · {{productName}}",
+      "eyebrow": "Waiting list",
+      "heading": "You’re on the list",
+      "joined": "You joined on {{date}}.",
+      "next": "We let people in a few at a time, writers first. When your place comes up, we’ll email you to say you’re in. Until then you can’t write, read or post yet, but you can get your profile ready.",
+      "interestLabel": "What do you want to do here?",
+      "saved": "Saved.",
+      "saveFailed": "We couldn’t save that. Check your connection and try again.",
+      "settingsLink": "Settings: emails, news and your account",
+      "logOut": "Log out",
+      "logOutFailed": "We couldn’t log you out. Check your connection and try again."
+    }
   }
 }

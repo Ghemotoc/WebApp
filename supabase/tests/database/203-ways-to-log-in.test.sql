@@ -18,6 +18,10 @@ create extension if not exists pgtap with schema extensions;
 
 select plan(24);
 
+-- The invite-only test with the waiting list off (WAITLIST-1 is tested in 310): without a code,
+-- sign-up is refused, as before the list.
+update public.feature_flags set is_enabled = false where key = 'waitlist';
+
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
          set_config('request.jwt.claims', '{"sub": "' || persona_id || '", "role": "authenticated"}', true);

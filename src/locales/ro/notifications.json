@@ -90,7 +90,8 @@
     "spaceHandoverOffered": "ți-a oferit {{space}}. Deschide-l ca să accepți sau să refuzi.",
     "storyFeatured": "povestea ta „{{story}}” este printre Recomandatele săptămânii, pe Descoperă.",
     "spotlightAgreed": "părintele sau tutorele tău a fost de acord să te recomandăm, pe tine și poveștile tale, altor cititori.",
-    "spotlightWithdrawn": "nu te mai recomandăm altor cititori, nici poveștile tale, pentru că acordul părintelui sau tutorelui tău a fost retras."
+    "spotlightWithdrawn": "nu te mai recomandăm altor cititori, nici poveștile tale, pentru că acordul părintelui sau tutorelui tău a fost retras.",
+    "waitlistAdmitted": "ți-a venit rândul pe lista de așteptare și contul tău e deschis. Bine ai venit!"
   },
   "grouped": {
     "reactions_one": "{{count}} reacție",
@@ -154,7 +155,8 @@
     "openAuditLog": "Deschide jurnalul de audit",
     "openLandingPage": "Deschide pagina",
     "seeMyRank": "Vezi rangul tău",
-    "seePrivacy": "Vezi setările de confidențialitate"
+    "seePrivacy": "Vezi setările de confidențialitate",
+    "startExploring": "Începe să explorezi"
   },
   "alwaysOn": "Mereu pornite",
   "unread": "Necitită",
@@ -219,7 +221,15 @@
     "digestNote": "Rezumatul zilnic vine o dată pe zi, dimineața, și doar când s-a întâmplat ceva.",
     "noMarketingTitle": "Fără emailuri de marketing.",
     "noMarketing": "Nu trimitem emailuri promoționale nimănui sub 18 ani.",
-    "unsubscribeNote": "Fiecare email, în afară de cele despre cont, siguranță și aspecte legale, are un link de dezabonare cu un singur clic."
+    "unsubscribeNote": "Fiecare email, în afară de cele despre cont, siguranță și aspecte legale, are un link de dezabonare cu un singur clic.",
+    "news": {
+      "label": "Trimite-mi din când în când noutăți despre aplicație pe email. Doar pentru cei de 18 ani sau mai mult; le poți opri oricând de aici.",
+      "loadFailed": "Nu am putut încărca alegerea ta pentru emailurile cu noutăți. Verifică-ți conexiunea și încearcă din nou.",
+      "failures": {
+        "adults_only": "Emailurile cu noutăți sunt doar pentru cei de 18 ani sau mai mult.",
+        "unreachable": "Nu am putut salva. Verifică-ți conexiunea și încearcă din nou."
+      }
+    }
   },
   "unsubscribe": {
     "documentTitle": "Dezabonare",
