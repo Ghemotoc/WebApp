@@ -27263,6 +27263,28 @@ COMMENT ON FUNCTION "public"."my_staff_areas"() IS 'The admin areas the caller m
 
 
 
+CREATE OR REPLACE FUNCTION "public"."my_staff_session_ended"() RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  -- The same three tests as is_staff_session(), with the time test turned round.
+  select public.is_staff()
+    and public.workspace_sign_in_holds()
+    and coalesce(
+      public.staff_session_started_at()
+        <= now() - make_interval(hours => coalesce(public.setting_value('staff_session_hours'), '12')::text::integer),
+      false
+    );
+$$;
+
+
+ALTER FUNCTION "public"."my_staff_session_ended"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."my_staff_session_ended"() IS 'For the admin shell: true when the caller holds a staff role but their staff session is older than staff_session_hours, so the page can ask them to sign in again (DASH-1).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."my_staff_sign_in"() RETURNS "jsonb"
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -39509,6 +39531,98 @@ ALTER FUNCTION "public"."spotlight_consent_by_token"("token" "text") OWNER TO "p
 
 
 COMMENT ON FUNCTION "public"."spotlight_consent_by_token"("token" "text") IS 'Internal: the agreed parental consent a spotlight link belongs to (S1-E2-03b).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."staff_dashboard"() RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  numbers jsonb := '{}'::jsonb;
+  may_see_safeguarding boolean := public.staff_may('safeguarding', 'view');
+begin
+  -- Step 1: only a live staff session gets numbers (architecture 1.8.1).
+  if not public.is_staff_session() then
+    raise exception 'Only staff in a staff session can see the dashboard.'
+      using errcode = 'insufficient_privilege';
+  end if;
+
+  -- Step 2: moderation: reports waiting for a decision, those past their deadline, and the
+  -- pictures waiting for a reviewer (the same cases admin_pictures_to_check() lists, counted
+  -- here without opening any file).
+  if public.staff_may('moderation', 'view') then
+    numbers := numbers || jsonb_build_object('moderation', jsonb_build_object(
+      'waiting', (select count(*) from public.cases
+        where cases.status = 'open' and cases.item_type <> 'picture'
+          and (not cases.is_safeguarding or may_see_safeguarding)),
+      'overdue', (select count(*) from public.cases
+        where cases.status = 'open' and cases.item_type <> 'picture' and cases.deadline_at < now()
+          and (not cases.is_safeguarding or may_see_safeguarding)),
+      'pictures', (select count(*) from public.cases
+        join public.picture_checks as picture on picture.id = cases.item_id
+        where cases.item_type = 'picture' and cases.status = 'open' and not cases.is_safeguarding
+          and cases.source in ('picture_review', 'picture_check') and picture.status = 'held')));
+  end if;
+
+  -- Step 3: appeals waiting for a second moderator (S1-E10-07).
+  if public.staff_may('appeals', 'view') then
+    numbers := numbers || jsonb_build_object('appeals', jsonb_build_object(
+      'open', (select count(*) from public.appeals where appeals.status = 'open')));
+  end if;
+
+  -- Step 4: teacher checks waiting for staff (S1-E2-11).
+  if public.staff_may('schools', 'view') then
+    numbers := numbers || jsonb_build_object('schools', jsonb_build_object(
+      'teacherChecks', (select count(*) from public.teacher_checks
+        where teacher_checks.status = 'waiting_for_staff')));
+  end if;
+
+  -- Step 5: data requests still open, and those past their legal deadline (GDPR art. 12(3):
+  -- one month, extendable by two; S1-E11-09).
+  if public.staff_may('data_requests', 'view') then
+    numbers := numbers || jsonb_build_object('dataRequests', jsonb_build_object(
+      'open', (select count(*) from public.data_requests where data_requests.state = 'open'),
+      'overdue', (select count(*) from public.data_requests
+        where data_requests.state = 'open'
+          and coalesce(data_requests.extended_to, data_requests.due_on) < current_date)));
+  end if;
+
+  -- Step 6: support tickets that still need the team (new or open; S1-E11-13).
+  if public.staff_may('support_tickets', 'view') then
+    numbers := numbers || jsonb_build_object('supportTickets', jsonb_build_object(
+      'open', (select count(*) from public.support_tickets
+        where support_tickets.status in ('new', 'open'))));
+  end if;
+
+  -- Step 7: sign-ups in the last 7 days, an aggregate the metrics area already shows (S1-E11-04).
+  if public.staff_may('metrics', 'view') then
+    numbers := numbers || jsonb_build_object('metrics', jsonb_build_object(
+      'signUpsThisWeek', (select count(*) from public.profiles
+        where profiles.created_at > now() - interval '7 days' and profiles.deleted_at is null)));
+  end if;
+
+  -- Step 8: calls that failed on our side or the network, and browser crashes, in the last
+  -- 24 hours (LOGS-1). A refused call (client_error) is often the rules working, so it isn't
+  -- counted as a failure here.
+  if public.staff_may('call_log', 'view') then
+    numbers := numbers || jsonb_build_object('logs', jsonb_build_object(
+      'failedCalls', (select count(*) from public.call_log
+        where call_log.created_at > now() - interval '24 hours'
+          and call_log.outcome in ('server_error', 'network_error')),
+      'crashes', (select count(*) from public.client_errors
+        where client_errors.created_at > now() - interval '24 hours')));
+  end if;
+
+  return numbers;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."staff_dashboard"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."staff_dashboard"() IS 'Staff: the admin front page''s numbers, one entry per area the caller may view; counts only, nothing personal (DASH-1).';
 
 
 
@@ -57149,6 +57263,11 @@ GRANT ALL ON FUNCTION "public"."my_staff_areas"() TO "authenticated";
 
 
 
+REVOKE ALL ON FUNCTION "public"."my_staff_session_ended"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."my_staff_session_ended"() TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."my_staff_sign_in"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."my_staff_sign_in"() TO "authenticated";
 
@@ -58859,6 +58978,11 @@ GRANT ALL ON FUNCTION "public"."sponsor_review_checks"() TO "authenticated";
 
 
 REVOKE ALL ON FUNCTION "public"."spotlight_consent_by_token"("token" "text") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."staff_dashboard"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."staff_dashboard"() TO "authenticated";
 
 
 

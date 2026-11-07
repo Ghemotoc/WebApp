@@ -12889,6 +12889,7 @@ export type Database = {
           area: string;
         }[];
       };
+      my_staff_session_ended: { Args: Record<PropertyKey, never>; Returns: boolean };
       my_staff_sign_in: { Args: Record<PropertyKey, never>; Returns: Json };
       my_statements: { Args: Record<PropertyKey, never>; Returns: Json };
       my_story_character: {
@@ -14700,6 +14701,7 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      staff_dashboard: { Args: Record<PropertyKey, never>; Returns: Json };
       staff_email_domain: { Args: Record<PropertyKey, never>; Returns: string };
       staff_house_ad_for_slot: {
         Args: { used_keys: string[]; wanted_page_key: string; wanted_slot_key: string };

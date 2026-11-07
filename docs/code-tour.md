@@ -850,11 +850,19 @@ The error page shows the first six characters of the stored row's ID as the code
 
 ```
 /staff/* (src/app/router.tsx: staffRoutes, loaded only when opened)     src/features/staff/
-  │  StaffLayout: skip link, StaffBar (the areas the person may open), the page, StaffFooter
+  │  StaffLayout: skip link, StaffBar, StaffSideMenu (DASH-1: the areas the person may open in
+  │     five groups, Safety, People, Content, Website, System; behind "Menu" under 1024 px),
+  │     the page, StaffFooter
   │     useMyStaffAccess → api/staffAccess.ts → my_staff_areas() + own staff_roles + own handle
-  │     a member or a visitor gets StaffAccessRefused instead (the server refused already)
-  │  staffAreas.ts: area → page (moderation, users, roles, audit_log; each staff story adds its own)
-  ├─ /staff            StaffHomePage: one card per area the person may open
+  │       + my_staff_session_ended() (DASH-1)
+  │     a member or a visitor gets StaffAccessRefused instead (the server refused already);
+  │     staff whose 12-hour session ran out get StaffSessionEnded ("Sign in again" → sign out →
+  │     /sign-in?next=/staff, checked by features/auth/lib/nextPath.ts) (DASH-1)
+  │  staffAreas.ts: area → page and its menu group (each staff story adds its own)
+  ├─ /staff            StaffHomePage: StaffDashboardTiles (DASH-1: useStaffDashboard →
+  │                      api/staffDashboard.ts → staff_dashboard(), counts only, one key per area
+  │                      the person may view; each tile links to its area), then one card per
+  │                      area, grouped as the side menu is
   ├─ /staff/roles      StaffRolesPage (S1-E2-07a, below)
   ├─ /staff/users      UsersPage (S1-E11-02): search → useUserLookup → admin_user_lookup()
   ├─ /staff/users/:id  AccountPage: useAccount → admin_user_account(), admin_account_open_cases(),

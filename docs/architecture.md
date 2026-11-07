@@ -552,7 +552,7 @@ Added 16 Oct 2026 (late evening) at Robert's request. Screens 8.1 to 8.9 are on 
 | Metrics and logs | March test numbers, sign-ups by age group, age check results, reports by tier, the compliance log and retention | 8.7 | S1-E11-04, S1-E15-02 |
 | Audit log | Every staff action and every sensitive read, searchable and exportable, never editable | today a block inside 8.6 | S1-E11-01 |
 
-Two layout proposals for the canvas (not decisions): give Website its own menu item instead of a block inside Settings, and give the Audit log its own page. The menu shows only the areas a person's role can use.
+Two layout proposals for the canvas (not decisions): give Website its own menu item instead of a block inside Settings, and give the Audit log its own page. The menu shows only the areas a person's role can use. Since bundle DASH-1 (Robert, 6 Nov 2026) the menu is a side menu in five groups (Safety: moderation, pictures, moderator mail, appeals, safety contacts, on call; People: users, support tickets, data requests, schools, roles; Content: stories, featured, classics, tags, contests; Website: website, sponsors; System: settings, forums, metrics, logs, audit log), and the front page opens with the numbers at a glance for those areas (`staff_dashboard()`, counts only).
 
 #### 1.8.3 Roles and permissions
 

@@ -115,8 +115,8 @@
     "documentTitle": "Site de administrare · {{productName}}",
     "heading": "Site de administrare",
     "intro": "Zonele pe care rolul tău le poate folosi. Fiecare acțiune și fiecare citire sensibilă se scrie în jurnalul de audit; serverul îți verifică rolul la fiecare, nu doar acest meniu.",
-    "noAreas": "Nicio zonă nu îți este deschisă acum. Rolul tău poate să nu aibă încă o zonă, sau sesiunea ta de echipă poate fi mai veche de 12 ore: deconectează-te și conectează-te din nou ca să începi una nouă.",
-    "comingAreas": "Contestațiile, Poveștile, Site-ul și celelalte zone vin cu propriile lor povești; meniul arată o zonă imediat ce pagina ei există.",
+    "areasHeading": "Zonele tale",
+    "noAreas": "Rolul tău nu are încă nicio zonă deschisă. Cere unui proprietar sau administrator dacă ai nevoie de una.",
     "areas": {
       "roles": "Cine din echipă are ce rol și ce permisiuni.",
       "call_log": "Fiecare apel făcut de aplicație, unde a eșuat și erorile din browser, pentru 30 de zile.",
@@ -1386,6 +1386,58 @@
       "not_allowed": "Doar administratorii și proprietarul pot schimba Recomandatele săptămânii.",
       "refused": "Nu se poate salva. Poate o poveste nu mai e permisă sau lista e prea lungă. Verifică lista și încearcă din nou.",
       "unreachable": "Nu am putut ajunge la baza de date. Încearcă din nou peste puțin timp."
+    }
+  },
+  "menuGroups": {
+    "safety": "Siguranță",
+    "people": "Oameni",
+    "content": "Conținut",
+    "website": "Site",
+    "system": "Sistem"
+  },
+  "menu": {
+    "toggle": "Meniu",
+    "empty": "Rolul tău nu are încă nicio zonă deschisă."
+  },
+  "sessionEnded": {
+    "documentTitle": "Conectează-te din nou · {{productName}}",
+    "heading": "Sesiunea ta de echipă s-a încheiat",
+    "body": "Sesiunile de echipă se încheie după 12 ore, ca să rămână conturile echipei în siguranță. Conectează-te din nou ca să deschizi site-ul de administrare.",
+    "signInAgain": "Conectează-te din nou",
+    "signingOut": "Te deconectăm…",
+    "goHome": "Mergi la Acasă",
+    "signOutFailed": "Nu te-am putut deconecta acum. Verifică conexiunea și încearcă din nou."
+  },
+  "dashboard": {
+    "heading": "Pe scurt",
+    "loading": "Numărăm…",
+    "loadFailed": "Cifrele nu s-au putut încărca acum. Zonele de mai jos funcționează în continuare.",
+    "tiles": {
+      "moderation": {
+        "waiting": "Rapoarte în așteptare",
+        "overdue": "Rapoarte peste termen",
+        "pictures": "Imagini de verificat"
+      },
+      "appeals": {
+        "open": "Contestații deschise"
+      },
+      "schools": {
+        "teacherChecks": "Verificări de profesori în așteptare"
+      },
+      "dataRequests": {
+        "open": "Cereri privind datele deschise",
+        "overdue": "Cereri privind datele peste termen"
+      },
+      "supportTickets": {
+        "open": "Tichete de suport deschise"
+      },
+      "metrics": {
+        "signUpsThisWeek": "Înscrieri în ultimele 7 zile"
+      },
+      "logs": {
+        "failedCalls": "Apeluri eșuate în ultimele 24 de ore",
+        "crashes": "Erori din browser în ultimele 24 de ore"
+      }
     }
   }
 }
