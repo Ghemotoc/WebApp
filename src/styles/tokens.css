@@ -1,10 +1,19 @@
 /*
  * Design tokens: every colour, font, radius and shadow the interface uses (story S1-E1-03).
  *
- * Where the values come from: the design boards in design/boards/ (Discover, Story, Reader, Search,
- * Settings, AdFormats, AdminSponsors, AdminUsers), copied, not guessed (CLAUDE.md, Designs).
- * Night values: no board has a night mode, so they are derived from the board colours, starting
- * from the Reader's Night theme (#1E0F24 background, #F4F0EC text) (Robert, 17 Oct 2026).
+ * Where the values come from: the liquid glass design Robert approved on 7 Nov 2026, 19:51 UTC
+ * (bundle G1 TOKENS): the handoff doc's "Design tokens and themes" tab and the canvas boards
+ * (design/README.md links both). Light is "Lilac mist", the default theme; night is "Revolver"
+ * (#2A0E33), the same whichever theme a member picks. The staff area has its own flat beige set,
+ * with no purple, so staff always know where they are (handoff, Staff tab).
+ *
+ * The names stay the ones the app already uses (paper, surface, ink, heading and so on); only the
+ * values changed, so every screen took the new colours without being edited. New tokens for the
+ * glass look (blobs, glass edge, grain, story paper, progress, accent) sit beside them.
+ *
+ * Glass: cards (bg-surface) are see-through white over the moving colour blobs. `--surface` keeps
+ * the solid colour the glass looks like on the page, because the contrast test can only measure
+ * solid colours; `--surface-glass` is what the card actually paints (see @theme inline below).
  *
  * How it works: the raw values are CSS variables. `data-theme="light"` or `data-theme="night"` on
  * <html> (set by public/theme-init.js before the page draws, then by src/lib/theme.ts) picks the
@@ -20,78 +29,108 @@
 [data-theme='light'] {
   color-scheme: light;
 
-  /* Surfaces */
-  --paper: #faf8f5;
-  --surface: #ffffff;
-  --tint: #f1eaf4;
-  --panel: #f4f0ec;
-  --panel-border: #e5d7ea;
-  --nav-glass: rgba(255, 255, 255, 0.85);
+  /* Surfaces. Page background, under the blobs and the grain (handoff: --bg #F3EEFB). */
+  --paper: #f3eefb;
+  /* The solid colour a glass card looks like on the page (white at 50% over --paper). */
+  --surface: #f9f7fd;
+  /* What a glass card paints: white at 50% (handoff: --glass-bg). */
+  --surface-glass: rgba(255, 255, 255, 0.5);
+  --tint: #ebe3f7;
+  --panel: #eee8f7;
+  --panel-border: #d9cdea;
+  --nav-glass: rgba(255, 255, 255, 0.5);
+  /* The bright rim of every glass surface (handoff: --glass-border). */
+  --glass-border: rgba(255, 255, 255, 0.8);
+  /* The soft highlight along the top inside edge of glass. */
+  --glass-highlight: rgba(255, 255, 255, 0.95);
+  /* Input fill (handoff: --field). */
+  --field: rgba(255, 255, 255, 0.78);
 
-  /* Text */
-  --ink: #26142e;
-  --heading: #481c5f;
-  --body: #5c4965;
-  /* The darkened meta colour: 5.9:1 on paper (story S1-E1-03 asks for at least 4.5:1). */
-  --meta: #6b5a73;
-  /* Gold is never small text; eyebrows and gold-coloured text use this darker gold (S1-E1-03). */
-  --eyebrow: #815e18;
-  --link: #672786;
-  --link-hover: #481c5f;
-  --destructive: #8c2b3a;
+  /* Text. Headings Revolver; eyebrows black, never gold (Robert, 7 Nov 2026, 11:48). */
+  --ink: #24133a;
+  --heading: #2a0e33;
+  --body: #584a6e;
+  --meta: #584a6e;
+  --eyebrow: #141114;
+  --link: #4b4fa8;
+  --link-hover: #2a0e33;
+  --destructive: #a3122a;
 
-  /* Accents and actions */
-  --gold: #e6c24c;
-  /* Text on a gold fill (count badges, the current sign-up step). It stays dark in both themes,
-   * because the gold does not change in night mode: --ink there is light and read 1.5:1 on it
-   * (accessibility check, 6 Nov 2026). #26142e on #e6c24c is about 9:1. */
+  /* Accents and actions. No strong yellow anywhere, a soft honey tint at most (rulebook 6). */
+  --gold: #f3dc9b;
+  /* Text on the honey fill (count badges, the current sign-up step): about 12:1. */
   --on-gold: #26142e;
-  --primary: #2a0e33;
-  --on-primary: #fbf7ec;
-  --chip-on: #481c5f;
+  --primary: #48125d;
+  --on-primary: #ffffff;
+  --chip-on: #48125d;
   --chip-on-text: #ffffff;
+  /* The theme accent (buttons, active tab, bars, dots, switches, the logo): Lilac mist is plum.
+     Bundle G2 sets one per theme; night keeps plum (Robert, 7 Nov 2026, 17:52 and 18:44). */
+  --accent: #672786;
+  --accent-deep: #2a0e33;
+  /* The plum gradient on every main action (Publish, Save, Continue; rulebook 5). */
+  --plum-from: #672786;
+  --plum-to: #2a0e33;
 
   /* Lines. control-border reaches 3:1 for form fields and chips (WCAG 2.2, 1.4.11). */
-  --border: #ded3e4;
-  --hairline: #efe8f2;
+  --border: #d9cdea;
+  --hairline: #e8e0f3;
   --control-border: #8e7b99;
-  --dashed-border: #b9a9c2;
-  /* Focus ring: plum on light backgrounds (Robert, 17 Oct 2026; the boards' gold fails 3:1 here). */
-  --focus-ring: #481c5f;
+  --dashed-border: #b3a5c8;
+  /* Focus ring: 3 px plum with a 6 px soft white halo, so it shows on any glass (handoff). */
+  --focus-ring: #48125d;
+  --focus-halo: rgba(255, 255, 255, 0.9);
 
-  /* Notices */
-  --success-bg: #e8f1ec;
-  --success-border: #a9c9b6;
-  --success-text: #245a41;
-  --info-bg: #f1eaf4;
-  --info-border: #c9b3d6;
-  --info-text: #3a2442;
-  --warning-bg: #fbf3da;
-  --warning-border: #d9b54a;
-  --warning-text: #5c3f0e;
-  --error-bg: #f6e9eb;
-  --error-border: #ddb0b8;
-  --error-text: #8c2b3a;
+  /* Background colour blobs, slowly drifting under everything (handoff: --blob-1 to 3). */
+  --blob-1: #d9ccf5;
+  --blob-2: #c9d8f7;
+  --blob-3: #f9d9cf;
+  /* Fine film grain over the background, 20% on the website (rulebook 3). */
+  --grain-opacity: 0.2;
+  --grain-blend: multiply;
+
+  /* Story paper: only where story text sits (reader, editor; rulebook 3). */
+  --story-paper: #fffbf2;
+  --story-ink: #2b211c;
+
+  /* Progress bars run from very dark plum to light lilac (rulebook 6). */
+  --progress-from: #2a0e33;
+  --progress-to: #c9a5e6;
+
+  /* Notices: whole tinted glass cards; green done, red blocked or error, amber warning. */
+  --success-bg: #e3f1ea;
+  --success-border: #a3cdb7;
+  --success-text: #1e6b47;
+  --info-bg: #ebe3f7;
+  --info-border: #c4b3e0;
+  --info-text: #3a2a5a;
+  --warning-bg: #fbefdc;
+  --warning-border: #e3c08a;
+  --warning-text: #7a4100;
+  --error-bg: #f8e4e8;
+  --error-border: #e2a9b4;
+  --error-text: #a3122a;
 
   /* Information pills: pastel tint, soft border, dark text of the same hue (DoD pill system). */
-  --pill-plum-bg: #f1eaf4;
-  --pill-plum-border: #c9b3d6;
-  --pill-plum-text: #481c5f;
-  --pill-sage-bg: #e8f1ec;
-  --pill-sage-border: #a9c9b6;
-  --pill-sage-text: #245a41;
-  --pill-gold-bg: #fbf3da;
-  --pill-gold-border: #d9b54a;
-  --pill-gold-text: #5c3f0e;
-  --pill-sky-bg: #e6eef6;
-  --pill-sky-border: #afc3de;
+  --pill-plum-bg: #ebe3f7;
+  --pill-plum-border: #c4b3e0;
+  --pill-plum-text: #48125d;
+  --pill-sage-bg: #e3f1ea;
+  --pill-sage-border: #a3cdb7;
+  --pill-sage-text: #1e6b47;
+  /* "Gold" pills are a soft honey now: no mustard (rulebook 6). */
+  --pill-gold-bg: #fbf1d6;
+  --pill-gold-border: #e3cf8f;
+  --pill-gold-text: #6b4a00;
+  --pill-sky-bg: #e4ecfa;
+  --pill-sky-border: #b3c6ea;
   --pill-sky-text: #2e4a8c;
-  --pill-neutral-bg: #f4f0ec;
-  --pill-neutral-border: #d6ccdc;
-  --pill-neutral-text: #4f3d57;
-  --pill-blush-bg: #f6e9eb;
-  --pill-blush-border: #ddb0b8;
-  --pill-blush-text: #8c2b3a;
+  --pill-neutral-bg: #eeeaf3;
+  --pill-neutral-border: #d3cbdc;
+  --pill-neutral-text: #4a3d5c;
+  --pill-blush-bg: #f8e4e8;
+  --pill-blush-border: #e2a9b4;
+  --pill-blush-text: #a3122a;
 
   /*
    * Lane B: doodle colours (Design: doodles take their colours from the tokens, 23 Oct 2026).
@@ -113,10 +152,10 @@
   --doodle-sky-soft: #d7e6f2;
   --doodle-sage-soft: #c9d8bf;
 
-  /* Shadows (boards: nav island, cards, pop-overs) */
-  --shadow-nav: 0 1px 2px rgba(38, 20, 46, 0.04), 0 8px 24px -12px rgba(38, 20, 46, 0.12);
-  --shadow-card: 0 1px 2px rgba(38, 20, 46, 0.04), 0 18px 40px -28px rgba(38, 20, 46, 0.3);
-  --shadow-popover: 0 1px 2px rgba(38, 20, 46, 0.05), 0 24px 48px -24px rgba(38, 20, 46, 0.35);
+  /* Shadows: soft and wide, so glass seems to float (handoff: --glass-shadow rgba(20,10,30,.10)). */
+  --shadow-nav: 0 1px 2px rgba(20, 10, 30, 0.04), 0 10px 30px -12px rgba(20, 10, 30, 0.1);
+  --shadow-card: 0 1px 2px rgba(20, 10, 30, 0.04), 0 18px 44px -24px rgba(20, 10, 30, 0.18);
+  --shadow-popover: 0 1px 2px rgba(20, 10, 30, 0.05), 0 24px 56px -20px rgba(20, 10, 30, 0.25);
 
   /* Story Atlas relationship lines (S1-E17-15): one colour per category, each also drawn with its
      own line style, so the meaning never rests on colour alone. At least 3:1 on cards. */
@@ -131,68 +170,91 @@
 [data-theme='night'] {
   color-scheme: dark;
 
-  --paper: #1e0f24;
-  --surface: #2a1633;
-  --tint: #3a2444;
-  --panel: #2e2433;
-  --panel-border: #4a3d52;
-  --nav-glass: rgba(42, 22, 51, 0.85);
+  /* Revolver: the whole interface at night, the same with every theme (rulebook 3). */
+  --paper: #2a0e33;
+  /* White at 7% over Revolver. */
+  --surface: #391f41;
+  --surface-glass: rgba(255, 255, 255, 0.07);
+  --tint: #432a4c;
+  --panel: #3a2042;
+  --panel-border: #5a4263;
+  --nav-glass: rgba(255, 255, 255, 0.07);
+  --glass-border: rgba(255, 255, 255, 0.16);
+  --glass-highlight: rgba(255, 255, 255, 0.16);
+  --field: rgba(255, 255, 255, 0.08);
 
-  --ink: #f4f0ec;
-  --heading: #e9ddf0;
-  --body: #d6ccdc;
-  --meta: #bfb0c8;
-  /* On night backgrounds the board gold itself is readable (about 9:1). */
-  --eyebrow: #e6c24c;
-  --link: #d9b8ec;
-  --link-hover: #f1e4f8;
-  --destructive: #f2a7b3;
+  --ink: #f4eef8;
+  --heading: #ffffff;
+  --body: #e6dded;
+  --meta: #e6dded;
+  --eyebrow: #ffffff;
+  --link: #c9c4ff;
+  --link-hover: #ffffff;
+  --destructive: #ff9aa8;
 
-  --gold: #e6c24c;
+  --gold: #f3dc9b;
   --on-gold: #26142e;
-  --primary: #e9ddf0;
+  --primary: #f4eef8;
   --on-primary: #2a0e33;
-  --chip-on: #e9ddf0;
+  --chip-on: #f4eef8;
   --chip-on-text: #2a0e33;
+  /* Night keeps plum whatever the theme (Robert, 7 Nov 2026, 18:44). */
+  --accent: #672786;
+  --accent-deep: #2a0e33;
+  --plum-from: #672786;
+  --plum-to: #2a0e33;
 
-  --border: #4a3554;
-  --hairline: #3a2744;
-  --control-border: #9f8da8;
-  --dashed-border: #6e5a78;
-  /* Focus ring: gold on dark backgrounds (Robert, 17 Oct 2026). */
-  --focus-ring: #e6c24c;
+  --border: #5a4263;
+  --hairline: #432a4c;
+  --control-border: #a593b0;
+  --dashed-border: #7a6585;
+  --focus-ring: #f4eef8;
+  --focus-halo: rgba(42, 14, 51, 0.9);
 
-  --success-bg: #1f3529;
-  --success-border: #4f7a62;
-  --success-text: #bfe3cd;
-  --info-bg: #3a2444;
-  --info-border: #6b4a7c;
-  --info-text: #ebddf2;
-  --warning-bg: #3a2e12;
-  --warning-border: #8a6e25;
-  --warning-text: #f5e2a8;
-  --error-bg: #3e1e26;
-  --error-border: #8a4a57;
-  --error-text: #f6c3cc;
+  --blob-1: #4d1b5e;
+  --blob-2: #3d348b;
+  --blob-3: #5a1e4e;
+  --grain-opacity: 0.2;
+  --grain-blend: overlay;
 
-  --pill-plum-bg: #3a2444;
-  --pill-plum-border: #6b4a7c;
-  --pill-plum-text: #ebddf2;
-  --pill-sage-bg: #1f3529;
-  --pill-sage-border: #4f7a62;
+  /* Black paper with light text at night (rulebook 3). */
+  --story-paper: #1e1520;
+  --story-ink: #ede4d8;
+
+  --progress-from: #b07fd6;
+  --progress-to: #f1e4fa;
+
+  --success-bg: #1d3a2e;
+  --success-border: #4f8a6c;
+  --success-text: #8fe0b5;
+  --info-bg: #3d2a5a;
+  --info-border: #6e5a99;
+  --info-text: #e6ddff;
+  --warning-bg: #3f2c14;
+  --warning-border: #8a6a33;
+  --warning-text: #ffc98a;
+  --error-bg: #45192a;
+  --error-border: #8f4a5c;
+  --error-text: #ff9aa8;
+
+  --pill-plum-bg: #3d2a5a;
+  --pill-plum-border: #6e5a99;
+  --pill-plum-text: #ece4ff;
+  --pill-sage-bg: #1d3a2e;
+  --pill-sage-border: #4f8a6c;
   --pill-sage-text: #bfe3cd;
-  --pill-gold-bg: #3a2e12;
-  --pill-gold-border: #8a6e25;
-  --pill-gold-text: #f5e2a8;
+  --pill-gold-bg: #3f2c14;
+  --pill-gold-border: #8a6a33;
+  --pill-gold-text: #ffdcae;
   --pill-sky-bg: #1e2a40;
   --pill-sky-border: #4f6a99;
   --pill-sky-text: #cfdcf2;
   --pill-neutral-bg: #2e2533;
   --pill-neutral-border: #5c4f63;
   --pill-neutral-text: #e5dee8;
-  --pill-blush-bg: #3e1e26;
-  --pill-blush-border: #8a4a57;
-  --pill-blush-text: #f6c3cc;
+  --pill-blush-bg: #45192a;
+  --pill-blush-border: #8f4a5c;
+  --pill-blush-text: #ffc3cc;
 
   /*
    * Lane B: doodle colours at night. The ink lines turn light, so every fill has to turn dark
@@ -211,9 +273,9 @@
   --doodle-sky-soft: #4f6a99;
   --doodle-sage-soft: #4f7a62;
 
-  --shadow-nav: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -12px rgba(0, 0, 0, 0.5);
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 18px 40px -28px rgba(0, 0, 0, 0.7);
-  --shadow-popover: 0 1px 2px rgba(0, 0, 0, 0.3), 0 24px 48px -24px rgba(0, 0, 0, 0.8);
+  --shadow-nav: 0 1px 2px rgba(0, 0, 0, 0.25), 0 10px 30px -12px rgba(0, 0, 0, 0.45);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.25), 0 18px 44px -24px rgba(0, 0, 0, 0.45);
+  --shadow-popover: 0 1px 2px rgba(0, 0, 0, 0.3), 0 24px 56px -20px rgba(0, 0, 0, 0.6);
 
   /* Story Atlas relationship lines (S1-E17-15), lightened for night cards. */
   --atlas-line-family: #e9ddf0;
@@ -222,6 +284,114 @@
   --atlas-line-allies: #9fd3a8;
   --atlas-line-conflict: #f2a7b3;
   --atlas-line-other: #c6d0da;
+}
+
+/*
+ * The staff area: its own flat, warm beige look with no purple, so staff always know they are in
+ * the admin site (handoff, Staff tab; rulebook 3). StaffLayout puts data-area="staff" on its root,
+ * so these values replace the member ones for everything inside it. Cards are flat (no glass) and
+ * the background has no colour blobs. Night mode turns it a warm dark brown, still without purple.
+ */
+[data-area='staff'] {
+  --paper: #f3ece0;
+  --surface: #fbf8f2;
+  --surface-glass: #fbf8f2;
+  --tint: #ebe2d3;
+  --panel: #ede4d6;
+  --panel-border: #d8ccb9;
+  --nav-glass: #fbf8f2;
+  --glass-border: #e2d7c6;
+  --glass-highlight: rgba(255, 255, 255, 0.6);
+  --field: #fffdf9;
+
+  --ink: #2b2119;
+  --heading: #2b2119;
+  --body: #5c5046;
+  --meta: #5c5046;
+  --eyebrow: #141114;
+  --link: #2b2119;
+  --link-hover: #000000;
+  --destructive: #a3122a;
+
+  --primary: #1f1a16;
+  --on-primary: #ffffff;
+  --chip-on: #2b2119;
+  --chip-on-text: #ffffff;
+  --accent: #2b2119;
+  --accent-deep: #000000;
+  --plum-from: #2b2119;
+  --plum-to: #1f1a16;
+
+  --border: #ddd1bf;
+  --hairline: #e9dfcf;
+  --control-border: #8a7b6b;
+  --dashed-border: #b5a793;
+  --focus-ring: #2b2119;
+  --focus-halo: rgba(255, 255, 255, 0.9);
+
+  --info-bg: #ebe2d3;
+  --info-border: #cbbba3;
+  --info-text: #3d3128;
+  --pill-plum-bg: #ebe2d3;
+  --pill-plum-border: #cbbba3;
+  --pill-plum-text: #3d3128;
+  --pill-neutral-bg: #ede4d6;
+  --pill-neutral-border: #d0c3b0;
+  --pill-neutral-text: #4a3e34;
+
+  --progress-from: #2b2119;
+  --progress-to: #b5a793;
+}
+
+[data-theme='night'] [data-area='staff'] {
+  --paper: #1f1a16;
+  --surface: #2a241f;
+  --surface-glass: #2a241f;
+  --tint: #362e27;
+  --panel: #312a24;
+  --panel-border: #4f4439;
+  --nav-glass: #2a241f;
+  --glass-border: #4f4439;
+  --glass-highlight: rgba(255, 255, 255, 0.08);
+  --field: #2a241f;
+
+  --ink: #f3ece0;
+  --heading: #ffffff;
+  --body: #e0d5c6;
+  --meta: #e0d5c6;
+  --eyebrow: #ffffff;
+  --link: #f3ece0;
+  --link-hover: #ffffff;
+  --destructive: #ff9aa8;
+
+  --primary: #f3ece0;
+  --on-primary: #1f1a16;
+  --chip-on: #f3ece0;
+  --chip-on-text: #1f1a16;
+  --accent: #f3ece0;
+  --accent-deep: #ffffff;
+  --plum-from: #f3ece0;
+  --plum-to: #e0d5c6;
+
+  --border: #4f4439;
+  --hairline: #362e27;
+  --control-border: #a3968a;
+  --dashed-border: #75685b;
+  --focus-ring: #f3ece0;
+  --focus-halo: rgba(31, 26, 22, 0.9);
+
+  --info-bg: #362e27;
+  --info-border: #6b5d4f;
+  --info-text: #f3ece0;
+  --pill-plum-bg: #362e27;
+  --pill-plum-border: #6b5d4f;
+  --pill-plum-text: #f3ece0;
+  --pill-neutral-bg: #312a24;
+  --pill-neutral-border: #6b5d4f;
+  --pill-neutral-text: #f3ece0;
+
+  --progress-from: #e0d5c6;
+  --progress-to: #75685b;
 }
 
 /* Tailwind classes from the tokens: bg-paper, text-ink, border-control-border and so on. */
@@ -234,7 +404,13 @@
   --color-on-featured: #faf8f5;
   --color-on-featured-soft: #e5d7ea;
   --color-paper: var(--paper);
-  --color-surface: var(--surface);
+  /* Cards paint the see-through glass; --surface stays the solid look-alike for the contrast test. */
+  --color-surface: var(--surface-glass);
+  --color-surface-solid: var(--surface);
+  --color-field: var(--field);
+  --color-accent: var(--accent);
+  --color-story-paper: var(--story-paper);
+  --color-story-ink: var(--story-ink);
   --color-tint: var(--tint);
   --color-panel: var(--panel);
   --color-panel-border: var(--panel-border);
@@ -269,9 +445,20 @@
   /* Eyebrows use Inter, as the parent company's do (Robert, 6 Nov 2026; Cutive before). */
   --font-eyebrow: 'Inter Variable', 'Inter', system-ui, sans-serif;
   --font-hand: 'Shadows Into Light Two', cursive;
+  /* Story text in the reader and the editor (handoff: --font-story Literata; bundle G1). */
+  --font-story: 'Literata Variable', 'Literata', Georgia, serif;
 
+  /* Type sizes from the handoff: h1 44 to 72 px, h2 30 to 42 px, h3 21 px, h4 19 px (the smallest
+     heading under an eyebrow is 19 px, rulebook 6), body 15 px, small 13 px. */
+  --text-h1: clamp(44px, 5vw, 72px);
+  --text-h2: clamp(30px, 3vw, 42px);
+  --text-h3: 21px;
+  --text-h4: 19px;
+
+  /* Radii: --r-sm 16, --r-md 24, --r-lg 28 (cards), pills fully round (handoff). */
   --radius-nav: 2.1rem;
-  --radius-card: 24px;
-  --radius-ad: 20px;
+  --radius-card: 28px;
+  --radius-ad: 24px;
   --radius-cover: 16px;
+  --radius-field: 14px;
 }

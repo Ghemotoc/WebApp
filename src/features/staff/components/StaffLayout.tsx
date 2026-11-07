@@ -95,8 +95,10 @@ export function StaffLayout() {
 
   // Step 5: staff get the bar, the side menu with their own areas, the page and the footer.
   const menuItems = pagesForAreas(access.areas.map((area) => area.area));
+  // data-area="staff" swaps in the staff area's flat beige colours (src/styles/tokens.css; bundle
+  // G1), and bg-paper paints them over the member background's colour blobs.
   return (
-    <div className="flex min-h-dvh flex-col bg-paper text-ink">
+    <div data-area="staff" className="flex min-h-dvh flex-col bg-paper text-ink">
       <a
         href="#main"
         className="sr-only z-20 rounded-full bg-surface px-4 py-2 focus:not-sr-only focus:absolute focus:top-2 focus:left-2"

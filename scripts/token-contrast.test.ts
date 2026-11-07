@@ -19,16 +19,18 @@ const tokensCss = readFileSync(
 );
 
 /**
- * Reads the "--name: #hex;" declarations from the block for one theme.
+ * Reads the "--name: #hex;" declarations from one block of tokens.css.
  *
- * @param themeName - 'light' or 'night', as in [data-theme="night"] (either quote style)
- * @returns token name → hex colour
- * Errors: throws when tokens.css has no block for that theme.
+ * @param selector - the block's selector exactly as written, for example [data-theme='night']
+ * @returns token name → hex colour (colours with transparency, such as the glass, are skipped:
+ *   the test measures the solid look-alikes, such as --surface)
+ * Errors: throws when tokens.css has no block with that selector.
  */
-function readTokenBlock(themeName: string): Map<string, string> {
-  const blockOpening = new RegExp(`\\[data-theme=['"]${themeName}['"]\\]\\s*\\{`);
+function readTokenBlock(selector: string): Map<string, string> {
+  const escapedSelector = selector.replace(/[[\]]/g, '\\$&');
+  const blockOpening = new RegExp(`(^|\\n)${escapedSelector}\\s*\\{`);
   const startIndex = tokensCss.search(blockOpening);
-  if (startIndex === -1) throw new Error(`tokens.css has no [data-theme="${themeName}"] block.`);
+  if (startIndex === -1) throw new Error(`tokens.css has no ${selector} block.`);
   const block = tokensCss.slice(startIndex, tokensCss.indexOf('\n}', startIndex));
   const tokens = new Map<string, string>();
 
@@ -38,9 +40,30 @@ function readTokenBlock(themeName: string): Map<string, string> {
   return tokens;
 }
 
+/**
+ * Lays one set of tokens over another, as the cascade does for an element inside another.
+ *
+ * @param layers - token sets from the outermost to the innermost
+ * @returns the tokens an element in the innermost set ends up with
+ */
+function layered(...layers: Map<string, string>[]): Map<string, string> {
+  return new Map(layers.flatMap((layer) => [...layer]));
+}
+
+const lightTokens = readTokenBlock("[data-theme='light']");
+const nightTokens = readTokenBlock("[data-theme='night']");
+const staffLightTokens = readTokenBlock("[data-area='staff']");
+const staffNightTokens = readTokenBlock("[data-theme='night'] [data-area='staff']");
+
+/**
+ * The four looks to check: members by day and at night, and the staff area by day and at night
+ * (the staff area sits inside the page, so its values lie over the member ones).
+ */
 const themes = {
-  light: readTokenBlock('light'),
-  night: readTokenBlock('night'),
+  light: lightTokens,
+  night: nightTokens,
+  staffLight: layered(lightTokens, staffLightTokens),
+  staffNight: layered(nightTokens, staffLightTokens, staffNightTokens),
 };
 
 /**
@@ -72,14 +95,34 @@ describe('design token contrast', () => {
     expect(failingPairs(themes.night)).toEqual([]);
   });
 
-  it('uses the colours the story names in light mode', () => {
-    expect(themes.light.get('paper')).toBe('#faf8f5');
-    expect(themes.light.get('heading')).toBe('#481c5f');
-    expect(themes.light.get('link')).toBe('#672786');
-    expect(themes.light.get('ink')).toBe('#26142e');
-    expect(themes.light.get('body')).toBe('#5c4965');
-    expect(themes.light.get('gold')).toBe('#e6c24c');
-    expect(themes.light.get('eyebrow')).toBe('#815e18');
+  it('every token pair meets WCAG 2.2 AA in the staff area, by day and at night', () => {
+    expect(failingPairs(themes.staffLight)).toEqual([]);
+    expect(failingPairs(themes.staffNight)).toEqual([]);
+  });
+
+  it('uses the Lilac mist colours of the approved design by day (bundle G1)', () => {
+    expect(themes.light.get('paper')).toBe('#f3eefb');
+    expect(themes.light.get('ink')).toBe('#24133a');
+    expect(themes.light.get('heading')).toBe('#2a0e33');
+    expect(themes.light.get('body')).toBe('#584a6e');
+    expect(themes.light.get('link')).toBe('#4b4fa8');
+    expect(themes.light.get('focus-ring')).toBe('#48125d');
+  });
+
+  it('draws eyebrows black by day and white at night, never gold (Robert, 7 Nov 2026)', () => {
+    expect(themes.light.get('eyebrow')).toBe('#141114');
+    expect(themes.night.get('eyebrow')).toBe('#ffffff');
+  });
+
+  it('turns the whole interface Revolver at night', () => {
+    expect(themes.night.get('paper')).toBe('#2a0e33');
+  });
+
+  it('keeps purple out of the staff area', () => {
+    const staffColours = [...staffLightTokens.values(), ...staffNightTokens.values()];
+    expect(staffColours).not.toContain('#672786');
+    expect(staffColours).not.toContain('#48125d');
+    expect(staffColours).not.toContain('#2a0e33');
   });
 
   it('never uses gold as small text on light backgrounds (it reaches only about 1.6:1 on paper)', () => {

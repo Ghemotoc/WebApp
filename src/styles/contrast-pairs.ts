@@ -2,7 +2,8 @@
  * Every foreground and background token pair the interface uses, with the contrast it must
  * reach (story S1-E1-03; WCAG 2.2 AA).
  *
- * Who reads it: src/styles/contrast.test.ts checks each pair in light and night mode, and the
+ * Who reads it: scripts/token-contrast.test.ts checks each pair by day and at night, for members
+ * and for the staff area, and the
  * /design page shows each pair with its ratio. When a component starts using a new pair of
  * tokens, add it here so CI checks it.
  * Minimums: 4.5 for text (WCAG 1.4.3), 3 for interface parts such as field borders, chip borders
@@ -56,6 +57,14 @@ const textPairs: ContrastPair[] = [
     minimumRatio: 4.5,
     usedFor: 'selected chips',
   },
+  // Story text on its paper, in the reader and the editor (bundle G1).
+  {
+    foreground: 'story-ink',
+    background: 'story-paper',
+    minimumRatio: 4.5,
+    usedFor: 'story text',
+  },
+  { foreground: 'on-gold', background: 'gold', minimumRatio: 4.5, usedFor: 'count badges' },
 ];
 
 /** Text inside notices and information pills: each hue's text on its own tint. */
