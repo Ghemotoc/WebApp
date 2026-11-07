@@ -51,7 +51,7 @@ export function NotificationBell() {
       {unreadCount > 0 && (
         <span
           aria-hidden="true"
-          className="absolute -top-1 -right-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-surface bg-gold px-1 text-[11px] leading-none font-bold text-on-gold"
+          className="absolute -top-1 -right-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-surface-solid bg-gold px-1 text-[11px] leading-none font-bold text-on-gold"
         >
           {badge}
         </span>

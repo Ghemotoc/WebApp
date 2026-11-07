@@ -40,7 +40,7 @@
 @layer base {
   /*
    * The page: the background colour sits on <html>; <body> stays see-through so the colour blobs
-   * and the grain (body::before and body::after, below) show between them and the page.
+   * (body::before, below) show between them and the page.
    * Body text is Inter at 15 px with a 1.5 line height (handoff: --font-ui).
    */
   html {
@@ -93,66 +93,42 @@
 }
 
 /*
- * The background (the liquid glass design; bundle G1): three large, soft colour blobs that drift
- * very slowly (a 60 s loop), and a fine film grain over them at 20% (rulebook 3). Both sit behind
- * every page, fixed to the window, and take no clicks. The staff area paints its own flat beige
- * over them (data-area="staff"). Phones and small tablets (under 744 px) get the blobs only, no
- * grain, as the app boards do. "Reduce motion" stops the drift (the rule further down).
+ * The background (the liquid glass design; bundle G1): three large, soft colour blobs behind every
+ * page, fixed to the window, taking no clicks. They stay still and there is no film grain, on
+ * every screen size, as on the phone and tablet boards (Robert, 7 Nov 2026, 21:46 UTC: the moving
+ * background and the grain were too much). The staff area paints its own flat beige over them
+ * (data-area="staff").
  */
-body::before,
-body::after {
+body::before {
   content: '';
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-}
-
-body::before {
   /* Each blob is a radial gradient fading to nothing, so the edges are soft. */
   background:
     radial-gradient(42vmax 42vmax at 12% 18%, var(--blob-1), transparent 70%),
     radial-gradient(38vmax 38vmax at 88% 22%, var(--blob-2), transparent 70%),
     radial-gradient(46vmax 46vmax at 60% 92%, var(--blob-3), transparent 70%);
-  background-size: 140% 140%;
-  animation: glass-mesh-drift 60s ease-in-out infinite alternate;
-}
-
-/* The grain: SVG fractal noise drawn as a 220 px tile (multiply by day, overlay at night). */
-body::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 220px 220px;
-  opacity: var(--grain-opacity);
-  mix-blend-mode: var(--grain-blend);
-}
-
-@media (max-width: 743px) {
-  body::after {
-    display: none;
-  }
-}
-
-@keyframes glass-mesh-drift {
-  from {
-    background-position: 0% 0%;
-  }
-  to {
-    background-position: 100% 100%;
-  }
 }
 
 /*
- * Glass: every card that uses bg-surface is see-through white with a blur of what lies behind it
- * (handoff: --glass-blur, blur(24px) saturate(180%)). The blur also keeps text readable when a
- * card or menu sits over other text. The staff area is flat, so it has no blur.
+ * Glass: every card that uses bg-surface is see-through white over the still colour blobs
+ * (handoff: --glass-bg). Blurring what lies behind (handoff: --glass-blur, blur(24px)
+ * saturate(180%)) costs a weaker phone a lot when a page has dozens of cards, and over soft blobs
+ * it looks the same, so only what floats over other content is blurred: dialogs and pop-overs
+ * (menus, the quote bar), where the blur also keeps the text underneath from showing through
+ * (Robert, 7 Nov 2026, 21:47 UTC: keep it light for weaker devices). The staff area is flat.
  * "Reduce transparency" (a system setting) swaps the glass for the solid colour it looks like.
  */
-.bg-surface {
+dialog.bg-surface,
+.bg-surface.shadow-popover {
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   backdrop-filter: blur(24px) saturate(180%);
 }
 
-[data-area='staff'] .bg-surface {
+[data-area='staff'] dialog.bg-surface,
+[data-area='staff'] .bg-surface.shadow-popover {
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
 }
@@ -163,7 +139,8 @@ body::after {
     --nav-glass: var(--surface);
   }
 
-  .bg-surface {
+  dialog.bg-surface,
+  .bg-surface.shadow-popover {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }

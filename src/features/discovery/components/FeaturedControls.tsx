@@ -39,7 +39,7 @@ export function FeaturedControls(props: FeaturedControlsProps) {
   const { titles, index, isPaused } = props;
   const { t } = useDiscoveryTranslation();
   return (
-    <div className="absolute bottom-6 left-[clamp(24px,4vw,56px)] flex flex-wrap items-center gap-2.5 rounded-full border border-border bg-surface/95 p-1.5">
+    <div className="absolute bottom-6 left-[clamp(24px,4vw,56px)] flex flex-wrap items-center gap-2.5 rounded-full border border-border bg-surface-solid/95 p-1.5">
       {titles.map((title, dotIndex) => (
         <button
           key={title + String(dotIndex)}

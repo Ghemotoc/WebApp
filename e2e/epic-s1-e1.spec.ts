@@ -41,8 +41,9 @@ const personaIds: Record<PersonaName, string> = {
   kid_14_waiting: '00000000-0000-4000-8000-000000000004',
 };
 
-/** The page background in each theme, from src/styles/tokens.css (--paper). */
-const paperColour = { light: 'rgb(250, 248, 245)', night: 'rgb(30, 15, 36)' };
+/** The page background in each theme, from src/styles/tokens.css (--paper): Lilac mist by day,
+ * Revolver at night (the liquid glass design, bundle G1). */
+const paperColour = { light: 'rgb(243, 238, 251)', night: 'rgb(42, 14, 51)' };
 
 /** The home heading in each language. */
 const homeHeading = {
@@ -57,12 +58,10 @@ async function waitForAnimations(page: Page) {
   );
 }
 
-/** The app frame's computed background colour (AppLayout's bg-paper: the --paper token in use). */
+/** The page's computed background colour: <html> paints the --paper token in use (since G1 the
+ * app frame is see-through so the colour blobs show). */
 async function pageBackground(page: Page) {
-  return page.evaluate(() => {
-    const appFrame = document.querySelector('#root > div') ?? document.body;
-    return getComputedStyle(appFrame).backgroundColor;
-  });
+  return page.evaluate(() => getComputedStyle(document.documentElement).backgroundColor);
 }
 
 /** Opens the app as a signed-in persona in a fresh browser context (one "device"). */

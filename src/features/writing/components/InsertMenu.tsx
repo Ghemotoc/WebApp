@@ -80,7 +80,7 @@ function InsertMenuPanel(props: InsertMenuPanelProps) {
   // The footnote sits outside the menu role (a menu holds only items) and describes it.
   const footnoteId = `${menuId}-note`;
   return (
-    <div className="absolute top-[54px] left-0 z-20 w-[min(340px,calc(100vw-32px))] rounded-[24px] border border-border bg-surface p-2 shadow-card">
+    <div className="absolute top-[54px] left-0 z-20 w-[min(340px,calc(100vw-32px))] rounded-[24px] border border-border bg-surface p-2 shadow-popover">
       <div
         ref={menuRef}
         id={menuId}

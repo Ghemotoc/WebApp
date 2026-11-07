@@ -9,7 +9,7 @@
  *
  * The names stay the ones the app already uses (paper, surface, ink, heading and so on); only the
  * values changed, so every screen took the new colours without being edited. New tokens for the
- * glass look (blobs, glass edge, grain, story paper, progress, accent) sit beside them.
+ * glass look (blobs, glass edge, story paper, progress, accent) sit beside them.
  *
  * Glass: cards (bg-surface) are see-through white over the moving colour blobs. `--surface` keeps
  * the solid colour the glass looks like on the page, because the contrast test can only measure
@@ -29,7 +29,7 @@
 [data-theme='light'] {
   color-scheme: light;
 
-  /* Surfaces. Page background, under the blobs and the grain (handoff: --bg #F3EEFB). */
+  /* Surfaces. Page background, under the blobs (handoff: --bg #F3EEFB). */
   --paper: #f3eefb;
   /* The solid colour a glass card looks like on the page (white at 50% over --paper). */
   --surface: #f9f7fd;
@@ -81,13 +81,10 @@
   --focus-ring: #48125d;
   --focus-halo: rgba(255, 255, 255, 0.9);
 
-  /* Background colour blobs, slowly drifting under everything (handoff: --blob-1 to 3). */
+  /* Background colour blobs, still, under everything (handoff: --blob-1 to 3). */
   --blob-1: #d9ccf5;
   --blob-2: #c9d8f7;
   --blob-3: #f9d9cf;
-  /* Fine film grain over the background, 20% on the website (rulebook 3). */
-  --grain-opacity: 0.2;
-  --grain-blend: multiply;
 
   /* Story paper: only where story text sits (reader, editor; rulebook 3). */
   --story-paper: #fffbf2;
@@ -214,8 +211,6 @@
   --blob-1: #4d1b5e;
   --blob-2: #3d348b;
   --blob-3: #5a1e4e;
-  --grain-opacity: 0.2;
-  --grain-blend: overlay;
 
   /* Black paper with light text at night (rulebook 3). */
   --story-paper: #1e1520;
@@ -447,6 +442,9 @@
   --font-hand: 'Shadows Into Light Two', cursive;
   /* Story text in the reader and the editor (handoff: --font-story Literata; bundle G1). */
   --font-story: 'Literata Variable', 'Literata', Georgia, serif;
+  /* The dyslexia-friendly reading font (Robert, 7 Nov 2026, 18:16); its files load only when
+     a reader picks it, because a browser fetches a font only once text uses it. */
+  --font-dyslexia: 'OpenDyslexic', 'Comic Sans MS', sans-serif;
 
   /* Type sizes from the handoff: h1 44 to 72 px, h2 30 to 42 px, h3 21 px, h4 19 px (the smallest
      heading under an eyebrow is 19 px, rulebook 6), body 15 px, small 13 px. */

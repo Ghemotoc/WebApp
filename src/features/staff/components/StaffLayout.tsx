@@ -101,7 +101,7 @@ export function StaffLayout() {
     <div data-area="staff" className="flex min-h-dvh flex-col bg-paper text-ink">
       <a
         href="#main"
-        className="sr-only z-20 rounded-full bg-surface px-4 py-2 focus:not-sr-only focus:absolute focus:top-2 focus:left-2"
+        className="sr-only z-20 rounded-full bg-surface-solid px-4 py-2 focus:not-sr-only focus:absolute focus:top-2 focus:left-2"
       >
         {t('shell.skipToContent')}
       </a>

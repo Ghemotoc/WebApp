@@ -25,7 +25,7 @@ interface SpaceBadgeProps {
 export function SpaceBadge({ name, banner, size }: SpaceBadgeProps) {
   const sizeClasses =
     size === 'large'
-      ? 'h-[88px] w-[88px] border-4 border-surface text-[28px]'
+      ? 'h-[88px] w-[88px] border-4 border-surface-solid text-[28px]'
       : 'h-11 w-11 text-base';
   return (
     <span
