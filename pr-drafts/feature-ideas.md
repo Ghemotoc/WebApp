@@ -10,6 +10,10 @@ Format when sent: a user story (As a, I want, so that), Given/When/Then criteria
 
 ## Sent
 
+### Sent 7 Nov 2026 (/mnt/project-files/06_feature-ideas/2026-11-07_feature-ideas_daily.md; doc tab "7 Nov 2026")
+
+12 ideas, IDEA-20261107-1 to 12: typo notes to the writer, restrict someone quietly, two invites once you're in, a support note after reporting self-harm, mute words, read chapters offline, data-light mode, private notebook, my year of reading and writing, quiet milestones, "I'd read this in English", "Inspired by" links.
+
 ### Sent 6 Nov 2026 (/mnt/project-files/06_feature-ideas/2026-11-06_feature-ideas_daily.md; doc tab "6 Nov 2026")
 
 11 ideas, IDEA-20261106-1 to 11: poem mode, who can comment, topics I'd rather not see, pin one comment, class anthology, stories set in my county, Romanian literary calendar, first-chapter checklist, editor opens where I stopped, "Feedback I'm looking for", chapter summaries.
