@@ -15,6 +15,10 @@ create extension if not exists pgtap with schema extensions;
 
 select plan(14);
 
+-- The invite-only test with the waiting list off (WAITLIST-1 is tested in 310): without a code,
+-- sign-up is refused, as before the list.
+update public.feature_flags set is_enabled = false where key = 'waitlist';
+
 -- The sign-up data the form sends, with the current version 0.1 in English.
 create function pg_temp.sign_up_data(invite_code text, birth_year text default '1990')
 returns jsonb

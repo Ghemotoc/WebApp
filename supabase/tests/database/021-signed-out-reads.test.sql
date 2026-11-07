@@ -247,6 +247,8 @@ select results_eq(
        ('teacher_checks', 0::bigint),
        ('username_approvals', 0::bigint),
        ('username_word_lists', 0::bigint),
+       -- The waiting list: each person's own entry and owner and admin (WAITLIST-1).
+       ('waitlist_entries', 0::bigint),
        ('writer_ranks', 0::bigint)
      ) as expected (table_name, visible_rows) order by 1 $$,
   'a signed-out visitor sees only public flags, settings, markets, published legal documents, languages, categories, tags, counties and age rules by country, nothing else'

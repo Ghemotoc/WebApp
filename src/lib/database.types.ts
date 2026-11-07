@@ -5080,6 +5080,7 @@ export type Database = {
           country_code: string | null;
           created_at: string;
           deleted_at: string | null;
+          founding_member_since: string | null;
           handle: string | null;
           handle_changed_at: string | null;
           handle_skeleton: string | null;
@@ -5143,6 +5144,7 @@ export type Database = {
           country_code?: string | null;
           created_at?: string;
           deleted_at?: string | null;
+          founding_member_since?: string | null;
           handle?: string | null;
           handle_changed_at?: string | null;
           handle_skeleton?: string | null;
@@ -5187,6 +5189,7 @@ export type Database = {
           country_code?: string | null;
           created_at?: string;
           deleted_at?: string | null;
+          founding_member_since?: string | null;
           handle?: string | null;
           handle_changed_at?: string | null;
           handle_skeleton?: string | null;
@@ -8922,6 +8925,48 @@ export type Database = {
         };
         Relationships: [];
       };
+      waitlist_entries: {
+        Row: {
+          admitted_at: string | null;
+          admitted_by_code: boolean;
+          created_at: string;
+          id: string;
+          interest: Database['public']['Enums']['waitlist_interest'];
+          joined_at: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          admitted_at?: string | null;
+          admitted_by_code?: boolean;
+          created_at?: string;
+          id?: string;
+          interest?: Database['public']['Enums']['waitlist_interest'];
+          joined_at?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          admitted_at?: string | null;
+          admitted_by_code?: boolean;
+          created_at?: string;
+          id?: string;
+          interest?: Database['public']['Enums']['waitlist_interest'];
+          joined_at?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'waitlist_entries_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: true;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       writer_ranks: {
         Row: {
           chapter_count: number;
@@ -9144,6 +9189,11 @@ export type Database = {
       admin_add_reserved_name: {
         Args: { how_it_matches: string; new_name: string };
         Returns: string;
+      };
+      admin_admit_from_waitlist: { Args: { entry_ids: string[] }; Returns: number };
+      admin_admit_waitlist_wave: {
+        Args: { how_many: number; wanted_country: string; wanted_interest: string };
+        Returns: number;
       };
       admin_appeals_queue: {
         Args: { status_filter?: Database['public']['Enums']['appeal_status'] };
@@ -10500,6 +10550,15 @@ export type Database = {
         }[];
       };
       admin_waiting_decision_email_count: { Args: Record<PropertyKey, never>; Returns: number };
+      admin_waitlist: {
+        Args: {
+          page_offset?: number;
+          page_size?: number;
+          wanted_country?: string;
+          wanted_interest?: string;
+        };
+        Returns: Json;
+      };
       admin_withdraw_parental_consent: {
         Args: { reason_given: string; target_user_id: string };
         Returns: boolean;
@@ -10508,6 +10567,7 @@ export type Database = {
         Args: { reason_given: string; target_user_id: string };
         Returns: boolean;
       };
+      admit_waitlist_entry: { Args: { how: string; target_entry_id: string }; Returns: boolean };
       ads_are_barred: { Args: { context: Json }; Returns: boolean };
       age_band: {
         Args: Record<PropertyKey, never>;
@@ -10815,6 +10875,7 @@ export type Database = {
           country_code: string | null;
           created_at: string;
           deleted_at: string | null;
+          founding_member_since: string | null;
           handle: string | null;
           handle_changed_at: string | null;
           handle_skeleton: string | null;
@@ -12156,6 +12217,7 @@ export type Database = {
         Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
         Returns: boolean;
       };
+      is_on_waitlist: { Args: { target_user_id: string }; Returns: boolean };
       is_personal_email_domain: { Args: { domain: string }; Returns: boolean };
       is_picture_reviewer: { Args: { person_id: string }; Returns: boolean };
       is_school_domain_trusted: { Args: { domain: string }; Returns: boolean };
@@ -12193,6 +12255,10 @@ export type Database = {
       };
       join_class_space: { Args: { code: string }; Returns: Json };
       join_space: { Args: { note?: string; slug: string }; Returns: Json };
+      join_waitlist_at_sign_up: {
+        Args: { new_user_id: string; sign_up_data: Json };
+        Returns: undefined;
+      };
       jsonb_values_text: { Args: { document: Json }; Returns: string };
       keep_setting: { Args: { default_value: number; setting_key: string }; Returns: number };
       landing_block_extra_problems: {
@@ -12596,6 +12662,7 @@ export type Database = {
           country_code: string | null;
           created_at: string;
           deleted_at: string | null;
+          founding_member_since: string | null;
           handle: string | null;
           handle_changed_at: string | null;
           handle_skeleton: string | null;
@@ -12975,6 +13042,7 @@ export type Database = {
       };
       my_teacher_check: { Args: Record<PropertyKey, never>; Returns: Json };
       my_unread_notification_count: { Args: Record<PropertyKey, never>; Returns: number };
+      my_waitlist: { Args: Record<PropertyKey, never>; Returns: Json };
       name_has_listed_word: { Args: { name: string }; Returns: boolean };
       name_is_approved: {
         Args: { name: string; name_kind: string; target_user_id: string };
@@ -13354,6 +13422,7 @@ export type Database = {
           country_code: string | null;
           created_at: string;
           deleted_at: string | null;
+          founding_member_since: string | null;
           handle: string | null;
           handle_changed_at: string | null;
           handle_skeleton: string | null;
@@ -14193,6 +14262,10 @@ export type Database = {
         Args: { story_slug: string; wanted: Database['public']['Enums']['story_visibility'] };
         Returns: Json;
       };
+      set_my_waitlist_interest: {
+        Args: { wanted: Database['public']['Enums']['waitlist_interest'] };
+        Returns: undefined;
+      };
       set_notification_email: {
         Args: {
           delivery: Database['public']['Enums']['email_delivery'];
@@ -14274,6 +14347,10 @@ export type Database = {
         Returns: string;
       };
       sign_up_rule_of: { Args: { message: string }; Returns: string };
+      sign_up_waitlist_interest: {
+        Args: { sign_up_data: Json };
+        Returns: Database['public']['Enums']['waitlist_interest'];
+      };
       sign_ups_by_age_group: { Args: Record<PropertyKey, never>; Returns: Json };
       signature_json: { Args: { person_id: string }; Returns: Json };
       signature_picture_file_may_go: { Args: { object_name: string }; Returns: boolean };
@@ -15145,6 +15222,10 @@ export type Database = {
       };
       verify_certificate: { Args: { code: string }; Returns: Json };
       wait_minutes_until_free: { Args: { oldest_in_window: string }; Returns: number };
+      waitlist_interest_matches: {
+        Args: { answer: Database['public']['Enums']['waitlist_interest']; wanted: string };
+        Returns: boolean;
+      };
       website_content: {
         Args: { visitor_country?: string; wanted_kind: string; wanted_language?: string };
         Returns: {
@@ -15244,7 +15325,8 @@ export type Database = {
         | 'staff_account'
         | 'legal_acceptance_required'
         | 'suspended'
-        | 'banned';
+        | 'banned'
+        | 'waitlisted';
       ad_format: 'wide' | 'portrait' | 'side_box' | 'list_card';
       ad_label: 'sponsored' | 'ad' | 'house';
       age_band: 'under_13' | '13_to_15' | '16_to_17' | '18_plus' | 'unknown';
@@ -15327,7 +15409,8 @@ export type Database = {
         | 'space_handover_offered'
         | 'story_featured'
         | 'spotlight_consent_agreed'
-        | 'spotlight_consent_withdrawn';
+        | 'spotlight_consent_withdrawn'
+        | 'waitlist_admitted';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -15455,6 +15538,7 @@ export type Database = {
       support_ticket_priority: 'low' | 'normal' | 'high' | 'urgent';
       support_ticket_status: 'new' | 'open' | 'pending_on_user' | 'on_hold' | 'solved' | 'closed';
       tag_status: 'waiting' | 'approved' | 'rejected';
+      waitlist_interest: 'write' | 'read' | 'both';
       writer_rank: 'new_writer' | 'writer' | 'storyteller' | 'novelist';
     };
     CompositeTypes: {
@@ -15619,6 +15703,7 @@ export const Constants = {
         'legal_acceptance_required',
         'suspended',
         'banned',
+        'waitlisted',
       ],
       ad_format: ['wide', 'portrait', 'side_box', 'list_card'],
       ad_label: ['sponsored', 'ad', 'house'],
@@ -15712,6 +15797,7 @@ export const Constants = {
         'story_featured',
         'spotlight_consent_agreed',
         'spotlight_consent_withdrawn',
+        'waitlist_admitted',
       ],
       picture_kind: [
         'cover',
@@ -15849,6 +15935,7 @@ export const Constants = {
       support_ticket_priority: ['low', 'normal', 'high', 'urgent'],
       support_ticket_status: ['new', 'open', 'pending_on_user', 'on_hold', 'solved', 'closed'],
       tag_status: ['waiting', 'approved', 'rejected'],
+      waitlist_interest: ['write', 'read', 'both'],
       writer_rank: ['new_writer', 'writer', 'storyteller', 'novelist'],
     },
   },
