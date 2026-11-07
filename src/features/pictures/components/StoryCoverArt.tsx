@@ -84,7 +84,7 @@ export function StoryCoverArt({ story, drawn, className }: StoryCoverArtProps) {
     <CoverBox className={className}>
       <img src={view.url} alt="" className="size-full object-cover" />
       {view.state !== 'visible' && (
-        <span className="absolute inset-x-2 bottom-2 inline-flex h-6 items-center justify-center rounded-full border border-border bg-surface px-2 text-xs leading-none font-semibold text-heading">
+        <span className="absolute inset-x-2 bottom-2 inline-flex h-6 items-center justify-center rounded-full border border-border bg-surface-solid px-2 text-xs leading-none font-semibold text-heading">
           {t(waitingKey(view.state))}
         </span>
       )}

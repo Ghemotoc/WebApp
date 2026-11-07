@@ -1,9 +1,9 @@
 /**
  * Eyebrow: the small kicker above or beside a heading (story S1-E1-03).
  *
- * The rule (DoD; Robert, 6 Nov 2026, replacing the Cutive rule of 17 Oct): exactly the parent
- * company's eyebrow, Inter Bold at 12 px, in capitals, with 0.2em letter-spacing, in the eyebrow
- * colour (dark gold #815E18 on light, gold #E6C24C on night). The look lives in one place, the
+ * The rule (DoD; the liquid glass design, Robert, 7 Nov 2026, replacing the dark gold of 6 Nov):
+ * Inter Bold at 11 px, in capitals, with 0.18em letter-spacing, black by day and white at night,
+ * never gold. The look lives in one place, the
  * `eyebrow` utility in src/styles/index.css. Pills, table headers and buttons are not eyebrows.
  * Who uses it: page headers, shelf headings, form section labels.
  */

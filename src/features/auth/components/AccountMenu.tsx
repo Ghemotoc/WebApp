@@ -151,7 +151,7 @@ export function AccountMenu({ initial, name, handle }: AccountMenuProps) {
       <div
         id="account-menu-panel"
         hidden={!isOpen}
-        className="absolute top-full right-0 z-20 mt-2 w-56 rounded-2xl border border-border bg-surface p-2 shadow-card"
+        className="absolute top-full right-0 z-20 mt-2 w-56 rounded-2xl border border-border bg-surface p-2 shadow-popover"
       >
         {/* Step 1: the public profile, then where to edit it (NAV-1); drawn only while open, so
             a closed menu adds no second @username to a page such as Settings. */}

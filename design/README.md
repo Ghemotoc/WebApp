@@ -1,5 +1,17 @@
 # Designs
 
+## The new look: liquid glass (approved 7 Nov 2026, 19:51 UTC)
+
+Robert approved a new look for the whole app on 7 Nov 2026. It replaces the colours, glass, type and backgrounds of the boards below, and adds some new features; each page keeps its sections, order, text and controls. Where it and a 17 Oct board differ, the new look wins.
+
+- The handoff doc (tokens, components, layouts, every decision): https://claude.ai/artifact/BfegSidHMMHZ2VVsbQXg1k
+- The canvas with every screen at 1440, 744 and 375 px wide (version 111): https://claude.ai/artifact/HyboySWbN7QvKSmbg98v74
+- The rulebook (every rule from Robert's comments): the project files, `07_designs/2026-11-07_website-mockups_design-rules.md`
+
+It is built in bundles G1 to G14, one at a time (the builder's live plan). G1 put the colours, fonts, background and focus ring into `src/styles/tokens.css` and `src/styles/index.css`.
+
+## The first boards (17 Oct 2026)
+
 The design canvas (17 Oct 2026, version 162) is the source of truth for every screen: layout, copy, colours, fonts and spacing. Stories in docs/stories/ say what a screen does; the board says how it looks.
 
 ## How to read a board

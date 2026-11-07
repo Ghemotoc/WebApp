@@ -10,10 +10,9 @@
 @import './tokens.css';
 
 /*
- * The eyebrow label, exactly as the parent company draws it (Robert, 6 Nov 2026: they should look
- * exactly the same as the parent company's originals; values from its design system: Inter Bold,
- * 12 px (9 pt), capitals, 0.2em tracking, the small-text gold #815E18 on light and the gold
- * #E6C24C on night). It replaces the 17 Oct rule of Cutive at 14 px in sentence case.
+ * The eyebrow label (the liquid glass design, approved 7 Nov 2026; bundle G1): Inter Bold, 11 px,
+ * capitals, 0.18em tracking, black (white at night), never gold (Robert, 7 Nov 2026, 11:48,
+ * replacing the 6 Nov dark gold at 12 px and 0.2em).
  * `eyebrow` is the whole look; `eyebrow-type` is the same type in another colour (for example the
  * meta-coloured "End of chapter" line). Every eyebrow in the app uses one of these two, so the
  * look changes in this one place. Text stays in sentence case in the locale files: the capitals
@@ -21,25 +20,29 @@
  */
 @utility eyebrow-type {
   font-family: var(--font-eyebrow);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   line-height: 1.3;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 
 @utility eyebrow {
   font-family: var(--font-eyebrow);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   line-height: 1.3;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--eyebrow);
 }
 
 @layer base {
-  /* The page: paper background, ink text, Inter (boards: body{background:#FAF8F5}). */
+  /*
+   * The page: the background colour sits on <html>; <body> stays see-through so the colour blobs
+   * (body::before, below) show between them and the page.
+   * Body text is Inter at 15 px with a 1.5 line height (handoff: --font-ui).
+   */
   html {
     background-color: var(--paper);
     color: var(--ink);
@@ -48,15 +51,16 @@
 
   body {
     margin: 0;
-    background-color: var(--paper);
+    background-color: transparent;
     color: var(--ink);
-    font-size: 16px;
-    line-height: 1.6;
+    font-size: 15px;
+    line-height: 1.5;
   }
 
   h1,
   h2,
-  h3 {
+  h3,
+  h4 {
     font-family: var(--font-heading);
     color: var(--heading);
   }
@@ -70,16 +74,75 @@
     color: var(--link-hover);
   }
 
-  /* One visible focus ring for everything: plum on light, gold on night (Robert, 17 Oct 2026). */
+  /*
+   * One visible focus ring for everything: 3 px solid with a 6 px soft halo around it, so it shows
+   * on glass, on the blobs and on dark buttons alike (handoff, Texture, focus and motion). Plum by
+   * day, near-white at night (WCAG 2.2, 2.4.7 and 2.4.13).
+   */
   :focus-visible {
-    outline: 2px solid var(--focus-ring);
-    outline-offset: 2px;
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 6px var(--focus-halo);
   }
 
   /* Disabled controls (boards: button:disabled{opacity:0.55}). */
   button:disabled {
     cursor: not-allowed;
     opacity: 0.55;
+  }
+}
+
+/*
+ * The background (the liquid glass design; bundle G1): three large, soft colour blobs behind every
+ * page, fixed to the window, taking no clicks. They stay still and there is no film grain, on
+ * every screen size, as on the phone and tablet boards (Robert, 7 Nov 2026, 21:46 UTC: the moving
+ * background and the grain were too much). The staff area paints its own flat beige over them
+ * (data-area="staff").
+ */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  /* Each blob is a radial gradient fading to nothing, so the edges are soft. */
+  background:
+    radial-gradient(42vmax 42vmax at 12% 18%, var(--blob-1), transparent 70%),
+    radial-gradient(38vmax 38vmax at 88% 22%, var(--blob-2), transparent 70%),
+    radial-gradient(46vmax 46vmax at 60% 92%, var(--blob-3), transparent 70%);
+}
+
+/*
+ * Glass: every card that uses bg-surface is see-through white over the still colour blobs
+ * (handoff: --glass-bg). Blurring what lies behind (handoff: --glass-blur, blur(24px)
+ * saturate(180%)) costs a weaker phone a lot when a page has dozens of cards, and over soft blobs
+ * it looks the same, so only what floats over other content is blurred: dialogs and pop-overs
+ * (menus, the quote bar), where the blur also keeps the text underneath from showing through
+ * (Robert, 7 Nov 2026, 21:47 UTC: keep it light for weaker devices). The staff area is flat.
+ * "Reduce transparency" (a system setting) swaps the glass for the solid colour it looks like.
+ */
+dialog.bg-surface,
+.bg-surface.shadow-popover {
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+}
+
+[data-area='staff'] dialog.bg-surface,
+[data-area='staff'] .bg-surface.shadow-popover {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --surface-glass: var(--surface);
+    --nav-glass: var(--surface);
+  }
+
+  dialog.bg-surface,
+  .bg-surface.shadow-popover {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 }
 

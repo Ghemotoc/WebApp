@@ -12,6 +12,11 @@
  *                        (Inter also sets the eyebrow labels, Bold, 12 px, capitals, as The
  *                        Magic Coffin's do; Robert, 6 Nov 2026, replacing Cutive)
  *   Shadows Into Light Two  handwritten accents
+ *   Literata             story text in the reader and the editor (the liquid glass design,
+ *                        approved 7 Nov 2026; bundle G1). Variable, OFL licence.
+ *   OpenDyslexic         the dyslexia-friendly choice in reading settings, for chapter text and
+ *                        the editor's writing area (Robert, 7 Nov 2026, 17:49 and 18:16; OFL
+ *                        licence). Loaded here in G1; the setting that uses it comes in G7.
  *   Atkinson Hyperlegible   a chapter reading font the reader can pick (IDEAS-1 part a,
  *                           IDEA-20261031-6; OFL licence). Its files download only when a reader
  *                           picks it, because a browser fetches a font only once text uses it.
@@ -19,6 +24,11 @@
 @import '@fontsource-variable/bricolage-grotesque';
 @import '@fontsource-variable/inter';
 @import '@fontsource/shadows-into-light-two';
+@import '@fontsource-variable/literata';
+@import '@fontsource/opendyslexic/400.css';
+@import '@fontsource/opendyslexic/400-italic.css';
+@import '@fontsource/opendyslexic/700.css';
+@import '@fontsource/opendyslexic/700-italic.css';
 @import '@fontsource/atkinson-hyperlegible/400.css';
 @import '@fontsource/atkinson-hyperlegible/400-italic.css';
 @import '@fontsource/atkinson-hyperlegible/700.css';

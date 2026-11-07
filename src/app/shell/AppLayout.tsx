@@ -69,11 +69,13 @@ export function AppLayout() {
   const { userId } = useSession();
   usePendingPictureRetry(userId);
 
+  // No background of its own: the page colour, the drifting blobs and the grain behind every page
+  // come from src/styles/index.css (bundle G1), and a background here would hide them.
   return (
-    <div className="flex min-h-dvh flex-col bg-paper text-ink">
+    <div className="flex min-h-dvh flex-col text-ink">
       <a
         href="#main"
-        className="sr-only z-20 rounded-full bg-surface px-4 py-2 focus:not-sr-only focus:absolute focus:top-2 focus:left-2"
+        className="sr-only z-20 rounded-full bg-surface-solid px-4 py-2 focus:not-sr-only focus:absolute focus:top-2 focus:left-2"
       >
         {t('shell.skipToContent')}
       </a>

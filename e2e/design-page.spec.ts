@@ -105,13 +105,13 @@ test('headings, body, eyebrows and handwriting use the fonts from the DoD', asyn
 
   expect((await fontOf('h1')).fontFamily).toContain('Bricolage Grotesque');
   expect((await fontOf('body')).fontFamily).toContain('Inter');
-  // Eyebrows are drawn as the parent company's: Inter Bold, 12 px, capitals, 0.2em (6 Nov 2026).
+  // Eyebrows: Inter Bold, 11 px, capitals, 0.18em, black (the liquid glass design, 7 Nov 2026).
   const eyebrow = await fontOf('[data-testid="type-samples"] p.eyebrow');
   expect(eyebrow.fontFamily).toContain('Inter');
-  expect(eyebrow.fontSize).toBe('12px');
+  expect(eyebrow.fontSize).toBe('11px');
   expect(eyebrow.fontWeight).toBe('700');
   expect(eyebrow.textTransform).toBe('uppercase');
-  expect(eyebrow.letterSpacing).toBe('2.4px');
+  expect(eyebrow.letterSpacing).toBe('1.98px');
   expect((await fontOf('[data-testid="type-samples"] p.font-hand')).fontFamily).toContain(
     'Shadows Into Light Two',
   );
