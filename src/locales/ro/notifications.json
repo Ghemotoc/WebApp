@@ -253,9 +253,9 @@
   },
   "pageLanguage": "ro",
   "rankNames": {
-    "new_writer": "Debut",
-    "writer": "Condei",
-    "storyteller": "Condei de povești",
-    "novelist": "Condei de roman"
+    "new_writer": "Debutant",
+    "writer": "Scriitor",
+    "storyteller": "Povestitor",
+    "novelist": "Romancier"
   }
 }

@@ -730,7 +730,7 @@ Tests: `203` in `supabase/tests/database/`, `src/features/auth/api/socialReturn.
   │        wrong details → record_sign_in_failure(hash) (5 in 15 minutes pause it)
   │        logged in    → clear_my_sign_in_failures()
   ▼
-the top bar's AccountMenu (Settings, Log out) → /settings → SignedInDevicesSection
+the top bar's AccountMenu (your name and @username, which open your public profile, then Edit profile, Settings and Log out; NAV-1) → /settings → SignedInDevicesSection
   │  useMySessions → list_my_sessions() / end_my_session() read auth.sessions, never the IP
   │  "Log out of all other devices" → supabase.auth.signOut({ scope: 'others' })
 /forgot-password → resetPasswordForEmail → supabase/templates/recovery.html

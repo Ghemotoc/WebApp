@@ -24,7 +24,7 @@ Logging in (S1-E2-05):
 
 - `components/SignInPage.tsx` with `SignInForm`, `PasswordInput` (Show / Hide) and `SignInMessage`: `/sign-in` (board 2.2). `hooks/useSignInForm.ts` holds the answers.
 - `components/ForgotPasswordPage.tsx` (`/forgot-password`, `hooks/useResetRequest.ts`, `SendProblem`) and `ResetPasswordPage.tsx` with `NewPasswordForm` (`/reset-password`, `hooks/useNewPasswordForm.ts`). `AuthCard` is the card all three share.
-- `components/AccountMenu.tsx`: the top bar's account button (Settings, Log out); `AccountLinks` shows "Log in" and "Join for free" while signed out.
+- `components/AccountMenu.tsx`: the top bar's account button: your name and @username (opens your public profile), Edit profile (Settings › Profile), Settings and Log out (NAV-1); `AccountLinks` shows "Log in" and "Join for free" while signed out.
 - `api/signIn.ts` (log in with the pause, log-in and reset links, new password, log out), `api/sessions.ts` (`list_my_sessions()`, `end_my_session()`), `lib/emailHash.ts`, `lib/deviceName.ts`.
 - Settings › Signed-in devices lives in `src/features/account/` (`SignedInDevicesSection`, `DeviceRow`, `hooks/useMySessions.ts`).
 
