@@ -6,8 +6,10 @@
  * role, and Sign out. Staff screens use plain components and no doodles (CLAUDE.md, Designs).
  * Showing an area in this menu is a convenience, never the protection: the database checks the
  * role on every staff action (architecture 1.8.1).
- * Who uses it: the /design page, and StaffLayout (the admin frame, S1-E11-01), which passes only
- * the areas the database allows the person and the language drop-down in the end slot.
+ * Who uses it: the /design page, which passes the board's area links, and StaffLayout (the admin
+ * frame, S1-E11-01), which passes the language drop-down in the end slot and no links: since
+ * DASH-1 the areas sit in the grouped side menu (StaffSideMenu), so the bar is a plain header
+ * there, and the side menu is the one navigation named "Staff".
  */
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +22,8 @@ import { BrandMark } from '@/features/branding/components/BrandMark';
 
 /** What the staff bar needs. */
 export interface StaffBarProps {
-  navigationItems: NavigationItem[];
+  /** The area links; leave out (as the admin frame does since DASH-1) for a bar without them. */
+  navigationItems?: NavigationItem[];
   staffName: string;
   roleLabel: string;
   onSignOut: () => void;
@@ -42,18 +45,22 @@ function staffLinkClasses({ isActive }: { isActive: boolean }): string {
  * @returns the header with the staff navigation
  */
 export function StaffBar({
-  navigationItems,
+  navigationItems = [],
   staffName,
   roleLabel,
   onSignOut,
   endSlot,
 }: StaffBarProps) {
   const { t } = useTranslation();
+  // A bar with links is a navigation landmark; without them it is just the header's island, so a
+  // screen reader never hears two navigations named "Staff" (DASH-1).
+  const hasLinks = navigationItems.length > 0;
+  const Island = hasLinks ? 'nav' : 'div';
 
   return (
     <header className="relative px-[clamp(16px,4vw,64px)] pt-6">
-      <nav
-        aria-label={t('staff.navigation')}
+      <Island
+        aria-label={hasLinks ? t('staff.navigation') : undefined}
         className="mx-auto flex max-w-[1280px] flex-wrap items-center gap-x-6 gap-y-4 rounded-nav border border-border bg-(--nav-glass) py-2.5 pr-2.5 pl-6 shadow-nav backdrop-blur-md"
       >
         <span className="inline-flex min-h-11 items-center gap-2.5">
@@ -63,15 +70,17 @@ export function StaffBar({
           </span>
           <InfoPill tone="plum">{t('staff.pill')}</InfoPill>
         </span>
-        <ul className="m-0 flex flex-[1_1_420px] list-none flex-wrap justify-center gap-x-[26px] gap-y-1 p-0 text-[15px]">
-          {navigationItems.map((item) => (
-            <li key={item.labelKey}>
-              <NavLink to={item.href} end className={staffLinkClasses}>
-                {t(item.labelKey)}
-              </NavLink>
-            </li>
-          ))}
-        </ul>
+        {hasLinks && (
+          <ul className="m-0 flex flex-[1_1_420px] list-none flex-wrap justify-center gap-x-[26px] gap-y-1 p-0 text-[15px]">
+            {navigationItems.map((item) => (
+              <li key={item.labelKey}>
+                <NavLink to={item.href} end className={staffLinkClasses}>
+                  {t(item.labelKey)}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        )}
         {/* Wraps on narrow phones, so nothing pushes the page sideways (CLAUDE.md rule 21). */}
         <div className="ml-auto flex flex-wrap items-center justify-end gap-2.5">
           {endSlot}
@@ -83,7 +92,7 @@ export function StaffBar({
             {t('staff.signOut')}
           </Button>
         </div>
-      </nav>
+      </Island>
     </header>
   );
 }

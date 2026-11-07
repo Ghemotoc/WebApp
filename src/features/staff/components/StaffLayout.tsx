@@ -1,19 +1,20 @@
 /**
- * StaffLayout: the frame around every admin page: skip link, staff bar, the page, staff footer
- * (story S1-E11-01; architecture 1.8.1 and 1.8.2).
+ * StaffLayout: the frame around every admin page: skip link, staff bar, the grouped side menu
+ * beside the page, staff footer (story S1-E11-01; side menu DASH-1; architecture 1.8.1 and 1.8.2).
  *
  * Who uses it: the router wraps every /staff route in it (src/app/router.tsx); the page itself
  * appears where <Outlet /> is. It is loaded on its own, so staff code never ships in the reader's
  * bundle (architecture 1.8.1).
- * What it shows: for a person with a staff role, the bar with only the areas the database allows
- * them (useMyStaffAccess → my_staff_areas()) and the page. For a visitor or a member, the
+ * What it shows: for a person with a staff role, the bar, the side menu with only the areas the
+ * database allows them (useMyStaffAccess → my_staff_areas()) and the page. For a visitor or a member, the
  * "This part is for staff" page instead of any staff page. For a staff member whose session isn't
  * a Google Workspace sign-in once the staff domain is set (S1-E2-07b), the page that asks them to
- * sign in with Google (StaffWorkspaceSignIn). The server refuses everything on its
+ * sign in with Google (StaffWorkspaceSignIn). For a staff member whose 12-hour staff session has
+ * run out, the "Sign in again" page (StaffSessionEnded, DASH-1). The server refuses everything on its
  * own as well: every staff read and write goes through policies and admin_* functions that ask
  * staff_may(); this frame only keeps a member from seeing empty staff screens.
- * What it calls: useMyStaffAccess, staffAreas.ts (which areas have a page), StaffAccessRefused
- * and StaffWorkspaceSignIn.
+ * What it calls: useMyStaffAccess, staffAreas.ts (which areas have a page), StaffSideMenu,
+ * StaffAccessRefused, StaffWorkspaceSignIn and StaffSessionEnded.
  */
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router';
@@ -32,6 +33,8 @@ import { pagesForAreas } from '../staffAreas';
 
 import { StaffAccessRefused } from './StaffAccessRefused';
 import { StaffFooter } from './StaffFooter';
+import { StaffSessionEnded } from './StaffSessionEnded';
+import { StaffSideMenu } from './StaffSideMenu';
 import { StaffWorkspaceSignIn } from './StaffWorkspaceSignIn';
 
 /**
@@ -86,7 +89,11 @@ export function StaffLayout() {
     );
   }
 
-  // Step 4: staff get the bar with their own areas, the page and the footer.
+  // Step 4: staff whose 12-hour session ran out are asked to sign in again (DASH-1), instead of
+  // an admin site with no area open.
+  if (access.sessionEnded) return <StaffSessionEnded />;
+
+  // Step 5: staff get the bar, the side menu with their own areas, the page and the footer.
   const menuItems = pagesForAreas(access.areas.map((area) => area.area));
   return (
     <div className="flex min-h-dvh flex-col bg-paper text-ink">
@@ -99,10 +106,6 @@ export function StaffLayout() {
       {/* The approved emblem in the browser tab (BRAND-1b). */}
       <BrandTabIcon />
       <StaffBar
-        navigationItems={menuItems.map((page) => ({
-          href: page.href,
-          labelKey: `staff:${page.labelKey}`,
-        }))}
         staffName={access.handle === null ? tStaff('shell.noHandle') : `@${access.handle}`}
         roleLabel={roleLabel(access.roles, tStaff)}
         onSignOut={() => void signOut()}
@@ -111,9 +114,15 @@ export function StaffLayout() {
       <SafetyContactWarningBanner
         canSee={access.areas.some((area) => area.area === 'safety_contacts')}
       />
-      <main id="main" tabIndex={-1} className="flex-1 focus:outline-none">
-        <Outlet />
-      </main>
+      {/* The side menu beside the page from 1024 px; above it, behind "Menu", on smaller screens. */}
+      <div className="mx-auto flex w-full max-w-[1408px] flex-1 flex-col lg:flex-row">
+        <aside className="px-[clamp(16px,4vw,64px)] pt-6 lg:w-64 lg:shrink-0 lg:pr-0">
+          <StaffSideMenu pages={menuItems} />
+        </aside>
+        <main id="main" tabIndex={-1} className="min-w-0 flex-1 focus:outline-none">
+          <Outlet />
+        </main>
+      </div>
       <StaffFooter menuItems={menuItems} />
     </div>
   );

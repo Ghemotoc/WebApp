@@ -115,8 +115,8 @@
     "documentTitle": "Admin site · {{productName}}",
     "heading": "Admin site",
     "intro": "The areas your role can use. Every action and every sensitive read is written to the audit log; the server checks your role on each one, not just this menu.",
-    "noAreas": "No area is open to you right now. Your role may have no area yet, or your staff session may be older than 12 hours: sign out and log in again to start a new one.",
-    "comingAreas": "Appeals, Stories, Website and the other areas arrive with their own stories; the menu shows an area as soon as its page exists.",
+    "areasHeading": "Your areas",
+    "noAreas": "No area is open to your role yet. Ask an owner or admin if you need one.",
     "areas": {
       "roles": "Who on the team holds which role and permission.",
       "call_log": "Every call the app made, where it failed, and the browser's crashes, for 30 days.",
@@ -1387,5 +1387,57 @@
       "unreachable": "We couldn’t reach the database. Try again in a moment."
     },
     "total_few": "{{count}} stories in this view."
+  },
+  "menuGroups": {
+    "safety": "Safety",
+    "people": "People",
+    "content": "Content",
+    "website": "Website",
+    "system": "System"
+  },
+  "menu": {
+    "toggle": "Menu",
+    "empty": "No area is open to your role yet."
+  },
+  "sessionEnded": {
+    "documentTitle": "Sign in again · {{productName}}",
+    "heading": "Your staff session has ended",
+    "body": "Staff sessions end after 12 hours, to keep staff accounts safe. Sign in again to open the admin site.",
+    "signInAgain": "Sign in again",
+    "signingOut": "Signing you out…",
+    "goHome": "Go to Home",
+    "signOutFailed": "We couldn’t sign you out just now. Check your connection and try again."
+  },
+  "dashboard": {
+    "heading": "At a glance",
+    "loading": "Counting…",
+    "loadFailed": "The numbers couldn’t load just now. The areas below still work.",
+    "tiles": {
+      "moderation": {
+        "waiting": "Reports waiting",
+        "overdue": "Reports past their deadline",
+        "pictures": "Pictures to check"
+      },
+      "appeals": {
+        "open": "Open appeals"
+      },
+      "schools": {
+        "teacherChecks": "Teacher checks waiting"
+      },
+      "dataRequests": {
+        "open": "Open data requests",
+        "overdue": "Data requests past their deadline"
+      },
+      "supportTickets": {
+        "open": "Open support tickets"
+      },
+      "metrics": {
+        "signUpsThisWeek": "Sign-ups in the last 7 days"
+      },
+      "logs": {
+        "failedCalls": "Failed calls in the last 24 hours",
+        "crashes": "Browser errors in the last 24 hours"
+      }
+    }
   }
 }

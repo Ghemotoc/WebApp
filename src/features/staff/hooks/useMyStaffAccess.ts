@@ -6,7 +6,7 @@
  * The answer is cached per person for a minute, so moving between staff pages doesn't ask again;
  * a refused action on any page can call refresh() to read it afresh.
  */
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient, type QueryClient } from '@tanstack/react-query';
 
 import { useSession } from '@/features/auth/hooks/useSession';
 import { getSupabaseClient } from '@/lib/supabase';
@@ -19,10 +19,23 @@ const noAccess: StaffAccess = {
   roles: [],
   handle: null,
   workspace: { isNeeded: false, domain: null, isConnected: false },
+  sessionEnded: false,
 };
 
 /** The cache key for one person's access. */
 const staffAccessKey = (userId: string | null) => ['staff-access', userId];
+
+/**
+ * Forgets every cached staff access answer, so the next read asks the database again.
+ *
+ * @param queryClient - the app's query cache
+ * Where it fits: StaffSessionEnded calls it when the person signs out to sign in again (DASH-1);
+ * without it the new session, for the same person, would reuse "your session has ended" for a
+ * minute.
+ */
+export function forgetStaffAccess(queryClient: QueryClient): void {
+  queryClient.removeQueries({ queryKey: ['staff-access'] });
+}
 
 /**
  * Follows the person's staff access.

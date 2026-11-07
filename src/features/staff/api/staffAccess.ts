@@ -7,7 +7,9 @@
  * ended; the person's own staff_roles rows (policy staff_roles_select_own) and their own username
  * (policy profiles_select_own), for the name and role shown in the staff bar; and
  * my_staff_sign_in() (…_s1_e2_07b_workspace_sign_in.sql), which says when a staff member must
- * sign in with their Google Workspace account first (S1-E2-07b).
+ * sign in with their Google Workspace account first (S1-E2-07b); and my_staff_session_ended()
+ * (…_dash1_01_staff_dashboard.sql), which says when the 12-hour staff session has run out, so the
+ * shell can ask the person to sign in again (DASH-1).
  */
 import type { Enums } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
@@ -38,6 +40,8 @@ export interface StaffAccess {
   handle: string | null;
   /** Whether staff powers wait for a Google Workspace sign-in (S1-E2-07b). */
   workspace: StaffWorkspaceSignIn;
+  /** True when the person holds a staff role but their staff session is over 12 hours old (DASH-1). */
+  sessionEnded: boolean;
 }
 
 /**
@@ -85,7 +89,12 @@ export async function fetchStaffAccess(
   const workspaceResult = await client.rpc('my_staff_sign_in');
   if (workspaceResult.error !== null) throw new Error(workspaceResult.error.message);
 
-  // Step 4: the username, for the staff bar.
+  // Step 4: whether the staff session has run out (12 hours, S1-E11-01), so the shell can say
+  // "Sign in again" instead of showing an empty admin site (DASH-1).
+  const endedResult = await client.rpc('my_staff_session_ended');
+  if (endedResult.error !== null) throw new Error(endedResult.error.message);
+
+  // Step 5: the username, for the staff bar.
   const profileResult = await client
     .from('profiles')
     .select('handle')
@@ -101,5 +110,6 @@ export async function fetchStaffAccess(
     roles: rolesResult.data.map((row) => row.role),
     handle: profileResult.data?.handle ?? null,
     workspace: toWorkspaceSignIn(workspaceResult.data),
+    sessionEnded: endedResult.data === true,
   };
 }
