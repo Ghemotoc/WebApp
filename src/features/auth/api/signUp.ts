@@ -37,6 +37,11 @@ export interface SignUpContext {
   country: string | null;
   /** The age rules by country, so the form refuses and asks for the month as the database does. */
   ageRules: AgeRule[];
+  /**
+   * The waiting list's switch (WAITLIST-1): while it is on, a code is optional, the form asks
+   * "write, read or both" and offers news emails.
+   */
+  isWaitlistOn: boolean;
 }
 
 /** Why a sign-up didn't work, in words the form can turn into a message. */
@@ -68,8 +73,26 @@ export function signUpFailureFromCode(code: string | undefined): SignUpFailure {
 /** The answers the sign-up trigger (and finish_social_sign_up()) reads besides the email. */
 export type SignUpDataAnswers = Pick<
   SignUpAnswers,
-  'birthYear' | 'birthMonth' | 'handle' | 'country' | 'legalRegion'
+  'birthYear' | 'birthMonth' | 'handle' | 'country' | 'legalRegion' | 'waitlistInterest' | 'newsEmails'
 >;
+
+/**
+ * The waiting list's part of the sign-up data (WAITLIST-1): the answer, the news opt-in, and
+ * whether the person joins the list (no code while it is on), which words the confirmation email
+ * as "You're on the list" (server/send-email.ts).
+ *
+ * @param answers - the form's answers
+ * @param context - the switch and the code
+ * @returns the extra data, empty while the list is off
+ */
+function waitlistData(answers: SignUpDataAnswers, context: SignUpContext) {
+  if (!context.isWaitlistOn) return {};
+  return {
+    waitlist_interest: answers.waitlistInterest === '' ? null : answers.waitlistInterest,
+    news_emails: answers.newsEmails ? 'true' : 'false',
+    joins_waitlist: context.inviteCode === null,
+  };
+}
 
 /**
  * The data the sign-up trigger checks, in the database's names. A Google, Apple or Microsoft
@@ -99,6 +122,7 @@ export function signUpData(answers: SignUpDataAnswers, context: SignUpContext) {
     // The scrambled IP address, signed; the trigger keeps it 30 days to spot a returning banned
     // account for a moderator, never to block anyone (bundle ADMIN-2, part f2).
     signup_ip: context.signupIpToken,
+    ...waitlistData(answers, context),
   };
 }
 

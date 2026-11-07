@@ -313,6 +313,24 @@ function loginMethodText(t: TFunction, notification: AppNotification): Notificat
 }
 
 /**
+ * Staff let the person in from the waiting list (WAITLIST-1): the account is open. The row leads
+ * to Discover, the first place to start reading or writing.
+ *
+ * @param t - the notifications translation function
+ * @returns the row's words and link
+ */
+function waitlistAdmittedText(t: TFunction): NotificationText {
+  return {
+    who: t('who.yourAccount'),
+    what: t('what.waitlistAdmitted'),
+    quote: null,
+    grouped: null,
+    actionLabel: t('actions.startExploring'),
+    href: '/discover',
+  };
+}
+
+/**
  * The Teacher badge request was decided (approved or turned down), or staff removed the badge
  * (S1-E2-11, criteria 6 and 8). The row leads to Settings › Teacher badge, which shows the
  * outcome, the team's reason and how to try again.
@@ -597,6 +615,7 @@ const teamTextFor: Partial<
   story_featured: storyFeaturedText,
   spotlight_consent_agreed: spotlightConsentText,
   spotlight_consent_withdrawn: spotlightConsentText,
+  waitlist_admitted: waitlistAdmittedText,
 };
 
 /**

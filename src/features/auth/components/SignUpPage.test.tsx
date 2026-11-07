@@ -217,6 +217,7 @@ describe('the sign-up form', () => {
       signupIpToken: null,
       country: null,
       ageRules,
+      isWaitlistOn: false,
     });
     expect(vi.mocked(signUp).mock.calls[0]?.[1]).toMatchObject({ country: 'RO', legalRegion: '' });
     expect(await screen.findByText(/We sent a link to new.writer@example.com/)).toBeInTheDocument();
@@ -344,5 +345,73 @@ describe('the country you live in (MARKETS-1)', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Create account' }));
     expect(await screen.findByText(/isn’t open to under-16s in Australia yet/)).toBeInTheDocument();
     expect(signUp).not.toHaveBeenCalled();
+  });
+});
+
+describe('SignUpPage with the waiting list (WAITLIST-1)', () => {
+  /** The flags with the waiting list on, as on staging from WAITLIST-1. */
+  function waitlistFlags() {
+    vi.mocked(useFeatureFlags).mockReturnValue({
+      isOn: (key: string) => ['invite_only', 'adults_only', 'waitlist'].includes(key),
+      isLoaded: true,
+    });
+  }
+
+  /** Fills the form as fillForm() does, ticking the terms box by its name (two boxes now). */
+  function fillWaitlistForm() {
+    fireEvent.change(screen.getByLabelText('Email'), {
+      target: { value: 'new.writer@example.com' },
+    });
+    fireEvent.change(screen.getByLabelText('Username'), { target: { value: 'new.writer' } });
+    fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'a long passphrase' } });
+    fireEvent.change(screen.getByLabelText('Confirm password'), {
+      target: { value: 'a long passphrase' },
+    });
+    fireEvent.change(screen.getByLabelText('Country you live in'), { target: { value: 'RO' } });
+    fireEvent.change(screen.getByLabelText('Year of birth'), { target: { value: '1990' } });
+    fireEvent.click(screen.getByRole('checkbox', { name: /I agree to the/ }));
+  }
+
+  it('shows the form without a code, headed "Join the waiting list"', () => {
+    waitlistFlags();
+    openSignUp('/sign-up');
+    expect(screen.getByRole('heading', { name: 'Join the waiting list' })).toBeInTheDocument();
+    expect(screen.getByRole('radiogroup', { name: 'What do you want to do here?' })).toBeInTheDocument();
+    expect(screen.queryByLabelText('Invitation code')).not.toBeInTheDocument();
+  });
+
+  it('asks "write, read or both" before sending anything', async () => {
+    waitlistFlags();
+    openSignUp('/sign-up');
+    fillWaitlistForm();
+    fireEvent.click(screen.getByRole('button', { name: 'Create account' }));
+    expect(await screen.findByText('Choose write, read or both.')).toBeInTheDocument();
+    expect(signUp).not.toHaveBeenCalled();
+  });
+
+  it('sends the answer and the news opt-in, then says "You’re on the list"', async () => {
+    waitlistFlags();
+    openSignUp('/sign-up');
+    fillWaitlistForm();
+    fireEvent.click(screen.getByRole('radio', { name: 'Write' }));
+    fireEvent.click(screen.getByRole('checkbox', { name: /occasional news/ }));
+    fireEvent.click(screen.getByRole('button', { name: 'Create account' }));
+    await waitFor(() => expect(signUp).toHaveBeenCalled());
+    expect(vi.mocked(signUp).mock.calls[0]?.[1]).toMatchObject({
+      waitlistInterest: 'write',
+      newsEmails: true,
+    });
+    expect(vi.mocked(signUp).mock.calls[0]?.[2]).toMatchObject({
+      inviteCode: null,
+      isWaitlistOn: true,
+    });
+    expect(await screen.findByRole('heading', { name: 'You’re on the list' })).toBeInTheDocument();
+  });
+
+  it('still takes a code in the address, which skips the queue', () => {
+    waitlistFlags();
+    openSignUp('/join/GOOD');
+    expect(screen.getByRole('heading', { name: 'Create your account' })).toBeInTheDocument();
+    expect(screen.getByText(/Invitation accepted/)).toBeInTheDocument();
   });
 });

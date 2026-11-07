@@ -90,7 +90,8 @@
     "spaceHandoverOffered": "offered you {{space}}. Open it to accept or decline.",
     "storyFeatured": "your story “{{story}}” is in Featured this week on Discover.",
     "spotlightAgreed": "your parent or guardian agreed that we may suggest you and your stories to other readers.",
-    "spotlightWithdrawn": "we no longer suggest you or your stories to other readers, because the yes from your parent or guardian was withdrawn."
+    "spotlightWithdrawn": "we no longer suggest you or your stories to other readers, because the yes from your parent or guardian was withdrawn.",
+    "waitlistAdmitted": "your place on the waiting list came up and your account is open. Welcome!"
   },
   "grouped": {
     "reactions_one": "{{count}} reaction",
@@ -154,7 +155,8 @@
     "openAuditLog": "Open the audit log",
     "openLandingPage": "Open the page",
     "seeMyRank": "See your rank",
-    "seePrivacy": "See your privacy settings"
+    "seePrivacy": "See your privacy settings",
+    "startExploring": "Start exploring"
   },
   "alwaysOn": "Always on",
   "unread": "Unread",
@@ -219,7 +221,15 @@
     "digestNote": "The daily digest arrives once a day, in the morning, and only when something happened.",
     "noMarketingTitle": "No marketing emails.",
     "noMarketing": "We don’t send promotional emails to anyone under 18.",
-    "unsubscribeNote": "Every email except account, safety and legal ones has a one-click unsubscribe link."
+    "unsubscribeNote": "Every email except account, safety and legal ones has a one-click unsubscribe link.",
+    "news": {
+      "label": "Send me occasional news about the app by email. Only for people 18 or over; stop any time here.",
+      "loadFailed": "We couldn’t load your news email choice. Check your connection and try again.",
+      "failures": {
+        "adults_only": "News emails are only for people 18 or over.",
+        "unreachable": "We couldn’t save that. Check your connection and try again."
+      }
+    }
   },
   "unsubscribe": {
     "documentTitle": "Unsubscribe",

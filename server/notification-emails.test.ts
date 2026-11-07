@@ -217,6 +217,23 @@ describe('the notification email worker', () => {
     expect(email?.headers).toBeUndefined();
   });
 
+  it('sends "You’re in" always, with a link to log in and no code (WAITLIST-1)', async () => {
+    const admitted: EmailNotificationItem = {
+      ...followers,
+      kind: 'waitlist_admitted',
+      actors: [],
+      actor_count: 0,
+    };
+    const [email] = await sendOnce([
+      claimed({ delivery: 'required', unsubscribe_key: null, items: [admitted] }),
+    ]);
+    expect(email?.subject).toBe('You’re in: your Product account is open');
+    expect(email?.text).toContain('Your place came up');
+    expect(email?.text).toMatch(/Log in to start: \S+\/sign-in/);
+    expect(email?.text).toContain('we always send it');
+    expect(email?.headers).toBeUndefined();
+  });
+
   it('tells a teacher their class is archived, always, naming the class (S1-E8-12)', async () => {
     const archived: EmailNotificationItem = {
       ...followers,

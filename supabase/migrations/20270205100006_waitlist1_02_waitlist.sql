@@ -386,7 +386,7 @@ $$;
 /**
  * my_waitlist: the caller's place on the waiting list, for the holding page.
  * Returns: {on_list: false} when the caller has no entry; otherwise {on_list, waiting, interest,
- *   joined_at, admitted_at}. No position in the queue: staff let people in by interest and
+ *   joined_at, admitted_at}; waiting is false for a staff account, which is never held. No position in the queue: staff let people in by interest and
  *   country, so a number would mislead.
  * Errors: insufficient_privilege when signed out.
  */
@@ -407,7 +407,11 @@ begin
   if entry.id is null then
     return jsonb_build_object('on_list', false);
   end if;
-  return jsonb_build_object('on_list', true, 'waiting', entry.admitted_at is null,
+  -- A staff account is never held on the list (account_state() step 4 comes first), so its holding
+  -- page never shows.
+  return jsonb_build_object('on_list', true,
+    'waiting', entry.admitted_at is null
+      and not exists (select 1 from public.staff_roles where staff_roles.user_id = entry.user_id),
     'interest', entry.interest, 'joined_at', entry.joined_at, 'admitted_at', entry.admitted_at);
 end;
 $$;

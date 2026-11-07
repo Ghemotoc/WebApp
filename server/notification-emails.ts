@@ -50,6 +50,7 @@ export interface EmailNotificationItem {
     | 'data_request_extended'
     | 'data_request_copy_ready'
     | 'picture_opened_by_staff'
+    | 'waitlist_admitted'
     | 'new_message';
   actors: { handle: string; display_name: string }[];
   actor_count: number;
@@ -107,13 +108,14 @@ const lineKeys: Record<EmailNotificationItem['kind'], string> = {
   data_request_extended: 'dataRequestExtended',
   data_request_copy_ready: 'dataRequestCopyReady',
   picture_opened_by_staff: 'pictureOpenedByStaff',
+  waitlist_admitted: 'waitlistAdmitted',
   new_message: 'newMessage',
 };
 
 /**
  * The kinds that are about the person's own account, never about other people, so their line has
  * no "who" and no plural form: decisions (S1-E10-04), ways to log in (S1-E2-09), an archived
- * class (S1-E8-12) and data requests (S1-E11-09).
+ * class (S1-E8-12), data requests (S1-E11-09) and "You're in" (WAITLIST-1).
  */
 const accountKinds = new Set<EmailNotificationItem['kind']>([
   'moderation_decision',
@@ -123,6 +125,7 @@ const accountKinds = new Set<EmailNotificationItem['kind']>([
   'data_request_confirm',
   'data_request_extended',
   'data_request_copy_ready',
+  'waitlist_admitted',
 ]);
 
 /** The subject of each kind that is always sent (delivery 'required'), by its email.json key. */
@@ -135,6 +138,7 @@ const requiredSubjectKeys: Partial<Record<EmailNotificationItem['kind'], string>
   data_request_extended: 'subjectDataRequestExtended',
   data_request_copy_ready: 'subjectDataRequestCopyReady',
   picture_opened_by_staff: 'subjectPictureOpenedByStaff',
+  waitlist_admitted: 'subjectWaitlistAdmitted',
 };
 
 /**
@@ -303,12 +307,16 @@ function introOf(claimed: ClaimedEmail, read: ReadText): string {
 }
 
 /**
- * The link back: the chat itself for a private message (by the sender's username), otherwise the
- * Notifications page.
+ * The link back: the chat itself for a private message (by the sender's username), the log-in page
+ * for "You're in", otherwise the Notifications page.
  *
  * @returns the line
  */
 function seeAllOf(claimed: ClaimedEmail, siteUrl: string, read: ReadText): string {
+  // "You're in" (WAITLIST-1): a link to log in, never a code (Robert, 6 Nov 2026, 17:27 UTC).
+  if (claimed.items[0]?.kind === 'waitlist_admitted') {
+    return read('notificationEmails.waitlistSignIn', { link: `${siteUrl}/sign-in` });
+  }
   const sender = claimed.items[0]?.actors[0]?.handle;
   if (claimed.delivery === 'message' && sender !== undefined) {
     return read('notificationEmails.messageOpen', {

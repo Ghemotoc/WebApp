@@ -557,5 +557,26 @@
       "goToSettings": "Mergi la Setări"
     },
     "teacher": "Profesor"
+  },
+  "waitlist": {
+    "foundingMember": "Membru fondator",
+    "interest": {
+      "write": "Să scriu",
+      "read": "Să citesc",
+      "both": "Amândouă"
+    },
+    "holding": {
+      "documentTitle": "Ești pe listă · {{productName}}",
+      "eyebrow": "Lista de așteptare",
+      "heading": "Ești pe listă",
+      "joined": "Te-ai înscris pe {{date}}.",
+      "next": "Primim oamenii câte puțin, scriitorii mai întâi. Când îți vine rândul, îți scriem pe email că ai intrat. Până atunci nu poți încă scrie, citi sau posta, dar îți poți pregăti profilul.",
+      "interestLabel": "Ce vrei să faci aici?",
+      "saved": "Salvat.",
+      "saveFailed": "Nu am putut salva. Verifică-ți conexiunea și încearcă din nou.",
+      "settingsLink": "Setări: emailuri, noutăți și contul tău",
+      "logOut": "Deconectează-te",
+      "logOutFailed": "Nu te-am putut deconecta. Verifică-ți conexiunea și încearcă din nou."
+    }
   }
 }

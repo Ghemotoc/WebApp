@@ -55,6 +55,7 @@ export function SignUpCardBody({ form, context, includesAgeCheck }: SignUpCardBo
       email={form.sentTo}
       isLinkSignUp={form.answers.method === 'link'}
       onResend={resend}
+      joinsWaitlist={form.joinsWaitlist}
     />
   );
 }

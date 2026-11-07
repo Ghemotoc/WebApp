@@ -39,6 +39,11 @@ export const signUpSchema = z
     // A region with its own age law (Quebec, Florida …), or '' for the rest of the country.
     legalRegion: z.string(),
     acceptsTerms: z.literal(true, 'signUp.errors.termsNotAccepted'),
+    // While the waiting list is on (WAITLIST-1): "write, read or both", '' until answered. The
+    // form asks for it only then (useSignUpForm), so the schema allows ''.
+    waitlistInterest: z.enum(['', 'write', 'read', 'both']),
+    // The separate opt-in for occasional news; the database keeps it only for an adult (Q50).
+    newsEmails: z.boolean(),
   })
   .superRefine((answers, context) => {
     // The month, when the year needs it (decided 16 Oct 2026, Q16).

@@ -28,6 +28,7 @@ import { OnlineDot } from '@/features/privacy/components/OnlineDot';
 import { useOnlineHandles } from '@/features/privacy/hooks/useOnlineStatus';
 import { ProfileRankChip } from '@/features/forums/components/ProfileRankChip';
 import { TeacherBadgePill } from '@/features/teacher-badge/components/TeacherBadgePill';
+import { FoundingMemberPill } from '@/features/waitlist/components/FoundingMemberPill';
 
 import type { WriterProfile } from '../api/writerProfile';
 import { formatJoinedMonth } from '../lib/formatting';
@@ -122,10 +123,12 @@ export function ProfileHeader({ profile }: { profile: WriterProfile }) {
           {!profile.iBlocked && <ProfileRankChip handle={profile.handle} />}
         </div>
         <HandleLine profile={profile} />
-        {/* The Teacher badge (S1-E2-11 criterion 7): never when it was granted, only that it is. */}
-        {profile.isTeacher && (
-          <p className="m-0">
-            <TeacherBadgePill isPending={false} />
+        {/* The Teacher badge (S1-E2-11 criterion 7) and the founding member badge (WAITLIST-1):
+            never when either was given, only that it is. */}
+        {(profile.isTeacher || profile.isFoundingMember) && (
+          <p className="m-0 flex flex-wrap gap-2">
+            {profile.isTeacher && <TeacherBadgePill isPending={false} />}
+            {profile.isFoundingMember && <FoundingMemberPill />}
           </p>
         )}
         <ProfileBio profile={profile} />

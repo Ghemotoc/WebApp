@@ -50,7 +50,8 @@ export type NotificationKind =
   | 'space_handover_offered'
   | 'story_featured'
   | 'spotlight_consent_agreed'
-  | 'spotlight_consent_withdrawn';
+  | 'spotlight_consent_withdrawn'
+  | 'waitlist_admitted';
 
 /** The board's filter chips (All is every category). */
 export type NotificationCategory = 'replies' | 'follows' | 'stories' | 'staff';

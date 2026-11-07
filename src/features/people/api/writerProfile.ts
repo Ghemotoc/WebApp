@@ -49,6 +49,8 @@ export interface WriterProfile {
   iBlocked: boolean;
   /** The writer holds the Teacher badge, shown as "Teacher" (S1-E2-11). */
   isTeacher: boolean;
+  /** The writer joined while the waiting list was on, shown as "Founding member" (WAITLIST-1). */
+  isFoundingMember: boolean;
   /**
    * Whether the signed-in visitor may start a chat with this person (S1-E9-03): null signed out
    * or on one's own profile. False never says why, so nobody learns an age from it.
@@ -90,6 +92,7 @@ interface WriterProfileRow {
   is_me: boolean;
   i_blocked: boolean;
   is_teacher: boolean;
+  is_founding_member: boolean;
   can_message: boolean | null;
   counts: { stories: number; chapters: number; reads: number };
   stories: ProfileStoryRow[];
@@ -161,6 +164,8 @@ export async function fetchWriterProfile(
     isMe: row.is_me,
     iBlocked: row.i_blocked,
     isTeacher: row.is_teacher,
+    // An older database without the badge says nothing: no badge (WAITLIST-1).
+    isFoundingMember: row.is_founding_member === true,
     canMessage: row.can_message,
     counts: row.counts,
     stories: row.stories.map(toProfileStory),

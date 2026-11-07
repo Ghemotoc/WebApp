@@ -46,6 +46,9 @@ const emptyDraft: SignUpDraft = {
   country: '',
   legalRegion: '',
   acceptsTerms: false,
+  // Asked only while the waiting list is on (WAITLIST-1); news emails are never ticked for anyone.
+  waitlistInterest: '',
+  newsEmails: false,
 };
 
 /** The age outcomes that end sign-up; under_market_age is the chosen country's own (MARKETS-1). */
@@ -130,6 +133,22 @@ async function handleOutcomeBeforeSending(
 }
 
 /**
+ * The form rules, plus the waiting list's question while the list is on (WAITLIST-1): "write,
+ * read or both" must be answered, so staff can let writers in first.
+ *
+ * @param draft - the form's answers
+ * @param context - the age rules and the waiting list's switch
+ * @returns the problems (an empty object when everything is fine)
+ */
+function problemsWithWaitlist(draft: SignUpDraft, context: SignUpContext): SignUpProblems {
+  const problems = findSignUpProblems(draft, context.ageRules);
+  if (context.isWaitlistOn && draft.waitlistInterest === '') {
+    problems.waitlistInterest = 'signUp.errors.waitlistInterestMissing';
+  }
+  return problems;
+}
+
+/**
  * Sends the answers once they pass every check in the browser.
  *
  * @param draft - the form's answers
@@ -140,8 +159,9 @@ async function sendSignUp(
   draft: SignUpDraft,
   context: SignUpContext,
 ): Promise<SignUpProblems | null> {
-  // Step 1: the form rules, the chosen country's month rule included.
-  const problems = findSignUpProblems(draft, context.ageRules);
+  // Step 1: the form rules, the chosen country's month rule and the waiting list's question
+  // included.
+  const problems = problemsWithWaitlist(draft, context);
   if (Object.keys(problems).length > 0) return problems;
   // Step 2: a leaked password is refused here; if the check can't be reached, sign-up goes on.
   if (draft.method === 'password' && (await checkPasswordLeak(draft.password)) === 'leaked') {
@@ -178,9 +198,9 @@ async function sendSocialSignUp(
   provider: SocialProvider,
 ): Promise<SignUpProblems | null> {
   // Step 1: the form rules, as for an emailed link, so no password is asked for.
-  const problems = findSignUpProblems(
+  const problems = problemsWithWaitlist(
     { ...draft, method: 'link', email: providerEmailStandIn },
-    context.ageRules,
+    context,
   );
   if (Object.keys(problems).length > 0) return problems;
   // Step 2: the username's full check, so a refusal shows under the field before leaving.
@@ -279,5 +299,9 @@ export function useSignUpForm(context: SignUpContext | null, isAdultsOnly: boole
     failure,
     refusal,
     sentTo,
+    // While on, the form asks the waiting list's question (WAITLIST-1).
+    isWaitlistOn: context?.isWaitlistOn ?? false,
+    // Whether this sign-up joins the list (no code), for "You're on the list".
+    joinsWaitlist: (context?.isWaitlistOn ?? false) && context?.inviteCode === null,
   };
 }

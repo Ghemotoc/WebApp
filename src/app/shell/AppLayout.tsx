@@ -27,6 +27,8 @@
  * live in AccountNotices, at the top of <main> (MARKETS-1 split them out).
  * Deleting an account (S1-E13-03): AccountClosingGate swaps the notices and the page for the
  * closing-account page ("Keep my account" or "Log out") while the account waits to be deleted.
+ * The waiting list (WAITLIST-1): WaitlistGate, inside it, swaps them for the holding page while
+ * the signed-in person still waits for their place.
  */
 import { useTranslation } from 'react-i18next';
 import { Outlet } from 'react-router';
@@ -45,6 +47,7 @@ import { PresenceHeartbeat } from '@/features/privacy/components/PresenceHeartbe
 import { useSession } from '@/features/auth/hooks/useSession';
 import { usePendingPictureRetry } from '@/features/pictures/hooks/usePictures';
 import { NoticeStrip } from '@/features/website/components/NoticeStrip';
+import { WaitlistGate } from '@/features/waitlist/components/WaitlistGate';
 import { WriteLink } from '@/features/writing/components/WriteLink';
 
 import { AccountNotices } from './AccountNotices';
@@ -100,9 +103,12 @@ export function AppLayout() {
         <MaintenanceGate>
           {/* While the account waits to be deleted, the closing page replaces the rest (S1-E13-03). */}
           <AccountClosingGate>
-            {/* The account notices: Terms, country, username, age check, consent, sanctions. */}
-            <AccountNotices />
-            <Outlet />
+            {/* While the person waits on the list, the holding page replaces the rest (WAITLIST-1). */}
+            <WaitlistGate>
+              {/* The account notices: Terms, country, username, age check, consent, sanctions. */}
+              <AccountNotices />
+              <Outlet />
+            </WaitlistGate>
           </AccountClosingGate>
         </MaintenanceGate>
       </main>

@@ -7,7 +7,8 @@
  * acceptance of the current terms with consent to the privacy notice.
  * The username sits under the email, with the same live "is it free?" check as setup (Robert,
  * 25 Oct 2026: chosen with the password, so the account has a name from the start); the pen name
- * stays optional and comes in setup or Settings (S1-E2-04). Under "Create account", the Google,
+ * stays optional and comes in setup or Settings (S1-E2-04). While the waiting list is on, "write,
+ * read or both" and the news opt-in come before the terms (WaitlistFields, WAITLIST-1). Under "Create account", the Google,
  * Apple and Microsoft buttons (SocialSignUp, S1-E2-09) show only while the social_login flag is on.
  * What it calls: useSignUpForm (checks, the leaked-password check, Supabase Auth). Once the link
  * is sent, the parent shows CheckYourEmail instead.
@@ -31,6 +32,7 @@ import { PasswordFields } from './PasswordFields';
 import { SignUpCountryField } from './SignUpCountryField';
 import { SocialSignUp } from './SocialSignUp';
 import { TermsCheckbox } from './TermsCheckbox';
+import { WaitlistFields } from './WaitlistFields';
 
 /** The message key for each way a sign-up can fail. */
 const failureMessages: Record<SignUpFailure, string> = {
@@ -104,6 +106,7 @@ export function SignUpForm({ form, includesAgeCheck }: SignUpFormProps) {
       {/* The country before the year: its law can make the month matter (MARKETS-1). */}
       <SignUpCountryField form={form} />
       <BirthFields form={form} includesAgeCheck={includesAgeCheck} />
+      {form.isWaitlistOn && <WaitlistFields form={form} />}
       <TermsCheckbox
         isChecked={answers.acceptsTerms}
         problem={problems.acceptsTerms}

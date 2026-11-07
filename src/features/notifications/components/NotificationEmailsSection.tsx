@@ -7,7 +7,8 @@
  * sent", and the notes about marketing and the one-click unsubscribe. Rows have a fine line
  * between them (DoD label rows). The board's Push column and quiet-hours note wait for push
  * notifications (S1-E7-03, after the apps), so they aren't shown (docs/board-fixes.md).
- * The section has id "notifications", so the link at the foot of every email opens it.
+ * The section has id "notifications", so the link at the foot of every email opens it. Under the
+ * table, the occasional news switch (NewsEmailsSwitch, WAITLIST-1).
  * Who shows it: SettingsPage. What it calls: useEmailSettings → my_notification_email_settings()
  * and set_notification_email().
  */
@@ -18,6 +19,7 @@ import { Notice } from '@/components/ui/Notice';
 import { useEmailSettings } from '../hooks/useEmailSettings';
 import { useNotificationsTranslation } from '../registerNotificationsTranslations';
 
+import { NewsEmailsSwitch } from './NewsEmailsSwitch';
 import { NotificationEmailRow } from './NotificationEmailRow';
 
 /** The table, its error, or nothing while it loads. */
@@ -113,6 +115,8 @@ export function NotificationEmailsSection() {
         <p className="m-0 text-body">{t('emailSettings.intro')}</p>
       </div>
       <EmailChoices />
+      {/* Occasional news, only with the person's own yes and only 18 and over (WAITLIST-1). */}
+      <NewsEmailsSwitch />
       <EmailNotes />
     </section>
   );

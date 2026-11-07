@@ -29,7 +29,12 @@ const defaultTexts: Record<'ro' | 'en', EmailTexts> = { ro: romanianEmail, en: e
 
 /** What Supabase Auth sends the hook (only the parts used). */
 export interface SendEmailHookPayload {
-  user: { email: string; new_email?: string; user_metadata?: { locale?: string } };
+  user: {
+    email: string;
+    new_email?: string;
+    /** joins_waitlist: the sign-up joined the waiting list without a code (WAITLIST-1). */
+    user_metadata?: { locale?: string; joins_waitlist?: boolean };
+  };
   email_data: {
     token: string;
     token_hash: string;
@@ -203,6 +208,30 @@ function recipientsOf(
 }
 
 /**
+ * The confirmation email for someone who joined the waiting list (WAITLIST-1): the same link,
+ * worded "You're on the list" (Robert, 6 Nov 2026, 17:27 UTC).
+ */
+const waitlistConfirmation: AuthEmailKind = {
+  group: 'waitlistConfirmation',
+  linkFor: (site, hash) => `${site}/auth/confirm?token_hash=${hash}&type=email`,
+};
+
+/**
+ * Which email this call is: by Supabase's action type, and for a sign-up that joined the waiting
+ * list, the "You're on the list" wording.
+ *
+ * @param payload - Supabase Auth's call
+ * @returns the kind, or undefined when it isn't set up
+ */
+export function authEmailKindOf(payload: SendEmailHookPayload): AuthEmailKind | undefined {
+  const actionType = payload.email_data.email_action_type;
+  if (actionType === 'signup' && payload.user.user_metadata?.joins_waitlist === true) {
+    return waitlistConfirmation;
+  }
+  return authEmailKinds[actionType];
+}
+
+/**
  * Answers one hook call.
  *
  * @param request - Supabase Auth's POST
@@ -223,7 +252,7 @@ export async function handleSendEmailHook(
     );
   }
   const payload = JSON.parse(body) as SendEmailHookPayload;
-  const kind = authEmailKinds[payload.email_data.email_action_type];
+  const kind = authEmailKindOf(payload);
   if (kind === undefined) {
     return Response.json(
       { error: { http_code: 400, message: 'This kind of email is not set up.' } },
