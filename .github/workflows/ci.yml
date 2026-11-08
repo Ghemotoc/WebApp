@@ -96,7 +96,8 @@ jobs:
           cache: npm
       - run: npm ci
       # Start only the Postgres container, apply supabase/migrations and load supabase/seed.sql.
-      - run: npx supabase db start
+      # Up to three tries: the image registry sometimes refuses when every job pulls at once (QA-9).
+      - run: scripts/ci/start-supabase.sh db start
       # pgTAP tests in supabase/tests (CLAUDE.md rule 1).
       - run: npx supabase test db
       # Regenerate the database types and fail if they differ from the committed file (rule 14).
@@ -136,7 +137,8 @@ jobs:
       # Storage stays on: picture uploads, covers, banners, teacher proofs and the data and story
       # downloads all write to a bucket, and without it those tests fail with "name resolution
       # failed" (CI-1, 8 Nov 2026: they had been failing on main since Storage was left out).
-      - run: npx supabase start -x studio,imgproxy,realtime,edge-runtime,logflare,vector,supavisor
+      # Up to three tries: the image registry sometimes refuses when every job pulls at once (QA-9).
+      - run: scripts/ci/start-supabase.sh start -x studio,imgproxy,realtime,edge-runtime,logflare,vector,supavisor
       - run: npm run test:e2e -- --shard=${{ matrix.shard }}/4
       # Keep the report for a week when something fails, so the failure can be looked at.
       - uses: actions/upload-artifact@v4
