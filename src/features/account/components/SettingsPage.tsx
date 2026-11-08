@@ -16,7 +16,6 @@
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
@@ -106,19 +105,6 @@ export function SettingsPage() {
   const account = useMyNames();
   return (
     <PageContainer className="tmc-rise relative flex flex-col gap-6 pt-12 pb-7">
-      {/* The board's wand and sun beside the heading (LOOK-5); wide screens only. */}
-      <Doodle
-        name="magic-wand"
-        kind="background"
-        hideBelow="wide"
-        className="absolute top-8 right-[clamp(16px,4vw,64px)] w-[104px] rotate-[8deg]"
-      />
-      <Doodle
-        name="sunny-face"
-        kind="background"
-        hideBelow="wide"
-        className="absolute top-14 right-[calc(clamp(16px,4vw,64px)+150px)] w-[52px] -rotate-6"
-      />
       <title>{t('settings.documentTitle')}</title>
       <header className="relative flex max-w-[720px] flex-col gap-2">
         <Eyebrow>{t('settings.eyebrow')}</Eyebrow>

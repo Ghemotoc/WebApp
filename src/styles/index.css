@@ -372,19 +372,6 @@ dialog.bg-surface,
   display: none;
 }
 
-/* Doodle breakpoints (DoD): tmc-dd-wide hides under 1000 px, tmc-dd-hide under 600 px. */
-@media (max-width: 999px) {
-  .tmc-dd-wide {
-    display: none !important;
-  }
-}
-
-@media (max-width: 599px) {
-  .tmc-dd-hide {
-    display: none !important;
-  }
-}
-
 /* A picture with a light and a night version, such as the logo and emblem (BRAND-1b): both are in
    the page and the theme on <html> (public/theme-init.js) shows one, so a switch needs no read. */
 [data-theme='night'] .tmc-light-only,

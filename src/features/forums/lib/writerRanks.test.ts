@@ -1,9 +1,9 @@
 /**
- * Tests for writerRanks (story S1-E8-09): the ladder, the sticker per rank and the progress bar.
+ * Tests for writerRanks (story S1-E8-09): the ladder and the progress bar.
  */
 import { describe, expect, it } from 'vitest';
 
-import { isRankReached, progressToNextRank, rankFrom, stickerFor } from './writerRanks';
+import { isRankReached, progressToNextRank, rankFrom } from './writerRanks';
 
 describe('writer ranks', () => {
   it('a New writer counts chapters towards Writer', () => {
@@ -31,13 +31,6 @@ describe('writer ranks', () => {
 
   it('a Novelist has no next rank', () => {
     expect(progressToNextRank('novelist', 80, 120000)).toBeNull();
-  });
-
-  it('each rank has its own sticker', () => {
-    const stickers = new Set(
-      (['new_writer', 'writer', 'storyteller', 'novelist'] as const).map(stickerFor),
-    );
-    expect(stickers.size).toBe(4);
   });
 
   it('a rung is reached when it is at or below the writer’s rank', () => {

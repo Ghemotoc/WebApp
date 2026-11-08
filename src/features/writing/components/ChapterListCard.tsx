@@ -4,7 +4,7 @@
  *
  * Board values: "Chapters" eyebrow, a 28 px heading that counts the chapters ("6 published,
  * 1 draft, 1 scheduled"), the hint "Drag the handle to reorder, or use the up and down
- * arrows.", and the open-spiral-notebook doodle on the card's top edge (hidden under 600 px).
+ * arrows.".
  * A change that didn't go through shows one plain message above the list.
  * Who uses it: ManageChaptersPage. What it calls: SortableChapterList and
  * lib/chapterListText.ts for the summary.
@@ -12,7 +12,6 @@
 import type { RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 
@@ -45,15 +44,8 @@ export function ChapterListCard({ problem, headingRef, ...listProps }: ChapterLi
       aria-labelledby="chapter-list-heading"
       className="relative flex flex-col gap-2 rounded-card border border-border bg-surface px-[26px] py-6 shadow-card max-sm:px-4"
     >
-      <Doodle
-        name="open-spiral-notebook"
-        kind="background"
-        hideBelow="phone"
-        className="absolute -top-[22px] right-10 w-[72px] rotate-[8deg]"
-      />
       <div className="flex flex-wrap items-end justify-between gap-3">
-        {/* The right padding (and the hint's right margin) keep long words clear of the notebook doodle on the card's corner. */}
-        <div className="flex flex-col gap-1.5 sm:pr-24">
+        <div className="flex flex-col gap-1.5">
           <div className="w-fit">
             <Eyebrow>{t('manageChapters.listEyebrow')}</Eyebrow>
           </div>

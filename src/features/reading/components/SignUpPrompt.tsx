@@ -8,14 +8,11 @@
  * (docs/board-fixes.md). The board's "Join for free" button needs an invitation link, so the card
  * offers "Log in" and "Back to the story". The apps line stays: the web comes first, the apps
  * after (decided 17 Oct 2026, 34o); its "About the apps" link waits for S1-E16-01.
- * The heart-balloon doodle sits in the card's top-right corner from 1000 px up, with the text kept
- * clear of it (lg:pr-36), as on the board.
  * Who uses it: TeaserPage.
  */
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
-import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { brand } from '@/config/brand';
 
@@ -38,7 +35,7 @@ export function SignUpPrompt({ storySlug, chaptersAfter }: SignUpPromptProps) {
       aria-labelledby="teaser-prompt-title"
       className="relative flex flex-col gap-4 rounded-[24px] border border-border bg-surface p-6 shadow-[0_8px_24px_rgba(72,28,95,0.08)] sm:p-8"
     >
-      <div className="flex flex-col gap-3 lg:pr-36">
+      <div className="flex flex-col gap-3">
         {chaptersAfter > 0 && (
           <Eyebrow>{t('teaser.moreChapters', { count: chaptersAfter })}</Eyebrow>
         )}
@@ -69,13 +66,6 @@ export function SignUpPrompt({ storySlug, chaptersAfter }: SignUpPromptProps) {
       <p className="m-0 border-t border-border pt-4 text-sm text-body">
         {t('teaser.appsNote', { productName: brand.productName })}
       </p>
-      <Doodle
-        name="heart-balloon"
-        kind="widget"
-        on="SignUpPrompt"
-        hideBelow="wide"
-        className="absolute top-6 right-8 w-20 -rotate-6"
-      />
     </section>
   );
 }

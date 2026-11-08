@@ -15,7 +15,6 @@ import { Link } from 'react-router';
 
 import settingsIcon from '@/assets/icons/settings.svg';
 import { Button } from '@/components/ui/Button';
-import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
@@ -53,28 +52,13 @@ function NotificationsHeader({
           <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-extrabold tracking-[-0.025em]">
             {t('page.title')}
           </h1>
-          {/* The board's smiling heart just after the heading (LOOK-5). */}
-          <Doodle
-            name="smiling-heart"
-            kind="widget"
-            on="What's new"
-            hideBelow="wide"
-            className="w-[54px] shrink-0 -rotate-8"
-          />
         </div>
         <p role="status" className="m-0 text-lg leading-relaxed text-body">
           {unread > 0 ? t('page.newSince', { count: unread }) : t('page.caughtUp')}
         </p>
       </div>
-      {/* The board's hot-air balloon between the heading and the button (LOOK-5). */}
-      <Doodle
-        name="hot-air-balloon"
-        kind="background"
-        hideBelow="wide"
-        className="mr-auto ml-8 w-[110px] self-start rotate-6"
-      />
       <div className="flex flex-wrap items-center gap-3">
-        {/* The board's Settings link with its doodle cog, to Settings › Notifications (LOOK-5). */}
+        {/* The board's Settings link with its cog, to Settings › Notifications (LOOK-5). */}
         <Link
           to="/settings#notifications"
           className="inline-flex h-12 items-center gap-2 rounded-full button-glass px-6 text-[15px] font-semibold no-underline"
@@ -140,14 +124,6 @@ function NotificationsBody() {
           className="flex min-w-0 flex-[1_1_320px] flex-col gap-5"
         >
           <DecisionsCard />
-          {/* The board's butterfly under the card (LOOK-5). */}
-          <Doodle
-            name="butterfly"
-            kind="widget"
-            on="About notifications"
-            hideBelow="phone"
-            className="ml-6 w-[60px] -rotate-10"
-          />
         </aside>
       </div>
     </>

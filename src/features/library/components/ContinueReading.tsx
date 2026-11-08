@@ -9,7 +9,6 @@
 import type { ContinueReadingItem } from '../api/library';
 import { useLibraryTranslation } from '../registerLibraryTranslations';
 
-import { Doodle } from '@/components/ui/Doodle';
 import { ContinueReadingCard } from './ContinueReadingCard';
 
 /**
@@ -29,14 +28,6 @@ export function ContinueReading({ items }: { items: ContinueReadingItem[] }) {
         >
           {t('continue.heading')}
         </h2>
-        {/* The board's reading glasses, just after the heading (LOOK-5). */}
-        <Doodle
-          name="reading-glasses"
-          kind="widget"
-          on="Continue reading"
-          hideBelow="wide"
-          className="w-[72px] shrink-0 -rotate-8"
-        />
       </div>
       {items.length === 0 ? (
         <p className="m-0 text-[15px] text-body">{t('continue.empty')}</p>

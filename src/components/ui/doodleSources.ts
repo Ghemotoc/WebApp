@@ -4,7 +4,8 @@
  * S1-E8-09; the jar lantern and the three "Why write here" doodles with LOOK-2; the thirteen from the
  * puppy to the map with LOOK-5; the teacup with LOOK-6).
  *
- * Who uses it: Doodle (src/components/ui/Doodle.tsx). Add a line here, and the file to
+ * Who uses it: the staff pickers that still choose a doodle (forum places, seasonal occasions; G12
+ * retires them) and the /design page. Screens draw no doodles since bundle G4. Add a line here, and the file to
  * src/assets/doodles/ with a readable name, when a screen needs another doodle. Kept apart from
  * the component so that file exports only a component (React's fast refresh asks for it).
  */

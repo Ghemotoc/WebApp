@@ -25,7 +25,6 @@ import {
 import { automaticCoverFor } from '@/components/covers/automaticCover';
 import { DrawnCover } from '@/components/covers/DrawnCover';
 import { Button } from '@/components/ui/Button';
-import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { CanvaCoverLink } from '@/features/canva/components/CanvaCoverLink';
 import { useFeatureFlags } from '@/features/flags/hooks/useFeatureFlags';
@@ -186,18 +185,7 @@ export function CoverSection({
   }
 
   return (
-    <FormSection
-      legend={t('cover.heading')}
-      decoration={
-        <Doodle
-          name="rainbow"
-          kind="widget"
-          on="Cover"
-          hideBelow="phone"
-          className="absolute -top-6 right-6 w-20 -rotate-6"
-        />
-      }
-    >
+    <FormSection legend={t('cover.heading')}>
       <UploadPart storyId={storyId} cover={cover} canUpload={canUpload} onChange={onChange} />
       <div className="flex flex-col gap-6 md:flex-row md:items-start">
         <div className="flex flex-col gap-2">

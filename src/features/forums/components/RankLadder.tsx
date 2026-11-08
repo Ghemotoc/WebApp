@@ -2,14 +2,13 @@
  * RankLadder: the four ranks as an ordered list inside the rank card (story S1-E8-09; board 6.1).
  *
  * Board values: rows 8 px apart with 8 px × 12 px padding and 12 px corners, 14 px text; a 10 px
- * dot (filled plum when reached, white with a #B9A9C2 ring when not), the rank's 28 px sticker
- * (faded to 0.45 when not reached), the name, and the rule at the right in 13 px meta text. The
- * current rank's row sits on the #F1EAF4 tint in bold plum. A fine line between rows pairs each
+ * dot (filled plum when reached, white with a #B9A9C2 ring when not), the rank's name in a glass
+ * text pill (no sticker: bundle G4; DESIGN thread, 8 Nov 2026), and the rule at the right in
+ * 13 px meta text. The current rank's row sits on the #F1EAF4 tint in bold plum. A fine line between rows pairs each
  * name with its rule (DoD, label rows). Reached or not is said in words for screen readers, not
  * by colour alone.
  * Who uses it: RankPanel. It calls nothing.
  */
-import { Doodle } from '@/components/ui/Doodle';
 import { cn } from '@/lib/utils';
 
 import { isRankReached, rankLadder, type RankRung, type WriterRank } from '../lib/writerRanks';
@@ -45,17 +44,10 @@ function LadderRow({ rung, current }: { rung: RankRung; current: WriterRank }) {
           isReached ? 'bg-[#672786]' : 'border-2 border-[#B9A9C2] bg-surface',
         )}
       />
-      <span className={cn('relative size-7 flex-none', !isReached && 'opacity-45')}>
-        <Doodle
-          name={rung.sticker}
-          kind="widget"
-          on={`The ${rung.rank} row`}
-          hideBelow="always"
-          className="size-7"
-        />
-      </span>
       <span className="flex-1">
-        {t(`rank.names.${rung.rank}`)}
+        <span className="button-glass inline-flex h-7 items-center rounded-full px-3 text-[13px] leading-none">
+          {t(`rank.names.${rung.rank}`)}
+        </span>
         <span className="sr-only">, {stateWords}</span>
       </span>
       <span className="ml-auto max-w-[55%] text-right text-[13px] font-normal text-meta">

@@ -42,7 +42,7 @@ The end-to-end check found these; the boards were corrected the same day, so bui
 | Certificate-Participation, Certificate-Winner, AdminSchools | Online contest certificates print the pen name; class certificates may print the real name with the school and are deleted 30 days after the class is archived (decided 17 Oct 2026, 12:44) |
 | AdminClassics (8.16) | Only staff with the admin role manage Classics (decided 17 Oct 2026, 12:44) |
 | AdFormats | Two ads can be in view on wide screens, never the same ad twice (decided 17 Oct 2026, 12:44) |
-| Doodle CSS on every board | Only `tmc-dd-wide` (hides under 1000 px) and `tmc-dd-hide` (hides under 600 px), as in the DoD; doodles that overlapped text or links were moved or removed (Search, Legal, AppOnly, Thread, Discover) |
+| Doodle CSS on every board | Only `tmc-dd-wide` (hides under 1000 px) and `tmc-dd-hide` (hides under 600 px), as in the DoD; doodles that overlapped text or links were moved or removed (Search, Legal, AppOnly, Thread, Discover). Since bundle G4 there are no doodles at all, so both classes are gone |
 
 ## Found while building S1-E1-03 (17 Oct 2026)
 

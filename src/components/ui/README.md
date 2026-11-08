@@ -13,7 +13,7 @@ The shared building blocks every screen uses, one component per file. Built by S
 | `Chip` | A switchable filter (chips do): grey glass, tick plus aria-pressed when selected |
 | `ChoiceChips` | Pick one of a few choices: a radiogroup of chips with arrow-key moves, a tick on the chosen one, dashed when disabled (S1-E3-01) |
 | `LabelRows` is used by the story page's "Labels from the writer" (S1-E3-05) |
-| `Doodle` (+ `doodleSources.ts`) | A decorative doodle: `data-doodle` background or widget, hidden under 1000 or 600 px, never over text (checked by `e2e/support/doodles.ts`) (S1-E3-01) |
+| `doodleSources.ts` | The doodle files by name. Only the staff pickers that still choose a doodle (forum places, seasonal occasions) read it; screens show no doodles since bundle G4, and G12 retires the pickers |
 | `Card`, `LabelRows`, `Eyebrow`, `EmptyState`, `Notice` | Glass panels (every `rounded-card bg-surface border-border` gets the glass rim, G3), label and value rows with fine lines, eyebrow labels, empty states, coloured messages |
 | `Tabs` | A tablist whose chosen tab is bold in the link colour, no underline bar; long rows wrap (G3) |
 | `StoryCard` | A story with a drawn cover (`src/components/covers/DrawnCover`); the title is always shown in full |
@@ -21,4 +21,4 @@ The shared building blocks every screen uses, one component per file. Built by S
 | `AdSlot` | Banner, portrait, side box and in-list card ad slots, labelled "Ad" or "Sponsored" |
 | `PageContainer` | The centred 1280 px column with responsive side padding |
 
-Colours come from `src/styles/tokens.css` (light and night). The liquid glass looks shared by many components (`button-main`, `button-glass`, `field-box`, the card rim, the segmented track and bubble, avatar beads and the sheen on "on" states) are in `src/styles/index.css` (bundle G3 COMPONENTS). Member avatars are glass beads coloured from the username (`src/features/avatars/lib/beadColours.ts`). Icons in `src/components/icons/` are plain SVGs, allowed only for arrows, ticks and form fields; everything else uses the doodle set.
+Colours come from `src/styles/tokens.css` (light and night). The liquid glass looks shared by many components (`button-main`, `button-glass`, `field-box`, the card rim, the segmented track and bubble, avatar beads and the sheen on "on" states) are in `src/styles/index.css` (bundle G3 COMPONENTS). Member avatars are glass beads coloured from the username (`src/features/avatars/lib/beadColours.ts`). Icons in `src/components/icons/` are plain line SVGs in the current text colour (`NavIcon` for the header and tab bar, bundle G4); the liquid glass design has no doodles (Robert, 7 Nov 2026).

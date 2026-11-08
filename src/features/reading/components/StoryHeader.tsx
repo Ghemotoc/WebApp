@@ -19,7 +19,6 @@ import { Link } from 'react-router';
 
 import { resolveCoverChoice } from '@/components/covers/automaticCover';
 import { DrawnCover } from '@/components/covers/DrawnCover';
-import { Doodle } from '@/components/ui/Doodle';
 import { StoryCoverArt } from '@/features/pictures/components/StoryCoverArt';
 import { InfoPill } from '@/components/ui/InfoPill';
 import { listAddress, plainList } from '@/features/discovery/lib/listAddresses';
@@ -166,14 +165,6 @@ export function StoryHeader({ story }: { story: StoryPageData }) {
           }
         />
         <RankBadges slug={story.slug} />
-        {/* The board's music notes sit under the cover (Story 3.4: 54 px in). In the flow of
-            the cover's column, so they can't reach the words beside it on any width. */}
-        <Doodle
-          name="music-notes"
-          kind="background"
-          hideBelow="wide"
-          className="mt-4 ml-[54px] block w-28 -rotate-6"
-        />
       </div>
       {/* Step 2: the words, beside the cover (or under it on narrow screens). */}
       <div className="flex min-w-0 flex-[1_1_360px] flex-col gap-4">

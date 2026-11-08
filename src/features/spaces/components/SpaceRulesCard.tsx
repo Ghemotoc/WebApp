@@ -5,7 +5,6 @@
  */
 import { Link } from 'react-router';
 
-import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 
 import type { Space } from '../api/spaces';
@@ -31,14 +30,6 @@ export function SpaceRulesCard({ space }: { space: Space }) {
             {t('rules.title')}
           </h2>
         </div>
-        {/* The board's mushroom in the card's top right corner, beside the heading (LOOK-5). */}
-        <Doodle
-          name="mushroom"
-          kind="widget"
-          on="Space rules"
-          hideBelow="phone"
-          className="w-12 shrink-0 rotate-[8deg]"
-        />
       </div>
       {space.rules.length === 0 && <p className="m-0 text-sm text-body">{t('rules.none')}</p>}
       {space.rules.length > 0 && (

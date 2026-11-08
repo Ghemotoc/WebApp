@@ -4,7 +4,7 @@
  * What it holds: which file each seasonal doodle uses, the reader's own date, whether an occasion
  * covers a day (the same rule as occasion_covers() in …_s1_e11_11_seasonal_occasions.sql, so the
  * staff year view shows what readers will see), and the days of a year no occasion covers.
- * Who calls it: hooks/useSeasonalDoodle.ts, components/SeasonalDoodle.tsx and the staff year view.
+ * Who calls it: the staff occasion form and year view.
  * It calls nothing else.
  */
 import type { DoodleName } from '@/components/ui/doodleSources';

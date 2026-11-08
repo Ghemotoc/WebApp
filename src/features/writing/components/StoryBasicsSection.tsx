@@ -11,7 +11,6 @@
 import { useTranslation } from 'react-i18next';
 
 import { ChoiceChips } from '@/components/ui/ChoiceChips';
-import { Doodle } from '@/components/ui/Doodle';
 import { Textarea } from '@/components/ui/Textarea';
 import { TextInput } from '@/components/ui/TextInput';
 import { MAXIMUM_BLURB_LENGTH, MAXIMUM_TITLE_LENGTH } from '@/schemas/story';
@@ -40,18 +39,7 @@ export function StoryBasicsSection({ answers, errors, languages, set }: StoryBas
   /** A language's name in the locale files, or its code for one they don't name yet. */
   const languageName = (code: string) => t(`languages.${code}`, { defaultValue: code });
   return (
-    <FormSection
-      legend={t('newStory.basics')}
-      decoration={
-        <Doodle
-          name="ideas-notepad"
-          kind="widget"
-          on="The basics"
-          hideBelow="phone"
-          className="absolute -top-7 right-5 w-16 rotate-6"
-        />
-      }
-    >
+    <FormSection legend={t('newStory.basics')}>
       <TextInput
         id="story-title"
         label={t('newStory.title')}

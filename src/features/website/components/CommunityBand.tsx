@@ -4,7 +4,7 @@
  *
  * Board values: a white card band; on one side the text, "Spaces people started" as chips and
  * "Browse the forums"; on the other the busiest threads this week, each with its forum, title and
- * "Started by … · n replies", with the puppy doodle peeking over the list. The words come from the
+ * "Started by … · n replies". The words come from the
  * CMS; the threads and spaces come from public_forum_highlights(), which lists only the
  * platform's own forums and public 16+ spaces, never a class, private or under-16 space, and only
  * people who may be put on show. With no threads the list is left out.
@@ -13,7 +13,6 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
-import { Doodle } from '@/components/ui/Doodle';
 import type { HomeBand } from '@/schemas/websiteContent';
 
 import type { ForumHighlights } from '../api/forumHighlights';
@@ -45,22 +44,15 @@ function SpaceChips({ spaces }: { spaces: ForumHighlights['spaces'] }) {
   );
 }
 
-/** The busiest threads, with the puppy peeking over the list's top edge. */
+/** The busiest threads. */
 function ThreadList({ threads }: { threads: ForumHighlights['threads'] }) {
   const { t } = useTranslation();
   if (threads.length === 0) return null;
   return (
-    <div className="relative mt-14 self-start lg:mt-10">
-      <Doodle
-        name="peeking-puppy"
-        kind="widget"
-        on="home-forum-threads"
-        hideBelow="wide"
-        className="absolute -top-[68px] right-8 w-[92px]"
-      />
+    <div className="self-start">
       <ul
         aria-label={t('website.busyThreads')}
-        className="relative z-10 m-0 flex list-none flex-col rounded-[24px] border border-border bg-surface p-2 shadow-card"
+        className="m-0 flex list-none flex-col rounded-[24px] border border-border bg-surface p-2 shadow-card"
       >
         {threads.map((thread) => (
           <li
