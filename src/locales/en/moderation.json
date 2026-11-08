@@ -168,9 +168,9 @@
   },
   "failures": {
     "not_allowed": "You can’t do this. Only moderation staff can, and safeguarding cases need the safeguarding permission.",
-    "refused": "The database refused it: the note may be empty, or the case is already decided.",
+    "refused": "The database refused it: the note may be empty, the case may already be decided, or the story may already be restricted, hidden or removed.",
     "unreachable": "We couldn’t reach our server. Check your connection and try again.",
-    "not_built": "Restricting an item comes with S1-E11-08."
+    "not_built": "This isn’t built yet."
   },
   "reason": {
     "hint": "Goes into the audit log. Only staff can read it.",

@@ -965,6 +965,7 @@ export type Database = {
           add_copied_work_note: undefined | null;
           case_item_content: Json | null;
           order_timeline_json: Json | null;
+          require_story_restrictable_by_case: undefined | null;
           statement_ground_for_case: {
             ground: Database['public']['Enums']['statement_ground'];
             ground_key: string;
@@ -974,6 +975,7 @@ export type Database = {
           | 'add_copied_work_note'
           | 'case_item_content'
           | 'order_timeline_json'
+          | 'require_story_restrictable_by_case'
           | 'statement_ground_for_case';
         Insert: {
           claimed_at?: string | null;
@@ -14005,6 +14007,15 @@ export type Database = {
         Returns: undefined;
       };
       require_sponsor_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
+      require_story_restrictable_by_case: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['cases']['Row'],
+            Database['public']['Tables']['cases']['ComputedFields']
+          >;
+        };
+        Returns: undefined;
+      };
       require_support_ticket_for_staff: {
         Args: { ticket_number: number };
         Returns: {

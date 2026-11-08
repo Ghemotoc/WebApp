@@ -123,9 +123,9 @@ export class ModerationError extends Error {
  * Turns a database error into a reason.
  *
  * @param code - Postgres's error code
- * @returns not_allowed (42501), refused (23514: the note, an already decided case or a sanction
- *   rule; 23P01: an on-call shift that overlaps another, S1-E10-09), not_built (0A000: restrict
- *   waits for S1-E11-08) or unreachable
+ * @returns not_allowed (42501), refused (23514: the note, an already decided case, a sanction
+ *   rule or a story that can't be restricted, QA-9; 23P01: an on-call shift that overlaps another,
+ *   S1-E10-09), not_built (0A000: a feature the database doesn't offer yet) or unreachable
  */
 export function failureFromCode(code: string | undefined): ModerationFailure {
   if (code === '42501') return 'not_allowed';
@@ -328,7 +328,8 @@ export interface Decision {
  * @param caseId - the case
  * @param decision - the action, the note, for suspend the days, and the message to the person
  * Errors: throws ModerationError: not_allowed (role, session or safeguarding), refused (a blank
- *   note, a case already decided or a sanction rule), not_built (restrict) or unreachable.
+ *   note, a case already decided, a sanction rule or a story that can't be restricted), not_built
+ *   or unreachable.
  */
 export async function decideCase(
   client: AppSupabaseClient,

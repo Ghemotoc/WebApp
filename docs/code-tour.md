@@ -15,7 +15,7 @@ Read in this order; each file's header comment says what it is for and where thi
 5. `src/locales/ro/common.json` and `src/locales/en/common.json`: the interface text.
 6. `src/styles/tokens.css`, `src/components/ui/README.md` and `/design` in the running app (`npm run dev`, then open /design): how screens look and which components to reuse.
 7. `supabase/README.md`, then `supabase/schema.sql` (the schema as it is now; the migrations in `supabase/migrations/` are its history), `supabase/seed.sql` and `supabase/tests/database/010-profiles.test.sql`: the database side and how a policy is tested.
-8. `.github/workflows/ci.yml`: what has to pass before anything merges, and when the long jobs run (only after a merge to main, Robert, 1 Nov 2026; e2e in 4 shards, QA-3).
+8. `.github/workflows/ci.yml`: what has to pass before anything merges: every pull request and every push to main run the whole suite (Robert, 8 Nov 2026; e2e in 4 shards, QA-3).
 9. `src/features/language/`: the first feature that saves to the database, from drop-down to SQL function (traced in "One round trip: saving the language" below).
 10. `e2e/home.spec.ts`, `e2e/language.spec.ts` and `scripts/`: how the checks prove each rule.
 
@@ -280,7 +280,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `e2e/` | Playwright tests in a real browser, with axe accessibility checks. `e2e/support/personas.ts` signs a seed persona in against the local Supabase (no sign-in screen needed). Tests run one at a time, because they share the personas, the seed story and site-wide flags in one database. A test that checks a signed-in screen in one language saves that language on the persona first (the account's language wins), and `e2e/support/animations.ts` waits for slides to stop before the next key | S1-E1-01, S1-E1-04, S1-E1-QA, TOOL-1 |
 | `scripts/` | Repository checks: the i18n check, the brand-value check, the generated-types check, the story issue sync (S1-E1-01); the policy-test coverage check and the bundle secret scan (S1-E1-02); and their tests | S1-E1-01, S1-E1-02 |
 | `scripts/ops/` | Operations scripts run by a person, never by CI: `check-uptime.ts` (what "up" means, run after a deploy) and `compare-restore.sh` (checks a restored database row for row in the restore drill). Runbooks: `docs/runbooks/uptime-checks.md`, `docs/runbooks/restore.md` | QA-8 |
-| `.github/workflows/` | CI (`ci.yml`), the disabled production release, the story issue sync. In `ci.yml` pull requests run only the quick `checks` job; the database and end-to-end jobs run after each merge to main | S1-E1-01; full tests only after the merge, 1 Nov 2026 |
+| `.github/workflows/`, `.github/dependabot.yml` | CI (`ci.yml`), the disabled production release, the story issue sync. In `ci.yml` every pull request and every push to main run all three jobs: `checks` (which starts with `npm audit --audit-level=high`), `database` and the four `e2e` shards. Dependabot opens one grouped pull request a week for packages and one for Actions | S1-E1-01; full tests on every pull request, 8 Nov 2026; audit and Dependabot, QA-9 |
 | `.claude/` | Claude Code settings and the SessionStart hook: on every start and resume it puts Node 24 first on PATH (through `CLAUDE_ENV_FILE`), starts Docker for the local Supabase stack if it is down, and installs packages when the lock file changes | S1-E1-01, Tooling (18 Oct 2026) |
 | `docs/` | Architecture, Definition of Done, decisions, stories, runbooks, this tour; `mocks.md` (mocks and stubs still on); `epic-reports/` (one report per epic check) | starter kit, then every story |
 | `design/` | Boards (source of truth for screens), renders and pictures | starter kit |
@@ -288,7 +288,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 
 **Where the app runs.** Locally: Vite's dev server plus the Supabase CLI in Docker. Staging: Cloudflare Pages project `ghemotoc` builds `main` (`npm run build`, output `dist`) and gives each pull request a preview link; Supabase's GitHub integration applies migrations to the staging project. Production: a tagged release, approved in GitHub (`.github/workflows/release-production.yml`, switched off until a production project exists).
 
-**Checks.** `npm run checks` (`scripts/run-all-checks.sh`) runs `npm run lint`, `npm run typecheck`, `npm run types:check`, `npm test`, a reset of the local database, `npx supabase test db`, `npm run test:e2e` and `npm run i18n:check`; after a build, also run `npm run scan:bundle`. The reset keeps the database tests independent of what ran before, and e2e puts the seed personas' language back when it ends (`e2e/support/global-teardown.ts`). Run them all locally before you mark a pull request ready for review. CI (`.github/workflows/ci.yml`) runs lint, types, unit tests, i18n and the build on every push to a pull request, drafts included. The two long jobs, database (about a minute) and e2e (over 2 hours on one machine, so it runs in 4 shards, QA-3), are skipped on pull requests and run after every merge to main, so the full local run before merging is what guards main. A skipped job counts as passed for the merge rules, so open pull requests as drafts and mark them ready once the local run is green (Robert, 1 Nov 2026: GitHub Actions minutes; before that the CTO's rule of 24 Oct 2026 also ran them on the pull request).
+**Checks.** `npm run checks` (`scripts/run-all-checks.sh`) runs `npm run lint`, `npm run typecheck`, `npm run types:check`, `npm test`, a reset of the local database, `npx supabase test db`, `npm run test:e2e` and `npm run i18n:check`; after a build, also run `npm run scan:bundle`. The reset keeps the database tests independent of what ran before, and e2e puts the seed personas' language back when it ends (`e2e/support/global-teardown.ts`). CI (`.github/workflows/ci.yml`) runs all of them on every push to a pull request, drafts included, and again after every merge to main: lint, types, unit tests, i18n and the build in `checks`, then database (about a minute) and e2e (over 2 hours on one machine, so it runs in 4 shards of about 40 minutes, QA-3). Mark a pull request ready for review once every job is green. Locally, run only what your change touches, or a test that failed, to debug it (Robert, 8 Nov 2026: the repository is public, so Actions minutes are free; replaces the 1 Nov 2026 rule that skipped the long jobs on pull requests).
 
 ## The database baseline (S1-E1-02)
 
@@ -948,7 +948,7 @@ An authority order (S1-E10-09) and a flagged picture (S1-E10-05) insert their ow
 ## Sanctions, and what a decision does (S1-E10-06)
 
 ```
-CasePage → DecisionForm (warn, suspend 1/7/30 days, ban, hide, remove; restrict waits for S1-E11-08)
+CasePage → DecisionForm (warn, suspend 1/7/30 days, ban, hide, remove; restrict on a case about a story, QA-9: the story leaves every list and an overturned appeal lifts it, test 312)
   │  useCase.decide() → rpc admin_decide_case(case, action, note, suspension_days)
   ▼
 …_s1_e10_06_sanctions.sql

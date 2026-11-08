@@ -88,7 +88,10 @@ test.describe('Staff › Sponsors (S1-E12-02)', () => {
     await page.getByRole('link', { name: 'Back to Sponsors' }).click();
     const card = page.getByRole('listitem').filter({ hasText: 'Poetry, sponsored' });
     await card.getByRole('button', { name: 'Approve' }).click();
-    await expect(page.getByText('Tick every check before you approve.')).toBeVisible();
+    // The refusal is the alert; the card's intro line starts with the same words, so match the alert only.
+    await expect(
+      page.getByRole('alert').filter({ hasText: 'Tick every check before you approve.' }),
+    ).toBeVisible();
     for (const check of await card.getByRole('checkbox').all()) await check.check();
     await card.getByRole('button', { name: 'Approve' }).click();
     await expect(page.getByText(/^Approved\. It goes live on its start date/)).toBeVisible();

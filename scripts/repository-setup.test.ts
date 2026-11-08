@@ -58,17 +58,26 @@ describe('repository setup', () => {
     expect(ciWorkflow).not.toMatch(/^ {2}pull_request:\n(?:\s+#.*\n)*\s+branches:/m);
   });
 
-  it('runs the database and e2e jobs only on main, after the merge, and only the quick checks on pull requests', () => {
-    // Robert, 1 Nov 2026: the full tests run locally before the merge and in CI after it
-    // (replaces "run the long CI jobs only when they matter", 24 Oct 2026).
+  it('runs the database and e2e jobs on every pull request and on main, after the quick checks', () => {
+    // Robert, 8 Nov 2026: the repository is public, so the full suite runs in CI on every pull
+    // request (replaces "only after the merge", 1 Nov 2026, which saved Actions minutes).
     const ciWorkflow = readRepositoryFile('.github/workflows/ci.yml');
     const gate = 'needs: [checks]\n';
-    const condition = `if: "!cancelled() && github.event_name == 'push'"`;
+    const condition = "if: '!cancelled()'";
 
     expect(ciWorkflow).toContain('types: [opened, synchronize, reopened, ready_for_review]');
     expect(ciWorkflow.split(gate)).toHaveLength(3);
     expect(ciWorkflow.split(condition)).toHaveLength(3);
+    expect(ciWorkflow).not.toContain('github.event_name');
     expect(ciWorkflow).not.toContain('only-docs-changed');
+  });
+
+  it('fails the quick checks on a high or critical package hole and keeps packages updated weekly (architecture 1.9)', () => {
+    const ciWorkflow = readRepositoryFile('.github/workflows/ci.yml');
+    expect(ciWorkflow).toContain('npm audit --audit-level=high');
+    const dependabot = readRepositoryFile('.github/dependabot.yml');
+    expect(dependabot).toContain('package-ecosystem: npm');
+    expect(dependabot).toContain('interval: weekly');
   });
 
   it('has a code tour that covers where the app starts, how a click travels, where things live and where to start reading', () => {

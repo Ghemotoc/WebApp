@@ -7,17 +7,16 @@
 # database tests with pgTAP and the generated-types check against a local Supabase (job "database");
 # Playwright tests with axe accessibility checks against a local Supabase, so signed-in journeys
 # run with the seed personas (job "e2e").
-# Saving Actions minutes (Robert, 1 Nov 2026: run the full tests only after the merge; before that
-# the CTO's rule of 24 Oct 2026 ran them on the pull request and again on main):
-#   - On a pull request only "checks" runs (about 3 minutes). "database" and "e2e" are skipped:
-#     the builder runs the full suite locally before every merge and pastes the results into the
-#     pull request ("Local check run"), so a second run here repeated the same work.
-#   - On a push to main nothing skips: "database" and "e2e" run after every merge, so a failure
-#     the local run missed shows on main within the hour and is fixed in the next pull request.
+# Every pull request runs the full suite (Robert, 8 Nov 2026: the repository is public, so
+# GitHub-hosted runners cost no Actions minutes, and the full run belongs here rather than in a
+# builder's session). This replaces the 1 Nov 2026 rule that ran "database" and "e2e" only after
+# the merge to save minutes.
+#   - On a pull request, drafts included, "checks", "database" and "e2e" all run, so a pull
+#     request can only merge once the whole suite is green here.
+#   - On a push to main the same three jobs run again, so main is checked after every merge too.
 # Blocking the merge: a branch ruleset on main lists "checks", "database" and "e2e" as required
-# status checks. A job skipped by its `if:` reports "Success" and still satisfies a required check
-# (GitHub docs, "Control jobs with conditions"). Never add workflow-level `paths`,
-# `paths-ignore` or branch filters, and never use "[skip ci]": a workflow that doesn't run at all
+# status checks, so a failed "database" or "e2e" job blocks the merge. Never add workflow-level
+# `paths`, `paths-ignore` or branch filters, and never use "[skip ci]": a workflow that doesn't run at all
 # leaves its required checks "Pending" and the pull request can't merge (GitHub docs, "Skip
 # workflow runs").
 # What it never does: deploy or push migrations. Cloudflare Pages builds main and pull request
@@ -53,6 +52,9 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      # A known high or critical hole in any package fails the build (architecture 1.9; QA-9, 8 Nov
+      # 2026). Moderate ones are listed in the log and picked up by the weekly Dependabot pull request.
+      - run: npm audit --audit-level=high
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
@@ -79,12 +81,11 @@ jobs:
   database:
     name: Database tests and generated types
     needs: [checks]
-    # Runs only on a push to main, after "checks", even if "checks" failed there (main always gets
-    # the full suite). On a pull request it is skipped, which counts as passed for the required
-    # check (Robert, 1 Nov 2026: the full tests run locally before the merge and here after it).
-    # `!cancelled()` replaces the default "every needed job succeeded", so a failed "checks" on
-    # main doesn't skip it.
-    if: "!cancelled() && github.event_name == 'push'"
+    # Runs on every pull request and every push to main, after "checks", even if "checks" failed,
+    # so one run shows every failure at once (Robert, 8 Nov 2026: the full suite runs here).
+    # `!cancelled()` replaces the default "every needed job succeeded", so a failed "checks"
+    # doesn't skip it.
+    if: '!cancelled()'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -106,12 +107,11 @@ jobs:
   e2e:
     name: End-to-end and accessibility smoke test
     needs: [checks]
-    # Runs only on a push to main, after "checks", even if "checks" failed there (main always gets
-    # the full suite). On a pull request it is skipped, which counts as passed for the required
-    # check (Robert, 1 Nov 2026: the full tests run locally before the merge and here after it).
-    # `!cancelled()` replaces the default "every needed job succeeded", so a failed "checks" on
-    # main doesn't skip it.
-    if: "!cancelled() && github.event_name == 'push'"
+    # Runs on every pull request and every push to main, after "checks", even if "checks" failed,
+    # so one run shows every failure at once (Robert, 8 Nov 2026: the full suite runs here).
+    # `!cancelled()` replaces the default "every needed job succeeded", so a failed "checks"
+    # doesn't skip it.
+    if: '!cancelled()'
     runs-on: ubuntu-latest
     # The suite runs on one worker (playwright.config.ts) and takes over 2 hours on one machine
     # (5 Nov 2026), so it is split into 4 shards, each on its own runner with its own local
@@ -130,10 +130,13 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium
-      # The local Supabase for signed-in tests (S1-E1-04): the database, Auth and the API only.
+      # The local Supabase for signed-in tests (S1-E1-04): the database, Auth, the API and Storage.
       # playwright.config.ts reads its address and public anon key from `supabase status`.
       # Mailpit stays on: sign-up and password-reset tests read their emails from it (S1-E2-01).
-      - run: npx supabase start -x studio,imgproxy,storage-api,realtime,edge-runtime,logflare,vector,supavisor
+      # Storage stays on: picture uploads, covers, banners, teacher proofs and the data and story
+      # downloads all write to a bucket, and without it those tests fail with "name resolution
+      # failed" (CI-1, 8 Nov 2026: they had been failing on main since Storage was left out).
+      - run: npx supabase start -x studio,imgproxy,realtime,edge-runtime,logflare,vector,supavisor
       - run: npm run test:e2e -- --shard=${{ matrix.shard }}/4
       # Keep the report for a week when something fails, so the failure can be looked at.
       - uses: actions/upload-artifact@v4

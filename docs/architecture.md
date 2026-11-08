@@ -598,7 +598,7 @@ Classics are managed only by staff with the admin role (and the owner); content 
 - Supabase's own two-factor level (aal2) isn't used for staff. Instead `is_staff_session()` is true only when the session came from Google sign-in with an account on the company's Google Workspace domain, themagiccoffin.com (read from the setting `STAFF_EMAIL_DOMAIN`, decided 17 Oct 2026, 12:47), and every staff policy checks it (S1-E2-07b; in March it returns true for any staff-role session, S1-E2-07a).
 - Lock-out, recovery and suspicious sign-in alerts are Google Workspace's (canvas 8.1).
 - Member log-ins (email, Google, Apple, Microsoft) never give staff access.
-- Staff sessions end after 12 hours (proposal), and the most sensitive actions ask the person to sign in with Google again (a fresh sign-in, proposal): changing a role, starting an export for someone else, "Emergency disable" and removing part of a writer's text.
+- Staff sessions end after 12 hours (proposal). Changing a role asks the person to sign in again first (a fresh sign-in within 15 minutes); starting an export for someone else, "Emergency disable" and removing part of a writer's text don't (Robert, 8 Nov 2026: "an overkill"; replaces the proposal that all four ask).
 
 **Least privilege in practice**
 
