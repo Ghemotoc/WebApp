@@ -150,7 +150,9 @@ function Rules({ block, language }: BlockProps) {
 }
 
 /**
- * Questions and answers, each question a disclosure.
+ * Questions and answers, each question a disclosure, in one glass card. They share the block's
+ * id as their `name`, so only one is open at a time, and the "+" turns into a "×" while open, as
+ * on the website's questions (G5b, board Landing "Before you start").
  *
  * @returns the section
  */
@@ -161,14 +163,21 @@ function Questions({ block, language }: BlockProps) {
       <h2 className="m-0 font-heading text-[26px] font-bold text-heading">
         {wordsOf(block, language, 'heading')}
       </h2>
-      <div className="flex flex-col">
+      <div className="flex flex-col rounded-card border border-border bg-surface px-5 shadow-card">
         {items.map((item, position) => (
           <details
             key={`${String(position)}-${item.question}`}
-            className="border-b border-hairline py-3"
+            name={`landing-questions-${block.id}`}
+            className="group border-b border-hairline py-3 last:border-b-0"
           >
-            <summary className="min-h-11 cursor-pointer font-semibold text-ink">
+            <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 font-semibold text-ink">
               {item.question}
+              <span
+                aria-hidden="true"
+                className="text-2xl leading-none transition-transform group-open:rotate-45 motion-reduce:transition-none"
+              >
+                +
+              </span>
             </summary>
             <div className="pt-2">
               <CmsMarkdown markdown={item.answer} language={language} />

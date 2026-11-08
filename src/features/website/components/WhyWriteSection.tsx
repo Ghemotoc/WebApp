@@ -38,14 +38,14 @@ export function WhyWriteSection({ page, language }: WhyWriteSectionProps) {
           {withBrand(page.whyHeading)}
         </h2>
       </div>
-      {/* One joined card: each cell draws its right and bottom line, and the negative margin
-          tucks the outer lines under the card's own border, so only the inner dividers show. */}
-      <ul className="m-0 grid list-none overflow-hidden rounded-3xl border border-border bg-surface p-0 shadow-card md:grid-cols-2 xl:grid-cols-4">
+      {/* Separate glass cards with a gap between them (G5b, handoff "Public pages": "separate
+          glass cards"); a plain card gets the glass rim from the shared card style. */}
+      <ul className="m-0 grid list-none gap-4 p-0 md:grid-cols-2 xl:grid-cols-4">
         {page.whyCards.map((card) => {
           return (
             <li
               key={card.title}
-              className="-mr-px -mb-px flex min-w-0 flex-col gap-2.5 border-r border-b border-hairline p-7"
+              className="flex min-w-0 flex-col gap-2.5 rounded-card border border-border bg-surface p-7 shadow-card"
             >
               <h3 className="m-0 font-heading text-[21px] font-bold text-ink">
                 {withBrand(card.title)}

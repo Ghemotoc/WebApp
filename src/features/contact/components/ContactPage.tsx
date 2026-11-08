@@ -7,7 +7,9 @@
  * reports of content to the Report button and the legal contact page (decided 23 Oct 2026, Q10h).
  * After sending: "Message sent" with the reference the emails carry (the reference is made by
  * the function and not stored, Q10c; there is no request list, Q10g).
- * Who shows it: the router. What it calls: useContactForm → api/contact.ts → POST /api/contact.
+ * Beside the form sits "Other ways to reach us" (G5b, board Contact).
+ * Who shows it: the router. What it calls: useContactForm → api/contact.ts → POST /api/contact,
+ * and ContactOtherWays.
  */
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
@@ -20,6 +22,7 @@ import { useContactForm } from '../hooks/useContactForm';
 import { registerContactTranslations } from '../registerContactTranslations';
 
 import { ContactForm } from './ContactForm';
+import { ContactOtherWays } from './ContactOtherWays';
 
 /**
  * "Message sent", with the reference and a way to write again.
@@ -76,20 +79,25 @@ export function ContactPage() {
           .
         </p>
       </div>
-      <div className="max-w-[760px]">
-        {form.reference !== null ? (
-          <MessageSent reference={form.reference} onAgain={form.reset} />
-        ) : (
-          form.isSenderKnown && (
-            <ContactForm
-              sender={form.sender ?? null}
-              language={language}
-              isSending={form.isSending}
-              failure={form.failure}
-              onSend={form.send}
-            />
-          )
-        )}
+      {/* The form, with "Other ways to reach us" beside it on a wide screen and under it on a
+          phone (G5b, board Contact). */}
+      <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,760px)_minmax(0,320px)]">
+        <div className="min-w-0">
+          {form.reference !== null ? (
+            <MessageSent reference={form.reference} onAgain={form.reset} />
+          ) : (
+            form.isSenderKnown && (
+              <ContactForm
+                sender={form.sender ?? null}
+                language={language}
+                isSending={form.isSending}
+                failure={form.failure}
+                onSend={form.send}
+              />
+            )
+          )}
+        </div>
+        <ContactOtherWays />
       </div>
     </PageContainer>
   );

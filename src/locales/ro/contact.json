@@ -36,5 +36,13 @@
     "invalid": "Ceva din mesaj a fost refuzat. Verifică câmpurile și încearcă din nou.",
     "unsent": "Nu am putut trimite mesajul acum. Te rugăm să încerci din nou în câteva minute sau scrie-ne direct la {{supportEmail}}.",
     "unreachable": "Nu am putut ajunge la serverul nostru. Verifică-ți conexiunea și încearcă din nou."
+  },
+  "otherWays": {
+    "heading": "Alte moduri de a ne scrie",
+    "emailTitle": "Email",
+    "reportTitle": "Raportează ceva",
+    "reportLine": "Nu ai nevoie de cont",
+    "helpTitle": "Centrul de ajutor",
+    "helpLine": "Răspunsuri la întrebările frecvente"
   }
 }

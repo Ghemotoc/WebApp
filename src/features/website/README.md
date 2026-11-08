@@ -11,8 +11,9 @@ the locale files; the buttons and labels around it are interface text in `common
   as a fallback. `hooks/useWebsiteEditor.ts`: one kind in one market for the editors.
   `hooks/useMarkets.ts`: the markets and their languages.
 - Public pages: `components/WebsiteHomePage.tsx` (with `HomeHero`, `WhyWriteSection`,
-  `SafetySection`, `QuestionList`), `NoticeStrip.tsx`, `HelpCentrePage.tsx`, `HelpPageView.tsx` and
-  `CmsMarkdown.tsx`, which shows the safe Markdown subset.
+  `SafetySection`, `QuestionList`, `QuestionsStructuredData`), `NoticeStrip.tsx`,
+  `HelpCentrePage.tsx` (with `HelpTopicTiles` and `HelpStillStuck`), `HelpPageView.tsx` and
+  `CmsMarkdown.tsx`, which shows the safe Markdown subset. G5b gave them the glass look.
 - Staff pages: `components/staff/WebsiteAdminPage.tsx` with the three editors (`HomePageEditor`,
   `NoticeEditor`, `HelpEditor`) and the parts they share (`CountedField`, `MarkdownField`,
   `PublishControls`, `VersionHistory`, `EditorFeedback`).

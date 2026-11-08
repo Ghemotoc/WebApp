@@ -106,8 +106,10 @@
   "notFound": {
     "documentTitle": "Pagina nu a fost găsită",
     "heading": "Nu găsim pagina asta",
-    "body": "Poate linkul e vechi sau pagina a fost mutată ori ștearsă. Întoarce-te la prima pagină ca să citești mai departe.",
-    "goHome": "Mergi la prima pagină"
+    "body": "Poate a fost mutată sau povestea a devenit privată. Încearcă o căutare sau întoarce-te la Descoperă.",
+    "eyebrow": "Eroare 404",
+    "search": "Caută pe {{productName}}",
+    "goDiscover": "Mergi la Descoperă"
   },
   "errorPage": {
     "documentTitle": "A apărut o problemă",
@@ -193,11 +195,32 @@
       "eyebrow": "Ajutor",
       "heading": "Cu ce te putem ajuta?",
       "intro": "Ghiduri scurte despre scris, citit și siguranță aici, plus răspunsuri la întrebările puse cel mai des.",
-      "questions": "Întrebări",
+      "questions": "Întrebări frecvente",
       "back": "Toate paginile de ajutor",
       "pageTitle": "{{title}} · Ajutor",
       "notFoundHeading": "Nu găsim această pagină de ajutor",
-      "notFound": "Poate a fost mutată sau scoasă. Toate paginile de ajutor sunt pe pagina Ajutor."
+      "notFound": "Poate a fost mutată sau scoasă. Toate paginile de ajutor sunt pe pagina Ajutor.",
+      "searchLabel": "Caută în ajutor",
+      "searchPlaceholder": "Caută în paginile de ajutor și în întrebări",
+      "searchResults_one": "Se potrivește {{count}} pagină de ajutor sau întrebare.",
+      "searchResults_few": "Se potrivesc {{count}} pagini de ajutor și întrebări.",
+      "searchResults_other": "Se potrivesc {{count}} de pagini de ajutor și întrebări.",
+      "searchResults_zero": "Nu se potrivește nimic. Încearcă alte cuvinte sau scrie-ne mai jos.",
+      "breadcrumb": "Firul de navigare",
+      "updatedLine_one": "Actualizat pe {{date}} · {{count}} minut de citit",
+      "updatedLine_few": "Actualizat pe {{date}} · {{count}} minute de citit",
+      "updatedLine_other": "Actualizat pe {{date}} · {{count}} de minute de citit",
+      "stillStuck": {
+        "heading": "Tot nu ai găsit?",
+        "supportTitle": "Întreabă echipa de ajutor",
+        "supportLine": "Un om citește fiecare cerere. De obicei răspundem într-o zi lucrătoare.",
+        "contactTitle": "Contactează-ne",
+        "contactLine": "Întrebări despre {{productName}}, parteneri și școli.",
+        "reportTitle": "Raportează ceva",
+        "reportLine": "Poți raporta și fără cont.",
+        "safetyTitle": "Cum îi ținem pe oameni în siguranță",
+        "safetyLine": "Vârste, mesaje, clasificări și raportări."
+      }
     },
     "allGenres": "Toate",
     "genreChips": "Arată poveștile populare pe genuri",
@@ -215,6 +238,13 @@
       "newWriters": "Scriitori noi",
       "startWriting": "Începe să scrii",
       "firstStory": "Începe prima ta poveste"
+    },
+    "questionsEyebrow": "Întrebări",
+    "moreHelp": {
+      "lead": "Altceva?",
+      "contact": "Contactează-ne",
+      "guidelines": "Citește regulile comunității",
+      "report": "Raportează ceva fără cont"
     }
   },
   "appearance": {

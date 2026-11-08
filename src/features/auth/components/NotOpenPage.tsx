@@ -14,6 +14,8 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
+import { buttonClassName } from '@/components/ui/buttonStyles';
+
 import { useSignUpMarket } from '../hooks/useSignUpMarket';
 
 import { AuthCard } from './AuthCard';
@@ -46,10 +48,8 @@ export function NotOpenPage() {
     >
       <OpeningListForm country={country} />
       <div className="flex flex-wrap gap-4">
-        <Link
-          to="/"
-          className="inline-flex h-11 items-center rounded-full button-main px-5 text-sm font-semibold no-underline"
-        >
+        {/* Grey glass, so "Tell me" stays the one main button on the page (G5b, board NotOpen). */}
+        <Link to="/" className={buttonClassName({ variant: 'secondary' })}>
           {t('notOpen.readStories')}
         </Link>
         <Link to="/legal/terms" className="inline-flex min-h-11 items-center text-link underline">

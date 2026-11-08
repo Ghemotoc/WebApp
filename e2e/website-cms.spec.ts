@@ -122,6 +122,29 @@ test.describe('Website CMS (S1-E11-06, S1-E11-10, S1-E11-12, S1-E5-08)', () => {
     ).toHaveAttribute('href', '/report');
   });
 
+  test('Help search narrows the topics and questions, and one question opens at a time', async ({
+    browser,
+  }) => {
+    const page = await openAs(browser, null, '/help', 'en');
+    // The questions carry FAQPage data for search engines (G5b).
+    const structuredData = await page.locator('script[type="application/ld+json"]').textContent();
+    expect(JSON.parse(structuredData ?? '{}')).toMatchObject({ '@type': 'FAQPage' });
+    // Opening a second question closes the first (an exclusive accordion).
+    const questions = page.locator('details[name="help-questions"]');
+    await questions.nth(0).locator('summary').click();
+    await questions.nth(1).locator('summary').click();
+    await expect(questions.nth(0)).not.toHaveAttribute('open', '');
+    await expect(questions.nth(1)).toHaveAttribute('open', '');
+    // Searching keeps only what matches; accents and capitals don't matter.
+    await page.getByRole('searchbox', { name: 'Search help' }).fill('REPORTING');
+    await expect(page.getByRole('link', { name: 'Reporting and safety' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Getting started' })).toHaveCount(0);
+    await page.getByRole('searchbox', { name: 'Search help' }).fill('zzzz nothing');
+    await expect(
+      page.getByText('Nothing matches. Try other words, or ask us below.'),
+    ).toBeVisible();
+  });
+
   test('a moderator is told the page is not theirs', async ({ browser }) => {
     const page = await openAs(browser, 'moderator', '/staff/website');
     await expect(page.getByText('Only the owner and admins can edit the website.')).toBeVisible();

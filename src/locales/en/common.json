@@ -106,8 +106,10 @@
   "notFound": {
     "documentTitle": "Page not found",
     "heading": "We can’t find that page",
-    "body": "The link may be old, or the page was moved or deleted. Go back to Home to keep reading.",
-    "goHome": "Go to Home"
+    "body": "It may have moved, or the story was made private. Try searching, or go back to Discover.",
+    "eyebrow": "Error 404",
+    "search": "Search {{productName}}",
+    "goDiscover": "Go to Discover"
   },
   "errorPage": {
     "documentTitle": "Something went wrong",
@@ -193,11 +195,32 @@
       "eyebrow": "Help",
       "heading": "How can we help?",
       "intro": "Short guides to writing, reading and staying safe here, and answers to the questions people ask most.",
-      "questions": "Questions",
+      "questions": "Popular questions",
       "back": "All help pages",
       "pageTitle": "{{title}} · Help",
       "notFoundHeading": "We can't find that help page",
-      "notFound": "It may have moved or been taken down. All help pages are on the Help page."
+      "notFound": "It may have moved or been taken down. All help pages are on the Help page.",
+      "searchLabel": "Search help",
+      "searchPlaceholder": "Search help pages and questions",
+      "searchResults_one": "{{count}} help page or question matches.",
+      "searchResults_few": "{{count}} help pages and questions match.",
+      "searchResults_other": "{{count}} help pages and questions match.",
+      "searchResults_zero": "Nothing matches. Try other words, or ask us below.",
+      "breadcrumb": "Breadcrumb",
+      "updatedLine_one": "Updated {{date}} · {{count}} min read",
+      "updatedLine_few": "Updated {{date}} · {{count}} min read",
+      "updatedLine_other": "Updated {{date}} · {{count}} min read",
+      "stillStuck": {
+        "heading": "Still stuck?",
+        "supportTitle": "Ask our support team",
+        "supportLine": "A person reads every request. We usually answer within one working day.",
+        "contactTitle": "Contact us",
+        "contactLine": "Questions about {{productName}}, partners and schools.",
+        "reportTitle": "Report something",
+        "reportLine": "You can report without an account.",
+        "safetyTitle": "How we keep people safe",
+        "safetyLine": "Ages, messages, ratings and reports."
+      }
     },
     "allGenres": "All",
     "genreChips": "Show trending stories by genre",
@@ -215,6 +238,13 @@
       "newWriters": "New writers",
       "startWriting": "Start writing",
       "firstStory": "Start your first story"
+    },
+    "questionsEyebrow": "Questions",
+    "moreHelp": {
+      "lead": "Something else?",
+      "contact": "Contact us",
+      "guidelines": "Read the community guidelines",
+      "report": "Report something without an account"
     }
   },
   "appearance": {
