@@ -63,7 +63,7 @@ export function PasswordInput({
           aria-describedby={describedBy}
           aria-invalid={errorMessage === undefined ? undefined : true}
           className={cn(
-            'h-11 w-full rounded-full border border-control-border bg-surface pr-20 pl-4 font-body text-[15px] text-ink',
+            'h-12 w-full field-box pr-20 pl-4 font-body text-[15px]',
             errorMessage !== undefined && 'border-destructive',
             className,
           )}

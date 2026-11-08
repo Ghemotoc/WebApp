@@ -47,21 +47,21 @@ function StoryCardLinks({ story }: { story: MyStory }) {
       {latestChapter !== undefined && (
         <Link
           to={`/write/s/${slug}/chapters`}
-          className="inline-flex h-11 items-center rounded-full border border-control-border bg-surface px-5 text-sm font-semibold text-heading no-underline hover:bg-tint"
+          className="inline-flex h-11 items-center rounded-full button-glass px-5 text-sm font-semibold no-underline"
         >
           {t('storyCard.manageChapters')}
         </Link>
       )}
       <Link
         to={`/write/s/${slug}/settings`}
-        className="inline-flex h-11 items-center rounded-full border border-control-border bg-surface px-5 text-sm font-semibold text-heading no-underline hover:bg-tint"
+        className="inline-flex h-11 items-center rounded-full button-glass px-5 text-sm font-semibold no-underline"
       >
         {t('storyCard.settings')}
       </Link>
       {/* "Plan" beside "Write": the story's side in Story Atlas (S1-E17 notes). */}
       <Link
         to={`/plan/s/${slug}`}
-        className="inline-flex h-11 items-center rounded-full border border-control-border bg-surface px-5 text-sm font-semibold text-heading no-underline hover:bg-tint"
+        className="inline-flex h-11 items-center rounded-full button-glass px-5 text-sm font-semibold no-underline"
       >
         {t('storyCard.plan')}
       </Link>
@@ -85,7 +85,7 @@ function WriteChapterLink({
   return (
     <Link
       to={`/write/s/${slug}/c/${latestChapter.code}`}
-      className="inline-flex h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold text-on-primary no-underline hover:opacity-90"
+      className="inline-flex h-11 items-center rounded-full button-main px-5 text-sm font-semibold no-underline"
     >
       {t('storyCard.continueChapter', { number: latestChapter.position })}
     </Link>

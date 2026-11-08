@@ -77,7 +77,7 @@ function NotificationsHeader({
         {/* The board's Settings link with its doodle cog, to Settings › Notifications (LOOK-5). */}
         <Link
           to="/settings#notifications"
-          className="inline-flex h-12 items-center gap-2 rounded-full border border-control-border bg-surface px-6 text-[15px] font-semibold text-heading no-underline hover:bg-tint"
+          className="inline-flex h-12 items-center gap-2 rounded-full button-glass px-6 text-[15px] font-semibold no-underline"
         >
           <img src={settingsIcon} alt="" aria-hidden="true" width={20} height={20} />
           {t('page.settings')}

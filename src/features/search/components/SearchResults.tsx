@@ -41,7 +41,7 @@ function NothingFound({ term }: { term: string }) {
         action={
           <Link
             to="/discover"
-            className="inline-flex h-11 w-fit items-center rounded-full bg-primary px-5 text-sm font-semibold text-on-primary no-underline hover:opacity-90"
+            className="inline-flex h-11 w-fit items-center rounded-full button-main px-5 text-sm font-semibold no-underline"
           >
             {t('empty.browse')}
           </Link>

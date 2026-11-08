@@ -52,7 +52,7 @@ function ToolButton(props: { label: string; isDisabled: boolean; onPress: () => 
       type="button"
       disabled={props.isDisabled}
       onClick={props.onPress}
-      className="inline-flex h-11 cursor-pointer items-center rounded-full border border-control-border bg-surface px-[18px] text-sm font-semibold text-heading hover:bg-tint focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus-ring) disabled:cursor-not-allowed disabled:opacity-60"
+      className="inline-flex h-11 cursor-pointer items-center rounded-full button-glass px-[18px] text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus-ring) disabled:cursor-not-allowed disabled:opacity-60"
     >
       {props.label}
     </button>

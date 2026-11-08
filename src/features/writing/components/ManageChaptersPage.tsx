@@ -64,7 +64,7 @@ function ManageChaptersHeader({ slug, storyTitle }: { slug: string; storyTitle: 
       <div className="flex flex-wrap items-center gap-3">
         <Link
           to={`/s/${slug}`}
-          className="inline-flex h-12 items-center rounded-full border border-control-border bg-surface px-[22px] text-[15px] font-semibold text-heading no-underline hover:bg-tint"
+          className="inline-flex h-12 items-center rounded-full button-glass px-[22px] text-[15px] font-semibold no-underline"
         >
           {t('storyCard.seePage')}
         </Link>

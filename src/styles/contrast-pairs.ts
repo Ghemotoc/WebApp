@@ -36,6 +36,18 @@ const textPairs: ContrastPair[] = [
   { foreground: 'eyebrow', background: 'paper', minimumRatio: 4.5, usedFor: 'eyebrow labels' },
   { foreground: 'eyebrow', background: 'surface', minimumRatio: 4.5, usedFor: 'eyebrows on cards' },
   { foreground: 'link', background: 'paper', minimumRatio: 4.5, usedFor: 'links' },
+  {
+    foreground: 'on-plum',
+    background: 'plum-from',
+    minimumRatio: 4.5,
+    usedFor: 'main button text, top',
+  },
+  {
+    foreground: 'on-plum',
+    background: 'plum-to',
+    minimumRatio: 4.5,
+    usedFor: 'main button text, bottom',
+  },
   { foreground: 'link', background: 'surface', minimumRatio: 4.5, usedFor: 'links on cards' },
   { foreground: 'link-hover', background: 'paper', minimumRatio: 4.5, usedFor: 'links on hover' },
   { foreground: 'destructive', background: 'paper', minimumRatio: 4.5, usedFor: 'delete actions' },

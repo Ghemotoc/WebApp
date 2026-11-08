@@ -19,7 +19,7 @@ import { BackIcon, ContentsIcon, ForwardIcon } from './ReaderIcons';
 
 /** The classes shared by the outlined links. */
 const outlinedLink =
-  'inline-flex h-11 items-center gap-1.5 rounded-full border border-control-border bg-surface pr-[18px] pl-3 text-[15px] font-semibold text-heading no-underline hover:bg-tint';
+  'inline-flex h-11 items-center gap-1.5 rounded-full button-glass pr-[18px] pl-3 text-[15px] font-semibold no-underline';
 
 /** What the bar needs. */
 export interface ChapterBarProps {
@@ -49,7 +49,7 @@ function ChapterNavigation({ chapter }: { chapter: ReaderChapter }) {
       {chapter.nextCode !== null && (
         <Link
           to={`${storyAddress}/${chapter.nextCode}`}
-          className="inline-flex h-11 items-center gap-1.5 rounded-full bg-primary pr-3 pl-5 text-[15px] font-semibold text-on-primary no-underline hover:opacity-90"
+          className="inline-flex h-11 items-center gap-1.5 rounded-full button-main pr-3 pl-5 text-[15px] font-semibold no-underline"
         >
           {t('reader.next')}
           <ForwardIcon />

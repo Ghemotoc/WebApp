@@ -37,6 +37,102 @@
   color: var(--eyebrow);
 }
 
+/*
+ * Buttons (bundle G3 COMPONENTS; handoff "Components: variants and states", "Buttons and pills").
+ * button-main is the action that finishes a task (Publish, Save, Continue): the theme accent's
+ * gradient (plum in Lilac mist and at night; black in the staff area), white text and a soft top
+ * highlight. button-glass is every add action and "not yet" state (New story, Add chapter,
+ * Follow): clear grey glass with ink text and a 3:1 edge. Both brighten a little on hover and
+ * press to 98 % (120 ms); reduce motion turns the press off with every other transition. A
+ * disabled button is half see-through and takes no pointer. Button.tsx uses these, and so do
+ * links drawn as buttons, so the look changes in this one place.
+ */
+@utility button-main {
+  background-color: var(--plum-to);
+  background-image: linear-gradient(180deg, var(--plum-from), var(--plum-to));
+  color: var(--on-plum);
+  border: 1px solid rgb(255 255 255 / 0.3);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.35),
+    0 10px 22px -12px color-mix(in srgb, var(--plum-to) 70%, transparent);
+  transition:
+    transform 120ms ease-out,
+    filter 120ms ease-out;
+  &:hover {
+    filter: brightness(1.1);
+  }
+  &:active {
+    transform: scale(0.98);
+  }
+  &:disabled,
+  &[aria-disabled='true'] {
+    filter: none;
+    transform: none;
+  }
+}
+
+@utility button-glass {
+  background-color: var(--surface-glass);
+  background-image: linear-gradient(rgb(36 19 58 / 0.05), rgb(36 19 58 / 0.05));
+  color: var(--ink);
+  border: 1px solid var(--control-border);
+  box-shadow: inset 0 1px 0 var(--glass-highlight);
+  transition:
+    transform 120ms ease-out,
+    filter 120ms ease-out;
+  &:hover {
+    filter: brightness(1.04);
+  }
+  &:active {
+    transform: scale(0.98);
+  }
+  &:disabled,
+  &[aria-disabled='true'] {
+    filter: none;
+    transform: none;
+  }
+}
+
+/*
+ * The segmented control (bundle G3; SegmentedControl.tsx): a recessed, slightly darker track and
+ * a white water bubble that slides to the picked option in 280 ms (handoff motion table). At
+ * night the bubble is a soft white glass so the light text stays readable on it.
+ */
+.segmented-track {
+  background-color: var(--track);
+  box-shadow: inset 0 1px 3px rgb(20 10 30 / 0.12);
+}
+
+.segmented-bubble {
+  background-color: var(--bubble);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    0 4px 12px -6px rgb(20 10 30 / 0.35);
+  transition:
+    left 280ms ease-out,
+    top 280ms ease-out,
+    width 280ms ease-out,
+    height 280ms ease-out;
+}
+
+/*
+ * Fields (bundle G3; handoff "Fields and forms"): 48 px tall inputs with a 14 px radius, the
+ * --field fill and a 3:1 edge. The label always sits above (TextInput, Textarea). An invalid
+ * field (aria-invalid) takes the red edge; its message sits under it, linked by aria-describedby.
+ */
+@utility field-box {
+  border-radius: var(--radius-field);
+  border: 1px solid var(--control-border);
+  background-color: var(--field);
+  color: var(--ink);
+  &::placeholder {
+    color: var(--meta);
+  }
+  &[aria-invalid='true'] {
+    border-color: var(--destructive);
+  }
+}
+
 @layer base {
   /*
    * The page: the background colour sits on <html>; <body> stays see-through so the colour blobs
@@ -138,6 +234,59 @@ dialog.bg-surface,
 [data-area='staff'] .bg-surface.shadow-popover {
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
+}
+
+/*
+ * "On" states (bundle G3 COMPONENTS; handoff: "Every pill is liquid glass. Plum is for finishing
+ * actions and 'on' states"). Every pressed chip, chosen reason and other bg-chip-on fill keeps its
+ * tested colour and gains a soft glass sheen along its top: a faint white wash that fades out
+ * above the text, so the text's contrast does not change, plus a one-pixel top highlight.
+ */
+.bg-chip-on {
+  background-image: linear-gradient(180deg, rgb(255 255 255 / 0.1), rgb(255 255 255 / 0) 45%);
+  --tw-inset-shadow: inset 0 1px 0 rgb(255 255 255 / 0.3);
+  box-shadow: var(--tw-inset-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
+[data-area='staff'] .bg-chip-on {
+  background-image: none;
+  box-shadow: none;
+}
+
+/*
+ * Cards (bundle G3 COMPONENTS; handoff "Cards and status": cards are liquid glass, radius --r-lg).
+ * Every plain card (rounded-card, bg-surface and the soft border-border edge) takes the bright glass
+ * rim and a one-pixel highlight along its top edge, so it reads as a pane of glass over the blobs.
+ * A card with a status border (border-destructive and so on) keeps it: the selector only matches
+ * border-border. The staff area stays flat, with its plain border and no highlight.
+ */
+.rounded-card.bg-surface.border-border {
+  border-color: var(--glass-border);
+  --tw-inset-shadow: inset 0 1px 0 var(--glass-highlight);
+}
+
+[data-area='staff'] .rounded-card.bg-surface.border-border {
+  border-color: var(--border);
+  --tw-inset-shadow: 0 0 #0000;
+}
+
+/*
+ * Avatar beads (bundle G3 COMPONENTS; handoff "Covers, avatars and pictures": member avatars are 3D
+ * glass beads with a soft shine). The bead's colour and its initials' colour come from
+ * src/features/avatars/lib/beadColours.ts through --bead and --bead-initials, so every pair is
+ * tested at 4.5:1. A small white shine sits at the top left, a soft shade at the bottom, and an
+ * inner rim and a drop shadow give the roundness. The shine stays clear of the initials' middle.
+ */
+.avatar-bead {
+  background-color: var(--bead);
+  background-image:
+    radial-gradient(ellipse 34% 24% at 34% 20%, rgb(255 255 255 / 0.55), rgb(255 255 255 / 0)),
+    radial-gradient(circle at 50% 115%, rgb(20 10 30 / 0.16), rgb(20 10 30 / 0) 60%);
+  color: var(--bead-initials);
+  box-shadow:
+    inset 0 -3px 6px rgb(20 10 30 / 0.18),
+    inset 0 1px 1px rgb(255 255 255 / 0.7),
+    0 6px 14px -8px rgb(36 19 58 / 0.5);
 }
 
 @media (prefers-reduced-transparency: reduce) {

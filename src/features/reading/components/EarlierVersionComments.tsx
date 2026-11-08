@@ -42,7 +42,7 @@ export function EarlierVersionComments() {
         aria-expanded={isOpen}
         aria-controls={isOpen ? threadId : undefined}
         onClick={() => comments.setOpenPlace(isOpen ? null : 'earlier')}
-        className="inline-flex h-11 items-center self-start justify-self-start rounded-full border border-control-border bg-surface px-5 text-sm font-semibold text-heading hover:bg-tint"
+        className="inline-flex h-11 items-center self-start justify-self-start rounded-full button-glass px-5 text-sm font-semibold"
       >
         {t('reader.paragraphComments.earlier', { count: comments.counts.earlier })}
       </button>

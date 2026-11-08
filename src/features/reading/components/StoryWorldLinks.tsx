@@ -36,7 +36,7 @@ export function StoryWorldLinks({ storySlug }: { storySlug: string }) {
           <li key={area}>
             <Link
               to={`${readerPlanBase(plan.storySlug)}/${areaPaths[area]}`}
-              className="inline-flex h-11 items-center rounded-full border border-control-border bg-surface px-5 text-sm font-semibold text-heading no-underline hover:bg-tint"
+              className="inline-flex h-11 items-center rounded-full button-glass px-5 text-sm font-semibold no-underline"
             >
               {t(`storyPage.world.areas.${area}`)}
             </Link>

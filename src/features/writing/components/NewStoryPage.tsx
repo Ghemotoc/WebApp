@@ -86,7 +86,7 @@ function NewStoryActionBar({
       <div className="flex flex-wrap gap-3">
         <Link
           to="/write"
-          className="inline-flex h-12 items-center rounded-full border border-control-border bg-surface px-6 text-[15px] font-semibold text-heading no-underline hover:bg-tint"
+          className="inline-flex h-12 items-center rounded-full button-glass px-6 text-[15px] font-semibold no-underline"
         >
           {t('newStory.cancel')}
         </Link>

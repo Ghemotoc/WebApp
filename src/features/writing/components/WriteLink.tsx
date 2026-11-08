@@ -27,7 +27,7 @@ export function WriteLink() {
     <NavLink
       to="/write"
       className={({ isActive }) =>
-        `inline-flex h-11 items-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold whitespace-nowrap text-on-primary no-underline hover:opacity-90 ${isActive ? 'ring-2 ring-gold ring-offset-2 ring-offset-surface' : ''}`
+        `inline-flex h-11 items-center gap-2 rounded-full button-main px-5 text-sm font-semibold whitespace-nowrap no-underline ${isActive ? 'ring-2 ring-gold ring-offset-2 ring-offset-surface' : ''}`
       }
     >
       <img

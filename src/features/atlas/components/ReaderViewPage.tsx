@@ -46,7 +46,7 @@ function ReaderViewBody({ slug, title }: { slug: string; title: string }) {
       <PublicAreaSwitches savedAreas={visibility.areas} save={saveAreas} />
       <Link
         to={`/plan/s/${slug}/preview`}
-        className="inline-flex h-11 items-center self-start rounded-full bg-primary px-6 font-semibold text-on-primary no-underline hover:opacity-90"
+        className="inline-flex h-11 items-center self-start rounded-full button-main px-6 font-semibold no-underline"
       >
         {t('readers.previewLink')}
       </Link>

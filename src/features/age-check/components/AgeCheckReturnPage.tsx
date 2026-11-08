@@ -115,7 +115,7 @@ function PassedMessage({ check, offerDocument }: { check: MyAgeCheck; offerDocum
       ) : null}
       <Link
         to="/"
-        className="inline-flex h-12 items-center self-start rounded-full bg-primary px-6 text-[15px] font-semibold text-on-primary no-underline hover:opacity-90"
+        className="inline-flex h-12 items-center self-start rounded-full button-main px-6 text-[15px] font-semibold no-underline"
       >
         {t('ageCheck.continue')}
       </Link>

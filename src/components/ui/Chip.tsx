@@ -2,9 +2,11 @@
  * Chip: a choice the reader can switch on and off, such as a filter (story S1-E1-03; DoD pill
  * system).
  *
- * The rule: white with a #8E7B99 border (3:1), plum text, 36 px tall with a 44 px touch target,
- * a visible focus ring, and the selected state shown by a tick and aria-pressed, never by colour
- * alone. Values from the Discover and Search boards (.tmc-chip).
+ * The rule: clear grey glass (button-glass) with a #8E7B99 border (3:1) and ink text, 36 px tall
+ * with a 44 px touch target, a visible focus ring, and the selected state shown by a tick and
+ * aria-pressed, never by colour alone; a pressed chip takes the "on" fill with its glass sheen
+ * (bundle G3 COMPONENTS, handoff: "Every pill is liquid glass"). It stays 36 px tall as the DoD pill
+ * system says, so filter rows keep their room; its touch target is the handoff's 44 px.
  * Who uses it: filters on Discover and Search, tabs in the admin site.
  */
 import type { ReactNode } from 'react';
@@ -49,9 +51,7 @@ export function Chip({
       className={cn(
         "relative inline-flex h-9 items-center justify-center gap-1.5 rounded-full border px-3.5 font-body text-sm leading-none font-semibold whitespace-nowrap after:absolute after:inset-x-0 after:top-1/2 after:h-11 after:-translate-y-1/2 after:content-['']",
         isDisabled && 'cursor-not-allowed opacity-60',
-        isPressed
-          ? 'border-chip-on bg-chip-on text-chip-on-text'
-          : 'border-control-border bg-surface text-heading hover:bg-tint',
+        isPressed ? 'border-chip-on bg-chip-on text-chip-on-text' : 'button-glass',
       )}
     >
       {isPressed && <CheckIcon />}

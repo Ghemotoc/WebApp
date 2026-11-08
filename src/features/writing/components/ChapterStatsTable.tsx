@@ -7,7 +7,9 @@
  * right), a fine line between rows (DoD: label rows), and "not published" where a draft or a
  * scheduled chapter has no numbers. The frame scrolls sideways on small screens and is a labelled
  * focusable region, so a keyboard can scroll it too (WCAG 2.1.1).
- * Every count from fewer than 5 readers reads "fewer than 5" (criterion 2).
+ * Every count from fewer than 5 readers reads "fewer than 5" (criterion 2). Every cell sits in the
+ * row's vertical middle, so the status pill is centred, and the date under the pill stacks on its
+ * own line with a 3 px gap (handoff, "Cards and status"; bundle G3 COMPONENTS).
  * Who uses it: WriterStoryCard. Its rows come from useWriterDashboard (writer_dashboard()).
  */
 import { useTranslation } from 'react-i18next';
@@ -53,26 +55,26 @@ function ChapterStatsRow({ chapter }: { chapter: DashboardChapter }) {
   const date = stateDate(chapter, i18n.language);
   return (
     <tr className="border-b border-hairline last:border-b-0">
-      <th scope="row" className="px-[18px] py-3.5 text-left align-top font-semibold text-ink">
+      <th scope="row" className="px-[18px] py-3.5 text-left align-middle font-semibold text-ink">
         {t('dashboard.table.row', { number: chapter.position, title })}
       </th>
-      <td className="px-3 py-3.5 align-top">
-        <span className="flex flex-col items-start gap-1">
+      <td className="px-3 py-3.5 align-middle">
+        <span className="flex flex-col items-start gap-[3px]">
           <InfoPill tone={pillTones[state]}>{t(`manageChapters.state.${state}`)}</InfoPill>
           {date !== null && <span className="text-[13px] text-meta">{date}</span>}
         </span>
       </td>
       {state === 'published' ? (
         <>
-          <td className="px-3 py-3.5 text-right align-top">{count(chapter.reads)}</td>
-          <td className="px-3 py-3.5 text-right align-top">
+          <td className="px-3 py-3.5 text-right align-middle">{count(chapter.reads)}</td>
+          <td className="px-3 py-3.5 text-right align-middle">
             {formatShownPercent(chapter.readThrough, i18n.language, fewer)}
           </td>
-          <td className="px-3 py-3.5 text-right align-top">{count(chapter.likes)}</td>
-          <td className="px-[18px] py-3.5 text-right align-top">{count(chapter.comments)}</td>
+          <td className="px-3 py-3.5 text-right align-middle">{count(chapter.likes)}</td>
+          <td className="px-[18px] py-3.5 text-right align-middle">{count(chapter.comments)}</td>
         </>
       ) : (
-        <td colSpan={4} className="px-3 py-3.5 align-top text-meta">
+        <td colSpan={4} className="px-3 py-3.5 align-middle text-meta">
           {t('dashboard.table.notPublished')}
         </td>
       )}

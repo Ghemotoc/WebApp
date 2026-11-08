@@ -21,7 +21,7 @@ import { StorySwitcher } from './StorySwitcher';
 
 /** The pill links' shared look (the outline pills of Your writing). */
 const pillLink =
-  'inline-flex h-11 items-center rounded-full border border-control-border bg-surface px-5 text-sm font-semibold text-heading no-underline hover:bg-tint';
+  'inline-flex h-11 items-center rounded-full button-glass px-5 text-sm font-semibold no-underline';
 
 /**
  * Renders the bar.

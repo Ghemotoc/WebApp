@@ -97,7 +97,7 @@ export function MyMailPage() {
         <>
           <Link
             to="/moderator-mail/new"
-            className="inline-flex h-11 w-fit items-center rounded-full bg-primary px-5 text-sm font-semibold text-on-primary no-underline hover:opacity-90"
+            className="inline-flex h-11 w-fit items-center rounded-full button-main px-5 text-sm font-semibold no-underline"
           >
             {t('list.write')}
           </Link>

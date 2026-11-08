@@ -99,7 +99,7 @@ export function SpaceJoinActions({ space }: { space: Space }) {
     return (
       <Link
         to="/sign-in"
-        className="inline-flex h-12 items-center rounded-full bg-primary px-5 text-[15px] font-semibold text-on-primary no-underline hover:opacity-90"
+        className="inline-flex h-12 items-center rounded-full button-main px-5 text-[15px] font-semibold no-underline"
       >
         {t('join.logIn')}
       </Link>

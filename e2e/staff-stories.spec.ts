@@ -74,6 +74,12 @@ test.describe('every story in the admin site (S1-E11-07)', () => {
     await expect(page).toHaveURL(/writers=under18/);
     await expect(page.getByText('1 story found.')).toBeVisible();
     await page.getByRole('button', { name: 'Writers under 18' }).click();
+    // The filters live in the address and change in a transition, so wait for the chip to let go
+    // before the next filter, as a person sees it do.
+    await expect(page.getByRole('button', { name: 'Writers under 18' })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    );
     await page.getByLabel('Story language').selectOption('en');
     await expect(page.getByText('1 story found.')).toBeVisible();
     await page.getByLabel('Story language').selectOption('');

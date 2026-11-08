@@ -15,6 +15,7 @@ import { CheckIcon } from '@/components/icons/CheckIcon';
 import { Button } from '@/components/ui/Button';
 import { TextInput } from '@/components/ui/TextInput';
 import type { SignUpMethod } from '@/schemas/signUp';
+import { PasswordStrengthMeter } from './PasswordStrengthMeter';
 
 /** What the fields need from the form. */
 interface PasswordFieldsProps {
@@ -85,6 +86,8 @@ export function PasswordFields(props: PasswordFieldsProps) {
           value={props.password}
           onChange={(event) => props.onPasswordChange(event.target.value)}
         />
+        {/* How strong it looks, as the person types (bundle G3; a hint, not a rule). */}
+        <PasswordStrengthMeter password={props.password} id="sign-up-password-strength" />
         <Button variant="text" className="self-start" onClick={() => props.onMethodChange('link')}>
           {t('signUp.useLink')}
         </Button>

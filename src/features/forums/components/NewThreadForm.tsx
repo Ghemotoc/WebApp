@@ -78,7 +78,7 @@ export function NewThreadForm({ forumSlug, cancelTo, initialBody = '' }: NewThre
       <div className="flex flex-wrap justify-end gap-3">
         <Link
           to={cancelTo}
-          className="inline-flex h-11 items-center rounded-full border border-control-border bg-surface px-5 text-sm font-semibold text-heading no-underline hover:bg-tint"
+          className="inline-flex h-11 items-center rounded-full button-glass px-5 text-sm font-semibold no-underline"
         >
           {t('newThread.cancel')}
         </Link>

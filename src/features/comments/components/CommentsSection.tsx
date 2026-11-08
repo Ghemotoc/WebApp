@@ -36,7 +36,7 @@ function AddComment({ address }: { address: ChapterAddress }) {
     return (
       <Link
         to="/sign-in"
-        className="inline-flex h-11 items-center self-start rounded-full border border-control-border bg-surface px-5 text-sm font-semibold text-heading no-underline hover:bg-tint"
+        className="inline-flex h-11 items-center self-start rounded-full button-glass px-5 text-sm font-semibold no-underline"
       >
         {t('section.logIn')}
       </Link>

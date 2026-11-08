@@ -98,7 +98,7 @@ export function ParentConsentNotice() {
         <p className="m-0 text-body">{body}</p>
         <Link
           to={isWithdrawn ? '/settings#parent-consent' : '/parent-consent'}
-          className="inline-flex h-11 items-center self-start rounded-full bg-primary px-5 text-sm font-semibold text-on-primary no-underline hover:opacity-90"
+          className="inline-flex h-11 items-center self-start rounded-full button-main px-5 text-sm font-semibold no-underline"
         >
           {t(isWithdrawn ? 'parentConsent.notice.withdrawnAction' : 'parentConsent.notice.action')}
         </Link>

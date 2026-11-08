@@ -74,6 +74,16 @@
   /* The plum gradient on every main action (Publish, Save, Continue; rulebook 5). */
   --plum-from: #672786;
   --plum-to: #2a0e33;
+  /* Text on the plum (or theme accent) gradient of main buttons: white, by day and at night. */
+  --on-plum: #ffffff;
+  /* The segmented control's recessed track and its water bubble (bundle G3). */
+  --track: rgba(36, 19, 58, 0.08);
+  --bubble: rgba(255, 255, 255, 1);
+  /* The password strength meter's four segments (handoff: red, yellow, green, dark green). */
+  --strength-weak: #c2283c;
+  --strength-fair: #d9a400;
+  --strength-strong: #3f9d5b;
+  --strength-very-strong: #1e6b47;
 
   /* Lines. control-border reaches 3:1 for form fields and chips (WCAG 2.2, 1.4.11). */
   --border: #d9cdea;
@@ -205,6 +215,13 @@
   --logo: #f4eef8;
   --plum-from: #672786;
   --plum-to: #2a0e33;
+  --on-plum: #ffffff;
+  --track: rgba(0, 0, 0, 0.28);
+  --bubble: rgba(255, 255, 255, 0.18);
+  --strength-weak: #ff9aa8;
+  --strength-fair: #ffd36a;
+  --strength-strong: #8fe0b5;
+  --strength-very-strong: #3fcf8a;
 
   --border: #5a4263;
   --hairline: #432a4c;
@@ -296,8 +313,8 @@
  * 2026, 17:52 and 18:44). White on every accent and every accent on its page pass AA (checked by
  * scripts/token-contrast.test.ts). The staff area ignores looks: its own block sets every one of
  * these again. --surface is the solid colour glass looks like on that page (white at 50%).
- * Summer's and Autumn's dark ends are builder picks: the handoff's were left from their earlier
- * fuchsia and auburn accents, so they are the golden and green accents darkened instead.
+ * Summer's and Autumn's dark ends are the canvas kit's --a2 values (#3D2C00, #232D12; DESIGN
+ * thread, 8 Nov 2026).
  */
 
 /*
@@ -501,15 +518,15 @@
   --blob-2: #bedffa;
   --blob-3: #f7c4e5;
   --accent: #946b00;
-  --accent-deep: #4a3500;
+  --accent-deep: #3d2c00;
   --plum-from: #946b00;
-  --plum-to: #4a3500;
+  --plum-to: #3d2c00;
   --primary: #946b00;
   --chip-on: #946b00;
   --link: #946b00;
-  --link-hover: #4a3500;
+  --link-hover: #3d2c00;
   --focus-ring: #946b00;
-  --progress-from: #4a3500;
+  --progress-from: #3d2c00;
   --progress-to: #ddd0ad;
   --logo: #946b00;
 }
@@ -526,15 +543,15 @@
   --blob-2: #e9b8a2;
   --blob-3: #e8d1ac;
   --accent: #556b2f;
-  --accent-deep: #2b3a14;
+  --accent-deep: #232d12;
   --plum-from: #556b2f;
-  --plum-to: #2b3a14;
+  --plum-to: #232d12;
   --primary: #556b2f;
   --chip-on: #556b2f;
   --link: #556b2f;
-  --link-hover: #2b3a14;
+  --link-hover: #232d12;
   --focus-ring: #556b2f;
-  --progress-from: #2b3a14;
+  --progress-from: #232d12;
   --progress-to: #c9d0bc;
   --logo: #556b2f;
 }
@@ -629,6 +646,7 @@
   --accent-deep: #ffffff;
   --plum-from: #f3ece0;
   --plum-to: #e0d5c6;
+  --on-plum: #1f1a16;
 
   --border: #4f4439;
   --hairline: #362e27;
@@ -684,6 +702,12 @@
   --color-on-gold: var(--on-gold);
   --color-primary: var(--primary);
   --color-on-primary: var(--on-primary);
+  /* The main button's gradient and its text (bundle G3: the theme accent, plum in Lilac mist). */
+  --color-plum-from: var(--plum-from);
+  --color-plum-to: var(--plum-to);
+  --color-on-plum: var(--on-plum);
+  --color-glass-border: var(--glass-border);
+  --color-glass-highlight: var(--glass-highlight);
   --color-chip-on: var(--chip-on);
   --color-chip-on-text: var(--chip-on-text);
   --color-border: var(--border);

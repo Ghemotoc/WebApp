@@ -29,7 +29,7 @@ export interface ConsentSentPanelProps {
 
 /** The class of a link drawn as a secondary button. */
 const linkButtonClass =
-  'inline-flex h-11 items-center rounded-full border border-control-border bg-surface px-5 text-sm font-semibold text-heading no-underline hover:bg-tint';
+  'inline-flex h-11 items-center rounded-full button-glass px-5 text-sm font-semibold no-underline';
 
 /**
  * Renders the panel.

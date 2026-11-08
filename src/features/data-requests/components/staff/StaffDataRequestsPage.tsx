@@ -76,7 +76,7 @@ export function StaffDataRequestsPage() {
         {list.loadFailure !== 'not_allowed' && (
           <Link
             to="/staff/data-requests/new"
-            className="inline-flex h-11 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-on-primary hover:opacity-90"
+            className="inline-flex h-11 items-center justify-center rounded-full button-main px-5 text-sm font-semibold"
           >
             {t('staff.logRequest')}
           </Link>
