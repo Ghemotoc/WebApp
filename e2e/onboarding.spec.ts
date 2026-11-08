@@ -273,6 +273,9 @@ test.describe('onboarding (S1-E2-06)', () => {
 
   test('step 2 passes axe', async ({ browser }) => {
     const page = await openAs(browser, accounts.axe, '/setup');
+    // Reduce motion, as checkScreen does: otherwise axe can run while the step still fades in and
+    // read the half-faded text as low contrast (CI shard 3 on PR #402).
+    await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.getByRole('button', { name: 'Next' }).click();
     await expect(page.getByRole('heading', { name: 'What do you like?' })).toBeVisible();
     await expectNoSeriousIssues(page);
