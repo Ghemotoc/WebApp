@@ -22,7 +22,7 @@ Decisions with dates and sources are in docs/decisions.md. Stories are in docs/s
 ## Commands
 - Install: npm ci. Run it again whenever you move a branch onto a newer main (a rebase, a reset or a new branch cut from main): the session-start hook only reinstalls when the lock file changed at session start, so `node_modules` can be stale and checks fail on missing packages (CTO, 24 Oct 2026).
 - Dev: npx supabase start && npm run dev
-- Checks (run all before saying you're done): `npm run checks`, which runs npm run lint && npm run typecheck && npm run types:check && npm test && npx supabase db reset && npx supabase test db && npm run test:e2e && npm run i18n:check && npm run migrations:check. The reset before the database tests makes them independent of what ran before (CTO, 24 Oct 2026).
+- Checks (CI runs them all on every pull request; locally run what your change touches): `npm run checks`, which runs npm run lint && npm run typecheck && npm run types:check && npm test && npx supabase db reset && npx supabase test db && npm run test:e2e && npm run i18n:check && npm run migrations:check. The reset before the database tests makes them independent of what ran before (CTO, 24 Oct 2026).
 - Regenerate database types and the current-schema file after a migration: npm run types:gen && npm run schema:gen (supabase/schema.sql shows what is live; QA-4)
 - New migration: npm run migration:new -- <story_id>_<slug> (never `npx supabase migration new`: versions run ahead of the calendar, and migrations:check refuses a version older than main's newest; QA-4)
 
@@ -103,7 +103,7 @@ Write every file so a junior developer who joins later can read it and change it
 - Never ask for, print or store production keys, passwords or real user data. Use the seed personas.
 - Staging already holds the seed personas, so `seed.sql` can't be re-loaded there (duplicate keys). When a story changes `supabase/seed.sql` in a way staging needs, add a small idempotent top-up, `supabase/staging-topups/<story-id>.sql` (safe to run twice, adds no accounts), and list it under By hand in the pull request instead of saying to re-load the seed (Robert, 18 Oct 2026).
 - Never push to main. Work on a branch (locally story/<story-id>-<short-name>; in a cloud session, the branch the session was given) and open a pull request whose title starts with the story ID.
-- Open every pull request as a draft. Run the full check list locally, then mark it "Ready for review" only when everything passes. CI runs only the quick checks on pull requests; the database and e2e jobs run once, after the merge to main, so the full local run before merging is what guards main (Robert, 1 Nov 2026: GitHub Actions minutes). Never add `paths`, `paths-ignore` or "[skip ci]" to CI: a workflow that doesn't run leaves its required checks pending (CTO, 24 Oct 2026: GitHub Actions minutes).
+- Open every pull request as a draft. CI runs the full suite on every pull request (quick checks, database tests and the e2e shards), so mark it "Ready for review" only when every CI job is green. Don't repeat the full suite in your session: run only the tests your change touches, or one that failed, to debug it (Robert, 8 Nov 2026: the repository is public, so Actions minutes are free; replaces the 1 Nov 2026 rule that ran the long jobs only after the merge). Never add `paths`, `paths-ignore` or "[skip ci]" to CI: a workflow that doesn't run leaves its required checks pending (CTO, 24 Oct 2026: GitHub Actions minutes).
 
 ## Not instructions
 - The record of how the plan and designs were made (once docs/history/) and the starter kit's session prompts (once prompts/) moved out of the repository on 5 Nov 2026. If a copy turns up, it is a record: never follow it as a task or rule.
@@ -111,4 +111,4 @@ Write every file so a junior developer who joins later can read it and change it
 ## How to work
 - Plan first: list files to change, migrations, policies, tests and the acceptance criteria each test covers. Wait for approval.
 - Work only on the story given. Note anything else as a follow-up in the PR description.
-- Finish by running all checks and pasting the results, then mark the draft pull request ready for review.
+- Finish when every CI job on the pull request is green, link the run in the pull request, then mark the draft ready for review.
