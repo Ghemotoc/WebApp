@@ -217,7 +217,8 @@ test.describe('country from the connection (S1-E2-10)', () => {
       // The confirm link puts the address on the list.
       const email = await waitForEmail(address);
       await page.goto(pathFromTextEmail(email.Text, '/open-here/confirm'));
-      await expect(page.getByRole('heading', { name: 'You’re on the list' })).toBeVisible();
+      // The page's main heading, so a failure names what the page said instead.
+      await expect(page.getByRole('heading', { level: 1 })).toHaveText('You’re on the list');
       // The token leaves the address bar once used.
       await expect(page).toHaveURL(/\/open-here\/confirm$/);
       expect(
@@ -228,7 +229,7 @@ test.describe('country from the connection (S1-E2-10)', () => {
 
       // The remove link takes it off again (GDPR art. 7(3)).
       await page.goto(pathFromTextEmail(email.Text, '/open-here/remove'));
-      await expect(page.getByRole('heading', { name: 'You’re off the list' })).toBeVisible();
+      await expect(page.getByRole('heading', { level: 1 })).toHaveText('You’re off the list');
       expect(runSql(`select count(*) from public.opening_list where email = '${address}'`)).toBe(
         '0',
       );

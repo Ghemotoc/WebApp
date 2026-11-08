@@ -9,7 +9,7 @@
  * cleared from the address bar once used, so a shared screenshot can't carry it.
  */
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router';
 
@@ -20,16 +20,23 @@ import { confirmOpeningList, leaveOpeningList, type LinkOutcome } from '../api/o
 import { AuthCard } from './AuthCard';
 
 /**
- * Reads the token after "#" once and takes it out of the address bar.
+ * Reads the token after "#". It only reads: React may call it more than once while the page is
+ * first drawn, so the address bar is cleared later, in an effect, once the page is on screen.
  *
  * @returns the token, or "" when there is none
  */
-function takeTokenFromAddress(): string {
-  const token = window.location.hash.replace(/^#/, '');
-  if (token !== '') {
-    window.history.replaceState(null, '', window.location.pathname);
-  }
-  return token;
+function readTokenFromAddress(): string {
+  return window.location.hash.replace(/^#/, '');
+}
+
+/**
+ * Takes the token out of the address bar, keeping the router's own history entry data, so a
+ * shared screenshot or a copied address can't carry it.
+ */
+function clearTokenFromAddress(): void {
+  if (window.location.hash === '') return;
+  const routerEntry: unknown = window.history.state;
+  window.history.replaceState(routerEntry, '', window.location.pathname + window.location.search);
 }
 
 /**
@@ -77,7 +84,12 @@ function wordsFor(outcome: LinkOutcome | undefined, countryName: (code: string) 
 export function OpenHerePage() {
   const { t, i18n } = useTranslation('auth');
   const { action = 'confirm' } = useParams();
-  const [token] = useState(takeTokenFromAddress);
+  // Read once; React keeps this value for as long as the page is open.
+  const [token] = useState(readTokenFromAddress);
+  // Once the page is on screen, take the token out of the address bar.
+  useEffect(() => {
+    if (token !== '') clearTokenFromAddress();
+  }, [token]);
   // Asked once: following the same link again would only say "doesn't work" after a removal.
   const result = useQuery({
     queryKey: ['open-here', action, token],
