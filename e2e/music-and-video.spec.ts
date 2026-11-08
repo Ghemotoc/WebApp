@@ -36,12 +36,17 @@ const editorAddress = `/write/s/statia-meteo-seed01/c/${chapterCode}`;
 const readerAddress = `/s/statia-meteo-seed01/${chapterCode}`;
 const youtubeLink = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ&si=tracking';
 
-/** Removes the spec's chapter, its cards and the moderation row, and switches cards off. */
+/**
+ * Removes the spec's chapter, its cards, the moderation row and the chapter's queued jobs, and
+ * switches cards off. The jobs go first: publishing queues a chapter_published job, and a job left
+ * pointing at a deleted chapter breaks the next spec that runs the notification jobs (CI-1).
+ */
 function cleanUp() {
   runSql(`
     update public.feature_flags set is_enabled = false where key = 'media_embeds';
     delete from public.moderated_items where item_type = 'embed' and item_id in (select id from public.chapter_embeds where chapter_id = '${chapterId}');
     delete from public.rate_limit_events where user_id = '${writerId}';
+    delete from public.jobs where payload ->> 'chapter_id' = '${chapterId}';
     delete from public.chapters where id = '${chapterId}';
     update public.profiles set locale = 'ro' where handle in ('adult_writer', 'teen_17');`);
 }
