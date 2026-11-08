@@ -62,10 +62,12 @@ test.describe('search (S1-E5-04)', () => {
     page,
   }) => {
     await page.goto('/discover');
-    await page
-      .getByRole('searchbox', { name: 'Search stories, writers and tags' })
-      .fill(foldedWord);
-    await page.getByRole('button', { name: 'Search', exact: true }).click();
+    // The top bar's search pill (bundle G4 SHELL): Enter opens the Search page.
+    const topBarSearch = page.getByRole('banner').getByRole('searchbox', {
+      name: 'Search stories, writers and tags',
+    });
+    await topBarSearch.fill(foldedWord);
+    await topBarSearch.press('Enter');
     await expect(page).toHaveURL(new RegExp(`/search\\?q=${foldedWord}$`));
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(`Results for “${foldedWord}”`);
     await expect(page.getByRole('heading', { name: '21 stories' })).toBeVisible();

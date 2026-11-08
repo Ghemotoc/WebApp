@@ -70,13 +70,17 @@ import { useIsNarrowScreen } from './useIsNarrowScreen';
 
 /**
  * The website top bar, for windows from 1024 px: the main links with Messages, search, then the
- * language code, the bell, Write and the account (handoff "Navigation").
+ * language code, the bell, Write and the account (handoff "Navigation"). The Search page has its
+ * own, bigger field with the filters, so the top bar leaves its search pill out there and the page
+ * keeps one search region.
  *
+ * @param props.hasSearch - false on the Search page
  * @returns the top bar
  */
-function WideHeader() {
+function WideHeader({ hasSearch }: { hasSearch: boolean }) {
   return (
     <TopBar
+      hasSearch={hasSearch}
       // Messages with its unread count, while signed in (S1-E9-01).
       navigationEnd={<MessagesNavLink />}
       endSlot={
@@ -103,7 +107,10 @@ function WideHeader() {
 function useShellHeader() {
   const isNarrow = useIsNarrowScreen();
   const { pathname } = useLocation();
-  if (!isNarrow) return { header: <WideHeader />, hasTabBar: false };
+  if (!isNarrow) {
+    const isSearchPage = pathname === '/search' || pathname.startsWith('/search/');
+    return { header: <WideHeader hasSearch={!isSearchPage} />, hasTabBar: false };
+  }
   const screen = shellScreenFor(pathname);
   if (screen.kind === 'focus') {
     return {

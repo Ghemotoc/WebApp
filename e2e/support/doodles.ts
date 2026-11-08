@@ -7,7 +7,8 @@
  * Who calls it: e2e/*.spec.ts files, after opening a screen at 390, 768 and 1440 px (usually
  * from checkScreen in e2e/support/accessibility.ts). Other lanes reuse it for their screens.
  * How: in the page, it takes every visible [data-doodle] element's box and every visible element
- * that is a control or carries its own text, and reports each pair whose boxes meet.
+ * that is a control or carries its own text, and reports each pair whose boxes meet. Controls in a
+ * fixed layer (the floating tab bar) are left out, because they are drawn above every doodle.
  */
 import { expect, type Page } from '@playwright/test';
 
@@ -40,12 +41,29 @@ export async function findDoodleOverlaps(page: Page): Promise<DoodleOverlap[]> {
       );
     }
 
+    /**
+     * True when the element sits in a fixed layer, such as the floating tab bar (bundle G4 SHELL).
+     * The page scrolls underneath it and it is drawn above every doodle, so a doodle passing under
+     * it never covers its links; skipping it keeps the check about the page itself.
+     */
+    function isInFixedLayer(element: Element): boolean {
+      for (
+        let current: Element | null = element;
+        current !== null;
+        current = current.parentElement
+      ) {
+        if (window.getComputedStyle(current).position === 'fixed') return true;
+      }
+      return false;
+    }
+
     /** The controls and text lines a doodle must keep away from. */
     const controlSelector = 'a, button, input, select, textarea, label, summary, [role="button"]';
     const candidates = Array.from(document.querySelectorAll<HTMLElement>('body *')).filter(
       (element) =>
         !element.closest('[data-doodle]') &&
         isVisible(element) &&
+        !isInFixedLayer(element) &&
         (element.matches(controlSelector) || hasOwnText(element)),
     );
 

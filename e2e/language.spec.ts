@@ -59,14 +59,21 @@ test('the footer drop-down switches the language too, and this browser remembers
 });
 
 for (const width of [390, 768, 1440]) {
-  test(`both language drop-downs are visible and nothing scrolls sideways at ${width} px`, async ({
+  test(`the language drop-downs show where they belong and nothing scrolls sideways at ${width} px`, async ({
     page,
   }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/');
 
-    await expect(topBarLanguage(page, 'Limbă')).toBeVisible();
+    // The footer always has the full drop-down. The top bar's short one (RO, EN) is drawn only
+    // from 1024 px: below that the phone header (header B) has no language control (bundle G4
+    // SHELL; handoff "App header and tab bar").
     await expect(footerLanguage(page, 'Limbă')).toBeVisible();
+    if (width >= 1024) {
+      await expect(topBarLanguage(page, 'Limbă')).toBeVisible();
+    } else {
+      await expect(topBarLanguage(page, 'Limbă')).toHaveCount(0);
+    }
     const pageWidth = await page.evaluate(() => document.documentElement.scrollWidth);
     expect(pageWidth).toBeLessThanOrEqual(width);
   });
