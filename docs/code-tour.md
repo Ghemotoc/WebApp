@@ -948,7 +948,7 @@ An authority order (S1-E10-09) and a flagged picture (S1-E10-05) insert their ow
 ## Sanctions, and what a decision does (S1-E10-06)
 
 ```
-CasePage → DecisionForm (warn, suspend 1/7/30 days, ban, hide, remove; restrict waits for S1-E11-08)
+CasePage → DecisionForm (warn, suspend 1/7/30 days, ban, hide, remove; restrict on a case about a story, QA-9: the story leaves every list and an overturned appeal lifts it, test 312)
   │  useCase.decide() → rpc admin_decide_case(case, action, note, suspension_days)
   ▼
 …_s1_e10_06_sanctions.sql

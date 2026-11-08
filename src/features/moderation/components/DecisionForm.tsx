@@ -3,8 +3,9 @@
  * and "Send decision" (stories S1-E10-03a and S1-E10-06; board 8.3's Decision panel).
  *
  * The chips are real radio buttons (arrow keys move between them; the group has a name), as the
- * report dialog's reasons are. "Restrict" waits for S1-E11-08 (decided 23 Oct 2026, Q3), so it
- * is left out of the chips. "Suspend" asks for how long: 1, 7 or 30 days (Q7; the choices mirror
+ * report dialog's reasons are. "Restrict" is offered only on a case about a story (QA-9; Robert,
+ * 8 Nov 2026): the story stays readable from a link but leaves every list, as on the story's admin
+ * page (S1-E11-08). "Suspend" asks for how long: 1, 7 or 30 days (Q7; the choices mirror
  * the setting suspension_day_choices). The database refuses a decision without a note and a second
  * decision on a decided case; the form says the same in plain words before asking.
  * What a decision does (S1-E10-06): it closes the case and its reports, goes to the audit log and
@@ -39,16 +40,19 @@ export interface DecisionFormProps {
 type Problem = 'action_missing' | 'days_missing' | 'note_missing' | 'message_missing' | null;
 
 /**
- * The actions a moderator may pick on a case: every value but restrict (S1-E11-08), and "Add a
- * public note" only on a story or a chapter (S1-E10-08; the database refuses it elsewhere too).
+ * The actions a moderator may pick on a case: "Restrict" only on a story (QA-9) and "Add a public
+ * note" only on a story or a chapter (S1-E10-08); the database refuses both elsewhere too.
  *
  * @param itemType - what the case is about
  * @returns the actions to offer
  */
 function offeredActionsFor(itemType: string): ModerationAction[] {
-  const allowsPublicNote = itemType === 'story' || itemType === 'chapter';
+  // Step 1: what this kind of item allows.
+  const isStory = itemType === 'story';
+  const allowsPublicNote = isStory || itemType === 'chapter';
+  // Step 2: every action, less the two that only fit some items.
   return Constants.public.Enums.moderation_action.filter((action) => {
-    if (action === 'restrict') return false;
+    if (action === 'restrict') return isStory;
     return action !== 'public_note' || allowsPublicNote;
   });
 }
