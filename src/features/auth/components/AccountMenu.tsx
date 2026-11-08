@@ -12,7 +12,8 @@
  * (aria-expanded) and the panel holds an ordinary link and button, so Tab and Enter work as
  * everywhere else. Escape closes it and puts focus back on the button; clicking elsewhere closes
  * it too. The button is the person's own avatar: their drawn avatar, or their initials on the glass
- * bead in their colour (bundle G4 SHELL; PersonAvatar); its accessible name is "Your account".
+ * bead in their colour (bundle G4 SHELL; PersonAvatar); its accessible name is "Your account" with
+ * the initials on the bead ("Your account, AW"; WCAG 2.5.3, label in name).
  * Who shows it: AccountLinks, once someone is signed in, with the shown name and username.
  * What it calls: api/signIn.ts → signOutHere(); after logging out it goes to the home page.
  */
@@ -22,6 +23,7 @@ import { Link, useNavigate } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
 import { PersonAvatar } from '@/features/avatars/components/PersonAvatar';
+import { initialsOf } from '@/features/people/lib/formatting';
 import { getSupabaseClient } from '@/lib/supabase';
 
 import { signOutHere } from '../api/signIn';
@@ -156,16 +158,15 @@ export function AccountMenu({ initial, name, handle }: AccountMenuProps) {
         type="button"
         aria-expanded={isOpen}
         aria-controls="account-menu-panel"
-        aria-label={t('nav.account')}
+        aria-label={t('nav.accountWithInitials', { initials: initialsOf(name ?? initial) })}
         onClick={() => setIsOpen(!isOpen)}
         className="inline-flex size-11 items-center justify-center rounded-full"
       >
-        {/* The same bead (or drawn avatar) as beside the person's name everywhere else. Hidden
-            from screen readers: the button's name is "Your account", and visible initials that
-            aren't in that name would trip WCAG 2.5.3 (label in name). */}
-        <span aria-hidden="true" className="inline-flex">
-          <PersonAvatar name={name ?? initial} handle={handle} size="large" />
-        </span>
+        {/* The same bead (or drawn avatar) as beside the person's name everywhere else. The
+            initials on it are part of the button's name ("Your account, AW"), because WCAG 2.5.3
+            (label in name) asks that text a person can see is also in what they can say to
+            voice control. */}
+        <PersonAvatar name={name ?? initial} handle={handle} size="large" />
       </button>
       <div
         id="account-menu-panel"

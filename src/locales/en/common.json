@@ -49,7 +49,7 @@
     "editProfile": "Edit profile",
     "settings": "Settings",
     "logIn": "Log in",
-    "account": "Your account",
+    "accountWithInitials": "Your account, {{initials}}",
     "logOut": "Log out",
     "logOutFailed": "We couldn’t log you out. Check your connection and try again.",
     "contact": "Company and legal contacts",

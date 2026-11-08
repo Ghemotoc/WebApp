@@ -49,7 +49,7 @@
     "editProfile": "Editează profilul",
     "settings": "Setări",
     "logIn": "Conectare",
-    "account": "Contul tău",
+    "accountWithInitials": "Contul tău, {{initials}}",
     "logOut": "Deconectare",
     "logOutFailed": "Nu te-am putut deconecta. Verifică-ți conexiunea și încearcă din nou.",
     "contact": "Companie și contacte legale",
