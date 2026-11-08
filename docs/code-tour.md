@@ -180,6 +180,7 @@ Every section, in the order it was built (QA-5, finding R4). Search this list fo
 - [Help threads with an answer, and threads from a chapter passage (IDEAS-3f)](#help-threads-with-an-answer-and-threads-from-a-chapter-passage-ideas-3f)
 - [Handing a space over to a moderator (IDEAS-3e)](#handing-a-space-over-to-a-moderator-ideas-3e)
 - [The waiting list (WAITLIST-1)](#the-waiting-list-waitlist-1)
+- ["Tell me when you open here" (G5a)](#tell-me-when-you-open-here-g5a)
 
 </details>
 
@@ -2561,3 +2562,13 @@ The account gate is the one place minors are held back: while `adults_only` is o
 - Staff › Waitlist (`/staff/waitlist`, owner and admin, People group): `StaffWaitlistPage` → `useStaffWaitlist()` → `admin_waitlist()` (counts, countries, one page of people; never the user ID or the email). Tick people → `admin_admit_from_waitlist()`; a wave → `admin_admit_waitlist_wave()` (confirmed emails only, oldest first, by answer and country). Both go through `admit_waitlist_entry()`, which sets `admitted_at`, writes the notice and the audit log (`waitlist.admitted`). The dashboard tile counts the people waiting (`staff_dashboard()` step 9).
 - Retention: an entry is deleted with the account; an account whose email is never confirmed is removed by `purge_unconfirmed_accounts()` after 7 days (`docs/retention.md`).
 - Migrations `…_waitlist1_01_kinds.sql` and `…_waitlist1_02_waitlist.sql`. Tests: `supabase/tests/database/310-waitlist.test.sql`, `src/features/waitlist/api/waitlist.test.ts`, `src/features/auth/api/signUp.test.ts`, `e2e/waitlist-1.spec.ts`.
+
+## "Tell me when you open here" (G5a)
+
+- The page: `/not-open` (`NotOpenPage`) shows `OpeningListForm` → `hooks/useOpeningListForm.ts` → `api/openingList.ts` (`joinOpeningList()`) → `POST /api/opening-list` (`functions/api/opening-list.ts`, locally `server/pages-functions-plugin.ts`) → `server/opening-list.ts` (`handleOpeningList()`). The country is the connection's; the form asks for one only when the connection gave none.
+- The server runs the bot check (hidden `website` field, three seconds to fill), signs the fields with `NOTICE_SECRET` and `purpose: "opening_list"`, and calls `join_opening_list()`. That keeps the address in `opening_list` with both countries and hands back a one-time token (only its hash is stored), or none when the address is confirmed already or a link went less than 10 minutes ago. The server emails the confirm and remove links (`/open-here/confirm#<token>`, `/open-here/remove#<token>`); texts are `email.json` `openingList`, admin-editable.
+- The links: `/open-here/:action` (`OpenHerePage`) reads the token after "#", clears it from the address bar, and calls `confirm_opening_list()` or `leave_opening_list()`.
+- Opening a country: `run_opening_email_worker()` (pg_cron, every 5 minutes) wakes `/api/opening-emails` when a confirmed address waits for a country that is now open; `handleOpeningEmails()` claims them (`opening_email_worker_claim()`), sends "We're open in <country>" with a link to sign up, and marks them (`opening_email_worker_mark_sent()`).
+- Clean-up: `purge_opening_list()` (pg_cron, 03:59 UTC) deletes unconfirmed addresses after 7 days and the rest 7 days after their opening email (`opening_list_keep_days`).
+- Staff › Waitlist: `OpeningListCounts` → `api/staffOpeningList.ts` → `admin_opening_list_counts()`: numbers by country, never an address.
+- Migration `…_g5a_opening_list.sql`. Tests: `supabase/tests/database/313-opening-list.test.sql`, `server/opening-list.test.ts`, `src/features/auth/components/OpeningListForm.test.tsx`.

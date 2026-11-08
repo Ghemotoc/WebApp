@@ -144,5 +144,16 @@
     "autoSolvedBody": "Nu am mai primit vești de la tine despre #{{number}}: „{{subject}}”, așa că am marcat-o ca rezolvată.\n\nDacă mai ai nevoie de ajutor, răspunde la acest email și păstrează [#{{number}}] în subiect. Cererea se redeschide și echipa noastră o preia din nou.",
     "mergedSubject": "Cererea ta #{{number}} continuă ca #{{mergedInto}} [#{{mergedInto}}] · {{productName}}",
     "mergedBody": "Cererea ta #{{number}}: „{{subject}}” era despre același lucru ca #{{mergedInto}}, așa că le-am unit. Tot ce ai scris se află acum în #{{mergedInto}} și acolo îți vom răspunde.\n\nCa să adaugi ceva, răspunde la acest email sau scrie-ne cu [#{{mergedInto}}] în subiect."
+  },
+  "openingList": {
+    "confirmSubject": "Confirmă că vrei să afli când se deschide {{productName}} în {{country}}",
+    "confirmBody": "Ne-ai rugat să-ți spunem când se deschide {{productName}} în {{country}}. Deschide linkul ca să confirmi că ai fost tu și îți vom trimite un singur email în ziua în care ne deschidem acolo.",
+    "confirmAction": "Confirmă: {{confirmLink}}",
+    "confirmNotYou": "Nu ai cerut asta? Ignoră emailul: fără confirmare nu îți mai scriem și îți ștergem adresa după 7 zile.",
+    "confirmRemove": "Te-ai răzgândit mai târziu? Scoate-ți adresa de pe listă: {{removeLink}}",
+    "openSubject": "{{productName}} s-a deschis în {{country}}",
+    "openBody": "Vești bune: {{productName}} s-a deschis în {{country}}, așa cum ne-ai rugat să-ți spunem. Înscrie-te în cel mult 7 zile; după aceea îți ștergem adresa de pe această listă.",
+    "openAction": "Înscrie-te: {{signUpLink}}",
+    "openOnce": "Este singurul email pe care îl primești despre asta."
   }
 }

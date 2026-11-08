@@ -144,5 +144,16 @@
     "autoSolvedBody": "We haven’t heard back from you about #{{number}}: “{{subject}}”, so we’ve marked it as solved.\n\nIf you still need help, just reply to this email and keep [#{{number}}] in the subject. The request opens again and our team picks it up.",
     "mergedSubject": "Your request #{{number}} continues as #{{mergedInto}} [#{{mergedInto}}] · {{productName}}",
     "mergedBody": "Your request #{{number}}: “{{subject}}” was about the same thing as #{{mergedInto}}, so we’ve joined them. Everything you wrote is now in #{{mergedInto}}, and that’s where we’ll answer.\n\nTo add something, reply to this email or write with [#{{mergedInto}}] in the subject."
+  },
+  "openingList": {
+    "confirmSubject": "Confirm you want to hear when {{productName}} opens in {{country}}",
+    "confirmBody": "You asked us to tell you when {{productName}} opens in {{country}}. Open the link to confirm it was you, and we’ll send one email on the day we open there.",
+    "confirmAction": "Confirm: {{confirmLink}}",
+    "confirmNotYou": "Didn’t ask for this? Ignore this email: without the confirmation we never write again, and we delete your address after 7 days.",
+    "confirmRemove": "Changed your mind later? Take your address off the list: {{removeLink}}",
+    "openSubject": "{{productName}} is open in {{country}}",
+    "openBody": "Good news: {{productName}} is now open in {{country}}, as you asked us to tell you. Sign up within 7 days, then we delete your address from this list.",
+    "openAction": "Sign up: {{signUpLink}}",
+    "openOnce": "This is the only email you’ll get about it."
   }
 }

@@ -605,7 +605,16 @@
     "admitted_one": "A intrat {{count}} persoană. A primit e-mailul.",
     "admitted_few": "Au intrat {{count}} persoane. Au primit e-mailul.",
     "admitted_other": "Au intrat {{count}} de persoane. Au primit e-mailul.",
-    "admitFailed": "Nu a intrat nimeni. Încearcă din nou peste puțin timp."
+    "admitFailed": "Nu a intrat nimeni. Încearcă din nou peste puțin timp.",
+    "openingList": {
+      "heading": "Așteaptă să ne deschidem în țara lor",
+      "intro": "Oameni din țări în care nu ne-am deschis încă și care au cerut să afle când ne deschidem. Fiecare adresă confirmată primește un singur email în ziua în care se deschide țara ei și e ștearsă după 7 zile.",
+      "country": "Țara",
+      "confirmed": "Confirmate",
+      "unconfirmed": "Neconfirmate încă",
+      "none": "Nimeni nu așteaptă o țară închisă.",
+      "loadFailed": "Nu am putut încărca cifrele. Reîncarcă pagina ca să încerci din nou."
+    }
   },
   "metrics": {
     "documentTitle": "Cifre · {{productName}}",

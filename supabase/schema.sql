@@ -7145,6 +7145,33 @@ COMMENT ON FUNCTION "public"."admin_open_ticket_data_request"("ticket_number" bi
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_opening_list_counts"() RETURNS TABLE("country_code" "text", "confirmed" bigint, "unconfirmed" bigint)
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  if not public.staff_may('waitlist', 'view') then
+    raise exception 'Not allowed.' using errcode = 'insufficient_privilege';
+  end if;
+  return query
+    select list.country_code,
+           count(*) filter (where list.confirmed_at is not null),
+           count(*) filter (where list.confirmed_at is null)
+    from public.opening_list as list
+    where list.open_email_sent_at is null
+    group by list.country_code
+    order by 2 desc, 1;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_opening_list_counts"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_opening_list_counts"() IS 'Staff › Waitlist: how many addresses wait for each closed country; never an address (G5a).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admin_order_timeline"("target_case_id" "uuid") RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -17252,6 +17279,32 @@ COMMENT ON FUNCTION "public"."compute_story_scores"() IS 'Hourly: each story''s 
 
 
 
+CREATE OR REPLACE FUNCTION "public"."confirm_opening_list"("token" "text") RETURNS "text"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  confirmed_country text;
+begin
+  update public.opening_list
+  set confirmed_at = coalesce(opening_list.confirmed_at, now())
+  where opening_list.token_hash = public.opening_list_token_hash(token)
+  returning opening_list.country_code into confirmed_country;
+  if confirmed_country is null then
+    raise exception 'This link doesn''t work any more.' using errcode = 'check_violation', hint = 'not_found';
+  end if;
+  return confirmed_country;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."confirm_opening_list"("token" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."confirm_opening_list"("token" "text") IS 'Confirms a "tell me when you open here" address from its emailed link (G5a; GDPR art. 7(1)).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."confirm_teacher_email"("token" "text") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -23619,6 +23672,60 @@ COMMENT ON FUNCTION "public"."join_class_space"("code" "text") IS 'Joins a class
 
 
 
+CREATE OR REPLACE FUNCTION "public"."join_opening_list"("payload" "text", "signature" "text") RETURNS "text"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  fields jsonb;
+  wanted_email text;
+  wanted_country text;
+  existing public.opening_list;
+  token text := encode(extensions.gen_random_bytes(24), 'hex');
+begin
+  -- Step 1: only a payload our server signed, for this purpose.
+  if not public.public_notice_payload_is_signed(payload, signature) then
+    raise exception 'This request didn''t come through the form.' using errcode = 'insufficient_privilege';
+  end if;
+  fields := payload::jsonb;
+  if fields ->> 'purpose' is distinct from 'opening_list' then
+    raise exception 'This request didn''t come through the form.' using errcode = 'insufficient_privilege';
+  end if;
+  wanted_email := lower(btrim(coalesce(fields ->> 'email', '')));
+  wanted_country := upper(btrim(coalesce(fields ->> 'countryCode', '')));
+  -- Step 2: an open country needs no list; the person can sign up now.
+  if exists (select 1 from public.markets where markets.country_code = wanted_country and markets.is_open) then
+    raise exception 'We are already open there.' using errcode = 'check_violation', hint = 'already_open';
+  end if;
+  -- Step 3: a known address keeps its row; a confirmed one, or one sent a link a moment ago, gets no email.
+  select * into existing from public.opening_list
+  where opening_list.email = wanted_email and opening_list.country_code = wanted_country;
+  if found then
+    if existing.confirmed_at is not null or existing.token_sent_at > now() - interval '10 minutes' then
+      return null;
+    end if;
+    update public.opening_list
+    set token_hash = public.opening_list_token_hash(token), token_sent_at = now(),
+        language = coalesce(fields ->> 'language', existing.language)
+    where id = existing.id;
+    return token;
+  end if;
+  -- Step 4: a new address; the table's checks refuse a malformed one.
+  insert into public.opening_list (email, country_code, detected_country_code, language, token_hash)
+  values (wanted_email, wanted_country, nullif(upper(btrim(coalesce(fields ->> 'detectedCountryCode', ''))), ''),
+          coalesce(fields ->> 'language', 'ro'), public.opening_list_token_hash(token));
+  return token;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."join_opening_list"("payload" "text", "signature" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."join_opening_list"("payload" "text", "signature" "text") IS 'Puts an address on the "tell me when you open here" list; only a payload signed by our server (G5a).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."join_space"("slug" "text", "note" "text" DEFAULT NULL::"text") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -24474,6 +24581,24 @@ ALTER FUNCTION "public"."launch_task"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."launch_task"() IS 'Internal: the ANCOM launch notice task (S1-E11-04; Law 50/2024).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."leave_opening_list"("token" "text") RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  delete from public.opening_list where opening_list.token_hash = public.opening_list_token_hash(token);
+  return found;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."leave_opening_list"("token" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."leave_opening_list"("token" "text") IS 'Takes a "tell me when you open here" address off the list from its emailed link (G5a; GDPR art. 7(3)).';
 
 
 
@@ -29347,6 +29472,87 @@ COMMENT ON FUNCTION "public"."open_story_languages"() IS 'The open languages, th
 
 
 
+CREATE OR REPLACE FUNCTION "public"."opening_email_worker_claim"("worker_key" "text", "batch_size" integer DEFAULT 50) RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  claimed jsonb := '[]'::jsonb;
+  due record;
+begin
+  -- Step 1: only our worker may ask.
+  if not public.email_worker_key_matches(worker_key) then
+    raise exception 'Not allowed.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 2: the oldest due addresses nobody else is sending to.
+  for due in
+    select list.* from public.opening_list as list
+    join public.markets on markets.country_code = list.country_code and markets.is_open
+    where list.confirmed_at is not null and list.open_email_sent_at is null and list.open_email_attempts < 5
+      and (list.open_email_claimed_at is null or list.open_email_claimed_at < now() - interval '15 minutes')
+    order by list.confirmed_at
+    limit least(greatest(coalesce(batch_size, 50), 1), 100)
+    for update of list skip locked
+  loop
+    -- Step 3: claim it, so a second worker run doesn't send it too.
+    update public.opening_list
+    set open_email_claimed_at = now(), open_email_attempts = due.open_email_attempts + 1
+    where id = due.id;
+    claimed := claimed || jsonb_build_array(jsonb_build_object(
+      'id', due.id, 'to', due.email, 'country_code', due.country_code, 'language', due.language));
+  end loop;
+  return claimed;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."opening_email_worker_claim"("worker_key" "text", "batch_size" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."opening_email_worker_claim"("worker_key" "text", "batch_size" integer) IS 'The opening email worker claims the "we''re open in your country" emails due now (G5a).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."opening_email_worker_mark_sent"("worker_key" "text", "email_ids" "uuid"[]) RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  marked integer;
+begin
+  if not public.email_worker_key_matches(worker_key) then
+    raise exception 'Not allowed.' using errcode = 'insufficient_privilege';
+  end if;
+  update public.opening_list set open_email_sent_at = now()
+  where id = any(email_ids) and open_email_sent_at is null;
+  get diagnostics marked = row_count;
+  return marked;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."opening_email_worker_mark_sent"("worker_key" "text", "email_ids" "uuid"[]) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."opening_email_worker_mark_sent"("worker_key" "text", "email_ids" "uuid"[]) IS 'The opening email worker marks the emails that left (G5a).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."opening_list_token_hash"("token" "text") RETURNS "text"
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select encode(extensions.digest(coalesce(token, ''), 'sha256'), 'hex');
+$$;
+
+
+ALTER FUNCTION "public"."opening_list_token_hash"("token" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."opening_list_token_hash"("token" "text") IS 'Internal: the SHA-256 of a "tell me when you open here" token (G5a).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."order_timeline_json"("target" "public"."cases") RETURNS "jsonb"
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -31543,6 +31749,30 @@ ALTER FUNCTION "public"."purge_old_support_tickets"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."purge_old_support_tickets"() IS 'Job: deletes support tickets closed or solved more than support_ticket_keep_years (2) ago (S1-E11-13 criterion 14).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."purge_opening_list"() RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  keep_days integer := coalesce((public.setting_value('opening_list_keep_days'))::integer, 7);
+  deleted_rows integer;
+begin
+  delete from public.opening_list as list
+  where (list.confirmed_at is null and list.created_at < now() - make_interval(days => keep_days))
+     or (list.open_email_sent_at < now() - make_interval(days => keep_days));
+  get diagnostics deleted_rows = row_count;
+  return deleted_rows;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."purge_opening_list"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."purge_opening_list"() IS 'Deletes unconfirmed "tell me when you open here" addresses after 7 days, and the rest 7 days after their opening email (G5a).';
 
 
 
@@ -35456,6 +35686,39 @@ ALTER FUNCTION "public"."run_notification_jobs"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."run_notification_jobs"() IS 'Turns waiting chapter_published and comment_posted jobs into notifications; every minute (S1-E7-01).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."run_opening_email_worker"() RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $_$
+declare
+  worker_url text;
+  worker_key text;
+begin
+  select decrypted_secret into worker_url from vault.decrypted_secrets where name = 'email_worker_url';
+  select decrypted_secret into worker_key from vault.decrypted_secrets where name = 'email_worker_key';
+  if coalesce(worker_url, '') = '' or coalesce(worker_key, '') = ''
+     or not exists (select 1 from public.opening_list as list
+                    join public.markets on markets.country_code = list.country_code and markets.is_open
+                    where list.confirmed_at is not null and list.open_email_sent_at is null
+                      and list.open_email_attempts < 5) then
+    return false;
+  end if;
+  perform net.http_post(
+    url := regexp_replace(worker_url, '/api/[^/?]*$', '/api/opening-emails'),
+    headers := jsonb_build_object('Authorization', 'Bearer ' || worker_key, 'Content-Type', 'application/json'),
+    body := '{}'::jsonb);
+  return true;
+end;
+$_$;
+
+
+ALTER FUNCTION "public"."run_opening_email_worker"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."run_opening_email_worker"() IS 'Internal: calls the opening email worker through pg_net when opening emails are due (G5a); pg_cron every 5 minutes.';
 
 
 
@@ -46105,6 +46368,40 @@ Who in the founding team is on call for removal orders, shift by shift; shifts n
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."opening_list" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "email" "text" NOT NULL,
+    "country_code" "text" NOT NULL,
+    "detected_country_code" "text",
+    "language" "text" DEFAULT 'ro'::"text" NOT NULL,
+    "token_hash" "text" NOT NULL,
+    "token_sent_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "confirmed_at" timestamp with time zone,
+    "open_email_claimed_at" timestamp with time zone,
+    "open_email_sent_at" timestamp with time zone,
+    "open_email_attempts" integer DEFAULT 0 NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "opening_list_country_is_alpha2" CHECK (("country_code" ~ '^[A-Z]{2}$'::"text")),
+    CONSTRAINT "opening_list_detected_is_alpha2" CHECK ((("detected_country_code" IS NULL) OR ("detected_country_code" ~ '^[A-Z]{2}$'::"text"))),
+    CONSTRAINT "opening_list_email_shape" CHECK ((("char_length"("email") <= 254) AND ("email" = "lower"("email")) AND ("email" ~ '^[^@\s]+@[^@\s]+\.[^@\s]+$'::"text"))),
+    CONSTRAINT "opening_list_language_is_known" CHECK (("language" = ANY (ARRAY['ro'::"text", 'en'::"text"]))),
+    CONSTRAINT "opening_list_token_hash_shape" CHECK (("token_hash" ~ '^[0-9a-f]{64}$'::"text"))
+);
+
+
+ALTER TABLE "public"."opening_list" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."opening_list" IS 'kind: platform
+"Tell me when you open here": addresses of visitors from a country we haven''t opened, to email once when it opens (G5a; S1-E2-10). Unconfirmed ones go after 7 days, the rest 7 days after the opening email.';
+
+
+
+COMMENT ON COLUMN "public"."opening_list"."email" IS 'Personal data: only owner and admin read it; never logged (rule 12).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."paragraph_shares" (
     "chapter_id" "uuid" NOT NULL,
     "paragraph_key" "text" NOT NULL,
@@ -48025,6 +48322,16 @@ ALTER TABLE ONLY "public"."on_call_rota"
 
 
 
+ALTER TABLE ONLY "public"."opening_list"
+    ADD CONSTRAINT "opening_list_one_per_country" UNIQUE ("email", "country_code");
+
+
+
+ALTER TABLE ONLY "public"."opening_list"
+    ADD CONSTRAINT "opening_list_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."paragraph_shares"
     ADD CONSTRAINT "paragraph_shares_pkey" PRIMARY KEY ("chapter_id", "paragraph_key", "shared_on");
 
@@ -49208,6 +49515,10 @@ CREATE INDEX "on_call_alerts_created_at_idx" ON "public"."on_call_alerts" USING 
 
 
 
+CREATE INDEX "opening_list_due" ON "public"."opening_list" USING "btree" ("country_code") WHERE (("confirmed_at" IS NOT NULL) AND ("open_email_sent_at" IS NULL));
+
+
+
 CREATE UNIQUE INDEX "parental_consents_one_live" ON "public"."parental_consents" USING "btree" ("user_id") WHERE ("status" = ANY (ARRAY['waiting'::"text", 'agreed'::"text"]));
 
 
@@ -50249,6 +50560,10 @@ CREATE OR REPLACE TRIGGER "on_call_rota_refuse_user_id_change" BEFORE UPDATE ON 
 
 
 CREATE OR REPLACE TRIGGER "on_call_rota_set_updated_at" BEFORE UPDATE ON "public"."on_call_rota" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "opening_list_set_updated_at" BEFORE UPDATE ON "public"."opening_list" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
 
@@ -53345,6 +53660,17 @@ CREATE POLICY "on_call_rota_select_staff" ON "public"."on_call_rota" FOR SELECT 
 
 
 
+ALTER TABLE "public"."opening_list" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "opening_list_select_staff" ON "public"."opening_list" FOR SELECT TO "authenticated" USING (( SELECT "public"."staff_may"('waitlist'::"text", 'view'::"text") AS "staff_may"));
+
+
+
+COMMENT ON POLICY "opening_list_select_staff" ON "public"."opening_list" IS 'Allows owner and admin, in a staff session, to read the "tell me when you open here" list (G5a).';
+
+
+
 ALTER TABLE "public"."paragraph_shares" ENABLE ROW LEVEL SECURITY;
 
 
@@ -54945,6 +55271,11 @@ GRANT ALL ON FUNCTION "public"."admin_open_ticket_data_request"("ticket_number" 
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_opening_list_counts"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_opening_list_counts"() TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_order_timeline"("target_case_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_order_timeline"("target_case_id" "uuid") TO "authenticated";
 
@@ -56322,6 +56653,12 @@ REVOKE ALL ON FUNCTION "public"."compute_story_scores"() FROM PUBLIC;
 
 
 
+REVOKE ALL ON FUNCTION "public"."confirm_opening_list"("token" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."confirm_opening_list"("token" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."confirm_opening_list"("token" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."confirm_teacher_email"("token" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."confirm_teacher_email"("token" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."confirm_teacher_email"("token" "text") TO "authenticated";
@@ -57210,6 +57547,12 @@ GRANT ALL ON FUNCTION "public"."join_class_space"("code" "text") TO "authenticat
 
 
 
+REVOKE ALL ON FUNCTION "public"."join_opening_list"("payload" "text", "signature" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."join_opening_list"("payload" "text", "signature" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."join_opening_list"("payload" "text", "signature" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."join_space"("slug" "text", "note" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."join_space"("slug" "text", "note" "text") TO "authenticated";
 
@@ -57326,6 +57669,12 @@ REVOKE ALL ON FUNCTION "public"."latest_place_json"("target_story_id" "uuid") FR
 
 
 REVOKE ALL ON FUNCTION "public"."launch_task"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."leave_opening_list"("token" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."leave_opening_list"("token" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."leave_opening_list"("token" "text") TO "authenticated";
 
 
 
@@ -58055,6 +58404,22 @@ GRANT ALL ON FUNCTION "public"."open_story_languages"() TO "authenticated";
 
 
 
+REVOKE ALL ON FUNCTION "public"."opening_email_worker_claim"("worker_key" "text", "batch_size" integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."opening_email_worker_claim"("worker_key" "text", "batch_size" integer) TO "anon";
+GRANT ALL ON FUNCTION "public"."opening_email_worker_claim"("worker_key" "text", "batch_size" integer) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."opening_email_worker_mark_sent"("worker_key" "text", "email_ids" "uuid"[]) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."opening_email_worker_mark_sent"("worker_key" "text", "email_ids" "uuid"[]) TO "anon";
+GRANT ALL ON FUNCTION "public"."opening_email_worker_mark_sent"("worker_key" "text", "email_ids" "uuid"[]) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."opening_list_token_hash"("token" "text") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."order_timeline_json"("target" "public"."cases") FROM PUBLIC;
 
 
@@ -58401,6 +58766,10 @@ REVOKE ALL ON FUNCTION "public"."purge_old_staff_records"() FROM PUBLIC;
 
 
 REVOKE ALL ON FUNCTION "public"."purge_old_support_tickets"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."purge_opening_list"() FROM PUBLIC;
 
 
 
@@ -58924,6 +59293,10 @@ REVOKE ALL ON FUNCTION "public"."run_email_worker"() FROM PUBLIC;
 
 
 REVOKE ALL ON FUNCTION "public"."run_notification_jobs"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."run_opening_email_worker"() FROM PUBLIC;
 
 
 
@@ -60529,6 +60902,11 @@ GRANT SELECT ON TABLE "public"."on_call_alerts" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."on_call_rota" TO "service_role";
 GRANT SELECT ON TABLE "public"."on_call_rota" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."opening_list" TO "service_role";
+GRANT SELECT ON TABLE "public"."opening_list" TO "authenticated";
 
 
 

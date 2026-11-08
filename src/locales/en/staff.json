@@ -605,7 +605,16 @@
     "admitted_one": "{{count}} person let in. They have been emailed.",
     "admitted_few": "{{count}} people let in. They have been emailed.",
     "admitted_other": "{{count}} people let in. They have been emailed.",
-    "admitFailed": "Nobody was let in. Try again in a moment."
+    "admitFailed": "Nobody was let in. Try again in a moment.",
+    "openingList": {
+      "heading": "Waiting for their country to open",
+      "intro": "People from countries we haven’t opened who asked to hear when we do. Each confirmed address gets one email on the day its country opens, then is deleted 7 days later.",
+      "country": "Country",
+      "confirmed": "Confirmed",
+      "unconfirmed": "Not confirmed yet",
+      "none": "Nobody is waiting for a closed country.",
+      "loadFailed": "The numbers couldn’t be loaded. Refresh the page to try again."
+    }
   },
   "metrics": {
     "documentTitle": "Metrics · {{productName}}",
