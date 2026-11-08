@@ -316,6 +316,47 @@ dialog.bg-surface,
 }
 
 /*
+ * A picture avatar (a drawn Micah avatar, and the editor's preview) floats like the initials bead
+ * (Robert, 8 Nov 2026: "a border and shadow ... to give the feeling the profile image is
+ * floating"). By day a thin near-black ring and a soft drop shadow; at night a white ring, a soft
+ * white glow and a dark shadow under it. On top, the bead's glass sheen: a white highlight at the
+ * top left and a faint shade at the bottom, kept light so the face and clothes still read. The
+ * ring and the sheen are drawn by ::after over the picture, so the picture keeps its full size and
+ * nothing takes a click. The initials bead keeps its own look and gets no ring. The smallest
+ * avatar today is 34 px; one at 24 px or less would take a 1 px ring and half the glow (DESIGN
+ * thread, 8 Nov 2026).
+ */
+.avatar-picture {
+  --avatar-ring: 1.5px;
+  --avatar-ring-colour: rgb(20 17 20 / 0.85);
+  isolation: isolate;
+  box-shadow: 0 6px 14px -6px rgb(20 17 20 / 0.45);
+}
+
+.avatar-picture::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image: radial-gradient(
+    circle at 30% 22%,
+    rgb(255 255 255 / 0.35),
+    rgb(255 255 255 / 0) 55%
+  );
+  box-shadow:
+    inset 0 0 0 var(--avatar-ring) var(--avatar-ring-colour),
+    inset 0 -3px 6px rgb(0 0 0 / 0.18);
+}
+
+[data-theme='night'] .avatar-picture {
+  --avatar-ring-colour: rgb(255 255 255 / 0.9);
+  box-shadow:
+    0 0 12px rgb(255 255 255 / 0.35),
+    0 6px 14px -6px rgb(0 0 0 / 0.6);
+}
+
+/*
  * The initials sit in the true middle of the bead (Robert, 8 Nov 2026: "it doesn't look centred").
  * They are their own box, one line high, which the bead centres. Bricolage's capitals sit in the
  * middle of a one-line box (its ascent less its descent equals the capital height, measured in

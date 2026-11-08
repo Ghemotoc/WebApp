@@ -60,7 +60,7 @@ export function PersonAvatar({ name, handle, size = 'medium' }: PersonAvatarProp
       </span>
       {/* Step 2: the drawn avatar on top, once it has loaded (nothing when there is none). */}
       {handle !== null && (
-        <span className="absolute inset-0 overflow-hidden rounded-full">
+        <span className="absolute inset-0 rounded-full">
           <AvatarImage handle={handle} />
         </span>
       )}
