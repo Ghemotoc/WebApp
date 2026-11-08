@@ -46,7 +46,7 @@ function StoryUnavailable() {
       <p className="m-0 text-base text-body">{t('storyPage.unavailableBody')}</p>
       <Link
         to="/"
-        className="inline-flex h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold text-on-primary no-underline hover:opacity-90"
+        className="inline-flex h-11 items-center rounded-full button-main px-5 text-sm font-semibold no-underline"
       >
         {t('storyPage.goHome')}
       </Link>

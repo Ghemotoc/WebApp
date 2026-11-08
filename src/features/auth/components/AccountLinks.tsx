@@ -55,7 +55,7 @@ export function AccountLinks() {
       </Link>
       <Link
         to="/sign-up"
-        className="inline-flex h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold whitespace-nowrap text-on-primary no-underline hover:opacity-90"
+        className="inline-flex h-11 items-center rounded-full button-main px-5 text-sm font-semibold whitespace-nowrap no-underline"
       >
         {t('nav.join')}
       </Link>

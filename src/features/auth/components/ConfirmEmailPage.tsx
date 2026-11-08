@@ -25,7 +25,7 @@ function ContinueLink({ to, label }: { to: string; label: string }) {
   return (
     <Link
       to={to}
-      className="inline-flex h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold text-on-primary no-underline"
+      className="inline-flex h-11 items-center rounded-full button-main px-5 text-sm font-semibold no-underline"
     >
       {label}
     </Link>

@@ -62,7 +62,7 @@ function ContinueDraftLink({ chapters }: { chapters: DashboardChapter[] }) {
   return (
     <Link
       to={`/write/s/${latest.storySlug}/c/${latest.chapterCode}`}
-      className="inline-flex h-12 items-center rounded-full border border-control-border bg-surface px-6 text-[15px] font-semibold whitespace-nowrap text-heading no-underline hover:bg-tint"
+      className="inline-flex h-12 items-center rounded-full button-glass px-6 text-[15px] font-semibold whitespace-nowrap no-underline"
     >
       {t('dashboard.continueDraft')}
     </Link>
@@ -74,7 +74,7 @@ function NewStoryLink({ label }: { label: string }) {
   return (
     <Link
       to="/write/new"
-      className="inline-flex h-12 items-center rounded-full bg-primary px-6 text-[15px] font-semibold whitespace-nowrap text-on-primary no-underline hover:opacity-90"
+      className="inline-flex h-12 items-center rounded-full button-main px-6 text-[15px] font-semibold whitespace-nowrap no-underline"
     >
       {label}
     </Link>

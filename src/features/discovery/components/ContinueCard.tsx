@@ -88,7 +88,7 @@ export function ContinueCard({ item }: { item: ContinueReadingCardData }) {
               {t('cards.newChapter', { number: newChapterNumber })}
             </span>
           )}
-          <span className="inline-flex h-10 items-center rounded-full bg-primary px-[18px] text-sm font-semibold text-on-primary">
+          <span className="inline-flex h-10 items-center rounded-full button-main px-[18px] text-sm font-semibold">
             {t('cards.continueButton')}
           </span>
         </div>

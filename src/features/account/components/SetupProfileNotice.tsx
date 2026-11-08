@@ -46,7 +46,7 @@ export function SetupProfileNotice() {
         <p className="m-0 text-body">{t(`${keyPrefix}.body`)}</p>
         <Link
           to="/setup"
-          className="inline-flex h-11 items-center self-start rounded-full bg-primary px-5 text-sm font-semibold text-on-primary no-underline hover:opacity-90"
+          className="inline-flex h-11 items-center self-start rounded-full button-main px-5 text-sm font-semibold no-underline"
         >
           {t(`${keyPrefix}.action`)}
         </Link>

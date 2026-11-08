@@ -50,7 +50,7 @@ export function Textarea({
         id={id}
         aria-describedby={hintId}
         className={cn(
-          'min-h-24 resize-y rounded-[20px] border border-control-border bg-surface px-[18px] py-3.5 font-body text-base leading-normal text-ink',
+          'field-box min-h-24 resize-y px-4 py-3 font-body text-base leading-normal',
           className,
         )}
         {...textareaProps}

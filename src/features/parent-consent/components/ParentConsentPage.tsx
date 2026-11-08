@@ -30,7 +30,7 @@ import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** The class of a link drawn as a secondary button. */
 const linkButtonClass =
-  'inline-flex h-11 items-center self-start rounded-full border border-control-border bg-surface px-5 text-sm font-semibold text-heading no-underline hover:bg-tint';
+  'inline-flex h-11 items-center self-start rounded-full button-glass px-5 text-sm font-semibold no-underline';
 
 /** useMyParentConsent's result, passed down once. */
 type Consent = ReturnType<typeof useMyParentConsent>;

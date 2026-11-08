@@ -23,7 +23,7 @@ import { ThreadRow } from './ThreadRow';
 
 /** The link style of "Start a thread". */
 const startLink =
-  'inline-flex h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold text-on-primary no-underline hover:opacity-90';
+  'inline-flex h-11 items-center rounded-full button-main px-5 text-sm font-semibold no-underline';
 
 /**
  * "Start a thread", or the way to log in first.

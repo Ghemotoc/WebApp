@@ -14,6 +14,7 @@ import { Notice } from '@/components/ui/Notice';
 import type { useNewPasswordForm } from '../hooks/useNewPasswordForm';
 
 import { PasswordInput } from './PasswordInput';
+import { PasswordStrengthMeter } from './PasswordStrengthMeter';
 
 /** Problems that belong under the second field; the others go under the first. */
 const confirmProblems = new Set(['signUp.errors.passwordsDiffer']);
@@ -48,6 +49,8 @@ export function NewPasswordForm({ form }: { form: ReturnType<typeof useNewPasswo
         value={form.password}
         onChange={(event) => form.setPassword(event.target.value)}
       />
+      {/* How strong it looks, as the person types (bundle G3; a hint, not a rule). */}
+      <PasswordStrengthMeter password={form.password} id="reset-password-strength" />
       <PasswordInput
         id="reset-confirm-password"
         autoComplete="new-password"

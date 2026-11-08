@@ -36,7 +36,7 @@ function CampaignsSection() {
         </h2>
         <Link
           to="/staff/sponsors/campaigns/new"
-          className="inline-flex h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold text-on-primary"
+          className="inline-flex h-11 items-center rounded-full button-main px-5 text-sm font-semibold"
         >
           {t('campaigns.new')}
         </Link>

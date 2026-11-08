@@ -5,7 +5,11 @@
  * The WAI-ARIA tabs pattern (WCAG 2.2, 4.1.2 and 2.1.1): a tablist of buttons with role "tab",
  * the chosen one aria-selected and the only one in the Tab order; Left and Right (and Home and
  * End) move between tabs and choose them. Each tab is at least 44 px tall (CLAUDE.md rule 9:
- * 24 px minimum targets). The row scrolls sideways on a narrow screen instead of wrapping.
+ * 24 px minimum targets).
+ * Look (bundle G3 COMPONENTS; handoff: "Tabs change only text colour; long tab rows wrap"): no
+ * underline bar; the chosen tab is in the link colour and bold, the others in body text, so the
+ * choice also shows by weight, not colour alone (WCAG 1.4.1). A long row wraps onto a second line
+ * instead of scrolling sideways.
  * Who uses it: AvatarEditorTabs. What it calls: nothing; the caller draws the panel.
  */
 import { useRef, type KeyboardEvent, type ReactNode } from 'react';
@@ -67,11 +71,7 @@ export function Tabs<Key extends string>(props: TabsProps<Key>) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div
-        role="tablist"
-        aria-label={label}
-        className="flex gap-1 overflow-x-auto border-b border-border"
-      >
+      <div role="tablist" aria-label={label} className="flex flex-wrap gap-x-1">
         {tabs.map((tab, position) => {
           const isSelected = position === selectedPosition;
           return (
@@ -88,10 +88,8 @@ export function Tabs<Key extends string>(props: TabsProps<Key>) {
               tabIndex={isSelected ? 0 : -1}
               onClick={() => onSelect(tab.key)}
               onKeyDown={handleKeyDown}
-              className={`-mb-px min-h-11 flex-none border-b-2 px-3.5 text-sm font-semibold whitespace-nowrap ${
-                isSelected
-                  ? 'border-link text-heading'
-                  : 'border-transparent text-body hover:text-heading'
+              className={`min-h-11 flex-none rounded-full px-3.5 text-sm whitespace-nowrap ${
+                isSelected ? 'font-bold text-link' : 'font-medium text-body hover:text-heading'
               }`}
             >
               {tab.label}

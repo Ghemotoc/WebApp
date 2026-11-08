@@ -50,7 +50,7 @@ export function DeleteAccountPage() {
       <p className="m-0 text-body">{t('page.after', { count: deletionDays })}</p>
       <Link
         to="/sign-in"
-        className="inline-flex h-12 w-fit items-center rounded-full bg-primary px-6 text-[15px] font-semibold text-on-primary hover:opacity-90"
+        className="inline-flex h-12 w-fit items-center rounded-full button-main px-6 text-[15px] font-semibold"
       >
         {t('page.logIn')}
       </Link>

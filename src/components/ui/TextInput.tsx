@@ -1,7 +1,8 @@
 /**
  * TextInput: a labelled one-line text field, with an optional hint and error (story S1-E1-03).
  *
- * Board values: 44 px tall, pill-shaped, 16 px horizontal padding. The border is #8E7B99 (3:1),
+ * Handoff values (bundle G3): 48 px tall, 14 px radius, the --field fill, 16 px horizontal padding
+ * (field-box in index.css). The border is #8E7B99 (3:1),
  * not the boards' paler #DED3E4, so the field's edge meets WCAG 2.2, 1.4.11 (docs/board-fixes.md).
  * The hint and the error are linked with aria-describedby so screen readers read them with the
  * field; an error also sets aria-invalid. Typed or pasted ş and ţ become ș and ț straight away
@@ -55,11 +56,7 @@ export function TextInput({
         id={id}
         aria-describedby={describedBy}
         aria-invalid={errorMessage === undefined ? undefined : true}
-        className={cn(
-          'h-11 rounded-full border border-control-border bg-surface px-4 font-body text-[15px] text-ink',
-          errorMessage !== undefined && 'border-destructive',
-          className,
-        )}
+        className={cn('field-box h-12 px-4 font-body text-[15px]', className)}
         {...inputProps}
         onChange={handleChange}
       />

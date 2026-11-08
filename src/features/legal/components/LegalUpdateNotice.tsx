@@ -75,7 +75,7 @@ export function LegalUpdateNotice() {
         <div className="flex flex-wrap gap-3">
           <Link
             to={`/legal/${firstDocument.document_slug}`}
-            className="inline-flex h-11 items-center rounded-full border border-control-border bg-surface px-5 text-sm font-semibold text-heading no-underline hover:bg-tint"
+            className="inline-flex h-11 items-center rounded-full button-glass px-5 text-sm font-semibold no-underline"
           >
             {t('update.read')}
           </Link>

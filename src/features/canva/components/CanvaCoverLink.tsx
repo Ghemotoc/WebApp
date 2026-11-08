@@ -28,7 +28,7 @@ export function CanvaCoverLink({ storyId }: { storyId: string }) {
           href={`/canva/start?story=${encodeURIComponent(storyId)}`}
           target="_blank"
           rel="noopener"
-          className="inline-flex min-h-12 flex-wrap items-center gap-x-2 rounded-full border border-control-border bg-surface px-[22px] text-[15px] font-semibold text-heading no-underline hover:bg-tint focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus-ring)"
+          className="inline-flex min-h-12 flex-wrap items-center gap-x-2 rounded-full button-glass px-[22px] text-[15px] font-semibold no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus-ring)"
         >
           {t('canva.design')}
           <span className="text-[13px] font-normal text-meta">{t('canva.newTab')}</span>

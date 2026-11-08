@@ -24,7 +24,7 @@ import { NewPasswordForm } from './NewPasswordForm';
 
 /** The link styled as the main button. */
 const primaryLinkClasses =
-  'inline-flex h-11 items-center self-start rounded-full bg-primary px-5 text-sm font-semibold text-on-primary no-underline hover:opacity-90';
+  'inline-flex h-11 items-center self-start rounded-full button-main px-5 text-sm font-semibold no-underline';
 
 /** Which state the page is in. */
 type ResetView = 'saved' | 'checking' | 'expired' | 'form';

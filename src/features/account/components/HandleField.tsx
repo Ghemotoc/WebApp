@@ -87,7 +87,7 @@ export function HandleField(props: HandleFieldProps) {
           aria-describedby={`${id}-status ${id}-hint`}
           aria-invalid={isRefused ? true : undefined}
           className={cn(
-            'h-11 w-full rounded-full border border-control-border bg-surface pr-4 pl-8 font-body text-[15px] text-ink',
+            'h-12 w-full field-box pr-4 pl-8 font-body text-[15px]',
             isRefused && 'border-destructive',
           )}
         />

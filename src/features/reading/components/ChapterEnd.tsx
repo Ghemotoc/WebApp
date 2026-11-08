@@ -43,7 +43,7 @@ export function ChapterEnd({ chapter }: { chapter: ReaderChapter }) {
         {chapter.nextCode !== null ? (
           <Link
             to={`${storyAddress}/${chapter.nextCode}`}
-            className="inline-flex h-12 items-center gap-1.5 rounded-full bg-primary pr-3.5 pl-[22px] text-[15px] font-semibold text-on-primary no-underline hover:opacity-90"
+            className="inline-flex h-12 items-center gap-1.5 rounded-full button-main pr-3.5 pl-[22px] text-[15px] font-semibold no-underline"
           >
             {t('reader.readNext', { number: chapter.number + 1 })}
             <ForwardIcon />
@@ -53,7 +53,7 @@ export function ChapterEnd({ chapter }: { chapter: ReaderChapter }) {
             <p className="m-0 text-[15px] text-body">{t('reader.latestChapter')}</p>
             <Link
               to={storyAddress}
-              className="inline-flex h-12 items-center rounded-full border border-control-border bg-surface px-5 text-[15px] font-semibold text-heading no-underline hover:bg-tint"
+              className="inline-flex h-12 items-center rounded-full button-glass px-5 text-[15px] font-semibold no-underline"
             >
               {t('reader.backToStory')}
             </Link>

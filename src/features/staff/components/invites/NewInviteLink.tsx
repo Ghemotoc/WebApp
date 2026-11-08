@@ -55,7 +55,7 @@ export function NewInviteLink({ invite, onDismiss }: { invite: NewInvite; onDism
             readOnly
             value={invite.link}
             onFocus={(event) => event.target.select()}
-            className="h-11 min-w-0 flex-1 rounded-full border border-control-border bg-surface px-4 font-body text-[15px] text-ink"
+            className="h-12 min-w-0 flex-1 field-box px-4 font-body text-[15px]"
           />
           <Button variant="secondary" onClick={() => void copyLink()}>
             {t(copyState === 'copied' ? 'invites.made.copied' : 'invites.made.copy')}

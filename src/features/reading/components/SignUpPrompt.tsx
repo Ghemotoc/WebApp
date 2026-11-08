@@ -54,13 +54,13 @@ export function SignUpPrompt({ storySlug, chaptersAfter }: SignUpPromptProps) {
         <div className="flex flex-wrap gap-3 pt-1">
           <Link
             to="/sign-in"
-            className="inline-flex h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold text-on-primary no-underline hover:opacity-90"
+            className="inline-flex h-11 items-center rounded-full button-main px-5 text-sm font-semibold no-underline"
           >
             {t('reader.signIn')}
           </Link>
           <Link
             to={`/s/${storySlug}`}
-            className="inline-flex h-11 items-center rounded-full border border-control-border bg-surface px-5 text-sm font-semibold text-heading no-underline hover:bg-tint"
+            className="inline-flex h-11 items-center rounded-full button-glass px-5 text-sm font-semibold no-underline"
           >
             {t('reader.backToStory')}
           </Link>

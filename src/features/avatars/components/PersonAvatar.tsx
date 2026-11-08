@@ -2,8 +2,10 @@
  * PersonAvatar: the one small round avatar used beside a person's name everywhere (bundle
  * LOOK-7: "one avatar style everywhere"; boards Thread 5.2, Story 3.4, Messages 5.5, Library 3.7).
  *
- * The person's initials, white on the plum gradient, with their drawn avatar over them when they
- * have built one (AVATAR-1). A deleted account (no username) keeps the initials only.
+ * The person's initials on a glass bead (bundle G3 COMPONENTS: member avatars are 3D glass beads;
+ * the bead's colour comes from the username, beadColours.ts), with their drawn avatar over them
+ * when they have built one (AVATAR-1). A deleted account (no username) keeps the initials only,
+ * coloured from the name.
  * Decorative: the name is always written beside it, so it is hidden from screen readers.
  * The large picture on a profile page is ProfileAvatar, in the same style.
  * Who shows it: forum posts, comments, chats, the Library's followed writers and the writer
@@ -11,6 +13,8 @@
  */
 import { initialsOf } from '@/features/people/lib/formatting';
 import { cn } from '@/lib/utils';
+
+import { beadStyleFor } from '../lib/beadColours';
 
 import { AvatarImage } from './AvatarImage';
 
@@ -44,7 +48,11 @@ export function PersonAvatar({ name, handle, size = 'medium' }: PersonAvatarProp
   return (
     <span aria-hidden="true" className={cn('relative inline-flex flex-none', sizeClasses[size])}>
       {/* Step 1: the initials, always there underneath. */}
-      <span className="inline-flex size-full items-center justify-center rounded-full bg-[linear-gradient(140deg,#4D1B5E,#9A5BB8)] font-heading font-extrabold text-white">
+      <span
+        data-avatar-bead
+        style={beadStyleFor(handle ?? name)}
+        className="avatar-bead inline-flex size-full items-center justify-center rounded-full font-heading font-extrabold"
+      >
         {initialsOf(name)}
       </span>
       {/* Step 2: the drawn avatar on top, once it has loaded (nothing when there is none). */}

@@ -35,7 +35,7 @@ import { SpaceFormCard } from './SpaceFormCard';
 
 /** The look of the page's main link-buttons, shared so both match. */
 const linkButtonClasses =
-  'inline-flex h-12 items-center self-start rounded-full bg-primary px-5 text-[15px] font-semibold text-on-primary no-underline hover:opacity-90';
+  'inline-flex h-12 items-center self-start rounded-full button-main px-5 text-[15px] font-semibold no-underline';
 
 /** The quieter look of the second link-button, "Create an account with this code". */
 const secondaryLinkClasses =

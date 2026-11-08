@@ -44,7 +44,7 @@ function ProfileAction({ profile }: { profile: WriterProfile }) {
     return (
       <Link
         to="/settings"
-        className="inline-flex h-11 items-center justify-center rounded-full border border-control-border bg-surface px-5 text-sm font-semibold text-heading no-underline hover:bg-tint"
+        className="inline-flex h-11 items-center justify-center rounded-full button-glass px-5 text-sm font-semibold no-underline"
       >
         {t('profile.editProfile')}
       </Link>
@@ -141,7 +141,7 @@ export function ProfileHeader({ profile }: { profile: WriterProfile }) {
           <Link
             to={`/messages/${profile.handle}`}
             aria-label={t('profile.messageLabel', { name: profile.displayName })}
-            className="inline-flex h-11 items-center justify-center rounded-full border border-control-border bg-surface px-5 text-sm font-semibold text-heading no-underline hover:bg-tint"
+            className="inline-flex h-11 items-center justify-center rounded-full button-glass px-5 text-sm font-semibold no-underline"
           >
             {t('profile.message')}
           </Link>
