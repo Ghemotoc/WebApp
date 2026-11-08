@@ -8,7 +8,7 @@
  *   same themes as the phone app");
  * - four seasonal looks, each shown in its own weeks, only for members who turned Seasonal themes
  *   on (off by default); the weeks are the public setting seasonal_look_dates;
- * - a look changes only the light colours: night mode is always Revolver, the same with every
+ * - a look changes only the light colours: night mode is always the monochrome set (NIGHT-1), the same with every
  *   look, and the staff area ignores looks (tokens.css).
  * The member's choice lives on their profile (set_my_appearance) and, so the page can draw the
  * right colours before anything loads, on this device too. public/theme-init.js reads the shown

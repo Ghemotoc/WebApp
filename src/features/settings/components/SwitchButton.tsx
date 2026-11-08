@@ -38,7 +38,7 @@ export function SwitchButton({ label, isOn, stateWord, isDisabled, onToggle }: S
         aria-hidden="true"
         className={cn(
           'relative block h-8 w-14 rounded-full border transition-colors',
-          isOn ? 'border-primary bg-primary' : 'border-control-border bg-tint',
+          isOn ? 'switch-track-on border-primary bg-primary' : 'border-control-border bg-tint',
         )}
       >
         <span

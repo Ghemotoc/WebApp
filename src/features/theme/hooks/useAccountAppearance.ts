@@ -58,7 +58,7 @@ function useShowAppearance(windows: readonly SeasonalWindow[]): void {
   const appearance = useSyncExternalStore(subscribeToAppearance, getAppearance);
 
   useEffect(() => {
-    // Step 1: the look (it only changes the light colours; night is Revolver with every look).
+    // Step 1: the look (it only changes the light colours; night is the same monochrome set with every look).
     applyLook(shownLookFor(appearance.look, appearance.isSeasonalOn, new Date(), windows));
     // Step 2: night or light, now and whenever the device switches (for "Match my device").
     const deviceDarkQuery = window.matchMedia(DEVICE_DARK_QUERY);

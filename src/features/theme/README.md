@@ -11,7 +11,7 @@ Light and night mode, and the colour looks members pick. Built by S1-E1-03; look
 
 How it fits together:
 1. `public/theme-init.js` runs before the page draws and sets `data-theme` and `data-look` on `<html>` from what this device remembers, so there is no white flash and no flash of the default look.
-2. `src/styles/tokens.css` has the Lilac mist day colours, one block per other look (day only), the Revolver night colours (the same with every look) and the staff set, which ignores looks.
+2. `src/styles/tokens.css` has the Lilac mist day colours, one block per other look (day only), the monochrome night colours with cobalt buttons and the galaxy background (the same with every look; NIGHT-1) and the staff set, which ignores looks.
 3. `src/lib/theme.ts` and `src/lib/looks.ts` hold the shared logic: modes, the ten looks, the seasonal windows (public setting `seasonal_look_dates`) and what the device remembers.
 4. A member who never saved a choice keeps each device's own choice at sign-in (`appearance_saved_at` is empty); once they save, every device they sign in on shows it.
 
