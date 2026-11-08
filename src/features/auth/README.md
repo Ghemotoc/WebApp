@@ -31,6 +31,7 @@ Logging in (S1-E2-05):
 Country from the connection (S1-E2-10):
 
 - `hooks/useSignUpMarket.ts` with `api/signupContext.ts`: the country and its signed token from `/api/signup-context` (`functions/api/signup-context.ts`, `server/signup-context.ts`), and the public `markets`. Once sign-up is public, a closed or unknown country goes to `components/NotOpenPage.tsx` (`/not-open`); the invited test admits every country.
+- `components/OpeningListForm.tsx` with `hooks/useOpeningListForm.ts` and `api/openingList.ts` (bundle G5, part a): "Tell me when you open here" on the not-open page. It posts to `/api/opening-list` (`functions/api/opening-list.ts`, `server/opening-list.ts`), which signs the address and the connection's country and emails a confirm link. `components/OpenHerePage.tsx` (`/open-here/confirm` and `/open-here/remove`) follows that link. When staff open the country, `/api/opening-emails` sends one "we're open" email to each confirmed address.
 - `components/AgeRefusal.tsx` also refuses someone under their country's minimum age (16 in Australia, Q19); `src/lib/age.ts` has `isUnderMarketAge()`.
 - `components/SignUpCardFlow.tsx`: the changing part of the sign-up card (invite gate or form).
 

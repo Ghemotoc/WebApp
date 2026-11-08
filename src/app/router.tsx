@@ -1169,6 +1169,11 @@ const signInRoutes: RouteObject[] = [
     '/not-open',
     async () => (await import('@/features/auth/components/NotOpenPage')).NotOpenPage,
   ),
+  // The links in the "Tell me when you open here" email: confirm or remove (G5a).
+  lazyPage(
+    '/open-here/:action',
+    async () => (await import('@/features/auth/components/OpenHerePage')).OpenHerePage,
+  ),
   // Set up your profile (S1-E2-04, S1-E2-06): the steps after the email is confirmed (and, for
   // under-18s, the age check); names are changed later in Settings.
   lazyPage(

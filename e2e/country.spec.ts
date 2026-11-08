@@ -9,7 +9,10 @@
  * - while invite_only and adults_only are on, an invitation works from a closed country too (Q6);
  * - once sign-up is public, a closed or unknown country sees "We're not open in your country yet",
  *   and an under-16 in a 16-and-over market (Australia, Q19) is refused with nothing kept;
- * - the "not open" page passes axe and doesn't scroll sideways at 390, 768 and 1440 px.
+ * - on the "not open" page, "Tell me when you open here" sends a confirm email whose links put the
+ *   address on the list and take it off again (bundle G5, part a);
+ * - the "not open" page and the confirm page pass axe and don’t scroll sideways at 390, 768 and
+ *   1440 px.
  * How the country is faked: the local server reads an X-Fake-Country header (never on Cloudflare).
  * Test data: synthetic @example.com addresses, removed afterwards; flags and markets are put back.
  */
@@ -59,6 +62,31 @@ function removeAccount(address: string) {
       and id not in (select user_id from public.audit_log where user_id is not null);
     delete from auth.users where email = '${address}' and id not in (select id from public.profiles);
     update public.invites set use_count = 0 where code_hash = public.invite_code_hash('${workingInvite}');`);
+}
+
+/**
+ * Puts the local signing secret of the public forms in Vault; "Tell me when you open here" signs
+ * with it too (bundle G5, part a). The same value as NOTICE_SECRET in playwright.config.ts.
+ */
+function useNoticeSecret() {
+  runSql(`
+    select vault.create_secret('local-e2e-notice-secret', 'public_notice_secret')
+      where not exists (select 1 from vault.secrets where name = 'public_notice_secret');
+    select vault.update_secret(id, 'local-e2e-notice-secret') from vault.secrets where name = 'public_notice_secret';`);
+}
+
+/**
+ * Finds a link to this site in a plain-text email, as a path the test can open.
+ *
+ * @param text - the email's text
+ * @param path - the start of the path, for example "/open-here/confirm"
+ * @returns the path with its "#" part
+ * Errors: throws when the email has no such link.
+ */
+function pathFromTextEmail(text: string, path: string): string {
+  const match = new RegExp(`https?://[^/\\s]+(${path}#[0-9a-f]+)`).exec(text);
+  if (match?.[1] === undefined) throw new Error(`The email has no ${path} link.`);
+  return match[1];
 }
 
 /** Opens sign-up to the public (after March), or closes it again. */
@@ -165,7 +193,52 @@ test.describe('country from the connection (S1-E2-10)', () => {
     }
   });
 
-  for (const view of everyView(['/not-open'])) {
+  test('"Tell me when you open here" confirms the address by email and the remove link takes it off', async ({
+    page,
+  }) => {
+    const address = `opening-gb-${Date.now()}@example.com`;
+    useNoticeSecret();
+    setPublicSignUp(true);
+    try {
+      // The page's clock runs ten seconds behind, so the form doesn't look sent by a bot.
+      await page.clock.install({ time: Date.now() - 10_000 });
+      await openSignUpFrom(page, 'GB', '/not-open');
+      // The connection gave the country, so the form asks only for the address.
+      await expect(page.getByRole('combobox', { name: 'Your country' })).toHaveCount(0);
+      await page.getByLabel('Email address').fill(address);
+      await page.getByRole('button', { name: 'Tell me when you open here' }).click();
+      await expect(page.getByText(/Check your email/)).toBeVisible();
+      expect(
+        runSql(
+          `select country_code || ':' || (confirmed_at is null)::text from public.opening_list where email = '${address}'`,
+        ),
+      ).toBe('GB:true');
+
+      // The confirm link puts the address on the list.
+      const email = await waitForEmail(address);
+      await page.goto(pathFromTextEmail(email.Text, '/open-here/confirm'));
+      await expect(page.getByRole('heading', { name: 'You’re on the list' })).toBeVisible();
+      // The token leaves the address bar once used.
+      await expect(page).toHaveURL(/\/open-here\/confirm$/);
+      expect(
+        runSql(
+          `select (confirmed_at is not null)::text from public.opening_list where email = '${address}'`,
+        ),
+      ).toBe('true');
+
+      // The remove link takes it off again (GDPR art. 7(3)).
+      await page.goto(pathFromTextEmail(email.Text, '/open-here/remove'));
+      await expect(page.getByRole('heading', { name: 'You’re off the list' })).toBeVisible();
+      expect(runSql(`select count(*) from public.opening_list where email = '${address}'`)).toBe(
+        '0',
+      );
+    } finally {
+      setPublicSignUp(false);
+      runSql(`delete from public.opening_list where email = '${address}';`);
+    }
+  });
+
+  for (const view of everyView(['/not-open', '/open-here/confirm'])) {
     test(`axe: ${view.address} at ${view.width} px, ${view.theme}, ${view.language}`, async ({
       page,
     }) => {

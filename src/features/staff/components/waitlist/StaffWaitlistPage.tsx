@@ -4,7 +4,8 @@
  *
  * Top to bottom: the counts (waiting, by answer, let in so far); the filters (writers or readers,
  * a country); "Let in a wave" (the next confirmed people who fit); the people who fit, with
- * "Let in selected" and paging. Each person let in gets the "You're in" email with a link to log
+ * "Let in selected" and paging; then, from G5a, how many people wait for each closed country to
+ * open (OpeningListCounts). Each person let in gets the "You're in" email with a link to log
  * in, and the audit log names who let them in.
  * No board: plain staff components, no doodles (CLAUDE.md, Designs). Who shows it: the router,
  * inside StaffLayout. The database refuses anyone but owner and admin (admin_waitlist()).
@@ -19,6 +20,7 @@ import { PageContainer } from '@/components/ui/PageContainer';
 
 import { useStaffWaitlist, waitlistPageSize } from '../../hooks/useStaffWaitlist';
 
+import { OpeningListCounts } from './OpeningListCounts';
 import { WaitlistFilters } from './WaitlistFilters';
 import { WaitlistPeopleTable } from './WaitlistPeopleTable';
 import { WaitlistWaveForm } from './WaitlistWaveForm';
@@ -134,6 +136,7 @@ export function StaffWaitlistPage() {
       </div>
       <div className="flex max-w-[960px] flex-col gap-6">
         <WaitlistBody waitlist={waitlist} />
+        {waitlist.loadFailure === null && <OpeningListCounts />}
       </div>
     </PageContainer>
   );

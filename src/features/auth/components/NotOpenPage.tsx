@@ -5,9 +5,11 @@
  * Who shows it: the router, at /not-open; SignUpPage sends a visitor here once sign-up is public
  * and their country's market is closed or unknown. During the invited March test nobody is sent
  * here (decided 17 Oct 2026, 19:43, Q6).
- * No email is kept here. The waiting list (WAITLIST-1, which reversed Q15 on 6 Nov 2026) is on
- * the sign-up form itself; a closed country can't join it, so this page only says to come back.
- * What it reads: the country of the connection (useSignUpMarket), only to name it.
+ * "Tell me when you open here" (bundle G5, part a; Robert, 7 Nov 2026, 11:57 UTC): the visitor can
+ * leave an email address to hear once, on the day their country opens (OpeningListForm). The
+ * waiting list of an open country (WAITLIST-1) stays on the sign-up form itself.
+ * What it reads: the country of the connection (useSignUpMarket), to name it and to tell the form
+ * whether it must ask for the country.
  */
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
@@ -15,6 +17,7 @@ import { Link } from 'react-router';
 import { useSignUpMarket } from '../hooks/useSignUpMarket';
 
 import { AuthCard } from './AuthCard';
+import { OpeningListForm } from './OpeningListForm';
 
 /**
  * Renders the page.
@@ -41,7 +44,7 @@ export function NotOpenPage() {
           : t('notOpen.body', { country: countryName })
       }
     >
-      <p className="m-0 text-body">{t('notOpen.noEmail')}</p>
+      <OpeningListForm country={country} />
       <div className="flex flex-wrap gap-4">
         <Link
           to="/"

@@ -24,6 +24,8 @@
  * /api/data-request-parent/… (server/data-request-parent.ts, ADMIN-2c3: the same secret and Mailpit),
  * /api/teacher-check/… (server/teacher-check.ts, S1-E2-11: signed with TEACHER_CHECK_SECRET, the
  * same value the tests put in the local Vault; the link goes to Mailpit) and
+ * POST /api/opening-list and POST /api/opening-emails (server/opening-list.ts, G5a: "Tell me when
+ * you open here", signed with NOTICE_SECRET; the emails go to Mailpit),
  * GET /s/… (server/link-preview.ts, S1-E4-04: the shared link's Open Graph tags, read from the
  * local Supabase with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY, as on Cloudflare).
  * GET /c/… (server/landing-preview.ts, S1-E11-14: a landing page's Open Graph tags, the same way).
@@ -58,6 +60,7 @@ import { fetchLandingPreview, handleLandingLink, parseLandingAddress } from './l
 import { fetchLinkPreview, handleSharedLink, parseSharedAddress } from './link-preview.ts';
 import { handlePicturePreview } from './picture-preview.ts';
 import { handleNotice } from './notice.ts';
+import { handleOpeningEmails, handleOpeningList } from './opening-list.ts';
 import {
   handleNotificationEmails,
   handleUnsubscribe,
@@ -69,7 +72,7 @@ import { handlePictureCheck } from './picture-check.ts';
 import { pictureChecker } from './picture-check/index.ts';
 import { overridesFromDatabase } from './send-email.ts';
 import { handleSupportEmails, handleSupportInbound } from './support-emails.ts';
-import { handleSignupContext } from './signup-context.ts';
+import { countryOfConnection, handleSignupContext } from './signup-context.ts';
 import { makeSignupIpToken } from './signup-ip.ts';
 import {
   fetchFromHaveIBeenPwned,
@@ -289,8 +292,42 @@ function databaseHandlerFor(
         sendEmail: sendWithMailpit('http://127.0.0.1:54324/api/v1'),
       });
   }
-  // The support ticket emails (ADMIN-2h2) and shared pictures (IDEAS-2f) read the database too.
-  return picturePreviewHandlerFor(url, environment) ?? supportHandlerFor(url, environment);
+  // The support ticket emails (ADMIN-2h2), shared pictures (IDEAS-2f) and "Tell me when you open
+  // here" (G5a) read the database too.
+  return (
+    picturePreviewHandlerFor(url, environment) ??
+    supportHandlerFor(url, environment) ??
+    openingListHandlerFor(url, environment)
+  );
+}
+
+/**
+ * The handlers for "Tell me when you open here" (G5a): joining the list, signed with NOTICE_SECRET
+ * (the same value the tests put in the local Vault), and the opening email worker, with the
+ * notification worker's settings. Both send to Mailpit. The country is LOCAL_FAKE_COUNTRY, or the
+ * X-Fake-Country header a test sends ("XX" for a connection with no country).
+ *
+ * @param url - the request's address
+ * @param environment - the VITE_ values
+ * @returns the function that answers it, or null for every other address
+ */
+function openingListHandlerFor(
+  url: string | undefined,
+  environment: Record<string, string>,
+): FunctionHandler | null {
+  if (url === '/api/opening-emails') {
+    return (request) => handleOpeningEmails(request, notificationEmailOptions(environment));
+  }
+  if (url !== '/api/opening-list') return null;
+  return (request) =>
+    handleOpeningList(request, {
+      ...notificationEmailOptions(environment),
+      secret: process.env.NOTICE_SECRET,
+      connectionCountry: countryOfConnection(
+        request,
+        request.headers.get('X-Fake-Country') ?? process.env.LOCAL_FAKE_COUNTRY ?? 'RO',
+      ),
+    });
 }
 
 /**

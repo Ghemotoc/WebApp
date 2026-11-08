@@ -4839,6 +4839,55 @@ export type Database = {
           },
         ];
       };
+      opening_list: {
+        Row: {
+          confirmed_at: string | null;
+          country_code: string;
+          created_at: string;
+          detected_country_code: string | null;
+          email: string;
+          id: string;
+          language: string;
+          open_email_attempts: number;
+          open_email_claimed_at: string | null;
+          open_email_sent_at: string | null;
+          token_hash: string;
+          token_sent_at: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          confirmed_at?: string | null;
+          country_code: string;
+          created_at?: string;
+          detected_country_code?: string | null;
+          email: string;
+          id?: string;
+          language?: string;
+          open_email_attempts?: number;
+          open_email_claimed_at?: string | null;
+          open_email_sent_at?: string | null;
+          token_hash: string;
+          token_sent_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          confirmed_at?: string | null;
+          country_code?: string;
+          created_at?: string;
+          detected_country_code?: string | null;
+          email?: string;
+          id?: string;
+          language?: string;
+          open_email_attempts?: number;
+          open_email_claimed_at?: string | null;
+          open_email_sent_at?: string | null;
+          token_hash?: string;
+          token_sent_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       paragraph_shares: {
         Row: {
           chapter_id: string;
@@ -9875,6 +9924,14 @@ export type Database = {
         };
         Returns: Json;
       };
+      admin_opening_list_counts: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          confirmed: number;
+          country_code: string;
+          unconfirmed: number;
+        }[];
+      };
       admin_order_timeline: { Args: { target_case_id: string }; Returns: Json };
       admin_passage_case: {
         Args: { case_reference: string };
@@ -11385,6 +11442,7 @@ export type Database = {
       compliance_times_problem: { Args: { completed: string; received: string }; Returns: string };
       compute_daily_metrics: { Args: { for_day?: string }; Returns: number };
       compute_story_scores: { Args: Record<PropertyKey, never>; Returns: number };
+      confirm_opening_list: { Args: { token: string }; Returns: string };
       confirm_teacher_email: { Args: { token: string }; Returns: Json };
       contact_topic_subject: { Args: { language: string; topic: string }; Returns: string };
       content_is_held_for_moderation: {
@@ -12272,6 +12330,7 @@ export type Database = {
         }[];
       };
       join_class_space: { Args: { code: string }; Returns: Json };
+      join_opening_list: { Args: { payload: string; signature: string }; Returns: string };
       join_space: { Args: { note?: string; slug: string }; Returns: Json };
       join_waitlist_at_sign_up: {
         Args: { new_user_id: string; sign_up_data: Json };
@@ -12359,6 +12418,7 @@ export type Database = {
       latest_material_legal_version: { Args: { target_document_id: string }; Returns: string };
       latest_place_json: { Args: { target_story_id: string }; Returns: Json };
       launch_task: { Args: Record<PropertyKey, never>; Returns: Json };
+      leave_opening_list: { Args: { token: string }; Returns: boolean };
       leave_space: { Args: { slug: string }; Returns: undefined };
       legal_documents_to_accept: {
         Args: { target_user_id: string };
@@ -13185,6 +13245,15 @@ export type Database = {
         Returns: string;
       };
       open_story_languages: { Args: Record<PropertyKey, never>; Returns: string[] };
+      opening_email_worker_claim: {
+        Args: { batch_size?: number; worker_key: string };
+        Returns: Json;
+      };
+      opening_email_worker_mark_sent: {
+        Args: { email_ids: string[]; worker_key: string };
+        Returns: number;
+      };
+      opening_list_token_hash: { Args: { token: string }; Returns: string };
       order_timeline_json: {
         Args: {
           target: Omit<
@@ -13568,6 +13637,7 @@ export type Database = {
       purge_old_reading_minutes: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_staff_records: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_support_tickets: { Args: Record<PropertyKey, never>; Returns: number };
+      purge_opening_list: { Args: Record<PropertyKey, never>; Returns: number };
       purge_rate_limit_events: { Args: Record<PropertyKey, never>; Returns: number };
       purge_sent_emails: { Args: Record<PropertyKey, never>; Returns: number };
       purge_unconfirmed_accounts: { Args: Record<PropertyKey, never>; Returns: number };
@@ -14106,6 +14176,7 @@ export type Database = {
       run_daily_metrics: { Args: Record<PropertyKey, never>; Returns: number };
       run_email_worker: { Args: Record<PropertyKey, never>; Returns: boolean };
       run_notification_jobs: { Args: Record<PropertyKey, never>; Returns: number };
+      run_opening_email_worker: { Args: Record<PropertyKey, never>; Returns: boolean };
       run_retention_jobs: { Args: Record<PropertyKey, never>; Returns: number };
       run_storage_sweep: { Args: Record<PropertyKey, never>; Returns: boolean };
       run_support_email_worker: { Args: Record<PropertyKey, never>; Returns: boolean };
