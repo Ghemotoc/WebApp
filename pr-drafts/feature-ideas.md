@@ -10,6 +10,10 @@ Format when sent: a user story (As a, I want, so that), Given/When/Then criteria
 
 ## Sent
 
+### Sent 8 Nov 2026 (/mnt/project-files/06_feature-ideas/2026-11-08_feature-ideas_daily.md; doc tab "8 Nov 2026")
+
+12 ideas, IDEA-20261108-1 to 12: who's who up to where I've read, choose-your-path chapters, a note to my followers, Quick reads shelf, time left to finish a story, a heads-up before sharing personal details, describe my cover, old links keep working after a username change, find a word inside a story, suggest a better wording, a high-contrast look, unsent comments are kept.
+
 ### Sent 7 Nov 2026 (/mnt/project-files/06_feature-ideas/2026-11-07_feature-ideas_daily.md; doc tab "7 Nov 2026")
 
 12 ideas, IDEA-20261107-1 to 12: typo notes to the writer, restrict someone quietly, two invites once you're in, a support note after reporting self-harm, mute words, read chapters offline, data-light mode, private notebook, my year of reading and writing, quiet milestones, "I'd read this in English", "Inspired by" links.
