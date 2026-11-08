@@ -68,6 +68,9 @@
      Bundle G2 sets one per theme; night keeps plum (Robert, 7 Nov 2026, 17:52 and 18:44). */
   --accent: #672786;
   --accent-deep: #2a0e33;
+  /* The cat logo and the wordmark: the theme accent by day, soft white at night (Robert, 7 Nov
+     2026, 19:34 to 19:36; bundle G2). Favicon and emails keep the fixed plum #48125D. */
+  --logo: #672786;
   /* The plum gradient on every main action (Publish, Save, Continue; rulebook 5). */
   --plum-from: #672786;
   --plum-to: #2a0e33;
@@ -198,6 +201,8 @@
   /* Night keeps plum whatever the theme (Robert, 7 Nov 2026, 18:44). */
   --accent: #672786;
   --accent-deep: #2a0e33;
+  /* The logo and wordmark are soft white at night (Robert, 7 Nov 2026, 19:36). */
+  --logo: #f4eef8;
   --plum-from: #672786;
   --plum-to: #2a0e33;
 
@@ -282,12 +287,267 @@
 }
 
 /*
+ * Looks (bundle G2 THEMES; handoff "Design tokens and themes", "Themes" and "Accent colour per
+ * theme"): the year-round themes a member picks in Settings › Appearance and the seasonal looks.
+ * src/lib/looks.ts sets data-look on <html>; each block applies only by day (data-theme="light"),
+ * because night mode is Revolver with every look. Lilac mist is the :root set above. A look
+ * changes the page colour, the text colours, the three blobs and its one accent, which colours
+ * main buttons, chips that are on, links, focus rings, progress bars and the logo (Robert, 7 Nov
+ * 2026, 17:52 and 18:44). White on every accent and every accent on its page pass AA (checked by
+ * scripts/token-contrast.test.ts). The staff area ignores looks: its own block sets every one of
+ * these again. --surface is the solid colour glass looks like on that page (white at 50%).
+ * Summer's and Autumn's dark ends are builder picks: the handoff's were left from their earlier
+ * fuchsia and auburn accents, so they are the golden and green accents darkened instead.
+ */
+
+/*
+ * Swatches: the tiles in Settings › Appearance carry data-look-swatch, so each tile draws its own
+ * look's day colours whatever look and theme the page shows. Every look block below also matches
+ * its swatch; Lilac mist's day colours are the :root set, so its swatch needs this block of its
+ * own (a tile in night mode would otherwise take the night colours).
+ */
+[data-look-swatch='lilac'] {
+  --paper: #f3eefb;
+  --blob-1: #d9ccf5;
+  --blob-2: #c9d8f7;
+  --blob-3: #f9d9cf;
+  --accent: #672786;
+}
+
+/* Peach sorbet: accent coral. */
+[data-theme='light'][data-look='sorbet'],
+[data-look-swatch='sorbet'] {
+  --paper: #fff1ea;
+  --surface: #fff8f4;
+  --ink: #2b1530;
+  --body: #5e4860;
+  --meta: #5e4860;
+  --blob-1: #ffd3c2;
+  --blob-2: #cdeedf;
+  --blob-3: #e4d6f7;
+  --accent: #c2412d;
+  --accent-deep: #6b1d12;
+  --plum-from: #c2412d;
+  --plum-to: #6b1d12;
+  --primary: #c2412d;
+  --chip-on: #c2412d;
+  --link: #c2412d;
+  --link-hover: #6b1d12;
+  --focus-ring: #c2412d;
+  --progress-from: #6b1d12;
+  --progress-to: #ebc2bc;
+  --logo: #c2412d;
+}
+
+/* Sea glass: accent teal. */
+[data-theme='light'][data-look='seaglass'],
+[data-look-swatch='seaglass'] {
+  --paper: #edf6f4;
+  --surface: #f6fafa;
+  --ink: #1c2433;
+  --body: #4a5666;
+  --meta: #4a5666;
+  --blob-1: #c4e6df;
+  --blob-2: #cfe0f5;
+  --blob-3: #f6d6e1;
+  --accent: #0f766e;
+  --accent-deep: #0b3d3a;
+  --plum-from: #0f766e;
+  --plum-to: #0b3d3a;
+  --primary: #0f766e;
+  --chip-on: #0f766e;
+  --link: #0f766e;
+  --link-hover: #0b3d3a;
+  --focus-ring: #0f766e;
+  --progress-from: #0b3d3a;
+  --progress-to: #b2d3d1;
+  --logo: #0f766e;
+}
+
+/* Pistachio and butter: accent olive green. */
+[data-theme='light'][data-look='pistachio'],
+[data-look-swatch='pistachio'] {
+  --paper: #f3f7ec;
+  --surface: #f9fbf6;
+  --ink: #1f2418;
+  --body: #4f5547;
+  --meta: #4f5547;
+  --blob-1: #d7e8c2;
+  --blob-2: #ffeba8;
+  --blob-3: #e2d5f2;
+  --accent: #4d7c0f;
+  --accent-deep: #1f3a0a;
+  --plum-from: #4d7c0f;
+  --plum-to: #1f3a0a;
+  --primary: #4d7c0f;
+  --chip-on: #4d7c0f;
+  --link: #4d7c0f;
+  --link-hover: #1f3a0a;
+  --focus-ring: #4d7c0f;
+  --progress-from: #1f3a0a;
+  --progress-to: #c6d5b2;
+  --logo: #4d7c0f;
+}
+
+/* Candy floss: accent raspberry. */
+[data-theme='light'][data-look='candy'],
+[data-look-swatch='candy'] {
+  --paper: #fceff5;
+  --surface: #fef7fa;
+  --ink: #2a1428;
+  --body: #5d465a;
+  --meta: #5d465a;
+  --blob-1: #f8cfe1;
+  --blob-2: #d3e1fb;
+  --blob-3: #e8daf8;
+  --accent: #c0266d;
+  --accent-deep: #5a0b2e;
+  --plum-from: #c0266d;
+  --plum-to: #5a0b2e;
+  --primary: #c0266d;
+  --chip-on: #c0266d;
+  --link: #c0266d;
+  --link-hover: #5a0b2e;
+  --focus-ring: #c0266d;
+  --progress-from: #5a0b2e;
+  --progress-to: #ebbad0;
+  --logo: #c0266d;
+}
+
+/* Magic Coffin cream: accent Magic Coffin red. */
+[data-theme='light'][data-look='tmc'],
+[data-look-swatch='tmc'] {
+  --paper: #faf8f5;
+  --surface: #fcfcfa;
+  --ink: #26142e;
+  --body: #5c4965;
+  --meta: #5c4965;
+  --blob-1: #ded3e4;
+  --blob-2: #f1eaf4;
+  --blob-3: #efd98f;
+  --accent: #9f1239;
+  --accent-deep: #3b0a16;
+  --plum-from: #9f1239;
+  --plum-to: #3b0a16;
+  --primary: #9f1239;
+  --chip-on: #9f1239;
+  --link: #9f1239;
+  --link-hover: #3b0a16;
+  --focus-ring: #9f1239;
+  --progress-from: #3b0a16;
+  --progress-to: #e0b3c0;
+  --logo: #9f1239;
+}
+
+/* Winter (seasonal): accent ice blue. */
+[data-theme='light'][data-look='winter'],
+[data-look-swatch='winter'] {
+  --paper: #eef3fa;
+  --surface: #f6f9fc;
+  --ink: #1b2236;
+  --body: #4a5268;
+  --meta: #4a5268;
+  --blob-1: #cbdbf3;
+  --blob-2: #e2e7ee;
+  --blob-3: #b9cceb;
+  --accent: #1d4ed8;
+  --accent-deep: #172554;
+  --plum-from: #1d4ed8;
+  --plum-to: #172554;
+  --primary: #1d4ed8;
+  --chip-on: #1d4ed8;
+  --link: #1d4ed8;
+  --link-hover: #172554;
+  --focus-ring: #1d4ed8;
+  --progress-from: #172554;
+  --progress-to: #b7c6f3;
+  --logo: #1d4ed8;
+}
+
+/* Spring (seasonal): accent rose. */
+[data-theme='light'][data-look='spring'],
+[data-look-swatch='spring'] {
+  --paper: #f6f4f5;
+  --surface: #fafafa;
+  --ink: #2a1a26;
+  --body: #5a4a55;
+  --meta: #5a4a55;
+  --blob-1: #f7d3df;
+  --blob-2: #e2e0e6;
+  --blob-3: #fbe4ec;
+  --accent: #b4235f;
+  --accent-deep: #4a1028;
+  --plum-from: #b4235f;
+  --plum-to: #4a1028;
+  --primary: #b4235f;
+  --chip-on: #b4235f;
+  --link: #b4235f;
+  --link-hover: #4a1028;
+  --focus-ring: #b4235f;
+  --progress-from: #4a1028;
+  --progress-to: #e7b9cc;
+  --logo: #b4235f;
+}
+
+/* Summer (seasonal): accent golden; Robert, 7 Nov 2026, 19:20. */
+[data-theme='light'][data-look='summer'],
+[data-look-swatch='summer'] {
+  --paper: #fff8e4;
+  --surface: #fffcf2;
+  --ink: #2a1830;
+  --body: #5c4860;
+  --meta: #5c4860;
+  --blob-1: #ffdf85;
+  --blob-2: #bedffa;
+  --blob-3: #f7c4e5;
+  --accent: #946b00;
+  --accent-deep: #4a3500;
+  --plum-from: #946b00;
+  --plum-to: #4a3500;
+  --primary: #946b00;
+  --chip-on: #946b00;
+  --link: #946b00;
+  --link-hover: #4a3500;
+  --focus-ring: #946b00;
+  --progress-from: #4a3500;
+  --progress-to: #ddd0ad;
+  --logo: #946b00;
+}
+
+/* Autumn (seasonal): accent earthy green; Robert, 7 Nov 2026, 19:20. */
+[data-theme='light'][data-look='autumn'],
+[data-look-swatch='autumn'] {
+  --paper: #f7f0e7;
+  --surface: #fbf8f3;
+  --ink: #2a1a14;
+  --body: #5a4a40;
+  --meta: #5a4a40;
+  --blob-1: #c9d6bc;
+  --blob-2: #e9b8a2;
+  --blob-3: #e8d1ac;
+  --accent: #556b2f;
+  --accent-deep: #2b3a14;
+  --plum-from: #556b2f;
+  --plum-to: #2b3a14;
+  --primary: #556b2f;
+  --chip-on: #556b2f;
+  --link: #556b2f;
+  --link-hover: #2b3a14;
+  --focus-ring: #556b2f;
+  --progress-from: #2b3a14;
+  --progress-to: #c9d0bc;
+  --logo: #556b2f;
+}
+
+/*
  * The staff area: its own flat, warm beige look with no purple, so staff always know they are in
  * the admin site (handoff, Staff tab; rulebook 3). StaffLayout puts data-area="staff" on its root,
  * so these values replace the member ones for everything inside it. Cards are flat (no glass) and
  * the background has no colour blobs. Night mode turns it a warm dark brown, still without purple.
  */
 [data-area='staff'] {
+  /* The staff area's logo is its neutral ink, never purple (handoff, Staff tab). */
+  --logo: #2b2119;
   --paper: #f3ece0;
   --surface: #fbf8f2;
   --surface-glass: #fbf8f2;
@@ -339,6 +599,8 @@
 }
 
 [data-theme='night'] [data-area='staff'] {
+  /* The staff area's logo is its neutral ink, never purple (handoff, Staff tab). */
+  --logo: #f3ece0;
   --paper: #1f1a16;
   --surface: #2a241f;
   --surface-glass: #2a241f;
@@ -404,6 +666,7 @@
   --color-surface-solid: var(--surface);
   --color-field: var(--field);
   --color-accent: var(--accent);
+  --color-logo: var(--logo);
   --color-story-paper: var(--story-paper);
   --color-story-ink: var(--story-ink);
   --color-tint: var(--tint);

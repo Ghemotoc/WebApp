@@ -5,7 +5,8 @@
  * Who uses it: the router (src/app/router.tsx) wraps every public route in it; the page itself
  * appears where <Outlet /> is. The admin site gets its own frame with the staff bar (S1-E11-01).
  * Language (S1-E1-04): the English / Română drop-down sits in both the top bar and the footer
- * (Q11), and useAccountLanguage shows a signed-in person's account language on every device.
+ * (Q11), and useAccountLanguage shows a signed-in person's account language on every device;
+ * useAccountAppearance does the same for their mode and look (bundle G2).
  * Accessibility: the first thing a keyboard user reaches is "Skip to content", which jumps past the
  * top bar to the page (WCAG 2.2, 2.4.1 Bypass blocks). The page sits in the one <main> landmark.
  * Legal updates (S1-E14-01): LegalUpdateNotice sits at the top of <main> on every page and shows
@@ -39,6 +40,7 @@ import { BrandTabIcon } from '@/features/branding/components/BrandTabIcon';
 import { LanguageSelect } from '@/features/language/components/LanguageSelect';
 import { useTrackRoutePattern } from '@/features/errors/hooks/useTrackRoutePattern';
 import { useAccountLanguage } from '@/features/language/hooks/useAccountLanguage';
+import { useAccountAppearance } from '@/features/theme/hooks/useAccountAppearance';
 import { MaintenanceGate } from '@/features/maintenance/components/MaintenanceGate';
 import { MessagesNavLink } from '@/features/messages/components/MessagesNavLink';
 import { NotificationBell } from '@/features/notifications/components/NotificationBell';
@@ -63,6 +65,8 @@ export function AppLayout() {
   const { t } = useTranslation();
   // Show a signed-in person's account language, whichever device they are on.
   useAccountLanguage();
+  // The member's mode and look, from their account on every device (bundle G2).
+  useAccountAppearance();
   // Remember the page on screen for error reports (S1-E1-05).
   useTrackRoutePattern();
   // Check again any picture whose check couldn't run when it was uploaded (S1-E10-05).

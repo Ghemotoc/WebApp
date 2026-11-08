@@ -11,6 +11,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 import { contrastRatio } from '../src/lib/contrast';
+import { seasonalLooks, yearRoundLooks } from '../src/lib/looks';
 import { contrastPairs } from '../src/styles/contrast-pairs';
 
 const tokensCss = readFileSync(
@@ -86,6 +87,17 @@ function failingPairs(tokens: Map<string, string>): string[] {
   });
 }
 
+/**
+ * The looks a member can see by day (bundle G2 THEMES): each look block laid over the day tokens.
+ * Lilac mist is the day set itself. Each block is read through its swatch selector, which starts
+ * a line in tokens.css ("[data-look-swatch='sorbet'] {").
+ */
+const lookTokens = new Map(
+  [...yearRoundLooks, ...seasonalLooks]
+    .filter((look) => look !== 'lilac')
+    .map((look) => [look, readTokenBlock(`[data-look-swatch='${look}']`)] as const),
+);
+
 describe('design token contrast', () => {
   it('every token pair meets WCAG 2.2 AA in light mode', () => {
     expect(failingPairs(themes.light)).toEqual([]);
@@ -135,5 +147,41 @@ describe('design token contrast', () => {
 
   it('defines the same tokens in both themes', () => {
     expect([...themes.night.keys()].sort()).toEqual([...themes.light.keys()].sort());
+  });
+
+  it('every look meets WCAG 2.2 AA by day (bundle G2 THEMES)', () => {
+    for (const [look, tokens] of lookTokens) {
+      expect({ look, failing: failingPairs(layered(lightTokens, tokens)) }).toEqual({
+        look,
+        failing: [],
+      });
+    }
+  });
+
+  it('keeps white readable on every accent and every accent readable on its page', () => {
+    for (const [look, tokens] of lookTokens) {
+      const day = layered(lightTokens, tokens);
+      const accent = day.get('accent') ?? '';
+      expect({ look, onAccent: contrastRatio('#ffffff', accent) >= 4.5 }).toEqual({
+        look,
+        onAccent: true,
+      });
+      expect({ look, onPaper: contrastRatio(accent, day.get('paper') ?? '') >= 4.5 }).toEqual({
+        look,
+        onPaper: true,
+      });
+    }
+  });
+
+  it('keeps the staff area plain whatever look a member picked', () => {
+    // Every token a look changes is set again by the staff block, so no look reaches staff pages.
+    // The blobs are the one exception: the staff area paints its flat beige over them (index.css).
+    const paintedOver = new Set(['blob-1', 'blob-2', 'blob-3']);
+    for (const tokens of lookTokens.values()) {
+      const leaking = [...tokens.keys()].filter(
+        (name) => !staffLightTokens.has(name) && !paintedOver.has(name),
+      );
+      expect(leaking).toEqual([]);
+    }
   });
 });

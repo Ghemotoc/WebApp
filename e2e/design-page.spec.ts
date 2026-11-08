@@ -70,7 +70,7 @@ test('the footer drop-down switches to night mode and the choice survives a relo
   page,
 }) => {
   await page.goto('/design');
-  await page.getByRole('combobox', { name: 'Temă' }).selectOption('night');
+  await page.getByRole('combobox', { name: 'Mod' }).selectOption('night');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'night');
 
   await page.reload();
@@ -80,7 +80,7 @@ test('the footer drop-down switches to night mode and the choice survives a relo
 test('a chosen Light mode wins over a device in dark mode', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'dark' });
   await page.goto('/design');
-  await page.getByRole('combobox', { name: 'Temă' }).selectOption('light');
+  await page.getByRole('combobox', { name: 'Mod' }).selectOption('light');
 
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
 });

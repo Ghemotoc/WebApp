@@ -123,6 +123,13 @@ body::before {
  */
 dialog.bg-surface,
 .bg-surface.shadow-popover {
+  /*
+   * A pop-over can float over anything, even a chapter page in night colours under a light panel
+   * (the reader's settings at night by the clock), so it paints its own colour almost solid: the
+   * text in it stays readable whatever lies underneath (WCAG 1.4.3), and the blur still softens
+   * the edges of what shows through.
+   */
+  background-color: color-mix(in srgb, var(--surface) 92%, transparent);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   backdrop-filter: blur(24px) saturate(180%);
 }
@@ -470,4 +477,16 @@ dialog.bg-surface,
     min-height: 100%;
     justify-content: space-between;
   }
+}
+
+/*
+ * The theme tiles in Settings › Appearance (bundle G2 THEMES; LookTiles.tsx): the look's page
+ * colour with its three blobs, drawn small, as on the Settings board. Each tile carries
+ * data-look-swatch, so these variables are that look's day colours (tokens.css, "Swatches").
+ */
+.look-swatch {
+  background:
+    radial-gradient(60% 70% at 20% 20%, var(--blob-1), transparent 70%),
+    radial-gradient(60% 70% at 85% 30%, var(--blob-2), transparent 70%),
+    radial-gradient(70% 70% at 50% 100%, var(--blob-3), transparent 70%), var(--paper);
 }

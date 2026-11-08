@@ -7,7 +7,7 @@
  * - the footer on every page links to the accessibility statement, which opens in the Legal
  *   centre in Romanian and in English;
  * - visiting the main pages, signed out and signed in, sets no cookie at all, and stores nothing
- *   in the browser outside the reviewed keys (the theme, the language, the session, and the
+ *   in the browser outside the reviewed keys (light or night, the colour theme, the language, the session, and the
  *   per-tab sort order, read counter and closed notices, and the last website content seen);
  * - the statement passes axe at 390, 768 and 1440 px.
  * Test data: seed personas only.
@@ -20,6 +20,9 @@ import { signInPersona, useSessionInBrowser } from './support/personas';
 /** The browser storage keys the app may write, each reviewed (src/lib and the features). */
 const reviewedStorageKeys = [
   'theme-preference',
+  // The member's theme and seasonal switch, and the look on screen, for the first paint (G2).
+  'theme-look-choice',
+  'theme-shown-look',
   'interface-language',
   'auth-session',
   'story-list-sort',

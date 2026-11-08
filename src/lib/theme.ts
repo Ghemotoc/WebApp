@@ -6,7 +6,7 @@
  * The choice is kept on this device only (localStorage). It is a comfort setting, not account
  * data, so it is never sent anywhere.
  *
- * Who calls it: src/features/theme/hooks/useThemePreference.ts (the footer drop-down).
+ * Who calls it: src/features/theme/ (the appearance store and useAccountAppearance, bundle G2).
  * public/theme-init.js repeats the first two steps before the page draws, so night readers never
  * see a white flash; keep THEME_STORAGE_KEY and the attribute name the same in both files.
  * What it changes: the data-theme attribute on <html>, which picks the token set in

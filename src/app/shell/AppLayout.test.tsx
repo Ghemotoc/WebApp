@@ -9,6 +9,7 @@ import { createMemoryRouter, RouterProvider } from 'react-router';
 import { AppProviders } from '@/app/AppProviders';
 import { appRoutes } from '@/app/router';
 import { brand } from '@/config/brand';
+import { replaceAppearance } from '@/features/theme/lib/appearanceStore';
 import { createI18n } from '@/lib/i18n';
 import { THEME_STORAGE_KEY } from '@/lib/theme';
 
@@ -23,8 +24,11 @@ function renderApp() {
 }
 
 afterEach(() => {
+  // The appearance store lives for the whole page, so each test starts again from the defaults.
+  replaceAppearance({ mode: 'device', look: 'lilac', isSeasonalOn: false });
   window.localStorage.clear();
   delete document.documentElement.dataset.theme;
+  delete document.documentElement.dataset.look;
 });
 
 describe('the app shell', () => {
@@ -50,7 +54,7 @@ describe('the app shell', () => {
   it('switches to night mode from the footer drop-down and remembers it on this device', () => {
     renderApp();
 
-    fireEvent.change(screen.getByRole('combobox', { name: 'Theme' }), {
+    fireEvent.change(screen.getByRole('combobox', { name: 'Mode' }), {
       target: { value: 'night' },
     });
 
@@ -61,7 +65,7 @@ describe('the app shell', () => {
   it('follows the device by default (light in this test, whose device is not in dark mode)', () => {
     renderApp();
 
-    expect(screen.getByRole('combobox', { name: 'Theme' })).toHaveValue('device');
+    expect(screen.getByRole('combobox', { name: 'Mode' })).toHaveValue('device');
     expect(document.documentElement.dataset.theme).toBe('light');
   });
 });

@@ -98,7 +98,7 @@ test.describe('journey 1: a visitor switches language and theme (S1-E1-01, 03, 0
     await page.getByRole('banner').getByRole('combobox', { name: 'Limbă' }).selectOption('en');
     await page
       .getByRole('contentinfo')
-      .getByRole('combobox', { name: 'Theme' })
+      .getByRole('combobox', { name: 'Mode' })
       .selectOption('night');
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(homeHeading.en);
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'night');

@@ -66,7 +66,7 @@ test('switching the page to night mode recolours the full doodle sheet', async (
   const firstPath = page.getByTestId('doodle-sheet').locator('svg path').first();
   const lightFill = await firstPath.evaluate((path) => getComputedStyle(path).fill);
 
-  await page.getByRole('combobox', { name: 'Temă' }).selectOption('night');
+  await page.getByRole('combobox', { name: 'Mod' }).selectOption('night');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'night');
 
   const nightFill = await firstPath.evaluate((path) => getComputedStyle(path).fill);

@@ -19,7 +19,7 @@ const settingFreshMilliseconds = 60 * 1000;
 /**
  * Loads the settings.
  *
- * @returns numberOf(settingKey, fallback) and wordsOf(settingKey, fallback)
+ * @returns numberOf(settingKey, fallback), wordsOf(settingKey, fallback) and valueOf(settingKey)
  */
 export function usePublicSettings() {
   const settings = useQuery<PublicSettings>({
@@ -57,5 +57,13 @@ export function usePublicSettings() {
       if (!Array.isArray(value)) return fallback;
       return value.filter((item): item is string => typeof item === 'string');
     },
+    /**
+     * A setting as the database sent it, for a caller that checks its own shape (for example the
+     * seasonal look windows, bundle G2, checked by parseSeasonalWindows).
+     *
+     * @param settingKey - for example 'seasonal_look_dates'
+     * @returns the value, or undefined while loading or when it can't be read
+     */
+    valueOf: (settingKey: string): unknown => settings.data?.[settingKey],
   };
 }

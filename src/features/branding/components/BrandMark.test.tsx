@@ -14,16 +14,21 @@ import { brandPicturesFrom } from '../hooks/useBrandAssets';
 import { BrandMark } from './BrandMark';
 
 describe('BrandMark', () => {
-  it('shows the curled cat emblem for each theme and the name once as text by default', () => {
+  it('draws the default cat once, tinted with the logo colour, and the name once as text', () => {
     const { container } = renderWithProviders(<BrandMark />, 'en');
     expect(screen.getByText(brand.productName)).toBeInTheDocument();
-    const light = container.querySelector('img[data-brand-emblem="light"]');
-    const dark = container.querySelector('img[data-brand-emblem="dark"]');
-    expect(light).toHaveAttribute('src', '/brand/emblem-light.svg');
-    expect(dark).toHaveAttribute('src', '/brand/emblem-dark.svg');
+    // One drawing serves both themes: the --logo token changes with the look and the theme.
+    const emblems = container.querySelectorAll('[data-brand-emblem]');
+    expect(emblems).toHaveLength(1);
+    const emblem = emblems[0] as Element;
+    expect(emblem).toHaveAttribute('data-brand-emblem', 'both');
+    expect(emblem).toHaveAttribute('data-brand-emblem-kind', 'tinted');
+    expect(emblem).toHaveClass('bg-logo');
+    expect(emblem.getAttribute('style')).toContain('/brand/emblem-light.svg');
     // The emblem is decorative: the name beside it says what the link is.
-    expect(light).toHaveAttribute('alt', '');
-    expect(light).toHaveAttribute('aria-hidden', 'true');
+    expect(emblem).toHaveAttribute('aria-hidden', 'true');
+    // The wordmark is drawn in lower case and the logo colour.
+    expect(screen.getByText(brand.productName)).toHaveClass('lowercase', 'text-logo');
   });
 });
 
