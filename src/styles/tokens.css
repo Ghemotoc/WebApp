@@ -3,9 +3,11 @@
  *
  * Where the values come from: the liquid glass design Robert approved on 7 Nov 2026, 19:51 UTC
  * (bundle G1 TOKENS): the handoff doc's "Design tokens and themes" tab and the canvas boards
- * (design/README.md links both). Light is "Lilac mist", the default theme; night is "Revolver"
- * (#2A0E33), the same whichever theme a member picks. The staff area has its own flat beige set,
- * with no purple, so staff always know where they are (handoff, Staff tab).
+ * (design/README.md links both). Light is "Lilac mist", the default theme; night is monochrome
+ * black, white and grey with cobalt buttons on the "galaxy F" background (bundle NIGHT-1, Robert,
+ * 8 Nov 2026), the same whichever theme a member picks. The staff area has its own flat beige set
+ * by day, with no purple, so staff always know where they are (handoff, Staff tab), and the same
+ * flat greys at night.
  *
  * The names stay the ones the app already uses (paper, surface, ink, heading and so on); only the
  * values changed, so every screen took the new colours without being edited. New tokens for the
@@ -46,7 +48,7 @@
   /* Input fill (handoff: --field). */
   --field: rgba(255, 255, 255, 0.78);
 
-  /* Text. Headings Revolver; eyebrows black, never gold (Robert, 7 Nov 2026, 11:48). */
+  /* Text. Headings the darkest plum; eyebrows black, never gold (Robert, 7 Nov 2026, 11:48). */
   --ink: #24133a;
   --heading: #2a0e33;
   --body: #584a6e;
@@ -65,7 +67,8 @@
   --chip-on: #48125d;
   --chip-on-text: #ffffff;
   /* The theme accent (buttons, active tab, bars, dots, switches, the logo): Lilac mist is plum.
-     Bundle G2 sets one per theme; night keeps plum (Robert, 7 Nov 2026, 17:52 and 18:44). */
+     Bundle G2 sets one per theme (Robert, 7 Nov 2026, 17:52 and 18:44); at night it is the light
+     cobalt #5B95EE (NIGHT-1). */
   --accent: #672786;
   --accent-deep: #2a0e33;
   /* The cat logo and the wordmark: the theme accent by day, soft white at night (Robert, 7 Nov
@@ -76,6 +79,8 @@
   --plum-to: #2a0e33;
   /* Text on the plum (or theme accent) gradient of main buttons: white, by day and at night. */
   --on-plum: #ffffff;
+  /* The main button's white rim: 30% by day, 35% at night (bundle NIGHT-1). */
+  --button-main-rim: rgba(255, 255, 255, 0.3);
   /* The segmented control's recessed track and its water bubble (bundle G3). */
   --track: rgba(36, 19, 58, 0.08);
   --bubble: rgba(255, 255, 255, 1);
@@ -186,74 +191,101 @@
 [data-theme='night'] {
   color-scheme: dark;
 
-  /* Revolver: the whole interface at night, the same with every theme (rulebook 3). */
-  --paper: #2a0e33;
-  /* White at 7% over Revolver. */
-  --surface: #391f41;
-  --surface-glass: rgba(255, 255, 255, 0.07);
-  --tint: #432a4c;
-  --panel: #3a2042;
-  --panel-border: #5a4263;
-  --nav-glass: rgba(255, 255, 255, 0.07);
-  --glass-border: rgba(255, 255, 255, 0.16);
-  --glass-highlight: rgba(255, 255, 255, 0.16);
+  /*
+   * Night (bundle NIGHT-1; Robert, 8 Nov 2026, 11:19 to 12:33 UTC, DESIGN thread, canvas v117 to
+   * v124): monochrome black, white and grey, the same with every theme, for members and staff.
+   * Main buttons and switches are cobalt (#0047AB, "to feel like spatial"); links, selected tabs,
+   * progress bars, dots and rings are white or grey. Replaces the plum "Revolver" night of 7 Nov.
+   * The page sits on the "galaxy F" background (--night-sky below; index.css, body::before).
+   */
+  --paper: #111113;
+  /* White at 6% over the page: what a glass card looks like (the canvas glass). */
+  --surface: #1f1f21;
+  --surface-glass: rgba(255, 255, 255, 0.06);
+  --tint: #2a2a2d;
+  --panel: #232326;
+  --panel-border: #3a3a3d;
+  --nav-glass: rgba(255, 255, 255, 0.06);
+  /* The glass rim: white at 14%. */
+  --glass-border: rgba(255, 255, 255, 0.14);
+  --glass-highlight: rgba(255, 255, 255, 0.14);
   --field: rgba(255, 255, 255, 0.08);
 
-  --ink: #f4eef8;
+  /* Text #F5F5F5, muted #CCCCCC (night accessibility review, canvas v117), headings white. */
+  --ink: #f5f5f5;
   --heading: #ffffff;
-  --body: #e6dded;
-  --meta: #e6dded;
+  --body: #cccccc;
+  --meta: #cccccc;
   --eyebrow: #ffffff;
-  --link: #c9c4ff;
-  --link-hover: #ffffff;
+  /* Links are white; in running text they keep their underline, so colour is never the only cue. */
+  --link: #ffffff;
+  --link-hover: #cccccc;
   --destructive: #ff9aa8;
 
-  --gold: #f3dc9b;
-  --on-gold: #26142e;
-  --primary: #f4eef8;
-  --on-primary: #2a0e33;
-  --chip-on: #f4eef8;
-  --chip-on-text: #2a0e33;
-  /* Night keeps plum whatever the theme (Robert, 7 Nov 2026, 18:44). */
-  --accent: #672786;
-  --accent-deep: #2a0e33;
+  /* "Gold" fills (count badges, the current step, unread dots, the switch knob) are white. */
+  --gold: #f5f5f5;
+  --on-gold: #111113;
+  /* Solid fills (selected tabs and section links, carousel dots, progress and chart bars, your own
+     chat bubbles) are white with near-black on them (canvas v117: "white or grey"). */
+  --primary: #f5f5f5;
+  --on-primary: #111113;
+  /* A chip or tab that is on: white with near-black text. */
+  --chip-on: #f5f5f5;
+  --chip-on-text: #111113;
+  /* Accent text, such as the current chapter's dot (canvas v117). */
+  --accent: #5b95ee;
+  --accent-deep: #111113;
   /* The logo and wordmark are soft white at night (Robert, 7 Nov 2026, 19:36). */
-  --logo: #f4eef8;
-  --plum-from: #672786;
-  --plum-to: #2a0e33;
+  --logo: #f5f5f5;
+  /* Main buttons: cobalt, lighter at the top, with white labels and a 35% white rim. */
+  --plum-from: #1a5bc4;
+  --plum-to: #0047ab;
   --on-plum: #ffffff;
-  --track: rgba(0, 0, 0, 0.28);
-  --bubble: rgba(255, 255, 255, 0.18);
+  --button-main-rim: rgba(255, 255, 255, 0.35);
+  --track: rgba(0, 0, 0, 0.35);
+  /* The selected segment's knob: white glass at 22% (canvas v117). */
+  --bubble: rgba(255, 255, 255, 0.22);
   --tab-current: var(--ink);
   --strength-weak: #ff9aa8;
   --strength-fair: #ffd36a;
   --strength-strong: #8fe0b5;
   --strength-very-strong: #3fcf8a;
 
-  --border: #5a4263;
-  --hairline: #432a4c;
-  --control-border: #a593b0;
-  --dashed-border: #7a6585;
-  --focus-ring: #f4eef8;
-  --focus-halo: rgba(42, 14, 51, 0.9);
+  /* Lines are white at 16%; field and chip edges stay at 3:1 or more (WCAG 2.2, 1.4.11). */
+  --border: #3a3a3d;
+  --hairline: #2a2a2d;
+  --control-border: #8a8a8e;
+  --dashed-border: #6e6e72;
+  --focus-ring: #ffffff;
+  --focus-halo: rgba(17, 17, 19, 0.9);
 
-  --blob-1: #4d1b5e;
-  --blob-2: #3d348b;
-  --blob-3: #5a1e4e;
+  /* The day blobs are not drawn at night (the galaxy replaces them); greys for anything that
+     still reads them. */
+  --blob-1: #1c1c20;
+  --blob-2: #18181c;
+  --blob-3: #1e1e22;
+  /*
+   * The night background, in one variable so swapping it is a one-line change (Robert, 8 Nov 2026,
+   * 12:18 and 12:33 UTC): "galaxy F", two vector SVGs of soft glows drawn by us (no photo, no
+   * licence), static, sharp at any size. Phones and tablets under 1024 px get the portrait one.
+   */
+  --night-sky: #111113 url('/night-galaxy-desktop.svg') center / cover no-repeat;
 
-  /* Black paper with light text at night (rulebook 3). */
-  --story-paper: #1e1520;
-  --story-ink: #ede4d8;
+  /* Dark reading paper with light text (canvas v117). */
+  --story-paper: #1a1a1c;
+  --story-ink: #ededed;
 
-  --progress-from: #b07fd6;
-  --progress-to: #f1e4fa;
+  /* Progress bars are white (canvas v117: "bars white"). */
+  --progress-from: #cccccc;
+  --progress-to: #ffffff;
 
   --success-bg: #1d3a2e;
   --success-border: #4f8a6c;
   --success-text: #8fe0b5;
-  --info-bg: #3d2a5a;
-  --info-border: #6e5a99;
-  --info-text: #e6ddff;
+  /* Info notices, and the shared-passage tint in the reader: white at 12% (canvas v117). */
+  --info-bg: #2e2e30;
+  --info-border: #5a5a5e;
+  --info-text: #f5f5f5;
   --warning-bg: #3f2c14;
   --warning-border: #8a6a33;
   --warning-text: #ffc98a;
@@ -261,9 +293,11 @@
   --error-border: #8f4a5c;
   --error-text: #ff9aa8;
 
-  --pill-plum-bg: #3d2a5a;
-  --pill-plum-border: #6e5a99;
-  --pill-plum-text: #ece4ff;
+  /* The plum pill turns grey: no plum at night. The other pills keep a dark tint of their hue,
+     because a rating or a status is learnt by its colour (DoD pill system). */
+  --pill-plum-bg: #2a2a2d;
+  --pill-plum-border: #5a5a5e;
+  --pill-plum-text: #f5f5f5;
   --pill-sage-bg: #1d3a2e;
   --pill-sage-border: #4f8a6c;
   --pill-sage-text: #bfe3cd;
@@ -273,36 +307,33 @@
   --pill-sky-bg: #1e2a40;
   --pill-sky-border: #4f6a99;
   --pill-sky-text: #cfdcf2;
-  --pill-neutral-bg: #2e2533;
-  --pill-neutral-border: #5c4f63;
-  --pill-neutral-text: #e5dee8;
+  --pill-neutral-bg: #262629;
+  --pill-neutral-border: #5a5a5e;
+  --pill-neutral-text: #e6e6e6;
   --pill-blush-bg: #45192a;
   --pill-blush-border: #8f4a5c;
   --pill-blush-text: #ffc3cc;
 
   /*
-   * Lane B: doodle colours at night. The ink lines turn light, so every fill has to turn dark
-   * too, or light lines on pastel fills would vanish. The fills reuse the night pill-system
-   * mid-tones (plum, gold, sage, blush, sky) so the drawings stay inside the DoD palette; the
-   * golds are darker than the pills' so the light lines still read on them. Proposal: Robert
-   * signs off on the 98-doodle sheet in light and night before this merges (23 Oct 2026).
+   * Doodle colours at night. The decorative doodles are gone (G4); the staff pickers still show
+   * the drawings until G12, so their lines turn light and their fills dark grey.
    */
-  --doodle-ink: #e9ddf0;
-  --doodle-paper: #2a1633;
+  --doodle-ink: #ededed;
+  --doodle-paper: #1a1a1c;
   --doodle-gold: #a8852a;
   --doodle-gold-soft: #6e5a1f;
   --doodle-blush: #a85a6c;
   --doodle-blush-soft: #8a4a57;
-  --doodle-plum-soft: #6b4a7c;
+  --doodle-plum-soft: #4a4a4e;
   --doodle-sky-soft: #4f6a99;
   --doodle-sage-soft: #4f7a62;
 
-  --shadow-nav: 0 1px 2px rgba(0, 0, 0, 0.25), 0 10px 30px -12px rgba(0, 0, 0, 0.45);
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.25), 0 18px 44px -24px rgba(0, 0, 0, 0.45);
-  --shadow-popover: 0 1px 2px rgba(0, 0, 0, 0.3), 0 24px 56px -20px rgba(0, 0, 0, 0.6);
+  --shadow-nav: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 30px -12px rgba(0, 0, 0, 0.55);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 18px 44px -24px rgba(0, 0, 0, 0.55);
+  --shadow-popover: 0 1px 2px rgba(0, 0, 0, 0.35), 0 24px 56px -20px rgba(0, 0, 0, 0.7);
 
-  /* Story Atlas relationship lines (S1-E17-15), lightened for night cards. */
-  --atlas-line-family: #e9ddf0;
+  /* Story Atlas relationship lines (S1-E17-15), light on night cards; family is white. */
+  --atlas-line-family: #f5f5f5;
   --atlas-line-love: #f4a6c8;
   --atlas-line-lineage: #e6c24c;
   --atlas-line-allies: #9fd3a8;
@@ -310,11 +341,18 @@
   --atlas-line-other: #c6d0da;
 }
 
+/* Phones, tablets and any window under 1024 px: the softer portrait galaxy (canvas v123). */
+@media (max-width: 1023px) {
+  [data-theme='night'] {
+    --night-sky: #111113 url('/night-galaxy-mobile.svg') center / cover no-repeat;
+  }
+}
+
 /*
  * Looks (bundle G2 THEMES; handoff "Design tokens and themes", "Themes" and "Accent colour per
  * theme"): the year-round themes a member picks in Settings › Appearance and the seasonal looks.
  * src/lib/looks.ts sets data-look on <html>; each block applies only by day (data-theme="light"),
- * because night mode is Revolver with every look. Lilac mist is the :root set above. A look
+ * because night mode is the same monochrome set with every look. Lilac mist is the :root set above. A look
  * changes the page colour, the text colours, the three blobs and its one accent, which colours
  * main buttons, chips that are on, links, focus rings, progress bars and the logo (Robert, 7 Nov
  * 2026, 17:52 and 18:44). White on every accent and every accent on its page pass AA (checked by
@@ -567,7 +605,7 @@
  * The staff area: its own flat, warm beige look with no purple, so staff always know they are in
  * the admin site (handoff, Staff tab; rulebook 3). StaffLayout puts data-area="staff" on its root,
  * so these values replace the member ones for everything inside it. Cards are flat (no glass) and
- * the background has no colour blobs. Night mode turns it a warm dark brown, still without purple.
+ * the background has no colour blobs. At night it takes the members' monochrome greys, flat.
  */
 [data-area='staff'] {
   /* The staff area's logo is its neutral ink, never purple (handoff, Staff tab). */
@@ -623,57 +661,58 @@
 }
 
 [data-theme='night'] [data-area='staff'] {
-  /* The staff area's logo is its neutral ink, never purple (handoff, Staff tab). */
-  --logo: #f3ece0;
-  --paper: #1f1a16;
-  --surface: #2a241f;
-  --surface-glass: #2a241f;
-  --tint: #362e27;
-  --panel: #312a24;
-  --panel-border: #4f4439;
-  --nav-glass: #2a241f;
-  --glass-border: #4f4439;
+  /* Staff at night: the members' monochrome night, flat (no glass, no galaxy), with the same
+     cobalt main buttons (bundle NIGHT-1; Robert, 8 Nov 2026: "every theme, members, staff"). */
+  --logo: #f5f5f5;
+  --paper: #111113;
+  --surface: #1f1f21;
+  --surface-glass: #1f1f21;
+  --tint: #2a2a2d;
+  --panel: #232326;
+  --panel-border: #3a3a3d;
+  --nav-glass: #1f1f21;
+  --glass-border: #3a3a3d;
   --glass-highlight: rgba(255, 255, 255, 0.08);
-  --field: #2a241f;
+  --field: #1f1f21;
 
-  --ink: #f3ece0;
+  --ink: #f5f5f5;
   --heading: #ffffff;
-  --body: #e0d5c6;
-  --meta: #e0d5c6;
+  --body: #cccccc;
+  --meta: #cccccc;
   --eyebrow: #ffffff;
-  --link: #f3ece0;
-  --link-hover: #ffffff;
+  --link: #ffffff;
+  --link-hover: #cccccc;
   --destructive: #ff9aa8;
 
-  --primary: #f3ece0;
-  --on-primary: #1f1a16;
-  --chip-on: #f3ece0;
-  --chip-on-text: #1f1a16;
-  --accent: #f3ece0;
-  --accent-deep: #ffffff;
-  --plum-from: #f3ece0;
-  --plum-to: #e0d5c6;
-  --on-plum: #1f1a16;
+  --primary: #f5f5f5;
+  --on-primary: #111113;
+  --chip-on: #f5f5f5;
+  --chip-on-text: #111113;
+  --accent: #5b95ee;
+  --accent-deep: #111113;
+  --plum-from: #1a5bc4;
+  --plum-to: #0047ab;
+  --on-plum: #ffffff;
 
-  --border: #4f4439;
-  --hairline: #362e27;
-  --control-border: #a3968a;
-  --dashed-border: #75685b;
-  --focus-ring: #f3ece0;
-  --focus-halo: rgba(31, 26, 22, 0.9);
+  --border: #3a3a3d;
+  --hairline: #2a2a2d;
+  --control-border: #8a8a8e;
+  --dashed-border: #6e6e72;
+  --focus-ring: #ffffff;
+  --focus-halo: rgba(17, 17, 19, 0.9);
 
-  --info-bg: #362e27;
-  --info-border: #6b5d4f;
-  --info-text: #f3ece0;
-  --pill-plum-bg: #362e27;
-  --pill-plum-border: #6b5d4f;
-  --pill-plum-text: #f3ece0;
-  --pill-neutral-bg: #312a24;
-  --pill-neutral-border: #6b5d4f;
-  --pill-neutral-text: #f3ece0;
+  --info-bg: #2e2e30;
+  --info-border: #5a5a5e;
+  --info-text: #f5f5f5;
+  --pill-plum-bg: #2a2a2d;
+  --pill-plum-border: #5a5a5e;
+  --pill-plum-text: #f5f5f5;
+  --pill-neutral-bg: #262629;
+  --pill-neutral-border: #5a5a5e;
+  --pill-neutral-text: #e6e6e6;
 
-  --progress-from: #e0d5c6;
-  --progress-to: #75685b;
+  --progress-from: #cccccc;
+  --progress-to: #ffffff;
 }
 
 /* Tailwind classes from the tokens: bg-paper, text-ink, border-control-border and so on. */

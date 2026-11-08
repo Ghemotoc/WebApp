@@ -40,8 +40,8 @@
 /*
  * Buttons (bundle G3 COMPONENTS; handoff "Components: variants and states", "Buttons and pills").
  * button-main is the action that finishes a task (Publish, Save, Continue): the theme accent's
- * gradient (plum in Lilac mist and at night; black in the staff area), white text and a soft top
- * highlight. button-glass is every add action and "not yet" state (New story, Add chapter,
+ * gradient (plum in Lilac mist, cobalt at night; black in the staff area by day), white text, a soft top
+ * highlight and a white rim (30% by day, 35% at night). button-glass is every add action and "not yet" state (New story, Add chapter,
  * Follow): clear grey glass with ink text and a 3:1 edge. Both brighten a little on hover and
  * press to 98 % (120 ms); reduce motion turns the press off with every other transition. A
  * disabled button is half see-through and takes no pointer. Button.tsx uses these, and so do
@@ -51,7 +51,7 @@
   background-color: var(--plum-to);
   background-image: linear-gradient(180deg, var(--plum-from), var(--plum-to));
   color: var(--on-plum);
-  border: 1px solid rgb(255 255 255 / 0.3);
+  border: 1px solid var(--button-main-rim);
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 0.35),
     0 10px 22px -12px color-mix(in srgb, var(--plum-to) 70%, transparent);
@@ -209,6 +209,15 @@ body::before {
 }
 
 /*
+ * At night the blobs give way to the "galaxy F" sky (bundle NIGHT-1; Robert, 8 Nov 2026, 12:30
+ * UTC): a static vector picture of soft lights, kept in one variable (--night-sky in tokens.css)
+ * so it can be swapped in one line. It is an SVG, so it stays sharp at any size.
+ */
+[data-theme='night'] body::before {
+  background: var(--night-sky);
+}
+
+/*
  * Glass: every card that uses bg-surface is see-through white over the still colour blobs
  * (handoff: --glass-bg). Blurring what lies behind (handoff: --glass-blur, blur(24px)
  * saturate(180%)) costs a weaker phone a lot when a page has dozens of cards, and over soft blobs
@@ -313,6 +322,21 @@ dialog.bg-surface,
     inset 0 -3px 6px rgb(20 10 30 / 0.18),
     inset 0 1px 1px rgb(255 255 255 / 0.7),
     0 6px 14px -8px rgb(36 19 58 / 0.5);
+}
+
+/* At night every initials bead is cobalt with white initials (about 8.6:1), so the monochrome
+   pages keep one calm colour (night accessibility review, canvas v117; bundle NIGHT-1). */
+[data-theme='night'] .switch-track-on {
+  /* An "on" switch at night is cobalt with a 35% white rim, so its edge still reads on the black
+     page (WCAG 2.2, 1.4.11); its white knob and the On word say the state (canvas v117; NIGHT-1).
+     By day it is the theme's solid colour (bg-primary in SwitchButton.tsx). */
+  background-color: #0047ab;
+  border-color: rgb(255 255 255 / 0.35);
+}
+
+[data-theme='night'] .avatar-bead {
+  background-color: #0047ab;
+  color: #ffffff;
 }
 
 /*

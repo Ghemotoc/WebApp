@@ -42,8 +42,8 @@ const personaIds: Record<PersonaName, string> = {
 };
 
 /** The page background in each theme, from src/styles/tokens.css (--paper): Lilac mist by day,
- * Revolver at night (the liquid glass design, bundle G1). */
-const paperColour = { light: 'rgb(243, 238, 251)', night: 'rgb(42, 14, 51)' };
+ * near-black at night (the liquid glass design, bundle G1; monochrome night, NIGHT-1). */
+const paperColour = { light: 'rgb(243, 238, 251)', night: 'rgb(17, 17, 19)' };
 
 /** The home heading in each language. */
 const homeHeading = {

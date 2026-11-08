@@ -126,8 +126,10 @@ describe('design token contrast', () => {
     expect(themes.night.get('eyebrow')).toBe('#ffffff');
   });
 
-  it('turns the whole interface Revolver at night', () => {
-    expect(themes.night.get('paper')).toBe('#2a0e33');
+  it('turns the whole interface monochrome at night, with cobalt main buttons and switches (NIGHT-1)', () => {
+    expect(themes.night.get('paper')).toBe('#111113');
+    expect(themes.night.get('ink')).toBe('#f5f5f5');
+    expect(themes.night.get('plum-to')).toBe('#0047ab');
   });
 
   it('keeps purple out of the staff area', () => {
