@@ -162,9 +162,10 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
     await expect(page.locator(`#${idBase}-save`)).toHaveText('Saved');
     await item.getByLabel('Type', { exact: true }).selectOption('decision');
     await expect(item).toContainText('Decision');
-    expect(savedIdea('Who put the lighthouse out?')).toBe(
-      'decision|Who put the lighthouse out?|The keeper did. Chapter 4.|true',
-    );
+    // The label changes on screen before the save reaches the database, so wait for the row.
+    await expect
+      .poll(() => savedIdea('Who put the lighthouse out?'))
+      .toBe('decision|Who put the lighthouse out?|The keeper did. Chapter 4.|true');
     // Delete asks first; "Keep it" keeps it, "Yes, delete it" deletes it.
     const todo = page.getByTestId('atlas-idea-item').filter({ hasText: 'To-do' });
     await todo.getByRole('button', { name: 'Delete “Check the tide tables”' }).click();

@@ -59,6 +59,7 @@ What you give us:
 - What you make: stories, chapters, drafts, comments, forum posts, private messages, pictures and drawings. Also the ratings and labels you give your stories.
 - What you do: likes, follows, your library and where you are in a story, and private downvotes (only our staff can see these). Reads are counted per day as totals, not as a list of who read what.
 - When you contact us: support messages, reports you make, appeals and data requests.
+- Before you join, if you ask us to tell you when we open in your country: your email address, your connection’s country and the language of the page. [lawyer to check]
 - Optional extras: if you ask for a Teacher badge, your school email address or the proof you send (we delete the proof once we’ve checked it). If you ask for a writing certificate, the name you want printed on it.
 
 What we get from others:
@@ -113,6 +114,8 @@ Security and stopping spam. Scrambled IP addresses, sign-in limits and spam limi
 Keeping the app working. The record of the app’s requests (above), to find and fix faults and to trace a problem you tell us about. Legal basis: our legitimate interest in an app that works. [lawyer to check]
 
 Your country. The country you live in sets the ages that apply to you: the age to join and the age below which a parent or guardian has to agree. We also use it, and your connection’s country, to open Ghemotoc only where we’re ready. Legal basis: our legal duty to apply the age rules where you live, and our legitimate interest. [lawyer to check]
+
+Telling you when we open in your country. Before you have an account, you can leave your email address on the “We’re not open in your country yet” page. We send one email to confirm it and, once you’ve confirmed, one email on the day we open there. Legal basis: your consent, which you give by confirming the address and can take back at any time with the link in the email. [lawyer to check]
 
 Answering you. Support requests and data requests. Legal basis: your consent when you write to us, and our legal duty to answer requests about your data.
 
@@ -245,6 +248,10 @@ Requests and support
 - Your data download files: deleted 7 days after they’re ready.
 - Records of data requests (what was asked, when, the identity check and what we sent, but not the files): [OPEN: to be set]
 - Support requests: [OPEN: proposal, 2 years after the request is closed]
+
+Before you join
+
+- “Tell me when you open here”: if you don’t confirm your address, we delete it after 7 days. Once confirmed, we keep it until we email you that we’re open, then delete it 7 days later. You can take it off the list at any time with the link in the email. [lawyer to check]
 
 Optional extras
 

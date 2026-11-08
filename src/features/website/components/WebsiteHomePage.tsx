@@ -4,7 +4,8 @@
  * What it shows, top to bottom, in the board's order: the hero with its cover wall (LOOK-2),
  * "Why write here" with the quiet safety row, Trending this week with genre chips, Completed
  * stories and New and rising writers (HomeShelves), the dark writers' band, the forums band, the
- * gold "Start your first story" band, "Apps come later", the questions in two columns and the big
+ * gold "Start your first story" band, "Apps come later", the questions in two columns (one open at
+ * a time, with FAQPage data for search engines and "Something else?" links; G5b) and the big
  * footer (LOOK-3). Every word of the page comes only from the published CMS content for the
  * visitor's market and language (S1-E11-06, S1-E11-12; decided 17 Oct 2026, 19:14); a band whose
  * heading is empty is left out. Shelf titles, the footer's columns and the top bar are interface
@@ -14,7 +15,9 @@
  * questions, HomeShelves, the four bands and HomeFooterColumns.
  */
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
 
+import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import {
@@ -35,6 +38,7 @@ import { HomeFooterColumns } from './HomeFooterColumns';
 import { HomeHero } from './HomeHero';
 import { HomeShelves } from './HomeShelves';
 import { QuestionList } from './QuestionList';
+import { QuestionsStructuredData } from './QuestionsStructuredData';
 import { homeQuestionsAnchor, SafetySection } from './SafetySection';
 import { WhyWriteSection } from './WhyWriteSection';
 import { WriteBand } from './WriteBand';
@@ -50,6 +54,42 @@ function useHomeQuestions(): ParsedEntry<QuestionContent>[] {
   return entries.filter((entry) => entry.content.showOn !== 'help');
 }
 
+/** Where "Something else?" points, under the questions heading (board Website-Home). */
+const moreHelpLinks = [
+  { href: '/contact', labelKey: 'website.moreHelp.contact' },
+  { href: '/legal/guidelines', labelKey: 'website.moreHelp.guidelines' },
+  { href: '/report', labelKey: 'website.moreHelp.report' },
+] as const;
+
+/**
+ * "Something else?" and three links, under the questions heading. They are navigation, like the
+ * footer, so their words are interface text rather than CMS text (G5b).
+ *
+ * @returns the lead line and the links
+ */
+function MoreHelpLinks() {
+  const { t } = useTranslation();
+  return (
+    <nav aria-labelledby="more-help-lead" className="flex flex-col gap-1">
+      <p id="more-help-lead" className="m-0 text-body">
+        {t('website.moreHelp.lead')}
+      </p>
+      <ul className="m-0 flex list-none flex-col p-0">
+        {moreHelpLinks.map((link) => (
+          <li key={link.href}>
+            <Link
+              to={link.href}
+              className="inline-flex min-h-11 items-center font-semibold text-heading underline-offset-4 hover:underline"
+            >
+              {t(link.labelKey)}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
 /**
  * The questions shown on the home page, under the page's own heading.
  *
@@ -62,6 +102,7 @@ function HomeQuestions({
   page: HomePageContent;
   questions: ParsedEntry<QuestionContent>[];
 }) {
+  const { t } = useTranslation();
   if (questions.length === 0) return null;
   return (
     <section
@@ -69,16 +110,19 @@ function HomeQuestions({
       aria-labelledby="questions-heading"
       className="grid scroll-mt-6 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-12"
     >
-      {/* The heading on one side, the questions on the other (board, LOOK-3). */}
-      <div className="flex flex-col gap-6">
+      {/* The heading and "Something else?" on one side, the questions on the other (board). */}
+      <div className="flex flex-col gap-4">
+        <Eyebrow>{t('website.questionsEyebrow')}</Eyebrow>
         <h2
           id="questions-heading"
           className="m-0 font-heading text-[clamp(28px,3vw,40px)] font-extrabold text-heading"
         >
           {withBrand(page.questionsHeading)}
         </h2>
+        <MoreHelpLinks />
       </div>
-      <QuestionList questions={questions} />
+      <QuestionList questions={questions} groupName="home-questions" />
+      <QuestionsStructuredData questions={questions} />
     </section>
   );
 }

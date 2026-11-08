@@ -59,6 +59,7 @@ Ce ne dai tu:
 - Ce creezi: povești, capitole, ciorne, comentarii, postări pe forum, mesaje private, imagini și desene. Și clasificările și etichetele pe care le dai poveștilor tale.
 - Ce faci: aprecieri, urmăriri, biblioteca ta și unde ai ajuns într-o poveste, plus voturile negative private (doar echipa noastră le poate vedea). Citirile sunt numărate pe zi, ca totaluri, nu ca o listă cu cine ce a citit.
 - Când ne contactezi: mesajele către suport, raportările pe care le faci, contestațiile și cererile despre date.
+- Înainte să te înscrii, dacă ne ceri să-ți spunem când deschidem în țara ta: adresa ta de email, țara conexiunii tale și limba paginii. [de verificat de avocat]
 - Extra, dacă vrei: dacă ceri o insignă de Profesor, adresa de email a școlii sau dovada pe care o trimiți (ștergem dovada după ce am verificat-o). Dacă ceri un certificat de scriere, numele pe care vrei să fie tipărit pe el.
 
 Ce primim de la alții:
@@ -113,6 +114,8 @@ Securitate și oprirea spamului. Adrese IP amestecate, limite la conectare și l
 Ca aplicația să funcționeze. Evidența cererilor aplicației (mai sus), ca să găsim și să reparăm defecte și să urmărim o problemă despre care ne spui. Temei legal: interesul nostru legitim de a avea o aplicație care funcționează. [de verificat de avocat]
 
 Țara ta. Țara în care locuiești stabilește vârstele care ți se aplică: vârsta de la care te poți înscrie și vârsta sub care trebuie să fie de acord un părinte sau tutore. O folosim și pe ea, și țara conexiunii, ca să deschidem Ghemotoc doar acolo unde suntem pregătiți. Temei legal: obligația noastră legală de a aplica regulile de vârstă de acolo unde locuiești și interesul nostru legitim. [de verificat de avocat]
+
+Să-ți spunem când deschidem în țara ta. Înainte să ai un cont, îți poți lăsa adresa de email pe pagina „Încă nu suntem deschiși în țara ta”. Îți trimitem un email ca s-o confirmi și, după ce ai confirmat-o, un email în ziua în care deschidem acolo. Temei legal: acordul tău, pe care îl dai când confirmi adresa și pe care îl poți retrage oricând cu linkul din email. [de verificat de avocat]
 
 Răspunsurile către tine. Cererile de suport și cererile despre date. Temei legal: acordul tău când ne scrii și obligația noastră legală de a răspunde cererilor despre datele tale.
 
@@ -245,6 +248,10 @@ Cereri și suport
 - Fișierele cu descărcarea datelor tale: șterse la 7 zile după ce sunt gata.
 - Evidența cererilor despre date (ce s-a cerut, când, verificarea identității și ce am trimis, dar nu fișierele): [DESCHIS: de stabilit]
 - Cererile de suport: [DESCHIS: propunere, 2 ani după închiderea cererii]
+
+Înainte să te înscrii
+
+- „Anunță-mă când vă deschideți aici”: dacă nu îți confirmi adresa, o ștergem după 7 zile. După ce ai confirmat-o, o păstrăm până când îți scriem că am deschis, apoi o ștergem după 7 zile. O poți scoate oricând de pe listă cu linkul din email. [de verificat de avocat]
 
 Extra, dacă vrei
 

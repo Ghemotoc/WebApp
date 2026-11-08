@@ -3,6 +3,7 @@
 "Write to us": the Contact us form for users and visitors, at `/contact`. Started by S1-E14-04 (decided 23 Oct 2026, Q10). No doodles (a contact and reporting screen, Definition of Done).
 
 - `components/ContactPage.tsx`: the page, the "report content elsewhere" line and "Message sent" with the reference.
+- `components/ContactOtherWays.tsx`: "Other ways to reach us" beside the form (the contact email from the brand config, Report something, the Help centre; G5b).
 - `components/ContactForm.tsx`: topic chips, the message, the email for a visitor (a signed-in person's account email is used, Q10e), the hidden honeypot field (Q10d) and Send.
 - `hooks/useContactForm.ts`, `api/contact.ts`: who is sending (from the session: email, username and user ID, never the year of birth), and `POST /api/contact`.
 - `src/schemas/contact.ts`: the shared contract, checked in the browser and on the server.

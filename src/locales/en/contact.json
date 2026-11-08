@@ -36,5 +36,13 @@
     "invalid": "Something in the message was refused. Check the fields and try again.",
     "unsent": "We couldn’t send your message right now. Please try again in a few minutes, or email us directly at {{supportEmail}}.",
     "unreachable": "We couldn’t reach our server. Check your connection and try again."
+  },
+  "otherWays": {
+    "heading": "Other ways to reach us",
+    "emailTitle": "Email",
+    "reportTitle": "Report something",
+    "reportLine": "No account needed",
+    "helpTitle": "Help centre",
+    "helpLine": "Answers to common questions"
   }
 }

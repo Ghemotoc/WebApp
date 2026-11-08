@@ -29,6 +29,9 @@ const reviewedHosts: Record<string, string> = {
   'json-schema.org': 'the JSON Schema identifier inside zod; never loaded',
   'tailwindcss.com': 'the licence comment in the built stylesheet; never loaded',
   'prosemirror.net': 'a link in an editor warning; never loaded',
+  // The FAQPage data on the home page and Help (G5b) names its vocabulary; search engines read
+  // it, the browser never runs it and nothing is loaded from it.
+  'schema.org': 'the vocabulary name in FAQPage structured data (G5b); never loaded',
   // The Word builder (S1-E13-02, the docx library): XML namespaces written into every .docx file
   // and one help link in a comment; none is ever loaded.
   'schemas.openxmlformats.org': 'Word file XML namespaces (docx library); never loaded',
