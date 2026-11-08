@@ -160,8 +160,12 @@ export function AccountMenu({ initial, name, handle }: AccountMenuProps) {
         onClick={() => setIsOpen(!isOpen)}
         className="inline-flex size-11 items-center justify-center rounded-full"
       >
-        {/* The same bead (or drawn avatar) as beside the person's name everywhere else. */}
-        <PersonAvatar name={name ?? initial} handle={handle} size="large" />
+        {/* The same bead (or drawn avatar) as beside the person's name everywhere else. Hidden
+            from screen readers: the button's name is "Your account", and visible initials that
+            aren't in that name would trip WCAG 2.5.3 (label in name). */}
+        <span aria-hidden="true" className="inline-flex">
+          <PersonAvatar name={name ?? initial} handle={handle} size="large" />
+        </span>
       </button>
       <div
         id="account-menu-panel"
