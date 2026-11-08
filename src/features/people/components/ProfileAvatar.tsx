@@ -28,10 +28,10 @@ export function ProfileAvatar({ name, handle }: { name: string; handle: string }
         aria-hidden="true"
         data-avatar-bead
         style={beadStyleFor(handle)}
-        className="avatar-bead inline-flex size-full items-center justify-center rounded-full font-heading text-[44px] font-extrabold sm:text-[56px]"
+        className="avatar-bead inline-flex size-full items-center justify-center rounded-full font-heading text-[46px] font-extrabold sm:text-[60px]"
       >
         {/* The initials sit in their own box, one line high, so only the letters count as text. */}
-        <span className="leading-none">{initialsOf(name)}</span>
+        <span className="avatar-bead-initials">{initialsOf(name)}</span>
       </span>
       <span aria-hidden="true" className="absolute inset-0">
         <AvatarImage handle={handle} />

@@ -49,7 +49,7 @@ function AvatarBuilder({ handle, saved }: { handle: string; saved: AvatarRecipe 
     <div className="flex flex-col gap-6 md:flex-row md:items-start">
       {/* Step 1: the big preview; it stays in view beside the tabs on a wide screen. */}
       <div className="flex flex-col items-center gap-2 md:sticky md:top-6">
-        <span className="relative inline-flex size-40 flex-none rounded-full border border-border bg-panel">
+        <span className="avatar-picture relative inline-flex size-40 flex-none rounded-full bg-panel">
           <AvatarDrawing recipe={draft.draft} alt={t('builder.previewAlt')} className="size-full" />
         </span>
         <p className="m-0 text-sm text-meta">

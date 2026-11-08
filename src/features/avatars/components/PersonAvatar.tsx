@@ -18,12 +18,15 @@ import { beadStyleFor } from '../lib/beadColours';
 
 import { AvatarImage } from './AvatarImage';
 
-/** The sizes in use, with the initials' text size for each. */
+/**
+ * The sizes in use, with the initials' text size for each: about 45% of the bead, so two initials
+ * span more than half of it (Robert, 8 Nov 2026) and the widest pair ("WW") still clears the edge.
+ */
 const sizeClasses = {
-  small: 'size-[34px] text-sm',
-  medium: 'size-10 text-base',
-  large: 'size-11 text-base',
-  xlarge: 'size-12 text-lg',
+  small: 'size-[34px] text-[15px]',
+  medium: 'size-10 text-[18px]',
+  large: 'size-11 text-[20px]',
+  xlarge: 'size-12 text-[22px]',
 } as const;
 
 /** What the avatar needs. */
@@ -53,11 +56,11 @@ export function PersonAvatar({ name, handle, size = 'medium' }: PersonAvatarProp
         style={beadStyleFor(handle ?? name)}
         className="avatar-bead inline-flex size-full items-center justify-center rounded-full font-heading font-extrabold"
       >
-        {initialsOf(name)}
+        <span className="avatar-bead-initials">{initialsOf(name)}</span>
       </span>
       {/* Step 2: the drawn avatar on top, once it has loaded (nothing when there is none). */}
       {handle !== null && (
-        <span className="absolute inset-0 overflow-hidden rounded-full">
+        <span className="absolute inset-0 rounded-full">
           <AvatarImage handle={handle} />
         </span>
       )}

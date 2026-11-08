@@ -2,7 +2,7 @@
  * CountryChangeForm: choose the country you live in and save it (bundle MARKETS-1, stories
  * S1-E2-20 and S1-E2-22).
  *
- * Who uses it: CountrySetting (Settings › Account) and CountryQuestionNotice (asked once).
+ * Who uses it: CountrySetting (Settings › Account).
  * What it calls: useMyCountry → set_my_country(), which checks the new country's age rule before
  * anything is saved. What the person sees after "Save":
  * - saved, and the rules there need nothing more;
