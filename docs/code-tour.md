@@ -266,7 +266,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `src/features/<feature>/` | One folder per feature: `components/` (screens), `hooks/` (data hooks), `api/` (Supabase calls) and a `README.md` | each feature story; `home/` by S1-E1-01 |
 | `src/lib/` | Shared helpers: `i18n.ts` (translations), `utils.ts` (`cn` for class names), `database.types.ts` (generated, never edited by hand), `supabase.ts` (the one browser client, loaded on demand; null without settings), `language-preference.ts` (the language kept in this browser), `romanian-text.ts` (ş and ţ become ș and ț), `query-retry.ts` (a refused read, 401 or 403, isn't retried; api/ functions keep the response status as the error's cause), and later `platform/` adapters | S1-E1-01, S1-E1-02, S1-E1-04, S1-E2-QA |
 | `src/locales/ro/`, `src/locales/en/` | All interface text, one JSON file per namespace; same keys in both | S1-E1-01, S1-E1-04 |
-| `src/styles/` | `tokens.css` (every colour: Lilac mist by day, Revolver at night and the beige staff set under `data-area="staff"`, plus fonts, type sizes, radii and shadows, from the liquid glass handoff), `fonts.css` (self-hosted fonts, Literata for story text), `index.css` (global rules: the still colour blobs behind every page, glass blur on `bg-surface`, focus ring with its halo, reduce motion and reduce transparency, tmc-* classes), `contrast-pairs.ts` (the pairs CI checks in all four looks, `scripts/token-contrast.test.ts`) | S1-E1-01, S1-E1-03, G1 |
+| `src/styles/` | `tokens.css` (every colour: Lilac mist by day, one block per other look under `data-look` (G2), Revolver at night and the beige staff set under `data-area="staff"`, plus fonts, type sizes, radii and shadows, from the liquid glass handoff), `fonts.css` (self-hosted fonts, Literata for story text), `index.css` (global rules: the still colour blobs behind every page, glass blur on `bg-surface`, focus ring with its halo, reduce motion and reduce transparency, tmc-* classes), `contrast-pairs.ts` (the pairs CI checks in all four looks, `scripts/token-contrast.test.ts`) | S1-E1-01, S1-E1-03, G1 |
 | `src/schemas/` | zod schemas shared with edge functions | first story with a form or function |
 | `src/test/` | Test set-up; later fixtures and MSW mocks | S1-E1-01 |
 | `public/` | Files copied as they are into `dist/`: `_redirects` (every address serves `index.html` on Cloudflare Pages), `theme-init.js` (light or night before the first paint) and `zod-init.js` (zod without eval, QA-1c) | S1-E1-01, S1-E1-03 |
@@ -1615,6 +1615,10 @@ Popular is every list's default except New stories (newest), Recently updated an
 Tests: `155-story-scores.test.sql`, `e2e/ranking.spec.ts`.
 
 
+### Themes and Settings › Appearance (G2 THEMES)
+
+A member picks one of six year-round themes, light, night or Match my device, and whether the seasonal looks switch on by themselves, in Settings › Appearance (`/settings#appearance`). The click goes `AppearanceSettingsSection` → `useAppearance().change()` → `appearanceStore` (the page changes at once and this device remembers it) → `set_my_appearance()` → `profiles.look`, `colour_mode`, `seasonal_looks` and `appearance_saved_at` on the caller's own row. On another device `useAccountAppearance` (in AppLayout and StaffLayout) reads those columns at sign-in through `profiles_select_own` and shows them; a member who never saved keeps each device's own choice. `src/lib/looks.ts` decides which look shows today (a seasonal one from the public setting `seasonal_look_dates`), sets `data-look` on `<html>` and remembers it, so `public/theme-init.js` draws it before the first paint next time. `src/styles/tokens.css` turns `data-look` into colours by day; night is Revolver with every look and the staff area ignores looks. The logo (`BrandMark`) is drawn in the `--logo` colour, the look's accent by day. Tests: `src/lib/looks.test.ts`, `scripts/token-contrast.test.ts`, `supabase/tests/database/311-appearance.test.sql`, `e2e/appearance.spec.ts`.
+
 ### Featured this week (S1-E5-10, LOOK-4a)
 
 - **Staff side:** Stories › Featured (`/staff/featured`, area `featured`: owner and admin) is `src/features/staff/components/featured/FeaturedPage.tsx`. It reads `admin_featured_candidates()` through `hooks/useFeaturedPicks.ts` and `api/featured.ts`, sorts the rows on screen only (`featuredColumns.tsx`) and saves with `admin_set_featured_picks()`, which checks the role, the staff session and `may_feature_writer()` (16 or over, active), writes `featured_picks`, the audit log and a `story_featured` notification in one transaction.
@@ -1680,7 +1684,7 @@ What the Foundations epic left in place, and where to find it. The epic report, 
 | Kind | Where | Story |
 | --- | --- | --- |
 | Screens | `/` (`src/features/website/` since CMS-1b; first `src/features/home/`) and `/design` (`src/features/design-system/`, local and staging only), inside the shell in `src/app/shell/` | S1-E1-01, S1-E1-03 |
-| Hooks | `useThemePreference` (`src/features/theme/hooks/`), `useInterfaceLanguage` and `useAccountLanguage` (`src/features/language/hooks/`) | S1-E1-03, S1-E1-04 |
+| Hooks | `useAppearance` and `useAccountAppearance` (`src/features/theme/hooks/`; `useThemePreference` until G2), `useInterfaceLanguage` and `useAccountLanguage` (`src/features/language/hooks/`) | S1-E1-03, S1-E1-04 |
 | Supabase calls | `src/features/language/api/profileLocale.ts`, through the one client in `src/lib/supabase.ts` | S1-E1-04 |
 | Tables | `profiles`, `staff_roles`, `feature_flags`, `settings`, `audit_log` | S1-E1-02, S1-E1-04 |
 | Functions | the account gate (`age_band()`, `is_active_member()`, `is_staff()`, `is_staff_session()`), `log_staff_action()`, `set_my_locale()` | S1-E1-02, S1-E1-04 |

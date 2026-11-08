@@ -11941,16 +11941,22 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     "country_chosen_at" timestamp with time zone,
     "consent_grace_until" timestamp with time zone,
     "founding_member_since" timestamp with time zone,
+    "look" "text" DEFAULT 'lilac'::"text" NOT NULL,
+    "colour_mode" "text" DEFAULT 'device'::"text" NOT NULL,
+    "seasonal_looks" boolean DEFAULT false NOT NULL,
+    "appearance_saved_at" timestamp with time zone,
     CONSTRAINT "profiles_avatar_recipe_shape" CHECK ("public"."avatar_recipe_valid"("avatar_recipe")),
     CONSTRAINT "profiles_bio_length" CHECK (("char_length"("bio") <= 300)),
     CONSTRAINT "profiles_birth_month_is_a_month" CHECK ((("birth_month" >= 1) AND ("birth_month" <= 12))),
     CONSTRAINT "profiles_birth_year_is_plausible" CHECK ((("birth_year" >= 1900) AND ("birth_year" <= 2100))),
     CONSTRAINT "profiles_birth_year_while_live" CHECK ((("birth_year" IS NOT NULL) OR ("deleted_at" IS NOT NULL))),
     CONSTRAINT "profiles_birthday_month_check" CHECK ((("birthday_month" >= 1) AND ("birthday_month" <= 12))),
+    CONSTRAINT "profiles_colour_mode_known" CHECK (("colour_mode" = ANY (ARRAY['light'::"text", 'night'::"text", 'device'::"text"]))),
     CONSTRAINT "profiles_country_code_is_alpha2" CHECK (("country_code" ~ '^[A-Z]{2}$'::"text")),
     CONSTRAINT "profiles_handle_length" CHECK ((("handle" IS NULL) OR (("char_length"("handle") >= 3) AND ("char_length"("handle") <= 30)))),
     CONSTRAINT "profiles_legal_region_shape" CHECK (("legal_region_code" ~ '^([A-Z0-9]{1,3})?$'::"text")),
     CONSTRAINT "profiles_locale_is_supported" CHECK (("locale" = ANY (ARRAY['ro'::"text", 'en'::"text"]))),
+    CONSTRAINT "profiles_look_known" CHECK (("look" = ANY (ARRAY['lilac'::"text", 'sorbet'::"text", 'seaglass'::"text", 'pistachio'::"text", 'candy'::"text", 'tmc'::"text"]))),
     CONSTRAINT "profiles_pen_name_length" CHECK ((("pen_name" IS NULL) OR (("char_length"("pen_name") >= 1) AND ("char_length"("pen_name") <= 50)))),
     CONSTRAINT "profiles_signature_short" CHECK ((("signature" IS NULL) OR ((("char_length"("signature") >= 1) AND ("char_length"("signature") <= 300)) AND ("array_length"("string_to_array"("signature", '
 '::"text"), 1) <= 3))))
@@ -12106,6 +12112,22 @@ COMMENT ON COLUMN "public"."profiles"."consent_grace_until" IS 'Until when a mem
 
 
 COMMENT ON COLUMN "public"."profiles"."founding_member_since" IS 'When a person joined while the waiting list was on: shown publicly only as "Founding member" (WAITLIST-1).';
+
+
+
+COMMENT ON COLUMN "public"."profiles"."look" IS 'The member''s year-round theme (Settings › Appearance; bundle G2): lilac (default), sorbet, seaglass, pistachio, candy or tmc. Night mode looks the same with every theme.';
+
+
+
+COMMENT ON COLUMN "public"."profiles"."colour_mode" IS 'Light, night or device (Match my device, the default) (Settings › Appearance and the footer; bundle G2).';
+
+
+
+COMMENT ON COLUMN "public"."profiles"."seasonal_looks" IS 'Whether the seasonal looks switch on by themselves in their weeks (seasonal_look_dates); off unless the member turns it on (bundle G2).';
+
+
+
+COMMENT ON COLUMN "public"."profiles"."appearance_saved_at" IS 'When the member last saved look, colour_mode and seasonal_looks; null until they first do, so devices keep their own choice (bundle G2).';
 
 
 
@@ -37208,6 +37230,59 @@ COMMENT ON FUNCTION "public"."set_message_emails"("wanted_emails_on" boolean, "w
 
 
 
+CREATE OR REPLACE FUNCTION "public"."set_my_appearance"("new_look" "text", "new_colour_mode" "text", "new_seasonal_looks" boolean) RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  saved public.profiles;
+begin
+  -- Step 1: only a signed-in person has a profile to save to.
+  if (select auth.uid()) is null then
+    raise exception 'Sign in to save your look to your account.'
+      using errcode = 'insufficient_privilege';
+  end if;
+
+  -- Step 2: refuse unknown values with a plain message (the checks would too, less helpfully).
+  if new_look is null or new_look not in ('lilac', 'sorbet', 'seaglass', 'pistachio', 'candy', 'tmc') then
+    raise exception 'Unknown theme: %.', coalesce(new_look, 'none')
+      using errcode = 'invalid_parameter_value';
+  end if;
+  if new_colour_mode is null or new_colour_mode not in ('light', 'night', 'device') then
+    raise exception 'Unknown mode: %. Use light, night or device.', coalesce(new_colour_mode, 'none')
+      using errcode = 'invalid_parameter_value';
+  end if;
+  if new_seasonal_looks is null then
+    raise exception 'Say whether seasonal themes are on or off.'
+      using errcode = 'invalid_parameter_value';
+  end if;
+
+  -- Step 3: change the caller's own row only, and only while the account is live.
+  update public.profiles
+    set look = new_look, colour_mode = new_colour_mode, seasonal_looks = new_seasonal_looks,
+        appearance_saved_at = now()
+    where profiles.id = (select auth.uid()) and profiles.deleted_at is null
+    returning * into saved;
+
+  -- Step 4: no row means a deleted account or a sign-up whose profile doesn't exist yet.
+  if saved.id is null then
+    raise exception 'This account has no profile to save the look to.'
+      using errcode = 'no_data_found';
+  end if;
+
+  return jsonb_build_object('look', saved.look, 'colour_mode', saved.colour_mode,
+    'seasonal_looks', saved.seasonal_looks);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_my_appearance"("new_look" "text", "new_colour_mode" "text", "new_seasonal_looks" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_my_appearance"("new_look" "text", "new_colour_mode" "text", "new_seasonal_looks" boolean) IS 'Saves the signed-in member''s look, mode and seasonal switch on their own profile (bundle G2).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."set_my_avatar_recipe"("recipe" "jsonb") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -59027,6 +59102,11 @@ GRANT ALL ON FUNCTION "public"."set_message_audience"("audience" "public"."messa
 
 REVOKE ALL ON FUNCTION "public"."set_message_emails"("wanted_emails_on" boolean, "wanted_quiet_hours_on" boolean, "wanted_from" time without time zone, "wanted_until" time without time zone) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_message_emails"("wanted_emails_on" boolean, "wanted_quiet_hours_on" boolean, "wanted_from" time without time zone, "wanted_until" time without time zone) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."set_my_appearance"("new_look" "text", "new_colour_mode" "text", "new_seasonal_looks" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_my_appearance"("new_look" "text", "new_colour_mode" "text", "new_seasonal_looks" boolean) TO "authenticated";
 
 
 

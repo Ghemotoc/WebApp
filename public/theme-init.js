@@ -1,11 +1,13 @@
 /*
- * Picks light or night mode before the page draws (story S1-E1-03).
+ * Picks light or night mode, and the member's look, before the page draws (story S1-E1-03; looks
+ * from bundle G2 THEMES).
  *
  * Why a separate file: index.html loads it in <head>, before any CSS or React, so a reader in
  * night mode never sees a white flash. It is a plain file rather than an inline script so a
  * strict Content Security Policy can allow it later without exceptions (architecture 1.9).
- * It repeats the first steps of src/lib/theme.ts; keep the storage key and the attribute the same.
- * After this, React takes over (src/features/theme/hooks/useThemePreference.ts).
+ * It repeats the first steps of src/lib/theme.ts and src/lib/looks.ts; keep the storage keys, the
+ * attributes and the list of looks the same in all three files.
+ * After this, React takes over (src/features/theme/hooks/useAccountAppearance.ts).
  */
 (function chooseThemeBeforeFirstPaint() {
   // Step 1: the reader's saved choice, if storage is available ('device' otherwise).
@@ -28,4 +30,27 @@
 
   // Step 3: tokens.css reads this attribute.
   document.documentElement.setAttribute('data-theme', theme);
+
+  // Step 4: the look last shown on this device (Lilac mist when none is stored). tokens.css only
+  // uses it by day; night mode is Revolver with every look (bundle G2).
+  const looks = [
+    'lilac',
+    'sorbet',
+    'seaglass',
+    'pistachio',
+    'candy',
+    'tmc',
+    'winter',
+    'spring',
+    'summer',
+    'autumn',
+  ];
+  let look = 'lilac';
+  try {
+    const storedLook = window.localStorage.getItem('theme-shown-look');
+    if (looks.indexOf(storedLook) !== -1) look = storedLook;
+  } catch {
+    // Storage is blocked: the default look.
+  }
+  document.documentElement.setAttribute('data-look', look);
 })();

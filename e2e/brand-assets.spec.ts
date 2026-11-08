@@ -111,11 +111,11 @@ test.describe('Staff › Website › Branding (BRAND-1a)', () => {
       'href',
       /\/brand-assets\/emblem_light\//,
     );
-    // The night emblem has no upload, so it keeps the bundled cat.
-    await expect(visitor.locator('header img[data-brand-emblem="dark"]')).toHaveAttribute(
-      'src',
-      '/brand/emblem-dark.svg',
-    );
+    // The night emblem has no upload, so it keeps the bundled cat, tinted with the logo colour
+    // (bundle G2: the cat follows the look's accent).
+    await expect(
+      visitor.locator('header [data-brand-emblem="dark"][data-brand-emblem-kind="tinted"]'),
+    ).toHaveAttribute('style', /\/brand\/emblem-dark\.svg/);
     await visitorContext.close();
 
     // Step 5: "Use the default" empties the slot again.

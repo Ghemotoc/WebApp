@@ -65,6 +65,7 @@
     "myReportsLink": "My reports",
     "groups": {
       "profile": "Profile",
+      "appearance": "Appearance",
       "account": "Email and sign-in",
       "privacy": "Privacy",
       "notifications": "Notifications",

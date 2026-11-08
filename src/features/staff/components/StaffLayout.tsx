@@ -24,6 +24,7 @@ import { BrandTabIcon } from '@/features/branding/components/BrandTabIcon';
 import { signOutHere } from '@/features/auth/api/signIn';
 import { LanguageSelect } from '@/features/language/components/LanguageSelect';
 import { useAccountLanguage } from '@/features/language/hooks/useAccountLanguage';
+import { useAccountAppearance } from '@/features/theme/hooks/useAccountAppearance';
 import { SafetyContactWarningBanner } from '@/features/safety/components/SafetyContactWarningBanner';
 import { getSupabaseClient } from '@/lib/supabase';
 
@@ -61,6 +62,8 @@ export function StaffLayout() {
   const { access, isKnown, isSignedIn } = useMyStaffAccess();
   // Show a signed-in person's account language, whichever device they are on (S1-E1-04).
   useAccountLanguage();
+  // The member's mode and look, from their account on every device (bundle G2).
+  useAccountAppearance();
 
   /** Signs this device out and goes to the public home page. */
   async function signOut() {

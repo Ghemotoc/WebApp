@@ -5069,12 +5069,14 @@ export type Database = {
           age_check_method: Database['public']['Enums']['age_check_method'] | null;
           age_check_result: Database['public']['Enums']['age_check_result'];
           age_checked_at: string | null;
+          appearance_saved_at: string | null;
           avatar_picture_id: string | null;
           avatar_recipe: Json | null;
           bio: string;
           birth_month: number | null;
           birth_year: number | null;
           birthday_month: number | null;
+          colour_mode: string;
           consent_grace_until: string | null;
           country_chosen_at: string | null;
           country_code: string | null;
@@ -5091,6 +5093,7 @@ export type Database = {
           legal_region_code: string;
           library_visible_to: Database['public']['Enums']['library_audience'];
           locale: string;
+          look: string;
           marketing_email_opt_in: boolean;
           message_emails_on: boolean | null;
           message_quiet_from: string | null;
@@ -5102,6 +5105,7 @@ export type Database = {
           pen_name_changed_at: string | null;
           profile_visible_to: Database['public']['Enums']['profile_audience'] | null;
           region_code: string | null;
+          seasonal_looks: boolean;
           shows_online_status: boolean;
           signature: string | null;
           signature_picture_id: string | null;
@@ -5133,12 +5137,14 @@ export type Database = {
           age_check_method?: Database['public']['Enums']['age_check_method'] | null;
           age_check_result?: Database['public']['Enums']['age_check_result'];
           age_checked_at?: string | null;
+          appearance_saved_at?: string | null;
           avatar_picture_id?: string | null;
           avatar_recipe?: Json | null;
           bio?: string;
           birth_month?: number | null;
           birth_year?: number | null;
           birthday_month?: number | null;
+          colour_mode?: string;
           consent_grace_until?: string | null;
           country_chosen_at?: string | null;
           country_code?: string | null;
@@ -5155,6 +5161,7 @@ export type Database = {
           legal_region_code?: string;
           library_visible_to?: Database['public']['Enums']['library_audience'];
           locale?: string;
+          look?: string;
           marketing_email_opt_in?: boolean;
           message_emails_on?: boolean | null;
           message_quiet_from?: string | null;
@@ -5166,6 +5173,7 @@ export type Database = {
           pen_name_changed_at?: string | null;
           profile_visible_to?: Database['public']['Enums']['profile_audience'] | null;
           region_code?: string | null;
+          seasonal_looks?: boolean;
           shows_online_status?: boolean;
           signature?: string | null;
           signature_picture_id?: string | null;
@@ -5178,12 +5186,14 @@ export type Database = {
           age_check_method?: Database['public']['Enums']['age_check_method'] | null;
           age_check_result?: Database['public']['Enums']['age_check_result'];
           age_checked_at?: string | null;
+          appearance_saved_at?: string | null;
           avatar_picture_id?: string | null;
           avatar_recipe?: Json | null;
           bio?: string;
           birth_month?: number | null;
           birth_year?: number | null;
           birthday_month?: number | null;
+          colour_mode?: string;
           consent_grace_until?: string | null;
           country_chosen_at?: string | null;
           country_code?: string | null;
@@ -5200,6 +5210,7 @@ export type Database = {
           legal_region_code?: string;
           library_visible_to?: Database['public']['Enums']['library_audience'];
           locale?: string;
+          look?: string;
           marketing_email_opt_in?: boolean;
           message_emails_on?: boolean | null;
           message_quiet_from?: string | null;
@@ -5211,6 +5222,7 @@ export type Database = {
           pen_name_changed_at?: string | null;
           profile_visible_to?: Database['public']['Enums']['profile_audience'] | null;
           region_code?: string | null;
+          seasonal_looks?: boolean;
           shows_online_status?: boolean;
           signature?: string | null;
           signature_picture_id?: string | null;
@@ -10864,12 +10876,14 @@ export type Database = {
           age_check_method: Database['public']['Enums']['age_check_method'] | null;
           age_check_result: Database['public']['Enums']['age_check_result'];
           age_checked_at: string | null;
+          appearance_saved_at: string | null;
           avatar_picture_id: string | null;
           avatar_recipe: Json | null;
           bio: string;
           birth_month: number | null;
           birth_year: number | null;
           birthday_month: number | null;
+          colour_mode: string;
           consent_grace_until: string | null;
           country_chosen_at: string | null;
           country_code: string | null;
@@ -10886,6 +10900,7 @@ export type Database = {
           legal_region_code: string;
           library_visible_to: Database['public']['Enums']['library_audience'];
           locale: string;
+          look: string;
           marketing_email_opt_in: boolean;
           message_emails_on: boolean | null;
           message_quiet_from: string | null;
@@ -10897,6 +10912,7 @@ export type Database = {
           pen_name_changed_at: string | null;
           profile_visible_to: Database['public']['Enums']['profile_audience'] | null;
           region_code: string | null;
+          seasonal_looks: boolean;
           shows_online_status: boolean;
           signature: string | null;
           signature_picture_id: string | null;
@@ -12651,12 +12667,14 @@ export type Database = {
           age_check_method: Database['public']['Enums']['age_check_method'] | null;
           age_check_result: Database['public']['Enums']['age_check_result'];
           age_checked_at: string | null;
+          appearance_saved_at: string | null;
           avatar_picture_id: string | null;
           avatar_recipe: Json | null;
           bio: string;
           birth_month: number | null;
           birth_year: number | null;
           birthday_month: number | null;
+          colour_mode: string;
           consent_grace_until: string | null;
           country_chosen_at: string | null;
           country_code: string | null;
@@ -12673,6 +12691,7 @@ export type Database = {
           legal_region_code: string;
           library_visible_to: Database['public']['Enums']['library_audience'];
           locale: string;
+          look: string;
           marketing_email_opt_in: boolean;
           message_emails_on: boolean | null;
           message_quiet_from: string | null;
@@ -12684,6 +12703,7 @@ export type Database = {
           pen_name_changed_at: string | null;
           profile_visible_to: Database['public']['Enums']['profile_audience'] | null;
           region_code: string | null;
+          seasonal_looks: boolean;
           shows_online_status: boolean;
           signature: string | null;
           signature_picture_id: string | null;
@@ -13411,12 +13431,14 @@ export type Database = {
           age_check_method: Database['public']['Enums']['age_check_method'] | null;
           age_check_result: Database['public']['Enums']['age_check_result'];
           age_checked_at: string | null;
+          appearance_saved_at: string | null;
           avatar_picture_id: string | null;
           avatar_recipe: Json | null;
           bio: string;
           birth_month: number | null;
           birth_year: number | null;
           birthday_month: number | null;
+          colour_mode: string;
           consent_grace_until: string | null;
           country_chosen_at: string | null;
           country_code: string | null;
@@ -13433,6 +13455,7 @@ export type Database = {
           legal_region_code: string;
           library_visible_to: Database['public']['Enums']['library_audience'];
           locale: string;
+          look: string;
           marketing_email_opt_in: boolean;
           message_emails_on: boolean | null;
           message_quiet_from: string | null;
@@ -13444,6 +13467,7 @@ export type Database = {
           pen_name_changed_at: string | null;
           profile_visible_to: Database['public']['Enums']['profile_audience'] | null;
           region_code: string | null;
+          seasonal_looks: boolean;
           shows_online_status: boolean;
           signature: string | null;
           signature_picture_id: string | null;
@@ -14248,6 +14272,10 @@ export type Database = {
           wanted_quiet_hours_on: boolean;
           wanted_until: string;
         };
+        Returns: Json;
+      };
+      set_my_appearance: {
+        Args: { new_colour_mode: string; new_look: string; new_seasonal_looks: boolean };
         Returns: Json;
       };
       set_my_avatar_recipe: { Args: { recipe: Json }; Returns: Json };
