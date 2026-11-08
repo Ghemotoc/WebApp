@@ -21,7 +21,8 @@
  * MaintenanceGate swaps the notices and the page for the maintenance page while maintenance mode is
  * on (staff and the log-in pages excepted); useTrackRoutePattern remembers which page is on screen
  * for error reports, as a pattern such as "/join/:code", never the address itself.
- * Notifications (S1-E7-01): the bell with the unread count sits before "Write" while signed in.
+ * Notifications (S1-E7-01): the bell with the unread count sits after "Write" while signed in
+ * (bundle G4 SHELL: search, Write, bell, avatar).
  * Pictures (S1-E10-05): usePendingPictureRetry asks once per signed-in visit for the check of any
  * picture whose services were down when it was uploaded.
  * The account notices (Terms, the country question, username, age check, consent and sanctions)
@@ -30,9 +31,16 @@
  * closing-account page ("Keep my account" or "Log out") while the account waits to be deleted.
  * The waiting list (WAITLIST-1): WaitlistGate, inside it, swaps them for the holding page while
  * the signed-in person still waits for their place.
+ * Narrow screens (bundle G4 SHELL; handoff "App header and tab bar"): from 1024 px every page has
+ * the website TopBar. Below that, a page where a person types, edits or reads gets header A
+ * (FocusHeader: Back and a title, no tab bar) and every other page gets header B (PhoneHeader)
+ * with the floating TabBar; shellScreens.ts lists which is which. Only one header is drawn at a
+ * time (useIsNarrowScreen), so the page never holds two "Main" navigations.
  */
 import { useTranslation } from 'react-i18next';
-import { Outlet } from 'react-router';
+import { Outlet, useLocation } from 'react-router';
+
+import { shellScreenFor } from '@/app/shellScreens';
 
 import { AccountClosingGate } from '@/features/account-deletion/components/AccountClosingGate';
 import { AccountLinks } from '@/features/auth/components/AccountLinks';
@@ -53,8 +61,65 @@ import { WaitlistGate } from '@/features/waitlist/components/WaitlistGate';
 import { WriteLink } from '@/features/writing/components/WriteLink';
 
 import { AccountNotices } from './AccountNotices';
+import { FocusHeader } from './FocusHeader';
 import { Footer } from './Footer';
+import { PhoneHeader } from './PhoneHeader';
+import { TabBar } from './TabBar';
 import { TopBar } from './TopBar';
+import { useIsNarrowScreen } from './useIsNarrowScreen';
+
+/**
+ * The website top bar, for windows from 1024 px: the main links with Messages, search, then the
+ * language code, the bell, Write and the account (handoff "Navigation"). The Search page has its
+ * own, bigger field with the filters, so the top bar leaves its search pill out there and the page
+ * keeps one search region.
+ *
+ * @param props.hasSearch - false on the Search page
+ * @returns the top bar
+ */
+function WideHeader({ hasSearch }: { hasSearch: boolean }) {
+  return (
+    <TopBar
+      hasSearch={hasSearch}
+      // Messages with its unread count, while signed in (S1-E9-01).
+      navigationEnd={<MessagesNavLink />}
+      endSlot={
+        <>
+          {/* Only the code here; the footer has the full names (handoff "Navigation"). */}
+          <LanguageSelect id="language-select-top" isCodeOnly />
+          {/* "Write", while signed in (S1-E3-01). */}
+          <WriteLink />
+          {/* The bell with the unread count, while signed in (S1-E7-01). */}
+          <NotificationBell />
+          {/* "Log in" and "Join for free" while signed out (S1-E2-01); the account bead after. */}
+          <AccountLinks />
+        </>
+      }
+    />
+  );
+}
+
+/**
+ * Picks the header for the window's width and the page on screen.
+ *
+ * @returns the header, and whether the floating tab bar is on screen
+ */
+function useShellHeader() {
+  const isNarrow = useIsNarrowScreen();
+  const { pathname } = useLocation();
+  if (!isNarrow) {
+    const isSearchPage = pathname === '/search' || pathname.startsWith('/search/');
+    return { header: <WideHeader hasSearch={!isSearchPage} />, hasTabBar: false };
+  }
+  const screen = shellScreenFor(pathname);
+  if (screen.kind === 'focus') {
+    return {
+      header: <FocusHeader titleKey={screen.titleKey} backTo={screen.backTo} />,
+      hasTabBar: false,
+    };
+  }
+  return { header: <PhoneHeader />, hasTabBar: true };
+}
 
 /**
  * Renders the frame and the current page inside it.
@@ -72,11 +137,17 @@ export function AppLayout() {
   // Check again any picture whose check couldn't run when it was uploaded (S1-E10-05).
   const { userId } = useSession();
   usePendingPictureRetry(userId);
+  // Header A, header B with the tab bar, or the website top bar (bundle G4 SHELL).
+  const { header, hasTabBar } = useShellHeader();
 
-  // No background of its own: the page colour, the drifting blobs and the grain behind every page
-  // come from src/styles/index.css (bundle G1), and a background here would hide them.
+  // No background of its own: the page colour and the still colour blobs behind every page come
+  // from src/styles/index.css (bundle G1), and a background here would hide them.
   return (
-    <div className="flex min-h-dvh flex-col text-ink">
+    // With the tab bar on screen, the frame leaves room at its foot so the footer's last line is
+    // never hidden under it: 64 px bar + 14 px gap + 26 px air, plus a phone's home bar.
+    <div
+      className={`flex min-h-dvh flex-col text-ink ${hasTabBar ? 'pb-[calc(104px+env(safe-area-inset-bottom))]' : ''}`}
+    >
       <a
         href="#main"
         className="sr-only z-20 rounded-full bg-surface-solid px-4 py-2 focus:not-sr-only focus:absolute focus:top-2 focus:left-2"
@@ -85,21 +156,7 @@ export function AppLayout() {
       </a>
       {/* The approved emblem in the browser tab (BRAND-1b). */}
       <BrandTabIcon />
-      <TopBar
-        // Messages with its unread count, while signed in (S1-E9-01).
-        navigationEnd={<MessagesNavLink />}
-        endSlot={
-          <>
-            <LanguageSelect id="language-select-top" />
-            {/* The bell with the unread count, while signed in (S1-E7-01). */}
-            <NotificationBell />
-            {/* "Write", while signed in (S1-E3-01). */}
-            <WriteLink />
-            {/* "Join for free" while signed out (S1-E2-01). */}
-            <AccountLinks />
-          </>
-        }
-      />
+      {header}
       {/* "You're offline" and "You're back online" (S1-E1-05). */}
       <OfflineBanner />
       {/* The notice banner staff publish from Website › Notice banners (S1-E11-10). */}
@@ -121,6 +178,8 @@ export function AppLayout() {
       {/* "Show when I'm online": a beat a minute, only while switched on (S1-E13-01). */}
       <PresenceHeartbeat />
       <Footer endSlot={<LanguageSelect id="language-select-footer" isLabelVisible />} />
+      {/* The floating tab bar, on narrow browse pages only (handoff "App header and tab bar"). */}
+      {hasTabBar && <TabBar />}
     </div>
   );
 }

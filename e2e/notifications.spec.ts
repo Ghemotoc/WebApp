@@ -87,12 +87,12 @@ test.describe('in-app notifications (S1-E7-01)', () => {
   test.beforeAll(seedNotifications);
   test.afterAll(cleanUp);
 
-  test('in night mode the bell’s count is dark on gold, readable at over 7:1', async ({
+  test('in night mode the bell’s count is dark on pale lilac, readable at over 7:1', async ({
     browser,
   }) => {
-    // The accessibility check of 6 Nov 2026 found light text on the gold badge in night mode
-    // (1.5:1). The gold (a soft honey since G1, #f3dc9b) stays the same in both themes, so the
-    // count uses --on-gold (#26142e).
+    // The accessibility check of 6 Nov 2026 found light text on the badge in night mode (1.5:1).
+    // Since bundle G4 SHELL the count uses the theme's "on" colour: at night a pale lilac
+    // (--chip-on, #f4eef8) with dark plum text (--chip-on-text, #2a0e33), about 16:1.
     // axe can't see it: the badge is aria-hidden because the link's name already says the count.
     const page = await openSignedIn(browser);
     await page
@@ -104,8 +104,8 @@ test.describe('in-app notifications (S1-E7-01)', () => {
       .getByRole('link', { name: /^Notifications, \d+ new$/ })
       .locator('span[aria-hidden=true]')
       .last();
-    await expect(badge).toHaveCSS('color', 'rgb(38, 20, 46)');
-    await expect(badge).toHaveCSS('background-color', 'rgb(243, 220, 155)');
+    await expect(badge).toHaveCSS('color', 'rgb(42, 14, 51)');
+    await expect(badge).toHaveCSS('background-color', 'rgb(244, 238, 248)');
     await page.context().close();
   });
 

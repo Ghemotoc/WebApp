@@ -237,6 +237,32 @@ dialog.bg-surface,
 }
 
 /*
+ * The shell's glass (bundle G4 SHELL; handoff "App header and tab bar", "Navigation"). glass-pill
+ * is the website top bar and the phone header's pills: see-through glass with the bright rim, a
+ * top highlight and the nav shadow. It sits over the still blobs only, so it needs no blur
+ * (Robert, 7 Nov 2026: keep it light for weaker devices). glass-float is the tab bar, which floats
+ * over the page's own text and cards, so it paints its colour almost solid and its labels stay
+ * readable over anything (WCAG 1.4.3). No blur on either: a blurred bar fixed over a scrolling page
+ * repaints on every frame, which weaker phones feel (Robert, 7 Nov 2026, 21:49: blur only on
+ * dialogs and pop-overs).
+ */
+@utility glass-pill {
+  background-color: var(--nav-glass);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    var(--shadow-nav);
+}
+
+@utility glass-float {
+  background-color: color-mix(in srgb, var(--surface) 96%, transparent);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    0 18px 40px -16px rgb(20 10 30 / 0.45);
+}
+
+/*
  * "On" states (bundle G3 COMPONENTS; handoff: "Every pill is liquid glass. Plum is for finishing
  * actions and 'on' states"). Every pressed chip, chosen reason and other bg-chip-on fill keeps its
  * tested colour and gains a soft glass sheen along its top: a faint white wash that fades out
@@ -300,6 +326,10 @@ dialog.bg-surface,
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
+
+  .glass-float {
+    background-color: var(--surface);
+  }
 }
 
 /* Gentle entrance used by page headers on the boards (tmcRise). */
@@ -353,12 +383,6 @@ dialog.bg-surface,
   .tmc-dd-hide {
     display: none !important;
   }
-}
-
-/* A dark doodle icon on a dark button (the top bar's Write pen, S1-E3-01): inverted until Lane B's
-   tokenised doodle icons land, when the icon takes its colour from the tokens instead. */
-.tmc-icon-on-dark {
-  filter: brightness(0) invert(1);
 }
 
 /* A picture with a light and a night version, such as the logo and emblem (BRAND-1b): both are in

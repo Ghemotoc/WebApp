@@ -23,7 +23,7 @@
  * places and drafts.
  * Popular ranks by totals only (reads, likes, comments; never downvotes), the same for everyone.
  * The wide ad slot sits after the first shelf (S1-E12-01; board 3.1).
- * What it calls: FeaturedBand, GreetingHeading, SeasonalDoodle, SearchForm, CategoryLinks,
+ * What it calls: FeaturedBand, GreetingHeading, SeasonalDoodle, CategoryLinks,
  * DiscoverCards, DiscoverShelf (useStoryShelf → browse_stories()) and RisingWritersShelf.
  * */
 import { Fragment } from 'react';
@@ -46,8 +46,6 @@ import type { ListKind } from '../api/storyLists';
 import { useStoryShelf } from '../hooks/useStoryShelf';
 import { discoverListKinds, plainList } from '../lib/listAddresses';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
-
-import { SearchForm } from '@/features/search/components/SearchForm';
 
 import { CategoryLinks } from './CategoryLinks';
 import { DiscoverCards } from './DiscoverCards';
@@ -216,8 +214,8 @@ export function DiscoverPage() {
       {/* Featured this week, picked by staff (S1-E5-10); not drawn when nothing is picked. */}
       <FeaturedBand />
       <DiscoverHeader />
-      {/* Search stories, writers and tags (S1-E5-04; board 3.1's search field). */}
-      <SearchForm />
+      {/* No search field of its own since bundle G4 SHELL: the top bar's search pill (from
+          1024 px) and the tab bar's Search button (narrower) open the Search page (S1-E5-04). */}
       <CategoryLinks />
       {/* Continue reading, Your draft and Start a new story, for a member (S1-E5-12). */}
       <DiscoverCards />

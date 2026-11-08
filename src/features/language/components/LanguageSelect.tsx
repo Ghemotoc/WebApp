@@ -6,6 +6,9 @@
  * it is shown beside the drop-down. Options in the board's order, each in its own language
  * (English, Română) with a lang attribute so screen readers pronounce them correctly. Height and
  * style follow the one Select (44 px everywhere, docs/board-fixes.md).
+ * The top bar's drop-down shows only the code (EN, RO; handoff "Navigation": "Language shows only
+ * the code", bundle G4 SHELL), and the footer's shows the full names. The options keep their lang
+ * attribute either way.
  * Who uses it: AppLayout puts one in the top bar's and one in the footer's end slot.
  * What it calls: useInterfaceLanguage, which switches the screen and saves the choice.
  */
@@ -22,6 +25,8 @@ export interface LanguageSelectProps {
   id: string;
   /** Shown in the footer; hidden (but read by screen readers) in the top bar, as on the board. */
   isLabelVisible?: boolean;
+  /** Shows "EN" and "RO" instead of the names, for the website top bar (bundle G4 SHELL). */
+  isCodeOnly?: boolean;
 }
 
 /** The languages in the board's order, each named in its own language. */
@@ -39,14 +44,19 @@ const saveMessageKeys: Record<LanguageSaveStatus, string | null> = {
  *
  * @returns the drop-down
  */
-export function LanguageSelect({ id, isLabelVisible = false }: LanguageSelectProps) {
+export function LanguageSelect({
+  id,
+  isLabelVisible = false,
+  isCodeOnly = false,
+}: LanguageSelectProps) {
   const { t } = useTranslation();
   const { language, changeLanguage, saveStatus } = useInterfaceLanguage();
 
-  // The option names come from the locale files (language.en, language.ro).
+  // The option names come from the locale files (language.en, language.ro); the top bar shows the
+  // code in capitals instead.
   const options = languageOrder.map((code) => ({
     value: code,
-    label: t(`language.${code}`),
+    label: isCodeOnly ? code.toUpperCase() : t(`language.${code}`),
     lang: code,
   }));
   const messageKey = saveMessageKeys[saveStatus];

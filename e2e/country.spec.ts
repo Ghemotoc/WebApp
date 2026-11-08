@@ -93,7 +93,7 @@ test.describe('country from the connection (S1-E2-10)', () => {
 
       // Confirm, then Settings shows the country.
       await page.goto(appPathFromEmail((await waitForEmail(address)).HTML));
-      await page.getByRole('link', { name: 'Continue' }).click();
+      await page.getByRole('link', { name: 'Continue', exact: true }).click();
       await expect(page).toHaveURL(/\/$/);
       await page.goto('/settings');
       // The country picker started on the connection's country (MARKETS-1).

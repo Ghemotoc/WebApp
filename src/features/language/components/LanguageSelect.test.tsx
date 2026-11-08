@@ -99,20 +99,26 @@ afterEach(() => {
 });
 
 describe('the language drop-downs', () => {
-  it('are drop-downs in both the top bar and the footer, listing English and Română', () => {
+  it('are drop-downs in both bars: codes in the top bar, English and Română in the footer', () => {
     renderApp();
     const { topBar, footer } = languageDropDowns('Limbă');
 
-    for (const dropDown of [topBar, footer]) {
-      expect(dropDown.tagName).toBe('SELECT');
-      expect(
-        within(dropDown)
-          .getAllByRole('option')
-          .map((option) => option.textContent),
-      ).toEqual(['English', 'Română']);
-      expect(dropDown).toHaveValue('ro');
-    }
-    expect(within(topBar).getByRole('option', { name: 'Română' })).toHaveAttribute('lang', 'ro');
+    /** The text of each option in a drop-down, in order. */
+    const optionTexts = (dropDown: HTMLElement) =>
+      within(dropDown)
+        .getAllByRole('option')
+        .map((option) => option.textContent);
+
+    // The top bar shows only the code (bundle G4 SHELL); the footer names each language.
+    expect(topBar.tagName).toBe('SELECT');
+    expect(optionTexts(topBar)).toEqual(['EN', 'RO']);
+    expect(footer.tagName).toBe('SELECT');
+    expect(optionTexts(footer)).toEqual(['English', 'Română']);
+    expect(topBar).toHaveValue('ro');
+    expect(footer).toHaveValue('ro');
+    // Each option keeps its language, so a screen reader pronounces it right (WCAG 3.1.2).
+    expect(within(topBar).getByRole('option', { name: 'RO' })).toHaveAttribute('lang', 'ro');
+    expect(within(footer).getByRole('option', { name: 'Română' })).toHaveAttribute('lang', 'ro');
   });
 
   it('switch the whole screen to English from the top bar and remember it in this browser', async () => {

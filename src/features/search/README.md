@@ -1,7 +1,8 @@
 # search
 
 Search for stories, writers and tags (story S1-E5-04; board Search 3.2). The search field sits on
-Discover and on the search page; results come in three groups, each one line of at most 20 with a
+the search page; elsewhere the top bar's search pill (from 1024 px) and the tab bar's round Search
+button open it (bundle G4 SHELL); results come in three groups, each one line of at most 20 with a
 "View more" card to its See all page.
 
 - `lib/searchAddresses.ts`: the addresses (`/search?q=…`, `/search/stories`, `/search/writers`,
