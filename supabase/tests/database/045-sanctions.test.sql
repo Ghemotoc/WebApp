@@ -6,7 +6,7 @@
 --   a sign-up with that email is refused (second criterion); lifting the ban undoes all three;
 -- - a reporting pause refuses the reporter's reports until it ends (third criterion);
 -- - the decision carries the action out: warn, suspend (1, 7 or 30 days), ban, hide, remove;
---   restrict is refused until S1-E11-08; a removed item answers is_moderated_away() true until
+--   restrict is refused on a profile (it is for stories, QA-9); a removed item answers is_moderated_away() true until
 --   it is restored, with a reason;
 -- - a staff account can't be sanctioned; a second live sanction of the same kind is refused;
 -- - policies: sanctions_select_moderation, banned_email_hashes_select_moderation and
@@ -174,8 +174,8 @@ create temp table opened as select id from public.cases where user_id = (select 
 grant select on opened to authenticated;
 set local role authenticated;
 select pg_temp.sign_in_as((select moderator from ids));
-select throws_ok($$ select public.admin_decide_case((select id from opened), 'restrict', 'Later') $$, '0A000', null,
-  'restrict waits for S1-E11-08 (Q3)');
+select throws_ok($$ select public.admin_decide_case((select id from opened), 'restrict', 'Later') $$, '23514', null,
+  'restrict is for a story only, so a case about a profile is refused (QA-9)');
 select ok(public.admin_decide_case((select id from opened), 'suspend', 'Spam again', 30), 'suspend, 30 days, from the case');
 reset role;
 select results_eq(

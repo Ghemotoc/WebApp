@@ -72,6 +72,14 @@ describe('repository setup', () => {
     expect(ciWorkflow).not.toContain('only-docs-changed');
   });
 
+  it('fails the quick checks on a high or critical package hole and keeps packages updated weekly (architecture 1.9)', () => {
+    const ciWorkflow = readRepositoryFile('.github/workflows/ci.yml');
+    expect(ciWorkflow).toContain('npm audit --audit-level=high');
+    const dependabot = readRepositoryFile('.github/dependabot.yml');
+    expect(dependabot).toContain('package-ecosystem: npm');
+    expect(dependabot).toContain('interval: weekly');
+  });
+
   it('has a code tour that covers where the app starts, how a click travels, where things live and where to start reading', () => {
     const codeTour = readRepositoryFile('docs/code-tour.md');
 

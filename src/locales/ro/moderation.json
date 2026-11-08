@@ -168,9 +168,9 @@
   },
   "failures": {
     "not_allowed": "Nu poți face asta. Doar echipa de moderare poate, iar cazurile de protecția copilului cer permisiunea de protecție.",
-    "refused": "Baza de date a refuzat: nota poate fi goală sau cazul este deja decis.",
+    "refused": "Baza de date a refuzat: nota poate fi goală, cazul poate fi deja decis sau povestea poate fi deja restricționată, ascunsă sau eliminată.",
     "unreachable": "Nu am putut ajunge la serverul nostru. Verifică-ți conexiunea și încearcă din nou.",
-    "not_built": "Restricționarea unui element vine cu S1-E11-08."
+    "not_built": "Încă nu este construit."
   },
   "reason": {
     "hint": "Ajunge în jurnalul de audit. Doar echipa o poate citi.",
