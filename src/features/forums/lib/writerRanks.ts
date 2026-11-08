@@ -5,30 +5,28 @@
  * The database decides the rank (rank_for() in supabase/migrations/…_forums2_e_ranks.sql); this
  * file mirrors the same thresholds only to draw the ladder and the progress bar, never to decide.
  * If the two ever disagree, the rank shown is still the database's.
- * Who calls it: RankPanel, RankChip and RankSticker in ../components. It calls nothing.
+ * Who calls it: RankPanel, RankLadder and RankProgressBar in ../components. It calls nothing.
  */
-import type { DoodleName } from '@/components/ui/doodleSources';
 import type { Enums } from '@/lib/database.types';
 
 /** One of the four ranks (generated from the writer_rank enum). */
 export type WriterRank = Enums<'writer_rank'>;
 
-/** One rung of the ladder: the rank and the sticker drawn for it. */
+/** One rung of the ladder. */
 export interface RankRung {
   rank: WriterRank;
-  sticker: DoodleName;
 }
 
 /**
  * The ladder, lowest first (S1-E8-09 criterion 2; decided 17 Oct 2026): New writer at the first
  * chapter, Writer at 5 chapters, Storyteller at 15 chapters or 30,000 words, Novelist at 100,000
- * words. Each rank has its own sticker (board 6.1).
+ * words. A rank shows as a text pill, never a sticker (bundle G4; DESIGN thread, 8 Nov 2026).
  */
 export const rankLadder: readonly RankRung[] = [
-  { rank: 'new_writer', sticker: 'rank-pencil' },
-  { rank: 'writer', sticker: 'rank-quill-and-ink' },
-  { rank: 'storyteller', sticker: 'rank-open-book-sparkles' },
-  { rank: 'novelist', sticker: 'rank-crown' },
+  { rank: 'new_writer' },
+  { rank: 'writer' },
+  { rank: 'storyteller' },
+  { rank: 'novelist' },
 ];
 
 /** The thresholds, the same numbers as rank_for() in the database. */
@@ -45,18 +43,6 @@ export interface RankProgress {
   unit: 'chapters' | 'words';
   have: number;
   need: number;
-}
-
-/**
- * The sticker for a rank.
- *
- * @param rank - the rank
- * @returns the doodle's name
- */
-export function stickerFor(rank: WriterRank): DoodleName {
-  const rung = rankLadder.find((candidate) => candidate.rank === rank);
-  // The ladder lists every enum value, so a missing rung only happens if the enum grows first.
-  return rung === undefined ? 'rank-pencil' : rung.sticker;
 }
 
 /**

@@ -4,12 +4,11 @@
  * The person's initials on a large glass bead (bundle G3 COMPONENTS; the colour comes from the
  * username, beadColours.ts, the same as their small PersonAvatar), with their drawn avatar over
  * them when they have built one (AvatarImage). It is decorative: the name sits beside it as the
- * page's heading, so screen readers skip it. The rank's sticker sits on its top edge, as on the board, and hides on phones
- * (RankSticker, S1-E8-09). The initials sit in their own one-line box in the circle's middle, so
- * their text box never meets the sticker.
+ * page's heading, so screen readers skip it. The initials sit in their own one-line box in the
+ * circle's middle. The rank shows as a text pill beside the name, never as a sticker on the
+ * picture (bundle G4; the liquid glass design has no doodles).
  * Who uses it: ProfileHeader.
  */
-import { RankSticker } from '@/features/forums/components/RankSticker';
 import { AvatarImage } from '@/features/avatars/components/AvatarImage';
 import { beadStyleFor } from '@/features/avatars/lib/beadColours';
 
@@ -37,8 +36,6 @@ export function ProfileAvatar({ name, handle }: { name: string; handle: string }
       <span aria-hidden="true" className="absolute inset-0">
         <AvatarImage handle={handle} />
       </span>
-      {/* The rank's own sticker on the top edge (S1-E8-09), the open book before the first chapter. */}
-      <RankSticker handle={handle} />
     </span>
   );
 }

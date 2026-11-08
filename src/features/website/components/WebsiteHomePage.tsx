@@ -17,7 +17,6 @@ import { useTranslation } from 'react-i18next';
 
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
-import { Doodle } from '@/components/ui/Doodle';
 import {
   homePageContentSchema,
   questionContentSchema,
@@ -70,7 +69,7 @@ function HomeQuestions({
       aria-labelledby="questions-heading"
       className="grid scroll-mt-6 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-12"
     >
-      {/* The heading and the balloon on one side, the questions on the other (board, LOOK-3). */}
+      {/* The heading on one side, the questions on the other (board, LOOK-3). */}
       <div className="flex flex-col gap-6">
         <h2
           id="questions-heading"
@@ -78,13 +77,6 @@ function HomeQuestions({
         >
           {withBrand(page.questionsHeading)}
         </h2>
-        <Doodle
-          name="hot-air-balloon"
-          kind="widget"
-          on="questions-heading"
-          hideBelow="wide"
-          className="w-[150px] -rotate-3"
-        />
       </div>
       <QuestionList questions={questions} />
     </section>

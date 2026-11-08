@@ -14,7 +14,6 @@ import { useTranslation } from 'react-i18next';
 
 import mailIcon from '@/assets/icons/mail.svg';
 import { Button } from '@/components/ui/Button';
-import { Doodle } from '@/components/ui/Doodle';
 
 /** What the step needs. */
 interface CheckYourEmailProps {
@@ -77,13 +76,6 @@ export function CheckYourEmail({
         <h3 className="m-0 min-w-0 font-heading text-[22px] font-bold text-heading">
           {t(joinsWaitlist ? 'signUp.sent.waitlistHeading' : 'signUp.sent.heading')}
         </h3>
-        <Doodle
-          name="smiling-heart"
-          kind="widget"
-          on="Check your email"
-          hideBelow="phone"
-          className="ml-auto w-14 shrink-0 rotate-6"
-        />
       </div>
       <p className="m-0 text-body">{t(bodyKey(isLinkSignUp, joinsWaitlist), { email })}</p>
       {/* On the list: confirming the email keeps the place; staff let people in (WAITLIST-1). */}

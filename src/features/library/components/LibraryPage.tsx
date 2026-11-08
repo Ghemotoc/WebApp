@@ -13,7 +13,6 @@
  */
 import { Link } from 'react-router';
 
-import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
@@ -42,12 +41,6 @@ function LibraryHeader() {
         <p className="m-0 text-base leading-relaxed text-body">{t('intro')}</p>
       </div>
       <LibraryVisibilityLine />
-      <Doodle
-        name="tote-bag-of-books"
-        kind="background"
-        hideBelow="wide"
-        className="absolute -top-8 right-10 w-[112px] rotate-6"
-      />
     </header>
   );
 }

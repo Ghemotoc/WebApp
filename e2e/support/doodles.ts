@@ -9,6 +9,9 @@
  * How: in the page, it takes every visible [data-doodle] element's box and every visible element
  * that is a control or carries its own text, and reports each pair whose boxes meet. Controls in a
  * fixed layer (the floating tab bar) are left out, because they are drawn above every doodle.
+ * Since bundle G4 the liquid glass screens draw no doodles at all (Robert, 7 Nov 2026), so today
+ * the check finds nothing; it stays in the specs as a guard, so anything decorative brought back
+ * later is still kept off text and controls.
  */
 import { expect, type Page } from '@playwright/test';
 

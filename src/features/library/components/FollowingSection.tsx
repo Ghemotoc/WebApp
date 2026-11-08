@@ -14,7 +14,6 @@ import { Link } from 'react-router';
 
 import { resolveCoverChoice } from '@/components/covers/automaticCover';
 import { DrawnCover } from '@/components/covers/DrawnCover';
-import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { InfoPill } from '@/components/ui/InfoPill';
 import { PersonAvatar } from '@/features/avatars/components/PersonAvatar';
@@ -139,14 +138,6 @@ export function FollowingSection() {
           </h2>
           <p className="m-0 text-sm text-body">{t('following.intro')}</p>
         </div>
-        {/* The board's butterfly beside the heading, clear of its words (LOOK-5). */}
-        <Doodle
-          name="butterfly"
-          kind="widget"
-          on="What you follow"
-          hideBelow="wide"
-          className="w-20 shrink-0 rotate-[10deg]"
-        />
       </div>
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         <FollowCard

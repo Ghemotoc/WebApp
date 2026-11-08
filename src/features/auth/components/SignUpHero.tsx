@@ -5,8 +5,8 @@
  * headline "Write stories. Get read." (Q5) with a gold hand-drawn underline under the last words,
  * a lead line and four benefits. The tag on the board says "for writers aged 13 and up"; in March
  * the test is for invited adults (decided 17 Oct 2026, 12:44), so it says that instead.
- * Each benefit has the board's doodle icon in a white rounded square, and the tag ends with the
- * board's smiling heart (LOOK-6). Both are decorative: the words say it all.
+ * Each benefit has the board's icon in a white rounded square (LOOK-6), decorative: the words say
+ * it all. The smiling heart after the tag went with bundle G4 (no doodles).
  * Who uses it: SignUpPage.
  */
 import { useTranslation } from 'react-i18next';
@@ -15,7 +15,6 @@ import certificateIcon from '@/assets/icons/certificate.svg';
 import flagIcon from '@/assets/icons/flag.svg';
 import openBookIcon from '@/assets/icons/open-book.svg';
 import shieldIcon from '@/assets/icons/shield.svg';
-import { Doodle } from '@/components/ui/Doodle';
 
 /** The four benefits, in the board's order, each with the board's icon. */
 const benefits = [
@@ -36,14 +35,6 @@ export function SignUpHero() {
     <div className="flex max-w-[600px] flex-col gap-5">
       <div className="flex origin-left -rotate-2 items-center gap-2">
         <p className="m-0 font-hand text-[19px] text-eyebrow">{t('signUp.hero.tagMarch')}</p>
-        {/* The board's smiling heart after the handwritten tag, outside its words' box. */}
-        <Doodle
-          name="smiling-heart"
-          kind="widget"
-          on="The handwritten tag"
-          hideBelow="phone"
-          className="-my-3 w-10 rotate-[8deg]"
-        />
       </div>
       <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-extrabold tracking-[-0.025em] break-words">
         {t('signUp.hero.headingStart')}{' '}

@@ -5,8 +5,7 @@
  * Board values: the writer card (name, 22 px, the bio, Follow and "See profile"; S1-E5-05 and
  * S1-E6-05; the writer's numbers stay on the profile), the label rows with a fine line between them (LabelRows: language,
  * rating, labels, AI, status, first published (6 Nov 2026), comments; "Where to read" joins with S1-E3-08) and the "Report
- * this story" link. The content note sits in StoryHeader, under the blurb. The mug and the mushroom doodles sit on the card
- * corners as on the board.
+ * this story" link. The content note sits in StoryHeader, under the blurb. No doodles since bundle G4.
  * Report button (CLAUDE.md rule 6): Lane C's shared <ReportButton> (S1-E10-01; architecture
  * 1.7.11), which opens the one report dialog for this story. Not shown to the story's owner, who
  * can't report their own story (the database refuses it too).
@@ -18,7 +17,6 @@ import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
-import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { LabelRows } from '@/components/ui/LabelRows';
 import { FollowButton } from '@/features/people/components/FollowButton';
@@ -83,7 +81,7 @@ function ClassicAuthorCard({ author }: { author: ClassicAuthor }) {
 
 /**
  * The writer card: pen name or username, the handle, the bio and "See profile" (S1-E5-05) and
- * Follow (S1-E6-05; not on one's own story), with the mug doodle on its corner.
+ * Follow (S1-E6-05; not on one's own story).
  *
  * @returns the card
  */
@@ -117,13 +115,6 @@ function WriterCard({ writer, isOwner }: { writer: StoryPageData['writer']; isOw
           {t('storyPage.seeProfile')}
         </Link>
       </div>
-      <Doodle
-        name="mug"
-        kind="widget"
-        on="The writer"
-        hideBelow="phone"
-        className="absolute -top-7 -right-2 w-[62px] rotate-[10deg]"
-      />
     </div>
   );
 }
@@ -227,19 +218,10 @@ export function StorySideColumn({ story }: { story: StoryPageData }) {
           ]}
         />
       </div>
-      {/* The Report row and its mushroom (a widget doodle on the Report button) show only to
-          readers: the owner can't report their own story, and an empty row would let the
-          doodle sit on the labels card. */}
+      {/* The Report row shows only to readers: the owner can't report their own story. */}
       {!story.isOwner && (
         <div className="relative flex items-center">
           <ReportButton itemType="story" itemReference={story.id} itemLabel={story.title} />
-          <Doodle
-            name="mushroom"
-            kind="widget"
-            on="Report this story"
-            hideBelow="phone"
-            className="absolute right-3 -bottom-1 w-[60px] rotate-6"
-          />
         </div>
       )}
     </aside>

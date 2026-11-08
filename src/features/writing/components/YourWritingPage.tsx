@@ -20,7 +20,6 @@ import { Link, useLocation } from 'react-router';
 
 import { automaticCoverFor, designsForRow } from '@/components/covers/automaticCover';
 import { ChoiceChips } from '@/components/ui/ChoiceChips';
-import { Doodle } from '@/components/ui/Doodle';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
@@ -168,12 +167,6 @@ function YourWritingHeader({
           <NewStoryLink label={t('yourWriting.newStory')} />
         </div>
       )}
-      <Doodle
-        name="typewriter"
-        kind="background"
-        hideBelow="wide"
-        className="absolute -top-4 right-[420px] w-28 -rotate-6"
-      />
     </header>
   );
 }

@@ -13,7 +13,6 @@ import { useTranslation } from 'react-i18next';
 
 import { automaticCoverFor } from '@/components/covers/automaticCover';
 import { DrawnCover } from '@/components/covers/DrawnCover';
-import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { InfoPill } from '@/components/ui/InfoPill';
 import { StoryLabelPills } from '@/features/reading/components/StoryLabelPills';
@@ -91,13 +90,6 @@ export function StoryPreviewAside({ answers, penName }: StoryPreviewAsideProps) 
         )}
       </div>
       <p className="m-0 text-[13px] leading-normal text-meta">{t('preview.deleteLater')}</p>
-      <Doodle
-        name="owl-reading-glasses"
-        kind="widget"
-        on="How readers will see it"
-        hideBelow="wide"
-        className="absolute -bottom-24 right-2 w-24"
-      />
     </aside>
   );
 }

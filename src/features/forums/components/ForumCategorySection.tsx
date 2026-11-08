@@ -1,14 +1,11 @@
 /**
- * ForumCategorySection: one category card on the forum index: its colour bar, name, "4 forums",
- * its doodle and its forums (bundle FORUMS-1, part a; S1-E8-01; board 5.1).
+ * ForumCategorySection: one category card on the forum index: its colour bar, name, "4 forums"
+ * and its forums (bundle FORUMS-1, part a; S1-E8-01; board 5.1). Categories are text only, with no
+ * picture (bundle G4; DESIGN thread, 8 Nov 2026).
  *
- * Who uses it: ForumsPage. What it calls: ForumRow for each forum, and Doodle for the category's
- * doodle when it names one the app has (staff choose it on /staff/forums).
+ * Who uses it: ForumsPage. What it calls: ForumRow for each forum.
  * Part d adds "Mark as read" for the category and every forum inside it (S1-E8-04): MarkReadButton.
  */
-import { Doodle } from '@/components/ui/Doodle';
-import { doodleSources, type DoodleName } from '@/components/ui/doodleSources';
-
 import type { ForumAccent } from '../api/forumIndex';
 import type { ForumCategory } from '../lib/forumTree';
 import { useForumsTranslation } from '../registerForumsTranslations';
@@ -24,16 +21,6 @@ const accentBars: Record<ForumAccent, string> = {
   sage: 'bg-(--pill-sage-text)',
   gold: 'bg-(--pill-gold-text)',
 };
-
-/**
- * Whether a doodle name staff chose is one the app has.
- *
- * @param name - the name from the database
- * @returns true when Doodle can draw it
- */
-function isDoodleName(name: string | null): name is DoodleName {
-  return name !== null && Object.hasOwn(doodleSources, name);
-}
 
 /**
  * Renders the card.
@@ -62,15 +49,6 @@ export function ForumCategorySection({ group }: { group: ForumCategory }) {
         <span className="ml-auto">
           <MarkReadButton forumSlug={category.slug} forumName={category.name} />
         </span>
-        {isDoodleName(category.doodle) && (
-          <Doodle
-            name={category.doodle}
-            kind="widget"
-            on="forum-category"
-            hideBelow="phone"
-            className="w-10"
-          />
-        )}
       </header>
       <ul className="m-0 list-none p-0">
         {forums.map(({ forum, subforums }) => (

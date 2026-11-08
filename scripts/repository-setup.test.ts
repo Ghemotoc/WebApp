@@ -80,6 +80,15 @@ describe('repository setup', () => {
     expect(dependabot).toContain('interval: weekly');
   });
 
+  it('starts the local Supabase in CI through the three-try script, so a busy image registry does not fail a job (QA-9)', () => {
+    const ciWorkflow = readRepositoryFile('.github/workflows/ci.yml');
+    expect(ciWorkflow).toContain('scripts/ci/start-supabase.sh db start');
+    expect(ciWorkflow).toContain('scripts/ci/start-supabase.sh start -x');
+    expect(ciWorkflow).not.toMatch(/run: npx supabase (db )?start/);
+    const startScript = readRepositoryFile('scripts/ci/start-supabase.sh');
+    expect(startScript).toContain('npx supabase stop --no-backup');
+  });
+
   it('has a code tour that covers where the app starts, how a click travels, where things live and where to start reading', () => {
     const codeTour = readRepositoryFile('docs/code-tour.md');
 
