@@ -15,7 +15,7 @@ Read in this order; each file's header comment says what it is for and where thi
 5. `src/locales/ro/common.json` and `src/locales/en/common.json`: the interface text.
 6. `src/styles/tokens.css`, `src/components/ui/README.md` and `/design` in the running app (`npm run dev`, then open /design): how screens look and which components to reuse.
 7. `supabase/README.md`, then `supabase/schema.sql` (the schema as it is now; the migrations in `supabase/migrations/` are its history), `supabase/seed.sql` and `supabase/tests/database/010-profiles.test.sql`: the database side and how a policy is tested.
-8. `.github/workflows/ci.yml`: what has to pass before anything merges, and when the long jobs run (only after a merge to main, Robert, 1 Nov 2026; e2e in 4 shards, QA-3).
+8. `.github/workflows/ci.yml`: what has to pass before anything merges: every pull request and every push to main run the whole suite (Robert, 8 Nov 2026; e2e in 4 shards, QA-3).
 9. `src/features/language/`: the first feature that saves to the database, from drop-down to SQL function (traced in "One round trip: saving the language" below).
 10. `e2e/home.spec.ts`, `e2e/language.spec.ts` and `scripts/`: how the checks prove each rule.
 
@@ -259,7 +259,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `src/features/people/` | Writer profiles (`/u/:handle`) through `get_writer_profile()`, blocks (`set_block()`, the block dialog, Settings' "Blocked accounts"), the bio, and the shared `<FollowButton>` for writers and stories; see its README | S1-E5-05, S1-E6-05 |
 | `src/features/discovery/` | Discover (`/discover`), and one list page for every See all, category, tag and writer list (`/discover/all/:listKind`, `/discover/c/:categorySlug`, `/discover/t/:tag`, `/u/:handle/stories`), all through `browse_stories()`; filters and sort live in the address; see its README | S1-E5-01, S1-E5-09, S1-E5-02 |
 | `src/components/covers/` | `DrawnCover` (every cover we draw: the 16 designs, the 9-colour palette, the full title at every size), `coverDesigns.ts` (the designs, colours and pattern artwork from the NewStory board) and `automaticCover.ts` (a skipped cover gets one of the 7 patterned designs from the story's ID, never a flat colour (LOOK-1); `designsForRow()` keeps two neighbours in a row apart) | S1-E3-01, S1-E3-13 |
-| `src/components/ui/Doodle.tsx`, `src/assets/doodles/` | The decorative doodles (`data-doodle="background"` or `"widget"`, hidden under 1000 or 600 px), copied from design/assets with readable names; `e2e/support/doodles.ts` fails a screen when a doodle meets text or a control | S1-E3-01 |
+| `src/components/ui/doodleSources.ts`, `src/assets/doodles/` | The doodle files with readable names. Screens draw no doodles since bundle G4 (the liquid glass design has none); only the staff pickers that still choose one (forum places, seasonal occasions) read them until G12. `e2e/support/doodles.ts` stays as a guard that fails a screen if a doodle ever meets text or a control | S1-E3-01, G4 |
 | `src/assets/icons/` | The board's small doodle icons (bell, block, bookmark, cog as `settings`, globe, laptop, lock, moon, send and others), copied from design/assets as they are and shown as `<img alt="" aria-hidden="true">` before words that already say what the control does. Arrows, close, ticks, plus and minus, form-field and status icons stay plain (`src/components/icons/`), and the reader, share, report and staff screens use none (DoD design rules) | LOOK-5 |
 | `src/features/avatars/components/PersonAvatar.tsx` | The one small round avatar beside a person's name (posts, comments, chats, followed writers, the dashboard's latest comments): initials on the plum gradient, the drawn avatar over them | LOOK-7 |
 | `src/components/ui/Shelf.tsx`, `useShelfScroll.ts`, `shelfPaging.ts` | Every sideways row of stories: the edge fades (each edge fades while cards are hidden past it, so both in the middle of a row), and arrows that move by whole cards (`pageTarget()`), so the card a fade covered is shown fully between the fades after one press; tests in `shelfPaging.test.ts` and `e2e/shelf-paging.spec.ts` | S1-E1-03, FIXES-1a |
@@ -280,7 +280,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `e2e/` | Playwright tests in a real browser, with axe accessibility checks. `e2e/support/personas.ts` signs a seed persona in against the local Supabase (no sign-in screen needed). Tests run one at a time, because they share the personas, the seed story and site-wide flags in one database. A test that checks a signed-in screen in one language saves that language on the persona first (the account's language wins), and `e2e/support/animations.ts` waits for slides to stop before the next key | S1-E1-01, S1-E1-04, S1-E1-QA, TOOL-1 |
 | `scripts/` | Repository checks: the i18n check, the brand-value check, the generated-types check, the story issue sync (S1-E1-01); the policy-test coverage check and the bundle secret scan (S1-E1-02); and their tests | S1-E1-01, S1-E1-02 |
 | `scripts/ops/` | Operations scripts run by a person, never by CI: `check-uptime.ts` (what "up" means, run after a deploy) and `compare-restore.sh` (checks a restored database row for row in the restore drill). Runbooks: `docs/runbooks/uptime-checks.md`, `docs/runbooks/restore.md` | QA-8 |
-| `.github/workflows/` | CI (`ci.yml`), the disabled production release, the story issue sync. In `ci.yml` pull requests run only the quick `checks` job; the database and end-to-end jobs run after each merge to main | S1-E1-01; full tests only after the merge, 1 Nov 2026 |
+| `.github/workflows/`, `.github/dependabot.yml` | CI (`ci.yml`), the disabled production release, the story issue sync. In `ci.yml` every pull request and every push to main run all three jobs: `checks` (which starts with `npm audit --audit-level=high`), `database` and the four `e2e` shards. Dependabot opens one grouped pull request a week for packages and one for Actions. Both Supabase-backed jobs start Supabase through `scripts/ci/start-supabase.sh`, which tries three times when the image registry is busy | S1-E1-01; full tests on every pull request, 8 Nov 2026; audit, Dependabot and the start script, QA-9 |
 | `.claude/` | Claude Code settings and the SessionStart hook: on every start and resume it puts Node 24 first on PATH (through `CLAUDE_ENV_FILE`), starts Docker for the local Supabase stack if it is down, and installs packages when the lock file changes | S1-E1-01, Tooling (18 Oct 2026) |
 | `docs/` | Architecture, Definition of Done, decisions, stories, runbooks, this tour; `mocks.md` (mocks and stubs still on); `epic-reports/` (one report per epic check) | starter kit, then every story |
 | `design/` | Boards (source of truth for screens), renders and pictures | starter kit |
@@ -288,7 +288,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 
 **Where the app runs.** Locally: Vite's dev server plus the Supabase CLI in Docker. Staging: Cloudflare Pages project `ghemotoc` builds `main` (`npm run build`, output `dist`) and gives each pull request a preview link; Supabase's GitHub integration applies migrations to the staging project. Production: a tagged release, approved in GitHub (`.github/workflows/release-production.yml`, switched off until a production project exists).
 
-**Checks.** `npm run checks` (`scripts/run-all-checks.sh`) runs `npm run lint`, `npm run typecheck`, `npm run types:check`, `npm test`, a reset of the local database, `npx supabase test db`, `npm run test:e2e` and `npm run i18n:check`; after a build, also run `npm run scan:bundle`. The reset keeps the database tests independent of what ran before, and e2e puts the seed personas' language back when it ends (`e2e/support/global-teardown.ts`). Run them all locally before you mark a pull request ready for review. CI (`.github/workflows/ci.yml`) runs lint, types, unit tests, i18n and the build on every push to a pull request, drafts included. The two long jobs, database (about a minute) and e2e (over 2 hours on one machine, so it runs in 4 shards, QA-3), are skipped on pull requests and run after every merge to main, so the full local run before merging is what guards main. A skipped job counts as passed for the merge rules, so open pull requests as drafts and mark them ready once the local run is green (Robert, 1 Nov 2026: GitHub Actions minutes; before that the CTO's rule of 24 Oct 2026 also ran them on the pull request).
+**Checks.** `npm run checks` (`scripts/run-all-checks.sh`) runs `npm run lint`, `npm run typecheck`, `npm run types:check`, `npm test`, a reset of the local database, `npx supabase test db`, `npm run test:e2e` and `npm run i18n:check`; after a build, also run `npm run scan:bundle`. The reset keeps the database tests independent of what ran before, and e2e puts the seed personas' language back when it ends (`e2e/support/global-teardown.ts`). CI (`.github/workflows/ci.yml`) runs all of them on every push to a pull request, drafts included, and again after every merge to main: lint, types, unit tests, i18n and the build in `checks`, then database (about a minute) and e2e (over 2 hours on one machine, so it runs in 4 shards of about 40 minutes, QA-3). Mark a pull request ready for review once every job is green. Locally, run only what your change touches, or a test that failed, to debug it (Robert, 8 Nov 2026: the repository is public, so Actions minutes are free; replaces the 1 Nov 2026 rule that skipped the long jobs on pull requests).
 
 ## The database baseline (S1-E1-02)
 
@@ -949,7 +949,7 @@ An authority order (S1-E10-09) and a flagged picture (S1-E10-05) insert their ow
 ## Sanctions, and what a decision does (S1-E10-06)
 
 ```
-CasePage → DecisionForm (warn, suspend 1/7/30 days, ban, hide, remove; restrict waits for S1-E11-08)
+CasePage → DecisionForm (warn, suspend 1/7/30 days, ban, hide, remove; restrict on a case about a story, QA-9: the story leaves every list and an overturned appeal lifts it, test 312)
   │  useCase.decide() → rpc admin_decide_case(case, action, note, suspension_days)
   ▼
 …_s1_e10_06_sanctions.sql
@@ -1724,7 +1724,7 @@ What the writing epic left in place. The epic report, `docs/epic-reports/S1-E3.m
 | Kind | Where | Story |
 | --- | --- | --- |
 | Screens | `/write` (Your writing), `/write/new`, `/write/s/<story>/settings`, `/write/s/<story>/c/<chapter>` (the editor), `/write/s/<story>/chapters` (Manage chapters) in `src/features/writing/`; the story page `/s/<story>` in `src/features/reading/` | 3-01, 3-05, 3-02a, 3-04 |
-| Shared pieces | `src/components/covers/` (drawn and automatic covers), `src/components/ui/Doodle.tsx`, `src/lib/romania-time.ts`, `src/lib/safe-links.ts`, `ChapterText` (the reader's renderer) | 3-01, 3-13, 3-03 |
+| Shared pieces | `src/components/covers/` (drawn and automatic covers), `src/lib/romania-time.ts`, `src/lib/safe-links.ts`, `ChapterText` (the reader's renderer) | 3-01, 3-13, 3-03 |
 | Hooks | `useNewStoryForm`, `useStorySettingsForm`, `useStoryActions`, `useMyStories`, `useChapterDraft`, `useChapterEditor`, `useAutosave` (with `useDeviceKeep`, `useDeviceDraft`), `useChapterPublishing`, `useManageChapters` | each story |
 | Tables | `categories`, `tags`, `stories`, `story_tags`, `chapters`, `chapter_revisions`, `jobs` (a queue staff read; S1-E7-01 and S1-E10-04 consume it) | 3-01, 3-02a, 3-06 |
 | Functions | `create_story()`, `update_my_story()`, `delete_my_story()`/`restore_my_story()`, `get_story_page()`, `rating_allows()`, `create_chapter()`, `save_chapter_draft()`, the publishing functions with `chapter_publish_now()` and `chapter_is_readable()`, the chapter management functions, `admin_raise_story_rating()`, `admin_set_ai_undisclosed_label()` | each story |
@@ -1802,7 +1802,7 @@ What the notifications epic left in place for March. The epic report is `docs/ep
 
 ## Epic S1-E5 at a glance (checked by S1-E5-QA)
 
-What the discovery epic has in place. S1-E5-08, the public home page, and S1-E5-07, the seasonal doodle, came in CMS-1; journey 6 of the check walks from the home page to a story. The epic report is `docs/epic-reports/S1-E5.md`.
+What the discovery epic has in place. S1-E5-08, the public home page, and S1-E5-07, the seasonal doodle, came in CMS-1 (no screen shows the doodle since bundle G4); journey 6 of the check walks from the home page to a story. The epic report is `docs/epic-reports/S1-E5.md`.
 
 | Kind | Where | Story |
 | --- | --- | --- |
@@ -1878,9 +1878,8 @@ Admins change the app's own words, and the Auth emails', from Staff › Website 
 
 ## Seasonal doodles (S1-E11-11, S1-E5-07; CMS-1d)
 
-A small drawing beside Discover's heading changes with the season and on special days. The owner and admins plan it; the app's database keeps the schedule (B30).
+A small drawing beside Discover's heading used to change with the season and on special days. Since bundle G4 no screen shows it: the seasonal looks carry the season (G2), and G12 turns the staff page into Website › Seasonal looks, which sets only the dates (DESIGN thread, 8 Nov 2026). Until then the owner and admins can still plan the schedule; the app's database keeps it (B30), and `current_seasonal_doodle(day, place)` still says which occasion wins (the shortest that covers the day, so Halloween beats Autumn).
 
-- **Where it starts (readers):** `DiscoverPage` shows `<SeasonalDoodle place="discover">` (`src/features/seasonal/`). `useSeasonalDoodle()` asks `current_seasonal_doodle(today, 'discover')` once a minute; the shortest occasion that covers today wins, so Halloween beats Autumn. If the read fails, no doodle shows. The doodle is decorative: `alt=""`, `aria-hidden`, beside the heading, never over it.
 - **Where it starts (staff):** `/staff/website/seasonal` (`SeasonalTab`). Add or Change opens `OccasionForm`; Save → `admin_save_occasion()` (checks the website area, refuses a last day before the first or a yearly range of a year or more, logs `seasonal.saved` with before and after) → the schedule and the doodle are read again. Remove → `admin_remove_occasion()` (soft delete, `seasonal.removed`).
 - **The year view:** `OccasionYearView` uses `occasionCovers()`, the same rule as the database's `occasion_covers()`, to list each month's occasions and count any day with no doodle.
 - **Tests:** `supabase/tests/database/174-seasonal-occasions.test.sql`, `e2e/seasonal-doodles.spec.ts`, `src/features/seasonal/lib/seasonalCalendar.test.ts`.
@@ -2326,10 +2325,10 @@ CI: npm run doodles:check  →  fails on any raw hex, a fallback that drifted or
 
 ## Writer ranks (S1-E8-09; FORUMS-2e)
 
-- Where it lives: `supabase/migrations/…_forums2_e_ranks.sql` (the `writer_rank` enum, `rank_for()`, the `writer_ranks` table, `refresh_writer_rank()` and its triggers, `profile_rank()`); `src/features/forums/lib/writerRanks.ts` (the ladder and the progress bar), `api/writerRanks.ts`, `hooks/useWriterRank.ts`; the components `RankChip`, `ProfileRankChip`, `RankPanel` with `RankLadder` and `RankProgressBar`, and `RankSticker` (the doodle on the profile picture).
+- Where it lives: `supabase/migrations/…_forums2_e_ranks.sql` (the `writer_rank` enum, `rank_for()`, the `writer_ranks` table, `refresh_writer_rank()` and its triggers, `profile_rank()`); `src/features/forums/lib/writerRanks.ts` (the ladder and the progress bar), `api/writerRanks.ts`, `hooks/useWriterRank.ts`; the components `RankChip`, `ProfileRankChip`, `RankPanel` with `RankLadder` and `RankProgressBar`. A rank is always a text pill, never a sticker (bundle G4).
 - The ladder (criterion 2): New writer at the first published chapter, Writer at 5, Storyteller at 15 chapters or 30,000 words, Novelist at 100,000 words. Only published, undeleted chapters of undeleted stories that no moderator hid or removed count; forum posts never do (criterion 1). Nobody can set a rank: there is no `admin_*` function for it.
 - How it stays current: triggers on `chapters` (publish, unpublish, delete, words), `stories` (delete) and `moderated_items` (hide, remove, restore) call `refresh_writer_rank()`, which counts again and saves one row per writer. The row is private to its owner; everyone else reads the rank through `profile_rank(handle)` (rank, chapters, words; null for a blocked reader or a private profile) or a post's `author_rank`, never a user ID.
-- Where it shows: the gold pill beside the name on the profile (`ProfileHeader`) and on every forum post (`ForumPostCard`, criterion 5), the rank card at the top of the profile's side column, and the rank's sticker on the profile picture (`ProfileAvatar`).
+- Where it shows: the gold pill beside the name on the profile (`ProfileHeader`) and on every forum post (`ForumPostCard`, criterion 5), the rank card at the top of the profile's side column, and the "new rank" notification row (`NotificationRow`).
 - Tests: `supabase/tests/database/231-writer-ranks.test.sql`, `src/features/forums/lib/writerRanks.test.ts`, `e2e/writer-ranks.spec.ts`.
 
 ### One journey through the whole epic (S1-E8-QA)

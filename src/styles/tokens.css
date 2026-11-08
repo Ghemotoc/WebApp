@@ -79,6 +79,12 @@
   /* The segmented control's recessed track and its water bubble (bundle G3). */
   --track: rgba(36, 19, 58, 0.08);
   --bubble: rgba(255, 255, 255, 1);
+  /*
+   * The tab bar's current page, written on the bubble: the theme's link colour by day. At night
+   * it is the light ink, because the link lilac on the pale bubble over the glass measured 4.49:1
+   * (CI-1, 8 Nov 2026), below WCAG 1.4.3's 4.5:1; the night design has white selected tabs.
+   */
+  --tab-current: var(--link);
   /* The password strength meter's four segments (handoff: red, yellow, green, dark green). */
   --strength-weak: #c2283c;
   --strength-fair: #d9a400;
@@ -218,6 +224,7 @@
   --on-plum: #ffffff;
   --track: rgba(0, 0, 0, 0.28);
   --bubble: rgba(255, 255, 255, 0.18);
+  --tab-current: var(--ink);
   --strength-weak: #ff9aa8;
   --strength-fair: #ffd36a;
   --strength-strong: #8fe0b5;

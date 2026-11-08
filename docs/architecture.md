@@ -226,7 +226,7 @@ Each piece has an ID (B01 and so on) so the screen tables below can point to it.
 | B27 | Admin functions: `admin_*` functions, each checking role, permission and `is_staff_session()` and writing the audit log in the same transaction | S1-E11 | nothing to mock |
 | B28 | Data rights: `exports`, `export-build`, `data_requests`, `story-export` (Word from the first version, PDF later; the shared Word builder is built in S1-E13-02, which comes first in the build order, decided 17 Oct 2026, 12:34), the deletion job | S1-E13-02, S1-E11-09, S1-E13-03, S1-E13-05 | nothing for Word (real from S1-E13-02); PDF returns a placeholder file until S1-E11-09b |
 | B29 | Banners and sponsors: sponsors, campaigns, daily stats, `pick_banner(context)` | S1-E12 | one seeded test campaign |
-| B30 | Seasonal doodles: `seasonal_occasions`, `current_occasion()`; the doodles themselves are SVG files in the app | S1-E11-11 (S1-E5-07 shows them) | seeded occasions |
+| B30 | Seasonal doodles: `seasonal_occasions`, `current_occasion()`; the doodles themselves are SVG files in the app | S1-E11-11 (S1-E5-07 showed them until bundle G4: the liquid glass design has no doodles, and G12 turns the schedule into seasonal look dates) | seeded occasions |
 | B31 | **Website content store (CMS):** pages and page versions by market and language (the home page first), notice banners, help pages and questions, behind one `WebsiteContentStore` contract, plus `public-shelves`, a read-only list of public stories for the website. For March the store lives in the app's database and is written through `admin_*` functions (decided 17 Oct 2026, 19:16); once the website database exists (set-up OPEN), a `website-cms` bridge writes there instead and only the storage changes | S1-E11-06, S1-E11-10, S1-E11-12, S1-E5-08 | nothing to mock for March: the store is real in the app's database. The website database adapter comes later (a new CMS built from scratch, decided 16 Oct 2026, Q54) |
 | B32 | Cookieless analytics and error tracking | S1-E15-01, S1-E1-05 | switched off locally |
 | B33 | Desktop shell: Tauri deep link, opener, single instance, updater, content protection | S1-E16-02 | build on the web first; the desktop parts are tested when S1-E16-02 lands |
@@ -598,7 +598,7 @@ Classics are managed only by staff with the admin role (and the owner); content 
 - Supabase's own two-factor level (aal2) isn't used for staff. Instead `is_staff_session()` is true only when the session came from Google sign-in with an account on the company's Google Workspace domain, themagiccoffin.com (read from the setting `STAFF_EMAIL_DOMAIN`, decided 17 Oct 2026, 12:47), and every staff policy checks it (S1-E2-07b; in March it returns true for any staff-role session, S1-E2-07a).
 - Lock-out, recovery and suspicious sign-in alerts are Google Workspace's (canvas 8.1).
 - Member log-ins (email, Google, Apple, Microsoft) never give staff access.
-- Staff sessions end after 12 hours (proposal), and the most sensitive actions ask the person to sign in with Google again (a fresh sign-in, proposal): changing a role, starting an export for someone else, "Emergency disable" and removing part of a writer's text.
+- Staff sessions end after 12 hours (proposal). Changing a role asks the person to sign in again first (a fresh sign-in within 15 minutes); starting an export for someone else, "Emergency disable" and removing part of a writer's text don't (Robert, 8 Nov 2026: "an overkill"; replaces the proposal that all four ask).
 
 **Least privilege in practice**
 

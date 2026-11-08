@@ -5,11 +5,11 @@
  * Who runs it: `npm run test:e2e` (Supabase started first).
  * What it proves:
  * - when a writer's published chapters lift them to a new rank, they get one notice saying so,
- *   with the rank's sticker in its icon and a link to their own profile (criterion 1);
+ *   naming the rank in its pill (no sticker since bundle G4) and a link to their own profile
+ *   (criterion 1);
  * - the writer card beside a story shows the writer's rank (criterion 3);
  * - a story card on the See all list shows the compact rank pill (criterion 3);
- * - the notifications page passes axe at 390, 768 and 1440 px, light and night, ro and en, and the
- *   sticker never touches text or a control.
+ * - the notifications page passes axe at 390, 768 and 1440 px, light and night, ro and en.
  * Test data: one story "Ranguri anunț e2e" with 15 published chapters by the pending_check persona,
  * whom no other spec gives a rank notice. The story, the notices and the "highest rank told" mark
  * are removed before and after, so the next run starts from no rank.
@@ -18,7 +18,6 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
 import { signInPersona, useSessionInBrowser } from './support/personas';
 
 /** The pending_check persona's user ID (the seed's), as in e2e/writer-ranks.spec.ts. */
@@ -74,7 +73,7 @@ test.describe('rank notices and rank pills (IDEAS-3a)', () => {
   });
   test.afterAll(cleanUp);
 
-  test('the writer is told once about their new rank, with its sticker', async ({ browser }) => {
+  test('the writer is told once about their new rank, named in its pill', async ({ browser }) => {
     // Criterion 1: one notice for the highest rank reached, not one per rank on the way.
     const count = runSql(`select count(*) from public.notifications
       where user_id = '${writerId}' and kind = 'rank_reached';`);
@@ -83,7 +82,7 @@ test.describe('rank notices and rank pills (IDEAS-3a)', () => {
     const page = await openAsWriter(browser, '/notifications');
     const notice = page.getByRole('listitem').filter({ hasText: 'Your rank:' });
     await expect(notice).toContainText('you’re now a Storyteller. Well done.');
-    await expect(notice.getByTestId('rank-sticker-icon')).toBeVisible();
+    await expect(notice.getByTestId('rank-chip')).toContainText('Storyteller');
     await expect(notice.getByRole('link', { name: 'See your rank' })).toHaveAttribute(
       'href',
       '/u/pending_check',
@@ -117,8 +116,7 @@ test.describe('rank notices and rank pills (IDEAS-3a)', () => {
       await useSessionInBrowser(context, session);
       const page = await context.newPage();
       await checkScreen(page, view);
-      await expect(page.getByTestId('rank-sticker-icon')).toBeVisible();
-      await expectNoDoodleOverlap(page);
+      await expect(page.getByTestId('rank-chip').first()).toBeVisible();
       await context.close();
     });
   }

@@ -4,8 +4,8 @@
  * Who runs it: `npm run test:e2e` (Supabase started first).
  * What it proves:
  * - a writer with 15 published chapters shows "Rank: Storyteller" beside their name, the rank
- *   card with the ladder and "41,200 of 100,000 words to Novelist", and the Storyteller sticker
- *   on their picture (criterion 2; board 6.1);
+ *   card with the ladder and "41,200 of 100,000 words to Novelist" (criterion 2; board 6.1; no
+ *   sticker on the picture since bundle G4);
  * - their forum post shows the rank beside their name, at phone width too (criterion 5);
  * - unpublishing chapters lowers the rank on the next visit (criterion 2);
  * - a writer with no published chapter shows no rank at all;

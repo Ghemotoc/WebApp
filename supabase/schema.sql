@@ -4980,8 +4980,8 @@ begin
   if target.id is null or not public.may_see_case(target.is_safeguarding) or not public.staff_may('moderation', 'act') then
     raise exception 'You can''t decide this case.' using errcode = 'insufficient_privilege';
   end if;
-  -- Step 2: a note is required; a decided case stays decided; restrict isn't built yet; a public
-  -- note goes on a story or a chapter only.
+  -- Step 2: a note is required; a decided case stays decided; a public note goes on a story or a
+  -- chapter only.
   if btrim(coalesce(note_text, '')) = '' then
     raise exception 'Write a note with the decision.' using errcode = 'check_violation';
   end if;
@@ -4991,13 +4991,14 @@ begin
   if target.status <> 'open' then
     raise exception 'This case is already decided.' using errcode = 'check_violation';
   end if;
-  if chosen_action = 'restrict' then
-    raise exception 'Restricting an item comes with S1-E11-08.' using errcode = 'feature_not_supported';
-  end if;
   if chosen_action = 'public_note' and target.item_type not in ('story', 'chapter') then
     raise exception 'A public note goes on a story or a chapter only.' using errcode = 'check_violation';
   end if;
-  -- Step 3: the shared steps, with the statement of reasons.
+  -- Step 3: "restrict" (QA-9) is for a story readers can still see, and not already restricted.
+  if chosen_action = 'restrict' then
+    perform public.require_story_restrictable_by_case(target);
+  end if;
+  -- Step 4: the shared steps, with the statement of reasons.
   perform public.decide_case(target, chosen_action, note_text, message_to_person, suspension_days, true);
   return true;
 end;
@@ -5007,7 +5008,7 @@ $$;
 ALTER FUNCTION "public"."admin_decide_case"("target_case_id" "uuid", "chosen_action" "public"."moderation_action", "note_text" "text", "suspension_days" integer, "message_to_person" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."admin_decide_case"("target_case_id" "uuid", "chosen_action" "public"."moderation_action", "note_text" "text", "suspension_days" integer, "message_to_person" "text") IS 'Moderators decide an open case; the action is carried out, the statement of reasons sent and the reporters told (S1-E10-03a, 06, 08, 04).';
+COMMENT ON FUNCTION "public"."admin_decide_case"("target_case_id" "uuid", "chosen_action" "public"."moderation_action", "note_text" "text", "suspension_days" integer, "message_to_person" "text") IS 'Moderators decide an open case; the action is carried out, the statement of reasons sent and the reporters told (S1-E10-03a, 06, 08, 04; restrict on a story from QA-9).';
 
 
 
@@ -18784,7 +18785,7 @@ begin
   -- Step 1: the decision row.
   insert into public.case_actions (case_id, user_id, action, note)
   values (target.id, (select auth.uid()), chosen_action, btrim(note_text));
-  -- Step 2: carry the action out (S1-E10-06, S1-E10-08). A sanction from a case gets no
+  -- Step 2: carry the action out (S1-E10-06, S1-E10-08, QA-9). A sanction from a case gets no
   -- statement of its own: the case's statement covers it.
   if chosen_action in ('warn', 'suspend', 'ban') then
     sanction_id := public.admin_apply_sanction(target.user_id,
@@ -18793,6 +18794,11 @@ begin
   elsif chosen_action in ('hide', 'remove') then
     perform public.moderate_item(target.item_type, target.item_id, target.user_id,
       case chosen_action when 'hide' then 'hidden' else 'removed' end::public.moderated_state, target.id, note_text);
+  elsif chosen_action = 'restrict' then
+    -- A restricted story still opens from a link but leaves every list (S1-E11-08); the case
+    -- note is the reason staff see on the story's admin page (the column allows 1,000 characters).
+    insert into public.story_restrictions (user_id, story_id, restricted_by_user_id, reason)
+    values (target.user_id, target.item_id, (select auth.uid()), left(btrim(note_text), 1000));
   elsif chosen_action = 'public_note' then
     perform public.add_copied_work_note(target);
   end if;
@@ -34888,6 +34894,34 @@ COMMENT ON FUNCTION "public"."require_sponsor_staff"() IS 'Internal: refuses any
 
 
 
+CREATE OR REPLACE FUNCTION "public"."require_story_restrictable_by_case"("target" "public"."cases") RETURNS "void"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  -- Step 1: only a story can be restricted; a chapter, comment or profile has no such state.
+  if target.item_type <> 'story' then
+    raise exception 'Only a story can be restricted.' using errcode = 'check_violation';
+  end if;
+  -- Step 2: a hidden or removed story is already out of sight, so restricting it changes nothing.
+  if public.is_moderated_away('story', target.item_id) then
+    raise exception 'This story is hidden or removed, so it can''t be restricted.' using errcode = 'check_violation';
+  end if;
+  -- Step 3: one live restriction at a time (the index story_restrictions_one_live_per_story).
+  if public.is_story_restricted(target.item_id) then
+    raise exception 'This story is already restricted.' using errcode = 'check_violation';
+  end if;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."require_story_restrictable_by_case"("target" "public"."cases") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."require_story_restrictable_by_case"("target" "public"."cases") IS 'Refuses a case''s "restrict" unless it is about a shown story that is not restricted yet (QA-9).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."require_support_ticket_for_staff"("ticket_number" bigint) RETURNS "public"."support_tickets"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -42920,6 +42954,15 @@ begin
   update public.contest_entries
   set status = 'valid', disqualified_at = null, disqualified_by_user_id = null
   where contest_entries.statement_id = statement.id and contest_entries.status = 'disqualified';
+  -- Step 5: a story the case restricted shows in lists again (QA-9). A story has at most one live
+  -- restriction, so the story's live one is the case's.
+  if statement.action = 'restrict' then
+    update public.story_restrictions
+    set lifted_at = now(), lifted_by_user_id = (select auth.uid())
+    where story_restrictions.story_id = (select cases.item_id from public.cases
+                                         where cases.id = statement.case_id and cases.item_type = 'story')
+      and story_restrictions.lifted_at is null;
+  end if;
 end;
 $$;
 
@@ -58811,6 +58854,10 @@ REVOKE ALL ON FUNCTION "public"."require_sponsor_approval_ready"("campaign" "pub
 
 
 REVOKE ALL ON FUNCTION "public"."require_sponsor_staff"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."require_story_restrictable_by_case"("target" "public"."cases") FROM PUBLIC;
 
 
 

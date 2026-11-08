@@ -41,7 +41,8 @@ const tabs: readonly Tab[] = [
 function tabClasses({ isActive }: { isActive: boolean }): string {
   const base =
     'flex h-14 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-full text-[11px] leading-tight no-underline';
-  if (isActive) return `${base} segmented-bubble font-bold text-link`;
+  // The current page's colour is a token: the link colour by day, the light ink at night (tokens.css).
+  if (isActive) return `${base} segmented-bubble font-bold text-(--tab-current)`;
   return `${base} font-medium text-ink hover:bg-ink/5`;
 }
 

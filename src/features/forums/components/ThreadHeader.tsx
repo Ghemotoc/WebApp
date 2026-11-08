@@ -3,14 +3,12 @@
  * button (bundle FORUMS-1, part b; S1-E8-02; board 5.2's heading).
  *
  * Board values: the title in Bricolage Grotesque at 36 to 48 px, the line under it in 14 px with
- * the starter's name as a link, an open-book doodle at the top right on wide screens (background,
- * hidden from screen readers). A thread staff hid shows its starter a note; nobody else sees it.
+ * the starter's name as a link (no doodle since bundle G4). A thread staff hid shows its starter a note; nobody else sees it.
  * Who uses it: ThreadPage. What it calls: ForumBreadcrumb, ReportButton (rule 6).
  */
 import { Trans } from 'react-i18next';
 import { Link } from 'react-router';
 
-import { Doodle } from '@/components/ui/Doodle';
 import { ReportButton } from '@/features/reporting/components/ReportButton';
 
 import type { ForumEntry } from '../api/forumIndex';
@@ -81,12 +79,6 @@ export function ThreadHeader({ thread, path }: { thread: ForumThreadHeader; path
       {thread.state === 'hidden' && (
         <p className="m-0 text-sm font-semibold text-body">{t('thread.hiddenNote')}</p>
       )}
-      <Doodle
-        name="open-book"
-        kind="background"
-        hideBelow="wide"
-        className="absolute top-2 right-4 w-[88px] -rotate-3"
-      />
     </header>
   );
 }

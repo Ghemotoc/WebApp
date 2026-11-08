@@ -5,8 +5,8 @@
  * Who shows it: the router, at /write/s/:storySlug/chapters; "Manage chapters" on Your writing
  * and the story link in the editor's breadcrumb lead here.
  * What it shows: the header (back to the writer dashboard, the story's title as the eyebrow,
- * "Manage chapters", the intro, "See story page" and "+ New chapter", the books-and-plant
- * doodle), the chapter list card, Recently deleted, and the delete dialog on top when asked.
+ * "Manage chapters", the intro, "See story page" and "+ New chapter"), the chapter list
+ * card, Recently deleted, and the delete dialog on top when asked.
  * The board's third card, "The whole story" (status, comments, delete the story), stays on the
  * story's settings page, where S1-E3-05 built it (docs/board-fixes.md).
  * What it calls: useMyStories (the story's title), useManageChapters (the list and every
@@ -18,7 +18,6 @@ import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router';
 
 import { ChevronLeftIcon } from '@/components/icons/ChevronLeftIcon';
-import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
@@ -37,14 +36,8 @@ import { RecentlyDeletedChapters } from './RecentlyDeletedChapters';
 function ManageChaptersHeader({ slug, storyTitle }: { slug: string; storyTitle: string }) {
   const { t } = useTranslation('writing');
   return (
-    // mb-2 makes the board's 28 px gap above the card, so the card's doodle stays clear of the buttons.
+    // mb-2 makes the board's 28 px gap above the card.
     <header className="relative mb-2 flex flex-wrap items-end justify-between gap-6">
-      <Doodle
-        name="books-and-plant"
-        kind="background"
-        hideBelow="wide"
-        className="absolute top-1.5 right-[360px] w-[150px] -rotate-4"
-      />
       <div className="flex max-w-[760px] flex-col gap-3.5">
         <Link
           to="/write"

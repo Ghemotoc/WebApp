@@ -10,7 +10,6 @@
 import { Link } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
-import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
@@ -53,12 +52,6 @@ function SpacesHeader() {
           {t('joinClassLink')}
         </Link>
       </div>
-      <Doodle
-        name="tote-bag-of-books"
-        kind="background"
-        hideBelow="wide"
-        className="absolute -top-2 -right-40 w-[80px] rotate-6"
-      />
     </header>
   );
 }

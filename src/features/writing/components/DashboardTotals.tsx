@@ -4,7 +4,7 @@
  *
  * Board values: eyebrow "All your stories", the 28 px heading, a "Last 30 days / All time"
  * choice, five white tiles (24 px corners, the label in the eyebrow style, the number in 40 px Bricolage
- * with a 40 px doodle-set icon, a 14 px note) and the lilac "These are totals only" panel.
+ * with a 40 px icon, a 14 px note) and the lilac "These are totals only" panel.
  * A count from fewer than 5 readers reads "fewer than 5" (criterion 2); the numbers are totals,
  * never a list of readers (criterion 3).
  * Who uses it: WriterDashboardTop. Its numbers come from useWriterDashboard (writer_dashboard()).
@@ -18,7 +18,6 @@ import openBookIcon from '@/assets/icons/open-book.svg';
 import peopleIcon from '@/assets/icons/people.svg';
 import shieldIcon from '@/assets/icons/shield.svg';
 import { ChoiceChips } from '@/components/ui/ChoiceChips';
-import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { formatRomaniaDate } from '@/lib/romania-time';
 
@@ -178,13 +177,6 @@ export function DashboardTotals({ dashboard, period, onPeriodChange }: Dashboard
   const tiles = tilesFor(dashboard, i18n.language, t);
   return (
     <section aria-labelledby="dashboard-totals-heading" className="relative">
-      <Doodle
-        name="butterfly"
-        kind="background"
-        on="How readers respond"
-        hideBelow="wide"
-        className="absolute -top-6 left-[330px] w-16 rotate-[10deg]"
-      />
       <div className="mb-[18px] flex flex-wrap items-end justify-between gap-3">
         <div className="flex flex-col gap-1.5">
           <Eyebrow>{t('dashboard.totals.eyebrow')}</Eyebrow>

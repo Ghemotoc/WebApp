@@ -2,7 +2,7 @@
  * The seasonal doodle store: today's doodle for readers, and the schedule for staff (stories
  * S1-E5-07 and S1-E11-11; architecture B30).
  *
- * Who calls it: hooks/useSeasonalDoodle.ts and hooks/useOccasionSchedule.ts.
+ * Who calls it: hooks/useOccasionSchedule.ts (staff). No screen shows the doodle since bundle G4.
  * What it calls next: current_seasonal_doodle() (anyone), the seasonal_occasions table (owner and
  * admin read it through RLS) and admin_save_occasion() / admin_remove_occasion(), which check the
  * role and write the audit log (…_s1_e11_11_seasonal_occasions.sql). Staff errors become the
@@ -53,28 +53,6 @@ function occasionFromRow(row: Tables<'seasonal_occasions'>): Occasion {
     showsOn,
     isSeasonDefault: row.is_season_default,
   };
-}
-
-/**
- * The doodle a place shows on a day.
- *
- * @param client - the shared client
- * @param isoDate - the reader's own date ("yyyy-mm-dd")
- * @param place - Discover or Search
- * @returns the doodle, or null when nothing covers the day
- * Errors: rejects when the read fails; the caller then shows no doodle.
- */
-export async function fetchSeasonalDoodle(
-  client: AppSupabaseClient,
-  isoDate: string,
-  place: SeasonalPlace,
-): Promise<SeasonalDoodleName | null> {
-  const { data, error } = await client.rpc('current_seasonal_doodle', {
-    on_date: isoDate,
-    place,
-  });
-  if (error !== null) throw new Error(`Couldn't read the seasonal doodle: ${error.message}`);
-  return data[0]?.doodle ?? null;
 }
 
 /**

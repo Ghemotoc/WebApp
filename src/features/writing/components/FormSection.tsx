@@ -12,8 +12,6 @@ import type { ReactNode } from 'react';
 export interface FormSectionProps {
   legend: string;
   children: ReactNode;
-  /** A doodle or another decoration positioned against the card (position: relative). */
-  decoration?: ReactNode;
 }
 
 /**
@@ -21,11 +19,10 @@ export interface FormSectionProps {
  *
  * @returns the fieldset
  */
-export function FormSection({ legend, children, decoration }: FormSectionProps) {
+export function FormSection({ legend, children }: FormSectionProps) {
   return (
     <fieldset className="relative m-0 flex min-w-0 flex-col gap-5 rounded-card border border-border bg-surface px-7 py-[26px] shadow-card">
-      {decoration}
-      <legend className="float-left mb-4 w-fit max-w-[calc(100%-96px)] font-heading text-[26px] leading-[1.1] font-bold text-heading">
+      <legend className="float-left mb-4 w-fit max-w-full font-heading text-[26px] leading-[1.1] font-bold text-heading">
         {legend}
       </legend>
       {children}

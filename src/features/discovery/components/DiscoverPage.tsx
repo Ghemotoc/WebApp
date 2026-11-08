@@ -5,8 +5,8 @@
  * What it shows, top to bottom:
  * - Featured this week (S1-E5-10), when staff picked stories this reader may see;
  * - the heading: for a visitor "Discover" and "Find your next story"; for someone signed in the
- *   dated eyebrow and "Good morning, <name>." (GreetingHeading; S1-E2-13, S1-E5-12). The seasonal
- *   doodle sits beside it (S1-E5-07), and the line under it links "How ranking works" (the terms'
+ *   dated eyebrow and "Good morning, <name>." (GreetingHeading; S1-E2-13, S1-E5-12). The line
+ *   under it links "How ranking works" (the terms'
  *   ranking section, DSA art. 27; S1-E5-03);
  * - search (S1-E5-04) and the category chips ("Browse by category");
  * - "Your dashboard" for a member (DiscoverCards, S1-E5-12): Continue reading, Your draft and the
@@ -23,7 +23,7 @@
  * places and drafts.
  * Popular ranks by totals only (reads, likes, comments; never downvotes), the same for everyone.
  * The wide ad slot sits after the first shelf (S1-E12-01; board 3.1).
- * What it calls: FeaturedBand, GreetingHeading, SeasonalDoodle, CategoryLinks,
+ * What it calls: FeaturedBand, GreetingHeading, CategoryLinks,
  * DiscoverCards, DiscoverShelf (useStoryShelf → browse_stories()) and RisingWritersShelf.
  * */
 import { Fragment } from 'react';
@@ -39,7 +39,6 @@ import { useMyNames } from '@/features/account/hooks/useMyNames';
 import { displayName } from '@/features/account/lib/nameRules';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { usePublicSettings } from '@/features/flags/hooks/usePublicSettings';
-import { SeasonalDoodle } from '@/features/seasonal/components/SeasonalDoodle';
 import { useStoryFormOptions } from '@/features/writing/hooks/useStoryFormOptions';
 
 import type { ListKind } from '../api/storyLists';
@@ -101,21 +100,12 @@ function DiscoverHeader() {
   const name = names === null ? null : displayName(names.handle, names.penName);
   return (
     <header className="flex flex-col gap-3">
-      {/* The seasonal doodle sits beside the heading, never over it (S1-E5-07; board 3.1). */}
-      <div className="flex items-center gap-[clamp(10px,1.4vw,20px)]">
-        <div className="flex min-w-0 flex-col gap-3">
-          {name === null ? (
-            <VisitorHeading />
-          ) : (
-            <GreetingHeading name={name} className={headingClass} />
-          )}
-        </div>
-        <SeasonalDoodle
-          place="discover"
-          on="discover-heading"
-          className="size-[clamp(56px,5.4vw,76px)] flex-none rotate-6 self-end"
-        />
-      </div>
+      {/* No seasonal doodle beside it since bundle G4: the seasonal looks carry the season. */}
+      {name === null ? (
+        <VisitorHeading />
+      ) : (
+        <GreetingHeading name={name} className={headingClass} />
+      )}
       <p className="m-0 max-w-[640px] text-base leading-relaxed text-body">
         {t('discover.intro', { productName: brand.productName })}{' '}
         <Link to="/legal/terms#section-5" className="font-semibold underline underline-offset-2">

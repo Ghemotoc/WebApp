@@ -6,16 +6,14 @@
  * the Yoti age check only while the `adults_only` flag is off (in the invited adults' test there
  * is no age check, decided 17 Oct 2026, 12:44); and the "too young" card says "under 18" in that
  * test and "under 13" once sign-up is open to everyone aged 13 and up.
- * The cards preview other screens, so they hold no buttons. The board's crystal ball sits beside
- * the heading.
- * Who uses it: SignUpPage. What it calls: the auth locale texts and the doodle icon set.
+ * The cards preview other screens, so they hold no buttons.
+ * Who uses it: SignUpPage. What it calls: the auth locale texts and the icon set.
  */
 import { useTranslation } from 'react-i18next';
 
 import mailIcon from '@/assets/icons/mail.svg';
 import pictureIcon from '@/assets/icons/picture.svg';
 import shieldIcon from '@/assets/icons/shield.svg';
-import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 
 /** One preview card: its icon, title and the line under it. */
@@ -83,14 +81,6 @@ export function SignUpWhatNext({ isAdultsOnly }: { isAdultsOnly: boolean }) {
             {t('signUp.next.heading')}
           </h2>
         </div>
-        {/* The board's crystal ball beside the heading, clear of its words. */}
-        <Doodle
-          name="crystal-ball"
-          kind="widget"
-          on="What you might see next"
-          hideBelow="wide"
-          className="w-[96px] shrink-0 -rotate-6"
-        />
       </div>
       <ul className="m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(min(100%,320px),1fr))] gap-5 p-0">
         {cards.map((card) => (

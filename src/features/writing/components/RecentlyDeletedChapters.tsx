@@ -2,8 +2,7 @@
  * RecentlyDeletedChapters: the story's deleted chapters, each with Undo until it is deleted for
  * good (story S1-E3-04; board 4.4, "Recently deleted").
  *
- * Board values: a panel on the sand background with the autumn-leaf doodle on its top edge
- * (hidden under 1000 px), the heading, the line "Deleted chapters are hidden straight away and
+ * Board values: a panel on the sand background with the heading, the line "Deleted chapters are hidden straight away and
  * deleted for good after 30 days. Until then you can undo.", one white row per chapter
  * ("Deleted 14 Oct · gone for good on 13 November 2026" and an outlined Undo), or "Nothing
  * deleted in the last 30 days.". An undone chapter comes back at the end of the list.
@@ -13,7 +12,6 @@
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
-import { Doodle } from '@/components/ui/Doodle';
 
 import type { ManagedChapter } from '../api/manageChapters';
 import type { ChapterChange } from '../hooks/useManageChapters';
@@ -42,12 +40,6 @@ export function RecentlyDeletedChapters({
       aria-labelledby="deleted-chapters-heading"
       className="relative flex flex-col gap-2.5 rounded-card bg-panel px-[26px] py-[22px] max-sm:px-4"
     >
-      <Doodle
-        name="autumn-leaf"
-        kind="background"
-        hideBelow="wide"
-        className="absolute -top-5 right-[150px] w-[52px] -rotate-12"
-      />
       <div className="flex flex-col gap-1">
         <h2
           id="deleted-chapters-heading"

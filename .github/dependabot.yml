@@ -1,0 +1,32 @@
+# Dependabot: keeps packages and GitHub Actions up to date (architecture 1.9, "Dependabot or
+# Renovate weekly"; added by QA-9 on 8 Nov 2026).
+# Updates come once a week, grouped into one pull request per kind, so they don't crowd the
+# one-task-at-a-time build. Every pull request runs the full CI suite like any other; a person
+# merges it once CI is green. Security fixes for a known hole arrive as soon as GitHub knows of it.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Europe/Stockholm
+    open-pull-requests-limit: 2
+    groups:
+      # Minor and patch updates of every package land together in one pull request.
+      minor-and-patch:
+        update-types: [minor, patch]
+    commit-message:
+      prefix: 'deps'
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Europe/Stockholm
+    open-pull-requests-limit: 1
+    groups:
+      actions:
+        patterns: ['*']
+    commit-message:
+      prefix: 'ci'

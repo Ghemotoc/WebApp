@@ -45,7 +45,6 @@ export function SignInPage() {
       eyebrow={t('signIn.eyebrow')}
       heading={t('signIn.heading')}
       intro={t('signIn.subheading')}
-      doodle="teacup"
     >
       <OtherWaysToLogIn onSignedIn={() => void navigate(nextPath)} />
       <SignInForm form={form} />

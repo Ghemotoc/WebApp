@@ -6,8 +6,8 @@
  * the left (on top on phones), with its title only; the eyebrow "Shared with you · chapter 1 of 15"; the story's title
  * as the page's H1 in Bricolage 800; "by <pen name>"; the blurb at 15 px / 1.6; the category and
  * status pills. The board's "15 chapters" and "1.2k reads" pills wait for public numbers
- * (S1-E3-07, after March). The open-book doodle sits on the card's top edge, as on the board,
- * from 1000 px up, clear of the text (DoD design rules; decided 18 Oct 2026, 10:46).
+ * (S1-E3-07, after March). The teaser's doodles went with bundle G4 (no doodles in the liquid
+ * glass design).
  * Who uses it: TeaserPage. What it reads: the story page's data (get_story_page()) and the
  * chapter's number and total.
  */
@@ -16,7 +16,6 @@ import { useTranslation } from 'react-i18next';
 import { resolveCoverChoice } from '@/components/covers/automaticCover';
 import { DrawnCover } from '@/components/covers/DrawnCover';
 import { StoryCoverArt } from '@/features/pictures/components/StoryCoverArt';
-import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { InfoPill } from '@/components/ui/InfoPill';
 
@@ -98,13 +97,6 @@ export function TeaserStoryCard({ story, chapterNumber, chapterTotal }: TeaserSt
           )}
         </div>
       </div>
-      <Doodle
-        name="open-book"
-        kind="widget"
-        on="TeaserStoryCard"
-        hideBelow="wide"
-        className="absolute -top-8 right-6 w-14 rotate-6"
-      />
     </section>
   );
 }

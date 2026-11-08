@@ -17,7 +17,6 @@
  * What it calls: useForumIndex → forum_index(); lib/forumTree.ts puts it in order;
  * MarkReadButton, UnreadLegend and NewForYou.
  */
-import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
@@ -50,19 +49,6 @@ function ForumsHeader({ threadCount }: { threadCount: number }) {
       <div className="mt-2">
         <MarkReadButton forumSlug={null} />
       </div>
-      {/* The board's two chat bubbles and little bird, to the right of the heading (LOOK-5). */}
-      <Doodle
-        name="two-chat-bubbles"
-        kind="background"
-        hideBelow="wide"
-        className="absolute -top-2 -right-56 w-[120px] -rotate-5"
-      />
-      <Doodle
-        name="little-bird"
-        kind="background"
-        hideBelow="wide"
-        className="absolute top-[74px] -right-16 w-[56px] rotate-6"
-      />
     </header>
   );
 }

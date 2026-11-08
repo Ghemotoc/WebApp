@@ -15,7 +15,6 @@ import { Link } from 'react-router';
 
 import { ChevronLeftIcon } from '@/components/icons/ChevronLeftIcon';
 import { Button } from '@/components/ui/Button';
-import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
@@ -31,7 +30,7 @@ import { StoryBasicsSection } from './StoryBasicsSection';
 import { StoryLabelsSection } from './StoryLabelsSection';
 import { StoryPreviewAside } from './StoryPreviewAside';
 
-/** The page header: back link, eyebrow, heading, intro and its two doodles. */
+/** The page header: back link, eyebrow, heading and intro. */
 function NewStoryHeader() {
   const { t } = useTranslation('writing');
   return (
@@ -48,18 +47,6 @@ function NewStoryHeader() {
         {t('newStory.heading')}
       </h1>
       <p className="m-0 text-lg leading-[1.6] text-body">{t('newStory.intro')}</p>
-      <Doodle
-        name="once-upon-a-time"
-        kind="background"
-        hideBelow="wide"
-        className="absolute top-0 -right-[260px] w-[200px]"
-      />
-      <Doodle
-        name="fountain-pen"
-        kind="background"
-        hideBelow="wide"
-        className="absolute -right-[420px] bottom-0 w-24 rotate-12"
-      />
     </header>
   );
 }

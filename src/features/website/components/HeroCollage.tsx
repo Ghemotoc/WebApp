@@ -1,6 +1,6 @@
 /**
  * HeroCollage: the wall of tilted story covers beside the home page's headline, with the gold
- * "Your rights" card and two doodles (bundle LOOK-2, the design catch-up; board Website-Home, the
+ * "Your rights" card (bundle LOOK-2, the design catch-up; board Website-Home, the
  * cover wall). Robert gave the go on 6 Nov 2026, 06:43 UTC.
  *
  * What it shows:
@@ -9,9 +9,8 @@
  *     the site's first picture and must suit every visitor (brief LOOK-2). Nothing is invented:
  *     with no such stories the wall shows only the card;
  *   - the "Your rights" card, whose words come only from the CMS (rightsCard; CLAUDE.md rule 4).
- *     It is hidden while its title is empty;
- *   - the open book and the jar lantern doodles, decorative and kept clear of every cover and
- *     the card (DoD design rules; e2e/support/doodles.ts checks it).
+ *     It is hidden while its title is empty.
+ * Its two doodles went with bundle G4 (no doodles in the liquid glass design).
  * The board's reader comment card is left out until staff can pick real comments (Robert,
  * 6 Nov 2026, D1; story S1-E5-13, parked).
  * The wall is at most 600 px wide, its width beside the headline on a desktop, so on a tablet,
@@ -24,7 +23,6 @@ import { useTranslation } from 'react-i18next';
 
 import { designsForRow } from '@/components/covers/automaticCover';
 import { DrawnCover } from '@/components/covers/DrawnCover';
-import { Doodle } from '@/components/ui/Doodle';
 import type { ListedStory, ListRequest } from '@/features/discovery/api/storyLists';
 import { useStoryShelf } from '@/features/discovery/hooks/useStoryShelf';
 import type { HomeRightsCard } from '@/schemas/websiteContent';
@@ -119,7 +117,7 @@ interface HeroCollageProps {
 /**
  * Renders the wall.
  *
- * @returns the figure with the covers, the card and the doodles
+ * @returns the figure with the covers and the card
  */
 export function HeroCollage({ rightsCard }: HeroCollageProps) {
   const { shelf } = useStoryShelf(trendingRequest);
@@ -128,20 +126,6 @@ export function HeroCollage({ rightsCard }: HeroCollageProps) {
     <figure className="relative mx-auto my-0 min-w-0 max-w-[600px] flex-[1_1_520px] pt-10 pb-6">
       <CoverColumns stories={stories} />
       <RightsCard card={rightsCard} />
-      <Doodle
-        name="rank-open-book-sparkles"
-        kind="widget"
-        on="HeroCollage"
-        hideBelow="always"
-        className="absolute -top-4 left-1 w-[84px] -rotate-6"
-      />
-      <Doodle
-        name="jar-lantern"
-        kind="widget"
-        on="HeroCollage"
-        hideBelow="phone"
-        className="absolute right-[31%] -bottom-8 w-[104px] -rotate-6"
-      />
     </figure>
   );
 }
