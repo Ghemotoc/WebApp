@@ -10,7 +10,27 @@
     "skipToContent": "Skip to content",
     "mainNavigation": "Main",
     "footerNavigation": "Footer",
-    "madeBy": "An app by {{companyName}}"
+    "madeBy": "An app by {{companyName}}",
+    "search": "Search",
+    "searchLabel": "Search stories, writers and tags",
+    "back": "Back",
+    "home": "{{productName}} home",
+    "accountTools": "Your notifications, chats and account",
+    "focus": {
+      "signUp": "Join",
+      "logIn": "Log in",
+      "resetPassword": "Reset password",
+      "setUp": "Set up your account",
+      "notOpen": "Not open yet",
+      "ageCheck": "Age check",
+      "newStory": "New story",
+      "editChapter": "Edit chapter",
+      "character": "Character",
+      "reading": "Reading",
+      "chat": "Chat",
+      "newThread": "New thread",
+      "thread": "Thread"
+    }
   },
   "nav": {
     "home": "Home",
@@ -40,7 +60,8 @@
     "notificationsUnread_other": "Notifications, {{count}} new",
     "notificationsUnread_few": "Notifications, {{count}} new",
     "accessibility": "Accessibility",
-    "help": "Help"
+    "help": "Help",
+    "write": "Write"
   },
   "theme": {
     "label": "Mode",

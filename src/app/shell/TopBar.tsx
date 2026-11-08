@@ -1,24 +1,29 @@
 /**
- * TopBar: the floating island at the top of every public screen (story S1-E1-03).
+ * TopBar: the floating glass pill at the top of every public page on a wide screen, from 1024 px
+ * (story S1-E1-03; restyled in bundle G4 SHELL from the liquid glass handoff, "Navigation":
+ * "Website top bar: recessed track, water bubble on the current page, search, Write, bell, avatar";
+ * canvas Discover.web board).
  *
- * Board values (Discover, Story, Reader, Search, Settings): a rounded island (2.1rem), 85% white
- * glass with a 12 px blur, a 1 px border and the nav shadow, 10 px padding (24 px on the left).
- * The wordmark is the product name as text in Bricolage 800, 22 px, from the brand config, with
- * the emblem before it; an uploaded logo replaces the text (BrandMark, bundle BRAND-1b).
- * The current page's link is plum, bold, with a 2 px gold underline and aria-current="page".
- * On phones the island wraps onto several rows, as the boards show; there is no hamburger menu.
- * Decisions: links appear only when their page exists (src/app/navigation.ts); there is no
- * theme switch here (Robert, 17 Oct 2026). The end slot holds the language drop-down from
- * S1-E1-04; notifications, Write and the account button come with their stories. Messages, with
- * its unread count, comes in through navigationEnd while signed in (S1-E9-01).
+ * From left to right: the logo and wordmark (BrandMark, in the theme's accent), the main links in a
+ * recessed track with the white water bubble under the page on screen (NavTrack), the search pill
+ * (HeaderSearch), then the end slot: the language code, Write, the bell and the account bead, or
+ * "Log in" and "Join for free" for a visitor. The pill wraps onto a second row when a window is
+ * only just wide enough, so nothing is cut off. Day and night live in the footer and in Settings,
+ * never here (handoff). Below 1024 px AppLayout draws PhoneHeader or FocusHeader instead.
+ * Decisions: links appear only when their page exists (src/app/navigation.ts). Messages, with its
+ * unread count, comes in through navigationEnd while signed in (S1-E9-01).
  * Who uses it: AppLayout, and the /design page with the full board links.
+ * What it calls: NavTrack, HeaderSearch, BrandMark.
  */
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, NavLink } from 'react-router';
+import { Link } from 'react-router';
 
 import { primaryNavigation, type NavigationItem } from '@/app/navigation';
 import { BrandMark } from '@/features/branding/components/BrandMark';
+
+import { HeaderSearch } from './HeaderSearch';
+import { NavTrack } from './NavTrack';
 
 /** What the top bar needs. All optional: AppLayout uses the defaults. */
 export interface TopBarProps {
@@ -29,14 +34,8 @@ export interface TopBarProps {
   navigationLabel?: string;
   /** Links after the list that decide themselves whether to show, such as Messages while signed in (S1-E9-01). */
   navigationEnd?: ReactNode;
-}
-
-/** A nav link's classes: plum, bold and gold-underlined when it is the current page. */
-function navigationLinkClasses({ isActive }: { isActive: boolean }): string {
-  const shared = 'inline-flex min-h-11 items-center border-b-2 no-underline hover:text-link-hover';
-  return isActive
-    ? `${shared} border-gold font-bold text-heading`
-    : `${shared} border-transparent text-body`;
+  /** The search pill; the /design specimen leaves it out so the page has one search region. */
+  hasSearch?: boolean;
 }
 
 /**
@@ -49,15 +48,13 @@ export function TopBar({
   endSlot,
   navigationLabel,
   navigationEnd,
+  hasSearch = true,
 }: TopBarProps) {
   const { t } = useTranslation();
 
   return (
-    <header className="relative z-10 px-[clamp(16px,4vw,64px)] pt-6">
-      <nav
-        aria-label={navigationLabel ?? t('shell.mainNavigation')}
-        className="mx-auto flex max-w-[1280px] flex-wrap items-center gap-x-6 gap-y-4 rounded-nav border border-border bg-(--nav-glass) py-2.5 pr-2.5 pl-6 shadow-nav backdrop-blur-md"
-      >
+    <header className="relative z-10 px-[clamp(16px,4vw,64px)] pt-5">
+      <div className="glass-pill mx-auto flex max-w-[1280px] flex-wrap items-center gap-x-4 gap-y-2.5 rounded-[36px] py-2 pr-2 pl-5">
         <Link
           to="/"
           className="inline-flex min-h-11 items-center font-heading text-[22px] font-extrabold tracking-[-0.01em] text-heading no-underline"
@@ -65,20 +62,15 @@ export function TopBar({
           <BrandMark />
         </Link>
         {navigationItems.length > 0 && (
-          <ul className="m-0 flex flex-[1_1_420px] list-none flex-wrap justify-center gap-x-[30px] gap-y-1 p-0 text-[15px] tracking-[0.01em]">
-            {navigationItems.map((item) => (
-              <li key={item.href}>
-                <NavLink to={item.href} end className={navigationLinkClasses}>
-                  {t(item.labelKey)}
-                </NavLink>
-              </li>
-            ))}
-            {navigationEnd}
-          </ul>
+          <nav aria-label={navigationLabel ?? t('shell.mainNavigation')}>
+            <NavTrack items={navigationItems} end={navigationEnd} />
+          </nav>
         )}
-        {/* Wraps on narrow phones, so the language menu, "Log in" and "Join for free" never push the page sideways (S1-E2-05; CLAUDE.md rule 21). */}
+        {hasSearch && <HeaderSearch />}
+        {/* Wraps when the window is only just wide enough, so "Log in" and "Join for free" never
+            push the page sideways (S1-E2-05; CLAUDE.md rule 21). */}
         <div className="ml-auto flex flex-wrap items-center justify-end gap-1.5">{endSlot}</div>
-      </nav>
+      </div>
     </header>
   );
 }

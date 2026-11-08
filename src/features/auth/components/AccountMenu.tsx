@@ -11,7 +11,8 @@
  * How it works: a disclosure, not an ARIA menu: the button says whether the panel is open
  * (aria-expanded) and the panel holds an ordinary link and button, so Tab and Enter work as
  * everywhere else. Escape closes it and puts focus back on the button; clicking elsewhere closes
- * it too. The button shows the person's initial; its accessible name is "Your account".
+ * it too. The button is the person's own avatar: their drawn avatar, or their initials on the glass
+ * bead in their colour (bundle G4 SHELL; PersonAvatar); its accessible name is "Your account".
  * Who shows it: AccountLinks, once someone is signed in, with the shown name and username.
  * What it calls: api/signIn.ts → signOutHere(); after logging out it goes to the home page.
  */
@@ -20,6 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
+import { PersonAvatar } from '@/features/avatars/components/PersonAvatar';
 import { getSupabaseClient } from '@/lib/supabase';
 
 import { signOutHere } from '../api/signIn';
@@ -105,6 +107,31 @@ interface AccountMenuProps {
 }
 
 /**
+ * Logs this device out and goes home, remembering a failure so the panel can say so.
+ *
+ * @param onDone - closes the panel once logged out
+ * @returns the log-out action and whether it failed
+ */
+function useLogOut(onDone: () => void) {
+  const navigate = useNavigate();
+  const [logOutFailed, setLogOutFailed] = useState(false);
+
+  /** Logs this device out, then goes home. */
+  async function logOut() {
+    try {
+      const client = await getSupabaseClient();
+      if (client !== null) await signOutHere(client);
+      onDone();
+      void navigate('/');
+    } catch {
+      setLogOutFailed(true);
+    }
+  }
+
+  return { logOut, logOutFailed };
+}
+
+/**
  * Renders the button and, when open, the panel.
  *
  * @param props - see AccountMenuProps
@@ -112,27 +139,14 @@ interface AccountMenuProps {
  */
 export function AccountMenu({ initial, name, handle }: AccountMenuProps) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
-  const [logOutFailed, setLogOutFailed] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const wrapperRef = useClosePanel(isOpen, closePanel, buttonRef);
+  const { logOut, logOutFailed } = useLogOut(closePanel);
 
   /** Closes the panel. */
   function closePanel() {
     setIsOpen(false);
-  }
-
-  /** Logs this device out, then goes home. */
-  async function logOut() {
-    try {
-      const client = await getSupabaseClient();
-      if (client !== null) await signOutHere(client);
-      setIsOpen(false);
-      void navigate('/');
-    } catch {
-      setLogOutFailed(true);
-    }
   }
 
   return (
@@ -144,9 +158,10 @@ export function AccountMenu({ initial, name, handle }: AccountMenuProps) {
         aria-controls="account-menu-panel"
         aria-label={t('nav.account')}
         onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex size-11 items-center justify-center rounded-full bg-primary font-heading text-base font-bold text-on-primary uppercase"
+        className="inline-flex size-11 items-center justify-center rounded-full"
       >
-        {initial}
+        {/* The same bead (or drawn avatar) as beside the person's name everywhere else. */}
+        <PersonAvatar name={name ?? initial} handle={handle} size="large" />
       </button>
       <div
         id="account-menu-panel"

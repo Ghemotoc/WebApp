@@ -10,7 +10,27 @@
     "skipToContent": "Sari la conținut",
     "mainNavigation": "Principal",
     "footerNavigation": "Subsol",
-    "madeBy": "O aplicație de la {{companyName}}"
+    "madeBy": "O aplicație de la {{companyName}}",
+    "search": "Caută",
+    "searchLabel": "Caută povești, scriitori și etichete",
+    "back": "Înapoi",
+    "home": "Pagina principală {{productName}}",
+    "accountTools": "Notificările, conversațiile și contul tău",
+    "focus": {
+      "signUp": "Înscrie-te",
+      "logIn": "Conectare",
+      "resetPassword": "Resetează parola",
+      "setUp": "Configurează-ți contul",
+      "notOpen": "Încă nu e deschis",
+      "ageCheck": "Verificarea vârstei",
+      "newStory": "Poveste nouă",
+      "editChapter": "Editează capitolul",
+      "character": "Personaj",
+      "reading": "Lectură",
+      "chat": "Conversație",
+      "newThread": "Discuție nouă",
+      "thread": "Discuție"
+    }
   },
   "nav": {
     "home": "Acasă",
@@ -40,7 +60,8 @@
     "notificationsUnread_few": "Notificări, {{count}} noi",
     "notificationsUnread_other": "Notificări, {{count}} de noi",
     "accessibility": "Accesibilitate",
-    "help": "Ajutor"
+    "help": "Ajutor",
+    "write": "Scrie"
   },
   "theme": {
     "label": "Mod",
