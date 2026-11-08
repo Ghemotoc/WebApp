@@ -8,8 +8,9 @@
  * The art is loaded only when an avatar is first drawn, so pages without one never download it.
  * A value the builder doesn't offer (a hand-made recipe) is replaced by the starting recipe's,
  * so the drawing only ever uses the art's own parts and the recipe's checked hex colours.
- * Every avatar is drawn close up (Robert, 6 Nov 2026: "Close Up"), so the face reads at comment
- * size.
+ * Every avatar is drawn head and shoulders, in Micah's full frame, so the clothes show at the
+ * bottom of the bead at every size (Robert, 8 Nov 2026: "I don't want the close-up to the face of
+ * the avatar. I'd rather see the clothes as well"; replaces the 6 Nov "Close Up").
  * Who calls it: hooks/useAvatarDrawing.ts. What it calls: DiceBear's createAvatar().
  */
 import type { Options as MicahOptions } from '@dicebear/micah';
@@ -18,8 +19,11 @@ import type { AvatarRecipe } from '@/schemas/avatarRecipe';
 
 import { avatarChoices, startingRecipe, type AvatarPart } from './avatarOptions';
 
-/** How far the close-up zooms in (per cent) and how far it moves down (per cent of the size). */
-const closeUp = { scale: 140, translateY: 12 } as const;
+/**
+ * The framing: Micah's full frame, no zoom (scale 100 per cent) and no shift (0 per cent), so the
+ * shoulders and the shirt stay in the picture (Robert, 8 Nov 2026). Small beads use the same frame.
+ */
+const headAndShoulders = { scale: 100, translateY: 0 } as const;
 
 /**
  * The recipe's value for a part when the builder offers it, otherwise the starting value.
@@ -50,7 +54,7 @@ type PartOf<Key extends keyof MicahOptions> =
  * DiceBear's options for a recipe: exactly one choice per part, nothing left to chance.
  *
  * @param recipe - a checked recipe
- * @returns the Micah options, close up
+ * @returns the Micah options, head and shoulders
  */
 export function micahOptionsOf(recipe: AvatarRecipe): MicahOptions & {
   backgroundColor: string[];
@@ -86,7 +90,7 @@ export function micahOptionsOf(recipe: AvatarRecipe): MicahOptions & {
     shirt: [offeredValue(recipe, 'shirt') as PartOf<'shirt'>],
     shirtColor: [offeredValue(recipe, 'shirtColour')],
     backgroundColor: [offeredValue(recipe, 'background')],
-    ...closeUp,
+    ...headAndShoulders,
   };
 }
 

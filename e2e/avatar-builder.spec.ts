@@ -90,7 +90,8 @@ test.describe('the avatar builder (ADMIN-2g)', () => {
     await section.getByRole('tab', { name: 'Glasses and earrings' }).click();
     await section.getByRole('radio', { name: 'Glasses: Round' }).click();
 
-    // No clothes tab (avatars are close-ups); the background colour is under every tab.
+    // No clothes tab (the starting top is drawn; Robert, 7 Nov 2026); the background colour is under
+    // every tab.
     await expect(section.getByRole('tab')).toHaveCount(3);
     await expect(section.getByRole('tab', { name: /Clothes/ })).toHaveCount(0);
     await expect(section.getByRole('radio', { name: /^Top/ })).toHaveCount(0);

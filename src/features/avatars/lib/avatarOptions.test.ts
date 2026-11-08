@@ -68,7 +68,7 @@ describe('the avatar builder', () => {
     }
   });
 
-  it('draws exactly the chosen parts, close up, and "none" draws nothing', () => {
+  it('draws exactly the chosen parts, head and shoulders with the shirt showing, and "none" draws nothing', () => {
     const options = micahOptionsOf({ ...startingRecipe, glasses: 'round', hairColour: '5b7fd6' });
     expect(options.hair).toEqual(['dannyPhantom']);
     expect(options.hairColor).toEqual(['5b7fd6']);
@@ -77,7 +77,9 @@ describe('the avatar builder', () => {
     expect(options.glassesProbability).toBe(100);
     expect(options.earringsProbability).toBe(0);
     expect(options.backgroundColor).toEqual(['f1eaf4']);
-    expect(options.scale).toBeGreaterThan(100);
+    // Robert, 8 Nov 2026: no face close-up, the clothes show.
+    expect(options.scale).toBe(100);
+    expect(options.translateY).toBe(0);
   });
 
   it('gives a beard the hair colour, so the two always match', () => {
