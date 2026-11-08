@@ -1,7 +1,7 @@
 /**
  * useMyCountry: saving the country the signed-in person lives in (bundle MARKETS-1).
  *
- * Who calls it: CountryChangeForm (Settings › Account and CountryQuestionNotice).
+ * Who calls it: CountryChangeForm (Settings › Account).
  * What it calls: api/myCountry.ts → set_my_country(). After a save it reads the person's names
  * (which hold the country) and their parental consent again, because the new country's rule can
  * ask for a parent's yes (ParentConsentNotice then shows).

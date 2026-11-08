@@ -13,5 +13,5 @@ The signed-in person's own account: their username and pen name, setup after sig
 - The database side: `supabase/README.md`, "Usernames and pen names".
 
 The country the member lives in (MARKETS-1):
-- `components/CountrySetting.tsx` (Settings › Account), `CountryQuestionNotice.tsx` (asked once, from AppLayout) and `CountryChangeForm.tsx` (the shared form).
+- `components/CountrySetting.tsx` (Settings › Account) and `CountryChangeForm.tsx` (the form it holds). Members are never asked where they live: the country comes from the connection at sign-up (Robert, 8 Nov 2026).
 - `api/myCountry.ts` and `hooks/useMyCountry.ts`: `set_my_country()`, which checks the new country's age rule first.

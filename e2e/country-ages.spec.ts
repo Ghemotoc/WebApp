@@ -4,14 +4,15 @@
  *
  * Who runs it: `npm run test:e2e` (Supabase started first).
  * What it proves:
- * - a member who never said where they live is asked once, and the answer is kept (S1-E2-20);
+ * - a member who never said where they live is not asked: the country from the connection at
+ *   sign-up stays (Robert, 8 Nov 2026, replacing "asked once" from S1-E2-20);
  * - Settings checks the new country's rule before saving: Australia refuses a 14-year-old and
  *   nothing changes (S1-E2-20, S1-E2-22);
  * - staff change a rule in Settings › Age rules by country with a reason, and it is audited
  *   (S1-E2-21);
  * - under the privacy notice, "Your country" names the reader's country and its ages, and "Ages by
  *   country" lists Quebec's own 14 (S1-E2-23);
- * - the legal page and the question pass axe and don't scroll sideways at 390 px (Romanian) and
+ * - the legal page passes axe and don't scroll sideways at 390 px (Romanian) and
  *   1440 px (English).
  * Test data: the seed personas; every change is put back afterwards.
  */
@@ -80,21 +81,19 @@ test.describe('the age rules by country (MARKETS-1)', () => {
       update public.country_age_rules set parental_consent_below = 13 where country_code = 'GB' and region_code = '';`);
   });
 
-  test('a member who never said where they live is asked once', async ({ browser }) => {
+  test('a member who never said where they live is not asked; their country stays', async ({
+    browser,
+  }) => {
+    // Robert, 8 Nov 2026: only the country is kept, taken from the connection at sign-up, so no
+    // page asks where a member lives. Settings › Account is the one place to change it.
     runSql(`update public.profiles set country_chosen_at = null where id = '${writerId}';`);
     const page = await openAs(browser, 'adult_writer', '/discover');
-    const question = page.getByRole('region', { name: 'Which country do you live in?' });
-    await expect(question).toBeVisible();
-    await question.getByLabel('Country you live in').selectOption({ label: 'United Kingdom' });
-    await question.getByRole('button', { name: 'Save country' }).click();
-    await expect(question).toHaveCount(0);
-    expect(
-      runSql(`select country_code || ' ' || (country_chosen_at is not null)
-        from public.profiles where id = '${writerId}';`).trim(),
-    ).toBe('GB true');
-    await page.reload();
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     await expect(page.getByText('Which country do you live in?')).toHaveCount(0);
+    await expect(page.getByLabel('Country you live in')).toHaveCount(0);
+    expect(
+      runSql(`select country_code from public.profiles where id = '${writerId}';`).trim(),
+    ).toBe('RO');
     await page.context().close();
   });
 
@@ -146,13 +145,15 @@ test.describe('the age rules by country (MARKETS-1)', () => {
     await page.context().close();
   });
 
-  test('axe: the legal page and the question at 390 px, in Romanian', async ({ browser }) => {
+  test('axe: the legal page at 390 px, in Romanian, with no country question', async ({
+    browser,
+  }) => {
     runSql(`update public.profiles set country_chosen_at = null where id = '${writerId}';`);
     const page = await openAs(browser, 'adult_writer', '/legal/terms', {
       width: 390,
       language: 'ro',
     });
-    await expect(page.getByRole('region', { name: 'În ce țară locuiești?' })).toBeVisible();
+    await expect(page.getByText('În ce țară locuiești?')).toHaveCount(0);
     await page.locator('summary', { hasText: 'Vârste pe țări' }).click();
     await expectAccessibleAndFitting(page, 390);
     await page.context().close();

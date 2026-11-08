@@ -429,7 +429,8 @@ the gate       account_state() step 6 → needs_country_consent(): below the pla
                a parent's yes (S1-E2-03), after any consent_grace_until
 Settings       CountrySetting → CountryChangeForm → set_my_country(): the new rule is checked
                first; a new need for consent starts 14 days' grace
-asked once     CountryQuestionNotice (AppLayout) while profiles.country_chosen_at is null
+not asked      members are never asked where they live; the country from the connection at
+               sign-up stays until they change it in Settings (Robert, 8 Nov 2026)
 staff          Staff › Settings › Age rules by country (AgeRulesSection, AgeRuleEditor)
                → admin_save_age_rule(rule, reason): audited with before and after values;
                start_consent_grace_for_rule() gives members newly asked for consent 14 days

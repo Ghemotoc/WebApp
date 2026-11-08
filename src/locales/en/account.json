@@ -114,10 +114,6 @@
       "under_country_age": "People your age can’t use {{productName}} in that country, so we didn’t change it.",
       "unknown_country": "Choose a country from the list.",
       "unreachable": "We couldn’t save your country. Check your connection and try again."
-    },
-    "question": {
-      "heading": "Which country do you live in?",
-      "body": "The law where you live sets some ages, such as when a parent has to agree. We ask once, and you can change it later in Settings."
     }
   },
   "sanction": {

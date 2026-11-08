@@ -114,10 +114,6 @@
       "under_country_age": "Cei de vârsta ta nu pot folosi {{productName}} în acea țară, așa că nu am schimbat-o.",
       "unknown_country": "Alege o țară din listă.",
       "unreachable": "Nu am putut salva țara. Verifică conexiunea și încearcă din nou."
-    },
-    "question": {
-      "heading": "În ce țară locuiești?",
-      "body": "Legea locului în care trăiești stabilește unele vârste, de exemplu când trebuie să fie de acord un părinte. Te întrebăm o singură dată și o poți schimba oricând din Setări."
     }
   },
   "sanction": {
