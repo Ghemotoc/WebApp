@@ -98,8 +98,15 @@ async function openAs(
   return page;
 }
 
-/** Runs axe on the page and fails on a serious or critical problem. */
+/**
+ * Runs axe on the page and fails on a serious or critical problem. It waits for every animation
+ * to end first: the share dialog fades in, and a colour read halfway through the fade is lighter
+ * than the one the reader ends up seeing (CI on #410 caught 3.91:1 mid-fade).
+ */
 async function expectNoSeriousProblems(page: Page) {
+  await page.waitForFunction(() =>
+    document.getAnimations().every((animation) => animation.playState !== 'running'),
+  );
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
     .analyze();
