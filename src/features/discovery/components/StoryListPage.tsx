@@ -7,12 +7,13 @@
  * /u/:handle/stories (a writer's profile) and /search/stories?q= (every story a search finds,
  * S1-E5-04). The address decides the list (listFromParams()).
  * What it shows: StoryListHeader, the filters, the rating note, then the stories as a grid with
- * "Load more" (StoryGrid). Filters and the sort live in the address, so a list can be shared;
+ * "Load more" (StoryGrid), with the list's ad high up and after every 10 stories (bundle G7e). Filters and the sort live in the address, so a list can be shared;
  * the sort is also kept for the rest of the visit (S1-E5-02).
  * Nothing on the page depends on what the reader has read (S1-E5-09's legal note); the database
  * leaves out what this reader may not see (ratings, blocks, drafts, moderation).
  * What it calls: useStoryList → browse_stories().
  */
+import type { ReactNode } from 'react';
 import { Link, useLocation, useParams, useSearchParams } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
@@ -35,7 +36,7 @@ import {
 import { rememberedSort, rememberSort } from '../lib/sortMemory';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
 
-import { StoryGrid } from './StoryGrid';
+import { StoryGrid, type StoryGridAd } from './StoryGrid';
 import { StoryListFilters } from './StoryListFilters';
 import { StoryListHeader } from './StoryListHeader';
 
@@ -104,6 +105,7 @@ function ListResults({
         hasMore={list.hasMore}
         isLoadingMore={list.isLoadingMore}
         onLoadMore={list.loadMore}
+        ad={gridAdFor(request)}
       />
     );
   }
@@ -125,14 +127,14 @@ function ListResults({
 }
 
 /**
- * The list page's ad slot (S1-E12-01): a wide banner on the classics list, a card the size of a
- * story card after the others on every other list (never the first card). It is chosen from the
- * list's category, tag and language only; the search term and anyone's username are never sent.
+ * The list's ad slot (S1-E12-01), as the grid places it: a wide banner on the classics list, a
+ * card the size of a story card on every other list. It is chosen from the list's category, tag
+ * and language only; the search term and anyone's username are never sent.
  *
- * @param props.request - the list with its filters
- * @returns the slot
+ * @param request - the list with its filters
+ * @returns the slot (it draws nothing for a visitor or when there is no ad)
  */
-function ListAdSlot({ request }: { request: ListRequest }) {
+function listAdSlot(request: ListRequest): ReactNode {
   const isClassics = request.kind === 'classics';
   const context = {
     category: request.kind === 'category' ? request.key : request.categorySlug,
@@ -147,6 +149,27 @@ function ListAdSlot({ request }: { request: ListRequest }) {
       isSpaceReserved={isClassics}
     />
   );
+}
+
+/**
+ * Where the list's ad goes (bundle G7e; Robert's design rules, 7 Nov 2026, "Content rules": the
+ * first ad sits high, near the top, and long grids carry one after every 10 stories).
+ * The classics list opens with its wide banner above the stories, then repeats it across a row
+ * after every 10th story; every other list puts its card-sized ad after the 4th story (in the
+ * first rows) and again after every 10 more, or after the last story of a list of 4 or fewer.
+ *
+ * @param request - the list with its filters
+ * @returns the ad's places in the grid
+ */
+function gridAdFor(request: ListRequest): StoryGridAd {
+  const isClassics = request.kind === 'classics';
+  return {
+    slot: listAdSlot(request),
+    firstAfter: isClassics ? 10 : 4,
+    spansRow: isClassics,
+    // The classics banner already sits above a short list; any other short list ends on its ad.
+    isShortListAdded: !isClassics,
+  };
 }
 
 /**
@@ -191,6 +214,8 @@ function KnownListPage({ kind, listKey }: { kind: ListRequest['kind']; listKey: 
         <>
           <StoryListFilters request={request} sortOrder={sortOrder} onChange={changeRequest} />
           <p className="m-0 text-sm text-meta">{t('seeAll.ratingNote')}</p>
+          {/* The classics list's wide banner sits high, above the stories (G7e). */}
+          {request.kind === 'classics' && listAdSlot(request)}
           <ListResults
             request={request}
             list={list}
@@ -203,7 +228,6 @@ function KnownListPage({ kind, listKey }: { kind: ListRequest['kind']; listKey: 
               })
             }
           />
-          <ListAdSlot request={request} />
         </>
       )}
     </>

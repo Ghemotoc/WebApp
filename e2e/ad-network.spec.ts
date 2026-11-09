@@ -16,6 +16,7 @@ import { expect, test, type Page, type Request } from '@playwright/test';
 
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
+import { rememberAdReaderLanguage, signInAdReader } from './support/adReader';
 
 /** The test publisher ID and ad unit: the right shape, not a real account. */
 const publisherId = 'ca-pub-0000000000000000';
@@ -44,22 +45,36 @@ function isToGoogle(request: Request): boolean {
   return new URL(request.url()).hostname.endsWith('googlesyndication.com');
 }
 
-/** Opens Discover in English, signed out, on a short screen so the banner starts out of view. */
+/**
+ * Opens Discover in English, signed in as a reader (only signed-in readers see ads, G7e), on a
+ * short screen so the banner starts out of view.
+ */
 async function openDiscover(page: Page): Promise<Request[]> {
+  await signInAdReader(page.context());
   const googleRequests: Request[] = [];
   page.on('request', (request) => {
     if (isToGoogle(request)) googleRequests.push(request);
   });
   await page.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
-  await page.setViewportSize({ width: 1440, height: 400 });
+  // A signed-in reader's Discover has its banner high (about 300 px down with the seed's one
+  // shelf), so the screen is shorter than that to start the banner out of view.
+  await page.setViewportSize({ width: 1440, height: 240 });
   await page.goto('/discover');
   return googleRequests;
 }
 
 test.describe('The ad network (S1-E12-04)', () => {
   test.describe.configure({ mode: 'serial' });
-  test.beforeAll(() => runSql(`${cleanUpSql}${chapterSql}`));
-  test.afterAll(() => runSql(cleanUpSql));
+  // The ad reader's language is put back afterwards (only signed-in readers see ads, G7e).
+  let putLanguageBack: () => void = () => undefined;
+  test.beforeAll(() => {
+    runSql(`${cleanUpSql}${chapterSql}`);
+    putLanguageBack = rememberAdReaderLanguage();
+  });
+  test.afterAll(() => {
+    runSql(cleanUpSql);
+    putLanguageBack();
+  });
 
   test('while the network is off, nothing is asked of Google', async ({ page }) => {
     const googleRequests = await openDiscover(page);
