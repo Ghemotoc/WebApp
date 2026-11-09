@@ -127,6 +127,6 @@ test.describe('epic S1-E10, round two', () => {
     // Step 6: adult_writer asks the moderators a question; the decision's reference goes with it.
     await decision.getByRole('link', { name: 'Ask the moderators a question' }).click();
     await expect(writerPage).toHaveURL(/\/moderator-mail\/new\?decision=S-\d{6}/);
-    await expect(writerPage.getByText(/About decision S-\d{6}/)).toBeVisible();
+    await expect(writerPage.getByText(/Linked to decision S-\d{6}/)).toBeVisible();
   });
 });
