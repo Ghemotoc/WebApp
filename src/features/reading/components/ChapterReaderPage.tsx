@@ -289,17 +289,22 @@ function useParagraphComments(
 /**
  * The paper and, for a reader with paragraph markers, the side column beside it from 1280 px
  * (G7d2; board ReaderComments): a two-column row there, one column everywhere else.
+ * The wrapper is the same element whether or not the column is shown: the markers' counts arrive
+ * after the text, and swapping the wrapper then would redraw the whole text, losing the reader's
+ * text selection (the "Share quote" button) and their place.
  */
 function PaperRow(props: {
   hasPanel: boolean;
   onPanel: (element: HTMLElement | null) => void;
   children: ReactNode;
 }) {
-  if (!props.hasPanel) return <>{props.children}</>;
+  const rowClasses = props.hasPanel
+    ? 'xl:grid xl:grid-cols-[minmax(0,1fr)_320px] xl:items-start xl:gap-8'
+    : undefined;
   return (
-    <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_320px] xl:items-start xl:gap-8">
+    <div className={rowClasses}>
       {props.children}
-      <ParagraphCommentsPanel onElement={props.onPanel} />
+      {props.hasPanel && <ParagraphCommentsPanel onElement={props.onPanel} />}
     </div>
   );
 }
