@@ -35,7 +35,8 @@ function LibraryHeader() {
     <header className="relative flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
       <div className="flex max-w-[640px] flex-col gap-2">
         <Eyebrow>{t('eyebrow')}</Eyebrow>
-        <h1 className="m-0 text-[clamp(36px,4.4vw,56px)] leading-none font-extrabold tracking-[-0.025em]">
+        {/* The large title of the glass pages (bundle G7d2; board Library), as on the list pages. */}
+        <h1 className="m-0 font-heading text-[clamp(40px,5.6vw,72px)] leading-[0.98] font-bold tracking-[-0.03em] text-heading">
           {t('title')}
         </h1>
         <p className="m-0 text-base leading-relaxed text-body">{t('intro')}</p>

@@ -24,7 +24,7 @@ export function ContinueReading({ items }: { items: ContinueReadingItem[] }) {
       <div className="flex items-center gap-8">
         <h2
           id="library-continue-heading"
-          className="m-0 font-heading text-[28px] font-bold text-heading"
+          className="m-0 font-heading text-[clamp(30px,3.4vw,44px)] leading-tight font-bold tracking-[-0.02em] text-heading"
         >
           {t('continue.heading')}
         </h2>

@@ -29,6 +29,8 @@
     "completed": "Poveste încheiată",
     "button": "Continuă",
     "buttonLabel": "Continuă {{title}}",
+    "contents": "Cuprins",
+    "contentsLabel": "Cuprins pentru {{title}}",
     "empty": "Poveștile pe care începi să le citești apar aici, cu locul unde ai rămas."
   },
   "shelves": {

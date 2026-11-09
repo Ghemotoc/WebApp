@@ -109,7 +109,9 @@
       "count_other": "{{count}} comments on this paragraph",
       "earlier_one": "{{count}} comment on an earlier version of this chapter",
       "earlier_few": "{{count}} comments on an earlier version of this chapter",
-      "earlier_other": "{{count}} comments on an earlier version of this chapter"
+      "earlier_other": "{{count}} comments on an earlier version of this chapter",
+      "panelLabel": "Paragraph comments",
+      "panelHint": "Choose the speech bubble beside a paragraph to read what others said about it and add your own comment."
     }
   },
   "teaser": {
