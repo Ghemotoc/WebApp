@@ -7,7 +7,7 @@
  * - criterion 2: an admin books an approved campaign into Discover's wide banner; the grid then
  *   says Booked with the sponsor; a second campaign on overlapping days is refused, naming the
  *   booking already there; cancelling with a reason frees the slot;
- * - criterion 3: a visitor on Discover sees the booked sponsor's ad, labelled Sponsored;
+ * - criterion 3: a signed-in reader on Discover sees the booked sponsor's ad, labelled Sponsored;
  * - criterion 6: an admin adds a house ad in both languages, linking to one of our own pages, and
  *   a link to another site is refused;
  * - Placements passes axe and never scrolls sideways at 390, 768 and 1440 px (the grid scrolls
@@ -21,6 +21,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
+import { rememberAdReaderLanguage, signInAdReader } from './support/adReader';
 import { signInPersona, useSessionInBrowser } from './support/personas';
 
 /** The test sponsor's name. */
@@ -90,8 +91,16 @@ async function bookDiscoverBanner(page: Page, campaignName: string): Promise<voi
 
 test.describe('Staff › Sponsors › Placements (S1-E12-05)', () => {
   test.describe.configure({ mode: 'serial' });
-  test.beforeAll(() => runSql(`${cleanUpSql}${setUpSql}`));
-  test.afterAll(() => runSql(cleanUpSql));
+  // The ad reader's language is put back afterwards (only signed-in readers see ads, G7e).
+  let putLanguageBack: () => void = () => undefined;
+  test.beforeAll(() => {
+    runSql(`${cleanUpSql}${setUpSql}`);
+    putLanguageBack = rememberAdReaderLanguage();
+  });
+  test.afterAll(() => {
+    runSql(cleanUpSql);
+    putLanguageBack();
+  });
 
   test('an admin books a slot, a clashing booking is refused, and the visitor sees the sponsor', async ({
     browser,
@@ -109,8 +118,10 @@ test.describe('Staff › Sponsors › Placements (S1-E12-05)', () => {
     ).toBeVisible();
     await page.context().close();
 
-    // Step 3: a visitor on Discover sees the booked sponsor, labelled Sponsored.
+    // Step 3: a signed-in reader on Discover sees the booked sponsor, labelled Sponsored (only
+    // signed-in readers see ads, G7e).
     const visitor = await browser.newPage();
+    await signInAdReader(visitor.context());
     await visitor.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
     await visitor.goto('/discover');
     const banner = visitor.locator('[data-ad="wide"]').first();

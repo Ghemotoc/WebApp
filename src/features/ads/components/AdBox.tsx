@@ -27,7 +27,8 @@ const formatClasses: Record<PageAdSlot['format'], string> = {
   wide: 'w-full max-w-[970px] min-h-[120px] max-[700px]:min-h-[100px] flex-row flex-wrap items-center',
   portrait: 'w-[300px] h-[600px] flex-col items-start',
   side_box: 'w-[300px] min-h-[250px] flex-col items-start',
-  list_card: 'w-[196px] min-h-[264px] flex-col items-start',
+  // A card fills its grid cell like a story card (up to 248 px), so two fit on a phone (G7e).
+  list_card: 'w-full max-w-[248px] min-h-[264px] flex-col items-start',
 };
 
 /** Portraits and side boxes live in the desktop side column only (1200 px and wider). */

@@ -1,13 +1,16 @@
 /**
- * PageAdSlot: one ad slot of a public page, filled by the server (bundle SPONSORS, part a1; story
+ * PageAdSlot: one ad slot of a page, filled by the server (bundle SPONSORS, part a1; story
  * S1-E12-01).
  *
  * A page places one PageAdSlot for each of its slots (at most two, decided 17 Oct 2026, 11:53)
- * with its page key, the slot's position and what the page is about. While the ad loads, a wide
- * slot keeps its height so the page doesn't jump (criterion 9). In a class space or on a
- * class-only story the server answers with no slot and nothing is drawn (Q70); if the read
- * fails, the slot quietly stays empty, because an ad is never worth an error on someone's page.
- * Who shows it: the public pages (the chapter's end, the story page, Discover, Library, …).
+ * with its page key, the slot's position and what the page is about; a long story grid places
+ * the same slot again after every 10 stories (bundle G7e). Only a signed-in reader sees an ad:
+ * for a visitor usePageAds() answers with no slot and nothing is drawn (G7e).
+ * While the ad loads, a wide slot keeps its height so the page doesn't jump (criterion 9). In a
+ * class space or on a class-only story the server answers with no slot and nothing is drawn
+ * (Q70); if the read fails, the slot quietly stays empty, because an ad is never worth an error
+ * on someone's page.
+ * Who shows it: the signed-in pages (the chapter's end, the story page, Discover, Library, …).
  * What it calls: usePageAds() and AdBox.
  */
 import type { AdPageContext, AdPageKey } from '@/schemas/ads';

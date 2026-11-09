@@ -21,6 +21,7 @@ import { expect, test, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
+import { rememberAdReaderLanguage, signInAdReader } from './support/adReader';
 import { signInPersona, useSessionInBrowser } from './support/personas';
 
 /** The test sponsor's name. */
@@ -65,15 +66,24 @@ const setUpSql = `
     ) as campaign (name, placement, category_slug, text_ro, text_en, link_url, discount_code)
   where sponsors.name = '${sponsorName}';`;
 
-/** Opens an address in English, signed out. */
+/** Opens an address in English, signed in as a reader: only signed-in readers see ads (G7e). */
 async function openInEnglish(page: Page, address: string): Promise<void> {
+  await signInAdReader(page.context());
   await page.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
   await page.goto(address);
 }
 
 test.describe('Sponsored ads (S1-E12-02)', () => {
-  test.beforeAll(() => runSql(`${cleanUpSql}${setUpSql}`));
-  test.afterAll(() => runSql(cleanUpSql));
+  // The ad reader's language is put back afterwards (only signed-in readers see ads, G7e).
+  let putLanguageBack: () => void = () => undefined;
+  test.beforeAll(() => {
+    runSql(`${cleanUpSql}${setUpSql}`);
+    putLanguageBack = rememberAdReaderLanguage();
+  });
+  test.afterAll(() => {
+    runSql(cleanUpSql);
+    putLanguageBack();
+  });
 
   test('Discover shows the sponsor’s ad with its link, its code and why it is there', async ({
     page,
@@ -105,7 +115,7 @@ test.describe('Sponsored ads (S1-E12-02)', () => {
   test('showing and following the ad are counted, and an admin downloads the daily totals', async ({
     browser,
   }) => {
-    // Step 1: a visitor sees the ad and follows its link; the new tab opens the sponsor's site.
+    // Step 1: a signed-in reader sees the ad and follows its link; the new tab opens the sponsor's site.
     const visitor = await browser.newContext();
     const page = await visitor.newPage();
     await openInEnglish(page, '/discover');
@@ -164,6 +174,7 @@ test.describe('Sponsored ads (S1-E12-02)', () => {
     test(`${view.address} with a sponsor passes axe at ${view.width} px, ${view.theme}, ${view.language}`, async ({
       page,
     }) => {
+      await signInAdReader(page.context(), view.language);
       await checkScreen(page, view);
     });
   }

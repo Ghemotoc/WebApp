@@ -1,6 +1,8 @@
 # Ads
 
-The ad slots on public pages (story S1-E12-01). Built in bundle SPONSORS-a1 (the slots, house
+The ad slots on signed-in pages (story S1-E12-01). Since bundle G7e only a signed-in reader sees
+an ad: a visitor sees none on any page, and there are none on the home page (Robert's design
+rules, 7 Nov 2026). Built in bundle SPONSORS-a1 (the slots, house
 ads and "Why this ad?"); part a2 placed them on every remaining public page, part b3 draws sponsors' ads and the
 "Sponsored by" line (the staff screens are in `src/features/sponsors/`), and part d adds the
 non-personalised ad network.
@@ -8,8 +10,10 @@ non-personalised ad network.
 - `api/ads.ts`: `fetchPageAds()` reads `page_ads(page_key, context)`; `adContextFor()` turns the
   page's context into what the server accepts. Only the page's context is sent, never anything
   about the reader.
-- `hooks/usePageAds.ts`: one page's slots, kept for five minutes.
-- `components/PageAdSlot.tsx`: what a page places, one per slot (at most two per page).
+- `hooks/usePageAds.ts`: one page's slots, kept for five minutes; for a visitor who isn't signed in
+  it asks nothing and answers with no slot (G7e).
+- `components/PageAdSlot.tsx`: what a page places, one per slot (at most two per page); a long
+  story grid places its slot again after every 10 stories (`StoryGrid`, G7e).
   `AdBox.tsx` draws the slot with its label and "Why this ad?"; `HouseAdCreative.tsx` draws our
   own ads (a landing page, Start writing, the classics, the forums); `SponsorAdCreative.tsx` draws
   a sponsor's ad (the checked picture, its line, the link marked `rel="sponsored"` and an optional

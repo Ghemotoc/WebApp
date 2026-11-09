@@ -1,23 +1,29 @@
 /**
- * Ad slots on public pages in a real browser (bundle SPONSORS, part a1; story S1-E12-01).
+ * Ad slots in a real browser (bundle SPONSORS, part a1; story S1-E12-01; who sees them and where
+ * from bundle G7e).
  *
  * Who runs it: `npm run test:e2e` (Supabase started first).
  * What it proves:
- * - a signed-out visitor sees one of our own ads, labelled "From us", on the story page and on
+ * - a visitor who isn't signed in sees no ad on any page, and the page never asks for one
+ *   (Robert's design rules, 7 Nov 2026, "Content rules"; G7e);
+ * - a signed-in reader sees one of our own ads, labelled "From us", on the story page and on
  *   Discover, and "Why this ad?" opens by keyboard and says nothing about the reader was used;
  * - a story shared only with a class shows no ad at all (Q70);
  * - every other public page has its slots at 1440 px: Search (wide and portrait), Forums (wide
  *   and side box), a public space, a writer profile, the teaser, the classics list (wide) and a
- *   See all list (a card), never more than two (SPONSORS-a2);
+ *   See all list (a card), never more than two kinds on one page (SPONSORS-a2);
+ * - on a long list the first ad sits high: the classics banner above the stories and the See all
+ *   card after the 4th story, then one after every 10 stories (G7e);
  * - the story page with its ad passes axe and doesn't scroll sideways at 390, 768 and 1440 px, in
  *   light and night mode and in both languages (CLAUDE.md rule 21).
  * Test data: seed personas and the seed story statia-meteo-seed01, with one published chapter
- * made here so visitors can open it; the chapter is removed and the class-only switch put back
- * afterwards.
+ * made here so readers can open it; the chapter is removed and the class-only switch put back
+ * afterwards. Pages are opened signed in as the teacher persona, a reader who isn't the writer.
  */
 import { expect, test, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
+import { rememberAdReaderLanguage, signInAdReader } from './support/adReader';
 import { runSql } from './support/database';
 import { signInPersona, useSessionInBrowser } from './support/personas';
 
@@ -42,11 +48,46 @@ async function openInEnglish(page: Page, address: string): Promise<void> {
   await page.goto(address);
 }
 
-test.describe('Ad slots', () => {
-  test.beforeAll(() => runSql(`${cleanUpSql}${setUpSql}`));
-  test.afterAll(() => runSql(cleanUpSql));
+/** Signs a reader in, so the page shows ads (G7e: only signed-in readers see them). */
+async function signInReader(page: Page, language: 'en' | 'ro' = 'en'): Promise<void> {
+  await signInAdReader(page.context(), language);
+}
 
-  test('a visitor sees our own ad on the story page and can ask why', async ({ page }) => {
+/** The pages a visitor might land on, each of which has ad slots for a signed-in reader. */
+const visitorPages = [
+  storyAddress,
+  '/discover',
+  '/s/statia-meteo-seed01/adse2e01',
+  '/discover/all/new',
+];
+
+test.describe('Ad slots', () => {
+  let putLanguageBack: () => void = () => undefined;
+  test.beforeAll(() => {
+    runSql(`${cleanUpSql}${setUpSql}`);
+    putLanguageBack = rememberAdReaderLanguage();
+  });
+  test.afterAll(() => {
+    runSql(cleanUpSql);
+    putLanguageBack();
+  });
+
+  test('a visitor who isn’t signed in sees no ad, and no page asks for one', async ({ page }) => {
+    let askedForAds = false;
+    page.on('request', (request) => {
+      if (request.url().includes('/rpc/page_ads')) askedForAds = true;
+    });
+    for (const address of visitorPages) {
+      await openInEnglish(page, address);
+      await expect(page.getByRole('heading', { level: 1 }).first()).toBeVisible();
+      await page.waitForTimeout(800);
+      await expect(page.locator('[data-ad]')).toHaveCount(0);
+    }
+    expect(askedForAds).toBe(false);
+  });
+
+  test('a signed-in reader sees our own ad on the story page and can ask why', async ({ page }) => {
+    await signInReader(page);
     await openInEnglish(page, storyAddress);
     const ad = page.getByRole('complementary', { name: 'Advertisement' });
     await expect(ad).toBeVisible();
@@ -60,6 +101,7 @@ test.describe('Ad slots', () => {
   });
 
   test('Discover shows one wide ad after the first shelf', async ({ page }) => {
+    await signInReader(page);
     await openInEnglish(page, '/discover');
     await expect(page.locator('[data-ad="wide"]')).toHaveCount(1);
   });
@@ -88,12 +130,17 @@ test.describe('Ad slots', () => {
   for (const [address, shapes] of pagesAndShapes) {
     test(`${address} shows ${shapes.join(' and ')} at 1440 px`, async ({ page }) => {
       await page.setViewportSize({ width: 1440, height: 900 });
+      await signInReader(page);
       await openInEnglish(page, address);
       for (const shape of shapes) {
-        await expect(page.locator(`[data-ad="${shape}"]`)).toBeVisible();
+        await expect(page.locator(`[data-ad="${shape}"]`).first()).toBeVisible();
       }
-      // Never more than two slots on a page (decided 17 Oct 2026, 11:53).
-      expect(await page.locator('[data-ad]').count()).toBeLessThanOrEqual(2);
+      // Never more than two kinds of slot on a page (decided 17 Oct 2026, 11:53); a long grid
+      // shows its one slot again every 10 stories (G7e).
+      const kinds = await page
+        .locator('[data-ad]')
+        .evaluateAll((ads) => ads.map((ad) => ad.getAttribute('data-ad')));
+      expect(new Set(kinds).size).toBeLessThanOrEqual(2);
     });
   }
 
@@ -101,6 +148,7 @@ test.describe('Ad slots', () => {
     test(`the story page with its ad passes axe at ${view.width} px, ${view.theme}, ${view.language}`, async ({
       page,
     }) => {
+      await signInReader(page, view.language);
       await checkScreen(page, view);
       await expect(page.locator('[data-ad]').first()).toBeVisible();
     });
