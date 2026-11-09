@@ -121,7 +121,11 @@ test.describe('forum help and passages (IDEAS-3f)', () => {
     await expect(note.getByRole('link', { name: /see reply #2 by/ })).toBeVisible();
     await expect(page.locator('#post-2').getByText('Answer', { exact: true })).toBeVisible();
     await page.goto('/forums/help-and-ideas');
-    const row = page.getByRole('listitem').filter({ hasText: helpTitle });
+    // The forum's own list, not the "New for you" card beside it (bundle G8a).
+    const row = page
+      .locator('section[aria-labelledby="thread-list-heading"]')
+      .getByRole('listitem')
+      .filter({ hasText: helpTitle });
     await expect(row.getByText('Answered', { exact: true })).toBeVisible();
     await page.context().close();
   });

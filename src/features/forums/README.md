@@ -12,7 +12,11 @@ S1-E8-02; board 5.2 Forum thread).
 - `components/ForumsPage.tsx` (`/forums`): `ForumCategorySection` → `ForumRow` (`ForumLatestPost`),
   and `ForumRulesCard`.
 - `components/ForumPage.tsx` (`/forums/:forumSlug`): `ForumBreadcrumb`, the forums inside it and
-  `ThreadList` (`ThreadRow`).
+  `ThreadList` (`ThreadRow`), with the index's side column (`NewForYou`, `SpacesCard`,
+  `ForumRulesCard`).
+- Liquid glass (bundle G8a; boards Forums, Forum, ForumThread, ForumNew): the large `page-title`
+  on every forum page with its actions at the heading's right, glass "Mark as read" pills with a
+  tick, glass buttons for a post's actions and the rules card beside the new-thread form.
 - Threads and posts (part b): `api/forumThreads.ts` (`forum_thread_list()`, `forum_thread()`),
   `api/forumWrites.ts` (start, reply, edit, delete, earlier versions), `hooks/useForumThreads.ts`,
   `hooks/useForumWrites.ts`, `lib/forumFailures.ts`, `lib/forumDates.ts`, `lib/forumPeople.ts`;

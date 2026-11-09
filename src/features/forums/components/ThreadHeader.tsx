@@ -63,9 +63,7 @@ export function ThreadHeader({ thread, path }: { thread: ForumThreadHeader; path
   return (
     <header className="relative flex flex-col gap-3">
       <ForumBreadcrumb path={path} current={thread.title} space={thread.space} />
-      <h1 className="m-0 max-w-[820px] text-[clamp(32px,4vw,48px)] leading-tight font-extrabold break-words">
-        {thread.title}
-      </h1>
+      <h1 className="page-title max-w-[1100px]">{thread.title}</h1>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <StartedByLine thread={thread} />
         {!thread.isMine && (

@@ -74,7 +74,7 @@ function ForumNumbers({ forum }: { forum: ForumEntry }) {
  */
 export function ForumRow({ forum, subforums }: ForumRowProps) {
   return (
-    <li className="grid gap-4 border-t border-border px-5 py-4 first:border-t-0 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,240px)] md:items-center md:px-7">
+    <li className="grid gap-3 border-t border-border px-5 py-4 first:border-t-0 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,250px)] md:items-center md:gap-4 md:px-6">
       <div className="flex min-w-0 flex-col gap-1">
         <h3 className="m-0 flex items-center gap-2.5 text-base font-semibold">
           <UnreadDot isNew={forum.hasUnread} />

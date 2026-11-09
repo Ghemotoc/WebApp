@@ -37,7 +37,8 @@ export function ForumCategorySection({ group }: { group: ForumCategory }) {
       aria-labelledby={headingId}
       className="overflow-hidden rounded-card border border-border bg-surface"
     >
-      <header className="relative flex items-center gap-3 border-b border-border px-5 py-4 md:px-7">
+      {/* The header wraps on a phone, so "Mark as read" moves under the name instead of being cut off. */}
+      <header className="relative flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-border px-5 py-4 md:px-6 md:py-5">
         <span
           aria-hidden="true"
           className={`h-7 w-1.5 shrink-0 rounded-full ${accentBars[category.accent]}`}
