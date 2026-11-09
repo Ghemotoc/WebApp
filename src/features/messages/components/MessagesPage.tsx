@@ -15,6 +15,7 @@
  */
 import { Link, useParams } from 'react-router';
 
+import { ActionIcon } from '@/components/icons/ActionIcon';
 import { NavIcon } from '@/components/icons/NavIcon';
 import { buttonClassName } from '@/components/ui/buttonStyles';
 import { Eyebrow } from '@/components/ui/Eyebrow';
@@ -96,7 +97,7 @@ function MessagesHeader({ isSignedIn }: { isSignedIn: boolean }) {
           to="/settings#messages"
           className={buttonClassName({ variant: 'secondary' }, 'w-fit shrink-0')}
         >
-          <NavIcon name="settings" size={16} />
+          <ActionIcon name="settings" size={16} />
           {t('settings.pageLink')}
         </Link>
       )}

@@ -11,7 +11,7 @@
  */
 import { useState } from 'react';
 
-import { NavIcon } from '@/components/icons/NavIcon';
+import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Button } from '@/components/ui/Button';
 import { OnlineDot } from '@/features/privacy/components/OnlineDot';
 import { useOnlineHandles } from '@/features/privacy/hooks/useOnlineStatus';
@@ -56,7 +56,7 @@ export function ChatHeader({ chat }: { chat: Conversation }) {
           aria-label={t('block.open', { name })}
           onClick={() => setIsBlockOpen(true)}
         >
-          <NavIcon name="block" size={14} />
+          <ActionIcon name="block" size={14} />
           {t('block.button')}
         </Button>
         <ReportButton

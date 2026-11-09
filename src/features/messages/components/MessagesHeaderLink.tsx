@@ -15,7 +15,7 @@ import { NavLink } from 'react-router';
 
 import { NavIcon } from '@/components/icons/NavIcon';
 
-import { useUnreadMessageCount } from '../hooks/useMessages';
+import { useUnreadMessageCount } from '../hooks/useUnreadMessageCount';
 
 /**
  * Renders the link.

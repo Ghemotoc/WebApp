@@ -1,8 +1,9 @@
 /**
- * The Messages hooks: the chats list, one chat with sending and answering a request, the caller's
- * own setting and the top bar's unread count (story S1-E9-01).
+ * The Messages hooks: the chats list, one chat with sending and answering a request, and the
+ * caller's own setting (story S1-E9-01). The top bar's unread count is in useUnreadMessageCount.ts,
+ * so every page doesn't download these (bundle G8c).
  *
- * Who calls them: MessagesPage and its parts, and MessagesNavLink. What they call:
+ * Who calls them: MessagesPage and its parts. What they call:
  * api/messages.ts. New messages arrive by asking again: every 5 seconds while a chat is open,
  * every 15 seconds for the list and every minute for the top bar, and whenever the person comes
  * back to the tab (the same choice as the notification bell, READ-3; Realtime can replace it
@@ -12,14 +13,12 @@ import { useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
-import { useSession } from '@/features/auth/hooks/useSession';
 
 import {
   answerRequest,
   fetchConversation,
   fetchConversations,
   fetchMyMessageSettings,
-  fetchUnreadMessageCount,
   markRead,
   MessagesError,
   sendMessage,
@@ -28,15 +27,17 @@ import {
 } from '../api/messages';
 import { errorShownByHook } from '@/lib/errorShownByHook';
 
+import { unreadMessagesKey } from './useUnreadMessageCount';
+
 /** How often each part asks again, in milliseconds. */
-const refreshEvery = { chat: 5_000, list: 15_000, topBar: 60_000 } as const;
+const refreshEvery = { chat: 5_000, list: 15_000 } as const;
 
 /** The cache keys, so a send can refresh the list, the chat and the count together. */
 export const messagesKeys = {
   all: ['messages'] as const,
   list: ['messages', 'list'] as const,
   chat: (handle: string) => ['messages', 'chat', handle.toLowerCase()] as const,
-  unread: (userId: string | null) => ['messages', 'unread', userId] as const,
+  unread: unreadMessagesKey,
   settings: ['messages', 'settings'] as const,
 };
 
@@ -153,21 +154,4 @@ export function useConversation(handle: string) {
     isAnswering: answer.isPending,
     answerState: messagesFailureOf(answer.error),
   };
-}
-
-/**
- * The top bar's count of chats with an unread message, while signed in.
- *
- * @returns isSignedIn and the count (0 while loading or when it can't be read)
- */
-export function useUnreadMessageCount() {
-  const { userId } = useSession();
-  const count = useQuery<number>({
-    queryKey: messagesKeys.unread(userId),
-    enabled: userId !== null,
-    refetchInterval: refreshEvery.topBar,
-    refetchOnWindowFocus: true,
-    queryFn: async () => fetchUnreadMessageCount(await requireClient()),
-  });
-  return { isSignedIn: userId !== null, unreadCount: count.data ?? 0 };
 }

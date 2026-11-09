@@ -11,7 +11,7 @@
 import { useId, useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router';
 
-import { NavIcon } from '@/components/icons/NavIcon';
+import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Button } from '@/components/ui/Button';
 import { TextInput } from '@/components/ui/TextInput';
 import { PeopleDialog } from '@/features/people/components/PeopleDialog';
@@ -28,7 +28,7 @@ function OpenButton({ look, onOpen }: { look: 'round' | 'pill'; onOpen: () => vo
   if (look === 'pill') {
     return (
       <Button variant="secondary" aria-haspopup="dialog" className="w-fit" onClick={onOpen}>
-        <NavIcon name="plus" size={16} />
+        <ActionIcon name="plus" size={16} />
         {t('chat.newChat')}
       </Button>
     );
@@ -41,7 +41,7 @@ function OpenButton({ look, onOpen }: { look: 'round' | 'pill'; onOpen: () => vo
       onClick={onOpen}
       className="inline-flex size-11 flex-none cursor-pointer items-center justify-center rounded-full button-glass text-heading"
     >
-      <NavIcon name="plus" size={18} />
+      <ActionIcon name="plus" size={18} />
     </button>
   );
 }

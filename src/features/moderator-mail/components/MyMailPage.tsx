@@ -13,7 +13,7 @@
 import { Trans } from 'react-i18next';
 import { Link } from 'react-router';
 
-import { NavIcon } from '@/components/icons/NavIcon';
+import { ActionIcon } from '@/components/icons/ActionIcon';
 import { buttonClassName } from '@/components/ui/buttonStyles';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
@@ -60,7 +60,7 @@ function MailHeader({ isSignedIn }: { isSignedIn: boolean }) {
           to="/moderator-mail/new"
           className={buttonClassName({ variant: 'primary' }, 'w-fit shrink-0')}
         >
-          <NavIcon name="plus" size={16} />
+          <ActionIcon name="plus" size={16} />
           {t('list.write')}
         </Link>
       )}

@@ -2,9 +2,10 @@
  * Private messages: the chats list, one chat, sending, answering a request, reading and the
  * caller's own message setting (story S1-E9-01; who may write is S1-E9-03).
  *
- * Who calls it: the hooks in ../hooks (the /messages pages and the top bar's Messages link).
+ * Who calls it: the hooks in ../hooks (the /messages pages; the top bar's count has its own
+ * small hook, useUnreadMessageCount).
  * What it calls next: my_conversations(), conversation_with(), send_message(),
- * answer_message_request(), say_no_thanks_to_request() (IDEAS-2), mark_conversation_read(), unread_message_count() and
+ * answer_message_request(), say_no_thanks_to_request() (IDEAS-2), mark_conversation_read() and
  * my_message_settings() (…_s1_e9_01_private_messages.sql); set_message_audience() and
  * delete_conversation() (…_s1_e9_04_message_settings_and_retention.sql) and
  * set_adults_may_message() (S1-E2-06); the email choices are read by api/messageEmails.ts (IDEAS-2). Every rule is in the database; a
@@ -254,17 +255,6 @@ export async function answerRequest(
 export async function markRead(client: AppSupabaseClient, handle: string): Promise<void> {
   const { error } = await client.rpc('mark_conversation_read', { other_handle: handle });
   if (error !== null) throw messagesErrorFrom(error);
-}
-
-/**
- * How many chats have an unread message, for the top bar.
- *
- * @throws MessagesError
- */
-export async function fetchUnreadMessageCount(client: AppSupabaseClient): Promise<number> {
-  const { data, error } = await client.rpc('unread_message_count');
-  if (error !== null) throw messagesErrorFrom(error);
-  return data;
 }
 
 /** Reads an age group, falling back to the safest reading. */

@@ -9,7 +9,7 @@
  */
 import { useState, type FormEvent } from 'react';
 
-import { NavIcon } from '@/components/icons/NavIcon';
+import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { Textarea } from '@/components/ui/Textarea';
@@ -50,7 +50,7 @@ function ReplyButtons({
   return (
     <div className="flex flex-wrap gap-3">
       <Button type="submit" disabled={isDisabled}>
-        <NavIcon name="send" size={16} />
+        <ActionIcon name="send" size={16} />
         {t('thread.send')}
       </Button>
       {onNote !== null && (

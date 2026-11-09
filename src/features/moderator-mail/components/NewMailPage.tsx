@@ -13,7 +13,7 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useSearchParams } from 'react-router';
 
-import { NavIcon } from '@/components/icons/NavIcon';
+import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Button } from '@/components/ui/Button';
 import { buttonClassName } from '@/components/ui/buttonStyles';
 import { Eyebrow } from '@/components/ui/Eyebrow';
@@ -61,7 +61,7 @@ function DecisionNote({ reference }: { reference: string }) {
   const { t } = useMailTranslation();
   return (
     <p className="m-0 flex items-start gap-2 rounded-[16px] border border-border bg-panel px-4 py-3 text-sm text-body">
-      <NavIcon name="info" size={16} className="mt-0.5 shrink-0" />
+      <ActionIcon name="info" size={16} className="mt-0.5 shrink-0" />
       <span>{t('new.about', { reference })}</span>
     </p>
   );
@@ -125,7 +125,7 @@ function NewMailForm({ decision }: { decision: string | null }) {
           type="submit"
           disabled={mail.isSending || subject.trim() === '' || body.trim() === ''}
         >
-          <NavIcon name="send" size={16} />
+          <ActionIcon name="send" size={16} />
           {mail.isSending ? t('new.sending') : t('new.send')}
         </Button>
       </div>
