@@ -28,13 +28,24 @@
  * paragraph gets a comment marker beside it (ParagraphCommentMarker, through ChapterText's
  * paragraphAddon) whose thread opens under the paragraph, and EarlierVersionComments follows the
  * text when comments sit on paragraphs the writer has since changed. useParagraphCommentCounts →
- * paragraph_comment_counts() gives the counts; ParagraphCommentsContext carries them in.
+ * paragraph_comment_counts() gives the counts; ParagraphCommentsContext carries them in. From
+ * 1280 px the paper shares the row with ParagraphCommentsPanel, a sticky side column where the
+ * open thread sits, so the text never moves (bundle G7d2; board ReaderComments).
  * Reading comfort (IDEAS-1 part a): useReadingLook takes the chapter's theme from Night by the
  * clock or a pick by hand (useChapterTheme), ReadingRuler draws the band over the line being
  * read, and an address ending "#resume" (the story page's "You are here") goes straight back to
  * the saved place instead of offering it.
  */
-import { lazy, Suspense, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react';
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+  type RefObject,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router';
 
@@ -69,6 +80,7 @@ import { CopyNotice } from './CopyNotice';
 import { EarlierVersionComments } from './EarlierVersionComments';
 import { NoPreviewNotice } from './NoPreviewNotice';
 import { ParagraphCommentMarker } from './ParagraphCommentMarker';
+import { ParagraphCommentsPanel } from './ParagraphCommentsPanel';
 import { ProtectedChapterText } from './ProtectedChapterText';
 import { ReadingTimeLeft } from './ReadingTimeLeft';
 import { SavedPlaceOffer } from './SavedPlaceOffer';
@@ -236,14 +248,20 @@ function ChapterTextBlock(props: {
 }
 
 /**
- * The paragraph markers' facts for one chapter (S1-E6-06): the counts, and which thread is open,
- * starting with the one the address asked for, if any (IDEAS-1e).
+ * The paragraph markers' facts for one chapter (S1-E6-06): the counts, which thread is open
+ * (starting with the one the address asked for, if any; IDEAS-1e) and the side column it opens
+ * in from 1280 px (G7d2).
  *
  * @param chapter - the chapter being read
  * @param hasText - false while there is no text
+ * @param sidePanel - the side column's element, or null while it isn't drawn
  * @returns the context value, or null when there are no markers (signed out, comments off)
  */
-function useParagraphComments(chapter: ReaderChapter, hasText: boolean): ParagraphComments | null {
+function useParagraphComments(
+  chapter: ReaderChapter,
+  hasText: boolean,
+  sidePanel: HTMLElement | null,
+): ParagraphComments | null {
   const address = useMemo(
     () => ({ storySlug: chapter.story.slug, chapterCode: chapter.code }),
     [chapter.story.slug, chapter.code],
@@ -251,10 +269,43 @@ function useParagraphComments(chapter: ReaderChapter, hasText: boolean): Paragra
   const counts = useParagraphCommentCounts(address, hasText);
   // A link such as a notification's "#paragraph-4" starts with that thread open (IDEAS-1e).
   const linkedPlace = useLinkedParagraphThread(counts !== null);
-  const [openPlace, setOpenPlace] = useState<ParagraphPlace | null>(linkedPlace);
+  const [openPlace, setOpenPlaceNow] = useState<ParagraphPlace | null>(linkedPlace);
+  // Whether the reader opened the open thread themselves (not a link), so the side column's
+  // thread knows to take focus.
+  const [isOpenedByReader, setIsOpenedByReader] = useState(false);
+  const setOpenPlace = useCallback((place: ParagraphPlace | null) => {
+    setIsOpenedByReader(true);
+    setOpenPlaceNow(place);
+  }, []);
   return useMemo(
-    () => (counts === null ? null : { address, counts, openPlace, setOpenPlace }),
-    [address, counts, openPlace],
+    () =>
+      counts === null
+        ? null
+        : { address, counts, openPlace, setOpenPlace, sidePanel, isOpenedByReader },
+    [address, counts, openPlace, setOpenPlace, sidePanel, isOpenedByReader],
+  );
+}
+
+/**
+ * The paper and, for a reader with paragraph markers, the side column beside it from 1280 px
+ * (G7d2; board ReaderComments): a two-column row there, one column everywhere else.
+ * The wrapper is the same element whether or not the column is shown: the markers' counts arrive
+ * after the text, and swapping the wrapper then would redraw the whole text, losing the reader's
+ * text selection (the "Share quote" button) and their place.
+ */
+function PaperRow(props: {
+  hasPanel: boolean;
+  onPanel: (element: HTMLElement | null) => void;
+  children: ReactNode;
+}) {
+  const rowClasses = props.hasPanel
+    ? 'xl:grid xl:grid-cols-[minmax(0,1fr)_320px] xl:items-start xl:gap-8'
+    : undefined;
+  return (
+    <div className={rowClasses}>
+      {props.children}
+      {props.hasPanel && <ParagraphCommentsPanel onElement={props.onPanel} />}
+    </div>
   );
 }
 
@@ -302,8 +353,9 @@ function ChapterReading({ chapter, spot }: { chapter: ReaderChapter; spot: SpotR
   );
   // S1-E4-02: the reader's own font, size, spacing, width and theme.
   const look = useReadingLook(chapter.code);
-  // S1-E6-06: the comment markers beside the paragraphs.
-  const paragraphComments = useParagraphComments(chapter, hasText);
+  // S1-E6-06: the comment markers beside the paragraphs, and (G7d2) the side column for threads.
+  const [sidePanel, setSidePanel] = useState<HTMLElement | null>(null);
+  const paragraphComments = useParagraphComments(chapter, hasText, sidePanel);
   return (
     <>
       <title>
@@ -314,30 +366,32 @@ function ChapterReading({ chapter, spot }: { chapter: ReaderChapter; spot: SpotR
         progress={hasText ? progress : 0}
         deviceSize={look.isSignedIn ? look.deviceSize : null}
       />
-      <ReadingPaper look={look} chapter={chapter}>
-        {chapter.body !== null && (
-          <SharedChapterContext.Provider value={sharedChapter}>
-            <ParagraphCommentsContext.Provider value={paragraphComments}>
-              <ChapterTextBlock
-                chapter={chapter}
-                body={chapter.body}
-                textRef={textRef}
-                look={look}
-                spot={spot}
-                hasMarkers={paragraphComments !== null}
-              >
-                <AboveText
+      <ParagraphCommentsContext.Provider value={paragraphComments}>
+        <PaperRow hasPanel={paragraphComments !== null} onPanel={setSidePanel}>
+          <ReadingPaper look={look} chapter={chapter}>
+            {chapter.body !== null && (
+              <SharedChapterContext.Provider value={sharedChapter}>
+                <ChapterTextBlock
                   chapter={chapter}
-                  spot={spot}
-                  savedPercent={savedPercent}
-                  placePercent={placePercent}
+                  body={chapter.body}
                   textRef={textRef}
-                />
-              </ChapterTextBlock>
-            </ParagraphCommentsContext.Provider>
-          </SharedChapterContext.Provider>
-        )}
-      </ReadingPaper>
+                  look={look}
+                  spot={spot}
+                  hasMarkers={paragraphComments !== null}
+                >
+                  <AboveText
+                    chapter={chapter}
+                    spot={spot}
+                    savedPercent={savedPercent}
+                    placePercent={placePercent}
+                    textRef={textRef}
+                  />
+                </ChapterTextBlock>
+              </SharedChapterContext.Provider>
+            )}
+          </ReadingPaper>
+        </PaperRow>
+      </ParagraphCommentsContext.Provider>
       {hasText && <UnderTheChapter chapter={chapter} sharedChapter={sharedChapter} />}
       {hasText && <ReadingTimeLeft minutesToRead={chapter.minutesToRead} progress={progress} />}
     </>

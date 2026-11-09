@@ -5,7 +5,8 @@
  * What it proves:
  * - teacher opens a paragraph's marker, comments on that paragraph only, and the marker counts
  *   it; the thread closes with Close or Escape and hands focus back; the main list says "On
- *   paragraph 2" (criterion 1);
+ *   paragraph 2" (criterion 1); at 1280 px and wider the thread opens in the side column beside
+ *   the paper and takes focus, and below that it opens under its paragraph (bundle G7d2);
  * - the writer puts a new paragraph first: the comment follows its paragraph to number 3; the
  *   writer changes its words: the comment moves to "comments on an earlier version", which opens
  *   without a box to comment in (criterion 2);
@@ -92,14 +93,17 @@ test.describe('comments on a paragraph (S1-E6-06)', () => {
     await expect(marker).toHaveAccessibleName('Comment on this paragraph');
     await marker.click();
     await expect(marker).toHaveAttribute('aria-expanded', 'true');
-    const thread = page.getByRole('region', { name: 'Comments on paragraph 2' });
-    await expect(thread).toContainText('No comments on this paragraph yet');
+    // At 1280 px (Desktop Chrome) the thread opens in the side column and takes focus (G7d2).
+    const panel = page.getByRole('complementary', { name: 'Paragraph comments' });
+    const thread = panel.getByRole('region', { name: 'Comments on paragraph 2' });
+    await expect(thread).toContainText('No comments on paragraph 2 yet');
+    await expect(thread).toBeFocused();
     await thread
       .getByRole('textbox', { name: 'Comment on this paragraph' })
       .fill('That lift scared me.');
     await thread.getByRole('button', { name: 'Post comment' }).click();
     await expect(thread.getByRole('article', { name: 'teacher' })).toContainText('That lift');
-    await expect(thread).toContainText('1 comment on this paragraph');
+    await expect(thread).toContainText('1 comment on paragraph 2');
     await expect(marker).toHaveAccessibleName('1 comment on this paragraph');
     // The other paragraphs have none, and the main list says where the comment is.
     await expect(markerOf(page, 1)).toHaveAccessibleName('Comment on this paragraph');
@@ -116,6 +120,23 @@ test.describe('comments on a paragraph (S1-E6-06)', () => {
       .focus();
     await page.keyboard.press('Escape');
     await expect(page.getByRole('region', { name: 'Comments on paragraph 2' })).toBeHidden();
+    await expect(marker).toBeFocused();
+    await page.context().close();
+  });
+
+  test('below 1280 px the thread opens under its paragraph, with no side column', async ({
+    browser,
+  }) => {
+    const page = await openAs(browser, 'teacher');
+    await page.setViewportSize({ width: 1024, height: 800 });
+    await expect(page.getByTestId('paragraph-comments-panel')).toBeHidden();
+    const marker = markerOf(page, 1);
+    await marker.click();
+    // The thread sits inside the chapter text, right after its paragraph's marker.
+    const thread = page.locator('.tmc-chapter-text').getByRole('region', {
+      name: 'Comments on paragraph 1',
+    });
+    await expect(thread).toContainText('No comments on this paragraph yet');
     await expect(marker).toBeFocused();
     await page.context().close();
   });

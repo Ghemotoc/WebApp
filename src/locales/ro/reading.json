@@ -109,7 +109,9 @@
       "count_other": "{{count}} de comentarii la acest paragraf",
       "earlier_one": "{{count}} comentariu la o versiune mai veche a capitolului",
       "earlier_few": "{{count}} comentarii la o versiune mai veche a capitolului",
-      "earlier_other": "{{count}} de comentarii la o versiune mai veche a capitolului"
+      "earlier_other": "{{count}} de comentarii la o versiune mai veche a capitolului",
+      "panelLabel": "Comentarii la paragrafe",
+      "panelHint": "Apasă bula de lângă un paragraf ca să citești ce au spus alții despre el și să adaugi comentariul tău."
     }
   },
   "teaser": {

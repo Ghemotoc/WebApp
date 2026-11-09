@@ -29,6 +29,8 @@
     "completed": "Completed story",
     "button": "Continue",
     "buttonLabel": "Continue {{title}}",
+    "contents": "Contents",
+    "contentsLabel": "Contents of {{title}}",
     "empty": "Stories you start reading show here, with your place in them."
   },
   "shelves": {
