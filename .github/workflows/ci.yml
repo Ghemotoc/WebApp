@@ -121,6 +121,15 @@ jobs:
         shard: [1, 2, 3, 4]
     timeout-minutes: 60
     steps:
+      # The runner's disk filled up during a shard more than once (ENOSPC while Playwright wrote
+      # a trace, 9 Nov 2026: G8e and NO-DOODLES), which failed tests that pass. The runner image
+      # carries toolchains this job never uses (.NET, Android, Haskell, CodeQL), so they go first;
+      # that frees well over 10 GB. Node comes from setup-node's own cache, which stays.
+      - name: Free disk space on the runner
+        run: |
+          df -h /
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL
+          df -h /
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with:
