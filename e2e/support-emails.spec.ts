@@ -168,7 +168,7 @@ test.describe('support ticket emails (S1-E11-13, ADMIN-2h2)', () => {
     expect(response.status()).toBe(200);
     await runWorker(request);
     const email = await waitForEmail(strangerEmail);
-    expect(email.Subject).toContain('Am primit cererea ta');
+    expect(email.Subject).toContain('Cerere primită');
     expect(email.Text).toContain('— English —');
     expect(email.Text).not.toContain('/support/');
   });

@@ -111,7 +111,7 @@ test.describe('support tickets (S1-E11-13, ADMIN-2h1)', () => {
     await reply.fill('Your drafts are under Write › Drafts. Does that help?');
     await page.getByRole('button', { name: 'Send answer' }).click();
     await expect(
-      history.getByText('@support: Status from Open to Waiting for your answer'),
+      history.getByText('@support: Status from Open to Waiting for an answer from you'),
     ).toBeVisible();
   });
 
@@ -129,7 +129,7 @@ test.describe('support tickets (S1-E11-13, ADMIN-2h1)', () => {
 
   test('a visitor’s Contact us message becomes an email-only ticket', async ({ browser }) => {
     const visitor = await openAs(browser, null, '/contact');
-    const form = visitor.getByRole('form', { name: 'Message' });
+    const form = visitor.getByRole('form', { name: 'Send a message' });
     await form.getByText('A question', { exact: true }).click();
     await form.getByLabel('Message', { exact: true }).fill(`Is it free to read? ${stamp}`);
     await form.getByLabel('Email').fill(`visitor-${stamp}@example.com`);

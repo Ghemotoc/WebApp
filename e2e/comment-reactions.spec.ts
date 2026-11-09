@@ -77,7 +77,7 @@ test.describe('reactions on comments (S1-E6-02)', () => {
       .getByRole('group', { name: 'Pick a reaction' })
       .getByRole('button', { name: 'Heart' })
       .click();
-    const heart = comment.getByRole('button', { name: 'Heart, 1, your reaction' });
+    const heart = comment.getByRole('button', { name: 'Heart, 1, reacted by you' });
     await expect(heart).toHaveAttribute('aria-pressed', 'true');
     // Fire replaces it: one reaction per person.
     await comment.getByRole('button', { name: 'Add a reaction' }).click();
@@ -85,10 +85,10 @@ test.describe('reactions on comments (S1-E6-02)', () => {
       .getByRole('group', { name: 'Pick a reaction' })
       .getByRole('button', { name: 'Fire' })
       .click();
-    await expect(comment.getByRole('button', { name: 'Fire, 1, your reaction' })).toBeVisible();
+    await expect(comment.getByRole('button', { name: 'Fire, 1, reacted by you' })).toBeVisible();
     await expect(comment.getByRole('button', { name: /^Heart/ })).toHaveCount(0);
     // Pressing their own chip again takes it away.
-    await comment.getByRole('button', { name: 'Fire, 1, your reaction' }).click();
+    await comment.getByRole('button', { name: 'Fire, 1, reacted by you' }).click();
     await expect(comment.getByRole('button', { name: /^Fire/ })).toHaveCount(0);
     expect(runSql(`select count(*) from public.comment_reactions`)).toBe('1');
     await reader.context().close();

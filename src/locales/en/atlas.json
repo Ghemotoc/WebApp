@@ -14,7 +14,7 @@
     "action": "New story"
   },
   "signedOut": "Sign in to plan stories.",
-  "notFound": "We couldn’t find that story among yours. It may have been deleted.",
+  "notFound": "We couldn’t find that story on this account. It may have been deleted.",
   "loadFailed": "Your plan didn’t load. Check your connection and try again.",
   "privateNote": "Only you can see this plan.",
   "save": {

@@ -35,7 +35,7 @@ async function openContact(page: Page) {
 test.describe('contact form (S1-E14-04)', () => {
   test('a visitor sends a message and both emails carry the reference', async ({ page }) => {
     await openContact(page);
-    const form = page.getByRole('form', { name: 'Message' });
+    const form = page.getByRole('form', { name: 'Send a message' });
     await form.getByRole('button', { name: 'Send message' }).click();
     await expect(form.getByText('Write the message first.')).toBeVisible();
     await form.getByLabel('Message', { exact: true }).fill('Hello, how do I change my pen name?');
@@ -67,7 +67,7 @@ test.describe('contact form (S1-E14-04)', () => {
     await useSessionInBrowser(page.context(), (await signInPersona('adult_writer')).session);
     runSql(`update public.profiles set locale = 'en' where handle = 'adult_writer';`);
     await openContact(page);
-    const form = page.getByRole('form', { name: 'Message' });
+    const form = page.getByRole('form', { name: 'Send a message' });
     await expect(form.getByLabel('Email')).toHaveCount(0);
     await expect(form.getByText(/We’ll reply to adult_writer@personas.test/)).toBeVisible();
     await form.getByText('A problem with an account', { exact: true }).click();

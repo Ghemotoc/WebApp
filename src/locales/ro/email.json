@@ -134,7 +134,7 @@
   "supportTickets": {
     "acknowledgementSubject": "Cerere primită [#{{number}}] · {{productName}}",
     "acknowledgementBody": "Îți mulțumim că ne-ai scris. Cererea ta este #{{number}}: „{{subject}}”.\n\nO persoană din echipa de asistență citește fiecare cerere. De obicei răspundem într-o zi lucrătoare și întotdeauna în cel mult o lună.\n\nCa să adaugi ceva, răspunde la acest email și păstrează [#{{number}}] în subiect.",
-    "acknowledgementInApp": "O poți citi și îi poți răspunde și la Cererile tale de asistență: {{link}}",
+    "acknowledgementInApp": "O poți citi și îi poți răspunde și la Cereri de ajutor: {{link}}",
     "replySubject": "Re: {{subject}} [#{{number}}]",
     "replyHowToAnswer": "Ca să răspunzi, răspunde la acest email și păstrează [#{{number}}] în subiect.",
     "replyInApp": "Toată conversația este și la Cererile tale de asistență: {{link}}",

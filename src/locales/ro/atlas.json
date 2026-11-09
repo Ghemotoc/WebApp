@@ -14,7 +14,7 @@
     "action": "Poveste nouă"
   },
   "signedOut": "Intră în cont ca să plănuiești povești.",
-  "notFound": "Nu am găsit povestea printre ale tale. Poate a fost ștearsă.",
+  "notFound": "Nu am găsit povestea în cont. Poate a fost ștearsă.",
   "loadFailed": "Planul nu s-a încărcat. Verifică-ți conexiunea și încearcă din nou.",
   "privateNote": "Doar tu vezi acest plan.",
   "save": {

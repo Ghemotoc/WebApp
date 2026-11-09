@@ -149,9 +149,7 @@ test.describe('forum signatures (FORUMS-2d, S1-E8-08)', () => {
     await staff.context().close();
 
     const writer = await openAs(browser, 'adult_writer', '/notifications');
-    const row = writer
-      .getByRole('listitem')
-      .filter({ hasText: 'please change your forum signature' });
+    const row = writer.getByRole('listitem').filter({ hasText: 'change the forum signature' });
     await expect(row.getByText('No adverts in signatures, please.')).toBeVisible();
     await row.getByRole('link').click();
     await expect(writer).toHaveURL(/\/settings#forum-signature$/);

@@ -99,7 +99,7 @@ test.describe('Notification emails', () => {
     const page = await openSettings(browser);
     const section = page.getByRole('region', { name: 'Notifications' });
     await expect(
-      section.getByRole('combobox', { name: 'Email for Replies to my comments' }),
+      section.getByRole('combobox', { name: 'Email for Replies to comments' }),
     ).toHaveValue('instant');
     await expect(section.getByRole('combobox', { name: 'Email for New followers' })).toHaveValue(
       'daily',

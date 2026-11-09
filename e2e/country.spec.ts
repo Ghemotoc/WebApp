@@ -207,7 +207,7 @@ test.describe('country from the connection (S1-E2-10)', () => {
       await expect(page.getByRole('combobox', { name: 'Country' })).toHaveCount(0);
       await page.getByLabel('Email address').fill(address);
       await page.getByRole('button', { name: 'Tell me when you open here' }).click();
-      await expect(page.getByText(/Check email/)).toBeVisible();
+      await expect(page.getByText(/Check your email/)).toBeVisible();
       expect(
         runSql(
           `select country_code || ':' || (confirmed_at is null)::text from public.opening_list where email = '${address}'`,

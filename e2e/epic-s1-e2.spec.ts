@@ -38,7 +38,7 @@ const workingInvite = 'PERSONAS-TEST-INVITE';
 const personaPassword = 'Persona-Test-2026!';
 
 /** The account menu's name in either language: personas open in their account's language. */
-const accountButton = /Your account|Contul tău/;
+const accountButton = /^(Account|Cont)$/;
 
 /** Logs in through the log-in screen. */
 async function logInWithScreen(page: Page, email: string, password: string) {
@@ -180,7 +180,7 @@ test.describe('fixes from the staging check (17 Oct 2026)', () => {
     const field = page.getByLabel('Invitation code');
     await expect(field).toBeFocused();
     await expect(field).toHaveAttribute('aria-invalid', 'true');
-    await expect(field).toHaveAccessibleDescription(/Enter the code from your invitation\./);
+    await expect(field).toHaveAccessibleDescription(/Enter the code from the invitation\./);
   });
 
   test('a wrong invite code keeps the typed code, the focus and a linked error', async ({

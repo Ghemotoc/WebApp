@@ -119,7 +119,7 @@ test.describe('epic check: comments, reactions and follows (S1-E6-QA)', () => {
       .getByRole('group', { name: 'Pick a reaction' })
       .getByRole('button', { name: 'Heart' })
       .click();
-    await expect(other.getByRole('button', { name: 'Heart, 1, your reaction' })).toBeVisible();
+    await expect(other.getByRole('button', { name: 'Heart, 1, reacted by you' })).toBeVisible();
     const downvote = other.getByRole('button', { name: /^Downvote/ });
     await downvote.click();
     await expect(downvote).toHaveAttribute('aria-pressed', 'true');

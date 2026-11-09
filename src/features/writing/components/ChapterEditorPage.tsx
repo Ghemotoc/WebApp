@@ -11,7 +11,7 @@
  * 10 seconds and on blur → save_chapter_draft(); offline keeps; conflicts), useMyStories (the
  * aside), CompareVersionsDialog (after a conflict), useChapterPublishing with PublishPanel and
  * ChapterPreviewDialog (S1-E3-03).
- * Errors: a chapter that isn't the writer's shows "We can't find this chapter among yours"; a
+ * Errors: a chapter that isn't the writer's shows "We can't find this chapter on this account"; a
  * failed load shows the plain message; save problems show in the Saving box.
  * The toolbar's Insert menu (ChapterInsertControls) adds pictures (S1-E3-09) while the
  * picture_uploads flag is on; drawings, music and video join it with S1-E3-10 and S1-E3-11.

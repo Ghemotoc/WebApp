@@ -66,7 +66,7 @@ test.describe('getting around as a writer (NAV-1)', () => {
     await expect(page).toHaveURL(/\/u\/adult_writer$/);
     // Step 2: "Edit profile" opens the Profile group of Settings.
     await page.getByRole('button', { name: 'Account' }).click();
-    await page.getByRole('link', { name: 'Edit profile' }).click();
+    await page.locator('#account-menu-panel').getByRole('link', { name: 'Edit profile' }).click();
     await expect(page).toHaveURL(/\/settings#profile$/);
     await page.context().close();
   });

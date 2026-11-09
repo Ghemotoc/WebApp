@@ -121,7 +121,7 @@ test.describe('forum threads and posts (FORUMS-1b, S1-E8-02)', () => {
   test('the author edits; a moderator reads the earlier version', async ({ browser }) => {
     const writer = await openAs(browser, 'adult_writer', threadAddress());
     await postCard(writer, 1).getByRole('button', { name: 'Edit post 1' }).click();
-    await writer.getByLabel('Post').fill('My chapter one now opens on the scene.');
+    await writer.getByLabel('Post', { exact: true }).fill('My chapter one now opens on the scene.');
     await writer.getByRole('button', { name: 'Save changes' }).click();
     await expect(postCard(writer, 1).getByText(/^Edited /)).toBeVisible();
     await expect(

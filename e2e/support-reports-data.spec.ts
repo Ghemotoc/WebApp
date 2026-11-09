@@ -73,7 +73,7 @@ test.describe('support tickets to reports and data requests (S1-E11-13, ADMIN-2h
     await page.getByRole('button', { name: 'Open data request' }).click();
     const started = page.getByRole('list', { name: 'Started from this ticket' });
     await started
-      .getByRole('link', { name: /Data request .+ \(A copy of their data\), due/ })
+      .getByRole('link', { name: /Data request .+ \(A copy of the data\), due/ })
       .click();
     await expect(page.getByRole('heading', { name: /^Data request / })).toBeVisible();
   });

@@ -111,7 +111,7 @@ test.describe('story status, settings and deletion (S1-E3-05)', () => {
   }) => {
     const page = await openAsPersona(browser, 'adult_writer', `/write/s/${slug}/settings`);
     await page.getByRole('button', { name: 'Delete story' }).click();
-    await expect(page.getByText('Delete “Stația meteo” and all its chapters?')).toBeVisible();
+    await expect(page.getByText('Delete “Stația meteo” and its chapters?')).toBeVisible();
     await page.getByRole('button', { name: 'Yes, delete story' }).click();
     await expect(page.getByText('Last check.')).toBeVisible();
     await page.getByRole('button', { name: 'Delete story', exact: true }).click();

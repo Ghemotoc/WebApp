@@ -142,7 +142,7 @@ test.describe('Delete account', () => {
         await useSessionInBrowser(page.context(), (await signInPersona('failed_check')).session);
         await checkScreen(page, view);
         await expect(
-          page.getByRole('button', { name: /Keep my account|Păstrez contul/ }),
+          page.getByRole('button', { name: /Keep account|Păstrez contul/ }),
         ).toBeVisible();
       });
     }

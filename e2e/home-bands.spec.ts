@@ -5,7 +5,7 @@
  * Who runs it: `npm run test:e2e` (Supabase started first).
  * What it proves:
  * - a visitor sees the four bands from the CMS in the board's order: the writers' band, the forums
- *   band, "Start a first story" and "Apps come later";
+ *   band, "Start your first story" and "Apps come later";
  * - the forums band lists an adult's busy thread with "Started by … · n replies" and a link to it,
  *   and never a 13 to 15-year-old's thread (no parent's yes; D4);
  * - Trending's genre chips are one radio group, and choosing one keeps the row on the page;
@@ -70,7 +70,7 @@ test.describe('home page bands, forums and footer (LOOK-3)', () => {
     const positions = [
       'Post your story one chapter at a time.',
       'Talk about stories in the forums.',
-      'Start a first story',
+      'Start your first story',
       'Desktop and phone apps come later',
     ].map((heading) => order.indexOf(heading));
     expect(positions.every((position) => position >= 0)).toBe(true);

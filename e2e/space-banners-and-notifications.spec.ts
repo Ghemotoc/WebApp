@@ -117,7 +117,7 @@ test.describe('space banners and join notifications (FORUMS-2c)', () => {
       where not exists (select 1 from vault.secrets where name = 'picture_check_secret');`);
     const page = await openAs(browser, 'teacher', `${spaceAddress}/settings`);
     const card = page.getByRole('region', { name: 'Banner picture' });
-    await expect(card.getByText('The space uses its colour.')).toBeVisible();
+    await expect(card.getByText('The space uses its colour.', { exact: true })).toBeVisible();
     await card.getByLabel('Choose a banner picture').setInputFiles({
       name: 'banner.png',
       mimeType: 'image/png',
@@ -131,7 +131,7 @@ test.describe('space banners and join notifications (FORUMS-2c)', () => {
 
     await page.goto(`${spaceAddress}/settings`);
     await card.getByRole('button', { name: 'Use the colour instead' }).click();
-    await expect(card.getByText('The space uses its colour.')).toBeVisible();
+    await expect(card.getByText('The space uses its colour.', { exact: true })).toBeVisible();
     // The replaced picture's file is gone from Storage too.
     await expect
       .poll(() => runSql(`select count(*) from storage.objects where bucket_id = 'space-banners'`))
