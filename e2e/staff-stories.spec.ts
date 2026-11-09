@@ -50,7 +50,9 @@ test.describe('every story in the admin site (S1-E11-07)', () => {
   test('the moderator searches, filters and opens a story', async ({ browser }) => {
     const page = await openAs(browser, 'moderator', '/staff');
     await page.getByRole('link', { name: 'Stories', exact: true }).first().click();
-    await expect(page.getByRole('heading', { name: 'Every story', level: 1 })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Stories', level: 1, exact: true }),
+    ).toBeVisible();
     await expect(page.getByRole('status').filter({ hasText: 'stories found' })).toBeVisible();
     await expect(
       page.getByRole('link', { name: 'The Girl Who Fixed Radios' }).first(),
@@ -91,8 +93,10 @@ test.describe('every story in the admin site (S1-E11-07)', () => {
     await expect(page.getByText('Your role can look at stories but not change them.')).toHaveCount(
       0,
     );
-    await page.getByRole('link', { name: 'Back to every story' }).click();
-    await expect(page.getByRole('heading', { name: 'Every story', level: 1 })).toBeVisible();
+    await page.getByRole('link', { name: 'Back to stories' }).click();
+    await expect(
+      page.getByRole('heading', { name: 'Stories', level: 1, exact: true }),
+    ).toBeVisible();
   });
 
   test('support only looks, and the content editor is refused', async ({ browser }) => {

@@ -126,12 +126,12 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     // Every type is offered (S1-E17-14), custom last.
     const kinds = section.getByLabel('Relationship', { exact: true });
     await expect(kinds.locator('option')).toHaveCount(13);
-    await expect(kinds.locator('option').last()).toHaveText('Custom (your own label)');
+    await expect(kinds.locator('option').last()).toHaveText('Custom (own label)');
     // A custom one needs its label.
     await kinds.selectOption('custom');
     await section.getByLabel('Other character', { exact: true }).selectOption({ label: 'Lupul' });
     await section.getByRole('button', { name: 'Add relationship' }).click();
-    await expect(section.getByText('Write your label for this relationship.')).toBeVisible();
+    await expect(section.getByText('Write a label for this relationship.')).toBeVisible();
     // A parent with a note.
     await kinds.selectOption('parent_of');
     await section.getByLabel('Other character', { exact: true }).selectOption({ label: 'Vali' });
@@ -164,7 +164,7 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     await expect(map.locator('[data-category]')).toHaveCount(3);
     await expect(map.locator('[data-category="conflict"]')).toHaveCount(1);
     // The same relationships as a list (S1-E17-15: "available as a list").
-    const list = page.getByRole('region', { name: 'All relationships', exact: true });
+    const list = page.getByRole('region', { name: 'Relationships', exact: true });
     await expect(list.getByText('Ion killed Lupul', { exact: true }).first()).toBeVisible();
     // Turning Conflict off hides its line.
     await page.getByRole('button', { name: 'Conflict' }).click();
@@ -227,7 +227,7 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
 
   test('Delete asks twice, then the relationship is gone from both sheets', async ({ browser }) => {
     const page = await openAs(browser, 'adult_writer', `${planAddress}/connections`);
-    const list = page.getByRole('region', { name: 'All relationships', exact: true });
+    const list = page.getByRole('region', { name: 'Relationships', exact: true });
     await list.getByRole('button', { name: 'Delete Ion killed Lupul' }).click();
     await expect(list.getByText('Delete “Ion killed Lupul”?')).toBeFocused();
     await list.getByRole('button', { name: 'Keep it' }).click();

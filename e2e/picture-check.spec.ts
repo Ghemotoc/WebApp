@@ -79,7 +79,7 @@ test.describe('the picture check (S1-E10-05)', () => {
     await page
       .getByLabel('Upload a picture')
       .setInputFiles({ name: 'me.png', mimeType: 'image/png', buffer: tinyPng });
-    await expect(page.getByText('Your picture passed the check.')).toBeVisible();
+    await expect(page.getByText('The picture passed the check.')).toBeVisible();
     expect(
       runSql(
         `select status from public.picture_checks where user_id = '${writerId}' order by created_at desc limit 1`,

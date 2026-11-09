@@ -105,7 +105,7 @@
   },
   "workspace": {
     "documentTitle": "Conectare cu Google · {{productName}}",
-    "heading": "Conectează-te cu contul Google Workspace",
+    "heading": "Conectează-te cu un cont Google Workspace",
     "why": "Pentru drepturile de echipă ai nevoie acum de o conectare cu contul Google al echipei, pe @{{domain}}. Îl protejează verificarea în doi pași a Google, așa că nu îți cerem alt cod.",
     "stepConnect": "Mai întâi leagă contul Google @{{domain}} de acest cont. Google te trimite înapoi aici; apoi continuă încă o dată cu Google ca să te conectezi.",
     "stepSignIn": "Contul Google @{{domain}} e legat. Continuă cu Google ca să te conectezi cu el, apoi deschide din nou zona echipei.",
@@ -116,7 +116,7 @@
     "documentTitle": "Site de administrare · {{productName}}",
     "heading": "Site de administrare",
     "intro": "Zonele pe care rolul tău le poate folosi. Fiecare acțiune și fiecare citire sensibilă se scrie în jurnalul de audit; serverul îți verifică rolul la fiecare, nu doar acest meniu.",
-    "areasHeading": "Zonele tale",
+    "areasHeading": "Zone",
     "noAreas": "Rolul tău nu are încă nicio zonă deschisă. Cere unui proprietar sau administrator dacă ai nevoie de una.",
     "areas": {
       "roles": "Cine din echipă are ce rol și ce permisiuni.",
@@ -187,7 +187,7 @@
       "auth": "Conectare",
       "function": "Funcție de server",
       "storage": "Fișiere",
-      "api": "Serverul nostru"
+      "api": "Serverul aplicației"
     },
     "calls": {
       "searchForm": "Caută în apeluri",
@@ -231,7 +231,7 @@
   },
   "auditLog": {
     "documentTitle": "Jurnal de audit · {{productName}}",
-    "eyebrow": "Echipă · jurnal de audit",
+    "eyebrow": "Echipă",
     "heading": "Jurnal de audit",
     "intro": "Cine a făcut ce, când și de ce, cu valorile dinainte și de după. Nimeni nu poate schimba sau șterge un rând, nici măcar un proprietar. Căutarea este liberă; exportul unui fișier este el însuși înregistrat.",
     "searchForm": "Caută în jurnalul de audit",
@@ -273,7 +273,7 @@
   },
   "invites": {
     "documentTitle": "Linkuri de invitație · {{productName}}",
-    "eyebrow": "Echipă · invitații",
+    "eyebrow": "Echipă",
     "heading": "Linkuri de invitație",
     "intro": "Fiecare link lasă un număr stabilit de persoane să își facă un cont, până expiră sau îl revoci. Crearea și revocarea linkurilor ajung în jurnalul de audit. Un link nu reține niciodată cine l-a folosit.",
     "open": "Fă un link de invitație",
@@ -341,7 +341,7 @@
   },
   "users": {
     "documentTitle": "Utilizatori · {{productName}}",
-    "eyebrow": "Echipă · utilizatori",
+    "eyebrow": "Echipă",
     "heading": "Utilizatori",
     "intro": "Găsește un cont după numele de utilizator, pseudonim, email sau ID-ul de utilizator. Contul arată starea, verificarea vârstei, sancțiunile și cazurile deschise. Fiecare acțiune și fiecare email afișat intră în jurnalul de audit.",
     "tabs": {
@@ -362,7 +362,7 @@
     "found_few": "Am găsit {{count}} conturi.",
     "found_other": "Am găsit {{count}} de conturi.",
     "ageNote": "Coloana verificării vârstei arată doar rezultatul și data. Nu păstrăm și nu arătăm fotografii sau documente, iar echipa nu vede aici anul nașterii.",
-    "notForYourRole": "Nu se arată rolului tău",
+    "notForYourRole": "Nu se arată acestui rol",
     "noSanctions": "Niciuna",
     "openAccount": "Deschide contul {{name}}",
     "columns": {
@@ -508,7 +508,7 @@
       "text": "Mesajele private sunt ascunse. Vezi un mesaj doar când face parte dintr-o raportare, pe pagina cazului acelei raportări."
     },
     "failures": {
-      "not_allowed": "Rolul tău nu poate face asta.",
+      "not_allowed": "Acest rol nu poate face asta.",
       "own_account": "Folosește Setările pentru propriul cont.",
       "reason_missing": "Scrie întâi un motiv. Intră în jurnalul de audit.",
       "no_such_account": "Nu există un astfel de cont. Caută din nou.",
@@ -540,7 +540,7 @@
   },
   "waitlist": {
     "documentTitle": "Listă de așteptare · {{productName}}",
-    "eyebrow": "Staff · listă de așteptare",
+    "eyebrow": "Echipă",
     "heading": "Listă de așteptare",
     "intro": "Aici așteaptă toți cei care s-au înscris fără invitație. Lasă oamenii să intre unul câte unul, bifându-i, sau în valuri: întâi scriitorii, pe țări dacă vrei. Fiecare primește un e-mail „Ai intrat” și o notificare în aplicație. Fiecare intrare ajunge în jurnalul de audit.",
     "notAllowed": "Doar proprietarii și administratorii pot vedea lista de așteptare.",
@@ -607,7 +607,7 @@
     "admitted_other": "Au intrat {{count}} de persoane. Au primit e-mailul.",
     "admitFailed": "Nu a intrat nimeni. Încearcă din nou peste puțin timp.",
     "openingList": {
-      "heading": "Așteaptă să ne deschidem în țara lor",
+      "heading": "Așteaptă deschiderea în țara lor",
       "intro": "Oameni din țări în care nu ne-am deschis încă și care au cerut să afle când ne deschidem. Fiecare adresă confirmată primește un singur email în ziua în care se deschide țara ei și e ștearsă după 7 zile.",
       "country": "Țara",
       "confirmed": "Confirmate",
@@ -803,7 +803,7 @@
     "empty": "Încă nu există clasice. Adaug-o pe prima.",
     "notAllowed": "Doar rolul de administrator se ocupă de Clasice.",
     "failures": {
-      "not_allowed": "Rolul tău nu poate face asta.",
+      "not_allowed": "Acest rol nu poate face asta.",
       "classics_account_missing": "Contul oficial de clasice nu există încă. Roagă proprietarul să-l creeze.",
       "details_invalid": "Alege un autor, o categorie și o clasificare.",
       "author_died_year_differs": "Autorul e deja în listă cu alt an al morții. Alege-l din listă sau verifică anul.",
@@ -992,7 +992,7 @@
     "reasonHint": "Persoana citește motivul în aplicație. Cine a decis rămâne doar în jurnalul de audit.",
     "save": "Salvează decizia",
     "failures": {
-      "not_allowed": "Rolul tău nu poate face asta.",
+      "not_allowed": "Acest rol nu poate face asta.",
       "refused": "Nu a mers: poate cererea are deja o decizie. Reîncarcă pagina.",
       "unreachable": "Nu am putut ajunge la baza de date. Încearcă din nou peste puțin timp."
     }
@@ -1023,7 +1023,7 @@
       "rejected": "Trimite „Încă nu”"
     },
     "failures": {
-      "not_allowed": "Rolul tău nu poate face asta.",
+      "not_allowed": "Acest rol nu poate face asta.",
       "refused": "Nu a mers: poate cererea are deja o decizie. Reîncarcă pagina.",
       "unreachable": "Nu am putut ajunge la baza de date. Încearcă din nou peste puțin timp."
     },
@@ -1056,7 +1056,7 @@
     "create": "Creează clasa",
     "created": "Clasa e gata.",
     "open": "Deschide-o",
-    "listTitle": "Toate spațiile de clasă",
+    "listTitle": "Spații de clasă",
     "none": "Încă nu există spații de clasă.",
     "noSchool": "Încă nescrisă",
     "members": "Membri",
@@ -1127,8 +1127,8 @@
   },
   "stories": {
     "documentTitle": "Povești · {{productName}}",
-    "eyebrow": "Echipă · povești",
-    "heading": "Toate poveștile",
+    "eyebrow": "Echipă",
+    "heading": "Povești",
     "intro": "Găsește orice poveste și deschide-o ca să-i vezi detaliile, capitolele și raportările. Echipa nu modifică niciodată cuvintele unei persoane care scrie. Fiecare schimbare are nevoie de un motiv, iar autorul sau autoarea află ce s-a schimbat și de ce.",
     "oneOwnerPill": "Fiecare poveste aparține unui singur ID de utilizator",
     "auditPill": "Fiecare acțiune de aici ajunge în jurnalul de audit",
@@ -1193,7 +1193,7 @@
     "loadFailed": "Poveștile nu s-au încărcat. Verifică-ți conexiunea și încearcă din nou.",
     "page": {
       "documentTitle": "{{title}} · Povești",
-      "back": "Înapoi la toate poveștile",
+      "back": "Înapoi la povești",
       "loading": "Se încarcă povestea…",
       "noSuchStory": "Nu există nicio poveste la această adresă. Poate a fost scrisă greșit.",
       "deletedByWriter": "Persoana care a scris povestea a șters-o. Nu mai apare în listă, dar echipa o poate deschide pentru un caz sau o cerere privind datele.",
@@ -1481,7 +1481,7 @@
   },
   "sessionEnded": {
     "documentTitle": "Conectează-te din nou · {{productName}}",
-    "heading": "Sesiunea ta de echipă s-a încheiat",
+    "heading": "Sesiunea de echipă s-a încheiat",
     "body": "Sesiunile de echipă se încheie după 12 ore, ca să rămână conturile echipei în siguranță. Conectează-te din nou ca să deschizi site-ul de administrare.",
     "signInAgain": "Conectează-te din nou",
     "signingOut": "Te deconectăm…",

@@ -1,6 +1,6 @@
 /**
  * useMyReportsAndDecisions: the signed-in person's statements of reasons and the reports they
- * sent, for "My reports and decisions" (story S1-E10-04; board 6.5).
+ * sent, for "Reports and decisions" (story S1-E10-04; board 6.5).
  *
  * Who calls it: MyReportsPage. What it calls: api/statements.ts → my_statements(), my_reports().
  */

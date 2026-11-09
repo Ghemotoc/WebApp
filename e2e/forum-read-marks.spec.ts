@@ -8,7 +8,7 @@
  *   index and in "New for you" (criterion 1);
  * - opening it from the list lands on the first new post, and once read it shows "No new posts"
  *   (criterion 2);
- * - "Mark as read" on a forum and "Mark all as read" on the index clear the dots (criterion 3);
+ * - "Mark as read" on a forum and "Mark as read" on the index clear the dots (criterion 3);
  * - a visitor sees no dots and no mark buttons;
  * - the index and the forum's page with new posts pass axe at 390, 768 and 1440 px, light and
  *   night, ro and en, and no doodle is drawn.
@@ -94,7 +94,7 @@ test.describe('read and unread in the forums (FORUMS-1d, S1-E8-04)', () => {
   test('a new thread is new in the list, on the index and in New for you', async ({ browser }) => {
     const writer = await openAs(browser, 'adult_writer', '/forums/first-chapters/new');
     await writer.getByLabel('Title').fill(threadTitle);
-    await writer.getByLabel('Your post').fill('Does this look new to you?');
+    await writer.getByLabel('Post').fill('Does this look new to you?');
     await writer.getByRole('button', { name: 'Post the thread' }).click();
     await expect(writer.getByRole('heading', { level: 1, name: threadTitle })).toBeVisible();
     // One's own thread is never new to oneself.
@@ -103,7 +103,7 @@ test.describe('read and unread in the forums (FORUMS-1d, S1-E8-04)', () => {
     await writer.context().close();
 
     const page = await openAs(browser, 'teacher', '/forums');
-    await expect(forumRow(page).getByText('New posts since your last visit')).toBeAttached();
+    await expect(forumRow(page).getByText('New posts since the last visit')).toBeAttached();
     const newForYou = page.getByRole('region', { name: 'New for you' });
     await expect(newForYou.getByRole('link', { name: new RegExp(threadTitle) })).toHaveAttribute(
       'href',
@@ -124,7 +124,7 @@ test.describe('read and unread in the forums (FORUMS-1d, S1-E8-04)', () => {
     addReply('Second post, written later.');
     addReply('Third post, written later.');
     await page.reload();
-    await expect(threadRow(page).getByText('New posts since your last visit')).toBeAttached();
+    await expect(threadRow(page).getByText('New posts since the last visit')).toBeAttached();
     await threadRow(page).getByRole('link', { name: threadTitle }).click();
     await expect(page).toHaveURL(/\?post=2$/);
     await expect(page.locator('#post-2')).toBeFocused();
@@ -134,14 +134,14 @@ test.describe('read and unread in the forums (FORUMS-1d, S1-E8-04)', () => {
   test('Mark as read on a forum, and Mark all as read on the index', async ({ browser }) => {
     addReply('Fourth post.');
     const page = await openAs(browser, 'teacher', '/forums/first-chapters');
-    await expect(threadRow(page).getByText('New posts since your last visit')).toBeAttached();
+    await expect(threadRow(page).getByText('New posts since the last visit')).toBeAttached();
     await page.getByRole('button', { name: 'Mark as read: First chapters' }).click();
     await expect(threadRow(page).getByText('No new posts')).toBeAttached();
 
     addReply('Fifth post.');
     await page.goto('/forums');
-    await expect(forumRow(page).getByText('New posts since your last visit')).toBeAttached();
-    await page.getByRole('button', { name: 'Mark all as read' }).click();
+    await expect(forumRow(page).getByText('New posts since the last visit')).toBeAttached();
+    await page.getByRole('button', { name: 'Mark as read' }).click();
     await expect(forumRow(page).getByText('No new posts')).toBeAttached();
     await expect(
       page.getByRole('region', { name: 'New for you' }).getByText('You’re up to date.'),
@@ -152,8 +152,8 @@ test.describe('read and unread in the forums (FORUMS-1d, S1-E8-04)', () => {
   test('a visitor sees no dots and nothing to mark', async ({ browser }) => {
     const page = await openAs(browser, null, '/forums');
     await expect(forumRow(page)).toBeVisible();
-    await expect(page.getByText('New posts since your last visit')).toHaveCount(0);
-    await expect(page.getByRole('button', { name: 'Mark all as read' })).toHaveCount(0);
+    await expect(page.getByText('New posts since the last visit')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Mark as read' })).toHaveCount(0);
     await expect(page.getByRole('region', { name: 'New for you' })).toHaveCount(0);
     await page.context().close();
   });

@@ -33,11 +33,11 @@
   },
   "quote": {
     "eyebrow": "Share a quote",
-    "title": "Your quote card",
+    "title": "Quote card",
     "made": "Made from the text you selected. {{count}} of 280 characters.",
     "background": "Background",
     "purple": "Purple",
-    "ourColours": "Or one of our colours:",
+    "ourColours": "Or one of these colours:",
     "colours": {
       "plum": "Plum",
       "violet": "Violet",
@@ -78,7 +78,7 @@
     "button": "Share picture",
     "buttonLabel": "Share picture: {{alt}}",
     "eyebrow": "Share a picture",
-    "title": "Your picture card",
+    "title": "Picture card",
     "description": "The picture with the story’s title, the writer’s name and a link to this spot in the chapter.",
     "altLabel": "Alt text for the image",
     "altHint": "We wrote this for you. Screen readers read it out, so everyone knows what the image shows. Paste it as the picture’s description when you post it.",

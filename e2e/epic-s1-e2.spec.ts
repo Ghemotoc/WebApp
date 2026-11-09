@@ -93,13 +93,13 @@ test.describe('epic S1-E2 journeys', () => {
       await expect(page.getByText('Saved.')).toBeVisible();
 
       // Log out, then back in through the log-in screen (S1-E2-05).
-      await page.getByRole('button', { name: 'Your account' }).click();
+      await page.getByRole('button', { name: 'Account' }).click();
       await page.getByRole('button', { name: 'Log out' }).click();
       await expect(page.getByRole('link', { name: 'Log in' })).toBeVisible();
       await logInWithScreen(page, address, firstPassword);
 
       // Settings: names, country and this device (S1-E2-04, S1-E2-10, S1-E2-05).
-      await page.getByRole('button', { name: 'Your account' }).click();
+      await page.getByRole('button', { name: 'Account' }).click();
       await page.getByRole('link', { name: 'Settings' }).click();
       await expect(page.getByText(`Signed in as Epic Writer · @epic.${stamp}`)).toBeVisible();
       await expect(page.getByText('Romania', { exact: true })).toBeVisible();
@@ -110,7 +110,7 @@ test.describe('epic S1-E2 journeys', () => {
       ).toBeVisible();
 
       // Reset the password by email and log in with the new one (S1-E2-05).
-      await page.getByRole('button', { name: 'Your account' }).click();
+      await page.getByRole('button', { name: 'Account' }).click();
       await page.getByRole('button', { name: 'Log out' }).click();
       await page.goto('/forgot-password');
       await page.getByLabel('Email', { exact: true }).fill(address);
@@ -119,10 +119,8 @@ test.describe('epic S1-E2 journeys', () => {
       await page.getByLabel('New password', { exact: true }).fill(newPassword);
       await page.getByLabel('Confirm new password').fill(newPassword);
       await page.getByRole('button', { name: 'Save new password' }).click();
-      await expect(
-        page.getByRole('heading', { name: 'Your new password is saved.' }),
-      ).toBeVisible();
-      await page.getByRole('button', { name: 'Your account' }).click();
+      await expect(page.getByRole('heading', { name: 'New password saved.' })).toBeVisible();
+      await page.getByRole('button', { name: 'Account' }).click();
       await page.getByRole('button', { name: 'Log out' }).click();
       await logInWithScreen(page, address, newPassword);
     } finally {

@@ -25,7 +25,7 @@
   "new": {
     "documentTitle": "Scrie moderatorilor",
     "title": "Scrie moderatorilor",
-    "intro": "Spune-ne despre ce e vorba. Te rugăm să nu incluzi parole sau date private ale altcuiva.",
+    "intro": "Spune-ne despre ce e vorba. Nu include parole sau date private ale altcuiva.",
     "about": "Legat de decizia {{reference}}. Echipa va vedea despre ce decizie e vorba.",
     "subject": "Subiect",
     "body": "Mesaj",
@@ -54,7 +54,7 @@
     "reopens": "Un răspuns într-o conversație închisă o redeschide."
   },
   "failures": {
-    "refused": "Te rugăm să completezi toate câmpurile.",
+    "refused": "Completează toate câmpurile.",
     "too_many": "Ai trimis multe mesaje în ultima oră. Încearcă din nou peste {{minutes}} minute.",
     "not_found": "Nu am găsit această conversație sau decizie în contul tău.",
     "not_allowed": "Nu poți face asta.",

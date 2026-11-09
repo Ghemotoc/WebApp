@@ -35,16 +35,16 @@ async function openContact(page: Page) {
 test.describe('contact form (S1-E14-04)', () => {
   test('a visitor sends a message and both emails carry the reference', async ({ page }) => {
     await openContact(page);
-    const form = page.getByRole('form', { name: 'Your message' });
+    const form = page.getByRole('form', { name: 'Message' });
     await form.getByRole('button', { name: 'Send message' }).click();
-    await expect(form.getByText('Write your message first.')).toBeVisible();
+    await expect(form.getByText('Write the message first.')).toBeVisible();
     await form.getByLabel('Message', { exact: true }).fill('Hello, how do I change my pen name?');
-    await form.getByLabel('Your email').fill('not an email');
+    await form.getByLabel('Email').fill('not an email');
     await form.getByRole('button', { name: 'Send message' }).click();
     await expect(form.getByText('Check the email address.')).toBeVisible();
 
     await form.getByText('A question', { exact: true }).click();
-    await form.getByLabel('Your email').fill(`visitor-${stamp}@example.com`);
+    await form.getByLabel('Email').fill(`visitor-${stamp}@example.com`);
     await form.getByRole('button', { name: 'Send message' }).click();
     const sent = page.getByRole('status', { name: 'Message sent' });
     await expect(sent).toBeVisible();
@@ -67,10 +67,10 @@ test.describe('contact form (S1-E14-04)', () => {
     await useSessionInBrowser(page.context(), (await signInPersona('adult_writer')).session);
     runSql(`update public.profiles set locale = 'en' where handle = 'adult_writer';`);
     await openContact(page);
-    const form = page.getByRole('form', { name: 'Your message' });
-    await expect(form.getByLabel('Your email')).toHaveCount(0);
+    const form = page.getByRole('form', { name: 'Message' });
+    await expect(form.getByLabel('Email')).toHaveCount(0);
     await expect(form.getByText(/We’ll reply to adult_writer@personas.test/)).toBeVisible();
-    await form.getByText('A problem with my account', { exact: true }).click();
+    await form.getByText('A problem with an account', { exact: true }).click();
     await form.getByLabel('Message', { exact: true }).fill(`Signed-in test ${stamp}`);
     await form.getByRole('button', { name: 'Send message' }).click();
     await expect(page.getByRole('heading', { name: 'Message sent' })).toBeVisible();
@@ -86,7 +86,7 @@ test.describe('contact form (S1-E14-04)', () => {
     const before = await (await fetch('http://127.0.0.1:54324/api/v1/messages?limit=1')).json();
     await openContact(page);
     await page.getByLabel('Message', { exact: true }).fill('spam spam');
-    await page.getByLabel('Your email').fill(`bot-${stamp}@example.com`);
+    await page.getByLabel('Email').fill(`bot-${stamp}@example.com`);
     await page.locator('#contact-website').fill('http://spam.example', { force: true });
     await page.getByRole('button', { name: 'Send message' }).click();
     await expect(page.getByRole('heading', { name: 'Message sent' })).toBeVisible();

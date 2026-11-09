@@ -3,7 +3,7 @@
   <body style="margin:0;padding:24px;background:#FAF8F5;font-family:Inter,Arial,sans-serif;color:#26142E;line-height:1.6">
     {{ if eq .Data.locale "en" }}
     <div lang="en">
-    <h1 style="font-size:24px;color:#481C5F;margin:0 0 16px">Reset your password</h1>
+    <h1 style="font-size:24px;color:#481C5F;margin:0 0 16px">Reset password</h1>
     <p style="margin:0 0 24px">Someone asked to reset the password for your Ghemotoc account. If it was you, press the button to choose a new one.</p>
     <p style="margin:0 0 24px"><a href="{{ .SiteURL }}/reset-password?token_hash={{ .TokenHash }}&type=recovery" style="display:inline-block;background:#2A0E33;color:#FBF7EC;padding:14px 24px;border-radius:999px;text-decoration:none;font-weight:600">Choose a new password</a></p>
     <p style="margin:0 0 8px;font-size:14px;color:#5C4965">The link works once and expires after an hour.</p>

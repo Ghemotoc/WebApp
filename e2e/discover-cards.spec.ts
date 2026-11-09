@@ -1,5 +1,5 @@
 /**
- * Discover's greeting, "Your dashboard" cards and five shelves in a real browser (story S1-E5-12,
+ * Discover's greeting, "Dashboard" cards and five shelves in a real browser (story S1-E5-12,
  * bundle LOOK-4b; board Discover).
  *
  * Who runs it: `npm run test:e2e` (Supabase started first).
@@ -90,7 +90,7 @@ test.describe('Discover greeting, cards and five shelves (S1-E5-12)', () => {
       /^(Good (morning|afternoon|evening), .+\.|Happy .+!)$/,
     );
     await expect(page.getByText(/^Discover · /)).toBeVisible();
-    const dashboard = page.getByRole('complementary', { name: 'Your dashboard' });
+    const dashboard = page.getByRole('complementary', { name: 'Dashboard' });
     const continueCard = dashboard.getByRole('link', { name: /Farul de pe dig/ });
     await expect(continueCard).toContainText('Chapter 1 of 2');
     await expect(continueCard).toContainText('Chapter 2 is out');
@@ -104,8 +104,8 @@ test.describe('Discover greeting, cards and five shelves (S1-E5-12)', () => {
       where user_id = '${adultWriterId}' and status = 'draft' and code <> 'dcarde23';
       update public.chapters set updated_at = now() where code = 'dcarde23';`);
     const page = await openAs(browser, 'adult_writer', '/discover');
-    const dashboard = page.getByRole('complementary', { name: 'Your dashboard' });
-    const draft = dashboard.getByRole('link', { name: /Your draft/ });
+    const dashboard = page.getByRole('complementary', { name: 'Dashboard' });
+    const draft = dashboard.getByRole('link', { name: /Draft/ });
     await expect(draft).toContainText('Lumina de pe mare');
     await expect(draft).toContainText('Farul de pe dig · 1,240 words');
     await expect(dashboard.getByRole('link', { name: /Start a new story/ })).toHaveAttribute(
@@ -120,9 +120,9 @@ test.describe('Discover greeting, cards and five shelves (S1-E5-12)', () => {
   test('a visitor sees the plain heading and no cards', async ({ browser }) => {
     const page = await openAs(browser, null, '/discover');
     await expect(
-      page.getByRole('heading', { level: 1, name: 'Find your next story' }),
+      page.getByRole('heading', { level: 1, name: 'Find the next story' }),
     ).toBeVisible();
-    await expect(page.getByRole('complementary', { name: 'Your dashboard' })).toHaveCount(0);
+    await expect(page.getByRole('complementary', { name: 'Dashboard' })).toHaveCount(0);
     await page.context().close();
   });
 
@@ -132,7 +132,7 @@ test.describe('Discover greeting, cards and five shelves (S1-E5-12)', () => {
       await useSessionInBrowser(context, (await signInPersona('teacher')).session);
       const page = await context.newPage();
       await checkScreen(page, { address: '/discover', width, theme: 'light', language: 'en' });
-      await expect(page.getByRole('complementary', { name: 'Your dashboard' })).toBeVisible();
+      await expect(page.getByRole('complementary', { name: 'Dashboard' })).toBeVisible();
       await context.close();
     });
   }

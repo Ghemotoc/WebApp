@@ -80,7 +80,7 @@ test.describe('joining spaces (IDEAS-3d)', () => {
     await expect(card.getByText('A welcome note can’t hold HTML tags.')).toBeVisible();
     await field.fill(welcomeNote);
     await card.getByRole('button', { name: 'Save welcome note' }).click();
-    await expect(card.getByText('Your welcome note is saved.')).toBeVisible();
+    await expect(card.getByText('Welcome note saved.')).toBeVisible();
     await page.context().close();
   });
 

@@ -42,11 +42,11 @@
     "idle": "Nothing to save yet.",
     "unsaved": "Unsaved changes.",
     "saving": "Saving…",
-    "savedJustNow": "Saved just now.",
+    "savedJustNow": "Saved now.",
     "savedAt": "Saved at {{time}}.",
     "conflict": "This chapter was changed on another device. Saving has stopped so nothing is overwritten. Choose which version to keep.",
     "failed": "We couldn’t save. Check your connection; we’ll try again in 10 seconds.",
-    "notActive": "Your account can’t save chapters yet.",
+    "notActive": "This account can’t save chapters yet.",
     "offline": "You’re offline. Your changes are kept on this device and will save when you’re back online."
   },
   "link": {
@@ -83,7 +83,7 @@
       "notSaved": "Your latest changes aren’t saved yet. Wait for “Saved”, then try again.",
       "empty": "Write something before you publish.",
       "badTime": "Pick a date and time in the future, at most a year ahead.",
-      "notActive": "Your account can’t publish yet.",
+      "notActive": "This account can’t publish yet.",
       "failed": "We couldn’t do that. Check your connection and try again."
     },
     "webReadingNote": "Signed-in readers can read this chapter in the browser until the apps exist. Copying is made harder; screenshots still work on the web."
@@ -99,10 +99,10 @@
     "plan": "Plan this story"
   },
   "yourStories": {
-    "heading": "Your stories",
+    "heading": "Stories",
     "newStory": "New story"
   },
-  "notFound": "We can’t find this chapter among yours.",
+  "notFound": "We can’t find this chapter on this account.",
   "signedOut": "Log in to write.",
   "errors": {
     "titleTooLong": "A chapter title can have at most {{max}} characters.",
@@ -160,7 +160,7 @@
     "checkNote": "Every picture goes through our picture check before readers see it.",
     "add": "Add the picture",
     "cancel": "Cancel",
-    "uploading": "Uploading and checking your picture…",
+    "uploading": "Uploading and checking the picture…",
     "missingFile": "Choose a picture.",
     "missingAlt": "Write alt text for the picture."
   },
@@ -250,7 +250,7 @@
     "undo": "Undo",
     "clear": "Clear",
     "sheetRole": "sketch pad",
-    "sheetLabel": "Your drawing",
+    "sheetLabel": "Drawing",
     "sheetHint": "Draw with a mouse, a finger or a pen. With the keyboard, the arrow keys draw a line and Shift with an arrow moves without drawing.",
     "lineCount_one": "{{count}} line drawn",
     "lineCount_few": "{{count}} lines drawn",
@@ -258,7 +258,7 @@
     "altHint": "Describe the drawing for readers who use a screen reader.",
     "savedNote": "Saved into the chapter as a picture. It goes through our picture check before readers see it.",
     "missingInk": "Draw something first.",
-    "uploading": "Saving and checking your drawing…",
+    "uploading": "Saving and checking the drawing…",
     "insert": "Insert drawing",
     "cancel": "Cancel"
   }

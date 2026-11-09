@@ -148,7 +148,7 @@ describe('the language drop-downs', () => {
     fireEvent.change(languageDropDowns('Limbă').footer, { target: { value: 'en' } });
 
     await waitFor(() => expect(supabaseStandIn.savedLocales).toEqual(['en']));
-    expect(await screen.findByText('Language saved to your account.')).toHaveAttribute(
+    expect(await screen.findByText('Language saved to the account.')).toHaveAttribute(
       'role',
       'status',
     );

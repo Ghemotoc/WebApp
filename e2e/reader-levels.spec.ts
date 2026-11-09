@@ -7,7 +7,7 @@
  * - the reader sees their own Reading level card while it is hidden, with "Only you can see
  *   this" and the way to Settings › Privacy, and no pill in their header;
  * - a visitor sees neither the pill nor the card while it is hidden;
- * - "Show it on my profile" in Settings › Privacy saves at once, and then a visitor sees the
+ * - "Show it on the profile" in Settings › Privacy saves at once, and then a visitor sees the
  *   "New reader" pill above the name and the card with "3 of 50 chapters read to Reader";
  * - the profile with the level shown passes axe at 390, 768 and 1440 px, light and night, ro
  *   and en.
@@ -105,9 +105,9 @@ test.describe('reader levels (G7a)', () => {
   test('Show it on my profile puts the level on the profile', async ({ browser }) => {
     // Step 1: the reader turns it on in Settings › Privacy.
     const settings = await openPage(browser, '/settings#privacy', true);
-    const group = settings.getByRole('group', { name: 'Your reading level' });
+    const group = settings.getByRole('group', { name: 'Reading level' });
     await expect(group.getByRole('radio', { name: 'Hidden' })).toBeChecked();
-    await group.getByRole('radio', { name: 'Show it on my profile' }).check();
+    await group.getByRole('radio', { name: 'Show it on the profile' }).check();
     await expect
       .poll(() =>
         runSql(`select shows_reader_level from public.profiles where handle = 'support';`),

@@ -1,7 +1,6 @@
 {
   "page": {
     "documentTitle": "Search · {{productName}}",
-    "eyebrow": "Search",
     "heading": "Search",
     "resultsFor": "Results for “{{term}}”",
     "count_one": "{{count}} result across stories, writers and tags.",

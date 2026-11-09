@@ -4,7 +4,7 @@
  * Who runs it: `npm run test:e2e`.
  * What it proves:
  * - while the server says a staff member must sign in with Google (my_staff_sign_in()), every
- *   /staff address shows the "Sign in with your Google Workspace account" page instead of the
+ *   /staff address shows the "Sign in with a Google Workspace account" page instead of the
  *   staff frame, naming the staff domain;
  * - an account not connected yet is asked to connect first; a connected one only to sign in;
  * - when Google sign-in can't start, the page says so plainly and the button works again;

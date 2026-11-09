@@ -6,11 +6,11 @@
   "reportInstead": "Raportezi o poveste, un comentariu sau un profil? Folosește butonul Raportează de lângă el, ca să ajungă direct la moderatorii noștri. Raportarea fără cont și cum ne contactezi pentru chestiuni legale sunt pe",
   "reportInsteadLink": "pagina de contact și date ale companiei",
   "form": {
-    "heading": "Mesajul tău",
+    "heading": "Mesaj",
     "topic": "Despre ce este vorba?",
     "topics": {
       "question": "O întrebare",
-      "account": "O problemă cu contul meu",
+      "account": "O problemă cu contul",
       "data_request": "Datele mele (să le văd, corectez, descarc sau șterg)",
       "other": "Altceva"
     },
@@ -18,7 +18,7 @@
     "messageHint": "Spune ce s-a întâmplat și ce ai vrea să facem. Cel mult {{max}} de caractere.",
     "messageMissing": "Scrie mai întâi mesajul.",
     "messageTooLong": "E prea lung. Păstrează-l sub 4.000 de caractere.",
-    "email": "Emailul tău",
+    "email": "Email",
     "emailHint": "Răspundem la această adresă și îți trimitem o referință.",
     "emailInvalid": "Verifică adresa de email.",
     "signedInAs": "Îți răspundem la {{email}}, adresa contului tău @{{handle}}. Numele de utilizator și ID-ul de utilizator merg împreună cu mesajul, ca să îți găsim contul; niciodată anul nașterii sau verificarea vârstei.",
@@ -34,7 +34,7 @@
   },
   "failures": {
     "invalid": "Ceva din mesaj a fost refuzat. Verifică câmpurile și încearcă din nou.",
-    "unsent": "Nu am putut trimite mesajul acum. Te rugăm să încerci din nou în câteva minute sau scrie-ne direct la {{supportEmail}}.",
+    "unsent": "Nu am putut trimite mesajul acum. Încearcă din nou în câteva minute sau scrie-ne direct la {{supportEmail}}.",
     "unreachable": "Nu am putut ajunge la serverul nostru. Verifică-ți conexiunea și încearcă din nou."
   },
   "otherWays": {

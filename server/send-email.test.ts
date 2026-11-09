@@ -111,7 +111,7 @@ describe('the Send Email hook', () => {
   it('sends the sign-up email in Romanian by default, with the link Supabase made', async () => {
     const { response, sent } = await run(payloadFor('signup'));
     expect(response.status).toBe(200);
-    expect(sent[0]?.subject).toBe('Confirmă-ți adresa de email');
+    expect(sent[0]?.subject).toBe('Confirmă adresa de email');
     expect(sent[0]?.text).toContain('https://example.test/auth/confirm?token_hash=hash&type=email');
     expect(sent[0]?.text).toContain('Product');
   });
@@ -120,7 +120,7 @@ describe('the Send Email hook', () => {
     const payload = payloadFor('signup', 'en');
     payload.user.user_metadata = { locale: 'en', joins_waitlist: true };
     const { sent } = await run(payload);
-    expect(sent[0]?.subject).toBe('You’re on the list: confirm your email');
+    expect(sent[0]?.subject).toBe('You’re on the list: confirm the email');
     expect(sent[0]?.text).toContain('https://example.test/auth/confirm?token_hash=hash&type=email');
     expect(sent[0]?.text).toContain('keep your place');
   });

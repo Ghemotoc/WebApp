@@ -1,5 +1,5 @@
 /**
- * Support tickets for members: "Your support requests" in Settings, asking for help and answering
+ * Support tickets for members: "Support requests" in Settings, asking for help and answering
  * the support team (story S1-E11-13, part 13a; bundle ADMIN-2h1).
  *
  * Who calls it: hooks/useMySupport.ts (the /support pages and the Settings card).

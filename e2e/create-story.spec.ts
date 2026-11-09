@@ -162,7 +162,7 @@ test.describe('create a story (S1-E3-01)', () => {
   test('the form refuses an empty title before asking the database', async ({ browser }) => {
     const page = await openAsPersona(browser, 'adult_writer', '/write/new');
     await page.getByRole('button', { name: 'Create and write chapter one' }).click();
-    await expect(page.getByText('Give your story a title.')).toBeVisible();
+    await expect(page.getByText('Give the story a title.')).toBeVisible();
     await expect(page.getByRole('textbox', { name: 'Title' })).toHaveAttribute(
       'aria-invalid',
       'true',

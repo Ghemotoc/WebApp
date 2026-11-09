@@ -111,7 +111,7 @@ test.describe('spaces people create (FORUMS-2a, S1-E8-06)', () => {
     await page.getByRole('link', { name: 'Start a thread' }).click();
     await expect(page).toHaveURL(/\/spaces\/fantasy-writers-circle\/new$/);
     await page.getByLabel('Title').fill(threadTitle);
-    await page.getByLabel('Your post').fill('Mine has a river that runs uphill.');
+    await page.getByLabel('Post').fill('Mine has a river that runs uphill.');
     await page.getByRole('button', { name: 'Post the thread' }).click();
     await expect(page).toHaveURL(/\/forums\/space-fantasy-writers-circle\/\d+/);
     const breadcrumb = page.getByRole('navigation', { name: 'Where you are' });

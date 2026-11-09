@@ -1,5 +1,5 @@
 /**
- * DownloadMyStoriesBlock: "Download my stories" at the foot of Settings › Download my data (story
+ * DownloadMyStoriesBlock: "Download stories" at the foot of Settings › Download my data (story
  * S1-E13-05; board Settings 6.3, the Download my data tab; widened by Robert, 1 Nov 2026, 06:27
  * and 06:29: the plan from Story Atlas, chosen chapters and a JSON copy).
  *

@@ -95,7 +95,7 @@ async function openAs(browser: Browser, persona: SignInPersonaName, address: str
  * @returns the code and its joining link, as shown
  */
 async function makeCode(page: Page) {
-  const card = page.getByRole('region', { name: 'Invite your class' });
+  const card = page.getByRole('region', { name: 'Invite the class' });
   await card.getByRole('button', { name: 'Make a code' }).click();
   const link = await card.getByLabel('Joining link').inputValue();
   return { card, link, code: link.split('/').at(-1) ?? '' };

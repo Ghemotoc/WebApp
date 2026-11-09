@@ -1,6 +1,6 @@
 {
   "documentTitle": "Website · Staff",
-  "eyebrow": "Staff · website",
+  "eyebrow": "Staff",
   "heading": "Website",
   "intro": "Edit the website's home page, notice banners, help pages and questions for each market and language. Pick the market and language first. A version goes live at 00:00 Romanian time on its show-from date, and every publish is in the audit log.",
   "auditLink": "See every website change in the audit log",
@@ -137,7 +137,7 @@
   "notices": {
     "new": "New notice",
     "none": "No notices in this market yet.",
-    "back": "Back to all notices",
+    "back": "Back to notices",
     "end": "End now",
     "endLabel": "End the notice “{{text}}” now",
     "editLabel": "Edit the notice “{{text}}”",

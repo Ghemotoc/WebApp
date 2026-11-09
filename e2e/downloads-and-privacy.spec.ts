@@ -5,7 +5,7 @@
  * What it proves:
  * - idea 1: the Download my data ZIP starts with "READ ME FIRST.txt" in the person's language,
  *   naming the files and every group of the data file;
- * - idea 2: a writer on the Delete your account step gets "Download your stories first", makes
+ * - idea 2: a writer on the Delete your account step gets "Download stories first", makes
  *   their files there and stays on the same step; someone without stories doesn't see it;
  * - idea 5: Settings › Privacy › "How long we keep things" shows each period from the settings,
  *   and a period staff change shows the next time it is opened;
@@ -73,17 +73,17 @@ test.describe('Downloads and privacy (IDEAS-2a)', () => {
     // Step 1: adult_writer asks for their data in Romanian.
     const page = await openSettings(browser, 'adult_writer', 'download-my-data', 'ro');
     const panel = page.locator('#download-my-data');
-    await panel.getByRole('button', { name: 'Cere-mi datele' }).click();
-    await expect(panel.getByText('Fișierul tău e gata.')).toBeVisible({ timeout: 30_000 });
+    await panel.getByRole('button', { name: 'Cere datele' }).click();
+    await expect(panel.getByText('Fișierul e gata.')).toBeVisible({ timeout: 30_000 });
     // Step 2: download it; the guide is the first file and explains the rest.
     const downloadStarted = page.waitForEvent('download');
     await panel.getByRole('button', { name: 'Descarcă ZIP-ul' }).click();
     const zip = await JSZip.loadAsync(await readFile(await (await downloadStarted).path()));
     expect(Object.keys(zip.files)[0]).toBe('CITEȘTE ÎNTÂI.txt');
     const guide = (await zip.file('CITEȘTE ÎNTÂI.txt')?.async('string')) ?? '';
-    expect(guide).toContain('Datele tale, pe înțeles');
+    expect(guide).toContain('Datele, pe înțeles');
     expect(guide).toContain('data.json:');
-    expect(guide).toContain('- stories: Poveștile tale și setările lor.');
+    expect(guide).toContain('- stories: Povești și setările lor.');
     expect(guide).toContain('- support_tickets:');
     await page.context().close();
   });
@@ -94,14 +94,14 @@ test.describe('Downloads and privacy (IDEAS-2a)', () => {
     test.setTimeout(60_000);
     const page = await openSettings(browser, 'adult_writer', 'delete-account');
     const panel = page.locator('#delete-account');
-    await expect(panel.getByRole('heading', { name: 'Delete your account?' })).toBeVisible();
+    await expect(panel.getByRole('heading', { name: 'Delete account?' })).toBeVisible();
     // Step 1: the step is above the delete controls; it makes the files in place.
-    await panel.getByRole('button', { name: 'Download my stories first' }).click();
-    await expect(panel.getByText('Your files are ready.')).toBeVisible({ timeout: 30_000 });
+    await panel.getByRole('button', { name: 'Download stories first' }).click();
+    await expect(panel.getByText('The files are ready.')).toBeVisible({ timeout: 30_000 });
     await expect(panel.getByRole('button', { name: 'Download ZIP' })).toBeVisible();
     // Step 2: nothing was lost: the same step, and the account is still open.
-    await expect(panel.getByRole('heading', { name: 'Delete your account?' })).toBeVisible();
-    await expect(panel.getByRole('button', { name: 'Keep my account' })).toBeVisible();
+    await expect(panel.getByRole('heading', { name: 'Delete account?' })).toBeVisible();
+    await expect(panel.getByRole('button', { name: 'Keep account' })).toBeVisible();
     expect(
       runSql(
         `select deleted_at is null from public.profiles where handle = 'adult_writer';`,
@@ -113,9 +113,9 @@ test.describe('Downloads and privacy (IDEAS-2a)', () => {
   test('someone without stories doesn’t get the step', async ({ browser }) => {
     const page = await openSettings(browser, 'failed_check', 'delete-account');
     const panel = page.locator('#delete-account');
-    await expect(panel.getByRole('heading', { name: 'Delete your account?' })).toBeVisible();
-    await expect(panel.getByText('Download my data first')).toBeVisible();
-    await expect(panel.getByRole('button', { name: 'Download my stories first' })).toHaveCount(0);
+    await expect(panel.getByRole('heading', { name: 'Delete account?' })).toBeVisible();
+    await expect(panel.getByText('Download data first')).toBeVisible();
+    await expect(panel.getByRole('button', { name: 'Download stories first' })).toHaveCount(0);
     await page.context().close();
   });
 

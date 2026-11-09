@@ -136,7 +136,7 @@ test.describe('user management (S1-E11-02)', () => {
   }) => {
     const page = await openAs(browser, 'support', '/staff/users?q=teacher');
     const row = page.getByRole('row').filter({ hasText: '@teacher' });
-    await expect(row).toContainText('Not shown to your role');
+    await expect(row).toContainText('Not shown to this role');
     await row.getByRole('link', { name: 'Open the account @teacher' }).click();
     await expect(page.getByRole('heading', { name: '@teacher', level: 1 })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Actions' })).toHaveCount(0);

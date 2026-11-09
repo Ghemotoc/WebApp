@@ -149,7 +149,7 @@ test.describe('The writer dashboard', () => {
 
   test('the page names no reader, only the public comment', async ({ browser }) => {
     const page = await openDashboard(browser);
-    const comments = page.getByRole('region', { name: 'Latest on your chapters' });
+    const comments = page.getByRole('region', { name: 'Latest on the chapters' });
     await expect(comments.getByText('Ce praf frumos!')).toBeVisible();
     await expect(comments.getByRole('link', { name: /Reply to .* on chapter 1/ })).toHaveAttribute(
       'href',

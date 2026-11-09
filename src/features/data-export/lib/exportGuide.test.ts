@@ -58,7 +58,7 @@ function exportedTableNames(): string[] {
 /** Words for the builder tests, with two known table lines. */
 const words: ExportGuideWords = {
   fileName: 'READ ME FIRST.txt',
-  title: 'Your data, explained',
+  title: 'Data, explained',
   intro: 'Made on 4 November 2026.',
   filesHeading: 'The files',
   files: { data: 'data.json: all', stories: 'stories/: docs', plans: 'plans', library: 'csv' },
@@ -98,12 +98,12 @@ describe('the READ ME FIRST guide', () => {
 
   it('starts with the title and ends with where to ask', () => {
     const text = guideText({}, []);
-    expect(text.startsWith('Your data, explained\n\nMade on 4 November 2026.')).toBe(true);
+    expect(text.startsWith('Data, explained\n\nMade on 4 November 2026.')).toBe(true);
     expect(text.trimEnd().endsWith('Questions? Write to us.')).toBe(true);
   });
 
   it('keeps ș and ț as they are', () => {
-    const romanian = { ...words, title: 'Datele tale, pe înțeles' };
+    const romanian = { ...words, title: 'Datele, pe înțeles' };
     const file = exportGuideFile({ tables: {}, files: [] }, romanian);
     expect(file.text).toContain('înțeles');
   });

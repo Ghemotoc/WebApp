@@ -7,7 +7,7 @@
     "logRequest": "Log a request",
     "show": "Show",
     "showOpen": "Open requests",
-    "showAll": "All requests",
+    "showAll": "Every request",
     "none": "No requests to show.",
     "notAllowed": "Only owner, admin and support staff handle data requests.",
     "listHeading": "Data requests",
@@ -22,10 +22,10 @@
       "status": "Status"
     },
     "types": {
-      "copy": "A copy of their data",
-      "move": "Move their data",
-      "correct": "Correct their data",
-      "delete": "Delete their data",
+      "copy": "A copy of the data",
+      "move": "Move the data",
+      "correct": "Correct the data",
+      "delete": "Delete the data",
       "other": "Something else"
     },
     "channels": {
@@ -166,11 +166,11 @@
     "extended": "We need more time: {{reason}}",
     "answered": "Answered",
     "types": {
-      "copy": "a copy of your data",
-      "move": "moving your data",
-      "correct": "correcting your data",
-      "delete": "deleting your data",
-      "other": "something else about your data"
+      "copy": "a copy of the data",
+      "move": "moving the data",
+      "correct": "correcting the data",
+      "delete": "deleting the data",
+      "other": "something else about the data"
     },
     "channels": {
       "in_app": "in the app",
@@ -184,7 +184,7 @@
     "noLabel": "No, request {{reference}} wasn’t me",
     "confirmed": "You confirmed it was you.",
     "denied": "You told us it wasn’t you. We won’t act on it, and we’ll look into it.",
-    "answerFailed": "We couldn’t save your answer. Try again.",
+    "answerFailed": "We couldn’t save the answer. Try again.",
     "notWaiting": "We’re no longer waiting for an answer on this request.",
     "copyReady": "Your copy is ready. Download it by {{date}}; after that it’s deleted.",
     "download": "Download",
@@ -249,8 +249,8 @@
       "other": "something about the data"
     },
     "yes": "Yes, we asked for it",
-    "no": "No, nobody in our family asked",
-    "answerFailed": "Your answer wasn’t saved. Try again.",
+    "no": "No, nobody in the family asked",
+    "answerFailed": "The answer wasn’t saved. Try again.",
     "confirmedHeading": "Thank you",
     "confirmedBody": "You confirmed request {{reference}}. We’ll email you at this same address when we’ve dealt with it, never anywhere else.",
     "deniedHeading": "Thank you for telling us",

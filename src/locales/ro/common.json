@@ -15,12 +15,12 @@
     "searchLabel": "Caută povești, scriitori și etichete",
     "back": "Înapoi",
     "home": "Pagina principală {{productName}}",
-    "accountTools": "Notificările, conversațiile și contul tău",
+    "accountTools": "Notificări, conversații și cont",
     "focus": {
       "signUp": "Înscrie-te",
       "logIn": "Conectare",
       "resetPassword": "Resetează parola",
-      "setUp": "Configurează-ți contul",
+      "setUp": "Configurează contul",
       "notOpen": "Încă nu e deschis",
       "ageCheck": "Verificarea vârstei",
       "newStory": "Poveste nouă",
@@ -45,11 +45,11 @@
     "privacy": "Confidențialitate",
     "guidelines": "Regulile comunității",
     "join": "Înscrie-te gratuit",
-    "viewProfile": "Vezi profilul tău public",
+    "viewProfile": "Vezi profilul public",
     "editProfile": "Editează profilul",
     "settings": "Setări",
     "logIn": "Conectare",
-    "accountWithInitials": "Contul tău, {{initials}}",
+    "accountWithInitials": "Cont, {{initials}}",
     "logOut": "Deconectare",
     "logOutFailed": "Nu te-am putut deconecta. Verifică-ți conexiunea și încearcă din nou.",
     "contact": "Companie și contacte legale",
@@ -73,7 +73,7 @@
     "label": "Limbă",
     "en": "English",
     "ro": "Română",
-    "savedToAccount": "Limba a fost salvată în contul tău.",
+    "savedToAccount": "Limba a fost salvată în cont.",
     "keptOnDevice": "Nu am putut salva limba în cont. O păstrăm pe acest dispozitiv.",
     "settingsHeading": "Limbă",
     "settingsIntro": "Limba butoanelor, meniurilor și e-mailurilor. Se salvează în cont, așa că se aplică pe orice dispozitiv.",
@@ -123,7 +123,7 @@
     "tryAgain": "Încearcă din nou",
     "goHome": "Mergi la prima pagină",
     "contactUs": "Scrie-ne",
-    "whatWeSendLabel": "Ce trimitem în jurnalul nostru de erori:",
+    "whatWeSendLabel": "Ce trimitem în jurnalul de erori:",
     "whatWeSend": "tipul erorii, pagina și versiunea aplicației. Niciodată adresa ta de email, adresa IP sau ceva ce ai scris."
   },
   "maintenance": {
@@ -147,8 +147,8 @@
     "beingChecked": "Imagine în verificare",
     "waitingForCheck": "Așteaptă verificarea",
     "waitingForPerson": "Așteaptă un om din echipă",
-    "uploading": "Îți încărcăm și verificăm imaginea…",
-    "passed": "Imaginea ta a trecut verificarea.",
+    "uploading": "Încărcăm și verificăm imaginea…",
+    "passed": "Imaginea a trecut verificarea.",
     "held": "O persoană din echipa de moderare se va uita la imagine înainte ca alții s-o vadă. Te anunțăm.",
     "pending": "Imaginea e încărcată. O verificăm cât mai repede; până atunci o vezi doar tu.",
     "failed": {
@@ -161,7 +161,7 @@
     },
     "coverLabel": "Încarcă o imagine",
     "coverHint": "JPEG, PNG sau WebP, până la 5 MB. Se potrivește cel mai bine o imagine înaltă (5 pe 8). Cititorii o văd după ce trece verificarea imaginilor.",
-    "coverPreview": "Coperta ta încărcată",
+    "coverPreview": "Coperta încărcată",
     "chapter": {
       "figureLabel": "Imagine din acest capitol",
       "beingChecked": "Imagine în verificare",
@@ -200,7 +200,7 @@
       "heading": "Cu ce te putem ajuta?",
       "intro": "Ghiduri scurte despre scris, citit și siguranță aici, plus răspunsuri la întrebările puse cel mai des.",
       "questions": "Întrebări frecvente",
-      "back": "Toate paginile de ajutor",
+      "back": "Pagini de ajutor",
       "pageTitle": "{{title}} · Ajutor",
       "notFoundHeading": "Nu găsim această pagină de ajutor",
       "notFound": "Poate a fost mutată sau scoasă. Toate paginile de ajutor sunt pe pagina Ajutor.",
@@ -241,7 +241,7 @@
       "helpAndLegal": "Ajutor și informații legale",
       "newWriters": "Scriitori noi",
       "startWriting": "Începe să scrii",
-      "firstStory": "Începe prima ta poveste"
+      "firstStory": "Începe prima poveste"
     },
     "questionsEyebrow": "Întrebări",
     "moreHelp": {
@@ -254,7 +254,7 @@
   "appearance": {
     "eyebrow": "Aspect",
     "heading": "Temă",
-    "intro": "Alegerea ta te urmează pe fiecare dispozitiv.",
+    "intro": "Alegerea te urmează pe fiecare dispozitiv.",
     "themeLegend": "Temă",
     "looks": {
       "lilac": "Ceață de liliac",

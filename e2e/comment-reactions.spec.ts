@@ -110,7 +110,7 @@ test.describe('reactions on comments (S1-E6-02)', () => {
     const page = await openAs(browser, 'failed_check');
     await page.getByRole('button', { name: 'Add a reaction' }).click();
     await page.getByRole('button', { name: 'Heart' }).click();
-    await expect(page.getByRole('alert')).toHaveText('Your account can’t react yet.');
+    await expect(page.getByRole('alert')).toHaveText('This account can’t react yet.');
     expect(runSql(`select count(*) from public.comment_reactions`)).toBe('1');
     await page.context().close();
   });

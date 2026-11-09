@@ -124,7 +124,7 @@ test.describe('the waiting list (WAITLIST-1)', () => {
     const confirmation = await waitForEmail(email);
     expect(confirmation.HTML).toContain('You’re on the waiting list');
     await page.goto(appPathFromEmail(confirmation.HTML));
-    await expect(page.getByRole('heading', { name: 'Your email is confirmed' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Email confirmed' })).toBeVisible();
     expect(runSql(`select account_state(id) from auth.users where email = '${email}'`)).toBe(
       'waitlisted',
     );
@@ -133,7 +133,7 @@ test.describe('the waiting list (WAITLIST-1)', () => {
     await page.goto('/write');
     await expect(page.getByRole('heading', { name: 'You’re on the list' })).toBeVisible();
     await expect(page.getByRole('radio', { name: 'Write' })).toBeChecked();
-    await page.getByRole('link', { name: /Settings: emails, news and your account/ }).click();
+    await page.getByRole('link', { name: /Settings: emails, news and account/ }).click();
     await expect(page).toHaveURL(/\/settings/);
     await expect(page.getByRole('heading', { name: 'You’re on the list' })).toHaveCount(0);
 

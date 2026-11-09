@@ -11,7 +11,7 @@ import { SegmentedControl } from './SegmentedControl';
 const modes = [
   { value: 'light', label: 'Light' },
   { value: 'night', label: 'Night' },
-  { value: 'device', label: 'Match my device' },
+  { value: 'device', label: 'Match the device' },
 ] as const;
 
 describe('SegmentedControl', () => {
@@ -46,7 +46,7 @@ describe('SegmentedControl', () => {
         onChange={onChange}
       />,
     );
-    fireEvent.click(screen.getByRole('radio', { name: 'Match my device' }));
+    fireEvent.click(screen.getByRole('radio', { name: 'Match the device' }));
     expect(onChange).toHaveBeenCalledWith('device');
   });
 

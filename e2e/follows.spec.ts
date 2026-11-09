@@ -105,7 +105,7 @@ test.describe('follows (S1-E6-05)', () => {
   test('adult_writer sees who follows them on their own profile', async ({ browser }) => {
     const page = await openAs(browser, 'adult_writer', '/u/adult_writer');
     await page.getByRole('button', { name: 'See who follows you' }).click();
-    const dialog = page.getByRole('dialog', { name: 'Your followers' });
+    const dialog = page.getByRole('dialog', { name: 'Followers' });
     await expect(dialog.getByRole('link', { name: 'teen_17' })).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(dialog).toBeHidden();
@@ -115,7 +115,7 @@ test.describe('follows (S1-E6-05)', () => {
   test('a read-only account is told it can’t follow yet', async ({ browser }) => {
     const page = await openAs(browser, 'kid_14_ok', '/u/adult_writer');
     await page.getByRole('button', { name: 'Follow Lia Scrie' }).click();
-    await expect(page.getByRole('alert')).toHaveText('Your account can’t follow anyone yet.');
+    await expect(page.getByRole('alert')).toHaveText('This account can’t follow anyone yet.');
     await page.context().close();
   });
 

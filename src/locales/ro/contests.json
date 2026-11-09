@@ -15,22 +15,22 @@
     "problems": {
       "not_active": "Contul tău nu poate participa încă la concursuri.",
       "not_readable": "Cititorii nu o pot deschide încă. Publică mai întâi un capitol.",
-      "class_only": "Este vizibilă doar pentru clasa ta.",
+      "class_only": "Este vizibilă doar pentru clasă.",
       "language": "Este scrisă într-o limbă pe care concursul nu o primește.",
       "rating": "Concursul este deschis și celor sub 16 ani, așa că primește doar povești pentru toate vârstele sau 13+.",
       "word_limit": "Capitolele publicate depășesc limita de cuvinte."
     },
-    "entrySaved": "Povestea ta este înscrisă. Mult succes!",
+    "entrySaved": "Poveste înscrisă. Mult succes!",
     "withdrawn": "Ai retras înscrierea. Te poți înscrie din nou până se încheie înscrierile.",
     "failures": {
       "already_entered": "Ai deja o poveste în acest concurs. Retrage-o mai întâi ca să înscrii alta.",
       "closed": "Înscrierile s-au încheiat, așa că înscrierea nu mai poate fi schimbată.",
-      "no_contest": "Concursul nu mai primește înscrierea ta.",
+      "no_contest": "Concursul nu mai primește această înscriere.",
       "no_story": "Nu am găsit povestea.",
       "no_entry": "Nu ai nicio înscriere în acest concurs.",
       "not_active": "Contul tău nu poate participa încă la concursuri.",
       "not_readable": "Cititorii nu pot deschide încă povestea. Publică mai întâi un capitol.",
-      "class_only": "Povestea este vizibilă doar pentru clasa ta.",
+      "class_only": "Povestea este vizibilă doar pentru clasă.",
       "language": "Concursul nu primește povești în această limbă.",
       "rating": "Concursul primește doar povești pentru toate vârstele sau 13+.",
       "word_limit": "Povestea depășește limita de cuvinte.",
@@ -39,10 +39,10 @@
   },
   "staff": {
     "documentTitle": "Concursuri",
-    "eyebrow": "Concursuri",
+    "eyebrow": "Echipă",
     "heading": "Concursuri",
     "intro": "Pregătește concursurile de scris. Un concurs se deschide doar după ce regulamentul complet este publicat în română și engleză și are link pe pagina de prezentare.",
-    "listHeading": "Toate concursurile",
+    "listHeading": "Concursuri",
     "empty": "Încă nu există concursuri.",
     "loadFailed": "Concursurile nu s-au putut încărca. Încearcă din nou peste câteva momente.",
     "unnamed": "Concurs fără nume",
@@ -73,7 +73,7 @@
     },
     "editor": {
       "documentTitle": "Concurs",
-      "back": "Toate concursurile",
+      "back": "Concursuri",
       "notFound": "Concursul nu există.",
       "pageLink": "Pagina de prezentare: /c/{{slug}}.",
       "draft": "Ciornă: participanții nu îl văd încă.",
@@ -238,7 +238,7 @@
         "failed": "Nu a funcționat. Încearcă din nou peste puțin timp.",
         "no_contest": "Concursul nu mai există."
       },
-      "certificatesHint": "Fiecare înscriere validă primește o diplomă în Diplomele mele: cele câștigătoare și cele din finală după loc, celelalte pentru participare. Diploma arată doar pseudonimul. Dacă schimbi un loc mai târziu, emite-le din nou: se actualizează doar diplomele schimbate.",
+      "certificatesHint": "Fiecare înscriere validă primește o diplomă în Diplome: cele câștigătoare și cele din finală după loc, celelalte pentru participare. Diploma arată doar pseudonimul. Dacă schimbi un loc mai târziu, emite-le din nou: se actualizează doar diplomele schimbate.",
       "issueCertificates": "Emite diplomele"
     }
   }

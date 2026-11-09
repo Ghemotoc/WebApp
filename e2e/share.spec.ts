@@ -174,7 +174,7 @@ test.describe('share a chapter and the quote card (S1-E4-05, S1-E4-07)', () => {
     const page = await openChapter(browser);
     await selectParagraph(page, 0);
     await page.getByRole('button', { name: 'Share quote' }).click();
-    const dialog = page.getByRole('dialog', { name: 'Your quote card' });
+    const dialog = page.getByRole('dialog', { name: 'Quote card' });
     await expect(dialog).toContainText(`${Array.from(shortParagraph).length} of 280 characters`);
     await expect(dialog.getByLabel('Alt text for the image')).toHaveValue(
       `A quote card from Turnul cu ceas by Lia Scrie: “${shortParagraph}”`,

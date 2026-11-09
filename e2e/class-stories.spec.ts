@@ -122,7 +122,7 @@ test.describe('class stories (CLASSES-c, S1-E8-11)', () => {
       .getByRole('group', { name: 'Who can read it' })
       .filter({ hasText: 'one of your classes' });
     await expect(card).toBeVisible();
-    await card.getByLabel('Your class').selectOption({ label: className });
+    await card.getByLabel('Class').selectOption({ label: className });
     await card.getByRole('button', { name: 'Share only with this class' }).click();
     await expect(card.getByText(`Only ${className} can read it now.`)).toBeVisible();
     await page.context().close();

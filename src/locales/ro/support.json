@@ -3,17 +3,17 @@
   "signedOut": "Intră în cont ca să vezi cererile tale de ajutor. Fără cont, folosește formularul Contactează-ne.",
   "logIn": "Intră în cont",
   "contactUs": "Contactează-ne",
-  "back": "Înapoi la cererile tale de ajutor",
+  "back": "Înapoi la cererile de ajutor",
   "statuses": {
     "new": "Nouă",
     "open": "Deschisă",
-    "pending_on_user": "Așteaptă răspunsul tău",
+    "pending_on_user": "Așteaptă un răspuns de la tine",
     "on_hold": "În așteptare",
     "solved": "Rezolvată",
     "closed": "Închisă"
   },
   "categories": {
-    "account": "Contul tău",
+    "account": "Cont",
     "writing": "Scris",
     "reading": "Citit",
     "safety_question": "O întrebare despre siguranță",
@@ -22,8 +22,8 @@
     "other": "Altceva"
   },
   "list": {
-    "documentTitle": "Cererile tale de ajutor",
-    "title": "Cererile tale de ajutor",
+    "documentTitle": "Cereri de ajutor",
+    "title": "Cereri de ajutor",
     "intro": "Cere ajutor echipei de suport pentru cont, scris, citit sau orice altceva. O persoană răspunde la fiecare cerere.",
     "write": "Cere ajutor",
     "empty": "Încă nu ai cerut ajutor.",
@@ -34,16 +34,16 @@
   "new": {
     "documentTitle": "Cere ajutor",
     "title": "Cere ajutor",
-    "intro": "Spune-ne ce s-a întâmplat. Te rugăm să nu scrii parole sau datele private ale altcuiva.",
+    "intro": "Spune-ne ce s-a întâmplat. Nu scrie parole sau datele private ale altcuiva.",
     "safety": "Dacă cineva e în pericol chiar acum, sună la 112. Ca să raportezi ceva ce ai văzut aici, folosește butonul Raportează de lângă acel lucru.",
     "category": "Despre ce este vorba?",
     "subject": "Subiect",
-    "body": "Mesajul tău",
+    "body": "Mesaj",
     "bodyHint": "Până la 4.000 de caractere.",
     "send": "Trimite",
     "sending": "Se trimite…",
     "sent": "Trimis. Cererea ta este #{{number}}. Îți răspundem aici.",
-    "open": "Deschide cererea"
+    "open": "Deschide o cerere"
   },
   "ticket": {
     "documentTitle": "Cererea de ajutor #{{number}}",
@@ -51,7 +51,7 @@
     "messagesLabel": "Mesaje",
     "you": "Tu",
     "team": "Echipa de suport",
-    "replyLabel": "Răspunsul tău",
+    "replyLabel": "Răspuns",
     "send": "Trimite",
     "closed": "Această cerere este închisă. Dacă mai ai nevoie de ajutor, cere din nou și pomenește #{{number}}.",
     "notFound": "Nu am găsit această cerere în contul tău.",
@@ -59,20 +59,20 @@
     "mergedInto": "Această cerere continuă ca #{{number}}: am unit-o cu alta despre același lucru."
   },
   "failures": {
-    "refused": "Te rugăm să completezi toate câmpurile.",
+    "refused": "Completează toate câmpurile.",
     "too_many": "Ai trimis multe cereri în ultima oră. Încearcă din nou peste {{minutes}} minute.",
     "not_found": "Nu am găsit această cerere în contul tău.",
     "not_allowed": "Nu poți face asta.",
     "unreachable": "Nu am putut trimite. Verifică conexiunea și încearcă din nou."
   },
   "settings": {
-    "heading": "Cererile tale de ajutor",
+    "heading": "Cereri de ajutor",
     "intro": "Cere ajutor echipei de suport și citește răspunsurile într-un singur loc.",
-    "open": "Vezi cererile tale de ajutor"
+    "open": "Vezi cererile de ajutor"
   },
   "staff": {
     "documentTitle": "Tichete de suport",
-    "eyebrow": "Echipă · suport",
+    "eyebrow": "Echipă",
     "heading": "Tichete de suport",
     "intro": "Fiecare cerere venită pe email, prin Contactează-ne sau din aplicație, ca un tichet numerotat. Răspunsurile pleacă de la echipa de suport; notele interne rămân la echipă.",
     "filtersLabel": "Restrânge lista",
@@ -184,9 +184,9 @@
     "followUpOf": "Continuă tichetul închis #{{number}}",
     "views": {
       "label": "Vizualizări",
-      "mine": "Tichetele mele",
+      "mine": "Atribuite mie",
       "unassigned": "Nealocate",
-      "all_open": "Toate deschise",
+      "all_open": "Deschise",
       "pending_on_user": "Așteaptă persoana",
       "solved": "Rezolvate",
       "spam": "Spam"

@@ -100,7 +100,7 @@ test.describe('copied-work reports (S1-E10-08)', () => {
       await dialog.locator('label', { hasText: 'Copied from a published work' }).click();
       await expect(copiedReason).toBeChecked({ timeout: 1000 });
     }).toPass();
-    const source = dialog.getByRole('group', { name: 'Where was it copied from? (all optional)' });
+    const source = dialog.getByRole('group', { name: 'Where was it copied from? (optional)' });
     await expect(source.getByText(storyTitle, { exact: true })).toBeVisible();
     await source.getByLabel('Title of the published work (optional)').fill('Ion');
     await source.getByLabel('Author (optional)').fill('Liviu Rebreanu');
@@ -138,9 +138,9 @@ test.describe('copied-work reports (S1-E10-08)', () => {
     browser,
   }) => {
     const settings = await openAs(browser, 'teacher', '/settings');
-    const section = settings.getByRole('region', { name: 'Questions about your reports' });
+    const section = settings.getByRole('region', { name: 'Questions about reports' });
     await expect(section.getByText('Which page of the novel is it on?')).toBeVisible();
-    await section.getByLabel('Your answer').fill('Page 12, the first chapter.');
+    await section.getByLabel('Answer').fill('Page 12, the first chapter.');
     await section.getByRole('button', { name: 'Send answer' }).click();
     await expect(
       settings.getByText('Thank you. The moderation team has your answer.'),

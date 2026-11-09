@@ -155,7 +155,7 @@ test.describe('library and continue reading (S1-E4-03)', () => {
 
   test('the Library draws no doodle at any width', async ({ browser }) => {
     const page = await openAs(browser, 'teen_17', '/library');
-    await expect(page.getByRole('heading', { level: 1, name: 'Your library' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'Library' })).toBeVisible();
     for (const width of [1440, 768, 390]) {
       await page.setViewportSize({ width, height: 900 });
       await expectNoDoodles(page);

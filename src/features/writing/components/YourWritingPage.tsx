@@ -1,5 +1,5 @@
 /**
- * YourWritingPage: "Your writing", the writer's own stories, screen 4.1's lower half (story
+ * YourWritingPage: "Writing", the writer's own stories, screen 4.1's lower half (story
  * S1-E3-01; design/boards/WriterDashboard.dc.html).
  *
  * Who shows it: the router, at /write; the top bar's "Write" button leads here.

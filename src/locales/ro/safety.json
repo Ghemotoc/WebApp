@@ -3,12 +3,12 @@
     "heading": "E cineva în pericol chiar acum?",
     "intro": "Sună mai întâi aici. Noi citim raportările, dar nu putem ajuta într-o urgență.",
     "forCountry": "Contacte pentru {{country}}, din surse oficiale.",
-    "loading": "Căutăm contactele pentru țara ta…",
+    "loading": "Căutăm contactele pentru această țară…",
     "fallbackCall": "Sună la numărul local de urgență.",
     "fallbackNoRow": "Nu avem încă date de contact verificate pentru țara ta. Alege altă țară mai jos sau folosește directoarele internaționale ca să găsești linia de ajutor și linia de raportare din țara ta.",
     "fallbackUnknown": "Nu am putut afla în ce țară ești. Alege-o mai jos.",
     "international": "Directoare internaționale, verificate pe {{date}}:",
-    "notYourCountry": "Nu e țara ta?",
+    "notYourCountry": "Altă țară?",
     "chooseCountry": "Alege o țară",
     "call": "Sună la {{label}}, {{number}}",
     "officialSite": "Site oficial: {{label}} (se deschide într-o filă nouă)"
@@ -80,7 +80,7 @@
       "someone": "echipă"
     },
     "failures": {
-      "not_allowed": "Rolul tău nu poate schimba contactele de siguranță.",
+      "not_allowed": "Acest rol nu poate schimba contactele de siguranță.",
       "invalid": "Verifică contactul: are nevoie de numele oficial, un număr de telefon sau un link https și de un motiv ca să fie șters.",
       "not_found": "Contactul nu mai există. Reîncarcă pagina.",
       "unreachable": "Nu am putut ajunge la baza de date. Verifică conexiunea și încearcă din nou."

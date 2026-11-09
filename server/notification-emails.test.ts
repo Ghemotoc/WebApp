@@ -142,7 +142,7 @@ describe('the notification email worker', () => {
     const [email] = await sendOnce([
       claimed({ language: 'ro', delivery: 'daily', items: [reply, followers] }),
     ]);
-    expect(email?.subject).toBe('Rezumatul tău zilnic de pe Product');
+    expect(email?.subject).toBe('Rezumat zilnic de pe Product');
     expect(email?.text).toContain(
       'Corbu a răspuns la comentariul tău de la capitolul 3 din „Sarea”.',
     );
@@ -227,7 +227,7 @@ describe('the notification email worker', () => {
     const [email] = await sendOnce([
       claimed({ delivery: 'required', unsubscribe_key: null, items: [admitted] }),
     ]);
-    expect(email?.subject).toBe('You’re in: your Product account is open');
+    expect(email?.subject).toBe('You’re in: the Product account is open');
     expect(email?.text).toContain('Your place came up');
     expect(email?.text).toMatch(/Log in to start: \S+\/sign-in/);
     expect(email?.text).toContain('we always send it');
@@ -284,7 +284,7 @@ describe('the notification email worker', () => {
     const [email] = await sendOnce([
       claimed({ delivery: 'required', unsubscribe_key: null, items: [confirm] }),
     ]);
-    expect(email?.subject).toBe('Was this request about your data yours?');
+    expect(email?.subject).toBe('Did you send this data request?');
     expect(email?.text).toContain('(D-000008)');
     expect(email?.text).toContain('Settings, under Data requests');
   });
@@ -300,7 +300,7 @@ describe('the notification email worker', () => {
     const [email] = await sendOnce([
       claimed({ delivery: 'required', unsubscribe_key: null, items: [ready] }),
     ]);
-    expect(email?.subject).toBe('Your copy of your data is ready');
+    expect(email?.subject).toBe('The data copy is ready');
     expect(email?.text).toContain('(D-000009)');
     expect(email?.text).toContain('seven days');
     expect(email?.text).toContain('We never send your data by email.');

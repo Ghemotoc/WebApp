@@ -163,7 +163,7 @@ describe('SignUpPage while the test is invite only', () => {
     inviteAnswer('valid');
     openSignUp('/join/GOOD');
     expect(screen.queryByText('Age check')).not.toBeInTheDocument();
-    expect(screen.getByText('Your profile')).toBeInTheDocument();
+    expect(screen.getByText('Profile')).toBeInTheDocument();
   });
 });
 
@@ -413,7 +413,7 @@ describe('SignUpPage with the waiting list (WAITLIST-1)', () => {
   it('still takes a code in the address, which skips the queue', () => {
     waitlistFlags();
     openSignUp('/join/GOOD');
-    expect(screen.getByRole('heading', { name: 'Create your account' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Create an account' })).toBeInTheDocument();
     expect(screen.getByText(/Invitation accepted/)).toBeInTheDocument();
     expect(
       screen.queryByRole('radiogroup', { name: 'What do you want to do here?' }),

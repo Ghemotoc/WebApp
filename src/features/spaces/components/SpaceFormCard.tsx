@@ -5,7 +5,7 @@
  * The page's main card (headingLevel 'h1') follows the boards' page header: the eyebrow, the page
  * title in Bricolage Grotesque at up to 72 px and the lead line sit above a glass card with 28 px
  * corners, up to 760 px wide, that holds the form. Every other card on the page (headingLevel
- * 'h2') carries its own eyebrow and heading inside it.
+ * 'h2') carries its heading inside it, with an eyebrow when it adds something.
  * Who uses it: NewSpacePage and SpaceSettingsPage (the settings form, then the welcome note,
  * logo, banner picture and Moderators cards, each with a second-level heading of its own).
  */
@@ -15,7 +15,8 @@ import { Eyebrow } from '@/components/ui/Eyebrow';
 
 /** What the card needs. */
 interface SpaceFormCardProps {
-  eyebrow: string;
+  /** The small label above the heading, or nothing when it would only repeat the heading (COPY-1). */
+  eyebrow?: string;
   title: string;
   /** The line under the heading, or nothing. */
   intro?: string;
@@ -47,7 +48,7 @@ export function SpaceFormCard({
     return (
       <section aria-labelledby={headingId} className="flex flex-col gap-6">
         <header className="flex max-w-[760px] flex-col gap-2">
-          <Eyebrow>{eyebrow}</Eyebrow>
+          {eyebrow !== undefined && <Eyebrow>{eyebrow}</Eyebrow>}
           <h1 id={headingId} className="page-title">
             {title}
           </h1>
@@ -60,7 +61,7 @@ export function SpaceFormCard({
   return (
     <section aria-labelledby={headingId} className={cardClasses}>
       <div className="flex flex-col gap-2">
-        <Eyebrow>{eyebrow}</Eyebrow>
+        {eyebrow !== undefined && <Eyebrow>{eyebrow}</Eyebrow>}
         <h2
           id={headingId}
           className="m-0 font-heading text-[28px] leading-tight font-bold text-heading"

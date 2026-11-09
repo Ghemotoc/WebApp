@@ -1,5 +1,5 @@
 /**
- * Onboarding, "Set up your profile", in a real browser (story S1-E2-06; board Onboarding 2.5).
+ * Onboarding, "Set up profile", in a real browser (story S1-E2-06; board Onboarding 2.5).
  *
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase started first).
  * What it proves:
@@ -177,13 +177,11 @@ test.describe('onboarding (S1-E2-06)', () => {
       page.getByRole('heading', { name: 'Finish setting up your profile' }),
     ).toBeVisible();
     await page.getByRole('link', { name: 'Continue setting up' }).click();
-    await expect(
-      page.getByRole('heading', { level: 1, name: 'Set up your profile' }),
-    ).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'Set up profile' })).toBeVisible();
 
     // Step 1: the language and the optional county; the country is never asked.
     await expect(page.getByText('Step 1 of 3')).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Your name and language' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Name and language' })).toBeVisible();
     await page.getByLabel('County (optional)').selectOption('RO-CJ');
     await page.getByRole('button', { name: 'Next' }).click();
 
@@ -253,7 +251,7 @@ test.describe('onboarding (S1-E2-06)', () => {
 
     await expect(page.getByText('Step 3 of 3 · for under-18s')).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Staying safe here' })).toBeFocused();
-    await expect(page.getByRole('link', { name: 'Read the full guidelines' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Read the guidelines' })).toBeVisible();
     await expectNoSeriousIssues(page);
     const adultMessages = page.getByLabel('Let adults message me');
     await expect(adultMessages).not.toBeChecked();

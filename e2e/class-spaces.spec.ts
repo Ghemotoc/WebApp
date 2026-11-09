@@ -88,7 +88,7 @@ test.describe('class spaces (CLASSES-a, S1-E8-11)', () => {
 
   test('the teacher makes a code and sees it once, with its link', async ({ browser }) => {
     const page = await openAs(browser, 'teacher', `${classAddress}/settings`);
-    const card = page.getByRole('region', { name: 'Invite your class' });
+    const card = page.getByRole('region', { name: 'Invite the class' });
     await expect(card.getByText('There is no working code.', { exact: false })).toBeVisible();
     await card.getByLabel('Works for').selectOption('14');
     await card.getByLabel('Number of places').fill('2');
@@ -144,7 +144,7 @@ test.describe('class spaces (CLASSES-a, S1-E8-11)', () => {
     await visitor.context().close();
 
     const teacher = await openAs(browser, 'teacher', `${classAddress}/settings`);
-    const card = teacher.getByRole('region', { name: 'Invite your class' });
+    const card = teacher.getByRole('region', { name: 'Invite the class' });
     await expect(card.getByText('There is no working code.', { exact: false })).toBeVisible();
     await card.getByRole('button', { name: 'Make a code' }).click();
     const secondLink = await card.getByLabel('Joining link').inputValue();

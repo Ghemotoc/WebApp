@@ -1,5 +1,5 @@
 /**
- * Adds the text of "My reports and decisions" (the "statements" namespace) to the translations
+ * Adds the text of "Reports and decisions" (the "statements" namespace) to the translations
  * when the page first renders (story S1-E10-04).
  *
  * Why not with the rest: the text is only needed on that page, so it travels with it, as the

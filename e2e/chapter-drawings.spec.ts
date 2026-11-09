@@ -131,7 +131,7 @@ test.describe('drawings in chapters (S1-E3-11)', () => {
   }) => {
     const page = await openAs(browser, 'adult_writer', editorAddress);
     const dialog = await openSketchPad(page);
-    const sheet = dialog.getByRole('application', { name: 'Your drawing' });
+    const sheet = dialog.getByRole('application', { name: 'Drawing' });
     await dragAcross(page);
     await expect(dialog.getByText('1 line drawn')).toBeAttached();
     await dialog.getByRole('button', { name: 'Clear' }).click();

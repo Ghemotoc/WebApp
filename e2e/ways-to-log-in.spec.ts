@@ -182,7 +182,7 @@ test.describe('ways to log in', () => {
 
     // Nothing filled in: the form says what is missing and stays here.
     await page.getByRole('button', { name: 'Continue with Google' }).click();
-    await expect(page.getByText('Choose your year of birth.', { exact: false })).toBeVisible();
+    await expect(page.getByText('Choose a year of birth.', { exact: false })).toBeVisible();
     expect(new URL(page.url()).pathname).toBe(`/join/${workingInvite}`);
 
     // The year, username and terms are enough: no email or password.

@@ -22,7 +22,7 @@ const waiting: MyAgeCheck = {
 };
 
 describe('the return page', () => {
-  it('says "Checking your age" while the result is on its way', () => {
+  it('says "Checking age" while the result is on its way', () => {
     expect(returnOutcome(waiting, false, false)).toBe('checking');
   });
 

@@ -29,7 +29,7 @@ describe('the Supabase Auth email templates', () => {
   });
 
   it('every email that opens an account action links with a one-time token', () => {
-    // The "password changed" notice only links to "Forgot your password?" (S1-E2-05), and the
+    // The "password changed" notice only links to "Forgot the password?" (S1-E2-05), and the
     // email change sends a code instead (Robert, 25 Oct 2026, 09:15).
     const actionEmails = authEmails.filter(
       (email) => email.fileName !== 'password_changed.html' && email.showsCode !== true,

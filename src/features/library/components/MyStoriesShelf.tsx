@@ -7,9 +7,9 @@
  * It is the shared Shelf like the other library shelves: one scrolling line of at most 20, with a
  * "View more" card when there are more (CLAUDE.md rule 20). Each card opens the story's chapter
  * list in the writing tools (/write/s/<story>/chapters), where the writer can open any chapter in
- * the editor. Under the shelf, a link goes to "Your writing" (/write) for the dashboard, the
+ * the editor. Under the shelf, a link goes to "Writing" (/write) for the dashboard, the
  * numbers and "+ New story". A deleted story (still restorable for 30 days) is left out, as on
- * "Your writing".
+ * "Writing".
  * Who shows it: LibraryShelves, when the "My stories" chip is chosen.
  * What it calls: useMyStories (the writing feature's read of the writer's own stories).
  */
@@ -55,7 +55,7 @@ function MyStoryCard({ story, cover }: { story: MyStory; cover: DrawnCoverChoice
   );
 }
 
-/** The link to "Your writing", under the shelf or in the empty state. */
+/** The link to "Writing", under the shelf or in the empty state. */
 function YourWritingLink() {
   const { t } = useLibraryTranslation();
   return (

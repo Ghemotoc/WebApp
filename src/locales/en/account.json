@@ -1,8 +1,8 @@
 {
   "setup": {
-    "documentTitle": "Set up your profile · {{productName}}",
+    "documentTitle": "Set up profile · {{productName}}",
     "eyebrow": "Welcome",
-    "heading": "Set up your profile",
+    "heading": "Set up profile",
     "intro": "Only your username is required. You can change both names later in Settings.",
     "save": "Save and continue",
     "saving": "Saving…",
@@ -13,7 +13,7 @@
     "hint": "3 to 30 characters. Any characters work, but we block swearwords, names that look like our staff’s and look-alike letters that copy another name. People use it to find and mention you.",
     "checking": "Checking…",
     "free": "@{{handle}} is free.",
-    "checkFailed": "We couldn’t check this name just now. We’ll check again when you save.",
+    "checkFailed": "We couldn’t check this name right now. We’ll check again when you save.",
     "outcomes": {
       "too_short": "Use 3 to 30 characters.",
       "too_long": "Use 3 to 30 characters.",
@@ -40,11 +40,11 @@
   "falseHit": {
     "text": "Think we got this wrong, for example because it’s your surname?",
     "link": "Ask a moderator to check it",
-    "emailSubject": "Please check my username"
+    "emailSubject": "Check a username"
   },
   "settings": {
     "documentTitle": "Settings · {{productName}}",
-    "eyebrow": "Your account",
+    "eyebrow": "Account",
     "heading": "Settings",
     "signedInAs": "Signed in as {{name}} · @{{handle}}",
     "accountHeading": "Account",
@@ -57,12 +57,12 @@
     "legalHeading": "Legal",
     "legalText": "The terms of use, the privacy notice and the community guidelines, with every earlier version.",
     "legalLink": "Open the Legal centre",
-    "signedOut": "Log in to see your settings.",
+    "signedOut": "Log in to see settings.",
     "noHandle": "Choose a username first.",
     "contactLink": "Contact and company details",
     "contactUsLink": "Contact us",
     "groupsLabel": "Settings sections",
-    "myReportsLink": "My reports",
+    "myReportsLink": "Reports sent",
     "groups": {
       "profile": "Profile",
       "appearance": "Appearance",
@@ -71,7 +71,7 @@
       "privacy": "Privacy",
       "notifications": "Notifications",
       "messages": "Messages",
-      "download-my-data": "Download my data",
+      "download-my-data": "Download data",
       "support": "Help and support",
       "delete-account": "Delete account"
     }
@@ -79,7 +79,7 @@
   "notice": {
     "heading": "Choose a username",
     "body": "You need a username before you can publish, comment or post. It only takes a moment.",
-    "action": "Set up your profile"
+    "action": "Set up profile"
   },
   "errors": {
     "loadFailed": "We couldn’t load your account. Check your connection and try again.",
@@ -94,8 +94,8 @@
     "lastActive": "Last active {{date}}",
     "signOut": "Log out",
     "signOutLabel": "Log out {{device}}",
-    "signOutOthers": "Log out of all other devices",
-    "signedOutOthers": "Your other devices are logged out.",
+    "signOutOthers": "Log out of other devices",
+    "signedOutOthers": "Other devices are logged out.",
     "privacy": "We show the browser and the kind of device only. We don’t keep your IP address or where you are.",
     "loadFailed": "We couldn’t load your devices. Check your connection and try again.",
     "actionFailed": "That didn’t work. Check your connection and try again.",
@@ -119,17 +119,17 @@
   },
   "sanction": {
     "suspension": {
-      "title": "Your account is suspended until {{until}}.",
+      "title": "Account suspended until {{until}}.",
       "body": "You can read and download your data, but you can’t publish, comment or message until then."
     },
     "reporting_pause": {
-      "title": "Your reporting is paused until {{until}}.",
+      "title": "Reporting paused until {{until}}.",
       "body": "Reports you sent were found unfounded again and again, so reporting is paused for a while. You can still read and write."
     }
   },
   "email": {
     "heading": "Email address",
-    "current": "Your email:",
+    "current": "Email:",
     "private": "Only you can see it. It’s never on your profile or shown to other people.",
     "pending": "Waiting to change to {{email}}. Type the two codes we sent to finish.",
     "newLabel": "New email address",
@@ -137,14 +137,14 @@
     "change": "Change email",
     "sending": "Sending…",
     "sent": "Check both inboxes: we sent a code to {{email}} and another to your current address. Until you type both, your current address keeps working.",
-    "sameAddress": "That’s already your email address.",
+    "sameAddress": "That’s already the address on this account.",
     "invalidAddress": "That doesn’t look like an email address. Check it and try again.",
     "addressInUse": "Another account already uses this address.",
     "tooManyAttempts": "Too many tries. Wait a few minutes, then try again.",
     "changeFailed": "We couldn’t send the codes. Check your connection and try again.",
     "codesHeading": "Type the two codes",
-    "currentCodeLabel": "Code from your current address",
-    "newCodeLabel": "Code from your new address",
+    "currentCodeLabel": "Code from the current address",
+    "newCodeLabel": "Code from the new address",
     "codeHint": "Sent to {{email}}.",
     "confirmCodes": "Confirm the change",
     "checkingCodes": "Checking…",
@@ -152,7 +152,7 @@
     "wrongCode": "This code is wrong or has expired. Check it, or send new codes.",
     "sendNewCodes": "Send new codes",
     "codesCheckFailed": "We couldn’t check the codes. Check your connection and try again.",
-    "changed": "Done. Your email address is now {{email}}."
+    "changed": "Done. The email address is now {{email}}."
   },
   "birthday": {
     "heading": "Birthday",
@@ -166,9 +166,9 @@
     "saveFailed": "We couldn’t save your birthday. Check your connection and try again."
   },
   "ageCheck": {
-    "documentTitle": "Confirm your age",
+    "documentTitle": "Confirm age",
     "eyebrow": "Age check",
-    "heading": "Confirm your age",
+    "heading": "Confirm age",
     "intro13": "We check that you’re 13 or over, and whether you’re under 18, so you get the right safety settings.",
     "intro18": "We check that you’re 18 or over, so you get the settings for adults.",
     "methodsHeading": "Two ways to check",
@@ -190,15 +190,15 @@
     "step3": "You come back here and see your result.",
     "readOnly": "Until the check is done, you can read but not post.",
     "byYoti": "Age check by Yoti",
-    "signedOut": "Log in to check your age.",
+    "signedOut": "Log in to check age.",
     "logIn": "Log in",
     "loadFailed": "We couldn’t load your age check. Try again in a moment.",
     "nothingToDo": "There’s no age check to do right now.",
-    "birthYearInSettings": "Your year of birth is in Settings.",
+    "birthYearInSettings": "Year of birth is in Settings.",
     "openSettings": "Open Settings",
     "confirmed": "Age confirmed: {{result}}",
     "confirmedMeta": "{{date}} · {{method}}",
-    "photoDeleted": "Yoti deleted your photo after the check.",
+    "photoDeleted": "Yoti deleted the photo after the check.",
     "continue": "Continue",
     "results": {
       "18_or_over": "18 or over",
@@ -216,12 +216,12 @@
       "unreachable": "We couldn’t reach the age check. Check your connection and try again."
     },
     "return": {
-      "documentTitle": "Your age check",
-      "checkingHeading": "Checking your age",
+      "documentTitle": "Age check",
+      "checkingHeading": "Checking age",
       "checkingBody": "We’re waiting for the result from Yoti. This can take a moment. Keep this page open.",
       "adultYearBody": "Settings for adults need an “18 or over” result. You can get one with an ID document.",
       "useDocument": "Use an ID document",
-      "failedHeading": "We couldn’t confirm your age",
+      "failedHeading": "We couldn’t confirm the age",
       "failedBody": "The check didn’t give a clear result. You can try again, or use an ID document instead.",
       "tryAgain": "Try again",
       "notFinishedHeading": "The check wasn’t finished",
@@ -231,9 +231,9 @@
       "startAgain": "Start again"
     },
     "notice": {
-      "heading": "Confirm your age",
+      "heading": "Confirm age",
       "body": "Until your age is confirmed, you can read but not post.",
-      "action": "Check my age"
+      "action": "Check age"
     },
     "fourteenDays": "If it isn’t done within 14 days of joining, we delete the account and your year (and month) of birth.",
     "manual": {
@@ -241,9 +241,9 @@
       "askLine": "Ask for a manual check. A person checks it and replies within 5 working days. They never see a photo.",
       "ask": "Ask for a manual check",
       "askFailed": "We couldn’t send your request. Try again in a moment.",
-      "openTitle": "A person is checking your age.",
+      "openTitle": "A person is checking the age.",
       "openBody": "They reply within 5 working days. Your account stays read-only until then.",
-      "refusedTitle": "We couldn’t confirm your age by hand.",
+      "refusedTitle": "We couldn’t confirm the age by hand.",
       "refusedBody": "The reason: {{reason}} You can start a new check with Yoti."
     }
   },
@@ -252,7 +252,7 @@
     "eyebrow": "Under 16 · after the age check",
     "heading": "Ask a parent or guardian",
     "intro": "You’re under 16, so a parent or guardian needs to agree. We’ll email them a link.",
-    "emailLabel": "Their email",
+    "emailLabel": "Email",
     "languageLabel": "Language of the email",
     "languages": {
       "ro": "Română",
@@ -269,9 +269,9 @@
     "sentAgain": "We sent it again.",
     "changeEmail": "Change the email",
     "readStories": "Read stories",
-    "agreedHeading": "Your account is ready",
+    "agreedHeading": "Account ready",
     "agreedBody": "Your parent or guardian agreed on {{date}}. You can now publish, comment, post and send messages.",
-    "setUpProfile": "Set up your profile",
+    "setUpProfile": "Set up profile",
     "withdrawnHeading": "Your parent or guardian withdrew their consent",
     "withdrawnBody": "Your account is read-only for now: you can read, but not publish, comment, post or send messages. We’ll tell you and them what happens next.",
     "nothingToDo": "There’s nothing to ask a parent or guardian for right now.",
@@ -322,7 +322,7 @@
       "contactUs": "Contact us",
       "agreedHeading": "Thank you. You agreed on {{date}}.",
       "agreedBody": "@{{handle}} can now publish, comment, post and send messages. We emailed you a confirmation. You can withdraw your consent here at any time.",
-      "withdraw": "Withdraw my consent",
+      "withdraw": "Withdraw consent",
       "withdrawConfirm": "Withdraw your consent? The account becomes read-only straight away.",
       "withdrawYes": "Yes, withdraw it",
       "cancel": "Cancel",
@@ -339,14 +339,14 @@
     "summary": {
       "heading": "What your parent or guardian agreed to",
       "agreedOn": "Your parent or guardian agreed on {{date}}.",
-      "coversIntro": "Their yes covers this:",
+      "coversIntro": "The yes covers this:",
       "coversWrite": "You can publish stories, comment and post in the forums.",
       "coversMessages": "You can send and get private messages, within the rules for your age: adults can never message anyone under 16.",
       "coversData": "We keep your email, username, pen name, year of birth and age check result, and never your real name.",
       "coversWithdraw": "They can withdraw their yes at any time. If they do, your account becomes read-only and we tell you here.",
       "withdrawnOn": "Your parent or guardian withdrew their consent on {{date}}.",
       "stillIntro": "Your account is read-only for now. You can still:",
-      "stillRead": "read stories and keep your library;",
+      "stillRead": "read stories and keep a library;",
       "stillKept": "find your own stories, saved as they were;",
       "stillReport": "report anything that worries you, and block anyone;",
       "stillData": "download your data or delete your account, below."
@@ -365,9 +365,9 @@
     }
   },
   "onboarding": {
-    "documentTitle": "Set up your profile · {{productName}}",
+    "documentTitle": "Set up profile · {{productName}}",
     "eyebrow": "Welcome to {{productName}}",
-    "heading": "Set up your profile",
+    "heading": "Set up profile",
     "intro": "Three short steps. Only your username is required. You can skip the rest and change it later in Settings.",
     "stepOf": "Step {{step}} of {{total}}",
     "next": "Next",
@@ -377,7 +377,7 @@
     "saveFailed": "We couldn’t save that. Try again in a moment.",
     "loadFailed": "We couldn’t load your profile. Try again in a moment.",
     "name": {
-      "heading": "Your name and language",
+      "heading": "Name and language",
       "languageLabel": "Interface language",
       "languageHint": "The language of menus and buttons. {{productName}} opens in Romanian for everyone. If you’d rather use English, pick it here or from the language menu. It applies on every device you use.",
       "countryHeading": "Country",
@@ -413,7 +413,7 @@
       "guidelineOwnWork": "Post your own work. You’re responsible for what you publish.",
       "guidelinePrivate": "Keep your address, school and phone number private.",
       "guidelineRate": "Rate your stories: All ages, 13+, 16+ or 18+.",
-      "fullGuidelines": "Read the full guidelines"
+      "fullGuidelines": "Read the guidelines"
     },
     "notice": {
       "heading": "Finish setting up your profile",
@@ -431,7 +431,7 @@
     "heading": "Ways to log in",
     "intro": "Log in with any of these. Google, Apple and Microsoft only replace your password. You need at least one.",
     "ageLine": "You still need the age check. Google, Apple and Microsoft don’t tell us how old you are.",
-    "listLabel": "Your ways to log in",
+    "listLabel": "Ways to log in",
     "loadFailed": "We couldn’t load your ways to log in. Check your connection and try again.",
     "connected": "Connected",
     "notConnected": "Not connected",
@@ -451,15 +451,15 @@
     },
     "google": {
       "name": "Google",
-      "detail": "Use your Google account"
+      "detail": "Use a Google account"
     },
     "apple": {
       "name": "Apple",
-      "detail": "Use your Apple account"
+      "detail": "Use an Apple account"
     },
     "microsoft": {
       "name": "Microsoft (Outlook)",
-      "detail": "Use your Outlook or Microsoft account"
+      "detail": "Use an Outlook or Microsoft account"
     },
     "passkey": {
       "name": "Passkey",
@@ -486,7 +486,7 @@
     "wayLegend": "How do you want to show you teach?",
     "ways": {
       "school_email": {
-        "title": "Confirm your school email",
+        "title": "Confirm a school email",
         "text": "The quickest way. We send a link to your school address. Open it to get your badge."
       },
       "proof": {
@@ -588,7 +588,7 @@
       "interestLabel": "What do you want to do here?",
       "saved": "Saved.",
       "saveFailed": "We couldn’t save that. Check your connection and try again.",
-      "settingsLink": "Settings: emails, news and your account",
+      "settingsLink": "Settings: emails, news and account",
       "logOut": "Log out",
       "logOutFailed": "We couldn’t log you out. Check your connection and try again."
     }

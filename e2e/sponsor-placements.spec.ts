@@ -149,11 +149,11 @@ test.describe('Staff › Sponsors › Placements (S1-E12-05)', () => {
     await form.getByLabel('Title in Română').fill('E2E Săptămâna poeziei');
     await form.getByLabel('Title in English').fill('E2E Poetry week');
     // Another site is refused.
-    await form.getByLabel('Page on our site').fill('https://example.com/');
+    await form.getByLabel('Page on the site').fill('https://example.com/');
     await form.getByRole('button', { name: 'Save house ad' }).click();
     await expect(form.getByText(/isn’t filled in correctly/)).toBeVisible();
     // One of our own pages is saved and listed.
-    await form.getByLabel('Page on our site').fill('/c/poetry-week');
+    await form.getByLabel('Page on the site').fill('/c/poetry-week');
     await form.getByRole('button', { name: 'Save house ad' }).click();
     await expect(form.getByText('Saved. It shows between its dates.')).toBeVisible();
     await expect(page.getByText('Links to /c/poetry-week', { exact: false })).toBeVisible();

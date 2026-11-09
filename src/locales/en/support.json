@@ -3,17 +3,17 @@
   "signedOut": "Log in to see your support requests. Without an account, use the Contact us form.",
   "logIn": "Log in",
   "contactUs": "Contact us",
-  "back": "Back to your support requests",
+  "back": "Back to support requests",
   "statuses": {
     "new": "New",
     "open": "Open",
-    "pending_on_user": "Waiting for your answer",
+    "pending_on_user": "Waiting for an answer from you",
     "on_hold": "On hold",
     "solved": "Solved",
     "closed": "Closed"
   },
   "categories": {
-    "account": "Your account",
+    "account": "Account",
     "writing": "Writing",
     "reading": "Reading",
     "safety_question": "A safety question",
@@ -22,8 +22,8 @@
     "other": "Something else"
   },
   "list": {
-    "documentTitle": "Your support requests",
-    "title": "Your support requests",
+    "documentTitle": "Support requests",
+    "title": "Support requests",
     "intro": "Ask our support team for help with your account, writing, reading or anything else. A person answers every request.",
     "write": "Ask for help",
     "empty": "You haven’t asked for help yet.",
@@ -34,16 +34,16 @@
   "new": {
     "documentTitle": "Ask for help",
     "title": "Ask for help",
-    "intro": "Tell us what happened. Please don’t include passwords or someone else’s private details.",
+    "intro": "Tell us what happened. Don’t include passwords or someone else’s private details.",
     "safety": "If someone is in danger right now, call 112. To report something you saw here, use Report on it instead.",
     "category": "What is it about?",
     "subject": "Subject",
-    "body": "Your message",
+    "body": "Message",
     "bodyHint": "Up to 4,000 characters.",
     "send": "Send",
     "sending": "Sending…",
     "sent": "Sent. Your request is #{{number}}. We’ll answer you here.",
-    "open": "Open your request"
+    "open": "Open a request"
   },
   "ticket": {
     "documentTitle": "Support request #{{number}}",
@@ -51,7 +51,7 @@
     "messagesLabel": "Messages",
     "you": "You",
     "team": "The support team",
-    "replyLabel": "Your answer",
+    "replyLabel": "Answer",
     "send": "Send",
     "closed": "This request is closed. If you need more help, ask again and mention #{{number}}.",
     "notFound": "We couldn’t find this request on your account.",
@@ -59,20 +59,20 @@
     "mergedInto": "This request continues as #{{number}}: we joined it with another one about the same thing."
   },
   "failures": {
-    "refused": "Please fill in every field.",
+    "refused": "Fill in every field.",
     "too_many": "You’ve sent a lot of requests in the last hour. Try again in {{minutes}} minutes.",
     "not_found": "We couldn’t find this request on your account.",
     "not_allowed": "You can’t do this.",
     "unreachable": "We couldn’t send it. Check your connection and try again."
   },
   "settings": {
-    "heading": "Your support requests",
+    "heading": "Support requests",
     "intro": "Ask our support team for help and read their answers in one place.",
-    "open": "See your support requests"
+    "open": "See support requests"
   },
   "staff": {
     "documentTitle": "Support tickets",
-    "eyebrow": "Staff · support",
+    "eyebrow": "Staff",
     "heading": "Support tickets",
     "intro": "Every request from email, Contact us and the app, as one numbered ticket. Answers go out from the support team; internal notes stay with staff.",
     "filtersLabel": "Narrow the inbox",
@@ -184,9 +184,9 @@
     "followUpOf": "Follows up the closed ticket #{{number}}",
     "views": {
       "label": "Views",
-      "mine": "My tickets",
+      "mine": "Assigned to me",
       "unassigned": "Unassigned",
-      "all_open": "All open",
+      "all_open": "Open",
       "pending_on_user": "Pending on user",
       "solved": "Solved",
       "spam": "Spam"
@@ -273,8 +273,8 @@
       "requestType": "What the person asks for",
       "openRequest": "Open data request",
       "requestTypes": {
-        "copy": "A copy of their data",
-        "move": "Their data to take elsewhere",
+        "copy": "A copy of the data",
+        "move": "Data to take elsewhere",
         "correct": "A correction",
         "delete": "Deletion",
         "other": "Something else"

@@ -1,10 +1,9 @@
 {
   "documentTitle": "Mesaje",
   "chatDocumentTitle": "Mesaje cu {{name}}",
-  "eyebrow": "Mesaje",
-  "title": "Mesajele tale",
+  "title": "Mesaje",
   "lead": "Conversații private cu alți scriitori și cititori. Doar text.",
-  "signedOut": "Intră în cont ca să-ți vezi mesajele.",
+  "signedOut": "Intră în cont ca să vezi mesajele.",
   "logIn": "Intră în cont",
   "list": {
     "title": "Conversații",
@@ -89,14 +88,14 @@
     "on": "Pornite",
     "off": "Oprite",
     "adultsHint": "Adulții nu pot scrie niciodată cuiva sub 16 ani. Dacă ai 16 sau 17 ani, mesajele de la adulți sunt oprite până nu le pornești tu. Doar tu le poți porni, din Setări.",
-    "privacyTitle": "Cine îți poate citi mesajele",
+    "privacyTitle": "Cine poate citi mesajele",
     "privacy": "Mesajele nu sunt criptate end-to-end. Echipa noastră le citește doar dacă cineva le raportează sau dacă legea o cere."
   },
   "newChat": {
     "eyebrow": "Mesaje",
     "title": "Începe o conversație nouă",
-    "label": "Numele său de utilizator",
-    "hint": "Numele de după @ de pe profilul său.",
+    "label": "Nume de utilizator",
+    "hint": "Numele de după @ de pe profil.",
     "open": "Deschide conversația",
     "close": "Închide"
   },

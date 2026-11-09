@@ -269,7 +269,7 @@ describe('notificationText', () => {
     };
     const text = notificationText(englishT(), approvedRow, null);
     expect(`${text.who} ${text.what}`).toBe(
-      'Your account: you’re in Fantasy writers’ circle. You can now post there.',
+      'Account: you’re in Fantasy writers’ circle. You can now post there.',
     );
     expect(text.href).toBe('/spaces/fantasy-writers-circle');
   });
@@ -441,7 +441,7 @@ describe('notificationText', () => {
       dataRequest: { reference: 'D-000007', deadline: '2027-02-28', extensionReason: null },
     };
     const text = notificationText(englishT(), askRow, null);
-    expect(text.who).toBe('Your account:');
+    expect(text.who).toBe('Account:');
     expect(text.what).toContain('(D-000007)');
     expect(text.what).toContain('Was it you?');
     expect(text.actionLabel).toBe('Answer');
@@ -483,7 +483,7 @@ describe('notificationText', () => {
       dataRequest: { reference: 'D-000009', deadline: '2027-02-28', extensionReason: null },
     };
     const text = notificationText(englishT(), readyRow, null);
-    expect(text.who).toBe('Your account:');
+    expect(text.who).toBe('Account:');
     expect(text.what).toContain('D-000009');
     expect(text.what).toContain('within seven days');
     expect(text.actionLabel).toBe('Download it');
@@ -522,9 +522,9 @@ describe('notificationText', () => {
       ownHandle: 'corbu',
     };
     const text = notificationText(englishT(), rankRow, 'corbu');
-    expect(text.who).toBe('Your rank:');
+    expect(text.who).toBe('Rank:');
     expect(text.what).toBe('you’re now a Storyteller. Well done.');
-    expect(text.actionLabel).toBe('See your rank');
+    expect(text.actionLabel).toBe('See rank');
     expect(text.href).toBe('/u/corbu');
   });
 
@@ -539,7 +539,7 @@ describe('notificationText', () => {
       story: { slug: 'the-salt-mine-choir', title: 'The Salt Mine Choir' },
     };
     const text = notificationText(englishT(), featuredRow, 'corbu');
-    expect(text.who).toBe('Our team:');
+    expect(text.who).toBe('The team:');
     expect(text.what).toBe(
       'your story “The Salt Mine Choir” is in Featured this week on Discover.',
     );
@@ -558,7 +558,7 @@ describe('notificationText', () => {
       story: null,
     };
     const agreed = notificationText(englishT(), spotlightRow, 'ana');
-    expect(agreed.who).toBe('Your account:');
+    expect(agreed.who).toBe('Account:');
     expect(agreed.what).toBe(
       'your parent or guardian agreed that we may suggest you and your stories to other readers.',
     );
@@ -569,6 +569,6 @@ describe('notificationText', () => {
       'ana',
     );
     expect(withdrawn.what).toContain('we no longer suggest you');
-    expect(withdrawn.actionLabel).toBe('See your privacy settings');
+    expect(withdrawn.actionLabel).toBe('See privacy settings');
   });
 });

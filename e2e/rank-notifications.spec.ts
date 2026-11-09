@@ -80,10 +80,10 @@ test.describe('rank notices and rank pills (IDEAS-3a)', () => {
     expect(count.split('\n').at(-1)).toBe('1');
 
     const page = await openAsWriter(browser, '/notifications');
-    const notice = page.getByRole('listitem').filter({ hasText: 'Your rank:' });
+    const notice = page.getByRole('listitem').filter({ hasText: 'Rank:' });
     await expect(notice).toContainText('you’re now a Storyteller. Well done.');
     await expect(notice.getByTestId('rank-chip')).toContainText('Storyteller');
-    await expect(notice.getByRole('link', { name: 'See your rank' })).toHaveAttribute(
+    await expect(notice.getByRole('link', { name: 'See rank' })).toHaveAttribute(
       'href',
       '/u/pending_check',
     );

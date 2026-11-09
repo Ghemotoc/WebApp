@@ -66,7 +66,7 @@ async function openBlock(browser: Browser) {
   const page = await context.newPage();
   await page.goto('/settings#download-my-stories');
   const block = page.locator('#download-my-stories');
-  await expect(block.getByRole('heading', { name: 'Download my stories' })).toBeVisible();
+  await expect(block.getByRole('heading', { name: 'Download stories' })).toBeVisible();
   return { context, page, block };
 }
 

@@ -187,7 +187,7 @@ describe('LegalUpdateNotice', () => {
       acceptFailed: false,
     });
     openNotice();
-    expect(screen.getByRole('heading', { name: 'We’ve updated our Terms' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'We’ve updated the Terms' })).toBeInTheDocument();
     expect(screen.getByText('Version 0.2 of the Terms: Clearer rules')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Read what changed' })).toHaveAttribute(
       'href',

@@ -122,7 +122,7 @@ function fakeClient(options: { refuse?: string } = {}) {
 /** The guide's words for the tests: English, with every table described the same way (IDEAS-2a). */
 const guideWords = (madeAt: string) => ({
   fileName: 'READ ME FIRST.txt',
-  title: 'Your data, explained',
+  title: 'Data, explained',
   intro: `Made on ${madeAt.slice(0, 10)}.`,
   filesHeading: 'The files',
   files: { data: 'data.json', stories: 'stories/', plans: 'plans', library: 'library.csv' },

@@ -12,7 +12,7 @@
  * - the art's designer is credited under the editor;
  * - nothing is uploaded: there is no file field any more;
  * - Save keeps the recipe on the profile and the drawn avatar shows on the writer's profile;
- * - "Use my initials instead" goes back to the initials;
+ * - "Use initials instead" goes back to the initials;
  * - Settings with the builder passes axe and doesn't scroll sideways at 390, 768 and 1440 px.
  * Test data: the seed persona adult_writer; their avatar is cleared afterwards.
  */
@@ -57,8 +57,8 @@ test.describe('the avatar builder (ADMIN-2g)', () => {
 
   test('a writer builds, undoes, saves and clears an avatar', async ({ browser }) => {
     const page = await openAsWriter(browser, '/settings');
-    const section = page.getByRole('region', { name: 'Your avatar' });
-    await expect(section.getByText('Others see your initials.')).toBeVisible();
+    const section = page.getByRole('region', { name: 'Avatar' });
+    await expect(section.getByText('Others see the initials.')).toBeVisible();
     await expect(
       section.getByRole('img', { name: 'Preview of the avatar you are building' }),
     ).toBeVisible();
@@ -124,10 +124,10 @@ test.describe('the avatar builder (ADMIN-2g)', () => {
     // Back to the initials.
     await page.goto('/settings');
     await page
-      .getByRole('region', { name: 'Your avatar' })
-      .getByRole('button', { name: 'Use my initials instead' })
+      .getByRole('region', { name: 'Avatar' })
+      .getByRole('button', { name: 'Use initials instead' })
       .click();
-    await expect(page.getByText('Done. Your initials show again.')).toBeVisible();
+    await expect(page.getByText('Done. The initials show again.')).toBeVisible();
     expect(savedPart('hair')).toBe('');
   });
 

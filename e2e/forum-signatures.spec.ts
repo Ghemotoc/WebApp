@@ -93,13 +93,13 @@ test.describe('forum signatures (FORUMS-2d, S1-E8-08)', () => {
   test('a writer saves a signature within the limits', async ({ browser }) => {
     const page = await openAs(browser, 'adult_writer', '/settings#forum-signature');
     const section = signatureSection(page);
-    const field = section.getByLabel('Your signature');
+    const field = section.getByLabel('Signature');
     await field.fill('one\ntwo\nthree\nfour');
     await expect(section.getByText('That’s 4 lines. A signature can have up to 3.')).toBeVisible();
     await field.fill(signatureText);
     await expect(section.getByText('54 of 300 characters, 2 of 3 lines')).toBeVisible();
     await section.getByRole('button', { name: 'Save signature' }).click();
-    await expect(section.getByText('Your signature is saved.')).toBeVisible();
+    await expect(section.getByText('Signature saved.')).toBeVisible();
     await page.context().close();
   });
 
@@ -121,8 +121,8 @@ test.describe('forum signatures (FORUMS-2d, S1-E8-08)', () => {
       section.getByText('A signature picture can’t move. Choose a still picture.'),
     ).toBeVisible();
     await chooser.setInputFiles({ name: 'moon.png', mimeType: 'image/png', buffer: tinyPng });
-    await expect(section.getByText('Your picture passed the check.').first()).toBeVisible();
-    await expect(section.getByRole('img', { name: 'Your signature picture' })).toBeVisible();
+    await expect(section.getByText('The picture passed the check.').first()).toBeVisible();
+    await expect(section.getByRole('img', { name: 'Signature picture' })).toBeVisible();
     await page.context().close();
   });
 

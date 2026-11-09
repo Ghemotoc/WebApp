@@ -4,7 +4,7 @@
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase started first).
  * What it proves:
  * - the moderator decides a case with "Suspend" for 7 days: the account is read-only (the
- *   database says suspended), the person sees "Your account is suspended until …" on every page
+ *   database says suspended), the person sees "Account suspended until …" on every page
  *   and can still read; the case page lists the live suspension and the moderator lifts it;
  * - "Ban" from a case: the person can't sign in any more (Supabase's own ban) and the email can't
  *   sign up again (the seed's banned_user is the proof for sign-in; the hash for sign-up);
@@ -89,7 +89,7 @@ test.describe('sanctions (S1-E10-06)', () => {
     );
 
     const teacherPage = await openAs(browser, 'teacher', '/');
-    await expect(teacherPage.getByText(/Your account is suspended until/)).toBeVisible();
+    await expect(teacherPage.getByText(/Account suspended until/)).toBeVisible();
 
     const panel = page.getByRole('region', { name: 'Reported account: sanctions' });
     await expect(panel).toContainText('Suspension');
@@ -127,7 +127,7 @@ test.describe('sanctions (S1-E10-06)', () => {
 
     // adult_writer sees the notice on every page, and the report dialog refuses before anything else.
     const writerPage = await openAs(browser, 'adult_writer', '/design#report');
-    await expect(writerPage.getByText(/Your reporting is paused until/)).toBeVisible();
+    await expect(writerPage.getByText(/Reporting paused until/)).toBeVisible();
     await writerPage.getByRole('button', { name: 'Report @adult_writer' }).click();
     const dialog = writerPage.getByRole('dialog', { name: 'Report this profile' });
     await dialog.getByText('Spam', { exact: true }).click();

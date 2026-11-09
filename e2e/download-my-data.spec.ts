@@ -64,7 +64,7 @@ async function firstBytesOf(zip: JSZip, path: string): Promise<string> {
   return new TextDecoder('latin1').decode(bytes.subarray(0, 5));
 }
 
-test.describe('Download my data', () => {
+test.describe('Download data', () => {
   test.beforeAll(() => {
     resetExports();
     seedStory();
@@ -86,10 +86,10 @@ test.describe('Download my data', () => {
     const page = await context.newPage();
     await page.goto('/settings#download-my-data');
     const panel = page.locator('#download-my-data');
-    await expect(panel.getByRole('heading', { name: 'Download my data' })).toBeVisible();
+    await expect(panel.getByRole('heading', { name: 'Download data' })).toBeVisible();
     // Step 2: ask; the browser builds the copy and the panel says it is ready.
-    await panel.getByRole('button', { name: 'Request my data' }).click();
-    await expect(panel.getByText('Your file is ready.')).toBeVisible({ timeout: 30_000 });
+    await panel.getByRole('button', { name: 'Request data' }).click();
+    await expect(panel.getByText('The file is ready.')).toBeVisible({ timeout: 30_000 });
     await expect(panel.getByText(/stops working on \d+ \w+ \d{4}/)).toBeVisible();
     // Step 3: the notification was sent (criterion 3).
     expect(

@@ -166,11 +166,11 @@
     "extended": "Avem nevoie de mai mult timp: {{reason}}",
     "answered": "Răspuns trimis",
     "types": {
-      "copy": "o copie a datelor tale",
-      "move": "mutarea datelor tale",
-      "correct": "corectarea datelor tale",
-      "delete": "ștergerea datelor tale",
-      "other": "altceva despre datele tale"
+      "copy": "o copie a datelor",
+      "move": "mutarea datelor",
+      "correct": "corectarea datelor",
+      "delete": "ștergerea datelor",
+      "other": "altceva despre date"
     },
     "channels": {
       "in_app": "în aplicație",
@@ -197,7 +197,7 @@
     "introParent": "Copia cuprinde tot ce a pus persoana aici și datele contului său, ca fișier citibil de calculator (data.json), fiecare poveste și planul fiecărei povești ca fișier Word și PDF și biblioteca sa ca tabel. Se face în această filă, în limba persoanei. La această cerere merge la părintele sau tutorele care a fost de acord cu contul: îi trimitem un link de unică folosință la adresa din acel acord, valabil șapte zile. Persoana nu e anunțată și nu vede fișierele.",
     "formatLabel": "Cum o trimiți",
     "formats": {
-      "zip": "O singură arhivă ZIP cu tot",
+      "zip": "O arhivă ZIP cu tot",
       "separate": "Fiecare fișier separat"
     },
     "send": "Fă și trimite copia",

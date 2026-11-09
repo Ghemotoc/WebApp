@@ -5,7 +5,7 @@
  *
  * Who runs it: `npm run test:e2e` (Supabase started first).
  * What it proves:
- * - an ongoing story, with "Only the chapters I choose" and two chapters ticked, offers "A sample
+ * - an ongoing story, with "Chosen chapters only" and two chapters ticked, offers "A sample
  *   EPUB for beta readers"; with none ticked it doesn't;
  * - the book holds only the ticked chapters with their numbers in the story, is saved as
  *   "<slug>-sample.epub", and its title and copyright pages say "Fragment" (the story is in
@@ -73,7 +73,7 @@ async function chooseChapters(browser: Browser): Promise<Page> {
   await page.goto('/settings#download-my-stories');
   const block = page.locator('#download-my-stories');
   await block.getByLabel('Story', { exact: true }).selectOption(storyId);
-  await block.getByLabel('Only the chapters I choose').check();
+  await block.getByLabel('Chosen chapters only').check();
   await expect(block.getByRole('heading', { name: 'A sample EPUB for beta readers' })).toHaveCount(
     0,
   );

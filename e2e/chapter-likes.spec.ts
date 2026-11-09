@@ -89,7 +89,7 @@ test.describe('liking a chapter (S1-E6-03)', () => {
   test('a read-only account is told it can’t like yet', async ({ browser }) => {
     const page = await openAs(browser, 'kid_14_ok', chapterAddress);
     await page.getByRole('button', { name: 'Like this chapter 0 likes' }).click();
-    await expect(page.getByRole('alert')).toHaveText('Your account can’t like chapters yet.');
+    await expect(page.getByRole('alert')).toHaveText('This account can’t like chapters yet.');
     await page.context().close();
   });
 

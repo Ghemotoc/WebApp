@@ -49,7 +49,7 @@ describe('OpeningListForm', () => {
       target: { value: 'reader@example.test' },
     });
     fireEvent.click(screen.getByRole('button', { name: /tell me when you open here/i }));
-    expect(await screen.findByText(/choose your country/i)).toBeTruthy();
+    expect(await screen.findByText('Choose a country.')).toBeTruthy();
     expect(joinOpeningList).not.toHaveBeenCalled();
   });
 

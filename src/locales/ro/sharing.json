@@ -33,11 +33,11 @@
   },
   "quote": {
     "eyebrow": "Distribuie un citat",
-    "title": "Cardul tău cu citat",
+    "title": "Card cu citat",
     "made": "Făcut din textul selectat. {{count}} din 280 de caractere.",
     "background": "Fundal",
     "purple": "Mov",
-    "ourColours": "Sau una dintre culorile noastre:",
+    "ourColours": "Sau una dintre aceste culori:",
     "colours": {
       "plum": "Prună",
       "violet": "Violet",
@@ -78,7 +78,7 @@
     "button": "Distribuie imaginea",
     "buttonLabel": "Distribuie imaginea: {{alt}}",
     "eyebrow": "Distribuie o imagine",
-    "title": "Cardul tău cu imaginea",
+    "title": "Card cu imagine",
     "description": "Imaginea, cu titlul poveștii, numele autorului și un link către acest loc din capitol.",
     "altLabel": "Text alternativ pentru imagine",
     "altHint": "L-am scris noi pentru tine. Cititoarele de ecran îl citesc cu voce tare, ca toată lumea să știe ce arată imaginea. Lipește-l ca descriere a imaginii când o postezi.",

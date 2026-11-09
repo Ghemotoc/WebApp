@@ -1,5 +1,5 @@
 /**
- * useCertificates: the reads and changes behind "My certificates", one certificate's page and the
+ * useCertificates: the reads and changes behind "Certificates", one certificate's page and the
  * public check page (bundle CLASSES, part e; story S1-E8-12).
  *
  * Who calls it: MyCertificatesPage, CertificatePage, PrintedNameForm and VerifyCertificatePage.

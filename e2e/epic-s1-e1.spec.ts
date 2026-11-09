@@ -143,7 +143,7 @@ test.describe('journeys 2 to 4: the personas (S1-E1-02 × S1-E1-04)', () => {
       .getByRole('contentinfo')
       .getByRole('combobox', { name: 'Language' })
       .selectOption('ro');
-    await expect(firstDevice.page.getByText('Limba a fost salvată în contul tău.')).toBeAttached();
+    await expect(firstDevice.page.getByText('Limba a fost salvată în cont.')).toBeAttached();
 
     // Device 2 opens in Romanian.
     const secondDevice = await openAsPersona(browser, 'adult_writer');
@@ -176,7 +176,7 @@ test.describe('journeys 2 to 4: the personas (S1-E1-02 × S1-E1-04)', () => {
       .getByRole('contentinfo')
       .getByRole('combobox', { name: 'Limbă' })
       .selectOption('en');
-    await expect(device.page.getByText('Language saved to your account.')).toBeAttached();
+    await expect(device.page.getByText('Language saved to the account.')).toBeAttached();
     await device.context.close();
   });
 
@@ -205,7 +205,7 @@ test.describe('journeys 2 to 4: the personas (S1-E1-02 × S1-E1-04)', () => {
         .getByRole('contentinfo')
         .getByRole('combobox', { name: 'Limbă' })
         .selectOption('en');
-      await expect(firstDevice.page.getByText('Language saved to your account.')).toBeAttached();
+      await expect(firstDevice.page.getByText('Language saved to the account.')).toBeAttached();
       const secondDevice = await openAsPersona(browser, persona);
       await expect(secondDevice.page.getByRole('heading', { level: 1 })).toHaveText(homeHeading.en);
       await firstDevice.context.close();

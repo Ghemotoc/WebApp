@@ -10,7 +10,7 @@
  *   nothing changes (S1-E2-20, S1-E2-22);
  * - staff change a rule in Settings › Age rules by country with a reason, and it is audited
  *   (S1-E2-21);
- * - under the privacy notice, "Your country" names the reader's country and its ages, and "Ages by
+ * - under the privacy notice, "Country" names the reader's country and its ages, and "Ages by
  *   country" lists Quebec's own 14 (S1-E2-23);
  * - the legal page passes axe and don't scroll sideways at 390 px (Romanian) and
  *   1440 px (English).
@@ -135,7 +135,7 @@ test.describe('the age rules by country (MARKETS-1)', () => {
       language: 'en',
       fakeCountry: 'CA',
     });
-    await page.getByText('Your country: Canada').click();
+    await page.getByText('Country: Canada').click();
     await expect(page.getByText('In Canada you can join from age 13.')).toBeVisible();
     await page.locator('summary', { hasText: 'Ages by country' }).click();
     const table = page.getByRole('table', { name: 'Ages by country' });

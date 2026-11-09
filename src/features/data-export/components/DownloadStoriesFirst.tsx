@@ -1,9 +1,9 @@
 /**
- * DownloadStoriesFirst: "Download your stories first" inside the Delete your account panel
+ * DownloadStoriesFirst: "Download stories first" inside the Delete your account panel
  * (bundle IDEAS-2, part a; idea IDEA-20261101-2).
  *
  * A writer leaving in a hurry can save every story before deleting the account, without leaving
- * the panel: "Download my stories first" makes the same files as Download my stories' defaults
+ * the panel: "Download stories first" makes the same files as Download my stories' defaults
  * (all stories, chapters and plans, as Word files), shows "We're making your files…" and then
  * "Your files are ready" with Download. The delete step stays open with everything as it was.
  * Someone with no stories sees nothing.

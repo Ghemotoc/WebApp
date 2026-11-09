@@ -60,7 +60,7 @@
   "loading": "Se încarcă documentul…",
   "loadFailed": {
     "title": "Nu am putut încărca această pagină",
-    "body": "Verifică-ți conexiunea și încearcă din nou.",
+    "body": "Verifică conexiunea și încearcă din nou.",
     "retry": "Încearcă din nou"
   },
   "notFound": {
@@ -69,7 +69,7 @@
   },
   "update": {
     "regionLabel": "Reguli actualizate",
-    "eyebrow": "Te rugăm să citești",
+    "eyebrow": "Citește schimbările",
     "titleOne": "Am actualizat {{document}}",
     "titleMany": "Am actualizat regulile",
     "change": "Versiunea {{version}} pentru {{document}}: {{summary}}",
@@ -89,7 +89,7 @@
     "orderLink": "Autorități: trimiteți un ordin de eliminare"
   },
   "country": {
-    "heading": "Țara ta: {{place}}",
+    "heading": "Țara: {{place}}",
     "yourCountry": "țara ta",
     "joinFrom": "În {{place}} te poți înscrie de la {{age}} ani.",
     "consentBelow": "Sub {{age}} ani, un părinte sau tutore trebuie să fie de acord mai întâi.",

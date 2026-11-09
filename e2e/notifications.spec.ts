@@ -7,7 +7,7 @@
  *   through the real triggers and the notification job (criteria 1 and 4);
  * - in night mode the bell's count is near-black on a white badge (accessibility check, 6 Nov 2026);
  * - the bell's badge counts the unread ones, the filter chips narrow the list, a decision says
- *   "Always on", and "Mark all as read" clears the badge (criteria 2 and 3);
+ *   "Always on", and "Mark as read" clears the badge (criteria 2 and 3);
  * - the page has no serious axe issue and no sideways scroll at 390, 768 and 1440 px, in light
  *   and night, Romanian and English (CLAUDE.md rules 9 and 21), and no doodle is drawn.
  * Test data: a throwaway account of its own (so other specs' notifications never mix in) with a
@@ -109,7 +109,7 @@ test.describe('in-app notifications (S1-E7-01)', () => {
     await page.context().close();
   });
 
-  test('the bell counts what is new, the page lists it and "Mark all as read" clears it', async ({
+  test('the bell counts what is new, the page lists it and "Mark as read" clears it', async ({
     browser,
   }) => {
     const page = await openSignedIn(browser);
@@ -133,9 +133,9 @@ test.describe('in-app notifications (S1-E7-01)', () => {
     await expect(follows).toHaveAttribute('aria-pressed', 'true');
     await expect(page.getByText('Moderation team:')).toHaveCount(0);
     await page.getByRole('button', { name: /^All/ }).click();
-    // Step 4: "Mark all as read" clears the count and the badge.
-    await page.getByRole('button', { name: 'Mark all as read' }).click();
-    await expect(page.getByText('You’re all caught up.')).toBeVisible();
+    // Step 4: "Mark as read" clears the count and the badge.
+    await page.getByRole('button', { name: 'Mark as read' }).click();
+    await expect(page.getByText('You’re caught up.')).toBeVisible();
     await expect(page.getByRole('link', { name: 'Notifications', exact: true })).toBeVisible();
     await expectNoDoodles(page);
     // Step 5: the header's Settings link opens Settings › Notifications (LOOK-5; board 6.2).

@@ -4,7 +4,7 @@
     "eyebrow": "Scriitor",
     "handleAndJoined": "@{{handle}} · Aici din {{date}}",
     "noBio": "Încă nu are o descriere.",
-    "editProfile": "Editează-ți profilul",
+    "editProfile": "Editează profilul",
     "message": "Mesaj",
     "messageLabel": "Mesaj pentru {{name}}",
     "notTakingMessages": "{{name}} nu primește mesaje acum.",
@@ -43,7 +43,7 @@
     "libraryHeading": "Ce are {{name}} în bibliotecă",
     "libraryVisibleTo": "Cine vede asta: {{audience}}.",
     "libraryChange": "Schimbă",
-    "libraryChangeLabel": "Schimbă cine îți poate vedea biblioteca",
+    "libraryChangeLabel": "Schimbă cine poate vedea biblioteca",
     "onlineLabel": "{{name}} e online"
   },
   "safety": {
@@ -69,12 +69,12 @@
     "followStory": "Urmărește povestea",
     "followingStory": "Urmărești povestea",
     "logIn": "Intră în cont ca să urmărești",
-    "readOnly": "Contul tău nu poate urmări pe nimeni deocamdată.",
+    "readOnly": "Contul nu poate urmări pe nimeni deocamdată.",
     "failed": "Nu am putut salva. Încearcă din nou."
   },
   "followers": {
     "eyebrow": "Doar tu vezi asta",
-    "title": "Urmăritorii tăi",
+    "title": "Urmăritori",
     "empty": "Încă nu te urmărește nimeni.",
     "loadFailed": "Nu am putut încărca urmăritorii. Încearcă din nou.",
     "followedOn": "din {{date}}",
@@ -90,8 +90,8 @@
     "bioSaving": "Se salvează…",
     "bioSaved": "Salvat.",
     "bioFailed": "Nu am putut salva descrierea. Încearcă din nou.",
-    "bioReadOnly": "Contul tău nu își poate schimba profilul deocamdată.",
-    "viewProfile": "Vezi-ți profilul",
+    "bioReadOnly": "Contul nu își poate schimba profilul deocamdată.",
+    "viewProfile": "Vezi profilul",
     "blockedHeading": "Conturi blocate",
     "blockedEmpty": "Nu ai blocat pe nimeni.",
     "blockedLoadFailed": "Nu am putut încărca lista. Încearcă din nou.",

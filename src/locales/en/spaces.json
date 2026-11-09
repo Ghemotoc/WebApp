@@ -55,7 +55,7 @@
     "noteModerator": "You help moderate this space.",
     "noteOwner": "You run this space.",
     "noteOtherGroup": "This space takes members from another age group, so you can read it but not join.",
-    "noteNotActive": "Your account can’t join spaces yet."
+    "noteNotActive": "This account can’t join spaces yet."
   },
   "threads": {
     "membersOnly": "Only members can post here. Join to start a thread or reply.",
@@ -141,7 +141,7 @@
     "cancel": "Cancel",
     "create": "Create space",
     "save": "Save changes",
-    "saved": "Your changes are saved.",
+    "saved": "Changes saved.",
     "notOwner": "Only the owner can change this space.",
     "classTitle": "A class space",
     "classText": "Only the class reads and posts here. Students join with the code you give them, never by asking.",
@@ -162,7 +162,7 @@
   },
   "failures": {
     "signed_out": "Log in first.",
-    "not_active": "Your account can’t do this yet.",
+    "not_active": "This account can’t do this yet.",
     "age_unknown": "We need to know your age group before you can start or join a space.",
     "age": "This space is for another age group.",
     "not_owner": "Only the space’s owner can do this.",
@@ -175,7 +175,7 @@
     "unreachable": "We couldn’t reach the server. Try again.",
     "invalid": "Check the form and try again.",
     "name": {
-      "empty": "Give your space a name.",
+      "empty": "Give the space a name.",
       "too_long": "That name is too long. Keep it to 60 characters.",
       "html": "A name can’t hold HTML tags.",
       "taken": "Another space has this name. Try another."
@@ -304,24 +304,23 @@
     }
   },
   "bannerPicture": {
-    "eyebrow": "Banner",
     "title": "Banner picture",
     "intro": "An optional picture across the top of your space. Until you add one, the space uses its colour.",
-    "none": "Your space uses its colour.",
-    "previewAlt": "Your banner picture",
+    "none": "The space uses its colour.",
+    "previewAlt": "Banner picture",
     "checking": "We’re checking your picture. Until it passes, everyone sees your space’s colour.",
     "waiting_for_person": "A person on our team will look at your picture first. Until then, everyone sees your space’s colour.",
-    "visible": "Your banner picture is up.",
+    "visible": "Banner picture is up.",
     "removed": "Our moderation team took this picture down. Your space shows its colour.",
     "upload": "Choose a banner picture",
     "hint": "JPEG, PNG or WebP, up to 5 MB. A wide picture works best.",
     "remove": "Use the colour instead",
-    "removeFailed": "We couldn’t take the picture off. Please try again.",
-    "removedNotice": "Your space uses its colour again."
+    "removeFailed": "We couldn’t take the picture off. Try again.",
+    "removedNotice": "The space uses its colour again."
   },
   "classInvite": {
     "eyebrow": "Class invite",
-    "title": "Invite your class",
+    "title": "Invite the class",
     "intro": "Students join with a code. Anyone with the code can join, so share it only with your class.",
     "resetNote": "Making a new code stops the old one straight away.",
     "worksFor": "Works for",
@@ -367,7 +366,7 @@
     },
     "qrLabel": "QR code to join the class",
     "sheetLabel": "Class invite sheet",
-    "sheetIntro": "Join our class",
+    "sheetIntro": "Join the class",
     "sheetUntil": "This code works until {{expires}}."
   },
   "joinClass": {
@@ -445,7 +444,7 @@
   },
   "joinClassLink": "Join a class",
   "classStories": {
-    "eyebrow": "Your class",
+    "eyebrow": "Class",
     "title": "Stories shared with the class",
     "note": "Only {{name}} can read these until the writer makes them public. A teacher can never make a student’s story public.",
     "empty": "No stories shared yet. To share one, open its Story settings and pick this class under “Who can read it”.",
@@ -456,14 +455,14 @@
     "legend": "Who can read it",
     "intro": "You can share this story only with one of your classes. Then only you, the class and our moderation team can read it: it isn’t in any public list or on your profile. Only you can make it public again.",
     "publicNow": "Right now everyone may read it, within its rating.",
-    "pick": "Your class",
+    "pick": "Class",
     "share": "Share only with this class",
     "sharedWith": "Only {{name}} can read it now.",
     "sharedWithDeleted": "Its class was deleted, so only you can read it now.",
     "makePublic": "Make it public",
     "saved": "Saved.",
     "failures": {
-      "missing": "We couldn’t find this story among yours.",
+      "missing": "We couldn’t find this story on this account.",
       "not_yours": "You can only share with a class you are in that isn’t locked.",
       "unreachable": "We couldn’t reach the server. Try again in a moment."
     }
@@ -503,7 +502,7 @@
     "hint_few": "{{count}} of {{limit}} characters. Plain text, no HTML.",
     "hint_other": "{{count}} of {{limit}} characters. Plain text, no HTML.",
     "save": "Save welcome note",
-    "saved": "Your welcome note is saved.",
+    "saved": "Welcome note saved.",
     "noteTitle": "Welcome to {{space}}",
     "gotIt": "Got it"
   },
@@ -530,7 +529,6 @@
     "decline": "Decline"
   },
   "logo": {
-    "eyebrow": "Logo",
     "title": "Logo (optional)",
     "intro": "Square, at least 512 px. Any picture except a real person: drawings, symbols, lettering, or photos of places and things. Every logo is checked before it shows. No logo? The space shows no picture at all.",
     "none": "No logo yet, so the space shows no picture.",
@@ -542,7 +540,7 @@
     "upload": "Choose a logo",
     "hint": "JPEG, PNG or WebP, up to 5 MB. A square picture works best.",
     "remove": "Remove",
-    "removeFailed": "We couldn’t take the logo off. Please try again.",
+    "removeFailed": "We couldn’t take the logo off. Try again.",
     "removedNotice": "The logo is off. The space shows no picture now."
   },
   "card": {

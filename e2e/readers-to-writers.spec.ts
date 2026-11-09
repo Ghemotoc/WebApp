@@ -260,7 +260,7 @@ test.describe('readers to writers (IDEAS-1 part c)', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'Lumina' })).toBeVisible();
     await selectParagraph(page);
     await page.getByRole('button', { name: 'Share quote' }).click();
-    const dialog = page.getByRole('dialog', { name: 'Your quote card' });
+    const dialog = page.getByRole('dialog', { name: 'Quote card' });
     await expect(dialog.getByRole('button', { name: 'Sage' })).toHaveAttribute(
       'aria-pressed',
       'true',

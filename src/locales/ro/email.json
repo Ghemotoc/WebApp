@@ -3,22 +3,22 @@
   "madeBy": "O aplicație de la {{companyName}}",
   "notYou": "Dacă nu ai cerut asta, poți ignora acest email. Nu se schimbă nimic.",
   "confirmation": {
-    "subject": "Confirmă-ți adresa de email",
-    "heading": "Confirmă-ți adresa de email",
+    "subject": "Confirmă adresa de email",
+    "heading": "Confirmă adresa de email",
     "body": "Mulțumim că te-ai alăturat comunității {{productName}}. Apasă butonul ca să-ți confirmi adresa de email. Până atunci poți citi povești, dar nu poți publica, comenta, posta sau trimite mesaje.",
-    "button": "Confirm adresa de email",
+    "button": "Confirmă adresa de email",
     "linkNote": "Linkul merge o singură dată și expiră după o oră."
   },
   "waitlistConfirmation": {
-    "subject": "Ești pe listă: confirmă-ți emailul",
+    "subject": "Ești pe listă: confirmă emailul",
     "heading": "Ești pe lista de așteptare",
     "body": "Mulțumim că te-ai înscris pe lista de așteptare pentru {{productName}}. Apasă butonul ca să-ți confirmi adresa de email și să-ți păstrezi locul. Când îți vine rândul, îți scriem pe email că ai intrat.",
-    "button": "Confirm adresa de email",
+    "button": "Confirmă adresa de email",
     "linkNote": "Linkul merge o singură dată și expiră după o oră."
   },
   "magicLink": {
-    "subject": "Linkul tău de conectare",
-    "heading": "Linkul tău de conectare",
+    "subject": "Link de conectare",
+    "heading": "Link de conectare",
     "body": "Apasă butonul ca să te conectezi la {{productName}}. Nu ai nevoie de parolă.",
     "button": "Mă conectez",
     "linkNote": "Linkul merge o singură dată și expiră după o oră."
@@ -31,21 +31,21 @@
     "linkNote": "Linkul merge o singură dată și expiră după o oră."
   },
   "passwordChanged": {
-    "subject": "Parola ta a fost schimbată",
-    "heading": "Parola ta a fost schimbată",
+    "subject": "Parola a fost schimbată",
+    "heading": "Parola a fost schimbată",
     "body": "Parola contului tău {{productName}} tocmai a fost schimbată și te-am deconectat de pe toate celelalte dispozitive. Dacă nu ai fost tu, resetează parola acum.",
     "button": "Resetează parola",
     "linkNote": "Vezi în Setări dispozitivele conectate."
   },
   "emailChange": {
     "subject": "Codul pentru schimbarea emailului",
-    "heading": "Codul tău pentru schimbarea adresei de email",
+    "heading": "Codul pentru schimbarea adresei de email",
     "body": "Cineva a cerut schimbarea adresei de email a unui cont {{productName}}. Trimitem un cod la adresa actuală și altul la cea nouă. Scrie-le pe amândouă în Setări, iar schimbarea se face doar după ce sunt corecte amândouă. Până atunci, adresa actuală merge în continuare.",
-    "codeLabel": "Codul tău pentru această adresă:",
+    "codeLabel": "Codul pentru această adresă:",
     "linkNote": "Codul merge o singură dată și expiră după o oră."
   },
   "notificationEmails": {
-    "subjectDigest": "Rezumatul tău zilnic de pe {{productName}}",
+    "subjectDigest": "Rezumat zilnic de pe {{productName}}",
     "subjectDecision": "O decizie de moderare despre ceva ce ai postat",
     "digestIntro": "Iată ce s-a întâmplat pe {{productName}} de ieri încoace:",
     "instantIntro": "Ceva nou pe {{productName}}:",
@@ -74,11 +74,11 @@
     "loginMethodRemoved": "Un mod de autentificare a fost deconectat de la contul tău. Le vezi pe cele rămase în Setări, la Moduri de autentificare. Dacă nu ai fost tu, schimbă-ți parola și scrie-ne.",
     "subjectClassArchived": "Spațiul clasei a fost arhivat: păstrează copii ale diplomelor",
     "classArchived": "Spațiul clasei „{{space}}” a fost arhivat. Salvează-ți copii ale diplomelor în 30 de zile: după aceea, numele reale tipărite pe ele se șterg.",
-    "subjectDataRequestConfirm": "Tu ai trimis această cerere privind datele tale?",
+    "subjectDataRequestConfirm": "Tu ai trimis această cerere privind datele?",
     "dataRequestConfirm": "Am primit o cerere privind datele din contul tău ({{reference}}) prin email sau poștă, nu din contul tău. Intră în cont și deschide Setări, la Cereri privind datele, ca să ne spui dacă tu ai trimis-o. Dacă nu, spune-ne acolo: nu îi vom da curs.",
     "subjectDataRequestExtended": "Avem nevoie de mai mult timp pentru cererea ta privind datele",
     "dataRequestExtended": "Avem nevoie de mai mult timp ca să răspundem la cererea ta privind datele {{reference}}. Îți răspundem până pe {{deadline}}. Motivul: {{reason}}",
-    "subjectDataRequestCopyReady": "Copia datelor tale e gata",
+    "subjectDataRequestCopyReady": "Copia datelor e gata",
     "dataRequestCopyReady": "Copia datelor tale pe care ai cerut-o ({{reference}}) e gata. Intră în cont și deschide Setări, la Cereri privind datele, ca s-o descarci. Rămâne acolo șapte zile, apoi se șterge. Nu îți trimitem niciodată datele prin email.",
     "pictureOpenedByStaff": "{{who}} a deschis fișierul original al unei imagini încărcate. Fiecare imagine deschisă apare în jurnalul de audit din site-ul echipei.",
     "subjectPictureOpenedByStaff": "Un membru al echipei a deschis o imagine încărcată",
@@ -89,7 +89,7 @@
     "messageOpen": "Deschide conversația: {{link}}",
     "messageWhy": "Primești aceste emailuri pentru că așa ai ales în Setări, la Mesaje, unde poți seta și orele de liniște: {{link}}",
     "waitlistAdmitted": "Ți-a venit rândul: contul tău {{productName}} e deschis. Acum poți scrie, citi, comenta și posta.",
-    "subjectWaitlistAdmitted": "Ai intrat: contul tău {{productName}} e deschis",
+    "subjectWaitlistAdmitted": "Ai intrat: contul {{productName}} e deschis",
     "waitlistSignIn": "Conectează-te ca să începi: {{link}}"
   },
   "parentConsent": {
@@ -100,9 +100,9 @@
     "agreedSubject": "Ai fost de acord cu contul lui @{{handle}}",
     "agreedBody": "Mulțumim. Ai fost de acord pe {{date}}, așa că @{{handle}} poate acum să publice, să comenteze, să posteze și să trimită mesaje.",
     "agreedWithdraw": "Îți poți retrage acordul oricând, de pe aceeași pagină: {{link}}",
-    "withdrawnSubject": "Ți-ai retras acordul pentru @{{handle}}",
+    "withdrawnSubject": "Acord retras pentru @{{handle}}",
     "withdrawnBody": "Am făcut contul lui @{{handle}} doar pentru citit. Poate citi în continuare povești, dar nu poate publica, comenta, posta sau trimite mesaje. Dacă ai întrebări despre ce urmează, răspunde la acest email.",
-    "refusedSubject": "Contul tău nu va fi activat",
+    "refusedSubject": "Contul nu va fi activat",
     "refusedBody": "Părintele sau tutorele tău nu a fost de acord, așa că nu îți activăm contul {{productName}} și l-am șters, împreună cu datele lui. Te poți înscrie din nou mai târziu și poți ruga un alt părinte sau tutore.",
     "agreedSpotlight": "Ați fost de acord și să recomandăm contul @{{handle}} și poveștile lui altor cititori, de exemplu în Scriitori noi în ascensiune. Ca să retrageți doar acest acord, folosiți pagina: {{spotlightLink}}",
     "spotlightRequestSubject": "Putem recomanda contul @{{handle}} altor cititori?",
@@ -123,7 +123,7 @@
     "copySubject": "Copia datelor contului @{{handle}} este gata",
     "copyBody": "Ai confirmat cererea {{reference}}, așa că copia datelor contului @{{handle}} te așteaptă până pe {{date}}.",
     "copyAction": "O deschizi de aici: {{link}}",
-    "copyOnce": "Linkul merge o singură dată: după ce îl deschizi, ai o oră să descarci fișierele. Te rugăm să nu redirecționezi acest email."
+    "copyOnce": "Linkul merge o singură dată: după ce îl deschizi, ai o oră să descarci fișierele. Nu redirecționa acest email."
   },
   "teacherCheck": {
     "linkSubject": "Confirmă adresa de la școală pentru {{productName}}",
@@ -132,7 +132,7 @@
     "linkNotYou": "Nu ai cerut asta? Ignoră acest email și nu se schimbă nimic. Linkul nu mai funcționează după o vreme."
   },
   "supportTickets": {
-    "acknowledgementSubject": "Am primit cererea ta [#{{number}}] · {{productName}}",
+    "acknowledgementSubject": "Cerere primită [#{{number}}] · {{productName}}",
     "acknowledgementBody": "Îți mulțumim că ne-ai scris. Cererea ta este #{{number}}: „{{subject}}”.\n\nO persoană din echipa de asistență citește fiecare cerere. De obicei răspundem într-o zi lucrătoare și întotdeauna în cel mult o lună.\n\nCa să adaugi ceva, răspunde la acest email și păstrează [#{{number}}] în subiect.",
     "acknowledgementInApp": "O poți citi și îi poți răspunde și la Cererile tale de asistență: {{link}}",
     "replySubject": "Re: {{subject}} [#{{number}}]",

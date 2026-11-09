@@ -59,11 +59,11 @@ async function openBlock(browser: Browser, persona: SignInPersonaName) {
   const page = await context.newPage();
   await page.goto('/settings#download-my-stories');
   const block = page.locator('#download-my-stories');
-  await expect(block.getByRole('heading', { name: 'Download my stories' })).toBeVisible();
+  await expect(block.getByRole('heading', { name: 'Download stories' })).toBeVisible();
   return { context, page, block };
 }
 
-test.describe('Download my stories', () => {
+test.describe('Download stories', () => {
   test.describe.configure({ mode: 'serial' });
   test.beforeAll(() => resetExports());
   test.afterAll(() => resetExports());
@@ -78,8 +78,8 @@ test.describe('Download my stories', () => {
       .getByLabel('Story', { exact: true })
       .selectOption('00000000-0000-4000-9000-000000000002');
     await block.getByLabel('The plan from Story Atlas', { exact: true }).uncheck();
-    await block.getByRole('button', { name: 'Get my files' }).click();
-    await expect(block.getByText('Your files are ready.')).toBeVisible({ timeout: 30_000 });
+    await block.getByRole('button', { name: 'Get files' }).click();
+    await expect(block.getByText('The files are ready.')).toBeVisible({ timeout: 30_000 });
     await expect(
       block.getByText('“The Girl Who Fixed Radios”: the chapters as a Word file'),
     ).toBeVisible();
@@ -93,7 +93,7 @@ test.describe('Download my stories', () => {
       'The Girl Who Fixed Radios',
     );
     // Step 3: the same choice again, unchanged, offers the files already made (criterion 4).
-    await block.getByRole('button', { name: 'Get my files' }).click();
+    await block.getByRole('button', { name: 'Get files' }).click();
     await expect(block.getByText(/Nothing has changed since you made these/)).toBeVisible();
     expect(runSql(`select count(*) from public.exports where kind = 'my_stories';`).trim()).toBe(
       '1',
@@ -109,7 +109,7 @@ test.describe('Download my stories', () => {
     // Step 1: "All my stories" is the first choice; add the JSON copy to the chapters and plans.
     await block.getByLabel('Story', { exact: true }).selectOption({ index: 0 });
     await block.getByLabel('A machine-readable copy (JSON)').check();
-    await block.getByRole('button', { name: 'Get my files' }).click();
+    await block.getByRole('button', { name: 'Get files' }).click();
     await expect(block.getByText(/2 stories: .* in one ZIP/)).toBeVisible({ timeout: 30_000 });
     // Step 2: the ZIP holds each story's Word file and plan, and the JSON copy.
     const downloadStarted = page.waitForEvent('download');
@@ -138,13 +138,13 @@ test.describe('Download my stories', () => {
       .getByLabel('Story', { exact: true })
       .selectOption('00000000-0000-4000-9000-000000000002');
     await block.getByLabel('The plan from Story Atlas', { exact: true }).uncheck();
-    await block.getByLabel('Only the chapters I choose').check();
-    await block.getByRole('button', { name: 'Get my files' }).click();
+    await block.getByLabel('Chosen chapters only').check();
+    await block.getByRole('button', { name: 'Get files' }).click();
     await expect(
       block.getByText('Choose at least one chapter, or pick All chapters.'),
     ).toBeVisible();
     await block.getByLabel('Chapter 2: The second station (draft)').check();
-    await block.getByRole('button', { name: 'Get my files' }).click();
+    await block.getByRole('button', { name: 'Get files' }).click();
     await expect(block.getByText(/1 chosen chapter as a Word file/)).toBeVisible({
       timeout: 30_000,
     });
@@ -164,7 +164,7 @@ test.describe('Download my stories', () => {
     const { context, block } = await openBlock(browser, 'adult_writer');
     await block.getByLabel('The chapters', { exact: true }).uncheck();
     await block.getByLabel('The plan from Story Atlas', { exact: true }).uncheck();
-    await block.getByRole('button', { name: 'Get my files' }).click();
+    await block.getByRole('button', { name: 'Get files' }).click();
     await expect(block.getByText('Tick at least one thing to include.')).toBeVisible();
     await context.close();
   });
@@ -178,7 +178,7 @@ test.describe('Download my stories', () => {
       .selectOption('00000000-0000-4000-9000-000000000002');
     await block.getByLabel('The plan from Story Atlas', { exact: true }).uncheck();
     await block.getByLabel('PDF', { exact: true }).check();
-    await block.getByRole('button', { name: 'Get my files' }).click();
+    await block.getByRole('button', { name: 'Get files' }).click();
     await expect(block.getByText('“The Girl Who Fixed Radios”: the chapters as a PDF')).toBeVisible(
       { timeout: 30_000 },
     );
@@ -201,7 +201,7 @@ test.describe('Download my stories', () => {
     ).toBe('4');
     const { context, page } = await openBlock(browser, 'adult_writer');
     await page.goto('/notifications');
-    await page.getByRole('link', { name: 'Download your stories' }).first().click();
+    await page.getByRole('link', { name: 'Download stories' }).first().click();
     await expect(page).toHaveURL(/\/settings#download-my-stories$/);
     await expect(page.locator('#download-my-stories')).toBeInViewport();
     await context.close();
@@ -210,7 +210,7 @@ test.describe('Download my stories', () => {
   test('a reader with no stories is told there is nothing to download yet', async ({ browser }) => {
     const { context, block } = await openBlock(browser, 'kid_14_ok');
     await expect(block.getByText(/You haven’t started a story yet/)).toBeVisible();
-    await expect(block.getByRole('button', { name: 'Get my files' })).toHaveCount(0);
+    await expect(block.getByRole('button', { name: 'Get files' })).toHaveCount(0);
     await context.close();
   });
 

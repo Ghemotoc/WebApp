@@ -159,11 +159,11 @@ test.describe('parental consent (S1-E2-03)', () => {
     const page = await openAsWriter(browser, writers.asking, '/legal');
     await page.getByRole('link', { name: 'Ask them' }).click();
     await expect(page).toHaveURL(/\/parent-consent$/);
-    await page.getByRole('textbox', { name: 'Their email' }).fill(writers.asking.email);
+    await page.getByRole('textbox', { name: 'Email' }).fill(writers.asking.email);
     await page.getByRole('button', { name: 'Send the email' }).click();
     // The writer's own email is refused, so a child can't agree for themselves.
     await expect(page.getByText('That’s your own email.', { exact: false })).toBeVisible();
-    await page.getByRole('textbox', { name: 'Their email' }).fill(parentEmail);
+    await page.getByRole('textbox', { name: 'Email' }).fill(parentEmail);
     await page.getByRole('button', { name: 'Send the email' }).click();
     await expect(page.getByText('We emailed your parent or guardian')).toBeVisible();
     await expect(page.getByText(/If nobody says yes by/)).toBeVisible();
@@ -193,7 +193,7 @@ test.describe('parental consent (S1-E2-03)', () => {
 
   test('the writer sees the account is ready and is told', async ({ browser }) => {
     const page = await openAsWriter(browser, writers.asking, '/parent-consent');
-    await expect(page.getByText('Your account is ready')).toBeVisible();
+    await expect(page.getByText('Account ready')).toBeVisible();
     await page.goto('/notifications');
     await expect(page.getByText(/agreed/).first()).toBeVisible();
   });
@@ -202,7 +202,7 @@ test.describe('parental consent (S1-E2-03)', () => {
     const email = await waitForEmail(parentEmail, 15_000, 'agreed');
     const path = /\/parent-consent\/answer#[A-Za-z0-9_-]+/.exec(email.Text)?.[0] ?? '';
     const page = await openAsParent(browser, path);
-    await page.getByRole('button', { name: 'Withdraw my consent' }).click();
+    await page.getByRole('button', { name: 'Withdraw consent' }).click();
     await page.getByRole('button', { name: 'Yes, withdraw it' }).click();
     await expect(page.getByText('You withdrew your consent')).toBeVisible();
     expect(accountState(writers.asking)).not.toBe('active');
@@ -224,7 +224,7 @@ test.describe('parental consent (S1-E2-03)', () => {
       runSql(`select deleted_at is not null from public.profiles where id = '${userId}';`).trim(),
     ).toBe('t');
     const told = await waitForEmail(writers.refused.email, 15_000, 'activated');
-    expect(told.Subject).toBe('Your account won’t be activated');
+    expect(told.Subject).toBe('The account won’t be activated');
   });
 
   test('a moderator withdraws a consent when a parent asks by email', async ({ browser }) => {

@@ -9,14 +9,14 @@
     "write": "Write"
   },
   "empty": {
-    "title": "Plan your first story",
+    "title": "Plan a first story",
     "description": "Story Atlas keeps each story’s plan beside its chapters: what it’s about, how long it should be and where you are with it. Only you see it.",
     "action": "New story"
   },
-  "signedOut": "Sign in to plan your stories.",
+  "signedOut": "Sign in to plan stories.",
   "notFound": "We couldn’t find that story among yours. It may have been deleted.",
   "loadFailed": "Your plan didn’t load. Check your connection and try again.",
-  "privateNote": "Only you can see your plan.",
+  "privateNote": "Only you can see this plan.",
   "save": {
     "saving": "Saving…",
     "saved": "Saved",
@@ -48,7 +48,7 @@
   "publishingRoute": {
     "undecided": "Not decided yet",
     "serial_here": "Chapter by chapter on {{productName}}",
-    "complete_here": "All at once on {{productName}}",
+    "complete_here": "At once on {{productName}}",
     "here_and_elsewhere": "On {{productName}} and elsewhere"
   },
   "summary": {
@@ -62,7 +62,7 @@
   "words": {
     "heading": "Words",
     "count": "{{written}} of {{target}} words",
-    "percent": "{{percent}}% of your word target"
+    "percent": "{{percent}}% of the word target"
   },
   "chapters": {
     "heading": "Chapters",
@@ -113,7 +113,7 @@
     "filterHint": "By name, or by what they’re also known as.",
     "none": "No characters yet. Add the first with New character.",
     "noMatch": "No one matches “{{filter}}”.",
-    "pick": "Choose a character to open their sheet.",
+    "pick": "Choose a character to open the sheet.",
     "notFound": "That character isn’t in this story any more.",
     "createFailed": "The character wasn’t added. Check your connection and try again.",
     "name": "Name",
@@ -163,8 +163,8 @@
     "firstAppearance": "First appearance",
     "firstAppearanceNone": "Not picked yet",
     "custom": {
-      "heading": "Your own fields",
-      "none": "No fields of your own yet.",
+      "heading": "Custom fields",
+      "none": "No custom fields yet.",
       "manage": "Add or remove your own fields on the at-a-glance page"
     },
     "picture": {
@@ -196,9 +196,9 @@
     }
   },
   "fieldsSection": {
-    "heading": "Your character fields",
+    "heading": "Character fields",
     "hint": "A field you add here shows on every character’s sheet in this story, such as “Turned by”.",
-    "none": "No fields of your own yet.",
+    "none": "No custom fields yet.",
     "name": "New field",
     "add": "Add field",
     "remove": "Remove",
@@ -225,7 +225,7 @@
       "enemy_of": "Enemy of",
       "resents": "Resents",
       "killed": "Killed",
-      "custom": "Custom (your own label)"
+      "custom": "Custom (own label)"
     },
     "sentences": {
       "parent_of": "{{from}} is the parent of {{to}}",
@@ -257,17 +257,17 @@
       "to": "Other character",
       "pickCharacter": "Pick a character",
       "kind": "Relationship",
-      "customLabel": "Your label",
+      "customLabel": "Label",
       "customHint": "For example “rival of” or “owes a debt to”.",
       "note": "Note (optional)",
       "button": "Add relationship",
       "added": "Relationship added.",
       "pickBoth": "Pick both characters.",
-      "labelRequired": "Write your label for this relationship.",
+      "labelRequired": "Write a label for this relationship.",
       "failed": "The relationship wasn’t saved. Check your connection and try again."
     },
     "list": {
-      "heading": "All relationships",
+      "heading": "Relationships",
       "sheetHeading": "Relationships",
       "none": "No relationships yet.",
       "delete": "Delete",
@@ -552,7 +552,7 @@
       "todo": "To-do",
       "decision": "Decision"
     },
-    "listHeading": "Your notes",
+    "listHeading": "Notes",
     "filterLabel": "Show",
     "filters": {
       "open": "Open ({{count}})",
@@ -675,7 +675,7 @@
         "characters": "Each character’s page, with only the parts of the sheet you open.",
         "relationship_map": "The map of how your characters are connected, with its list.",
         "family_tree": "The family tree.",
-        "bible": "Your story world, in reading mode.",
+        "bible": "The story world, in reading mode.",
         "timeline": "The events on your timeline, in order."
       }
     },
@@ -726,7 +726,7 @@
       "none": "No characters to show yet."
     },
     "character": {
-      "back": "All characters",
+      "back": "Characters",
       "connections": "Connections",
       "notShown": "This character isn’t shown here."
     },

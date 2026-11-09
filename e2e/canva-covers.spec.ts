@@ -126,7 +126,7 @@ test.describe('design a cover in Canva (S1-E3-12)', () => {
     ).toBe('1');
     await tab.getByRole('link', { name: 'Return' }).click();
     // Criteria 2 and 3: back, uploaded through the picture check and saved as the cover.
-    await expect(tab.getByText('Your Canva cover is saved.')).toBeVisible();
+    await expect(tab.getByText('Canva cover saved.')).toBeVisible();
     // The seed story is All ages, so the cover waits for a moderator (ADMIN-2e1b).
     await expect(tab.getByText(/up to two days when a person/)).toBeVisible();
     expect(

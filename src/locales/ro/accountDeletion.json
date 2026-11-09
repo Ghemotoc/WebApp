@@ -1,14 +1,14 @@
 {
   "settings": {
-    "heading": "Șterge-ți contul",
+    "heading": "Șterge contul",
     "intro_one": "Contul tău se închide imediat. Îl ștergem definitiv după {{count}} zi. Poți anula dacă te conectezi până atunci.",
     "intro_few": "Contul tău se închide imediat. Îl ștergem definitiv după {{count}} zile. Poți anula dacă te conectezi până atunci.",
     "intro_other": "Contul tău se închide imediat. Îl ștergem definitiv după {{count}} de zile. Poți anula dacă te conectezi până atunci.",
     "storiesLine": "Poveștile și capitolele tale se șterg odată cu contul.",
     "downloadFirstBefore": "Poate vrei să",
-    "downloadFirstLink": "descarci mai întâi datele tale",
+    "downloadFirstLink": "descarci mai întâi datele",
     "downloadFirstAfter": ".",
-    "start": "Șterge-mi contul",
+    "start": "Șterge contul",
     "webRoute": "Nu ai aplicația? Îți poți șterge contul și pe site-ul nostru, la {{address}}.",
     "loadFailed": "Nu am putut verifica contul tău. Reîncarcă pagina ca să încerci din nou."
   },
@@ -21,7 +21,7 @@
       "legalCase": "Dacă ceva ce ai postat face parte dintr-un caz legal deschis, păstrăm doar acel lucru până se încheie cazul.",
       "records": "Raportările și deciziile de moderare despre contul tău se păstrează cât spune programul nostru de păstrare a datelor, fără profilul tău."
     },
-    "downloadFirst": "Descarcă mai întâi datele mele",
+    "downloadFirst": "Descarcă mai întâi datele",
     "logInAgainLabel": "Conectează-te din nou ca să confirmi",
     "logInAgainHint": "Așa nimeni altcineva nu-ți poate șterge contul pe un dispozitiv unde ai rămas conectat.",
     "otherWays": "Conectează-te din nou cu",
@@ -30,7 +30,7 @@
     "passkey": "Folosește o cheie de acces",
     "confirmed": "Te-ai conectat din nou. Acum îți poți șterge contul.",
     "keep": "Păstrez contul",
-    "delete": "Șterge-mi contul",
+    "delete": "Șterge contul",
     "failures": {
       "wrongPassword": "Parola nu e corectă. Încearcă din nou.",
       "cancelled": "Fereastra pentru cheia de acces s-a închis. Încearcă din nou când ești gata.",
@@ -41,28 +41,28 @@
     }
   },
   "closing": {
-    "heading": "Contul tău se închide",
+    "heading": "Contul se închide",
     "body": "Îl ștergem definitiv pe {{date}}. Până atunci, nimeni nu-ți poate vedea profilul, poveștile sau comentariile.",
     "changeMind": "Te-ai răzgândit? Păstrează-ți contul și totul revine cum era.",
     "keep": "Păstrez contul",
     "logOut": "Deconectează-te",
     "keepFailed": "Nu am putut păstra contul. Încearcă din nou peste un minut.",
-    "kept": "Bine ai revenit. Contul tău e din nou deschis."
+    "kept": "Bine ai revenit. Contul e din nou deschis."
   },
   "page": {
-    "heading": "Șterge-ți contul",
+    "heading": "Șterge contul",
     "intro": "Îți poți șterge contul aici, pe site, fără aplicație.",
     "stepsLabel": "Cum",
     "steps": {
-      "logIn": "Conectează-te la contul tău.",
+      "logIn": "Conectează-te.",
       "open": "Deschide Setări › Șterge contul.",
-      "confirm": "Conectează-te din nou ca să confirmi, apoi alege Șterge-mi contul."
+      "confirm": "Conectează-te din nou ca să confirmi, apoi alege Șterge contul."
     },
     "after_one": "Contul tău se închide imediat și îl ștergem definitiv după {{count}} zi. Până atunci, te poți conecta și poți anula.",
     "after_few": "Contul tău se închide imediat și îl ștergem definitiv după {{count}} zile. Până atunci, te poți conecta și poți anula.",
     "after_other": "Contul tău se închide imediat și îl ștergem definitiv după {{count}} de zile. Până atunci, te poți conecta și poți anula.",
     "logIn": "Conectează-te",
     "noAccess": "Nu te poți conecta? Scrie-ne la {{email}} și te ajutăm.",
-    "title": "Șterge-ți contul"
+    "title": "Șterge contul"
   }
 }

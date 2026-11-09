@@ -173,7 +173,6 @@ function BookingHeading() {
   const { t } = useSponsorTranslation();
   return (
     <div className="flex flex-col gap-1">
-      <Eyebrow>{t('booking.eyebrow')}</Eyebrow>
       <h3 id="booking-heading" className="m-0 font-heading text-[22px] font-bold text-heading">
         {t('booking.heading')}
       </h3>

@@ -68,7 +68,6 @@ export function SpaceBannerPictureCard({ space }: { space: Space }) {
   if (!isOn('picture_uploads', false)) return null;
   return (
     <SpaceFormCard
-      eyebrow={t('bannerPicture.eyebrow')}
       title={t('bannerPicture.title')}
       intro={t('bannerPicture.intro')}
       headingLevel="h2"

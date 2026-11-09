@@ -16,7 +16,6 @@
  */
 import { useSearchParams } from 'react-router';
 
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { brand } from '@/config/brand';
 import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
@@ -53,10 +52,9 @@ export function SearchPage() {
   return (
     <PageContainer className="tmc-rise flex flex-col gap-8 pt-10 pb-14">
       <title>{t('page.documentTitle', { productName: brand.productName })}</title>
-      {/* The eyebrow, the title and the glass search bar, centred (board Search, bundle G7c). */}
+      {/* The title and the glass search bar, centred (board Search, bundle G7c). */}
       <div className="mx-auto flex w-full max-w-[900px] flex-col gap-7">
         <header className="flex flex-col items-center gap-3 text-center">
-          <Eyebrow>{t('page.eyebrow')}</Eyebrow>
           <h1 className="m-0 min-w-0 font-heading text-[clamp(36px,5.2vw,64px)] leading-[1.02] font-bold tracking-[-0.03em] break-words text-heading">
             {heading}
           </h1>

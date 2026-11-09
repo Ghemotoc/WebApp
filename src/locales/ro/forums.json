@@ -1,7 +1,7 @@
 {
-  "eyebrow_one": "Forumuri · {{count, number}} discuție",
-  "eyebrow_few": "Forumuri · {{count, number}} discuții",
-  "eyebrow_other": "Forumuri · {{count, number}} de discuții",
+  "eyebrow_one": "{{count, number}} discuție",
+  "eyebrow_few": "{{count, number}} discuții",
+  "eyebrow_other": "{{count, number}} de discuții",
   "title": "Forumuri",
   "intro": "Pune întrebări despre scris, fă schimb de păreri și cunoaște alți scriitori. Oricine poate citi forumurile. Ca să scrii, ai nevoie de un cont.",
   "loadFailed": "Nu am putut încărca forumurile. Verifică-ți conexiunea și încearcă din nou.",
@@ -106,19 +106,18 @@
   },
   "editor": {
     "title": "Titlu",
-    "body": "Mesajul tău",
-    "reply": "Răspunsul tău",
+    "body": "Mesaj",
+    "reply": "Răspuns",
     "help": "Doar formatare simplă: aldine, cursive, linkuri, citate și liste.",
     "counter": "{{count}} / {{limit}}",
     "counterLabel": "{{count}} din {{limit}} caractere folosite"
   },
   "reply": {
-    "eyebrow": "Răspuns",
-    "heading": "Răspunsul tău",
+    "heading": "Răspuns",
     "post": "Trimite răspunsul",
     "logIn": "Intră în cont ca să răspunzi",
-    "notActive": "Contul tău nu poate scrie încă.",
-    "posted": "Răspunsul tău a apărut ca #{{number}}.",
+    "notActive": "Contul nu poate scrie încă.",
+    "posted": "Răspuns publicat ca #{{number}}.",
     "quoted_one": "{{count}} postare citată",
     "quoted_few": "{{count}} postări citate",
     "quoted_other": "{{count}} de postări citate",
@@ -139,7 +138,7 @@
   },
   "failures": {
     "signed_out": "Intră mai întâi în cont.",
-    "not_active": "Contul tău nu poate scrie acum.",
+    "not_active": "Contul nu poate scrie acum.",
     "not_mine": "Doar autorul poate modifica un mesaj.",
     "too_many_one": "Ai scris mult în ultima oră. Așteaptă {{count}} minut și încearcă din nou.",
     "too_many_few": "Ai scris mult în ultima oră. Așteaptă {{count}} minute și încearcă din nou.",
@@ -177,7 +176,7 @@
   "unread": {
     "new": "Postări noi de la ultima vizită",
     "none": "Nicio postare nouă",
-    "markAll": "Marchează tot ca citit",
+    "markAll": "Marchează ca citit",
     "mark": "Marchează ca citit",
     "markLabel": "Marchează ca citit: {{name}}",
     "markFailed": "Nu am putut marca drept citit. Încearcă din nou."
@@ -246,15 +245,15 @@
     "intro": "Apare sub postările tale de pe forum pe ecranele mai mari și pe profilul tău. Până la 300 de caractere, trei rânduri și o imagine statică.",
     "whereItShows": "Apare sub postările de pe forum ale lui {{handle}} pe ecranele mai mari. Până la 300 de caractere, trei rânduri și o imagine statică.",
     "pictureAlt": "Imaginea din semnătura lui {{name}}",
-    "previewAlt": "Imaginea din semnătura ta",
-    "wordsLabel": "Semnătura ta",
+    "previewAlt": "Imaginea din semnătură",
+    "wordsLabel": "Semnătură",
     "wordsHint": "Text simplu, până la {{max}} de caractere și {{maxLines}} rânduri. Linkurile nu se pot deschide de aici.",
     "count": "{{count}} din {{max}} de caractere, {{lines}} din {{maxLines}} rânduri",
     "tooLong": "Ai {{count}} de caractere. O semnătură poate avea cel mult {{max}}.",
     "tooManyLines": "Ai {{lines}} rânduri. O semnătură poate avea cel mult {{maxLines}}.",
     "save": "Salvează semnătura",
     "saving": "Se salvează…",
-    "saved": "Semnătura ta e salvată.",
+    "saved": "Semnătură salvată.",
     "loadFailed": "Nu am putut încărca semnătura. Încearcă din nou peste puțin timp.",
     "failed": {
       "too_long": "O semnătură poate avea cel mult 300 de caractere.",
@@ -267,7 +266,7 @@
     "pictureLabel": "Alege o imagine pentru semnătură",
     "pictureHint": "O singură imagine statică JPEG, PNG sau WebP, până la 1 MB. Imaginile care se mișcă nu sunt permise. Ceilalți o văd după ce trece verificarea imaginilor.",
     "pictureState": {
-      "visible": "Imaginea ta a trecut verificarea.",
+      "visible": "Imaginea a trecut verificarea.",
       "checking": "Imaginea ta e în verificare. Până atunci doar tu o poți vedea.",
       "waiting_for_person": "Cineva din echipa de moderare se va uita la imaginea ta înainte să o poată vedea ceilalți.",
       "removed": "Imaginea ta a fost ștearsă de echipa de moderare."

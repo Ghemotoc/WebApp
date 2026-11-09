@@ -1,6 +1,5 @@
 {
   "settings": {
-    "eyebrow": "Confidențialitate",
     "heading": "Confidențialitate",
     "intro": "Alege ce pot vedea alții despre tine. Modificările se salvează pe loc.",
     "under18": "Ai sub 18 ani, așa că fiecare setare de aici a pornit de la varianta cea mai privată. Le poți schimba oricând.",
@@ -9,7 +8,7 @@
     "saveFailed": "Nu s-a salvat. Verifică conexiunea și încearcă din nou."
   },
   "profile": {
-    "legend": "Cine îți poate vedea profilul",
+    "legend": "Cine poate vedea profilul",
     "everyone": "Oricine, inclusiv cei fără cont",
     "members": "Doar cei care au cont",
     "people_i_follow": "Doar oamenii pe care îi urmăresc",
@@ -26,7 +25,7 @@
     "dot": "Online"
   },
   "library": {
-    "legend": "Cine îți poate vedea biblioteca",
+    "legend": "Cine poate vedea biblioteca",
     "only_me": "Doar eu",
     "people_i_follow": "Oamenii pe care îi urmăresc",
     "everyone": "Oricine",
@@ -35,7 +34,7 @@
   "libraryNote": {
     "only_me": {
       "lead": "Privat.",
-      "body": "Doar tu îți vezi biblioteca."
+      "body": "Doar tu vezi biblioteca."
     },
     "people_i_follow": {
       "lead": "Împărtășit.",
@@ -46,7 +45,7 @@
       "body": "Oricine îți vede biblioteca pe profil."
     },
     "change": "Schimbă",
-    "changeLabel": "Schimbă cine îți poate vedea biblioteca"
+    "changeLabel": "Schimbă cine poate vedea biblioteca"
   },
   "keep": {
     "heading": "Cât timp păstrăm datele",
@@ -78,7 +77,7 @@
     "label": "Recomandă-mă pe mine și poveștile mele altor oameni",
     "hint": "Așa te pot găsi cititorii în Scriitori de urmărit și Scriitori noi în ascensiune. Dacă o oprești, ieși imediat din aceste liste. E pornită pentru adulți și oprită pentru cei sub 18 ani.",
     "askParent": "Ai sub 16 ani, așa că te recomandăm doar dacă spune da și părintele sau tutorele tău. Îi trimitem o singură întrebare pe email.",
-    "askButton": "Întreabă-mi părintele",
+    "askButton": "Întreabă un părinte",
     "waiting": "Așteptăm răspunsul părintelui tău. Nu te recomandăm până nu spune da.",
     "askAgain": "Trimite emailul din nou",
     "sent": "Trimis. I-am scris părintelui sau tutorelui tău.",
@@ -95,9 +94,9 @@
     }
   },
   "readerLevel": {
-    "legend": "Nivelul tău de cititor",
+    "legend": "Nivel de cititor",
     "hint": "Nivelul vine din capitolele citite și poveștile terminate. Ascuns înseamnă că doar tu îl vezi pe profil.",
     "hidden": "Ascuns",
-    "shown": "Arată-l pe profilul meu"
+    "shown": "Arată-l pe profil"
   }
 }

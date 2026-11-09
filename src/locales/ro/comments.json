@@ -22,11 +22,11 @@
     "postReply": "Publică răspunsul",
     "cancel": "Renunță",
     "kind": "Fii blând. Fiecare raportare e citită de un om.",
-    "posted": "Comentariul tău a apărut.",
+    "posted": "Comentariu publicat.",
     "paragraphLabel": "Comentează acest paragraf"
   },
   "failures": {
-    "read_only": "Contul tău nu poate comenta încă.",
+    "read_only": "Contul nu poate comenta încă.",
     "too_many_one": "Ai publicat multe comentarii. Așteaptă {{count}} minut până la următorul.",
     "too_many_few": "Ai publicat multe comentarii. Așteaptă {{count}} minute până la următorul.",
     "too_many_other": "Ai publicat multe comentarii. Așteaptă {{count}} de minute până la următorul.",
@@ -70,7 +70,7 @@
       "star": "Stea"
     },
     "failures": {
-      "read_only": "Contul tău nu poate reacționa încă.",
+      "read_only": "Contul nu poate reacționa încă.",
       "other": "Nu am putut salva reacția. Verifică conexiunea și încearcă din nou."
     }
   },
@@ -78,7 +78,7 @@
     "label": "Vot negativ",
     "sent": "Vot negativ trimis. E privat: nimeni nu vede un număr, nici măcar scriitorul. Doar moderatorii se uită la el.",
     "failures": {
-      "read_only": "Contul tău nu poate da încă vot negativ.",
+      "read_only": "Contul nu poate da încă vot negativ.",
       "other": "Nu am putut salva votul negativ. Verifică conexiunea și încearcă din nou."
     }
   },

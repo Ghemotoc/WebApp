@@ -3,7 +3,7 @@
  *
  * Who runs it: `npm run test:e2e` (Supabase started first).
  * What it proves:
- * - a member finds "Your support requests" in Settings, asks for help and gets a numbered ticket;
+ * - a member finds "Support requests" in Settings, asks for help and gets a numbered ticket;
  * - support finds it in the inbox, sees the age group (never the year of birth), shows the email,
  *   changes the status, priority, assignee and tags (kept in the history), adds an internal note
  *   and answers; the member sees the answer from "The support team", never the note, and their
@@ -71,14 +71,14 @@ test.describe('support tickets (S1-E11-13, ADMIN-2h1)', () => {
 
   test('a member asks for help from Settings and gets a numbered ticket', async ({ browser }) => {
     const page = await openAs(browser, 'adult_writer', '/settings#support');
-    await page.getByRole('link', { name: 'See your support requests' }).click();
+    await page.getByRole('link', { name: 'See support requests' }).click();
     await page.getByRole('link', { name: 'Ask for help' }).click();
     await page.getByLabel('What is it about?').selectOption({ label: 'Writing' });
     await page.getByLabel('Subject').fill(subject);
-    await page.getByLabel('Your message').fill(`I saved three chapters yesterday ${stamp}.`);
+    await page.getByLabel('Message').fill(`I saved three chapters yesterday ${stamp}.`);
     await page.getByRole('button', { name: 'Send' }).click();
     await expect(page.getByText(/Sent\. Your request is #\d+/)).toBeVisible();
-    await page.getByRole('link', { name: 'Open your request' }).click();
+    await page.getByRole('link', { name: 'Open a request' }).click();
     await expect(page.getByRole('heading', { name: subject })).toBeVisible();
     await expect(page.getByText(`#${memberTicketNumber()} · New`)).toBeVisible();
   });
@@ -121,18 +121,18 @@ test.describe('support tickets (S1-E11-13, ADMIN-2h1)', () => {
     const page = await openAs(browser, 'adult_writer', `/support/${memberTicketNumber()}`);
     await expect(page.getByText('The support team', { exact: true })).toBeVisible();
     await expect(page.getByText(/Checked the logs/)).toHaveCount(0);
-    await expect(page.getByText(/Waiting for your answer/)).toBeVisible();
-    await page.getByLabel('Your answer').fill('Found them, thank you!');
+    await expect(page.getByText(/Waiting for an answer from you/)).toBeVisible();
+    await page.getByLabel('Answer').fill('Found them, thank you!');
     await page.getByRole('button', { name: 'Send' }).click();
     await expect(page.getByText(`#${memberTicketNumber()} · Open`)).toBeVisible();
   });
 
   test('a visitor’s Contact us message becomes an email-only ticket', async ({ browser }) => {
     const visitor = await openAs(browser, null, '/contact');
-    const form = visitor.getByRole('form', { name: 'Your message' });
+    const form = visitor.getByRole('form', { name: 'Message' });
     await form.getByText('A question', { exact: true }).click();
     await form.getByLabel('Message', { exact: true }).fill(`Is it free to read? ${stamp}`);
-    await form.getByLabel('Your email').fill(`visitor-${stamp}@example.com`);
+    await form.getByLabel('Email').fill(`visitor-${stamp}@example.com`);
     await form.getByRole('button', { name: 'Send message' }).click();
     const sent = visitor.getByRole('status', { name: 'Message sent' });
     await expect(sent).toContainText(/#\d+/);

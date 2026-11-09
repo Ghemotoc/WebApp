@@ -5,9 +5,9 @@
     "winner": "Winner"
   },
   "my": {
-    "documentTitle": "My certificates",
-    "eyebrow": "Your writing",
-    "title": "My certificates",
+    "documentTitle": "Certificates",
+    "eyebrow": "Writing",
+    "title": "Certificates",
     "intro": "Certificates from your class programmes. Open one to print it or save it as a PDF for your school portfolio.",
     "empty": "You have no certificates yet. When your teacher approves a class programme’s results, yours appears here.",
     "loadFailed": "We couldn’t load your certificates. Try again in a moment.",
@@ -15,12 +15,12 @@
     "signed": "Signed {{date}}",
     "revoked": "Revoked",
     "checkLink": "Check a certificate’s code",
-    "signedOut": "Log in to see your certificates.",
+    "signedOut": "Log in to see certificates.",
     "logIn": "Log in"
   },
   "page": {
     "documentTitle": "Certificate: {{programme}}",
-    "back": "My certificates",
+    "back": "Certificates",
     "notFound": "We couldn’t find this certificate.",
     "revokedNote": "This certificate was revoked, so it can’t be printed. If you think this is a mistake, write to us from Contact us.",
     "languageLabel": "Language of the certificate",
@@ -28,12 +28,12 @@
     "printHint": "In the print window, choose “Save as PDF” to keep a copy for your portfolio."
   },
   "name": {
-    "title": "Your name on the certificate",
+    "title": "Name on the certificate",
     "intro": "A class certificate may print your real name with the school’s name. It is stored only with this certificate, never on your profile, and it is deleted 30 days after the class is archived. Leave it empty to print your pen name.",
     "label": "Name to print",
     "hint": "Up to 80 characters.",
     "save": "Save the name",
-    "clear": "Use my pen name",
+    "clear": "Use the pen name",
     "saved": "Saved.",
     "deletesOn": "The name is deleted on {{date}}. Save a copy before then.",
     "deleted": "The class was archived more than 30 days ago, so the printed name was deleted. The certificate prints your pen name.",
@@ -42,7 +42,7 @@
       "name_deleted": "Printed names are deleted 30 days after the class is archived.",
       "revoked": "This certificate was revoked.",
       "missing": "We couldn’t find this certificate.",
-      "not_allowed": "Log in to change your certificate.",
+      "not_allowed": "Log in to change the certificate.",
       "unreachable": "We couldn’t save the name. Try again.",
       "teacher_only": "We couldn’t save the name. Try again.",
       "not_member": "We couldn’t save the name. Try again.",
@@ -134,7 +134,7 @@
   "settingsCard": {
     "eyebrow": "Class programme",
     "title": "Certificates",
-    "body": "Approve a programme’s results and each student gets a certificate under My certificates.",
+    "body": "Approve a programme’s results and each student gets a certificate under Certificates.",
     "link": "Open certificates"
   }
 }

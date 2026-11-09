@@ -1,17 +1,17 @@
 {
   "builder": {
-    "heading": "Avatarul tău",
+    "heading": "Avatar",
     "intro": "Construiește un avatar desenat pentru profil și mesaje: alege o filă, apoi atinge o imagine sau o culoare. Nu se încarcă nimic. Până salvezi unul, se văd inițialele tale.",
     "previewAlt": "Previzualizarea avatarului pe care îl construiești",
-    "showingInitials": "Ceilalți îți văd inițialele.",
-    "showingAvatar": "Ceilalți îți văd avatarul salvat.",
+    "showingInitials": "Ceilalți văd inițialele.",
+    "showingAvatar": "Ceilalți văd avatarul salvat.",
     "surprise": "Surprinde-mă",
     "undo": "Anulează",
     "save": "Salvează avatarul",
     "useInitials": "Folosește inițialele",
     "outcomes": {
       "saved": "Salvat. Avatarul tău apare acum pe profil și în mesaje.",
-      "initials": "Gata. Se văd din nou inițialele tale."
+      "initials": "Gata. Se văd din nou inițialele."
     },
     "failures": {
       "not_allowed": "Contul tău nu își poate schimba profilul acum.",
@@ -114,9 +114,9 @@
     "4b3328": "Nuanța 9 (cea mai închisă)"
   },
   "hairColour": {
+    "724133": "Șaten",
     "2c1b18": "Negru",
     "4a312c": "Șaten închis",
-    "724133": "Șaten",
     "a55728": "Arămiu",
     "b58143": "Șaten deschis",
     "d6b370": "Blond",

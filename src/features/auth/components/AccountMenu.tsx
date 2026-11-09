@@ -12,7 +12,7 @@
  * (aria-expanded) and the panel holds an ordinary link and button, so Tab and Enter work as
  * everywhere else. Escape closes it and puts focus back on the button; clicking elsewhere closes
  * it too. The button is the person's own avatar: their drawn avatar, or their initials on the glass
- * bead in their colour (bundle G4 SHELL; PersonAvatar); its accessible name is "Your account" with
+ * bead in their colour (bundle G4 SHELL; PersonAvatar); its accessible name is "Account" with
  * the initials on the bead ("Your account, AW"; WCAG 2.5.3, label in name).
  * Who shows it: AccountLinks, once someone is signed in, with the shown name and username.
  * What it calls: api/signIn.ts → signOutHere(); after logging out it goes to the home page.

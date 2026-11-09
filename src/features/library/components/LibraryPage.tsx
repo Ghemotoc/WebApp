@@ -2,7 +2,7 @@
  * LibraryPage: the reader's library, screen 3.7 (story S1-E4-03; design/boards/Library.dc.html).
  *
  * Who shows it: the router, at /library; the top bar's "Library" link leads here.
- * What it shows, top to bottom as on the board: the eyebrow, "Your library", the line about the
+ * What it shows, top to bottom as on the board: "Library", the line about the
  * place being kept on every device and who can see the library, with Change (S1-E4-03, third
  * criterion: private by default; S1-E13-01 adds the choice); ContinueReading; LibraryShelves (Reading, Saved for
  * later, Finished); ReadingHabitNote (the private reading streak, IDEAS-1b); FollowingSection. A signed-out visitor gets a card asking them to log in.
@@ -13,7 +13,6 @@
  */
 import { Link } from 'react-router';
 
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
@@ -34,7 +33,6 @@ function LibraryHeader() {
   return (
     <header className="relative flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
       <div className="flex max-w-[640px] flex-col gap-2">
-        <Eyebrow>{t('eyebrow')}</Eyebrow>
         {/* The large title of the glass pages (bundle G7d2; board Library), as on the list pages. */}
         <h1 className="m-0 font-heading text-[clamp(40px,5.6vw,72px)] leading-[0.98] font-bold tracking-[-0.03em] text-heading">
           {t('title')}

@@ -103,7 +103,7 @@ test('an invited adult signs up, confirms the email from Mailpit and is confirme
   const address = newAddress();
   try {
     await openInEnglish(page, `/join/${workingInvite}`);
-    await expect(page.getByText('Invitation accepted. Create your account below.')).toBeVisible();
+    await expect(page.getByText('Invitation accepted. Create an account below.')).toBeVisible();
 
     // A 9-character password and a mismatch are caught before anything is sent.
     await fillSignUp(page, address, '123456789');
@@ -132,9 +132,9 @@ test('an invited adult signs up, confirms the email from Mailpit and is confirme
 
     // The confirmation email is in English, the language the form was in.
     const email = await waitForEmail(address);
-    expect(email.HTML).toContain('Confirm your email address');
+    expect(email.HTML).toContain('Confirm the email address');
     await page.goto(appPathFromEmail(email.HTML));
-    await expect(page.getByRole('heading', { name: 'Your email is confirmed' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Email confirmed' })).toBeVisible();
     // The username came with the form (S1-E2-04), so the confirmed account is active at once.
     expect(
       runSql(

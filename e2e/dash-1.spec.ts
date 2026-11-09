@@ -10,7 +10,7 @@
  * - a tile opens the area that lists what it counts;
  * - the side menu shows the areas in the five groups on a wide screen, and behind a "Menu"
  *   button on a phone, which closes again once a link opens a page;
- * - a staff session older than 12 hours gets "Your staff session has ended" instead of an empty
+ * - a staff session older than 12 hours gets "Staff session ended" instead of an empty
  *   admin site, and "Sign in again" logs the person back in to /staff;
  * - the new screens pass axe and don't scroll sideways at 390, 768 and 1440 px.
  * Test data: seed personas only.
@@ -140,7 +140,7 @@ test.describe('staff dashboard and side menu (DASH-1)', () => {
     browser,
   }) => {
     const page = await openAs(browser, 'admin', '/staff', { sessionEnded: true });
-    await expect(page.getByRole('heading', { name: 'Your staff session has ended' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Staff session ended' })).toBeVisible();
     await expect(page.getByRole('navigation', { name: 'Staff' })).toHaveCount(0);
 
     await page.getByRole('button', { name: 'Sign in again' }).click();

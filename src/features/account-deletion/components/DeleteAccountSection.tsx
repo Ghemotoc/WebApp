@@ -4,8 +4,8 @@
  * art. 17; Apple guideline 5.1.1(v)).
  *
  * Top to bottom as on the board: the heading, that the account closes at once and is deleted for
- * good 14 days later, that stories go with it, "download your data first", "Delete my account",
- * and the line that the website has a deletion page too (/delete-account). "Delete my account"
+ * good 14 days later, that stories go with it, "download the data first", "Delete account",
+ * and the line that the website has a deletion page too (/delete-account). "Delete account"
  * opens the confirmation (DeleteAccountConfirm). The section has id "delete-account", so
  * /delete-account and a provider's return after "Log in again" open it.
  * Who shows it: SettingsPage. What it calls: useMyAccountDeletion.
@@ -35,7 +35,7 @@ function DownloadFirstLine() {
   );
 }
 
-/** The panel's body: the first panel, then the confirmation once "Delete my account" is pressed. */
+/** The panel's body: the first panel, then the confirmation once "Delete account" is pressed. */
 function SectionBody() {
   const { t } = useAccountDeletionTranslation();
   const deletion = useMyAccountDeletion();

@@ -91,7 +91,7 @@ test.describe('the private reading streak (IDEAS-1 part b)', () => {
   }) => {
     // Step 1: off at first, with nothing counted.
     const library = await openAs(browser, 'editor', '/library');
-    const note = library.getByRole('region', { name: 'Your reading days' });
+    const note = library.getByRole('region', { name: 'Reading days' });
     await expect(note.getByRole('button', { name: 'Turn it on' })).toBeVisible();
     expect(editorStreak()).toBe('');
     await note.getByRole('button', { name: 'Turn it on' }).click();
@@ -117,7 +117,7 @@ test.describe('the private reading streak (IDEAS-1 part b)', () => {
 
   test('the reader picks any target and a reminder time', async ({ browser }) => {
     const page = await openAs(browser, 'editor', '/library#reading-days');
-    const note = page.getByRole('region', { name: 'Your reading days' });
+    const note = page.getByRole('region', { name: 'Reading days' });
     await note.getByLabel('Daily target, in minutes').fill('17');
     await note.getByLabel('Remind me if I haven’t reached it').check();
     await note.getByLabel('Time', { exact: true }).fill('20:15');
@@ -134,14 +134,14 @@ test.describe('the private reading streak (IDEAS-1 part b)', () => {
     );
     const page = await openAs(browser, 'editor', '/notifications');
     await expect(page.getByText('a few minutes of reading today?')).toBeVisible();
-    await page.getByRole('link', { name: 'Open your library' }).first().click();
+    await page.getByRole('link', { name: 'Open the library' }).first().click();
     await expect(page).toHaveURL(/\/library#reading-days$/);
-    await expect(page.getByRole('region', { name: 'Your reading days' })).toBeVisible();
+    await expect(page.getByRole('region', { name: 'Reading days' })).toBeVisible();
   });
 
   test('an under-18 can’t pick a reminder in quiet hours', async ({ browser }) => {
     const page = await openAs(browser, 'teen_17', '/library');
-    const note = page.getByRole('region', { name: 'Your reading days' });
+    const note = page.getByRole('region', { name: 'Reading days' });
     await note.getByRole('button', { name: 'Turn it on' }).click();
     await note.getByLabel('Daily target, in minutes').fill('10');
     await note.getByLabel('Remind me if I haven’t reached it').check();
@@ -167,8 +167,8 @@ test.describe('the private reading streak (IDEAS-1 part b)', () => {
 
   test('turning it off deletes the target, the reminder and the minutes', async ({ browser }) => {
     const page = await openAs(browser, 'editor', '/library#reading-days');
-    const note = page.getByRole('region', { name: 'Your reading days' });
-    await note.getByRole('button', { name: 'Turn off and delete my minutes' }).click();
+    const note = page.getByRole('region', { name: 'Reading days' });
+    await note.getByRole('button', { name: 'Turn off and delete the minutes' }).click();
     await expect(note.getByText('This deletes your target, your reminder')).toBeVisible();
     await note.getByRole('button', { name: 'Yes, turn it off' }).click();
     await expect(note.getByRole('button', { name: 'Turn it on' })).toBeVisible();

@@ -1,24 +1,24 @@
 {
   "builder": {
-    "heading": "Your avatar",
+    "heading": "Avatar",
     "intro": "Build a drawn avatar for your profile and messages: pick a tab, then tap a picture or a colour. Nothing is uploaded. Until you save one, your initials show.",
     "previewAlt": "Preview of the avatar you are building",
-    "showingInitials": "Others see your initials.",
-    "showingAvatar": "Others see your saved avatar.",
+    "showingInitials": "Others see the initials.",
+    "showingAvatar": "Others see the saved avatar.",
     "surprise": "Surprise me",
     "undo": "Undo",
     "save": "Save avatar",
-    "useInitials": "Use my initials instead",
+    "useInitials": "Use initials instead",
     "outcomes": {
       "saved": "Saved. Your avatar now shows on your profile and in messages.",
-      "initials": "Done. Your initials show again."
+      "initials": "Done. The initials show again."
     },
     "failures": {
       "not_allowed": "Your account can’t change its profile right now.",
       "invalid": "That avatar couldn’t be saved. Try another choice.",
       "unreachable": "We couldn’t reach our server. Check your connection and try again."
     },
-    "tabsLabel": "Parts of your avatar",
+    "tabsLabel": "Avatar parts",
     "tabs": {
       "face": "Face",
       "hair": "Hair",
@@ -114,9 +114,9 @@
     "4b3328": "Tone 9 (deepest)"
   },
   "hairColour": {
+    "724133": "Brown",
     "2c1b18": "Black",
     "4a312c": "Dark brown",
-    "724133": "Brown",
     "a55728": "Auburn",
     "b58143": "Light brown",
     "d6b370": "Blond",

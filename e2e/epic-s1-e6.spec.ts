@@ -159,7 +159,7 @@ test.describe('epic check: comments, reactions and follows (S1-E6-QA)', () => {
       );
       await page.getByLabel('Add a comment').fill('Și eu!');
       await page.getByRole('button', { name: 'Post comment' }).click();
-      await expect(page.getByText('Your account can’t comment yet.')).toBeVisible();
+      await expect(page.getByText('This account can’t comment yet.')).toBeVisible();
       expect(countOf(`public.comments where user_id = '${personaIds[persona]}'`)).toBe('0');
       await page.context().close();
     });

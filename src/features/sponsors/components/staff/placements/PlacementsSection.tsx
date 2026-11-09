@@ -8,7 +8,6 @@
  * Who shows it: StaffSponsorsPage. What it calls: usePlacementsData(), useSponsorsData() for the
  * campaigns and categories, and the components in this folder.
  */
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 
 import { usePlacementsData } from '../../../hooks/usePlacements';
@@ -66,7 +65,6 @@ export function PlacementsSection() {
   return (
     <section aria-labelledby="placements-heading" className="flex flex-col gap-5">
       <div className="flex max-w-[720px] flex-col gap-1">
-        <Eyebrow>{t('inventory.eyebrow')}</Eyebrow>
         <h2 id="placements-heading" className="m-0 font-heading text-[22px] font-bold text-heading">
           {t('inventory.heading')}
         </h2>

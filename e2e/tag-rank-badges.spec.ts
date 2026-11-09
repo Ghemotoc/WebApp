@@ -6,7 +6,7 @@
  * - the story page shows where the story stands in its tags ("#3 in Owls"), by the same popular
  *   order as the tag page, with the tag in the reader's language;
  * - the writer sees each tag's rank in Story settings, picks one tag, and the cover then shows only
- *   that one; "Show my 3 best ranks instead" brings the automatic badges back;
+ *   that one; "Show the 3 best ranks instead" brings the automatic badges back;
  * - Story settings with the picker passes axe at 390 px, light, ro and en.
  * Test data: six stories of the spec's own (adult_writer's "Ranked owls" and five by teacher), two
  * approved tags with English and Romanian names, and likes from seed personas, so the hourly
@@ -121,7 +121,7 @@ test.describe('rank badges (CMS-1g)', () => {
     const settings = await openAs(browser, true, `/write/s/${slug}/settings`, 'en');
     const owlsChip = settings.getByRole('button', { name: `${owls} · #3 of 6` });
     await expect(owlsChip).toHaveAttribute('aria-pressed', 'false');
-    await expect(settings.getByText('Showing your 3 best ranks.')).toBeVisible();
+    await expect(settings.getByText('Showing the 3 best ranks.')).toBeVisible();
     await owlsChip.click();
     await expect(owlsChip).toHaveAttribute('aria-pressed', 'true');
     await expect(settings.getByText('Showing the 1 tag you picked.')).toBeVisible();
@@ -130,8 +130,8 @@ test.describe('rank badges (CMS-1g)', () => {
     await expect(badges(story)).toContainText(`#3 in ${owls}`);
     await expect(badges(story)).not.toContainText(lanterns);
 
-    await settings.getByRole('button', { name: 'Show my 3 best ranks instead' }).click();
-    await expect(settings.getByText('Showing your 3 best ranks.')).toBeVisible();
+    await settings.getByRole('button', { name: 'Show the 3 best ranks instead' }).click();
+    await expect(settings.getByText('Showing the 3 best ranks.')).toBeVisible();
     const again = await openAs(browser, false, `/s/${slug}`, 'en');
     await expect(badges(again)).toContainText(`#3 in ${lanterns}`);
   });

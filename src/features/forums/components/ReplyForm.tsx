@@ -19,7 +19,6 @@ import { useState, type FormEvent } from 'react';
 import { Link, useSearchParams } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { useSession } from '@/features/auth/hooks/useSession';
 
@@ -227,7 +226,6 @@ export function ReplyForm({
       className="flex flex-col gap-4 rounded-card border border-border bg-surface p-5 shadow-card md:p-6"
     >
       <div className="flex flex-col gap-1">
-        <Eyebrow>{t('reply.eyebrow')}</Eyebrow>
         <h2 id="reply-heading" className="m-0 font-heading text-2xl font-bold text-heading">
           {t('reply.heading')}
         </h2>
