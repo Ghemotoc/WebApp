@@ -7,6 +7,7 @@
  * or is unknown: the field keeps the code, is marked invalid and carries the reason as its error
  * (linked with aria-describedby). An empty code gets its own error. The code typed here goes into
  * the address (/join/<code>), the same link an admin hands out, so nothing is stored anywhere.
+ * Look (bundle G6): "Continue" is the card's main button, full width, as "Create account" is.
  * Who uses it: SignUpCardFlow. The database refuses a sign-up without a working invite anyway.
  * What it calls: hooks/useInviteGateForm.ts.
  */
@@ -65,7 +66,7 @@ export function InviteGate({ reason, codeFromAddress }: InviteGateProps) {
           value={form.code}
           onChange={(event) => form.changeCode(event.target.value)}
         />
-        <Button type="submit" variant="secondary" size="lg" className="self-start">
+        <Button type="submit" size="xl" className="w-full">
           {t('invite.continue')}
         </Button>
       </form>

@@ -8,47 +8,31 @@
  * link that needs the browser the sign-up started in. "Continue" goes to the home page: the
  * username was chosen on the sign-up form (S1-E2-04), and an older account without one is asked
  * for it by the "Choose a username" notice. A used or expired link says so.
+ * Look (bundle G6, board ConfirmEmail): the shared glass AuthCard with an eyebrow, the heading and
+ * one line; a used link adds a glass "Sign up again" button, because signing up again is the fix.
+ * The board's age check step strip is left out: the March test is for adults only (17 Oct 2026).
  * Who shows it: the router. What it calls: api/signUp.ts → confirmEmail().
  */
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Link, useSearchParams } from 'react-router';
 
-import { EmptyState } from '@/components/ui/EmptyState';
-import { PageContainer } from '@/components/ui/PageContainer';
+import { buttonClassName } from '@/components/ui/buttonStyles';
 import { getSupabaseClient } from '@/lib/supabase';
 
 import { confirmEmail } from '../api/signUp';
+import { AuthCard } from './AuthCard';
 
-/** The button under a finished confirmation. */
-function ContinueLink({ to, label }: { to: string; label: string }) {
-  return (
-    <Link
-      to={to}
-      className="inline-flex h-11 items-center rounded-full button-main px-5 text-sm font-semibold no-underline"
-    >
-      {label}
-    </Link>
-  );
-}
-
-/** "Checking…" while the token is with Supabase. */
-function Checking({ text }: { text: string }) {
-  return (
-    <p role="status" className="m-0 text-body">
-      {text}
-    </p>
-  );
-}
+/** Where the link stands: still checking, confirmed, or no longer working. */
+type ConfirmationState = 'checking' | 'done' | 'failed';
 
 /**
- * The sign-up (or log-in) link: confirmed, or the link no longer works.
+ * Hands the token to Supabase once and says how it went.
  *
- * @param props.tokenHash - the token from the link
- * @returns the page's body
+ * @param tokenHash - the token from the link, or null when the link had none
+ * @returns the state of the confirmation
  */
-function SignUpConfirmation({ tokenHash }: { tokenHash: string | null }) {
-  const { t } = useTranslation('auth');
+function useConfirmation(tokenHash: string | null): ConfirmationState {
   // The token is used once, so the answer is never fetched again.
   const confirmation = useQuery({
     queryKey: ['confirm-email', tokenHash],
@@ -60,34 +44,62 @@ function SignUpConfirmation({ tokenHash }: { tokenHash: string | null }) {
       return confirmEmail(client, tokenHash);
     },
   });
-
-  if (confirmation.isPending) return <Checking text={t('confirm.checking')} />;
-  if (confirmation.data === true) {
-    return (
-      <EmptyState
-        title={t('confirm.doneHeading')}
-        description={t('confirm.doneBody')}
-        action={<ContinueLink to="/" label={t('confirm.continue')} />}
-      />
-    );
-  }
-  return <EmptyState title={t('confirm.failedHeading')} description={t('confirm.failedBody')} />;
+  if (confirmation.isPending) return 'checking';
+  return confirmation.data === true ? 'done' : 'failed';
 }
+
+/** The card's words for each state, as locale keys. */
+const cardText: Record<ConfirmationState, { eyebrow: string; heading: string; body?: string }> = {
+  checking: { eyebrow: 'confirm.eyebrow', heading: 'confirm.checkingHeading' },
+  done: {
+    eyebrow: 'confirm.doneEyebrow',
+    heading: 'confirm.doneHeading',
+    body: 'confirm.doneBody',
+  },
+  failed: {
+    eyebrow: 'confirm.eyebrow',
+    heading: 'confirm.failedHeading',
+    body: 'confirm.failedBody',
+  },
+};
 
 /**
  * Renders the page.
  *
- * @returns "Checking…", then whether the link worked
+ * @returns the glass card: "Confirming…", then whether the link worked
  */
 export function ConfirmEmailPage() {
   const { t } = useTranslation('auth');
   const [searchParams] = useSearchParams();
-  const tokenHash = searchParams.get('token_hash');
+  const state = useConfirmation(searchParams.get('token_hash'));
+  const text = cardText[state];
 
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-4 pt-12 pb-7">
-      <title>{t('confirm.documentTitle')}</title>
-      <SignUpConfirmation tokenHash={tokenHash} />
-    </PageContainer>
+    <AuthCard
+      documentTitle={t('confirm.documentTitle')}
+      eyebrow={t(text.eyebrow)}
+      heading={t(text.heading)}
+      intro={text.body === undefined ? undefined : t(text.body)}
+    >
+      {/* Screen readers hear "Confirming your email…" while the token is with Supabase. */}
+      {state === 'checking' && (
+        <p role="status" className="m-0 text-body">
+          {t('confirm.checking')}
+        </p>
+      )}
+      {state === 'done' && (
+        <Link to="/" className={buttonClassName({ size: 'lg' }, 'w-full')}>
+          {t('confirm.continue')}
+        </Link>
+      )}
+      {state === 'failed' && (
+        <Link
+          to="/sign-up"
+          className={buttonClassName({ variant: 'secondary', size: 'lg' }, 'w-full')}
+        >
+          {t('confirm.signUpAgain')}
+        </Link>
+      )}
+    </AuthCard>
   );
 }
