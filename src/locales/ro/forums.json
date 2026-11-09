@@ -289,9 +289,8 @@
     }
   },
   "rank": {
-    "chip": "Rang: {{rank}}",
-    "chipTitle": "Rang după capitolele și cuvintele publicate",
-    "prefix": "Rang:",
+    "chipTitle": "Rang de scriitor, după capitolele și cuvintele publicate",
+    "prefix": "Rang de scriitor:",
     "names": {
       "new_writer": "Debutant",
       "writer": "Scriitor",
@@ -305,7 +304,7 @@
       "novelist": "100.000 de cuvinte"
     },
     "eyebrow": "Rang",
-    "explainer": "Rangurile vin din capitolele și cuvintele publicate. Postările din forumuri nu contează. Fiecare rang are propriul autocolant pe poza de profil.",
+    "explainer": "Rangurile vin din capitolele și cuvintele publicate. Postările din forumuri nu contează.",
     "ladderLabel": "Cele patru ranguri",
     "current": "rangul de acum",
     "reached": "atins",

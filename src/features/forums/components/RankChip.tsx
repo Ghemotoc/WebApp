@@ -1,17 +1,15 @@
 /**
- * RankChip: the gold "Rank: Storyteller" pill (story S1-E8-09; board 6.1 beside the name, and
- * beside the author's name on each forum post, criterion 5).
+ * RankChip: a writer's rank as a plain glass text pill, "Storyteller" (story S1-E8-09; board 6.1
+ * above the pen name, and beside the author's name on each forum post, criterion 5).
  *
- * Board values: the gold information pill (#FBF3DA, #5C3F0E text, #D9B54A border, 24 px tall),
- * from the shared InfoPill. On a post the pill shows only the rank's name, to keep the header
- * short; "Rank:" is still read out by screen readers, so the pill never reads as a bare word.
- * Who uses it: ProfileRankChip, ForumPostCard and the story cards (ListedStoryCard, IDEAS-3a). It
- *   calls nothing; the rank comes in as a prop.
- * Why the wrapper is "relative": the screen-reader-only "Rank:" is absolutely positioned. Without
- *   a positioned ancestor it escaped a shelf's sideways scrolling, so a phone page with a row of
- *   ranked story cards scrolled sideways (bundle 17 CHECK, search at 390 px).
+ * Look (bundle G7a; DESIGN thread, 8 Nov 2026, 05:19 UTC): the shared GlassTag with the rank's
+ * medal icon and only the rank's name, never "Rank: …"; hovering says "Writing rank, from
+ * published chapters and words", and screen readers hear "Writing rank:" first, so the pill never
+ * reads as a bare word. The same pill on profiles, forum posts, story cards and notifications.
+ * Who uses it: ProfileRankChip, ForumPostCard, the story cards (ListedStoryCard, IDEAS-3a) and
+ *   NotificationRow. It calls nothing; the rank comes in as a prop.
  */
-import { InfoPill } from '@/components/ui/InfoPill';
+import { GlassTag } from '@/components/ui/GlassTag';
 
 import type { WriterRank } from '../lib/writerRanks';
 import { useForumsTranslation } from '../registerForumsTranslations';
@@ -19,8 +17,25 @@ import { useForumsTranslation } from '../registerForumsTranslations';
 /** What the chip needs. */
 export interface RankChipProps {
   rank: WriterRank;
-  /** true on a post: the name alone shows, "Rank:" is for screen readers only. */
-  isCompact?: boolean;
+}
+
+/** The board's medal: a circle on a ribbon, 14 px, in the text colour. */
+function MedalIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="14"
+      height="14"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="12" cy="9" r="6" />
+      <path d="M8.5 14L7 21l5-3 5 3-1.5-7" />
+    </svg>
+  );
 }
 
 /**
@@ -28,21 +43,16 @@ export interface RankChipProps {
  *
  * @returns the rank pill
  */
-export function RankChip({ rank, isCompact = false }: RankChipProps) {
+export function RankChip({ rank }: RankChipProps) {
   const { t } = useForumsTranslation();
-  const name = t(`rank.names.${rank}`);
   return (
-    <span title={t('rank.chipTitle')} data-testid="rank-chip" className="relative inline-flex">
-      <InfoPill tone="gold">
-        {isCompact ? (
-          <>
-            <span className="sr-only">{t('rank.prefix')} </span>
-            {name}
-          </>
-        ) : (
-          t('rank.chip', { rank: name })
-        )}
-      </InfoPill>
-    </span>
+    <GlassTag
+      icon={<MedalIcon />}
+      title={t('rank.chipTitle')}
+      hiddenPrefix={t('rank.prefix')}
+      testId="rank-chip"
+    >
+      {t(`rank.names.${rank}`)}
+    </GlassTag>
   );
 }

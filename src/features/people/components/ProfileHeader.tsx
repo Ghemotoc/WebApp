@@ -8,9 +8,10 @@
  * never tells anyone an age.
  *
  * Board values: the name in Bricolage 800 at clamp(36px, 4.4vw, 64px), the handle line 15 px in
- * the meta colour, the bio 18 px / 1.6 up to 640 px wide. Beside the name sits the gold rank
- * pill (S1-E8-09, ProfileRankChip). Not shown yet, as the board's later parts: Share (the share
- * sheet comes with the apps) and the "…" menu (Report and Block sit in ProfileSafetyCard instead, so they're never
+ * the meta colour, the bio 18 px / 1.6 up to 640 px wide. Above the name sit the glass rank
+ * pill (S1-E8-09, ProfileRankChip) and, when shown, the reading level pill (G7a,
+ * ReaderLevelPill). Not shown yet, as the board's later parts: Share (the share sheet comes with
+ * the apps) and the "…" menu (Report and Block sit in ProfileSafetyCard instead, so they're never
  * hidden behind a menu). Never shown: year of birth, age check or email (story S1-E5-05; the
  * database doesn't send them). Since S1-E13-01: when the owner keeps the rest of their profile
  * from this reader, the join month and the bio give way to "<name> shares the rest of their
@@ -35,6 +36,7 @@ import { formatJoinedMonth } from '../lib/formatting';
 import { FollowButton } from './FollowButton';
 import { ProfileAvatar } from './ProfileAvatar';
 import { ProfileStats } from './ProfileStats';
+import { ReaderLevelPill } from './ReaderLevelPill';
 
 /** The action on the right: Follow for others, "Edit your profile" on one's own. */
 function ProfileAction({ profile }: { profile: WriterProfile }) {
@@ -106,13 +108,17 @@ export function ProfileHeader({ profile }: { profile: WriterProfile }) {
       <ProfileAvatar name={profile.displayName} handle={profile.handle} />
       <div className="flex min-w-0 flex-col gap-3 md:flex-[999_1_420px]">
         <Eyebrow>{t('profile.eyebrow')}</Eyebrow>
-        {/* The name and, beside it, the writer's rank (S1-E8-09), as the board draws them. */}
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
-          <h1 className="m-0 min-w-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-extrabold tracking-[-0.025em] break-words text-heading">
-            {profile.displayName}
-          </h1>
-          {!profile.iBlocked && <ProfileRankChip handle={profile.handle} />}
-        </div>
+        {/* Above the name, as the board draws them (G7a): the writing rank (S1-E8-09) and, when
+            its owner shows it, the reading level. The row disappears when both are absent. */}
+        {!profile.iBlocked && (
+          <div className="flex flex-wrap items-center gap-2 empty:hidden">
+            <ProfileRankChip handle={profile.handle} />
+            <ReaderLevelPill handle={profile.handle} />
+          </div>
+        )}
+        <h1 className="m-0 min-w-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-extrabold tracking-[-0.025em] break-words text-heading">
+          {profile.displayName}
+        </h1>
         <HandleLine profile={profile} />
         {/* The Teacher badge (S1-E2-11 criterion 7) and the founding member badge (WAITLIST-1):
             never when either was given, only that it is. */}

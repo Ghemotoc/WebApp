@@ -22,8 +22,8 @@ interface AudienceRadiosProps<Choice extends string> {
   choices: readonly Choice[];
   /** The label of each choice. */
   labelOf: (choice: Choice) => string;
-  /** The choice an under-18 starts on, which gets the pill. */
-  under18Default: Choice;
+  /** The choice an under-18 starts on, which gets the pill; left out when everyone starts alike. */
+  under18Default?: Choice;
   saved: Choice;
   isSaving: boolean;
   onSave: (choice: Choice) => Promise<void>;

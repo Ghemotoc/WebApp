@@ -5,7 +5,8 @@
  * What it calls next: my_privacy_settings(), set_profile_audience(), set_library_audience(),
  * set_shows_online_status(), note_i_am_online() and who_is_online()
  * (supabase/migrations/…_s1_e13_01_privacy_settings.sql), and set_suggest_me() for "Suggest me
- * and my stories to other people" (…_look4c_02_rising_writers.sql, story S1-E5-11). The database fills in each setting's
+ * and my stories to other people" (…_look4c_02_rising_writers.sql, story S1-E5-11), and
+ * set_shows_reader_level() for "Your reading level" (…_g7a_reader_levels.sql, bundle G7a). The database fills in each setting's
  * default for the person's age group, so an under-18 starts on the most private value.
  */
 import type { Database } from '@/lib/database.types';
@@ -48,6 +49,8 @@ export interface PrivacySettings {
   parentSpotlight: ParentSpotlight;
   /** True when a 13 to 15-year-old's parent already agreed to the account, so can be asked. */
   canAskParent: boolean;
+  /** "Your reading level": false keeps it hidden (the default for everyone), true shows it. */
+  showsReaderLevel: boolean;
 }
 
 /** not_needed (16 and over), agreed, asked (email sent, no answer yet) or none. */
@@ -63,6 +66,7 @@ interface PrivacySettingsRow {
   suggest_me: boolean;
   parent_spotlight: ParentSpotlight;
   can_ask_parent: boolean;
+  shows_reader_level: boolean;
 }
 
 /**
@@ -85,6 +89,7 @@ export async function fetchPrivacySettings(client: AppSupabaseClient): Promise<P
     suggestMe: row.suggest_me,
     parentSpotlight: row.parent_spotlight,
     canAskParent: row.can_ask_parent,
+    showsReaderLevel: row.shows_reader_level,
   };
 }
 
@@ -184,4 +189,27 @@ export async function fetchRetentionPeriods(client: AppSupabaseClient): Promise<
   const { data, error } = await client.rpc('retention_periods');
   if (error !== null) throw new Error(`Could not read how long we keep things: ${error.message}`);
   return data ?? [];
+}
+
+/** "Your reading level" in Settings › Privacy: hidden (the default) or shown on the profile. */
+export type ReaderLevelVisibility = 'hidden' | 'shown';
+
+/** The two choices, in the order Settings shows them (Settings board, Privacy). */
+export const readerLevelVisibilities: readonly ReaderLevelVisibility[] = ['hidden', 'shown'];
+
+/**
+ * Shows or hides the caller's reading level on their profile (bundle G7a).
+ *
+ * @param client - the shared Supabase client
+ * @param visibility - 'shown' puts it on the profile, 'hidden' takes it off
+ * @throws Error with Supabase's message when the save is refused
+ */
+export async function saveReaderLevelVisibility(
+  client: AppSupabaseClient,
+  visibility: ReaderLevelVisibility,
+): Promise<void> {
+  const { error } = await client.rpc('set_shows_reader_level', {
+    should_show: visibility === 'shown',
+  });
+  if (error !== null) throw new Error(`Could not save your reading level choice: ${error.message}`);
 }

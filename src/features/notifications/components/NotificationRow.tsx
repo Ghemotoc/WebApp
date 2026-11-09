@@ -57,7 +57,7 @@ function RowWords({
         <time dateTime={notification.at}>{timeAgo(notification.at, i18n.language)}</time>
         {text.grouped !== null && <InfoPill tone="neutral">{text.grouped}</InfoPill>}
         {/* The rank just reached, in the same pill as on the profile (IDEAS-3a). */}
-        {notification.writerRank !== null && <RankChip rank={notification.writerRank} isCompact />}
+        {notification.writerRank !== null && <RankChip rank={notification.writerRank} />}
         {notification.isRequired && (
           <InfoPill tone="plum">
             <img src={lockIcon} alt="" aria-hidden="true" width={14} height={14} />

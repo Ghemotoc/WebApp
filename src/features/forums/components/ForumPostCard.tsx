@@ -80,7 +80,7 @@ function PostHeader({ post, forumSlug, threadNumber }: ForumPostCardProps) {
             </Link>
           )}
           {/* The author's writer rank beside the name (S1-E8-09 criterion 5). */}
-          {post.authorRank !== null && <RankChip rank={post.authorRank} isCompact />}
+          {post.authorRank !== null && <RankChip rank={post.authorRank} />}
           {post.author?.isStaff === true && <InfoPill tone="sky">{t('staff')}</InfoPill>}
           {post.isStarter && <InfoPill tone="plum">{t('person.starter')}</InfoPill>}
           {/* IDEAS-3f: the reply that answered the thread, while everyone can read it. */}

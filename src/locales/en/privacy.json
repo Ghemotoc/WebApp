@@ -93,5 +93,11 @@
       "gone": "Something went wrong. Try again in a moment.",
       "already_answered": "Your parent or guardian has already answered."
     }
+  },
+  "readerLevel": {
+    "legend": "Your reading level",
+    "hint": "Your level comes from chapters read and stories finished. Hidden means only you see it on your profile.",
+    "hidden": "Hidden",
+    "shown": "Show it on my profile"
   }
 }

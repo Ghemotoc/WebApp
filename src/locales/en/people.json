@@ -97,5 +97,38 @@
     "blockedLoadFailed": "We couldn’t load the list. Try again.",
     "unblock": "Unblock",
     "unblockLabel": "Unblock @{{handle}}"
+  },
+  "readerLevel": {
+    "eyebrow": "Reading level",
+    "pillTitle": "Reading level, from chapters read and stories finished",
+    "prefix": "Reading level:",
+    "names": {
+      "new_reader": "New reader",
+      "reader": "Reader",
+      "bookworm": "Bookworm",
+      "story_devourer": "Story devourer"
+    },
+    "rules": {
+      "new_reader": "first chapter read",
+      "reader": "50 chapters read",
+      "bookworm": "10 stories finished",
+      "story_devourer": "40 stories finished"
+    },
+    "noLevelYet": "No reading level yet",
+    "explainer": "For people who mostly read. Levels come from chapters read and stories finished, never from time spent. Private until the reader turns it on.",
+    "ladderLabel": "The four reading levels",
+    "current": "current level",
+    "reached": "reached",
+    "notYet": "not reached yet",
+    "progressChapters_one": "{{have}} of {{need}} chapter read to {{level}}",
+    "progressChapters_few": "{{have}} of {{need}} chapters read to {{level}}",
+    "progressChapters_other": "{{have}} of {{need}} chapters read to {{level}}",
+    "progressStories_one": "{{have}} of {{need}} story finished to {{level}}",
+    "progressStories_few": "{{have}} of {{need}} stories finished to {{level}}",
+    "progressStories_other": "{{have}} of {{need}} stories finished to {{level}}",
+    "progressLabel": "Progress to {{level}}, {{percent}} per cent",
+    "top": "{{name}} has reached the top reading level.",
+    "hiddenNote": "Only you can see this. To show it on your profile, change Your reading level in Settings › Privacy.",
+    "hiddenLink": "Open Privacy settings"
   }
 }

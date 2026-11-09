@@ -2,7 +2,7 @@
 
 Settings › Privacy and online status. Built by S1-E13-01 (bundle PRIVACY, part a). Board: `design/boards/Settings.dc.html` (6.3, the Privacy tab).
 
-- `components/PrivacySettingsSection.tsx`: the Privacy panel on `/settings` (id `privacy`): who can see your profile and your library (`AudienceRadios`), who can message you (a line with Change to the Messages panel, which owns that choice), "Show when I'm online" (`OnlineStatusSwitch`) and "Suggest me and my stories to other people" (`SuggestMeSwitch`, LOOK-4c: with "Ask my parent" for 13 to 15-year-olds). Every choice saves at once; under-18s read that each started at its most private value.
+- `components/PrivacySettingsSection.tsx`: the Privacy panel on `/settings` (id `privacy`): who can see your profile and your library (`AudienceRadios`), who can message you (a line with Change to the Messages panel, which owns that choice), "Show when I'm online" (`OnlineStatusSwitch`), "Suggest me and my stories to other people" (`SuggestMeSwitch`, LOOK-4c: with "Ask my parent" for 13 to 15-year-olds) and "Your reading level" (Hidden or "Show it on my profile", `set_shows_reader_level()`, G7a). Every choice saves at once; under-18s read that each started at its most private value.
 - `components/PresenceHeartbeat.tsx`: mounted once in `AppLayout`; while the switch is on it calls `note_i_am_online()` every minute the tab is in front (`hooks/useOnlineStatus.ts`).
 - `components/OnlineDot.tsx` and `useOnlineHandles()`: the dot by a name, with the word "Online" for screen readers, on the profile header, the chat header and the chat list.
 - `components/LibraryVisibilityLine.tsx`: "Private / Shared / Public" with Change on the Library page.
