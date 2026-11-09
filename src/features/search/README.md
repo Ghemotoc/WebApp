@@ -13,7 +13,7 @@ button open it (bundle G4 SHELL); results come in three groups, each one line of
   one place.
 - `hooks/useSearchResults.ts` (the search page) and `hooks/useSearchGroupList.ts` (the writers and
   tags See all pages, 24 a page with Load more).
-- `components/`: `SearchForm` (the field), `SearchPage`, `SearchResults`, `SearchGroupShelf`,
+- `components/`: `SearchForm` (the field and its buttons in one glass pill, G7c), `SearchPage`, `SearchResults`, `SearchGroupShelf`,
   `SearchGroupPage`, `WriterResultCard` and `TagResultCard`. The stories See all page is the
   shared `StoryListPage` at `/search/stories`, sorted by best match.
 

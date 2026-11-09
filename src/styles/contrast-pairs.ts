@@ -98,6 +98,17 @@ const tintedPairs: ContrastPair[] = [
   usedFor: `${hue} notice or pill`,
 }));
 
+/** White text on each genre band (G7c), at both ends of its gradient. */
+const bandPairs: ContrastPair[] = ['plum', 'sage', 'gold', 'sky', 'neutral', 'blush'].flatMap(
+  (hue) =>
+    ['from', 'to'].map((end) => ({
+      foreground: 'band-text',
+      background: `band-${hue}-${end}`,
+      minimumRatio: 4.5,
+      usedFor: `text on the ${hue} genre band`,
+    })),
+);
+
 /** Interface parts that must stand out from what's around them. */
 const interfacePairs: ContrastPair[] = [
   { foreground: 'control-border', background: 'paper', minimumRatio: 3, usedFor: 'field borders' },
@@ -120,4 +131,9 @@ const interfacePairs: ContrastPair[] = [
 ];
 
 /** All pairs, checked in both themes. */
-export const contrastPairs: ContrastPair[] = [...textPairs, ...tintedPairs, ...interfacePairs];
+export const contrastPairs: ContrastPair[] = [
+  ...textPairs,
+  ...tintedPairs,
+  ...bandPairs,
+  ...interfacePairs,
+];

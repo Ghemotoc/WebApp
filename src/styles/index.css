@@ -27,6 +27,24 @@
   text-transform: uppercase;
 }
 
+/*
+ * genre-band: the deep coloured band at the top of a category page (bundle G7c; board
+ * DiscoverGenre). Everything inside it turns white (headings, body text, links, the eyebrow and
+ * the focus ring) by pointing the text tokens at --band-text, so shared parts such as the
+ * breadcrumb and the "Sponsored by" line need no band-only version. The band colours themselves
+ * come from categoryAccents.ts; every one carries white text at 4.5:1 (contrast-pairs.ts).
+ */
+@utility genre-band {
+  color: var(--band-text);
+  --heading: var(--band-text);
+  --body: var(--band-text);
+  --meta: var(--band-text);
+  --eyebrow: var(--band-text);
+  --link: var(--band-text);
+  --link-hover: var(--band-text);
+  --focus-ring: var(--band-text);
+}
+
 @utility eyebrow {
   font-family: var(--font-eyebrow);
   font-size: 11px;

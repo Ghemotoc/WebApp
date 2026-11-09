@@ -11,7 +11,7 @@
  *   /library/<reading|saved|finished>                 one shelf of the reader's library (S1-E4-03)
  *   /u/<username>/library                             someone's library, from their profile (S1-E13-01)
  * and ?category=…&status=…&language=…&sort=… for the filters.
- * Who uses it: DiscoverPage (each shelf's "View more"), StoryListPage, CategoryChips, the story
+ * Who uses it: DiscoverPage (each shelf's "View more"), StoryListPage, StoryBreadcrumb, the story
  * page's tags.
  */
 import type { CompletionStatus, ListKind, ListRequest, SortOrder } from '../api/storyLists';

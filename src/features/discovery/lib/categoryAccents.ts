@@ -2,7 +2,8 @@
  * Each category's accent colour (story S1-E5-01, first criterion: "the category's accent
  * colour"). The accents reuse the pill tones, so they have their night-mode versions and their
  * text contrast already checked (src/styles/tokens.css; DoD pill system).
- * Who uses it: CategoryChips (the coloured dot) and StoryListHeader (the band on a category page).
+ * Who uses it: StoryListFilters (the coloured dot) and StoryListHeader (the deep band on a category
+ * page, bundle G7c).
  */
 import type { PillTone } from '@/components/ui/InfoPill';
 
@@ -23,22 +24,15 @@ export function categoryAccent(categorySlug: string): PillTone {
   return accentByCategory[categorySlug] ?? 'neutral';
 }
 
-/** The band and dot classes for each tone, written out in full so Tailwind can find them. */
-export const accentBandClasses: Record<PillTone, string> = {
-  plum: 'border-(--pill-plum-border) bg-(--pill-plum-bg)',
-  sage: 'border-(--pill-sage-border) bg-(--pill-sage-bg)',
-  gold: 'border-(--pill-gold-border) bg-(--pill-gold-bg)',
-  sky: 'border-(--pill-sky-border) bg-(--pill-sky-bg)',
-  neutral: 'border-(--pill-neutral-border) bg-(--pill-neutral-bg)',
-  blush: 'border-(--pill-blush-border) bg-(--pill-blush-bg)',
-};
-
-/** The dot beside a category's name: the tone's text colour, which has 7:1 contrast. */
-export const accentDotClasses: Record<PillTone, string> = {
-  plum: 'bg-(--pill-plum-text)',
-  sage: 'bg-(--pill-sage-text)',
-  gold: 'bg-(--pill-gold-text)',
-  sky: 'bg-(--pill-sky-text)',
-  neutral: 'bg-(--pill-neutral-text)',
-  blush: 'bg-(--pill-blush-text)',
+/**
+ * The deep band at the top of a category page (bundle G7c; board DiscoverGenre): the tone's
+ * gradient from tokens.css, which carries white text (the genre-band utility).
+ */
+export const accentDeepBandClasses: Record<PillTone, string> = {
+  plum: 'bg-[linear-gradient(135deg,var(--band-plum-from),var(--band-plum-to)_70%)]',
+  sage: 'bg-[linear-gradient(135deg,var(--band-sage-from),var(--band-sage-to)_70%)]',
+  gold: 'bg-[linear-gradient(135deg,var(--band-gold-from),var(--band-gold-to)_70%)]',
+  sky: 'bg-[linear-gradient(135deg,var(--band-sky-from),var(--band-sky-to)_70%)]',
+  neutral: 'bg-[linear-gradient(135deg,var(--band-neutral-from),var(--band-neutral-to)_70%)]',
+  blush: 'bg-[linear-gradient(135deg,var(--band-blush-from),var(--band-blush-to)_70%)]',
 };
