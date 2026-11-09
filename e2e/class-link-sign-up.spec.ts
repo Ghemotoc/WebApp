@@ -89,7 +89,7 @@ test.describe('the class link as the invitation (IDEAS-3c)', () => {
 
   test('a student signs up through the class link and is in the class', async ({ page }) => {
     await openSignedOut(page, `/class/${onePlace}`);
-    await expect(page.getByText(`You’re invited to join ${className}.`)).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: className })).toBeVisible();
     await page.getByRole('link', { name: 'Create an account with this code' }).click();
     await expect(page).toHaveURL(new RegExp(`/join/${onePlace}$`));
     // The class code is the invitation: the form opens without asking for another code.

@@ -108,11 +108,11 @@ test.describe('class tools (CLASSES-b, S1-E8-11)', () => {
     const page = await openAs(browser, 'pending_check', '/forums');
     await page.getByRole('link', { name: 'Join a class' }).click();
     await expect(page).toHaveURL(/\/class$/);
-    await page.getByRole('button', { name: 'Check the code' }).click();
-    await expect(page.getByText('Type the code your teacher gave you.')).toBeVisible();
+    await page.getByRole('button', { name: 'Find the class' }).click();
+    await expect(page.getByText('Type the code from the teacher.')).toBeVisible();
     await page.getByLabel('Class code').fill(` ${code.toLowerCase()} `);
-    await page.getByRole('button', { name: 'Check the code' }).click();
-    await expect(page.getByText(`You’re invited to join ${className}.`)).toBeVisible();
+    await page.getByRole('button', { name: 'Find the class' }).click();
+    await expect(page.getByRole('heading', { level: 1, name: className })).toBeVisible();
     await page.getByRole('button', { name: 'Join the class' }).click();
     await expect(page).toHaveURL(new RegExp(`${classAddress}$`));
     await page.context().close();

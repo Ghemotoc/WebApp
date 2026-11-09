@@ -137,7 +137,7 @@ test.describe('class invite sheet and who has replied (IDEAS-3b)', () => {
 
   test('the link in the QR code opens Join a class for that code', async ({ browser }) => {
     const page = await openAs(browser, 'pending_check', `/class/${code}`);
-    await expect(page.getByText(`You’re invited to join ${className}.`)).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: className })).toBeVisible();
     await page.context().close();
     joinAs('pending_check', code, threadAddress);
     joinAs('kid_14_waiting', code, null);

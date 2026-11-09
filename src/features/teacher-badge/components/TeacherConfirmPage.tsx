@@ -1,35 +1,88 @@
 /**
  * TeacherConfirmPage: the page a school email link opens, /teacher-check/confirm#<token> (story
- * S1-E2-11, criterion 3).
+ * S1-E2-11, criterion 3; liquid glass in bundle G8e, board TeacherConfirm).
  *
  * Who shows it: the router. The token sits after "#", so it never reaches a server log or a
- * Referer header (the signed-link pattern of ADR 0011). What it calls: useTeacherEmailConfirm.
- * What it says: the badge is granted (a .edu.ro address), the address is confirmed and our team
- * will check the school (any other), or the link has expired or no longer works. Works signed out,
- * on any device. Plain page: no doodles.
+ * Referer header (the signed-link pattern of ADR 0011). What it calls: useTeacherEmailConfirm,
+ * then TeacherConfirmSteps for an address a moderator still has to check.
+ * What it says: the badge is granted (a .edu.ro address), the address is confirmed and a moderator
+ * will check the school (any other), or the link has expired or no longer works. The heading
+ * names the outcome, so a colour never says it alone. Works signed out, on any device.
+ * Board values: one centred glass card with 40 px corners, a round icon, the eyebrow, the heading,
+ * one line under it and one main button. Plain page: no doodles.
  */
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router';
 
+import { ActionIcon } from '@/components/icons/ActionIcon';
+import { buttonClassName } from '@/components/ui/buttonStyles';
 import { Eyebrow } from '@/components/ui/Eyebrow';
-import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
+import { cn } from '@/lib/utils';
 
 import { useTeacherEmailConfirm } from '../hooks/useTeacherEmailConfirm';
 
+import { TeacherConfirmSteps } from './TeacherConfirmSteps';
+
+/** Where the link stands: still checking, one of the outcomes, or the check itself failed. */
+type ConfirmState = 'checking' | 'failed' | 'approved' | 'waiting_for_staff' | 'expired' | 'gone';
+
 /**
- * What the card says.
+ * Works out where the link stands from the hook's answer.
  *
- * @returns the line for the outcome
+ * @param token - the token after "#"
+ * @returns the state the card shows
  */
-function ConfirmBody({ token }: { token: string }) {
-  const { t } = useTranslation('account');
+function useConfirmState(token: string): ConfirmState {
   const { outcome, failed } = useTeacherEmailConfirm(token);
-  if (failed) return <Notice tone="error">{t('teacherBadge.confirm.failed')}</Notice>;
-  if (outcome === null)
-    return <p className="m-0 text-body">{t('teacherBadge.confirm.checking')}</p>;
-  const tone = outcome === 'approved' || outcome === 'waiting_for_staff' ? 'success' : 'info';
-  return <Notice tone={tone}>{t(`teacherBadge.confirm.${outcome}`)}</Notice>;
+  if (failed) return 'failed';
+  if (outcome === null) return 'checking';
+  return outcome;
+}
+
+/**
+ * The round icon above the heading: a tick on the theme's accent when it worked, an info mark
+ * otherwise. Decoration only, since the heading says the same.
+ *
+ * @param props.isGood - true for approved and waiting_for_staff
+ * @returns the icon
+ */
+function OutcomeIcon({ isGood }: { isGood: boolean }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn(
+        'flex size-14 items-center justify-center rounded-full',
+        isGood ? 'bg-primary text-on-primary' : 'border border-border bg-surface text-heading',
+      )}
+    >
+      <ActionIcon name={isGood ? 'check' : 'info'} size={24} />
+    </span>
+  );
+}
+
+/**
+ * The one main button: Spaces once the badge is there (a teacher can now open a class), Settings
+ * otherwise, where the request's state and a new link live.
+ *
+ * @param props.state - where the link stands
+ * @returns the link drawn as a button
+ */
+function NextLink({ state }: { state: ConfirmState }) {
+  const { t } = useTranslation('account');
+  const classes = buttonClassName({ size: 'lg' }, 'self-start');
+  if (state === 'approved') {
+    return (
+      <Link to="/spaces" className={classes}>
+        {t('teacherBadge.confirm.goToSpaces')}
+      </Link>
+    );
+  }
+  return (
+    <Link to="/settings#teacher-badge" className={classes}>
+      {t('teacherBadge.confirm.goToSettings')}
+    </Link>
+  );
 }
 
 /**
@@ -40,28 +93,33 @@ function ConfirmBody({ token }: { token: string }) {
 export function TeacherConfirmPage() {
   const { t } = useTranslation('account');
   const token = useLocation().hash.replace(/^#/, '');
+  const state = useConfirmState(token);
+  const isGood = state === 'approved' || state === 'waiting_for_staff';
   return (
-    <PageContainer className="flex justify-center pt-12 pb-7">
+    <PageContainer className="flex justify-center py-10 md:py-14">
       <title>{t('teacherBadge.confirm.documentTitle')}</title>
       <section
         aria-labelledby="teacher-confirm-heading"
-        className="flex w-full max-w-[640px] flex-col gap-5 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
+        className="flex w-full max-w-[640px] flex-col gap-6 rounded-[40px] border border-border bg-surface p-6 shadow-card md:p-10"
       >
-        <div className="flex flex-col gap-2">
+        {state !== 'checking' && <OutcomeIcon isGood={isGood} />}
+        {/* The heading and the line change once the link is checked, so they are read out. */}
+        <div className="flex flex-col gap-2" aria-live="polite">
           <Eyebrow>{t('teacherBadge.confirm.eyebrow')}</Eyebrow>
           <h1
             id="teacher-confirm-heading"
-            className="m-0 font-heading text-[30px] font-bold text-heading"
+            className="m-0 font-heading text-[30px] leading-tight font-bold text-heading md:text-[36px]"
           >
-            {t('teacherBadge.confirm.heading')}
+            {t(`teacherBadge.confirm.headings.${state}`)}
           </h1>
+          {state !== 'checking' && (
+            <p className="m-0 text-base leading-relaxed text-body">
+              {t(`teacherBadge.confirm.${state}`)}
+            </p>
+          )}
         </div>
-        <div aria-live="polite">
-          <ConfirmBody token={token} />
-        </div>
-        <Link to="/settings#teacher-badge" className="self-start font-semibold text-link underline">
-          {t('teacherBadge.confirm.goToSettings')}
-        </Link>
+        {state === 'waiting_for_staff' && <TeacherConfirmSteps />}
+        <NextLink state={state} />
       </section>
     </PageContainer>
   );

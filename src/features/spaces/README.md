@@ -46,7 +46,8 @@ Each space owns one hidden forum, so its threads reuse the forums feature (`Thre
   class space's invite code (`make_class_invite()`, `end_class_invite()`, `class_invite()`) and
   joining with it (`class_invite_preview()`, `join_class_space()`); `ClassInviteCard` (with
   `ClassInviteFields` and `NewClassInviteCode`) on the settings page and `JoinClassPage`
-  (`/class/:code`).
+  (`/class/:code`, and `/class` with `ClassCodeForm`), both inside the glass `ClassJoinCard`
+  (G8e).
 - `api/classTools.ts` and `hooks/useClassTools.ts` (bundle CLASSES, part b; S1-E8-11): starting
   a class space from the new space form (`create_class_space()`), its lock at the end of the
   school year (`set_class_lock()`) and the members still waiting to read

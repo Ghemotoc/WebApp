@@ -374,7 +374,6 @@
     "eyebrow": "Class invite",
     "title": "Join a class",
     "checking": "Checking the code…",
-    "invited": "You’re invited to join {{name}}.",
     "join": "Join the class",
     "logIn": "Log in to join",
     "signUpWithCode": "Create an account with this code",
@@ -386,10 +385,14 @@
     "openClass": "Open the class",
     "loadFailed": "We couldn’t check the code. Try again.",
     "code": "Class code",
-    "codeHint": "Your teacher gives you the code, on the board or as a link.",
-    "codeEmpty": "Type the code your teacher gave you.",
-    "check": "Check the code",
-    "enterIntro": "Type the code to join your class."
+    "codeHint": "Letters and numbers. The dashes are optional.",
+    "codeEmpty": "Type the code from the teacher.",
+    "check": "Find the class",
+    "enterIntro": "Type the code the teacher wrote on the board or shared. It looks like <example>K4TQ-72BX-9MNA</example>.",
+    "formEyebrow": "Class space",
+    "privacyNote": "Only the class name shows before joining. Class spaces are private: nobody outside the class can see their posts or stories.",
+    "invitedBody": "You’re invited to this class space. Only class members can see it. Members share stories with the class and talk in its threads.",
+    "notNow": "Not now"
   },
   "classLock": {
     "eyebrow": "End of the school year",
