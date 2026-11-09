@@ -139,6 +139,11 @@ test.describe('Writers to follow and the parent’s separate yes (S1-E5-11, S1-E
 
   for (const language of ['ro', 'en'] as const) {
     test(`axe: the parent’s suggestions page at 390 px, light, ${language}`, async ({ page }) => {
+      // The page switches to the parent's own language once the request loads, so the request
+      // carries the view's language; otherwise the Romanian view turned English whenever the
+      // request arrived before checkScreen read the page's language.
+      runSql(`update public.parental_consents set language = '${language}'
+        where user_id = '00000000-0000-4000-8000-000000000003';`);
       await checkScreen(page, {
         address: `/parent-consent/spotlight#${spotlightToken}`,
         width: 390,
