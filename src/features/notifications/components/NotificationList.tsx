@@ -2,8 +2,8 @@
  * NotificationList: the notifications under their day headings, Today, Yesterday, Earlier this
  * week and Older (story S1-E7-01; board 6.2), or the empty state.
  *
- * Board values: each day is a section with an eyebrow heading and a white card of rows (24 px
- * radius, 1 px border, the card shadow). Who uses it: NotificationsPage. What it calls:
+ * Board values (liquid glass redesign, bundle G8d): each day is a section with a small heading and
+ * a glass card of rows (28 px corners, 1 px border, the card shadow). Who uses it: NotificationsPage. What it calls:
  * lib/dayGroups.ts and NotificationRow.
  */
 import type { AppNotification } from '../api/notifications';
@@ -44,10 +44,13 @@ export function NotificationList({ notifications, ownHandle, onOpen }: Notificat
           aria-labelledby={`notifications-${group}`}
           className="flex flex-col gap-2.5"
         >
-          <h2 id={`notifications-${group}`} className="m-0 eyebrow">
+          <h2
+            id={`notifications-${group}`}
+            className="m-0 font-heading text-lg font-bold text-heading"
+          >
             {t(`days.${group}`)}
           </h2>
-          <ul className="m-0 list-none overflow-hidden rounded-card border border-border bg-surface p-0 shadow-card">
+          <ul className="m-0 list-none overflow-hidden rounded-[28px] border border-border bg-surface p-0 shadow-card">
             {items.map((item) => (
               <NotificationRow
                 key={item.id}

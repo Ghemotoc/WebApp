@@ -13,7 +13,10 @@
     "signedOut": "Log in to see your notifications.",
     "logIn": "Log in",
     "newSince_few": "{{count}} new since you last looked.",
-    "settings": "Settings"
+    "settings": "Settings",
+    "unreadOnly": "Unread only",
+    "switchOn": "On",
+    "switchOff": "Off"
   },
   "filters": {
     "label": "Show",
@@ -168,6 +171,10 @@
     "heading": "Decisions about your posts",
     "body": "When a moderator makes a decision about something you posted, you always hear about it here, with the reasons and how to challenge it. You can’t switch these off.",
     "link": "My reports and decisions"
+  },
+  "choicesCard": {
+    "heading": "Email choices",
+    "link": "Change in Settings"
   },
   "statementDecisions": {
     "hide": "a moderator hid something you posted.",

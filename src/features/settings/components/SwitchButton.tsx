@@ -3,7 +3,8 @@
  * AdminSettings: a 56 by 32 px track inside a 44 px tall button, so the touch target stays big).
  *
  * The state shows as the knob's place and the words On or Off beside it, never colour alone
- * (WCAG 1.4.1). Who uses it: FlagRow.
+ * (WCAG 1.4.1). Who uses it: FlagRow, the Appearance settings
+ * section and the "Unread only" switch on the notifications page (G8d).
  */
 import { cn } from '@/lib/utils';
 

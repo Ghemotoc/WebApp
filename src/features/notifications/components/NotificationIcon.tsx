@@ -1,48 +1,40 @@
 /**
  * NotificationIcon: the round icon at the start of a notification row (story S1-E7-01; board
- * 6.2): an open book for stories, a speech bubble for replies, a person for follows and a shield
- * on dark plum for staff.
+ * Notifications in the liquid glass redesign, bundle G8d): an open book for stories, a speech
+ * bubble for replies, a person for follows and a shield for staff, as plain line icons in a
+ * 42 px glass circle.
  *
  * A "You're now a Storyteller" row (IDEAS-3a) has the stories icon; the row names the rank in a
- * pill (bundle G4: no rank stickers).
+ * pill (bundle G4: no rank stickers). Staff rows keep a plum circle so decisions stand out.
  * Who uses it: NotificationRow. Decorative: the row's words say what it is, so the icon is hidden
- * from screen readers. Icons are SVG files (CLAUDE.md rule 16).
+ * from screen readers. What it calls: ActionIcon.
  */
-import commentIcon from '@/assets/icons/comment.svg';
-import openBookIcon from '@/assets/icons/open-book.svg';
-import shieldIcon from '@/assets/icons/shield.svg';
-import userIcon from '@/assets/icons/user.svg';
+import { ActionIcon, type ActionIconName } from '@/components/icons/ActionIcon';
 
 import type { NotificationCategory } from '../api/notifications';
 
-/** Each category's picture and circle colour (the board's tints, as pill tokens). */
-const iconFor: Record<NotificationCategory, { source: string; circle: string }> = {
-  stories: { source: openBookIcon, circle: 'bg-(--pill-plum-bg)' },
-  replies: { source: commentIcon, circle: 'bg-(--pill-sky-bg)' },
-  follows: { source: userIcon, circle: 'bg-(--pill-sage-bg)' },
-  staff: { source: shieldIcon, circle: 'bg-primary' },
+/** The icon and the circle's colours for each kind of notification. */
+const iconFor: Record<NotificationCategory, { name: ActionIconName; circle: string }> = {
+  stories: { name: 'book', circle: 'border border-border bg-surface text-heading' },
+  replies: { name: 'comment', circle: 'border border-border bg-surface text-heading' },
+  follows: { name: 'person', circle: 'border border-border bg-surface text-heading' },
+  staff: { name: 'shield', circle: 'bg-primary text-on-primary' },
 };
 
 /**
- * Renders the icon.
+ * Renders the icon in its circle.
  *
- * @param props.category - which filter the notification belongs to
- * @returns the decorative circle with its icon
+ * @param props.category - the notification's kind
+ * @returns the decorative circle
  */
 export function NotificationIcon({ category }: { category: NotificationCategory }) {
-  const { source, circle } = iconFor[category];
+  const { name, circle } = iconFor[category];
   return (
     <span
       aria-hidden="true"
-      className={`inline-flex size-11 flex-none items-center justify-center rounded-full ${circle}`}
+      className={`inline-flex size-[42px] flex-none items-center justify-center rounded-full ${circle}`}
     >
-      {category === 'staff' ? (
-        <span className="inline-flex size-8 items-center justify-center rounded-full bg-on-primary">
-          <img src={source} alt="" width={24} height={24} className="block size-6" />
-        </span>
-      ) : (
-        <img src={source} alt="" width={24} height={24} className="block size-6" />
-      )}
+      <ActionIcon name={name} size={18} />
     </span>
   );
 }

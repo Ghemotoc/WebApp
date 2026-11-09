@@ -1,9 +1,10 @@
 /**
  * NotificationRow: one notification in the list (story S1-E7-01; board 6.2).
  *
- * Board values: 18 by 22 px padding, a hairline between rows, unread rows on a faint plum tint
- * with a gold dot, a 16 px line "<b>who</b> what", the quote under it, then the time, a grouped
- * pill ("12 reactions"), "Always on" for a decision and the one action in violet. A "new rank"
+ * Board values (Notifications, liquid glass redesign, bundle G8d): 16 by 20 px padding, a hairline
+ * between rows, unread rows on a faint tint with a plum dot, a 15 px line "<b>who</b> what", the
+ * quote under it, then the time, a grouped pill ("12 reactions"), "Always on" with a padlock for
+ * a decision and the one action in bold. A "new rank"
  * row also names the rank in its pill (bundle G4; DESIGN thread, 8 Nov 2026: no sticker).
  * Opening a row marks it as read. A row whose item is gone (no address) is plain text.
  * Who uses it: NotificationsPage. What it calls: lib/notificationText.ts for the words,
@@ -11,7 +12,7 @@
  */
 import { Link } from 'react-router';
 
-import lockIcon from '@/assets/icons/lock.svg';
+import { ActionIcon } from '@/components/icons/ActionIcon';
 import { InfoPill } from '@/components/ui/InfoPill';
 import { timeAgo } from '@/features/comments/lib/timeAgo';
 import { RankChip } from '@/features/forums/components/RankChip';
@@ -47,7 +48,7 @@ function RowWords({
   const { t, i18n } = useNotificationsTranslation();
   return (
     <>
-      <span className="text-base leading-normal text-ink">
+      <span className="text-[15px] leading-normal text-ink">
         <b>{text.who}</b> {text.what}
       </span>
       {text.quote !== null && text.quote !== '' && (
@@ -60,12 +61,12 @@ function RowWords({
         {notification.writerRank !== null && <RankChip rank={notification.writerRank} />}
         {notification.isRequired && (
           <InfoPill tone="plum">
-            <img src={lockIcon} alt="" aria-hidden="true" width={14} height={14} />
+            <ActionIcon name="lock" size={14} />
             {t('alwaysOn')}
           </InfoPill>
         )}
         {text.actionLabel !== null && (
-          <span className="font-semibold text-link">{text.actionLabel}</span>
+          <span className="font-bold text-link underline">{text.actionLabel}</span>
         )}
       </span>
     </>
@@ -85,7 +86,7 @@ export function NotificationRow({ notification, ownHandle, onOpen }: Notificatio
   return (
     <li
       className={cn(
-        'flex items-start gap-4 border-t border-hairline px-[22px] py-[18px] first:border-t-0',
+        'flex items-start gap-3.5 border-t border-hairline px-5 py-4 first:border-t-0',
         isUnread ? 'bg-tint/40' : 'bg-surface',
       )}
     >
@@ -106,7 +107,7 @@ export function NotificationRow({ notification, ownHandle, onOpen }: Notificatio
         </Link>
       )}
       {isUnread && (
-        <span className="mt-2 size-2.5 flex-none rounded-full bg-gold shadow-[0_0_0_2px_var(--surface)]">
+        <span className="mt-2 size-2.5 flex-none rounded-full bg-primary">
           <span className="sr-only">{t('unread')}</span>
         </span>
       )}

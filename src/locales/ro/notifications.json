@@ -13,7 +13,10 @@
     "aboutLabel": "Despre notificări",
     "signedOut": "Intră în cont ca să-ți vezi notificările.",
     "logIn": "Intră în cont",
-    "settings": "Setări"
+    "settings": "Setări",
+    "unreadOnly": "Doar necitite",
+    "switchOn": "Pornit",
+    "switchOff": "Oprit"
   },
   "filters": {
     "label": "Arată",
@@ -168,6 +171,10 @@
     "heading": "Decizii despre ce ai postat",
     "body": "Când un moderator ia o decizie despre ceva ce ai postat, afli mereu aici, cu motivele și cum o poți contesta. Nu poți opri aceste notificări.",
     "link": "Raportările și deciziile mele"
+  },
+  "choicesCard": {
+    "heading": "Alegeri pentru email",
+    "link": "Schimbă în Setări"
   },
   "statementDecisions": {
     "hide": "un moderator a ascuns ceva ce ai postat.",
