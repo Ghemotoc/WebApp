@@ -118,7 +118,7 @@
   "thanks": {
     "button": "Spune că ai terminat povestea",
     "sent": "Trimis",
-    "hint": "Persoana care a scris-o vede numele și că ai terminat povestea. Fără mesaj, doar un mulțumesc.",
+    "hint": "Persoana care a scris-o vede numele tău și că ai terminat povestea. Fără mesaj, doar un mulțumesc.",
     "sentNote": "Trimis. Persoana care a scris povestea va vedea că ai terminat-o.",
     "failed": "Nu am putut trimite. Încearcă din nou.",
     "notActive": "Poți trimite asta după ce contul tău e gata să participe."

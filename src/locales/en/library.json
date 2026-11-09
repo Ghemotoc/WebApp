@@ -118,7 +118,7 @@
   "thanks": {
     "button": "Tell the writer you finished it",
     "sent": "Sent",
-    "hint": "The writer sees the name and that you finished the story. No message, only thanks.",
+    "hint": "The writer sees your name and that you finished the story. No message, only thanks.",
     "sentNote": "Sent. The writer will see that you finished their story.",
     "failed": "We couldn’t send it. Try again.",
     "notActive": "You can send this once your account is ready to take part."
