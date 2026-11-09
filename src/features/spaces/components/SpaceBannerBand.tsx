@@ -1,41 +1,50 @@
 /**
- * SpaceBannerBand: the band across the top of a space's header (bundle FORUMS-2, parts a and c;
- * S1-E8-06 criterion 1; design/boards/Space.dc.html's 168 px banner).
+ * SpaceBannerBand: the coloured background at the top of a space's header (bundle FORUMS-2,
+ * parts a and c, redrawn in G8b; S1-E8-06 criterion 1; design/boards/Space.dc.html's banner).
  *
- * It always paints the space's drawn colour, and lays the uploaded banner picture over it once its
- * check passed (CLAUDE.md rule 19). Until then everyone, the uploader included, sees the colour;
- * the settings page shows the uploader a preview and where the check is. The band is decoration: the
- * space's name is the heading below it, so screen readers skip it.
- * Who shows it: SpaceHeaderCard. What it calls: useSpaceBannerView → the picture's signed address.
+ * It fills the header's banner area behind the space's name and buttons. It always paints the
+ * space's colour, and lays the uploaded banner picture over it, under a dark wash so white text
+ * reads on any picture, once the picture's check passed (CLAUDE.md rule 19). Until then everyone,
+ * the uploader included, sees the colour; the settings page shows the uploader a preview and where
+ * the check is. The band is decoration: the space's name is the heading on it, so screen readers
+ * skip it.
+ * Who shows it: SpaceHeaderCard, which also decides the text colour on it (lib/spaceLook.ts).
  */
-import type { Space } from '../api/spaces';
-import { useSpaceBannerView } from '../hooks/useSpaceBanner';
-import { bannerBackgrounds } from '../lib/spaceLook';
+import type { SpaceBanner } from '../api/spaces';
+import { bannerBackground, pictureScrim } from '../lib/spaceLook';
 
 /**
  * Renders the band.
  *
- * @param props.space - the space
- * @returns the coloured band, with the picture over it when there is one to show
+ * @param props.banner - the space's colour
+ * @param props.pictureUrl - the uploaded picture's signed address once it passed, or null
+ * @returns the band, filling its positioned parent
  */
-export function SpaceBannerBand({ space }: { space: Space }) {
-  const view = useSpaceBannerView(space).data ?? null;
-  // A picture still being checked, waiting for a person or removed shows the colour instead.
-  const pictureUrl = view !== null && view.state === 'visible' ? view.url : null;
+export function SpaceBannerBand({
+  banner,
+  pictureUrl,
+}: {
+  banner: SpaceBanner;
+  pictureUrl: string | null;
+}) {
   return (
     <div
       aria-hidden="true"
       data-testid="space-banner-band"
-      className="relative h-[120px] md:h-[168px]"
-      style={{ background: bannerBackgrounds[space.banner] }}
+      data-banner={banner}
+      className="absolute inset-0"
+      style={{ background: bannerBackground(banner) }}
     >
       {pictureUrl !== null && (
-        <img
-          src={pictureUrl}
-          alt=""
-          className="absolute inset-0 size-full object-cover"
-          data-testid="space-banner-picture"
-        />
+        <>
+          <img
+            src={pictureUrl}
+            alt=""
+            className="absolute inset-0 size-full object-cover"
+            data-testid="space-banner-picture"
+          />
+          <div className="absolute inset-0" style={{ background: pictureScrim }} />
+        </>
       )}
     </div>
   );

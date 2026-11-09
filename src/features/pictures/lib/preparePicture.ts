@@ -24,6 +24,8 @@ export const longestSideFor = {
   atlasImage: 1600,
   // A space's banner band, 168 px tall across a 1,440 px page on a sharp screen (FORUMS-2c).
   spaceBanner: 2400,
+  // A space's square logo, drawn at most 96 px; 1,024 keeps it sharp on any screen (G8b).
+  spaceLogo: 1024,
   // A signature picture is drawn at 56 px; 400 keeps it sharp on any screen (S1-E8-08).
   signaturePicture: 400,
   // A landing page's hero or text picture across a 1,440 px page on a sharp screen (S1-E11-14).

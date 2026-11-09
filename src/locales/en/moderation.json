@@ -394,7 +394,8 @@
       "signature_picture": "Signature picture",
       "landing_picture": "Landing page picture",
       "sponsor_creative": "Sponsor picture",
-      "brand_asset": "Logo or emblem"
+      "brand_asset": "Logo or emblem",
+      "space_logo": "Space logo"
     },
     "status": "Status",
     "statuses": {

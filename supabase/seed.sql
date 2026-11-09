@@ -414,7 +414,7 @@ begin
      'Young poets', public.space_name_key('Young poets'),
      'Poems by and for writers under 16. Post one, read others, say something kind.',
      E'Poems only.\nBe kind and specific.',
-     'under_16', 'members', 'anyone', 'open', 'gold')
+     'under_16', 'members', 'anyone', 'open', 'butter')
   on conflict (id) do nothing;
 
   -- 2. Each space's hidden forum, named after it.

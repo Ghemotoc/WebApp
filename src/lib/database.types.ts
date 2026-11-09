@@ -6736,6 +6736,7 @@ export type Database = {
           joining: Database['public']['Enums']['space_joining'];
           kind: Database['public']['Enums']['space_kind'];
           locks_at: string | null;
+          logo_picture_id: string | null;
           name: string;
           name_key: string;
           posting: Database['public']['Enums']['space_posting'];
@@ -6788,6 +6789,7 @@ export type Database = {
           joining?: Database['public']['Enums']['space_joining'];
           kind?: Database['public']['Enums']['space_kind'];
           locks_at?: string | null;
+          logo_picture_id?: string | null;
           name: string;
           name_key: string;
           posting?: Database['public']['Enums']['space_posting'];
@@ -6813,6 +6815,7 @@ export type Database = {
           joining?: Database['public']['Enums']['space_joining'];
           kind?: Database['public']['Enums']['space_kind'];
           locks_at?: string | null;
+          logo_picture_id?: string | null;
           name?: string;
           name_key?: string;
           posting?: Database['public']['Enums']['space_posting'];
@@ -6837,6 +6840,13 @@ export type Database = {
             columns: ['handover_to_user_id'];
             isOneToOne: false;
             referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'spaces_logo_picture_id_fkey';
+            columns: ['logo_picture_id'];
+            isOneToOne: false;
+            referencedRelation: 'picture_checks';
             referencedColumns: ['id'];
           },
           {
@@ -11273,6 +11283,7 @@ export type Database = {
           joining: Database['public']['Enums']['space_joining'];
           kind: Database['public']['Enums']['space_kind'];
           locks_at: string | null;
+          logo_picture_id: string | null;
           name: string;
           name_key: string;
           posting: Database['public']['Enums']['space_posting'];
@@ -12236,6 +12247,7 @@ export type Database = {
           joining: Database['public']['Enums']['space_joining'];
           kind: Database['public']['Enums']['space_kind'];
           locks_at: string | null;
+          logo_picture_id: string | null;
           name: string;
           name_key: string;
           posting: Database['public']['Enums']['space_posting'];
@@ -13305,6 +13317,7 @@ export type Database = {
           joining: Database['public']['Enums']['space_joining'];
           kind: Database['public']['Enums']['space_kind'];
           locks_at: string | null;
+          logo_picture_id: string | null;
           name: string;
           name_key: string;
           posting: Database['public']['Enums']['space_posting'];
@@ -13912,6 +13925,7 @@ export type Database = {
       };
       register_signature_picture: { Args: { target_path: string }; Returns: string };
       register_space_banner: { Args: { target_path: string }; Returns: string };
+      register_space_logo: { Args: { target_path: string }; Returns: string };
       register_sponsor_creative: { Args: { target_path: string }; Returns: string };
       removal_order_log_rows: { Args: Record<PropertyKey, never>; Returns: Json[] };
       remove_character_picture: { Args: { character_id: string }; Returns: Json };
@@ -14411,6 +14425,7 @@ export type Database = {
       set_shows_online_status: { Args: { should_show: boolean }; Returns: undefined };
       set_shows_reader_level: { Args: { should_show: boolean }; Returns: undefined };
       set_space_banner_picture: { Args: { picture_id?: string; slug: string }; Returns: Json };
+      set_space_logo_picture: { Args: { picture_id?: string; slug: string }; Returns: Json };
       set_space_moderator: {
         Args: {
           handle: string;
@@ -14530,6 +14545,7 @@ export type Database = {
           joining: Database['public']['Enums']['space_joining'];
           kind: Database['public']['Enums']['space_kind'];
           locks_at: string | null;
+          logo_picture_id: string | null;
           name: string;
           name_key: string;
           posting: Database['public']['Enums']['space_posting'];
@@ -14564,6 +14580,7 @@ export type Database = {
           joining: Database['public']['Enums']['space_joining'];
           kind: Database['public']['Enums']['space_kind'];
           locks_at: string | null;
+          logo_picture_id: string | null;
           name: string;
           name_key: string;
           posting: Database['public']['Enums']['space_posting'];
@@ -14752,6 +14769,7 @@ export type Database = {
           joining: Database['public']['Enums']['space_joining'];
           kind: Database['public']['Enums']['space_kind'];
           locks_at: string | null;
+          logo_picture_id: string | null;
           name: string;
           name_key: string;
           posting: Database['public']['Enums']['space_posting'];
@@ -15551,7 +15569,8 @@ export type Database = {
         | 'signature_picture'
         | 'landing_picture'
         | 'sponsor_creative'
-        | 'brand_asset';
+        | 'brand_asset'
+        | 'space_logo';
       picture_status: 'pending' | 'passed' | 'held' | 'approved' | 'removed';
       profile_audience: 'everyone' | 'members' | 'people_i_follow';
       reaction_kind: 'heart' | 'fire' | 'laugh' | 'wow' | 'sad' | 'star';
@@ -15612,7 +15631,23 @@ export type Database = {
         | 'rain_cloud'
         | 'sunny_face';
       space_age_group: 'under_16' | '16_plus';
-      space_banner: 'plum' | 'night' | 'forest' | 'gold';
+      space_banner:
+        | 'plum'
+        | 'night'
+        | 'forest'
+        | 'gold'
+        | 'cobalt'
+        | 'ember'
+        | 'rose'
+        | 'teal'
+        | 'berry'
+        | 'ink'
+        | 'lilac'
+        | 'sky_mist'
+        | 'peach'
+        | 'mint'
+        | 'butter'
+        | 'blush';
       space_joining: 'approve' | 'open';
       space_kind: 'open' | 'class';
       space_member_role: 'owner' | 'member' | 'moderator';
@@ -15941,6 +15976,7 @@ export const Constants = {
         'landing_picture',
         'sponsor_creative',
         'brand_asset',
+        'space_logo',
       ],
       picture_status: ['pending', 'passed', 'held', 'approved', 'removed'],
       profile_audience: ['everyone', 'members', 'people_i_follow'],
@@ -16006,7 +16042,24 @@ export const Constants = {
         'sunny_face',
       ],
       space_age_group: ['under_16', '16_plus'],
-      space_banner: ['plum', 'night', 'forest', 'gold'],
+      space_banner: [
+        'plum',
+        'night',
+        'forest',
+        'gold',
+        'cobalt',
+        'ember',
+        'rose',
+        'teal',
+        'berry',
+        'ink',
+        'lilac',
+        'sky_mist',
+        'peach',
+        'mint',
+        'butter',
+        'blush',
+      ],
       space_joining: ['approve', 'open'],
       space_kind: ['open', 'class'],
       space_member_role: ['owner', 'member', 'moderator'],

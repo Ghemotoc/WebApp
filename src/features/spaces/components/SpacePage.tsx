@@ -89,7 +89,7 @@ function SpaceContent({ space }: { space: Space }) {
     <>
       <SpaceBreadcrumb current={space.name} />
       <SpaceHeaderCard space={space} />
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
         <div className="flex min-w-0 flex-col gap-6">
           <SpaceHandoverOffer space={space} />
           <SpaceWelcomeNote space={space} />

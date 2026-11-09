@@ -42,7 +42,7 @@ function cleanUp() {
     delete from public.space_members where space_id = '${spaceId}';
     delete from public.forums where space_id = '${spaceId}';
     delete from public.spaces where id = '${spaceId}';
-    delete from public.picture_checks where kind = 'space_banner';
+    delete from public.picture_checks where kind in ('space_banner', 'space_logo');
     delete from public.rate_limit_events where user_id = '00000000-0000-4000-8000-000000000007';
     update public.profiles set locale = 'ro' where handle in ('teacher', 'blocker');`);
 }
@@ -54,7 +54,7 @@ function makeSpace() {
       readers, posting, joining, banner)
     values ('${spaceId}', '00000000-0000-4000-8000-000000000007', 'banner-club-e2e', '${spaceName}',
       public.space_name_key('${spaceName}'), 'Pictures at the top.', 'Be kind.', '16_plus',
-      'everybody', 'members', 'approve', 'gold');
+      'everybody', 'members', 'approve', 'ember');
     insert into public.forums (slug, space_id) values ('space-banner-club-e2e', '${spaceId}');
     select public.write_space_forum_names('${spaceId}', '${spaceName}');
     insert into public.space_members (user_id, space_id, role, status, joined_at)
@@ -139,6 +139,34 @@ test.describe('space banners and join notifications (FORUMS-2c)', () => {
     await page.goto(spaceAddress);
     await expect(page.getByTestId('space-banner-band')).toBeVisible();
     await expect(page.getByTestId('space-banner-picture')).toHaveCount(0);
+    await page.context().close();
+  });
+
+  test('the owner adds a logo, which shows beside the name, then removes it (G8b)', async ({
+    browser,
+  }) => {
+    // Uploads stay on from the banner test above; the check is the local stub.
+    const page = await openAs(browser, 'teacher', `${spaceAddress}/settings`);
+    const card = page.getByRole('region', { name: 'Logo (optional)' });
+    await expect(card.getByText('No logo yet, so the space shows no picture.')).toBeVisible();
+    await card.getByLabel('Choose a logo').setInputFiles({
+      name: 'logo.png',
+      mimeType: 'image/png',
+      buffer: tinyPng,
+    });
+    await expect(card.getByText('The logo is up.')).toBeVisible();
+
+    await page.goto(spaceAddress);
+    await expect(page.getByTestId('space-logo')).toHaveCount(1);
+    await page.goto('/spaces');
+    await expect(page.getByTestId('space-logo')).not.toHaveCount(0);
+
+    await page.goto(`${spaceAddress}/settings`);
+    await card.getByRole('button', { name: 'Remove' }).click();
+    await expect(card.getByText('The logo is off. The space shows no picture now.')).toBeVisible();
+    await page.goto(spaceAddress);
+    // "No logo? The space shows no picture at all." (board Space).
+    await expect(page.getByTestId('space-logo')).toHaveCount(0);
     await page.context().close();
   });
 

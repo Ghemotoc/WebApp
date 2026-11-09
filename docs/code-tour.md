@@ -141,6 +141,7 @@ Every section, in the order it was built (QA-5, finding R4). Search this list fo
 - [Spaces people create (S1-E8-06; FORUMS-2a)](#spaces-people-create-s1-e8-06-forums-2a)
 - [Space moderators (S1-E8-07; FORUMS-2b)](#space-moderators-s1-e8-07-forums-2b)
 - [Space banners, join notifications and search by space (S1-E8-06, S1-E8-10; FORUMS-2c)](#space-banners-join-notifications-and-search-by-space-s1-e8-06-s1-e8-10-forums-2c)
+- [Space logos and banner colours (S1-E8-06; G8b)](#space-logos-and-banner-colours-s1-e8-06-g8b)
 - [Private class spaces and invite codes (S1-E8-11; CLASSES-a)](#private-class-spaces-and-invite-codes-s1-e8-11-classes-a)
   - [The end of the school year, the waiting list and typing a code (CLASSES-b)](#the-end-of-the-school-year-the-waiting-list-and-typing-a-code-classes-b)
   - [Stories shared only with a class (CLASSES-c)](#stories-shared-only-with-a-class-classes-c)
@@ -2272,6 +2273,14 @@ CI: npm run doodles:check  →  fails on any raw hex, a fallback that drifted or
 - Join notifications need no change to the join functions: the `space_members_notify` trigger calls `notify()` when a `pending` row is added (to the owner and moderators with the members power, one row per space per day) and when it becomes `active` (to the person, with no actor). `notifications.space_id` carries the space, and `notification_json()` shows `{slug, name}` while the reader may see it.
 - The forum search filter lists spaces as "Space: <name>" with their hidden forum's slug; `search_forum_posts()` already filters by it. `forums_refuse_space_forum_change` keeps staff's forum tools off a space's forum.
 - Tests: `supabase/tests/database/229-space-banners-and-notifications.test.sql`, `src/features/notifications/lib/notificationText.test.ts`, `src/features/forums/lib/forumSearchAddress.test.ts`, `e2e/space-banners-and-notifications.spec.ts`.
+
+## Space logos and banner colours (S1-E8-06; G8b)
+
+- Where it lives: `src/features/spaces/api/spaceLogo.ts`, `hooks/useSpaceLogo.ts`, `SpaceLogo` (header and cards) and `SpaceLogoCard` (settings); `uploadSpaceLogo()` in `src/features/pictures/api/pictures.ts`; the colours in `src/features/spaces/lib/spaceLook.ts`; `supabase/migrations/…_g8b_space_logo_enums.sql` and `…_g8b_space_logo_and_banners.sql`.
+- A logo is a picture of kind `space_logo` in the same `space-banners` bucket and space folder as the banner picture, so the bucket's storage policies cover it unchanged. `register_space_logo()` records it as pending its check; `set_space_logo_picture()` (the settings power) chooses it or takes it off, logged as `logo_picture_changed`. `space_json()` sends it as `logo_picture`; `SpaceLogo` draws it only once it passed (rule 19), and a space without one shows no picture at all (no initials badge).
+- How a click travels: "Choose a logo" → `useSpaceLogoChange().upload` → Storage upload → `register_space_logo()` → `/api/picture-check` → `set_space_logo_picture()` → the old file, if any, is deleted.
+- Banner colours: fourteen (`space_banner`), eight deep and six pastel; `spaces_banner_is_offered` keeps spaces off the retired `night` and `gold`. The header puts the name, description and buttons on the banner: `bannerTextColour()` picks white or dark plum, the shared `genre-band` utility points the text tokens at it, and `data-banner-tone="deep"` turns the buttons into white-edged pills (index.css).
+- Tests: `supabase/tests/database/315-space-logos-and-banners.test.sql`, `src/features/spaces/lib/spaceLook.test.ts` (text contrast on every colour), `e2e/space-banners-and-notifications.spec.ts`.
 
 ## Private class spaces and invite codes (S1-E8-11; CLASSES-a)
 

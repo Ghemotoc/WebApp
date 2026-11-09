@@ -112,6 +112,25 @@
 }
 
 /*
+ * Buttons on a space's deep banner (bundle G8b; board Space: the pills on the banner are clear,
+ * with white text). On the eight deep colours and on a washed picture the grey glass button turns
+ * into a clear pill with a white edge and white text, and the main button turns solid white with
+ * dark plum text, so neither melts into the banner. Pastel banners keep the normal buttons. Both
+ * reach 4.5:1 on every deep banner (white on the colour under a 16% white film, plum on white).
+ */
+[data-banner-tone='deep'] .button-glass {
+  background-color: rgb(255 255 255 / 0.16);
+  background-image: none;
+  color: #ffffff;
+  border-color: rgb(255 255 255 / 0.55);
+  box-shadow: none;
+}
+[data-banner-tone='deep'] .button-main {
+  background: #ffffff;
+  color: #2a0e33;
+}
+
+/*
  * The segmented control (bundle G3; SegmentedControl.tsx): a recessed, slightly darker track and
  * a white water bubble that slides to the picked option in 280 ms (handoff motion table). At
  * night the bubble is a soft white glass so the light text stays readable on it.

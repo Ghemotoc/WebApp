@@ -19,32 +19,14 @@ import { useFeatureFlags } from '@/features/flags/hooks/useFeatureFlags';
 import { ChangeRequestNotice } from '@/features/forums/components/ChangeRequestNotice';
 import { CustomisationChangeForm } from '@/features/forums/components/CustomisationChangeForm';
 import { useSpaceBannerChangeRequest } from '@/features/forums/hooks/useForumSignatures';
-import { PictureUploadError } from '@/features/pictures/api/pictures';
 import { PictureUploadField } from '@/features/pictures/components/PictureUploadField';
-import type { UploadOutcome } from '@/features/pictures/hooks/usePictureUpload';
 
 import type { Space } from '../api/spaces';
 import { useSpaceBannerChange, useSpaceBannerView } from '../hooks/useSpaceBanner';
+import { uploadOutcomeOf } from '../lib/pictureOutcome';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
 import { SpaceFormCard } from './SpaceFormCard';
-
-/**
- * What the upload field says, from the upload's result or error.
- *
- * @param status - the check's status after the upload, or undefined before one
- * @param error - the upload's error, or null
- * @returns the outcome, or null before any upload
- */
-function outcomeOf(status: string | undefined, error: Error | null): UploadOutcome | null {
-  if (error !== null) {
-    if (error instanceof PictureUploadError) {
-      return { kind: 'failed', failure: error.failure, waitMinutes: error.waitMinutes };
-    }
-    return { kind: 'failed', failure: 'unreachable', waitMinutes: null };
-  }
-  return status === undefined ? null : { kind: 'uploaded', path: '', status };
-}
 
 /**
  * The preview and the line saying where the picture's check is.
@@ -100,7 +82,7 @@ export function SpaceBannerPictureCard({ space }: { space: Space }) {
         label={t('bannerPicture.upload')}
         hint={t('bannerPicture.hint')}
         isUploading={upload.isPending}
-        outcome={outcomeOf(upload.data, upload.error)}
+        outcome={uploadOutcomeOf(upload.data, upload.error)}
         onPick={(file) => upload.mutate(file)}
       />
       {space.bannerPicture !== null && (

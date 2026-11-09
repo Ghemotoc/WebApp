@@ -394,7 +394,8 @@
       "signature_picture": "Imagine de semnătură",
       "landing_picture": "Imagine de pe o pagină de prezentare",
       "sponsor_creative": "Imagine de la un sponsor",
-      "brand_asset": "Logo sau emblemă"
+      "brand_asset": "Logo sau emblemă",
+      "space_logo": "Logo de spațiu"
     },
     "status": "Stare",
     "statuses": {

@@ -94,7 +94,6 @@
     "eyebrow": "Spațiu nou",
     "title": "Creează un spațiu",
     "editEyebrow": "Setările spațiului",
-    "editTitle": "Schimbă spațiul",
     "intro16": "Oricine poate crea un spațiu și îl conduce. Pentru că ai cel puțin 16 ani, spațiul tău este pentru membri de la 16 ani, iar oricine, cu sau fără cont, îl poate citi. Poți schimba mai târziu tot ce este mai jos.",
     "introUnder16": "Oricine poate crea un spațiu și îl conduce. Pentru că ai sub 16 ani, spațiul tău este pentru membri sub 16 ani, iar tu alegi cine îl poate citi. Poți schimba mai târziu tot ce este mai jos.",
     "introUnknown": "Avem nevoie de grupa ta de vârstă înainte să poți crea un spațiu.",
@@ -106,12 +105,22 @@
     "description": "Descriere",
     "rules": "Reguli (opțional)",
     "rulesHint": "O regulă pe rând. Apar în partea de sus a spațiului. Regulile comunității se aplică oricum.",
-    "banner": "Culoarea bannerului",
+    "banner": "Banner (opțional)",
     "banners": {
       "plum": "Prună",
-      "night": "Albastru de noapte",
-      "forest": "Verde de pădure",
-      "gold": "Auriu"
+      "cobalt": "Cobalt",
+      "forest": "Pădure",
+      "ember": "Jar",
+      "rose": "Trandafiriu",
+      "teal": "Turcoaz închis",
+      "berry": "Fructe de pădure",
+      "ink": "Cerneală",
+      "lilac": "Liliachiu",
+      "sky_mist": "Cer senin",
+      "peach": "Piersică",
+      "mint": "Mentă",
+      "butter": "Unt",
+      "blush": "Roz pal"
     },
     "whoJoins": "Cine poate intra",
     "whoJoinsText": "Spațiile țin grupele de vârstă separat. Un spațiu creat de cineva sub 16 ani primește doar persoane sub 16 ani. Un spațiu creat de cineva de la 16 ani în sus primește doar persoane de la 16 ani.",
@@ -141,7 +150,10 @@
     "kindOpenNote": "Persoanele din grupa ta de vârstă îl pot găsi și i se pot alătura.",
     "kindClass": "Spațiul unei clase",
     "kindClassNote": "Privat, doar pentru clasa ta. Elevii intră cu un cod pe care li-l dai, oricare le-ar fi vârsta.",
-    "createClass": "Creează spațiul clasei"
+    "createClass": "Creează spațiul clasei",
+    "bannerHint": "Culori intense sau pasteluri.",
+    "bannerChosen": "Ales: {{name}}",
+    "editIntro": "Doar proprietarul, un moderator cu dreptul de a schimba setările și echipa noastră de moderare le pot schimba."
   },
   "newThread": {
     "eyebrow": "Discuție nouă",
@@ -287,7 +299,8 @@
       "handover_offered": "{{actor}} a oferit spațiul contului {{target}}.",
       "handover_cancelled": "{{actor}} a retras oferta făcută contului {{target}}.",
       "handover_declined": "{{actor}} a refuzat spațiul oferit de {{target}}.",
-      "handover_accepted": "{{actor}} a preluat spațiul de la {{target}} și acum este proprietarul lui. {{target}} rămâne moderator cu toate drepturile."
+      "handover_accepted": "{{actor}} a preluat spațiul de la {{target}} și acum este proprietarul lui. {{target}} rămâne moderator cu toate drepturile.",
+      "logo_picture_changed": "{{actor}} a schimbat logoul."
     }
   },
   "bannerPicture": {
@@ -512,5 +525,27 @@
     "offerText": "Dacă accepți, devii proprietar, iar {{name}} rămâne moderator cu toate drepturile.",
     "accept": "Acceptă și devino proprietar",
     "decline": "Refuză"
+  },
+  "logo": {
+    "eyebrow": "Logo",
+    "title": "Logo (opțional)",
+    "intro": "Pătrat, de cel puțin 512 px. Orice imagine, în afară de o persoană reală: desene, simboluri, litere sau fotografii cu locuri și obiecte. Fiecare logo este verificat înainte să apară. Fără logo? Spațiul nu arată nicio imagine.",
+    "none": "Încă nu există logo, așa că spațiul nu arată nicio imagine.",
+    "previewAlt": "Logoul spațiului",
+    "checking": "Verificăm logoul. Apare după ce trece verificarea.",
+    "waiting_for_person": "Cineva din echipa noastră se va uita mai întâi la logo. Apare după ce îl aprobă.",
+    "visible": "Logoul este afișat.",
+    "removed": "Echipa de moderare a scos acest logo. Spațiul nu arată nicio imagine.",
+    "upload": "Alege un logo",
+    "hint": "JPEG, PNG sau WebP, până la 5 MB. O imagine pătrată arată cel mai bine.",
+    "remove": "Scoate",
+    "removeFailed": "Nu am putut scoate logoul. Încearcă din nou.",
+    "removedNotice": "Logoul a fost scos. Spațiul nu mai arată nicio imagine."
+  },
+  "card": {
+    "meta": "{{members}} · {{posting}}",
+    "postingMembers": "doar membrii postează",
+    "postingAnyone": "oricine poate posta",
+    "latest": "Ultima postare: {{when}}"
   }
 }

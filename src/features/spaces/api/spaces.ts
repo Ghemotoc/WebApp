@@ -24,13 +24,39 @@ export type SpaceReaders = Enums<'space_readers'>;
 export type SpacePosting = Enums<'space_posting'>;
 /** How people join: the owner approves, or straight away. */
 export type SpaceJoining = Enums<'space_joining'>;
-/** The drawn banner colour (board 5.3). */
-export type SpaceBanner = Enums<'space_banner'>;
+/**
+ * The banner colour: one of the fourteen the boards offer (G8b; SpaceSettings and SpaceNew).
+ * The database keeps the retired 'night' and 'gold' in its type but no space can use them
+ * (spaces_banner_is_offered), so the screens never meet them.
+ */
+export type SpaceBanner = Exclude<Enums<'space_banner'>, 'night' | 'gold'>;
 /** An open space (S1-E8-06) or a private class space joined by invite code (S1-E8-11). */
 export type SpaceKind = Enums<'space_kind'>;
 
-/** The banner colours in the board's order. */
-export const spaceBanners: SpaceBanner[] = ['plum', 'night', 'forest', 'gold'];
+/** The deep banner colours in the board's order; a space's text on them is white. */
+export const deepSpaceBanners: SpaceBanner[] = [
+  'plum',
+  'cobalt',
+  'forest',
+  'ember',
+  'rose',
+  'teal',
+  'berry',
+  'ink',
+];
+
+/** The pastel banner colours in the board's order; a space's text on them is dark. */
+export const pastelSpaceBanners: SpaceBanner[] = [
+  'lilac',
+  'sky_mist',
+  'peach',
+  'mint',
+  'butter',
+  'blush',
+];
+
+/** Every banner colour in the board's order: the deep ones, then the pastels. */
+export const spaceBanners: SpaceBanner[] = [...deepSpaceBanners, ...pastelSpaceBanners];
 
 /** The caller's place in a space. */
 export type SpaceMembership = 'owner' | 'moderator' | 'member' | 'pending' | null;
@@ -116,6 +142,11 @@ export interface Space {
    * when the caller may read it: once it passed its check, or to its uploader and staff.
    */
   bannerPicture: StoredPicture | null;
+  /**
+   * The space's logo (G8b), or null when it has none, and the boards then show no picture at all.
+   * Its file is named only when the caller may read it, as for the banner picture.
+   */
+  logoPicture: StoredPicture | null;
   owner: ForumPerson;
   memberCount: number;
   threadCount: number;
@@ -415,6 +446,7 @@ export function spaceFrom(value: Json | undefined): Space {
     joining: row['joining'] === 'open' ? 'open' : 'approve',
     banner: spaceBanners.find((banner) => banner === row['banner']) ?? 'plum',
     bannerPicture: pictureFromJson(row['banner_picture'] ?? null),
+    logoPicture: pictureFromJson(row['logo_picture'] ?? null),
     owner: personFrom(row['owner']),
     memberCount: countFrom(row['member_count']),
     threadCount: countFrom(row['thread_count']),

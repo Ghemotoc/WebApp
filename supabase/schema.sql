@@ -745,7 +745,8 @@ CREATE TYPE "public"."picture_kind" AS ENUM (
     'signature_picture',
     'landing_picture',
     'sponsor_creative',
-    'brand_asset'
+    'brand_asset',
+    'space_logo'
 );
 
 
@@ -963,14 +964,26 @@ CREATE TYPE "public"."space_banner" AS ENUM (
     'plum',
     'night',
     'forest',
-    'gold'
+    'gold',
+    'cobalt',
+    'ember',
+    'rose',
+    'teal',
+    'berry',
+    'ink',
+    'lilac',
+    'sky_mist',
+    'peach',
+    'mint',
+    'butter',
+    'blush'
 );
 
 
 ALTER TYPE "public"."space_banner" OWNER TO "postgres";
 
 
-COMMENT ON TYPE "public"."space_banner" IS 'A space''s drawn banner colour (board 5.3: plum, night blue, forest green, gold).';
+COMMENT ON TYPE "public"."space_banner" IS 'A space''s banner colour (boards SpaceSettings and SpaceNew, G8b): deep plum, cobalt, forest, ember, rose, teal, berry and ink, or pastel lilac, sky_mist, peach, mint, butter and blush. night and gold are retired (G8b moved them to ink and ember).';
 
 
 
@@ -14402,8 +14415,10 @@ CREATE TABLE IF NOT EXISTS "public"."spaces" (
     "welcome_note" "text",
     "handover_to_user_id" "uuid",
     "handover_offered_at" timestamp with time zone,
+    "logo_picture_id" "uuid",
     CONSTRAINT "spaces_16_plus_read_by_everybody" CHECK ((("kind" = 'class'::"public"."space_kind") OR ("age_group" = 'under_16'::"public"."space_age_group") OR ("readers" = 'everybody'::"public"."space_readers"))),
     CONSTRAINT "spaces_archived_only_class" CHECK ((("archived_at" IS NULL) OR ("kind" = 'class'::"public"."space_kind"))),
+    CONSTRAINT "spaces_banner_is_offered" CHECK (("banner" <> ALL (ARRAY['night'::"public"."space_banner", 'gold'::"public"."space_banner"]))),
     CONSTRAINT "spaces_class_is_private" CHECK ((("kind" = 'open'::"public"."space_kind") OR (("readers" = 'members'::"public"."space_readers") AND ("posting" = 'members'::"public"."space_posting")))),
     CONSTRAINT "spaces_description_length" CHECK (("char_length"("description") <= 2000)),
     CONSTRAINT "spaces_name_is_written" CHECK ((("btrim"("name") <> ''::"text") AND ("char_length"("name") <= 200))),
@@ -14462,6 +14477,14 @@ COMMENT ON COLUMN "public"."spaces"."handover_to_user_id" IS 'The moderator the 
 
 
 COMMENT ON COLUMN "public"."spaces"."handover_offered_at" IS 'When the owner made the open offer; null for none (IDEA-20261102-7).';
+
+
+
+COMMENT ON COLUMN "public"."spaces"."logo_picture_id" IS 'The uploaded logo (G8b), shown once its check passed; null when the space has no logo.';
+
+
+
+COMMENT ON CONSTRAINT "spaces_banner_is_offered" ON "public"."spaces" IS 'A space uses one of the fourteen banner colours the boards offer; night and gold are retired (G8b).';
 
 
 
@@ -29399,7 +29422,7 @@ CREATE TABLE IF NOT EXISTS "public"."picture_checks" (
     CONSTRAINT "picture_checks_file_sha256_shape" CHECK ((("file_sha256" IS NULL) OR ("file_sha256" ~ '^[0-9a-f]{64}$'::"text"))),
     CONSTRAINT "picture_checks_ip_period_shape" CHECK ((("uploader_ip_period" IS NULL) OR ("uploader_ip_period" ~ '^[0-9]{4}-[0-9]{2}$'::"text"))),
     CONSTRAINT "picture_checks_ip_shape" CHECK ((("uploader_ip_scrambled" IS NULL) OR ("uploader_ip_scrambled" ~ '^[0-9a-f]{64}$'::"text"))),
-    CONSTRAINT "picture_checks_kind_matches_bucket" CHECK (((("kind" = 'cover'::"public"."picture_kind") AND ("bucket" = 'covers'::"text")) OR (("kind" = 'avatar'::"public"."picture_kind") AND ("bucket" = 'avatars'::"text")) OR (("kind" = ANY (ARRAY['chapter_picture'::"public"."picture_kind", 'drawing'::"public"."picture_kind"])) AND ("bucket" = 'chapter-images'::"text")) OR (("kind" = 'atlas_image'::"public"."picture_kind") AND ("bucket" = 'atlas-images'::"text")) OR (("kind" = 'space_banner'::"public"."picture_kind") AND ("bucket" = 'space-banners'::"text")) OR (("kind" = 'signature_picture'::"public"."picture_kind") AND ("bucket" = 'signature-pictures'::"text")) OR (("kind" = 'landing_picture'::"public"."picture_kind") AND ("bucket" = 'landing-pictures'::"text")) OR (("kind" = 'sponsor_creative'::"public"."picture_kind") AND ("bucket" = 'sponsor-creatives'::"text")) OR (("kind" = 'brand_asset'::"public"."picture_kind") AND ("bucket" = 'brand-assets'::"text")) OR ("kind" <> ALL (ARRAY['cover'::"public"."picture_kind", 'avatar'::"public"."picture_kind", 'chapter_picture'::"public"."picture_kind", 'drawing'::"public"."picture_kind", 'atlas_image'::"public"."picture_kind", 'space_banner'::"public"."picture_kind", 'signature_picture'::"public"."picture_kind", 'landing_picture'::"public"."picture_kind", 'sponsor_creative'::"public"."picture_kind", 'brand_asset'::"public"."picture_kind"]))))
+    CONSTRAINT "picture_checks_kind_matches_bucket" CHECK (((("kind" = 'cover'::"public"."picture_kind") AND ("bucket" = 'covers'::"text")) OR (("kind" = 'avatar'::"public"."picture_kind") AND ("bucket" = 'avatars'::"text")) OR (("kind" = ANY (ARRAY['chapter_picture'::"public"."picture_kind", 'drawing'::"public"."picture_kind"])) AND ("bucket" = 'chapter-images'::"text")) OR (("kind" = 'atlas_image'::"public"."picture_kind") AND ("bucket" = 'atlas-images'::"text")) OR (("kind" = ANY (ARRAY['space_banner'::"public"."picture_kind", 'space_logo'::"public"."picture_kind"])) AND ("bucket" = 'space-banners'::"text")) OR (("kind" = 'signature_picture'::"public"."picture_kind") AND ("bucket" = 'signature-pictures'::"text")) OR (("kind" = 'landing_picture'::"public"."picture_kind") AND ("bucket" = 'landing-pictures'::"text")) OR (("kind" = 'sponsor_creative'::"public"."picture_kind") AND ("bucket" = 'sponsor-creatives'::"text")) OR (("kind" = 'brand_asset'::"public"."picture_kind") AND ("bucket" = 'brand-assets'::"text")) OR ("kind" <> ALL (ARRAY['cover'::"public"."picture_kind", 'avatar'::"public"."picture_kind", 'chapter_picture'::"public"."picture_kind", 'drawing'::"public"."picture_kind", 'atlas_image'::"public"."picture_kind", 'space_banner'::"public"."picture_kind", 'space_logo'::"public"."picture_kind", 'signature_picture'::"public"."picture_kind", 'landing_picture'::"public"."picture_kind", 'sponsor_creative'::"public"."picture_kind", 'brand_asset'::"public"."picture_kind"]))))
 );
 
 
@@ -33755,6 +33778,49 @@ ALTER FUNCTION "public"."register_space_banner"("target_path" "text") OWNER TO "
 
 
 COMMENT ON FUNCTION "public"."register_space_banner"("target_path" "text") IS 'Records a just-uploaded space banner as pending its check (FORUMS-2c).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."register_space_logo"("target_path" "text") RETURNS "uuid"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  new_id uuid;
+begin
+  -- Step 1: a member who may write, while uploads are on.
+  if caller_id is null or not public.is_active_member() then
+    raise exception 'Your account can''t add pictures right now.' using errcode = 'insufficient_privilege';
+  end if;
+  if not public.is_feature_enabled('picture_uploads') then
+    raise exception 'Picture uploads are switched off.' using errcode = 'feature_not_supported';
+  end if;
+  -- Step 2: the file is there, the caller uploaded it, under a space whose settings they hold
+  -- (space_banner_upload_allowed() checks the folder and the power for both kinds of picture).
+  if not public.space_banner_upload_allowed(target_path)
+     or not exists (select 1 from storage.objects where objects.bucket_id = 'space-banners'
+                    and objects.name = target_path and objects.owner_id = caller_id::text) then
+    raise exception 'That picture isn''t uploaded to a space you can change.' using errcode = 'check_violation';
+  end if;
+  -- Step 3: the upload limit (S1-E10-12), then the pending row.
+  perform public.take_rate_limit('picture_upload');
+  insert into public.picture_checks (user_id, bucket, path, kind)
+  values (caller_id, 'space-banners', target_path, 'space_logo')
+  on conflict (bucket, path) do nothing
+  returning id into new_id;
+  if new_id is null then
+    raise exception 'That picture is already registered.' using errcode = 'check_violation';
+  end if;
+  return new_id;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."register_space_logo"("target_path" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."register_space_logo"("target_path" "text") IS 'Records a just-uploaded space logo as pending its check (G8b).';
 
 
 
@@ -38337,6 +38403,47 @@ COMMENT ON FUNCTION "public"."set_space_banner_picture"("slug" "text", "picture_
 
 
 
+CREATE OR REPLACE FUNCTION "public"."set_space_logo_picture"("slug" "text", "picture_id" "uuid" DEFAULT NULL::"uuid") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  space public.spaces := public.space_for_power(set_space_logo_picture.slug, 'settings');
+  old_file jsonb;
+begin
+  -- Step 1: the new picture is the caller's own logo, under this space's folder.
+  if set_space_logo_picture.picture_id is not null and not exists (
+      select 1 from public.picture_checks
+      where picture_checks.id = set_space_logo_picture.picture_id
+        and picture_checks.kind = 'space_logo' and picture_checks.deleted_at is null
+        and picture_checks.user_id = (select auth.uid())
+        and split_part(picture_checks.path, '/', 1) = space.id::text) then
+    raise exception 'That picture isn''t a logo you uploaded for this space.' using errcode = 'check_violation', hint = 'picture:not_yours';
+  end if;
+  -- Step 2: the old logo is marked deleted, and its file handed back to delete.
+  if space.logo_picture_id is not null
+     and space.logo_picture_id is distinct from set_space_logo_picture.picture_id then
+    update public.picture_checks set deleted_at = coalesce(deleted_at, now())
+    where picture_checks.id = space.logo_picture_id
+    returning jsonb_build_object('bucket', picture_checks.bucket, 'path', picture_checks.path) into old_file;
+  end if;
+  -- Step 3: the change, then the space's log.
+  update public.spaces set logo_picture_id = set_space_logo_picture.picture_id, updated_at = now()
+  where spaces.id = space.id;
+  perform public.log_space_action(space, 'logo_picture_changed', null, null, null,
+    jsonb_build_object('has_picture', set_space_logo_picture.picture_id is not null));
+  return jsonb_build_object('old_file', old_file);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_space_logo_picture"("slug" "text", "picture_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_space_logo_picture"("slug" "text", "picture_id" "uuid") IS 'Makes an uploaded picture a space''s logo, or takes the logo off; the settings power; logged (G8b).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."set_space_moderator"("slug" "text", "handle" "text", "powers" "public"."space_power"[]) RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -39574,6 +39681,10 @@ CREATE OR REPLACE FUNCTION "public"."space_json"("target" "public"."spaces") RET
     'banner_picture', (select public.picture_state_json(picture_checks) from public.picture_checks
                        where picture_checks.id = target.banner_picture_id
                          and picture_checks.deleted_at is null),
+    -- G8b: the space's logo, once uploaded; null when it has none (the boards then show no picture).
+    'logo_picture', (select public.picture_state_json(picture_checks) from public.picture_checks
+                     where picture_checks.id = target.logo_picture_id
+                       and picture_checks.deleted_at is null),
     'owner', public.forum_person_json(target.user_id),
     'member_count', (select count(*)::integer from public.space_members
                      where space_members.space_id = target.id and space_members.status = 'active'),
@@ -49834,6 +49945,10 @@ CREATE INDEX "spaces_handover_to_user_id_fk_idx" ON "public"."spaces" USING "btr
 
 
 
+CREATE INDEX "spaces_logo_picture" ON "public"."spaces" USING "btree" ("logo_picture_id") WHERE ("logo_picture_id" IS NOT NULL);
+
+
+
 CREATE UNIQUE INDEX "spaces_name_key_live" ON "public"."spaces" USING "btree" ("name_key") WHERE ("deleted_at" IS NULL);
 
 
@@ -52354,6 +52469,11 @@ ALTER TABLE ONLY "public"."spaces"
 
 ALTER TABLE ONLY "public"."spaces"
     ADD CONSTRAINT "spaces_handover_to_user_id_fkey" FOREIGN KEY ("handover_to_user_id") REFERENCES "public"."profiles"("id") ON DELETE SET NULL;
+
+
+
+ALTER TABLE ONLY "public"."spaces"
+    ADD CONSTRAINT "spaces_logo_picture_id_fkey" FOREIGN KEY ("logo_picture_id") REFERENCES "public"."picture_checks"("id") ON DELETE SET NULL;
 
 
 
@@ -59159,6 +59279,11 @@ GRANT ALL ON FUNCTION "public"."register_space_banner"("target_path" "text") TO 
 
 
 
+REVOKE ALL ON FUNCTION "public"."register_space_logo"("target_path" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."register_space_logo"("target_path" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."register_sponsor_creative"("target_path" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."register_sponsor_creative"("target_path" "text") TO "authenticated";
 
@@ -59742,6 +59867,11 @@ GRANT ALL ON FUNCTION "public"."set_shows_reader_level"("should_show" boolean) T
 
 REVOKE ALL ON FUNCTION "public"."set_space_banner_picture"("slug" "text", "picture_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_space_banner_picture"("slug" "text", "picture_id" "uuid") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."set_space_logo_picture"("slug" "text", "picture_id" "uuid") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_space_logo_picture"("slug" "text", "picture_id" "uuid") TO "authenticated";
 
 
 

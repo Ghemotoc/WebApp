@@ -16,6 +16,8 @@ const knownActions = [
   'member_removed',
   'settings_changed',
   'banner_picture_changed',
+  // A space's logo (bundle G8b).
+  'logo_picture_changed',
   'thread_made_sticky',
   'thread_sticky_removed',
   'thread_locked',
