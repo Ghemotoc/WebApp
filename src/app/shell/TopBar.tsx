@@ -6,10 +6,10 @@
  *
  * From left to right: the logo and wordmark (BrandMark, in the theme's accent), the main links in a
  * recessed track with the white water bubble under the page on screen (NavTrack), the search pill
- * (HeaderSearch), then the end slot: the language code, Write, the bell and the account bead, or
- * "Log in" and "Join for free" for a visitor. The pill wraps onto a second row when a window is
- * only just wide enough, so nothing is cut off. Day and night live in the footer and in Settings,
- * never here (handoff). Below 1024 px AppLayout draws PhoneHeader or FocusHeader instead.
+ * (HeaderSearch), then the end slot: Write, the bell and the account bead, or "Log in" and
+ * "Join for free" for a visitor. The pill wraps onto a second row when a window is only just wide
+ * enough, so nothing is cut off. Day and night, and the language, live in the footer and in
+ * Settings, never here (handoff; Robert, 9 Nov 2026, 12:20 UTC, bundle FIX-3). Below 1024 px AppLayout draws PhoneHeader or FocusHeader instead.
  * Decisions: links appear only when their page exists (src/app/navigation.ts). Messages, with its
  * unread count, comes in through navigationEnd while signed in (S1-E9-01).
  * Who uses it: AppLayout, and the /design page with the full board links.
@@ -28,7 +28,7 @@ import { NavTrack } from './NavTrack';
 /** What the top bar needs. All optional: AppLayout uses the defaults. */
 export interface TopBarProps {
   navigationItems?: NavigationItem[];
-  /** Controls at the right-hand end, such as the language drop-down. */
+  /** Controls at the right-hand end: Write, the bell and the account. */
   endSlot?: ReactNode;
   /** The navigation's accessible name; a specimen on /design passes its own so it isn't a second "Main". */
   navigationLabel?: string;

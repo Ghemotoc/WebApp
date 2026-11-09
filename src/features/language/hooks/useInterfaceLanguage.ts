@@ -1,8 +1,9 @@
 /**
  * useInterfaceLanguage: the language on screen, and changing it (story S1-E1-04).
  *
- * Who calls it: LanguageSelect, the drop-down in the top bar and in the footer. Both share the one
- * translation instance, so changing one changes the other at once.
+ * Who calls it: LanguageSelect, the footer's drop-down, and LanguageSettingsSection, the Language
+ * panel in Settings (bundle FIX-3). Both share the one translation instance, so changing one
+ * changes the other at once.
  * What it calls, in this order, when the person picks a language:
  *   1. i18next, so the whole screen switches straight away;
  *   2. src/lib/language-preference.ts, so this browser opens in it next time;

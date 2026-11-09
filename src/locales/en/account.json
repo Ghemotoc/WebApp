@@ -66,6 +66,7 @@
     "groups": {
       "profile": "Profile",
       "appearance": "Appearance",
+      "language": "Language",
       "account": "Email and sign-in",
       "privacy": "Privacy",
       "notifications": "Notifications",

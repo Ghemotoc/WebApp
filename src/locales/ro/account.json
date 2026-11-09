@@ -66,6 +66,7 @@
     "groups": {
       "profile": "Profil",
       "appearance": "Aspect",
+      "language": "Limbă",
       "account": "E-mail și conectare",
       "privacy": "Confidențialitate",
       "notifications": "Notificări",

@@ -6,9 +6,10 @@
  * What it proves:
  * - a browser set to English still opens in Romanian, and English is one choice away (decided
  *   17 Oct 2026, 11:48);
- * - both drop-downs (top bar and footer) switch the language, and this browser remembers it;
- * - a signed-in person's choice is saved to the account and opens on a second device;
- * - the drop-downs fit at 390, 768 and 1440 px without sideways scroll (CLAUDE.md rule 21).
+ * - the footer's drop-down switches the language, and this browser remembers it;
+ * - the top bar has no language menu at any width (Robert, 9 Nov 2026, 12:20 UTC; bundle FIX-3);
+ * - a signed-in person's choice in Settings is saved to the account and opens on a second device;
+ * - nothing scrolls sideways at 390, 768 and 1440 px (CLAUDE.md rule 21).
  */
 import { expect, test, type Page } from '@playwright/test';
 
@@ -18,11 +19,6 @@ import { signInPersona, useSessionInBrowser } from './support/personas';
 const romanianHeading = 'Scrie povești. Fii citit.';
 const englishHeading = 'Write stories. Get read.';
 
-/** The top bar's language drop-down (its label is hidden on screen, as on the board). */
-function topBarLanguage(page: Page, label: 'Limbă' | 'Language') {
-  return page.getByRole('banner').getByRole('combobox', { name: label });
-}
-
 /** The footer's language drop-down (its label is shown). */
 function footerLanguage(page: Page, label: 'Limbă' | 'Language') {
   return page.getByRole('contentinfo').getByRole('combobox', { name: label });
@@ -31,12 +27,12 @@ function footerLanguage(page: Page, label: 'Limbă' | 'Language') {
 test.describe('a browser set to English', () => {
   test.use({ locale: 'en-GB' });
 
-  test('still opens in Romanian, with English one choice away in the top bar', async ({ page }) => {
+  test('still opens in Romanian, with English one choice away in the footer', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('html')).toHaveAttribute('lang', 'ro');
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(romanianHeading);
 
-    await topBarLanguage(page, 'Limbă').selectOption('en');
+    await footerLanguage(page, 'Limbă').selectOption('en');
 
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(englishHeading);
@@ -44,9 +40,7 @@ test.describe('a browser set to English', () => {
   });
 });
 
-test('the footer drop-down switches the language too, and this browser remembers it', async ({
-  page,
-}) => {
+test('this browser remembers the language chosen in the footer', async ({ page }) => {
   await page.goto('/');
   await footerLanguage(page, 'Limbă').selectOption('en');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(englishHeading);
@@ -59,21 +53,15 @@ test('the footer drop-down switches the language too, and this browser remembers
 });
 
 for (const width of [390, 768, 1440]) {
-  test(`the language drop-downs show where they belong and nothing scrolls sideways at ${width} px`, async ({
+  test(`the language menu is in the footer only and nothing scrolls sideways at ${width} px`, async ({
     page,
   }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/');
 
-    // The footer always has the full drop-down. The top bar's short one (RO, EN) is drawn only
-    // from 1024 px: below that the phone header (header B) has no language control (bundle G4
-    // SHELL; handoff "App header and tab bar").
+    // The footer has the drop-down; the header has none at any width (bundle FIX-3).
     await expect(footerLanguage(page, 'Limbă')).toBeVisible();
-    if (width >= 1024) {
-      await expect(topBarLanguage(page, 'Limbă')).toBeVisible();
-    } else {
-      await expect(topBarLanguage(page, 'Limbă')).toHaveCount(0);
-    }
+    await expect(page.getByRole('banner').getByRole('combobox', { name: 'Limbă' })).toHaveCount(0);
     const pageWidth = await page.evaluate(() => document.documentElement.scrollWidth);
     expect(pageWidth).toBeLessThanOrEqual(width);
   });
@@ -90,18 +78,22 @@ test.describe('a signed-in person', () => {
     expect(error).toBeNull();
   });
 
-  test('switches to English on one device and sees English on a second device', async ({
+  test('switches to English in Settings on one device and sees English on a second device', async ({
     browser,
   }) => {
-    // Device 1: signed in as adult_writer, the app opens in Romanian (the account's language).
+    // Device 1: signed in as adult_writer, Settings opens in Romanian (the account's language).
     const firstDevice = await browser.newContext();
     await useSessionInBrowser(firstDevice, (await signInPersona('adult_writer')).session);
     const firstPage = await firstDevice.newPage();
-    await firstPage.goto('/');
-    await expect(firstPage.getByRole('heading', { level: 1 })).toHaveText(romanianHeading);
+    await firstPage.goto('/settings#language');
+    const panel = firstPage.getByRole('region', { name: 'Limbă' });
+    await expect(panel.getByRole('radio', { name: 'Română' })).toBeChecked();
 
-    await topBarLanguage(firstPage, 'Limbă').selectOption('en');
-    await expect(firstPage.getByText('Language saved to your account.')).toBeAttached();
+    // The Language panel's radio buttons (bundle FIX-3) save to the account.
+    await panel.getByText('English', { exact: true }).click();
+    await expect(firstPage.getByRole('region', { name: 'Language' })).toContainText(
+      'Language saved to your account.',
+    );
 
     // Device 2: a fresh browser with nothing remembered, signed in again as the same persona.
     const secondDevice = await browser.newContext();
@@ -110,7 +102,7 @@ test.describe('a signed-in person', () => {
     await secondPage.goto('/');
 
     await expect(secondPage.getByRole('heading', { level: 1 })).toHaveText(englishHeading);
-    await expect(topBarLanguage(secondPage, 'Language')).toHaveValue('en');
+    await expect(footerLanguage(secondPage, 'Language')).toHaveValue('en');
 
     await firstDevice.close();
     await secondDevice.close();

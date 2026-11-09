@@ -21,6 +21,9 @@ import { cn } from '@/lib/utils';
 export interface SegmentedOption<Value extends string> {
   value: Value;
   label: string;
+  /** The label's own language, when it differs from the page's ("Română" on an English page), so
+   * screen readers say it right (WCAG 3.1.2). */
+  lang?: string;
 }
 
 /** What the control needs. */
@@ -114,6 +117,7 @@ export function SegmentedControl<Value extends string>({
           return (
             <label
               key={option.value}
+              lang={option.lang}
               data-segment
               className={cn(
                 'relative z-[1] inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full px-2 text-center text-sm leading-tight text-ink sm:px-5',

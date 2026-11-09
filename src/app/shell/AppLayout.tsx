@@ -4,8 +4,9 @@
  *
  * Who uses it: the router (src/app/router.tsx) wraps every public route in it; the page itself
  * appears where <Outlet /> is. The admin site gets its own frame with the staff bar (S1-E11-01).
- * Language (S1-E1-04): the English / Română drop-down sits in both the top bar and the footer
- * (Q11), and useAccountLanguage shows a signed-in person's account language on every device;
+ * Language (S1-E1-04): the English / Română drop-down sits only in the footer, and Settings has
+ * a Language group (Robert, 9 Nov 2026, 12:20 UTC, bundle FIX-3; replaces Q11's "both the top
+ * bar and the footer"). useAccountLanguage shows a signed-in person's account language on every device;
  * useAccountAppearance does the same for their mode and look (bundle G2).
  * Accessibility: the first thing a keyboard user reaches is "Skip to content", which jumps past the
  * top bar to the page (WCAG 2.2, 2.4.1 Bypass blocks). The page sits in the one <main> landmark.
@@ -69,8 +70,8 @@ import { TopBar } from './TopBar';
 import { useIsNarrowScreen } from './useIsNarrowScreen';
 
 /**
- * The website top bar, for windows from 1024 px: the main links with Messages, search, then the
- * language code, the bell, Write and the account (handoff "Navigation"). The Search page has its
+ * The website top bar, for windows from 1024 px: the main links with Messages, search, then
+ * Write, the bell and the account (handoff "Navigation"). The Search page has its
  * own, bigger field with the filters, so the top bar leaves its search pill out there and the page
  * keeps one search region.
  *
@@ -85,8 +86,6 @@ function WideHeader({ hasSearch }: { hasSearch: boolean }) {
       navigationEnd={<MessagesNavLink />}
       endSlot={
         <>
-          {/* Only the code here; the footer has the full names (handoff "Navigation"). */}
-          <LanguageSelect id="language-select-top" isCodeOnly />
           {/* "Write", while signed in (S1-E3-01). */}
           <WriteLink />
           {/* The bell with the unread count, while signed in (S1-E7-01). */}

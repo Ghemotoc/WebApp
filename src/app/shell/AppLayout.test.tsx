@@ -85,11 +85,17 @@ describe('the app shell', () => {
 });
 
 describe('the shell on a wide window (bundle G4 SHELL)', () => {
-  it('has the website top bar with the search pill and the language as a code', () => {
+  it('has the website top bar with the search pill and no language menu', () => {
     renderApp();
 
     expect(screen.getByRole('search', { name: 'Search' })).toBeInTheDocument();
-    expect(screen.getAllByRole('option', { name: 'EN' })).toHaveLength(1);
+    // The language menu sits only in the footer and in Settings (bundle FIX-3).
+    expect(
+      within(screen.getByRole('banner')).queryByRole('combobox', { name: 'Language' }),
+    ).not.toBeInTheDocument();
+    expect(
+      within(screen.getByRole('contentinfo')).getByRole('combobox', { name: 'Language' }),
+    ).toBeInTheDocument();
     // No tab bar on a wide window: the only "Main" navigation is the top bar's.
     expect(screen.getAllByRole('navigation', { name: 'Main' })).toHaveLength(1);
     expect(screen.queryByRole('link', { name: 'Search' })).not.toBeInTheDocument();
