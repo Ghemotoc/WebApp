@@ -11,7 +11,7 @@
  * - the class has a lock date at the end of the school year; "Lock the space now" stops posting
  *   for everyone while members still read, and "Unlock the space" brings posting back;
  * - the new space form, the code form, the class settings and a locked class pass axe at 390, 768
- *   and 1440 px, light and night, ro and en, and no doodle touches text or a control.
+ *   and 1440 px, light and night, ro and en, and no doodle is drawn.
  * Test data: the teacher persona (with the Teacher badge) makes the class in the browser.
  * pending_check is the student who can read (an invited adult is active while adults_only is on);
  * kid_14_waiting is the one who waits. Codes come from make_class_invite() as the teacher. The
@@ -21,7 +21,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 /** The class this spec starts. */
@@ -175,7 +175,7 @@ test.describe('class tools (CLASSES-b, S1-E8-11)', () => {
     for (const view of everyView(addresses)) {
       runSql(`update public.profiles set locale = '${view.language}' where handle = 'teacher';`);
       await checkScreen(page, view);
-      await expectNoDoodleOverlap(page);
+      await expectNoDoodles(page);
     }
     await context.close();
   });
@@ -193,7 +193,7 @@ test.describe('class tools (CLASSES-b, S1-E8-11)', () => {
         `update public.profiles set locale = '${view.language}' where handle = 'pending_check';`,
       );
       await checkScreen(page, view);
-      await expectNoDoodleOverlap(page);
+      await expectNoDoodles(page);
     }
     await context.close();
   });

@@ -10,7 +10,7 @@
  *   and never a 13 to 15-year-old's thread (no parent's yes; D4);
  * - Trending's genre chips are one radio group, and choosing one keeps the row on the page;
  * - the big footer's columns link to the rows on the page.
- * The hero spec (home-hero.spec.ts) checks the whole page with axe and the doodle overlap check
+ * The hero spec (home-hero.spec.ts) checks the whole page with axe and the no-doodles guard
  * at every width, theme and language.
  * Test data: two threads of the spec's own in the platform's first forum, removed after.
  */

@@ -9,7 +9,7 @@
  * - "New entry" opens an entry ready to write; its title, tags and text save by themselves;
  *   reading mode shows clickable links and an Edit toggle; moving it to another section puts it
  *   there; Delete asks twice (S1-E17-18);
- * - the page passes axe, doesn't scroll sideways and has no doodle over text at 390, 768 and
+ * - the page passes axe, doesn't scroll sideways and draws no doodle at 390, 768 and
  *   1440 px, light and night, Romanian and English, with an entry open and with the sections.
  * Test data: adult_writer's seed story "Stația meteo" (its bible goes back to the defaults at the
  * end); suspended_user (whose language no other spec changes) gets one seeded story with one
@@ -19,7 +19,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 const writerStoryId = '00000000-0000-4000-9000-000000000001';
@@ -228,7 +228,7 @@ test.describe('Story Atlas story world, once the bible (S1-E17-17 and S1-E17-18)
       const page = await context.newPage();
       await checkScreen(page, view);
       await expect(page.getByRole('link', { name: 'Farul', exact: true })).toBeVisible();
-      await expectNoDoodleOverlap(page);
+      await expectNoDoodles(page);
       await context.close();
     });
   }

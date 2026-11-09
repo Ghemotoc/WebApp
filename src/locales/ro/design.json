@@ -15,8 +15,7 @@
     "shelves": "Rafturi",
     "notices": "Mesaje și stări goale",
     "ads": "Spații pentru reclame și sponsori",
-    "shell": "Bara de sus, bara echipei și subsolul",
-    "doodles": "Desene"
+    "shell": "Bara de sus, bara echipei și subsolul"
   },
   "colours": {
     "light": "Luminoasă",
@@ -127,12 +126,5 @@
     "title": "Butonul Raportează",
     "intro": "Singura acțiune Raportează pe care o arată fiecare tip de conținut al utilizatorilor (S1-E10-01). Deschide dialogul de raportare cu elementul deja completat. Conectat ca o persoană de test, raportarea este reală și ajunge în coada de moderare.",
     "sampleItem": "Un profil de probă: @adult_writer"
-  },
-  "doodles": {
-    "intro": "Desenele făcute de mână din design/assets, puse direct în pagină ca să-și ia culorile din token-urile --doodle-*. În modul luminos arată exact ca pe planșă; noaptea cerneala devine deschisă și fiecare umplere devine închisă. Scriptul scripts/doodle-tokens.ts păstrează fișierele așa, iar CI eșuează la orice culoare fixă.",
-    "all": "Toate cele {{count}} desene, în modul curent al paginii",
-    "showAll": "Arată toate desenele",
-    "loading": "Se încarcă desenele…",
-    "loadFailed": "Desenele nu s-au putut încărca. Reîncarcă pagina și încearcă din nou."
   }
 }

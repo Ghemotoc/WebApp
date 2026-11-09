@@ -10,7 +10,7 @@
  * - a typed "<script>" is stored as escaped text and shows as text, never runs;
  * - the autosave saves on its own within 10 seconds of a change;
  * - teen_17 can't open adult_writer's chapter; a signed-out visitor is asked to log in;
- * - the editor passes axe, fits the width and keeps doodles off text at 390, 768 and 1440 px,
+ * - the editor passes axe, fits the width and draws no doodle at 390, 768 and 1440 px,
  *   light and night, ro and en.
  * Test data: the seed story "Stația meteo" (adult_writer); its chapters are deleted after.
  */
@@ -18,7 +18,7 @@ import { expect, test, type Browser } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 const storyId = '00000000-0000-4000-9000-000000000001';
@@ -183,7 +183,7 @@ test.describe('chapter editor (S1-E3-02a)', () => {
     );
   });
 
-  test.describe('every view is accessible, fits the width and keeps doodles off text', () => {
+  test.describe('every view is accessible, fits the width and draws no doodle', () => {
     for (const view of everyView(['/write/s/statia-meteo-seed01/c/__CODE__'])) {
       test(`axe: ${view.address} at ${view.width} px, ${view.theme}, ${view.language}`, async ({
         page,
@@ -196,7 +196,7 @@ test.describe('chapter editor (S1-E3-02a)', () => {
           ...view,
           address: view.address.replace('__CODE__', firstChapterCode()),
         });
-        await expectNoDoodleOverlap(page);
+        await expectNoDoodles(page);
       });
     }
   });

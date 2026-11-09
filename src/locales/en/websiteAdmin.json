@@ -18,7 +18,6 @@
     "help": "Help and questions",
     "interfaceText": "Interface text",
     "emails": "Email templates",
-    "seasonal": "Seasonal doodles",
     "landingPages": "Landing pages",
     "branding": "Branding"
   },
@@ -216,58 +215,6 @@
     "searchHint": "Search by the words on screen, in either language, or by key.",
     "count": "Showing {{shown}} of {{total}}",
     "more": "Show 50 more"
-  },
-  "seasonal": {
-    "intro": "Plan which doodle shows beside the Discover heading and Search's popular tags on which days. Readers see a change within a minute. When two occasions overlap, the shorter one wins, and a season's default doodle covers the days with no occasion. New doodles arrive as files in a release, never as uploads.",
-    "add": "Add an occasion",
-    "edit": "Change",
-    "editNamed": "Change {{name}}",
-    "remove": "Remove",
-    "removeNamed": "Remove {{name}}",
-    "save": "Save",
-    "cancel": "Cancel",
-    "formLabel": "Occasion",
-    "fields": {
-      "nameRo": "Name in Romanian",
-      "nameEn": "Name in English",
-      "startsOn": "First day",
-      "endsOn": "Last day",
-      "endsOnHint": "For a range over New Year, pick the last day in the next year.",
-      "everyYear": "Every year",
-      "showsOn": "Shows on",
-      "isSeasonDefault": "Season default (shows on days with no occasion)",
-      "doodle": "Doodle"
-    },
-    "places": {
-      "both": "Discover and Search",
-      "discover": "Discover only",
-      "search": "Search only"
-    },
-    "doodles": {
-      "autumn_leaf": "Autumn leaf",
-      "bee": "Bee",
-      "butterfly": "Butterfly",
-      "candle": "Candle",
-      "cherry_blossom": "Cherry blossom",
-      "daisy": "Daisy",
-      "friendly_ghost": "Friendly ghost",
-      "hot_air_balloon": "Hot air balloon",
-      "hot_chocolate": "Hot chocolate",
-      "jack_o_lantern": "Jack-o'-lantern",
-      "kite": "Kite",
-      "mushroom": "Mushroom",
-      "rain_cloud": "Rain cloud",
-      "sunny_face": "Smiling sun"
-    },
-    "listDates": "{{from}} to {{to}}",
-    "everyYearShort": "every year",
-    "defaultLabel": "season default",
-    "year": "Year",
-    "yearHeading": "The year {{year}}",
-    "dayRange": "(days {{first}} to {{last}})",
-    "gapDays_one": "{{count}} day with no doodle",
-    "gapDays_few": "{{count}} days with no doodle",
-    "gapDays_other": "{{count}} days with no doodle"
   },
   "branding": {
     "heading": "Logo and emblem",

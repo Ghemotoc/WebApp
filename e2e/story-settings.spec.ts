@@ -9,7 +9,7 @@
  *   teen_17 can't open adult_writer's unpublished story;
  * - deleting asks twice, hides the story at once (the page says it isn't available), lists it
  *   under "Recently deleted" and undoes it; the purge job removes it only after 30 days;
- * - the settings and story pages pass axe, don't scroll sideways and keep doodles off text at
+ * - the settings and story pages pass axe, don't scroll sideways and draw no doodle at
  *   390, 768 and 1440 px, in light and night mode, in Romanian and English.
  * Test data: the seed story "Stația meteo" (adult_writer); it is put back as the seed made it.
  */
@@ -17,7 +17,7 @@ import { expect, test, type Browser } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 /** The seed story under test (supabase/seed.sql) and its owner. IDs are used only in SQL. */
@@ -144,7 +144,7 @@ test.describe('story status, settings and deletion (S1-E3-05)', () => {
     ).toBeVisible();
   });
 
-  test.describe('every view is accessible, fits the width and keeps doodles off text', () => {
+  test.describe('every view is accessible, fits the width and draws no doodle', () => {
     for (const view of everyView([`/write/s/${slug}/settings`, `/s/${slug}`])) {
       test(`axe: ${view.address} at ${view.width} px, ${view.theme}, ${view.language}`, async ({
         page,
@@ -154,7 +154,7 @@ test.describe('story status, settings and deletion (S1-E3-05)', () => {
         runSql(`update public.profiles set locale = '${view.language}' where id = '${writerId}';`);
         await useSessionInBrowser(page.context(), (await signInPersona('adult_writer')).session);
         await checkScreen(page, view);
-        await expectNoDoodleOverlap(page);
+        await expectNoDoodles(page);
       });
     }
   });

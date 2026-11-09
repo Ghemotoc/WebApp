@@ -11,7 +11,7 @@
  * - every marketing field saves by itself, the logline and genre being the same fields as At a
  *   glance and Story settings; "Back cover" opens a preview of the title, logline, blurb and
  *   comparable titles as real text (S1-E17-29);
- * - both pages pass axe, don't scroll sideways and have no doodle over text at 390, 768 and
+ * - both pages pass axe, don't scroll sideways and draw no doodle at 390, 768 and
  *   1440 px, light and night, Romanian and English; the open back cover passes axe too.
  * Test data: adult_writer gets "atlas-ideas-seed01"; suspended_user (whose language only the
  * Story Atlas specs change, one at a time) gets "atlas-ideas-seed02" with two notes and
@@ -22,7 +22,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 const writerId = '00000000-0000-4000-8000-000000000001';
@@ -248,7 +248,7 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
       const page = await context.newPage();
       await checkScreen(page, view);
       await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-      await expectNoDoodleOverlap(page);
+      await expectNoDoodles(page);
       await context.close();
     });
   });

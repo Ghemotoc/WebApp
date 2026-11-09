@@ -6,7 +6,7 @@ language: ro
 category: fiction
 rating: all_ages
 tags: sat, umor, poveste, fântână, bătrâni
-cover: drawn:doodles/gold/plum
+cover: drawn:sparkles/gold/plum
 sample: yes
 blurb: În Pârâu Strâmb, fântâna din mijlocul satului a secat peste noapte. Bătrâna Sevastița își amintește de ce: pe vremuri, satul a făgăduit că o va face pe fântână să râdă o dată pe an, și de vreo treizeci de ani n-a mai râs nimeni la ea. Așa că primarul spune bancuri în ciutură, popa cântă, fanfara sună. Fântâna tace. Până intră în scenă capra mea.
 ---

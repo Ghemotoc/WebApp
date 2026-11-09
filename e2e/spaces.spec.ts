@@ -12,7 +12,7 @@
  * - a visitor reads a 16+ space, is asked to log in to join, and can't find an under-16 space
  *   whose readers are members only (criterion 5); the forum index shows the Spaces card;
  * - /spaces, a space and the create form pass axe at 390, 768 and 1440 px, light and night, ro
- *   and en, and no doodle touches text or a control.
+ *   and en, and no doodle is drawn.
  * Test data: the seeded spaces (supabase/seed.sql, FORUMS-2a); the space and thread this spec
  * makes and blocker's membership are removed before and after.
  */
@@ -20,7 +20,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 /** The seeded 16+ space: adult_writer owns it, members post and the owner approves each request. */
@@ -137,7 +137,7 @@ test.describe('spaces people create (FORUMS-2a, S1-E8-06)', () => {
       page,
     }) => {
       await checkScreen(page, view);
-      await expectNoDoodleOverlap(page);
+      await expectNoDoodles(page);
     });
   }
 
@@ -152,7 +152,7 @@ test.describe('spaces people create (FORUMS-2a, S1-E8-06)', () => {
         `update public.profiles set locale = '${view.language}' where handle = 'adult_writer';`,
       );
       await checkScreen(page, view);
-      await expectNoDoodleOverlap(page);
+      await expectNoDoodles(page);
     }
     await context.close();
   });

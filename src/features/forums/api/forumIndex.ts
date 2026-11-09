@@ -37,8 +37,6 @@ export interface ForumEntry {
   position: number;
   isPinned: boolean;
   accent: ForumAccent;
-  /** The doodle's file name, or null. */
-  doodle: string | null;
   name: string;
   description: string;
   threadCount: number;
@@ -89,7 +87,6 @@ function toForumEntry(row: ForumIndexRow): ForumEntry {
     position: row.position,
     isPinned: row.is_pinned,
     accent: row.accent,
-    doodle: (row.doodle as string | null) ?? null,
     name: row.name,
     description: row.description,
     threadCount: Number(row.thread_count),

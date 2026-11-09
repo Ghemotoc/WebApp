@@ -4,8 +4,8 @@
  *
  * Board values: two columns that wrap on narrow screens. On the left, an eyebrow, the Bricolage
  * headline on two lines with a gold underline under the chosen word, the lede, two pill buttons
- * with their doodle icons (the pen on "Start writing", the open book on "Start reading") and
- * three short points with the padlock, shield and book icons. On the right, the cover wall
+ * with their line icons (the pen on "Start writing", the open book on "Start reading") and
+ * three short points with the padlock, shield and book icons (ActionIcon, since NO-DOODLES). On the right, the cover wall
  * (HeroCollage). Every word comes from the published CMS version (never the locale files,
  * decided 17 Oct 2026, 19:14); the `lang` attribute is the copy's language, which can differ
  * from the interface after a fallback (WCAG 2.2, 3.1.2).
@@ -13,11 +13,7 @@
  */
 import { Link } from 'react-router';
 
-import bookIcon from '@/assets/icons/book.svg';
-import drawingIcon from '@/assets/icons/drawing.svg';
-import lockIcon from '@/assets/icons/lock.svg';
-import openBookIcon from '@/assets/icons/open-book.svg';
-import shieldIcon from '@/assets/icons/shield.svg';
+import { ActionIcon, type ActionIconName } from '@/components/icons/ActionIcon';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { useSession } from '@/features/auth/hooks/useSession';
 import type { HomePageContent } from '@/schemas/websiteContent';
@@ -38,16 +34,16 @@ interface HomeHeroProps {
  * tracking ads (shield), free to read and write (book). The points' words come from the CMS,
  * so the icons follow their position.
  */
-const pointIcons: readonly string[] = [lockIcon, shieldIcon, bookIcon];
+const pointIcons: readonly ActionIconName[] = ['lock', 'shield', 'book'];
 
 /**
  * The icon for one point.
  *
  * @param index - the point's position, from 0
- * @returns the icon's address; the book for any point past the third
+ * @returns the icon's name; the book for any point past the third
  */
-function pointIcon(index: number): string {
-  return pointIcons[index] ?? bookIcon;
+function pointIcon(index: number): ActionIconName {
+  return pointIcons[index] ?? 'book';
 }
 
 /**
@@ -64,22 +60,16 @@ function HeroButtons({ page }: { page: HomePageContent }) {
     <div className="mt-1 flex flex-wrap items-center gap-3.5">
       <Link
         to={writeAddress}
-        className={`${pill} bg-primary pr-[30px] pl-[18px] text-on-primary hover:opacity-90`}
+        className={`${pill} bg-primary pr-[30px] pl-[22px] text-on-primary hover:opacity-90`}
       >
-        {/* The pen sits in a pale circle, as on the board, so it shows on the dark button. */}
-        <span
-          aria-hidden="true"
-          className="inline-flex h-8 w-8 flex-none items-center justify-center rounded-full bg-[#FBF7EC]"
-        >
-          <img src={drawingIcon} alt="" className="h-6 w-6" />
-        </span>
+        <ActionIcon name="pen" size={22} className="flex-none" />
         {withBrand(page.primaryButton)}
       </Link>
       <Link
         to="/discover"
         className={`${pill} border border-control-border bg-surface pr-7 pl-[22px] text-heading hover:bg-tint`}
       >
-        <img src={openBookIcon} alt="" aria-hidden="true" className="h-[26px] w-[26px] flex-none" />
+        <ActionIcon name="book" size={22} className="flex-none" />
         {withBrand(page.secondaryButton)}
       </Link>
     </div>
@@ -96,7 +86,7 @@ function HeroPoints({ points }: { points: string[] }) {
     <ul className="m-0 mt-2 flex list-none flex-wrap gap-x-6 gap-y-2.5 p-0 text-[15px] text-ink">
       {points.map((point, index) => (
         <li key={point} className="inline-flex items-center gap-2">
-          <img src={pointIcon(index)} alt="" aria-hidden="true" className="h-6 w-6 flex-none" />
+          <ActionIcon name={pointIcon(index)} size={20} className="flex-none text-heading" />
           {withBrand(point)}
         </li>
       ))}

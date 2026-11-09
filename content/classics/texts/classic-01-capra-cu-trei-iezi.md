@@ -11,7 +11,7 @@ language: ro
 category: fiction
 rating: all_ages
 tags: domeniu public, clasic, basm, creangă
-cover: drawn:doodles/sage/plum
+cover: drawn:sparkles/sage/plum
 blurb: Capra pleacă după mâncare și le spune iezilor să nu deschidă nimănui. Lupul ascultă la ușă și învață cântecul. Povestea despre ascultare, vicleșug și o mamă care nu iartă.
 ---
 

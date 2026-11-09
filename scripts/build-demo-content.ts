@@ -148,7 +148,7 @@ const coverDesigns = [
   'grid',
   'waves',
   'starry',
-  'doodles',
+  'sparkles',
   'twotone',
 ];
 const coverPalette = ['plum', 'ink', 'violet', 'gold', 'lilac', 'blush', 'sky', 'sage', 'paper'];

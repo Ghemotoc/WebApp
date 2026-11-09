@@ -10,19 +10,15 @@
  */
 import { useTranslation } from 'react-i18next';
 
+import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Eyebrow } from '@/components/ui/Eyebrow';
-
-import certificateIcon from '@/assets/icons/certificate.svg';
-import flagIcon from '@/assets/icons/flag.svg';
-import openBookIcon from '@/assets/icons/open-book.svg';
-import shieldIcon from '@/assets/icons/shield.svg';
 
 /** The four benefits, in the board's order, each with the board's icon. */
 const benefits = [
-  { key: 'free', icon: openBookIcon },
-  { key: 'yours', icon: certificateIcon },
-  { key: 'noTracking', icon: shieldIcon },
-  { key: 'person', icon: flagIcon },
+  { key: 'free', icon: 'book' },
+  { key: 'yours', icon: 'award' },
+  { key: 'noTracking', icon: 'shield' },
+  { key: 'person', icon: 'flag' },
 ] as const;
 
 /**
@@ -45,9 +41,9 @@ export function SignUpHero() {
             {/* The board's icon in a white rounded square; decorative. */}
             <span
               aria-hidden="true"
-              className="inline-flex size-12 flex-none items-center justify-center rounded-2xl border border-border bg-surface"
+              className="inline-flex size-12 flex-none items-center justify-center rounded-2xl border border-border bg-surface text-heading"
             >
-              <img src={icon} alt="" width={34} height={34} className="block size-[34px]" />
+              <ActionIcon name={icon} size={24} className="text-heading" />
             </span>
             <span className="flex flex-col gap-1">
               <span className="font-heading text-[19px] font-bold text-heading">

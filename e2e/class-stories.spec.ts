@@ -8,7 +8,7 @@
  *   See all page, while an adult outside the class can't open the story at all;
  * - the student makes it public again, and the outsider reads it;
  * - Story settings with the card, the class page with the shelf and the See all page pass axe at
- *   390, 768 and 1440 px, light and night, ro and en, and no doodle touches text or a control.
+ *   390, 768 and 1440 px, light and night, ro and en, and no doodle is drawn.
  * Test data: the teacher persona starts the class and makes a code with SQL; pending_check (an
  * invited adult is fully active while adults_only is on) joins with it and writes the story;
  * adult_writer is the outsider. Everything is removed before and after; the class's name never
@@ -18,7 +18,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 /** The class and the story this spec makes. */
@@ -167,7 +167,7 @@ test.describe('class stories (CLASSES-c, S1-E8-11)', () => {
         `update public.profiles set locale = '${view.language}' where handle = 'pending_check';`,
       );
       await checkScreen(writerPage, view);
-      await expectNoDoodleOverlap(writerPage);
+      await expectNoDoodles(writerPage);
     }
     await writerContext.close();
   });

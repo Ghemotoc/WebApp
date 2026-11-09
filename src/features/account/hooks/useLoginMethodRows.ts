@@ -15,20 +15,18 @@ import { useTranslation } from 'react-i18next';
 import appleLogo from '@/assets/brands/apple.svg';
 import googleLogo from '@/assets/brands/google.svg';
 import microsoftLogo from '@/assets/brands/microsoft.svg';
-import lockIcon from '@/assets/icons/lock.svg';
-import mailIcon from '@/assets/icons/mail.svg';
 import { socialProviders, type SocialProvider } from '@/features/auth/api/socialSignIn';
 import { formatRomaniaDate } from '@/lib/romania-time';
 
 import { countLoginMethods, type MyLoginMethods, type MyPasskey } from '../api/loginMethods';
-import type { LoginMethodAction } from '../components/LoginMethodRow';
+import type { LoginMethodAction, LoginMethodIcon } from '../components/LoginMethodRow';
 
 import type { useLoginMethods } from './useLoginMethods';
 
 /** One row's props, with its key. */
 export interface LoginMethodRowData {
   key: string;
-  iconSource: string;
+  icon: LoginMethodIcon;
   name: string;
   detail: string;
   isConnected: boolean | null;
@@ -107,7 +105,7 @@ function emailRowOf({ t, methods, login }: RowContext): LoginMethodRowData {
   const setPasswordLabel = t('loginMethods.email.setPassword');
   return {
     key: 'email',
-    iconSource: mailIcon,
+    icon: { lineIcon: 'mail' },
     name: t('loginMethods.email.name'),
     detail: methods.hasPassword
       ? t('loginMethods.email.detailOn')
@@ -134,7 +132,7 @@ function providerRowOf(context: RowContext, provider: SocialProvider): LoginMeth
   const connectName = t('loginMethods.connectNamed', { what: name });
   return {
     key: provider,
-    iconSource: logo,
+    icon: { brandLogo: logo },
     name,
     detail: t(`loginMethods.${textKey}.detail`),
     isConnected,
@@ -158,7 +156,7 @@ function passkeyRowOf(context: RowContext, passkey: MyPasskey): LoginMethodRowDa
   const what = t('loginMethods.passkey.named', { detail });
   return {
     key: passkey.id,
-    iconSource: lockIcon,
+    icon: { lineIcon: 'lock' },
     name: t('loginMethods.passkey.name'),
     detail,
     isConnected: true,
@@ -177,7 +175,7 @@ function addPasskeyRowOf({ t, methods, login }: RowContext): LoginMethodRowData 
   const label = hasPasskeys ? t('loginMethods.passkey.addAnother') : t('loginMethods.passkey.add');
   return {
     key: 'add-passkey',
-    iconSource: lockIcon,
+    icon: { lineIcon: 'lock' },
     name: hasPasskeys ? t('loginMethods.passkey.anotherName') : t('loginMethods.passkey.name'),
     detail: t('loginMethods.passkey.detail'),
     isConnected: hasPasskeys ? null : false,

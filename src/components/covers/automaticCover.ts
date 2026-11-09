@@ -5,7 +5,7 @@
  * it"; the clash rule accepted 23 Oct 2026, Q4).
  *
  * The rules:
- *   - Only the 7 patterned designs are picked (stripes, dots, grid, waves, starry, doodles and
+ *   - Only the 7 patterned designs are picked (stripes, dots, grid, waves, starry, sparkles and
  *     two-tone), never one of the 9 flat colours, so no automatic cover looks empty (Robert,
  *     6 Nov 2026, D3, bundle LOOK-1). A writer can still choose a flat colour themselves.
  *   - The design comes from the story's ID, never from the title, so it is the same on every

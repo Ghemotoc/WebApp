@@ -15,10 +15,6 @@ import type { Editor } from '@tiptap/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import drawingIcon from '@/assets/icons/drawing.svg';
-import musicIcon from '@/assets/icons/music.svg';
-import pictureIcon from '@/assets/icons/picture.svg';
-import videoIcon from '@/assets/icons/video.svg';
 import { useFeatureFlags } from '@/features/flags/hooks/useFeatureFlags';
 
 import { DrawingInsertDialog } from './DrawingInsertDialog';
@@ -55,14 +51,14 @@ function useInsertItems({ openPicture, openDrawing, openEmbed }: InsertOpeners) 
       key: 'picture',
       label: t('insert.picture'),
       note: t('insert.pictureNote'),
-      icon: pictureIcon,
+      icon: 'picture',
       onPick: openPicture,
     });
     items.push({
       key: 'drawing',
       label: t('insert.drawing'),
       note: t('insert.drawingNote'),
-      icon: drawingIcon,
+      icon: 'pen',
       onPick: openDrawing,
     });
   }
@@ -73,14 +69,14 @@ function useInsertItems({ openPicture, openDrawing, openEmbed }: InsertOpeners) 
         key: 'music',
         label: t('insert.music'),
         note: t('insert.musicNote'),
-        icon: musicIcon,
+        icon: 'music',
         onPick: () => openEmbed('music'),
       },
       {
         key: 'video',
         label: t('insert.video'),
         note: t('insert.videoNote'),
-        icon: videoIcon,
+        icon: 'video',
         onPick: () => openEmbed('video'),
       },
     );

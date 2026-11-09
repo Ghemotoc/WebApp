@@ -81,15 +81,15 @@ insert into public.stories (id, user_id, slug, title, blurb, language_code, cate
 select '00000000-0000-4000-9100-000100000000'::uuid, '00000000-0000-4000-8000-000000000001'::uuid, 'painea-de-duminica-demo-01',
   $demo$Pâinea de duminică$demo$, $demo$Irina se întoarce în orașul în care a crescut ca să țină brutăria tatălui ei o singură săptămână. Rețetele sunt toate în caiet, în afară de una: pâinea pe care o coace el doar duminica, pe care nu o vinde nimănui. Și tata nu vrea să-i spună de ce.$demo$, 'ro',
   (select id from public.categories where slug = 'fiction'),
-  'drawn', 'doodles', 'gold', 'plum', 'all_ages', 'no_ai',
+  'drawn', 'sparkles', 'gold', 'plum', 'all_ages', 'no_ai',
   now() - interval '38 days', now() - interval '32 days', now() - interval '40 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9100-000100000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9100-000100000000'::uuid, '00000000-0000-4000-8000-000000000001'::uuid, array['familie', 'brutărie', 'oraș mic', 'întoarcere acasă']);
 update public.stories
-set cover_kind = 'drawn', cover_design = 'doodles', cover_background = 'gold', cover_accent = 'plum'
+set cover_kind = 'drawn', cover_design = 'sparkles', cover_background = 'gold', cover_accent = 'plum'
 where stories.id = '00000000-0000-4000-9100-000100000000'::uuid
   and (cover_kind, cover_design, cover_background, cover_accent)
-    is distinct from ('drawn', 'doodles', 'gold', 'plum');
+    is distinct from ('drawn', 'sparkles', 'gold', 'plum');
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -2267,15 +2267,15 @@ insert into public.stories (id, user_id, slug, title, blurb, language_code, cate
 select '00000000-0000-4000-9100-000700000000'::uuid, '00000000-0000-4000-8000-000000000104'::uuid, 'fantana-care-trebuia-sa-rada-demo-07',
   $demo$Fântâna care trebuia să râdă$demo$, $demo$În Pârâu Strâmb, fântâna din mijlocul satului a secat peste noapte. Bătrâna Sevastița își amintește de ce: pe vremuri, satul a făgăduit că o va face pe fântână să râdă o dată pe an, și de vreo treizeci de ani n-a mai râs nimeni la ea. Așa că primarul spune bancuri în ciutură, popa cântă, fanfara sună. Fântâna tace. Până intră în scenă capra mea.$demo$, 'ro',
   (select id from public.categories where slug = 'fiction'),
-  'drawn', 'doodles', 'gold', 'plum', 'all_ages', 'no_ai',
+  'drawn', 'sparkles', 'gold', 'plum', 'all_ages', 'no_ai',
   now() - interval '80 days', now() - interval '74 days', now() - interval '82 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9100-000700000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9100-000700000000'::uuid, '00000000-0000-4000-8000-000000000104'::uuid, array['sat', 'umor', 'poveste', 'fântână', 'bătrâni']);
 update public.stories
-set cover_kind = 'drawn', cover_design = 'doodles', cover_background = 'gold', cover_accent = 'plum'
+set cover_kind = 'drawn', cover_design = 'sparkles', cover_background = 'gold', cover_accent = 'plum'
 where stories.id = '00000000-0000-4000-9100-000700000000'::uuid
   and (cover_kind, cover_design, cover_background, cover_accent)
-    is distinct from ('drawn', 'doodles', 'gold', 'plum');
+    is distinct from ('drawn', 'sparkles', 'gold', 'plum');
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)

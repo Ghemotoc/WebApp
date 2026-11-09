@@ -4,19 +4,14 @@
  *
  * Board values: eyebrow "All your stories", the 28 px heading, a "Last 30 days / All time"
  * choice, five white tiles (24 px corners, the label in the eyebrow style, the number in 40 px Bricolage
- * with a 40 px icon, a 14 px note) and the lilac "These are totals only" panel.
+ * with a 28 px line icon, a 14 px note) and the lilac "These are totals only" panel.
  * A count from fewer than 5 readers reads "fewer than 5" (criterion 2); the numbers are totals,
  * never a list of readers (criterion 3).
  * Who uses it: WriterDashboardTop. Its numbers come from useWriterDashboard (writer_dashboard()).
  */
 import { useTranslation } from 'react-i18next';
 
-import commentIcon from '@/assets/icons/comment.svg';
-import eyeIcon from '@/assets/icons/eye.svg';
-import heartIcon from '@/assets/icons/heart.svg';
-import openBookIcon from '@/assets/icons/open-book.svg';
-import peopleIcon from '@/assets/icons/people.svg';
-import shieldIcon from '@/assets/icons/shield.svg';
+import { ActionIcon, type ActionIconName } from '@/components/icons/ActionIcon';
 import { ChoiceChips } from '@/components/ui/ChoiceChips';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { formatRomaniaDate } from '@/lib/romania-time';
@@ -28,7 +23,7 @@ import { formatShownCount, formatShownPercent } from '../lib/dashboardNumbers';
 interface TileContent {
   label: string;
   value: string;
-  icon: string;
+  icon: ActionIconName;
   note: string;
   /** True when the value is words ("fewer than 5"), which take a smaller size than a number. */
   isWords?: boolean;
@@ -49,14 +44,7 @@ function StatTile({ tile }: { tile: TileContent }) {
         >
           {tile.value}
         </span>
-        <img
-          src={tile.icon}
-          alt=""
-          aria-hidden="true"
-          width={40}
-          height={40}
-          className="block flex-none"
-        />
+        <ActionIcon name={tile.icon} size={28} className="block flex-none text-heading" />
       </span>
       <span className="text-sm leading-[1.45] text-body">{tile.note}</span>
     </div>
@@ -104,31 +92,31 @@ function tilesFor(
     {
       label: t('dashboard.totals.reads'),
       value: count(totals.reads),
-      icon: eyeIcon,
+      icon: 'eye',
       note: readsNote(dashboard, language, t),
     },
     {
       label: t('dashboard.totals.readThrough'),
       value: formatShownPercent(totals.readThrough, language, fewer),
-      icon: openBookIcon,
+      icon: 'book',
       note: t('dashboard.totals.readThroughNote'),
     },
     {
       label: t('dashboard.totals.likes'),
       value: count(totals.likes),
-      icon: heartIcon,
+      icon: 'heart',
       note: t('dashboard.totals.likesAcross', { count: totals.likedChapters }),
     },
     {
       label: t('dashboard.totals.comments'),
       value: count(totals.comments),
-      icon: commentIcon,
+      icon: 'comment',
       note: t('dashboard.totals.commentsNote'),
     },
     {
       label: t('dashboard.totals.followers'),
       value: count(totals.followers),
-      icon: peopleIcon,
+      icon: 'people',
       note: t(isLast30 ? 'dashboard.totals.followersLast30' : 'dashboard.totals.followersNote'),
     },
   ];
@@ -141,14 +129,7 @@ function TotalsOnlyNote() {
   const { t } = useTranslation('writing');
   return (
     <div className="mt-4 flex items-start gap-3.5 rounded-[20px] bg-tint px-5 py-4">
-      <img
-        src={shieldIcon}
-        alt=""
-        aria-hidden="true"
-        width={28}
-        height={28}
-        className="mt-0.5 block flex-none"
-      />
+      <ActionIcon name="shield" size={24} className="mt-0.5 block flex-none text-heading" />
       <p className="m-0 text-[15px] leading-[1.6] text-ink">
         <strong className="font-bold">{t('dashboard.totals.privacyStrong')}</strong>{' '}
         {t('dashboard.totals.privacy')}

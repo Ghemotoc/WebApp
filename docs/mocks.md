@@ -52,7 +52,6 @@ These are not mocks of an outside service: they are the safe, simple version of 
 | Notification emails | queued and sent by `/api/notification-emails`, which the database wakes through pg_net; until the Vault has `email_worker_url` and `email_worker_key` and Cloudflare has `EMAIL_WORKER_KEY`, the emails wait in `email_outbox` and nothing leaves (locally, the e2e test wakes the worker itself and the emails go to Mailpit) | GO-LIVE (S1-E7-02 by-hand list) | **set by hand** |
 | The Storage sweep | `run-storage-sweep` does nothing until the Vault has `storage_sweep_url` and `storage_sweep_key` and the `storage-sweep` Edge Function is deployed with `STORAGE_SWEEP_KEY`; until then a deleted row's file stays in Storage (locally nothing is ever swept; database test 212 checks the list of files and Vitest the function) | GO-LIVE (S1-E13-04 by-hand list) | **set by hand** |
 | The bell's count | read every minute and when the tab comes back into view, not pushed (READ-3 decision) | Realtime, when it is worth one more moving part (no story yet) | same |
-| Doodles | still drawn on some member pages with the boards' own ink colours; the liquid glass redesign removes them screen by screen (7 Nov 2026: no doodles) | the glass bundles G5 to G14 | same |
 
 ## Stubs and stand-ins from Lane C (safety and admin, from 23 Oct 2026)
 

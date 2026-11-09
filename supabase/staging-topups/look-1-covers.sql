@@ -18,10 +18,10 @@ end;
 $$;
 
 update public.stories
-set cover_kind = 'drawn', cover_design = 'doodles', cover_background = 'gold', cover_accent = 'plum'
+set cover_kind = 'drawn', cover_design = 'sparkles', cover_background = 'gold', cover_accent = 'plum'
 where stories.id = '00000000-0000-4000-9100-000100000000'::uuid
   and (cover_kind, cover_design, cover_background, cover_accent)
-    is distinct from ('drawn', 'doodles', 'gold', 'plum');
+    is distinct from ('drawn', 'sparkles', 'gold', 'plum');
 update public.stories
 set cover_kind = 'drawn', cover_design = 'starry', cover_background = 'ink', cover_accent = 'gold'
 where stories.id = '00000000-0000-4000-9100-000400000000'::uuid
@@ -33,10 +33,10 @@ where stories.id = '00000000-0000-4000-9100-000600000000'::uuid
   and (cover_kind, cover_design, cover_background, cover_accent)
     is distinct from ('drawn', 'dots', 'lilac', 'gold');
 update public.stories
-set cover_kind = 'drawn', cover_design = 'doodles', cover_background = 'gold', cover_accent = 'plum'
+set cover_kind = 'drawn', cover_design = 'sparkles', cover_background = 'gold', cover_accent = 'plum'
 where stories.id = '00000000-0000-4000-9100-000700000000'::uuid
   and (cover_kind, cover_design, cover_background, cover_accent)
-    is distinct from ('drawn', 'doodles', 'gold', 'plum');
+    is distinct from ('drawn', 'sparkles', 'gold', 'plum');
 update public.stories
 set cover_kind = 'drawn', cover_design = 'grid', cover_background = 'sage', cover_accent = 'violet'
 where stories.id = '00000000-0000-4000-9100-000900000000'::uuid
@@ -83,10 +83,10 @@ where stories.id = '00000000-0000-4000-9100-002500000000'::uuid
   and (cover_kind, cover_design, cover_background, cover_accent)
     is distinct from ('drawn', 'grid', 'sky', 'ink');
 update public.stories
-set cover_kind = 'drawn', cover_design = 'doodles', cover_background = 'paper', cover_accent = 'sage'
+set cover_kind = 'drawn', cover_design = 'sparkles', cover_background = 'paper', cover_accent = 'sage'
 where stories.id = '00000000-0000-4000-9100-002600000000'::uuid
   and (cover_kind, cover_design, cover_background, cover_accent)
-    is distinct from ('drawn', 'doodles', 'paper', 'sage');
+    is distinct from ('drawn', 'sparkles', 'paper', 'sage');
 update public.stories
 set cover_kind = 'drawn', cover_design = 'twotone', cover_background = 'plum', cover_accent = 'gold'
 where stories.id = '00000000-0000-4000-9100-002800000000'::uuid
@@ -108,10 +108,10 @@ where stories.id = '00000000-0000-4000-9100-003600000000'::uuid
   and (cover_kind, cover_design, cover_background, cover_accent)
     is distinct from ('drawn', 'stripes', 'ink', 'gold');
 update public.stories
-set cover_kind = 'drawn', cover_design = 'doodles', cover_background = 'sage', cover_accent = 'plum'
+set cover_kind = 'drawn', cover_design = 'sparkles', cover_background = 'sage', cover_accent = 'plum'
 where stories.id = '00000000-0000-4000-9300-000100000000'::uuid
   and (cover_kind, cover_design, cover_background, cover_accent)
-    is distinct from ('drawn', 'doodles', 'sage', 'plum');
+    is distinct from ('drawn', 'sparkles', 'sage', 'plum');
 update public.stories
 set cover_kind = 'drawn', cover_design = 'dots', cover_background = 'gold', cover_accent = 'ink'
 where stories.id = '00000000-0000-4000-9300-000200000000'::uuid
@@ -148,10 +148,10 @@ where stories.id = '00000000-0000-4000-9300-001200000000'::uuid
   and (cover_kind, cover_design, cover_background, cover_accent)
     is distinct from ('drawn', 'stripes', 'sky', 'paper');
 update public.stories
-set cover_kind = 'drawn', cover_design = 'doodles', cover_background = 'gold', cover_accent = 'sage'
+set cover_kind = 'drawn', cover_design = 'sparkles', cover_background = 'gold', cover_accent = 'sage'
 where stories.id = '00000000-0000-4000-9300-001400000000'::uuid
   and (cover_kind, cover_design, cover_background, cover_accent)
-    is distinct from ('drawn', 'doodles', 'gold', 'sage');
+    is distinct from ('drawn', 'sparkles', 'gold', 'sage');
 update public.stories
 set cover_kind = 'drawn', cover_design = 'starry', cover_background = 'plum', cover_accent = 'gold'
 where stories.id = '00000000-0000-4000-9300-001500000000'::uuid

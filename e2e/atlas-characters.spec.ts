@@ -14,7 +14,7 @@
  * - with uploads on, a picture shows once a moderator approved it (the seed story is All ages), with alt text, and Remove brings the
  *   initials back (S1-E17-11);
  * - Delete asks twice, and the at-a-glance page counts the cast (S1-E17-13, S1-E17-06);
- * - the page passes axe, doesn't scroll sideways and has no doodle over text at 390, 768 and
+ * - the page passes axe, doesn't scroll sideways and draws no doodle at 390, 768 and
  *   1440 px, light and night, Romanian and English.
  * Test data: adult_writer's seed story "Stația meteo" (its characters and fields are deleted at
  * the end); suspended_user (whose language no other spec changes) gets one seeded story with one
@@ -24,7 +24,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 import { approveWaitingPictures } from './support/pictures';
 
@@ -261,7 +261,7 @@ test.describe('Story Atlas characters (S1-E17-08 to S1-E17-13)', () => {
       const page = await context.newPage();
       await checkScreen(page, view);
       await expect(page.getByRole('heading', { level: 2, name: 'Ileana Pescaru' })).toBeVisible();
-      await expectNoDoodleOverlap(page);
+      await expectNoDoodles(page);
       await context.close();
     });
   }

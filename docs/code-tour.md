@@ -96,7 +96,6 @@ Every section, in the order it was built (QA-5, finding R4). Search this list fo
 - [Content settings, markets and languages (S1-E11-03, S1-E11-05; CMS-1a)](#content-settings-markets-and-languages-s1-e11-03-s1-e11-05-cms-1a)
 - [The website CMS, notices and help (S1-E11-06, S1-E11-10, S1-E11-12, S1-E5-08; CMS-1b)](#the-website-cms-notices-and-help-s1-e11-06-s1-e11-10-s1-e11-12-s1-e5-08-cms-1b)
 - [Interface text and email templates (S1-E11-18, S1-E11-19; CMS-1c)](#interface-text-and-email-templates-s1-e11-18-s1-e11-19-cms-1c)
-- [Seasonal doodles (S1-E11-11, S1-E5-07; CMS-1d)](#seasonal-doodles-s1-e11-11-s1-e5-07-cms-1d)
 - [Logo and emblem (BRAND-1a, BRAND-1b)](#logo-and-emblem-brand-1a-brand-1b)
 - [Landing pages (S1-E11-14; CONTESTS-13a1)](#landing-pages-s1-e11-14-contests-13a1)
   - [Pictures and featured stories (CONTESTS-13a2a)](#pictures-and-featured-stories-contests-13a2a)
@@ -127,7 +126,7 @@ Every section, in the order it was built (QA-5, finding R4). Search this list fo
 - [Sharing a passage or a picture (S1-E4-11; WRITE-5e)](#sharing-a-passage-or-a-picture-s1-e4-11-write-5e)
 - [Cookieless analytics and the event catalogue (S1-E15-01, S1-E15-03; READ-4f)](#cookieless-analytics-and-the-event-catalogue-s1-e15-01-s1-e15-03-read-4f)
 - [Epic S1-E11 at a glance (checked by S1-E11-QA)](#epic-s1-e11-at-a-glance-checked-by-s1-e11-qa)
-- [Doodles through the tokens (Lane B, 23 Oct 2026)](#doodles-through-the-tokens-lane-b-23-oct-2026)
+- [No doodles (NO-DOODLES)](#no-doodles-no-doodles)
 - [Comments on a paragraph (S1-E6-06; WRITE-5f)](#comments-on-a-paragraph-s1-e6-06-write-5f)
 - [Story Atlas: a story's plan (S1-E17-01 to S1-E17-06; ATLAS-a)](#story-atlas-a-storys-plan-s1-e17-01-to-s1-e17-06-atlas-a)
 - [Story Atlas: characters (S1-E17-08 to S1-E17-13; ATLAS-b)](#story-atlas-characters-s1-e17-08-to-s1-e17-13-atlas-b)
@@ -261,8 +260,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `src/features/people/` | Writer profiles (`/u/:handle`) through `get_writer_profile()`, blocks (`set_block()`, the block dialog, Settings' "Blocked accounts"), the bio, and the shared `<FollowButton>` for writers and stories; see its README | S1-E5-05, S1-E6-05 |
 | `src/features/discovery/` | Discover (`/discover`), and one list page for every See all, category, tag and writer list (`/discover/all/:listKind`, `/discover/c/:categorySlug`, `/discover/t/:tag`, `/u/:handle/stories`), all through `browse_stories()`; filters and sort live in the address; see its README | S1-E5-01, S1-E5-09, S1-E5-02 |
 | `src/components/covers/` | `DrawnCover` (every cover we draw: the 16 designs, the 9-colour palette, the full title at every size), `coverDesigns.ts` (the designs, colours and pattern artwork from the NewStory board) and `automaticCover.ts` (a skipped cover gets one of the 7 patterned designs from the story's ID, never a flat colour (LOOK-1); `designsForRow()` keeps two neighbours in a row apart) | S1-E3-01, S1-E3-13 |
-| `src/components/ui/doodleSources.ts`, `src/assets/doodles/` | The doodle files with readable names. Screens draw no doodles since bundle G4 (the liquid glass design has none); only the staff pickers that still choose one (forum places, seasonal occasions) read them until G12. `e2e/support/doodles.ts` stays as a guard that fails a screen if a doodle ever meets text or a control | S1-E3-01, G4 |
-| `src/assets/icons/` | The board's small doodle icons (bell, block, bookmark, cog as `settings`, globe, laptop, lock, moon, send and others), copied from design/assets as they are and shown as `<img alt="" aria-hidden="true">` before words that already say what the control does. Arrows, close, ticks, plus and minus, form-field and status icons stay plain (`src/components/icons/`), and the reader, share, report and staff screens use none (DoD design rules) | LOOK-5 |
+| `src/components/icons/` | Line icons: `ActionIcon` (buttons, notes and status lines), `NavIcon` (header and tab bar) and the plain arrows, chevrons, tick and cross, all drawn in the current text colour and hidden from screen readers beside words that say what the control does (the hand-drawn icons were replaced in NO-DOODLES) | S1-E1-03, G4, NO-DOODLES |
 | `src/features/avatars/components/PersonAvatar.tsx` | The one small round avatar beside a person's name (posts, comments, chats, followed writers, the dashboard's latest comments): initials on the plum gradient, the drawn avatar over them | LOOK-7 |
 | `src/components/ui/Shelf.tsx`, `useShelfScroll.ts`, `shelfPaging.ts` | Every sideways row of stories: the edge fades (each edge fades while cards are hidden past it, so both in the middle of a row), and arrows that move by whole cards (`pageTarget()`), so the card a fade covered is shown fully between the fades after one press; tests in `shelfPaging.test.ts` and `e2e/shelf-paging.spec.ts` | S1-E1-03, FIXES-1a |
 | `src/features/<feature>/` | One folder per feature: `components/` (screens), `hooks/` (data hooks), `api/` (Supabase calls) and a `README.md` | each feature story; `home/` by S1-E1-01 |
@@ -286,7 +284,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `.claude/` | Claude Code settings and the SessionStart hook: on every start and resume it puts Node 24 first on PATH (through `CLAUDE_ENV_FILE`), starts Docker for the local Supabase stack if it is down, and installs packages when the lock file changes | S1-E1-01, Tooling (18 Oct 2026) |
 | `docs/` | Architecture, Definition of Done, decisions, stories, runbooks, this tour; `mocks.md` (mocks and stubs still on); `epic-reports/` (one report per epic check) | starter kit, then every story |
 | `design/` | Boards (source of truth for screens), renders and pictures | starter kit |
-| `design/assets/*.svg`, `scripts/doodle-tokens.ts` | The 98 doodles and 16 drawn cover backgrounds; the script that keeps every doodle colour a `--doodle-*` token (Lane B, below) | canvas; Lane B (23 Oct 2026) |
+| `design/assets/*.svg` | The 16 drawn cover backgrounds and the old boards' doodles, kept as a record only (the app draws no doodles, NO-DOODLES) | canvas |
 
 **Where the app runs.** Locally: Vite's dev server plus the Supabase CLI in Docker. Staging: Cloudflare Pages project `ghemotoc` builds `main` (`npm run build`, output `dist`) and gives each pull request a preview link; Supabase's GitHub integration applies migrations to the staging project. Production: a tagged release, approved in GitHub (`.github/workflows/release-production.yml`, switched off until a production project exists).
 
@@ -392,7 +390,7 @@ Supabase emails supabase/templates/confirmation.html (Mailpit locally)
 / (home). /setup stays for an account made before 25 Oct 2026 without a username (next section)
 ```
 
-Beside the form, `SignUpHero` shows the four benefits with the board's doodle icons; under both, `SignUpWhatNext` previews what can come after "Create account" (confirm the email, the Yoti age check only while `adults_only` is off, and the too-young refusal), with no buttons (LOOK-6).
+Beside the form, `SignUpHero` shows the four benefits with line icons; under both, `SignUpWhatNext` previews what can come after "Create account" (confirm the email, the Yoti age check only while `adults_only` is off, and the too-young refusal), with no buttons (LOOK-6).
 
 ## The country from the connection (S1-E2-10)
 
@@ -1808,7 +1806,7 @@ What the notifications epic left in place for March. The epic report is `docs/ep
 
 ## Epic S1-E5 at a glance (checked by S1-E5-QA)
 
-What the discovery epic has in place. S1-E5-08, the public home page, and S1-E5-07, the seasonal doodle, came in CMS-1 (no screen shows the doodle since bundle G4); journey 6 of the check walks from the home page to a story. The epic report is `docs/epic-reports/S1-E5.md`.
+What the discovery epic has in place. S1-E5-08, the public home page, and S1-E5-07, the seasonal doodle, came in CMS-1 (retired in NO-DOODLES); journey 6 of the check walks from the home page to a story. The epic report is `docs/epic-reports/S1-E5.md`.
 
 | Kind | Where | Story |
 | --- | --- | --- |
@@ -1883,13 +1881,6 @@ Admins change the app's own words, and the Auth emails', from Staff › Website 
 - **Emails:** `functions/api/send-email.ts` → `server/send-email.ts` is the Supabase Auth Send Email hook: it checks the Standard Webhooks signature, picks the email and language, lays the `email:` overrides over `email.json` and sends through Brevo. It is switched on by hand (GO-LIVE); until then Auth uses `supabase/templates/`.
 - **Tests:** `supabase/tests/database/173-interface-text.test.sql`, `e2e/interface-text.spec.ts`, `server/send-email.test.ts` and the unit tests next to each file.
 
-## Seasonal doodles (S1-E11-11, S1-E5-07; CMS-1d)
-
-A small drawing beside Discover's heading used to change with the season and on special days. Since bundle G4 no screen shows it: the seasonal looks carry the season (G2), and G12 turns the staff page into Website › Seasonal looks, which sets only the dates (DESIGN thread, 8 Nov 2026). Until then the owner and admins can still plan the schedule; the app's database keeps it (B30), and `current_seasonal_doodle(day, place)` still says which occasion wins (the shortest that covers the day, so Halloween beats Autumn).
-
-- **Where it starts (staff):** `/staff/website/seasonal` (`SeasonalTab`). Add or Change opens `OccasionForm`; Save → `admin_save_occasion()` (checks the website area, refuses a last day before the first or a yearly range of a year or more, logs `seasonal.saved` with before and after) → the schedule and the doodle are read again. Remove → `admin_remove_occasion()` (soft delete, `seasonal.removed`).
-- **The year view:** `OccasionYearView` uses `occasionCovers()`, the same rule as the database's `occasion_covers()`, to list each month's occasions and count any day with no doodle.
-- **Tests:** `supabase/tests/database/174-seasonal-occasions.test.sql`, `e2e/seasonal-doodles.spec.ts`, `src/features/seasonal/lib/seasonalCalendar.test.ts`.
 
 ## Logo and emblem (BRAND-1a, BRAND-1b)
 
@@ -2150,7 +2141,7 @@ What the Admin epic has in place so far. The epic report, `docs/epic-reports/S1-
 
 | Kind | Where | Story |
 | --- | --- | --- |
-| Screens | `/staff` (the shell and home), `/staff/audit-log`, `/staff/invites`, `/staff/roles` (`src/features/staff/`), `/staff/settings` (`src/features/settings/`), `/staff/website` and its tabs (`src/features/website/`, `src/features/interface-text/`, `src/features/seasonal/`, `src/features/branding/`) | 11-01, 11-17, 2-07a, 11-03, 11-05, 11-06, 11-10, 11-12, 11-18, 11-19, 11-11 |
+| Screens | `/staff` (the shell and home), `/staff/audit-log`, `/staff/invites`, `/staff/roles` (`src/features/staff/`), `/staff/settings` (`src/features/settings/`), `/staff/website` and its tabs (`src/features/website/`, `src/features/interface-text/`, `src/features/branding/`) | 11-01, 11-17, 2-07a, 11-03, 11-05, 11-06, 11-10, 11-12, 11-18, 11-19, 11-11 |
 | Hooks | `useMyStaffAccess`, `useAuditLog`, `useInviteLinks`, `useStaffRoles` | each story |
 | Tables | `audit_log` (append-only), `invites`, `staff_roles`, `staff_permissions`, `staff_role_areas`, the settings `staff_session_hours` and `staff_fresh_sign_in_minutes` | 1-02, 2-01, 2-07a, 11-01, 11-17 |
 | Functions | `is_staff_session()` (12 hours), `staff_signed_in_recently()`, `my_staff_areas()`, `log_sensitive_read()`, `admin_search_audit_log()`, `admin_export_audit_log()`, `admin_create_invite()`, `admin_revoke_invite()`, `admin_list_invites()`, `use_platform_invite()` | each story |
@@ -2158,22 +2149,12 @@ What the Admin epic has in place so far. The epic report, `docs/epic-reports/S1-
 
 **One main journey through the whole epic:** the admin opens `/staff/invites` → `admin_create_invite()` returns the code once and logs `invite.created` → an adult opens `/join/<code>` → the sign-up trigger calls `use_platform_invite()`, which takes the last place and logs `invite.used_up` on behalf of the maker → the owner opens `/staff/audit-log` → `admin_search_audit_log()` finds both rows. `e2e/epic-s1-e11.spec.ts` walks it. Round two (ADMIN-2) walks a support ticket through the rest of the area: `admin_convert_ticket_to_report()` opens a case on a story → the moderator finds it in `/staff/moderation`, then the story in `/staff/stories` (`admin_search_stories()`) and restricts it (`admin_set_story_visibility()`, a statement of reasons to the writer) → `admin_open_ticket_data_request()` starts a data request on the same ticket. `e2e/epic-s1-e11-round-2.spec.ts` and `260` walk it.
 
-<!-- Lane B: doodles through the tokens (23 Oct 2026). -->
-## Doodles through the tokens (Lane B, 23 Oct 2026)
+## No doodles (NO-DOODLES)
 
-The hand-drawn doodles live in `design/assets/*.svg`, next to the 16 drawn cover backgrounds (viewBox `0 0 100 160`, which keep their colours in night mode, `src/lib/cover-colours.ts`). A doodle holds no fixed colour: every fill is written `style="fill:var(--doodle-ink, #2a0e33)"`, the token for a doodle drawn inline in a page, the light value as a fallback for a file opened on its own. The nine `--doodle-*` tokens are in `src/styles/tokens.css`, light and night.
+The app draws no doodles, stickers or hand-drawn icons anywhere (Robert, 7 Nov 2026 for the member screens, bundle G4; 9 Nov 2026 for everything left, bundle NO-DOODLES). Icons are line SVGs in `src/components/icons/`: `ActionIcon` for buttons and notes, `NavIcon` for the header and tab bar. The old doodle files, the /design doodle gallery, the doodle colour tokens and the seasonal doodle schedule (S1-E11-11) were deleted; the old boards in `design/` keep their doodles as a record only.
 
-```
-canvas export (fixed hex)  →  npm run doodles:tokens  →  design/assets/<id>.svg (tokens + fallback)
-                               scripts/doodle-tokens.ts
-CI: npm run doodles:check  →  fails on any raw hex, a fallback that drifted or a token missing
-/design#doodles            →  src/features/design-system/doodleFiles.ts (bundles the SVG text)
-                               → DoodleSection → DoodleTile (inline, aria-hidden, captioned)
-```
-
-- When new doodles arrive from the canvas: drop the files in `design/assets/`, run `npm run doodles:tokens`. A colour with no token stops the script and names the file; add the token to both theme blocks in `tokens.css` and to the map in the script, then run it again.
-- Tests: `scripts/doodle-tokens.test.ts` (the rewrite and the check), `src/features/design-system/components/DoodleSection.test.tsx` (three samples resolve in both themes), `e2e/doodles.spec.ts` (the colours the browser really draws).
-- Night values are a proposal signed off on the /design sheet; change them in `tokens.css` only, never in the SVG files.
+- **Guards:** `src/test/noDoodles.test.ts` fails on a doodle marker, token or import in `src/` and on the word in any locale file; `e2e/support/noDoodles.ts` (`expectNoDoodles`) fails a screen spec when the browser draws one; `supabase/tests/database/316-no-doodles.test.sql` checks the doodle column, table and cover name stay gone.
+- **Covers:** the patterned cover once called "Doodles" is "Sparkles" (`sparkles` in `coverDesigns.ts` and `stories.cover_design`; ro "Sclipiri"). The drawing is the same.
 
 ## Comments on a paragraph (S1-E6-06; WRITE-5f)
 

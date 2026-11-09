@@ -5,7 +5,7 @@
  * What it proves, one test per acceptance criterion and the board's states:
  * - the list shows every chapter with its pill and meta line, including the "Edited on" date
  *   readers see for a published chapter that changed; axe finds nothing serious and no doodle
- *   meets a control or text at 390, 768 and 1440 px, in English and Romanian;
+ *   is drawn at 390, 768 and 1440 px, in English and Romanian;
  * - "Move up" and "Move down" reorder chapters as well as dragging does, by mouse and by
  *   keyboard (Space, arrow, Space), and readers see the new order (WCAG 2.2, 2.5.7);
  * - Rename changes a published chapter's title for readers at once;
@@ -20,7 +20,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 import { checkScreen, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { waitForAnimationsToFinish } from './support/animations';
 import { runSql } from './support/database';
-import { findDoodleOverlaps } from './support/doodles';
+import { findDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser } from './support/personas';
 
 const storyId = '00000000-0000-4000-9000-000000000001';
@@ -209,7 +209,7 @@ test.describe('Manage chapters (S1-E3-04)', () => {
     await expect(deleted).toContainText(/Deleted \d+ \w+ · gone for good on \d+ \w+ \d{4}/);
   });
 
-  test('passes axe with no doodle overlaps at 390, 768 and 1440 px, in English and Romanian', async ({
+  test('passes axe and draws no doodle at 390, 768 and 1440 px, in English and Romanian', async ({
     browser,
   }) => {
     test.setTimeout(120_000);
@@ -224,7 +224,7 @@ test.describe('Manage chapters (S1-E3-04)', () => {
         // checkScreen ran axe once; run it again now the rows are certainly in.
         await expect(chapterList(page).getByRole('listitem')).toHaveCount(5);
         expect(await seriousAxeIssues(page)).toEqual([]);
-        expect(await findDoodleOverlaps(page)).toEqual([]);
+        expect(await findDoodles(page)).toEqual([]);
         await context.close();
       }
     }

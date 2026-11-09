@@ -17,7 +17,6 @@ function forum(slug: string, changes: Partial<StaffForum> = {}): StaffForum {
     position: 1,
     isPinned: false,
     accent: 'plum',
-    doodle: null,
     names: { ro: { name: slug, description: '' } },
     missingLanguages: ['en'],
     ...changes,

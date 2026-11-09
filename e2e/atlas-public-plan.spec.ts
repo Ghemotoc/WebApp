@@ -12,7 +12,7 @@
  * - "Preview as a reader" marks an event that waits for a chapter, a visitor doesn't see it,
  *   and a reader who reached that chapter does (S1-E17-35);
  * - a reader can report a public character (S1-E17-34);
- * - the reader pages pass axe, don't scroll sideways and have no doodle over text at 390, 768
+ * - the reader pages pass axe, don't scroll sideways and draw no doodle at 390, 768
  *   and 1440 px, light and night, Romanian and English.
  * Test data: adult_writer gets one story of its own with two published chapters, two
  * characters and two events (all deleted at the end); teen_17 is the signed-in reader.
@@ -21,7 +21,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 const writerId = '00000000-0000-4000-8000-000000000001';
@@ -205,7 +205,7 @@ test.describe('Story Atlas for readers (S1-E17-32 to S1-E17-35)', () => {
       const page = await context.newPage();
       await checkScreen(page, view);
       await expect(page.getByRole('heading', { level: 1, name: 'Moara de pe deal' })).toBeVisible();
-      await expectNoDoodleOverlap(page);
+      await expectNoDoodles(page);
       await context.close();
     });
   }

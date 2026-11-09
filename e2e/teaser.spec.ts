@@ -14,7 +14,7 @@
  *   colour), chapter pages carry noindex in the page and the header, story pages carry JSON-LD
  *   without chapter text, and a 16+ story's tags hold its title only;
  * - axe finds nothing serious in all 12 views of the teaser and the notice, nothing scrolls
- *   sideways, and the teaser's doodles touch no text or control at 390, 768 and 1440 px.
+ *   sideways, and the teaser draws no doodle at 390, 768 and 1440 px.
  * Test data: two chapters on adult_writer's seed story; removed, and the story put back, after.
  */
 import { expect, test, type Browser, type Page } from '@playwright/test';
@@ -26,7 +26,7 @@ import {
   screenWidths,
 } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser } from './support/personas';
 
 const storyId = '00000000-0000-4000-9000-000000000001';
@@ -178,9 +178,7 @@ test.describe('the web teaser and link previews (S1-E4-04)', () => {
     expect(hiddenHtml).not.toContain('Lia Scrie');
   });
 
-  test('axe in all 12 views of the teaser and the notice; the doodles touch nothing', async ({
-    browser,
-  }) => {
+  test('axe in all 12 views of the teaser and the notice; no doodle drawn', async ({ browser }) => {
     test.setTimeout(240_000);
     const context = await browser.newContext();
     for (const view of everyView([chapterAddress])) {
@@ -188,7 +186,7 @@ test.describe('the web teaser and link previews (S1-E4-04)', () => {
       await test.step(`teaser at ${view.width} px, ${view.theme}, ${view.language}`, async () => {
         await checkScreen(page, view);
         await expect(page.locator('.tmc-chapter-text')).toBeVisible();
-        await expectNoDoodleOverlap(page);
+        await expectNoDoodles(page);
       });
       await page.close();
     }

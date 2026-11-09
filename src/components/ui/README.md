@@ -13,7 +13,6 @@ The shared building blocks every screen uses, one component per file. Built by S
 | `Chip` | A switchable filter (chips do): grey glass, tick plus aria-pressed when selected |
 | `ChoiceChips` | Pick one of a few choices: a radiogroup of chips with arrow-key moves, a tick on the chosen one, dashed when disabled (S1-E3-01) |
 | `LabelRows` is used by the story page's "Labels from the writer" (S1-E3-05) |
-| `doodleSources.ts` | The doodle files by name. Only the staff pickers that still choose a doodle (forum places, seasonal occasions) read it; screens show no doodles since bundle G4, and G12 retires the pickers |
 | `Card`, `LabelRows`, `Eyebrow`, `EmptyState`, `Notice` | Glass panels (every `rounded-card bg-surface border-border` gets the glass rim, G3), label and value rows with fine lines, eyebrow labels, empty states, coloured messages |
 | `GlassTag` | The plain glass text pill for a writing rank and a reading level: a 14 px icon, the name and a hidden prefix for screen readers (G7a) |
 | `Tabs` | A tablist whose chosen tab is bold in the link colour, no underline bar; long rows wrap (G3) |

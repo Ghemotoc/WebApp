@@ -190,7 +190,7 @@ function ReportForm(props: ReportDialogProps & { report: ReturnType<typeof useRe
 /**
  * The corner "×" from the board (ReportDialog, CTO 24 Oct 2026): a 44 px round button whose
  * accessible name is "Close" / "Închide". Closing the native dialog fires its close event, so it
- * goes through the same path as Escape. The × is a close icon, which the doodle rule exempts.
+ * goes through the same path as Escape. The × is a plain close icon.
  *
  * @param props.label - the accessible name, in the page's language
  * @param props.onClick - closes the dialog

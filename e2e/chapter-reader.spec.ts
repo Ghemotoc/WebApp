@@ -19,6 +19,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 const storyId = '00000000-0000-4000-9000-000000000001';
@@ -100,7 +101,7 @@ test.describe('chapter reader (S1-E4-01a)', () => {
     await expect(text).toHaveAttribute('lang', 'ro');
     await expect(text.locator('p')).toHaveCount(2);
     await expect(text.locator('strong')).toHaveText('notează');
-    await expect(page.locator('[data-doodle]')).toHaveCount(0);
+    await expectNoDoodles(page);
 
     // Next skips the draft; the first chapter has no Previous.
     await expect(chapterNav(page).getByRole('link', { name: 'Previous' })).toHaveCount(0);

@@ -92,29 +92,29 @@ select is((select thread_count + post_count from public.forum_index('ro') where 
 /* ---------- 4. Staff add and change forums (criterion 1) ---------- */
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000010');
-select throws_ok($$ select public.admin_save_forum(null, null, 'poeti', 5, true, 'gold', null,
+select throws_ok($$ select public.admin_save_forum(null, null, 'poeti', 5, true, 'gold',
     pg_temp.names('Poeți', 'Poets')) $$, '42501', null,
   'a moderator can''t add a forum (settings area: owner and admin)');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000009');
-select lives_ok($$ select public.admin_save_forum(null, null, 'poeti', 5, true, 'gold', 'daisy',
+select lives_ok($$ select public.admin_save_forum(null, null, 'poeti', 5, true, 'gold',
     pg_temp.names('Poeți', 'Poets')) $$,
-  'an admin adds a pinned category with its colour and doodle');
+  'an admin adds a pinned category with its colour');
 select lives_ok($$ select public.admin_save_forum(null, (select id from public.forums where slug = 'poeti'),
-    'sonete', 2, false, 'plum', null, pg_temp.names('Sonete', 'Sonnets')) $$,
+    'sonete', 2, false, 'plum', pg_temp.names('Sonete', 'Sonnets')) $$,
   'an admin adds a forum inside it');
 select lives_ok($$ select public.admin_save_forum(null, (select id from public.forums where slug = 'sonete'),
-    'sonete-scurte', 1, false, 'plum', null, pg_temp.names('Sonete scurte', 'Short sonnets')) $$,
+    'sonete-scurte', 1, false, 'plum', pg_temp.names('Sonete scurte', 'Short sonnets')) $$,
   'an admin adds a subforum inside that forum');
 select is(pg_temp.hint_of($$ select public.admin_save_forum(null, (select id from public.forums where slug = 'sonete-scurte'),
-    'prea-adanc', 1, false, 'plum', null, pg_temp.names('Prea adânc', 'Too deep')) $$),
+    'prea-adanc', 1, false, 'plum', pg_temp.names('Prea adânc', 'Too deep')) $$),
   'parent:too_deep', 'a fourth level is refused: up to two levels below a category');
-select is(pg_temp.hint_of($$ select public.admin_save_forum(null, null, 'Fara Nume', 1, false, 'plum', null,
+select is(pg_temp.hint_of($$ select public.admin_save_forum(null, null, 'Fara Nume', 1, false, 'plum',
     '{"ro": {"name": ""}}'::jsonb) $$),
   'ro:empty,en:empty,slug:format', 'a forum needs a name in each interface language and a proper address');
 select is(pg_temp.hint_of($$ select public.admin_save_forum(null, (select id from public.forums where slug = 'poeti'),
-    'fixat', 1, true, 'plum', null, pg_temp.names('Fixat', 'Pinned')) $$),
+    'fixat', 1, true, 'plum', pg_temp.names('Fixat', 'Pinned')) $$),
   'pin:not_category', 'only a category can be pinned');
-select is(pg_temp.hint_of($$ select public.admin_save_forum(null, null, 'reading', 9, false, 'plum', null,
+select is(pg_temp.hint_of($$ select public.admin_save_forum(null, null, 'reading', 9, false, 'plum',
     pg_temp.names('Alta', 'Another')) $$),
   'slug:taken', 'two forums can''t share an address');
 select is(
@@ -129,7 +129,7 @@ select is((select count(*)::integer from public.audit_log where action = 'forum.
 select is(pg_temp.hint_of($$ select public.admin_delete_forum((select id from public.forums where slug = 'sonete'), 'Gol') $$),
   'forum:has_children', 'a forum with a subforum inside can''t be removed');
 select is(pg_temp.hint_of($$ select public.admin_save_forum((select id from public.forums where slug = 'sonete'),
-    (select id from public.forums where slug = 'reading'), 'sonete', 2, false, 'plum', null,
+    (select id from public.forums where slug = 'reading'), 'sonete', 2, false, 'plum',
     pg_temp.names('Sonete', 'Sonnets')) $$),
   'parent:has_children', 'a forum with a subforum inside can''t move');
 select lives_ok($$ select public.admin_delete_forum((select id from public.forums where slug = 'sonete-scurte'), 'Gol') $$,

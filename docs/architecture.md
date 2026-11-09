@@ -226,7 +226,7 @@ Each piece has an ID (B01 and so on) so the screen tables below can point to it.
 | B27 | Admin functions: `admin_*` functions, each checking role, permission and `is_staff_session()` and writing the audit log in the same transaction | S1-E11 | nothing to mock |
 | B28 | Data rights: `exports`, `export-build`, `data_requests`, `story-export` (Word from the first version, PDF later; the shared Word builder is built in S1-E13-02, which comes first in the build order, decided 17 Oct 2026, 12:34), the deletion job | S1-E13-02, S1-E11-09, S1-E13-03, S1-E13-05 | nothing for Word (real from S1-E13-02); PDF returns a placeholder file until S1-E11-09b |
 | B29 | Banners and sponsors: sponsors, campaigns, daily stats, `pick_banner(context)` | S1-E12 | one seeded test campaign |
-| B30 | Seasonal doodles: `seasonal_occasions`, `current_occasion()`; the doodles themselves are SVG files in the app | S1-E11-11 (S1-E5-07 showed them until bundle G4: the liquid glass design has no doodles, and G12 turns the schedule into seasonal look dates) | seeded occasions |
+| B30 | Seasonal looks: the season shows through the seasonal themes and their dates (`seasonal_look_dates`, `profiles.seasonal_looks`). The seasonal doodle schedule (`seasonal_occasions`, S1-E11-11) was retired in bundle NO-DOODLES (Robert, 9 Nov 2026: no doodles anywhere) | G2 (S1-E11-11 retired) | nothing to mock |
 | B31 | **Website content store (CMS):** pages and page versions by market and language (the home page first), notice banners, help pages and questions, behind one `WebsiteContentStore` contract, plus `public-shelves`, a read-only list of public stories for the website. For March the store lives in the app's database and is written through `admin_*` functions (decided 17 Oct 2026, 19:16); once the website database exists (set-up OPEN), a `website-cms` bridge writes there instead and only the storage changes | S1-E11-06, S1-E11-10, S1-E11-12, S1-E5-08 | nothing to mock for March: the store is real in the app's database. The website database adapter comes later (a new CMS built from scratch, decided 16 Oct 2026, Q54) |
 | B32 | Cookieless analytics and error tracking | S1-E15-01, S1-E1-05 | switched off locally |
 | B33 | Desktop shell: Tauri deep link, opener, single instance, updater, content protection | S1-E16-02 | build on the web first; the desktop parts are tested when S1-E16-02 lands |
@@ -329,7 +329,7 @@ The website never reads the app's tables directly. It reads only its own databas
 | 8.10 Stories | S1-E11-07 | B27 `admin_search_stories()` (title, current or earlier handle, user ID) | the function | seed |
 | 8.11 Story in admin | S1-E11-08 | B27 `admin_update_story()`, `admin_remove_passage()`, story and chapter revisions, B26 statements | the functions | seed |
 | 8.12 Data requests | S1-E11-09 | B28 | `data_requests` and the job contract | PDF placeholder until S1-E11-09b (Word is real from S1-E13-02) |
-| Website CMS and interface text | S1-E11-06, S1-E11-10, S1-E11-11, S1-E11-12, S1-E11-18 | B31 store in the app's database (the website database later), B34 interface text; B30 lives in the app's database | the `WebsiteContentStore` contract | nothing for March: real in the app's database |
+| Website CMS and interface text | S1-E11-06, S1-E11-10, S1-E11-12, S1-E11-18 | B31 store in the app's database (the website database later), B34 interface text; B30 lives in the app's database | the `WebsiteContentStore` contract | nothing for March: real in the app's database |
 | Audit log | S1-E11-01 | B03 | B03 | nothing |
 
 #### 1.7.5 How to mock each kind of piece
@@ -547,7 +547,7 @@ Added 16 Oct 2026 (late evening) at Robert's request. Screens 8.1 to 8.9 are on 
 | Support tickets | Every support email and Contact us message as a ticket: views, statuses, assignee, internal notes, canned replies, merge, links to reports and data requests | 8.13 | S1-E11-13 |
 | Data requests | Requests to see, move, correct or delete data, with deadlines; story export as Word and PDF plus a machine-readable copy | 8.12 | S1-E11-09 |
 | Schools and teacher checks | Pilot schools, partnership status, teacher checks, class spaces and invite sheets, certificates | 8.9 | S1-E2-11, S1-E8-11, S1-E8-12 |
-| Website (CMS) | Pages by market and language (the home page first), notice banners, help pages and questions, the seasonal doodle schedule and Interface text (admin overrides of the app's ro and en text, S1-E11-18) | 8.14 shows the Website menu; the home page editor is drawn inside 8.6 | S1-E11-06, S1-E11-10, S1-E11-11, S1-E11-12, S1-E11-18 |
+| Website (CMS) | Pages by market and language (the home page first), notice banners, help pages and questions and Interface text (admin overrides of the app's ro and en text, S1-E11-18) | 8.14 shows the Website menu; the home page editor is drawn inside 8.6 | S1-E11-06, S1-E11-10, S1-E11-11, S1-E11-12, S1-E11-18 |
 | Sponsors | Campaigns, the creative review queue, "Sponsored" placements, ad-network settings and reports | 8.8 | S1-E12-02, S1-E12-03, S1-E12-04 |
 | Settings | Feature flags, markets and languages, categories, forums, reserved names, ranking weights and rate limits | 8.6 | S1-E11-03, S1-E11-05, S1-E10-12 |
 | Metrics and logs | March test numbers, sign-ups by age group, age check results, reports by tier, the compliance log and retention | 8.7 | S1-E11-04, S1-E15-02 |
@@ -574,7 +574,7 @@ Stage 1 staff roles are **owner**, **admin**, **moderator**, **support** and **c
 | Stories › Classics (S1-E11-16) | Act | Act | None | None | None |
 | Data requests | Act | Act | None | Act | None |
 | Schools and teacher checks | Act | Act | with the permission | None | None |
-| Website CMS (pages, notices, help and questions, seasonal doodles) | Act | Act | None | None | None |
+| Website CMS (pages, notices, help and questions) | Act | Act | None | None | None |
 | Interface text (S1-E11-18) | Act | Act | None | None | None |
 | Sponsors | Act | Act | None | None | None |
 | Settings and flags | Act | Act | None | None | None |
@@ -642,7 +642,7 @@ Removing one passage instead of the whole story is also in line with DSA art. 14
 
 #### 1.8.6 Website CMS
 
-**What it covers:** website pages by market and language, starting with the home page (S1-E11-06, which also builds the shared CMS core), notice banners (S1-E11-10; they show on the website and in the app from one table, decided 17 Oct 2026, 12:44), help pages and questions (S1-E11-12), the seasonal doodle schedule (S1-E11-11, after March) and Interface text (S1-E11-18), which reuses the same editor for the app's own text. Sponsor banners are not part of it; they stay in Sponsors (S1-E12), so an ad can never be published as a notice. S1-E11-06, 10, 12 and 18 are in the March MVP (decided 17 Oct 2026, 19:14 and 19:19).
+**What it covers:** website pages by market and language, starting with the home page (S1-E11-06, which also builds the shared CMS core), notice banners (S1-E11-10; they show on the website and in the app from one table, decided 17 Oct 2026, 12:44), help pages and questions (S1-E11-12) and Interface text (S1-E11-18), which reuses the same editor for the app's own text. Sponsor banners are not part of it; they stay in Sponsors (S1-E12), so an ad can never be published as a notice. S1-E11-06, 10, 12 and 18 are in the March MVP (decided 17 Oct 2026, 19:14 and 19:19).
 
 **Where the text comes from (decided 17 Oct 2026, 19:14 and 19:16).**
 
@@ -658,7 +658,7 @@ Removing one passage instead of the whole story is also in line with DSA art. 14
 - Editors and public pages talk only to one interface, the `WebsiteContentStore` contract (shared zod schemas). For March its only implementation writes to CMS tables in the app's database through `admin_*` functions, which check the admin role and `is_staff_session()` and write the audit log in the same transaction. When the website database exists, a second implementation writes there through a `website-cms` edge function with a key that can only write the website's content tables; only the storage changes, not the editors (decided 17 Oct 2026, 19:16).
 - Public pages read published rows through read-only views (never draft or scheduled rows) and keep showing the last published version if a read fails.
 - Every template is admin-editable (decided 25 Oct 2026, 09:16 to 09:21): interface text (S1-E11-18), every email, Auth emails included (S1-E11-19), notices, help and pages. A feature that needs a template ships it with draft ro and en text and it is editable from day one; placeholders and codes are locked so an edit can't break it.
-- Interface text overrides and the seasonal doodle schedule stay in the app's database for good, because the app reads them (B34, B30). Whether the website also shows seasonal doodles is OPEN.
+- Interface text overrides stay in the app's database for good, because the app reads them (B34). The seasonal doodle schedule was retired in NO-DOODLES (9 Nov 2026).
 
 **One way of working for every content type** (pages, notices, help and questions, and Interface text):
 
@@ -775,7 +775,7 @@ Updated 16 Oct 2026 (late evening). Robert builds without a programmer (Q32), so
 | Iteration 1: clickable prototype | The screens in the design direction, tested with 5 to 10 writers and readers (proposal); no backend | Design work, plus S1-E1-03 tokens so the prototype and the real app share the same look |
 | Iteration 2: working prototype for a closed group | Logins, publishing, reading, comments and reporting. Adults only (the whole March test is invited adults only, decided 17 Oct 2026, 12:44) | S1-E1-01 to 04, S1-E2-01, 02, 04, 05, 07a, S1-E3-01 to 03, S1-E4-01, S1-E5-05, S1-E6-01, 05, S1-E7-01, S1-E10-01, 03, 04, S1-E11-01, S1-E14-01, 02 (23 stories) |
 | March MVP (proposal) | 20 writers publishing (decided 16 Oct 2026, from any open market) and 200 readers (proposal), on the web, invited adults only (decided 17 Oct 2026, 12:44), with the picture check, moderation and the legal minimum; the age check, parental consent and data rights come before minors go live | Iteration 2 plus the stories in the table below: 63 stories, about 540 hours (52 feature stories plus 11 epic checks) |
-| After March | Forums, spaces, private messages, the desktop and phone apps, banners, landing pages, contests, seasonal doodles and everything else, Must first, then Should | The rest of Stage 1 |
+| After March | Forums, spaces, private messages, the desktop and phone apps, banners, landing pages, contests and everything else, Must first, then Should | The rest of Stage 1 |
 
 **What stays in the March MVP**
 
@@ -824,7 +824,7 @@ Updated 17 Oct 2026, 19:14 to 19:19: the website CMS (S1-E11-06, 10, 12) and Edi
 
 **Added to the MVP (decided 17 Oct 2026, 11:53).** Robert wants the MVP as complete as possible before a CTO joins, so the five Must stories that sat outside both lists are in: S1-E3-04 (manage chapters, M), S1-E6-02 (emoji reactions, S), S1-E6-04 (private downvote, S), S1-E10-08 ("copied from a published work" report, M) and S1-E10-13 (safety contacts by country, M). That adds about 42 hours. S1-E11-05 is covered for March by seeding (1.7.9) and S1-E11-13 by the support mailbox (proposal in the story). Should stories inside the MVP (updated 17 Oct 2026, 19:19): S1-E2-10, S1-E5-08, S1-E11-10 and S1-E11-12 (S1-E13-05 moved after March at 12:44).
 
-**Added to the MVP (decided 17 Oct 2026, 19:14 to 19:19).** The website CMS is built before March: S1-E11-06 (website CMS and home page copy, now Must, M) builds the shared CMS core and the home page editor, S1-E11-10 (notice banners, Should, S) and S1-E11-12 (help pages and questions, Should, M) reuse it, and the new S1-E11-18 (edit interface text, Must, M) comes straight after, on the same editor. That adds about 39 hours. Website page text comes only from the CMS; interface text stays in the locale files with admin overrides; everything is admin-only and stored in the app's database until the website database exists (section 1.8.6). S1-E11-11 (seasonal doodles) and S1-E11-05 (markets screen) stay after March; the CMS reads the seeded markets list.
+**Added to the MVP (decided 17 Oct 2026, 19:14 to 19:19).** The website CMS is built before March: S1-E11-06 (website CMS and home page copy, now Must, M) builds the shared CMS core and the home page editor, S1-E11-10 (notice banners, Should, S) and S1-E11-12 (help pages and questions, Should, M) reuse it, and the new S1-E11-18 (edit interface text, Must, M) comes straight after, on the same editor. That adds about 39 hours. Website page text comes only from the CMS; interface text stays in the locale files with admin overrides; everything is admin-only and stored in the app's database until the website database exists (section 1.8.6). S1-E11-05 (markets screen) stays after March, and S1-E11-11 (seasonal doodles) was retired in NO-DOODLES; the CMS reads the seeded markets list.
 
 Added since the old slice: S1-E1-06 (12, dropped again on 17 Oct 2026), S1-E2-03 (12), S1-E2-04 grows from S to M (9 more), S1-E2-10 (3), S1-E5-03 (12), S1-E5-08 (12), S1-E5-09 (3), S1-E10-05 (12), S1-E4-06a (3), S1-E13-05 (3), S1-E14-04 (3), and Word files from the first version (about 18 inside S1-E11-09).
 

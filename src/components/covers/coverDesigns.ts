@@ -49,7 +49,7 @@ export const coverDesignKeys = [
   'grid',
   'waves',
   'starry',
-  'doodles',
+  'sparkles',
   'twotone',
 ] as const;
 
@@ -58,7 +58,7 @@ export type CoverDesignKey = (typeof coverDesignKeys)[number];
 
 /** How a design is drawn: a plain colour, or one of the pattern kinds. */
 export type CoverDesignKind =
-  'plain' | 'stripes' | 'dots' | 'grid' | 'waves' | 'starry' | 'doodles' | 'twotone';
+  'plain' | 'stripes' | 'dots' | 'grid' | 'waves' | 'starry' | 'sparkles' | 'twotone';
 
 /** What the app knows about one design. */
 export interface CoverDesign {
@@ -86,7 +86,7 @@ export const coverDesigns: readonly CoverDesign[] = [
   // The board's blue (#6E93BF) is outside the palette; Violet is the nearest palette accent.
   { key: 'waves', kind: 'waves', background: 'sky', accent: 'violet' },
   { key: 'starry', kind: 'starry', background: 'ink', accent: 'gold' },
-  { key: 'doodles', kind: 'doodles', background: 'paper', accent: 'violet' },
+  { key: 'sparkles', kind: 'sparkles', background: 'paper', accent: 'violet' },
   { key: 'twotone', kind: 'twotone', background: 'blush', accent: 'plum' },
 ];
 
@@ -256,7 +256,7 @@ function starryArtwork(): CoverArtwork {
 }
 
 /** Hearts and sparkles as fine outlines. */
-function doodlesArtwork(): CoverArtwork {
+function sparklesArtwork(): CoverArtwork {
   const hearts: [number, number, number][] = [
     [20, 24, 7],
     [76, 44, 6],
@@ -292,7 +292,7 @@ const artworkByKind: Record<CoverDesignKind, CoverArtwork> = {
   grid: gridArtwork(),
   waves: wavesArtwork(),
   starry: starryArtwork(),
-  doodles: doodlesArtwork(),
+  sparkles: sparklesArtwork(),
   twotone: twotoneArtwork(),
 };
 
@@ -310,7 +310,7 @@ export function coverArtwork(kind: CoverDesignKind): CoverArtwork {
  * Where the title sits on a design: on the background itself (plain designs only), or on a solid
  * box that hides the pattern behind the words. Busy patterns (dots and waves) use a paper box, as
  * the board draws them; two-tone uses its accent band's colour; the other patterns (stripes,
- * grid, starry, doodles) use the background colour.
+ * grid, starry, sparkles) use the background colour.
  * Why every pattern has a box (bundle FIXES-1b; Robert, 5 Nov 2026): on the grid design the lines
  * ran straight through the title, and when they were the title's colour the title couldn't be
  * read; on two-tone a long title grew above the band onto a background it wasn't coloured for.

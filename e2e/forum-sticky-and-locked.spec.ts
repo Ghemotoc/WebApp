@@ -11,14 +11,14 @@
  *   list shows a Locked pill; unlocking brings the reply box back (criterion 2);
  * - "Don't bump" posts the reply but leaves the thread where it was in the list (criterion 3);
  * - a member sees no moderator tools; the locked thread passes axe at 390, 768 and 1440 px,
- *   light and night, ro and en, with its padlock doodle clear of the text.
+ *   light and night, ro and en, with no doodle drawn.
  * Test data: two threads this spec writes to the database, removed before and after.
  */
 import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 /** The two threads; the ending marks their rows for clean-up. */
@@ -169,7 +169,7 @@ test.describe('sticky and locked threads, and Don’t bump (FORUMS-1e, S1-E8-05)
         `update public.profiles set locale = '${view.language}' where handle = 'adult_writer';`,
       );
       await checkScreen(page, view);
-      await expectNoDoodleOverlap(page);
+      await expectNoDoodles(page);
     }
   });
 });

@@ -1,7 +1,6 @@
 /**
- * The toolbar's icons, drawn as inline SVG from board 4.3 (story S1-E3-02a). Plain icons, not
- * doodles: the DoD keeps formatting controls under 18 px out of the doodle set, and these are
- * 18 px line icons. Each is hidden from screen readers; the button carries the name.
+ * The toolbar's icons, drawn as inline SVG from board 4.3 (story S1-E3-02a): 18 px line icons,
+ * like the rest of the app's icons. Each is hidden from screen readers; the button carries the name.
  * Who uses it: EditorToolbar.
  */
 import type { SVGProps } from 'react';

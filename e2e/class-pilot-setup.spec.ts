@@ -11,7 +11,7 @@
  *   page says it is archived, nobody can start a thread and "Unlock the space" is gone
  *   (criterion 8);
  * - the staff page and a class's settings pass axe at 390, 768 and 1440 px, light and night, ro
- *   and en, and no doodle touches text or a control.
+ *   and en, and no doodle is drawn.
  * Test data: the moderator and teacher personas. The class is removed before and after; its name
  * never ends in "e2e", so spaces.spec leaves it alone.
  */
@@ -19,7 +19,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 /** The class this spec sets up. */
@@ -117,7 +117,7 @@ test.describe('class pilot set-up (CLASSES-d, S1-E8-11)', () => {
           `update public.profiles set locale = '${view.language}' where handle = '${persona}';`,
         );
         await checkScreen(page, view);
-        await expectNoDoodleOverlap(page);
+        await expectNoDoodles(page);
       }
       await context.close();
     }

@@ -6,7 +6,7 @@ language: ro
 category: fiction
 rating: all_ages
 tags: familie, brutărie, oraș mic, întoarcere acasă
-cover: drawn:doodles/gold/plum
+cover: drawn:sparkles/gold/plum
 blurb: Irina se întoarce în orașul în care a crescut ca să țină brutăria tatălui ei o singură săptămână. Rețetele sunt toate în caiet, în afară de una: pâinea pe care o coace el doar duminica, pe care nu o vinde nimănui. Și tata nu vrea să-i spună de ce.
 ---
 

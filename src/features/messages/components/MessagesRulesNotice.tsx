@@ -7,7 +7,8 @@
  * person's own age group, never anyone else's. "Change" opens Settings › Messages (S1-E9-04).
  * Who shows it: ChatList. What it calls: useMyMessageSettings.
  */
-import shieldIcon from '@/assets/icons/shield.svg';
+
+import { ActionIcon } from '@/components/icons/ActionIcon';
 
 import { useMyMessageSettings } from '../hooks/useMessages';
 import { useMessagesTranslation } from '../registerMessagesTranslations';
@@ -26,14 +27,7 @@ export function MessagesRulesNotice() {
   const isUnder18 = settings.data.ageGroup !== 'adult';
   return (
     <div className="flex gap-3 rounded-card border border-border bg-tint p-4 text-sm leading-relaxed text-ink">
-      <img
-        src={shieldIcon}
-        alt=""
-        aria-hidden="true"
-        width={22}
-        height={22}
-        className="mt-0.5 size-[22px] flex-none"
-      />
+      <ActionIcon name="shield" size={22} className="mt-0.5 flex-none text-heading" />
       <div className="flex flex-col gap-1">
         <p className="m-0">
           {isUnder18 && <strong className="font-semibold">{t('rules.minors')} </strong>}

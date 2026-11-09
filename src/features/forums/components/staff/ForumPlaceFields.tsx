@@ -1,13 +1,12 @@
 /**
  * ForumPlaceFields: where a forum sits and how it looks, on the staff form (bundle FORUMS-1,
  * part a; S1-E8-01, first criterion: "parent" and "order"): Sits in, Address, Order and, for a
- * category only, the pin, the colour and the doodle.
+ * category only, the pin and the colour.
  *
  * Who shows it: ForumForm. It calls nothing: the form keeps the values.
  */
 import { useTranslation } from 'react-i18next';
 
-import { doodleSources } from '@/components/ui/doodleSources';
 import { Select } from '@/components/ui/Select';
 import { TextInput } from '@/components/ui/TextInput';
 
@@ -29,9 +28,9 @@ interface ForumPlaceFieldsProps {
 const noParent = '';
 
 /**
- * The pin, the colour and the doodle: categories only.
+ * The pin and the colour: categories only.
  *
- * @returns the three controls
+ * @returns the two controls
  */
 function CategoryLookFields({
   formKey,
@@ -39,10 +38,6 @@ function CategoryLookFields({
   onChange,
 }: Omit<ForumPlaceFieldsProps, 'forums' | 'problemOf'>) {
   const { t } = useTranslation('forumsAdmin');
-  const doodleOptions = [
-    { value: '', label: t('noDoodle') },
-    ...Object.keys(doodleSources).map((name) => ({ value: name, label: name })),
-  ];
   return (
     <div className="flex flex-col gap-3">
       <label className="flex min-h-11 items-center gap-3 text-body">
@@ -61,14 +56,6 @@ function CategoryLookFields({
         options={forumAccents.map((accent) => ({ value: accent, label: t(`accents.${accent}`) }))}
         value={values.accent}
         onChange={(accent) => onChange({ ...values, accent: accent as ForumAccent })}
-      />
-      <Select
-        id={`forum-${formKey}-doodle`}
-        label={t('doodle')}
-        isLabelVisible
-        options={doodleOptions}
-        value={values.doodle ?? ''}
-        onChange={(doodle) => onChange({ ...values, doodle: doodle === '' ? null : doodle })}
       />
     </div>
   );

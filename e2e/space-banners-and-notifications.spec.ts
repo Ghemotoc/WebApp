@@ -11,7 +11,7 @@
  *   file is deleted;
  * - the forum search's filter lists spaces ("Space: <name>") and keeps the space chosen;
  * - the settings page with the Banner picture card passes axe at 390, 768 and 1440 px, light and
- *   night, ro and en, and no doodle touches text or a control.
+ *   night, ro and en, and no doodle is drawn.
  * Test data: a 16+ space "Banner club e2e" made here, owned by teacher; blocker asks to join. Both
  * are removed before and after, with the notifications and pictures they made.
  */
@@ -19,7 +19,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 /** This spec's space and its addresses. */
@@ -192,7 +192,7 @@ test.describe('space banners and join notifications (FORUMS-2c)', () => {
     for (const view of everyView([`${spaceAddress}/settings`])) {
       runSql(`update public.profiles set locale = '${view.language}' where handle = 'teacher';`);
       await checkScreen(page, view);
-      await expectNoDoodleOverlap(page);
+      await expectNoDoodles(page);
     }
     runSql(`update public.feature_flags set is_enabled = false where key = 'picture_uploads';`);
     await context.close();

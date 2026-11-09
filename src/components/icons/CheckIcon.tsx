@@ -1,7 +1,7 @@
 /**
  * CheckIcon: a tick, drawn as an inline SVG (story S1-E1-03).
  * Used by: selected chips. Plain icons are allowed for arrows, ticks and form fields (DoD design rules);
- * everything else uses the doodle icon set. Decorative: hidden from screen readers, so the
+ * everything else uses the line icons (ActionIcon, NavIcon). Decorative: hidden from screen readers, so the
  * control around it must have its own accessible name.
  */
 import type { SVGProps } from 'react';

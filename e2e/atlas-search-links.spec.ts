@@ -13,7 +13,7 @@
  *   chips; a note's and a timeline event's links do the same (S1-E17-31);
  * - "Mentioned in" on the sheet lists the places that link to the character and opens one with
  *   one click (S1-E17-12);
- * - the search page passes axe, doesn't scroll sideways and has no doodle over text at 390, 768
+ * - the search page passes axe, doesn't scroll sideways and draws no doodle at 390, 768
  *   and 1440 px, light and night, Romanian and English.
  * Test data: adult_writer gets "atlas-search-seed01"; suspended_user (whose language only the
  * Story Atlas specs change, one at a time) gets "atlas-search-seed02" for the accessibility
@@ -23,7 +23,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 const writerId = '00000000-0000-4000-8000-000000000001';
@@ -201,7 +201,7 @@ test.describe('Story Atlas search, cross-links and "Mentioned in" (S1-E17-30, 31
       const page = await context.newPage();
       await checkScreen(page, view);
       await expect(page.locator('mark').first()).toBeVisible();
-      await expectNoDoodleOverlap(page);
+      await expectNoDoodles(page);
       await context.close();
     });
   });

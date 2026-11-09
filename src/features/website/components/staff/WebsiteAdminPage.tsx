@@ -6,11 +6,12 @@
  * Tabs (links, so each has its own address): Home page (/staff/website), Notice banners
  * (/staff/website/notices), Help and questions (/staff/website/help), Interface text
  * (/staff/website/interface-text, S1-E11-18), Email templates (/staff/website/emails,
- * S1-E11-19), Seasonal doodles (/staff/website/seasonal, S1-E11-11) and Landing pages
+ * S1-E11-19) and Landing pages
  * (/staff/website/landing-pages, S1-E11-14) and Branding (/staff/website/branding, BRAND-1a: the
  * logo and emblem for each theme). The website tabs start
- * with the market and language picker. Plain components, no doodles (staff screens). Staff without the
- * website area see why; the database refuses their changes anyway (decided 17 Oct 2026, 19:19).
+ * with the market and language picker. Plain components (staff screens). The seasonal doodle
+ * schedule (S1-E11-11) was retired in bundle NO-DOODLES (Robert, 9 Nov 2026). Staff without
+ * the website area see why; the database refuses their changes anyway (decided 17 Oct 2026, 19:19).
  * Who shows it: the router, inside StaffLayout. What it calls: the three editors.
  */
 import { useState } from 'react';
@@ -26,7 +27,6 @@ import { cn } from '@/lib/utils';
 import { BrandingTab } from '@/features/branding/components/staff/BrandingTab';
 import { LandingPagesTab } from '@/features/landing-pages/components/staff/LandingPagesTab';
 import { InterfaceTextTab } from '@/features/interface-text/components/InterfaceTextTab';
-import { SeasonalTab } from '@/features/seasonal/components/staff/SeasonalTab';
 
 import { registerWebsiteAdminTranslations } from '../../registerWebsiteAdminTranslations';
 
@@ -43,8 +43,6 @@ const tabs = [
   // S1-E11-18 and S1-E11-19: the app's own text, one version per language, not per market.
   { area: 'interface-text', href: '/staff/website/interface-text', labelKey: 'tabs.interfaceText' },
   { area: 'emails', href: '/staff/website/emails', labelKey: 'tabs.emails' },
-  // S1-E11-11: the seasonal doodle schedule, the same in every market for now.
-  { area: 'seasonal', href: '/staff/website/seasonal', labelKey: 'tabs.seasonal' },
   // S1-E11-14: landing pages for contests and campaigns, written in both languages side by side.
   { area: 'landing-pages', href: '/staff/website/landing-pages', labelKey: 'tabs.landingPages' },
   // BRAND-1a: the logo and emblem for the light and night themes; the emblem is the tab icon.
@@ -92,7 +90,6 @@ function WebsiteEditors({ area }: { area: string | undefined }) {
   const { t } = useTranslation('websiteAdmin');
   // The app's own text has no market: one version per language (decided 17 Oct 2026, 19:19).
   if (area === 'interface-text') return <InterfaceTextTab />;
-  if (area === 'seasonal') return <SeasonalTab />;
   // Landing pages carry both languages in one version and have no market (S1-E11-14).
   if (area === 'landing-pages') return <LandingPagesTab />;
   // The logo and emblem are the same in every market and language (BRAND-1a).

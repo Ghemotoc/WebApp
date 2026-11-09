@@ -11,8 +11,7 @@
  * reader still hears what it is about when the link is not there.
  * Who uses it: WebsiteHomePage, which says whether there are questions.
  */
-import lockIcon from '@/assets/icons/lock.svg';
-import shieldIcon from '@/assets/icons/shield.svg';
+import { ActionIcon, type ActionIconName } from '@/components/icons/ActionIcon';
 import type { HomePageContent } from '@/schemas/websiteContent';
 
 import { withBrand } from '../lib/brandText';
@@ -21,7 +20,7 @@ import { withBrand } from '../lib/brandText';
 export const homeQuestionsAnchor = 'questions';
 
 /** The icon beside each line, in the board's order: the age check (shield), messages (lock). */
-const lineIcons: readonly string[] = [shieldIcon, lockIcon];
+const lineIcons: readonly ActionIconName[] = ['shield', 'lock'];
 
 /** What the section needs. */
 interface SafetySectionProps {
@@ -46,11 +45,10 @@ export function SafetySection({ page, language, hasQuestions }: SafetySectionPro
     >
       {page.safetyLines.map((line, index) => (
         <li key={line} className="inline-flex min-h-8 items-center gap-2">
-          <img
-            src={lineIcons[index] ?? shieldIcon}
-            alt=""
-            aria-hidden="true"
-            className="h-[22px] w-[22px] flex-none"
+          <ActionIcon
+            name={lineIcons[index] ?? 'shield'}
+            size={20}
+            className="flex-none text-heading"
           />
           {withBrand(line)}
         </li>

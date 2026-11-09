@@ -199,7 +199,6 @@ select results_eq(
        ('safety_contact_gaps', 0::bigint),
        ('safety_contacts', (select count(*) from public.safety_contacts)),
        ('sanctions', 0::bigint),
-       ('seasonal_occasions', 0::bigint),
        ('settings', (select count(*) from public.settings where is_public)),
        ('sign_in_failures', 0::bigint),
        -- Scrambled sign-up IPs: moderation staff only (ADMIN-2f2).

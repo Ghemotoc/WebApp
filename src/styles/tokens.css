@@ -173,26 +173,6 @@
   --band-blush-from: #b11226;
   --band-blush-to: #6a010e;
 
-  /*
-   * Lane B: doodle colours (Design: doodles take their colours from the tokens, 23 Oct 2026).
-   * The nine colours the hand-drawn doodles in design/assets/ use, as drawn on the canvas. Each
-   * SVG says fill="var(--doodle-ink, #2a0e33)": the token when the doodle sits inline in a page,
-   * the light value as a fallback when the file is opened on its own. Light values never change
-   * (the drawings stay pixel-identical); scripts/doodle-tokens.ts checks the fallbacks match.
-   * They are their own family, not aliases of --primary or --gold, so retuning a button colour
-   * never recolours a drawing. The 16 drawn cover backgrounds in the same folder are not doodles:
-   * covers keep their colours in night mode (src/lib/cover-colours.ts).
-   */
-  --doodle-ink: #2a0e33;
-  --doodle-paper: #fffdf8;
-  --doodle-gold: #e6c24c;
-  --doodle-gold-soft: #f5e3a6;
-  --doodle-blush: #f2a7b8;
-  --doodle-blush-soft: #f6d3dc;
-  --doodle-plum-soft: #e9ddf0;
-  --doodle-sky-soft: #d7e6f2;
-  --doodle-sage-soft: #c9d8bf;
-
   /* Shadows: soft and wide, so glass seems to float (handoff: --glass-shadow rgba(20,10,30,.10)). */
   --shadow-nav: 0 1px 2px rgba(20, 10, 30, 0.04), 0 10px 30px -12px rgba(20, 10, 30, 0.1);
   --shadow-card: 0 1px 2px rgba(20, 10, 30, 0.04), 0 18px 44px -24px rgba(20, 10, 30, 0.18);
@@ -349,20 +329,6 @@
   --band-neutral-to: #141416;
   --band-blush-from: #b11226;
   --band-blush-to: #6a010e;
-
-  /*
-   * Doodle colours at night. The decorative doodles are gone (G4); the staff pickers still show
-   * the drawings until G12, so their lines turn light and their fills dark grey.
-   */
-  --doodle-ink: #ededed;
-  --doodle-paper: #1a1a1c;
-  --doodle-gold: #a8852a;
-  --doodle-gold-soft: #6e5a1f;
-  --doodle-blush: #a85a6c;
-  --doodle-blush-soft: #8a4a57;
-  --doodle-plum-soft: #4a4a4e;
-  --doodle-sky-soft: #4f6a99;
-  --doodle-sage-soft: #4f7a62;
 
   --shadow-nav: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 30px -12px rgba(0, 0, 0, 0.55);
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 18px 44px -24px rgba(0, 0, 0, 0.55);

@@ -18,7 +18,6 @@ function entry(slug: string, changes: Partial<ForumEntry> = {}): ForumEntry {
     position: 0,
     isPinned: false,
     accent: 'plum',
-    doodle: null,
     name: slug,
     description: '',
     threadCount: 0,
