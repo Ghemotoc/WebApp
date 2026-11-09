@@ -25,6 +25,9 @@ export const buttonStyles = cva(
         xl: 'h-13 px-6 text-[15px]',
       },
     },
+    // A text button sits flush with the text around it: the size's side padding would otherwise
+    // win (it comes later in the class list), indenting every text link by 20 px (bundle G6).
+    compoundVariants: [{ variant: 'text', class: 'px-0' }],
     defaultVariants: { variant: 'primary', size: 'md' },
   },
 );

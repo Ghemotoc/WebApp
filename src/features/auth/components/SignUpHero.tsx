@@ -1,15 +1,16 @@
 /**
  * SignUpHero: the left half of the sign-up screen, board 2.1 (story S1-E2-01).
  *
- * Board values (design/boards/Main.dc.html): a handwritten tag in Shadows Into Light Two, the
- * headline "Write stories. Get read." (Q5) with a gold hand-drawn underline under the last words,
- * a lead line and four benefits. The tag on the board says "for writers aged 13 and up"; in March
- * the test is for invited adults (decided 17 Oct 2026, 12:44), so it says that instead.
- * Each benefit has the board's icon in a white rounded square (LOOK-6), decorative: the words say
- * it all. The smiling heart after the tag went with bundle G4 (no doodles).
+ * Board values (liquid glass board SignUp, bundle G6): an eyebrow over the headline
+ * "Write stories. Get read." (Q5), a lead line and four benefits. The eyebrow says the test is for
+ * invited writers (decided 17 Oct 2026, 12:44). Each benefit has the board's icon in a glass
+ * rounded square, decorative: the words say it all. G6 replaced the rotated handwritten tag with
+ * the eyebrow and dropped the hand-drawn gold underline, which counted as a doodle (G4: no doodles).
  * Who uses it: SignUpPage.
  */
 import { useTranslation } from 'react-i18next';
+
+import { Eyebrow } from '@/components/ui/Eyebrow';
 
 import certificateIcon from '@/assets/icons/certificate.svg';
 import flagIcon from '@/assets/icons/flag.svg';
@@ -33,30 +34,9 @@ export function SignUpHero() {
   const { t } = useTranslation('auth');
   return (
     <div className="flex max-w-[600px] flex-col gap-5">
-      <div className="flex origin-left -rotate-2 items-center gap-2">
-        <p className="m-0 font-hand text-[19px] text-eyebrow">{t('signUp.hero.tagMarch')}</p>
-      </div>
+      <Eyebrow>{t('signUp.hero.tagMarch')}</Eyebrow>
       <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-extrabold tracking-[-0.025em] break-words">
-        {t('signUp.hero.headingStart')}{' '}
-        <span className="relative inline-block">
-          {t('signUp.hero.headingEnd')}
-          {/* A decorative gold underline, as on the board; hidden from screen readers. */}
-          <svg
-            aria-hidden="true"
-            focusable="false"
-            viewBox="0 0 200 12"
-            preserveAspectRatio="none"
-            className="absolute -bottom-2 left-0 h-3 w-full text-gold"
-          >
-            <path
-              d="M3 8 C 50 2, 120 2, 197 7"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="4"
-              strokeLinecap="round"
-            />
-          </svg>
-        </span>
+        {t('signUp.hero.headingStart')} {t('signUp.hero.headingEnd')}
       </h1>
       <p className="m-0 text-lg leading-[1.6] text-body">{t('signUp.hero.lead')}</p>
       <ul className="m-0 mt-3 flex list-none flex-col gap-[22px] p-0">
