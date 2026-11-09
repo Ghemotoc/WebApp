@@ -6,7 +6,8 @@
  * followers list lead here.
  * What it shows: ProfileHeader (avatar, name, handle, join month, bio, numbers, Follow), then
  * ProfileStories and, when its owner lets the reader see it, ProfileLibrary (S1-E13-01) on the
- * left and, on the right, the rank card (RankPanel, S1-E8-09), the forum signature
+ * left and, on the right, the rank card (RankPanel, S1-E8-09), the reading level card
+ * (ReaderLevelPanel, G7a: for others only when its owner shows it), the forum signature
  * (ProfileSignatureCard, S1-E8-08) and ProfileSafetyCard (Report and Block); one column under
  * 1024 px. The wide ad slot follows the stories (S1-E12-01). The board's forum posts and
  * certificates come with their own stories (S1-E8, S1-E2-11), so they aren't drawn yet.
@@ -15,7 +16,8 @@
  * reader), the page says "This profile isn't available" and nothing more, so a block can't be
  * told from a missing profile.
  * What it calls: useWriterProfile → get_writer_profile() (ADR 0004: never the tables) and
- * useProfileSignature → profile_signature(), useProfileRank → profile_rank().
+ * useProfileSignature → profile_signature(), useProfileRank → profile_rank() and
+ * useProfileReaderLevel → profile_reader_level().
  */
 import { usePeopleTranslation } from '../registerPeopleTranslations';
 import { Link, useParams } from 'react-router';
@@ -29,13 +31,16 @@ import { useProfileSignature } from '@/features/forums/hooks/useForumSignatures'
 import { useProfileRank } from '@/features/forums/hooks/useWriterRank';
 import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
 
+import { showsReaderLevelPanel } from '../api/readerLevel';
 import type { WriterProfile } from '../api/writerProfile';
+import { useProfileReaderLevel } from '../hooks/useReaderLevel';
 import { useWriterProfile } from '../hooks/useWriterProfile';
 
 import { ProfileHeader } from './ProfileHeader';
 import { ProfileLibrary } from './ProfileLibrary';
 import { ProfileSafetyCard } from './ProfileSafetyCard';
 import { ProfileStories } from './ProfileStories';
+import { ReaderLevelPanel } from './ReaderLevelPanel';
 
 /** "This profile isn't available", with the way home. */
 function ProfileUnavailable() {
@@ -58,8 +63,8 @@ function ProfileUnavailable() {
 }
 
 /**
- * Which forum cards the side column draws: the rank card (S1-E8-09) and the signature (S1-E8-08),
- * each only when there is one and the reader isn't blocked by the person.
+ * Which cards the side column draws: the rank card (S1-E8-09), the reading level card (G7a) and
+ * the signature (S1-E8-08), each only when there is one and the reader isn't blocked by the person.
  *
  * @param profile - the profile on the page
  * @returns whether to show each card
@@ -69,9 +74,11 @@ function useForumCards(profile: WriterProfile) {
   // when it has something in it.
   const hasSignature = (useProfileSignature(profile.handle).data ?? null) !== null;
   const hasRank = (useProfileRank(profile.handle).data ?? null) !== null;
+  const hasReaderLevel = showsReaderLevelPanel(useProfileReaderLevel(profile.handle).data ?? null);
   return {
     showsSignature: hasSignature && !profile.iBlocked,
     showsRank: hasRank && !profile.iBlocked,
+    showsReaderLevel: hasReaderLevel && !profile.iBlocked,
   };
 }
 
@@ -89,13 +96,16 @@ function ProfileSideColumn({
   profile: WriterProfile;
   isSignedIn: boolean;
 }) {
-  const { showsRank, showsSignature } = useForumCards(profile);
+  const { showsRank, showsReaderLevel, showsSignature } = useForumCards(profile);
   const showsSafetyCard = !profile.isMe && isSignedIn;
-  if (!showsSafetyCard && !showsSignature && !showsRank) return null;
+  const hasAnyCard = showsSafetyCard || showsSignature || showsRank || showsReaderLevel;
+  if (!hasAnyCard) return null;
   return (
     <div className="flex w-full flex-col gap-5 lg:max-w-[340px] lg:flex-[1_1_300px]">
       {/* The rank card comes first, as on the board (S1-E8-09). */}
       {showsRank && <RankPanel handle={profile.handle} name={profile.displayName} />}
+      {/* The reading level card sits under the rank card, as on the board (G7a). */}
+      {showsReaderLevel && <ReaderLevelPanel handle={profile.handle} name={profile.displayName} />}
       {showsSignature && (
         <ProfileSignatureCard handle={profile.handle} name={profile.displayName} />
       )}

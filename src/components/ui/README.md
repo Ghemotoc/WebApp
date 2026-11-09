@@ -15,6 +15,7 @@ The shared building blocks every screen uses, one component per file. Built by S
 | `LabelRows` is used by the story page's "Labels from the writer" (S1-E3-05) |
 | `doodleSources.ts` | The doodle files by name. Only the staff pickers that still choose a doodle (forum places, seasonal occasions) read it; screens show no doodles since bundle G4, and G12 retires the pickers |
 | `Card`, `LabelRows`, `Eyebrow`, `EmptyState`, `Notice` | Glass panels (every `rounded-card bg-surface border-border` gets the glass rim, G3), label and value rows with fine lines, eyebrow labels, empty states, coloured messages |
+| `GlassTag` | The plain glass text pill for a writing rank and a reading level: a 14 px icon, the name and a hidden prefix for screen readers (G7a) |
 | `Tabs` | A tablist whose chosen tab is bold in the link colour, no underline bar; long rows wrap (G3) |
 | `StoryCard` | A story with a drawn cover (`src/components/covers/DrawnCover`); the title is always shown in full |
 | `Shelf` (+ `useShelfScroll`, `shelfPaging`, `ShelfArrows`, `ViewMoreCard`) | One sideways line of at most 20 stories, arrows only when it overflows, a fade at each edge with cards hidden past it (both in the middle of a row; 6 Nov 2026), arrows that move by whole cards so a faded card is always shown fully next (FIXES-1a), then "View more" |

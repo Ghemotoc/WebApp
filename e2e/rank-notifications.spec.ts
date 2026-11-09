@@ -93,7 +93,7 @@ test.describe('rank notices and rank pills (IDEAS-3a)', () => {
   test('the story page’s writer card shows the rank', async ({ browser }) => {
     const page = await openAsWriter(browser, `/s/${storySlug}`);
     await expect(page.getByRole('heading', { level: 1, name: title })).toBeVisible();
-    await expect(page.getByTestId('rank-chip').first()).toHaveText('Rank: Storyteller');
+    await expect(page.getByTestId('rank-chip').first()).toHaveText('Writing rank: Storyteller');
     await page.context().close();
   });
 

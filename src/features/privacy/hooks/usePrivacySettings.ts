@@ -12,6 +12,7 @@ import { requireClient } from '@/features/account/hooks/useMyNames';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { risingWritersQueryKey } from '@/features/discovery/hooks/useRisingWriters';
 import { storyListQueryKey } from '@/features/discovery/hooks/useStoryShelf';
+import { readerLevelQueryKey } from '@/features/people/hooks/useReaderLevel';
 import { writerProfileQueryKey } from '@/features/people/hooks/useWriterProfile';
 
 import {
@@ -19,10 +20,12 @@ import {
   fetchRetentionPeriods,
   saveLibraryAudience,
   saveProfileAudience,
+  saveReaderLevelVisibility,
   saveShowsOnlineStatus,
   saveSuggestMe,
   type LibraryAudience,
   type ProfileAudience,
+  type ReaderLevelVisibility,
 } from '../api/privacy';
 
 /** The settings' cache key, per person, so a new sign-in never shows the last person's. */
@@ -49,7 +52,7 @@ export function usePrivacySettings() {
  * Saving the privacy choices.
  *
  * @returns saveProfile(audience), saveLibrary(audience), saveOnline(shouldShow),
- *   saveSuggest(shouldSuggest), isSaving and hasFailed
+ *   saveSuggest(shouldSuggest), saveReaderLevel(visibility, G7a), isSaving and hasFailed
  */
 export function useSavePrivacySettings() {
   const queryClient = useQueryClient();
@@ -60,6 +63,7 @@ export function useSavePrivacySettings() {
     await queryClient.invalidateQueries({ queryKey: [writerProfileQueryKey] });
     await queryClient.invalidateQueries({ queryKey: [storyListQueryKey] });
     await queryClient.invalidateQueries({ queryKey: [risingWritersQueryKey] });
+    await queryClient.invalidateQueries({ queryKey: [readerLevelQueryKey] });
   };
   const profile = useMutation({
     mutationFn: async (audience: ProfileAudience) =>
@@ -81,13 +85,20 @@ export function useSavePrivacySettings() {
       saveSuggestMe(await requireClient(), shouldSuggest),
     onSuccess: refresh,
   });
+  const readerLevel = useMutation({
+    mutationFn: async (visibility: ReaderLevelVisibility) =>
+      saveReaderLevelVisibility(await requireClient(), visibility),
+    onSuccess: refresh,
+  });
+  const mutations = [profile, library, online, suggest, readerLevel];
   return {
+    saveReaderLevel: (visibility: ReaderLevelVisibility) => readerLevel.mutateAsync(visibility),
     saveSuggest: (shouldSuggest: boolean) => suggest.mutateAsync(shouldSuggest),
     saveProfile: (audience: ProfileAudience) => profile.mutateAsync(audience),
     saveLibrary: (audience: LibraryAudience) => library.mutateAsync(audience),
     saveOnline: (shouldShow: boolean) => online.mutateAsync(shouldShow),
-    isSaving: profile.isPending || library.isPending || online.isPending || suggest.isPending,
-    hasFailed: profile.isError || library.isError || online.isError || suggest.isError,
+    isSaving: mutations.some((mutation) => mutation.isPending),
+    hasFailed: mutations.some((mutation) => mutation.isError),
   };
 }
 

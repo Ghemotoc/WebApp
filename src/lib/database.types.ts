@@ -5158,6 +5158,7 @@ export type Database = {
           region_code: string | null;
           seasonal_looks: boolean;
           shows_online_status: boolean;
+          shows_reader_level: boolean;
           signature: string | null;
           signature_picture_id: string | null;
           suggest_me: boolean | null;
@@ -5226,6 +5227,7 @@ export type Database = {
           region_code?: string | null;
           seasonal_looks?: boolean;
           shows_online_status?: boolean;
+          shows_reader_level?: boolean;
           signature?: string | null;
           signature_picture_id?: string | null;
           suggest_me?: boolean | null;
@@ -5275,6 +5277,7 @@ export type Database = {
           region_code?: string | null;
           seasonal_looks?: boolean;
           shows_online_status?: boolean;
+          shows_reader_level?: boolean;
           signature?: string | null;
           signature_picture_id?: string | null;
           suggest_me?: boolean | null;
@@ -10973,6 +10976,7 @@ export type Database = {
           region_code: string | null;
           seasonal_looks: boolean;
           shows_online_status: boolean;
+          shows_reader_level: boolean;
           signature: string | null;
           signature_picture_id: string | null;
           suggest_me: boolean | null;
@@ -12767,6 +12771,7 @@ export type Database = {
           region_code: string | null;
           seasonal_looks: boolean;
           shows_online_status: boolean;
+          shows_reader_level: boolean;
           signature: string | null;
           signature_picture_id: string | null;
           suggest_me: boolean | null;
@@ -13540,6 +13545,7 @@ export type Database = {
           region_code: string | null;
           seasonal_looks: boolean;
           shows_online_status: boolean;
+          shows_reader_level: boolean;
           signature: string | null;
           signature_picture_id: string | null;
           suggest_me: boolean | null;
@@ -13564,6 +13570,7 @@ export type Database = {
         Returns: boolean;
       };
       profile_rank: { Args: { wanted_handle: string }; Returns: Json };
+      profile_reader_level: { Args: { wanted_handle: string }; Returns: Json };
       profile_signature: { Args: { wanted_handle: string }; Returns: Json };
       profile_story_cards: { Args: { is_owner: boolean; writer_id: string }; Returns: Json };
       public_character_json: {
@@ -13748,6 +13755,17 @@ export type Database = {
           story_id: string;
           user_id: string;
         }[];
+      };
+      reader_level_counts: {
+        Args: { person_id: string };
+        Returns: {
+          chapters_read: number;
+          stories_finished: number;
+        }[];
+      };
+      reader_level_from: {
+        Args: { chapters_read: number; stories_finished: number };
+        Returns: Database['public']['Enums']['reader_level'];
       };
       reader_reached_chapter: { Args: { target_chapter_id: string }; Returns: boolean };
       reader_visible_story: {
@@ -14391,6 +14409,7 @@ export type Database = {
       };
       set_rank_badge_tags: { Args: { story_slug: string; tag_names: string[] }; Returns: Json };
       set_shows_online_status: { Args: { should_show: boolean }; Returns: undefined };
+      set_shows_reader_level: { Args: { should_show: boolean }; Returns: undefined };
       set_space_banner_picture: { Args: { picture_id?: string; slug: string }; Returns: Json };
       set_space_moderator: {
         Args: {
@@ -15536,6 +15555,7 @@ export type Database = {
       picture_status: 'pending' | 'passed' | 'held' | 'approved' | 'removed';
       profile_audience: 'everyone' | 'members' | 'people_i_follow';
       reaction_kind: 'heart' | 'fire' | 'laugh' | 'wow' | 'sad' | 'star';
+      reader_level: 'new_reader' | 'reader' | 'bookworm' | 'story_devourer';
       reading_font: 'sans' | 'serif' | 'dyslexia_friendly' | 'atkinson_hyperlegible';
       reading_line_spacing: 'compact' | 'normal' | 'wide';
       reading_line_width: 'narrow' | 'medium' | 'wide';
@@ -15925,6 +15945,7 @@ export const Constants = {
       picture_status: ['pending', 'passed', 'held', 'approved', 'removed'],
       profile_audience: ['everyone', 'members', 'people_i_follow'],
       reaction_kind: ['heart', 'fire', 'laugh', 'wow', 'sad', 'star'],
+      reader_level: ['new_reader', 'reader', 'bookworm', 'story_devourer'],
       reading_font: ['sans', 'serif', 'dyslexia_friendly', 'atkinson_hyperlegible'],
       reading_line_spacing: ['compact', 'normal', 'wide'],
       reading_line_width: ['narrow', 'medium', 'wide'],

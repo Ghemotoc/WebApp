@@ -97,5 +97,38 @@
     "blockedLoadFailed": "Nu am putut încărca lista. Încearcă din nou.",
     "unblock": "Deblochează",
     "unblockLabel": "Deblochează @{{handle}}"
+  },
+  "readerLevel": {
+    "eyebrow": "Nivel de cititor",
+    "pillTitle": "Nivel de cititor, după capitolele citite și poveștile terminate",
+    "prefix": "Nivel de cititor:",
+    "names": {
+      "new_reader": "Cititor nou",
+      "reader": "Cititor",
+      "bookworm": "Șoarece de bibliotecă",
+      "story_devourer": "Devorator de povești"
+    },
+    "rules": {
+      "new_reader": "primul capitol citit",
+      "reader": "50 de capitole citite",
+      "bookworm": "10 povești terminate",
+      "story_devourer": "40 de povești terminate"
+    },
+    "noLevelYet": "Încă niciun nivel de cititor",
+    "explainer": "Pentru cei care mai ales citesc. Nivelurile vin din capitolele citite și poveștile terminate, niciodată din timpul petrecut. Rămân private până când cititorul le face vizibile.",
+    "ladderLabel": "Cele patru niveluri de cititor",
+    "current": "nivelul actual",
+    "reached": "atins",
+    "notYet": "încă neatins",
+    "progressChapters_one": "{{have}} din {{need}} capitol citit până la {{level}}",
+    "progressChapters_few": "{{have}} din {{need}} capitole citite până la {{level}}",
+    "progressChapters_other": "{{have}} din {{need}} de capitole citite până la {{level}}",
+    "progressStories_one": "{{have}} din {{need}} poveste terminată până la {{level}}",
+    "progressStories_few": "{{have}} din {{need}} povești terminate până la {{level}}",
+    "progressStories_other": "{{have}} din {{need}} de povești terminate până la {{level}}",
+    "progressLabel": "Progres spre {{level}}, {{percent}} la sută",
+    "top": "{{name}} a atins cel mai înalt nivel de cititor.",
+    "hiddenNote": "Doar tu vezi asta. Ca să apară pe profil, schimbă Nivelul tău de cititor în Setări › Confidențialitate.",
+    "hiddenLink": "Deschide setările de confidențialitate"
   }
 }

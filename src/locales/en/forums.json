@@ -289,9 +289,8 @@
     }
   },
   "rank": {
-    "chip": "Rank: {{rank}}",
-    "chipTitle": "Rank from published chapters and words",
-    "prefix": "Rank:",
+    "chipTitle": "Writing rank, from published chapters and words",
+    "prefix": "Writing rank:",
     "names": {
       "new_writer": "New writer",
       "writer": "Writer",
@@ -305,7 +304,7 @@
       "novelist": "100,000 words"
     },
     "eyebrow": "Rank",
-    "explainer": "Ranks come from published chapters and words. Forum posts don’t count. Each rank has its own sticker on the profile picture.",
+    "explainer": "Ranks come from published chapters and words. Forum posts don’t count.",
     "ladderLabel": "The four ranks",
     "current": "current rank",
     "reached": "reached",

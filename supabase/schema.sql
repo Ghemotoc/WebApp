@@ -803,6 +803,21 @@ COMMENT ON TYPE "public"."reaction_kind" IS 'The six reactions on a comment, in 
 
 
 
+CREATE TYPE "public"."reader_level" AS ENUM (
+    'new_reader',
+    'reader',
+    'bookworm',
+    'story_devourer'
+);
+
+
+ALTER TYPE "public"."reader_level" OWNER TO "postgres";
+
+
+COMMENT ON TYPE "public"."reader_level" IS 'New reader (first chapter read), Reader (50 chapters read), Bookworm (10 stories finished), Story devourer (40 stories finished) (G7a).';
+
+
+
 CREATE TYPE "public"."reading_font" AS ENUM (
     'sans',
     'serif',
@@ -11973,6 +11988,7 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     "colour_mode" "text" DEFAULT 'device'::"text" NOT NULL,
     "seasonal_looks" boolean DEFAULT false NOT NULL,
     "appearance_saved_at" timestamp with time zone,
+    "shows_reader_level" boolean DEFAULT false NOT NULL,
     CONSTRAINT "profiles_avatar_recipe_shape" CHECK ("public"."avatar_recipe_valid"("avatar_recipe")),
     CONSTRAINT "profiles_bio_length" CHECK (("char_length"("bio") <= 300)),
     CONSTRAINT "profiles_birth_month_is_a_month" CHECK ((("birth_month" >= 1) AND ("birth_month" <= 12))),
@@ -12156,6 +12172,10 @@ COMMENT ON COLUMN "public"."profiles"."seasonal_looks" IS 'Whether the seasonal 
 
 
 COMMENT ON COLUMN "public"."profiles"."appearance_saved_at" IS 'When the member last saved look, colour_mode and seasonal_looks; null until they first do, so devices keep their own choice (bundle G2).';
+
+
+
+COMMENT ON COLUMN "public"."profiles"."shows_reader_level" IS 'Settings › Privacy › Your reading level: false keeps it hidden (the default for everyone), true shows it on the profile (G7a).';
 
 
 
@@ -27483,7 +27503,8 @@ CREATE OR REPLACE FUNCTION "public"."my_privacy_settings"() RETURNS "jsonb"
                          > coalesce(parental_consents.spotlight_withdrawn_at, '-infinity')) then 'asked'
       else 'none'
     end,
-    'can_ask_parent', public.age_band_of(profiles.id) = '13_to_15' and public.has_parental_consent(profiles.id))
+    'can_ask_parent', public.age_band_of(profiles.id) = '13_to_15' and public.has_parental_consent(profiles.id),
+    'shows_reader_level', profiles.shows_reader_level)
   from public.profiles where profiles.id = public.require_live_profile();
 $$;
 
@@ -27491,7 +27512,7 @@ $$;
 ALTER FUNCTION "public"."my_privacy_settings"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."my_privacy_settings"() IS 'The signed-in member''s privacy settings, with Suggest me and the parent''s separate yes (S1-E13-01, S1-E5-11, S1-E2-03b).';
+COMMENT ON FUNCTION "public"."my_privacy_settings"() IS 'The signed-in member''s privacy settings, with Suggest me, the parent''s separate yes and the reading level switch (S1-E13-01, S1-E5-11, S1-E2-03b, G7a).';
 
 
 
@@ -30737,6 +30758,35 @@ COMMENT ON FUNCTION "public"."profile_rank"("wanted_handle" "text") IS 'A profil
 
 
 
+CREATE OR REPLACE FUNCTION "public"."profile_reader_level"("wanted_handle" "text") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select jsonb_build_object(
+    'level', public.reader_level_from(counts.chapters_read, counts.stories_finished),
+    'chapters_read', counts.chapters_read,
+    'stories_finished', counts.stories_finished,
+    'is_shown', reader.shows_reader_level,
+    'is_own', reader.id = (select auth.uid()))
+  from public.profile_for_handle(wanted_handle) as reader
+  cross join lateral public.reader_level_counts(reader.id) as counts
+  -- The owner always sees their own; anyone else only what the owner chose to show.
+  where reader.id = (select auth.uid())
+     or (reader.shows_reader_level
+         and public.profile_is_open_to(reader, (select auth.uid()))
+         and not exists (select 1 from public.blocks
+                         where blocks.user_id = reader.id
+                           and blocks.blocked_user_id = (select auth.uid())));
+$$;
+
+
+ALTER FUNCTION "public"."profile_reader_level"("wanted_handle" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."profile_reader_level"("wanted_handle" "text") IS 'A profile''s reading level: always for its owner, for others only when shown, by the profile''s own visibility rules (G7a).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."profile_signature"("wanted_handle" "text") RETURNS "jsonb"
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -32313,6 +32363,55 @@ ALTER FUNCTION "public"."readable_chapters_for_ranking"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."readable_chapters_for_ranking"() IS 'Internal: the chapters chapter_is_readable() allows, as one set, for the ranking job (QA-2d).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."reader_level_counts"("person_id" "uuid") RETURNS TABLE("chapters_read" integer, "stories_finished" integer)
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  -- Step 1: the person's places in other people's chapters, read to 95 per cent or more.
+  with read_places as (
+    select chapters as chapter, reading_positions.furthest_percent
+    from public.reading_positions
+    join public.chapters on chapters.id = reading_positions.chapter_id
+    join public.stories on stories.id = reading_positions.story_id
+    where reading_positions.user_id = person_id
+      and stories.user_id <> person_id
+      and reading_positions.furthest_percent >= 95
+  )
+  -- Step 2: every such chapter counts once; a story counts when its last chapter was finished.
+  select count(*)::integer,
+         (count(distinct (read_places.chapter).story_id)
+           filter (where public.finishes_story(read_places.chapter, read_places.furthest_percent)))::integer
+  from read_places;
+$$;
+
+
+ALTER FUNCTION "public"."reader_level_counts"("person_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."reader_level_counts"("person_id" "uuid") IS 'Internal: one person''s chapters read (95 per cent or more) and stories finished, never their own (G7a).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."reader_level_from"("chapters_read" integer, "stories_finished" integer) RETURNS "public"."reader_level"
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select case
+    when coalesce(stories_finished, 0) >= 40 then 'story_devourer'
+    when coalesce(stories_finished, 0) >= 10 then 'bookworm'
+    when coalesce(chapters_read, 0) >= 50 then 'reader'
+    when coalesce(chapters_read, 0) >= 1 then 'new_reader'
+  end::public.reader_level;
+$$;
+
+
+ALTER FUNCTION "public"."reader_level_from"("chapters_read" integer, "stories_finished" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."reader_level_from"("chapters_read" integer, "stories_finished" integer) IS 'The reader level for a number of chapters read and stories finished (G7a).';
 
 
 
@@ -38178,6 +38277,22 @@ ALTER FUNCTION "public"."set_shows_online_status"("should_show" boolean) OWNER T
 
 
 COMMENT ON FUNCTION "public"."set_shows_online_status"("should_show" boolean) IS 'Turns online status on or off; off forgets the last active time (S1-E13-01).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."set_shows_reader_level"("should_show" boolean) RETURNS "void"
+    LANGUAGE "sql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  update public.profiles set shows_reader_level = coalesce(should_show, false), updated_at = now()
+  where profiles.id = public.require_live_profile();
+$$;
+
+
+ALTER FUNCTION "public"."set_shows_reader_level"("should_show" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_shows_reader_level"("should_show" boolean) IS 'The signed-in member shows or hides their reading level on their profile (G7a).';
 
 
 
@@ -58619,6 +58734,12 @@ GRANT ALL ON FUNCTION "public"."profile_rank"("wanted_handle" "text") TO "authen
 
 
 
+REVOKE ALL ON FUNCTION "public"."profile_reader_level"("wanted_handle" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."profile_reader_level"("wanted_handle" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."profile_reader_level"("wanted_handle" "text") TO "authenticated";
+
+
+
 GRANT ALL ON FUNCTION "public"."profile_signature"("wanted_handle" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."profile_signature"("wanted_handle" "text") TO "authenticated";
 
@@ -58859,6 +58980,10 @@ REVOKE ALL ON FUNCTION "public"."readable_chapter_for"("story_slug" "text", "cha
 
 
 REVOKE ALL ON FUNCTION "public"."readable_chapters_for_ranking"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."reader_level_counts"("person_id" "uuid") FROM PUBLIC;
 
 
 
@@ -59607,6 +59732,11 @@ GRANT ALL ON FUNCTION "public"."set_rank_badge_tags"("story_slug" "text", "tag_n
 
 REVOKE ALL ON FUNCTION "public"."set_shows_online_status"("should_show" boolean) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_shows_online_status"("should_show" boolean) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."set_shows_reader_level"("should_show" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_shows_reader_level"("should_show" boolean) TO "authenticated";
 
 
 

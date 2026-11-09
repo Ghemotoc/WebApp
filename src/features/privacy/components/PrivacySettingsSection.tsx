@@ -4,7 +4,8 @@
  *
  * Top to bottom as on the board: the intro, the under-18 note, "Who can see your profile", "Who
  * can message you", "Show when I'm online", "Suggest me and my stories to other people"
- * (SuggestMeSwitch, LOOK-4c), "Who can see your library" and "How long we keep things"
+ * (SuggestMeSwitch, LOOK-4c), "Who can see your library", "Your reading level" (Hidden, the
+ * default for everyone, or "Show it on my profile"; G7a) and "How long we keep things"
  * (HowLongWeKeep, IDEAS-2a). Every choice saves at
  * once. Who can message you belongs to Messages (S1-E9-04), so here it is one line with Change,
  * which jumps to that panel: one place to change it, never two controls that could disagree.
@@ -18,7 +19,12 @@ import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { registerMessagesTranslations } from '@/features/messages/registerMessagesTranslations';
 
-import { libraryAudiences, profileAudiences, type PrivacySettings } from '../api/privacy';
+import {
+  libraryAudiences,
+  profileAudiences,
+  readerLevelVisibilities,
+  type PrivacySettings,
+} from '../api/privacy';
 import { usePrivacySettings, useSavePrivacySettings } from '../hooks/usePrivacySettings';
 import { usePrivacyTranslation } from '../registerPrivacyTranslations';
 
@@ -86,6 +92,18 @@ function PrivacyChoices({ settings }: { settings: PrivacySettings }) {
           saved={settings.libraryAudience}
           isSaving={saving.isSaving}
           onSave={saving.saveLibrary}
+        />
+      </div>
+      <div className="border-t border-border pt-4">
+        <AudienceRadios
+          name="reader-level"
+          legend={t('readerLevel.legend')}
+          hint={t('readerLevel.hint')}
+          choices={readerLevelVisibilities}
+          labelOf={(choice) => t(`readerLevel.${choice}`)}
+          saved={settings.showsReaderLevel ? 'shown' : 'hidden'}
+          isSaving={saving.isSaving}
+          onSave={saving.saveReaderLevel}
         />
       </div>
       <HowLongWeKeep />

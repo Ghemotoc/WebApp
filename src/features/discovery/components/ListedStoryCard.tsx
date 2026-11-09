@@ -50,7 +50,7 @@ export function ListedStoryCard(props: {
           {story.completionStatus === 'ongoing' && (
             <InfoPill tone="sage">{t('status.ongoing', { ns: 'writing' })}</InfoPill>
           )}
-          {story.writer.rank !== null && <RankChip rank={story.writer.rank} isCompact />}
+          {story.writer.rank !== null && <RankChip rank={story.writer.rank} />}
         </span>
       }
     />

@@ -3,7 +3,7 @@
  *
  * Who runs it: `npm run test:e2e` (Supabase started first).
  * What it proves:
- * - a writer with 15 published chapters shows "Rank: Storyteller" beside their name, the rank
+ * - a writer with 15 published chapters shows a "Storyteller" pill above their name, the rank
  *   card with the ladder and "41,200 of 100,000 words to Novelist" (criterion 2; board 6.1; no
  *   sticker on the picture since bundle G4);
  * - their forum post shows the rank beside their name, at phone width too (criterion 5);
@@ -93,7 +93,7 @@ test.describe('writer ranks (FORUMS-2e, S1-E8-09)', () => {
   }) => {
     publishChapters();
     const page = await openSignedOut(browser, '/u/pending_check');
-    await expect(page.getByTestId('rank-chip')).toHaveText('Rank: Storyteller');
+    await expect(page.getByTestId('rank-chip')).toHaveText('Writing rank: Storyteller');
     const card = page.getByRole('region', { name: 'Storyteller' });
     await expect(card.getByText('Forum posts don’t count.', { exact: false })).toBeVisible();
     const ladder = card.getByRole('list', { name: 'The four ranks' });
@@ -109,7 +109,7 @@ test.describe('writer ranks (FORUMS-2e, S1-E8-09)', () => {
   test('a forum post shows its author’s rank', async ({ browser }) => {
     const page = await openSignedOut(browser, startThread());
     const post = page.getByRole('article').first();
-    await expect(post.getByTestId('rank-chip')).toHaveText('Rank: Storyteller');
+    await expect(post.getByTestId('rank-chip')).toHaveText('Writing rank: Storyteller');
     // Criterion 5: at phone width the chip still sits next to the name.
     await page.setViewportSize({ width: 390, height: 844 });
     await expect(post.getByTestId('rank-chip')).toBeVisible();
@@ -120,7 +120,7 @@ test.describe('writer ranks (FORUMS-2e, S1-E8-09)', () => {
     runSql(`update public.chapters set status = 'draft'
       where story_id = '${storyId}' and position > 4;`);
     const page = await openSignedOut(browser, '/u/pending_check');
-    await expect(page.getByTestId('rank-chip')).toHaveText('Rank: New writer');
+    await expect(page.getByTestId('rank-chip')).toHaveText('Writing rank: New writer');
     await expect(page.getByText('4 of 5 chapters to Writer')).toBeVisible();
     await page.context().close();
     runSql(`update public.chapters set status = 'published' where story_id = '${storyId}';`);

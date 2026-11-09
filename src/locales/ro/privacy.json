@@ -93,5 +93,11 @@
       "gone": "Ceva n-a mers. Mai încearcă puțin mai târziu.",
       "already_answered": "Părintele sau tutorele tău a răspuns deja."
     }
+  },
+  "readerLevel": {
+    "legend": "Nivelul tău de cititor",
+    "hint": "Nivelul vine din capitolele citite și poveștile terminate. Ascuns înseamnă că doar tu îl vezi pe profil.",
+    "hidden": "Ascuns",
+    "shown": "Arată-l pe profilul meu"
   }
 }

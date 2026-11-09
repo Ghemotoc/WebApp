@@ -45,7 +45,7 @@ function LadderRow({ rung, current }: { rung: RankRung; current: WriterRank }) {
         )}
       />
       <span className="flex-1">
-        <span className="button-glass inline-flex h-7 items-center rounded-full px-3 text-[13px] leading-none">
+        <span className="button-glass inline-flex h-7 items-center rounded-full px-3 text-[13px] leading-none whitespace-nowrap">
           {t(`rank.names.${rung.rank}`)}
         </span>
         <span className="sr-only">, {stateWords}</span>
