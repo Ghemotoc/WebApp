@@ -1,14 +1,17 @@
 /**
- * NewChatButton: the round + beside "Chats", and the small dialog it opens to start a chat by
- * username (story S1-E9-01; board Messages 5.5).
+ * NewChatButton: the round + beside the chats, and the small dialog it opens to start a chat by
+ * username (story S1-E9-01; board Messages 5.5). Bundle G8c (board Messages in the liquid glass
+ * redesign) adds a second look: a grey glass "New chat" pill with a plus, under "Pick a chat"
+ * while no chat is open.
  *
  * The dialog only opens /messages/:handle; whether the person may be written to is decided there
  * by the database, so this never reveals anything about anyone.
  * Who shows it: ChatList. What it calls: PeopleDialog (S1-E5-05) and the router.
  */
-import { useState, type FormEvent } from 'react';
+import { useId, useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router';
 
+import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Button } from '@/components/ui/Button';
 import { TextInput } from '@/components/ui/TextInput';
 import { PeopleDialog } from '@/features/people/components/PeopleDialog';
@@ -16,15 +19,46 @@ import { PeopleDialog } from '@/features/people/components/PeopleDialog';
 import { useMessagesTranslation } from '../registerMessagesTranslations';
 
 /**
- * Renders the + and its dialog.
+ * The button that opens the dialog: a round + (named for screen readers) or a pill with words.
  *
+ * @returns the button
+ */
+function OpenButton({ look, onOpen }: { look: 'round' | 'pill'; onOpen: () => void }) {
+  const { t } = useMessagesTranslation();
+  if (look === 'pill') {
+    return (
+      <Button variant="secondary" aria-haspopup="dialog" className="w-fit" onClick={onOpen}>
+        <ActionIcon name="plus" size={16} />
+        {t('chat.newChat')}
+      </Button>
+    );
+  }
+  return (
+    <button
+      type="button"
+      aria-label={t('list.newChat')}
+      aria-haspopup="dialog"
+      onClick={onOpen}
+      className="inline-flex size-11 flex-none cursor-pointer items-center justify-center rounded-full button-glass text-heading"
+    >
+      <ActionIcon name="plus" size={18} />
+    </button>
+  );
+}
+
+/**
+ * Renders the button and its dialog.
+ *
+ * @param props.look - 'round' (the default, beside the chats) or 'pill' (under "Pick a chat")
  * @returns the button and the dialog
  */
-export function NewChatButton() {
+export function NewChatButton({ look = 'round' }: { look?: 'round' | 'pill' }) {
   const { t } = useMessagesTranslation();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [handle, setHandle] = useState('');
+  // Two of these can be on the page at once, so each dialog's field gets its own ID.
+  const fieldId = `new-chat-handle-${useId()}`;
 
   /** Opens the chat with the username typed, without the @. */
   function open(event: FormEvent) {
@@ -38,26 +72,7 @@ export function NewChatButton() {
 
   return (
     <>
-      <button
-        type="button"
-        aria-label={t('list.newChat')}
-        aria-haspopup="dialog"
-        onClick={() => setIsOpen(true)}
-        className="inline-flex size-11 flex-none cursor-pointer items-center justify-center rounded-full border border-control-border bg-surface text-heading hover:bg-tint"
-      >
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          aria-hidden="true"
-        >
-          <path d="M12 5v14M5 12h14" />
-        </svg>
-      </button>
+      <OpenButton look={look} onOpen={() => setIsOpen(true)} />
       <PeopleDialog
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
@@ -67,7 +82,7 @@ export function NewChatButton() {
       >
         <form noValidate onSubmit={open} className="flex flex-col gap-4">
           <TextInput
-            id="new-chat-handle"
+            id={fieldId}
             label={t('newChat.label')}
             hint={t('newChat.hint')}
             autoComplete="off"

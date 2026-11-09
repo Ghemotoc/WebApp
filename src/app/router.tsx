@@ -609,14 +609,15 @@ const supportRoutes: RouteObject[] = [
 
 /**
  * Messages to the moderators (S1-E10-11): the list, a new message and one thread; a
- * moderator_mail_reply notification links to the thread. Each is loaded when opened.
+ * moderator_mail_reply notification links to the thread. The three load together, from
+ * memberMailPages, the first time one is opened (bundle G8c).
  */
 const moderatorMailRoutes: RouteObject[] = [
   {
     path: '/moderator-mail',
     HydrateFallback: () => null,
     lazy: async () => {
-      const { MyMailPage } = await import('@/features/moderator-mail/components/MyMailPage');
+      const { MyMailPage } = await import('@/features/moderator-mail/memberMailPages');
       return { Component: MyMailPage };
     },
   },
@@ -624,7 +625,7 @@ const moderatorMailRoutes: RouteObject[] = [
     path: '/moderator-mail/new',
     HydrateFallback: () => null,
     lazy: async () => {
-      const { NewMailPage } = await import('@/features/moderator-mail/components/NewMailPage');
+      const { NewMailPage } = await import('@/features/moderator-mail/memberMailPages');
       return { Component: NewMailPage };
     },
   },
@@ -632,8 +633,7 @@ const moderatorMailRoutes: RouteObject[] = [
     path: '/moderator-mail/:reference',
     HydrateFallback: () => null,
     lazy: async () => {
-      const { MailThreadPage } =
-        await import('@/features/moderator-mail/components/MailThreadPage');
+      const { MailThreadPage } = await import('@/features/moderator-mail/memberMailPages');
       return { Component: MailThreadPage };
     },
   },

@@ -5,7 +5,10 @@
  * The liquid glass design has no doodles (Robert, 7 Nov 2026), so the header and the tab bar use
  * these plain icons, each always with a written label or an accessible name beside it.
  * Decorative: hidden from screen readers.
- * Who uses it: TabBar, PhoneHeader, NotificationBell and MessagesHeaderLink. What it calls: nothing.
+ * Who uses it: TabBar, PhoneHeader, NotificationBell, MessagesHeaderLink, the back links of
+ * Messages and moderator mail, and ReportButton's pill and icon looks (the flag, bundle G8c). The
+ * action icons of the messages pages live in ActionIcon, so this file stays small: every page,
+ * the chapter reader included, loads it. What it calls: nothing.
  */
 import type { SVGProps } from 'react';
 
@@ -60,6 +63,13 @@ const drawings = {
     <>
       <path d="M19 12H5" />
       <path d="m12 19-7-7 7-7" />
+    </>
+  ),
+  // Report: a flag (bundle G8c, the boards' Report pills and buttons).
+  flag: (
+    <>
+      <path d="M4 22V4" />
+      <path d="M4 4h12l-2 4 2 4H4" />
     </>
   ),
 } as const;

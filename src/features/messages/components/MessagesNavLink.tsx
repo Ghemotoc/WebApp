@@ -14,7 +14,7 @@ import { NavLink } from 'react-router';
 
 import { navTrackLinkClasses } from '@/components/ui/navTrackStyles';
 
-import { useUnreadMessageCount } from '../hooks/useMessages';
+import { useUnreadMessageCount } from '../hooks/useUnreadMessageCount';
 
 /** Above this the bubble says "99+", so it stays small. */
 const largestShownCount = 99;

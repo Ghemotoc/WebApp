@@ -1,56 +1,35 @@
 /**
  * MyMailPage: /moderator-mail, a member's messages with the moderation team (story S1-E10-11;
- * DSA art. 12: one place to reach the moderators).
+ * DSA art. 12: one place to reach the moderators; board ModMail in the liquid glass redesign,
+ * bundle G8c).
  *
- * The list of the person's threads (subject, reference, status, last activity) and "Write to the
- * moderators". Signed-out visitors are asked to log in; anyone without an account can still use
- * the public report form or Contact us.
- * Who shows it: the router. What it calls: useMyMail.
+ * As the board draws it: "Settings" to go back, the eyebrow, the title and the lead on the left
+ * with "Write to the moderators" as the main pill on the right, the threads as one glass table,
+ * then a note for people without an account pointing to the public report form and Contact us.
+ * Signed-out visitors are asked to log in.
+ * Who shows it: the router; My reports and Settings link here.
+ * What it calls: useMyMail, MailThreadTable.
  */
+import { Trans } from 'react-i18next';
 import { Link } from 'react-router';
 
+import { ActionIcon } from '@/components/icons/ActionIcon';
+import { buttonClassName } from '@/components/ui/buttonStyles';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { useSession } from '@/features/auth/hooks/useSession';
 
-import type { MailThreadSummary } from '../api/moderatorMail';
 import { useMyMail } from '../hooks/useMyMail';
 import { useMailTranslation } from '../registerMailTranslations';
 
-/**
- * One thread in the list.
- *
- * @returns a list item
- */
-function ThreadRow({ thread }: { thread: MailThreadSummary }) {
-  const { t, i18n } = useMailTranslation();
-  const when = new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium' }).format(
-    new Date(thread.lastMessageAt),
-  );
-  return (
-    <li className="flex flex-col gap-1 border-b border-border py-4 last:border-b-0">
-      <Link
-        to={`/moderator-mail/${thread.reference}`}
-        className="font-semibold break-words text-link underline"
-      >
-        {thread.subject}
-      </Link>
-      <p className="m-0 text-sm text-meta">
-        {t('list.meta', {
-          reference: thread.reference,
-          status: t(`statuses.${thread.status}`),
-          date: when,
-        })}
-      </p>
-    </li>
-  );
-}
+import { MailBackLink } from './MailBackLink';
+import { MailThreadTable } from './MailThreadTable';
 
 /**
- * The list for a signed-in person.
+ * The threads for a signed-in person.
  *
- * @returns the list, a wait or an error
+ * @returns the table, a line when there are none, a wait or an error
  */
 function SignedInList() {
   const { t } = useMailTranslation();
@@ -58,12 +37,55 @@ function SignedInList() {
   if (mail.isError) return <Notice tone="error">{t('list.loadFailed')}</Notice>;
   if (mail.isPending) return null;
   if (mail.data.length === 0) return <p className="m-0 text-body">{t('list.empty')}</p>;
+  return <MailThreadTable threads={mail.data} />;
+}
+
+/**
+ * The title and lead, with "Write to the moderators" on the right for a signed-in person.
+ *
+ * @param props.isSignedIn - true to show the pill
+ * @returns the header
+ */
+function MailHeader({ isSignedIn }: { isSignedIn: boolean }) {
+  const { t } = useMailTranslation();
   return (
-    <ul className="m-0 list-none rounded-card border border-border bg-surface px-6 py-1 shadow-card">
-      {mail.data.map((thread) => (
-        <ThreadRow key={thread.reference} thread={thread} />
-      ))}
-    </ul>
+    <header className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+      <div className="flex max-w-[720px] flex-col gap-2">
+        <Eyebrow>{t('eyebrow')}</Eyebrow>
+        <h1 className="page-title">{t('list.title')}</h1>
+        <p className="m-0 text-lg leading-relaxed text-body">{t('list.intro')}</p>
+      </div>
+      {isSignedIn && (
+        <Link
+          to="/moderator-mail/new"
+          className={buttonClassName({ variant: 'primary' }, 'w-fit shrink-0')}
+        >
+          <ActionIcon name="plus" size={16} />
+          {t('list.write')}
+        </Link>
+      )}
+    </header>
+  );
+}
+
+/**
+ * The board's last line: where people without an account can go instead.
+ *
+ * @returns the note, with its two links
+ */
+function NoAccountNote() {
+  const { t } = useMailTranslation();
+  return (
+    <p className="m-0 text-sm text-meta">
+      <Trans
+        t={t}
+        i18nKey="list.noAccount"
+        components={{
+          report: <Link to="/report" className="text-link underline" />,
+          contact: <Link to="/contact" className="text-link underline" />,
+        }}
+      />
+    </p>
   );
 }
 
@@ -75,16 +97,12 @@ function SignedInList() {
 export function MyMailPage() {
   const { t } = useMailTranslation();
   const { userId, isKnown } = useSession();
+  const isSignedIn = isKnown && userId !== null;
   return (
-    <PageContainer className="flex flex-col gap-6 pb-16">
+    <PageContainer className="flex flex-col gap-6 pt-10 pb-16">
       <title>{t('list.documentTitle')}</title>
-      <header className="flex max-w-[720px] flex-col gap-4 pt-14">
-        <Eyebrow>{t('eyebrow')}</Eyebrow>
-        <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-extrabold tracking-[-0.025em]">
-          {t('list.title')}
-        </h1>
-        <p className="m-0 text-lg leading-relaxed text-body">{t('list.intro')}</p>
-      </header>
+      <MailBackLink to="/settings" label={t('list.settings')} />
+      <MailHeader isSignedIn={isSignedIn} />
       {isKnown && userId === null && (
         <p className="m-0 text-body">
           {t('signedOut')}{' '}
@@ -93,17 +111,8 @@ export function MyMailPage() {
           </Link>
         </p>
       )}
-      {isKnown && userId !== null && (
-        <>
-          <Link
-            to="/moderator-mail/new"
-            className="inline-flex h-11 w-fit items-center rounded-full button-main px-5 text-sm font-semibold no-underline"
-          >
-            {t('list.write')}
-          </Link>
-          <SignedInList />
-        </>
-      )}
+      {isSignedIn && <SignedInList />}
+      <NoAccountNote />
     </PageContainer>
   );
 }

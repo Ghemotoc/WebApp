@@ -2,7 +2,7 @@
   "eyebrow": "Siguranță",
   "signedOut": "Intră în cont ca să le scrii moderatorilor.",
   "logIn": "Intră în cont",
-  "back": "Înapoi la mesajele tale",
+  "back": "Mesaje către moderatori",
   "statuses": {
     "open": "Așteaptă echipa",
     "waiting": "Ți s-a răspuns",
@@ -11,28 +11,34 @@
   "list": {
     "documentTitle": "Mesaje către moderatori",
     "title": "Mesaje către moderatori",
-    "intro": "Scrie echipei de moderare despre o raportare, o decizie sau contul tău. Fiecare mesaj ajunge la toată echipa și îți răspunde un om.",
+    "intro": "Mesaje cu echipa de moderare. Fiecare ajunge în căsuța comună a echipei, niciodată la un singur moderator, și răspunde un om.",
     "write": "Scrie moderatorilor",
     "empty": "Încă nu le-ai scris moderatorilor.",
     "loadFailed": "Nu am putut încărca mesajele. Verifică-ți conexiunea și încearcă din nou.",
-    "meta": "{{reference}} · {{status}} · {{date}}"
+    "settings": "Setări",
+    "subject": "Subiect",
+    "status": "Stare",
+    "updated": "Ultima actualizare",
+    "referenceLinked": "{{reference}} · legat de {{decision}}",
+    "noAccount": "Fără cont? Folosește <report>formularul public de raportare</report> sau <contact>Contactează-ne</contact>."
   },
   "new": {
     "documentTitle": "Scrie moderatorilor",
     "title": "Scrie moderatorilor",
     "intro": "Spune-ne despre ce e vorba. Te rugăm să nu incluzi parole sau date private ale altcuiva.",
-    "about": "Despre decizia {{reference}}.",
+    "about": "Legat de decizia {{reference}}. Echipa va vedea despre ce decizie e vorba.",
     "subject": "Subiect",
-    "body": "Mesajul tău",
+    "body": "Mesaj",
     "bodyHint": "Până la 4.000 de caractere.",
     "send": "Trimite",
     "sending": "Se trimite…",
     "sent": "Trimis. Referința ta este {{reference}}. Te anunțăm când îți răspunde echipa.",
-    "open": "Deschide conversația"
+    "open": "Deschide conversația",
+    "suspendedNote": "Poți scrie chiar dacă ești suspendat. Ca să contești oficial o decizie, folosește „Contestă decizia” pe pagina de raportări și decizii.",
+    "cancel": "Anulează"
   },
   "thread": {
     "documentTitle": "Mesajul {{reference}}",
-    "meta": "{{reference}} · {{status}}",
     "decision": "Despre decizia {{reference}}",
     "messagesLabel": "Mesaje",
     "you": "Tu",
@@ -40,10 +46,12 @@
     "member": "@{{handle}}",
     "teamBy": "Echipa de moderare (@{{handle}})",
     "note": "Notă internă de la @{{handle}} (o vede doar echipa)",
-    "replyLabel": "Răspunsul tău",
+    "replyLabel": "Răspuns",
     "send": "Trimite",
     "notFound": "Nu am găsit această conversație în contul tău.",
-    "loadFailed": "Nu am putut încărca conversația. Verifică-ți conexiunea și încearcă din nou."
+    "loadFailed": "Nu am putut încărca conversația. Verifică-ți conexiunea și încearcă din nou.",
+    "textOnly": "Doar text. Aici nu se pot trimite fișiere.",
+    "reopens": "Un răspuns într-o conversație închisă o redeschide."
   },
   "failures": {
     "refused": "Te rugăm să completezi toate câmpurile.",
