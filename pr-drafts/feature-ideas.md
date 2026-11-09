@@ -10,6 +10,10 @@ Format when sent: a user story (As a, I want, so that), Given/When/Then criteria
 
 ## Sent
 
+### Sent 9 Nov 2026 (doc tabs by category in "Ghemotoc feature ideas"; Notion Feature ideas database)
+
+12 ideas, IDEA-20261109-1 to 12: tap an invented word to see what it means, languages I read, an "Easy to read" label for language learners, a word bank for a class assignment, feedback partners in a class, ask readers to pick between two blurbs, a heart from the writer on a comment, pause comments for a while, events in a space, a focus mode, surprise me with a first chapter, remind me to read this later.
+
 ### Sent 8 Nov 2026 (/mnt/project-files/06_feature-ideas/2026-11-08_feature-ideas_daily.md; doc tab "8 Nov 2026")
 
 12 ideas, IDEA-20261108-1 to 12: who's who up to where I've read, choose-your-path chapters, a note to my followers, Quick reads shelf, time left to finish a story, a heads-up before sharing personal details, describe my cover, old links keep working after a username change, find a word inside a story, suggest a better wording, a high-contrast look, unsent comments are kept.
