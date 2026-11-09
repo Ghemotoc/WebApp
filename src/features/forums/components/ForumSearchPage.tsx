@@ -81,9 +81,7 @@ export function ForumSearchPage() {
   return (
     <PageContainer className="flex flex-col gap-6 py-10">
       <ForumBreadcrumb path={[]} current={t('search.title')} />
-      <h1 className="m-0 text-[clamp(32px,4vw,48px)] leading-none font-extrabold tracking-[-0.025em]">
-        {t('search.title')}
-      </h1>
+      <h1 className="page-title">{t('search.title')}</h1>
       {/* A new address (a new search) starts the form afresh from it. */}
       <ForumSearchForm key={parameters.toString()} initial={query} showsFilters />
       <SearchResults search={search} term={query.term} />

@@ -5,9 +5,11 @@
  * Shown only to a signed-in reader. Its accessible name starts with its words and adds what it
  * marks ("Mark as read: Writing craft"), so several on one page can be told apart (WCAG 2.5.3).
  * A failure says so in plain words beside it.
+ * Liquid glass (bundle G8a; board Forums): every one is a grey glass pill with a tick.
  * Who uses it: ForumsPage, ForumCategorySection and ForumPage. What it calls: useMarkForumsRead
  * → mark_forums_read().
  */
+import { CheckIcon } from '@/components/icons/CheckIcon';
 import { Button } from '@/components/ui/Button';
 import { useSession } from '@/features/auth/hooks/useSession';
 
@@ -36,11 +38,12 @@ export function MarkReadButton({ forumSlug, forumName = '' }: MarkReadButtonProp
   return (
     <span className="inline-flex flex-wrap items-center gap-2">
       <Button
-        variant={isWholeBoard ? 'secondary' : 'text'}
+        variant="secondary"
         aria-label={isWholeBoard ? undefined : t('unread.markLabel', { name: forumName })}
         disabled={marking.isRunning}
         onClick={() => marking.run(forumSlug)}
       >
+        <CheckIcon />
         {t(isWholeBoard ? 'unread.markAll' : 'unread.mark')}
       </Button>
       {marking.failed && (

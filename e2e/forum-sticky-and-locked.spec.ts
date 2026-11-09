@@ -85,7 +85,11 @@ async function listedOrder(page: Page): Promise<string[]> {
 
 /** One row of the forum's list. */
 function threadRow(page: Page, title: string) {
-  return page.getByRole('listitem').filter({ has: page.getByRole('link', { name: title }) });
+  // The forum's own list, not the "New for you" card beside it (bundle G8a), which can name it too.
+  return page
+    .locator('section[aria-labelledby="thread-list-heading"]')
+    .getByRole('listitem')
+    .filter({ has: page.getByRole('link', { name: title }) });
 }
 
 /**

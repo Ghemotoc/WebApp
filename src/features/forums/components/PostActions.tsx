@@ -58,7 +58,7 @@ function QuoteButtons({ post, quotePicks }: { post: ForumPost; quotePicks: Quote
   return (
     <>
       <Button
-        variant="text"
+        variant="secondary"
         aria-label={t('post.quoteLabel', { number: post.number })}
         onClick={() => quotePicks.quoteOnly(post.id)}
       >
@@ -92,7 +92,7 @@ function AnswerButton({ post, threadNumber }: { post: ForumPost; threadNumber: n
   return (
     <>
       <Button
-        variant="text"
+        variant="secondary"
         aria-label={t(`answer.${key}Label`, { number: post.number })}
         disabled={marking.isRunning}
         onClick={() => void marking.run({ threadNumber, postNumber }).catch(errorShownByHook)}
@@ -165,7 +165,7 @@ function ManageButtons(props: PostActionsProps) {
     <>
       {post.hasHistory && (
         <Button
-          variant="text"
+          variant="secondary"
           aria-expanded={props.isHistoryOpen}
           aria-controls={props.historyRegionId}
           onClick={props.onToggleHistory}
@@ -175,7 +175,7 @@ function ManageButtons(props: PostActionsProps) {
       )}
       {post.canEdit && (
         <Button
-          variant="text"
+          variant="secondary"
           aria-label={t('post.editLabel', { number: post.number })}
           onClick={props.onEdit}
         >
@@ -184,7 +184,7 @@ function ManageButtons(props: PostActionsProps) {
       )}
       {post.canDelete && (
         <Button
-          variant="text"
+          variant="secondary"
           aria-label={t('post.deleteLabel', { number: post.number })}
           onClick={() => props.onAskDelete(true)}
         >

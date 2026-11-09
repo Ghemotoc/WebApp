@@ -8,6 +8,8 @@
  * the reader lands on the new thread. Signed out, it says to log in; in a category it says to
  * pick one of its forums.
  * What it calls: useForumIndex (the forum and its path), NewThreadForm → start_forum_thread().
+ * Liquid glass (bundle G8a; board ForumNew): the forum as an eyebrow, the large title, the form
+ * in a glass card and the forum rules beside it.
  * A space's forum has no page here: /forums/space-<name>/new moves to the space's own
  * /spaces/<name>/new (FORUMS-2a, S1-E8-06). IDEAS-3f: "Discuss in the forums" in the chapter reader
  * opens this page with a passage in the router's state, which the post starts with
@@ -28,6 +30,7 @@ import { spaceSlugOfForum } from '../lib/spaceForums';
 import { useForumsTranslation } from '../registerForumsTranslations';
 
 import { ForumBreadcrumb } from './ForumBreadcrumb';
+import { ForumRulesCard } from './ForumRulesCard';
 import { NewThreadForm } from './NewThreadForm';
 
 /**
@@ -82,15 +85,20 @@ export function NewThreadPage() {
       {forum !== undefined && (
         <>
           <ForumBreadcrumb path={path} current={t('newThread.eyebrow')} />
-          <section className="flex max-w-[760px] flex-col gap-5 rounded-card border border-border bg-surface p-5 md:p-7">
-            <div className="flex flex-col gap-1">
-              <Eyebrow>{t('newThread.eyebrow')}</Eyebrow>
-              <h1 className="m-0 font-heading text-[28px] leading-tight font-extrabold text-heading">
-                {t('newThread.heading', { forum: forum.name })}
-              </h1>
-            </div>
-            <NewThreadBody forum={forum} />
-          </section>
+          <header className="flex max-w-[860px] flex-col gap-3">
+            <Eyebrow>{forum.name}</Eyebrow>
+            <h1 className="page-title">{t('newThread.heading', { forum: forum.name })}</h1>
+          </header>
+          {/* The form in a glass card, the forum rules beside it (board ForumNew). */}
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
+            <section
+              aria-label={t('newThread.eyebrow')}
+              className="flex min-w-0 flex-col gap-5 rounded-card border border-border bg-surface p-5 md:p-7"
+            >
+              <NewThreadBody forum={forum} />
+            </section>
+            <ForumRulesCard />
+          </div>
         </>
       )}
     </PageContainer>

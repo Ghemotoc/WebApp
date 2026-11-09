@@ -72,7 +72,11 @@ function addReply(words: string) {
 
 /** The thread's row in its forum's list. */
 function threadRow(page: Page) {
-  return page.getByRole('listitem').filter({ hasText: threadTitle });
+  // The forum's own list, not the "New for you" card beside it (bundle G8a), which can name it too.
+  return page
+    .locator('section[aria-labelledby="thread-list-heading"]')
+    .getByRole('listitem')
+    .filter({ hasText: threadTitle });
 }
 
 /** The First chapters row on the index. */
