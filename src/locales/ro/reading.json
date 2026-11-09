@@ -1,6 +1,8 @@
 {
   "storyPage": {
     "documentTitle": "{{title}} · {{productName}}",
+    "breadcrumb": "Unde te afli",
+    "breadcrumbDiscover": "Descoperă",
     "by": "de",
     "tags": "Etichete",
     "writerEyebrow": "Autorul",

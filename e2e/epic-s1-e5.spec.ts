@@ -103,9 +103,12 @@ test.describe('epic check S1-E5 (S1-E5-QA)', () => {
 
   test('journey 1: a visitor browses from Discover to a writer’s stories', async ({ browser }) => {
     const page = await openAs(browser, null, '/discover');
+    // Discover has no category chips since bundle G7: a story page's breadcrumb leads to its
+    // category.
+    await card(page, 'Quiet orchard').first().click();
     await page
-      .getByRole('navigation', { name: 'Browse by category' })
-      .getByRole('link', { name: /Fiction/ })
+      .getByRole('navigation', { name: 'Where you are' })
+      .getByRole('link', { name: 'Fiction' })
       .click();
     await expect(page).toHaveURL(/\/discover\/c\/fiction$/);
     await expect(page.getByLabel('Sort by')).toHaveValue('popular');
@@ -131,14 +134,14 @@ test.describe('epic check S1-E5 (S1-E5-QA)', () => {
     const page = await openAs(browser, null, '/');
     await page.getByRole('link', { name: 'Start reading' }).click();
     await expect(page).toHaveURL(/\/discover$/);
-    // Step 2: a category, then a story.
+    // Step 2: a story from a shelf, then its category through the breadcrumb (bundle G7).
+    await card(page, 'Quiet orchard').first().click();
+    await expect(page.getByRole('heading', { level: 1, name: 'Quiet orchard' })).toBeVisible();
     await page
-      .getByRole('navigation', { name: 'Browse by category' })
-      .getByRole('link', { name: /Fiction/ })
+      .getByRole('navigation', { name: 'Where you are' })
+      .getByRole('link', { name: 'Fiction' })
       .click();
     await expect(page).toHaveURL(/\/discover\/c\/fiction$/);
-    await card(page, 'Quiet orchard').click();
-    await expect(page.getByRole('heading', { level: 1, name: 'Quiet orchard' })).toBeVisible();
   });
 
   test('journey 2: a like in the reader lifts a story on the next scoring run', async ({

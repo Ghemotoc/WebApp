@@ -4,7 +4,6 @@
     "eyebrow": "Descoperă",
     "heading": "Găsește-ți următoarea poveste",
     "intro": "Capitole noi de la scriitorii de pe {{productName}}, pe categorii și etichete. Nimic de aici nu e ales după ce citești.",
-    "categoriesLabel": "Răsfoiește pe categorii",
     "loadFailed": "Nu am putut încărca poveștile. Verifică conexiunea și încearcă din nou.",
     "empty": "Încă nu e publicată nicio poveste. Fii primul: începe să scrii.",
     "writeLink": "Începe să scrii",
@@ -108,7 +107,8 @@
     "showSlide": "Arată povestea {{position}}: {{title}}",
     "previous": "Povestea anterioară",
     "next": "Povestea următoare",
-    "pause": "Oprește derularea poveștilor"
+    "pause": "Oprește derularea poveștilor",
+    "pauseShort": "Oprește"
   },
   "writersToFollow": {
     "eyebrow": "În ascensiune",

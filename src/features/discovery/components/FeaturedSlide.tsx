@@ -1,9 +1,13 @@
 /**
  * FeaturedSlide: one story in Featured this week (story S1-E5-10; board Discover, the big slider).
  *
- * The dark plum card holds the eyebrow, the title, the blurb, "Read the story", the byline and
- * chapter count, and on the right the story's cover in front of a tilted gold card. The cover is
- * decorative here (the title is the heading beside it), so it is hidden from screen readers.
+ * Board values (liquid glass board Discover, bundle G7): on the light glass card, the eyebrow, the
+ * title in Bricolage at 40 px, the blurb in the soft body colour, "Read the story" as the main
+ * button with the byline and chapter count beside it, and on the right the story's cover, 210 px
+ * wide and tilted a little, with a soft shadow, drawn at the shelf cards' size so the whole title
+ * fits on its lines (DoD covers). The cover is decorative here (the title is the
+ * heading beside it), so it is hidden from screen readers; it hides under 640 px, where the text
+ * needs the width.
  * Who shows it: FeaturedBand. What it calls: StoryCoverArt and DrawnCover, the same cover as on
  * every shelf.
  */
@@ -25,29 +29,25 @@ export interface FeaturedSlideProps {
 }
 
 /**
- * The cover in front of a tilted gold card (board: "artBack" and "artFront").
+ * The tilted cover (board: the slide's cover, 210 by 300 px, turned 3 degrees).
  *
- * @returns the decorative cover pair
+ * @returns the decorative cover
  */
-function CoverPair({ story }: { story: ListedStory }) {
+function TiltedCover({ story }: { story: ListedStory }) {
   const drawn = (
     <DrawnCover
       title={story.title}
       penName={story.writer.displayName}
       choice={resolveCoverChoice(story)}
-      size="card"
+      size="shelf"
       isDecorative
       className="w-full"
     />
   );
   return (
-    <div
-      aria-hidden="true"
-      className="relative flex min-h-[260px] flex-[0_1_300px] items-center justify-center max-sm:hidden"
-    >
-      <span className="absolute h-[250px] w-[160px] translate-x-8 rotate-[8deg] rounded-[16px] bg-gold/80" />
-      <span className="relative block w-[170px] -rotate-[4deg] shadow-[0_24px_40px_-20px_rgba(0,0,0,0.6)]">
-        <StoryCoverArt story={story} drawn={drawn} className="w-[170px]" />
+    <div aria-hidden="true" className="flex flex-[0_0_210px] justify-center max-sm:hidden">
+      <span className="block w-[210px] rotate-[3deg] overflow-hidden rounded-[22px] shadow-[0_30px_60px_rgba(20,10,30,0.3)]">
+        <StoryCoverArt story={story} drawn={drawn} className="w-[210px]" />
       </span>
     </div>
   );
@@ -65,30 +65,29 @@ export function FeaturedSlide({ story, position, count }: FeaturedSlideProps) {
       role="group"
       aria-roledescription={t('featured.slide')}
       aria-label={t('featured.slideLabel', { position, count, title: story.title })}
-      className="flex flex-wrap items-center gap-8 px-[clamp(24px,4vw,56px)] pt-[clamp(28px,4vw,48px)] pb-24"
+      className="relative flex flex-wrap items-center gap-8"
     >
-      <div className="flex max-w-[640px] min-w-0 flex-[1_1_380px] flex-col gap-4">
-        {/* The eyebrow's look, in gold so it reads on the dark card (about 9:1). */}
-        <p className="eyebrow m-0 text-gold">{t('featured.eyebrow')}</p>
-        <h2 className="m-0 font-heading text-[clamp(30px,4.4vw,52px)] leading-[1.02] font-extrabold tracking-[-0.02em] break-words text-on-featured">
+      <div className="flex min-w-0 flex-[1_1_320px] flex-col gap-3">
+        <p className="eyebrow m-0">{t('featured.eyebrow')}</p>
+        <h2 className="m-0 font-heading text-[clamp(30px,3.4vw,40px)] leading-[1.02] font-bold break-words text-heading">
           {story.title}
         </h2>
         {story.blurb !== '' && (
-          <p className="m-0 text-[17px] leading-relaxed text-on-featured-soft">{story.blurb}</p>
+          <p className="m-0 text-base leading-relaxed text-body">{story.blurb}</p>
         )}
-        <div className="mt-2 flex flex-wrap items-center gap-4">
+        <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-2">
           <Link
             to={`/s/${story.slug}`}
-            className="inline-flex min-h-12 items-center rounded-full bg-gold px-6 font-semibold text-on-gold no-underline hover:bg-gold/90"
+            className="inline-flex h-[50px] items-center rounded-full button-main px-6 font-semibold no-underline"
           >
             {t('featured.readStory')}
           </Link>
-          <span className="text-sm text-on-featured-soft">
+          <span className="text-sm text-body">
             {t('card.meta', { writer: story.writer.displayName, count: story.chapterCount })}
           </span>
         </div>
       </div>
-      <CoverPair story={story} />
+      <TiltedCover story={story} />
     </div>
   );
 }

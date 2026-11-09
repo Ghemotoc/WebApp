@@ -2,8 +2,9 @@
  * DraftCard: "Your draft" on Discover, the member's draft chapter saved most recently (story
  * S1-E5-12, bundle LOOK-4b; board Discover, "Your dashboard").
  *
- * Board values: a white card with the eyebrow, the draft's title in Bricolage at 22 px ("Chapter
- * 1, untitled" when it has none), "<story> · 1,240 words · saved yesterday" and "Open draft".
+ * Board values (liquid glass board Discover, bundle G7): a glass card in the side column with the
+ * eyebrow, the draft's title in Bricolage at 20 px ("Chapter 1, untitled" when it has none),
+ * "<story> · 1,240 words · saved yesterday" and "Open draft" drawn as an outlined pill.
  * The whole card is one link to the chapter editor.
  * Who shows it: DiscoverCards. What it calls: timeAgo for "saved 2 days ago".
  */
@@ -34,20 +35,22 @@ export function DraftCard({ draft }: { draft: DraftCardData }) {
   return (
     <Link
       to={`/write/s/${encodeURIComponent(draft.storySlug)}/c/${draft.chapterCode}`}
-      className="flex flex-col gap-2 rounded-[24px] border border-border bg-surface p-[22px] text-inherit no-underline shadow-card"
+      className="flex flex-col gap-2 rounded-[28px] border border-border bg-surface p-[18px] text-inherit no-underline shadow-card"
     >
       <span className="eyebrow">{t('cards.draftEyebrow')}</span>
-      <span className="font-heading text-[22px] leading-[1.15] font-bold break-words text-heading">
+      <span className="font-heading text-xl leading-[1.15] font-bold break-words text-heading">
         {title}
       </span>
-      <span className="text-sm text-body">
+      <span className="text-[13px] text-body">
         {t('cards.draftMeta', {
           story: draft.storyTitle,
           words,
           when: timeAgo(draft.savedAt, i18n.language),
         })}
       </span>
-      <span className="mt-auto pt-1 text-sm font-semibold text-link">{t('cards.openDraft')}</span>
+      <span className="mt-1 inline-flex h-11 items-center self-start rounded-full border border-control-border px-[18px] text-sm font-semibold text-ink">
+        {t('cards.openDraft')}
+      </span>
     </Link>
   );
 }

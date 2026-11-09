@@ -1581,11 +1581,11 @@ Tests: `183-notification-emails.test.sql`, `server/notification-emails.test.ts`,
 
 ## Discover and the story lists (S1-E5-01, S1-E5-09, S1-E5-02)
 
-`/discover` from the top bar; a shelf's "View more", a tag on the story page or "View more" on a profile open a list page:
+`/discover` from the top bar; a shelf's "View more", a tag or the category in the story page's breadcrumb (`StoryBreadcrumb`, G7) or "View more" on a profile open a list page:
 
 ```
 DiscoverPage
-  │  CategoryLinks (links to /discover/c/<slug>, the categories table)
+  │  GreetingHeading · FeaturedBand and, beside it from 1024 px, DiscoverCards (the side column)
   ▼  DiscoverShelf × (the order of the setting discover_shelves) → useStoryShelf (21 rows)
 StoryListPage (listFromParams() picks the list from the address; requestFromAddress() the filters)
   │  StoryListHeader (breadcrumb, eyebrow, title, "n stories") · StoryListFilters (chips, language)
@@ -1646,8 +1646,8 @@ Most screens draw their buttons, fields and cards with plain Tailwind classes, s
 
 ### Discover's greeting and cards (S1-E5-12, LOOK-4b)
 
-- **Heading:** `src/features/discovery/components/DiscoverPage.tsx` shows `GreetingHeading` once the member's name is known ("Good morning, <name>." with the gold line, under "Discover · <date>"), and the visitor's heading otherwise.
-- **Cards:** `DiscoverCards` draws "Your dashboard": `ContinueCard`, `DraftCard` and the gold `NewStoryCard`, each only when it has something to show. `useDiscoverCards` calls `my_discover_cards()` (`supabase/migrations/…_look4b_01_discover_cards.sql`), which reads only the member's own places and drafts.
+- **Heading:** `src/features/discovery/components/DiscoverPage.tsx` shows `GreetingHeading` once the member's name is known ("Good morning, <name>." under "Discover · <date>"; no gold line since G7, it counted as a doodle), and the visitor's heading otherwise.
+- **Cards:** `DiscoverCards` draws "Your dashboard", the side column beside Featured this week from 1024 px (G7): `ContinueCard`, `DraftCard` and `NewStoryCard`, glass cards each shown only when it has something to show. `useDiscoverCards` calls `my_discover_cards()` (`supabase/migrations/…_look4b_01_discover_cards.sql`), which reads only the member's own places and drafts.
 - **Shelves:** the same migration sets `discover_shelves` to the board's five; `DiscoverPage` keeps the same five as its fallback.
 - **Tests:** `supabase/tests/database/305-discover-cards.test.sql`, `src/features/discovery/api/discoverCards.test.ts` and `e2e/discover-cards.spec.ts`.
 
