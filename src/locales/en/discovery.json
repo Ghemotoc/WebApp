@@ -4,7 +4,6 @@
     "eyebrow": "Discover",
     "heading": "Find your next story",
     "intro": "New chapters from writers on {{productName}}, by category and tag. Nothing here is picked from what you read.",
-    "categoriesLabel": "Browse by category",
     "loadFailed": "We couldn’t load the stories. Check your connection and try again.",
     "empty": "No stories are published yet. Be the first: start writing.",
     "writeLink": "Start writing",
@@ -108,7 +107,8 @@
     "showSlide": "Show story {{position}}: {{title}}",
     "previous": "Previous story",
     "next": "Next story",
-    "pause": "Pause the stories"
+    "pause": "Pause the stories",
+    "pauseShort": "Pause"
   },
   "writersToFollow": {
     "eyebrow": "Rising",

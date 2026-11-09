@@ -3,8 +3,8 @@
  * bundle LOOK-4b; board Discover, "Personal greeting").
  *
  * The heading is "Good morning, Lia." by the reader's own clock (the board's rule: nothing about
- * place is used), with the board's gold underline drawn under the name. All through their
- * birthday month it says "Happy birthday month" (the month only since QA-7: no birthday day is
+ * place is used), with the name as plain heading text (G7: the gold underline was a doodle and
+ * is gone). All through their birthday month it says "Happy birthday month" (the month only since QA-7: no birthday day is
  * stored, CLAUDE.md rule 5) and in the month they joined, from the first anniversary on, "Happy
  * <product> anniversary" (Robert, 25 Oct 2026). The birthday month wins over the anniversary.
  * The name is the pen name, or the username when there is none; never a real name (rule 5).
@@ -25,33 +25,14 @@ import { greetingKeyFor } from '../lib/greeting';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
 
 /**
- * The name with the board's hand-drawn gold line under it. The line is decoration only.
+ * The name inside the greeting. Bundle G7 dropped the hand-drawn gold line under it, which
+ * counted as a doodle (G4: no doodles anywhere); the name now reads as plain heading text.
  *
  * @param props.children - the name, filled in by Trans
- * @returns the marked name
+ * @returns the name
  */
-function MarkedName({ children }: { children?: ReactNode }) {
-  return (
-    <span className="relative isolate inline-block">
-      {children}
-      <svg
-        aria-hidden="true"
-        focusable="false"
-        viewBox="0 0 100 20"
-        preserveAspectRatio="none"
-        className="pointer-events-none absolute -bottom-[0.12em] left-[-2%] -z-10 h-[0.24em] w-[104%] overflow-visible"
-      >
-        <path
-          d="M1 13 C 22 5 48 9 70 12 C 81 13 90 14 99 8"
-          fill="none"
-          stroke="var(--gold)"
-          strokeWidth="4"
-          strokeLinecap="round"
-          vectorEffect="non-scaling-stroke"
-        />
-      </svg>
-    </span>
-  );
+function GreetingName({ children }: { children?: ReactNode }) {
+  return <span>{children}</span>;
 }
 
 /**
@@ -81,7 +62,7 @@ export function GreetingHeading({ name, className }: { name: string; className: 
   const greeting = useMyGreeting();
   // Step 1: the special greeting if there is one today, else the time of day.
   const key = greetingKeyFor(greeting?.kind ?? null, new Date().getHours());
-  // Step 2: the eyebrow, then the heading with the name marked.
+  // Step 2: the eyebrow, then the heading with the name.
   return (
     <>
       <Eyebrow>{t('discover.eyebrowDated', { date: todayWords(i18n.language) })}</Eyebrow>
@@ -90,7 +71,7 @@ export function GreetingHeading({ name, className }: { name: string; className: 
           t={t}
           i18nKey={key}
           values={{ name, productName: brand.productName }}
-          components={{ name: <MarkedName /> }}
+          components={{ name: <GreetingName /> }}
         />
       </h1>
     </>

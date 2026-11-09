@@ -64,13 +64,16 @@ export function FeaturedBand() {
       aria-label={t('featured.label')}
       data-testid="featured-band"
       ref={bandRef}
-      className="relative overflow-hidden rounded-[28px] bg-linear-120 from-featured-from via-featured-via to-featured-to shadow-card"
+      className="relative overflow-hidden rounded-[36px] border border-border bg-surface px-[clamp(20px,3vw,32px)] pt-[clamp(20px,3vw,32px)] pb-5 shadow-card lg:col-start-1"
     >
-      {/* The focus ring turns gold on the dark card, so it stays visible there (about 9:1). */}
+      {/* The board's soft colour glow in the top right corner, drawn as a radial gradient in the
+          theme's third background colour rather than a blur filter (no heavy effects; Robert,
+          7 Nov 2026, 21:49). Decoration only. */}
       <div
-        aria-live={rotation.isTurning ? 'off' : 'polite'}
-        className="[--focus-ring:var(--color-gold)]"
-      >
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-[120px] -right-20 size-[380px] rounded-full bg-[radial-gradient(closest-side,var(--blob-3),transparent)] opacity-60"
+      />
+      <div aria-live={rotation.isTurning ? 'off' : 'polite'} className="relative">
         <FeaturedSlide story={story} position={rotation.index + 1} count={stories.length} />
       </div>
       {stories.length > 1 && (

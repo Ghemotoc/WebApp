@@ -2,17 +2,15 @@
  * StoryPage: a story's public page, screen 3.4 (story S1-E3-05 starts it;
  * design/boards/Story.dc.html).
  *
- * Who shows it: the router, at /s/:storySlug; shared links, Your writing's "See story page" and,
- * later, Discover lead here.
- * What it shows today: the cover (220 × 308), the pills (category, Ongoing or Completed), the
- * title, "by <pen name>", the blurb, the tags, "Labels from the writer" (language, status) and
- * "Report this story". The owner sees a note while nothing is published yet. What joins later:
- * the chapter list, "Start reading" and "Updated" (S1-E3-03), the rating pill, labels and content
- * note (S1-E3-06), Follow, Library and Like (S1-E6-05, S1-E4-03, S1-E6-03), the writer card's
- * numbers and "See profile" (S1-E5-05), the breadcrumb (S1-E5-01), the wide ad slot under the
- * chapter list (S1-E12-01; none on a class-only story, Q70), "Web and app" (S1-E3-08), "The story's world" (the plan's public parts, S1-E17-33). Doodles:
- * the music notes under the cover (StoryHeader) and the mug and mushroom by
- * the side column, as on the board; the chapter card's book and puppy come with the list.
+ * Who shows it: the router, at /s/:storySlug; shared links, story cards and Your writing's "See
+ * story page" lead here.
+ * What it shows (liquid glass board StoryPage, bundle G7): the breadcrumb "Discover / category /
+ * title" (StoryBreadcrumb), then two columns from 1024 px. The main column holds the header
+ * (cover, pills, title, "by <pen name>", numbers, Start reading and Library, Follow and Share, the
+ * blurb and the tags), the chapter list, "The story's world" (S1-E17-33) and the wide ad slot
+ * (S1-E12-01; none on a class-only story, Q70). The side column holds the writer card and "Labels
+ * from the writer", then Report. The owner sees a note while nothing is published yet. No
+ * doodles since bundle G4.
  * A signed-out visitor on a 16+ or 18+ story gets its title and NoPreviewNotice instead of "not
  * available" (S1-E4-04; they count as under 16, Q6).
  * What it calls: useStoryPage → get_story_page() (ADR 0004: never the tables); useStoryPreview →
@@ -29,6 +27,7 @@ import { useStoryPage } from '../hooks/useStoryPage';
 import { useStoryPreview } from '../hooks/useStoryPreview';
 
 import { NoPreviewNotice } from './NoPreviewNotice';
+import { StoryBreadcrumb } from './StoryBreadcrumb';
 import { StoryChapterList } from './StoryChapterList';
 import { CopiedWorkNote } from './CopiedWorkNote';
 import { StoryHeader } from './StoryHeader';
@@ -125,6 +124,8 @@ export function StoryPage() {
       {story.isOwner && !story.isPublic && (
         <Notice tone="info">{t('storyPage.notPublicYet')}</Notice>
       )}
+      {/* Discover / category / title (G7): the way back, and to the category page. */}
+      <StoryBreadcrumb title={story.title} categorySlug={story.categorySlug} />
       {/* Two columns only from 1024 px: at 768 px the side cards would be squeezed to about
           220 px and their label rows (140 px labels) would push the page sideways (rule 21). */}
       <div className="flex flex-col gap-10 lg:flex-row lg:items-start">

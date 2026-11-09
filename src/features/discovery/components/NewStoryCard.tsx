@@ -1,10 +1,12 @@
 /**
- * NewStoryCard: the gold "Start a new story" card on Discover (story S1-E5-12, bundle LOOK-4b;
+ * NewStoryCard: the "Start a new story" card on Discover (story S1-E5-12, bundle LOOK-4b;
  * board Discover, "Your dashboard", the house promo).
  *
- * Board values: a gold card with the "Write" eyebrow, "Start a new story" in Bricolage at 24 px,
- * one line saying nobody sees it until it is published, and "New story". The whole card is one
- * link to the new story page. The text stays dark on gold in both themes (--on-gold).
+ * Board values: the "Write" eyebrow, "Start a new story" in Bricolage at 20 px, one line saying
+ * nobody sees it until it is published, and "New story". Since bundle G7 it is a glass card in the
+ * side column like Your draft, no longer gold: top cards stay light and calm (design rulebook,
+ * "Top cards"), and the main colour is kept for the buttons. The whole card is one link to the
+ * new story page.
  * Who shows it: DiscoverCards, only for a member who may write (is_active_member()).
  */
 import { Link } from 'react-router';
@@ -21,14 +23,14 @@ export function NewStoryCard() {
   return (
     <Link
       to="/write/new"
-      className="flex flex-col gap-2 rounded-[24px] bg-gold p-[22px] text-on-gold no-underline"
+      className="flex flex-col gap-2 rounded-[28px] border border-border bg-surface p-[18px] text-inherit no-underline shadow-card"
     >
-      <span className="eyebrow-type text-on-gold">{t('cards.writeEyebrow')}</span>
-      <span className="font-heading text-2xl leading-[1.05] font-extrabold text-on-gold">
+      <span className="eyebrow">{t('cards.writeEyebrow')}</span>
+      <span className="font-heading text-xl leading-[1.15] font-bold text-heading">
         {t('cards.newStoryTitle')}
       </span>
-      <span className="text-sm leading-normal text-on-gold">{t('cards.newStoryText')}</span>
-      <span className="mt-auto pt-1 text-sm font-semibold text-on-gold">
+      <span className="text-[13px] leading-normal text-body">{t('cards.newStoryText')}</span>
+      <span className="mt-1 inline-flex h-11 items-center self-start rounded-full border border-control-border px-[18px] text-sm font-semibold text-ink">
         {t('cards.newStoryLink')}
       </span>
     </Link>
