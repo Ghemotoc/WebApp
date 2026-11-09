@@ -5,14 +5,15 @@
  * Who shows it: the router; "Space settings" on the space's header links here, for its owner.
  * What it shows: the same form as a new space, filled in, and "Your changes are saved." after
  * saving, for anyone holding the settings power (the owner, a moderator given it, or our
- * moderation team; part b, S1-E8-07), then the Banner picture card (part c) for the same people
- * while picture uploads are on. Under them, the Moderators card for the owner and our
+ * moderation team; part b, S1-E8-07), then the Logo card (G8b) and the Banner picture card
+ * (part c) for the same people while picture uploads are on. The page title is "Space settings"
+ * under the space's name, as on board SpaceSettings (G8b). Under them, the Moderators card for the owner and our
  * moderation team (SpaceModeratorsCard). In a class space (bundle CLASSES, part a; S1-E8-11), the
  * class invite card for anyone holding the members power (ClassInviteCard). Part b adds, in a
  * class space, the members still waiting to read (ClassWaitingCard, same power) and the lock at the
  * end of the school year (ClassLockCard, the settings power) and archiving it for good (ClassArchiveCard, CLASSES-d). Anyone else is told only the owner can change it; the
  * database checks again. A new name keeps the space's address, so links to it still work.
- * What it calls: useSpace → space_page(); useUpdateSpace → update_space(); SpaceBannerPictureCard;
+ * What it calls: useSpace → space_page(); useUpdateSpace → update_space(); SpaceLogoCard; SpaceBannerPictureCard;
  * SpaceModeratorsCard; ClassInviteCard; ClassWaitingCard; ClassLockCard; ClassArchiveCard; and the
  * teacher's ClassCertificatesCard (CLASSES-e, S1-E8-12); SpaceWelcomeNoteCard → set_space_welcome_note(),
  * the welcome note new members see once (bundle 14d IDEAS-3, part d), for the settings power.
@@ -37,6 +38,7 @@ import { SpaceBreadcrumb } from './SpaceBreadcrumb';
 import { SpaceForm } from './SpaceForm';
 import { SpaceFormCard } from './SpaceFormCard';
 import { SpaceHandoverCard } from './SpaceHandoverCard';
+import { SpaceLogoCard } from './SpaceLogoCard';
 import { SpaceModeratorsCard } from './SpaceModeratorsCard';
 import { SpaceNotFound } from './SpaceNotFound';
 import { SpaceWelcomeNoteCard } from './SpaceWelcomeNoteCard';
@@ -78,7 +80,7 @@ function SettingsForm({ space }: { space: Space }) {
   }
 
   return (
-    <SpaceFormCard eyebrow={t('form.editEyebrow')} title={t('form.editTitle')}>
+    <SpaceFormCard eyebrow={space.name} title={t('form.editEyebrow')} intro={t('form.editIntro')}>
       <div aria-live="polite">{isSaved && <Notice tone="success">{t('form.saved')}</Notice>}</div>
       <SpaceForm
         initial={settingsOf(space)}
@@ -117,6 +119,21 @@ function ClassCards({ space }: { space: Space }) {
 }
 
 /**
+ * The logo and the banner picture (G8b and FORUMS-2c), for the settings power.
+ *
+ * @param props.space - the space
+ * @returns the two cards
+ */
+function SpacePictureCards({ space }: { space: Space }) {
+  return (
+    <>
+      <SpaceLogoCard space={space} />
+      <SpaceBannerPictureCard space={space} />
+    </>
+  );
+}
+
+/**
  * The class cards, the settings form and the Moderators card, each for whoever may use it.
  *
  * @param props.space - the space
@@ -134,7 +151,7 @@ function SettingsCards({ space }: { space: Space }) {
       <ClassCards space={space} />
       {canManage && <SettingsForm key={space.slug} space={space} />}
       {canManage && <SpaceWelcomeNoteCard key={`welcome-${space.slug}`} space={space} />}
-      {canManage && <SpaceBannerPictureCard space={space} />}
+      {canManage && <SpacePictureCards space={space} />}
       {canAppoint && <SpaceModeratorsCard space={space} />}
       {/* IDEAS-3e: only the owner may hand the space over. */}
       {space.viewer.canHandOver && <SpaceHandoverCard space={space} />}

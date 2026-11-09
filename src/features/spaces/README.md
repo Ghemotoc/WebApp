@@ -13,11 +13,14 @@ Each space owns one hidden forum, so its threads reuse the forums feature (`Thre
   `decide_space_join_request()` and `my_space_age_group()`, with refusals as `SpaceError`.
 - `hooks/useSpaces.ts`: the reads and changes; `hooks/useSpaceNameCheck.ts`: the name check as
   the owner types.
-- `lib/spaceLook.ts`: the four drawn banners and the badge's letters; `lib/spaceFailures.ts`:
-  which words a refusal gets.
-- `components/SpacesPage.tsx` (`/spaces`) with `SpaceRow`; `SpacesCard` on the forum index.
+- `lib/spaceLook.ts`: the fourteen banner colours (eight deep, six pastel) and the text colour
+  that reads on each (G8b); `lib/spaceFailures.ts`: which words a refusal gets;
+  `lib/pictureOutcome.ts`: what the logo and banner upload fields say after an upload.
+- `components/SpacesPage.tsx` (`/spaces`) with a glass `SpaceCard` per space (G8b); `SpacesCard`
+  on the forum index with `SpaceRow`.
 - `components/SpacePage.tsx` (`/spaces/:spaceSlug`): `SpaceBreadcrumb`, `SpaceHeaderCard`
-  (`SpaceBadge`, `SpacePills`, `SpaceJoinActions`, Report), the forums' `ThreadList`,
+  (`SpaceBannerBand`, `SpaceLogo`, `SpacePills`, `SpaceJoinActions`, Report: everything on the
+  banner, in the colour that reads on it; G8b), the forums' `ThreadList`,
   `SpaceRequestsCard`, `SpaceRulesCard` and `SpaceRunsCard`.
 - `components/NewSpacePage.tsx` (`/spaces/new`) and `SpaceSettingsPage.tsx`
   (`/spaces/:spaceSlug/settings`), both with `SpaceFormCard` and `SpaceForm` (`SpaceNameField`,
@@ -35,6 +38,10 @@ Each space owns one hidden forum, so its threads reuse the forums feature (`Thre
   colour (`set_space_banner_picture()`) and the picture's signed address; `SpaceBannerBand` on the
   header and `SpaceBannerPictureCard` on the settings page. The join notifications are written by
   a database trigger and worded in the notifications feature.
+- `api/spaceLogo.ts` and `hooks/useSpaceLogo.ts` (G8b): a space's square logo
+  (`register_space_logo()`, `set_space_logo_picture()`), kept beside the banner picture in the
+  `space-banners` bucket; `SpaceLogo` draws it once its check passed (nothing for a space without
+  one) and `SpaceLogoCard` changes it on the settings page.
 - `api/classSpaces.ts` and `hooks/useClassSpaces.ts` (bundle CLASSES, part a; S1-E8-11): a
   class space's invite code (`make_class_invite()`, `end_class_invite()`, `class_invite()`) and
   joining with it (`class_invite_preview()`, `join_class_space()`); `ClassInviteCard` (with

@@ -1,6 +1,6 @@
 /**
  * How a space's answers and refusals become what the screen shows (bundle FORUMS-2, part a;
- * S1-E8-06): spaceFrom(), rulesFrom(), spaceErrorFrom(), spaceFailureText(), spaceInitials(),
+ * S1-E8-06): spaceFrom(), rulesFrom(), spaceErrorFrom(), spaceFailureText(),
  * and the forums' space refusals and addresses.
  */
 import { describe, expect, it } from 'vitest';
@@ -9,7 +9,6 @@ import { forumWriteErrorFrom } from '@/features/forums/api/forumWrites';
 import { spaceSlugOfForum } from '@/features/forums/lib/spaceForums';
 
 import { spaceFailureText } from '../lib/spaceFailures';
-import { spaceInitials } from '../lib/spaceLook';
 
 import { joinNoteFrom, rulesFrom, spaceErrorFrom, spaceFrom } from './spaces';
 
@@ -134,14 +133,6 @@ describe('spaceErrorFrom', () => {
 
   it('says it couldn’t reach the server for anything else', () => {
     expect(spaceErrorFrom({ code: 'XX000' }).failure).toBe('unreachable');
-  });
-});
-
-describe('spaceInitials', () => {
-  it('takes the first letters of the first two words, or two letters of one word', () => {
-    expect(spaceInitials('Fantasy writers’ circle')).toBe('FW');
-    expect(spaceInitials('poezie')).toBe('PO');
-    expect(spaceInitials('  șoapte   de seară ')).toBe('ȘD');
   });
 });
 

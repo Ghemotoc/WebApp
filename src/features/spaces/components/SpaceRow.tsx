@@ -1,8 +1,9 @@
 /**
- * SpaceRow: one space in a list: its badge, name (a link), description, "214 members · run by
- * inkwolf" and its pills (bundle FORUMS-2, part a; S1-E8-06; board 5.1's Spaces card and the
- * /spaces page).
- * Who shows it: SpacesPage and SpacesCard. What it calls: SpaceBadge, SpacePills.
+ * SpaceRow: one space in a list: its logo, name (a link), description, "214 members · run by
+ * inkwolf" and its pills (bundle FORUMS-2, part a; S1-E8-06; board 5.1's Spaces card).
+ * Who shows it: SpacesCard on the forum index (the /spaces page shows SpaceCard since G8b).
+ * What it calls: SpaceLogo (nothing for a space without a logo, as the boards draw it; G8b),
+ * SpacePills.
  */
 import { Link } from 'react-router';
 
@@ -11,7 +12,7 @@ import { nameOf } from '@/features/forums/lib/forumPeople';
 import type { Space } from '../api/spaces';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
-import { SpaceBadge } from './SpaceBadge';
+import { SpaceLogo } from './SpaceLogo';
 import { SpacePills } from './SpacePills';
 
 /** What a row needs. */
@@ -31,7 +32,7 @@ export function SpaceRow({ space, isCompact = false }: SpaceRowProps) {
   const owner = nameOf(space.owner, t('row.ownerDeleted'));
   return (
     <li className="flex items-start gap-3 border-b border-border px-5 py-4 last:border-b-0 md:px-6">
-      <SpaceBadge name={space.name} banner={space.banner} size="small" />
+      <SpaceLogo space={space} size="small" />
       <div className="flex min-w-0 flex-col gap-1.5">
         <Link
           to={`/spaces/${space.slug}`}

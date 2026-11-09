@@ -1,8 +1,13 @@
 /**
- * SpaceFormCard: the card around the space form: the eyebrow, the heading and the intro (bundle
- * FORUMS-2, part a; S1-E8-06; the board's "New space" card, 28 px corners, up to 760 px wide).
- * Who uses it: NewSpacePage and SpaceSettingsPage (twice there: the settings form, then the
- * Moderators card of part b, S1-E8-07, which takes a second-level heading of its own).
+ * SpaceFormCard: a space form's card with its eyebrow, heading and intro (bundle FORUMS-2, part a,
+ * redrawn in G8b; S1-E8-06; boards SpaceNew and SpaceSettings).
+ *
+ * The page's main card (headingLevel 'h1') follows the boards' page header: the eyebrow, the page
+ * title in Bricolage Grotesque at up to 72 px and the lead line sit above a glass card with 28 px
+ * corners, up to 760 px wide, that holds the form. Every other card on the page (headingLevel
+ * 'h2') carries its own eyebrow and heading inside it.
+ * Who uses it: NewSpacePage and SpaceSettingsPage (the settings form, then the welcome note,
+ * logo, banner picture and Moderators cards, each with a second-level heading of its own).
  */
 import type { ReactNode } from 'react';
 
@@ -20,6 +25,10 @@ interface SpaceFormCardProps {
   children: ReactNode;
 }
 
+/** The glass card's own classes. */
+const cardClasses =
+  'flex max-w-[760px] flex-col gap-6 rounded-[28px] border border-border bg-surface p-5 shadow-card md:p-8';
+
 /**
  * Renders the card.
  *
@@ -33,20 +42,31 @@ export function SpaceFormCard({
   headingId = 'space-form-heading',
   children,
 }: SpaceFormCardProps) {
-  const Heading = headingLevel;
+  // The page's title sits above its card, as on the boards.
+  if (headingLevel === 'h1') {
+    return (
+      <section aria-labelledby={headingId} className="flex flex-col gap-6">
+        <header className="flex max-w-[760px] flex-col gap-2">
+          <Eyebrow>{eyebrow}</Eyebrow>
+          <h1 id={headingId} className="page-title">
+            {title}
+          </h1>
+          {intro !== undefined && <p className="m-0 text-lg leading-relaxed text-body">{intro}</p>}
+        </header>
+        <div className={cardClasses}>{children}</div>
+      </section>
+    );
+  }
   return (
-    <section
-      aria-labelledby={headingId}
-      className="flex max-w-[760px] flex-col gap-6 rounded-[28px] border border-border bg-surface p-5 shadow-card md:p-8"
-    >
+    <section aria-labelledby={headingId} className={cardClasses}>
       <div className="flex flex-col gap-2">
         <Eyebrow>{eyebrow}</Eyebrow>
-        <Heading
+        <h2
           id={headingId}
-          className="m-0 font-heading text-[32px] leading-tight font-extrabold text-heading"
+          className="m-0 font-heading text-[28px] leading-tight font-bold text-heading"
         >
           {title}
-        </Heading>
+        </h2>
         {intro !== undefined && <p className="m-0 text-base text-body">{intro}</p>}
       </div>
       {children}

@@ -94,7 +94,6 @@
     "eyebrow": "New space",
     "title": "Create a space",
     "editEyebrow": "Space settings",
-    "editTitle": "Change your space",
     "intro16": "Anyone can create a space, and you become its owner. Because you’re 16 or over, your space is for members 16 and over, and anyone, with or without an account, can read it. You can change everything below later.",
     "introUnder16": "Anyone can create a space, and you become its owner. Because you’re under 16, your space is for members under 16, and you choose who can read it. You can change everything below later.",
     "introUnknown": "We need to know your age group before you can start a space.",
@@ -106,12 +105,22 @@
     "description": "Description",
     "rules": "Rules (optional)",
     "rulesHint": "One rule a line. Shown at the top of your space. The community guidelines always apply as well.",
-    "banner": "Banner colour",
+    "banner": "Banner (optional)",
     "banners": {
       "plum": "Plum",
-      "night": "Night blue",
-      "forest": "Forest green",
-      "gold": "Gold"
+      "cobalt": "Cobalt",
+      "forest": "Forest",
+      "ember": "Ember",
+      "rose": "Rose",
+      "teal": "Teal",
+      "berry": "Berry",
+      "ink": "Ink",
+      "lilac": "Lilac",
+      "sky_mist": "Sky mist",
+      "peach": "Peach",
+      "mint": "Mint",
+      "butter": "Butter",
+      "blush": "Blush"
     },
     "whoJoins": "Who can join",
     "whoJoinsText": "Spaces keep age groups apart. A space started by someone under 16 takes only under-16s. A space started by someone 16 or over takes only people 16 and over.",
@@ -141,7 +150,10 @@
     "kindOpenNote": "People in your age group can find it and join.",
     "kindClass": "Class space",
     "kindClassNote": "Private, for your class only. Students join with a code you give them, whatever their ages.",
-    "createClass": "Create the class space"
+    "createClass": "Create the class space",
+    "bannerHint": "Deep colours or pastels.",
+    "bannerChosen": "Chosen: {{name}}",
+    "editIntro": "Only the owner, a moderator given the settings power and our moderation team can change these."
   },
   "newThread": {
     "eyebrow": "New thread",
@@ -287,7 +299,8 @@
       "handover_offered": "{{actor}} offered the space to {{target}}.",
       "handover_cancelled": "{{actor}} took back the offer of the space to {{target}}.",
       "handover_declined": "{{actor}} declined the space offered by {{target}}.",
-      "handover_accepted": "{{actor}} accepted the space from {{target}} and is now its owner. {{target}} stays on as a moderator with every power."
+      "handover_accepted": "{{actor}} accepted the space from {{target}} and is now its owner. {{target}} stays on as a moderator with every power.",
+      "logo_picture_changed": "{{actor}} changed the logo."
     }
   },
   "bannerPicture": {
@@ -512,5 +525,27 @@
     "offerText": "If you accept, you become the owner and {{name}} stays on as a moderator with every power.",
     "accept": "Accept and become the owner",
     "decline": "Decline"
+  },
+  "logo": {
+    "eyebrow": "Logo",
+    "title": "Logo (optional)",
+    "intro": "Square, at least 512 px. Any picture except a real person: drawings, symbols, lettering, or photos of places and things. Every logo is checked before it shows. No logo? The space shows no picture at all.",
+    "none": "No logo yet, so the space shows no picture.",
+    "previewAlt": "The space’s logo",
+    "checking": "We’re checking the logo. It shows once it passes.",
+    "waiting_for_person": "A person on our team will look at the logo first. It shows once they approve it.",
+    "visible": "The logo is up.",
+    "removed": "Our moderation team took this logo down. Your space shows no picture.",
+    "upload": "Choose a logo",
+    "hint": "JPEG, PNG or WebP, up to 5 MB. A square picture works best.",
+    "remove": "Remove",
+    "removeFailed": "We couldn’t take the logo off. Please try again.",
+    "removedNotice": "The logo is off. The space shows no picture now."
+  },
+  "card": {
+    "meta": "{{members}} · {{posting}}",
+    "postingMembers": "members-only posting",
+    "postingAnyone": "anyone can post",
+    "latest": "Latest post {{when}}"
   }
 }

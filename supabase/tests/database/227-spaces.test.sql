@@ -71,7 +71,7 @@ select pg_temp.make_age('00000000-0000-4000-8000-000000000002', 15);
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 select is(public.create_space('Cercul fanteziei zq', 'Fantezie și folclor.', E'Doar fantezie.\nFii amabil.',
-  'members', 'approve', 'members', 'night') ->> 'slug', 'cercul-fanteziei-zq', 'an adult starts a space; its address comes from its name');
+  'members', 'approve', 'members', 'cobalt') ->> 'slug', 'cercul-fanteziei-zq', 'an adult starts a space; its address comes from its name');
 select is((select role::text from public.space_members where space_members.user_id = '00000000-0000-4000-8000-000000000001'
     and space_members.space_id = pg_temp.space_id('cercul-fanteziei-zq')),
   'owner', 'allowed: space_members_select_own: the starter is its owner and reads their membership');
@@ -137,7 +137,7 @@ select isnt(public.start_forum_thread('space-cercul-fanteziei-zq', 'Întrebare z
 
 -- "Anyone with an account" in the space's age group may post without joining.
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
-select public.update_space('cercul-fanteziei-zq', 'Cercul fanteziei zq', 'Fantezie și folclor.', '', 'anyone', 'approve', 'members', 'night');
+select public.update_space('cercul-fanteziei-zq', 'Cercul fanteziei zq', 'Fantezie și folclor.', '', 'anyone', 'approve', 'members', 'cobalt');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000015');
 select is(pg_temp.hint_of(format($$select public.reply_to_forum_thread(%s, 'Și eu!')$$,
   pg_temp.thread_no('Bun venit zq'))), null,
@@ -146,7 +146,7 @@ select is(pg_temp.hint_of(format($$select public.reply_to_forum_thread(%s, 'Și 
 /* ---------- 4. An under-16 space opened to everybody (criterion 6) ---------- */
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000003');
-select public.update_space('tineri-poeti-zq', 'Tineri poeți zq', 'Poezie pentru noi.', '', 'anyone', 'open', 'everybody', 'gold');
+select public.update_space('tineri-poeti-zq', 'Tineri poeți zq', 'Poezie pentru noi.', '', 'anyone', 'open', 'everybody', 'butter');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
 select is(jsonb_array_length(public.forum_thread_list('space-tineri-poeti-zq') -> 'threads'), 1,
   'once its owner opens it to everybody, an adult reads it');

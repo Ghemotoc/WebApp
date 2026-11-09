@@ -9,7 +9,7 @@
  * picture; the upload fields in Story settings and Settings › Profile).
  * What it calls next: Supabase Storage (the private `covers`, `avatars`, `chapter-images`,
  * `atlas-images`, `space-banners` and `signature-pictures` buckets), the database functions
- * register_picture(), register_chapter_picture(), register_atlas_picture(), register_space_banner(),
+ * register_picture(), register_chapter_picture(), register_atlas_picture(), register_space_banner(), register_space_logo(),
  * register_signature_picture(),
  * story_cover_picture(), my_pending_pictures() and my_picture_states()
  * (…_s1_e10_05_picture_check.sql, …_s1_e3_09_chapter_pictures.sql), and POST /api/picture-check
@@ -389,6 +389,35 @@ export async function uploadSpaceBanner(
   });
   // Step 2: registered as pending; the hourly limit is counted here.
   const registered = await client.rpc('register_space_banner', { target_path: path });
+  if (registered.error !== null) throw registrationFailure(registered.error);
+  // Step 3: the check, as for every other picture.
+  const status = await requestPictureCheck(client, registered.data, upload.file.name);
+  return { pictureId: registered.data, status };
+}
+
+/**
+ * Uploads a logo for a space, registers it and asks for its check (G8b; S1-E8-06). It sits beside
+ * the banner picture in `space-banners`, under the space's folder, and the space shows it only once
+ * the check passed (CLAUDE.md rule 19).
+ *
+ * @param client - the shared Supabase client
+ * @param upload - the space's ID (the folder in `space-banners`, never a person's ID) and the file
+ * @returns the picture's ID (for set_space_logo_picture()) and its status after the check
+ * @throws PictureUploadError as uploadPicture()
+ */
+export async function uploadSpaceLogo(
+  client: AppSupabaseClient,
+  upload: { spaceId: string; file: File },
+): Promise<{ pictureId: string; status: string }> {
+  // Step 1: the prepared file, in the space's folder.
+  const path = await storePicture(client, {
+    bucket: 'space-banners',
+    folder: upload.spaceId,
+    file: upload.file,
+    longestSide: longestSideFor.spaceLogo,
+  });
+  // Step 2: registered as pending; the hourly limit is counted here.
+  const registered = await client.rpc('register_space_logo', { target_path: path });
   if (registered.error !== null) throw registrationFailure(registered.error);
   // Step 3: the check, as for every other picture.
   const status = await requestPictureCheck(client, registered.data, upload.file.name);

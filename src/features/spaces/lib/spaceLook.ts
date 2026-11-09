@@ -1,45 +1,93 @@
 /**
- * How a space looks: its banner colours and the letters in its round badge (bundle FORUMS-2,
- * part a; story S1-E8-06; design/boards/Space.dc.html's header).
+ * How a space looks: its fourteen banner colours and the text colour that reads on each (bundle
+ * FORUMS-2, part a, redrawn in G8b of the liquid glass redesign; story S1-E8-06;
+ * design/boards/Space.dc.html's header and SpaceSettings.dc.html's "Banner (optional)").
  *
- * The owner picks one of four drawn banners for now; uploaded banner pictures come with the
- * picture check in part b (S1-E10-05 checks every picture before anyone sees it, rule 19).
- * The banner and badge are decoration with no text on the banner, so they are fixed colours
- * taken from the board rather than light and night tokens.
- * Who calls it: SpaceHeaderCard, SpaceRow and SpaceBannerChoice.
+ * The boards offer eight deep colours and six pastels, each a two-stop gradient. The space's name,
+ * description and notes sit on the banner, so every colour names the text that reads on it: white
+ * on the deep ones and dark plum on the pastels, each at least 4.5:1 at both ends of the gradient
+ * (WCAG 2.2 AA; spaceLook.test.ts). The colours are fixed, not light and night tokens, because they are the space's
+ * own choice and look the same in both modes; an uploaded banner picture gets a dark wash
+ * (pictureScrim) so white text reads on any picture.
+ * Who calls it: SpaceBannerBand, SpaceHeaderCard and SpaceBannerChoice.
  */
-import type { SpaceBanner } from '../api/spaces';
+import { deepSpaceBanners, type SpaceBanner } from '../api/spaces';
 
-/** The banner band's background, per banner (the board's plum gradient first). */
-export const bannerBackgrounds: Record<SpaceBanner, string> = {
-  plum: 'radial-gradient(ellipse at 12% 120%, rgba(154,91,184,0.6) 0, rgba(154,91,184,0) 46%), linear-gradient(120deg,#2A0E33 0%,#481C5F 55%,#672786 100%)',
-  night:
-    'radial-gradient(ellipse at 12% 120%, rgba(91,124,184,0.6) 0, rgba(91,124,184,0) 46%), linear-gradient(120deg,#0E1633 0%,#1C2F5F 55%,#27488A 100%)',
-  forest:
-    'radial-gradient(ellipse at 12% 120%, rgba(108,168,120,0.6) 0, rgba(108,168,120,0) 46%), linear-gradient(120deg,#0E2616 0%,#1D4A2B 55%,#2E6B40 100%)',
-  gold: 'radial-gradient(ellipse at 12% 120%, rgba(240,200,110,0.7) 0, rgba(240,200,110,0) 46%), linear-gradient(120deg,#5C3F0E 0%,#8A6418 55%,#B98A2A 100%)',
+/** The two stops of each banner's gradient, from the boards' swatches (spaceLook.test.ts checks
+ * the text on both ends). */
+export const bannerStops: Record<SpaceBanner, [string, string]> = {
+  plum: ['#672786', '#2A0E33'],
+  cobalt: ['#0047AB', '#2A0E33'],
+  forest: ['#005C42', '#2A0E33'],
+  ember: ['#883500', '#2A0E33'],
+  rose: ['#702963', '#2A0E33'],
+  teal: ['#00606B', '#00353B'],
+  berry: ['#8A1538', '#4A0B1E'],
+  ink: ['#1E2A78', '#0E1440'],
+  lilac: ['#E6DAFA', '#CDBCF0'],
+  sky_mist: ['#DCE7FB', '#BFD3F5'],
+  peach: ['#FCE3D8', '#F6C9B6'],
+  mint: ['#DDF3E8', '#BCE5D0'],
+  butter: ['#FBF0CF', '#F3DE9F'],
+  blush: ['#FBE0EA', '#F1C2D4'],
 };
 
-/** The badge's background and letter colour, per banner (white letters reach 4.5:1 on each). */
-export const badgeStyles: Record<SpaceBanner, { background: string; color: string }> = {
-  plum: { background: 'linear-gradient(140deg,#4D1B5E,#7A3D96)', color: '#FFFFFF' },
-  night: { background: 'linear-gradient(140deg,#1C2F5F,#33508F)', color: '#FFFFFF' },
-  forest: { background: 'linear-gradient(140deg,#1D4A2B,#2E6B40)', color: '#FFFFFF' },
-  gold: { background: 'linear-gradient(140deg,#5C3F0E,#7D5A17)', color: '#FFFFFF' },
-};
+/** White text, on the deep colours and on a washed picture. */
+export const textOnDeepBanner = '#FFFFFF';
+/** Dark plum text, on the pastels. */
+export const textOnPastelBanner = '#2A0E33';
 
 /**
- * The letters in a space's badge: the first letters of its first two words ("Fantasy writers'
- * circle" → "FW"), or the first two letters of a one-word name.
- *
- * @param name - the space's name
- * @returns one or two capital letters
+ * A dark wash over an uploaded banner picture, so the white text on it reads whatever the picture.
+ * It is darkest on the left, where the name and description sit.
  */
-export function spaceInitials(name: string): string {
-  const words = name.split(/\s+/).filter((word) => word !== '');
-  const first = words[0] ?? '';
-  const second = words[1];
-  const letters =
-    second === undefined ? first.slice(0, 2) : `${first.slice(0, 1)}${second.slice(0, 1)}`;
-  return letters.toLocaleUpperCase();
+export const pictureScrim =
+  'linear-gradient(90deg, rgba(20,8,28,0.82) 0%, rgba(20,8,28,0.66) 55%, rgba(20,8,28,0.55) 100%)';
+
+/**
+ * Is this one of the deep colours, whose text is white?
+ *
+ * @param banner - the banner colour
+ * @returns true for the eight deep colours, false for the six pastels
+ */
+export function isDeepBanner(banner: SpaceBanner): boolean {
+  return deepSpaceBanners.includes(banner);
+}
+
+/**
+ * The swatch a banner colour shows in the picker: its plain two-stop gradient.
+ *
+ * @param banner - the banner colour
+ * @returns a CSS background
+ */
+export function bannerSwatch(banner: SpaceBanner): string {
+  const [first, second] = bannerStops[banner];
+  return `linear-gradient(135deg, ${first} 0%, ${second} 100%)`;
+}
+
+/**
+ * The banner band's background: the gradient with a soft light in the top right corner, as the
+ * board draws the header (a faint white light on deep colours, a brighter one on pastels).
+ *
+ * @param banner - the banner colour
+ * @returns a CSS background
+ */
+export function bannerBackground(banner: SpaceBanner): string {
+  const [first, second] = bannerStops[banner];
+  const light = isDeepBanner(banner) ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.55)';
+  return `radial-gradient(40% 80% at 88% 10%, ${light}, transparent 70%), linear-gradient(120deg, ${first} 0%, ${second} 100%)`;
+}
+
+/**
+ * The colour every text on a space's banner takes (the header points the text tokens at it
+ * through the shared `genre-band` utility, so links, notes and the focus ring follow).
+ *
+ * @param banner - the banner colour
+ * @param hasPicture - true when an uploaded picture (with its dark wash) covers the colour
+ * @returns white on deep colours and pictures, dark plum on pastels
+ */
+export function bannerTextColour(banner: SpaceBanner, hasPicture: boolean): string {
+  // A picture always sits under the dark wash, so its text is white.
+  if (hasPicture || isDeepBanner(banner)) return textOnDeepBanner;
+  return textOnPastelBanner;
 }

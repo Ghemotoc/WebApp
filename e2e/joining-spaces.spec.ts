@@ -46,7 +46,7 @@ function cleanUp() {
 function startSpaces() {
   runSql(`select set_config('request.jwt.claims', '{"sub": "${ownerId}", "role": "authenticated"}', false);
     select public.create_space('Cercul de bun venit test', 'Un spațiu deschis.', '', 'members', 'open', 'members', 'plum');
-    select public.create_space('Cercul cu cereri test', 'Un spațiu cu cereri.', '', 'members', 'approve', 'members', 'night');`);
+    select public.create_space('Cercul cu cereri test', 'Un spațiu cu cereri.', '', 'members', 'approve', 'members', 'cobalt');`);
 }
 
 /** Opens a page as a persona in English, with motion reduced. */
