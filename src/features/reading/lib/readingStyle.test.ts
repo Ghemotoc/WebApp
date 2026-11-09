@@ -34,14 +34,19 @@ describe('the reading text style', () => {
     expect(readingTextStyle({ ...defaultReadingSettings, textSize: 16 }, 22).fontSize).toBe('16px');
   });
 
-  it('gives the dyslexia-friendly font extra letter spacing and wide spacing a line height of 2', () => {
+  it('sets the dyslexia-friendly font in OpenDyslexic with extra letter spacing, and wide spacing a line height of 2', () => {
     const style = readingTextStyle(
       { ...defaultReadingSettings, font: 'dyslexia_friendly', lineSpacing: 'wide' },
       19,
     );
-    expect(style.fontFamily).toContain('Verdana');
+    expect(style.fontFamily).toBe('var(--font-dyslexia)');
     expect(style.letterSpacing).toBe('0.04em');
     expect(style.lineHeight).toBe(2);
+  });
+
+  it('sets the serif font in Literata, the story font', () => {
+    const style = readingTextStyle({ ...defaultReadingSettings, font: 'serif' }, 19);
+    expect(style.fontFamily).toBe('var(--font-story)');
   });
 
   it('keeps a size inside 14 to 28 px', () => {

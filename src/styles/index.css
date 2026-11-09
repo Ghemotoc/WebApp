@@ -636,19 +636,37 @@ dialog.bg-surface,
   line-height: var(--reading-line-height, 1.7);
   letter-spacing: var(--reading-letter-spacing, 0);
 }
-/* The Sepia and Night themes for the chapter text only (S1-E4-02; board 3.5): a rounded page
-   behind the text. Night reuses the night tokens (data-theme="night" on the same box); Sepia sets
-   its own, every text colour at least 7:1 on #F3E7D3. Light keeps the app's colours. */
+/* The reading paper (S1-E4-02 themes; liquid glass look from bundle G7d, board WebReaderV1): the
+   whole chapter, title to Like, sits on one rounded sheet of paper with a soft shadow. Light uses
+   the story paper (#FFFBF2 by day; #1A1A1C with light text when the site is at night, rulebook),
+   Night reuses the night tokens (data-theme="night" on the same box) on the same dark paper, and
+   Sepia sets its own colours, every one at least 7:1 on #F3E7D3. --reading-page-pad is the side
+   padding, which ChapterReaderPage adds to the text column's width so the line length stays the
+   reader's choice. */
 .tmc-reading-page {
-  padding: 24px 18px;
-  border-radius: 24px;
+  --reading-page-pad: 20px;
+  padding: 24px var(--reading-page-pad) 28px;
+  border-radius: 32px;
   background: var(--paper);
   color: var(--ink);
+  box-shadow: var(--shadow-card);
 }
 @media (min-width: 600px) {
   .tmc-reading-page {
-    padding: 32px 24px 32px 32px;
+    --reading-page-pad: 40px;
+    padding-top: 40px;
+    padding-bottom: 40px;
   }
+}
+@media (min-width: 1024px) {
+  .tmc-reading-page {
+    --reading-page-pad: 64px;
+    padding-top: 56px;
+    padding-bottom: 56px;
+  }
+}
+.tmc-reading-page--paper {
+  --paper: var(--story-paper);
 }
 .tmc-reading-page--sepia {
   color-scheme: light;

@@ -2,10 +2,12 @@
  * Turns the reader's settings into what the chapter text looks like (story S1-E4-02; board 3.5
  * Reader, "Reading settings").
  *
- * Board values: fonts Inter, a serif (Georgia), a dyslexia-friendly one (Verdana with a
- * little extra letter spacing) and Atkinson Hyperlegible (IDEAS-1 part a, IDEA-20261031-6,
- * served from our own files in src/styles/fonts.css); text size 14 to 28 px, 19 px by default; line spacing 1.5, 1.7
- * or 2; line width about 560, 680 or 780 px.
+ * Board values: fonts Inter, a serif (Literata, the story font of the liquid glass design,
+ * bundle G7d; Georgia before it loads), a dyslexia-friendly one (OpenDyslexic with a little extra
+ * letter spacing; rulebook: "Dyslexia-friendly font = OpenDyslexic", G7d) and Atkinson
+ * Hyperlegible (IDEAS-1 part a, IDEA-20261031-6). All are served from our own files in
+ * src/styles/fonts.css, and a browser fetches a font's files only once text uses it. Text size
+ * 14 to 28 px, 19 px by default; line spacing 1.5, 1.7 or 2; line width about 560, 680 or 780 px.
  * The device's own text size (S1-E4-02, third criterion): browsers and phones that make text
  * larger raise the page's root font size above 16 px, so the default 19 px grows by the same
  * share until the reader picks a size of their own.
@@ -29,9 +31,11 @@ const browserNormalSize = 16;
 /** Each font's CSS family and letter spacing. */
 const fontStyles: Record<ReadingFont, { family: string; letterSpacing: string }> = {
   sans: { family: 'var(--font-body)', letterSpacing: '0' },
-  serif: { family: "Georgia, 'Times New Roman', serif", letterSpacing: '0' },
-  // Verdana's wide letters and the extra spacing help many readers with dyslexia (board 3.5).
-  dyslexia_friendly: { family: 'Verdana, var(--font-body), sans-serif', letterSpacing: '0.04em' },
+  // Literata, the story font (tokens.css --font-story), with Georgia while it loads (G7d).
+  serif: { family: 'var(--font-story)', letterSpacing: '0' },
+  // OpenDyslexic's weighted letter bottoms and the extra spacing help many readers with dyslexia
+  // (rulebook, G7d; tokens.css --font-dyslexia, which falls back to Comic Sans MS).
+  dyslexia_friendly: { family: 'var(--font-dyslexia)', letterSpacing: '0.04em' },
   // Made by the Braille Institute so letters that look alike (I, l, 1; O, 0) are easy to tell apart.
   atkinson_hyperlegible: {
     family: "'Atkinson Hyperlegible', var(--font-body), sans-serif",

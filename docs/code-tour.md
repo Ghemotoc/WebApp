@@ -1427,7 +1427,8 @@ The covers bucket and the `picture_uploads` flag (off) are the contract for uplo
 ChapterReaderPage → useChapter → api/chapter.ts → get_chapter(story_slug, chapter_code)
   │                    reader_visible_story(): live, not moderated away, rating_allows(), not blocked
   │                    chapter_is_readable(): published, not deleted, not moderated away
-  │  ChapterBar (Contents, Previous, Next, the progress line from useReadingProgress)
+  │  ChapterBar ("Chapter n of N", Aa, Contents, Previous, Next, the progress line from useReadingProgress)
+  │  ReadingPaper (the sheet of paper the chapter sits on) · ReadingTimeLeft ("3 min left", G7d)
   │  ChapterReaderHeader ("Chapter n of N", H1, "by … · date · n min read")
   │  ChapterText (the Markdown as HTML, 19 px, in the story's language) → ChapterEnd
   ▼
@@ -1999,7 +2000,7 @@ One search field finds stories, writers and tags, in Romanian and English, with 
 
 - On screen 3.5 a signed-in reader gets "Reading settings" in the chapter bar (`ReadingSettingsControl` → `ReadingSettingsPanel`): font (Inter, Serif, Dyslexia-friendly), text size (14 to 28 px), line spacing, line width and theme (Light, Sepia, Night).
 - How a change travels: the panel calls `change()` in `useReadingSettings`, which replaces the cached settings at once (so the text changes straight away) and saves the whole set 600 ms later → `save_reading_settings()` → `reading_settings` (one row per reader). Another device reads the row when the chapter opens.
-- How the text gets its look: `useReadingLook` joins the settings with the device's own text size (the page's root font size, read once; 19 px at the normal 16) and puts CSS variables (`--reading-font-size` and so on) on the box around the text; `src/styles/index.css` reads them in `.tmc-chapter-text--reader`. Sepia and Night wrap the text in `.tmc-reading-page` (Night with `data-theme="night"`, so it reuses the night tokens).
+- How the text gets its look: `useReadingLook` joins the settings with the device's own text size (the page's root font size, read once; 19 px at the normal 16) and puts CSS variables (`--reading-font-size` and so on) on the box around the text; `src/styles/index.css` reads them in `.tmc-chapter-text--reader`. Every theme puts the whole chapter on a sheet of paper, `.tmc-reading-page` (bundle G7d): Light and Night on the story paper (`.tmc-reading-page--paper`; Night with `data-theme="night"`, so it reuses the night tokens and gets the dark paper), Sepia on its own warm paper. The dyslexia-friendly font is OpenDyslexic (`--font-dyslexia`) and the serif is Literata (`--font-story`).
 - The row is readable by its owner only. Tests: `supabase/tests/database/180-reading-settings.test.sql`, `src/features/reading/lib/readingStyle.test.ts`, `e2e/reading-settings.spec.ts`.
 
 ## Reading place and comfort (IDEAS-1 part a)

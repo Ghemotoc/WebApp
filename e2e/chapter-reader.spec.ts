@@ -91,7 +91,7 @@ test.describe('chapter reader (S1-E4-01a)', () => {
     await expect(page).toHaveURL(`/s/${slug}/readera1`);
 
     // The header: the place, the title as H1, the meta line.
-    await expect(page.getByText('Chapter 1 of 2')).toBeVisible();
+    await expect(page.locator('header').getByText('Chapter 1 of 2')).toBeVisible();
     await expect(page.getByRole('heading', { level: 1, name: 'Caietele bunicii' })).toBeVisible();
     await expect(page.getByText('by Lia Scrie · 9 Oct 2026 · 3 min read')).toBeVisible();
 
@@ -106,7 +106,7 @@ test.describe('chapter reader (S1-E4-01a)', () => {
     await expect(chapterNav(page).getByRole('link', { name: 'Previous' })).toHaveCount(0);
     await page.getByRole('link', { name: 'Read chapter 2' }).click();
     await expect(page).toHaveURL(`/s/${slug}/readerc3`);
-    await expect(page.getByText('Chapter 2 of 2')).toBeVisible();
+    await expect(page.locator('header').getByText('Chapter 2 of 2')).toBeVisible();
     await expect(page.getByText('End of chapter 2')).toBeVisible();
     await expect(page.getByText('That’s the latest chapter so far.')).toBeVisible();
     await expect(chapterNav(page).getByRole('link', { name: 'Next chapter' })).toHaveCount(0);

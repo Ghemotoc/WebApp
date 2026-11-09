@@ -3,10 +3,12 @@
  *
  * Who shows it: the router, at /s/:storySlug/:chapterCode; the story page's chapter list, the
  * Previous and Next links and shared links lead here.
- * What it shows: ChapterBar (back to the story, Contents, Previous, Next chapter, the progress
- * line), then the chapter as one calm column: ChapterReaderHeader, the text as real HTML
- * (ChapterText with the reader's 19 px size, about 680 px wide, in the story's language), and
- * ChapterEnd. No doodles (DoD design rules). A signed-out visitor gets TeaserPage instead: the
+ * What it shows: ChapterBar (back to the story, "Chapter 2 of 4", Aa Reading settings, Contents,
+ * Previous, Next chapter, the progress line), then the chapter as one calm column on a sheet of
+ * paper (ReadingPaper; bundle G7d): ChapterReaderHeader, the text as real HTML (ChapterText with
+ * the reader's 19 px size, about 680 px wide, in the story's language), and ChapterEnd. While
+ * there is text left to scroll, ReadingTimeLeft floats "3 min left" at the bottom (G7d). No
+ * doodles (DoD design rules). A signed-out visitor gets TeaserPage instead: the
  * first part of the chapter and a prompt to log in (S1-E4-04, board 3.8); on a 16+ or 18+ story,
  * which visitors can't open, NoPreviewNotice explains why. The banner slot comes after the
  * <article>, never inside the text (S1-E4-01b); it is empty until S1-E12-01. The text has
@@ -68,6 +70,7 @@ import { EarlierVersionComments } from './EarlierVersionComments';
 import { NoPreviewNotice } from './NoPreviewNotice';
 import { ParagraphCommentMarker } from './ParagraphCommentMarker';
 import { ProtectedChapterText } from './ProtectedChapterText';
+import { ReadingTimeLeft } from './ReadingTimeLeft';
 import { SavedPlaceOffer } from './SavedPlaceOffer';
 import { SharedPassageNotice } from './SharedPassageNotice';
 import { TeaserPage } from './TeaserPage';
@@ -150,6 +153,43 @@ function AboveText(props: {
 }
 
 /**
+ * The sheet of paper the whole chapter sits on (bundle G7d; board WebReaderV1): the theme's
+ * paper and colours (useReadingLook), the reader's text variables, and the text column's width
+ * plus the paper's side padding, so the line length stays the reader's choice. On it, the
+ * chapter's <article> keeps the column width itself: the header, the text (children) and, once
+ * there is text, ChapterEnd.
+ */
+function ReadingPaper(props: {
+  look: ReturnType<typeof useReadingLook>;
+  chapter: ReaderChapter;
+  children: ReactNode;
+}) {
+  const { look, chapter, children } = props;
+  const paperStyle = {
+    ...look.textVariables,
+    maxWidth: `calc(${look.columnWidth}px + 2 * var(--reading-page-pad))`,
+  };
+  return (
+    <div
+      data-testid="chapter-page"
+      className={cn('mx-auto mt-7 w-full', look.page.className)}
+      data-theme={look.page.dataTheme}
+      style={paperStyle}
+    >
+      <article
+        aria-labelledby="chapter-title"
+        className="mx-auto w-full"
+        style={{ maxWidth: look.columnWidth }}
+      >
+        <ChapterReaderHeader chapter={chapter} />
+        {children}
+        {chapter.body !== null && <ChapterEnd chapter={chapter} />}
+      </article>
+    </div>
+  );
+}
+
+/**
  * The chapter's text in the reader's look, with anything shown above it (the saved place) and,
  * a comment marker beside each paragraph (S1-E6-06). The marker is always passed in, so the
  * paragraphs keep the same elements when the counts arrive (a shared passage keeps its focus);
@@ -171,13 +211,7 @@ function ChapterTextBlock(props: {
   return (
     <div ref={textRef} className={hasMarkers ? undefined : 'lg:pr-20'}>
       {children}
-      <div
-        ref={pageRef}
-        data-testid="chapter-page"
-        className={cn(look.page.className, look.hasRuler && 'tmc-has-ruler')}
-        data-theme={look.page.dataTheme}
-        style={look.textVariables}
-      >
+      <div ref={pageRef} className={cn(look.hasRuler && 'tmc-has-ruler')}>
         {look.hasRuler && (
           <Suspense fallback={null}>
             <ReadingRuler boxRef={pageRef} />
@@ -280,12 +314,7 @@ function ChapterReading({ chapter, spot }: { chapter: ReaderChapter; spot: SpotR
         progress={hasText ? progress : 0}
         deviceSize={look.isSignedIn ? look.deviceSize : null}
       />
-      <article
-        aria-labelledby="chapter-title"
-        className="mx-auto w-full"
-        style={{ maxWidth: look.columnWidth }}
-      >
-        <ChapterReaderHeader chapter={chapter} />
+      <ReadingPaper look={look} chapter={chapter}>
         {chapter.body !== null && (
           <SharedChapterContext.Provider value={sharedChapter}>
             <ParagraphCommentsContext.Provider value={paragraphComments}>
@@ -308,9 +337,9 @@ function ChapterReading({ chapter, spot }: { chapter: ReaderChapter; spot: SpotR
             </ParagraphCommentsContext.Provider>
           </SharedChapterContext.Provider>
         )}
-        {hasText && <ChapterEnd chapter={chapter} />}
-      </article>
+      </ReadingPaper>
       {hasText && <UnderTheChapter chapter={chapter} sharedChapter={sharedChapter} />}
+      {hasText && <ReadingTimeLeft minutesToRead={chapter.minutesToRead} progress={progress} />}
     </>
   );
 }

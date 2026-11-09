@@ -28,7 +28,9 @@ export interface ReadingPage {
 }
 
 /**
- * The box for a theme: none for Light, a rounded page for Sepia and Night.
+ * The paper for a theme (bundle G7d): every theme is a rounded sheet of paper (index.css,
+ * tmc-reading-page). Light is the story paper, Sepia its own warm paper, and Night the story
+ * paper inside the night tokens, so it is the dark paper with light text.
  *
  * @param theme - the reader's theme
  * @returns the class and the data-theme value
@@ -36,8 +38,9 @@ export interface ReadingPage {
 export function readingPageFor(theme: ReadingTheme): ReadingPage {
   if (theme === 'sepia')
     return { className: 'tmc-reading-page tmc-reading-page--sepia', dataTheme: undefined };
-  if (theme === 'night') return { className: 'tmc-reading-page', dataTheme: 'night' };
-  return { className: '', dataTheme: undefined };
+  if (theme === 'night')
+    return { className: 'tmc-reading-page tmc-reading-page--paper', dataTheme: 'night' };
+  return { className: 'tmc-reading-page tmc-reading-page--paper', dataTheme: undefined };
 }
 
 /**
