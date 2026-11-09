@@ -10,7 +10,7 @@
  */
 import { Link } from 'react-router';
 
-import lockIcon from '@/assets/icons/lock.svg';
+import { ActionIcon } from '@/components/icons/ActionIcon';
 import { InfoPill } from '@/components/ui/InfoPill';
 import { timeAgo } from '@/features/comments/lib/timeAgo';
 
@@ -35,7 +35,7 @@ function ThreadPills({ thread }: { thread: ForumThreadSummary }) {
       {thread.isSticky && <InfoPill tone="gold">{t('list.pinned')}</InfoPill>}
       {thread.isLocked && (
         <InfoPill tone="neutral">
-          <img src={lockIcon} alt="" aria-hidden="true" className="size-3.5" />
+          <ActionIcon name="lock" size={14} />
           {t('list.locked')}
         </InfoPill>
       )}

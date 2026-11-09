@@ -922,31 +922,6 @@ COMMENT ON TYPE "public"."sanction_kind" IS 'A warning (a record only), a suspen
 
 
 
-CREATE TYPE "public"."seasonal_doodle" AS ENUM (
-    'autumn_leaf',
-    'bee',
-    'butterfly',
-    'candle',
-    'cherry_blossom',
-    'daisy',
-    'friendly_ghost',
-    'hot_air_balloon',
-    'hot_chocolate',
-    'jack_o_lantern',
-    'kite',
-    'mushroom',
-    'rain_cloud',
-    'sunny_face'
-);
-
-
-ALTER TYPE "public"."seasonal_doodle" OWNER TO "postgres";
-
-
-COMMENT ON TYPE "public"."seasonal_doodle" IS 'The seasonal doodles shipped with the app as SVG files (S1-E11-11). Add a value with its file in a release.';
-
-
-
 CREATE TYPE "public"."space_age_group" AS ENUM (
     'under_16',
     '16_plus'
@@ -3029,7 +3004,7 @@ CASE "cover_kind"
     WHEN 'upload'::"public"."cover_kind" THEN (("cover_design" IS NULL) AND ("cover_background" IS NULL) AND ("cover_accent" IS NULL) AND ("cover_tall_path" IS NOT NULL))
     ELSE NULL::boolean
 END),
-    CONSTRAINT "stories_cover_design_is_approved" CHECK ((("cover_design" IS NULL) OR ("cover_design" = ANY (ARRAY['plum'::"text", 'ink'::"text", 'violet'::"text", 'gold'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text", 'stripes'::"text", 'dots'::"text", 'grid'::"text", 'waves'::"text", 'starry'::"text", 'doodles'::"text", 'twotone'::"text"])))),
+    CONSTRAINT "stories_cover_design_is_approved" CHECK ((("cover_design" IS NULL) OR ("cover_design" = ANY (ARRAY['plum'::"text", 'ink'::"text", 'violet'::"text", 'gold'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text", 'stripes'::"text", 'dots'::"text", 'grid'::"text", 'waves'::"text", 'starry'::"text", 'sparkles'::"text", 'twotone'::"text"])))),
     CONSTRAINT "stories_first_published_year_range" CHECK ((("first_published_year" >= 1) AND ("first_published_year" <= 2100))),
     CONSTRAINT "stories_language_code_shape" CHECK (("language_code" ~ '^[a-z]{2}(-[A-Z]{2})?$'::"text")),
     CONSTRAINT "stories_rank_badge_tag_ids_check" CHECK ((("rank_badge_tag_ids" IS NULL) OR ("cardinality"("rank_badge_tag_ids") <= 3))),
@@ -3123,6 +3098,10 @@ COMMENT ON COLUMN "public"."stories"."visibility" IS 'kind: setting. Who can rea
 
 
 COMMENT ON COLUMN "public"."stories"."first_published_year" IS 'The year the work was first published anywhere; set for classics from classic_works (copied by a trigger). Null for a writer''s own story, whose first chapter''s year is shown instead.';
+
+
+
+COMMENT ON CONSTRAINT "stories_cover_design_is_approved" ON "public"."stories" IS 'A drawn cover uses one of the designs the app can draw (src/components/covers/coverDesigns.ts); "doodles" was renamed "sparkles" in NO-DOODLES.';
 
 
 
@@ -6094,15 +6073,17 @@ COMMENT ON FUNCTION "public"."admin_list_client_errors"("since" timestamp with t
 
 
 
-CREATE OR REPLACE FUNCTION "public"."admin_list_forums"() RETURNS TABLE("id" "uuid", "parent_id" "uuid", "level" smallint, "slug" "text", "position" integer, "is_pinned" boolean, "accent" "public"."forum_accent", "doodle" "text", "names" "jsonb", "missing_languages" "text"[])
+CREATE OR REPLACE FUNCTION "public"."admin_list_forums"() RETURNS TABLE("id" "uuid", "parent_id" "uuid", "level" smallint, "slug" "text", "position" integer, "is_pinned" boolean, "accent" "public"."forum_accent", "names" "jsonb", "missing_languages" "text"[])
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
 begin
+  -- Only forum staff may see the list.
   perform public.require_forum_staff();
+  -- Every live public forum, with its names per language and the interface languages it lacks.
   return query
   select forums.id, forums.parent_id, forums.level, forums.slug, forums.position, forums.is_pinned,
-    forums.accent, forums.doodle,
+    forums.accent,
     coalesce((select jsonb_object_agg(forum_names.language_code,
         jsonb_build_object('name', forum_names.name, 'description', forum_names.description))
       from public.forum_names where forum_names.forum_id = forums.id), '{}'::jsonb),
@@ -8073,34 +8054,6 @@ COMMENT ON FUNCTION "public"."admin_remove_nudge_word"("target_word_id" "uuid") 
 
 
 
-CREATE OR REPLACE FUNCTION "public"."admin_remove_occasion"("occasion_id" "uuid") RETURNS "void"
-    LANGUAGE "plpgsql" SECURITY DEFINER
-    SET "search_path" TO ''
-    AS $$
-declare
-  removed public.seasonal_occasions;
-begin
-  perform public.require_website_staff();
-  update public.seasonal_occasions as occasion
-  set deleted_at = now(), user_id = (select auth.uid())
-  where occasion.id = occasion_id and occasion.deleted_at is null
-  returning * into removed;
-  if removed.id is null then
-    raise exception 'There is no occasion with that id.' using errcode = 'no_data_found';
-  end if;
-  perform public.log_staff_action('seasonal.removed', 'seasonal_occasions', removed.id::text, null, null,
-    to_jsonb(removed) - 'user_id', null);
-end;
-$$;
-
-
-ALTER FUNCTION "public"."admin_remove_occasion"("occasion_id" "uuid") OWNER TO "postgres";
-
-
-COMMENT ON FUNCTION "public"."admin_remove_occasion"("occasion_id" "uuid") IS 'Takes a seasonal occasion off the schedule; owner and admin only; logged (S1-E11-11).';
-
-
-
 CREATE OR REPLACE FUNCTION "public"."admin_remove_on_call_shift"("shift_id" "uuid", "reason_given" "text") RETURNS boolean
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -9160,7 +9113,7 @@ COMMENT ON FUNCTION "public"."admin_save_contest"("target_contest_id" "uuid", "d
 
 
 
-CREATE OR REPLACE FUNCTION "public"."admin_save_forum"("forum_id" "uuid", "parent_id" "uuid", "slug" "text", "sort_position" integer, "is_pinned" boolean, "accent" "public"."forum_accent", "doodle" "text", "names" "jsonb") RETURNS "uuid"
+CREATE OR REPLACE FUNCTION "public"."admin_save_forum"("forum_id" "uuid", "parent_id" "uuid", "slug" "text", "sort_position" integer, "is_pinned" boolean, "accent" "public"."forum_accent", "names" "jsonb") RETURNS "uuid"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
     AS $_$
@@ -9189,10 +9142,9 @@ begin
   end if;
   -- Step 2: add it, or change the one staff opened (the level trigger checks the parent).
   if admin_save_forum.forum_id is null then
-    insert into public.forums (parent_id, slug, position, is_pinned, accent, doodle)
+    insert into public.forums (parent_id, slug, position, is_pinned, accent)
     values (admin_save_forum.parent_id, admin_save_forum.slug, greatest(coalesce(sort_position, 0), 0),
-      coalesce(admin_save_forum.is_pinned, false), coalesce(admin_save_forum.accent, 'plum'),
-      nullif(btrim(admin_save_forum.doodle), ''))
+      coalesce(admin_save_forum.is_pinned, false), coalesce(admin_save_forum.accent, 'plum'))
     returning forums.id into saved_id;
   else
     before_forum := public.forum_as_json(admin_save_forum.forum_id);
@@ -9200,7 +9152,7 @@ begin
     set parent_id = admin_save_forum.parent_id, slug = admin_save_forum.slug,
       position = greatest(coalesce(sort_position, 0), 0),
       is_pinned = coalesce(admin_save_forum.is_pinned, false),
-      accent = coalesce(admin_save_forum.accent, 'plum'), doodle = nullif(btrim(admin_save_forum.doodle), '')
+      accent = coalesce(admin_save_forum.accent, 'plum')
     where forums.id = admin_save_forum.forum_id and forums.deleted_at is null
     returning forums.id into saved_id;
     if saved_id is null then
@@ -9217,10 +9169,10 @@ end;
 $_$;
 
 
-ALTER FUNCTION "public"."admin_save_forum"("forum_id" "uuid", "parent_id" "uuid", "slug" "text", "sort_position" integer, "is_pinned" boolean, "accent" "public"."forum_accent", "doodle" "text", "names" "jsonb") OWNER TO "postgres";
+ALTER FUNCTION "public"."admin_save_forum"("forum_id" "uuid", "parent_id" "uuid", "slug" "text", "sort_position" integer, "is_pinned" boolean, "accent" "public"."forum_accent", "names" "jsonb") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."admin_save_forum"("forum_id" "uuid", "parent_id" "uuid", "slug" "text", "sort_position" integer, "is_pinned" boolean, "accent" "public"."forum_accent", "doodle" "text", "names" "jsonb") IS 'Adds or changes a forum category, forum or subforum; owner and admin; logged (S1-E8-01).';
+COMMENT ON FUNCTION "public"."admin_save_forum"("forum_id" "uuid", "parent_id" "uuid", "slug" "text", "sort_position" integer, "is_pinned" boolean, "accent" "public"."forum_accent", "names" "jsonb") IS 'Adds or changes a forum category, forum or subforum; owner and admin; logged (S1-E8-01).';
 
 
 
@@ -9353,58 +9305,6 @@ ALTER FUNCTION "public"."admin_save_landing_page_draft"("target_page_id" "uuid",
 
 
 COMMENT ON FUNCTION "public"."admin_save_landing_page_draft"("target_page_id" "uuid", "new_content" "jsonb", "new_show_from" "date", "new_take_down_on" "date") IS 'Saves a landing page draft; owner and admin only (S1-E11-14).';
-
-
-
-CREATE OR REPLACE FUNCTION "public"."admin_save_occasion"("name_ro" "text", "name_en" "text", "starts_on" "date", "ends_on" "date", "every_year" boolean, "doodle" "public"."seasonal_doodle", "shows_on" "text", "is_season_default" boolean, "occasion_id" "uuid" DEFAULT NULL::"uuid") RETURNS "uuid"
-    LANGUAGE "plpgsql" SECURITY DEFINER
-    SET "search_path" TO ''
-    AS $$
-declare
-  problems text[] := public.seasonal_occasion_problems(name_ro, name_en, starts_on, ends_on, every_year, shows_on);
-  before_row public.seasonal_occasions;
-  saved_id uuid;
-begin
-  perform public.require_website_staff();
-  -- Step 1: refuse a broken occasion, naming every field to fix.
-  if cardinality(problems) > 0 then
-    raise exception 'Fix this occasion before saving.' using errcode = 'check_violation', hint = array_to_string(problems, ',');
-  end if;
-  -- Step 2: change the one asked for, or add a new one.
-  if occasion_id is not null then
-    select * into before_row from public.seasonal_occasions as occasion
-    where occasion.id = occasion_id and occasion.deleted_at is null for update;
-    if before_row.id is null then
-      raise exception 'There is no occasion with that id.' using errcode = 'no_data_found';
-    end if;
-    update public.seasonal_occasions as occasion
-    set name_ro = btrim(admin_save_occasion.name_ro), name_en = btrim(admin_save_occasion.name_en),
-        starts_on = admin_save_occasion.starts_on, ends_on = admin_save_occasion.ends_on,
-        every_year = admin_save_occasion.every_year, doodle = admin_save_occasion.doodle,
-        shows_on = admin_save_occasion.shows_on, is_season_default = admin_save_occasion.is_season_default,
-        user_id = (select auth.uid())
-    where occasion.id = occasion_id
-    returning occasion.id into saved_id;
-  else
-    insert into public.seasonal_occasions
-      (name_ro, name_en, starts_on, ends_on, every_year, doodle, shows_on, is_season_default, user_id)
-    values (btrim(name_ro), btrim(name_en), starts_on, ends_on, every_year, doodle, shows_on,
-      is_season_default, (select auth.uid()))
-    returning id into saved_id;
-  end if;
-  -- Step 3: the audit log, with what it was and what it is now.
-  perform public.log_staff_action('seasonal.saved', 'seasonal_occasions', saved_id::text, null, null,
-    case when before_row.id is null then null else to_jsonb(before_row) - 'user_id' end,
-    (select to_jsonb(occasion) - 'user_id' from public.seasonal_occasions as occasion where occasion.id = saved_id));
-  return saved_id;
-end;
-$$;
-
-
-ALTER FUNCTION "public"."admin_save_occasion"("name_ro" "text", "name_en" "text", "starts_on" "date", "ends_on" "date", "every_year" boolean, "doodle" "public"."seasonal_doodle", "shows_on" "text", "is_season_default" boolean, "occasion_id" "uuid") OWNER TO "postgres";
-
-
-COMMENT ON FUNCTION "public"."admin_save_occasion"("name_ro" "text", "name_en" "text", "starts_on" "date", "ends_on" "date", "every_year" boolean, "doodle" "public"."seasonal_doodle", "shows_on" "text", "is_season_default" boolean, "occasion_id" "uuid") IS 'Adds or changes a seasonal occasion; owner and admin only; logged (S1-E11-11).';
 
 
 
@@ -18419,27 +18319,6 @@ COMMENT ON FUNCTION "public"."create_story_character"("story_slug" "text", "char
 
 
 
-CREATE OR REPLACE FUNCTION "public"."current_seasonal_doodle"("on_date" "date", "place" "text") RETURNS TABLE("doodle" "public"."seasonal_doodle")
-    LANGUAGE "sql" STABLE SECURITY DEFINER
-    SET "search_path" TO ''
-    AS $$
-  select occasion.doodle
-  from public.seasonal_occasions as occasion
-  where occasion.deleted_at is null
-    and occasion.shows_on in (place, 'both')
-    and public.occasion_covers(occasion.starts_on, occasion.ends_on, occasion.every_year, on_date)
-  order by occasion.is_season_default, occasion.ends_on - occasion.starts_on, occasion.updated_at desc
-  limit 1;
-$$;
-
-
-ALTER FUNCTION "public"."current_seasonal_doodle"("on_date" "date", "place" "text") OWNER TO "postgres";
-
-
-COMMENT ON FUNCTION "public"."current_seasonal_doodle"("on_date" "date", "place" "text") IS 'The seasonal doodle Discover or Search shows on a day (S1-E5-07, S1-E11-11).';
-
-
-
 CREATE OR REPLACE FUNCTION "public"."data_export_held_tables"() RETURNS TABLE("table_name" "text", "is_included" boolean, "why_left_out" "text")
     LANGUAGE "sql" IMMUTABLE
     SET "search_path" TO ''
@@ -21460,12 +21339,12 @@ COMMENT ON FUNCTION "public"."forum_has_unread"("target_forum_id" "uuid") IS 'In
 
 
 
-CREATE OR REPLACE FUNCTION "public"."forum_index"("language_code" "text") RETURNS TABLE("id" "uuid", "parent_id" "uuid", "level" smallint, "slug" "text", "position" integer, "is_pinned" boolean, "accent" "public"."forum_accent", "doodle" "text", "name" "text", "description" "text", "thread_count" bigint, "post_count" bigint, "latest_activity_at" timestamp with time zone, "latest_post" "jsonb", "has_unread" boolean)
+CREATE OR REPLACE FUNCTION "public"."forum_index"("language_code" "text") RETURNS TABLE("id" "uuid", "parent_id" "uuid", "level" smallint, "slug" "text", "position" integer, "is_pinned" boolean, "accent" "public"."forum_accent", "name" "text", "description" "text", "thread_count" bigint, "post_count" bigint, "latest_activity_at" timestamp with time zone, "latest_post" "jsonb", "has_unread" boolean)
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
   select forums.id, forums.parent_id, forums.level, forums.slug, forums.position, forums.is_pinned,
-    forums.accent, forums.doodle, names.name, names.description,
+    forums.accent, names.name, names.description,
     numbers.thread_count, numbers.post_count, latest.posted_at,
     case when latest.post_id is not null then jsonb_build_object(
       'thread_title', latest.thread_title,
@@ -29165,36 +29044,6 @@ COMMENT ON FUNCTION "public"."notify_space_membership"() IS 'Internal: the join 
 
 
 
-CREATE OR REPLACE FUNCTION "public"."occasion_covers"("starts_on" "date", "ends_on" "date", "every_year" boolean, "on_date" "date") RETURNS boolean
-    LANGUAGE "sql" IMMUTABLE
-    SET "search_path" TO ''
-    AS $$
-  -- Month and day as one number (14 February is 214), so 29 February needs no special case.
-  with day_numbers as (
-    select
-      extract(month from starts_on)::int * 100 + extract(day from starts_on)::int as first_day,
-      extract(month from ends_on)::int * 100 + extract(day from ends_on)::int as last_day,
-      extract(month from on_date)::int * 100 + extract(day from on_date)::int as this_day
-  )
-  select case
-    when not every_year then on_date between starts_on and ends_on
-    -- A yearly range inside one year: 25 October to 1 November.
-    when extract(year from ends_on) = extract(year from starts_on)
-      then this_day between first_day and last_day
-    -- A yearly range over New Year: 1 December to 29 February.
-    else this_day >= first_day or this_day <= last_day
-  end
-  from day_numbers;
-$$;
-
-
-ALTER FUNCTION "public"."occasion_covers"("starts_on" "date", "ends_on" "date", "every_year" boolean, "on_date" "date") OWNER TO "postgres";
-
-
-COMMENT ON FUNCTION "public"."occasion_covers"("starts_on" "date", "ends_on" "date", "every_year" boolean, "on_date" "date") IS 'Internal: whether an occasion shows on a day, yearly ranges wrapping over New Year (S1-E11-11).';
-
-
-
 CREATE OR REPLACE FUNCTION "public"."offer_space_handover"("slug" "text", "handle" "text") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -33328,10 +33177,12 @@ CREATE OR REPLACE FUNCTION "public"."refuse_space_forum_change"() RETURNS "trigg
     SET "search_path" TO ''
     AS $$
 begin
+  -- A space's forum belongs to its space: staff's forum tools may not move, pin, recolour or
+  -- remove it (FORUMS-2c).
   if old.space_id is not null and (
        new.slug is distinct from old.slug or new.parent_id is distinct from old.parent_id
        or new.position is distinct from old.position or new.is_pinned is distinct from old.is_pinned
-       or new.accent is distinct from old.accent or new.doodle is distinct from old.doodle
+       or new.accent is distinct from old.accent
        or new.deleted_at is distinct from old.deleted_at or new.space_id is distinct from old.space_id) then
     raise exception 'A space''s forum belongs to its space.' using errcode = 'check_violation', hint = 'forum:space';
   end if;
@@ -36868,31 +36719,6 @@ ALTER FUNCTION "public"."search_writers"("term" "text", "page_size" integer, "pa
 
 
 COMMENT ON FUNCTION "public"."search_writers"("term" "text", "page_size" integer, "page_offset" integer) IS 'Writers whose username or pen name answers a search, with a story the reader may see (S1-E5-04).';
-
-
-
-CREATE OR REPLACE FUNCTION "public"."seasonal_occasion_problems"("name_ro" "text", "name_en" "text", "starts_on" "date", "ends_on" "date", "every_year" boolean, "shows_on" "text") RETURNS "text"[]
-    LANGUAGE "sql" IMMUTABLE
-    SET "search_path" TO ''
-    AS $$
-  select array_remove(array[
-    case when coalesce(btrim(name_ro), '') = '' then 'nameRo:empty' end,
-    case when length(btrim(name_ro)) > 60 then 'nameRo:too_long' end,
-    case when coalesce(btrim(name_en), '') = '' then 'nameEn:empty' end,
-    case when length(btrim(name_en)) > 60 then 'nameEn:too_long' end,
-    case when starts_on is null then 'startsOn:empty' end,
-    case when ends_on is null then 'endsOn:empty' end,
-    case when ends_on < starts_on then 'endsOn:before_start' end,
-    case when every_year and ends_on - starts_on >= 366 then 'endsOn:longer_than_a_year' end,
-    case when shows_on not in ('discover', 'search', 'both') then 'showsOn:unknown' end
-  ], null);
-$$;
-
-
-ALTER FUNCTION "public"."seasonal_occasion_problems"("name_ro" "text", "name_en" "text", "starts_on" "date", "ends_on" "date", "every_year" boolean, "shows_on" "text") OWNER TO "postgres";
-
-
-COMMENT ON FUNCTION "public"."seasonal_occasion_problems"("name_ro" "text", "name_en" "text", "starts_on" "date", "ends_on" "date", "every_year" boolean, "shows_on" "text") IS 'Internal: what stops a seasonal occasion from being saved (S1-E11-11).';
 
 
 
@@ -46204,12 +46030,10 @@ CREATE TABLE IF NOT EXISTS "public"."forums" (
     "position" integer DEFAULT 0 NOT NULL,
     "is_pinned" boolean DEFAULT false NOT NULL,
     "accent" "public"."forum_accent" DEFAULT 'plum'::"public"."forum_accent" NOT NULL,
-    "doodle" "text",
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "deleted_at" timestamp with time zone,
     "space_id" "uuid",
-    CONSTRAINT "forums_doodle_format" CHECK ((("doodle" IS NULL) OR ("doodle" ~ '^[a-z0-9]+(-[a-z0-9]+)*$'::"text"))),
     CONSTRAINT "forums_level_range" CHECK ((("level" >= 0) AND ("level" <= 2))),
     CONSTRAINT "forums_not_own_parent" CHECK (("parent_id" IS DISTINCT FROM "id")),
     CONSTRAINT "forums_only_categories_pinned" CHECK (((NOT "is_pinned") OR ("parent_id" IS NULL))),
@@ -47073,35 +46897,6 @@ ALTER TABLE "public"."safety_contact_gaps" OWNER TO "postgres";
 
 COMMENT ON TABLE "public"."safety_contact_gaps" IS 'kind: platform
 Countries asked for safety contacts that had no row: a counter per country for staff, never who asked (S1-E10-13a).';
-
-
-
-CREATE TABLE IF NOT EXISTS "public"."seasonal_occasions" (
-    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
-    "name_ro" "text" NOT NULL,
-    "name_en" "text" NOT NULL,
-    "starts_on" "date" NOT NULL,
-    "ends_on" "date" NOT NULL,
-    "every_year" boolean DEFAULT true NOT NULL,
-    "doodle" "public"."seasonal_doodle" NOT NULL,
-    "shows_on" "text" DEFAULT 'both'::"text" NOT NULL,
-    "is_season_default" boolean DEFAULT false NOT NULL,
-    "user_id" "uuid",
-    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    "deleted_at" timestamp with time zone,
-    CONSTRAINT "seasonal_occasions_dates_in_order" CHECK (("ends_on" >= "starts_on")),
-    CONSTRAINT "seasonal_occasions_names_fit" CHECK (((("length"("btrim"("name_ro")) >= 1) AND ("length"("btrim"("name_ro")) <= 60)) AND (("length"("btrim"("name_en")) >= 1) AND ("length"("btrim"("name_en")) <= 60)))),
-    CONSTRAINT "seasonal_occasions_place_is_known" CHECK (("shows_on" = ANY (ARRAY['discover'::"text", 'search'::"text", 'both'::"text"]))),
-    CONSTRAINT "seasonal_occasions_yearly_fits_a_year" CHECK (((NOT "every_year") OR (("ends_on" - "starts_on") < 366)))
-);
-
-
-ALTER TABLE "public"."seasonal_occasions" OWNER TO "postgres";
-
-
-COMMENT ON TABLE "public"."seasonal_occasions" IS 'kind: platform
-The seasonal doodle schedule (S1-E11-11, S1-E5-07). Staff-written settings, not user content; user_id is the admin who saved it.';
 
 
 
@@ -48763,11 +48558,6 @@ ALTER TABLE ONLY "public"."sanctions"
 
 
 
-ALTER TABLE ONLY "public"."seasonal_occasions"
-    ADD CONSTRAINT "seasonal_occasions_pkey" PRIMARY KEY ("id");
-
-
-
 ALTER TABLE ONLY "public"."settings"
     ADD CONSTRAINT "settings_key_key" UNIQUE ("key");
 
@@ -49893,10 +49683,6 @@ CREATE INDEX "sanctions_by_account" ON "public"."sanctions" USING "btree" ("user
 
 
 
-CREATE INDEX "seasonal_occasions_user_id_fk_idx" ON "public"."seasonal_occasions" USING "btree" ("user_id");
-
-
-
 CREATE INDEX "sign_in_failures_email_hash_idx" ON "public"."sign_in_failures" USING "btree" ("email_hash", "failed_at");
 
 
@@ -50922,10 +50708,6 @@ CREATE OR REPLACE TRIGGER "sanctions_refuse_user_id_change" BEFORE UPDATE ON "pu
 
 
 CREATE OR REPLACE TRIGGER "sanctions_set_updated_at" BEFORE UPDATE ON "public"."sanctions" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
-
-
-
-CREATE OR REPLACE TRIGGER "seasonal_occasions_set_updated_at" BEFORE UPDATE ON "public"."seasonal_occasions" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
 
@@ -52409,11 +52191,6 @@ ALTER TABLE ONLY "public"."sanctions"
 
 ALTER TABLE ONLY "public"."sanctions"
     ADD CONSTRAINT "sanctions_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
-
-
-
-ALTER TABLE ONLY "public"."seasonal_occasions"
-    ADD CONSTRAINT "seasonal_occasions_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE SET NULL;
 
 
 
@@ -54177,17 +53954,6 @@ COMMENT ON POLICY "sanctions_select_moderation" ON "public"."sanctions" IS 'Allo
 
 
 
-ALTER TABLE "public"."seasonal_occasions" ENABLE ROW LEVEL SECURITY;
-
-
-CREATE POLICY "seasonal_occasions_select_admin" ON "public"."seasonal_occasions" FOR SELECT TO "authenticated" USING (( SELECT "public"."staff_may"('website_cms'::"text", 'view'::"text") AS "staff_may"));
-
-
-
-COMMENT ON POLICY "seasonal_occasions_select_admin" ON "public"."seasonal_occasions" IS 'Allows owner and admin, in a staff session, to read the schedule for the year view (S1-E11-11). Readers get only today''s doodle through current_seasonal_doodle().';
-
-
-
 ALTER TABLE "public"."settings" ENABLE ROW LEVEL SECURITY;
 
 
@@ -55627,11 +55393,6 @@ GRANT ALL ON FUNCTION "public"."admin_remove_nudge_word"("target_word_id" "uuid"
 
 
 
-REVOKE ALL ON FUNCTION "public"."admin_remove_occasion"("occasion_id" "uuid") FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."admin_remove_occasion"("occasion_id" "uuid") TO "authenticated";
-
-
-
 REVOKE ALL ON FUNCTION "public"."admin_remove_on_call_shift"("shift_id" "uuid", "reason_given" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_remove_on_call_shift"("shift_id" "uuid", "reason_given" "text") TO "authenticated";
 
@@ -55777,8 +55538,8 @@ GRANT ALL ON FUNCTION "public"."admin_save_contest"("target_contest_id" "uuid", 
 
 
 
-REVOKE ALL ON FUNCTION "public"."admin_save_forum"("forum_id" "uuid", "parent_id" "uuid", "slug" "text", "sort_position" integer, "is_pinned" boolean, "accent" "public"."forum_accent", "doodle" "text", "names" "jsonb") FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."admin_save_forum"("forum_id" "uuid", "parent_id" "uuid", "slug" "text", "sort_position" integer, "is_pinned" boolean, "accent" "public"."forum_accent", "doodle" "text", "names" "jsonb") TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."admin_save_forum"("forum_id" "uuid", "parent_id" "uuid", "slug" "text", "sort_position" integer, "is_pinned" boolean, "accent" "public"."forum_accent", "names" "jsonb") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_save_forum"("forum_id" "uuid", "parent_id" "uuid", "slug" "text", "sort_position" integer, "is_pinned" boolean, "accent" "public"."forum_accent", "names" "jsonb") TO "authenticated";
 
 
 
@@ -55794,11 +55555,6 @@ GRANT ALL ON FUNCTION "public"."admin_save_interface_text"("text_key" "text", "l
 
 REVOKE ALL ON FUNCTION "public"."admin_save_landing_page_draft"("target_page_id" "uuid", "new_content" "jsonb", "new_show_from" "date", "new_take_down_on" "date") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_save_landing_page_draft"("target_page_id" "uuid", "new_content" "jsonb", "new_show_from" "date", "new_take_down_on" "date") TO "authenticated";
-
-
-
-REVOKE ALL ON FUNCTION "public"."admin_save_occasion"("name_ro" "text", "name_en" "text", "starts_on" "date", "ends_on" "date", "every_year" boolean, "doodle" "public"."seasonal_doodle", "shows_on" "text", "is_season_default" boolean, "occasion_id" "uuid") FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."admin_save_occasion"("name_ro" "text", "name_en" "text", "starts_on" "date", "ends_on" "date", "every_year" boolean, "doodle" "public"."seasonal_doodle", "shows_on" "text", "is_season_default" boolean, "occasion_id" "uuid") TO "authenticated";
 
 
 
@@ -57041,12 +56797,6 @@ GRANT ALL ON FUNCTION "public"."create_story_character"("story_slug" "text", "ch
 
 
 
-REVOKE ALL ON FUNCTION "public"."current_seasonal_doodle"("on_date" "date", "place" "text") FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."current_seasonal_doodle"("on_date" "date", "place" "text") TO "anon";
-GRANT ALL ON FUNCTION "public"."current_seasonal_doodle"("on_date" "date", "place" "text") TO "authenticated";
-
-
-
 REVOKE ALL ON FUNCTION "public"."data_export_held_tables"() FROM PUBLIC;
 
 
@@ -57475,6 +57225,7 @@ REVOKE ALL ON FUNCTION "public"."forum_has_unread"("target_forum_id" "uuid") FRO
 
 
 
+REVOKE ALL ON FUNCTION "public"."forum_index"("language_code" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."forum_index"("language_code" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."forum_index"("language_code" "text") TO "authenticated";
 
@@ -61274,11 +61025,6 @@ GRANT SELECT ON TABLE "public"."safety_contact_checks" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."safety_contact_gaps" TO "service_role";
 GRANT SELECT ON TABLE "public"."safety_contact_gaps" TO "authenticated";
-
-
-
-GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."seasonal_occasions" TO "service_role";
-GRANT SELECT ON TABLE "public"."seasonal_occasions" TO "authenticated";
 
 
 

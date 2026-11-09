@@ -11,7 +11,7 @@
  *   Reading, Saved for later and Finished with their sizes, and the shelf's See all page lists it
  *   (second and fifth criteria);
  * - a visitor gets a log-in card, never anyone's library (third criterion);
- * - the Library passes axe at 390 px, light, ro and en, and its doodle touches no text or control
+ * - the Library passes axe at 390 px, light, ro and en, and it draws no doodle
  *   at 1440, 768 and 390 px (DoD design rules);
  * - with a writer and a story followed, the Following cards stay inside a 390 px screen (the
  *   accessibility check of 6 Nov 2026 found them 19 px too wide; WCAG 1.4.10, CLAUDE.md rule 21).
@@ -22,7 +22,7 @@ import { expect, test, type Browser } from '@playwright/test';
 
 import { checkScreen, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 const readerId = '00000000-0000-4000-8000-000000000002';
@@ -153,12 +153,12 @@ test.describe('library and continue reading (S1-E4-03)', () => {
     await expect(page.getByRole('link', { name: /Raftul bibliotecii/ })).toHaveCount(0);
   });
 
-  test('the doodle touches no text or control at any width', async ({ browser }) => {
+  test('the Library draws no doodle at any width', async ({ browser }) => {
     const page = await openAs(browser, 'teen_17', '/library');
     await expect(page.getByRole('heading', { level: 1, name: 'Your library' })).toBeVisible();
     for (const width of [1440, 768, 390]) {
       await page.setViewportSize({ width, height: 900 });
-      await expectNoDoodleOverlap(page);
+      await expectNoDoodles(page);
     }
   });
 

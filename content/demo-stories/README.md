@@ -10,7 +10,7 @@ Synthetic stories for the staging demo (Robert, chat, 23 Oct 2026): 30 to 40 Rom
 - **Fit the rating.** All ages: nothing a 10-year-old shouldn't read. 13+: mild peril, first love, loss, a swear word at most. 16+: darker themes, violence described without relish, strong language; still no sexual content and nothing about abuse or coercion (that needs a content note and is out of scope for the demo).
 - **Length.** Prose chapters 300 to 500 words each. Poetry "chapters" are one poem or a short cycle, 120 to 300 words each. Blurb at most 500 characters, title at most 120.
 - **Tags**: 2 to 6 per story, lower case, in the story's language, at most 40 characters each.
-- **Covers**: `automatic` (nothing stored) or `drawn:<design>/<background>/<accent>`, with design one of `plum ink violet gold lilac blush sky sage paper stripes dots grid waves starry doodles twotone` and background and accent one of `plum ink violet gold lilac blush sky sage paper` (S1-E3-01). Pick a background and an accent that differ. Drawn demo covers use a patterned design (`stripes dots grid waves starry doodles twotone`), never a flat colour, so no card looks empty on a shelf (LOOK-1, 6 Nov 2026); a unit test checks it.
+- **Covers**: `automatic` (nothing stored) or `drawn:<design>/<background>/<accent>`, with design one of `plum ink violet gold lilac blush sky sage paper stripes dots grid waves starry sparkles twotone` and background and accent one of `plum ink violet gold lilac blush sky sage paper` (S1-E3-01). Pick a background and an accent that differ. Drawn demo covers use a patterned design (`stripes dots grid waves starry sparkles twotone`), never a flat colour, so no card looks empty on a shelf (LOOK-1, 6 Nov 2026); a unit test checks it.
 
 ## File format
 

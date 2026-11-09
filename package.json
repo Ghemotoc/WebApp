@@ -30,8 +30,6 @@
     "issues:sync": "tsx scripts/sync-story-issues.ts",
     "emails:build": "tsx scripts/build-auth-email-templates.ts",
     "demo:build": "tsx scripts/build-demo-content.ts",
-    "doodles:tokens": "tsx scripts/doodle-tokens.ts",
-    "doodles:check": "tsx scripts/doodle-tokens.ts --check",
     "demo:compare-parts": "tsx scripts/compare-demo-parts.ts",
     "demo:check-2b": "tsx scripts/check-demo-content-2b.ts"
   },

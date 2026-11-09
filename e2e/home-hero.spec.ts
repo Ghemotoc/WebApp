@@ -11,7 +11,7 @@
  * - the gold card shows the CMS's words (CLAUDE.md rule 4; seeded version 1);
  * - the safety row's link, worded with the CMS safety heading, jumps to the questions;
  * - at 390, 768 and 1440 px, light and night, Romanian and English: axe finds no serious or
- *   critical issue, nothing scrolls sideways and no doodle meets text or a control (DoD design
+ *   critical issue, nothing scrolls sideways and no doodle is drawn (DoD design
  *   rules; CLAUDE.md rules 9 and 21).
  * Test data: four stories of its own by adult_writer, one of each rating, scored by the ranking
  * job; removed afterwards.
@@ -20,7 +20,7 @@ import { expect, test } from '@playwright/test';
 
 import { checkScreen, everyView } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser } from './support/personas';
 
 const adultWriterId = '00000000-0000-4000-8000-000000000001';
@@ -107,13 +107,13 @@ test.describe('the home page hero', () => {
   });
 
   for (const view of everyView(['/'])) {
-    test(`the hero passes axe with no doodle on text at ${view.width} px, ${view.theme}, ${view.language}`, async ({
+    test(`the hero passes axe and draws no doodle at ${view.width} px, ${view.theme}, ${view.language}`, async ({
       page,
     }) => {
       await checkScreen(page, view);
-      // Wait for the wall, so the doodles are checked against the covers too.
+      // Wait for the wall, so the covers are on the page when it is checked.
       await expect(page.getByRole('img', { name: new RegExp(wallTitles.all_ages) })).toBeVisible();
-      await expectNoDoodleOverlap(page);
+      await expectNoDoodles(page);
     });
   }
 });

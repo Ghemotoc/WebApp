@@ -43,7 +43,7 @@ Decisions with dates and sources are in docs/decisions.md. Stories are in docs/s
 13. If a story depends on a decision marked OPEN, stop and ask. Do not choose for the founder.
 14. Contract first: migration, RLS tests and generated types before any screen. Never hand-write a type that mirrors the database.
 15. Every table for user content or user actions has a not-null user_id referencing profiles.id. Never show the user ID publicly.
-16. Doodles and icons are SVG files. Screens never import Tauri directly; use src/lib/platform/.
+16. No doodles anywhere (Robert, 9 Nov 2026; bundle NO-DOODLES); icons are line SVGs in src/components/icons/ (`ActionIcon`, `NavIcon`). Screens never import Tauri directly; use src/lib/platform/.
 17. Mocks are listed in docs/mocks.md. A story is not done while its mock is still on for staging.
 18. Ratings (All ages, 13+, 16+, 18+) hide a story from anyone younger, enforced in RLS through age_band(). Staff never edit a writer's words.
 19. Every uploaded picture goes through the picture check (S1-E10-05) before anyone else sees it. No automated text moderation.
@@ -90,9 +90,9 @@ Write every file so a junior developer who joins later can read it and change it
 - design/renders/desktop and design/renders/phone show how each board should look. design/README.md maps boards to stories.
 - The new look (liquid glass, approved by Robert 7 Nov 2026, 19:51 UTC) is being built in bundles G1 to G14: the handoff doc and the canvas linked in design/README.md win over the 17 Oct boards wherever they differ. Colours come only from src/styles/tokens.css (Lilac mist by day; at night monochrome black, white and grey with cobalt buttons on the "galaxy F" background, NIGHT-1; a flat beige set under data-area="staff" by day, flat greys at night).
 - Fonts: Bricolage Grotesque (headings), Inter (body, and eyebrow labels: Bold, 11 px, capitals, 0.18em letter-spacing, black by day and white at night, never gold, through the `eyebrow` class; Robert, 7 Nov 2026), Literata (story text in the reader and editor), Shadows Into Light Two (handwriting). The design rules (drop-downs, scroll arrows, label rows, ad slots) are in docs/definition-of-done.md.
-- Pictures the boards use (doodles, covers, photos) are in design/assets/; a board's /_blob/<id> is design/assets/<id>.<ext>.
+- Pictures the boards use (covers, photos, and the old doodles, kept only as a record) are in design/assets/; a board's /_blob/<id> is design/assets/<id>.<ext>. Where a board draws a doodle or a hand-drawn icon, leave the doodle out and use a line icon.
 - Draft content (legal texts, safety contacts by country, public-domain classics) is in content/. Load it as seed data or CMS content; never hard-code it in components.
-- Staff (admin) screens use plain components, no doodles.
+- Staff (admin) screens use plain components.
 
 ## Story issues (Q39; issues created 17 Oct 2026)
 - Every story has one GitHub issue in this repository, titled "<story ID>: <title>" (created by Actions > Sync story issues). Find it at the start of every session by searching the issues for the story ID, and read its comments: Robert may add details or changes there after the story was written. If a comment contradicts docs/, stop and ask.

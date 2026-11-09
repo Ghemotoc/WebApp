@@ -14,14 +14,14 @@
  * - a signed-out visitor reads the thread and is asked to log in to reply; every post by someone
  *   else has Report; the author deletes their reply and its number stays as "Post deleted";
  * - the forum, the thread and the new-thread page pass axe at 390, 768 and 1440 px, light and
- *   night, ro and en, and no doodle touches text or a control.
+ *   night, ro and en, and no doodle is drawn.
  * Test data: the threads this spec starts, removed before and after.
  */
 import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 /** The thread this spec starts; its title marks its rows for clean-up. */
@@ -153,7 +153,7 @@ test.describe('forum threads and posts (FORUMS-1b, S1-E8-02)', () => {
       page,
     }) => {
       await checkScreen(page, view);
-      await expectNoDoodleOverlap(page);
+      await expectNoDoodles(page);
     });
   }
 
@@ -167,7 +167,7 @@ test.describe('forum threads and posts (FORUMS-1b, S1-E8-02)', () => {
         `update public.profiles set locale = '${view.language}' where handle = 'adult_writer';`,
       );
       await checkScreen(page, view);
-      await expectNoDoodleOverlap(page);
+      await expectNoDoodles(page);
     }
   });
 });

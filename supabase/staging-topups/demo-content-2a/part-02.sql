@@ -3227,15 +3227,15 @@ insert into public.stories (id, user_id, slug, title, blurb, language_code, cate
 select '00000000-0000-4000-9100-002600000000'::uuid, '00000000-0000-4000-8000-000000000007'::uuid, 'biblioteca-din-statia-de-autobuz-demo-26',
   $demo$Biblioteca din stația de autobuz$demo$, $demo$La capătul străzii Zorilor, autobuzul vine rar și oamenii așteaptă mult. Catinca, opt ani, și bunicul ei construiesc o cutie albastră cu ușă de geam și pun în ea douăsprezece cărți. Apoi cartea cu balena dispare. O poveste caldă despre cărți care pleacă și se întorc, pentru cititori de la șapte ani în sus.$demo$, 'ro',
   (select id from public.categories where slug = 'fiction'),
-  'drawn', 'doodles', 'paper', 'sage', 'all_ages', 'no_ai',
+  'drawn', 'sparkles', 'paper', 'sage', 'all_ages', 'no_ai',
   now() - interval '63 days', now() - interval '57 days', now() - interval '65 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9100-002600000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9100-002600000000'::uuid, '00000000-0000-4000-8000-000000000007'::uuid, array['copii', 'cărți', 'bunici', 'cartier', 'iarnă']);
 update public.stories
-set cover_kind = 'drawn', cover_design = 'doodles', cover_background = 'paper', cover_accent = 'sage'
+set cover_kind = 'drawn', cover_design = 'sparkles', cover_background = 'paper', cover_accent = 'sage'
 where stories.id = '00000000-0000-4000-9100-002600000000'::uuid
   and (cover_kind, cover_design, cover_background, cover_accent)
-    is distinct from ('drawn', 'doodles', 'paper', 'sage');
+    is distinct from ('drawn', 'sparkles', 'paper', 'sage');
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)

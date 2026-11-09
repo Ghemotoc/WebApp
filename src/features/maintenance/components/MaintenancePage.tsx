@@ -6,7 +6,7 @@
  * What it calls: nothing itself; "Check again" is the gate's checkAgain, and "Staff sign-in" opens
  * the normal log-in page, which stays open during maintenance (lib/openDuringMaintenance.ts).
  * Board differences: no "back by 14:00" time (there is no setting for it yet; follow-up) and no
- * desk-lamp doodle or icon yet (no screen uses doodles yet; follow-up).
+ * desk-lamp picture (the app has no doodles).
  */
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';

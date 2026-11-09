@@ -50,7 +50,6 @@ export function startingValues(forum: StaffForum | null, parentId: string | null
       position: 1,
       isPinned: false,
       accent: 'plum',
-      doodle: null,
       names,
     };
   }
@@ -61,7 +60,6 @@ export function startingValues(forum: StaffForum | null, parentId: string | null
     position: forum.position,
     isPinned: forum.isPinned,
     accent: forum.accent,
-    doodle: forum.doodle,
     names,
   };
 }

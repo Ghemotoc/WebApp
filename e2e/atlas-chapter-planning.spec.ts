@@ -12,7 +12,7 @@
  * - "Appears in" on the sheet lists the chapters and opens one with one click (S1-E17-12);
  * - a chapter near the most one chapter holds warns the writer to split it (S1-E17-23);
  * - "New chapter" in the list makes an ordinary draft chapter (S1-E17-24);
- * - the editor passes axe, doesn't scroll sideways and has no doodle over text at 390, 768 and
+ * - the editor passes axe, doesn't scroll sideways and draws no doodle at 390, 768 and
  *   1440 px, light and night, Romanian and English, with the plan open.
  * Test data: adult_writer gets a story of their own for this spec ("atlas-chapters-seed01") with
  * two chapters and two characters; suspended_user (whose language no other spec changes) gets
@@ -22,7 +22,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 const writerId = '00000000-0000-4000-8000-000000000001';
@@ -252,7 +252,7 @@ test.describe('Story Atlas chapter planning (S1-E17-23 to S1-E17-26)', () => {
       const page = await context.newPage();
       await checkScreen(page, view);
       await expect(page.locator('#atlas-chapter-kind')).toBeVisible();
-      await expectNoDoodleOverlap(page);
+      await expectNoDoodles(page);
       await context.close();
     });
   }

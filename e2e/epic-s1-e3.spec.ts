@@ -13,7 +13,7 @@
  * - Journey 3, every screen of the epic with real chapters and labels, in all 12 views (390, 768
  *   and 1440 px, light and night, Romanian and English): the story page as a reader sees it, the
  *   editor on a published chapter and Manage chapters; axe finds nothing serious, nothing scrolls
- *   sideways and no doodle meets a control or a line of text. The other screens' 12 views live in
+ *   sideways and no doodle is drawn. The other screens' 12 views live in
  *   their own specs (docs/epic-reports/S1-E3.md lists them).
  * - Journey 4, the editor's two dialogs in all 12 views: Preview (S1-E3-03) and Compare versions
  *   after a save conflict (S1-E3-02b), which their own specs check at 390 and 1440 px only.
@@ -25,7 +25,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 /** The story journey 1 makes. */
@@ -246,7 +246,7 @@ test.describe('epic S1-E3 journeys', () => {
         const page = await screen.context.newPage();
         await test.step(`axe: ${view.address} at ${view.width} px, ${view.theme}, ${view.language}`, async () => {
           await checkScreen(page, view);
-          await expectNoDoodleOverlap(page);
+          await expectNoDoodles(page);
         });
         await page.close();
       }

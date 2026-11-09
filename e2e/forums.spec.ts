@@ -12,14 +12,14 @@
  *   parent in both languages, and the forum index shows them in the reader's language
  *   (criterion 1); then removes them, forum first;
  * - the forum index, a forum and Staff › Forums pass axe at 390, 768 and 1440 px, light and
- *   night, ro and en, and no doodle touches text or a control.
+ *   night, ro and en, and no doodle is drawn.
  * Test data: the forums the admin adds, removed by the test and again afterwards.
  */
 import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 /** Removes the forums this spec adds, subforums first, and puts the admin back in Romanian. */
@@ -163,7 +163,7 @@ test.describe('forum categories and subforums (FORUMS-1a, S1-E8-01)', () => {
       page,
     }) => {
       await checkScreen(page, view);
-      await expectNoDoodleOverlap(page);
+      await expectNoDoodles(page);
     });
   }
 

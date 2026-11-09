@@ -5,7 +5,7 @@
  * Who uses it: ShareDialog and StoryShareDialog. What it calls: nothing.
  */
 
-/** The small shield before the line (a status icon, which the doodle rule exempts). */
+/** The small shield before the line (a plain status icon). */
 function ShieldIcon() {
   return (
     <svg

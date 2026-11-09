@@ -6201,15 +6201,15 @@ select '00000000-0000-4000-9300-001400000000'::uuid, '00000000-0000-4000-8000-00
 
 Text: Wikisource, https://ro.wikisource.org/w/index.php?oldid=123622, CC BY-SA 4.0; formatare adaptată.$demo$, 'ro',
   (select id from public.categories where slug = 'fiction'),
-  'drawn', 'doodles', 'gold', 'sage', 'all_ages', 'no_ai',
+  'drawn', 'sparkles', 'gold', 'sage', 'all_ages', 'no_ai',
   now() - interval '69 days', now() - interval '69 days', now() - interval '71 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-001400000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9300-001400000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'clasic', 'basm', 'poveste']);
 update public.stories
-set cover_kind = 'drawn', cover_design = 'doodles', cover_background = 'gold', cover_accent = 'sage'
+set cover_kind = 'drawn', cover_design = 'sparkles', cover_background = 'gold', cover_accent = 'sage'
 where stories.id = '00000000-0000-4000-9300-001400000000'::uuid
   and (cover_kind, cover_design, cover_background, cover_accent)
-    is distinct from ('drawn', 'doodles', 'gold', 'sage');
+    is distinct from ('drawn', 'sparkles', 'gold', 'sage');
 insert into public.classic_authors (name, died_year) values ($demo$Barbu Ștefănescu Delavrancea$demo$, 1918)
 on conflict (name) do nothing;
 update public.stories

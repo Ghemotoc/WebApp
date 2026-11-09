@@ -5,7 +5,7 @@
  * It shows the uploaded picture when the staff member may see it (at any stage of its check, as
  * the uploader), otherwise the bundled default: the curled cat emblem, or the product name as
  * text for a logo. The tile uses the light or night page colour (--paper in
- * src/styles/tokens.css) whatever theme the staff member uses, as the seasonal doodle picker does.
+ * src/styles/tokens.css) whatever theme the staff member uses.
  * Who shows it: BrandSlotCard. What it calls: nothing; it draws what it is given.
  */
 import { useTranslation } from 'react-i18next';

@@ -20,7 +20,7 @@ The design canvas (17 Oct 2026, version 162) is the source of truth for every sc
 - Text in square brackets ([Partner], [date], [price to be set]) is a placeholder, not copy.
 - `renders/desktop/` shows each board at 1440 px wide; `renders/phone/` shows the product screens at 390 px wide (twice the pixels).
 - Screen numbers (3.1, 8.14 and so on) match the screen groups in docs/architecture.md, section 1.7.4.
-- Groups 9 (social posts), 10 (certificates) and 11 (doodles) are references, not app screens. Doodles are SVG files (CLAUDE.md rule 16).
+- Groups 9 (social posts), 10 (certificates) and 11 (doodles) are references, not app screens. The app draws no doodles (CLAUDE.md rule 16; Robert, 9 Nov 2026): where a board draws one, leave it out.
 
 ## Boards
 

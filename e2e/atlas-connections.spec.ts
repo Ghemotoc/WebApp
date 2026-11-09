@@ -12,7 +12,7 @@
  *   inside its own region while the page doesn't (S1-E17-15);
  * - the family tree puts generations top to bottom with partners side by side, "Include turned
  *   or made" counts makers, and a note says how many characters are left off (S1-E17-16);
- * - the page passes axe, doesn't scroll sideways and has no doodle over text at 390, 768 and
+ * - the page passes axe, doesn't scroll sideways and draws no doodle at 390, 768 and
  *   1440 px, light and night, Romanian and English.
  * Test data: adult_writer's seed story "Stația meteo" gets five characters (deleted at the end);
  * suspended_user (whose language no other spec changes) gets one seeded story with three
@@ -22,7 +22,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 const writerId = '00000000-0000-4000-8000-000000000001';
@@ -262,7 +262,7 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
       await expect(
         page.getByTestId('atlas-relationship-map').getByRole('link', { name: 'Radu', exact: true }),
       ).toBeVisible();
-      await expectNoDoodleOverlap(page);
+      await expectNoDoodles(page);
       await context.close();
     });
   }

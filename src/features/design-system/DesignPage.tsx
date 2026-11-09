@@ -17,7 +17,6 @@ import { AdSection } from './components/AdSection';
 import { ButtonSection } from './components/ButtonSection';
 import { CardSection } from './components/CardSection';
 import { ColourSection } from './components/ColourSection';
-import { DoodleSection } from './components/DoodleSection';
 import { FormSection } from './components/FormSection';
 import { NoticeSection } from './components/NoticeSection';
 import { PillSection } from './components/PillSection';
@@ -61,8 +60,6 @@ export function DesignPage() {
       <ReportSection />
       <AdSection />
       <ShellSection />
-      {/* Lane B (23 Oct 2026): the doodles in light and night, drawn from the tokens. */}
-      <DoodleSection />
     </PageContainer>
   );
 }

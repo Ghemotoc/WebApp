@@ -10,7 +10,7 @@
  * ExportDownloadButton for Download ZIP (a one-minute address for the signed-in owner only,
  * criterion 3). The saved file is named after the day the copy was made, never after the person.
  */
-import clockIcon from '@/assets/icons/clock.svg';
+import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { formatRomaniaDate } from '@/lib/romania-time';
@@ -37,14 +37,7 @@ function PreparingLine() {
       role="status"
       className="flex items-center gap-3 rounded-2xl bg-tint px-4.5 py-4 text-[15px] text-body"
     >
-      <img
-        src={clockIcon}
-        alt=""
-        aria-hidden="true"
-        width={22}
-        height={22}
-        className="size-5.5 shrink-0"
-      />
+      <ActionIcon name="clock" size={22} className="shrink-0 text-heading" />
       {t('settings.preparing')}
     </div>
   );

@@ -4,7 +4,6 @@ The `/design` page: every colour (light and night, with contrast ratios), font a
 
 - `DesignPage.tsx`: the page; one section component per part in `components/`.
 - `registerDesignTranslations.ts`: adds the page's own text (`src/locales/<language>/design.json`) when the page loads, so production builds don't carry it.
-- `doodleFiles.ts` (Lane B, 23 Oct 2026): the 98 doodles from `design/assets/` as SVG text, drawn inline by `components/DoodleSection.tsx` so they take their colours from the `--doodle-*` tokens; the sign-off sheet for light and night.
 
 Where it shows: always in development (`npm run dev`), and on staging when the build has `VITE_SHOW_DESIGN_PAGE=true`. Never in production (decided 17 Oct 2026). Search engines are asked not to index it.
 

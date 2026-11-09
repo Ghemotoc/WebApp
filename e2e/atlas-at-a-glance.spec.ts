@@ -14,7 +14,7 @@
  * - the switcher moves between stories and /plan opens the story open last (S1-E17-02);
  * - "Plan" sits beside "Story settings" on Your writing; another writer can't open someone
  *   else's plan;
- * - the page passes axe, doesn't scroll sideways and has no doodle over text at 390, 768 and
+ * - the page passes axe, doesn't scroll sideways and draws no doodle at 390, 768 and
  *   1440 px, light and night, Romanian and English.
  * Test data: adult_writer makes "Atlas test" stories (deleted at the end); suspended_user (whose
  * language no other spec changes) gets one seeded story for the accessibility checks.
@@ -23,7 +23,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 const suspendedUserId = '00000000-0000-4000-8000-000000000013';
@@ -186,7 +186,7 @@ test.describe('Story Atlas at a glance (S1-E17-01 to S1-E17-06)', () => {
       const page = await context.newPage();
       await checkScreen(page, view);
       await expect(page.getByRole('heading', { level: 1 })).toHaveText('Harta din podul bunicii');
-      await expectNoDoodleOverlap(page);
+      await expectNoDoodles(page);
       await context.close();
     });
   }

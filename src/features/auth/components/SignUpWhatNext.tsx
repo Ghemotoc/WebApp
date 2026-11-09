@@ -7,19 +7,17 @@
  * is no age check, decided 17 Oct 2026, 12:44); and the "too young" card says "under 18" in that
  * test and "under 13" once sign-up is open to everyone aged 13 and up.
  * The cards preview other screens, so they hold no buttons.
- * Who uses it: SignUpPage. What it calls: the auth locale texts and the icon set.
+ * Who uses it: SignUpPage. What it calls: the auth locale texts and ActionIcon's line icons.
  */
 import { useTranslation } from 'react-i18next';
 
-import mailIcon from '@/assets/icons/mail.svg';
-import pictureIcon from '@/assets/icons/picture.svg';
-import shieldIcon from '@/assets/icons/shield.svg';
+import { ActionIcon, type ActionIconName } from '@/components/icons/ActionIcon';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 
 /** One preview card: its icon, title and the line under it. */
 interface PreviewCard {
   key: string;
-  icon: string;
+  icon: ActionIconName;
   title: string;
   body: string;
 }
@@ -36,7 +34,7 @@ function usePreviewCards(isAdultsOnly: boolean): PreviewCard[] {
   const cards: PreviewCard[] = [
     {
       key: 'email',
-      icon: mailIcon,
+      icon: 'mail',
       title: t('signUp.next.email.title'),
       body: t('signUp.next.email.body'),
     },
@@ -45,7 +43,7 @@ function usePreviewCards(isAdultsOnly: boolean): PreviewCard[] {
   if (!isAdultsOnly) {
     cards.push({
       key: 'ageCheck',
-      icon: pictureIcon,
+      icon: 'picture',
       title: t('signUp.next.ageCheck.title'),
       body: t('signUp.next.ageCheck.body'),
     });
@@ -53,7 +51,7 @@ function usePreviewCards(isAdultsOnly: boolean): PreviewCard[] {
   // Step 3: a short preview of the refusal the form shows (AgeRefusal), in its own words.
   cards.push({
     key: 'tooYoung',
-    icon: shieldIcon,
+    icon: 'shield',
     title: isAdultsOnly ? t('signUp.next.under18.title') : t('signUp.next.under13.title'),
     body: isAdultsOnly ? t('signUp.next.under18.body') : t('signUp.next.under13.body'),
   });
@@ -93,7 +91,7 @@ export function SignUpWhatNext({ isAdultsOnly }: { isAdultsOnly: boolean }) {
               aria-hidden="true"
               className="inline-flex size-11 items-center justify-center rounded-2xl bg-tint"
             >
-              <img src={card.icon} alt="" width={32} height={32} className="block size-8" />
+              <ActionIcon name={card.icon} size={22} className="text-heading" />
             </span>
             <h3 className="m-0 font-heading text-xl font-bold text-heading">{card.title}</h3>
             <p className="m-0 text-[15px] leading-relaxed text-body">{card.body}</p>

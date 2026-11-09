@@ -10,7 +10,7 @@
  *   offered to remove the owner, and can't open the log or change the settings;
  * - the owner reads the moderation log: who did what, and the reason (criterion 2);
  * - the settings with the Moderators card, the members page and the log pass axe at 390, 768 and
- *   1440 px, light and night, ro and en, and no doodle touches text or a control.
+ *   1440 px, light and night, ro and en, and no doodle is drawn.
  * Test data: the seeded 16+ space "fantasy-writers-circle" (adult_writer owns it, teacher is a
  * member). blocker joins it here; teacher's powers, blocker's membership and the space's log are
  * put back before and after.
@@ -19,7 +19,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 /** The seeded 16+ space. */
@@ -138,7 +138,7 @@ test.describe('space moderators (FORUMS-2b, S1-E8-07)', () => {
         `update public.profiles set locale = '${view.language}' where handle = 'adult_writer';`,
       );
       await checkScreen(page, view);
-      await expectNoDoodleOverlap(page);
+      await expectNoDoodles(page);
     }
     await context.close();
   });

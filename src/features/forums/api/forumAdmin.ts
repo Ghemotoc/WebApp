@@ -29,7 +29,6 @@ export interface StaffForum {
   position: number;
   isPinned: boolean;
   accent: ForumAccent;
-  doodle: string | null;
   /** Its names by language code. */
   names: Record<string, ForumName>;
   /** The interface languages it has no name in yet. */
@@ -45,7 +44,6 @@ export interface ForumChanges {
   position: number;
   isPinned: boolean;
   accent: ForumAccent;
-  doodle: string | null;
   names: Record<string, ForumName>;
 }
 
@@ -102,7 +100,6 @@ export async function listStaffForums(client: AppSupabaseClient): Promise<StaffF
     position: row.position,
     isPinned: row.is_pinned,
     accent: row.accent,
-    doodle: (row.doodle as string | null) ?? null,
     names: namesFrom(row.names),
     missingLanguages: row.missing_languages,
   }));
@@ -125,7 +122,6 @@ export async function saveForum(client: AppSupabaseClient, changes: ForumChanges
     sort_position: changes.position,
     is_pinned: changes.isPinned,
     accent: changes.accent,
-    doodle: changes.doodle as string,
     names: namesAsJson(changes.names),
   });
   if (error !== null) throw websiteErrorFrom(error);

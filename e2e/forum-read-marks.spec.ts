@@ -11,7 +11,7 @@
  * - "Mark as read" on a forum and "Mark all as read" on the index clear the dots (criterion 3);
  * - a visitor sees no dots and no mark buttons;
  * - the index and the forum's page with new posts pass axe at 390, 768 and 1440 px, light and
- *   night, ro and en, and no doodle touches text or a control.
+ *   night, ro and en, and no doodle is drawn.
  * Test data: the thread this spec starts, removed before and after. Replies by adult_writer are
  * added straight into the database, as if written later, so the post limit doesn't come into it.
  */
@@ -19,7 +19,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 /** The thread this spec starts; its title marks its rows for clean-up. */
@@ -166,7 +166,7 @@ test.describe('read and unread in the forums (FORUMS-1d, S1-E8-04)', () => {
     for (const view of everyView(['/forums', '/forums/first-chapters'])) {
       runSql(`update public.profiles set locale = '${view.language}' where handle = 'teacher';`);
       await checkScreen(page, view);
-      await expectNoDoodleOverlap(page);
+      await expectNoDoodles(page);
     }
   });
 });

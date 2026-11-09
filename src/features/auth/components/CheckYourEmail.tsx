@@ -12,7 +12,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import mailIcon from '@/assets/icons/mail.svg';
+import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Button } from '@/components/ui/Button';
 
 /** What the step needs. */
@@ -66,12 +66,12 @@ export function CheckYourEmail({
   return (
     <div role="status" className="flex flex-col gap-3">
       <div className="flex items-center gap-3">
-        {/* The board's mail icon on a soft plum square, and its smiling heart (LOOK-6). */}
+        {/* The board's mail icon on a soft plum square; decorative. */}
         <span
           aria-hidden="true"
-          className="inline-flex size-14 flex-none items-center justify-center rounded-2xl bg-tint"
+          className="inline-flex size-14 flex-none items-center justify-center rounded-2xl bg-tint text-heading"
         >
-          <img src={mailIcon} alt="" width={38} height={38} className="block size-[38px]" />
+          <ActionIcon name="mail" size={28} />
         </span>
         <h3 className="m-0 min-w-0 font-heading text-[22px] font-bold text-heading">
           {t(joinsWaitlist ? 'signUp.sent.waitlistHeading' : 'signUp.sent.heading')}

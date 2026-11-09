@@ -10,14 +10,14 @@
  * - the forum and author filters narrow the results and stay in the address;
  * - a post by someone who blocks the reader is not found (criterion 2);
  * - the results page passes axe at 390, 768 and 1440 px, light and night, ro and en, with no
- *   doodle touching text or a control.
+ *   doodle drawn.
  * Test data: two threads this spec writes to the database, removed before and after.
  */
 import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 /** The threads; the ending marks their rows for clean-up. */
@@ -150,7 +150,7 @@ test.describe('forum search (FORUMS-1f, S1-E8-10)', () => {
     test.setTimeout(180_000);
     for (const view of everyView(['/forums/search?q=dragoni'])) {
       await checkScreen(page, view);
-      await expectNoDoodleOverlap(page);
+      await expectNoDoodles(page);
     }
   });
 });

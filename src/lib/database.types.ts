@@ -3595,7 +3595,6 @@ export type Database = {
           accent: Database['public']['Enums']['forum_accent'];
           created_at: string;
           deleted_at: string | null;
-          doodle: string | null;
           id: string;
           is_pinned: boolean;
           level: number;
@@ -3610,7 +3609,6 @@ export type Database = {
           accent?: Database['public']['Enums']['forum_accent'];
           created_at?: string;
           deleted_at?: string | null;
-          doodle?: string | null;
           id?: string;
           is_pinned?: boolean;
           level?: number;
@@ -3624,7 +3622,6 @@ export type Database = {
           accent?: Database['public']['Enums']['forum_accent'];
           created_at?: string;
           deleted_at?: string | null;
-          doodle?: string | null;
           id?: string;
           is_pinned?: boolean;
           level?: number;
@@ -6394,63 +6391,6 @@ export type Database = {
           },
           {
             foreignKeyName: 'sanctions_user_id_fkey';
-            columns: ['user_id'];
-            isOneToOne: false;
-            referencedRelation: 'profiles';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
-      seasonal_occasions: {
-        Row: {
-          created_at: string;
-          deleted_at: string | null;
-          doodle: Database['public']['Enums']['seasonal_doodle'];
-          ends_on: string;
-          every_year: boolean;
-          id: string;
-          is_season_default: boolean;
-          name_en: string;
-          name_ro: string;
-          shows_on: string;
-          starts_on: string;
-          updated_at: string;
-          user_id: string | null;
-        };
-        ComputedFields: never;
-        Insert: {
-          created_at?: string;
-          deleted_at?: string | null;
-          doodle: Database['public']['Enums']['seasonal_doodle'];
-          ends_on: string;
-          every_year?: boolean;
-          id?: string;
-          is_season_default?: boolean;
-          name_en: string;
-          name_ro: string;
-          shows_on?: string;
-          starts_on: string;
-          updated_at?: string;
-          user_id?: string | null;
-        };
-        Update: {
-          created_at?: string;
-          deleted_at?: string | null;
-          doodle?: Database['public']['Enums']['seasonal_doodle'];
-          ends_on?: string;
-          every_year?: boolean;
-          id?: string;
-          is_season_default?: boolean;
-          name_en?: string;
-          name_ro?: string;
-          shows_on?: string;
-          starts_on?: string;
-          updated_at?: string;
-          user_id?: string | null;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'seasonal_occasions_user_id_fkey';
             columns: ['user_id'];
             isOneToOne: false;
             referencedRelation: 'profiles';
@@ -9757,7 +9697,6 @@ export type Database = {
         Args: Record<PropertyKey, never>;
         Returns: {
           accent: Database['public']['Enums']['forum_accent'];
-          doodle: string;
           id: string;
           is_pinned: boolean;
           level: number;
@@ -10074,7 +10013,6 @@ export type Database = {
       };
       admin_remove_name_word: { Args: { target_word_id: string }; Returns: boolean };
       admin_remove_nudge_word: { Args: { target_word_id: string }; Returns: boolean };
-      admin_remove_occasion: { Args: { occasion_id: string }; Returns: undefined };
       admin_remove_on_call_shift: {
         Args: { reason_given: string; shift_id: string };
         Returns: boolean;
@@ -10191,7 +10129,6 @@ export type Database = {
       admin_save_forum: {
         Args: {
           accent: Database['public']['Enums']['forum_accent'];
-          doodle: string;
           forum_id: string;
           is_pinned: boolean;
           names: Json;
@@ -10219,20 +10156,6 @@ export type Database = {
           new_show_from?: string;
           new_take_down_on?: string;
           target_page_id: string;
-        };
-        Returns: string;
-      };
-      admin_save_occasion: {
-        Args: {
-          doodle: Database['public']['Enums']['seasonal_doodle'];
-          ends_on: string;
-          every_year: boolean;
-          is_season_default: boolean;
-          name_en: string;
-          name_ro: string;
-          occasion_id?: string;
-          shows_on: string;
-          starts_on: string;
         };
         Returns: string;
       };
@@ -11671,12 +11594,6 @@ export type Database = {
         Args: { character_name: string; character_role: string; story_slug: string };
         Returns: Json;
       };
-      current_seasonal_doodle: {
-        Args: { on_date: string; place: string };
-        Returns: {
-          doodle: Database['public']['Enums']['seasonal_doodle'];
-        }[];
-      };
       data_export_held_tables: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -12038,7 +11955,6 @@ export type Database = {
         Returns: {
           accent: Database['public']['Enums']['forum_accent'];
           description: string;
-          doodle: string;
           has_unread: boolean;
           id: string;
           is_pinned: boolean;
@@ -13217,10 +13133,6 @@ export type Database = {
       };
       notify_chapter_published: { Args: { payload: Json }; Returns: undefined };
       notify_comment_posted: { Args: { payload: Json }; Returns: undefined };
-      occasion_covers: {
-        Args: { ends_on: string; every_year: boolean; on_date: string; starts_on: string };
-        Returns: boolean;
-      };
       offer_space_handover: { Args: { handle: string; slug: string }; Returns: Json };
       on_call_gaps: { Args: { from_time: string; to_time: string }; Returns: Json };
       on_call_now: { Args: { at_time?: string }; Returns: string };
@@ -14325,17 +14237,6 @@ export type Database = {
       search_writers: {
         Args: { page_offset?: number; page_size?: number; term: string };
         Returns: Json;
-      };
-      seasonal_occasion_problems: {
-        Args: {
-          ends_on: string;
-          every_year: boolean;
-          name_en: string;
-          name_ro: string;
-          shows_on: string;
-          starts_on: string;
-        };
-        Returns: string[];
       };
       send_finished_thanks: { Args: { story_slug: string }; Returns: Json };
       send_landing_reminders: { Args: Record<PropertyKey, never>; Returns: number };
@@ -15615,21 +15516,6 @@ export type Database = {
         | 'police_online_child'
         | 'regulator';
       sanction_kind: 'warning' | 'suspension' | 'ban' | 'reporting_pause';
-      seasonal_doodle:
-        | 'autumn_leaf'
-        | 'bee'
-        | 'butterfly'
-        | 'candle'
-        | 'cherry_blossom'
-        | 'daisy'
-        | 'friendly_ghost'
-        | 'hot_air_balloon'
-        | 'hot_chocolate'
-        | 'jack_o_lantern'
-        | 'kite'
-        | 'mushroom'
-        | 'rain_cloud'
-        | 'sunny_face';
       space_age_group: 'under_16' | '16_plus';
       space_banner:
         | 'plum'
@@ -16025,22 +15911,6 @@ export const Constants = {
         'regulator',
       ],
       sanction_kind: ['warning', 'suspension', 'ban', 'reporting_pause'],
-      seasonal_doodle: [
-        'autumn_leaf',
-        'bee',
-        'butterfly',
-        'candle',
-        'cherry_blossom',
-        'daisy',
-        'friendly_ghost',
-        'hot_air_balloon',
-        'hot_chocolate',
-        'jack_o_lantern',
-        'kite',
-        'mushroom',
-        'rain_cloud',
-        'sunny_face',
-      ],
       space_age_group: ['under_16', '16_plus'],
       space_banner: [
         'plum',

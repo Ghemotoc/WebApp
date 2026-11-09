@@ -1,7 +1,7 @@
 /**
  * CrossIcon: an ×, drawn as an inline SVG (bundle ADMIN-2, part e1b).
  * Used by: the Reject button on Moderation › Pictures to check. Plain icons are allowed for close
- * and status marks (DoD design rules); everything else uses the doodle icon set. Decorative:
+ * and status marks (DoD design rules); everything else uses the line icons (ActionIcon, NavIcon). Decorative:
  * hidden from screen readers, so the control around it must have its own accessible name.
  */
 import type { SVGProps } from 'react';

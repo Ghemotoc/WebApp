@@ -13,7 +13,7 @@
  *   undated chapters apart (S1-E17-20);
  * - the lanes show each chapter in its teller's column with its status in words (S1-E17-21);
  * - the view toggle remembers the last choice (S1-E17-22);
- * - the page passes axe, doesn't scroll sideways and has no doodle over text at 390, 768 and
+ * - the page passes axe, doesn't scroll sideways and draws no doodle at 390, 768 and
  *   1440 px, light and night, Romanian and English, each view at every width.
  * Test data: adult_writer gets "atlas-storyline-seed01" with three chapters (two published) and
  * two characters; suspended_user (whose language no other spec changes) gets one small story for
@@ -23,7 +23,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 const writerId = '00000000-0000-4000-8000-000000000001';
@@ -327,7 +327,7 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
       const page = await context.newPage();
       await checkScreen(page, view);
       await expect(page.getByRole('radiogroup')).toBeVisible();
-      await expectNoDoodleOverlap(page);
+      await expectNoDoodles(page);
       await context.close();
     });
   });

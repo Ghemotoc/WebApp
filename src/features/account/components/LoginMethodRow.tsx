@@ -2,7 +2,7 @@
  * LoginMethodRow: one way to log in in Settings › Ways to log in (story S1-E2-09; board 6.3,
  * "Ways to log in").
  *
- * Shows the way's logo or doodle icon, its name and a short detail, a Connected or Not connected
+ * Shows the way's logo (the provider's own, from its brand kit) or a line icon, its name and a short detail, a Connected or Not connected
  * pill and, when there is one, its button (Connect, Disconnect, "Add a passkey", "Set a password").
  * A Disconnect that would remove the last way in is disabled and points at the note that says why
  * (aria-describedby), as the board does.
@@ -10,6 +10,7 @@
  */
 import { useTranslation } from 'react-i18next';
 
+import { ActionIcon, type ActionIconName } from '@/components/icons/ActionIcon';
 import { Button } from '@/components/ui/Button';
 import { InfoPill } from '@/components/ui/InfoPill';
 
@@ -25,10 +26,16 @@ export interface LoginMethodAction {
   disabledBecauseOf: string | null;
 }
 
+/**
+ * The row's picture: a provider's own logo file (Google, Apple, Microsoft; never redrawn, DoD), or
+ * one of the line icons for email and passkeys (NO-DOODLES).
+ */
+export type LoginMethodIcon = { brandLogo: string } | { lineIcon: ActionIconName };
+
 /** What a row needs. */
 interface LoginMethodRowProps {
-  /** The logo or icon file; drawn without alt text, because the name says the same. */
-  iconSource: string;
+  /** The logo or icon; drawn without alt text, because the name says the same. */
+  icon: LoginMethodIcon;
   name: string;
   detail: string;
   /** Connected or not; null for the "Add another passkey" row, which has no pill. */
@@ -48,7 +55,11 @@ export function LoginMethodRow(props: LoginMethodRowProps) {
   return (
     <li className="flex flex-wrap items-center gap-x-4 gap-y-3 border-t border-border px-[18px] py-4 first:border-t-0">
       <span className="inline-flex h-10 w-10 flex-none items-center justify-center rounded-full bg-white">
-        <img src={props.iconSource} alt="" aria-hidden="true" width={22} height={22} />
+        {'brandLogo' in props.icon ? (
+          <img src={props.icon.brandLogo} alt="" aria-hidden="true" width={22} height={22} />
+        ) : (
+          <ActionIcon name={props.icon.lineIcon} size={22} className="text-[#1d1a20]" />
+        )}
       </span>
       <span className="flex min-w-0 flex-[1_1_220px] flex-col gap-[3px]">
         <span className="text-[15px] font-bold text-heading">{props.name}</span>

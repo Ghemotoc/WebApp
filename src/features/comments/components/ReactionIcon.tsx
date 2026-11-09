@@ -1,8 +1,8 @@
 /**
  * ReactionIcon: one of the six reactions, drawn as an inline SVG (story S1-E6-02; board 3.5).
  *
- * The paths are copied from the Reader board. Plain icons, not doodles: the chapter reader has no
- * doodles (DoD design rules), and the interface shows no emoji (the story's note). Hidden from
+ * The paths are copied from the Reader board. Plain line icons, like the rest of the
+ * app's icons, and the interface shows no emoji (the story's note). Hidden from
  * screen readers: the button around it carries the reaction's name.
  * Who uses it: CommentReactions.
  */

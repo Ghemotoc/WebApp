@@ -18,7 +18,6 @@
     "help": "Ajutor și întrebări",
     "interfaceText": "Textele aplicației",
     "emails": "Șabloane de email",
-    "seasonal": "Desene de sezon",
     "landingPages": "Pagini de prezentare",
     "branding": "Identitate vizuală"
   },
@@ -216,58 +215,6 @@
     "searchHint": "Caută după cuvintele de pe ecran, în oricare limbă, sau după cheie.",
     "count": "Se văd {{shown}} din {{total}}",
     "more": "Arată încă 50"
-  },
-  "seasonal": {
-    "intro": "Alege ce desen apare lângă titlul Descoperă și lângă etichetele populare din Căutare, și în ce zile. Cititorii văd o schimbare în cel mult un minut. Când două ocazii se suprapun, câștigă cea mai scurtă, iar desenul implicit al anotimpului acoperă zilele fără ocazie. Desenele noi vin ca fișiere într-o versiune nouă a aplicației, niciodată prin încărcare.",
-    "add": "Adaugă o ocazie",
-    "edit": "Schimbă",
-    "editNamed": "Schimbă {{name}}",
-    "remove": "Scoate",
-    "removeNamed": "Scoate {{name}}",
-    "save": "Salvează",
-    "cancel": "Renunță",
-    "formLabel": "Ocazie",
-    "fields": {
-      "nameRo": "Numele în română",
-      "nameEn": "Numele în engleză",
-      "startsOn": "Prima zi",
-      "endsOn": "Ultima zi",
-      "endsOnHint": "Pentru o perioadă peste Anul Nou, alege ultima zi în anul următor.",
-      "everyYear": "În fiecare an",
-      "showsOn": "Apare în",
-      "isSeasonDefault": "Implicit pentru anotimp (apare în zilele fără ocazie)",
-      "doodle": "Desen"
-    },
-    "places": {
-      "both": "Descoperă și Căutare",
-      "discover": "Doar Descoperă",
-      "search": "Doar Căutare"
-    },
-    "doodles": {
-      "autumn_leaf": "Frunză de toamnă",
-      "bee": "Albină",
-      "butterfly": "Fluture",
-      "candle": "Lumânare",
-      "cherry_blossom": "Flori de cireș",
-      "daisy": "Margaretă",
-      "friendly_ghost": "Fantomă prietenoasă",
-      "hot_air_balloon": "Balon cu aer cald",
-      "hot_chocolate": "Ciocolată caldă",
-      "jack_o_lantern": "Dovleac de Halloween",
-      "kite": "Zmeu",
-      "mushroom": "Ciupercă",
-      "rain_cloud": "Nor cu ploaie",
-      "sunny_face": "Soare zâmbitor"
-    },
-    "listDates": "{{from}} până la {{to}}",
-    "everyYearShort": "în fiecare an",
-    "defaultLabel": "implicit pentru anotimp",
-    "year": "Anul",
-    "yearHeading": "Anul {{year}}",
-    "dayRange": "(zilele {{first}} până la {{last}})",
-    "gapDays_one": "{{count}} zi fără desen",
-    "gapDays_few": "{{count}} zile fără desen",
-    "gapDays_other": "{{count}} de zile fără desen"
   },
   "branding": {
     "heading": "Logo și emblemă",

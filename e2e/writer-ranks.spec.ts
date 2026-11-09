@@ -10,7 +10,7 @@
  * - unpublishing chapters lowers the rank on the next visit (criterion 2);
  * - a writer with no published chapter shows no rank at all;
  * - the profile passes axe at 390, 768 and 1440 px, light and night, ro and en, and no doodle
- *   touches text or a control (the avatar's initials keep a line height of 1 since this part).
+ *   is drawn (the avatar's initials keep a line height of 1 since this part).
  * Test data: one story "Ranguri e2e" with 15 published chapters by the pending_check persona, and
  * one thread "Ranguri e2e" they start here. Both are removed before and after.
  */
@@ -18,7 +18,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 
 /**
  * The pending_check persona's user ID (the seed's): an active member whom no other spec publishes
@@ -134,7 +134,7 @@ test.describe('writer ranks (FORUMS-2e, S1-E8-09)', () => {
     for (const view of everyView(['/u/pending_check'])) {
       await checkScreen(page, view);
       await expect(page.getByTestId('rank-chip')).toBeVisible();
-      await expectNoDoodleOverlap(page);
+      await expectNoDoodles(page);
     }
     await context.close();
   });

@@ -6,6 +6,7 @@ The boards in design/boards are the source of truth for layout, but where a boar
 
 | Board | Element | Change |
 | --- | --- | --- |
+| Every board | Doodles, stickers and hand-drawn icons (the doodle set, the forum category doodles, the seasonal doodle, doodle icons on buttons) and the "Doodles" cover pattern's name | Left out everywhere, staff screens included: line icons (`ActionIcon`, `NavIcon`) instead, and the cover pattern is called "Sparkles" (ro "Sclipiri") with the same drawing. Any row below that keeps, moves or lets staff pick a doodle is replaced by this one (Robert, 9 Nov 2026; NO-DOODLES) |
 | Messages (5.5) | The three columns at every width, stacked on phones | Under 1024 px one column at a time: the chats at /messages, the chat (with "Chats" to go back, About below it) at /messages/:handle, so a phone never shows a long list above the chat (S1-E9-01) |
 | Messages (5.5) | The chat header's "Fiction writer · The Salt Mine Choir, 15 chapters" | The name and @username only; the profile is one link away in About this chat (S1-E9-01) |
 | Messages (5.5) | A small flag icon beside each message | Report is the shared text button beside each message from the other person (S1-E10-01). Block and Report in the chat header, the "Change" links and Delete chat are built as drawn (S1-E9-02, S1-E9-04) |

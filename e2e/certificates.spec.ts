@@ -12,7 +12,7 @@
  *   (criterion 7);
  * - archiving the class tells the teacher in the app and queues an email (criterion 3);
  * - every certificate screen passes axe at 390, 768 and 1440 px, light and night, ro and en, and
- *   no doodle touches text or a control.
+ *   no doodle is drawn.
  * Test data: the teacher persona starts the class with SQL; pending_check joins with its code;
  * the moderator persona has the Schools permission. Everything is removed before and after; the
  * class's name never ends in "e2e", so spaces.spec leaves it alone.
@@ -21,7 +21,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 /** The class this spec makes. */
@@ -212,7 +212,7 @@ test.describe('writing certificates (CLASSES-e, S1-E8-12)', () => {
           );
         }
         await checkScreen(page, view);
-        await expectNoDoodleOverlap(page);
+        await expectNoDoodles(page);
       }
       await context.close();
     }

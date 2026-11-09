@@ -13,7 +13,7 @@
 import { useState } from 'react';
 import { usePeopleTranslation } from '../registerPeopleTranslations';
 
-import blockIcon from '@/assets/icons/block.svg';
+import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Notice } from '@/components/ui/Notice';
@@ -70,7 +70,7 @@ export function ProfileSafetyCard({ profile }: { profile: WriterProfile }) {
         />
         <Button variant="destructive" aria-haspopup="dialog" onClick={() => setIsBlockOpen(true)}>
           {/* The board's "no entry" sign before the words (LOOK-5); the words name it. */}
-          <img src={blockIcon} alt="" aria-hidden="true" width={20} height={20} />
+          <ActionIcon name="block" size={18} />
           {t('safety.block', { name: profile.displayName })}
         </Button>
       </div>

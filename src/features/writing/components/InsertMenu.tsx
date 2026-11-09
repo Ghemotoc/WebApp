@@ -4,7 +4,7 @@
  *
  * Board values: a 44 px pill button in plum text, filled plum while open; the menu is a white
  * card (24 px corners, a soft shadow) under it, at most 340 px wide and never wider than the
- * screen, each item a 56 px row with its doodle icon in a tinted tile, its name and a short note.
+ * screen, each item a 56 px row with its line icon in a tinted tile, its name and a short note.
  * Keyboard (WAI-ARIA menu button): Enter, Space or the down arrow opens it on the first item; the
  * arrow keys, Home and End move; Escape closes it and puts focus back on the button; Tab or a
  * click outside closes it.
@@ -16,13 +16,15 @@
 import { useEffect, useId, useRef, useState, type KeyboardEvent, type RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { ActionIcon, type ActionIconName } from '@/components/icons/ActionIcon';
+
 /** One item of the menu. */
 export interface InsertMenuItem {
   key: string;
   label: string;
   note: string;
-  /** The doodle icon's file (an SVG, CLAUDE.md rule 16); decorative. */
-  icon: string;
+  /** The item's line icon (ActionIcon, since NO-DOODLES); decorative. */
+  icon: ActionIconName;
   onPick: () => void;
 }
 
@@ -73,7 +75,7 @@ interface InsertMenuPanelProps {
   onPicked: () => void;
 }
 
-/** The open menu: one row per item, each with its doodle icon, name and note. */
+/** The open menu: one row per item, each with its line icon, name and note. */
 function InsertMenuPanel(props: InsertMenuPanelProps) {
   const { menuRef, menuId, items, footnote, onKeyDown, onPicked } = props;
   const { t } = useTranslation('editor');
@@ -105,9 +107,9 @@ function InsertMenuPanel(props: InsertMenuPanelProps) {
           >
             <span
               aria-hidden="true"
-              className="inline-flex size-9 shrink-0 items-center justify-center rounded-xl bg-tint"
+              className="inline-flex size-9 shrink-0 items-center justify-center rounded-xl bg-tint text-heading"
             >
-              <img src={item.icon} alt="" width={26} height={26} />
+              <ActionIcon name={item.icon} size={20} />
             </span>
             <span className="flex flex-col gap-0.5">
               <span className="text-[15px] font-semibold text-ink">{item.label}</span>

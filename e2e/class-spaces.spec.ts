@@ -14,7 +14,7 @@
  * - another adult never finds the class: its address says it isn't here (criterion 3);
  * - a used-up code and a stopped code say so on the join page (criterion 4);
  * - the settings with the invite card and the join page pass axe at 390, 768 and 1440 px, light
- *   and night, ro and en, and no doodle touches text or a control.
+ *   and night, ro and en, and no doodle is drawn.
  * Test data: the teacher persona (with the Teacher badge) starts the class through
  * create_class_space(), as the class option (part b) will. pending_check is the student who can
  * read (an invited adult is active while adults_only is on); kid_14_waiting is the one who waits.
@@ -24,7 +24,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 /** The class this spec starts; its name never ends in "e2e", so spaces.spec leaves it alone. */
@@ -169,7 +169,7 @@ test.describe('class spaces (CLASSES-a, S1-E8-11)', () => {
     for (const view of everyView(addresses)) {
       runSql(`update public.profiles set locale = '${view.language}' where handle = 'teacher';`);
       await checkScreen(page, view);
-      await expectNoDoodleOverlap(page);
+      await expectNoDoodles(page);
     }
     await context.close();
   });

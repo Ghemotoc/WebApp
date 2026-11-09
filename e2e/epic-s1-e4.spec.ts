@@ -15,8 +15,8 @@
  *   title with "No preview for this story".
  * - Journey 4, the epic's screens at 390, 768 and 1440 px, at night and in Romanian (each
  *   story's own spec covers the other views): the reader with the copy notice, the teaser and
- *   the "No preview" notice; axe finds nothing serious, nothing scrolls sideways and the teaser's
- *   doodles touch nothing.
+ *   the "No preview" notice; axe finds nothing serious, nothing scrolls sideways and no doodle
+ *   is drawn.
  * The database half is supabase/tests/database/093-epic-s1-e4.test.sql.
  * Test data: seed personas; the seed story's chapters are removed and the story put back after.
  */
@@ -24,7 +24,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, LANGUAGE_STORAGE_KEY, screenWidths } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 const storyId = '00000000-0000-4000-9000-000000000001';
@@ -213,7 +213,7 @@ test.describe('epic check: reading (S1-E4-QA)', () => {
         const page = await visitorContext.newPage();
         await checkScreen(page, view);
         await expect(page.getByText('Citești prima parte')).toBeVisible();
-        await expectNoDoodleOverlap(page);
+        await expectNoDoodles(page);
         await page.close();
       });
     }

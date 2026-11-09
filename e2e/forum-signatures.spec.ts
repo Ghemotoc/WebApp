@@ -12,7 +12,7 @@
  * - a moderator asks for a change on the staff account page; the writer is told in Notifications
  *   and in Settings (criterion 3; Q29);
  * - the Settings and profile pages pass axe at 390, 768 and 1440 px, light and night, ro and en,
- *   and no doodle touches text or a control.
+ *   and no doodle is drawn.
  * Test data: adult_writer's signature and one thread "Semnături e2e" they start here. Everything
  * is removed before and after, with the requests, notifications and pictures made here.
  */
@@ -20,7 +20,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 /** adult_writer's user ID (the seed's), for the staff page's address and the clean-up. */
@@ -176,7 +176,7 @@ test.describe('forum signatures (FORUMS-2d, S1-E8-08)', () => {
         `update public.profiles set locale = '${view.language}' where handle = 'adult_writer';`,
       );
       await checkScreen(page, view);
-      await expectNoDoodleOverlap(page);
+      await expectNoDoodles(page);
     }
     await context.close();
   }

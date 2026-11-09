@@ -27,7 +27,7 @@ export interface SharingModalProps {
 }
 
 /**
- * The corner "×", a 44 px round button. The × is a close icon, which the doodle rule exempts.
+ * The corner "×", a 44 px round button. The × is a plain close icon.
  *
  * @returns the button
  */

@@ -14,7 +14,7 @@
 import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react';
 import { useTranslation } from 'react-i18next';
 
-import shieldIcon from '@/assets/icons/shield.svg';
+import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Button } from '@/components/ui/Button';
 import { InfoPill, type PillTone } from '@/components/ui/InfoPill';
 import { TextInput } from '@/components/ui/TextInput';
@@ -85,14 +85,7 @@ export function ChapterPictureNodeView({ node, updateAttributes, deleteNode }: N
         errorMessage={alt.trim() === '' ? t('picture.altMissing') : undefined}
       />
       <div className="flex items-start gap-2.5 text-sm text-heading">
-        <img
-          src={shieldIcon}
-          alt=""
-          aria-hidden="true"
-          width={26}
-          height={26}
-          className="shrink-0"
-        />
+        <ActionIcon name="shield" size={20} className="mt-0.5 shrink-0" />
         <span>
           <strong className="font-bold">{t(`picture.noteTitle.${state}`)}</strong>{' '}
           {t(`picture.note.${state}`)}

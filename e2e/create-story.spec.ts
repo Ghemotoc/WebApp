@@ -10,7 +10,7 @@
  * - teen_17 (read-only while the test is adults only) can't create a story and never sees
  *   adult_writer's new story;
  * - the Write button leads to /write, and a signed-out visitor is asked to log in;
- * - /write and /write/new pass axe, don't scroll sideways and have no doodle over text at 390,
+ * - /write and /write/new pass axe, don't scroll sideways and draw no doodle at 390,
  *   768 and 1440 px, in light and night mode, in Romanian and English.
  * Test data: the seed personas; the story this test makes is deleted at the end.
  */
@@ -18,7 +18,7 @@ import { expect, test, type Browser } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 /** A title long enough to need the smallest cover size (over 40 characters). */
@@ -174,7 +174,7 @@ test.describe('create a story (S1-E3-01)', () => {
     await expect(page.getByText(/Conectează-te|Log in/)).toBeVisible();
   });
 
-  test.describe('every view is accessible, fits the width and keeps doodles off text', () => {
+  test.describe('every view is accessible, fits the width and draws no doodle', () => {
     for (const view of everyView(['/write', '/write/new'])) {
       test(`axe: ${view.address} at ${view.width} px, ${view.theme}, ${view.language}`, async ({
         page,
@@ -186,7 +186,7 @@ test.describe('create a story (S1-E3-01)', () => {
         );
         await useSessionInBrowser(page.context(), (await signInPersona('adult_writer')).session);
         await checkScreen(page, view);
-        await expectNoDoodleOverlap(page);
+        await expectNoDoodles(page);
       });
     }
   });

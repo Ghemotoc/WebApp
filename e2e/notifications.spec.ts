@@ -9,7 +9,7 @@
  * - the bell's badge counts the unread ones, the filter chips narrow the list, a decision says
  *   "Always on", and "Mark all as read" clears the badge (criteria 2 and 3);
  * - the page has no serious axe issue and no sideways scroll at 390, 768 and 1440 px, in light
- *   and night, Romanian and English (CLAUDE.md rules 9 and 21), and no doodle meets text.
+ *   and night, Romanian and English (CLAUDE.md rules 9 and 21), and no doodle is drawn.
  * Test data: a throwaway account of its own (so other specs' notifications never mix in) with a
  * story and chapter, removed afterwards with everything that points at it.
  */
@@ -19,7 +19,7 @@ import { THEME_STORAGE_KEY } from '../src/lib/theme';
 
 import { checkScreen, everyView } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectNoDoodleOverlap } from './support/doodles';
+import { expectNoDoodles } from './support/noDoodles';
 import { makeTestClient, useSessionInBrowser } from './support/personas';
 import { createTestAccount, removeTestAccount } from './support/testAccounts';
 
@@ -137,7 +137,7 @@ test.describe('in-app notifications (S1-E7-01)', () => {
     await page.getByRole('button', { name: 'Mark all as read' }).click();
     await expect(page.getByText('You’re all caught up.')).toBeVisible();
     await expect(page.getByRole('link', { name: 'Notifications', exact: true })).toBeVisible();
-    await expectNoDoodleOverlap(page);
+    await expectNoDoodles(page);
     // Step 5: the header's Settings link opens Settings › Notifications (LOOK-5; board 6.2).
     await page.getByRole('main').getByRole('link', { name: 'Settings', exact: true }).click();
     await expect(page).toHaveURL(/\/settings#notifications$/);

@@ -6,7 +6,7 @@ language: ro
 category: fiction
 rating: all_ages
 tags: copii, cărți, bunici, cartier, iarnă
-cover: drawn:doodles/paper/sage
+cover: drawn:sparkles/paper/sage
 blurb: La capătul străzii Zorilor, autobuzul vine rar și oamenii așteaptă mult. Catinca, opt ani, și bunicul ei construiesc o cutie albastră cu ușă de geam și pun în ea douăsprezece cărți. Apoi cartea cu balena dispare. O poveste caldă despre cărți care pleacă și se întorc, pentru cititori de la șapte ani în sus.
 ---
 

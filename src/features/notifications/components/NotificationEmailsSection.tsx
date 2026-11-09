@@ -12,7 +12,7 @@
  * Who shows it: SettingsPage. What it calls: useEmailSettings → my_notification_email_settings()
  * and set_notification_email().
  */
-import mailIcon from '@/assets/icons/mail.svg';
+import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 
@@ -74,14 +74,7 @@ function EmailNotes() {
     <ul className="m-0 flex list-none flex-col gap-2.5 p-0 text-sm text-body">
       <li>{t('emailSettings.digestNote')}</li>
       <li className="flex items-start gap-2.5">
-        <img
-          src={mailIcon}
-          alt=""
-          aria-hidden="true"
-          width="22"
-          height="22"
-          className="flex-none"
-        />
+        <ActionIcon name="mail" size={22} className="flex-none text-heading" />
         <span>
           <b>{t('emailSettings.noMarketingTitle')}</b> {t('emailSettings.noMarketing')}
         </span>

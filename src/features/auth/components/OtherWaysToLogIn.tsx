@@ -12,7 +12,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import lockIcon from '@/assets/icons/lock.svg';
+import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { useFeatureFlags } from '@/features/flags/hooks/useFeatureFlags';
@@ -95,7 +95,7 @@ export function OtherWaysToLogIn({ onSignedIn }: { onSignedIn: () => void }) {
             disabled={ways.isBusy}
             onClick={() => void ways.logInWithPasskey()}
           >
-            <img src={lockIcon} alt="" aria-hidden="true" width={24} height={24} />
+            <ActionIcon name="lock" size={20} />
             {t('passkey.use')}
           </Button>
         )}

@@ -8,7 +8,8 @@
  * doodle: the liquid glass design has none (bundle G4).
  * Who uses it: ReplyForm, when the thread has a lock.
  */
-import lockIcon from '@/assets/icons/lock.svg';
+
+import { ActionIcon } from '@/components/icons/ActionIcon';
 
 import type { ForumThreadLock } from '../api/forumThreads';
 import { threadDay } from '../lib/forumDates';
@@ -28,8 +29,8 @@ export function LockedThreadNote({ lock }: { lock: ForumThreadLock }) {
       className="rounded-card border border-dashed border-control-border bg-surface p-5 md:p-6"
     >
       <div className="flex flex-wrap items-start gap-4 rounded-2xl bg-panel p-5">
-        <span className="flex size-11 flex-none items-center justify-center rounded-full border border-border bg-surface">
-          <img src={lockIcon} alt="" aria-hidden="true" className="size-6" />
+        <span className="flex size-11 flex-none items-center justify-center rounded-full border border-border bg-surface text-heading">
+          <ActionIcon name="lock" size={22} />
         </span>
         <div className="flex min-w-0 flex-[1_1_320px] flex-col gap-1.5">
           <h2 id="locked-heading" className="m-0 font-heading text-xl font-bold text-heading">

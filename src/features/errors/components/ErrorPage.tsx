@@ -7,7 +7,7 @@
  * What it calls: hooks/useReportedErrorCode.ts, which sends the scrubbed error to our own error
  * log and answers with a short code to quote to support. The page says what is sent and what never
  * is (GDPR art. 13, transparency; board 7.4).
- * Board differences: no storm-cloud doodle or icon yet (no screen uses doodles yet; follow-up), and
+ * Board differences: no storm-cloud picture (the app has no doodles), and
  * the code shows only when the report was stored.
  */
 import { useTranslation } from 'react-i18next';
