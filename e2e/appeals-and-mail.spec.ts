@@ -116,7 +116,7 @@ test.describe('appeals and moderator mail (S1-E10-07, S1-E10-11)', () => {
     // Step 1: the teacher writes from the decision's "Ask the moderators a question".
     const teacherPage = await openAs(browser, 'teacher', '/moderator-mail/new');
     await teacherPage.getByLabel('Subject').fill('About my warning');
-    await teacherPage.getByLabel('Your message').fill('Is my bio fine now?');
+    await teacherPage.getByLabel('Message', { exact: true }).fill('Is my bio fine now?');
     await teacherPage.getByRole('button', { name: 'Send' }).click();
     await expect(teacherPage.getByText(/Your reference is M-\d{6}/)).toBeVisible();
     const reference = runSql(

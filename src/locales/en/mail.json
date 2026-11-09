@@ -2,37 +2,43 @@
   "eyebrow": "Safety",
   "signedOut": "Log in to write to the moderators.",
   "logIn": "Log in",
-  "back": "Back to your messages",
+  "back": "Moderator mail",
   "statuses": {
     "open": "Waiting for the team",
     "waiting": "Answered",
     "closed": "Closed"
   },
   "list": {
-    "documentTitle": "Messages to the moderators",
-    "title": "Messages to the moderators",
-    "intro": "Write to our moderation team about a report, a decision or your account. Every message goes to the whole team, and a person answers.",
+    "documentTitle": "Moderator mail",
+    "title": "Moderator mail",
+    "intro": "Messages with the moderation team. Each one goes to the team's shared inbox, never to one moderator, and a person answers.",
     "write": "Write to the moderators",
     "empty": "You haven't written to the moderators yet.",
     "loadFailed": "We couldn't load your messages. Check your connection and try again.",
-    "meta": "{{reference}} · {{status}} · {{date}}"
+    "settings": "Settings",
+    "subject": "Subject",
+    "status": "Status",
+    "updated": "Last update",
+    "referenceLinked": "{{reference}} · linked to {{decision}}",
+    "noAccount": "Without an account? Use the <report>public report form</report> or <contact>Contact us</contact>."
   },
   "new": {
     "documentTitle": "Write to the moderators",
     "title": "Write to the moderators",
     "intro": "Tell us what it is about. Please don't include passwords or someone else's private details.",
-    "about": "About decision {{reference}}.",
+    "about": "Linked to decision {{reference}}. The team will see which decision it's about.",
     "subject": "Subject",
-    "body": "Your message",
+    "body": "Message",
     "bodyHint": "Up to 4,000 characters.",
     "send": "Send",
     "sending": "Sending…",
     "sent": "Sent. Your reference is {{reference}}. We'll notify you when the team answers.",
-    "open": "Open the conversation"
+    "open": "Open the conversation",
+    "suspendedNote": "You can write even while suspended. To appeal a decision formally, use \"Appeal this decision\" on the reports and decisions page.",
+    "cancel": "Cancel"
   },
   "thread": {
     "documentTitle": "Message {{reference}}",
-    "meta": "{{reference}} · {{status}}",
     "decision": "About decision {{reference}}",
     "messagesLabel": "Messages",
     "you": "You",
@@ -40,10 +46,12 @@
     "member": "@{{handle}}",
     "teamBy": "The moderation team (@{{handle}})",
     "note": "Internal note by @{{handle}} (only staff see this)",
-    "replyLabel": "Your answer",
+    "replyLabel": "Reply",
     "send": "Send",
     "notFound": "We couldn't find this conversation on your account.",
-    "loadFailed": "We couldn't load this conversation. Check your connection and try again."
+    "loadFailed": "We couldn't load this conversation. Check your connection and try again.",
+    "textOnly": "Text only. Files can't be sent here.",
+    "reopens": "Answering a closed thread opens it again."
   },
   "failures": {
     "refused": "Please fill in every field.",

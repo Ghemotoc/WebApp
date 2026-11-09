@@ -134,7 +134,7 @@ test.describe('private messages (S1-E9-01)', () => {
     await expect(page.getByLabel('Message to blocker')).toHaveCount(0);
     // Step 3: blocker finds it under Requests and accepts.
     const blocker = await openAs(browser, 'blocker', '/messages');
-    await blocker.getByRole('button', { name: /Requests/ }).click();
+    await blocker.getByRole('radio', { name: /Requests/ }).check({ force: true });
     await blocker.locator('a[href="/messages/adult_writer"]').click();
     await expect(chatOn(blocker).getByText('Hi! Want to swap feedback?')).toBeVisible();
     await blocker.getByRole('button', { name: 'Accept request' }).click();
@@ -158,7 +158,7 @@ test.describe('private messages (S1-E9-01)', () => {
     await blocker.getByRole('button', { name: 'Delete request' }).click();
     await expect(blocker.getByText('teacher isn’t taking messages right now.')).toHaveCount(0);
     await blocker.goto('/messages');
-    await blocker.getByRole('button', { name: /Requests/ }).click();
+    await blocker.getByRole('radio', { name: /Requests/ }).check({ force: true });
     await expect(blocker.getByText('No message requests.')).toBeVisible();
     await teacher.reload();
     await expect(teacher.getByText(/is waiting in blocker’s requests/)).toBeVisible();

@@ -9,6 +9,7 @@
  */
 import { useState, type FormEvent } from 'react';
 
+import { NavIcon } from '@/components/icons/NavIcon';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 
@@ -66,6 +67,7 @@ export function MessageComposer({
           className="min-h-11 min-w-0 flex-1 resize-y rounded-[22px] border border-control-border bg-surface px-4 py-2.5 text-[15px] text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus-ring)"
         />
         <Button type="submit" disabled={isSending || body.trim() === ''}>
+          <NavIcon name="send" size={16} />
           {t('chat.send')}
         </Button>
       </div>

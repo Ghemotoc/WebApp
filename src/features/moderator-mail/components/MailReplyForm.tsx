@@ -1,12 +1,15 @@
 /**
  * MailReplyForm: one text box and a send button, for answering in a moderator mail thread
- * (story S1-E10-11). Staff get a second button for an internal note.
+ * (story S1-E10-11). Staff get a second button for an internal note. The member's page passes a
+ * hint ("Text only…"), which sits on the left of the buttons as board ModMailOne draws it (bundle
+ * G8c); Send carries the paper plane icon.
  *
  * Who shows it: MailThreadPage and StaffMailThreadPage. What it calls: the onSend it is given;
  * the box empties once the message is saved.
  */
 import { useState, type FormEvent } from 'react';
 
+import { NavIcon } from '@/components/icons/NavIcon';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { Textarea } from '@/components/ui/Textarea';
@@ -25,6 +28,38 @@ export interface MailReplyFormProps {
   onSend: (body: string, isNote: boolean) => Promise<unknown>;
   /** Staff only: shows "Add an internal note". */
   allowsNote?: boolean;
+  /** A short line beside the buttons, linked to the box for screen readers. */
+  hint?: string;
+}
+
+/**
+ * Send, and for staff "Add an internal note".
+ *
+ * @param props.isDisabled - true while sending or while the box is empty
+ * @param props.onNote - saves the words as a note, or null when notes aren't offered
+ * @returns the buttons
+ */
+function ReplyButtons({
+  isDisabled,
+  onNote,
+}: {
+  isDisabled: boolean;
+  onNote: (() => void) | null;
+}) {
+  const { t } = useMailTranslation();
+  return (
+    <div className="flex flex-wrap gap-3">
+      <Button type="submit" disabled={isDisabled}>
+        <NavIcon name="send" size={16} />
+        {t('thread.send')}
+      </Button>
+      {onNote !== null && (
+        <Button type="button" variant="secondary" disabled={isDisabled} onClick={onNote}>
+          {t('staff.addNote')}
+        </Button>
+      )}
+    </div>
+  );
 }
 
 /**
@@ -40,6 +75,7 @@ export function MailReplyForm({
   waitMinutes,
   onSend,
   allowsNote = false,
+  hint,
 }: MailReplyFormProps) {
   const { t } = useMailTranslation();
   const [body, setBody] = useState('');
@@ -68,26 +104,23 @@ export function MailReplyForm({
         maxLength={mailLimits.body}
         value={body}
         onChange={(event) => setBody(event.target.value)}
+        aria-describedby={hint === undefined ? undefined : `${id}-hint`}
       />
       <div aria-live="polite">
         {failure !== null && (
           <Notice tone="error">{t(`failures.${failure}`, { minutes: waitMinutes ?? 60 })}</Notice>
         )}
       </div>
-      <div className="flex flex-wrap gap-3">
-        <Button type="submit" disabled={isBusy || body.trim() === ''}>
-          {t('thread.send')}
-        </Button>
-        {allowsNote && (
-          <Button
-            type="button"
-            variant="secondary"
-            disabled={isBusy || body.trim() === ''}
-            onClick={() => void send(true)}
-          >
-            {t('staff.addNote')}
-          </Button>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        {hint !== undefined && (
+          <p id={`${id}-hint`} className="m-0 text-[13px] text-meta">
+            {hint}
+          </p>
         )}
+        <ReplyButtons
+          isDisabled={isBusy || body.trim() === ''}
+          onNote={allowsNote ? () => void send(true) : null}
+        />
       </div>
     </form>
   );

@@ -3,14 +3,15 @@
  * Report (story S1-E9-01 for the person, S1-E9-02 for the two actions; board Messages 5.5).
  *
  * Block opens "Block <name>?" (ChatBlockDialog). Report reports the person's profile (rule 6);
- * a single message is reported from its own Report beside it (ChatMessages). Both are plain text
- * buttons with the person named in their accessible names, so a screen reader knows whose they
- * are. The online dot follows the username while the person shows as online to the reader
+ * a single message is reported from its own flag button beside it (ChatMessages). Both are small
+ * grey glass pills with a line icon (board Chat in the liquid glass redesign, bundle G8c), with
+ * the person named in their accessible names, so a screen reader knows whose they are. The online dot follows the username while the person shows as online to the reader
  * (S1-E13-01). No doodles (DoD: reporting screens).
  * Who shows it: ChatPanel. What it calls: ChatBlockDialog and ReportButton (S1-E10-01).
  */
 import { useState } from 'react';
 
+import { NavIcon } from '@/components/icons/NavIcon';
 import { Button } from '@/components/ui/Button';
 import { OnlineDot } from '@/features/privacy/components/OnlineDot';
 import { useOnlineHandles } from '@/features/privacy/hooks/useOnlineStatus';
@@ -46,19 +47,23 @@ export function ChatHeader({ chat }: { chat: Conversation }) {
           <OnlineDot isOnline={online.has(chat.handle.toLowerCase())} />
         </p>
       </div>
-      <div className="flex items-center gap-4">
+      {/* The board's small grey glass pills, each with its icon (bundle G8c). */}
+      <div className="flex items-center gap-2">
         <Button
-          variant="text"
+          variant="secondary"
+          className="h-9 px-3.5 text-[13px]"
           aria-haspopup="dialog"
           aria-label={t('block.open', { name })}
           onClick={() => setIsBlockOpen(true)}
         >
+          <NavIcon name="block" size={14} />
           {t('block.button')}
         </Button>
         <ReportButton
           itemType="profile"
           itemReference={chat.handle}
           itemLabel={`@${chat.handle}`}
+          look="pill"
         />
       </div>
       <ChatBlockDialog
