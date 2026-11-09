@@ -1,15 +1,14 @@
 /**
- * LanguageSelect: the English / Română drop-down in the top bar and in the footer
- * (story S1-E1-04; decided 16 Oct 2026, late evening, Q11: a drop-down, not a toggle, in both).
+ * LanguageSelect: the English / Română drop-down in the footer (story S1-E1-04; Q11, 16 Oct 2026:
+ * a drop-down, not a toggle). Robert, 9 Nov 2026, 12:20 UTC (bundle FIX-3): the language menu
+ * sits only in the footer and in Settings, never in the top bar, so the top bar's code-only
+ * version (EN, RO; bundle G4 SHELL) is gone. Settings has its own panel, LanguageSettingsSection.
  *
- * Board values (Discover): in the top bar the label "Language" is visually hidden; in the footer
- * it is shown beside the drop-down. Options in the board's order, each in its own language
- * (English, Română) with a lang attribute so screen readers pronounce them correctly. Height and
- * style follow the one Select (44 px everywhere, docs/board-fixes.md).
- * The top bar's drop-down shows only the code (EN, RO; handoff "Navigation": "Language shows only
- * the code", bundle G4 SHELL), and the footer's shows the full names. The options keep their lang
- * attribute either way.
- * Who uses it: AppLayout puts one in the top bar's and one in the footer's end slot.
+ * Board values (Discover): the label "Language" is shown beside the drop-down, or visually hidden
+ * where a frame asks for it. Options in the board's order, each in its own language (English,
+ * Română) with a lang attribute so screen readers pronounce them correctly. Height and style
+ * follow the one Select (44 px everywhere, docs/board-fixes.md).
+ * Who uses it: AppLayout's footer, and the staff frame (StaffLayout, StaffFooter).
  * What it calls: useInterfaceLanguage, which switches the screen and saves the choice.
  */
 import { useTranslation } from 'react-i18next';
@@ -21,12 +20,10 @@ import { useInterfaceLanguage, type LanguageSaveStatus } from '../hooks/useInter
 
 /** What the drop-down needs. */
 export interface LanguageSelectProps {
-  /** Unique on the page: the top bar and the footer each have one. */
+  /** Unique on the page: the public footer and the staff footer each pass their own. */
   id: string;
-  /** Shown in the footer; hidden (but read by screen readers) in the top bar, as on the board. */
+  /** Shown in the footer; hidden (but read by screen readers) where a frame has no room. */
   isLabelVisible?: boolean;
-  /** Shows "EN" and "RO" instead of the names, for the website top bar (bundle G4 SHELL). */
-  isCodeOnly?: boolean;
 }
 
 /** The languages in the board's order, each named in its own language. */
@@ -44,19 +41,14 @@ const saveMessageKeys: Record<LanguageSaveStatus, string | null> = {
  *
  * @returns the drop-down
  */
-export function LanguageSelect({
-  id,
-  isLabelVisible = false,
-  isCodeOnly = false,
-}: LanguageSelectProps) {
+export function LanguageSelect({ id, isLabelVisible = false }: LanguageSelectProps) {
   const { t } = useTranslation();
   const { language, changeLanguage, saveStatus } = useInterfaceLanguage();
 
-  // The option names come from the locale files (language.en, language.ro); the top bar shows the
-  // code in capitals instead.
+  // The option names come from the locale files (language.en, language.ro).
   const options = languageOrder.map((code) => ({
     value: code,
-    label: isCodeOnly ? code.toUpperCase() : t(`language.${code}`),
+    label: t(`language.${code}`),
     lang: code,
   }));
   const messageKey = saveMessageKeys[saveStatus];

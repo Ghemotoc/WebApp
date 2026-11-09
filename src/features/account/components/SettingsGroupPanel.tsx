@@ -33,6 +33,7 @@ import { PrivacySettingsSection } from '@/features/privacy/components/PrivacySet
 import { SupportRequestsSection } from '@/features/support/components/SupportRequestsSection';
 import { TeacherBadgeSection } from '@/features/teacher-badge/components/TeacherBadgeSection';
 import { AppearanceSettingsSection } from '@/features/theme/components/AppearanceSettingsSection';
+import { LanguageSettingsSection } from '@/features/language/components/LanguageSettingsSection';
 
 import type { useMyNames } from '../hooks/useMyNames';
 import type { SettingsGroupKey } from '../lib/settingsGroups';
@@ -98,6 +99,8 @@ function ProfileGroup({ account, names }: { account: LoadedAccount; names: Loade
 const plainGroups: Record<Exclude<SettingsGroupKey, 'profile'>, () => ReactNode> = {
   // The theme, mode and seasonal looks, saved on the account (bundle G2 THEMES).
   appearance: () => <AppearanceSettingsSection />,
+  // The interface language; the footer has the other menu (S1-E1-04; bundle FIX-3).
+  language: () => <LanguageSettingsSection />,
   account: () => (
     <>
       {/* Every signed-in account sees and can change its own address, minors included. */}

@@ -22,7 +22,6 @@ import { Outlet, useNavigate } from 'react-router';
 import { StaffBar } from '@/app/shell/StaffBar';
 import { BrandTabIcon } from '@/features/branding/components/BrandTabIcon';
 import { signOutHere } from '@/features/auth/api/signIn';
-import { LanguageSelect } from '@/features/language/components/LanguageSelect';
 import { useAccountLanguage } from '@/features/language/hooks/useAccountLanguage';
 import { useAccountAppearance } from '@/features/theme/hooks/useAccountAppearance';
 import { SafetyContactWarningBanner } from '@/features/safety/components/SafetyContactWarningBanner';
@@ -113,8 +112,8 @@ export function StaffLayout() {
       <StaffBar
         staffName={access.handle === null ? tStaff('shell.noHandle') : `@${access.handle}`}
         roleLabel={roleLabel(access.roles, tStaff)}
+        // No language menu up here: the staff footer has it (Robert, 9 Nov 2026, bundle FIX-3).
         onSignOut={() => void signOut()}
-        endSlot={<LanguageSelect id="language-select-staff-top" />}
       />
       <SafetyContactWarningBanner
         canSee={access.areas.some((area) => area.area === 'safety_contacts')}

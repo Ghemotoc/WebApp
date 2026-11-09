@@ -7,7 +7,8 @@
  * Showing an area in this menu is a convenience, never the protection: the database checks the
  * role on every staff action (architecture 1.8.1).
  * Who uses it: the /design page, which passes the board's area links, and StaffLayout (the admin
- * frame, S1-E11-01), which passes the language drop-down in the end slot and no links: since
+ * frame, S1-E11-01), which passes no links and, since bundle FIX-3, no language drop-down (the
+ * staff footer has it): since
  * DASH-1 the areas sit in the grouped side menu (StaffSideMenu), so the bar is a plain header
  * there, and the side menu is the one navigation named "Staff".
  */
@@ -27,7 +28,7 @@ export interface StaffBarProps {
   staffName: string;
   roleLabel: string;
   onSignOut: () => void;
-  /** Extra controls before the name, such as the language drop-down (S1-E11-01). */
+  /** Extra controls before the name (S1-E11-01); the admin frame passes none. */
   endSlot?: ReactNode;
 }
 

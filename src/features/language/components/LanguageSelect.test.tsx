@@ -1,6 +1,6 @@
 /**
  * Tests for the language drop-downs and saving the choice (story S1-E1-04), drawn through the real
- * app shell so both drop-downs (top bar and footer) are on the page together.
+ * app shell, where the footer holds the one drop-down (bundle FIX-3).
  *
  * Supabase is replaced by a small stand-in, so these tests cover the screen's side: what is shown,
  * what is saved where and what is said when saving fails. The database side (only your own row,
@@ -78,10 +78,12 @@ function renderApp() {
   );
 }
 
-/** The top bar's and the footer's drop-downs ("Limbă" while the screen is in Romanian). */
+/**
+ * The footer's drop-down ("Limbă" while the screen is in Romanian). The top bar has none since
+ * bundle FIX-3 (Robert, 9 Nov 2026, 12:20 UTC: the footer and Settings only).
+ */
 function languageDropDowns(name: string | RegExp) {
   return {
-    topBar: within(screen.getByRole('banner')).getByRole('combobox', { name }),
     footer: within(screen.getByRole('contentinfo')).getByRole('combobox', { name }),
   };
 }
@@ -99,32 +101,29 @@ afterEach(() => {
 });
 
 describe('the language drop-downs', () => {
-  it('are drop-downs in both bars: codes in the top bar, English and Română in the footer', () => {
+  it('is a drop-down in the footer only, naming each language in its own language', () => {
     renderApp();
-    const { topBar, footer } = languageDropDowns('Limbă');
+    const { footer } = languageDropDowns('Limbă');
 
-    /** The text of each option in a drop-down, in order. */
-    const optionTexts = (dropDown: HTMLElement) =>
-      within(dropDown)
-        .getAllByRole('option')
-        .map((option) => option.textContent);
-
-    // The top bar shows only the code (bundle G4 SHELL); the footer names each language.
-    expect(topBar.tagName).toBe('SELECT');
-    expect(optionTexts(topBar)).toEqual(['EN', 'RO']);
+    // The top bar has no language menu (bundle FIX-3); the footer names each language.
+    expect(
+      within(screen.getByRole('banner')).queryByRole('combobox', { name: 'Limbă' }),
+    ).not.toBeInTheDocument();
     expect(footer.tagName).toBe('SELECT');
-    expect(optionTexts(footer)).toEqual(['English', 'Română']);
-    expect(topBar).toHaveValue('ro');
+    expect(
+      within(footer)
+        .getAllByRole('option')
+        .map((option) => option.textContent),
+    ).toEqual(['English', 'Română']);
     expect(footer).toHaveValue('ro');
     // Each option keeps its language, so a screen reader pronounces it right (WCAG 3.1.2).
-    expect(within(topBar).getByRole('option', { name: 'RO' })).toHaveAttribute('lang', 'ro');
     expect(within(footer).getByRole('option', { name: 'Română' })).toHaveAttribute('lang', 'ro');
   });
 
-  it('switch the whole screen to English from the top bar and remember it in this browser', async () => {
+  it('switch the whole screen to English from the footer and remember it in this browser', async () => {
     renderApp();
 
-    fireEvent.change(languageDropDowns('Limbă').topBar, { target: { value: 'en' } });
+    fireEvent.change(languageDropDowns('Limbă').footer, { target: { value: 'en' } });
 
     expect(await screen.findByRole('link', { name: 'Skip to content' })).toBeInTheDocument();
     expect(languageDropDowns('Language').footer).toHaveValue('en');
@@ -146,7 +145,7 @@ describe('the language drop-downs', () => {
     Object.assign(supabaseStandIn, { isConfigured: true, isSignedIn: true });
     renderApp();
 
-    fireEvent.change(languageDropDowns('Limbă').topBar, { target: { value: 'en' } });
+    fireEvent.change(languageDropDowns('Limbă').footer, { target: { value: 'en' } });
 
     await waitFor(() => expect(supabaseStandIn.savedLocales).toEqual(['en']));
     expect(await screen.findByText('Language saved to your account.')).toHaveAttribute(
@@ -160,7 +159,7 @@ describe('the language drop-downs', () => {
     vi.spyOn(console, 'warn').mockImplementation(() => undefined);
     renderApp();
 
-    fireEvent.change(languageDropDowns('Limbă').topBar, { target: { value: 'en' } });
+    fireEvent.change(languageDropDowns('Limbă').footer, { target: { value: 'en' } });
 
     expect(
       await screen.findByText(
@@ -174,7 +173,7 @@ describe('the language drop-downs', () => {
     Object.assign(supabaseStandIn, { isConfigured: true, isSignedIn: false });
     renderApp();
 
-    fireEvent.change(languageDropDowns('Limbă').topBar, { target: { value: 'en' } });
+    fireEvent.change(languageDropDowns('Limbă').footer, { target: { value: 'en' } });
 
     await screen.findByRole('link', { name: 'Skip to content' });
     expect(supabaseStandIn.savedLocales).toEqual([]);

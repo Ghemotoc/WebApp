@@ -44,7 +44,7 @@ test('each document opens from the row of documents, and English is one choice a
   page,
 }) => {
   await page.goto('/legal/terms');
-  await page.getByRole('banner').getByRole('combobox', { name: 'Limbă' }).selectOption('en');
+  await page.getByRole('contentinfo').getByRole('combobox', { name: 'Limbă' }).selectOption('en');
   await expect(page.getByRole('heading', { level: 2, name: 'Terms of use' })).toBeVisible();
 
   const documents = page.getByRole('navigation', { name: 'Legal documents' });

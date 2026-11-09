@@ -14,6 +14,9 @@ export const settingsGroupKeys = [
   'profile',
   // How the site looks: theme, mode and seasonal looks (bundle G2 THEMES).
   'appearance',
+  // The interface language, saved on the account (S1-E1-04; bundle FIX-3, which took the
+  // language menu out of the top bar).
+  'language',
   'account',
   'privacy',
   'notifications',
@@ -36,6 +39,7 @@ export const firstSettingsGroup: SettingsGroupKey = 'profile';
 const anchorsOfGroup: Record<SettingsGroupKey, readonly string[]> = {
   profile: ['forum-signature', 'teacher-badge'],
   appearance: [],
+  language: [],
   // Ways to log in sits here: while its sign-in flags are off it shows nothing, so it can't be a
   // group of its own; its old address (/settings#ways-to-log-in, in emails) still opens it.
   account: ['ways-to-log-in'],

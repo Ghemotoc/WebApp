@@ -90,7 +90,7 @@ Grouped by when the answer is needed. "Blocks" lists the stories that can't be f
 | Messaging wording | Off by default for 16 and 17-year-olds; never between under-16s and adults | Q6 | S1-E5-08, S1-E2-06 |
 | Consent wording | "Parent or guardian" | Q8 | S1-E2-03 |
 | Copy protection wording | "Makes copying harder" | Q9 | S1-E4-06 |
-| Language switch | A drop-down in the top bar and the footer | Q11 | S1-E1-04 |
+| Language switch | A drop-down in the footer and a Language group in Settings, never in the top bar (Robert, 9 Nov 2026, replaces the top bar half of Q11) | Q11 | S1-E1-04, FIX-3 |
 | Class spaces | Lock at the end of the academic year; members keep reading access while their account exists; no ads, sponsored items or sponsor credits | Q69, Q70 | S1-E8-11 |
 | School pilot | Maybe a pilot around March, as a writing club, the contest or both; no inspectorate before autumn 2027 | Q65 to Q67 | S1-E8-11, S1-E8-12 |
 | Shelves | One scrolling line of at most 20, then "View more" to a See all page | 23:00 | DoD, S1-E5-09 |

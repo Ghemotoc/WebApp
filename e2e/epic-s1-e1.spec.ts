@@ -94,8 +94,8 @@ test.describe('journey 1: a visitor switches language and theme (S1-E1-01, 03, 0
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
     expect(await pageBackground(page)).toBe(paperColour.light);
 
-    // English from the top bar, Night from the footer.
-    await page.getByRole('banner').getByRole('combobox', { name: 'Limbă' }).selectOption('en');
+    // English and Night, both from the footer (the top bar has neither; bundle FIX-3).
+    await page.getByRole('contentinfo').getByRole('combobox', { name: 'Limbă' }).selectOption('en');
     await page
       .getByRole('contentinfo')
       .getByRole('combobox', { name: 'Mode' })
@@ -173,7 +173,7 @@ test.describe('journeys 2 to 4: the personas (S1-E1-02 × S1-E1-04)', () => {
     // The language still saves: a read-only account can choose how the app talks to it.
     const device = await openAsPersona(browser, 'teen_17');
     await device.page
-      .getByRole('banner')
+      .getByRole('contentinfo')
       .getByRole('combobox', { name: 'Limbă' })
       .selectOption('en');
     await expect(device.page.getByText('Language saved to your account.')).toBeAttached();
@@ -202,7 +202,7 @@ test.describe('journeys 2 to 4: the personas (S1-E1-02 × S1-E1-04)', () => {
       // The language still saves to their account and opens on a second device.
       const firstDevice = await openAsPersona(browser, persona);
       await firstDevice.page
-        .getByRole('banner')
+        .getByRole('contentinfo')
         .getByRole('combobox', { name: 'Limbă' })
         .selectOption('en');
       await expect(firstDevice.page.getByText('Language saved to your account.')).toBeAttached();

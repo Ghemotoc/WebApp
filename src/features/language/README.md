@@ -2,7 +2,8 @@
 
 The English / Română drop-downs and saving the interface language. Built by S1-E1-04.
 
-- `components/LanguageSelect.tsx`: the drop-down. AppLayout puts one in the top bar (label hidden, as on the Discover board) and one in the footer (label shown).
+- `components/LanguageSelect.tsx`: the drop-down. AppLayout puts it in the footer (label shown); the top bar has none (Robert, 9 Nov 2026, bundle FIX-3).
+- `components/LanguageSettingsSection.tsx`: the Language panel in Settings (/settings#language), one row of radio buttons that saves to the account like the footer's drop-down (bundle FIX-3).
 - `hooks/useInterfaceLanguage.ts`: the language on screen and changing it: switch the screen, remember it in this browser, then save it to the account when someone is signed in.
 - `hooks/useAccountLanguage.ts`: when someone is signed in, shows their account's language as the app opens and after each sign-in, so the choice follows them to every device.
 - `api/profileLocale.ts`: reads `profiles.locale` (own row only, `profiles_select_own`) and saves through `set_my_locale()`.
