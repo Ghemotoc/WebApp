@@ -67,6 +67,23 @@ function shelfKindFrom(word: string): ListKind | null {
   return discoverListKinds.find((kind) => kind === word) ?? null;
 }
 
+/**
+ * Whether a word of the setting can draw anything for this reader: "categories", "writers" and
+ * known lists can; the follows shelf and "Picked for you" only for someone signed in; an unknown
+ * word never. Used so the ad slot follows the first shelf the reader can actually get, not an
+ * empty place (a visitor's ad sat straight under the heading before).
+ *
+ * @param word - from discover_shelves
+ * @param isSignedIn - whether someone is signed in
+ * @returns true when the word may draw a shelf
+ */
+function shelfCanShow(word: string, isSignedIn: boolean): boolean {
+  if (word === 'categories' || word === 'writers') return true;
+  const kind = shelfKindFrom(word);
+  if (kind === null) return false;
+  return isSignedIn || (kind !== 'following' && kind !== 'picked');
+}
+
 /** The h1's type, the same for the visitor's heading and the greeting (board 3.1). */
 const headingClass =
   'm-0 min-w-0 font-heading text-[clamp(36px,4.4vw,54px)] leading-[1.02] font-bold tracking-[-0.02em] break-words text-heading';
@@ -152,6 +169,22 @@ function ShelfFromSetting({ word, isSignedIn }: { word: string; isSignedIn: bool
 }
 
 /**
+ * The wide ad slot after the first shelf (S1-E12-01), drawn only once that shelf has loaded, so
+ * the ad never sits just under the heading for a moment and then jumps down (or gets counted as
+ * seen before the reader has met any stories). It reads the same cached list as the shelf, so it
+ * asks the server for nothing more. Discover is about every category, so it sends no context.
+ *
+ * @param props.word - the first word of discover_shelves this reader can get
+ * @returns the slot, or nothing while the first shelf loads
+ */
+function FirstShelfAd({ word }: { word: string }) {
+  // "categories" and "writers" aren't story lists; Recently updated has loaded by now for them.
+  const { shelf } = useStoryShelf(plainList(shelfKindFrom(word) ?? 'updated'));
+  if (shelf === null) return null;
+  return <PageAdSlot pageKey="discover" position={1} />;
+}
+
+/**
  * The shelves, once the first one says there is something to show.
  *
  * @returns the shelves, the empty state or the error
@@ -173,16 +206,19 @@ function DiscoverShelves() {
       />
     );
   }
-  // The order staff set (discover_shelves); a word listed twice shows once.
-  const words = [...new Set(wordsOf('discover_shelves', defaultShelfOrder))];
+  // The order staff set (discover_shelves); a word listed twice shows once, and a word that
+  // can't draw anything for this reader is left out.
+  const isSignedIn = userId !== null;
+  const words = [...new Set(wordsOf('discover_shelves', defaultShelfOrder))].filter((word) =>
+    shelfCanShow(word, isSignedIn),
+  );
   return (
     <div className="flex flex-col gap-14">
       {words.map((word, index) => (
         <Fragment key={word}>
-          <ShelfFromSetting word={word} isSignedIn={userId !== null} />
-          {/* The wide ad slot comes after the first shelf, so the reader meets stories first
-              (S1-E12-01). Discover is about every category, so it sends no context. */}
-          {index === 0 && <PageAdSlot pageKey="discover" position={1} />}
+          <ShelfFromSetting word={word} isSignedIn={isSignedIn} />
+          {/* The wide ad slot comes after the first shelf, so the reader meets stories first. */}
+          {index === 0 && <FirstShelfAd word={word} />}
         </Fragment>
       ))}
     </div>
