@@ -8,9 +8,9 @@
  * it (bundle G7c). "Load more" adds the next 24 and puts
  * nothing in the reader's way while they load; the new count is announced politely.
  * A long grid carries the list's ad among the stories: the first one high up, then one after
- * every 10 stories, so each "Load more" brings more in (bundle G7e; lib/gridAdPlaces.ts). A
- * card-sized ad takes one cell; a wide banner takes a whole row. A place whose ad doesn't come
- * (a visitor, no ad today) takes no room at all.
+ * every 10 stories, so each "Load more" brings more in; a short list has its one ad at its end
+ * (bundle G7e; lib/gridAdPlaces.ts). A card-sized ad takes one cell; a wide banner takes a whole
+ * row. A place whose ad doesn't come (a visitor, no ad today) takes no room at all.
  * Who uses it: StoryListPage.
  */
 import type { ReactNode } from 'react';
@@ -32,6 +32,8 @@ export interface StoryGridAd {
   firstAfter: number;
   /** True for a wide banner, which takes a whole row; false for a card-sized ad. */
   spansRow: boolean;
+  /** True to put a short list's one ad after its last story (lib/gridAdPlaces.ts). */
+  isShortListAdded: boolean;
 }
 
 /** What the grid needs. */
@@ -64,7 +66,8 @@ export function StoryGrid({ stories, hasMore, isLoadingMore, onLoadMore, ad }: S
         {stories.map((story, index) => {
           const storyNumber = index + 1;
           const hasAdAfter =
-            ad !== undefined && isAdAfterStory(storyNumber, stories.length, ad.firstAfter);
+            ad !== undefined &&
+            isAdAfterStory(storyNumber, stories.length, ad.firstAfter, ad.isShortListAdded);
           return [
             <li key={story.slug} className="w-full max-w-[248px]">
               <ListedStoryCard

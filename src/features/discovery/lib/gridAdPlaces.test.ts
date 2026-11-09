@@ -6,10 +6,12 @@ import { describe, expect, it } from 'vitest';
 import { isAdAfterStory } from './gridAdPlaces';
 
 /** The story numbers an ad follows in a grid of this many stories. */
-function adPlaces(storyCount: number, firstAdAfter: number): number[] {
+function adPlaces(storyCount: number, firstAdAfter: number, isShortListAdded = true): number[] {
   const places: number[] = [];
   for (let storyNumber = 1; storyNumber <= storyCount; storyNumber += 1) {
-    if (isAdAfterStory(storyNumber, storyCount, firstAdAfter)) places.push(storyNumber);
+    if (isAdAfterStory(storyNumber, storyCount, firstAdAfter, isShortListAdded)) {
+      places.push(storyNumber);
+    }
   }
   return places;
 }
@@ -28,14 +30,19 @@ describe('ads in a long grid of stories', () => {
     expect(adPlaces(35, 10)).toEqual([10, 20, 30]);
   });
 
-  it('never ends a list on an ad', () => {
+  it('never ends a longer list on an ad', () => {
     expect(adPlaces(14, 4)).toEqual([4]);
     expect(adPlaces(20, 10)).toEqual([10]);
   });
 
-  it('shows no ad in a list too short to have one', () => {
-    expect(adPlaces(4, 4)).toEqual([]);
-    expect(adPlaces(3, 4)).toEqual([]);
+  it('gives a short list its one ad after its last story, still near the top', () => {
+    expect(adPlaces(4, 4)).toEqual([4]);
+    expect(adPlaces(1, 4)).toEqual([1]);
     expect(adPlaces(0, 4)).toEqual([]);
+  });
+
+  it('leaves a short list without a grid ad when a banner already sits above it', () => {
+    expect(adPlaces(8, 10, false)).toEqual([]);
+    expect(adPlaces(20, 10, false)).toEqual([10]);
   });
 });

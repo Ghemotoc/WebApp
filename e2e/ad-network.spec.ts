@@ -56,7 +56,9 @@ async function openDiscover(page: Page): Promise<Request[]> {
     if (isToGoogle(request)) googleRequests.push(request);
   });
   await page.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
-  await page.setViewportSize({ width: 1440, height: 400 });
+  // A signed-in reader's Discover has its banner high (about 300 px down with the seed's one
+  // shelf), so the screen is shorter than that to start the banner out of view.
+  await page.setViewportSize({ width: 1440, height: 240 });
   await page.goto('/discover');
   return googleRequests;
 }

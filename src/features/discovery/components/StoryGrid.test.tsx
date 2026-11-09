@@ -51,7 +51,7 @@ function gridItems(count: number, slot = <p>An ad</p>): string[] {
         hasMore={false}
         isLoadingMore={false}
         onLoadMore={() => undefined}
-        ad={{ slot, firstAfter: 4, spansRow: false }}
+        ad={{ slot, firstAfter: 4, spansRow: false, isShortListAdded: true }}
       />
     </MemoryRouter>,
     'en',
@@ -72,8 +72,8 @@ describe('the ads in a grid of stories', () => {
     expect(items.filter((item) => item === 'ad')).toHaveLength(2);
   });
 
-  it('never ends the list on an ad, and a short list has none', () => {
-    expect(gridItems(4).filter((item) => item === 'ad')).toHaveLength(0);
+  it('gives a short list its one ad after its last story', () => {
+    expect(gridItems(3)).toEqual(['story', 'story', 'story', 'ad']);
   });
 
   it('keeps an empty place when the slot draws nothing, hidden so it takes no cell', () => {

@@ -156,14 +156,20 @@ function listAdSlot(request: ListRequest): ReactNode {
  * first ad sits high, near the top, and long grids carry one after every 10 stories).
  * The classics list opens with its wide banner above the stories, then repeats it across a row
  * after every 10th story; every other list puts its card-sized ad after the 4th story (in the
- * first rows) and again after every 10 more.
+ * first rows) and again after every 10 more, or after the last story of a list of 4 or fewer.
  *
  * @param request - the list with its filters
  * @returns the ad's places in the grid
  */
 function gridAdFor(request: ListRequest): StoryGridAd {
   const isClassics = request.kind === 'classics';
-  return { slot: listAdSlot(request), firstAfter: isClassics ? 10 : 4, spansRow: isClassics };
+  return {
+    slot: listAdSlot(request),
+    firstAfter: isClassics ? 10 : 4,
+    spansRow: isClassics,
+    // The classics banner already sits above a short list; any other short list ends on its ad.
+    isShortListAdded: !isClassics,
+  };
 }
 
 /**
