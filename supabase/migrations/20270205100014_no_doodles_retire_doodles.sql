@@ -19,6 +19,9 @@ drop function if exists public.admin_save_occasion(text, text, date, date, boole
 drop function if exists public.admin_remove_occasion(uuid);
 drop function if exists public.seasonal_occasion_problems(text, text, date, date, boolean, text);
 drop function if exists public.occasion_covers(date, date, boolean, date);
+-- The table's one policy is dropped by name first, so scripts/check-policy-tests.ts (which reads
+-- the migrations) knows it is gone; dropping the table would remove it anyway.
+drop policy if exists seasonal_occasions_select_admin on public.seasonal_occasions;
 drop table if exists public.seasonal_occasions;
 drop type if exists public.seasonal_doodle;
 
