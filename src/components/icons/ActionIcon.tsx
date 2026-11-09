@@ -1,14 +1,18 @@
 /**
- * ActionIcon: the line icons for actions inside messages and moderator mail (bundle G8c): Block,
- * Send, Settings, a plus for "New chat" and "Write to the moderators", and an "i" for notes.
+ * ActionIcon: the line icons inside messages, moderator mail and notifications (bundles G8c and
+ * G8d): Block, Send, Settings, a plus for "New chat" and "Write to the moderators", an "i" for
+ * notes, a tick for "Mark all as read", and the notification kinds as the board draws them (an
+ * open book for stories, a speech bubble for replies, a person for follows, a shield for staff
+ * and a lock for "Always on").
  *
  * Why not in NavIcon: NavIcon is in the bundle every page loads (the tab bar and top bar use it),
  * and the chapter reader has a script budget (e2e/reader-performance.spec.ts). These icons are
  * only needed on the messages and moderator mail pages, so they travel with those pages instead.
  * Same drawing rules as NavIcon: a 24 px grid, a 1.8 px stroke in the current text colour, hidden
  * from screen readers because the button or link beside it carries the words.
- * Who uses it: ChatHeader, MessageComposer, MessagesPage, NewChatButton, MailReplyForm, MyMailPage
- * and NewMailPage.
+ * Who uses it: ChatHeader, MessageComposer, MessagesPage, NewChatButton, MailReplyForm, MyMailPage,
+ * NewMailPage, and in notifications NotificationsPage, NotificationIcon, NotificationRow and
+ * DecisionsCard.
  */
 import type { SVGProps } from 'react';
 
@@ -48,6 +52,33 @@ const drawings = {
       <circle cx="12" cy="12" r="10" />
       <path d="M12 16v-4" />
       <path d="M12 8h.01" />
+    </>
+  ),
+  // Done: a tick (bundle G8d, "Mark all as read").
+  check: <path d="M5 12.5l4.5 4.5L19 7" />,
+  // Stories: an open book (bundle G8d, Notifications board).
+  book: (
+    <>
+      <path d="M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z" />
+      <path d="M5 17a3 3 0 0 1 3-3h10" />
+    </>
+  ),
+  // Replies: a speech bubble (bundle G8d).
+  comment: <path d="M4 5h16v11H9l-5 4z" />,
+  // Follows: a person (bundle G8d).
+  person: (
+    <>
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 21a8 8 0 0 1 16 0" />
+    </>
+  ),
+  // Staff and decisions: a shield (bundle G8d).
+  shield: <path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" />,
+  // Always on: a padlock (bundle G8d).
+  lock: (
+    <>
+      <rect x="5" y="11" width="14" height="9" rx="2" />
+      <path d="M8 11V8a4 4 0 0 1 8 0v3" />
     </>
   ),
 } as const;

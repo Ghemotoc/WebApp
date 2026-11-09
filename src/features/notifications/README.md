@@ -3,11 +3,12 @@
 In-app notifications (S1-E7-01), built by READ-3: the bell in the top bar and the Notifications page at `/notifications` (board 6.2).
 
 - `components/NotificationBell.tsx`: the bell with the unread count, in the top bar while signed in (`src/app/shell/AppLayout.tsx`); its words are in `common.json` because it is on every page.
-- `components/NotificationsPage.tsx`: "What's new", the unread line, "Mark all as read", the filter chips, the list and "Show older".
+- `components/NotificationsPage.tsx`: "What's new", the unread line, Settings and "Mark all as read", the filter chips with the "Unread only" switch, the list and "Show older", with the two side cards beside the list (G8d, liquid glass).
 - `components/NotificationFilters.tsx`: All, Replies, Follows, Stories and Staff, each with its count.
 - `components/NotificationList.tsx`, `NotificationRow.tsx`, `NotificationIcon.tsx`: the rows under Today, Yesterday, Earlier this week and Older; opening one marks it as read.
 - `components/NotificationsEmpty.tsx`: "You're all caught up".
 - `components/DecisionsCard.tsx`: "Decisions about your posts": they always arrive and can't be switched off.
+- `components/EmailChoicesCard.tsx`: "Email choices", how each kind arrives by email (from `useEmailSettings`), with a link to Settings (G8d).
 - `lib/notificationText.ts`: what each kind says and where it leads; `lib/dayGroups.ts`: the day headings, in Romanian time.
 - `api/notifications.ts` and the hooks: `my_notifications()`, `my_unread_notification_count()`, `mark_notifications_read()`. The bell asks every minute and on focus (no Realtime yet).
 - `registerNotificationsTranslations.ts`: the `notifications` text namespace, added when the page first renders.
