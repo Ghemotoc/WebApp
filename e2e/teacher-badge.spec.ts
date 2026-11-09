@@ -161,7 +161,9 @@ test.describe('the Teacher badge (S1-E2-11)', () => {
     const path = /\/teacher-check\/confirm#[A-Za-z0-9_-]+/.exec(email.Text)?.[0];
     if (path === undefined) throw new Error('The email has no confirmation link.');
     await page.goto(path);
-    await expect(page.getByText('Done. You have the Teacher badge')).toBeVisible();
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Teacher badge added' }),
+    ).toBeVisible();
     expect(
       runSql(`select school_domain from public.teacher_checks
         where user_id = (select id from public.profiles where handle = '${accounts.school.handle}');`).trim(),
@@ -181,7 +183,9 @@ test.describe('the Teacher badge (S1-E2-11)', () => {
     const email = await waitForEmail(otherAddress, 15_000);
     const path = /\/teacher-check\/confirm#[A-Za-z0-9_-]+/.exec(email.Text)?.[0] ?? '';
     await page.goto(path);
-    await expect(page.getByText('Thanks, your address is confirmed.')).toBeVisible();
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'School address confirmed' }),
+    ).toBeVisible();
 
     const staff = await openAsModerator(browser);
     const card = requestCard(staff, accounts.other);

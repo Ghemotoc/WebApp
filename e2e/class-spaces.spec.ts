@@ -114,7 +114,7 @@ test.describe('class spaces (CLASSES-a, S1-E8-11)', () => {
 
   test('a student joins with the link and reads the class', async ({ browser }) => {
     const page = await openAs(browser, 'pending_check', new URL(inviteLink).pathname);
-    await expect(page.getByText(`You’re invited to join ${className}.`)).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: className })).toBeVisible();
     await page.getByRole('button', { name: 'Join the class' }).click();
     await expect(page).toHaveURL(new RegExp(`${classAddress}$`));
     await expect(page.getByRole('heading', { level: 1, name: className })).toBeVisible();

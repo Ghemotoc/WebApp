@@ -543,16 +543,32 @@
       "removed": "Your Teacher badge was removed. You can ask for it again."
     },
     "confirm": {
-      "documentTitle": "Your school address · {{productName}}",
+      "documentTitle": "School address · {{productName}}",
       "eyebrow": "Teacher badge",
-      "heading": "Your school address",
-      "checking": "Checking your link…",
-      "approved": "Done. You have the Teacher badge, and it shows on your profile.",
-      "waiting_for_staff": "Thanks, your address is confirmed. Our team will check that it belongs to a school and we’ll notify you when it’s done.",
-      "expired": "This link has expired. Ask for a new one in Settings.",
-      "gone": "This link doesn’t work any more. It may have been used already, or a newer one was sent.",
-      "failed": "We couldn’t check the link. Try again in a few minutes.",
-      "goToSettings": "Go to Settings"
+      "approved": "It shows on the profile, and class spaces can now be opened.",
+      "waiting_for_staff": "A moderator now checks that the address belongs to a school. The answer arrives in notifications.",
+      "expired": "Ask for a new one in Settings.",
+      "gone": "It may have been used already, or a newer one was sent.",
+      "failed": "Try again in a few minutes.",
+      "goToSettings": "Go to Settings",
+      "headings": {
+        "checking": "Checking the link",
+        "approved": "Teacher badge added",
+        "waiting_for_staff": "School address confirmed",
+        "expired": "This link has expired",
+        "gone": "This link doesn’t work any more",
+        "failed": "We couldn’t check the link"
+      },
+      "nextHeading": "What happens next",
+      "steps": {
+        "confirmedTitle": "School address confirmed",
+        "confirmedNote": "Done",
+        "checkTitle": "A moderator checks it",
+        "checkNote": "Next",
+        "badgeTitle": "Teacher badge on the profile",
+        "badgeNote": "Then class spaces can be opened"
+      },
+      "goToSpaces": "Go to Spaces"
     },
     "teacher": "Teacher"
   },

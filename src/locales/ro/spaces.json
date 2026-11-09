@@ -374,7 +374,6 @@
     "eyebrow": "Invitație pentru clasă",
     "title": "Intră într-o clasă",
     "checking": "Verificăm codul…",
-    "invited": "Ai o invitație să intri în {{name}}.",
     "join": "Intră în clasă",
     "logIn": "Intră în cont ca să te alături",
     "signUpWithCode": "Creează un cont cu acest cod",
@@ -386,10 +385,14 @@
     "openClass": "Deschide clasa",
     "loadFailed": "Nu am putut verifica codul. Încearcă din nou.",
     "code": "Codul clasei",
-    "codeHint": "Codul îl primești de la profesor, pe tablă sau ca link.",
+    "codeHint": "Litere și cifre. Cratimele sunt opționale.",
     "codeEmpty": "Scrie codul primit de la profesor.",
-    "check": "Verifică codul",
-    "enterIntro": "Scrie codul ca să intri în clasa ta."
+    "check": "Găsește clasa",
+    "enterIntro": "Scrie codul pe care profesorul l-a scris pe tablă sau l-a trimis. Arată așa: <example>K4TQ-72BX-9MNA</example>.",
+    "formEyebrow": "Spațiu de clasă",
+    "privacyNote": "Înainte să intri vezi doar numele clasei. Spațiile de clasă sunt private: nimeni din afara clasei nu le vede postările sau poveștile.",
+    "invitedBody": "Ai o invitație în acest spațiu de clasă. Doar membrii clasei îl văd. Membrii împărtășesc povești cu clasa și discută în firele ei.",
+    "notNow": "Nu acum"
   },
   "classLock": {
     "eyebrow": "Sfârșitul anului școlar",

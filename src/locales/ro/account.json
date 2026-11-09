@@ -543,16 +543,32 @@
       "removed": "Insigna ta de Profesor a fost retrasă. O poți cere din nou."
     },
     "confirm": {
-      "documentTitle": "Adresa ta de la școală · {{productName}}",
+      "documentTitle": "Adresa de la școală · {{productName}}",
       "eyebrow": "Insigna de Profesor",
-      "heading": "Adresa ta de la școală",
-      "checking": "Îți verificăm linkul…",
-      "approved": "Gata. Ai insigna de Profesor și apare pe profilul tău.",
-      "waiting_for_staff": "Mulțumim, adresa ta e confirmată. Echipa noastră va verifica dacă aparține unei școli și te anunțăm când e gata.",
-      "expired": "Linkul a expirat. Cere unul nou din Setări.",
-      "gone": "Linkul nu mai funcționează. Poate a fost deja folosit sau s-a trimis unul mai nou.",
-      "failed": "Nu am putut verifica linkul. Încearcă din nou peste câteva minute.",
-      "goToSettings": "Mergi la Setări"
+      "approved": "Apare pe profil și acum poți deschide spații de clasă.",
+      "waiting_for_staff": "Un moderator verifică acum dacă adresa aparține unei școli. Răspunsul vine în notificări.",
+      "expired": "Cere unul nou din Setări.",
+      "gone": "Poate a fost deja folosit sau s-a trimis unul mai nou.",
+      "failed": "Încearcă din nou peste câteva minute.",
+      "goToSettings": "Mergi la Setări",
+      "headings": {
+        "checking": "Verificăm linkul",
+        "approved": "Insigna de Profesor a fost adăugată",
+        "waiting_for_staff": "Adresa de la școală e confirmată",
+        "expired": "Linkul a expirat",
+        "gone": "Linkul nu mai funcționează",
+        "failed": "Nu am putut verifica linkul"
+      },
+      "nextHeading": "Ce urmează",
+      "steps": {
+        "confirmedTitle": "Adresa de la școală e confirmată",
+        "confirmedNote": "Gata",
+        "checkTitle": "Un moderator o verifică",
+        "checkNote": "Urmează",
+        "badgeTitle": "Insigna de Profesor pe profil",
+        "badgeNote": "Apoi poți deschide spații de clasă"
+      },
+      "goToSpaces": "Mergi la Spații"
     },
     "teacher": "Profesor"
   },

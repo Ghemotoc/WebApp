@@ -6,8 +6,11 @@
  * Forums page's Spaces card and on the Spaces page open it).
  * What it does: takes the code the teacher wrote on the board and opens /class/<code>, where
  * JoinClassPage checks it. Nothing is sent to the server from here.
+ * G8e (board ClassJoin): the intro shows what a code looks like, the button reads "Find the
+ * class" and a small note under it says what shows before joining.
  */
 import { type FormEvent, useState } from 'react';
+import { Trans } from 'react-i18next';
 import { useNavigate } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
@@ -18,7 +21,7 @@ import { useSpacesTranslation } from '../registerSpacesTranslations';
 /**
  * Renders the form.
  *
- * @returns the code field and "Check the code"
+ * @returns the code field, "Find the class" and the privacy note
  */
 export function ClassCodeForm() {
   const { t } = useSpacesTranslation();
@@ -40,7 +43,14 @@ export function ClassCodeForm() {
 
   return (
     <form className="flex flex-col gap-4" onSubmit={submit} noValidate>
-      <p className="m-0 text-body">{t('joinClass.enterIntro')}</p>
+      {/* The example code stays on one line, so a phone never splits it at a dash. */}
+      <p className="m-0 text-base leading-relaxed text-body">
+        <Trans
+          t={t}
+          i18nKey="joinClass.enterIntro"
+          components={{ example: <span className="font-semibold whitespace-nowrap" /> }}
+        />
+      </p>
       <TextInput
         id="class-code"
         label={t('joinClass.code')}
@@ -55,9 +65,10 @@ export function ClassCodeForm() {
           setIsEmpty(false);
         }}
       />
-      <Button type="submit" className="self-start">
+      <Button type="submit" size="lg" className="self-start">
         {t('joinClass.check')}
       </Button>
+      <p className="m-0 text-sm text-body">{t('joinClass.privacyNote')}</p>
     </form>
   );
 }

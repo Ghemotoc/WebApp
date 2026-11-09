@@ -7,7 +7,7 @@ The person's side of the Teacher badge (story S1-E2-11; board Onboarding 2.5, st
 - `components/TeacherStep.tsx`: onboarding step 3 ("Are you a teacher?"), with "Not a teacher? Skip this" and "Go to Discover".
 - `components/TeacherBadgeSection.tsx`: Settings › Teacher badge (`#teacher-badge`, where the notifications link).
 - `components/TeacherBadgePanel.tsx`: what both show: `TeacherBadgeStatus` (the badge, a waiting request, a reason), then `TeacherBadgeForm` (`WayPicker`, `SchoolEmailWay` or `ProofWay`) and `SentNote`.
-- `components/TeacherConfirmPage.tsx` (`/teacher-check/confirm#<token>`): the emailed link, signed in or not.
+- `components/TeacherConfirmPage.tsx` (`/teacher-check/confirm#<token>`): the emailed link, signed in or not: a glass card whose heading names the outcome, with `TeacherConfirmSteps` ("What happens next") while a moderator still has to check (G8e).
 - `components/TeacherBadgePill.tsx`: "Teacher" (sage) or "Teacher badge · pending" (gold), also on the writer's profile.
 
 The staff side is `src/features/staff/components/schools/`. The database side is the `…_s1_e2_11_teacher_badge.sql` migration (supabase/README.md, "The Teacher badge"); a .edu.ro address gives the badge at once, anything else waits for staff.
