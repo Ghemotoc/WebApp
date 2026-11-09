@@ -1,14 +1,19 @@
 /**
- * StoryListFilters: the filters on a See all, category or tag page (story S1-E5-09; board 3.10).
+ * StoryListFilters: the filters on a See all, category or tag page (story S1-E5-09; board 3.10;
+ * liquid glass layout from bundle G7c, boards DiscoverGenre, DiscoverTag and DiscoverAll).
  *
- * Category and status are chips (one choice each, "Any" first); language is a drop-down of the
- * open story languages, each written in its own language; "Sort by" is a drop-down of the six
- * sorts (S1-E5-02). A filter the page already is (the
- * category on a category page, the status on Completed) isn't offered. Every change goes into the
- * address, so the filtered list can be shared (S1-E5-09, fourth criterion).
+ * Category is a row of chips (one choice, "Any" first). Status is a segmented control, Ongoing,
+ * Completed or Both, as the boards draw it; language is a drop-down of the story languages, each
+ * written in its own language; "Sort by" is a drop-down of the six sorts (S1-E5-02), on the right
+ * of the same row from 640 px. A filter the page already is (the category on a category page, the
+ * status on Completed) isn't offered. Every change goes into the address, so the filtered list
+ * can be shared (S1-E5-09, fourth criterion).
+ * Board difference: the boards fold category and language into a "Filters" button; they stay on
+ * the page here so nothing that worked before needs an extra click (decisions log, G7c).
  * Who uses it: StoryListPage. What it calls: useStoryFormOptions (categories and languages).
  */
 import { ChoiceChips, type ChoiceOption } from '@/components/ui/ChoiceChips';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { Select } from '@/components/ui/Select';
 import { useStoryFormOptions } from '@/features/writing/hooks/useStoryFormOptions';
 
@@ -26,7 +31,7 @@ export interface StoryListFiltersProps {
   onChange: (request: ListRequest) => void;
 }
 
-/** The value the chips and the drop-down use for "Any". */
+/** The value the chips, the segments and the drop-down use for "Any". */
 const anyValue = '';
 
 /**
@@ -49,65 +54,99 @@ function useCategoryOptions(): ChoiceOption[] {
 }
 
 /**
- * The language and sort drop-downs, side by side.
+ * Ongoing, Completed or Both, as a segmented control (boards DiscoverTag and DiscoverAll).
  *
- * @returns the two drop-downs
+ * @returns the control
  */
-function ListDropDowns({ request, sortOrder, onChange }: StoryListFiltersProps) {
+function StatusSegments({ request, onChange }: Omit<StoryListFiltersProps, 'sortOrder'>) {
+  const { t } = useDiscoveryTranslation();
+  const options = [
+    { value: 'ongoing', label: t('seeAll.ongoing') },
+    { value: 'completed', label: t('seeAll.completed') },
+    { value: anyValue, label: t('seeAll.anyStatus') },
+  ];
+  return (
+    <SegmentedControl
+      legend={t('seeAll.status')}
+      isLegendVisible={false}
+      name="story-list-status"
+      options={options}
+      value={request.completion ?? anyValue}
+      onChange={(value) =>
+        onChange({
+          ...request,
+          completion: value === anyValue ? null : (value as CompletionStatus),
+        })
+      }
+    />
+  );
+}
+
+/**
+ * The language drop-down: every language stories may be written in, open or not, so an older
+ * story still filters.
+ *
+ * @returns the drop-down
+ */
+function LanguageSelect({ request, onChange }: Omit<StoryListFiltersProps, 'sortOrder'>) {
   const { t } = useDiscoveryTranslation();
   const { languages } = useStoryFormOptions();
   const languageOptions = [
     { value: anyValue, label: t('seeAll.anyLanguage') },
-    // Every language stories may be written in, open or not, so an older story still filters.
     ...languages.map(({ code }) => ({
       value: code,
       label: t(`languages.${code}`, { ns: 'writing', defaultValue: code }),
       lang: code,
     })),
   ];
+  return (
+    <Select
+      id="story-list-language"
+      label={t('seeAll.language')}
+      isLabelVisible
+      options={languageOptions}
+      value={request.languageCode ?? anyValue}
+      onChange={(value) =>
+        onChange({ ...request, languageCode: value === anyValue ? null : value })
+      }
+    />
+  );
+}
+
+/**
+ * The "Sort by" drop-down, with the sorts this kind of list offers.
+ *
+ * @returns the drop-down
+ */
+function SortSelect({ request, sortOrder, onChange }: StoryListFiltersProps) {
+  const { t } = useDiscoveryTranslation();
   const sortOptions = sortChoicesFor(request.kind).map((order) => ({
     value: order,
     label: t(`sort.${order}`),
   }));
   return (
-    <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-      <Select
-        id="story-list-language"
-        label={t('seeAll.language')}
-        isLabelVisible
-        options={languageOptions}
-        value={request.languageCode ?? anyValue}
-        onChange={(value) =>
-          onChange({ ...request, languageCode: value === anyValue ? null : value })
-        }
-      />
-      <Select
-        id="story-list-sort"
-        label={t('seeAll.sortBy')}
-        isLabelVisible
-        options={sortOptions}
-        value={sortOrder}
-        onChange={(value) => onChange({ ...request, sortOrder: value as SortOrder })}
-      />
-    </div>
+    <Select
+      id="story-list-sort"
+      label={t('seeAll.sortBy')}
+      isLabelVisible
+      options={sortOptions}
+      value={sortOrder}
+      onChange={(value) => onChange({ ...request, sortOrder: value as SortOrder })}
+    />
   );
 }
 
 /**
- * Renders the filters.
+ * Renders the filters: category chips first (when the page isn't a category), then one row with
+ * the status and language on the left and the sort on the right.
  *
  * @returns the group of filters
  */
 export function StoryListFilters({ request, sortOrder, onChange }: StoryListFiltersProps) {
   const { t } = useDiscoveryTranslation();
   const categoryOptions = useCategoryOptions();
-  const statusOptions: ChoiceOption[] = [
-    { value: anyValue, label: t('seeAll.anyStatus') },
-    { value: 'ongoing', label: t('seeAll.ongoing') },
-    { value: 'completed', label: t('seeAll.completed') },
-  ];
   return (
-    <div role="group" aria-label={t('seeAll.filtersLabel')} className="flex flex-col gap-4">
+    <div role="group" aria-label={t('seeAll.filtersLabel')} className="flex flex-col gap-5">
       {request.kind !== 'category' && categoryOptions.length > 1 && (
         <ChoiceChips
           label={t('seeAll.category')}
@@ -119,21 +158,13 @@ export function StoryListFilters({ request, sortOrder, onChange }: StoryListFilt
           }
         />
       )}
-      {request.kind !== 'completed' && (
-        <ChoiceChips
-          label={t('seeAll.status')}
-          isLabelVisible
-          options={statusOptions}
-          value={request.completion ?? anyValue}
-          onChange={(value) =>
-            onChange({
-              ...request,
-              completion: value === anyValue ? null : (value as CompletionStatus),
-            })
-          }
-        />
-      )}
-      <ListDropDowns request={request} sortOrder={sortOrder} onChange={onChange} />
+      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-4">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
+          {request.kind !== 'completed' && <StatusSegments request={request} onChange={onChange} />}
+          <LanguageSelect request={request} onChange={onChange} />
+        </div>
+        <SortSelect request={request} sortOrder={sortOrder} onChange={onChange} />
+      </div>
     </div>
   );
 }

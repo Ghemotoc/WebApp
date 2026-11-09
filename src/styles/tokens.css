@@ -154,6 +154,26 @@
   --pill-blush-text: #a3122a;
 
   /*
+   * Genre and tag page bands (bundle G7c; boards DiscoverGenre and DiscoverAll): a deep gradient
+   * per category accent, from the top left to the bottom right, with white text on it. Each pair
+   * is checked for white text at 4.5:1 or more at both ends (contrast-pairs.ts). Staff choosing
+   * their own band colours waits for GENRE-LOOK-1 (rulebook, line 75).
+   */
+  --band-text: #ffffff;
+  --band-plum-from: #702963;
+  --band-plum-to: #43143b;
+  --band-sage-from: #005c42;
+  --band-sage-to: #003728;
+  --band-gold-from: #7a5600;
+  --band-gold-to: #4a3400;
+  --band-sky-from: #0047ab;
+  --band-sky-to: #002b67;
+  --band-neutral-from: #4b4fa8;
+  --band-neutral-to: #201a53;
+  --band-blush-from: #b11226;
+  --band-blush-to: #6a010e;
+
+  /*
    * Lane B: doodle colours (Design: doodles take their colours from the tokens, 23 Oct 2026).
    * The nine colours the hand-drawn doodles in design/assets/ use, as drawn on the canvas. Each
    * SVG says fill="var(--doodle-ink, #2a0e33)": the token when the doodle sits inline in a page,
@@ -313,6 +333,22 @@
   --pill-blush-bg: #45192a;
   --pill-blush-border: #8f4a5c;
   --pill-blush-text: #ffc3cc;
+
+  /* Genre bands at night: plum and the neutral indigo turn grey (no plum at night); the other
+     hues are already deep, so a genre keeps its colour, as its pill does (G7c). */
+  --band-text: #ffffff;
+  --band-plum-from: #3a3a3e;
+  --band-plum-to: #18181a;
+  --band-sage-from: #005c42;
+  --band-sage-to: #003728;
+  --band-gold-from: #7a5600;
+  --band-gold-to: #4a3400;
+  --band-sky-from: #0047ab;
+  --band-sky-to: #002b67;
+  --band-neutral-from: #333337;
+  --band-neutral-to: #141416;
+  --band-blush-from: #b11226;
+  --band-blush-to: #6a010e;
 
   /*
    * Doodle colours at night. The decorative doodles are gone (G4); the staff pickers still show

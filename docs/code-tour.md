@@ -1588,12 +1588,14 @@ DiscoverPage
   │  GreetingHeading · FeaturedBand and, beside it from 1024 px, DiscoverCards (the side column)
   ▼  DiscoverShelf × (the order of the setting discover_shelves) → useStoryShelf (21 rows)
 StoryListPage (listFromParams() picks the list from the address; requestFromAddress() the filters)
-  │  StoryListHeader (breadcrumb, eyebrow, title, "n stories") · StoryListFilters (chips, language)
+  │  StoryListHeader (breadcrumb, eyebrow, title, "n stories"; a deep genre band on a category)
+  │  StoryListFilters (category chips, status segments, language, sort)
   ▼  StoryGrid ("Load more", 24 a page) → useStoryList
 both → api/storyLists.ts → browse_stories(list_kind, list_key, filters, sort_order, page_size, page_offset)
          listed_stories(): published, readable chapter, not moderated, rating_allows(), not is_blocked_with()
          list_holds_story(): which list; story_card_json(): one card, never a user ID
 ```
+- Genre bands (G7c): a category page's band takes its colours from `--band-<tone>-from` and `--band-<tone>-to` in `tokens.css` (tone from `categoryAccents.ts`), and the `genre-band` utility in `index.css` turns the text tokens white inside it, so the breadcrumb and the "Sponsored by" line need no special version. `contrast-pairs.ts` checks white on both ends of every band.
 
 There is no new table: everything is read through the functions. A shelf asks for 21 so it knows there are more than 20 (rule 20) and passes the total to "View more". A follow or a block refreshes every list (the `story-list` query key).
 

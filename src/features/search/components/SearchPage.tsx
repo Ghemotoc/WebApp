@@ -6,8 +6,12 @@
  * What it shows: the eyebrow and "Results for “…”" (or "Search" with no term), the search field
  * with the diacritics hint, then SearchResults. A term under 2 letters says so instead of
  * searching. The term lives in the address, so a search can be shared.
+ * Look (bundle G7c; board Search): the eyebrow, the title and the glass search bar sit centred
+ * above the results.
  * Board differences: the board's Forum posts group waits for the forums (S1-E8-10); its ad slot
- * waits for S1-E12; tags take the third group (the story's criteria: stories, writers, tags).
+ * waits for S1-E12; tags take the third group (the story's criteria: stories, writers, tags). The
+ * board's Stories, People, Forums and Spaces switch and its recent searches are not built (the
+ * results already come in groups, and recent searches would keep what a person typed).
  * What it calls: SearchForm and SearchResults.
  */
 import { useSearchParams } from 'react-router';
@@ -49,16 +53,17 @@ export function SearchPage() {
   return (
     <PageContainer className="tmc-rise flex flex-col gap-8 pt-10 pb-14">
       <title>{t('page.documentTitle', { productName: brand.productName })}</title>
-      <header className="flex flex-col gap-2">
-        <Eyebrow>{t('page.eyebrow')}</Eyebrow>
-        <div className="flex items-center gap-8">
-          <h1 className="m-0 min-w-0 font-heading text-[clamp(32px,5vw,56px)] leading-[1.05] font-extrabold tracking-[-0.02em] break-words text-heading">
+      {/* The eyebrow, the title and the glass search bar, centred (board Search, bundle G7c). */}
+      <div className="mx-auto flex w-full max-w-[900px] flex-col gap-7">
+        <header className="flex flex-col items-center gap-3 text-center">
+          <Eyebrow>{t('page.eyebrow')}</Eyebrow>
+          <h1 className="m-0 min-w-0 font-heading text-[clamp(36px,5.2vw,64px)] leading-[1.02] font-bold tracking-[-0.03em] break-words text-heading">
             {heading}
           </h1>
-        </div>
-      </header>
-      {/* A new term starts the field afresh, so the key is the term. */}
-      <SearchForm key={term} initialTerm={term} showsHint />
+        </header>
+        {/* A new term starts the field afresh, so the key is the term. */}
+        <SearchForm key={term} initialTerm={term} showsHint />
+      </div>
       {/* The results with the portrait ad beside them from 1200 px; the wide ad comes after
           the results, never above them (S1-E12-01; board AdFormats). */}
       <div className="grid gap-8 min-[1200px]:grid-cols-[minmax(0,1fr)_300px] min-[1200px]:items-start">

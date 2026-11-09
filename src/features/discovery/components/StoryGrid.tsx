@@ -3,8 +3,9 @@
  * 3.10).
  *
  * A See all page is the one place stories sit in rows of cards instead of one scrolling line:
- * it is where a shelf's "View more" leads (CLAUDE.md rule 20). Columns fill the width at 196 px
- * a card, so it is two on a phone and six on a wide screen. "Load more" adds the next 24 and puts
+ * it is where a shelf's "View more" leads (CLAUDE.md rule 20). Columns fill the width at 210 to
+ * 248 px a card, so it is two on a phone and five on a wide screen, as the DiscoverAll board draws
+ * it (bundle G7c). "Load more" adds the next 24 and puts
  * nothing in the reader's way while they load; the new count is announced politely.
  * Who uses it: StoryListPage.
  */
@@ -34,9 +35,9 @@ export function StoryGrid({ stories, hasMore, isLoadingMore, onLoadMore }: Story
   const covers = designsForRow(stories);
   return (
     <div className="flex flex-col items-center gap-8">
-      <ul className="m-0 grid w-full list-none grid-cols-[repeat(auto-fill,minmax(150px,1fr))] justify-items-center gap-x-5 gap-y-8 p-0 sm:grid-cols-[repeat(auto-fill,minmax(196px,1fr))]">
+      <ul className="m-0 grid w-full list-none grid-cols-[repeat(auto-fill,minmax(150px,1fr))] justify-items-center gap-x-5 gap-y-8 p-0 sm:grid-cols-[repeat(auto-fill,minmax(210px,1fr))]">
         {stories.map((story, index) => (
-          <li key={story.slug} className="w-full max-w-[196px]">
+          <li key={story.slug} className="w-full max-w-[248px]">
             <ListedStoryCard
               story={story}
               cover={covers[index] ?? resolveCoverChoice(story)}

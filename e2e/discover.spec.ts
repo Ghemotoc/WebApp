@@ -103,11 +103,11 @@ test.describe('Discover and story lists (S1-E5-01, S1-E5-09)', () => {
     await page.getByRole('list', { name: 'Tags' }).getByRole('link', { name: tag }).click();
     await expect(page).toHaveURL(new RegExp(`/discover/t/${tag}$`));
     await expect(page.getByText('2 stories')).toBeVisible();
-    // Completed only.
-    await page
-      .getByRole('radiogroup', { name: 'Status' })
-      .getByRole('radio', { name: 'Completed' })
-      .click();
+    // Completed only: the status is a segmented control, so the reader clicks the segment's
+    // visible label (its radio button is hidden inside it, G7c).
+    const status = page.getByRole('group', { name: 'Status' });
+    await status.getByText('Completed', { exact: true }).click();
+    await expect(status.getByRole('radio', { name: 'Completed' })).toBeChecked();
     await expect(page).toHaveURL(/status=completed/);
     await expect(page.getByText('1 story', { exact: true })).toBeVisible();
     await page.reload();
