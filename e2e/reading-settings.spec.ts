@@ -100,7 +100,7 @@ test.describe('reading settings (S1-E4-02)', () => {
     await page.getByRole('button', { name: 'Reading settings' }).click();
     const panel = page.getByRole('region', { name: 'Reading settings' });
     await panel.getByRole('radio', { name: 'Dyslexia-friendly' }).click();
-    await expect.poll(() => textStyle(page, 'fontFamily')).toContain('Verdana');
+    await expect.poll(() => textStyle(page, 'fontFamily')).toContain('OpenDyslexic');
     await panel.getByLabel('Text size').fill('24');
     await expect.poll(() => textStyle(page, 'fontSize')).toBe('24px');
     await panel.getByRole('radio', { name: 'Wide' }).first().click();

@@ -80,6 +80,9 @@
     "minutes_one": "{{count}} minut de citit",
     "minutes_few": "{{count}} minute de citit",
     "minutes_other": "{{count}} de minute de citit",
+    "minutesLeft_one": "{{count}} minut rămas",
+    "minutesLeft_few": "{{count}} minute rămase",
+    "minutesLeft_other": "{{count}} de minute rămase",
     "edited": "modificat {{date}}",
     "untitled": "Capitol fără titlu",
     "endOfChapter": "Sfârșitul capitolului {{number}}",
@@ -142,6 +145,7 @@
   },
   "settings": {
     "button": "Setări de citire",
+    "buttonSample": "Aa",
     "title": "Setări de citire",
     "close": "Închide setările de citire",
     "font": "Font",
@@ -151,7 +155,7 @@
       "dyslexia_friendly": "Pentru dislexie",
       "atkinson_hyperlegible": "Atkinson Hyperlegible"
     },
-    "fontHint": "Fonturi care merg în orice browser: unul pe care mulți cititori cu dislexie îl găsesc mai ușor și Atkinson Hyperlegible, făcut ca literele care seamănă între ele să se deosebească ușor.",
+    "fontHint": "Fonturi care merg în orice browser: OpenDyslexic, pe care mulți cititori cu dislexie îl găsesc mai ușor și Atkinson Hyperlegible, făcut ca literele care seamănă între ele să se deosebească ușor.",
     "textSize": "Mărimea textului",
     "textSizeValue": "{{size}} px",
     "textSizeFromDevice": "{{size}} px, de pe dispozitivul tău",

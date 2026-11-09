@@ -66,17 +66,6 @@ export function HeartIcon({ isFilled }: { isFilled: boolean }) {
   );
 }
 
-/** A "T" for type: "Reading settings" (board 3.5, S1-E4-02). */
-export function TextSettingsIcon() {
-  return (
-    <Frame strokeWidth="1.9">
-      <polyline points="4 7 4 4 20 4 20 7" />
-      <line x1="9" x2="15" y1="20" y2="20" />
-      <line x1="12" x2="12" y1="4" y2="20" />
-    </Frame>
-  );
-}
-
 /** A cross: "Close reading settings". */
 export function CloseIcon() {
   return (

@@ -4,7 +4,9 @@
  *
  * Board values: a white 24 px-radius card about 360 px wide with the heading and a close button,
  * then Font, Text size, Line spacing, Line width and Theme, and a line saying the settings are
- * saved to the account. Every change shows on the chapter at once. No doodles: this is the
+ * saved to the account. The card lines up with the button's right edge, because the button sits
+ * at the right of the bar since bundle G7d, and a card opening rightwards would leave a phone's
+ * screen. Every change shows on the chapter at once. No doodles: this is the
  * chapter reader (DoD design rules). The board's "Later, in the apps: any font on your device"
  * block is left out until the desktop and phone apps exist (docs/board-fixes.md).
  * Reading comfort (IDEAS-1 part a): Atkinson Hyperlegible joins the fonts (IDEA-20261031-6);
@@ -177,7 +179,7 @@ export function ReadingSettingsPanel({
     <section
       id={id}
       aria-labelledby={`${id}-title`}
-      className="tmc-rise absolute top-14 left-0 z-[5] flex max-h-[calc(100dvh-140px)] w-[min(360px,calc(100vw-32px))] flex-col gap-[18px] overflow-y-auto rounded-card border border-border bg-surface p-[22px] shadow-popover"
+      className="tmc-rise absolute top-14 right-0 z-[5] flex max-h-[calc(100dvh-140px)] w-[min(360px,calc(100vw-32px))] flex-col gap-[18px] overflow-y-auto rounded-card border border-border bg-surface p-[22px] shadow-popover"
     >
       <div className="flex items-center justify-between gap-2">
         <h2

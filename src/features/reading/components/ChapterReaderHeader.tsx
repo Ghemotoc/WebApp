@@ -39,7 +39,7 @@ export function ChapterReaderHeader({ chapter }: { chapter: ReaderChapter }) {
   const { t, i18n } = useTranslation('reading');
   const parts = metaParts(chapter, i18n.language, t);
   return (
-    <header className="flex flex-col gap-3.5 pt-14 pb-9 lg:pr-20">
+    <header className="flex flex-col gap-3.5 pb-9 lg:pr-20">
       <Eyebrow>{t('reader.kicker', { number: chapter.number, total: chapter.total })}</Eyebrow>
       <h1
         id="chapter-title"

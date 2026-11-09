@@ -80,6 +80,9 @@
     "minutes_one": "{{count}} min read",
     "minutes_few": "{{count}} min read",
     "minutes_other": "{{count}} min read",
+    "minutesLeft_one": "{{count}} min left",
+    "minutesLeft_few": "{{count}} min left",
+    "minutesLeft_other": "{{count}} min left",
     "edited": "edited {{date}}",
     "untitled": "Untitled chapter",
     "endOfChapter": "End of chapter {{number}}",
@@ -142,6 +145,7 @@
   },
   "settings": {
     "button": "Reading settings",
+    "buttonSample": "Aa",
     "title": "Reading settings",
     "close": "Close reading settings",
     "font": "Font",
@@ -151,7 +155,7 @@
       "dyslexia_friendly": "Dyslexia-friendly",
       "atkinson_hyperlegible": "Atkinson Hyperlegible"
     },
-    "fontHint": "Fonts that work in every browser: one that many readers with dyslexia find easier, and Atkinson Hyperlegible, made so letters that look alike are easy to tell apart.",
+    "fontHint": "Fonts that work in every browser: OpenDyslexic, which many readers with dyslexia find easier, and Atkinson Hyperlegible, made so letters that look alike are easy to tell apart.",
     "textSize": "Text size",
     "textSizeValue": "{{size}} px",
     "textSizeFromDevice": "{{size}} px, from your device",

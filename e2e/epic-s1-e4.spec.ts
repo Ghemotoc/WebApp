@@ -118,7 +118,7 @@ test.describe('epic check: reading (S1-E4-QA)', () => {
   }) => {
     const page = await openAs(browser, 'teen_17', `/s/${slug}`);
     await page.getByRole('link', { name: 'Caietele bunicii' }).click();
-    await expect(page.getByText('Chapter 1 of 2')).toBeVisible();
+    await expect(page.locator('header').getByText('Chapter 1 of 2')).toBeVisible();
     await expect(page.locator('.tmc-chapter-text p')).toHaveCount(3);
     // Copying is off on the text, and the notice says what it can and can't do.
     expect(await copyFirstParagraph(page)).toBe('before');
@@ -200,7 +200,13 @@ test.describe('epic check: reading (S1-E4-QA)', () => {
       await test.step(`the reader at ${width} px`, async () => {
         const page = await readerContext.newPage();
         await checkScreen(page, view);
-        await expect(page.getByRole('navigation', { name: 'Capitole' })).toBeVisible();
+        // From 768 px the chapter links sit in the bar; on a phone they move to the end of the
+        // chapter, where "Read chapter 2" leads on (rulebook; bundle G7d).
+        if (width >= 768) {
+          await expect(page.getByRole('navigation', { name: 'Capitole' })).toBeVisible();
+        } else {
+          await expect(page.getByRole('link', { name: /Citește capitolul 2/ })).toBeVisible();
+        }
         await page.close();
       });
       await test.step(`the teaser at ${width} px`, async () => {
