@@ -1953,6 +1953,11 @@ A contest belongs to one landing page of type contest (S1-E11-14): the page tell
 - **The appeal:** the writer appeals from My reports and decisions like any decision (S1-E10-07). `decider_of_statement()` names the admin who disqualified, and `undo_decision_for_appeal()` makes the entry valid again when a moderator overturns it. A disqualified entry still holds the writer's one place, so `contest_entry_options()` returns it and `StoryContestCard` links to the decision.
 - **Tests:** `supabase/tests/database/266-contest-entries-disqualify.test.sql`, `e2e/contests.spec.ts`.
 
+### Original work only (GAPS-14)
+
+- `contest_story_problems()` lists `fan_fiction` for a story labelled fan fiction (`stories.is_fan_fiction`), so `enter_contest()` refuses it with that hint and `StoryContestCard` says why beforehand (Robert, 7 Nov 2026: no contests unless original). A story relabelled after it was entered keeps its entry; `admin_contest_entries()` returns `is_fan_fiction` and `ContestEntriesSection` shows a "Fan fiction" pill on the row, so staff decide whether to disqualify it.
+- **Tests:** `supabase/tests/database/341-contest-fan-fiction.test.sql`, `e2e/contests.spec.ts`.
+
 ### Judging, results and prizes (CONTESTS-13b2b)
 
 - **Judging:** once entries close (`contest_entries_have_closed()`), the Placing column (`PlacingControl` in `EntryJudging.tsx`) → `useContestEntries().judge({ kind: 'placing' })` → `admin_set_contest_placing()` stores `contest_entries.award` (winner or finalist). Only owner and admins choose; there is no public vote.

@@ -3,7 +3,7 @@
  * S1-E11-15 criteria 5 and 6; bundle CONTESTS-13b2a).
  *
  * What it shows: each entry by pen name and age group only (never the year of birth or the user
- * ID), the story with a link to read it, its rating, its published words, the day it was entered
+ * ID), the story with a link to read it, its rating (with a "Fan fiction" pill when the story is labelled so now, GAPS-14), its published words, the day it was entered
  * and its status (Valid, Withdrawn, Disqualified with the statement's reference). Staff never edit
  * an entry's words (architecture 1.8.5), so the only action is Disqualify on a valid entry, which
  * opens DisqualifyForm under the table. Plain staff components, no doodles.
@@ -15,6 +15,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 
+import { InfoPill } from '@/components/ui/InfoPill';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { formatRomaniaDate, romaniaNowFields } from '@/lib/romania-time';
@@ -67,7 +68,13 @@ function EntryRow({ entry, context }: { entry: StaffContestEntry; context: RowCo
           {entry.story_title}
         </Link>
       </td>
-      <td className="py-3 pr-4 text-body">{t(`staff.entries.ratings.${entry.rating}`)}</td>
+      <td className="py-3 pr-4 text-body">
+        <span className="flex flex-col items-start gap-1">
+          {t(`staff.entries.ratings.${entry.rating}`)}
+          {/* GAPS-14: contests take original work; a story relabelled after entering shows it. */}
+          {entry.is_fan_fiction && <InfoPill tone="gold">{t('staff.entries.fanFiction')}</InfoPill>}
+        </span>
+      </td>
       <td className="py-3 pr-4 text-body">{entry.words.toLocaleString(i18n.language)}</td>
       <td className="py-3 pr-4 text-body">
         {formatRomaniaDate(new Date(entry.entered_at), i18n.language)}

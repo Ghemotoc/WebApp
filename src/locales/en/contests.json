@@ -16,6 +16,7 @@
       "not_active": "Your account can’t take part in contests yet.",
       "not_readable": "Readers can’t open it yet. Publish a chapter first.",
       "class_only": "It’s shared only with the class.",
+      "fan_fiction": "It’s labelled fan fiction. Contests take original stories only.",
       "language": "It’s written in a language this contest doesn’t take.",
       "rating": "This contest is open to writers under 16, so it takes only stories rated All ages or 13+.",
       "word_limit": "Its published chapters are longer than the word limit."
@@ -31,6 +32,7 @@
       "not_active": "Your account can’t take part in contests yet.",
       "not_readable": "Readers can’t open this story yet. Publish a chapter first.",
       "class_only": "This story is shared only with the class.",
+      "fan_fiction": "Contests take original stories only, and this one is labelled fan fiction.",
       "language": "This contest doesn’t take stories in this language.",
       "rating": "This contest takes only stories rated All ages or 13+.",
       "word_limit": "This story is longer than the word limit.",
@@ -178,6 +180,7 @@
         "16_plus": "16+",
         "18_plus": "18+"
       },
+      "fanFiction": "Fan fiction",
       "status": {
         "valid": "Valid",
         "withdrawn": "Withdrawn",

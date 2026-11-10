@@ -4643,6 +4643,8 @@ begin
         'story_title', stories.title,
         'story_slug', stories.slug,
         'rating', stories.rating,
+        -- GAPS-14: a story labelled fan fiction after it was entered, for staff to judge.
+        'is_fan_fiction', stories.is_fan_fiction,
         'words', (select coalesce(sum(chapters.published_word_count), 0) from public.chapters
                   where chapters.story_id = stories.id and chapters.status = 'published'
                     and chapters.deleted_at is null),
@@ -18703,6 +18705,9 @@ CREATE OR REPLACE FUNCTION "public"."contest_story_problems"("target" "public"."
     case when story.deleted_at is not null or public.is_moderated_away('story', story.id)
            or not public.story_has_readable_chapter(story.id) then 'not_readable' end,
     case when story.class_only then 'class_only' end,
+    -- GAPS-14: contests are for original work; a story labelled fan fiction can't be entered
+    -- (Robert, 7 Nov 2026: fan fiction is welcome on the platform, but no contests unless original).
+    case when story.is_fan_fiction then 'fan_fiction' end,
     case when not story.language_code = any (target.language_codes) then 'language' end,
     case when '13_to_15' = any (target.age_groups) and story.rating not in ('all_ages', '13_plus')
       then 'rating' end,
