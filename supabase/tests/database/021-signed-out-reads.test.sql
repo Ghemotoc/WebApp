@@ -177,6 +177,9 @@ select results_eq(
        ('quote_cards', 0::bigint),
        -- A private reading streak is the reader's only (IDEAS-1b).
        ('reading_habits', 0::bigint),
+       -- A reader's lists are theirs; a public one opens through reading_list() only (GAPS-6).
+       ('reading_list_stories', 0::bigint),
+       ('reading_lists', 0::bigint),
        ('reading_minutes', 0::bigint),
        ('reading_positions', 0::bigint),
        -- What someone said they like is theirs only (S1-E2-06).

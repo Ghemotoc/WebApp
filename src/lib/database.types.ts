@@ -5543,6 +5543,97 @@ export type Database = {
           },
         ];
       };
+      reading_list_stories: {
+        Row: {
+          created_at: string;
+          id: string;
+          list_id: string;
+          story_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          list_id: string;
+          story_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          list_id?: string;
+          story_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'reading_list_stories_list_id_fkey';
+            columns: ['list_id'];
+            isOneToOne: false;
+            referencedRelation: 'reading_lists';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'reading_list_stories_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: false;
+            referencedRelation: 'stories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'reading_list_stories_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      reading_lists: {
+        Row: {
+          created_at: string;
+          deleted_at: string | null;
+          id: string;
+          is_public: boolean;
+          name: string;
+          updated_at: string;
+          user_id: string;
+          reading_list_is_visible: boolean | null;
+          reading_list_json: Json | null;
+        };
+        ComputedFields: 'reading_list_is_visible' | 'reading_list_json';
+        Insert: {
+          created_at?: string;
+          deleted_at?: string | null;
+          id?: string;
+          is_public?: boolean;
+          name: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          deleted_at?: string | null;
+          id?: string;
+          is_public?: boolean;
+          name?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'reading_lists_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       reading_minutes: {
         Row: {
           created_at: string;
@@ -11297,6 +11388,7 @@ export type Database = {
       clean_bible_tags: { Args: { raw_tags: Json }; Returns: string[] };
       clean_certificate_code: { Args: { typed: string }; Returns: string };
       clean_mail_text: { Args: { longest: number; raw_text: string }; Returns: string };
+      clean_reading_list_name: { Args: { typed_name: string }; Returns: string };
       clear_map_positions: { Args: { story_slug: string }; Returns: Json };
       clear_my_sign_in_failures: { Args: Record<PropertyKey, never>; Returns: undefined };
       close_account_for_abuse_image: {
@@ -11605,6 +11697,7 @@ export type Database = {
         Args: { new_user_id: string; sign_up_data: Json };
         Returns: undefined;
       };
+      create_reading_list: { Args: { list_name: string }; Returns: Json };
       create_space: {
         Args: {
           banner?: Database['public']['Enums']['space_banner'];
@@ -11823,6 +11916,7 @@ export type Database = {
       delete_marketing_detail: { Args: { detail_id: string; story_slug: string }; Returns: Json };
       delete_my_story: { Args: { story_slug: string }; Returns: Json };
       delete_plan_act: { Args: { act_id: string; story_slug: string }; Returns: Json };
+      delete_reading_list: { Args: { list_id: string }; Returns: Json };
       delete_story_character: { Args: { character_id: string }; Returns: Json };
       delete_story_event: { Args: { event_id: string }; Returns: Json };
       delete_story_idea: { Args: { idea_id: string }; Returns: Json };
@@ -12992,6 +13086,7 @@ export type Database = {
       my_planned_story_id: { Args: { story_slug: string }; Returns: string };
       my_privacy_settings: { Args: Record<PropertyKey, never>; Returns: Json };
       my_reading_habit: { Args: Record<PropertyKey, never>; Returns: Json };
+      my_reading_lists: { Args: Record<PropertyKey, never>; Returns: Json };
       my_report_detail_requests: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -13799,6 +13894,25 @@ export type Database = {
           isSetofReturn: true;
         };
       };
+      reading_list: { Args: { list_id: string }; Returns: Json };
+      reading_list_is_visible: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['reading_lists']['Row'],
+            Database['public']['Tables']['reading_lists']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
+      reading_list_json: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['reading_lists']['Row'],
+            Database['public']['Tables']['reading_lists']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
       rebuild_story_search_documents: { Args: Record<PropertyKey, never>; Returns: number };
       receive_support_email: { Args: { payload: string; signature: string }; Returns: Json };
       recently_banned_ip_matches: {
@@ -14415,6 +14529,10 @@ export type Database = {
       };
       set_space_welcome_note: { Args: { note: string; slug: string }; Returns: Json };
       set_story_class: { Args: { class_slug?: string; story_slug: string }; Returns: Json };
+      set_story_in_reading_list: {
+        Args: { is_in: boolean; list_id: string; story_slug: string };
+        Returns: Json;
+      };
       set_story_public_areas: { Args: { areas: string[]; story_slug: string }; Returns: Json };
       set_story_tags: {
         Args: { owner_id: string; tag_names: string[]; target_story_id: string };
@@ -15117,6 +15235,7 @@ export type Database = {
         Args: { labels: Json };
         Returns: Database['public']['Enums']['story_rating_reason'][];
       };
+      story_reading_lists: { Args: { story_slug: string }; Returns: Json };
       story_search_document: { Args: { target_story_id: string }; Returns: unknown };
       story_search_rank: {
         Args: {
@@ -15321,6 +15440,10 @@ export type Database = {
       };
       update_my_story: { Args: { changes: Json; story_slug: string }; Returns: Json };
       update_published_chapter: { Args: { chapter_code: string }; Returns: Json };
+      update_reading_list: {
+        Args: { list_id: string; make_public?: boolean; new_name?: string };
+        Returns: Json;
+      };
       update_space: {
         Args: {
           banner?: Database['public']['Enums']['space_banner'];
@@ -15601,7 +15724,8 @@ export type Database = {
         | 'forum_thread'
         | 'forum_post'
         | 'space'
-        | 'space_join_note';
+        | 'space_join_note'
+        | 'reading_list';
       revision_reason: 'published' | 'edited' | 'restored';
       safety_contact_kind:
         | 'emergency'
@@ -15995,6 +16119,7 @@ export const Constants = {
         'forum_post',
         'space',
         'space_join_note',
+        'reading_list',
       ],
       revision_reason: ['published', 'edited', 'restored'],
       safety_contact_kind: [

@@ -639,7 +639,8 @@ CREATE TYPE "public"."reportable_type" AS ENUM (
     'forum_thread',
     'forum_post',
     'space',
-    'space_join_note'
+    'space_join_note',
+    'reading_list'
 );
 
 
@@ -1449,6 +1450,8 @@ CREATE OR REPLACE FUNCTION "public"."account_deletion_rules"() RETURNS TABLE("ta
     ('quote_cards', 'delete', 1, null),
     ('rate_limit_events', 'delete', 1, null),
     ('reading_habits', 'delete', 1, null),
+    ('reading_list_stories', 'delete', 1, null),
+    ('reading_lists', 'delete', 2, null),
     ('reading_minutes', 'delete', 1, null),
     ('reading_positions', 'delete', 1, null),
     ('reading_preferences', 'delete', 1, null),
@@ -1482,7 +1485,7 @@ $$;
 ALTER FUNCTION "public"."account_deletion_rules"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09).';
+COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6).';
 
 
 
@@ -14344,6 +14347,14 @@ CREATE OR REPLACE FUNCTION "public"."case_item_content"("target" "public"."cases
         'space', spaces.name, 'created_at', space_join_notes.created_at)
         from public.space_join_notes join public.spaces on spaces.id = space_join_notes.space_id
         where space_join_notes.id = target.item_id)
+    -- A reading list's name, whether it is public and the titles in it (GAPS-6).
+    when 'reading_list' then (select jsonb_build_object('name', reading_lists.name,
+        'is_public', reading_lists.is_public, 'created_at', reading_lists.created_at,
+        'stories', (select coalesce(jsonb_agg(stories.title order by entries.created_at), '[]'::jsonb)
+          from public.reading_list_stories as entries
+          join public.stories on stories.id = entries.story_id
+          where entries.list_id = reading_lists.id))
+        from public.reading_lists where reading_lists.id = target.item_id)
   end;
 $$;
 
@@ -14351,7 +14362,7 @@ $$;
 ALTER FUNCTION "public"."case_item_content"("target" "public"."cases") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."case_item_content"("target" "public"."cases") IS 'Internal: the full content of a case''s item, for the evidence pack (S1-E10-10).';
+COMMENT ON FUNCTION "public"."case_item_content"("target" "public"."cases") IS 'Internal: the full content of a case''s item, for the evidence pack (S1-E10-10, GAPS-6).';
 
 
 
@@ -16704,6 +16715,34 @@ COMMENT ON FUNCTION "public"."clean_mail_text"("raw_text" "text", "longest" inte
 
 
 
+CREATE OR REPLACE FUNCTION "public"."clean_reading_list_name"("typed_name" "text") RETURNS "text"
+    LANGUAGE "plpgsql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+declare
+  clean_name text := public.normalise_romanian_letters(
+    regexp_replace(btrim(coalesce(typed_name, '')), '\s+', ' ', 'g'));
+begin
+  if char_length(clean_name) not between 1 and 60 then
+    raise exception 'A list''s name has 1 to 60 characters.'
+      using errcode = 'check_violation', hint = 'name_length';
+  end if;
+  if public.has_html_tag(clean_name) then
+    raise exception 'A list''s name is plain text.'
+      using errcode = 'check_violation', hint = 'name_html';
+  end if;
+  return clean_name;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."clean_reading_list_name"("typed_name" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."clean_reading_list_name"("typed_name" "text") IS 'Internal: a reading list''s name trimmed to one line, or an error for an empty, over-long or HTML name (GAPS-6).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."clear_map_positions"("story_slug" "text") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -18427,6 +18466,48 @@ COMMENT ON FUNCTION "public"."create_profile_from_sign_up"("new_user_id" "uuid",
 
 
 
+CREATE OR REPLACE FUNCTION "public"."create_reading_list"("list_name" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  clean_name text;
+  most_lists integer := coalesce(public.setting_value('reading_lists_max') #>> '{}', '30')::integer;
+  new_id uuid;
+begin
+  -- Step 1: signed in, with a real name.
+  if caller_id is null then
+    raise exception 'Log in to make a reading list.' using errcode = 'insufficient_privilege';
+  end if;
+  clean_name := public.clean_reading_list_name(list_name);
+  -- Step 2: one change to this person's lists at a time, so two presses of "Create" at the same
+  -- moment can't both pass the checks below.
+  perform pg_advisory_xact_lock(hashtext('reading_lists:' || caller_id::text));
+  if exists (select 1 from public.reading_lists
+             where user_id = caller_id and deleted_at is null and lower(name) = lower(clean_name)) then
+    raise exception 'You already have a list with that name.'
+      using errcode = 'check_violation', hint = 'name_taken';
+  end if;
+  if (select count(*) from public.reading_lists where user_id = caller_id and deleted_at is null) >= most_lists then
+    raise exception 'You can have at most % reading lists.', most_lists
+      using errcode = 'check_violation', hint = 'too_many_lists';
+  end if;
+  -- Step 3: the list, private until its owner says otherwise.
+  insert into public.reading_lists (user_id, name) values (caller_id, clean_name)
+  returning id into new_id;
+  return jsonb_build_object('id', new_id);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."create_reading_list"("list_name" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."create_reading_list"("list_name" "text") IS 'Makes a private, empty reading list for the caller (GAPS-6).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."create_space"("name" "text", "description" "text", "rules" "text" DEFAULT ''::"text", "posting" "public"."space_posting" DEFAULT 'members'::"public"."space_posting", "joining" "public"."space_joining" DEFAULT 'approve'::"public"."space_joining", "readers" "public"."space_readers" DEFAULT 'members'::"public"."space_readers", "banner" "public"."space_banner" DEFAULT 'plum'::"public"."space_banner") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -18668,6 +18749,8 @@ CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_
     ('quote_cards', true, null),
     ('rate_limit_events', false, 'a security counter kept for two days'),
     ('reading_habits', true, null),
+    ('reading_list_stories', true, null),
+    ('reading_lists', true, null),
     ('reading_minutes', true, null),
     ('reading_positions', true, null),
     ('reading_preferences', true, null),
@@ -18701,7 +18784,7 @@ $$;
 ALTER FUNCTION "public"."data_export_tables"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09).';
+COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6).';
 
 
 
@@ -19676,6 +19759,37 @@ ALTER FUNCTION "public"."delete_plan_act"("story_slug" "text", "act_id" "text") 
 
 
 COMMENT ON FUNCTION "public"."delete_plan_act"("story_slug" "text", "act_id" "text") IS 'Deletes one of the acts of the caller''s own story plan; its chapters move to "No act" (GAPS-2a; S1-E17-01).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."delete_reading_list"("list_id" "uuid") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+begin
+  if caller_id is null then
+    raise exception 'Log in to delete a reading list.' using errcode = 'insufficient_privilege';
+  end if;
+  if not exists (select 1 from public.reading_lists
+                 where id = list_id and user_id = caller_id and deleted_at is null) then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  if public.content_is_held_for_moderation('reading_list', list_id) then
+    update public.reading_lists set deleted_at = now(), is_public = false where id = list_id;
+  else
+    delete from public.reading_lists where id = list_id;
+  end if;
+  return jsonb_build_object('outcome', 'ok');
+end;
+$$;
+
+
+ALTER FUNCTION "public"."delete_reading_list"("list_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."delete_reading_list"("list_id" "uuid") IS 'Deletes one of the caller''s reading lists; one held by a moderation case is only marked deleted (GAPS-6).';
 
 
 
@@ -23693,14 +23807,14 @@ CREATE OR REPLACE FUNCTION "public"."is_story_list_kind"("list_kind" "text") RET
     SET "search_path" TO ''
     AS $$
   select list_kind in ('updated', 'new', 'popular', 'rising', 'completed', 'category', 'tag',
-    'following', 'writer', 'search', 'classics', 'library', 'picked', 'reader_library', 'shared');
+    'following', 'writer', 'search', 'classics', 'library', 'picked', 'reader_library', 'shared', 'reading_list');
 $$;
 
 
 ALTER FUNCTION "public"."is_story_list_kind"("list_kind" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."is_story_list_kind"("list_kind" "text") IS 'Internal: the story lists browse_stories() accepts (S1-E5-06).';
+COMMENT ON FUNCTION "public"."is_story_list_kind"("list_kind" "text") IS 'Internal: the story lists browse_stories() accepts (S1-E5-06, GAPS-6).';
 
 
 
@@ -25028,6 +25142,7 @@ CREATE OR REPLACE FUNCTION "public"."list_default_sort"("list_kind" "text") RETU
     when 'updated' then 'updated'
     when 'following' then 'updated'
     when 'library' then 'updated'
+    when 'reading_list' then 'updated'
     when 'search' then 'relevance'
     when 'shared' then 'shared'
     else 'popular'
@@ -25038,7 +25153,7 @@ $$;
 ALTER FUNCTION "public"."list_default_sort"("list_kind" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."list_default_sort"("list_kind" "text") IS 'Internal: a list''s own order (S1-E5-02, S1-E5-03).';
+COMMENT ON FUNCTION "public"."list_default_sort"("list_kind" "text") IS 'Internal: a list''s own order (S1-E5-02, S1-E5-03, GAPS-6).';
 
 
 
@@ -25090,6 +25205,14 @@ CREATE OR REPLACE FUNCTION "public"."list_holds_story"("target" "public"."storie
         and public.library_is_open_to(owner, (select auth.uid())))
     -- IDEAS-1e: shared at least once in the last 7 days.
     when 'shared' then public.story_shares_this_week(target.id) > 0
+    -- GAPS-6: one reading list, by its ID, when the caller may see the list (their own, or a
+    -- public one that moderators haven't taken away and whose owner isn't blocked either way).
+    when 'reading_list' then exists (
+      select 1 from public.reading_list_stories as entries
+      join public.reading_lists on reading_lists.id = entries.list_id
+      where entries.story_id = target.id
+        and reading_lists.id::text = list_key
+        and public.reading_list_is_visible(reading_lists))
     else false
   end;
 $$;
@@ -25098,7 +25221,7 @@ $$;
 ALTER FUNCTION "public"."list_holds_story"("target" "public"."stories", "list_kind" "text", "list_key" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."list_holds_story"("target" "public"."stories", "list_kind" "text", "list_key" "text") IS 'Internal: does a story belong to a list, before the reader''s rules (S1-E5-01).';
+COMMENT ON FUNCTION "public"."list_holds_story"("target" "public"."stories", "list_kind" "text", "list_key" "text") IS 'Internal: does a story belong to a list, before the reader''s rules (S1-E5-01, GAPS-6).';
 
 
 
@@ -25129,7 +25252,7 @@ COMMENT ON FUNCTION "public"."list_my_sessions"() IS 'The signed-in person''s ow
 CREATE OR REPLACE FUNCTION "public"."listed_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text") RETURNS SETOF "public"."stories"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
-    AS $$
+    AS $_$
 declare
   caller_id uuid := (select auth.uid());
   -- The ratings this caller may see, from rating_allows() itself, asked once per rating.
@@ -25142,6 +25265,12 @@ declare
     union
     select blocks.user_id from public.blocks where blocks.blocked_user_id = caller_id);
   is_search boolean := list_kind = 'search';
+  -- GAPS-6: a reading list's ID, so its few stories are found through the list's own index
+  -- instead of asking every story whether it is in the list. Null for every other list.
+  reading_list_id uuid := case
+    when list_kind = 'reading_list'
+      and list_key ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+    then list_key::uuid end;
   search_terms tsquery;
   search_pattern text;
 begin
@@ -25184,7 +25313,7 @@ begin
     -- A public story always passes, so that common case is answered without the function.
     and (stories.visibility = 'public' or public.story_listing_allows(stories, list_kind))
     -- S1-E11-08: a restricted story still opens, but no list promotes it.
-    and (list_kind in ('library', 'reader_library', 'writer')
+    and (list_kind in ('library', 'reader_library', 'writer', 'reading_list')
          or stories.user_id = caller_id
          or not exists (
            select 1 from public.story_restrictions
@@ -25192,6 +25321,10 @@ begin
     -- CLAUDE.md rules 18 and 6: the rating, and blocks, unless it is the caller's own story.
     and (stories.user_id = caller_id
          or (stories.rating = any (allowed_ratings) and not (stories.user_id = any (blocked_ids))))
+    -- GAPS-6: for a reading list, only the stories in it are looked at.
+    and (list_kind <> 'reading_list' or stories.id in (
+          select entries.story_id from public.reading_list_stories as entries
+          where entries.list_id = reading_list_id))
     and (category_slug is null or categories.slug = category_slug)
     and (completion is null or stories.completion_status = completion)
     and (language is null or stories.language_code = language)
@@ -25205,13 +25338,13 @@ begin
       or (list_kind not in ('updated', 'new', 'popular', 'search')
           and public.list_holds_story(stories, list_kind, list_key)));
 end;
-$$;
+$_$;
 
 
 ALTER FUNCTION "public"."listed_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."listed_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text") IS 'Internal: the stories in a list this reader may see, after the filters (S1-E5-01).';
+COMMENT ON FUNCTION "public"."listed_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text") IS 'Internal: the stories in a list this reader may see, after the filters (S1-E5-01, GAPS-6).';
 
 
 
@@ -27869,6 +28002,32 @@ COMMENT ON FUNCTION "public"."my_reading_habit"() IS 'The caller''s private read
 
 
 
+CREATE OR REPLACE FUNCTION "public"."my_reading_lists"() RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+begin
+  if caller_id is null then
+    raise exception 'Log in to see your reading lists.' using errcode = 'insufficient_privilege';
+  end if;
+  return (
+    select coalesce(jsonb_agg(public.reading_list_json(reading_lists)
+      order by reading_lists.updated_at desc, reading_lists.id), '[]'::jsonb)
+    from public.reading_lists
+    where reading_lists.user_id = caller_id and reading_lists.deleted_at is null);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."my_reading_lists"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."my_reading_lists"() IS 'The caller''s own reading lists with their counts and covers, for the Library (GAPS-6).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."my_report_detail_requests"() RETURNS TABLE("request_id" "uuid", "report_reference" "text", "reason" "public"."report_reason", "question" "text", "asked_at" timestamp with time zone)
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -29070,6 +29229,8 @@ CREATE OR REPLACE FUNCTION "public"."notification_item_json"("case_id" "uuid") R
         from public.forum_posts join public.forum_threads on forum_threads.id = forum_posts.thread_id
         join public.forums on forums.id = forum_threads.forum_id where forum_posts.id = cases.item_id)
       when 'space' then (select '/spaces/' || spaces.slug from public.spaces where spaces.id = cases.item_id)
+      -- A reading list's own page (GAPS-6).
+      when 'reading_list' then '/library/lists/' || cases.item_id
     end)
   from public.cases where cases.id = case_id;
 $$;
@@ -29078,7 +29239,7 @@ $$;
 ALTER FUNCTION "public"."notification_item_json"("case_id" "uuid") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."notification_item_json"("case_id" "uuid") IS 'Internal: a decided case''s item type, reference and address for its notification (S1-E7-01).';
+COMMENT ON FUNCTION "public"."notification_item_json"("case_id" "uuid") IS 'Internal: a decided case''s item type, reference and address for its notification (S1-E7-01, GAPS-6).';
 
 
 
@@ -32800,6 +32961,101 @@ COMMENT ON FUNCTION "public"."reader_visible_story"("story_slug" "text") IS 'Int
 
 
 
+CREATE OR REPLACE FUNCTION "public"."reading_list"("list_id" "uuid") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select public.reading_list_json(reading_lists)
+    || case when reading_lists.user_id = (select auth.uid()) then jsonb_build_object('entries', (
+        select coalesce(jsonb_agg(jsonb_build_object('slug', shown.slug, 'title', shown.title)
+          order by entries.created_at desc), '[]'::jsonb)
+        from public.listed_stories('reading_list', reading_lists.id::text, null, null, null) as shown
+        join public.reading_list_stories as entries
+          on entries.list_id = reading_lists.id and entries.story_id = shown.id))
+      else '{}'::jsonb end
+  from public.reading_lists
+  where reading_lists.id = list_id and public.reading_list_is_visible(reading_lists);
+$$;
+
+
+ALTER FUNCTION "public"."reading_list"("list_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."reading_list"("list_id" "uuid") IS 'One reading list the caller may see (their own, or a public one), for its page; null otherwise (GAPS-6).';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."reading_lists" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "name" "text" NOT NULL,
+    "is_public" boolean DEFAULT false NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "deleted_at" timestamp with time zone,
+    CONSTRAINT "reading_lists_name_check" CHECK (((("char_length"("name") >= 1) AND ("char_length"("name") <= 60)) AND ("name" !~ '[\n\r]'::"text")))
+);
+
+
+ALTER TABLE "public"."reading_lists" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."reading_lists" IS 'kind: user_content; reportable: reading_list
+A list of stories a reader makes and names in their Library; private until they make it public (GAPS-6).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."reading_list_is_visible"("target" "public"."reading_lists") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select target.deleted_at is null
+    and (
+      target.user_id = (select auth.uid())
+      or (target.is_public
+          and not public.is_moderated_away('reading_list', target.id)
+          and not public.is_blocked_with(target.user_id))
+    );
+$$;
+
+
+ALTER FUNCTION "public"."reading_list_is_visible"("target" "public"."reading_lists") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."reading_list_is_visible"("target" "public"."reading_lists") IS 'Internal: the caller may see this reading list: their own, or a public one not moderated away or blocked (GAPS-6).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."reading_list_json"("target" "public"."reading_lists") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  with listed as (
+    select shown.id, entries.created_at as added_at
+    from public.listed_stories('reading_list', target.id::text, null, null, null) as shown
+    join public.reading_list_stories as entries
+      on entries.list_id = target.id and entries.story_id = shown.id
+  )
+  select jsonb_build_object(
+    'id', target.id,
+    'name', target.name,
+    'is_public', target.is_public,
+    'is_own', target.user_id = (select auth.uid()),
+    'owner', (select jsonb_build_object('handle', profiles.handle, 'pen_name', profiles.pen_name)
+              from public.profiles where profiles.id = target.user_id),
+    'story_count', (select count(*) from listed),
+    'covers', (select coalesce(jsonb_agg(public.story_card_json(latest.id) order by latest.added_at desc), '[]'::jsonb)
+               from (select listed.id, listed.added_at from listed order by listed.added_at desc limit 3) as latest));
+$$;
+
+
+ALTER FUNCTION "public"."reading_list_json"("target" "public"."reading_lists") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."reading_list_json"("target" "public"."reading_lists") IS 'Internal: a reading list with its owner, its count and its three latest covers, as this caller may see them (GAPS-6).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."rebuild_story_search_documents"() RETURNS integer
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -34952,6 +35208,13 @@ begin
         where is_row_id and space_join_notes.id = item_reference::uuid
           and space_join_notes.deleted_at is null and spaces.deleted_at is null
           and public.space_may_act(spaces, 'members');
+    -- A reading list only while the reporter may see it: someone else's public list, so a private
+    -- list's existence never leaks through the report form (GAPS-6).
+    when 'reading_list' then
+      return query
+        select reading_lists.id, reading_lists.user_id from public.reading_lists
+        where is_row_id and reading_lists.id = item_reference::uuid
+          and reading_lists.is_public and public.reading_list_is_visible(reading_lists);
   end case;
   if not found then
     raise exception 'There is no such % to report.', item_type using errcode = 'check_violation';
@@ -34963,7 +35226,7 @@ $_$;
 ALTER FUNCTION "public"."reportable_item_owner"("item_type" "public"."reportable_type", "item_reference" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."reportable_item_owner"("item_type" "public"."reportable_type", "item_reference" "text") IS 'The reported item''s ID and owner, one branch per reportable_type (shared contract, S1-E10-01; comment S1-E6-01; picture S1-E10-05; embed S1-E3-10; atlas_item S1-E17-34; message S1-E9-01; forum_thread and forum_post S1-E8-02; space S1-E8-06; space_join_note IDEA-20261102-9).';
+COMMENT ON FUNCTION "public"."reportable_item_owner"("item_type" "public"."reportable_type", "item_reference" "text") IS 'The reported item''s ID and owner, one branch per reportable_type (shared contract, S1-E10-01; comment S1-E6-01; picture S1-E10-05; embed S1-E3-10; atlas_item S1-E17-34; message S1-E9-01; forum_thread and forum_post S1-E8-02; space S1-E8-06; space_join_note IDEA-20261102-9, GAPS-6).';
 
 
 
@@ -35048,6 +35311,9 @@ begin
         into summary
       from public.space_join_notes join public.spaces on spaces.id = space_join_notes.space_id
       where space_join_notes.id = item_id;
+    when 'reading_list' then
+      select format('Reading list "%s"', reading_lists.name) into summary
+      from public.reading_lists where reading_lists.id = item_id;
   end case;
   return coalesce(summary, '(gone)');
 end;
@@ -35057,7 +35323,7 @@ $$;
 ALTER FUNCTION "public"."reportable_item_summary"("item_type" "public"."reportable_type", "item_id" "uuid") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."reportable_item_summary"("item_type" "public"."reportable_type", "item_id" "uuid") IS 'A few words saying what was reported, one branch per reportable_type (shared contract, S1-E10-01; comment S1-E6-01; picture S1-E10-05).';
+COMMENT ON FUNCTION "public"."reportable_item_summary"("item_type" "public"."reportable_type", "item_id" "uuid") IS 'A few words saying what was reported, one branch per reportable_type (shared contract, S1-E10-01; comment S1-E6-01; picture S1-E10-05, GAPS-6).';
 
 
 
@@ -39059,6 +39325,63 @@ COMMENT ON FUNCTION "public"."set_story_class"("story_slug" "text", "class_slug"
 
 
 
+CREATE OR REPLACE FUNCTION "public"."set_story_in_reading_list"("list_id" "uuid", "story_slug" "text", "is_in" boolean) RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  target_story_id uuid;
+  most_stories integer := coalesce(public.setting_value('reading_list_stories_max') #>> '{}', '200')::integer;
+begin
+  -- Step 1: signed in, and the caller's own list. The lock makes two presses at the same moment
+  -- wait for each other, so the count below is true.
+  if caller_id is null then
+    raise exception 'Log in to keep reading lists.' using errcode = 'insufficient_privilege';
+  end if;
+  perform pg_advisory_xact_lock(hashtext('reading_lists:' || caller_id::text));
+  if not exists (select 1 from public.reading_lists
+                 where id = list_id and user_id = caller_id and deleted_at is null) then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  -- Step 2: taking a story out works on any story in the list.
+  if is_in is not true then
+    delete from public.reading_list_stories as entries
+    using public.stories
+    where stories.id = entries.story_id and stories.slug = story_slug and entries.list_id = set_story_in_reading_list.list_id;
+    update public.reading_lists set updated_at = now() where id = list_id;
+    return jsonb_build_object('outcome', 'ok', 'in_list', false);
+  end if;
+  -- Step 3: a story the caller may read, with something published.
+  select story.id into target_story_id from public.reader_visible_story(story_slug) as story;
+  if target_story_id is null or not public.story_has_readable_chapter(target_story_id) then
+    raise exception 'There is no such story.' using errcode = 'no_data_found';
+  end if;
+  -- Step 4: room in the list, unless the story is already in it.
+  if not exists (select 1 from public.reading_list_stories as entries
+                 where entries.list_id = set_story_in_reading_list.list_id and entries.story_id = target_story_id)
+     and (select count(*) from public.reading_list_stories as entries
+          where entries.list_id = set_story_in_reading_list.list_id) >= most_stories then
+    raise exception 'A reading list holds at most % stories.', most_stories
+      using errcode = 'check_violation', hint = 'too_many_stories';
+  end if;
+  -- Step 5: in, once; the list counts as changed, so it moves to the top of the Library's rows.
+  insert into public.reading_list_stories (list_id, user_id, story_id)
+  values (list_id, caller_id, target_story_id)
+  on conflict on constraint reading_list_stories_once_per_list do nothing;
+  update public.reading_lists set updated_at = now() where id = list_id;
+  return jsonb_build_object('outcome', 'ok', 'in_list', true);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_story_in_reading_list"("list_id" "uuid", "story_slug" "text", "is_in" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_story_in_reading_list"("list_id" "uuid", "story_slug" "text", "is_in" boolean) IS 'Puts a story in one of the caller''s reading lists or takes it out (GAPS-6).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."set_story_public_areas"("story_slug" "text", "areas" "text"[]) RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -42210,9 +42533,13 @@ CREATE OR REPLACE FUNCTION "public"."story_listing_allows"("target" "public"."st
     or target.user_id = (select auth.uid())
     or (target.visibility = 'unlisted' and (
       list_kind = 'library'
-      or (list_kind = 'reader_library' and (
+      -- GAPS-6: in a reading list as in someone's library: only for a reader who already keeps
+      -- the story (in their library, their follows or one of their own lists).
+      or (list_kind in ('reader_library', 'reading_list') and (
         exists (select 1 from public.library_entries
                 where library_entries.user_id = (select auth.uid()) and library_entries.story_id = target.id)
+        or exists (select 1 from public.reading_list_stories
+                   where reading_list_stories.user_id = (select auth.uid()) and reading_list_stories.story_id = target.id)
         or exists (select 1 from public.follows_stories
                    where follows_stories.user_id = (select auth.uid()) and follows_stories.story_id = target.id)))));
 $$;
@@ -42221,7 +42548,7 @@ $$;
 ALTER FUNCTION "public"."story_listing_allows"("target" "public"."stories", "list_kind" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."story_listing_allows"("target" "public"."stories", "list_kind" "text") IS 'Internal: unlisted stories show only in libraries, private ones nowhere but the writer''s own (NEW-1).';
+COMMENT ON FUNCTION "public"."story_listing_allows"("target" "public"."stories", "list_kind" "text") IS 'Internal: unlisted stories show only in libraries, private ones nowhere but the writer''s own (NEW-1, GAPS-6).';
 
 
 
@@ -42560,6 +42887,31 @@ ALTER FUNCTION "public"."story_rating_reasons_from"("labels" "jsonb") OWNER TO "
 
 
 COMMENT ON FUNCTION "public"."story_rating_reasons_from"("labels" "jsonb") IS 'Internal: the rating reasons in a story''s labels, empty below 16+ (SPONSORS-f).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."story_reading_lists"("story_slug" "text") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(jsonb_agg(jsonb_build_object(
+      'id', reading_lists.id,
+      'name', reading_lists.name,
+      'is_public', reading_lists.is_public,
+      'has_story', exists (
+        select 1 from public.reading_list_stories as entries
+        join public.stories on stories.id = entries.story_id
+        where entries.list_id = reading_lists.id and stories.slug = story_slug))
+    order by lower(reading_lists.name), reading_lists.id), '[]'::jsonb)
+  from public.reading_lists
+  where reading_lists.user_id = (select auth.uid()) and reading_lists.deleted_at is null;
+$$;
+
+
+ALTER FUNCTION "public"."story_reading_lists"("story_slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_reading_lists"("story_slug" "text") IS 'The caller''s reading lists with whether a story is in each, for "Add to a list" on the story page (GAPS-6).';
 
 
 
@@ -44472,6 +44824,55 @@ ALTER FUNCTION "public"."update_published_chapter"("chapter_code" "text") OWNER 
 
 
 COMMENT ON FUNCTION "public"."update_published_chapter"("chapter_code" "text") IS 'Readers get the writer''s saved edits ("Edited on"): {outcome: ok | not_active | not_found | empty | wrong_state} (S1-E3-03, Q10).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."update_reading_list"("list_id" "uuid", "new_name" "text" DEFAULT NULL::"text", "make_public" boolean DEFAULT NULL::boolean) RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  target public.reading_lists;
+  clean_name text;
+  will_be_public boolean;
+begin
+  -- Step 1: signed in, and one change to this person's lists at a time.
+  if caller_id is null then
+    raise exception 'Log in to change a reading list.' using errcode = 'insufficient_privilege';
+  end if;
+  perform pg_advisory_xact_lock(hashtext('reading_lists:' || caller_id::text));
+  select * into target from public.reading_lists
+  where id = list_id and user_id = caller_id and deleted_at is null;
+  if not found then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  -- Step 2: the name, when it changes: valid, and not another of the caller's lists' (a list may
+  -- change its own capitals).
+  clean_name := case when new_name is null then target.name else public.clean_reading_list_name(new_name) end;
+  if exists (select 1 from public.reading_lists
+             where user_id = caller_id and deleted_at is null and id <> target.id
+               and lower(name) = lower(clean_name)) then
+    raise exception 'You already have a list with that name.'
+      using errcode = 'check_violation', hint = 'name_taken';
+  end if;
+  -- Step 3: a public list needs an active account.
+  will_be_public := coalesce(make_public, target.is_public);
+  if will_be_public and (make_public is true or new_name is not null) and not public.is_active_member() then
+    raise exception 'Your account can''t make a list public right now.'
+      using errcode = 'insufficient_privilege', hint = 'not_active';
+  end if;
+  -- Step 4: save.
+  update public.reading_lists set name = clean_name, is_public = will_be_public where id = target.id;
+  return jsonb_build_object('outcome', 'ok', 'name', clean_name, 'is_public', will_be_public);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."update_reading_list"("list_id" "uuid", "new_name" "text", "make_public" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."update_reading_list"("list_id" "uuid", "new_name" "text", "make_public" boolean) IS 'Renames one of the caller''s reading lists or makes it public or private (GAPS-6).';
 
 
 
@@ -47348,6 +47749,24 @@ A reader''s private reading streak: daily target, reminder and time zone (IDEAS-
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."reading_list_stories" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "list_id" "uuid" NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "story_id" "uuid" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL
+);
+
+
+ALTER TABLE "public"."reading_list_stories" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."reading_list_stories" IS 'kind: user_action
+Which stories a reader put in which of their reading lists, and when (GAPS-6).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."reading_minutes" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "user_id" "uuid" NOT NULL,
@@ -49205,6 +49624,21 @@ ALTER TABLE ONLY "public"."reading_habits"
 
 
 
+ALTER TABLE ONLY "public"."reading_list_stories"
+    ADD CONSTRAINT "reading_list_stories_once_per_list" UNIQUE ("list_id", "story_id");
+
+
+
+ALTER TABLE ONLY "public"."reading_list_stories"
+    ADD CONSTRAINT "reading_list_stories_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."reading_lists"
+    ADD CONSTRAINT "reading_lists_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."reading_minutes"
     ADD CONSTRAINT "reading_minutes_one_row_a_day" UNIQUE ("user_id", "read_on");
 
@@ -50382,6 +50816,22 @@ CREATE INDEX "rate_limit_events_user_action_idx" ON "public"."rate_limit_events"
 
 
 
+CREATE INDEX "reading_list_stories_person_story" ON "public"."reading_list_stories" USING "btree" ("user_id", "story_id");
+
+
+
+CREATE INDEX "reading_list_stories_story" ON "public"."reading_list_stories" USING "btree" ("story_id");
+
+
+
+CREATE UNIQUE INDEX "reading_lists_one_name_per_person" ON "public"."reading_lists" USING "btree" ("user_id", "lower"("name")) WHERE ("deleted_at" IS NULL);
+
+
+
+CREATE INDEX "reading_lists_owner" ON "public"."reading_lists" USING "btree" ("user_id");
+
+
+
 CREATE INDEX "reading_positions_chapter_id" ON "public"."reading_positions" USING "btree" ("chapter_id");
 
 
@@ -51411,6 +51861,22 @@ CREATE OR REPLACE TRIGGER "rate_limit_events_refuse_user_id_change" BEFORE UPDAT
 
 
 CREATE OR REPLACE TRIGGER "reading_habits_set_updated_at" BEFORE UPDATE ON "public"."reading_habits" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "reading_list_stories_refuse_user_id_change" BEFORE UPDATE ON "public"."reading_list_stories" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"('user_id');
+
+
+
+CREATE OR REPLACE TRIGGER "reading_list_stories_set_updated_at" BEFORE UPDATE ON "public"."reading_list_stories" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "reading_lists_refuse_user_id_change" BEFORE UPDATE ON "public"."reading_lists" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"('user_id');
+
+
+
+CREATE OR REPLACE TRIGGER "reading_lists_set_updated_at" BEFORE UPDATE ON "public"."reading_lists" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
 
@@ -52833,6 +53299,26 @@ ALTER TABLE ONLY "public"."rate_limit_events"
 
 ALTER TABLE ONLY "public"."reading_habits"
     ADD CONSTRAINT "reading_habits_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."reading_list_stories"
+    ADD CONSTRAINT "reading_list_stories_list_id_fkey" FOREIGN KEY ("list_id") REFERENCES "public"."reading_lists"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."reading_list_stories"
+    ADD CONSTRAINT "reading_list_stories_story_id_fkey" FOREIGN KEY ("story_id") REFERENCES "public"."stories"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."reading_list_stories"
+    ADD CONSTRAINT "reading_list_stories_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."reading_lists"
+    ADD CONSTRAINT "reading_lists_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
 
 
 
@@ -54557,6 +55043,20 @@ CREATE POLICY "reading_habits_select_own" ON "public"."reading_habits" FOR SELEC
 
 
 COMMENT ON POLICY "reading_habits_select_own" ON "public"."reading_habits" IS 'The reader reads their own streak settings; nobody else (IDEAS-1b).';
+
+
+
+ALTER TABLE "public"."reading_list_stories" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "reading_list_stories_select_own" ON "public"."reading_list_stories" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
+
+
+
+ALTER TABLE "public"."reading_lists" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "reading_lists_select_own" ON "public"."reading_lists" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
 
 
 
@@ -57346,6 +57846,10 @@ REVOKE ALL ON FUNCTION "public"."clean_mail_text"("raw_text" "text", "longest" i
 
 
 
+REVOKE ALL ON FUNCTION "public"."clean_reading_list_name"("typed_name" "text") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."clear_map_positions"("story_slug" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."clear_map_positions"("story_slug" "text") TO "authenticated";
 
@@ -57589,6 +58093,11 @@ REVOKE ALL ON FUNCTION "public"."create_profile_from_sign_up"("new_user_id" "uui
 
 
 
+REVOKE ALL ON FUNCTION "public"."create_reading_list"("list_name" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."create_reading_list"("list_name" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."create_space"("name" "text", "description" "text", "rules" "text", "posting" "public"."space_posting", "joining" "public"."space_joining", "readers" "public"."space_readers", "banner" "public"."space_banner") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."create_space"("name" "text", "description" "text", "rules" "text", "posting" "public"."space_posting", "joining" "public"."space_joining", "readers" "public"."space_readers", "banner" "public"."space_banner") TO "authenticated";
 
@@ -57753,6 +58262,11 @@ GRANT ALL ON FUNCTION "public"."delete_my_story"("story_slug" "text") TO "authen
 
 REVOKE ALL ON FUNCTION "public"."delete_plan_act"("story_slug" "text", "act_id" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."delete_plan_act"("story_slug" "text", "act_id" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."delete_reading_list"("list_id" "uuid") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."delete_reading_list"("list_id" "uuid") TO "authenticated";
 
 
 
@@ -58948,6 +59462,11 @@ GRANT ALL ON FUNCTION "public"."my_reading_habit"() TO "authenticated";
 
 
 
+REVOKE ALL ON FUNCTION "public"."my_reading_lists"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."my_reading_lists"() TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."my_report_detail_requests"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."my_report_detail_requests"() TO "authenticated";
 
@@ -59690,6 +60209,25 @@ REVOKE ALL ON FUNCTION "public"."reader_reached_chapter"("target_chapter_id" "uu
 
 
 REVOKE ALL ON FUNCTION "public"."reader_visible_story"("story_slug" "text") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."reading_list"("list_id" "uuid") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."reading_list"("list_id" "uuid") TO "anon";
+GRANT ALL ON FUNCTION "public"."reading_list"("list_id" "uuid") TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."reading_lists" TO "service_role";
+GRANT SELECT ON TABLE "public"."reading_lists" TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."reading_list_is_visible"("target" "public"."reading_lists") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."reading_list_json"("target" "public"."reading_lists") FROM PUBLIC;
 
 
 
@@ -60496,6 +61034,11 @@ GRANT ALL ON FUNCTION "public"."set_story_class"("story_slug" "text", "class_slu
 
 
 
+REVOKE ALL ON FUNCTION "public"."set_story_in_reading_list"("list_id" "uuid", "story_slug" "text", "is_in" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_story_in_reading_list"("list_id" "uuid", "story_slug" "text", "is_in" boolean) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."set_story_public_areas"("story_slug" "text", "areas" "text"[]) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_story_public_areas"("story_slug" "text", "areas" "text"[]) TO "authenticated";
 
@@ -61024,6 +61567,11 @@ REVOKE ALL ON FUNCTION "public"."story_rating_reasons_from"("labels" "jsonb") FR
 
 
 
+REVOKE ALL ON FUNCTION "public"."story_reading_lists"("story_slug" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."story_reading_lists"("story_slug" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."story_search_document"("target_story_id" "uuid") FROM PUBLIC;
 
 
@@ -61273,6 +61821,11 @@ GRANT ALL ON FUNCTION "public"."update_my_story"("story_slug" "text", "changes" 
 
 REVOKE ALL ON FUNCTION "public"."update_published_chapter"("chapter_code" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."update_published_chapter"("chapter_code" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."update_reading_list"("list_id" "uuid", "new_name" "text", "make_public" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."update_reading_list"("list_id" "uuid", "new_name" "text", "make_public" boolean) TO "authenticated";
 
 
 
@@ -61807,6 +62360,11 @@ GRANT SELECT ON TABLE "public"."rate_limit_events" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."reading_habits" TO "service_role";
 GRANT SELECT ON TABLE "public"."reading_habits" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."reading_list_stories" TO "service_role";
+GRANT SELECT ON TABLE "public"."reading_list_stories" TO "authenticated";
 
 
 
