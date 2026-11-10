@@ -4184,6 +4184,90 @@ export type Database = {
         };
         Relationships: [];
       };
+      learning_path_progress: {
+        Row: {
+          created_at: string;
+          day_number: number;
+          id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          day_number: number;
+          id?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          day_number?: number;
+          id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'learning_path_progress_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      learning_path_steps: {
+        Row: {
+          created_at: string;
+          day_number: number;
+          id: string;
+          lesson_en: string;
+          lesson_ro: string;
+          task_en: string;
+          task_ro: string;
+          title_en: string;
+          title_ro: string;
+          updated_at: string;
+          updated_by_user_id: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          day_number: number;
+          id?: string;
+          lesson_en: string;
+          lesson_ro: string;
+          task_en: string;
+          task_ro: string;
+          title_en: string;
+          title_ro: string;
+          updated_at?: string;
+          updated_by_user_id?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          day_number?: number;
+          id?: string;
+          lesson_en?: string;
+          lesson_ro?: string;
+          task_en?: string;
+          task_ro?: string;
+          title_en?: string;
+          title_ro?: string;
+          updated_at?: string;
+          updated_by_user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'learning_path_steps_updated_by_user_id_fkey';
+            columns: ['updated_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       legal_document_versions: {
         Row: {
           body_markdown: string;
@@ -10626,6 +10710,7 @@ export type Database = {
         };
         Returns: string;
       };
+      admin_save_learning_step: { Args: { step: Json; target_day: number }; Returns: boolean };
       admin_save_safety_contact: { Args: { contact: Json }; Returns: string };
       admin_save_sponsor: {
         Args: { sponsor_name: string; target_sponsor_id: string; website: string };
@@ -13107,6 +13192,7 @@ export type Database = {
         Returns: undefined;
       };
       mark_forums_read: { Args: { forum_slug?: string }; Returns: undefined };
+      mark_learning_step: { Args: { is_done: boolean; target_day: number }; Returns: boolean };
       mark_notifications_read: { Args: { notification_ids?: string[] }; Returns: number };
       market_change_problem: {
         Args: {
@@ -16076,6 +16162,19 @@ export type Database = {
           prize_en: string;
           prize_ro: string;
           word_limit: number;
+        }[];
+      };
+      writers_hub_learning_path: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          day_number: number;
+          is_done: boolean;
+          lesson_en: string;
+          lesson_ro: string;
+          task_en: string;
+          task_ro: string;
+          title_en: string;
+          title_ro: string;
         }[];
       };
       writers_hub_prompts: {

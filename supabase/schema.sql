@@ -1439,6 +1439,7 @@ CREATE OR REPLACE FUNCTION "public"."account_deletion_rules"() RETURNS TABLE("ta
     ('identity_link_requests', 'delete', 1, null),
     ('invites', 'kept', 0, 'invites staff made; purged 90 days after they expire (docs/retention.md)'),
     ('landing_page_reminders', 'delete', 1, null),
+    ('learning_path_progress', 'delete', 1, null),
     ('library_entries', 'delete', 1, null),
     ('manual_age_checks', 'delete', 1, null),
     ('messages', 'own_step', 0, 'the person''s own messages are deleted, unless reported and still held (S1-E9-02)'),
@@ -1488,7 +1489,7 @@ $$;
 ALTER FUNCTION "public"."account_deletion_rules"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f).';
+COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g).';
 
 
 
@@ -9655,6 +9656,49 @@ ALTER FUNCTION "public"."admin_save_landing_page_draft"("target_page_id" "uuid",
 
 
 COMMENT ON FUNCTION "public"."admin_save_landing_page_draft"("target_page_id" "uuid", "new_content" "jsonb", "new_show_from" "date", "new_take_down_on" "date") IS 'Saves a landing page draft; owner and admin only (S1-E11-14).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_save_learning_step"("target_day" integer, "step" "jsonb") RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  before_row public.learning_path_steps;
+  saved public.learning_path_steps;
+begin
+  -- Step 1: staff with the contests area only (the server decides, architecture 1.8.1).
+  if not public.staff_may('contests', 'act') then
+    raise exception 'Only contest staff can change the learning path.' using errcode = 'insufficient_privilege';
+  end if;
+  if step is null then
+    raise exception 'A day needs its texts.' using errcode = 'check_violation';
+  end if;
+  -- Step 2: the day as it was, held while it changes.
+  select * into before_row from public.learning_path_steps where day_number = target_day for update;
+  if before_row.id is null then
+    raise exception 'The learning path has days 1 to 7.' using errcode = 'no_data_found';
+  end if;
+  -- Step 3: the new words. The table's checks refuse an empty or long text.
+  update public.learning_path_steps set
+    title_ro = btrim(coalesce(step ->> 'title_ro', '')), title_en = btrim(coalesce(step ->> 'title_en', '')),
+    lesson_ro = btrim(coalesce(step ->> 'lesson_ro', '')), lesson_en = btrim(coalesce(step ->> 'lesson_en', '')),
+    task_ro = btrim(coalesce(step ->> 'task_ro', '')), task_en = btrim(coalesce(step ->> 'task_en', '')),
+    updated_by_user_id = (select auth.uid())
+  where id = before_row.id returning * into saved;
+  -- Step 4: the audit log keeps what changed, in the same transaction.
+  perform public.log_staff_action('learning_step.saved', 'learning_path_steps', saved.id::text, null, null,
+    to_jsonb(before_row) - array['id', 'updated_by_user_id', 'created_at', 'updated_at'],
+    to_jsonb(saved) - array['id', 'updated_by_user_id', 'created_at', 'updated_at']);
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_save_learning_step"("target_day" integer, "step" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_save_learning_step"("target_day" integer, "step" "jsonb") IS 'Contest staff change one learning path day''s title, lesson and task; logged with before and after (GAPS-12g).';
 
 
 
@@ -19228,6 +19272,7 @@ CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_
     ('identity_link_requests', false, 'a ten-minute step while connecting a way to log in; the ways to log in are in the account part'),
     ('invites', true, null),
     ('landing_page_reminders', true, null),
+    ('learning_path_progress', true, null),
     ('library_entries', true, null),
     ('manual_age_checks', true, null),
     ('messages', true, null),
@@ -19277,7 +19322,7 @@ $$;
 ALTER FUNCTION "public"."data_export_tables"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f).';
+COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g).';
 
 
 
@@ -26486,6 +26531,38 @@ ALTER FUNCTION "public"."mark_forums_read"("forum_slug" "text") OWNER TO "postgr
 
 
 COMMENT ON FUNCTION "public"."mark_forums_read"("forum_slug" "text") IS '"Mark all as read" on the board, or "Mark as read" on a forum and the forums inside it (S1-E8-04).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."mark_learning_step"("target_day" integer, "is_done" boolean) RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+begin
+  if caller_id is null then
+    raise exception 'Log in to follow the learning path.' using errcode = 'insufficient_privilege';
+  end if;
+  if target_day is null or target_day not between 1 and 7 then
+    raise exception 'The learning path has days 1 to 7.' using errcode = 'check_violation';
+  end if;
+  -- Taking the tick off removes the row; ticking twice changes nothing.
+  if not coalesce(is_done, false) then
+    delete from public.learning_path_progress where user_id = caller_id and day_number = target_day;
+    return false;
+  end if;
+  insert into public.learning_path_progress (user_id, day_number) values (caller_id, target_day)
+  on conflict on constraint learning_path_progress_one_per_day do nothing;
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."mark_learning_step"("target_day" integer, "is_done" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."mark_learning_step"("target_day" integer, "is_done" boolean) IS 'The caller marks a learning path day done, or not done again (GAPS-12g).';
 
 
 
@@ -47331,6 +47408,35 @@ COMMENT ON FUNCTION "public"."writers_hub_contests"() IS 'The contests the signe
 
 
 
+CREATE OR REPLACE FUNCTION "public"."writers_hub_learning_path"() RETURNS TABLE("day_number" integer, "title_ro" "text", "title_en" "text", "lesson_ro" "text", "lesson_en" "text", "task_ro" "text", "task_en" "text", "is_done" boolean)
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select
+    steps.day_number,
+    steps.title_ro,
+    steps.title_en,
+    steps.lesson_ro,
+    steps.lesson_en,
+    steps.task_ro,
+    steps.task_en,
+    exists (
+      select 1 from public.learning_path_progress as progress
+      where progress.user_id = (select auth.uid()) and progress.day_number = steps.day_number
+    )
+  from public.learning_path_steps as steps
+  where (select auth.uid()) is not null
+  order by steps.day_number;
+$$;
+
+
+ALTER FUNCTION "public"."writers_hub_learning_path"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."writers_hub_learning_path"() IS 'The learning path''s seven days in order, each with whether the caller marked it done (GAPS-12g).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."writers_hub_prompts"() RETURNS TABLE("prompt_id" "uuid", "prompt_ro" "text", "prompt_en" "text", "starts_on" "date", "ends_on" "date", "is_current" boolean, "writer_count" integer)
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -48729,6 +48835,54 @@ ALTER TABLE "public"."languages" OWNER TO "postgres";
 
 COMMENT ON TABLE "public"."languages" IS 'kind: platform
 Story and interface languages with their status; a language opens only with a moderator who reads it (S1-E11-05).';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."learning_path_progress" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "day_number" integer NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "learning_path_progress_day_in_path" CHECK ((("day_number" >= 1) AND ("day_number" <= 7)))
+);
+
+
+ALTER TABLE "public"."learning_path_progress" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."learning_path_progress" IS 'kind: user_action
+Which days of the Writers'' hub learning path a writer marked done, and when (GAPS-12g). Personal data: the person''s own progress; nobody else reads it.';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."learning_path_steps" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "day_number" integer NOT NULL,
+    "title_ro" "text" NOT NULL,
+    "title_en" "text" NOT NULL,
+    "lesson_ro" "text" NOT NULL,
+    "lesson_en" "text" NOT NULL,
+    "task_ro" "text" NOT NULL,
+    "task_en" "text" NOT NULL,
+    "updated_by_user_id" "uuid",
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "learning_path_steps_day_in_path" CHECK ((("day_number" >= 1) AND ("day_number" <= 7))),
+    CONSTRAINT "learning_path_steps_lesson_en_length" CHECK ((("char_length"("btrim"("lesson_en")) >= 1) AND ("char_length"("btrim"("lesson_en")) <= 1500))),
+    CONSTRAINT "learning_path_steps_lesson_ro_length" CHECK ((("char_length"("btrim"("lesson_ro")) >= 1) AND ("char_length"("btrim"("lesson_ro")) <= 1500))),
+    CONSTRAINT "learning_path_steps_task_en_length" CHECK ((("char_length"("btrim"("task_en")) >= 1) AND ("char_length"("btrim"("task_en")) <= 300))),
+    CONSTRAINT "learning_path_steps_task_ro_length" CHECK ((("char_length"("btrim"("task_ro")) >= 1) AND ("char_length"("btrim"("task_ro")) <= 300))),
+    CONSTRAINT "learning_path_steps_title_en_length" CHECK ((("char_length"("btrim"("title_en")) >= 1) AND ("char_length"("btrim"("title_en")) <= 80))),
+    CONSTRAINT "learning_path_steps_title_ro_length" CHECK ((("char_length"("btrim"("title_ro")) >= 1) AND ("char_length"("btrim"("title_ro")) <= 80)))
+);
+
+
+ALTER TABLE "public"."learning_path_steps" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."learning_path_steps" IS 'kind: platform
+The seven days of the Writers'' hub learning path: a title, a short lesson and a small task each, in Romanian and English, shipped as draft text and changed by staff (GAPS-12g). No personal data.';
 
 
 
@@ -50867,6 +51021,26 @@ ALTER TABLE ONLY "public"."languages"
 
 ALTER TABLE ONLY "public"."languages"
     ADD CONSTRAINT "languages_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."learning_path_progress"
+    ADD CONSTRAINT "learning_path_progress_one_per_day" UNIQUE ("user_id", "day_number");
+
+
+
+ALTER TABLE ONLY "public"."learning_path_progress"
+    ADD CONSTRAINT "learning_path_progress_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."learning_path_steps"
+    ADD CONSTRAINT "learning_path_steps_one_per_day" UNIQUE ("day_number");
+
+
+
+ALTER TABLE ONLY "public"."learning_path_steps"
+    ADD CONSTRAINT "learning_path_steps_pkey" PRIMARY KEY ("id");
 
 
 
@@ -53234,6 +53408,18 @@ CREATE OR REPLACE TRIGGER "languages_set_updated_at" BEFORE UPDATE ON "public"."
 
 
 
+CREATE OR REPLACE TRIGGER "learning_path_progress_refuse_user_id_change" BEFORE UPDATE ON "public"."learning_path_progress" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"('user_id');
+
+
+
+CREATE OR REPLACE TRIGGER "learning_path_progress_set_updated_at" BEFORE UPDATE ON "public"."learning_path_progress" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "learning_path_steps_set_updated_at" BEFORE UPDATE ON "public"."learning_path_steps" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
 CREATE OR REPLACE TRIGGER "legal_document_versions_set_updated_at" BEFORE UPDATE ON "public"."legal_document_versions" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
@@ -54584,6 +54770,16 @@ ALTER TABLE ONLY "public"."landing_page_versions"
 
 ALTER TABLE ONLY "public"."landing_pages"
     ADD CONSTRAINT "landing_pages_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE SET NULL;
+
+
+
+ALTER TABLE ONLY "public"."learning_path_progress"
+    ADD CONSTRAINT "learning_path_progress_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."learning_path_steps"
+    ADD CONSTRAINT "learning_path_steps_updated_by_user_id_fkey" FOREIGN KEY ("updated_by_user_id") REFERENCES "public"."profiles"("id");
 
 
 
@@ -56411,6 +56607,28 @@ CREATE POLICY "languages_select_public" ON "public"."languages" FOR SELECT TO "a
 
 
 COMMENT ON POLICY "languages_select_public" ON "public"."languages" IS 'Allows anyone to read the languages and their status; nothing in it is personal (S1-E11-05).';
+
+
+
+ALTER TABLE "public"."learning_path_progress" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "learning_path_progress_select_own" ON "public"."learning_path_progress" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
+
+
+
+COMMENT ON POLICY "learning_path_progress_select_own" ON "public"."learning_path_progress" IS 'Allows a writer to read which learning path days they marked done; nobody else reads them (GAPS-12g).';
+
+
+
+ALTER TABLE "public"."learning_path_steps" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "learning_path_steps_select_members" ON "public"."learning_path_steps" FOR SELECT TO "authenticated" USING (true);
+
+
+
+COMMENT ON POLICY "learning_path_steps_select_members" ON "public"."learning_path_steps" IS 'Allows anyone signed in to read the learning path''s seven days: staff-written teaching text, nothing personal (GAPS-12g).';
 
 
 
@@ -58531,6 +58749,11 @@ GRANT ALL ON FUNCTION "public"."admin_save_interface_text"("text_key" "text", "l
 
 REVOKE ALL ON FUNCTION "public"."admin_save_landing_page_draft"("target_page_id" "uuid", "new_content" "jsonb", "new_show_from" "date", "new_take_down_on" "date") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_save_landing_page_draft"("target_page_id" "uuid", "new_content" "jsonb", "new_show_from" "date", "new_take_down_on" "date") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_save_learning_step"("target_day" integer, "step" "jsonb") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_save_learning_step"("target_day" integer, "step" "jsonb") TO "authenticated";
 
 
 
@@ -60849,6 +61072,11 @@ GRANT ALL ON FUNCTION "public"."mark_forum_thread_read"("thread_number" bigint, 
 
 REVOKE ALL ON FUNCTION "public"."mark_forums_read"("forum_slug" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."mark_forums_read"("forum_slug" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."mark_learning_step"("target_day" integer, "is_done" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."mark_learning_step"("target_day" integer, "is_done" boolean) TO "authenticated";
 
 
 
@@ -63789,6 +64017,11 @@ GRANT ALL ON FUNCTION "public"."writers_hub_contests"() TO "authenticated";
 
 
 
+REVOKE ALL ON FUNCTION "public"."writers_hub_learning_path"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."writers_hub_learning_path"() TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."writers_hub_prompts"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."writers_hub_prompts"() TO "authenticated";
 
@@ -64104,6 +64337,16 @@ GRANT SELECT ON TABLE "public"."landing_pages" TO "authenticated";
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."languages" TO "service_role";
 GRANT SELECT ON TABLE "public"."languages" TO "anon";
 GRANT SELECT ON TABLE "public"."languages" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."learning_path_progress" TO "service_role";
+GRANT SELECT ON TABLE "public"."learning_path_progress" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."learning_path_steps" TO "service_role";
+GRANT SELECT ON TABLE "public"."learning_path_steps" TO "authenticated";
 
 
 

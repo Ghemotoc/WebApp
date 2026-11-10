@@ -511,13 +511,18 @@ const parentConsentRoutes: RouteObject[] = [
 ];
 
 /**
- * The Writers' hub, the signed-in home the logo opens, and Resources, opened from the account menu
- * (bundle G9 WRITING, part a), both loaded when opened.
+ * The Writers' hub, the signed-in home the logo opens, its learning path (GAPS-12g) and Resources,
+ * opened from the account menu (bundle G9 WRITING, part a), each loaded when opened.
  */
 const hubRoutes: RouteObject[] = [
   lazyPage(
     '/hub',
     async () => (await import('@/features/hub/components/WritersHubPage')).WritersHubPage,
+  ),
+  // The learning path's lessons, one day at a time (GAPS-12g).
+  lazyPage(
+    '/hub/path',
+    async () => (await import('@/features/hub/components/LearningPathPage')).LearningPathPage,
   ),
   lazyPage(
     '/resources',

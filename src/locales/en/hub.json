@@ -129,6 +129,19 @@
       "notYet": "Not yet",
       "note": "Counted from saves in the editor. Nobody else sees this.",
       "loadFailed": "We couldn’t load the writing month. Check the connection and try again."
+    },
+    "path": {
+      "eyebrow": "Learning path",
+      "heading": "A first chapter in 7 days",
+      "intro": "A short lesson and a small task each day.",
+      "listLabel": "The seven days",
+      "dayNumber": "Day {{day}}",
+      "done": "done",
+      "start": "Start day 1",
+      "continue": "Continue day {{day}}",
+      "readAgain": "Read the path again",
+      "progress": "{{done}} of {{total}} days done",
+      "loadFailed": "We couldn’t load the learning path. Check the connection and try again."
     }
   },
   "hubStaff": {
@@ -202,6 +215,21 @@
       "listLabel": "Writer of the week picks, newest first",
       "refused": "Check the username, that the writer is an adult with an active account, and both lines (up to 300 characters).",
       "dayTaken": "Another pick already starts on that day. Pick a different day."
+    },
+    "path": {
+      "heading": "Learning path",
+      "intro": "The seven days writers read at “A first chapter in 7 days”. The path always has seven days: change the words, not the count.",
+      "listLabel": "The seven days of the learning path",
+      "lessonHint": "Up to 1,500 characters. Leave a blank line between paragraphs.",
+      "fields": {
+        "titleEn": "Title in English",
+        "titleRo": "Title in Romanian",
+        "lessonEn": "Lesson in English",
+        "lessonRo": "Lesson in Romanian",
+        "taskEn": "Task in English",
+        "taskRo": "Task in Romanian"
+      },
+      "refused": "Fill in every field: titles up to 80 characters, lessons up to 1,500 and tasks up to 300."
     }
   },
   "resources": {
@@ -230,5 +258,19 @@
       "legalTitle": "Privacy and terms",
       "legalLine": "How we handle data, and the rules of the platform"
     }
+  },
+  "path": {
+    "documentTitle": "Learning path · {{productName}}",
+    "backToHub": "Back to the Writers’ hub",
+    "dayOf": "Day {{day}} of {{total}}",
+    "task": "Today’s task",
+    "markDone": "Mark day {{day}} done",
+    "markNotDone": "Mark as not done",
+    "nextDay": "On to day {{day}}",
+    "goWrite": "Open Writing",
+    "markFailed": "We couldn’t save that. Try again.",
+    "loading": "Loading…",
+    "daysLabel": "Days of the learning path",
+    "signedOut": "Log in to follow the learning path."
   }
 }

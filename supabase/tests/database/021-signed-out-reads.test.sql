@@ -155,6 +155,9 @@ select results_eq(
        ('landing_pages', 0::bigint),
        ('languages', (select count(*) from public.languages)),
        -- A reader's library and places are theirs only (S1-E4-03).
+       -- The learning path: a writer's own ticks; the seven days are for signed-in members (GAPS-12g).
+       ('learning_path_progress', 0::bigint),
+       ('learning_path_steps', 0::bigint),
        ('library_entries', 0::bigint),
        ('legal_document_versions',
         (select count(*) from public.legal_document_versions where published_at <= now())),

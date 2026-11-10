@@ -129,6 +129,19 @@
       "notYet": "Încă nu",
       "note": "Se numără din salvările din editor. Nimeni altcineva nu vede asta.",
       "loadFailed": "Nu am putut încărca luna de scris. Verifică conexiunea și încearcă din nou."
+    },
+    "path": {
+      "eyebrow": "Traseu de învățare",
+      "heading": "Un prim capitol în 7 zile",
+      "intro": "O lecție scurtă și o sarcină mică în fiecare zi.",
+      "listLabel": "Cele șapte zile",
+      "dayNumber": "Ziua {{day}}",
+      "done": "gata",
+      "start": "Începe ziua 1",
+      "continue": "Continuă ziua {{day}}",
+      "readAgain": "Citește din nou traseul",
+      "progress": "{{done}} din {{total}} zile gata",
+      "loadFailed": "Nu am putut încărca traseul de învățare. Verifică conexiunea și încearcă din nou."
     }
   },
   "hubStaff": {
@@ -202,6 +215,21 @@
       "listLabel": "Alegeri pentru scriitorul săptămânii, de la cea mai nouă",
       "refused": "Verifică numele de utilizator, că scriitorul este adult și are cont activ, și ambele rânduri (cel mult 300 de caractere).",
       "dayTaken": "O altă alegere începe deja în ziua aceea. Alege altă zi."
+    },
+    "path": {
+      "heading": "Traseu de învățare",
+      "intro": "Cele șapte zile pe care scriitorii le citesc la „Un prim capitol în 7 zile”. Traseul are mereu șapte zile: schimbă cuvintele, nu numărul.",
+      "listLabel": "Cele șapte zile ale traseului de învățare",
+      "lessonHint": "Cel mult 1.500 de caractere. Lasă un rând liber între paragrafe.",
+      "fields": {
+        "titleEn": "Titlul în engleză",
+        "titleRo": "Titlul în română",
+        "lessonEn": "Lecția în engleză",
+        "lessonRo": "Lecția în română",
+        "taskEn": "Sarcina în engleză",
+        "taskRo": "Sarcina în română"
+      },
+      "refused": "Completează fiecare câmp: titluri de cel mult 80 de caractere, lecții de cel mult 1.500 și sarcini de cel mult 300."
     }
   },
   "resources": {
@@ -230,5 +258,19 @@
       "legalTitle": "Confidențialitate și termeni",
       "legalLine": "Cum folosim datele și regulile platformei"
     }
+  },
+  "path": {
+    "documentTitle": "Traseu de învățare · {{productName}}",
+    "backToHub": "Înapoi la Spațiul scriitorilor",
+    "dayOf": "Ziua {{day}} din {{total}}",
+    "task": "Sarcina de azi",
+    "markDone": "Marchează ziua {{day}} ca gata",
+    "markNotDone": "Marchează ca neterminată",
+    "nextDay": "Mai departe, la ziua {{day}}",
+    "goWrite": "Deschide Scrieri",
+    "markFailed": "Nu am putut salva. Încearcă din nou.",
+    "loading": "Se încarcă…",
+    "daysLabel": "Zilele traseului de învățare",
+    "signedOut": "Intră în cont ca să urmezi traseul de învățare."
   }
 }

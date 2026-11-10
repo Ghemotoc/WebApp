@@ -13,6 +13,7 @@ import { PageContainer } from '@/components/ui/PageContainer';
 import { useHubTranslation } from '../../registerHubTranslations';
 
 import { CallsSection } from './CallsSection';
+import { LearningPathSection } from './LearningPathSection';
 import { PromptsSection } from './PromptsSection';
 import { SpotlightsSection } from './SpotlightsSection';
 
@@ -35,6 +36,7 @@ export function StaffHubPage() {
       <PromptsSection />
       <CallsSection />
       <SpotlightsSection />
+      <LearningPathSection />
     </PageContainer>
   );
 }
