@@ -9,6 +9,8 @@
  * - place_chapter_on_board(): a move on the board, which asks first when readers would see a
  *   new order (S1-E3-04);
  * - add_chapter_to_act(): "Add chapter" on an act;
+ * - add_plan_act(), rename_plan_act() and delete_plan_act(): "Add act" and "Edit act" on the
+ *   board (bundle GAPS-2a, …_gaps2a_plan_acts.sql);
  * - add_story_event(), update_story_event() and delete_story_event(): the timeline.
  * All of it is private: only the writer reads it (story_events_select_own and the others).
  */
@@ -199,6 +201,49 @@ export async function addChapterToAct(
   const answer = await client.rpc('add_chapter_to_act', { story_slug: slug, act_id: actId ?? '' });
   const data = checkedAnswer(answer, 'add the chapter');
   return String(data.code);
+}
+
+/**
+ * Adds an act after the story's other acts (GAPS-2a: "Add act" on the board).
+ *
+ * @param name - the act's name, 1 to 80 characters
+ * Errors: throws when the story already has 12 acts, the name is empty or the database can't be
+ *   reached.
+ */
+export async function addPlanAct(client: AppSupabaseClient, slug: string, name: string) {
+  const answer = await client.rpc('add_plan_act', { story_slug: slug, act_name: name });
+  checkedAnswer(answer, 'add the act');
+}
+
+/**
+ * Gives an act a new name (GAPS-2a: "Edit act" on a column).
+ *
+ * @param act - the act's ID and its new name, 1 to 80 characters
+ * Errors: throws when the name is empty, the act isn't the story's or the database can't be
+ *   reached.
+ */
+export async function renamePlanAct(
+  client: AppSupabaseClient,
+  slug: string,
+  act: { id: string; name: string },
+) {
+  const answer = await client.rpc('rename_plan_act', {
+    story_slug: slug,
+    act_id: act.id,
+    act_name: act.name,
+  });
+  checkedAnswer(answer, 'rename the act');
+}
+
+/**
+ * Deletes an act; its chapters stay in the book and move to "No act" (GAPS-2a). The screen asks
+ * first.
+ *
+ * Errors: throws when the act isn't the story's or the database can't be reached.
+ */
+export async function deletePlanAct(client: AppSupabaseClient, slug: string, actId: string) {
+  const answer = await client.rpc('delete_plan_act', { story_slug: slug, act_id: actId });
+  checkedAnswer(answer, 'delete the act');
 }
 
 /** A new event as the form gives it. */

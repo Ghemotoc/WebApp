@@ -2323,6 +2323,46 @@ COMMENT ON FUNCTION "public"."add_email_to_support_ticket"("ticket" "public"."su
 
 
 
+CREATE OR REPLACE FUNCTION "public"."add_plan_act"("story_slug" "text", "act_name" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  target_story_id uuid;
+  new_id uuid;
+begin
+  -- Step 1: a signed-in writer and their own live story.
+  if caller_id is null then
+    raise exception 'Sign in to add an act.' using errcode = 'insufficient_privilege';
+  end if;
+  target_story_id := public.my_live_story_id(story_slug);
+  if target_story_id is null then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  -- Step 2: the bound. 12 acts, so the board stays readable (builder's choice, GAPS-2a).
+  if (select count(*) from public.story_plan_acts where story_id = target_story_id) >= 12 then
+    raise exception 'A story can hold at most 12 acts.'
+      using errcode = 'check_violation', hint = 'too_many_acts';
+  end if;
+  -- Step 3: the act, after the others.
+  insert into public.story_plan_acts (story_id, user_id, position, name)
+  values (target_story_id, caller_id,
+    coalesce((select max(position) from public.story_plan_acts where story_id = target_story_id), 0) + 1,
+    btrim(act_name))
+  returning id into new_id;
+  return jsonb_build_object('outcome', 'ok', 'id', new_id);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."add_plan_act"("story_slug" "text", "act_name" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."add_plan_act"("story_slug" "text", "act_name" "text") IS 'Adds an act to the caller''s own story plan, after the acts it has (GAPS-2a; S1-E17-01).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."add_reading_minute"() RETURNS integer
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -19451,6 +19491,43 @@ COMMENT ON FUNCTION "public"."delete_my_story"("story_slug" "text") IS 'Soft-del
 
 
 
+CREATE OR REPLACE FUNCTION "public"."delete_plan_act"("story_slug" "text", "act_id" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target_story_id uuid;
+  target_act_id uuid;
+  moved integer;
+begin
+  -- Step 1: a signed-in writer, their own live story and one of its acts.
+  if (select auth.uid()) is null then
+    raise exception 'Sign in to delete an act.' using errcode = 'insufficient_privilege';
+  end if;
+  target_story_id := public.my_live_story_id(story_slug);
+  -- (Looked up here, not with act_of_story(), which raises for an act of another story; here
+  -- such an act is simply not found.)
+  select acts.id into target_act_id from public.story_plan_acts as acts
+  where acts.story_id = target_story_id and acts.id::text = act_id;
+  if target_story_id is null or target_act_id is null then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  -- Step 2: how many chapters will move to "No act", for the screen's message.
+  select count(*) into moved from public.chapter_plans where chapter_plans.act_id = target_act_id;
+  -- Step 3: the act goes; the foreign key clears it from its chapters' plans.
+  delete from public.story_plan_acts where id = target_act_id;
+  return jsonb_build_object('outcome', 'ok', 'chapters_moved', moved);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."delete_plan_act"("story_slug" "text", "act_id" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."delete_plan_act"("story_slug" "text", "act_id" "text") IS 'Deletes one of the acts of the caller''s own story plan; its chapters move to "No act" (GAPS-2a; S1-E17-01).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."delete_story_character"("character_id" "uuid") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -34202,6 +34279,40 @@ ALTER FUNCTION "public"."rename_character_detail_group"("story_slug" "text", "gr
 
 
 COMMENT ON FUNCTION "public"."rename_character_detail_group"("story_slug" "text", "group_name" "text", "new_name" "text") IS 'Renames one of the caller''s own groups of character details, on every detail in it (GAPS-1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."rename_plan_act"("story_slug" "text", "act_id" "text", "act_name" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target_story_id uuid;
+  target_act_id uuid;
+begin
+  -- Step 1: a signed-in writer, their own live story and one of its acts.
+  if (select auth.uid()) is null then
+    raise exception 'Sign in to rename an act.' using errcode = 'insufficient_privilege';
+  end if;
+  target_story_id := public.my_live_story_id(story_slug);
+  -- (Looked up here, not with act_of_story(), which raises for an act of another story; here
+  -- such an act is simply not found.)
+  select acts.id into target_act_id from public.story_plan_acts as acts
+  where acts.story_id = target_story_id and acts.id::text = act_id;
+  if target_story_id is null or target_act_id is null then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  -- Step 2: the new name.
+  update public.story_plan_acts set name = btrim(act_name) where id = target_act_id;
+  return jsonb_build_object('outcome', 'ok');
+end;
+$$;
+
+
+ALTER FUNCTION "public"."rename_plan_act"("story_slug" "text", "act_id" "text", "act_name" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."rename_plan_act"("story_slug" "text", "act_id" "text", "act_name" "text") IS 'Renames one of the acts of the caller''s own story plan (GAPS-2a; S1-E17-01).';
 
 
 
@@ -54980,6 +55091,11 @@ REVOKE ALL ON FUNCTION "public"."add_email_to_support_ticket"("ticket" "public".
 
 
 
+REVOKE ALL ON FUNCTION "public"."add_plan_act"("story_slug" "text", "act_name" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."add_plan_act"("story_slug" "text", "act_name" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."add_reading_minute"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."add_reading_minute"() TO "authenticated";
 
@@ -57297,6 +57413,11 @@ GRANT ALL ON FUNCTION "public"."delete_my_story"("story_slug" "text") TO "authen
 
 
 
+REVOKE ALL ON FUNCTION "public"."delete_plan_act"("story_slug" "text", "act_id" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."delete_plan_act"("story_slug" "text", "act_id" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."delete_story_character"("character_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."delete_story_character"("character_id" "uuid") TO "authenticated";
 
@@ -59446,6 +59567,11 @@ GRANT ALL ON FUNCTION "public"."rename_chapter"("chapter_code" "text", "title" "
 
 REVOKE ALL ON FUNCTION "public"."rename_character_detail_group"("story_slug" "text", "group_name" "text", "new_name" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."rename_character_detail_group"("story_slug" "text", "group_name" "text", "new_name" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."rename_plan_act"("story_slug" "text", "act_id" "text", "act_name" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."rename_plan_act"("story_slug" "text", "act_id" "text", "act_name" "text") TO "authenticated";
 
 
 

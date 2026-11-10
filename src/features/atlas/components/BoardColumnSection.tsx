@@ -3,9 +3,10 @@
  *
  * No box of its own (bundle G10 ATLAS, part c1; board AtlasStoryline): the act's name as a heading
  * with its chapter count, its chapters as glass cards in book order, then "Add chapter", which
- * adds a draft at the end of this act. Dropping a card on the column (not on a card) puts it at
- * the column's end. Who uses it: ChapterBoard. What it calls: BoardCard and the handlers it is
- * given.
+ * adds a draft at the end of this act. An act (never "No act") also has "Edit act", to rename or
+ * delete it (bundle GAPS-2a). Dropping a card on the column (not on a card) puts it at the
+ * column's end. Who uses it: ChapterBoard. What it calls: BoardCard, EditActForm and the handlers
+ * it is given.
  */
 import { useState } from 'react';
 
@@ -18,6 +19,7 @@ import type { BoardColumn, BoardTarget } from '../lib/boardColumns';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { BoardCard } from './BoardCard';
+import { EditActForm } from './EditActForm';
 
 /** What the column needs. */
 export interface BoardColumnSectionProps {
@@ -119,7 +121,7 @@ function ColumnCards(props: BoardColumnSectionProps & { column: BoardColumn }) {
 /**
  * Renders the column.
  *
- * @returns the labelled section with its cards and "Add chapter"
+ * @returns the labelled section with "Edit act", its cards and "Add chapter"
  */
 export function BoardColumnSection(props: BoardColumnSectionProps) {
   const { t } = useAtlasTranslation();
@@ -154,6 +156,15 @@ export function BoardColumnSection(props: BoardColumnSectionProps) {
             {column.chapters.length}
           </span>
         </div>
+        {column.actId !== null && (
+          <EditActForm
+            // A fresh form for each name, so a rename closes it and shows the new name.
+            key={name}
+            slug={props.slug}
+            act={{ id: column.actId, name }}
+            chapterCount={column.chapters.length}
+          />
+        )}
         {column.chapters.length === 0 && (
           <p className="m-0 text-sm text-meta">{t('storyline.board.empty')}</p>
         )}

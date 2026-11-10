@@ -7,7 +7,8 @@
  * part c1; board AtlasStoryline). The choice is remembered on this device, so the
  * storyline opens on it next time. Only the writer sees any of it.
  * Who calls it: src/app/router.tsx (loaded only when a writer opens it). What it calls:
- * useStoryline → story_storyline() and the changers; ChapterBoard, TimelineView, PovLanesView;
+ * useStoryline → story_storyline() and the changers; AddActForm, ChapterBoard, TimelineView,
+ * PovLanesView;
  * lib/storylineView.ts ("?view=timeline" from a search result wins over it); useMyStories for
  * the top bar.
  */
@@ -32,6 +33,7 @@ import {
 import { writeAddressFor } from '../lib/writeAddress';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
+import { AddActForm } from './AddActForm';
 import { AtlasPageHeading } from './AtlasPageHeading';
 import { AtlasTopBar } from './AtlasTopBar';
 import { ChapterBoard } from './ChapterBoard';
@@ -76,11 +78,16 @@ function StorylineBody({
   );
 }
 
-/** Board, Timeline or POV lanes (S1-E17-22), with the view's hint beside the switch. */
+/**
+ * Board, Timeline or POV lanes (S1-E17-22), with the view's hint beside the switch and, after the
+ * hint, the view's own action (the board's "Add act", GAPS-2a).
+ */
 function ViewToggle({
+  slug,
   view,
   onChange,
 }: {
+  slug: string;
   view: StorylineView;
   onChange: (view: StorylineView) => void;
 }) {
@@ -98,7 +105,10 @@ function ViewToggle({
         value={view}
         onChange={onChange}
       />
-      <p className="m-0 max-w-[60ch] text-sm text-meta">{t(`storyline.${view}.hint`)}</p>
+      <div className="flex min-w-0 flex-wrap items-center gap-3">
+        <p className="m-0 max-w-[60ch] text-sm text-meta">{t(`storyline.${view}.hint`)}</p>
+        {view === 'board' && <AddActForm slug={slug} />}
+      </div>
     </div>
   );
 }
@@ -140,6 +150,7 @@ export function StorylinePage() {
         <>
           <AtlasPageHeading title={t('storyline.heading')} />
           <ViewToggle
+            slug={storySlug}
             view={view}
             onChange={(chosen) => {
               setView(chosen);

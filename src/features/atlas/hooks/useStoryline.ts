@@ -1,5 +1,6 @@
 /**
- * useStoryline: a story's storyline and the timeline's changers (stories S1-E17-19 to S1-E17-22).
+ * useStoryline: a story's storyline, the timeline's changers (stories S1-E17-19 to S1-E17-22) and
+ * the acts' changers (bundle GAPS-2a).
  *
  * Who calls it: StorylinePage. What it calls: api/storyline.ts. After each change it reads the
  * storyline again, and the writing view's chapter list too, so both show the same chapters.
@@ -12,9 +13,12 @@ import { useSession } from '@/features/auth/hooks/useSession';
 import { chapterProgressQueryKey } from '../api/chapterPlans';
 import {
   addChapterToAct,
+  addPlanAct,
   addStoryEvent,
+  deletePlanAct,
   deleteStoryEvent,
   fetchStoryline,
+  renamePlanAct,
   saveStoryEventChange,
   storylineQueryKey,
   type NewStoryEvent,
@@ -27,8 +31,8 @@ import {
  *
  * @param slug - the story's address
  * @returns storyline (null when it isn't the writer's, undefined while loading), loadFailed,
- *   refresh and the changers: addChapter, addEvent, saveEvent and removeEvent (each throws when
- *   it can't)
+ *   refresh and the changers: addChapter, addAct, renameAct, deleteAct, addEvent, saveEvent and
+ *   removeEvent (each throws when it can't)
  */
 export function useStoryline(slug: string) {
   const { userId } = useSession();
@@ -60,6 +64,14 @@ export function useStoryline(slug: string) {
     refresh,
     addChapter: async (actId: string | null) =>
       changeThenRefresh(async () => addChapterToAct(await requireClient(), slug, actId)),
+    addAct: async (name: string) =>
+      changeThenRefresh(async () => addPlanAct(await requireClient(), slug, name)),
+    renameAct: async (actId: string, name: string) =>
+      changeThenRefresh(async () =>
+        renamePlanAct(await requireClient(), slug, { id: actId, name }),
+      ),
+    deleteAct: async (actId: string) =>
+      changeThenRefresh(async () => deletePlanAct(await requireClient(), slug, actId)),
     addEvent: async (event: NewStoryEvent) =>
       changeThenRefresh(async () => addStoryEvent(await requireClient(), slug, event)),
     saveEvent: async (eventId: string, change: StoryEventChange) =>
