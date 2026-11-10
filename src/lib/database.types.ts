@@ -5665,6 +5665,7 @@ export type Database = {
           pen_name_changed_at: string | null;
           profile_visible_to: Database['public']['Enums']['profile_audience'] | null;
           region_code: string | null;
+          rules_walkthrough_seen_at: string | null;
           seasonal_looks: boolean;
           shows_online_status: boolean;
           shows_reader_level: boolean;
@@ -5737,6 +5738,7 @@ export type Database = {
           pen_name_changed_at?: string | null;
           profile_visible_to?: Database['public']['Enums']['profile_audience'] | null;
           region_code?: string | null;
+          rules_walkthrough_seen_at?: string | null;
           seasonal_looks?: boolean;
           shows_online_status?: boolean;
           shows_reader_level?: boolean;
@@ -5788,6 +5790,7 @@ export type Database = {
           pen_name_changed_at?: string | null;
           profile_visible_to?: Database['public']['Enums']['profile_audience'] | null;
           region_code?: string | null;
+          rules_walkthrough_seen_at?: string | null;
           seasonal_looks?: boolean;
           shows_online_status?: boolean;
           shows_reader_level?: boolean;
@@ -11829,6 +11832,7 @@ export type Database = {
           pen_name_changed_at: string | null;
           profile_visible_to: Database['public']['Enums']['profile_audience'] | null;
           region_code: string | null;
+          rules_walkthrough_seen_at: string | null;
           seasonal_looks: boolean;
           shows_online_status: boolean;
           shows_reader_level: boolean;
@@ -12850,6 +12854,7 @@ export type Database = {
       };
       finish_data_export: { Args: { export_id: string; story_count: number }; Returns: Json };
       finish_onboarding: { Args: Record<PropertyKey, never>; Returns: undefined };
+      finish_rules_walkthrough: { Args: Record<PropertyKey, never>; Returns: undefined };
       finish_social_sign_up: { Args: { sign_up_data: Json }; Returns: Json };
       finishes_story: {
         Args: {
@@ -13716,6 +13721,7 @@ export type Database = {
           pen_name_changed_at: string | null;
           profile_visible_to: Database['public']['Enums']['profile_audience'] | null;
           region_code: string | null;
+          rules_walkthrough_seen_at: string | null;
           seasonal_looks: boolean;
           shows_online_status: boolean;
           shows_reader_level: boolean;
@@ -14130,6 +14136,7 @@ export type Database = {
       };
       needs_country_consent: { Args: { target_user_id: string }; Returns: boolean };
       needs_legal_acceptance: { Args: { target_user_id: string }; Returns: boolean };
+      needs_rules_walkthrough: { Args: Record<PropertyKey, never>; Returns: boolean };
       network_ad_for_slot: {
         Args: { slot_format: Database['public']['Enums']['ad_format']; used_keys: string[] };
         Returns: Json;
@@ -14537,6 +14544,7 @@ export type Database = {
           pen_name_changed_at: string | null;
           profile_visible_to: Database['public']['Enums']['profile_audience'] | null;
           region_code: string | null;
+          rules_walkthrough_seen_at: string | null;
           seasonal_looks: boolean;
           shows_online_status: boolean;
           shows_reader_level: boolean;

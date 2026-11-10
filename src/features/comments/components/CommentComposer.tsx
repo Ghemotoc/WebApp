@@ -15,12 +15,14 @@
  * Who uses it: CommentsSection (a new comment), CommentItem (a reply) and ParagraphThread (a
  * comment on a paragraph).
  * What it calls: useCommentComposer → post_comment(); useCommentLimit; KindWordsNudge; and
- * PersonalDetailsNote, which asks before words that look like contact details go out (MUST-1b).
+ * PersonalDetailsNote, which asks before words that look like contact details go out (MUST-1b);
+ * and RulesWalkthrough, before an under-18's first comment (MUST-1c).
  */
 import { useId, useRef } from 'react';
 
 import { Button } from '@/components/ui/Button';
 import { PersonalDetailsNote } from '@/features/privacy/components/PersonalDetailsNote';
+import { RulesWalkthrough } from '@/features/safety/components/RulesWalkthrough';
 import type { ChapterAddress } from '@/features/reading/api/likes';
 import { cn } from '@/lib/utils';
 
@@ -139,13 +141,17 @@ function ComposerFeedback(props: {
 }
 
 /**
- * The questions the box may ask before sending, one at a time: "Still want to send this?" for a
+ * The questions the box may ask before sending, one at a time: the rules walkthrough before an
+ * under-18's first comment (MUST-1c), "Still want to send this?" for a
  * word from the nudge lists (ADMIN-2 d3), then "Post anyway?" for words that look like contact
  * details (MUST-1b). Neither ever blocks the comment.
  *
  * @returns the open question, or nothing
  */
 function ComposerQuestions({ composer }: { composer: CommentComposerState }) {
+  if (composer.rules.isShown) {
+    return <RulesWalkthrough walkthrough={composer.rules} onClosed={composer.editAgain} />;
+  }
   if (composer.isNudgeShown) {
     return (
       <KindWordsNudge

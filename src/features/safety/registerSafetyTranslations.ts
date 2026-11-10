@@ -16,3 +16,11 @@ const safetyTranslations = createNamespaceTranslations('safety', romanianSafety,
  * @param i18n - the app's translation instance (from useTranslation())
  */
 export const registerSafetyTranslations = safetyTranslations.register;
+
+/**
+ * The translation hook for this folder: registers the texts first, then reads them (used by the
+ * rules walkthrough, MUST-1c).
+ *
+ * @returns useTranslation('safety')
+ */
+export const useSafetyTranslation = safetyTranslations.useNamespaceTranslation;

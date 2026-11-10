@@ -12770,6 +12770,7 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     "appearance_saved_at" timestamp with time zone,
     "shows_reader_level" boolean DEFAULT false NOT NULL,
     "checks_personal_details" boolean,
+    "rules_walkthrough_seen_at" timestamp with time zone,
     CONSTRAINT "profiles_avatar_recipe_shape" CHECK ("public"."avatar_recipe_valid"("avatar_recipe")),
     CONSTRAINT "profiles_bio_length" CHECK (("char_length"("bio") <= 300)),
     CONSTRAINT "profiles_birth_month_is_a_month" CHECK ((("birth_month" >= 1) AND ("birth_month" <= 12))),
@@ -12961,6 +12962,10 @@ COMMENT ON COLUMN "public"."profiles"."shows_reader_level" IS 'Settings › Priv
 
 
 COMMENT ON COLUMN "public"."profiles"."checks_personal_details" IS 'Whether the browser asks "Post anyway?" before sending text that looks like contact details; null is the age default: on under 18, off for adults (MUST-1b).';
+
+
+
+COMMENT ON COLUMN "public"."profiles"."rules_walkthrough_seen_at" IS 'When the person finished or skipped the rules walkthrough shown to under-18s before a first comment or post; null until then (MUST-1c).';
 
 
 
@@ -22119,6 +22124,29 @@ COMMENT ON FUNCTION "public"."finish_onboarding"() IS 'Marks the caller''s setup
 
 
 
+CREATE OR REPLACE FUNCTION "public"."finish_rules_walkthrough"() RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := public.require_live_profile();
+begin
+  -- Step 1: keep the first time; nothing else about the walkthrough is stored.
+  update public.profiles
+  set rules_walkthrough_seen_at = now()
+  where profiles.id = caller_id
+    and profiles.rules_walkthrough_seen_at is null;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."finish_rules_walkthrough"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."finish_rules_walkthrough"() IS 'Records that the signed-in person finished or skipped the rules walkthrough (MUST-1c).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."finish_social_sign_up"("sign_up_data" "jsonb") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -30161,6 +30189,25 @@ ALTER FUNCTION "public"."needs_legal_acceptance"("target_user_id" "uuid") OWNER 
 
 
 COMMENT ON FUNCTION "public"."needs_legal_acceptance"("target_user_id" "uuid") IS 'Internal: true when a person must accept a new legal version before writing again (S1-E14-01).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."needs_rules_walkthrough"() RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(
+    (select public.message_age_group(profiles) <> 'adult' and profiles.rules_walkthrough_seen_at is null
+     from public.profiles
+     where profiles.id = (select auth.uid())),
+    false);
+$$;
+
+
+ALTER FUNCTION "public"."needs_rules_walkthrough"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."needs_rules_walkthrough"() IS 'True when the signed-in person is under 18 and hasn''t seen the rules walkthrough yet (MUST-1c).';
 
 
 
@@ -61838,6 +61885,11 @@ GRANT ALL ON FUNCTION "public"."finish_onboarding"() TO "authenticated";
 
 
 
+REVOKE ALL ON FUNCTION "public"."finish_rules_walkthrough"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."finish_rules_walkthrough"() TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."finish_social_sign_up"("sign_up_data" "jsonb") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."finish_social_sign_up"("sign_up_data" "jsonb") TO "authenticated";
 
@@ -63005,6 +63057,11 @@ REVOKE ALL ON FUNCTION "public"."needs_country_consent"("target_user_id" "uuid")
 
 
 REVOKE ALL ON FUNCTION "public"."needs_legal_acceptance"("target_user_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."needs_rules_walkthrough"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."needs_rules_walkthrough"() TO "authenticated";
 
 
 

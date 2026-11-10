@@ -8,7 +8,8 @@
  * Who shows it: NewThreadPage (a forum) and SpaceNewThreadPage (a space).
  * What it calls: useStartThread → start_forum_thread().
  * Before sending, usePersonalDetailsGate asks "Post anyway?" when the words look like contact
- * details (MUST-1b; PersonalDetailsGateNote); it never blocks.
+ * details (MUST-1b; PersonalDetailsGateNote); it never blocks. Before an under-18's first post,
+ * RulesWalkthrough shows four short rules first (MUST-1c), keeping the words in the box.
  */
 import { useId, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
@@ -18,6 +19,8 @@ import { Notice } from '@/components/ui/Notice';
 import { TextInput } from '@/components/ui/TextInput';
 import { PersonalDetailsGateNote } from '@/features/privacy/components/PersonalDetailsNote';
 import { usePersonalDetailsGate } from '@/features/privacy/hooks/usePersonalDetailsCheck';
+import { RulesWalkthrough } from '@/features/safety/components/RulesWalkthrough';
+import { useRulesBeforeSubmit } from '@/features/safety/hooks/useRulesWalkthrough';
 
 import { useStartThread } from '../hooks/useForumWrites';
 import { failureMessages } from '../lib/forumFailures';
@@ -52,6 +55,8 @@ export function NewThreadForm({ forumSlug, cancelTo, initialBody = '' }: NewThre
 
   // MUST-1b: asks "Post anyway?" before words that look like contact details go out.
   const gate = usePersonalDetailsGate({ text: `${title}\n${body}`, sendNow });
+  // MUST-1c: the rules walkthrough before an under-18's first post, then the gate.
+  const first = useRulesBeforeSubmit(gate.submit);
 
   /** Posts the thread, then opens it. */
   async function sendNow() {
@@ -64,7 +69,7 @@ export function NewThreadForm({ forumSlug, cancelTo, initialBody = '' }: NewThre
   }
 
   return (
-    <form onSubmit={gate.submit} className="flex flex-col gap-5">
+    <form onSubmit={first.submit} className="flex flex-col gap-5">
       <TextInput
         id={titleId}
         label={t('editor.title')}
@@ -79,6 +84,10 @@ export function NewThreadForm({ forumSlug, cancelTo, initialBody = '' }: NewThre
         value={body}
         onChange={gate.whileEditing(setBody)}
         problem={messages.body}
+      />
+      <RulesWalkthrough
+        walkthrough={first.rules}
+        onClosed={() => document.getElementById(bodyId)?.focus()}
       />
       <PersonalDetailsGateNote gate={gate} isSending={starting.isRunning} />
       {messages.general !== null && <Notice tone="error">{messages.general}</Notice>}

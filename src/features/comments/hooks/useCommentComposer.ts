@@ -2,7 +2,8 @@
  * useCommentComposer: the comment box's state: the text, the spoiler mark, the kind-words nudge
  * and the post (story S1-E6-01; the nudge from bundle ADMIN-2, part d3, Robert, 2 Nov 2026).
  *
- * Sending first asks useKindWordsNudge whether to stop for "Still want to send this?"; if not, or
+ * Before an under-18's first comment, sending opens the rules walkthrough (MUST-1c) and waits.
+ * Sending then asks useKindWordsNudge whether to stop for "Still want to send this?"; if not, or
  * after "Send anyway", it posts exactly what was typed. Moved out of CommentComposer in part d3
  * so the component stays short.
  * Who calls it: CommentComposer. What it calls: usePostComment → post_comment() or
@@ -12,6 +13,7 @@ import { useState, type FormEvent, type RefObject } from 'react';
 
 import { usePersonalDetailsCheck } from '@/features/privacy/hooks/usePersonalDetailsCheck';
 import type { ChapterAddress } from '@/features/reading/api/likes';
+import { useRulesWalkthrough } from '@/features/safety/hooks/useRulesWalkthrough';
 
 import { usePostComment } from './useCommentActions';
 import { useKindWordsNudge } from './useKindWordsNudge';
@@ -44,6 +46,7 @@ export function useCommentComposer(target: ComposerTarget) {
   const posting = usePostComment(address);
   const nudge = useKindWordsNudge();
   const details = usePersonalDetailsCheck();
+  const rules = useRulesWalkthrough();
 
   /** Posts the text as it is; on success the box empties and the list reads again. */
   async function postNow() {
@@ -66,6 +69,8 @@ export function useCommentComposer(target: ComposerTarget) {
     setIsSpoiler,
     justPosted,
     posting,
+    /** MUST-1c: the rules walkthrough, open before an under-18's first comment. */
+    rules,
     isNudgeShown: nudge.isShown,
     /** MUST-1b: "This looks like personal contact details. Post anyway?" is open. */
     isDetailsNoteShown: details.isShown,
@@ -76,11 +81,13 @@ export function useCommentComposer(target: ComposerTarget) {
       details.close();
     },
     /**
-     * The form's submit: stops for the nudge when the text has a word from the lists, then for
-     * the personal details note when it looks like contact details (MUST-1b).
+     * The form's submit: stops for the rules walkthrough before an under-18's first comment
+     * (MUST-1c), then for the nudge when the text has a word from the lists, then for the personal
+     * details note when it looks like contact details (MUST-1b).
      */
     send: async (event: FormEvent) => {
       event.preventDefault();
+      if (rules.shouldHold()) return;
       if (nudge.shouldNudge(text) || details.shouldHold(text)) return;
       await postNow();
     },
