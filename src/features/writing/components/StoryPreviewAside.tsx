@@ -7,7 +7,8 @@
  * the rating banner when the story is 13+, 16+ or 18+ (S1-E3-06), the blurb and the tag line,
  * with an "Only you" lock pill at the top. Under the card: the line about deleting the story
  * later.
- * Who uses it: NewStoryPage. On phones it drops below the form.
+ * Who uses it: NewStoryPage, and StorySettingsPage without the line about deleting later
+ * (the delete card is on that page; G9d). On phones it drops below the form.
  */
 import { useTranslation } from 'react-i18next';
 
@@ -25,6 +26,8 @@ import type { StoryAnswers } from '../hooks/storyAnswers';
 export interface StoryPreviewAsideProps {
   answers: StoryAnswers;
   penName: string;
+  /** False on the settings page, where the delete card itself sits below the form. */
+  hasDeleteNote?: boolean;
 }
 
 /** The board's rating banner: who the story is hidden from (CLAUDE.md rule 18); nothing for All ages. */
@@ -43,7 +46,11 @@ function RatingBanner({ rating }: { rating: StoryAnswers['rating'] }) {
  *
  * @returns the preview card
  */
-export function StoryPreviewAside({ answers, penName }: StoryPreviewAsideProps) {
+export function StoryPreviewAside({
+  answers,
+  penName,
+  hasDeleteNote = true,
+}: StoryPreviewAsideProps) {
   const { t } = useTranslation('writing');
   const shownTitle = answers.title.trim() === '' ? t('cover.untitled') : answers.title;
 
@@ -89,7 +96,9 @@ export function StoryPreviewAside({ answers, penName }: StoryPreviewAsideProps) 
           </p>
         )}
       </div>
-      <p className="m-0 text-[13px] leading-normal text-meta">{t('preview.deleteLater')}</p>
+      {hasDeleteNote && (
+        <p className="m-0 text-[13px] leading-normal text-meta">{t('preview.deleteLater')}</p>
+      )}
     </aside>
   );
 }

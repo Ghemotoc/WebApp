@@ -6,7 +6,8 @@
  * starts a drag, so a tap on the handle does nothing) and a keyboard sensor (Space picks up, the
  * arrow keys move, Space drops, Escape cancels). Each step is read out by a screen reader in the
  * interface language (the announcements below). When a chapter is dropped somewhere new, the
- * whole new order goes to set_chapter_order() through onChange.
+ * whole new order goes to set_chapter_order() through onChange, with the dragged chapter's code
+ * so the page can ask first when a published chapter would change number (G9d).
  * Who uses it: ChapterListCard. What it calls: ManagedChapterRow for each chapter.
  */
 import {
@@ -122,7 +123,7 @@ export function SortableChapterList(props: SortableChapterListProps) {
       codes.indexOf(String(active.id)),
       codes.indexOf(String(over.id)),
     );
-    props.onChange({ kind: 'order', codes: newOrder });
+    props.onChange({ kind: 'order', codes: newOrder, movedCode: String(active.id) });
   }
 
   return (
