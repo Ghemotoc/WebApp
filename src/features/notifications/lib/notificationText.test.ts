@@ -546,6 +546,23 @@ describe('notificationText', () => {
     expect(text.href).toBeNull();
   });
 
+  it('an invitation to the home page comes from the team and links to the hub (GAPS-13)', () => {
+    const invitedRow: AppNotification = {
+      ...newChapter,
+      kind: 'home_comment_invited',
+      category: 'staff',
+      actors: [],
+      actorCount: 0,
+      story: null,
+      chapter: null,
+    };
+    const text = notificationText(englishT(), invitedRow, null);
+    expect(text.who).toBe('The team:');
+    expect(text.what).toContain('home page');
+    expect(text.href).toBe('/hub#home-comment-invitation');
+    expect(text.actionLabel).toBe('See the invitation');
+  });
+
   it('a new rank names the rank and links to the writer’s own profile (IDEAS-3a)', () => {
     const rankRow: AppNotification = {
       ...newChapter,

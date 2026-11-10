@@ -11,8 +11,9 @@
  *   - the "Your rights" card, whose words come only from the CMS (rightsCard; CLAUDE.md rule 4).
  *     It is hidden while its title is empty.
  * Its two doodles went with bundle G4 (no doodles in the liquid glass design).
- * The board's reader comment card is left out until staff can pick real comments (Robert,
- * 6 Nov 2026, D1; story S1-E5-13, parked).
+ *   - the reader comment card at the bottom left (HomeCommentCard, bundle GAPS-13): a real
+ *     comment staff picked and whose reader agreed to show it; absent when there is none or
+ *     the wall has no cover, and placed under the covers when they fill only one row.
  * The wall is at most 600 px wide, its width beside the headline on a desktop, so on a tablet,
  * where it moves under the headline, the covers keep their size instead of filling the screen.
  * Who uses it: HomeHero. What it calls: useStoryShelf('popular'), the same request as the
@@ -30,6 +31,8 @@ import type { HomeRightsCard } from '@/schemas/websiteContent';
 import { withBrand } from '../lib/brandText';
 import { wallStories } from '../lib/wallStories';
 
+import { HomeCommentCard } from './HomeCommentCard';
+
 /** The public Trending list, exactly as the Trending shelf asks for it (one cached request). */
 const trendingRequest: ListRequest = {
   kind: 'popular',
@@ -39,6 +42,9 @@ const trendingRequest: ListRequest = {
   languageCode: null,
   sortOrder: null,
 };
+
+/** How many covers fill the wall's first row; a fourth starts the second. */
+const coversInOneRow = 3;
 
 /** Each column's push down from the top, so the three are staggered as on the board. */
 const columnOffsets = ['mt-14', 'mt-0', 'mt-[104px]'] as const;
@@ -117,7 +123,7 @@ interface HeroCollageProps {
 /**
  * Renders the wall.
  *
- * @returns the figure with the covers and the card
+ * @returns the figure with the covers and the two cards
  */
 export function HeroCollage({ rightsCard }: HeroCollageProps) {
   const { shelf } = useStoryShelf(trendingRequest);
@@ -126,6 +132,12 @@ export function HeroCollage({ rightsCard }: HeroCollageProps) {
     <figure className="relative mx-auto my-0 min-w-0 max-w-[600px] flex-[1_1_520px] pt-10 pb-6">
       <CoverColumns stories={stories} />
       <RightsCard card={rightsCard} />
+      {/* On a wall of two rows the card sits over its bottom left corner, as on the board. Under
+          a single row it goes below the covers, where it can't meet the other card on a phone;
+          with no cover at all there is no wall to put it on. */}
+      {stories.length > 0 && (
+        <HomeCommentCard placement={stories.length > coversInOneRow ? 'onWall' : 'underWall'} />
+      )}
     </figure>
   );
 }

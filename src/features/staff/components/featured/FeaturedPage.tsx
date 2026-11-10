@@ -9,7 +9,10 @@
  * no doodles.
  * Who shows it: the router at /staff/featured, inside StaffLayout (the "featured" area: owner and
  * admin). The database refuses everyone else (admin_featured_candidates()), and the page says so.
- * What it calls: useFeaturedPicks → api/featured.ts; FeaturedTable and FeaturedPickList.
+ * Under them sits HomeCommentSection, where the same staff pick the reader comment for the home
+ * page (bundle GAPS-13).
+ * What it calls: useFeaturedPicks → api/featured.ts; FeaturedTable, FeaturedPickList and
+ * HomeCommentSection.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -26,6 +29,7 @@ import { useFeaturedPicks } from '../../hooks/useFeaturedPicks';
 import { featuredSortKeys, sortedCandidates, type FeaturedSortKey } from './featuredColumns';
 import { FeaturedPickList } from './FeaturedPickList';
 import { FeaturedTable } from './FeaturedTable';
+import { HomeCommentSection } from './HomeCommentSection';
 
 /** useFeaturedPicks's result, passed down once. */
 type FeaturedState = ReturnType<typeof useFeaturedPicks>;
@@ -156,6 +160,7 @@ export function FeaturedPage() {
         <p className="m-0 max-w-[720px] text-body">{t('featured.intro')}</p>
       </header>
       <FeaturedContent state={state} allStories={all.data} view={view} onView={setView} />
+      <HomeCommentSection />
     </PageContainer>
   );
 }

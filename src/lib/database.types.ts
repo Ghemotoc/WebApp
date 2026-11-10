@@ -3769,6 +3769,65 @@ export type Database = {
           },
         ];
       };
+      home_comment_picks: {
+        Row: {
+          agreed_at: string | null;
+          comment_id: string;
+          created_at: string;
+          declined_at: string | null;
+          deleted_at: string | null;
+          id: string;
+          picked_by_user_id: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          agreed_at?: string | null;
+          comment_id: string;
+          created_at?: string;
+          declined_at?: string | null;
+          deleted_at?: string | null;
+          id?: string;
+          picked_by_user_id?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          agreed_at?: string | null;
+          comment_id?: string;
+          created_at?: string;
+          declined_at?: string | null;
+          deleted_at?: string | null;
+          id?: string;
+          picked_by_user_id?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'home_comment_picks_comment_id_fkey';
+            columns: ['comment_id'];
+            isOneToOne: false;
+            referencedRelation: 'comments';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'home_comment_picks_picked_by_user_id_fkey';
+            columns: ['picked_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'home_comment_picks_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       house_ads: {
         Row: {
           archived_at: string | null;
@@ -10192,6 +10251,7 @@ export type Database = {
       };
       admin_delete_canned_reply: { Args: { reply_id: string }; Returns: boolean };
       admin_delete_forum: { Args: { forum_id: string; reason: string }; Returns: undefined };
+      admin_delete_home_comment_pick: { Args: { pick_id: string }; Returns: boolean };
       admin_delete_live_session: { Args: { session_id: string }; Returns: boolean };
       admin_delete_submission_call: { Args: { call_id: string }; Returns: boolean };
       admin_delete_writer_spotlight: { Args: { spotlight_id: string }; Returns: boolean };
@@ -10292,8 +10352,35 @@ export type Database = {
         };
         Returns: boolean;
       };
+      admin_home_comment_candidates: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          body: string;
+          chapter_position: number;
+          comment_id: string;
+          display_name: string;
+          handle: string;
+          story_title: string;
+          written_at: string;
+        }[];
+      };
+      admin_home_comment_picks: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          answer: string;
+          body: string;
+          can_show: boolean;
+          chapter_position: number;
+          display_name: string;
+          handle: string;
+          is_on_home_page: boolean;
+          pick_id: string;
+          story_title: string;
+        }[];
+      };
       admin_house_ads: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_import_classics: { Args: { list_rows: Json }; Returns: Json };
+      admin_invite_home_comment: { Args: { target_comment: string }; Returns: string };
       admin_invite_writer_spotlight: {
         Args: { first_day: string; reason_en: string; reason_ro: string; target_handle: string };
         Returns: string;
@@ -11389,6 +11476,7 @@ export type Database = {
         Returns: string;
       };
       answer_data_request_parent: { Args: { is_ours: boolean; token: string }; Returns: Json };
+      answer_home_comment_pick: { Args: { agrees: boolean; pick_id: string }; Returns: string };
       answer_message_request: {
         Args: { sender_handle: string; should_accept: boolean };
         Returns: Json;
@@ -12847,6 +12935,18 @@ export type Database = {
         };
         Returns: number;
       };
+      home_comment_can_show: { Args: { target_comment: string }; Returns: boolean };
+      home_comment_card: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          body: string;
+          chapter_position: number;
+          display_name: string;
+          handle: string;
+          paragraph_number: number;
+          story_title: string;
+        }[];
+      };
       house_ad_candidates: {
         Args: { page_key: string };
         Returns: {
@@ -13596,6 +13696,16 @@ export type Database = {
       };
       my_follows: { Args: Record<PropertyKey, never>; Returns: Json };
       my_greeting: { Args: Record<PropertyKey, never>; Returns: Json };
+      my_home_comment_invitations: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          answer: string;
+          body: string;
+          chapter_position: number;
+          pick_id: string;
+          story_title: string;
+        }[];
+      };
       my_legal_documents_to_accept: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -16449,7 +16559,8 @@ export type Database = {
         | 'spotlight_consent_agreed'
         | 'spotlight_consent_withdrawn'
         | 'waitlist_admitted'
-        | 'live_session_soon';
+        | 'live_session_soon'
+        | 'home_comment_invited';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -16842,6 +16953,7 @@ export const Constants = {
         'spotlight_consent_withdrawn',
         'waitlist_admitted',
         'live_session_soon',
+        'home_comment_invited',
       ],
       picture_kind: [
         'cover',

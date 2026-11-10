@@ -47,6 +47,7 @@ export type NotificationKind =
   | 'picture_opened_by_staff'
   | 'landing_entries_open'
   | 'live_session_soon'
+  | 'home_comment_invited'
   | 'rank_reached'
   | 'space_handover_offered'
   | 'story_featured'

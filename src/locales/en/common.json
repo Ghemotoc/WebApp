@@ -250,6 +250,12 @@
       "contact": "Contact us",
       "guidelines": "Read the community guidelines",
       "report": "Report something without an account"
+    },
+    "homeComment": {
+      "label": "A reader’s comment",
+      "onParagraph": "on paragraph {{number}}",
+      "commented": "commented",
+      "place": "{{story}} · Chapter {{position}}"
     }
   },
   "appearance": {

@@ -725,7 +725,8 @@ CREATE TYPE "public"."notification_kind" AS ENUM (
     'spotlight_consent_agreed',
     'spotlight_consent_withdrawn',
     'waitlist_admitted',
-    'live_session_soon'
+    'live_session_soon',
+    'home_comment_invited'
 );
 
 
@@ -1437,6 +1438,7 @@ CREATE OR REPLACE FUNCTION "public"."account_deletion_rules"() RETURNS TABLE("ta
     ('forum_read_marks', 'delete', 1, null),
     ('forum_thread_reads', 'delete', 1, null),
     ('forum_threads', 'own_step', 0, 'deleted when nobody else posted in it; otherwise kept for the other people''s replies, its starter shown as a deleted account'),
+    ('home_comment_picks', 'delete', 1, null),
     ('identity_link_requests', 'delete', 1, null),
     ('invites', 'kept', 0, 'invites staff made; purged 90 days after they expire (docs/retention.md)'),
     ('landing_page_reminders', 'delete', 1, null),
@@ -1491,7 +1493,7 @@ $$;
 ALTER FUNCTION "public"."account_deletion_rules"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h).';
+COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13).';
 
 
 
@@ -5422,6 +5424,35 @@ COMMENT ON FUNCTION "public"."admin_delete_forum"("forum_id" "uuid", "reason" "t
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_delete_home_comment_pick"("pick_id" "uuid") RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  deleted public.home_comment_picks;
+begin
+  if not public.staff_may('featured', 'act') then
+    raise exception 'Only staff with the featured area can pick a home page comment.' using errcode = 'insufficient_privilege';
+  end if;
+  update public.home_comment_picks set deleted_at = now()
+  where id = pick_id and deleted_at is null returning * into deleted;
+  if deleted.id is null then
+    raise exception 'There is no such pick.' using errcode = 'no_data_found';
+  end if;
+  perform public.log_staff_action('home_comment.removed', 'home_comment_picks', deleted.id::text, deleted.user_id, null,
+    jsonb_build_object('comment_id', deleted.comment_id, 'agreed', deleted.agreed_at is not null), null);
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_delete_home_comment_pick"("pick_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_delete_home_comment_pick"("pick_id" "uuid") IS 'Staff with the featured area take a home page comment pick down; logged (GAPS-13).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admin_delete_live_session"("session_id" "uuid") RETURNS boolean
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -6094,6 +6125,81 @@ COMMENT ON FUNCTION "public"."admin_grant_role"("target_user_id" "uuid", "grante
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_home_comment_candidates"() RETURNS TABLE("comment_id" "uuid", "handle" "text", "display_name" "text", "body" "text", "story_title" "text", "chapter_position" integer, "written_at" timestamp with time zone)
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  if not public.staff_may('featured', 'view') then
+    raise exception 'Only staff with the featured area can see these comments.' using errcode = 'insufficient_privilege';
+  end if;
+  return query
+    select comments.id, profiles.handle, public.display_name(profiles.handle, profiles.pen_name),
+      btrim(comments.body), stories.title, chapters.position, comments.created_at
+    from public.comments
+    join public.profiles on profiles.id = comments.user_id
+    join public.chapters on chapters.id = comments.chapter_id
+    join public.stories on stories.id = chapters.story_id
+    where comments.created_at > now() - interval '90 days'
+      and comments.deleted_at is null
+      and public.home_comment_can_show(comments.id)
+      and not exists (select 1 from public.home_comment_picks as picks
+                      where picks.comment_id = comments.id and picks.deleted_at is null)
+    order by comments.created_at desc
+    limit 40;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_home_comment_candidates"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_home_comment_candidates"() IS 'Staff with the featured area: recent short public comments that could be shown on the home page (GAPS-13).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_home_comment_picks"() RETURNS TABLE("pick_id" "uuid", "handle" "text", "display_name" "text", "body" "text", "story_title" "text", "chapter_position" integer, "answer" "text", "can_show" boolean, "is_on_home_page" boolean)
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  shown_pick uuid;
+begin
+  if not public.staff_may('featured', 'view') then
+    raise exception 'Only staff with the featured area can see these picks.' using errcode = 'insufficient_privilege';
+  end if;
+  -- The pick visitors see: the same choice as home_comment_card(), without the caller's blocks.
+  select picks.id into shown_pick
+  from public.home_comment_picks as picks
+  where picks.deleted_at is null and picks.agreed_at is not null
+    and public.home_comment_can_show(picks.comment_id)
+  order by picks.agreed_at desc limit 1;
+  return query
+    select picks.id, profiles.handle, public.display_name(profiles.handle, profiles.pen_name),
+      btrim(comments.body), stories.title, chapters.position,
+      case when picks.agreed_at is not null then 'agreed'
+           when picks.declined_at is not null then 'declined'
+           else 'waiting' end,
+      public.home_comment_can_show(comments.id),
+      picks.id is not distinct from shown_pick
+    from public.home_comment_picks as picks
+    join public.comments on comments.id = picks.comment_id
+    join public.profiles on profiles.id = comments.user_id
+    join public.chapters on chapters.id = comments.chapter_id
+    join public.stories on stories.id = chapters.story_id
+    where picks.deleted_at is null
+    order by picks.created_at desc;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_home_comment_picks"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_home_comment_picks"() IS 'Staff with the featured area: the home page comment picks with each reader''s answer and which one is showing (GAPS-13).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admin_house_ads"() RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -6155,6 +6261,44 @@ $$;
 
 
 ALTER FUNCTION "public"."admin_import_classics"("list_rows" "jsonb") OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_invite_home_comment"("target_comment" "uuid") RETURNS "uuid"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  reader_id uuid;
+  saved public.home_comment_picks;
+begin
+  -- Step 1: staff with the featured area only (the server decides, architecture 1.8.1).
+  if not public.staff_may('featured', 'act') then
+    raise exception 'Only staff with the featured area can pick a home page comment.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 2: the comment must be one the home page may show.
+  if target_comment is null or not public.home_comment_can_show(target_comment) then
+    raise exception 'This comment can''t be shown on the home page.' using errcode = 'check_violation';
+  end if;
+  select comments.user_id into reader_id from public.comments where comments.id = target_comment;
+  -- Step 3: the pick, waiting for the reader's answer.
+  insert into public.home_comment_picks (user_id, comment_id, picked_by_user_id)
+  values (reader_id, target_comment, (select auth.uid()))
+  returning * into saved;
+  -- Step 4: tell the reader, with no actor (it comes from the team), and log it.
+  perform public.notify(reader_id, 'home_comment_invited', null,
+    jsonb_build_object('comment_id', target_comment));
+  perform public.log_staff_action('home_comment.invited', 'home_comment_picks', saved.id::text, reader_id, null,
+    null, jsonb_build_object('comment_id', target_comment));
+  return saved.id;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_invite_home_comment"("target_comment" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_invite_home_comment"("target_comment" "uuid") IS 'Staff with the featured area invite a reader to have one comment shown on the home page; the reader is told; logged (GAPS-13).';
+
 
 
 CREATE OR REPLACE FUNCTION "public"."admin_invite_writer_spotlight"("target_handle" "text", "first_day" "date", "reason_ro" "text", "reason_en" "text") RETURNS "uuid"
@@ -13189,6 +13333,36 @@ COMMENT ON FUNCTION "public"."answer_data_request_parent"("token" "text", "is_ou
 
 
 
+CREATE OR REPLACE FUNCTION "public"."answer_home_comment_pick"("pick_id" "uuid", "agrees" boolean) RETURNS "text"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  saved public.home_comment_picks;
+begin
+  -- Only the reader who wrote the comment, only a pick that still exists.
+  update public.home_comment_picks set
+    agreed_at = case when coalesce(agrees, false) then now() else null end,
+    declined_at = case when coalesce(agrees, false) then null else now() end
+  where id = pick_id
+    and user_id = (select auth.uid())
+    and deleted_at is null
+  returning * into saved;
+  if saved.id is null then
+    raise exception 'There is no such invitation.' using errcode = 'no_data_found';
+  end if;
+  return case when saved.agreed_at is not null then 'agreed' else 'declined' end;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."answer_home_comment_pick"("pick_id" "uuid", "agrees" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."answer_home_comment_pick"("pick_id" "uuid", "agrees" boolean) IS 'A reader agrees to, declines or withdraws from having their comment on the home page (GAPS-13; GDPR art. 7(3)).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."answer_message_request"("sender_handle" "text", "should_accept" boolean) RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -19365,6 +19539,7 @@ CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_
     ('forum_read_marks', true, null),
     ('forum_thread_reads', true, null),
     ('forum_threads', true, null),
+    ('home_comment_picks', true, null),
     ('identity_link_requests', false, 'a ten-minute step while connecting a way to log in; the ways to log in are in the account part'),
     ('invites', true, null),
     ('landing_page_reminders', true, null),
@@ -19419,7 +19594,7 @@ $$;
 ALTER FUNCTION "public"."data_export_tables"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h).';
+COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13).';
 
 
 
@@ -24015,6 +24190,86 @@ COMMENT ON FUNCTION "public"."hide_banned_account"("ban" "public"."sanctions") I
 
 
 
+CREATE OR REPLACE FUNCTION "public"."home_comment_can_show"("target_comment" "uuid") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select exists (
+    select 1
+    from public.comments
+    join public.chapters on chapters.id = comments.chapter_id
+    join public.stories on stories.id = chapters.story_id
+    where comments.id = target_comment
+      -- The comment itself.
+      and comments.deleted_at is null
+      and not comments.is_spoiler
+      and char_length(btrim(comments.body)) between 1 and 200
+      -- A comment of its own, not a reply (a reply reads oddly without what it answers), and
+      -- without a web address: the home page carries no member's link.
+      and comments.parent_comment_id is null
+      and comments.body !~* '(https?://|www\.|mailto:)'
+      and not public.is_moderated_away('comment', comments.id)
+      -- Its writer: an adult who may be put on show (LOOK-4c; minors never on the home page).
+      and public.age_band_of(comments.user_id) = '18_plus'
+      and public.may_spotlight_writer(comments.user_id)
+      -- Its chapter and story: what any visitor may open, rated like the wall's covers (LOOK-2).
+      and chapters.status = 'published'
+      and chapters.deleted_at is null
+      and not public.is_moderated_away('chapter', chapters.id)
+      and stories.deleted_at is null
+      and stories.visibility = 'public'
+      and not stories.class_only
+      and stories.rating in ('all_ages', '13_plus')
+      and stories.title_hidden_at is null
+      -- The card names the story, so its writer must be one who may be put on show too.
+      and public.may_spotlight_writer(stories.user_id)
+      and not public.is_moderated_away('story', stories.id)
+  );
+$$;
+
+
+ALTER FUNCTION "public"."home_comment_can_show"("target_comment" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."home_comment_can_show"("target_comment" "uuid") IS 'Internal: whether a comment may be shown on the home page: a short, live comment by an adult who may be put on show, on a public story rated All ages or 13+ (GAPS-13).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."home_comment_card"() RETURNS TABLE("handle" "text", "display_name" "text", "body" "text", "paragraph_number" integer, "story_title" "text", "chapter_position" integer)
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select
+    profiles.handle,
+    public.display_name(profiles.handle, profiles.pen_name),
+    btrim(comments.body),
+    -- A number only while the paragraph is still where the comment was left (IDEAS-1e).
+    case when jsonb_typeof(place.now) = 'number' then (place.now #>> '{}')::integer end,
+    stories.title,
+    chapters.position
+  from public.home_comment_picks as picks
+  join public.comments on comments.id = picks.comment_id
+  join public.profiles on profiles.id = comments.user_id
+  join public.chapters on chapters.id = comments.chapter_id
+  join public.stories on stories.id = chapters.story_id
+  cross join lateral (select public.comment_paragraph_json(comments, chapters.published_body) as now) as place
+  where picks.deleted_at is null
+    and picks.agreed_at is not null
+    and public.home_comment_can_show(comments.id)
+    and not public.is_blocked_with(comments.user_id)
+    and not public.is_blocked_with(stories.user_id)
+  order by picks.agreed_at desc
+  limit 1;
+$$;
+
+
+ALTER FUNCTION "public"."home_comment_card"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."home_comment_card"() IS 'The reader comment on the home page: the pick most recently agreed to that can still be shown; never a user ID (GAPS-13).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."house_ad_candidates"("page_key" "text") RETURNS TABLE("ad_key" "text", "kind" "text", "page_slug" "text", "title_ro" "text", "title_en" "text", "ad_rank" bigint)
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -28211,6 +28466,38 @@ COMMENT ON FUNCTION "public"."my_greeting"() IS 'What the signed-in greeting lin
 
 
 
+CREATE OR REPLACE FUNCTION "public"."my_home_comment_invitations"() RETURNS TABLE("pick_id" "uuid", "body" "text", "story_title" "text", "chapter_position" integer, "answer" "text")
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select
+    picks.id,
+    btrim(comments.body),
+    stories.title,
+    chapters.position,
+    case when picks.agreed_at is not null then 'agreed'
+         when picks.declined_at is not null then 'declined'
+         else 'waiting' end
+  from public.home_comment_picks as picks
+  join public.comments on comments.id = picks.comment_id
+  join public.chapters on chapters.id = comments.chapter_id
+  join public.stories on stories.id = chapters.story_id
+  where picks.user_id = (select auth.uid())
+    and picks.deleted_at is null
+    and public.home_comment_can_show(comments.id)
+    -- A declined invitation stays 30 days, in case the reader changes their mind, then goes.
+    and (picks.declined_at is null or picks.declined_at > now() - interval '30 days')
+  order by picks.created_at desc;
+$$;
+
+
+ALTER FUNCTION "public"."my_home_comment_invitations"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."my_home_comment_invitations"() IS 'The caller''s own invitations to show a comment on the home page, with their answer (GAPS-13).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."my_legal_documents_to_accept"() RETURNS TABLE("document_slug" "text", "version_label" "text", "change_summary" "text")
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -29987,6 +30274,7 @@ CREATE OR REPLACE FUNCTION "public"."notification_category"("kind" "public"."not
     when 'spotlight_consent_agreed' then 'staff'
     when 'spotlight_consent_withdrawn' then 'staff'
     when 'waitlist_admitted' then 'staff'
+    when 'home_comment_invited' then 'staff'
     else 'replies'
   end;
 $$;
@@ -48961,6 +49249,28 @@ COMMENT ON COLUMN "public"."forums"."rules_thread_id" IS 'The thread that holds 
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."home_comment_picks" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "comment_id" "uuid" NOT NULL,
+    "picked_by_user_id" "uuid",
+    "agreed_at" timestamp with time zone,
+    "declined_at" timestamp with time zone,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "deleted_at" timestamp with time zone,
+    CONSTRAINT "home_comment_picks_one_answer" CHECK ((("agreed_at" IS NULL) OR ("declined_at" IS NULL)))
+);
+
+
+ALTER TABLE "public"."home_comment_picks" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."home_comment_picks" IS 'kind: user_action
+Comments staff asked to show on the home page, and each reader''s answer: agreed, declined or still waiting (GAPS-13). Personal data: the link between a reader, their comment and their consent.';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."house_ads" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "user_id" "uuid",
@@ -51258,6 +51568,11 @@ ALTER TABLE ONLY "public"."forums"
 
 
 
+ALTER TABLE ONLY "public"."home_comment_picks"
+    ADD CONSTRAINT "home_comment_picks_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."house_ads"
     ADD CONSTRAINT "house_ads_pkey" PRIMARY KEY ("id");
 
@@ -52530,6 +52845,14 @@ CREATE INDEX "forums_rules_thread_id_fk_idx" ON "public"."forums" USING "btree" 
 
 
 
+CREATE INDEX "home_comment_picks_by_reader" ON "public"."home_comment_picks" USING "btree" ("user_id") WHERE ("deleted_at" IS NULL);
+
+
+
+CREATE UNIQUE INDEX "home_comment_picks_one_per_comment" ON "public"."home_comment_picks" USING "btree" ("comment_id") WHERE ("deleted_at" IS NULL);
+
+
+
 CREATE INDEX "house_ads_user_id_fk_idx" ON "public"."house_ads" USING "btree" ("user_id");
 
 
@@ -53699,6 +54022,14 @@ CREATE OR REPLACE TRIGGER "forums_set_level" BEFORE INSERT OR UPDATE OF "parent_
 
 
 CREATE OR REPLACE TRIGGER "forums_set_updated_at" BEFORE UPDATE ON "public"."forums" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "home_comment_picks_refuse_user_id_change" BEFORE UPDATE ON "public"."home_comment_picks" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"();
+
+
+
+CREATE OR REPLACE TRIGGER "home_comment_picks_set_updated_at" BEFORE UPDATE ON "public"."home_comment_picks" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
 
@@ -55052,6 +55383,21 @@ ALTER TABLE ONLY "public"."forums"
 
 ALTER TABLE ONLY "public"."forums"
     ADD CONSTRAINT "forums_space_id_fkey" FOREIGN KEY ("space_id") REFERENCES "public"."spaces"("id");
+
+
+
+ALTER TABLE ONLY "public"."home_comment_picks"
+    ADD CONSTRAINT "home_comment_picks_comment_id_fkey" FOREIGN KEY ("comment_id") REFERENCES "public"."comments"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."home_comment_picks"
+    ADD CONSTRAINT "home_comment_picks_picked_by_user_id_fkey" FOREIGN KEY ("picked_by_user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."home_comment_picks"
+    ADD CONSTRAINT "home_comment_picks_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
 
 
 
@@ -56873,6 +57219,25 @@ COMMENT ON POLICY "forums_select_public" ON "public"."forums" IS 'Allows anyone 
 
 
 
+ALTER TABLE "public"."home_comment_picks" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "home_comment_picks_select_featured_staff" ON "public"."home_comment_picks" FOR SELECT TO "authenticated" USING ((("deleted_at" IS NULL) AND ( SELECT "public"."staff_may"('featured'::"text", 'view'::"text") AS "staff_may")));
+
+
+
+COMMENT ON POLICY "home_comment_picks_select_featured_staff" ON "public"."home_comment_picks" IS 'Allows staff with the featured area to read the home page comment picks that aren''t taken down (GAPS-13).';
+
+
+
+CREATE POLICY "home_comment_picks_select_own" ON "public"."home_comment_picks" FOR SELECT TO "authenticated" USING ((("user_id" = ( SELECT "auth"."uid"() AS "uid")) AND ("deleted_at" IS NULL)));
+
+
+
+COMMENT ON POLICY "home_comment_picks_select_own" ON "public"."home_comment_picks" IS 'Allows a reader to read the picks of their own comments, so they can answer the invitation (GAPS-13).';
+
+
+
 ALTER TABLE "public"."house_ads" ENABLE ROW LEVEL SECURITY;
 
 
@@ -58571,6 +58936,11 @@ GRANT ALL ON FUNCTION "public"."admin_delete_forum"("forum_id" "uuid", "reason" 
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_delete_home_comment_pick"("pick_id" "uuid") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_delete_home_comment_pick"("pick_id" "uuid") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_delete_live_session"("session_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_delete_live_session"("session_id" "uuid") TO "authenticated";
 
@@ -58655,6 +59025,16 @@ GRANT ALL ON FUNCTION "public"."admin_grant_role"("target_user_id" "uuid", "gran
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_home_comment_candidates"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_home_comment_candidates"() TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_home_comment_picks"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_home_comment_picks"() TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_house_ads"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_house_ads"() TO "authenticated";
 
@@ -58662,6 +59042,11 @@ GRANT ALL ON FUNCTION "public"."admin_house_ads"() TO "authenticated";
 
 REVOKE ALL ON FUNCTION "public"."admin_import_classics"("list_rows" "jsonb") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_import_classics"("list_rows" "jsonb") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_invite_home_comment"("target_comment" "uuid") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_invite_home_comment"("target_comment" "uuid") TO "authenticated";
 
 
 
@@ -59594,6 +59979,11 @@ GRANT ALL ON FUNCTION "public"."answer_data_request"("request_reference" "text",
 REVOKE ALL ON FUNCTION "public"."answer_data_request_parent"("token" "text", "is_ours" boolean) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."answer_data_request_parent"("token" "text", "is_ours" boolean) TO "anon";
 GRANT ALL ON FUNCTION "public"."answer_data_request_parent"("token" "text", "is_ours" boolean) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."answer_home_comment_pick"("pick_id" "uuid", "agrees" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."answer_home_comment_pick"("pick_id" "uuid", "agrees" boolean) TO "authenticated";
 
 
 
@@ -61089,6 +61479,16 @@ REVOKE ALL ON FUNCTION "public"."hide_banned_account"("ban" "public"."sanctions"
 
 
 
+REVOKE ALL ON FUNCTION "public"."home_comment_can_show"("target_comment" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."home_comment_card"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."home_comment_card"() TO "anon";
+GRANT ALL ON FUNCTION "public"."home_comment_card"() TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."house_ad_candidates"("page_key" "text") FROM PUBLIC;
 
 
@@ -61713,6 +62113,11 @@ GRANT ALL ON FUNCTION "public"."my_follows"() TO "authenticated";
 
 REVOKE ALL ON FUNCTION "public"."my_greeting"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."my_greeting"() TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."my_home_comment_invitations"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."my_home_comment_invitations"() TO "authenticated";
 
 
 
@@ -64718,6 +65123,11 @@ GRANT UPDATE ON SEQUENCE "public"."forum_threads_thread_number_seq" TO "service_
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."forums" TO "service_role";
 GRANT SELECT ON TABLE "public"."forums" TO "anon";
 GRANT SELECT ON TABLE "public"."forums" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."home_comment_picks" TO "service_role";
+GRANT SELECT ON TABLE "public"."home_comment_picks" TO "authenticated";
 
 
 

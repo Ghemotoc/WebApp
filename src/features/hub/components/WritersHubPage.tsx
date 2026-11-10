@@ -12,7 +12,7 @@
  * The ad slot waits for S1-E12-04.
  * Signed out, it says to log in, as Notifications does.
  * Who shows it: the router, at /hub; the logo links here when someone is signed in.
- * What it calls: HubHero, HubSpotlightInvitations, HubContests, HubPrompt, HubSpotlight, HubGuides,
+ * What it calls: HubHero, HubSpotlightInvitations, HubHomeCommentInvitations, HubContests, HubPrompt, HubSpotlight, HubGuides,
  * HubPath, HubSessions, HubMonth, HubWeek, HubTools and HubCalls; useSession.
  */
 import { Link } from 'react-router';
@@ -31,6 +31,7 @@ import { HubHero } from './HubHero';
 import { HubMonth } from './HubMonth';
 import { HubPath } from './HubPath';
 import { HubPrompt } from './HubPrompt';
+import { HubHomeCommentInvitations } from './HubHomeCommentInvitations';
 import { HubSessions } from './HubSessions';
 import { HubSpotlight } from './HubSpotlight';
 import { HubSpotlightInvitations } from './HubSpotlightInvitations';
@@ -51,6 +52,7 @@ function HubBody() {
       <div className="flex flex-wrap items-start gap-7">
         <div className="flex min-w-0 flex-[999_1_560px] flex-col gap-7">
           <HubSpotlightInvitations />
+          <HubHomeCommentInvitations />
           <HubContests now={now} />
           <HubPrompt now={now} />
           <HubSpotlight />

@@ -89,6 +89,7 @@
     "landingEntriesOpenGone": "entries are open for a page you asked about, which has since been taken down.",
     "liveSessionSoon": "“{{title}}” starts at {{time}}.",
     "liveSessionSoonGone": "a live session you asked about was cancelled.",
+    "homeCommentInvited": "we’d like to show one of your comments on the home page. Nothing shows unless you agree.",
     "contestCertificateIssued": "you have a certificate from “{{title}}”. It’s in Certificates.",
     "certificateIssuedPlain": "you have a new certificate. It’s in Certificates.",
     "rankReached": "you’re now a {{rank}}. Well done.",
@@ -161,6 +162,7 @@
     "openAuditLog": "Open the audit log",
     "openLandingPage": "Open the page",
     "openWritersHub": "Open the Writers’ hub",
+    "seeHomeCommentInvitation": "See the invitation",
     "seeMyRank": "See rank",
     "seePrivacy": "See privacy settings",
     "startExploring": "Start exploring"

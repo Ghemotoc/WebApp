@@ -1468,7 +1468,33 @@
       "refused": "That can’t be saved. A story may no longer be allowed, or the list is too long. Check the list and try again.",
       "unreachable": "We couldn’t reach the database. Try again in a moment."
     },
-    "total_few": "{{count}} stories in this view."
+    "total_few": "{{count}} stories in this view.",
+    "homeComment": {
+      "heading": "Reader comment on the home page",
+      "intro": "Invite a reader to have one comment shown on the home page’s cover wall. The reader gets a notification and an invitation on the hub, and visitors see the comment only after the reader agrees. The newest agreement is the one shown. Listed below: comments from the last 90 days, up to 200 characters, by adults, on public stories rated All ages or 13+, never spoilers.",
+      "loading": "Loading the comments…",
+      "picksHeading": "Picks",
+      "candidatesHeading": "Recent comments",
+      "noPicks": "No pick yet.",
+      "noCandidates": "No recent comment fits.",
+      "place": "{{story}} · Chapter {{position}}",
+      "invite": "Invite",
+      "inviteLabel": "Invite {{name}}",
+      "remove": "Take down",
+      "removeLabel": "Take down the comment by {{name}}",
+      "answers": {
+        "waiting": "Waiting for the reader",
+        "agreed": "Agreed",
+        "declined": "Declined"
+      },
+      "onHomePage": "On the home page",
+      "cannotShow": "Can no longer be shown",
+      "failures": {
+        "not_allowed": "Only admins and the owner can pick the home page comment.",
+        "cannot_show": "That comment can no longer be shown, or it is already picked. The lists are up to date now.",
+        "failed": "Something went wrong. Try again."
+      }
+    }
   },
   "menuGroups": {
     "safety": "Safety",
