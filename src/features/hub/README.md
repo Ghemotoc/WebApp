@@ -10,12 +10,14 @@ The signed-in home at `/hub` and the Resources page at `/resources`, built by bu
 - `components/staff/`: `/staff/hub`, where staff with the contests area keep the hub's content. `StaffHubPage.tsx` shows `PromptsSection.tsx` (`PromptForm`, `PromptItem`) `SpotlightsSection.tsx` (`SpotlightForm`, `SpotlightItem`, GAPS-12e) and `CallsSection.tsx` (`CallForm`, `CallItem`); `ConfirmDeleteButtons.tsx` and `formatStaffDay.ts` are shared.
 - `components/HubGuides.tsx`: the how-to guides two at a time, with Previous and Next arrows and a link to Resources.
 - `components/HubWeek.tsx` (GAPS-12b): "This week": chapters posted, reads, comments and new followers in the last 7 days, with a link to the statistics on `/write`. A number from fewer than 5 people reads "fewer than 5".
+- `components/HubMonth.tsx` (GAPS-12f): "Writing month": the writer's own words this calendar month against 15,000 as a bar, the streak of days in a row, and five badges, each "Earned" or "Not yet". Only the writer sees it.
 - `components/HubTools.tsx`: Story Atlas, Writing, Download stories and Help centre.
 - `components/HubCalls.tsx` (GAPS-12d): "Calls for submissions": calls from outside the platform that are still open, each a link to the organiser's page (new tab, `rel="nofollow noopener noreferrer"`), with "Paid" where it applies. Paid calls reach adults only. Hidden when no call is open.
 - `components/HubSpotlight.tsx` and `HubSpotlightInvitations.tsx` (GAPS-12e): "Writer of the week": the writer staff picked, with staff's line and Follow, shown only once the writer agreed; and the picked writer's own invitation with Agree, Decline and "Take the card down".
 - `components/ResourcesPage.tsx` and `ResourcesLinkList.tsx`: writers' rights, every how-to guide and More help (help centre, guidelines, contact, privacy and terms).
 - `api/hubContests.ts` and `hooks/useHubContests.ts`: `writers_hub_contests()`.
 - `api/hubWeek.ts` and `hooks/useHubWeek.ts`: `my_week_numbers()`, which counts only the caller's own activity.
+- `api/hubMonth.ts` and `hooks/useHubMonth.ts`: `my_writing_month()`, fed by the `writing_days` rows a trigger keeps from the writer's saves.
 - `api/hubPrompts.ts`, `hooks/useHubPrompts.ts` and `hooks/useStaffPrompts.ts`: `writers_hub_prompts()`, `start_story_from_prompt()`, the `writing_prompts` table for staff, `admin_save_writing_prompt()` and `admin_delete_writing_prompt()`.
 - `api/hubCalls.ts`, `hooks/useHubCalls.ts` and `hooks/useStaffCalls.ts`: `writers_hub_calls()`, the `submission_calls` table for staff, `admin_save_submission_call()` and `admin_delete_submission_call()`. `api/hubStaffErrors.ts` turns a refused staff change into the message to show.
 - `api/hubSpotlight.ts`, `hooks/useHubSpotlight.ts` and `hooks/useStaffSpotlights.ts`: `writers_hub_spotlight()`, `my_writer_spotlights()`, `answer_writer_spotlight()`, `admin_writer_spotlights()`, `admin_invite_writer_spotlight()` and `admin_delete_writer_spotlight()`.

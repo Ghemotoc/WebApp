@@ -9392,6 +9392,42 @@ export type Database = {
           },
         ];
       };
+      writing_days: {
+        Row: {
+          created_at: string;
+          day: string;
+          id: string;
+          updated_at: string;
+          user_id: string;
+          words: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          day: string;
+          id?: string;
+          updated_at?: string;
+          user_id: string;
+          words?: number;
+        };
+        Update: {
+          created_at?: string;
+          day?: string;
+          id?: string;
+          updated_at?: string;
+          user_id?: string;
+          words?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'writing_days_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       writing_prompts: {
         Row: {
           created_at: string;
@@ -13573,6 +13609,7 @@ export type Database = {
           starts_on: string;
         }[];
       };
+      my_writing_month: { Args: Record<PropertyKey, never>; Returns: Json };
       name_has_listed_word: { Args: { name: string }; Returns: boolean };
       name_is_approved: {
         Args: { name: string; name_kind: string; target_user_id: string };

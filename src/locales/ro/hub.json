@@ -105,6 +105,30 @@
       "withdraw": "Scoate cardul",
       "agreeAfterAll": "Accept totuși",
       "failed": "Nu am putut salva răspunsul. Încearcă din nou."
+    },
+    "month": {
+      "eyebrow": "Luna de scris",
+      "ofGoal": "din {{goal}} de cuvinte",
+      "progressLabel": "{{percent}}% din {{goal}} de cuvinte luna aceasta",
+      "streak_one": "Serie de {{count}} zi",
+      "streak_few": "Serie de {{count}} zile",
+      "streak_other": "Serie de {{count}} de zile",
+      "noStreak": "Nicio serie încă",
+      "words_one": "{{formatted}} cuvânt",
+      "words_few": "{{formatted}} cuvinte",
+      "words_other": "{{formatted}} de cuvinte",
+      "badgesHeading": "Insigne luna aceasta",
+      "badges": {
+        "streak_5": "Serie de 5 zile",
+        "first_5000": "Primele 5.000",
+        "comments_10": "10 comentarii",
+        "contest_entry": "Înscriere la concurs",
+        "words_15000": "15.000 de cuvinte"
+      },
+      "earned": "Obținută",
+      "notYet": "Încă nu",
+      "note": "Se numără din salvările din editor. Nimeni altcineva nu vede asta.",
+      "loadFailed": "Nu am putut încărca luna de scris. Verifică conexiunea și încearcă din nou."
     }
   },
   "hubStaff": {

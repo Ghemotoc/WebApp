@@ -105,6 +105,30 @@
       "withdraw": "Take the card down",
       "agreeAfterAll": "Agree after all",
       "failed": "We couldn’t save the answer. Try again."
+    },
+    "month": {
+      "eyebrow": "Writing month",
+      "ofGoal": "of {{goal}} words",
+      "progressLabel": "{{percent}}% of {{goal}} words this month",
+      "streak_one": "{{count}}-day streak",
+      "streak_few": "{{count}}-day streak",
+      "streak_other": "{{count}}-day streak",
+      "noStreak": "No streak yet",
+      "words_one": "{{formatted}} word",
+      "words_few": "{{formatted}} words",
+      "words_other": "{{formatted}} words",
+      "badgesHeading": "Badges this month",
+      "badges": {
+        "streak_5": "5-day streak",
+        "first_5000": "First 5,000",
+        "comments_10": "10 comments",
+        "contest_entry": "Contest entry",
+        "words_15000": "15,000 words"
+      },
+      "earned": "Earned",
+      "notYet": "Not yet",
+      "note": "Counted from saves in the editor. Nobody else sees this.",
+      "loadFailed": "We couldn’t load the writing month. Check the connection and try again."
     }
   },
   "hubStaff": {

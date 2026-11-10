@@ -1480,14 +1480,15 @@ CREATE OR REPLACE FUNCTION "public"."account_deletion_rules"() RETURNS TABLE("ta
     ('username_approvals', 'delete', 1, null),
     ('waitlist_entries', 'delete', 1, null),
     ('writer_ranks', 'delete', 1, null),
-    ('writer_spotlights', 'delete', 1, null);
+    ('writer_spotlights', 'delete', 1, null),
+    ('writing_days', 'delete', 1, null);
 $$;
 
 
 ALTER FUNCTION "public"."account_deletion_rules"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e).';
+COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f).';
 
 
 
@@ -18641,6 +18642,53 @@ COMMENT ON FUNCTION "public"."count_words"("body" "text") IS 'Words in a chapter
 
 
 
+CREATE OR REPLACE FUNCTION "public"."count_writing_day"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  words_before integer := 0;
+  difference integer;
+  today date := public.romania_today();
+begin
+  -- Step 1: only the writer's own saves count, never a staff change or a background job.
+  if (select auth.uid()) is distinct from new.user_id then
+    return new;
+  end if;
+  -- Step 2: how many words this save added or took away.
+  if tg_op = 'UPDATE' then
+    words_before := coalesce(old.word_count, 0);
+  end if;
+  difference := coalesce(new.word_count, 0) - words_before;
+  if difference = 0 then
+    return new;
+  end if;
+  -- Step 3: words taken away come off today's total, never below zero and never as a new row.
+  if difference < 0 then
+    update public.writing_days set words = greatest(0, words + difference)
+    where user_id = new.user_id and day = today;
+    return new;
+  end if;
+  -- Step 4: new words go on today's row, made on the day's first save.
+  insert into public.writing_days (user_id, day, words) values (new.user_id, today, difference)
+  on conflict on constraint writing_days_one_per_day
+  -- Capped far above anything a person writes, so a huge paste can never make the save fail.
+  do update set words = least(2000000000::bigint, public.writing_days.words::bigint + excluded.words)::integer;
+  -- Step 5: drop the writer's days older than 400 (docs/retention.md); the unique index finds them.
+  delete from public.writing_days
+  where user_id = new.user_id and day < today - 400;
+  return new;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."count_writing_day"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."count_writing_day"() IS 'Trigger on chapters: adds the change in a chapter''s word count to the writer''s own total for the day; prunes days older than 400 (GAPS-12f).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."cover_upload_allowed"("object_name" "text") RETURNS boolean
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -19221,6 +19269,7 @@ CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_
     ('username_approvals', false, 'a moderator''s note that a name was refused by mistake; the name itself is in the profile'),
     ('waitlist_entries', true, null),
     ('writer_spotlights', true, null),
+    ('writing_days', true, null),
     ('writer_ranks', false, 'worked out from the person''s published chapters, which are in the export; the rank itself shows on the profile');
 $$;
 
@@ -19228,7 +19277,7 @@ $$;
 ALTER FUNCTION "public"."data_export_tables"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e).';
+COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f).';
 
 
 
@@ -29155,6 +29204,80 @@ ALTER FUNCTION "public"."my_writer_spotlights"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."my_writer_spotlights"() IS 'The caller''s own writer-of-the-week invitations that haven''t ended, with their answer (GAPS-12e).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."my_writing_month"() RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  today date := public.romania_today();
+  month_start date := date_trunc('month', public.romania_today())::date;
+  month_words integer;
+  current_streak integer;
+  best_month_streak integer;
+  comment_count integer;
+  entered_contest boolean;
+begin
+  if caller_id is null then
+    raise exception 'Log in to see the writing month.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 1: the month's words.
+  select least(coalesce(sum(writing_days.words), 0), 2000000000)::integer into month_words
+  from public.writing_days
+  where writing_days.user_id = caller_id and writing_days.day >= month_start;
+  -- Step 2: the streak still running: days in a row with words, ending today or yesterday (so a
+  -- streak isn't lost before the writer has had today's chance). Days in a row share the same
+  -- "day minus its place in line".
+  with written as (
+    select writing_days.day,
+           writing_days.day - (row_number() over (order by writing_days.day))::integer as run
+    from public.writing_days
+    where writing_days.user_id = caller_id and writing_days.words > 0
+  ), runs as (
+    select max(written.day) as last_day, count(*)::integer as length from written group by written.run
+  )
+  select coalesce(max(runs.length), 0) into current_streak from runs where runs.last_day >= today - 1;
+  -- Step 3: the longest run inside this month, for the 5-day badge (it stays earned after a gap).
+  with written as (
+    select writing_days.day,
+           writing_days.day - (row_number() over (order by writing_days.day))::integer as run
+    from public.writing_days
+    where writing_days.user_id = caller_id and writing_days.words > 0 and writing_days.day >= month_start
+  )
+  select coalesce(max(runs.length), 0) into best_month_streak
+  from (select count(*)::integer as length from written group by written.run) as runs;
+  -- Step 4: comments left this month that are still up, and a contest entered and not withdrawn.
+  select count(*)::integer into comment_count
+  from public.comments
+  where comments.user_id = caller_id and comments.deleted_at is null
+    and (comments.created_at at time zone 'Europe/Bucharest')::date >= month_start;
+  select exists (
+    select 1 from public.contest_entries
+    where contest_entries.user_id = caller_id and contest_entries.status = 'valid'
+      and (contest_entries.entered_at at time zone 'Europe/Bucharest')::date >= month_start
+  ) into entered_contest;
+  return jsonb_build_object(
+    'month_start', month_start,
+    'goal', 15000,
+    'words', month_words,
+    'streak_days', current_streak,
+    'badges', jsonb_build_object(
+      'streak_5', best_month_streak >= 5,
+      'first_5000', month_words >= 5000,
+      'comments_10', comment_count >= 10,
+      'contest_entry', entered_contest,
+      'words_15000', month_words >= 15000));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."my_writing_month"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."my_writing_month"() IS 'The caller''s writing month: words against a goal of 15,000, the running streak and five badges, from their own activity only (GAPS-12f).';
 
 
 
@@ -50086,6 +50209,25 @@ Each writer''s rank, worked out again whenever their published chapters change; 
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."writing_days" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "day" "date" NOT NULL,
+    "words" integer DEFAULT 0 NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "writing_days_words_not_negative" CHECK (("words" >= 0))
+);
+
+
+ALTER TABLE "public"."writing_days" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."writing_days" IS 'kind: user_action
+A writer''s net new words per day in Romanian time, kept by a trigger on chapters, for the writing month, streaks and badges on the Writers'' hub (GAPS-12f). Personal data: on which days the person wrote and how much; never the words themselves. Kept 400 days.';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."writing_prompts" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "prompt_ro" "text" NOT NULL,
@@ -51390,6 +51532,16 @@ ALTER TABLE ONLY "public"."writer_ranks"
 
 ALTER TABLE ONLY "public"."writer_spotlights"
     ADD CONSTRAINT "writer_spotlights_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."writing_days"
+    ADD CONSTRAINT "writing_days_one_per_day" UNIQUE ("user_id", "day");
+
+
+
+ALTER TABLE ONLY "public"."writing_days"
+    ADD CONSTRAINT "writing_days_pkey" PRIMARY KEY ("id");
 
 
 
@@ -52778,6 +52930,10 @@ CREATE OR REPLACE TRIGGER "chapter_scenes_set_updated_at" BEFORE UPDATE ON "publ
 
 
 
+CREATE OR REPLACE TRIGGER "chapters_count_writing_day" AFTER INSERT OR UPDATE OF "word_count" ON "public"."chapters" FOR EACH ROW EXECUTE FUNCTION "public"."count_writing_day"();
+
+
+
 CREATE OR REPLACE TRIGGER "chapters_make_chapter_plan" AFTER INSERT ON "public"."chapters" FOR EACH ROW EXECUTE FUNCTION "public"."make_chapter_plan"();
 
 
@@ -53651,6 +53807,14 @@ CREATE OR REPLACE TRIGGER "writer_spotlights_refuse_user_id_change" BEFORE UPDAT
 
 
 CREATE OR REPLACE TRIGGER "writer_spotlights_set_updated_at" BEFORE UPDATE ON "public"."writer_spotlights" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "writing_days_refuse_user_id_change" BEFORE UPDATE ON "public"."writing_days" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"('user_id');
+
+
+
+CREATE OR REPLACE TRIGGER "writing_days_set_updated_at" BEFORE UPDATE ON "public"."writing_days" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
 
@@ -55380,6 +55544,11 @@ ALTER TABLE ONLY "public"."writer_spotlights"
 
 ALTER TABLE ONLY "public"."writer_spotlights"
     ADD CONSTRAINT "writer_spotlights_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."writing_days"
+    ADD CONSTRAINT "writing_days_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
 
 
 
@@ -57249,6 +57418,17 @@ CREATE POLICY "writer_spotlights_select_own" ON "public"."writer_spotlights" FOR
 
 
 COMMENT ON POLICY "writer_spotlights_select_own" ON "public"."writer_spotlights" IS 'Allows the picked writer to read their own writer-of-the-week invitations that aren''t deleted (GAPS-12e).';
+
+
+
+ALTER TABLE "public"."writing_days" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "writing_days_select_own" ON "public"."writing_days" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
+
+
+
+COMMENT ON POLICY "writing_days_select_own" ON "public"."writing_days" IS 'Allows a writer to read their own words-per-day rows; nobody else reads them (GAPS-12f).';
 
 
 
@@ -59593,6 +59773,10 @@ GRANT ALL ON FUNCTION "public"."count_words"("body" "text") TO "authenticated";
 
 
 
+REVOKE ALL ON FUNCTION "public"."count_writing_day"() FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."cover_upload_allowed"("object_name" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."cover_upload_allowed"("object_name" "text") TO "authenticated";
 
@@ -61117,6 +61301,11 @@ GRANT ALL ON FUNCTION "public"."my_week_numbers"() TO "authenticated";
 
 REVOKE ALL ON FUNCTION "public"."my_writer_spotlights"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."my_writer_spotlights"() TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."my_writing_month"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."my_writing_month"() TO "authenticated";
 
 
 
@@ -64243,6 +64432,11 @@ GRANT SELECT ON TABLE "public"."waitlist_entries" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."writer_ranks" TO "service_role";
 GRANT SELECT ON TABLE "public"."writer_ranks" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."writing_days" TO "service_role";
+GRANT SELECT ON TABLE "public"."writing_days" TO "authenticated";
 
 
 
