@@ -4,7 +4,7 @@
  *
  * The Story Atlas top bar, then a switch between three views (bundle G10 ATLAS, part b2, board
  * AtlasConnections): the relationship map (drag, zoom, Focus on, Arrange for me), the family tree
- * and the List, which is also the map's version for screen readers (S1-E17-15). "Add a
+ * (with "Add to this tree", GAPS-3) and the List, which is also the map's version for screen readers (S1-E17-15). "Add a
  * connection" opens the form above the views, and a card dropped on another opens it with both
  * characters picked. With fewer than two characters the page points to the Characters page
  * instead. Only the writer sees any of it.
@@ -162,7 +162,7 @@ function ConnectionsViewCard({
   onConnect: (fromId: string, toId: string) => void;
 }) {
   const { t } = useAtlasTranslation();
-  const { unrelate } = useRelationshipChangers(slug);
+  const { relate, unrelate } = useRelationshipChangers(slug);
   const words = useRelationshipWords(cast);
   return (
     <section
@@ -178,7 +178,9 @@ function ConnectionsViewCard({
           onConnect={onConnect}
         />
       )}
-      {view === 'tree' && <FamilyTreeView addressOf={addressOf} cast={cast} words={words} />}
+      {view === 'tree' && (
+        <FamilyTreeView addressOf={addressOf} cast={cast} words={words} onAdd={relate} />
+      )}
       {view === 'list' && (
         <RelationshipList
           relationships={cast.relationships}

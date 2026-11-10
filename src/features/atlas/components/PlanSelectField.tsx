@@ -16,6 +16,8 @@ import { SaveNote } from './SaveNote';
 export interface PlanSelectFieldProps {
   id: string;
   label: string;
+  /** A short line under the drop-down saying what the pick does; read with it. */
+  hint?: string;
   options: SelectOption[];
   savedValue: string;
   /** Saves the picked value; throws when it can't. */
@@ -25,9 +27,16 @@ export interface PlanSelectFieldProps {
 /**
  * Renders the drop-down and its save note.
  *
- * @returns the label, the drop-down and the note
+ * @returns the label, the drop-down, the hint when there is one, and the note
  */
-export function PlanSelectField({ id, label, options, savedValue, save }: PlanSelectFieldProps) {
+export function PlanSelectField({
+  id,
+  label,
+  hint,
+  options,
+  savedValue,
+  save,
+}: PlanSelectFieldProps) {
   const field = useAutosaveField({ savedValue, save });
 
   /** Takes the pick and saves it straight away. */
@@ -45,7 +54,13 @@ export function PlanSelectField({ id, label, options, savedValue, save }: PlanSe
         options={options}
         value={field.value}
         onChange={pick}
+        descriptionId={hint === undefined ? undefined : `${id}-hint`}
       />
+      {hint !== undefined && (
+        <p id={`${id}-hint`} className="m-0 text-sm text-meta">
+          {hint}
+        </p>
+      )}
       <SaveNote id={`${id}-save`} status={field.status} />
     </div>
   );

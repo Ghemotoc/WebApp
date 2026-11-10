@@ -2121,6 +2121,9 @@ declare
   to_character public.story_characters;
   is_custom boolean := relationship_kind = 'custom';
   is_cousin boolean := relationship_kind = 'cousin_of';
+  -- The types that say the same thing from both sides.
+  reads_both_ways boolean := relationship_kind in
+    ('sibling_of', 'partner_of', 'cousin_of', 'friend_of', 'ally_of', 'enemy_of');
   new_id uuid;
 begin
   -- Step 1: a signed-in writer and two of their own characters.
@@ -2137,12 +2140,25 @@ begin
     raise exception 'Both characters must be in the same story.'
       using errcode = 'check_violation', hint = 'different_stories';
   end if;
+  -- One add at a time per story, so two clicks at once can't both pass the checks below.
+  perform pg_advisory_xact_lock(hashtext('story_character_relationships:' || from_character.story_id));
   if (select count(*) from public.story_character_relationships
       where story_id = from_character.story_id) >= 2000 then
     raise exception 'A story can hold at most 2,000 relationships.'
       using errcode = 'check_violation', hint = 'too_many_relationships';
   end if;
-  -- Step 3: the relationship; values that don't belong to its type are dropped, and the table's
+  -- Step 3: the same relationship is recorded once.
+  if not is_custom and exists (
+    select 1 from public.story_character_relationships as existing
+    where existing.kind = relationship_kind
+      and ((existing.from_character_id = from_character.id and existing.to_character_id = to_character.id)
+        or (reads_both_ways
+            and existing.from_character_id = to_character.id and existing.to_character_id = from_character.id))
+  ) then
+    raise exception 'That relationship is already there.'
+      using errcode = 'check_violation', hint = 'already_there';
+  end if;
+  -- Step 4: the relationship; values that don't belong to its type are dropped, and the table's
   -- checks refuse the rest (a custom one with no label, a cousin with no degree).
   insert into public.story_character_relationships
     (story_id, user_id, from_character_id, to_character_id, kind, custom_label, reverse_label,
@@ -2163,7 +2179,7 @@ $$;
 ALTER FUNCTION "public"."add_character_relationship"("from_character_id" "uuid", "to_character_id" "uuid", "relationship_kind" "text", "custom_label" "text", "note" "text", "reverse_label" "text", "cousin_degree" integer, "cousin_removed" integer) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."add_character_relationship"("from_character_id" "uuid", "to_character_id" "uuid", "relationship_kind" "text", "custom_label" "text", "note" "text", "reverse_label" "text", "cousin_degree" integer, "cousin_removed" integer) IS 'Records how two of the caller''s characters are connected, with the reverse label of an "Other" one and a cousin''s degree (S1-E17-14, G10b).';
+COMMENT ON FUNCTION "public"."add_character_relationship"("from_character_id" "uuid", "to_character_id" "uuid", "relationship_kind" "text", "custom_label" "text", "note" "text", "reverse_label" "text", "cousin_degree" integer, "cousin_removed" integer) IS 'Records how two of the caller''s characters are connected, once: the same relationship a second time is refused (S1-E17-14, G10b, GAPS-3).';
 
 
 
@@ -15209,7 +15225,9 @@ CREATE TABLE IF NOT EXISTS "public"."story_characters" (
     "public_sheet_parts" "text"[] DEFAULT ARRAY['basics'::"text", 'look_and_voice'::"text", 'in_the_story'::"text"] NOT NULL,
     "map_x" smallint,
     "map_y" smallint,
+    "gender" "text",
     CONSTRAINT "story_characters_custom_values_is_object" CHECK (("jsonb_typeof"("custom_values") = 'object'::"text")),
+    CONSTRAINT "story_characters_gender_known" CHECK ((("gender" IS NULL) OR ("gender" = ANY (ARRAY['she'::"text", 'he'::"text", 'they'::"text"])))),
     CONSTRAINT "story_characters_map_place" CHECK (((("map_x" IS NULL) AND ("map_y" IS NULL)) OR ((("map_x" >= 0) AND ("map_x" <= 4000)) AND (("map_y" >= 0) AND ("map_y" <= 4000))))),
     CONSTRAINT "story_characters_name_length" CHECK ((("char_length"("btrim"("name")) >= 1) AND ("char_length"("btrim"("name")) <= 120))),
     CONSTRAINT "story_characters_picture_alt_length" CHECK (("char_length"("picture_alt") <= 300)),
@@ -15259,12 +15277,17 @@ COMMENT ON COLUMN "public"."story_characters"."map_y" IS 'The card''s top edge o
 
 
 
+COMMENT ON COLUMN "public"."story_characters"."gender" IS 'kind: user_content. The character''s gender for family words: she (mother, daughter, sister), he (father, son, brother), they or null (parent, child, sibling) (GAPS-3).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."character_json"("target_character" "public"."story_characters") RETURNS "jsonb"
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
   select jsonb_build_object(
     'id', target_character.id, 'name', target_character.name, 'role', target_character.role,
+    'gender', target_character.gender,
     'sheet', target_character.sheet, 'custom_values', target_character.custom_values,
     'first_appearance', (select chapters.code from public.chapters
                          where chapters.id = target_character.first_appearance_chapter_id
@@ -31086,6 +31109,7 @@ CREATE OR REPLACE FUNCTION "public"."public_character_json"("target_character" "
     AS $$
   select jsonb_build_object(
     'id', target_character.id, 'name', target_character.name, 'role', target_character.role,
+    'gender', target_character.gender,
     'sheet', case when with_sheet then coalesce((
         select jsonb_object_agg(sheet_text.key, sheet_text.value)
         from jsonb_each(target_character.sheet) as sheet_text
@@ -44435,10 +44459,12 @@ begin
   perform public.check_character_texts(coalesce(changes -> 'sheet', '{}'::jsonb), public.character_sheet_keys());
   perform public.check_custom_value_keys(target_character.story_id, coalesce(changes -> 'custom', '{}'::jsonb));
 
-  -- Step 3: change only what was given; the table's checks refuse the rest.
+  -- Step 3: change only what was given; the table's checks refuse the rest (an unknown gender
+  -- among them). An empty gender means "not set".
   update public.story_characters set
     name = coalesce(btrim(changes ->> 'name'), name),
     role = coalesce(changes ->> 'role', role),
+    gender = case when changes ? 'gender' then nullif(changes ->> 'gender', '') else gender end,
     sheet = sheet || coalesce(changes -> 'sheet', '{}'::jsonb),
     custom_values = custom_values || coalesce(changes -> 'custom', '{}'::jsonb),
     first_appearance_chapter_id = case when changes ? 'first_appearance'
@@ -44455,7 +44481,7 @@ $$;
 ALTER FUNCTION "public"."update_story_character"("character_id" "uuid", "changes" "jsonb") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."update_story_character"("character_id" "uuid", "changes" "jsonb") IS 'Changes one of the caller''s characters: name, role, sheet text, custom values, first appearance or picture alt text (S1-E17-08 to S1-E17-11).';
+COMMENT ON FUNCTION "public"."update_story_character"("character_id" "uuid", "changes" "jsonb") IS 'Changes one of the caller''s characters: name, role, gender, sheet text, custom values, first appearance or picture alt text (S1-E17-08 to S1-E17-11; GAPS-3).';
 
 
 

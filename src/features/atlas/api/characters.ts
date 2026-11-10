@@ -18,6 +18,8 @@ import { toCharacterField, type CharacterField, type CharacterFieldRow } from '.
 export type { CharacterField } from './characterDetails';
 import type { Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
+
+import { checkedAnswer } from './checkedAnswer';
 import {
   deleteStoredPicture,
   pictureViewsFromJson,
@@ -62,6 +64,8 @@ export interface StoryCharacter {
   id: string;
   name: string;
   role: CharacterRole;
+  /** Picks the family words (mother, son, brother); null when not set (GAPS-3). */
+  gender: CharacterGender | null;
   sheet: Partial<Record<SheetKey, string>>;
   /** The writer's own fields' values, by field ID (S1-E17-10). */
   customValues: Record<string, string>;
@@ -73,6 +77,14 @@ export interface StoryCharacter {
   /** Where the writer put the card on the relationship map, or null to let the map place it. */
   mapPlace: MapPlace | null;
 }
+
+/**
+ * The genders a character can have, in the order the sheet offers them. They only pick family
+ * words: "she" reads mother, daughter, sister; "he" father, son, brother; "they" and not set
+ * keep parent, child, sibling (GAPS-3; the database's story_characters_gender_known check).
+ */
+export const characterGenders = ['she', 'he', 'they'] as const;
+export type CharacterGender = (typeof characterGenders)[number];
 
 /** A card's top-left corner on the relationship map, in map pixels (G10b2). */
 export interface MapPlace {
@@ -138,6 +150,7 @@ interface CharacterRow {
   id: string;
   name: string;
   role: CharacterRole;
+  gender: CharacterGender | null;
   sheet: Partial<Record<SheetKey, string>>;
   custom_values: Record<string, string>;
   first_appearance: string | null;
@@ -185,6 +198,7 @@ async function toCharacters(
     id: row.id,
     name: row.name,
     role: row.role,
+    gender: row.gender,
     sheet: row.sheet,
     customValues: row.custom_values,
     firstAppearance: row.first_appearance,
@@ -273,11 +287,12 @@ export async function createCharacter(
   return String(okAnswer(answer, 'add the character').id);
 }
 
-/** What one save changes: a name, a role, sheet text, a custom value, the first appearance or
- * the picture's alt text (each field saves by itself). */
+/** What one save changes: a name, a role, a gender ('' for not set), sheet text, a custom value,
+ * the first appearance or the picture's alt text (each field saves by itself). */
 export type CharacterChange =
   | { name: string }
   | { role: CharacterRole }
+  | { gender: CharacterGender | '' }
   | { sheet: Partial<Record<SheetKey, string>> }
   | { custom: Record<string, string> }
   | { first_appearance: string }
@@ -410,7 +425,7 @@ export interface NewRelationship {
  * @param client - the shared Supabase client
  * @param relationship - the two characters, the type, the labels, the cousin's degree and the note
  * Errors: throws when the database refuses it (the same character twice, a custom type with no
- *   label) or can't be reached.
+ *   label, a relationship that is already there: hint 'already_there') or can't be reached.
  */
 export async function addRelationship(
   client: AppSupabaseClient,
@@ -426,7 +441,8 @@ export async function addRelationship(
     cousin_degree: relationship.cousinDegree ?? undefined,
     cousin_removed: relationship.cousinRemoved ?? undefined,
   });
-  okAnswer(answer, 'add the relationship');
+  // checkedAnswer keeps the database's hint, so the form can say "already there" (GAPS-3).
+  checkedAnswer(answer, 'add the relationship');
 }
 
 /**

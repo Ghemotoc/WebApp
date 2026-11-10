@@ -14,14 +14,19 @@
  * - a card dragged to an empty spot keeps its place, Arrange for me puts it back, and a card
  *   dropped on another opens Add a connection with both picked (G10b2);
  * - the family tree puts generations top to bottom with partners side by side, "Include turned
- *   or made" counts makers, "Whose tree" shows one family, and a note says how many characters
+ *   or made" counts makers, "Whose tree" shows one family and a note says how many characters
  *   are left off (S1-E17-16, G10b2);
+ * - a character's gender picks the family word (mother, son), told from the child on the child's
+ *   own sheet, and "Add to this tree" adds a relative from the tree itself, once: a double click
+ *   saves once, the same relationship again is refused, and a long name stays in its box
+ *   (GAPS-3 and its break test, 10 Nov 2026);
  * - the page passes axe, doesn't scroll sideways and draws no doodle at 390, 768 and
  *   1440 px, light and night, Romanian and English.
  * Test data: adult_writer's seed story "Stația meteo" gets five characters (deleted at the end);
  * suspended_user (whose language no other spec changes) gets one seeded story with three
  * connected characters for the accessibility checks.
  */
+import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
@@ -209,9 +214,10 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     await expect(section.getByText('Raised him alone.')).toBeVisible();
     // Listed on Vali's sheet too.
     await page.goto(`${planAddress}/characters/${cast.vali}`);
+    // Listed on Vali's sheet too, told from his side (GAPS-3).
     const valiSection = page.getByRole('region', { name: 'Relationships', exact: true });
     await expect(
-      valiSection.getByText('Ana is the parent of Vali', { exact: true }).first(),
+      valiSection.getByText('Vali is the child of Ana', { exact: true }).first(),
     ).toBeVisible();
     await page.context().close();
   });
@@ -451,6 +457,92 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
       section.getByText('Vali is the sibling of Ana', { exact: true }).first(),
     ).toBeVisible();
     await expect(section.getByText('A spell swapped their ages.')).toBeVisible();
+    await page.context().close();
+  });
+
+  test('a gender picks mother and son, and "Add to this tree" adds a child', async ({
+    browser,
+  }) => {
+    // Ana is Vali's parent. With a gender she is his mother (GAPS-3, board
+    // AtlasCharacterRelationship).
+    const page = await openAs(browser, 'adult_writer', `${planAddress}/characters/${cast.ana}`);
+    const gender = page.getByLabel('Gender', { exact: true });
+    await expect(gender.locator('option')).toHaveText(['Not set', 'She', 'He', 'They']);
+    await gender.selectOption({ label: 'She' });
+    await expect(page.locator('#atlas-character-gender-save')).toHaveText('Saved');
+    await expect(
+      page
+        .getByRole('region', { name: 'Relationships', exact: true })
+        .getByText('Ana is the mother of Vali', { exact: true })
+        .first(),
+    ).toBeVisible();
+    // On Vali's own sheet it is told from his side: the son.
+    await page.goto(`${planAddress}/characters/${cast.vali}`);
+    await page.getByLabel('Gender', { exact: true }).selectOption({ label: 'He' });
+    await expect(page.locator('#atlas-character-gender-save')).toHaveText('Saved');
+    await expect(
+      page
+        .getByRole('region', { name: 'Relationships', exact: true })
+        .getByText('Vali is the son of Ana', { exact: true })
+        .first(),
+    ).toBeVisible();
+    // The tree adds to itself (board AtlasFamilyTree: "Add to Mara's tree"). Reduced motion, as
+    // checkScreen does, so axe measures the settled page and not one still fading in.
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(`${planAddress}/connections?view=tree`);
+    const treeCard = page.getByRole('region', { name: 'Family tree', exact: true });
+    await treeCard.getByLabel('Whose tree', { exact: true }).selectOption({ label: 'Mara' });
+    await treeCard.getByRole('button', { name: 'Add to this tree' }).click();
+    const form = treeCard.getByRole('form', { name: 'Add to Mara’s tree' });
+    await expect(form.getByLabel('How they’re related to Mara').locator('option')).toHaveText([
+      'Parent',
+      'Child',
+      'Sibling',
+      'Partner or spouse',
+      'Cousin',
+    ]);
+    // Both characters are needed.
+    await form.getByRole('button', { name: 'Add', exact: true }).click();
+    await expect(form.getByText('Pick both characters.')).toBeVisible();
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
+      .analyze();
+    expect(results.violations).toEqual([]);
+    await form.getByLabel('Character', { exact: true }).selectOption({ label: 'Lupul' });
+    await form.getByLabel('How they’re related to Mara').selectOption({ label: 'Child' });
+    // A double click saves once (break test, 10 Nov 2026); the count below proves it.
+    await form.getByRole('button', { name: 'Add', exact: true }).dblclick();
+    await expect(form.getByText('Relationship added.')).toBeVisible();
+    // Lupul now sits a generation under Mara, and the relationship runs from parent to child.
+    await expect(
+      treeCard.getByRole('list', { name: 'Generations' }).getByRole('listitem').filter({
+        hasText: 'Lupul',
+      }),
+    ).toHaveCount(1);
+    expect(
+      runSql(`select count(*) from public.story_character_relationships
+        where from_character_id = '${cast.mara}' and to_character_id = '${cast.lupul}' and kind = 'parent_of'`),
+    ).toBe('1');
+    // The same relationship a second time is refused in plain words, and nothing is added.
+    await form.getByLabel('Character', { exact: true }).selectOption({ label: 'Lupul' });
+    await form.getByLabel('How they’re related to Mara').selectOption({ label: 'Child' });
+    await form.getByRole('button', { name: 'Add', exact: true }).click();
+    await expect(form.getByText('That relationship is already there.')).toBeVisible();
+    expect(
+      runSql(`select count(*) from public.story_character_relationships
+        where from_character_id = '${cast.mara}' and to_character_id = '${cast.lupul}' and kind = 'parent_of'`),
+    ).toBe('1');
+    // Cancel closes the form.
+    await form.getByRole('button', { name: 'Cancel' }).click();
+    await expect(form).toHaveCount(0);
+    // A very long name with no spaces stays inside its box on the tree.
+    const longName = 'Pneumonoultramicroscopicsilicovolcanoconiosis'.repeat(2).slice(0, 80);
+    runSql(`update public.story_characters set name = '${longName}' where id = '${cast.lupul}'`);
+    await page.reload();
+    const longBox = treeCard.getByRole('link', { name: longName, exact: true });
+    await expect(longBox).toBeVisible();
+    expect(await longBox.evaluate((box) => box.scrollWidth <= box.clientWidth + 1)).toBe(true);
+    runSql(`update public.story_characters set name = 'Lupul' where id = '${cast.lupul}'`);
     await page.context().close();
   });
 
