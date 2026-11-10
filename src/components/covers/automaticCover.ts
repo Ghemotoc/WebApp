@@ -28,11 +28,14 @@ import {
 } from './coverDesigns';
 
 /**
- * The designs an automatic cover may use: every patterned one, in the board's order. The flat
- * colours read as an empty card on a shelf, so they are left to writers who pick them (D3).
+ * The designs an automatic cover may use: the 7 first patterned ones, in the board's order. The
+ * flat colours read as an empty card on a shelf, so they are left to writers who pick them (D3).
+ * The three patterns G9c added (Arches, Rings, Forest waves) are for writers to pick only: the
+ * choice is the story ID's hash taken over this list, so a longer list would move every
+ * existing automatic cover to another design, and "always the same for that story" would break.
  */
 export const automaticDesignKeys: readonly CoverDesignKey[] = coverDesigns
-  .filter((design) => design.kind !== 'plain')
+  .filter((design) => design.kind !== 'plain' && design.isNew !== true)
   .map((design) => design.key);
 
 /** A story as the cover code needs it: its ID, its cover kind and, for drawn covers, the choice. */

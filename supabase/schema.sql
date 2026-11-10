@@ -3004,7 +3004,7 @@ CASE "cover_kind"
     WHEN 'upload'::"public"."cover_kind" THEN (("cover_design" IS NULL) AND ("cover_background" IS NULL) AND ("cover_accent" IS NULL) AND ("cover_tall_path" IS NOT NULL))
     ELSE NULL::boolean
 END),
-    CONSTRAINT "stories_cover_design_is_approved" CHECK ((("cover_design" IS NULL) OR ("cover_design" = ANY (ARRAY['plum'::"text", 'ink'::"text", 'violet'::"text", 'gold'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text", 'stripes'::"text", 'dots'::"text", 'grid'::"text", 'waves'::"text", 'starry'::"text", 'sparkles'::"text", 'twotone'::"text"])))),
+    CONSTRAINT "stories_cover_design_is_approved" CHECK ((("cover_design" IS NULL) OR ("cover_design" = ANY (ARRAY['plum'::"text", 'ink'::"text", 'violet'::"text", 'gold'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text", 'stripes'::"text", 'dots'::"text", 'grid'::"text", 'waves'::"text", 'starry'::"text", 'sparkles'::"text", 'twotone'::"text", 'arches'::"text", 'rings'::"text", 'forestwaves'::"text"])))),
     CONSTRAINT "stories_first_published_year_range" CHECK ((("first_published_year" >= 1) AND ("first_published_year" <= 2100))),
     CONSTRAINT "stories_language_code_shape" CHECK (("language_code" ~ '^[a-z]{2}(-[A-Z]{2})?$'::"text")),
     CONSTRAINT "stories_rank_badge_tag_ids_check" CHECK ((("rank_badge_tag_ids" IS NULL) OR ("cardinality"("rank_badge_tag_ids") <= 3))),
@@ -3101,7 +3101,7 @@ COMMENT ON COLUMN "public"."stories"."first_published_year" IS 'The year the wor
 
 
 
-COMMENT ON CONSTRAINT "stories_cover_design_is_approved" ON "public"."stories" IS 'A drawn cover uses one of the designs the app can draw (src/components/covers/coverDesigns.ts); "doodles" was renamed "sparkles" in NO-DOODLES.';
+COMMENT ON CONSTRAINT "stories_cover_design_is_approved" ON "public"."stories" IS 'A drawn cover uses one of the designs the app can draw (src/components/covers/coverDesigns.ts); "doodles" was renamed "sparkles" in NO-DOODLES, and G9c added arches, rings and forestwaves.';
 
 
 

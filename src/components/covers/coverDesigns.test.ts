@@ -16,11 +16,15 @@ import {
 } from './coverDesigns';
 
 describe('cover designs', () => {
-  it('are the 16 approved backgrounds: 9 plain colours and 7 patterns', () => {
-    expect(coverDesigns).toHaveLength(16);
+  it('are the 19 approved backgrounds: 9 plain colours, 7 patterns and the 3 new ones', () => {
+    expect(coverDesigns).toHaveLength(19);
     expect(coverDesigns.filter((design) => design.kind === 'plain')).toHaveLength(9);
-    expect(coverDesigns.filter((design) => design.kind !== 'plain')).toHaveLength(7);
+    expect(coverDesigns.filter((design) => design.kind !== 'plain')).toHaveLength(10);
     expect(coverDesigns.map((design) => design.key)).toEqual([...coverDesignKeys]);
+    // G9c: the board marks Arches, Rings and Forest waves "New"; they come last.
+    expect(
+      coverDesigns.filter((design) => design.isNew === true).map((design) => design.key),
+    ).toEqual(['arches', 'rings', 'forestwaves']);
   });
 
   it('use a 9-colour palette, and every default colour is in it', () => {
@@ -32,7 +36,7 @@ describe('cover designs', () => {
   });
 
   it('give the title at least 4.5:1 contrast for every background and accent pair', () => {
-    // Every design × background × accent: 16 × 9 × 9 = 1,296 choices.
+    // Every design × background × accent: 19 × 9 × 9 = 1,539 choices.
     const choices = coverDesigns.flatMap((design) =>
       coverColourKeys.flatMap((background) =>
         coverColourKeys.map((accent) => ({ design: design.key, background, accent })),
@@ -44,7 +48,7 @@ describe('cover designs', () => {
         return { choice, ratio: contrastRatio(surface, titleColourOn(surface)) };
       })
       .filter((pair) => pair.ratio < 4.5);
-    expect(choices).toHaveLength(1296);
+    expect(choices).toHaveLength(1539);
     expect(weakPairs).toEqual([]);
   });
 
@@ -84,5 +88,12 @@ describe('cover designs', () => {
     // Waves: the board's blue is outside the palette, so Violet stands in (docs/board-fixes.md).
     expect(defaultChoiceFor('waves').accent).toBe('violet');
     expect(coverPalette.plum).toBe('#481C5F');
+    // G9c: the board's blues and greens map to the nearest palette pair (docs/board-fixes.md).
+    expect(defaultChoiceFor('arches')).toEqual({
+      design: 'arches',
+      background: 'ink',
+      accent: 'violet',
+    });
+    expect(defaultChoiceFor('forestwaves').background).toBe('sage');
   });
 });
