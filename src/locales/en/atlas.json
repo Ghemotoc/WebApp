@@ -705,6 +705,7 @@
   "search": {
     "label": "Search this story",
     "placeholder": "Search this story",
+    "button": "Search",
     "documentTitle": "Search “{{query}}”: Story Atlas",
     "heading": "Search",
     "tooShort_one": "Type at least {{count}} letter to search.",
@@ -772,7 +773,9 @@
         "family_tree": "The family tree.",
         "bible": "The story world, in reading mode.",
         "timeline": "The events on your timeline, in order."
-      }
+      },
+      "on": "On",
+      "off": "Off"
     },
     "item": {
       "heading": "What readers see",
@@ -797,10 +800,24 @@
     },
     "preview": {
       "documentTitle": "Preview of {{title}} as a reader: Story Atlas",
-      "heading": "Preview as a reader",
-      "note": "This is what readers see. Anything marked with a chapter shows only once a reader gets there.",
-      "notPublished": "This is what readers will see once your story is published. Anything marked with a chapter shows only once a reader gets there.",
+      "note": "Preview as a reader. This is what readers see. Anything marked with a chapter shows only once a reader gets there.",
+      "notPublished": "Preview as a reader. This is what readers will see once the story is published. Anything marked with a chapter shows only once a reader gets there.",
       "nothing": "Nothing is public yet."
+    },
+    "characters": {
+      "heading": "Characters",
+      "none": "No characters yet.",
+      "keptPrivate": "Kept private",
+      "fromStart": "Readers see it from the start",
+      "fromChapter": "Readers see it from chapter {{number}}",
+      "noParts": "no part of the sheet",
+      "change": "Change",
+      "done": "Done",
+      "changeNamed": "Change what readers see of {{name}}"
+    },
+    "spoilers": {
+      "heading": "Spoilers stay safe",
+      "body": "Pick the chapter each thing shows from. Readers who haven’t reached it don’t see it."
     }
   },
   "publicPlan": {
@@ -830,6 +847,7 @@
     },
     "timeline": {
       "none": "No events to show yet."
-    }
+    },
+    "sharedByWriter": "Shared by the writer"
   }
 }

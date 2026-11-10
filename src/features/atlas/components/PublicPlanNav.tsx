@@ -2,8 +2,8 @@
  * PublicPlanNav: the row of a story's public areas on the readers' pages (story S1-E17-33:
  * "tabs or links for those areas show … and none for areas that are off").
  *
- * Real links with aria-current on the open one, filled so it isn't told by colour alone; the row
- * wraps on a phone. Who uses it: PublicPlanView. What it calls: lib/publicPlanAreas.ts.
+ * Real links inside one glass track (boards AtlasPreview*, G10c4), with aria-current on the open
+ * one, filled so it isn't told by colour alone; the track wraps on a phone. Who uses it: PublicPlanView. What it calls: lib/publicPlanAreas.ts.
  */
 import { Link } from 'react-router';
 
@@ -33,17 +33,15 @@ export function PublicPlanNav({
   const { t } = useAtlasTranslation();
   return (
     <nav aria-label={t('publicPlan.navLabel')}>
-      <ul className="m-0 flex list-none flex-wrap gap-2 p-0">
+      <ul className="m-0 inline-flex max-w-full list-none flex-wrap gap-1 rounded-[24px] border border-border bg-surface p-1.5 shadow-card">
         {areas.map((area) => (
           <li key={area}>
             <Link
               to={`${base}/${areaPaths[area]}`}
               aria-current={area === current ? 'page' : undefined}
               className={cn(
-                'inline-flex h-11 items-center rounded-full border px-5 text-sm font-semibold no-underline',
-                area === current
-                  ? 'border-primary bg-primary text-on-primary'
-                  : 'border-control-border bg-surface text-heading hover:bg-tint',
+                'inline-flex h-11 items-center rounded-full px-5 text-sm font-semibold no-underline',
+                area === current ? 'bg-primary text-on-primary' : 'text-heading hover:bg-tint',
               )}
             >
               {t(`publicPlan.areas.${area}`)}

@@ -60,7 +60,9 @@ export function Select({
   }
 
   return (
-    <span className="inline-flex flex-wrap items-center gap-2">
+    // max-w-full and min-w-0: a very long option (a story title without spaces) shortens with an
+    // ellipsis inside the row, and never pushes the page sideways (rule 21; G10c4 break test).
+    <span className="inline-flex max-w-full min-w-0 flex-wrap items-center gap-2">
       <label
         htmlFor={id}
         className={isLabelVisible ? 'text-[13px] font-semibold text-body' : 'sr-only'}
@@ -73,7 +75,7 @@ export function Select({
           value={value}
           aria-describedby={descriptionId}
           onChange={handleChange}
-          className="h-11 w-auto max-w-full cursor-pointer appearance-none rounded-full border border-control-border bg-surface pr-9 pl-4 font-body text-sm font-semibold text-ink"
+          className="h-11 w-auto max-w-full cursor-pointer appearance-none text-ellipsis rounded-full border border-control-border bg-surface pr-9 pl-4 font-body text-sm font-semibold text-ink"
         >
           {options.map((option) => (
             <option key={option.value} value={option.value} lang={option.lang}>

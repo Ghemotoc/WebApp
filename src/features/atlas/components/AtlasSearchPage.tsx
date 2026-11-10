@@ -2,10 +2,10 @@
  * AtlasSearchPage: /plan/s/:storySlug/search?q=…, the results of one search across the open
  * story (story S1-E17-30).
  *
- * The Story Atlas top bar (its search box holds the query), the heading with what was searched
- * for, then the results grouped by type (characters, bible entries, chapters, scenes, questions
- * and ideas, timeline events, marketing notes), each with its count, a link to the item and a
- * snippet with the match marked. Only the writer sees any of it.
+ * The Story Atlas top bar, the heading, the wide search bar holding the query, then the results
+ * grouped by type (characters, bible entries, chapters, scenes, questions and ideas, timeline
+ * events, marketing notes) in two columns of glass lists, each group with its count and each row
+ * a link to the item with the match marked (board AtlasSearch, G10c4). Only the writer sees any of it.
  * Who calls it: src/app/router.tsx (loaded only when a writer opens it). What it calls:
  * useStorySearch → search_story(); lib/searchGroups.ts; SearchResultItem; useMyStories for the
  * top bar and the story's title.
@@ -24,6 +24,7 @@ import { writeAddressFor } from '../lib/writeAddress';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { AtlasPageHeading } from './AtlasPageHeading';
+import { AtlasSearchBox } from './AtlasSearchBox';
 import { AtlasTopBar } from './AtlasTopBar';
 import { SearchResultItem } from './SearchResultItem';
 
@@ -39,37 +40,39 @@ function SearchResults({
 }) {
   const { t } = useAtlasTranslation();
   if (results.length === 0) {
-    return <p className="m-0 text-body">{t('search.nothing', { query })}</p>;
+    return <p className="m-0 break-words text-body">{t('search.nothing', { query })}</p>;
   }
   return (
-    <div className="flex flex-col gap-6">
-      <p className="m-0 text-sm text-meta" role="status">
+    <div className="flex min-w-0 flex-col gap-5">
+      <p className="m-0 break-words text-body" role="status">
         {t('search.count', { count: results.length, query })}
       </p>
-      {groupSearchResults(results).map((group) => (
-        <section
-          key={group.kind}
-          aria-labelledby={`atlas-search-${group.kind}`}
-          className="flex min-w-0 flex-col gap-2 rounded-card border border-border bg-surface px-5 py-5 shadow-card md:px-7"
-        >
-          <h2
-            id={`atlas-search-${group.kind}`}
-            className="m-0 font-heading text-[22px] font-bold text-heading"
+      <div className="grid min-w-0 items-start gap-x-6 gap-y-5 md:grid-cols-2">
+        {groupSearchResults(results).map((group) => (
+          <section
+            key={group.kind}
+            aria-labelledby={`atlas-search-${group.kind}`}
+            className="flex min-w-0 flex-col gap-1.5"
           >
-            {t(`search.kinds.${group.kind}`, { count: group.results.length })}
-          </h2>
-          <ul className="m-0 list-none p-0">
-            {group.results.map((result) => (
-              <SearchResultItem
-                key={`${result.kind}-${result.ref}`}
-                slug={slug}
-                result={result}
-                query={query}
-              />
-            ))}
-          </ul>
-        </section>
-      ))}
+            <h2
+              id={`atlas-search-${group.kind}`}
+              className="m-0 px-[18px] text-[13px] font-semibold tracking-[0.08em] break-words text-meta uppercase"
+            >
+              {t(`search.kinds.${group.kind}`, { count: group.results.length })}
+            </h2>
+            <ul className="m-0 flex list-none flex-col overflow-hidden rounded-card border border-border bg-surface p-0 shadow-card">
+              {group.results.map((result) => (
+                <SearchResultItem
+                  key={`${result.kind}-${result.ref}`}
+                  slug={slug}
+                  result={result}
+                  query={query}
+                />
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
     </div>
   );
 }
@@ -109,6 +112,7 @@ export function AtlasSearchPage() {
         <>
           <AtlasTopBar slug={storySlug} writeAddress={writeAddressFor(story)} section={null} />
           <AtlasPageHeading title={t('search.heading')} />
+          <AtlasSearchBox key={query} slug={storySlug} isPageBar />
           <SearchBody slug={storySlug} query={query} />
         </>
       )}

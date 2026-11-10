@@ -705,6 +705,7 @@
   "search": {
     "label": "Caută în această poveste",
     "placeholder": "Caută în poveste",
+    "button": "Caută",
     "documentTitle": "Caută „{{query}}”: Story Atlas",
     "heading": "Căutare",
     "tooShort_one": "Scrie cel puțin {{count}} literă ca să cauți.",
@@ -772,7 +773,9 @@
         "family_tree": "Arborele genealogic.",
         "bible": "Lumea poveștii, în modul de citire.",
         "timeline": "Evenimentele din cronologie, în ordine."
-      }
+      },
+      "on": "Pornit",
+      "off": "Oprit"
     },
     "item": {
       "heading": "Ce văd cititorii",
@@ -797,10 +800,24 @@
     },
     "preview": {
       "documentTitle": "{{title}} văzută ca un cititor: Story Atlas",
-      "heading": "Vezi ca un cititor",
-      "note": "Asta văd cititorii. Ce are un capitol marcat apare doar după ce cititorul ajunge acolo.",
-      "notPublished": "Asta vor vedea cititorii după ce îți publici povestea. Ce are un capitol marcat apare doar după ce cititorul ajunge acolo.",
+      "note": "Vezi ca un cititor. Asta văd cititorii. Ce are un capitol marcat apare doar după ce cititorul ajunge acolo.",
+      "notPublished": "Vezi ca un cititor. Asta vor vedea cititorii după ce povestea e publicată. Ce are un capitol marcat apare doar după ce cititorul ajunge acolo.",
       "nothing": "Nimic nu e public încă."
+    },
+    "characters": {
+      "heading": "Personaje",
+      "none": "Niciun personaj încă.",
+      "keptPrivate": "Păstrat privat",
+      "fromStart": "Cititorii îl văd de la început",
+      "fromChapter": "Cititorii îl văd de la capitolul {{number}}",
+      "noParts": "nicio parte din fișă",
+      "change": "Schimbă",
+      "done": "Gata",
+      "changeNamed": "Schimbă ce văd cititorii din {{name}}"
+    },
+    "spoilers": {
+      "heading": "Fără dezvăluiri",
+      "body": "Alege capitolul de la care apare fiecare lucru. Cititorii care n-au ajuns acolo nu îl văd."
     }
   },
   "publicPlan": {
@@ -830,6 +847,7 @@
     },
     "timeline": {
       "none": "Niciun eveniment de arătat încă."
-    }
+    },
+    "sharedByWriter": "Împărtășit de autor"
   }
 }

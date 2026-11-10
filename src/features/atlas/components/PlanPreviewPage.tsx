@@ -2,11 +2,12 @@
  * PlanPreviewPage: /plan/s/:storySlug/preview/:area, "Preview as a reader" (story S1-E17-32:
  * "when I open it, then I see exactly what a reader would see").
  *
- * The Story Atlas top bar, a line saying this is a preview (and, before publishing, that readers
- * can't see any of it yet), then the same PublicPlanView readers get, with the items that wait
+ * The Story Atlas top bar, the same band readers get with the story's title (PublicPlanHero), a
+ * line saying this is a preview (and, before publishing, that readers can't see any of it yet),
+ * then the same PublicPlanView readers get, with the items that wait
  * for a chapter marked instead of left out (S1-E17-35) and no Report buttons. Only the writer
- * sees it. Who calls it: src/app/router.tsx. What it calls: usePlanPreview, PublicPlanView and
- * AtlasTopBar.
+ * sees it. Who calls it: src/app/router.tsx. What it calls: usePlanPreview, PublicPlanHero,
+ * PublicPlanView and AtlasTopBar.
  */
 import { Link, useParams } from 'react-router';
 
@@ -22,6 +23,7 @@ import { writeAddressFor } from '../lib/writeAddress';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { AtlasTopBar } from './AtlasTopBar';
+import { PublicPlanHero } from './PublicPlanHero';
 import { PublicPlanView } from './PublicPlanView';
 
 /** The preview's note, then the view of the open area (the first public one by default). */
@@ -87,9 +89,7 @@ export function PlanPreviewPage() {
       {preview === null && <Notice tone="error">{t('notFound')}</Notice>}
       {preview && (
         <>
-          <h1 className="m-0 text-[clamp(36px,4.4vw,56px)] leading-[0.98] font-extrabold tracking-[-0.025em] break-words">
-            {t('readers.preview.heading')}
-          </h1>
+          <PublicPlanHero title={preview.plan.storyTitle} storyAddress={null} />
           <PreviewBody slug={storySlug} plan={preview.plan} isPublished={preview.isPublished} />
         </>
       )}
