@@ -13,7 +13,6 @@
  */
 import type { Editor } from '@tiptap/react';
 import { useState, type FormEvent } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
@@ -24,6 +23,7 @@ import { EMBED_SERVICE_NAMES, parseEmbedLink } from '@/lib/embed-links';
 
 import { useNativeDialog } from '../hooks/useNativeDialog';
 import { insertChapterEmbed } from '../lib/chapterEmbedNode';
+import { useEditorTranslation } from '../registerEditorTranslations';
 
 /** Which item opened the dialog; null while it is closed. */
 export type EmbedDialogKind = 'music' | 'video' | null;
@@ -58,7 +58,7 @@ function failureMessage(error: unknown): { key: string; values?: Record<string, 
  */
 function useEmbedInsert(props: EmbedInsertDialogProps) {
   const { editor, chapterId, onClose } = props;
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   const [link, setLink] = useState('');
   const [fieldError, setFieldError] = useState<string | undefined>(undefined);
   const adding = useEmbedAddition();
@@ -95,7 +95,7 @@ function useEmbedInsert(props: EmbedInsertDialogProps) {
  * @returns the dialog element (closed when kind is null)
  */
 export function EmbedInsertDialog(props: EmbedInsertDialogProps) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   const { link, setLink, fieldError, adding, submit, close } = useEmbedInsert(props);
   const dialogRef = useNativeDialog(props.kind !== null);
   const kind = props.kind ?? 'video';

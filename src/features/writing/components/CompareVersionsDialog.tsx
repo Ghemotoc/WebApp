@@ -12,7 +12,6 @@
  */
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
@@ -22,6 +21,7 @@ import { dateLocaleFor } from '@/lib/romania-time';
 
 import { fetchMyChapter, type MyChapter } from '../api/chapters';
 import { markdownToPlainText } from '../lib/chapterMarkdown';
+import { useEditorTranslation } from '../registerEditorTranslations';
 
 /** One side of the comparison. */
 export interface VersionSide {
@@ -49,7 +49,7 @@ function VersionColumn(props: {
   onKeep: () => void;
   headingId: string;
 }) {
-  const { t, i18n } = useTranslation('editor');
+  const { t, i18n } = useEditorTranslation();
   const savedLine =
     props.side.savedAt === null
       ? t('compare.unsaved')
@@ -102,7 +102,7 @@ function useOtherVersion(isOpen: boolean, chapterCode: string) {
  * @returns the dialog element (closed when isOpen is false)
  */
 export function CompareVersionsDialog(props: CompareVersionsDialogProps) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const { other, failed } = useOtherVersion(props.isOpen, props.chapterCode);
 

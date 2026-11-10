@@ -13,7 +13,6 @@
  */
 import type { Editor } from '@tiptap/react';
 import { useState, type KeyboardEvent, type ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { ChapterInsertControls } from './ChapterInsertControls';
 import {
@@ -25,6 +24,7 @@ import {
   QuoteIcon,
   SceneBreakIcon,
 } from './EditorToolbarIcons';
+import { useEditorTranslation } from '../registerEditorTranslations';
 
 /** One button: its key in the locale file, its icon, what it does and whether it is "on". */
 interface ToolbarAction {
@@ -110,7 +110,7 @@ function toolbarActions(onLink: () => void): ToolbarAction[] {
  * @returns the bar with its buttons and the word count
  */
 export function EditorToolbar({ editor, wordCount, onLink, chapterId }: EditorToolbarProps) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   const actions = toolbarActions(onLink);
   // One tab stop: Tab lands on the remembered button, the arrow keys move along the bar.
   const [focusedIndex, setFocusedIndex] = useState(0);

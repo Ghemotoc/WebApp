@@ -12,7 +12,6 @@
  * (useChapterPublishing). Problems show under the buttons in a role="alert" line.
  */
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
 import { TextInput } from '@/components/ui/TextInput';
@@ -23,6 +22,7 @@ import {
 } from '@/lib/romania-time';
 
 import type { PublishAction, PublishingState, PublishProblem } from '../hooks/useChapterPublishing';
+import { useEditorTranslation } from '../registerEditorTranslations';
 
 /** What the panel needs. */
 export interface PublishPanelProps {
@@ -41,7 +41,7 @@ function WhenChoice({
   isLater: boolean;
   onChange: (isLater: boolean) => void;
 }) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   const options = [
     { value: false, label: t('publish.now') },
     { value: true, label: t('publish.later') },
@@ -74,7 +74,7 @@ function DraftControls({
   onAction,
   onPreview,
 }: Omit<PublishPanelProps, 'state' | 'problem'>) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   const [isLater, setLater] = useState(false);
   const [fields, setFields] = useState(() => defaultScheduleFields(new Date()));
 
@@ -132,7 +132,7 @@ function ScheduledControls({
   isBusy,
   onAction,
 }: Pick<PublishPanelProps, 'state' | 'isBusy' | 'onAction'>) {
-  const { t, i18n } = useTranslation('editor');
+  const { t, i18n } = useEditorTranslation();
   const when =
     state.scheduledFor === null ? '' : formatRomaniaDateTime(state.scheduledFor, i18n.language);
   return (
@@ -159,7 +159,7 @@ function PublishedControls({
   onAction,
   onPreview,
 }: Omit<PublishPanelProps, 'problem'>) {
-  const { t, i18n } = useTranslation('editor');
+  const { t, i18n } = useEditorTranslation();
   const when =
     state.lastPublishedAt === null
       ? ''
@@ -188,7 +188,7 @@ function UnpublishControls({
   isBusy,
   onAction,
 }: Pick<PublishPanelProps, 'state' | 'isBusy' | 'onAction'>) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   const isPublished = state.status === 'published';
   return (
     <div className="flex flex-col gap-2 border-t border-border pt-3.5">
@@ -212,7 +212,7 @@ function UnpublishControls({
  * @returns the controls
  */
 export function PublishPanel(props: PublishPanelProps) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   return (
     <div className="flex flex-col gap-3.5">
       {props.state.status === 'draft' && (

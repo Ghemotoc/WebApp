@@ -22,3 +22,4 @@ The writer's side: creating a story, its cover, and (later in the lane) chapters
 - `lib/tags.ts`: the tag rule the form applies as the writer types, the same as the database's `normalise_tag()`.
 - Covers are drawn by `src/components/covers/` (`DrawnCover`, `coverDesigns.ts`, `automaticCover.ts` for a skipped cover, S1-E3-13), shared with every screen that shows a cover. The form makes the story's ID so the automatic design is known before the story exists.
 - The database side: `supabase/README.md`, "Stories".
+- Editor texts: `registerEditorTranslations.ts` adds the `editor` namespace when an editor component first renders (`useEditorTranslation()`), so the texts travel with the editor's own file and not with every first page (GAPS-6; the reader's script budget in `e2e/reader-performance.spec.ts`).
