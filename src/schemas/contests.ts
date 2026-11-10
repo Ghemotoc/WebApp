@@ -53,6 +53,8 @@ export const contestStoryProblemCodes = [
   'not_active',
   'not_readable',
   'class_only',
+  // GAPS-14: contests take original work only (Robert, 7 Nov 2026).
+  'fan_fiction',
   'language',
   'rating',
   'word_limit',
@@ -105,6 +107,9 @@ export const staffContestEntrySchema = z.object({
   story_title: z.string(),
   story_slug: z.string(),
   rating: z.string(),
+  // GAPS-14: whether the story is labelled fan fiction now (it may have been relabelled after
+  // it was entered; staff decide whether to disqualify it).
+  is_fan_fiction: z.boolean(),
   words: z.number().int(),
   entered_at: z.string(),
   status: z.enum(contestEntryStatuses),

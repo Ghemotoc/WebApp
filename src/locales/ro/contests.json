@@ -16,6 +16,7 @@
       "not_active": "Contul tău nu poate participa încă la concursuri.",
       "not_readable": "Cititorii nu o pot deschide încă. Publică mai întâi un capitol.",
       "class_only": "Este vizibilă doar pentru clasă.",
+      "fan_fiction": "Este marcată ca fan fiction. Concursurile primesc doar povești originale.",
       "language": "Este scrisă într-o limbă pe care concursul nu o primește.",
       "rating": "Concursul este deschis și celor sub 16 ani, așa că primește doar povești pentru toate vârstele sau 13+.",
       "word_limit": "Capitolele publicate depășesc limita de cuvinte."
@@ -31,6 +32,7 @@
       "not_active": "Contul tău nu poate participa încă la concursuri.",
       "not_readable": "Cititorii nu pot deschide încă povestea. Publică mai întâi un capitol.",
       "class_only": "Povestea este vizibilă doar pentru clasă.",
+      "fan_fiction": "Concursurile primesc doar povești originale, iar aceasta este marcată ca fan fiction.",
       "language": "Concursul nu primește povești în această limbă.",
       "rating": "Concursul primește doar povești pentru toate vârstele sau 13+.",
       "word_limit": "Povestea depășește limita de cuvinte.",
@@ -178,6 +180,7 @@
         "16_plus": "16+",
         "18_plus": "18+"
       },
+      "fanFiction": "Fan fiction",
       "status": {
         "valid": "Validă",
         "withdrawn": "Retrasă",

@@ -9,6 +9,8 @@
  *   and 2);
  * - a writer sees "Enter <contest>" in their story's settings while entries are open, enters the
  *   story and withdraws it (criterion 3);
+ * - a story labelled fan fiction can't be entered and its card says why; staff see a story
+ *   relabelled as fan fiction after entering (GAPS-14);
  * - an admin disqualifies the entry with a reason, and the writer's card points to the decision
  *   (criteria 5 and 6, part 13b2a);
  * - once entries close, an admin chooses the winner, publishes the results and marks the prize as
@@ -43,7 +45,7 @@ const cleanUpSql = `
   delete from public.landing_pages where slug = 'concurs-e2e';
   delete from public.cms_versions where content_kind = 'help_page' and entry_key = 'regulament-e2e';
   delete from public.chapters where code = 'ct2e0001';
-  update public.stories set rating = 'all_ages' where slug = 'statia-meteo-seed01';`;
+  update public.stories set rating = 'all_ages', is_fan_fiction = false where slug = 'statia-meteo-seed01';`;
 
 /** The live landing page with key dates and the Rules link, and the rules in both languages. */
 const setUpSql = `
@@ -153,6 +155,20 @@ test.describe('Contests (S1-E11-15)', () => {
     await page.context().close();
   });
 
+  test('a story labelled fan fiction can’t be entered, and the card says why (GAPS-14)', async ({
+    browser,
+  }) => {
+    runSql(`update public.stories set is_fan_fiction = true where slug = 'statia-meteo-seed01';`);
+    const page = await openAs(browser, 'adult_writer', '/write/s/statia-meteo-seed01/settings');
+    const card = page.getByRole('group', { name: 'Contests' });
+    await expect(
+      card.getByText('It’s labelled fan fiction. Contests take original stories only.'),
+    ).toBeVisible();
+    await expect(card.getByRole('button', { name: 'Enter The trial contest' })).toHaveCount(0);
+    await page.context().close();
+    runSql(`update public.stories set is_fan_fiction = false where slug = 'statia-meteo-seed01';`);
+  });
+
   test('a writer enters a story from its settings and withdraws it', async ({ browser }) => {
     const page = await openAs(browser, 'adult_writer', '/write/s/statia-meteo-seed01/settings');
     // Step 1: the Contests card offers the open contest.
@@ -189,6 +205,12 @@ test.describe('Contests (S1-E11-15)', () => {
     await expect(entries.getByRole('cell', { name: 'Withdrawn', exact: true })).toBeVisible();
     const validRow = entries.getByRole('row').filter({ hasText: 'Valid' });
     await expect(validRow.getByRole('cell', { name: '18 and over' })).toBeVisible();
+    // GAPS-14: the story is relabelled as fan fiction after entering; staff see it on the row.
+    await expect(validRow.getByText('Fan fiction', { exact: true })).toHaveCount(0);
+    runSql(`update public.stories set is_fan_fiction = true where slug = 'statia-meteo-seed01';`);
+    await admin.reload();
+    await expect(validRow.getByText('Fan fiction', { exact: true })).toBeVisible();
+    runSql(`update public.stories set is_fan_fiction = false where slug = 'statia-meteo-seed01';`);
     await validRow.getByRole('button', { name: /^Disqualify .+’s entry$/ }).click();
     await admin
       .getByLabel('Why the entry breaks the rules')
