@@ -85,7 +85,7 @@ async function openAs(
 async function publicCharacterNames(browser: Browser, persona: SignInPersonaName | null) {
   const page = await openAs(browser, persona, `${readerBase}/characters`);
   await expect(page.getByRole('heading', { level: 1, name: 'Moara de pe deal' })).toBeVisible();
-  // Each character's link holds its initials, then its name: the name is the last line.
+  // Each character's link holds its picture (when there is one), then its name: the last line.
   const links = page.locator(`main a[href*="${readerBase}/characters/"]`);
   const names = await links.allInnerTexts();
   await page.context().close();

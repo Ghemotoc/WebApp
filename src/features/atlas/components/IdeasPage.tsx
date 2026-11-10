@@ -25,6 +25,7 @@ import { filterIdeas, ideaFilters, type IdeaFilter } from '../lib/ideaFilters';
 import { writeAddressFor } from '../lib/writeAddress';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
+import { AtlasPageHeading } from './AtlasPageHeading';
 import { AtlasTopBar } from './AtlasTopBar';
 import { IdeaItem } from './IdeaItem';
 import { IdeaQuickAdd } from './IdeaQuickAdd';
@@ -109,14 +110,7 @@ export function IdeasPage() {
       {ideas === null && <Notice tone="error">{t('notFound')}</Notice>}
       {ideas !== undefined && ideas !== null && (
         <>
-          <header className="flex flex-col gap-2">
-            <h1 className="m-0 text-[clamp(36px,4.4vw,56px)] leading-[0.98] font-extrabold tracking-[-0.025em] break-words">
-              {t('ideas.heading')}
-            </h1>
-            <p className="m-0 text-sm text-meta">
-              {ideas.storyTitle} · {t('privateNote')}
-            </p>
-          </header>
+          <AtlasPageHeading title={t('ideas.heading')} />
           <IdeaQuickAdd onAdd={add} />
           <IdeaList slug={storySlug} ideas={ideas} />
         </>

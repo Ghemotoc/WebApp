@@ -31,6 +31,7 @@ import {
 import { writeAddressFor } from '../lib/writeAddress';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
+import { AtlasPageHeading } from './AtlasPageHeading';
 import { AtlasTopBar } from './AtlasTopBar';
 import { ChapterBoard } from './ChapterBoard';
 import { PovLanesView } from './PovLanesView';
@@ -141,14 +142,7 @@ export function StorylinePage() {
       {storyline === null && <Notice tone="error">{t('notFound')}</Notice>}
       {storyline !== undefined && storyline !== null && (
         <>
-          <header className="flex flex-col gap-2">
-            <h1 className="m-0 text-[clamp(36px,4.4vw,56px)] leading-[0.98] font-extrabold tracking-[-0.025em] break-words">
-              {t('storyline.heading')}
-            </h1>
-            <p className="m-0 text-sm text-meta">
-              {storyline.storyTitle} · {t('privateNote')}
-            </p>
-          </header>
+          <AtlasPageHeading title={t('storyline.heading')} />
           <ViewToggle
             view={view}
             onChange={(chosen) => {

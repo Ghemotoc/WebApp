@@ -25,6 +25,7 @@ import { useStoryCast } from '../hooks/useStoryCast';
 import { writeAddressFor } from '../lib/writeAddress';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
+import { AtlasPageHeading } from './AtlasPageHeading';
 import { AddRelationshipForm } from './AddRelationshipForm';
 import { AtlasTopBar } from './AtlasTopBar';
 import { FamilyTreeView } from './FamilyTreeView';
@@ -140,14 +141,7 @@ export function ConnectionsPage() {
       {cast === null && <Notice tone="error">{t('notFound')}</Notice>}
       {cast !== undefined && cast !== null && (
         <>
-          <header className="flex flex-col gap-2">
-            <h1 className="m-0 text-[clamp(36px,4.4vw,56px)] leading-[0.98] font-extrabold tracking-[-0.025em] break-words">
-              {t('connections.heading')}
-            </h1>
-            <p className="m-0 text-sm text-meta">
-              {cast.storyTitle} · {t('privateNote')}
-            </p>
-          </header>
+          <AtlasPageHeading title={t('connections.heading')} />
           <ConnectionsBody slug={storySlug} cast={cast} />
         </>
       )}

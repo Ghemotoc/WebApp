@@ -4,15 +4,15 @@
  *
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase started first).
  * What it proves:
- * - "New character" makes a character and opens its sheet; the list groups the cast by role and
- *   filters it by typing; the sheet sits beside the list on a laptop and below it on a phone
- *   (S1-E17-08);
+ * - "New character" makes a character and opens its sheet; with no character open the cast shows
+ *   as cards, and beside an open sheet the list groups it by role; typing filters both; the sheet
+ *   sits beside the list on a laptop and below it on a phone (S1-E17-08, G10a);
  * - every sheet field saves by itself and is still there after a reload, the first appearance is
  *   picked from the chapters, and long boxes grow with the text (S1-E17-09);
  * - a field of the writer's own shows on every sheet; removing it hides it and keeps its value,
  *   and bringing it back shows the value again (S1-E17-10);
- * - with uploads on, a picture shows once a moderator approved it (the seed story is All ages), with alt text, and Remove brings the
- *   initials back (S1-E17-11);
+ * - with uploads on, a picture shows once a moderator approved it (the seed story is All ages),
+ *   with alt text, and Remove takes it away; no initials stand in for it (S1-E17-11, G10a);
  * - Delete asks twice, and the at-a-glance page counts the cast (S1-E17-13, S1-E17-06);
  * - the page passes axe, doesn't scroll sideways and draws no doodle at 390, 768 and
  *   1440 px, light and night, Romanian and English.
@@ -81,6 +81,11 @@ async function openAs(
   return page;
 }
 
+/** The cast list by role, beside an open sheet. */
+function castList(page: Page) {
+  return page.getByRole('navigation', { name: 'Characters', exact: true });
+}
+
 /** Makes a character with "New character" and gives it a name. */
 async function newCharacter(page: Page, name: string) {
   await page.getByRole('button', { name: 'New character' }).click();
@@ -143,17 +148,18 @@ test.describe('Story Atlas characters (S1-E17-08 to S1-E17-13)', () => {
     await expect(page.getByText('No one matches “zzz”.')).toBeVisible();
 
     // Beside the list on a laptop.
-    const list = await page.getByRole('heading', { name: '2 characters' }).boundingBox();
+    const list = await castList(page).boundingBox();
     const sheet = await page
       .getByRole('heading', { level: 2, name: 'Ștefan the Keeper' })
       .boundingBox();
     expect(sheet?.x ?? 0).toBeGreaterThan((list?.x ?? 0) + 200);
     await page.context().close();
 
-    // Below it on a phone.
+    // Below it on a phone. With no character open, the cast shows as cards (G10a).
     const phone = await openAs(browser, 'adult_writer', castAddress, 390);
+    await expect(phone.getByRole('heading', { name: '2 characters' })).toBeVisible();
     await phone.getByRole('link', { name: 'Ștefan the Keeper' }).click();
-    const phoneList = await phone.getByRole('heading', { name: '2 characters' }).boundingBox();
+    const phoneList = await castList(phone).boundingBox();
     const phoneSheet = await phone
       .getByRole('heading', { level: 2, name: 'Ștefan the Keeper' })
       .boundingBox();
@@ -172,9 +178,11 @@ test.describe('Story Atlas characters (S1-E17-08 to S1-E17-13)', () => {
     await fields.getByRole('textbox', { name: 'New field' }).fill('Turned by');
     await fields.getByRole('button', { name: 'Add field' }).click();
     await expect(fields.getByRole('listitem')).toContainText('Turned by');
-    // The cast count and the recently edited characters (S1-E17-06).
-    await expect(page.getByRole('region', { name: 'Characters', exact: true })).toContainText(
-      '2 characters',
+    // The cast count and the recently edited characters (S1-E17-06; G10a: the five edited last,
+    // each with its role).
+    await expect(page.getByRole('link', { name: 'Open characters (2)' })).toBeVisible();
+    await expect(page.getByRole('list', { name: 'Characters · edited recently' })).toContainText(
+      'Protagonist',
     );
 
     await page.getByRole('link', { name: 'Ana Mureșan' }).click();
@@ -195,7 +203,7 @@ test.describe('Story Atlas characters (S1-E17-08 to S1-E17-13)', () => {
     await page.context().close();
   });
 
-  test('a picture shows once a moderator approved it, and Remove brings the initials back', async ({
+  test('a picture shows once a moderator approved it, and Remove takes it away', async ({
     browser,
   }) => {
     // The local server signs check results with PICTURE_CHECK_SECRET (playwright.config.ts); the
@@ -206,7 +214,7 @@ test.describe('Story Atlas characters (S1-E17-08 to S1-E17-13)', () => {
     const page = await openAs(browser, 'adult_writer', castAddress);
     await page.getByRole('link', { name: 'Ana Mureșan' }).click();
     const pictureCard = page.getByRole('group', { name: 'Picture' });
-    await expect(pictureCard.getByText('No picture yet, so the initials show.')).toBeVisible();
+    await expect(pictureCard.getByText('No picture yet.')).toBeVisible();
     await pictureCard.getByLabel('Choose a picture').setInputFiles({
       name: 'ana.png',
       mimeType: 'image/png',
@@ -222,7 +230,7 @@ test.describe('Story Atlas characters (S1-E17-08 to S1-E17-13)', () => {
     await expect(pictureCard.getByRole('img', { name: 'Ana on the cliff' })).toBeVisible();
 
     await pictureCard.getByRole('button', { name: 'Remove picture' }).click();
-    await expect(pictureCard.getByText('No picture yet, so the initials show.')).toBeVisible();
+    await expect(pictureCard.getByText('No picture yet.')).toBeVisible();
     await expect(pictureCard.getByRole('img')).toHaveCount(0);
     // The file is gone from Storage too (S1-E17-11: "removing it deletes the file").
     expect(runSql(`select count(*) from storage.objects where bucket_id = 'atlas-images'`)).toBe(

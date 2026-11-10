@@ -4,7 +4,11 @@
  * Characters, Connections, Bible, Storyline, Ideas, Marketing and Readers (what readers can see).
  *
  * Real links with aria-current on the one open now, so a screen reader says where the writer is;
- * the open one is also filled, not told by colour alone. On a phone the row wraps.
+ * the open one also sits on a soft tint and is bold, so it shows by shape and weight, not colour
+ * alone (WCAG 1.4.1). The row stays on one line (bundle G10a, board AtlasStory: the glass top bar's
+ * second row): the text steps down a size on a phone, and a row still wider than the screen
+ * scrolls sideways, keeping its scrollbar because it has no arrows (DoD scroll rule); each link
+ * scrolls into view when the keyboard reaches it.
  * Who uses it: AtlasTopBar.
  */
 import { Link } from 'react-router';
@@ -58,17 +62,17 @@ export function AtlasSectionNav({ slug, current }: { slug: string; current: Atla
   ];
   return (
     <nav aria-label={t('nav.label')}>
-      <ul className="m-0 flex list-none flex-wrap gap-2 p-0">
+      <ul className="m-0 flex list-none flex-nowrap gap-1 overflow-x-auto p-0">
         {sections.map((section) => (
-          <li key={section}>
+          <li key={section} className="shrink-0">
             <Link
               to={`/plan/s/${slug}${sectionPaths[section]}`}
               aria-current={section === current ? 'page' : undefined}
               className={cn(
-                'inline-flex h-11 items-center rounded-full border px-5 text-sm font-semibold no-underline',
+                'inline-flex min-h-[38px] items-center rounded-xl px-2.5 text-[13px] whitespace-nowrap no-underline sm:text-sm',
                 section === current
-                  ? 'border-primary bg-primary text-on-primary'
-                  : 'border-control-border bg-surface text-heading hover:bg-tint',
+                  ? 'bg-tint font-bold text-heading'
+                  : 'font-medium text-ink hover:bg-tint',
               )}
             >
               {t(`nav.${section}`)}
