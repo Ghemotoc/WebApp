@@ -1,0 +1,78 @@
+{
+  "hub": {
+    "documentTitle": "Spațiul scriitorilor · {{productName}}",
+    "eyebrow": "Spațiul scriitorilor · {{day}}",
+    "heading": "Tot ce trebuie pentru următorul capitol.",
+    "intro": "Concursuri deschise, ghiduri pas cu pas și instrumentele pentru a plănui și a împărtăși povești.",
+    "startWriting": "Începe să scrii",
+    "resources": "Resurse",
+    "signedOut": "Conectează-te ca să vezi concursurile, ghidurile și instrumentele de scris.",
+    "signedOutEyebrow": "Spațiul scriitorilor",
+    "logIn": "Conectare",
+    "contests": {
+      "eyebrow": "Concurs · deschis acum",
+      "emptyEyebrow": "Concursuri",
+      "closesToday": "Se închide azi",
+      "closesIn_one": "Se închide într-o zi",
+      "closesIn_few": "Se închide în {{count}} zile",
+      "closesIn_other": "Se închide în {{count}} de zile",
+      "wordLimit_one": "Cel mult {{words}} cuvânt",
+      "wordLimit_few": "Cel mult {{words}} cuvinte",
+      "wordLimit_other": "Cel mult {{words}} de cuvinte",
+      "prize": "Premiu: {{prize}}",
+      "howToEnter": "Înscrie o poveste din setările ei, la Concursuri.",
+      "open": "Vezi concursul",
+      "openLabel": "Vezi concursul: {{name}}",
+      "none": "Niciun concurs nu primește înscrieri acum. Concursurile noi apar aici.",
+      "loadFailed": "Nu am putut încărca concursurile. Verifică conexiunea și încearcă din nou."
+    },
+    "guides": {
+      "eyebrow": "Ghiduri pas cu pas",
+      "seeEvery": "Vezi fiecare ghid",
+      "previous": "Ghidurile de dinainte",
+      "next": "Ghidurile următoare",
+      "regionLabel": "Ghiduri pas cu pas, câte două. Săgețile le arată pe următoarele două.",
+      "position": "Ghidurile de la {{first}} la {{last}} din {{total}}",
+      "steps": "Pas cu pas",
+      "none": "Ghidurile sunt pe drum. Până atunci, Centrul de ajutor are răspunsurile."
+    },
+    "tools": {
+      "eyebrow": "Instrumente",
+      "atlasTitle": "Story Atlas",
+      "atlasLine": "Plănuiește personaje, locuri și capitole",
+      "writeTitle": "Scrieri",
+      "writeLine": "Povești, ciorne și statistici",
+      "downloadTitle": "Descarcă poveștile",
+      "downloadLine": "Copii Word, PDF și EPUB",
+      "helpTitle": "Centrul de ajutor",
+      "helpLine": "Răspunsuri la întrebările frecvente"
+    }
+  },
+  "resources": {
+    "documentTitle": "Resurse · {{productName}}",
+    "heading": "Resurse",
+    "intro": "Află cum să te descurci: drepturile scriitorilor, ghiduri pas cu pas și unde găsești ajutor.",
+    "rights": {
+      "heading": "Drepturile scriitorilor",
+      "body": "Poveștile rămân ale celor care le scriu. Scriitorii păstrează toate drepturile asupra operei lor. O arătăm doar acolo unde alege scriitorul, iar orice poveste poate fi descărcată oricând.",
+      "link": "Citește pe larg drepturile scriitorilor"
+    },
+    "guides": {
+      "heading": "Ghiduri pas cu pas",
+      "intro": "Ajutor pas cu pas pentru folosirea {{productName}}.",
+      "none": "Ghidurile sunt pe drum. Până atunci, Centrul de ajutor are răspunsurile.",
+      "loadFailed": "Nu am putut încărca ghidurile. Verifică conexiunea și încearcă din nou."
+    },
+    "more": {
+      "heading": "Mai mult ajutor",
+      "helpTitle": "Centrul de ajutor",
+      "helpLine": "Răspunsuri la întrebările frecvente",
+      "guidelinesTitle": "Regulile comunității",
+      "guidelinesLine": "Ce e permis și ce nu",
+      "contactTitle": "Contactează-ne",
+      "contactLine": "Scrie-i echipei {{productName}}",
+      "legalTitle": "Confidențialitate și termeni",
+      "legalLine": "Cum folosim datele și regulile platformei"
+    }
+  }
+}

@@ -13,7 +13,8 @@
  * Decisions: links appear only when their page exists (src/app/navigation.ts). Messages, with its
  * unread count, comes in through navigationEnd while signed in (S1-E9-01).
  * Who uses it: AppLayout, and the /design page with the full board links.
- * What it calls: NavTrack, HeaderSearch, BrandMark.
+ * What it calls: NavTrack, HeaderSearch, BrandMark, and useHomeAddress for where the logo goes
+ * (the Writers' hub when signed in, G9a).
  */
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -21,6 +22,7 @@ import { Link } from 'react-router';
 
 import { primaryNavigation, type NavigationItem } from '@/app/navigation';
 import { BrandMark } from '@/features/branding/components/BrandMark';
+import { useHomeAddress } from '@/features/hub/hooks/useHomeAddress';
 
 import { HeaderSearch } from './HeaderSearch';
 import { NavTrack } from './NavTrack';
@@ -51,12 +53,14 @@ export function TopBar({
   hasSearch = true,
 }: TopBarProps) {
   const { t } = useTranslation();
+  // Signed in, the logo opens the Writers' hub; signed out, the public home page (G9a).
+  const homeAddress = useHomeAddress();
 
   return (
     <header className="relative z-10 px-[clamp(16px,4vw,64px)] pt-5">
       <div className="glass-pill mx-auto flex max-w-[1280px] flex-wrap items-center gap-x-4 gap-y-2.5 rounded-[36px] py-2 pr-2 pl-5">
         <Link
-          to="/"
+          to={homeAddress}
           className="inline-flex min-h-11 items-center font-heading text-[22px] font-extrabold tracking-[-0.01em] text-heading no-underline"
         >
           <BrandMark />

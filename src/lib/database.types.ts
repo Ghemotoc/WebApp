@@ -15348,6 +15348,19 @@ export type Database = {
         Args: { target_chapter_id: string; writer_id: string };
         Returns: Json;
       };
+      writers_hub_contests: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          contest_id: string;
+          entries_close_on: string;
+          name_en: string;
+          name_ro: string;
+          page_slug: string;
+          prize_en: string;
+          prize_ro: string;
+          word_limit: number;
+        }[];
+      };
       writers_published_by_market: {
         Args: { for_day: string };
         Returns: {
