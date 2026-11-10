@@ -770,11 +770,11 @@
 
 /* Fonts, type sizes and radii from the boards; the font files are self-hosted (src/styles/fonts.css). */
 @theme {
-  --font-heading: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-heading: 'Funnel Display Variable', 'Funnel Display', system-ui, sans-serif;
   --font-body: 'Inter Variable', 'Inter', system-ui, sans-serif;
   /* Eyebrows use Inter, as the parent company's do (Robert, 6 Nov 2026; Cutive before). */
   --font-eyebrow: 'Inter Variable', 'Inter', system-ui, sans-serif;
-  --font-hand: 'Shadows Into Light Two', cursive;
+  --font-hand: 'Playwrite CU Variable', 'Playwrite CU', cursive;
   /* Story text in the reader and the editor (handoff: --font-story Literata; bundle G1). */
   --font-story: 'Literata Variable', 'Literata', Georgia, serif;
   /* The dyslexia-friendly reading font (Robert, 7 Nov 2026, 18:16); its files load only when

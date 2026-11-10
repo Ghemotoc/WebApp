@@ -2,7 +2,7 @@
  * WriterStoryCard: one of the writer's own stories on "Writing" (story S1-E3-01; board
  * WriterDashboard 4.1, "Story by story").
  *
- * Board values: a card with the 96 × 130 drawn cover on the left, the title in Bricolage, the
+ * Board values: a card with the 96 × 130 drawn cover on the left, the title in Funnel Display, the
  * blurb, the chips (category, Ongoing or Completed from S1-E3-05, the language, the label pills
  * from S1-E3-06), the tags, the
  * lock line "Only you can see this story until you publish its first chapter" while nothing is

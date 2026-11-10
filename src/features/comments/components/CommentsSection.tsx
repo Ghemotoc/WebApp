@@ -1,7 +1,7 @@
 /**
  * CommentsSection: "Comments" under the chapter (story S1-E6-01; board 3.5).
  *
- * Board values: the eyebrow "Comments", the heading "86 comments" (28 px, Bricolage) with
+ * Board values: the eyebrow "Comments", the heading "86 comments" (28 px, Funnel Display) with
  * "Newest first" beside it, the composer card, then one white card (24 px corners) listing the
  * comments with fine lines between them, and "Show more comments" under it. A visitor gets a
  * "Log in to comment" link instead of the composer; with comments off the section says so and

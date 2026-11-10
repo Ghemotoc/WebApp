@@ -12,7 +12,7 @@
  *   - An arrow press moves by whole cards: the card a fade covered becomes fully visible
  *     (Robert, 5 Nov 2026; shelfPaging.ts). The row doesn't snap, because snapping would pull
  *     each press back to a card's edge and leave that card under the fade again.
- * Board values: heading Bricolage 30 px, 18 px below it; cards 20 px apart; a 140 px fade on
+ * Board values: heading Funnel Display 30 px, 18 px below it; cards 20 px apart; a 140 px fade on
  * each faded edge (narrower on small screens, so a whole card still fits between two fades).
  * Who uses it: Discover (S1-E5-01), Classics, Library, the website home page and /design.
  */

@@ -3,7 +3,7 @@
  * S1-E5-12, bundle LOOK-4b; board Discover, "Your dashboard").
  *
  * Board values (liquid glass board Discover, bundle G7): a glass card in the side column with the
- * eyebrow, the draft's title in Bricolage at 20 px ("Chapter 1, untitled" when it has none),
+ * eyebrow, the draft's title in Funnel Display at 20 px ("Chapter 1, untitled" when it has none),
  * "<story> · 1,240 words · saved yesterday" and "Open draft" drawn as an outlined pill.
  * The whole card is one link to the chapter editor.
  * Who shows it: DiscoverCards. What it calls: timeAgo for "saved 2 days ago".

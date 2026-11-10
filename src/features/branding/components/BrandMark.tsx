@@ -10,7 +10,7 @@
  *     An emblem staff uploaded is a picture with its own colours, so it stays an <img>, one per
  *     theme;
  *   - the uploaded logo, with the product name as its alt text, or the name as text in lower case
- *     and the --logo colour when there is no logo (Bricolage 800, from the caller).
+ *     and the --logo colour when there is no logo (Funnel Display 800, from the caller).
  * Light and night uploads are both in the page and CSS shows the one for the current theme
  * (.tmc-light-only and .tmc-night-only in src/styles/index.css), so a theme switch needs no new
  * read. With no logo uploaded the name is drawn once, so its link has one plain name.

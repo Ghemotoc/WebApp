@@ -7,7 +7,7 @@
  * "<name> isn't taking messages right now" (S1-E9-03), the same note whatever the reason, so it
  * never tells anyone an age.
  *
- * Board values: the name in Bricolage 800 at clamp(36px, 4.4vw, 64px), the handle line 15 px in
+ * Board values: the name in Funnel Display 800 at clamp(36px, 4.4vw, 64px), the handle line 15 px in
  * the meta colour, the bio 18 px / 1.6 up to 640 px wide. Above the name sit the glass rank
  * pill (S1-E8-09, ProfileRankChip) and, when shown, the reading level pill (G7a,
  * ReaderLevelPill). Not shown yet, as the board's later parts: Share (the share sheet comes with

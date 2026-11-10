@@ -2,7 +2,7 @@
  * SharingModal: the frame every sharing dialog uses (stories S1-E4-05 and S1-E4-07; board 3.6).
  *
  * Board values: a white 20 px-radius card, a eyebrow ("Share", "Share a quote"), the
- * heading in Bricolage Grotesque and a corner "×" named "Close". No doodles on sharing screens
+ * heading in Funnel Display and a corner "×" named "Close". No doodles on sharing screens
  * (DoD design rules).
  * How it is a dialog: the browser's own <dialog> with showModal(), which traps focus, closes on
  * Escape and gives focus back to the button that opened it (WCAG 2.2, 2.1.2 and 2.4.3), as the

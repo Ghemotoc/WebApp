@@ -2,7 +2,7 @@
  * RankPanel: the "Rank" card at the top of a profile's side column (story S1-E8-09; board 6.1).
  *
  * Board values: a white card with 24 px corners and 24 px padding, the eyebrow "Rank", the
- * rank's name as a 26 px Bricolage heading, the 15 px line saying where ranks come from (forum
+ * rank's name as a 26 px Funnel Display heading, the 15 px line saying where ranks come from (forum
  * posts never count, criterion 1), the ladder and the progress bar (no trophy doodle since bundle
  * G4). Nothing is drawn before the writer's first published chapter, or when profile_rank() keeps
  * it from this reader.

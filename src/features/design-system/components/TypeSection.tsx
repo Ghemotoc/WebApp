@@ -1,9 +1,8 @@
 /**
  * TypeSection: the fonts and the type scale from the boards, on /design (story S1-E1-03).
- * Bricolage Grotesque for headings, Inter for body and for the eyebrows (Inter Bold, 11 px,
- * capitals, 0.18em spacing, black; Robert, 7 Nov 2026), Literata for story text and Shadows Into
- * Light Two for handwriting
- * (CLAUDE.md, Designs; DoD design rules).
+ * Funnel Display for headings, Inter for body and for the eyebrows (Inter Bold, 11 px,
+ * capitals, 0.18em spacing, black; Robert, 7 Nov 2026), Literata for story text and Playwrite
+ * Cuba for handwriting (Robert, 10 Nov 2026, bundle FONTS; CLAUDE.md, Designs; DoD design rules).
  * Who uses it: DesignPage. The e2e test reads the computed fonts from these samples.
  */
 import { useTranslation } from 'react-i18next';

@@ -4,7 +4,7 @@
  *
  * Board values: a white card with 24 px corners and a soft shadow; the cover at 112 px wide on
  * the left (on top on phones), with its title only; the eyebrow "Shared with you · chapter 1 of 15"; the story's title
- * as the page's H1 in Bricolage 800; "by <pen name>"; the blurb at 15 px / 1.6; the category and
+ * as the page's H1 in Funnel Display 800; "by <pen name>"; the blurb at 15 px / 1.6; the category and
  * status pills. The board's "15 chapters" and "1.2k reads" pills wait for public numbers
  * (S1-E3-07, after March). The teaser's doodles went with bundle G4 (no doodles in the liquid
  * glass design).

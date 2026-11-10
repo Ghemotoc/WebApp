@@ -3,7 +3,7 @@
  * chapters published, reads and followers, with "only <name> sees who" under the followers
  * (Q50: the count is public, the list is the writer's only).
  *
- * Board values: numbers in Bricolage 26 px bold, labels 13 px in the meta colour. A description
+ * Board values: numbers in Funnel Display 26 px bold, labels 13 px in the meta colour. A description
  * list, so each number is read with its label. On one's own profile the followers number is a
  * button that opens the list (FollowersDialog).
  * Who uses it: ProfileHeader. The follower count comes from useFollow (the same answer the

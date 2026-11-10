@@ -33,7 +33,7 @@ export function PictureCardCanvas({
 }: PictureCardCanvasProps) {
   useEffect(() => {
     let isCurrent = true;
-    // Wait for the fonts so the title is drawn in Bricolage Grotesque, then draw.
+    // Wait for the fonts so the title is drawn in Funnel Display, then draw.
     void document.fonts.ready.then(() => {
       const context = canvasRef.current?.getContext('2d') ?? null;
       if (!isCurrent || context === null) return;

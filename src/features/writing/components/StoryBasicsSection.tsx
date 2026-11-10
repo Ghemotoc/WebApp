@@ -2,7 +2,7 @@
  * StoryBasicsSection: "The basics": title, blurb and the language (story S1-E3-01; board
  * NewStory 4.2, section 1).
  *
- * Board values: the title field 52 px tall in Bricolage 700 at 20 px (maxlength 120); the blurb
+ * Board values: the title field 52 px tall in Funnel Display 700 at 20 px (maxlength 120); the blurb
  * three rows with a live "n of 500 characters" counter; the language as choice chips, with the
  * note that more open once we have moderators who read them. Languages staff haven't opened yet
  * show as disabled chips, "coming when we have moderators for it" (S1-E11-05, criterion 5).

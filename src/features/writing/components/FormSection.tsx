@@ -2,7 +2,7 @@
  * FormSection: one card of the new story form, a fieldset with its legend (story S1-E3-01).
  *
  * Board values (NewStory 4.2): a white card, 26 by 28 px padding, 24 px radius, the legend in
- * Bricolage 700 at 26 px in the heading colour, 20 px between fields.
+ * Funnel Display 700 at 26 px in the heading colour, 20 px between fields.
  * Who uses it: StoryBasicsSection, CategoryTagsSection, CoverSection and, later, the status,
  * where-to-read and labels sections (S1-E3-05, S1-E3-06).
  */

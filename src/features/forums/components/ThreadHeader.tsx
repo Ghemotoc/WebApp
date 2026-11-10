@@ -2,7 +2,7 @@
  * ThreadHeader: a thread's breadcrumb, title, "Started by … on … · 23 replies" and its Report
  * button (bundle FORUMS-1, part b; S1-E8-02; board 5.2's heading).
  *
- * Board values: the title in Bricolage Grotesque at 36 to 48 px, the line under it in 14 px with
+ * Board values: the title in Funnel Display at 36 to 48 px, the line under it in 14 px with
  * the starter's name as a link (no doodle since bundle G4). A thread staff hid shows its starter a note; nobody else sees it.
  * Who uses it: ThreadPage. What it calls: ForumBreadcrumb, ReportButton (rule 6).
  */

@@ -2,7 +2,7 @@
  * ChapterReaderHeader: the top of a chapter (story S1-E4-01a; board 3.5).
  *
  * Board values: the eyebrow "Chapter 14 of 15" (the eyebrow style), the chapter title as the page's
- * H1 (Bricolage Grotesque 800, 36 to 64 px), and the meta line "by <pen name> · 9 Oct 2026 ·
+ * H1 (Funnel Display 800, 36 to 64 px), and the meta line "by <pen name> · 9 Oct 2026 ·
  * 3 min read" in 14 px. An edited chapter adds "edited <date>" (S1-E3-03, Q10). The pen name
  * links to the writer's profile once profiles exist (S1-E5-05); until then it is plain text.
  * Who uses it: ChapterReaderPage.

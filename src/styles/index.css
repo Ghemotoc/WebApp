@@ -283,7 +283,7 @@ dialog.bg-surface,
 }
 
 /*
- * The large page title of the liquid glass boards (".h1": Bricolage Grotesque, 72 px on a wide
+ * The large page title of the liquid glass boards (".h1": Funnel Display, 72 px on a wide
  * screen, stepping down to 40 px on a phone; bundle G8). The list pages of G7c and the Library
  * draw the same size inline; pages restyled from G8 on use this one class instead.
  */
@@ -435,9 +435,9 @@ dialog.bg-surface,
 
 /*
  * The initials sit in the true middle of the bead (Robert, 8 Nov 2026: "it doesn't look centred").
- * They are their own box, one line high, which the bead centres. Bricolage's capitals sit in the
- * middle of a one-line box (its ascent less its descent equals the capital height, measured in
- * Chromium), so the letters' middle is the bead's middle, give or take the browser's pixel rounding.
+ * They are their own box, one line high, which the bead centres. The heading font's capitals sit
+ * close to the middle of a one-line box, so the letters' middle is the bead's middle, give or take
+ * the browser's pixel rounding (checked again for Funnel Display, bundle FONTS).
  */
 .avatar-bead-initials {
   display: block;
@@ -509,7 +509,7 @@ dialog.bg-surface,
 }
 
 /* The chapter text, in the editor (S1-E3-02a) and the reader (S1-E4-01a): board 4.3's 18 px at
-   1.75 line height, headings in Bricolage, quotes with a plum bar, the scene break centred. */
+   1.75 line height, headings in Funnel Display, quotes with a plum bar, the scene break centred. */
 .tmc-chapter-text {
   font-size: 18px;
   line-height: 1.75;
