@@ -67,12 +67,67 @@ export function toCharacterField(row: CharacterFieldRow): CharacterField {
   };
 }
 
+/**
+ * Why a detail or a group wasn't saved, when the database says so: the place already holds a
+ * detail with that name, or the story already has a group with that name. Anything else (the
+ * bounds, the connection) is 'other'.
+ */
+export type DetailRefusal = 'detailNameTaken' | 'groupNameTaken' | 'other';
+
+/** The refusal behind each hint add_character_detail() and rename_character_detail_group() raise. */
+const refusalForHint: Record<string, DetailRefusal> = {
+  detail_name_taken: 'detailNameTaken',
+  name_taken: 'groupNameTaken',
+};
+
+/** A change to the details that didn't save, with the reason the screen words its message from. */
+export class DetailChangeError extends Error {
+  readonly refusal: DetailRefusal;
+
+  constructor(message: string, refusal: DetailRefusal) {
+    super(message);
+    this.name = 'DetailChangeError';
+    this.refusal = refusal;
+  }
+}
+
+/**
+ * The reason a change to the details failed.
+ *
+ * @param error - whatever addDetail or renameDetailGroup threw
+ * @returns the refusal the database named, or 'other'
+ */
+export function detailRefusalOf(error: unknown): DetailRefusal {
+  return error instanceof DetailChangeError ? error.refusal : 'other';
+}
+
+/** The message for each refusal the database names, as a key in the atlas locale file. */
+const messageKeyForRefusal = {
+  detailNameTaken: 'characters.details.nameTaken',
+  groupNameTaken: 'characters.details.groupNameTaken',
+} as const;
+
+/**
+ * The locale key of the message for a change that didn't save.
+ *
+ * @param error - whatever addDetail or renameDetailGroup threw
+ * @param otherwiseKey - the form's general "that didn't save" message
+ * @returns the key for "that name is taken" when the database said so, or otherwiseKey
+ */
+export function detailFailureKey<Key extends string>(error: unknown, otherwiseKey: Key) {
+  const refusal = detailRefusalOf(error);
+  return refusal === 'other' ? otherwiseKey : messageKeyForRefusal[refusal];
+}
+
 /** Throws unless the database answered { outcome: 'ok' }. */
 function requireOk(
-  answer: { data: unknown; error: { message: string } | null },
+  answer: { data: unknown; error: { message: string; hint?: string | null } | null },
   action: string,
 ): void {
-  if (answer.error !== null) throw new Error(`Could not ${action}: ${answer.error.message}`);
+  if (answer.error !== null) {
+    const refusal = refusalForHint[answer.error.hint ?? ''] ?? 'other';
+    throw new DetailChangeError(`Could not ${action}: ${answer.error.message}`, refusal);
+  }
   const data = answer.data as Record<string, unknown> | null;
   if (data?.outcome !== 'ok') throw new Error(`Could not ${action}: ${String(data?.outcome)}`);
 }
@@ -83,8 +138,8 @@ function requireOk(
  * @param client - the shared Supabase client
  * @param slug - the story's address
  * @param detail - the detail's name and where it sits
- * Errors: throws when the database refuses it (40 details or 12 groups already, an empty name)
- *   or can't be reached.
+ * Errors: throws a DetailChangeError when the database refuses it (the place already holds that
+ *   name, 40 details or 12 groups already, an empty name) or can't be reached.
  */
 export async function addCharacterDetail(
   client: AppSupabaseClient,
@@ -109,8 +164,8 @@ export async function addCharacterDetail(
  * @param client - the shared Supabase client
  * @param slug - the story's address
  * @param names - the group's name now and its new name
- * Errors: throws when the database refuses it (another group has that name, an empty name) or
- *   can't be reached.
+ * Errors: throws a DetailChangeError when the database refuses it (another group has that name,
+ *   an empty name) or can't be reached.
  */
 export async function renameCharacterDetailGroup(
   client: AppSupabaseClient,

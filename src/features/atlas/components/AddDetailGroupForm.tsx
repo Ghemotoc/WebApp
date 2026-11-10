@@ -5,8 +5,10 @@
  * Closed, it is one grey glass button. Open, it asks for the group's name and its first detail,
  * because a group exists while it holds a detail (so there is never an empty card to tidy away).
  * The group then shows on every character's sheet in the story. A plain message says when it
- * didn't save; a story holds up to 12 groups and 40 details.
- * Who uses it: CharacterSheet. What it calls: useDetailChangers' addDetail.
+ * didn't save; a story holds up to 12 groups and 40 details. "Add group" waits while a save is on
+ * its way, so a double click adds one detail (break test, 10 Nov 2026).
+ * Who uses it: CharacterSheet. What it calls: useDetailChangers' addDetail and
+ * useDetailFormSave.
  */
 import { useEffect, useState } from 'react';
 
@@ -15,6 +17,7 @@ import { Notice } from '@/components/ui/Notice';
 import { TextInput } from '@/components/ui/TextInput';
 
 import { useDetailChangers } from '../hooks/useDetailChangers';
+import { useBuiltInGroupNames, useDetailFormSave } from '../hooks/useDetailFormSave';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 /** The form's two boxes, empty. */
@@ -62,7 +65,8 @@ export function AddDetailGroupForm({ slug }: { slug: string }) {
   const { addDetail } = useDetailChangers(slug);
   const [isOpen, setIsOpen] = useState(false);
   const [typed, setTyped] = useState(emptyGroup);
-  const [message, setMessage] = useState<string | null>(null);
+  const { message, isSaving, say, save } = useDetailFormSave();
+  const isBuiltInGroupName = useBuiltInGroupNames();
 
   // Opening the form puts the cursor in its first box, so the keyboard carries on from the button.
   useEffect(() => {
@@ -71,15 +75,16 @@ export function AddDetailGroupForm({ slug }: { slug: string }) {
 
   /** Adds the group with its first detail and closes, or says why not. */
   async function add() {
-    setMessage(null);
-    if (typed.groupName.trim() === '') return setMessage(t('characters.details.groupNameRequired'));
-    if (typed.detailName.trim() === '') return setMessage(t('characters.details.nameRequired'));
-    await addDetail({ name: typed.detailName, sheetGroup: null, ownGroup: typed.groupName })
-      .then(() => {
-        setTyped(emptyGroup);
-        setIsOpen(false);
-      })
-      .catch(() => setMessage(t('characters.details.groupFailed')));
+    if (typed.groupName.trim() === '') return say(t('characters.details.groupNameRequired'));
+    if (isBuiltInGroupName(typed.groupName)) return say(t('characters.details.groupNameTaken'));
+    if (typed.detailName.trim() === '') return say(t('characters.details.nameRequired'));
+    const isSaved = await save(
+      () => addDetail({ name: typed.detailName, sheetGroup: null, ownGroup: typed.groupName }),
+      'characters.details.groupFailed',
+    );
+    if (!isSaved) return;
+    setTyped(emptyGroup);
+    setIsOpen(false);
   }
 
   if (!isOpen) {
@@ -100,7 +105,9 @@ export function AddDetailGroupForm({ slug }: { slug: string }) {
     >
       <GroupBoxes typed={typed} setTyped={setTyped} />
       <div className="flex flex-wrap gap-3">
-        <Button type="submit">{t('characters.details.addGroupConfirm')}</Button>
+        <Button type="submit" disabled={isSaving}>
+          {t('characters.details.addGroupConfirm')}
+        </Button>
         <Button variant="secondary" onClick={() => setIsOpen(false)}>
           {t('characters.details.cancel')}
         </Button>

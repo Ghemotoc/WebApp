@@ -40,11 +40,11 @@ function SearchResults({
 }) {
   const { t } = useAtlasTranslation();
   if (results.length === 0) {
-    return <p className="m-0 text-body">{t('search.nothing', { query })}</p>;
+    return <p className="m-0 break-words text-body">{t('search.nothing', { query })}</p>;
   }
   return (
     <div className="flex min-w-0 flex-col gap-5">
-      <p className="m-0 text-body" role="status">
+      <p className="m-0 break-words text-body" role="status">
         {t('search.count', { count: results.length, query })}
       </p>
       <div className="grid min-w-0 items-start gap-x-6 gap-y-5 md:grid-cols-2">

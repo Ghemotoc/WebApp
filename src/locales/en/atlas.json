@@ -209,7 +209,9 @@
       "groupFailed": "That didn’t save. A story holds up to 12 groups and 40 details; check your connection and try again.",
       "renameGroup": "Rename group",
       "renameGroupNamed": "Rename the group {{group}}",
-      "renameFailed": "That didn’t save. Another group may have that name; try a different one."
+      "renameFailed": "That didn’t save. Check the connection and try again.",
+      "nameTaken": "A detail with that name is already here. A removed one comes back from the at-a-glance page.",
+      "groupNameTaken": "Another group has that name. Try a different one."
     },
     "picture": {
       "heading": "Picture",
@@ -609,7 +611,9 @@
         "addSubmit": "Add",
         "cancel": "Cancel",
         "nameRequired": "Give the act a name.",
-        "addFailed": "Not added. A story holds at most 12 acts; check the connection and try again.",
+        "addFailed": "Not added. Check the connection and try again.",
+        "tooMany": "A story holds up to 12 acts. Delete one to add another.",
+        "nameTaken": "Another act has that name. Try a different one.",
         "edit": "Edit act",
         "editNamed": "Edit act: {{name}}",
         "save": "Save",
@@ -761,7 +765,9 @@
       "addSubmit": "Add",
       "cancel": "Cancel",
       "nameRequired": "Give the detail a name.",
-      "addFailed": "Not added. A story holds at most 12 details here; check the connection and try again.",
+      "addFailed": "Not added. Check the connection and try again.",
+      "tooMany": "A story holds up to 12 details here. Delete one to add another.",
+      "nameTaken": "Another note or detail has that name. Try a different one.",
       "edit": "Edit detail",
       "editNamed": "Edit detail: {{name}}",
       "save": "Save",

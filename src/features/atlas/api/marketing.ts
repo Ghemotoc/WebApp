@@ -11,7 +11,7 @@
  */
 import type { AppSupabaseClient } from '@/lib/supabase';
 
-import { checkedAnswer } from './checkedAnswer';
+import { checkedAnswer, refusalHintOf } from './checkedAnswer';
 
 /** The marketing notes, keyed as the database names them. */
 export interface MarketingNotes {
@@ -78,6 +78,33 @@ export async function saveMarketingField(
     changes: { [field]: value },
   });
   checkedAnswer(answer, 'save the marketing notes');
+}
+
+/** The five notes every Marketing page has, by their column names (S1-E17-29). */
+export const marketingNoteKeys = [
+  'back_cover_blurb',
+  'comparable_titles',
+  'hooks_keywords',
+  'query_pitch',
+  'launch_notes',
+] as const;
+
+/** The message for each refusal the detail functions name with a hint. */
+const detailRefusalKeys = { name_taken: 'nameTaken', too_many_details: 'tooMany' } as const;
+
+/**
+ * The locale key of the message for a marketing detail that wasn't added or renamed.
+ *
+ * @param error - whatever addMarketingDetail or saveMarketingDetail threw
+ * @param otherwise - the form's general message: 'addFailed' or 'saveFailed'
+ * @returns the key for "another detail has that name" or "12 details at most" when the database
+ *   said so, or the general one
+ */
+export function marketingDetailFailureKey(error: unknown, otherwise: 'addFailed' | 'saveFailed') {
+  const hint = refusalHintOf(error);
+  const refusal =
+    hint === 'name_taken' || hint === 'too_many_details' ? detailRefusalKeys[hint] : null;
+  return `marketing.details.${refusal ?? otherwise}` as const;
 }
 
 /**

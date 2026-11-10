@@ -2,6 +2,8 @@
 -- What it proves:
 -- - a writer adds a detail, story_marketing() lists it in the order added, with its name trimmed
 --   and no text yet;
+-- - a detail never takes another detail's name, capitals aside, though it may change its own
+--   capitals (break test, 10 Nov 2026);
 -- - a detail's name and text change one at a time; an empty name, an over-long text and an
 --   unknown change are refused;
 -- - search finds a detail by its text, as one result named by the detail, and no longer offers the
@@ -15,7 +17,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(19);
+select plan(22);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -61,6 +63,14 @@ select is(pg_temp.details(), 'Newsletter=; Reading dates=',
   'the details come in the order added, names trimmed, with no text yet');
 select is(pg_temp.refusal(format('select public.add_marketing_detail(%L, %L)', pg_temp.slug(), '  ')),
   '23514:name_length', 'a detail with an empty name is refused');
+select is(pg_temp.refusal(format('select public.add_marketing_detail(%L, %L)', pg_temp.slug(), ' NEWSLETTER ')),
+  '23514:name_taken', 'a detail with another detail''s name is refused, capitals aside (break test, 10 Nov 2026)');
+select is(pg_temp.refusal(format('select public.update_marketing_detail(%L, %L, %L)', pg_temp.slug(),
+    pg_temp.detail_id('Reading dates'), '{"name": "newsletter"}')),
+  '23514:name_taken', 'a detail can''t take another detail''s name');
+select is(public.update_marketing_detail(pg_temp.slug(), pg_temp.detail_id('Reading dates'),
+    '{"name": "Reading Dates"}') ->> 'outcome', 'ok', 'a detail may change its own capitals');
+select public.update_marketing_detail(pg_temp.slug(), pg_temp.detail_id('Reading Dates'), '{"name": "Reading dates"}');
 
 /* ---------- 2. Changing a detail ---------- */
 

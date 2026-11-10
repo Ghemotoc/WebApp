@@ -12,6 +12,7 @@
  * - "Preview as a reader" marks an event that waits for a chapter, a visitor doesn't see it,
  *   and a reader who reached that chapter does (S1-E17-35);
  * - a reader can report a public character (S1-E17-34);
+ * - a title and a name of one very long word stay inside a phone screen (break test);
  * - the reader pages pass axe, don't scroll sideways and draw no doodle at 390, 768
  *   and 1440 px, light and night, Romanian and English.
  * Test data: adult_writer gets one story of its own with two published chapters, two
@@ -85,7 +86,7 @@ async function openAs(
 async function publicCharacterNames(browser: Browser, persona: SignInPersonaName | null) {
   const page = await openAs(browser, persona, `${readerBase}/characters`);
   await expect(page.getByRole('heading', { level: 1, name: 'Moara de pe deal' })).toBeVisible();
-  // Each character's card holds its picture or initials, its name and one quiet line.
+  // Each character's card holds its picture (when it has one), its name and one quiet line.
   const names = await page.getByTestId('atlas-public-character-name').allInnerTexts();
   await page.context().close();
   return names.map((name) => name.trim());
@@ -210,6 +211,31 @@ test.describe('Story Atlas for readers (S1-E17-32 to S1-E17-35)', () => {
       await context.close();
     });
   }
+
+  test('a very long title and name without spaces stay inside a phone screen', async ({
+    browser,
+  }) => {
+    // Break test (Robert, 10 Nov 2026): the longest name the database takes, with no space to
+    // break on, and a title to match.
+    const longWord = 'Supercalifragilisticexpialidocious'.repeat(4).slice(0, 118);
+    runSql(`
+      update public.story_characters set name = '${longWord}' where id = '${anaId}';
+      update public.stories set title = '${longWord}' where id = '${storyId}';`);
+    for (const [persona, address] of [
+      [null, `${readerBase}/characters`],
+      [null, `${readerBase}/characters/${anaId}`],
+      ['adult_writer', settingsAddress],
+      ['adult_writer', `/plan/s/${storySlug}/search?q=${longWord}`],
+    ] as const) {
+      const page = await openAs(browser, persona, address, 390);
+      await expect(page.locator('main')).toContainText(longWord.slice(0, 40));
+      const overflow = await page.evaluate(
+        () => document.documentElement.scrollWidth - window.innerWidth,
+      );
+      expect(overflow, `${address} scrolls sideways`).toBeLessThanOrEqual(0);
+      await page.context().close();
+    }
+  });
 
   test('turning an area off takes it away from readers at once', async ({ browser }) => {
     const page = await openAs(browser, 'adult_writer', settingsAddress);
