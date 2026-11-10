@@ -2154,6 +2154,13 @@ The liquid glass Library board draws "Your lists": lists of stories a reader mak
 - How a view travels: the thread loads → `useRecordThreadView()` checks sessionStorage (`forum-counted-threads`, thread numbers only) → `record_forum_thread_view(thread_number)` adds one unless the caller is the starter or may not open the thread → `forum_thread_header_json()` answers `view_count`.
 - Tests: `supabase/tests/database/345-thread-views.test.sql`, `src/features/forums/hooks/useRecordThreadView.test.tsx`, `e2e/forum-thread-views.spec.ts`.
 
+## A heads-up before sharing personal details (MUST-1b)
+
+- Where it lives: `src/features/privacy/lib/personalDetails.ts` (the patterns, pure and unit-tested), `hooks/usePersonalDetailsCheck.ts` (`usePersonalDetailsCheck` for the comment box, `usePersonalDetailsGate` for the forum reply and new thread forms, the message box and the bio), `components/PersonalDetailsNote.tsx` and the switch `components/PersonalDetailsSwitch.tsx` in Settings › Privacy; `supabase/migrations/…_must1b_personal_details_check.sql`.
+- How a send travels: Post → the box asks the gate → `findPersonalDetails()` in the browser → if something looks like contact details, the note asks "Post anyway?" and the send waits → "Post anyway" sends the words as typed, "Change it" goes back to the box. Nothing about the check leaves the browser.
+- The setting: `profiles.checks_personal_details` (null until an adult chooses); `checks_personal_details_of()` makes it always on under 18; `my_privacy_settings()` answers it and `set_checks_personal_details()` saves it.
+- Tests: `src/features/privacy/lib/personalDetails.test.ts`, `supabase/tests/database/347-personal-details-check.test.sql`, `e2e/personal-details-heads-up.spec.ts`.
+
 ## Who can comment on a story (MUST-1a)
 
 - Where it lives: `CommentAudienceField` in `src/features/writing/components/StoryStatusSection.tsx` (story settings), `CommentEntry` in `src/features/comments/components/CommentsSection.tsx` and `ThreadFoot` in `ParagraphThread.tsx`, and `supabase/migrations/…_must1a_comment_audience.sql`.

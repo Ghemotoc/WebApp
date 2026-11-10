@@ -10,6 +10,7 @@
  */
 import { useState, type FormEvent, type RefObject } from 'react';
 
+import { usePersonalDetailsCheck } from '@/features/privacy/hooks/usePersonalDetailsCheck';
 import type { ChapterAddress } from '@/features/reading/api/likes';
 
 import { usePostComment } from './useCommentActions';
@@ -42,6 +43,7 @@ export function useCommentComposer(target: ComposerTarget) {
   const [justPosted, setJustPosted] = useState(false);
   const posting = usePostComment(address);
   const nudge = useKindWordsNudge();
+  const details = usePersonalDetailsCheck();
 
   /** Posts the text as it is; on success the box empties and the list reads again. */
   async function postNow() {
@@ -65,25 +67,38 @@ export function useCommentComposer(target: ComposerTarget) {
     justPosted,
     posting,
     isNudgeShown: nudge.isShown,
-    /** A change to the text closes the nudge: the person is editing. */
+    /** MUST-1b: "This looks like personal contact details. Post anyway?" is open. */
+    isDetailsNoteShown: details.isShown,
+    /** A change to the text closes the nudge and the note: the person is editing. */
     setText: (newText: string) => {
       setTextState(newText);
       nudge.close();
+      details.close();
     },
-    /** The form's submit: stops for the nudge when the text has a word from the lists. */
+    /**
+     * The form's submit: stops for the nudge when the text has a word from the lists, then for
+     * the personal details note when it looks like contact details (MUST-1b).
+     */
     send: async (event: FormEvent) => {
       event.preventDefault();
-      if (nudge.shouldNudge(text)) return;
+      if (nudge.shouldNudge(text) || details.shouldHold(text)) return;
       await postNow();
     },
-    /** "Send anyway": the person chose to send this text as it is. */
+    /** "Send anyway": the person chose to send this text as it is; the details note may still ask. */
     sendAnyway: async () => {
       nudge.acceptText(text);
+      if (details.shouldHold(text)) return;
       await postNow();
     },
-    /** "Edit": back to the text box, with nothing sent. */
+    /** "Post anyway" on the personal details note (MUST-1b). */
+    postWithDetails: async () => {
+      details.acceptText(text);
+      await postNow();
+    },
+    /** "Edit" or "Change it": back to the text box, with nothing sent. */
     editAgain: () => {
       nudge.close();
+      details.close();
       textBoxRef.current?.focus();
     },
   };

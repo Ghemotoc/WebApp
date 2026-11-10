@@ -12769,6 +12769,7 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     "seasonal_looks" boolean DEFAULT false NOT NULL,
     "appearance_saved_at" timestamp with time zone,
     "shows_reader_level" boolean DEFAULT false NOT NULL,
+    "checks_personal_details" boolean,
     CONSTRAINT "profiles_avatar_recipe_shape" CHECK ("public"."avatar_recipe_valid"("avatar_recipe")),
     CONSTRAINT "profiles_bio_length" CHECK (("char_length"("bio") <= 300)),
     CONSTRAINT "profiles_birth_month_is_a_month" CHECK ((("birth_month" >= 1) AND ("birth_month" <= 12))),
@@ -12956,6 +12957,10 @@ COMMENT ON COLUMN "public"."profiles"."appearance_saved_at" IS 'When the member 
 
 
 COMMENT ON COLUMN "public"."profiles"."shows_reader_level" IS 'Settings › Privacy › Your reading level: false keeps it hidden (the default for everyone), true shows it on the profile (G7a).';
+
+
+
+COMMENT ON COLUMN "public"."profiles"."checks_personal_details" IS 'Whether the browser asks "Post anyway?" before sending text that looks like contact details; null is the age default: on under 18, off for adults (MUST-1b).';
 
 
 
@@ -16832,6 +16837,21 @@ ALTER FUNCTION "public"."check_story_labels"("labels" "jsonb") OWNER TO "postgre
 
 
 COMMENT ON FUNCTION "public"."check_story_labels"("labels" "jsonb") IS 'Internal: refuses labels the rules don''t allow, with a plain message (S1-E3-06).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."checks_personal_details_of"("target" "public"."profiles") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select public.message_age_group(target) <> 'adult' or coalesce(target.checks_personal_details, false);
+$$;
+
+
+ALTER FUNCTION "public"."checks_personal_details_of"("target" "public"."profiles") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."checks_personal_details_of"("target" "public"."profiles") IS 'Internal: whether the personal details heads-up is on for this person (MUST-1b).';
 
 
 
@@ -29197,7 +29217,9 @@ CREATE OR REPLACE FUNCTION "public"."my_privacy_settings"() RETURNS "jsonb"
       else 'none'
     end,
     'can_ask_parent', public.age_band_of(profiles.id) = '13_to_15' and public.has_parental_consent(profiles.id),
-    'shows_reader_level', profiles.shows_reader_level)
+    'shows_reader_level', profiles.shows_reader_level,
+    -- MUST-1b: whether the browser asks "Post anyway?" before sending what looks like contact details.
+    'checks_personal_details', public.checks_personal_details_of(profiles))
   from public.profiles where profiles.id = public.require_live_profile();
 $$;
 
@@ -39957,6 +39979,36 @@ ALTER FUNCTION "public"."set_character_updated_at"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."set_character_updated_at"() IS 'Trigger: keeps story_characters.updated_at current, except when only the map place changed (G10b2).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."set_checks_personal_details"("should_check" boolean) RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := public.require_live_profile();
+  caller public.profiles;
+begin
+  -- Step 1: a choice is needed.
+  if should_check is null then
+    raise exception 'Choose whether to get the heads-up.' using errcode = 'check_violation';
+  end if;
+  -- Step 2: under 18 it stays on (IDEA-20261108-6).
+  select * into caller from public.profiles where profiles.id = caller_id;
+  if not should_check and public.message_age_group(caller) <> 'adult' then
+    raise exception 'Under 18, the heads-up stays on.' using errcode = 'check_violation', hint = 'under_18';
+  end if;
+  -- Step 3: save it.
+  update public.profiles set checks_personal_details = should_check where profiles.id = caller_id;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_checks_personal_details"("should_check" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_checks_personal_details"("should_check" boolean) IS 'Saves whether the signed-in person gets the personal details heads-up; stays on under 18 (MUST-1b).';
 
 
 
@@ -61037,6 +61089,10 @@ REVOKE ALL ON FUNCTION "public"."check_story_labels"("labels" "jsonb") FROM PUBL
 
 
 
+REVOKE ALL ON FUNCTION "public"."checks_personal_details_of"("target" "public"."profiles") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."class_certificates"("slug" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."class_certificates"("slug" "text") TO "authenticated";
 
@@ -64282,6 +64338,11 @@ GRANT ALL ON FUNCTION "public"."set_character_public_parts"("character_id" "uuid
 
 
 REVOKE ALL ON FUNCTION "public"."set_character_updated_at"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."set_checks_personal_details"("should_check" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_checks_personal_details"("should_check" boolean) TO "authenticated";
 
 
 

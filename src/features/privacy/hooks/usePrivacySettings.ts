@@ -20,6 +20,7 @@ import {
   fetchRetentionPeriods,
   saveLibraryAudience,
   saveProfileAudience,
+  saveChecksPersonalDetails,
   saveReaderLevelVisibility,
   saveShowsOnlineStatus,
   saveSuggestMe,
@@ -52,7 +53,8 @@ export function usePrivacySettings() {
  * Saving the privacy choices.
  *
  * @returns saveProfile(audience), saveLibrary(audience), saveOnline(shouldShow),
- *   saveSuggest(shouldSuggest), saveReaderLevel(visibility, G7a), isSaving and hasFailed
+ *   saveSuggest(shouldSuggest), saveReaderLevel(visibility, G7a), savePersonalDetails(shouldCheck,
+ *   MUST-1b), isSaving and hasFailed
  */
 export function useSavePrivacySettings() {
   const queryClient = useQueryClient();
@@ -90,8 +92,14 @@ export function useSavePrivacySettings() {
       saveReaderLevelVisibility(await requireClient(), visibility),
     onSuccess: refresh,
   });
-  const mutations = [profile, library, online, suggest, readerLevel];
+  const personalDetails = useMutation({
+    mutationFn: async (shouldCheck: boolean) =>
+      saveChecksPersonalDetails(await requireClient(), shouldCheck),
+    onSuccess: refresh,
+  });
+  const mutations = [profile, library, online, suggest, readerLevel, personalDetails];
   return {
+    savePersonalDetails: (shouldCheck: boolean) => personalDetails.mutateAsync(shouldCheck),
     saveReaderLevel: (visibility: ReaderLevelVisibility) => readerLevel.mutateAsync(visibility),
     saveSuggest: (shouldSuggest: boolean) => suggest.mutateAsync(shouldSuggest),
     saveProfile: (audience: ProfileAudience) => profile.mutateAsync(audience),

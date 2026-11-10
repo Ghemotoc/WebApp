@@ -7,13 +7,17 @@
  * quoted from a chapter with its link (IDEA-20261102-10).
  * Who shows it: NewThreadPage (a forum) and SpaceNewThreadPage (a space).
  * What it calls: useStartThread → start_forum_thread().
+ * Before sending, usePersonalDetailsGate asks "Post anyway?" when the words look like contact
+ * details (MUST-1b; PersonalDetailsGateNote); it never blocks.
  */
-import { useId, useState, type FormEvent } from 'react';
+import { useId, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { TextInput } from '@/components/ui/TextInput';
+import { PersonalDetailsGateNote } from '@/features/privacy/components/PersonalDetailsNote';
+import { usePersonalDetailsGate } from '@/features/privacy/hooks/usePersonalDetailsCheck';
 
 import { useStartThread } from '../hooks/useForumWrites';
 import { failureMessages } from '../lib/forumFailures';
@@ -46,9 +50,11 @@ export function NewThreadForm({ forumSlug, cancelTo, initialBody = '' }: NewThre
   const starting = useStartThread();
   const messages = failureMessages(starting.failure, t);
 
+  // MUST-1b: asks "Post anyway?" before words that look like contact details go out.
+  const gate = usePersonalDetailsGate({ text: `${title}\n${body}`, sendNow });
+
   /** Posts the thread, then opens it. */
-  async function send(event: FormEvent) {
-    event.preventDefault();
+  async function sendNow() {
     try {
       const threadNumber = await starting.run({ forumSlug, title, body });
       void navigate(`/forums/${forumSlug}/${threadNumber}`);
@@ -58,22 +64,23 @@ export function NewThreadForm({ forumSlug, cancelTo, initialBody = '' }: NewThre
   }
 
   return (
-    <form onSubmit={(event) => void send(event)} className="flex flex-col gap-5">
+    <form onSubmit={gate.submit} className="flex flex-col gap-5">
       <TextInput
         id={titleId}
         label={t('editor.title')}
         value={title}
         maxLength={120}
-        onChange={(event) => setTitle(event.target.value)}
+        onChange={(event) => gate.whileEditing(setTitle)(event.target.value)}
         errorMessage={messages.title}
       />
       <PostEditor
         id={bodyId}
         label={t('editor.body')}
         value={body}
-        onChange={setBody}
+        onChange={gate.whileEditing(setBody)}
         problem={messages.body}
       />
+      <PersonalDetailsGateNote gate={gate} isSending={starting.isRunning} />
       {messages.general !== null && <Notice tone="error">{messages.general}</Notice>}
       <div className="flex flex-wrap justify-end gap-3">
         <Link

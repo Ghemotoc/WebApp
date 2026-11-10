@@ -5635,6 +5635,7 @@ export type Database = {
           birth_month: number | null;
           birth_year: number | null;
           birthday_month: number | null;
+          checks_personal_details: boolean | null;
           colour_mode: string;
           consent_grace_until: string | null;
           country_chosen_at: string | null;
@@ -5676,6 +5677,7 @@ export type Database = {
           age_check_can_start_for: boolean | null;
           age_check_threshold_for: number | null;
           bio_for_caller: string | null;
+          checks_personal_details_of: boolean | null;
           message_age_group: string | null;
           message_audience_of: Database['public']['Enums']['message_audience'] | null;
           message_email_choices: Json | null;
@@ -5687,6 +5689,7 @@ export type Database = {
           | 'age_check_can_start_for'
           | 'age_check_threshold_for'
           | 'bio_for_caller'
+          | 'checks_personal_details_of'
           | 'message_age_group'
           | 'message_audience_of'
           | 'message_email_choices'
@@ -5704,6 +5707,7 @@ export type Database = {
           birth_month?: number | null;
           birth_year?: number | null;
           birthday_month?: number | null;
+          checks_personal_details?: boolean | null;
           colour_mode?: string;
           consent_grace_until?: string | null;
           country_chosen_at?: string | null;
@@ -5754,6 +5758,7 @@ export type Database = {
           birth_month?: number | null;
           birth_year?: number | null;
           birthday_month?: number | null;
+          checks_personal_details?: boolean | null;
           colour_mode?: string;
           consent_grace_until?: string | null;
           country_chosen_at?: string | null;
@@ -11794,6 +11799,7 @@ export type Database = {
           birth_month: number | null;
           birth_year: number | null;
           birthday_month: number | null;
+          checks_personal_details: boolean | null;
           colour_mode: string;
           consent_grace_until: string | null;
           country_chosen_at: string | null;
@@ -12089,6 +12095,15 @@ export type Database = {
       };
       check_story_cover: { Args: { cover: Json }; Returns: undefined };
       check_story_labels: { Args: { labels: Json }; Returns: undefined };
+      checks_personal_details_of: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['profiles']['Row'],
+            Database['public']['Tables']['profiles']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
       class_certificates: { Args: { slug: string }; Returns: Json };
       class_invite: { Args: { slug: string }; Returns: Json };
       class_invite_opens_sign_up: { Args: { code: string }; Returns: boolean };
@@ -13671,6 +13686,7 @@ export type Database = {
           birth_month: number | null;
           birth_year: number | null;
           birthday_month: number | null;
+          checks_personal_details: boolean | null;
           colour_mode: string;
           consent_grace_until: string | null;
           country_chosen_at: string | null;
@@ -14491,6 +14507,7 @@ export type Database = {
           birth_month: number | null;
           birth_year: number | null;
           birthday_month: number | null;
+          checks_personal_details: boolean | null;
           colour_mode: string;
           consent_grace_until: string | null;
           country_chosen_at: string | null;
@@ -15380,6 +15397,7 @@ export type Database = {
         Args: { character_id: string; parts: string[] };
         Returns: Json;
       };
+      set_checks_personal_details: { Args: { should_check: boolean }; Returns: undefined };
       set_class_lock: { Args: { new_locks_at?: string; slug: string }; Returns: Json };
       set_landing_reminder: { Args: { page_slug: string; wanted: boolean }; Returns: Json };
       set_library_audience: {

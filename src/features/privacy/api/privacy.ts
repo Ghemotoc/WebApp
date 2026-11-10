@@ -6,7 +6,9 @@
  * set_shows_online_status(), note_i_am_online() and who_is_online()
  * (supabase/migrations/…_s1_e13_01_privacy_settings.sql), and set_suggest_me() for "Suggest me
  * and my stories to other people" (…_look4c_02_rising_writers.sql, story S1-E5-11), and
- * set_shows_reader_level() for "Your reading level" (…_g7a_reader_levels.sql, bundle G7a). The database fills in each setting's
+ * set_shows_reader_level() for "Your reading level" (…_g7a_reader_levels.sql, bundle G7a), and
+ * set_checks_personal_details() for the personal details heads-up (…_must1b_personal_details_check.sql,
+ * MUST-1b). The database fills in each setting's
  * default for the person's age group, so an under-18 starts on the most private value.
  */
 import type { Database } from '@/lib/database.types';
@@ -51,6 +53,11 @@ export interface PrivacySettings {
   canAskParent: boolean;
   /** "Your reading level": false keeps it hidden (the default for everyone), true shows it. */
   showsReaderLevel: boolean;
+  /**
+   * The heads-up before sharing personal details (MUST-1b): always on under 18, an adult's own
+   * choice otherwise (off until chosen).
+   */
+  checksPersonalDetails: boolean;
 }
 
 /** not_needed (16 and over), agreed, asked (email sent, no answer yet) or none. */
@@ -67,6 +74,7 @@ interface PrivacySettingsRow {
   parent_spotlight: ParentSpotlight;
   can_ask_parent: boolean;
   shows_reader_level: boolean;
+  checks_personal_details: boolean;
 }
 
 /**
@@ -90,6 +98,7 @@ export async function fetchPrivacySettings(client: AppSupabaseClient): Promise<P
     parentSpotlight: row.parent_spotlight,
     canAskParent: row.can_ask_parent,
     showsReaderLevel: row.shows_reader_level,
+    checksPersonalDetails: row.checks_personal_details,
   };
 }
 
@@ -212,4 +221,19 @@ export async function saveReaderLevelVisibility(
     should_show: visibility === 'shown',
   });
   if (error !== null) throw new Error(`Could not save your reading level choice: ${error.message}`);
+}
+
+/**
+ * Saves whether the caller gets the heads-up before sharing personal details (MUST-1b).
+ *
+ * @param client - the shared Supabase client
+ * @param shouldCheck - true to ask "Post anyway?" before text that looks like contact details
+ * @throws Error with Supabase's message when the save is refused (under 18 it stays on)
+ */
+export async function saveChecksPersonalDetails(
+  client: AppSupabaseClient,
+  shouldCheck: boolean,
+): Promise<void> {
+  const { error } = await client.rpc('set_checks_personal_details', { should_check: shouldCheck });
+  if (error !== null) throw new Error(`Could not save the heads-up setting: ${error.message}`);
 }

@@ -4,7 +4,7 @@
  *
  * Top to bottom as on the board: the intro, the under-18 note, "Who can see your profile", "Who
  * can message you", "Show when I'm online", "Suggest me and my stories to other people"
- * (SuggestMeSwitch, LOOK-4c), "Who can see your library", "Your reading level" (Hidden, the
+ * (SuggestMeSwitch, LOOK-4c), "Ask before I share contact details" (PersonalDetailsSwitch, MUST-1b), "Who can see your library", "Your reading level" (Hidden, the
  * default for everyone, or "Show it on my profile"; G7a) and "How long we keep things"
  * (HowLongWeKeep, IDEAS-2a). Every choice saves at
  * once. Who can message you belongs to Messages (S1-E9-04), so here it is one line with Change,
@@ -30,6 +30,7 @@ import { usePrivacyTranslation } from '../registerPrivacyTranslations';
 import { AudienceRadios } from './AudienceRadios';
 import { HowLongWeKeep } from './HowLongWeKeep';
 import { OnlineStatusSwitch } from './OnlineStatusSwitch';
+import { PersonalDetailsSwitch } from './PersonalDetailsSwitch';
 import { SuggestMeSwitch } from './SuggestMeSwitch';
 
 /** "Who can message you: Everyone · Change", pointing at the Messages panel. */
@@ -80,6 +81,12 @@ function PrivacyChoices({ settings }: { settings: PrivacySettings }) {
         onSave={saving.saveOnline}
       />
       <SuggestMeSwitch settings={settings} isSaving={saving.isSaving} onSave={saving.saveSuggest} />
+      <PersonalDetailsSwitch
+        saved={settings.checksPersonalDetails}
+        isUnder18={settings.isUnder18}
+        isSaving={saving.isSaving}
+        onSave={saving.savePersonalDetails}
+      />
       <div className="border-t border-border pt-4">
         <AudienceRadios
           name="library-audience"

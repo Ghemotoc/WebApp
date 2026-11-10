@@ -7,8 +7,10 @@
  * why saving is refused (the account gate).
  * Who shows it: SettingsPage, once the person has a username.
  * What it calls: useWriterProfile (to read the current bio) and useSaveBio → set_my_bio().
+ * Before sending, usePersonalDetailsGate asks "Post anyway?" when the words look like contact
+ * details (MUST-1b; PersonalDetailsGateNote); it never blocks.
  */
-import { useState, type FormEvent } from 'react';
+import { useState } from 'react';
 import { usePeopleTranslation } from '@/features/people/registerPeopleTranslations';
 import { Link } from 'react-router';
 
@@ -18,6 +20,8 @@ import { Textarea } from '@/components/ui/Textarea';
 import { bioMaxLength } from '@/features/people/api/writerProfile';
 import { useSaveBio } from '@/features/people/hooks/useSaveBio';
 import { useWriterProfile } from '@/features/people/hooks/useWriterProfile';
+import { PersonalDetailsGateNote } from '@/features/privacy/components/PersonalDetailsNote';
+import { usePersonalDetailsGate } from '@/features/privacy/hooks/usePersonalDetailsCheck';
 
 /** What the form needs. */
 interface BioFormProps {
@@ -34,13 +38,14 @@ function BioForm({ handle, savedBio, saveBio }: BioFormProps) {
   const isTooLong = bio.trim().length > bioMaxLength;
 
   /** Saves the bio, unless it is too long (the field already says so). */
-  async function handleSubmit(event: FormEvent) {
-    event.preventDefault();
+  async function saveNow() {
     if (!isTooLong) await saveBio.save(bio);
   }
+  // MUST-1b: the bio is public, so it asks "Post anyway?" before contact details are saved.
+  const gate = usePersonalDetailsGate({ text: bio, sendNow: saveNow });
 
   return (
-    <form noValidate className="flex flex-col gap-3" onSubmit={(event) => void handleSubmit(event)}>
+    <form noValidate className="flex flex-col gap-3" onSubmit={gate.submit}>
       <Textarea
         id="settings-bio"
         label={t('settings.bioLabel')}
@@ -50,9 +55,11 @@ function BioForm({ handle, savedBio, saveBio }: BioFormProps) {
         aria-invalid={isTooLong ? true : undefined}
         onChange={(event) => {
           saveBio.reset();
+          gate.close();
           setBio(event.target.value);
         }}
       />
+      <PersonalDetailsGateNote gate={gate} isSending={saveBio.isSaving} />
       <p
         aria-live="polite"
         className={`m-0 text-[13px] ${isTooLong ? 'text-destructive' : 'text-meta'}`}

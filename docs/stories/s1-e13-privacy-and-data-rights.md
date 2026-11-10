@@ -13,6 +13,7 @@ As a user, I want simple privacy controls so that I decide what others see.
   - Given privacy settings, when they open, then they include profile visibility, who can message me, online status (off by default) and library visibility.
   - Given an under-18 user, when the account is created, then every setting starts at its most private value.
 - **Legal and compliance:** GDPR Art 25(2) privacy by default. Online status is opt-in (research).
+- **Built:** S1-E13-01; "Ask before I share contact details" and its heads-up on comments, forum posts, messages and the bio in MUST-1b (IDEA-20261108-6).
 
 ##### S1-E13-02 Download my data
 

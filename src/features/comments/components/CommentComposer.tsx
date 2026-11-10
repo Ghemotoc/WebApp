@@ -14,11 +14,13 @@
  * send this?"), which never blocks it (bundle ADMIN-2, part d3; CLAUDE.md rule 19).
  * Who uses it: CommentsSection (a new comment), CommentItem (a reply) and ParagraphThread (a
  * comment on a paragraph).
- * What it calls: useCommentComposer → post_comment(); useCommentLimit; KindWordsNudge.
+ * What it calls: useCommentComposer → post_comment(); useCommentLimit; KindWordsNudge; and
+ * PersonalDetailsNote, which asks before words that look like contact details go out (MUST-1b).
  */
 import { useId, useRef } from 'react';
 
 import { Button } from '@/components/ui/Button';
+import { PersonalDetailsNote } from '@/features/privacy/components/PersonalDetailsNote';
 import type { ChapterAddress } from '@/features/reading/api/likes';
 import { cn } from '@/lib/utils';
 
@@ -137,6 +139,33 @@ function ComposerFeedback(props: {
 }
 
 /**
+ * The questions the box may ask before sending, one at a time: "Still want to send this?" for a
+ * word from the nudge lists (ADMIN-2 d3), then "Post anyway?" for words that look like contact
+ * details (MUST-1b). Neither ever blocks the comment.
+ *
+ * @returns the open question, or nothing
+ */
+function ComposerQuestions({ composer }: { composer: CommentComposerState }) {
+  if (composer.isNudgeShown) {
+    return (
+      <KindWordsNudge
+        onEdit={composer.editAgain}
+        onSendAnyway={() => void composer.sendAnyway()}
+        isSending={composer.posting.isPosting}
+      />
+    );
+  }
+  if (!composer.isDetailsNoteShown) return null;
+  return (
+    <PersonalDetailsNote
+      onChange={composer.editAgain}
+      onPostAnyway={() => void composer.postWithDetails()}
+      isSending={composer.posting.isPosting}
+    />
+  );
+}
+
+/**
  * The label above the text box.
  *
  * @param props - the composer's props
@@ -195,13 +224,7 @@ export function CommentComposer(props: CommentComposerProps) {
         aria-describedby={counterId}
         className="w-full resize-y rounded-2xl border border-control-border bg-paper px-[18px] py-3.5 text-base leading-normal text-ink"
       />
-      {composer.isNudgeShown && (
-        <KindWordsNudge
-          onEdit={composer.editAgain}
-          onSendAnyway={() => void composer.sendAnyway()}
-          isSending={composer.posting.isPosting}
-        />
-      )}
+      <ComposerQuestions composer={composer} />
       <ComposerControls
         composer={composer}
         counterId={counterId}

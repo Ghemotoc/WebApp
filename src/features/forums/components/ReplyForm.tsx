@@ -16,13 +16,17 @@
  * space (SpaceReplyNote) instead of "Your account can't write yet".
  * Who uses it: ThreadPage. What it calls: useReplyToThread → reply_to_forum_thread();
  * ForumQuoteBlock for the picked posts.
+ * Before sending, usePersonalDetailsGate asks "Post anyway?" when the words look like contact
+ * details (MUST-1b; PersonalDetailsGateNote); it never blocks.
  */
-import { useState, type FormEvent } from 'react';
+import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { useSession } from '@/features/auth/hooks/useSession';
+import { PersonalDetailsGateNote } from '@/features/privacy/components/PersonalDetailsNote';
+import { usePersonalDetailsGate } from '@/features/privacy/hooks/usePersonalDetailsCheck';
 
 import type { ForumPost, ForumQuote, ForumThreadLock, ForumThreadSpace } from '../api/forumThreads';
 import { useReplyToThread } from '../hooks/useForumWrites';
@@ -162,8 +166,7 @@ function ReplyFields({ target }: { target: ReplyTarget }) {
   const quotes = pickedQuotes(target.posts, target.quotePicks.pickedIds);
 
   /** Posts the reply with its quotes, then shows it at its permalink. */
-  async function send(event: FormEvent) {
-    event.preventDefault();
+  async function sendNow() {
     try {
       const quotedPostIds = quotes.map((picked) => picked.id);
       const postNumber = await replying.run({ body, quotedPostIds, bump: !noBump });
@@ -177,16 +180,20 @@ function ReplyFields({ target }: { target: ReplyTarget }) {
     }
   }
 
+  // MUST-1b: asks "Post anyway?" before words that look like contact details go out.
+  const gate = usePersonalDetailsGate({ text: body, sendNow });
+
   return (
-    <form onSubmit={(event) => void send(event)} className="flex flex-col gap-4">
+    <form onSubmit={gate.submit} className="flex flex-col gap-4">
       <PickedQuotes target={target} quotes={quotes} />
       <PostEditor
         id={replyBoxId}
         label={t('editor.reply')}
         value={body}
-        onChange={setBody}
+        onChange={gate.whileEditing(setBody)}
         problem={messages.body}
       />
+      <PersonalDetailsGateNote gate={gate} isSending={replying.isRunning} />
       {isPreviewing && <ReplyPreview text={body} />}
       {messages.general !== null && <Notice tone="error">{messages.general}</Notice>}
       <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
