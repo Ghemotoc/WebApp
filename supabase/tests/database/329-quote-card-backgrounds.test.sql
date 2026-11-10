@@ -174,7 +174,7 @@ select is(pg_temp.live_pictures('00000000-0000-4000-8000-000000000007'), 1,
 select set_config('storage.allow_delete_query', 'true', true);
 delete from storage.objects where bucket_id = 'quote-card-pictures';
 select is(pg_temp.files_seen(), 1,
-  'quote_card_pictures_delete_own: the retired file goes (allowed), the live one stays (denied)');
+  'denied: quote_card_pictures_delete_own: the live picture''s file stays, while the retired one went');
 insert into discarded select public.remove_my_quote_card_picture();
 select is((select answer #>> '{old_file,path}' from discarded), '32900000-0000-4000-8000-0000000000a2.webp',
   'removing the picture says which file to delete');
