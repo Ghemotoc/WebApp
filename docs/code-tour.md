@@ -2154,6 +2154,13 @@ The liquid glass Library board draws "Your lists": lists of stories a reader mak
 - How a view travels: the thread loads → `useRecordThreadView()` checks sessionStorage (`forum-counted-threads`, thread numbers only) → `record_forum_thread_view(thread_number)` adds one unless the caller is the starter or may not open the thread → `forum_thread_header_json()` answers `view_count`.
 - Tests: `supabase/tests/database/345-thread-views.test.sql`, `src/features/forums/hooks/useRecordThreadView.test.tsx`, `e2e/forum-thread-views.spec.ts`.
 
+## Who can comment on a story (MUST-1a)
+
+- Where it lives: `CommentAudienceField` in `src/features/writing/components/StoryStatusSection.tsx` (story settings), `CommentEntry` in `src/features/comments/components/CommentsSection.tsx` and `ThreadFoot` in `ParagraphThread.tsx`, and `supabase/migrations/…_must1a_comment_audience.sql`.
+- The data: `stories.comments_enabled` (Nobody when off) and `stories.comment_audience` (`everyone` or `followers`). `update_my_story()` saves both; `create_story()` starts a writer aged 13 to 17 at `followers`.
+- The check: `comment_audience_allows(story, caller)` is true on Everyone, for the writer, and for a follower (`follows_users`). `require_comment_allowed()` refuses anyone else (42501, hint `followers_only`, shown by `commentErrorFrom()`), and `chapter_comments()` and `paragraph_comments()` answer `audience_allows_me` so the page shows the line instead of the box.
+- Tests: `supabase/tests/database/346-comment-audience.test.sql`, `src/features/comments/api/comments.test.ts`, `e2e/comment-audience.spec.ts`, `e2e/story-settings.spec.ts`.
+
 ## Votes on forum posts (GAPS-16c)
 
 - Where it lives: `src/features/forums/components/PostVotes.tsx` (at the start of `PostActions`), the "How votes work" box in `ThreadSidePanel`, `hooks/usePostVote.ts`, `api/forumVotes.ts`, and `supabase/migrations/…_gaps16c_forum_post_votes.sql`.

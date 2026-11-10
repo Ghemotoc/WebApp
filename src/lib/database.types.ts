@@ -7885,6 +7885,7 @@ export type Database = {
           class_only: boolean;
           class_space_id: string | null;
           classic_author_id: string | null;
+          comment_audience: string;
           comments_enabled: boolean;
           completion_status: Database['public']['Enums']['completion_status'];
           content_note: string;
@@ -7931,6 +7932,7 @@ export type Database = {
             class_only: boolean;
             class_space_id: string | null;
             classic_author_id: string | null;
+            comment_audience: string;
             comments_enabled: boolean;
             completion_status: Database['public']['Enums']['completion_status'];
             content_note: string;
@@ -7981,6 +7983,7 @@ export type Database = {
           class_only?: boolean;
           class_space_id?: string | null;
           classic_author_id?: string | null;
+          comment_audience?: string;
           comments_enabled?: boolean;
           completion_status?: Database['public']['Enums']['completion_status'];
           content_note?: string;
@@ -8024,6 +8027,7 @@ export type Database = {
           class_only?: boolean;
           class_space_id?: string | null;
           classic_author_id?: string | null;
+          comment_audience?: string;
           comments_enabled?: boolean;
           completion_status?: Database['public']['Enums']['completion_status'];
           content_note?: string;
@@ -11225,6 +11229,7 @@ export type Database = {
           class_only: boolean;
           class_space_id: string | null;
           classic_author_id: string | null;
+          comment_audience: string;
           comments_enabled: boolean;
           completion_status: Database['public']['Enums']['completion_status'];
           content_note: string;
@@ -12258,6 +12263,16 @@ export type Database = {
       cms_text_problem: {
         Args: { field_name: string; field_value: string; longest: number };
         Returns: string;
+      };
+      comment_audience_allows: {
+        Args: {
+          caller_id: string;
+          story: Omit<
+            Database['public']['Tables']['stories']['Row'],
+            Database['public']['Tables']['stories']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
       };
       comment_is_shown_to_caller: {
         Args: {
@@ -13407,6 +13422,7 @@ export type Database = {
           class_only: boolean;
           class_space_id: string | null;
           classic_author_id: string | null;
+          comment_audience: string;
           comments_enabled: boolean;
           completion_status: Database['public']['Enums']['completion_status'];
           content_note: string;
@@ -14748,6 +14764,7 @@ export type Database = {
           class_only: boolean;
           class_space_id: string | null;
           classic_author_id: string | null;
+          comment_audience: string;
           comments_enabled: boolean;
           completion_status: Database['public']['Enums']['completion_status'];
           content_note: string;
@@ -16107,6 +16124,7 @@ export type Database = {
           class_only: boolean;
           class_space_id: string | null;
           classic_author_id: string | null;
+          comment_audience: string;
           comments_enabled: boolean;
           completion_status: Database['public']['Enums']['completion_status'];
           content_note: string;

@@ -23,6 +23,7 @@ import type { AppSupabaseClient } from '@/lib/supabase';
 import {
   coverJsonFor,
   type AiDisclosure,
+  type CommentAudience,
   type NewStoryInput,
   type StoryRating,
   type StoryRatingReason,
@@ -68,6 +69,8 @@ export interface MyStory {
   /** The writer chose "In the app only" (S1-E3-08, GAPS-15); applies once the switch is on. */
   isAppOnly: boolean;
   commentsEnabled: boolean;
+  /** Who may comment while comments are on (MUST-1a). */
+  commentAudience: CommentAudience;
   /** Whether readers may make quote cards and passage links from its chapters (S1-E4-07, S1-E4-11). */
   quoteCardsEnabled: boolean;
   /** Whether readers may share its chapters' pictures (S1-E4-11). */
@@ -207,7 +210,7 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
   const { data, error } = await client
     .from('stories')
     .select(
-      'id, slug, title, blurb, language_code, cover_kind, cover_design, cover_background, cover_accent, cover_tall_path, first_published_at, created_at, completion_status, visibility, is_app_only, comments_enabled, quote_cards_enabled, picture_sharing_enabled, card_colour, deleted_at, rating, is_fan_fiction, is_parody, deals_with_abuse_or_coercion, content_note, ai_disclosure, rating_reasons, ai_undisclosed_labelled_at, categories(slug), story_tags(tags(name)), chapters(code, position, status)',
+      'id, slug, title, blurb, language_code, cover_kind, cover_design, cover_background, cover_accent, cover_tall_path, first_published_at, created_at, completion_status, visibility, is_app_only, comments_enabled, comment_audience, quote_cards_enabled, picture_sharing_enabled, card_colour, deleted_at, rating, is_fan_fiction, is_parody, deals_with_abuse_or_coercion, content_note, ai_disclosure, rating_reasons, ai_undisclosed_labelled_at, categories(slug), story_tags(tags(name)), chapters(code, position, status)',
     )
     // Only live chapters, in order; the deleted ones wait for the purge (S1-E3-04 shows undo).
     .is('chapters.deleted_at', null)
@@ -241,6 +244,7 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
     visibility: row.visibility,
     isAppOnly: row.is_app_only,
     commentsEnabled: row.comments_enabled,
+    commentAudience: row.comment_audience === 'followers' ? 'followers' : 'everyone',
     quoteCardsEnabled: row.quote_cards_enabled,
     pictureSharingEnabled: row.picture_sharing_enabled,
     cardColour: row.card_colour,
@@ -299,6 +303,7 @@ export async function updateMyStory(
       cover: coverJsonFor(settings.cover),
       completion_status: settings.completionStatus,
       comments_enabled: settings.commentsEnabled,
+      comment_audience: settings.commentAudience,
       quote_cards_enabled: settings.quoteCardsEnabled,
       picture_sharing_enabled: settings.pictureSharingEnabled,
       card_colour: settings.cardColour,

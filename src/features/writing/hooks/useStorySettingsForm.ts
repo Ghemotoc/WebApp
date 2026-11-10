@@ -62,6 +62,7 @@ function answersFrom(story: MyStory): StoryAnswers {
     visibility: story.visibility,
     isAppOnly: story.isAppOnly,
     commentsEnabled: story.commentsEnabled,
+    commentAudience: story.commentAudience,
     quoteCardsEnabled: story.quoteCardsEnabled,
     pictureSharingEnabled: story.pictureSharingEnabled,
     cardColour: story.cardColour,

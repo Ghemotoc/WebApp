@@ -49,6 +49,11 @@ export interface ChapterComment {
 /** One page of comments, newest first. */
 export interface CommentsPage {
   commentsEnabled: boolean;
+  /**
+   * False when the story takes comments from the writer's followers only and the reader isn't one
+   * (MUST-1a): the page shows a line instead of the comment box. True for a visitor on Everyone.
+   */
+  audienceAllowsMe: boolean;
   /** Every comment and reply the reader may read, for the heading. */
   total: number;
   hasMore: boolean;
@@ -62,6 +67,7 @@ export type CommentFailure =
   | 'too_many_links'
   | 'too_long'
   | 'comments_off'
+  | 'followers_only'
   | 'refused'
   | 'gone'
   | 'unreachable';
@@ -96,6 +102,8 @@ export interface CommentRow {
 /** The JSON a page arrives as (chapter_comments() and paragraph_comments()). */
 export interface CommentsPageRow {
   comments_enabled: boolean;
+  /** Left out when comments are off (MUST-1a). */
+  audience_allows_me?: boolean;
   total: number;
   has_more: boolean;
   comments: CommentRow[];
@@ -149,6 +157,7 @@ export async function fetchCommentsPage(
   const row = data as unknown as CommentsPageRow;
   return {
     commentsEnabled: row.comments_enabled,
+    audienceAllowsMe: row.audience_allows_me !== false,
     total: row.total,
     hasMore: row.has_more,
     comments: row.comments.map(commentFrom),
@@ -170,17 +179,29 @@ function refusedErrorFrom(hint: string | null | undefined): CommentError {
 }
 
 /**
+ * A refusal for who the caller is (42501): the story takes comments from the writer's followers
+ * only (hint followers_only, MUST-1a), or the account can't comment yet.
+ *
+ * @param hint - the error's hint
+ * @returns followers_only or read_only
+ */
+function notAllowedErrorFrom(hint: string | null | undefined): CommentError {
+  if (hint === 'followers_only') return new CommentError('followers_only');
+  return new CommentError('read_only');
+}
+
+/**
  * Turns a database error into a CommentError.
  *
  * @param error - Postgres's code and hint
- * @returns the error: read_only (42501), too_many with the minutes (54000, hint
+ * @returns the error: followers_only (42501 with that hint, MUST-1a), read_only (42501), too_many with the minutes (54000, hint
  *   "wait_minutes:n"), comments_off (55000), too_many_links (23514 with the hint
  *   "too_many_links": a new account's comment with more than one link, S1-E10-12), too_long
  *   (23514 with the hint "paragraph_too_long:<limit>"), refused (23514: the text), gone (P0002), or
  *   unreachable
  */
 export function commentErrorFrom(error: { code?: string; hint?: string | null }): CommentError {
-  if (error.code === '42501') return new CommentError('read_only');
+  if (error.code === '42501') return notAllowedErrorFrom(error.hint);
   if (error.code === '54000') {
     const minutes = Number((error.hint ?? '').replace('wait_minutes:', ''));
     return new CommentError('too_many', Number.isFinite(minutes) && minutes > 0 ? minutes : null);

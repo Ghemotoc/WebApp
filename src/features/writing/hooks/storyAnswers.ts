@@ -9,6 +9,7 @@
  */
 import type {
   AiDisclosure,
+  CommentAudience,
   StoryCoverChoice,
   StoryRating,
   StoryRatingReason,
@@ -36,6 +37,12 @@ export interface StoryAnswers {
   isAppOnly: boolean;
   /** Whether readers may comment (S1-E3-05; enforced by S1-E6-01); on for a new story. */
   commentsEnabled: boolean;
+  /**
+   * Who may add comments while they are on (MUST-1a): everyone, or the writer's followers only.
+   * With commentsEnabled it makes the one "Who can comment" setting: Everyone, Followers only or
+   * Nobody (comments off).
+   */
+  commentAudience: CommentAudience;
   /** The quote card switch (S1-E4-07); since S1-E4-11 it covers passage links too. */
   quoteCardsEnabled: boolean;
   /** Whether readers may share the chapters' pictures (S1-E4-11); on for a new story. */

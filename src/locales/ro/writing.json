@@ -203,9 +203,13 @@
     "notYet": "Aplicațiile {{productName}} nu au apărut încă. Până atunci, oricine e conectat citește toate capitolele pe web, iar noi îți spunem înainte ca „Doar în aplicație” să se aplice."
   },
   "comments": {
-    "label": "Comentarii",
-    "on": "Pornite. Cititorii pot comenta la fiecare capitol.",
-    "off": "Oprite. Comentariile existente sunt ascunse și nimeni nu poate adăuga altele."
+    "label": "Cine poate comenta",
+    "everyone": "Toată lumea",
+    "followers": "Doar urmăritorii",
+    "nobody": "Nimeni",
+    "everyoneNote": "Cititorii pot comenta la fiecare capitol.",
+    "followersNote": "Doar cei care te urmăresc pot adăuga comentarii. Comentariile deja scrise rămân.",
+    "nobodyNote": "Comentariile existente sunt ascunse și nimeni nu poate adăuga altele."
   },
   "quoteCards": {
     "label": "Carduri cu citate și linkuri către pasaje",

@@ -3215,10 +3215,12 @@ CREATE TABLE IF NOT EXISTS "public"."stories" (
     "first_published_year" integer,
     "writing_prompt_id" "uuid",
     "is_app_only" boolean DEFAULT false NOT NULL,
+    "comment_audience" "text" DEFAULT 'everyone'::"text" NOT NULL,
     CONSTRAINT "stories_abuse_needs_rating_and_note" CHECK (((NOT "deals_with_abuse_or_coercion") OR (("rating" = ANY (ARRAY['16_plus'::"public"."story_rating", '18_plus'::"public"."story_rating"])) AND ("btrim"("content_note") <> ''::"text")))),
     CONSTRAINT "stories_blurb_length" CHECK (("char_length"("blurb") <= 500)),
     CONSTRAINT "stories_card_colour_on_palette" CHECK ((("card_colour" IS NULL) OR ("card_colour" = ANY (ARRAY['plum'::"text", 'violet'::"text", 'gold'::"text", 'ink'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text"])))),
     CONSTRAINT "stories_class_link_only_when_class_only" CHECK (("class_only" OR ("class_space_id" IS NULL))),
+    CONSTRAINT "stories_comment_audience_known" CHECK (("comment_audience" = ANY (ARRAY['everyone'::"text", 'followers'::"text"]))),
     CONSTRAINT "stories_content_note_length" CHECK (("char_length"("content_note") <= 300)),
     CONSTRAINT "stories_cover_colours_are_in_the_palette" CHECK (((("cover_background" IS NULL) OR ("cover_background" = ANY (ARRAY['plum'::"text", 'ink'::"text", 'violet'::"text", 'gold'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text"]))) AND (("cover_accent" IS NULL) OR ("cover_accent" = ANY (ARRAY['plum'::"text", 'ink'::"text", 'violet'::"text", 'gold'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text"]))))),
     CONSTRAINT "stories_cover_columns_match_kind" CHECK (
@@ -3330,6 +3332,10 @@ COMMENT ON COLUMN "public"."stories"."writing_prompt_id" IS 'The writing prompt 
 
 
 COMMENT ON COLUMN "public"."stories"."is_app_only" IS 'The writer chose "In the app only" (S1-E3-08). Applies only while the app_only_stories flag is on (GAPS-15).';
+
+
+
+COMMENT ON COLUMN "public"."stories"."comment_audience" IS 'Who may add comments while they are on: everyone, or the writer''s followers only (MUST-1a).';
 
 
 
@@ -15447,6 +15453,10 @@ begin
   -- Step 3: the answer; the extra comment only says there is more.
   return jsonb_build_object(
     'comments_enabled', true,
+    -- MUST-1a: who may add comments, and whether that includes the caller, so the page shows
+    -- the comment box or "Only the writer's followers can comment here".
+    'comment_audience', story.comment_audience,
+    'audience_allows_me', public.comment_audience_allows(story, (select auth.uid())),
     'total', (select count(*)::integer from public.comments
               where comments.chapter_id = chapter.id and public.comment_is_shown_to_caller(comments)),
     'has_more', page_count > page_size,
@@ -17952,6 +17962,25 @@ COMMENT ON FUNCTION "public"."cms_text_problem"("field_value" "text", "field_nam
 
 
 
+CREATE OR REPLACE FUNCTION "public"."comment_audience_allows"("story" "public"."stories", "caller_id" "uuid") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select story.comment_audience = 'everyone'
+    or caller_id = story.user_id
+    or exists (select 1 from public.follows_users
+               where follows_users.user_id = caller_id
+                 and follows_users.followed_user_id = story.user_id);
+$$;
+
+
+ALTER FUNCTION "public"."comment_audience_allows"("story" "public"."stories", "caller_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."comment_audience_allows"("story" "public"."stories", "caller_id" "uuid") IS 'Internal: whether a story''s comment setting lets this person comment (MUST-1a).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."comments" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "user_id" "uuid" NOT NULL,
@@ -19408,7 +19437,7 @@ begin
     id, user_id, slug, title, blurb, language_code, category_id,
     cover_kind, cover_design, cover_background, cover_accent, cover_tall_path, cover_square_path,
     rating, is_fan_fiction, is_parody, deals_with_abuse_or_coercion, content_note, ai_disclosure,
-    rating_reasons
+    rating_reasons, comment_audience
   ) values (
     new_story_id, caller_id, new_slug, clean_title, clean_blurb, language_code, chosen_category_id,
     (cover ->> 'kind')::public.cover_kind, cover ->> 'design', cover ->> 'background', cover ->> 'accent',
@@ -19420,7 +19449,9 @@ begin
     btrim(coalesce(labels ->> 'content_note', '')),
     (labels ->> 'ai_disclosure')::public.ai_disclosure,
     -- Why it is 16+ or 18+ (SPONSORS-f); empty for a younger rating.
-    public.story_rating_reasons_from(labels)
+    public.story_rating_reasons_from(labels),
+    -- MUST-1a (IDEA-20261106-2, proposal): a writer aged 13 to 17 starts at Followers only.
+    case when public.age_band() in ('13_to_15', '16_to_17') then 'followers' else 'everyone' end
   );
 
   -- Step 4: the tags, merged and capped.
@@ -31755,6 +31786,10 @@ begin
   -- Step 3: the answer, with the total the thread's heading says.
   return jsonb_build_object(
     'comments_enabled', true,
+    -- MUST-1a: who may add comments, and whether that includes the caller, so the page shows
+    -- the comment box or "Only the writer's followers can comment here".
+    'comment_audience', story.comment_audience,
+    'audience_allows_me', public.comment_audience_allows(story, (select auth.uid())),
     'total', (select count(*)::integer from public.comments
               where comments.chapter_id = chapter.id
                 and comments.paragraph_key is not null
@@ -37232,6 +37267,11 @@ declare
 begin
   if not story.comments_enabled then
     raise exception 'The writer has turned comments off for this story.' using errcode = 'object_not_in_prerequisite_state';
+  end if;
+  -- MUST-1a: on Followers only, someone who doesn't follow the writer can't add a comment.
+  if not public.comment_audience_allows(story, caller_id) then
+    raise exception 'Only the writer''s followers can comment on this story.'
+      using errcode = 'insufficient_privilege', hint = 'followers_only';
   end if;
   if not public.is_active_member() then
     raise exception 'Your account can''t comment right now.' using errcode = 'insufficient_privilege';
@@ -46781,6 +46821,8 @@ begin
     category_id = new_category_id,
     completion_status = coalesce((changes ->> 'completion_status')::public.completion_status, completion_status),
     comments_enabled = coalesce((changes ->> 'comments_enabled')::boolean, comments_enabled),
+    -- MUST-1a: everyone or followers only; the column's check refuses anything else.
+    comment_audience = coalesce(changes ->> 'comment_audience', comment_audience),
     -- S1-E4-07: the writer's switch for quote cards.
     quote_cards_enabled = coalesce((changes ->> 'quote_cards_enabled')::boolean, quote_cards_enabled),
     -- S1-E4-11: the writer's switch for sharing the chapters' pictures.
@@ -61156,6 +61198,10 @@ REVOKE ALL ON FUNCTION "public"."cms_live_versions"("wanted_kind" "text") FROM P
 
 
 REVOKE ALL ON FUNCTION "public"."cms_text_problem"("field_value" "text", "field_name" "text", "longest" integer) FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."comment_audience_allows"("story" "public"."stories", "caller_id" "uuid") FROM PUBLIC;
 
 
 

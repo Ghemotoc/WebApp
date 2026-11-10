@@ -26,6 +26,8 @@ import { Notice } from '@/components/ui/Notice';
 import type { ChapterAddress } from '@/features/reading/api/likes';
 import type { ParagraphPlace } from '@/features/reading/api/paragraphComments';
 
+import type { ParagraphThread as ParagraphThreadData } from '../api/paragraphComments';
+
 import { useParagraphComments } from '../hooks/useParagraphComments';
 import { useCommentsTranslation } from '../registerCommentsTranslations';
 
@@ -134,15 +136,24 @@ function useThreadKeyboard(
 }
 
 /**
- * What closes the thread: the box to comment on the paragraph, or, for an earlier version, a
- * note saying why there is none (the paragraph has changed since).
+ * What closes the thread: the box to comment on the paragraph, or a note saying why there is
+ * none (an earlier version: the paragraph has changed since; or a followers-only story, MUST-1a).
  *
  * @returns the composer or the note
  */
-function ThreadFoot({ address, place }: Pick<ParagraphThreadProps, 'address' | 'place'>) {
+function ThreadFoot({
+  address,
+  place,
+  thread,
+}: Pick<ParagraphThreadProps, 'address' | 'place'> & { thread: ParagraphThreadData | null }) {
   const { t } = useCommentsTranslation();
   if (place === 'earlier') {
     return <p className="m-0 mt-3 text-sm text-meta">{t('paragraph.earlierNote')}</p>;
+  }
+  // MUST-1a: on a followers-only story, someone who doesn't follow the writer sees why. Until the
+  // thread loads, the box shows; the database refuses a comment it mustn't take.
+  if (thread !== null && !thread.audienceAllowsMe) {
+    return <p className="m-0 mt-3 text-sm text-meta">{t('section.followersOnly')}</p>;
   }
   return (
     <div className="mt-3 border-t border-hairline pt-4">
@@ -191,7 +202,7 @@ export function ParagraphThread(props: ParagraphThreadProps) {
           ))}
         </div>
       )}
-      <ThreadFoot address={address} place={place} />
+      <ThreadFoot address={address} place={place} thread={thread} />
     </section>
   );
 }

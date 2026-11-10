@@ -7,6 +7,7 @@
     "newestFirst": "Cele mai noi primele",
     "empty": "Niciun comentariu încă. Spune primul ce ți s-a părut.",
     "off": "Scriitorul a oprit comentariile la această poveste.",
+    "followersOnly": "Doar urmăritorii scriitorului pot comenta aici.",
     "showMore": "Arată mai multe comentarii",
     "loadFailed": "Nu am putut încărca comentariile. Verifică conexiunea și încearcă din nou.",
     "logIn": "Intră în cont ca să comentezi"
@@ -32,6 +33,7 @@
     "too_many_other": "Ai publicat multe comentarii. Așteaptă {{count}} de minute până la următorul.",
     "too_many_unknown": "Ai publicat multe comentarii. Așteaptă puțin până la următorul.",
     "comments_off": "Scriitorul a oprit comentariile la această poveste.",
+    "followers_only": "Doar urmăritorii scriitorului pot comenta la această poveste. Urmărește scriitorul ca să participi.",
     "refused": "Nu se poate publica. Un comentariu are nevoie de câteva cuvinte, cel mult {{limit}} de caractere și fără HTML.",
     "gone": "Comentariul acela nu mai există.",
     "unreachable": "Nu am putut salva. Verifică conexiunea și încearcă din nou.",

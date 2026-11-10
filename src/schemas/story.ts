@@ -195,12 +195,23 @@ export const storyVisibilities = ['public', 'unlisted', 'private'] as const;
 /** One of storyVisibilities. */
 export type StoryVisibility = (typeof storyVisibilities)[number];
 
+/**
+ * Who may add comments while they are on (MUST-1a; the check on stories.comment_audience):
+ * everyone, or only people who follow the writer.
+ */
+export const commentAudiences = ['everyone', 'followers'] as const;
+
+/** One of commentAudiences. */
+export type CommentAudience = (typeof commentAudiences)[number];
+
 /** The story settings form's answers (S1-E3-05): the same fields plus status, comments and the sharing switches. */
 export const storySettingsSchema = newStoryShape
   .omit({ storyId: true })
   .extend({
     completionStatus: z.enum(['ongoing', 'completed']),
     commentsEnabled: z.boolean(),
+    /** Who may comment while comments are on (MUST-1a; stories.comment_audience). */
+    commentAudience: z.enum(commentAudiences),
     /** The writer's switch for quote cards (S1-E4-07) and passage links (S1-E4-11). */
     quoteCardsEnabled: z.boolean(),
     /** The writer's switch for sharing the chapters' pictures (S1-E4-11). */

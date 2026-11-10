@@ -17,6 +17,8 @@ import { commentFrom, type ChapterComment, type CommentsPageRow } from './commen
 export interface ParagraphThread {
   /** Every comment and reply the reader may read on it, for the heading. */
   total: number;
+  /** False on a followers-only story for someone who doesn't follow the writer (MUST-1a). */
+  audienceAllowsMe: boolean;
   /** Newest first, each with its replies. */
   comments: ChapterComment[];
 }
@@ -44,5 +46,9 @@ export async function fetchParagraphThread(
   if (error !== null) throw new Error(`Could not read the paragraph's comments: ${error.message}`);
   if (data === null) return null;
   const row = data as unknown as CommentsPageRow;
-  return { total: row.total, comments: row.comments.map(commentFrom) };
+  return {
+    total: row.total,
+    audienceAllowsMe: row.audience_allows_me !== false,
+    comments: row.comments.map(commentFrom),
+  };
 }

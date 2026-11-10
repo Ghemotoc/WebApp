@@ -18,6 +18,7 @@ import { Notice } from '@/components/ui/Notice';
 import { useSession } from '@/features/auth/hooks/useSession';
 import type { ChapterAddress } from '@/features/reading/api/likes';
 
+import type { CommentsPage } from '../api/comments';
 import { useChapterComments } from '../hooks/useChapterComments';
 import { useCommentsTranslation } from '../registerCommentsTranslations';
 
@@ -43,6 +44,21 @@ function AddComment({ address }: { address: ChapterAddress }) {
     );
   }
   return <CommentComposer address={address} />;
+}
+
+/**
+ * What sits above the list: the way to add a comment, or a line saying why there is none (the
+ * writer turned comments off, or takes them from followers only, MUST-1a).
+ *
+ * @returns the composer, the log-in link or the line
+ */
+function CommentEntry({ address, page }: { address: ChapterAddress; page: CommentsPage }) {
+  const { t } = useCommentsTranslation();
+  if (!page.commentsEnabled) return <p className="m-0 text-base text-body">{t('section.off')}</p>;
+  if (!page.audienceAllowsMe) {
+    return <p className="m-0 text-base text-body">{t('section.followersOnly')}</p>;
+  }
+  return <AddComment address={address} />;
 }
 
 /**
@@ -73,11 +89,7 @@ export function CommentsSection({ address }: { address: ChapterAddress }) {
           <span className="text-sm text-meta">{t('section.newestFirst')}</span>
         )}
       </div>
-      {firstPage.commentsEnabled ? (
-        <AddComment address={address} />
-      ) : (
-        <p className="m-0 text-base text-body">{t('section.off')}</p>
-      )}
+      <CommentEntry address={address} page={firstPage} />
       {firstPage.commentsEnabled && comments.comments.length === 0 && (
         <p className="m-0 mt-4 text-base text-body">{t('section.empty')}</p>
       )}

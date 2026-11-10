@@ -3,9 +3,10 @@
  * Chapters 4.4, "The whole story").
  *
  * Board values: Status as a segmented Ongoing | Completed with "Shown on your story card.
- * Readers can filter by it."; Comments as a switch (role="switch", 60 × 34 px) with "On. Readers
- * can comment on every chapter." or "Off. Existing comments are hidden and nobody can add new
- * ones." The switch is stored now and enforced by S1-E6-01. A second switch, Quote cards
+ * Readers can filter by it."; then "Who can comment" (MUST-1a, IDEA-20261106-2), one setting in
+ * place of the board's Comments switch: Everyone, Followers only or Nobody, with a line saying
+ * what the choice means. Nobody is the old switch turned off (comments_enabled); Followers only
+ * is stories.comment_audience. The database enforces both (S1-E6-01). A switch, Quote cards
  * (S1-E4-07, third criterion), hides "Share quote" on every chapter when it is off. Then the
  * picture switch (S1-E4-11) and the card colour drop-down (IDEAS-1c, CardColourField).
  * Who uses it: StorySettingsPage (the new story form keeps the defaults; docs/board-fixes.md).
@@ -76,6 +77,53 @@ function StorySwitch({ idPrefix, label, isOn, note, onToggle }: StorySwitchProps
   );
 }
 
+/** The three answers of "Who can comment", as the chips show them. */
+type CommentChoice = 'everyone' | 'followers' | 'nobody';
+
+/**
+ * Reads the one setting from the two stored answers: comments off is Nobody, whoever the audience.
+ *
+ * @returns the chip that is on
+ */
+function commentChoiceOf(answers: StoryAnswers): CommentChoice {
+  if (!answers.commentsEnabled) return 'nobody';
+  return answers.commentAudience;
+}
+
+/**
+ * "Who can comment" (MUST-1a): one chip group that sets both stored answers.
+ *
+ * @returns the chip group with its note
+ */
+function CommentAudienceField({ answers, set }: StoryStatusSectionProps) {
+  const { t } = useTranslation('writing');
+  const choice = commentChoiceOf(answers);
+  /** Nobody turns comments off and keeps the audience for when they come back on. */
+  function pick(value: string) {
+    if (value === 'nobody') {
+      set('commentsEnabled', false);
+      return;
+    }
+    set('commentsEnabled', true);
+    set('commentAudience', value === 'followers' ? 'followers' : 'everyone');
+  }
+  return (
+    <ChoiceChips
+      label={t('comments.label')}
+      isLabelVisible
+      options={[
+        { value: 'everyone', label: t('comments.everyone') },
+        { value: 'followers', label: t('comments.followers') },
+        { value: 'nobody', label: t('comments.nobody') },
+      ]}
+      value={choice}
+      onChange={pick}
+      descriptionId="story-comments-note"
+      description={t(`comments.${choice}Note`)}
+    />
+  );
+}
+
 /**
  * Renders the section.
  *
@@ -99,13 +147,7 @@ export function StoryStatusSection({ answers, set }: StoryStatusSectionProps) {
         descriptionId="story-status-hint"
         description={t('status.hint')}
       />
-      <StorySwitch
-        idPrefix="story-comments"
-        label={t('comments.label')}
-        isOn={answers.commentsEnabled}
-        note={answers.commentsEnabled ? t('comments.on') : t('comments.off')}
-        onToggle={() => set('commentsEnabled', !answers.commentsEnabled)}
-      />
+      <CommentAudienceField answers={answers} set={set} />
       <StorySwitch
         idPrefix="story-quote-cards"
         label={t('quoteCards.label')}

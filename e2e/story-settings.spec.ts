@@ -3,7 +3,7 @@
  *
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase started first).
  * What it proves:
- * - adult_writer marks a story Completed and switches comments off in story settings; the card
+ * - adult_writer marks a story Completed and sets "Who can comment" to Nobody in story settings; the card
  *   on Your writing shows "Completed" and the Ongoing / Completed filter works;
  * - the story page shows the status and the comments setting (to the owner, as a preview);
  *   teen_17 can't open adult_writer's unpublished story;
@@ -50,7 +50,7 @@ test.describe('story status, settings and deletion (S1-E3-05)', () => {
   test.beforeAll(cleanUp);
   test.afterAll(cleanUp);
 
-  test('the writer marks the story Completed, switches comments off, and the card and filter follow', async ({
+  test('the writer marks the story Completed, sets who can comment to Nobody, and the card and filter follow', async ({
     browser,
   }) => {
     const page = await openAsPersona(browser, 'adult_writer', '/write');
@@ -59,11 +59,12 @@ test.describe('story status, settings and deletion (S1-E3-05)', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'Stația meteo' })).toBeVisible();
 
     await page.getByRole('radio', { name: 'Completed' }).click();
-    const commentsSwitch = page.getByRole('switch', { name: 'Comments' });
-    await expect(commentsSwitch).toHaveAttribute('aria-checked', 'true');
-    await commentsSwitch.click();
+    // MUST-1a: "Who can comment" is one setting; Nobody is the old switch turned off.
+    const whoCanComment = page.getByRole('radiogroup', { name: 'Who can comment' });
+    await expect(whoCanComment.getByRole('radio', { name: 'Everyone' })).toBeChecked();
+    await whoCanComment.getByRole('radio', { name: 'Nobody' }).click();
     await expect(
-      page.getByText('Off. Existing comments are hidden', { exact: false }),
+      page.getByText('Existing comments are hidden and nobody can add new ones.'),
     ).toBeVisible();
     await page.getByRole('button', { name: 'Save changes' }).click();
     await expect(page.getByText('Saved.')).toBeVisible();
