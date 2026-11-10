@@ -2130,6 +2130,16 @@ The liquid glass Library board draws "Your lists": lists of stories a reader mak
 - The list: `forum_thread_list()` puts every sticky thread first on the first page only, then pages the rest by `bumped_at`; "Show more threads" passes the last thread's `bumpedAt`.
 - Tests: `supabase/tests/database/225-forum-sticky-and-locked.test.sql`, `src/features/forums/api/forumModeration.test.ts`, `e2e/forum-sticky-and-locked.spec.ts`.
 
+## A forum's rules strip, a locked thread's pointer, and Preview (GAPS-9)
+
+- Where it lives: `src/features/forums/components/ThreadRulesStrip.tsx`, `ThreadNextControl.tsx`, `ReplyPreview.tsx`, the "Go to …" link in `LockedThreadNote`, the extra buttons in `ThreadModeration`, `threadNumberFrom()` in `lib/forumAddresses.ts`, and `supabase/migrations/…_gaps9_forum_rules_and_pointers.sql`.
+- The columns: `forums.rules_thread_id` (the one thread of a forum that holds its rules) and `forum_threads.continues_in_thread_id` (where a locked thread carries on; a check refuses it on an open thread, and unlocking clears it).
+- How the strip travels: a moderator presses "Make rules thread" → `admin_set_forum_rules_thread()` (the same permission, reason and log as pin and lock; it also pins the thread) → `forum_thread_header_json()` answers `rules` on every other thread of that forum → `ThreadPage` draws `ThreadRulesStrip` under the heading: "Pinned", the title as a link, the first post's opening words (`forum_search_snippet()`), and "Locked: read only" when it is locked.
+- How the pointer travels: on a locked thread the moderator types the other thread's number or pastes its address (`ThreadNextControl` → `threadNumberFrom()`) → `admin_set_forum_thread_next()` → the header's `lock.next` → `LockedThreadNote` links "Go to …".
+- Who sees what: both links come from `forum_thread_pointer_json()`, which answers null unless `forum_thread_is_shown()` says the caller may open that thread, so a strip or a link never tells anyone a hidden thread's title. A moderator pointing at a thread they may not open gets the same "isn't there" as for a number that doesn't exist.
+- Preview: "Preview" beside "Post reply" opens `ReplyPreview`, which draws what is in the box with `ForumPostText`, the component a posted reply uses (so raw HTML is never drawn). It is made on the reader's device and sends nothing.
+- Tests: `supabase/tests/database/330-forum-rules-and-pointers.test.sql`, `src/features/forums/lib/forumAddresses.test.ts`, `src/features/forums/api/forumModeration.test.ts`, `e2e/forum-rules-and-pointers.spec.ts`.
+
 ## Forum search (S1-E8-10; FORUMS-1f)
 
 - Where it lives: `src/features/forums/api/forumSearch.ts`, `hooks/useForumSearch.ts`, `lib/forumSearchAddress.ts`, `components/ForumSearchForm.tsx` (on the forum index and the results page), `ForumSearchPage.tsx` and `ForumSearchResultRow.tsx`, and `supabase/migrations/…_forums1_f_forum_search.sql`. Architecture 1.7.3 calls it `search_posts()`; it is `search_forum_posts()`.

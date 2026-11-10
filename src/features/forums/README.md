@@ -32,6 +32,11 @@ S1-E8-02; board 5.2 Forum thread).
 - Sticky, locked and "Don't bump" (S1-E8-05, FORUMS-1e): `api/forumModeration.ts`,
   `hooks/useForumModeration.ts`, `components/ThreadModeration.tsx` (moderators only) and
   `LockedThreadNote.tsx`; the pills in `ThreadRow` and "Don't bump" in `ReplyForm`.
+- A forum's rules strip, a locked thread's pointer and Preview (GAPS-9):
+  `components/ThreadRulesStrip.tsx` (the forum's rules thread above its other threads),
+  `ThreadNextControl.tsx` (moderators point a locked thread at the one that carries on; the
+  "Go to …" link is in `LockedThreadNote`), `ReplyPreview.tsx` ("Preview" in `ReplyForm`) and
+  `threadNumberFrom()` in `lib/forumAddresses.ts`.
 - Search (S1-E8-10, FORUMS-1f): `api/forumSearch.ts`, `hooks/useForumSearch.ts`,
   `lib/forumSearchAddress.ts`, `components/ForumSearchForm.tsx`, `ForumSearchPage.tsx`
   (`/forums/search`) and `ForumSearchResultRow.tsx`.

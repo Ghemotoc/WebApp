@@ -127,7 +127,11 @@
     "noBumpNote": "Răspunsul tău nu va muta discuția în capul listei.",
     "joinSpace": "Intră în <space>{{space}}</space> ca să răspunzi aici.",
     "pendingSpace": "Ai cerut să intri în <space>{{space}}</space>. Vei putea răspunde după ce proprietarul te primește.",
-    "otherAgeGroup": "Doar cei din grupa de vârstă a spațiului <space>{{space}}</space> pot răspunde aici."
+    "otherAgeGroup": "Doar cei din grupa de vârstă a spațiului <space>{{space}}</space> pot răspunde aici.",
+    "preview": "Previzualizare",
+    "previewHide": "Ascunde previzualizarea",
+    "previewHeading": "Previzualizare",
+    "previewEmpty": "Scrie ceva ca să apară aici."
   },
   "newThread": {
     "eyebrow": "Discuție nouă",
@@ -194,7 +198,8 @@
   "locked": {
     "heading": "Discuția este închisă",
     "byTeam": "Închisă de echipa de moderare pe {{date}}. Motiv: „{{reason}}”",
-    "stillRead": "Poți citi în continuare toate mesajele, dar nimeni nu mai poate răspunde."
+    "stillRead": "Poți citi în continuare toate mesajele, dar nimeni nu mai poate răspunde.",
+    "goTo": "Mergi la „{{title}}”"
   },
   "moderation": {
     "heading": "Unelte de moderare",
@@ -208,16 +213,31 @@
       "sticky": "Discuția e fixată în capul forumului.",
       "unsticky": "Discuția e din nou în ordinea ultimei activități.",
       "lock": "Discuția e închisă. Toată lumea o poate citi în continuare.",
-      "unlock": "Discuția primește din nou răspunsuri."
+      "unlock": "Discuția primește din nou răspunsuri.",
+      "rules": "Aceasta e discuția cu regulile forumului. E fixată sus, iar celelalte discuții din forum o arată în partea de sus.",
+      "unrules": "Forumul nu mai are o discuție cu regulile.",
+      "next": "Discuția închisă trimite spre acea discuție.",
+      "unnext": "Trimiterea a fost scoasă."
     },
     "failures": {
       "not_allowed": "Doar echipa de moderare poate face asta.",
       "reason_empty": "Scrie mai întâi un motiv.",
       "reason_too_long": "Motivul trebuie să aibă sub 500 de caractere.",
       "gone": "Discuția nu mai există.",
-      "unreachable": "Nu am putut salva. Verifică-ți conexiunea și încearcă din nou."
+      "unreachable": "Nu am putut salva. Verifică-ți conexiunea și încearcă din nou.",
+      "not_locked": "Închide mai întâi discuția.",
+      "next_missing": "Discuția aceea nu există.",
+      "next_same": "O discuție nu poate trimite spre ea însăși."
     },
-    "reasonHintSpace": "Intră în jurnalul de moderare al spațiului, pe care îl pot citi proprietarul și echipa noastră de moderare. Când închizi discuția, toată lumea vede motivul."
+    "reasonHintSpace": "Intră în jurnalul de moderare al spațiului, pe care îl pot citi proprietarul și echipa noastră de moderare. Când închizi discuția, toată lumea vede motivul.",
+    "rules": "Fă-o discuția cu regulile",
+    "unrules": "Nu mai e discuția cu regulile",
+    "next": {
+      "label": "Discuția care continuă",
+      "hint": "Numărul sau adresa unei discuții. Cititorii acestei discuții închise primesc un link spre ea.",
+      "set": "Trimite spre acea discuție",
+      "remove": "Scoate trimiterea"
+    }
   },
   "search": {
     "label": "Caută în discuții și mesaje",
@@ -329,5 +349,9 @@
       "gone": "Discuția nu mai e aici.",
       "unreachable": "Nu am putut salva. Verifică conexiunea și încearcă din nou."
     }
+  },
+  "rulesStrip": {
+    "label": "Regulile forumului",
+    "readOnly": "Închisă: doar citire"
   }
 }

@@ -127,7 +127,11 @@
     "noBumpNote": "Your reply won’t move this thread to the top of the list.",
     "joinSpace": "Join <space>{{space}}</space> to reply here.",
     "pendingSpace": "You asked to join <space>{{space}}</space>. You can reply once the owner lets you in.",
-    "otherAgeGroup": "Only members of <space>{{space}}</space>’s age group can reply here."
+    "otherAgeGroup": "Only members of <space>{{space}}</space>’s age group can reply here.",
+    "preview": "Preview",
+    "previewHide": "Hide preview",
+    "previewHeading": "Preview",
+    "previewEmpty": "Write something to see it here."
   },
   "newThread": {
     "eyebrow": "New thread",
@@ -194,7 +198,8 @@
   "locked": {
     "heading": "This thread is locked",
     "byTeam": "Locked by the moderation team on {{date}}. Reason: “{{reason}}”",
-    "stillRead": "You can still read every post, but nobody can reply."
+    "stillRead": "You can still read every post, but nobody can reply.",
+    "goTo": "Go to “{{title}}”"
   },
   "moderation": {
     "heading": "Moderator tools",
@@ -208,16 +213,31 @@
       "sticky": "The thread is pinned to the top of its forum.",
       "unsticky": "The thread is back in order of latest activity.",
       "lock": "The thread is locked. Everyone can still read it.",
-      "unlock": "The thread is open for replies again."
+      "unlock": "The thread is open for replies again.",
+      "rules": "This is the forum’s rules thread. It is pinned, and the forum’s other threads show it at the top.",
+      "unrules": "The forum has no rules thread now.",
+      "next": "The locked thread links to that thread.",
+      "unnext": "The pointer is gone."
     },
     "failures": {
       "not_allowed": "Only moderators can do that.",
       "reason_empty": "Write a reason first.",
       "reason_too_long": "Keep the reason under 500 characters.",
       "gone": "This thread isn’t there any more.",
-      "unreachable": "We couldn’t save that. Check your connection and try again."
+      "unreachable": "We couldn’t save that. Check your connection and try again.",
+      "not_locked": "Lock the thread first.",
+      "next_missing": "That thread isn’t there.",
+      "next_same": "A thread can’t point to itself."
     },
-    "reasonHintSpace": "Goes in the space’s moderation log, which its owner and our moderation team can read. When you lock the thread, everyone sees the reason."
+    "reasonHintSpace": "Goes in the space’s moderation log, which its owner and our moderation team can read. When you lock the thread, everyone sees the reason.",
+    "rules": "Make rules thread",
+    "unrules": "Stop being rules thread",
+    "next": {
+      "label": "Thread that carries on",
+      "hint": "A thread’s number or address. Readers of this locked thread get a link to it.",
+      "set": "Point to that thread",
+      "remove": "Remove pointer"
+    }
   },
   "search": {
     "label": "Search forum threads and posts",
@@ -329,5 +349,9 @@
       "gone": "This thread isn’t here any more.",
       "unreachable": "We couldn’t save that. Check your connection and try again."
     }
+  },
+  "rulesStrip": {
+    "label": "Forum rules",
+    "readOnly": "Locked: read only"
   }
 }

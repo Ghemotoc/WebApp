@@ -3,7 +3,8 @@
  * replying, editing and deleting (bundle FORUMS-1, part b; story S1-E8-02; board 5.2). Part c
  * adds each post's quotes (S1-E8-03); part d, whether a thread is new to the reader (S1-E8-04).
  * FORUMS-2 adds each post's signature (S1-E8-08) and its author's rank (S1-E8-09). IDEAS-3f adds
- * the reply the thread's starter marked "This answered it" (IDEA-20261102-8).
+ * the reply the thread's starter marked "This answered it" (IDEA-20261102-8). GAPS-9 adds the
+ * forum's rules thread and where a locked thread carries on.
  *
  * Who calls it: hooks/useForumThreads.ts. What it calls next: forum_thread_list(),
  * forum_thread(), start_forum_thread(), reply_to_forum_thread(), edit_forum_post(),
@@ -102,6 +103,23 @@ export interface ForumThreadHeader {
   space: ForumThreadSpace | null;
   /** The reply that answered it, linked at the top (IDEAS-3f); null when none is marked. */
   answer: ForumThreadAnswer | null;
+  /** This thread holds its forum's rules (GAPS-9). */
+  isRules: boolean;
+  /** The forum's rules thread, for the strip above this one; null when none, or this is it. */
+  rules: ForumThreadPointer | null;
+}
+
+/**
+ * Another thread as this one links to it (GAPS-9): the forum's rules thread, or where a locked
+ * thread carries on. The server leaves it out when the reader may not open that thread.
+ */
+export interface ForumThreadPointer {
+  number: number;
+  title: string;
+  forumSlug: string;
+  /** A short plain line of its first post; null when the reader can't read that post. */
+  summary: string | null;
+  isLocked: boolean;
 }
 
 /** The reply a thread's starter marked as the answer: its number and who wrote it. */
@@ -114,6 +132,8 @@ export interface ForumThreadAnswer {
 export interface ForumThreadLock {
   lockedAt: string;
   reason: string;
+  /** Where the conversation carries on (GAPS-9); null when nowhere the reader can open. */
+  next: ForumThreadPointer | null;
 }
 
 /** One read of a thread: the heading, some posts in order, and whether more come after. */
@@ -296,6 +316,26 @@ function headerFrom(row: JsonObject): ForumThreadHeader {
     canModerate: row['can_moderate'] === true,
     space: spaceOfThread(row['space']),
     answer: answerFrom(row['answer']),
+    isRules: row['is_rules'] === true,
+    rules: pointerFrom(row['rules']),
+  };
+}
+
+/**
+ * Reads a link to another thread (GAPS-9).
+ *
+ * @param value - forum_thread_pointer_json()'s answer: null when there is none to show
+ * @returns the pointer, or null
+ */
+function pointerFrom(value: Json | undefined): ForumThreadPointer | null {
+  const pointer = objectOf(value);
+  if (typeof pointer['number'] !== 'number' || typeof pointer['title'] !== 'string') return null;
+  return {
+    number: pointer['number'],
+    title: pointer['title'],
+    forumSlug: String(pointer['forum_slug']),
+    summary: textOrNull(pointer['summary']),
+    isLocked: pointer['is_locked'] === true,
   };
 }
 
@@ -320,7 +360,11 @@ function answerFrom(value: Json | undefined): ForumThreadAnswer | null {
 function lockFrom(value: Json | undefined): ForumThreadLock | null {
   const lock = objectOf(value);
   if (typeof lock['locked_at'] !== 'string') return null;
-  return { lockedAt: lock['locked_at'], reason: String(lock['reason'] ?? '') };
+  return {
+    lockedAt: lock['locked_at'],
+    reason: String(lock['reason'] ?? ''),
+    next: pointerFrom(lock['next']),
+  };
 }
 
 /**

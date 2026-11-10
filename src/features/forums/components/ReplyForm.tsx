@@ -10,6 +10,8 @@
  * new post's permalink, so the page shows and scrolls to it. Part e adds "Don't bump" (the reply
  * leaves the thread's place in the forum's list) and, on a locked thread, LockedThreadNote in
  * place of the card (S1-E8-05 criteria 2 and 3).
+ * GAPS-9 adds "Preview" beside "Post reply": it shows the reply as it will look (ReplyPreview),
+ * made on the reader's device, and sends nothing.
  * FORUMS-2a (S1-E8-06): in a space's thread, a reader who can't reply is told how to join the
  * space (SpaceReplyNote) instead of "Your account can't write yet".
  * Who uses it: ThreadPage. What it calls: useReplyToThread → reply_to_forum_thread();
@@ -32,6 +34,7 @@ import { useForumsTranslation } from '../registerForumsTranslations';
 import { ForumQuoteBlock } from './ForumQuoteBlock';
 import { LockedThreadNote } from './LockedThreadNote';
 import { PostEditor } from './PostEditor';
+import { ReplyPreview, replyPreviewId } from './ReplyPreview';
 import { SpaceReplyNote } from './SpaceReplyNote';
 
 /** Where the reply goes and what it may quote. */
@@ -136,13 +139,15 @@ function NoBumpBox({ checked, onChange }: { checked: boolean; onChange: (next: b
  * The form itself, for a reader who may reply.
  *
  * @param props.target - the thread, its posts and the quote picks
- * @returns the quotes, the editor, any refusal and "Post reply"
+ * @returns the quotes, the editor, the preview when asked for, any refusal and "Post reply"
  */
 function ReplyFields({ target }: { target: ReplyTarget }) {
   const { t } = useForumsTranslation();
   const [body, setBody] = useState('');
   // "Don't bump" (S1-E8-05 criterion 3): off by default, so a reply moves the thread up.
   const [noBump, setNoBump] = useState(false);
+  // "Preview" (GAPS-9): closed until asked for, and closed again once the reply is posted.
+  const [isPreviewing, setIsPreviewing] = useState(false);
   const [, setSearchParams] = useSearchParams();
   const replying = useReplyToThread(target.threadNumber);
   const messages = failureMessages(replying.failure, t);
@@ -156,6 +161,7 @@ function ReplyFields({ target }: { target: ReplyTarget }) {
       const postNumber = await replying.run({ body, quotedPostIds, bump: !noBump });
       setBody('');
       setNoBump(false);
+      setIsPreviewing(false);
       target.quotePicks.clear();
       setSearchParams({ post: String(postNumber) }, { replace: true });
     } catch {
@@ -173,9 +179,18 @@ function ReplyFields({ target }: { target: ReplyTarget }) {
         onChange={setBody}
         problem={messages.body}
       />
+      {isPreviewing && <ReplyPreview text={body} />}
       {messages.general !== null && <Notice tone="error">{messages.general}</Notice>}
       <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
         <NoBumpBox checked={noBump} onChange={setNoBump} />
+        <Button
+          variant="secondary"
+          aria-expanded={isPreviewing}
+          aria-controls={isPreviewing ? replyPreviewId : undefined}
+          onClick={() => setIsPreviewing(!isPreviewing)}
+        >
+          {isPreviewing ? t('reply.previewHide') : t('reply.preview')}
+        </Button>
         <Button type="submit" disabled={replying.isRunning || body.trim() === ''}>
           {t('reply.post')}
         </Button>
