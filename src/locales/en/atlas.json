@@ -643,13 +643,14 @@
       "done": "Nothing ticked off yet.",
       "all": "No notes yet. Add the first above."
     },
-    "done": "Done",
     "doneNamed": "Done: {{body}}",
     "doneOn": "Done on {{date}}",
     "tickFailed": "We couldn’t save the tick. Try again.",
     "body": "Note",
     "outcome": "Action or outcome",
     "outcomeHint": "What you decided or did about it.",
+    "edit": "Edit",
+    "editNamed": "Edit “{{body}}”",
     "delete": "Delete",
     "deleteNamed": "Delete “{{body}}”",
     "confirmDelete": "Delete “{{body}}”? This can’t be undone.",
@@ -679,11 +680,26 @@
     },
     "backCover": {
       "heading": "Back cover",
-      "hint": "See the title, logline, blurb and comparable titles laid out like the back of a book.",
       "show": "Show the back cover",
       "hide": "Hide the back cover",
       "forReadersOf": "For readers of",
       "empty": "Write a logline, a blurb or comparable titles and they’ll show here."
+    },
+    "qr": {
+      "heading": "QR code",
+      "use": "For posters, flyers and bookmarks",
+      "hint": "People scan it with a phone camera and land on the story. Pick where it goes, then download it.",
+      "destination": "Where it takes people",
+      "destinations": {
+        "story": "The story page",
+        "world": "The story’s world",
+        "profile": "The writer’s profile"
+      },
+      "whoCanOpen": "The link opens for readers who can see that page. Nothing counts the scans.",
+      "downloadPng": "Download PNG",
+      "downloadSvg": "Download SVG",
+      "codeLabel": "QR code for {{path}}",
+      "failed": "We couldn’t make the picture. Try Download SVG."
     }
   },
   "search": {

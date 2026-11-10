@@ -5,7 +5,8 @@
  *
  * Two cards. "The pitch": the logline and publishing route (the plan's own, the same fields as
  * At a glance), the genre and audience (the story's own, the same as Story settings), then the
- * blurb, comparable titles and hooks. "Getting it out": the query pitch and launch notes.
+ * blurb, comparable titles, hooks and query pitch. "Getting it out": the launch notes (board
+ * AtlasMarketing, G10c3).
  * Who uses it: MarketingPage. What it calls: the savers it is given (useStoryPlan and
  * useStoryMarketing) and useStoryChoiceOptions.
  */
@@ -134,9 +135,9 @@ export function MarketingFields(props: MarketingFieldsProps) {
         <NoteField field="back_cover_blurb" notes={notes} saveNote={saveNote} />
         <NoteField field="comparable_titles" notes={notes} saveNote={saveNote} />
         <NoteField field="hooks_keywords" notes={notes} saveNote={saveNote} />
+        <NoteField field="query_pitch" notes={notes} saveNote={saveNote} />
       </FormSection>
       <FormSection legend={t('marketing.launchHeading')}>
-        <NoteField field="query_pitch" notes={notes} saveNote={saveNote} />
         <NoteField field="launch_notes" notes={notes} saveNote={saveNote} />
       </FormSection>
     </>

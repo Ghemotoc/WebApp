@@ -30,6 +30,7 @@ import { AtlasPageHeading } from './AtlasPageHeading';
 import { AtlasTopBar } from './AtlasTopBar';
 import { BackCoverPreview } from './BackCoverPreview';
 import { MarketingFields } from './MarketingFields';
+import { StoryQrCard } from './StoryQrCard';
 
 /** The heading, the fields and the back cover, once both reads have answered. */
 function MarketingBody({
@@ -49,21 +50,30 @@ function MarketingBody({
   return (
     <>
       <AtlasPageHeading title={t('marketing.heading')} />
-      <MarketingFields
-        page={page}
-        notes={notes}
-        savePlan={savePlan}
-        saveStory={saveStory}
-        saveNote={save}
-      />
-      <BackCoverPreview
-        text={{
-          title: page.story.title,
-          logline: page.plan.logline,
-          blurb: notes.back_cover_blurb,
-          comparableTitles: notes.comparable_titles,
-        }}
-      />
+      {/* Board AtlasMarketing: the fields and the QR code on the left, the back cover beside
+          them from 1024 px and under them on smaller screens. */}
+      <div className="flex min-w-0 flex-col gap-7 lg:flex-row lg:items-start">
+        <div className="flex min-w-0 flex-1 flex-col gap-[18px]">
+          <MarketingFields
+            page={page}
+            notes={notes}
+            savePlan={savePlan}
+            saveStory={saveStory}
+            saveNote={save}
+          />
+          <StoryQrCard slug={slug} />
+        </div>
+        <aside className="flex min-w-0 flex-col lg:w-[420px] lg:shrink-0">
+          <BackCoverPreview
+            text={{
+              title: page.story.title,
+              logline: page.plan.logline,
+              blurb: notes.back_cover_blurb,
+              comparableTitles: notes.comparable_titles,
+            }}
+          />
+        </aside>
+      </div>
     </>
   );
 }

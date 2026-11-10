@@ -3,16 +3,17 @@
  * with a type (Question, Idea, To-do, Decision), when I type a line and press Enter, then the
  * item is added and the box clears").
  *
- * A type drop-down, one line and "Add". Enter in the line sends the form, so nothing else is
- * needed; the type stays as chosen, so a run of questions needs no more clicks. An empty line
- * waits with a plain message. Who uses it: IdeasPage. What it calls: the onAdd prop
+ * A glass card (board AtlasIdeas, bundle G10c3): the type as a segmented switch, one line and
+ * "Add". Enter in the line sends the form, so nothing else is needed; the type stays as chosen,
+ * so a run of questions needs no more clicks. An empty line waits with a plain message.
+ * Who uses it: IdeasPage. What it calls: the onAdd prop
  * (useStoryIdeas' add).
  */
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
-import { Select } from '@/components/ui/Select';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { TextInput } from '@/components/ui/TextInput';
 
 import { ideaKinds, type IdeaKind } from '../api/ideas';
@@ -48,7 +49,7 @@ export function IdeaQuickAdd({ onAdd }: IdeaQuickAddProps) {
   return (
     <form
       aria-labelledby="atlas-idea-add-heading"
-      className="flex flex-col gap-3 rounded-card border border-border bg-surface px-5 py-5 shadow-card md:px-7"
+      className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface px-5 py-5 shadow-card md:px-7"
       onSubmit={(submitted) => {
         submitted.preventDefault();
         void add();
@@ -60,13 +61,13 @@ export function IdeaQuickAdd({ onAdd }: IdeaQuickAddProps) {
       >
         {t('ideas.add.heading')}
       </h2>
-      <Select
-        id="atlas-idea-kind"
-        label={t('ideas.add.kind')}
-        isLabelVisible
+      <SegmentedControl
+        legend={t('ideas.add.kind')}
+        isLegendVisible={false}
+        name="atlas-idea-kind"
         options={ideaKinds.map((option) => ({ value: option, label: t(`ideas.kinds.${option}`) }))}
         value={kind}
-        onChange={(chosen) => setKind(ideaKinds.find((option) => option === chosen) ?? 'idea')}
+        onChange={setKind}
       />
       <div className="flex flex-wrap items-end gap-3">
         <div className="min-w-0 flex-1 basis-64">
@@ -79,7 +80,9 @@ export function IdeaQuickAdd({ onAdd }: IdeaQuickAddProps) {
             onChange={(changed) => setLine(changed.target.value)}
           />
         </div>
-        <Button type="submit">{t('ideas.add.button')}</Button>
+        <Button type="submit" variant="secondary">
+          {t('ideas.add.button')}
+        </Button>
       </div>
       {message !== null && <Notice tone="error">{message}</Notice>}
     </form>

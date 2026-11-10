@@ -643,13 +643,14 @@
       "done": "Nimic bifat încă.",
       "all": "Încă nu ai notițe. Adaug-o pe prima mai sus."
     },
-    "done": "Rezolvat",
     "doneNamed": "Rezolvat: {{body}}",
     "doneOn": "Rezolvat pe {{date}}",
     "tickFailed": "N-am putut salva bifa. Încearcă din nou.",
     "body": "Notiță",
     "outcome": "Acțiune sau rezultat",
     "outcomeHint": "Ce ai hotărât sau ce ai făcut.",
+    "edit": "Editează",
+    "editNamed": "Editează „{{body}}”",
     "delete": "Șterge",
     "deleteNamed": "Șterge „{{body}}”",
     "confirmDelete": "Ștergi „{{body}}”? Nu se mai poate anula.",
@@ -679,11 +680,26 @@
     },
     "backCover": {
       "heading": "Coperta a patra",
-      "hint": "Vezi titlul, rezumatul, textul și titlurile asemănătoare așezate ca pe spatele unei cărți.",
       "show": "Arată coperta a patra",
       "hide": "Ascunde coperta a patra",
       "forReadersOf": "Pentru cititorii cărților",
       "empty": "Scrie rezumatul, textul sau titlurile asemănătoare și vor apărea aici."
+    },
+    "qr": {
+      "heading": "Cod QR",
+      "use": "Pentru afișe, pliante și semne de carte",
+      "hint": "Oamenii îl scanează cu camera telefonului și ajung la poveste. Alege unde duce, apoi descarcă-l.",
+      "destination": "Unde duce",
+      "destinations": {
+        "story": "Pagina poveștii",
+        "world": "Lumea poveștii",
+        "profile": "Profilul scriitorului"
+      },
+      "whoCanOpen": "Linkul se deschide pentru cititorii care pot vedea pagina. Scanările nu sunt numărate.",
+      "downloadPng": "Descarcă PNG",
+      "downloadSvg": "Descarcă SVG",
+      "codeLabel": "Cod QR pentru {{path}}",
+      "failed": "Nu am putut face imaginea. Încearcă „Descarcă SVG”."
     }
   },
   "search": {
