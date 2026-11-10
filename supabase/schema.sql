@@ -21698,6 +21698,7 @@ CREATE TABLE IF NOT EXISTS "public"."forum_posts" (
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "deleted_at" timestamp with time zone,
     "quoted_post_ids" "uuid"[] DEFAULT '{}'::"uuid"[] NOT NULL,
+    "moved_from_thread_id" "uuid",
     CONSTRAINT "forum_posts_body_is_written" CHECK ((("char_length"("body") <= 20000) AND (("btrim"("body") <> ''::"text") OR ("deleted_at" IS NOT NULL)))),
     CONSTRAINT "forum_posts_number_positive" CHECK (("post_number" >= 1)),
     CONSTRAINT "forum_posts_quotes_bounded" CHECK (("cardinality"("quoted_post_ids") <= 50))
@@ -21721,6 +21722,10 @@ COMMENT ON COLUMN "public"."forum_posts"."edited_at" IS 'When its author last ch
 
 
 COMMENT ON COLUMN "public"."forum_posts"."quoted_post_ids" IS 'The posts this reply quotes, in thread order; drawn from the quoted posts as they are now (S1-E8-03).';
+
+
+
+COMMENT ON COLUMN "public"."forum_posts"."moved_from_thread_id" IS 'The thread a space moderator moved this reply out of (GAPS-10); null for a reply that never moved.';
 
 
 
@@ -22064,6 +22069,23 @@ COMMENT ON FUNCTION "public"."forum_post_history"("post_id" "uuid") IS 'The earl
 
 
 
+CREATE OR REPLACE FUNCTION "public"."forum_post_is_space_hidden"("target" "public"."forum_posts") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select exists (select 1 from public.moderated_items
+                 where moderated_items.item_type = 'forum_post' and moderated_items.item_id = target.id
+                   and moderated_items.restored_at is null and moderated_items.space_id is not null);
+$$;
+
+
+ALTER FUNCTION "public"."forum_post_is_space_hidden"("target" "public"."forum_posts") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."forum_post_is_space_hidden"("target" "public"."forum_posts") IS 'Internal: true when a space''s moderators (not our team) hid the post (GAPS-10).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."forum_post_json"("target" "public"."forum_posts", "starter_id" "uuid") RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -22073,6 +22095,8 @@ declare
   state text := public.forum_post_state_for_caller(target);
   is_own boolean := caller_id is not null and target.user_id = caller_id;
   is_shown boolean := state in ('live', 'hidden');
+  is_space_hidden boolean := public.forum_post_is_space_hidden(target);
+  space public.spaces := public.space_of_post(target);
 begin
   return jsonb_build_object(
     'id', target.id,
@@ -22101,7 +22125,16 @@ begin
     'is_answer', target.id = (select forum_threads.answer_post_id from public.forum_threads
                               where forum_threads.id = target.thread_id),
     'can_mark_answer', is_own is false and caller_id is not null and caller_id = starter_id
-                       and target.post_number > 1 and state = 'live');
+                       and target.post_number > 1 and state = 'live',
+    -- GAPS-10: who hid a hidden post, whether it was moved here, and the space moderators' tools.
+    'hidden_by', case when state is distinct from 'hidden' then null when is_space_hidden then 'space' else 'team' end,
+    'was_moved', is_shown and target.moved_from_thread_id is not null,
+    'can_space_moderate', coalesce(
+      caller_id is not null and is_shown and target.post_number > 1
+      and space.id is not null and public.space_may_act(space, 'posts')
+      and (state = 'live' or is_space_hidden)
+      and (target.user_id <> space.user_id or space.user_id = caller_id
+           or public.space_acts_as_platform(space)), false));
 end;
 $$;
 
@@ -22146,9 +22179,12 @@ begin
   if moderated = 'removed' then
     return 'removed';
   end if;
-  -- Step 3: hidden by staff: the author still sees it; for everyone else it is gone.
+  -- Step 3: hidden: the author still sees it; so do the space's moderators when the hide is
+  -- theirs; for everyone else it is gone.
   if moderated = 'hidden' then
-    return case when target.user_id = (select auth.uid()) then 'hidden' end;
+    return case when target.user_id = (select auth.uid()) then 'hidden'
+                when public.forum_post_is_space_hidden(target)
+                     and public.space_may_act(public.space_of_post(target), 'posts') then 'hidden' end;
   end if;
   return 'live';
 end;
@@ -22219,7 +22255,12 @@ begin
     'number', quoted.post_number,
     'author', case when state = 'unavailable' then null else public.forum_person_json(quoted.user_id) end,
     'state', state,
-    'body', case when state = 'live' then quoted.body end);
+    'body', case when state = 'live' then quoted.body end)
+    -- GAPS-10: where the quoted post is now; left out of a quote the caller can't see.
+    || case when state = 'unavailable' then '{}'::jsonb else (
+         select jsonb_build_object('thread_number', forum_threads.thread_number, 'forum_slug', forums.slug)
+         from public.forum_threads join public.forums on forums.id = forum_threads.forum_id
+         where forum_threads.id = quoted.thread_id) end;
 end;
 $$;
 
@@ -26657,6 +26698,12 @@ CREATE OR REPLACE FUNCTION "public"."moderate_item"("item_type" "public"."report
 declare
   new_row_id uuid;
 begin
+  -- A space's own hide gives way to the team's decision.
+  update public.moderated_items
+  set restored_at = now(), restored_by_user_id = (select auth.uid()),
+      restore_reason = 'Replaced by a moderation team decision.'
+  where moderated_items.item_type = moderate_item.item_type and moderated_items.item_id = moderate_item.item_id
+    and moderated_items.restored_at is null and moderated_items.space_id is not null;
   if public.moderated_state_of(item_type, item_id) is not null then
     raise exception 'This item is already hidden or removed.' using errcode = 'check_violation';
   end if;
@@ -40611,6 +40658,32 @@ COMMENT ON FUNCTION "public"."space_handover_refusal"("target" "public"."spaces"
 
 
 
+CREATE OR REPLACE FUNCTION "public"."space_hide_forum_post"("post_id" "uuid", "reason" "text") RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  post public.forum_posts := public.space_post_for_moderation(post_id, reason);
+  space public.spaces := public.space_of_post(post);
+begin
+  if public.moderated_state_of('forum_post', post.id) is not null then
+    raise exception 'This post is already hidden.' using errcode = 'check_violation', hint = 'post:already';
+  end if;
+  insert into public.moderated_items (user_id, item_type, item_id, state, moderated_by_user_id, note, space_id)
+  values (post.user_id, 'forum_post', post.id, 'hidden', (select auth.uid()), btrim(reason), space.id);
+  perform public.log_space_action(space, 'post_hidden', post.user_id, post.thread_id, reason,
+    jsonb_build_object('post_id', post.id, 'post_number', post.post_number));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."space_hide_forum_post"("post_id" "uuid", "reason" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."space_hide_forum_post"("post_id" "uuid", "reason" "text") IS 'Hides a reply in a space; its owner or a moderator with the posts power; logged in the space''s log (GAPS-10).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."space_is_in_class"("target" "public"."spaces") RETURNS boolean
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -41058,6 +41131,67 @@ COMMENT ON FUNCTION "public"."space_moderators"("slug" "text") IS 'A space''s mo
 
 
 
+CREATE OR REPLACE FUNCTION "public"."space_move_forum_post"("post_id" "uuid", "to_thread_number" bigint, "reason" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  post public.forum_posts := public.space_post_for_moderation(post_id, reason);
+  space public.spaces := public.space_of_post(post);
+  from_thread public.forum_threads;
+  to_thread public.forum_threads;
+  hide public.moderated_items;
+  new_number integer;
+begin
+  select * into from_thread from public.forum_threads where forum_threads.id = post.thread_id;
+  -- Step 1: the other thread, a live one in this same space, locked for the change.
+  select * into to_thread from public.forum_threads
+  where forum_threads.thread_number = to_thread_number and forum_threads.deleted_at is null
+    and forum_threads.forum_id = from_thread.forum_id
+  for update;
+  -- A thread our moderation team hid or removed takes no replies either.
+  if to_thread.id is null or public.is_moderated_away('forum_thread', to_thread.id) then
+    raise exception 'That thread isn''t in this space.' using errcode = 'no_data_found', hint = 'target:missing';
+  end if;
+  if to_thread.id = from_thread.id then
+    raise exception 'The post is already in that thread.' using errcode = 'check_violation', hint = 'target:same';
+  end if;
+  if to_thread.locked_at is not null then
+    raise exception 'That thread is locked.' using errcode = 'check_violation', hint = 'target:locked';
+  end if;
+  -- Step 2: a reply our team hid or removed stays where the case found it.
+  select * into hide from public.moderated_items
+  where moderated_items.item_type = 'forum_post' and moderated_items.item_id = post.id
+    and moderated_items.restored_at is null;
+  if hide.id is not null and hide.space_id is null then
+    raise exception 'Our moderation team hid this post.' using errcode = 'check_violation', hint = 'post:by_team';
+  end if;
+  -- Step 3: the next number in the other thread (numbers are never reused).
+  new_number := to_thread.last_post_number + 1;
+  update public.forum_threads set last_post_number = new_number where forum_threads.id = to_thread.id;
+  update public.forum_posts
+  set thread_id = to_thread.id, post_number = new_number,
+      moved_from_thread_id = coalesce(forum_posts.moved_from_thread_id, from_thread.id)
+  where forum_posts.id = post.id;
+  -- Step 4: the old thread no longer has this reply as its answer.
+  update public.forum_threads set answer_post_id = null
+  where forum_threads.id = from_thread.id and forum_threads.answer_post_id = post.id;
+  -- Step 5: log it.
+  perform public.log_space_action(space, 'post_moved', post.user_id, to_thread.id, reason,
+    jsonb_build_object('post_id', post.id, 'from_thread_id', from_thread.id, 'from_post_number', post.post_number,
+                       'to_thread_id', to_thread.id, 'to_post_number', new_number));
+  return jsonb_build_object('thread_number', to_thread.thread_number, 'post_number', new_number);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."space_move_forum_post"("post_id" "uuid", "to_thread_number" bigint, "reason" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."space_move_forum_post"("post_id" "uuid", "to_thread_number" bigint, "reason" "text") IS 'Moves a reply to another thread of the same space; its owner or a moderator with the posts power; logged (GAPS-10).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."space_name_available"("name" "text") RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -41122,6 +41256,22 @@ COMMENT ON FUNCTION "public"."space_of_forum"("target_forum_id" "uuid") IS 'Inte
 
 
 
+CREATE OR REPLACE FUNCTION "public"."space_of_post"("target" "public"."forum_posts") RETURNS "public"."spaces"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select public.space_of_forum((select forum_threads.forum_id from public.forum_threads
+                                where forum_threads.id = target.thread_id));
+$$;
+
+
+ALTER FUNCTION "public"."space_of_post"("target" "public"."forum_posts") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."space_of_post"("target" "public"."forum_posts") IS 'Internal: the space a forum post''s thread lives in (GAPS-10).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."space_page"("slug" "text") RETURNS "jsonb"
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -41135,6 +41285,62 @@ ALTER FUNCTION "public"."space_page"("slug" "text") OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."space_page"("slug" "text") IS 'One space for its page, by the age rules; null when hidden (S1-E8-06).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."space_post_for_moderation"("post_id" "uuid", "reason" "text") RETURNS "public"."forum_posts"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  post public.forum_posts;
+  thread public.forum_threads;
+  space public.spaces;
+begin
+  -- Step 1: the reply and its thread, locked for the change (a deleted one too, so its space's
+  -- moderators get "isn't there any more" instead of "not yours").
+  select * into post from public.forum_posts where forum_posts.id = post_id for update;
+  select * into thread from public.forum_threads where forum_threads.id = post.thread_id;
+  space := public.space_of_forum(thread.forum_id);
+  -- Step 2: only in a space, and only with the posts power there (the same answer when the post
+  -- doesn't exist, so a post ID tells an outsider nothing). A suspended or banned account
+  -- moderates nothing (the account gate, architecture 1.7.8); our team's accounts are staff
+  -- accounts, which the gate doesn't count as members.
+  if space.id is null or not public.space_may_act(space, 'posts')
+     or not (public.is_active_member() or public.staff_may('moderation', 'act')) then
+    raise exception 'Only this space''s moderators can do that.' using errcode = 'insufficient_privilege';
+  end if;
+  -- A deleted reply or thread is gone; a thread our moderation team hid or removed is the
+  -- team's, and its replies stay as the case found them.
+  if post.deleted_at is not null or thread.deleted_at is not null
+     or public.is_moderated_away('forum_thread', thread.id) then
+    raise exception 'That post isn''t there any more.' using errcode = 'no_data_found', hint = 'post:missing';
+  end if;
+  -- Step 3: the owner's posts are the owner's and our team's to deal with, never a moderator's.
+  if post.user_id = space.user_id and space.user_id <> (select auth.uid())
+     and not public.space_acts_as_platform(space) then
+    raise exception 'A moderator can''t change the owner''s posts.' using errcode = 'insufficient_privilege', hint = 'post:owner';
+  end if;
+  -- Step 4: a thread's first post stays where it is: lock the thread, or report it.
+  if post.post_number = 1 then
+    raise exception 'The first post of a thread can''t be hidden or moved.' using errcode = 'check_violation', hint = 'post:first';
+  end if;
+  -- Step 5: every change needs a reason (architecture 1.8.4).
+  if reason is null or btrim(reason) = '' then
+    raise exception 'Say why.' using errcode = 'check_violation', hint = 'reason:empty';
+  end if;
+  if char_length(btrim(reason)) > 500 then
+    raise exception 'Keep the reason under 500 characters.' using errcode = 'check_violation', hint = 'reason:too_long';
+  end if;
+  return post;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."space_post_for_moderation"("post_id" "uuid", "reason" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."space_post_for_moderation"("post_id" "uuid", "reason" "text") IS 'Internal: a live reply in a space for its owner or a moderator with the posts power to change (GAPS-10).';
 
 
 
@@ -41152,6 +41358,41 @@ ALTER FUNCTION "public"."space_powers_of_caller"("target" "public"."spaces") OWN
 
 
 COMMENT ON FUNCTION "public"."space_powers_of_caller"("target" "public"."spaces") IS 'Internal: the caller''s powers in a space (S1-E8-07).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."space_show_forum_post"("post_id" "uuid", "reason" "text") RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  post public.forum_posts := public.space_post_for_moderation(post_id, reason);
+  space public.spaces := public.space_of_post(post);
+  hide public.moderated_items;
+begin
+  select * into hide from public.moderated_items
+  where moderated_items.item_type = 'forum_post' and moderated_items.item_id = post.id
+    and moderated_items.restored_at is null
+  for update;
+  if hide.id is null then
+    raise exception 'This post isn''t hidden.' using errcode = 'check_violation', hint = 'post:not_hidden';
+  end if;
+  if hide.space_id is distinct from space.id then
+    raise exception 'Our moderation team hid this post.' using errcode = 'check_violation', hint = 'post:by_team';
+  end if;
+  update public.moderated_items
+  set restored_at = now(), restored_by_user_id = (select auth.uid()), restore_reason = btrim(reason)
+  where moderated_items.id = hide.id;
+  perform public.log_space_action(space, 'post_shown', post.user_id, post.thread_id, reason,
+    jsonb_build_object('post_id', post.id, 'post_number', post.post_number));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."space_show_forum_post"("post_id" "uuid", "reason" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."space_show_forum_post"("post_id" "uuid", "reason" "text") IS 'Shows again a reply a space''s moderators hid; never one our team hid; logged (GAPS-10).';
 
 
 
@@ -47748,6 +47989,7 @@ CREATE TABLE IF NOT EXISTS "public"."moderated_items" (
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "sanction_id" "uuid",
+    "space_id" "uuid",
     CONSTRAINT "moderated_items_note_is_written" CHECK ((("btrim"("note") <> ''::"text") AND ("char_length"("note") <= 4000))),
     CONSTRAINT "moderated_items_restore_fields_go_together" CHECK ((("restored_at" IS NULL) = ("restored_by_user_id" IS NULL)))
 );
@@ -47762,6 +48004,10 @@ What staff hid or removed (S1-E10-06, Q3): hidden stays visible to the writer an
 
 
 COMMENT ON COLUMN "public"."moderated_items"."sanction_id" IS 'The ban that hid this item when the account was closed for good; lifting the ban restores exactly these (part f1).';
+
+
+
+COMMENT ON COLUMN "public"."moderated_items"."space_id" IS 'Set when a space''s owner or moderator hid the item (GAPS-10); null for our moderation team''s own decisions.';
 
 
 
@@ -50801,6 +51047,10 @@ CREATE INDEX "forum_posts_author_recent" ON "public"."forum_posts" USING "btree"
 
 
 
+CREATE INDEX "forum_posts_moved_from_thread_id_fk_idx" ON "public"."forum_posts" USING "btree" ("moved_from_thread_id");
+
+
+
 CREATE INDEX "forum_read_marks_forum_id_fk_idx" ON "public"."forum_read_marks" USING "btree" ("forum_id");
 
 
@@ -50938,6 +51188,10 @@ CREATE UNIQUE INDEX "moderated_items_one_live_per_item" ON "public"."moderated_i
 
 
 CREATE INDEX "moderated_items_sanction_id_fk_idx" ON "public"."moderated_items" USING "btree" ("sanction_id");
+
+
+
+CREATE INDEX "moderated_items_space_id_fk_idx" ON "public"."moderated_items" USING "btree" ("space_id");
 
 
 
@@ -53177,6 +53431,11 @@ ALTER TABLE ONLY "public"."forum_post_revisions"
 
 
 ALTER TABLE ONLY "public"."forum_posts"
+    ADD CONSTRAINT "forum_posts_moved_from_thread_id_fkey" FOREIGN KEY ("moved_from_thread_id") REFERENCES "public"."forum_threads"("id") ON DELETE SET NULL;
+
+
+
+ALTER TABLE ONLY "public"."forum_posts"
     ADD CONSTRAINT "forum_posts_thread_id_fkey" FOREIGN KEY ("thread_id") REFERENCES "public"."forum_threads"("id") ON DELETE CASCADE;
 
 
@@ -53353,6 +53612,11 @@ ALTER TABLE ONLY "public"."moderated_items"
 
 ALTER TABLE ONLY "public"."moderated_items"
     ADD CONSTRAINT "moderated_items_sanction_id_fkey" FOREIGN KEY ("sanction_id") REFERENCES "public"."sanctions"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."moderated_items"
+    ADD CONSTRAINT "moderated_items_space_id_fkey" FOREIGN KEY ("space_id") REFERENCES "public"."spaces"("id");
 
 
 
@@ -58878,6 +59142,10 @@ GRANT ALL ON FUNCTION "public"."forum_post_history"("post_id" "uuid") TO "authen
 
 
 
+REVOKE ALL ON FUNCTION "public"."forum_post_is_space_hidden"("target" "public"."forum_posts") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."forum_post_json"("target" "public"."forum_posts", "starter_id" "uuid") FROM PUBLIC;
 
 
@@ -61513,6 +61781,11 @@ REVOKE ALL ON FUNCTION "public"."space_handover_refusal"("target" "public"."spac
 
 
 
+REVOKE ALL ON FUNCTION "public"."space_hide_forum_post"("post_id" "uuid", "reason" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."space_hide_forum_post"("post_id" "uuid", "reason" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."space_is_in_class"("target" "public"."spaces") FROM PUBLIC;
 
 
@@ -61592,6 +61865,11 @@ GRANT ALL ON FUNCTION "public"."space_moderators"("slug" "text") TO "authenticat
 
 
 
+REVOKE ALL ON FUNCTION "public"."space_move_forum_post"("post_id" "uuid", "to_thread_number" bigint, "reason" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."space_move_forum_post"("post_id" "uuid", "to_thread_number" bigint, "reason" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."space_name_available"("name" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."space_name_available"("name" "text") TO "authenticated";
 
@@ -61605,12 +61883,25 @@ REVOKE ALL ON FUNCTION "public"."space_of_forum"("target_forum_id" "uuid") FROM 
 
 
 
+REVOKE ALL ON FUNCTION "public"."space_of_post"("target" "public"."forum_posts") FROM PUBLIC;
+
+
+
 GRANT ALL ON FUNCTION "public"."space_page"("slug" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."space_page"("slug" "text") TO "authenticated";
 
 
 
+REVOKE ALL ON FUNCTION "public"."space_post_for_moderation"("post_id" "uuid", "reason" "text") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."space_powers_of_caller"("target" "public"."spaces") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."space_show_forum_post"("post_id" "uuid", "reason" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."space_show_forum_post"("post_id" "uuid", "reason" "text") TO "authenticated";
 
 
 

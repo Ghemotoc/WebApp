@@ -105,7 +105,7 @@ select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
 select public.delete_forum_post(pg_temp.post_id(2));
 select is(pg_temp.hint_of(format($$ select public.reply_to_forum_thread(%s, 'Târziu.', array[%L::uuid]) $$,
   pg_temp.named('thread'), pg_temp.post_id(2))), 'quote:missing', 'a deleted post can''t be quoted');
-select is((pg_temp.post(4) -> 'quotes' -> 0) - 'author', '{"number": 2, "state": "deleted", "body": null}'::jsonb,
+select is((pg_temp.post(4) -> 'quotes' -> 0) - 'author' - 'thread_number' - 'forum_slug', '{"number": 2, "state": "deleted", "body": null}'::jsonb,
   'a quote of a deleted post becomes the marker, without its words');
 -- Staff remove #3: the quote becomes the removal marker.
 reset role;

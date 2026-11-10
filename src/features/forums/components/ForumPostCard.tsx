@@ -10,9 +10,12 @@
  * words, each linking back to the quoted post (S1-E8-03). Under the words sits the author's forum
  * signature, only from 768 px up: phones hide it (S1-E8-08 criterion 2; Q25). Beside the name sits
  * the author's rank (RankChip, S1-E8-09). IDEAS-3f adds an "Answer" pill on the reply the thread's
- * starter marked "This answered it" (IDEA-20261102-8).
+ * starter marked "This answered it" (IDEA-20261102-8). GAPS-10: a reply its space's moderators
+ * hid says so to the people who still see it, a reply moved from another thread is marked
+ * "Moved here", a quote links to wherever the quoted post is now, and the space's owner and
+ * moderators get the "Moderate" tools under a reply (PostSpaceModeration).
  * Who uses it: ThreadPage. What it calls: ForumQuoteBlock, ForumPostText, PostActions,
- * PostEditForm, PostHistory, RankChip, SignatureBody.
+ * PostEditForm, PostHistory, PostSpaceModeration, RankChip, SignatureBody.
  */
 import { useId, useState } from 'react';
 import { Link } from 'react-router';
@@ -32,6 +35,7 @@ import { ForumQuoteBlock } from './ForumQuoteBlock';
 import { PostActions } from './PostActions';
 import { PostEditForm } from './PostEditForm';
 import { PostHistory } from './PostHistory';
+import { PostSpaceModeration } from './PostSpaceModeration';
 import { RankChip } from './RankChip';
 import { SignatureBody } from './SignatureBody';
 
@@ -98,6 +102,8 @@ function PostHeader({ post, forumSlug, threadNumber }: ForumPostCardProps) {
               </time>
             </>
           )}
+          {/* GAPS-10: a space's moderator moved this reply here from another thread. */}
+          {post.wasMoved && <> · {t('post.moved')}</>}
         </p>
       </div>
       <Link
@@ -125,13 +131,20 @@ function PostBody({ post, forumSlug, threadNumber }: ForumPostCardProps) {
   return (
     <div className="flex flex-col gap-3">
       {post.state === 'hidden' && (
-        <p className="m-0 text-sm font-semibold text-body">{t('post.hiddenNote')}</p>
+        <p className="m-0 text-sm font-semibold text-body">
+          {t(post.hiddenBy === 'space' ? 'post.hiddenBySpaceNote' : 'post.hiddenNote')}
+        </p>
       )}
       {post.quotes.map((quote) => (
         <ForumQuoteBlock
           key={quote.number}
           quote={quote}
-          postAddress={postAddress(forumSlug, threadNumber, quote.number)}
+          // GAPS-10: the quoted post may have been moved to another thread since.
+          postAddress={postAddress(
+            quote.forumSlug ?? forumSlug,
+            quote.threadNumber ?? threadNumber,
+            quote.number,
+          )}
         />
       ))}
       <ForumPostText text={post.body ?? ''} />
@@ -194,6 +207,7 @@ export function ForumPostCard(props: ForumPostCardProps) {
           quotePicks={props.quotePicks}
         />
       )}
+      {mode === 'reading' && <PostSpaceModeration post={post} forumSlug={props.forumSlug} />}
     </article>
   );
 }

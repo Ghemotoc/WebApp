@@ -27,6 +27,10 @@ const knownActions = [
   'thread_rules_removed',
   'thread_next_set',
   'thread_next_removed',
+  // A space's moderators hide, show again and move replies (bundle GAPS-10).
+  'post_hidden',
+  'post_shown',
+  'post_moved',
   // A class space's invite code and joins (bundle CLASSES, part a; S1-E8-11).
   'invite_made',
   'invite_ended',

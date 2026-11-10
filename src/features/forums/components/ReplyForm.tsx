@@ -63,7 +63,15 @@ function pickedQuotes(
   const picked = posts.filter((post) => post.state === 'live' && pickedIds.includes(post.id));
   return picked.map((post) => ({
     id: post.id,
-    quote: { number: post.number, author: post.author, state: 'live', body: post.body },
+    // The picked post is on this page, so its link stays in this thread (no other place to name).
+    quote: {
+      number: post.number,
+      author: post.author,
+      state: 'live',
+      body: post.body,
+      threadNumber: null,
+      forumSlug: null,
+    },
   }));
 }
 

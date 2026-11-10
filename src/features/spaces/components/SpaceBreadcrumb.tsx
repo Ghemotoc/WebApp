@@ -49,7 +49,7 @@ export function SpaceBreadcrumb({ space, current }: SpaceBreadcrumbProps) {
         )}
         <li className="flex min-w-0 items-center gap-2">
           <span aria-hidden="true">›</span>
-          <span aria-current="page" className="break-words">
+          <span aria-current="page" className="min-w-0 [overflow-wrap:anywhere]">
             {current}
           </span>
         </li>

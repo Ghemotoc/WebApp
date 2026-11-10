@@ -40,6 +40,12 @@ export interface ForumQuote {
   state: ForumQuoteState;
   /** The words, only when live. */
   body: string | null;
+  /**
+   * Where the quoted post is now (GAPS-10): a space's moderator may have moved it to another
+   * thread. Both are null when the quote is unavailable; the link then stays in this thread.
+   */
+  threadNumber: number | null;
+  forumSlug: string | null;
 }
 
 /** One post in a thread. */
@@ -70,6 +76,12 @@ export interface ForumPost {
   isAnswer: boolean;
   /** The reader is the thread's starter and may mark this reply, or take the mark away. */
   canMarkAnswer: boolean;
+  /** Who hid a hidden post (GAPS-10): the space's moderators or our team; null when not hidden. */
+  hiddenBy: 'space' | 'team' | null;
+  /** A space's moderator moved this reply here from another thread (GAPS-10). */
+  wasMoved: boolean;
+  /** The reader may hide, show again or move this reply in its space (GAPS-10). */
+  canSpaceModerate: boolean;
 }
 
 /** The space a thread lives in (FORUMS-2a, S1-E8-06): its address and name. */
@@ -247,7 +259,19 @@ export function quoteFrom(row: JsonObject): ForumQuote {
     author: personFrom(row['author']),
     state,
     body: state === 'live' ? textOrNull(row['body']) : null,
+    threadNumber: typeof row['thread_number'] === 'number' ? row['thread_number'] : null,
+    forumSlug: textOrNull(row['forum_slug']),
   };
+}
+
+/**
+ * Reads who hid a post.
+ *
+ * @param value - forum_post_json()'s "hidden_by"
+ * @returns 'space', 'team' or null
+ */
+function hiddenByFrom(value: Json | undefined): 'space' | 'team' | null {
+  return value === 'space' || value === 'team' ? value : null;
 }
 
 /**
@@ -275,6 +299,9 @@ export function postFrom(row: JsonObject): ForumPost {
     authorRank: rankFrom(row['author_rank']),
     isAnswer: row['is_answer'] === true,
     canMarkAnswer: row['can_mark_answer'] === true,
+    hiddenBy: hiddenByFrom(row['hidden_by']),
+    wasMoved: row['was_moved'] === true,
+    canSpaceModerate: row['can_space_moderate'] === true,
   };
 }
 
