@@ -8,7 +8,7 @@
  * Who uses it: ForumPostCard. What it calls: useDeletePost → delete_forum_post(); ReportButton;
  * the thread page's quote picks (hooks/useQuotePicks.ts). IDEAS-3f adds "This answered it" for
  * the thread's starter on someone else's reply (IDEA-20261102-8): useMarkAnswer →
- * mark_forum_thread_answer().
+ * mark_forum_thread_answer(). GAPS-16c adds the vote chip at the start of the row (PostVotes).
  */
 import { useNavigate } from 'react-router';
 
@@ -22,6 +22,9 @@ import { useDeletePost } from '../hooks/useForumWrites';
 import type { QuotePicks } from '../hooks/useQuotePicks';
 import { failureText } from '../lib/forumFailures';
 import { useForumsTranslation } from '../registerForumsTranslations';
+
+import { PostVotes } from './PostVotes';
+
 import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the row needs. */
@@ -209,6 +212,12 @@ export function PostActions(props: PostActionsProps) {
   const quotePicks = post.state === 'live' ? props.quotePicks : null;
   return (
     <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
+      {/* GAPS-16c: the votes sit at the start of the row, the post's actions at its end. */}
+      {post.votes !== null && (
+        <div className="mr-auto">
+          <PostVotes postId={post.id} postNumber={post.number} votes={post.votes} />
+        </div>
+      )}
       {post.canMarkAnswer && <AnswerButton post={post} threadNumber={props.threadNumber} />}
       {quotePicks !== null && <QuoteButtons post={post} quotePicks={quotePicks} />}
       <ManageButtons {...props} />

@@ -28,7 +28,7 @@ As a user, I want to start threads and reply with simple formatting so that disc
   - Given a thread, when it is shown, then every post has a number (#1, #2) and its own permalink.
   - Given a user edits their post, when they save, then an "Edited" note appears and moderators can see the previous version.
 - **Legal and compliance:** whether pictures are allowed in posts is OPEN (if yes, they go through the picture check in S1-E10-05).
-- **Built:** FORUMS-1b; board 5.2's "Following thread" in GAPS-16a (Follow thread, with a daily notification of new replies); its formatting buttons in GAPS-16b.
+- **Built:** FORUMS-1b; board 5.2's "Following thread" in GAPS-16a (Follow thread, with a daily notification of new replies); its formatting buttons in GAPS-16b; upvotes and private downvotes on posts in GAPS-16c.
 
 ##### S1-E8-03 Quote, multi-quote and quick reply
 

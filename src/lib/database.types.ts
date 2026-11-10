@@ -3397,6 +3397,52 @@ export type Database = {
           },
         ];
       };
+      forum_post_votes: {
+        Row: {
+          created_at: string;
+          id: string;
+          is_counted: boolean;
+          is_upvote: boolean;
+          post_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          is_counted: boolean;
+          is_upvote: boolean;
+          post_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          is_counted?: boolean;
+          is_upvote?: boolean;
+          post_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'forum_post_votes_post_id_fkey';
+            columns: ['post_id'];
+            isOneToOne: false;
+            referencedRelation: 'forum_posts';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'forum_post_votes_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       forum_posts: {
         Row: {
           body: string;
@@ -3412,6 +3458,7 @@ export type Database = {
           user_id: string;
           forum_post_is_space_hidden: boolean | null;
           forum_post_state_for_caller: string | null;
+          open_forum_post_downvote_case: undefined | null;
           space_of_post: {
             age_group: Database['public']['Enums']['space_age_group'];
             archived_at: string | null;
@@ -3440,7 +3487,10 @@ export type Database = {
           } | null;
         };
         ComputedFields:
-          'forum_post_is_space_hidden' | 'forum_post_state_for_caller' | 'space_of_post';
+          | 'forum_post_is_space_hidden'
+          | 'forum_post_state_for_caller'
+          | 'open_forum_post_downvote_case'
+          | 'space_of_post';
         Insert: {
           body: string;
           created_at?: string;
@@ -12871,6 +12921,38 @@ export type Database = {
         };
         Returns: string;
       };
+      forum_post_vote_target: {
+        Args: { post_id: string };
+        Returns: {
+          body: string;
+          created_at: string;
+          deleted_at: string | null;
+          edited_at: string | null;
+          id: string;
+          moved_from_thread_id: string | null;
+          post_number: number;
+          quoted_post_ids: string[];
+          thread_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'forum_posts';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      forum_post_votes_json: {
+        Args: {
+          can_vote: boolean;
+          target: Omit<
+            Database['public']['Tables']['forum_posts']['Row'],
+            Database['public']['Tables']['forum_posts']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
       forum_post_wait_minutes: { Args: { author_id: string }; Returns: number };
       forum_quote_json: { Args: { quoted_post_id: string }; Returns: Json };
       forum_quotes_for_reply: {
@@ -14067,6 +14149,15 @@ export type Database = {
           target: Omit<
             Database['public']['Tables']['comments']['Row'],
             Database['public']['Tables']['comments']['ComputedFields']
+          >;
+        };
+        Returns: undefined;
+      };
+      open_forum_post_downvote_case: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['forum_posts']['Row'],
+            Database['public']['Tables']['forum_posts']['ComputedFields']
           >;
         };
         Returns: undefined;
@@ -16341,6 +16432,7 @@ export type Database = {
         }[];
       };
       verify_certificate: { Args: { code: string }; Returns: Json };
+      vote_forum_post: { Args: { post_id: string; vote: string }; Returns: string };
       wait_minutes_until_free: { Args: { oldest_in_window: string }; Returns: number };
       waitlist_interest_matches: {
         Args: { answer: Database['public']['Enums']['waitlist_interest']; wanted: string };

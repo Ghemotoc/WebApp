@@ -397,5 +397,21 @@
       "target_locked": "Discuția aceea e închisă.",
       "unreachable": "Nu am putut salva. Verifică-ți conexiunea și încearcă din nou."
     }
+  },
+  "votes": {
+    "count_one": "{{count}} vot pozitiv",
+    "count_few": "{{count}} voturi pozitive",
+    "count_other": "{{count}} de voturi pozitive",
+    "upvoteLabel_one": "{{count}} vot pozitiv. Votează pozitiv postarea {{number}}",
+    "upvoteLabel_few": "{{count}} voturi pozitive. Votează pozitiv postarea {{number}}",
+    "upvoteLabel_other": "{{count}} de voturi pozitive. Votează pozitiv postarea {{number}}",
+    "downvote": "Vot negativ privat",
+    "downvoteLabel": "Votează negativ postarea {{number}}, în privat",
+    "private": "Doar moderatorii văd voturile negative.",
+    "failed": "Nu a mers. Încearcă din nou.",
+    "help": {
+      "title": "Cum funcționează voturile",
+      "text": "Toată lumea vede voturile pozitive. Voturile negative sunt private. Nu apar niciodată ca scor. Îi ajută doar pe moderatori să găsească postările de verificat."
+    }
   }
 }

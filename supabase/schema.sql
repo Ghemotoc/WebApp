@@ -1437,6 +1437,7 @@ CREATE OR REPLACE FUNCTION "public"."account_deletion_rules"() RETURNS TABLE("ta
     ('forum_post_revisions', 'own_step', 0, 'deleted with the account''s posts, unless a case holds the post'),
     ('forum_posts', 'own_step', 0, 'words erased unless under an open case; the post keeps its number as a "Post deleted" marker so the thread''s numbering stays'),
     ('forum_read_marks', 'delete', 1, null),
+    ('forum_post_votes', 'delete', 1, null),
     ('forum_thread_follows', 'delete', 1, null),
     ('forum_thread_reads', 'delete', 1, null),
     ('forum_threads', 'own_step', 0, 'deleted when nobody else posted in it; otherwise kept for the other people''s replies, its starter shown as a deleted account'),
@@ -1495,7 +1496,7 @@ $$;
 ALTER FUNCTION "public"."account_deletion_rules"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13, GAPS-16a).';
+COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13, GAPS-16a, GAPS-16c).';
 
 
 
@@ -19549,6 +19550,7 @@ CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_
     ('forum_post_revisions', true, null),
     ('forum_posts', true, null),
     ('forum_read_marks', true, null),
+    ('forum_post_votes', true, null),
     ('forum_thread_follows', true, null),
     ('forum_thread_reads', true, null),
     ('forum_threads', true, null),
@@ -19607,7 +19609,7 @@ $$;
 ALTER FUNCTION "public"."data_export_tables"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13, GAPS-16a).';
+COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13, GAPS-16a, GAPS-16c).';
 
 
 
@@ -22874,6 +22876,9 @@ declare
   is_shown boolean := state in ('live', 'hidden');
   is_space_hidden boolean := public.forum_post_is_space_hidden(target);
   space public.spaces := public.space_of_post(target);
+  is_thread_open boolean := not exists (select 1 from public.forum_threads
+                                        where forum_threads.id = target.thread_id
+                                          and forum_threads.locked_at is not null);
 begin
   return jsonb_build_object(
     'id', target.id,
@@ -22911,7 +22916,12 @@ begin
       and space.id is not null and public.space_may_act(space, 'posts')
       and (state = 'live' or is_space_hidden)
       and (target.user_id <> space.user_id or space.user_id = caller_id
-           or public.space_acts_as_platform(space)), false));
+           or public.space_acts_as_platform(space)), false),
+    -- GAPS-16c: the upvote count and the caller's own vote (never a downvote count), and
+    -- whether they may vote: a live post by someone else in an open thread, by an active member.
+    'votes', case when is_shown then public.forum_post_votes_json(target,
+      caller_id is not null and not is_own and state = 'live' and is_thread_open
+      and public.is_active_member()) end);
 end;
 $$;
 
@@ -22919,7 +22929,7 @@ $$;
 ALTER FUNCTION "public"."forum_post_json"("target" "public"."forum_posts", "starter_id" "uuid") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."forum_post_json"("target" "public"."forum_posts", "starter_id" "uuid") IS 'Internal: one post as the thread page draws it, with its quotes and its author''s signature and rank, never a user ID (S1-E8-02, S1-E8-03, S1-E8-08, S1-E8-09).';
+COMMENT ON FUNCTION "public"."forum_post_json"("target" "public"."forum_posts", "starter_id" "uuid") IS 'Internal: one post as the thread page draws it, with its quotes, its author''s signature and rank, and its upvotes, never a user ID or a downvote count (S1-E8-02, S1-E8-03, S1-E8-08, S1-E8-09, GAPS-16c).';
 
 
 
@@ -22972,6 +22982,59 @@ ALTER FUNCTION "public"."forum_post_state_for_caller"("target" "public"."forum_p
 
 
 COMMENT ON FUNCTION "public"."forum_post_state_for_caller"("target" "public"."forum_posts") IS 'Internal: live, hidden, removed, deleted or null for the caller (S1-E8-02).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."forum_post_vote_target"("post_id" "uuid") RETURNS "public"."forum_posts"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target public.forum_posts;
+  thread public.forum_threads;
+begin
+  -- Step 1: the post must be live for the caller, in a thread they may open.
+  select * into target from public.forum_posts where forum_posts.id = post_id;
+  select * into thread from public.forum_threads where forum_threads.id = target.thread_id;
+  if target.id is null or thread.id is null or not public.forum_thread_is_shown(thread)
+     or public.forum_post_state_for_caller(target) is distinct from 'live' then
+    raise exception 'That post isn''t there any more.' using errcode = 'no_data_found', hint = 'post:missing';
+  end if;
+  -- Step 2: never one's own post.
+  if target.user_id = (select auth.uid()) then
+    raise exception 'You can''t vote on your own post.' using errcode = 'check_violation', hint = 'post:own';
+  end if;
+  return target;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."forum_post_vote_target"("post_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."forum_post_vote_target"("post_id" "uuid") IS 'Internal: the live forum post a vote is about, checked for the caller (GAPS-16c).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."forum_post_votes_json"("target" "public"."forum_posts", "can_vote" boolean) RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select jsonb_build_object(
+    'up', (select count(*) from public.forum_post_votes as votes
+           join public.profiles on profiles.id = votes.user_id
+           where votes.post_id = target.id and votes.is_upvote and profiles.deleted_at is null),
+    'mine', (select case when votes.is_upvote then 'up' else 'down' end
+             from public.forum_post_votes as votes
+             where votes.post_id = target.id and votes.user_id = (select auth.uid())),
+    'can_vote', can_vote);
+$$;
+
+
+ALTER FUNCTION "public"."forum_post_votes_json"("target" "public"."forum_posts", "can_vote" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."forum_post_votes_json"("target" "public"."forum_posts", "can_vote" boolean) IS 'Internal: a forum post''s upvote count and the caller''s own vote, never a downvote count (GAPS-16c).';
 
 
 
@@ -30678,6 +30741,8 @@ CREATE OR REPLACE FUNCTION "public"."notification_json"("target" "public"."notif
                      where live_sessions.id = target.live_session_id and live_sessions.deleted_at is null),
     -- GAPS-16a: the followed thread with new replies, while the reader may still open it.
     'forum_thread', (select jsonb_build_object('number', forum_threads.thread_number,
+                       'forum_slug', (select forums.slug from public.forums
+                                      where forums.id = forum_threads.forum_id),
                        'title', forum_threads.title)
                      from public.forum_threads
                      where forum_threads.id = target.forum_thread_id
@@ -31212,6 +31277,43 @@ ALTER FUNCTION "public"."open_downvote_case"("target" "public"."comments") OWNER
 
 
 COMMENT ON FUNCTION "public"."open_downvote_case"("target" "public"."comments") IS 'Internal: opens a lowest-tier case once a comment has enough counted downvotes (S1-E6-04).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."open_forum_post_downvote_case"("target" "public"."forum_posts") RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  threshold integer := coalesce(public.setting_value('downvote_case_threshold'), '5')::text::integer;
+  counted integer;
+begin
+  -- Step 1: how many accounts count.
+  select count(*) into counted
+  from public.forum_post_votes as votes
+  join public.profiles on profiles.id = votes.user_id
+  where votes.post_id = target.id and not votes.is_upvote and votes.is_counted
+    and profiles.deleted_at is null;
+  if counted < threshold then
+    return;
+  end if;
+  -- Step 2: one open case per item; a report may already have opened it.
+  if exists (select 1 from public.cases
+             where cases.item_type = 'forum_post' and cases.item_id = target.id and cases.status = 'open') then
+    return;
+  end if;
+  insert into public.cases (reference, user_id, item_type, item_id, source, tier, received_at, deadline_at)
+  values ('D-' || lpad(nextval('public.downvote_case_reference_seq')::text, 6, '0'), target.user_id,
+          'forum_post', target.id, 'downvotes', 'seven_days', now(),
+          now() + make_interval(hours => public.tier_hours('seven_days')));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."open_forum_post_downvote_case"("target" "public"."forum_posts") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."open_forum_post_downvote_case"("target" "public"."forum_posts") IS 'Internal: opens a lowest-tier case once a forum post has enough counted downvotes (GAPS-16c, S1-E6-04).';
 
 
 
@@ -47264,6 +47366,59 @@ COMMENT ON FUNCTION "public"."verify_certificate"("code" "text") IS 'Public: whe
 
 
 
+CREATE OR REPLACE FUNCTION "public"."vote_forum_post"("post_id" "uuid", "vote" "text") RETURNS "text"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  target public.forum_posts;
+  new_account_hours integer := coalesce(public.setting_value('downvote_new_account_hours'), '24')::text::integer;
+begin
+  -- Step 1: signed in, a vote we know, and a post the caller may vote on.
+  if caller_id is null then
+    raise exception 'Log in to vote.' using errcode = 'insufficient_privilege', hint = 'signed_out';
+  end if;
+  if vote is not null and vote not in ('up', 'down') then
+    raise exception 'A vote is up or down.' using errcode = 'invalid_parameter_value';
+  end if;
+  target := public.forum_post_vote_target(post_id);
+  -- Step 2: taking the vote back is always allowed.
+  if vote is null then
+    delete from public.forum_post_votes as votes
+    where votes.post_id = target.id and votes.user_id = caller_id;
+    return null;
+  end if;
+  -- Step 3: adding or swapping a vote is a write: the account gate, and an open thread.
+  if not public.is_active_member() then
+    raise exception 'Your account can''t vote right now.' using errcode = 'insufficient_privilege', hint = 'not_active';
+  end if;
+  if exists (select 1 from public.forum_threads
+             where forum_threads.id = target.thread_id and forum_threads.locked_at is not null) then
+    raise exception 'This thread is locked.' using errcode = 'check_violation', hint = 'thread:locked';
+  end if;
+  -- Step 4: one row per person per post; a new account's vote is kept but not counted.
+  insert into public.forum_post_votes (user_id, post_id, is_upvote, is_counted)
+  select caller_id, target.id, vote = 'up', profiles.created_at <= now() - make_interval(hours => new_account_hours)
+  from public.profiles where profiles.id = caller_id
+  on conflict on constraint forum_post_votes_one_per_person
+  do update set is_upvote = excluded.is_upvote;
+  -- Step 5: enough downvotes put the post in the queue.
+  if vote = 'down' then
+    perform public.open_forum_post_downvote_case(target);
+  end if;
+  return vote;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."vote_forum_post"("post_id" "uuid", "vote" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."vote_forum_post"("post_id" "uuid", "vote" "text") IS 'Sets, swaps or takes back the caller''s vote on a forum post; answers only the caller''s own vote (GAPS-16c, S1-E6-04).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."wait_minutes_until_free"("oldest_in_window" timestamp with time zone) RETURNS integer
     LANGUAGE "sql" STABLE
     SET "search_path" TO ''
@@ -49324,6 +49479,25 @@ ALTER TABLE "public"."forum_post_revisions" OWNER TO "postgres";
 
 COMMENT ON TABLE "public"."forum_post_revisions" IS 'kind: user_content; reportable: forum_post
 Earlier versions of edited forum posts; only moderation staff and the author read them (S1-E8-02 criterion 4).';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."forum_post_votes" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "post_id" "uuid" NOT NULL,
+    "is_upvote" boolean NOT NULL,
+    "is_counted" boolean NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL
+);
+
+
+ALTER TABLE "public"."forum_post_votes" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."forum_post_votes" IS 'kind: user_action
+One vote per person per forum post: an upvote everyone can count, or a private downvote only moderation sees (GAPS-16c, S1-E6-04). Read by the voter (their own) and moderation staff only.';
 
 
 
@@ -51704,6 +51878,16 @@ ALTER TABLE ONLY "public"."forum_post_revisions"
 
 
 
+ALTER TABLE ONLY "public"."forum_post_votes"
+    ADD CONSTRAINT "forum_post_votes_one_per_person" UNIQUE ("user_id", "post_id");
+
+
+
+ALTER TABLE ONLY "public"."forum_post_votes"
+    ADD CONSTRAINT "forum_post_votes_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."forum_posts"
     ADD CONSTRAINT "forum_posts_number_in_thread" UNIQUE ("thread_id", "post_number");
 
@@ -52998,6 +53182,10 @@ CREATE INDEX "forum_post_revisions_post" ON "public"."forum_post_revisions" USIN
 
 
 
+CREATE INDEX "forum_post_votes_post_id" ON "public"."forum_post_votes" USING "btree" ("post_id");
+
+
+
 CREATE INDEX "forum_posts_author_recent" ON "public"."forum_posts" USING "btree" ("user_id", "created_at" DESC);
 
 
@@ -54175,6 +54363,14 @@ CREATE OR REPLACE TRIGGER "forum_post_revisions_refuse_user_id_change" BEFORE UP
 
 
 CREATE OR REPLACE TRIGGER "forum_post_revisions_set_updated_at" BEFORE UPDATE ON "public"."forum_post_revisions" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "forum_post_votes_refuse_user_id_change" BEFORE UPDATE ON "public"."forum_post_votes" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"('user_id');
+
+
+
+CREATE OR REPLACE TRIGGER "forum_post_votes_set_updated_at" BEFORE UPDATE ON "public"."forum_post_votes" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
 
@@ -55529,6 +55725,16 @@ ALTER TABLE ONLY "public"."forum_post_revisions"
 
 ALTER TABLE ONLY "public"."forum_post_revisions"
     ADD CONSTRAINT "forum_post_revisions_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."forum_post_votes"
+    ADD CONSTRAINT "forum_post_votes_post_id_fkey" FOREIGN KEY ("post_id") REFERENCES "public"."forum_posts"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."forum_post_votes"
+    ADD CONSTRAINT "forum_post_votes_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
 
 
 
@@ -57381,6 +57587,17 @@ CREATE POLICY "forum_post_revisions_select_own" ON "public"."forum_post_revision
 
 
 COMMENT ON POLICY "forum_post_revisions_select_own" ON "public"."forum_post_revisions" IS 'Allows the author to read the earlier versions of their own posts (S1-E8-02).';
+
+
+
+ALTER TABLE "public"."forum_post_votes" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "forum_post_votes_select_moderation" ON "public"."forum_post_votes" FOR SELECT TO "authenticated" USING (( SELECT "public"."staff_may"('moderation'::"text", 'view'::"text") AS "staff_may"));
+
+
+
+CREATE POLICY "forum_post_votes_select_own" ON "public"."forum_post_votes" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
 
 
 
@@ -61581,6 +61798,14 @@ REVOKE ALL ON FUNCTION "public"."forum_post_state_for_caller"("target" "public".
 
 
 
+REVOKE ALL ON FUNCTION "public"."forum_post_vote_target"("post_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."forum_post_votes_json"("target" "public"."forum_posts", "can_vote" boolean) FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."forum_post_wait_minutes"("author_id" "uuid") FROM PUBLIC;
 
 
@@ -62743,6 +62968,10 @@ GRANT ALL ON FUNCTION "public"."open_data_request_parent_copy"("token" "text") T
 
 
 REVOKE ALL ON FUNCTION "public"."open_downvote_case"("target" "public"."comments") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."open_forum_post_downvote_case"("target" "public"."forum_posts") FROM PUBLIC;
 
 
 
@@ -64980,6 +65209,11 @@ GRANT ALL ON FUNCTION "public"."verify_certificate"("code" "text") TO "authentic
 
 
 
+REVOKE ALL ON FUNCTION "public"."vote_forum_post"("post_id" "uuid", "vote" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."vote_forum_post"("post_id" "uuid", "vote" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."wait_minutes_until_free"("oldest_in_window" timestamp with time zone) FROM PUBLIC;
 
 
@@ -65370,6 +65604,11 @@ GRANT SELECT ON TABLE "public"."forum_names" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."forum_post_revisions" TO "service_role";
 GRANT SELECT ON TABLE "public"."forum_post_revisions" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."forum_post_votes" TO "service_role";
+GRANT SELECT ON TABLE "public"."forum_post_votes" TO "authenticated";
 
 
 

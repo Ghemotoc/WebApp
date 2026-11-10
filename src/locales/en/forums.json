@@ -397,5 +397,21 @@
       "target_locked": "That thread is locked.",
       "unreachable": "We couldn’t save that. Check your connection and try again."
     }
+  },
+  "votes": {
+    "count_one": "{{count}} upvote",
+    "count_few": "{{count}} upvotes",
+    "count_other": "{{count}} upvotes",
+    "upvoteLabel_one": "{{count}} upvote. Upvote post {{number}}",
+    "upvoteLabel_few": "{{count}} upvotes. Upvote post {{number}}",
+    "upvoteLabel_other": "{{count}} upvotes. Upvote post {{number}}",
+    "downvote": "Downvote privately",
+    "downvoteLabel": "Downvote post {{number}} privately",
+    "private": "Only moderators see downvotes.",
+    "failed": "That didn’t work. Try again.",
+    "help": {
+      "title": "How votes work",
+      "text": "Everyone can see upvotes. Downvotes are private. They never show as a score. They only help moderators find posts to check."
+    }
   }
 }

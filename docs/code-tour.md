@@ -2147,6 +2147,14 @@ The liquid glass Library board draws "Your lists": lists of stories a reader mak
 - Preview: "Preview" beside "Post reply" opens `ReplyPreview`, which draws what is in the box with `ForumPostText`, the component a posted reply uses (so raw HTML is never drawn). It is made on the reader's device and sends nothing.
 - Tests: `supabase/tests/database/330-forum-rules-and-pointers.test.sql`, `src/features/forums/lib/forumAddresses.test.ts`, `src/features/forums/api/forumModeration.test.ts`, `e2e/forum-rules-and-pointers.spec.ts`.
 
+## Votes on forum posts (GAPS-16c)
+
+- Where it lives: `src/features/forums/components/PostVotes.tsx` (at the start of `PostActions`), the "How votes work" box in `ThreadSidePanel`, `hooks/usePostVote.ts`, `api/forumVotes.ts`, and `supabase/migrations/…_gaps16c_forum_post_votes.sql`.
+- The table: `forum_post_votes` (member, post, up or down, and whether a downvote counts; one row per member per post). The voter reads their own row, moderation staff read every row, nobody writes to it directly.
+- How a vote travels: the Upvote chip or "Downvote privately" → `usePostVote()` → `vote_forum_post(post_id, 'up' | 'down' | null)` → `forum_post_vote_target()` checks the post is live in a thread the member may open and isn't theirs → the account gate and an open thread for a new vote → one row upserted → a downvote may call `open_forum_post_downvote_case()`, which opens a lowest-tier `downvotes` case at the same threshold comments use.
+- What the page gets: `forum_post_json()` answers `votes` = `{up, mine, can_vote}` from `forum_post_votes_json()`. There is never a downvote count (Q22).
+- Tests: `supabase/tests/database/344-forum-post-votes.test.sql`, `e2e/forum-post-votes.spec.ts`.
+
 ## Formatting buttons on forum posts (GAPS-16b)
 
 - Where it lives: `src/features/forums/components/PostFormatToolbar.tsx` (drawn by `PostEditor`, so the reply box, the new-thread box and the edit box all have it), `hooks/usePostFormatting.ts` and `lib/postFormatting.ts`; the link, quote and list icons are in `src/components/icons/ActionIcon.tsx`.

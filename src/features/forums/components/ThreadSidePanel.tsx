@@ -4,7 +4,8 @@
  *
  * The numbers are Replies, Writers taking part and Last reply, as label and value rows with a fine
  * line between them (DoD). The board's Views is left out: we keep no per-reader records
- * (docs/board-fixes.md). GAPS-16a adds Follow thread under the numbers (ThreadFollowButton).
+ * (docs/board-fixes.md). GAPS-16a adds Follow thread under the numbers (ThreadFollowButton);
+ * GAPS-16c adds "How votes work" (downvotes are private, Q22).
  * Who uses it: ThreadPage.
  */
 import { LabelRows } from '@/components/ui/LabelRows';
@@ -44,6 +45,12 @@ export function ThreadSidePanel({ thread }: { thread: ForumThreadHeader }) {
           ]}
         />
         <ThreadFollowButton threadNumber={thread.number} isFollowing={thread.isFollowing} />
+      </section>
+      <section className="flex flex-col gap-2 rounded-card border border-border bg-surface p-5">
+        <h2 className="m-0 font-heading text-base font-bold text-heading">
+          {t('votes.help.title')}
+        </h2>
+        <p className="m-0 text-sm text-body">{t('votes.help.text')}</p>
       </section>
       <section className="flex flex-col gap-2 rounded-card border border-panel-border bg-panel p-5">
         <h2 className="m-0 font-heading text-base font-bold text-heading">
