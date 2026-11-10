@@ -29,6 +29,21 @@
       "none": "No contest is open for entries right now. New contests show here.",
       "loadFailed": "We couldn’t load the contests. Check the connection and try again."
     },
+    "prompt": {
+      "eyebrow": "Prompt of the week",
+      "earlierEyebrow": "Earlier prompt",
+      "tried_one": "{{count}} writer tried it",
+      "tried_few": "{{count}} writers tried it",
+      "tried_other": "{{count}} writers tried it",
+      "endsToday": "ends today",
+      "endsIn_one": "ends in {{count}} day",
+      "endsIn_few": "ends in {{count}} days",
+      "endsIn_other": "ends in {{count}} days",
+      "write": "Write from this prompt",
+      "another": "Another prompt",
+      "writingFrom": "Writing from this prompt",
+      "loadFailed": "We couldn’t load the writing prompt. Check the connection and try again."
+    },
     "guides": {
       "eyebrow": "How-to guides",
       "seeEvery": "See every guide",
@@ -59,6 +74,39 @@
       "fewerThanFive": "fewer than 5",
       "seeStatistics": "See statistics",
       "loadFailed": "We couldn’t load this week’s numbers. Check the connection and try again."
+    }
+  },
+  "hubStaff": {
+    "documentTitle": "Writers’ hub · Admin",
+    "heading": "Writers’ hub",
+    "intro": "What writers see on the Writers’ hub besides contests. Every change is logged.",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "editNamed": "Edit: {{name}}",
+    "delete": "Delete",
+    "deleteNamed": "Delete: {{name}}",
+    "deleteConfirm": "Delete it",
+    "keep": "Keep it",
+    "loading": "Loading…",
+    "loadFailed": "We couldn’t load the list. Check the connection and try again.",
+    "failures": {
+      "not_allowed": "This account can’t change the Writers’ hub.",
+      "day_taken": "Another prompt already starts on that day. Pick a different day.",
+      "refused": "Fill in both texts, up to 300 characters each, and the start day.",
+      "failed": "We couldn’t save the change. Try again."
+    },
+    "prompts": {
+      "heading": "Prompt of the week",
+      "intro": "A prompt shows on the hub from its start day for 7 days. Writers can still open earlier prompts with “Another prompt”.",
+      "add": "Add a prompt",
+      "enLabel": "Prompt in English",
+      "roLabel": "Prompt in Romanian",
+      "dayLabel": "Start day",
+      "dayHint": "The first of its 7 days, in Romanian time.",
+      "startsOn": "Starts {{day}}",
+      "empty": "No prompt yet. The hub shows the card once the first one starts.",
+      "listLabel": "Writing prompts, newest first"
     }
   },
   "resources": {

@@ -7536,6 +7536,7 @@ export type Database = {
           updated_at: string;
           user_id: string;
           visibility: Database['public']['Enums']['story_visibility'];
+          writing_prompt_id: string | null;
           admin_story_cover_json: Json | null;
           admin_story_row: Json | null;
           admin_story_settings_json: Json | null;
@@ -7580,6 +7581,7 @@ export type Database = {
             updated_at: string;
             user_id: string;
             visibility: Database['public']['Enums']['story_visibility'];
+            writing_prompt_id: string | null;
           } | null;
         };
         ComputedFields:
@@ -7628,6 +7630,7 @@ export type Database = {
           updated_at?: string;
           user_id: string;
           visibility?: Database['public']['Enums']['story_visibility'];
+          writing_prompt_id?: string | null;
         };
         Update: {
           ai_disclosure?: Database['public']['Enums']['ai_disclosure'];
@@ -7669,6 +7672,7 @@ export type Database = {
           updated_at?: string;
           user_id?: string;
           visibility?: Database['public']['Enums']['story_visibility'];
+          writing_prompt_id?: string | null;
         };
         Relationships: [
           {
@@ -7697,6 +7701,13 @@ export type Database = {
             columns: ['user_id'];
             isOneToOne: false;
             referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'stories_writing_prompt_id_fkey';
+            columns: ['writing_prompt_id'];
+            isOneToOne: false;
+            referencedRelation: 'writing_prompts';
             referencedColumns: ['id'];
           },
         ];
@@ -9268,6 +9279,48 @@ export type Database = {
           },
         ];
       };
+      writing_prompts: {
+        Row: {
+          created_at: string;
+          deleted_at: string | null;
+          id: string;
+          prompt_en: string;
+          prompt_ro: string;
+          starts_on: string;
+          updated_at: string;
+          updated_by_user_id: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          deleted_at?: string | null;
+          id?: string;
+          prompt_en: string;
+          prompt_ro: string;
+          starts_on: string;
+          updated_at?: string;
+          updated_by_user_id?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          deleted_at?: string | null;
+          id?: string;
+          prompt_en?: string;
+          prompt_ro?: string;
+          starts_on?: string;
+          updated_at?: string;
+          updated_by_user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'writing_prompts_updated_by_user_id_fkey';
+            columns: ['updated_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -9796,6 +9849,7 @@ export type Database = {
       };
       admin_delete_canned_reply: { Args: { reply_id: string }; Returns: boolean };
       admin_delete_forum: { Args: { forum_id: string; reason: string }; Returns: undefined };
+      admin_delete_writing_prompt: { Args: { prompt_id: string }; Returns: boolean };
       admin_describe_abuse_image: {
         Args: { description_text: string; evidence_id: string };
         Returns: boolean;
@@ -10426,6 +10480,10 @@ export type Database = {
         Args: { fields: Json; target_campaign_id: string };
         Returns: Json;
       };
+      admin_save_writing_prompt: {
+        Args: { prompt_en: string; prompt_id: string; prompt_ro: string; starts_on: string };
+        Returns: string;
+      };
       admin_search_audit_log: {
         Args: {
           action_prefix?: string;
@@ -10627,6 +10685,7 @@ export type Database = {
           updated_at: string;
           user_id: string;
           visibility: Database['public']['Enums']['story_visibility'];
+          writing_prompt_id: string | null;
         };
         SetofOptions: {
           from: '*';
@@ -12748,6 +12807,7 @@ export type Database = {
           updated_at: string;
           user_id: string;
           visibility: Database['public']['Enums']['story_visibility'];
+          writing_prompt_id: string | null;
         }[];
         SetofOptions: {
           from: '*';
@@ -14048,6 +14108,7 @@ export type Database = {
           updated_at: string;
           user_id: string;
           visibility: Database['public']['Enums']['story_visibility'];
+          writing_prompt_id: string | null;
         }[];
         SetofOptions: {
           from: '*';
@@ -15307,6 +15368,10 @@ export type Database = {
         Returns: Json;
       };
       start_reading_habit: { Args: { device_time_zone: string }; Returns: undefined };
+      start_story_from_prompt: {
+        Args: { prompt_id: string; story_slug: string };
+        Returns: boolean;
+      };
       statement_ground_for_case: {
         Args: {
           target: Omit<
@@ -15393,6 +15458,7 @@ export type Database = {
           updated_at: string;
           user_id: string;
           visibility: Database['public']['Enums']['story_visibility'];
+          writing_prompt_id: string | null;
         };
         SetofOptions: {
           from: 'stories';
@@ -15807,6 +15873,18 @@ export type Database = {
           prize_en: string;
           prize_ro: string;
           word_limit: number;
+        }[];
+      };
+      writers_hub_prompts: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          ends_on: string;
+          is_current: boolean;
+          prompt_en: string;
+          prompt_id: string;
+          prompt_ro: string;
+          starts_on: string;
+          writer_count: number;
         }[];
       };
       writers_published_by_market: {

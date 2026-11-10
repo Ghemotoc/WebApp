@@ -3203,6 +3203,7 @@ CREATE TABLE IF NOT EXISTS "public"."stories" (
     "rating_reasons" "public"."story_rating_reason"[] DEFAULT '{}'::"public"."story_rating_reason"[] NOT NULL,
     "visibility" "public"."story_visibility" DEFAULT 'public'::"public"."story_visibility" NOT NULL,
     "first_published_year" integer,
+    "writing_prompt_id" "uuid",
     CONSTRAINT "stories_abuse_needs_rating_and_note" CHECK (((NOT "deals_with_abuse_or_coercion") OR (("rating" = ANY (ARRAY['16_plus'::"public"."story_rating", '18_plus'::"public"."story_rating"])) AND ("btrim"("content_note") <> ''::"text")))),
     CONSTRAINT "stories_blurb_length" CHECK (("char_length"("blurb") <= 500)),
     CONSTRAINT "stories_card_colour_on_palette" CHECK ((("card_colour" IS NULL) OR ("card_colour" = ANY (ARRAY['plum'::"text", 'violet'::"text", 'gold'::"text", 'ink'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text"])))),
@@ -3310,6 +3311,10 @@ COMMENT ON COLUMN "public"."stories"."visibility" IS 'kind: setting. Who can rea
 
 
 COMMENT ON COLUMN "public"."stories"."first_published_year" IS 'The year the work was first published anywhere; set for classics from classic_works (copied by a trigger). Null for a writer''s own story, whose first chapter''s year is shown instead.';
+
+
+
+COMMENT ON COLUMN "public"."stories"."writing_prompt_id" IS 'The writing prompt this story was started from, or null (GAPS-12c).';
 
 
 
@@ -5409,6 +5414,36 @@ ALTER FUNCTION "public"."admin_delete_forum"("forum_id" "uuid", "reason" "text")
 
 
 COMMENT ON FUNCTION "public"."admin_delete_forum"("forum_id" "uuid", "reason" "text") IS 'Removes an empty forum, with no forums or threads inside; owner and admin; logged (FORUMS-1a, FORUMS-1b).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_delete_writing_prompt"("prompt_id" "uuid") RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  deleted public.writing_prompts;
+begin
+  if not public.staff_may('contests', 'act') then
+    raise exception 'Only contest staff can change writing prompts.' using errcode = 'insufficient_privilege';
+  end if;
+  update public.writing_prompts set deleted_at = now(), updated_by_user_id = (select auth.uid())
+  where id = prompt_id and deleted_at is null returning * into deleted;
+  if deleted.id is null then
+    raise exception 'There is no such writing prompt.' using errcode = 'no_data_found';
+  end if;
+  perform public.log_staff_action('writing_prompt.deleted', 'writing_prompts', deleted.id::text, null, null,
+    jsonb_build_object('prompt_ro', deleted.prompt_ro, 'prompt_en', deleted.prompt_en, 'starts_on', deleted.starts_on),
+    null);
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_delete_writing_prompt"("prompt_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_delete_writing_prompt"("prompt_id" "uuid") IS 'Contest staff delete a writing prompt; logged (GAPS-12c).';
 
 
 
@@ -9659,6 +9694,56 @@ ALTER FUNCTION "public"."admin_save_sponsor_campaign"("target_campaign_id" "uuid
 
 
 COMMENT ON FUNCTION "public"."admin_save_sponsor_campaign"("target_campaign_id" "uuid", "fields" "jsonb") IS 'Creates or saves a sponsor campaign as a draft; owner and admin only; logged (S1-E12-02).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_save_writing_prompt"("prompt_id" "uuid", "prompt_ro" "text", "prompt_en" "text", "starts_on" "date") RETURNS "uuid"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  before_row public.writing_prompts;
+  saved public.writing_prompts;
+begin
+  -- Step 1: staff with the contests area only (the server decides, architecture 1.8.1).
+  if not public.staff_may('contests', 'act') then
+    raise exception 'Only contest staff can change writing prompts.' using errcode = 'insufficient_privilege';
+  end if;
+  if starts_on is null then
+    raise exception 'A prompt needs a start day.' using errcode = 'check_violation';
+  end if;
+  -- Step 2: a new prompt, or the change to one that exists.
+  if prompt_id is null then
+    insert into public.writing_prompts (prompt_ro, prompt_en, starts_on, updated_by_user_id)
+    values (btrim(prompt_ro), btrim(prompt_en), starts_on, (select auth.uid()))
+    returning * into saved;
+  else
+    select * into before_row from public.writing_prompts
+    where writing_prompts.id = prompt_id and deleted_at is null for update;
+    if before_row.id is null then
+      raise exception 'There is no such writing prompt.' using errcode = 'no_data_found';
+    end if;
+    update public.writing_prompts set prompt_ro = btrim(admin_save_writing_prompt.prompt_ro),
+      prompt_en = btrim(admin_save_writing_prompt.prompt_en),
+      starts_on = admin_save_writing_prompt.starts_on,
+      updated_by_user_id = (select auth.uid())
+    where id = prompt_id returning * into saved;
+  end if;
+  -- Step 3: the audit log keeps what changed, in the same transaction.
+  perform public.log_staff_action('writing_prompt.saved', 'writing_prompts', saved.id::text, null, null,
+    case when before_row.id is null then null
+         else jsonb_build_object('prompt_ro', before_row.prompt_ro, 'prompt_en', before_row.prompt_en,
+                                 'starts_on', before_row.starts_on) end,
+    jsonb_build_object('prompt_ro', saved.prompt_ro, 'prompt_en', saved.prompt_en, 'starts_on', saved.starts_on));
+  return saved.id;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_save_writing_prompt"("prompt_id" "uuid", "prompt_ro" "text", "prompt_en" "text", "starts_on" "date") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_save_writing_prompt"("prompt_id" "uuid", "prompt_ro" "text", "prompt_en" "text", "starts_on" "date") IS 'Contest staff add or change a writing prompt; logged with before and after (GAPS-12c).';
 
 
 
@@ -42323,6 +42408,41 @@ COMMENT ON FUNCTION "public"."start_reading_habit"("device_time_zone" "text") IS
 
 
 
+CREATE OR REPLACE FUNCTION "public"."start_story_from_prompt"("story_slug" "text", "prompt_id" "uuid") RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  changed_rows integer;
+begin
+  -- Step 1: a signed-in writer only.
+  if caller_id is null then
+    raise exception 'Log in to write from a prompt.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 2: the prompt must be one the hub shows (started, not deleted).
+  if not exists (select 1 from public.writing_prompts
+                 where writing_prompts.id = prompt_id and writing_prompts.deleted_at is null
+                   and writing_prompts.starts_on <= public.romania_today()) then
+    return false;
+  end if;
+  -- Step 3: the caller's own live story, and only if it has no prompt yet.
+  update public.stories set writing_prompt_id = prompt_id
+  where stories.slug = story_slug and stories.user_id = caller_id
+    and stories.deleted_at is null and stories.writing_prompt_id is null;
+  get diagnostics changed_rows = row_count;
+  return changed_rows = 1;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."start_story_from_prompt"("story_slug" "text", "prompt_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."start_story_from_prompt"("story_slug" "text", "prompt_id" "uuid") IS 'The signed-in writer ties their own story to a started writing prompt, once; false when it can''t (GAPS-12c).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."statement_from_job"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -46767,6 +46887,36 @@ COMMENT ON FUNCTION "public"."writers_hub_contests"() IS 'The contests the signe
 
 
 
+CREATE OR REPLACE FUNCTION "public"."writers_hub_prompts"() RETURNS TABLE("prompt_id" "uuid", "prompt_ro" "text", "prompt_en" "text", "starts_on" "date", "ends_on" "date", "is_current" boolean, "writer_count" integer)
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select
+    writing_prompts.id,
+    writing_prompts.prompt_ro,
+    writing_prompts.prompt_en,
+    writing_prompts.starts_on,
+    writing_prompts.starts_on + 6,
+    public.romania_today() <= writing_prompts.starts_on + 6,
+    (select count(distinct stories.user_id)::integer from public.stories
+      where stories.writing_prompt_id = writing_prompts.id and stories.deleted_at is null)
+  from public.writing_prompts
+  where (select auth.uid()) is not null
+    and writing_prompts.deleted_at is null
+    -- An upcoming prompt stays hidden until its first day.
+    and writing_prompts.starts_on <= public.romania_today()
+  order by writing_prompts.starts_on desc
+  limit 8;
+$$;
+
+
+ALTER FUNCTION "public"."writers_hub_prompts"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."writers_hub_prompts"() IS 'The writing prompts that have started, newest first, each with how many writers started a story from it, for the Writers'' hub (GAPS-12c).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."writers_published_by_market"("for_day" "date") RETURNS TABLE("market" "text", "writer_count" integer)
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -49548,6 +49698,28 @@ Each writer''s rank, worked out again whenever their published chapters change; 
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."writing_prompts" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "prompt_ro" "text" NOT NULL,
+    "prompt_en" "text" NOT NULL,
+    "starts_on" "date" NOT NULL,
+    "updated_by_user_id" "uuid",
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "deleted_at" timestamp with time zone,
+    CONSTRAINT "writing_prompts_prompt_en_length" CHECK ((("char_length"("btrim"("prompt_en")) >= 1) AND ("char_length"("btrim"("prompt_en")) <= 300))),
+    CONSTRAINT "writing_prompts_prompt_ro_length" CHECK ((("char_length"("btrim"("prompt_ro")) >= 1) AND ("char_length"("btrim"("prompt_ro")) <= 300)))
+);
+
+
+ALTER TABLE "public"."writing_prompts" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."writing_prompts" IS 'kind: platform
+The prompt of the week on the Writers'' hub: staff-written words in Romanian and English with a start day (GAPS-12c). No personal data.';
+
+
+
 ALTER TABLE ONLY "public"."abuse_image_evidence"
     ADD CONSTRAINT "abuse_image_evidence_pkey" PRIMARY KEY ("id");
 
@@ -50823,6 +50995,11 @@ ALTER TABLE ONLY "public"."writer_ranks"
 
 
 
+ALTER TABLE ONLY "public"."writing_prompts"
+    ADD CONSTRAINT "writing_prompts_pkey" PRIMARY KEY ("id");
+
+
+
 CREATE INDEX "abuse_image_evidence_case_id_idx" ON "public"."abuse_image_evidence" USING "btree" ("case_id");
 
 
@@ -51795,6 +51972,10 @@ CREATE INDEX "stories_user_id_idx" ON "public"."stories" USING "btree" ("user_id
 
 
 
+CREATE INDEX "stories_writing_prompt_id" ON "public"."stories" USING "btree" ("writing_prompt_id") WHERE ("writing_prompt_id" IS NOT NULL);
+
+
+
 CREATE INDEX "story_bible_entries_section_id_idx" ON "public"."story_bible_entries" USING "btree" ("section_id");
 
 
@@ -52016,6 +52197,10 @@ CREATE INDEX "username_approvals_user_id_idx" ON "public"."username_approvals" U
 
 
 CREATE INDEX "waitlist_entries_waiting" ON "public"."waitlist_entries" USING "btree" ("joined_at") WHERE ("admitted_at" IS NULL);
+
+
+
+CREATE UNIQUE INDEX "writing_prompts_one_per_start_day" ON "public"."writing_prompts" USING "btree" ("starts_on") WHERE ("deleted_at" IS NULL);
 
 
 
@@ -53044,6 +53229,10 @@ CREATE OR REPLACE TRIGGER "waitlist_entries_refuse_user_id_change" BEFORE UPDATE
 
 
 CREATE OR REPLACE TRIGGER "waitlist_entries_set_updated_at" BEFORE UPDATE ON "public"."waitlist_entries" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "writing_prompts_set_updated_at" BEFORE UPDATE ON "public"."writing_prompts" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
 
@@ -54437,6 +54626,11 @@ ALTER TABLE ONLY "public"."stories"
 
 
 
+ALTER TABLE ONLY "public"."stories"
+    ADD CONSTRAINT "stories_writing_prompt_id_fkey" FOREIGN KEY ("writing_prompt_id") REFERENCES "public"."writing_prompts"("id");
+
+
+
 ALTER TABLE ONLY "public"."story_bible_entries"
     ADD CONSTRAINT "story_bible_entries_section_id_fkey" FOREIGN KEY ("section_id") REFERENCES "public"."story_bible_sections"("id");
 
@@ -54749,6 +54943,11 @@ ALTER TABLE ONLY "public"."waitlist_entries"
 
 ALTER TABLE ONLY "public"."writer_ranks"
     ADD CONSTRAINT "writer_ranks_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."writing_prompts"
+    ADD CONSTRAINT "writing_prompts_updated_by_user_id_fkey" FOREIGN KEY ("updated_by_user_id") REFERENCES "public"."profiles"("id");
 
 
 
@@ -56586,6 +56785,17 @@ COMMENT ON POLICY "writer_ranks_select_own" ON "public"."writer_ranks" IS 'Allow
 
 
 
+ALTER TABLE "public"."writing_prompts" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "writing_prompts_select_contest_staff" ON "public"."writing_prompts" FOR SELECT TO "authenticated" USING ((("deleted_at" IS NULL) AND ( SELECT "public"."staff_may"('contests'::"text", 'view'::"text") AS "staff_may")));
+
+
+
+COMMENT ON POLICY "writing_prompts_select_contest_staff" ON "public"."writing_prompts" IS 'Allows staff with the contests area to read the writing prompts that aren''t deleted, upcoming ones included (GAPS-12c).';
+
+
+
 GRANT USAGE ON SCHEMA "public" TO "postgres";
 GRANT USAGE ON SCHEMA "public" TO "anon";
 GRANT USAGE ON SCHEMA "public" TO "authenticated";
@@ -57109,6 +57319,11 @@ GRANT ALL ON FUNCTION "public"."admin_delete_canned_reply"("reply_id" "uuid") TO
 
 REVOKE ALL ON FUNCTION "public"."admin_delete_forum"("forum_id" "uuid", "reason" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_delete_forum"("forum_id" "uuid", "reason" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_delete_writing_prompt"("prompt_id" "uuid") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_delete_writing_prompt"("prompt_id" "uuid") TO "authenticated";
 
 
 
@@ -57669,6 +57884,11 @@ GRANT ALL ON FUNCTION "public"."admin_save_sponsor"("target_sponsor_id" "uuid", 
 
 REVOKE ALL ON FUNCTION "public"."admin_save_sponsor_campaign"("target_campaign_id" "uuid", "fields" "jsonb") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_save_sponsor_campaign"("target_campaign_id" "uuid", "fields" "jsonb") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_save_writing_prompt"("prompt_id" "uuid", "prompt_ro" "text", "prompt_en" "text", "starts_on" "date") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_save_writing_prompt"("prompt_id" "uuid", "prompt_ro" "text", "prompt_en" "text", "starts_on" "date") TO "authenticated";
 
 
 
@@ -62269,6 +62489,11 @@ GRANT ALL ON FUNCTION "public"."start_reading_habit"("device_time_zone" "text") 
 
 
 
+REVOKE ALL ON FUNCTION "public"."start_story_from_prompt"("story_slug" "text", "prompt_id" "uuid") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."start_story_from_prompt"("story_slug" "text", "prompt_id" "uuid") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."statement_from_job"() FROM PUBLIC;
 
 
@@ -62855,6 +63080,11 @@ REVOKE ALL ON FUNCTION "public"."writer_reader_stops"("target_chapter_id" "uuid"
 
 REVOKE ALL ON FUNCTION "public"."writers_hub_contests"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."writers_hub_contests"() TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."writers_hub_prompts"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."writers_hub_prompts"() TO "authenticated";
 
 
 
@@ -63486,6 +63716,11 @@ GRANT SELECT ON TABLE "public"."waitlist_entries" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."writer_ranks" TO "service_role";
 GRANT SELECT ON TABLE "public"."writer_ranks" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."writing_prompts" TO "service_role";
+GRANT SELECT ON TABLE "public"."writing_prompts" TO "authenticated";
 
 
 

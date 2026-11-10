@@ -181,6 +181,14 @@ const staffRoutes: RouteObject = {
         return { Component: SafetyContactsAdminPage };
       },
     },
+    // Writers' hub content (GAPS-12c): the writing prompts, kept by staff with the contests area.
+    {
+      path: 'hub',
+      lazy: async () => {
+        const { StaffHubPage } = await import('@/features/hub/components/staff/StaffHubPage');
+        return { Component: StaffHubPage };
+      },
+    },
     // Contests (S1-E11-15; CONTESTS-13b1): owner and admin; the list and one contest's editor.
     {
       path: 'contests',

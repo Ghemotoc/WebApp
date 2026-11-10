@@ -2,15 +2,15 @@
  * WritersHubPage: the Writers' hub at /hub, the signed-in home (bundle G9 WRITING, part a; board
  * WritersHub; design rulebook: "When signed in, the logo goes to the Writers' hub").
  *
- * Top to bottom, as on the board: the hero, then the open contests and the how-to guides in the
- * wide column, with this week's numbers (GAPS-12b) and the tools beside them on a wide screen and
+ * Top to bottom, as on the board: the hero, then the open contests, the prompt of the week
+ * (GAPS-12c) and the how-to guides in the wide column, with this week's numbers (GAPS-12b) and the tools beside them on a wide screen and
  * under them on a phone or tablet.
- * Built only from parts with something real behind them; the board's prompt of the week, learning
+ * Built only from parts with something real behind them; the board's learning
  * path, live sessions, writing month, writer of the week, calls for submissions and badges wait
  * for their own parts of GAPS-12 (docs/board-fixes.md). The ad slot waits for S1-E12-04.
  * Signed out, it says to log in, as Notifications does.
  * Who shows it: the router, at /hub; the logo links here when someone is signed in.
- * What it calls: HubHero, HubContests, HubGuides, HubWeek and HubTools; useSession.
+ * What it calls: HubHero, HubContests, HubPrompt, HubGuides, HubWeek and HubTools; useSession.
  */
 import { Link } from 'react-router';
 
@@ -24,6 +24,7 @@ import { useHubTranslation } from '../registerHubTranslations';
 import { HubContests } from './HubContests';
 import { HubGuides } from './HubGuides';
 import { HubHero } from './HubHero';
+import { HubPrompt } from './HubPrompt';
 import { HubTools } from './HubTools';
 import { HubWeek } from './HubWeek';
 
@@ -41,6 +42,7 @@ function HubBody() {
       <div className="flex flex-wrap items-start gap-7">
         <div className="flex min-w-0 flex-[999_1_560px] flex-col gap-7">
           <HubContests now={now} />
+          <HubPrompt now={now} />
           <HubGuides />
         </div>
         <div className="flex min-w-0 flex-[1_1_300px] flex-col gap-7">

@@ -6,6 +6,8 @@
  * (the basics, category and tags, cover, labels) and the action bar, with the live preview
  * beside them (below them on phones). The board's "Status and comments" section lives in story
  * settings (S1-E3-05) and "Where can people read this story?" is S1-E3-08 (after March).
+ * Coming from the hub's "Write from this prompt" (?prompt=<ID>, GAPS-12c), PromptNote shows the
+ * prompt under the header and the new story remembers it.
  * What it calls: useNewStoryForm (the answers, checks and create_story()), useStoryFormOptions
  * (languages and categories), useMyNames (the pen name for the preview).
  * Errors: a read-only account or a failed save shows a plain message above the buttons.
@@ -20,6 +22,7 @@ import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { useMyNames } from '@/features/account/hooks/useMyNames';
 import { displayName } from '@/features/account/lib/nameRules';
+import { PromptNote } from '@/features/hub/components/PromptNote';
 
 import { useNewStoryForm } from '../hooks/useNewStoryForm';
 import { useStoryFormOptions } from '../hooks/useStoryFormOptions';
@@ -30,7 +33,7 @@ import { StoryBasicsSection } from './StoryBasicsSection';
 import { StoryLabelsSection } from './StoryLabelsSection';
 import { StoryPreviewAside } from './StoryPreviewAside';
 
-/** The page header: back link, eyebrow, heading and intro. */
+/** The page header: back link, eyebrow, heading, intro and the writing prompt, if any. */
 function NewStoryHeader() {
   const { t } = useTranslation('writing');
   return (
@@ -47,6 +50,8 @@ function NewStoryHeader() {
         {t('newStory.heading')}
       </h1>
       <p className="m-0 text-lg leading-[1.6] text-body">{t('newStory.intro')}</p>
+      {/* The writing prompt, when the writer came from the hub's "Write from this prompt". */}
+      <PromptNote />
     </header>
   );
 }

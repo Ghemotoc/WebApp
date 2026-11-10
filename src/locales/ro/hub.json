@@ -29,6 +29,21 @@
       "none": "Niciun concurs nu primește înscrieri acum. Concursurile noi apar aici.",
       "loadFailed": "Nu am putut încărca concursurile. Verifică conexiunea și încearcă din nou."
     },
+    "prompt": {
+      "eyebrow": "Tema săptămânii",
+      "earlierEyebrow": "Temă mai veche",
+      "tried_one": "{{count}} scriitor a încercat-o",
+      "tried_few": "{{count}} scriitori au încercat-o",
+      "tried_other": "{{count}} de scriitori au încercat-o",
+      "endsToday": "se încheie azi",
+      "endsIn_one": "se încheie într-o zi",
+      "endsIn_few": "se încheie în {{count}} zile",
+      "endsIn_other": "se încheie în {{count}} de zile",
+      "write": "Scrie pornind de la temă",
+      "another": "Altă temă",
+      "writingFrom": "Scrii pornind de la tema aceasta",
+      "loadFailed": "Nu am putut încărca tema de scris. Verifică conexiunea și încearcă din nou."
+    },
     "guides": {
       "eyebrow": "Ghiduri pas cu pas",
       "seeEvery": "Vezi fiecare ghid",
@@ -59,6 +74,39 @@
       "fewerThanFive": "mai puțin de 5",
       "seeStatistics": "Vezi statisticile",
       "loadFailed": "Nu am putut încărca cifrele săptămânii. Verifică conexiunea și încearcă din nou."
+    }
+  },
+  "hubStaff": {
+    "documentTitle": "Spațiul scriitorilor · Admin",
+    "heading": "Spațiul scriitorilor",
+    "intro": "Ce văd scriitorii în Spațiul scriitorilor, pe lângă concursuri. Fiecare schimbare este înregistrată.",
+    "save": "Salvează",
+    "cancel": "Renunță",
+    "edit": "Editează",
+    "editNamed": "Editează: {{name}}",
+    "delete": "Șterge",
+    "deleteNamed": "Șterge: {{name}}",
+    "deleteConfirm": "Șterge",
+    "keep": "Păstrează",
+    "loading": "Se încarcă…",
+    "loadFailed": "Nu am putut încărca lista. Verifică conexiunea și încearcă din nou.",
+    "failures": {
+      "not_allowed": "Contul acesta nu poate schimba Spațiul scriitorilor.",
+      "day_taken": "O altă temă începe deja în ziua aceea. Alege altă zi.",
+      "refused": "Completează ambele texte, cel mult 300 de caractere fiecare, și ziua de început.",
+      "failed": "Nu am putut salva schimbarea. Încearcă din nou."
+    },
+    "prompts": {
+      "heading": "Tema săptămânii",
+      "intro": "O temă apare în spațiu din ziua de început, timp de 7 zile. Scriitorii pot deschide în continuare temele mai vechi cu „Altă temă”.",
+      "add": "Adaugă o temă",
+      "enLabel": "Tema în engleză",
+      "roLabel": "Tema în română",
+      "dayLabel": "Ziua de început",
+      "dayHint": "Prima dintre cele 7 zile, după ora României.",
+      "startsOn": "Începe pe {{day}}",
+      "empty": "Nicio temă încă. Cardul apare în spațiu când începe prima.",
+      "listLabel": "Teme de scris, de la cea mai nouă"
     }
   },
   "resources": {
