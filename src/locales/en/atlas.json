@@ -324,6 +324,7 @@
       "note": "Note (optional)",
       "button": "Add relationship",
       "added": "Relationship added.",
+      "alreadyThere": "That relationship is already there.",
       "pickBoth": "Pick both characters.",
       "labelRequired": "Write a label for this relationship.",
       "failed": "The relationship wasn’t saved. Check your connection and try again.",

@@ -7,8 +7,10 @@
  * relationship, the right way round. When the tree shows every family, the form first asks who
  * the character is related to. A clash with a relationship already there opens the same warning
  * as "Add a relationship": advice, never a block. The tree redraws once the relationship is
- * saved. Who uses it: TreeAddition (FamilyTreeView). What it calls: the onAdd prop
- * (useRelationshipChangers' relate), findClash and useRelationshipWords for the warning.
+ * saved. A relationship is saved once: a double click on Add saves once, and one that is already
+ * there is refused in plain words (break test, 10 Nov 2026). Who uses it: FamilyTreeView. What
+ * it calls: useRelationshipAdd (which calls the onAdd prop, useRelationshipChangers' relate),
+ * findClash and useRelationshipWords for the warning.
  */
 import { useState } from 'react';
 
@@ -17,6 +19,7 @@ import { Notice } from '@/components/ui/Notice';
 import { Select } from '@/components/ui/Select';
 
 import type { CharacterRelationship, NewRelationship, StoryCast } from '../api/characters';
+import { toneOf, useRelationshipAdd } from '../hooks/useRelationshipAdd';
 import type { RelationshipWords } from '../hooks/useRelationshipWords';
 import { findClash } from '../lib/relationshipClash';
 import {
@@ -154,12 +157,15 @@ function TreeFormActions({
   clash,
   draft,
   words,
+  isBusy,
   change,
   onBack,
   onSave,
   onClose,
 }: {
   clash: CharacterRelationship | null;
+  /** True while a save is on its way: Add waits. */
+  isBusy: boolean;
   draft: TreeAddition;
   words: RelationshipWords;
   change: (part: Partial<TreeAddition>) => void;
@@ -186,7 +192,7 @@ function TreeFormActions({
       <Button type="button" variant="secondary" onClick={onClose}>
         {t('connections.tree.add.cancel')}
       </Button>
-      <Button type="submit" variant="secondary">
+      <Button type="submit" variant="secondary" disabled={isBusy}>
         {t('connections.tree.add.button')}
       </Button>
     </div>
@@ -201,16 +207,16 @@ function TreeFormActions({
 export function AddToTreeForm({ cast, rootId, words, onAdd, onClose }: AddToTreeFormProps) {
   const { t } = useAtlasTranslation();
   const { draft, change, reset, message, setMessage, clash, setClash } = useTreeDraft(rootId);
+  const { isBusy, addOnce } = useRelationshipAdd(cast.relationships, onAdd);
   const anchorName = words.nameOf(draft.anchorId);
 
-  /** Saves the relationship and readies the form for the next one, or says why not. */
+  /** Saves the relationship once and readies the form for the next one, or says why not. */
   async function save() {
-    await onAdd(relationshipForTree(draft))
-      .then(() => {
-        reset();
-        setMessage({ tone: 'success', text: t('connections.add.added') });
-      })
-      .catch(() => setMessage({ tone: 'error', text: t('connections.add.failed') }));
+    const outcome = await addOnce(relationshipForTree(draft));
+    // Another save is still running (a double click): this one did nothing.
+    if (outcome === 'busy') return;
+    if (outcome === 'added') reset();
+    setMessage({ tone: toneOf(outcome), text: t(`connections.add.${outcome}`) });
   }
 
   /** Add: both characters are needed; a clash opens the warning first. */
@@ -250,6 +256,7 @@ export function AddToTreeForm({ cast, rootId, words, onAdd, onClose }: AddToTree
         clash={clash}
         draft={draft}
         words={words}
+        isBusy={isBusy}
         change={change}
         onBack={() => setClash(null)}
         onSave={() => void save()}

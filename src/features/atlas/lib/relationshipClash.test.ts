@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { CharacterRelationship, RelationshipKind } from '../api/characters';
 
-import { findClash } from './relationshipClash';
+import { findClash, isAlreadyThere } from './relationshipClash';
 
 /** A saved relationship with only what the check reads. */
 function saved(fromId: string, kind: RelationshipKind, toId: string): CharacterRelationship {
@@ -43,5 +43,24 @@ describe('findClash', () => {
 
   it('a family tie between two other characters never clashes', () => {
     expect(findClash(story, { fromId: 'teo', toId: 'elena', kind: 'sibling_of' })).toBeNull();
+  });
+});
+
+describe('isAlreadyThere', () => {
+  it('the same relationship the same way round is already there', () => {
+    expect(isAlreadyThere(story, { fromId: 'elena', toId: 'mara', kind: 'parent_of' })).toBe(true);
+  });
+
+  it('a parent the other way round is another relationship', () => {
+    expect(isAlreadyThere(story, { fromId: 'mara', toId: 'elena', kind: 'parent_of' })).toBe(false);
+  });
+
+  it('a friendship reads the same from both sides', () => {
+    expect(isAlreadyThere(story, { fromId: 'teo', toId: 'mara', kind: 'friend_of' })).toBe(true);
+  });
+
+  it('another type between the same two, and the writer\u2019s own words, are not', () => {
+    expect(isAlreadyThere(story, { fromId: 'mara', toId: 'teo', kind: 'ally_of' })).toBe(false);
+    expect(isAlreadyThere(story, { fromId: 'mara', toId: 'teo', kind: 'custom' })).toBe(false);
   });
 });

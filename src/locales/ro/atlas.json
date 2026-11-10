@@ -324,6 +324,7 @@
       "note": "Notă (opțional)",
       "button": "Adaugă legătura",
       "added": "Legătura a fost adăugată.",
+      "alreadyThere": "Legătura aceasta există deja.",
       "pickBoth": "Alege ambele personaje.",
       "labelRequired": "Scrie o etichetă pentru această legătură.",
       "failed": "Legătura nu a fost salvată. Verifică-ți conexiunea și încearcă din nou.",
