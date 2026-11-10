@@ -13368,6 +13368,7 @@ export type Database = {
       my_teacher_check: { Args: Record<PropertyKey, never>; Returns: Json };
       my_unread_notification_count: { Args: Record<PropertyKey, never>; Returns: number };
       my_waitlist: { Args: Record<PropertyKey, never>; Returns: Json };
+      my_week_numbers: { Args: Record<PropertyKey, never>; Returns: Json };
       name_has_listed_word: { Args: { name: string }; Returns: boolean };
       name_is_approved: {
         Args: { name: string; name_kind: string; target_user_id: string };

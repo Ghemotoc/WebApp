@@ -28776,6 +28776,59 @@ COMMENT ON FUNCTION "public"."my_waitlist"() IS 'The caller''s waiting list entr
 
 
 
+CREATE OR REPLACE FUNCTION "public"."my_week_numbers"() RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  since timestamptz := now() - interval '7 days';
+  chapters_posted integer;
+  totals record;
+  new_followers integer;
+begin
+  -- Step 1: only a signed-in writer has a week.
+  if caller_id is null then
+    raise exception 'Log in to see your numbers.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 2: chapters the writer published for the first time in the last 7 days that readers
+  -- can still open (a chapter taken back to draft or deleted since doesn't count).
+  select count(*)::integer into chapters_posted
+  from public.chapters
+  join public.stories on stories.id = chapters.story_id
+  where stories.user_id = caller_id
+    and stories.deleted_at is null
+    and chapters.deleted_at is null
+    and chapters.status = 'published'
+    and chapters.first_published_at >= since;
+  -- Step 3: reads and comments, from the same per-chapter totals the dashboard uses, so the
+  -- two screens never disagree (the writer's own comments and hidden comments don't count).
+  select coalesce(sum(numbers.reads), 0) as reads, coalesce(sum(numbers.comments), 0) as comments
+  into totals
+  from public.writer_chapter_numbers(caller_id, since) as numbers;
+  -- Step 4: people who started following the writer in the last 7 days.
+  select count(*)::integer into new_followers
+  from public.follows_users
+  where follows_users.followed_user_id = caller_id
+    and follows_users.created_at >= since;
+  -- Step 5: the answer, with other people's numbers rounded by the "fewer than 5" rule.
+  return jsonb_build_object(
+    'chapters_posted', chapters_posted,
+    'reads', public.shown_count(totals.reads),
+    'comments', public.shown_count(totals.comments),
+    'followers', public.shown_count(new_followers)
+  );
+end;
+$$;
+
+
+ALTER FUNCTION "public"."my_week_numbers"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."my_week_numbers"() IS 'The signed-in writer''s last 7 days: chapters posted (exact), reads, comments and new followers (null when from fewer than 5) (GAPS-12b).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."name_has_listed_word"("name" "text") RETURNS boolean
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -60337,6 +60390,11 @@ GRANT ALL ON FUNCTION "public"."my_unread_notification_count"() TO "authenticate
 
 REVOKE ALL ON FUNCTION "public"."my_waitlist"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."my_waitlist"() TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."my_week_numbers"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."my_week_numbers"() TO "authenticated";
 
 
 
