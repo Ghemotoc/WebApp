@@ -724,7 +724,8 @@ CREATE TYPE "public"."notification_kind" AS ENUM (
     'story_featured',
     'spotlight_consent_agreed',
     'spotlight_consent_withdrawn',
-    'waitlist_admitted'
+    'waitlist_admitted',
+    'live_session_soon'
 );
 
 
@@ -1441,6 +1442,7 @@ CREATE OR REPLACE FUNCTION "public"."account_deletion_rules"() RETURNS TABLE("ta
     ('landing_page_reminders', 'delete', 1, null),
     ('learning_path_progress', 'delete', 1, null),
     ('library_entries', 'delete', 1, null),
+    ('live_session_reminders', 'delete', 1, null),
     ('manual_age_checks', 'delete', 1, null),
     ('messages', 'own_step', 0, 'the person''s own messages are deleted, unless reported and still held (S1-E9-02)'),
     ('moderator_mail_messages', 'kept', 0, 'a moderation record, purged a year after the thread was last updated (docs/retention.md)'),
@@ -1489,7 +1491,7 @@ $$;
 ALTER FUNCTION "public"."account_deletion_rules"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g).';
+COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h).';
 
 
 
@@ -5417,6 +5419,38 @@ ALTER FUNCTION "public"."admin_delete_forum"("forum_id" "uuid", "reason" "text")
 
 
 COMMENT ON FUNCTION "public"."admin_delete_forum"("forum_id" "uuid", "reason" "text") IS 'Removes an empty forum, with no forums or threads inside; owner and admin; logged (FORUMS-1a, FORUMS-1b).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_delete_live_session"("session_id" "uuid") RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  deleted public.live_sessions;
+begin
+  if not public.staff_may('contests', 'act') then
+    raise exception 'Only contest staff can change live sessions.' using errcode = 'insufficient_privilege';
+  end if;
+  update public.live_sessions set deleted_at = now(), updated_by_user_id = (select auth.uid())
+  where id = session_id and deleted_at is null returning * into deleted;
+  if deleted.id is null then
+    raise exception 'There is no such live session.' using errcode = 'no_data_found';
+  end if;
+  -- A session that won't happen needs no reminders.
+  delete from public.live_session_reminders
+  where live_session_reminders.session_id = deleted.id and live_session_reminders.notified_at is null;
+  perform public.log_staff_action('live_session.deleted', 'live_sessions', deleted.id::text, null, null,
+    to_jsonb(deleted) - array['id', 'updated_by_user_id', 'created_at', 'updated_at', 'deleted_at'], null);
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_delete_live_session"("session_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_delete_live_session"("session_id" "uuid") IS 'Contest staff delete a live session and its waiting reminders; logged (GAPS-12h).';
 
 
 
@@ -9699,6 +9733,63 @@ ALTER FUNCTION "public"."admin_save_learning_step"("target_day" integer, "step" 
 
 
 COMMENT ON FUNCTION "public"."admin_save_learning_step"("target_day" integer, "step" "jsonb") IS 'Contest staff change one learning path day''s title, lesson and task; logged with before and after (GAPS-12g).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_save_live_session"("session_id" "uuid", "session" "jsonb") RETURNS "uuid"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  before_row public.live_sessions;
+  saved public.live_sessions;
+begin
+  -- Step 1: staff with the contests area only (the server decides, architecture 1.8.1).
+  if not public.staff_may('contests', 'act') then
+    raise exception 'Only contest staff can change live sessions.' using errcode = 'insufficient_privilege';
+  end if;
+  if session is null or nullif(session ->> 'starts_at', '') is null then
+    raise exception 'A live session needs its start.' using errcode = 'check_violation';
+  end if;
+  -- Step 2: a new session, or the change to one that exists. The table's checks refuse bad values.
+  if session_id is null then
+    insert into public.live_sessions (title_ro, title_en, starts_at, language_code, rating, place_ro,
+      place_en, link_url, updated_by_user_id)
+    values (btrim(session ->> 'title_ro'), btrim(session ->> 'title_en'),
+      (session ->> 'starts_at')::timestamptz, session ->> 'language_code',
+      coalesce((session ->> 'rating')::public.story_rating, 'all_ages'),
+      btrim(session ->> 'place_ro'), btrim(session ->> 'place_en'),
+      nullif(btrim(session ->> 'link_url'), ''), (select auth.uid()))
+    returning * into saved;
+  else
+    select * into before_row from public.live_sessions
+    where live_sessions.id = session_id and deleted_at is null for update;
+    if before_row.id is null then
+      raise exception 'There is no such live session.' using errcode = 'no_data_found';
+    end if;
+    update public.live_sessions set
+      title_ro = btrim(session ->> 'title_ro'), title_en = btrim(session ->> 'title_en'),
+      starts_at = (session ->> 'starts_at')::timestamptz, language_code = session ->> 'language_code',
+      rating = coalesce((session ->> 'rating')::public.story_rating, 'all_ages'),
+      place_ro = btrim(session ->> 'place_ro'), place_en = btrim(session ->> 'place_en'),
+      link_url = nullif(btrim(session ->> 'link_url'), ''),
+      updated_by_user_id = (select auth.uid())
+    where id = session_id returning * into saved;
+  end if;
+  -- Step 3: the audit log keeps what changed, in the same transaction.
+  perform public.log_staff_action('live_session.saved', 'live_sessions', saved.id::text, null, null,
+    case when before_row.id is null then null
+         else to_jsonb(before_row) - array['id', 'updated_by_user_id', 'created_at', 'updated_at', 'deleted_at'] end,
+    to_jsonb(saved) - array['id', 'updated_by_user_id', 'created_at', 'updated_at', 'deleted_at']);
+  return saved.id;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_save_live_session"("session_id" "uuid", "session" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_save_live_session"("session_id" "uuid", "session" "jsonb") IS 'Contest staff add or change a live session; logged with before and after (GAPS-12h).';
 
 
 
@@ -19274,6 +19365,7 @@ CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_
     ('landing_page_reminders', true, null),
     ('learning_path_progress', true, null),
     ('library_entries', true, null),
+    ('live_session_reminders', true, null),
     ('manual_age_checks', true, null),
     ('messages', true, null),
     ('moderator_mail_messages', true, null),
@@ -19322,7 +19414,7 @@ $$;
 ALTER FUNCTION "public"."data_export_tables"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g).';
+COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h).';
 
 
 
@@ -29883,6 +29975,7 @@ CREATE OR REPLACE FUNCTION "public"."notification_category"("kind" "public"."not
     when 'data_request_copy_ready' then 'staff'
     when 'picture_opened_by_staff' then 'staff'
     when 'landing_entries_open' then 'stories'
+    when 'live_session_soon' then 'stories'
     when 'rank_reached' then 'stories'
     when 'space_handover_offered' then 'follows'
     when 'story_featured' then 'stories'
@@ -29925,7 +30018,8 @@ CREATE TABLE IF NOT EXISTS "public"."notifications" (
     "story_revision_id" "uuid",
     "data_request_id" "uuid",
     "landing_page_id" "uuid",
-    "writer_rank" "public"."writer_rank"
+    "writer_rank" "public"."writer_rank",
+    "live_session_id" "uuid"
 );
 
 
@@ -29970,6 +30064,10 @@ COMMENT ON COLUMN "public"."notifications"."landing_page_id" IS 'The landing pag
 
 
 COMMENT ON COLUMN "public"."notifications"."writer_rank" IS 'For rank_reached: the rank the writer reached (IDEAS-3a).';
+
+
+
+COMMENT ON COLUMN "public"."notifications"."live_session_id" IS 'The live session a live_session_soon notification is about (GAPS-12h).';
 
 
 
@@ -30161,6 +30259,12 @@ CREATE OR REPLACE FUNCTION "public"."notification_json"("target" "public"."notif
                      cross join lateral public.landing_page_live_version(pages.id) as live
                      where pages.id = target.landing_page_id and pages.archived_at is null
                        and live.id is not null),
+    -- GAPS-12h: the live session about to start, with its title in each language, while it is
+    -- still listed (a deleted session gives null, and the row has no link).
+    'live_session', (select jsonb_build_object('title_ro', live_sessions.title_ro,
+                       'title_en', live_sessions.title_en, 'starts_at', live_sessions.starts_at)
+                     from public.live_sessions
+                     where live_sessions.id = target.live_session_id and live_sessions.deleted_at is null),
     -- IDEAS-3a: the rank a writer just reached, and their own handle for the link to their profile.
     'writer_rank', case when target.kind = 'rank_reached' then target.writer_rank end,
     'own_handle', case when target.kind = 'rank_reached'
@@ -30241,7 +30345,7 @@ begin
   -- the alert that staff opened an uploaded picture (ADMIN-2e2a).
   insert into public.notifications (user_id, kind, actor_user_ids, actor_count, story_id, chapter_id,
     comment_id, case_id, decision, statement_id, appeal_id, mail_thread_id, space_id, change_request_id,
-    story_revision_id, data_request_id, landing_page_id, group_key, is_required)
+    story_revision_id, data_request_id, landing_page_id, live_session_id, group_key, is_required)
   values (recipient_id, notification_kind,
     case when actor_id is null then '{}'::uuid[] else array[actor_id] end,
     case when actor_id is null then 0 else 1 end,
@@ -30250,7 +30354,7 @@ begin
     (about ->> 'statement_id')::uuid, (about ->> 'appeal_id')::uuid, (about ->> 'mail_thread_id')::uuid,
     (about ->> 'space_id')::uuid, (about ->> 'change_request_id')::uuid,
     (about ->> 'story_revision_id')::uuid, (about ->> 'data_request_id')::uuid,
-    (about ->> 'landing_page_id')::uuid, notify.group_key,
+    (about ->> 'landing_page_id')::uuid, (about ->> 'live_session_id')::uuid, notify.group_key,
     notification_kind in ('moderation_decision', 'appeal_decided', 'customisation_change_requested',
                           'story_changed_by_staff', 'data_request_confirm',
                           'data_request_extended', 'data_request_copy_ready', 'picture_opened_by_staff'));
@@ -33585,6 +33689,26 @@ ALTER FUNCTION "public"."rating_allows"("story_rating" "public"."story_rating") 
 
 
 COMMENT ON FUNCTION "public"."rating_allows"("story_rating" "public"."story_rating") IS 'May the caller see a story with this rating; the one rule every reader path uses (S1-E3-06, rule 18).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."rating_fits_band"("rating" "public"."story_rating", "band" "public"."age_band") RETURNS boolean
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select case rating
+    when 'all_ages' then true
+    when '13_plus' then band in ('13_to_15', '16_to_17', '18_plus')
+    when '16_plus' then band in ('16_to_17', '18_plus')
+    else band = '18_plus'
+  end;
+$$;
+
+
+ALTER FUNCTION "public"."rating_fits_band"("rating" "public"."story_rating", "band" "public"."age_band") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."rating_fits_band"("rating" "public"."story_rating", "band" "public"."age_band") IS 'Internal: whether an age group may see something with a rating; an unknown age sees only all ages (GAPS-12h).';
 
 
 
@@ -38676,6 +38800,51 @@ COMMENT ON FUNCTION "public"."send_landing_reminders"() IS 'Hourly: sends each l
 
 
 
+CREATE OR REPLACE FUNCTION "public"."send_live_session_reminders"() RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  reminder record;
+  sent integer := 0;
+begin
+  -- Step 1: each waiting reminder for a session that starts within the hour.
+  for reminder in
+    select reminders.id, reminders.user_id, reminders.session_id, sessions.rating
+    from public.live_session_reminders as reminders
+    join public.live_sessions as sessions on sessions.id = reminders.session_id
+    where reminders.notified_at is null and sessions.deleted_at is null
+      and sessions.starts_at > now() and sessions.starts_at <= now() + interval '1 hour'
+    for update of reminders skip locked
+  loop
+    if public.rating_fits_band(reminder.rating, public.age_band_of(reminder.user_id)) then
+      -- Step 2: one in-app notification, with no actor, then mark the reminder as sent.
+      perform public.notify(reminder.user_id, 'live_session_soon', null,
+        jsonb_build_object('live_session_id', reminder.session_id));
+      update public.live_session_reminders set notified_at = now()
+      where live_session_reminders.id = reminder.id;
+      sent := sent + 1;
+    else
+      -- The session is no longer for this member's age group: no notification, no reminder.
+      delete from public.live_session_reminders where live_session_reminders.id = reminder.id;
+    end if;
+  end loop;
+  -- Step 3: a reminder isn't needed 30 days after its session (docs/retention.md).
+  delete from public.live_session_reminders as reminders
+  using public.live_sessions as sessions
+  where sessions.id = reminders.session_id and sessions.starts_at < now() - interval '30 days';
+  return sent;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."send_live_session_reminders"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."send_live_session_reminders"() IS 'Every ten minutes: sends each live session reminder once, in the hour before the start (GAPS-12h).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."send_message"("recipient_handle" "text", "body" "text") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -39351,6 +39520,48 @@ ALTER FUNCTION "public"."set_library_shelf"("story_slug" "text", "wanted_shelf" 
 
 
 COMMENT ON FUNCTION "public"."set_library_shelf"("story_slug" "text", "wanted_shelf" "public"."library_shelf") IS 'Puts a story on one of the caller''s library shelves, or takes it off (S1-E4-03).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."set_live_session_reminder"("target_session" "uuid", "wanted" boolean) RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+begin
+  -- Step 1: only a signed-in member.
+  if caller_id is null then
+    raise exception 'Sign in to be reminded.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 2: cancelling needs no session check: the row is the caller's own.
+  if not coalesce(wanted, false) then
+    delete from public.live_session_reminders
+    where live_session_reminders.user_id = caller_id
+      and live_session_reminders.session_id = target_session
+      and live_session_reminders.notified_at is null;
+    return false;
+  end if;
+  -- Step 3: a session the caller can see on the hub: coming up and for their age group.
+  if not exists (
+      select 1 from public.live_sessions
+      where live_sessions.id = target_session and live_sessions.deleted_at is null
+        and live_sessions.starts_at > now()
+        and public.rating_fits_band(live_sessions.rating, public.age_band())) then
+    raise exception 'There is no such live session.' using errcode = 'no_data_found';
+  end if;
+  -- Step 4: one reminder per member and session.
+  insert into public.live_session_reminders (user_id, session_id) values (caller_id, target_session)
+  on conflict on constraint live_session_reminders_one_per_session do nothing;
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_live_session_reminder"("target_session" "uuid", "wanted" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_live_session_reminder"("target_session" "uuid", "wanted" boolean) IS 'A member asks for, or cancels, one in-app notification shortly before a live session starts (GAPS-12h).';
 
 
 
@@ -47467,6 +47678,41 @@ COMMENT ON FUNCTION "public"."writers_hub_prompts"() IS 'The writing prompts tha
 
 
 
+CREATE OR REPLACE FUNCTION "public"."writers_hub_sessions"() RETURNS TABLE("session_id" "uuid", "title_ro" "text", "title_en" "text", "starts_at" timestamp with time zone, "language_code" "text", "rating" "public"."story_rating", "place_ro" "text", "place_en" "text", "link_url" "text", "is_reminded" boolean)
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select
+    live_sessions.id,
+    live_sessions.title_ro,
+    live_sessions.title_en,
+    live_sessions.starts_at,
+    live_sessions.language_code,
+    live_sessions.rating,
+    live_sessions.place_ro,
+    live_sessions.place_en,
+    live_sessions.link_url,
+    exists (select 1 from public.live_session_reminders as reminders
+            where reminders.session_id = live_sessions.id
+              and reminders.user_id = (select auth.uid()))
+  from public.live_sessions
+  where (select auth.uid()) is not null
+    and live_sessions.deleted_at is null
+    and live_sessions.starts_at > now()
+    -- Never to a member younger than the session's age group (CLAUDE.md rule 18).
+    and public.rating_fits_band(live_sessions.rating, (select public.age_band()))
+  order by live_sessions.starts_at, live_sessions.created_at
+  limit 6;
+$$;
+
+
+ALTER FUNCTION "public"."writers_hub_sessions"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."writers_hub_sessions"() IS 'The live sessions coming up that fit the caller''s age group, soonest first, with the caller''s own reminders (GAPS-12h).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."writers_hub_spotlight"() RETURNS TABLE("handle" "text", "display_name" "text", "reason_ro" "text", "reason_en" "text", "is_me" boolean)
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -48938,6 +49184,55 @@ ALTER TABLE "public"."library_entries" OWNER TO "postgres";
 
 COMMENT ON TABLE "public"."library_entries" IS 'kind: user_action
 Which story sits on which shelf of a reader''s library (S1-E4-03). Private to the reader.';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."live_session_reminders" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "session_id" "uuid" NOT NULL,
+    "notified_at" timestamp with time zone,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL
+);
+
+
+ALTER TABLE "public"."live_session_reminders" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."live_session_reminders" IS 'kind: user_action
+Which live sessions a member asked to be reminded of: one row per member and session, deleted 30 days after the session (GAPS-12h). Personal data: the link between a member and a session.';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."live_sessions" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "title_ro" "text" NOT NULL,
+    "title_en" "text" NOT NULL,
+    "starts_at" timestamp with time zone NOT NULL,
+    "language_code" "text" NOT NULL,
+    "rating" "public"."story_rating" DEFAULT 'all_ages'::"public"."story_rating" NOT NULL,
+    "place_ro" "text" NOT NULL,
+    "place_en" "text" NOT NULL,
+    "link_url" "text",
+    "updated_by_user_id" "uuid",
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "deleted_at" timestamp with time zone,
+    CONSTRAINT "live_sessions_language_known" CHECK (("language_code" = ANY (ARRAY['ro'::"text", 'en'::"text"]))),
+    CONSTRAINT "live_sessions_link_is_https" CHECK ((("link_url" IS NULL) OR (("link_url" ~ '^https://[^\s"''<>]+$'::"text") AND (("char_length"("link_url") >= 12) AND ("char_length"("link_url") <= 500))))),
+    CONSTRAINT "live_sessions_place_en_length" CHECK ((("char_length"("btrim"("place_en")) >= 1) AND ("char_length"("btrim"("place_en")) <= 80))),
+    CONSTRAINT "live_sessions_place_ro_length" CHECK ((("char_length"("btrim"("place_ro")) >= 1) AND ("char_length"("btrim"("place_ro")) <= 80))),
+    CONSTRAINT "live_sessions_title_en_length" CHECK ((("char_length"("btrim"("title_en")) >= 1) AND ("char_length"("btrim"("title_en")) <= 120))),
+    CONSTRAINT "live_sessions_title_ro_length" CHECK ((("char_length"("btrim"("title_ro")) >= 1) AND ("char_length"("btrim"("title_ro")) <= 120)))
+);
+
+
+ALTER TABLE "public"."live_sessions" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."live_sessions" IS 'kind: platform
+Live sessions listed on the Writers'' hub: staff-written title and place in Romanian and English, the start, the language, the youngest age group and an optional link (GAPS-12h). No personal data.';
 
 
 
@@ -51074,6 +51369,21 @@ ALTER TABLE ONLY "public"."library_entries"
 
 
 
+ALTER TABLE ONLY "public"."live_session_reminders"
+    ADD CONSTRAINT "live_session_reminders_one_per_session" UNIQUE ("user_id", "session_id");
+
+
+
+ALTER TABLE ONLY "public"."live_session_reminders"
+    ADD CONSTRAINT "live_session_reminders_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."live_sessions"
+    ADD CONSTRAINT "live_sessions_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."manual_age_checks"
     ADD CONSTRAINT "manual_age_checks_pkey" PRIMARY KEY ("id");
 
@@ -52284,6 +52594,18 @@ CREATE INDEX "library_entries_story_id" ON "public"."library_entries" USING "btr
 
 
 
+CREATE INDEX "live_session_reminders_session_id_fk_idx" ON "public"."live_session_reminders" USING "btree" ("session_id");
+
+
+
+CREATE INDEX "live_session_reminders_waiting" ON "public"."live_session_reminders" USING "btree" ("session_id") WHERE ("notified_at" IS NULL);
+
+
+
+CREATE INDEX "live_sessions_coming_up" ON "public"."live_sessions" USING "btree" ("starts_at") WHERE ("deleted_at" IS NULL);
+
+
+
 CREATE UNIQUE INDEX "manual_age_checks_one_open" ON "public"."manual_age_checks" USING "btree" ("user_id") WHERE ("status" = 'open'::"text");
 
 
@@ -52365,6 +52687,10 @@ CREATE INDEX "notifications_group" ON "public"."notifications" USING "btree" ("u
 
 
 CREATE INDEX "notifications_landing_page_id_fk_idx" ON "public"."notifications" USING "btree" ("landing_page_id");
+
+
+
+CREATE INDEX "notifications_live_session_id_fk_idx" ON "public"."notifications" USING "btree" ("live_session_id") WHERE ("live_session_id" IS NOT NULL);
 
 
 
@@ -53429,6 +53755,18 @@ CREATE OR REPLACE TRIGGER "legal_documents_set_updated_at" BEFORE UPDATE ON "pub
 
 
 CREATE OR REPLACE TRIGGER "library_entries_set_updated_at" BEFORE UPDATE ON "public"."library_entries" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "live_session_reminders_refuse_user_id_change" BEFORE UPDATE ON "public"."live_session_reminders" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"();
+
+
+
+CREATE OR REPLACE TRIGGER "live_session_reminders_set_updated_at" BEFORE UPDATE ON "public"."live_session_reminders" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "live_sessions_set_updated_at" BEFORE UPDATE ON "public"."live_sessions" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
 
@@ -54798,6 +55136,21 @@ ALTER TABLE ONLY "public"."library_entries"
 
 
 
+ALTER TABLE ONLY "public"."live_session_reminders"
+    ADD CONSTRAINT "live_session_reminders_session_id_fkey" FOREIGN KEY ("session_id") REFERENCES "public"."live_sessions"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."live_session_reminders"
+    ADD CONSTRAINT "live_session_reminders_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."live_sessions"
+    ADD CONSTRAINT "live_sessions_updated_by_user_id_fkey" FOREIGN KEY ("updated_by_user_id") REFERENCES "public"."profiles"("id");
+
+
+
 ALTER TABLE ONLY "public"."manual_age_checks"
     ADD CONSTRAINT "manual_age_checks_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
 
@@ -54905,6 +55258,11 @@ ALTER TABLE ONLY "public"."notifications"
 
 ALTER TABLE ONLY "public"."notifications"
     ADD CONSTRAINT "notifications_landing_page_id_fkey" FOREIGN KEY ("landing_page_id") REFERENCES "public"."landing_pages"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."notifications"
+    ADD CONSTRAINT "notifications_live_session_id_fkey" FOREIGN KEY ("live_session_id") REFERENCES "public"."live_sessions"("id") ON DELETE CASCADE;
 
 
 
@@ -56669,6 +57027,28 @@ CREATE POLICY "library_entries_select_own" ON "public"."library_entries" FOR SEL
 
 
 
+ALTER TABLE "public"."live_session_reminders" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "live_session_reminders_select_own" ON "public"."live_session_reminders" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
+
+
+
+COMMENT ON POLICY "live_session_reminders_select_own" ON "public"."live_session_reminders" IS 'Allows a member to read their own live session reminders only (GAPS-12h).';
+
+
+
+ALTER TABLE "public"."live_sessions" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "live_sessions_select_contest_staff" ON "public"."live_sessions" FOR SELECT TO "authenticated" USING ((("deleted_at" IS NULL) AND ( SELECT "public"."staff_may"('contests'::"text", 'view'::"text") AS "staff_may")));
+
+
+
+COMMENT ON POLICY "live_sessions_select_contest_staff" ON "public"."live_sessions" IS 'Allows staff with the contests area to read the live sessions that aren''t deleted, past ones included (GAPS-12h).';
+
+
+
 ALTER TABLE "public"."manual_age_checks" ENABLE ROW LEVEL SECURITY;
 
 
@@ -58187,6 +58567,11 @@ GRANT ALL ON FUNCTION "public"."admin_delete_forum"("forum_id" "uuid", "reason" 
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_delete_live_session"("session_id" "uuid") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_delete_live_session"("session_id" "uuid") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_delete_submission_call"("call_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_delete_submission_call"("call_id" "uuid") TO "authenticated";
 
@@ -58754,6 +59139,11 @@ GRANT ALL ON FUNCTION "public"."admin_save_landing_page_draft"("target_page_id" 
 
 REVOKE ALL ON FUNCTION "public"."admin_save_learning_step"("target_day" integer, "step" "jsonb") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_save_learning_step"("target_day" integer, "step" "jsonb") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_save_live_session"("session_id" "uuid", "session" "jsonb") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_save_live_session"("session_id" "uuid", "session" "jsonb") TO "authenticated";
 
 
 
@@ -62157,6 +62547,10 @@ GRANT ALL ON FUNCTION "public"."rating_allows"("story_rating" "public"."story_ra
 
 
 
+REVOKE ALL ON FUNCTION "public"."rating_fits_band"("rating" "public"."story_rating", "band" "public"."age_band") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."react_to_comment"("comment_id" "uuid", "wanted_kind" "public"."reaction_kind") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."react_to_comment"("comment_id" "uuid", "wanted_kind" "public"."reaction_kind") TO "authenticated";
 
@@ -62810,6 +63204,10 @@ REVOKE ALL ON FUNCTION "public"."send_landing_reminders"() FROM PUBLIC;
 
 
 
+REVOKE ALL ON FUNCTION "public"."send_live_session_reminders"() FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."send_message"("recipient_handle" "text", "body" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."send_message"("recipient_handle" "text", "body" "text") TO "authenticated";
 
@@ -62893,6 +63291,11 @@ GRANT ALL ON FUNCTION "public"."set_library_audience"("audience" "public"."libra
 
 REVOKE ALL ON FUNCTION "public"."set_library_shelf"("story_slug" "text", "wanted_shelf" "public"."library_shelf") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_library_shelf"("story_slug" "text", "wanted_shelf" "public"."library_shelf") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."set_live_session_reminder"("target_session" "uuid", "wanted" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_live_session_reminder"("target_session" "uuid", "wanted" boolean) TO "authenticated";
 
 
 
@@ -64027,6 +64430,11 @@ GRANT ALL ON FUNCTION "public"."writers_hub_prompts"() TO "authenticated";
 
 
 
+REVOKE ALL ON FUNCTION "public"."writers_hub_sessions"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."writers_hub_sessions"() TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."writers_hub_spotlight"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."writers_hub_spotlight"() TO "authenticated";
 
@@ -64358,6 +64766,16 @@ GRANT SELECT ON TABLE "public"."legal_document_versions" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."library_entries" TO "service_role";
 GRANT SELECT ON TABLE "public"."library_entries" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."live_session_reminders" TO "service_role";
+GRANT SELECT ON TABLE "public"."live_session_reminders" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."live_sessions" TO "service_role";
+GRANT SELECT ON TABLE "public"."live_sessions" TO "authenticated";
 
 
 

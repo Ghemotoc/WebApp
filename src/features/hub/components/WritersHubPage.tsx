@@ -31,6 +31,7 @@ import { HubHero } from './HubHero';
 import { HubMonth } from './HubMonth';
 import { HubPath } from './HubPath';
 import { HubPrompt } from './HubPrompt';
+import { HubSessions } from './HubSessions';
 import { HubSpotlight } from './HubSpotlight';
 import { HubSpotlightInvitations } from './HubSpotlightInvitations';
 import { HubTools } from './HubTools';
@@ -55,6 +56,7 @@ function HubBody() {
           <HubSpotlight />
           <HubGuides />
           <HubPath />
+          <HubSessions />
         </div>
         <div className="flex min-w-0 flex-[1_1_300px] flex-col gap-7">
           <HubMonth />

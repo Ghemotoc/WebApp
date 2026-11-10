@@ -15,6 +15,7 @@ import { useHubTranslation } from '../../registerHubTranslations';
 import { CallsSection } from './CallsSection';
 import { LearningPathSection } from './LearningPathSection';
 import { PromptsSection } from './PromptsSection';
+import { SessionsSection } from './SessionsSection';
 import { SpotlightsSection } from './SpotlightsSection';
 
 /**
@@ -37,6 +38,7 @@ export function StaffHubPage() {
       <CallsSection />
       <SpotlightsSection />
       <LearningPathSection />
+      <SessionsSection />
     </PageContainer>
   );
 }

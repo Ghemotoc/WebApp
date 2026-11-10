@@ -4393,6 +4393,106 @@ export type Database = {
           },
         ];
       };
+      live_session_reminders: {
+        Row: {
+          created_at: string;
+          id: string;
+          notified_at: string | null;
+          session_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          notified_at?: string | null;
+          session_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          notified_at?: string | null;
+          session_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'live_session_reminders_session_id_fkey';
+            columns: ['session_id'];
+            isOneToOne: false;
+            referencedRelation: 'live_sessions';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'live_session_reminders_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      live_sessions: {
+        Row: {
+          created_at: string;
+          deleted_at: string | null;
+          id: string;
+          language_code: string;
+          link_url: string | null;
+          place_en: string;
+          place_ro: string;
+          rating: Database['public']['Enums']['story_rating'];
+          starts_at: string;
+          title_en: string;
+          title_ro: string;
+          updated_at: string;
+          updated_by_user_id: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          deleted_at?: string | null;
+          id?: string;
+          language_code: string;
+          link_url?: string | null;
+          place_en: string;
+          place_ro: string;
+          rating?: Database['public']['Enums']['story_rating'];
+          starts_at: string;
+          title_en: string;
+          title_ro: string;
+          updated_at?: string;
+          updated_by_user_id?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          deleted_at?: string | null;
+          id?: string;
+          language_code?: string;
+          link_url?: string | null;
+          place_en?: string;
+          place_ro?: string;
+          rating?: Database['public']['Enums']['story_rating'];
+          starts_at?: string;
+          title_en?: string;
+          title_ro?: string;
+          updated_at?: string;
+          updated_by_user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'live_sessions_updated_by_user_id_fkey';
+            columns: ['updated_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       manual_age_checks: {
         Row: {
           created_at: string;
@@ -4777,6 +4877,7 @@ export type Database = {
           is_required: boolean;
           kind: Database['public']['Enums']['notification_kind'];
           landing_page_id: string | null;
+          live_session_id: string | null;
           mail_thread_id: string | null;
           read_at: string | null;
           space_id: string | null;
@@ -4806,6 +4907,7 @@ export type Database = {
           is_required?: boolean;
           kind: Database['public']['Enums']['notification_kind'];
           landing_page_id?: string | null;
+          live_session_id?: string | null;
           mail_thread_id?: string | null;
           read_at?: string | null;
           space_id?: string | null;
@@ -4832,6 +4934,7 @@ export type Database = {
           is_required?: boolean;
           kind?: Database['public']['Enums']['notification_kind'];
           landing_page_id?: string | null;
+          live_session_id?: string | null;
           mail_thread_id?: string | null;
           read_at?: string | null;
           space_id?: string | null;
@@ -4890,6 +4993,13 @@ export type Database = {
             columns: ['landing_page_id'];
             isOneToOne: false;
             referencedRelation: 'landing_pages';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'notifications_live_session_id_fkey';
+            columns: ['live_session_id'];
+            isOneToOne: false;
+            referencedRelation: 'live_sessions';
             referencedColumns: ['id'];
           },
           {
@@ -10082,6 +10192,7 @@ export type Database = {
       };
       admin_delete_canned_reply: { Args: { reply_id: string }; Returns: boolean };
       admin_delete_forum: { Args: { forum_id: string; reason: string }; Returns: undefined };
+      admin_delete_live_session: { Args: { session_id: string }; Returns: boolean };
       admin_delete_submission_call: { Args: { call_id: string }; Returns: boolean };
       admin_delete_writer_spotlight: { Args: { spotlight_id: string }; Returns: boolean };
       admin_delete_writing_prompt: { Args: { prompt_id: string }; Returns: boolean };
@@ -10711,6 +10822,7 @@ export type Database = {
         Returns: string;
       };
       admin_save_learning_step: { Args: { step: Json; target_day: number }; Returns: boolean };
+      admin_save_live_session: { Args: { session: Json; session_id: string }; Returns: string };
       admin_save_safety_contact: { Args: { contact: Json }; Returns: string };
       admin_save_sponsor: {
         Args: { sponsor_name: string; target_sponsor_id: string; website: string };
@@ -14241,6 +14353,13 @@ export type Database = {
         Args: { story_rating: Database['public']['Enums']['story_rating'] };
         Returns: boolean;
       };
+      rating_fits_band: {
+        Args: {
+          band: Database['public']['Enums']['age_band'];
+          rating: Database['public']['Enums']['story_rating'];
+        };
+        Returns: boolean;
+      };
       react_to_comment: {
         Args: { comment_id: string; wanted_kind: Database['public']['Enums']['reaction_kind'] };
         Returns: Json;
@@ -14924,6 +15043,7 @@ export type Database = {
       };
       send_finished_thanks: { Args: { story_slug: string }; Returns: Json };
       send_landing_reminders: { Args: Record<PropertyKey, never>; Returns: number };
+      send_live_session_reminders: { Args: Record<PropertyKey, never>; Returns: number };
       send_message: { Args: { body: string; recipient_handle: string }; Returns: Json };
       send_moderator_mail: {
         Args: { body: string; statement_reference?: string; subject: string };
@@ -14965,6 +15085,10 @@ export type Database = {
       set_library_shelf: {
         Args: { story_slug: string; wanted_shelf: Database['public']['Enums']['library_shelf'] };
         Returns: Json;
+      };
+      set_live_session_reminder: {
+        Args: { target_session: string; wanted: boolean };
+        Returns: boolean;
       };
       set_marketing_email_opt_in: { Args: { wanted: boolean }; Returns: undefined };
       set_message_audience: {
@@ -16189,6 +16313,21 @@ export type Database = {
           writer_count: number;
         }[];
       };
+      writers_hub_sessions: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          is_reminded: boolean;
+          language_code: string;
+          link_url: string;
+          place_en: string;
+          place_ro: string;
+          rating: Database['public']['Enums']['story_rating'];
+          session_id: string;
+          starts_at: string;
+          title_en: string;
+          title_ro: string;
+        }[];
+      };
       writers_hub_spotlight: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -16309,7 +16448,8 @@ export type Database = {
         | 'story_featured'
         | 'spotlight_consent_agreed'
         | 'spotlight_consent_withdrawn'
-        | 'waitlist_admitted';
+        | 'waitlist_admitted'
+        | 'live_session_soon';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -16701,6 +16841,7 @@ export const Constants = {
         'spotlight_consent_agreed',
         'spotlight_consent_withdrawn',
         'waitlist_admitted',
+        'live_session_soon',
       ],
       picture_kind: [
         'cover',

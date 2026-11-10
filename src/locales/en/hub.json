@@ -142,6 +142,27 @@
       "readAgain": "Read the path again",
       "progress": "{{done}} of {{total}} days done",
       "loadFailed": "We couldn’t load the learning path. Check the connection and try again."
+    },
+    "sessions": {
+      "eyebrow": "Live sessions",
+      "remind": "Remind me",
+      "remindLabel": "Remind me: {{title}}",
+      "reminderSet": "Reminder set. A notification arrives in the hour before the start.",
+      "open": "Open the session",
+      "openLabel": "Open the session: {{title}} (opens in a new tab)",
+      "timeNote": "Times are on this device’s clock.",
+      "language": {
+        "en": "English",
+        "ro": "Romanian"
+      },
+      "rating": {
+        "all_ages": "All ages",
+        "13_plus": "13+",
+        "16_plus": "16+",
+        "18_plus": "18+"
+      },
+      "remindFailed": "We couldn’t change the reminder. The session may have started. Try again.",
+      "loadFailed": "We couldn’t load the live sessions. Check the connection and try again."
     }
   },
   "hubStaff": {
@@ -230,6 +251,25 @@
         "taskRo": "Task in Romanian"
       },
       "refused": "Fill in every field: titles up to 80 characters, lessons up to 1,500 and tasks up to 300."
+    },
+    "sessions": {
+      "heading": "Live sessions",
+      "intro": "Sessions held live, such as a question hour with an author. A session shows on the hub until it starts, only to members old enough for its age group. A member who asks gets one notification in the hour before the start.",
+      "add": "Add a session",
+      "titleEnLabel": "Title in English",
+      "titleRoLabel": "Title in Romanian",
+      "placeEnLabel": "Where, in English",
+      "placeRoLabel": "Where, in Romanian",
+      "startLabel": "Start",
+      "startHint": "On this device’s clock. Each member sees it on their own.",
+      "languageLabel": "Language",
+      "ratingLabel": "Youngest age group",
+      "linkLabel": "Link to the session (optional)",
+      "linkHint": "The full address, starting with https://. Leave empty until there is one.",
+      "past": "Started",
+      "empty": "No session yet. The hub shows the list once the first one is added.",
+      "listLabel": "Live sessions, latest start first",
+      "refused": "Fill in the titles (up to 120 characters), where it happens (up to 80) and the start. A link must start with https://."
     }
   },
   "resources": {

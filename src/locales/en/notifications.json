@@ -87,6 +87,8 @@
     "pictureOpenedByStaff": "opened the original file of an uploaded picture. Every opening is in the audit log.",
     "landingEntriesOpen": "entries are open for “{{title}}”.",
     "landingEntriesOpenGone": "entries are open for a page you asked about, which has since been taken down.",
+    "liveSessionSoon": "“{{title}}” starts at {{time}}.",
+    "liveSessionSoonGone": "a live session you asked about was cancelled.",
     "contestCertificateIssued": "you have a certificate from “{{title}}”. It’s in Certificates.",
     "certificateIssuedPlain": "you have a new certificate. It’s in Certificates.",
     "rankReached": "you’re now a {{rank}}. Well done.",
@@ -158,6 +160,7 @@
     "downloadDataRequestCopy": "Download it",
     "openAuditLog": "Open the audit log",
     "openLandingPage": "Open the page",
+    "openWritersHub": "Open the Writers’ hub",
     "seeMyRank": "See rank",
     "seePrivacy": "See privacy settings",
     "startExploring": "Start exploring"

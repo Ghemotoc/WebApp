@@ -142,6 +142,27 @@
       "readAgain": "Citește din nou traseul",
       "progress": "{{done}} din {{total}} zile gata",
       "loadFailed": "Nu am putut încărca traseul de învățare. Verifică conexiunea și încearcă din nou."
+    },
+    "sessions": {
+      "eyebrow": "Sesiuni live",
+      "remind": "Amintește-mi",
+      "remindLabel": "Amintește-mi: {{title}}",
+      "reminderSet": "Memento setat. O notificare sosește în ora dinaintea începerii.",
+      "open": "Deschide sesiunea",
+      "openLabel": "Deschide sesiunea: {{title}} (se deschide într-o filă nouă)",
+      "timeNote": "Orele sunt cele de pe ceasul acestui dispozitiv.",
+      "language": {
+        "en": "Engleză",
+        "ro": "Română"
+      },
+      "rating": {
+        "all_ages": "Toate vârstele",
+        "13_plus": "13+",
+        "16_plus": "16+",
+        "18_plus": "18+"
+      },
+      "remindFailed": "Nu am putut schimba mementoul. Poate că sesiunea a început. Încearcă din nou.",
+      "loadFailed": "Nu am putut încărca sesiunile live. Verifică conexiunea și încearcă din nou."
     }
   },
   "hubStaff": {
@@ -230,6 +251,25 @@
         "taskRo": "Sarcina în română"
       },
       "refused": "Completează fiecare câmp: titluri de cel mult 80 de caractere, lecții de cel mult 1.500 și sarcini de cel mult 300."
+    },
+    "sessions": {
+      "heading": "Sesiuni live",
+      "intro": "Sesiuni ținute în direct, cum ar fi o oră de întrebări cu un autor. O sesiune apare în spațiu până când începe, doar pentru membrii destul de mari pentru grupa ei de vârstă. Un membru care cere primește o notificare în ora dinaintea începerii.",
+      "add": "Adaugă o sesiune",
+      "titleEnLabel": "Titlu în engleză",
+      "titleRoLabel": "Titlu în română",
+      "placeEnLabel": "Unde, în engleză",
+      "placeRoLabel": "Unde, în română",
+      "startLabel": "Început",
+      "startHint": "Pe ceasul acestui dispozitiv. Fiecare membru îl vede pe al său.",
+      "languageLabel": "Limbă",
+      "ratingLabel": "Cea mai mică grupă de vârstă",
+      "linkLabel": "Link către sesiune (opțional)",
+      "linkHint": "Adresa completă, care începe cu https://. Lasă gol până există una.",
+      "past": "A început",
+      "empty": "Nicio sesiune încă. Spațiul arată lista după ce este adăugată prima.",
+      "listLabel": "Sesiuni live, cele mai târzii primele",
+      "refused": "Completează titlurile (cel mult 120 de caractere), locul (cel mult 80) și începutul. Un link trebuie să înceapă cu https://."
     }
   },
   "resources": {
