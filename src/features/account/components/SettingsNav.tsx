@@ -5,7 +5,10 @@
  * Each item is a real link to the group's address (/settings#privacy), so it works with the
  * keyboard, opens in a new tab and keeps Back working; the open group is marked aria-current.
  * Every item is at least 48 px tall (CLAUDE.md rule 9: 24 px minimum targets). On a narrow screen
- * the menu sits above the open group, as on the board.
+ * the menu sits above the open group, as on the board. From a tablet up it sits beside the group
+ * and stays in view below the floating top bar (md:sticky, top-28 matching the page's
+ * scroll-padding-top), so no link slides under the bar when a group's address scrolls the page
+ * (NAV-1 follow-up: WCAG 2.5.8 target size and 2.4.11 focus not obscured).
  * The person's reports have their own page, so the menu also links to it ("Reports sent").
  * Who shows it: SettingsPage. What it calls: React Router's Link.
  */
@@ -66,7 +69,7 @@ export function SettingsNav({ open, onPick }: SettingsNavProps) {
   return (
     <nav
       aria-label={t('settings.groupsLabel')}
-      className="flex min-w-0 flex-[1_1_260px] flex-col gap-0.5 self-start rounded-card border border-border bg-surface p-2.5 shadow-card md:max-w-[320px]"
+      className="flex min-w-0 flex-[1_1_220px] flex-col gap-0.5 self-start rounded-card border border-border bg-surface p-2.5 shadow-card md:sticky md:top-28 md:max-w-[320px]"
     >
       {settingsGroupKeys.map((key) => (
         <SettingsNavItem key={key} groupKey={key} isOpen={key === open} onPick={onPick} />
