@@ -53,6 +53,11 @@ export interface StoryPageData {
   isOwner: boolean;
   /** True while a chapter is published, so readers can see the story (S1-E3-03). */
   isPublic: boolean;
+  /**
+   * True when the writer chose "In the app only" and that applies now (S1-E3-08, GAPS-15): the
+   * page shows the notice and the chapters open in the app.
+   */
+  appOnly: boolean;
   /** The chapters: the readable ones for readers; every live one for the owner (S1-E3-03). */
   chapters: StoryPageChapter[];
   /**
@@ -99,6 +104,7 @@ interface StoryPageRow {
   last_chapter_published_at: string | null;
   is_owner: boolean;
   is_public: boolean;
+  app_only?: boolean;
   chapters: {
     code: string;
     number: number;
@@ -216,6 +222,7 @@ export async function fetchStoryPage(
     firstPublishedAt: row.first_published_at,
     lastChapterPublishedAt: row.last_chapter_published_at,
     isOwner: row.is_owner,
+    appOnly: row.app_only === true,
     isPublic: row.is_public,
     stats: { likes: row.stats?.likes ?? 0, comments: row.stats?.comments ?? 0 },
     chapters: row.chapters.map((chapter) => ({

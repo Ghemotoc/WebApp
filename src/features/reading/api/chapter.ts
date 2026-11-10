@@ -45,6 +45,11 @@ export interface ReaderChapter {
   isTeaser: boolean;
   /** True when the chapter goes on after the teaser. */
   textContinues: boolean;
+  /**
+   * True when the writer chose "In the app only" and that applies now (S1-E3-08, GAPS-15): the
+   * body is empty and the reader shows the app only notice instead (S1-E4-09).
+   */
+  appOnly: boolean;
   /** The published text as the Markdown subset (ADR 0005), or only its teaser. */
   body: string | null;
   /**
@@ -78,6 +83,8 @@ interface ChapterRow {
   needs_sign_in: boolean;
   is_teaser: boolean;
   text_continues: boolean;
+  /** GAPS-15: missing from answers saved before the switch existed (prefetch caches). */
+  app_only?: boolean;
   body: string | null;
   pictures?: Json;
   embeds?: Json;
@@ -124,6 +131,7 @@ export async function fetchChapter(
     isOwner: row.is_owner,
     needsSignIn: row.needs_sign_in,
     isTeaser: row.is_teaser,
+    appOnly: row.app_only === true,
     textContinues: row.text_continues,
     body: row.body,
     // Signed addresses for the pictures the reader may see; Storage refuses the others.

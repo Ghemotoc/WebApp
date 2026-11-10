@@ -60,6 +60,7 @@ function answersFrom(story: MyStory): StoryAnswers {
     cover: coverAnswerFor(story),
     completionStatus: story.completionStatus,
     visibility: story.visibility,
+    isAppOnly: story.isAppOnly,
     commentsEnabled: story.commentsEnabled,
     quoteCardsEnabled: story.quoteCardsEnabled,
     pictureSharingEnabled: story.pictureSharingEnabled,

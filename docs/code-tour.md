@@ -267,7 +267,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `src/features/<feature>/` | One folder per feature: `components/` (screens), `hooks/` (data hooks), `api/` (Supabase calls) and a `README.md` | each feature story; `home/` by S1-E1-01 |
 | `src/lib/` | Shared helpers: `i18n.ts` (translations), `utils.ts` (`cn` for class names), `database.types.ts` (generated, never edited by hand), `supabase.ts` (the one browser client, loaded on demand; null without settings), `language-preference.ts` (the language kept in this browser), `romanian-text.ts` (ş and ţ become ș and ț), `query-retry.ts` (a refused read, 401 or 403, isn't retried; api/ functions keep the response status as the error's cause), and later `platform/` adapters | S1-E1-01, S1-E1-02, S1-E1-04, S1-E2-QA |
 | `src/locales/ro/`, `src/locales/en/` | All interface text, one JSON file per namespace; same keys in both | S1-E1-01, S1-E1-04 |
-| `src/styles/` | `tokens.css` (every colour: Lilac mist by day, one block per other look under `data-look` (G2), monochrome greys with cobalt buttons at night (NIGHT-1; the galaxy background is `--night-sky`, from `public/night-galaxy-*.svg`) and the beige staff set under `data-area="staff"`, plus fonts, type sizes, radii and shadows, from the liquid glass handoff), `fonts.css` (self-hosted fonts, Literata for story text), `index.css` (global rules: the still colour blobs behind every page, glass blur on `bg-surface`, focus ring with its halo, reduce motion and reduce transparency, tmc-* classes), `contrast-pairs.ts` (the pairs CI checks in all four looks, `scripts/token-contrast.test.ts`) | S1-E1-01, S1-E1-03, G1 |
+| `src/styles/` | `tokens.css` (every colour: Lilac mist by day, one block per other look under `data-look` (G2), monochrome greys with cobalt buttons at night (NIGHT-1; the galaxy background is `--night-sky`, from `public/night-galaxy-*.svg`) and the beige staff set under `data-area="staff"`, plus fonts, type sizes, radii and shadows, from the liquid glass handoff), `fonts.css` (self-hosted fonts: Funnel Display for headings, Inter, Literata for story text and Playwrite Cuba for handwriting; FONTS), `index.css` (global rules: the still colour blobs behind every page, glass blur on `bg-surface`, focus ring with its halo, reduce motion and reduce transparency, tmc-* classes), `contrast-pairs.ts` (the pairs CI checks in all four looks, `scripts/token-contrast.test.ts`) | S1-E1-01, S1-E1-03, G1 |
 | `src/schemas/` | zod schemas shared with edge functions | first story with a form or function |
 | `src/test/` | Test set-up; later fixtures and MSW mocks | S1-E1-01 |
 | `public/` | Files copied as they are into `dist/`: `_redirects` (every address serves `index.html` on Cloudflare Pages), `theme-init.js` (light or night before the first paint) and `zod-init.js` (zod without eval, QA-1c) | S1-E1-01, S1-E1-03 |
@@ -2653,3 +2653,16 @@ The account gate is the one place minors are held back: while `adults_only` is o
 - Resources: `/resources` (`ResourcesPage`), from the avatar menu (`AccountMenu`). It links to the writers' rights page, lists every how-to guide and ends with More help.
 - The guides and the rights page are CMS help pages (rule 4): keys `how-to-…` and `writers-rights`, in ro and en for the Romanian market. The migration publishes version 1 and admins edit them in Staff › Website › Help pages. Both pages read them through `useWebsiteContent('help_page', …)`, and each guide opens at `/help/<key>` (`HelpPageView`).
 - Migration `…_g9a_writers_hub.sql`. Tests: `supabase/tests/database/317-writers-hub.test.sql`, `src/features/hub/lib/hubDates.test.ts`, `src/features/hub/lib/howToGuides.test.ts`, `e2e/writers-hub.spec.ts`.
+
+### App only stories (GAPS-15)
+
+A writer picks "Where can people read this story?" in the story's settings
+(`src/features/writing/components/StoryReadOnSection.tsx`); `updateMyStory()` saves it last through
+`set_my_story_app_only()` into `stories.is_app_only`. Nothing changes for readers until staff turn
+the `app_only_stories` flag on (it waits for the apps): `story_app_only_applies()` is the one place
+that checks both. Then `get_chapter()` sends no text to anyone but the writer and says `app_only`,
+so `ChapterReaderPage` shows `AppOnlyNotice`; `get_shared_passage()` (and so link previews of
+passages and pictures) answers nothing; `get_story_page()` and `story_card_json()` carry `app_only`
+for the notice on the story page and the "In the app only" pill on cards
+(`ListedStoryCard`, `StoryHeader`). Tests: `supabase/tests/database/342-app-only.test.sql` and
+`e2e/app-only.spec.ts`.

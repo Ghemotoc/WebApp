@@ -2,7 +2,7 @@
  * FeaturedSlide: one story in Featured this week (story S1-E5-10; board Discover, the big slider).
  *
  * Board values (liquid glass board Discover, bundle G7): on the light glass card, the eyebrow, the
- * title in Bricolage at 40 px, the blurb in the soft body colour, "Read the story" as the main
+ * title in Funnel Display at 40 px, the blurb in the soft body colour, "Read the story" as the main
  * button with the byline and chapter count beside it, and on the right the story's cover, 210 px
  * wide and tilted a little, with a soft shadow, drawn at the shelf cards' size so the whole title
  * fits on its lines (DoD covers). The cover is decorative here (the title is the

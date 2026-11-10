@@ -27,7 +27,7 @@ export interface QuoteCardCanvasProps {
 export function QuoteCardCanvas({ content, altText, canvasRef }: QuoteCardCanvasProps) {
   useEffect(() => {
     let isCurrent = true;
-    // Step 1: wait for the fonts (Bricolage Grotesque and Inter) so the card uses them.
+    // Step 1: wait for the fonts (Funnel Display and Inter) so the card uses them.
     void document.fonts.ready.then(() => {
       // Step 2: draw, unless the content changed again meanwhile.
       const context = canvasRef.current?.getContext('2d') ?? null;

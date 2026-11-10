@@ -83,7 +83,7 @@ const textWidth = cardSize - margin * 2;
 
 /** The fonts the card uses: the reading serif for the quote, the app's own for the rest. */
 const quoteFontFamily = 'Georgia, "Times New Roman", serif';
-const titleFontFamily = '"Bricolage Grotesque", Inter, sans-serif';
+const titleFontFamily = '"Funnel Display Variable", "Funnel Display", Inter, sans-serif';
 const bodyFontFamily = 'Inter, system-ui, sans-serif';
 
 /**

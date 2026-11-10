@@ -3,7 +3,7 @@
  * redrawn in G8b; S1-E8-06; boards SpaceNew and SpaceSettings).
  *
  * The page's main card (headingLevel 'h1') follows the boards' page header: the eyebrow, the page
- * title in Bricolage Grotesque at up to 72 px and the lead line sit above a glass card with 28 px
+ * title in Funnel Display at up to 72 px and the lead line sit above a glass card with 28 px
  * corners, up to 760 px wide, that holds the form. Every other card on the page (headingLevel
  * 'h2') carries its heading inside it, with an eyebrow when it adds something.
  * Who uses it: NewSpacePage and SpaceSettingsPage (the settings form, then the welcome note,

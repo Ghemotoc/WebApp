@@ -3,7 +3,7 @@
  * 3.7 Library).
  *
  * Board values: a white card with the cover (the small "tile" size, so the full title still fits;
- * DoD covers), the title in Bricolage, "by <writer> · Chapter 14 of 15", a progress line through
+ * DoD covers), the title in Funnel Display, "by <writer> · Chapter 14 of 15", a progress line through
  * the chapter, "You stopped halfway through chapter 14 on your phone, yesterday", then either
  * "Chapter 15 is out" (sage) or "Completed story", and the Continue button.
  * Liquid glass look (bundle G7d2; board Library): a glass card with 28 px corners, a 96 px cover,

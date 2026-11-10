@@ -6,7 +6,7 @@
  * accessible name ("View more · All 54 in Trending"), so voice control users can say what they see
  * (WCAG 2.2, 2.5.3 Label in Name).
  * Board values: 196 by 264 px, a 2 px dashed border, a 52 px plum circle with an arrow, the title
- * in Bricolage 22 px.
+ * in Funnel Display 22 px.
  * Who uses it: Shelf (src/components/ui/Shelf.tsx).
  */
 import { useTranslation } from 'react-i18next';

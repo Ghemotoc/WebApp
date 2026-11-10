@@ -4,7 +4,7 @@
  *
  * Board values: a 220 × 308 cover with the words beside it (36 px apart, wrapping under the
  * cover on narrow screens), the pill row (Fiction, Ongoing only while the story is still being
- * written, the rating and label pills from S1-E3-06; "Web and app" joins with S1-E3-08), the H1 in Bricolage 800 at
+ * written, the rating and label pills from S1-E3-06; "Web and app" joins with S1-E3-08), the H1 in Funnel Display 800 at
  * clamp(36px, 4.4vw, 64px), "by <name>" at 16 px, the blurb at 17 px / 1.6 up to 640 px wide,
  * the content note box when the writer left one (S1-E3-06: readers see it before they open the
  * story), the tag chips, each a link to its tag page (S1-E5-01), "Follow story" (S1-E6-05) and,
@@ -101,6 +101,8 @@ function StoryPills({ story }: { story: StoryPageData }) {
       {story.completionStatus === 'ongoing' && (
         <InfoPill tone="sage">{t('status.ongoing', { ns: 'writing' })}</InfoPill>
       )}
+      {/* GAPS-15: the board's "App only" pill, once the switch for it is on (S1-E3-08). */}
+      {story.appOnly && <InfoPill tone="sky">{t('storyPage.appOnlyPill')}</InfoPill>}
       <StoryLabelPills labels={story.labels} />
     </div>
   );

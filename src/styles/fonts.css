@@ -6,12 +6,13 @@
  * The @fontsource packages ship the same font files; Vite copies them into dist/ at build time.
  * Every file includes the Latin Extended range, so Romanian ș and ț render in every font.
  *
- * Fonts (CLAUDE.md, Designs; decided 17 Oct 2026, 10:43):
- *   Bricolage Grotesque  headings, page titles, the wordmark
+ * Fonts (CLAUDE.md, Designs; decided 17 Oct 2026, 10:43; headings and handwriting changed by
+ * Robert, 10 Nov 2026, bundle FONTS):
+ *   Funnel Display       headings, page titles, the wordmark (variable, OFL licence)
  *   Inter                body and interface text
  *                        (Inter also sets the eyebrow labels, Bold, 12 px, capitals, as The
  *                        Magic Coffin's do; Robert, 6 Nov 2026, replacing Cutive)
- *   Shadows Into Light Two  handwritten accents
+ *   Playwrite Cuba       handwritten accents ('Playwrite CU'; variable, OFL licence)
  *   Literata             story text in the reader and the editor (the liquid glass design,
  *                        approved 7 Nov 2026; bundle G1). Variable, OFL licence.
  *   OpenDyslexic         the dyslexia-friendly choice in reading settings, for chapter text and
@@ -21,9 +22,9 @@
  *                           IDEA-20261031-6; OFL licence). Its files download only when a reader
  *                           picks it, because a browser fetches a font only once text uses it.
  */
-@import '@fontsource-variable/bricolage-grotesque';
+@import '@fontsource-variable/funnel-display';
 @import '@fontsource-variable/inter';
-@import '@fontsource/shadows-into-light-two';
+@import '@fontsource-variable/playwrite-cu';
 @import '@fontsource-variable/literata';
 @import '@fontsource/opendyslexic/400.css';
 @import '@fontsource/opendyslexic/400-italic.css';

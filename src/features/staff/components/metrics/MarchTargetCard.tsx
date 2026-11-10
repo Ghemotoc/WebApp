@@ -2,7 +2,7 @@
  * MarchTargetCard: one of the three March test numbers with its target (story S1-E15-02; board
  * AdminMetrics, "March test targets").
  *
- * Board values: a white card, the label as an eyebrow, the number in Bricolage at 40 px, an 8 px
+ * Board values: a white card, the label as an eyebrow, the number in Funnel Display at 40 px, an 8 px
  * gold progress bar on a lilac track, "Target 20 · 70% of the way" and a line saying what is
  * counted. The bar is a real progressbar with its label, so a screen reader hears the progress.
  * Who uses it: MarchNumbersPage.

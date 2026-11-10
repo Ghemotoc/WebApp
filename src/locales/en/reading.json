@@ -66,7 +66,9 @@
       }
     },
     "youAreHere": "You are here, {{percent}}%",
-    "youAreHereLink": "You are here, {{percent}}% through chapter {{number}}. Go back to that place"
+    "youAreHereLink": "You are here, {{percent}}% through chapter {{number}}. Go back to that place",
+    "appOnly": "{{writer}} publishes this story in the app only. The chapter list is here, and the chapters open in the app.",
+    "appOnlyPill": "In the app only"
   },
   "reader": {
     "documentTitle": "{{chapter}} · {{story}}",
@@ -215,5 +217,10 @@
       "music": "the music “{{title}}”",
       "video": "the video “{{title}}”"
     }
+  },
+  "appOnly": {
+    "title": "This story is only in the app",
+    "body": "{{writer}} chose to publish this story in the {{productName}} app only. The app gives writers more privacy and more control over their work, and makes chapters harder to copy.",
+    "backToStory": "Back to the story"
   }
 }

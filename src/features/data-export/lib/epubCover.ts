@@ -37,7 +37,7 @@ const lineGap = 30;
 
 /** The fonts, by the names src/styles/tokens.css gives them; sans-serif only if they can't load. */
 const titleFont = (size: number) =>
-  `700 ${size}px "Bricolage Grotesque Variable", "Bricolage Grotesque", sans-serif`;
+  `700 ${size}px "Funnel Display Variable", "Funnel Display", sans-serif`;
 const nameFont = `500 ${nameSize}px "Inter Variable", Inter, sans-serif`;
 
 /** What a drawn cover needs. */

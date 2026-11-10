@@ -88,6 +88,8 @@ export interface ListedStory {
   drawnCover: DrawnCoverChoice | null;
   chapterCount: number;
   lastChapterPublishedAt: string | null;
+  /** The writer chose "In the app only" and it applies now: the card's label (GAPS-15, Q4). */
+  appOnly: boolean;
 }
 
 /** One page of a list. */
@@ -116,6 +118,8 @@ export interface ListedStoryRow {
   };
   chapter_count: number;
   last_chapter_published_at: string | null;
+  /** GAPS-15 (story_card_json()); missing from functions that build their own cards. */
+  app_only?: boolean;
 }
 
 /**
@@ -159,6 +163,7 @@ export function toListedStory(row: ListedStoryRow): ListedStory {
     drawnCover: drawnCoverOf(row.cover),
     chapterCount: row.chapter_count,
     lastChapterPublishedAt: row.last_chapter_published_at,
+    appOnly: row.app_only === true,
   };
 }
 

@@ -2,7 +2,7 @@
  * NewStoryCard: the "Start a new story" card on Discover (story S1-E5-12, bundle LOOK-4b;
  * board Discover, "Your dashboard", the house promo).
  *
- * Board values: the "Write" eyebrow, "Start a new story" in Bricolage at 20 px, one line saying
+ * Board values: the "Write" eyebrow, "Start a new story" in Funnel Display at 20 px, one line saying
  * nobody sees it until it is published, and "New story". Since bundle G7 it is a glass card in the
  * side column like Your draft, no longer gold: top cards stay light and calm (design rulebook,
  * "Top cards"), and the main colour is kept for the buttons. The whole card is one link to the

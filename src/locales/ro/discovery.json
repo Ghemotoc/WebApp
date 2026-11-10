@@ -48,7 +48,8 @@
   "card": {
     "meta_one": "{{writer}} · {{count}} capitol",
     "meta_few": "{{writer}} · {{count}} capitole",
-    "meta_other": "{{writer}} · {{count}} de capitole"
+    "meta_other": "{{writer}} · {{count}} de capitole",
+    "appOnly": "Doar în aplicație"
   },
   "seeAll": {
     "documentTitle": "{{title}} · {{productName}}",

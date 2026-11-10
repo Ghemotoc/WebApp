@@ -7774,6 +7774,7 @@ export type Database = {
           first_published_at: string | null;
           first_published_year: number | null;
           id: string;
+          is_app_only: boolean;
           is_fan_fiction: boolean;
           is_parody: boolean;
           language_code: string;
@@ -7819,6 +7820,7 @@ export type Database = {
             first_published_at: string | null;
             first_published_year: number | null;
             id: string;
+            is_app_only: boolean;
             is_fan_fiction: boolean;
             is_parody: boolean;
             language_code: string;
@@ -7868,6 +7870,7 @@ export type Database = {
           first_published_at?: string | null;
           first_published_year?: number | null;
           id?: string;
+          is_app_only?: boolean;
           is_fan_fiction?: boolean;
           is_parody?: boolean;
           language_code: string;
@@ -7910,6 +7913,7 @@ export type Database = {
           first_published_at?: string | null;
           first_published_year?: number | null;
           id?: string;
+          is_app_only?: boolean;
           is_fan_fiction?: boolean;
           is_parody?: boolean;
           language_code?: string;
@@ -11110,6 +11114,7 @@ export type Database = {
           first_published_at: string | null;
           first_published_year: number | null;
           id: string;
+          is_app_only: boolean;
           is_fan_fiction: boolean;
           is_parody: boolean;
           language_code: string;
@@ -13258,6 +13263,7 @@ export type Database = {
           first_published_at: string | null;
           first_published_year: number | null;
           id: string;
+          is_app_only: boolean;
           is_fan_fiction: boolean;
           is_parody: boolean;
           language_code: string;
@@ -14589,6 +14595,7 @@ export type Database = {
           first_published_at: string | null;
           first_published_year: number | null;
           id: string;
+          is_app_only: boolean;
           is_fan_fiction: boolean;
           is_parody: boolean;
           language_code: string;
@@ -15226,6 +15233,7 @@ export type Database = {
       set_my_locale: { Args: { new_locale: string }; Returns: string };
       set_my_pen_name: { Args: { new_pen_name: string }; Returns: string };
       set_my_signature: { Args: { picture_id?: string; signature_text: string }; Returns: Json };
+      set_my_story_app_only: { Args: { story_slug: string; wanted: boolean }; Returns: Json };
       set_my_story_visibility: {
         Args: { story_slug: string; wanted: Database['public']['Enums']['story_visibility'] };
         Returns: Json;
@@ -15912,6 +15920,7 @@ export type Database = {
         Returns: string;
       };
       stories_fingerprint: { Args: { chosen_story_id: string; owner_id: string }; Returns: string };
+      story_app_only_applies: { Args: { chosen: boolean }; Returns: boolean };
       story_as_shown: {
         Args: {
           target: Omit<
@@ -15944,6 +15953,7 @@ export type Database = {
           first_published_at: string | null;
           first_published_year: number | null;
           id: string;
+          is_app_only: boolean;
           is_fan_fiction: boolean;
           is_parody: boolean;
           language_code: string;

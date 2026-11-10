@@ -4,7 +4,7 @@
  *
  * Board values (Discover shelf card): 196 px wide, a 264 px cover with 18 px padding and 16 px
  * radius, the title drawn at the bottom of the cover, then an optional pill, the title in
- * Bricolage 16 px and a 13 px meta line.
+ * Funnel Display 16 px and a 13 px meta line.
  * Rules: the drawn title is always shown in full, wrapping on spaces and stepping down in size
  * (DoD covers; src/lib/cover-title.ts). The real title sits right under the cover as text, so the
  * drawn one is hidden from screen readers to avoid reading it twice.

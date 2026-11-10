@@ -47,6 +47,7 @@ import { StoryBasicsSection } from './StoryBasicsSection';
 import { StoryLabelsSection } from './StoryLabelsSection';
 import { StoryPreviewAside } from './StoryPreviewAside';
 import { StoryStatusSection } from './StoryStatusSection';
+import { StoryReadOnSection } from './StoryReadOnSection';
 import { StoryVisibilitySection } from './StoryVisibilitySection';
 
 /** The message under the save button for each outcome. */
@@ -167,6 +168,7 @@ function SettingsFields({
       )}
       <StoryLabelsSection answers={form.answers} errors={form.errors} set={form.set} />
       <StoryVisibilitySection answers={form.answers} set={form.set} />
+      <StoryReadOnSection answers={form.answers} set={form.set} />
       <StoryStatusSection answers={form.answers} set={form.set} />
       <SaveBar form={form} />
       <DeleteStoryCard story={story} />

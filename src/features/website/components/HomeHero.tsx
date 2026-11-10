@@ -2,7 +2,7 @@
  * HomeHero: the top of the public home page (stories S1-E5-08 and S1-E11-06; board
  * Website-Home, 1.1; the cover wall from bundle LOOK-2).
  *
- * Board values: two columns that wrap on narrow screens. On the left, an eyebrow, the Bricolage
+ * Board values: two columns that wrap on narrow screens. On the left, an eyebrow, the Funnel Display
  * headline on two lines with a gold underline under the chosen word, the lede, two pill buttons
  * with their line icons (the pen on "Start writing", the open book on "Start reading") and
  * three short points with the padlock, shield and book icons (ActionIcon, since NO-DOODLES). On the right, the cover wall

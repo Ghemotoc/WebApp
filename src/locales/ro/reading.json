@@ -66,7 +66,9 @@
       }
     },
     "youAreHere": "Ești aici, {{percent}}%",
-    "youAreHereLink": "Ești aici, {{percent}}% din capitolul {{number}}. Mergi înapoi acolo"
+    "youAreHereLink": "Ești aici, {{percent}}% din capitolul {{number}}. Mergi înapoi acolo",
+    "appOnly": "{{writer}} publică această poveste doar în aplicație. Lista capitolelor e aici, iar capitolele se deschid în aplicație.",
+    "appOnlyPill": "Doar în aplicație"
   },
   "reader": {
     "documentTitle": "{{chapter}} · {{story}}",
@@ -215,5 +217,10 @@
       "music": "muzica „{{title}}”",
       "video": "videoclipul „{{title}}”"
     }
+  },
+  "appOnly": {
+    "title": "Povestea e doar în aplicație",
+    "body": "{{writer}} a ales să publice această poveste doar în aplicația {{productName}}. Aplicația le oferă scriitorilor mai multă intimitate și mai mult control asupra textelor și face capitolele mai greu de copiat.",
+    "backToStory": "Înapoi la poveste"
   }
 }

@@ -2,7 +2,7 @@
  * EmptyState: what a screen shows when there is nothing to list yet (story S1-E1-03).
  *
  * Board values (Search, empty results): 40 by 32 px padding, white surface, 1 px border, 24 px
- * radius, a 26 px Bricolage heading, 16 px text and one action.
+ * radius, a 26 px Funnel Display heading, 16 px text and one action.
  * Who uses it: Search with no results, an empty library, an empty queue.
  */
 import type { ReactNode } from 'react';

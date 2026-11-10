@@ -4,7 +4,7 @@
  *
  * Board values: an eyebrow, the 28 px heading, a "Last 30 days / All time" glass switch
  * (SegmentedControl, bundle G9 WRITING, part b), five tiles (24 px corners, the label in the
- * eyebrow style with a 20 px line icon beside it, the number in 40 px Bricolage below, a 14 px
+ * eyebrow style with a 20 px line icon beside it, the number in 40 px Funnel Display below, a 14 px
  * note) and the lilac "These are totals only" panel.
  * A count from fewer than 5 readers reads "fewer than 5" (criterion 2); the numbers are totals,
  * never a list of readers (criterion 3).

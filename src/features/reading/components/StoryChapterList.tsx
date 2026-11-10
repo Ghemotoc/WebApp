@@ -3,7 +3,7 @@
  * list).
  *
  * Board values: a card with the eyebrow "Chapters" and one row per chapter, a fine line between
- * rows: "Chapter n", the title in Bricolage, and the published date (with "Edited …" when the
+ * rows: "Chapter n", the title in Funnel Display, and the published date (with "Edited …" when the
  * writer updated it). Readers see only published chapters; the owner's preview also lists drafts
  * and scheduled chapters with a pill. A published chapter's title links to the chapter reader
  * (S1-E4-01a); a draft or scheduled one stays plain text, because readers can't open it.
