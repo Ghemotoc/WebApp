@@ -168,6 +168,34 @@ describe('plansFrom', () => {
     expect(bible?.markdown).toBe('Hot.');
   });
 
+  it('a chapter told by the Narrator says so, though the Narrator is nobody in the cast', () => {
+    const [entry] = plansFrom(
+      dataFile({
+        chapter_plans: [
+          {
+            chapter_id: 'c1',
+            story_id: 's1',
+            kind: 'chapter',
+            planning_status: 'idea',
+            pov_character_id: null,
+            pov_is_narrator: true,
+            act_id: null,
+            word_target: null,
+            world_date: '',
+            location: '',
+            summary: '',
+          },
+        ],
+      }),
+      words,
+    );
+    const plan = entry?.plan.parts.find((part) => part.heading === 'plan.chapterPlans')?.entries[0];
+    expect(plan?.details).toContainEqual({
+      label: 'chapterPlan.pov',
+      value: 'chapterPlan.narrator',
+    });
+  });
+
   it('a chapter plan names its point of view, its people and its scenes', () => {
     const [entry] = plansFrom(
       dataFile({

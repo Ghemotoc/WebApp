@@ -29,6 +29,8 @@ export interface ChapterPlanFields {
   planningStatus: PlanningStatus;
   /** The point-of-view character's ID, or null. */
   povCharacterId: string | null;
+  /** True when the Narrator, outside the story, tells the chapter (G10c2); never with a character. */
+  povIsNarrator: boolean;
   actId: string | null;
   /** Words aimed for in this chapter, or null for no target. */
   wordTarget: number | null;
@@ -102,6 +104,7 @@ interface ChapterPlanRow {
     kind: ChapterKind;
     planning_status: PlanningStatus;
     pov_character_id: string | null;
+    pov_is_narrator: boolean;
     act_id: string | null;
     word_target: number | null;
     world_date: string;
@@ -160,6 +163,7 @@ export async function fetchChapterPlan(
       kind: row.plan.kind,
       planningStatus: row.plan.planning_status,
       povCharacterId: row.plan.pov_character_id,
+      povIsNarrator: row.plan.pov_is_narrator,
       actId: row.plan.act_id,
       wordTarget: row.plan.word_target,
       worldDate: row.plan.world_date,
@@ -249,6 +253,8 @@ export interface ChapterPlanChange {
   planning_status?: PlanningStatus;
   /** '' clears it. */
   pov_character_id?: string;
+  /** True for the Narrator; the database then clears the character (G10c2). */
+  pov_is_narrator?: boolean;
   /** '' clears it. */
   act_id?: string;
   /** null clears it. */

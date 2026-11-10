@@ -514,7 +514,10 @@
       "povAndPresent": "punct de vedere, prezent",
       "chapter": "Capitolul {{number}}: {{title}}",
       "loadFailed": "Nu am putut încărca unde apare personajul."
-    }
+    },
+    "narrator": "Narator",
+    "narratorOption": "Narator (din afara poveștii)",
+    "narratorOutside": "din afara poveștii"
   },
   "storyline": {
     "documentTitle": "Firul poveștii pentru {{title}}: Story Atlas",
@@ -606,7 +609,8 @@
       "none": "Niciun capitol nu are încă o perspectivă. Alege una în planul fiecărui capitol.",
       "noChapters": "Povestea nu are încă niciun capitol.",
       "countsLabel": "Capitole după narator",
-      "chaptersBy": "Spuse de {{name}}"
+      "chaptersBy": "Spuse de {{name}}",
+      "toldByNarrator": "Spuse de narator"
     }
   },
   "ideas": {

@@ -17,6 +17,7 @@ function chapter(code: string, actId: string | null, kind = 'chapter'): Storylin
     kind: kind as StorylineChapter['kind'],
     planningStatus: 'idea',
     povCharacterId: null,
+    povIsNarrator: false,
     actId,
     wordCount: 0,
     wordTarget: null,

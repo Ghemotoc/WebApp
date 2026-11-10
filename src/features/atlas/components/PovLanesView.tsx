@@ -6,12 +6,13 @@
  * Above the table, a tile per teller with how many chapters they tell (bundle G10 ATLAS, part c1;
  * board AtlasPov). A real table, so a screen reader reads each mark with its chapter and its character. The
  * table scrolls inside its own box when there are many characters, never the page (rule 21).
- * Who uses it: StorylinePage. What it calls: lib/povLanes.ts and PlanningStatusPill.
+ * Who uses it: StorylinePage. What it calls: lib/povLanes.ts (the columns, the Narrator's
+ * last, G10c2) and PlanningStatusPill.
  */
 import { Link } from 'react-router';
 
 import type { Storyline, StorylineChapter } from '../api/storyline';
-import { povCharacters } from '../lib/povLanes';
+import { isToldBy, laneTellers, type LaneTeller } from '../lib/povLanes';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { PlanningStatusPill } from './PlanningStatusPill';
@@ -23,14 +24,14 @@ export interface PovLanesViewProps {
   labelOf: (code: string) => string;
 }
 
-/** A character who tells at least one chapter. */
-interface Teller {
-  id: string;
-  name: string;
-}
-
 /** How many chapters each character tells, as a row of small glass tiles. */
-function TellerCounts({ tellers, chapters }: { tellers: Teller[]; chapters: StorylineChapter[] }) {
+function TellerCounts({
+  tellers,
+  chapters,
+}: {
+  tellers: LaneTeller[];
+  chapters: StorylineChapter[];
+}) {
   const { t } = useAtlasTranslation();
   return (
     <ul
@@ -43,10 +44,12 @@ function TellerCounts({ tellers, chapters }: { tellers: Teller[]; chapters: Stor
           className="flex min-w-0 flex-col gap-1 rounded-3xl border border-border bg-surface px-[18px] py-3.5 shadow-card"
         >
           <span className="text-[13px] break-words text-meta">
-            {t('storyline.lanes.chaptersBy', { name: teller.name })}
+            {teller.name === null
+              ? t('storyline.lanes.toldByNarrator')
+              : t('storyline.lanes.chaptersBy', { name: teller.name })}
           </span>
           <b className="font-heading text-2xl font-extrabold text-heading">
-            {chapters.filter((chapter) => chapter.povCharacterId === teller.id).length}
+            {chapters.filter((chapter) => isToldBy(chapter, teller.id)).length}
           </b>
         </li>
       ))}
@@ -64,7 +67,7 @@ function LaneRow({
   slug: string;
   chapter: StorylineChapter;
   label: string;
-  tellers: Teller[];
+  tellers: LaneTeller[];
 }) {
   return (
     <tr data-testid="atlas-lane-row" className="border-b border-hairline last:border-b-0">
@@ -79,7 +82,7 @@ function LaneRow({
       </th>
       {tellers.map((character) => (
         <td key={character.id} className="px-1.5 py-2 text-center align-middle">
-          {chapter.povCharacterId === character.id && (
+          {isToldBy(chapter, character.id) && (
             <PlanningStatusPill status={chapter.planningStatus} />
           )}
         </td>
@@ -94,7 +97,7 @@ function LanesTable({
   storyline,
   labelOf,
   tellers,
-}: PovLanesViewProps & { tellers: Teller[] }) {
+}: PovLanesViewProps & { tellers: LaneTeller[] }) {
   const { t } = useAtlasTranslation();
   return (
     <div
@@ -118,7 +121,13 @@ function LanesTable({
                 scope="col"
                 className="min-w-[104px] px-1.5 py-2.5 text-center font-semibold break-words text-heading"
               >
-                {character.name}
+                {character.name ?? t('chapterPlan.narrator')}
+                {/* The Narrator is nobody in the cast, so the column says so (board AtlasPov). */}
+                {character.name === null && (
+                  <span className="block text-[13px] font-medium text-meta">
+                    {t('chapterPlan.narratorOutside')}
+                  </span>
+                )}
               </th>
             ))}
           </tr>
@@ -146,7 +155,7 @@ function LanesTable({
  */
 export function PovLanesView({ slug, storyline, labelOf }: PovLanesViewProps) {
   const { t } = useAtlasTranslation();
-  const tellers = povCharacters(storyline.characters, storyline.chapters);
+  const tellers = laneTellers(storyline.characters, storyline.chapters);
   if (storyline.chapters.length === 0)
     return <p className="m-0 text-body">{t('storyline.lanes.noChapters')}</p>;
   if (tellers.length === 0) return <p className="m-0 text-body">{t('storyline.lanes.none')}</p>;

@@ -303,7 +303,10 @@ function chapterPlanEntry(
     },
     {
       label: words.atlas('chapterPlan.pov'),
-      value: characterName(rows, chapterPlan.pov_character_id),
+      // The Narrator is nobody in the cast, so the export names them in words (G10c2).
+      value: chapterPlan.pov_is_narrator
+        ? words.atlas('chapterPlan.narrator')
+        : characterName(rows, chapterPlan.pov_character_id),
     },
     { label: words.atlas('chapterPlan.act'), value: actName },
     { label: words.atlas('chapterPlan.wordTarget'), value: String(chapterPlan.word_target ?? '') },

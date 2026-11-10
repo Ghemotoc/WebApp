@@ -87,7 +87,7 @@ select public.update_chapter_plan('c194aaaa', jsonb_build_object(
 select is((public.chapter_plan('c194aaaa') -> 'plan') - 'updated_at'::text - 'act_id'::text, jsonb_build_object(
     'kind', 'prologue', 'planning_status', 'drafting', 'word_target', 3000, 'world_date', 'Primăvara, anul 3',
     'world_sort', 3.5, 'location', 'Farul', 'summary', 'Furtuna lovește farul.',
-    'pov_character_id', '19400000-0000-4000-8000-0000000000c1'),
+    'pov_character_id', '19400000-0000-4000-8000-0000000000c1', 'pov_is_narrator', false),
   'each field saves, texts trimmed and ş corrected to ș');
 select is((public.chapter_plan('c194aaaa') -> 'plan' ->> 'act_id')::uuid,
   (select id from public.story_plan_acts where story_id = '00000000-0000-4000-9000-000000000001' and position = 1),

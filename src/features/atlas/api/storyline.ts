@@ -28,6 +28,8 @@ export interface StorylineChapter {
   kind: ChapterKind;
   planningStatus: PlanningStatus;
   povCharacterId: string | null;
+  /** True when the Narrator, outside the story, tells it (G10c2). */
+  povIsNarrator: boolean;
   /** The act it sits in, or null for "No act". */
   actId: string | null;
   wordCount: number;
@@ -80,6 +82,7 @@ interface StorylineRow {
     kind: ChapterKind;
     planning_status: PlanningStatus;
     pov_character_id: string | null;
+    pov_is_narrator: boolean;
     act_id: string | null;
     word_count: number;
     word_target: number | null;
@@ -107,6 +110,7 @@ function chapterFrom(row: StorylineRow['chapters'][number]): StorylineChapter {
     kind: row.kind,
     planningStatus: row.planning_status,
     povCharacterId: row.pov_character_id,
+    povIsNarrator: row.pov_is_narrator,
     actId: row.act_id,
     wordCount: row.word_count,
     wordTarget: row.word_target,

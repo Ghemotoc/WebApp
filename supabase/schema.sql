@@ -14843,7 +14843,8 @@ begin
     'outcome', 'ok',
     'plan', jsonb_build_object(
       'kind', target_plan.kind, 'planning_status', target_plan.planning_status,
-      'pov_character_id', target_plan.pov_character_id, 'act_id', target_plan.act_id,
+      'pov_character_id', target_plan.pov_character_id,
+      'pov_is_narrator', target_plan.pov_is_narrator, 'act_id', target_plan.act_id,
       'word_target', target_plan.word_target, 'world_date', target_plan.world_date,
       'world_sort', target_plan.world_sort, 'location', target_plan.location,
       'summary', target_plan.summary, 'updated_at', target_plan.updated_at),
@@ -26559,8 +26560,10 @@ CREATE TABLE IF NOT EXISTS "public"."chapter_plans" (
     "summary" "text" DEFAULT ''::"text" NOT NULL,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "pov_is_narrator" boolean DEFAULT false NOT NULL,
     CONSTRAINT "chapter_plans_kind_known" CHECK (("kind" = ANY (ARRAY['chapter'::"text", 'prologue'::"text", 'interlude'::"text", 'epilogue'::"text"]))),
     CONSTRAINT "chapter_plans_location_length" CHECK (("char_length"("location") <= 200)),
+    CONSTRAINT "chapter_plans_one_teller" CHECK ((NOT ("pov_is_narrator" AND ("pov_character_id" IS NOT NULL)))),
     CONSTRAINT "chapter_plans_planning_status_known" CHECK (("planning_status" = ANY (ARRAY['idea'::"text", 'outlined'::"text", 'drafting'::"text", 'revising'::"text", 'done'::"text"]))),
     CONSTRAINT "chapter_plans_summary_length" CHECK (("char_length"("summary") <= 5000)),
     CONSTRAINT "chapter_plans_word_target_range" CHECK ((("word_target" IS NULL) OR (("word_target" >= 1) AND ("word_target" <= 1000000)))),
@@ -26577,6 +26580,10 @@ The private planning beside each chapter (S1-E17-24). Only the writer reads it; 
 
 
 COMMENT ON COLUMN "public"."chapter_plans"."user_id" IS 'The writer''s user ID; never shown publicly (rule 15).';
+
+
+
+COMMENT ON COLUMN "public"."chapter_plans"."pov_is_narrator" IS 'True when the chapter is told by the Narrator, outside the story, and not by a character (G10c2).';
 
 
 
@@ -42620,7 +42627,8 @@ CREATE OR REPLACE FUNCTION "public"."storyline_chapters_json"("target_story_id" 
       'code', chapters.code, 'position', chapters.position, 'title', chapters.draft_title,
       'status', chapters.status, 'kind', coalesce(plans.kind, 'chapter'),
       'planning_status', coalesce(plans.planning_status, 'idea'),
-      'pov_character_id', plans.pov_character_id, 'act_id', plans.act_id,
+      'pov_character_id', plans.pov_character_id,
+      'pov_is_narrator', coalesce(plans.pov_is_narrator, false), 'act_id', plans.act_id,
       'word_count', chapters.word_count, 'word_target', plans.word_target,
       'world_date', coalesce(plans.world_date, ''), 'world_sort', plans.world_sort)
     order by chapters.position, chapters.created_at), '[]'::jsonb)
@@ -43674,7 +43682,8 @@ begin
     return jsonb_build_object('outcome', 'not_found');
   end if;
   if exists (select 1 from jsonb_object_keys(coalesce(changes, '{}'::jsonb)) as change_key
-             where change_key not in ('kind', 'planning_status', 'pov_character_id', 'act_id', 'word_target',
+             where change_key not in ('kind', 'planning_status', 'pov_character_id', 'pov_is_narrator', 'act_id',
+                                      'word_target',
                                       'world_date', 'world_sort', 'location', 'summary')) then
     raise exception 'Unknown change to a chapter plan.' using errcode = 'check_violation', hint = 'unknown_change';
   end if;
@@ -43683,12 +43692,26 @@ begin
      or (changes ? 'world_sort' and jsonb_typeof(changes -> 'world_sort') not in ('number', 'null')) then
     raise exception 'A target or sort value is a number.' using errcode = 'check_violation', hint = 'bad_number';
   end if;
+  -- Step 2b (G10c2): the Narrator is yes or no, never anything else.
+  if changes ? 'pov_is_narrator' and jsonb_typeof(changes -> 'pov_is_narrator') <> 'boolean' then
+    raise exception 'The Narrator is true or false.' using errcode = 'check_violation', hint = 'bad_narrator';
+  end if;
   -- Step 3: change only what was given; the helpers and the table's checks refuse the rest.
   update public.chapter_plans set
     kind = case when changes ? 'kind' then changes ->> 'kind' else kind end,
     planning_status = case when changes ? 'planning_status' then changes ->> 'planning_status' else planning_status end,
-    pov_character_id = case when changes ? 'pov_character_id'
-      then public.character_of_story(target_plan.story_id, changes ->> 'pov_character_id') else pov_character_id end,
+    -- One teller at a time (G10c2): picking a character takes the Narrator off, and picking the
+    -- Narrator clears the character, unless the same call says otherwise (the table's check then
+    -- refuses a chapter told by both).
+    pov_character_id = case
+      when changes ? 'pov_character_id'
+        then public.character_of_story(target_plan.story_id, changes ->> 'pov_character_id')
+      when (changes ->> 'pov_is_narrator')::boolean then null
+      else pov_character_id end,
+    pov_is_narrator = case
+      when changes ? 'pov_is_narrator' then (changes ->> 'pov_is_narrator')::boolean
+      when changes ->> 'pov_character_id' is not null then false
+      else pov_is_narrator end,
     act_id = case when changes ? 'act_id' then public.act_of_story(target_plan.story_id, changes ->> 'act_id') else act_id end,
     word_target = case when changes ? 'word_target' then (changes ->> 'word_target')::numeric::integer else word_target end,
     world_date = case when changes ? 'world_date' then public.plan_text(changes ->> 'world_date') else world_date end,
