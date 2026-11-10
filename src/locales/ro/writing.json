@@ -109,7 +109,10 @@
       "waves": "Valuri",
       "starry": "Noapte înstelată",
       "sparkles": "Sclipiri",
-      "twotone": "Două tonuri"
+      "twotone": "Două tonuri",
+      "arches": "Arcade",
+      "rings": "Cercuri",
+      "forestwaves": "Valuri de pădure"
     },
     "colourNames": {
       "plum": "Prună",
@@ -123,7 +126,9 @@
       "paper": "Hârtie"
     },
     "uploadLater": "Vrei să folosești o imagine proprie? Salvează mai întâi povestea, apoi încarc-o din setările poveștii.",
-    "uploadChosen": "Imaginea încărcată este coperta. Alege mai jos un model desenat dacă vrei să-l folosești pe acela."
+    "uploadChosen": "Imaginea încărcată este coperta. Alege mai jos un model desenat dacă vrei să-l folosești pe acela.",
+    "newDesign": "Nou",
+    "designNameNew": "{{name}}, nou"
   },
   "preview": {
     "eyebrow": "Cum o vor vedea cititorii",

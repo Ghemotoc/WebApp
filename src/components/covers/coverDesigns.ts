@@ -1,12 +1,15 @@
 /**
- * The drawn cover designs: the 16 approved backgrounds, the 9-colour palette and the pattern
+ * The drawn cover designs: the 19 approved backgrounds, the 9-colour palette and the pattern
  * artwork (story S1-E3-01; decided 16 Oct 2026: "Drawn covers use the 16 approved backgrounds:
- * 9 plain colours and 7 patterns", recolourable within the palette).
+ * 9 plain colours and 7 patterns", recolourable within the palette). Bundle G9 WRITING, part c,
+ * adds the liquid glass New story board's three new patterns, Arches, Rings and Forest waves,
+ * after the first 16, which stay as they were.
  *
  * Where the values come from: design/boards/NewStory.dc.html (4.2), its `designs`, `pal` and
  * `art` lists, copied, not guessed. The artwork is drawn on a 100 × 160 (5:8) canvas so tiles,
  * previews and cards match exactly. One board mismatch: Waves' default accent (#6E93BF) is not
- * in the palette, so it defaults to Violet here (docs/board-fixes.md).
+ * in the palette, so it defaults to Violet here, and the three G9c patterns' blues and greens are
+ * mapped to the nearest palette colours the same way (docs/board-fixes.md).
  * Who uses it: DrawnCover (the drawing), DrawnCoverPicker and CoverColourSwatches (the choices,
  * src/features/writing/), the zod schema (src/schemas/story.ts) and the database constraints
  * (supabase/migrations/…_s1_e3_01_stories.sql), which list the same keys.
@@ -33,7 +36,7 @@ export type CoverColourKey = keyof typeof coverPalette;
 /** The palette keys in the order the swatches show them (the board's order). */
 export const coverColourKeys = Object.keys(coverPalette) as CoverColourKey[];
 
-/** The 16 design keys: 9 plain, then 7 patterns. */
+/** The 19 design keys: 9 plain, the 7 first patterns, then the 3 added in G9c. */
 export const coverDesignKeys = [
   'plum',
   'ink',
@@ -51,6 +54,9 @@ export const coverDesignKeys = [
   'starry',
   'sparkles',
   'twotone',
+  'arches',
+  'rings',
+  'forestwaves',
 ] as const;
 
 /** One of the design keys. */
@@ -58,7 +64,17 @@ export type CoverDesignKey = (typeof coverDesignKeys)[number];
 
 /** How a design is drawn: a plain colour, or one of the pattern kinds. */
 export type CoverDesignKind =
-  'plain' | 'stripes' | 'dots' | 'grid' | 'waves' | 'starry' | 'sparkles' | 'twotone';
+  | 'plain'
+  | 'stripes'
+  | 'dots'
+  | 'grid'
+  | 'waves'
+  | 'starry'
+  | 'sparkles'
+  | 'twotone'
+  | 'arches'
+  | 'rings'
+  | 'forestwaves';
 
 /** What the app knows about one design. */
 export interface CoverDesign {
@@ -67,9 +83,11 @@ export interface CoverDesign {
   /** The default background and accent the board gives it. */
   background: CoverColourKey;
   accent: CoverColourKey;
+  /** True for the designs the G9c board marks "New", so the picker can say so. */
+  isNew?: boolean;
 }
 
-/** The 16 designs with their board defaults. */
+/** The 19 designs with their board defaults. */
 export const coverDesigns: readonly CoverDesign[] = [
   { key: 'plum', kind: 'plain', background: 'plum', accent: 'gold' },
   { key: 'ink', kind: 'plain', background: 'ink', accent: 'gold' },
@@ -88,6 +106,12 @@ export const coverDesigns: readonly CoverDesign[] = [
   { key: 'starry', kind: 'starry', background: 'ink', accent: 'gold' },
   { key: 'sparkles', kind: 'sparkles', background: 'paper', accent: 'violet' },
   { key: 'twotone', kind: 'twotone', background: 'blush', accent: 'plum' },
+  // G9c. The board draws these in blues and greens outside the palette (Arches #3B2A78 and
+  // #4B4FA8, Rings #672786 and #9A5BB8, Forest waves #005C42 and #1A8164); each takes the
+  // nearest palette pair, so every colour row and the 4.5:1 title check still hold.
+  { key: 'arches', kind: 'arches', background: 'ink', accent: 'violet', isNew: true },
+  { key: 'rings', kind: 'rings', background: 'violet', accent: 'lilac', isNew: true },
+  { key: 'forestwaves', kind: 'forestwaves', background: 'sage', accent: 'ink', isNew: true },
 ];
 
 /** A writer's drawn cover choice, as stored on the story. */
@@ -100,7 +124,7 @@ export interface DrawnCoverChoice {
 /**
  * Finds a design by key.
  *
- * @param key - one of the 16 keys
+ * @param key - one of the 19 keys
  * @returns the design
  * Errors: throws when the key is unknown, which only a bug can cause (the schema and the database
  *   both check the key).
@@ -187,6 +211,11 @@ function heart(x: number, y: number, size: number): string {
     `C${round(x - 1.5 * size)} ${round(y - 0.1 * size)} ${round(x - 0.8 * size)} ${round(y - 1.1 * size)} ${x} ${round(y - 0.3 * size)}` +
     `C${round(x + 0.8 * size)} ${round(y - 1.1 * size)} ${round(x + 1.5 * size)} ${round(y - 0.1 * size)} ${x} ${round(y + 0.9 * size)}Z`
   );
+}
+
+/** A circle outline as a path (two half arcs), for the arch and ring patterns. */
+function circle(x: number, y: number, radius: number): string {
+  return `M${round(x - radius)} ${y}a${radius} ${radius} 0 1 0 ${round(2 * radius)} 0a${radius} ${radius} 0 1 0 ${round(-2 * radius)} 0`;
 }
 
 /** Diagonal gold stripes every 18 units. */
@@ -281,6 +310,33 @@ function twotoneArtwork(): CoverArtwork {
   return { fillPath: 'M0 98H100V160H0Z', strokePath: '', strokeWidth: 0 };
 }
 
+/**
+ * Arches (G9c): rainbow arcs rising from below the bottom edge, every 14 units, as the board's
+ * repeating radial gradient at 50% 120% draws them.
+ */
+function archesArtwork(): CoverArtwork {
+  let path = '';
+  for (let radius = 10; radius <= 200; radius += 14) path += circle(50, 192, radius);
+  return { fillPath: '', strokePath: path, strokeWidth: 5 };
+}
+
+/** Rings (G9c): circles spreading from the top left, every 12 units (board: 30% 30%). */
+function ringsArtwork(): CoverArtwork {
+  let path = '';
+  for (let radius = 6; radius <= 190; radius += 12) path += circle(30, 48, radius);
+  return { fillPath: '', strokePath: path, strokeWidth: 4.5 };
+}
+
+/** Forest waves (G9c): broad, slow waves every 22 units, wider and bolder than Waves. */
+function forestWavesArtwork(): CoverArtwork {
+  let path = '';
+  for (let y = 6; y < 180; y += 22) {
+    path += `M-20 ${y}Q-10 ${y - 10} 0 ${y}`;
+    for (let x = 20; x <= 120; x += 20) path += `T${x} ${y}`;
+  }
+  return { fillPath: '', strokePath: path, strokeWidth: 6 };
+}
+
 /** No artwork at all: plain covers draw only their colour and the accent bar. */
 const noArtwork: CoverArtwork = { fillPath: '', strokePath: '', strokeWidth: 0 };
 
@@ -294,6 +350,9 @@ const artworkByKind: Record<CoverDesignKind, CoverArtwork> = {
   starry: starryArtwork(),
   sparkles: sparklesArtwork(),
   twotone: twotoneArtwork(),
+  arches: archesArtwork(),
+  rings: ringsArtwork(),
+  forestwaves: forestWavesArtwork(),
 };
 
 /**
@@ -310,7 +369,7 @@ export function coverArtwork(kind: CoverDesignKind): CoverArtwork {
  * Where the title sits on a design: on the background itself (plain designs only), or on a solid
  * box that hides the pattern behind the words. Busy patterns (dots and waves) use a paper box, as
  * the board draws them; two-tone uses its accent band's colour; the other patterns (stripes,
- * grid, starry, sparkles) use the background colour.
+ * grid, starry, sparkles, and G9c's arches, rings and forest waves) use the background colour.
  * Why every pattern has a box (bundle FIXES-1b; Robert, 5 Nov 2026): on the grid design the lines
  * ran straight through the title, and when they were the title's colour the title couldn't be
  * read; on two-tone a long title grew above the band onto a background it wasn't coloured for.

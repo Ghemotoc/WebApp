@@ -13,7 +13,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(30);
+select plan(32);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -92,6 +92,13 @@ select throws_ok($$ select public.create_story('', '', 'ro', 'fiction', '{}', '{
 select throws_ok($$ select public.create_story('Odd colour', '', 'ro', 'fiction', '{}',
   '{"kind": "drawn", "design": "waves", "background": "sky", "accent": "#6E93BF"}', null, pg_temp.labels()) $$, '23514', null,
   'a cover colour outside the 9-colour palette is refused');
+select is(
+  (public.create_story('Arcade', '', 'ro', 'fiction', '{}',
+    '{"kind": "drawn", "design": "arches", "background": "ink", "accent": "violet"}', null, pg_temp.labels())) ->> 'outcome', 'ok',
+  'a drawn cover may use one of the G9c patterns (Arches, Rings, Forest waves)');
+select throws_ok($$ select public.create_story('Unknown design', '', 'ro', 'fiction', '{}',
+  '{"kind": "drawn", "design": "nebula", "background": "ink", "accent": "violet"}', null, pg_temp.labels()) $$, '23514', null,
+  'a design the app can''t draw is refused');
 select throws_ok($$ select public.create_story('Upload', '', 'ro', 'fiction', '{}',
   '{"kind": "upload", "tall_path": "x/tall.jpg"}', null, pg_temp.labels()) $$, '0A000', null,
   'an uploaded cover is refused while picture_uploads is off (no uploads in the demo, 23 Oct 2026)');

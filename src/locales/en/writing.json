@@ -109,7 +109,10 @@
       "waves": "Waves",
       "starry": "Starry night",
       "sparkles": "Sparkles",
-      "twotone": "Two-tone"
+      "twotone": "Two-tone",
+      "arches": "Arches",
+      "rings": "Rings",
+      "forestwaves": "Forest waves"
     },
     "colourNames": {
       "plum": "Plum",
@@ -123,7 +126,9 @@
       "paper": "Paper"
     },
     "uploadLater": "Want to use your own picture? Save the story first, then upload it in the story's settings.",
-    "uploadChosen": "Your uploaded picture is the cover. Pick a drawn design below to use that instead."
+    "uploadChosen": "Your uploaded picture is the cover. Pick a drawn design below to use that instead.",
+    "newDesign": "New",
+    "designNameNew": "{{name}}, new"
   },
   "preview": {
     "eyebrow": "How readers will see it",
