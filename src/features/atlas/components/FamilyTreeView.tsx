@@ -66,9 +66,11 @@ function TreeBoxes({
         >
           <MaybeLink
             to={addressOf(box.id)}
-            className="flex size-full items-center justify-center rounded-xl border-2 border-control-border bg-surface px-2 text-center text-sm font-semibold break-words text-heading no-underline hover:bg-tint"
+            className="flex size-full items-center justify-center rounded-xl border-2 border-control-border bg-surface px-2 text-center text-sm leading-tight font-semibold text-heading no-underline hover:bg-tint"
           >
-            {words.nameOf(box.id)}
+            {/* A long name stays inside its box: two lines at most, broken anywhere (GAPS-3
+                break test, 10 Nov 2026). The link still reads the whole name. */}
+            <span className="line-clamp-2 min-w-0 wrap-anywhere">{words.nameOf(box.id)}</span>
           </MaybeLink>
         </li>
       ))}

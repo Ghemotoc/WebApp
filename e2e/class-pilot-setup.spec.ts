@@ -77,7 +77,7 @@ test.describe('class pilot set-up (CLASSES-d, S1-E8-11)', () => {
     const card = page.getByRole('listitem').filter({ hasText: className });
     await expect(card.getByText('Școala Gimnazială nr. 7')).toBeVisible();
     await card.getByRole('button', { name: 'Make a code to print' }).click();
-    await expect(card.getByRole('button', { name: 'Print' })).toBeVisible();
+    await expect(card.getByRole('button', { name: 'Print', exact: true })).toBeVisible();
 
     await card.getByRole('button', { name: 'Change the school' }).click();
     await card.getByLabel('School', { exact: true }).fill('Școala Gimnazială nr. 8');

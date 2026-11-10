@@ -17,7 +17,9 @@
  *   or made" counts makers, "Whose tree" shows one family and a note says how many characters
  *   are left off (S1-E17-16, G10b2);
  * - a character's gender picks the family word (mother, son), told from the child on the child's
- *   own sheet, and "Add to this tree" adds a relative from the tree itself (GAPS-3);
+ *   own sheet, and "Add to this tree" adds a relative from the tree itself, once: a double click
+ *   saves once, the same relationship again is refused, and a long name stays in its box
+ *   (GAPS-3 and its break test, 10 Nov 2026);
  * - the page passes axe, doesn't scroll sideways and draws no doodle at 390, 768 and
  *   1440 px, light and night, Romanian and English.
  * Test data: adult_writer's seed story "Stația meteo" gets five characters (deleted at the end);
@@ -508,7 +510,8 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     expect(results.violations).toEqual([]);
     await form.getByLabel('Character', { exact: true }).selectOption({ label: 'Lupul' });
     await form.getByLabel('How they’re related to Mara').selectOption({ label: 'Child' });
-    await form.getByRole('button', { name: 'Add', exact: true }).click();
+    // A double click saves once (break test, 10 Nov 2026); the count below proves it.
+    await form.getByRole('button', { name: 'Add', exact: true }).dblclick();
     await expect(form.getByText('Relationship added.')).toBeVisible();
     // Lupul now sits a generation under Mara, and the relationship runs from parent to child.
     await expect(
@@ -520,9 +523,26 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
       runSql(`select count(*) from public.story_character_relationships
         where from_character_id = '${cast.mara}' and to_character_id = '${cast.lupul}' and kind = 'parent_of'`),
     ).toBe('1');
+    // The same relationship a second time is refused in plain words, and nothing is added.
+    await form.getByLabel('Character', { exact: true }).selectOption({ label: 'Lupul' });
+    await form.getByLabel('How they’re related to Mara').selectOption({ label: 'Child' });
+    await form.getByRole('button', { name: 'Add', exact: true }).click();
+    await expect(form.getByText('That relationship is already there.')).toBeVisible();
+    expect(
+      runSql(`select count(*) from public.story_character_relationships
+        where from_character_id = '${cast.mara}' and to_character_id = '${cast.lupul}' and kind = 'parent_of'`),
+    ).toBe('1');
     // Cancel closes the form.
     await form.getByRole('button', { name: 'Cancel' }).click();
     await expect(form).toHaveCount(0);
+    // A very long name with no spaces stays inside its box on the tree.
+    const longName = 'Pneumonoultramicroscopicsilicovolcanoconiosis'.repeat(2).slice(0, 80);
+    runSql(`update public.story_characters set name = '${longName}' where id = '${cast.lupul}'`);
+    await page.reload();
+    const longBox = treeCard.getByRole('link', { name: longName, exact: true });
+    await expect(longBox).toBeVisible();
+    expect(await longBox.evaluate((box) => box.scrollWidth <= box.clientWidth + 1)).toBe(true);
+    runSql(`update public.story_characters set name = 'Lupul' where id = '${cast.lupul}'`);
     await page.context().close();
   });
 

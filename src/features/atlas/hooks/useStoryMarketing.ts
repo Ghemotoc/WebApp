@@ -14,12 +14,14 @@ import {
   addMarketingDetail,
   deleteMarketingDetail,
   fetchStoryMarketing,
+  marketingNoteKeys,
   saveMarketingDetail,
   saveMarketingField,
   storyMarketingQueryKey,
   type MarketingNotes,
   type StoryMarketing,
 } from '../api/marketing';
+import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 /**
  * Follows a story's marketing notes.
@@ -61,4 +63,18 @@ export function useStoryMarketing(slug: string) {
     deleteDetail: async (detailId: string) =>
       changeThenRefresh(async () => deleteMarketingDetail(await requireClient(), slug, detailId)),
   };
+}
+
+/**
+ * Says whether a name is one of the page's five fixed notes in the writer's language, capitals
+ * aside. A detail of the writer's own can't take one of those names, or two boxes would carry one
+ * label (break test, 10 Nov 2026). The check lives here and not in the database because the
+ * notes' names are interface text.
+ *
+ * @returns isFixedNoteName(name)
+ */
+export function useFixedNoteNames() {
+  const { t } = useAtlasTranslation();
+  const fixedNames = marketingNoteKeys.map((key) => t(`marketing.fields.${key}`).toLowerCase());
+  return (name: string) => fixedNames.includes(name.trim().toLowerCase());
 }

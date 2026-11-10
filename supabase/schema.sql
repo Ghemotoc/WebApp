@@ -2002,6 +2002,7 @@ declare
   caller_id uuid := (select auth.uid());
   target_story_id uuid;
   wanted_group text := nullif(btrim(coalesce(own_group, '')), '');
+  wanted_name text := btrim(coalesce(field_name, ''));
   new_id uuid;
 begin
   -- Step 1: a signed-in writer and their own live story.
@@ -2012,10 +2013,32 @@ begin
   if target_story_id is null then
     return jsonb_build_object('outcome', 'not_found');
   end if;
+  -- One change to a story's details at a time: two presses of "Add" at the same moment wait
+  -- for each other, so the checks below see the first one's detail (break test, 10 Nov 2026).
+  perform pg_advisory_xact_lock(hashtext('story_character_fields:' || target_story_id::text));
   -- Step 2: one place at most.
   if sheet_group is not null and wanted_group is not null then
     raise exception 'A detail sits in one place.'
       using errcode = 'check_violation', hint = 'two_places';
+  end if;
+  -- A group that differs only in capitals is the same group: the detail joins it under the
+  -- spelling it already has, so a sheet never shows "Magic" and "magic" as two cards.
+  if wanted_group is not null then
+    wanted_group := coalesce(
+      (select fields.own_group from public.story_character_fields as fields
+       where fields.story_id = target_story_id and lower(fields.own_group) = lower(wanted_group)
+       order by fields.position limit 1),
+      wanted_group);
+  end if;
+  -- One name once in a place (removed details included: they come back from the at-a-glance
+  -- page), so two boxes with the same label never sit side by side.
+  if exists (select 1 from public.story_character_fields as fields
+             where fields.story_id = target_story_id
+               and lower(fields.name) = lower(wanted_name)
+               and fields.sheet_group is not distinct from add_character_detail.sheet_group
+               and fields.own_group is not distinct from wanted_group) then
+    raise exception 'This place already has a detail with that name.'
+      using errcode = 'check_violation', hint = 'detail_name_taken';
   end if;
   -- Step 3: the bounds. 40 details as in add_character_field(), hidden ones included (they keep
   -- their values); 12 groups of the writer's own, so a sheet stays readable.
@@ -2035,7 +2058,7 @@ begin
   insert into public.story_character_fields (story_id, user_id, position, name, sheet_group, own_group)
   values (target_story_id, caller_id,
     coalesce((select max(position) from public.story_character_fields where story_id = target_story_id), 0) + 1,
-    btrim(field_name), sheet_group, wanted_group)
+    wanted_name, sheet_group, wanted_group)
   returning id into new_id;
   return jsonb_build_object('outcome', 'ok', 'id', new_id);
 end;
@@ -2098,6 +2121,9 @@ declare
   to_character public.story_characters;
   is_custom boolean := relationship_kind = 'custom';
   is_cousin boolean := relationship_kind = 'cousin_of';
+  -- The types that say the same thing from both sides.
+  reads_both_ways boolean := relationship_kind in
+    ('sibling_of', 'partner_of', 'cousin_of', 'friend_of', 'ally_of', 'enemy_of');
   new_id uuid;
 begin
   -- Step 1: a signed-in writer and two of their own characters.
@@ -2114,12 +2140,25 @@ begin
     raise exception 'Both characters must be in the same story.'
       using errcode = 'check_violation', hint = 'different_stories';
   end if;
+  -- One add at a time per story, so two clicks at once can't both pass the checks below.
+  perform pg_advisory_xact_lock(hashtext('story_character_relationships:' || from_character.story_id));
   if (select count(*) from public.story_character_relationships
       where story_id = from_character.story_id) >= 2000 then
     raise exception 'A story can hold at most 2,000 relationships.'
       using errcode = 'check_violation', hint = 'too_many_relationships';
   end if;
-  -- Step 3: the relationship; values that don't belong to its type are dropped, and the table's
+  -- Step 3: the same relationship is recorded once.
+  if not is_custom and exists (
+    select 1 from public.story_character_relationships as existing
+    where existing.kind = relationship_kind
+      and ((existing.from_character_id = from_character.id and existing.to_character_id = to_character.id)
+        or (reads_both_ways
+            and existing.from_character_id = to_character.id and existing.to_character_id = from_character.id))
+  ) then
+    raise exception 'That relationship is already there.'
+      using errcode = 'check_violation', hint = 'already_there';
+  end if;
+  -- Step 4: the relationship; values that don't belong to its type are dropped, and the table's
   -- checks refuse the rest (a custom one with no label, a cousin with no degree).
   insert into public.story_character_relationships
     (story_id, user_id, from_character_id, to_character_id, kind, custom_label, reverse_label,
@@ -2140,7 +2179,7 @@ $$;
 ALTER FUNCTION "public"."add_character_relationship"("from_character_id" "uuid", "to_character_id" "uuid", "relationship_kind" "text", "custom_label" "text", "note" "text", "reverse_label" "text", "cousin_degree" integer, "cousin_removed" integer) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."add_character_relationship"("from_character_id" "uuid", "to_character_id" "uuid", "relationship_kind" "text", "custom_label" "text", "note" "text", "reverse_label" "text", "cousin_degree" integer, "cousin_removed" integer) IS 'Records how two of the caller''s characters are connected, with the reverse label of an "Other" one and a cousin''s degree (S1-E17-14, G10b).';
+COMMENT ON FUNCTION "public"."add_character_relationship"("from_character_id" "uuid", "to_character_id" "uuid", "relationship_kind" "text", "custom_label" "text", "note" "text", "reverse_label" "text", "cousin_degree" integer, "cousin_removed" integer) IS 'Records how two of the caller''s characters are connected, once: the same relationship a second time is refused (S1-E17-14, G10b, GAPS-3).';
 
 
 
@@ -2331,6 +2370,7 @@ declare
   caller_id uuid := (select auth.uid());
   target_story_id uuid;
   clean_name text := public.plan_text(detail_name);
+  current_details jsonb;
   new_id uuid := gen_random_uuid();
 begin
   -- Step 1: a signed-in writer and their own planned story.
@@ -2349,8 +2389,17 @@ begin
   -- Step 3: the row, made empty on the first save, then the bound.
   insert into public.story_marketing (story_id, user_id) values (target_story_id, caller_id)
   on conflict (story_id) do nothing;
-  if (select jsonb_array_length(own_details) from public.story_marketing
-      where story_id = target_story_id) >= 12 then
+  -- The row is locked until this change ends: two presses of "Add" at the same moment wait for
+  -- each other, so the checks below see the first one's detail (break test, 10 Nov 2026).
+  select own_details into current_details from public.story_marketing
+  where story_id = target_story_id for update;
+  -- One name once, capitals aside, so two boxes never carry the same label.
+  if exists (select 1 from jsonb_array_elements(current_details) as detail
+             where lower(detail ->> 'name') = lower(clean_name)) then
+    raise exception 'This story already has a marketing detail with that name.'
+      using errcode = 'check_violation', hint = 'name_taken';
+  end if;
+  if jsonb_array_length(current_details) >= 12 then
     raise exception 'A story can hold at most 12 marketing details of your own.'
       using errcode = 'check_violation', hint = 'too_many_details';
   end if;
@@ -2387,7 +2436,17 @@ begin
   if target_story_id is null then
     return jsonb_build_object('outcome', 'not_found');
   end if;
-  -- Step 2: the bound. 12 acts, so the board stays readable (builder's choice, GAPS-2a).
+  -- One change to a story's acts at a time: two presses of "Add" at the same moment wait for
+  -- each other, so the checks below see the first one's act (break test, 10 Nov 2026).
+  perform pg_advisory_xact_lock(hashtext('story_plan_acts:' || target_story_id::text));
+  -- Step 2: one name once, capitals aside, so two columns never carry the same heading.
+  if exists (select 1 from public.story_plan_acts as acts
+             where acts.story_id = target_story_id
+               and lower(acts.name) = lower(btrim(coalesce(act_name, '')))) then
+    raise exception 'This story already has an act with that name.'
+      using errcode = 'check_violation', hint = 'name_taken';
+  end if;
+  -- The bound. 12 acts, so the board stays readable (builder's choice, GAPS-2a).
   if (select count(*) from public.story_plan_acts where story_id = target_story_id) >= 12 then
     raise exception 'A story can hold at most 12 acts.'
       using errcode = 'check_violation', hint = 'too_many_acts';
@@ -34364,7 +34423,9 @@ begin
     return jsonb_build_object('outcome', 'ok');
   end if;
   if exists (select 1 from public.story_character_fields as fields
-             where fields.story_id = target_story_id and fields.own_group = wanted_name) then
+             where fields.story_id = target_story_id
+               and lower(fields.own_group) = lower(wanted_name)
+               and fields.own_group <> group_name) then
     raise exception 'This story already has a group with that name.'
       using errcode = 'check_violation', hint = 'name_taken';
   end if;
@@ -34407,7 +34468,14 @@ begin
   if target_story_id is null or target_act_id is null then
     return jsonb_build_object('outcome', 'not_found');
   end if;
-  -- Step 2: the new name.
+  -- Step 2: never another act's name, capitals aside.
+  if exists (select 1 from public.story_plan_acts as acts
+             where acts.story_id = target_story_id and acts.id <> target_act_id
+               and lower(acts.name) = lower(btrim(coalesce(act_name, '')))) then
+    raise exception 'This story already has an act with that name.'
+      using errcode = 'check_violation', hint = 'name_taken';
+  end if;
+  -- Step 3: the new name.
   update public.story_plan_acts set name = btrim(act_name) where id = target_act_id;
   return jsonb_build_object('outcome', 'ok');
 end;
@@ -44145,8 +44213,10 @@ begin
     raise exception 'Sign in to change a detail.' using errcode = 'insufficient_privilege';
   end if;
   target_story_id := public.my_planned_story_id(story_slug);
+  -- (The row is locked until this change ends, so a rename and an add at the same moment can't
+  -- both take one name.)
   select own_details into current_details from public.story_marketing
-  where story_id = target_story_id;
+  where story_id = target_story_id for update;
   if current_details is null or not exists (
       select 1 from jsonb_array_elements(current_details) as detail where detail ->> 'id' = detail_id) then
     return jsonb_build_object('outcome', 'not_found');
@@ -44160,6 +44230,12 @@ begin
   if changes ? 'name' and char_length(new_name) not between 1 and 80 then
     raise exception 'A detail''s name has 1 to 80 characters.'
       using errcode = 'check_violation', hint = 'name_length';
+  end if;
+  if changes ? 'name' and exists (
+      select 1 from jsonb_array_elements(current_details) as detail
+      where detail ->> 'id' <> detail_id and lower(detail ->> 'name') = lower(new_name)) then
+    raise exception 'This story already has a marketing detail with that name.'
+      using errcode = 'check_violation', hint = 'name_taken';
   end if;
   if changes ? 'text' and char_length(new_text) > 5000 then
     raise exception 'A detail holds at most 5,000 characters.'

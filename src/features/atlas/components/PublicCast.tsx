@@ -3,8 +3,9 @@
  * AtlasPreview: one grid of centred glass cards).
  *
  * Each card is a link to the character's public page: the picture (only once it passed its
- * check, rule 19) or initials, the name and one quiet line (what they do, when the writer opened
- * that field, otherwise their role). The cards keep the cast's order: main characters first.
+ * check, rule 19; no initials circle without one, G10a), the name and one quiet line of at most
+ * two lines (what they do, when the writer opened that field, otherwise their role). A name
+ * without spaces breaks inside its card. The cards keep the cast's order: main characters first.
  * Who uses it: PublicPlanView. What it calls: lib/castGroups.ts, CharacterAvatar and
  * PlanGuardPill (the preview's marks).
  */
@@ -38,13 +39,15 @@ export function PublicCast({ plan, base }: { plan: PublicPlan; base: string }) {
             className="flex h-full w-full min-w-0 flex-col items-center gap-2.5 rounded-card border border-border bg-surface px-5 py-6 text-center no-underline shadow-card hover:bg-tint"
           >
             <CharacterAvatar character={character} size="small" />
+            {/* max-w-full: in a centred column a long word only breaks once its box is bounded. */}
             <b
-              className="font-heading text-lg break-words text-heading"
+              className="max-w-full font-heading text-lg break-words text-heading"
               data-testid="atlas-public-character-name"
             >
               {character.name}
             </b>
-            <span className="text-sm break-words text-meta">
+            {/* One quiet line: a long answer stops at two lines, the full text is on the page. */}
+            <span className="line-clamp-2 max-w-full text-sm break-words text-meta">
               {(character.sheet.occupation ?? '') !== ''
                 ? character.sheet.occupation
                 : t(`characters.role.${character.role}`)}

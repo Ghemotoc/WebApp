@@ -10,7 +10,8 @@
  *   renumbers published chapters asks first, and "Keep the order" changes nothing;
  * - "Add chapter" adds a draft at the end of its act;
  * - "Add act" adds a column, "Edit act" renames it, and deleting it asks first and moves its
- *   chapters to "No act" without deleting any (GAPS-2a);
+ *   chapters to "No act" without deleting any (GAPS-2a); a double click adds one act and another
+ *   act's name is refused in plain words;
  * - a chapter told by the Narrator says so on the board and has its own lane (G10c2);
  * - the timeline adds, sorts, changes and deletes events beside dated chapters, and lists the
  *   undated chapters apart (S1-E17-20);
@@ -371,8 +372,13 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
     await expect(page.getByRole('textbox', { name: 'Act name' })).toBeFocused();
     await page.getByRole('button', { name: 'Add', exact: true }).click();
     await expect(page.getByText('Give the act a name.')).toBeVisible();
-    await page.getByRole('textbox', { name: 'Act name' }).fill('Epilogue');
+    // Break test (10 Nov 2026): another act's name is refused in plain words, capitals aside,
+    // and a double click on "Add" adds one act.
+    await page.getByRole('textbox', { name: 'Act name' }).fill('act ii');
     await page.getByRole('button', { name: 'Add', exact: true }).click();
+    await expect(page.getByText('Another act has that name. Try a different one.')).toBeVisible();
+    await page.getByRole('textbox', { name: 'Act name' }).fill('Epilogue');
+    await page.getByRole('button', { name: 'Add', exact: true }).dblclick();
     // The new act is a column after the others, before "No act".
     await expect(page.getByTestId('atlas-board-column').getByRole('heading')).toHaveText([
       'Act I',
@@ -387,6 +393,9 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
     const chaptersBefore = chapterCount();
     // "Edit act" renames it.
     await page.getByRole('button', { name: 'Edit act: Epilogue', exact: true }).click();
+    await page.getByRole('textbox', { name: 'Act name' }).fill('Act I');
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await expect(page.getByText('Another act has that name. Try a different one.')).toBeVisible();
     await page.getByRole('textbox', { name: 'Act name' }).fill('Aftermath');
     await page.getByRole('button', { name: 'Save', exact: true }).click();
     const aftermath = page.getByRole('region', { name: 'Aftermath', exact: true });

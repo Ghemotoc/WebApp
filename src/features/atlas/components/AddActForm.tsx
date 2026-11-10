@@ -3,7 +3,8 @@
  *
  * One button; pressed, it opens a small form with the act's name, "Add" and "Cancel". The new act
  * comes after the story's other acts, as a column before "No act". A story holds at most 12 acts
- * (add_plan_act()). Who uses it: StorylinePage, on the Board view. What it calls: useStoryline's
+ * (add_plan_act()); "Add" waits while a save is on its way and a name another act has is refused in
+ * plain words (break test, 10 Nov 2026). Who uses it: StorylinePage, on the Board view. What it calls: useStoryline's
  * addAct.
  */
 import { useEffect, useState } from 'react';
@@ -13,6 +14,8 @@ import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { TextInput } from '@/components/ui/TextInput';
 
+import { actFailureKey } from '../api/storyline';
+import { useOneAtATime } from '../hooks/useOneAtATime';
 import { useStoryline } from '../hooks/useStoryline';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
@@ -31,6 +34,7 @@ export function AddActForm({ slug }: { slug: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState('');
   const [message, setMessage] = useState<string | null>(null);
+  const { isBusy, run } = useOneAtATime();
 
   // Opening the form puts the cursor in its box, so the keyboard carries on from the button.
   useEffect(() => {
@@ -48,9 +52,9 @@ export function AddActForm({ slug }: { slug: string }) {
   async function add() {
     setMessage(null);
     if (name.trim() === '') return setMessage(t('storyline.board.acts.nameRequired'));
-    await addAct(name)
-      .then(close)
-      .catch(() => setMessage(t('storyline.board.acts.addFailed')));
+    await run(() => addAct(name))
+      .then((hasRun) => hasRun && close())
+      .catch((error: unknown) => setMessage(t(actFailureKey(error, 'addFailed'))));
   }
 
   if (!isOpen) {
@@ -79,7 +83,9 @@ export function AddActForm({ slug }: { slug: string }) {
             onChange={(event) => setName(event.target.value)}
           />
         </div>
-        <Button type="submit">{t('storyline.board.acts.addSubmit')}</Button>
+        <Button type="submit" disabled={isBusy}>
+          {t('storyline.board.acts.addSubmit')}
+        </Button>
         <Button variant="secondary" onClick={close}>
           {t('storyline.board.acts.cancel')}
         </Button>
