@@ -66,6 +66,14 @@ export interface StoryCharacter {
   /** The picture, or null when there is none (the initials show, S1-E17-11). */
   picture: PictureView | null;
   pictureAlt: string;
+  /** Where the writer put the card on the relationship map, or null to let the map place it. */
+  mapPlace: MapPlace | null;
+}
+
+/** A card's top-left corner on the relationship map, in map pixels (G10b2). */
+export interface MapPlace {
+  x: number;
+  y: number;
 }
 
 /** The relationship types, in the order the list offers them (S1-E17-14). */
@@ -138,6 +146,8 @@ interface CharacterRow {
   first_appearance: string | null;
   picture: Json | null;
   picture_alt: string;
+  map_x: number | null;
+  map_y: number | null;
 }
 
 /** What story_cast() answers for one of the caller's stories. */
@@ -183,6 +193,7 @@ async function toCharacters(
     firstAppearance: row.first_appearance,
     picture: pictures[row.id] ?? null,
     pictureAlt: row.picture_alt,
+    mapPlace: row.map_x === null || row.map_y === null ? null : { x: row.map_x, y: row.map_y },
   }));
 }
 
@@ -437,4 +448,33 @@ export async function deleteRelationship(client: AppSupabaseClient, relationship
     relationship_id: relationshipId,
   });
   okAnswer(answer, 'delete the relationship');
+}
+
+/**
+ * Saves where the writer dropped a character's card on the relationship map (G10b2).
+ *
+ * @param client - the shared Supabase client
+ * @param characterId - the character
+ * @param place - the card's top-left corner, 0 to 4,000 each way
+ * @throws when the database refuses it or the character isn't the writer's
+ */
+export async function moveOnMap(client: AppSupabaseClient, characterId: string, place: MapPlace) {
+  const answer = await client.rpc('set_character_map_position', {
+    character_id: characterId,
+    x: Math.round(place.x),
+    y: Math.round(place.y),
+  });
+  okAnswer(answer, 'move the card');
+}
+
+/**
+ * "Arrange for me": forgets every card's place, so the map lays them out again (G10b2).
+ *
+ * @param client - the shared Supabase client
+ * @param slug - the story's address
+ * @throws when the database refuses it
+ */
+export async function arrangeMap(client: AppSupabaseClient, slug: string) {
+  const answer = await client.rpc('clear_map_positions', { story_slug: slug });
+  okAnswer(answer, 'arrange the map');
 }

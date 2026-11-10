@@ -7,11 +7,15 @@
  * - a relationship added on a sheet, with a type and a note, is listed on both characters'
  *   sheets; the type list offers every type; a custom one needs its label; Delete asks twice
  *   (S1-E17-14);
- * - the Connections page draws the characters as linked nodes and the relationships as lines,
- *   a category switch hides its lines, a node opens the sheet, and on a phone the map scrolls
- *   inside its own region while the page doesn't (S1-E17-15);
+ * - the Connections page switches between the map, the family tree and the list; the map draws
+ *   the linked characters as cards and the relationships as lines, names the characters not on
+ *   it, a category switch hides its lines, a card opens the sheet, and on a phone the map fits
+ *   the width and, zoomed in, scrolls inside its own region while the page doesn't (S1-E17-15);
+ * - a card dragged to an empty spot keeps its place, Arrange for me puts it back, and a card
+ *   dropped on another opens Add a connection with both picked (G10b2);
  * - the family tree puts generations top to bottom with partners side by side, "Include turned
- *   or made" counts makers, and a note says how many characters are left off (S1-E17-16);
+ *   or made" counts makers, "Whose tree" shows one family, and a note says how many characters
+ *   are left off (S1-E17-16, G10b2);
  * - the page passes axe, doesn't scroll sideways and draws no doodle at 390, 768 and
  *   1440 px, light and night, Romanian and English.
  * Test data: adult_writer's seed story "Stația meteo" gets five characters (deleted at the end);
@@ -100,6 +104,43 @@ async function openAs(
   return page;
 }
 
+/** Opens "Add a connection" on the Connections page, unless it is open already. */
+async function openAddForm(page: Page) {
+  const form = page.getByRole('region', { name: 'Add a relationship', exact: true });
+  const opener = page.getByRole('button', { name: 'Add a connection' });
+  await expect(opener).toBeVisible();
+  if ((await opener.getAttribute('aria-expanded')) !== 'true') await opener.click();
+  await expect(form).toBeVisible();
+  return form;
+}
+
+/** Switches the Connections page to one of its views: Map, Family tree or List. */
+async function showView(page: Page, name: 'Map' | 'Family tree' | 'List') {
+  // The radio itself is visually hidden; a person clicks the segment's label.
+  await page.getByRole('group', { name: 'View' }).getByText(name, { exact: true }).click();
+  await expect(page.getByRole('radio', { name, exact: true })).toBeChecked();
+}
+
+/** Drags with the mouse from one point to another, in small steps, as a person would. */
+async function dragBetween(
+  page: Page,
+  from: { x: number; y: number },
+  to: { x: number; y: number },
+) {
+  await page.mouse.move(from.x, from.y);
+  await page.mouse.down();
+  await page.mouse.move(from.x + 10, from.y + 10, { steps: 3 });
+  await page.mouse.move(to.x, to.y, { steps: 8 });
+  await page.mouse.up();
+}
+
+/** The centre of an element on the screen. */
+async function centreOf(page: Page, selector: string) {
+  const box = await page.locator(selector).boundingBox();
+  if (box === null) throw new Error(`${selector} is not on the screen`);
+  return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+}
+
 /** One relationship to add: from whom, which kind, which relationship, to whom. */
 interface NewLink {
   from: string;
@@ -110,7 +151,7 @@ interface NewLink {
 
 /** Fills in and sends one "Add a relationship" form on the Connections page. */
 async function addOnConnections(page: Page, { from, group, kind, to }: NewLink) {
-  const form = page.getByRole('region', { name: 'Add a relationship', exact: true });
+  const form = await openAddForm(page);
   await form.getByLabel('Character', { exact: true }).selectOption({ label: from });
   await form.getByLabel('Kind', { exact: true }).selectOption({ label: group });
   await form.getByLabel('Relationship', { exact: true }).selectOption({ label: kind });
@@ -193,9 +234,14 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     const map = page.getByTestId('atlas-relationship-map');
     await expect(map.locator('[data-category]')).toHaveCount(3);
     await expect(map.locator('[data-category="conflict"]')).toHaveCount(1);
+    // Mara has no relationship yet, so she is named under the map instead (G10b2).
+    await expect(page.getByText('Not on the map yet: Mara', { exact: true })).toBeVisible();
     // The same relationships as a list (S1-E17-15: "available as a list").
+    await showView(page, 'List');
     const list = page.getByRole('region', { name: 'Relationships', exact: true });
     await expect(list.getByText('Ion killed Lupul', { exact: true }).first()).toBeVisible();
+    await expect(page).toHaveURL(/\?view=list$/);
+    await showView(page, 'Map');
     // Turning Conflict off hides its line.
     await page.getByRole('button', { name: 'Conflict' }).click();
     await expect(page.getByRole('button', { name: 'Conflict' })).toHaveAttribute(
@@ -204,7 +250,7 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     );
     await expect(map.locator('[data-category="conflict"]')).toHaveCount(0);
     await expect(map.locator('[data-category]')).toHaveCount(2);
-    // A node is a real link to the sheet.
+    // A card is a real link to the sheet.
     await map.getByRole('link', { name: 'Lupul', exact: true }).focus();
     await page.keyboard.press('Enter');
     await expect(page).toHaveURL(new RegExp(`/characters/${cast.lupul}$`));
@@ -212,10 +258,17 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     await page.context().close();
   });
 
-  test('on a phone the map scrolls inside its region, not the page', async ({ browser }) => {
+  test('on a phone the map fits, and zoomed in it scrolls inside its region', async ({
+    browser,
+  }) => {
     const page = await openAs(browser, 'adult_writer', `${planAddress}/connections`, 390);
     const map = page.getByTestId('atlas-relationship-map');
     await expect(map.getByRole('link', { name: 'Ana', exact: true })).toBeVisible();
+    // At first the whole map fits across the screen (G10b2: "Fit").
+    const fitted = await map.evaluate((region) => region.scrollWidth - region.clientWidth);
+    expect(fitted).toBeLessThanOrEqual(1);
+    await page.getByRole('button', { name: 'Zoom in' }).click();
+    await page.getByRole('button', { name: 'Zoom in' }).click();
     const sizes = await map.evaluate((region) => ({
       scrollWidth: region.scrollWidth,
       clientWidth: region.clientWidth,
@@ -226,8 +279,47 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     await page.context().close();
   });
 
-  test('the family tree lays out generations and counts who is left off', async ({ browser }) => {
+  test('a dragged card keeps its place, and dropped on another opens Add a connection', async ({
+    browser,
+  }) => {
     const page = await openAs(browser, 'adult_writer', `${planAddress}/connections`);
+    const lupul = `[data-map-card="${cast.lupul}"]`;
+    await expect(page.locator(lupul)).toBeVisible();
+    const placeOfLupul = () =>
+      runSql(
+        `select coalesce(map_x::text, 'none') from public.story_characters where id = '${cast.lupul}'`,
+      );
+    // Dragged a little way onto empty map, the card stays there and the place is saved.
+    // The whole map in view first, so both ends of each drag are on the screen.
+    await page.getByTestId('atlas-relationship-map').scrollIntoViewIfNeeded();
+    const start = await centreOf(page, lupul);
+    await dragBetween(page, start, { x: start.x + 40, y: start.y + 30 });
+    await expect.poll(placeOfLupul).not.toBe('none');
+    await expect(page).toHaveURL(/\/connections$/);
+    // Arrange for me forgets every place (the button alternative to dragging).
+    await page.getByRole('button', { name: 'Arrange for me' }).click();
+    await expect.poll(placeOfLupul).toBe('none');
+    await expect(page.getByRole('button', { name: 'Arrange for me' })).toBeDisabled();
+    // Dropped on Ana's card, it opens the form with both picked; nothing is saved yet.
+    await dragBetween(
+      page,
+      await centreOf(page, lupul),
+      await centreOf(page, `[data-map-card="${cast.ana}"]`),
+    );
+    const form = page.getByRole('region', { name: 'Add a relationship', exact: true });
+    await expect(form.getByLabel('Character', { exact: true })).toHaveValue(cast.lupul);
+    await expect(form.getByLabel('Other character', { exact: true })).toHaveValue(cast.ana);
+    await expect(form.getByLabel('Kind', { exact: true })).toBeFocused();
+    expect(placeOfLupul()).toBe('none');
+    // Focus on fades everyone not linked to the chosen character.
+    await page.getByLabel('Focus on', { exact: true }).selectOption({ label: 'Lupul' });
+    await expect(page.locator(`[data-map-card="${cast.vali}"]`)).toHaveClass(/opacity-30/);
+    await expect(page.locator(`[data-map-card="${cast.ion}"]`)).not.toHaveClass(/opacity-30/);
+    await page.context().close();
+  });
+
+  test('the family tree lays out generations and counts who is left off', async ({ browser }) => {
+    const page = await openAs(browser, 'adult_writer', `${planAddress}/connections?view=tree`);
     const treeCard = page.getByRole('region', { name: 'Family tree', exact: true });
     const generations = treeCard.getByRole('list', { name: 'Generations' });
     await expect(generations.getByRole('listitem')).toHaveText([
@@ -253,6 +345,15 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
       'Generation 2: Lupul, Vali',
     ]);
     await expect(treeCard.getByText(/left off/)).toHaveCount(0);
+    // Whose tree: only Mara's family (G10b2, board AtlasFamilyTree).
+    await treeCard.getByLabel('Whose tree', { exact: true }).selectOption({ label: 'Mara' });
+    await expect(generations.getByRole('listitem')).toHaveText([
+      'Generation 1: Mara',
+      'Generation 2: Lupul',
+    ]);
+    await expect(
+      treeCard.getByRole('list', { name: 'Line styles' }).getByRole('listitem'),
+    ).toHaveText(['Parent', 'Sibling', 'Partner', 'Cousin']);
     // Each box opens the sheet.
     await expect(
       page.getByTestId('atlas-family-tree').getByRole('link', { name: 'Mara', exact: true }),
@@ -261,7 +362,7 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
   });
 
   test('Delete asks twice, then the relationship is gone from both sheets', async ({ browser }) => {
-    const page = await openAs(browser, 'adult_writer', `${planAddress}/connections`);
+    const page = await openAs(browser, 'adult_writer', `${planAddress}/connections?view=list`);
     const list = page.getByRole('region', { name: 'Relationships', exact: true });
     await list.getByRole('button', { name: 'Delete Ion killed Lupul' }).click();
     await expect(list.getByText('Delete “Ion killed Lupul”?')).toBeFocused();
@@ -286,8 +387,8 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
   test('a cousin says which cousin, and an "Other" one reads from each side', async ({
     browser,
   }) => {
-    const page = await openAs(browser, 'adult_writer', `${planAddress}/connections`);
-    const form = page.getByRole('region', { name: 'Add a relationship', exact: true });
+    const page = await openAs(browser, 'adult_writer', `${planAddress}/connections?view=list`);
+    const form = await openAddForm(page);
     const list = page.getByRole('region', { name: 'Relationships', exact: true });
     // A second cousin once removed (G10b: first to third cousins, up to three times removed).
     await form.getByLabel('Character', { exact: true }).selectOption({ label: 'Mara' });
@@ -311,6 +412,11 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
       .fill('goddaughter of');
     await form.getByRole('button', { name: 'Add relationship' }).click();
     await expect(list.getByText('Ana: godmother of Mara', { exact: true }).first()).toBeVisible();
+    // In the tree, the younger cousin sits a generation below Mara; Mara joins the top row.
+    await showView(page, 'Family tree');
+    await expect(
+      page.getByRole('list', { name: 'Generations' }).getByRole('listitem').first(),
+    ).toHaveText('Generation 1: Ana, Ion, Mara');
     // Mara's sheet tells it from her side.
     await page.goto(`${planAddress}/characters/${cast.mara}`);
     const maraSection = page.getByRole('region', { name: 'Relationships', exact: true });

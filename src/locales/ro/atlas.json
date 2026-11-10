@@ -299,7 +299,8 @@
       "reverseLabel": "Ce este {{to}} pentru {{from}}? (opțional)",
       "reverseHint": "Apare pe fișa personajului {{to}}, de exemplu „fină pentru”.",
       "firstStandIn": "primul personaj",
-      "secondStandIn": "celălalt personaj"
+      "secondStandIn": "celălalt personaj",
+      "open": "Adaugă o legătură"
     },
     "list": {
       "heading": "Legături",
@@ -313,22 +314,40 @@
     },
     "map": {
       "heading": "Harta legăturilor",
-      "hint": "Alege un personaj ca să-i deschizi fișa. Aceleași legături sunt scrise și la Toate legăturile.",
-      "region": "Harta legăturilor; pe ecrane mici se derulează în lateral",
+      "region": "Harta legăturilor; pe ecrane mici se derulează",
       "categoriesLabel": "Arată categoriile",
-      "none": "Încă nu sunt legături de desenat."
+      "none": "Încă nu sunt legături de desenat.",
+      "focusOn": "Evidențiază",
+      "everyone": "Toată lumea",
+      "arrange": "Aranjează automat",
+      "dragHint": "Trage un card ca să-l muți. Trage un card peste altul ca să le legi.",
+      "moveFailed": "Noul loc al cardului nu a fost salvat. Verifică conexiunea și încearcă din nou.",
+      "arrangeFailed": "Harta nu a fost rearanjată. Verifică conexiunea și încearcă din nou.",
+      "zoomLabel": "Mărire",
+      "zoomOut": "Micșorează",
+      "zoomIn": "Mărește",
+      "fit": "Potrivește",
+      "zoomNow": "{{percent}}%",
+      "offMap": "Încă nu sunt pe hartă: {{names}}"
     },
     "tree": {
       "heading": "Arborele familiei",
-      "hint": "Făcut din „Părinte pentru” și „Partener(ă) sau soț(ie) pentru”. Generațiile mai vechi sunt sus.",
+      "hint": "Făcut din „Părinte pentru”, „Frate sau soră cu”, „Partener(ă) sau soț(ie) pentru” și „Văr sau vară cu”. Generațiile mai vechi sunt sus.",
       "includeMade": "Include și transformările sau creațiile",
       "region": "Arborele familiei; pe ecrane mici se derulează în lateral",
-      "none": "Încă nu sunt legături de familie. Adaugă „Părinte pentru” sau „Partener(ă) sau soț(ie) pentru” ca să apară arborele.",
+      "none": "Încă nu sunt legături de familie. Adaugă „Părinte pentru”, „Frate sau soră cu”, „Partener(ă) sau soț(ie) pentru” sau „Văr sau vară cu” ca să apară arborele.",
       "leftOff_one": "{{count}} personaj fără legături de familie nu apare.",
       "leftOff_few": "{{count}} personaje fără legături de familie nu apar.",
       "leftOff_other": "{{count}} de personaje fără legături de familie nu apar.",
       "generationsLabel": "Generații",
-      "generation": "Generația {{number}}: {{names}}"
+      "generation": "Generația {{number}}: {{names}}",
+      "whose": "Al cui arbore",
+      "everyFamily": "Toate familiile",
+      "legend": "Tipuri de linii",
+      "lineParent": "Părinte",
+      "lineSibling": "Frate sau soră",
+      "linePartner": "Partener(ă)",
+      "lineCousin": "Văr sau vară"
     },
     "clash": {
       "title": "Se contrazice cu o legătură care există deja.",
@@ -340,7 +359,13 @@
       "back": "Înapoi",
       "save": "Salvează oricum"
     },
-    "otherWay": "Invers"
+    "otherWay": "Invers",
+    "views": {
+      "legend": "Vizualizare",
+      "map": "Hartă",
+      "tree": "Arborele familiei",
+      "list": "Listă"
+    }
   },
   "bible": {
     "heading": "Lumea poveștii",

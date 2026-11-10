@@ -15021,7 +15021,10 @@ CREATE TABLE IF NOT EXISTS "public"."story_characters" (
     "is_private" boolean DEFAULT false NOT NULL,
     "show_from_chapter_id" "uuid",
     "public_sheet_parts" "text"[] DEFAULT ARRAY['basics'::"text", 'look_and_voice'::"text", 'in_the_story'::"text"] NOT NULL,
+    "map_x" smallint,
+    "map_y" smallint,
     CONSTRAINT "story_characters_custom_values_is_object" CHECK (("jsonb_typeof"("custom_values") = 'object'::"text")),
+    CONSTRAINT "story_characters_map_place" CHECK (((("map_x" IS NULL) AND ("map_y" IS NULL)) OR ((("map_x" >= 0) AND ("map_x" <= 4000)) AND (("map_y" >= 0) AND ("map_y" <= 4000))))),
     CONSTRAINT "story_characters_name_length" CHECK ((("char_length"("btrim"("name")) >= 1) AND ("char_length"("btrim"("name")) <= 120))),
     CONSTRAINT "story_characters_picture_alt_length" CHECK (("char_length"("picture_alt") <= 300)),
     CONSTRAINT "story_characters_public_sheet_parts_known" CHECK (("cardinality"("public_sheet_parts") <= 200)),
@@ -15062,6 +15065,14 @@ COMMENT ON COLUMN "public"."story_characters"."public_sheet_parts" IS 'The sheet
 
 
 
+COMMENT ON COLUMN "public"."story_characters"."map_x" IS 'The card''s left edge on the relationship map, in map pixels; null when the map places it (G10b2).';
+
+
+
+COMMENT ON COLUMN "public"."story_characters"."map_y" IS 'The card''s top edge on the relationship map, in map pixels; null when the map places it (G10b2).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."character_json"("target_character" "public"."story_characters") RETURNS "jsonb"
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -15075,6 +15086,7 @@ CREATE OR REPLACE FUNCTION "public"."character_json"("target_character" "public"
     'picture', (select public.picture_state_json(picture_checks) from public.picture_checks
                 where picture_checks.id = target_character.picture_id and picture_checks.deleted_at is null),
     'picture_alt', target_character.picture_alt,
+    'map_x', target_character.map_x, 'map_y', target_character.map_y,
     'updated_at', target_character.updated_at);
 $$;
 
@@ -16480,6 +16492,36 @@ ALTER FUNCTION "public"."clean_mail_text"("raw_text" "text", "longest" integer) 
 
 
 COMMENT ON FUNCTION "public"."clean_mail_text"("raw_text" "text", "longest" integer) IS 'Internal: trims and checks a moderator mail text (S1-E10-11).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."clear_map_positions"("story_slug" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target_story_id uuid;
+begin
+  -- Step 1: a signed-in writer and their own live story.
+  if (select auth.uid()) is null then
+    raise exception 'Sign in to change your characters.' using errcode = 'insufficient_privilege';
+  end if;
+  target_story_id := public.my_live_story_id(story_slug);
+  if target_story_id is null then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  -- Step 2: every saved place goes; the map lays the cards out again.
+  update public.story_characters set map_x = null, map_y = null
+  where story_id = target_story_id and map_x is not null;
+  return jsonb_build_object('outcome', 'ok');
+end;
+$$;
+
+
+ALTER FUNCTION "public"."clear_map_positions"("story_slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."clear_map_positions"("story_slug" "text") IS 'Arrange for me: forgets where the writer put the cards on a story''s relationship map (G10b2).';
 
 
 
@@ -37314,6 +37356,35 @@ COMMENT ON FUNCTION "public"."set_chapter_order"("story_slug" "text", "chapter_c
 
 
 
+CREATE OR REPLACE FUNCTION "public"."set_character_map_position"("character_id" "uuid", "x" integer, "y" integer) RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target public.story_characters;
+begin
+  -- Step 1: a signed-in writer and their own character.
+  if (select auth.uid()) is null then
+    raise exception 'Sign in to change your characters.' using errcode = 'insufficient_privilege';
+  end if;
+  target := public.my_story_character(character_id);
+  if target.id is null then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  -- Step 2: the place; the table's check refuses one off the map.
+  update public.story_characters set map_x = x, map_y = y where id = target.id;
+  return jsonb_build_object('outcome', 'ok');
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_character_map_position"("character_id" "uuid", "x" integer, "y" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_character_map_position"("character_id" "uuid", "x" integer, "y" integer) IS 'Saves where the writer put a character''s card on the relationship map (G10b2).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."set_character_picture"("character_id" "uuid", "new_picture_id" "uuid") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -37388,6 +37459,31 @@ ALTER FUNCTION "public"."set_character_public_parts"("character_id" "uuid", "par
 
 
 COMMENT ON FUNCTION "public"."set_character_public_parts"("character_id" "uuid", "parts" "text"[]) IS 'Sets which parts of one of the caller''s character sheets readers see (S1-E17-32).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."set_character_updated_at"() RETURNS "trigger"
+    LANGUAGE "plpgsql"
+    SET "search_path" TO ''
+    AS $$
+begin
+  -- Step 1: only the map place moved; everything else, the stamp aside, is as it was.
+  if (new.map_x, new.map_y) is distinct from (old.map_x, old.map_y)
+     and (to_jsonb(new) - 'map_x' - 'map_y' - 'updated_at')
+       = (to_jsonb(old) - 'map_x' - 'map_y' - 'updated_at') then
+    new.updated_at := old.updated_at;
+  else
+    new.updated_at := now();
+  end if;
+  return new;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_character_updated_at"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_character_updated_at"() IS 'Trigger: keeps story_characters.updated_at current, except when only the map place changed (G10b2).';
 
 
 
@@ -50990,7 +51086,7 @@ CREATE OR REPLACE TRIGGER "story_characters_refuse_user_id_change" BEFORE UPDATE
 
 
 
-CREATE OR REPLACE TRIGGER "story_characters_set_updated_at" BEFORE UPDATE ON "public"."story_characters" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+CREATE OR REPLACE TRIGGER "story_characters_set_updated_at" BEFORE UPDATE ON "public"."story_characters" FOR EACH ROW EXECUTE FUNCTION "public"."set_character_updated_at"();
 
 
 
@@ -56659,6 +56755,11 @@ REVOKE ALL ON FUNCTION "public"."clean_mail_text"("raw_text" "text", "longest" i
 
 
 
+REVOKE ALL ON FUNCTION "public"."clear_map_positions"("story_slug" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."clear_map_positions"("story_slug" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."clear_my_sign_in_failures"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."clear_my_sign_in_failures"() TO "authenticated";
 
@@ -59610,6 +59711,11 @@ GRANT ALL ON FUNCTION "public"."set_chapter_order"("story_slug" "text", "chapter
 
 
 
+REVOKE ALL ON FUNCTION "public"."set_character_map_position"("character_id" "uuid", "x" integer, "y" integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_character_map_position"("character_id" "uuid", "x" integer, "y" integer) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."set_character_picture"("character_id" "uuid", "new_picture_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_character_picture"("character_id" "uuid", "new_picture_id" "uuid") TO "authenticated";
 
@@ -59617,6 +59723,10 @@ GRANT ALL ON FUNCTION "public"."set_character_picture"("character_id" "uuid", "n
 
 REVOKE ALL ON FUNCTION "public"."set_character_public_parts"("character_id" "uuid", "parts" "text"[]) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_character_public_parts"("character_id" "uuid", "parts" "text"[]) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."set_character_updated_at"() FROM PUBLIC;
 
 
 

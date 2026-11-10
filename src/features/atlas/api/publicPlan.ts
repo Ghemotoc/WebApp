@@ -155,6 +155,8 @@ async function castFrom(
       firstAppearance: character.first_appearance,
       picture: pictures[character.id] ?? null,
       pictureAlt: character.picture_alt,
+      // Readers' maps lay themselves out: the writer's card places stay private (G10b2).
+      mapPlace: null,
     };
   });
   const cast: StoryCast = {

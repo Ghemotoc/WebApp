@@ -16,20 +16,24 @@ import { Link } from 'react-router';
  * @param props.to - the address, or null for no link
  * @param props.className - the classes, the same either way so the layout doesn't change
  * @param props.children - what shows
+ * @param props.isNativeDragOff - true on a map card the writer drags (G10b2)
  * @returns a Link or a span
  */
 export function MaybeLink({
   to,
   className,
   children,
+  isNativeDragOff = false,
 }: {
   to: string | null;
   className: string;
   children: ReactNode;
+  /** True on a card the writer drags on the map, so the browser doesn't drag the link itself. */
+  isNativeDragOff?: boolean;
 }) {
   if (to === null) return <span className={className}>{children}</span>;
   return (
-    <Link to={to} className={className}>
+    <Link to={to} className={className} draggable={isNativeDragOff ? false : undefined}>
       {children}
     </Link>
   );
