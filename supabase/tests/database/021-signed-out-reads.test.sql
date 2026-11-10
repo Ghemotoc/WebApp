@@ -142,6 +142,8 @@ select results_eq(
        ('forum_thread_reads', 0::bigint),
        ('forum_threads', 0::bigint),
        ('forums', (select count(*) from public.forums where deleted_at is null and space_id is null)),
+       -- Home page comment picks: the reader's own and featured staff's; visitors get the card through a function (GAPS-13).
+       ('home_comment_picks', 0::bigint),
        -- Our own house ads: owner and admin only (SPONSORS-e1).
        ('house_ads', 0::bigint),
        ('identity_link_requests', 0::bigint),

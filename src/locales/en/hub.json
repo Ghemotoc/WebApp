@@ -163,6 +163,17 @@
       },
       "remindFailed": "We couldn’t change the reminder. The session may have started. Try again.",
       "loadFailed": "We couldn’t load the live sessions. Check the connection and try again."
+    },
+    "homeComment": {
+      "heading": "The team would like to show this comment on the home page",
+      "body": "Visitors would see your name and avatar, the comment and the story it is on:",
+      "place": "{{story}} · Chapter {{position}}",
+      "status": {
+        "waiting": "Nothing shows until you agree.",
+        "agreed": "You agreed. The home page can show the comment.",
+        "declined": "You declined. Nothing shows."
+      },
+      "withdraw": "Take the comment down"
     }
   },
   "hubStaff": {

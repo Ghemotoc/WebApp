@@ -29,3 +29,4 @@ The signed-in home at `/hub` and the Resources page at `/resources`, built by bu
 - `lib/howToGuides.ts`: picks the how-to guides from the help pages and pages through them.
 - `registerHubTranslations.ts`: the `hub` text namespace (`src/locales/*/hub.json`).
 - The guides and the writers' rights page are CMS help pages, not locale text (CLAUDE.md rule 4): the migration `…_g9a_writers_hub.sql` publishes version 1 and admins edit them in Staff › Website.
+- `components/HubHomeCommentInvitations.tsx` (GAPS-13): a reader's own invitation to have one of their comments shown on the home page, with Agree, Decline and "Take the comment down"; the data and the rules live in `src/features/website/` (`api/homeComment.ts`).

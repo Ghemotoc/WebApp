@@ -250,6 +250,12 @@
       "contact": "Contactează-ne",
       "guidelines": "Citește regulile comunității",
       "report": "Raportează ceva fără cont"
+    },
+    "homeComment": {
+      "label": "Comentariul unui cititor",
+      "onParagraph": "la paragraful {{number}}",
+      "commented": "a comentat",
+      "place": "{{story}} · Capitolul {{position}}"
     }
   },
   "appearance": {

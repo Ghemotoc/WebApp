@@ -1468,6 +1468,32 @@
       "not_allowed": "Doar administratorii și proprietarul pot schimba Recomandatele săptămânii.",
       "refused": "Nu se poate salva. Poate o poveste nu mai e permisă sau lista e prea lungă. Verifică lista și încearcă din nou.",
       "unreachable": "Nu am putut ajunge la baza de date. Încearcă din nou peste puțin timp."
+    },
+    "homeComment": {
+      "heading": "Comentariul unui cititor pe pagina principală",
+      "intro": "Invită un cititor să aibă un comentariu arătat pe peretele de coperți al paginii principale. Cititorul primește o notificare și o invitație în Spațiul scriitorilor, iar vizitatorii văd comentariul doar după ce cititorul acceptă. Se arată cel mai recent acord. Mai jos: comentarii din ultimele 90 de zile, de cel mult 200 de caractere, scrise de adulți, la povești publice cu ratingul Toate vârstele sau 13+, niciodată spoilere.",
+      "loading": "Se încarcă comentariile…",
+      "picksHeading": "Alegeri",
+      "candidatesHeading": "Comentarii recente",
+      "noPicks": "Nicio alegere încă.",
+      "noCandidates": "Niciun comentariu recent nu se potrivește.",
+      "place": "{{story}} · Capitolul {{position}}",
+      "invite": "Invită",
+      "inviteLabel": "Invită cititorul {{name}}",
+      "remove": "Scoate",
+      "removeLabel": "Scoate comentariul scris de {{name}}",
+      "answers": {
+        "waiting": "Se așteaptă cititorul",
+        "agreed": "A acceptat",
+        "declined": "A refuzat"
+      },
+      "onHomePage": "Pe pagina principală",
+      "cannotShow": "Nu mai poate fi arătat",
+      "failures": {
+        "not_allowed": "Doar administratorii și proprietarul pot alege comentariul de pe pagina principală.",
+        "cannot_show": "Comentariul nu mai poate fi arătat sau este deja ales. Listele sunt acum la zi.",
+        "failed": "Ceva nu a mers. Încearcă din nou."
+      }
     }
   },
   "menuGroups": {

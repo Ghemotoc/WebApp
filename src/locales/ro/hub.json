@@ -163,6 +163,17 @@
       },
       "remindFailed": "Nu am putut schimba mementoul. Poate că sesiunea a început. Încearcă din nou.",
       "loadFailed": "Nu am putut încărca sesiunile live. Verifică conexiunea și încearcă din nou."
+    },
+    "homeComment": {
+      "heading": "Echipa ar vrea să arate acest comentariu pe pagina principală",
+      "body": "Vizitatorii ar vedea numele și avatarul tău, comentariul și povestea la care a fost scris:",
+      "place": "{{story}} · Capitolul {{position}}",
+      "status": {
+        "waiting": "Nimic nu apare până nu accepți.",
+        "agreed": "Ai acceptat. Pagina principală poate arăta comentariul.",
+        "declined": "Ai refuzat. Nimic nu apare."
+      },
+      "withdraw": "Scoate comentariul"
     }
   },
   "hubStaff": {

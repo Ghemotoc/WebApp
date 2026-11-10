@@ -89,6 +89,7 @@
     "landingEntriesOpenGone": "au început înscrierile pentru o pagină despre care ai întrebat, dar care a fost scoasă între timp.",
     "liveSessionSoon": "„{{title}}” începe la {{time}}.",
     "liveSessionSoonGone": "o sesiune live despre care ai cerut un memento a fost anulată.",
+    "homeCommentInvited": "am vrea să arătăm un comentariu de-al tău pe pagina principală. Nimic nu apare dacă nu accepți.",
     "contestCertificateIssued": "ai primit o diplomă de la „{{title}}”. O găsești în Diplome.",
     "certificateIssuedPlain": "ai primit o diplomă nouă. O găsești în Diplome.",
     "rankReached": "acum ai rangul {{rank}}. Felicitări!",
@@ -161,6 +162,7 @@
     "openAuditLog": "Deschide jurnalul de audit",
     "openLandingPage": "Deschide pagina",
     "openWritersHub": "Deschide Spațiul scriitorilor",
+    "seeHomeCommentInvitation": "Vezi invitația",
     "seeMyRank": "Vezi rangul",
     "seePrivacy": "Vezi setările de confidențialitate",
     "startExploring": "Începe să explorezi"
