@@ -117,6 +117,8 @@ export interface ForumThreadHeader {
   replyCount: number;
   writerCount: number;
   lastPostAt: string;
+  /** How many times the thread was opened (GAPS-16d): a total only, never who. */
+  viewCount: number;
   /** Pinned to the top of its forum by a moderator (S1-E8-05). */
   isSticky: boolean;
   /** Null while open; when and why the moderation team locked it (S1-E8-05). */
@@ -366,6 +368,7 @@ function headerFrom(row: JsonObject): ForumThreadHeader {
     replyCount: Number(row['reply_count']),
     writerCount: Number(row['writer_count']),
     lastPostAt: String(row['last_post_at']),
+    viewCount: Number(row['view_count'] ?? 0),
     isSticky: row['is_sticky'] === true,
     lock: lockFrom(row['lock']),
     canReply: row['can_reply'] === true,

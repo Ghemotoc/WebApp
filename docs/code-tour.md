@@ -2147,6 +2147,13 @@ The liquid glass Library board draws "Your lists": lists of stories a reader mak
 - Preview: "Preview" beside "Post reply" opens `ReplyPreview`, which draws what is in the box with `ForumPostText`, the component a posted reply uses (so raw HTML is never drawn). It is made on the reader's device and sends nothing.
 - Tests: `supabase/tests/database/330-forum-rules-and-pointers.test.sql`, `src/features/forums/lib/forumAddresses.test.ts`, `src/features/forums/api/forumModeration.test.ts`, `e2e/forum-rules-and-pointers.spec.ts`.
 
+## A forum thread's view total (GAPS-16d)
+
+- Where it lives: `src/features/forums/hooks/useRecordThreadView.ts` (called by `ThreadPage`), `api/forumViews.ts`, the Views row in `ThreadSidePanel`, and `supabase/migrations/…_gaps16d_thread_views.sql`.
+- The table: `forum_thread_views` (thread and total, one row per thread; no user ID). Moderation staff may read it; members see the number only through the thread page.
+- How a view travels: the thread loads → `useRecordThreadView()` checks sessionStorage (`forum-counted-threads`, thread numbers only) → `record_forum_thread_view(thread_number)` adds one unless the caller is the starter or may not open the thread → `forum_thread_header_json()` answers `view_count`.
+- Tests: `supabase/tests/database/345-thread-views.test.sql`, `src/features/forums/hooks/useRecordThreadView.test.tsx`, `e2e/forum-thread-views.spec.ts`.
+
 ## Votes on forum posts (GAPS-16c)
 
 - Where it lives: `src/features/forums/components/PostVotes.tsx` (at the start of `PostActions`), the "How votes work" box in `ThreadSidePanel`, `hooks/usePostVote.ts`, `api/forumVotes.ts`, and `supabase/migrations/…_gaps16c_forum_post_votes.sql`.

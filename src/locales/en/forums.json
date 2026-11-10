@@ -62,6 +62,7 @@
     "facts": {
       "title": "This thread",
       "replies": "Replies",
+      "views": "Views",
       "writers": "Writers taking part",
       "lastReply": "Last reply"
     },

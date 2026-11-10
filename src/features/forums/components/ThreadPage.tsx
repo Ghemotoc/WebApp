@@ -32,6 +32,7 @@ import { useForumIndex } from '../hooks/useForumIndex';
 import { useMarkThreadRead } from '../hooks/useForumReads';
 import { useForumThread } from '../hooks/useForumThreads';
 import { useQuotePicks } from '../hooks/useQuotePicks';
+import { useRecordThreadView } from '../hooks/useRecordThreadView';
 import { forumPath } from '../lib/forumTree';
 import { useForumsTranslation } from '../registerForumsTranslations';
 
@@ -196,6 +197,8 @@ export function ThreadPage() {
   useScrollToPost(read.posts, wantedPost);
   // What is on screen counts as read (S1-E8-04): the highest post number shown.
   useMarkThreadRead(threadNumber, read.posts.at(-1)?.number ?? null);
+  // GAPS-16d: one view for the thread's total, once per tab (nothing about the reader is kept).
+  useRecordThreadView(threadNumber, read.thread != null);
   const movedTo = read.thread?.forumSlug;
   if (movedTo !== undefined && movedTo !== forumSlug) {
     // The thread lives in another forum (it was moved, or the address was typed): go there.

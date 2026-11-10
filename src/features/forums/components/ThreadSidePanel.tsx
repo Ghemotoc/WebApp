@@ -2,9 +2,8 @@
  * ThreadSidePanel: "This thread" with its numbers and "Something wrong?" (bundle FORUMS-1, part
  * b; S1-E8-02; board 5.2's side column).
  *
- * The numbers are Replies, Writers taking part and Last reply, as label and value rows with a fine
- * line between them (DoD). The board's Views is left out: we keep no per-reader records
- * (docs/board-fixes.md). GAPS-16a adds Follow thread under the numbers (ThreadFollowButton);
+ * The numbers are Replies, Views, Writers taking part and Last reply, as label and value rows with
+ * a fine line between them (DoD). Views is a total only, never who opened the thread (GAPS-16d). GAPS-16a adds Follow thread under the numbers (ThreadFollowButton);
  * GAPS-16c adds "How votes work" (downvotes are private, Q22).
  * Who uses it: ThreadPage.
  */
@@ -37,6 +36,7 @@ export function ThreadSidePanel({ thread }: { thread: ForumThreadHeader }) {
         <LabelRows
           rows={[
             { label: t('thread.facts.replies'), value: format.format(thread.replyCount) },
+            { label: t('thread.facts.views'), value: format.format(thread.viewCount) },
             { label: t('thread.facts.writers'), value: format.format(thread.writerCount) },
             {
               label: t('thread.facts.lastReply'),

@@ -3670,6 +3670,33 @@ export type Database = {
           },
         ];
       };
+      forum_thread_views: {
+        Row: {
+          thread_id: string;
+          total: number;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          thread_id: string;
+          total?: number;
+          updated_at?: string;
+        };
+        Update: {
+          thread_id?: string;
+          total?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'forum_thread_views_thread_id_fkey';
+            columns: ['thread_id'];
+            isOneToOne: true;
+            referencedRelation: 'forum_threads';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       forum_threads: {
         Row: {
           answer_post_id: string | null;
@@ -14823,6 +14850,7 @@ export type Database = {
         Args: { chapter_code: string; story_slug: string };
         Returns: boolean;
       };
+      record_forum_thread_view: { Args: { thread_number: number }; Returns: boolean };
       record_passage_share: {
         Args: { chapter_code: string; first_block: number; last_block: number; story_slug: string };
         Returns: boolean;

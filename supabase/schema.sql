@@ -23344,6 +23344,9 @@ CREATE OR REPLACE FUNCTION "public"."forum_thread_header_json"("target" "public"
                      where forum_posts.thread_id = target.id
                        and public.forum_post_state_for_caller(forum_posts) in ('live', 'hidden')),
     'last_post_at', target.last_post_at,
+    -- GAPS-16d: how many times the thread was opened, a total only (never who).
+    'view_count', coalesce((select views.total from public.forum_thread_views as views
+                            where views.thread_id = target.id), 0),
     'last_post_number', target.last_post_number,
     'is_sticky', target.is_sticky,
     'lock', case when target.locked_at is null then null
@@ -23376,7 +23379,7 @@ $$;
 ALTER FUNCTION "public"."forum_thread_header_json"("target" "public"."forum_threads") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."forum_thread_header_json"("target" "public"."forum_threads") IS 'Internal: a thread''s heading, numbers, sticky, lock, rules strip, pointer and whether the reader follows it, never a user ID (S1-E8-02, S1-E8-05, GAPS-9, GAPS-16a).';
+COMMENT ON FUNCTION "public"."forum_thread_header_json"("target" "public"."forum_threads") IS 'Internal: a thread''s heading, numbers (views included), sticky, lock, rules strip, pointer and whether the reader follows it, never a user ID (S1-E8-02, S1-E8-05, GAPS-9, GAPS-16a, GAPS-16d).';
 
 
 
@@ -34868,6 +34871,36 @@ ALTER FUNCTION "public"."record_chapter_share"("story_slug" "text", "chapter_cod
 
 
 COMMENT ON FUNCTION "public"."record_chapter_share"("story_slug" "text", "chapter_code" "text") IS 'Counts one share of a chapter the caller may read; never records who (S1-E4-05).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."record_forum_thread_view"("thread_number" bigint) RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  thread public.forum_threads;
+begin
+  -- Step 1: a thread the caller may open, and not their own.
+  select * into thread from public.forum_threads
+  where forum_threads.thread_number = record_forum_thread_view.thread_number;
+  if thread.id is null or not public.forum_thread_is_shown(thread)
+     or thread.user_id is not distinct from (select auth.uid()) then
+    return false;
+  end if;
+  -- Step 2: one more on the total; nothing about the reader is kept.
+  insert into public.forum_thread_views (thread_id, total) values (thread.id, 1)
+  on conflict (thread_id) do update
+  set total = public.forum_thread_views.total + 1, updated_at = now();
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."record_forum_thread_view"("thread_number" bigint) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."record_forum_thread_view"("thread_number" bigint) IS 'Adds one to a forum thread''s view total; keeps nothing about who opened it (GAPS-16d).';
 
 
 
@@ -49564,6 +49597,21 @@ COMMENT ON COLUMN "public"."forum_thread_reads"."last_read_post_number" IS 'The 
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."forum_thread_views" (
+    "thread_id" "uuid" NOT NULL,
+    "total" bigint DEFAULT 0 NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "forum_thread_views_total_not_negative" CHECK (("total" >= 0))
+);
+
+
+ALTER TABLE "public"."forum_thread_views" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."forum_thread_views" IS 'kind: platform. How many times each forum thread was opened: a total only, never who (GAPS-16d).';
+
+
+
 ALTER TABLE "public"."forum_threads" ALTER COLUMN "thread_number" ADD GENERATED ALWAYS AS IDENTITY (
     SEQUENCE NAME "public"."forum_threads_thread_number_seq"
     START WITH 1
@@ -51925,6 +51973,11 @@ ALTER TABLE ONLY "public"."forum_thread_reads"
 
 ALTER TABLE ONLY "public"."forum_thread_reads"
     ADD CONSTRAINT "forum_thread_reads_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."forum_thread_views"
+    ADD CONSTRAINT "forum_thread_views_pkey" PRIMARY KEY ("thread_id");
 
 
 
@@ -55783,6 +55836,11 @@ ALTER TABLE ONLY "public"."forum_thread_reads"
 
 
 
+ALTER TABLE ONLY "public"."forum_thread_views"
+    ADD CONSTRAINT "forum_thread_views_thread_id_fkey" FOREIGN KEY ("thread_id") REFERENCES "public"."forum_threads"("id") ON DELETE CASCADE;
+
+
+
 ALTER TABLE ONLY "public"."forum_threads"
     ADD CONSTRAINT "forum_threads_answer_post_id_fkey" FOREIGN KEY ("answer_post_id") REFERENCES "public"."forum_posts"("id") ON DELETE SET NULL;
 
@@ -57650,6 +57708,13 @@ CREATE POLICY "forum_thread_reads_select_own" ON "public"."forum_thread_reads" F
 
 
 COMMENT ON POLICY "forum_thread_reads_select_own" ON "public"."forum_thread_reads" IS 'A person reads their own thread reads; nobody else (S1-E8-04).';
+
+
+
+ALTER TABLE "public"."forum_thread_views" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "forum_thread_views_select_moderation" ON "public"."forum_thread_views" FOR SELECT TO "authenticated" USING (( SELECT "public"."staff_may"('moderation'::"text", 'view'::"text") AS "staff_may"));
 
 
 
@@ -63535,6 +63600,12 @@ GRANT ALL ON FUNCTION "public"."record_chapter_share"("story_slug" "text", "chap
 
 
 
+REVOKE ALL ON FUNCTION "public"."record_forum_thread_view"("thread_number" bigint) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."record_forum_thread_view"("thread_number" bigint) TO "anon";
+GRANT ALL ON FUNCTION "public"."record_forum_thread_view"("thread_number" bigint) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."record_passage_share"("story_slug" "text", "chapter_code" "text", "first_block" integer, "last_block" integer) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."record_passage_share"("story_slug" "text", "chapter_code" "text", "first_block" integer, "last_block" integer) TO "authenticated";
 
@@ -65624,6 +65695,11 @@ GRANT SELECT ON TABLE "public"."forum_thread_follows" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."forum_thread_reads" TO "service_role";
 GRANT SELECT ON TABLE "public"."forum_thread_reads" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."forum_thread_views" TO "service_role";
+GRANT SELECT ON TABLE "public"."forum_thread_views" TO "authenticated";
 
 
 
