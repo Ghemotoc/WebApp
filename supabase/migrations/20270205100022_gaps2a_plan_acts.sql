@@ -24,8 +24,8 @@
  * Inputs: the story's address and the act's name.
  * Returns: { outcome: 'ok', id } or { outcome: 'not_found' } for a story that isn't the caller's.
  * Errors: insufficient_privilege when signed out; check_violation with hint too_many_acts (12
- *   acts in a story), and the table's own check for an empty or over-long name (1 to 80
- *   characters).
+ *   acts in a story) or name_taken (the story has an act with that name, capitals aside), and
+ *   the table's own check for an empty or over-long name (1 to 80 characters).
  * Where it fits: "Add act" on the Storyline page's chapter board (useStoryline.addAct).
  */
 create function public.add_plan_act(story_slug text, act_name text)
@@ -47,7 +47,17 @@ begin
   if target_story_id is null then
     return jsonb_build_object('outcome', 'not_found');
   end if;
-  -- Step 2: the bound. 12 acts, so the board stays readable (builder's choice, GAPS-2a).
+  -- One change to a story's acts at a time: two presses of "Add" at the same moment wait for
+  -- each other, so the checks below see the first one's act (break test, 10 Nov 2026).
+  perform pg_advisory_xact_lock(hashtext('story_plan_acts:' || target_story_id::text));
+  -- Step 2: one name once, capitals aside, so two columns never carry the same heading.
+  if exists (select 1 from public.story_plan_acts as acts
+             where acts.story_id = target_story_id
+               and lower(acts.name) = lower(btrim(coalesce(act_name, '')))) then
+    raise exception 'This story already has an act with that name.'
+      using errcode = 'check_violation', hint = 'name_taken';
+  end if;
+  -- The bound. 12 acts, so the board stays readable (builder's choice, GAPS-2a).
   if (select count(*) from public.story_plan_acts where story_id = target_story_id) >= 12 then
     raise exception 'A story can hold at most 12 acts.'
       using errcode = 'check_violation', hint = 'too_many_acts';
@@ -76,8 +86,9 @@ grant execute on function public.add_plan_act(text, text) to authenticated;
  * Inputs: the story's address, the act's ID (as text) and the new name.
  * Returns: { outcome: 'ok' } or { outcome: 'not_found' } for a story that isn't the caller's or
  *   an act that story doesn't have.
- * Errors: insufficient_privilege when signed out; the table's own check for an empty or
- *   over-long name.
+ * Errors: insufficient_privilege when signed out; check_violation with hint name_taken when
+ *   another act of the story has that name (capitals aside; an act may change its own capitals),
+ *   and the table's own check for an empty or over-long name.
  * Where it fits: "Rename" on an act's column of the chapter board (useStoryline.renameAct).
  */
 create function public.rename_plan_act(story_slug text, act_id text, act_name text)
@@ -102,7 +113,14 @@ begin
   if target_story_id is null or target_act_id is null then
     return jsonb_build_object('outcome', 'not_found');
   end if;
-  -- Step 2: the new name.
+  -- Step 2: never another act's name, capitals aside.
+  if exists (select 1 from public.story_plan_acts as acts
+             where acts.story_id = target_story_id and acts.id <> target_act_id
+               and lower(acts.name) = lower(btrim(coalesce(act_name, '')))) then
+    raise exception 'This story already has an act with that name.'
+      using errcode = 'check_violation', hint = 'name_taken';
+  end if;
+  -- Step 3: the new name.
   update public.story_plan_acts set name = btrim(act_name) where id = target_act_id;
   return jsonb_build_object('outcome', 'ok');
 end;

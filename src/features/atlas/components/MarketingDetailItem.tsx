@@ -5,6 +5,8 @@
  * A box named after the detail that saves by itself, like the page's other notes, then "Edit
  * detail": the name with "Save" and "Cancel", and "Delete detail", which asks first, in place.
  * The box's ID is "atlas-marketing-detail-<id>", where a search result for the detail lands.
+ * One change runs at a time, and a name another note or detail has is refused in plain words
+ * (break test, 10 Nov 2026).
  * Who uses it: MarketingDetails. What it calls: useStoryMarketing's saveDetail and deleteDetail.
  */
 import { useEffect, useState } from 'react';
@@ -13,8 +15,9 @@ import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { TextInput } from '@/components/ui/TextInput';
 
-import type { MarketingDetail } from '../api/marketing';
-import { useStoryMarketing } from '../hooks/useStoryMarketing';
+import { marketingDetailFailureKey, type MarketingDetail } from '../api/marketing';
+import { useOneAtATime } from '../hooks/useOneAtATime';
+import { useFixedNoteNames, useStoryMarketing } from '../hooks/useStoryMarketing';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { PlanTextField } from './PlanTextField';
@@ -73,6 +76,8 @@ function EditDetail({ slug, detail }: MarketingDetailItemProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState(detail.name);
   const [message, setMessage] = useState<string | null>(null);
+  const { isBusy, run } = useOneAtATime();
+  const isFixedNoteName = useFixedNoteNames();
 
   const boxId = `atlas-marketing-detail-name-${detail.id}`;
   // Opening the form puts the cursor in its box, so the keyboard carries on from the button.
@@ -84,9 +89,10 @@ function EditDetail({ slug, detail }: MarketingDetailItemProps) {
   async function save() {
     setMessage(null);
     if (name.trim() === '') return setMessage(t('marketing.details.nameRequired'));
-    await saveDetail(detail.id, { name })
-      .then(() => setIsOpen(false))
-      .catch(() => setMessage(t('marketing.details.saveFailed')));
+    if (isFixedNoteName(name)) return setMessage(t('marketing.details.nameTaken'));
+    await run(() => saveDetail(detail.id, { name }))
+      .then((hasRun) => hasRun && setIsOpen(false))
+      .catch((error: unknown) => setMessage(t(marketingDetailFailureKey(error, 'saveFailed'))));
   }
 
   if (!isOpen) return <EditDetailButton name={detail.name} onOpen={() => setIsOpen(true)} />;
@@ -108,7 +114,9 @@ function EditDetail({ slug, detail }: MarketingDetailItemProps) {
             onChange={(event) => setName(event.target.value)}
           />
         </div>
-        <Button type="submit">{t('marketing.details.save')}</Button>
+        <Button type="submit" disabled={isBusy}>
+          {t('marketing.details.save')}
+        </Button>
         <Button variant="secondary" onClick={() => setIsOpen(false)}>
           {t('marketing.details.cancel')}
         </Button>
@@ -117,7 +125,9 @@ function EditDetail({ slug, detail }: MarketingDetailItemProps) {
         name={detail.name}
         onDelete={() => {
           setMessage(null);
-          deleteDetail(detail.id).catch(() => setMessage(t('marketing.details.deleteFailed')));
+          run(() => deleteDetail(detail.id)).catch(() =>
+            setMessage(t('marketing.details.deleteFailed')),
+          );
         }}
       />
       <div aria-live="polite">{message !== null && <Notice tone="error">{message}</Notice>}</div>

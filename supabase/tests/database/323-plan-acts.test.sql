@@ -4,6 +4,8 @@
 -- - a writer adds an act after the others and story_storyline() lists it, with its name trimmed;
 -- - an empty name is refused, and so is a 13th act;
 -- - a writer renames an act; an act of no such ID is not found;
+-- - an act never takes another act's name, capitals aside, though it may change its own capitals
+--   (break test, 10 Nov 2026);
 -- - deleting an act moves its chapters to "No act" and deletes no chapter;
 -- - another writer can't add, rename or delete and a visitor can't call the functions.
 -- Personas: adult_writer (…01, owns the seed story …9000-…01), teen_17 (…02).
@@ -12,7 +14,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(16);
+select plan(19);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -58,6 +60,8 @@ select is(pg_temp.act_names(), 'Act I, Act II, Act III, Epilogue',
   'the new act comes after the others, its name trimmed');
 select is(pg_temp.refusal(format('select public.add_plan_act(%L, %L)', pg_temp.slug(), '   ')), '23514',
   'an act with an empty name is refused');
+select is(pg_temp.refusal(format('select public.add_plan_act(%L, %L)', pg_temp.slug(), ' act ii ')),
+  '23514:name_taken', 'an act with another act''s name is refused, capitals aside');
 
 /* ---------- 2. Renaming an act ---------- */
 
@@ -66,6 +70,11 @@ select is(public.rename_plan_act(pg_temp.slug(), pg_temp.act_id('Epilogue'), 'Af
 select is(pg_temp.act_names(), 'Act I, Act II, Act III, Aftermath', 'the act carries its new name');
 select is(public.rename_plan_act(pg_temp.slug(), '00000000-0000-4000-8000-00000000ffff', 'Nothing') ->> 'outcome',
   'not_found', 'an act the story does not have is not found');
+select is(pg_temp.refusal(format('select public.rename_plan_act(%L, %L, %L)',
+    pg_temp.slug(), pg_temp.act_id('Aftermath'), 'ACT III')),
+  '23514:name_taken', 'an act can''t take another act''s name');
+select is(public.rename_plan_act(pg_temp.slug(), pg_temp.act_id('Aftermath'), 'AFTERMATH') ->> 'outcome', 'ok',
+  'an act may change its own capitals');
 
 /* ---------- 3. Deleting an act ---------- */
 
@@ -75,7 +84,7 @@ insert into added_chapter
 select is(public.delete_plan_act(pg_temp.slug(), pg_temp.act_id('Act I')),
   jsonb_build_object('outcome', 'ok', 'chapters_moved', 1),
   'a writer deletes an act and hears how many chapters moved');
-select is(pg_temp.act_names(), 'Act II, Act III, Aftermath', 'the act is gone');
+select is(pg_temp.act_names(), 'Act II, Act III, AFTERMATH', 'the act is gone');
 select is((select count(*) from jsonb_array_elements(public.story_storyline(pg_temp.slug()) -> 'chapters') as chapter
            where chapter ->> 'code' = (select code from added_chapter) and chapter ->> 'act_id' is null),
   1::bigint, 'its chapter is still in the book, under "No act"');

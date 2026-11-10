@@ -5,14 +5,17 @@
 --   story_cast() answers it;
 -- - an unknown gender is refused, and another change leaves the gender as it was;
 -- - what readers get of a character carries the gender too, so shared relationships read the same;
--- - another writer can't change it and a visitor can't call the function.
+-- - another writer can't change it and a visitor can't call the function;
+-- - the same relationship is recorded once: a second "parent of" the same way round is refused,
+--   and so is "sibling of" the other way round, while the reverse parent and a second "Other"
+--   relationship are still allowed (break test, 10 Nov 2026).
 -- Personas: adult_writer (…01, owns the seed story …9000-…01), teen_17 (…02).
--- Test data: one character in adult_writer's story; rolled back.
+-- Test data: two characters in adult_writer's story; rolled back.
 begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(10);
+select plan(15);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -37,7 +40,30 @@ create function pg_temp.gender_in_cast() returns text language sql as $$
   where character ->> 'name' = 'Gender test character';
 $$;
 create temp table made (character_id uuid);
+-- The second character, for the relationship tests.
+create temp table relatives (character_id uuid);
+grant select, insert on relatives to anon, authenticated;
 grant select, insert on made to anon, authenticated;
+-- Records a relationship between the test's two characters, the first to the second or, turned
+-- round, the second to the first.
+create function pg_temp.relate(relationship_kind text, is_turned_round boolean) returns jsonb language sql as $$
+  select public.add_character_relationship(
+    case when is_turned_round then (select character_id from relatives) else (select character_id from made) end,
+    case when is_turned_round then (select character_id from made) else (select character_id from relatives) end,
+    relationship_kind, case when relationship_kind = 'custom' then 'owes a debt to' else '' end, '');
+$$;
+-- The SQLSTATE and hint a statement raises, or null.
+create function pg_temp.refusal_hint(statement text) returns text language plpgsql as $$
+declare
+  error_hint text;
+begin
+  execute statement;
+  return null;
+exception when others then
+  get stacked diagnostics error_hint = pg_exception_hint;
+  return sqlstate || ':' || error_hint;
+end;
+$$;
 grant execute on all functions in schema pg_temp to anon, authenticated;
 
 /* ---------- 1. Setting and clearing ---------- */
@@ -72,7 +98,26 @@ select is((select public.public_character_json(story_characters, false, false) -
            from public.story_characters where id = (select character_id from made)),
   'he', 'what readers get of a character carries the gender');
 
-/* ---------- 4. Nobody else ---------- */
+/* ---------- 4. The same relationship once ---------- */
+
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
+
+insert into relatives
+select (public.create_story_character(pg_temp.slug(), 'Gender test relative', 'supporting') ->> 'id')::uuid;
+
+select is(pg_temp.relate('parent_of', false) ->> 'outcome', 'ok', 'the writer records a parent');
+select is(pg_temp.refusal_hint($sql$select pg_temp.relate('parent_of', false)$sql$), '23514:already_there',
+  'the same parent a second time is refused');
+select is(pg_temp.relate('parent_of', true) ->> 'outcome', 'ok',
+  'the parent the other way round is still recorded (the screen warns, it never blocks)');
+select pg_temp.relate('sibling_of', false);
+select is(pg_temp.refusal_hint($sql$select pg_temp.relate('sibling_of', true)$sql$), '23514:already_there',
+  'a sibling the other way round is the same sibling');
+select pg_temp.relate('custom', false);
+select is(pg_temp.relate('custom', false) ->> 'outcome', 'ok',
+  'two relationships in the writer''s own words sit side by side');
+
+/* ---------- 5. Nobody else ---------- */
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000002');
 select is(public.update_story_character((select character_id from made), '{"gender": "she"}') ->> 'outcome',

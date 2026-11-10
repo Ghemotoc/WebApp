@@ -39,7 +39,8 @@ comment on column public.story_marketing.own_details is
  * Inputs: the story's address and the detail's name.
  * Returns: { outcome: 'ok', id } or { outcome: 'not_found' } for a story that isn't the caller's.
  * Errors: insufficient_privilege when signed out; check_violation with hint name_length (an empty
- *   name or one over 80 characters) or too_many_details (12 in a story).
+ *   name or one over 80 characters), name_taken (the story has a detail with that name, capitals
+ *   aside) or too_many_details (12 in a story).
  * Where it fits: "Add detail" in "Getting it out" on the Marketing page
  *   (useStoryMarketing.addDetail).
  */
@@ -53,6 +54,7 @@ declare
   caller_id uuid := (select auth.uid());
   target_story_id uuid;
   clean_name text := public.plan_text(detail_name);
+  current_details jsonb;
   new_id uuid := gen_random_uuid();
 begin
   -- Step 1: a signed-in writer and their own planned story.
@@ -71,8 +73,17 @@ begin
   -- Step 3: the row, made empty on the first save, then the bound.
   insert into public.story_marketing (story_id, user_id) values (target_story_id, caller_id)
   on conflict (story_id) do nothing;
-  if (select jsonb_array_length(own_details) from public.story_marketing
-      where story_id = target_story_id) >= 12 then
+  -- The row is locked until this change ends: two presses of "Add" at the same moment wait for
+  -- each other, so the checks below see the first one's detail (break test, 10 Nov 2026).
+  select own_details into current_details from public.story_marketing
+  where story_id = target_story_id for update;
+  -- One name once, capitals aside, so two boxes never carry the same label.
+  if exists (select 1 from jsonb_array_elements(current_details) as detail
+             where lower(detail ->> 'name') = lower(clean_name)) then
+    raise exception 'This story already has a marketing detail with that name.'
+      using errcode = 'check_violation', hint = 'name_taken';
+  end if;
+  if jsonb_array_length(current_details) >= 12 then
     raise exception 'A story can hold at most 12 marketing details of your own.'
       using errcode = 'check_violation', hint = 'too_many_details';
   end if;
@@ -101,7 +112,9 @@ grant execute on function public.add_marketing_detail(text, text) to authenticat
  * Returns: { outcome: 'ok' } or { outcome: 'not_found' } for a story that isn't the caller's or a
  *   detail it doesn't have.
  * Errors: insufficient_privilege when signed out; check_violation with hint unknown_change (a key
- *   other than name and text), name_length (1 to 80 characters) or text_length (over 5,000).
+ *   other than name and text), name_length (1 to 80 characters), name_taken (another detail of
+ *   the story has that name, capitals aside; a detail may change its own capitals) or text_length
+ *   (over 5,000).
  * Where it fits: the detail's boxes on the Marketing page (useStoryMarketing.saveDetail).
  */
 create function public.update_marketing_detail(story_slug text, detail_id text, changes jsonb)
@@ -121,8 +134,10 @@ begin
     raise exception 'Sign in to change a detail.' using errcode = 'insufficient_privilege';
   end if;
   target_story_id := public.my_planned_story_id(story_slug);
+  -- (The row is locked until this change ends, so a rename and an add at the same moment can't
+  -- both take one name.)
   select own_details into current_details from public.story_marketing
-  where story_id = target_story_id;
+  where story_id = target_story_id for update;
   if current_details is null or not exists (
       select 1 from jsonb_array_elements(current_details) as detail where detail ->> 'id' = detail_id) then
     return jsonb_build_object('outcome', 'not_found');
@@ -136,6 +151,12 @@ begin
   if changes ? 'name' and char_length(new_name) not between 1 and 80 then
     raise exception 'A detail''s name has 1 to 80 characters.'
       using errcode = 'check_violation', hint = 'name_length';
+  end if;
+  if changes ? 'name' and exists (
+      select 1 from jsonb_array_elements(current_details) as detail
+      where detail ->> 'id' <> detail_id and lower(detail ->> 'name') = lower(new_name)) then
+    raise exception 'This story already has a marketing detail with that name.'
+      using errcode = 'check_violation', hint = 'name_taken';
   end if;
   if changes ? 'text' and char_length(new_text) > 5000 then
     raise exception 'A detail holds at most 5,000 characters.'

@@ -8,9 +8,11 @@
  * then the relationship, then the other character. A cousin also says which cousin; "Other"
  * asks for the writer's own words both ways. When the new relationship clashes with one already
  * there, a warning explains it and offers a note on how both are true, with Go back and Save
- * anyway: it is advice, never a block. Who uses it: CharacterRelationshipsSection and
- * ConnectionsPage. What it calls: the onAdd prop (useRelationshipChangers' relate),
- * findClash and useRelationshipWords for the warning's sentences.
+ * anyway: it is advice, never a block. A relationship is saved once: a double click saves once,
+ * and one that is already there is refused in plain words (GAPS-3 break test, 10 Nov 2026). Who
+ * uses it: CharacterRelationshipsSection and ConnectionsPage. What it calls: useRelationshipAdd
+ * (which calls the onAdd prop, useRelationshipChangers' relate), findClash and
+ * useRelationshipWords for the warning's sentences.
  */
 import { useState } from 'react';
 
@@ -20,6 +22,7 @@ import { Select } from '@/components/ui/Select';
 import { Textarea } from '@/components/ui/Textarea';
 
 import type { CharacterRelationship, NewRelationship, StoryCast } from '../api/characters';
+import { toneOf, useRelationshipAdd } from '../hooks/useRelationshipAdd';
 import { useRelationshipWords } from '../hooks/useRelationshipWords';
 import { findClash } from '../lib/relationshipClash';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
@@ -168,12 +171,15 @@ function KindDetails({ idPrefix, cast, draft, change }: KindDetailsProps) {
 /** What the form's lower part needs. */
 interface NoteOrClashProps extends KindDetailsProps {
   clash: CharacterRelationship | null;
+  /** True while a save is on its way: Add relationship waits. */
+  isBusy: boolean;
   onBack: () => void;
   onSave: () => void;
 }
 
 /** The note and Add relationship, or, on a clash, the warning with its own note and buttons. */
-function NoteOrClash({ idPrefix, cast, draft, clash, change, onBack, onSave }: NoteOrClashProps) {
+function NoteOrClash(props: NoteOrClashProps) {
+  const { idPrefix, cast, draft, clash, isBusy, change, onBack, onSave } = props;
   const { t } = useAtlasTranslation();
   const words = useRelationshipWords(cast);
   if (clash !== null) {
@@ -202,7 +208,7 @@ function NoteOrClash({ idPrefix, cast, draft, clash, change, onBack, onSave }: N
         value={draft.note}
         onChange={(event) => change({ note: event.target.value })}
       />
-      <Button type="submit" variant="secondary" className="self-start">
+      <Button type="submit" variant="secondary" className="self-start" disabled={isBusy}>
         {t('connections.add.button')}
       </Button>
     </>
@@ -250,14 +256,15 @@ export function AddRelationshipForm({
     initialPair,
   );
 
-  /** Saves the relationship and starts a fresh form, or says why not. */
+  const { isBusy, addOnce } = useRelationshipAdd(cast.relationships, onAdd);
+
+  /** Saves the relationship once and starts a fresh form, or says why not. */
   async function save() {
-    await onAdd(draft)
-      .then(() => {
-        reset();
-        setMessage({ tone: 'success', text: t('connections.add.added') });
-      })
-      .catch(() => setMessage({ tone: 'error', text: t('connections.add.failed') }));
+    const outcome = await addOnce(draft);
+    // Another save is still running (a double click): this one did nothing.
+    if (outcome === 'busy') return;
+    if (outcome === 'added') reset();
+    setMessage({ tone: toneOf(outcome), text: t(`connections.add.${outcome}`) });
   }
 
   /** Add relationship: checks what is missing, then any clash, then saves. */
@@ -293,6 +300,7 @@ export function AddRelationshipForm({
         cast={cast}
         draft={draft}
         clash={clash}
+        isBusy={isBusy}
         change={change}
         onBack={() => setClash(null)}
         onSave={() => void save()}

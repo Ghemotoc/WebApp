@@ -271,8 +271,15 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
     await expect(page.getByRole('textbox', { name: 'Detail name' })).toBeFocused();
     await page.getByRole('button', { name: 'Add', exact: true }).click();
     await expect(page.getByText('Give the detail a name.')).toBeVisible();
-    await page.getByRole('textbox', { name: 'Detail name' }).fill('Newsletter');
+    // Break test (10 Nov 2026): a fixed note's name is refused in plain words, capitals aside,
+    // and a double click on "Add" adds one detail.
+    await page.getByRole('textbox', { name: 'Detail name' }).fill('launch NOTES');
     await page.getByRole('button', { name: 'Add', exact: true }).click();
+    await expect(
+      page.getByText('Another note or detail has that name. Try a different one.'),
+    ).toBeVisible();
+    await page.getByRole('textbox', { name: 'Detail name' }).fill('Newsletter');
+    await page.getByRole('button', { name: 'Add', exact: true }).dblclick();
     // The detail is a box of its own that saves by itself.
     const detail = page.getByTestId('atlas-marketing-detail');
     await expect(detail).toHaveCount(1);

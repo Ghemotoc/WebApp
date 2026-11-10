@@ -18,6 +18,8 @@ import { toCharacterField, type CharacterField, type CharacterFieldRow } from '.
 export type { CharacterField } from './characterDetails';
 import type { Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
+
+import { checkedAnswer } from './checkedAnswer';
 import {
   deleteStoredPicture,
   pictureViewsFromJson,
@@ -423,7 +425,7 @@ export interface NewRelationship {
  * @param client - the shared Supabase client
  * @param relationship - the two characters, the type, the labels, the cousin's degree and the note
  * Errors: throws when the database refuses it (the same character twice, a custom type with no
- *   label) or can't be reached.
+ *   label, a relationship that is already there: hint 'already_there') or can't be reached.
  */
 export async function addRelationship(
   client: AppSupabaseClient,
@@ -439,7 +441,8 @@ export async function addRelationship(
     cousin_degree: relationship.cousinDegree ?? undefined,
     cousin_removed: relationship.cousinRemoved ?? undefined,
   });
-  okAnswer(answer, 'add the relationship');
+  // checkedAnswer keeps the database's hint, so the form can say "already there" (GAPS-3).
+  checkedAnswer(answer, 'add the relationship');
 }
 
 /**

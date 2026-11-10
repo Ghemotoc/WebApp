@@ -249,6 +249,33 @@ test.describe('Story Atlas characters (S1-E17-08 to S1-E17-13)', () => {
       'Hazel, nine inches',
     );
 
+    // Break test (10 Nov 2026): a double click adds one detail; the same name again in the same
+    // place is refused in plain words; a group can't take a built-in card's name or, capitals
+    // aside, another group's; and a name typed as one very long word stays inside a phone screen.
+    const longName = 'Pneumonoultramicroscopicsilicovolcanoconiosis'.repeat(2).slice(0, 60);
+    await basics.getByRole('button', { name: 'Add detail to Basics' }).click();
+    await basics.getByRole('textbox', { name: 'Detail name' }).fill(longName);
+    await basics.getByRole('button', { name: 'Add', exact: true }).dblclick();
+    await expect(basics.getByRole('textbox', { name: longName })).toHaveCount(1);
+    await basics.getByRole('button', { name: 'Add detail to Basics' }).click();
+    await basics.getByRole('textbox', { name: 'Detail name' }).fill('blood TYPE');
+    await basics.getByRole('button', { name: 'Add', exact: true }).click();
+    await expect(basics.getByText(/A detail with that name is already here/)).toBeVisible();
+    await basics.getByRole('button', { name: 'Cancel' }).click();
+    await spellwork.getByRole('button', { name: 'Rename the group Spellwork' }).click();
+    await spellwork.getByRole('textbox', { name: 'Group name' }).fill('basics');
+    await spellwork.getByRole('button', { name: 'Save' }).click();
+    await expect(
+      spellwork.getByText('Another group has that name. Try a different one.'),
+    ).toBeVisible();
+    await spellwork.getByRole('button', { name: 'Cancel' }).click();
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(basics.getByRole('textbox', { name: longName })).toBeVisible();
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth),
+    ).toBeLessThanOrEqual(0);
+    await page.setViewportSize({ width: 1440, height: 1000 });
+
     // The other character's sheet has the same detail and group, empty, and no point-of-view pill.
     await castList(page).getByRole('link', { name: 'Ștefan the Keeper' }).click();
     await expect(

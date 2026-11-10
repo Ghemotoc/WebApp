@@ -43,7 +43,9 @@ export function Textarea({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-sm font-semibold text-ink">
+      {/* wrap-anywhere: a label a member typed as one long word (a detail's name on a character
+          sheet) breaks inside its column and never pushes the page sideways (rule 21). */}
+      <label htmlFor={id} className="text-sm font-semibold wrap-anywhere text-ink">
         {label}
       </label>
       <textarea
