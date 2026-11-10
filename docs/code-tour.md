@@ -1084,6 +1084,8 @@ get_chapter() → pictures: { <ID>: { state, bucket, path } } → ChapterText �
 
 Covers and profile pictures now go through `preparePicture()` too. Tests: `185` in `supabase/tests/database/`, `src/lib/chapter-pictures.test.ts`, `e2e/chapter-pictures.spec.ts`.
 
+"Replace picture" on a picture block and "Change link" on a music or video card (GAPS-8) take the same road as a new insert: `PictureReplaceControl` → `useChapterPictureUpload`, or `EmbedLinkChange` → `useEmbedAddition` → `/api/embed`; the block then keeps its place and takes the new ID (`updateAttributes`). The blocks learn which chapter they are in from `EditingChapterContext` (`src/features/writing/lib/editingChapter.ts`), which `ChapterEditorPage` provides around the text.
+
 **Drawings in chapters (S1-E3-11).** Insert › Drawing opens `DrawingInsertDialog`: `useSketchPad` holds the strokes (pointer or arrow keys), `SketchPadCanvas` paints them with `paintDrawing()` (`src/features/writing/lib/sketchPad.ts`), and "Insert drawing" turns the sheet into a PNG and sends it through the same `uploadChapterPicture()` as any chapter picture, so the drawing is checked and stored as a picture. No new table. Tests: `src/features/writing/lib/sketchPad.test.ts`, `e2e/chapter-drawings.spec.ts`.
 
 **Music and video in chapters (S1-E3-10; ADR 0008).** A writer pastes a link; our server, not the reader's browser, looks it up:

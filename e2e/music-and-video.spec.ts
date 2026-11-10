@@ -138,6 +138,60 @@ test.describe('music and video in chapters (S1-E3-10)', () => {
     await page.context().close();
   });
 
+  test('Change link swaps the card for the new link in the same place, after the same look-up (GAPS-8)', async ({
+    browser,
+  }) => {
+    const page = await openAs(browser, 'adult_writer', editorAddress);
+    const card = page.getByRole('group', { name: 'Music or video card' });
+    const firstCard = /!\[Test YouTube title\]\(embed:([0-9a-f-]{36})\)/.exec(
+      runSql(`select draft_body from public.chapters where id = '${chapterId}'`),
+    )?.[1];
+    await card.getByRole('button', { name: 'Change link' }).click();
+    const field = card.getByRole('textbox', { name: 'New link' });
+
+    // A link from another site and a missing video are explained; the card stays as it was.
+    await field.fill('https://example.org/watch?v=dQw4w9WgXcQ');
+    await card.getByRole('button', { name: 'Save link' }).click();
+    await expect(card.getByText(/That link isn’t from Spotify, Apple Music/)).toBeVisible();
+    await field.fill('https://youtu.be/notfound123');
+    await field.press('Enter');
+    await expect(card.getByText(/there’s no song or video at that link/)).toBeVisible();
+    await expect(card.getByText('Test YouTube title')).toBeVisible();
+
+    // A Vimeo link: the same card, now from Vimeo, and the field closes.
+    await field.fill('https://vimeo.com/76979871');
+    await card.getByRole('button', { name: 'Save link' }).click();
+    await expect(card.getByText('Link changed.')).toBeVisible();
+    await expect(card.getByText('Video · Vimeo')).toBeVisible();
+    await expect(card.getByText('Test Vimeo title')).toBeVisible();
+    await expect(page.getByRole('group', { name: 'Music or video card' })).toHaveCount(1);
+    await expect(field).toHaveCount(0);
+
+    // Cancel changes nothing and gives the focus back to the button.
+    await card.getByRole('button', { name: 'Change link' }).click();
+    await card.getByRole('button', { name: 'Cancel' }).click();
+    await expect(card.getByRole('button', { name: 'Change link' })).toBeFocused();
+
+    // Back to the YouTube link for the tests that follow; the stored text holds one card, a new one.
+    await card.getByRole('button', { name: 'Change link' }).click();
+    await card.getByRole('textbox', { name: 'New link' }).fill(youtubeLink);
+    await card.getByRole('button', { name: 'Save link' }).click();
+    await expect(card.getByText('Video · YouTube')).toBeVisible();
+    // The block's own controls aren't the text, so this is saved by the 10-second autosave.
+    await expect(page.getByRole('region', { name: 'Saving' }).getByRole('status')).toHaveText(
+      /Saved at \d/,
+      { timeout: 20_000 },
+    );
+    const body = runSql(`select draft_body from public.chapters where id = '${chapterId}'`);
+    const cards = [...body.matchAll(/\(embed:([0-9a-f-]{36})\)/g)].map((match) => match[1]);
+    expect(cards).toHaveLength(1);
+    expect(cards[0]).not.toBe(firstCard);
+    expect(runSql(`select source_url from public.chapter_embeds where id = '${cards[0]}'`)).toBe(
+      'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    );
+    await page.context().close();
+  });
+
   test('readers load nothing from YouTube until play, then the no-cookie player', async ({
     browser,
   }) => {

@@ -172,6 +172,11 @@
     "altHint": "Descrie imaginea pentru cititorii care folosesc un cititor de ecran.",
     "altMissing": "Scrie un text alternativ, ca cititorii care nu văd imaginea să știe ce arată.",
     "remove": "Scoate imaginea",
+    "replace": "Înlocuiește imaginea",
+    "replaceFileLabel": "Imagine nouă",
+    "replaceHint": "JPEG, PNG sau WebP, până la 5 MB. Trece prin verificarea imaginilor ca una nouă. Textul alternativ rămâne; schimbă-l dacă imaginea nouă arată altceva.",
+    "replaceCancel": "Renunță",
+    "replaced": "Imagine înlocuită.",
     "notLoaded": "Nu am putut încărca imaginea. Verifică-ți conexiunea; imaginea e tot în capitol.",
     "state": {
       "checking": "În verificare",
@@ -210,7 +215,12 @@
     "remove": {
       "music": "Scoate muzica",
       "video": "Scoate videoclipul"
-    }
+    },
+    "changeLink": "Schimbă linkul",
+    "changeLinkLabel": "Link nou",
+    "changeSave": "Salvează linkul",
+    "changeCancel": "Renunță",
+    "changed": "Link schimbat."
   },
   "embedDialog": {
     "heading": {

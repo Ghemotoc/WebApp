@@ -49,6 +49,7 @@ import { useChapterPublishing } from '../hooks/useChapterPublishing';
 import { useDeviceDraft } from '../hooks/useDeviceDraft';
 import { useMyStories } from '../hooks/useMyStories';
 import { markdownToEditorDocument } from '../lib/chapterMarkdown';
+import { EditingChapterContext } from '../lib/editingChapter';
 import type { DeviceDraft } from '../lib/draftStore';
 
 import { ChapterPreviewDialog } from './ChapterPreviewDialog';
@@ -323,7 +324,10 @@ function EditorMainColumn(props: {
         />
       )}
       <div className="tmc-chapter-text rounded-card border border-border bg-surface p-[clamp(24px,4vw,56px)] shadow-card">
-        <EditorContent editor={editing.editor} />
+        {/* The blocks inside the text (pictures, cards) read the chapter from here (GAPS-8). */}
+        <EditingChapterContext value={chapter.id}>
+          <EditorContent editor={editing.editor} />
+        </EditingChapterContext>
       </div>
       {/* Words against the chapter's target, live (Story Atlas, S1-E17-23 and S1-E17-26). */}
       <ChapterWordsLine

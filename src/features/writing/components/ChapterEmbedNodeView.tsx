@@ -5,10 +5,11 @@
  * Board values: a white card with a 1 px border and 16 px corners; on the left a dark panel with
  * a play mark (decorative here: nothing plays in the editor); on the right the eyebrow
  * ("Video · YouTube"), the title, "Readers see this card. The video plays from YouTube, which may
- * use cookies.", "Nothing loads from YouTube until the reader presses play." and Remove. The
- * board's "Change link" is left out: remove the card and add the new link (docs/board-fixes.md).
+ * use cookies.", "Nothing loads from YouTube until the reader presses play.", "Change link"
+ * (bundle GAPS-8: our server looks the new link up, as for a new card) and Remove.
  * Who uses it: the chapterEmbed node (lib/chapterEmbedNode.ts) through TipTap's React node views.
- * What it calls: useMyEmbeds (the card's service and title).
+ * What it calls: useMyEmbeds (the card's service and title), EmbedLinkChange and
+ * useEditingChapterId (the chapter a new card belongs to).
  */
 import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react';
 
@@ -18,6 +19,10 @@ import type { EmbedView } from '@/features/embeds/api/embeds';
 import { useMyEmbeds } from '@/features/embeds/hooks/useEmbeds';
 import { EMBED_SERVICE_NAMES, embedKindOf } from '@/lib/embed-links';
 import { useEditorTranslation } from '../registerEditorTranslations';
+
+import { useEditingChapterId } from '../lib/editingChapter';
+
+import { EmbedLinkChange } from './EmbedLinkChange';
 
 /** The card's words, once its service is known. */
 function CardDetails({ view, title }: { view: EmbedView | undefined; title: string }) {
@@ -48,12 +53,14 @@ function CardDetails({ view, title }: { view: EmbedView | undefined; title: stri
 /**
  * Renders the card block.
  *
- * @returns the card, which the writer can't type into (only its button takes input)
+ * @returns the card, which the writer can't type into (only its buttons and the link field take
+ *   input)
  */
-export function ChapterEmbedNodeView({ node, deleteNode }: NodeViewProps) {
+export function ChapterEmbedNodeView({ node, updateAttributes, deleteNode }: NodeViewProps) {
   const { t } = useEditorTranslation();
   const embedId = String(node.attrs.embedId ?? '');
   const title = String(node.attrs.title ?? '');
+  const chapterId = useEditingChapterId();
   const { embeds, loadFailed } = useMyEmbeds([embedId]);
   const view = embeds[embedId];
   const kind = view?.state === 'visible' ? embedKindOf(view.service) : 'video';
@@ -77,6 +84,16 @@ export function ChapterEmbedNodeView({ node, deleteNode }: NodeViewProps) {
       <div className="flex min-w-0 flex-[1_1_280px] flex-col gap-1.5 px-5 py-4">
         <CardDetails view={view} title={title} />
         {loadFailed && <p className="m-0 text-sm text-destructive">{t('embed.notLoaded')}</p>}
+        {chapterId !== null && (
+          <div className="mt-1">
+            <EmbedLinkChange
+              chapterId={chapterId}
+              embedId={embedId}
+              kind={kind}
+              onChanged={(card) => updateAttributes(card)}
+            />
+          </div>
+        )}
         <div className="mt-1">
           <Button variant="destructive" onClick={() => deleteNode()}>
             {t(`embed.remove.${kind}`)}

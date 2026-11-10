@@ -172,6 +172,11 @@
     "altHint": "Describe the picture for readers who use a screen reader.",
     "altMissing": "Write alt text so readers who can’t see the picture know what it shows.",
     "remove": "Remove picture",
+    "replace": "Replace picture",
+    "replaceFileLabel": "New picture",
+    "replaceHint": "JPEG, PNG or WebP, up to 5 MB. It goes through the picture check like a new one. The alt text stays; change it if the new picture shows something else.",
+    "replaceCancel": "Cancel",
+    "replaced": "Picture replaced.",
     "notLoaded": "We couldn’t load this picture. Check your connection; it’s still in your chapter.",
     "state": {
       "checking": "Being checked",
@@ -210,7 +215,12 @@
     "remove": {
       "music": "Remove music",
       "video": "Remove video"
-    }
+    },
+    "changeLink": "Change link",
+    "changeLinkLabel": "New link",
+    "changeSave": "Save link",
+    "changeCancel": "Cancel",
+    "changed": "Link changed."
   },
   "embedDialog": {
     "heading": {
