@@ -142,6 +142,34 @@ test.describe('chapter editor (S1-E3-02a)', () => {
     await expect(text).toContainText('<script>alert(1)</script>');
   });
 
+  test('a scene break is the four-diamond mark in the text and "* * *" when stored', async ({
+    browser,
+  }) => {
+    const code = firstChapterCode();
+    const page = await openAsPersona(browser, 'adult_writer', `/write/s/${slug}/c/${code}`);
+    const text = page.getByRole('textbox', { name: 'Chapter text' });
+    await expect(text).toContainText('Bunica mea');
+    await text.click();
+    await page.keyboard.press('End');
+    await page.keyboard.press('Control+Enter');
+    // Drawn as the toolbar's four diamonds (a mask in the meta colour), not a thin line (G9e).
+    const sceneBreak = text.locator('hr');
+    await expect(sceneBreak).toBeVisible();
+    const look = await sceneBreak.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return { mask: style.maskImage || style.webkitMaskImage, height: style.height };
+    });
+    expect(look.mask).toContain('svg');
+    expect(look.height).toBe('28px');
+    await page.getByRole('textbox', { name: 'Chapter title' }).focus();
+    await expect(page.getByRole('region', { name: 'Saving' }).getByRole('status')).toHaveText(
+      /Saved at \d/,
+    );
+    expect(runSql(`select draft_body from public.chapters where code = '${code}'`)).toContain(
+      '* * *',
+    );
+  });
+
   test('the autosave saves on its own within 10 seconds', async ({ browser }) => {
     const code = firstChapterCode();
     const page = await openAsPersona(browser, 'adult_writer', `/write/s/${slug}/c/${code}`);

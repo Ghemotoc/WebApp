@@ -4,7 +4,8 @@
  *
  * Board values: a 44 px pill button in plum text, filled plum while open; the menu is a white
  * card (24 px corners, a soft shadow) under it, at most 340 px wide and never wider than the
- * screen, each item a 56 px row with its line icon in a tinted tile, its name and a short note.
+ * screen (it moves left when it would run past the right edge, useStayOnScreen), each item a
+ * 56 px row with its line icon in a tinted tile, its name and a short note.
  * Keyboard (WAI-ARIA menu button): Enter, Space or the down arrow opens it on the first item; the
  * arrow keys, Home and End move; Escape closes it and puts focus back on the button; Tab or a
  * click outside closes it.
@@ -13,7 +14,15 @@
  * above a hairline, 13 px meta text).
  * Who uses it: ChapterInsertControls.
  */
-import { useEffect, useId, useRef, useState, type KeyboardEvent, type RefObject } from 'react';
+import {
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type RefObject,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { ActionIcon, type ActionIconName } from '@/components/icons/ActionIcon';
@@ -75,14 +84,43 @@ interface InsertMenuPanelProps {
   onPicked: () => void;
 }
 
+/** The gap kept between the open menu and the window's right edge, in pixels. */
+const WINDOW_MARGIN = 16;
+
+/**
+ * How far left the open menu moves so it never runs past the window's right edge. The menu
+ * opens under its button, starting at the button's left edge; when the button sits near the
+ * right of a narrow screen (the toolbar wraps on phones), the menu shifts left by what it
+ * would overflow (WCAG 1.4.10, nothing scrolls sideways at 390 px).
+ *
+ * @returns the panel's ref and the shift in pixels (0 or less)
+ */
+function useStayOnScreen() {
+  const panelRef = useRef<HTMLDivElement>(null);
+  const [shift, setShift] = useState(0);
+  useLayoutEffect(() => {
+    // Measure once, as the menu opens: its right edge against the window's.
+    const panel = panelRef.current;
+    if (panel === null) return;
+    const overflow = panel.getBoundingClientRect().right - (window.innerWidth - WINDOW_MARGIN);
+    if (overflow > 0) setShift(-overflow);
+  }, []);
+  return { panelRef, shift };
+}
+
 /** The open menu: one row per item, each with its line icon, name and note. */
 function InsertMenuPanel(props: InsertMenuPanelProps) {
   const { menuRef, menuId, items, footnote, onKeyDown, onPicked } = props;
   const { t } = useTranslation('editor');
+  const { panelRef, shift } = useStayOnScreen();
   // The footnote sits outside the menu role (a menu holds only items) and describes it.
   const footnoteId = `${menuId}-note`;
   return (
-    <div className="absolute top-[54px] left-0 z-20 w-[min(340px,calc(100vw-32px))] rounded-[24px] border border-border bg-surface p-2 shadow-popover">
+    <div
+      ref={panelRef}
+      style={{ left: shift }}
+      className="absolute top-[54px] left-0 z-20 w-[min(340px,calc(100vw-32px))] rounded-[24px] border border-border bg-surface p-2 shadow-popover"
+    >
       <div
         ref={menuRef}
         id={menuId}

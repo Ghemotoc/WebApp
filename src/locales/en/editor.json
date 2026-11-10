@@ -141,6 +141,8 @@
   "insert": {
     "button": "Insert",
     "menuLabel": "Insert",
+    "pictureButton": "Insert a picture",
+    "videoButton": "Insert a video link (YouTube, Vimeo or Loom)",
     "picture": "Picture",
     "pictureNote": "Upload a picture. Alt text is required.",
     "drawing": "Drawing",

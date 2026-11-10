@@ -1071,7 +1071,7 @@ admin_pictures_to_check() / admin_case_picture()
 **Pictures in chapters (S1-E3-09).** The same check, for a picture inside a chapter:
 
 ```
-Chapter editor › Insert › Picture (only while the picture_uploads flag is on)
+Chapter editor › Picture button (only while the picture_uploads flag is on; its own toolbar button since G9e)
   PictureInsertDialog (file, alt text, "I have the right to use this picture")
     → useChapterPictureUpload → uploadChapterPicture() (src/features/pictures/api/pictures.ts)
        preparePicture(): redrawn on a canvas, so no location data, at most 1600 px
@@ -1089,7 +1089,7 @@ Covers and profile pictures now go through `preparePicture()` too. Tests: `185` 
 **Music and video in chapters (S1-E3-10; ADR 0008).** A writer pastes a link; our server, not the reader's browser, looks it up:
 
 ```
-Insert › Music or Video (ChapterInsertControls, flag media_embeds) → EmbedInsertDialog
+Video link button or Insert › Music (ChapterInsertControls, flag media_embeds) → EmbedInsertDialog
   → parseEmbedLink() (src/lib/embed-links.ts: Spotify, Apple Music, YouTube, Vimeo, Loom only)
   → POST /api/embed (server/embeds.ts; functions/api/embed.ts) → oEmbed title (server/embeds/oembed.ts)
   → register_chapter_embed() as the writer → chapter_embeds → the card ![title](embed:<ID>) in the text

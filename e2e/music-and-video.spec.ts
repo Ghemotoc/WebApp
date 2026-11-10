@@ -78,10 +78,9 @@ async function openAs(
   return page;
 }
 
-/** Opens Insert › Video and pastes a link. */
+/** Opens the Video link button (its own toolbar button since G9e) and pastes a link. */
 async function pasteVideoLink(page: Page, link: string) {
-  await page.getByRole('button', { name: 'Insert' }).click();
-  await page.getByRole('menuitem', { name: /Video/ }).click();
+  await page.getByRole('button', { name: 'Insert a video link (YouTube, Vimeo or Loom)' }).click();
   const dialog = page.getByRole('dialog', { name: 'Add a video' });
   await dialog.getByRole('textbox', { name: 'Link' }).fill(link);
   await dialog.getByRole('button', { name: 'Add' }).click();
@@ -195,7 +194,8 @@ test.describe('music and video in chapters (S1-E3-10)', () => {
     runSql(`update public.feature_flags set is_enabled = false where key = 'media_embeds';`);
     const page = await openAs(browser, 'adult_writer', editorAddress);
     await expect(page.getByRole('toolbar', { name: 'Formatting' })).toBeVisible();
-    const insert = page.getByRole('button', { name: 'Insert' });
+    await expect(page.getByRole('button', { name: /Insert a video link/ })).toHaveCount(0);
+    const insert = page.getByRole('button', { name: 'Insert', exact: true });
     if ((await insert.count()) > 0) {
       await insert.click();
       await expect(page.getByRole('menuitem', { name: /Video/ })).toHaveCount(0);
@@ -216,8 +216,12 @@ test.describe('music and video in chapters (S1-E3-10)', () => {
       const page = await openAs(browser, 'adult_writer', editorAddress, { width, language });
       await expect(page.locator('.ProseMirror [role="group"]').first()).toBeVisible();
       await expectAccessibleAndFitting(page, width);
-      await page.locator('button[aria-haspopup="menu"]').click();
-      await page.getByRole('menuitem').last().click();
+      // The Video link button (G9e), in either language.
+      await page
+        .locator(
+          'button[aria-label^="Insert a video link"], button[aria-label^="Inserează un link video"]',
+        )
+        .click();
       await expect(page.getByRole('dialog')).toBeVisible();
       await expectAccessibleAndFitting(page, width);
       await page.goto(readerAddress);
