@@ -3534,6 +3534,46 @@ export type Database = {
           },
         ];
       };
+      forum_thread_follows: {
+        Row: {
+          created_at: string;
+          id: string;
+          thread_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          thread_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          thread_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'forum_thread_follows_thread_id_fkey';
+            columns: ['thread_id'];
+            isOneToOne: false;
+            referencedRelation: 'forum_threads';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'forum_thread_follows_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       forum_thread_reads: {
         Row: {
           created_at: string;
@@ -4931,6 +4971,7 @@ export type Database = {
           created_at: string;
           data_request_id: string | null;
           decision: Database['public']['Enums']['moderation_action'] | null;
+          forum_thread_id: string | null;
           group_key: string | null;
           id: string;
           is_required: boolean;
@@ -4961,6 +5002,7 @@ export type Database = {
           created_at?: string;
           data_request_id?: string | null;
           decision?: Database['public']['Enums']['moderation_action'] | null;
+          forum_thread_id?: string | null;
           group_key?: string | null;
           id?: string;
           is_required?: boolean;
@@ -4988,6 +5030,7 @@ export type Database = {
           created_at?: string;
           data_request_id?: string | null;
           decision?: Database['public']['Enums']['moderation_action'] | null;
+          forum_thread_id?: string | null;
           group_key?: string | null;
           id?: string;
           is_required?: boolean;
@@ -5045,6 +5088,13 @@ export type Database = {
             columns: ['data_request_id'];
             isOneToOne: false;
             referencedRelation: 'data_requests';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'notifications_forum_thread_id_fkey';
+            columns: ['forum_thread_id'];
+            isOneToOne: false;
+            referencedRelation: 'forum_threads';
             referencedColumns: ['id'];
           },
           {
@@ -12707,6 +12757,7 @@ export type Database = {
       flag_possible_returning_user: { Args: { new_user_id: string }; Returns: string };
       fold_look_alike_characters: { Args: { name: string }; Returns: string };
       fold_old_daily_totals: { Args: Record<PropertyKey, never>; Returns: number };
+      follow_forum_thread: { Args: { thread_number: number; wanted: boolean }; Returns: boolean };
       follow_story: { Args: { should_follow: boolean; story_slug: string }; Returns: Json };
       follow_writer: { Args: { should_follow: boolean; target_handle: string }; Returns: Json };
       follower_count_of: { Args: { writer_id: string }; Returns: number };
@@ -16570,7 +16621,8 @@ export type Database = {
         | 'spotlight_consent_withdrawn'
         | 'waitlist_admitted'
         | 'live_session_soon'
-        | 'home_comment_invited';
+        | 'home_comment_invited'
+        | 'forum_reply';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -16964,6 +17016,7 @@ export const Constants = {
         'waitlist_admitted',
         'live_session_soon',
         'home_comment_invited',
+        'forum_reply',
       ],
       picture_kind: [
         'cover',

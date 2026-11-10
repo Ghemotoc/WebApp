@@ -726,7 +726,8 @@ CREATE TYPE "public"."notification_kind" AS ENUM (
     'spotlight_consent_withdrawn',
     'waitlist_admitted',
     'live_session_soon',
-    'home_comment_invited'
+    'home_comment_invited',
+    'forum_reply'
 );
 
 
@@ -1436,6 +1437,7 @@ CREATE OR REPLACE FUNCTION "public"."account_deletion_rules"() RETURNS TABLE("ta
     ('forum_post_revisions', 'own_step', 0, 'deleted with the account''s posts, unless a case holds the post'),
     ('forum_posts', 'own_step', 0, 'words erased unless under an open case; the post keeps its number as a "Post deleted" marker so the thread''s numbering stays'),
     ('forum_read_marks', 'delete', 1, null),
+    ('forum_thread_follows', 'delete', 1, null),
     ('forum_thread_reads', 'delete', 1, null),
     ('forum_threads', 'own_step', 0, 'deleted when nobody else posted in it; otherwise kept for the other people''s replies, its starter shown as a deleted account'),
     ('home_comment_picks', 'delete', 1, null),
@@ -1493,7 +1495,7 @@ $$;
 ALTER FUNCTION "public"."account_deletion_rules"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13).';
+COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13, GAPS-16a).';
 
 
 
@@ -19547,6 +19549,7 @@ CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_
     ('forum_post_revisions', true, null),
     ('forum_posts', true, null),
     ('forum_read_marks', true, null),
+    ('forum_thread_follows', true, null),
     ('forum_thread_reads', true, null),
     ('forum_threads', true, null),
     ('home_comment_picks', true, null),
@@ -19604,7 +19607,7 @@ $$;
 ALTER FUNCTION "public"."data_export_tables"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13).';
+COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13, GAPS-16a).';
 
 
 
@@ -22251,6 +22254,44 @@ COMMENT ON FUNCTION "public"."fold_old_daily_totals"() IS 'Job: folds daily read
 
 
 
+CREATE OR REPLACE FUNCTION "public"."follow_forum_thread"("thread_number" bigint, "wanted" boolean) RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  thread public.forum_threads;
+begin
+  -- Step 1: only a signed-in member follows anything.
+  if caller_id is null then
+    raise exception 'Log in to follow a thread.' using errcode = 'insufficient_privilege';
+  end if;
+  select * into thread from public.forum_threads
+  where forum_threads.thread_number = follow_forum_thread.thread_number;
+  -- Step 2: unfollowing always works, even for a thread the caller can no longer open.
+  if not coalesce(wanted, false) then
+    delete from public.forum_thread_follows
+    where forum_thread_follows.user_id = caller_id and forum_thread_follows.thread_id = thread.id;
+    return false;
+  end if;
+  -- Step 3: following needs a thread the caller may open (the same rule as the thread page).
+  if thread.id is null or not public.forum_thread_is_shown(thread) then
+    raise exception 'That thread isn''t there any more.' using errcode = 'no_data_found', hint = 'thread:missing';
+  end if;
+  insert into public.forum_thread_follows (user_id, thread_id) values (caller_id, thread.id)
+  on conflict on constraint forum_thread_follows_one_per_thread do nothing;
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."follow_forum_thread"("thread_number" bigint, "wanted" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."follow_forum_thread"("thread_number" bigint, "wanted" boolean) IS 'Follows or unfollows a forum thread for the caller; returns whether they follow it now (GAPS-16a).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."follow_story"("story_slug" "text", "should_follow" boolean) RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -23142,6 +23183,41 @@ COMMENT ON FUNCTION "public"."forum_thread"("thread_number" bigint, "after_post"
 
 
 
+CREATE OR REPLACE FUNCTION "public"."forum_thread_follow_on_post"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  follower record;
+begin
+  -- Step 1: a new thread is followed by the person who started it.
+  if new.post_number = 1 then
+    insert into public.forum_thread_follows (user_id, thread_id)
+    values (new.user_id, new.thread_id)
+    on conflict on constraint forum_thread_follows_one_per_thread do nothing;
+    return null;
+  end if;
+  -- Step 2: a reply reaches every other follower, one grouped row per thread a day.
+  for follower in
+    select follows.user_id from public.forum_thread_follows as follows
+    where follows.thread_id = new.thread_id and follows.user_id <> new.user_id
+  loop
+    perform public.notify(follower.user_id, 'forum_reply', new.user_id,
+      jsonb_build_object('forum_thread_id', new.thread_id),
+      'forum_reply:' || new.thread_id::text, interval '24 hours');
+  end loop;
+  return null;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."forum_thread_follow_on_post"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."forum_thread_follow_on_post"() IS 'Trigger: a thread''s starter follows it; a reply tells the other followers (GAPS-16a).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."forum_thread_for_moderation"("thread_number" bigint, "reason" "text") RETURNS "public"."forum_threads"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -23194,6 +23270,10 @@ CREATE OR REPLACE FUNCTION "public"."forum_thread_header_json"("target" "public"
               from public.space_of_forum(target.forum_id) as space where space.id is not null),
     'author', public.forum_person_json(target.user_id),
     'is_mine', target.user_id = (select auth.uid()),
+    -- GAPS-16a: whether the reader follows this thread (false when signed out).
+    'is_following', exists (select 1 from public.forum_thread_follows as follows
+                            where follows.thread_id = target.id
+                              and follows.user_id = (select auth.uid())),
     'state', case when public.moderated_state_of('forum_thread', target.id) = 'hidden' then 'hidden' else 'live' end,
     'created_at', target.created_at,
     'reply_count', greatest(public.forum_live_post_count(target.id) - 1, 0),
@@ -23233,7 +23313,7 @@ $$;
 ALTER FUNCTION "public"."forum_thread_header_json"("target" "public"."forum_threads") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."forum_thread_header_json"("target" "public"."forum_threads") IS 'Internal: a thread''s heading, numbers, sticky, lock, rules strip and pointer, never a user ID (S1-E8-02, S1-E8-05, GAPS-9).';
+COMMENT ON FUNCTION "public"."forum_thread_header_json"("target" "public"."forum_threads") IS 'Internal: a thread''s heading, numbers, sticky, lock, rules strip, pointer and whether the reader follows it, never a user ID (S1-E8-02, S1-E8-05, GAPS-9, GAPS-16a).';
 
 
 
@@ -30336,7 +30416,8 @@ CREATE TABLE IF NOT EXISTS "public"."notifications" (
     "data_request_id" "uuid",
     "landing_page_id" "uuid",
     "writer_rank" "public"."writer_rank",
-    "live_session_id" "uuid"
+    "live_session_id" "uuid",
+    "forum_thread_id" "uuid"
 );
 
 
@@ -30388,6 +30469,10 @@ COMMENT ON COLUMN "public"."notifications"."live_session_id" IS 'The live sessio
 
 
 
+COMMENT ON COLUMN "public"."notifications"."forum_thread_id" IS 'The followed forum thread a forum_reply notification is about (GAPS-16a).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."notification_is_shown"("target" "public"."notifications") RETURNS boolean
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -30395,6 +30480,7 @@ CREATE OR REPLACE FUNCTION "public"."notification_is_shown"("target" "public"."n
 declare
   address record;
   comment public.comments;
+  thread public.forum_threads;
 begin
   -- Step 1: only the owner, and a moderation decision always reaches them (DSA art. 17).
   if target.user_id is distinct from (select auth.uid()) then
@@ -30426,7 +30512,15 @@ begin
       return false;
     end if;
   end if;
-  -- Step 5: the comment must still be live, or hidden only from others.
+  -- Step 5 (GAPS-16a): a followed thread must still be one the reader may open: not deleted,
+  -- not moderated away, not in a space they have left, not started by someone they block.
+  if target.forum_thread_id is not null then
+    select * into thread from public.forum_threads where forum_threads.id = target.forum_thread_id;
+    if thread.id is null or not public.forum_thread_is_shown(thread) then
+      return false;
+    end if;
+  end if;
+  -- Step 6: the comment must still be live, or hidden only from others.
   if target.comment_id is not null then
     select * into comment from public.comments where comments.id = target.comment_id;
     return public.comment_state_for_caller(comment) in ('live', 'hidden');
@@ -30582,6 +30676,12 @@ CREATE OR REPLACE FUNCTION "public"."notification_json"("target" "public"."notif
                        'title_en', live_sessions.title_en, 'starts_at', live_sessions.starts_at)
                      from public.live_sessions
                      where live_sessions.id = target.live_session_id and live_sessions.deleted_at is null),
+    -- GAPS-16a: the followed thread with new replies, while the reader may still open it.
+    'forum_thread', (select jsonb_build_object('number', forum_threads.thread_number,
+                       'title', forum_threads.title)
+                     from public.forum_threads
+                     where forum_threads.id = target.forum_thread_id
+                       and public.forum_thread_is_shown(forum_threads)),
     -- IDEAS-3a: the rank a writer just reached, and their own handle for the link to their profile.
     'writer_rank', case when target.kind = 'rank_reached' then target.writer_rank end,
     'own_handle', case when target.kind = 'rank_reached'
@@ -30662,7 +30762,7 @@ begin
   -- the alert that staff opened an uploaded picture (ADMIN-2e2a).
   insert into public.notifications (user_id, kind, actor_user_ids, actor_count, story_id, chapter_id,
     comment_id, case_id, decision, statement_id, appeal_id, mail_thread_id, space_id, change_request_id,
-    story_revision_id, data_request_id, landing_page_id, live_session_id, group_key, is_required)
+    story_revision_id, data_request_id, landing_page_id, live_session_id, forum_thread_id, group_key, is_required)
   values (recipient_id, notification_kind,
     case when actor_id is null then '{}'::uuid[] else array[actor_id] end,
     case when actor_id is null then 0 else 1 end,
@@ -30671,7 +30771,8 @@ begin
     (about ->> 'statement_id')::uuid, (about ->> 'appeal_id')::uuid, (about ->> 'mail_thread_id')::uuid,
     (about ->> 'space_id')::uuid, (about ->> 'change_request_id')::uuid,
     (about ->> 'story_revision_id')::uuid, (about ->> 'data_request_id')::uuid,
-    (about ->> 'landing_page_id')::uuid, (about ->> 'live_session_id')::uuid, notify.group_key,
+    (about ->> 'landing_page_id')::uuid, (about ->> 'live_session_id')::uuid,
+    (about ->> 'forum_thread_id')::uuid, notify.group_key,
     notification_kind in ('moderation_decision', 'appeal_decided', 'customisation_change_requested',
                           'story_changed_by_staff', 'data_request_confirm',
                           'data_request_extended', 'data_request_copy_ready', 'picture_opened_by_staff'));
@@ -49248,6 +49349,23 @@ COMMENT ON COLUMN "public"."forum_read_marks"."forum_id" IS 'The forum marked as
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."forum_thread_follows" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "thread_id" "uuid" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL
+);
+
+
+ALTER TABLE "public"."forum_thread_follows" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."forum_thread_follows" IS 'kind: user_action
+Which forum threads a member follows, so new replies reach their notifications (GAPS-16a). Private to the member.';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."forum_thread_reads" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "user_id" "uuid" NOT NULL,
@@ -51606,6 +51724,16 @@ ALTER TABLE ONLY "public"."forum_read_marks"
 
 
 
+ALTER TABLE ONLY "public"."forum_thread_follows"
+    ADD CONSTRAINT "forum_thread_follows_one_per_thread" UNIQUE ("user_id", "thread_id");
+
+
+
+ALTER TABLE ONLY "public"."forum_thread_follows"
+    ADD CONSTRAINT "forum_thread_follows_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."forum_thread_reads"
     ADD CONSTRAINT "forum_thread_reads_one_each" UNIQUE ("user_id", "thread_id");
 
@@ -52882,6 +53010,10 @@ CREATE INDEX "forum_read_marks_forum_id_fk_idx" ON "public"."forum_read_marks" U
 
 
 
+CREATE INDEX "forum_thread_follows_thread_id_fk_idx" ON "public"."forum_thread_follows" USING "btree" ("thread_id");
+
+
+
 CREATE INDEX "forum_thread_reads_thread" ON "public"."forum_thread_reads" USING "btree" ("thread_id");
 
 
@@ -53079,6 +53211,10 @@ CREATE INDEX "notifications_comment_id_fk_idx" ON "public"."notifications" USING
 
 
 CREATE INDEX "notifications_data_request_id_fk_idx" ON "public"."notifications" USING "btree" ("data_request_id");
+
+
+
+CREATE INDEX "notifications_forum_thread_id_fk_idx" ON "public"."notifications" USING "btree" ("forum_thread_id") WHERE ("forum_thread_id" IS NOT NULL);
 
 
 
@@ -54042,6 +54178,10 @@ CREATE OR REPLACE TRIGGER "forum_post_revisions_set_updated_at" BEFORE UPDATE ON
 
 
 
+CREATE OR REPLACE TRIGGER "forum_posts_follow_on_insert" AFTER INSERT ON "public"."forum_posts" FOR EACH ROW EXECUTE FUNCTION "public"."forum_thread_follow_on_post"();
+
+
+
 CREATE OR REPLACE TRIGGER "forum_posts_refuse_locked_edit" BEFORE UPDATE OF "body" ON "public"."forum_posts" FOR EACH ROW WHEN (("new"."body" IS DISTINCT FROM "old"."body")) EXECUTE FUNCTION "public"."refuse_locked_space_edit"();
 
 
@@ -54063,6 +54203,14 @@ CREATE OR REPLACE TRIGGER "forum_read_marks_refuse_user_id_change" BEFORE UPDATE
 
 
 CREATE OR REPLACE TRIGGER "forum_read_marks_set_updated_at" BEFORE UPDATE ON "public"."forum_read_marks" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "forum_thread_follows_refuse_user_id_change" BEFORE UPDATE ON "public"."forum_thread_follows" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"();
+
+
+
+CREATE OR REPLACE TRIGGER "forum_thread_follows_set_updated_at" BEFORE UPDATE ON "public"."forum_thread_follows" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
 
@@ -55409,6 +55557,16 @@ ALTER TABLE ONLY "public"."forum_read_marks"
 
 
 
+ALTER TABLE ONLY "public"."forum_thread_follows"
+    ADD CONSTRAINT "forum_thread_follows_thread_id_fkey" FOREIGN KEY ("thread_id") REFERENCES "public"."forum_threads"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."forum_thread_follows"
+    ADD CONSTRAINT "forum_thread_follows_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
+
+
+
 ALTER TABLE ONLY "public"."forum_thread_reads"
     ADD CONSTRAINT "forum_thread_reads_thread_id_fkey" FOREIGN KEY ("thread_id") REFERENCES "public"."forum_threads"("id") ON DELETE CASCADE;
 
@@ -55676,6 +55834,11 @@ ALTER TABLE ONLY "public"."notifications"
 
 ALTER TABLE ONLY "public"."notifications"
     ADD CONSTRAINT "notifications_data_request_id_fkey" FOREIGN KEY ("data_request_id") REFERENCES "public"."data_requests"("id") ON DELETE SET NULL;
+
+
+
+ALTER TABLE ONLY "public"."notifications"
+    ADD CONSTRAINT "notifications_forum_thread_id_fkey" FOREIGN KEY ("forum_thread_id") REFERENCES "public"."forum_threads"("id") ON DELETE CASCADE;
 
 
 
@@ -57248,6 +57411,17 @@ CREATE POLICY "forum_read_marks_select_own" ON "public"."forum_read_marks" FOR S
 
 
 COMMENT ON POLICY "forum_read_marks_select_own" ON "public"."forum_read_marks" IS 'A person reads their own read marks; nobody else (S1-E8-04).';
+
+
+
+ALTER TABLE "public"."forum_thread_follows" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "forum_thread_follows_select_own" ON "public"."forum_thread_follows" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
+
+
+
+COMMENT ON POLICY "forum_thread_follows_select_own" ON "public"."forum_thread_follows" IS 'Allows a member to read the forum threads they follow, and nobody else''s (GAPS-16a).';
 
 
 
@@ -61301,6 +61475,11 @@ REVOKE ALL ON FUNCTION "public"."fold_old_daily_totals"() FROM PUBLIC;
 
 
 
+REVOKE ALL ON FUNCTION "public"."follow_forum_thread"("thread_number" bigint, "wanted" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."follow_forum_thread"("thread_number" bigint, "wanted" boolean) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."follow_story"("story_slug" "text", "should_follow" boolean) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."follow_story"("story_slug" "text", "should_follow" boolean) TO "authenticated";
 
@@ -61424,6 +61603,10 @@ REVOKE ALL ON FUNCTION "public"."forum_search_snippet"("body" "text") FROM PUBLI
 
 GRANT ALL ON FUNCTION "public"."forum_thread"("thread_number" bigint, "after_post" integer, "up_to_post" integer) TO "anon";
 GRANT ALL ON FUNCTION "public"."forum_thread"("thread_number" bigint, "after_post" integer, "up_to_post" integer) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."forum_thread_follow_on_post"() FROM PUBLIC;
 
 
 
@@ -65192,6 +65375,11 @@ GRANT SELECT ON TABLE "public"."forum_post_revisions" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."forum_read_marks" TO "service_role";
 GRANT SELECT ON TABLE "public"."forum_read_marks" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."forum_thread_follows" TO "service_role";
+GRANT SELECT ON TABLE "public"."forum_thread_follows" TO "authenticated";
 
 
 

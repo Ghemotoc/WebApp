@@ -139,6 +139,8 @@ select results_eq(
        ('forum_posts', 0::bigint),
        -- Read marks and thread reads: only one's own (FORUMS-1d).
        ('forum_read_marks', 0::bigint),
+       -- A member's own followed threads (GAPS-16a).
+       ('forum_thread_follows', 0::bigint),
        ('forum_thread_reads', 0::bigint),
        ('forum_threads', 0::bigint),
        ('forums', (select count(*) from public.forums where deleted_at is null and space_id is null)),

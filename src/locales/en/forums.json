@@ -70,7 +70,14 @@
       "text": "Press Report on any post. A person on our team reads every report and tells you what we decided."
     },
     "reportLabel": "the thread “{{title}}”",
-    "replies_few": "{{count, number}} replies"
+    "replies_few": "{{count, number}} replies",
+    "follow": {
+      "follow": "Follow thread",
+      "following": "Following",
+      "hintOff": "Get a notification when someone replies.",
+      "hintOn": "You get a notification when someone replies.",
+      "failed": "That didn’t work. Try again."
+    }
   },
   "post": {
     "label": "Post {{number}} by {{name}}",

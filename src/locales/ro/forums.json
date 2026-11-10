@@ -70,7 +70,14 @@
       "title": "Ceva nu e în regulă?",
       "text": "Apasă Raportează la orice mesaj. Un om din echipa noastră citește fiecare raport și îți spune ce am hotărât."
     },
-    "reportLabel": "discuția „{{title}}”"
+    "reportLabel": "discuția „{{title}}”",
+    "follow": {
+      "follow": "Urmărește discuția",
+      "following": "Urmărești",
+      "hintOff": "Primește o notificare când răspunde cineva.",
+      "hintOn": "Primești o notificare când răspunde cineva.",
+      "failed": "Nu a mers. Încearcă din nou."
+    }
   },
   "post": {
     "label": "Mesajul {{number}}, de {{name}}",

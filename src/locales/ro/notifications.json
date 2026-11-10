@@ -97,7 +97,10 @@
     "storyFeatured": "povestea ta „{{story}}” este printre Recomandatele săptămânii, pe Descoperă.",
     "spotlightAgreed": "părintele sau tutorele tău a fost de acord să te recomandăm, pe tine și poveștile tale, altor cititori.",
     "spotlightWithdrawn": "nu te mai recomandăm altor cititori, nici poveștile tale, pentru că acordul părintelui sau tutorelui tău a fost retras.",
-    "waitlistAdmitted": "ți-a venit rândul pe lista de așteptare și contul tău e deschis. Bine ai venit!"
+    "waitlistAdmitted": "ți-a venit rândul pe lista de așteptare și contul tău e deschis. Bine ai venit!",
+    "forumReply_one": "a răspuns în „{{title}}”.",
+    "forumReply_few": "au răspuns în „{{title}}”.",
+    "forumReply_other": "au răspuns în „{{title}}”."
   },
   "grouped": {
     "reactions_one": "{{count}} reacție",
@@ -165,7 +168,8 @@
     "seeHomeCommentInvitation": "Vezi invitația",
     "seeMyRank": "Vezi rangul",
     "seePrivacy": "Vezi setările de confidențialitate",
-    "startExploring": "Începe să explorezi"
+    "startExploring": "Începe să explorezi",
+    "openThread": "Deschide discuția"
   },
   "alwaysOn": "Mereu pornite",
   "unread": "Necitită",

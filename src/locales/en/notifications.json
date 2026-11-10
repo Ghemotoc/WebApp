@@ -97,7 +97,10 @@
     "storyFeatured": "your story “{{story}}” is in Featured this week on Discover.",
     "spotlightAgreed": "your parent or guardian agreed that we may suggest you and your stories to other readers.",
     "spotlightWithdrawn": "we no longer suggest you or your stories to other readers, because the yes from your parent or guardian was withdrawn.",
-    "waitlistAdmitted": "your place on the waiting list came up and your account is open. Welcome!"
+    "waitlistAdmitted": "your place on the waiting list came up and your account is open. Welcome!",
+    "forumReply_one": "replied in “{{title}}”.",
+    "forumReply_few": "replied in “{{title}}”.",
+    "forumReply_other": "replied in “{{title}}”."
   },
   "grouped": {
     "reactions_one": "{{count}} reaction",
@@ -165,7 +168,8 @@
     "seeHomeCommentInvitation": "See the invitation",
     "seeMyRank": "See rank",
     "seePrivacy": "See privacy settings",
-    "startExploring": "Start exploring"
+    "startExploring": "Start exploring",
+    "openThread": "Open the thread"
   },
   "alwaysOn": "Always on",
   "unread": "Unread",

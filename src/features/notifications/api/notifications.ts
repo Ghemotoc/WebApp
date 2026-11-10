@@ -48,6 +48,7 @@ export type NotificationKind =
   | 'landing_entries_open'
   | 'live_session_soon'
   | 'home_comment_invited'
+  | 'forum_reply'
   | 'rank_reached'
   | 'space_handover_offered'
   | 'story_featured'
@@ -123,6 +124,14 @@ export interface NotificationLiveSession {
   startsAt: string;
 }
 
+/** A followed forum thread a notification is about (GAPS-16a). */
+export interface NotificationForumThread {
+  number: number;
+  /** The forum it is in, for the thread's address. */
+  forumSlug: string;
+  title: string;
+}
+
 /** One notification as the page draws it. */
 export interface AppNotification {
   id: string;
@@ -174,6 +183,11 @@ export interface AppNotification {
    * and its start, or null once staff deleted the session.
    */
   liveSession: NotificationLiveSession | null;
+  /**
+   * The followed thread with new replies, for forum_reply (GAPS-16a): its number, forum and
+   * title, or null once the reader can no longer open it.
+   */
+  forumThread: NotificationForumThread | null;
   /**
    * For rank_reached (IDEAS-3a): the rank the writer reached, for its sticker, and their own
    * handle, for the link to their profile.
@@ -234,6 +248,7 @@ interface NotificationRow {
   data_request?: { reference: string; deadline: string; extension_reason: string | null } | null;
   landing_page?: { slug: string; title_ro: string | null; title_en: string | null } | null;
   live_session?: { title_ro: string; title_en: string; starts_at: string } | null;
+  forum_thread?: { number: number; forum_slug: string; title: string } | null;
   writer_rank?: Enums<'writer_rank'> | null;
   own_handle?: string | null;
   is_required: boolean;
@@ -287,6 +302,18 @@ function landingPageOf(row: NotificationRow): NotificationLandingPage | null {
   const page = row.landing_page;
   if (page === null || page === undefined) return null;
   return { slug: page.slug, titles: { ro: page.title_ro ?? '', en: page.title_en ?? '' } };
+}
+
+/**
+ * A followed forum thread in the page's shape (GAPS-16a).
+ *
+ * @param row - the database's row
+ * @returns the thread, or null for other kinds and threads the reader can't open
+ */
+function forumThreadOf(row: NotificationRow): NotificationForumThread | null {
+  const thread = row.forum_thread;
+  if (thread === null || thread === undefined) return null;
+  return { number: thread.number, forumSlug: thread.forum_slug, title: thread.title };
 }
 
 /**
@@ -369,6 +396,7 @@ function toNotification(row: NotificationRow): AppNotification {
     dataRequest: dataRequestOf(row),
     landingPage: landingPageOf(row),
     liveSession: liveSessionOf(row),
+    forumThread: forumThreadOf(row),
     writerRank: row.writer_rank ?? null,
     ownHandle: row.own_handle ?? null,
     isRequired: row.is_required,

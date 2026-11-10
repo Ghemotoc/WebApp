@@ -2147,6 +2147,15 @@ The liquid glass Library board draws "Your lists": lists of stories a reader mak
 - Preview: "Preview" beside "Post reply" opens `ReplyPreview`, which draws what is in the box with `ForumPostText`, the component a posted reply uses (so raw HTML is never drawn). It is made on the reader's device and sends nothing.
 - Tests: `supabase/tests/database/330-forum-rules-and-pointers.test.sql`, `src/features/forums/lib/forumAddresses.test.ts`, `src/features/forums/api/forumModeration.test.ts`, `e2e/forum-rules-and-pointers.spec.ts`.
 
+## Following a forum thread (GAPS-16a)
+
+- Where it lives: `src/features/forums/components/ThreadFollowButton.tsx` (in `ThreadSidePanel`), `hooks/useThreadFollow.ts`, `api/forumFollows.ts`, `src/features/notifications/lib/forumReplyText.ts`, and `supabase/migrations/…_gaps16a_forum_reply_kind.sql` and `…_gaps16a_thread_follows.sql`.
+- The table: `forum_thread_follows` (member and thread, one row each; the member reads only their own rows, nobody writes to it directly). `notifications.forum_thread_id` says which thread a `forum_reply` row is about.
+- How a follow travels: "Follow thread" → `useThreadFollow()` → `follow_forum_thread(thread_number, wanted)`, which checks the member may open the thread (`forum_thread_is_shown()`) before following; unfollowing always works → `forum_thread_header_json()` answers `is_following` and the button turns to "Following".
+- How a reply reaches followers: the trigger `forum_posts_follow_on_insert` runs `forum_thread_follow_on_post()` after every new post. Post #1 follows the thread for its starter. A reply calls `notify()` for every other follower with the group key `forum_reply:<thread>` and a 24-hour window, so a day's replies share one row that names the newest people. `notify()` skips blocks either way.
+- Who sees the row: `notification_is_shown()` drops it once the reader can no longer open the thread (deleted, hidden or removed by moderators, a space they left, a starter they block), and `notification_json()` answers `forum_thread` (number, forum and title) only while they can. `forumReplyText()` writes "ana and 3 others replied in …" with "Open the thread".
+- Tests: `supabase/tests/database/343-thread-follows.test.sql`, `src/features/notifications/lib/notificationText.test.ts`, `e2e/forum-thread-follows.spec.ts`.
+
 ## A space hides and moves replies, and Share on a space (GAPS-10)
 
 - Where it lives: `src/features/forums/api/spacePostModeration.ts`, `hooks/useSpacePostModeration.ts`, `components/PostSpaceModeration.tsx` (the "Moderate" tools under a reply, drawn by `ForumPostCard`); `src/features/spaces/components/SpaceShareButton.tsx`, `SpaceShareDialog.tsx` and `lib/spaceShareLink.ts`; and `supabase/migrations/…_gaps10_space_post_moderation.sql`.

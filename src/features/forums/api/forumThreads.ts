@@ -98,6 +98,8 @@ export interface ForumThreadHeader {
   forumSlug: string;
   author: ForumPerson;
   isMine: boolean;
+  /** The reader follows it and hears about new replies (GAPS-16a); false when signed out. */
+  isFollowing: boolean;
   state: 'live' | 'hidden';
   createdAt: string;
   replyCount: number;
@@ -332,6 +334,7 @@ function headerFrom(row: JsonObject): ForumThreadHeader {
     forumSlug: String(row['forum_slug']),
     author: personFrom(row['author']),
     isMine: row['is_mine'] === true,
+    isFollowing: row['is_following'] === true,
     state: row['state'] === 'hidden' ? 'hidden' : 'live',
     createdAt: String(row['created_at']),
     replyCount: Number(row['reply_count']),
