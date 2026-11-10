@@ -2195,6 +2195,7 @@ The app draws no doodles, stickers or hand-drawn icons anywhere (Robert, 7 Nov 2
 - On each sheet, `CharacterRelationshipsSection` lists the character's relationships both ways and adds new ones.
 - The form (G10b): `RelationshipKindPickers` (Kind, then Relationship, from `lib/relationshipGroups.ts`), `CousinPickers` for "Cousin of", `RelationshipOwnWords` for "Other" (the label and the optional reverse label), and `RelationshipClashPanel` when `lib/relationshipClash.ts` finds a clash among the relationships already loaded. `useRelationshipWords` writes the sentences: which cousin through `lib/cousinWords.ts`, and an "Other" one with a reverse label from the side of the sheet it is on.
 - The map and tree (G10b2): `ConnectionsPage` switches views (`?view=map|tree|list`); `ConnectionsMapView` adds Focus on and Arrange for me and saves dropped cards through `useRelationshipChangers` (`moveOnMap` → `set_character_map_position()`, `arrangeMap` → `clear_map_positions()`); `RelationshipMap` lays cards out with `lib/relationshipMap.ts`, drags them with `hooks/useCardDrag.ts` and zooms with `hooks/useMapZoom.ts`; `FamilyTreeView` adds Whose tree, siblings, cousins and the legend (`lib/familyTree.ts`, `lib/familyTreeLayout.ts`).
+- Story world and Storyline in glass (G10c1): `BibleContents` draws each section as a label, a "+" and a glass list; `BibleEntryView` is the glass article. `TimelineRow` is the one line both `TimelineView` (chapters) and `TimelineEventItem` (events) draw: date and sort value, a dot on the rail, a glass card.
 
 ## Story Atlas: the bible (S1-E17-17 and S1-E17-18; ATLAS-d)
 
@@ -2214,7 +2215,7 @@ The app draws no doodles, stickers or hand-drawn icons anywhere (Robert, 7 Nov 2
 
 ## Story Atlas: the storyline (S1-E17-19 to S1-E17-22; ATLAS-f)
 
-- `/plan/s/:storySlug/storyline` is `StorylinePage`: a view toggle (`ChoiceChips`: Board, Timeline, POV lanes) remembered on the device by `lib/storylineView.ts`, then `ChapterBoard`, `TimelineView` or `PovLanesView`. One reading, `story_storyline()` through `useStoryline`, feeds all three.
+- `/plan/s/:storySlug/storyline` is `StorylinePage`: a view switch (`SegmentedControl`: Board, Timeline, POV lanes, with the view's hint beside it, G10c1) remembered on the device by `lib/storylineView.ts`, then `ChapterBoard`, `TimelineView` or `PovLanesView`. One reading, `story_storyline()` through `useStoryline`, feeds all three.
 - The board's columns and moves are plain functions in `lib/boardColumns.ts` (one column per act, then "No act"; `orderAfterMove()` works out the book's new order). One click: "Move Calmul earlier" on a `BoardCard` → `useBoardMoves().move` → `placeChapterOnBoard()` in `api/storyline.ts` → `place_chapter_on_board()`. When published chapters would change order the database answers `needs_confirmation` and nothing moves until the writer says "Move it" in `BoardMoveDialog`, as Manage chapters asks (S1-E3-04).
 - Chapter numbers in the plan count only chapters of the type "chapter" (`chapterNumbers()`, used by the board, the timeline, the lanes and the writing view's list through `useChapterLabels`).
 - Timeline events live in `story_events` (`add_story_event()`, `update_story_event()`, `delete_story_event()`); `lib/timeline.ts` sorts them with dated chapters and lists the undated ones apart.

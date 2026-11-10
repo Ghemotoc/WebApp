@@ -31,6 +31,8 @@ function MoveButton({
   return (
     <Button
       variant="secondary"
+      // Board AtlasStoryline: small pills, 32 px tall (over the 24 px smallest target).
+      className="h-8 px-2.5 text-xs"
       disabled={onMove === null}
       aria-label={accessibleName}
       onClick={() => onMove?.()}
@@ -57,7 +59,7 @@ export function BoardCardMoves({
     <div
       role="group"
       aria-label={t('storyline.board.moves.group', { title })}
-      className="flex flex-wrap gap-1.5"
+      className="flex flex-wrap gap-1"
     >
       <MoveButton
         label={t('storyline.board.moves.earlier')}
