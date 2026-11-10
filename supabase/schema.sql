@@ -26828,6 +26828,77 @@ COMMENT ON FUNCTION "public"."my_certificates"() IS 'The caller''s own certifica
 
 
 
+CREATE OR REPLACE FUNCTION "public"."my_chapter_comments"("older_than" timestamp with time zone DEFAULT NULL::timestamp with time zone, "only_story_slug" "text" DEFAULT NULL::"text", "page_size" integer DEFAULT 20, "older_than_id" "uuid" DEFAULT NULL::"uuid") RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  wanted_rows integer := least(greatest(coalesce(page_size, 20), 1), 50);
+  page jsonb;
+  found_rows integer;
+begin
+  -- Step 1: a signed-in writer.
+  if caller_id is null then
+    raise exception 'Log in to see the comments on your chapters.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 2: one page and one row more, to know whether older comments are left.
+  select coalesce(jsonb_agg(listed.item order by listed.created_at desc, listed.id)
+                    filter (where listed.place <= wanted_rows), '[]'::jsonb),
+         count(*)
+  into page, found_rows
+  from (
+    select comments.created_at, comments.id,
+      row_number() over (order by comments.created_at desc, comments.id) as place,
+      jsonb_build_object(
+        'id', comments.id,
+        'display_name', public.display_name(profiles.handle, profiles.pen_name),
+        'handle', profiles.handle,
+        'story_slug', stories.slug,
+        'story_title', stories.title,
+        'chapter_code', chapters.code,
+        'chapter_position', chapters.position,
+        'body', left(comments.body, 600),
+        'is_shortened', char_length(comments.body) > 600,
+        'created_at', comments.created_at) as item
+    from public.comments
+    join public.chapters on chapters.id = comments.chapter_id
+    join public.stories on stories.id = chapters.story_id
+    join public.profiles on profiles.id = comments.user_id
+    where stories.user_id = caller_id and stories.deleted_at is null and chapters.deleted_at is null
+      and chapters.status = 'published' and comments.user_id <> caller_id
+      and (only_story_slug is null or stories.slug = only_story_slug)
+      -- Older than the last one shown; at the very same moment, the ones after it by ID.
+      and (older_than is null or comments.created_at < older_than
+           or (older_than_id is not null and comments.created_at = older_than
+               and comments.id > older_than_id))
+      and public.comment_is_shown_to_caller(comments)
+    order by comments.created_at desc, comments.id
+    limit wanted_rows + 1
+  ) as listed;
+  -- Step 3: the page, with the stories to pick from.
+  return jsonb_build_object(
+    'stories', coalesce((
+      select jsonb_agg(jsonb_build_object('slug', stories.slug, 'title', stories.title)
+               order by lower(stories.title), stories.created_at)
+      from public.stories
+      where stories.user_id = caller_id and stories.deleted_at is null
+        and exists (select 1 from public.chapters
+                    where chapters.story_id = stories.id and chapters.deleted_at is null
+                      and chapters.status = 'published')), '[]'::jsonb),
+    'has_more', found_rows > wanted_rows,
+    'comments', page);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."my_chapter_comments"("older_than" timestamp with time zone, "only_story_slug" "text", "page_size" integer, "older_than_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."my_chapter_comments"("older_than" timestamp with time zone, "only_story_slug" "text", "page_size" integer, "older_than_id" "uuid") IS 'One page of the comments readers wrote under the caller''s published chapters, newest first (GAPS-5; S1-E3-07).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."chapter_plans" (
     "chapter_id" "uuid" NOT NULL,
     "story_id" "uuid" NOT NULL,
@@ -58714,6 +58785,11 @@ GRANT ALL ON FUNCTION "public"."my_blocked_accounts"() TO "authenticated";
 
 REVOKE ALL ON FUNCTION "public"."my_certificates"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."my_certificates"() TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."my_chapter_comments"("older_than" timestamp with time zone, "only_story_slug" "text", "page_size" integer, "older_than_id" "uuid") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."my_chapter_comments"("older_than" timestamp with time zone, "only_story_slug" "text", "page_size" integer, "older_than_id" "uuid") TO "authenticated";
 
 
 

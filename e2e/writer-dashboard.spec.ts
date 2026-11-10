@@ -13,7 +13,11 @@
  * - "Last 30 days" changes the tiles; "Not published yet" lists the draft with an Edit link and
  *   "Continue draft" opens it;
  * - axe finds nothing serious, nothing scrolls sideways and no doodle is drawn at 390, 768
- *   and 1440 px.
+ *   and 1440 px;
+ * - "More comments" opens /write/comments: every comment newest first, 20 at a time with "Show
+ *   older", each naming its story and chapter; comments written at the same moment are all
+ *   shown, and the story picker keeps its place and focus while another story loads (bundle
+ *   GAPS-5 and its break test, 10 Nov 2026).
  * Test data: a story by the editor persona (…12, which no other spec writes with) with one
  * published chapter and one draft; reading places, likes, follows and a comment from seeded
  * personas. All removed afterwards.
@@ -30,6 +34,9 @@ const writerId = '00000000-0000-4000-8000-000000000012';
 const storySlug = 'dashboard-e2e';
 const publishedCode = 'tablou01';
 const draftCode = 'tablou02';
+/** A second published story, added only for the story picker's test. */
+const secondStorySlug = 'dashboard-e2e-second';
+const secondStoryCode = 'tablou03';
 /** Seeded readers by number (…02, …03, …07, …08, …09, …10). */
 const readers = [2, 3, 7, 8, 9, 10];
 
@@ -47,7 +54,7 @@ function cleanUp() {
     delete from public.reading_positions where chapter_id in
       (select id from public.chapters where code = '${publishedCode}');
     delete from public.chapters where code in ('${publishedCode}', '${draftCode}');
-    delete from public.stories where slug = '${storySlug}';
+    delete from public.stories where slug in ('${storySlug}', '${secondStorySlug}');
     delete from public.follows_users where followed_user_id = '${writerId}';
     update public.profiles set locale = 'ro' where id = '${writerId}';`);
 }
@@ -217,4 +224,75 @@ test.describe('The writer dashboard', () => {
       await page.context().close();
     });
   }
+  test('"More comments" opens every comment, a page at a time', async ({ browser }) => {
+    // 21 older comments join the one already there, so the list needs a second page. All 21
+    // were written at the very same moment: none may be skipped between the two pages (break
+    // test, 10 Nov 2026).
+    runSql(`insert into public.comments (user_id, chapter_id, body, created_at)
+      select '${personaId(8)}', chapters.id, 'Comentariu vechi ' || age, now() - interval '1 hour'
+      from public.chapters, generate_series(1, 21) as age
+      where chapters.code = '${publishedCode}';`);
+    const page = await openDashboard(browser);
+    await page
+      .getByRole('region', { name: 'Latest on the chapters' })
+      .getByRole('link', { name: 'More comments' })
+      .click();
+    await expect(page).toHaveURL(/\/write\/comments$/);
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Comments on the chapters' }),
+    ).toBeVisible();
+
+    // The first page: 20 comments, the newest first, each with its story, chapter and Reply.
+    const comments = page.getByRole('list', { name: 'Comments' }).getByTestId('writer-comment');
+    await expect(comments).toHaveCount(20);
+    await expect(comments.first()).toContainText('Ce praf frumos!');
+    await expect(comments.first()).toContainText(/on chapter 1 of .+ · /);
+    await expect(
+      comments.first().getByRole('link', { name: /Reply to .* on chapter 1/ }),
+    ).toHaveAttribute('href', `/s/${storySlug}/${publishedCode}#comments-heading`);
+    // One story, so there is nothing to pick.
+    await expect(page.getByLabel('Story')).toHaveCount(0);
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
+      .analyze();
+    expect(results.violations).toEqual([]);
+    await expectNoDoodles(page);
+
+    // "Show older" brings the rest and then goes away.
+    await page.getByRole('button', { name: 'Show older' }).click();
+    await expect(comments).toHaveCount(22);
+    await expect(comments.filter({ hasText: 'Comentariu vechi' })).toHaveCount(21);
+    await expect(page.getByRole('button', { name: 'Show older' })).toHaveCount(0);
+
+    // On a phone nothing scrolls sideways.
+    await page.setViewportSize({ width: 390, height: 900 });
+    const pageWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+    expect(pageWidth).toBeLessThanOrEqual(390);
+
+    // A second published story brings the story picker. While the other story's list loads
+    // (slowed here), the picker stays where it is and keeps the keyboard's focus.
+    runSql(`insert into public.stories (user_id, slug, title, blurb, language_code, category_id,
+        completion_status, rating, first_published_at, last_chapter_published_at)
+      values ('${writerId}', '${secondStorySlug}', 'Altă poveste', 'x', 'ro',
+        (select id from public.categories where slug = 'fiction'), 'ongoing', 'all_ages', now(), now());
+      insert into public.chapters (story_id, user_id, code, position, draft_title, draft_body,
+        word_count, status, published_title, published_body, published_word_count, first_published_at)
+      select id, user_id, '${secondStoryCode}', 1, 'Unu', 'x', 1, 'published', 'Unu', 'Unu.', 1, now()
+      from public.stories where slug = '${secondStorySlug}';
+      insert into public.comments (user_id, chapter_id, body)
+      select '${personaId(7)}', id, 'Pe cealaltă poveste' from public.chapters where code = '${secondStoryCode}';`);
+    await page.reload();
+    await page.route('**/rest/v1/rpc/my_chapter_comments', async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 600));
+      await route.continue();
+    });
+    const picker = page.getByLabel('Story', { exact: true });
+    await picker.focus();
+    await picker.selectOption({ label: 'Altă poveste' });
+    await expect(picker).toBeFocused();
+    await expect(comments).toHaveCount(1);
+    await expect(comments.first()).toContainText('Pe cealaltă poveste');
+    await expect(picker).toBeFocused();
+    await page.context().close();
+  });
 });

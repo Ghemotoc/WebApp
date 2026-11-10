@@ -12831,6 +12831,15 @@ export type Database = {
         }[];
       };
       my_certificates: { Args: Record<PropertyKey, never>; Returns: Json };
+      my_chapter_comments: {
+        Args: {
+          older_than?: string;
+          older_than_id?: string;
+          only_story_slug?: string;
+          page_size?: number;
+        };
+        Returns: Json;
+      };
       my_chapter_plan: {
         Args: { chapter_code: string };
         Returns: {

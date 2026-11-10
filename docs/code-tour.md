@@ -1267,6 +1267,7 @@ The word lists start in `content/username-word-lists/` and reach the database th
 
 ```
 /write (YourWritingPage) → "+ New story" → /write/new (NewStoryPage)      src/features/writing/
+/write → "More comments" → /write/comments (ChapterCommentsPage, GAPS-5)   useMyChapterComments → my_chapter_comments()
   │  the choices: useStoryFormOptions → api/stories.ts → open_story_languages(), categories
   │  typing: StoryBasicsSection, CategoryTagsSection (TagInput merges look-alikes with
   │     lib/tags.ts, the same rule as the database's normalise_tag()), CoverSection

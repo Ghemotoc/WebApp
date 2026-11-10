@@ -490,7 +490,9 @@
       "onChapter": "la capitolul {{number}} · {{when}}",
       "reply": "Răspunde",
       "replyLabel": "Răspunde-i lui {{name}} la capitolul {{number}}",
-      "empty": "Încă nu ai comentarii. Apar aici când cititorii scriu sub capitolele tale."
+      "empty": "Încă nu ai comentarii. Apar aici când cititorii scriu sub capitolele tale.",
+      "seeAll": "Mai multe comentarii",
+      "onChapterOf": "la capitolul {{number}} din {{title}} · {{when}}"
     }
   },
   "canva": {
@@ -548,5 +550,17 @@
     "tenth": "{{from}}–{{to}}%",
     "tenthValue": "{{percent}}% dintre cititori",
     "loadFailed": "Nu am putut încărca aceste cifre. Reîncarcă pagina ca să încerci din nou."
+  },
+  "allComments": {
+    "documentTitle": "Comentarii la capitole",
+    "back": "Scrie",
+    "eyebrow": "Scrie · comentarii",
+    "heading": "Comentarii la capitole",
+    "lead": "Ce au scris cititorii sub fiecare capitol publicat, de la cele mai noi.",
+    "storyLabel": "Poveste",
+    "everyStory": "Fiecare poveste",
+    "listLabel": "Comentarii",
+    "showOlder": "Arată mai vechi",
+    "loadFailed": "Comentariile nu s-au putut încărca. Verifică conexiunea și încearcă din nou."
   }
 }
