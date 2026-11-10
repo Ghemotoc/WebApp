@@ -46667,14 +46667,35 @@ COMMENT ON FUNCTION "public"."writer_reader_stops"("target_chapter_id" "uuid", "
 
 
 
-CREATE OR REPLACE FUNCTION "public"."writers_hub_contests"() RETURNS TABLE("contest_id" "uuid", "name_ro" "text", "name_en" "text", "page_slug" "text", "entries_close_on" "date", "word_limit" integer, "prize_ro" "text", "prize_en" "text")
+CREATE OR REPLACE FUNCTION "public"."writers_hub_contests"() RETURNS TABLE("contest_id" "uuid", "name_ro" "text", "name_en" "text", "page_slug" "text", "entries_close_on" "date", "word_limit" integer, "prize_ro" "text", "prize_en" "text", "entry_count" integer, "cover" "jsonb", "cover_alt_ro" "text", "cover_alt_en" "text")
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
   select contests.id, contests.name_ro, contests.name_en, pages.slug,
-    contests.entries_close_on, contests.word_limit, contests.prize_ro, contests.prize_en
+    contests.entries_close_on, contests.word_limit, contests.prize_ro, contests.prize_en,
+    -- Entries that count today: not withdrawn, not disqualified.
+    (select count(*)::integer from public.contest_entries
+     where contest_entries.contest_id = contests.id and contest_entries.status = 'valid'),
+    -- The picture as this caller may see it; {} when the page has none.
+    coalesce((select jsonb_build_object(picture_checks.id, public.picture_state_json(picture_checks))
+              from public.picture_checks
+              where picture_checks.id::text = cover_block.block ->> 'picture_id'
+                and picture_checks.kind = 'landing_picture' and picture_checks.deleted_at is null),
+             '{}'::jsonb),
+    coalesce(cover_block.block -> 'ro' ->> 'alt', ''),
+    coalesce(cover_block.block -> 'en' ->> 'alt', '')
   from public.contests
   join public.landing_pages as pages on pages.id = contests.landing_page_id
+  -- The live version's first block that carries a picture, top to bottom (the hero comes first).
+  left join lateral (
+    select each_block.block
+    from public.landing_page_live_version(pages.id) as live
+    cross join lateral jsonb_array_elements(coalesce(live.content -> 'blocks', '[]'::jsonb))
+      with ordinality as each_block(block, place)
+    where each_block.block ->> 'picture_id' is not null
+    order by each_block.place
+    limit 1
+  ) as cover_block on true
   -- Step 1: only signed-in writers; a visitor sees the contest on its landing page instead.
   where (select auth.uid()) is not null
     -- Step 2: the contest takes entries today and its landing page still shows.
@@ -46689,7 +46710,7 @@ $$;
 ALTER FUNCTION "public"."writers_hub_contests"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."writers_hub_contests"() IS 'The contests the signed-in writer can enter today, for the Writers'' hub (G9a; S1-E11-15 rules).';
+COMMENT ON FUNCTION "public"."writers_hub_contests"() IS 'The contests the signed-in writer can enter today, each with its entry count and cover picture, for the Writers'' hub (G9a, GAPS-12a; S1-E11-15 rules).';
 
 
 

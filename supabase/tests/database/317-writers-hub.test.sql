@@ -3,6 +3,9 @@
 -- What it proves:
 -- - writers_hub_contests() lists a contest only while it takes entries, only to a signed-in
 --   writer in its age groups and market, with its landing page's address; a visitor can't call it;
+-- - it counts the entries that count today (a withdrawn one doesn't) and hands over the landing
+--   page's first picture with its alt text, naming the file only once the picture is approved
+--   (GAPS-12a);
 -- - the fifteen how-to guides and the rights page are live help pages in English and Romanian,
 --   each passing the same checks a page published from Staff › Website passes (field lengths and
 --   links to pages that exist), with Romanian ș and ț (comma below), never ş or ţ.
@@ -12,7 +15,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(12);
+select plan(19);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -66,6 +69,54 @@ select results_eq(
      where contest_id = (select id from kept where label = 'contest') $$,
   $$ values ('The winter contest', 'hub-concurs', public.romania_today() + 10, 5000) $$,
   'an adult writer in Romania sees the open contest with its landing page address');
+
+-- GAPS-12a: the entry count and the cover picture.
+select is((select entry_count from public.writers_hub_contests() where page_slug = 'hub-concurs'), 0,
+  'a contest nobody entered counts no entries');
+select is((select cover from public.writers_hub_contests() where page_slug = 'hub-concurs'), '{}'::jsonb,
+  'a landing page with no picture gives no cover');
+reset role;
+insert into public.contest_entries (user_id, contest_id, story_id)
+values ('00000000-0000-4000-8000-000000000001', (select id from kept where label = 'contest'), '00000000-0000-4000-9000-000000000001');
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
+select is((select entry_count from public.writers_hub_contests() where page_slug = 'hub-concurs'), 1,
+  'an entry that counts is counted');
+reset role;
+update public.contest_entries set status = 'withdrawn', withdrawn_at = now()
+where contest_id = (select id from kept where label = 'contest');
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
+select is((select entry_count from public.writers_hub_contests() where page_slug = 'hub-concurs'), 0,
+  'a withdrawn entry is not');
+
+-- An admin uploads a picture for the page (uploads are behind a flag); it sits in the hero of
+-- the live version.
+reset role;
+update public.feature_flags set is_enabled = true where key = 'picture_uploads';
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000009');
+insert into storage.objects (bucket_id, name, owner_id)
+select 'landing-pictures', id::text || '/11111111-1111-4111-8111-111111111111.png', '00000000-0000-4000-8000-000000000009'
+from kept where label = 'page';
+insert into kept (label, id)
+select 'picture', public.register_landing_picture(id::text || '/11111111-1111-4111-8111-111111111111.png') from kept where label = 'page';
+reset role;
+update public.landing_page_versions
+set content = jsonb_set(content, '{blocks,0}', (content #> '{blocks,0}')
+  || jsonb_build_object('picture_id', (select id from kept where label = 'picture'))
+  || '{"ro": {"title": "Concursul", "intro": "", "alt": "O fereastră ninsă"}, "en": {"title": "The contest", "intro": "", "alt": "A snowy window"}}'::jsonb)
+where page_id = (select id from kept where label = 'page');
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
+select is((select cover -> (select id::text from kept where label = 'picture') ->> 'path'
+           from public.writers_hub_contests() where page_slug = 'hub-concurs'), null,
+  'a picture still being checked is named without its file');
+reset role;
+update public.picture_checks set status = 'approved' where id = (select id from kept where label = 'picture');
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
+select is((select cover -> (select id::text from kept where label = 'picture') ->> 'state'
+           from public.writers_hub_contests() where page_slug = 'hub-concurs'), 'visible',
+  'an approved picture is the contest''s cover');
+select results_eq(
+  $$ select cover_alt_ro, cover_alt_en from public.writers_hub_contests() where page_slug = 'hub-concurs' $$,
+  $$ values ('O fereastră ninsă', 'A snowy window') $$, 'with the alt text the admin wrote, in both languages');
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000002');
 select is((select count(*) from public.writers_hub_contests() where page_slug = 'hub-concurs'), 0::bigint,
