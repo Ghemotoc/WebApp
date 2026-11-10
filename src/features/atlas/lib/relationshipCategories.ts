@@ -25,6 +25,7 @@ const categoryOfKind: Record<RelationshipKind, RelationshipCategory> = {
   parent_of: 'family',
   sibling_of: 'family',
   partner_of: 'family',
+  cousin_of: 'family',
   loves: 'love',
   made: 'lineage',
   friend_of: 'allies',

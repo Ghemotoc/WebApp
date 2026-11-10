@@ -12,6 +12,7 @@
  * it is tested alone (planForWord.test.ts).
  */
 import { sheetGroups, type SheetKey } from '@/features/atlas/api/characters';
+import { cousinPhrase } from '@/features/atlas/lib/cousinWords';
 import type { Tables } from '@/lib/database.types';
 import type { WordPlan, WordPlanDetail, WordPlanEntry, WordPlanPart } from '@/lib/word/wordTypes';
 
@@ -179,15 +180,44 @@ function charactersPart(rows: StoryRows, words: PlanWords): WordPlanPart | null 
   return partOrNull(words.atlas('characters.heading'), entries);
 }
 
-/** Connections: one sentence each ("Ana is a friend of Matei"), with its note. */
+/** One connection as a sentence: from the first character, or the other way round. */
+function connectionSentence(
+  rows: StoryRows,
+  words: PlanWords,
+  connection: Tables<'story_character_relationships'>,
+  isReversed: boolean,
+): string {
+  const fromId = isReversed ? connection.to_character_id : connection.from_character_id;
+  const toId = isReversed ? connection.from_character_id : connection.to_character_id;
+  return words.atlas(`connections.sentences.${connection.kind}`, {
+    from: characterName(rows, fromId),
+    to: characterName(rows, toId),
+    label: isReversed ? connection.reverse_label : (connection.custom_label ?? ''),
+    // A cousin says which cousin: "second cousin once removed" (G10b).
+    which: cousinPhrase(
+      (key) => words.atlas(key),
+      connection.cousin_degree,
+      connection.cousin_removed,
+    ),
+  });
+}
+
+/**
+ * Connections: one sentence each ("Ana is a friend of Matei"), with its note, and for an "Other"
+ * one with a reverse label, the sentence the other way round (G10b).
+ */
 function connectionsPart(rows: StoryRows, words: PlanWords): WordPlanPart | null {
   const entries = rows.connections.map((connection) => ({
-    title: words.atlas(`connections.sentences.${connection.kind}`, {
-      from: characterName(rows, connection.from_character_id),
-      to: characterName(rows, connection.to_character_id),
-      label: connection.custom_label ?? '',
-    }),
-    details: [],
+    title: connectionSentence(rows, words, connection, false),
+    details:
+      connection.kind === 'custom' && connection.reverse_label !== ''
+        ? [
+            {
+              label: words.atlas('connections.otherWay'),
+              value: connectionSentence(rows, words, connection, true),
+            },
+          ]
+        : [],
     markdown: (connection.note ?? '').trim() === '' ? null : connection.note,
   }));
   return partOrNull(words.atlas('connections.heading'), entries);

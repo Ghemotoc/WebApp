@@ -73,6 +73,7 @@ export const relationshipKinds = [
   'parent_of',
   'sibling_of',
   'partner_of',
+  'cousin_of',
   'loves',
   'made',
   'friend_of',
@@ -94,6 +95,11 @@ export interface CharacterRelationship {
   kind: RelationshipKind;
   /** The writer's own label, for a custom relationship only. */
   customLabel: string;
+  /** For a custom relationship: what the second character is to the first; may be empty (G10b). */
+  reverseLabel: string;
+  /** For a cousin only: 1 to 3 (first to third cousin), and 0 to 3 times removed (G10b). */
+  cousinDegree: number | null;
+  cousinRemoved: number | null;
   note: string;
 }
 
@@ -147,6 +153,9 @@ interface StoryCastRow {
     to: string;
     kind: RelationshipKind;
     custom_label: string;
+    reverse_label: string;
+    cousin_degree: number | null;
+    cousin_removed: number | null;
     note: string;
   }[];
 }
@@ -213,6 +222,9 @@ export async function fetchStoryCast(
       toId: link.to,
       kind: link.kind,
       customLabel: link.custom_label,
+      reverseLabel: link.reverse_label,
+      cousinDegree: link.cousin_degree,
+      cousinRemoved: link.cousin_removed,
       note: link.note,
     })),
   };
@@ -379,8 +391,12 @@ export interface NewRelationship {
   fromId: string;
   toId: string;
   kind: RelationshipKind;
-  /** Only for a custom relationship. */
+  /** Only for a custom relationship, with the optional reverse (G10b). */
   customLabel: string;
+  reverseLabel: string;
+  /** Only for a cousin (G10b). */
+  cousinDegree: number | null;
+  cousinRemoved: number | null;
   note: string;
 }
 
@@ -388,7 +404,7 @@ export interface NewRelationship {
  * Records how two of the writer's characters are connected (S1-E17-14).
  *
  * @param client - the shared Supabase client
- * @param relationship - the two characters, the type, the label and the note
+ * @param relationship - the two characters, the type, the labels, the cousin's degree and the note
  * Errors: throws when the database refuses it (the same character twice, a custom type with no
  *   label) or can't be reached.
  */
@@ -402,6 +418,9 @@ export async function addRelationship(
     relationship_kind: relationship.kind,
     custom_label: relationship.customLabel,
     note: relationship.note,
+    reverse_label: relationship.reverseLabel,
+    cousin_degree: relationship.cousinDegree ?? undefined,
+    cousin_removed: relationship.cousinRemoved ?? undefined,
   });
   okAnswer(answer, 'add the relationship');
 }

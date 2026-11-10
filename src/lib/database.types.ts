@@ -7654,6 +7654,8 @@ export type Database = {
       };
       story_character_relationships: {
         Row: {
+          cousin_degree: number | null;
+          cousin_removed: number | null;
           created_at: string;
           custom_label: string;
           from_character_id: string;
@@ -7661,6 +7663,7 @@ export type Database = {
           is_private: boolean;
           kind: string;
           note: string;
+          reverse_label: string;
           story_id: string;
           to_character_id: string;
           updated_at: string;
@@ -7668,6 +7671,8 @@ export type Database = {
         };
         ComputedFields: never;
         Insert: {
+          cousin_degree?: number | null;
+          cousin_removed?: number | null;
           created_at?: string;
           custom_label?: string;
           from_character_id: string;
@@ -7675,12 +7680,15 @@ export type Database = {
           is_private?: boolean;
           kind: string;
           note?: string;
+          reverse_label?: string;
           story_id: string;
           to_character_id: string;
           updated_at?: string;
           user_id: string;
         };
         Update: {
+          cousin_degree?: number | null;
+          cousin_removed?: number | null;
           created_at?: string;
           custom_label?: string;
           from_character_id?: string;
@@ -7688,6 +7696,7 @@ export type Database = {
           is_private?: boolean;
           kind?: string;
           note?: string;
+          reverse_label?: string;
           story_id?: string;
           to_character_id?: string;
           updated_at?: string;
@@ -9106,10 +9115,13 @@ export type Database = {
       add_character_field: { Args: { field_name: string; story_slug: string }; Returns: Json };
       add_character_relationship: {
         Args: {
+          cousin_degree?: number;
+          cousin_removed?: number;
           custom_label: string;
           from_character_id: string;
           note: string;
           relationship_kind: string;
+          reverse_label?: string;
           to_character_id: string;
         };
         Returns: Json;
@@ -13840,6 +13852,16 @@ export type Database = {
       register_space_banner: { Args: { target_path: string }; Returns: string };
       register_space_logo: { Args: { target_path: string }; Returns: string };
       register_sponsor_creative: { Args: { target_path: string }; Returns: string };
+      relationship_json: {
+        Args: {
+          link: Omit<
+            Database['public']['Tables']['story_character_relationships']['Row'],
+            Database['public']['Tables']['story_character_relationships']['ComputedFields']
+          >;
+          with_note: boolean;
+        };
+        Returns: Json;
+      };
       removal_order_log_rows: { Args: Record<PropertyKey, never>; Returns: Json[] };
       remove_character_picture: { Args: { character_id: string }; Returns: Json };
       remove_space_member: {

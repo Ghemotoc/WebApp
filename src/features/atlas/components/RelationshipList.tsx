@@ -25,6 +25,13 @@ export interface RelationshipListProps {
   onDelete: (relationshipId: string) => Promise<void>;
   /** Anything more under a relationship: "Keep private" on the Connections page (S1-E17-32). */
   extra?: (relationship: CharacterRelationship, sentence: string) => ReactNode;
+  /** The sheet's character, so an "Other" relationship reads from their side (G10b). */
+  viewpointId?: string;
+}
+
+/** What one row needs: the list's props, for one relationship. */
+interface RelationshipRowProps extends Omit<RelationshipListProps, 'relationships'> {
+  relationship: CharacterRelationship;
 }
 
 /** One relationship's row: the sentence, the note, and Delete with its question. */
@@ -33,17 +40,13 @@ function RelationshipRow({
   words,
   onDelete,
   extra,
-}: {
-  relationship: CharacterRelationship;
-  words: RelationshipWords;
-  onDelete: RelationshipListProps['onDelete'];
-  extra: RelationshipListProps['extra'];
-}) {
+  viewpointId,
+}: RelationshipRowProps) {
   const { t } = useAtlasTranslation();
   const [isAsking, setIsAsking] = useState(false);
   const [failed, setFailed] = useState(false);
   const question = useRef<HTMLParagraphElement>(null);
-  const sentence = words.sentence(relationship);
+  const sentence = words.sentence(relationship, viewpointId);
 
   // The question takes the focus when it appears, so it is read out.
   useEffect(() => {
@@ -98,7 +101,13 @@ function RelationshipRow({
  *
  * @returns the list of relationships
  */
-export function RelationshipList({ relationships, words, onDelete, extra }: RelationshipListProps) {
+export function RelationshipList({
+  relationships,
+  words,
+  onDelete,
+  extra,
+  viewpointId,
+}: RelationshipListProps) {
   const { t } = useAtlasTranslation();
   if (relationships.length === 0) {
     return <p className="m-0 text-body">{t('connections.list.none')}</p>;
@@ -112,6 +121,7 @@ export function RelationshipList({ relationships, words, onDelete, extra }: Rela
           words={words}
           onDelete={onDelete}
           extra={extra}
+          viewpointId={viewpointId}
         />
       ))}
     </ul>

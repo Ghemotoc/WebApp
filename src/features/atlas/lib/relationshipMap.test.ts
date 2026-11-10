@@ -9,7 +9,17 @@ import { layoutRelationshipMap } from './relationshipMap';
 
 /** A relationship with only what these tests need. */
 function link(id: string, fromId: string, toId: string): CharacterRelationship {
-  return { id, fromId, toId, kind: 'friend_of', customLabel: '', note: '' };
+  return {
+    id,
+    fromId,
+    toId,
+    kind: 'friend_of',
+    customLabel: '',
+    reverseLabel: '',
+    cousinDegree: null,
+    cousinRemoved: null,
+    note: '',
+  };
 }
 
 describe('layoutRelationshipMap', () => {
