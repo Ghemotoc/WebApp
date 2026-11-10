@@ -122,6 +122,14 @@ async function openAs(browser: Browser, persona: SignInPersonaName, path: string
   return page;
 }
 
+/**
+ * Picks Board, Timeline or POV lanes. The switch's radios are visually hidden, so the click goes
+ * to the segment's words, as a person's would.
+ */
+async function showView(page: Page, name: string) {
+  await page.getByRole('group', { name: 'View' }).getByText(name, { exact: true }).click();
+}
+
 /** The titles of the cards in one column, in order. */
 async function columnTitles(page: Page, name: string): Promise<string[]> {
   const column = page.getByRole('region', { name, exact: true });
@@ -160,7 +168,7 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', storylineAddress);
-    await page.getByRole('radio', { name: 'Board' }).click();
+    await showView(page, 'Board');
     for (const name of ['Act I', 'Act II', 'Act III', 'No act']) {
       await expect(page.getByRole('region', { name, exact: true })).toBeVisible();
     }
@@ -246,7 +254,7 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', storylineAddress);
-    await page.getByRole('radio', { name: 'Timeline' }).click();
+    await showView(page, 'Timeline');
     await page.getByRole('textbox', { name: 'Title' }).fill('The war');
     await page.getByRole('button', { name: 'Add event' }).click();
     await expect(
@@ -268,7 +276,7 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
     await expect(lines.nth(1)).toContainText('Furtuna');
     await expect(lines.nth(2)).toContainText('Peace');
     // The undated chapters are listed apart.
-    const undated = page.getByRole('region', { name: 'Chapters without a date' });
+    const undated = page.getByRole('list', { name: 'Chapters without a date' });
     await expect(undated.getByRole('link', { name: /Calmul/ })).toBeVisible();
     // Change an event's sort value: it takes its new place.
     await page.getByRole('button', { name: 'Edit Peace' }).click();
@@ -282,10 +290,7 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
     await expect(lines).toHaveCount(2);
     // The view is remembered.
     await page.reload();
-    await expect(page.getByRole('radio', { name: 'Timeline' })).toHaveAttribute(
-      'aria-checked',
-      'true',
-    );
+    await expect(page.getByRole('radio', { name: 'Timeline' })).toBeChecked();
     await page.context().close();
   });
 
@@ -293,7 +298,7 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', storylineAddress);
-    await page.getByRole('radio', { name: 'POV lanes' }).click();
+    await showView(page, 'POV lanes');
     const table = page.getByRole('table', { name: 'Chapters by point-of-view character' });
     await expect(table.getByRole('columnheader')).toHaveText(['Chapter', 'Ana', 'Bogdan']);
     const stormRow = table.getByRole('row', { name: /Furtuna/ });
@@ -326,7 +331,7 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
       ] as const);
       const page = await context.newPage();
       await checkScreen(page, view);
-      await expect(page.getByRole('radiogroup')).toBeVisible();
+      await expect(page.getByRole('group', { name: /^(View|Vizualizare)$/ })).toBeVisible();
       await expectNoDoodles(page);
       await context.close();
     });

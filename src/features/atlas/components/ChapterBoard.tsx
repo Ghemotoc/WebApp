@@ -57,7 +57,7 @@ export function ChapterBoard({ slug, storyline, refresh, addChapter }: ChapterBo
   return (
     <div className="flex min-w-0 flex-col gap-4">
       {moves.failed && <Notice tone="error">{t('storyline.board.moveFailed')}</Notice>}
-      <div className="grid min-w-0 gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid min-w-0 items-start gap-x-[18px] gap-y-8 md:grid-cols-2 xl:grid-cols-4">
         {columns.map((column, columnIndex) => (
           <BoardColumnSection
             key={column.actId ?? 'no-act'}

@@ -22,6 +22,7 @@ import { CrossLinkChips } from './CrossLinkChips';
 import { CrossLinkText } from './CrossLinkText';
 import { PlanTextField } from './PlanTextField';
 import { ItemVisibilityControls } from './ItemVisibilityControls';
+import { TimelineRow } from './TimelineRow';
 import { TwoStepDelete } from './TwoStepDelete';
 
 /** What the item needs. */
@@ -111,15 +112,11 @@ export function TimelineEventItem(props: TimelineEventItemProps) {
   const { event } = props;
   const [isEditing, setIsEditing] = useState(false);
   return (
-    <li
-      data-testid="atlas-timeline-item"
-      className="flex flex-col gap-2 border-b border-hairline py-4 last:border-b-0"
-    >
-      <div className="flex flex-wrap items-center gap-2">
+    <TimelineRow kind="event" date={event.displayDate} sortValue={event.sortValue}>
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <p className="m-0 min-w-0 font-bold break-words text-heading">{event.title}</p>
         <InfoPill tone="gold">{t('storyline.timeline.event')}</InfoPill>
-        {event.displayDate !== '' && <span className="text-sm text-meta">{event.displayDate}</span>}
       </div>
-      <p className="m-0 font-semibold break-words text-heading">{event.title}</p>
       {event.description !== '' && !isEditing && (
         <p className="m-0 text-sm break-words whitespace-pre-line text-body">
           <CrossLinkText text={event.description} />
@@ -128,7 +125,7 @@ export function TimelineEventItem(props: TimelineEventItemProps) {
       {isEditing && <EventFields {...props} />}
       <Button
         variant="secondary"
-        className="self-start"
+        className="h-9 self-start px-4 text-[13px]"
         aria-expanded={isEditing}
         aria-label={
           isEditing ? undefined : t('storyline.timeline.editNamed', { title: event.title })
@@ -137,6 +134,6 @@ export function TimelineEventItem(props: TimelineEventItemProps) {
       >
         {isEditing ? t('storyline.timeline.done') : t('storyline.timeline.edit')}
       </Button>
-    </li>
+    </TimelineRow>
   );
 }

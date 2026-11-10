@@ -51,7 +51,7 @@ function BibleBody({
   }
 
   return (
-    <div className="grid items-start gap-8 lg:grid-cols-[minmax(240px,320px)_minmax(0,1fr)]">
+    <div className="grid items-start gap-6 lg:grid-cols-[300px_minmax(0,1fr)]">
       <BibleContents slug={slug} bible={bible} openEntryId={entryId} onCreateEntry={createEntry} />
       <div className="flex min-w-0 flex-col gap-4">
         {entryId === undefined && <p className="m-0 text-body">{t('bible.pick')}</p>}

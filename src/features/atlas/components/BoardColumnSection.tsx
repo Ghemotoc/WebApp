@@ -1,13 +1,15 @@
 /**
  * BoardColumnSection: one act's column on the chapter board (story S1-E17-19), or "No act".
  *
- * The act's name as a heading, its chapters as cards in book order, then "Add chapter", which
+ * No box of its own (bundle G10 ATLAS, part c1; board AtlasStoryline): the act's name as a heading
+ * with its chapter count, its chapters as glass cards in book order, then "Add chapter", which
  * adds a draft at the end of this act. Dropping a card on the column (not on a card) puts it at
  * the column's end. Who uses it: ChapterBoard. What it calls: BoardCard and the handlers it is
  * given.
  */
 import { useState } from 'react';
 
+import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 
@@ -60,12 +62,14 @@ function AddChapterButton({ name, onAdd }: { name: string; onAdd: () => Promise<
     <div className="flex flex-col gap-2">
       <Button
         variant="secondary"
+        className="h-9 self-start px-4 text-[13px]"
         aria-label={t('storyline.board.addChapterIn', { name })}
         onClick={() => {
           setFailed(false);
           onAdd().catch(() => setFailed(true));
         }}
       >
+        <ActionIcon name="plus" size={14} />
         {t('storyline.board.addChapter')}
       </Button>
       {failed && <Notice tone="error">{t('storyline.board.addFailed')}</Notice>}
@@ -84,7 +88,7 @@ function ColumnCards(props: BoardColumnSectionProps & { column: BoardColumn }) {
   const povNameOf = (id: string | null) =>
     storyline.characters.find((character) => character.id === id)?.name ?? null;
   return (
-    <ol className="m-0 flex list-none flex-col gap-3 p-0">
+    <ol className="m-0 flex list-none flex-col gap-3 p-0 empty:hidden">
       {column.chapters.map((chapter, index) => (
         <BoardCard
           key={chapter.code}
@@ -122,11 +126,7 @@ export function BoardColumnSection(props: BoardColumnSectionProps) {
   const restCount = column.chapters.filter((chapter) => chapter.code !== draggingCode).length;
 
   return (
-    <section
-      aria-labelledby={headingId}
-      data-testid="atlas-board-column"
-      className="min-w-0 rounded-card border border-border bg-panel"
-    >
+    <section aria-labelledby={headingId} data-testid="atlas-board-column" className="min-w-0">
       {/* The column's drop zone: a card dropped here (not on a card) goes to the column's end. */}
       <div
         role="presentation"
@@ -135,11 +135,20 @@ export function BoardColumnSection(props: BoardColumnSectionProps) {
           event.preventDefault();
           if (draggingCode !== null) move(draggingCode, { actId: column.actId, index: restCount });
         }}
-        className="flex h-full flex-col gap-3 p-4"
+        className="flex h-full flex-col gap-3"
       >
-        <h3 id={headingId} className="m-0 font-heading text-lg font-bold text-heading">
-          {name}
-        </h3>
+        <div className="flex items-baseline justify-between gap-2">
+          <h2
+            id={headingId}
+            className="m-0 min-w-0 font-heading text-lg font-bold break-words text-heading"
+          >
+            {name}
+          </h2>
+          {/* How many chapters the act holds; the list below says the same to a screen reader. */}
+          <span aria-hidden="true" className="text-sm text-meta">
+            {column.chapters.length}
+          </span>
+        </div>
         {column.chapters.length === 0 && (
           <p className="m-0 text-sm text-meta">{t('storyline.board.empty')}</p>
         )}

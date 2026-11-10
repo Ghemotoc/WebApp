@@ -382,7 +382,6 @@
     "contents": {
       "heading": "Sections",
       "manage": "Manage sections",
-      "newEntry": "New entry",
       "newEntryIn": "New entry in {{section}}",
       "newEntryName": "New entry",
       "noEntries": "No entries yet.",
@@ -528,7 +527,7 @@
     },
     "board": {
       "heading": "Chapter board",
-      "hint": "Drag a card, or use its buttons, to move it within an act or to another act. Chapter numbers follow by themselves.",
+      "hint": "Drag a card, or use Earlier and Later. Published chapters ask first.",
       "noAct": "No act",
       "empty": "No chapters here yet.",
       "chapterNumber": "Chapter {{number}}",
@@ -594,7 +593,10 @@
       "deleteFailed": "We couldn’t delete the event. Try again in a moment.",
       "undatedHeading": "Chapters without a date",
       "undatedHint": "Open a chapter and fill in its in-world date and sort value to place it on the timeline.",
-      "undatedNone": "Every chapter has a place on the timeline."
+      "undatedNone": "Every chapter has a place on the timeline.",
+      "sortLine": "sort {{value}}",
+      "noDateYet": "No in-world date yet",
+      "sideLabel": "Add an event and undated chapters"
     },
     "lanes": {
       "heading": "Point-of-view lanes",
@@ -602,7 +604,9 @@
       "caption": "Chapters by point-of-view character",
       "chapterColumn": "Chapter",
       "none": "No chapter has a point of view yet. Pick one in each chapter’s plan.",
-      "noChapters": "This story has no chapters yet."
+      "noChapters": "This story has no chapters yet.",
+      "countsLabel": "Chapters by teller",
+      "chaptersBy": "Told by {{name}}"
     }
   },
   "ideas": {

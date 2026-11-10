@@ -2,8 +2,9 @@
  * StorylinePage: /plan/s/:storySlug/storyline, a story's structure in Story Atlas (stories
  * S1-E17-19 to S1-E17-22).
  *
- * The Story Atlas top bar, the heading, then the view toggle (Board, Timeline or POV lanes, one
- * toggle away, S1-E17-22) and the view chosen. The choice is remembered on this device, so the
+ * The Story Atlas top bar, the heading, then the view switch (Board, Timeline or POV lanes, one
+ * switch away, S1-E17-22) with the view's hint beside it, and the view chosen (bundle G10 ATLAS,
+ * part c1; board AtlasStoryline). The choice is remembered on this device, so the
  * storyline opens on it next time. Only the writer sees any of it.
  * Who calls it: src/app/router.tsx (loaded only when a writer opens it). What it calls:
  * useStoryline → story_storyline() and the changers; ChapterBoard, TimelineView, PovLanesView;
@@ -13,9 +14,9 @@
 import { useState } from 'react';
 import { useParams, useSearchParams } from 'react-router';
 
-import { ChoiceChips } from '@/components/ui/ChoiceChips';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { useMyStories } from '@/features/writing/hooks/useMyStories';
 
@@ -37,7 +38,7 @@ import { ChapterBoard } from './ChapterBoard';
 import { PovLanesView } from './PovLanesView';
 import { TimelineView } from './TimelineView';
 
-/** The view's heading and hint, then the view itself. */
+/** The view chosen, in a section named after it ("Chapter board", "Timeline" …). */
 function StorylineBody({
   slug,
   storyline,
@@ -50,16 +51,8 @@ function StorylineBody({
   const { t } = useAtlasTranslation();
   const changers = useStoryline(slug);
   const labelOf = useChapterLabels(storyline.chapters);
-  const headings = { board: 'board', timeline: 'timeline', lanes: 'lanes' } as const;
   return (
-    <section aria-labelledby="atlas-storyline-view-heading" className="flex min-w-0 flex-col gap-4">
-      <h2
-        id="atlas-storyline-view-heading"
-        className="m-0 font-heading text-[22px] font-bold text-heading"
-      >
-        {t(`storyline.${headings[view]}.heading`)}
-      </h2>
-      <p className="m-0 text-sm text-meta">{t(`storyline.${headings[view]}.hint`)}</p>
+    <section aria-label={t(`storyline.${view}.heading`)} className="flex min-w-0 flex-col gap-4">
       {view === 'board' && (
         <ChapterBoard
           slug={slug}
@@ -83,7 +76,7 @@ function StorylineBody({
   );
 }
 
-/** Board, Timeline or POV lanes (S1-E17-22). */
+/** Board, Timeline or POV lanes (S1-E17-22), with the view's hint beside the switch. */
 function ViewToggle({
   view,
   onChange,
@@ -93,17 +86,20 @@ function ViewToggle({
 }) {
   const { t } = useAtlasTranslation();
   return (
-    <ChoiceChips
-      label={t('storyline.viewLabel')}
-      isLabelVisible
-      isLabelEyebrow
-      options={storylineViews.map((option) => ({
-        value: option,
-        label: t(`storyline.views.${option}`),
-      }))}
-      value={view}
-      onChange={(chosen) => onChange(storylineViews.find((option) => option === chosen) ?? 'board')}
-    />
+    <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+      <SegmentedControl
+        legend={t('storyline.viewLabel')}
+        isLegendVisible={false}
+        name="atlas-storyline-view"
+        options={storylineViews.map((option) => ({
+          value: option,
+          label: t(`storyline.views.${option}`),
+        }))}
+        value={view}
+        onChange={onChange}
+      />
+      <p className="m-0 max-w-[60ch] text-sm text-meta">{t(`storyline.${view}.hint`)}</p>
+    </div>
   );
 }
 

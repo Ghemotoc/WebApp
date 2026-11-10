@@ -382,7 +382,6 @@
     "contents": {
       "heading": "Secțiuni",
       "manage": "Organizează secțiunile",
-      "newEntry": "Intrare nouă",
       "newEntryIn": "Intrare nouă în {{section}}",
       "newEntryName": "Intrare nouă",
       "noEntries": "Încă nu ai intrări.",
@@ -528,7 +527,7 @@
     },
     "board": {
       "heading": "Panoul capitolelor",
-      "hint": "Trage un card sau folosește-i butoanele ca să-l muți în același act sau în alt act. Numerele capitolelor se actualizează singure.",
+      "hint": "Trage un card sau folosește Mai devreme și Mai târziu. Capitolele publicate întreabă întâi.",
       "noAct": "Fără act",
       "empty": "Încă nu e niciun capitol aici.",
       "chapterNumber": "Capitolul {{number}}",
@@ -594,7 +593,10 @@
       "deleteFailed": "Nu am putut șterge evenimentul. Încearcă din nou peste puțin timp.",
       "undatedHeading": "Capitole fără dată",
       "undatedHint": "Deschide un capitol și completează-i data în poveste și valoarea de sortare ca să-l așezi în cronologie.",
-      "undatedNone": "Fiecare capitol are un loc în cronologie."
+      "undatedNone": "Fiecare capitol are un loc în cronologie.",
+      "sortLine": "sortare {{value}}",
+      "noDateYet": "Încă fără dată în poveste",
+      "sideLabel": "Adaugă un eveniment și capitole fără dată"
     },
     "lanes": {
       "heading": "Culoarele perspectivelor",
@@ -602,7 +604,9 @@
       "caption": "Capitolele după personajul din perspectiva căruia sunt spuse",
       "chapterColumn": "Capitol",
       "none": "Niciun capitol nu are încă o perspectivă. Alege una în planul fiecărui capitol.",
-      "noChapters": "Povestea nu are încă niciun capitol."
+      "noChapters": "Povestea nu are încă niciun capitol.",
+      "countsLabel": "Capitole după narator",
+      "chaptersBy": "Spuse de {{name}}"
     }
   },
   "ideas": {

@@ -44,14 +44,17 @@ function EventBoxes({
 }) {
   const { t } = useAtlasTranslation();
   return (
-    <div className="grid gap-3 md:grid-cols-3">
-      <TextInput
-        id="atlas-event-title"
-        label={t('storyline.timeline.add.title')}
-        maxLength={200}
-        value={typed.title}
-        onChange={(changed) => setTyped({ ...typed, title: changed.target.value })}
-      />
+    <div className="grid gap-3 sm:grid-cols-2">
+      {/* The title takes the whole row; the two date boxes share the next (board AtlasTimeline). */}
+      <div className="sm:col-span-2">
+        <TextInput
+          id="atlas-event-title"
+          label={t('storyline.timeline.add.title')}
+          maxLength={200}
+          value={typed.title}
+          onChange={(changed) => setTyped({ ...typed, title: changed.target.value })}
+        />
+      </div>
       <TextInput
         id="atlas-event-date"
         label={t('storyline.timeline.add.displayDate')}
@@ -95,15 +98,15 @@ export function AddEventForm({ onAdd }: { onAdd: (event: NewStoryEvent) => Promi
 
   return (
     <form
-      className="flex flex-col gap-3"
+      className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface px-6 py-[22px] shadow-card"
       onSubmit={(submitted) => {
         submitted.preventDefault();
         void add();
       }}
     >
-      <h3 className="m-0 font-heading text-lg font-bold text-heading">
+      <h2 className="m-0 font-heading text-[22px] font-bold text-heading">
         {t('storyline.timeline.add.heading')}
-      </h3>
+      </h2>
       <EventBoxes typed={typed} setTyped={setTyped} />
       <Textarea
         id="atlas-event-description"
@@ -113,7 +116,7 @@ export function AddEventForm({ onAdd }: { onAdd: (event: NewStoryEvent) => Promi
         onChange={(changed) => setTyped({ ...typed, description: changed.target.value })}
       />
       {message !== null && <Notice tone="error">{message}</Notice>}
-      <Button type="submit" className="self-start">
+      <Button type="submit" variant="secondary" className="self-start">
         {t('storyline.timeline.add.button')}
       </Button>
     </form>

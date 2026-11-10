@@ -3,13 +3,15 @@
  * shows in reading mode with clickable links and an Edit toggle"; "when I delete it, then a second
  * confirming click is needed").
  *
- * The title as the heading and an Edit toggle (aria-pressed, so its state is never told by colour
- * alone). Reading mode shows the section, the tags and the text as Markdown; editing mode shows
- * BibleEntryEditor. A new entry opens in editing mode. Delete sits at the foot and asks twice.
+ * A glass article laid out as board AtlasWorld (bundle G10 ATLAS, part c1): the section and an
+ * Edit toggle on the top row (aria-pressed, so its state is never told by colour alone), then the
+ * title. Reading mode shows the tags, the text as Markdown and the links found in it; editing
+ * mode shows BibleEntryEditor. A new entry opens in editing mode. Delete sits at the foot and asks twice.
  * Who uses it: BiblePage. What it calls: the save and remove props (useStoryBible).
  */
 import { useState } from 'react';
 
+import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Button } from '@/components/ui/Button';
 import { InfoPill } from '@/components/ui/InfoPill';
 
@@ -19,6 +21,7 @@ import { useOpenStorySlug } from '../hooks/useOpenStorySlug';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { BibleEntryEditor } from './BibleEntryEditor';
+import { CrossLinkChips } from './CrossLinkChips';
 import { ItemVisibilityControls } from './ItemVisibilityControls';
 import { BibleMarkdown } from './BibleMarkdown';
 import { TwoStepDelete } from './TwoStepDelete';
@@ -34,18 +37,11 @@ export interface BibleEntryViewProps {
   remove: () => Promise<void>;
 }
 
-/** Reading mode: the section, the tags and the text. */
-function EntryReading({ bible, entry }: Pick<BibleEntryViewProps, 'bible' | 'entry'>) {
+/** Reading mode: the tags, the text and the links found in it. */
+function EntryReading({ entry }: Pick<BibleEntryViewProps, 'entry'>) {
   const { t } = useAtlasTranslation();
-  const sectionName = useBibleSectionName();
-  const section = bible.sections.find((candidate) => candidate.id === entry.sectionId);
   return (
     <div className="flex min-w-0 flex-col gap-4">
-      {section !== undefined && (
-        <p className="m-0 text-sm text-meta">
-          {t('bible.entry.inSection', { section: sectionName(section) })}
-        </p>
-      )}
       {entry.tags.length > 0 && (
         <ul aria-label={t('bible.entry.tags')} className="m-0 flex list-none flex-wrap gap-2 p-0">
           {entry.tags.map((tag) => (
@@ -58,8 +54,38 @@ function EntryReading({ bible, entry }: Pick<BibleEntryViewProps, 'bible' | 'ent
       {entry.body.trim() === '' ? (
         <p className="m-0 text-body">{t('bible.entry.empty')}</p>
       ) : (
-        <BibleMarkdown text={entry.body} />
+        // Board AtlasWorld: the entry reads at 17 px on a line no wider than 700 px.
+        <div className="max-w-[700px] [&>div]:text-[17px] [&>div]:leading-[1.7]">
+          <BibleMarkdown text={entry.body} />
+        </div>
       )}
+      <CrossLinkChips texts={[entry.body]} />
+    </div>
+  );
+}
+
+/** The top row: which section the entry is in (reading mode only) and the Edit toggle. */
+function EntryTopRow({
+  bible,
+  entry,
+  isEditing,
+  onToggle,
+}: Pick<BibleEntryViewProps, 'bible' | 'entry'> & { isEditing: boolean; onToggle: () => void }) {
+  const { t } = useAtlasTranslation();
+  const sectionName = useBibleSectionName();
+  const section = bible.sections.find((candidate) => candidate.id === entry.sectionId);
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <p className="m-0 text-sm text-meta">
+        {isEditing && t('bible.entry.editing')}
+        {!isEditing &&
+          section !== undefined &&
+          t('bible.entry.inSection', { section: sectionName(section) })}
+      </p>
+      <Button variant="secondary" aria-pressed={isEditing} onClick={onToggle}>
+        <ActionIcon name="pen" size={16} />
+        {t('bible.entry.edit')}
+      </Button>
     </div>
   );
 }
@@ -96,28 +122,24 @@ export function BibleEntryView({ bible, entry, startsEditing, save, remove }: Bi
   return (
     <article
       aria-labelledby="atlas-bible-entry-heading"
-      className="flex min-w-0 flex-col gap-5 rounded-card border border-border bg-surface px-7 py-[26px] shadow-card"
+      className="flex min-w-0 flex-col gap-4 rounded-card border border-border bg-surface px-5 py-6 shadow-card sm:px-11 sm:py-9"
     >
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <h2
-          id="atlas-bible-entry-heading"
-          className="m-0 min-w-0 font-heading text-[clamp(26px,3vw,36px)] leading-[1.1] font-extrabold break-words text-heading"
-        >
-          {entry.title}
-        </h2>
-        <Button
-          variant="secondary"
-          aria-pressed={isEditing}
-          onClick={() => setIsEditing(!isEditing)}
-        >
-          {t('bible.entry.edit')}
-        </Button>
-      </div>
-      {isEditing && <p className="m-0 text-sm text-meta">{t('bible.entry.editing')}</p>}
+      <EntryTopRow
+        bible={bible}
+        entry={entry}
+        isEditing={isEditing}
+        onToggle={() => setIsEditing(!isEditing)}
+      />
+      <h2
+        id="atlas-bible-entry-heading"
+        className="m-0 min-w-0 font-heading text-[clamp(26px,3vw,36px)] leading-[1.1] font-extrabold break-words text-heading"
+      >
+        {entry.title}
+      </h2>
       {isEditing ? (
         <BibleEntryEditor bible={bible} entry={entry} save={save} />
       ) : (
-        <EntryReading bible={bible} entry={entry} />
+        <EntryReading entry={entry} />
       )}
       <EntryReadersSection entry={entry} />
       <section
