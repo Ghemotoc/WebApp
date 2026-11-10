@@ -1,11 +1,13 @@
 /**
  * StaffHubPage: /staff/hub, where staff with the contests area (owner and admin) keep what the
- * Writers' hub shows beyond contests: the prompt of the week (GAPS-12c) and the calls for
- * submissions (GAPS-12d). Every change is in the audit log with the before and after values.
+ * Writers' hub shows beyond contests: the prompt of the week (GAPS-12c), the calls for
+ * submissions (GAPS-12d), the writer of the week (GAPS-12e), the learning path (GAPS-12g) and
+ * the live sessions (GAPS-12h). Every change is in the audit log with the before and after values.
  * Plain components (staff screens).
  *
  * Who shows it: the router, inside StaffLayout; the side menu lists it under Content.
- * What it calls: PromptsSection and CallsSection. The server decides who may: each table's
+ * What it calls: PromptsSection, CallsSection, SpotlightsSection, LearningPathSection and
+ * SessionsSection. The server decides who may: each table's
  * policy shows other staff no rows and the admin functions refuse them (architecture 1.8.1).
  */
 import { PageContainer } from '@/components/ui/PageContainer';

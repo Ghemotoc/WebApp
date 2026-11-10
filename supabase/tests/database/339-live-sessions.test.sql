@@ -13,7 +13,8 @@
 -- - live_session_reminders_select_own: a member reads their own reminders, another member and
 --   staff read none;
 -- - the job sends nothing more than an hour before the start, then exactly one
---   'live_session_soon' notification, and never a second one; a member who is no longer old
+--   'live_session_soon' notification, and never a second one, unless staff move the session to
+--   another time; a reminder that went out can still be taken off; a member who is no longer old
 --   enough gets none; the notification names the session and loses it once the session is
 --   deleted;
 -- - deleting a session takes its waiting reminders with it;
@@ -24,7 +25,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(34);
+select plan(37);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -166,6 +167,20 @@ select is(public.send_live_session_reminders() || '|' || pg_temp.soon_count('000
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 select is((select item -> 'live_session' ->> 'title_en' from jsonb_array_elements(public.my_notifications() -> 'notifications') as item
            where item ->> 'kind' = 'live_session_soon'), 'Soon zq', 'the notification names the session');
+reset role;
+
+-- Staff move the session by a quarter of an hour: the reminder waits again and goes out once more.
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000009');
+select lives_ok(format($$ select public.admin_save_live_session(%L,
+  pg_temp.session('Soon zq', '45 minutes', '18_plus')) $$, (select id from kept where label = 'soon')),
+  'an admin moves the session to another time');
+reset role;
+select is(public.send_live_session_reminders() || '|' || pg_temp.soon_count('00000000-0000-4000-8000-000000000001'),
+  '1|2', 'the member who asked hears of the new time, once');
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
+select public.set_live_session_reminder((select id from kept where label = 'soon'), false);
+select is((select count(*)::integer from public.live_session_reminders), 0,
+  'a reminder that already went out can still be taken off');
 
 /* ---------- 5. Deleting a session ---------- */
 
@@ -176,7 +191,8 @@ select is(public.admin_delete_live_session((select id from kept where label = 'l
 select is(pg_temp.audit_count('live_session.deleted') - (select deleted from audit_before), 2, 'both in the audit log');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 select is((select count(*)::integer from public.live_session_reminders where notified_at is null)
-  || '|' || (select coalesce(item ->> 'live_session', 'none') from jsonb_array_elements(public.my_notifications() -> 'notifications') as item
+  || '|' || (select string_agg(distinct coalesce(item ->> 'live_session', 'none'), ',')
+             from jsonb_array_elements(public.my_notifications() -> 'notifications') as item
              where item ->> 'kind' = 'live_session_soon'),
   '0|none', 'the waiting reminder went with its session, and the notification no longer names the deleted one');
 

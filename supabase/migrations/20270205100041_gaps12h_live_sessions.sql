@@ -216,7 +216,7 @@ grant execute on function public.writers_hub_sessions() to authenticated;
  * Errors: insufficient_privilege for a signed-out caller; no_data_found for a session that is
  *   unknown, deleted, already started or for an older age group (one answer for all four, so
  *   the function never says a session for older members exists).
- * Asking twice changes nothing. A reminder that already went out is left as it is.
+ * Asking twice changes nothing.
  */
 create function public.set_live_session_reminder(target_session uuid, wanted boolean)
 returns boolean
@@ -235,8 +235,7 @@ begin
   if not coalesce(wanted, false) then
     delete from public.live_session_reminders
     where live_session_reminders.user_id = caller_id
-      and live_session_reminders.session_id = target_session
-      and live_session_reminders.notified_at is null;
+      and live_session_reminders.session_id = target_session;
     return false;
   end if;
   -- Step 3: a session the caller can see on the hub: coming up and for their age group.
@@ -323,6 +322,8 @@ select cron.schedule('send-live-session-reminders', '*/10 * * * *', 'select publ
  * Errors: insufficient_privilege unless the caller may act on contests; check_violation for an
  *   empty or long text, an unknown language, a link that isn't https or a missing start;
  *   invalid_text_representation for an unknown rating; no_data_found for an unknown session.
+ * A changed start makes the session's sent reminders wait again, so members who asked hear of
+ * the new time in the hour before it.
  * Logged as live_session.saved with the before and after values.
  */
 create function public.admin_save_live_session(session_id uuid, session jsonb)
@@ -366,6 +367,11 @@ begin
       link_url = nullif(btrim(session ->> 'link_url'), ''),
       updated_by_user_id = (select auth.uid())
     where id = session_id returning * into saved;
+    -- A session moved to another time is announced again: its reminders wait once more.
+    if saved.starts_at is distinct from before_row.starts_at then
+      update public.live_session_reminders set notified_at = null
+      where live_session_reminders.session_id = saved.id and live_session_reminders.notified_at is not null;
+    end if;
   end if;
   -- Step 3: the audit log keeps what changed, in the same transaction.
   perform public.log_staff_action('live_session.saved', 'live_sessions', saved.id::text, null, null,

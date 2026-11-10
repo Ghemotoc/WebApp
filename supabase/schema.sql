@@ -9775,6 +9775,11 @@ begin
       link_url = nullif(btrim(session ->> 'link_url'), ''),
       updated_by_user_id = (select auth.uid())
     where id = session_id returning * into saved;
+    -- A session moved to another time is announced again: its reminders wait once more.
+    if saved.starts_at is distinct from before_row.starts_at then
+      update public.live_session_reminders set notified_at = null
+      where live_session_reminders.session_id = saved.id and live_session_reminders.notified_at is not null;
+    end if;
   end if;
   -- Step 3: the audit log keeps what changed, in the same transaction.
   perform public.log_staff_action('live_session.saved', 'live_sessions', saved.id::text, null, null,
@@ -39538,8 +39543,7 @@ begin
   if not coalesce(wanted, false) then
     delete from public.live_session_reminders
     where live_session_reminders.user_id = caller_id
-      and live_session_reminders.session_id = target_session
-      and live_session_reminders.notified_at is null;
+      and live_session_reminders.session_id = target_session;
     return false;
   end if;
   -- Step 3: a session the caller can see on the hub: coming up and for their age group.
