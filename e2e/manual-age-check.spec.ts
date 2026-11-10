@@ -103,14 +103,14 @@ test.describe('manual age checks (S1-E2-08b)', () => {
       page.getByRole('heading', { name: 'Yoti stand-in: are you 18 or over?' }),
     ).toBeVisible();
     await page.getByRole('link', { name: 'Fail' }).click();
-    await expect(page.getByRole('heading', { name: 'We couldn’t confirm your age' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'We couldn’t confirm the age' })).toBeVisible();
     await page.getByRole('button', { name: 'Ask for a manual check' }).click();
-    await expect(page.getByText('A person is checking your age.')).toBeVisible();
+    await expect(page.getByText('A person is checking the age.')).toBeVisible();
     // Asking changes no result: the account stays read-only until a person decides.
     expect(storedCheck()).toBe('failed|facial_estimation');
     // The start page shows the open request too, and no second "Ask" button.
     await page.goto('/age-check');
-    await expect(page.getByText('A person is checking your age.')).toBeVisible();
+    await expect(page.getByText('A person is checking the age.')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Ask for a manual check' })).toHaveCount(0);
   });
 

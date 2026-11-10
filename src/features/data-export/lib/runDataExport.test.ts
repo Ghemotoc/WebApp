@@ -121,7 +121,7 @@ function fakeClient(options: { failUpload?: boolean } = {}) {
 /** The guide's words for the tests: English, with every table described the same way (IDEAS-2a). */
 const guideWords = (madeAt: string) => ({
   fileName: 'READ ME FIRST.txt',
-  title: 'Your data, explained',
+  title: 'Data, explained',
   intro: `Made on ${madeAt.slice(0, 10)}.`,
   filesHeading: 'The files',
   files: { data: 'data.json', stories: 'stories/', plans: 'plans', library: 'library.csv' },
@@ -216,7 +216,7 @@ describe('the READ ME FIRST guide in the ZIP (IDEAS-2a)', () => {
     await makeDataExport(runOptions(fake.client));
     const zip = await JSZip.loadAsync(fake.uploadedZip() ?? new Uint8Array());
     const guide = (await zip.file('READ ME FIRST.txt')?.async('string')) ?? '';
-    expect(guide.startsWith('Your data, explained')).toBe(true);
+    expect(guide.startsWith('Data, explained')).toBe(true);
     expect(guide).toContain('- library.csv');
     expect(guide).toContain('- plans');
     expect(guide).toContain('- chapters: about chapters');

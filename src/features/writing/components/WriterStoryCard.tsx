@@ -1,5 +1,5 @@
 /**
- * WriterStoryCard: one of the writer's own stories on "Your writing" (story S1-E3-01; board
+ * WriterStoryCard: one of the writer's own stories on "Writing" (story S1-E3-01; board
  * WriterDashboard 4.1, "Story by story").
  *
  * Board values: a card with the 96 × 130 drawn cover on the left, the title in Bricolage, the

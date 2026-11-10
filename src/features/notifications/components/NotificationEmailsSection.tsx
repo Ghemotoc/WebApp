@@ -13,7 +13,6 @@
  * and set_notification_email().
  */
 import { ActionIcon } from '@/components/icons/ActionIcon';
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 
 import { useEmailSettings } from '../hooks/useEmailSettings';
@@ -98,7 +97,6 @@ export function NotificationEmailsSection() {
       className="flex scroll-mt-24 flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card"
     >
       <div className="flex flex-col gap-1.5">
-        <Eyebrow>{t('emailSettings.eyebrow')}</Eyebrow>
         <h2
           id="settings-notifications-heading"
           className="m-0 font-heading text-[22px] font-bold text-heading"

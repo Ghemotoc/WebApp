@@ -83,7 +83,7 @@ test.describe('report dialog (S1-E10-01)', () => {
     await dialog.getByLabel('Anything else? (optional)').fill('Keeps messaging me');
     await dialog.getByRole('button', { name: 'Send report' }).click();
     await expect(dialog.getByRole('status')).toContainText('Report sent');
-    await expect(dialog.getByRole('status')).toContainText(/Your reference: R-\d{6}/);
+    await expect(dialog.getByRole('status')).toContainText(/Reference: R-\d{6}/);
     expect(
       runSql(`select reason || ' ' || reporter_age_band from public.reports
         where user_id = '00000000-0000-4000-8000-000000000004' and created_at > now() - interval '1 hour'`),

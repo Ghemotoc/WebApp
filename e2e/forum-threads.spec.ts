@@ -76,7 +76,7 @@ test.describe('forum threads and posts (FORUMS-1b, S1-E8-02)', () => {
     await expect(page).toHaveURL(/\/forums\/first-chapters\/new$/);
     await page.getByLabel('Title').fill(threadTitle);
     await page
-      .getByLabel('Your post')
+      .getByLabel('Post')
       .fill('Every version of my chapter one starts with **two pages** of history.');
     await page.getByRole('button', { name: 'Post the thread' }).click();
     await expect(page.getByRole('heading', { level: 1, name: threadTitle })).toBeVisible();
@@ -89,14 +89,12 @@ test.describe('forum threads and posts (FORUMS-1b, S1-E8-02)', () => {
   test('another member replies safely and gets #2', async ({ browser }) => {
     const page = await openAs(browser, 'teacher', threadAddress());
     // HTML is refused with plain words (criterion 1).
-    await page
-      .getByRole('textbox', { name: 'Your reply' })
-      .fill('Try this <script>alert(1)</script>');
+    await page.getByRole('textbox', { name: 'Reply' }).fill('Try this <script>alert(1)</script>');
     await page.getByRole('button', { name: 'Post reply' }).click();
     await expect(page.getByText('Posts can’t contain HTML tags.', { exact: false })).toBeVisible();
     // A reply with a link posts as #2, and the link is safe (criterion 2).
     await page
-      .getByRole('textbox', { name: 'Your reply' })
+      .getByRole('textbox', { name: 'Reply' })
       .fill('Start with the scene. Our [guide](https://example.com/guide) helps.');
     await page.getByRole('button', { name: 'Post reply' }).click();
     await expect(page).toHaveURL(/\?post=2$/);
@@ -123,7 +121,7 @@ test.describe('forum threads and posts (FORUMS-1b, S1-E8-02)', () => {
   test('the author edits; a moderator reads the earlier version', async ({ browser }) => {
     const writer = await openAs(browser, 'adult_writer', threadAddress());
     await postCard(writer, 1).getByRole('button', { name: 'Edit post 1' }).click();
-    await writer.getByLabel('Your post').fill('My chapter one now opens on the scene.');
+    await writer.getByLabel('Post', { exact: true }).fill('My chapter one now opens on the scene.');
     await writer.getByRole('button', { name: 'Save changes' }).click();
     await expect(postCard(writer, 1).getByText(/^Edited /)).toBeVisible();
     await expect(

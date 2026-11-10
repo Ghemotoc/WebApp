@@ -42,7 +42,7 @@ describe('marking as read', () => {
     ]);
   });
 
-  it('sends no forum for "Mark all as read", and the forum for "Mark as read"', async () => {
+  it('sends no forum for "Mark as read", and the forum for "Mark as read"', async () => {
     const { client, calls } = fakeClient(null);
     await markForumsRead(client, null);
     await markForumsRead(client, 'writing-craft');

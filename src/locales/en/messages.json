@@ -1,10 +1,9 @@
 {
   "documentTitle": "Messages",
   "chatDocumentTitle": "Messages with {{name}}",
-  "eyebrow": "Messages",
-  "title": "Your messages",
+  "title": "Messages",
   "lead": "Private chats with other writers and readers. Text only.",
-  "signedOut": "Log in to see your messages.",
+  "signedOut": "Log in to see messages.",
   "logIn": "Log in",
   "list": {
     "title": "Chats",
@@ -89,14 +88,14 @@
     "on": "On",
     "off": "Off",
     "adultsHint": "Adults can never message anyone under 16. If you’re 16 or 17, messages from adults are off unless you turn them on. Only you can turn this on, in Settings.",
-    "privacyTitle": "Who can read your messages",
+    "privacyTitle": "Who can read messages",
     "privacy": "Messages aren’t end-to-end encrypted. Our team reads them only if someone reports them or the law requires it."
   },
   "newChat": {
     "eyebrow": "Messages",
     "title": "Start a new chat",
-    "label": "Their username",
-    "hint": "The name after @ on their profile.",
+    "label": "Username",
+    "hint": "The name after @ on the profile.",
     "open": "Open chat",
     "close": "Close"
   },

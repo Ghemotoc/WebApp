@@ -15,12 +15,12 @@
     "searchLabel": "Search stories, writers and tags",
     "back": "Back",
     "home": "{{productName}} home",
-    "accountTools": "Your notifications, chats and account",
+    "accountTools": "Notifications, chats and account",
     "focus": {
       "signUp": "Join",
       "logIn": "Log in",
       "resetPassword": "Reset password",
-      "setUp": "Set up your account",
+      "setUp": "Set up the account",
       "notOpen": "Not open yet",
       "ageCheck": "Age check",
       "newStory": "New story",
@@ -45,11 +45,11 @@
     "privacy": "Privacy",
     "guidelines": "Community guidelines",
     "join": "Join for free",
-    "viewProfile": "View your public profile",
+    "viewProfile": "View public profile",
     "editProfile": "Edit profile",
     "settings": "Settings",
     "logIn": "Log in",
-    "accountWithInitials": "Your account, {{initials}}",
+    "accountWithInitials": "Account, {{initials}}",
     "logOut": "Log out",
     "logOutFailed": "We couldn’t log you out. Check your connection and try again.",
     "contact": "Company and legal contacts",
@@ -73,7 +73,7 @@
     "label": "Language",
     "en": "English",
     "ro": "Română",
-    "savedToAccount": "Language saved to your account.",
+    "savedToAccount": "Language saved to the account.",
     "keptOnDevice": "We couldn't save the language to your account. It's kept on this device.",
     "settingsHeading": "Language",
     "settingsIntro": "The language of buttons, menus and emails. It is saved to the account, so it applies on every device.",
@@ -123,7 +123,7 @@
     "tryAgain": "Try again",
     "goHome": "Go to Home",
     "contactUs": "Contact us",
-    "whatWeSendLabel": "What we send to our error log:",
+    "whatWeSendLabel": "What we send to the error log:",
     "whatWeSend": "the type of error, the page and the app version. Never your email, your IP address or anything you wrote."
   },
   "maintenance": {
@@ -147,8 +147,8 @@
     "beingChecked": "Picture being checked",
     "waitingForCheck": "Waiting for a check",
     "waitingForPerson": "Waiting for a person",
-    "uploading": "Uploading and checking your picture…",
-    "passed": "Your picture passed the check.",
+    "uploading": "Uploading and checking the picture…",
+    "passed": "The picture passed the check.",
     "held": "A person on our moderation team will look at your picture before others can see it. We'll let you know.",
     "pending": "Your picture is uploaded. We'll check it as soon as we can; until then only you can see it.",
     "failed": {
@@ -161,7 +161,7 @@
     },
     "coverLabel": "Upload a picture",
     "coverHint": "JPEG, PNG or WebP, up to 5 MB. A tall picture (5 by 8) fits best. Readers see it once it passes our picture check.",
-    "coverPreview": "Your uploaded cover",
+    "coverPreview": "Uploaded cover",
     "chapter": {
       "figureLabel": "Picture in this chapter",
       "beingChecked": "Picture being checked",
@@ -200,7 +200,7 @@
       "heading": "How can we help?",
       "intro": "Short guides to writing, reading and staying safe here, and answers to the questions people ask most.",
       "questions": "Popular questions",
-      "back": "All help pages",
+      "back": "Help pages",
       "pageTitle": "{{title}} · Help",
       "notFoundHeading": "We can't find that help page",
       "notFound": "It may have moved or been taken down. All help pages are on the Help page.",
@@ -216,7 +216,7 @@
       "updatedLine_other": "Updated {{date}} · {{count}} min read",
       "stillStuck": {
         "heading": "Still stuck?",
-        "supportTitle": "Ask our support team",
+        "supportTitle": "Ask the support team",
         "supportLine": "A person reads every request. We usually answer within one working day.",
         "contactTitle": "Contact us",
         "contactLine": "Questions about {{productName}}, partners and schools.",
@@ -241,7 +241,7 @@
       "helpAndLegal": "Help and legal",
       "newWriters": "New writers",
       "startWriting": "Start writing",
-      "firstStory": "Start your first story"
+      "firstStory": "Start a first story"
     },
     "questionsEyebrow": "Questions",
     "moreHelp": {
@@ -254,7 +254,7 @@
   "appearance": {
     "eyebrow": "Appearance",
     "heading": "Theme",
-    "intro": "Your choice follows you on every device.",
+    "intro": "The choice follows you on every device.",
     "themeLegend": "Theme",
     "looks": {
       "lilac": "Lilac mist",
@@ -268,7 +268,7 @@
     "modes": {
       "light": "Light",
       "night": "Night",
-      "device": "Match my device"
+      "device": "Match the device"
     },
     "seasonalLabel": "Seasonal themes",
     "seasonalHint": "Winter, spring, summer and autumn looks switch on by themselves for a few weeks each season. Off unless you turn it on.",

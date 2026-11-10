@@ -1,6 +1,6 @@
 {
   "documentTitle": "Site · Echipă",
-  "eyebrow": "Echipă · site",
+  "eyebrow": "Echipă",
   "heading": "Site",
   "intro": "Editează pagina principală a site-ului, anunțurile, paginile de ajutor și întrebările, pentru fiecare piață și limbă. Alege întâi piața și limba. O versiune apare la 00:00, ora României, în data de la care se afișează, iar fiecare publicare e în jurnalul de audit.",
   "auditLink": "Vezi toate schimbările site-ului în jurnalul de audit",
@@ -137,7 +137,7 @@
   "notices": {
     "new": "Anunț nou",
     "none": "Încă nu există anunțuri pe această piață.",
-    "back": "Înapoi la toate anunțurile",
+    "back": "Înapoi la anunțuri",
     "end": "Încheie acum",
     "endLabel": "Încheie acum anunțul „{{text}}”",
     "editLabel": "Editează anunțul „{{text}}”",

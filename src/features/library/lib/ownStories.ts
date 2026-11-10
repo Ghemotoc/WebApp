@@ -7,7 +7,7 @@
 import type { MyStory } from '@/features/writing/api/stories';
 
 /**
- * The writer's stories that aren't deleted, in the order "Your writing" lists them. A deleted
+ * The writer's stories that aren't deleted, in the order "Writing" lists them. A deleted
  * story can still be restored for 30 days (S1-E3-05), but it belongs in "Recently deleted" on
  * Your writing, not on a shelf.
  *

@@ -1,9 +1,9 @@
 {
   "why": {
     "button": "Why this ad?",
-    "ours": "This is one of our own pages.",
+    "ours": "This is one of the site’s own pages.",
     "matchesParts": "It matches this page: {{parts}}.",
-    "matchesPage": "It is chosen from this page only.",
+    "matchesPage": "It is chosen from this page.",
     "category": "category {{name}}",
     "tag": "tag {{name}}",
     "language": "language {{name}}",

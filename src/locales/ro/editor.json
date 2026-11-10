@@ -42,11 +42,11 @@
     "idle": "Nimic de salvat încă.",
     "unsaved": "Modificări nesalvate.",
     "saving": "Se salvează…",
-    "savedJustNow": "Salvat chiar acum.",
+    "savedJustNow": "Salvat acum.",
     "savedAt": "Salvat la {{time}}.",
     "conflict": "Acest capitol a fost modificat pe alt dispozitiv. Salvarea s-a oprit ca să nu se suprascrie nimic. Alege ce versiune păstrezi.",
     "failed": "Nu am putut salva. Verifică conexiunea; încercăm din nou în 10 secunde.",
-    "notActive": "Contul tău nu poate salva capitole încă.",
+    "notActive": "Contul nu poate salva capitole încă.",
     "offline": "Nu ești conectat. Modificările rămân pe acest dispozitiv și se salvează când revii online."
   },
   "link": {
@@ -83,7 +83,7 @@
       "notSaved": "Ultimele modificări nu sunt salvate încă. Așteaptă „Salvat”, apoi încearcă din nou.",
       "empty": "Scrie ceva înainte să publici.",
       "badTime": "Alege o dată și o oră din viitor, cel mult peste un an.",
-      "notActive": "Contul tău nu poate publica încă.",
+      "notActive": "Contul nu poate publica încă.",
       "failed": "Nu am putut face asta. Verifică conexiunea și încearcă din nou."
     },
     "webReadingNote": "Cititorii conectați pot citi capitolul în browser până apar aplicațiile. Copierea e mai grea, dar capturile de ecran funcționează în continuare pe web."
@@ -99,10 +99,10 @@
     "plan": "Plănuiește povestea"
   },
   "yourStories": {
-    "heading": "Poveștile tale",
+    "heading": "Povești",
     "newStory": "Poveste nouă"
   },
-  "notFound": "Nu găsim acest capitol printre ale tale.",
+  "notFound": "Nu găsim acest capitol în cont.",
   "signedOut": "Intră în cont ca să scrii.",
   "errors": {
     "titleTooLong": "Titlul unui capitol poate avea cel mult {{max}} de caractere.",
@@ -160,7 +160,7 @@
     "checkNote": "Fiecare imagine trece prin verificarea imaginilor înainte s-o vadă cititorii.",
     "add": "Adaugă imaginea",
     "cancel": "Renunță",
-    "uploading": "Îți încărcăm și verificăm imaginea…",
+    "uploading": "Încărcăm și verificăm imaginea…",
     "missingFile": "Alege o imagine.",
     "missingAlt": "Scrie un text alternativ pentru imagine."
   },
@@ -248,9 +248,9 @@
       "blue": "Culoare: albastru"
     },
     "undo": "Anulează",
-    "clear": "Șterge tot",
+    "clear": "Golește",
     "sheetRole": "planșă de desen",
-    "sheetLabel": "Desenul tău",
+    "sheetLabel": "Desen",
     "sheetHint": "Desenează cu mouse-ul, cu degetul sau cu un creion digital. De la tastatură, săgețile trasează o linie, iar Shift cu o săgeată mută fără să deseneze.",
     "lineCount_one": "{{count}} linie desenată",
     "lineCount_few": "{{count}} linii desenate",
@@ -258,7 +258,7 @@
     "altHint": "Descrie desenul pentru cititorii care folosesc un cititor de ecran.",
     "savedNote": "Se salvează în capitol ca imagine. Trece prin verificarea noastră a imaginilor înainte să-l vadă cititorii.",
     "missingInk": "Desenează ceva mai întâi.",
-    "uploading": "Îți salvăm și verificăm desenul…",
+    "uploading": "Salvăm și verificăm desenul…",
     "insert": "Inserează desenul",
     "cancel": "Renunță"
   }

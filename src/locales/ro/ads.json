@@ -1,9 +1,9 @@
 {
   "why": {
     "button": "De ce văd această reclamă?",
-    "ours": "Este una dintre paginile noastre.",
+    "ours": "Este una dintre paginile site-ului.",
     "matchesParts": "Se potrivește cu această pagină: {{parts}}.",
-    "matchesPage": "Este aleasă doar după această pagină.",
+    "matchesPage": "Este aleasă după această pagină.",
     "category": "categoria {{name}}",
     "tag": "eticheta {{name}}",
     "language": "limba {{name}}",

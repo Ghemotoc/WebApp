@@ -1,5 +1,5 @@
 /**
- * MySupportPage: /support, "Your support requests" (story S1-E11-13 criterion 2; bundle
+ * MySupportPage: /support, "Support requests" (story S1-E11-13 criterion 2; bundle
  * ADMIN-2h1).
  *
  * The person's tickets (subject, number, status, last activity, and "We answered" when the team

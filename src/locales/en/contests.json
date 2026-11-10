@@ -15,22 +15,22 @@
     "problems": {
       "not_active": "Your account can’t take part in contests yet.",
       "not_readable": "Readers can’t open it yet. Publish a chapter first.",
-      "class_only": "It’s shared only with your class.",
+      "class_only": "It’s shared only with the class.",
       "language": "It’s written in a language this contest doesn’t take.",
       "rating": "This contest is open to writers under 16, so it takes only stories rated All ages or 13+.",
       "word_limit": "Its published chapters are longer than the word limit."
     },
-    "entrySaved": "Your story is entered. Good luck!",
+    "entrySaved": "Story entered. Good luck!",
     "withdrawn": "Your entry is withdrawn. You can enter again until entries close.",
     "failures": {
       "already_entered": "You already have a story in this contest. Withdraw it first to enter another.",
       "closed": "Entries have closed, so the entry can’t be changed.",
-      "no_contest": "This contest isn’t taking entries from you any more.",
+      "no_contest": "This contest isn’t taking this entry any more.",
       "no_story": "We couldn’t find this story.",
       "no_entry": "You have no entry in this contest.",
       "not_active": "Your account can’t take part in contests yet.",
       "not_readable": "Readers can’t open this story yet. Publish a chapter first.",
-      "class_only": "This story is shared only with your class.",
+      "class_only": "This story is shared only with the class.",
       "language": "This contest doesn’t take stories in this language.",
       "rating": "This contest takes only stories rated All ages or 13+.",
       "word_limit": "This story is longer than the word limit.",
@@ -39,10 +39,10 @@
   },
   "staff": {
     "documentTitle": "Contests",
-    "eyebrow": "Contests",
+    "eyebrow": "Staff",
     "heading": "Contests",
     "intro": "Set up writing contests. A contest opens only when its full rules are published in Romanian and English and linked from its landing page.",
-    "listHeading": "All contests",
+    "listHeading": "Contests",
     "empty": "No contests yet.",
     "loadFailed": "The contests couldn’t be loaded. Try again in a moment.",
     "unnamed": "Untitled contest",
@@ -73,7 +73,7 @@
     },
     "editor": {
       "documentTitle": "Contest",
-      "back": "All contests",
+      "back": "Contests",
       "notFound": "This contest doesn’t exist.",
       "pageLink": "Landing page: /c/{{slug}}.",
       "draft": "Draft: writers don’t see it yet.",
@@ -238,7 +238,7 @@
         "failed": "That didn’t work. Try again in a moment.",
         "no_contest": "This contest no longer exists."
       },
-      "certificatesHint": "Every valid entry gets a certificate under My certificates: winners and finalists by their placing, everyone else for taking part. It prints the pen name only. If you change a placing later, issue them again: only the changed certificates are updated.",
+      "certificatesHint": "Every valid entry gets a certificate under Certificates: winners and finalists by their placing, everyone else for taking part. It prints the pen name only. If you change a placing later, issue them again: only the changed certificates are updated.",
       "issueCertificates": "Issue certificates"
     }
   }

@@ -136,21 +136,21 @@ test.describe('sticky and locked threads, and Don’t bump (FORUMS-1e, S1-E8-05)
     await expect(note).toContainText('Locked by the moderation team on');
     await expect(note).toContainText('Reason: “The prompt has ended.”');
     await expect(note).not.toContainText('moderator');
-    await expect(member.getByRole('textbox', { name: 'Your reply' })).toHaveCount(0);
+    await expect(member.getByRole('textbox', { name: 'Reply' })).toHaveCount(0);
     await expect(member.getByRole('region', { name: 'Moderator tools' })).toHaveCount(0);
     await member.goto(forumAddress);
     await expect(threadRow(member, newerTitle).getByText('Locked', { exact: true })).toBeVisible();
     // Unlocking brings the reply box back.
     await moderate(moderator, 'Reopened for late entries', 'Unlock thread');
     await member.goto(threadAddress(newerTitle));
-    await expect(member.getByRole('textbox', { name: 'Your reply' })).toBeVisible();
+    await expect(member.getByRole('textbox', { name: 'Reply' })).toBeVisible();
     await moderator.context().close();
     await member.context().close();
   });
 
   test('Don’t bump posts the reply and leaves the thread where it was', async ({ browser }) => {
     const page = await openAs(browser, 'teacher', threadAddress(olderTitle));
-    await page.getByRole('textbox', { name: 'Your reply' }).fill('A quiet note, no need to bump.');
+    await page.getByRole('textbox', { name: 'Reply' }).fill('A quiet note, no need to bump.');
     await page.getByRole('checkbox', { name: 'Don’t bump' }).check();
     await page.getByRole('button', { name: 'Post reply' }).click();
     await expect(page.locator('#post-2')).toBeVisible();

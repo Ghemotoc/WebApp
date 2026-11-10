@@ -22,11 +22,11 @@
     "postReply": "Post reply",
     "cancel": "Cancel",
     "kind": "Be kind. Every report is read by a person.",
-    "posted": "Your comment is up.",
+    "posted": "Comment posted.",
     "paragraphLabel": "Comment on this paragraph"
   },
   "failures": {
-    "read_only": "Your account can’t comment yet.",
+    "read_only": "This account can’t comment yet.",
     "too_many_one": "You’ve posted a lot of comments. Wait {{count}} minute before the next one.",
     "too_many_few": "You’ve posted a lot of comments. Wait {{count}} minutes before the next one.",
     "too_many_other": "You’ve posted a lot of comments. Wait {{count}} minutes before the next one.",
@@ -60,7 +60,7 @@
     "add": "Add a reaction",
     "pick": "Pick a reaction",
     "chip": "{{name}}, {{count}}",
-    "chipMine": "{{name}}, {{count}}, your reaction",
+    "chipMine": "{{name}}, {{count}}, reacted by you",
     "names": {
       "heart": "Heart",
       "fire": "Fire",
@@ -70,7 +70,7 @@
       "star": "Star"
     },
     "failures": {
-      "read_only": "Your account can’t react yet.",
+      "read_only": "This account can’t react yet.",
       "other": "We couldn’t save your reaction. Check your connection and try again."
     }
   },
@@ -78,7 +78,7 @@
     "label": "Downvote",
     "sent": "Downvote sent. It’s private: nobody sees a count, not even the writer. Only moderators look at it.",
     "failures": {
-      "read_only": "Your account can’t downvote yet.",
+      "read_only": "This account can’t downvote yet.",
       "other": "We couldn’t save your downvote. Check your connection and try again."
     }
   },

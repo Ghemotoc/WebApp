@@ -1,12 +1,12 @@
 /**
- * DeleteAccountConfirm: the second Delete account panel, after "Delete my account" (story
+ * DeleteAccountConfirm: the second Delete account panel, after "Delete account" (story
  * S1-E13-03; board Settings 6.3, "Delete your account?").
  *
  * Top to bottom as on the board: the question, when the account is deleted for good, what
  * happens (content deleted, only what an open legal case holds is kept, moderation records stay),
- * "Download my data first", "Download your stories first" for a writer (DownloadStoriesFirst,
+ * "Download data first", "Download stories first" for a writer (DownloadStoriesFirst,
  * IDEAS-2a: the files are made without leaving this panel), "Log in again to confirm"
- * (ConfirmLogIn) while the last log-in is too old, then "Keep my account" and "Delete my account".
+ * (ConfirmLogIn) while the last log-in is too old, then "Keep account" and "Delete account".
  * Who shows it: DeleteAccountSection. What it calls: useRequestAccountDeletion and
  * DownloadStoriesFirst (features/data-export); after a request
  * the whole app reads its state again and AccountClosingGate shows the closing page.
@@ -33,7 +33,7 @@ interface DeleteAccountConfirmProps {
   deletionDays: number;
   /** True when the last log-in is recent enough to confirm. */
   signedInRecently: boolean;
-  /** "Keep my account": closes this panel. */
+  /** "Keep account": closes this panel. */
   onKeep: () => void;
 }
 

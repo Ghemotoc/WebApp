@@ -1,7 +1,6 @@
 {
-  "documentTitle": "Your library",
-  "eyebrow": "Library",
-  "title": "Your library",
+  "documentTitle": "Library",
+  "title": "Library",
   "intro": "Carry on from where you stopped. Your place in every chapter is saved on every device you log in on.",
   "signedOut": {
     "title": "Keep a library",
@@ -34,8 +33,8 @@
     "empty": "Stories you start reading show here, with your place in them."
   },
   "shelves": {
-    "eyebrow": "Your shelves",
-    "heading": "Stories in your library",
+    "eyebrow": "Shelves",
+    "heading": "Stories in the library",
     "choose": "Shelf",
     "option": "{{name}} ({{count}})",
     "reading": "Reading",
@@ -50,11 +49,11 @@
       "mine": "Stories you write show here, drafts included. Only you see this shelf."
     },
     "mine": {
-      "label": "My stories",
+      "label": "Written by you",
       "draft": "Draft",
       "ongoing": "Ongoing",
       "completed": "Completed",
-      "yourWriting": "Open Your writing for numbers, comments and every story tool",
+      "yourWriting": "Open Writing for numbers, comments and every story tool",
       "newStory": "Start a new story",
       "loadFailed": "We couldn’t load your stories. Check your connection and try again."
     }
@@ -73,15 +72,15 @@
   },
   "button": {
     "label": "Library",
-    "none": "Not in your library",
+    "none": "Not in the library",
     "saveFailed": "That didn't save. Try again.",
     "logIn": "Log in to save it"
   },
   "startReading": "Start reading",
   "continueChapter": "Continue chapter {{number}}",
   "habit": {
-    "eyebrow": "Just for you",
-    "heading": "Your reading days",
+    "eyebrow": "Private",
+    "heading": "Reading days",
     "offBody": "Keep a private count of the days you read, with a daily target if you want one. Nobody else sees it. No badges, no pressure.",
     "turnOn": "Turn it on",
     "daysThisWeek_one": "You read on {{count}} day this week.",
@@ -94,7 +93,7 @@
     "minutesToday_other": "{{count}} minutes today",
     "targetMet": "Today’s target reached.",
     "progressLabel": "Minutes read today",
-    "privateNote": "Only you see this. We keep just the minutes for each day, for two weeks.",
+    "privateNote": "Only you see this. We keep the minutes for each day, for two weeks.",
     "settingsHeading": "Target and reminder",
     "target": "Daily target, in minutes",
     "targetHint": "Any number from 1 to 600. Leave it empty for no target.",
@@ -109,19 +108,19 @@
     "save": "Save",
     "saved": "Saved.",
     "saveFailed": "That didn’t save. Check your connection and try again.",
-    "turnOff": "Turn off and delete my minutes",
+    "turnOff": "Turn off and delete the minutes",
     "turnOffConfirm": "This deletes your target, your reminder and the minutes counted so far.",
     "turnOffYes": "Yes, turn it off",
     "keepIt": "Keep it",
     "changeFailed": "That didn’t work. Check your connection and try again.",
-    "loadFailed": "Your reading days couldn’t be loaded."
+    "loadFailed": "Reading days couldn’t be loaded."
   },
   "thanks": {
     "button": "Tell the writer you finished it",
     "sent": "Sent",
-    "hint": "The writer sees your name and that you finished their story. No message, just thanks.",
+    "hint": "The writer sees your name and that you finished the story. No message, only thanks.",
     "sentNote": "Sent. The writer will see that you finished their story.",
-    "failed": "We couldn’t send it. Please try again.",
+    "failed": "We couldn’t send it. Try again.",
     "notActive": "You can send this once your account is ready to take part."
   }
 }

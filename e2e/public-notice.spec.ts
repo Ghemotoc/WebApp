@@ -82,12 +82,12 @@ test.describe('public report form (S1-E10-02)', () => {
     await page.getByRole('contentinfo').getByRole('link', { name: 'Report content' }).click();
     await expect(page).toHaveURL(/\/report$/);
 
-    const form = page.getByRole('form', { name: 'Your report' });
+    const form = page.getByRole('form', { name: 'Report' });
     await form.getByRole('button', { name: 'Send report' }).click();
     await expect(form.getByText('Choose what kind of content it is.')).toBeVisible();
     await expect(form.getByText('Paste the exact link to the content.')).toBeVisible();
     await expect(form.getByText('Say why you think it’s illegal.')).toBeVisible();
-    await expect(form.getByText('Write your name.')).toBeVisible();
+    await expect(form.getByText('Write a name.')).toBeVisible();
     await expect(form.getByText('Tick the good-faith statement to send the report.')).toBeVisible();
     // Focus goes to the first problem: the kind.
     await expect(form.getByRole('radio').first()).toBeFocused();
@@ -95,7 +95,7 @@ test.describe('public report form (S1-E10-02)', () => {
 
   test('a visitor sends a notice and the receipt carries the reference', async ({ page }) => {
     await openReportForm(page);
-    const form = page.getByRole('form', { name: 'Your report' });
+    const form = page.getByRole('form', { name: 'Report' });
     await form.getByRole('radio', { name: 'Copyright' }).click();
     await form
       .getByLabel('Exact link to the content (required)')
@@ -103,8 +103,8 @@ test.describe('public report form (S1-E10-02)', () => {
     await form
       .getByLabel('Why do you think it’s illegal? (required)')
       .fill('My poem, copied without asking.');
-    await form.getByLabel('Your name (required)').fill('Ana Test');
-    await form.getByLabel('Your email (required)').fill(`notifier-${stamp}@example.com`);
+    await form.getByLabel('Name (required)').fill('Ana Test');
+    await form.getByLabel('Email (required)').fill(`notifier-${stamp}@example.com`);
     await form.getByLabel(/I believe, in good faith/).check();
     await form.getByRole('button', { name: 'Send report' }).click();
 
@@ -121,9 +121,9 @@ test.describe('public report form (S1-E10-02)', () => {
 
   test('child sexual content can be reported without a name or email', async ({ page }) => {
     await openReportForm(page);
-    const form = page.getByRole('form', { name: 'Your report' });
+    const form = page.getByRole('form', { name: 'Report' });
     await form.getByRole('radio', { name: 'Sexual content involving a minor' }).click();
-    await expect(form.getByLabel('Your name (optional)')).toBeVisible();
+    await expect(form.getByLabel('Name (optional)')).toBeVisible();
     await form
       .getByLabel('Exact link to the content (required)')
       .fill(`https://elsewhere.example/${stamp}/csam`);
@@ -156,7 +156,7 @@ test.describe('public report form (S1-E10-02)', () => {
       .getByLabel('The order, or a summary of it (required)')
       .fill('Removal order under Regulation (EU) 2021/784.');
     await form
-      .getByLabel('Email for our acknowledgement (required)')
+      .getByLabel('Email for the acknowledgement (required)')
       .fill(`orders-${stamp}@example.com`);
     await form.getByRole('button', { name: 'Send removal order' }).click();
 

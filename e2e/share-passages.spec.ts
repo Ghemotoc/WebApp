@@ -239,7 +239,7 @@ test.describe('share a passage or a picture (S1-E4-11)', () => {
   }) => {
     const page = await openAs(browser, 'blocked', chapterPath);
     await page.getByRole('button', { name: `Share picture: ${pictureAlt}` }).click();
-    const dialog = page.getByRole('dialog', { name: 'Your picture card' });
+    const dialog = page.getByRole('dialog', { name: 'Picture card' });
     await expect(dialog).toBeVisible();
     await expect(dialog.getByText(`${storySlug}/${chapterCode}/p3`)).toBeVisible();
     await expect(dialog.getByRole('img', { name: /A picture from Farul by/ })).toBeVisible();

@@ -91,7 +91,7 @@ async function signUpAndConfirm(page: Page) {
   await page.getByRole('button', { name: 'Create account' }).click();
   await expect(page.getByRole('status').getByText(/We sent a link/)).toBeVisible();
   await page.goto(appPathFromEmail((await waitForEmail(oldAddress)).HTML));
-  await expect(page.getByRole('heading', { name: 'Your email is confirmed' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Email confirmed' })).toBeVisible();
 }
 
 /** Logs in through the log-in screen with an address and the test password. */
@@ -100,7 +100,7 @@ async function logIn(page: Page, address: string) {
   await page.locator('#sign-in-email').fill(address);
   await page.locator('#sign-in-password').fill(password);
   await page.locator('form button[type="submit"]').click();
-  await expect(page.getByRole('button', { name: 'Your account' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Account' })).toBeVisible();
 }
 
 test.describe('email address in Settings (S1-E2-05)', () => {
@@ -129,7 +129,7 @@ test.describe('email address in Settings (S1-E2-05)', () => {
     await page.goto('/settings#account');
     await panel.getByLabel('New email address').fill(oldAddress);
     await panel.getByRole('button', { name: 'Change email' }).click();
-    await expect(panel.getByText('That’s already your email address.')).toBeVisible();
+    await expect(panel.getByText('That’s already the address on this account.')).toBeVisible();
     await panel.getByLabel('New email address').fill(newAddress);
     await panel.getByRole('button', { name: 'Change email' }).click();
     await expect(panel.getByText(/Check both inboxes/)).toBeVisible();
@@ -148,23 +148,23 @@ test.describe('email address in Settings (S1-E2-05)', () => {
     // A wrong code is refused in words and nothing changes.
     const oldCode = codeFromEmail((await waitForEmail(oldAddress, 15_000, 'code')).HTML);
     const newCode = codeFromEmail((await waitForEmail(newAddress, 15_000, 'code')).HTML);
-    await panel.getByLabel('Code from your current address').fill(oldCode);
-    await panel.getByLabel('Code from your new address').fill(wrongCode(newCode));
+    await panel.getByLabel('Code from the current address').fill(oldCode);
+    await panel.getByLabel('Code from the new address').fill(wrongCode(newCode));
     await panel.getByRole('button', { name: 'Confirm the change' }).click();
     await expect(panel.getByText('This code is right.')).toBeVisible();
     await expect(panel.getByText(/This code is wrong or has expired/)).toBeVisible();
     expect(runSql(`select count(*) from auth.users where email = '${oldAddress}'`)).toBe('1');
 
     // The right second code makes the change.
-    await panel.getByLabel('Code from your new address').fill(newCode);
+    await panel.getByLabel('Code from the new address').fill(newCode);
     await panel.getByRole('button', { name: 'Confirm the change' }).click();
-    await expect(panel.getByText(`Done. Your email address is now ${newAddress}.`)).toBeVisible();
+    await expect(panel.getByText(`Done. The email address is now ${newAddress}.`)).toBeVisible();
     expect(runSql(`select count(*) from auth.users where email = '${newAddress}'`)).toBe('1');
 
     // Settings shows the new address, and the account logs in with it.
     await page.goto('/settings#account');
     await expect(panel.getByText(newAddress, { exact: true })).toBeVisible();
-    await page.getByRole('button', { name: 'Your account' }).click();
+    await page.getByRole('button', { name: 'Account' }).click();
     await page.getByRole('button', { name: 'Log out', exact: true }).click();
     await logIn(page, newAddress);
   });

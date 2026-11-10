@@ -47,7 +47,7 @@ export function useMyAccountDeletion() {
 }
 
 /**
- * "Delete my account": closes the account, then logs out the person's other devices.
+ * "Delete account": closes the account, then logs out the person's other devices.
  *
  * @returns TanStack Query's mutation; its data is the outcome
  */
@@ -67,7 +67,7 @@ export function useRequestAccountDeletion() {
 }
 
 /**
- * "Keep my account".
+ * "Keep account".
  *
  * @returns TanStack Query's mutation
  */
@@ -113,7 +113,7 @@ async function logInAgain(choice: ConfirmWay): Promise<ConfirmOutcome> {
 
 /**
  * "Log in again to confirm": after a log-in the account's state is read again, so the panel
- * knows "Delete my account" can be pressed.
+ * knows "Delete account" can be pressed.
  *
  * @returns TanStack Query's mutation; its data is the outcome
  */

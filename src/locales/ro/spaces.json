@@ -55,7 +55,7 @@
     "noteModerator": "Ajuți la moderarea acestui spațiu.",
     "noteOwner": "Tu conduci acest spațiu.",
     "noteOtherGroup": "Spațiul primește membri din altă grupă de vârstă, așa că îl poți citi, dar nu poți intra.",
-    "noteNotActive": "Contul tău nu poate intra încă în spații."
+    "noteNotActive": "Contul nu poate intra încă în spații."
   },
   "threads": {
     "membersOnly": "Aici postează doar membrii. Intră în spațiu ca să începi o discuție sau să răspunzi.",
@@ -141,7 +141,7 @@
     "cancel": "Renunță",
     "create": "Creează spațiul",
     "save": "Salvează schimbările",
-    "saved": "Schimbările sunt salvate.",
+    "saved": "Schimbări salvate.",
     "notOwner": "Doar cine a creat spațiul îl poate schimba.",
     "classTitle": "Spațiul unei clase",
     "classText": "Aici citește și postează doar clasa. Elevii intră cu codul pe care li-l dai, niciodată cu o cerere.",
@@ -162,7 +162,7 @@
   },
   "failures": {
     "signed_out": "Intră mai întâi în cont.",
-    "not_active": "Contul tău nu poate face asta încă.",
+    "not_active": "Contul nu poate face asta încă.",
     "age_unknown": "Avem nevoie de grupa ta de vârstă înainte să poți crea sau intra într-un spațiu.",
     "age": "Spațiul este pentru altă grupă de vârstă.",
     "not_owner": "Doar cine a creat spațiul poate face asta.",
@@ -304,11 +304,10 @@
     }
   },
   "bannerPicture": {
-    "eyebrow": "Banner",
     "title": "Imaginea de banner",
     "intro": "O imagine opțională în partea de sus a spațiului. Până adaugi una, spațiul își folosește culoarea.",
     "none": "Spațiul își folosește culoarea.",
-    "previewAlt": "Imaginea ta de banner",
+    "previewAlt": "Imagine de banner",
     "checking": "Îți verificăm imaginea. Până trece verificarea, toată lumea vede culoarea spațiului.",
     "waiting_for_person": "Cineva din echipa noastră se va uita mai întâi la imagine. Până atunci, toată lumea vede culoarea spațiului.",
     "visible": "Imaginea de banner este afișată.",
@@ -321,7 +320,7 @@
   },
   "classInvite": {
     "eyebrow": "Invitație pentru clasă",
-    "title": "Invită-ți clasa",
+    "title": "Invită clasa",
     "intro": "Elevii intră cu un cod. Oricine are codul poate intra, așa că dă-l doar clasei tale.",
     "resetNote": "Un cod nou îl oprește imediat pe cel vechi.",
     "worksFor": "Funcționează timp de",
@@ -367,7 +366,7 @@
     },
     "qrLabel": "Cod QR pentru intrarea în clasă",
     "sheetLabel": "Fișa de invitație a clasei",
-    "sheetIntro": "Intră în clasa noastră",
+    "sheetIntro": "Intră în clasă",
     "sheetUntil": "Codul funcționează până pe {{expires}}."
   },
   "joinClass": {
@@ -445,7 +444,7 @@
   },
   "joinClassLink": "Intră într-o clasă",
   "classStories": {
-    "eyebrow": "Clasa ta",
+    "eyebrow": "Clasa",
     "title": "Povești împărtășite cu clasa",
     "note": "Doar {{name}} le poate citi până când autorul le face publice. Un profesor nu poate face niciodată publică povestea unui elev.",
     "empty": "Încă nu e nicio poveste împărtășită. Ca să împărtășești una, deschide Setările poveștii și alege clasa aceasta la „Cine o poate citi”.",
@@ -456,14 +455,14 @@
     "legend": "Cine o poate citi",
     "intro": "Poți împărtăși povestea aceasta doar cu una dintre clasele tale. Atunci doar tu, clasa și echipa noastră de moderare o pot citi: nu apare în nicio listă publică și nici pe profilul tău. Doar tu o poți face din nou publică.",
     "publicNow": "Acum o poate citi oricine, în limita clasificării ei.",
-    "pick": "Clasa ta",
+    "pick": "Clasa",
     "share": "Împărtășește doar cu clasa aceasta",
     "sharedWith": "Acum doar {{name}} o poate citi.",
     "sharedWithDeleted": "Clasa ei a fost ștearsă, așa că acum doar tu o poți citi.",
     "makePublic": "Fă-o publică",
     "saved": "Salvat.",
     "failures": {
-      "missing": "Nu am găsit povestea aceasta printre ale tale.",
+      "missing": "Nu am găsit povestea aceasta în cont.",
       "not_yours": "Poți împărtăși doar cu o clasă din care faci parte și care nu e blocată.",
       "unreachable": "Nu am putut ajunge la server. Încearcă din nou peste puțin timp."
     }
@@ -503,7 +502,7 @@
     "hint_few": "{{count}} din {{limit}} de caractere. Doar text, fără HTML.",
     "hint_other": "{{count}} din {{limit}} de caractere. Doar text, fără HTML.",
     "save": "Salvează mesajul de bun venit",
-    "saved": "Mesajul de bun venit a fost salvat.",
+    "saved": "Mesaj de bun venit salvat.",
     "noteTitle": "Bun venit în {{space}}",
     "gotIt": "Am înțeles"
   },
@@ -530,7 +529,6 @@
     "decline": "Refuză"
   },
   "logo": {
-    "eyebrow": "Logo",
     "title": "Logo (opțional)",
     "intro": "Pătrat, de cel puțin 512 px. Orice imagine, în afară de o persoană reală: desene, simboluri, litere sau fotografii cu locuri și obiecte. Fiecare logo este verificat înainte să apară. Fără logo? Spațiul nu arată nicio imagine.",
     "none": "Încă nu există logo, așa că spațiul nu arată nicio imagine.",

@@ -1,19 +1,19 @@
 {
   "settings": {
-    "heading": "Delete your account",
+    "heading": "Delete account",
     "intro_one": "Your account closes straight away. We delete it for good {{count}} day later. You can cancel by logging in before then.",
     "intro_few": "Your account closes straight away. We delete it for good {{count}} days later. You can cancel by logging in before then.",
     "intro_other": "Your account closes straight away. We delete it for good {{count}} days later. You can cancel by logging in before then.",
     "storiesLine": "Your stories and chapters are deleted with your account.",
     "downloadFirstBefore": "You might want to",
-    "downloadFirstLink": "download your data",
+    "downloadFirstLink": "download the data",
     "downloadFirstAfter": " first.",
-    "start": "Delete my account",
+    "start": "Delete account",
     "webRoute": "No app? You can also delete your account on our website, at {{address}}.",
     "loadFailed": "We couldn’t check your account. Reload the page to try again."
   },
   "confirm": {
-    "heading": "Delete your account?",
+    "heading": "Delete account?",
     "body": "Your account closes now and nobody can see your profile. We delete it for good on {{date}}. If you change your mind, log in before then and cancel.",
     "consequencesLabel": "What happens",
     "consequences": {
@@ -21,48 +21,48 @@
       "legalCase": "If something you posted is part of an open legal case, we keep only that until the case ends.",
       "records": "Reports and moderation decisions about your account are kept for the time our retention schedule sets, without your profile."
     },
-    "downloadFirst": "Download my data first",
+    "downloadFirst": "Download data first",
     "logInAgainLabel": "Log in again to confirm",
     "logInAgainHint": "So nobody else can delete your account on a device you left signed in.",
     "otherWays": "Log in again with",
-    "passwordLabel": "Or your password",
+    "passwordLabel": "Or the password",
     "passwordButton": "Log in",
     "passkey": "Use a passkey",
     "confirmed": "You logged in again. You can delete your account now.",
-    "keep": "Keep my account",
-    "delete": "Delete my account",
+    "keep": "Keep account",
+    "delete": "Delete account",
     "failures": {
       "wrongPassword": "That password isn’t right. Try again.",
       "cancelled": "The passkey prompt was closed. Try again when you’re ready.",
-      "failed": "We couldn’t log you in again. Please try again in a minute.",
+      "failed": "We couldn’t log you in again. Try again in a minute.",
       "signInAgain": "That log-in was a while ago. Log in again to confirm.",
       "staffAccount": "This is a staff account. Ask an owner to remove your staff role first.",
-      "deleteFailed": "We couldn’t delete your account. Please try again in a minute."
+      "deleteFailed": "We couldn’t delete the account. Try again in a minute."
     }
   },
   "closing": {
-    "heading": "Your account is closing",
+    "heading": "Account closing",
     "body": "We delete it for good on {{date}}. Until then, nobody can see your profile, your stories or your comments.",
     "changeMind": "Changed your mind? Keep your account and everything comes back as it was.",
-    "keep": "Keep my account",
+    "keep": "Keep account",
     "logOut": "Log out",
-    "keepFailed": "We couldn’t keep your account. Please try again in a minute.",
-    "kept": "Welcome back. Your account is open again."
+    "keepFailed": "We couldn’t keep the account. Try again in a minute.",
+    "kept": "Welcome back. The account is open again."
   },
   "page": {
-    "heading": "Delete your account",
+    "heading": "Delete account",
     "intro": "You can delete your account here on the website, without the app.",
     "stepsLabel": "How",
     "steps": {
-      "logIn": "Log in to your account.",
+      "logIn": "Log in.",
       "open": "Open Settings › Delete account.",
-      "confirm": "Log in again to confirm, then choose Delete my account."
+      "confirm": "Log in again to confirm, then choose Delete account."
     },
     "after_one": "Your account closes straight away and we delete it for good {{count}} day later. Until then, you can log in and cancel.",
     "after_few": "Your account closes straight away and we delete it for good {{count}} days later. Until then, you can log in and cancel.",
     "after_other": "Your account closes straight away and we delete it for good {{count}} days later. Until then, you can log in and cancel.",
     "logIn": "Log in",
     "noAccess": "Can’t log in? Write to us at {{email}} and we’ll help.",
-    "title": "Delete your account"
+    "title": "Delete account"
   }
 }

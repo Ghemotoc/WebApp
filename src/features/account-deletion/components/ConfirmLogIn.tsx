@@ -4,7 +4,7 @@
  *
  * It offers only the ways the person can use: each connected provider (Google, Apple,
  * Microsoft, with their own logos), "Use a passkey" when they have one, and their password when
- * the account has one. A log-in from the last few minutes is what lets "Delete my account" work
+ * the account has one. A log-in from the last few minutes is what lets "Delete account" work
  * (request_account_deletion() checks it again), so nobody can delete an account on a device left
  * signed in.
  * Who shows it: DeleteAccountConfirm, while the last log-in is too old. What it calls:

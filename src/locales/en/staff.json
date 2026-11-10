@@ -105,7 +105,7 @@
   },
   "workspace": {
     "documentTitle": "Sign in with Google · {{productName}}",
-    "heading": "Sign in with your Google Workspace account",
+    "heading": "Sign in with a Google Workspace account",
     "why": "Staff powers now need a sign-in with your team Google account on @{{domain}}. Google’s 2-Step Verification protects it, so we don’t ask for a separate code.",
     "stepConnect": "First connect your @{{domain}} Google account to this account. Google sends you back here; then continue with Google once more to sign in.",
     "stepSignIn": "Your @{{domain}} Google account is connected. Continue with Google to sign in with it, then open the admin site again.",
@@ -116,7 +116,7 @@
     "documentTitle": "Admin site · {{productName}}",
     "heading": "Admin site",
     "intro": "The areas your role can use. Every action and every sensitive read is written to the audit log; the server checks your role on each one, not just this menu.",
-    "areasHeading": "Your areas",
+    "areasHeading": "Areas",
     "noAreas": "No area is open to your role yet. Ask an owner or admin if you need one.",
     "areas": {
       "roles": "Who on the team holds which role and permission.",
@@ -187,12 +187,12 @@
       "auth": "Sign-in",
       "function": "Edge function",
       "storage": "Files",
-      "api": "Our server"
+      "api": "App server"
     },
     "calls": {
       "searchForm": "Search the calls",
       "kind": "Kind of call",
-      "allKinds": "All kinds",
+      "allKinds": "Every kind",
       "name": "Name",
       "nameHint": "Part of the name, for example my_discover_cards.",
       "person": "Username",
@@ -231,14 +231,14 @@
   },
   "auditLog": {
     "documentTitle": "Audit log · {{productName}}",
-    "eyebrow": "Staff · audit log",
+    "eyebrow": "Staff",
     "heading": "Audit log",
     "intro": "Who did what, when and why, with the values before and after. Nobody can change or delete a row, not even an owner. Searching is free; exporting a file is itself logged.",
     "searchForm": "Search the audit log",
     "action": "Action starts with",
     "actionHint": "For example staff. or sensitive_read.",
     "staffMember": "Staff member",
-    "staffMemberHint": "Their username, with or without @.",
+    "staffMemberHint": "Username, with or without @.",
     "targetUserId": "Account user ID",
     "targetUserIdHint": "The full user ID of the account acted on.",
     "fromDate": "From",
@@ -273,7 +273,7 @@
   },
   "invites": {
     "documentTitle": "Invite links · {{productName}}",
-    "eyebrow": "Staff · invites",
+    "eyebrow": "Staff",
     "heading": "Invite links",
     "intro": "Each link lets a set number of people sign up, until it expires or you revoke it. Making and revoking links goes to the audit log. A link never records who used it.",
     "open": "Make an invite link",
@@ -341,7 +341,7 @@
   },
   "users": {
     "documentTitle": "Users · {{productName}}",
-    "eyebrow": "Staff · users",
+    "eyebrow": "Staff",
     "heading": "Users",
     "intro": "Find an account by its username, pen name, email or user ID. Opening an account shows its status, age check, sanctions and open cases. Every action and every email shown goes to the audit log.",
     "tabs": {
@@ -362,7 +362,7 @@
     "found_few": "{{count}} accounts found.",
     "found_other": "{{count}} accounts found.",
     "ageNote": "The age check column shows the result and date only. We never keep or show photos or documents, and staff never see the year of birth here.",
-    "notForYourRole": "Not shown to your role",
+    "notForYourRole": "Not shown to this role",
     "noSanctions": "None",
     "openAccount": "Open the account {{name}}",
     "columns": {
@@ -508,7 +508,7 @@
       "text": "Private messages are hidden. You see a message only when it is part of a report, on that report’s case page."
     },
     "failures": {
-      "not_allowed": "Your role can’t do this.",
+      "not_allowed": "This role can’t do this.",
       "own_account": "Use Settings for your own account.",
       "reason_missing": "Write a reason first. It goes to the audit log.",
       "no_such_account": "There is no such account. Search again.",
@@ -540,11 +540,11 @@
   },
   "waitlist": {
     "documentTitle": "Waitlist · {{productName}}",
-    "eyebrow": "Staff · waitlist",
+    "eyebrow": "Staff",
     "heading": "Waitlist",
     "intro": "Everyone who signed up without an invite waits here. Let people in one by one with the ticks, or in a wave: writers first, by country if you like. Each person gets a \"You're in\" email and a notice in the app. Every admission goes to the audit log.",
     "notAllowed": "Only owners and admins can see the waiting list.",
-    "loadFailed": "The waiting list couldn't load just now. Try again in a moment.",
+    "loadFailed": "The waiting list couldn't load right now. Try again in a moment.",
     "loading": "Loading the waiting list…",
     "unknownCountry": "Unknown country",
     "noName": "No name yet",
@@ -569,7 +569,7 @@
       "writers": "Write (includes both)",
       "readers": "Read (includes both)",
       "countryLabel": "Country",
-      "allCountries": "All countries"
+      "allCountries": "Every country"
     },
     "wave": {
       "heading": "Let in a wave",
@@ -607,7 +607,7 @@
     "admitted_other": "{{count}} people let in. They have been emailed.",
     "admitFailed": "Nobody was let in. Try again in a moment.",
     "openingList": {
-      "heading": "Waiting for their country to open",
+      "heading": "Waiting for a country to open",
       "intro": "People from countries we haven’t opened who asked to hear when we do. Each confirmed address gets one email on the day its country opens, then is deleted 7 days later.",
       "country": "Country",
       "confirmed": "Confirmed",
@@ -803,7 +803,7 @@
     "empty": "No classics yet. Add the first one.",
     "notAllowed": "Only the admin role manages Classics.",
     "failures": {
-      "not_allowed": "Your role can’t do this.",
+      "not_allowed": "This role can’t do this.",
       "classics_account_missing": "The official classics account doesn’t exist yet. Ask the owner to create it.",
       "details_invalid": "Pick an author, a category and a rating.",
       "author_died_year_differs": "This author is already listed with another year of death. Pick them from the list, or check the year.",
@@ -992,7 +992,7 @@
     "reasonHint": "The person reads this in the app. Who decided stays only in the audit log.",
     "save": "Save the decision",
     "failures": {
-      "not_allowed": "Your role can’t do this.",
+      "not_allowed": "This role can’t do this.",
       "refused": "That didn’t work: the request may already be decided. Reload the page.",
       "unreachable": "We couldn’t reach the database. Try again in a moment."
     }
@@ -1023,7 +1023,7 @@
       "rejected": "Send “Not yet”"
     },
     "failures": {
-      "not_allowed": "Your role can’t do this.",
+      "not_allowed": "This role can’t do this.",
       "refused": "That didn’t work: maybe the request already has a decision. Reload the page.",
       "unreachable": "We couldn’t reach the database. Try again in a moment."
     },
@@ -1056,7 +1056,7 @@
     "create": "Set up the class",
     "created": "The class is ready.",
     "open": "Open it",
-    "listTitle": "Every class space",
+    "listTitle": "Class spaces",
     "none": "There are no class spaces yet.",
     "noSchool": "Not written yet",
     "members": "Members",
@@ -1127,8 +1127,8 @@
   },
   "stories": {
     "documentTitle": "Stories · {{productName}}",
-    "eyebrow": "Staff · stories",
-    "heading": "Every story",
+    "eyebrow": "Staff",
+    "heading": "Stories",
     "intro": "Find any story and open it to see its details, its chapters and its reports. Staff never edit a writer’s words. Every change needs a reason, and the writer is told what changed and why.",
     "oneOwnerPill": "Each story belongs to one user ID",
     "auditPill": "Every action here goes to the audit log",
@@ -1139,11 +1139,11 @@
     "statusLabel": "Status",
     "allStatuses": "All",
     "categoryLabel": "Category",
-    "allCategories": "All categories",
+    "allCategories": "Every category",
     "languageLabel": "Story language",
-    "allLanguages": "All languages",
+    "allLanguages": "Every language",
     "ratingLabel": "Rating",
-    "allRatings": "All ratings",
+    "allRatings": "Every rating",
     "audienceLabel": "Where it can be read",
     "allAudiences": "Read anywhere",
     "openReports": "Open reports",
@@ -1193,7 +1193,7 @@
     "loadFailed": "The stories didn’t load. Check your connection and try again.",
     "page": {
       "documentTitle": "{{title}} · Stories",
-      "back": "Back to every story",
+      "back": "Back to stories",
       "loading": "Loading the story…",
       "noSuchStory": "There is no story at this address. It may have been typed wrongly.",
       "deletedByWriter": "The writer deleted this story. It no longer shows in the list, and staff can still open it for a case or a data request.",
@@ -1252,7 +1252,7 @@
       "reasons": {
         "rating_rules": "The rating is wrong",
         "story_details": "A detail is wrong (category, tags, language or labels)",
-        "community_rules": "It breaks our community guidelines",
+        "community_rules": "It breaks the community guidelines",
         "illegal_content": "Illegal content",
         "personal_data": "Someone’s personal data",
         "copyright": "Copyright",
@@ -1481,17 +1481,17 @@
   },
   "sessionEnded": {
     "documentTitle": "Sign in again · {{productName}}",
-    "heading": "Your staff session has ended",
+    "heading": "Staff session ended",
     "body": "Staff sessions end after 12 hours, to keep staff accounts safe. Sign in again to open the admin site.",
     "signInAgain": "Sign in again",
     "signingOut": "Signing you out…",
     "goHome": "Go to Home",
-    "signOutFailed": "We couldn’t sign you out just now. Check your connection and try again."
+    "signOutFailed": "We couldn’t sign you out right now. Check the connection and try again."
   },
   "dashboard": {
     "heading": "At a glance",
     "loading": "Counting…",
-    "loadFailed": "The numbers couldn’t load just now. The areas below still work.",
+    "loadFailed": "The numbers couldn’t load right now. The areas below still work.",
     "tiles": {
       "moderation": {
         "waiting": "Reports waiting",

@@ -13,7 +13,7 @@
  *    Word file and makes its EPUB from the same block; once the Word copy's seven days are over
  *    the nightly clean-up removes it and the block no longer offers it;
  * 4. Delete my account × Download my data: teen_17 closes their account, the closing page stands
- *    in front of Settings, and after "Keep my account" Download my data works again;
+ *    in front of Settings, and after "Keep account" Download my data works again;
  * 5. Settings at 390, 768 and 1440 px, at night, in Romanian, as kid_14_ok, scrolled to each of the
  *    epic's four sections: no serious axe issue and nothing scrolls sideways.
  * Test data: everything this file makes is removed at the start and the end; adults_only is
@@ -91,8 +91,8 @@ async function openSettings(browser: Browser, persona: SignInPersonaName, sectio
  */
 async function downloadMyData(page: Page) {
   const panel = page.locator('#download-my-data');
-  await panel.getByRole('button', { name: 'Request my data' }).click();
-  await expect(panel.getByText('Your file is ready.')).toBeVisible({ timeout: 30_000 });
+  await panel.getByRole('button', { name: 'Request data' }).click();
+  await expect(panel.getByText('The file is ready.')).toBeVisible({ timeout: 30_000 });
   const downloadStarted = page.waitForEvent('download');
   await panel.getByRole('button', { name: 'Download ZIP' }).click();
   const download = await downloadStarted;
@@ -137,7 +137,7 @@ test.describe('epic S1-E13 journeys', () => {
     await expect(section.getByRole('radio', { name: /Only people I follow/ })).toBeChecked();
     await expect(section.getByLabel('Show when I’m online')).not.toBeChecked();
     // Step 2: kid_14_ok shows their library to people they follow, saved at once.
-    const library = section.getByRole('group', { name: 'Who can see your library' });
+    const library = section.getByRole('group', { name: 'Who can see the library' });
     await library.getByRole('radio', { name: 'People I follow' }).check();
     await expect
       .poll(() =>
@@ -172,8 +172,8 @@ test.describe('epic S1-E13 journeys', () => {
     // Step 1: the story's chapters as a Word file (S1-E13-05, criterion 1).
     await block.getByLabel('Story', { exact: true }).selectOption(storyId);
     await block.getByLabel('The plan from Story Atlas', { exact: true }).uncheck();
-    await block.getByRole('button', { name: 'Get my files' }).click();
-    await expect(block.getByText('Your files are ready.')).toBeVisible({ timeout: 30_000 });
+    await block.getByRole('button', { name: 'Get files' }).click();
+    await expect(block.getByText('The files are ready.')).toBeVisible({ timeout: 30_000 });
     // Step 2: the EPUB from the same block, saved straight to the device (PRIVACY part f).
     await block.getByRole('button', { name: 'Make an EPUB' }).click();
     const dialog = page.getByRole('dialog');
@@ -191,8 +191,8 @@ test.describe('epic S1-E13 journeys', () => {
     ).toBe('0');
     // Step 4: the block no longer offers it; asking again makes a new one.
     await page.reload();
-    await expect(block.getByRole('heading', { name: 'Download my stories' })).toBeVisible();
-    await expect(block.getByText('Your files are ready.')).toHaveCount(0);
+    await expect(block.getByRole('heading', { name: 'Download stories' })).toBeVisible();
+    await expect(block.getByText('The files are ready.')).toHaveCount(0);
     await context.close();
   });
 
@@ -203,15 +203,15 @@ test.describe('epic S1-E13 journeys', () => {
     // Step 1: teen_17 has just logged in, so Delete my account is offered straight away.
     const { context, page } = await openSettings(browser, 'teen_17', 'delete-account');
     const panel = page.locator('#delete-account');
-    await panel.getByRole('button', { name: 'Delete my account' }).click();
+    await panel.getByRole('button', { name: 'Delete account' }).click();
     // Step 2: the closing page stands in front of Settings and its downloads (S1-E13-03).
-    await expect(page.getByRole('heading', { name: 'Your account is closing' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Account closing' })).toBeVisible();
     await page.goto('/settings#download-my-data');
-    await expect(page.getByRole('heading', { name: 'Your account is closing' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Account closing' })).toBeVisible();
     await expect(page.locator('#download-my-data')).toHaveCount(0);
-    // Step 3: "Keep my account", and Download my data works again (S1-E13-02).
-    await page.getByRole('button', { name: 'Keep my account' }).click();
-    await expect(page.getByRole('heading', { name: 'Your account is closing' })).toHaveCount(0);
+    // Step 3: "Keep account", and Download my data works again (S1-E13-02).
+    await page.getByRole('button', { name: 'Keep account' }).click();
+    await expect(page.getByRole('heading', { name: 'Account closing' })).toHaveCount(0);
     await page.goto('/settings#download-my-data');
     const data = await downloadMyData(page);
     expect(data.user_id).toBe(teenId);

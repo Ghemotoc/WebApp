@@ -1,5 +1,5 @@
 /**
- * MyReportsPage: /my-reports, "My reports and decisions" (story S1-E10-04; board 6.5, MyReports;
+ * MyReportsPage: /my-reports, "Reports and decisions" (story S1-E10-04; board 6.5, MyReports;
  * DSA art. 17: the statement of reasons; art. 16(5): the reporter is told the decision).
  *
  * Board: the Safety eyebrow, the title and intro, "Decisions about your posts" (each statement in

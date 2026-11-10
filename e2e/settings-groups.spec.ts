@@ -47,7 +47,7 @@ test.describe('Settings groups (PROFILE-1)', () => {
       'aria-current',
       'true',
     );
-    await expect(page.getByRole('region', { name: 'Your avatar' })).toBeVisible();
+    await expect(page.getByRole('region', { name: 'Avatar' })).toBeVisible();
     await expect(page.getByRole('region', { name: 'Privacy' })).toHaveCount(0);
 
     // Picking Privacy shows only its panels and moves the focus to them.
@@ -59,15 +59,15 @@ test.describe('Settings groups (PROFILE-1)', () => {
     );
     await expect(page.getByRole('region', { name: 'Privacy' })).toBeVisible();
     await expect(page.getByRole('region', { name: 'Blocked accounts' })).toBeVisible();
-    await expect(page.getByRole('region', { name: 'Your avatar' })).toHaveCount(0);
+    await expect(page.getByRole('region', { name: 'Avatar' })).toHaveCount(0);
     await expect(page.locator('#settings-panel')).toBeFocused();
 
     // Back returns to Profile.
     await page.goBack();
-    await expect(page.getByRole('region', { name: 'Your avatar' })).toBeVisible();
+    await expect(page.getByRole('region', { name: 'Avatar' })).toBeVisible();
 
     // The menu also leads to My reports.
-    await expect(menu.getByRole('link', { name: 'My reports' })).toHaveAttribute(
+    await expect(menu.getByRole('link', { name: 'Reports sent' })).toHaveAttribute(
       'href',
       '/my-reports',
     );
@@ -83,7 +83,7 @@ test.describe('Settings groups (PROFILE-1)', () => {
     await expect(page.locator('#teacher-badge')).toBeVisible();
 
     await page.goto('/settings#download-my-stories');
-    await expect(menu.getByRole('link', { name: 'Download my data' })).toHaveAttribute(
+    await expect(menu.getByRole('link', { name: 'Download data' })).toHaveAttribute(
       'aria-current',
       'true',
     );

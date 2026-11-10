@@ -1,5 +1,5 @@
 /**
- * MyCertificatesPage: /certificates, "My certificates" (bundle CLASSES, part e; story S1-E8-12
+ * MyCertificatesPage: /certificates, "Certificates" (bundle CLASSES, part e; story S1-E8-12
  * criterion 1: "each student gets a certificate under My certificates in their account").
  *
  * What it shows: every certificate the signed-in student has, newest first, each with its

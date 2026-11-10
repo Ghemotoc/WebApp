@@ -3,7 +3,7 @@
  * kept (story S1-E13-03; board Settings 6.3: "If you change your mind, log in before then and
  * cancel").
  *
- * It says when the account is deleted for good and offers "Keep my account" (everything comes
+ * It says when the account is deleted for good and offers "Keep account" (everything comes
  * back as it was) and "Log out". Nothing else of the app is shown: the account can't write, and
  * its profile, stories and comments are hidden from everyone.
  * Who shows it: AccountClosingGate. What it calls: useCancelAccountDeletion, and signOutHere

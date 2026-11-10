@@ -60,7 +60,7 @@
   "loading": "Loading the document…",
   "loadFailed": {
     "title": "We couldn’t load this page",
-    "body": "Check your connection and try again.",
+    "body": "Check the connection and try again.",
     "retry": "Try again"
   },
   "notFound": {
@@ -69,8 +69,8 @@
   },
   "update": {
     "regionLabel": "Updated rules",
-    "eyebrow": "Please read",
-    "titleOne": "We’ve updated our {{document}}",
+    "eyebrow": "Read the changes",
+    "titleOne": "We’ve updated the {{document}}",
     "titleMany": "We’ve updated our rules",
     "change": "Version {{version}} of the {{document}}: {{summary}}",
     "body": "Read the new version and accept it before you post again. You can keep reading meanwhile.",
@@ -89,7 +89,7 @@
     "orderLink": "Authorities: send a removal order"
   },
   "country": {
-    "heading": "Your country: {{place}}",
+    "heading": "Country: {{place}}",
     "yourCountry": "your country",
     "joinFrom": "In {{place}} you can join from age {{age}}.",
     "consentBelow": "Below {{age}}, a parent or guardian has to agree first.",

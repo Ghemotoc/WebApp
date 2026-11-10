@@ -81,7 +81,7 @@ describe('the school email link', () => {
       await hmacHex(`teacher|${userId}|liceul-1.edu.ro|${call?.token_hash ?? ''}`, 'test-secret'),
     );
     expect(sent[0]?.to).toBe('ana.pop@liceul-1.edu.ro');
-    expect(sent[0]?.subject).toBe('Confirm your school address for Product');
+    expect(sent[0]?.subject).toBe('Confirm a school address for Product');
     expect(sent[0]?.text).toMatch(
       /https:\/\/site\.test\/teacher-check\/confirm#[A-Za-z0-9_-]{40,}/,
     );

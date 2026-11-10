@@ -114,7 +114,7 @@ test.describe('Epic check: Story Atlas (S1-E17-QA)', () => {
       // The writer's own planning pages are the writer's alone, staff included.
       const page = await openAs(browser, persona, `/plan/s/${firstStory.slug}/characters`);
       await expect(
-        page.getByText('We couldn’t find that story among yours.', { exact: false }),
+        page.getByText('We couldn’t find that story on this account.', { exact: false }),
       ).toBeVisible();
       await expect(page.getByText('Maria Pădurăreasa')).toHaveCount(0);
       // Nothing is public until an area is on.

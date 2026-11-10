@@ -312,11 +312,11 @@
     "referralLine": "{{authority}} ({{reference}}), {{when}} (ora României), de @{{handle}}",
     "authority": "Autoritatea (de exemplu poliția sau protecția copilului)",
     "authorityMissing": "Numește autoritatea.",
-    "authorityReference": "Referința lor (opțional)",
+    "authorityReference": "Referința autorității (opțional)",
     "referralNote": "Notă (opțional)",
     "logReferral": "Notează sesizarea",
     "move": "Mută la protecția copilului",
-    "moveIntro": "Dacă acest caz este de fapt despre un copil în pericol, mută-l la protecția copilului. Îl vor vedea doar cei cu permisiunea pentru protecția copilului.",
+    "moveIntro": "Dacă acest caz este despre un copil în pericol, mută-l la protecția copilului. Îl vor vedea doar cei cu permisiunea pentru protecția copilului.",
     "moveReason": "De ce ține de protecția copilului?",
     "moveConfirm": "Mută cazul",
     "moved": "Mutat la protecția copilului. Se ocupă de el cei cu această permisiune."

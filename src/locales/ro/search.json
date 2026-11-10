@@ -1,7 +1,6 @@
 {
   "page": {
     "documentTitle": "Căutare · {{productName}}",
-    "eyebrow": "Căutare",
     "heading": "Căutare",
     "resultsFor": "Rezultate pentru „{{term}}”",
     "count_one": "Un rezultat printre povești, scriitori și etichete.",

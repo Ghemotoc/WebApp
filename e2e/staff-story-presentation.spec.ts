@@ -85,7 +85,7 @@ test.describe('hiding a title or cover (S1-E11-08)', () => {
     await giveReason(
       page,
       'presentation-title',
-      'It breaks our community guidelines',
+      'It breaks the community guidelines',
       'An insult.',
     );
     await section.getByRole('button', { name: 'Hide the title' }).click();
@@ -104,7 +104,7 @@ test.describe('hiding a title or cover (S1-E11-08)', () => {
     await giveReason(
       page,
       'presentation-cover',
-      'It breaks our community guidelines',
+      'It breaks the community guidelines',
       'A rude drawing.',
     );
     await section.getByRole('button', { name: 'Hide the cover' }).click();

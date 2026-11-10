@@ -5,7 +5,7 @@
   "intro": "Oricine poate folosi acest formular, cu sau fără cont. Spune-ne unde este conținutul și de ce crezi că încalcă legea. O persoană din echipa noastră citește fiecare raportare.",
   "contactPoint": "Acest formular este punctul nostru de contact pentru autorități, inclusiv pentru ordinele de eliminare emise în temeiul Regulamentului (UE) 2021/784. Acceptăm raportări și ordine în română și engleză și acționăm asupra ordinelor de eliminare în cel mult o oră.",
   "form": {
-    "heading": "Raportarea ta",
+    "heading": "Raportare",
     "kind": "Ce fel de conținut este?",
     "required": "obligatoriu",
     "optional": "opțional",
@@ -14,8 +14,8 @@
     "contentUrlHint": "Copiază-l din bara de adrese a browserului.",
     "explanation": "De ce crezi că este ilegal?",
     "explanationHint": "Explică în cuvintele tale. Dacă îți copiază o lucrare, spune care și unde a fost publicată prima dată.",
-    "name": "Numele tău",
-    "email": "Adresa ta de email",
+    "name": "Nume",
+    "email": "Adresă de email",
     "contactHint": "Îți trimitem la această adresă o confirmare și, mai târziu, decizia noastră.",
     "contactOptionalHint": "Pentru acest fel de raportare poți să nu îți scrii numele și adresa de email. Fără email nu îți putem trimite confirmarea sau decizia.",
     "goodFaith": "Declar, cu bună-credință, că informațiile din această raportare sunt corecte și complete.",
@@ -28,7 +28,7 @@
       "url_missing": "Lipește linkul exact către conținut.",
       "explanation_missing": "Spune de ce crezi că este ilegal.",
       "explanation_too_long": "Scrie cel mult {{max}} de caractere.",
-      "name_missing": "Scrie-ți numele.",
+      "name_missing": "Scrie un nume.",
       "email_invalid": "Scrie o adresă de email la care îți putem răspunde, de exemplu nume@exemplu.ro.",
       "good_faith_missing": "Bifează declarația de bună-credință ca să trimiți raportarea.",
       "authority_missing": "Scrie numele autorității care trimite ordinul."
@@ -74,7 +74,7 @@
     "logIn": "Intră în cont"
   },
   "details": {
-    "heading": "Datele tale",
+    "heading": "Date de contact",
     "body": "Folosim numele și adresa ta de email doar ca să ne ocupăm de această raportare. Le păstrăm 3 ani după închiderea raportării, apoi le ștergem.",
     "privacy": "Citește Nota de informare privind datele"
   }

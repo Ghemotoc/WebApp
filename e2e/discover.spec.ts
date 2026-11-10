@@ -82,7 +82,7 @@ test.describe('Discover and story lists (S1-E5-01, S1-E5-09)', () => {
     const page = await openAsVisitor(browser, '/');
     await page.getByRole('banner').getByRole('link', { name: 'Discover' }).click();
     await expect(
-      page.getByRole('heading', { level: 1, name: 'Find your next story' }),
+      page.getByRole('heading', { level: 1, name: 'Find the next story' }),
     ).toBeVisible();
     // The board's five shelves since LOOK-4b (D5); a visitor has no follows shelf.
     await expect(page.getByRole('region', { name: 'Popular', exact: true })).toBeVisible();

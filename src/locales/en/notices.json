@@ -5,17 +5,17 @@
   "intro": "Anyone can use this form, with or without an account. Tell us where the content is and why you think it breaks the law. A person on our team reads every report.",
   "contactPoint": "This form is our contact point for authorities, including for removal orders under Regulation (EU) 2021/784. We accept reports and orders in English and Romanian, and we act on removal orders within one hour.",
   "form": {
-    "heading": "Your report",
+    "heading": "Report",
     "kind": "What kind of content is it?",
     "required": "required",
     "optional": "optional",
     "removalOrder": "Removal order from an authority",
     "contentUrl": "Exact link to the content",
-    "contentUrlHint": "Copy it from your browser’s address bar.",
+    "contentUrlHint": "Copy it from the browser’s address bar.",
     "explanation": "Why do you think it’s illegal?",
     "explanationHint": "Explain in your own words. If it copies your work, say which work and where it was first published.",
-    "name": "Your name",
-    "email": "Your email",
+    "name": "Name",
+    "email": "Email",
     "contactHint": "We send a receipt to this address, and later our decision.",
     "contactOptionalHint": "For this kind of report you may leave your name and email out. Without an email we can’t send you a receipt or our decision.",
     "goodFaith": "I believe, in good faith, that the information in this report is accurate and complete.",
@@ -28,7 +28,7 @@
       "url_missing": "Paste the exact link to the content.",
       "explanation_missing": "Say why you think it’s illegal.",
       "explanation_too_long": "Keep it to {{max}} characters.",
-      "name_missing": "Write your name.",
+      "name_missing": "Write a name.",
       "email_invalid": "Write an email address we can reply to, like name@example.com.",
       "good_faith_missing": "Tick the good-faith statement to send the report.",
       "authority_missing": "Write the name of the authority sending the order."
@@ -41,13 +41,13 @@
     "orderReference": "The order’s reference",
     "orderText": "The order, or a summary of it",
     "orderTextHint": "Paste the order’s text, or summarise it and say where it can be read.",
-    "email": "Email for our acknowledgement",
+    "email": "Email for the acknowledgement",
     "emailHint": "We confirm receipt, with the time, at once.",
     "send": "Send removal order"
   },
   "failures": {
     "invalid": "Something in the report isn’t right. Check the fields and try again.",
-    "unavailable": "We couldn’t save the report just now. Try again in a minute, or email {{supportEmail}}.",
+    "unavailable": "We couldn’t save the report right now. Try again in a minute, or email {{supportEmail}}.",
     "unreachable": "We couldn’t reach the server. Check your connection and try again."
   },
   "received": {
@@ -74,7 +74,7 @@
     "logIn": "Log in"
   },
   "details": {
-    "heading": "Your details",
+    "heading": "Contact details",
     "body": "We use your name and email only to handle this report. We keep them for 3 years after your report is closed, then delete them.",
     "privacy": "Read the Privacy notice"
   }

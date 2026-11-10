@@ -1,7 +1,6 @@
 {
-  "documentTitle": "Biblioteca ta",
-  "eyebrow": "Bibliotecă",
-  "title": "Biblioteca ta",
+  "documentTitle": "Bibliotecă",
+  "title": "Bibliotecă",
   "intro": "Continuă de unde ai rămas. Locul tău în fiecare capitol e păstrat pe orice dispozitiv pe care intri în cont.",
   "signedOut": {
     "title": "Păstrează o bibliotecă",
@@ -34,8 +33,8 @@
     "empty": "Poveștile pe care începi să le citești apar aici, cu locul unde ai rămas."
   },
   "shelves": {
-    "eyebrow": "Rafturile tale",
-    "heading": "Povești din biblioteca ta",
+    "eyebrow": "Rafturi",
+    "heading": "Povești din bibliotecă",
     "choose": "Raft",
     "option": "{{name}} ({{count}})",
     "reading": "Citesc acum",
@@ -50,11 +49,11 @@
       "mine": "Poveștile pe care le scrii apar aici, inclusiv ciornele. Doar tu vezi acest raft."
     },
     "mine": {
-      "label": "Poveștile mele",
+      "label": "Scrise de tine",
       "draft": "Ciornă",
       "ongoing": "În curs",
       "completed": "Terminată",
-      "yourWriting": "Deschide Scrierile tale pentru cifre, comentarii și toate uneltele poveștii",
+      "yourWriting": "Deschide Scrieri pentru cifre, comentarii și uneltele poveștii",
       "newStory": "Începe o poveste nouă",
       "loadFailed": "Nu ți-am putut încărca poveștile. Verifică-ți conexiunea și încearcă din nou."
     }
@@ -73,15 +72,15 @@
   },
   "button": {
     "label": "Bibliotecă",
-    "none": "Nu e în biblioteca ta",
+    "none": "Nu e în bibliotecă",
     "saveFailed": "Nu s-a salvat. Încearcă din nou.",
     "logIn": "Intră în cont ca s-o păstrezi"
   },
   "startReading": "Începe lectura",
   "continueChapter": "Continuă capitolul {{number}}",
   "habit": {
-    "eyebrow": "Doar pentru tine",
-    "heading": "Zilele tale de citit",
+    "eyebrow": "Privat",
+    "heading": "Zile de citit",
     "offBody": "Ține o socoteală privată a zilelor în care citești, cu o țintă zilnică dacă vrei una. Nu o vede nimeni altcineva. Fără insigne, fără presiune.",
     "turnOn": "Pornește",
     "daysThisWeek_one": "Săptămâna asta ai citit într-o zi.",
@@ -94,7 +93,7 @@
     "minutesToday_other": "{{count}} de minute azi",
     "targetMet": "Ținta de azi e atinsă.",
     "progressLabel": "Minute citite azi",
-    "privateNote": "Doar tu vezi asta. Păstrăm doar minutele din fiecare zi, timp de două săptămâni.",
+    "privateNote": "Doar tu vezi asta. Păstrăm minutele din fiecare zi, timp de două săptămâni.",
     "settingsHeading": "Ținta și memento-ul",
     "target": "Ținta zilnică, în minute",
     "targetHint": "Orice număr de la 1 la 600. Lasă gol dacă nu vrei o țintă.",
@@ -109,12 +108,12 @@
     "save": "Salvează",
     "saved": "Salvat.",
     "saveFailed": "Nu s-a salvat. Verifică conexiunea și încearcă din nou.",
-    "turnOff": "Oprește și șterge minutele mele",
+    "turnOff": "Oprește și șterge minutele",
     "turnOffConfirm": "Se șterg ținta, memento-ul și minutele numărate până acum.",
     "turnOffYes": "Da, oprește",
     "keepIt": "Păstrează",
     "changeFailed": "N-a mers. Verifică conexiunea și încearcă din nou.",
-    "loadFailed": "Zilele tale de citit nu s-au putut încărca."
+    "loadFailed": "Zilele de citit nu s-au putut încărca."
   },
   "thanks": {
     "button": "Spune că ai terminat povestea",

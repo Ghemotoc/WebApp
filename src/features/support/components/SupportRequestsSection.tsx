@@ -1,5 +1,5 @@
 /**
- * SupportRequestsSection: "Your support requests" on Settings (id support): the way to ask the
+ * SupportRequestsSection: "Support requests" on Settings (id support): the way to ask the
  * support team for help and to read their answers (story S1-E11-13 criterion 2; bundle
  * ADMIN-2h1).
  *

@@ -106,7 +106,7 @@ test.describe('staff change a story (S1-E11-08)', () => {
     const page = await openAs(browser, 'moderator', `/staff/stories/${weatherStationId}`);
     const visibility = page.getByRole('radiogroup', { name: 'Who can find this story' });
     await visibility.getByRole('radio', { name: 'Restricted' }).click();
-    await giveReason(page, 'story-visibility', 'It breaks our community guidelines', 'Spam links.');
+    await giveReason(page, 'story-visibility', 'It breaks the community guidelines', 'Spam links.');
     await page.getByRole('button', { name: 'Save who can find it' }).click();
     await expect(
       page.getByText('Saved. The writer has been told what changed and why.'),

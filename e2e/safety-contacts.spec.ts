@@ -6,7 +6,7 @@
  * - adult_writer (Romania) sees 112, Telefonul Copilului 116 111 and Ora de Net in the report
  *   dialog, each from the database, with "Official site" links that open in a new tab;
  * - a signed-out visitor from Great Britain (faked connection) sees British contacts on
- *   /legal/contact, and "Not your country?" switches to Romania;
+ *   /legal/contact, and "Wrong country?" switches to Romania;
  * - a visitor from a country with no row (France) sees "Call your local emergency number", the
  *   two international directories (Child Helpline International, INHOPE) and
  *   the gap is counted for staff;
@@ -64,7 +64,7 @@ test.describe('safety contacts (S1-E10-13a)', () => {
     const block = page.getByRole('region', { name: 'Is someone in danger right now?' });
     await expect(block).toContainText('Contacts for United Kingdom');
     await expect(block).toContainText('999');
-    await block.getByRole('combobox', { name: 'Not your country?' }).selectOption('RO');
+    await block.getByRole('combobox', { name: 'Wrong country?' }).selectOption('RO');
     await expect(block).toContainText('Contacts for Romania');
     await expect(block).toContainText('116 111');
   });
@@ -79,7 +79,7 @@ test.describe('safety contacts (S1-E10-13a)', () => {
     );
     await openFrom(page, 'FR', '/legal/contact');
     const block = page.getByRole('region', { name: 'Is someone in danger right now?' });
-    await expect(block).toContainText('Call your local emergency number.');
+    await expect(block).toContainText('Call the local emergency number.');
     await expect(block).toContainText('We don’t have checked contacts for your country yet.');
     // The two international directories, checked by the CTO on 24 Oct 2026 (Q9c).
     await expect(block).toContainText('International directories, checked October 24, 2026:');

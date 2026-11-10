@@ -169,7 +169,7 @@ test.describe('chapter editor (S1-E3-02a)', () => {
   }) => {
     const code = firstChapterCode();
     const teenPage = await openAsPersona(browser, 'teen_17', `/write/s/${slug}/c/${code}`);
-    await expect(teenPage.getByText('We can’t find this chapter among yours.')).toBeVisible();
+    await expect(teenPage.getByText('We can’t find this chapter on this account.')).toBeVisible();
     await page.goto(`/write/s/${slug}/c/${code}`);
     await expect(page.getByText(/Intră în cont ca să scrii|Log in to write/)).toBeVisible();
   });

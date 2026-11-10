@@ -25,7 +25,7 @@
   "new": {
     "documentTitle": "Write to the moderators",
     "title": "Write to the moderators",
-    "intro": "Tell us what it is about. Please don't include passwords or someone else's private details.",
+    "intro": "Tell us what it is about. Don't include passwords or someone else's private details.",
     "about": "Linked to decision {{reference}}. The team will see which decision it's about.",
     "subject": "Subject",
     "body": "Message",
@@ -54,7 +54,7 @@
     "reopens": "Answering a closed thread opens it again."
   },
   "failures": {
-    "refused": "Please fill in every field.",
+    "refused": "Fill in every field.",
     "too_many": "You've sent a lot of messages in the last hour. Try again in {{minutes}} minutes.",
     "not_found": "We couldn't find this conversation or decision on your account.",
     "not_allowed": "You can't do this.",

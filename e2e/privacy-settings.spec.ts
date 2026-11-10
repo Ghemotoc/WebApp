@@ -99,7 +99,7 @@ test.describe('privacy settings (S1-E13-01)', () => {
     // Step 1: the four settings, with the adult's defaults.
     const page = await openAs(browser, 'adult_writer', '/settings#privacy');
     const section = page.getByRole('region', { name: 'Privacy' });
-    const profile = section.getByRole('group', { name: 'Who can see your profile' });
+    const profile = section.getByRole('group', { name: 'Who can see the profile' });
     await expect(
       profile.getByRole('radio', { name: /Everyone, including people without an account/ }),
     ).toBeChecked();
@@ -108,7 +108,7 @@ test.describe('privacy settings (S1-E13-01)', () => {
     await expect(section.getByLabel('Show when I’m online')).not.toBeChecked();
     await expect(
       section
-        .getByRole('group', { name: 'Who can see your library' })
+        .getByRole('group', { name: 'Who can see the library' })
         .getByRole('radio', { name: /Only me/ }),
     ).toBeChecked();
     // Step 2: "Only people with an account", saved at once.
@@ -150,7 +150,7 @@ test.describe('privacy settings (S1-E13-01)', () => {
   test('a library shown to everyone appears on the profile', async ({ browser }) => {
     // Step 1: teacher shows their library to everyone.
     const page = await openAs(browser, 'teacher', '/settings#privacy');
-    const library = page.getByRole('group', { name: 'Who can see your library' });
+    const library = page.getByRole('group', { name: 'Who can see the library' });
     await library.getByRole('radio', { name: 'Everyone' }).check();
     await expect(library.getByRole('radio', { name: 'Everyone' })).toBeChecked();
     // Step 2: the Library page says so.

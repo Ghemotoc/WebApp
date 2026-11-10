@@ -3,9 +3,9 @@
  *
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase started first).
  * What it proves:
- * - criterion 1: in Settings, "Delete my account" asks to log in again when the last log-in is
+ * - criterion 1: in Settings, "Delete account" asks to log in again when the last log-in is
  *   old; after logging in again with the password the account closes at once (the closing page
- *   on every page, the profile marked deleted) and "Keep my account" brings it back;
+ *   on every page, the profile marked deleted) and "Keep account" brings it back;
  * - criterion 5: /delete-account explains how to delete an account on the website, and opens
  *   Settings › Delete account when signed in;
  * - axe at 390, 768 and 1440 px, light and night, ro and en, on the confirmation, the website
@@ -45,7 +45,7 @@ function closeAccount() {
     values ('${leaverId}', now() + interval '14 days');`);
 }
 
-test.describe('Delete my account', () => {
+test.describe('Delete account', () => {
   test.beforeAll(() => {
     expect(runSql(`select handle from public.profiles where id = '${leaverId}';`).trim()).toBe(
       'failed_check',
@@ -65,24 +65,24 @@ test.describe('Delete my account', () => {
     const page = await context.newPage();
     await page.goto('/settings#delete-account');
     const panel = page.locator('#delete-account');
-    await expect(panel.getByRole('heading', { name: 'Delete your account?' })).toBeVisible();
+    await expect(panel.getByRole('heading', { name: 'Delete account?' })).toBeVisible();
     await expect(panel.getByText('Log in again to confirm')).toBeVisible();
-    await expect(panel.getByRole('button', { name: 'Delete my account' })).toHaveCount(0);
+    await expect(panel.getByRole('button', { name: 'Delete account' })).toHaveCount(0);
     // Step 2: logging in again with the password lets the person delete (criterion 1).
     setFreshMinutes(10);
-    await panel.getByLabel('Or your password').fill(personaPassword);
+    await panel.getByLabel('Or the password').fill(personaPassword);
     await panel.getByRole('button', { name: 'Log in', exact: true }).click();
     await expect(panel.getByText('You logged in again.')).toBeVisible();
-    await panel.getByRole('button', { name: 'Delete my account' }).click();
+    await panel.getByRole('button', { name: 'Delete account' }).click();
     // Step 3: the account closes at once, and the closing page is on every page.
-    await expect(page.getByRole('heading', { name: 'Your account is closing' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Account closing' })).toBeVisible();
     await expect(page.getByText(/We delete it for good on \d+ \w+ \d{4}/)).toBeVisible();
     expect(runSql(`select account_state('${leaverId}')::text;`).trim()).toBe('deleted');
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: 'Your account is closing' })).toBeVisible();
-    // Step 4: "Keep my account" brings everything back.
-    await page.getByRole('button', { name: 'Keep my account' }).click();
-    await expect(page.getByRole('heading', { name: 'Your account is closing' })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Account closing' })).toBeVisible();
+    // Step 4: "Keep account" brings everything back.
+    await page.getByRole('button', { name: 'Keep account' }).click();
+    await expect(page.getByRole('heading', { name: 'Account closing' })).toHaveCount(0);
     expect(
       runSql(`select deleted_at is null from public.profiles where id = '${leaverId}';`).trim(),
     ).toBe('t');
@@ -96,7 +96,7 @@ test.describe('Delete my account', () => {
     const visitor = await browser.newPage();
     await visitor.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
     await visitor.goto('/delete-account');
-    await expect(visitor.getByRole('heading', { name: 'Delete your account' })).toBeVisible();
+    await expect(visitor.getByRole('heading', { name: 'Delete account' })).toBeVisible();
     await expect(
       visitor.locator('#main').getByRole('link', { name: 'Log in', exact: true }),
     ).toBeVisible();
@@ -142,7 +142,7 @@ test.describe('Delete my account', () => {
         await useSessionInBrowser(page.context(), (await signInPersona('failed_check')).session);
         await checkScreen(page, view);
         await expect(
-          page.getByRole('button', { name: /Keep my account|Păstrez contul/ }),
+          page.getByRole('button', { name: /Keep account|Păstrez contul/ }),
         ).toBeVisible();
       });
     }

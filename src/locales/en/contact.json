@@ -6,19 +6,19 @@
   "reportInstead": "Reporting a story, comment or profile? Use the Report button next to it, so it reaches our moderators straight away. Reporting without an account, and how to reach us about legal matters, is on the",
   "reportInsteadLink": "contact and company details page",
   "form": {
-    "heading": "Your message",
+    "heading": "Send a message",
     "topic": "What is it about?",
     "topics": {
       "question": "A question",
-      "account": "A problem with my account",
+      "account": "A problem with an account",
       "data_request": "My data (see, correct, download or delete it)",
       "other": "Something else"
     },
     "message": "Message",
     "messageHint": "Say what happened and what you’d like us to do. At most {{max}} characters.",
-    "messageMissing": "Write your message first.",
+    "messageMissing": "Write the message first.",
     "messageTooLong": "That’s too long. Keep it under 4,000 characters.",
-    "email": "Your email",
+    "email": "Email",
     "emailHint": "We reply to this address and send you a reference.",
     "emailInvalid": "Check the email address.",
     "signedInAs": "We’ll reply to {{email}}, the address of your account @{{handle}}. Your username and user ID go with the message, so we can find your account; never your year of birth or age check.",
@@ -34,7 +34,7 @@
   },
   "failures": {
     "invalid": "Something in the message was refused. Check the fields and try again.",
-    "unsent": "We couldn’t send your message right now. Please try again in a few minutes, or email us directly at {{supportEmail}}.",
+    "unsent": "We couldn’t send the message right now. Try again in a few minutes, or email us directly at {{supportEmail}}.",
     "unreachable": "We couldn’t reach our server. Check your connection and try again."
   },
   "otherWays": {

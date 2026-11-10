@@ -79,7 +79,7 @@ export async function requestAccountDeletion(
 }
 
 /**
- * Keeps the signed-in person's closing account ("Keep my account").
+ * Keeps the signed-in person's closing account ("Keep account").
  *
  * @param client - the shared Supabase client
  * Errors: throws when the database can't be reached.

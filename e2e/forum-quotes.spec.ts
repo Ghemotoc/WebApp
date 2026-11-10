@@ -63,14 +63,14 @@ function postCard(page: Page, number: number) {
 
 /** The reply box. */
 function replyBox(page: Page) {
-  return page.getByRole('textbox', { name: 'Your reply' });
+  return page.getByRole('textbox', { name: 'Reply' });
 }
 
 /** Starts the thread as adult_writer through the screens, with a reply by teacher as #2. */
 async function startThread(browser: Browser) {
   const writer = await openAs(browser, 'adult_writer', '/forums/first-chapters/new');
   await writer.getByLabel('Title').fill(threadTitle);
-  await writer.getByLabel('Your post').fill('Open on the **choir** counting heads.');
+  await writer.getByLabel('Post').fill('Open on the **choir** counting heads.');
   await writer.getByRole('button', { name: 'Post the thread' }).click();
   await expect(writer.getByRole('heading', { level: 1, name: threadTitle })).toBeVisible();
   await writer.context().close();

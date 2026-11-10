@@ -19,7 +19,7 @@ export type CertificateResult = Enums<'certificate_result'>;
 /** The three results, in the order the teacher's list offers them. */
 export const certificateResults: CertificateResult[] = ['participant', 'finalist', 'winner'];
 
-/** One of the signed-in student's certificates, as "My certificates" and the sheet draw it. */
+/** One of the signed-in student's certificates, as "Certificates" and the sheet draw it. */
 export interface MyCertificate {
   id: string;
   code: string;

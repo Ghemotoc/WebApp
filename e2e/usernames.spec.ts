@@ -65,8 +65,8 @@ test.describe('usernames and pen names (S1-E2-04)', () => {
 
     // The notice is on every page until a username is chosen.
     await expect(page.getByRole('heading', { name: 'Choose a username' })).toBeVisible();
-    await page.getByRole('link', { name: 'Set up your profile' }).click();
-    await expect(page.getByRole('heading', { name: 'Set up your profile' })).toBeVisible();
+    await page.getByRole('link', { name: 'Set up profile' }).click();
+    await expect(page.getByRole('heading', { name: 'Set up profile' })).toBeVisible();
 
     // A staff look-alike (Cyrillic а) is refused, with a way to ask for a review. The "Choose a
     // username" notice is labelled with the word too, so ask for the text box by role.
@@ -98,7 +98,7 @@ test.describe('usernames and pen names (S1-E2-04)', () => {
 
   test('Settings changes the username once, then asks to wait 30 days', async ({ browser }) => {
     const page = await openAsPersona(browser, '/');
-    await page.getByRole('button', { name: 'Your account' }).click();
+    await page.getByRole('button', { name: 'Account' }).click();
     await page.getByRole('link', { name: 'Settings' }).click();
     await expect(page.getByText('Signed in as Doamna Popescu · @ms.popescu')).toBeVisible();
 

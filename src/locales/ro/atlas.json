@@ -9,14 +9,14 @@
     "write": "Scrie"
   },
   "empty": {
-    "title": "Plănuiește-ți prima poveste",
+    "title": "Plănuiește prima poveste",
     "description": "Atlasul poveștii ține planul fiecărei povești lângă capitolele ei: despre ce e, cât de lungă să fie și unde ai ajuns. Doar tu îl vezi.",
     "action": "Poveste nouă"
   },
-  "signedOut": "Intră în cont ca să-ți plănuiești poveștile.",
-  "notFound": "Nu am găsit povestea printre ale tale. Poate a fost ștearsă.",
+  "signedOut": "Intră în cont ca să plănuiești povești.",
+  "notFound": "Nu am găsit povestea în cont. Poate a fost ștearsă.",
   "loadFailed": "Planul nu s-a încărcat. Verifică-ți conexiunea și încearcă din nou.",
-  "privateNote": "Doar tu îți vezi planul.",
+  "privateNote": "Doar tu vezi acest plan.",
   "save": {
     "saving": "Se salvează…",
     "saved": "Salvat",
@@ -48,7 +48,7 @@
   "publishingRoute": {
     "undecided": "Nu m-am hotărât",
     "serial_here": "Capitol cu capitol pe {{productName}}",
-    "complete_here": "Toată odată pe {{productName}}",
+    "complete_here": "Dintr-odată pe {{productName}}",
     "here_and_elsewhere": "Pe {{productName}} și în altă parte"
   },
   "summary": {
@@ -62,7 +62,7 @@
   "words": {
     "heading": "Cuvinte",
     "count": "{{written}} din {{target}} de cuvinte",
-    "percent": "{{percent}}% din ținta ta de cuvinte"
+    "percent": "{{percent}}% din ținta de cuvinte"
   },
   "chapters": {
     "heading": "Capitole",
@@ -113,7 +113,7 @@
     "filterHint": "După nume sau după cum mai sunt cunoscute.",
     "none": "Încă nu ai personaje. Adaugă-l pe primul cu Personaj nou.",
     "noMatch": "Niciun personaj nu se potrivește cu „{{filter}}”.",
-    "pick": "Alege un personaj ca să-i deschizi fișa.",
+    "pick": "Alege un personaj ca să deschizi fișa.",
     "notFound": "Personajul acesta nu mai este în poveste.",
     "createFailed": "Personajul nu a fost adăugat. Verifică-ți conexiunea și încearcă din nou.",
     "name": "Nume",
@@ -163,7 +163,7 @@
     "firstAppearance": "Prima apariție",
     "firstAppearanceNone": "Încă nealeasă",
     "custom": {
-      "heading": "Câmpurile tale",
+      "heading": "Câmpuri proprii",
       "none": "Încă nu ai câmpuri proprii.",
       "manage": "Adaugă sau scoate câmpurile tale pe pagina Pe scurt"
     },
@@ -196,7 +196,7 @@
     }
   },
   "fieldsSection": {
-    "heading": "Câmpurile tale pentru personaje",
+    "heading": "Câmpuri pentru personaje",
     "hint": "Un câmp adăugat aici apare pe fișa fiecărui personaj din poveste, de exemplu „Transformat de”.",
     "none": "Încă nu ai câmpuri proprii.",
     "name": "Câmp nou",
@@ -225,7 +225,7 @@
       "enemy_of": "În dușmănie cu",
       "resents": "Are resentimente față de",
       "killed": "A ucis",
-      "custom": "Altă legătură (eticheta ta)"
+      "custom": "Altă legătură (etichetă proprie)"
     },
     "sentences": {
       "parent_of": "{{from}} e părinte pentru {{to}}",
@@ -257,17 +257,17 @@
       "to": "Celălalt personaj",
       "pickCharacter": "Alege un personaj",
       "kind": "Legătura",
-      "customLabel": "Eticheta ta",
+      "customLabel": "Etichetă",
       "customHint": "De exemplu „rival cu” sau „îi datorează lui”.",
       "note": "Notă (opțional)",
       "button": "Adaugă legătura",
       "added": "Legătura a fost adăugată.",
       "pickBoth": "Alege ambele personaje.",
-      "labelRequired": "Scrie eticheta ta pentru această legătură.",
+      "labelRequired": "Scrie o etichetă pentru această legătură.",
       "failed": "Legătura nu a fost salvată. Verifică-ți conexiunea și încearcă din nou."
     },
     "list": {
-      "heading": "Toate legăturile",
+      "heading": "Legături",
       "sheetHeading": "Legături",
       "none": "Încă nu ai legături.",
       "delete": "Șterge",
@@ -552,7 +552,7 @@
       "todo": "De făcut",
       "decision": "Decizie"
     },
-    "listHeading": "Notițele tale",
+    "listHeading": "Notițe",
     "filterLabel": "Arată",
     "filters": {
       "open": "Deschise ({{count}})",
@@ -675,7 +675,7 @@
         "characters": "Pagina fiecărui personaj, doar cu părțile din fișă pe care le deschizi.",
         "relationship_map": "Harta legăturilor dintre personaje, cu lista ei.",
         "family_tree": "Arborele genealogic.",
-        "bible": "Lumea poveștii tale, în modul de citire.",
+        "bible": "Lumea poveștii, în modul de citire.",
         "timeline": "Evenimentele din cronologie, în ordine."
       }
     },
@@ -726,7 +726,7 @@
       "none": "Niciun personaj de arătat încă."
     },
     "character": {
-      "back": "Toate personajele",
+      "back": "Personaje",
       "connections": "Legături",
       "notShown": "Acest personaj nu apare aici."
     },

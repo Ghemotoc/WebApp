@@ -82,8 +82,8 @@ test.describe('safeguarding (S1-E10-10)', () => {
     await panel.getByRole('button', { name: 'Build and download' }).click();
     expect((await download).suggestedFilename()).toMatch(/^evidence-R-\d+\.json$/);
 
-    await panel.getByLabel(/^Authority/).fill('Poliția Română');
-    await panel.getByLabel('Their reference (optional)').fill('DOS-123');
+    await panel.getByLabel(/^Authority \(/).fill('Poliția Română');
+    await panel.getByLabel('Authority’s reference (optional)').fill('DOS-123');
     await panel.getByRole('button', { name: 'Log the referral' }).click();
     await expect(panel.getByText(/Poliția Română \(DOS-123\)/)).toBeVisible();
     // The case stays open for the next test's own report, so it is closed here by hand.

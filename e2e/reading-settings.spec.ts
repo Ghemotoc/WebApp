@@ -135,10 +135,10 @@ test.describe('reading settings (S1-E4-02)', () => {
     await expect.poll(() => textStyle(page, 'fontSize')).toBe('24px');
     await page.getByRole('button', { name: 'Reading settings' }).click();
     const panel = page.getByRole('region', { name: 'Reading settings' });
-    await expect(panel).toContainText('24 px, from your device');
+    await expect(panel).toContainText('24 px, from the device');
     await panel.getByLabel('Text size').fill('16');
     await expect.poll(() => textStyle(page, 'fontSize')).toBe('16px');
-    await panel.getByRole('button', { name: 'Use my device’s size' }).click();
+    await panel.getByRole('button', { name: 'Use the device’s size' }).click();
     await expect.poll(() => textStyle(page, 'fontSize')).toBe('24px');
   });
 

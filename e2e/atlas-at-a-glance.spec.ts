@@ -153,7 +153,7 @@ test.describe('Story Atlas at a glance (S1-E17-01 to S1-E17-06)', () => {
 
   test('another writer can’t open someone else’s plan', async ({ browser }) => {
     const page = await openAs(browser, 'teacher', '/plan/s/statia-meteo-seed01');
-    await expect(page.getByText('We couldn’t find that story among yours.')).toBeVisible();
+    await expect(page.getByText('We couldn’t find that story on this account.')).toBeVisible();
     await expect(page.getByText('Story details')).toHaveCount(0);
     await page.context().close();
   });

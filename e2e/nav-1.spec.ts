@@ -5,9 +5,9 @@
  * What it proves:
  * - the account menu starts with the person's name and @username, which opens their public
  *   profile, then "Edit profile", which opens Settings › Profile;
- * - the Library has a "My stories" chip with the writer's own stories, drafts included, and a card
+ * - the Library has a "Written by you" chip with the writer's own stories, drafts included, and a card
  *   opens the story's chapters in the writing tools;
- * - the Library's My stories shelf and the open account menu pass axe at 390 px, light, ro and en.
+ * - the Library's Written by you shelf and the open account menu pass axe at 390 px, light, ro and en.
  * Test data: a draft story "Ciorna din raft" for adult_writer, removed afterwards.
  */
 import { expect, test, type Browser } from '@playwright/test';
@@ -58,45 +58,48 @@ test.describe('getting around as a writer (NAV-1)', () => {
   }) => {
     const page = await openAsWriter(browser, '/discover');
     // Step 1: the menu's first row is the person, linking to their own public profile.
-    await page.getByRole('button', { name: 'Your account' }).click();
+    await page.getByRole('button', { name: 'Account' }).click();
     const profileLink = page.getByRole('link', { name: /@adult_writer/ });
     await expect(profileLink).toHaveAttribute('href', '/u/adult_writer');
-    await expect(profileLink).toContainText('View your public profile');
+    await expect(profileLink).toContainText('View public profile');
     await profileLink.click();
     await expect(page).toHaveURL(/\/u\/adult_writer$/);
     // Step 2: "Edit profile" opens the Profile group of Settings.
-    await page.getByRole('button', { name: 'Your account' }).click();
-    await page.getByRole('link', { name: 'Edit profile' }).click();
+    await page.getByRole('button', { name: 'Account' }).click();
+    await page.locator('#account-menu-panel').getByRole('link', { name: 'Edit profile' }).click();
     await expect(page).toHaveURL(/\/settings#profile$/);
     await page.context().close();
   });
 
-  test('the Library shows the writer’s own stories, drafts included, under My stories', async ({
+  test('the Library shows the writer’s own stories, drafts included, under Written by you', async ({
     browser,
   }) => {
     const page = await openAsWriter(browser, '/library');
     const chips = page.getByRole('radiogroup', { name: 'Shelf' });
-    await chips.getByRole('radio', { name: /^My stories \(\d+\)$/ }).click();
+    await chips.getByRole('radio', { name: /^Written by you \(\d+\)$/ }).click();
     // The draft is there, marked Draft, and opens its chapters in the writing tools.
     const draftCard = page.getByRole('link', { name: /Ciorna din raft/ }).first();
     await expect(draftCard).toContainText('Draft');
     await expect(draftCard).toHaveAttribute('href', `/write/s/${draftSlug}/chapters`);
     await expect(
       page.getByRole('link', {
-        name: 'Open Your writing for numbers, comments and every story tool',
+        name: 'Open Writing for numbers, comments and every story tool',
       }),
     ).toHaveAttribute('href', '/write');
     await page.context().close();
   });
 
   for (const language of ['ro', 'en'] as const) {
-    test(`axe: My stories in the Library at 390 px, light, ${language}`, async ({ browser }) => {
+    test(`axe: Written by you in the Library at 390 px, light, ${language}`, async ({
+      browser,
+    }) => {
       const page = await openAsWriter(browser, '/library', language);
       await checkScreen(
         page,
         { address: '/library', width: 390, theme: 'light', language },
         async (screen) => {
-          const chipName = language === 'ro' ? /^Poveștile mele \(\d+\)$/ : /^My stories \(\d+\)$/;
+          const chipName =
+            language === 'ro' ? /^Scrise de tine \(\d+\)$/ : /^Written by you \(\d+\)$/;
           await screen.getByRole('radio', { name: chipName }).click();
           await expect(screen.getByRole('link', { name: /Ciorna din raft/ }).first()).toBeVisible();
         },
@@ -110,7 +113,7 @@ test.describe('getting around as a writer (NAV-1)', () => {
         page,
         { address: '/discover', width: 390, theme: 'light', language },
         async (screen) => {
-          const accountName = language === 'ro' ? 'Contul tău' : 'Your account';
+          const accountName = language === 'ro' ? 'Cont' : 'Account';
           await screen.getByRole('button', { name: accountName }).click();
           await expect(screen.getByRole('link', { name: /@adult_writer/ })).toBeVisible();
         },

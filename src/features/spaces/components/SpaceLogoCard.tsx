@@ -63,7 +63,6 @@ export function SpaceLogoCard({ space }: { space: Space }) {
   if (!isOn('picture_uploads', false)) return null;
   return (
     <SpaceFormCard
-      eyebrow={t('logo.eyebrow')}
       title={t('logo.title')}
       intro={t('logo.intro')}
       headingLevel="h2"

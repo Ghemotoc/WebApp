@@ -92,7 +92,7 @@ test.describe('a signed-in person', () => {
     // The Language panel's radio buttons (bundle FIX-3) save to the account.
     await panel.getByText('English', { exact: true }).click();
     await expect(firstPage.getByRole('region', { name: 'Language' })).toContainText(
-      'Language saved to your account.',
+      'Language saved to the account.',
     );
 
     // Device 2: a fresh browser with nothing remembered, signed in again as the same persona.

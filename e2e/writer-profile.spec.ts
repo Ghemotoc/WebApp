@@ -156,9 +156,9 @@ test.describe('writer profile and blocks (S1-E5-05)', () => {
     await bio.fill('I teach Romanian and read everything.');
     await page.getByRole('button', { name: 'Save bio' }).click();
     await expect(page.getByText('Saved.')).toBeVisible();
-    await page.getByRole('link', { name: 'See your profile' }).click();
+    await page.getByRole('link', { name: 'See profile' }).click();
     await expect(page.getByText('I teach Romanian and read everything.')).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Edit your profile' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Edit profile' })).toBeVisible();
     await page.context().close();
   });
 

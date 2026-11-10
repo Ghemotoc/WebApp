@@ -8,7 +8,7 @@
  * - five wrong tries pause logging in, and even the right password waits out the pause;
  * - a person logs in, sees their devices in Settings (this one marked) and logs every other device
  *   out; the account menu logs this device out;
- * - "Forgot your password?" emails a link (Mailpit); the new password logs every other device out
+ * - "Forgot the password?" emails a link (Mailpit); the new password logs every other device out
  *   and a "password changed" email arrives; the new password works;
  * - the log-in and password screens pass axe and don't scroll sideways at 390, 768 and 1440 px.
  * Test data: throwaway @example.com accounts made and removed by e2e/support/testAccounts.ts.
@@ -105,14 +105,14 @@ test('a person logs in, sees their devices and logs the others out', async ({ br
     // Two devices log in.
     const phone = await openSignIn(browser);
     await logIn(phone, account.email, firstPassword);
-    await expect(phone.getByRole('button', { name: 'Your account' })).toBeVisible();
+    await expect(phone.getByRole('button', { name: 'Account' })).toBeVisible();
     const laptop = await openSignIn(browser);
     await logIn(laptop, account.email, firstPassword);
-    await expect(laptop.getByRole('button', { name: 'Your account' })).toBeVisible();
+    await expect(laptop.getByRole('button', { name: 'Account' })).toBeVisible();
     expect(sessionCount(account.email)).toBe('2');
 
     // The laptop opens Settings through the account menu.
-    await laptop.getByRole('button', { name: 'Your account' }).click();
+    await laptop.getByRole('button', { name: 'Account' }).click();
     await laptop.getByRole('link', { name: 'Settings' }).click();
     // The devices sit in the "Email and sign-in" group (PROFILE-1).
     await laptop.getByRole('link', { name: 'Email and sign-in' }).click();
@@ -122,13 +122,13 @@ test('a person logs in, sees their devices and logs the others out', async ({ br
     await expect(devices.getByText(/IP address/)).toBeVisible();
 
     // Every other device is logged out.
-    await devices.getByRole('button', { name: 'Log out of all other devices' }).click();
-    await expect(devices.getByText('Your other devices are logged out.')).toBeVisible();
+    await devices.getByRole('button', { name: 'Log out of other devices' }).click();
+    await expect(devices.getByText('Other devices are logged out.')).toBeVisible();
     await expect(devices.getByRole('listitem')).toHaveCount(1);
     expect(sessionCount(account.email)).toBe('1');
 
     // The account menu logs this device out too.
-    await laptop.getByRole('button', { name: 'Your account' }).click();
+    await laptop.getByRole('button', { name: 'Account' }).click();
     await laptop.getByRole('button', { name: 'Log out' }).click();
     await expect(laptop.getByRole('link', { name: 'Log in' })).toBeVisible();
   } finally {
@@ -146,20 +146,20 @@ test('a password reset by email logs other devices out and sends a "password cha
     // Another device is logged in before the reset.
     const otherDevice = await openSignIn(browser);
     await logIn(otherDevice, account.email, firstPassword);
-    await expect(otherDevice.getByRole('button', { name: 'Your account' })).toBeVisible();
+    await expect(otherDevice.getByRole('button', { name: 'Account' })).toBeVisible();
 
-    // "Forgot your password?" sends the link, with the same words for any address.
+    // "Forgot the password?" sends the link, with the same words for any address.
     const page = await openSignIn(browser);
-    await page.getByRole('link', { name: 'Forgot your password?' }).click();
+    await page.getByRole('link', { name: 'Forgot the password?' }).click();
     // The log-in form has an "Email" field too, so wait until the reset form has replaced it;
     // otherwise the address lands in a field that is about to disappear and the reset form
     // opens empty ("Type the email you joined with.").
-    await expect(page.getByRole('heading', { name: 'Reset your password' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Reset password' })).toBeVisible();
     const emailField = page.getByLabel('Email', { exact: true });
     await emailField.fill(account.email);
     await expect(emailField).toHaveValue(account.email);
     await page.getByRole('button', { name: 'Send reset link' }).click();
-    await expect(page.getByRole('heading', { name: 'Check your email' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Check email' })).toBeVisible();
     await expect(page.getByText(`If there’s an account for ${account.email}`)).toBeVisible();
 
     // The link opens the new password form; a short password is refused first.
@@ -175,17 +175,17 @@ test('a password reset by email logs other devices out and sends a "password cha
     await page.getByLabel('New password', { exact: true }).fill(newPassword);
     await page.getByLabel('Confirm new password').fill(newPassword);
     await page.getByRole('button', { name: 'Save new password' }).click();
-    await expect(page.getByRole('heading', { name: 'Your new password is saved.' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'New password saved.' })).toBeVisible();
 
     // Every other device is logged out, and the "password changed" email arrives.
     expect(sessionCount(account.email)).toBe('1');
     const changedEmail = await waitForEmail(account.email, 15_000, 'changed');
-    expect(changedEmail.HTML).toContain('Your password was changed');
+    expect(changedEmail.HTML).toContain('Password changed');
 
     // The new password works on a fresh device.
     const fresh = await openSignIn(browser);
     await logIn(fresh, account.email, newPassword);
-    await expect(fresh.getByRole('button', { name: 'Your account' })).toBeVisible();
+    await expect(fresh.getByRole('button', { name: 'Account' })).toBeVisible();
   } finally {
     removeTestAccount(account.email);
   }

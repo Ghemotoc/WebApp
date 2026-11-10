@@ -15,7 +15,6 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { registerMessagesTranslations } from '@/features/messages/registerMessagesTranslations';
 
@@ -134,7 +133,6 @@ export function PrivacySettingsSection() {
       className="flex scroll-mt-24 flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card"
     >
       <div className="flex flex-col gap-1.5">
-        <Eyebrow>{t('settings.eyebrow')}</Eyebrow>
         <h2
           id="settings-privacy-heading"
           className="m-0 font-heading text-[22px] font-bold text-heading"

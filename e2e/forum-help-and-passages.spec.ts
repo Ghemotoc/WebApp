@@ -143,7 +143,7 @@ test.describe('forum help and passages (IDEAS-3f)', () => {
     await selectParagraph(page, 1);
     await page.getByRole('button', { name: 'Discuss in the forums' }).click();
     await expect(page).toHaveURL(/\/forums\/book-talk\/new$/);
-    const post = page.getByLabel('Your post');
+    const post = page.getByLabel('Post');
     await expect(post).toHaveValue(new RegExp(`^> ${secondParagraph}`));
     await expect(post).toHaveValue(new RegExp(`/s/${storySlug}/${chapterCode}/p2\\)`));
     await page.getByLabel('Title').fill(passageTitle);

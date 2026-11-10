@@ -30,7 +30,7 @@
     "untitledChapter": "Untitled",
     "publishedOn": "Published {{date}}",
     "editedOn": "Edited {{date}}",
-    "noChaptersOwner": "No chapters yet. Write chapter one from Your writing.",
+    "noChaptersOwner": "No chapters yet. Write chapter one from Writing.",
     "draftChapter": "Draft",
     "scheduledChapter": "Scheduled",
     "notPublicYet": "Only you can see this story until you publish a chapter. This is how readers will see it.",
@@ -142,8 +142,8 @@
     "count_one": "{{count}} like",
     "count_few": "{{count}} likes",
     "count_other": "{{count}} likes",
-    "readOnly": "Your account can’t like chapters yet.",
-    "failed": "We couldn’t save your like. Try again."
+    "readOnly": "This account can’t like chapters yet.",
+    "failed": "We couldn’t save the like. Try again."
   },
   "settings": {
     "button": "Reading settings",
@@ -160,8 +160,8 @@
     "fontHint": "Fonts that work in every browser: OpenDyslexic, which many readers with dyslexia find easier, and Atkinson Hyperlegible, made so letters that look alike are easy to tell apart.",
     "textSize": "Text size",
     "textSizeValue": "{{size}} px",
-    "textSizeFromDevice": "{{size}} px, from your device",
-    "followDevice": "Use my device’s size",
+    "textSizeFromDevice": "{{size}} px, from the device",
+    "followDevice": "Use the device’s size",
     "lineSpacing": "Line spacing",
     "spacings": {
       "compact": "Compact",

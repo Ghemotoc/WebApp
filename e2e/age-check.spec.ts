@@ -91,7 +91,7 @@ test.describe('the age check', () => {
 
   test('explains both methods and passes with an ID document', async ({ browser }) => {
     const page = await openSignedIn(browser, '/age-check');
-    await expect(page.getByRole('heading', { level: 1, name: 'Confirm your age' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'Confirm age' })).toBeVisible();
     await expect(page.getByText('Quick selfie')).toBeVisible();
     await expect(page.getByText('Use an ID document')).toBeVisible();
     await expect(page.getByText('Never your photo or your document.')).toBeVisible();
@@ -112,7 +112,7 @@ test.describe('the age check', () => {
     const page = await openSignedIn(browser, '/age-check');
     await openStandIn(page);
     await page.getByRole('link', { name: 'Fail' }).click();
-    await expect(page.getByRole('heading', { name: 'We couldn’t confirm your age' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'We couldn’t confirm the age' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Try again' })).toBeVisible();
     expect(storedCheck()).toBe('failed|facial_estimation|true|0');
   });

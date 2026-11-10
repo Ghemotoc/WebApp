@@ -70,7 +70,7 @@ test.describe('automatic covers (S1-E3-13)', () => {
 
     // Picking a design, then going back to the automatic one.
     await page.getByRole('radio', { name: 'Gold stripes' }).click();
-    await expect(page.getByText('You chose your own cover.')).toBeVisible();
+    await expect(page.getByText('You chose a cover.')).toBeVisible();
     await page.getByRole('button', { name: 'Use the automatic cover' }).click();
     await expect(rightNow).toBeVisible();
 

@@ -8,7 +8,7 @@
  *   March, opens the Report dialog on a profile, sees the helplines for Romania above the form,
  *   reports harassment and gets a reference → the moderator finds the case in the queue (7 days,
  *   "Reporter under 18"), opens it, reads the note, suspends the account for 7 days → adult_writer
- *   sees "Your account is suspended until …" and can still read the contact page → the moderator
+ *   sees "Account suspended until …" and can still read the contact page → the moderator
  *   pauses kid_14_waiting's reporting → kid_14_waiting's next report is refused in the dialog →
  *   the moderator lifts the suspension → the notice is gone.
  * - Journey 2 (S1-E10-13a × S1-E14-02 × S1-E14-04): a visitor from Great Britain reads 999 on the
@@ -99,7 +99,7 @@ test.describe('epic S1-E10 journeys', () => {
 
     // Step 3: adult_writer sees why, and still reads (S1-E10-06).
     const writerPage = await openAs(browser, 'adult_writer', '/legal/contact');
-    await expect(writerPage.getByText(/Your account is suspended until/)).toBeVisible();
+    await expect(writerPage.getByText(/Account suspended until/)).toBeVisible();
     await expect(
       writerPage.getByRole('heading', { name: 'Contact and company details', level: 2 }),
     ).toBeVisible();
@@ -124,7 +124,7 @@ test.describe('epic S1-E10 journeys', () => {
     await panel.getByRole('button', { name: 'Lift the sanction' }).click();
     await expect(panel).toContainText('Lifted');
     await writerPage.reload();
-    await expect(writerPage.getByText(/Your account is suspended until/)).toHaveCount(0);
+    await expect(writerPage.getByText(/Account suspended until/)).toHaveCount(0);
   });
 
   test('journey 2: a visitor reads their country’s helplines and finds the way to write to us', async ({

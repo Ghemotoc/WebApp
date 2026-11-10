@@ -97,7 +97,7 @@
   },
   "notices": {
     "successTitle": "Saved.",
-    "successText": "Your chapter is safe.",
+    "successText": "The chapter is safe.",
     "infoTitle": "Good to know.",
     "infoText": "Private messages are hidden from staff unless they are part of a report.",
     "warningTitle": "Check this.",

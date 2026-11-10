@@ -1,6 +1,6 @@
 {
   "documentTitle": "Forums · Staff",
-  "eyebrow": "Staff · forums",
+  "eyebrow": "Staff",
   "heading": "Forums",
   "intro": "Categories hold forums, and a forum can hold subforums: two levels below a category, no more. Give each one a name in every interface language. Pinned categories come first on the forum index, in the order you set; the rest follow by their latest post. Every change is in the audit log.",
   "addCategory": "Add a category",

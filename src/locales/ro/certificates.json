@@ -5,9 +5,9 @@
     "winner": "Locul întâi"
   },
   "my": {
-    "documentTitle": "Diplomele mele",
-    "eyebrow": "Scrisul tău",
-    "title": "Diplomele mele",
+    "documentTitle": "Diplome",
+    "eyebrow": "Scris",
+    "title": "Diplome",
     "intro": "Diplome din programele clasei tale. Deschide una ca s-o tipărești sau s-o salvezi ca PDF pentru portofoliul școlar.",
     "empty": "Încă nu ai diplome. Când cadrul didactic aprobă rezultatele unui program al clasei, diploma ta apare aici.",
     "loadFailed": "Nu ți-am putut încărca diplomele. Încearcă din nou peste puțin timp.",
@@ -15,12 +15,12 @@
     "signed": "Semnată pe {{date}}",
     "revoked": "Retrasă",
     "checkLink": "Verifică codul unei diplome",
-    "signedOut": "Conectează-te ca să-ți vezi diplomele.",
+    "signedOut": "Conectează-te ca să vezi diplomele.",
     "logIn": "Conectează-te"
   },
   "page": {
     "documentTitle": "Diplomă: {{programme}}",
-    "back": "Diplomele mele",
+    "back": "Diplome",
     "notFound": "Nu am găsit această diplomă.",
     "revokedNote": "Această diplomă a fost retrasă, așa că nu poate fi tipărită. Dacă e o greșeală, scrie-ne din Contact.",
     "languageLabel": "Limba diplomei",
@@ -134,7 +134,7 @@
   "settingsCard": {
     "eyebrow": "Program al clasei",
     "title": "Diplome",
-    "body": "Aprobă rezultatele unui program și fiecare elev primește o diplomă în Diplomele mele.",
+    "body": "Aprobă rezultatele unui program și fiecare elev primește o diplomă în Diplome.",
     "link": "Deschide diplomele"
   }
 }

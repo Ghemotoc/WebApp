@@ -119,7 +119,7 @@ test.describe('epic check: comments, reactions and follows (S1-E6-QA)', () => {
       .getByRole('group', { name: 'Pick a reaction' })
       .getByRole('button', { name: 'Heart' })
       .click();
-    await expect(other.getByRole('button', { name: 'Heart, 1, your reaction' })).toBeVisible();
+    await expect(other.getByRole('button', { name: 'Heart, 1, reacted by you' })).toBeVisible();
     const downvote = other.getByRole('button', { name: /^Downvote/ });
     await downvote.click();
     await expect(downvote).toHaveAttribute('aria-pressed', 'true');
@@ -159,7 +159,7 @@ test.describe('epic check: comments, reactions and follows (S1-E6-QA)', () => {
       );
       await page.getByLabel('Add a comment').fill('Și eu!');
       await page.getByRole('button', { name: 'Post comment' }).click();
-      await expect(page.getByText('Your account can’t comment yet.')).toBeVisible();
+      await expect(page.getByText('This account can’t comment yet.')).toBeVisible();
       expect(countOf(`public.comments where user_id = '${personaIds[persona]}'`)).toBe('0');
       await page.context().close();
     });

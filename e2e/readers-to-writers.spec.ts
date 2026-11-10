@@ -138,7 +138,7 @@ test.describe('readers to writers (IDEAS-1 part c)', () => {
     const page = await openAs(browser, 'teacher', `/s/${storySlug}`);
     const button = page.getByRole('button', { name: 'Tell the writer you finished it' });
     await expect(button).toBeVisible();
-    await expect(button).toHaveAccessibleDescription(/No message, just thanks/);
+    await expect(button).toHaveAccessibleDescription(/No message, only thanks/);
     // Step 2: it goes once and the button reads "Sent", also after a reload.
     await button.click();
     await expect(page.getByRole('status').filter({ hasText: 'Sent. The writer' })).toHaveCount(1);
@@ -260,7 +260,7 @@ test.describe('readers to writers (IDEAS-1 part c)', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'Lumina' })).toBeVisible();
     await selectParagraph(page);
     await page.getByRole('button', { name: 'Share quote' }).click();
-    const dialog = page.getByRole('dialog', { name: 'Your quote card' });
+    const dialog = page.getByRole('dialog', { name: 'Quote card' });
     await expect(dialog.getByRole('button', { name: 'Sage' })).toHaveAttribute(
       'aria-pressed',
       'true',

@@ -172,7 +172,7 @@ describe('the parent’s answer', () => {
     });
     await handleParentConsent(request, makeOptions(sent));
     expect(sent[0]?.to).toBe('ana@example.com');
-    expect(sent[0]?.subject).toBe('Contul tău nu va fi activat');
+    expect(sent[0]?.subject).toBe('Contul nu va fi activat');
   });
 
   it('answers a used or unknown link plainly', async () => {

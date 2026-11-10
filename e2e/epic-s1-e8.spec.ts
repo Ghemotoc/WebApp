@@ -124,14 +124,14 @@ test.describe('epic check: forums and spaces (S1-E8-QA)', () => {
   test('journey 1: a thread, a quote, an under-16 who reads, New for you', async ({ browser }) => {
     const writer = await openAs(browser, 'adult_writer', '/forums/first-chapters/new');
     await writer.getByLabel('Title').fill(threadTitle);
-    await writer.getByLabel('Your post').fill('I open on the **weather**, every time.');
+    await writer.getByLabel('Post').fill('I open on the **weather**, every time.');
     await writer.getByRole('button', { name: 'Post the thread' }).click();
     await expect(writer.getByRole('heading', { level: 1, name: threadTitle })).toBeVisible();
     await writer.context().close();
 
     const teacher = await openAs(browser, 'teacher', threadAddress());
     await teacher.locator('#post-1').getByRole('button', { name: 'Quote post 1' }).click();
-    await teacher.getByRole('textbox', { name: 'Your reply' }).fill('Try a voice instead.');
+    await teacher.getByRole('textbox', { name: 'Reply' }).fill('Try a voice instead.');
     await teacher.getByRole('button', { name: 'Post reply' }).click();
     await expect(
       teacher.locator('#post-2 blockquote').getByRole('link', { name: '#1' }),
@@ -142,8 +142,8 @@ test.describe('epic check: forums and spaces (S1-E8-QA)', () => {
     const kid = await openAs(browser, 'kid_14_ok', threadAddress());
     await expect(kid.locator('#post-2').getByText('Try a voice instead.')).toBeVisible();
     await expect(kid.locator('#post-2 blockquote').getByText('weather')).toBeVisible();
-    await expect(kid.getByText('Your account can’t post yet.')).toBeVisible();
-    await expect(kid.getByRole('textbox', { name: 'Your reply' })).toHaveCount(0);
+    await expect(kid.getByText('This account can’t post yet.')).toBeVisible();
+    await expect(kid.getByRole('textbox', { name: 'Reply' })).toHaveCount(0);
     await kid.context().close();
 
     const teen = await openAs(browser, 'teen_17', '/forums');
@@ -156,7 +156,7 @@ test.describe('epic check: forums and spaces (S1-E8-QA)', () => {
     const student = await openAs(browser, 'pending_check', `/spaces/${classSlug}`);
     await expect(student.getByRole('heading', { level: 1, name: className })).toBeVisible();
     await student.getByRole('link', { name: classThread }).click();
-    await student.getByRole('textbox', { name: 'Your reply' }).fill('Am citit capitolul.');
+    await student.getByRole('textbox', { name: 'Reply' }).fill('Am citit capitolul.');
     await student.getByRole('button', { name: 'Post reply' }).click();
     await expect(student.locator('#post-2').getByText('Am citit capitolul.')).toBeVisible();
 
@@ -175,7 +175,7 @@ test.describe('epic check: forums and spaces (S1-E8-QA)', () => {
         '[{"handle": "pending_check", "result": "participant"}]');`,
     );
     await student.goto('/notifications');
-    await student.getByRole('link', { name: 'Open my certificates' }).first().click();
+    await student.getByRole('link', { name: 'Open certificates' }).first().click();
     await expect(student.getByRole('link', { name: `Open “${programme}”` })).toBeVisible();
     await student.context().close();
   });

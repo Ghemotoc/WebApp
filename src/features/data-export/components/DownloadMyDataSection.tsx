@@ -1,5 +1,5 @@
 /**
- * DownloadMyDataSection: "Download my data" in Settings (story S1-E13-02; board 6.3, the Download
+ * DownloadMyDataSection: "Download data" in Settings (story S1-E13-02; board 6.3, the Download
  * my data tab, drawn here as a panel on the one Settings page like the others; GDPR art. 15 and
  * 20).
  *

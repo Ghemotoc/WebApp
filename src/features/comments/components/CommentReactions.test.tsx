@@ -51,7 +51,7 @@ describe('reactions on a comment', () => {
   it('marks the reader’s own reaction with aria-pressed and its name', () => {
     signedIn('reader');
     renderWithProviders(<CommentReactions address={address} comment={comment} />, 'en');
-    expect(screen.getByRole('button', { name: 'Heart, 4, your reaction' })).toHaveAttribute(
+    expect(screen.getByRole('button', { name: 'Heart, 4, reacted by you' })).toHaveAttribute(
       'aria-pressed',
       'true',
     );
@@ -61,7 +61,7 @@ describe('reactions on a comment', () => {
   it('takes the reaction away when the reader picks their own again', () => {
     signedIn('reader');
     renderWithProviders(<CommentReactions address={address} comment={comment} />, 'en');
-    fireEvent.click(screen.getByRole('button', { name: 'Heart, 4, your reaction' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Heart, 4, reacted by you' }));
     expect(react).toHaveBeenCalledWith(null);
     fireEvent.click(screen.getByRole('button', { name: 'Wow, 1' }));
     expect(react).toHaveBeenCalledWith('wow');

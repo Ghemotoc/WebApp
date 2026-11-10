@@ -1,6 +1,6 @@
 {
   "documentTitle": "Sponsors · {{productName}}",
-  "eyebrow": "Staff · sponsors",
+  "eyebrow": "Staff",
   "heading": "Sponsors and banners",
   "intro": "Set up sponsor campaigns and check every creative before it goes live. A banner matches the page, not the person reading it, so everyone on the same page sees the same banner.",
   "principles": {
@@ -218,7 +218,6 @@
     "download": "Download CSV"
   },
   "inventory": {
-    "eyebrow": "Placements",
     "heading": "Placements",
     "intro": "Book a sponsor into a slot here. Ad-network ads need no booking: they fill whatever is left, automatically. Every public page has at most 2 ad slots, and class spaces have none.",
     "orderHeading": "How each slot is filled, every time a page loads",
@@ -277,7 +276,6 @@
     }
   },
   "booking": {
-    "eyebrow": "Book a slot",
     "heading": "Book a slot for a campaign",
     "campaign": "Campaign (approved only)",
     "noCampaigns": "No approved campaign can be booked yet. Campaigns waiting for review, sent back or giving “Sponsored by” credits can’t be booked.",
@@ -307,7 +305,7 @@
   },
   "houseAds": {
     "eyebrow": "House ads",
-    "heading": "Our own promos",
+    "heading": "House promos",
     "intro": "A house ad shows our own name, with no “Ad” or “Sponsored” label, and links only to a page on our own site.",
     "new": "New house ad",
     "edit": "Change",
@@ -319,7 +317,7 @@
     "titleEn": "Title in English",
     "textRo": "Line in Română (optional)",
     "textEn": "Line in English (optional)",
-    "link": "Page on our site",
+    "link": "Page on the site",
     "linkHint": "A path that starts with /, for example /c/poetry-week.",
     "slot": "Slot",
     "anySlot": "Any slot",

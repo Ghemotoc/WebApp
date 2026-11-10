@@ -3,14 +3,14 @@
     "write": "Write"
   },
   "yourWriting": {
-    "documentTitle": "Your writing · {{productName}}",
+    "documentTitle": "Writing · {{productName}}",
     "eyebrow": "Write · writer dashboard",
-    "heading": "Your writing",
+    "heading": "Writing",
     "intro": "See how each story is doing, pick up your drafts and read what readers said.",
     "newStory": "+ New story",
-    "storiesEyebrow": "Your stories",
+    "storiesEyebrow": "Stories",
     "storiesHeading": "Story by story",
-    "signedOut": "Log in to see your stories.",
+    "signedOut": "Log in to see stories.",
     "empty": {
       "title": "No stories yet",
       "description": "Start a story and write chapter one. Only you can see it until you publish.",
@@ -25,7 +25,7 @@
     "back": "Writer dashboard",
     "eyebrow": "Write · new story",
     "heading": "Start a new story",
-    "intro": "Fill in the basics, then write chapter one. You can change all of this later in story settings.",
+    "intro": "Fill in the basics, then write chapter one. You can change this later in story settings.",
     "basics": "The basics",
     "title": "Title",
     "blurb": "Blurb",
@@ -50,9 +50,9 @@
     "tagWaiting": "(waiting for approval)",
     "suggestedTags": "Suggested tags",
     "addSuggestedTag": "Add the tag {{tag}}",
-    "allSuggestions_one": "Show all {{count}} suggestion",
-    "allSuggestions_few": "Show all {{count}} suggestions",
-    "allSuggestions_other": "Show all {{count}} suggestions",
+    "allSuggestions_one": "Show {{count}} suggestion",
+    "allSuggestions_few": "Show the {{count}} suggestions",
+    "allSuggestions_other": "Show the {{count}} suggestions",
     "fewerSuggestions": "Show fewer suggestions"
   },
   "categories": {
@@ -90,7 +90,7 @@
     "automatic": {
       "intro": "Skip this and we’ll give your story one of these covers automatically. You can change it any time.",
       "current": "Right now: {{design}}, picked for you automatically.",
-      "chosen": "You chose your own cover.",
+      "chosen": "You chose a cover.",
       "use": "Use the automatic cover"
     },
     "designNames": {
@@ -128,11 +128,11 @@
   "preview": {
     "eyebrow": "How readers will see it",
     "onlyYou": "Only you",
-    "noBlurb": "Your blurb shows here.",
+    "noBlurb": "The blurb shows here.",
     "deleteLater": "You can also delete the story later in story settings. We ask twice, hide it straight away and delete it for good after 30 days. Until then you can undo it."
   },
   "errors": {
-    "titleMissing": "Give your story a title.",
+    "titleMissing": "Give the story a title.",
     "titleTooLong": "A title can have at most 120 characters.",
     "blurbTooLong": "A blurb can have at most 500 characters.",
     "languageMissing": "Choose the language your story is written in.",
@@ -147,7 +147,7 @@
     "abuseNeedsRating": "A story about abuse or coercion must be rated 16+ or 18+.",
     "abuseNeedsNote": "Add a content note for a story about abuse or coercion.",
     "contentNoteTooLong": "A content note can have at most {{max}} characters.",
-    "chapterCreateFailed": "Your story was saved, but we couldn’t open chapter one. Open it from Your writing.",
+    "chapterCreateFailed": "The story was saved, but we couldn’t open chapter one. Open it from Writing.",
     "ratingReasonsMissing": "Tick at least one reason why it is 16+ or 18+."
   },
   "storyCard": {
@@ -168,7 +168,7 @@
     "completed": "Completed",
     "hint": "Shown on your story card. Readers can filter by it.",
     "filterLabel": "Show",
-    "all": "All stories"
+    "all": "Every story"
   },
   "visibility": {
     "heading": "Who can read it",
@@ -197,11 +197,11 @@
   "pictureSharing": {
     "label": "Sharing pictures",
     "on": "On. Readers can share a picture from your chapters as a card with your name and a link to it. Only pictures that passed the check.",
-    "off": "Off. Readers can’t share your chapters’ pictures."
+    "off": "Off. Readers can’t share the chapters’ pictures."
   },
   "cardColour": {
     "label": "Colour for quote and picture cards",
-    "ourDefault": "Our default",
+    "ourDefault": "Default",
     "hint": "New cards readers make from your story start in this colour. Each reader can still pick another for their own card."
   },
   "settings": {
@@ -212,14 +212,14 @@
     "saving": "Saving…",
     "saved": "Saved.",
     "saveFailed": "We couldn’t save the changes. Check your connection and try again.",
-    "notFound": "We can’t find this story among yours."
+    "notFound": "We can’t find this story on this account."
   },
   "deleteStory": {
     "eyebrow": "The whole story",
     "heading": "Delete this story",
     "intro": "We ask you twice. The story and all its chapters are hidden straight away and deleted for good after 30 days.",
     "button": "Delete story",
-    "firstTitle": "Delete “{{title}}” and all its chapters?",
+    "firstTitle": "Delete “{{title}}” and its chapters?",
     "firstBody": "Readers lose access straight away.",
     "keep": "Keep story",
     "confirmFirst": "Yes, delete story",
@@ -370,7 +370,7 @@
     "problems": {
       "notActive": "Your account can’t change chapters yet. Confirm your email and choose a username first.",
       "empty": "This chapter has no words yet, so it can’t be published. Open it and write something first.",
-      "outOfDate": "Something changed on another device or tab. The list is up to date now; please try again.",
+      "outOfDate": "Something changed on another device or tab. The list is up to date now; try again.",
       "failed": "That didn’t work. Check your connection and try again."
     },
     "drag": {
@@ -387,11 +387,11 @@
     "pickLabel": "Tags to show as badges",
     "rankOf": "{{tag}} · #{{rank}} of {{count}}",
     "noRank": "{{tag}} · no rank yet",
-    "automatic": "Showing your 3 best ranks.",
+    "automatic": "Showing the 3 best ranks.",
     "picked_one": "Showing the {{count}} tag you picked.",
     "picked_few": "Showing the {{count}} tags you picked.",
     "picked_other": "Showing the {{count}} tags you picked.",
-    "useBest": "Show my 3 best ranks instead",
+    "useBest": "Show the 3 best ranks instead",
     "full": "You've picked 3. Switch one off to pick another.",
     "noTags": "Approved tags appear here once you save the story with tags.",
     "saved": "Saved. Readers see the new badges within a few minutes.",
@@ -403,7 +403,7 @@
     "fewerShort": "< 5",
     "loadFailed": "We couldn’t load your numbers. Refresh the page to try again.",
     "totals": {
-      "eyebrow": "All your stories",
+      "eyebrow": "Every story",
       "heading": "How readers respond",
       "periodLabel": "Time period",
       "last30Days": "Last 30 days",
@@ -419,7 +419,7 @@
       "likesAcross_few": "Across {{count}} chapters",
       "likesAcross_other": "Across {{count}} chapters",
       "comments": "Comments",
-      "commentsNote": "From readers, on your chapters",
+      "commentsNote": "From readers, on the chapters",
       "followers": "Followers",
       "followersNote": "People who follow you",
       "followersLast30": "New followers in 30 days",
@@ -462,7 +462,7 @@
     "noNumbersYet": "No numbers yet.",
     "comments": {
       "eyebrow": "Comments",
-      "heading": "Latest on your chapters",
+      "heading": "Latest on the chapters",
       "onChapter": "on chapter {{number}} · {{when}}",
       "reply": "Reply",
       "replyLabel": "Reply to {{name}} on chapter {{number}}",
@@ -472,13 +472,13 @@
   "canva": {
     "documentTitle": "Design it in Canva · {{productName}}",
     "heading": "Design it in Canva",
-    "backToWriting": "Back to Your writing",
+    "backToWriting": "Back to Writing",
     "backToSettings": "Back to your story’s settings",
     "opening": "Opening Canva…",
     "signedOut": "Log in first, then press “Design it in Canva” again in your story’s settings.",
     "working": "One moment. We’re talking to Canva…",
     "cancelled": "You didn’t connect Canva, so nothing was shared with Canva. You can try again any time from your story’s settings.",
-    "saved": "Your Canva cover is saved.",
+    "saved": "Canva cover saved.",
     "savedChecking": "You can see it now. Readers see it once it has been checked. That takes a few minutes, or up to two days when a person on our moderation team looks at it. You can close this tab.",
     "savedVisible": "Readers can see it now. You can close this tab.",
     "design": "Design it in Canva",
@@ -486,24 +486,24 @@
     "note": "Canva opens a blank cover at the right size. When you press Return in Canva, your cover comes back here. You need your own Canva account, and Canva’s rules apply there. Nothing is shared with Canva until you connect.",
     "failed": {
       "switched_off": "Designing covers in Canva is switched off right now.",
-      "account": "Your account can’t change covers right now.",
+      "account": "This account can’t change covers right now.",
       "not_connected": "Canva isn’t connected any more. Press “Design it in Canva” again in your story’s settings to connect it.",
-      "declined": "Canva didn’t accept the connection. Please try again from your story’s settings.",
-      "expired": "This link has expired or didn’t come from Canva. Please start again from your story’s settings.",
+      "declined": "Canva didn’t accept the connection. Try again from the story’s settings.",
+      "expired": "This link has expired or didn’t come from Canva. Start again from the story’s settings.",
       "export_failed": "Canva couldn’t export your design. Open it in Canva and press Return again.",
-      "unavailable": "Canva isn’t set up on our side yet. Please try again later.",
+      "unavailable": "Canva isn’t set up yet. Try again later.",
       "unreachable": "We couldn’t reach Canva or our server. Check your connection and try again.",
       "signed_out": "Log in first, then try again.",
       "invalid": "This page only works on the way to Canva and back. Start from your story’s settings.",
-      "storyNotFound": "We couldn’t find that story among yours."
+      "storyNotFound": "We couldn’t find that story on this account."
     },
     "settings": {
       "heading": "Canva",
       "notConnected": "Not connected. You connect Canva the first time you press “Design it in Canva” in a story’s cover settings.",
       "connected": "Connected since {{date}}. We use it only to open blank covers and bring back the ones you design.",
       "disconnect": "Disconnect Canva",
-      "disconnectFailed": "We couldn’t disconnect Canva. Please try again.",
-      "loadFailed": "We couldn’t check whether Canva is connected. Please try again."
+      "disconnectFailed": "We couldn’t disconnect Canva. Try again.",
+      "loadFailed": "We couldn’t check whether Canva is connected. Try again."
     },
     "arrived": "Your new cover from Canva is here, and it’s already saved."
   },

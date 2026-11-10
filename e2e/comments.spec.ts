@@ -145,7 +145,7 @@ test.describe('comments on a chapter (S1-E6-01)', () => {
   test('a read-only account is told it can’t comment yet', async ({ browser }) => {
     const page = await openAs(browser, 'kid_14_ok');
     await postComment(page, 'Salut!');
-    await expect(page.getByRole('alert')).toHaveText('Your account can’t comment yet.');
+    await expect(page.getByRole('alert')).toHaveText('This account can’t comment yet.');
     expect(
       runSql(
         `select count(*) from public.comments where user_id <> '${teacherId}' and user_id <> '${adultWriterId}'`,

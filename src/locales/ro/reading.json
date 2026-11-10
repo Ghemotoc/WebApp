@@ -30,7 +30,7 @@
     "untitledChapter": "Fără titlu",
     "publishedOn": "Publicat {{date}}",
     "editedOn": "Modificat {{date}}",
-    "noChaptersOwner": "Niciun capitol încă. Scrie capitolul unu din Scrierile tale.",
+    "noChaptersOwner": "Niciun capitol încă. Scrie capitolul unu din Scrieri.",
     "draftChapter": "Ciornă",
     "scheduledChapter": "Programat",
     "notPublicYet": "Doar tu vezi această poveste până publici un capitol. Așa o vor vedea cititorii.",
@@ -142,7 +142,7 @@
     "count_one": "{{count}} apreciere",
     "count_few": "{{count}} aprecieri",
     "count_other": "{{count}} de aprecieri",
-    "readOnly": "Contul tău nu poate aprecia capitole încă.",
+    "readOnly": "Contul nu poate aprecia capitole încă.",
     "failed": "Nu am putut salva aprecierea. Încearcă din nou."
   },
   "settings": {
@@ -160,7 +160,7 @@
     "fontHint": "Fonturi care merg în orice browser: OpenDyslexic, pe care mulți cititori cu dislexie îl găsesc mai ușor și Atkinson Hyperlegible, făcut ca literele care seamănă între ele să se deosebească ușor.",
     "textSize": "Mărimea textului",
     "textSizeValue": "{{size}} px",
-    "textSizeFromDevice": "{{size}} px, de pe dispozitivul tău",
+    "textSizeFromDevice": "{{size}} px, de pe dispozitiv",
     "followDevice": "Folosește mărimea dispozitivului",
     "lineSpacing": "Spațiul dintre rânduri",
     "spacings": {

@@ -1,6 +1,6 @@
 {
   "documentTitle": "Settings · Staff",
-  "eyebrow": "Staff · settings",
+  "eyebrow": "Staff",
   "heading": "Content settings",
   "intro": "Change how the platform works without a new release. Changes apply within a minute, and each one is logged with who, what, when and the before and after values.",
   "auditLink": "See every settings change in the audit log",
@@ -19,7 +19,7 @@
     "below_zero": "Numbers can't go below zero.",
     "bad_item": "Each item must be a word or a number of zero or more.",
     "repeated_item": "Each item may appear only once.",
-    "changed_parts": "The value must keep all its parts.",
+    "changed_parts": "The value must keep every part.",
     "typed_invalid": "Type a number of zero or more, or a list separated by a comma and a space.",
     "no_moderator": "No moderator who reads this language is on the rota yet. Record the languages staff read on Staff › Roles first.",
     "interface_language": "The interface is in this language, so it stays open.",

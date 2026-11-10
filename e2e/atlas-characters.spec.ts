@@ -168,7 +168,7 @@ test.describe('Story Atlas characters (S1-E17-08 to S1-E17-13)', () => {
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', '/plan/s/statia-meteo-seed01');
-    const fields = page.getByRole('region', { name: 'Your character fields' });
+    const fields = page.getByRole('region', { name: 'Character fields' });
     await fields.getByRole('textbox', { name: 'New field' }).fill('Turned by');
     await fields.getByRole('button', { name: 'Add field' }).click();
     await expect(fields.getByRole('listitem')).toContainText('Turned by');

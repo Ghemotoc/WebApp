@@ -29,7 +29,7 @@
  * The account notices (Terms, the country question, username, age check, consent and sanctions)
  * live in AccountNotices, at the top of <main> (MARKETS-1 split them out).
  * Deleting an account (S1-E13-03): AccountClosingGate swaps the notices and the page for the
- * closing-account page ("Keep my account" or "Log out") while the account waits to be deleted.
+ * closing-account page ("Keep account" or "Log out") while the account waits to be deleted.
  * The waiting list (WAITLIST-1): WaitlistGate, inside it, swaps them for the holding page while
  * the signed-in person still waits for their place.
  * Narrow screens (bundle G4 SHELL; handoff "App header and tab bar"): from 1024 px every page has

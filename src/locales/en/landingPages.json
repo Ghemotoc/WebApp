@@ -135,7 +135,7 @@
       "bad_link": "use one of our pages or an https:// address",
       "before_show_from": "the take-down date must come after the “show from” date",
       "invalid": "check this",
-      "dates_empty": "Choose all three dates.",
+      "dates_empty": "Choose the three dates.",
       "dates_bad_date": "One of the dates isn’t valid.",
       "dates_out_of_order": "Entries open, then close, then the results come out.",
       "link_empty": "Add the address of the rules.",

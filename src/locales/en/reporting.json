@@ -34,13 +34,13 @@
   "sent": {
     "heading": "Report sent",
     "body": "Thanks. A person on our team will read it and tell you what we decide.",
-    "reference": "Your reference: {{reference}}, received {{receivedAt}}.",
+    "reference": "Reference: {{reference}}, received {{receivedAt}}.",
     "back": "Back"
   },
   "failures": {
     "signed_out": "Log in to report this.",
     "refused": "We couldn’t take this report. You can’t report your own things, and the item may no longer exist.",
-    "too_many": "You’ve sent a lot of reports in the last hour. Please try again later.",
+    "too_many": "You’ve sent a lot of reports in the last hour. Try again later.",
     "unreachable": "We couldn’t reach our server. Check your connection and try again.",
     "paused": "Your reporting is paused for now. You can still read and write."
   },
@@ -99,8 +99,8 @@
     }
   },
   "copied": {
-    "legend": "Where was it copied from? (all optional)",
-    "titleHelps": "Even just the title of the published work helps us check.",
+    "legend": "Where was it copied from? (optional)",
+    "titleHelps": "Even the title of the published work helps us check.",
     "selected": "The passage you selected",
     "removeSelected": "Leave the selected passage out",
     "title": "Title of the published work (optional)",
@@ -110,10 +110,10 @@
     "passageHint": "Paste the lines the story copies, so a moderator can compare them."
   },
   "questions": {
-    "heading": "Questions about your reports",
+    "heading": "Questions about reports",
     "intro": "The moderation team needs a little more to check what you reported. Your answer goes only to them.",
-    "about": "About your report {{reference}} ({{reason}})",
-    "answer": "Your answer",
+    "about": "About report {{reference}} ({{reason}})",
+    "answer": "Answer",
     "send": "Send answer",
     "thanks": "Thank you. The moderation team has your answer.",
     "loadFailed": "We couldn’t load the questions about your reports. Try again later.",

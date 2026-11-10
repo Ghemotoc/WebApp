@@ -4,7 +4,7 @@
     "eyebrow": "Writer",
     "handleAndJoined": "@{{handle}} · Joined {{date}}",
     "noBio": "No bio yet.",
-    "editProfile": "Edit your profile",
+    "editProfile": "Edit profile",
     "message": "Message",
     "messageLabel": "Message {{name}}",
     "notTakingMessages": "{{name}} isn’t taking messages right now.",
@@ -43,7 +43,7 @@
     "libraryHeading": "{{name}}’s library",
     "libraryVisibleTo": "Who can see this: {{audience}}.",
     "libraryChange": "Change",
-    "libraryChangeLabel": "Change who can see your library",
+    "libraryChangeLabel": "Change who can see the library",
     "onlineLabel": "{{name}} is online"
   },
   "safety": {
@@ -69,14 +69,14 @@
     "followStory": "Follow story",
     "followingStory": "Following story",
     "logIn": "Log in to follow",
-    "readOnly": "Your account can’t follow anyone yet.",
+    "readOnly": "This account can’t follow anyone yet.",
     "failed": "We couldn’t save that. Try again."
   },
   "followers": {
     "eyebrow": "Only you see this",
-    "title": "Your followers",
+    "title": "Followers",
     "empty": "Nobody follows you yet.",
-    "loadFailed": "We couldn’t load your followers. Try again.",
+    "loadFailed": "We couldn’t load followers. Try again.",
     "followedOn": "since {{date}}",
     "close": "Close"
   },
@@ -89,9 +89,9 @@
     "bioSave": "Save bio",
     "bioSaving": "Saving…",
     "bioSaved": "Saved.",
-    "bioFailed": "We couldn’t save your bio. Try again.",
-    "bioReadOnly": "Your account can’t change its profile yet.",
-    "viewProfile": "See your profile",
+    "bioFailed": "We couldn’t save the bio. Try again.",
+    "bioReadOnly": "This account can’t change its profile yet.",
+    "viewProfile": "See profile",
     "blockedHeading": "Blocked accounts",
     "blockedEmpty": "You don’t block anyone.",
     "blockedLoadFailed": "We couldn’t load the list. Try again.",

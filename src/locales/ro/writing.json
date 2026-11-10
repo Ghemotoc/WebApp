@@ -3,14 +3,14 @@
     "write": "Scrie"
   },
   "yourWriting": {
-    "documentTitle": "Scrierile tale · {{productName}}",
+    "documentTitle": "Scrieri · {{productName}}",
     "eyebrow": "Scrie · panoul scriitorului",
-    "heading": "Scrierile tale",
+    "heading": "Scrieri",
     "intro": "Vezi cum merge fiecare poveste, reia ciornele și citește ce au spus cititorii.",
     "newStory": "+ Poveste nouă",
-    "storiesEyebrow": "Poveștile tale",
+    "storiesEyebrow": "Povești",
     "storiesHeading": "Poveste cu poveste",
-    "signedOut": "Conectează-te ca să-ți vezi poveștile.",
+    "signedOut": "Conectează-te ca să vezi poveștile.",
     "empty": {
       "title": "Nicio poveste încă",
       "description": "Începe o poveste și scrie primul capitol. Doar tu o vezi până o publici.",
@@ -25,7 +25,7 @@
     "back": "Panoul scriitorului",
     "eyebrow": "Scrie · poveste nouă",
     "heading": "Începe o poveste nouă",
-    "intro": "Completează lucrurile de bază, apoi scrie primul capitol. Le poți schimba pe toate mai târziu, din setările poveștii.",
+    "intro": "Completează lucrurile de bază, apoi scrie primul capitol. Le poți schimba mai târziu, din setările poveștii.",
     "basics": "Lucrurile de bază",
     "title": "Titlu",
     "blurb": "Descriere scurtă",
@@ -51,8 +51,8 @@
     "suggestedTags": "Etichete sugerate",
     "addSuggestedTag": "Adaugă eticheta {{tag}}",
     "allSuggestions_one": "Arată {{count}} sugestie",
-    "allSuggestions_few": "Arată toate cele {{count}} sugestii",
-    "allSuggestions_other": "Arată toate cele {{count}} de sugestii",
+    "allSuggestions_few": "Arată cele {{count}} sugestii",
+    "allSuggestions_other": "Arată cele {{count}} de sugestii",
     "fewerSuggestions": "Arată mai puține sugestii"
   },
   "categories": {
@@ -90,7 +90,7 @@
     "automatic": {
       "intro": "Sari peste acest pas și îți dăm automat una dintre aceste coperte. O poți schimba oricând.",
       "current": "Acum: {{design}}, aleasă automat pentru tine.",
-      "chosen": "Ți-ai ales propria copertă.",
+      "chosen": "Ai ales o copertă.",
       "use": "Folosește coperta automată"
     },
     "designNames": {
@@ -128,7 +128,7 @@
   "preview": {
     "eyebrow": "Cum o vor vedea cititorii",
     "onlyYou": "Doar tu",
-    "noBlurb": "Descrierea ta scurtă apare aici.",
+    "noBlurb": "Descrierea scurtă apare aici.",
     "deleteLater": "Poți șterge povestea mai târziu, din setările ei. Te întrebăm de două ori, o ascundem imediat și o ștergem definitiv după 30 de zile. Până atunci poți reveni."
   },
   "errors": {
@@ -147,7 +147,7 @@
     "abuseNeedsRating": "O poveste despre abuz sau constrângere trebuie clasificată 16+ sau 18+.",
     "abuseNeedsNote": "Adaugă o notă de conținut pentru o poveste despre abuz sau constrângere.",
     "contentNoteTooLong": "O notă de conținut poate avea cel mult {{max}} caractere.",
-    "chapterCreateFailed": "Povestea a fost salvată, dar nu am putut deschide capitolul unu. Deschide-l din Scrierile tale.",
+    "chapterCreateFailed": "Povestea a fost salvată, dar nu am putut deschide capitolul unu. Deschide-l din Scrieri.",
     "ratingReasonsMissing": "Bifează cel puțin un motiv pentru care e 16+ sau 18+."
   },
   "storyCard": {
@@ -197,11 +197,11 @@
   "pictureSharing": {
     "label": "Distribuirea imaginilor",
     "on": "Pornit. Cititorii pot distribui o imagine din capitolele tale ca un card cu numele tău și un link către ea. Doar imaginile care au trecut verificarea.",
-    "off": "Oprit. Cititorii nu pot distribui imaginile din capitolele tale."
+    "off": "Oprit. Cititorii nu pot distribui imaginile din capitole."
   },
   "cardColour": {
     "label": "Culoarea cardurilor cu citate și imagini",
-    "ourDefault": "Culoarea noastră obișnuită",
+    "ourDefault": "Culoarea obișnuită",
     "hint": "Cardurile noi făcute de cititori din povestea ta pornesc în această culoare. Fiecare cititor poate alege totuși alta pentru cardul său."
   },
   "settings": {
@@ -212,14 +212,14 @@
     "saving": "Se salvează…",
     "saved": "Salvat.",
     "saveFailed": "Nu am putut salva modificările. Verifică-ți conexiunea și încearcă din nou.",
-    "notFound": "Nu găsim această poveste printre ale tale."
+    "notFound": "Nu găsim această poveste în cont."
   },
   "deleteStory": {
     "eyebrow": "Toată povestea",
     "heading": "Șterge această poveste",
     "intro": "Te întrebăm de două ori. Povestea și toate capitolele ei sunt ascunse imediat și șterse definitiv după 30 de zile.",
     "button": "Șterge povestea",
-    "firstTitle": "Ștergi „{{title}}” și toate capitolele ei?",
+    "firstTitle": "Ștergi „{{title}}” și capitolele ei?",
     "firstBody": "Cititorii pierd accesul imediat.",
     "keep": "Păstrează povestea",
     "confirmFirst": "Da, șterge povestea",
@@ -387,7 +387,7 @@
     "pickLabel": "Etichetele afișate ca insigne",
     "rankOf": "{{tag}} · #{{rank}} din {{count}}",
     "noRank": "{{tag}} · încă fără loc",
-    "automatic": "Se văd cele mai bune 3 locuri ale tale.",
+    "automatic": "Se văd cele mai bune 3 locuri.",
     "picked_one": "Se vede eticheta aleasă de tine.",
     "picked_few": "Se văd cele {{count}} etichete alese de tine.",
     "picked_other": "Se văd cele {{count}} de etichete alese de tine.",
@@ -403,7 +403,7 @@
     "fewerShort": "< 5",
     "loadFailed": "Nu ți-am putut încărca cifrele. Reîncarcă pagina ca să încerci din nou.",
     "totals": {
-      "eyebrow": "Toate poveștile tale",
+      "eyebrow": "Toate poveștile",
       "heading": "Cum răspund cititorii",
       "periodLabel": "Perioada",
       "last30Days": "Ultimele 30 de zile",
@@ -419,7 +419,7 @@
       "likesAcross_few": "Pe {{count}} capitole",
       "likesAcross_other": "Pe {{count}} de capitole",
       "comments": "Comentarii",
-      "commentsNote": "De la cititori, la capitolele tale",
+      "commentsNote": "De la cititori, la capitole",
       "followers": "Urmăritori",
       "followersNote": "Oamenii care te urmăresc",
       "followersLast30": "Urmăritori noi în 30 de zile",
@@ -462,7 +462,7 @@
     "noNumbersYet": "Încă nu sunt cifre.",
     "comments": {
       "eyebrow": "Comentarii",
-      "heading": "Cele mai noi la capitolele tale",
+      "heading": "Cele mai noi la capitole",
       "onChapter": "la capitolul {{number}} · {{when}}",
       "reply": "Răspunde",
       "replyLabel": "Răspunde-i lui {{name}} la capitolul {{number}}",
@@ -472,13 +472,13 @@
   "canva": {
     "documentTitle": "Creează-o în Canva · {{productName}}",
     "heading": "Creează-o în Canva",
-    "backToWriting": "Înapoi la Scrierile tale",
+    "backToWriting": "Înapoi la Scrieri",
     "backToSettings": "Înapoi la setările poveștii",
     "opening": "Se deschide Canva…",
     "signedOut": "Conectează-te mai întâi, apoi apasă din nou „Creează-o în Canva” în setările poveștii.",
     "working": "O clipă. Vorbim cu Canva…",
     "cancelled": "Nu ai conectat Canva, așa că nu s-a trimis nimic către Canva. Poți încerca oricând din setările poveștii.",
-    "saved": "Coperta ta din Canva e salvată.",
+    "saved": "Coperta din Canva e salvată.",
     "savedChecking": "O vezi deja. Cititorii o văd după ce este verificată. Durează câteva minute sau până la două zile când o verifică o persoană din echipa de moderare. Poți închide fila.",
     "savedVisible": "Cititorii o pot vedea acum. Poți închide fila.",
     "design": "Creează-o în Canva",
@@ -486,16 +486,16 @@
     "note": "Canva deschide o copertă goală, la mărimea potrivită. Când apeși Return în Canva, coperta ta revine aici. Ai nevoie de propriul cont Canva, iar acolo se aplică regulile Canva. Nu se trimite nimic către Canva până nu te conectezi.",
     "failed": {
       "switched_off": "Crearea copertelor în Canva e oprită acum.",
-      "account": "Contul tău nu poate schimba coperte acum.",
+      "account": "Contul nu poate schimba coperte acum.",
       "not_connected": "Canva nu mai e conectat. Apasă din nou „Creează-o în Canva” în setările poveștii ca să-l conectezi.",
       "declined": "Canva nu a acceptat conectarea. Încearcă din nou din setările poveștii.",
       "expired": "Linkul a expirat sau nu vine de la Canva. Începe din nou din setările poveștii.",
       "export_failed": "Canva nu a putut exporta designul. Deschide-l în Canva și apasă din nou Return.",
-      "unavailable": "Canva nu e încă pregătit la noi. Încearcă mai târziu.",
+      "unavailable": "Canva nu e încă pregătit. Încearcă mai târziu.",
       "unreachable": "Nu am putut ajunge la Canva sau la serverul nostru. Verifică conexiunea și încearcă din nou.",
       "signed_out": "Conectează-te mai întâi, apoi încearcă din nou.",
       "invalid": "Pagina aceasta merge doar în drum spre Canva și înapoi. Începe din setările poveștii.",
-      "storyNotFound": "Nu am găsit povestea aceasta printre ale tale."
+      "storyNotFound": "Nu am găsit povestea aceasta în cont."
     },
     "settings": {
       "heading": "Canva",

@@ -77,23 +77,23 @@ test.describe('statements of reasons (S1-E10-04)', () => {
       .fill('Your bio advertises a paid service.');
     await form.getByRole('button', { name: 'Send decision' }).click();
     const stored = page.getByRole('region', { name: 'Statement of reasons' });
-    await expect(stored.getByRole('heading', { name: 'We warned your account' })).toBeVisible();
+    await expect(stored.getByRole('heading', { name: 'Account warned' })).toBeVisible();
     await expect(stored).toContainText('Your bio advertises a paid service.');
 
     // Step 3: the teacher reads it, with the rule, how it was found and the Appeal button.
     const teacherPage = await openAs(browser, 'teacher', '/notifications');
     await teacherPage.getByRole('link', { name: 'Read why' }).first().click();
     await expect(teacherPage).toHaveURL(/\/my-reports/);
-    const decision = teacherPage.getByRole('article').filter({ hasText: 'We warned your account' });
+    const decision = teacherPage.getByRole('article').filter({ hasText: 'Account warned' });
     await expect(decision).toContainText('Your bio advertises a paid service.');
-    await expect(decision).toContainText('Our community guidelines: spam');
+    await expect(decision).toContainText('Community guidelines: spam');
     await expect(decision).toContainText('No automated tools made this decision.');
     await expect(decision.getByRole('button', { name: 'Appeal this decision' })).toBeVisible();
 
     // Step 4: the reporter sees the outcome only.
     const reporterPage = await openAs(browser, 'adult_writer', '/my-reports');
     await expect(reporterPage.getByText('Decided: action taken').first()).toBeVisible();
-    await expect(reporterPage.getByText('We warned your account')).toHaveCount(0);
+    await expect(reporterPage.getByText('Account warned')).toHaveCount(0);
   });
 
   for (const view of everyView(['/my-reports'])) {

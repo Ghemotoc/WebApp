@@ -34,13 +34,13 @@
   "sent": {
     "heading": "Raportare trimisă",
     "body": "Mulțumim. O persoană din echipa noastră o va citi și îți va spune ce am decis.",
-    "reference": "Referința ta: {{reference}}, primită la {{receivedAt}}.",
+    "reference": "Referința: {{reference}}, primită la {{receivedAt}}.",
     "back": "Înapoi"
   },
   "failures": {
     "signed_out": "Conectează-te ca să raportezi.",
     "refused": "Nu am putut prelua această raportare. Nu îți poți raporta propriile lucruri, iar elementul poate să nu mai existe.",
-    "too_many": "Ai trimis multe raportări în ultima oră. Te rugăm să încerci mai târziu.",
+    "too_many": "Ai trimis multe raportări în ultima oră. Încearcă mai târziu.",
     "unreachable": "Nu am putut ajunge la serverul nostru. Verifică-ți conexiunea și încearcă din nou.",
     "paused": "Raportarea ta este suspendată deocamdată. Poți citi și scrie în continuare."
   },
@@ -99,8 +99,8 @@
     }
   },
   "copied": {
-    "legend": "De unde a fost copiat? (totul opțional)",
-    "titleHelps": "Ne ajută și doar titlul operei publicate.",
+    "legend": "De unde a fost copiat? (opțional)",
+    "titleHelps": "Ne ajută și titlul operei publicate.",
     "selected": "Fragmentul pe care l-ai selectat",
     "removeSelected": "Nu trimite fragmentul selectat",
     "title": "Titlul operei publicate (opțional)",
@@ -110,10 +110,10 @@
     "passageHint": "Lipește rândurile pe care povestea le copiază, ca un moderator să le poată compara."
   },
   "questions": {
-    "heading": "Întrebări despre raportările tale",
+    "heading": "Întrebări despre raportări",
     "intro": "Echipa de moderare are nevoie de câteva detalii în plus ca să verifice ce ai raportat. Răspunsul tău ajunge doar la ei.",
-    "about": "Despre raportarea ta {{reference}} ({{reason}})",
-    "answer": "Răspunsul tău",
+    "about": "Despre raportarea {{reference}} ({{reason}})",
+    "answer": "Răspuns",
     "send": "Trimite răspunsul",
     "thanks": "Mulțumim. Echipa de moderare a primit răspunsul tău.",
     "loadFailed": "Nu am putut încărca întrebările despre raportările tale. Încearcă din nou mai târziu.",

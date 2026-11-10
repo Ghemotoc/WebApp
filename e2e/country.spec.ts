@@ -158,7 +158,7 @@ test.describe('country from the connection (S1-E2-10)', () => {
       await openSignUpFrom(page, 'GB', '/sign-up');
       await expect(page).toHaveURL(/\/not-open$/);
       await expect(
-        page.getByRole('heading', { name: 'We’re not open in your country yet' }),
+        page.getByRole('heading', { name: 'We’re not open in this country yet' }),
       ).toBeVisible();
       await expect(page.getByText(/We’ll open in United Kingdom later/)).toBeVisible();
 
@@ -204,7 +204,7 @@ test.describe('country from the connection (S1-E2-10)', () => {
       await page.clock.install({ time: Date.now() - 10_000 });
       await openSignUpFrom(page, 'GB', '/not-open');
       // The connection gave the country, so the form asks only for the address.
-      await expect(page.getByRole('combobox', { name: 'Your country' })).toHaveCount(0);
+      await expect(page.getByRole('combobox', { name: 'Country' })).toHaveCount(0);
       await page.getByLabel('Email address').fill(address);
       await page.getByRole('button', { name: 'Tell me when you open here' }).click();
       await expect(page.getByText(/Check your email/)).toBeVisible();

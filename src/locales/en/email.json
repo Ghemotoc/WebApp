@@ -3,49 +3,49 @@
   "madeBy": "An app by {{companyName}}",
   "notYou": "If you didn’t ask for this, you can ignore this email. Nothing will change.",
   "confirmation": {
-    "subject": "Confirm your email address",
-    "heading": "Confirm your email address",
+    "subject": "Confirm the email address",
+    "heading": "Confirm the email address",
     "body": "Thanks for joining {{productName}}. Press the button to confirm your email address. Until you do, you can read stories but you can’t publish, comment, post or send messages.",
-    "button": "Confirm my email",
+    "button": "Confirm email",
     "linkNote": "The link works once and expires after an hour."
   },
   "waitlistConfirmation": {
-    "subject": "You’re on the list: confirm your email",
+    "subject": "You’re on the list: confirm the email",
     "heading": "You’re on the waiting list",
     "body": "Thanks for joining the {{productName}} waiting list. Press the button to confirm your email address and keep your place. When your place comes up, we’ll email you to say you’re in.",
-    "button": "Confirm my email",
+    "button": "Confirm email",
     "linkNote": "The link works once and expires after an hour."
   },
   "magicLink": {
-    "subject": "Your log-in link",
-    "heading": "Your log-in link",
+    "subject": "Log-in link",
+    "heading": "Log-in link",
     "body": "Press the button to log in to {{productName}}. No password needed.",
     "button": "Log in",
     "linkNote": "The link works once and expires after an hour."
   },
   "recovery": {
-    "subject": "Reset your password",
-    "heading": "Reset your password",
+    "subject": "Reset password",
+    "heading": "Reset password",
     "body": "Someone asked to reset the password for your {{productName}} account. If it was you, press the button to choose a new one.",
     "button": "Choose a new password",
     "linkNote": "The link works once and expires after an hour."
   },
   "passwordChanged": {
-    "subject": "Your password was changed",
-    "heading": "Your password was changed",
+    "subject": "Password changed",
+    "heading": "Password changed",
     "body": "The password for your {{productName}} account has just been changed, and we logged you out on every other device. If this wasn’t you, reset your password now.",
-    "button": "Reset my password",
+    "button": "Reset password",
     "linkNote": "You can see where you’re logged in under Settings."
   },
   "emailChange": {
-    "subject": "Your code to change your email",
-    "heading": "Your code to change your email address",
+    "subject": "Code to change the email",
+    "heading": "Code to change the email address",
     "body": "Someone asked to change the email address of a {{productName}} account. We send one code to the current address and another to the new one. Type both in Settings, and the change happens only once both are right. Until then, the current address keeps working.",
-    "codeLabel": "Your code for this address:",
+    "codeLabel": "Code for this address:",
     "linkNote": "The code works once and expires after an hour."
   },
   "notificationEmails": {
-    "subjectDigest": "Your daily round-up from {{productName}}",
+    "subjectDigest": "Daily round-up from {{productName}}",
     "subjectDecision": "A moderation decision about something you posted",
     "digestIntro": "Here’s what happened on {{productName}} since yesterday:",
     "instantIntro": "Something new on {{productName}}:",
@@ -74,11 +74,11 @@
     "loginMethodRemoved": "A way to log in was disconnected from your account. You can see the ones left in Settings, under Ways to log in. If this wasn’t you, change your password and contact us.",
     "subjectClassArchived": "Your class space is archived: keep copies of its certificates",
     "classArchived": "The class space “{{space}}” is archived. Save your own copies of its certificates within 30 days: after that, the real names printed on them are deleted.",
-    "subjectDataRequestConfirm": "Was this request about your data yours?",
+    "subjectDataRequestConfirm": "Did you send this data request?",
     "dataRequestConfirm": "We received a request about the data in your account ({{reference}}) by email or post, not from inside your account. Log in and open Settings, under Data requests, to tell us whether it was you. If it wasn’t, say so there: we won’t act on it.",
     "subjectDataRequestExtended": "We need more time for your data request",
     "dataRequestExtended": "We need more time to answer your data request {{reference}}. We’ll answer by {{deadline}}. Why: {{reason}}",
-    "subjectDataRequestCopyReady": "Your copy of your data is ready",
+    "subjectDataRequestCopyReady": "The data copy is ready",
     "dataRequestCopyReady": "The copy of your data you asked for ({{reference}}) is ready. Log in and open Settings, under Data requests, to download it. It’s there for seven days, then it’s deleted. We never send your data by email.",
     "pictureOpenedByStaff": "{{who}} opened the original file of an uploaded picture. Every picture they opened is in the audit log on the staff site.",
     "subjectPictureOpenedByStaff": "A staff member opened an uploaded picture",
@@ -89,7 +89,7 @@
     "messageOpen": "Open the chat: {{link}}",
     "messageWhy": "You get these emails because of your choices in Settings, under Messages, where you can also set quiet hours: {{link}}",
     "waitlistAdmitted": "Your place came up: your {{productName}} account is open. You can now write, read, comment and post.",
-    "subjectWaitlistAdmitted": "You’re in: your {{productName}} account is open",
+    "subjectWaitlistAdmitted": "You’re in: the {{productName}} account is open",
     "waitlistSignIn": "Log in to start: {{link}}"
   },
   "parentConsent": {
@@ -100,9 +100,9 @@
     "agreedSubject": "You agreed to @{{handle}}’s account",
     "agreedBody": "Thank you. You agreed on {{date}}, so @{{handle}} can now publish, comment, post and send messages.",
     "agreedWithdraw": "You can withdraw your consent at any time from the same page: {{link}}",
-    "withdrawnSubject": "You withdrew your consent for @{{handle}}",
+    "withdrawnSubject": "Consent withdrawn for @{{handle}}",
     "withdrawnBody": "We’ve made @{{handle}}’s account read-only. They can still read stories, but can’t publish, comment, post or send messages. If you have questions about what happens next, reply to this email.",
-    "refusedSubject": "Your account won’t be activated",
+    "refusedSubject": "The account won’t be activated",
     "refusedBody": "Your parent or guardian didn’t agree, so we won’t activate your {{productName}} account, and we’ve deleted it and its data. You can sign up again later and ask another parent or guardian.",
     "agreedSpotlight": "You also agreed that we may suggest @{{handle}} and their stories to other readers, for example in New and rising writers. To take back only that, use this page: {{spotlightLink}}",
     "spotlightRequestSubject": "May we suggest @{{handle}} to other readers?",
@@ -123,21 +123,21 @@
     "copySubject": "The copy of @{{handle}}’s data is ready",
     "copyBody": "You confirmed request {{reference}}, so the copy of @{{handle}}’s data is ready until {{date}}.",
     "copyAction": "Open it here: {{link}}",
-    "copyOnce": "The link works once: after you open it, you have one hour to download the files. Please don’t forward this email."
+    "copyOnce": "The link works once: after you open it, you have one hour to download the files. Don’t forward this email."
   },
   "teacherCheck": {
-    "linkSubject": "Confirm your school address for {{productName}}",
+    "linkSubject": "Confirm a school address for {{productName}}",
     "linkBody": "Someone asked for a Teacher badge on {{productName}} and gave this as their school address. Open the link to confirm it’s yours.",
-    "linkAction": "Confirm your school address: {{link}}",
+    "linkAction": "Confirm the school address: {{link}}",
     "linkNotYou": "Didn’t ask for this? Ignore this email and nothing changes. The link stops working after a while."
   },
   "supportTickets": {
-    "acknowledgementSubject": "We’ve received your request [#{{number}}] · {{productName}}",
+    "acknowledgementSubject": "Request received [#{{number}}] · {{productName}}",
     "acknowledgementBody": "Thank you for writing to us. Your request is #{{number}}: “{{subject}}”.\n\nA person on our support team reads every request. We usually answer within one working day, and always within one month.\n\nTo add something, reply to this email and keep [#{{number}}] in the subject.",
-    "acknowledgementInApp": "You can also read and answer it under Your support requests: {{link}}",
+    "acknowledgementInApp": "You can also read and answer it under Support requests: {{link}}",
     "replySubject": "Re: {{subject}} [#{{number}}]",
     "replyHowToAnswer": "To answer, reply to this email and keep [#{{number}}] in the subject.",
-    "replyInApp": "You can also read the whole conversation under Your support requests: {{link}}",
+    "replyInApp": "You can also read the whole conversation under Support requests: {{link}}",
     "safetyLine": "If you or someone else is in danger, call 112. To report something on {{productName}}, use Report on it, not this email.",
     "signOff": "The support team at {{productName}}",
     "autoSolvedSubject": "We’ve marked your request as solved [#{{number}}] · {{productName}}",

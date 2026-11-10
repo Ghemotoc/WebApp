@@ -6,7 +6,7 @@
  * keyboard, opens in a new tab and keeps Back working; the open group is marked aria-current.
  * Every item is at least 48 px tall (CLAUDE.md rule 9: 24 px minimum targets). On a narrow screen
  * the menu sits above the open group, as on the board.
- * The person's reports have their own page, so the menu also links to it ("My reports").
+ * The person's reports have their own page, so the menu also links to it ("Reports sent").
  * Who shows it: SettingsPage. What it calls: React Router's Link.
  */
 import { useTranslation } from 'react-i18next';
@@ -71,7 +71,7 @@ export function SettingsNav({ open, onPick }: SettingsNavProps) {
       {settingsGroupKeys.map((key) => (
         <SettingsNavItem key={key} groupKey={key} isOpen={key === open} onPick={onPick} />
       ))}
-      {/* The person's reports and appeals live on their own page (board: "My reports"). */}
+      {/* The person's reports and appeals live on their own page (board: "Reports sent"). */}
       <Link
         to="/my-reports"
         className="flex min-h-12 items-center rounded-[14px] px-4 text-[15px] font-medium text-heading no-underline hover:bg-panel"

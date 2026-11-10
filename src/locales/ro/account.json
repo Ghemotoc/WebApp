@@ -1,8 +1,8 @@
 {
   "setup": {
-    "documentTitle": "Configurează-ți profilul · {{productName}}",
+    "documentTitle": "Configurează profilul · {{productName}}",
     "eyebrow": "Bine ai venit",
-    "heading": "Configurează-ți profilul",
+    "heading": "Configurează profilul",
     "intro": "Doar numele de utilizator e obligatoriu. Poți schimba ambele nume mai târziu, în Setări.",
     "save": "Salvează și continuă",
     "saving": "Se salvează…",
@@ -40,11 +40,11 @@
   "falseHit": {
     "text": "Crezi că am greșit, de exemplu pentru că e numele tău de familie?",
     "link": "Cere unui moderator să verifice",
-    "emailSubject": "Vă rog să verificați numele meu de utilizator"
+    "emailSubject": "Verificați un nume de utilizator"
   },
   "settings": {
     "documentTitle": "Setări · {{productName}}",
-    "eyebrow": "Contul tău",
+    "eyebrow": "Cont",
     "heading": "Setări",
     "signedInAs": "Contul conectat: {{name}} · @{{handle}}",
     "accountHeading": "Cont",
@@ -57,12 +57,12 @@
     "legalHeading": "Informații legale",
     "legalText": "Termenii de utilizare, nota de informare privind confidențialitatea și regulile comunității, cu toate versiunile anterioare.",
     "legalLink": "Deschide Centrul legal",
-    "signedOut": "Conectează-te ca să îți vezi setările.",
+    "signedOut": "Conectează-te ca să vezi setările.",
     "noHandle": "Alege mai întâi un nume de utilizator.",
     "contactLink": "Contact și datele companiei",
     "contactUsLink": "Contactează-ne",
     "groupsLabel": "Secțiunile setărilor",
-    "myReportsLink": "Raportările mele",
+    "myReportsLink": "Raportări trimise",
     "groups": {
       "profile": "Profil",
       "appearance": "Aspect",
@@ -71,7 +71,7 @@
       "privacy": "Confidențialitate",
       "notifications": "Notificări",
       "messages": "Mesaje",
-      "download-my-data": "Descarcă-mi datele",
+      "download-my-data": "Descarcă datele",
       "support": "Ajutor și asistență",
       "delete-account": "Șterge contul"
     }
@@ -79,7 +79,7 @@
   "notice": {
     "heading": "Alege un nume de utilizator",
     "body": "Ai nevoie de un nume de utilizator înainte să publici, să comentezi sau să postezi. Durează doar un moment.",
-    "action": "Configurează-ți profilul"
+    "action": "Configurează profilul"
   },
   "errors": {
     "loadFailed": "Nu am putut încărca contul. Verifică-ți conexiunea și încearcă din nou.",
@@ -94,7 +94,7 @@
     "lastActive": "Activ ultima dată pe {{date}}",
     "signOut": "Deconectează",
     "signOutLabel": "Deconectează {{device}}",
-    "signOutOthers": "Deconectează toate celelalte dispozitive",
+    "signOutOthers": "Deconectează celelalte dispozitive",
     "signedOutOthers": "Celelalte dispozitive sunt deconectate.",
     "privacy": "Arătăm doar browserul și tipul de dispozitiv. Nu păstrăm adresa IP și nici locul în care ești.",
     "loadFailed": "Nu am putut încărca dispozitivele. Verifică-ți conexiunea și încearcă din nou.",
@@ -119,17 +119,17 @@
   },
   "sanction": {
     "suspension": {
-      "title": "Contul tău este suspendat până la {{until}}.",
+      "title": "Cont suspendat până la {{until}}.",
       "body": "Poți citi și îți poți descărca datele, dar nu poți publica, comenta sau trimite mesaje până atunci."
     },
     "reporting_pause": {
-      "title": "Raportarea ta este suspendată până la {{until}}.",
+      "title": "Raportarea e suspendată până la {{until}}.",
       "body": "Raportările tale au fost găsite nefondate de mai multe ori, așa că raportarea este suspendată o vreme. Poți citi și scrie în continuare."
     }
   },
   "email": {
     "heading": "Adresa de email",
-    "current": "Emailul tău:",
+    "current": "Email:",
     "private": "Doar tu o vezi. Nu apare niciodată pe profilul tău și nu le este arătată altor oameni.",
     "pending": "Așteaptă să se schimbe în {{email}}. Scrie cele două coduri trimise ca să termini.",
     "newLabel": "Adresa de email nouă",
@@ -137,7 +137,7 @@
     "change": "Schimbă emailul",
     "sending": "Se trimite…",
     "sent": "Verifică ambele căsuțe: am trimis un cod la {{email}} și altul la adresa ta actuală. Până le scrii pe amândouă, adresa actuală merge în continuare.",
-    "sameAddress": "Aceasta este deja adresa ta de email.",
+    "sameAddress": "Aceasta este deja adresa contului.",
     "invalidAddress": "Nu pare o adresă de email. Verific-o și încearcă din nou.",
     "addressInUse": "Un alt cont folosește deja această adresă.",
     "tooManyAttempts": "Prea multe încercări. Așteaptă câteva minute, apoi încearcă din nou.",
@@ -152,7 +152,7 @@
     "wrongCode": "Codul acesta este greșit sau a expirat. Verifică-l sau trimite coduri noi.",
     "sendNewCodes": "Trimite coduri noi",
     "codesCheckFailed": "Nu am putut verifica codurile. Verifică-ți conexiunea și încearcă din nou.",
-    "changed": "Gata. Adresa ta de email este acum {{email}}."
+    "changed": "Gata. Adresa de email este acum {{email}}."
   },
   "birthday": {
     "heading": "Ziua de naștere",
@@ -166,9 +166,9 @@
     "saveFailed": "Nu am putut salva ziua de naștere. Verifică-ți conexiunea și încearcă din nou."
   },
   "ageCheck": {
-    "documentTitle": "Confirmă-ți vârsta",
+    "documentTitle": "Confirmă vârsta",
     "eyebrow": "Verificarea vârstei",
-    "heading": "Confirmă-ți vârsta",
+    "heading": "Confirmă vârsta",
     "intro13": "Verificăm că ai cel puțin 13 ani și dacă ai sub 18 ani, ca să primești setările de siguranță potrivite.",
     "intro18": "Verificăm că ai cel puțin 18 ani, ca să primești setările pentru adulți.",
     "methodsHeading": "Două feluri de a verifica",
@@ -190,15 +190,15 @@
     "step3": "Te întorci aici și vezi rezultatul.",
     "readOnly": "Până se termină verificarea, poți citi, dar nu poți posta.",
     "byYoti": "Verificarea vârstei prin Yoti",
-    "signedOut": "Intră în cont ca să îți verifici vârsta.",
+    "signedOut": "Intră în cont ca să verifici vârsta.",
     "logIn": "Intră în cont",
     "loadFailed": "Nu am putut încărca verificarea vârstei. Încearcă din nou peste puțin timp.",
     "nothingToDo": "Acum nu e nicio verificare a vârstei de făcut.",
-    "birthYearInSettings": "Anul nașterii tale e în Setări.",
+    "birthYearInSettings": "Anul nașterii e în Setări.",
     "openSettings": "Deschide Setările",
     "confirmed": "Vârstă confirmată: {{result}}",
     "confirmedMeta": "{{date}} · {{method}}",
-    "photoDeleted": "Yoti ți-a șters fotografia după verificare.",
+    "photoDeleted": "Yoti a șters fotografia după verificare.",
     "continue": "Continuă",
     "results": {
       "18_or_over": "18 ani sau mai mult",
@@ -216,12 +216,12 @@
       "unreachable": "Nu am putut ajunge la verificarea vârstei. Verifică-ți conexiunea și încearcă din nou."
     },
     "return": {
-      "documentTitle": "Verificarea vârstei tale",
-      "checkingHeading": "Îți verificăm vârsta",
+      "documentTitle": "Verificarea vârstei",
+      "checkingHeading": "Verificăm vârsta",
       "checkingBody": "Așteptăm rezultatul de la Yoti. Poate dura puțin. Ține pagina deschisă.",
       "adultYearBody": "Setările pentru adulți cer rezultatul „18 ani sau mai mult”. Îl poți obține cu un act de identitate.",
       "useDocument": "Folosește un act de identitate",
-      "failedHeading": "Nu ți-am putut confirma vârsta",
+      "failedHeading": "Nu am putut confirma vârsta",
       "failedBody": "Verificarea nu a dat un rezultat clar. Poți încerca din nou sau poți folosi un act de identitate.",
       "tryAgain": "Încearcă din nou",
       "notFinishedHeading": "Verificarea nu s-a terminat",
@@ -231,9 +231,9 @@
       "startAgain": "Începe din nou"
     },
     "notice": {
-      "heading": "Confirmă-ți vârsta",
+      "heading": "Confirmă vârsta",
       "body": "Până îți confirmăm vârsta, poți citi, dar nu poți posta.",
-      "action": "Verifică-mi vârsta"
+      "action": "Verifică vârsta"
     },
     "fourteenDays": "Dacă nu o termini în 14 zile de la înscriere, ștergem contul și anul (și luna) nașterii.",
     "manual": {
@@ -241,9 +241,9 @@
       "askLine": "Cere o verificare manuală. O persoană o face și îți răspunde în 5 zile lucrătoare. Nu vede nicio fotografie.",
       "ask": "Cere o verificare manuală",
       "askFailed": "Nu am putut trimite cererea. Încearcă din nou peste puțin timp.",
-      "openTitle": "O persoană îți verifică vârsta.",
+      "openTitle": "O persoană verifică vârsta.",
       "openBody": "Îți răspunde în 5 zile lucrătoare. Până atunci, contul tău rămâne doar pentru citit.",
-      "refusedTitle": "Nu ți-am putut confirma vârsta manual.",
+      "refusedTitle": "Nu am putut confirma vârsta manual.",
       "refusedBody": "Motivul: {{reason}} Poți începe o verificare nouă cu Yoti."
     }
   },
@@ -252,7 +252,7 @@
     "eyebrow": "Sub 16 ani · după verificarea vârstei",
     "heading": "Roagă un părinte sau tutore",
     "intro": "Ai sub 16 ani, așa că un părinte sau tutore trebuie să fie de acord. Îi trimitem un link pe email.",
-    "emailLabel": "Emailul lui",
+    "emailLabel": "Email",
     "languageLabel": "Limba emailului",
     "languages": {
       "ro": "Română",
@@ -269,9 +269,9 @@
     "sentAgain": "L-am trimis din nou.",
     "changeEmail": "Schimbă emailul",
     "readStories": "Citește povești",
-    "agreedHeading": "Contul tău e gata",
+    "agreedHeading": "Contul e gata",
     "agreedBody": "Părintele sau tutorele tău a fost de acord pe {{date}}. Acum poți publica, comenta, posta și trimite mesaje.",
-    "setUpProfile": "Completează-ți profilul",
+    "setUpProfile": "Completează profilul",
     "withdrawnHeading": "Părintele sau tutorele tău și-a retras acordul",
     "withdrawnBody": "Deocamdată contul tău e doar pentru citit: poți citi, dar nu poți publica, comenta, posta sau trimite mesaje. Îți spunem ție și lor ce urmează.",
     "nothingToDo": "Acum nu e nevoie să rogi un părinte sau tutore.",
@@ -322,7 +322,7 @@
       "contactUs": "Scrie-ne",
       "agreedHeading": "Mulțumim. Ai fost de acord pe {{date}}.",
       "agreedBody": "@{{handle}} poate acum să publice, să comenteze, să posteze și să trimită mesaje. Ți-am trimis o confirmare pe email. Îți poți retrage acordul de aici oricând.",
-      "withdraw": "Îmi retrag acordul",
+      "withdraw": "Retrag acordul",
       "withdrawConfirm": "Îți retragi acordul? Contul devine imediat doar pentru citit.",
       "withdrawYes": "Da, îl retrag",
       "cancel": "Renunță",
@@ -339,14 +339,14 @@
     "summary": {
       "heading": "La ce și-a dat acordul părintele sau tutorele tău",
       "agreedOn": "Părintele sau tutorele tău și-a dat acordul pe {{date}}.",
-      "coversIntro": "Acordul lor înseamnă:",
+      "coversIntro": "Acordul înseamnă:",
       "coversWrite": "Poți publica povești, comenta și posta pe forumuri.",
       "coversMessages": "Poți trimite și primi mesaje private, după regulile pentru vârsta ta: adulții nu pot scrie niciodată cuiva sub 16 ani.",
       "coversData": "Păstrăm emailul, numele de utilizator, pseudonimul, anul nașterii și rezultatul verificării vârstei, niciodată numele tău real.",
       "coversWithdraw": "Își pot retrage acordul oricând. Dacă fac asta, contul tău poate doar citi și îți spunem aici.",
       "withdrawnOn": "Părintele sau tutorele tău și-a retras acordul pe {{date}}.",
       "stillIntro": "Deocamdată contul tău poate doar citi. Poți în continuare:",
-      "stillRead": "să citești povești și să-ți păstrezi biblioteca;",
+      "stillRead": "să citești povești și să păstrezi biblioteca;",
       "stillKept": "să-ți găsești poveștile, salvate cum erau;",
       "stillReport": "să raportezi orice te îngrijorează și să blochezi pe oricine;",
       "stillData": "să-ți descarci datele sau să-ți ștergi contul, mai jos."
@@ -365,9 +365,9 @@
     }
   },
   "onboarding": {
-    "documentTitle": "Configurează-ți profilul · {{productName}}",
+    "documentTitle": "Configurează profilul · {{productName}}",
     "eyebrow": "Bun venit pe {{productName}}",
-    "heading": "Configurează-ți profilul",
+    "heading": "Configurează profilul",
     "intro": "Trei pași scurți. Doar numele de utilizator e obligatoriu. Poți sări peste restul și îl poți schimba mai târziu din Setări.",
     "stepOf": "Pasul {{step}} din {{total}}",
     "next": "Mai departe",
@@ -377,7 +377,7 @@
     "saveFailed": "Nu am putut salva. Încearcă din nou peste puțin timp.",
     "loadFailed": "Nu am putut încărca profilul. Încearcă din nou peste puțin timp.",
     "name": {
-      "heading": "Numele și limba ta",
+      "heading": "Nume și limbă",
       "languageLabel": "Limba interfeței",
       "languageHint": "Limba meniurilor și a butoanelor. {{productName}} se deschide în română pentru toată lumea. Dacă preferi engleza, alege-o aici sau din meniul de limbă. Se aplică pe toate dispozitivele tale.",
       "countryHeading": "Țara",
@@ -413,7 +413,7 @@
       "guidelineOwnWork": "Publică doar ce ai scris tu. Răspunzi de ce publici.",
       "guidelinePrivate": "Nu-ți spune adresa, școala sau numărul de telefon.",
       "guidelineRate": "Clasifică-ți poveștile: Toate vârstele, 13+, 16+ sau 18+.",
-      "fullGuidelines": "Citește toate regulile"
+      "fullGuidelines": "Citește regulile"
     },
     "notice": {
       "heading": "Termină de configurat profilul",
@@ -431,7 +431,7 @@
     "heading": "Moduri de autentificare",
     "intro": "Intră cu oricare dintre acestea. Google, Apple și Microsoft înlocuiesc doar parola. Ai nevoie de cel puțin unul.",
     "ageLine": "Tot ai nevoie de verificarea vârstei. Google, Apple și Microsoft nu ne spun câți ani ai.",
-    "listLabel": "Modurile tale de autentificare",
+    "listLabel": "Moduri de autentificare",
     "loadFailed": "Nu am putut încărca modurile tale de autentificare. Verifică conexiunea și încearcă din nou.",
     "connected": "Conectat",
     "notConnected": "Neconectat",
@@ -451,15 +451,15 @@
     },
     "google": {
       "name": "Google",
-      "detail": "Folosește contul tău Google"
+      "detail": "Folosește un cont Google"
     },
     "apple": {
       "name": "Apple",
-      "detail": "Folosește contul tău Apple"
+      "detail": "Folosește un cont Apple"
     },
     "microsoft": {
       "name": "Microsoft (Outlook)",
-      "detail": "Folosește contul tău Outlook sau Microsoft"
+      "detail": "Folosește un cont Outlook sau Microsoft"
     },
     "passkey": {
       "name": "Cheie de acces",
@@ -588,7 +588,7 @@
       "interestLabel": "Ce vrei să faci aici?",
       "saved": "Salvat.",
       "saveFailed": "Nu am putut salva. Verifică-ți conexiunea și încearcă din nou.",
-      "settingsLink": "Setări: emailuri, noutăți și contul tău",
+      "settingsLink": "Setări: emailuri, noutăți și cont",
       "logOut": "Deconectează-te",
       "logOutFailed": "Nu te-am putut deconecta. Verifică-ți conexiunea și încearcă din nou."
     }

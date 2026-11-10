@@ -18,7 +18,6 @@ import { Link, useParams } from 'react-router';
 import { ActionIcon } from '@/components/icons/ActionIcon';
 import { NavIcon } from '@/components/icons/NavIcon';
 import { buttonClassName } from '@/components/ui/buttonStyles';
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { useSession } from '@/features/auth/hooks/useSession';
 
@@ -88,7 +87,6 @@ function MessagesHeader({ isSignedIn }: { isSignedIn: boolean }) {
   return (
     <header className="flex flex-col gap-5 pt-14 md:flex-row md:items-end md:justify-between">
       <div className="flex max-w-[720px] flex-col gap-2">
-        <Eyebrow>{t('eyebrow')}</Eyebrow>
         <h1 className="page-title">{t('title')}</h1>
         <p className="m-0 text-lg leading-relaxed text-body">{t('lead')}</p>
       </div>

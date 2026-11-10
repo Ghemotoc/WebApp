@@ -21,7 +21,7 @@
     },
     "filters": {
       "tier": "Tier",
-      "allTiers": "All tiers",
+      "allTiers": "Every tier",
       "status": "Status",
       "allStatuses": "Open and decided",
       "under18": "Reporter under 18",
@@ -31,7 +31,7 @@
       "source": "Found by",
       "allSources": "Reports, orders and picture checks",
       "reason": "Reason",
-      "allReasons": "All reasons",
+      "allReasons": "Every reason",
       "claimed": "Claimed",
       "claimedAll": "All",
       "claimedMine": "By me",
@@ -312,11 +312,11 @@
     "referralLine": "{{authority}} ({{reference}}), {{when}} (Romania time), by @{{handle}}",
     "authority": "Authority (for example the police or a child protection service)",
     "authorityMissing": "Name the authority.",
-    "authorityReference": "Their reference (optional)",
+    "authorityReference": "Authority’s reference (optional)",
     "referralNote": "Note (optional)",
     "logReferral": "Log the referral",
     "move": "Move to safeguarding",
-    "moveIntro": "If this case is really about a child at risk, move it to the safeguarding lane. Only staff with the safeguarding permission will see it.",
+    "moveIntro": "If this case is about a child at risk, move it to the safeguarding lane. Only staff with the safeguarding permission will see it.",
     "moveReason": "Why does it belong in safeguarding?",
     "moveConfirm": "Move the case",
     "moved": "Moved to safeguarding. Staff with that permission now handle it."
@@ -541,7 +541,7 @@
       "sexual_image_of_minor": "a sexual image of a minor",
       "gore": "gore",
       "hate": "hate",
-      "other": "something else our guidelines don’t allow"
+      "other": "something else the guidelines don’t allow"
     },
     "openedNote": "Opening a picture here is in the audit log, and the owner is told.",
     "policeDescription": "Describe the image in a few words for the police.",

@@ -92,7 +92,7 @@ test.describe('epic S1-E11, round two', () => {
     await member.getByRole('link', { name: 'Ask for help' }).click();
     await member.getByLabel('What is it about?').selectOption({ label: 'A safety question' });
     await member.getByLabel('Subject').fill(subject);
-    await member.getByLabel('Your message').fill('Stația meteo copies my poem word for word.');
+    await member.getByLabel('Message').fill('Stația meteo copies my poem word for word.');
     await member.getByRole('button', { name: 'Send' }).click();
     await expect(member.getByText(/Sent\. Your request is #\d+/)).toBeVisible();
     const number = runSql(`select number from public.support_tickets where subject = '${subject}'`);
@@ -105,7 +105,7 @@ test.describe('epic S1-E11, round two', () => {
     await support.getByRole('button', { name: 'Insert' }).click();
     await support.getByRole('button', { name: 'Send answer' }).click();
     const history = support.getByRole('region', { name: 'History' });
-    await expect(history.getByText(/Waiting for your answer/)).toBeVisible();
+    await expect(history.getByText(/Waiting for an answer from you/)).toBeVisible();
 
     // Step 3: support converts the ticket into a report on the story.
     await support
