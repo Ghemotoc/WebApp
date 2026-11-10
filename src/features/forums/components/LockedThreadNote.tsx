@@ -6,8 +6,11 @@
  * post. It names the team, never the moderator: the board's "Locked by Andrei Mureșan, moderator"
  * would put a staff member's name in front of every reader (docs/board-fixes.md). No padlock
  * doodle: the liquid glass design has none (bundle G4).
+ * GAPS-9: when a moderator pointed the thread at the one that carries on, "Go to …" links there
+ * (board: "Go to the October prompt"); the server leaves it out for a reader who may not open it.
  * Who uses it: ReplyForm, when the thread has a lock.
  */
+import { Link } from 'react-router';
 
 import { ActionIcon } from '@/components/icons/ActionIcon';
 
@@ -18,7 +21,7 @@ import { useForumsTranslation } from '../registerForumsTranslations';
 /**
  * Renders the note.
  *
- * @param props.lock - when and why the thread was locked
+ * @param props.lock - when and why the thread was locked, and where it carries on
  * @returns the locked card
  */
 export function LockedThreadNote({ lock }: { lock: ForumThreadLock }) {
@@ -43,6 +46,14 @@ export function LockedThreadNote({ lock }: { lock: ForumThreadLock }) {
             })}
           </p>
           <p className="m-0 text-[15px] leading-relaxed text-body">{t('locked.stillRead')}</p>
+          {lock.next !== null && (
+            <Link
+              to={`/forums/${lock.next.forumSlug}/${lock.next.number}`}
+              className="inline-block max-w-full self-start py-2.5 text-[15px] font-semibold [overflow-wrap:anywhere] text-link underline"
+            >
+              {t('locked.goTo', { title: lock.next.title })}
+            </Link>
+          )}
         </div>
       </div>
     </section>

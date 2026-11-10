@@ -22,6 +22,11 @@ const knownActions = [
   'thread_sticky_removed',
   'thread_locked',
   'thread_unlocked',
+  // The rules thread and a locked thread's pointer (bundle GAPS-9).
+  'thread_rules_set',
+  'thread_rules_removed',
+  'thread_next_set',
+  'thread_next_removed',
   // A class space's invite code and joins (bundle CLASSES, part a; S1-E8-11).
   'invite_made',
   'invite_ended',

@@ -10192,6 +10192,88 @@ COMMENT ON FUNCTION "public"."admin_set_flag"("flag_key" "text", "turn_on" boole
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_set_forum_rules_thread"("thread_number" bigint, "is_rules" boolean, "reason" "text") RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  thread public.forum_threads := public.forum_thread_for_moderation(thread_number, reason);
+  previous_rules_thread_id uuid;
+  -- A missing answer counts as "stop", the change that can't take anything from another thread.
+  make_rules boolean := coalesce(is_rules, false);
+begin
+  -- Step 1: what the forum had before, for the log.
+  select forums.rules_thread_id into previous_rules_thread_id
+  from public.forums where forums.id = thread.forum_id for update;
+  -- Step 2: make the change.
+  if make_rules then
+    update public.forums set rules_thread_id = thread.id where forums.id = thread.forum_id;
+    update public.forum_threads set is_sticky = true where forum_threads.id = thread.id;
+  else
+    -- Only this thread's own mark is taken away, never another thread's.
+    update public.forums set rules_thread_id = null
+    where forums.id = thread.forum_id and forums.rules_thread_id = thread.id;
+  end if;
+  -- Step 3: log it with the reason.
+  perform public.log_thread_moderation(thread,
+    case when make_rules then 'rules_set' else 'rules_removed' end, reason,
+    jsonb_build_object('rules_thread_id', previous_rules_thread_id, 'is_sticky', thread.is_sticky),
+    jsonb_build_object(
+      'rules_thread_id', case when make_rules then thread.id
+                              when previous_rules_thread_id = thread.id then null
+                              else previous_rules_thread_id end,
+      'is_sticky', thread.is_sticky or make_rules));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_set_forum_rules_thread"("thread_number" bigint, "is_rules" boolean, "reason" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_set_forum_rules_thread"("thread_number" bigint, "is_rules" boolean, "reason" "text") IS 'Makes a thread its forum''s rules thread (and pins it), or stops it; moderators; logged (GAPS-9).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_set_forum_thread_next"("thread_number" bigint, "reason" "text", "next_thread_number" bigint DEFAULT NULL::bigint) RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  thread public.forum_threads := public.forum_thread_for_moderation(thread_number, reason);
+  next_thread public.forum_threads;
+begin
+  -- Step 1: only a locked thread points on.
+  if thread.locked_at is null then
+    raise exception 'Lock the thread first.' using errcode = 'check_violation', hint = 'thread:not_locked';
+  end if;
+  -- Step 2: find the other thread, when one is named.
+  if next_thread_number is not null then
+    select * into next_thread from public.forum_threads
+    where forum_threads.thread_number = next_thread_number and forum_threads.deleted_at is null;
+    if next_thread.id is null or not public.forum_thread_is_shown(next_thread) then
+      raise exception 'That thread isn''t there.' using errcode = 'no_data_found', hint = 'next:missing';
+    end if;
+    if next_thread.id = thread.id then
+      raise exception 'A thread can''t point at itself.' using errcode = 'check_violation', hint = 'next:same';
+    end if;
+  end if;
+  -- Step 3: save and log.
+  update public.forum_threads set continues_in_thread_id = next_thread.id where forum_threads.id = thread.id;
+  perform public.log_thread_moderation(thread,
+    case when next_thread.id is null then 'next_removed' else 'next_set' end, reason,
+    jsonb_build_object('continues_in_thread_id', thread.continues_in_thread_id),
+    jsonb_build_object('continues_in_thread_id', next_thread.id));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_set_forum_thread_next"("thread_number" bigint, "reason" "text", "next_thread_number" bigint) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_set_forum_thread_next"("thread_number" bigint, "reason" "text", "next_thread_number" bigint) IS 'Points a locked thread at the thread that carries on, or takes the pointer away; moderators; logged (GAPS-9).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admin_set_forum_thread_sticky"("thread_number" bigint, "is_sticky" boolean, "reason" "text") RETURNS "void"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -11422,11 +11504,13 @@ CREATE OR REPLACE FUNCTION "public"."admin_unlock_forum_thread"("thread_number" 
 declare
   thread public.forum_threads := public.forum_thread_for_moderation(thread_number, reason);
 begin
-  update public.forum_threads set locked_at = null, locked_by_user_id = null, lock_reason = null
+  update public.forum_threads
+  set locked_at = null, locked_by_user_id = null, lock_reason = null, continues_in_thread_id = null
   where forum_threads.id = thread.id;
   perform public.log_thread_moderation(thread, 'unlocked', reason,
-    jsonb_build_object('locked_at', thread.locked_at, 'lock_reason', thread.lock_reason),
-    jsonb_build_object('locked_at', null, 'lock_reason', null));
+    jsonb_build_object('locked_at', thread.locked_at, 'lock_reason', thread.lock_reason,
+                       'continues_in_thread_id', thread.continues_in_thread_id),
+    jsonb_build_object('locked_at', null, 'lock_reason', null, 'continues_in_thread_id', null));
 end;
 $$;
 
@@ -21657,7 +21741,10 @@ CREATE TABLE IF NOT EXISTS "public"."forum_threads" (
     "lock_reason" "text",
     "bumped_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "answer_post_id" "uuid",
+    "continues_in_thread_id" "uuid",
     CONSTRAINT "forum_threads_lock_is_whole" CHECK (((("locked_at" IS NULL) AND ("lock_reason" IS NULL)) OR (("locked_at" IS NOT NULL) AND ("lock_reason" IS NOT NULL) AND ("btrim"("lock_reason") <> ''::"text") AND ("char_length"("lock_reason") <= 500)))),
+    CONSTRAINT "forum_threads_next_is_another" CHECK (("continues_in_thread_id" IS DISTINCT FROM "id")),
+    CONSTRAINT "forum_threads_next_needs_lock" CHECK ((("continues_in_thread_id" IS NULL) OR ("locked_at" IS NOT NULL))),
     CONSTRAINT "forum_threads_title_is_written" CHECK ((("btrim"("title") <> ''::"text") AND ("char_length"("title") <= 300)))
 );
 
@@ -21703,6 +21790,10 @@ COMMENT ON COLUMN "public"."forum_threads"."bumped_at" IS 'When the thread last 
 
 
 COMMENT ON COLUMN "public"."forum_threads"."answer_post_id" IS 'The reply the thread''s starter marked "This answered it"; null for none (IDEA-20261102-8).';
+
+
+
+COMMENT ON COLUMN "public"."forum_threads"."continues_in_thread_id" IS 'Where the conversation carries on after this thread was locked (GAPS-9); null when nowhere.';
 
 
 
@@ -22336,7 +22427,9 @@ CREATE OR REPLACE FUNCTION "public"."forum_thread_header_json"("target" "public"
     'last_post_number', target.last_post_number,
     'is_sticky', target.is_sticky,
     'lock', case when target.locked_at is null then null
-                 else jsonb_build_object('locked_at', target.locked_at, 'reason', target.lock_reason) end,
+                 else jsonb_build_object('locked_at', target.locked_at, 'reason', target.lock_reason,
+                                         -- GAPS-9: where the conversation carries on.
+                                         'next', public.forum_thread_pointer_json(target.continues_in_thread_id)) end,
     'can_reply', (select auth.uid()) is not null and target.locked_at is null and public.is_active_member()
                  and coalesce((select public.space_may_post(space) from public.space_of_forum(target.forum_id) as space
                                where space.id is not null), true),
@@ -22347,14 +22440,23 @@ CREATE OR REPLACE FUNCTION "public"."forum_thread_header_json"("target" "public"
     'can_moderate', (select auth.uid()) is not null and (
                       public.staff_may('moderation', 'act')
                       or coalesce((select public.space_may_act(space, 'posts') from public.space_of_forum(target.forum_id) as space
-                                   where space.id is not null), false)));
+                                   where space.id is not null), false)),
+    -- GAPS-9: this thread is the forum's rules thread.
+    'is_rules', exists (select 1 from public.forums
+                        where forums.id = target.forum_id and forums.rules_thread_id = target.id),
+    -- GAPS-9: the forum's rules thread, for the strip above every other thread of the forum.
+    'rules', (select public.forum_thread_pointer_json(rules_thread.id)
+              from public.forums
+              join public.forum_threads as rules_thread on rules_thread.id = forums.rules_thread_id
+              where forums.id = target.forum_id and rules_thread.id <> target.id
+                and rules_thread.forum_id = forums.id));
 $$;
 
 
 ALTER FUNCTION "public"."forum_thread_header_json"("target" "public"."forum_threads") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."forum_thread_header_json"("target" "public"."forum_threads") IS 'Internal: a thread''s heading, numbers, sticky and lock, never a user ID (S1-E8-02, S1-E8-05).';
+COMMENT ON FUNCTION "public"."forum_thread_header_json"("target" "public"."forum_threads") IS 'Internal: a thread''s heading, numbers, sticky, lock, rules strip and pointer, never a user ID (S1-E8-02, S1-E8-05, GAPS-9).';
 
 
 
@@ -22431,6 +22533,30 @@ ALTER FUNCTION "public"."forum_thread_list"("forum_slug" "text", "older_than" ti
 
 
 COMMENT ON FUNCTION "public"."forum_thread_list"("forum_slug" "text", "older_than" timestamp with time zone) IS 'One page of a forum''s threads, sticky first, then latest activity; never a user ID (S1-E8-02, S1-E8-05).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."forum_thread_pointer_json"("pointed_thread_id" "uuid") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select jsonb_build_object(
+    'number', pointed.thread_number,
+    'title', pointed.title,
+    'forum_slug', (select forums.slug from public.forums where forums.id = pointed.forum_id),
+    'summary', (select public.forum_search_snippet(first_post.body) from public.forum_posts as first_post
+                where first_post.thread_id = pointed.id and first_post.post_number = 1
+                  and public.forum_post_state_for_caller(first_post) = 'live'),
+    'is_locked', pointed.locked_at is not null)
+  from public.forum_threads as pointed
+  where pointed.id = pointed_thread_id and public.forum_thread_is_shown(pointed);
+$$;
+
+
+ALTER FUNCTION "public"."forum_thread_pointer_json"("pointed_thread_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."forum_thread_pointer_json"("pointed_thread_id" "uuid") IS 'Internal: a thread as another links to it, or null when the caller may not open it (GAPS-9).';
 
 
 
@@ -47372,6 +47498,7 @@ CREATE TABLE IF NOT EXISTS "public"."forums" (
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "deleted_at" timestamp with time zone,
     "space_id" "uuid",
+    "rules_thread_id" "uuid",
     CONSTRAINT "forums_level_range" CHECK ((("level" >= 0) AND ("level" <= 2))),
     CONSTRAINT "forums_not_own_parent" CHECK (("parent_id" IS DISTINCT FROM "id")),
     CONSTRAINT "forums_only_categories_pinned" CHECK (((NOT "is_pinned") OR ("parent_id" IS NULL))),
@@ -47391,6 +47518,10 @@ Forum categories (level 0), forums (level 1) and subforums (level 2), made by st
 
 
 COMMENT ON COLUMN "public"."forums"."space_id" IS 'The space this hidden forum belongs to; null for staff''s forums (S1-E8-06). Space forums never show on the forum index.';
+
+
+
+COMMENT ON COLUMN "public"."forums"."rules_thread_id" IS 'The thread that holds this forum''s rules, shown in a strip above its other threads (GAPS-9).';
 
 
 
@@ -50686,6 +50817,10 @@ CREATE INDEX "forum_threads_author" ON "public"."forum_threads" USING "btree" ("
 
 
 
+CREATE INDEX "forum_threads_continues_in_thread_id_fk_idx" ON "public"."forum_threads" USING "btree" ("continues_in_thread_id");
+
+
+
 CREATE INDEX "forum_threads_forum_bumped" ON "public"."forum_threads" USING "btree" ("forum_id", "bumped_at" DESC) WHERE ("deleted_at" IS NULL);
 
 
@@ -50699,6 +50834,10 @@ CREATE INDEX "forum_threads_forum_sticky" ON "public"."forum_threads" USING "btr
 
 
 CREATE INDEX "forums_parent_id" ON "public"."forums" USING "btree" ("parent_id") WHERE ("deleted_at" IS NULL);
+
+
+
+CREATE INDEX "forums_rules_thread_id_fk_idx" ON "public"."forums" USING "btree" ("rules_thread_id");
 
 
 
@@ -53073,6 +53212,11 @@ ALTER TABLE ONLY "public"."forum_threads"
 
 
 ALTER TABLE ONLY "public"."forum_threads"
+    ADD CONSTRAINT "forum_threads_continues_in_thread_id_fkey" FOREIGN KEY ("continues_in_thread_id") REFERENCES "public"."forum_threads"("id") ON DELETE SET NULL;
+
+
+
+ALTER TABLE ONLY "public"."forum_threads"
     ADD CONSTRAINT "forum_threads_forum_id_fkey" FOREIGN KEY ("forum_id") REFERENCES "public"."forums"("id");
 
 
@@ -53089,6 +53233,11 @@ ALTER TABLE ONLY "public"."forum_threads"
 
 ALTER TABLE ONLY "public"."forums"
     ADD CONSTRAINT "forums_parent_id_fkey" FOREIGN KEY ("parent_id") REFERENCES "public"."forums"("id") ON DELETE RESTRICT;
+
+
+
+ALTER TABLE ONLY "public"."forums"
+    ADD CONSTRAINT "forums_rules_thread_id_fkey" FOREIGN KEY ("rules_thread_id") REFERENCES "public"."forum_threads"("id") ON DELETE SET NULL;
 
 
 
@@ -57070,6 +57219,16 @@ GRANT ALL ON FUNCTION "public"."admin_set_flag"("flag_key" "text", "turn_on" boo
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_set_forum_rules_thread"("thread_number" bigint, "is_rules" boolean, "reason" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_set_forum_rules_thread"("thread_number" bigint, "is_rules" boolean, "reason" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_set_forum_thread_next"("thread_number" bigint, "reason" "text", "next_thread_number" bigint) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_set_forum_thread_next"("thread_number" bigint, "reason" "text", "next_thread_number" bigint) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_set_forum_thread_sticky"("thread_number" bigint, "is_sticky" boolean, "reason" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_set_forum_thread_sticky"("thread_number" bigint, "is_sticky" boolean, "reason" "text") TO "authenticated";
 
@@ -58770,6 +58929,10 @@ REVOKE ALL ON FUNCTION "public"."forum_thread_is_shown"("target" "public"."forum
 
 GRANT ALL ON FUNCTION "public"."forum_thread_list"("forum_slug" "text", "older_than" timestamp with time zone) TO "anon";
 GRANT ALL ON FUNCTION "public"."forum_thread_list"("forum_slug" "text", "older_than" timestamp with time zone) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."forum_thread_pointer_json"("pointed_thread_id" "uuid") FROM PUBLIC;
 
 
 

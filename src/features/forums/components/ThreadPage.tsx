@@ -13,7 +13,8 @@
  * (ThreadModeration, S1-E8-05). FORUMS-2a: a thread in a space lives at
  * /forums/space-<space>/<n>, its breadcrumb goes through the space and its reply card says how to
  * join (S1-E8-06). IDEAS-3f links the reply the starter marked "This answered it" above the posts
- * (ThreadAnswerNote, IDEA-20261102-8).
+ * (ThreadAnswerNote, IDEA-20261102-8). GAPS-9 shows the forum's rules thread in a strip under
+ * the heading (ThreadRulesStrip).
  * What it calls: useForumThread → forum_thread(); useForumIndex for the breadcrumb;
  * useQuotePicks.
  */
@@ -39,6 +40,7 @@ import { ReplyForm } from './ReplyForm';
 import { ThreadAnswerNote } from './ThreadAnswerNote';
 import { ThreadHeader } from './ThreadHeader';
 import { ThreadModeration } from './ThreadModeration';
+import { ThreadRulesStrip } from './ThreadRulesStrip';
 import { ThreadSidePanel } from './ThreadSidePanel';
 
 /**
@@ -159,6 +161,8 @@ function ThreadContent({
   return (
     <>
       <ThreadHeader thread={thread} path={path} />
+      {/* GAPS-9: the forum's rules thread, above every other thread of the forum. */}
+      <ThreadRulesStrip rules={thread.rules} />
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
         <div className="flex min-w-0 flex-col gap-6">
           <ThreadPosts read={read} threadNumber={threadNumber} />

@@ -3487,6 +3487,7 @@ export type Database = {
         Row: {
           answer_post_id: string | null;
           bumped_at: string;
+          continues_in_thread_id: string | null;
           created_at: string;
           deleted_at: string | null;
           forum_id: string;
@@ -3529,6 +3530,7 @@ export type Database = {
         Insert: {
           answer_post_id?: string | null;
           bumped_at?: string;
+          continues_in_thread_id?: string | null;
           created_at?: string;
           deleted_at?: string | null;
           forum_id: string;
@@ -3547,6 +3549,7 @@ export type Database = {
         Update: {
           answer_post_id?: string | null;
           bumped_at?: string;
+          continues_in_thread_id?: string | null;
           created_at?: string;
           deleted_at?: string | null;
           forum_id?: string;
@@ -3568,6 +3571,13 @@ export type Database = {
             columns: ['answer_post_id'];
             isOneToOne: false;
             referencedRelation: 'forum_posts';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'forum_threads_continues_in_thread_id_fkey';
+            columns: ['continues_in_thread_id'];
+            isOneToOne: false;
+            referencedRelation: 'forum_threads';
             referencedColumns: ['id'];
           },
           {
@@ -3603,6 +3613,7 @@ export type Database = {
           level: number;
           parent_id: string | null;
           position: number;
+          rules_thread_id: string | null;
           slug: string;
           space_id: string | null;
           updated_at: string;
@@ -3617,6 +3628,7 @@ export type Database = {
           level?: number;
           parent_id?: string | null;
           position?: number;
+          rules_thread_id?: string | null;
           slug: string;
           space_id?: string | null;
           updated_at?: string;
@@ -3630,6 +3642,7 @@ export type Database = {
           level?: number;
           parent_id?: string | null;
           position?: number;
+          rules_thread_id?: string | null;
           slug?: string;
           space_id?: string | null;
           updated_at?: string;
@@ -3640,6 +3653,13 @@ export type Database = {
             columns: ['parent_id'];
             isOneToOne: false;
             referencedRelation: 'forums';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'forums_rules_thread_id_fkey';
+            columns: ['rules_thread_id'];
+            isOneToOne: false;
+            referencedRelation: 'forum_threads';
             referencedColumns: ['id'];
           },
           {
@@ -10376,6 +10396,14 @@ export type Database = {
         Returns: undefined;
       };
       admin_set_flag: { Args: { flag_key: string; turn_on: boolean }; Returns: boolean };
+      admin_set_forum_rules_thread: {
+        Args: { is_rules: boolean; reason: string; thread_number: number };
+        Returns: undefined;
+      };
+      admin_set_forum_thread_next: {
+        Args: { next_thread_number?: number; reason: string; thread_number: number };
+        Returns: undefined;
+      };
       admin_set_forum_thread_sticky: {
         Args: { is_sticky: boolean; reason: string; thread_number: number };
         Returns: undefined;
@@ -12163,6 +12191,7 @@ export type Database = {
         Returns: {
           answer_post_id: string | null;
           bumped_at: string;
+          continues_in_thread_id: string | null;
           created_at: string;
           deleted_at: string | null;
           forum_id: string;
@@ -12204,6 +12233,7 @@ export type Database = {
         Returns: boolean;
       };
       forum_thread_list: { Args: { forum_slug: string; older_than?: string }; Returns: Json };
+      forum_thread_pointer_json: { Args: { pointed_thread_id: string }; Returns: Json };
       forum_thread_summary_json: {
         Args: {
           target: Omit<
