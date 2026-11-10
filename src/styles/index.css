@@ -300,10 +300,10 @@ dialog.bg-surface,
 
 /*
  * The shell's glass (bundle G4 SHELL; handoff "App header and tab bar", "Navigation"). glass-pill
- * is the website top bar and the phone header's pills: see-through glass with the bright rim, a
- * top highlight and the nav shadow. It sits over the still blobs only, so it needs no blur
- * (Robert, 7 Nov 2026: keep it light for weaker devices). glass-float is the tab bar, which floats
- * over the page's own text and cards, so it paints its colour almost solid and its labels stay
+ * is see-through glass with the bright rim, a top highlight and the nav shadow, for pills that sit
+ * over the still blobs only, so it needs no blur (Robert, 7 Nov 2026: keep it light for weaker
+ * devices). glass-float is the tab bar and, since NAV-1, every header's pills, which float over
+ * the page's own text and cards, so it paints its colour almost solid and its labels stay
  * readable over anything (WCAG 1.4.3). No blur on either: a blurred bar fixed over a scrolling page
  * repaints on every frame, which weaker phones feel (Robert, 7 Nov 2026, 21:49: blur only on
  * dialogs and pop-overs).
@@ -804,4 +804,19 @@ dialog.bg-surface,
     radial-gradient(60% 70% at 20% 20%, var(--blob-1), transparent 70%),
     radial-gradient(60% 70% at 85% 30%, var(--blob-2), transparent 70%),
     radial-gradient(70% 70% at 50% 100%, var(--blob-3), transparent 70%), var(--paper);
+}
+
+/*
+ * NAV-1 (Robert, 10 Nov 2026): the header floats over the page however far it scrolls, so a jump
+ * to an anchor and a keyboard focus that scrolls the page stop below it, never under it
+ * (WCAG 2.2, 2.4.11 Focus not obscured). 112 px clears the website top bar; phones' headers are
+ * shorter, so 88 px there.
+ */
+html {
+  scroll-padding-top: 112px;
+}
+@media (width < 1024px) {
+  html {
+    scroll-padding-top: 88px;
+  }
 }

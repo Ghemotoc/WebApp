@@ -207,7 +207,7 @@ function HomePageForm({
           state={state}
           onChange={change}
         />
-        <div className="xl:sticky xl:top-4 xl:self-start">
+        <div className="xl:sticky xl:top-28 xl:self-start">
           <HeroPreview page={page} language={language} />
         </div>
       </div>

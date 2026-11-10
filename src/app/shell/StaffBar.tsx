@@ -59,10 +59,12 @@ export function StaffBar({
   const Island = hasLinks ? 'nav' : 'div';
 
   return (
-    <header className="relative px-[clamp(16px,4vw,64px)] pt-6">
+    // NAV-1 (Robert, 10 Nov 2026): the staff bar floats over the page too, painted almost
+    // solid and without blur, as the other fixed bars (Robert, 7 Nov 2026, 21:49).
+    <header className="pointer-events-none sticky top-0 z-30 px-[clamp(16px,4vw,64px)] pt-6">
       <Island
         aria-label={hasLinks ? t('staff.navigation') : undefined}
-        className="mx-auto flex max-w-[1280px] flex-wrap items-center gap-x-6 gap-y-4 rounded-nav border border-border bg-(--nav-glass) py-2.5 pr-2.5 pl-6 shadow-nav backdrop-blur-md"
+        className="glass-float pointer-events-auto mx-auto flex max-w-[1280px] flex-wrap items-center gap-x-6 gap-y-4 rounded-nav py-2.5 pr-2.5 pl-6"
       >
         <span className="inline-flex min-h-11 items-center gap-2.5">
           {/* The emblem and the name, as in the public top bar (LOGO-1: the logo on every platform). */}

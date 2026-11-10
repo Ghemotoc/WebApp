@@ -55,7 +55,7 @@ export function StoryPreviewAside({
   const shownTitle = answers.title.trim() === '' ? t('cover.untitled') : answers.title;
 
   return (
-    <aside className="relative flex flex-col gap-3 md:sticky md:top-6">
+    <aside className="relative flex flex-col gap-3 md:sticky md:top-28">
       <div className="flex items-center justify-between gap-3">
         <Eyebrow>{t('preview.eyebrow')}</Eyebrow>
         <InfoPill tone="neutral">{t('preview.onlyYou')}</InfoPill>

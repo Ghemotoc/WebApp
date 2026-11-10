@@ -37,6 +37,8 @@
  * (FocusHeader: Back and a title, no tab bar) and every other page gets header B (PhoneHeader)
  * with the floating TabBar; shellScreens.ts lists which is which. Only one header is drawn at a
  * time (useIsNarrowScreen), so the page never holds two "Main" navigations.
+ * Every header floats over the page however far it scrolls (NAV-1, Robert, 10 Nov 2026): it is
+ * sticky, and `scroll-padding-top` in src/styles/index.css keeps anchors and focus below it.
  */
 import { useTranslation } from 'react-i18next';
 import { Outlet, useLocation } from 'react-router';
@@ -149,7 +151,7 @@ export function AppLayout() {
     >
       <a
         href="#main"
-        className="sr-only z-20 rounded-full bg-surface-solid px-4 py-2 focus:not-sr-only focus:absolute focus:top-2 focus:left-2"
+        className="sr-only z-40 rounded-full bg-surface-solid px-4 py-2 focus:not-sr-only focus:absolute focus:top-2 focus:left-2"
       >
         {t('shell.skipToContent')}
       </a>
