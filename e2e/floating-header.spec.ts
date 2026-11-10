@@ -20,6 +20,32 @@ async function headerBottom(page: Page) {
   return (box?.y ?? 0) + (box?.height ?? 0);
 }
 
+/** The header's top edge on screen, in px (-1 when there is no header). */
+async function headerTop(page: Page) {
+  const box = await page.locator('header').first().boundingBox();
+  return box?.y ?? -1;
+}
+
+/** Whether the middle of the header's logo belongs to the header, so it is drawn above the page. */
+async function logoIsOnTop(page: Page) {
+  const logo = await page.locator('header a').first().boundingBox();
+  const middle = {
+    x: (logo?.x ?? 0) + (logo?.width ?? 0) / 2,
+    y: (logo?.y ?? 0) + (logo?.height ?? 0) / 2,
+  };
+  return page.evaluate(
+    (point) => document.elementFromPoint(point.x, point.y)?.closest('header') !== null,
+    middle,
+  );
+}
+
+/** How far the page scrolls sideways, in px (0 or less when it doesn't). */
+async function sidewaysOverflow(page: Page) {
+  return page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  );
+}
+
 for (const width of [1440, 390]) {
   test(`at ${width} px the header stays on screen however far the page scrolls`, async ({
     browser,
@@ -31,20 +57,12 @@ for (const width of [1440, 390]) {
     // Scroll to the very foot of the page.
     await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(400);
-    const header = await page.locator('header').first().boundingBox();
-    expect(header?.y ?? -1).toBeGreaterThanOrEqual(0);
-    expect(header?.y ?? 99).toBeLessThan(4);
-    // The header is drawn above the page: the middle of its logo belongs to the header.
-    const logo = await page.locator('header a').first().boundingBox();
-    const inHeader = await page.evaluate(
-      (point) => document.elementFromPoint(point.x, point.y)?.closest('header') !== null,
-      { x: (logo?.x ?? 0) + (logo?.width ?? 0) / 2, y: (logo?.y ?? 0) + (logo?.height ?? 0) / 2 },
-    );
-    expect(inHeader).toBe(true);
-    const overflow = await page.evaluate(
-      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
-    );
-    expect(overflow).toBeLessThanOrEqual(0);
+    // The header is still at the top of the screen, drawn above the page.
+    const top = await headerTop(page);
+    expect(top).toBeGreaterThanOrEqual(0);
+    expect(top).toBeLessThan(4);
+    expect(await logoIsOnTop(page)).toBe(true);
+    expect(await sidewaysOverflow(page)).toBeLessThanOrEqual(0);
     await context.close();
   });
 
