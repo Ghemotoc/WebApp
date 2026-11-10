@@ -17,7 +17,7 @@
 import type { AppSupabaseClient } from '@/lib/supabase';
 
 import type { ChapterKind, PlanningStatus } from './chapterPlans';
-import { checkedAnswer } from './checkedAnswer';
+import { checkedAnswer, refusalHintOf } from './checkedAnswer';
 
 /** One chapter as the three views draw it. */
 export interface StorylineChapter {
@@ -201,6 +201,23 @@ export async function addChapterToAct(
   const answer = await client.rpc('add_chapter_to_act', { story_slug: slug, act_id: actId ?? '' });
   const data = checkedAnswer(answer, 'add the chapter');
   return String(data.code);
+}
+
+/** The message for each refusal add_plan_act() and rename_plan_act() name with a hint. */
+const actRefusalKeys = { name_taken: 'nameTaken', too_many_acts: 'tooMany' } as const;
+
+/**
+ * The locale key of the message for an act that wasn't added or renamed.
+ *
+ * @param error - whatever addPlanAct or renamePlanAct threw
+ * @param otherwise - the form's general message: 'addFailed' or 'saveFailed'
+ * @returns the key for "another act has that name" or "12 acts at most" when the database said
+ *   so, or the general one
+ */
+export function actFailureKey(error: unknown, otherwise: 'addFailed' | 'saveFailed') {
+  const hint = refusalHintOf(error);
+  const refusal = hint === 'name_taken' || hint === 'too_many_acts' ? actRefusalKeys[hint] : null;
+  return `storyline.board.acts.${refusal ?? otherwise}` as const;
 }
 
 /**

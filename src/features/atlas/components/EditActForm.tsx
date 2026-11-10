@@ -4,7 +4,8 @@
  * One button; pressed, it opens the act's name with "Save" and "Cancel", and "Delete act".
  * Deleting asks first, in place, and says how many chapters stay in the book under "No act": no
  * chapter is deleted and none changes place, so readers see nothing different
- * (delete_plan_act()). Who uses it: BoardColumnSection, on every act (never on "No act"). What it
+ * (delete_plan_act()). One change runs at a time, and a name another act has is refused in plain
+ * words (break test, 10 Nov 2026). Who uses it: BoardColumnSection, on every act (never on "No act"). What it
  * calls: useStoryline's renameAct and deleteAct.
  */
 import { useEffect, useState } from 'react';
@@ -13,6 +14,8 @@ import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { TextInput } from '@/components/ui/TextInput';
 
+import { actFailureKey } from '../api/storyline';
+import { useOneAtATime } from '../hooks/useOneAtATime';
 import { useStoryline } from '../hooks/useStoryline';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
@@ -84,6 +87,7 @@ export function EditActForm({ slug, act, chapterCount }: EditActFormProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState(act.name);
   const [message, setMessage] = useState<string | null>(null);
+  const { isBusy, run } = useOneAtATime();
 
   const boxId = `atlas-edit-act-${act.id}`;
   // Opening the form puts the cursor in its box, so the keyboard carries on from the button.
@@ -95,28 +99,24 @@ export function EditActForm({ slug, act, chapterCount }: EditActFormProps) {
   async function save() {
     setMessage(null);
     if (name.trim() === '') return setMessage(t('storyline.board.acts.nameRequired'));
-    await renameAct(act.id, name)
-      .then(() => setIsOpen(false))
-      .catch(() => setMessage(t('storyline.board.acts.saveFailed')));
+    await run(() => renameAct(act.id, name))
+      .then((hasRun) => hasRun && setIsOpen(false))
+      .catch((error: unknown) => setMessage(t(actFailureKey(error, 'saveFailed'))));
   }
 
   /** Deletes the act (the column goes with it), or says why not. */
   function remove() {
     setMessage(null);
-    deleteAct(act.id).catch(() => setMessage(t('storyline.board.acts.deleteFailed')));
+    run(() => deleteAct(act.id)).catch(() => setMessage(t('storyline.board.acts.deleteFailed')));
   }
 
-  if (!isOpen) {
-    return (
-      <EditActButton
-        name={act.name}
-        onOpen={() => {
-          setName(act.name);
-          setIsOpen(true);
-        }}
-      />
-    );
+  /** Opens the form with the act's name as it is now. */
+  function open() {
+    setName(act.name);
+    setIsOpen(true);
   }
+
+  if (!isOpen) return <EditActButton name={act.name} onOpen={open} />;
   return (
     <div className="flex min-w-0 flex-col gap-3">
       <form
@@ -134,7 +134,9 @@ export function EditActForm({ slug, act, chapterCount }: EditActFormProps) {
           onChange={(event) => setName(event.target.value)}
         />
         <div className="flex flex-wrap gap-2">
-          <Button type="submit">{t('storyline.board.acts.save')}</Button>
+          <Button type="submit" disabled={isBusy}>
+            {t('storyline.board.acts.save')}
+          </Button>
           <Button variant="secondary" onClick={() => setIsOpen(false)}>
             {t('storyline.board.acts.cancel')}
           </Button>
