@@ -3,14 +3,17 @@
  * turn on an area (Characters, Relationship map, Family tree, Story bible, Timeline), then that
  * area shows with the story once it is published").
  *
- * A fieldset of checkboxes, each with a line on what it shares; a tick saves at once, and the
- * box shows the writer's choice until the save answers. Turning one off takes it away from
- * readers at once (every public answer reads the switches live).
- * Who uses it: ReaderViewPage. What it calls: the save it is given (usePlanVisibility).
+ * A glass card of rows (board AtlasReaders, G10c4): the area's name and a line on what it shares
+ * on the left, an on and off switch on the right. A press saves at once, and the switch shows the
+ * writer's choice until the save answers. Turning one off takes it away from readers at once
+ * (every public answer reads the switches live).
+ * Who uses it: ReaderViewPage. What it calls: the save it is given (usePlanVisibility) and the
+ * shared SwitchButton.
  */
 import { useState } from 'react';
 
 import { Notice } from '@/components/ui/Notice';
+import { SwitchButton } from '@/features/settings/components/SwitchButton';
 
 import { planAreas, type PlanArea } from '../api/publicPlan';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
@@ -50,24 +53,19 @@ export function PublicAreaSwitches({ savedAreas, save }: PublicAreaSwitchesProps
       {planAreas.map((area) => (
         <div
           key={area}
-          className="flex min-h-11 items-start gap-3 border-t border-hairline py-3 first-of-type:border-t-0"
+          className="flex min-h-11 w-full items-center justify-between gap-4 border-t border-hairline py-3 first-of-type:border-t-0"
         >
-          <input
-            id={`atlas-area-${area}`}
-            type="checkbox"
-            className="mt-0.5 h-5 w-5 shrink-0"
-            checked={areas.includes(area)}
-            aria-describedby={`atlas-area-${area}-hint`}
-            onChange={(changed) => void toggle(area, changed.target.checked)}
-          />
-          <div className="flex flex-col gap-0.5">
-            <label htmlFor={`atlas-area-${area}`} className="font-semibold text-heading">
-              {t(`publicPlan.areas.${area}`)}
-            </label>
-            <span id={`atlas-area-${area}-hint`} className="text-sm text-body">
-              {t(`readers.areas.hints.${area}`)}
-            </span>
+          <div className="flex min-w-0 flex-col gap-0.5">
+            <span className="font-semibold text-heading">{t(`publicPlan.areas.${area}`)}</span>
+            <span className="text-sm text-body">{t(`readers.areas.hints.${area}`)}</span>
           </div>
+          <SwitchButton
+            label={t(`publicPlan.areas.${area}`)}
+            isOn={areas.includes(area)}
+            stateWord={t(areas.includes(area) ? 'readers.areas.on' : 'readers.areas.off')}
+            isDisabled={false}
+            onToggle={() => void toggle(area, !areas.includes(area))}
+          />
         </div>
       ))}
       <div aria-live="polite">

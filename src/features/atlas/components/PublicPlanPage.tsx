@@ -2,13 +2,13 @@
  * PublicPlanPage: /s/:storySlug/atlas/:area and /s/:storySlug/atlas/characters/:characterId,
  * the parts of a story's plan its writer shares with readers (story S1-E17-33).
  *
- * A heading with the story's title (a link back to its page), then PublicPlanView. The database
+ * PublicPlanHero (the story's title, a link back to its page), then PublicPlanView. The database
  * decides what this reader may see (get_public_story_plan(): the story's rating, blocks,
  * moderation and the writer's switches, S1-E17-32 to S1-E17-35); an area that is off or a story
  * the reader may not read gets the same plain message. No doodles: plain reading pages.
- * Who calls it: src/app/router.tsx. What it calls: usePublicPlan and PublicPlanView.
+ * Who calls it: src/app/router.tsx. What it calls: usePublicPlan, PublicPlanHero and PublicPlanView.
  */
-import { Link, useParams } from 'react-router';
+import { useParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
@@ -18,6 +18,7 @@ import { usePublicPlan } from '../hooks/usePublicPlan';
 import { areaFromPath, readerPlanBase } from '../lib/publicPlanAreas';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
+import { PublicPlanHero } from './PublicPlanHero';
 import { PublicPlanView } from './PublicPlanView';
 
 /** The heading and the area, once the reader may see it. */
@@ -30,17 +31,9 @@ function PublicPlanBody({
   area: PlanArea;
   characterId: string | undefined;
 }) {
-  const { t } = useAtlasTranslation();
   return (
     <>
-      <header className="flex flex-col gap-2">
-        <p className="m-0 eyebrow">{t('publicPlan.eyebrow')}</p>
-        <h1 className="m-0 text-[clamp(36px,4.4vw,56px)] leading-[0.98] font-extrabold tracking-[-0.025em] break-words">
-          <Link to={`/s/${plan.storySlug}`} className="text-heading no-underline hover:underline">
-            {plan.storyTitle}
-          </Link>
-        </h1>
-      </header>
+      <PublicPlanHero title={plan.storyTitle} storyAddress={`/s/${plan.storySlug}`} />
       <PublicPlanView
         plan={plan}
         area={area}

@@ -108,8 +108,11 @@ test.describe('Story Atlas search, cross-links and "Mentioned in" (S1-E17-30, 31
     const marketing = page.getByRole('region', { name: 'Marketing notes (1)' });
     await expect(marketing.getByRole('link', { name: 'Back-cover blurb' })).toBeVisible();
     await expect(marketing.locator('mark')).toHaveText('far');
+    // The search page has one search field, the wide bar, with its own "Search" button.
+    await expect(page.getByRole('searchbox', { name: 'Search this story' })).toHaveCount(1);
     // Accents don't matter, and the manuscript is searched.
-    await search(page, 'stefan');
+    await page.getByRole('searchbox', { name: 'Search this story' }).fill('stefan');
+    await page.getByRole('button', { name: 'Search', exact: true }).click();
     const chapters = page.getByRole('region', { name: 'Chapters (1)' });
     await expect(chapters.locator('mark')).toHaveText('Ștefan');
     await expect(chapters.locator('mark')).toHaveCSS('font-weight', '700');

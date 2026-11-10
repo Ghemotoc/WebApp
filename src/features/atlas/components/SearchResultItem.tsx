@@ -1,12 +1,15 @@
 /**
  * SearchResultItem: one search result (story S1-E17-30: "each opens its item").
  *
- * Its title as a link to the item (a character's sheet, a bible entry, a chapter or a scene's
- * chapter, the note on the Ideas page, the timeline or the marketing field), then the snippet
- * with the match marked. Who uses it: AtlasSearchPage. What it calls: lib/itemAddress.ts and
+ * A row of a glass list (board AtlasSearch, G10c4), the whole row a link to the item (a
+ * character's sheet, a bible entry, a chapter or a scene's chapter, the note on the Ideas page,
+ * the timeline or the marketing field): its title in bold, then the snippet with the match
+ * marked. Who uses it: AtlasSearchPage. What it calls: lib/itemAddress.ts and
  * HighlightedSnippet.
  */
 import { Link } from 'react-router';
+
+import { ChevronRightIcon } from '@/components/icons/ChevronRightIcon';
 
 import type { SearchResult } from '../api/search';
 import { itemAddress } from '../lib/itemAddress';
@@ -41,19 +44,19 @@ export function SearchResultItem({
 }) {
   const title = useResultTitle(result);
   return (
-    <li
-      data-testid="atlas-search-result"
-      className="flex min-w-0 flex-col gap-1 border-b border-hairline py-3 last:border-b-0"
-    >
+    <li data-testid="atlas-search-result" className="border-b border-border last:border-b-0">
       <Link
         to={itemAddress(slug, result)}
-        className="inline-flex min-h-6 font-semibold break-words text-link underline"
+        className="flex min-h-[60px] items-center gap-3.5 px-[18px] py-2.5 text-heading no-underline hover:bg-tint"
       >
-        {title}
+        <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <span className="text-[15px] font-bold break-words">{title}</span>
+          <span className="text-[13px] break-words text-body">
+            <HighlightedSnippet snippet={result.snippet} query={query} />
+          </span>
+        </span>
+        <ChevronRightIcon aria-hidden="true" className="shrink-0 text-meta" />
       </Link>
-      <p className="m-0 text-sm break-words text-body">
-        <HighlightedSnippet snippet={result.snippet} query={query} />
-      </p>
     </li>
   );
 }

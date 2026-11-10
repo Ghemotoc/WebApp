@@ -54,7 +54,8 @@ export function AtlasTopBar({
         </div>
         {/* Right: search this story, then go and write or start another story. */}
         <div className="flex min-w-0 flex-wrap items-center gap-2">
-          <AtlasSearchBox slug={slug} />
+          {/* The search page has its own wide bar, so the small box stays out there. */}
+          {section !== null && <AtlasSearchBox slug={slug} />}
           <Link to={writeAddress} className={pillLink}>
             <ActionIcon name="pen" />
             {t('switcher.write')}

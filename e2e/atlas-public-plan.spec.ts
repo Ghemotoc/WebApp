@@ -85,11 +85,10 @@ async function openAs(
 async function publicCharacterNames(browser: Browser, persona: SignInPersonaName | null) {
   const page = await openAs(browser, persona, `${readerBase}/characters`);
   await expect(page.getByRole('heading', { level: 1, name: 'Moara de pe deal' })).toBeVisible();
-  // Each character's link holds its picture (when there is one), then its name: the last line.
-  const links = page.locator(`main a[href*="${readerBase}/characters/"]`);
-  const names = await links.allInnerTexts();
+  // Each character's card holds its picture or initials, its name and one quiet line.
+  const names = await page.getByTestId('atlas-public-character-name').allInnerTexts();
   await page.context().close();
-  return names.map((name) => name.trim().split('\n').at(-1));
+  return names.map((name) => name.trim());
 }
 
 test.describe('Story Atlas for readers (S1-E17-32 to S1-E17-35)', () => {
@@ -116,10 +115,10 @@ test.describe('Story Atlas for readers (S1-E17-32 to S1-E17-35)', () => {
       page.getByRole('heading', { level: 1, name: 'What readers can see' }),
     ).toBeVisible();
     const areas = page.getByRole('group', { name: 'Areas readers see' });
-    await areas.getByRole('checkbox', { name: 'Characters' }).check();
-    await expect(areas.getByRole('checkbox', { name: 'Characters' })).toBeChecked();
-    await areas.getByRole('checkbox', { name: 'Timeline' }).check();
-    await expect(areas.getByRole('checkbox', { name: 'Timeline' })).toBeChecked();
+    await areas.getByRole('switch', { name: 'Characters' }).click();
+    await expect(areas.getByRole('switch', { name: 'Characters' })).toBeChecked();
+    await areas.getByRole('switch', { name: 'Timeline' }).click();
+    await expect(areas.getByRole('switch', { name: 'Timeline' })).toBeChecked();
     await page.context().close();
 
     // The story page links to the two areas, and only those.
@@ -136,13 +135,15 @@ test.describe('Story Atlas for readers (S1-E17-32 to S1-E17-35)', () => {
   });
 
   test('“Keep private” and the sheet’s parts decide what a reader sees', async ({ browser }) => {
-    const page = await openAs(
-      browser,
-      'adult_writer',
-      `/plan/s/${storySlug}/characters/${cezarId}`,
-    );
-    await page.getByRole('checkbox', { name: 'Keep private: Cezar' }).check();
-    await expect(page.getByRole('checkbox', { name: 'Keep private: Cezar' })).toBeChecked();
+    // "What readers can see" lists every character with what readers see of it; "Change" opens
+    // the same controls the sheet has (board AtlasReaders, G10c4).
+    const page = await openAs(browser, 'adult_writer', settingsAddress);
+    const cezar = page.getByTestId('atlas-reader-character').filter({ hasText: 'Cezar' });
+    await expect(cezar).toContainText('Readers see it from the start');
+    await cezar.getByRole('button', { name: 'Change what readers see of Cezar' }).click();
+    await cezar.getByRole('checkbox', { name: 'Keep private: Cezar' }).check();
+    await expect(cezar).toContainText('Kept private');
+    await expect(page.getByRole('heading', { name: 'Spoilers stay safe' })).toBeVisible();
     await page.context().close();
     expect(await publicCharacterNames(browser, null)).toEqual(['Ana']);
 
@@ -213,8 +214,8 @@ test.describe('Story Atlas for readers (S1-E17-32 to S1-E17-35)', () => {
   test('turning an area off takes it away from readers at once', async ({ browser }) => {
     const page = await openAs(browser, 'adult_writer', settingsAddress);
     const areas = page.getByRole('group', { name: 'Areas readers see' });
-    await areas.getByRole('checkbox', { name: 'Timeline' }).uncheck();
-    await expect(areas.getByRole('checkbox', { name: 'Timeline' })).not.toBeChecked();
+    await areas.getByRole('switch', { name: 'Timeline' }).click();
+    await expect(areas.getByRole('switch', { name: 'Timeline' })).not.toBeChecked();
     await page.context().close();
     const visitor = await openAs(browser, null, `${readerBase}/timeline`);
     await expect(visitor.getByText('This isn’t available.', { exact: false })).toBeVisible();
