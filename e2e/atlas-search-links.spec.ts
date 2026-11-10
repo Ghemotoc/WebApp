@@ -126,10 +126,7 @@ test.describe('Story Atlas search, cross-links and "Mentioned in" (S1-E17-30, 31
       .getByRole('region', { name: 'Questions and ideas (1)' })
       .getByRole('link', { name: 'Cine a stins farul?' })
       .click();
-    await expect(page.getByRole('radio', { name: 'All (1)' })).toHaveAttribute(
-      'aria-checked',
-      'true',
-    );
+    await expect(page.getByRole('radio', { name: 'All (1)' })).toBeChecked();
     await expect(page.getByTestId('atlas-idea-item')).toHaveCount(1);
     // The note's [[link]] shows as a chip to the character.
     const chip = page.getByTestId('atlas-idea-item').getByRole('link', { name: 'Bogdan' });

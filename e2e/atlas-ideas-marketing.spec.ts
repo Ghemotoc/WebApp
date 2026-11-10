@@ -9,8 +9,10 @@
  *   date it was done; Open, Done and All filter the list; its type changes and it deletes after
  *   a second click (S1-E17-28);
  * - every marketing field saves by itself, the logline and genre being the same fields as At a
- *   glance and Story settings; "Back cover" opens a preview of the title, logline, blurb and
+ *   glance and Story settings; "Back cover" shows a preview of the title, logline, blurb and
  *   comparable titles as real text (S1-E17-29);
+ * - a note reads as a row and "Edit" opens its fields; the QR code points at the story page,
+ *   the story's world (while shared) or the profile, and downloads as PNG and SVG (G10c3);
  * - both pages pass axe, don't scroll sideways and draw no doodle at 390, 768 and
  *   1440 px, light and night, Romanian and English; the open back cover passes axe too.
  * Test data: adult_writer gets "atlas-ideas-seed01"; suspended_user (whose language only the
@@ -85,12 +87,17 @@ function savedMarketing(column: string): string {
     where story_id = (select id from public.stories where slug = '${slug}')`);
 }
 
-/** The notes the list shows now, as their text boxes hold them. */
+/** The notes the list shows now, top to bottom. */
 async function shownNotes(page: Page): Promise<string[]> {
-  const boxes = page.getByTestId('atlas-idea-item').getByRole('textbox', { name: 'Note' });
-  return boxes.evaluateAll((elements) =>
-    elements.map((element) => (element as HTMLInputElement).value),
-  );
+  return page.getByTestId('atlas-idea-body').allTextContents();
+}
+
+/**
+ * Picks a segment of a switch ("Type", "Show"). The switch's radios are visually hidden, so the
+ * click goes to the segment's words, as a person's would.
+ */
+async function pickSegment(page: Page, group: string, segment: string) {
+  await page.getByRole('group', { name: group }).getByText(segment, { exact: true }).click();
 }
 
 test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E17-29)', () => {
@@ -110,7 +117,7 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
     await line.fill('Who put the light out?');
     await line.press('Enter');
     await expect(line).toHaveValue('');
-    await page.locator('#atlas-idea-kind').selectOption('todo');
+    await pickSegment(page, 'Type', 'To-do');
     await line.fill('Check the tide tables');
     await line.press('Enter');
     await expect(line).toHaveValue('');
@@ -129,20 +136,17 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', ideasAddress);
-    await expect(page.getByRole('radio', { name: 'Open (2)' })).toHaveAttribute(
-      'aria-checked',
-      'true',
-    );
+    await expect(page.getByRole('radio', { name: 'Open (2)' })).toBeChecked();
     await page.getByRole('checkbox', { name: 'Done: Who put the light out?' }).check();
     // Open hides it once it is done; Done shows it with the day, and All shows both.
-    await expect(page.getByRole('radio', { name: 'Done (1)' })).toBeVisible();
+    await expect(page.getByRole('radio', { name: 'Done (1)' })).toBeAttached();
     expect(await shownNotes(page)).toEqual(['Check the tide tables']);
-    await page.getByRole('radio', { name: 'Done (1)' }).click();
+    await pickSegment(page, 'Show', 'Done (1)');
     expect(await shownNotes(page)).toEqual(['Who put the light out?']);
     const today = new Intl.DateTimeFormat('en', { dateStyle: 'medium' }).format(new Date());
     await expect(page.getByTestId('atlas-idea-item')).toContainText(`Done on ${today}`);
     expect(savedIdea('Who put the light out?')).toBe('question|Who put the light out?||true');
-    await page.getByRole('radio', { name: 'All (2)' }).click();
+    await pickSegment(page, 'Show', 'All (2)');
     expect(await shownNotes(page)).toEqual(['Check the tide tables', 'Who put the light out?']);
     await page.context().close();
   });
@@ -151,8 +155,14 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', ideasAddress);
-    await page.getByRole('radio', { name: 'All (2)' }).click();
+    await pickSegment(page, 'Show', 'All (2)');
     const item = page.getByTestId('atlas-idea-item').filter({ hasText: 'Done on' });
+    // The done note is struck through; "Edit" opens its fields.
+    await expect(item.getByTestId('atlas-idea-body')).toHaveCSS(
+      'text-decoration-line',
+      'line-through',
+    );
+    await item.getByRole('button', { name: 'Edit “Who put the light out?”' }).click();
     const idBase = await item.getByRole('textbox', { name: 'Note' }).getAttribute('id');
     await item
       .getByRole('textbox', { name: 'Action or outcome' })
@@ -162,6 +172,9 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
     await expect(page.locator(`#${idBase}-save`)).toHaveText('Saved');
     await item.getByLabel('Type', { exact: true }).selectOption('decision');
     await expect(item).toContainText('Decision');
+    // The row reads the new words and the outcome under them.
+    await expect(item.getByTestId('atlas-idea-body')).toHaveText('Who put the lighthouse out?');
+    await expect(item).toContainText('The keeper did. Chapter 4.');
     // The label changes on screen before the save reaches the database, so wait for the row.
     await expect
       .poll(() => savedIdea('Who put the lighthouse out?'))
@@ -214,25 +227,59 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
     await page.context().close();
   });
 
-  test('"Back cover" opens a preview of the title, logline, blurb and comparable titles as text', async ({
+  test('"Back cover" shows a preview of the title, logline, blurb and comparable titles as text', async ({
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', marketingAddress);
-    const toggle = page.getByRole('button', { name: 'Show the back cover' });
-    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
-    await expect(page.getByTestId('atlas-back-cover')).toHaveCount(0);
-    await toggle.click();
+    // The back cover is open beside the fields at first.
     const cover = page.getByRole('figure', { name: 'Farul de pe stâncă' });
     await expect(cover).toBeVisible();
     await expect(cover).toContainText('A keeper hunts the light.');
     await expect(cover).toContainText('A dark lighthouse and a quiet island.');
-    await expect(cover).toContainText('For readers of The Shadow of the Wind');
-    await expect(page.getByRole('button', { name: 'Hide the back cover' })).toHaveAttribute(
-      'aria-expanded',
-      'true',
-    );
-    await page.getByRole('button', { name: 'Hide the back cover' }).click();
+    await expect(cover).toContainText('For readers of');
+    await expect(cover).toContainText('The Shadow of the Wind');
+    const hide = page.getByRole('button', { name: 'Hide the back cover' });
+    await expect(hide).toHaveAttribute('aria-expanded', 'true');
+    await hide.click();
     await expect(page.getByTestId('atlas-back-cover')).toHaveCount(0);
+    const show = page.getByRole('button', { name: 'Show the back cover' });
+    await expect(show).toHaveAttribute('aria-expanded', 'false');
+    await show.click();
+    await expect(page.getByTestId('atlas-back-cover')).toBeVisible();
+    await page.context().close();
+  });
+
+  test('the QR code points where the writer picks and downloads as a PNG or an SVG', async ({
+    browser,
+  }) => {
+    const page = await openAs(browser, 'adult_writer', marketingAddress);
+    const card = page.getByRole('region', { name: 'QR code' });
+    // It starts on the story page, with the address written under the code.
+    await expect(card.getByRole('img', { name: `QR code for /s/${slug}` })).toBeVisible();
+    await expect(card.locator('figcaption')).toHaveText(`/s/${slug}`);
+    // The story's world is offered only while it is shared; the profile always is.
+    const where = card.getByLabel('Where it takes people');
+    await expect(where.locator('option')).toHaveText(['The story page', 'The writer’s profile']);
+    await where.selectOption({ label: 'The writer’s profile' });
+    await expect(card.locator('figcaption')).toHaveText('/u/adult_writer');
+    // Both files are made in the browser and named after the story and the place.
+    const svg = page.waitForEvent('download');
+    await card.getByRole('button', { name: 'Download SVG' }).click();
+    expect((await svg).suggestedFilename()).toBe(`${slug}-qr-profile.svg`);
+    const png = page.waitForEvent('download');
+    await card.getByRole('button', { name: 'Download PNG' }).click();
+    expect((await png).suggestedFilename()).toBe(`${slug}-qr-profile.png`);
+    // Sharing the story's world adds it to the choices.
+    runSql(`update public.story_plans set public_areas = array['bible']
+      where story_id = (select id from public.stories where slug = '${slug}');`);
+    await page.reload();
+    await page
+      .getByRole('region', { name: 'QR code' })
+      .getByLabel('Where it takes people')
+      .selectOption({ label: 'The story’s world' });
+    await expect(page.getByRole('region', { name: 'QR code' }).locator('figcaption')).toHaveText(
+      `/s/${slug}/atlas/world`,
+    );
     await page.context().close();
   });
 
@@ -256,7 +303,6 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
   test('the open back cover passes axe and fits a phone', async ({ browser }) => {
     const page = await openAs(browser, 'suspended_user', axeMarketingAddress);
     await page.setViewportSize({ width: 390, height: 900 });
-    await page.getByRole('button', { name: 'Show the back cover' }).click();
     await expect(page.getByTestId('atlas-back-cover')).toContainText('Umbra vântului');
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
