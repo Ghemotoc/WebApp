@@ -14,6 +14,8 @@
  */
 import type { AppSupabaseClient } from '@/lib/supabase';
 
+import { hubStaffErrorFrom } from './hubStaffErrors';
+
 /** One started prompt as the hub shows it. */
 export interface HubPrompt {
   promptId: string;
@@ -125,40 +127,13 @@ export async function fetchStaffPrompts(client: AppSupabaseClient): Promise<Staf
   }));
 }
 
-/** Why a staff change was refused, in the words the page has text for. */
-export type PromptFailure = 'not_allowed' | 'day_taken' | 'refused' | 'failed';
-
-/** A refused staff change, carrying which message to show. */
-export class PromptError extends Error {
-  readonly failure: PromptFailure;
-
-  constructor(failure: PromptFailure, message: string) {
-    super(message);
-    this.failure = failure;
-  }
-}
-
-/**
- * Turns the database's refusal into the message to show.
- *
- * @param error - what the call answered: its SQLSTATE and words
- * @returns the error to throw
- */
-function promptErrorFrom(error: { code?: string; message: string }): PromptError {
-  // 42501: not contest staff. 23505: another prompt starts that day. 23514: empty or too long.
-  if (error.code === '42501') return new PromptError('not_allowed', error.message);
-  if (error.code === '23505') return new PromptError('day_taken', error.message);
-  if (error.code === '23514') return new PromptError('refused', error.message);
-  return new PromptError('failed', error.message);
-}
-
 /**
  * Adds a prompt, or changes one; logged with the before and after words.
  *
  * @param client - the shared Supabase client
  * @param draft - the words in both languages and the start day
  * @returns the prompt's ID
- * @throws PromptError
+ * @throws HubStaffError
  */
 export async function savePrompt(client: AppSupabaseClient, draft: PromptDraft): Promise<string> {
   const { data, error } = await client.rpc('admin_save_writing_prompt', {
@@ -168,7 +143,7 @@ export async function savePrompt(client: AppSupabaseClient, draft: PromptDraft):
     prompt_en: draft.promptEn,
     starts_on: draft.startsOn,
   });
-  if (error !== null) throw promptErrorFrom(error);
+  if (error !== null) throw hubStaffErrorFrom(error);
   return data;
 }
 
@@ -177,9 +152,9 @@ export async function savePrompt(client: AppSupabaseClient, draft: PromptDraft):
  *
  * @param client - the shared Supabase client
  * @param promptId - the prompt to delete
- * @throws PromptError
+ * @throws HubStaffError
  */
 export async function deletePrompt(client: AppSupabaseClient, promptId: string): Promise<void> {
   const { error } = await client.rpc('admin_delete_writing_prompt', { prompt_id: promptId });
-  if (error !== null) throw promptErrorFrom(error);
+  if (error !== null) throw hubStaffErrorFrom(error);
 }

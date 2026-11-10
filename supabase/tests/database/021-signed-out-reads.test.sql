@@ -242,6 +242,8 @@ select results_eq(
        -- Stored search rows: staff only, visitors search through browse_stories() (QA-2a).
        ('story_search_documents', 0::bigint),
        ('story_tags', 0::bigint),
+       -- Calls for submissions: contest staff only, members through writers_hub_calls() (GAPS-12d).
+       ('submission_calls', 0::bigint),
        -- Support tickets: support staff only, members through functions (ADMIN-2h1).
        ('support_canned_replies', 0::bigint),
        ('support_ticket_emails', 0::bigint),

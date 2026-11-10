@@ -9,29 +9,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
 
-import {
-  deletePrompt,
-  fetchStaffPrompts,
-  PromptError,
-  savePrompt,
-  type PromptDraft,
-  type PromptFailure,
-} from '../api/hubPrompts';
+import { deletePrompt, fetchStaffPrompts, savePrompt, type PromptDraft } from '../api/hubPrompts';
+import { hubStaffFailureOf } from '../api/hubStaffErrors';
 
 import { hubPromptsKey } from './useHubPrompts';
 
 const staffPromptsKey = ['staff-hub', 'prompts'];
-
-/**
- * Which message a failed change needs.
- *
- * @param error - what the mutation threw, or null
- * @returns the failure, or null when nothing failed
- */
-function failureOf(error: unknown): PromptFailure | null {
-  if (error === null || error === undefined) return null;
-  return error instanceof PromptError ? error.failure : 'failed';
-}
 
 /**
  * The prompts and how to change them.
@@ -62,6 +45,6 @@ export function useStaffPrompts() {
     save,
     remove,
     isChanging: save.isPending || remove.isPending,
-    changeFailure: failureOf(save.error ?? remove.error),
+    changeFailure: hubStaffFailureOf(save.error ?? remove.error),
   };
 }

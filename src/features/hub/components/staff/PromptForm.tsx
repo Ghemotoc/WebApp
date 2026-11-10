@@ -3,7 +3,7 @@
  * first of its 7 days (bundle GAPS-12c). English comes first: it is the main language (Robert,
  * 10 Nov 2026).
  *
- * Who shows it: StaffHubPage and PromptItem. What it calls: the onSave and onCancel it is given.
+ * Who shows it: PromptsSection and PromptItem. What it calls: the onSave and onCancel it is given.
  */
 import { useState, type FormEvent } from 'react';
 

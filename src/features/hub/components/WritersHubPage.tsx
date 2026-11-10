@@ -3,14 +3,14 @@
  * WritersHub; design rulebook: "When signed in, the logo goes to the Writers' hub").
  *
  * Top to bottom, as on the board: the hero, then the open contests, the prompt of the week
- * (GAPS-12c) and the how-to guides in the wide column, with this week's numbers (GAPS-12b) and the tools beside them on a wide screen and
+ * (GAPS-12c) and the how-to guides in the wide column, with this week's numbers (GAPS-12b), the tools and the calls for submissions (GAPS-12d) beside them on a wide screen and
  * under them on a phone or tablet.
  * Built only from parts with something real behind them; the board's learning
- * path, live sessions, writing month, writer of the week, calls for submissions and badges wait
+ * path, live sessions, writing month, writer of the week and badges wait
  * for their own parts of GAPS-12 (docs/board-fixes.md). The ad slot waits for S1-E12-04.
  * Signed out, it says to log in, as Notifications does.
  * Who shows it: the router, at /hub; the logo links here when someone is signed in.
- * What it calls: HubHero, HubContests, HubPrompt, HubGuides, HubWeek and HubTools; useSession.
+ * What it calls: HubHero, HubContests, HubPrompt, HubGuides, HubWeek, HubTools and HubCalls; useSession.
  */
 import { Link } from 'react-router';
 
@@ -21,6 +21,7 @@ import { useSession } from '@/features/auth/hooks/useSession';
 
 import { useHubTranslation } from '../registerHubTranslations';
 
+import { HubCalls } from './HubCalls';
 import { HubContests } from './HubContests';
 import { HubGuides } from './HubGuides';
 import { HubHero } from './HubHero';
@@ -48,6 +49,7 @@ function HubBody() {
         <div className="flex min-w-0 flex-[1_1_300px] flex-col gap-7">
           <HubWeek />
           <HubTools />
+          <HubCalls now={now} />
         </div>
       </div>
     </div>

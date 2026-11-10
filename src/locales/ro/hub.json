@@ -65,6 +65,17 @@
       "helpTitle": "Centrul de ajutor",
       "helpLine": "Răspunsuri la întrebările frecvente"
     },
+    "calls": {
+      "eyebrow": "Apeluri de texte",
+      "closesToday": "Se închide azi",
+      "closesIn_one": "Se închide într-o zi",
+      "closesIn_few": "Se închide în {{count}} zile",
+      "closesIn_other": "Se închide în {{count}} de zile",
+      "paid": "Plătit",
+      "openLabel": "{{title}} (deschide pagina organizatorului într-o filă nouă)",
+      "outsideNote": "Apelurile vin de la alți organizatori. Citește regulile lor înainte să trimiți texte.",
+      "loadFailed": "Nu am putut încărca apelurile de texte. Verifică conexiunea și încearcă din nou."
+    },
     "week": {
       "eyebrow": "Săptămâna aceasta",
       "chapters": "Capitole publicate",
@@ -93,7 +104,6 @@
     "failures": {
       "not_allowed": "Contul acesta nu poate schimba Spațiul scriitorilor.",
       "day_taken": "O altă temă începe deja în ziua aceea. Alege altă zi.",
-      "refused": "Completează ambele texte, cel mult 300 de caractere fiecare, și ziua de început.",
       "failed": "Nu am putut salva schimbarea. Încearcă din nou."
     },
     "prompts": {
@@ -106,7 +116,26 @@
       "dayHint": "Prima dintre cele 7 zile, după ora României.",
       "startsOn": "Începe pe {{day}}",
       "empty": "Nicio temă încă. Cardul apare în spațiu când începe prima.",
-      "listLabel": "Teme de scris, de la cea mai nouă"
+      "listLabel": "Teme de scris, de la cea mai nouă",
+      "refused": "Completează ambele texte, cel mult 300 de caractere fiecare, și ziua de început."
+    },
+    "calls": {
+      "heading": "Apeluri de texte",
+      "intro": "Apeluri de la reviste, antologii și concursuri din afara platformei. Un apel apare în spațiu până în ultima zi. Apelurile plătite apar numai adulților.",
+      "add": "Adaugă un apel",
+      "titleEnLabel": "Titlul în engleză",
+      "titleRoLabel": "Titlul în română",
+      "detailsEnLabel": "Detalii în engleză",
+      "detailsRoLabel": "Detalii în română",
+      "linkLabel": "Pagina organizatorului",
+      "linkHint": "Adresa completă, care începe cu https://",
+      "dayLabel": "Ultima zi",
+      "dayHint": "Ultima zi în care se pot trimite texte, după ora României.",
+      "paidLabel": "Organizatorul plătește textele",
+      "closesOn": "Se închide pe {{day}}",
+      "empty": "Niciun apel încă. Lista apare în spațiu când este adăugat primul.",
+      "listLabel": "Apeluri de texte, de la ultima zi cea mai îndepărtată",
+      "refused": "Completează fiecare câmp: titluri de cel mult 120 de caractere, detalii de cel mult 300 și o adresă care începe cu https://."
     }
   },
   "resources": {

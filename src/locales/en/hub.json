@@ -65,6 +65,17 @@
       "helpTitle": "Help centre",
       "helpLine": "Answers to common questions"
     },
+    "calls": {
+      "eyebrow": "Calls for submissions",
+      "closesToday": "Closes today",
+      "closesIn_one": "Closes in {{count}} day",
+      "closesIn_few": "Closes in {{count}} days",
+      "closesIn_other": "Closes in {{count}} days",
+      "paid": "Paid",
+      "openLabel": "{{title}} (opens the organiser’s page in a new tab)",
+      "outsideNote": "These calls come from other organisers. Read their rules before sending work.",
+      "loadFailed": "We couldn’t load the calls for submissions. Check the connection and try again."
+    },
     "week": {
       "eyebrow": "This week",
       "chapters": "Chapters posted",
@@ -93,7 +104,6 @@
     "failures": {
       "not_allowed": "This account can’t change the Writers’ hub.",
       "day_taken": "Another prompt already starts on that day. Pick a different day.",
-      "refused": "Fill in both texts, up to 300 characters each, and the start day.",
       "failed": "We couldn’t save the change. Try again."
     },
     "prompts": {
@@ -106,7 +116,26 @@
       "dayHint": "The first of its 7 days, in Romanian time.",
       "startsOn": "Starts {{day}}",
       "empty": "No prompt yet. The hub shows the card once the first one starts.",
-      "listLabel": "Writing prompts, newest first"
+      "listLabel": "Writing prompts, newest first",
+      "refused": "Fill in both texts, up to 300 characters each, and the start day."
+    },
+    "calls": {
+      "heading": "Calls for submissions",
+      "intro": "Calls from magazines, anthologies and competitions outside the platform. A call shows on the hub until its last day. Paid calls show to adults only.",
+      "add": "Add a call",
+      "titleEnLabel": "Title in English",
+      "titleRoLabel": "Title in Romanian",
+      "detailsEnLabel": "Details in English",
+      "detailsRoLabel": "Details in Romanian",
+      "linkLabel": "Organiser’s page",
+      "linkHint": "The full address, starting with https://",
+      "dayLabel": "Last day",
+      "dayHint": "The last day to send work, in Romanian time.",
+      "paidLabel": "The organiser pays for the work",
+      "closesOn": "Closes {{day}}",
+      "empty": "No call yet. The hub shows the list once the first one is added.",
+      "listLabel": "Calls for submissions, latest closing day first",
+      "refused": "Fill in every field: titles up to 120 characters, details up to 300, and an address that starts with https://."
     }
   },
   "resources": {

@@ -5417,6 +5417,35 @@ COMMENT ON FUNCTION "public"."admin_delete_forum"("forum_id" "uuid", "reason" "t
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_delete_submission_call"("call_id" "uuid") RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  deleted public.submission_calls;
+begin
+  if not public.staff_may('contests', 'act') then
+    raise exception 'Only contest staff can change calls for submissions.' using errcode = 'insufficient_privilege';
+  end if;
+  update public.submission_calls set deleted_at = now(), updated_by_user_id = (select auth.uid())
+  where id = call_id and deleted_at is null returning * into deleted;
+  if deleted.id is null then
+    raise exception 'There is no such call for submissions.' using errcode = 'no_data_found';
+  end if;
+  perform public.log_staff_action('submission_call.deleted', 'submission_calls', deleted.id::text, null, null,
+    to_jsonb(deleted) - array['id', 'updated_by_user_id', 'created_at', 'updated_at', 'deleted_at'], null);
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_delete_submission_call"("call_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_delete_submission_call"("call_id" "uuid") IS 'Contest staff delete a call for submissions; logged (GAPS-12d).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admin_delete_writing_prompt"("prompt_id" "uuid") RETURNS boolean
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -9694,6 +9723,60 @@ ALTER FUNCTION "public"."admin_save_sponsor_campaign"("target_campaign_id" "uuid
 
 
 COMMENT ON FUNCTION "public"."admin_save_sponsor_campaign"("target_campaign_id" "uuid", "fields" "jsonb") IS 'Creates or saves a sponsor campaign as a draft; owner and admin only; logged (S1-E12-02).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_save_submission_call"("call_id" "uuid", "call" "jsonb") RETURNS "uuid"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  before_row public.submission_calls;
+  saved public.submission_calls;
+begin
+  -- Step 1: staff with the contests area only (the server decides, architecture 1.8.1).
+  if not public.staff_may('contests', 'act') then
+    raise exception 'Only contest staff can change calls for submissions.' using errcode = 'insufficient_privilege';
+  end if;
+  if call is null or nullif(call ->> 'closes_on', '') is null then
+    raise exception 'A call needs its last day.' using errcode = 'check_violation';
+  end if;
+  -- Step 2: a new call, or the change to one that exists. The table's checks refuse bad values.
+  if call_id is null then
+    insert into public.submission_calls (title_ro, title_en, details_ro, details_en, link_url, closes_on,
+      is_paid, updated_by_user_id)
+    values (btrim(call ->> 'title_ro'), btrim(call ->> 'title_en'), btrim(call ->> 'details_ro'),
+      btrim(call ->> 'details_en'), btrim(call ->> 'link_url'), (call ->> 'closes_on')::date,
+      coalesce((call ->> 'is_paid')::boolean, false), (select auth.uid()))
+    returning * into saved;
+  else
+    select * into before_row from public.submission_calls
+    where submission_calls.id = call_id and deleted_at is null for update;
+    if before_row.id is null then
+      raise exception 'There is no such call for submissions.' using errcode = 'no_data_found';
+    end if;
+    update public.submission_calls set
+      title_ro = btrim(call ->> 'title_ro'), title_en = btrim(call ->> 'title_en'),
+      details_ro = btrim(call ->> 'details_ro'), details_en = btrim(call ->> 'details_en'),
+      link_url = btrim(call ->> 'link_url'), closes_on = (call ->> 'closes_on')::date,
+      is_paid = coalesce((call ->> 'is_paid')::boolean, false),
+      updated_by_user_id = (select auth.uid())
+    where id = call_id returning * into saved;
+  end if;
+  -- Step 3: the audit log keeps what changed, in the same transaction.
+  perform public.log_staff_action('submission_call.saved', 'submission_calls', saved.id::text, null, null,
+    case when before_row.id is null then null
+         else to_jsonb(before_row) - array['id', 'updated_by_user_id', 'created_at', 'updated_at', 'deleted_at'] end,
+    to_jsonb(saved) - array['id', 'updated_by_user_id', 'created_at', 'updated_at', 'deleted_at']);
+  return saved.id;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_save_submission_call"("call_id" "uuid", "call" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_save_submission_call"("call_id" "uuid", "call" "jsonb") IS 'Contest staff add or change a call for submissions; logged with before and after (GAPS-12d).';
 
 
 
@@ -46840,6 +46923,38 @@ COMMENT ON FUNCTION "public"."writer_reader_stops"("target_chapter_id" "uuid", "
 
 
 
+CREATE OR REPLACE FUNCTION "public"."writers_hub_calls"() RETURNS TABLE("call_id" "uuid", "title_ro" "text", "title_en" "text", "details_ro" "text", "details_en" "text", "link_url" "text", "closes_on" "date", "is_paid" boolean)
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select
+    submission_calls.id,
+    submission_calls.title_ro,
+    submission_calls.title_en,
+    submission_calls.details_ro,
+    submission_calls.details_en,
+    submission_calls.link_url,
+    submission_calls.closes_on,
+    submission_calls.is_paid
+  from public.submission_calls
+  where (select auth.uid()) is not null
+    and submission_calls.deleted_at is null
+    -- Still open: the last day is included.
+    and submission_calls.closes_on >= public.romania_today()
+    -- Paid writing work is for adults only (Robert, 8 Nov 2026).
+    and (not submission_calls.is_paid or (select public.age_band()) = '18_plus')
+  order by submission_calls.closes_on, submission_calls.created_at
+  limit 12;
+$$;
+
+
+ALTER FUNCTION "public"."writers_hub_calls"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."writers_hub_calls"() IS 'The calls for submissions still open today, soonest closing first; paid ones only for adults (GAPS-12d).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."writers_hub_contests"() RETURNS TABLE("contest_id" "uuid", "name_ro" "text", "name_en" "text", "page_slug" "text", "entries_close_on" "date", "word_limit" integer, "prize_ro" "text", "prize_en" "text", "entry_count" integer, "cover" "jsonb", "cover_alt_ro" "text", "cover_alt_en" "text")
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -49455,6 +49570,35 @@ Which tags a story carries (at most 10); written only by create_story() and upda
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."submission_calls" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "title_ro" "text" NOT NULL,
+    "title_en" "text" NOT NULL,
+    "details_ro" "text" NOT NULL,
+    "details_en" "text" NOT NULL,
+    "link_url" "text" NOT NULL,
+    "closes_on" "date" NOT NULL,
+    "is_paid" boolean DEFAULT false NOT NULL,
+    "updated_by_user_id" "uuid",
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "deleted_at" timestamp with time zone,
+    CONSTRAINT "submission_calls_details_en_length" CHECK ((("char_length"("btrim"("details_en")) >= 1) AND ("char_length"("btrim"("details_en")) <= 300))),
+    CONSTRAINT "submission_calls_details_ro_length" CHECK ((("char_length"("btrim"("details_ro")) >= 1) AND ("char_length"("btrim"("details_ro")) <= 300))),
+    CONSTRAINT "submission_calls_link_is_https" CHECK ((("link_url" ~ '^https://[^\s"''<>]+$'::"text") AND (("char_length"("link_url") >= 12) AND ("char_length"("link_url") <= 500)))),
+    CONSTRAINT "submission_calls_title_en_length" CHECK ((("char_length"("btrim"("title_en")) >= 1) AND ("char_length"("btrim"("title_en")) <= 120))),
+    CONSTRAINT "submission_calls_title_ro_length" CHECK ((("char_length"("btrim"("title_ro")) >= 1) AND ("char_length"("btrim"("title_ro")) <= 120)))
+);
+
+
+ALTER TABLE "public"."submission_calls" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."submission_calls" IS 'kind: platform
+Calls for submissions from outside the platform, listed on the Writers'' hub: staff-written title and details in Romanian and English, the organiser''s page, the last day and whether it pays (GAPS-12d). No personal data.';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."support_canned_replies" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "title" "text" NOT NULL,
@@ -50895,6 +51039,11 @@ ALTER TABLE ONLY "public"."story_tags"
 
 
 
+ALTER TABLE ONLY "public"."submission_calls"
+    ADD CONSTRAINT "submission_calls_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."support_canned_replies"
     ADD CONSTRAINT "support_canned_replies_pkey" PRIMARY KEY ("id");
 
@@ -52120,6 +52269,10 @@ CREATE INDEX "story_tags_tag_id_idx" ON "public"."story_tags" USING "btree" ("ta
 
 
 
+CREATE INDEX "submission_calls_open" ON "public"."submission_calls" USING "btree" ("closes_on") WHERE ("deleted_at" IS NULL);
+
+
+
 CREATE INDEX "support_ticket_emails_due_idx" ON "public"."support_ticket_emails" USING "btree" ("created_at") WHERE ("sent_at" IS NULL);
 
 
@@ -53165,6 +53318,10 @@ CREATE OR REPLACE TRIGGER "story_tags_refuse_user_id_change" BEFORE UPDATE ON "p
 
 
 CREATE OR REPLACE TRIGGER "story_tags_set_updated_at" BEFORE UPDATE ON "public"."story_tags" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "submission_calls_set_updated_at" BEFORE UPDATE ON "public"."submission_calls" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
 
@@ -54843,6 +55000,11 @@ ALTER TABLE ONLY "public"."story_tags"
 
 ALTER TABLE ONLY "public"."story_tags"
     ADD CONSTRAINT "story_tags_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."submission_calls"
+    ADD CONSTRAINT "submission_calls_updated_by_user_id_fkey" FOREIGN KEY ("updated_by_user_id") REFERENCES "public"."profiles"("id");
 
 
 
@@ -56625,6 +56787,17 @@ COMMENT ON POLICY "story_tags_select_own" ON "public"."story_tags" IS 'Allows a 
 
 
 
+ALTER TABLE "public"."submission_calls" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "submission_calls_select_contest_staff" ON "public"."submission_calls" FOR SELECT TO "authenticated" USING ((("deleted_at" IS NULL) AND ( SELECT "public"."staff_may"('contests'::"text", 'view'::"text") AS "staff_may")));
+
+
+
+COMMENT ON POLICY "submission_calls_select_contest_staff" ON "public"."submission_calls" IS 'Allows staff with the contests area to read the calls for submissions that aren''t deleted, closed ones included (GAPS-12d).';
+
+
+
 ALTER TABLE "public"."support_canned_replies" ENABLE ROW LEVEL SECURITY;
 
 
@@ -57322,6 +57495,11 @@ GRANT ALL ON FUNCTION "public"."admin_delete_forum"("forum_id" "uuid", "reason" 
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_delete_submission_call"("call_id" "uuid") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_delete_submission_call"("call_id" "uuid") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_delete_writing_prompt"("prompt_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_delete_writing_prompt"("prompt_id" "uuid") TO "authenticated";
 
@@ -57884,6 +58062,11 @@ GRANT ALL ON FUNCTION "public"."admin_save_sponsor"("target_sponsor_id" "uuid", 
 
 REVOKE ALL ON FUNCTION "public"."admin_save_sponsor_campaign"("target_campaign_id" "uuid", "fields" "jsonb") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_save_sponsor_campaign"("target_campaign_id" "uuid", "fields" "jsonb") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_save_submission_call"("call_id" "uuid", "call" "jsonb") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_save_submission_call"("call_id" "uuid", "call" "jsonb") TO "authenticated";
 
 
 
@@ -63078,6 +63261,11 @@ REVOKE ALL ON FUNCTION "public"."writer_reader_stops"("target_chapter_id" "uuid"
 
 
 
+REVOKE ALL ON FUNCTION "public"."writers_hub_calls"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."writers_hub_calls"() TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."writers_hub_contests"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."writers_hub_contests"() TO "authenticated";
 
@@ -63664,6 +63852,11 @@ GRANT SELECT ON TABLE "public"."story_search_documents" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."story_tags" TO "service_role";
 GRANT SELECT ON TABLE "public"."story_tags" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."submission_calls" TO "service_role";
+GRANT SELECT ON TABLE "public"."submission_calls" TO "authenticated";
 
 
 

@@ -8656,6 +8656,60 @@ export type Database = {
           },
         ];
       };
+      submission_calls: {
+        Row: {
+          closes_on: string;
+          created_at: string;
+          deleted_at: string | null;
+          details_en: string;
+          details_ro: string;
+          id: string;
+          is_paid: boolean;
+          link_url: string;
+          title_en: string;
+          title_ro: string;
+          updated_at: string;
+          updated_by_user_id: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          closes_on: string;
+          created_at?: string;
+          deleted_at?: string | null;
+          details_en: string;
+          details_ro: string;
+          id?: string;
+          is_paid?: boolean;
+          link_url: string;
+          title_en: string;
+          title_ro: string;
+          updated_at?: string;
+          updated_by_user_id?: string | null;
+        };
+        Update: {
+          closes_on?: string;
+          created_at?: string;
+          deleted_at?: string | null;
+          details_en?: string;
+          details_ro?: string;
+          id?: string;
+          is_paid?: boolean;
+          link_url?: string;
+          title_en?: string;
+          title_ro?: string;
+          updated_at?: string;
+          updated_by_user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'submission_calls_updated_by_user_id_fkey';
+            columns: ['updated_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       support_canned_replies: {
         Row: {
           body_en: string;
@@ -9849,6 +9903,7 @@ export type Database = {
       };
       admin_delete_canned_reply: { Args: { reply_id: string }; Returns: boolean };
       admin_delete_forum: { Args: { forum_id: string; reason: string }; Returns: undefined };
+      admin_delete_submission_call: { Args: { call_id: string }; Returns: boolean };
       admin_delete_writing_prompt: { Args: { prompt_id: string }; Returns: boolean };
       admin_describe_abuse_image: {
         Args: { description_text: string; evidence_id: string };
@@ -10480,6 +10535,7 @@ export type Database = {
         Args: { fields: Json; target_campaign_id: string };
         Returns: Json;
       };
+      admin_save_submission_call: { Args: { call: Json; call_id: string }; Returns: string };
       admin_save_writing_prompt: {
         Args: { prompt_en: string; prompt_id: string; prompt_ro: string; starts_on: string };
         Returns: string;
@@ -15857,6 +15913,19 @@ export type Database = {
       writer_reader_stops: {
         Args: { target_chapter_id: string; writer_id: string };
         Returns: Json;
+      };
+      writers_hub_calls: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          call_id: string;
+          closes_on: string;
+          details_en: string;
+          details_ro: string;
+          is_paid: boolean;
+          link_url: string;
+          title_en: string;
+          title_ro: string;
+        }[];
       };
       writers_hub_contests: {
         Args: Record<PropertyKey, never>;
