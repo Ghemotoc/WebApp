@@ -38,7 +38,7 @@ const workingInvite = 'PERSONAS-TEST-INVITE';
 const personaPassword = 'Persona-Test-2026!';
 
 /** The account menu's name in either language: personas open in their account's language. */
-const accountButton = /^(Account|Cont)$/;
+const accountButton = /^(Account|Cont), /;
 
 /** Logs in through the log-in screen. */
 async function logInWithScreen(page: Page, email: string, password: string) {

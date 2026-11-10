@@ -181,7 +181,7 @@ test.describe('support ticket emails (S1-E11-13, ADMIN-2h2)', () => {
     const page = await context.newPage();
     await page.goto('/staff/support');
     const views = page.getByRole('group', { name: 'Views' });
-    await expect(views.getByRole('button', { name: /^All open \(\d+\)$/ })).toHaveAttribute(
+    await expect(views.getByRole('button', { name: /^Open \(\d+\)$/ })).toHaveAttribute(
       'aria-pressed',
       'true',
     );

@@ -1,6 +1,6 @@
 /**
- * SupportViewChips: the support inbox's saved views with their counts: My tickets, Unassigned,
- * All open, Pending on user and Solved (story S1-E11-13 criterion 6; bundle ADMIN-2h3a). Each
+ * SupportViewChips: the support inbox's saved views with their counts: Assigned to me, Unassigned,
+ * Open, Pending on user and Solved (story S1-E11-13 criterion 6; bundle ADMIN-2h3a). Each
  * view sets the status and assignee filters below it; the chip whose filters match is pressed.
  *
  * Who shows it: StaffSupportInboxPage. What it calls: nothing; the counts come from

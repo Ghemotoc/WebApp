@@ -7,7 +7,7 @@
  *   profile, then "Edit profile", which opens Settings › Profile;
  * - the Library has a "Written by you" chip with the writer's own stories, drafts included, and a card
  *   opens the story's chapters in the writing tools;
- * - the Library's My stories shelf and the open account menu pass axe at 390 px, light, ro and en.
+ * - the Library's Written by you shelf and the open account menu pass axe at 390 px, light, ro and en.
  * Test data: a draft story "Ciorna din raft" for adult_writer, removed afterwards.
  */
 import { expect, test, type Browser } from '@playwright/test';
@@ -76,7 +76,7 @@ test.describe('getting around as a writer (NAV-1)', () => {
   }) => {
     const page = await openAsWriter(browser, '/library');
     const chips = page.getByRole('radiogroup', { name: 'Shelf' });
-    await chips.getByRole('radio', { name: /^My stories \(\d+\)$/ }).click();
+    await chips.getByRole('radio', { name: /^Written by you \(\d+\)$/ }).click();
     // The draft is there, marked Draft, and opens its chapters in the writing tools.
     const draftCard = page.getByRole('link', { name: /Ciorna din raft/ }).first();
     await expect(draftCard).toContainText('Draft');
@@ -90,7 +90,9 @@ test.describe('getting around as a writer (NAV-1)', () => {
   });
 
   for (const language of ['ro', 'en'] as const) {
-    test(`axe: My stories in the Library at 390 px, light, ${language}`, async ({ browser }) => {
+    test(`axe: Written by you in the Library at 390 px, light, ${language}`, async ({
+      browser,
+    }) => {
       const page = await openAsWriter(browser, '/library', language);
       await checkScreen(
         page,
