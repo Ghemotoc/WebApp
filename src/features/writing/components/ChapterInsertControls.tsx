@@ -18,7 +18,6 @@
  */
 import type { Editor } from '@tiptap/react';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { ActionIcon, type ActionIconName } from '@/components/icons/ActionIcon';
 import { useFeatureFlags } from '@/features/flags/hooks/useFeatureFlags';
@@ -27,6 +26,7 @@ import { DrawingInsertDialog } from './DrawingInsertDialog';
 import { EmbedInsertDialog, type EmbedDialogKind } from './EmbedInsertDialog';
 import { InsertMenu, type InsertMenuItem } from './InsertMenu';
 import { PictureInsertDialog } from './PictureInsertDialog';
+import { useEditorTranslation } from '../registerEditorTranslations';
 
 /** What the menu items open. */
 interface InsertOpeners {
@@ -50,7 +50,7 @@ export interface ChapterInsertControlsProps {
  * @returns the items, in the board's order, and the footnote under them
  */
 function useInsertItems({ openDrawing, openEmbed }: Omit<InsertOpeners, 'openPicture'>) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   const { isOn } = useFeatureFlags();
   const items: InsertMenuItem[] = [];
   if (isOn('picture_uploads', false)) {
@@ -141,7 +141,7 @@ function InsertDialogs(props: {
  * @returns the Insert button with its menu, or nothing while no item is available
  */
 export function ChapterInsertControls({ editor, chapterId }: ChapterInsertControlsProps) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   const [isPictureDialogOpen, setPictureDialogOpen] = useState(false);
   const [isDrawingDialogOpen, setDrawingDialogOpen] = useState(false);
   const [embedDialogKind, setEmbedDialogKind] = useState<EmbedDialogKind>(null);

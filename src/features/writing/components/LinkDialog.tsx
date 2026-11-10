@@ -9,12 +9,12 @@
  */
 import type { Editor } from '@tiptap/react';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
 import { TextInput } from '@/components/ui/TextInput';
 
 import { isAllowedLink } from '../lib/chapterMarkdown';
+import { useEditorTranslation } from '../registerEditorTranslations';
 
 /** What the dialog needs. */
 export interface LinkDialogProps {
@@ -36,7 +36,7 @@ interface LinkFormProps {
 
 /** The heading, the address field and the three buttons. */
 function LinkForm(props: LinkFormProps) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   return (
     <form onSubmit={props.onSubmit} className="flex flex-col gap-4">
       <h2 id="chapter-link-heading" className="m-0 font-heading text-[22px] font-bold text-heading">

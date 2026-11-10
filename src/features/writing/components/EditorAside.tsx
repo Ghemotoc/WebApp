@@ -22,6 +22,7 @@ import type { SaveState } from '../hooks/useAutosave';
 import { storyEditorAddress } from '../lib/storyEditorAddress';
 
 import { SaveStatus } from './SaveStatus';
+import { useEditorTranslation } from '../registerEditorTranslations';
 
 /** One white panel of the aside, a named region so a screen reader can jump to it. */
 function Panel({ label, children }: { label: string; children: React.ReactNode }) {
@@ -37,7 +38,7 @@ function Panel({ label, children }: { label: string; children: React.ReactNode }
 
 /** "Story details": the labels that apply to every chapter, read-only here. */
 function StoryDetailsPanel({ story }: { story: MyStory }) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   const { t: tWriting } = useTranslation('writing');
   const { showTag } = useTagCatalogue();
   return (
@@ -82,7 +83,7 @@ function StoryDetailsPanel({ story }: { story: MyStory }) {
 
 /** "Your stories": the writer's live stories, the open one marked. */
 function YourStoriesPanel({ stories, currentSlug }: { stories: MyStory[]; currentSlug: string }) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   return (
     <Panel label={t('yourStories.heading')}>
       <div className="w-fit">
@@ -121,7 +122,7 @@ function ConflictActions({
   onKeepMine: () => void;
   onCompare: () => void;
 }) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   return (
     <div className="flex flex-wrap gap-2">
       <Button onClick={onKeepMine}>{t('conflict.keepMine')}</Button>
@@ -152,7 +153,7 @@ export interface EditorAsideProps {
  */
 export function EditorAside(props: EditorAsideProps) {
   const { saveState, story, stories, currentSlug } = props;
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   return (
     <aside className="flex flex-col gap-5">
       <Panel label={t('saving.heading')}>

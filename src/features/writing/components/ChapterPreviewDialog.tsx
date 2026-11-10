@@ -11,7 +11,6 @@
  * text's pictures and cards.
  */
 import { useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
 import { useMyEmbeds } from '@/features/embeds/hooks/useEmbeds';
@@ -19,6 +18,7 @@ import { useMyPictureStates } from '@/features/pictures/hooks/useChapterPictures
 import { ChapterText } from '@/features/reading/components/ChapterText';
 import { embedIdsIn } from '@/lib/chapter-embeds';
 import { pictureIdsIn } from '@/lib/chapter-pictures';
+import { useEditorTranslation } from '../registerEditorTranslations';
 
 /** What the dialog needs. */
 export interface ChapterPreviewDialogProps {
@@ -42,7 +42,7 @@ export function ChapterPreviewDialog({
   language,
   onClose,
 }: ChapterPreviewDialogProps) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const { pictures } = useMyPictureStates(pictureIdsIn(markdown));
   const { embeds } = useMyEmbeds(embedIdsIn(markdown));

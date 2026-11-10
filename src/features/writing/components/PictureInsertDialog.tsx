@@ -28,6 +28,7 @@ import { insertChapterPicture } from '../lib/chapterPictureNode';
 import { pictureFailureMessage } from '../lib/pictureFailure';
 
 import { PictureFileField } from './PictureFileField';
+import { useEditorTranslation } from '../registerEditorTranslations';
 
 /** What the dialog needs. */
 export interface PictureInsertDialogProps {
@@ -112,7 +113,7 @@ interface PictureFieldsProps {
 
 /** The file, the alt text, the picture rules and the note on the picture check. */
 function PictureFields({ form, missing, isUploading, onChange }: PictureFieldsProps) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   return (
     <>
       <PictureFileField
@@ -143,7 +144,7 @@ function PictureFields({ form, missing, isUploading, onChange }: PictureFieldsPr
  * @returns the dialog element (closed when isOpen is false)
  */
 export function PictureInsertDialog(props: PictureInsertDialogProps) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   const { t: tCommon } = useTranslation();
   const { form, setForm, missing, uploading, submit, close } = usePictureInsert(props);
   const dialogRef = useNativeDialog(props.isOpen);
