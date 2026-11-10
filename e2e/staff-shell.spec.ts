@@ -64,6 +64,7 @@ test.describe('admin shell (S1-E11-01)', () => {
 
   test('each staff persona sees only the areas its role allows', async ({ browser }) => {
     // Featured (LOOK-4a), Logs (LOGS-1) and Waitlist (WAITLIST-1) are for the owner and admins only.
+    // Writers’ hub (GAPS-12c) is for staff with the contests area: the owner and admins.
     const ownerPage = await openAs(browser, 'owner', '/staff');
     expect(await menuLinks(ownerPage)).toEqual([
       'Moderation',
@@ -83,6 +84,7 @@ test.describe('admin shell (S1-E11-01)', () => {
       'Classics',
       'Tags',
       'Contests',
+      'Writers’ hub',
       'Website',
       'Sponsors',
       'Settings',
@@ -113,6 +115,7 @@ test.describe('admin shell (S1-E11-01)', () => {
       'Classics',
       'Tags',
       'Contests',
+      'Writers’ hub',
       'Website',
       'Sponsors',
       'Settings',

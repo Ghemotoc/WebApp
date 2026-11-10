@@ -34,6 +34,9 @@ function cleanUp() {
 
 /** Opens a page as a seed persona, in a fresh browser context. */
 async function openAs(browser: Browser, persona: SignInPersonaName, path: string, width = 1440) {
+  // Other specs leave a persona reading in English; this one checks the Romanian words, so it
+  // sets the language itself instead of counting on what ran before it.
+  runSql(`update public.profiles set locale = 'ro' where handle = '${persona}';`);
   const context = await browser.newContext({ viewport: { width, height: 900 } });
   await useSessionInBrowser(context, (await signInPersona(persona)).session);
   const page = await context.newPage();
