@@ -52,8 +52,10 @@ comment on column public.story_character_fields.own_group is
  * Returns: { outcome: 'ok', id } or { outcome: 'not_found' } for a story that isn't the caller's.
  * Errors: insufficient_privilege when signed out; check_violation with hint too_many_fields (40
  *   details in a story, hidden ones included), too_many_groups (12 groups of the writer's own),
- *   two_places (both a built-in and an own group), and the table's own checks for an empty or
- *   over-long name or an unknown built-in group.
+ *   two_places (both a built-in and an own group), detail_name_taken (the place already holds a
+ *   detail with that name, removed ones included; capitals don't count), and the table's own
+ *   checks for an empty or over-long name or an unknown built-in group.
+ * A group's name is matched without minding capitals: a detail added to "magic" joins "Magic".
  * Where it fits: "Add detail" and "Add a group of details" on the character sheet
  *   (useStoryCast.addDetail). add_character_field() stays for the at-a-glance page.
  */
@@ -72,6 +74,7 @@ declare
   caller_id uuid := (select auth.uid());
   target_story_id uuid;
   wanted_group text := nullif(btrim(coalesce(own_group, '')), '');
+  wanted_name text := btrim(coalesce(field_name, ''));
   new_id uuid;
 begin
   -- Step 1: a signed-in writer and their own live story.
@@ -82,10 +85,32 @@ begin
   if target_story_id is null then
     return jsonb_build_object('outcome', 'not_found');
   end if;
+  -- One change to a story's details at a time: two presses of "Add" at the same moment wait
+  -- for each other, so the checks below see the first one's detail (break test, 10 Nov 2026).
+  perform pg_advisory_xact_lock(hashtext('story_character_fields:' || target_story_id::text));
   -- Step 2: one place at most.
   if sheet_group is not null and wanted_group is not null then
     raise exception 'A detail sits in one place.'
       using errcode = 'check_violation', hint = 'two_places';
+  end if;
+  -- A group that differs only in capitals is the same group: the detail joins it under the
+  -- spelling it already has, so a sheet never shows "Magic" and "magic" as two cards.
+  if wanted_group is not null then
+    wanted_group := coalesce(
+      (select fields.own_group from public.story_character_fields as fields
+       where fields.story_id = target_story_id and lower(fields.own_group) = lower(wanted_group)
+       order by fields.position limit 1),
+      wanted_group);
+  end if;
+  -- One name once in a place (removed details included: they come back from the at-a-glance
+  -- page), so two boxes with the same label never sit side by side.
+  if exists (select 1 from public.story_character_fields as fields
+             where fields.story_id = target_story_id
+               and lower(fields.name) = lower(wanted_name)
+               and fields.sheet_group is not distinct from add_character_detail.sheet_group
+               and fields.own_group is not distinct from wanted_group) then
+    raise exception 'This place already has a detail with that name.'
+      using errcode = 'check_violation', hint = 'detail_name_taken';
   end if;
   -- Step 3: the bounds. 40 details as in add_character_field(), hidden ones included (they keep
   -- their values); 12 groups of the writer's own, so a sheet stays readable.
@@ -105,7 +130,7 @@ begin
   insert into public.story_character_fields (story_id, user_id, position, name, sheet_group, own_group)
   values (target_story_id, caller_id,
     coalesce((select max(position) from public.story_character_fields where story_id = target_story_id), 0) + 1,
-    btrim(field_name), sheet_group, wanted_group)
+    wanted_name, sheet_group, wanted_group)
   returning id into new_id;
   return jsonb_build_object('outcome', 'ok', 'id', new_id);
 end;
@@ -127,8 +152,9 @@ grant execute on function public.add_character_detail(text, text, text, text) to
  * Returns: { outcome: 'ok' } or { outcome: 'not_found' } for a story that isn't the caller's or a
  *   group that story doesn't have.
  * Errors: insufficient_privilege when signed out; check_violation with hint name_taken when the
- *   story already has a group with the new name, and the table's own check for an empty or
- *   over-long name.
+ *   story already has another group with the new name (capitals don't count, so "magic" is taken
+ *   while "Magic" exists; a group may change its own capitals), and the table's own check for an
+ *   empty or over-long name.
  * Where it fits: "Rename" beside a group's name on the character sheet
  *   (useStoryCast.renameDetailGroup).
  */
@@ -159,7 +185,9 @@ begin
     return jsonb_build_object('outcome', 'ok');
   end if;
   if exists (select 1 from public.story_character_fields as fields
-             where fields.story_id = target_story_id and fields.own_group = wanted_name) then
+             where fields.story_id = target_story_id
+               and lower(fields.own_group) = lower(wanted_name)
+               and fields.own_group <> group_name) then
     raise exception 'This story already has a group with that name.'
       using errcode = 'check_violation', hint = 'name_taken';
   end if;
