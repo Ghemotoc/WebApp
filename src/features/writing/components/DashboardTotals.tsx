@@ -2,9 +2,10 @@
  * DashboardTotals: "How readers respond", the five tiles at the top of the writer dashboard
  * (story S1-E3-07; board WriterDashboard 4.1, "Totals for all stories").
  *
- * Board values: eyebrow "All your stories", the 28 px heading, a "Last 30 days / All time"
- * choice, five white tiles (24 px corners, the label in the eyebrow style, the number in 40 px Bricolage
- * with a 28 px line icon, a 14 px note) and the lilac "These are totals only" panel.
+ * Board values: an eyebrow, the 28 px heading, a "Last 30 days / All time" glass switch
+ * (SegmentedControl, bundle G9 WRITING, part b), five tiles (24 px corners, the label in the
+ * eyebrow style with a 20 px line icon beside it, the number in 40 px Bricolage below, a 14 px
+ * note) and the lilac "These are totals only" panel.
  * A count from fewer than 5 readers reads "fewer than 5" (criterion 2); the numbers are totals,
  * never a list of readers (criterion 3).
  * Who uses it: WriterDashboardTop. Its numbers come from useWriterDashboard (writer_dashboard()).
@@ -12,8 +13,8 @@
 import { useTranslation } from 'react-i18next';
 
 import { ActionIcon, type ActionIconName } from '@/components/icons/ActionIcon';
-import { ChoiceChips } from '@/components/ui/ChoiceChips';
 import { Eyebrow } from '@/components/ui/Eyebrow';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { formatRomaniaDate } from '@/lib/romania-time';
 
 import type { DashboardPeriod, WriterDashboard } from '../api/dashboard';
@@ -29,22 +30,26 @@ interface TileContent {
   isWords?: boolean;
 }
 
-/** One tile, as the board draws it. */
+/**
+ * One tile, as the liquid glass Write board draws it (bundle G9 WRITING, part b): the label and a
+ * small line icon share the top row, so the number below has the tile's whole width and words
+ * such as "fewer than 5" don't squeeze beside an icon.
+ */
 function StatTile({ tile }: { tile: TileContent }) {
   return (
     <div className="flex flex-col gap-1.5 rounded-3xl border border-border bg-surface px-[22px] py-5 shadow-card">
-      <Eyebrow>{tile.label}</Eyebrow>
       <span className="flex items-center justify-between gap-2">
-        <span
-          className={
-            tile.isWords === true
-              ? 'font-heading text-[26px] leading-tight font-extrabold text-ink'
-              : 'font-heading text-[40px] leading-none font-extrabold tracking-[-0.02em] text-ink'
-          }
-        >
-          {tile.value}
-        </span>
-        <ActionIcon name={tile.icon} size={28} className="block flex-none text-heading" />
+        <Eyebrow>{tile.label}</Eyebrow>
+        <ActionIcon name={tile.icon} size={20} className="block flex-none text-heading" />
+      </span>
+      <span
+        className={
+          tile.isWords === true
+            ? 'font-heading text-[26px] leading-tight font-extrabold text-ink'
+            : 'font-heading text-[40px] leading-none font-extrabold tracking-[-0.02em] text-ink'
+        }
+      >
+        {tile.value}
       </span>
       <span className="text-sm leading-[1.45] text-body">{tile.note}</span>
     </div>
@@ -168,14 +173,17 @@ export function DashboardTotals({ dashboard, period, onPeriodChange }: Dashboard
             {t('dashboard.totals.heading')}
           </h2>
         </div>
-        <ChoiceChips
-          label={t('dashboard.totals.periodLabel')}
+        {/* The board's glass switch: a radio group with the white bubble under the pick. */}
+        <SegmentedControl
+          legend={t('dashboard.totals.periodLabel')}
+          isLegendVisible={false}
+          name="dashboard-period"
           options={[
             { value: 'last_30_days', label: t('dashboard.totals.last30Days') },
             { value: 'all', label: t('dashboard.totals.allTime') },
           ]}
           value={period}
-          onChange={(next) => onPeriodChange(next as DashboardPeriod)}
+          onChange={onPeriodChange}
         />
       </div>
       <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,180px),1fr))] gap-4">

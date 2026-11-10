@@ -65,7 +65,11 @@ function StoryCardLinks({ story }: { story: MyStory }) {
       >
         {t('storyCard.plan')}
       </Link>
-      <Link to={`/s/${slug}`} className="inline-flex min-h-11 items-center text-sm font-semibold">
+      {/* A glass pill like its neighbours, as the Write board draws it (G9 WRITING, part b). */}
+      <Link
+        to={`/s/${slug}`}
+        className="inline-flex h-11 items-center rounded-full button-glass px-5 text-sm font-semibold no-underline"
+      >
         {t('storyCard.seePage')}
       </Link>
     </div>
