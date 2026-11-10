@@ -63,7 +63,7 @@ function ReaderViewBody({ slug, title }: { slug: string; title: string }) {
         <h1 className="m-0 text-[clamp(36px,4.4vw,56px)] leading-[0.98] font-extrabold tracking-[-0.025em] break-words">
           {t('readers.heading')}
         </h1>
-        <p className="m-0 text-sm text-meta">{title}</p>
+        <p className="m-0 text-sm break-words text-meta">{title}</p>
         <p className="m-0 max-w-[70ch] text-body">{t('readers.intro')}</p>
       </header>
       {preview && !preview.isPublished && <Notice tone="info">{t('readers.notPublished')}</Notice>}

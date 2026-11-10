@@ -303,6 +303,10 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
   test('the open back cover passes axe and fits a phone', async ({ browser }) => {
     const page = await openAs(browser, 'suspended_user', axeMarketingAddress);
     await page.setViewportSize({ width: 390, height: 900 });
+    // Reduce motion, as checkScreen does: axe then measures the colours the page settles on, not
+    // a page still fading in (tmc-rise). Only the motion changes.
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.reload();
     await expect(page.getByTestId('atlas-back-cover')).toContainText('Umbra vântului');
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
