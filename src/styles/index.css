@@ -555,12 +555,20 @@ dialog.bg-surface,
 .tmc-chapter-text li + li {
   margin-top: 6px;
 }
+/* The scene break: four small diamonds set as a larger diamond, the same shape as the editor's
+   Scene break button (liquid glass ChapterEditor board, G9e). The shape is a mask over the
+   meta text colour, so it follows light and night mode; the <hr> keeps its separator role for
+   screen readers. Used by the chapter editor and the reader alike. */
 .tmc-chapter-text hr {
   margin: 28px auto;
-  width: 120px;
+  width: 28px;
+  height: 28px;
   border: 0;
-  height: 1px;
-  background: var(--border);
+  background: var(--meta);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 4.2 14.4 6.6 12 9 9.6 6.6ZM8.6 9.6 11 12 8.6 14.4 6.2 12ZM15.4 9.6 17.8 12 15.4 14.4 13 12ZM12 15 14.4 17.4 12 19.8 9.6 17.4Z'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 4.2 14.4 6.6 12 9 9.6 6.6ZM8.6 9.6 11 12 8.6 14.4 6.2 12ZM15.4 9.6 17.8 12 15.4 14.4 13 12ZM12 15 14.4 17.4 12 19.8 9.6 17.4Z'/%3E%3C/svg%3E")
+    center / contain no-repeat;
 }
 .tmc-chapter-text a {
   color: var(--link);

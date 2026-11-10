@@ -141,6 +141,8 @@
   "insert": {
     "button": "Inserează",
     "menuLabel": "Inserează",
+    "pictureButton": "Inserează o imagine",
+    "videoButton": "Inserează un link video (YouTube, Vimeo sau Loom)",
     "picture": "Imagine",
     "pictureNote": "Încarcă o imagine. Textul alternativ e obligatoriu.",
     "drawing": "Desen",

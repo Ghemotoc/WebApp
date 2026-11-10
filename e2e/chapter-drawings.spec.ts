@@ -65,7 +65,7 @@ async function openAs(
 
 /** Opens Insert › Drawing. */
 async function openSketchPad(page: Page) {
-  await page.getByRole('button', { name: 'Insert' }).click();
+  await page.getByRole('button', { name: 'Insert', exact: true }).click();
   await page.getByRole('menuitem', { name: /Drawing/ }).click();
   return page.getByRole('dialog', { name: 'Draw a sketch' });
 }
@@ -185,7 +185,8 @@ test.describe('drawings in chapters (S1-E3-11)', () => {
     test(`the sketch pad passes axe and fits at ${width} px`, async ({ browser }) => {
       const page = await openAs(browser, 'adult_writer', editorAddress, { width, language });
       await page.locator('button[aria-haspopup="menu"]').click();
-      await page.getByRole('menuitem').nth(1).click();
+      // Drawing is the menu's first item since Picture got its own button (G9e).
+      await page.getByRole('menuitem').first().click();
       await expect(page.locator('dialog canvas')).toBeVisible();
       await dragAcross(page);
       await expectAccessibleAndFitting(page, width);

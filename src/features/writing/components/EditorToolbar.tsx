@@ -6,8 +6,9 @@
  * List, Link, Scene break. Every button has an accessible name, a title with its shortcut,
  * aria-keyshortcuts, aria-pressed (for the toggles) and a focus ring; the bar is a
  * role="toolbar" with one tab stop and the arrow keys moving between buttons (WCAG 2.1.1).
- * The board's Insert menu (ChapterInsertControls, S1-E3-09) sits after a thin divider, before
- * the word count, with its own tab stop.
+ * After a thin divider come the insert controls (ChapterInsertControls, S1-E3-09 to 11; G9e):
+ * the Picture and Video link buttons and the Insert menu, each with its own tab stop, then the
+ * word count. Scene break draws the four-diamond mark the text shows (EditorToolbarIcons).
  * Who uses it: ChapterEditorPage.
  */
 import type { Editor } from '@tiptap/react';

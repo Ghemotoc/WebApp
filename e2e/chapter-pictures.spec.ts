@@ -111,8 +111,8 @@ async function addPicture(
   file: { name: string; mimeType: string; buffer: Buffer },
   alt: string,
 ) {
-  await page.getByRole('button', { name: 'Insert' }).click();
-  await page.getByRole('menuitem', { name: /Picture/ }).click();
+  // Picture is its own toolbar button since G9e (liquid glass ChapterEditor board).
+  await page.getByRole('button', { name: 'Insert a picture' }).click();
   const dialog = page.getByRole('dialog', { name: 'Add a picture' });
   await dialog.getByLabel('Picture', { exact: true }).setInputFiles(file);
   await dialog.getByRole('textbox', { name: 'Alt text' }).fill(alt);
@@ -157,17 +157,20 @@ test.describe('pictures in chapters (S1-E3-09)', () => {
   });
   test.afterAll(cleanUp);
 
-  test('Insert › Picture needs the file and the alt text, and says which pictures are allowed', async ({
+  test('the Picture button needs the file and the alt text, and says which pictures are allowed', async ({
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', editorAddress);
-    await page.getByRole('button', { name: 'Insert' }).click();
+    await page.getByRole('button', { name: 'Insert', exact: true }).click();
     await expect(page.getByRole('menu', { name: 'Insert' })).toBeVisible();
     // Escape closes the menu and gives focus back to the button.
     await page.keyboard.press('Escape');
-    await expect(page.getByRole('button', { name: 'Insert' })).toBeFocused();
+    await expect(page.getByRole('button', { name: 'Insert', exact: true })).toBeFocused();
     await page.keyboard.press('ArrowDown');
-    await expect(page.getByRole('menuitem', { name: /Picture/ })).toBeFocused();
+    await expect(page.getByRole('menuitem', { name: /Drawing/ })).toBeFocused();
+    await page.keyboard.press('Escape');
+    // Picture is its own toolbar button (G9e); the keyboard reaches it with Enter too.
+    await page.getByRole('button', { name: 'Insert a picture' }).focus();
     await page.keyboard.press('Enter');
     const dialog = page.getByRole('dialog', { name: 'Add a picture' });
     await dialog.getByRole('button', { name: 'Add the picture' }).click();
@@ -256,11 +259,14 @@ test.describe('pictures in chapters (S1-E3-09)', () => {
     await page.context().close();
   });
 
-  test('with picture uploads off there is no Insert button', async ({ browser }) => {
+  test('with picture uploads off there is no Picture button and no Insert menu', async ({
+    browser,
+  }) => {
     runSql(`update public.feature_flags set is_enabled = false where key = 'picture_uploads';`);
     const page = await openAs(browser, 'adult_writer', editorAddress);
     await expect(page.getByRole('toolbar', { name: 'Formatting' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Insert' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Insert a picture' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Insert', exact: true })).toHaveCount(0);
     // The pictures already in the chapter stay.
     await expect(page.getByRole('figure', { name: 'Picture in this chapter' })).toHaveCount(2);
     runSql(`update public.feature_flags set is_enabled = true where key = 'picture_uploads';`);
@@ -280,7 +286,10 @@ test.describe('pictures in chapters (S1-E3-09)', () => {
       await expectAccessibleAndFitting(page, width);
       await page.locator('button[aria-haspopup="menu"]').click();
       await expectAccessibleAndFitting(page, width);
-      await page.getByRole('menuitem').first().click();
+      await page.keyboard.press('Escape');
+      await page
+        .locator('button[aria-label="Insert a picture"], button[aria-label="Inserează o imagine"]')
+        .click();
       await expect(page.getByRole('dialog')).toBeVisible();
       await expectAccessibleAndFitting(page, width);
       await page.goto(readerAddress);
