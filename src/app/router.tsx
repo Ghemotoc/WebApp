@@ -667,6 +667,16 @@ const writeRoutes: RouteObject[] = [
       return { Component: YourWritingPage };
     },
   },
+  // Every comment on the writer's chapters (GAPS-5), opened from "See all comments" on /write.
+  {
+    path: '/write/comments',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { ChapterCommentsPage } =
+        await import('@/features/writing/components/ChapterCommentsPage');
+      return { Component: ChapterCommentsPage };
+    },
+  },
   {
     path: '/write/new',
     HydrateFallback: () => null,

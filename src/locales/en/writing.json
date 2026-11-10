@@ -490,7 +490,9 @@
       "onChapter": "on chapter {{number}} · {{when}}",
       "reply": "Reply",
       "replyLabel": "Reply to {{name}} on chapter {{number}}",
-      "empty": "No comments yet. They appear here when readers write under your chapters."
+      "empty": "No comments yet. They appear here when readers write under your chapters.",
+      "seeAll": "More comments",
+      "onChapterOf": "on chapter {{number}} of {{title}} · {{when}}"
     }
   },
   "canva": {
@@ -548,5 +550,17 @@
     "tenth": "{{from}} to {{to}}%",
     "tenthValue": "{{percent}}% of readers",
     "loadFailed": "We couldn’t load these numbers. Refresh the page to try again."
+  },
+  "allComments": {
+    "documentTitle": "Comments on the chapters",
+    "back": "Write",
+    "eyebrow": "Write · comments",
+    "heading": "Comments on the chapters",
+    "lead": "What readers wrote under each published chapter, newest first.",
+    "storyLabel": "Story",
+    "everyStory": "Every story",
+    "listLabel": "Comments",
+    "showOlder": "Show older",
+    "loadFailed": "The comments couldn’t load. Check your connection and try again."
   }
 }

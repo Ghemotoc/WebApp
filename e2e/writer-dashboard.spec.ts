@@ -13,7 +13,9 @@
  * - "Last 30 days" changes the tiles; "Not published yet" lists the draft with an Edit link and
  *   "Continue draft" opens it;
  * - axe finds nothing serious, nothing scrolls sideways and no doodle is drawn at 390, 768
- *   and 1440 px.
+ *   and 1440 px;
+ * - "More comments" opens /write/comments: every comment newest first, 20 at a time with "Show
+ *   older", each naming its story and chapter (bundle GAPS-5).
  * Test data: a story by the editor persona (…12, which no other spec writes with) with one
  * published chapter and one draft; reading places, likes, follows and a comment from seeded
  * personas. All removed afterwards.
@@ -217,4 +219,48 @@ test.describe('The writer dashboard', () => {
       await page.context().close();
     });
   }
+  test('"More comments" opens every comment, a page at a time', async ({ browser }) => {
+    // 21 older comments join the one already there, so the list needs a second page.
+    runSql(`insert into public.comments (user_id, chapter_id, body, created_at)
+      select '${personaId(8)}', chapters.id, 'Comentariu vechi ' || age, now() - make_interval(hours => age)
+      from public.chapters, generate_series(1, 21) as age
+      where chapters.code = '${publishedCode}';`);
+    const page = await openDashboard(browser);
+    await page
+      .getByRole('region', { name: 'Latest on the chapters' })
+      .getByRole('link', { name: 'More comments' })
+      .click();
+    await expect(page).toHaveURL(/\/write\/comments$/);
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Comments on the chapters' }),
+    ).toBeVisible();
+
+    // The first page: 20 comments, the newest first, each with its story, chapter and Reply.
+    const comments = page.getByRole('list', { name: 'Comments' }).getByTestId('writer-comment');
+    await expect(comments).toHaveCount(20);
+    await expect(comments.first()).toContainText('Ce praf frumos!');
+    await expect(comments.first()).toContainText(/on chapter 1 of .+ · /);
+    await expect(
+      comments.first().getByRole('link', { name: /Reply to .* on chapter 1/ }),
+    ).toHaveAttribute('href', `/s/${storySlug}/${publishedCode}#comments-heading`);
+    // One story, so there is nothing to pick.
+    await expect(page.getByLabel('Story')).toHaveCount(0);
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
+      .analyze();
+    expect(results.violations).toEqual([]);
+    await expectNoDoodles(page);
+
+    // "Show older" brings the rest and then goes away.
+    await page.getByRole('button', { name: 'Show older' }).click();
+    await expect(comments).toHaveCount(22);
+    await expect(comments.last()).toContainText('Comentariu vechi 21');
+    await expect(page.getByRole('button', { name: 'Show older' })).toHaveCount(0);
+
+    // On a phone nothing scrolls sideways.
+    await page.setViewportSize({ width: 390, height: 900 });
+    const pageWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+    expect(pageWidth).toBeLessThanOrEqual(390);
+    await page.context().close();
+  });
 });
