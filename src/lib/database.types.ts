@@ -13042,6 +13042,7 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      my_story_plans: { Args: Record<PropertyKey, never>; Returns: Json };
       my_support_ticket: { Args: { ticket_number: number }; Returns: Json };
       my_support_tickets: {
         Args: Record<PropertyKey, never>;

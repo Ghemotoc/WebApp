@@ -1,7 +1,9 @@
 /**
- * CharacterPictureSection: a character's portrait or mood picture (story S1-E17-11).
+ * CharacterPictureSection: a character's portrait or mood picture (story S1-E17-11), on the right
+ * of the sheet's header card (bundle G10a, board AtlasCharacterSheet: a 4:5 portrait with the
+ * upload under it and a short caption).
  *
- * - No picture: the initials show ("images are blank by default").
+ * - No picture: nothing shows but a short note; there is no initials circle (G10a).
  * - Choose a picture: it is prepared (location data out), uploaded, checked (CLAUDE.md rule 19)
  *   and shown once it passed; until then the section says it is being checked.
  * - The alt text saves by itself; Remove picture takes it off and deletes the file.
@@ -15,7 +17,6 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { useFeatureFlags } from '@/features/flags/hooks/useFeatureFlags';
-import { FormSection } from '@/features/writing/components/FormSection';
 import { PictureUploadError } from '@/features/pictures/api/pictures';
 import { PictureUploadField } from '@/features/pictures/components/PictureUploadField';
 import type { UploadOutcome } from '@/features/pictures/hooks/usePictureUpload';
@@ -58,7 +59,7 @@ function PictureStateNote({ character }: { character: StoryCharacter }) {
 /**
  * Renders the section.
  *
- * @returns the card with the picture or initials, the upload field, the alt text and Remove
+ * @returns the group with the picture, the upload field, the alt text and Remove
  */
 export function CharacterPictureSection({
   character,
@@ -72,13 +73,10 @@ export function CharacterPictureSection({
   const uploading = useMutation({ mutationFn: upload });
   const hasPicture = character.picture !== null;
   return (
-    <FormSection legend={t('characters.picture.heading')}>
-      <div className="flex flex-wrap items-center gap-4">
-        <CharacterAvatar character={character} size="large" />
-        <div className="min-w-0 flex-1 basis-48">
-          <PictureStateNote character={character} />
-        </div>
-      </div>
+    <fieldset className="m-0 flex w-full min-w-0 flex-col gap-3 border-0 p-0 md:w-[220px] md:shrink-0">
+      <legend className="sr-only">{t('characters.picture.heading')}</legend>
+      <CharacterAvatar character={character} size="large" />
+      <PictureStateNote character={character} />
       {isOn('picture_uploads', false) && (
         <PictureUploadField
           label={t('characters.picture.upload')}
@@ -110,6 +108,6 @@ export function CharacterPictureSection({
       <div aria-live="polite">
         {removeFailed && <Notice tone="error">{t('characters.picture.removeFailed')}</Notice>}
       </div>
-    </FormSection>
+    </fieldset>
   );
 }

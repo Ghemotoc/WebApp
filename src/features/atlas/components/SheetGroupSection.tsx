@@ -4,7 +4,9 @@
  *
  * One box per field, each saving by itself after a pause; the short facts are one line, the rest
  * grow with the text ("Given a long field, when I write, then the box grows with the text").
- * Extra content (the first appearance in In the story) comes in as children.
+ * Extra content comes in as `before` (the name, role and line at the top of Basics) and as
+ * children (the first appearance in In the story). The fields sit in two columns on a laptop
+ * (bundle G10a, board AtlasCharacterSheet) and one on a phone.
  * Who uses it: CharacterSheet. What it calls: PlanTextField with the save it is given.
  */
 import type { ReactNode } from 'react';
@@ -41,6 +43,8 @@ export interface SheetGroupSectionProps {
   character: StoryCharacter;
   /** Saves one sheet field; throws when it can't. */
   saveSheetField: (key: SheetKey, value: string) => Promise<void>;
+  /** Shown above the group's own fields. */
+  before?: ReactNode;
   children?: ReactNode;
 }
 
@@ -53,23 +57,27 @@ export function SheetGroupSection({
   group,
   character,
   saveSheetField,
+  before,
   children,
 }: SheetGroupSectionProps) {
   const { t } = useAtlasTranslation();
   return (
     <FormSection legend={t(`characters.groups.${group}`)}>
-      {sheetGroups[group].map((key) => (
-        <PlanTextField
-          key={key}
-          id={`atlas-character-${key}`}
-          label={t(`characters.fields.${key}`)}
-          hint={keysWithHint.includes(key) ? t(`characters.hints.${key}`) : undefined}
-          isMultiline={!oneLineKeys.includes(key)}
-          maxLength={20000}
-          savedValue={character.sheet[key] ?? ''}
-          save={async (value) => saveSheetField(key, value)}
-        />
-      ))}
+      {before}
+      <div className="grid gap-x-6 gap-y-4 md:grid-cols-2">
+        {sheetGroups[group].map((key) => (
+          <PlanTextField
+            key={key}
+            id={`atlas-character-${key}`}
+            label={t(`characters.fields.${key}`)}
+            hint={keysWithHint.includes(key) ? t(`characters.hints.${key}`) : undefined}
+            isMultiline={!oneLineKeys.includes(key)}
+            maxLength={20000}
+            savedValue={character.sheet[key] ?? ''}
+            save={async (value) => saveSheetField(key, value)}
+          />
+        ))}
+      </div>
       {children}
     </FormSection>
   );

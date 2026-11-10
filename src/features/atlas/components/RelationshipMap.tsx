@@ -24,6 +24,7 @@ import {
   relationshipCategories,
   type RelationshipCategory,
 } from '../lib/relationshipCategories';
+import { visiblePictureUrl } from '../lib/characterPicture';
 import { layoutRelationshipMap, nodeRadius, type MapLayout } from '../lib/relationshipMap';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
@@ -154,9 +155,12 @@ function MapNodes({
               to={addressOf(node.id)}
               className="flex flex-col items-center gap-1 rounded-card text-center no-underline"
             >
-              <span className="flex size-14 items-center justify-center rounded-full border-2 border-control-border bg-surface">
-                <CharacterAvatar character={character} size="small" />
-              </span>
+              {/* A picture only when there is one: no initials circle (G10a). */}
+              {visiblePictureUrl(character) !== null && (
+                <span className="flex size-14 items-center justify-center rounded-full border-2 border-control-border bg-surface">
+                  <CharacterAvatar character={character} size="small" />
+                </span>
+              )}
               <span className="max-w-full rounded-md bg-surface px-1 text-sm font-semibold break-words text-heading">
                 {character.name}
               </span>

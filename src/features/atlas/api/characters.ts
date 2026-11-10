@@ -47,7 +47,11 @@ export const sheetGroups = {
   inTheStory: ['backstory', 'arc', 'key_lines', 'notes'],
 } as const;
 export type SheetGroup = keyof typeof sheetGroups;
-export type SheetKey = (typeof sheetGroups)[SheetGroup][number];
+/**
+ * A sheet field's key: one of the groups' fields, or 'summary', the character in a line that the
+ * cast cards and the sheet's header show under the name (G10a; character_sheet_keys()).
+ */
+export type SheetKey = (typeof sheetGroups)[SheetGroup][number] | 'summary';
 
 /** One character as the Characters page shows it. */
 export interface StoryCharacter {

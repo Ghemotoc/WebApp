@@ -1,12 +1,11 @@
 /**
- * AtAGlance: the body of a story's at-a-glance page (story S1-E17-06), under the Story Atlas
- * top bar.
+ * AtAGlance: the body of a story's at-a-glance page (story S1-E17-06; bundle G10 ATLAS, part a:
+ * the liquid glass board AtlasStory), under the Story Atlas top bar.
  *
- * The title as the page heading with "Only you can see your plan", then two rows that stack on
- * a phone: "The story" beside the words, chapters and characters, and the details beside the
- * linked project, the writer's own character fields and Delete. Further parts of the bundle add
- * the chapters' planning status and targets (part e) and the open questions and ideas (part g)
- * to the first row.
+ * "At a glance" with "Only you can see this plan.", then two columns that stack on a phone. The
+ * main column: "The story" card with the cover, the Words and Chapters tiles side by side, the
+ * details (each saving by itself) and the linked project. The side column: the characters and the
+ * chapters edited last, the writer's own character fields and Delete, with its red edge.
  * Who uses it: StoryAtlasPage. What it calls: useStoryPlan for the savers; the section components.
  */
 import { DeleteStoryControl } from '@/features/writing/components/DeleteStoryControl';
@@ -16,10 +15,12 @@ import type { StoryPlanPage } from '../api/storyPlans';
 import { useStoryPlan } from '../hooks/useStoryPlan';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
+import { AtlasPageHeading } from './AtlasPageHeading';
 import { CastAtAGlance } from './CastAtAGlance';
 import { ChaptersAtAGlance } from './ChaptersAtAGlance';
 import { CharacterFieldsSection } from './CharacterFieldsSection';
 import { LinkedProjectSection } from './LinkedProjectSection';
+import { RecentChaptersList } from './RecentChaptersList';
 import { StoryDetailsSection } from './StoryDetailsSection';
 import { StorySummary } from './StorySummary';
 import { WordsProgress } from './WordsProgress';
@@ -30,7 +31,7 @@ function DeleteSection({ story }: { story: MyStory }) {
   return (
     <section
       aria-labelledby="atlas-delete-heading"
-      className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface px-7 py-[26px] shadow-card"
+      className="flex min-w-0 flex-col gap-3 rounded-card border border-destructive/35 bg-surface px-6 py-[22px] shadow-card"
     >
       <h2 id="atlas-delete-heading" className="m-0 font-heading text-[22px] font-bold text-heading">
         {t('delete.heading')}
@@ -53,32 +54,28 @@ export function AtAGlance({ page, story }: { page: StoryPlanPage; story: MyStory
   const { savePlan, saveStory } = useStoryPlan(page.story.slug);
   return (
     <>
-      <header className="flex flex-col gap-2">
-        <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-extrabold tracking-[-0.025em] break-words">
-          {page.story.title}
-        </h1>
-        <p className="m-0 text-sm text-meta">
-          {t('atAGlance')} · {t('privateNote')}
-        </p>
-      </header>
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-        <StorySummary page={page} />
-        <div className="flex min-w-0 flex-col gap-6">
-          <WordsProgress
-            wordsWritten={page.chapters.wordsWritten}
-            wordTarget={page.plan.wordTarget}
-          />
-          <ChaptersAtAGlance page={page} />
-          <CastAtAGlance page={page} />
-        </div>
-      </div>
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-        <StoryDetailsSection page={page} saveStory={saveStory} savePlan={savePlan} />
-        <div className="flex min-w-0 flex-col gap-6">
+      <AtlasPageHeading title={t('atAGlance')} />
+      <div className="grid items-start gap-7 lg:grid-cols-[minmax(0,1fr)_minmax(300px,380px)]">
+        {/* The main column: the story, its numbers, its details and the linked project. */}
+        <div className="flex min-w-0 flex-col gap-5">
+          <StorySummary page={page} story={story} />
+          <div className="grid gap-5 sm:grid-cols-2">
+            <WordsProgress
+              wordsWritten={page.chapters.wordsWritten}
+              wordTarget={page.plan.wordTarget}
+            />
+            <ChaptersAtAGlance page={page} />
+          </div>
+          <StoryDetailsSection page={page} saveStory={saveStory} savePlan={savePlan} />
           <LinkedProjectSection page={page} savePlan={savePlan} />
+        </div>
+        {/* The side column: what changed last, the writer's own fields and Delete. */}
+        <aside aria-label={t('glanceAside')} className="flex min-w-0 flex-col gap-5">
+          <CastAtAGlance page={page} />
+          <RecentChaptersList page={page} />
           <CharacterFieldsSection slug={page.story.slug} />
           {story !== undefined && <DeleteSection story={story} />}
-        </div>
+        </aside>
       </div>
     </>
   );

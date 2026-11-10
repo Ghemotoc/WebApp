@@ -21,6 +21,7 @@ import { useStoryBible } from '../hooks/useStoryBible';
 import { writeAddressFor } from '../lib/writeAddress';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
+import { AtlasPageHeading } from './AtlasPageHeading';
 import { AtlasTopBar } from './AtlasTopBar';
 import { BibleContents } from './BibleContents';
 import { BibleEntryView } from './BibleEntryView';
@@ -111,14 +112,7 @@ export function BiblePage() {
       {bible === null && <Notice tone="error">{t('notFound')}</Notice>}
       {bible !== undefined && bible !== null && (
         <>
-          <header className="flex flex-col gap-2">
-            <h1 className="m-0 text-[clamp(36px,4.4vw,56px)] leading-[0.98] font-extrabold tracking-[-0.025em] break-words">
-              {t('bible.heading')}
-            </h1>
-            <p className="m-0 text-sm text-meta">
-              {bible.storyTitle} · {t('privateNote')}
-            </p>
-          </header>
+          <AtlasPageHeading title={t('bible.heading')} />
           <BibleBody slug={storySlug} bible={bible} entryId={entryId} />
         </>
       )}

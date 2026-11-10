@@ -15196,6 +15196,7 @@ CREATE OR REPLACE FUNCTION "public"."character_sheet_keys"() RETURNS "text"[]
     SET "search_path" TO ''
     AS $$
   select array[
+    'summary',
     'also_known_as', 'species', 'pronouns', 'age_or_born', 'life_status', 'occupation', 'origin',
     'appearance', 'distinguishing_marks', 'voice',
     'personality', 'wants', 'needs', 'fear_or_wound', 'secrets', 'values_and_code',
@@ -15206,7 +15207,7 @@ $$;
 ALTER FUNCTION "public"."character_sheet_keys"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."character_sheet_keys"() IS 'Internal: the keys of a character sheet''s text fields (S1-E17-09).';
+COMMENT ON FUNCTION "public"."character_sheet_keys"() IS 'Internal: the keys of a character sheet''s text fields, the one-line summary first (S1-E17-09, G10a).';
 
 
 
@@ -27773,6 +27774,46 @@ ALTER FUNCTION "public"."my_story_idea"("target_idea_id" "uuid") OWNER TO "postg
 
 
 COMMENT ON FUNCTION "public"."my_story_idea"("target_idea_id" "uuid") IS 'Internal: one of the caller''s questions or ideas on a live story, or nulls (S1-E17-28).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."my_story_plans"() RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+begin
+  -- Step 1: only a signed-in writer has plans.
+  if caller_id is null then
+    raise exception 'Sign in to see your plans.' using errcode = 'insufficient_privilege';
+  end if;
+
+  -- Step 2: the caller's live stories and their plans; the words come from the chapters' own
+  -- counts, the same sum the at-a-glance page shows (story_plan_chapters()).
+  return coalesce((
+    select jsonb_agg(jsonb_build_object(
+             'slug', stories.slug,
+             'logline', plans.logline,
+             'writing_status', plans.writing_status,
+             'word_target', plans.word_target,
+             'words_written', coalesce((
+               select sum(chapters.word_count) from public.chapters
+               where chapters.story_id = stories.id and chapters.deleted_at is null
+             ), 0))
+           order by greatest(plans.updated_at, stories.updated_at) desc)
+    from public.stories
+    join public.story_plans as plans on plans.story_id = stories.id
+    where stories.user_id = caller_id and stories.deleted_at is null
+  ), '[]'::jsonb);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."my_story_plans"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."my_story_plans"() IS 'The caller''s story plans for the /plan list: slug, logline, writing status, word target and words written (G10a).';
 
 
 
@@ -41671,15 +41712,19 @@ begin
       from public.story_plan_acts as acts where acts.story_id = stories.id
     ), '[]'::jsonb),
     'chapters', public.story_plan_chapters(stories.id),
-    -- Step 3: the cast count and the characters edited last (S1-E17-06).
+    -- Step 3: the cast count and the five characters edited last, with role and line (G10a).
     'cast', jsonb_build_object(
       'count', (select count(*) from public.story_characters where story_characters.story_id = stories.id),
       'recent', coalesce((
-        select jsonb_agg(jsonb_build_object('id', recent.id, 'name', recent.name, 'updated_at', recent.updated_at)
+        select jsonb_agg(jsonb_build_object(
+                           'id', recent.id, 'name', recent.name, 'role', recent.role,
+                           'summary', coalesce(recent.sheet ->> 'summary', ''),
+                           'updated_at', recent.updated_at)
                          order by recent.updated_at desc)
-        from (select story_characters.id, story_characters.name, story_characters.updated_at
+        from (select story_characters.id, story_characters.name, story_characters.role,
+                     story_characters.sheet, story_characters.updated_at
               from public.story_characters where story_characters.story_id = stories.id
-              order by story_characters.updated_at desc limit 3) as recent
+              order by story_characters.updated_at desc limit 5) as recent
       ), '[]'::jsonb))
   )
   into result
@@ -41695,7 +41740,7 @@ $$;
 ALTER FUNCTION "public"."story_plan"("story_slug" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."story_plan"("story_slug" "text") IS 'The at-a-glance page of one of the caller''s stories: the story, its plan, acts, chapter numbers and cast (S1-E17-06).';
+COMMENT ON FUNCTION "public"."story_plan"("story_slug" "text") IS 'The at-a-glance page of one of the caller''s stories: the story, its plan, acts, chapter numbers and cast (S1-E17-06, G10a).';
 
 
 
@@ -41713,9 +41758,13 @@ CREATE OR REPLACE FUNCTION "public"."story_plan_chapters"("plan_story_id" "uuid"
       from (
         select jsonb_build_object(
           'code', latest.code, 'position', latest.position, 'title', latest.draft_title,
-          'edited_at', coalesce(latest.draft_saved_at, latest.updated_at)
+          'edited_at', coalesce(latest.draft_saved_at, latest.updated_at),
+          'status', latest.status, 'scheduled_for', latest.scheduled_for,
+          'published_at', latest.last_published_at,
+          'planning_status', plans.planning_status
         ) as recent_chapter
         from public.chapters as latest
+        left join public.chapter_plans as plans on plans.chapter_id = latest.id
         where latest.story_id = plan_story_id and latest.deleted_at is null
         order by coalesce(latest.draft_saved_at, latest.updated_at) desc
         limit 5
@@ -41730,7 +41779,7 @@ $$;
 ALTER FUNCTION "public"."story_plan_chapters"("plan_story_id" "uuid") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."story_plan_chapters"("plan_story_id" "uuid") IS 'Internal: words written, chapter counts and the recently edited chapters of one story (S1-E17-06).';
+COMMENT ON FUNCTION "public"."story_plan_chapters"("plan_story_id" "uuid") IS 'Internal: words written, chapter counts and the recently edited chapters of one story, with their status (S1-E17-06, G10a).';
 
 
 
@@ -58216,6 +58265,11 @@ GRANT SELECT ON TABLE "public"."story_ideas" TO "authenticated";
 
 
 REVOKE ALL ON FUNCTION "public"."my_story_idea"("target_idea_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."my_story_plans"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."my_story_plans"() TO "authenticated";
 
 
 

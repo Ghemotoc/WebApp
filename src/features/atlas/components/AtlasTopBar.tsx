@@ -1,16 +1,19 @@
 /**
- * AtlasTopBar: the bar at the top of every Story Atlas page (stories S1-E17-01 and S1-E17-02).
+ * AtlasTopBar: the glass bar at the top of every Story Atlas page (stories S1-E17-01, S1-E17-02
+ * and S1-E17-30; bundle G10 ATLAS, part a: the liquid glass boards draw it as one glass card).
  *
- * "Story Atlas", the story switcher, "Write" (the same story's chapters in the writer section,
- * so "Plan" and "Write" sit side by side, S1-E17 notes) and "New story", which opens the usual
- * New story form and comes back to the new story's plan (S1-E17-01). Under them, the search box
- * (AtlasSearchBox, S1-E17-30), then the row of sections (AtlasSectionNav: At a glance,
- * Characters, Connections, Bible, Storyline, Ideas and Marketing). No doodles: a working screen
- * with many controls. Who uses it: every Story Atlas page (StoryAtlasPage, CharactersPage,
- * ConnectionsPage, BiblePage, StorylinePage, IdeasPage, MarketingPage and AtlasSearchPage).
+ * The first row holds the "Story Atlas" eyebrow and the story switcher on the left, and the search
+ * box, "Write" (the same story's chapters in the writer section, so "Plan" and "Write" sit side by
+ * side, S1-E17 notes) and "New story" (the usual New story form, which comes back to the new
+ * story's plan, S1-E17-01) on the right. The second row is the sections (AtlasSectionNav), on one
+ * line. On a phone the first row's parts stack.
+ * Who uses it: every Story Atlas page (StoryAtlasPage, CharactersPage, ConnectionsPage, BiblePage,
+ * StorylinePage, IdeasPage, MarketingPage, ReaderViewPage, PlanPreviewPage and AtlasSearchPage).
+ * What it calls: StorySwitcher, AtlasSearchBox and AtlasSectionNav.
  */
 import { Link } from 'react-router';
 
+import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 
 import { useAtlasTranslation } from '../registerAtlasTranslations';
@@ -19,9 +22,9 @@ import { AtlasSearchBox } from './AtlasSearchBox';
 import { AtlasSectionNav, type AtlasSection } from './AtlasSectionNav';
 import { StorySwitcher } from './StorySwitcher';
 
-/** The pill links' shared look (the outline pills of Your writing). */
+/** The pill links' shared look: grey glass, the add and "go elsewhere" actions (handoff, Buttons). */
 const pillLink =
-  'inline-flex h-11 items-center rounded-full button-glass px-5 text-sm font-semibold no-underline';
+  'inline-flex h-11 shrink-0 items-center gap-2 rounded-full button-glass px-5 text-sm font-semibold whitespace-nowrap no-underline';
 
 /**
  * Renders the bar.
@@ -29,7 +32,7 @@ const pillLink =
  * @param props.slug - the story open now
  * @param props.writeAddress - where "Write" goes: the latest chapter, or the chapter list
  * @param props.section - the Story Atlas section open now, or null on the search page
- * @returns the bar
+ * @returns the glass card with the two rows
  */
 export function AtlasTopBar({
   slug,
@@ -42,22 +45,26 @@ export function AtlasTopBar({
 }) {
   const { t } = useAtlasTranslation();
   return (
-    <div className="flex flex-col gap-4 border-b border-border pb-5">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div className="flex min-w-0 flex-col gap-2">
+    <div className="flex min-w-0 flex-col gap-3.5 rounded-card border border-border bg-surface px-[18px] py-4 shadow-card">
+      <div className="flex flex-wrap items-center justify-between gap-3.5">
+        {/* Left: where the writer is. */}
+        <div className="flex min-w-0 flex-wrap items-center gap-3">
           <Eyebrow>{t('eyebrow')}</Eyebrow>
           <StorySwitcher currentSlug={slug} />
         </div>
-        <nav aria-label={t('eyebrow')} className="flex flex-wrap gap-3">
+        {/* Right: search this story, then go and write or start another story. */}
+        <div className="flex min-w-0 flex-wrap items-center gap-2">
+          <AtlasSearchBox slug={slug} />
           <Link to={writeAddress} className={pillLink}>
+            <ActionIcon name="pen" />
             {t('switcher.write')}
           </Link>
           <Link to="/write/new?from=plan" className={pillLink}>
+            <ActionIcon name="plus" />
             {t('switcher.newStory')}
           </Link>
-        </nav>
+        </div>
       </div>
-      <AtlasSearchBox slug={slug} />
       <AtlasSectionNav slug={slug} current={section} />
     </div>
   );

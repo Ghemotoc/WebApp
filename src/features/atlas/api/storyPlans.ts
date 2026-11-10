@@ -4,7 +4,8 @@
  * Who calls it: the hooks in src/features/atlas/hooks/.
  * What it calls next: Supabase.
  * - story_plan(): the at-a-glance page: the story's title, category and rating, the plan's own
- *   fields, its acts, the chapter numbers and the cast count (supabase/migrations/…_s1_e17_01_story_plans.sql).
+ *   fields, its acts, the chapter numbers and the cast count (supabase/migrations/…_s1_e17_01_story_plans.sql),
+ *   with the recent chapters' status and the recent characters' role and line (…_g10a_atlas_glance.sql).
  * - update_story_plan(): the plan's own fields, one change at a time (S1-E17-03, S1-E17-04).
  * - update_my_story() (S1-E3-05): the title, genre and audience, which are the story's own, so a
  *   change in Story Atlas is the same change as in Story settings (S1-E17-03).
@@ -13,6 +14,9 @@
 import type { Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
 import type { StoryRating } from '@/schemas/story';
+
+import type { CharacterRole } from './characters';
+import type { PlanningStatus } from './chapterPlans';
 
 /** Where the writer is with the story (S1-E17-03). */
 export const writingStatuses = [
@@ -51,6 +55,22 @@ export interface RecentChapter {
   position: number;
   title: string;
   editedAt: string;
+  /** Draft, scheduled or published (G10a: "Published 30 Oct", "Scheduled for Thursday"). */
+  status: 'draft' | 'scheduled' | 'published';
+  scheduledFor: string | null;
+  /** When it last went out; null for a chapter never published. */
+  publishedAt: string | null;
+  /** Idea to done (S1-E17-24); null while the chapter has no plan yet. */
+  planningStatus: PlanningStatus | null;
+}
+
+/** One of the characters edited most recently, as the at-a-glance list shows them (G10a). */
+export interface RecentCharacter {
+  id: string;
+  name: string;
+  role: CharacterRole;
+  /** The character in a line; empty when the writer hasn't written one. */
+  summary: string;
 }
 
 /** Everything the at-a-glance page shows. */
@@ -64,8 +84,8 @@ export interface StoryPlanPage {
     publishedCount: number;
     recent: RecentChapter[];
   };
-  /** How many characters, and the three edited last (S1-E17-06, S1-E17-08). */
-  cast: { count: number; recent: { id: string; name: string }[] };
+  /** How many characters, and the five edited last (S1-E17-06, S1-E17-08, G10a). */
+  cast: { count: number; recent: RecentCharacter[] };
 }
 
 /** The cache key of one story's plan. */
@@ -96,9 +116,18 @@ interface StoryPlanRow {
     words_written: number;
     chapter_count: number;
     published_count: number;
-    recent: { code: string; position: number; title: string; edited_at: string }[];
+    recent: {
+      code: string;
+      position: number;
+      title: string;
+      edited_at: string;
+      status: RecentChapter['status'];
+      scheduled_for: string | null;
+      published_at: string | null;
+      planning_status: PlanningStatus | null;
+    }[];
   };
-  cast: { count: number; recent: { id: string; name: string }[] };
+  cast: { count: number; recent: RecentCharacter[] };
 }
 
 /** The database's plan fields in the page's own names. */
@@ -134,11 +163,20 @@ function toStoryPlanPage(row: StoryPlanRow): StoryPlanPage {
         position: chapter.position,
         title: chapter.title,
         editedAt: chapter.edited_at,
+        status: chapter.status,
+        scheduledFor: chapter.scheduled_for,
+        publishedAt: chapter.published_at,
+        planningStatus: chapter.planning_status,
       })),
     },
     cast: {
       count: row.cast.count,
-      recent: row.cast.recent.map((character) => ({ id: character.id, name: character.name })),
+      recent: row.cast.recent.map((character) => ({
+        id: character.id,
+        name: character.name,
+        role: character.role,
+        summary: character.summary,
+      })),
     },
   };
 }

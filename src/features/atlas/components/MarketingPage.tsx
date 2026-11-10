@@ -26,6 +26,7 @@ import { useStoryPlan } from '../hooks/useStoryPlan';
 import { writeAddressFor } from '../lib/writeAddress';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
+import { AtlasPageHeading } from './AtlasPageHeading';
 import { AtlasTopBar } from './AtlasTopBar';
 import { BackCoverPreview } from './BackCoverPreview';
 import { MarketingFields } from './MarketingFields';
@@ -47,14 +48,7 @@ function MarketingBody({
   useScrollToHash(true);
   return (
     <>
-      <header className="flex flex-col gap-2">
-        <h1 className="m-0 text-[clamp(36px,4.4vw,56px)] leading-[0.98] font-extrabold tracking-[-0.025em] break-words">
-          {t('marketing.heading')}
-        </h1>
-        <p className="m-0 text-sm text-meta">
-          {page.story.title} · {t('privateNote')}
-        </p>
-      </header>
+      <AtlasPageHeading title={t('marketing.heading')} />
       <MarketingFields
         page={page}
         notes={notes}

@@ -1,51 +1,44 @@
 /**
- * CharacterAvatar: a character's picture, or their initials while they have none (story
- * S1-E17-11: "images are blank by default"; only the writer's own uploads appear).
+ * CharacterAvatar: a character's picture, or nothing while they have none (story S1-E17-11:
+ * "images are blank by default"; only the writer's own uploads appear). Bundle G10a: characters
+ * never get an initials circle; with no picture the name, always written beside, stands alone
+ * (handoff "Story Atlas": "no picture, name only").
  *
- * The picture shows only once its check passed and the database gave a signed address; anything
- * else (no picture, being checked, removed) shows the initials. The initials are decorative: the
- * name is always written beside them, so they are hidden from screen readers.
- * Who uses it: CastList and CharacterPictureSection. What it calls: lib/characterInitials.ts.
+ * The small size is a round face crop (the cast cards of a public plan, the map); the large size
+ * is the 4:5 portrait the boards draw on the right of a sheet.
+ * Who uses it: CharacterPictureSection, PublicCast, PublicCharacter and RelationshipMap.
+ * What it calls: lib/characterPicture.ts.
  */
 import { cn } from '@/lib/utils';
 
 import type { StoryCharacter } from '../api/characters';
-import { characterInitials } from '../lib/characterInitials';
+import { visiblePictureUrl } from '../lib/characterPicture';
 
 /**
- * Renders the picture or the initials.
+ * Renders the picture, or nothing.
  *
  * @param props.character - the character
- * @param props.size - 'small' in the cast list, 'large' on the sheet
- * @returns a round picture or a round tint with the initials
+ * @param props.size - 'small' (a 40 px circle) or 'large' (the 4:5 portrait)
+ * @returns the picture, or null when there is none to show
  */
 export function CharacterAvatar({
   character,
   size,
 }: {
-  character: StoryCharacter;
+  character: Pick<StoryCharacter, 'picture' | 'pictureAlt'>;
   size: 'small' | 'large';
 }) {
-  const box = size === 'small' ? 'size-10 text-sm' : 'size-24 text-[28px]';
-  const picture = character.picture;
-  if (picture?.state === 'visible' && picture.url !== null) {
-    return (
-      <img
-        src={picture.url}
-        alt={size === 'large' ? character.pictureAlt : ''}
-        className={cn('shrink-0 rounded-full object-cover', box)}
-      />
-    );
-  }
+  const url = visiblePictureUrl(character);
+  if (url === null) return null;
   return (
-    <span
-      aria-hidden="true"
+    <img
+      src={url}
+      // The small one sits beside the written name, so it is decorative there.
+      alt={size === 'large' ? character.pictureAlt : ''}
       className={cn(
-        'inline-flex shrink-0 items-center justify-center rounded-full bg-tint font-heading font-bold text-heading',
-        box,
+        'shrink-0 object-cover',
+        size === 'small' ? 'size-10 rounded-full' : 'aspect-[4/5] w-full max-w-[190px] rounded-3xl',
       )}
-    >
-      {characterInitials(character.name)}
-    </span>
+    />
   );
 }

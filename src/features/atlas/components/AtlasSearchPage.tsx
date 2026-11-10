@@ -23,6 +23,7 @@ import { groupSearchResults } from '../lib/searchGroups';
 import { writeAddressFor } from '../lib/writeAddress';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
+import { AtlasPageHeading } from './AtlasPageHeading';
 import { AtlasTopBar } from './AtlasTopBar';
 import { SearchResultItem } from './SearchResultItem';
 
@@ -107,16 +108,7 @@ export function AtlasSearchPage() {
       {userId !== null && (
         <>
           <AtlasTopBar slug={storySlug} writeAddress={writeAddressFor(story)} section={null} />
-          <header className="flex flex-col gap-2">
-            <h1 className="m-0 text-[clamp(36px,4.4vw,56px)] leading-[0.98] font-extrabold tracking-[-0.025em] break-words">
-              {t('search.heading')}
-            </h1>
-            {story !== undefined && (
-              <p className="m-0 text-sm text-meta">
-                {story.title} · {t('privateNote')}
-              </p>
-            )}
-          </header>
+          <AtlasPageHeading title={t('search.heading')} />
           <SearchBody slug={storySlug} query={query} />
         </>
       )}

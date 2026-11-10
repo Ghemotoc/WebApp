@@ -25,7 +25,7 @@ export function AtlasSearchBox({ slug }: { slug: string }) {
   const [searchParams] = useSearchParams();
   const [typed, setTyped] = useState(searchParams.get('q') ?? '');
   return (
-    <div role="search" className="w-full max-w-md min-w-0">
+    <div role="search" className="w-full min-w-0 sm:w-60">
       <form
         onSubmit={(submitted) => {
           submitted.preventDefault();
