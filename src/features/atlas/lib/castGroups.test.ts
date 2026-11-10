@@ -13,6 +13,7 @@ function character(name: string, role: StoryCharacter['role'], alias = ''): Stor
     id: name,
     name,
     role,
+    gender: null,
     sheet: alias === '' ? {} : { also_known_as: alias },
     customValues: {},
     firstAppearance: null,

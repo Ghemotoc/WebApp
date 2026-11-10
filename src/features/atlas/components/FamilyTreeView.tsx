@@ -14,20 +14,26 @@
  * - Characters with no family link are left off, and a note says how many.
  * - Each box is a real link to the character's sheet. The lines are drawing only; a screen reader
  *   gets the generations as a list instead.
- * Who uses it: ConnectionsPage.
+ * - The writer's own tree has "Add to this tree" (bundle GAPS-3): a form that adds a parent,
+ *   child, sibling, partner or cousin of the tree's character. Readers' trees don't have it.
+ * Who uses it: ConnectionsPage and PublicConnections. What it calls: lib/familyTree.ts,
+ * lib/familyTreeLayout.ts, FamilyTreeLines (the lines and their legend) and AddToTreeForm.
  */
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
+
+import { Button } from '@/components/ui/Button';
 
 import { Chip } from '@/components/ui/Chip';
 import { Select } from '@/components/ui/Select';
 
-import type { StoryCast } from '../api/characters';
+import type { NewRelationship, StoryCast } from '../api/characters';
 import type { RelationshipWords } from '../hooks/useRelationshipWords';
 import { buildFamilyTree, type FamilyTree } from '../lib/familyTree';
 import { boxHeight, boxWidth, layoutFamilyTree, type TreeLayout } from '../lib/familyTreeLayout';
-import { lineStyles } from '../lib/relationshipCategories';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
+import { AddToTreeForm } from './AddToTreeForm';
+import { TreeLegend, TreeLines } from './FamilyTreeLines';
 import { MaybeLink } from './MaybeLink';
 
 /** What the tree needs. */
@@ -36,118 +42,8 @@ export interface FamilyTreeViewProps {
   addressOf: (characterId: string) => string | null;
   cast: StoryCast;
   words: RelationshipWords;
-}
-
-/** How each kind of family line is drawn (G10b2, board AtlasFamilyTree's legend). */
-const treeLines = {
-  sibling: '7 5',
-  cousin: '1 6',
-} as const;
-
-/** The tree's lines: parent solid (maker dotted in the lineage colour), partner double,
- * sibling dashed, cousin dotted. */
-function TreeLines({ layout, madeKeys }: { layout: TreeLayout; madeKeys: Set<string> }) {
-  const family = lineStyles.family;
-  const lineage = lineStyles.lineage;
-  return (
-    <svg
-      aria-hidden="true"
-      width={layout.width}
-      height={layout.height}
-      className="pointer-events-none absolute inset-0"
-    >
-      {layout.parentPaths.map(({ key, path }) => {
-        const style = madeKeys.has(key) ? lineage : family;
-        return (
-          <path
-            key={key}
-            d={path}
-            fill="none"
-            stroke={style.colour}
-            strokeWidth={style.width}
-            strokeDasharray={style.dashes}
-          />
-        );
-      })}
-      {/* A double line: a wide stroke with a thin gap of the card's colour along its middle. */}
-      {layout.partnerPaths.map(({ key, path }) => (
-        <g key={key}>
-          <path d={path} fill="none" stroke={family.colour} strokeWidth={7} />
-          <path d={path} fill="none" stroke="var(--surface)" strokeWidth={2.5} />
-        </g>
-      ))}
-      {layout.siblingPaths.map(({ key, path }) => (
-        <path
-          key={key}
-          d={path}
-          fill="none"
-          stroke={family.colour}
-          strokeWidth={2.5}
-          strokeDasharray={treeLines.sibling}
-        />
-      ))}
-      {layout.cousinPaths.map(({ key, path }) => (
-        <path
-          key={key}
-          d={path}
-          fill="none"
-          stroke={family.colour}
-          strokeWidth={3}
-          strokeLinecap="round"
-          strokeDasharray={treeLines.cousin}
-        />
-      ))}
-    </svg>
-  );
-}
-
-/** One legend entry: a short sample of the line, then its name. */
-function LegendLine({
-  label,
-  dashes,
-  isDouble,
-}: {
-  label: string;
-  dashes?: string;
-  isDouble?: boolean;
-}) {
-  const colour = lineStyles.family.colour;
-  return (
-    <li className="flex items-center gap-2 text-sm text-ink">
-      <svg aria-hidden="true" width="32" height="12" viewBox="0 0 32 12" className="shrink-0">
-        <line
-          x1="2"
-          y1="6"
-          x2="30"
-          y2="6"
-          stroke={colour}
-          strokeWidth={isDouble ? 7 : 3}
-          strokeDasharray={dashes}
-          strokeLinecap={dashes === treeLines.cousin ? 'round' : undefined}
-        />
-        {isDouble && (
-          <line x1="2" y1="6" x2="30" y2="6" stroke="var(--surface)" strokeWidth={2.5} />
-        )}
-      </svg>
-      {label}
-    </li>
-  );
-}
-
-/** The legend: parent, sibling, partner and cousin lines. */
-function TreeLegend() {
-  const { t } = useAtlasTranslation();
-  return (
-    <ul
-      aria-label={t('connections.tree.legend')}
-      className="m-0 flex list-none flex-wrap gap-x-5 gap-y-2 p-0"
-    >
-      <LegendLine label={t('connections.tree.lineParent')} />
-      <LegendLine label={t('connections.tree.lineSibling')} dashes={treeLines.sibling} />
-      <LegendLine label={t('connections.tree.linePartner')} isDouble />
-      <LegendLine label={t('connections.tree.lineCousin')} dashes={treeLines.cousin} />
-    </ul>
-  );
+  /** Saves a relationship added from the tree; left out on readers' trees (GAPS-3). */
+  onAdd?: (relationship: NewRelationship) => Promise<void>;
 }
 
 /** The boxes, each a link to the character's sheet. */
@@ -197,19 +93,22 @@ function GenerationsList({ tree, words }: { tree: FamilyTree; words: Relationshi
   );
 }
 
-/** "Whose tree" and "Include turned or made". */
+/** "Whose tree", "Include turned or made" and, for the writer, "Add to this tree". */
 function TreeControls({
   cast,
   rootId,
   onRoot,
   includeMade,
   onIncludeMade,
+  action,
 }: {
   cast: StoryCast;
   rootId: string;
   onRoot: (rootId: string) => void;
   includeMade: boolean;
   onIncludeMade: (includeMade: boolean) => void;
+  /** The "Add to this tree" button, or nothing on a reader's tree. */
+  action: ReactNode;
 }) {
   const { t } = useAtlasTranslation();
   // Everyone with a family link can be the tree's centre.
@@ -237,6 +136,7 @@ function TreeControls({
       <Chip isPressed={includeMade} onPressedChange={onIncludeMade}>
         {t('connections.tree.includeMade')}
       </Chip>
+      {action}
     </div>
   );
 }
@@ -271,15 +171,32 @@ function TreeDrawing({
   );
 }
 
+/** "Add to this tree": opens and closes the form under the controls (GAPS-3). */
+function AddToTreeButton({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }) {
+  const { t } = useAtlasTranslation();
+  return (
+    <Button
+      type="button"
+      variant="secondary"
+      aria-expanded={isOpen}
+      aria-controls="atlas-tree-add"
+      onClick={onToggle}
+    >
+      {t('connections.tree.add.open')}
+    </Button>
+  );
+}
+
 /**
  * Renders the tree with its controls, legend and note.
  *
  * @returns the controls, the scrolling tree, the legend, the note and the screen-reader list
  */
-export function FamilyTreeView({ addressOf, cast, words }: FamilyTreeViewProps) {
+export function FamilyTreeView({ addressOf, cast, words, onAdd }: FamilyTreeViewProps) {
   const { t } = useAtlasTranslation();
   const [includeMade, setIncludeMade] = useState(false);
   const [rootId, setRootId] = useState('');
+  const [isAdding, setIsAdding] = useState(false);
   const characterIds = cast.characters.map((character) => character.id);
   const tree = buildFamilyTree(characterIds, cast.relationships, includeMade, rootId || null);
   // Which parent lines come from "turned or made", so they are drawn dotted.
@@ -297,7 +214,23 @@ export function FamilyTreeView({ addressOf, cast, words }: FamilyTreeViewProps) 
         onRoot={setRootId}
         includeMade={includeMade}
         onIncludeMade={setIncludeMade}
+        action={
+          onAdd !== undefined && (
+            <AddToTreeButton isOpen={isAdding} onToggle={() => setIsAdding(!isAdding)} />
+          )
+        }
       />
+      {/* A new form per tree, so it always adds to the tree that shows. */}
+      {isAdding && onAdd !== undefined && (
+        <AddToTreeForm
+          key={rootId}
+          cast={cast}
+          rootId={rootId}
+          words={words}
+          onAdd={onAdd}
+          onClose={() => setIsAdding(false)}
+        />
+      )}
       {tree.generations.length === 0 && (
         <p className="m-0 text-body">{t('connections.tree.none')}</p>
       )}

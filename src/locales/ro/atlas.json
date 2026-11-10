@@ -136,6 +136,14 @@
       "minor": "Episodic",
       "mentioned": "Doar pomenit"
     },
+    "genderLabel": "Gen",
+    "genderHint": "Opțional. Alege cuvintele de familie: mamă, tată, soră, frate.",
+    "gender": {
+      "none": "Nu e ales",
+      "she": "Ea",
+      "he": "El",
+      "they": "Alt gen"
+    },
     "groups": {
       "basics": "Date de bază",
       "lookAndVoice": "Înfățișare și voce",
@@ -265,7 +273,14 @@
     },
     "sentences": {
       "parent_of": "{{from}} e părinte pentru {{to}}",
+      "parent_of_she": "{{from}} e mama lui {{to}}",
+      "parent_of_he": "{{from}} e tatăl lui {{to}}",
+      "child_of": "{{from}} e copilul lui {{to}}",
+      "child_of_she": "{{from}} e fiica lui {{to}}",
+      "child_of_he": "{{from}} e fiul lui {{to}}",
       "sibling_of": "{{from}} e frate sau soră cu {{to}}",
+      "sibling_of_she": "{{from}} e sora lui {{to}}",
+      "sibling_of_he": "{{from}} e fratele lui {{to}}",
       "partner_of": "{{from}} e partener(ă) sau soț(ie) pentru {{to}}",
       "cousin_of": "{{from}} și {{to}} sunt {{which}}",
       "loves": "{{from}} e îndrăgostit(ă) de {{to}}",
@@ -371,7 +386,25 @@
       "lineParent": "Părinte",
       "lineSibling": "Frate sau soră",
       "linePartner": "Partener(ă)",
-      "lineCousin": "Văr sau vară"
+      "lineCousin": "Văr sau vară",
+      "add": {
+        "open": "Adaugă în arbore",
+        "heading": "Adaugă în arbore: {{name}}",
+        "headingAny": "Adaugă în arbore",
+        "relatedTo": "Rudă cu",
+        "character": "Personaj",
+        "how": "Ce e pentru {{name}}",
+        "howAny": "Ce rudă e",
+        "relations": {
+          "parent": "Părinte",
+          "child": "Copil",
+          "sibling": "Frate sau soră",
+          "partner": "Partener(ă) sau soț(ie)",
+          "cousin": "Văr sau vară"
+        },
+        "cancel": "Renunță",
+        "button": "Adaugă"
+      }
     },
     "clash": {
       "title": "Se contrazice cu o legătură care există deja.",

@@ -35,7 +35,8 @@ export function CharacterRelationshipsSection({
   const { t } = useAtlasTranslation();
   const { relate, unrelate } = useRelationshipChangers(slug);
   const words = useRelationshipWords(cast);
-  // Both ways: "Ana is the parent of Vali" shows on Ana's sheet and on Vali's.
+  // Both ways: "Ana is the parent of Vali" shows on Ana's sheet, and on Vali's as "Vali is the
+  // child of Ana" (GAPS-3).
   const mine = cast.relationships.filter(
     (relationship) => relationship.fromId === characterId || relationship.toId === characterId,
   );

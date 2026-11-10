@@ -11,8 +11,15 @@
  * Who calls it: runDataExport.ts and runStoriesExport.ts. What it calls: nothing; it is pure, so
  * it is tested alone (planForWord.test.ts).
  */
-import { sheetGroups, type SheetKey } from '@/features/atlas/api/characters';
+import {
+  characterGenders,
+  sheetGroups,
+  type CharacterGender,
+  type RelationshipKind,
+  type SheetKey,
+} from '@/features/atlas/api/characters';
 import { cousinPhrase } from '@/features/atlas/lib/cousinWords';
+import { familyWording } from '@/features/atlas/lib/familyWords';
 import type { Tables } from '@/lib/database.types';
 import type { WordPlan, WordPlanDetail, WordPlanEntry, WordPlanPart } from '@/lib/word/wordTypes';
 
@@ -120,6 +127,12 @@ function characterName(rows: StoryRows, characterId: string | null): string {
   return rows.characters.find((character) => character.id === characterId)?.name ?? '';
 }
 
+/** A character's gender by ID, or null when it isn't set (or the character is gone). */
+function characterGender(rows: StoryRows, characterId: string | null): CharacterGender | null {
+  const gender = rows.characters.find((character) => character.id === characterId)?.gender;
+  return characterGenders.find((known) => known === gender) ?? null;
+}
+
 /** At a glance: the logline, the series, the target, the status, the route and the link. */
 function glancePart(rows: StoryRows, words: PlanWords): WordPlanPart | null {
   const plan = rows.plan;
@@ -151,10 +164,15 @@ function characterDetails(
   const sheet = (character.sheet ?? {}) as Partial<Record<SheetKey, string>>;
   const customValues = (character.custom_values ?? {}) as Record<string, string>;
   const sheetKeys = Object.values(sheetGroups).flat() as SheetKey[];
+  const gender = characterGender(rows, character.id);
   return filledDetails([
     {
       label: words.atlas('characters.roleLabel'),
       value: words.atlas(`characters.role.${character.role}`),
+    },
+    {
+      label: words.atlas('characters.genderLabel'),
+      value: gender === null ? null : words.atlas(`characters.gender.${gender}`),
     },
     ...sheetKeys.map((key) => ({
       label: words.atlas(`characters.fields.${key}`),
@@ -189,7 +207,15 @@ function connectionSentence(
 ): string {
   const fromId = isReversed ? connection.to_character_id : connection.from_character_id;
   const toId = isReversed ? connection.from_character_id : connection.to_character_id;
-  return words.atlas(`connections.sentences.${connection.kind}`, {
+  // A parent or sibling takes the family word of the first character's gender: mother, brother
+  // (GAPS-3). The file tells every relationship from its first character.
+  const wording = familyWording({
+    kind: connection.kind as RelationshipKind,
+    fromGender: characterGender(rows, connection.from_character_id),
+    toGender: characterGender(rows, connection.to_character_id),
+    isFromSecond: false,
+  });
+  return words.atlas(`connections.sentences.${wording.sentenceKey}`, {
     from: characterName(rows, fromId),
     to: characterName(rows, toId),
     label: isReversed ? connection.reverse_label : (connection.custom_label ?? ''),

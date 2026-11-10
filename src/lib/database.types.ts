@@ -7747,6 +7747,7 @@ export type Database = {
           created_at: string;
           custom_values: NonNullable<Json>;
           first_appearance_chapter_id: string | null;
+          gender: string | null;
           id: string;
           is_private: boolean;
           map_x: number | null;
@@ -7769,6 +7770,7 @@ export type Database = {
           created_at?: string;
           custom_values?: NonNullable<Json>;
           first_appearance_chapter_id?: string | null;
+          gender?: string | null;
           id?: string;
           is_private?: boolean;
           map_x?: number | null;
@@ -7788,6 +7790,7 @@ export type Database = {
           created_at?: string;
           custom_values?: NonNullable<Json>;
           first_appearance_chapter_id?: string | null;
+          gender?: string | null;
           id?: string;
           is_private?: boolean;
           map_x?: number | null;
@@ -13020,6 +13023,7 @@ export type Database = {
           created_at: string;
           custom_values: NonNullable<Json>;
           first_appearance_chapter_id: string | null;
+          gender: string | null;
           id: string;
           is_private: boolean;
           map_x: number | null;

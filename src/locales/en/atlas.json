@@ -136,6 +136,14 @@
       "minor": "Minor",
       "mentioned": "Mentioned only"
     },
+    "genderLabel": "Gender",
+    "genderHint": "Optional. Picks family words: mother, father, sister, brother.",
+    "gender": {
+      "none": "Not set",
+      "she": "She",
+      "he": "He",
+      "they": "They"
+    },
     "groups": {
       "basics": "Basics",
       "lookAndVoice": "Look and voice",
@@ -265,7 +273,14 @@
     },
     "sentences": {
       "parent_of": "{{from}} is the parent of {{to}}",
+      "parent_of_she": "{{from}} is the mother of {{to}}",
+      "parent_of_he": "{{from}} is the father of {{to}}",
+      "child_of": "{{from}} is the child of {{to}}",
+      "child_of_she": "{{from}} is the daughter of {{to}}",
+      "child_of_he": "{{from}} is the son of {{to}}",
       "sibling_of": "{{from}} is the sibling of {{to}}",
+      "sibling_of_she": "{{from}} is the sister of {{to}}",
+      "sibling_of_he": "{{from}} is the brother of {{to}}",
       "partner_of": "{{from}} is the partner or spouse of {{to}}",
       "cousin_of": "{{from}} is the {{which}} of {{to}}",
       "loves": "{{from}} loves {{to}}",
@@ -371,7 +386,25 @@
       "lineParent": "Parent",
       "lineSibling": "Sibling",
       "linePartner": "Partner",
-      "lineCousin": "Cousin"
+      "lineCousin": "Cousin",
+      "add": {
+        "open": "Add to this tree",
+        "heading": "Add to {{name}}’s tree",
+        "headingAny": "Add to this tree",
+        "relatedTo": "Related to",
+        "character": "Character",
+        "how": "How they’re related to {{name}}",
+        "howAny": "How they’re related",
+        "relations": {
+          "parent": "Parent",
+          "child": "Child",
+          "sibling": "Sibling",
+          "partner": "Partner or spouse",
+          "cousin": "Cousin"
+        },
+        "cancel": "Cancel",
+        "button": "Add"
+      }
     },
     "clash": {
       "title": "This clashes with a relationship already here.",

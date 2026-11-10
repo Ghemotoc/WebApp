@@ -14,7 +14,13 @@ import type { AppSupabaseClient } from '@/lib/supabase';
 import { pictureViewsFromJson } from '@/features/pictures/api/pictures';
 
 import type { BibleSectionPreset } from './bible';
-import type { CharacterRole, RelationshipKind, SheetKey, StoryCast } from './characters';
+import type {
+  CharacterGender,
+  CharacterRole,
+  RelationshipKind,
+  SheetKey,
+  StoryCast,
+} from './characters';
 import { checkedAnswer } from './checkedAnswer';
 
 /** The plan's areas a writer can make public, in the settings' order (S1-E17-32). */
@@ -88,6 +94,7 @@ interface PublicCharacterRow {
   id: string;
   name: string;
   role: CharacterRole;
+  gender: CharacterGender | null;
   sheet: Partial<Record<SheetKey, string>>;
   custom_values: Record<string, string>;
   first_appearance: string | null;
@@ -150,6 +157,7 @@ async function castFrom(
       id: character.id,
       name: character.name,
       role: character.role,
+      gender: character.gender,
       sheet: character.sheet,
       customValues: character.custom_values,
       firstAppearance: character.first_appearance,

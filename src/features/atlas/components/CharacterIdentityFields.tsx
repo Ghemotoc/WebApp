@@ -1,24 +1,31 @@
 /**
- * CharacterIdentityFields: the name, role and "In a line" at the top of a character sheet's
- * Basics (stories S1-E17-08 and S1-E17-09; bundle G10a adds "In a line", the character in one
- * line that the cast cards and the sheet's header show under the name). The role decides the
- * group the character is listed in.
+ * CharacterIdentityFields: the name, role, gender and "In a line" at the top of a character
+ * sheet's Basics (stories S1-E17-08 and S1-E17-09; bundle G10a adds "In a line", the character
+ * in one line that the cast cards and the sheet's header show under the name). The role decides
+ * the group the character is listed in. The gender is optional and only picks family words
+ * (mother, son, brother) on the relationships and the family tree (bundle GAPS-3).
  *
  * Who uses it: CharacterSheet. What it calls: PlanTextField and PlanSelectField with the save it
  * is given.
  */
-import { characterRoles, type CharacterChange, type StoryCharacter } from '../api/characters';
+import {
+  characterGenders,
+  characterRoles,
+  type CharacterChange,
+  type CharacterGender,
+  type StoryCharacter,
+} from '../api/characters';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { PlanSelectField } from './PlanSelectField';
 import { PlanTextField } from './PlanTextField';
 
 /**
- * Renders the two fields.
+ * Renders the fields.
  *
  * @param props.character - the character
  * @param props.saveChange - saves one change; throws when it can't
- * @returns the name box, the role drop-down and the one-line summary
+ * @returns the name box, the role and gender drop-downs and the one-line summary
  */
 export function CharacterIdentityFields({
   character,
@@ -51,6 +58,20 @@ export function CharacterIdentityFields({
           }))}
           savedValue={character.role}
           save={async (role) => saveChange({ role: role as StoryCharacter['role'] })}
+        />
+        <PlanSelectField
+          id="atlas-character-gender"
+          label={t('characters.genderLabel')}
+          hint={t('characters.genderHint')}
+          options={[
+            { value: '', label: t('characters.gender.none') },
+            ...characterGenders.map((gender) => ({
+              value: gender,
+              label: t(`characters.gender.${gender}`),
+            })),
+          ]}
+          savedValue={character.gender ?? ''}
+          save={async (gender) => saveChange({ gender: gender as CharacterGender | '' })}
         />
       </div>
       <PlanTextField

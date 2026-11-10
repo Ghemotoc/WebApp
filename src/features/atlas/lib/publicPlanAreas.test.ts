@@ -20,6 +20,7 @@ const plan: PublicPlan = {
         id: 'ana',
         name: 'Ana',
         role: 'protagonist',
+        gender: null,
         sheet: { also_known_as: 'Ani, , Paznica' },
         customValues: {},
         firstAppearance: null,
