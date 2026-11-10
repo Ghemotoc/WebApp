@@ -18,6 +18,7 @@ import { pictureTypes } from '@/features/pictures/api/pictures';
 import { useChapterPictureUpload } from '@/features/pictures/hooks/useChapterPictures';
 
 import { pictureFailureMessage } from '../lib/pictureFailure';
+import { useEditorTranslation } from '../registerEditorTranslations';
 
 /** What the control needs. */
 export interface PictureReplaceControlProps {
@@ -67,7 +68,7 @@ function usePictureReplacement({ chapterId, onReplaced }: PictureReplaceControlP
  * @returns the control
  */
 export function PictureReplaceControl(props: PictureReplaceControlProps) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   const { t: tCommon } = useTranslation();
   const { isOpen, wasReplaced, uploading, open, close, choose } = usePictureReplacement(props);
   const buttonRef = useRef<HTMLButtonElement>(null);

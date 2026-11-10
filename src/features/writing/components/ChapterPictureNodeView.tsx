@@ -13,7 +13,6 @@
  * PictureReplaceControl and useEditingChapterId (the chapter a new upload belongs to).
  */
 import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react';
-import { useTranslation } from 'react-i18next';
 
 import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Button } from '@/components/ui/Button';
@@ -22,6 +21,7 @@ import { TextInput } from '@/components/ui/TextInput';
 import type { PictureState, PictureView } from '@/features/pictures/api/pictures';
 import { useMyPictureStates } from '@/features/pictures/hooks/useChapterPictures';
 import { MAXIMUM_ALT_TEXT_LENGTH } from '@/lib/chapter-pictures';
+import { useEditorTranslation } from '../registerEditorTranslations';
 
 import { useEditingChapterId } from '../lib/editingChapter';
 
@@ -42,7 +42,7 @@ function PictureWithState(props: {
   loadFailed: boolean;
 }) {
   const { view, alt, loadFailed } = props;
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   const state = view?.state ?? 'checking';
   return (
     <div className="relative overflow-hidden rounded-card bg-tint">
@@ -65,7 +65,7 @@ function PictureWithState(props: {
  * @returns the card, which the writer can't type into (only its field and button take input)
  */
 export function ChapterPictureNodeView({ node, updateAttributes, deleteNode }: NodeViewProps) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   const pictureId = String(node.attrs.pictureId ?? '');
   const alt = String(node.attrs.alt ?? '');
   const chapterId = useEditingChapterId();

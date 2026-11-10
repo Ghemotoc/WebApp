@@ -8,11 +8,11 @@
  * the pen, which is what a writer means by picking one.
  * Who uses it: DrawingInsertDialog. What it calls: the shared Chip.
  */
-import { useTranslation } from 'react-i18next';
 
 import { Chip } from '@/components/ui/Chip';
 
 import { SKETCH_COLOURS, type SketchColour, type SketchTool } from '../lib/sketchPad';
+import { useEditorTranslation } from '../registerEditorTranslations';
 
 /** What the toolbar needs. */
 export interface SketchToolsProps {
@@ -30,7 +30,7 @@ const colourOrder: SketchColour[] = ['black', 'red', 'blue'];
 
 /** One colour swatch. */
 function ColourSwatch(props: { colour: SketchColour; isChosen: boolean; onChoose: () => void }) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   return (
     <button
       type="button"
@@ -65,7 +65,7 @@ function ToolButton(props: { label: string; isDisabled: boolean; onPress: () => 
  * @returns a toolbar group with the tools, the colours, Undo and Clear
  */
 export function SketchTools(props: SketchToolsProps) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   return (
     <div
       role="group"

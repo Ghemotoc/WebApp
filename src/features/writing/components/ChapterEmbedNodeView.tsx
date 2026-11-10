@@ -12,13 +12,13 @@
  * useEditingChapterId (the chapter a new card belongs to).
  */
 import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react';
-import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
 import { InfoPill } from '@/components/ui/InfoPill';
 import type { EmbedView } from '@/features/embeds/api/embeds';
 import { useMyEmbeds } from '@/features/embeds/hooks/useEmbeds';
 import { EMBED_SERVICE_NAMES, embedKindOf } from '@/lib/embed-links';
+import { useEditorTranslation } from '../registerEditorTranslations';
 
 import { useEditingChapterId } from '../lib/editingChapter';
 
@@ -26,7 +26,7 @@ import { EmbedLinkChange } from './EmbedLinkChange';
 
 /** The card's words, once its service is known. */
 function CardDetails({ view, title }: { view: EmbedView | undefined; title: string }) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   if (view === undefined) return <p className="m-0 text-sm text-meta">{t('embed.loading')}</p>;
   if (view.state === 'removed') {
     return (
@@ -57,7 +57,7 @@ function CardDetails({ view, title }: { view: EmbedView | undefined; title: stri
  *   input)
  */
 export function ChapterEmbedNodeView({ node, updateAttributes, deleteNode }: NodeViewProps) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   const embedId = String(node.attrs.embedId ?? '');
   const title = String(node.attrs.title ?? '');
   const chapterId = useEditingChapterId();

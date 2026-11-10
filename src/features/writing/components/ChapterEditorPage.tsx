@@ -23,7 +23,6 @@
  */
 import { EditorContent } from '@tiptap/react';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router';
 
 import { ChevronRightIcon } from '@/components/icons/ChevronRightIcon';
@@ -60,13 +59,14 @@ import { EditorToolbar } from './EditorToolbar';
 import { LinkDialog } from './LinkDialog';
 import { NewChapterButton } from './NewChapterButton';
 import { PublishPanel } from './PublishPanel';
+import { useEditorTranslation } from '../registerEditorTranslations';
 
 /** The state pill's tone: a draft is neutral, scheduled gold, published sage. */
 const stateTone = { draft: 'neutral', scheduled: 'gold', published: 'sage' } as const;
 
 /** The breadcrumb: Writer dashboard › the story (its Manage chapters page, S1-E3-04) › Chapter n, then the state pill. */
 function EditorBreadcrumb({ chapter, status }: { chapter: MyChapter; status: ChapterStatus }) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   return (
     <nav aria-label={t('back')} className="flex flex-wrap items-center gap-2 text-sm text-body">
       <Link
@@ -102,7 +102,7 @@ function ChapterTitleField(props: {
   onChange: (value: string) => void;
   onBlur: () => void;
 }) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   return (
     <TextInput
       id="chapter-title"
@@ -119,7 +119,7 @@ function ChapterTitleField(props: {
 
 /** The two lines under the text: the paste note and the rights line. */
 function EditorFootnotes() {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   return (
     <>
       <p className="m-0 text-[13px] leading-normal text-meta">{t('pasteNote')}</p>
@@ -171,7 +171,7 @@ function editorStartFor(chapter: MyChapter, deviceDraft: DeviceDraft | null): Ed
 
 /** The loaded editor's state: the title, the word count, the TipTap editor and the autosave. */
 function useLoadedEditor(chapter: MyChapter, start: EditorStart) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   const { isOnline } = useOnlineStatus();
   const [title, setTitle] = useState(start.title);
   const [wordCount, setWordCount] = useState(chapter.wordCount);
@@ -355,7 +355,7 @@ function EditorMainColumn(props: {
  * chapter's plan. Focus mode hides the list and the plan.
  */
 function LoadedEditor({ chapter, start }: { chapter: MyChapter; start: EditorStart }) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   const writing = useMyStories();
   const loaded = useLoadedEditor(chapter, start);
   const conflict = useConflictChoices(loaded);
@@ -434,7 +434,7 @@ function pageMessage(
 
 /** The page while the editor can't show: signed out, a failed load, loading or not found. */
 function EditorPageMessage({ kind }: { kind: PageMessageKind }) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   if (kind === 'loading') return <PageContainer className="pt-12 pb-7" />;
   if (kind === 'signedOut') {
     return (

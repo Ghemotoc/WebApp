@@ -7,9 +7,9 @@
  * (src/features/pictures/api/pictures.ts) and by the bucket itself.
  * Who uses it: PictureInsertDialog.
  */
-import { useTranslation } from 'react-i18next';
 
 import { pictureTypes } from '@/features/pictures/api/pictures';
+import { useEditorTranslation } from '../registerEditorTranslations';
 
 /** What the field needs. */
 export interface PictureFileFieldProps {
@@ -30,7 +30,7 @@ export function PictureFileField({
   errorMessage,
   onPick,
 }: PictureFileFieldProps) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   const describedBy =
     errorMessage === undefined
       ? 'chapter-picture-file-hint'

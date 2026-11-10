@@ -10,7 +10,6 @@
  * Who uses it: ChapterEmbedNodeView. What it calls: useEmbedAddition.
  */
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
@@ -19,6 +18,7 @@ import { useEmbedAddition } from '@/features/embeds/hooks/useEmbeds';
 import { EMBED_SERVICE_NAMES, parseEmbedLink } from '@/lib/embed-links';
 
 import { embedFailureMessage } from '../lib/embedFailure';
+import { useEditorTranslation } from '../registerEditorTranslations';
 
 /** What the control needs. */
 export interface EmbedLinkChangeProps {
@@ -38,7 +38,7 @@ export interface EmbedLinkChangeProps {
  * @returns the state and the ways to open, close and save
  */
 function useLinkChange({ chapterId, onChanged }: EmbedLinkChangeProps) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   const [isOpen, setOpen] = useState(false);
   const [wasChanged, setWasChanged] = useState(false);
   const [link, setLink] = useState('');
@@ -84,7 +84,7 @@ function useLinkChange({ chapterId, onChanged }: EmbedLinkChangeProps) {
  * @returns the status lines
  */
 function ChangeStatus({ change }: { change: ReturnType<typeof useLinkChange> }) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   const failure = change.adding.error === null ? null : embedFailureMessage(change.adding.error);
   return (
     <div aria-live="polite">
@@ -103,7 +103,7 @@ function ChangeStatus({ change }: { change: ReturnType<typeof useLinkChange> }) 
  * @returns the control
  */
 export function EmbedLinkChange(props: EmbedLinkChangeProps) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   const change = useLinkChange(props);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
