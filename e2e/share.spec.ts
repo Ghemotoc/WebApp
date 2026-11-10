@@ -14,7 +14,9 @@
  *   fifth criteria); the palette colours can be picked (fourth criterion);
  * - a second card from the same chapter shows the "One quote card per chapter" pop-up (second);
  * - the writer's Quote cards switch in story settings hides "Share quote" (third);
- * - both dialogs pass axe at 390 px in ro and en and fit at 320 px.
+ * - both dialogs pass axe at 390 px in ro and en and fit at 320 px;
+ * - "Send in Messages" opens Messages with only the chapter's path in the address, counts one
+ *   share, and "Don't send" drops it; a visitor isn't offered it (GAPS-7a).
  * Test data: adult_writer's story "Turnul cu ceas" with one chapter; blocked reads it (no other
  *   reader spec signs in as blocked). All removed afterwards.
  */
@@ -32,19 +34,33 @@ import { runSql } from './support/database';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 const readerId = '00000000-0000-4000-8000-000000000016';
+/** teacher, the adult reader who uploads a background picture (GAPS-7). */
+const pictureReaderId = '00000000-0000-4000-8000-000000000007';
 const storySlug = 'share-e2e';
 const chapterCode = 'impart01';
 const chapterPath = `/s/${storySlug}/${chapterCode}`;
 const shortParagraph = 'Ceasul din turn bătea de treisprezece ori în fiecare joi.';
+/** A 1 by 1 pixel PNG, enough for the stub check. */
+const tinyPng = Buffer.from(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+  'base64',
+);
 const longParagraph = `${'Nimeni din oraș nu știa cine urca scările turnului noaptea. '.repeat(6)}Până într-o zi.`;
 
 /** Removes the spec's story, its shares, cards and the reader's rate-limit events. */
 function cleanUp() {
-  runSql(`delete from public.quote_cards where user_id = '${readerId}';
-    delete from public.rate_limit_events where user_id = '${readerId}';
+  const readers = `('${readerId}', '${pictureReaderId}')`;
+  runSql(`delete from public.quote_cards where user_id in ${readers};
+    update public.feature_flags set is_enabled = false where key = 'picture_uploads';
+    delete from vault.secrets where name = 'picture_check_secret';
+    delete from public.notifications where case_id in (select case_id from public.picture_checks where user_id = '${pictureReaderId}' and kind = 'quote_card');
+    delete from public.case_actions where case_id in (select case_id from public.picture_checks where user_id = '${pictureReaderId}' and kind = 'quote_card');
+    with removed as (delete from public.picture_checks where user_id = '${pictureReaderId}' and kind = 'quote_card' returning case_id)
+    delete from public.cases where id in (select case_id from removed);
+    delete from public.rate_limit_events where user_id in ${readers};
     delete from public.chapters where code = '${chapterCode}';
     delete from public.stories where slug = '${storySlug}';
-    update public.profiles set locale = 'ro' where handle in ('blocked', 'adult_writer');`);
+    update public.profiles set locale = 'ro' where handle in ('blocked', 'adult_writer', 'teacher');`);
 }
 
 /** The story with one published chapter: a short paragraph and one over 280 characters. */
@@ -216,6 +232,70 @@ test.describe('share a chapter and the quote card (S1-E4-05, S1-E4-07)', () => {
     await expect(page.getByRole('button', { name: 'Share quote' })).toHaveCount(0);
   });
 
+  test('the quote card takes the story cover or the reader’s own checked picture as its background', async ({
+    browser,
+  }) => {
+    // The local server signs check results with PICTURE_CHECK_SECRET (playwright.config.ts); the
+    // database checks them against the same value in its Vault. Never a real secret.
+    runSql(`delete from public.quote_cards where user_id = '${pictureReaderId}';
+      update public.feature_flags set is_enabled = true where key = 'picture_uploads';
+      delete from vault.secrets where name = 'picture_check_secret';
+      select vault.create_secret('local-e2e-picture-secret', 'picture_check_secret');`);
+    // teacher: an adult who may write, so Storage takes their upload (the other tests' reader is a
+    // minor who isn't admitted yet, and may not upload).
+    const page = await openAs(browser, 'teacher', chapterPath);
+    await expect(page.getByRole('heading', { level: 1, name: 'Treisprezece' })).toBeVisible();
+    await selectParagraph(page, 0);
+    await page.getByRole('button', { name: 'Share quote' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Quote card' });
+    const pressed = (name: string) => dialog.getByRole('button', { name, exact: true });
+
+    // The story's cover: one press, and it is the chosen background.
+    await pressed('Story cover').click();
+    await expect(pressed('Story cover')).toHaveAttribute('aria-pressed', 'true');
+    await expect(pressed('Purple')).toHaveAttribute('aria-pressed', 'false');
+    await expect(
+      dialog.getByText('Pictures are blurred so the words stay easy to read.'),
+    ).toBeVisible();
+
+    // No picture of their own yet: no chip, only the upload field.
+    await expect(pressed('Own picture')).toHaveCount(0);
+    await dialog
+      .getByLabel('Upload picture')
+      .setInputFiles({ name: 'sky.png', mimeType: 'image/png', buffer: tinyPng });
+    await expect(dialog.getByText('The picture passed the check.')).toBeVisible();
+    await expect(pressed('Own picture')).toBeEnabled();
+    await pressed('Own picture').click();
+    await expect(pressed('Own picture')).toHaveAttribute('aria-pressed', 'true');
+    await expect(pressed('Story cover')).toHaveAttribute('aria-pressed', 'false');
+
+    // A picture the check flags waits for a person: no chip, and the card falls back to a colour.
+    await dialog
+      .getByLabel('Change picture')
+      .setInputFiles({ name: 'sky_fail.png', mimeType: 'image/png', buffer: tinyPng });
+    await expect(
+      dialog.getByText('A person on the moderation team is looking at the picture.', {
+        exact: false,
+      }),
+    ).toBeVisible();
+    await expect(pressed('Own picture')).toHaveCount(0);
+    await expect(pressed('Purple')).toHaveAttribute('aria-pressed', 'true');
+    expect(
+      runSql(`select count(*) from public.picture_checks
+        where user_id = '${pictureReaderId}' and kind = 'quote_card' and deleted_at is null;`).trim(),
+    ).toBe('1');
+
+    // "Remove picture" takes it away.
+    await dialog.getByRole('button', { name: 'Remove picture' }).click();
+    await expect(dialog.getByLabel('Upload picture')).toBeAttached();
+    await expect(dialog.getByRole('button', { name: 'Remove picture' })).toHaveCount(0);
+    expect(
+      runSql(`select count(*) from public.picture_checks
+        where user_id = '${pictureReaderId}' and kind = 'quote_card' and deleted_at is null;`).trim(),
+    ).toBe('0');
+    await page.context().close();
+  });
+
   test('axe: the share dialog and the quote card at 390 px in ro and en', async ({ browser }) => {
     runSql(`delete from public.quote_cards where user_id = '${readerId}';`);
     for (const language of ['ro', 'en'] as const) {
@@ -267,5 +347,50 @@ test.describe('share a chapter and the quote card (S1-E4-05, S1-E4-07)', () => {
     await expect(page.getByRole('button', { name: 'Share quote' })).toHaveCount(0);
     // Sharing the link still works.
     await expect(page.getByRole('button', { name: 'Share chapter 1' })).toBeVisible();
+  });
+
+  test('Send in Messages takes the link to Messages and counts the share (GAPS-7a)', async ({
+    browser,
+  }) => {
+    const page = await openChapter(browser);
+    await page.getByRole('button', { name: 'Share chapter 1' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Share this chapter' });
+    const sharesBefore = Number(sharesToday());
+    // Step 1: the link carries only the chapter's path, nothing about the reader.
+    const send = dialog.getByRole('link', { name: 'Send in Messages' });
+    await expect(send).toHaveAttribute(
+      'href',
+      `/messages?share=${encodeURIComponent(chapterPath)}`,
+    );
+    await send.click();
+    // Step 2: Messages shows the link and asks for a chat; the share is counted once.
+    await expect(page).toHaveURL(/\/messages\?share=/);
+    await expect(
+      page.getByText('Pick a chat, or start a new one, to send this link.'),
+    ).toBeVisible();
+    await expect(page.getByText(new RegExp(`${chapterPath}$`))).toBeVisible();
+    await expect.poll(() => Number(sharesToday())).toBe(sharesBefore + 1);
+    // Step 3: "Don't send" drops the link from the address.
+    await page.getByRole('button', { name: 'Don’t send' }).click();
+    await expect(page).toHaveURL(/\/messages$/);
+    await expect(page.getByText('Pick a chat, or start a new one, to send this link.')).toHaveCount(
+      0,
+    );
+  });
+
+  test('a visitor sees no Send in Messages in the share dialog (GAPS-7a)', async ({ browser }) => {
+    const context = await browser.newContext({
+      permissions: ['clipboard-read', 'clipboard-write'],
+    });
+    await context.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
+    const page = await context.newPage();
+    await page.goto(chapterPath);
+    const share = page.getByRole('button', { name: 'Share chapter 1' });
+    // A visitor reads the teaser; when it offers Share, the dialog has no Messages link.
+    if ((await share.count()) === 0) return;
+    await share.click();
+    const dialog = page.getByRole('dialog', { name: 'Share this chapter' });
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByRole('link', { name: 'Send in Messages' })).toHaveCount(0);
   });
 });

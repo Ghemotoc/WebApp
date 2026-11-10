@@ -6,10 +6,16 @@
  * with a round flag button beside them, named "Report the message from …" (CLAUDE.md rule 6); a
  * report takes that message and up to 20 before it to the moderation team (S1-E9-02). Each has
  * "name · time" under it. Words are plain text, shown as written with their line breaks, never
- * HTML or Markdown, so nothing in a message can run or link anywhere. A message the moderation
- * team removed reads "[Removed by the moderation team]".
- * Who shows it: ChatPanel. What it calls: ReportButton (S1-E10-01).
+ * HTML or Markdown, so nothing in a message can run or lead to another website. One exception
+ * (bundle GAPS-7, part a): a link to a story, chapter or passage on this website can be pressed
+ * and opens inside the app; lib/storyLinks.ts decides what counts, and the story's own rules
+ * (rating, blocks, visibility) still decide whether the reader may open it. A message the
+ * moderation team removed reads "[Removed by the moderation team]".
+ * Who shows it: ChatPanel. What it calls: ReportButton (S1-E10-01) and lib/storyLinks.ts.
  */
+import { Link } from 'react-router';
+
+import { splitStoryLinks } from '@/lib/storyLinks';
 import { ReportButton } from '@/features/reporting/components/ReportButton';
 
 import type { ChatMessage } from '../api/messages';
@@ -25,6 +31,33 @@ function timeOf(iso: string, language: string): string {
 /** The day a message was sent, for the line between days. */
 function dayOf(iso: string, language: string): string {
   return new Intl.DateTimeFormat(language, { dateStyle: 'medium' }).format(new Date(iso));
+}
+
+/**
+ * A message's words, with this website's story links made pressable and everything else plain.
+ *
+ * @param props.body - the message as written
+ * @returns the words and links in order
+ */
+function MessageWords({ body }: { body: string }) {
+  return (
+    <>
+      {splitStoryLinks(body).map((piece, index) =>
+        piece.kind === 'storyLink' ? (
+          // The pieces never reorder, so their place is a safe key.
+          <Link
+            key={index}
+            to={piece.path}
+            className="font-semibold text-inherit underline [overflow-wrap:anywhere]"
+          >
+            {piece.text}
+          </Link>
+        ) : (
+          <span key={index}>{piece.text}</span>
+        ),
+      )}
+    </>
+  );
 }
 
 /**
@@ -45,7 +78,11 @@ function MessageItem({ message, otherName }: { message: ChatMessage; otherName: 
         <p
           className={`m-0 max-w-[min(520px,85vw)] rounded-[18px] px-4 py-2.5 text-[15px] leading-relaxed break-words whitespace-pre-line ${bubbleStyle}`}
         >
-          {message.body ?? <em>{t('chat.removed')}</em>}
+          {message.body === null ? (
+            <em>{t('chat.removed')}</em>
+          ) : (
+            <MessageWords body={message.body} />
+          )}
         </p>
         {!message.fromMe && message.body !== null && (
           <ReportButton

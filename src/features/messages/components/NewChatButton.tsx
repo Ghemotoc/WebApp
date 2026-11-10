@@ -5,7 +5,8 @@
  * while no chat is open.
  *
  * The dialog only opens /messages/:handle; whether the person may be written to is decided there
- * by the database, so this never reveals anything about anyone.
+ * by the database, so this never reveals anything about anyone. A story link being sent into a
+ * chat (GAPS-7a) stays in the address.
  * Who shows it: ChatList. What it calls: PeopleDialog (S1-E5-05) and the router.
  */
 import { useId, useState, type FormEvent } from 'react';
@@ -16,6 +17,7 @@ import { Button } from '@/components/ui/Button';
 import { TextInput } from '@/components/ui/TextInput';
 import { PeopleDialog } from '@/features/people/components/PeopleDialog';
 
+import { useSharedLink } from '../hooks/useSharedLink';
 import { useMessagesTranslation } from '../registerMessagesTranslations';
 
 /**
@@ -55,6 +57,7 @@ function OpenButton({ look, onOpen }: { look: 'round' | 'pill'; onOpen: () => vo
 export function NewChatButton({ look = 'round' }: { look?: 'round' | 'pill' }) {
   const { t } = useMessagesTranslation();
   const navigate = useNavigate();
+  const shared = useSharedLink();
   const [isOpen, setIsOpen] = useState(false);
   const [handle, setHandle] = useState('');
   // Two of these can be on the page at once, so each dialog's field gets its own ID.
@@ -67,7 +70,7 @@ export function NewChatButton({ look = 'round' }: { look?: 'round' | 'pill' }) {
     if (username === '') return;
     setIsOpen(false);
     setHandle('');
-    void navigate(`/messages/${encodeURIComponent(username)}`);
+    void navigate(`/messages/${encodeURIComponent(username)}${shared.query}`);
   }
 
   return (

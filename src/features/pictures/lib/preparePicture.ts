@@ -32,6 +32,9 @@ export const longestSideFor = {
   landingPicture: 2400,
   // A sponsor's banner, at most 970 px wide on a sharp screen (S1-E12-02; board AdFormats).
   sponsorCreative: 1940,
+  // A reader's own quote card background: the card is 1,080 px square and the picture is drawn
+  // blurred, so nothing bigger is ever needed (GAPS-7).
+  quoteCardPicture: 1080,
   // A logo or emblem (BRAND-1a): drawn at most 48 px tall, and as a 512 px browser tab icon.
   brandPicture: 1024,
 } as const;

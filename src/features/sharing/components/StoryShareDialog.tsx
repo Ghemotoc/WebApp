@@ -7,7 +7,10 @@
  * looks in a chat" copies what the link preview really sends (lib/sharedStory.ts): the cover
  * colour, the title, "by <pen name>" and the blurb; for a 16+ or 18+ story only the title and the
  * rating, as for chapters.
- * Who uses it: StoryShareButton. What it calls: ShareLinkRow, SharePrivacyNote and SharingModal.
+ * "Send in Messages" (bundle GAPS-7, part a) takes a signed-in reader to Messages with the link
+ * ready for the chat they pick.
+ * Who uses it: StoryShareButton. What it calls: ShareLinkRow, SharePrivacyNote, SendInMessagesLink
+ * and SharingModal.
  */
 import { useTranslation } from 'react-i18next';
 
@@ -22,6 +25,7 @@ import {
 } from '../lib/sharedStory';
 import { storyShareLink } from '../lib/shareLink';
 
+import { SendInMessagesLink } from './SendInMessagesLink';
 import { ShareLinkRow } from './ShareLinkRow';
 import { SharePrivacyNote } from './SharePrivacyNote';
 import { SharingModal } from './SharingModal';
@@ -99,6 +103,7 @@ function StoryChatPreview({ story }: { story: SharedStory }) {
  */
 export function StoryShareDialog({ isOpen, onClose, story, wasCopied }: StoryShareDialogProps) {
   const { t } = useTranslation('sharing');
+  const link = storyShareLink(story.slug);
   return (
     <SharingModal
       isOpen={isOpen}
@@ -108,9 +113,13 @@ export function StoryShareDialog({ isOpen, onClose, story, wasCopied }: StorySha
       description={story.title}
       closeLabel={t('dialog.close')}
     >
-      <ShareLinkRow link={storyShareLink(story.slug)} wasCopied={wasCopied} />
+      <ShareLinkRow link={link} wasCopied={wasCopied} />
       <SharePrivacyNote text={t('story.privacy')} />
-      <p className="m-0 text-sm text-body">{t('dialog.deviceNote')}</p>
+      <div className="flex flex-col gap-2">
+        <h3 className="m-0 eyebrow">{t('dialog.otherWays')}</h3>
+        <SendInMessagesLink link={link} countedChapter={null} />
+        <p className="m-0 text-sm text-body">{t('dialog.deviceNote')}</p>
+      </div>
       <StoryChatPreview story={story} />
       <div className="flex justify-end border-t border-border pt-4">
         <Button onClick={onClose}>{t('dialog.done')}</Button>

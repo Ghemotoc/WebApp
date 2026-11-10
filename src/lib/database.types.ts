@@ -13085,6 +13085,7 @@ export type Database = {
       my_plan_item_kind: { Args: { target_item_id: string }; Returns: string };
       my_planned_story_id: { Args: { story_slug: string }; Returns: string };
       my_privacy_settings: { Args: Record<PropertyKey, never>; Returns: Json };
+      my_quote_card_picture: { Args: Record<PropertyKey, never>; Returns: Json };
       my_reading_habit: { Args: Record<PropertyKey, never>; Returns: Json };
       my_reading_lists: { Args: Record<PropertyKey, never>; Returns: Json };
       my_report_detail_requests: {
@@ -13730,6 +13731,7 @@ export type Database = {
         Args: { ends: string; local_moment: string; starts: string };
         Returns: string;
       };
+      quote_card_picture_file_may_go: { Args: { object_name: string }; Returns: boolean };
       quote_card_state: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
       raise_rating_for_picture: {
         Args: {
@@ -14005,6 +14007,7 @@ export type Database = {
         };
         Returns: string;
       };
+      register_quote_card_picture: { Args: { target_path: string }; Returns: string };
       register_signature_picture: { Args: { target_path: string }; Returns: string };
       register_space_banner: { Args: { target_path: string }; Returns: string };
       register_space_logo: { Args: { target_path: string }; Returns: string };
@@ -14021,6 +14024,7 @@ export type Database = {
       };
       removal_order_log_rows: { Args: Record<PropertyKey, never>; Returns: Json[] };
       remove_character_picture: { Args: { character_id: string }; Returns: Json };
+      remove_my_quote_card_picture: { Args: Record<PropertyKey, never>; Returns: Json };
       remove_space_member: {
         Args: { handle: string; reason?: string; slug: string };
         Returns: undefined;

@@ -41,8 +41,8 @@ export interface PictureView {
 
 /** The buckets people upload to: covers, profile pictures, chapter pictures (S1-E3-09), Story
  * Atlas pictures (S1-E17-11), space banners (FORUMS-2c), signature pictures (S1-E8-08) and
- * landing page pictures (S1-E11-14, CONTESTS-13a2a), sponsor creatives (S1-E12-02, SPONSORS-b2)
- * and brand logos and emblems (BRAND-1a). */
+ * landing page pictures (S1-E11-14, CONTESTS-13a2a), sponsor creatives (S1-E12-02, SPONSORS-b2),
+ * brand logos and emblems (BRAND-1a) and a reader's own quote card background (GAPS-7). */
 export type PictureBucket =
   | 'covers'
   | 'avatars'
@@ -52,7 +52,8 @@ export type PictureBucket =
   | 'signature-pictures'
   | 'landing-pictures'
   | 'sponsor-creatives'
-  | 'brand-assets';
+  | 'brand-assets'
+  | 'quote-card-pictures';
 
 /** The picture types the buckets accept, and the largest file each takes (the bucket limits). */
 export const pictureTypes = ['image/jpeg', 'image/png', 'image/webp'] as const;
@@ -66,6 +67,7 @@ export const largestPictureBytes: Record<PictureBucket, number> = {
   'landing-pictures': 5 * 1024 * 1024,
   'sponsor-creatives': 5 * 1024 * 1024,
   'brand-assets': 2 * 1024 * 1024,
+  'quote-card-pictures': 5 * 1024 * 1024,
 };
 
 /** Why an upload didn't work. animated: a signature picture that moves (S1-E8-08). */
@@ -231,7 +233,7 @@ export interface PictureUpload {
  * @throws PictureUploadError wrong_type, too_big, animated (a moving signature picture) or
  *   not_allowed (Storage refused it)
  */
-async function storePicture(
+export async function storePicture(
   client: AppSupabaseClient,
   target: { bucket: PictureBucket; folder: string | null; file: File; longestSide: number },
 ): Promise<string> {
@@ -265,7 +267,7 @@ async function storePicture(
  * @param error - the error the database returned
  * @returns the error to throw
  */
-function registrationFailure(error: { code: string; hint?: string }): PictureUploadError {
+export function registrationFailure(error: { code: string; hint?: string }): PictureUploadError {
   if (error.code === '54000')
     return new PictureUploadError('too_many', waitMinutesFrom(error.hint));
   return new PictureUploadError(error.code === '' ? 'unreachable' : 'not_allowed');

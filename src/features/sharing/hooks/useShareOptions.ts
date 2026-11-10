@@ -5,7 +5,7 @@
  * Asked once per chapter for a signed-in reader. A visitor, a 16+ or 18+ story, or a chapter
  * whose writer switched a kind off gets false for it, and its button never appears.
  * Who calls it: QuoteShareBar (passage links), PictureShareButton (picture cards), and both card
- * dialogs for the writer's card colour (IDEAS-1c).
+ * dialogs for the writer's card colour (IDEAS-1c) and the story's cover as a background (GAPS-7).
  * What it calls: api/sharing.ts → share_options().
  */
 import { useQuery } from '@tanstack/react-query';
@@ -16,7 +16,12 @@ import { useSession } from '@/features/auth/hooks/useSession';
 import { fetchShareOptions, type ChapterAddress, type ShareOptions } from '../api/sharing';
 
 /** What a visitor and a chapter still loading get: nothing beyond the plain link. */
-const nothingShared: ShareOptions = { passages: false, pictures: false, cardColour: null };
+const nothingShared: ShareOptions = {
+  passages: false,
+  pictures: false,
+  cardColour: null,
+  cover: null,
+};
 
 /**
  * Reads the options.

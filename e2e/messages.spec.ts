@@ -12,6 +12,8 @@
  * - the profile shows Message only to someone who may write (S1-E9-03): not to an adult on a
  *   14-year-old's profile; each message from the other person has its own Report (rule 6);
  * - text only: the box says so (criterion 4);
+ * - a story link sent from a share dialog rides into the chat picked, is sent once and can be
+ *   pressed there; anything else in the address, and other websites' links, stay inert (GAPS-7a);
  * - axe at 390, 768 and 1440 px, light and night, ro and en, on /messages and one chat, and no
  *   sideways scroll.
  * Test data: the seed personas adult_writer, teacher, blocker (an adult) and kid_14_waiting, and
@@ -171,6 +173,53 @@ test.describe('private messages (S1-E9-01)', () => {
     await page.goto('/messages/kid_14_waiting');
     await expect(page.getByText('kid_14_waiting isn’t taking messages right now.')).toBeVisible();
     await expect(page.getByLabel('Message to kid_14_waiting')).toHaveCount(0);
+  });
+
+  test('a shared story link rides into the chat picked, is sent once and can be pressed', async ({
+    browser,
+  }) => {
+    // Step 1: arriving from a share dialog, the notice shows the link and the chats keep it.
+    const sharedPath = '/s/a-shared-story/abcd1234';
+    const page = await openAs(
+      browser,
+      'adult_writer',
+      `/messages?share=${encodeURIComponent(sharedPath)}`,
+    );
+    await expect(
+      page.getByText('Pick a chat, or start a new one, to send this link.'),
+    ).toBeVisible();
+    await page.locator('a[href^="/messages/teacher"]').click();
+    await expect(page).toHaveURL(/\/messages\/teacher\?share=/);
+    // Step 2: the link sits in the box; a few words are added and it is sent.
+    const box = page.getByLabel('Message to teacher');
+    await expect(box).toHaveValue(new RegExp(`${sharedPath}$`));
+    await expect(page.getByText('The link is in the message box.')).toBeVisible();
+    await box.pressSequentially(' is worth a read.');
+    // Exact, because "Don’t send" in the notice also holds the word.
+    await page.getByRole('button', { name: 'Send', exact: true }).click();
+    // Step 3: the address forgets the link, the box is empty and the notice is gone.
+    await expect(page).toHaveURL(/\/messages\/teacher$/);
+    await expect(box).toHaveValue('');
+    await expect(page.getByText('The link is in the message box.')).toHaveCount(0);
+    // Step 4: in the chat, the story link can be pressed and stays inside the website.
+    const link = chatOn(page).getByRole('link', { name: new RegExp(`${sharedPath}$`) });
+    await expect(link).toHaveAttribute('href', sharedPath);
+    await expect(chatOn(page).getByText('is worth a read.')).toBeVisible();
+  });
+
+  test('anything but a story address in the share parameter is ignored', async ({ browser }) => {
+    const page = await openAs(
+      browser,
+      'adult_writer',
+      `/messages/teacher?share=${encodeURIComponent('https://evil.example/s/a-story')}`,
+    );
+    await expect(page.getByLabel('Message to teacher')).toHaveValue('');
+    await expect(page.getByText('The link is in the message box.')).toHaveCount(0);
+    // Another website's link inside a message stays plain words.
+    await page.getByLabel('Message to teacher').fill('See https://evil.example/s/a-story');
+    await page.getByRole('button', { name: 'Send' }).click();
+    await expect(chatOn(page).getByText('See https://evil.example/s/a-story')).toBeVisible();
+    await expect(chatOn(page).getByRole('link', { name: /evil\.example/ })).toHaveCount(0);
   });
 
   for (const view of everyView(['/messages', '/messages/teacher'])) {

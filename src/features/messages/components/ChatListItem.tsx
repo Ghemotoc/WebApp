@@ -6,6 +6,7 @@
  * bold with a plum dot and say "new messages" to screen readers, so colour is never the only
  * sign. A removed last message reads "[Removed by the moderation team]". The online dot follows
  * the name while the other person shows as online to the reader (S1-E13-01).
+ * A story link being sent into a chat (GAPS-7a) stays in the address while the reader picks one.
  * Who shows it: ChatList. Where it goes: /messages/:handle.
  */
 import { Link } from 'react-router';
@@ -13,6 +14,7 @@ import { Link } from 'react-router';
 import { OnlineDot } from '@/features/privacy/components/OnlineDot';
 
 import type { ConversationSummary } from '../api/messages';
+import { useSharedLink } from '../hooks/useSharedLink';
 import { useMessagesTranslation } from '../registerMessagesTranslations';
 
 import { ChatAvatar } from './ChatAvatar';
@@ -60,11 +62,13 @@ export function ChatListItem(props: {
   const { chat, isOpen, isOnline } = props;
   const { t, i18n } = useMessagesTranslation();
   const preview = usePreview(chat);
+  // A link being shared travels with the reader into the chat they pick (GAPS-7a).
+  const shared = useSharedLink();
   const openStyle = isOpen ? 'border-l-gold bg-tint' : 'border-l-transparent';
   return (
     <li className="border-b border-border last:border-b-0">
       <Link
-        to={`/messages/${chat.otherHandle}`}
+        to={`/messages/${chat.otherHandle}${shared.query}`}
         aria-current={isOpen ? 'page' : undefined}
         className={`flex min-h-[64px] items-center gap-3 border-l-4 px-4 py-3 text-ink no-underline hover:bg-tint ${openStyle}`}
       >

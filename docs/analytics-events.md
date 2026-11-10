@@ -16,7 +16,7 @@ The rule (S1-E15-03): every event the code sends is a row here and a line in `sr
 | `report_submitted` | a signed-in person sends a report | `reason`, `item_type` (never the item or the reporter) | `src/features/reporting/hooks/useReportItem.ts` | S1-E10-01 |
 | `writer_followed` | a reader follows a writer | none (never who) | `src/features/people/hooks/useFollow.ts` | S1-E6-05 |
 | `story_followed` | a reader follows a story | none (never which) | `src/features/people/hooks/useFollow.ts` | S1-E6-05 |
-| `chapter_shared` | a reader copies a chapter's link or shares it with the device's share sheet | `method`: `copy_link` or `share_sheet` | `src/features/sharing/lib/countShare.ts` | S1-E4-05 |
+| `chapter_shared` | a reader copies a chapter's link, shares it with the device's share sheet or presses "Send in Messages" (GAPS-7a) | `method`: `copy_link`, `share_sheet` or `message` | `src/features/sharing/lib/countShare.ts` | S1-E4-05 |
 | `quote_card_saved` | a reader saves a quote card picture | none | `src/features/sharing/hooks/useQuoteCardActions.ts` | S1-E4-07 |
 | `picture_card_saved` | a reader saves a picture card | none | `src/features/sharing/hooks/usePictureCardActions.ts` | S1-E4-11 |
 

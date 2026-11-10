@@ -27962,6 +27962,26 @@ COMMENT ON FUNCTION "public"."my_privacy_settings"() IS 'The signed-in member''s
 
 
 
+CREATE OR REPLACE FUNCTION "public"."my_quote_card_picture"() RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select public.picture_state_json(picture_checks)
+  from public.picture_checks
+  where picture_checks.user_id = (select auth.uid()) and picture_checks.kind = 'quote_card'
+    and picture_checks.deleted_at is null
+  order by picture_checks.created_at desc
+  limit 1;
+$$;
+
+
+ALTER FUNCTION "public"."my_quote_card_picture"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."my_quote_card_picture"() IS 'The caller''s own quote card background: its check state and file (GAPS-7).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."my_reading_habit"() RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -29879,11 +29899,11 @@ CREATE TABLE IF NOT EXISTS "public"."picture_checks" (
     "file_sha256" "text",
     "uploader_ip_scrambled" "text",
     "uploader_ip_period" "text",
-    CONSTRAINT "picture_checks_bucket_is_known" CHECK (("bucket" = ANY (ARRAY['covers'::"text", 'avatars'::"text", 'chapter-images'::"text", 'atlas-images'::"text", 'space-banners'::"text", 'signature-pictures'::"text", 'landing-pictures'::"text", 'sponsor-creatives'::"text", 'brand-assets'::"text"]))),
+    CONSTRAINT "picture_checks_bucket_is_known" CHECK (("bucket" = ANY (ARRAY['covers'::"text", 'avatars'::"text", 'chapter-images'::"text", 'atlas-images'::"text", 'space-banners'::"text", 'signature-pictures'::"text", 'landing-pictures'::"text", 'sponsor-creatives'::"text", 'brand-assets'::"text", 'quote-card-pictures'::"text"]))),
     CONSTRAINT "picture_checks_file_sha256_shape" CHECK ((("file_sha256" IS NULL) OR ("file_sha256" ~ '^[0-9a-f]{64}$'::"text"))),
     CONSTRAINT "picture_checks_ip_period_shape" CHECK ((("uploader_ip_period" IS NULL) OR ("uploader_ip_period" ~ '^[0-9]{4}-[0-9]{2}$'::"text"))),
     CONSTRAINT "picture_checks_ip_shape" CHECK ((("uploader_ip_scrambled" IS NULL) OR ("uploader_ip_scrambled" ~ '^[0-9a-f]{64}$'::"text"))),
-    CONSTRAINT "picture_checks_kind_matches_bucket" CHECK (((("kind" = 'cover'::"public"."picture_kind") AND ("bucket" = 'covers'::"text")) OR (("kind" = 'avatar'::"public"."picture_kind") AND ("bucket" = 'avatars'::"text")) OR (("kind" = ANY (ARRAY['chapter_picture'::"public"."picture_kind", 'drawing'::"public"."picture_kind"])) AND ("bucket" = 'chapter-images'::"text")) OR (("kind" = 'atlas_image'::"public"."picture_kind") AND ("bucket" = 'atlas-images'::"text")) OR (("kind" = ANY (ARRAY['space_banner'::"public"."picture_kind", 'space_logo'::"public"."picture_kind"])) AND ("bucket" = 'space-banners'::"text")) OR (("kind" = 'signature_picture'::"public"."picture_kind") AND ("bucket" = 'signature-pictures'::"text")) OR (("kind" = 'landing_picture'::"public"."picture_kind") AND ("bucket" = 'landing-pictures'::"text")) OR (("kind" = 'sponsor_creative'::"public"."picture_kind") AND ("bucket" = 'sponsor-creatives'::"text")) OR (("kind" = 'brand_asset'::"public"."picture_kind") AND ("bucket" = 'brand-assets'::"text")) OR ("kind" <> ALL (ARRAY['cover'::"public"."picture_kind", 'avatar'::"public"."picture_kind", 'chapter_picture'::"public"."picture_kind", 'drawing'::"public"."picture_kind", 'atlas_image'::"public"."picture_kind", 'space_banner'::"public"."picture_kind", 'space_logo'::"public"."picture_kind", 'signature_picture'::"public"."picture_kind", 'landing_picture'::"public"."picture_kind", 'sponsor_creative'::"public"."picture_kind", 'brand_asset'::"public"."picture_kind"]))))
+    CONSTRAINT "picture_checks_kind_matches_bucket" CHECK (((("kind" = 'cover'::"public"."picture_kind") AND ("bucket" = 'covers'::"text")) OR (("kind" = 'avatar'::"public"."picture_kind") AND ("bucket" = 'avatars'::"text")) OR (("kind" = ANY (ARRAY['chapter_picture'::"public"."picture_kind", 'drawing'::"public"."picture_kind"])) AND ("bucket" = 'chapter-images'::"text")) OR (("kind" = 'atlas_image'::"public"."picture_kind") AND ("bucket" = 'atlas-images'::"text")) OR (("kind" = ANY (ARRAY['space_banner'::"public"."picture_kind", 'space_logo'::"public"."picture_kind"])) AND ("bucket" = 'space-banners'::"text")) OR (("kind" = 'signature_picture'::"public"."picture_kind") AND ("bucket" = 'signature-pictures'::"text")) OR (("kind" = 'landing_picture'::"public"."picture_kind") AND ("bucket" = 'landing-pictures'::"text")) OR (("kind" = 'sponsor_creative'::"public"."picture_kind") AND ("bucket" = 'sponsor-creatives'::"text")) OR (("kind" = 'brand_asset'::"public"."picture_kind") AND ("bucket" = 'brand-assets'::"text")) OR (("kind" = 'quote_card'::"public"."picture_kind") AND ("bucket" = 'quote-card-pictures'::"text"))))
 );
 
 
@@ -32583,6 +32603,26 @@ COMMENT ON FUNCTION "public"."quiet_hours_end_after"("local_moment" timestamp wi
 
 
 
+CREATE OR REPLACE FUNCTION "public"."quote_card_picture_file_may_go"("object_name" "text") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select not exists (
+    select 1 from public.picture_checks
+    where picture_checks.bucket = 'quote-card-pictures' and picture_checks.path = object_name
+      and (picture_checks.deleted_at is null
+           or picture_checks.status in ('held', 'removed')
+           or picture_checks.preserve_until is not null));
+$$;
+
+
+ALTER FUNCTION "public"."quote_card_picture_file_may_go"("object_name" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."quote_card_picture_file_may_go"("object_name" "text") IS 'True when no live, held or preserved picture still needs this quote-card-pictures file (GAPS-7).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."quote_card_state"("story_slug" "text", "chapter_code" "text") RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -34267,6 +34307,53 @@ COMMENT ON FUNCTION "public"."register_picture"("target_bucket" "text", "target_
 
 
 
+CREATE OR REPLACE FUNCTION "public"."register_quote_card_picture"("target_path" "text") RETURNS "uuid"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  new_id uuid;
+begin
+  -- Step 1: a member who may write, while uploads are on.
+  if caller_id is null or not public.is_active_member() then
+    raise exception 'Your account can''t add pictures right now.' using errcode = 'insufficient_privilege';
+  end if;
+  if not public.is_feature_enabled('picture_uploads') then
+    raise exception 'Picture uploads are switched off.' using errcode = 'feature_not_supported';
+  end if;
+  -- Step 2: the file is there and the caller uploaded it.
+  if not public.avatar_upload_allowed(target_path)
+     or not exists (select 1 from storage.objects where objects.bucket_id = 'quote-card-pictures'
+                    and objects.name = target_path and objects.owner_id = caller_id::text) then
+    raise exception 'That picture isn''t uploaded.' using errcode = 'check_violation';
+  end if;
+  -- Step 3: the upload limit, then the pending row.
+  perform public.take_rate_limit('picture_upload');
+  insert into public.picture_checks (user_id, bucket, path, kind)
+  values (caller_id, 'quote-card-pictures', target_path, 'quote_card')
+  on conflict (bucket, path) do nothing
+  returning id into new_id;
+  if new_id is null then
+    raise exception 'That picture is already registered.' using errcode = 'check_violation';
+  end if;
+  -- Step 4: the earlier background pictures are retired; a held or removed one keeps its row and
+  -- file for the moderators (quote_card_picture_file_may_go()).
+  update public.picture_checks set deleted_at = now()
+  where picture_checks.user_id = caller_id and picture_checks.kind = 'quote_card'
+    and picture_checks.id <> new_id and picture_checks.deleted_at is null;
+  return new_id;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."register_quote_card_picture"("target_path" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."register_quote_card_picture"("target_path" "text") IS 'Records a just-uploaded quote card background as pending its check and retires the caller''s earlier one (GAPS-7).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."register_signature_picture"("target_path" "text") RETURNS "uuid"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -34564,6 +34651,39 @@ ALTER FUNCTION "public"."remove_character_picture"("character_id" "uuid") OWNER 
 
 
 COMMENT ON FUNCTION "public"."remove_character_picture"("character_id" "uuid") IS 'Takes the picture off one of the caller''s characters and marks it deleted (S1-E17-11).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."remove_my_quote_card_picture"() RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  old_file jsonb;
+begin
+  if caller_id is null then
+    raise exception 'Sign in to change your picture.' using errcode = 'insufficient_privilege';
+  end if;
+  -- The newest live picture's file is handed back; every live one is retired.
+  select jsonb_build_object('bucket', picture_checks.bucket, 'path', picture_checks.path) into old_file
+  from public.picture_checks
+  where picture_checks.user_id = caller_id and picture_checks.kind = 'quote_card'
+    and picture_checks.deleted_at is null
+  order by picture_checks.created_at desc
+  limit 1;
+  update public.picture_checks set deleted_at = now()
+  where picture_checks.user_id = caller_id and picture_checks.kind = 'quote_card'
+    and picture_checks.deleted_at is null;
+  return jsonb_build_object('old_file', old_file);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."remove_my_quote_card_picture"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."remove_my_quote_card_picture"() IS 'Retires the caller''s quote card background and hands back its file to delete (GAPS-7).';
 
 
 
@@ -39584,22 +39704,32 @@ CREATE OR REPLACE FUNCTION "public"."share_options"("story_slug" "text", "chapte
     AS $$
 declare
   shared record;
-  pictures_on boolean;
-  colour text;
+  story public.stories;
+  cover_kind public.cover_kind;
 begin
   -- Step 1: a signed-in reader and a chapter they may read, or nothing at all.
   select * into shared from public.shareable_chapter(story_slug, chapter_code);
   if (select auth.uid()) is null or not found then
-    return jsonb_build_object('passages', false, 'pictures', false, 'card_colour', null);
+    return jsonb_build_object('passages', false, 'pictures', false, 'card_colour', null, 'cover', null);
   end if;
-  -- Step 2: the writer's picture switch (never for 16+ or 18+) and their card colour.
-  select stories.picture_sharing_enabled and public.story_shares_content(stories.rating),
-    stories.card_colour
-    into pictures_on, colour
+  -- Step 2: the story, for the writer's switches, their card colour and the cover.
+  select stories.* into story
   from public.chapters join public.stories on stories.id = chapters.story_id
   where chapters.id = shared.chapter_id;
-  return jsonb_build_object('passages', shared.quote_cards_enabled,
-    'pictures', coalesce(pictures_on, false), 'card_colour', colour);
+  -- Step 3: a cover staff hid shows as the automatic one (S1-E11-08).
+  cover_kind := case when story.cover_hidden_at is null then story.cover_kind else 'automatic' end;
+  return jsonb_build_object(
+    'passages', shared.quote_cards_enabled,
+    -- The writer's picture switch, never for 16+ or 18+ (S1-E4-11, criterion 4).
+    'pictures', coalesce(story.picture_sharing_enabled and public.story_shares_content(story.rating), false),
+    'card_colour', story.card_colour,
+    'cover', jsonb_build_object(
+      'kind', cover_kind,
+      -- The story's ID (never the writer's) draws the automatic cover (S1-E3-13).
+      'story_id', story.id,
+      'design', case when cover_kind = 'drawn' then story.cover_design end,
+      'background', case when cover_kind = 'drawn' then story.cover_background end,
+      'accent', case when cover_kind = 'drawn' then story.cover_accent end));
 end;
 $$;
 
@@ -39607,7 +39737,7 @@ $$;
 ALTER FUNCTION "public"."share_options"("story_slug" "text", "chapter_code" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."share_options"("story_slug" "text", "chapter_code" "text") IS 'Whether the caller may share passages and pictures from a chapter, and the writer''s card colour (S1-E4-11, IDEAS-1c).';
+COMMENT ON FUNCTION "public"."share_options"("story_slug" "text", "chapter_code" "text") IS 'Whether the caller may share passages and pictures from a chapter, the writer''s card colour and the story''s cover for the card (S1-E4-11, IDEAS-1c, GAPS-7).';
 
 
 
@@ -59457,6 +59587,11 @@ GRANT ALL ON FUNCTION "public"."my_privacy_settings"() TO "authenticated";
 
 
 
+REVOKE ALL ON FUNCTION "public"."my_quote_card_picture"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."my_quote_card_picture"() TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."my_reading_habit"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."my_reading_habit"() TO "authenticated";
 
@@ -60151,6 +60286,11 @@ REVOKE ALL ON FUNCTION "public"."quiet_hours_end_after"("local_moment" timestamp
 
 
 
+REVOKE ALL ON FUNCTION "public"."quote_card_picture_file_may_go"("object_name" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."quote_card_picture_file_may_go"("object_name" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."quote_card_state"("story_slug" "text", "chapter_code" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."quote_card_state"("story_slug" "text", "chapter_code" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."quote_card_state"("story_slug" "text", "chapter_code" "text") TO "authenticated";
@@ -60385,6 +60525,11 @@ GRANT ALL ON FUNCTION "public"."register_picture"("target_bucket" "text", "targe
 
 
 
+REVOKE ALL ON FUNCTION "public"."register_quote_card_picture"("target_path" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."register_quote_card_picture"("target_path" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."register_signature_picture"("target_path" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."register_signature_picture"("target_path" "text") TO "authenticated";
 
@@ -60420,6 +60565,11 @@ REVOKE ALL ON FUNCTION "public"."removal_order_log_rows"() FROM PUBLIC;
 
 REVOKE ALL ON FUNCTION "public"."remove_character_picture"("character_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."remove_character_picture"("character_id" "uuid") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."remove_my_quote_card_picture"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."remove_my_quote_card_picture"() TO "authenticated";
 
 
 
