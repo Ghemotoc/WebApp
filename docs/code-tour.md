@@ -2147,6 +2147,13 @@ The liquid glass Library board draws "Your lists": lists of stories a reader mak
 - Preview: "Preview" beside "Post reply" opens `ReplyPreview`, which draws what is in the box with `ForumPostText`, the component a posted reply uses (so raw HTML is never drawn). It is made on the reader's device and sends nothing.
 - Tests: `supabase/tests/database/330-forum-rules-and-pointers.test.sql`, `src/features/forums/lib/forumAddresses.test.ts`, `src/features/forums/api/forumModeration.test.ts`, `e2e/forum-rules-and-pointers.spec.ts`.
 
+## Formatting buttons on forum posts (GAPS-16b)
+
+- Where it lives: `src/features/forums/components/PostFormatToolbar.tsx` (drawn by `PostEditor`, so the reply box, the new-thread box and the edit box all have it), `hooks/usePostFormatting.ts` and `lib/postFormatting.ts`; the link, quote and list icons are in `src/components/icons/ActionIcon.tsx`.
+- How a press travels: a button (or Ctrl+B, Ctrl+I in the box) → `usePostFormatting().format()` reads the box's text and selection → `applyPostFormat()` works out the new text and what to select (pure, unit-tested) → the form gets the new text through `onChange` → after the box redraws, a layout effect focuses it and selects the words, so typing goes on.
+- Nothing new reaches the server: the buttons only type the Markdown a writer could type (`**`, `*`, `[words](https://)`, `> `, `- `), which `check_forum_post_text()` and `ForumPostText` already handle.
+- Tests: `src/features/forums/lib/postFormatting.test.ts`, `e2e/forum-formatting.spec.ts`.
+
 ## Following a forum thread (GAPS-16a)
 
 - Where it lives: `src/features/forums/components/ThreadFollowButton.tsx` (in `ThreadSidePanel`), `hooks/useThreadFollow.ts`, `api/forumFollows.ts`, `src/features/notifications/lib/forumReplyText.ts`, and `supabase/migrations/…_gaps16a_forum_reply_kind.sql` and `…_gaps16a_thread_follows.sql`.

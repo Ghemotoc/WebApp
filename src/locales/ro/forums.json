@@ -119,7 +119,16 @@
     "reply": "Răspuns",
     "help": "Doar formatare simplă: aldine, cursive, linkuri, citate și liste.",
     "counter": "{{count}} / {{limit}}",
-    "counterLabel": "{{count}} din {{limit}} caractere folosite"
+    "counterLabel": "{{count}} din {{limit}} caractere folosite",
+    "format": {
+      "label": "Formatare",
+      "bold": "Aldine",
+      "italic": "Cursive",
+      "link": "Adaugă un link",
+      "quote": "Citat",
+      "list": "Listă",
+      "linkWords": "textul linkului"
+    }
   },
   "reply": {
     "heading": "Răspuns",

@@ -15,7 +15,8 @@
  * DecisionsCard; the class and teacher check pages (G8e); and, since NO-DOODLES replaced the old
  * hand-drawn icon set, every screen that used it (the home page hero and safety lines, sign-up,
  * log-in ways, story stats, the writer dashboard, the chapter editor's insert buttons, forum
- * locks, the messages rules note, export status and the profile's safety card).
+ * locks, the messages rules note, export status and the profile's safety card); and the forum
+ * reply's formatting toolbar (GAPS-16b: link, quote, list).
  */
 import type { SVGProps } from 'react';
 
@@ -160,6 +161,27 @@ const drawings = {
     <>
       <rect x="3" y="5" width="18" height="14" rx="2" />
       <path d="m10 9 5 3-5 3z" />
+    </>
+  ),
+  // Link: two chain links (bundle GAPS-16b; board 5.2's formatting toolbar).
+  link: (
+    <>
+      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+    </>
+  ),
+  // Quote: two quotation marks (GAPS-16b).
+  quote: (
+    <>
+      <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.76-2-2-2H4c-1.25 0-2 .75-2 2v6c0 1.25.75 2 2 2h3c0 4-2 6-4 6" />
+      <path d="M14 21c3 0 7-1 7-8V5c0-1.25-.76-2-2-2h-4c-1.25 0-2 .75-2 2v6c0 1.25.75 2 2 2h3c0 4-2 6-4 6" />
+    </>
+  ),
+  // List: three dots, each with a line (GAPS-16b).
+  list: (
+    <>
+      <path d="M8 6h13M8 12h13M8 18h13" />
+      <path d="M3 6h.01M3 12h.01M3 18h.01" />
     </>
   ),
 } as const;

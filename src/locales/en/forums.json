@@ -119,7 +119,16 @@
     "reply": "Reply",
     "help": "Simple formatting only: bold, italic, links, quotes and lists.",
     "counter": "{{count}} / {{limit}}",
-    "counterLabel": "{{count}} of {{limit}} characters used"
+    "counterLabel": "{{count}} of {{limit}} characters used",
+    "format": {
+      "label": "Formatting",
+      "bold": "Bold",
+      "italic": "Italic",
+      "link": "Add a link",
+      "quote": "Quote",
+      "list": "List",
+      "linkWords": "link text"
+    }
   },
   "reply": {
     "heading": "Reply",
