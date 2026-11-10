@@ -1994,6 +1994,61 @@ COMMENT ON FUNCTION "public"."add_chapter_to_act"("story_slug" "text", "act_id" 
 
 
 
+CREATE OR REPLACE FUNCTION "public"."add_character_detail"("story_slug" "text", "field_name" "text", "sheet_group" "text", "own_group" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  target_story_id uuid;
+  wanted_group text := nullif(btrim(coalesce(own_group, '')), '');
+  new_id uuid;
+begin
+  -- Step 1: a signed-in writer and their own live story.
+  if caller_id is null then
+    raise exception 'Sign in to add a detail.' using errcode = 'insufficient_privilege';
+  end if;
+  target_story_id := public.my_live_story_id(story_slug);
+  if target_story_id is null then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  -- Step 2: one place at most.
+  if sheet_group is not null and wanted_group is not null then
+    raise exception 'A detail sits in one place.'
+      using errcode = 'check_violation', hint = 'two_places';
+  end if;
+  -- Step 3: the bounds. 40 details as in add_character_field(), hidden ones included (they keep
+  -- their values); 12 groups of the writer's own, so a sheet stays readable.
+  if (select count(*) from public.story_character_fields where story_id = target_story_id) >= 40 then
+    raise exception 'A story can hold at most 40 character fields of your own.'
+      using errcode = 'check_violation', hint = 'too_many_fields';
+  end if;
+  if wanted_group is not null
+     and not exists (select 1 from public.story_character_fields as fields
+                     where fields.story_id = target_story_id and fields.own_group = wanted_group)
+     and (select count(distinct fields.own_group) from public.story_character_fields as fields
+          where fields.story_id = target_story_id) >= 12 then
+    raise exception 'A story can hold at most 12 groups of your own details.'
+      using errcode = 'check_violation', hint = 'too_many_groups';
+  end if;
+  -- Step 4: the detail, after the others.
+  insert into public.story_character_fields (story_id, user_id, position, name, sheet_group, own_group)
+  values (target_story_id, caller_id,
+    coalesce((select max(position) from public.story_character_fields where story_id = target_story_id), 0) + 1,
+    btrim(field_name), sheet_group, wanted_group)
+  returning id into new_id;
+  return jsonb_build_object('outcome', 'ok', 'id', new_id);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."add_character_detail"("story_slug" "text", "field_name" "text", "sheet_group" "text", "own_group" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."add_character_detail"("story_slug" "text", "field_name" "text", "sheet_group" "text", "own_group" "text") IS 'Adds one of the caller''s own details to every character sheet of a story, under a built-in group, in a group of their own or in neither (GAPS-1; S1-E17-10).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."add_character_field"("story_slug" "text", "field_name" "text") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -34106,6 +34161,50 @@ COMMENT ON FUNCTION "public"."rename_chapter"("chapter_code" "text", "title" "te
 
 
 
+CREATE OR REPLACE FUNCTION "public"."rename_character_detail_group"("story_slug" "text", "group_name" "text", "new_name" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target_story_id uuid;
+  wanted_name text := btrim(coalesce(new_name, ''));
+begin
+  -- Step 1: a signed-in writer and their own live story.
+  if (select auth.uid()) is null then
+    raise exception 'Sign in to rename a group.' using errcode = 'insufficient_privilege';
+  end if;
+  target_story_id := public.my_live_story_id(story_slug);
+  if target_story_id is null then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  -- Step 2: the same name is nothing to do; another group's name would merge two groups unasked.
+  if wanted_name = group_name then
+    return jsonb_build_object('outcome', 'ok');
+  end if;
+  if exists (select 1 from public.story_character_fields as fields
+             where fields.story_id = target_story_id and fields.own_group = wanted_name) then
+    raise exception 'This story already has a group with that name.'
+      using errcode = 'check_violation', hint = 'name_taken';
+  end if;
+  -- Step 3: every detail in the group takes the new name.
+  update public.story_character_fields
+  set own_group = wanted_name
+  where story_id = target_story_id and own_group = group_name;
+  if not found then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  return jsonb_build_object('outcome', 'ok');
+end;
+$$;
+
+
+ALTER FUNCTION "public"."rename_character_detail_group"("story_slug" "text", "group_name" "text", "new_name" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."rename_character_detail_group"("story_slug" "text", "group_name" "text", "new_name" "text") IS 'Renames one of the caller''s own groups of character details, on every detail in it (GAPS-1).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."renumber_story_chapters"("target_story_id" "uuid") RETURNS "void"
     LANGUAGE "sql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -41348,8 +41447,8 @@ begin
     return jsonb_build_object('outcome', 'not_found');
   end if;
 
-  -- Step 2: the characters, the writer's own fields, the chapters to pick from and the
-  -- relationships between the characters, with their notes (the writer's own).
+  -- Step 2: the characters, the writer's own fields with their places, the chapters to pick from
+  -- and the relationships between the characters, with their notes (the writer's own).
   return (select jsonb_build_object(
     'outcome', 'ok',
     'story', jsonb_build_object('id', stories.id, 'slug', stories.slug, 'title', stories.title),
@@ -41358,7 +41457,9 @@ begin
       from public.story_characters where story_characters.story_id = stories.id), '[]'::jsonb),
     'fields', coalesce((
       select jsonb_agg(jsonb_build_object('id', fields.id, 'name', fields.name, 'position', fields.position,
-          'is_hidden', fields.hidden_at is not null) order by fields.position, fields.created_at)
+          'is_hidden', fields.hidden_at is not null,
+          'sheet_group', fields.sheet_group, 'own_group', fields.own_group)
+        order by fields.position, fields.created_at)
       from public.story_character_fields as fields where fields.story_id = stories.id), '[]'::jsonb),
     'chapters', coalesce((
       select jsonb_agg(jsonb_build_object('code', chapters.code, 'position', chapters.position,
@@ -47407,8 +47508,13 @@ CREATE TABLE IF NOT EXISTS "public"."story_character_fields" (
     "hidden_at" timestamp with time zone,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "sheet_group" "text",
+    "own_group" "text",
     CONSTRAINT "story_character_fields_name_length" CHECK ((("char_length"("btrim"("name")) >= 1) AND ("char_length"("btrim"("name")) <= 60))),
-    CONSTRAINT "story_character_fields_position_counts_from_one" CHECK (("position" >= 1))
+    CONSTRAINT "story_character_fields_one_place" CHECK ((("sheet_group" IS NULL) OR ("own_group" IS NULL))),
+    CONSTRAINT "story_character_fields_own_group_length" CHECK ((("own_group" IS NULL) OR (("char_length"("btrim"("own_group")) >= 1) AND ("char_length"("btrim"("own_group")) <= 60)))),
+    CONSTRAINT "story_character_fields_position_counts_from_one" CHECK (("position" >= 1)),
+    CONSTRAINT "story_character_fields_sheet_group_known" CHECK ((("sheet_group" IS NULL) OR ("sheet_group" = ANY (ARRAY['basics'::"text", 'look_and_voice'::"text", 'inside'::"text", 'in_the_story'::"text"]))))
 );
 
 
@@ -47421,6 +47527,14 @@ The writer''s own character fields in one story''s plan, shown on every sheet (S
 
 
 COMMENT ON COLUMN "public"."story_character_fields"."user_id" IS 'The writer''s user ID; never shown publicly (rule 15).';
+
+
+
+COMMENT ON COLUMN "public"."story_character_fields"."sheet_group" IS 'kind: setting. The built-in sheet group this detail shows under (basics, look_and_voice, inside, in_the_story); null when it sits elsewhere (GAPS-1).';
+
+
+
+COMMENT ON COLUMN "public"."story_character_fields"."own_group" IS 'kind: user_content. The name of the writer''s own group this detail sits in; null when it sits elsewhere. A group exists while one of its details does (GAPS-1).';
 
 
 
@@ -54829,6 +54943,11 @@ GRANT ALL ON FUNCTION "public"."add_chapter_to_act"("story_slug" "text", "act_id
 
 
 
+REVOKE ALL ON FUNCTION "public"."add_character_detail"("story_slug" "text", "field_name" "text", "sheet_group" "text", "own_group" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."add_character_detail"("story_slug" "text", "field_name" "text", "sheet_group" "text", "own_group" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."add_character_field"("story_slug" "text", "field_name" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."add_character_field"("story_slug" "text", "field_name" "text") TO "authenticated";
 
@@ -59322,6 +59441,11 @@ GRANT ALL ON FUNCTION "public"."rename_bible_section"("section_id" "uuid", "sect
 
 REVOKE ALL ON FUNCTION "public"."rename_chapter"("chapter_code" "text", "title" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."rename_chapter"("chapter_code" "text", "title" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."rename_character_detail_group"("story_slug" "text", "group_name" "text", "new_name" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."rename_character_detail_group"("story_slug" "text", "group_name" "text", "new_name" "text") TO "authenticated";
 
 
 

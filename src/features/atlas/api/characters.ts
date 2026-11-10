@@ -7,11 +7,15 @@
  * - story_cast(): the characters, the writer's own fields and the chapters to pick from;
  * - create_story_character(), update_story_character() and delete_story_character();
  * - add_character_field() and update_character_field() (the writer's own fields, S1-E17-10);
+ * - the places of the writer's own details are in api/characterDetails.ts (GAPS-1);
  * - set_character_picture() and remove_character_picture(), with the upload and file delete in
  *   src/features/pictures/api/pictures.ts (S1-E17-11);
  * - add_character_relationship() and delete_character_relationship() (S1-E17-14).
  * Characters are private: only their writer can read them (story_characters_select_own).
  */
+import { toCharacterField, type CharacterField, type CharacterFieldRow } from './characterDetails';
+
+export type { CharacterField } from './characterDetails';
 import type { Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
 import {
@@ -111,13 +115,6 @@ export interface CharacterRelationship {
   note: string;
 }
 
-/** One of the writer's own fields (S1-E17-10). */
-export interface CharacterField {
-  id: string;
-  name: string;
-  isHidden: boolean;
-}
-
 /** Everything the Characters page shows. */
 export interface StoryCast {
   /** The story's row ID: the folder its pictures go in (never a user ID). */
@@ -155,7 +152,7 @@ interface StoryCastRow {
   outcome: 'ok';
   story: { id: string; slug: string; title: string };
   characters: CharacterRow[];
-  fields: { id: string; name: string; position: number; is_hidden: boolean }[];
+  fields: CharacterFieldRow[];
   chapters: { code: string; position: number; title: string }[];
   relationships: {
     id: string;
@@ -221,11 +218,7 @@ export async function fetchStoryCast(
     storyId: row.story.id,
     storyTitle: row.story.title,
     characters: await toCharacters(client, row.characters),
-    fields: row.fields.map((field) => ({
-      id: field.id,
-      name: field.name,
-      isHidden: field.is_hidden,
-    })),
+    fields: row.fields.map(toCharacterField),
     chapters: row.chapters,
     relationships: row.relationships.map((link) => ({
       id: link.id,

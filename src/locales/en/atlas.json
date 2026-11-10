@@ -174,10 +174,34 @@
     "firstAppearance": "First appearance",
     "firstAppearanceNone": "Not picked yet",
     "firstAppearancePill": "First appearance: Chapter {{number}}",
+    "povPill_one": "Point of view in {{count}} chapter",
+    "povPill_few": "Point of view in {{count}} chapters",
+    "povPill_other": "Point of view in {{count}} chapters",
     "custom": {
       "heading": "Custom fields",
       "none": "No custom fields yet.",
-      "manage": "Add or remove your own fields on the at-a-glance page"
+      "manage": "Remove or bring back fields on the at-a-glance page"
+    },
+    "details": {
+      "add": "Add detail",
+      "addTo": "Add detail to {{group}}",
+      "name": "Detail name",
+      "nameHint": "Shows on every character’s sheet in this story.",
+      "addConfirm": "Add",
+      "cancel": "Cancel",
+      "save": "Save",
+      "nameRequired": "Give the detail a name.",
+      "failed": "That didn’t save. A story holds up to 40 details; check your connection and try again.",
+      "addGroup": "Add a group of details",
+      "groupName": "Group name",
+      "groupNameHint": "Such as “Magic” or “School”.",
+      "firstDetail": "First detail",
+      "addGroupConfirm": "Add group",
+      "groupNameRequired": "Give the group a name.",
+      "groupFailed": "That didn’t save. A story holds up to 12 groups and 40 details; check your connection and try again.",
+      "renameGroup": "Rename group",
+      "renameGroupNamed": "Rename the group {{group}}",
+      "renameFailed": "That didn’t save. Another group may have that name; try a different one."
     },
     "picture": {
       "heading": "Picture",

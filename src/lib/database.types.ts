@@ -7612,7 +7612,9 @@ export type Database = {
           hidden_at: string | null;
           id: string;
           name: string;
+          own_group: string | null;
           position: number;
+          sheet_group: string | null;
           story_id: string;
           updated_at: string;
           user_id: string;
@@ -7623,7 +7625,9 @@ export type Database = {
           hidden_at?: string | null;
           id?: string;
           name: string;
+          own_group?: string | null;
           position: number;
+          sheet_group?: string | null;
           story_id: string;
           updated_at?: string;
           user_id: string;
@@ -7633,7 +7637,9 @@ export type Database = {
           hidden_at?: string | null;
           id?: string;
           name?: string;
+          own_group?: string | null;
           position?: number;
+          sheet_group?: string | null;
           story_id?: string;
           updated_at?: string;
           user_id?: string;
@@ -9121,6 +9127,10 @@ export type Database = {
       add_chapter_scene: { Args: { chapter_code: string; scene_title: string }; Returns: Json };
       add_chapter_share: { Args: { target_chapter_id: string }; Returns: undefined };
       add_chapter_to_act: { Args: { act_id: string; story_slug: string }; Returns: Json };
+      add_character_detail: {
+        Args: { field_name: string; own_group: string; sheet_group: string; story_slug: string };
+        Returns: Json;
+      };
       add_character_field: { Args: { field_name: string; story_slug: string }; Returns: Json };
       add_character_relationship: {
         Args: {
@@ -13885,6 +13895,10 @@ export type Database = {
       removed_passage_marker: { Args: { language_code: string }; Returns: string };
       rename_bible_section: { Args: { section_id: string; section_name: string }; Returns: Json };
       rename_chapter: { Args: { chapter_code: string; title: string }; Returns: Json };
+      rename_character_detail_group: {
+        Args: { group_name: string; new_name: string; story_slug: string };
+        Returns: Json;
+      };
       renumber_story_chapters: { Args: { target_story_id: string }; Returns: undefined };
       replace_sent_teacher_link: { Args: { target_user_id: string }; Returns: undefined };
       reply_moderator_mail: { Args: { body: string; thread_reference: string }; Returns: boolean };

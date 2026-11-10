@@ -5,7 +5,9 @@
  * Two columns on a wide screen, one on a phone. The main column: the header card (the name, the
  * role and first appearance pills, the line, and the picture on the right), then the four groups
  * (Basics with the name, role and line first; Look and voice; Inside; In the story with the first
- * appearance) and the writer's own fields. The side column: the relationships (S1-E17-14), where
+ * appearance), each with the writer's details placed in it and "Add detail"; then the writer's
+ * own groups of details, the fields with no place and "Add a group of details" (bundle GAPS-1).
+ * The side column: the relationships (S1-E17-14), where
  * the character appears, what readers see of them (S1-E17-32) and Delete. Every field saves by
  * itself.
  * The caller gives it a key per character, so switching characters saves what was waiting and
@@ -13,15 +15,24 @@
  * Who uses it: CharactersPage. What it calls: useStoryCast's changers (through the props),
  * CharacterSheetHeader and the sheet's section components.
  */
-import type { CharacterChange, SheetKey, StoryCast, StoryCharacter } from '../api/characters';
+import type {
+  CharacterChange,
+  SheetGroup,
+  SheetKey,
+  StoryCast,
+  StoryCharacter,
+} from '../api/characters';
+import { ownDetailGroups } from '../lib/ownDetailGroups';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
+import { AddDetailGroupForm } from './AddDetailGroupForm';
 import { CharacterIdentityFields } from './CharacterIdentityFields';
 import { CharacterAppearancesSection } from './CharacterAppearancesSection';
 import { CharacterRelationshipsSection } from './CharacterRelationshipsSection';
 import { CharacterSheetHeader } from './CharacterSheetHeader';
 import { CustomValuesSection } from './CustomValuesSection';
 import { DeleteCharacterSection } from './DeleteCharacterSection';
+import { OwnDetailGroupSection } from './OwnDetailGroupSection';
 import { PlanSelectField } from './PlanSelectField';
 import { ReaderVisibilitySection } from './ReaderVisibilitySection';
 import { SheetGroupSection } from './SheetGroupSection';
@@ -88,6 +99,61 @@ function SheetSideColumn({
   );
 }
 
+/** The four built-in groups, in the sheet's order. */
+const builtInGroups: readonly SheetGroup[] = ['basics', 'lookAndVoice', 'inside', 'inTheStory'];
+
+/** The main column's groups: the four built-in ones, then the writer's own, then the rest. */
+function SheetGroups({ slug, cast, character, saveChange }: CharacterSheetProps) {
+  /** Saves one sheet field by itself. */
+  const saveSheetField = async (key: SheetKey, value: string) =>
+    saveChange({ sheet: { [key]: value } });
+  /** Saves one of the writer's own details by itself. */
+  const saveDetail = async (fieldId: string, value: string) =>
+    saveChange({ custom: { [fieldId]: value } });
+  return (
+    <>
+      {builtInGroups.map((group) => (
+        <SheetGroupSection
+          key={group}
+          slug={slug}
+          group={group}
+          character={character}
+          fields={cast.fields}
+          saveSheetField={saveSheetField}
+          saveDetail={saveDetail}
+          before={
+            group === 'basics' && (
+              <CharacterIdentityFields character={character} saveChange={saveChange} />
+            )
+          }
+        >
+          {group === 'inTheStory' && (
+            <FirstAppearanceField cast={cast} character={character} saveChange={saveChange} />
+          )}
+        </SheetGroupSection>
+      ))}
+      {ownDetailGroups(cast.fields).map((group, index) => (
+        <OwnDetailGroupSection
+          key={group.name}
+          slug={slug}
+          name={group.name}
+          index={index}
+          character={character}
+          fields={group.fields}
+          saveValue={saveDetail}
+        />
+      ))}
+      <CustomValuesSection
+        slug={slug}
+        character={character}
+        fields={cast.fields}
+        saveValue={saveDetail}
+      />
+      <AddDetailGroupForm slug={slug} />
+    </>
+  );
+}
+
 /**
  * Renders the sheet.
  *
@@ -95,9 +161,6 @@ function SheetSideColumn({
  */
 export function CharacterSheet(props: CharacterSheetProps) {
   const { slug, cast, character, saveChange } = props;
-  /** Saves one sheet field by itself. */
-  const saveSheetField = async (key: SheetKey, value: string) =>
-    saveChange({ sheet: { [key]: value } });
   return (
     <article
       aria-labelledby="atlas-character-heading"
@@ -111,27 +174,7 @@ export function CharacterSheet(props: CharacterSheetProps) {
           uploadPicture={props.uploadPicture}
           removePicture={props.removePicture}
         />
-        <SheetGroupSection
-          group="basics"
-          character={character}
-          saveSheetField={saveSheetField}
-          before={<CharacterIdentityFields character={character} saveChange={saveChange} />}
-        />
-        <SheetGroupSection
-          group="lookAndVoice"
-          character={character}
-          saveSheetField={saveSheetField}
-        />
-        <SheetGroupSection group="inside" character={character} saveSheetField={saveSheetField} />
-        <SheetGroupSection group="inTheStory" character={character} saveSheetField={saveSheetField}>
-          <FirstAppearanceField cast={cast} character={character} saveChange={saveChange} />
-        </SheetGroupSection>
-        <CustomValuesSection
-          slug={slug}
-          character={character}
-          fields={cast.fields}
-          saveValue={async (fieldId, value) => saveChange({ custom: { [fieldId]: value } })}
-        />
+        <SheetGroups {...props} />
       </div>
       <SheetSideColumn slug={slug} cast={cast} character={character} onDelete={props.onDelete} />
     </article>
