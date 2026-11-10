@@ -2,7 +2,8 @@
  * PlanPreviewPage: /plan/s/:storySlug/preview/:area, "Preview as a reader" (story S1-E17-32:
  * "when I open it, then I see exactly what a reader would see").
  *
- * The Story Atlas top bar, the same band readers get with the story's title (PublicPlanHero), a
+ * The Story Atlas top bar, the same band readers get with the story's cover, title and writer's
+ * name (PublicPlanHero), a
  * line saying this is a preview (and, before publishing, that readers can't see any of it yet),
  * then the same PublicPlanView readers get, with the items that wait
  * for a chapter marked instead of left out (S1-E17-35) and no Report buttons. Only the writer
@@ -37,7 +38,7 @@ function PreviewBody({
   isPublished: boolean;
 }) {
   const { t } = useAtlasTranslation();
-  const { areaPath, characterId } = useParams();
+  const { areaPath, itemId } = useParams();
   const area = areaFromPath(areaPath) ?? plan.areas[0] ?? null;
   return (
     <>
@@ -55,7 +56,7 @@ function PreviewBody({
         <PublicPlanView
           plan={plan}
           area={area}
-          characterId={characterId}
+          itemId={itemId}
           base={`/plan/s/${slug}/preview`}
           isPreview
         />
@@ -89,7 +90,7 @@ export function PlanPreviewPage() {
       {preview === null && <Notice tone="error">{t('notFound')}</Notice>}
       {preview && (
         <>
-          <PublicPlanHero title={preview.plan.storyTitle} storyAddress={null} />
+          <PublicPlanHero plan={preview.plan} storyAddress={null} />
           <PreviewBody slug={storySlug} plan={preview.plan} isPublished={preview.isPublished} />
         </>
       )}

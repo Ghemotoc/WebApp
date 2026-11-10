@@ -782,7 +782,7 @@ const writeRoutes: RouteObject[] = [
   ...[
     '/plan/s/:storySlug/preview',
     '/plan/s/:storySlug/preview/:areaPath',
-    '/plan/s/:storySlug/preview/:areaPath/:characterId',
+    '/plan/s/:storySlug/preview/:areaPath/:itemId',
   ].map((path): RouteObject => ({
     path,
     HydrateFallback: () => null,
@@ -839,8 +839,8 @@ const writeRoutes: RouteObject[] = [
     },
   },
   // The parts of a story's plan its writer shares (S1-E17-33): /s/<story>/atlas/<area>, and one
-  // character's page. "atlas" is five letters, so it can never be a chapter's 8-character code.
-  ...['/s/:storySlug/atlas/:areaPath', '/s/:storySlug/atlas/:areaPath/:characterId'].map(
+  // character's or one world entry's page (GAPS-4). "atlas" is five letters, so it can never be a chapter's 8-character code.
+  ...['/s/:storySlug/atlas/:areaPath', '/s/:storySlug/atlas/:areaPath/:itemId'].map(
     (path): RouteObject => ({
       path,
       HydrateFallback: () => null,

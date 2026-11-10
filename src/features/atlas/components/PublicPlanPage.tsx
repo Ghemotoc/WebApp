@@ -1,8 +1,10 @@
 /**
- * PublicPlanPage: /s/:storySlug/atlas/:area and /s/:storySlug/atlas/characters/:characterId,
- * the parts of a story's plan its writer shares with readers (story S1-E17-33).
+ * PublicPlanPage: /s/:storySlug/atlas/:area, /s/:storySlug/atlas/characters/:itemId and
+ * /s/:storySlug/atlas/world/:itemId (GAPS-4), the parts of a story's plan its writer shares with
+ * readers (story S1-E17-33).
  *
- * PublicPlanHero (the story's title, a link back to its page), then PublicPlanView. The database
+ * PublicPlanHero (the story's cover, its title as a link back to its page and who wrote it),
+ * then PublicPlanView. The database
  * decides what this reader may see (get_public_story_plan(): the story's rating, blocks,
  * moderation and the writer's switches, S1-E17-32 to S1-E17-35); an area that is off or a story
  * the reader may not read gets the same plain message. No doodles: plain reading pages.
@@ -16,6 +18,7 @@ import { PageContainer } from '@/components/ui/PageContainer';
 import type { PlanArea, PublicPlan } from '../api/publicPlan';
 import { usePublicPlan } from '../hooks/usePublicPlan';
 import { areaFromPath, readerPlanBase } from '../lib/publicPlanAreas';
+import { findPublicEntry } from '../lib/worldEntries';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { PublicPlanHero } from './PublicPlanHero';
@@ -25,19 +28,19 @@ import { PublicPlanView } from './PublicPlanView';
 function PublicPlanBody({
   plan,
   area,
-  characterId,
+  itemId,
 }: {
   plan: PublicPlan;
   area: PlanArea;
-  characterId: string | undefined;
+  itemId: string | undefined;
 }) {
   return (
     <>
-      <PublicPlanHero title={plan.storyTitle} storyAddress={`/s/${plan.storySlug}`} />
+      <PublicPlanHero plan={plan} storyAddress={`/s/${plan.storySlug}`} />
       <PublicPlanView
         plan={plan}
         area={area}
-        characterId={characterId}
+        itemId={itemId}
         base={readerPlanBase(plan.storySlug)}
         isPreview={false}
       />
@@ -56,13 +59,38 @@ function shownArea(plan: PublicPlan | null | undefined, area: PlanArea | null): 
 }
 
 /**
+ * True when there is nothing to show: the reader may not read the story, or the area is off.
+ *
+ * @returns whether to show the plain "not available" message
+ */
+function isNothingToShow(plan: PublicPlan | null | undefined, area: PlanArea | null): boolean {
+  if (plan === null) return true;
+  return plan !== undefined && area === null;
+}
+
+/**
+ * What the tab's title calls the open page: a world entry's own title on its page (GAPS-4),
+ * otherwise the area's name.
+ *
+ * @returns the entry's title, or null to use the area's name
+ */
+function openEntryTitle(
+  plan: PublicPlan,
+  area: PlanArea,
+  itemId: string | undefined,
+): string | null {
+  if (area !== 'bible' || itemId === undefined) return null;
+  return findPublicEntry(plan, itemId)?.entry.title ?? null;
+}
+
+/**
  * Renders the page.
  *
  * @returns the readers' page, a wait or a plain message
  */
 export function PublicPlanPage() {
   const { t } = useAtlasTranslation();
-  const { storySlug = '', areaPath, characterId } = useParams();
+  const { storySlug = '', areaPath, itemId } = useParams();
   const { plan, loadFailed } = usePublicPlan(storySlug);
   // Step 1: the area from the address, kept only when the writer turned it on.
   const area = shownArea(plan, areaFromPath(areaPath));
@@ -70,19 +98,16 @@ export function PublicPlanPage() {
   const title =
     plan && area !== null
       ? t('publicPlan.documentTitle', {
-          area: t(`publicPlan.areas.${area}`),
+          area: openEntryTitle(plan, area, itemId) ?? t(`publicPlan.areas.${area}`),
           title: plan.storyTitle,
         })
       : t('publicPlan.notFound');
-  const isMissing = plan === null || (plan !== undefined && area === null);
   return (
     <PageContainer className="tmc-rise flex flex-col gap-8 pt-10 pb-12">
       <title>{title}</title>
       {loadFailed && <Notice tone="error">{t('publicPlan.loadFailed')}</Notice>}
-      {isMissing && <Notice tone="error">{t('publicPlan.notFound')}</Notice>}
-      {plan && area !== null && (
-        <PublicPlanBody plan={plan} area={area} characterId={characterId} />
-      )}
+      {isNothingToShow(plan, area) && <Notice tone="error">{t('publicPlan.notFound')}</Notice>}
+      {plan && area !== null && <PublicPlanBody plan={plan} area={area} itemId={itemId} />}
     </PageContainer>
   );
 }

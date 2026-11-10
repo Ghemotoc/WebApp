@@ -9,6 +9,11 @@
  * rating, blocks, moderation) and leaves out everything the writer kept private; and Storage for
  * each passed character picture (the atlas_images_select_public policy).
  */
+import type {
+  CoverColourKey,
+  CoverDesignKey,
+  DrawnCoverChoice,
+} from '@/components/covers/coverDesigns';
 import type { Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
 import { pictureViewsFromJson } from '@/features/pictures/api/pictures';
@@ -69,8 +74,15 @@ export interface PublicEvent {
 
 /** Everything readers see of one story's plan. */
 export interface PublicPlan {
+  /** The story's ID (never the writer's), used to draw the automatic cover (S1-E3-13). */
+  storyId: string;
   storySlug: string;
   storyTitle: string;
+  /** The cover for the band at the top (GAPS-4): its kind, and the drawn choice when there is one. */
+  coverKind: 'automatic' | 'drawn' | 'upload';
+  drawnCover: DrawnCoverChoice | null;
+  /** The writer's pen name, else the username; a classic's real author. */
+  writerName: string;
   areas: PlanArea[];
   /** The characters in the same shape as the writer's cast, so the map and tree draw them. */
   cast: StoryCast;
@@ -103,9 +115,23 @@ interface PublicCharacterRow {
   show_from: PlanGuard | null;
 }
 
+/** The story's cover as the database answers it (the same shape as get_story_page()). */
+interface PublicCoverRow {
+  kind: 'automatic' | 'drawn' | 'upload';
+  design: string | null;
+  background: string | null;
+  accent: string | null;
+}
+
 /** The answer of get_public_story_plan() and preview_story_plan(). */
 export interface PublicPlanRow {
-  story: { slug: string; title: string };
+  story: {
+    id: string;
+    slug: string;
+    title: string;
+    cover: PublicCoverRow;
+    writer_name: string;
+  };
   areas: PlanArea[];
   characters: PublicCharacterRow[];
   fields: { id: string; name: string }[];
@@ -198,6 +224,22 @@ async function castFrom(
 }
 
 /**
+ * The writer's drawn cover choice, when the story has one.
+ *
+ * @param cover - the answer's cover part
+ * @returns the design and colours, or null for an automatic or uploaded cover
+ */
+function drawnCoverFrom(cover: PublicCoverRow): DrawnCoverChoice | null {
+  if (cover.kind !== 'drawn') return null;
+  if (cover.design === null || cover.background === null || cover.accent === null) return null;
+  return {
+    design: cover.design as CoverDesignKey,
+    background: cover.background as CoverColourKey,
+    accent: cover.accent as CoverColourKey,
+  };
+}
+
+/**
  * Turns the database's answer into what the readers' pages draw.
  *
  * @param client - the shared Supabase client (for the pictures' signed addresses)
@@ -210,8 +252,12 @@ export async function publicPlanFrom(
 ): Promise<PublicPlan> {
   const { cast, guards } = await castFrom(client, row);
   return {
+    storyId: row.story.id,
     storySlug: row.story.slug,
     storyTitle: row.story.title,
+    coverKind: row.story.cover.kind,
+    drawnCover: drawnCoverFrom(row.story.cover),
+    writerName: row.story.writer_name,
     areas: row.areas,
     cast,
     characterGuards: guards,
