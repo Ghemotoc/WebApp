@@ -5,12 +5,15 @@
  * Who shows it: the router, at /write/s/:storySlug/chapters; "Manage chapters" on Your writing
  * and the story link in the editor's breadcrumb lead here.
  * What it shows: the header (back to the writer dashboard, the story's title as the eyebrow,
- * "Manage chapters", the intro, "See story page" and "+ New chapter"), the chapter list
- * card, Recently deleted, and the delete dialog on top when asked.
+ * "Manage chapters", the intro, "Story settings", "Open the chapter board" and "+ New
+ * chapter"), the "This story in numbers" row, the chapter list card, Recently deleted, and the
+ * delete or move dialog on top when asked (liquid glass Chapters board, G9d).
+ * Chapter numbers follow the reading order, so a move that gives a published chapter a new
+ * number asks first (MoveChapterDialog); drafts and scheduled chapters move straight away.
  * The board's third card, "The whole story" (status, comments, delete the story), stays on the
  * story's settings page, where S1-E3-05 built it (docs/board-fixes.md).
  * What it calls: useMyStories (the story's title), useManageChapters (the list and every
- * change). After a delete or an undo, focus goes to the list's heading, because the row the
+ * change), lib/chapterMoves.ts (which moves ask first). After a delete or an undo, focus goes to the list's heading, because the row the
  * writer was on has moved.
  */
 import { useRef, useState } from 'react';
@@ -25,12 +28,26 @@ import { PageContainer } from '@/components/ui/PageContainer';
 import type { ManagedChapter } from '../api/manageChapters';
 import { useManageChapters, type ChapterChange } from '../hooks/useManageChapters';
 import { useMyStories } from '../hooks/useMyStories';
+import { chapterMoveOf, needsMoveQuestion } from '../lib/chapterMoves';
 
 import { ChapterListCard } from './ChapterListCard';
+import { ChapterStats } from './ChapterStats';
 import { DeleteChapterDialog } from './DeleteChapterDialog';
 import { PlusIcon } from './ManageChaptersIcons';
+import { MoveChapterDialog } from './MoveChapterDialog';
 import { NewChapterButton } from './NewChapterButton';
 import { RecentlyDeletedChapters } from './RecentlyDeletedChapters';
+
+/** A move waiting for the writer's answer, with what the question says. */
+interface PendingMove {
+  change: ChapterChange;
+  title: string;
+  newNumber: number;
+}
+
+/** The glass look of the header's two links (the same as on Story settings). */
+const headerLinkClass =
+  'inline-flex h-12 items-center rounded-full button-glass px-[22px] text-[15px] font-semibold no-underline';
 
 /** The header: back link, the story's title, the heading, the intro and the two actions. */
 function ManageChaptersHeader({ slug, storyTitle }: { slug: string; storyTitle: string }) {
@@ -55,11 +72,11 @@ function ManageChaptersHeader({ slug, storyTitle }: { slug: string; storyTitle: 
         <p className="m-0 text-lg leading-relaxed text-body">{t('manageChapters.intro')}</p>
       </div>
       <div className="flex flex-wrap items-center gap-3">
-        <Link
-          to={`/s/${slug}`}
-          className="inline-flex h-12 items-center rounded-full button-glass px-[22px] text-[15px] font-semibold no-underline"
-        >
-          {t('storyCard.seePage')}
+        <Link to={`/write/s/${slug}/settings`} className={headerLinkClass}>
+          {t('storyCard.settings')}
+        </Link>
+        <Link to={`/plan/s/${slug}`} className={headerLinkClass}>
+          {t('manageChapters.chapterBoard')}
         </Link>
         <NewChapterButton
           slug={slug}
@@ -77,7 +94,23 @@ function ManageChaptersBody({ slug }: { slug: string }) {
   const { t } = useTranslation('writing');
   const chapters = useManageChapters(slug);
   const [toDelete, setToDelete] = useState<ManagedChapter | null>(null);
+  // A move of a published chapter waits here until the writer answers the question.
+  const [pendingMove, setPendingMove] = useState<PendingMove | null>(null);
   const listHeadingRef = useRef<HTMLHeadingElement>(null);
+
+  /** Moves that renumber a published chapter ask first; every other change goes straight on. */
+  function askOrChange(change: ChapterChange) {
+    const move = chapterMoveOf(change, chapters.live);
+    if (needsMoveQuestion(move)) {
+      setPendingMove({
+        change,
+        title: move.chapter.title || t('manageChapters.untitled'),
+        newNumber: move.newNumber,
+      });
+      return;
+    }
+    chapters.change(change);
+  }
 
   /** Delete and undo move the row away, so focus goes to the list's heading. */
   function changeAndRefocus(change: ChapterChange) {
@@ -89,13 +122,14 @@ function ManageChaptersBody({ slug }: { slug: string }) {
   if (chapters.loadFailed) return <Notice tone="error">{t('errors.loadFailed')}</Notice>;
   return (
     <>
+      <ChapterStats chapters={chapters.live} />
       <ChapterListCard
         slug={slug}
         chapters={chapters.live}
         problem={chapters.problem}
         isBusy={chapters.isBusy}
         headingRef={listHeadingRef}
-        onChange={chapters.change}
+        onChange={askOrChange}
         onAskDelete={setToDelete}
       />
       <RecentlyDeletedChapters
@@ -109,6 +143,14 @@ function ManageChaptersBody({ slug }: { slug: string }) {
         onConfirm={() => {
           if (toDelete !== null) changeAndRefocus({ kind: 'delete', code: toDelete.code });
           setToDelete(null);
+        }}
+      />
+      <MoveChapterDialog
+        move={pendingMove}
+        onClose={() => setPendingMove(null)}
+        onConfirm={() => {
+          if (pendingMove !== null) chapters.change(pendingMove.change);
+          setPendingMove(null);
         }}
       />
     </>

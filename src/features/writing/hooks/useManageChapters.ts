@@ -24,7 +24,8 @@ import { myStoriesKey } from './useMyStories';
 /** One change from the page. */
 export type ChapterChange =
   | { kind: 'move'; code: string; direction: -1 | 1 }
-  | { kind: 'order'; codes: string[] }
+  // movedCode names the dragged chapter, so the page can ask before a published one moves.
+  | { kind: 'order'; codes: string[]; movedCode?: string }
   | { kind: 'rename'; code: string; title: string }
   | { kind: 'delete'; code: string }
   | { kind: 'restore'; code: string }

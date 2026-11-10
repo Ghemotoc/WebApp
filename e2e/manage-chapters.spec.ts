@@ -8,6 +8,8 @@
  *   is drawn at 390, 768 and 1440 px, in English and Romanian;
  * - "Move up" and "Move down" reorder chapters as well as dragging does, by mouse and by
  *   keyboard (Space, arrow, Space), and readers see the new order (WCAG 2.2, 2.5.7);
+ * - moving a published chapter asks first ("Keep the order" keeps it), a draft moves straight
+ *   away, titles carry their chapter number, and the numbers row counts chapters (G9d);
  * - Rename changes a published chapter's title for readers at once;
  * - Unpublish and Publish again from the list;
  * - Delete asks first, hides the chapter from readers at once, shows it under Recently deleted
@@ -153,6 +155,17 @@ function chapterList(page: Page) {
   });
 }
 
+/**
+ * Answers "Move a published chapter?" with "Move chapter" (G9d: chapter numbers follow the
+ * order, so moving a published chapter asks first).
+ */
+async function confirmMove(page: Page) {
+  const dialog = page.getByRole('alertdialog', { name: 'Move a published chapter?' });
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole('button', { name: 'Move chapter', exact: true }).click();
+  await expect(dialog).toBeHidden();
+}
+
 /** axe's serious and critical issues on the page as it is now (WCAG 2.2 AA). */
 async function seriousAxeIssues(page: Page) {
   const results = await new AxeBuilder({ page })
@@ -235,12 +248,15 @@ test.describe('Manage chapters (S1-E3-04)', () => {
   }) => {
     const page = await openManageChapters(browser);
     await page.getByRole('button', { name: 'Move chapter 2 up' }).click();
+    await confirmMove(page);
     await expect.poll(chapterOrder).toBe('mgpub002,mgpub001,mgdraft1,mgsched1,mgunpub1');
-    // Focus stays on the arrow, now at the top, so the keyboard user can carry on.
+    // Focus comes back to the arrow, now at the top, so the keyboard user can carry on.
     await expect(page.getByRole('button', { name: 'Move chapter 1 up' })).toBeFocused();
     await page.getByRole('button', { name: 'Move chapter 1 down' }).click();
+    await confirmMove(page);
     await expect.poll(chapterOrder).toBe('mgpub001,mgpub002,mgdraft1,mgsched1,mgunpub1');
     await page.getByRole('button', { name: 'Move chapter 1 down' }).click();
+    await confirmMove(page);
     await expect.poll(chapterOrder).toBe('mgpub002,mgpub001,mgdraft1,mgsched1,mgunpub1');
     expect(await readerTitles(browser)).toEqual(['Vântul de miercuri', 'Caietele bunicii']);
   });
@@ -259,7 +275,39 @@ test.describe('Manage chapters (S1-E3-04)', () => {
     // Small steps, so the drag starts (6 px) and passes over the rows on the way.
     await page.mouse.move(from.x + from.width / 2, to.y + to.height / 2, { steps: 20 });
     await page.mouse.up();
+    await confirmMove(page);
     await expect.poll(chapterOrder).toBe('mgpub002,mgdraft1,mgpub001,mgsched1,mgunpub1');
+  });
+
+  test('moving a published chapter asks first, and "Keep the order" keeps it', async ({
+    browser,
+  }) => {
+    const page = await openManageChapters(browser);
+    await page.getByRole('button', { name: 'Move chapter 2 up' }).click();
+    const dialog = page.getByRole('alertdialog', { name: 'Move a published chapter?' });
+    // The question names the chapter and the number it would get.
+    await expect(dialog).toContainText('“Vântul de miercuri” becomes chapter 1.');
+    await dialog.getByRole('button', { name: 'Keep the order' }).click();
+    await expect(dialog).toBeHidden();
+    await expect.poll(chapterOrder).toBe('mgpub001,mgpub002,mgdraft1,mgsched1,mgunpub1');
+    // A draft has no readers to surprise, so it moves without a question.
+    await page.getByRole('button', { name: 'Move chapter 3 up' }).click();
+    await expect.poll(chapterOrder).toBe('mgpub001,mgdraft1,mgpub002,mgsched1,mgunpub1');
+    await expect(dialog).toBeHidden();
+  });
+
+  test('the numbers row counts chapters and words, and names the next scheduled chapter', async ({
+    browser,
+  }) => {
+    const page = await openManageChapters(browser);
+    const numbers = page.getByRole('region', { name: 'This story in numbers' });
+    await expect(numbers.getByRole('definition').first()).toHaveText('5');
+    await expect(numbers).toContainText('chapters');
+    await expect(numbers).not.toContainText('none scheduled');
+    // Chapter titles carry their number, which follows the reading order.
+    await expect(
+      chapterList(page).getByRole('link', { name: 'Chapter 2: Vântul de miercuri' }),
+    ).toBeVisible();
   });
 
   test('dragging by keyboard: Space picks up, arrows move, Space drops', async ({ browser }) => {

@@ -217,7 +217,10 @@
     "saving": "Saving…",
     "saved": "Saved.",
     "saveFailed": "We couldn’t save the changes. Check your connection and try again.",
-    "notFound": "We can’t find this story on this account."
+    "notFound": "We can’t find this story on this account.",
+    "intro": "Change anything here. Readers see the changes as soon as you save.",
+    "unsaved": "You have unsaved changes.",
+    "cancel": "Cancel"
   },
   "deleteStory": {
     "eyebrow": "The whole story",
@@ -258,7 +261,7 @@
     "ratingUnderSixteen": "Writers under 16 can rate a story All ages or 13+.",
     "guide": {
       "all_ages": {
-        "who": "For every reader, children included",
+        "who": "For everyone, children included: written like a children’s book",
         "what": "Feelings and friendships, a first kiss at most. Nothing frightening shown in detail, no swearing."
       },
       "13_plus": {
@@ -288,7 +291,8 @@
     },
     "ai": "Did you use AI?",
     "aiHint": "Shown as a label on your story. If someone reports a missing label, a person on our team decides. We never use AI detectors to judge your writing.",
-    "previewBanner": "{{rating}}: hidden from readers under {{age}}"
+    "previewBanner": "{{rating}}: hidden from readers under {{age}}",
+    "ratingsLink": "What the ratings mean"
   },
   "rating": {
     "all_ages": "All ages",
@@ -313,7 +317,7 @@
     "newChapter": "New chapter",
     "listEyebrow": "Chapters",
     "noChapters": "No chapters yet",
-    "note": "Drag the handle to reorder, or use the up and down arrows.",
+    "note": "Drag a chapter, or use the arrows. Moving a published chapter asks first.",
     "listLabel": "Chapters in reading order",
     "dragLabel": "Drag chapter {{number}} to reorder. You can also use the arrows.",
     "moveUp": "Move chapter {{number}} up",
@@ -384,6 +388,21 @@
       "over": "{{title}} is now at position {{position}} of {{total}}.",
       "dropped": "Dropped {{title}} at position {{position}} of {{total}}.",
       "cancelled": "Move cancelled. {{title}} stays where it was."
+    },
+    "rowTitle": "Chapter {{number}}: {{title}}",
+    "chapterBoard": "Open the chapter board",
+    "stats": {
+      "label": "This story in numbers",
+      "chapters": "chapters",
+      "words": "words",
+      "nextChapter": "next chapter",
+      "noneScheduled": "none scheduled"
+    },
+    "moveDialog": {
+      "title": "Move a published chapter?",
+      "body": "“{{title}}” becomes chapter {{number}}. Readers see the new numbers at once, and their saved places stay with the chapters.",
+      "keep": "Keep the order",
+      "confirm": "Move chapter"
     }
   },
   "rankBadges": {

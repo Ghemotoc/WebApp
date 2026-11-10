@@ -1295,6 +1295,9 @@ first_published_at and get_story_page() (S1-E3-05) serves the public page (ADR 0
   │  the same sections as the new story form, filled from the story (useStorySettingsForm),
   │  plus StoryStatusSection (Ongoing | Completed, the comments switch)
   │  saving: storySettingsSchema (zod) → api/stories.ts → update_my_story(slug, changes)
+  │  SaveBar (G9d): stays at the foot of the window, says "You have unsaved changes" while
+  │  isDirty, and Cancel puts the last saved answers back (useStorySettingsForm.discard);
+  │  StoryPreviewAside beside the form shows the card readers will see
   │  DeleteStoryControl: asked twice → delete_my_story(slug); Undo → restore_my_story(slug)
   ▼
 update_my_story(): is_active_member(), my_live_story_id() (the caller's own live story),
@@ -1403,10 +1406,13 @@ get_story_page(): public while story_has_readable_chapter(); 'chapters' from sto
 Managing chapters (S1-E3-04), at `/write/s/<slug>/chapters` ("Manage chapters" on a story card, or the story in the editor's breadcrumb):
 
 ```
-ManageChaptersPage → ChapterListCard → SortableChapterList (dnd-kit: mouse, touch, keyboard)
-  │                     → ManagedChapterRow (handle, pill, meta from lib/chapterListText.ts)
+ManageChaptersPage → ChapterStats ("This story in numbers": chapters, words, next scheduled)
+  │  → ChapterListCard → SortableChapterList (dnd-kit: mouse, touch, keyboard)
+  │                     → ManagedChapterRow ("Chapter 3: Title", pill, meta from lib/chapterListText.ts)
   │                       → ChapterRowActions (arrows, Edit, Rename, Unpublish, Delete)
   │  → RecentlyDeletedChapters (Undo), DeleteChapterDialog (asks first)
+  │  → MoveChapterDialog: a move that gives a published chapter a new number asks first
+  │    (lib/chapterMoves.ts decides; drafts and scheduled chapters move straight away; G9d)
   ▼
 useManageChapters (the list from api/manageChapters.ts; a new order shows at once)
   ▼

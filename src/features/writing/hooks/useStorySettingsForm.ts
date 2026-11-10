@@ -8,6 +8,9 @@
  * It starts from the story as saved, so the sections (shared with the new story form) show the
  * current values and the writer changes only what they want. A cover saved from another tab,
  * such as one made in Canva, replaces the form's cover by itself (useArrivingCover, IDEAS-2d).
+ * It also knows whether anything changed since the last save (isDirty), so the save bar can say
+ * "You have unsaved changes" and Cancel can put every answer back (liquid glass StorySettings
+ * board, bundle G9 WRITING, part d).
  */
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
@@ -76,10 +79,13 @@ function answersFrom(story: MyStory): StoryAnswers {
  *
  * @param story - the story being edited
  * @returns answers, set, errors, outcome (null | 'saved' | 'not_active' | 'not_found' |
- *   'save_failed'), save, isSaving, and arrivedCoverPath (a cover saved from another tab, or null)
+ *   'save_failed'), save, isSaving, arrivedCoverPath (a cover saved from another tab, or null),
+ *   isDirty (something changed since the last save) and discard (put the saved answers back)
  */
 export function useStorySettingsForm(story: MyStory) {
   const [answers, setAnswers] = useState<StoryAnswers>(() => answersFrom(story));
+  // The answers as last saved, to tell whether anything changed since.
+  const [savedAnswers, setSavedAnswers] = useState<StoryAnswers>(() => answersFrom(story));
   const [errors, setErrors] = useState<StoryFieldErrors>({});
   const [outcome, setOutcome] = useState<SettingsOutcome | 'saved' | 'save_failed' | null>(null);
   const { userId } = useSession();
@@ -117,7 +123,21 @@ export function useStorySettingsForm(story: MyStory) {
       setErrors(toStoryFieldErrors(result.error.issues));
       return;
     }
-    save.mutate(result.data);
+    // The answers as sent become the new starting point once the save goes through, so the
+    // save bar stops saying "unsaved" (they are kept as typed, so the comparison stays exact).
+    const sentAnswers = answers;
+    save.mutate(result.data, {
+      onSuccess: (outcomeOfSave) => {
+        if (outcomeOfSave === 'ok') setSavedAnswers(sentAnswers);
+      },
+    });
+  }
+
+  /** Cancel: every answer goes back to what was last saved, and the errors clear. */
+  function discard() {
+    setAnswers(savedAnswers);
+    setErrors({});
+    setOutcome(null);
   }
 
   return {
@@ -128,5 +148,8 @@ export function useStorySettingsForm(story: MyStory) {
     submit,
     isSaving: save.isPending,
     arrivedCoverPath,
+    // Compared as JSON: the answers are plain data (text, lists and small objects).
+    isDirty: JSON.stringify(answers) !== JSON.stringify(savedAnswers),
+    discard,
   };
 }

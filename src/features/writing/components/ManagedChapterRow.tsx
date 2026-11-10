@@ -1,9 +1,12 @@
 /**
  * ManagedChapterRow: one chapter on Manage chapters (story S1-E3-04; board 4.4).
  *
- * What it shows, left to right: the drag handle, the number tile, the title (a link to the
- * editor) with its status pill and the meta line under it, then ChapterRowActions. Rename turns
- * the title into RenameChapterForm; when it closes, focus goes back to the Rename button.
+ * What it shows, left to right: the drag handle, the title with its number ("Chapter 3: The
+ * lighthouse", a link to the editor) and its status pill, the meta line under it, then
+ * ChapterRowActions. The number is the chapter's place in the reading order, so it changes
+ * when the chapter moves (liquid glass Chapters board, G9d; it replaces the sand number tile).
+ * Rename turns the title into RenameChapterForm; when it closes, focus goes back to the Rename
+ * button.
  * Pills (DoD pill system; board 4.4): Published sage, Draft gold, Scheduled sky, Unpublished
  * neutral.
  * Dragging: the handle is the only part that starts a drag (dnd-kit's useSortable with the
@@ -48,20 +51,9 @@ export interface ManagedChapterRowProps {
   onAskDelete: (chapter: ManagedChapter) => void;
 }
 
-/** The board's sand tile with the chapter's number; the list itself already says the place. */
-function NumberTile({ number }: { number: number }) {
-  return (
-    <span
-      aria-hidden="true"
-      className="inline-flex size-9 flex-none items-center justify-center rounded-xl bg-panel font-heading text-base font-bold text-heading"
-    >
-      {number}
-    </span>
-  );
-}
-
-/** The title as a link to the editor, with its pill. */
-function ChapterTitle({ slug, chapter }: { slug: string; chapter: ManagedChapter }) {
+/** The title as a link to the editor ("Chapter 3: The lighthouse"), with its pill. */
+function ChapterTitle(props: { slug: string; chapter: ManagedChapter; number: number }) {
+  const { slug, chapter, number } = props;
   const { t } = useTranslation('writing');
   return (
     <span className="flex flex-wrap items-center gap-2.5">
@@ -69,7 +61,10 @@ function ChapterTitle({ slug, chapter }: { slug: string; chapter: ManagedChapter
         to={`/write/s/${slug}/c/${chapter.code}`}
         className="font-heading text-[19px] font-bold break-words text-ink no-underline hover:underline"
       >
-        {chapter.title === '' ? t('manageChapters.untitled') : chapter.title}
+        {t('manageChapters.rowTitle', {
+          number,
+          title: chapter.title === '' ? t('manageChapters.untitled') : chapter.title,
+        })}
       </Link>
       <InfoPill tone={pillTones[chapter.state]}>
         {t(`manageChapters.state.${chapter.state}`)}
@@ -100,7 +95,7 @@ function ChapterRowText(props: {
           onSave={props.onRename}
         />
       ) : (
-        <ChapterTitle slug={props.slug} chapter={chapter} />
+        <ChapterTitle slug={props.slug} chapter={chapter} number={props.number} />
       )}
       <span className="text-sm text-meta">{chapterMeta(t, chapter, i18n.language)}</span>
     </div>
@@ -170,7 +165,6 @@ export function ManagedChapterRow(props: ManagedChapterRowProps) {
       >
         <GripIcon />
       </button>
-      <NumberTile number={number} />
       <ChapterRowText
         slug={props.slug}
         chapter={chapter}

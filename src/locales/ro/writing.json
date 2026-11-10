@@ -217,7 +217,10 @@
     "saving": "Se salvează…",
     "saved": "Salvat.",
     "saveFailed": "Nu am putut salva modificările. Verifică-ți conexiunea și încearcă din nou.",
-    "notFound": "Nu găsim această poveste în cont."
+    "notFound": "Nu găsim această poveste în cont.",
+    "intro": "Schimbă orice aici. Cititorii văd schimbările imediat ce salvezi.",
+    "unsaved": "Ai modificări nesalvate.",
+    "cancel": "Renunță"
   },
   "deleteStory": {
     "eyebrow": "Toată povestea",
@@ -258,7 +261,7 @@
     "ratingUnderSixteen": "Scriitorii sub 16 ani pot alege pentru o poveste doar Toate vârstele sau 13+.",
     "guide": {
       "all_ages": {
-        "who": "Pentru orice cititor, inclusiv copii",
+        "who": "Pentru oricine, inclusiv copii: scrisă ca o carte pentru copii",
         "what": "Sentimente și prietenii, cel mult un prim sărut. Nimic înfricoșător arătat în detaliu, fără înjurături."
       },
       "13_plus": {
@@ -288,7 +291,8 @@
     },
     "ai": "Ai folosit AI?",
     "aiHint": "Apare ca etichetă pe povestea ta. Dacă cineva raportează o etichetă lipsă, decide o persoană din echipa noastră. Nu folosim niciodată detectoare de AI ca să judecăm ce scrii.",
-    "previewBanner": "{{rating}}: ascunsă de cititorii sub {{age}} ani"
+    "previewBanner": "{{rating}}: ascunsă de cititorii sub {{age}} ani",
+    "ratingsLink": "Ce înseamnă clasificările"
   },
   "rating": {
     "all_ages": "Toate vârstele",
@@ -313,7 +317,7 @@
     "newChapter": "Capitol nou",
     "listEyebrow": "Capitole",
     "noChapters": "Niciun capitol încă",
-    "note": "Trage de mâner ca să schimbi ordinea sau folosește săgețile sus și jos.",
+    "note": "Trage un capitol sau folosește săgețile. Când muți un capitol publicat, te întrebăm înainte.",
     "listLabel": "Capitolele în ordinea lecturii",
     "dragLabel": "Trage capitolul {{number}} ca să-i schimbi locul. Poți folosi și săgețile.",
     "moveUp": "Mută capitolul {{number}} mai sus",
@@ -384,6 +388,21 @@
       "over": "{{title}} este acum pe locul {{position}} din {{total}}.",
       "dropped": "Ai lăsat {{title}} pe locul {{position}} din {{total}}.",
       "cancelled": "Mutare anulată. {{title}} rămâne unde era."
+    },
+    "rowTitle": "Capitolul {{number}}: {{title}}",
+    "chapterBoard": "Deschide tabla capitolelor",
+    "stats": {
+      "label": "Povestea în cifre",
+      "chapters": "capitole",
+      "words": "cuvinte",
+      "nextChapter": "capitolul următor",
+      "noneScheduled": "nimic programat"
+    },
+    "moveDialog": {
+      "title": "Muți un capitol publicat?",
+      "body": "„{{title}}” devine capitolul {{number}}. Cititorii văd imediat numerele noi, iar locurile salvate rămân la capitolele lor.",
+      "keep": "Păstrează ordinea",
+      "confirm": "Mută capitolul"
     }
   },
   "rankBadges": {
