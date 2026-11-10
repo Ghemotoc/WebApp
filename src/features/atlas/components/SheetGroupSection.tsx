@@ -7,7 +7,10 @@
  * Extra content comes in as `before` (the name, role and line at the top of Basics) and as
  * children (the first appearance in In the story). The fields sit in two columns on a laptop
  * (bundle G10a, board AtlasCharacterSheet) and one on a phone.
- * Who uses it: CharacterSheet. What it calls: PlanTextField with the save it is given.
+ * Under the group's own fields come the writer's details placed in this group and "Add detail"
+ * (bundle GAPS-1, same board).
+ * Who uses it: CharacterSheet. What it calls: PlanTextField with the save it is given,
+ * OwnDetailBoxes and AddDetailForm.
  */
 import type { ReactNode } from 'react';
 
@@ -15,12 +18,15 @@ import { FormSection } from '@/features/writing/components/FormSection';
 
 import {
   sheetGroups,
+  type CharacterField,
   type SheetGroup,
   type SheetKey,
   type StoryCharacter,
 } from '../api/characters';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
+import { AddDetailForm } from './AddDetailForm';
+import { OwnDetailBoxes } from './OwnDetailBoxes';
 import { PlanTextField } from './PlanTextField';
 
 /** The fields that hold a word or a short phrase, so they are one line. */
@@ -39,8 +45,13 @@ const keysWithHint: readonly SheetKey[] = ['also_known_as', 'age_or_born', 'life
 
 /** What the group needs. */
 export interface SheetGroupSectionProps {
+  slug: string;
   group: SheetGroup;
   character: StoryCharacter;
+  /** Every detail of the writer's own in the story; the ones placed in this group show here. */
+  fields: CharacterField[];
+  /** Saves one of the writer's own details; throws when it can't. */
+  saveDetail: (fieldId: string, value: string) => Promise<void>;
   /** Saves one sheet field; throws when it can't. */
   saveSheetField: (key: SheetKey, value: string) => Promise<void>;
   /** Shown above the group's own fields. */
@@ -53,16 +64,12 @@ export interface SheetGroupSectionProps {
  *
  * @returns the card with the group's fields
  */
-export function SheetGroupSection({
-  group,
-  character,
-  saveSheetField,
-  before,
-  children,
-}: SheetGroupSectionProps) {
+export function SheetGroupSection(props: SheetGroupSectionProps) {
+  const { slug, group, character, saveSheetField, before, children } = props;
   const { t } = useAtlasTranslation();
+  const groupLabel = t(`characters.groups.${group}`);
   return (
-    <FormSection legend={t(`characters.groups.${group}`)}>
+    <FormSection legend={groupLabel}>
       {before}
       <div className="grid gap-x-6 gap-y-4 md:grid-cols-2">
         {sheetGroups[group].map((key) => (
@@ -79,6 +86,17 @@ export function SheetGroupSection({
         ))}
       </div>
       {children}
+      <OwnDetailBoxes
+        character={character}
+        fields={props.fields.filter((field) => field.sheetGroup === group)}
+        saveValue={props.saveDetail}
+      />
+      <AddDetailForm
+        slug={slug}
+        id={`atlas-add-detail-${group}`}
+        place={{ sheetGroup: group, ownGroup: null }}
+        groupLabel={groupLabel}
+      />
     </FormSection>
   );
 }

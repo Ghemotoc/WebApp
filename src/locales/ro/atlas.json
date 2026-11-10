@@ -174,10 +174,36 @@
     "firstAppearance": "Prima apariție",
     "firstAppearanceNone": "Încă nealeasă",
     "firstAppearancePill": "Apare prima dată: capitolul {{number}}",
+    "povPill_one": "Punct de vedere în {{count}} capitol",
+    "povPill_few": "Punct de vedere în {{count}} capitole",
+    "povPill_other": "Punct de vedere în {{count}} de capitole",
     "custom": {
       "heading": "Câmpuri proprii",
       "none": "Încă nu ai câmpuri proprii.",
-      "manage": "Adaugă sau scoate câmpurile tale pe pagina Pe scurt"
+      "manage": "Scoate sau adu înapoi câmpuri pe pagina Pe scurt"
+    },
+    "details": {
+      "add": "Adaugă un detaliu",
+      "addTo": "Adaugă un detaliu la {{group}}",
+      "name": "Numele detaliului",
+      "nameHint": "Apare pe fișa fiecărui personaj din această poveste.",
+      "addConfirm": "Adaugă",
+      "cancel": "Renunță",
+      "save": "Salvează",
+      "nameRequired": "Dă un nume detaliului.",
+      "failed": "Nu s-a salvat. O poveste are cel mult 40 de detalii; verifică conexiunea și încearcă din nou.",
+      "addGroup": "Adaugă un grup de detalii",
+      "groupName": "Numele grupului",
+      "groupNameHint": "De exemplu „Magie” sau „Școală”.",
+      "firstDetail": "Primul detaliu",
+      "addGroupConfirm": "Adaugă grupul",
+      "groupNameRequired": "Dă un nume grupului.",
+      "groupFailed": "Nu s-a salvat. O poveste are cel mult 12 grupuri și 40 de detalii; verifică conexiunea și încearcă din nou.",
+      "renameGroup": "Redenumește grupul",
+      "renameGroupNamed": "Redenumește grupul {{group}}",
+      "renameFailed": "Nu s-a salvat. Verifică conexiunea și încearcă din nou.",
+      "nameTaken": "Există deja aici un detaliu cu acest nume. Unul scos se aduce înapoi din pagina Pe scurt.",
+      "groupNameTaken": "Alt grup are acest nume. Încearcă altul."
     },
     "picture": {
       "heading": "Imagine",

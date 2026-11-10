@@ -49,6 +49,7 @@ function cleanUp() {
     delete from public.story_character_fields where story_id = '${writerStoryId}';
     delete from public.picture_checks where kind = 'atlas_image';
     delete from public.rate_limit_events where user_id = '00000000-0000-4000-8000-000000000001';
+    delete from public.chapter_plans where chapter_id in (select id from public.chapters where code = 'e2ecast1');
     delete from public.chapters where code = 'e2ecast1';
     delete from public.stories where slug = 'atlas-cast-seed01';
     update public.profiles set locale = 'ro' where handle in ('adult_writer', 'suspended_user');`);
@@ -200,6 +201,91 @@ test.describe('Story Atlas characters (S1-E17-08 to S1-E17-13)', () => {
     await expect(fields.getByRole('button', { name: 'Remove Turned by' })).toBeVisible();
     await page.getByRole('link', { name: 'Ana Mureșan' }).click();
     await expect(page.getByRole('textbox', { name: 'Turned by' })).toHaveValue('Nobody yet');
+    await page.context().close();
+  });
+
+  test('Add detail puts a detail under its group on every sheet, a group of details gets its own card, and the header counts point-of-view chapters', async ({
+    browser,
+  }) => {
+    // GAPS-1: the chapter is told from Ana's point of view, so her header counts it.
+    runSql(`insert into public.chapter_plans (chapter_id, story_id, user_id, pov_character_id)
+      select chapters.id, chapters.story_id, chapters.user_id,
+        (select id from public.story_characters where name = 'Ana Mureșan' and story_id = '${writerStoryId}')
+      from public.chapters where code = 'e2ecast1'
+      on conflict (chapter_id) do update set pov_character_id = excluded.pov_character_id;`);
+    const page = await openAs(browser, 'adult_writer', castAddress);
+    await page.getByRole('link', { name: 'Ana Mureșan' }).click();
+    await expect(page.getByText('Point of view in 1 chapter', { exact: true })).toBeVisible();
+
+    // A detail under a built-in group.
+    const basics = page.getByRole('group', { name: 'Basics' });
+    await basics.getByRole('button', { name: 'Add detail to Basics' }).click();
+    await expect(basics.getByRole('textbox', { name: 'Detail name' })).toBeFocused();
+    await basics.getByRole('button', { name: 'Add', exact: true }).click();
+    await expect(basics.getByText('Give the detail a name.')).toBeVisible();
+    await basics.getByRole('textbox', { name: 'Detail name' }).fill('Blood type');
+    await basics.getByRole('button', { name: 'Add', exact: true }).click();
+    await expect(basics.getByRole('textbox', { name: 'Blood type' })).toBeVisible();
+    await expect(
+      page
+        .getByRole('group', { name: 'Custom fields' })
+        .getByRole('textbox', { name: 'Blood type' }),
+    ).toHaveCount(0);
+
+    // A group of the writer's own, then its new name.
+    await page.getByRole('button', { name: 'Add a group of details' }).click();
+    await page.getByRole('textbox', { name: 'Group name' }).fill('Magic');
+    await page.getByRole('textbox', { name: 'First detail' }).fill('Wand');
+    await page.getByRole('button', { name: 'Add group' }).click();
+    const magic = page.getByRole('group', { name: 'Magic' });
+    await magic.getByRole('textbox', { name: 'Wand' }).fill('Hazel, nine inches');
+    await expect(page.locator('[id$="-save"]').filter({ hasText: 'Saved' }).first()).toBeVisible();
+    await magic.getByRole('textbox', { name: 'Wand' }).blur();
+    await magic.getByRole('button', { name: 'Rename the group Magic' }).click();
+    await magic.getByRole('textbox', { name: 'Group name' }).fill('Spellwork');
+    await magic.getByRole('button', { name: 'Save' }).click();
+    const spellwork = page.getByRole('group', { name: 'Spellwork' });
+    await expect(spellwork.getByRole('textbox', { name: 'Wand' })).toHaveValue(
+      'Hazel, nine inches',
+    );
+
+    // Break test (10 Nov 2026): a double click adds one detail; the same name again in the same
+    // place is refused in plain words; a group can't take a built-in card's name or, capitals
+    // aside, another group's; and a name typed as one very long word stays inside a phone screen.
+    const longName = 'Pneumonoultramicroscopicsilicovolcanoconiosis'.repeat(2).slice(0, 60);
+    await basics.getByRole('button', { name: 'Add detail to Basics' }).click();
+    await basics.getByRole('textbox', { name: 'Detail name' }).fill(longName);
+    await basics.getByRole('button', { name: 'Add', exact: true }).dblclick();
+    await expect(basics.getByRole('textbox', { name: longName })).toHaveCount(1);
+    await basics.getByRole('button', { name: 'Add detail to Basics' }).click();
+    await basics.getByRole('textbox', { name: 'Detail name' }).fill('blood TYPE');
+    await basics.getByRole('button', { name: 'Add', exact: true }).click();
+    await expect(basics.getByText(/A detail with that name is already here/)).toBeVisible();
+    await basics.getByRole('button', { name: 'Cancel' }).click();
+    await spellwork.getByRole('button', { name: 'Rename the group Spellwork' }).click();
+    await spellwork.getByRole('textbox', { name: 'Group name' }).fill('basics');
+    await spellwork.getByRole('button', { name: 'Save' }).click();
+    await expect(
+      spellwork.getByText('Another group has that name. Try a different one.'),
+    ).toBeVisible();
+    await spellwork.getByRole('button', { name: 'Cancel' }).click();
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(basics.getByRole('textbox', { name: longName })).toBeVisible();
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth),
+    ).toBeLessThanOrEqual(0);
+    await page.setViewportSize({ width: 1440, height: 1000 });
+
+    // The other character's sheet has the same detail and group, empty, and no point-of-view pill.
+    await castList(page).getByRole('link', { name: 'Ștefan the Keeper' }).click();
+    await expect(
+      page.getByRole('group', { name: 'Basics' }).getByRole('textbox', { name: 'Blood type' }),
+    ).toHaveValue('');
+    await expect(
+      page.getByRole('group', { name: 'Spellwork' }).getByRole('textbox', { name: 'Wand' }),
+    ).toHaveValue('');
+    await expect(page.getByText(/Point of view in/)).toHaveCount(0);
+    await expectNoDoodles(page);
     await page.context().close();
   });
 

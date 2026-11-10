@@ -164,7 +164,15 @@ async function castFrom(
     storyId: '',
     storyTitle: row.story.title,
     characters,
-    fields: row.fields.map((field) => ({ id: field.id, name: field.name, isHidden: false })),
+    // Readers see the shared details in one list, so a detail's place on the writer's sheet is
+    // left out (GAPS-1).
+    fields: row.fields.map((field) => ({
+      id: field.id,
+      name: field.name,
+      isHidden: false,
+      sheetGroup: null,
+      ownGroup: null,
+    })),
     chapters: [],
     relationships: row.relationships.map((link) => ({
       id: link.id,

@@ -49,13 +49,16 @@ export function Chip({
       disabled={isDisabled}
       onClick={() => onPressedChange(!isPressed)}
       className={cn(
-        "relative inline-flex h-9 items-center justify-center gap-1.5 rounded-full border px-3.5 font-body text-sm leading-none font-semibold whitespace-nowrap after:absolute after:inset-x-0 after:top-1/2 after:h-11 after:-translate-y-1/2 after:content-['']",
+        // max-w-full with the truncating span below: a chip whose text a member typed as one very
+        // long word (a detail's name) shortens with an ellipsis and never pushes the page
+        // sideways (rule 21; GAPS-1 break test). Its full text stays the accessible name.
+        "relative inline-flex h-9 max-w-full items-center justify-center gap-1.5 rounded-full border px-3.5 font-body text-sm leading-none font-semibold whitespace-nowrap after:absolute after:inset-x-0 after:top-1/2 after:h-11 after:-translate-y-1/2 after:content-['']",
         isDisabled && 'cursor-not-allowed opacity-60',
         isPressed ? 'border-chip-on bg-chip-on text-chip-on-text' : 'button-glass',
       )}
     >
       {isPressed && <CheckIcon />}
-      {children}
+      <span className="min-w-0 truncate py-1">{children}</span>
     </button>
   );
 }

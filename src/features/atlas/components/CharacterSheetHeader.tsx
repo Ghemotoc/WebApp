@@ -2,15 +2,18 @@
  * CharacterSheetHeader: the glass card at the top of a character's sheet (bundle G10 ATLAS, part
  * a; board AtlasCharacterSheet).
  *
- * On the left the name as the heading, pills for the role and the first appearance, and the
+ * On the left the name as the heading, pills for the role, the chapters told from the character's
+ * point of view ("Point of view in 6 chapters", bundle GAPS-1) and the first appearance, and the
  * character in a line; on the right the picture with its upload (CharacterPictureSection). With
  * no picture the name stands alone: no initials (handoff "Story Atlas"). On a phone the picture
  * goes under the words.
- * Who uses it: CharacterSheet. What it calls: InfoPill and CharacterPictureSection.
+ * Who uses it: CharacterSheet. What it calls: InfoPill, useCharacterAppearances (for the point of
+ * view count) and CharacterPictureSection.
  */
 import { InfoPill } from '@/components/ui/InfoPill';
 
 import type { CharacterChange, StoryCast, StoryCharacter } from '../api/characters';
+import { useCharacterAppearances } from '../hooks/useCharacterAppearances';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { CharacterPictureSection } from './CharacterPictureSection';
@@ -39,6 +42,15 @@ function FirstAppearancePill({
   );
 }
 
+/** "Point of view in 6 chapters", or nothing while the character tells none (or it is loading). */
+function PointOfViewPill({ characterId }: { characterId: string }) {
+  const { t } = useAtlasTranslation();
+  const { appearances } = useCharacterAppearances(characterId);
+  const count = (appearances ?? []).filter((appearance) => appearance.isPov).length;
+  if (count === 0) return null;
+  return <InfoPill tone="neutral">{t('characters.povPill', { count })}</InfoPill>;
+}
+
 /**
  * Renders the header card.
  *
@@ -59,6 +71,7 @@ export function CharacterSheetHeader(props: CharacterSheetHeaderProps) {
         </h2>
         <div className="flex flex-wrap gap-2">
           <InfoPill tone="plum">{t(`characters.role.${character.role}`)}</InfoPill>
+          <PointOfViewPill characterId={character.id} />
           <FirstAppearancePill cast={cast} character={character} />
         </div>
         {summary !== '' && <p className="m-0 text-[17px] break-words text-meta">{summary}</p>}

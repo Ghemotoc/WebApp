@@ -10,8 +10,8 @@ const chapters = [
   { code: 'two', position: 2 },
 ];
 const fields = [
-  { id: 'field-a', name: 'Favourite tea', isHidden: false },
-  { id: 'field-b', name: 'Old nickname', isHidden: true },
+  { id: 'field-a', name: 'Favourite tea', isHidden: false, sheetGroup: null, ownGroup: null },
+  { id: 'field-b', name: 'Old nickname', isHidden: true, sheetGroup: null, ownGroup: null },
 ];
 
 describe('readerSummaryOf', () => {
