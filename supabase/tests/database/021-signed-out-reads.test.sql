@@ -155,7 +155,13 @@ select results_eq(
        ('landing_pages', 0::bigint),
        ('languages', (select count(*) from public.languages)),
        -- A reader's library and places are theirs only (S1-E4-03).
+       -- The learning path: a writer's own ticks; the seven days are for signed-in members (GAPS-12g).
+       ('learning_path_progress', 0::bigint),
+       ('learning_path_steps', 0::bigint),
        ('library_entries', 0::bigint),
+       -- Live sessions: staff content read through a function; a member's own reminders (GAPS-12h).
+       ('live_session_reminders', 0::bigint),
+       ('live_sessions', 0::bigint),
        ('legal_document_versions',
         (select count(*) from public.legal_document_versions where published_at <= now())),
        ('legal_documents', (select count(*) from public.legal_documents)),
@@ -242,6 +248,8 @@ select results_eq(
        -- Stored search rows: staff only, visitors search through browse_stories() (QA-2a).
        ('story_search_documents', 0::bigint),
        ('story_tags', 0::bigint),
+       -- Calls for submissions: contest staff only, members through writers_hub_calls() (GAPS-12d).
+       ('submission_calls', 0::bigint),
        -- Support tickets: support staff only, members through functions (ADMIN-2h1).
        ('support_canned_replies', 0::bigint),
        ('support_ticket_emails', 0::bigint),
@@ -255,7 +263,12 @@ select results_eq(
        ('username_word_lists', 0::bigint),
        -- The waiting list: each person's own entry and owner and admin (WAITLIST-1).
        ('waitlist_entries', 0::bigint),
-       ('writer_ranks', 0::bigint)
+       ('writer_ranks', 0::bigint),
+       -- Writer of the week: the picked writer and contest staff only, members through writers_hub_spotlight() (GAPS-12e).
+       ('writer_spotlights', 0::bigint),
+       -- Words per day: the writer only (GAPS-12f).
+       ('writing_days', 0::bigint),
+       ('writing_prompts', 0::bigint)
      ) as expected (table_name, visible_rows) order by 1 $$,
   'a signed-out visitor sees only public flags, settings, markets, published legal documents, languages, categories, tags, counties and age rules by country, nothing else'
 );

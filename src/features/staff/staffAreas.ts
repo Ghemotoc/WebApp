@@ -184,6 +184,14 @@ export const staffAreaPages: StaffAreaPage[] = [
     labelKey: 'nav.contests',
     descriptionKey: 'home.areas.contests',
   },
+  // Writers' hub content (GAPS-12c): the prompt of the week, with the contests area's staff.
+  {
+    area: 'contests',
+    href: '/staff/hub',
+    group: 'content',
+    labelKey: 'nav.hub',
+    descriptionKey: 'home.areas.hub',
+  },
   // Website: the public pages and the sponsors shown on them.
   // The website CMS: home page, notice banners, help and questions (S1-E11-06, 10, 12), owner
   // and admin only (decided 17 Oct 2026, 19:19); the menu item is "Website" (architecture 1.8.2).

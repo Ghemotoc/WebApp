@@ -724,7 +724,8 @@ CREATE TYPE "public"."notification_kind" AS ENUM (
     'story_featured',
     'spotlight_consent_agreed',
     'spotlight_consent_withdrawn',
-    'waitlist_admitted'
+    'waitlist_admitted',
+    'live_session_soon'
 );
 
 
@@ -1439,7 +1440,9 @@ CREATE OR REPLACE FUNCTION "public"."account_deletion_rules"() RETURNS TABLE("ta
     ('identity_link_requests', 'delete', 1, null),
     ('invites', 'kept', 0, 'invites staff made; purged 90 days after they expire (docs/retention.md)'),
     ('landing_page_reminders', 'delete', 1, null),
+    ('learning_path_progress', 'delete', 1, null),
     ('library_entries', 'delete', 1, null),
+    ('live_session_reminders', 'delete', 1, null),
     ('manual_age_checks', 'delete', 1, null),
     ('messages', 'own_step', 0, 'the person''s own messages are deleted, unless reported and still held (S1-E9-02)'),
     ('moderator_mail_messages', 'kept', 0, 'a moderation record, purged a year after the thread was last updated (docs/retention.md)'),
@@ -1479,14 +1482,16 @@ CREATE OR REPLACE FUNCTION "public"."account_deletion_rules"() RETURNS TABLE("ta
     ('teacher_checks', 'delete', 1, null),
     ('username_approvals', 'delete', 1, null),
     ('waitlist_entries', 'delete', 1, null),
-    ('writer_ranks', 'delete', 1, null);
+    ('writer_ranks', 'delete', 1, null),
+    ('writer_spotlights', 'delete', 1, null),
+    ('writing_days', 'delete', 1, null);
 $$;
 
 
 ALTER FUNCTION "public"."account_deletion_rules"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11).';
+COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h).';
 
 
 
@@ -3203,6 +3208,7 @@ CREATE TABLE IF NOT EXISTS "public"."stories" (
     "rating_reasons" "public"."story_rating_reason"[] DEFAULT '{}'::"public"."story_rating_reason"[] NOT NULL,
     "visibility" "public"."story_visibility" DEFAULT 'public'::"public"."story_visibility" NOT NULL,
     "first_published_year" integer,
+    "writing_prompt_id" "uuid",
     CONSTRAINT "stories_abuse_needs_rating_and_note" CHECK (((NOT "deals_with_abuse_or_coercion") OR (("rating" = ANY (ARRAY['16_plus'::"public"."story_rating", '18_plus'::"public"."story_rating"])) AND ("btrim"("content_note") <> ''::"text")))),
     CONSTRAINT "stories_blurb_length" CHECK (("char_length"("blurb") <= 500)),
     CONSTRAINT "stories_card_colour_on_palette" CHECK ((("card_colour" IS NULL) OR ("card_colour" = ANY (ARRAY['plum'::"text", 'violet'::"text", 'gold'::"text", 'ink'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text"])))),
@@ -3310,6 +3316,10 @@ COMMENT ON COLUMN "public"."stories"."visibility" IS 'kind: setting. Who can rea
 
 
 COMMENT ON COLUMN "public"."stories"."first_published_year" IS 'The year the work was first published anywhere; set for classics from classic_works (copied by a trigger). Null for a writer''s own story, whose first chapter''s year is shown instead.';
+
+
+
+COMMENT ON COLUMN "public"."stories"."writing_prompt_id" IS 'The writing prompt this story was started from, or null (GAPS-12c).';
 
 
 
@@ -5412,6 +5422,127 @@ COMMENT ON FUNCTION "public"."admin_delete_forum"("forum_id" "uuid", "reason" "t
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_delete_live_session"("session_id" "uuid") RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  deleted public.live_sessions;
+begin
+  if not public.staff_may('contests', 'act') then
+    raise exception 'Only contest staff can change live sessions.' using errcode = 'insufficient_privilege';
+  end if;
+  update public.live_sessions set deleted_at = now(), updated_by_user_id = (select auth.uid())
+  where id = session_id and deleted_at is null returning * into deleted;
+  if deleted.id is null then
+    raise exception 'There is no such live session.' using errcode = 'no_data_found';
+  end if;
+  -- A session that won't happen needs no reminders.
+  delete from public.live_session_reminders
+  where live_session_reminders.session_id = deleted.id and live_session_reminders.notified_at is null;
+  perform public.log_staff_action('live_session.deleted', 'live_sessions', deleted.id::text, null, null,
+    to_jsonb(deleted) - array['id', 'updated_by_user_id', 'created_at', 'updated_at', 'deleted_at'], null);
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_delete_live_session"("session_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_delete_live_session"("session_id" "uuid") IS 'Contest staff delete a live session and its waiting reminders; logged (GAPS-12h).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_delete_submission_call"("call_id" "uuid") RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  deleted public.submission_calls;
+begin
+  if not public.staff_may('contests', 'act') then
+    raise exception 'Only contest staff can change calls for submissions.' using errcode = 'insufficient_privilege';
+  end if;
+  update public.submission_calls set deleted_at = now(), updated_by_user_id = (select auth.uid())
+  where id = call_id and deleted_at is null returning * into deleted;
+  if deleted.id is null then
+    raise exception 'There is no such call for submissions.' using errcode = 'no_data_found';
+  end if;
+  perform public.log_staff_action('submission_call.deleted', 'submission_calls', deleted.id::text, null, null,
+    to_jsonb(deleted) - array['id', 'updated_by_user_id', 'created_at', 'updated_at', 'deleted_at'], null);
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_delete_submission_call"("call_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_delete_submission_call"("call_id" "uuid") IS 'Contest staff delete a call for submissions; logged (GAPS-12d).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_delete_writer_spotlight"("spotlight_id" "uuid") RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  deleted public.writer_spotlights;
+begin
+  if not public.staff_may('contests', 'act') then
+    raise exception 'Only contest staff can pick the writer of the week.' using errcode = 'insufficient_privilege';
+  end if;
+  update public.writer_spotlights set deleted_at = now(), updated_by_user_id = (select auth.uid())
+  where id = spotlight_id and deleted_at is null returning * into deleted;
+  if deleted.id is null then
+    raise exception 'There is no such pick.' using errcode = 'no_data_found';
+  end if;
+  perform public.log_staff_action('writer_spotlight.deleted', 'writer_spotlights', deleted.id::text, deleted.user_id, null,
+    jsonb_build_object('starts_on', deleted.starts_on, 'reason_ro', deleted.reason_ro, 'reason_en', deleted.reason_en,
+      'answer', public.writer_spotlight_answer(deleted)), null);
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_delete_writer_spotlight"("spotlight_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_delete_writer_spotlight"("spotlight_id" "uuid") IS 'Contest staff delete a writer-of-the-week pick; logged (GAPS-12e).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_delete_writing_prompt"("prompt_id" "uuid") RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  deleted public.writing_prompts;
+begin
+  if not public.staff_may('contests', 'act') then
+    raise exception 'Only contest staff can change writing prompts.' using errcode = 'insufficient_privilege';
+  end if;
+  update public.writing_prompts set deleted_at = now(), updated_by_user_id = (select auth.uid())
+  where id = prompt_id and deleted_at is null returning * into deleted;
+  if deleted.id is null then
+    raise exception 'There is no such writing prompt.' using errcode = 'no_data_found';
+  end if;
+  perform public.log_staff_action('writing_prompt.deleted', 'writing_prompts', deleted.id::text, null, null,
+    jsonb_build_object('prompt_ro', deleted.prompt_ro, 'prompt_en', deleted.prompt_en, 'starts_on', deleted.starts_on),
+    null);
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_delete_writing_prompt"("prompt_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_delete_writing_prompt"("prompt_id" "uuid") IS 'Contest staff delete a writing prompt; logged (GAPS-12c).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admin_describe_abuse_image"("evidence_id" "uuid", "description_text" "text") RETURNS boolean
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -6024,6 +6155,48 @@ $$;
 
 
 ALTER FUNCTION "public"."admin_import_classics"("list_rows" "jsonb") OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_invite_writer_spotlight"("target_handle" "text", "first_day" "date", "reason_ro" "text", "reason_en" "text") RETURNS "uuid"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  writer public.profiles;
+  saved public.writer_spotlights;
+begin
+  -- Step 1: staff with the contests area only (the server decides, architecture 1.8.1).
+  if not public.staff_may('contests', 'act') then
+    raise exception 'Only contest staff can pick the writer of the week.' using errcode = 'insufficient_privilege';
+  end if;
+  if first_day is null then
+    raise exception 'A pick needs its first day.' using errcode = 'check_violation';
+  end if;
+  -- Step 2: the writer exists, can write and is an adult.
+  select * into writer from public.profile_for_handle(btrim(coalesce(target_handle, '')));
+  if writer.id is null or public.account_state(writer.id) <> 'active' then
+    raise exception 'There is no active account with that username.' using errcode = 'check_violation';
+  end if;
+  if public.age_band_of(writer.id) <> '18_plus' then
+    raise exception 'Only an adult can be writer of the week.' using errcode = 'check_violation';
+  end if;
+  -- Step 3: the pick, waiting for the writer's answer. The table's checks refuse bad lines.
+  insert into public.writer_spotlights (user_id, starts_on, reason_ro, reason_en, updated_by_user_id)
+  values (writer.id, first_day, btrim(reason_ro), btrim(reason_en), (select auth.uid()))
+  returning * into saved;
+  -- Step 4: the audit log, in the same transaction.
+  perform public.log_staff_action('writer_spotlight.invited', 'writer_spotlights', saved.id::text, writer.id, null,
+    null, jsonb_build_object('starts_on', saved.starts_on, 'reason_ro', saved.reason_ro, 'reason_en', saved.reason_en));
+  return saved.id;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_invite_writer_spotlight"("target_handle" "text", "first_day" "date", "reason_ro" "text", "reason_en" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_invite_writer_spotlight"("target_handle" "text", "first_day" "date", "reason_ro" "text", "reason_en" "text") IS 'Contest staff invite an adult writer to be writer of the week; shown only once the writer agrees; logged (GAPS-12e).';
+
 
 
 CREATE OR REPLACE FUNCTION "public"."admin_issue_contest_certificates"("target_contest_id" "uuid") RETURNS "jsonb"
@@ -9520,6 +9693,111 @@ COMMENT ON FUNCTION "public"."admin_save_landing_page_draft"("target_page_id" "u
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_save_learning_step"("target_day" integer, "step" "jsonb") RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  before_row public.learning_path_steps;
+  saved public.learning_path_steps;
+begin
+  -- Step 1: staff with the contests area only (the server decides, architecture 1.8.1).
+  if not public.staff_may('contests', 'act') then
+    raise exception 'Only contest staff can change the learning path.' using errcode = 'insufficient_privilege';
+  end if;
+  if step is null then
+    raise exception 'A day needs its texts.' using errcode = 'check_violation';
+  end if;
+  -- Step 2: the day as it was, held while it changes.
+  select * into before_row from public.learning_path_steps where day_number = target_day for update;
+  if before_row.id is null then
+    raise exception 'The learning path has days 1 to 7.' using errcode = 'no_data_found';
+  end if;
+  -- Step 3: the new words. The table's checks refuse an empty or long text.
+  update public.learning_path_steps set
+    title_ro = btrim(coalesce(step ->> 'title_ro', '')), title_en = btrim(coalesce(step ->> 'title_en', '')),
+    lesson_ro = btrim(coalesce(step ->> 'lesson_ro', '')), lesson_en = btrim(coalesce(step ->> 'lesson_en', '')),
+    task_ro = btrim(coalesce(step ->> 'task_ro', '')), task_en = btrim(coalesce(step ->> 'task_en', '')),
+    updated_by_user_id = (select auth.uid())
+  where id = before_row.id returning * into saved;
+  -- Step 4: the audit log keeps what changed, in the same transaction.
+  perform public.log_staff_action('learning_step.saved', 'learning_path_steps', saved.id::text, null, null,
+    to_jsonb(before_row) - array['id', 'updated_by_user_id', 'created_at', 'updated_at'],
+    to_jsonb(saved) - array['id', 'updated_by_user_id', 'created_at', 'updated_at']);
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_save_learning_step"("target_day" integer, "step" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_save_learning_step"("target_day" integer, "step" "jsonb") IS 'Contest staff change one learning path day''s title, lesson and task; logged with before and after (GAPS-12g).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_save_live_session"("session_id" "uuid", "session" "jsonb") RETURNS "uuid"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  before_row public.live_sessions;
+  saved public.live_sessions;
+begin
+  -- Step 1: staff with the contests area only (the server decides, architecture 1.8.1).
+  if not public.staff_may('contests', 'act') then
+    raise exception 'Only contest staff can change live sessions.' using errcode = 'insufficient_privilege';
+  end if;
+  if session is null or nullif(session ->> 'starts_at', '') is null then
+    raise exception 'A live session needs its start.' using errcode = 'check_violation';
+  end if;
+  -- Step 2: a new session, or the change to one that exists. The table's checks refuse bad values.
+  if session_id is null then
+    insert into public.live_sessions (title_ro, title_en, starts_at, language_code, rating, place_ro,
+      place_en, link_url, updated_by_user_id)
+    values (btrim(session ->> 'title_ro'), btrim(session ->> 'title_en'),
+      (session ->> 'starts_at')::timestamptz, session ->> 'language_code',
+      coalesce((session ->> 'rating')::public.story_rating, 'all_ages'),
+      btrim(session ->> 'place_ro'), btrim(session ->> 'place_en'),
+      nullif(btrim(session ->> 'link_url'), ''), (select auth.uid()))
+    returning * into saved;
+  else
+    select * into before_row from public.live_sessions
+    where live_sessions.id = session_id and deleted_at is null for update;
+    if before_row.id is null then
+      raise exception 'There is no such live session.' using errcode = 'no_data_found';
+    end if;
+    update public.live_sessions set
+      title_ro = btrim(session ->> 'title_ro'), title_en = btrim(session ->> 'title_en'),
+      starts_at = (session ->> 'starts_at')::timestamptz, language_code = session ->> 'language_code',
+      rating = coalesce((session ->> 'rating')::public.story_rating, 'all_ages'),
+      place_ro = btrim(session ->> 'place_ro'), place_en = btrim(session ->> 'place_en'),
+      link_url = nullif(btrim(session ->> 'link_url'), ''),
+      updated_by_user_id = (select auth.uid())
+    where id = session_id returning * into saved;
+    -- A session moved to another time is announced again: its reminders wait once more.
+    if saved.starts_at is distinct from before_row.starts_at then
+      update public.live_session_reminders set notified_at = null
+      where live_session_reminders.session_id = saved.id and live_session_reminders.notified_at is not null;
+    end if;
+  end if;
+  -- Step 3: the audit log keeps what changed, in the same transaction.
+  perform public.log_staff_action('live_session.saved', 'live_sessions', saved.id::text, null, null,
+    case when before_row.id is null then null
+         else to_jsonb(before_row) - array['id', 'updated_by_user_id', 'created_at', 'updated_at', 'deleted_at'] end,
+    to_jsonb(saved) - array['id', 'updated_by_user_id', 'created_at', 'updated_at', 'deleted_at']);
+  return saved.id;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_save_live_session"("session_id" "uuid", "session" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_save_live_session"("session_id" "uuid", "session" "jsonb") IS 'Contest staff add or change a live session; logged with before and after (GAPS-12h).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admin_save_safety_contact"("contact" "jsonb") RETURNS "uuid"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -9659,6 +9937,110 @@ ALTER FUNCTION "public"."admin_save_sponsor_campaign"("target_campaign_id" "uuid
 
 
 COMMENT ON FUNCTION "public"."admin_save_sponsor_campaign"("target_campaign_id" "uuid", "fields" "jsonb") IS 'Creates or saves a sponsor campaign as a draft; owner and admin only; logged (S1-E12-02).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_save_submission_call"("call_id" "uuid", "call" "jsonb") RETURNS "uuid"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  before_row public.submission_calls;
+  saved public.submission_calls;
+begin
+  -- Step 1: staff with the contests area only (the server decides, architecture 1.8.1).
+  if not public.staff_may('contests', 'act') then
+    raise exception 'Only contest staff can change calls for submissions.' using errcode = 'insufficient_privilege';
+  end if;
+  if call is null or nullif(call ->> 'closes_on', '') is null then
+    raise exception 'A call needs its last day.' using errcode = 'check_violation';
+  end if;
+  -- Step 2: a new call, or the change to one that exists. The table's checks refuse bad values.
+  if call_id is null then
+    insert into public.submission_calls (title_ro, title_en, details_ro, details_en, link_url, closes_on,
+      is_paid, updated_by_user_id)
+    values (btrim(call ->> 'title_ro'), btrim(call ->> 'title_en'), btrim(call ->> 'details_ro'),
+      btrim(call ->> 'details_en'), btrim(call ->> 'link_url'), (call ->> 'closes_on')::date,
+      coalesce((call ->> 'is_paid')::boolean, false), (select auth.uid()))
+    returning * into saved;
+  else
+    select * into before_row from public.submission_calls
+    where submission_calls.id = call_id and deleted_at is null for update;
+    if before_row.id is null then
+      raise exception 'There is no such call for submissions.' using errcode = 'no_data_found';
+    end if;
+    update public.submission_calls set
+      title_ro = btrim(call ->> 'title_ro'), title_en = btrim(call ->> 'title_en'),
+      details_ro = btrim(call ->> 'details_ro'), details_en = btrim(call ->> 'details_en'),
+      link_url = btrim(call ->> 'link_url'), closes_on = (call ->> 'closes_on')::date,
+      is_paid = coalesce((call ->> 'is_paid')::boolean, false),
+      updated_by_user_id = (select auth.uid())
+    where id = call_id returning * into saved;
+  end if;
+  -- Step 3: the audit log keeps what changed, in the same transaction.
+  perform public.log_staff_action('submission_call.saved', 'submission_calls', saved.id::text, null, null,
+    case when before_row.id is null then null
+         else to_jsonb(before_row) - array['id', 'updated_by_user_id', 'created_at', 'updated_at', 'deleted_at'] end,
+    to_jsonb(saved) - array['id', 'updated_by_user_id', 'created_at', 'updated_at', 'deleted_at']);
+  return saved.id;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_save_submission_call"("call_id" "uuid", "call" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_save_submission_call"("call_id" "uuid", "call" "jsonb") IS 'Contest staff add or change a call for submissions; logged with before and after (GAPS-12d).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_save_writing_prompt"("prompt_id" "uuid", "prompt_ro" "text", "prompt_en" "text", "starts_on" "date") RETURNS "uuid"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  before_row public.writing_prompts;
+  saved public.writing_prompts;
+begin
+  -- Step 1: staff with the contests area only (the server decides, architecture 1.8.1).
+  if not public.staff_may('contests', 'act') then
+    raise exception 'Only contest staff can change writing prompts.' using errcode = 'insufficient_privilege';
+  end if;
+  if starts_on is null then
+    raise exception 'A prompt needs a start day.' using errcode = 'check_violation';
+  end if;
+  -- Step 2: a new prompt, or the change to one that exists.
+  if prompt_id is null then
+    insert into public.writing_prompts (prompt_ro, prompt_en, starts_on, updated_by_user_id)
+    values (btrim(prompt_ro), btrim(prompt_en), starts_on, (select auth.uid()))
+    returning * into saved;
+  else
+    select * into before_row from public.writing_prompts
+    where writing_prompts.id = prompt_id and deleted_at is null for update;
+    if before_row.id is null then
+      raise exception 'There is no such writing prompt.' using errcode = 'no_data_found';
+    end if;
+    update public.writing_prompts set prompt_ro = btrim(admin_save_writing_prompt.prompt_ro),
+      prompt_en = btrim(admin_save_writing_prompt.prompt_en),
+      starts_on = admin_save_writing_prompt.starts_on,
+      updated_by_user_id = (select auth.uid())
+    where id = prompt_id returning * into saved;
+  end if;
+  -- Step 3: the audit log keeps what changed, in the same transaction.
+  perform public.log_staff_action('writing_prompt.saved', 'writing_prompts', saved.id::text, null, null,
+    case when before_row.id is null then null
+         else jsonb_build_object('prompt_ro', before_row.prompt_ro, 'prompt_en', before_row.prompt_en,
+                                 'starts_on', before_row.starts_on) end,
+    jsonb_build_object('prompt_ro', saved.prompt_ro, 'prompt_en', saved.prompt_en, 'starts_on', saved.starts_on));
+  return saved.id;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_save_writing_prompt"("prompt_id" "uuid", "prompt_ro" "text", "prompt_en" "text", "starts_on" "date") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_save_writing_prompt"("prompt_id" "uuid", "prompt_ro" "text", "prompt_en" "text", "starts_on" "date") IS 'Contest staff add or change a writing prompt; logged with before and after (GAPS-12c).';
 
 
 
@@ -11945,6 +12327,35 @@ COMMENT ON FUNCTION "public"."admin_withdraw_spotlight_consent"("target_user_id"
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_writer_spotlights"() RETURNS TABLE("spotlight_id" "uuid", "handle" "text", "display_name" "text", "starts_on" "date", "reason_ro" "text", "reason_en" "text", "answer" "text")
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  if not public.staff_may('contests', 'view') then
+    raise exception 'Only contest staff can see the picks.' using errcode = 'insufficient_privilege';
+  end if;
+  return query
+    select writer_spotlights.id, profiles.handle,
+      public.display_name(profiles.handle, profiles.pen_name),
+      writer_spotlights.starts_on, writer_spotlights.reason_ro, writer_spotlights.reason_en,
+      public.writer_spotlight_answer(writer_spotlights)
+    from public.writer_spotlights
+    join public.profiles on profiles.id = writer_spotlights.user_id
+    where writer_spotlights.deleted_at is null
+    order by writer_spotlights.starts_on desc
+    limit 30;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_writer_spotlights"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_writer_spotlights"() IS 'Contest staff list the writer-of-the-week picks with each writer''s answer (GAPS-12e).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admit_waitlist_entry"("target_entry_id" "uuid", "how" "text") RETURNS boolean
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -12994,6 +13405,37 @@ ALTER FUNCTION "public"."answer_spotlight_consent"("token" "text", "decision" "t
 
 
 COMMENT ON FUNCTION "public"."answer_spotlight_consent"("token" "text", "decision" "text", "signature" "text") IS 'The parent''s yes to suggestions, or its withdrawal, from the one-question page; signed by our server (S1-E2-03b).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."answer_writer_spotlight"("spotlight_id" "uuid", "agrees" boolean) RETURNS "text"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  saved public.writer_spotlights;
+begin
+  -- Only the picked writer, only a pick that still exists and hasn't ended.
+  update public.writer_spotlights set
+    agreed_at = case when coalesce(agrees, false) then now() else null end,
+    declined_at = case when coalesce(agrees, false) then null else now() end
+  where id = spotlight_id
+    and user_id = (select auth.uid())
+    and deleted_at is null
+    and starts_on + 6 >= public.romania_today()
+  returning * into saved;
+  if saved.id is null then
+    raise exception 'There is no such invitation.' using errcode = 'no_data_found';
+  end if;
+  return public.writer_spotlight_answer(saved);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."answer_writer_spotlight"("spotlight_id" "uuid", "agrees" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."answer_writer_spotlight"("spotlight_id" "uuid", "agrees" boolean) IS 'The picked writer agrees to be writer of the week or declines; changeable until the week ends (GAPS-12e).';
 
 
 
@@ -18340,6 +18782,53 @@ COMMENT ON FUNCTION "public"."count_words"("body" "text") IS 'Words in a chapter
 
 
 
+CREATE OR REPLACE FUNCTION "public"."count_writing_day"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  words_before integer := 0;
+  difference integer;
+  today date := public.romania_today();
+begin
+  -- Step 1: only the writer's own saves count, never a staff change or a background job.
+  if (select auth.uid()) is distinct from new.user_id then
+    return new;
+  end if;
+  -- Step 2: how many words this save added or took away.
+  if tg_op = 'UPDATE' then
+    words_before := coalesce(old.word_count, 0);
+  end if;
+  difference := coalesce(new.word_count, 0) - words_before;
+  if difference = 0 then
+    return new;
+  end if;
+  -- Step 3: words taken away come off today's total, never below zero and never as a new row.
+  if difference < 0 then
+    update public.writing_days set words = greatest(0, words + difference)
+    where user_id = new.user_id and day = today;
+    return new;
+  end if;
+  -- Step 4: new words go on today's row, made on the day's first save.
+  insert into public.writing_days (user_id, day, words) values (new.user_id, today, difference)
+  on conflict on constraint writing_days_one_per_day
+  -- Capped far above anything a person writes, so a huge paste can never make the save fail.
+  do update set words = least(2000000000::bigint, public.writing_days.words::bigint + excluded.words)::integer;
+  -- Step 5: drop the writer's days older than 400 (docs/retention.md); the unique index finds them.
+  delete from public.writing_days
+  where user_id = new.user_id and day < today - 400;
+  return new;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."count_writing_day"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."count_writing_day"() IS 'Trigger on chapters: adds the change in a chapter''s word count to the writer''s own total for the day; prunes days older than 400 (GAPS-12f).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."cover_upload_allowed"("object_name" "text") RETURNS boolean
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -18879,7 +19368,9 @@ CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_
     ('identity_link_requests', false, 'a ten-minute step while connecting a way to log in; the ways to log in are in the account part'),
     ('invites', true, null),
     ('landing_page_reminders', true, null),
+    ('learning_path_progress', true, null),
     ('library_entries', true, null),
+    ('live_session_reminders', true, null),
     ('manual_age_checks', true, null),
     ('messages', true, null),
     ('moderator_mail_messages', true, null),
@@ -18919,6 +19410,8 @@ CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_
     ('teacher_checks', true, null),
     ('username_approvals', false, 'a moderator''s note that a name was refused by mistake; the name itself is in the profile'),
     ('waitlist_entries', true, null),
+    ('writer_spotlights', true, null),
+    ('writing_days', true, null),
     ('writer_ranks', false, 'worked out from the person''s published chapters, which are in the export; the rank itself shows on the profile');
 $$;
 
@@ -18926,7 +19419,7 @@ $$;
 ALTER FUNCTION "public"."data_export_tables"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11).';
+COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h).';
 
 
 
@@ -26138,6 +26631,38 @@ COMMENT ON FUNCTION "public"."mark_forums_read"("forum_slug" "text") IS '"Mark a
 
 
 
+CREATE OR REPLACE FUNCTION "public"."mark_learning_step"("target_day" integer, "is_done" boolean) RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+begin
+  if caller_id is null then
+    raise exception 'Log in to follow the learning path.' using errcode = 'insufficient_privilege';
+  end if;
+  if target_day is null or target_day not between 1 and 7 then
+    raise exception 'The learning path has days 1 to 7.' using errcode = 'check_violation';
+  end if;
+  -- Taking the tick off removes the row; ticking twice changes nothing.
+  if not coalesce(is_done, false) then
+    delete from public.learning_path_progress where user_id = caller_id and day_number = target_day;
+    return false;
+  end if;
+  insert into public.learning_path_progress (user_id, day_number) values (caller_id, target_day)
+  on conflict on constraint learning_path_progress_one_per_day do nothing;
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."mark_learning_step"("target_day" integer, "is_done" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."mark_learning_step"("target_day" integer, "is_done" boolean) IS 'The caller marks a learning path day done, or not done again (GAPS-12g).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."mark_notifications_read"("notification_ids" "uuid"[] DEFAULT NULL::"uuid"[]) RETURNS integer
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -28829,6 +29354,107 @@ COMMENT ON FUNCTION "public"."my_week_numbers"() IS 'The signed-in writer''s las
 
 
 
+CREATE OR REPLACE FUNCTION "public"."my_writer_spotlights"() RETURNS TABLE("spotlight_id" "uuid", "starts_on" "date", "ends_on" "date", "reason_ro" "text", "reason_en" "text", "answer" "text")
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select
+    writer_spotlights.id,
+    writer_spotlights.starts_on,
+    writer_spotlights.starts_on + 6,
+    writer_spotlights.reason_ro,
+    writer_spotlights.reason_en,
+    public.writer_spotlight_answer(writer_spotlights)
+  from public.writer_spotlights
+  where writer_spotlights.user_id = (select auth.uid())
+    and writer_spotlights.deleted_at is null
+    and writer_spotlights.starts_on + 6 >= public.romania_today()
+  order by writer_spotlights.starts_on
+  limit 4;
+$$;
+
+
+ALTER FUNCTION "public"."my_writer_spotlights"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."my_writer_spotlights"() IS 'The caller''s own writer-of-the-week invitations that haven''t ended, with their answer (GAPS-12e).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."my_writing_month"() RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  today date := public.romania_today();
+  month_start date := date_trunc('month', public.romania_today())::date;
+  month_words integer;
+  current_streak integer;
+  best_month_streak integer;
+  comment_count integer;
+  entered_contest boolean;
+begin
+  if caller_id is null then
+    raise exception 'Log in to see the writing month.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 1: the month's words.
+  select least(coalesce(sum(writing_days.words), 0), 2000000000)::integer into month_words
+  from public.writing_days
+  where writing_days.user_id = caller_id and writing_days.day >= month_start;
+  -- Step 2: the streak still running: days in a row with words, ending today or yesterday (so a
+  -- streak isn't lost before the writer has had today's chance). Days in a row share the same
+  -- "day minus its place in line".
+  with written as (
+    select writing_days.day,
+           writing_days.day - (row_number() over (order by writing_days.day))::integer as run
+    from public.writing_days
+    where writing_days.user_id = caller_id and writing_days.words > 0
+  ), runs as (
+    select max(written.day) as last_day, count(*)::integer as length from written group by written.run
+  )
+  select coalesce(max(runs.length), 0) into current_streak from runs where runs.last_day >= today - 1;
+  -- Step 3: the longest run inside this month, for the 5-day badge (it stays earned after a gap).
+  with written as (
+    select writing_days.day,
+           writing_days.day - (row_number() over (order by writing_days.day))::integer as run
+    from public.writing_days
+    where writing_days.user_id = caller_id and writing_days.words > 0 and writing_days.day >= month_start
+  )
+  select coalesce(max(runs.length), 0) into best_month_streak
+  from (select count(*)::integer as length from written group by written.run) as runs;
+  -- Step 4: comments left this month that are still up, and a contest entered and not withdrawn.
+  select count(*)::integer into comment_count
+  from public.comments
+  where comments.user_id = caller_id and comments.deleted_at is null
+    and (comments.created_at at time zone 'Europe/Bucharest')::date >= month_start;
+  select exists (
+    select 1 from public.contest_entries
+    where contest_entries.user_id = caller_id and contest_entries.status = 'valid'
+      and (contest_entries.entered_at at time zone 'Europe/Bucharest')::date >= month_start
+  ) into entered_contest;
+  return jsonb_build_object(
+    'month_start', month_start,
+    'goal', 15000,
+    'words', month_words,
+    'streak_days', current_streak,
+    'badges', jsonb_build_object(
+      'streak_5', best_month_streak >= 5,
+      'first_5000', month_words >= 5000,
+      'comments_10', comment_count >= 10,
+      'contest_entry', entered_contest,
+      'words_15000', month_words >= 15000));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."my_writing_month"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."my_writing_month"() IS 'The caller''s writing month: words against a goal of 15,000, the running streak and five badges, from their own activity only (GAPS-12f).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."name_has_listed_word"("name" "text") RETURNS boolean
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -29354,6 +29980,7 @@ CREATE OR REPLACE FUNCTION "public"."notification_category"("kind" "public"."not
     when 'data_request_copy_ready' then 'staff'
     when 'picture_opened_by_staff' then 'staff'
     when 'landing_entries_open' then 'stories'
+    when 'live_session_soon' then 'stories'
     when 'rank_reached' then 'stories'
     when 'space_handover_offered' then 'follows'
     when 'story_featured' then 'stories'
@@ -29396,7 +30023,8 @@ CREATE TABLE IF NOT EXISTS "public"."notifications" (
     "story_revision_id" "uuid",
     "data_request_id" "uuid",
     "landing_page_id" "uuid",
-    "writer_rank" "public"."writer_rank"
+    "writer_rank" "public"."writer_rank",
+    "live_session_id" "uuid"
 );
 
 
@@ -29441,6 +30069,10 @@ COMMENT ON COLUMN "public"."notifications"."landing_page_id" IS 'The landing pag
 
 
 COMMENT ON COLUMN "public"."notifications"."writer_rank" IS 'For rank_reached: the rank the writer reached (IDEAS-3a).';
+
+
+
+COMMENT ON COLUMN "public"."notifications"."live_session_id" IS 'The live session a live_session_soon notification is about (GAPS-12h).';
 
 
 
@@ -29632,6 +30264,12 @@ CREATE OR REPLACE FUNCTION "public"."notification_json"("target" "public"."notif
                      cross join lateral public.landing_page_live_version(pages.id) as live
                      where pages.id = target.landing_page_id and pages.archived_at is null
                        and live.id is not null),
+    -- GAPS-12h: the live session about to start, with its title in each language, while it is
+    -- still listed (a deleted session gives null, and the row has no link).
+    'live_session', (select jsonb_build_object('title_ro', live_sessions.title_ro,
+                       'title_en', live_sessions.title_en, 'starts_at', live_sessions.starts_at)
+                     from public.live_sessions
+                     where live_sessions.id = target.live_session_id and live_sessions.deleted_at is null),
     -- IDEAS-3a: the rank a writer just reached, and their own handle for the link to their profile.
     'writer_rank', case when target.kind = 'rank_reached' then target.writer_rank end,
     'own_handle', case when target.kind = 'rank_reached'
@@ -29712,7 +30350,7 @@ begin
   -- the alert that staff opened an uploaded picture (ADMIN-2e2a).
   insert into public.notifications (user_id, kind, actor_user_ids, actor_count, story_id, chapter_id,
     comment_id, case_id, decision, statement_id, appeal_id, mail_thread_id, space_id, change_request_id,
-    story_revision_id, data_request_id, landing_page_id, group_key, is_required)
+    story_revision_id, data_request_id, landing_page_id, live_session_id, group_key, is_required)
   values (recipient_id, notification_kind,
     case when actor_id is null then '{}'::uuid[] else array[actor_id] end,
     case when actor_id is null then 0 else 1 end,
@@ -29721,7 +30359,7 @@ begin
     (about ->> 'statement_id')::uuid, (about ->> 'appeal_id')::uuid, (about ->> 'mail_thread_id')::uuid,
     (about ->> 'space_id')::uuid, (about ->> 'change_request_id')::uuid,
     (about ->> 'story_revision_id')::uuid, (about ->> 'data_request_id')::uuid,
-    (about ->> 'landing_page_id')::uuid, notify.group_key,
+    (about ->> 'landing_page_id')::uuid, (about ->> 'live_session_id')::uuid, notify.group_key,
     notification_kind in ('moderation_decision', 'appeal_decided', 'customisation_change_requested',
                           'story_changed_by_staff', 'data_request_confirm',
                           'data_request_extended', 'data_request_copy_ready', 'picture_opened_by_staff'));
@@ -33056,6 +33694,26 @@ ALTER FUNCTION "public"."rating_allows"("story_rating" "public"."story_rating") 
 
 
 COMMENT ON FUNCTION "public"."rating_allows"("story_rating" "public"."story_rating") IS 'May the caller see a story with this rating; the one rule every reader path uses (S1-E3-06, rule 18).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."rating_fits_band"("rating" "public"."story_rating", "band" "public"."age_band") RETURNS boolean
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select case rating
+    when 'all_ages' then true
+    when '13_plus' then band in ('13_to_15', '16_to_17', '18_plus')
+    when '16_plus' then band in ('16_to_17', '18_plus')
+    else band = '18_plus'
+  end;
+$$;
+
+
+ALTER FUNCTION "public"."rating_fits_band"("rating" "public"."story_rating", "band" "public"."age_band") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."rating_fits_band"("rating" "public"."story_rating", "band" "public"."age_band") IS 'Internal: whether an age group may see something with a rating; an unknown age sees only all ages (GAPS-12h).';
 
 
 
@@ -38147,6 +38805,51 @@ COMMENT ON FUNCTION "public"."send_landing_reminders"() IS 'Hourly: sends each l
 
 
 
+CREATE OR REPLACE FUNCTION "public"."send_live_session_reminders"() RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  reminder record;
+  sent integer := 0;
+begin
+  -- Step 1: each waiting reminder for a session that starts within the hour.
+  for reminder in
+    select reminders.id, reminders.user_id, reminders.session_id, sessions.rating
+    from public.live_session_reminders as reminders
+    join public.live_sessions as sessions on sessions.id = reminders.session_id
+    where reminders.notified_at is null and sessions.deleted_at is null
+      and sessions.starts_at > now() and sessions.starts_at <= now() + interval '1 hour'
+    for update of reminders skip locked
+  loop
+    if public.rating_fits_band(reminder.rating, public.age_band_of(reminder.user_id)) then
+      -- Step 2: one in-app notification, with no actor, then mark the reminder as sent.
+      perform public.notify(reminder.user_id, 'live_session_soon', null,
+        jsonb_build_object('live_session_id', reminder.session_id));
+      update public.live_session_reminders set notified_at = now()
+      where live_session_reminders.id = reminder.id;
+      sent := sent + 1;
+    else
+      -- The session is no longer for this member's age group: no notification, no reminder.
+      delete from public.live_session_reminders where live_session_reminders.id = reminder.id;
+    end if;
+  end loop;
+  -- Step 3: a reminder isn't needed 30 days after its session (docs/retention.md).
+  delete from public.live_session_reminders as reminders
+  using public.live_sessions as sessions
+  where sessions.id = reminders.session_id and sessions.starts_at < now() - interval '30 days';
+  return sent;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."send_live_session_reminders"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."send_live_session_reminders"() IS 'Every ten minutes: sends each live session reminder once, in the hour before the start (GAPS-12h).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."send_message"("recipient_handle" "text", "body" "text") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -38822,6 +39525,47 @@ ALTER FUNCTION "public"."set_library_shelf"("story_slug" "text", "wanted_shelf" 
 
 
 COMMENT ON FUNCTION "public"."set_library_shelf"("story_slug" "text", "wanted_shelf" "public"."library_shelf") IS 'Puts a story on one of the caller''s library shelves, or takes it off (S1-E4-03).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."set_live_session_reminder"("target_session" "uuid", "wanted" boolean) RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+begin
+  -- Step 1: only a signed-in member.
+  if caller_id is null then
+    raise exception 'Sign in to be reminded.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 2: cancelling needs no session check: the row is the caller's own.
+  if not coalesce(wanted, false) then
+    delete from public.live_session_reminders
+    where live_session_reminders.user_id = caller_id
+      and live_session_reminders.session_id = target_session;
+    return false;
+  end if;
+  -- Step 3: a session the caller can see on the hub: coming up and for their age group.
+  if not exists (
+      select 1 from public.live_sessions
+      where live_sessions.id = target_session and live_sessions.deleted_at is null
+        and live_sessions.starts_at > now()
+        and public.rating_fits_band(live_sessions.rating, public.age_band())) then
+    raise exception 'There is no such live session.' using errcode = 'no_data_found';
+  end if;
+  -- Step 4: one reminder per member and session.
+  insert into public.live_session_reminders (user_id, session_id) values (caller_id, target_session)
+  on conflict on constraint live_session_reminders_one_per_session do nothing;
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_live_session_reminder"("target_session" "uuid", "wanted" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_live_session_reminder"("target_session" "uuid", "wanted" boolean) IS 'A member asks for, or cancels, one in-app notification shortly before a live session starts (GAPS-12h).';
 
 
 
@@ -42320,6 +43064,41 @@ ALTER FUNCTION "public"."start_reading_habit"("device_time_zone" "text") OWNER T
 
 
 COMMENT ON FUNCTION "public"."start_reading_habit"("device_time_zone" "text") IS 'Turns the caller''s private reading streak on (IDEAS-1b).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."start_story_from_prompt"("story_slug" "text", "prompt_id" "uuid") RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  changed_rows integer;
+begin
+  -- Step 1: a signed-in writer only.
+  if caller_id is null then
+    raise exception 'Log in to write from a prompt.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 2: the prompt must be one the hub shows (started, not deleted).
+  if not exists (select 1 from public.writing_prompts
+                 where writing_prompts.id = prompt_id and writing_prompts.deleted_at is null
+                   and writing_prompts.starts_on <= public.romania_today()) then
+    return false;
+  end if;
+  -- Step 3: the caller's own live story, and only if it has no prompt yet.
+  update public.stories set writing_prompt_id = prompt_id
+  where stories.slug = story_slug and stories.user_id = caller_id
+    and stories.deleted_at is null and stories.writing_prompt_id is null;
+  get diagnostics changed_rows = row_count;
+  return changed_rows = 1;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."start_story_from_prompt"("story_slug" "text", "prompt_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."start_story_from_prompt"("story_slug" "text", "prompt_id" "uuid") IS 'The signed-in writer ties their own story to a started writing prompt, once; false when it can''t (GAPS-12c).';
 
 
 
@@ -46720,6 +47499,83 @@ COMMENT ON FUNCTION "public"."writer_reader_stops"("target_chapter_id" "uuid", "
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."writer_spotlights" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "starts_on" "date" NOT NULL,
+    "reason_ro" "text" NOT NULL,
+    "reason_en" "text" NOT NULL,
+    "agreed_at" timestamp with time zone,
+    "declined_at" timestamp with time zone,
+    "updated_by_user_id" "uuid",
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "deleted_at" timestamp with time zone,
+    CONSTRAINT "writer_spotlights_one_answer" CHECK ((("agreed_at" IS NULL) OR ("declined_at" IS NULL))),
+    CONSTRAINT "writer_spotlights_reason_en_length" CHECK ((("char_length"("btrim"("reason_en")) >= 1) AND ("char_length"("btrim"("reason_en")) <= 300))),
+    CONSTRAINT "writer_spotlights_reason_ro_length" CHECK ((("char_length"("btrim"("reason_ro")) >= 1) AND ("char_length"("btrim"("reason_ro")) <= 300)))
+);
+
+
+ALTER TABLE "public"."writer_spotlights" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."writer_spotlights" IS 'kind: user_action
+Writer of the week on the Writers'' hub: the writer staff picked, the first day, staff''s line on why in Romanian and English, and the writer''s own answer with its time (GAPS-12e). Personal data: that the person was picked and whether they agreed.';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."writer_spotlight_answer"("spotlight" "public"."writer_spotlights") RETURNS "text"
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select case
+    when spotlight.agreed_at is not null then 'agreed'
+    when spotlight.declined_at is not null then 'declined'
+    else 'waiting'
+  end;
+$$;
+
+
+ALTER FUNCTION "public"."writer_spotlight_answer"("spotlight" "public"."writer_spotlights") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."writer_spotlight_answer"("spotlight" "public"."writer_spotlights") IS 'Internal: a writer-of-the-week pick''s answer as agreed, declined or waiting (GAPS-12e).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."writers_hub_calls"() RETURNS TABLE("call_id" "uuid", "title_ro" "text", "title_en" "text", "details_ro" "text", "details_en" "text", "link_url" "text", "closes_on" "date", "is_paid" boolean)
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select
+    submission_calls.id,
+    submission_calls.title_ro,
+    submission_calls.title_en,
+    submission_calls.details_ro,
+    submission_calls.details_en,
+    submission_calls.link_url,
+    submission_calls.closes_on,
+    submission_calls.is_paid
+  from public.submission_calls
+  where (select auth.uid()) is not null
+    and submission_calls.deleted_at is null
+    -- Still open: the last day is included.
+    and submission_calls.closes_on >= public.romania_today()
+    -- Paid writing work is for adults only (Robert, 8 Nov 2026).
+    and (not submission_calls.is_paid or (select public.age_band()) = '18_plus')
+  order by submission_calls.closes_on, submission_calls.created_at
+  limit 12;
+$$;
+
+
+ALTER FUNCTION "public"."writers_hub_calls"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."writers_hub_calls"() IS 'The calls for submissions still open today, soonest closing first; paid ones only for adults (GAPS-12d).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."writers_hub_contests"() RETURNS TABLE("contest_id" "uuid", "name_ro" "text", "name_en" "text", "page_slug" "text", "entries_close_on" "date", "word_limit" integer, "prize_ro" "text", "prize_en" "text", "entry_count" integer, "cover" "jsonb", "cover_alt_ro" "text", "cover_alt_en" "text")
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -46764,6 +47620,138 @@ ALTER FUNCTION "public"."writers_hub_contests"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."writers_hub_contests"() IS 'The contests the signed-in writer can enter today, each with its entry count and cover picture, for the Writers'' hub (G9a, GAPS-12a; S1-E11-15 rules).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."writers_hub_learning_path"() RETURNS TABLE("day_number" integer, "title_ro" "text", "title_en" "text", "lesson_ro" "text", "lesson_en" "text", "task_ro" "text", "task_en" "text", "is_done" boolean)
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select
+    steps.day_number,
+    steps.title_ro,
+    steps.title_en,
+    steps.lesson_ro,
+    steps.lesson_en,
+    steps.task_ro,
+    steps.task_en,
+    exists (
+      select 1 from public.learning_path_progress as progress
+      where progress.user_id = (select auth.uid()) and progress.day_number = steps.day_number
+    )
+  from public.learning_path_steps as steps
+  where (select auth.uid()) is not null
+  order by steps.day_number;
+$$;
+
+
+ALTER FUNCTION "public"."writers_hub_learning_path"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."writers_hub_learning_path"() IS 'The learning path''s seven days in order, each with whether the caller marked it done (GAPS-12g).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."writers_hub_prompts"() RETURNS TABLE("prompt_id" "uuid", "prompt_ro" "text", "prompt_en" "text", "starts_on" "date", "ends_on" "date", "is_current" boolean, "writer_count" integer)
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select
+    writing_prompts.id,
+    writing_prompts.prompt_ro,
+    writing_prompts.prompt_en,
+    writing_prompts.starts_on,
+    writing_prompts.starts_on + 6,
+    public.romania_today() <= writing_prompts.starts_on + 6,
+    (select count(distinct stories.user_id)::integer from public.stories
+      where stories.writing_prompt_id = writing_prompts.id and stories.deleted_at is null)
+  from public.writing_prompts
+  where (select auth.uid()) is not null
+    and writing_prompts.deleted_at is null
+    -- An upcoming prompt stays hidden until its first day.
+    and writing_prompts.starts_on <= public.romania_today()
+  order by writing_prompts.starts_on desc
+  limit 8;
+$$;
+
+
+ALTER FUNCTION "public"."writers_hub_prompts"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."writers_hub_prompts"() IS 'The writing prompts that have started, newest first, each with how many writers started a story from it, for the Writers'' hub (GAPS-12c).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."writers_hub_sessions"() RETURNS TABLE("session_id" "uuid", "title_ro" "text", "title_en" "text", "starts_at" timestamp with time zone, "language_code" "text", "rating" "public"."story_rating", "place_ro" "text", "place_en" "text", "link_url" "text", "is_reminded" boolean)
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select
+    live_sessions.id,
+    live_sessions.title_ro,
+    live_sessions.title_en,
+    live_sessions.starts_at,
+    live_sessions.language_code,
+    live_sessions.rating,
+    live_sessions.place_ro,
+    live_sessions.place_en,
+    live_sessions.link_url,
+    exists (select 1 from public.live_session_reminders as reminders
+            where reminders.session_id = live_sessions.id
+              and reminders.user_id = (select auth.uid()))
+  from public.live_sessions
+  where (select auth.uid()) is not null
+    and live_sessions.deleted_at is null
+    and live_sessions.starts_at > now()
+    -- Never to a member younger than the session's age group (CLAUDE.md rule 18).
+    and public.rating_fits_band(live_sessions.rating, (select public.age_band()))
+  order by live_sessions.starts_at, live_sessions.created_at
+  limit 6;
+$$;
+
+
+ALTER FUNCTION "public"."writers_hub_sessions"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."writers_hub_sessions"() IS 'The live sessions coming up that fit the caller''s age group, soonest first, with the caller''s own reminders (GAPS-12h).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."writers_hub_spotlight"() RETURNS TABLE("handle" "text", "display_name" "text", "reason_ro" "text", "reason_en" "text", "is_me" boolean)
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select
+    profiles.handle,
+    public.display_name(profiles.handle, profiles.pen_name),
+    writer_spotlights.reason_ro,
+    writer_spotlights.reason_en,
+    -- The picked writer sees their own card without Follow.
+    profiles.id = (select auth.uid())
+  from public.writer_spotlights
+  join public.profiles on profiles.id = writer_spotlights.user_id
+  where (select auth.uid()) is not null
+    and writer_spotlights.deleted_at is null
+    -- The writer's agreement comes first (GAPS-12 brief).
+    and writer_spotlights.agreed_at is not null
+    -- Its 7 days, the first and the last included.
+    and public.romania_today() between writer_spotlights.starts_on and writer_spotlights.starts_on + 6
+    -- A deleted, suspended or banned account is never put forward.
+    and profiles.deleted_at is null
+    and public.account_state(profiles.id) = 'active'
+    -- Adults only (architecture 1.10: under-18s are private by default).
+    and public.age_band_of(profiles.id) = '18_plus'
+    -- Blocks are respected (CLAUDE.md rule 6).
+    and not public.is_blocked_with(profiles.id)
+  order by writer_spotlights.starts_on desc
+  limit 1;
+$$;
+
+
+ALTER FUNCTION "public"."writers_hub_spotlight"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."writers_hub_spotlight"() IS 'This week''s writer of the week, only once the writer agreed and while the account is active and adult; blocks respected (GAPS-12e).';
 
 
 
@@ -48100,6 +49088,54 @@ Story and interface languages with their status; a language opens only with a mo
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."learning_path_progress" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "day_number" integer NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "learning_path_progress_day_in_path" CHECK ((("day_number" >= 1) AND ("day_number" <= 7)))
+);
+
+
+ALTER TABLE "public"."learning_path_progress" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."learning_path_progress" IS 'kind: user_action
+Which days of the Writers'' hub learning path a writer marked done, and when (GAPS-12g). Personal data: the person''s own progress; nobody else reads it.';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."learning_path_steps" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "day_number" integer NOT NULL,
+    "title_ro" "text" NOT NULL,
+    "title_en" "text" NOT NULL,
+    "lesson_ro" "text" NOT NULL,
+    "lesson_en" "text" NOT NULL,
+    "task_ro" "text" NOT NULL,
+    "task_en" "text" NOT NULL,
+    "updated_by_user_id" "uuid",
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "learning_path_steps_day_in_path" CHECK ((("day_number" >= 1) AND ("day_number" <= 7))),
+    CONSTRAINT "learning_path_steps_lesson_en_length" CHECK ((("char_length"("btrim"("lesson_en")) >= 1) AND ("char_length"("btrim"("lesson_en")) <= 1500))),
+    CONSTRAINT "learning_path_steps_lesson_ro_length" CHECK ((("char_length"("btrim"("lesson_ro")) >= 1) AND ("char_length"("btrim"("lesson_ro")) <= 1500))),
+    CONSTRAINT "learning_path_steps_task_en_length" CHECK ((("char_length"("btrim"("task_en")) >= 1) AND ("char_length"("btrim"("task_en")) <= 300))),
+    CONSTRAINT "learning_path_steps_task_ro_length" CHECK ((("char_length"("btrim"("task_ro")) >= 1) AND ("char_length"("btrim"("task_ro")) <= 300))),
+    CONSTRAINT "learning_path_steps_title_en_length" CHECK ((("char_length"("btrim"("title_en")) >= 1) AND ("char_length"("btrim"("title_en")) <= 80))),
+    CONSTRAINT "learning_path_steps_title_ro_length" CHECK ((("char_length"("btrim"("title_ro")) >= 1) AND ("char_length"("btrim"("title_ro")) <= 80)))
+);
+
+
+ALTER TABLE "public"."learning_path_steps" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."learning_path_steps" IS 'kind: platform
+The seven days of the Writers'' hub learning path: a title, a short lesson and a small task each, in Romanian and English, shipped as draft text and changed by staff (GAPS-12g). No personal data.';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."legal_document_versions" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "document_id" "uuid" NOT NULL,
@@ -48152,6 +49188,55 @@ ALTER TABLE "public"."library_entries" OWNER TO "postgres";
 
 COMMENT ON TABLE "public"."library_entries" IS 'kind: user_action
 Which story sits on which shelf of a reader''s library (S1-E4-03). Private to the reader.';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."live_session_reminders" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "session_id" "uuid" NOT NULL,
+    "notified_at" timestamp with time zone,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL
+);
+
+
+ALTER TABLE "public"."live_session_reminders" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."live_session_reminders" IS 'kind: user_action
+Which live sessions a member asked to be reminded of: one row per member and session, deleted 30 days after the session (GAPS-12h). Personal data: the link between a member and a session.';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."live_sessions" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "title_ro" "text" NOT NULL,
+    "title_en" "text" NOT NULL,
+    "starts_at" timestamp with time zone NOT NULL,
+    "language_code" "text" NOT NULL,
+    "rating" "public"."story_rating" DEFAULT 'all_ages'::"public"."story_rating" NOT NULL,
+    "place_ro" "text" NOT NULL,
+    "place_en" "text" NOT NULL,
+    "link_url" "text",
+    "updated_by_user_id" "uuid",
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "deleted_at" timestamp with time zone,
+    CONSTRAINT "live_sessions_language_known" CHECK (("language_code" = ANY (ARRAY['ro'::"text", 'en'::"text"]))),
+    CONSTRAINT "live_sessions_link_is_https" CHECK ((("link_url" IS NULL) OR (("link_url" ~ '^https://[^\s"''<>]+$'::"text") AND (("char_length"("link_url") >= 12) AND ("char_length"("link_url") <= 500))))),
+    CONSTRAINT "live_sessions_place_en_length" CHECK ((("char_length"("btrim"("place_en")) >= 1) AND ("char_length"("btrim"("place_en")) <= 80))),
+    CONSTRAINT "live_sessions_place_ro_length" CHECK ((("char_length"("btrim"("place_ro")) >= 1) AND ("char_length"("btrim"("place_ro")) <= 80))),
+    CONSTRAINT "live_sessions_title_en_length" CHECK ((("char_length"("btrim"("title_en")) >= 1) AND ("char_length"("btrim"("title_en")) <= 120))),
+    CONSTRAINT "live_sessions_title_ro_length" CHECK ((("char_length"("btrim"("title_ro")) >= 1) AND ("char_length"("btrim"("title_ro")) <= 120)))
+);
+
+
+ALTER TABLE "public"."live_sessions" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."live_sessions" IS 'kind: platform
+Live sessions listed on the Writers'' hub: staff-written title and place in Romanian and English, the start, the language, the youngest age group and an optional link (GAPS-12h). No personal data.';
 
 
 
@@ -49305,6 +50390,35 @@ Which tags a story carries (at most 10); written only by create_story() and upda
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."submission_calls" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "title_ro" "text" NOT NULL,
+    "title_en" "text" NOT NULL,
+    "details_ro" "text" NOT NULL,
+    "details_en" "text" NOT NULL,
+    "link_url" "text" NOT NULL,
+    "closes_on" "date" NOT NULL,
+    "is_paid" boolean DEFAULT false NOT NULL,
+    "updated_by_user_id" "uuid",
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "deleted_at" timestamp with time zone,
+    CONSTRAINT "submission_calls_details_en_length" CHECK ((("char_length"("btrim"("details_en")) >= 1) AND ("char_length"("btrim"("details_en")) <= 300))),
+    CONSTRAINT "submission_calls_details_ro_length" CHECK ((("char_length"("btrim"("details_ro")) >= 1) AND ("char_length"("btrim"("details_ro")) <= 300))),
+    CONSTRAINT "submission_calls_link_is_https" CHECK ((("link_url" ~ '^https://[^\s"''<>]+$'::"text") AND (("char_length"("link_url") >= 12) AND ("char_length"("link_url") <= 500)))),
+    CONSTRAINT "submission_calls_title_en_length" CHECK ((("char_length"("btrim"("title_en")) >= 1) AND ("char_length"("btrim"("title_en")) <= 120))),
+    CONSTRAINT "submission_calls_title_ro_length" CHECK ((("char_length"("btrim"("title_ro")) >= 1) AND ("char_length"("btrim"("title_ro")) <= 120)))
+);
+
+
+ALTER TABLE "public"."submission_calls" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."submission_calls" IS 'kind: platform
+Calls for submissions from outside the platform, listed on the Writers'' hub: staff-written title and details in Romanian and English, the organiser''s page, the last day and whether it pays (GAPS-12d). No personal data.';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."support_canned_replies" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "title" "text" NOT NULL,
@@ -49545,6 +50659,47 @@ ALTER TABLE "public"."writer_ranks" OWNER TO "postgres";
 
 COMMENT ON TABLE "public"."writer_ranks" IS 'kind: identity
 Each writer''s rank, worked out again whenever their published chapters change; others read it only through rank_of() and profile_rank() (S1-E8-09).';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."writing_days" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "day" "date" NOT NULL,
+    "words" integer DEFAULT 0 NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "writing_days_words_not_negative" CHECK (("words" >= 0))
+);
+
+
+ALTER TABLE "public"."writing_days" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."writing_days" IS 'kind: user_action
+A writer''s net new words per day in Romanian time, kept by a trigger on chapters, for the writing month, streaks and badges on the Writers'' hub (GAPS-12f). Personal data: on which days the person wrote and how much; never the words themselves. Kept 400 days.';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."writing_prompts" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "prompt_ro" "text" NOT NULL,
+    "prompt_en" "text" NOT NULL,
+    "starts_on" "date" NOT NULL,
+    "updated_by_user_id" "uuid",
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "deleted_at" timestamp with time zone,
+    CONSTRAINT "writing_prompts_prompt_en_length" CHECK ((("char_length"("btrim"("prompt_en")) >= 1) AND ("char_length"("btrim"("prompt_en")) <= 300))),
+    CONSTRAINT "writing_prompts_prompt_ro_length" CHECK ((("char_length"("btrim"("prompt_ro")) >= 1) AND ("char_length"("btrim"("prompt_ro")) <= 300)))
+);
+
+
+ALTER TABLE "public"."writing_prompts" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."writing_prompts" IS 'kind: platform
+The prompt of the week on the Writers'' hub: staff-written words in Romanian and English with a start day (GAPS-12c). No personal data.';
 
 
 
@@ -50168,6 +51323,26 @@ ALTER TABLE ONLY "public"."languages"
 
 
 
+ALTER TABLE ONLY "public"."learning_path_progress"
+    ADD CONSTRAINT "learning_path_progress_one_per_day" UNIQUE ("user_id", "day_number");
+
+
+
+ALTER TABLE ONLY "public"."learning_path_progress"
+    ADD CONSTRAINT "learning_path_progress_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."learning_path_steps"
+    ADD CONSTRAINT "learning_path_steps_one_per_day" UNIQUE ("day_number");
+
+
+
+ALTER TABLE ONLY "public"."learning_path_steps"
+    ADD CONSTRAINT "learning_path_steps_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."legal_document_versions"
     ADD CONSTRAINT "legal_document_versions_one_per_language" UNIQUE ("document_id", "version_label", "language");
 
@@ -50195,6 +51370,21 @@ ALTER TABLE ONLY "public"."library_entries"
 
 ALTER TABLE ONLY "public"."library_entries"
     ADD CONSTRAINT "library_entries_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."live_session_reminders"
+    ADD CONSTRAINT "live_session_reminders_one_per_session" UNIQUE ("user_id", "session_id");
+
+
+
+ALTER TABLE ONLY "public"."live_session_reminders"
+    ADD CONSTRAINT "live_session_reminders_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."live_sessions"
+    ADD CONSTRAINT "live_sessions_pkey" PRIMARY KEY ("id");
 
 
 
@@ -50723,6 +51913,11 @@ ALTER TABLE ONLY "public"."story_tags"
 
 
 
+ALTER TABLE ONLY "public"."submission_calls"
+    ADD CONSTRAINT "submission_calls_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."support_canned_replies"
     ADD CONSTRAINT "support_canned_replies_pkey" PRIMARY KEY ("id");
 
@@ -50820,6 +52015,26 @@ ALTER TABLE ONLY "public"."waitlist_entries"
 
 ALTER TABLE ONLY "public"."writer_ranks"
     ADD CONSTRAINT "writer_ranks_pkey" PRIMARY KEY ("user_id");
+
+
+
+ALTER TABLE ONLY "public"."writer_spotlights"
+    ADD CONSTRAINT "writer_spotlights_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."writing_days"
+    ADD CONSTRAINT "writing_days_one_per_day" UNIQUE ("user_id", "day");
+
+
+
+ALTER TABLE ONLY "public"."writing_days"
+    ADD CONSTRAINT "writing_days_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."writing_prompts"
+    ADD CONSTRAINT "writing_prompts_pkey" PRIMARY KEY ("id");
 
 
 
@@ -51383,6 +52598,18 @@ CREATE INDEX "library_entries_story_id" ON "public"."library_entries" USING "btr
 
 
 
+CREATE INDEX "live_session_reminders_session_id_fk_idx" ON "public"."live_session_reminders" USING "btree" ("session_id");
+
+
+
+CREATE INDEX "live_session_reminders_waiting" ON "public"."live_session_reminders" USING "btree" ("session_id") WHERE ("notified_at" IS NULL);
+
+
+
+CREATE INDEX "live_sessions_coming_up" ON "public"."live_sessions" USING "btree" ("starts_at") WHERE ("deleted_at" IS NULL);
+
+
+
 CREATE UNIQUE INDEX "manual_age_checks_one_open" ON "public"."manual_age_checks" USING "btree" ("user_id") WHERE ("status" = 'open'::"text");
 
 
@@ -51464,6 +52691,10 @@ CREATE INDEX "notifications_group" ON "public"."notifications" USING "btree" ("u
 
 
 CREATE INDEX "notifications_landing_page_id_fk_idx" ON "public"."notifications" USING "btree" ("landing_page_id");
+
+
+
+CREATE INDEX "notifications_live_session_id_fk_idx" ON "public"."notifications" USING "btree" ("live_session_id") WHERE ("live_session_id" IS NOT NULL);
 
 
 
@@ -51795,6 +53026,10 @@ CREATE INDEX "stories_user_id_idx" ON "public"."stories" USING "btree" ("user_id
 
 
 
+CREATE INDEX "stories_writing_prompt_id" ON "public"."stories" USING "btree" ("writing_prompt_id") WHERE ("writing_prompt_id" IS NOT NULL);
+
+
+
 CREATE INDEX "story_bible_entries_section_id_idx" ON "public"."story_bible_entries" USING "btree" ("section_id");
 
 
@@ -51939,6 +53174,10 @@ CREATE INDEX "story_tags_tag_id_idx" ON "public"."story_tags" USING "btree" ("ta
 
 
 
+CREATE INDEX "submission_calls_open" ON "public"."submission_calls" USING "btree" ("closes_on") WHERE ("deleted_at" IS NULL);
+
+
+
 CREATE INDEX "support_ticket_emails_due_idx" ON "public"."support_ticket_emails" USING "btree" ("created_at") WHERE ("sent_at" IS NULL);
 
 
@@ -52016,6 +53255,18 @@ CREATE INDEX "username_approvals_user_id_idx" ON "public"."username_approvals" U
 
 
 CREATE INDEX "waitlist_entries_waiting" ON "public"."waitlist_entries" USING "btree" ("joined_at") WHERE ("admitted_at" IS NULL);
+
+
+
+CREATE INDEX "writer_spotlights_by_writer" ON "public"."writer_spotlights" USING "btree" ("user_id") WHERE ("deleted_at" IS NULL);
+
+
+
+CREATE UNIQUE INDEX "writer_spotlights_one_per_day" ON "public"."writer_spotlights" USING "btree" ("starts_on") WHERE ("deleted_at" IS NULL);
+
+
+
+CREATE UNIQUE INDEX "writing_prompts_one_per_start_day" ON "public"."writing_prompts" USING "btree" ("starts_on") WHERE ("deleted_at" IS NULL);
 
 
 
@@ -52180,6 +53431,10 @@ CREATE OR REPLACE TRIGGER "chapter_scenes_refuse_user_id_change" BEFORE UPDATE O
 
 
 CREATE OR REPLACE TRIGGER "chapter_scenes_set_updated_at" BEFORE UPDATE ON "public"."chapter_scenes" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "chapters_count_writing_day" AFTER INSERT OR UPDATE OF "word_count" ON "public"."chapters" FOR EACH ROW EXECUTE FUNCTION "public"."count_writing_day"();
 
 
 
@@ -52483,6 +53738,18 @@ CREATE OR REPLACE TRIGGER "languages_set_updated_at" BEFORE UPDATE ON "public"."
 
 
 
+CREATE OR REPLACE TRIGGER "learning_path_progress_refuse_user_id_change" BEFORE UPDATE ON "public"."learning_path_progress" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"('user_id');
+
+
+
+CREATE OR REPLACE TRIGGER "learning_path_progress_set_updated_at" BEFORE UPDATE ON "public"."learning_path_progress" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "learning_path_steps_set_updated_at" BEFORE UPDATE ON "public"."learning_path_steps" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
 CREATE OR REPLACE TRIGGER "legal_document_versions_set_updated_at" BEFORE UPDATE ON "public"."legal_document_versions" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
@@ -52492,6 +53759,18 @@ CREATE OR REPLACE TRIGGER "legal_documents_set_updated_at" BEFORE UPDATE ON "pub
 
 
 CREATE OR REPLACE TRIGGER "library_entries_set_updated_at" BEFORE UPDATE ON "public"."library_entries" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "live_session_reminders_refuse_user_id_change" BEFORE UPDATE ON "public"."live_session_reminders" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"();
+
+
+
+CREATE OR REPLACE TRIGGER "live_session_reminders_set_updated_at" BEFORE UPDATE ON "public"."live_session_reminders" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "live_sessions_set_updated_at" BEFORE UPDATE ON "public"."live_sessions" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
 
@@ -52983,6 +54262,10 @@ CREATE OR REPLACE TRIGGER "story_tags_set_updated_at" BEFORE UPDATE ON "public".
 
 
 
+CREATE OR REPLACE TRIGGER "submission_calls_set_updated_at" BEFORE UPDATE ON "public"."submission_calls" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
 CREATE OR REPLACE TRIGGER "support_canned_replies_set_updated_at" BEFORE UPDATE ON "public"."support_canned_replies" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
@@ -53044,6 +54327,26 @@ CREATE OR REPLACE TRIGGER "waitlist_entries_refuse_user_id_change" BEFORE UPDATE
 
 
 CREATE OR REPLACE TRIGGER "waitlist_entries_set_updated_at" BEFORE UPDATE ON "public"."waitlist_entries" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "writer_spotlights_refuse_user_id_change" BEFORE UPDATE ON "public"."writer_spotlights" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"('user_id');
+
+
+
+CREATE OR REPLACE TRIGGER "writer_spotlights_set_updated_at" BEFORE UPDATE ON "public"."writer_spotlights" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "writing_days_refuse_user_id_change" BEFORE UPDATE ON "public"."writing_days" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"('user_id');
+
+
+
+CREATE OR REPLACE TRIGGER "writing_days_set_updated_at" BEFORE UPDATE ON "public"."writing_days" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "writing_prompts_set_updated_at" BEFORE UPDATE ON "public"."writing_prompts" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
 
@@ -53812,6 +55115,16 @@ ALTER TABLE ONLY "public"."landing_pages"
 
 
 
+ALTER TABLE ONLY "public"."learning_path_progress"
+    ADD CONSTRAINT "learning_path_progress_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."learning_path_steps"
+    ADD CONSTRAINT "learning_path_steps_updated_by_user_id_fkey" FOREIGN KEY ("updated_by_user_id") REFERENCES "public"."profiles"("id");
+
+
+
 ALTER TABLE ONLY "public"."legal_document_versions"
     ADD CONSTRAINT "legal_document_versions_document_id_fkey" FOREIGN KEY ("document_id") REFERENCES "public"."legal_documents"("id");
 
@@ -53824,6 +55137,21 @@ ALTER TABLE ONLY "public"."library_entries"
 
 ALTER TABLE ONLY "public"."library_entries"
     ADD CONSTRAINT "library_entries_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."live_session_reminders"
+    ADD CONSTRAINT "live_session_reminders_session_id_fkey" FOREIGN KEY ("session_id") REFERENCES "public"."live_sessions"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."live_session_reminders"
+    ADD CONSTRAINT "live_session_reminders_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."live_sessions"
+    ADD CONSTRAINT "live_sessions_updated_by_user_id_fkey" FOREIGN KEY ("updated_by_user_id") REFERENCES "public"."profiles"("id");
 
 
 
@@ -53934,6 +55262,11 @@ ALTER TABLE ONLY "public"."notifications"
 
 ALTER TABLE ONLY "public"."notifications"
     ADD CONSTRAINT "notifications_landing_page_id_fkey" FOREIGN KEY ("landing_page_id") REFERENCES "public"."landing_pages"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."notifications"
+    ADD CONSTRAINT "notifications_live_session_id_fkey" FOREIGN KEY ("live_session_id") REFERENCES "public"."live_sessions"("id") ON DELETE CASCADE;
 
 
 
@@ -54437,6 +55770,11 @@ ALTER TABLE ONLY "public"."stories"
 
 
 
+ALTER TABLE ONLY "public"."stories"
+    ADD CONSTRAINT "stories_writing_prompt_id_fkey" FOREIGN KEY ("writing_prompt_id") REFERENCES "public"."writing_prompts"("id");
+
+
+
 ALTER TABLE ONLY "public"."story_bible_entries"
     ADD CONSTRAINT "story_bible_entries_section_id_fkey" FOREIGN KEY ("section_id") REFERENCES "public"."story_bible_sections"("id");
 
@@ -54652,6 +55990,11 @@ ALTER TABLE ONLY "public"."story_tags"
 
 
 
+ALTER TABLE ONLY "public"."submission_calls"
+    ADD CONSTRAINT "submission_calls_updated_by_user_id_fkey" FOREIGN KEY ("updated_by_user_id") REFERENCES "public"."profiles"("id");
+
+
+
 ALTER TABLE ONLY "public"."support_canned_replies"
     ADD CONSTRAINT "support_canned_replies_updated_by_user_id_fkey" FOREIGN KEY ("updated_by_user_id") REFERENCES "public"."profiles"("id");
 
@@ -54749,6 +56092,26 @@ ALTER TABLE ONLY "public"."waitlist_entries"
 
 ALTER TABLE ONLY "public"."writer_ranks"
     ADD CONSTRAINT "writer_ranks_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."writer_spotlights"
+    ADD CONSTRAINT "writer_spotlights_updated_by_user_id_fkey" FOREIGN KEY ("updated_by_user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."writer_spotlights"
+    ADD CONSTRAINT "writer_spotlights_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."writing_days"
+    ADD CONSTRAINT "writing_days_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."writing_prompts"
+    ADD CONSTRAINT "writing_prompts_updated_by_user_id_fkey" FOREIGN KEY ("updated_by_user_id") REFERENCES "public"."profiles"("id");
 
 
 
@@ -55609,6 +56972,28 @@ COMMENT ON POLICY "languages_select_public" ON "public"."languages" IS 'Allows a
 
 
 
+ALTER TABLE "public"."learning_path_progress" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "learning_path_progress_select_own" ON "public"."learning_path_progress" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
+
+
+
+COMMENT ON POLICY "learning_path_progress_select_own" ON "public"."learning_path_progress" IS 'Allows a writer to read which learning path days they marked done; nobody else reads them (GAPS-12g).';
+
+
+
+ALTER TABLE "public"."learning_path_steps" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "learning_path_steps_select_members" ON "public"."learning_path_steps" FOR SELECT TO "authenticated" USING (true);
+
+
+
+COMMENT ON POLICY "learning_path_steps_select_members" ON "public"."learning_path_steps" IS 'Allows anyone signed in to read the learning path''s seven days: staff-written teaching text, nothing personal (GAPS-12g).';
+
+
+
 ALTER TABLE "public"."legal_document_versions" ENABLE ROW LEVEL SECURITY;
 
 
@@ -55643,6 +57028,28 @@ ALTER TABLE "public"."library_entries" ENABLE ROW LEVEL SECURITY;
 
 
 CREATE POLICY "library_entries_select_own" ON "public"."library_entries" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
+
+
+
+ALTER TABLE "public"."live_session_reminders" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "live_session_reminders_select_own" ON "public"."live_session_reminders" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
+
+
+
+COMMENT ON POLICY "live_session_reminders_select_own" ON "public"."live_session_reminders" IS 'Allows a member to read their own live session reminders only (GAPS-12h).';
+
+
+
+ALTER TABLE "public"."live_sessions" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "live_sessions_select_contest_staff" ON "public"."live_sessions" FOR SELECT TO "authenticated" USING ((("deleted_at" IS NULL) AND ( SELECT "public"."staff_may"('contests'::"text", 'view'::"text") AS "staff_may")));
+
+
+
+COMMENT ON POLICY "live_sessions_select_contest_staff" ON "public"."live_sessions" IS 'Allows staff with the contests area to read the live sessions that aren''t deleted, past ones included (GAPS-12h).';
 
 
 
@@ -56426,6 +57833,17 @@ COMMENT ON POLICY "story_tags_select_own" ON "public"."story_tags" IS 'Allows a 
 
 
 
+ALTER TABLE "public"."submission_calls" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "submission_calls_select_contest_staff" ON "public"."submission_calls" FOR SELECT TO "authenticated" USING ((("deleted_at" IS NULL) AND ( SELECT "public"."staff_may"('contests'::"text", 'view'::"text") AS "staff_may")));
+
+
+
+COMMENT ON POLICY "submission_calls_select_contest_staff" ON "public"."submission_calls" IS 'Allows staff with the contests area to read the calls for submissions that aren''t deleted, closed ones included (GAPS-12d).';
+
+
+
 ALTER TABLE "public"."support_canned_replies" ENABLE ROW LEVEL SECURITY;
 
 
@@ -56583,6 +58001,47 @@ CREATE POLICY "writer_ranks_select_own" ON "public"."writer_ranks" FOR SELECT TO
 
 
 COMMENT ON POLICY "writer_ranks_select_own" ON "public"."writer_ranks" IS 'Allows a person to read their own rank row; others see ranks only through functions without the user ID (S1-E8-09).';
+
+
+
+ALTER TABLE "public"."writer_spotlights" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "writer_spotlights_select_contest_staff" ON "public"."writer_spotlights" FOR SELECT TO "authenticated" USING ((("deleted_at" IS NULL) AND ( SELECT "public"."staff_may"('contests'::"text", 'view'::"text") AS "staff_may")));
+
+
+
+COMMENT ON POLICY "writer_spotlights_select_contest_staff" ON "public"."writer_spotlights" IS 'Allows staff with the contests area to read the writer-of-the-week picks that aren''t deleted (GAPS-12e).';
+
+
+
+CREATE POLICY "writer_spotlights_select_own" ON "public"."writer_spotlights" FOR SELECT TO "authenticated" USING ((("deleted_at" IS NULL) AND ("user_id" = ( SELECT "auth"."uid"() AS "uid"))));
+
+
+
+COMMENT ON POLICY "writer_spotlights_select_own" ON "public"."writer_spotlights" IS 'Allows the picked writer to read their own writer-of-the-week invitations that aren''t deleted (GAPS-12e).';
+
+
+
+ALTER TABLE "public"."writing_days" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "writing_days_select_own" ON "public"."writing_days" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
+
+
+
+COMMENT ON POLICY "writing_days_select_own" ON "public"."writing_days" IS 'Allows a writer to read their own words-per-day rows; nobody else reads them (GAPS-12f).';
+
+
+
+ALTER TABLE "public"."writing_prompts" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "writing_prompts_select_contest_staff" ON "public"."writing_prompts" FOR SELECT TO "authenticated" USING ((("deleted_at" IS NULL) AND ( SELECT "public"."staff_may"('contests'::"text", 'view'::"text") AS "staff_may")));
+
+
+
+COMMENT ON POLICY "writing_prompts_select_contest_staff" ON "public"."writing_prompts" IS 'Allows staff with the contests area to read the writing prompts that aren''t deleted, upcoming ones included (GAPS-12c).';
 
 
 
@@ -57112,6 +58571,26 @@ GRANT ALL ON FUNCTION "public"."admin_delete_forum"("forum_id" "uuid", "reason" 
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_delete_live_session"("session_id" "uuid") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_delete_live_session"("session_id" "uuid") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_delete_submission_call"("call_id" "uuid") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_delete_submission_call"("call_id" "uuid") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_delete_writer_spotlight"("spotlight_id" "uuid") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_delete_writer_spotlight"("spotlight_id" "uuid") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_delete_writing_prompt"("prompt_id" "uuid") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_delete_writing_prompt"("prompt_id" "uuid") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_describe_abuse_image"("evidence_id" "uuid", "description_text" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_describe_abuse_image"("evidence_id" "uuid", "description_text" "text") TO "authenticated";
 
@@ -57183,6 +58662,11 @@ GRANT ALL ON FUNCTION "public"."admin_house_ads"() TO "authenticated";
 
 REVOKE ALL ON FUNCTION "public"."admin_import_classics"("list_rows" "jsonb") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_import_classics"("list_rows" "jsonb") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_invite_writer_spotlight"("target_handle" "text", "first_day" "date", "reason_ro" "text", "reason_en" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_invite_writer_spotlight"("target_handle" "text", "first_day" "date", "reason_ro" "text", "reason_en" "text") TO "authenticated";
 
 
 
@@ -57657,6 +59141,16 @@ GRANT ALL ON FUNCTION "public"."admin_save_landing_page_draft"("target_page_id" 
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_save_learning_step"("target_day" integer, "step" "jsonb") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_save_learning_step"("target_day" integer, "step" "jsonb") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_save_live_session"("session_id" "uuid", "session" "jsonb") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_save_live_session"("session_id" "uuid", "session" "jsonb") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_save_safety_contact"("contact" "jsonb") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_save_safety_contact"("contact" "jsonb") TO "authenticated";
 
@@ -57669,6 +59163,16 @@ GRANT ALL ON FUNCTION "public"."admin_save_sponsor"("target_sponsor_id" "uuid", 
 
 REVOKE ALL ON FUNCTION "public"."admin_save_sponsor_campaign"("target_campaign_id" "uuid", "fields" "jsonb") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_save_sponsor_campaign"("target_campaign_id" "uuid", "fields" "jsonb") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_save_submission_call"("call_id" "uuid", "call" "jsonb") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_save_submission_call"("call_id" "uuid", "call" "jsonb") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_save_writing_prompt"("prompt_id" "uuid", "prompt_ro" "text", "prompt_en" "text", "starts_on" "date") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_save_writing_prompt"("prompt_id" "uuid", "prompt_ro" "text", "prompt_en" "text", "starts_on" "date") TO "authenticated";
 
 
 
@@ -57979,6 +59483,11 @@ GRANT ALL ON FUNCTION "public"."admin_withdraw_spotlight_consent"("target_user_i
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_writer_spotlights"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_writer_spotlights"() TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admit_waitlist_entry"("target_entry_id" "uuid", "how" "text") FROM PUBLIC;
 
 
@@ -58112,6 +59621,11 @@ GRANT ALL ON FUNCTION "public"."answer_space_handover"("slug" "text", "accept" b
 REVOKE ALL ON FUNCTION "public"."answer_spotlight_consent"("token" "text", "decision" "text", "signature" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."answer_spotlight_consent"("token" "text", "decision" "text", "signature" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."answer_spotlight_consent"("token" "text", "decision" "text", "signature" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."answer_writer_spotlight"("spotlight_id" "uuid", "agrees" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."answer_writer_spotlight"("spotlight_id" "uuid", "agrees" boolean) TO "authenticated";
 
 
 
@@ -58873,6 +60387,10 @@ REVOKE ALL ON FUNCTION "public"."count_links"("body" "text") FROM PUBLIC;
 
 GRANT ALL ON FUNCTION "public"."count_words"("body" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."count_words"("body" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."count_writing_day"() FROM PUBLIC;
 
 
 
@@ -59951,6 +61469,11 @@ GRANT ALL ON FUNCTION "public"."mark_forums_read"("forum_slug" "text") TO "authe
 
 
 
+REVOKE ALL ON FUNCTION "public"."mark_learning_step"("target_day" integer, "is_done" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."mark_learning_step"("target_day" integer, "is_done" boolean) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."mark_notifications_read"("notification_ids" "uuid"[]) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."mark_notifications_read"("notification_ids" "uuid"[]) TO "authenticated";
 
@@ -60395,6 +61918,16 @@ GRANT ALL ON FUNCTION "public"."my_waitlist"() TO "authenticated";
 
 REVOKE ALL ON FUNCTION "public"."my_week_numbers"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."my_week_numbers"() TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."my_writer_spotlights"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."my_writer_spotlights"() TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."my_writing_month"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."my_writing_month"() TO "authenticated";
 
 
 
@@ -61015,6 +62548,10 @@ REVOKE ALL ON FUNCTION "public"."ranking_setting"("setting_key" "text", "fallbac
 
 GRANT ALL ON FUNCTION "public"."rating_allows"("story_rating" "public"."story_rating") TO "anon";
 GRANT ALL ON FUNCTION "public"."rating_allows"("story_rating" "public"."story_rating") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."rating_fits_band"("rating" "public"."story_rating", "band" "public"."age_band") FROM PUBLIC;
 
 
 
@@ -61671,6 +63208,10 @@ REVOKE ALL ON FUNCTION "public"."send_landing_reminders"() FROM PUBLIC;
 
 
 
+REVOKE ALL ON FUNCTION "public"."send_live_session_reminders"() FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."send_message"("recipient_handle" "text", "body" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."send_message"("recipient_handle" "text", "body" "text") TO "authenticated";
 
@@ -61754,6 +63295,11 @@ GRANT ALL ON FUNCTION "public"."set_library_audience"("audience" "public"."libra
 
 REVOKE ALL ON FUNCTION "public"."set_library_shelf"("story_slug" "text", "wanted_shelf" "public"."library_shelf") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_library_shelf"("story_slug" "text", "wanted_shelf" "public"."library_shelf") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."set_live_session_reminder"("target_session" "uuid", "wanted" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_live_session_reminder"("target_session" "uuid", "wanted" boolean) TO "authenticated";
 
 
 
@@ -62266,6 +63812,11 @@ GRANT ALL ON FUNCTION "public"."start_forum_thread"("forum_slug" "text", "title"
 
 REVOKE ALL ON FUNCTION "public"."start_reading_habit"("device_time_zone" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."start_reading_habit"("device_time_zone" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."start_story_from_prompt"("story_slug" "text", "prompt_id" "uuid") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."start_story_from_prompt"("story_slug" "text", "prompt_id" "uuid") TO "authenticated";
 
 
 
@@ -62853,8 +64404,43 @@ REVOKE ALL ON FUNCTION "public"."writer_reader_stops"("target_chapter_id" "uuid"
 
 
 
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."writer_spotlights" TO "service_role";
+GRANT SELECT ON TABLE "public"."writer_spotlights" TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."writer_spotlight_answer"("spotlight" "public"."writer_spotlights") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."writer_spotlight_answer"("spotlight" "public"."writer_spotlights") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."writers_hub_calls"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."writers_hub_calls"() TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."writers_hub_contests"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."writers_hub_contests"() TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."writers_hub_learning_path"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."writers_hub_learning_path"() TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."writers_hub_prompts"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."writers_hub_prompts"() TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."writers_hub_sessions"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."writers_hub_sessions"() TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."writers_hub_spotlight"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."writers_hub_spotlight"() TO "authenticated";
 
 
 
@@ -63166,6 +64752,16 @@ GRANT SELECT ON TABLE "public"."languages" TO "authenticated";
 
 
 
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."learning_path_progress" TO "service_role";
+GRANT SELECT ON TABLE "public"."learning_path_progress" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."learning_path_steps" TO "service_role";
+GRANT SELECT ON TABLE "public"."learning_path_steps" TO "authenticated";
+
+
+
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."legal_document_versions" TO "service_role";
 GRANT SELECT ON TABLE "public"."legal_document_versions" TO "anon";
 GRANT SELECT ON TABLE "public"."legal_document_versions" TO "authenticated";
@@ -63174,6 +64770,16 @@ GRANT SELECT ON TABLE "public"."legal_document_versions" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."library_entries" TO "service_role";
 GRANT SELECT ON TABLE "public"."library_entries" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."live_session_reminders" TO "service_role";
+GRANT SELECT ON TABLE "public"."live_session_reminders" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."live_sessions" TO "service_role";
+GRANT SELECT ON TABLE "public"."live_sessions" TO "authenticated";
 
 
 
@@ -63437,6 +65043,11 @@ GRANT SELECT ON TABLE "public"."story_tags" TO "authenticated";
 
 
 
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."submission_calls" TO "service_role";
+GRANT SELECT ON TABLE "public"."submission_calls" TO "authenticated";
+
+
+
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."support_canned_replies" TO "service_role";
 GRANT SELECT ON TABLE "public"."support_canned_replies" TO "authenticated";
 
@@ -63486,6 +65097,16 @@ GRANT SELECT ON TABLE "public"."waitlist_entries" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."writer_ranks" TO "service_role";
 GRANT SELECT ON TABLE "public"."writer_ranks" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."writing_days" TO "service_role";
+GRANT SELECT ON TABLE "public"."writing_days" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."writing_prompts" TO "service_role";
+GRANT SELECT ON TABLE "public"."writing_prompts" TO "authenticated";
 
 
 

@@ -87,6 +87,8 @@
     "pictureOpenedByStaff": "a deschis fișierul original al unei imagini încărcate. Fiecare deschidere apare în jurnalul de audit.",
     "landingEntriesOpen": "au început înscrierile pentru „{{title}}”.",
     "landingEntriesOpenGone": "au început înscrierile pentru o pagină despre care ai întrebat, dar care a fost scoasă între timp.",
+    "liveSessionSoon": "„{{title}}” începe la {{time}}.",
+    "liveSessionSoonGone": "o sesiune live despre care ai cerut un memento a fost anulată.",
     "contestCertificateIssued": "ai primit o diplomă de la „{{title}}”. O găsești în Diplome.",
     "certificateIssuedPlain": "ai primit o diplomă nouă. O găsești în Diplome.",
     "rankReached": "acum ai rangul {{rank}}. Felicitări!",
@@ -158,6 +160,7 @@
     "downloadDataRequestCopy": "Descarc-o",
     "openAuditLog": "Deschide jurnalul de audit",
     "openLandingPage": "Deschide pagina",
+    "openWritersHub": "Deschide Spațiul scriitorilor",
     "seeMyRank": "Vezi rangul",
     "seePrivacy": "Vezi setările de confidențialitate",
     "startExploring": "Începe să explorezi"

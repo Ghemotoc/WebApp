@@ -46,6 +46,7 @@ export type NotificationKind =
   | 'data_request_copy_ready'
   | 'picture_opened_by_staff'
   | 'landing_entries_open'
+  | 'live_session_soon'
   | 'rank_reached'
   | 'space_handover_offered'
   | 'story_featured'
@@ -114,6 +115,13 @@ export interface NotificationLandingPage {
   titles: { ro: string; en: string };
 }
 
+/** A live session a notification is about, with its title in Romanian and English (GAPS-12h). */
+export interface NotificationLiveSession {
+  titles: { ro: string; en: string };
+  /** The moment it starts, as the database writes it. */
+  startsAt: string;
+}
+
 /** One notification as the page draws it. */
 export interface AppNotification {
   id: string;
@@ -160,6 +168,11 @@ export interface AppNotification {
    * its address and its title in each language, or null once the page is archived.
    */
   landingPage: NotificationLandingPage | null;
+  /**
+   * The live session about to start, for live_session_soon (GAPS-12h): its title in each language
+   * and its start, or null once staff deleted the session.
+   */
+  liveSession: NotificationLiveSession | null;
   /**
    * For rank_reached (IDEAS-3a): the rank the writer reached, for its sticker, and their own
    * handle, for the link to their profile.
@@ -219,6 +232,7 @@ interface NotificationRow {
   } | null;
   data_request?: { reference: string; deadline: string; extension_reason: string | null } | null;
   landing_page?: { slug: string; title_ro: string | null; title_en: string | null } | null;
+  live_session?: { title_ro: string; title_en: string; starts_at: string } | null;
   writer_rank?: Enums<'writer_rank'> | null;
   own_handle?: string | null;
   is_required: boolean;
@@ -272,6 +286,18 @@ function landingPageOf(row: NotificationRow): NotificationLandingPage | null {
   const page = row.landing_page;
   if (page === null || page === undefined) return null;
   return { slug: page.slug, titles: { ro: page.title_ro ?? '', en: page.title_en ?? '' } };
+}
+
+/**
+ * A live session in the page's shape (GAPS-12h).
+ *
+ * @param row - the database's row
+ * @returns the session, or null for other kinds and deleted sessions
+ */
+function liveSessionOf(row: NotificationRow): NotificationLiveSession | null {
+  const session = row.live_session;
+  if (session === null || session === undefined) return null;
+  return { titles: { ro: session.title_ro, en: session.title_en }, startsAt: session.starts_at };
 }
 
 /**
@@ -341,6 +367,7 @@ function toNotification(row: NotificationRow): AppNotification {
     staffChange: staffChangeOf(row),
     dataRequest: dataRequestOf(row),
     landingPage: landingPageOf(row),
+    liveSession: liveSessionOf(row),
     writerRank: row.writer_rank ?? null,
     ownHandle: row.own_handle ?? null,
     isRequired: row.is_required,

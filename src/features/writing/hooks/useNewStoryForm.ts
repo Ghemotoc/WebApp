@@ -14,6 +14,8 @@ import { useNavigate, useSearchParams } from 'react-router';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
 import { useSession } from '@/features/auth/hooks/useSession';
+import { promptIdFrom, startStoryFromPrompt } from '@/features/hub/api/hubPrompts';
+import { hubPromptsKey } from '@/features/hub/hooks/useHubPrompts';
 import { newStorySchema, type NewStoryInput } from '@/schemas/story';
 import { trackEvent } from '@/lib/analytics/track';
 
@@ -76,6 +78,24 @@ export function useNewStoryForm() {
   const [searchParams] = useSearchParams();
   const startedFromAtlas = searchParams.get('from') === 'plan';
 
+  // The hub's "Write from this prompt" links here with ?prompt=<ID> (GAPS-12c).
+  const promptId = promptIdFrom(searchParams.get('prompt'));
+
+  /**
+   * Ties the new story to its prompt. The story is already made, so a failure here must not
+   * lose it: the writer goes on to chapter one and only the hub's count misses this story.
+   */
+  async function rememberPrompt(storySlug: string) {
+    if (promptId === null) return;
+    try {
+      await startStoryFromPrompt(await requireClient(), storySlug, promptId);
+      await queryClient.invalidateQueries({ queryKey: hubPromptsKey });
+    } catch (error) {
+      // Said in the console for whoever debugs it; there is nothing the writer could do about it.
+      console.warn('The story was made, but its prompt was not saved.', error);
+    }
+  }
+
   const create = useMutation({
     mutationFn: async (input: NewStoryInput) => createStory(await requireClient(), input),
     onSuccess: async (result, input) => {
@@ -85,6 +105,8 @@ export function useNewStoryForm() {
         return;
       }
       await queryClient.invalidateQueries({ queryKey: myStoriesKey(userId) });
+      // A story started from the hub's "Write from this prompt" remembers its prompt (GAPS-12c).
+      await rememberPrompt(result.slug);
       // The category only, never the story (docs/analytics-events.md).
       trackEvent('story_created', { category: input.categorySlug });
       // Step 4 (S1-E17-01): a story made from Story Atlas opens on its plan's at-a-glance page.

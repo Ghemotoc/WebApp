@@ -29,6 +29,21 @@
       "none": "No contest is open for entries right now. New contests show here.",
       "loadFailed": "We couldn’t load the contests. Check the connection and try again."
     },
+    "prompt": {
+      "eyebrow": "Prompt of the week",
+      "earlierEyebrow": "Earlier prompt",
+      "tried_one": "{{count}} writer tried it",
+      "tried_few": "{{count}} writers tried it",
+      "tried_other": "{{count}} writers tried it",
+      "endsToday": "ends today",
+      "endsIn_one": "ends in {{count}} day",
+      "endsIn_few": "ends in {{count}} days",
+      "endsIn_other": "ends in {{count}} days",
+      "write": "Write from this prompt",
+      "another": "Another prompt",
+      "writingFrom": "Writing from this prompt",
+      "loadFailed": "We couldn’t load the writing prompt. Check the connection and try again."
+    },
     "guides": {
       "eyebrow": "How-to guides",
       "seeEvery": "See every guide",
@@ -50,6 +65,17 @@
       "helpTitle": "Help centre",
       "helpLine": "Answers to common questions"
     },
+    "calls": {
+      "eyebrow": "Calls for submissions",
+      "closesToday": "Closes today",
+      "closesIn_one": "Closes in {{count}} day",
+      "closesIn_few": "Closes in {{count}} days",
+      "closesIn_other": "Closes in {{count}} days",
+      "paid": "Paid",
+      "openLabel": "{{title}} (opens the organiser’s page in a new tab)",
+      "outsideNote": "These calls come from other organisers. Read their rules before sending work.",
+      "loadFailed": "We couldn’t load the calls for submissions. Check the connection and try again."
+    },
     "week": {
       "eyebrow": "This week",
       "chapters": "Chapters posted",
@@ -59,6 +85,191 @@
       "fewerThanFive": "fewer than 5",
       "seeStatistics": "See statistics",
       "loadFailed": "We couldn’t load this week’s numbers. Check the connection and try again."
+    },
+    "spotlight": {
+      "eyebrow": "Writer of the week",
+      "staffPick": "Staff pick",
+      "loadFailed": "We couldn’t load the writer of the week. Check the connection and try again."
+    },
+    "invitation": {
+      "eyebrow": "Invitation",
+      "heading": "The team picked you as writer of the week",
+      "body": "From {{from}} to {{to}}, the Writers’ hub would show members your name, avatar and profile link, with this line:",
+      "status": {
+        "waiting": "Nothing shows until you agree.",
+        "agreed": "You agreed. Members see the card on those days.",
+        "declined": "You declined. Nothing shows."
+      },
+      "agree": "Agree",
+      "decline": "Decline",
+      "withdraw": "Take the card down",
+      "agreeAfterAll": "Agree after all",
+      "failed": "We couldn’t save the answer. Try again."
+    },
+    "month": {
+      "eyebrow": "Writing month",
+      "ofGoal": "of {{goal}} words",
+      "progressLabel": "{{percent}}% of {{goal}} words this month",
+      "streak_one": "{{count}}-day streak",
+      "streak_few": "{{count}}-day streak",
+      "streak_other": "{{count}}-day streak",
+      "noStreak": "No streak yet",
+      "words_one": "{{formatted}} word",
+      "words_few": "{{formatted}} words",
+      "words_other": "{{formatted}} words",
+      "badgesHeading": "Badges this month",
+      "badges": {
+        "streak_5": "5-day streak",
+        "first_5000": "First 5,000",
+        "comments_10": "10 comments",
+        "contest_entry": "Contest entry",
+        "words_15000": "15,000 words"
+      },
+      "earned": "Earned",
+      "notYet": "Not yet",
+      "note": "Counted from saves in the editor. Nobody else sees this.",
+      "loadFailed": "We couldn’t load the writing month. Check the connection and try again."
+    },
+    "path": {
+      "eyebrow": "Learning path",
+      "heading": "A first chapter in 7 days",
+      "intro": "A short lesson and a small task each day.",
+      "listLabel": "The seven days",
+      "dayNumber": "Day {{day}}",
+      "done": "done",
+      "start": "Start day 1",
+      "continue": "Continue day {{day}}",
+      "readAgain": "Read the path again",
+      "progress": "{{done}} of {{total}} days done",
+      "loadFailed": "We couldn’t load the learning path. Check the connection and try again."
+    },
+    "sessions": {
+      "eyebrow": "Live sessions",
+      "remind": "Remind me",
+      "remindLabel": "Remind me: {{title}}",
+      "reminderSet": "Reminder set. A notification arrives in the hour before the start.",
+      "open": "Open the session",
+      "openLabel": "Open the session: {{title}} (opens in a new tab)",
+      "timeNote": "Times are on this device’s clock.",
+      "language": {
+        "en": "English",
+        "ro": "Romanian"
+      },
+      "rating": {
+        "all_ages": "All ages",
+        "13_plus": "13+",
+        "16_plus": "16+",
+        "18_plus": "18+"
+      },
+      "remindFailed": "We couldn’t change the reminder. The session may have started. Try again.",
+      "loadFailed": "We couldn’t load the live sessions. Check the connection and try again."
+    }
+  },
+  "hubStaff": {
+    "documentTitle": "Writers’ hub · Admin",
+    "heading": "Writers’ hub",
+    "intro": "What writers see on the Writers’ hub besides contests. Every change is logged.",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "editNamed": "Edit: {{name}}",
+    "delete": "Delete",
+    "deleteNamed": "Delete: {{name}}",
+    "deleteConfirm": "Delete it",
+    "keep": "Keep it",
+    "loading": "Loading…",
+    "loadFailed": "We couldn’t load the list. Check the connection and try again.",
+    "failures": {
+      "not_allowed": "This account can’t change the Writers’ hub.",
+      "day_taken": "Another prompt already starts on that day. Pick a different day.",
+      "failed": "We couldn’t save the change. Try again."
+    },
+    "prompts": {
+      "heading": "Prompt of the week",
+      "intro": "A prompt shows on the hub from its start day for 7 days. Writers can still open earlier prompts with “Another prompt”.",
+      "add": "Add a prompt",
+      "enLabel": "Prompt in English",
+      "roLabel": "Prompt in Romanian",
+      "dayLabel": "Start day",
+      "dayHint": "The first of its 7 days, in Romanian time.",
+      "startsOn": "Starts {{day}}",
+      "empty": "No prompt yet. The hub shows the card once the first one starts.",
+      "listLabel": "Writing prompts, newest first",
+      "refused": "Fill in both texts, up to 300 characters each, and the start day."
+    },
+    "calls": {
+      "heading": "Calls for submissions",
+      "intro": "Calls from magazines, anthologies and competitions outside the platform. A call shows on the hub until its last day. Paid calls show to adults only.",
+      "add": "Add a call",
+      "titleEnLabel": "Title in English",
+      "titleRoLabel": "Title in Romanian",
+      "detailsEnLabel": "Details in English",
+      "detailsRoLabel": "Details in Romanian",
+      "linkLabel": "Organiser’s page",
+      "linkHint": "The full address, starting with https://",
+      "dayLabel": "Last day",
+      "dayHint": "The last day to send work, in Romanian time.",
+      "paidLabel": "The organiser pays for the work",
+      "closesOn": "Closes {{day}}",
+      "empty": "No call yet. The hub shows the list once the first one is added.",
+      "listLabel": "Calls for submissions, latest closing day first",
+      "refused": "Fill in every field: titles up to 120 characters, details up to 300, and an address that starts with https://."
+    },
+    "spotlights": {
+      "heading": "Writer of the week",
+      "intro": "Pick an adult writer for 7 days and say why in one line. The writer gets an invitation on the hub, and members see the card only after the writer agrees. The line can’t be changed after inviting: delete the pick and invite again.",
+      "add": "Invite a writer",
+      "handleLabel": "Username",
+      "handleHint": "The writer’s username, with or without @.",
+      "dayLabel": "First day",
+      "dayHint": "The card shows for 7 days from this day, in Romanian time.",
+      "reasonEnLabel": "Why, in English",
+      "reasonRoLabel": "Why, in Romanian",
+      "invite": "Send invitation",
+      "startsOn": "From {{day}}",
+      "answers": {
+        "waiting": "Waiting for the writer",
+        "agreed": "Agreed",
+        "declined": "Declined"
+      },
+      "empty": "No pick yet. The hub shows the card once a writer agrees.",
+      "listLabel": "Writer of the week picks, newest first",
+      "refused": "Check the username, that the writer is an adult with an active account, and both lines (up to 300 characters).",
+      "dayTaken": "Another pick already starts on that day. Pick a different day."
+    },
+    "path": {
+      "heading": "Learning path",
+      "intro": "The seven days writers read at “A first chapter in 7 days”. The path always has seven days: change the words, not the count.",
+      "listLabel": "The seven days of the learning path",
+      "lessonHint": "Up to 1,500 characters. Leave a blank line between paragraphs.",
+      "fields": {
+        "titleEn": "Title in English",
+        "titleRo": "Title in Romanian",
+        "lessonEn": "Lesson in English",
+        "lessonRo": "Lesson in Romanian",
+        "taskEn": "Task in English",
+        "taskRo": "Task in Romanian"
+      },
+      "refused": "Fill in every field: titles up to 80 characters, lessons up to 1,500 and tasks up to 300."
+    },
+    "sessions": {
+      "heading": "Live sessions",
+      "intro": "Sessions held live, such as a question hour with an author. A session shows on the hub until it starts, only to members old enough for its age group. A member who asks gets one notification in the hour before the start.",
+      "add": "Add a session",
+      "titleEnLabel": "Title in English",
+      "titleRoLabel": "Title in Romanian",
+      "placeEnLabel": "Where, in English",
+      "placeRoLabel": "Where, in Romanian",
+      "startLabel": "Start",
+      "startHint": "On this device’s clock. Each member sees it on their own.",
+      "languageLabel": "Language",
+      "ratingLabel": "Youngest age group",
+      "linkLabel": "Link to the session (optional)",
+      "linkHint": "The full address, starting with https://. Leave empty until there is one.",
+      "past": "Started",
+      "empty": "No session yet. The hub shows the list once the first one is added.",
+      "listLabel": "Live sessions, latest start first",
+      "refused": "Fill in the titles (up to 120 characters), where it happens (up to 80) and the start. A link must start with https://."
     }
   },
   "resources": {
@@ -87,5 +298,19 @@
       "legalTitle": "Privacy and terms",
       "legalLine": "How we handle data, and the rules of the platform"
     }
+  },
+  "path": {
+    "documentTitle": "Learning path · {{productName}}",
+    "backToHub": "Back to the Writers’ hub",
+    "dayOf": "Day {{day}} of {{total}}",
+    "task": "Today’s task",
+    "markDone": "Mark day {{day}} done",
+    "markNotDone": "Mark as not done",
+    "nextDay": "On to day {{day}}",
+    "goWrite": "Open Writing",
+    "markFailed": "We couldn’t save that. Try again.",
+    "loading": "Loading…",
+    "daysLabel": "Days of the learning path",
+    "signedOut": "Log in to follow the learning path."
   }
 }

@@ -29,6 +29,21 @@
       "none": "Niciun concurs nu primește înscrieri acum. Concursurile noi apar aici.",
       "loadFailed": "Nu am putut încărca concursurile. Verifică conexiunea și încearcă din nou."
     },
+    "prompt": {
+      "eyebrow": "Tema săptămânii",
+      "earlierEyebrow": "Temă mai veche",
+      "tried_one": "{{count}} scriitor a încercat-o",
+      "tried_few": "{{count}} scriitori au încercat-o",
+      "tried_other": "{{count}} de scriitori au încercat-o",
+      "endsToday": "se încheie azi",
+      "endsIn_one": "se încheie într-o zi",
+      "endsIn_few": "se încheie în {{count}} zile",
+      "endsIn_other": "se încheie în {{count}} de zile",
+      "write": "Scrie pornind de la temă",
+      "another": "Altă temă",
+      "writingFrom": "Scrii pornind de la tema aceasta",
+      "loadFailed": "Nu am putut încărca tema de scris. Verifică conexiunea și încearcă din nou."
+    },
     "guides": {
       "eyebrow": "Ghiduri pas cu pas",
       "seeEvery": "Vezi fiecare ghid",
@@ -50,6 +65,17 @@
       "helpTitle": "Centrul de ajutor",
       "helpLine": "Răspunsuri la întrebările frecvente"
     },
+    "calls": {
+      "eyebrow": "Apeluri de texte",
+      "closesToday": "Se închide azi",
+      "closesIn_one": "Se închide într-o zi",
+      "closesIn_few": "Se închide în {{count}} zile",
+      "closesIn_other": "Se închide în {{count}} de zile",
+      "paid": "Plătit",
+      "openLabel": "{{title}} (deschide pagina organizatorului într-o filă nouă)",
+      "outsideNote": "Apelurile vin de la alți organizatori. Citește regulile lor înainte să trimiți texte.",
+      "loadFailed": "Nu am putut încărca apelurile de texte. Verifică conexiunea și încearcă din nou."
+    },
     "week": {
       "eyebrow": "Săptămâna aceasta",
       "chapters": "Capitole publicate",
@@ -59,6 +85,191 @@
       "fewerThanFive": "mai puțin de 5",
       "seeStatistics": "Vezi statisticile",
       "loadFailed": "Nu am putut încărca cifrele săptămânii. Verifică conexiunea și încearcă din nou."
+    },
+    "spotlight": {
+      "eyebrow": "Scriitorul săptămânii",
+      "staffPick": "Alegerea echipei",
+      "loadFailed": "Nu am putut încărca scriitorul săptămânii. Verifică conexiunea și încearcă din nou."
+    },
+    "invitation": {
+      "eyebrow": "Invitație",
+      "heading": "Echipa te-a ales scriitorul săptămânii",
+      "body": "Între {{from}} și {{to}}, Spațiul scriitorilor le-ar arăta membrilor numele, avatarul și un link către profilul tău, cu acest rând:",
+      "status": {
+        "waiting": "Nimic nu apare până nu accepți.",
+        "agreed": "Ai acceptat. Membrii văd cardul în zilele acelea.",
+        "declined": "Ai refuzat. Nimic nu apare."
+      },
+      "agree": "Accept",
+      "decline": "Refuz",
+      "withdraw": "Scoate cardul",
+      "agreeAfterAll": "Accept totuși",
+      "failed": "Nu am putut salva răspunsul. Încearcă din nou."
+    },
+    "month": {
+      "eyebrow": "Luna de scris",
+      "ofGoal": "din {{goal}} de cuvinte",
+      "progressLabel": "{{percent}}% din {{goal}} de cuvinte luna aceasta",
+      "streak_one": "Serie de {{count}} zi",
+      "streak_few": "Serie de {{count}} zile",
+      "streak_other": "Serie de {{count}} de zile",
+      "noStreak": "Nicio serie încă",
+      "words_one": "{{formatted}} cuvânt",
+      "words_few": "{{formatted}} cuvinte",
+      "words_other": "{{formatted}} de cuvinte",
+      "badgesHeading": "Insigne luna aceasta",
+      "badges": {
+        "streak_5": "Serie de 5 zile",
+        "first_5000": "Primele 5.000",
+        "comments_10": "10 comentarii",
+        "contest_entry": "Înscriere la concurs",
+        "words_15000": "15.000 de cuvinte"
+      },
+      "earned": "Obținută",
+      "notYet": "Încă nu",
+      "note": "Se numără din salvările din editor. Nimeni altcineva nu vede asta.",
+      "loadFailed": "Nu am putut încărca luna de scris. Verifică conexiunea și încearcă din nou."
+    },
+    "path": {
+      "eyebrow": "Traseu de învățare",
+      "heading": "Un prim capitol în 7 zile",
+      "intro": "O lecție scurtă și o sarcină mică în fiecare zi.",
+      "listLabel": "Cele șapte zile",
+      "dayNumber": "Ziua {{day}}",
+      "done": "gata",
+      "start": "Începe ziua 1",
+      "continue": "Continuă ziua {{day}}",
+      "readAgain": "Citește din nou traseul",
+      "progress": "{{done}} din {{total}} zile gata",
+      "loadFailed": "Nu am putut încărca traseul de învățare. Verifică conexiunea și încearcă din nou."
+    },
+    "sessions": {
+      "eyebrow": "Sesiuni live",
+      "remind": "Amintește-mi",
+      "remindLabel": "Amintește-mi: {{title}}",
+      "reminderSet": "Memento setat. O notificare sosește în ora dinaintea începerii.",
+      "open": "Deschide sesiunea",
+      "openLabel": "Deschide sesiunea: {{title}} (se deschide într-o filă nouă)",
+      "timeNote": "Orele sunt cele de pe ceasul acestui dispozitiv.",
+      "language": {
+        "en": "Engleză",
+        "ro": "Română"
+      },
+      "rating": {
+        "all_ages": "Toate vârstele",
+        "13_plus": "13+",
+        "16_plus": "16+",
+        "18_plus": "18+"
+      },
+      "remindFailed": "Nu am putut schimba mementoul. Poate că sesiunea a început. Încearcă din nou.",
+      "loadFailed": "Nu am putut încărca sesiunile live. Verifică conexiunea și încearcă din nou."
+    }
+  },
+  "hubStaff": {
+    "documentTitle": "Spațiul scriitorilor · Admin",
+    "heading": "Spațiul scriitorilor",
+    "intro": "Ce văd scriitorii în Spațiul scriitorilor, pe lângă concursuri. Fiecare schimbare este înregistrată.",
+    "save": "Salvează",
+    "cancel": "Renunță",
+    "edit": "Editează",
+    "editNamed": "Editează: {{name}}",
+    "delete": "Șterge",
+    "deleteNamed": "Șterge: {{name}}",
+    "deleteConfirm": "Șterge",
+    "keep": "Păstrează",
+    "loading": "Se încarcă…",
+    "loadFailed": "Nu am putut încărca lista. Verifică conexiunea și încearcă din nou.",
+    "failures": {
+      "not_allowed": "Contul acesta nu poate schimba Spațiul scriitorilor.",
+      "day_taken": "O altă temă începe deja în ziua aceea. Alege altă zi.",
+      "failed": "Nu am putut salva schimbarea. Încearcă din nou."
+    },
+    "prompts": {
+      "heading": "Tema săptămânii",
+      "intro": "O temă apare în spațiu din ziua de început, timp de 7 zile. Scriitorii pot deschide în continuare temele mai vechi cu „Altă temă”.",
+      "add": "Adaugă o temă",
+      "enLabel": "Tema în engleză",
+      "roLabel": "Tema în română",
+      "dayLabel": "Ziua de început",
+      "dayHint": "Prima dintre cele 7 zile, după ora României.",
+      "startsOn": "Începe pe {{day}}",
+      "empty": "Nicio temă încă. Cardul apare în spațiu când începe prima.",
+      "listLabel": "Teme de scris, de la cea mai nouă",
+      "refused": "Completează ambele texte, cel mult 300 de caractere fiecare, și ziua de început."
+    },
+    "calls": {
+      "heading": "Apeluri de texte",
+      "intro": "Apeluri de la reviste, antologii și concursuri din afara platformei. Un apel apare în spațiu până în ultima zi. Apelurile plătite apar numai adulților.",
+      "add": "Adaugă un apel",
+      "titleEnLabel": "Titlul în engleză",
+      "titleRoLabel": "Titlul în română",
+      "detailsEnLabel": "Detalii în engleză",
+      "detailsRoLabel": "Detalii în română",
+      "linkLabel": "Pagina organizatorului",
+      "linkHint": "Adresa completă, care începe cu https://",
+      "dayLabel": "Ultima zi",
+      "dayHint": "Ultima zi în care se pot trimite texte, după ora României.",
+      "paidLabel": "Organizatorul plătește textele",
+      "closesOn": "Se închide pe {{day}}",
+      "empty": "Niciun apel încă. Lista apare în spațiu când este adăugat primul.",
+      "listLabel": "Apeluri de texte, de la ultima zi cea mai îndepărtată",
+      "refused": "Completează fiecare câmp: titluri de cel mult 120 de caractere, detalii de cel mult 300 și o adresă care începe cu https://."
+    },
+    "spotlights": {
+      "heading": "Scriitorul săptămânii",
+      "intro": "Alege un scriitor adult pentru 7 zile și spune de ce, într-un rând. Scriitorul primește o invitație în spațiu, iar membrii văd cardul numai după ce scriitorul acceptă. Rândul nu poate fi schimbat după invitație: șterge alegerea și invită din nou.",
+      "add": "Invită un scriitor",
+      "handleLabel": "Nume de utilizator",
+      "handleHint": "Numele de utilizator al scriitorului, cu sau fără @.",
+      "dayLabel": "Prima zi",
+      "dayHint": "Cardul apare 7 zile începând cu această zi, după ora României.",
+      "reasonEnLabel": "De ce, în engleză",
+      "reasonRoLabel": "De ce, în română",
+      "invite": "Trimite invitația",
+      "startsOn": "Din {{day}}",
+      "answers": {
+        "waiting": "Se așteaptă răspunsul scriitorului",
+        "agreed": "A acceptat",
+        "declined": "A refuzat"
+      },
+      "empty": "Nicio alegere încă. Cardul apare în spațiu după ce un scriitor acceptă.",
+      "listLabel": "Alegeri pentru scriitorul săptămânii, de la cea mai nouă",
+      "refused": "Verifică numele de utilizator, că scriitorul este adult și are cont activ, și ambele rânduri (cel mult 300 de caractere).",
+      "dayTaken": "O altă alegere începe deja în ziua aceea. Alege altă zi."
+    },
+    "path": {
+      "heading": "Traseu de învățare",
+      "intro": "Cele șapte zile pe care scriitorii le citesc la „Un prim capitol în 7 zile”. Traseul are mereu șapte zile: schimbă cuvintele, nu numărul.",
+      "listLabel": "Cele șapte zile ale traseului de învățare",
+      "lessonHint": "Cel mult 1.500 de caractere. Lasă un rând liber între paragrafe.",
+      "fields": {
+        "titleEn": "Titlul în engleză",
+        "titleRo": "Titlul în română",
+        "lessonEn": "Lecția în engleză",
+        "lessonRo": "Lecția în română",
+        "taskEn": "Sarcina în engleză",
+        "taskRo": "Sarcina în română"
+      },
+      "refused": "Completează fiecare câmp: titluri de cel mult 80 de caractere, lecții de cel mult 1.500 și sarcini de cel mult 300."
+    },
+    "sessions": {
+      "heading": "Sesiuni live",
+      "intro": "Sesiuni ținute în direct, cum ar fi o oră de întrebări cu un autor. O sesiune apare în spațiu până când începe, doar pentru membrii destul de mari pentru grupa ei de vârstă. Un membru care cere primește o notificare în ora dinaintea începerii.",
+      "add": "Adaugă o sesiune",
+      "titleEnLabel": "Titlu în engleză",
+      "titleRoLabel": "Titlu în română",
+      "placeEnLabel": "Unde, în engleză",
+      "placeRoLabel": "Unde, în română",
+      "startLabel": "Început",
+      "startHint": "Pe ceasul acestui dispozitiv. Fiecare membru îl vede pe al său.",
+      "languageLabel": "Limbă",
+      "ratingLabel": "Cea mai mică grupă de vârstă",
+      "linkLabel": "Link către sesiune (opțional)",
+      "linkHint": "Adresa completă, care începe cu https://. Lasă gol până există una.",
+      "past": "A început",
+      "empty": "Nicio sesiune încă. Spațiul arată lista după ce este adăugată prima.",
+      "listLabel": "Sesiuni live, cele mai târzii primele",
+      "refused": "Completează titlurile (cel mult 120 de caractere), locul (cel mult 80) și începutul. Un link trebuie să înceapă cu https://."
     }
   },
   "resources": {
@@ -87,5 +298,19 @@
       "legalTitle": "Confidențialitate și termeni",
       "legalLine": "Cum folosim datele și regulile platformei"
     }
+  },
+  "path": {
+    "documentTitle": "Traseu de învățare · {{productName}}",
+    "backToHub": "Înapoi la Spațiul scriitorilor",
+    "dayOf": "Ziua {{day}} din {{total}}",
+    "task": "Sarcina de azi",
+    "markDone": "Marchează ziua {{day}} ca gata",
+    "markNotDone": "Marchează ca neterminată",
+    "nextDay": "Mai departe, la ziua {{day}}",
+    "goWrite": "Deschide Scrieri",
+    "markFailed": "Nu am putut salva. Încearcă din nou.",
+    "loading": "Se încarcă…",
+    "daysLabel": "Zilele traseului de învățare",
+    "signedOut": "Intră în cont ca să urmezi traseul de învățare."
   }
 }

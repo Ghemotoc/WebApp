@@ -14,6 +14,7 @@ import type { AppNotification } from '../api/notifications';
 
 import { dataRequestNoticeText } from './dataRequestNoticeText';
 import { landingEntriesOpenText } from './landingEntriesOpenText';
+import { liveSessionSoonText } from './liveSessionSoonText';
 import { rankReachedText } from './rankReachedText';
 import { pictureOpenedText } from './pictureOpenedText';
 import { staffChangeText } from './staffChangeText';
@@ -610,6 +611,7 @@ const teamTextFor: Partial<
   data_request_copy_ready: dataRequestNoticeText,
   picture_opened_by_staff: pictureOpenedText,
   landing_entries_open: landingEntriesOpenText,
+  live_session_soon: liveSessionSoonText,
   rank_reached: rankReachedText,
   space_handover_offered: spaceHandoverOfferedText,
   story_featured: storyFeaturedText,

@@ -43,6 +43,7 @@ const newChapter: AppNotification = {
   staffChange: null,
   dataRequest: null,
   landingPage: null,
+  liveSession: null,
   writerRank: null,
   ownHandle: null,
   isRequired: false,
@@ -507,6 +508,42 @@ describe('notificationText', () => {
     expect(text.what).toContain('The winter contest');
     expect(text.href).toBe('/c/iarna');
     expect(text.actionLabel).toBe('Open the page');
+  });
+
+  it('a live session about to start names it with its time and links to the hub (GAPS-12h)', () => {
+    const soonRow: AppNotification = {
+      ...newChapter,
+      kind: 'live_session_soon',
+      actors: [],
+      actorCount: 0,
+      story: null,
+      chapter: null,
+      liveSession: {
+        titles: { ro: 'Întreabă un autor', en: 'Ask a published author' },
+        startsAt: '2026-11-13T16:00:00Z',
+      },
+    };
+    const text = notificationText(englishT(), soonRow, null);
+    expect(text.who).toBe('Reminder:');
+    expect(text.what).toContain('Ask a published author');
+    expect(text.what).toMatch(/\d{2}:\d{2}/);
+    expect(text.href).toBe('/hub#hub-sessions');
+    expect(text.actionLabel).toBe('Open the Writers’ hub');
+  });
+
+  it('a live session staff deleted keeps its row without a link (GAPS-12h)', () => {
+    const goneRow: AppNotification = {
+      ...newChapter,
+      kind: 'live_session_soon',
+      actors: [],
+      actorCount: 0,
+      story: null,
+      chapter: null,
+      liveSession: null,
+    };
+    const text = notificationText(englishT(), goneRow, null);
+    expect(text.what).toContain('cancelled');
+    expect(text.href).toBeNull();
   });
 
   it('a new rank names the rank and links to the writer’s own profile (IDEAS-3a)', () => {

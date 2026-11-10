@@ -83,6 +83,26 @@ function sharesToday(): string {
     where chapter_id = (select id from public.chapters where code = '${chapterCode}');`).trim();
 }
 
+/**
+ * Today's share total once it has stopped moving. A share is counted in the background, so one
+ * from an earlier test can land a moment after that test ended; reading the total too soon then
+ * makes the next count look like two (seen once in CI on GAPS-12a).
+ */
+async function settledSharesToday(page: Page): Promise<number> {
+  let last = Number(sharesToday());
+  await expect
+    .poll(async () => {
+      // Two readings 400 ms apart that agree mean nothing is still on its way.
+      await page.waitForTimeout(400);
+      const now = Number(sharesToday());
+      const isSettled = now === last;
+      last = now;
+      return isSettled;
+    })
+    .toBe(true);
+  return last;
+}
+
 /** Opens a page as a persona in a fresh browser context. */
 async function openAs(
   browser: Browser,
@@ -355,7 +375,7 @@ test.describe('share a chapter and the quote card (S1-E4-05, S1-E4-07)', () => {
     const page = await openChapter(browser);
     await page.getByRole('button', { name: 'Share chapter 1' }).click();
     const dialog = page.getByRole('dialog', { name: 'Share this chapter' });
-    const sharesBefore = Number(sharesToday());
+    const sharesBefore = await settledSharesToday(page);
     // Step 1: the link carries only the chapter's path, nothing about the reader.
     const send = dialog.getByRole('link', { name: 'Send in Messages' });
     await expect(send).toHaveAttribute(
