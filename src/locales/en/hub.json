@@ -49,6 +49,16 @@
       "downloadLine": "Word, PDF and EPUB copies",
       "helpTitle": "Help centre",
       "helpLine": "Answers to common questions"
+    },
+    "week": {
+      "eyebrow": "This week",
+      "chapters": "Chapters posted",
+      "reads": "Reads",
+      "comments": "Comments",
+      "followers": "New followers",
+      "fewerThanFive": "fewer than 5",
+      "seeStatistics": "See statistics",
+      "loadFailed": "We couldn’t load this week’s numbers. Check the connection and try again."
     }
   },
   "resources": {

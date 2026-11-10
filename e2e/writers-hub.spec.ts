@@ -170,6 +170,32 @@ test.describe('the Writers’ hub and Resources (G9a)', () => {
     }
   });
 
+  test('the hub shows the writer’s last 7 days in four numbers', async ({ browser }) => {
+    const context = await browser.newContext();
+    await useSessionInBrowser(context, (await signInPersona('adult_writer')).session);
+    const page = await context.newPage();
+    await page.setViewportSize({ width: 390, height: 900 });
+    await page.goto('/hub');
+    const week = page.getByRole('region', { name: 'Săptămâna aceasta' });
+    await expect(week).toBeVisible();
+    // The seed writer reads in Romanian. Each label sits beside a number, or beside "fewer than
+    // 5" when it comes from under 5 people.
+    for (const label of ['Capitole publicate', 'Citiri', 'Comentarii', 'Urmăritori noi']) {
+      const row = week.locator('div', { has: page.getByText(label, { exact: true }) }).last();
+      await expect(row.locator('dd')).toHaveText(/^(\d[\d,.]*|mai puțin de 5)$/);
+    }
+    await expect(week.getByRole('link', { name: 'Vezi statisticile' })).toHaveAttribute(
+      'href',
+      '/write',
+    );
+    // Nothing scrolls sideways at phone width with the card in.
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    expect(overflow).toBeLessThanOrEqual(0);
+    await context.close();
+  });
+
   test('the avatar menu opens Resources, which lists every guide and opens one', async ({
     browser,
   }) => {

@@ -49,6 +49,16 @@
       "downloadLine": "Copii Word, PDF și EPUB",
       "helpTitle": "Centrul de ajutor",
       "helpLine": "Răspunsuri la întrebările frecvente"
+    },
+    "week": {
+      "eyebrow": "Săptămâna aceasta",
+      "chapters": "Capitole publicate",
+      "reads": "Citiri",
+      "comments": "Comentarii",
+      "followers": "Urmăritori noi",
+      "fewerThanFive": "mai puțin de 5",
+      "seeStatistics": "Vezi statisticile",
+      "loadFailed": "Nu am putut încărca cifrele săptămânii. Verifică conexiunea și încearcă din nou."
     }
   },
   "resources": {
