@@ -2346,6 +2346,63 @@ COMMENT ON FUNCTION "public"."add_email_to_support_ticket"("ticket" "public"."su
 
 
 
+CREATE OR REPLACE FUNCTION "public"."add_marketing_detail"("story_slug" "text", "detail_name" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  target_story_id uuid;
+  clean_name text := public.plan_text(detail_name);
+  current_details jsonb;
+  new_id uuid := gen_random_uuid();
+begin
+  -- Step 1: a signed-in writer and their own planned story.
+  if caller_id is null then
+    raise exception 'Sign in to add a detail.' using errcode = 'insufficient_privilege';
+  end if;
+  target_story_id := public.my_planned_story_id(story_slug);
+  if target_story_id is null then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  -- Step 2: a real name.
+  if char_length(clean_name) not between 1 and 80 then
+    raise exception 'A detail''s name has 1 to 80 characters.'
+      using errcode = 'check_violation', hint = 'name_length';
+  end if;
+  -- Step 3: the row, made empty on the first save, then the bound.
+  insert into public.story_marketing (story_id, user_id) values (target_story_id, caller_id)
+  on conflict (story_id) do nothing;
+  -- The row is locked until this change ends: two presses of "Add" at the same moment wait for
+  -- each other, so the checks below see the first one's detail (break test, 10 Nov 2026).
+  select own_details into current_details from public.story_marketing
+  where story_id = target_story_id for update;
+  -- One name once, capitals aside, so two boxes never carry the same label.
+  if exists (select 1 from jsonb_array_elements(current_details) as detail
+             where lower(detail ->> 'name') = lower(clean_name)) then
+    raise exception 'This story already has a marketing detail with that name.'
+      using errcode = 'check_violation', hint = 'name_taken';
+  end if;
+  if jsonb_array_length(current_details) >= 12 then
+    raise exception 'A story can hold at most 12 marketing details of your own.'
+      using errcode = 'check_violation', hint = 'too_many_details';
+  end if;
+  -- Step 4: the detail, after the others.
+  update public.story_marketing
+  set own_details = own_details || jsonb_build_object('id', new_id, 'name', clean_name, 'text', '')
+  where story_id = target_story_id;
+  return jsonb_build_object('outcome', 'ok', 'id', new_id);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."add_marketing_detail"("story_slug" "text", "detail_name" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."add_marketing_detail"("story_slug" "text", "detail_name" "text") IS 'Adds one of the caller''s own details to a story''s marketing notes (GAPS-2b; S1-E17-29).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."add_plan_act"("story_slug" "text", "act_name" "text") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -19484,6 +19541,44 @@ ALTER FUNCTION "public"."delete_forum_post"("post_id" "uuid") OWNER TO "postgres
 
 
 COMMENT ON FUNCTION "public"."delete_forum_post"("post_id" "uuid") IS 'Deletes the caller''s own post, keeping its number as a marker; #1 alone takes its thread (S1-E8-02).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."delete_marketing_detail"("story_slug" "text", "detail_id" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target_story_id uuid;
+  current_details jsonb;
+begin
+  -- Step 1: a signed-in writer, their own planned story and one of its details.
+  if (select auth.uid()) is null then
+    raise exception 'Sign in to delete a detail.' using errcode = 'insufficient_privilege';
+  end if;
+  target_story_id := public.my_planned_story_id(story_slug);
+  select own_details into current_details from public.story_marketing
+  where story_id = target_story_id;
+  if current_details is null or not exists (
+      select 1 from jsonb_array_elements(current_details) as detail where detail ->> 'id' = detail_id) then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  -- Step 2: the list again, in the same order, without this detail.
+  update public.story_marketing
+  set own_details = coalesce((
+    select jsonb_agg(detail order by place)
+    from jsonb_array_elements(current_details) with ordinality as listed(detail, place)
+    where detail ->> 'id' <> detail_id), '[]'::jsonb)
+  where story_id = target_story_id;
+  return jsonb_build_object('outcome', 'ok');
+end;
+$$;
+
+
+ALTER FUNCTION "public"."delete_marketing_detail"("story_slug" "text", "detail_id" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."delete_marketing_detail"("story_slug" "text", "detail_id" "text") IS 'Deletes one of the caller''s own marketing details (GAPS-2b; S1-E17-29).';
 
 
 
@@ -42039,12 +42134,14 @@ begin
     return jsonb_build_object('outcome', 'not_found');
   end if;
   select * into notes from public.story_marketing where story_marketing.story_id = target_story_id;
-  return jsonb_build_object('outcome', 'ok', 'notes', jsonb_build_object(
-    'back_cover_blurb', coalesce(notes.back_cover_blurb, ''),
-    'comparable_titles', coalesce(notes.comparable_titles, ''),
-    'hooks_keywords', coalesce(notes.hooks_keywords, ''),
-    'query_pitch', coalesce(notes.query_pitch, ''),
-    'launch_notes', coalesce(notes.launch_notes, '')));
+  return jsonb_build_object('outcome', 'ok',
+    'notes', jsonb_build_object(
+      'back_cover_blurb', coalesce(notes.back_cover_blurb, ''),
+      'comparable_titles', coalesce(notes.comparable_titles, ''),
+      'hooks_keywords', coalesce(notes.hooks_keywords, ''),
+      'query_pitch', coalesce(notes.query_pitch, ''),
+      'launch_notes', coalesce(notes.launch_notes, '')),
+    'own_details', coalesce(notes.own_details, '[]'::jsonb));
 end;
 $$;
 
@@ -42557,8 +42654,15 @@ CREATE OR REPLACE FUNCTION "public"."story_search_texts"("target_story_id" "uuid
   -- Marketing notes: one result per field, named by the field.
   select 'marketing', notes.key, notes.key, null, notes.value
   from public.story_marketing as marketing,
-    jsonb_each_text(to_jsonb(marketing) - array['story_id', 'user_id', 'created_at', 'updated_at'])
-      as notes
+    jsonb_each_text(to_jsonb(marketing)
+      - array['story_id', 'user_id', 'created_at', 'updated_at', 'own_details']) as notes
+  where marketing.story_id = target_story_id
+  union all
+  -- The writer's own marketing details (GAPS-2b): one result each, named by the detail's name;
+  -- the ref is "detail-<id>", the detail's place on the Marketing page.
+  select 'marketing', 'detail-' || (detail ->> 'id'), detail ->> 'name', null,
+    concat_ws(' ', detail ->> 'name', detail ->> 'text')
+  from public.story_marketing as marketing, jsonb_array_elements(marketing.own_details) as detail
   where marketing.story_id = target_story_id;
 $$;
 
@@ -44055,6 +44159,73 @@ ALTER FUNCTION "public"."update_character_field"("field_id" "uuid", "changes" "j
 
 
 COMMENT ON FUNCTION "public"."update_character_field"("field_id" "uuid", "changes" "jsonb") IS 'Renames, hides or brings back one of the caller''s custom character fields; hiding keeps the values (S1-E17-10).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."update_marketing_detail"("story_slug" "text", "detail_id" "text", "changes" "jsonb") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target_story_id uuid;
+  current_details jsonb;
+  new_name text := public.plan_text(changes ->> 'name');
+  new_text text := public.plan_text(changes ->> 'text');
+begin
+  -- Step 1: a signed-in writer, their own planned story and one of its details.
+  if (select auth.uid()) is null then
+    raise exception 'Sign in to change a detail.' using errcode = 'insufficient_privilege';
+  end if;
+  target_story_id := public.my_planned_story_id(story_slug);
+  -- (The row is locked until this change ends, so a rename and an add at the same moment can't
+  -- both take one name.)
+  select own_details into current_details from public.story_marketing
+  where story_id = target_story_id for update;
+  if current_details is null or not exists (
+      select 1 from jsonb_array_elements(current_details) as detail where detail ->> 'id' = detail_id) then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  -- Step 2: only known changes, each within its length.
+  if exists (select 1 from jsonb_object_keys(coalesce(changes, '{}'::jsonb)) as change_key
+             where change_key not in ('name', 'text')) then
+    raise exception 'Unknown change to a marketing detail.'
+      using errcode = 'check_violation', hint = 'unknown_change';
+  end if;
+  if changes ? 'name' and char_length(new_name) not between 1 and 80 then
+    raise exception 'A detail''s name has 1 to 80 characters.'
+      using errcode = 'check_violation', hint = 'name_length';
+  end if;
+  if changes ? 'name' and exists (
+      select 1 from jsonb_array_elements(current_details) as detail
+      where detail ->> 'id' <> detail_id and lower(detail ->> 'name') = lower(new_name)) then
+    raise exception 'This story already has a marketing detail with that name.'
+      using errcode = 'check_violation', hint = 'name_taken';
+  end if;
+  if changes ? 'text' and char_length(new_text) > 5000 then
+    raise exception 'A detail holds at most 5,000 characters.'
+      using errcode = 'check_violation', hint = 'text_length';
+  end if;
+  -- Step 3: the list again, in the same order, with this detail changed.
+  update public.story_marketing
+  set own_details = (
+    select jsonb_agg(
+      case when detail ->> 'id' = detail_id then
+        detail
+          || case when changes ? 'name' then jsonb_build_object('name', new_name) else '{}'::jsonb end
+          || case when changes ? 'text' then jsonb_build_object('text', new_text) else '{}'::jsonb end
+      else detail end
+      order by place)
+    from jsonb_array_elements(current_details) with ordinality as listed(detail, place))
+  where story_id = target_story_id;
+  return jsonb_build_object('outcome', 'ok');
+end;
+$$;
+
+
+ALTER FUNCTION "public"."update_marketing_detail"("story_slug" "text", "detail_id" "text", "changes" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."update_marketing_detail"("story_slug" "text", "detail_id" "text", "changes" "jsonb") IS 'Changes the name or text of one of the caller''s own marketing details (GAPS-2b; S1-E17-29).';
 
 
 
@@ -47701,10 +47872,12 @@ CREATE TABLE IF NOT EXISTS "public"."story_marketing" (
     "launch_notes" "text" DEFAULT ''::"text" NOT NULL,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "own_details" "jsonb" DEFAULT '[]'::"jsonb" NOT NULL,
     CONSTRAINT "story_marketing_blurb_length" CHECK (("char_length"("back_cover_blurb") <= 3000)),
     CONSTRAINT "story_marketing_comparable_titles_length" CHECK (("char_length"("comparable_titles") <= 1000)),
     CONSTRAINT "story_marketing_hooks_keywords_length" CHECK (("char_length"("hooks_keywords") <= 1000)),
     CONSTRAINT "story_marketing_launch_notes_length" CHECK (("char_length"("launch_notes") <= 5000)),
+    CONSTRAINT "story_marketing_own_details_list" CHECK ((("jsonb_typeof"("own_details") = 'array'::"text") AND ("jsonb_array_length"("own_details") <= 12))),
     CONSTRAINT "story_marketing_query_pitch_length" CHECK (("char_length"("query_pitch") <= 3000))
 );
 
@@ -47718,6 +47891,10 @@ The writer''s marketing notes on one story (S1-E17-29): back-cover blurb, compar
 
 
 COMMENT ON COLUMN "public"."story_marketing"."user_id" IS 'The writer''s user ID; never shown publicly (rule 15).';
+
+
+
+COMMENT ON COLUMN "public"."story_marketing"."own_details" IS 'kind: user_content. The writer''s own marketing details, in the order added: a list of { id, name (1 to 80 characters), text (up to 5,000) }; at most 12 (GAPS-2b).';
 
 
 
@@ -55133,6 +55310,11 @@ REVOKE ALL ON FUNCTION "public"."add_email_to_support_ticket"("ticket" "public".
 
 
 
+REVOKE ALL ON FUNCTION "public"."add_marketing_detail"("story_slug" "text", "detail_name" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."add_marketing_detail"("story_slug" "text", "detail_name" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."add_plan_act"("story_slug" "text", "act_name" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."add_plan_act"("story_slug" "text", "act_name" "text") TO "authenticated";
 
@@ -57447,6 +57629,11 @@ GRANT ALL ON FUNCTION "public"."delete_conversation"("other_handle" "text") TO "
 
 REVOKE ALL ON FUNCTION "public"."delete_forum_post"("post_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."delete_forum_post"("post_id" "uuid") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."delete_marketing_detail"("story_slug" "text", "detail_id" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."delete_marketing_detail"("story_slug" "text", "detail_id" "text") TO "authenticated";
 
 
 
@@ -60957,6 +61144,11 @@ GRANT ALL ON FUNCTION "public"."update_chapter_scene"("scene_id" "uuid", "change
 
 REVOKE ALL ON FUNCTION "public"."update_character_field"("field_id" "uuid", "changes" "jsonb") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."update_character_field"("field_id" "uuid", "changes" "jsonb") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."update_marketing_detail"("story_slug" "text", "detail_id" "text", "changes" "jsonb") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."update_marketing_detail"("story_slug" "text", "detail_id" "text", "changes" "jsonb") TO "authenticated";
 
 
 

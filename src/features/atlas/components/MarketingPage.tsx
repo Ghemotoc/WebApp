@@ -8,13 +8,15 @@
  * marketing notes. Only the writer sees any of it.
  * Who calls it: src/app/router.tsx (loaded only when a writer opens it). What it calls:
  * useStoryPlan → story_plan() and its savers; useStoryMarketing → story_marketing() and
- * update_story_marketing(); MarketingFields and BackCoverPreview; useScrollToHash for a field
- * opened from a search result; useMyStories for the top bar.
+ * update_story_marketing(); MarketingFields and BackCoverPreview (signed with the writer's name
+ * from useMyNames); useScrollToHash for a field opened from a search result; useMyStories for the
+ * top bar.
  */
 import { useParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
+import { useMyNames } from '@/features/account/hooks/useMyNames';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { useMyStories } from '@/features/writing/hooks/useMyStories';
 
@@ -45,6 +47,9 @@ function MarketingBody({
   const { t } = useAtlasTranslation();
   const { savePlan, saveStory } = useStoryPlan(slug);
   const { save } = useStoryMarketing(slug);
+  // The name the back cover is signed with: the pen name, or the username without one.
+  const { names } = useMyNames();
+  const writerName = names?.penName ?? names?.handle ?? '';
   // "#atlas-marketing-<field>" (from a search result) brings that field into view.
   useScrollToHash(true);
   return (
@@ -55,6 +60,7 @@ function MarketingBody({
       <div className="flex min-w-0 flex-col gap-7 lg:flex-row lg:items-start">
         <div className="flex min-w-0 flex-1 flex-col gap-[18px]">
           <MarketingFields
+            slug={slug}
             page={page}
             notes={notes}
             savePlan={savePlan}
@@ -70,6 +76,7 @@ function MarketingBody({
               logline: page.plan.logline,
               blurb: notes.back_cover_blurb,
               comparableTitles: notes.comparable_titles,
+              writerName,
             }}
           />
         </aside>

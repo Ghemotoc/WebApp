@@ -1,8 +1,9 @@
 /**
- * useStoryMarketing: a story's marketing notes and their save (story S1-E17-29).
+ * useStoryMarketing: a story's marketing notes, the writer's own details and their changers
+ * (story S1-E17-29; bundle GAPS-2b).
  *
- * Who calls it: MarketingPage. What it calls: api/marketing.ts; after a save it reads the notes
- * again, so the back-cover preview shows the new text.
+ * Who calls it: MarketingPage and MarketingDetails. What it calls: api/marketing.ts; after a
+ * change it reads the notes again, so the page and the back-cover preview show the new text.
  */
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -10,35 +11,70 @@ import { requireClient } from '@/features/account/hooks/useMyNames';
 import { useSession } from '@/features/auth/hooks/useSession';
 
 import {
+  addMarketingDetail,
+  deleteMarketingDetail,
   fetchStoryMarketing,
+  marketingNoteKeys,
+  saveMarketingDetail,
   saveMarketingField,
   storyMarketingQueryKey,
   type MarketingNotes,
+  type StoryMarketing,
 } from '../api/marketing';
+import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 /**
  * Follows a story's marketing notes.
  *
  * @param slug - the story's address
- * @returns notes (null when it isn't the writer's, undefined while loading), loadFailed and save
- *   (one field; throws when it can't)
+ * @returns notes (null when it isn't the writer's, undefined while loading), details (the
+ *   writer's own, in order), loadFailed, save (one note) and the details' changers: addDetail,
+ *   saveDetail and deleteDetail (each throws when it can't)
  */
 export function useStoryMarketing(slug: string) {
   const { userId } = useSession();
   const queryClient = useQueryClient();
   const queryKey = storyMarketingQueryKey(userId, slug);
-  const notes = useQuery<MarketingNotes | null>({
+  const marketing = useQuery<StoryMarketing | null>({
     queryKey,
     enabled: userId !== null && slug !== '',
     queryFn: async () => fetchStoryMarketing(await requireClient(), slug),
   });
 
+  /** Runs one change, then reads the notes again. */
+  async function changeThenRefresh(change: () => Promise<unknown>): Promise<void> {
+    await change();
+    await queryClient.invalidateQueries({ queryKey });
+  }
+
   return {
-    notes: notes.data,
-    loadFailed: notes.isError,
-    save: async (field: keyof MarketingNotes, value: string) => {
-      await saveMarketingField(await requireClient(), slug, field, value);
-      await queryClient.invalidateQueries({ queryKey });
-    },
+    // null stays null (not the writer's story) and undefined stays undefined (still loading).
+    notes: marketing.data === null ? null : marketing.data?.notes,
+    details: marketing.data?.details ?? [],
+    loadFailed: marketing.isError,
+    save: async (field: keyof MarketingNotes, value: string) =>
+      changeThenRefresh(async () => saveMarketingField(await requireClient(), slug, field, value)),
+    addDetail: async (name: string) =>
+      changeThenRefresh(async () => addMarketingDetail(await requireClient(), slug, name)),
+    saveDetail: async (detailId: string, change: { name: string } | { text: string }) =>
+      changeThenRefresh(async () =>
+        saveMarketingDetail(await requireClient(), slug, detailId, change),
+      ),
+    deleteDetail: async (detailId: string) =>
+      changeThenRefresh(async () => deleteMarketingDetail(await requireClient(), slug, detailId)),
   };
+}
+
+/**
+ * Says whether a name is one of the page's five fixed notes in the writer's language, capitals
+ * aside. A detail of the writer's own can't take one of those names, or two boxes would carry one
+ * label (break test, 10 Nov 2026). The check lives here and not in the database because the
+ * notes' names are interface text.
+ *
+ * @returns isFixedNoteName(name)
+ */
+export function useFixedNoteNames() {
+  const { t } = useAtlasTranslation();
+  const fixedNames = marketingNoteKeys.map((key) => t(`marketing.fields.${key}`).toLowerCase());
+  return (name: string) => fixedNames.includes(name.trim().toLowerCase());
 }

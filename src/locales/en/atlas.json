@@ -725,12 +725,32 @@
       "query_pitch": "The pitch you’d send to an agent or a publisher.",
       "launch_notes": "Dates, places to share it, who to tell."
     },
+    "details": {
+      "add": "Add detail",
+      "name": "Detail name",
+      "nameHint": "Such as Newsletter, Reading dates or Agents to query.",
+      "addSubmit": "Add",
+      "cancel": "Cancel",
+      "nameRequired": "Give the detail a name.",
+      "addFailed": "Not added. Check the connection and try again.",
+      "tooMany": "A story holds up to 12 details here. Delete one to add another.",
+      "nameTaken": "Another note or detail has that name. Try a different one.",
+      "edit": "Edit detail",
+      "editNamed": "Edit detail: {{name}}",
+      "save": "Save",
+      "saveFailed": "Not saved. Check the connection and try again.",
+      "delete": "Delete detail",
+      "deleteQuestion": "Delete {{name}} and the text in it?",
+      "keep": "Keep detail",
+      "deleteFailed": "Not deleted. Check the connection and try again."
+    },
     "backCover": {
       "heading": "Back cover",
       "show": "Show the back cover",
       "hide": "Hide the back cover",
       "forReadersOf": "For readers of",
-      "empty": "Write a logline, a blurb or comparable titles and they’ll show here."
+      "empty": "Write a logline, a blurb or comparable titles and they’ll show here.",
+      "byline": "{{name}} · {{productName}}"
     },
     "qr": {
       "heading": "QR code",
