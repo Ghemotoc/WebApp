@@ -18,6 +18,7 @@ function character(name: string, role: StoryCharacter['role'], alias = ''): Stor
     firstAppearance: null,
     picture: null,
     pictureAlt: '',
+    mapPlace: null,
   };
 }
 

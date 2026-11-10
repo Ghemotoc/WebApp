@@ -7740,6 +7740,8 @@ export type Database = {
           first_appearance_chapter_id: string | null;
           id: string;
           is_private: boolean;
+          map_x: number | null;
+          map_y: number | null;
           name: string;
           picture_alt: string;
           picture_id: string | null;
@@ -7760,6 +7762,8 @@ export type Database = {
           first_appearance_chapter_id?: string | null;
           id?: string;
           is_private?: boolean;
+          map_x?: number | null;
+          map_y?: number | null;
           name: string;
           picture_alt?: string;
           picture_id?: string | null;
@@ -7777,6 +7781,8 @@ export type Database = {
           first_appearance_chapter_id?: string | null;
           id?: string;
           is_private?: boolean;
+          map_x?: number | null;
+          map_y?: number | null;
           name?: string;
           picture_alt?: string;
           picture_id?: string | null;
@@ -11270,6 +11276,7 @@ export type Database = {
       clean_bible_tags: { Args: { raw_tags: Json }; Returns: string[] };
       clean_certificate_code: { Args: { typed: string }; Returns: string };
       clean_mail_text: { Args: { longest: number; raw_text: string }; Returns: string };
+      clear_map_positions: { Args: { story_slug: string }; Returns: Json };
       clear_my_sign_in_failures: { Args: Record<PropertyKey, never>; Returns: undefined };
       close_account_for_abuse_image: {
         Args: {
@@ -12994,6 +13001,8 @@ export type Database = {
           first_appearance_chapter_id: string | null;
           id: string;
           is_private: boolean;
+          map_x: number | null;
+          map_y: number | null;
           name: string;
           picture_alt: string;
           picture_id: string | null;
@@ -14280,6 +14289,10 @@ export type Database = {
         Returns: Json;
       };
       set_chapter_order: { Args: { chapter_codes: string[]; story_slug: string }; Returns: Json };
+      set_character_map_position: {
+        Args: { character_id: string; x: number; y: number };
+        Returns: Json;
+      };
       set_character_picture: {
         Args: { character_id: string; new_picture_id: string };
         Returns: Json;

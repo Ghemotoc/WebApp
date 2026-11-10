@@ -299,7 +299,8 @@
       "reverseLabel": "What is {{to}} to {{from}}? (optional)",
       "reverseHint": "Shows on {{to}}’s sheet, for example “goddaughter of”.",
       "firstStandIn": "the first character",
-      "secondStandIn": "the other character"
+      "secondStandIn": "the other character",
+      "open": "Add a connection"
     },
     "list": {
       "heading": "Relationships",
@@ -313,22 +314,40 @@
     },
     "map": {
       "heading": "Relationship map",
-      "hint": "Choose a character to open their sheet. The same relationships are listed under All relationships.",
-      "region": "Relationship map; scrolls sideways on small screens",
+      "region": "Relationship map; scrolls on small screens",
       "categoriesLabel": "Show categories",
-      "none": "No relationships to draw yet."
+      "none": "No relationships to draw yet.",
+      "focusOn": "Focus on",
+      "everyone": "Everyone",
+      "arrange": "Arrange for me",
+      "dragHint": "Drag a card to move it. Drag one card onto another to connect them.",
+      "moveFailed": "The card’s new place wasn’t saved. Check the connection and try again.",
+      "arrangeFailed": "The map wasn’t rearranged. Check the connection and try again.",
+      "zoomLabel": "Zoom",
+      "zoomOut": "Zoom out",
+      "zoomIn": "Zoom in",
+      "fit": "Fit",
+      "zoomNow": "{{percent}}%",
+      "offMap": "Not on the map yet: {{names}}"
     },
     "tree": {
       "heading": "Family tree",
-      "hint": "Built from “Parent of” and “Partner or spouse of”. Older generations at the top.",
+      "hint": "Built from “Parent of”, “Sibling of”, “Partner or spouse of” and “Cousin of”. Older generations at the top.",
       "includeMade": "Include turned or made",
       "region": "Family tree; scrolls sideways on small screens",
-      "none": "No family links yet. Add “Parent of” or “Partner or spouse of” to draw the tree.",
+      "none": "No family links yet. Add “Parent of”, “Sibling of”, “Partner or spouse of” or “Cousin of” to draw the tree.",
       "leftOff_one": "{{count}} character with no family links is left off.",
       "leftOff_few": "{{count}} characters with no family links are left off.",
       "leftOff_other": "{{count}} characters with no family links are left off.",
       "generationsLabel": "Generations",
-      "generation": "Generation {{number}}: {{names}}"
+      "generation": "Generation {{number}}: {{names}}",
+      "whose": "Whose tree",
+      "everyFamily": "Every family",
+      "legend": "Line styles",
+      "lineParent": "Parent",
+      "lineSibling": "Sibling",
+      "linePartner": "Partner",
+      "lineCousin": "Cousin"
     },
     "clash": {
       "title": "This clashes with a relationship already here.",
@@ -340,7 +359,13 @@
       "back": "Go back",
       "save": "Save anyway"
     },
-    "otherWay": "The other way round"
+    "otherWay": "The other way round",
+    "views": {
+      "legend": "View",
+      "map": "Map",
+      "tree": "Family tree",
+      "list": "List"
+    }
   },
   "bible": {
     "heading": "Story world",

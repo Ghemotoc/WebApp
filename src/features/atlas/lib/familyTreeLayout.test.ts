@@ -14,6 +14,8 @@ const smallFamily: FamilyTree = {
     { parentId: 'ion', childId: 'vali' },
   ],
   partnerLinks: [['ana', 'ion']],
+  siblingLinks: [],
+  cousinLinks: [],
   leftOffCount: 0,
 };
 
@@ -50,5 +52,27 @@ describe('layoutFamilyTree', () => {
     const layout = layoutFamilyTree(smallFamily);
     const lowest = Math.max(...layout.boxes.map((box) => box.y + boxHeight));
     expect(layout.height).toBeGreaterThanOrEqual(lowest);
+  });
+
+  it('arches a line between siblings in one row, inside the drawing', () => {
+    const layout = layoutFamilyTree({
+      ...smallFamily,
+      generations: [['ana', 'ion', 'dan']],
+      parentLinks: [],
+      siblingLinks: [['ana', 'dan']],
+    });
+    expect(layout.siblingPaths).toHaveLength(1);
+    // The arch's control points sit above the boxes but never above the drawing's top.
+    const numbers = (layout.siblingPaths[0]?.path.match(/-?[\d.]+/g) ?? []).map(Number);
+    expect(Math.min(...numbers)).toBeGreaterThanOrEqual(0);
+  });
+
+  it('curves a cousin line from the older row down to the younger one', () => {
+    const layout = layoutFamilyTree({
+      ...smallFamily,
+      cousinLinks: [{ fromId: 'ion', toId: 'vali', removed: 1 }],
+    });
+    const vali = layout.boxes.find((box) => box.id === 'vali');
+    expect(layout.cousinPaths[0]?.path.endsWith(`${vali?.y}`)).toBe(true);
   });
 });

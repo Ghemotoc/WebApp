@@ -36,6 +36,8 @@ export interface AddRelationshipFormProps {
   cast: StoryCast;
   /** The sheet's character; left out on the Connections page, where both are picked. */
   fixedFromId?: string;
+  /** The two characters to start with, when a card was dropped on another on the map (G10b2). */
+  initialPair?: { fromId: string; toId: string };
   /** Saves the relationship; throws when it can't. */
   onAdd: (relationship: NewRelationship) => Promise<void>;
 }
@@ -208,9 +210,13 @@ function NoteOrClash({ idPrefix, cast, draft, clash, change, onBack, onSave }: N
 }
 
 /** The state of one form: the draft, the message, and the clash being shown. */
-function useRelationshipDraft(fixedFromId: string | undefined) {
+function useRelationshipDraft(
+  fixedFromId: string | undefined,
+  initialPair: AddRelationshipFormProps['initialPair'],
+) {
   const freshDraft = { ...emptyDraft, fromId: fixedFromId ?? '' };
-  const [draft, setDraft] = useState<NewRelationship>(freshDraft);
+  // A pair from the map fills both characters once; after a save the form starts blank.
+  const [draft, setDraft] = useState<NewRelationship>({ ...freshDraft, ...initialPair });
   const [message, setMessage] = useState<{ tone: 'error' | 'success'; text: string } | null>(null);
   const [clash, setClash] = useState<CharacterRelationship | null>(null);
   /** Changes one part of the draft; a change to the pickers closes the warning. */
@@ -235,11 +241,14 @@ export function AddRelationshipForm({
   idPrefix,
   cast,
   fixedFromId,
+  initialPair,
   onAdd,
 }: AddRelationshipFormProps) {
   const { t } = useAtlasTranslation();
-  const { draft, change, reset, message, setMessage, clash, setClash } =
-    useRelationshipDraft(fixedFromId);
+  const { draft, change, reset, message, setMessage, clash, setClash } = useRelationshipDraft(
+    fixedFromId,
+    initialPair,
+  );
 
   /** Saves the relationship and starts a fresh form, or says why not. */
   async function save() {

@@ -2194,6 +2194,7 @@ The app draws no doodles, stickers or hand-drawn icons anywhere (Robert, 7 Nov 2
 - `FamilyTreeView` builds the generations with `lib/familyTree.ts` and draws them with `lib/familyTreeLayout.ts`.
 - On each sheet, `CharacterRelationshipsSection` lists the character's relationships both ways and adds new ones.
 - The form (G10b): `RelationshipKindPickers` (Kind, then Relationship, from `lib/relationshipGroups.ts`), `CousinPickers` for "Cousin of", `RelationshipOwnWords` for "Other" (the label and the optional reverse label), and `RelationshipClashPanel` when `lib/relationshipClash.ts` finds a clash among the relationships already loaded. `useRelationshipWords` writes the sentences: which cousin through `lib/cousinWords.ts`, and an "Other" one with a reverse label from the side of the sheet it is on.
+- The map and tree (G10b2): `ConnectionsPage` switches views (`?view=map|tree|list`); `ConnectionsMapView` adds Focus on and Arrange for me and saves dropped cards through `useRelationshipChangers` (`moveOnMap` → `set_character_map_position()`, `arrangeMap` → `clear_map_positions()`); `RelationshipMap` lays cards out with `lib/relationshipMap.ts`, drags them with `hooks/useCardDrag.ts` and zooms with `hooks/useMapZoom.ts`; `FamilyTreeView` adds Whose tree, siblings, cousins and the legend (`lib/familyTree.ts`, `lib/familyTreeLayout.ts`).
 
 ## Story Atlas: the bible (S1-E17-17 and S1-E17-18; ATLAS-d)
 

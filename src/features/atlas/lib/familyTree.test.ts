@@ -73,7 +73,41 @@ describe('buildFamilyTree', () => {
       generations: [],
       parentLinks: [],
       partnerLinks: [],
+      siblingLinks: [],
+      cousinLinks: [],
       leftOffCount: 1,
     });
+  });
+
+  it('puts siblings in the same row, side by side', () => {
+    const tree = buildFamilyTree(
+      ['a', 'b', 'c', 'd'],
+      [link('a', 'parent_of', 'b'), link('c', 'sibling_of', 'b'), link('a', 'partner_of', 'd')],
+      false,
+    );
+    expect(tree.generations).toEqual([
+      ['a', 'd'],
+      ['b', 'c'],
+    ]);
+    expect(tree.siblingLinks).toEqual([['c', 'b']]);
+  });
+
+  it('puts a cousin removed that many rows below the first character', () => {
+    const cousin = { ...link('a', 'cousin_of', 'b'), cousinDegree: 1, cousinRemoved: 1 };
+    const tree = buildFamilyTree(['a', 'b'], [cousin], false);
+    expect(tree.generations).toEqual([['a'], ['b']]);
+    expect(tree.cousinLinks).toEqual([{ fromId: 'a', toId: 'b', removed: 1 }]);
+  });
+
+  it("shows only one character's family when a character is chosen", () => {
+    const tree = buildFamilyTree(
+      ['a', 'b', 'c', 'd', 'e'],
+      [link('a', 'parent_of', 'b'), link('c', 'partner_of', 'd')],
+      false,
+      'd',
+    );
+    expect(tree.generations.flat().sort()).toEqual(['c', 'd']);
+    // Left off still counts only the characters with no family link at all.
+    expect(tree.leftOffCount).toBe(1);
   });
 });
