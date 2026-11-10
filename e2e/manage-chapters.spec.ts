@@ -10,6 +10,9 @@
  *   keyboard (Space, arrow, Space), and readers see the new order (WCAG 2.2, 2.5.7);
  * - moving a published chapter asks first ("Keep the order" keeps it), a draft moves straight
  *   away, titles carry their chapter number, and the numbers row counts chapters (G9d);
+ * - a chapter whose number changed says where it was ("Moved here from chapter 2" for the one
+ *   the writer moved, "Was chapter 1" for the one that made room), after an arrow and after a
+ *   drag, in Romanian too, and a chapter put back shows no note (GAPS-11);
  * - Rename changes a published chapter's title for readers at once;
  * - Unpublish and Publish again from the list;
  * - Delete asks first, hides the chapter from readers at once, shows it under Recently deleted
@@ -277,6 +280,57 @@ test.describe('Manage chapters (S1-E3-04)', () => {
     await page.mouse.up();
     await confirmMove(page);
     await expect.poll(chapterOrder).toBe('mgpub002,mgdraft1,mgpub001,mgsched1,mgunpub1');
+  });
+
+  test('a moved chapter says where it was, and a chapter put back says nothing', async ({
+    browser,
+  }) => {
+    const page = await openManageChapters(browser);
+    const rows = chapterList(page).getByRole('listitem');
+    await expect(page.getByText(/Was chapter|Moved here from chapter/)).toHaveCount(0);
+    // An arrow: the chapter the writer moved and the one that made room each get a note.
+    await page.getByRole('button', { name: 'Move chapter 4 up' }).click();
+    await expect.poll(chapterOrder).toBe('mgpub001,mgpub002,mgsched1,mgdraft1,mgunpub1');
+    await expect(rows.nth(2)).toContainText('Moved here from chapter 4');
+    await expect(rows.nth(3)).toContainText('Was chapter 3');
+    await expect(page.getByText(/Was chapter|Moved here from chapter/)).toHaveCount(2);
+    // A drag from the top to third place: the dragged chapter says where it came from.
+    await page.setViewportSize({ width: 1440, height: 1600 });
+    const handle = page.getByRole('button', { name: /^Drag chapter 1 to reorder/ });
+    const from = await handle.boundingBox();
+    const to = await rows.nth(2).boundingBox();
+    if (from === null || to === null) throw new Error('The handle or the row is not on screen.');
+    await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(from.x + from.width / 2, to.y + to.height / 2, { steps: 20 });
+    await page.mouse.up();
+    await confirmMove(page);
+    await expect.poll(chapterOrder).toBe('mgpub002,mgsched1,mgpub001,mgdraft1,mgunpub1');
+    await expect(rows.nth(2)).toContainText('Moved here from chapter 1');
+    await expect(rows.nth(0)).toContainText('Was chapter 2');
+    // The scheduled chapter went from 4 to 3 by the arrow, then to 2 by the drag: it still
+    // says the number it started the week with.
+    await expect(rows.nth(1)).toContainText('Moved here from chapter 4');
+    // The same notes in Romanian, at phone width, with nothing for axe to flag.
+    runSql(`update public.profiles set locale = 'ro' where id = '${writerId}';`);
+    await page.setViewportSize({ width: 390, height: 900 });
+    await page.reload();
+    await expect(rows.nth(2)).toContainText('Mutat aici de la capitolul 1');
+    await expect(rows.nth(0)).toContainText('A fost capitolul 2');
+    // The page fades in after a reload; axe reads colours, so it waits for that to end.
+    await waitForAnimationsToFinish(page);
+    expect(await seriousAxeIssues(page)).toEqual([]);
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    expect(overflow).toBeLessThanOrEqual(0);
+    // Back in the first order, by the database's own functions: every note goes.
+    runSql(
+      `select set_config('request.jwt.claims', '{"sub": "${writerId}", "role": "authenticated"}', true); select public.set_chapter_order('${slug}', array['mgpub001','mgpub002','mgdraft1','mgsched1','mgunpub1']);`,
+    );
+    await page.reload();
+    await expect(rows).toHaveCount(5);
+    await expect(page.getByText(/A fost capitolul|Mutat aici de la capitolul/)).toHaveCount(0);
   });
 
   test('moving a published chapter asks first, and "Keep the order" keeps it', async ({

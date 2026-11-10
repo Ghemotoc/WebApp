@@ -1,12 +1,15 @@
 /**
  * Reads and changes the chapters of one of the writer's stories for "Manage chapters"
- * (story S1-E3-04; board 4.4).
+ * (story S1-E3-04; board 4.4). GAPS-11 adds the note beside a chapter whose number changed
+ * ("Was chapter 13").
  *
  * Who calls it: hooks/useManageChapters.ts.
  * What it calls next: Supabase.
  * - The list: the chapters table through chapters_select_own (a writer reads only their own
  *   rows), live and deleted, for one story; never another writer's.
- * - The changes: move_chapter(code, direction), set_chapter_order(slug, codes),
+ * - The notes: chapter_move_notes(slug), the chapters whose number changed in the last 7 days
+ *   and the number each had before (supabase/migrations/…_gaps11_chapter_moves.sql).
+ * - The changes: move_chapter(code, direction), set_chapter_order(slug, codes, moved code),
  *   rename_chapter(code, title), delete_chapter(code), restore_chapter(code)
  *   (supabase/migrations/…_s1_e3_04_manage_chapters.sql), and publish_chapter /
  *   unpublish_chapter from S1-E3-03; each answers {outcome: ok | …}.
@@ -32,6 +35,41 @@ export interface ManagedChapter {
   unpublishedAt: string | null;
   /** When the writer deleted it; null for a live chapter. */
   deletedAt: string | null;
+  /**
+   * The number it had before its first move in the last 7 days; null when it didn't move or is
+   * back where it was (GAPS-11).
+   */
+  wasPosition: number | null;
+  /** True when the writer moved this chapter; false when it only shifted to make room. */
+  wasPicked: boolean;
+}
+
+/** One chapter's move note as chapter_move_notes() answers it. */
+interface ChapterMoveNote {
+  wasPosition: number;
+  wasPicked: boolean;
+}
+
+/**
+ * Reads which chapters of one of the writer's stories recently changed number.
+ *
+ * @param client - the shared Supabase client
+ * @param storySlug - the story's public address
+ * @returns the notes by chapter code; empty when nothing moved in the last 7 days
+ * Errors: throws with Supabase's message when the database can't be reached.
+ */
+async function fetchMoveNotes(
+  client: AppSupabaseClient,
+  storySlug: string,
+): Promise<Map<string, ChapterMoveNote>> {
+  const { data, error } = await client.rpc('chapter_move_notes', { story_slug: storySlug });
+  if (error !== null) throw new Error(`Could not read the chapter moves: ${error.message}`);
+  return new Map(
+    data.map((row) => [
+      row.chapter_code,
+      { wasPosition: row.was_position, wasPicked: row.was_picked },
+    ]),
+  );
 }
 
 /** What the changing functions answer. */
@@ -45,7 +83,8 @@ function stateOf(status: ChapterStatus, unpublishedAt: string | null): ManagedCh
 }
 
 /**
- * Reads every chapter of one of the writer's stories, deleted ones included (for undo).
+ * Reads every chapter of one of the writer's stories, deleted ones included (for undo), each
+ * with its move note.
  *
  * @param client - the shared Supabase client
  * @param storySlug - the story's public address
@@ -64,6 +103,8 @@ export async function fetchStoryChapters(
     .eq('stories.slug', storySlug)
     .order('position');
   if (error !== null) throw new Error(`Could not read the chapters: ${error.message}`);
+  // The notes come from their own function, which works out the earlier number per chapter.
+  const notes = await fetchMoveNotes(client, storySlug);
   return data.map((row) => ({
     code: row.code,
     position: row.position,
@@ -76,6 +117,8 @@ export async function fetchStoryChapters(
     scheduledFor: row.scheduled_for,
     unpublishedAt: row.unpublished_at,
     deletedAt: row.deleted_at,
+    wasPosition: notes.get(row.code)?.wasPosition ?? null,
+    wasPicked: notes.get(row.code)?.wasPicked ?? false,
   }));
 }
 

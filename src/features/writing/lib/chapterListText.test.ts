@@ -9,7 +9,7 @@ import enWriting from '@/locales/en/writing.json';
 import roWriting from '@/locales/ro/writing.json';
 
 import type { ManagedChapter } from '../api/manageChapters';
-import { chapterMeta, chapterSummary, deletedMeta } from './chapterListText';
+import { chapterMeta, chapterMovedNote, chapterSummary, deletedMeta } from './chapterListText';
 
 let english: TFunction;
 let romanian: TFunction;
@@ -39,6 +39,8 @@ function chapter(changes: Partial<ManagedChapter>): ManagedChapter {
     scheduledFor: null,
     unpublishedAt: null,
     deletedAt: null,
+    wasPosition: null,
+    wasPicked: false,
     ...changes,
   };
 }
@@ -102,5 +104,24 @@ describe('deletedMeta', () => {
     expect(deletedMeta(english, '2026-10-14T10:00:00Z', 'en')).toBe(
       'Deleted 14 Oct · gone for good on 13 November 2026',
     );
+  });
+});
+
+describe('chapterMovedNote', () => {
+  it('a chapter that only shifted says the number it had', () => {
+    const shifted = chapter({ position: 14, wasPosition: 13 });
+    expect(chapterMovedNote(english, shifted)).toBe('Was chapter 13');
+    expect(chapterMovedNote(romanian, shifted)).toBe('A fost capitolul 13');
+  });
+
+  it('the chapter the writer moved says where it came from', () => {
+    const picked = chapter({ position: 13, wasPosition: 14, wasPicked: true });
+    expect(chapterMovedNote(english, picked)).toBe('Moved here from chapter 14');
+    expect(chapterMovedNote(romanian, picked)).toBe('Mutat aici de la capitolul 14');
+  });
+
+  it('a chapter that never moved, or is back at its number, has no note', () => {
+    expect(chapterMovedNote(english, chapter({ position: 3 }))).toBeNull();
+    expect(chapterMovedNote(english, chapter({ position: 3, wasPosition: 3 }))).toBeNull();
   });
 });

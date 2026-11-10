@@ -5,6 +5,8 @@
  * lighthouse", a link to the editor) and its status pill, the meta line under it, then
  * ChapterRowActions. The number is the chapter's place in the reading order, so it changes
  * when the chapter moves (liquid glass Chapters board, G9d; it replaces the sand number tile).
+ * Under the meta line, a chapter whose number changed in the last 7 days says where it was
+ * ("Was chapter 13", "Moved here from chapter 14"; GAPS-11).
  * Rename turns the title into RenameChapterForm; when it closes, focus goes back to the Rename
  * button.
  * Pills (DoD pill system; board 4.4): Published sage, Draft gold, Scheduled sky, Unpublished
@@ -26,7 +28,7 @@ import { cn } from '@/lib/utils';
 
 import type { ManagedChapter, ManagedChapterState } from '../api/manageChapters';
 import type { ChapterChange } from '../hooks/useManageChapters';
-import { chapterMeta } from '../lib/chapterListText';
+import { chapterMeta, chapterMovedNote } from '../lib/chapterListText';
 
 import { ChapterRowActions } from './ChapterRowActions';
 import { GripIcon } from './ManageChaptersIcons';
@@ -84,6 +86,7 @@ function ChapterRowText(props: {
 }) {
   const { t, i18n } = useTranslation('writing');
   const { chapter } = props;
+  const movedNote = chapterMovedNote(t, chapter);
   return (
     <div className="flex min-w-0 flex-[1_1_180px] flex-col gap-1">
       {props.isRenaming ? (
@@ -98,6 +101,7 @@ function ChapterRowText(props: {
         <ChapterTitle slug={props.slug} chapter={chapter} number={props.number} />
       )}
       <span className="text-sm text-meta">{chapterMeta(t, chapter, i18n.language)}</span>
+      {movedNote !== null && <span className="text-sm font-semibold text-body">{movedNote}</span>}
     </div>
   );
 }

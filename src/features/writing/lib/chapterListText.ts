@@ -2,6 +2,8 @@
  * The words Manage chapters shows about each chapter: the list's summary ("6 published,
  * 1 draft, 1 scheduled") and each row's meta line (story S1-E3-04; board 4.4).
  *
+ * GAPS-11 adds the note for a chapter whose number changed ("Was chapter 13").
+ *
  * Who calls it: ChapterListCard, ManagedChapterRow and RecentlyDeletedChapters.
  * What it calls: i18next's t() for the words (writing.json, manageChapters.*) and
  * src/lib/romania-time.ts for the dates, which are always Romania time in March
@@ -121,4 +123,20 @@ export function deletedMeta(t: TFunction, deletedAt: string, language: string): 
     date: shortRomaniaDate(deletedAt, language),
     purgeDate: purgeDateFor(deletedAt, language),
   });
+}
+
+/**
+ * The note for a chapter whose number changed in the last 7 days (GAPS-11; liquid glass
+ * Chapters board): "Moved here from chapter 14" for the chapter the writer moved, "Was chapter
+ * 13" for one that shifted to make room.
+ *
+ * @param t - the writing namespace's t()
+ * @param chapter - the chapter as the list has it
+ * @returns the note, or null when the chapter is where it was
+ */
+export function chapterMovedNote(t: TFunction, chapter: ManagedChapter): string | null {
+  // No move on record, or the list already shows it back at its old number.
+  if (chapter.wasPosition === null || chapter.wasPosition === chapter.position) return null;
+  const key = chapter.wasPicked ? 'manageChapters.movedFrom' : 'manageChapters.wasChapter';
+  return t(key, { number: chapter.wasPosition });
 }

@@ -390,6 +390,8 @@
       "cancelled": "Move cancelled. {{title}} stays where it was."
     },
     "rowTitle": "Chapter {{number}}: {{title}}",
+    "movedFrom": "Moved here from chapter {{number}}",
+    "wasChapter": "Was chapter {{number}}",
     "chapterBoard": "Open the chapter board",
     "stats": {
       "label": "This story in numbers",

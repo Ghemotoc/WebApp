@@ -24,7 +24,8 @@ import { myStoriesKey } from './useMyStories';
 /** One change from the page. */
 export type ChapterChange =
   | { kind: 'move'; code: string; direction: -1 | 1 }
-  // movedCode names the dragged chapter, so the page can ask before a published one moves.
+  // movedCode names the dragged chapter, so the page can ask before a published one moves and
+  // the record of moves can say which chapter the writer picked up (GAPS-11).
   | { kind: 'order'; codes: string[]; movedCode?: string }
   | { kind: 'rename'; code: string; title: string }
   | { kind: 'delete'; code: string }
@@ -53,7 +54,11 @@ function callFor(slug: string, change: ChapterChange) {
     case 'order':
       return {
         name: 'set_chapter_order',
-        args: { story_slug: slug, chapter_codes: change.codes },
+        args: {
+          story_slug: slug,
+          chapter_codes: change.codes,
+          moved_chapter_code: change.movedCode ?? null,
+        },
       } as const;
     case 'rename':
       return {
