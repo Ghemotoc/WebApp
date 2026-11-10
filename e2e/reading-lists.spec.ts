@@ -10,6 +10,7 @@
  *   account gets the Report action, never the owner's tools;
  * - a second list can't take the first one's name; the owner takes a story out and deletes the
  *   list after a second, confirming click;
+ * - a list name and a story title that are one long word stay inside a 390 px screen;
  * - "Notification settings" in "What you follow" opens Settings at its notifications part;
  * - the Library with a list, and the list's page, pass axe and never scroll sideways at 390, 768
  *   and 1440 px, in English and Romanian, and draw no doodle.
@@ -186,6 +187,38 @@ test.describe('reading lists (GAPS-6)', () => {
     const page = await openAs(browser, 'teacher', '/library');
     await page.getByRole('link', { name: 'Notification settings' }).click();
     await expect(page).toHaveURL(/\/settings#notifications$/);
+    await page.context().close();
+  });
+
+  test('a name and a title that are one long word stay inside a 390 px screen', async ({
+    browser,
+  }) => {
+    // Break test, 10 Nov 2026: a 60-letter name ran past the phone's edge in the list page's
+    // breadcrumb and in "Add to a list", and a one-word story title ran over the next card.
+    const longName = 'Supercalifragilisticexpialidociousandthensomemorelettersxyza';
+    runSql(`update public.stories set title = 'Pneumonoultramicroscopicsilicovolcanoconiosisstory'
+        where slug = '${storySlug}';
+      insert into public.reading_lists (user_id, name) values ('${readerId}', '${longName}');
+      insert into public.reading_list_stories (list_id, user_id, story_id)
+        select reading_lists.id, '${readerId}', stories.id
+        from public.reading_lists, public.stories
+        where reading_lists.user_id = '${readerId}' and stories.slug = '${storySlug}';`);
+    const page = await openAs(browser, 'teacher', `/library/lists/${listIdOf(longName)}`);
+    await page.setViewportSize({ width: 390, height: 900 });
+    await expect(page.getByRole('heading', { level: 1, name: longName })).toBeVisible();
+    await expect(page.getByRole('link', { name: /Pneumonoultra/ }).first()).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+      390,
+    );
+    await page.goto(`/s/${storySlug}`);
+    await page.getByRole('button', { name: 'Add to a list' }).click();
+    await expect(page.getByRole('checkbox', { name: new RegExp(longName) })).toBeChecked();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+      390,
+    );
+    // Back to how the other tests expect things.
+    runSql(`delete from public.reading_lists where user_id = '${readerId}';
+      update public.stories set title = 'Lista de ploaie' where slug = '${storySlug}';`);
     await page.context().close();
   });
 

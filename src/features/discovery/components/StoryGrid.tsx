@@ -69,7 +69,7 @@ export function StoryGrid({ stories, hasMore, isLoadingMore, onLoadMore, ad }: S
             ad !== undefined &&
             isAdAfterStory(storyNumber, stories.length, ad.firstAfter, ad.isShortListAdded);
           return [
-            <li key={story.slug} className="w-full max-w-[248px]">
+            <li key={story.slug} className="w-full max-w-[248px] min-w-0">
               <ListedStoryCard
                 story={story}
                 cover={covers[index] ?? resolveCoverChoice(story)}

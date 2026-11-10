@@ -55,7 +55,11 @@ function ListCheckbox(props: {
         onChange={(event) => change(event.target.checked)}
       />
       <label htmlFor={id} className="flex min-w-0 flex-col">
-        <span className="font-semibold break-words text-heading">{props.choice.name}</span>
+        {/* "anywhere" lets a name that is one long word wrap and also lets the panel shrink to a
+            phone's width; break-words alone kept the panel as wide as the word (break test). */}
+        <span className="font-semibold [overflow-wrap:anywhere] text-heading">
+          {props.choice.name}
+        </span>
         <span className="text-[13px] text-meta">
           {t(props.choice.isPublic ? 'lists.seenBy.public' : 'lists.seenBy.onlyYou')}
         </span>

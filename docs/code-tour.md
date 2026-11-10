@@ -2059,6 +2059,20 @@ Idea IDEA-20261031-12 (GDPR art. 15 and 20).
 - In the browser, `makeDataExport()` runs `withLibraryLinks()` (`src/features/data-export/lib/libraryForExport.ts`), which turns each address into a full link with `brand.siteUrl`, and adds `library.csv` (`libraryCsvFile()`: a heading line in the reader's language, one line per story, UTF-8 with a byte-order mark) to the ZIP.
 - Tests: `supabase/tests/database/220-library-in-my-data.test.sql`, `runDataExport.test.ts`, `e2e/download-my-data.spec.ts`.
 
+## Reading lists (GAPS-6)
+
+The liquid glass Library board draws "Your lists": lists of stories a reader makes and names. A list is private until its owner makes it public.
+
+- Tables: `reading_lists` (name, owner, `is_public`) and `reading_list_stories` (which stories are in which list). Each has one policy, the owner reading their own rows; every write goes through a function. Migration `…_gaps6_reading_lists.sql`; the enum value `reading_list` is in `…_gaps6_reading_list_enum.sql`.
+- One gate, `reading_list_is_visible()`: the owner's own list, or a public one that moderators haven't taken away and whose owner isn't blocked either way. `reading_list()`, the report form and `browse_stories('reading_list', <id>)` all ask it, so a private list looks the same as no list.
+- A list's stories are a story list like any other: `listed_stories()` finds them through the list's own rows and then applies every reader rule (rating, blocks, moderation, unlisted and private stories), so a 14-year-old never sees a 16+ story in someone's public list and the count on the row matches the page.
+- How a click travels: `ReadingListsCard` on `/library` → `useReadingLists` → `my_reading_lists()`. "New list" → `NewReadingListForm` → `create_reading_list()` → the list's page, `ReadingListPage` at `/library/lists/:listId` → `reading_list()` and `browse_stories()`. On the story page, `AddToReadingList` (inside `StoryReadingActions`) → `story_reading_lists()` and `set_story_in_reading_list()`.
+- The owner's tools (`ReadingListOwnerTools`): rename and "Who sees it" (`update_reading_list()`; making a list public needs an active account), "Remove" per story, and "Delete list" with a second click (`delete_reading_list()`; a list an open case holds is only marked deleted).
+- Limits: 30 lists per person and 200 stories per list (settings `reading_lists_max` and `reading_list_stories_max`); a name is one line of 1 to 60 characters, used once per person, capitals aside.
+- Reportable as `reading_list` (CLAUDE.md rule 6): `<ReportButton>` on a public list someone else opens; branches in `reportable_item_owner()`, `reportable_item_summary()`, `case_item_content()` and `notification_item_json()`. Both tables are in Download my data and go with the account.
+- "Notification settings" in "What you follow" (`FollowingSection`) opens `/settings#notifications`.
+- Tests: `supabase/tests/database/328-reading-lists.test.sql`, `src/features/library/lib/readingListAddress.test.ts`, `e2e/reading-lists.spec.ts`.
+
 ## Sharing a chapter and the quote card (S1-E4-05, S1-E4-07; READ-4c)
 
 - Where it lives: `src/features/sharing/` (see its README). The reader screen adds `ShareButtonWhenNear` to `ChapterEnd`'s row (it fetches `ShareButton` when the row nears the screen, `src/lib/use-is-near.ts`) and `QuoteShareWatcher` under the chapter (it fetches `QuoteShareBar` on the first selection); `reading/lib/toSharedChapter.ts` hands them only public things (address, titles, number, pen name).
