@@ -108,6 +108,9 @@ export interface PublicPlanRow {
     to: string;
     kind: RelationshipKind;
     custom_label: string;
+    reverse_label: string;
+    cousin_degree: number | null;
+    cousin_removed: number | null;
   }[];
   sections: {
     id: string;
@@ -167,6 +170,9 @@ async function castFrom(
       toId: link.to,
       kind: link.kind,
       customLabel: link.custom_label,
+      reverseLabel: link.reverse_label,
+      cousinDegree: link.cousin_degree,
+      cousinRemoved: link.cousin_removed,
       note: '',
     })),
   };

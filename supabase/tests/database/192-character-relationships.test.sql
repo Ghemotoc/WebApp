@@ -66,7 +66,8 @@ select is((select count(*)::integer from public.story_character_relationships), 
   'allowed: story_character_relationships_select_own: the writer reads the relationships they recorded');
 select is((public.story_cast('statia-meteo-seed01') -> 'relationships' -> 0) - 'id',
   jsonb_build_object('from', (select id from named where label = 'ana'), 'to', (select id from named where label = 'vali'),
-    'kind', 'parent_of', 'custom_label', '', 'note', 'Îl crește singură.'),
+    'kind', 'parent_of', 'custom_label', '', 'note', 'Îl crește singură.', 'reverse_label', '',
+    'cousin_degree', null, 'cousin_removed', null),
   'story_cast() returns each relationship, read from the first character to the second, the note trimmed');
 select is(public.story_cast('statia-meteo-seed01') #>> '{relationships,2,custom_label}', 'îi datorează viața',
   'a custom relationship keeps the writer''s own label');

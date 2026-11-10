@@ -227,6 +227,7 @@
       "parent_of": "Parent of",
       "sibling_of": "Sibling of",
       "partner_of": "Partner or spouse of",
+      "cousin_of": "Cousin of",
       "loves": "Loves",
       "made": "Turned or made",
       "friend_of": "Friend of",
@@ -236,12 +237,13 @@
       "enemy_of": "Enemy of",
       "resents": "Resents",
       "killed": "Killed",
-      "custom": "Custom (own label)"
+      "custom": "Own words"
     },
     "sentences": {
       "parent_of": "{{from}} is the parent of {{to}}",
       "sibling_of": "{{from}} is the sibling of {{to}}",
       "partner_of": "{{from}} is the partner or spouse of {{to}}",
+      "cousin_of": "{{from}} is the {{which}} of {{to}}",
       "loves": "{{from}} loves {{to}}",
       "made": "{{from}} turned or made {{to}}",
       "friend_of": "{{from}} is a friend of {{to}}",
@@ -252,6 +254,14 @@
       "resents": "{{from}} resents {{to}}",
       "killed": "{{from}} killed {{to}}",
       "custom": "{{from}}: {{label}} {{to}}"
+    },
+    "cousin": {
+      "degree1": "cousin",
+      "degree2": "second cousin",
+      "degree3": "third cousin",
+      "removed1": " once removed",
+      "removed2": " twice removed",
+      "removed3": " three times removed"
     },
     "categories": {
       "family": "Family",
@@ -268,14 +278,28 @@
       "to": "Other character",
       "pickCharacter": "Pick a character",
       "kind": "Relationship",
-      "customLabel": "Label",
-      "customHint": "For example “rival of” or “owes a debt to”.",
+      "customLabel": "What is {{from}} to {{to}}?",
+      "customHint": "For example “godmother of” or “owes a debt to”.",
       "note": "Note (optional)",
       "button": "Add relationship",
       "added": "Relationship added.",
       "pickBoth": "Pick both characters.",
       "labelRequired": "Write a label for this relationship.",
-      "failed": "The relationship wasn’t saved. Check your connection and try again."
+      "failed": "The relationship wasn’t saved. Check your connection and try again.",
+      "group": "Kind",
+      "cousinDegree": "Which cousin",
+      "cousinDegree1": "First cousin",
+      "cousinDegree2": "Second cousin",
+      "cousinDegree3": "Third cousin",
+      "cousinRemoved": "Generations apart",
+      "cousinRemoved0": "Same generation",
+      "cousinRemoved1": "Once removed",
+      "cousinRemoved2": "Twice removed",
+      "cousinRemoved3": "Three times removed",
+      "reverseLabel": "What is {{to}} to {{from}}? (optional)",
+      "reverseHint": "Shows on {{to}}’s sheet, for example “goddaughter of”.",
+      "firstStandIn": "the first character",
+      "secondStandIn": "the other character"
     },
     "list": {
       "heading": "Relationships",
@@ -305,7 +329,18 @@
       "leftOff_other": "{{count}} characters with no family links are left off.",
       "generationsLabel": "Generations",
       "generation": "Generation {{number}}: {{names}}"
-    }
+    },
+    "clash": {
+      "title": "This clashes with a relationship already here.",
+      "explain": "Already here: “{{existing}}”. Saving adds “{{proposed}}” as well.",
+      "bothTrue": "Both can be true in a story. If they are, add a note so you remember how.",
+      "note": "How both are true (optional)",
+      "noteHint": "Only you see this note. It shows with the relationship.",
+      "notePlaceholder": "For example: they share a father",
+      "back": "Go back",
+      "save": "Save anyway"
+    },
+    "otherWay": "The other way round"
   },
   "bible": {
     "heading": "Story world",

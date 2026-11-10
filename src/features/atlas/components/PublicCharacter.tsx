@@ -82,7 +82,7 @@ function CharacterLinks({ plan, characterId }: { plan: PublicPlan; characterId: 
       <ul className="m-0 list-none p-0">
         {own.map((relationship) => (
           <li key={relationship.id} className="border-b border-hairline py-2 last:border-b-0">
-            {words.sentence(relationship)}
+            {words.sentence(relationship, characterId)}
           </li>
         ))}
       </ul>

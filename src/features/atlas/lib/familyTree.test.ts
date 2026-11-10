@@ -9,7 +9,17 @@ import { buildFamilyTree } from './familyTree';
 
 /** A relationship with only what these tests need. */
 function link(fromId: string, kind: RelationshipKind, toId: string): CharacterRelationship {
-  return { id: `${fromId}-${toId}`, fromId, toId, kind, customLabel: '', note: '' };
+  return {
+    id: `${fromId}-${toId}`,
+    fromId,
+    toId,
+    kind,
+    customLabel: '',
+    reverseLabel: '',
+    cousinDegree: null,
+    cousinRemoved: null,
+    note: '',
+  };
 }
 
 const cast = ['ana', 'ion', 'vali', 'maria', 'stefan', 'nora'];

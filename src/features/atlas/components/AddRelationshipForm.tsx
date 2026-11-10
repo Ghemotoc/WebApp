@@ -1,29 +1,33 @@
 /**
  * AddRelationshipForm: "Add a relationship" on a character sheet and on the Connections page
  * (story S1-E17-14: "when I pick another character, a relationship type and an optional note,
- * then the relationship is saved").
+ * then the relationship is saved"; bundle G10 ATLAS, part b, handoff A4 and A5).
  *
  * On a sheet the first character is the sheet's own, so only the other one is picked; on the
- * Connections page both are. The type list offers every type in the story's order, and "Custom"
- * adds a box for the writer's own label. A plain message says what is missing or that it didn't
- * save. Who uses it: CharacterRelationshipsSection and ConnectionsPage. What it calls: the
- * onAdd prop (useRelationshipChangers' relate).
+ * Connections page both are. The writer picks a kind (Family, Love, Allies, Conflict or Other),
+ * then the relationship, then the other character. A cousin also says which cousin; "Other"
+ * asks for the writer's own words both ways. When the new relationship clashes with one already
+ * there, a warning explains it and offers a note on how both are true, with Go back and Save
+ * anyway: it is advice, never a block. Who uses it: CharacterRelationshipsSection and
+ * ConnectionsPage. What it calls: the onAdd prop (useRelationshipChangers' relate),
+ * findClash and useRelationshipWords for the warning's sentences.
  */
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { Select } from '@/components/ui/Select';
-import { TextInput } from '@/components/ui/TextInput';
 import { Textarea } from '@/components/ui/Textarea';
 
-import {
-  relationshipKinds,
-  type NewRelationship,
-  type RelationshipKind,
-  type StoryCast,
-} from '../api/characters';
+import type { CharacterRelationship, NewRelationship, StoryCast } from '../api/characters';
+import { useRelationshipWords } from '../hooks/useRelationshipWords';
+import { findClash } from '../lib/relationshipClash';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
+
+import { CousinPickers } from './CousinPickers';
+import { RelationshipClashPanel } from './RelationshipClashPanel';
+import { RelationshipKindPickers } from './RelationshipKindPickers';
+import { RelationshipOwnWords } from './RelationshipOwnWords';
 
 /** What the form needs. */
 export interface AddRelationshipFormProps {
@@ -36,12 +40,15 @@ export interface AddRelationshipFormProps {
   onAdd: (relationship: NewRelationship) => Promise<void>;
 }
 
-/** A blank form. */
+/** A blank form: a first cousin, not removed, is ready in case the writer picks "Cousin of". */
 const emptyDraft: NewRelationship = {
   fromId: '',
   toId: '',
   kind: 'parent_of',
   customLabel: '',
+  reverseLabel: '',
+  cousinDegree: 1,
+  cousinRemoved: 0,
   note: '',
 };
 
@@ -68,7 +75,12 @@ function characterOptions(cast: StoryCast, leaveOutId: string, pickLabel: string
   ];
 }
 
-/** What the three pickers need. */
+/** The draft as a relationship, so the warning can put it into words. */
+function asRelationship(draft: NewRelationship): CharacterRelationship {
+  return { ...draft, id: '' };
+}
+
+/** What the pickers need. */
 interface RelationshipPickersProps {
   idPrefix: string;
   cast: StoryCast;
@@ -78,7 +90,7 @@ interface RelationshipPickersProps {
   change: (part: Partial<NewRelationship>) => void;
 }
 
-/** The first character (on the Connections page only), the type and the other character. */
+/** The first character (Connections page only), the kind, the relationship and the other one. */
 function RelationshipPickers({
   idPrefix,
   cast,
@@ -88,10 +100,6 @@ function RelationshipPickers({
 }: RelationshipPickersProps) {
   const { t } = useAtlasTranslation();
   const pickLabel = t('connections.add.pickCharacter');
-  const kindOptions = relationshipKinds.map((kind) => ({
-    value: kind,
-    label: t(`connections.kinds.${kind}`),
-  }));
   return (
     <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
       {isFromPicked && (
@@ -104,14 +112,7 @@ function RelationshipPickers({
           onChange={(fromId) => change({ fromId })}
         />
       )}
-      <Select
-        id={`${idPrefix}-kind`}
-        label={t('connections.add.kind')}
-        isLabelVisible
-        options={kindOptions}
-        value={draft.kind}
-        onChange={(kind) => change({ kind: kind as RelationshipKind })}
-      />
+      <RelationshipKindPickers idPrefix={idPrefix} kind={draft.kind} change={change} />
       <Select
         id={`${idPrefix}-to`}
         label={t('connections.add.to')}
@@ -124,25 +125,74 @@ function RelationshipPickers({
   );
 }
 
-/** The writer's own label (for a custom relationship only) and the note. */
-function RelationshipTextFields({
-  idPrefix,
-  draft,
-  change,
-}: Pick<RelationshipPickersProps, 'idPrefix' | 'draft' | 'change'>) {
+/** What the type's own fields need. */
+interface KindDetailsProps {
+  idPrefix: string;
+  cast: StoryCast;
+  draft: NewRelationship;
+  change: (part: Partial<NewRelationship>) => void;
+}
+
+/** A cousin's degree, or "Other"'s own words; nothing for the other types. */
+function KindDetails({ idPrefix, cast, draft, change }: KindDetailsProps) {
   const { t } = useAtlasTranslation();
+  const words = useRelationshipWords(cast);
+  if (draft.kind === 'cousin_of') {
+    return (
+      <CousinPickers
+        idPrefix={idPrefix}
+        degree={draft.cousinDegree}
+        removed={draft.cousinRemoved}
+        change={change}
+      />
+    );
+  }
+  if (draft.kind !== 'custom') return null;
+  // A name reads better than "the first character", once one is picked.
+  const fromName = words.nameOf(draft.fromId) || t('connections.add.firstStandIn');
+  const toName = words.nameOf(draft.toId) || t('connections.add.secondStandIn');
+  return (
+    <RelationshipOwnWords
+      idPrefix={idPrefix}
+      fromName={fromName}
+      toName={toName}
+      customLabel={draft.customLabel}
+      reverseLabel={draft.reverseLabel}
+      change={change}
+    />
+  );
+}
+
+/** What the form's lower part needs. */
+interface NoteOrClashProps extends KindDetailsProps {
+  clash: CharacterRelationship | null;
+  onBack: () => void;
+  onSave: () => void;
+}
+
+/** The note and Add relationship, or, on a clash, the warning with its own note and buttons. */
+function NoteOrClash({ idPrefix, cast, draft, clash, change, onBack, onSave }: NoteOrClashProps) {
+  const { t } = useAtlasTranslation();
+  const words = useRelationshipWords(cast);
+  if (clash !== null) {
+    return (
+      <RelationshipClashPanel
+        idPrefix={idPrefix}
+        existing={words.sentence(clash)}
+        proposed={words.sentence(asRelationship(draft))}
+        note={draft.note}
+        onNote={(note) => change({ note })}
+        onBack={() => {
+          // Back to the pickers: the kind drop-down takes the focus once the warning closes.
+          onBack();
+          requestAnimationFrame(() => document.getElementById(`${idPrefix}-group`)?.focus());
+        }}
+        onSave={onSave}
+      />
+    );
+  }
   return (
     <>
-      {draft.kind === 'custom' && (
-        <TextInput
-          id={`${idPrefix}-label`}
-          label={t('connections.add.customLabel')}
-          hint={t('connections.add.customHint')}
-          maxLength={60}
-          value={draft.customLabel}
-          onChange={(event) => change({ customLabel: event.target.value })}
-        />
-      )}
       <Textarea
         id={`${idPrefix}-note`}
         label={t('connections.add.note')}
@@ -150,14 +200,36 @@ function RelationshipTextFields({
         value={draft.note}
         onChange={(event) => change({ note: event.target.value })}
       />
+      <Button type="submit" variant="secondary" className="self-start">
+        {t('connections.add.button')}
+      </Button>
     </>
   );
+}
+
+/** The state of one form: the draft, the message, and the clash being shown. */
+function useRelationshipDraft(fixedFromId: string | undefined) {
+  const freshDraft = { ...emptyDraft, fromId: fixedFromId ?? '' };
+  const [draft, setDraft] = useState<NewRelationship>(freshDraft);
+  const [message, setMessage] = useState<{ tone: 'error' | 'success'; text: string } | null>(null);
+  const [clash, setClash] = useState<CharacterRelationship | null>(null);
+  /** Changes one part of the draft; a change to the pickers closes the warning. */
+  const change = (part: Partial<NewRelationship>) => {
+    setDraft({ ...draft, ...part });
+    if (!('note' in part)) setClash(null);
+  };
+  const reset = () => {
+    setDraft(freshDraft);
+    setClash(null);
+  };
+  return { draft, change, reset, message, setMessage, clash, setClash };
 }
 
 /**
  * Renders the form.
  *
- * @returns the pickers, the label and note boxes, and Add relationship
+ * @returns the pickers, the type's own fields, the note, Add relationship and, on a clash, the
+ *   warning
  */
 export function AddRelationshipForm({
   idPrefix,
@@ -166,22 +238,28 @@ export function AddRelationshipForm({
   onAdd,
 }: AddRelationshipFormProps) {
   const { t } = useAtlasTranslation();
-  const [draft, setDraft] = useState<NewRelationship>({ ...emptyDraft, fromId: fixedFromId ?? '' });
-  const [message, setMessage] = useState<{ tone: 'error' | 'success'; text: string } | null>(null);
-  /** Changes one part of the draft. */
-  const change = (part: Partial<NewRelationship>) => setDraft({ ...draft, ...part });
+  const { draft, change, reset, message, setMessage, clash, setClash } =
+    useRelationshipDraft(fixedFromId);
 
   /** Saves the relationship and starts a fresh form, or says why not. */
+  async function save() {
+    await onAdd(draft)
+      .then(() => {
+        reset();
+        setMessage({ tone: 'success', text: t('connections.add.added') });
+      })
+      .catch(() => setMessage({ tone: 'error', text: t('connections.add.failed') }));
+  }
+
+  /** Add relationship: checks what is missing, then any clash, then saves. */
   async function add() {
     setMessage(null);
     const missing = missingPart(draft);
     if (missing !== null) return setMessage({ tone: 'error', text: t(missing) });
-    await onAdd(draft)
-      .then(() => {
-        setDraft({ ...emptyDraft, fromId: fixedFromId ?? '' });
-        setMessage({ tone: 'success', text: t('connections.add.added') });
-      })
-      .catch(() => setMessage({ tone: 'error', text: t('connections.add.failed') }));
+    // A clash is advice: the warning opens, and Save anyway still saves.
+    const found = findClash(cast.relationships, draft);
+    if (found !== null) return setClash(found);
+    await save();
   }
 
   return (
@@ -200,10 +278,16 @@ export function AddRelationshipForm({
         isFromPicked={fixedFromId === undefined}
         change={change}
       />
-      <RelationshipTextFields idPrefix={idPrefix} draft={draft} change={change} />
-      <Button type="submit" variant="secondary" className="self-start">
-        {t('connections.add.button')}
-      </Button>
+      <KindDetails idPrefix={idPrefix} cast={cast} draft={draft} change={change} />
+      <NoteOrClash
+        idPrefix={idPrefix}
+        cast={cast}
+        draft={draft}
+        clash={clash}
+        change={change}
+        onBack={() => setClash(null)}
+        onSave={() => void save()}
+      />
       <div aria-live="polite">
         {message !== null && <Notice tone={message.tone}>{message.text}</Notice>}
       </div>

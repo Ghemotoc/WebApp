@@ -100,10 +100,19 @@ async function openAs(
   return page;
 }
 
+/** One relationship to add: from whom, which kind, which relationship, to whom. */
+interface NewLink {
+  from: string;
+  group: string;
+  kind: string;
+  to: string;
+}
+
 /** Fills in and sends one "Add a relationship" form on the Connections page. */
-async function addOnConnections(page: Page, from: string, kind: string, to: string) {
+async function addOnConnections(page: Page, { from, group, kind, to }: NewLink) {
   const form = page.getByRole('region', { name: 'Add a relationship', exact: true });
   await form.getByLabel('Character', { exact: true }).selectOption({ label: from });
+  await form.getByLabel('Kind', { exact: true }).selectOption({ label: group });
   await form.getByLabel('Relationship', { exact: true }).selectOption({ label: kind });
   await form.getByLabel('Other character', { exact: true }).selectOption({ label: to });
   await form.getByRole('button', { name: 'Add relationship' }).click();
@@ -123,15 +132,31 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     const page = await openAs(browser, 'adult_writer', `${planAddress}/characters/${cast.ana}`);
     const section = page.getByRole('region', { name: 'Relationships', exact: true });
     await expect(section.getByText('No relationships yet.')).toBeVisible();
-    // Every type is offered (S1-E17-14), custom last.
+    // Kind first, then the relationships of that kind (S1-E17-14; G10b, handoff A4).
+    const groups = section.getByLabel('Kind', { exact: true });
+    await expect(groups.locator('option')).toHaveText([
+      'Family',
+      'Love',
+      'Allies',
+      'Conflict',
+      'Other',
+    ]);
     const kinds = section.getByLabel('Relationship', { exact: true });
-    await expect(kinds.locator('option')).toHaveCount(13);
-    await expect(kinds.locator('option').last()).toHaveText('Custom (own label)');
-    // A custom one needs its label.
-    await kinds.selectOption('custom');
+    await expect(kinds.locator('option')).toHaveText([
+      'Parent of',
+      'Sibling of',
+      'Partner or spouse of',
+      'Cousin of',
+      'Turned or made',
+    ]);
+    // "Other" asks for the writer's own words, and needs them.
+    await groups.selectOption({ label: 'Other' });
+    await expect(kinds).toHaveCount(0);
     await section.getByLabel('Other character', { exact: true }).selectOption({ label: 'Lupul' });
+    await expect(section.getByRole('textbox', { name: 'What is Ana to Lupul?' })).toBeVisible();
     await section.getByRole('button', { name: 'Add relationship' }).click();
     await expect(section.getByText('Write a label for this relationship.')).toBeVisible();
+    await groups.selectOption({ label: 'Family' });
     // A parent with a note.
     await kinds.selectOption('parent_of');
     await section.getByLabel('Other character', { exact: true }).selectOption({ label: 'Vali' });
@@ -158,8 +183,13 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
       'aria-current',
       'page',
     );
-    await addOnConnections(page, 'Ion', 'Partner or spouse of', 'Ana');
-    await addOnConnections(page, 'Ion', 'Killed', 'Lupul');
+    await addOnConnections(page, {
+      from: 'Ion',
+      group: 'Family',
+      kind: 'Partner or spouse of',
+      to: 'Ana',
+    });
+    await addOnConnections(page, { from: 'Ion', group: 'Conflict', kind: 'Killed', to: 'Lupul' });
     const map = page.getByTestId('atlas-relationship-map');
     await expect(map.locator('[data-category]')).toHaveCount(3);
     await expect(map.locator('[data-category="conflict"]')).toHaveCount(1);
@@ -208,7 +238,12 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
       treeCard.getByText('2 characters with no family links are left off.'),
     ).toBeVisible();
     // A maker counts as lineage once the switch is on (S1-E17-16).
-    await addOnConnections(page, 'Mara', 'Turned or made', 'Lupul');
+    await addOnConnections(page, {
+      from: 'Mara',
+      group: 'Family',
+      kind: 'Turned or made',
+      to: 'Lupul',
+    });
     await expect(
       treeCard.getByText('2 characters with no family links are left off.'),
     ).toBeVisible();
@@ -245,6 +280,71 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
         `select count(*) from public.story_character_relationships where story_id = '${writerStoryId}'`,
       ),
     ).toBe('3');
+    await page.context().close();
+  });
+
+  test('a cousin says which cousin, and an "Other" one reads from each side', async ({
+    browser,
+  }) => {
+    const page = await openAs(browser, 'adult_writer', `${planAddress}/connections`);
+    const form = page.getByRole('region', { name: 'Add a relationship', exact: true });
+    const list = page.getByRole('region', { name: 'Relationships', exact: true });
+    // A second cousin once removed (G10b: first to third cousins, up to three times removed).
+    await form.getByLabel('Character', { exact: true }).selectOption({ label: 'Mara' });
+    await form.getByLabel('Relationship', { exact: true }).selectOption({ label: 'Cousin of' });
+    await form.getByLabel('Other character', { exact: true }).selectOption({ label: 'Vali' });
+    await form.getByLabel('Which cousin', { exact: true }).selectOption({ label: 'Second cousin' });
+    await form
+      .getByLabel('Generations apart', { exact: true })
+      .selectOption({ label: 'Once removed' });
+    await form.getByRole('button', { name: 'Add relationship' }).click();
+    await expect(
+      list.getByText('Mara is the second cousin once removed of Vali', { exact: true }).first(),
+    ).toBeVisible();
+    // "Other" in the writer's own words, both ways.
+    await form.getByLabel('Character', { exact: true }).selectOption({ label: 'Ana' });
+    await form.getByLabel('Kind', { exact: true }).selectOption({ label: 'Other' });
+    await form.getByLabel('Other character', { exact: true }).selectOption({ label: 'Mara' });
+    await form.getByRole('textbox', { name: 'What is Ana to Mara?' }).fill('godmother of');
+    await form
+      .getByRole('textbox', { name: 'What is Mara to Ana? (optional)' })
+      .fill('goddaughter of');
+    await form.getByRole('button', { name: 'Add relationship' }).click();
+    await expect(list.getByText('Ana: godmother of Mara', { exact: true }).first()).toBeVisible();
+    // Mara's sheet tells it from her side.
+    await page.goto(`${planAddress}/characters/${cast.mara}`);
+    const maraSection = page.getByRole('region', { name: 'Relationships', exact: true });
+    await expect(
+      maraSection.getByText('Mara: goddaughter of Ana', { exact: true }).first(),
+    ).toBeVisible();
+    await page.context().close();
+  });
+
+  test('a clashing relationship warns, and Save anyway keeps it with a note', async ({
+    browser,
+  }) => {
+    const page = await openAs(browser, 'adult_writer', `${planAddress}/characters/${cast.vali}`);
+    const section = page.getByRole('region', { name: 'Relationships', exact: true });
+    // Ana is Vali's parent; making them siblings too is a clash (G10b, handoff A5).
+    await section.getByLabel('Relationship', { exact: true }).selectOption({ label: 'Sibling of' });
+    await section.getByLabel('Other character', { exact: true }).selectOption({ label: 'Ana' });
+    await section.getByRole('button', { name: 'Add relationship' }).click();
+    await expect(section.getByText('This clashes with a relationship already here.')).toBeVisible();
+    await expect(section.getByText(/Already here: “Ana is the parent of Vali”/)).toBeVisible();
+    // Go back closes the warning and saves nothing.
+    await section.getByRole('button', { name: 'Go back' }).click();
+    await expect(section.getByLabel('Kind', { exact: true })).toBeFocused();
+    await expect(section.getByText('Vali is the sibling of Ana', { exact: true })).toHaveCount(0);
+    // Never a block: Save anyway keeps it, with the note on how both are true.
+    await section.getByRole('button', { name: 'Add relationship' }).click();
+    await section
+      .getByRole('textbox', { name: 'How both are true (optional)' })
+      .fill('A spell swapped their ages.');
+    await section.getByRole('button', { name: 'Save anyway' }).click();
+    await expect(
+      section.getByText('Vali is the sibling of Ana', { exact: true }).first(),
+    ).toBeVisible();
+    await expect(section.getByText('A spell swapped their ages.')).toBeVisible();
     await page.context().close();
   });
 

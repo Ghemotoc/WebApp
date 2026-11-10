@@ -2034,13 +2034,15 @@ COMMENT ON FUNCTION "public"."add_character_field"("story_slug" "text", "field_n
 
 
 
-CREATE OR REPLACE FUNCTION "public"."add_character_relationship"("from_character_id" "uuid", "to_character_id" "uuid", "relationship_kind" "text", "custom_label" "text", "note" "text") RETURNS "jsonb"
+CREATE OR REPLACE FUNCTION "public"."add_character_relationship"("from_character_id" "uuid", "to_character_id" "uuid", "relationship_kind" "text", "custom_label" "text", "note" "text", "reverse_label" "text" DEFAULT ''::"text", "cousin_degree" integer DEFAULT NULL::integer, "cousin_removed" integer DEFAULT NULL::integer) RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
 declare
   from_character public.story_characters;
   to_character public.story_characters;
+  is_custom boolean := relationship_kind = 'custom';
+  is_cousin boolean := relationship_kind = 'cousin_of';
   new_id uuid;
 begin
   -- Step 1: a signed-in writer and two of their own characters.
@@ -2062,23 +2064,28 @@ begin
     raise exception 'A story can hold at most 2,000 relationships.'
       using errcode = 'check_violation', hint = 'too_many_relationships';
   end if;
-  -- Step 3: the relationship; the table's checks refuse the rest.
+  -- Step 3: the relationship; values that don't belong to its type are dropped, and the table's
+  -- checks refuse the rest (a custom one with no label, a cousin with no degree).
   insert into public.story_character_relationships
-    (story_id, user_id, from_character_id, to_character_id, kind, custom_label, note)
+    (story_id, user_id, from_character_id, to_character_id, kind, custom_label, reverse_label,
+     note, cousin_degree, cousin_removed)
   values (from_character.story_id, from_character.user_id, from_character.id, to_character.id,
     relationship_kind,
-    case when relationship_kind = 'custom' then btrim(coalesce(custom_label, '')) else '' end,
-    btrim(coalesce(note, '')))
+    case when is_custom then btrim(coalesce(custom_label, '')) else '' end,
+    case when is_custom then btrim(coalesce(reverse_label, '')) else '' end,
+    btrim(coalesce(note, '')),
+    case when is_cousin then cousin_degree end,
+    case when is_cousin then coalesce(cousin_removed, 0) end)
   returning id into new_id;
   return jsonb_build_object('outcome', 'ok', 'id', new_id);
 end;
 $$;
 
 
-ALTER FUNCTION "public"."add_character_relationship"("from_character_id" "uuid", "to_character_id" "uuid", "relationship_kind" "text", "custom_label" "text", "note" "text") OWNER TO "postgres";
+ALTER FUNCTION "public"."add_character_relationship"("from_character_id" "uuid", "to_character_id" "uuid", "relationship_kind" "text", "custom_label" "text", "note" "text", "reverse_label" "text", "cousin_degree" integer, "cousin_removed" integer) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."add_character_relationship"("from_character_id" "uuid", "to_character_id" "uuid", "relationship_kind" "text", "custom_label" "text", "note" "text") IS 'Records how two of the caller''s characters in one story are connected (S1-E17-14).';
+COMMENT ON FUNCTION "public"."add_character_relationship"("from_character_id" "uuid", "to_character_id" "uuid", "relationship_kind" "text", "custom_label" "text", "note" "text", "reverse_label" "text", "cousin_degree" integer, "cousin_removed" integer) IS 'Records how two of the caller''s characters are connected, with the reverse label of an "Other" one and a cousin''s degree (S1-E17-14, G10b).';
 
 
 
@@ -31018,8 +31025,7 @@ CREATE OR REPLACE FUNCTION "public"."public_plan_relationships"("target_story_id
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
-  select coalesce(jsonb_agg(jsonb_build_object('id', links.id, 'from', links.from_character_id,
-      'to', links.to_character_id, 'kind', links.kind, 'custom_label', links.custom_label)
+  select coalesce(jsonb_agg(public.relationship_json(links, false)
       order by links.created_at, links.id), '[]'::jsonb)
   from public.story_character_relationships as links
   join public.story_characters as from_character on from_character.id = links.from_character_id
@@ -33755,6 +33761,81 @@ ALTER FUNCTION "public"."register_sponsor_creative"("target_path" "text") OWNER 
 
 
 COMMENT ON FUNCTION "public"."register_sponsor_creative"("target_path" "text") IS 'Records a just-uploaded sponsor creative as pending its check; owner and admin only (SPONSORS-b1).';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."story_character_relationships" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "story_id" "uuid" NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "from_character_id" "uuid" NOT NULL,
+    "to_character_id" "uuid" NOT NULL,
+    "kind" "text" NOT NULL,
+    "custom_label" "text" DEFAULT ''::"text" NOT NULL,
+    "note" "text" DEFAULT ''::"text" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "is_private" boolean DEFAULT false NOT NULL,
+    "reverse_label" "text" DEFAULT ''::"text" NOT NULL,
+    "cousin_degree" smallint,
+    "cousin_removed" smallint,
+    CONSTRAINT "story_character_relationships_cousin" CHECK (((("kind" = 'cousin_of'::"text") AND COALESCE((("cousin_degree" >= 1) AND ("cousin_degree" <= 3)), false) AND COALESCE((("cousin_removed" >= 0) AND ("cousin_removed" <= 3)), false)) OR (("kind" <> 'cousin_of'::"text") AND ("cousin_degree" IS NULL) AND ("cousin_removed" IS NULL)))),
+    CONSTRAINT "story_character_relationships_custom_label" CHECK (((("kind" = 'custom'::"text") AND (("char_length"("btrim"("custom_label")) >= 1) AND ("char_length"("btrim"("custom_label")) <= 60))) OR (("kind" <> 'custom'::"text") AND ("custom_label" = ''::"text")))),
+    CONSTRAINT "story_character_relationships_kind_known" CHECK (("kind" = ANY (ARRAY['parent_of'::"text", 'sibling_of'::"text", 'partner_of'::"text", 'cousin_of'::"text", 'loves'::"text", 'made'::"text", 'friend_of'::"text", 'ally_of'::"text", 'mentors'::"text", 'works_for'::"text", 'enemy_of'::"text", 'resents'::"text", 'killed'::"text", 'custom'::"text"]))),
+    CONSTRAINT "story_character_relationships_note_length" CHECK (("char_length"("note") <= 1000)),
+    CONSTRAINT "story_character_relationships_reverse_label" CHECK (((("kind" = 'custom'::"text") AND ("char_length"("reverse_label") <= 60) AND ("reverse_label" = "btrim"("reverse_label"))) OR (("kind" <> 'custom'::"text") AND ("reverse_label" = ''::"text")))),
+    CONSTRAINT "story_character_relationships_two_characters" CHECK (("from_character_id" <> "to_character_id"))
+);
+
+
+ALTER TABLE "public"."story_character_relationships" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."story_character_relationships" IS 'kind: user_content; reportable: atlas_item
+How two characters of one story''s plan are connected (S1-E17-14). Only the writer reads the table; readers see the public ones through get_public_story_plan() (S1-E17-33).';
+
+
+
+COMMENT ON COLUMN "public"."story_character_relationships"."user_id" IS 'The writer''s user ID; never shown publicly (rule 15).';
+
+
+
+COMMENT ON COLUMN "public"."story_character_relationships"."kind" IS 'parent_of, sibling_of, partner_of, loves, made (turned or made), friend_of, ally_of, mentors, works_for, enemy_of, resents, killed or custom (S1-E17-14).';
+
+
+
+COMMENT ON COLUMN "public"."story_character_relationships"."is_private" IS '"Keep private": readers never see this relationship (S1-E17-32).';
+
+
+
+COMMENT ON COLUMN "public"."story_character_relationships"."reverse_label" IS 'For an "Other" (custom) relationship only: what the second character is to the first, shown on the second''s sheet; empty when not given (G10b).';
+
+
+
+COMMENT ON COLUMN "public"."story_character_relationships"."cousin_degree" IS 'For cousin_of only: 1 (cousin), 2 (second cousin) or 3 (third cousin) (G10b).';
+
+
+
+COMMENT ON COLUMN "public"."story_character_relationships"."cousin_removed" IS 'For cousin_of only: how many generations apart, 0 (not removed) to 3 (G10b).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."relationship_json"("link" "public"."story_character_relationships", "with_note" boolean) RETURNS "jsonb"
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select jsonb_build_object('id', link.id, 'from', link.from_character_id,
+      'to', link.to_character_id, 'kind', link.kind, 'custom_label', link.custom_label,
+      'reverse_label', link.reverse_label, 'cousin_degree', link.cousin_degree,
+      'cousin_removed', link.cousin_removed)
+    || case when with_note then jsonb_build_object('note', link.note) else '{}'::jsonb end;
+$$;
+
+
+ALTER FUNCTION "public"."relationship_json"("link" "public"."story_character_relationships", "with_note" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."relationship_json"("link" "public"."story_character_relationships", "with_note" boolean) IS 'Internal: one relationship as JSON, with the writer''s note only when asked (G10b).';
 
 
 
@@ -41165,7 +41246,7 @@ begin
   end if;
 
   -- Step 2: the characters, the writer's own fields, the chapters to pick from and the
-  -- relationships between the characters.
+  -- relationships between the characters, with their notes (the writer's own).
   return (select jsonb_build_object(
     'outcome', 'ok',
     'story', jsonb_build_object('id', stories.id, 'slug', stories.slug, 'title', stories.title),
@@ -41181,9 +41262,7 @@ begin
           'title', chapters.draft_title) order by chapters.position)
       from public.chapters where chapters.story_id = stories.id and chapters.deleted_at is null), '[]'::jsonb),
     'relationships', coalesce((
-      select jsonb_agg(jsonb_build_object('id', links.id, 'from', links.from_character_id,
-          'to', links.to_character_id, 'kind', links.kind, 'custom_label', links.custom_label,
-          'note', links.note) order by links.created_at)
+      select jsonb_agg(public.relationship_json(links, true) order by links.created_at)
       from public.story_character_relationships as links where links.story_id = stories.id), '[]'::jsonb))
     from public.stories where stories.id = target_story_id);
 end;
@@ -47223,45 +47302,6 @@ The writer''s own character fields in one story''s plan, shown on every sheet (S
 
 
 COMMENT ON COLUMN "public"."story_character_fields"."user_id" IS 'The writer''s user ID; never shown publicly (rule 15).';
-
-
-
-CREATE TABLE IF NOT EXISTS "public"."story_character_relationships" (
-    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
-    "story_id" "uuid" NOT NULL,
-    "user_id" "uuid" NOT NULL,
-    "from_character_id" "uuid" NOT NULL,
-    "to_character_id" "uuid" NOT NULL,
-    "kind" "text" NOT NULL,
-    "custom_label" "text" DEFAULT ''::"text" NOT NULL,
-    "note" "text" DEFAULT ''::"text" NOT NULL,
-    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    "is_private" boolean DEFAULT false NOT NULL,
-    CONSTRAINT "story_character_relationships_custom_label" CHECK (((("kind" = 'custom'::"text") AND (("char_length"("btrim"("custom_label")) >= 1) AND ("char_length"("btrim"("custom_label")) <= 60))) OR (("kind" <> 'custom'::"text") AND ("custom_label" = ''::"text")))),
-    CONSTRAINT "story_character_relationships_kind_known" CHECK (("kind" = ANY (ARRAY['parent_of'::"text", 'sibling_of'::"text", 'partner_of'::"text", 'loves'::"text", 'made'::"text", 'friend_of'::"text", 'ally_of'::"text", 'mentors'::"text", 'works_for'::"text", 'enemy_of'::"text", 'resents'::"text", 'killed'::"text", 'custom'::"text"]))),
-    CONSTRAINT "story_character_relationships_note_length" CHECK (("char_length"("note") <= 1000)),
-    CONSTRAINT "story_character_relationships_two_characters" CHECK (("from_character_id" <> "to_character_id"))
-);
-
-
-ALTER TABLE "public"."story_character_relationships" OWNER TO "postgres";
-
-
-COMMENT ON TABLE "public"."story_character_relationships" IS 'kind: user_content; reportable: atlas_item
-How two characters of one story''s plan are connected (S1-E17-14). Only the writer reads the table; readers see the public ones through get_public_story_plan() (S1-E17-33).';
-
-
-
-COMMENT ON COLUMN "public"."story_character_relationships"."user_id" IS 'The writer''s user ID; never shown publicly (rule 15).';
-
-
-
-COMMENT ON COLUMN "public"."story_character_relationships"."kind" IS 'parent_of, sibling_of, partner_of, loves, made (turned or made), friend_of, ally_of, mentors, works_for, enemy_of, resents, killed or custom (S1-E17-14).';
-
-
-
-COMMENT ON COLUMN "public"."story_character_relationships"."is_private" IS '"Keep private": readers never see this relationship (S1-E17-32).';
 
 
 
@@ -54675,8 +54715,8 @@ GRANT ALL ON FUNCTION "public"."add_character_field"("story_slug" "text", "field
 
 
 
-REVOKE ALL ON FUNCTION "public"."add_character_relationship"("from_character_id" "uuid", "to_character_id" "uuid", "relationship_kind" "text", "custom_label" "text", "note" "text") FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."add_character_relationship"("from_character_id" "uuid", "to_character_id" "uuid", "relationship_kind" "text", "custom_label" "text", "note" "text") TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."add_character_relationship"("from_character_id" "uuid", "to_character_id" "uuid", "relationship_kind" "text", "custom_label" "text", "note" "text", "reverse_label" "text", "cousin_degree" integer, "cousin_removed" integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."add_character_relationship"("from_character_id" "uuid", "to_character_id" "uuid", "relationship_kind" "text", "custom_label" "text", "note" "text", "reverse_label" "text", "cousin_degree" integer, "cousin_removed" integer) TO "authenticated";
 
 
 
@@ -59120,6 +59160,15 @@ GRANT ALL ON FUNCTION "public"."register_sponsor_creative"("target_path" "text")
 
 
 
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."story_character_relationships" TO "service_role";
+GRANT SELECT ON TABLE "public"."story_character_relationships" TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."relationship_json"("link" "public"."story_character_relationships", "with_note" boolean) FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."removal_order_log_rows"() FROM PUBLIC;
 
 
@@ -61175,11 +61224,6 @@ GRANT UPDATE ON SEQUENCE "public"."statement_reference_seq" TO "service_role";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."story_character_fields" TO "service_role";
 GRANT SELECT ON TABLE "public"."story_character_fields" TO "authenticated";
-
-
-
-GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."story_character_relationships" TO "service_role";
-GRANT SELECT ON TABLE "public"."story_character_relationships" TO "authenticated";
 
 
 

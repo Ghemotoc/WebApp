@@ -50,7 +50,12 @@ export function CharacterRelationshipsSection({
       >
         {t('connections.list.sheetHeading')}
       </h2>
-      <RelationshipList relationships={mine} words={words} onDelete={unrelate} />
+      <RelationshipList
+        relationships={mine}
+        words={words}
+        onDelete={unrelate}
+        viewpointId={characterId}
+      />
       {cast.characters.length > 1 && (
         <>
           <h3 className="m-0 font-heading text-lg font-bold text-heading">

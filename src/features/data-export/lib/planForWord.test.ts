@@ -70,6 +70,40 @@ describe('plansFrom', () => {
     expect(characters?.entries[0]?.details.at(-1)?.value).toBe('Chapter 1: Începutul');
   });
 
+  it('a cousin says which cousin, and an "Other" one reads the other way round too', () => {
+    const [entry] = plansFrom(
+      dataFile({
+        story_characters: [
+          { id: 'k1', story_id: 's1', name: 'Ana', role: 'minor', sheet: {}, custom_values: {} },
+          { id: 'k2', story_id: 's1', name: 'Ilinca', role: 'minor', sheet: {}, custom_values: {} },
+        ],
+        story_character_relationships: [
+          {
+            ...{ id: 'r1', story_id: 's1', from_character_id: 'k1', to_character_id: 'k2' },
+            ...{ kind: 'cousin_of', custom_label: '', reverse_label: '', note: '' },
+            ...{ cousin_degree: 2, cousin_removed: 1 },
+          },
+          {
+            ...{ id: 'r2', story_id: 's1', from_character_id: 'k1', to_character_id: 'k2' },
+            ...{ kind: 'custom', custom_label: 'godmother of', reverse_label: 'goddaughter of' },
+            ...{ note: '', cousin_degree: null, cousin_removed: null },
+          },
+        ],
+      }),
+      words,
+    );
+    const connections = entry?.plan.parts.find((part) => part.heading === 'connections.heading');
+    // The fake words print the key and the values, so "which" shows the cousin's own keys.
+    expect(connections?.entries[0]?.title).toContain('connections.cousin.degree2');
+    expect(connections?.entries[0]?.title).toContain('connections.cousin.removed1');
+    expect(connections?.entries[1]?.details).toEqual([
+      {
+        label: 'connections.otherWay',
+        value: expect.stringContaining('"from":"Ilinca","to":"Ana","label":"goddaughter of"'),
+      },
+    ]);
+  });
+
   it('bible entries, events, ideas and marketing each become a part with their text', () => {
     const [entry] = plansFrom(
       dataFile({

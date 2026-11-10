@@ -227,6 +227,7 @@
       "parent_of": "Părinte pentru",
       "sibling_of": "Frate sau soră cu",
       "partner_of": "Partener(ă) sau soț(ie) pentru",
+      "cousin_of": "Văr sau vară cu",
       "loves": "Îndrăgostit(ă) de",
       "made": "A transformat sau a creat",
       "friend_of": "Prieten(ă) cu",
@@ -236,12 +237,13 @@
       "enemy_of": "În dușmănie cu",
       "resents": "Are resentimente față de",
       "killed": "A ucis",
-      "custom": "Altă legătură (etichetă proprie)"
+      "custom": "Cuvinte proprii"
     },
     "sentences": {
       "parent_of": "{{from}} e părinte pentru {{to}}",
       "sibling_of": "{{from}} e frate sau soră cu {{to}}",
       "partner_of": "{{from}} e partener(ă) sau soț(ie) pentru {{to}}",
+      "cousin_of": "{{from}} și {{to}} sunt {{which}}",
       "loves": "{{from}} e îndrăgostit(ă) de {{to}}",
       "made": "{{to}} a fost transformat(ă) sau creat(ă) de {{from}}",
       "friend_of": "{{from}} e prieten(ă) cu {{to}}",
@@ -252,6 +254,14 @@
       "resents": "{{from}} are resentimente față de {{to}}",
       "killed": "{{to}} a fost ucis(ă) de {{from}}",
       "custom": "{{from}}: {{label}} {{to}}"
+    },
+    "cousin": {
+      "degree1": "veri primari",
+      "degree2": "veri de-al doilea",
+      "degree3": "veri de-al treilea",
+      "removed1": ", cu o generație între ei",
+      "removed2": ", cu două generații între ei",
+      "removed3": ", cu trei generații între ei"
     },
     "categories": {
       "family": "Familie",
@@ -268,14 +278,28 @@
       "to": "Celălalt personaj",
       "pickCharacter": "Alege un personaj",
       "kind": "Legătura",
-      "customLabel": "Etichetă",
-      "customHint": "De exemplu „rival cu” sau „îi datorează lui”.",
+      "customLabel": "Ce este {{from}} pentru {{to}}?",
+      "customHint": "De exemplu „nașă pentru” sau „îi datorează lui”.",
       "note": "Notă (opțional)",
       "button": "Adaugă legătura",
       "added": "Legătura a fost adăugată.",
       "pickBoth": "Alege ambele personaje.",
       "labelRequired": "Scrie o etichetă pentru această legătură.",
-      "failed": "Legătura nu a fost salvată. Verifică-ți conexiunea și încearcă din nou."
+      "failed": "Legătura nu a fost salvată. Verifică-ți conexiunea și încearcă din nou.",
+      "group": "Fel",
+      "cousinDegree": "Ce fel de veri",
+      "cousinDegree1": "Veri primari",
+      "cousinDegree2": "Veri de-al doilea",
+      "cousinDegree3": "Veri de-al treilea",
+      "cousinRemoved": "Generații între ei",
+      "cousinRemoved0": "Aceeași generație",
+      "cousinRemoved1": "O generație",
+      "cousinRemoved2": "Două generații",
+      "cousinRemoved3": "Trei generații",
+      "reverseLabel": "Ce este {{to}} pentru {{from}}? (opțional)",
+      "reverseHint": "Apare pe fișa personajului {{to}}, de exemplu „fină pentru”.",
+      "firstStandIn": "primul personaj",
+      "secondStandIn": "celălalt personaj"
     },
     "list": {
       "heading": "Legături",
@@ -305,7 +329,18 @@
       "leftOff_other": "{{count}} de personaje fără legături de familie nu apar.",
       "generationsLabel": "Generații",
       "generation": "Generația {{number}}: {{names}}"
-    }
+    },
+    "clash": {
+      "title": "Se contrazice cu o legătură care există deja.",
+      "explain": "Există deja: „{{existing}}”. Salvarea adaugă și „{{proposed}}”.",
+      "bothTrue": "Pot fi adevărate amândouă într-o poveste. Dacă sunt, adaugă o notă ca să știi cum.",
+      "note": "Cum sunt adevărate amândouă (opțional)",
+      "noteHint": "Doar tu vezi nota. Apare lângă legătură.",
+      "notePlaceholder": "De exemplu: au același tată",
+      "back": "Înapoi",
+      "save": "Salvează oricum"
+    },
+    "otherWay": "Invers"
   },
   "bible": {
     "heading": "Lumea poveștii",

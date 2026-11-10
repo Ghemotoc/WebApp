@@ -2193,6 +2193,7 @@ The app draws no doodles, stickers or hand-drawn icons anywhere (Robert, 7 Nov 2
 - `RelationshipMap` places the nodes with `lib/relationshipMap.ts` and draws each line in its category's colour and dash (`lib/relationshipCategories.ts`, colours `--atlas-line-*` in `src/styles/tokens.css`); the nodes are real links to the sheets, and `RelationshipList` under "All relationships" is the same data for screen readers.
 - `FamilyTreeView` builds the generations with `lib/familyTree.ts` and draws them with `lib/familyTreeLayout.ts`.
 - On each sheet, `CharacterRelationshipsSection` lists the character's relationships both ways and adds new ones.
+- The form (G10b): `RelationshipKindPickers` (Kind, then Relationship, from `lib/relationshipGroups.ts`), `CousinPickers` for "Cousin of", `RelationshipOwnWords` for "Other" (the label and the optional reverse label), and `RelationshipClashPanel` when `lib/relationshipClash.ts` finds a clash among the relationships already loaded. `useRelationshipWords` writes the sentences: which cousin through `lib/cousinWords.ts`, and an "Other" one with a reverse label from the side of the sheet it is on.
 
 ## Story Atlas: the bible (S1-E17-17 and S1-E17-18; ATLAS-d)
 
