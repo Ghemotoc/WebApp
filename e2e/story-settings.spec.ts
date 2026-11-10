@@ -78,9 +78,12 @@ test.describe('story status, settings and deletion (S1-E3-05)', () => {
     await page.goto('/write');
     await expect(card).toBeVisible();
     await expect(card.getByText('Completed')).toHaveCount(0);
-    await page.getByRole('radio', { name: 'Ongoing' }).click();
+    // The filter is the glass switch (G9b): a press on a segment's words picks it.
+    const filter = page.getByRole('group', { name: 'Show' });
+    await filter.getByText('Ongoing', { exact: true }).click();
     await expect(card).toHaveCount(0);
-    await page.getByRole('radio', { name: 'Completed' }).click();
+    await filter.getByText('Completed', { exact: true }).click();
+    await expect(filter.getByRole('radio', { name: 'Completed' })).toBeChecked();
     await expect(card).toBeVisible();
   });
 

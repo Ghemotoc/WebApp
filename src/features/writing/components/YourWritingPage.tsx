@@ -19,11 +19,11 @@ import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router';
 
 import { automaticCoverFor, designsForRow } from '@/components/covers/automaticCover';
-import { ChoiceChips } from '@/components/ui/ChoiceChips';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
 
 import type { DashboardChapter, DashboardPeriod, WriterDashboard } from '../api/dashboard';
 import type { MyStory } from '../api/stories';
@@ -68,20 +68,28 @@ function ContinueDraftLink({ chapters }: { chapters: DashboardChapter[] }) {
   );
 }
 
-/** The "+ New story" button, a link drawn as the primary button. */
-function NewStoryLink({ label }: { label: string }) {
+/**
+ * The "+ New story" link. In the header it is a grey glass pill, like every other add button in
+ * the liquid glass design (design decision, 7 Nov 2026; Write board, bundle G9 WRITING, part b);
+ * in the empty state, where it is the only thing to do, it is the main button.
+ */
+function NewStoryLink({ label, look }: { label: string; look: 'glass' | 'main' }) {
+  const lookClass = look === 'glass' ? 'button-glass' : 'button-main';
   return (
     <Link
       to="/write/new"
-      className="inline-flex h-12 items-center rounded-full button-main px-6 text-[15px] font-semibold whitespace-nowrap no-underline"
+      className={`inline-flex h-12 items-center rounded-full ${lookClass} px-6 text-[15px] font-semibold whitespace-nowrap no-underline`}
     >
       {label}
     </Link>
   );
 }
 
-/** The Ongoing / Completed filter chips ("Readers can filter by it"; the writer can too). */
-function StatusFilterChips({
+/**
+ * The Ongoing / Completed filter ("Readers can filter by it"; the writer can too), drawn as the
+ * Write board's glass switch (SegmentedControl, bundle G9 WRITING, part b).
+ */
+function StatusFilterSwitch({
   value,
   onChange,
 }: {
@@ -90,15 +98,17 @@ function StatusFilterChips({
 }) {
   const { t } = useTranslation('writing');
   return (
-    <ChoiceChips
-      label={t('status.filterLabel')}
+    <SegmentedControl
+      legend={t('status.filterLabel')}
+      isLegendVisible={false}
+      name="writing-status-filter"
       options={[
         { value: 'all', label: t('status.all') },
         { value: 'ongoing', label: t('status.ongoing') },
         { value: 'completed', label: t('status.completed') },
       ]}
       value={value}
-      onChange={(next) => onChange(next as StatusFilter)}
+      onChange={onChange}
     />
   );
 }
@@ -123,7 +133,7 @@ function StoriesBody({
       <EmptyState
         title={t(filter === 'all' ? 'yourWriting.empty.title' : 'yourWriting.empty.filteredTitle')}
         description={t('yourWriting.empty.description')}
-        action={<NewStoryLink label={t('yourWriting.empty.action')} />}
+        action={<NewStoryLink label={t('yourWriting.empty.action')} look="main" />}
       />
     );
   }
@@ -164,7 +174,7 @@ function YourWritingHeader({
       {isSignedIn && (
         <div className="flex flex-wrap gap-3">
           <ContinueDraftLink chapters={chapters} />
-          <NewStoryLink label={t('yourWriting.newStory')} />
+          <NewStoryLink label={t('yourWriting.newStory')} look="glass" />
         </div>
       )}
     </header>
@@ -189,7 +199,7 @@ function StoriesSection({
           {t('yourWriting.storiesHeading')}
         </h2>
       </div>
-      {writing.isSignedIn && <StatusFilterChips value={filter} onChange={setFilter} />}
+      {writing.isSignedIn && <StatusFilterSwitch value={filter} onChange={setFilter} />}
       <StoriesBody writing={writing} filter={filter} chapterNumbers={chapterNumbers} />
     </section>
   );

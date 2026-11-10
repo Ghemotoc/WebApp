@@ -113,7 +113,7 @@ function tileValue(page: Page, label: string) {
   return page
     .getByRole('region', { name: 'How readers respond' })
     .getByText(label, { exact: true })
-    .locator('xpath=..');
+    .locator('xpath=../..');
 }
 
 test.describe('The writer dashboard', () => {
@@ -164,7 +164,10 @@ test.describe('The writer dashboard', () => {
 
   test('the period, the waiting draft and "Continue draft"', async ({ browser }) => {
     const page = await openDashboard(browser);
-    await page.getByRole('radio', { name: 'Last 30 days' }).click();
+    // The period is the glass switch (G9b): a press on a segment's words picks it.
+    const period = page.getByRole('group', { name: 'Time period' });
+    await period.getByText('Last 30 days', { exact: true }).click();
+    await expect(period.getByRole('radio', { name: 'Last 30 days' })).toBeChecked();
     await expect(page.getByText('New followers in 30 days')).toBeVisible();
     const waiting = page.getByRole('region', { name: 'Not published yet' });
     await expect(waiting.getByText('Chapter 2: Rama')).toBeVisible();
