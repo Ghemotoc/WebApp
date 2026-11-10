@@ -15795,7 +15795,11 @@ export type Database = {
         Args: Record<PropertyKey, never>;
         Returns: {
           contest_id: string;
+          cover: Json;
+          cover_alt_en: string;
+          cover_alt_ro: string;
           entries_close_on: string;
+          entry_count: number;
           name_en: string;
           name_ro: string;
           page_slug: string;

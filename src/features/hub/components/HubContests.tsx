@@ -5,7 +5,9 @@
  *
  * The contest's full page is its landing page at /c/<slug>, so the card links there; a writer
  * enters a story from that story's settings (StoryContestCard, S1-E11-15), which the card says.
- * Left out (docs/board-fixes.md): the cover picture and the entry count, which members can't read.
+ * GAPS-12a: the card opens with the landing page's first picture (only once it passed its check
+ * and a moderator approved it) and counts the entries from the first one; members can't read
+ * the contests or their entries themselves, so both come from writers_hub_contests().
  * Who shows it: WritersHubPage. What it calls: hooks/useHubContests.ts and lib/hubDates.ts.
  */
 import { Link } from 'react-router';
@@ -45,6 +47,13 @@ function ContestCard({ contest, now }: { contest: HubContest; now: Date }) {
       : t('hub.contests.closesIn', { count: daysLeft });
   return (
     <article aria-labelledby={`hub-contest-${contest.contestId}`} className={cardClasses}>
+      {contest.coverUrl !== null && (
+        <img
+          src={contest.coverUrl}
+          alt={isRomanian ? contest.coverAltRo : contest.coverAltEn}
+          className="block max-h-[280px] w-full rounded-2xl object-cover"
+        />
+      )}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <Eyebrow>{t('hub.contests.eyebrow')}</Eyebrow>
         <InfoPill tone="gold">{closing}</InfoPill>
@@ -65,6 +74,11 @@ function ContestCard({ contest, now }: { contest: HubContest; now: Date }) {
           </InfoPill>
         )}
         {prize !== '' && <InfoPill tone="plum">{t('hub.contests.prize', { prize })}</InfoPill>}
+        {contest.entryCount > 0 && (
+          <InfoPill tone="neutral">
+            {t('hub.contests.entries', { count: contest.entryCount })}
+          </InfoPill>
+        )}
       </div>
       <p className="m-0 text-sm text-meta">{t('hub.contests.howToEnter')}</p>
       <Link

@@ -4,7 +4,7 @@ The signed-in home at `/hub` and the Resources page at `/resources`, built by bu
 
 - `components/WritersHubPage.tsx`: the page. Signed out it shows a log-in line; signed in it shows the four blocks below.
 - `components/HubHero.tsx`: the day, the heading and the Start writing and Resources buttons.
-- `components/HubContests.tsx`: one card per open contest (days left, word limit, prize, how to enter, a link to its landing page), or a short line when none is open.
+- `components/HubContests.tsx`: one card per open contest (the landing page's first picture as its cover, days left, word limit, prize, how many entries count, how to enter, a link to its landing page), or a short line when none is open. The cover and the count come from `writers_hub_contests()` (GAPS-12a).
 - `components/HubGuides.tsx`: the how-to guides two at a time, with Previous and Next arrows and a link to Resources.
 - `components/HubTools.tsx`: Story Atlas, Writing, Download stories and Help centre.
 - `components/ResourcesPage.tsx` and `ResourcesLinkList.tsx`: writers' rights, every how-to guide and More help (help centre, guidelines, contact, privacy and terms).
