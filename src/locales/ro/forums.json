@@ -102,7 +102,9 @@
     "addQuote": "Adaugă la citate",
     "addedQuote": "Adăugată la citate",
     "addQuoteLabel": "Adaugă la citate: postarea {{number}}",
-    "addedQuoteLabel": "Adăugată la citate: postarea {{number}}"
+    "addedQuoteLabel": "Adăugată la citate: postarea {{number}}",
+    "hiddenBySpaceNote": "Moderatorii acestui spațiu au ascuns mesajul. Doar autorul și moderatorii îl pot vedea.",
+    "moved": "Mutat aici de un moderator"
   },
   "editor": {
     "title": "Titlu",
@@ -353,5 +355,31 @@
   "rulesStrip": {
     "label": "Regulile forumului",
     "readOnly": "Închisă: doar citire"
+  },
+  "spaceModeration": {
+    "toggle": "Moderează",
+    "toggleLabel": "Moderează mesajul {{number}}",
+    "reason": "Motiv",
+    "reasonHint": "Intră în jurnalul de moderare al spațiului, pe care îl pot citi proprietarul și echipa noastră de moderare.",
+    "hide": "Ascunde mesajul",
+    "show": "Arată din nou",
+    "moveLabel": "Discuția care primește mesajul",
+    "moveHint": "Numărul sau adresa altei discuții din acest spațiu.",
+    "move": "Mută mesajul",
+    "failures": {
+      "not_allowed": "Doar moderatorii acestui spațiu pot face asta.",
+      "owner": "Un moderator nu poate schimba mesajele proprietarului.",
+      "first": "Primul mesaj al unei discuții nu poate fi ascuns sau mutat.",
+      "reason_empty": "Scrie mai întâi un motiv.",
+      "reason_too_long": "Motivul trebuie să aibă sub 500 de caractere.",
+      "gone": "Mesajul nu mai există.",
+      "already": "Mesajul e deja ascuns.",
+      "not_hidden": "Mesajul nu e ascuns.",
+      "by_team": "Echipa noastră de moderare a ascuns sau a eliminat mesajul, așa că spațiul nu îl poate schimba.",
+      "target_missing": "Discuția aceea nu e în acest spațiu.",
+      "target_same": "Mesajul e deja în acea discuție.",
+      "target_locked": "Discuția aceea e închisă.",
+      "unreachable": "Nu am putut salva. Verifică-ți conexiunea și încearcă din nou."
+    }
   }
 }

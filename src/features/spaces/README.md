@@ -69,3 +69,7 @@ Each space owns one hidden forum, so its threads reuse the forums feature (`Thre
   space over to one of its moderators (`offer_space_handover()`, `cancel_space_handover()`,
   `answer_space_handover()`). `SpaceHandoverCard` on the settings page for the owner, and
   `SpaceHandoverOffer` at the top of the space for the moderator it is offered to.
+- `components/SpaceShareButton.tsx`, `SpaceShareDialog.tsx` and `lib/spaceShareLink.ts` (bundle
+  GAPS-10): "Share" in the space's header opens the link, "Copy link", a QR code and the device's
+  share menu; a class space has none. Hiding and moving replies in a space lives with the forum
+  thread page (`src/features/forums/components/PostSpaceModeration.tsx`).

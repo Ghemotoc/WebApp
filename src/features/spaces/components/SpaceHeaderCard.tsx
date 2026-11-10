@@ -10,10 +10,10 @@
  * pastels) through the shared `genre-band` utility, which points every text token at it. Under the
  * banner, a meta row: who reads, the age group, who posts, "214 members" and "Owner: inkwolf".
  * The owner sees "Space settings" where others see Report (nobody reports their own space; rule 6
- * for everyone else). Share comes with the share card (S1-E4-05) for spaces later, so it is left
- * out here (noted in docs/board-fixes.md).
+ * for everyone else). "Share" (GAPS-10) opens the link, "Copy link" and a QR code; a class space
+ * has none.
  * Who shows it: SpacePage. What it calls: SpaceBannerBand, SpaceLogo, SpacePills,
- * SpaceJoinActions, SpaceToolLinks, ReportButton.
+ * SpaceJoinActions, SpaceShareButton, SpaceToolLinks, ReportButton.
  */
 import type { CSSProperties } from 'react';
 import { Link } from 'react-router';
@@ -31,6 +31,7 @@ import { SpaceBannerBand } from './SpaceBannerBand';
 import { SpaceJoinActions } from './SpaceJoinActions';
 import { SpaceLogo } from './SpaceLogo';
 import { SpacePills } from './SpacePills';
+import { SpaceShareButton } from './SpaceShareButton';
 import { SpaceToolLinks } from './SpaceToolLinks';
 
 /**
@@ -134,7 +135,10 @@ export function SpaceHeaderCard({ space }: { space: Space }) {
           <div className="flex flex-col items-start gap-3 md:items-end">
             <SpaceJoinActions space={space} />
             <SpaceToolLinks space={space} />
-            <SpaceReport space={space} />
+            <div className="flex flex-wrap items-center gap-3 md:justify-end">
+              <SpaceShareButton space={space} />
+              <SpaceReport space={space} />
+            </div>
           </div>
         </div>
       </div>

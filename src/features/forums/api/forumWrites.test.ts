@@ -68,13 +68,23 @@ describe('quoteFrom', () => {
       state: 'live',
       body: 'Start with the scene.',
       author: { handle: 'teacher', display_name: 'Lia', is_staff: false },
+      thread_number: 412,
+      forum_slug: 'space-poets',
     });
     expect(quote).toEqual({
       number: 2,
       state: 'live',
       body: 'Start with the scene.',
       author: { handle: 'teacher', displayName: 'Lia', isStaff: false },
+      threadNumber: 412,
+      forumSlug: 'space-poets',
     });
+  });
+
+  it('names no place for a quote the database gives none for', () => {
+    const quote = quoteFrom({ number: 5, state: 'unavailable' });
+    expect(quote.threadNumber).toBeNull();
+    expect(quote.forumSlug).toBeNull();
   });
 
   it('never keeps words for a marker, and reads an unknown state as unavailable', () => {

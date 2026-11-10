@@ -102,7 +102,9 @@
     "addQuote": "Add to quotes",
     "addedQuote": "Added to quotes",
     "addQuoteLabel": "Add to quotes: post {{number}}",
-    "addedQuoteLabel": "Added to quotes: post {{number}}"
+    "addedQuoteLabel": "Added to quotes: post {{number}}",
+    "hiddenBySpaceNote": "This space’s moderators hid this post. Only its writer and the moderators can see it.",
+    "moved": "Moved here by a moderator"
   },
   "editor": {
     "title": "Title",
@@ -353,5 +355,31 @@
   "rulesStrip": {
     "label": "Forum rules",
     "readOnly": "Locked: read only"
+  },
+  "spaceModeration": {
+    "toggle": "Moderate",
+    "toggleLabel": "Moderate post {{number}}",
+    "reason": "Reason",
+    "reasonHint": "Goes in the space’s moderation log, which its owner and our moderation team can read.",
+    "hide": "Hide post",
+    "show": "Show again",
+    "moveLabel": "Thread that takes the post",
+    "moveHint": "The number or address of another thread in this space.",
+    "move": "Move post",
+    "failures": {
+      "not_allowed": "Only this space’s moderators can do that.",
+      "owner": "A moderator can’t change the owner’s posts.",
+      "first": "A thread’s first post can’t be hidden or moved.",
+      "reason_empty": "Write a reason first.",
+      "reason_too_long": "Keep the reason under 500 characters.",
+      "gone": "This post isn’t there any more.",
+      "already": "This post is already hidden.",
+      "not_hidden": "This post isn’t hidden.",
+      "by_team": "Our moderation team hid or removed this post, so the space can’t change it.",
+      "target_missing": "That thread isn’t in this space.",
+      "target_same": "The post is already in that thread.",
+      "target_locked": "That thread is locked.",
+      "unreachable": "We couldn’t save that. Check your connection and try again."
+    }
   }
 }

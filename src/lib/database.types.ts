@@ -3345,20 +3345,50 @@ export type Database = {
           deleted_at: string | null;
           edited_at: string | null;
           id: string;
+          moved_from_thread_id: string | null;
           post_number: number;
           quoted_post_ids: string[];
           thread_id: string;
           updated_at: string;
           user_id: string;
+          forum_post_is_space_hidden: boolean | null;
           forum_post_state_for_caller: string | null;
+          space_of_post: {
+            age_group: Database['public']['Enums']['space_age_group'];
+            archived_at: string | null;
+            banner: Database['public']['Enums']['space_banner'];
+            banner_picture_id: string | null;
+            created_at: string;
+            deleted_at: string | null;
+            description: string;
+            handover_offered_at: string | null;
+            handover_to_user_id: string | null;
+            id: string;
+            joining: Database['public']['Enums']['space_joining'];
+            kind: Database['public']['Enums']['space_kind'];
+            locks_at: string | null;
+            logo_picture_id: string | null;
+            name: string;
+            name_key: string;
+            posting: Database['public']['Enums']['space_posting'];
+            readers: Database['public']['Enums']['space_readers'];
+            rules: string;
+            school_name: string | null;
+            slug: string;
+            updated_at: string;
+            user_id: string;
+            welcome_note: string | null;
+          } | null;
         };
-        ComputedFields: 'forum_post_state_for_caller';
+        ComputedFields:
+          'forum_post_is_space_hidden' | 'forum_post_state_for_caller' | 'space_of_post';
         Insert: {
           body: string;
           created_at?: string;
           deleted_at?: string | null;
           edited_at?: string | null;
           id?: string;
+          moved_from_thread_id?: string | null;
           post_number: number;
           quoted_post_ids?: string[];
           thread_id: string;
@@ -3371,6 +3401,7 @@ export type Database = {
           deleted_at?: string | null;
           edited_at?: string | null;
           id?: string;
+          moved_from_thread_id?: string | null;
           post_number?: number;
           quoted_post_ids?: string[];
           thread_id?: string;
@@ -3378,6 +3409,13 @@ export type Database = {
           user_id?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: 'forum_posts_moved_from_thread_id_fkey';
+            columns: ['moved_from_thread_id'];
+            isOneToOne: false;
+            referencedRelation: 'forum_threads';
+            referencedColumns: ['id'];
+          },
           {
             foreignKeyName: 'forum_posts_thread_id_fkey';
             columns: ['thread_id'];
@@ -3508,6 +3546,7 @@ export type Database = {
             deleted_at: string | null;
             edited_at: string | null;
             id: string;
+            moved_from_thread_id: string | null;
             post_number: number;
             quoted_post_ids: string[];
             thread_id: string;
@@ -4346,6 +4385,7 @@ export type Database = {
           restored_at: string | null;
           restored_by_user_id: string | null;
           sanction_id: string | null;
+          space_id: string | null;
           state: Database['public']['Enums']['moderated_state'];
           updated_at: string;
           user_id: string;
@@ -4363,6 +4403,7 @@ export type Database = {
           restored_at?: string | null;
           restored_by_user_id?: string | null;
           sanction_id?: string | null;
+          space_id?: string | null;
           state: Database['public']['Enums']['moderated_state'];
           updated_at?: string;
           user_id: string;
@@ -4379,6 +4420,7 @@ export type Database = {
           restored_at?: string | null;
           restored_by_user_id?: string | null;
           sanction_id?: string | null;
+          space_id?: string | null;
           state?: Database['public']['Enums']['moderated_state'];
           updated_at?: string;
           user_id?: string;
@@ -4410,6 +4452,13 @@ export type Database = {
             columns: ['sanction_id'];
             isOneToOne: false;
             referencedRelation: 'sanctions';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'moderated_items_space_id_fkey';
+            columns: ['space_id'];
+            isOneToOne: false;
+            referencedRelation: 'spaces';
             referencedColumns: ['id'];
           },
           {
@@ -12090,6 +12139,7 @@ export type Database = {
           deleted_at: string | null;
           edited_at: string | null;
           id: string;
+          moved_from_thread_id: string | null;
           post_number: number;
           quoted_post_ids: string[];
           thread_id: string;
@@ -12145,6 +12195,15 @@ export type Database = {
       forum_new_for_you: { Args: { how_many?: number; language_code?: string }; Returns: Json };
       forum_person_json: { Args: { person_id: string }; Returns: Json };
       forum_post_history: { Args: { post_id: string }; Returns: Json };
+      forum_post_is_space_hidden: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['forum_posts']['Row'],
+            Database['public']['Tables']['forum_posts']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
       forum_post_json: {
         Args: {
           starter_id: string;
@@ -13382,6 +13441,7 @@ export type Database = {
           deleted_at: string | null;
           edited_at: string | null;
           id: string;
+          moved_from_thread_id: string | null;
           post_number: number;
           quoted_post_ids: string[];
           thread_id: string;
@@ -14750,6 +14810,7 @@ export type Database = {
         };
         Returns: string;
       };
+      space_hide_forum_post: { Args: { post_id: string; reason: string }; Returns: undefined };
       space_is_in_class: {
         Args: {
           target: Omit<
@@ -14882,6 +14943,10 @@ export type Database = {
         };
       };
       space_moderators: { Args: { slug: string }; Returns: Json };
+      space_move_forum_post: {
+        Args: { post_id: string; reason: string; to_thread_number: number };
+        Returns: Json;
+      };
       space_name_available: { Args: { name: string }; Returns: Json };
       space_name_key: { Args: { name: string }; Returns: string };
       space_of_forum: {
@@ -14919,7 +14984,69 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      space_of_post: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['forum_posts']['Row'],
+            Database['public']['Tables']['forum_posts']['ComputedFields']
+          >;
+        };
+        Returns: {
+          age_group: Database['public']['Enums']['space_age_group'];
+          archived_at: string | null;
+          banner: Database['public']['Enums']['space_banner'];
+          banner_picture_id: string | null;
+          created_at: string;
+          deleted_at: string | null;
+          description: string;
+          handover_offered_at: string | null;
+          handover_to_user_id: string | null;
+          id: string;
+          joining: Database['public']['Enums']['space_joining'];
+          kind: Database['public']['Enums']['space_kind'];
+          locks_at: string | null;
+          logo_picture_id: string | null;
+          name: string;
+          name_key: string;
+          posting: Database['public']['Enums']['space_posting'];
+          readers: Database['public']['Enums']['space_readers'];
+          rules: string;
+          school_name: string | null;
+          slug: string;
+          updated_at: string;
+          user_id: string;
+          welcome_note: string | null;
+        };
+        SetofOptions: {
+          from: 'forum_posts';
+          to: 'spaces';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       space_page: { Args: { slug: string }; Returns: Json };
+      space_post_for_moderation: {
+        Args: { post_id: string; reason: string };
+        Returns: {
+          body: string;
+          created_at: string;
+          deleted_at: string | null;
+          edited_at: string | null;
+          id: string;
+          moved_from_thread_id: string | null;
+          post_number: number;
+          quoted_post_ids: string[];
+          thread_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'forum_posts';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       space_powers_of_caller: {
         Args: {
           target: Omit<
@@ -14929,6 +15056,7 @@ export type Database = {
         };
         Returns: Database['public']['Enums']['space_power'][];
       };
+      space_show_forum_post: { Args: { post_id: string; reason: string }; Returns: undefined };
       space_slug_for: { Args: { name: string }; Returns: string };
       space_viewer_json: {
         Args: {

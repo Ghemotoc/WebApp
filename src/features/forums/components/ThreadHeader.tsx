@@ -63,7 +63,8 @@ export function ThreadHeader({ thread, path }: { thread: ForumThreadHeader; path
   return (
     <header className="relative flex flex-col gap-3">
       <ForumBreadcrumb path={path} current={thread.title} space={thread.space} />
-      <h1 className="page-title max-w-[1100px]">{thread.title}</h1>
+      {/* A title with no spaces in it wraps instead of pushing the page sideways (rule 21). */}
+      <h1 className="page-title max-w-[1100px] [overflow-wrap:anywhere]">{thread.title}</h1>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <StartedByLine thread={thread} />
         {!thread.isMine && (

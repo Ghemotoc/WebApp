@@ -243,7 +243,7 @@
       "settings": "setări"
     },
     "powerNotes": {
-      "posts": "Fixează sus și închide discuții, doar în acest spațiu.",
+      "posts": "Fixează sus și închide discuții, ascunde sau mută răspunsuri, doar în acest spațiu.",
       "members": "Răspunde la cererile de intrare și scoate oameni din spațiu.",
       "settings": "Schimbă numele, descrierea, regulile și cine poate posta sau intra."
     }
@@ -304,7 +304,10 @@
       "handover_cancelled": "{{actor}} a retras oferta făcută contului {{target}}.",
       "handover_declined": "{{actor}} a refuzat spațiul oferit de {{target}}.",
       "handover_accepted": "{{actor}} a preluat spațiul de la {{target}} și acum este proprietarul lui. {{target}} rămâne moderator cu toate drepturile.",
-      "logo_picture_changed": "{{actor}} a schimbat logoul."
+      "logo_picture_changed": "{{actor}} a schimbat logoul.",
+      "post_hidden": "{{actor}} a ascuns un mesaj.",
+      "post_shown": "{{actor}} a arătat din nou un mesaj ascuns.",
+      "post_moved": "{{actor}} a mutat un mesaj în altă discuție."
     }
   },
   "bannerPicture": {
@@ -552,5 +555,17 @@
     "postingMembers": "doar membrii postează",
     "postingAnyone": "oricine poate posta",
     "latest": "Ultima postare: {{when}}"
+  },
+  "share": {
+    "button": "Distribuie",
+    "buttonLabel": "Distribuie spațiul „{{name}}”",
+    "title": "Distribuie acest spațiu",
+    "qrHeading": "Cod QR",
+    "qrLabel": "Cod QR care deschide acest spațiu",
+    "qrNote": "Tipărește-l sau arată-l pe un ecran. Camera unui telefon care îl scanează deschide acest spațiu.",
+    "withApp": "Distribuie cu o aplicație",
+    "privacy": "Linkul nu include niciun nume și niciun cod de urmărire. Cine îl deschide vede doar ce îi permite spațiul contului său.",
+    "done": "Gata",
+    "close": "Închide"
   }
 }

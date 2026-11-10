@@ -37,6 +37,9 @@ S1-E8-02; board 5.2 Forum thread).
   `ThreadNextControl.tsx` (moderators point a locked thread at the one that carries on; the
   "Go to …" link is in `LockedThreadNote`), `ReplyPreview.tsx` ("Preview" in `ReplyForm`) and
   `threadNumberFrom()` in `lib/forumAddresses.ts`.
+- A space's moderators hide, show again and move replies (GAPS-10): `api/spacePostModeration.ts`,
+  `hooks/useSpacePostModeration.ts` and `components/PostSpaceModeration.tsx` (the "Moderate"
+  tools under a reply); `ForumPostCard` marks a reply hidden by its space or moved here.
 - Search (S1-E8-10, FORUMS-1f): `api/forumSearch.ts`, `hooks/useForumSearch.ts`,
   `lib/forumSearchAddress.ts`, `components/ForumSearchForm.tsx`, `ForumSearchPage.tsx`
   (`/forums/search`) and `ForumSearchResultRow.tsx`.

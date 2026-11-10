@@ -243,7 +243,7 @@
       "settings": "settings"
     },
     "powerNotes": {
-      "posts": "Make threads sticky and lock them, in this space only.",
+      "posts": "Make threads sticky, lock them, and hide or move replies, in this space only.",
       "members": "Answer requests to join and remove members.",
       "settings": "Change the name, description, rules and who can post or join."
     }
@@ -304,7 +304,10 @@
       "handover_cancelled": "{{actor}} took back the offer of the space to {{target}}.",
       "handover_declined": "{{actor}} declined the space offered by {{target}}.",
       "handover_accepted": "{{actor}} accepted the space from {{target}} and is now its owner. {{target}} stays on as a moderator with every power.",
-      "logo_picture_changed": "{{actor}} changed the logo."
+      "logo_picture_changed": "{{actor}} changed the logo.",
+      "post_hidden": "{{actor}} hid a post.",
+      "post_shown": "{{actor}} showed a hidden post again.",
+      "post_moved": "{{actor}} moved a post to another thread."
     }
   },
   "bannerPicture": {
@@ -552,5 +555,17 @@
     "postingMembers": "members-only posting",
     "postingAnyone": "anyone can post",
     "latest": "Latest post {{when}}"
+  },
+  "share": {
+    "button": "Share",
+    "buttonLabel": "Share the space “{{name}}”",
+    "title": "Share this space",
+    "qrHeading": "QR code",
+    "qrLabel": "QR code that opens this space",
+    "qrNote": "Print it or show it on a screen. A phone camera that scans it opens this space.",
+    "withApp": "Share with an app",
+    "privacy": "The link doesn’t include a name or tracking code. People who open it see only what the space lets their account see.",
+    "done": "Done",
+    "close": "Close"
   }
 }
