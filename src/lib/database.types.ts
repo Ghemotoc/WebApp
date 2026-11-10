@@ -9333,6 +9333,65 @@ export type Database = {
           },
         ];
       };
+      writer_spotlights: {
+        Row: {
+          agreed_at: string | null;
+          created_at: string;
+          declined_at: string | null;
+          deleted_at: string | null;
+          id: string;
+          reason_en: string;
+          reason_ro: string;
+          starts_on: string;
+          updated_at: string;
+          updated_by_user_id: string | null;
+          user_id: string;
+          writer_spotlight_answer: string | null;
+        };
+        ComputedFields: 'writer_spotlight_answer';
+        Insert: {
+          agreed_at?: string | null;
+          created_at?: string;
+          declined_at?: string | null;
+          deleted_at?: string | null;
+          id?: string;
+          reason_en: string;
+          reason_ro: string;
+          starts_on: string;
+          updated_at?: string;
+          updated_by_user_id?: string | null;
+          user_id: string;
+        };
+        Update: {
+          agreed_at?: string | null;
+          created_at?: string;
+          declined_at?: string | null;
+          deleted_at?: string | null;
+          id?: string;
+          reason_en?: string;
+          reason_ro?: string;
+          starts_on?: string;
+          updated_at?: string;
+          updated_by_user_id?: string | null;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'writer_spotlights_updated_by_user_id_fkey';
+            columns: ['updated_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'writer_spotlights_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       writing_prompts: {
         Row: {
           created_at: string;
@@ -9904,6 +9963,7 @@ export type Database = {
       admin_delete_canned_reply: { Args: { reply_id: string }; Returns: boolean };
       admin_delete_forum: { Args: { forum_id: string; reason: string }; Returns: undefined };
       admin_delete_submission_call: { Args: { call_id: string }; Returns: boolean };
+      admin_delete_writer_spotlight: { Args: { spotlight_id: string }; Returns: boolean };
       admin_delete_writing_prompt: { Args: { prompt_id: string }; Returns: boolean };
       admin_describe_abuse_image: {
         Args: { description_text: string; evidence_id: string };
@@ -10003,6 +10063,10 @@ export type Database = {
       };
       admin_house_ads: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_import_classics: { Args: { list_rows: Json }; Returns: Json };
+      admin_invite_writer_spotlight: {
+        Args: { first_day: string; reason_en: string; reason_ro: string; target_handle: string };
+        Returns: string;
+      };
       admin_issue_contest_certificates: { Args: { target_contest_id: string }; Returns: Json };
       admin_landing_picture_states: { Args: { target_page_id: string }; Returns: Json };
       admin_lift_sanction: {
@@ -10955,6 +11019,18 @@ export type Database = {
         Args: { reason_given: string; target_user_id: string };
         Returns: boolean;
       };
+      admin_writer_spotlights: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          answer: string;
+          display_name: string;
+          handle: string;
+          reason_en: string;
+          reason_ro: string;
+          spotlight_id: string;
+          starts_on: string;
+        }[];
+      };
       admit_waitlist_entry: { Args: { how: string; target_entry_id: string }; Returns: boolean };
       ads_are_barred: { Args: { context: Json }; Returns: boolean };
       age_band: {
@@ -11103,6 +11179,7 @@ export type Database = {
         Args: { decision: string; signature: string; token: string };
         Returns: Json;
       };
+      answer_writer_spotlight: { Args: { agrees: boolean; spotlight_id: string }; Returns: string };
       apply_support_change: {
         Args: {
           after_value: Json;
@@ -13485,6 +13562,17 @@ export type Database = {
       my_unread_notification_count: { Args: Record<PropertyKey, never>; Returns: number };
       my_waitlist: { Args: Record<PropertyKey, never>; Returns: Json };
       my_week_numbers: { Args: Record<PropertyKey, never>; Returns: Json };
+      my_writer_spotlights: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          answer: string;
+          ends_on: string;
+          reason_en: string;
+          reason_ro: string;
+          spotlight_id: string;
+          starts_on: string;
+        }[];
+      };
       name_has_listed_word: { Args: { name: string }; Returns: boolean };
       name_is_approved: {
         Args: { name: string; name_kind: string; target_user_id: string };
@@ -15914,6 +16002,15 @@ export type Database = {
         Args: { target_chapter_id: string; writer_id: string };
         Returns: Json;
       };
+      writer_spotlight_answer: {
+        Args: {
+          spotlight: Omit<
+            Database['public']['Tables']['writer_spotlights']['Row'],
+            Database['public']['Tables']['writer_spotlights']['ComputedFields']
+          >;
+        };
+        Returns: string;
+      };
       writers_hub_calls: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -15954,6 +16051,16 @@ export type Database = {
           prompt_ro: string;
           starts_on: string;
           writer_count: number;
+        }[];
+      };
+      writers_hub_spotlight: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          display_name: string;
+          handle: string;
+          is_me: boolean;
+          reason_en: string;
+          reason_ro: string;
         }[];
       };
       writers_published_by_market: {

@@ -1479,14 +1479,15 @@ CREATE OR REPLACE FUNCTION "public"."account_deletion_rules"() RETURNS TABLE("ta
     ('teacher_checks', 'delete', 1, null),
     ('username_approvals', 'delete', 1, null),
     ('waitlist_entries', 'delete', 1, null),
-    ('writer_ranks', 'delete', 1, null);
+    ('writer_ranks', 'delete', 1, null),
+    ('writer_spotlights', 'delete', 1, null);
 $$;
 
 
 ALTER FUNCTION "public"."account_deletion_rules"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11).';
+COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e).';
 
 
 
@@ -5446,6 +5447,36 @@ COMMENT ON FUNCTION "public"."admin_delete_submission_call"("call_id" "uuid") IS
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_delete_writer_spotlight"("spotlight_id" "uuid") RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  deleted public.writer_spotlights;
+begin
+  if not public.staff_may('contests', 'act') then
+    raise exception 'Only contest staff can pick the writer of the week.' using errcode = 'insufficient_privilege';
+  end if;
+  update public.writer_spotlights set deleted_at = now(), updated_by_user_id = (select auth.uid())
+  where id = spotlight_id and deleted_at is null returning * into deleted;
+  if deleted.id is null then
+    raise exception 'There is no such pick.' using errcode = 'no_data_found';
+  end if;
+  perform public.log_staff_action('writer_spotlight.deleted', 'writer_spotlights', deleted.id::text, deleted.user_id, null,
+    jsonb_build_object('starts_on', deleted.starts_on, 'reason_ro', deleted.reason_ro, 'reason_en', deleted.reason_en,
+      'answer', public.writer_spotlight_answer(deleted)), null);
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_delete_writer_spotlight"("spotlight_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_delete_writer_spotlight"("spotlight_id" "uuid") IS 'Contest staff delete a writer-of-the-week pick; logged (GAPS-12e).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admin_delete_writing_prompt"("prompt_id" "uuid") RETURNS boolean
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -6088,6 +6119,48 @@ $$;
 
 
 ALTER FUNCTION "public"."admin_import_classics"("list_rows" "jsonb") OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_invite_writer_spotlight"("target_handle" "text", "first_day" "date", "reason_ro" "text", "reason_en" "text") RETURNS "uuid"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  writer public.profiles;
+  saved public.writer_spotlights;
+begin
+  -- Step 1: staff with the contests area only (the server decides, architecture 1.8.1).
+  if not public.staff_may('contests', 'act') then
+    raise exception 'Only contest staff can pick the writer of the week.' using errcode = 'insufficient_privilege';
+  end if;
+  if first_day is null then
+    raise exception 'A pick needs its first day.' using errcode = 'check_violation';
+  end if;
+  -- Step 2: the writer exists, can write and is an adult.
+  select * into writer from public.profile_for_handle(btrim(coalesce(target_handle, '')));
+  if writer.id is null or public.account_state(writer.id) <> 'active' then
+    raise exception 'There is no active account with that username.' using errcode = 'check_violation';
+  end if;
+  if public.age_band_of(writer.id) <> '18_plus' then
+    raise exception 'Only an adult can be writer of the week.' using errcode = 'check_violation';
+  end if;
+  -- Step 3: the pick, waiting for the writer's answer. The table's checks refuse bad lines.
+  insert into public.writer_spotlights (user_id, starts_on, reason_ro, reason_en, updated_by_user_id)
+  values (writer.id, first_day, btrim(reason_ro), btrim(reason_en), (select auth.uid()))
+  returning * into saved;
+  -- Step 4: the audit log, in the same transaction.
+  perform public.log_staff_action('writer_spotlight.invited', 'writer_spotlights', saved.id::text, writer.id, null,
+    null, jsonb_build_object('starts_on', saved.starts_on, 'reason_ro', saved.reason_ro, 'reason_en', saved.reason_en));
+  return saved.id;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_invite_writer_spotlight"("target_handle" "text", "first_day" "date", "reason_ro" "text", "reason_en" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_invite_writer_spotlight"("target_handle" "text", "first_day" "date", "reason_ro" "text", "reason_en" "text") IS 'Contest staff invite an adult writer to be writer of the week; shown only once the writer agrees; logged (GAPS-12e).';
+
 
 
 CREATE OR REPLACE FUNCTION "public"."admin_issue_contest_certificates"("target_contest_id" "uuid") RETURNS "jsonb"
@@ -12113,6 +12186,35 @@ COMMENT ON FUNCTION "public"."admin_withdraw_spotlight_consent"("target_user_id"
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_writer_spotlights"() RETURNS TABLE("spotlight_id" "uuid", "handle" "text", "display_name" "text", "starts_on" "date", "reason_ro" "text", "reason_en" "text", "answer" "text")
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  if not public.staff_may('contests', 'view') then
+    raise exception 'Only contest staff can see the picks.' using errcode = 'insufficient_privilege';
+  end if;
+  return query
+    select writer_spotlights.id, profiles.handle,
+      public.display_name(profiles.handle, profiles.pen_name),
+      writer_spotlights.starts_on, writer_spotlights.reason_ro, writer_spotlights.reason_en,
+      public.writer_spotlight_answer(writer_spotlights)
+    from public.writer_spotlights
+    join public.profiles on profiles.id = writer_spotlights.user_id
+    where writer_spotlights.deleted_at is null
+    order by writer_spotlights.starts_on desc
+    limit 30;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_writer_spotlights"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_writer_spotlights"() IS 'Contest staff list the writer-of-the-week picks with each writer''s answer (GAPS-12e).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admit_waitlist_entry"("target_entry_id" "uuid", "how" "text") RETURNS boolean
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -13162,6 +13264,37 @@ ALTER FUNCTION "public"."answer_spotlight_consent"("token" "text", "decision" "t
 
 
 COMMENT ON FUNCTION "public"."answer_spotlight_consent"("token" "text", "decision" "text", "signature" "text") IS 'The parent''s yes to suggestions, or its withdrawal, from the one-question page; signed by our server (S1-E2-03b).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."answer_writer_spotlight"("spotlight_id" "uuid", "agrees" boolean) RETURNS "text"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  saved public.writer_spotlights;
+begin
+  -- Only the picked writer, only a pick that still exists and hasn't ended.
+  update public.writer_spotlights set
+    agreed_at = case when coalesce(agrees, false) then now() else null end,
+    declined_at = case when coalesce(agrees, false) then null else now() end
+  where id = spotlight_id
+    and user_id = (select auth.uid())
+    and deleted_at is null
+    and starts_on + 6 >= public.romania_today()
+  returning * into saved;
+  if saved.id is null then
+    raise exception 'There is no such invitation.' using errcode = 'no_data_found';
+  end if;
+  return public.writer_spotlight_answer(saved);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."answer_writer_spotlight"("spotlight_id" "uuid", "agrees" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."answer_writer_spotlight"("spotlight_id" "uuid", "agrees" boolean) IS 'The picked writer agrees to be writer of the week or declines; changeable until the week ends (GAPS-12e).';
 
 
 
@@ -19087,6 +19220,7 @@ CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_
     ('teacher_checks', true, null),
     ('username_approvals', false, 'a moderator''s note that a name was refused by mistake; the name itself is in the profile'),
     ('waitlist_entries', true, null),
+    ('writer_spotlights', true, null),
     ('writer_ranks', false, 'worked out from the person''s published chapters, which are in the export; the rank itself shows on the profile');
 $$;
 
@@ -19094,7 +19228,7 @@ $$;
 ALTER FUNCTION "public"."data_export_tables"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11).';
+COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e).';
 
 
 
@@ -28994,6 +29128,33 @@ ALTER FUNCTION "public"."my_week_numbers"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."my_week_numbers"() IS 'The signed-in writer''s last 7 days: chapters posted (exact), reads, comments and new followers (null when from fewer than 5) (GAPS-12b).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."my_writer_spotlights"() RETURNS TABLE("spotlight_id" "uuid", "starts_on" "date", "ends_on" "date", "reason_ro" "text", "reason_en" "text", "answer" "text")
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select
+    writer_spotlights.id,
+    writer_spotlights.starts_on,
+    writer_spotlights.starts_on + 6,
+    writer_spotlights.reason_ro,
+    writer_spotlights.reason_en,
+    public.writer_spotlight_answer(writer_spotlights)
+  from public.writer_spotlights
+  where writer_spotlights.user_id = (select auth.uid())
+    and writer_spotlights.deleted_at is null
+    and writer_spotlights.starts_on + 6 >= public.romania_today()
+  order by writer_spotlights.starts_on
+  limit 4;
+$$;
+
+
+ALTER FUNCTION "public"."my_writer_spotlights"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."my_writer_spotlights"() IS 'The caller''s own writer-of-the-week invitations that haven''t ended, with their answer (GAPS-12e).';
 
 
 
@@ -46923,6 +47084,51 @@ COMMENT ON FUNCTION "public"."writer_reader_stops"("target_chapter_id" "uuid", "
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."writer_spotlights" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "starts_on" "date" NOT NULL,
+    "reason_ro" "text" NOT NULL,
+    "reason_en" "text" NOT NULL,
+    "agreed_at" timestamp with time zone,
+    "declined_at" timestamp with time zone,
+    "updated_by_user_id" "uuid",
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "deleted_at" timestamp with time zone,
+    CONSTRAINT "writer_spotlights_one_answer" CHECK ((("agreed_at" IS NULL) OR ("declined_at" IS NULL))),
+    CONSTRAINT "writer_spotlights_reason_en_length" CHECK ((("char_length"("btrim"("reason_en")) >= 1) AND ("char_length"("btrim"("reason_en")) <= 300))),
+    CONSTRAINT "writer_spotlights_reason_ro_length" CHECK ((("char_length"("btrim"("reason_ro")) >= 1) AND ("char_length"("btrim"("reason_ro")) <= 300)))
+);
+
+
+ALTER TABLE "public"."writer_spotlights" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."writer_spotlights" IS 'kind: user_action
+Writer of the week on the Writers'' hub: the writer staff picked, the first day, staff''s line on why in Romanian and English, and the writer''s own answer with its time (GAPS-12e). Personal data: that the person was picked and whether they agreed.';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."writer_spotlight_answer"("spotlight" "public"."writer_spotlights") RETURNS "text"
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select case
+    when spotlight.agreed_at is not null then 'agreed'
+    when spotlight.declined_at is not null then 'declined'
+    else 'waiting'
+  end;
+$$;
+
+
+ALTER FUNCTION "public"."writer_spotlight_answer"("spotlight" "public"."writer_spotlights") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."writer_spotlight_answer"("spotlight" "public"."writer_spotlights") IS 'Internal: a writer-of-the-week pick''s answer as agreed, declined or waiting (GAPS-12e).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."writers_hub_calls"() RETURNS TABLE("call_id" "uuid", "title_ro" "text", "title_en" "text", "details_ro" "text", "details_en" "text", "link_url" "text", "closes_on" "date", "is_paid" boolean)
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -47029,6 +47235,44 @@ ALTER FUNCTION "public"."writers_hub_prompts"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."writers_hub_prompts"() IS 'The writing prompts that have started, newest first, each with how many writers started a story from it, for the Writers'' hub (GAPS-12c).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."writers_hub_spotlight"() RETURNS TABLE("handle" "text", "display_name" "text", "reason_ro" "text", "reason_en" "text", "is_me" boolean)
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select
+    profiles.handle,
+    public.display_name(profiles.handle, profiles.pen_name),
+    writer_spotlights.reason_ro,
+    writer_spotlights.reason_en,
+    -- The picked writer sees their own card without Follow.
+    profiles.id = (select auth.uid())
+  from public.writer_spotlights
+  join public.profiles on profiles.id = writer_spotlights.user_id
+  where (select auth.uid()) is not null
+    and writer_spotlights.deleted_at is null
+    -- The writer's agreement comes first (GAPS-12 brief).
+    and writer_spotlights.agreed_at is not null
+    -- Its 7 days, the first and the last included.
+    and public.romania_today() between writer_spotlights.starts_on and writer_spotlights.starts_on + 6
+    -- A deleted, suspended or banned account is never put forward.
+    and profiles.deleted_at is null
+    and public.account_state(profiles.id) = 'active'
+    -- Adults only (architecture 1.10: under-18s are private by default).
+    and public.age_band_of(profiles.id) = '18_plus'
+    -- Blocks are respected (CLAUDE.md rule 6).
+    and not public.is_blocked_with(profiles.id)
+  order by writer_spotlights.starts_on desc
+  limit 1;
+$$;
+
+
+ALTER FUNCTION "public"."writers_hub_spotlight"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."writers_hub_spotlight"() IS 'This week''s writer of the week, only once the writer agreed and while the account is active and adult; blocks respected (GAPS-12e).';
 
 
 
@@ -51144,6 +51388,11 @@ ALTER TABLE ONLY "public"."writer_ranks"
 
 
 
+ALTER TABLE ONLY "public"."writer_spotlights"
+    ADD CONSTRAINT "writer_spotlights_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."writing_prompts"
     ADD CONSTRAINT "writing_prompts_pkey" PRIMARY KEY ("id");
 
@@ -52353,6 +52602,14 @@ CREATE INDEX "waitlist_entries_waiting" ON "public"."waitlist_entries" USING "bt
 
 
 
+CREATE INDEX "writer_spotlights_by_writer" ON "public"."writer_spotlights" USING "btree" ("user_id") WHERE ("deleted_at" IS NULL);
+
+
+
+CREATE UNIQUE INDEX "writer_spotlights_one_per_day" ON "public"."writer_spotlights" USING "btree" ("starts_on") WHERE ("deleted_at" IS NULL);
+
+
+
 CREATE UNIQUE INDEX "writing_prompts_one_per_start_day" ON "public"."writing_prompts" USING "btree" ("starts_on") WHERE ("deleted_at" IS NULL);
 
 
@@ -53386,6 +53643,14 @@ CREATE OR REPLACE TRIGGER "waitlist_entries_refuse_user_id_change" BEFORE UPDATE
 
 
 CREATE OR REPLACE TRIGGER "waitlist_entries_set_updated_at" BEFORE UPDATE ON "public"."waitlist_entries" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "writer_spotlights_refuse_user_id_change" BEFORE UPDATE ON "public"."writer_spotlights" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"('user_id');
+
+
+
+CREATE OR REPLACE TRIGGER "writer_spotlights_set_updated_at" BEFORE UPDATE ON "public"."writer_spotlights" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
 
@@ -55105,6 +55370,16 @@ ALTER TABLE ONLY "public"."waitlist_entries"
 
 ALTER TABLE ONLY "public"."writer_ranks"
     ADD CONSTRAINT "writer_ranks_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."writer_spotlights"
+    ADD CONSTRAINT "writer_spotlights_updated_by_user_id_fkey" FOREIGN KEY ("updated_by_user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."writer_spotlights"
+    ADD CONSTRAINT "writer_spotlights_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
 
 
 
@@ -56958,6 +57233,25 @@ COMMENT ON POLICY "writer_ranks_select_own" ON "public"."writer_ranks" IS 'Allow
 
 
 
+ALTER TABLE "public"."writer_spotlights" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "writer_spotlights_select_contest_staff" ON "public"."writer_spotlights" FOR SELECT TO "authenticated" USING ((("deleted_at" IS NULL) AND ( SELECT "public"."staff_may"('contests'::"text", 'view'::"text") AS "staff_may")));
+
+
+
+COMMENT ON POLICY "writer_spotlights_select_contest_staff" ON "public"."writer_spotlights" IS 'Allows staff with the contests area to read the writer-of-the-week picks that aren''t deleted (GAPS-12e).';
+
+
+
+CREATE POLICY "writer_spotlights_select_own" ON "public"."writer_spotlights" FOR SELECT TO "authenticated" USING ((("deleted_at" IS NULL) AND ("user_id" = ( SELECT "auth"."uid"() AS "uid"))));
+
+
+
+COMMENT ON POLICY "writer_spotlights_select_own" ON "public"."writer_spotlights" IS 'Allows the picked writer to read their own writer-of-the-week invitations that aren''t deleted (GAPS-12e).';
+
+
+
 ALTER TABLE "public"."writing_prompts" ENABLE ROW LEVEL SECURITY;
 
 
@@ -57500,6 +57794,11 @@ GRANT ALL ON FUNCTION "public"."admin_delete_submission_call"("call_id" "uuid") 
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_delete_writer_spotlight"("spotlight_id" "uuid") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_delete_writer_spotlight"("spotlight_id" "uuid") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_delete_writing_prompt"("prompt_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_delete_writing_prompt"("prompt_id" "uuid") TO "authenticated";
 
@@ -57576,6 +57875,11 @@ GRANT ALL ON FUNCTION "public"."admin_house_ads"() TO "authenticated";
 
 REVOKE ALL ON FUNCTION "public"."admin_import_classics"("list_rows" "jsonb") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_import_classics"("list_rows" "jsonb") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_invite_writer_spotlight"("target_handle" "text", "first_day" "date", "reason_ro" "text", "reason_en" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_invite_writer_spotlight"("target_handle" "text", "first_day" "date", "reason_ro" "text", "reason_en" "text") TO "authenticated";
 
 
 
@@ -58382,6 +58686,11 @@ GRANT ALL ON FUNCTION "public"."admin_withdraw_spotlight_consent"("target_user_i
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_writer_spotlights"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_writer_spotlights"() TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admit_waitlist_entry"("target_entry_id" "uuid", "how" "text") FROM PUBLIC;
 
 
@@ -58515,6 +58824,11 @@ GRANT ALL ON FUNCTION "public"."answer_space_handover"("slug" "text", "accept" b
 REVOKE ALL ON FUNCTION "public"."answer_spotlight_consent"("token" "text", "decision" "text", "signature" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."answer_spotlight_consent"("token" "text", "decision" "text", "signature" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."answer_spotlight_consent"("token" "text", "decision" "text", "signature" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."answer_writer_spotlight"("spotlight_id" "uuid", "agrees" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."answer_writer_spotlight"("spotlight_id" "uuid", "agrees" boolean) TO "authenticated";
 
 
 
@@ -60798,6 +61112,11 @@ GRANT ALL ON FUNCTION "public"."my_waitlist"() TO "authenticated";
 
 REVOKE ALL ON FUNCTION "public"."my_week_numbers"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."my_week_numbers"() TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."my_writer_spotlights"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."my_writer_spotlights"() TO "authenticated";
 
 
 
@@ -63261,6 +63580,16 @@ REVOKE ALL ON FUNCTION "public"."writer_reader_stops"("target_chapter_id" "uuid"
 
 
 
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."writer_spotlights" TO "service_role";
+GRANT SELECT ON TABLE "public"."writer_spotlights" TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."writer_spotlight_answer"("spotlight" "public"."writer_spotlights") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."writer_spotlight_answer"("spotlight" "public"."writer_spotlights") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."writers_hub_calls"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."writers_hub_calls"() TO "authenticated";
 
@@ -63273,6 +63602,11 @@ GRANT ALL ON FUNCTION "public"."writers_hub_contests"() TO "authenticated";
 
 REVOKE ALL ON FUNCTION "public"."writers_hub_prompts"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."writers_hub_prompts"() TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."writers_hub_spotlight"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."writers_hub_spotlight"() TO "authenticated";
 
 
 

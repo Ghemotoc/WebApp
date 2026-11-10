@@ -85,6 +85,26 @@
       "fewerThanFive": "mai puțin de 5",
       "seeStatistics": "Vezi statisticile",
       "loadFailed": "Nu am putut încărca cifrele săptămânii. Verifică conexiunea și încearcă din nou."
+    },
+    "spotlight": {
+      "eyebrow": "Scriitorul săptămânii",
+      "staffPick": "Alegerea echipei",
+      "loadFailed": "Nu am putut încărca scriitorul săptămânii. Verifică conexiunea și încearcă din nou."
+    },
+    "invitation": {
+      "eyebrow": "Invitație",
+      "heading": "Echipa te-a ales scriitorul săptămânii",
+      "body": "Între {{from}} și {{to}}, Spațiul scriitorilor le-ar arăta membrilor numele, avatarul și un link către profilul tău, cu acest rând:",
+      "status": {
+        "waiting": "Nimic nu apare până nu accepți.",
+        "agreed": "Ai acceptat. Membrii văd cardul în zilele acelea.",
+        "declined": "Ai refuzat. Nimic nu apare."
+      },
+      "agree": "Accept",
+      "decline": "Refuz",
+      "withdraw": "Scoate cardul",
+      "agreeAfterAll": "Accept totuși",
+      "failed": "Nu am putut salva răspunsul. Încearcă din nou."
     }
   },
   "hubStaff": {
@@ -136,6 +156,28 @@
       "empty": "Niciun apel încă. Lista apare în spațiu când este adăugat primul.",
       "listLabel": "Apeluri de texte, de la ultima zi cea mai îndepărtată",
       "refused": "Completează fiecare câmp: titluri de cel mult 120 de caractere, detalii de cel mult 300 și o adresă care începe cu https://."
+    },
+    "spotlights": {
+      "heading": "Scriitorul săptămânii",
+      "intro": "Alege un scriitor adult pentru 7 zile și spune de ce, într-un rând. Scriitorul primește o invitație în spațiu, iar membrii văd cardul numai după ce scriitorul acceptă. Rândul nu poate fi schimbat după invitație: șterge alegerea și invită din nou.",
+      "add": "Invită un scriitor",
+      "handleLabel": "Nume de utilizator",
+      "handleHint": "Numele de utilizator al scriitorului, cu sau fără @.",
+      "dayLabel": "Prima zi",
+      "dayHint": "Cardul apare 7 zile începând cu această zi, după ora României.",
+      "reasonEnLabel": "De ce, în engleză",
+      "reasonRoLabel": "De ce, în română",
+      "invite": "Trimite invitația",
+      "startsOn": "Din {{day}}",
+      "answers": {
+        "waiting": "Se așteaptă răspunsul scriitorului",
+        "agreed": "A acceptat",
+        "declined": "A refuzat"
+      },
+      "empty": "Nicio alegere încă. Cardul apare în spațiu după ce un scriitor acceptă.",
+      "listLabel": "Alegeri pentru scriitorul săptămânii, de la cea mai nouă",
+      "refused": "Verifică numele de utilizator, că scriitorul este adult și are cont activ, și ambele rânduri (cel mult 300 de caractere).",
+      "dayTaken": "O altă alegere începe deja în ziua aceea. Alege altă zi."
     }
   },
   "resources": {

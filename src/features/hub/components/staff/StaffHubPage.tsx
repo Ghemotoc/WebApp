@@ -14,6 +14,7 @@ import { useHubTranslation } from '../../registerHubTranslations';
 
 import { CallsSection } from './CallsSection';
 import { PromptsSection } from './PromptsSection';
+import { SpotlightsSection } from './SpotlightsSection';
 
 /**
  * Renders the page.
@@ -33,6 +34,7 @@ export function StaffHubPage() {
       </div>
       <PromptsSection />
       <CallsSection />
+      <SpotlightsSection />
     </PageContainer>
   );
 }

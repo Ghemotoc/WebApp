@@ -85,6 +85,26 @@
       "fewerThanFive": "fewer than 5",
       "seeStatistics": "See statistics",
       "loadFailed": "We couldn’t load this week’s numbers. Check the connection and try again."
+    },
+    "spotlight": {
+      "eyebrow": "Writer of the week",
+      "staffPick": "Staff pick",
+      "loadFailed": "We couldn’t load the writer of the week. Check the connection and try again."
+    },
+    "invitation": {
+      "eyebrow": "Invitation",
+      "heading": "The team picked you as writer of the week",
+      "body": "From {{from}} to {{to}}, the Writers’ hub would show members your name, avatar and profile link, with this line:",
+      "status": {
+        "waiting": "Nothing shows until you agree.",
+        "agreed": "You agreed. Members see the card on those days.",
+        "declined": "You declined. Nothing shows."
+      },
+      "agree": "Agree",
+      "decline": "Decline",
+      "withdraw": "Take the card down",
+      "agreeAfterAll": "Agree after all",
+      "failed": "We couldn’t save the answer. Try again."
     }
   },
   "hubStaff": {
@@ -136,6 +156,28 @@
       "empty": "No call yet. The hub shows the list once the first one is added.",
       "listLabel": "Calls for submissions, latest closing day first",
       "refused": "Fill in every field: titles up to 120 characters, details up to 300, and an address that starts with https://."
+    },
+    "spotlights": {
+      "heading": "Writer of the week",
+      "intro": "Pick an adult writer for 7 days and say why in one line. The writer gets an invitation on the hub, and members see the card only after the writer agrees. The line can’t be changed after inviting: delete the pick and invite again.",
+      "add": "Invite a writer",
+      "handleLabel": "Username",
+      "handleHint": "The writer’s username, with or without @.",
+      "dayLabel": "First day",
+      "dayHint": "The card shows for 7 days from this day, in Romanian time.",
+      "reasonEnLabel": "Why, in English",
+      "reasonRoLabel": "Why, in Romanian",
+      "invite": "Send invitation",
+      "startsOn": "From {{day}}",
+      "answers": {
+        "waiting": "Waiting for the writer",
+        "agreed": "Agreed",
+        "declined": "Declined"
+      },
+      "empty": "No pick yet. The hub shows the card once a writer agrees.",
+      "listLabel": "Writer of the week picks, newest first",
+      "refused": "Check the username, that the writer is an adult with an active account, and both lines (up to 300 characters).",
+      "dayTaken": "Another pick already starts on that day. Pick a different day."
     }
   },
   "resources": {
