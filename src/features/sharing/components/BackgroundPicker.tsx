@@ -5,8 +5,11 @@
  * Board values: an eyebrow, the "Purple" chip (the default), then "Or one of our colours:" and
  * nine round swatches. Every choice is a toggle button with aria-pressed and a tick when chosen,
  * never colour alone (DoD pill system); each swatch is named ("Gold") and 44 px across.
- * "Story cover" and "Your own picture" come later with the image check (docs/board-fixes.md).
- * Who uses it: QuoteCardDialog and PictureCardDialog.
+ * The quote card also offers "Story cover" and "Own picture" (bundle GAPS-7, parts b and c):
+ * the dialog passes `pictures`, and the picker adds the cover chip, the reader's own picture and
+ * the board's note that pictures are blurred. The picture card doesn't pass it: its picture is
+ * the chapter's own.
+ * Who uses it: QuoteCardDialog and PictureCardDialog. What it calls: OwnPictureChoice.
  */
 import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -14,12 +17,30 @@ import { useTranslation } from 'react-i18next';
 import { Chip } from '@/components/ui/Chip';
 import { CheckIcon } from '@/components/icons/CheckIcon';
 
+import type { QuoteCardPicture } from '../hooks/useQuoteCardPicture';
+import { coverBackgroundKey } from '../lib/coverBackground';
 import { paletteBackgrounds, purpleBackground, type QuoteCardBackground } from '../lib/quoteCard';
+
+import { OwnPictureChoice } from './OwnPictureChoice';
+
+/** The picture choices the quote card adds (GAPS-7). */
+export interface PictureChoices {
+  /** True once the story's cover is known. */
+  hasCover: boolean;
+  onChooseCover: () => void;
+  /** The reader's own picture. */
+  own: QuoteCardPicture;
+  /** The key the picker gives the reader's own picture. */
+  ownKey: string;
+  onChooseOwn: () => void;
+}
 
 /** What the picker needs. */
 export interface BackgroundPickerProps {
   chosen: QuoteCardBackground;
   onChoose: (background: QuoteCardBackground) => void;
+  /** "Story cover" and "Own picture"; left out on the picture card. */
+  pictures?: PictureChoices;
 }
 
 /**
@@ -54,7 +75,7 @@ function Swatch(props: {
  *
  * @returns the group of choices
  */
-export function BackgroundPicker({ chosen, onChoose }: BackgroundPickerProps) {
+export function BackgroundPicker({ chosen, onChoose, pictures }: BackgroundPickerProps) {
   const { t } = useTranslation('sharing');
   const headingId = useId();
   const coloursId = useId();
@@ -63,13 +84,21 @@ export function BackgroundPicker({ chosen, onChoose }: BackgroundPickerProps) {
       <p id={headingId} className="m-0 eyebrow">
         {t('quote.background')}
       </p>
-      <div>
+      <div className="flex flex-wrap items-center gap-2.5">
         <Chip
           isPressed={chosen.key === purpleBackground.key}
           onPressedChange={() => onChoose(purpleBackground)}
         >
           {t('quote.purple')}
         </Chip>
+        {pictures?.hasCover === true && (
+          <Chip
+            isPressed={chosen.key === coverBackgroundKey}
+            onPressedChange={pictures.onChooseCover}
+          >
+            {t('quote.cover')}
+          </Chip>
+        )}
       </div>
       <div role="group" aria-labelledby={coloursId} className="flex flex-wrap items-center gap-2.5">
         <span id={coloursId} className="text-sm font-semibold text-ink">
@@ -85,6 +114,16 @@ export function BackgroundPicker({ chosen, onChoose }: BackgroundPickerProps) {
           />
         ))}
       </div>
+      {pictures !== undefined && (
+        <>
+          <OwnPictureChoice
+            own={pictures.own}
+            isChosen={chosen.key === pictures.ownKey}
+            onChoose={pictures.onChooseOwn}
+          />
+          <p className="m-0 text-sm text-body">{t('quote.picturesBlurred')}</p>
+        </>
+      )}
     </div>
   );
 }

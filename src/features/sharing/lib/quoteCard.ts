@@ -8,6 +8,9 @@
  * plain brand purple with no gold glow (the board's purple gradient), or one of our nine palette
  * colours. Light colours get dark words, dark ones light words, so the text keeps its contrast.
  * A writer may pick one palette colour for their story's new cards (IDEAS-1c, backgroundByKey).
+ * A background may also be a picture: the story's uploaded cover or the reader's own checked
+ * picture (GAPS-7; board: "Pictures are blurred automatically so the words stay easy to read").
+ * It is drawn to fill the card, blurred, under a dark veil, and the words are white.
  * Who calls it: components/QuoteCardCanvas.tsx, and lib/pictureCard.ts for the shared footer
  * (S1-E4-11). What it calls: the canvas 2D API only.
  */
@@ -20,6 +23,11 @@ export interface QuoteCardBackground {
   colours: readonly string[];
   /** True for light colours, which take dark words. */
   isLight: boolean;
+  /**
+   * A picture drawn instead of the colours, blurred under a dark veil (GAPS-7). The colours stay
+   * as what shows until the picture is drawn; isLight is false, because the veil is dark.
+   */
+  picture?: ImageBitmap;
 }
 
 /** The default: the board's brand purple (#2A0F36 to #7A3D96), no gold glow. */
@@ -124,6 +132,85 @@ export function quoteFontSize(passage: string): number {
   return 44;
 }
 
+/** The colour a picture background falls back to and is veiled with: the palette's ink. */
+export const pictureVeilColour = '#26142E';
+
+/**
+ * How dark the veil over a picture is. At 0.72 white words keep at least 4.5:1 even over a pure
+ * white picture (the veiled white is #635669, 6.8:1 against white; WCAG 2.2, 1.4.3).
+ */
+export const pictureVeilStrength = 0.72;
+
+/** The picture is shrunk to this many pixels a side and stretched back, which blurs it. */
+const blurredSide = 54;
+
+/**
+ * Makes a picture background from a decoded picture.
+ *
+ * @param key - the picker's key: 'cover' or 'own'
+ * @param picture - the decoded picture
+ * @returns the background, with white words
+ */
+export function pictureBackground(key: string, picture: ImageBitmap): QuoteCardBackground {
+  return { key, colours: [pictureVeilColour], isLight: false, picture };
+}
+
+/**
+ * The part of a picture that fills a square without stretching: the middle, cut to a square.
+ *
+ * @param width - the picture's width
+ * @param height - its height
+ * @returns the square to copy from the picture
+ */
+export function squareCrop(width: number, height: number) {
+  const side = Math.min(width, height);
+  return { x: (width - side) / 2, y: (height - side) / 2, side };
+}
+
+/**
+ * Fills the card with a picture: cut to a square, blurred and veiled, so the words on top stay
+ * easy to read whatever the picture shows. The blur is made by shrinking the picture and
+ * stretching it back, which every browser does the same way (a canvas blur filter isn't
+ * available everywhere).
+ *
+ * @param context - the canvas's 2D context
+ * @param picture - the decoded picture
+ */
+function paintPicture(context: CanvasRenderingContext2D, picture: ImageBitmap) {
+  const crop = squareCrop(picture.width, picture.height);
+  // Step 1: the picture, very small, on a canvas of its own.
+  const small = document.createElement('canvas');
+  small.width = blurredSide;
+  small.height = blurredSide;
+  const smallContext = small.getContext('2d');
+  // Step 2: stretched back over the whole card, smoothed. Without a second canvas (which only a
+  // broken browser lacks) the picture is drawn sharp; the veil still keeps the words readable.
+  context.imageSmoothingEnabled = true;
+  context.imageSmoothingQuality = 'high';
+  if (smallContext === null) {
+    context.drawImage(picture, crop.x, crop.y, crop.side, crop.side, 0, 0, cardSize, cardSize);
+  } else {
+    smallContext.imageSmoothingQuality = 'high';
+    smallContext.drawImage(
+      picture,
+      crop.x,
+      crop.y,
+      crop.side,
+      crop.side,
+      0,
+      0,
+      blurredSide,
+      blurredSide,
+    );
+    context.drawImage(small, 0, 0, cardSize, cardSize);
+  }
+  // Step 3: the dark veil.
+  context.globalAlpha = pictureVeilStrength;
+  context.fillStyle = pictureVeilColour;
+  context.fillRect(0, 0, cardSize, cardSize);
+  context.globalAlpha = 1;
+}
+
 /**
  * Fills the card with its background.
  *
@@ -134,6 +221,10 @@ export function paintBackground(
   context: CanvasRenderingContext2D,
   background: QuoteCardBackground,
 ) {
+  if (background.picture !== undefined) {
+    paintPicture(context, background.picture);
+    return;
+  }
   if (background.colours.length === 1) {
     context.fillStyle = background.colours[0] ?? '#481C5F';
   } else {

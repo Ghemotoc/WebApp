@@ -180,6 +180,48 @@ export interface ShareOptions {
   pictures: boolean;
   /** The palette colour the writer picked for new cards (IDEAS-1c); null for our default. */
   cardColour: string | null;
+  /** The story's cover, for "Story cover" as a card background (GAPS-7); null when unknown. */
+  cover: SharedCover | null;
+}
+
+/** A story's cover as the quote card needs it (GAPS-7): what to draw, never whose it is. */
+export interface SharedCover {
+  kind: 'automatic' | 'drawn' | 'upload';
+  /** The story's ID (never the writer's), which draws an automatic cover (S1-E3-13). */
+  storyId: string;
+  /** The writer's drawn design and colours; all null unless the kind is 'drawn'. */
+  design: string | null;
+  background: string | null;
+  accent: string | null;
+}
+
+/** The cover as share_options() sends it. */
+interface SharedCoverRow {
+  kind?: string;
+  story_id?: string;
+  design?: string | null;
+  background?: string | null;
+  accent?: string | null;
+}
+
+/**
+ * Reads the cover part of share_options()'s answer.
+ *
+ * @param row - the answer's "cover", or nothing
+ * @returns the cover, or null when the answer has none or it is incomplete
+ */
+function sharedCoverFrom(row: SharedCoverRow | null | undefined): SharedCover | null {
+  if (row === null || row === undefined || typeof row.story_id !== 'string') return null;
+  const kinds = ['automatic', 'drawn', 'upload'] as const;
+  const kind = kinds.find((candidate) => candidate === row.kind);
+  if (kind === undefined) return null;
+  return {
+    kind,
+    storyId: row.story_id,
+    design: row.design ?? null,
+    background: row.background ?? null,
+    accent: row.accent ?? null,
+  };
 }
 
 /**
@@ -204,10 +246,12 @@ export async function fetchShareOptions(
     passages?: boolean;
     pictures?: boolean;
     card_colour?: string | null;
+    cover?: SharedCoverRow | null;
   } | null;
   return {
     passages: row?.passages === true,
     pictures: row?.pictures === true,
     cardColour: row?.card_colour ?? null,
+    cover: sharedCoverFrom(row?.cover),
   };
 }

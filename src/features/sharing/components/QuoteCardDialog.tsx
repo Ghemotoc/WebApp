@@ -8,8 +8,10 @@
  * (first criterion). The alt text is written for the reader and they may change it (fifth
  * criterion). The first copy or save records the card; a second card from the same chapter shows
  * the limit pop-up instead (second criterion).
- * Who uses it: LoadedQuoteDialog. What it calls: QuoteCardCanvas, BackgroundPicker and
- * useQuoteCardActions.
+ * The background is a colour, the story's cover or the reader's own checked picture (fourth
+ * criterion; GAPS-7): useCardBackground decides which.
+ * Who uses it: LoadedQuoteDialog. What it calls: QuoteCardCanvas, BackgroundPicker,
+ * useCardBackground and useQuoteCardActions.
  */
 import { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -18,14 +20,9 @@ import { Button } from '@/components/ui/Button';
 import { Textarea } from '@/components/ui/Textarea';
 import { brand } from '@/config/brand';
 
+import { ownBackgroundKey, useCardBackground } from '../hooks/useCardBackground';
 import { useQuoteCardActions } from '../hooks/useQuoteCardActions';
-import { useShareOptions } from '../hooks/useShareOptions';
-import {
-  backgroundByKey,
-  purpleBackground,
-  type QuoteCardBackground,
-  type QuoteCardContent,
-} from '../lib/quoteCard';
+import type { QuoteCardContent } from '../lib/quoteCard';
 import type { SharedChapter } from '../lib/sharedChapter';
 import { chapterShareLink, printedLink } from '../lib/shareLink';
 
@@ -89,9 +86,8 @@ export function QuoteCardDialog({
   // Step 0: the reader's own choice wins; until they make one, the card is in the writer's colour
   // when they picked one (IDEAS-1c, which may arrive a moment after the dialog opens), otherwise
   // our purple.
-  const { cardColour } = useShareOptions(chapter.address);
-  const [chosenBackground, setBackground] = useState<QuoteCardBackground | null>(null);
-  const background = chosenBackground ?? backgroundByKey(cardColour) ?? purpleBackground;
+  const cardBackground = useCardBackground(chapter.address);
+  const { background } = cardBackground;
   // Step 1: the alt text we write; the reader may change it.
   const [altText, setAltText] = useState(() =>
     t('quote.altText', { story: chapter.storyTitle, writer: chapter.writerName, passage }),
@@ -119,7 +115,17 @@ export function QuoteCardDialog({
       closeLabel={t('quote.close')}
     >
       <QuoteCardCanvas content={content} altText={altText} canvasRef={canvasRef} />
-      <BackgroundPicker chosen={background} onChoose={setBackground} />
+      <BackgroundPicker
+        chosen={background}
+        onChoose={cardBackground.chooseColour}
+        pictures={{
+          hasCover: cardBackground.hasCover,
+          onChooseCover: cardBackground.chooseCover,
+          own: cardBackground.own,
+          ownKey: ownBackgroundKey,
+          onChooseOwn: cardBackground.chooseOwn,
+        }}
+      />
       <Textarea
         id="quote-alt-text"
         label={t('quote.altLabel')}

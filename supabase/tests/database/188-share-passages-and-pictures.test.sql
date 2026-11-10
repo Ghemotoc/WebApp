@@ -1,6 +1,7 @@
 -- Database tests for sharing a passage or a picture from a chapter (story S1-E4-11).
 -- What it proves:
 -- - chapter_blocks() cuts a body into numbered blocks between blank lines, empty ones left out;
+-- (The "cover" part of share_options() is tested in 329-quote-card-backgrounds.test.sql, GAPS-7.)
 -- - share_options() says what a reader may share: passages and pictures for a signed-in reader
 --   while the writer's switches are on, nothing for a signed-out visitor, nothing for 16+ or 18+;
 -- - get_shared_passage() gives anyone the passage a link points to: text while the passage
@@ -77,14 +78,14 @@ select is((select block_text from public.chapter_blocks(E'\n\nUnu\n\n\nDoi\n') w
 /* ---------- 2. What a reader may share ---------- */
 
 select pg_temp.sign_out();
-select is(public.share_options('statia-meteo-seed01', 'pass0001'),
+select is(public.share_options('statia-meteo-seed01', 'pass0001') - 'cover',
   '{"passages": false, "pictures": false, "card_colour": null}'::jsonb,
   'a signed-out visitor may share nothing but the address');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
-select is(public.share_options('statia-meteo-seed01', 'pass0001'),
+select is(public.share_options('statia-meteo-seed01', 'pass0001') - 'cover',
   '{"passages": true, "pictures": true, "card_colour": null}'::jsonb,
   'a signed-in reader may share passages and pictures while both switches are on');
-select is(public.share_options('statia-meteo-seed01', 'nosuch01'),
+select is(public.share_options('statia-meteo-seed01', 'nosuch01') - 'cover',
   '{"passages": false, "pictures": false, "card_colour": null}'::jsonb,
   'a chapter that doesn''t exist offers nothing');
 
@@ -122,7 +123,7 @@ select pg_temp.as_postgres();
 update public.stories set picture_sharing_enabled = true, quote_cards_enabled = false
 where slug = 'statia-meteo-seed01';
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
-select is(public.share_options('statia-meteo-seed01', 'pass0001'),
+select is(public.share_options('statia-meteo-seed01', 'pass0001') - 'cover',
   '{"passages": false, "pictures": true, "card_colour": null}'::jsonb,
   'with the passage switch off, only pictures may be shared');
 select pg_temp.sign_out();
@@ -133,7 +134,7 @@ select is(pg_temp.passage(1, 1), null, 'and text isn''t in a shared passage');
 select pg_temp.as_postgres();
 update public.stories set quote_cards_enabled = true, rating = '16_plus' where slug = 'statia-meteo-seed01';
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
-select is(public.share_options('statia-meteo-seed01', 'pass0001'),
+select is(public.share_options('statia-meteo-seed01', 'pass0001') - 'cover',
   '{"passages": false, "pictures": false, "card_colour": null}'::jsonb,
   'an adult reading a 16+ story may share nothing but the link');
 select is(public.quote_card_state('statia-meteo-seed01', 'pass0001') ->> 'allowed', 'false',
