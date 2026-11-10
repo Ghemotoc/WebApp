@@ -6,8 +6,9 @@
  * Beside the fields (board AtlasMarketing, G10c3): the heading with a button that hides and shows
  * the preview (aria-expanded; open at first), then a book-shaped panel, two wide by three tall,
  * in the buttons' colour: the title, the logline in the story serif as the line that sells it,
- * the blurb and "For readers of" with the comparable titles. All of it is real HTML text, never a picture, so it
- * reads aloud and zooms (Architecture 1.1 principle 8). Empty parts are left out, with a plain
+ * the blurb and "For readers of" with the comparable titles, and at the foot the writer's pen name
+ * with the product's name (GAPS-2b). All of it is real HTML text, never a picture, so it reads
+ * aloud and zooms (Architecture 1.1 principle 8). Empty parts are left out, with a plain
  * line when there is nothing to show yet. No doodles: a working screen.
  * Who uses it: MarketingPage. What it calls: nothing; the page passes the saved text.
  */
@@ -17,12 +18,14 @@ import { Button } from '@/components/ui/Button';
 
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
-/** The four pieces the back cover shows. */
+/** The pieces the back cover shows. */
 export interface BackCoverText {
   title: string;
   logline: string;
   blurb: string;
   comparableTitles: string;
+  /** The writer's pen name (or username), or '' while it isn't known. */
+  writerName: string;
 }
 
 /** The book-shaped panel itself. */
@@ -51,13 +54,21 @@ function BackCover({ text }: { text: BackCoverText }) {
           {text.blurb}
         </p>
       )}
-      {text.comparableTitles !== '' && (
-        <p className="m-0 mt-auto flex flex-col gap-1 text-sm break-words whitespace-pre-line">
-          <span className="eyebrow-type">{t('marketing.backCover.forReadersOf')}</span>
-          {text.comparableTitles}
-        </p>
-      )}
       {!hasWords && <p className="m-0 text-sm">{t('marketing.backCover.empty')}</p>}
+      {/* The foot of the cover: who the book is for, then who wrote it. */}
+      <div className="mt-auto flex flex-col gap-3.5">
+        {text.comparableTitles !== '' && (
+          <p className="m-0 flex flex-col gap-1 text-sm break-words whitespace-pre-line">
+            <span className="eyebrow-type">{t('marketing.backCover.forReadersOf')}</span>
+            {text.comparableTitles}
+          </p>
+        )}
+        {text.writerName !== '' && (
+          <p data-testid="atlas-back-cover-byline" className="m-0 text-sm break-words">
+            {t('marketing.backCover.byline', { name: text.writerName })}
+          </p>
+        )}
+      </div>
     </figure>
   );
 }
@@ -65,7 +76,7 @@ function BackCover({ text }: { text: BackCoverText }) {
 /**
  * Renders the button and, once opened, the back cover.
  *
- * @param props.text - the saved title, logline, blurb and comparable titles
+ * @param props.text - the saved title, logline, blurb and comparable titles, and the writer's name
  * @returns the "Back cover" section
  */
 export function BackCoverPreview({ text }: { text: BackCoverText }) {

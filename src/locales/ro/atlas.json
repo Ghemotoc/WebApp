@@ -721,12 +721,30 @@
       "query_pitch": "Prezentarea pe care ai trimite-o unui agent sau unei edituri.",
       "launch_notes": "Date, locuri unde s-o împarți, cui să-i spui."
     },
+    "details": {
+      "add": "Adaugă detaliu",
+      "name": "Numele detaliului",
+      "nameHint": "De exemplu Newsletter, Date de lectură sau Agenți de contactat.",
+      "addSubmit": "Adaugă",
+      "cancel": "Renunță",
+      "nameRequired": "Dă un nume detaliului.",
+      "addFailed": "Nu s-a adăugat. O poveste are aici cel mult 12 detalii; verifică conexiunea și încearcă din nou.",
+      "edit": "Editează detaliul",
+      "editNamed": "Editează detaliul: {{name}}",
+      "save": "Salvează",
+      "saveFailed": "Nu s-a salvat. Verifică conexiunea și încearcă din nou.",
+      "delete": "Șterge detaliul",
+      "deleteQuestion": "Ștergi {{name}} și textul din el?",
+      "keep": "Păstrează detaliul",
+      "deleteFailed": "Nu s-a șters. Verifică conexiunea și încearcă din nou."
+    },
     "backCover": {
       "heading": "Coperta a patra",
       "show": "Arată coperta a patra",
       "hide": "Ascunde coperta a patra",
       "forReadersOf": "Pentru cititorii cărților",
-      "empty": "Scrie rezumatul, textul sau titlurile asemănătoare și vor apărea aici."
+      "empty": "Scrie rezumatul, textul sau titlurile asemănătoare și vor apărea aici.",
+      "byline": "{{name}} · {{productName}}"
     },
     "qr": {
       "heading": "Cod QR",

@@ -17,9 +17,13 @@ import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { HighlightedSnippet } from './HighlightedSnippet';
 
-/** The title a result shows: a marketing field by its name, an untitled chapter as such. */
+/**
+ * The title a result shows: a marketing field by its name (one of the writer's own details, ref
+ * "detail-<id>", by the name the writer gave it; GAPS-2b), an untitled chapter as such.
+ */
 function useResultTitle(result: SearchResult): string {
   const { t } = useAtlasTranslation();
+  if (result.kind === 'marketing' && result.ref.startsWith('detail-')) return result.title;
   if (result.kind === 'marketing') return t(`marketing.fields.${result.ref}`);
   if (result.title.trim() === '') return t('chapterPlan.untitled');
   return result.title;

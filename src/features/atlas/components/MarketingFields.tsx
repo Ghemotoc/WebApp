@@ -6,9 +6,9 @@
  * Two cards. "The pitch": the logline and publishing route (the plan's own, the same fields as
  * At a glance), the genre and audience (the story's own, the same as Story settings), then the
  * blurb, comparable titles, hooks and query pitch. "Getting it out": the launch notes (board
- * AtlasMarketing, G10c3).
+ * AtlasMarketing, G10c3), then the writer's own details and "Add detail" (GAPS-2b).
  * Who uses it: MarketingPage. What it calls: the savers it is given (useStoryPlan and
- * useStoryMarketing) and useStoryChoiceOptions.
+ * useStoryMarketing), useStoryChoiceOptions and MarketingDetails.
  */
 import { FormSection } from '@/features/writing/components/FormSection';
 
@@ -22,11 +22,13 @@ import {
 import { useStoryChoiceOptions } from '../hooks/useStoryChoiceOptions';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
+import { MarketingDetails } from './MarketingDetails';
 import { PlanSelectField } from './PlanSelectField';
 import { PlanTextField } from './PlanTextField';
 
 /** What the fields need. */
 export interface MarketingFieldsProps {
+  slug: string;
   page: StoryPlanPage;
   notes: MarketingNotes;
   savePlan: <Field extends keyof PlanFields>(
@@ -75,7 +77,7 @@ function MarketingChoices({
   page,
   savePlan,
   saveStory,
-}: Omit<MarketingFieldsProps, 'notes' | 'saveNote'>) {
+}: Omit<MarketingFieldsProps, 'slug' | 'notes' | 'saveNote'>) {
   const { t } = useAtlasTranslation();
   const { genreOptions, audienceOptions } = useStoryChoiceOptions();
   return (
@@ -117,7 +119,7 @@ function MarketingChoices({
  */
 export function MarketingFields(props: MarketingFieldsProps) {
   const { t } = useAtlasTranslation();
-  const { page, notes, savePlan, saveNote } = props;
+  const { slug, page, notes, savePlan, saveNote } = props;
   return (
     <>
       <FormSection legend={t('marketing.pitchHeading')}>
@@ -139,6 +141,7 @@ export function MarketingFields(props: MarketingFieldsProps) {
       </FormSection>
       <FormSection legend={t('marketing.launchHeading')}>
         <NoteField field="launch_notes" notes={notes} saveNote={saveNote} />
+        <MarketingDetails slug={slug} />
       </FormSection>
     </>
   );

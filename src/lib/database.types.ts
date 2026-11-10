@@ -7965,6 +7965,7 @@ export type Database = {
           created_at: string;
           hooks_keywords: string;
           launch_notes: string;
+          own_details: NonNullable<Json>;
           query_pitch: string;
           story_id: string;
           updated_at: string;
@@ -7977,6 +7978,7 @@ export type Database = {
           created_at?: string;
           hooks_keywords?: string;
           launch_notes?: string;
+          own_details?: NonNullable<Json>;
           query_pitch?: string;
           story_id: string;
           updated_at?: string;
@@ -7988,6 +7990,7 @@ export type Database = {
           created_at?: string;
           hooks_keywords?: string;
           launch_notes?: string;
+          own_details?: NonNullable<Json>;
           query_pitch?: string;
           story_id?: string;
           updated_at?: string;
@@ -9165,6 +9168,7 @@ export type Database = {
         };
         Returns: number;
       };
+      add_marketing_detail: { Args: { detail_name: string; story_slug: string }; Returns: Json };
       add_plan_act: { Args: { act_name: string; story_slug: string }; Returns: Json };
       add_reading_minute: { Args: Record<PropertyKey, never>; Returns: number };
       add_story_event: {
@@ -11813,6 +11817,7 @@ export type Database = {
       delete_comment: { Args: { comment_id: string }; Returns: boolean };
       delete_conversation: { Args: { other_handle: string }; Returns: Json };
       delete_forum_post: { Args: { post_id: string }; Returns: Json };
+      delete_marketing_detail: { Args: { detail_id: string; story_slug: string }; Returns: Json };
       delete_my_story: { Args: { story_slug: string }; Returns: Json };
       delete_plan_act: { Args: { act_id: string; story_slug: string }; Returns: Json };
       delete_story_character: { Args: { character_id: string }; Returns: Json };
@@ -15297,6 +15302,10 @@ export type Database = {
       update_chapter_plan: { Args: { changes: Json; chapter_code: string }; Returns: Json };
       update_chapter_scene: { Args: { changes: Json; scene_id: string }; Returns: Json };
       update_character_field: { Args: { changes: Json; field_id: string }; Returns: Json };
+      update_marketing_detail: {
+        Args: { changes: Json; detail_id: string; story_slug: string };
+        Returns: Json;
+      };
       update_my_story: { Args: { changes: Json; story_slug: string }; Returns: Json };
       update_published_chapter: { Args: { chapter_code: string }; Returns: Json };
       update_space: {

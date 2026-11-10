@@ -11,6 +11,8 @@
  * - every marketing field saves by itself, the logline and genre being the same fields as At a
  *   glance and Story settings; "Back cover" shows a preview of the title, logline, blurb and
  *   comparable titles as real text (S1-E17-29);
+ * - "Add detail" adds a detail of the writer's own that saves by itself, renames, is found by
+ *   search and deletes after a question; the back cover is signed with the pen name (GAPS-2b);
  * - a note reads as a row and "Edit" opens its fields; the QR code points at the story page,
  *   the story's world (while shared) or the profile, and downloads as PNG and SVG (G10c3);
  * - both pages pass axe, don't scroll sideways and draw no doodle at 390, 768 and
@@ -58,8 +60,10 @@ function seedAll() {
     select id, user_id, 'question', 'Cine a stins farul?', '', null from public.stories where slug = 'atlas-ideas-seed02'
     union all
     select id, user_id, 'decision', 'Ana pleacă în capitolul 3', 'Da, cu barca.', now() from public.stories where slug = 'atlas-ideas-seed02';
-    insert into public.story_marketing (story_id, user_id, back_cover_blurb, comparable_titles)
-    select id, user_id, 'Un far stins și o insulă care tace.', 'Umbra vântului' from public.stories where slug = 'atlas-ideas-seed02';
+    insert into public.story_marketing (story_id, user_id, back_cover_blurb, comparable_titles, own_details)
+    select id, user_id, 'Un far stins și o insulă care tace.', 'Umbra vântului',
+      '[{"id": "00000000-0000-4000-8000-0000000d0001", "name": "Newsletter", "text": "Vineri."}]'::jsonb
+    from public.stories where slug = 'atlas-ideas-seed02';
     update public.story_plans set logline = 'O paznică de far caută lumina.'
     where story_id = (select id from public.stories where slug = 'atlas-ideas-seed02');`);
 }
@@ -238,6 +242,11 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
     await expect(cover).toContainText('A dark lighthouse and a quiet island.');
     await expect(cover).toContainText('For readers of');
     await expect(cover).toContainText('The Shadow of the Wind');
+    // The foot is signed with the writer's pen name (or username) and the product's name (GAPS-2b).
+    const writerName = runSql(
+      `select coalesce(pen_name, handle) from public.profiles where id = '${writerId}'`,
+    );
+    await expect(page.getByTestId('atlas-back-cover-byline')).toContainText(`${writerName} · `);
     const hide = page.getByRole('button', { name: 'Hide the back cover' });
     await expect(hide).toHaveAttribute('aria-expanded', 'true');
     await hide.click();
@@ -246,6 +255,52 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
     await expect(show).toHaveAttribute('aria-expanded', 'false');
     await show.click();
     await expect(page.getByTestId('atlas-back-cover')).toBeVisible();
+    await page.context().close();
+  });
+
+  test('a writer adds a marketing detail, fills it in, renames it, finds it by search and deletes it (GAPS-2b)', async ({
+    browser,
+  }) => {
+    const page = await openAs(browser, 'adult_writer', marketingAddress);
+    const savedDetails = () =>
+      runSql(`select coalesce(string_agg((detail ->> 'name') || '=' || (detail ->> 'text'), ';'), '')
+        from public.story_marketing, jsonb_array_elements(own_details) as detail
+        where story_id = (select id from public.stories where slug = '${slug}')`);
+    // "Add detail" opens the name box; an empty name waits with a plain message.
+    await page.getByRole('button', { name: 'Add detail', exact: true }).click();
+    await expect(page.getByRole('textbox', { name: 'Detail name' })).toBeFocused();
+    await page.getByRole('button', { name: 'Add', exact: true }).click();
+    await expect(page.getByText('Give the detail a name.')).toBeVisible();
+    await page.getByRole('textbox', { name: 'Detail name' }).fill('Newsletter');
+    await page.getByRole('button', { name: 'Add', exact: true }).click();
+    // The detail is a box of its own that saves by itself.
+    const detail = page.getByTestId('atlas-marketing-detail');
+    await expect(detail).toHaveCount(1);
+    await detail.getByRole('textbox', { name: 'Newsletter' }).fill('Send the zeppelin chapter.');
+    await expect(detail.locator('[id$="-save"]')).toHaveText('Saved');
+    expect(savedDetails()).toBe('Newsletter=Send the zeppelin chapter.');
+    // "Edit detail" renames it; the text stays.
+    await page.getByRole('button', { name: 'Edit detail: Newsletter' }).click();
+    await page.getByRole('textbox', { name: 'Detail name' }).fill('Mailing list');
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await expect(detail.getByRole('textbox', { name: 'Mailing list' })).toHaveValue(
+      'Send the zeppelin chapter.',
+    );
+    // Search finds it by its text and names the result after the detail.
+    await page.goto(`/plan/s/${slug}/search?q=zeppelin`);
+    await expect(page.getByRole('link', { name: /Mailing list/ })).toBeVisible();
+    // Deleting asks first; "Keep detail" changes nothing.
+    await page.goto(marketingAddress);
+    await page.getByRole('button', { name: 'Edit detail: Mailing list' }).click();
+    await detail.getByRole('button', { name: 'Delete detail', exact: true }).click();
+    const question = detail.getByRole('group', { name: 'Delete detail' });
+    await expect(question).toContainText('Delete Mailing list and the text in it?');
+    await question.getByRole('button', { name: 'Keep detail' }).click();
+    await expect(detail).toHaveCount(1);
+    await detail.getByRole('button', { name: 'Delete detail', exact: true }).click();
+    await question.getByRole('button', { name: 'Delete detail', exact: true }).click();
+    await expect(detail).toHaveCount(0);
+    expect(savedDetails()).toBe('');
     await page.context().close();
   });
 
@@ -303,6 +358,10 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
   test('the open back cover passes axe and fits a phone', async ({ browser }) => {
     const page = await openAs(browser, 'suspended_user', axeMarketingAddress);
     await page.setViewportSize({ width: 390, height: 900 });
+    // Reduce motion, as checkScreen does: axe then measures the colours the page settles on, not
+    // a page still fading in (tmc-rise). Only the motion changes.
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.reload();
     await expect(page.getByTestId('atlas-back-cover')).toContainText('Umbra vântului');
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
