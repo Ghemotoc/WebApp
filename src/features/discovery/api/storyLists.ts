@@ -36,7 +36,9 @@ export type ListKind =
   // S1-E13-01: someone's library, shown on their profile when they allow it (the key is the username).
   | 'reader_library'
   // IDEAS-1e: the stories shared most in the last 7 days.
-  | 'shared';
+  | 'shared'
+  // GAPS-6: one reading list (the key is the list's ID); shown on its own page in the Library.
+  | 'reading_list';
 
 /**
  * The reader's sort choices (S1-E5-02; popular from S1-E5-03; relevance, only for search, from

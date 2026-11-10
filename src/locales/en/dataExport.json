@@ -261,6 +261,8 @@
       "picture_checks": "The checks on pictures you uploaded.",
       "quote_cards": "The quote cards you made.",
       "reading_habits": "Private reading streak settings.",
+      "reading_list_stories": "Which stories are in each reading list, and when each was added.",
+      "reading_lists": "Reading lists: each name and whether it is public.",
       "reading_minutes": "Minutes you read on each recent day, for your streak.",
       "reading_positions": "Where you stopped in each story.",
       "reading_preferences": "The categories and tags you said you like.",

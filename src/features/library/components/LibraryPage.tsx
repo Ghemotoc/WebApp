@@ -5,10 +5,11 @@
  * What it shows, top to bottom as on the board: "Library", the line about the
  * place being kept on every device and who can see the library, with Change (S1-E4-03, third
  * criterion: private by default; S1-E13-01 adds the choice); ContinueReading; LibraryShelves (Reading, Saved for
- * later, Finished); ReadingHabitNote (the private reading streak, IDEAS-1b); FollowingSection. A signed-out visitor gets a card asking them to log in.
+ * later, Finished); ReadingListsCard; ReadingHabitNote (the private reading streak, IDEAS-1b); FollowingSection. A signed-out visitor gets a card asking them to log in.
  * The wide ad slot comes after the shelves, for signed-in readers only (S1-E12-01).
- * Not yet, as noted in docs/board-fixes.md: "Your lists" (no story
- * builds reading lists yet) and "Downloaded to read offline" (the apps, S1-E4-08).
+ * Since GAPS-6 the reader's own reading lists come after the shelves (ReadingListsCard; the
+ * board's "Your lists"). Not yet, as noted in docs/board-fixes.md: "Downloaded to read offline"
+ * (the apps, S1-E4-08).
  * What it calls: useLibraryOverview → my_library(); the sections call their own reads.
  */
 import { Link } from 'react-router';
@@ -26,6 +27,7 @@ import { ContinueReading } from './ContinueReading';
 import { FollowingSection } from './FollowingSection';
 import { LibraryShelves } from './LibraryShelves';
 import { ReadingHabitNote } from './ReadingHabitNote';
+import { ReadingListsCard } from './ReadingListsCard';
 
 /** The page's heading block, with who can see the library (S1-E13-01). */
 function LibraryHeader() {
@@ -73,6 +75,7 @@ function SignedInLibrary() {
     <>
       <ContinueReading items={overview.continueReading} />
       <LibraryShelves overview={overview} />
+      <ReadingListsCard />
       {/* The page's one ad slot; a library has no single category, so it sends no context. */}
       <PageAdSlot pageKey="library" position={1} />
       <ReadingHabitNote />

@@ -10,6 +10,7 @@
  *   /search/stories?q=<term>                          the stories a search finds (S1-E5-04)
  *   /library/<reading|saved|finished>                 one shelf of the reader's library (S1-E4-03)
  *   /u/<username>/library                             someone's library, from their profile (S1-E13-01)
+ *   /library/lists/<list ID>                          one reading list (GAPS-6; its own page, ReadingListPage)
  * and ?category=…&status=…&language=…&sort=… for the filters.
  * Who uses it: DiscoverPage (each shelf's "View more"), StoryListPage, StoryBreadcrumb, the story
  * page's tags.
@@ -83,6 +84,8 @@ export function listAddress(request: ListRequest): string {
     search: '/search/stories',
     library: `/library/${key}`,
     reader_library: `/u/${key}/library`,
+    // GAPS-6: a reading list has its own page in the Library (ReadingListPage), not a See all page.
+    reading_list: `/library/lists/${key}`,
   };
   // Step 2: the query string carries the search term, the filters and the sort.
   const query = new URLSearchParams();
@@ -107,6 +110,8 @@ export function listAddress(request: ListRequest): string {
 export function listDefaultSort(kind: ListKind): SortOrder {
   if (kind === 'new') return 'newest';
   if (kind === 'updated' || kind === 'following' || kind === 'library') return 'updated';
+  // GAPS-6: a reading list, like a library shelf, shows the story updated last first.
+  if (kind === 'reading_list') return 'updated';
   if (kind === 'search') return 'relevance';
   if (kind === 'shared') return 'shared';
   return 'popular';

@@ -5,8 +5,8 @@
  * Board values: two white cards side by side (stacked on phones), "Writers (4)" and "Stories (4)",
  * one row per follow with a fine line between rows: the initial or the cover, the name, a line
  * about the latest chapter, a "New" pill for a story updated in the last 7 days, and the shared
- * FollowButton (which unfollows in place). The board's "Notification settings" link joins with
- * the email settings (S1-E7-02).
+ * FollowButton (which unfollows in place). The board's "Notification settings" link, after the
+ * line about notifications, opens Settings at its notifications part (GAPS-6).
  * Who uses it: LibraryPage. What it calls: useMyFollows → my_follows().
  */
 import type { ReactNode } from 'react';
@@ -136,7 +136,15 @@ export function FollowingSection() {
           >
             {t('following.heading')}
           </h2>
-          <p className="m-0 text-sm text-body">{t('following.intro')}</p>
+          <p className="m-0 text-sm text-body">
+            {t('following.intro')}{' '}
+            <Link
+              to="/settings#notifications"
+              className="inline-flex min-h-6 items-center font-semibold text-link underline underline-offset-2"
+            >
+              {t('following.notificationSettings')}
+            </Link>
+          </p>
         </div>
       </div>
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">

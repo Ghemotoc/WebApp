@@ -1071,6 +1071,16 @@ const writeRoutes: RouteObject[] = [
       return { Component: LibraryPage };
     },
   },
+  // One reading list (GAPS-6). Listed before /library/:shelf; the router also ranks its fixed
+  // "lists" part above a shelf's name, so the two never mix.
+  {
+    path: '/library/lists/:listId',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { ReadingListPage } = await import('@/features/library/components/ReadingListPage');
+      return { Component: ReadingListPage };
+    },
+  },
   {
     path: '/library/:shelf',
     HydrateFallback: () => null,

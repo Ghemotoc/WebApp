@@ -68,7 +68,8 @@
     "nothingYet": "Nimic publicat încă",
     "noWriters": "Încă nu urmărești niciun scriitor. Folosește „Urmărește” pe profilul unui scriitor.",
     "noStories": "Încă nu urmărești nicio poveste. Folosește „Urmărește povestea” pe pagina unei povești.",
-    "new": "Nou"
+    "new": "Nou",
+    "notificationSettings": "Setări pentru notificări"
   },
   "button": {
     "label": "Bibliotecă",
@@ -122,5 +123,64 @@
     "sentNote": "Trimis. Persoana care a scris povestea va vedea că ai terminat-o.",
     "failed": "Nu am putut trimite. Încearcă din nou.",
     "notActive": "Poți trimite asta după ce contul tău e gata să participe."
+  },
+  "lists": {
+    "heading": "Liste de lectură",
+    "intro": "Grupează povești sub orice nume. O listă rămâne privată până o faci publică.",
+    "empty": "Nicio listă încă. Creează una, apoi adaugă povești din pagina unei povești.",
+    "loadFailed": "Listele de lectură nu au putut fi încărcate. Verifică conexiunea și încearcă din nou.",
+    "count_one": "{{count}} poveste",
+    "count_few": "{{count}} povești",
+    "count_other": "{{count}} de povești",
+    "seenBy": {
+      "onlyYou": "Doar tu",
+      "public": "Oricine are linkul"
+    },
+    "new": {
+      "button": "Listă nouă",
+      "nameLabel": "Numele listei",
+      "nameHint": "Cel mult 60 de caractere.",
+      "create": "Creează lista",
+      "cancel": "Renunță"
+    },
+    "add": {
+      "button": "Adaugă într-o listă",
+      "none": "Nicio listă încă."
+    },
+    "errors": {
+      "nameLength": "Numele unei liste are între 1 și 60 de caractere.",
+      "nameHtml": "Numele unei liste este text simplu, fără HTML.",
+      "nameTaken": "Altă listă are acest nume. Alege altul.",
+      "tooManyLists": "Ai numărul maxim de liste pentru un cont. Șterge una ca să faci loc.",
+      "tooManyStories": "Lista este plină. Scoate o poveste ca să faci loc.",
+      "notActive": "Acest cont nu poate face publică o listă acum.",
+      "saveFailed": "Nu s-a salvat. Încearcă din nou."
+    },
+    "page": {
+      "documentTitle": "{{name}} · {{productName}}",
+      "breadcrumb": "Unde se află această listă",
+      "unknown": "Nu există o astfel de listă",
+      "unknownBody": "Poate este privată sau a fost ștearsă.",
+      "backToLibrary": "Înapoi la Bibliotecă",
+      "madeBy": "O listă de",
+      "reportLabel": "lista de lectură „{{name}}”",
+      "toolsHeading": "Administrează lista",
+      "nameLabel": "Numele listei",
+      "saveName": "Salvează numele",
+      "saved": "Salvat",
+      "audienceLabel": "Cine o vede",
+      "audienceHint": "O listă publică își arată numele, poveștile din ea și numele de utilizator al celui care a făcut-o.",
+      "entriesHeading": "Poveștile din această listă",
+      "remove": "Scoate",
+      "removeLabel": "Scoate {{title}} din această listă",
+      "delete": "Șterge lista",
+      "deleteQuestion": "Ștergi „{{name}}”? Poveștile rămân unde sunt.",
+      "deleteYes": "Da, șterge",
+      "deleteKeep": "Păstrează",
+      "emptyTitle": "Nicio poveste încă",
+      "emptyOwn": "Folosește „Adaugă într-o listă” din pagina unei povești.",
+      "emptyOther": "Nimic din această listă nu îți este deschis acum.",
+      "discover": "Caută povești"
+    }
   }
 }
