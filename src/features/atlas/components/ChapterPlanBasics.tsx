@@ -6,6 +6,7 @@
  */
 import { chapterKinds, planningStatuses, type ChapterPlan } from '../api/chapterPlans';
 import type { ChapterPlanChange } from '../api/chapterPlans';
+import { narratorValue, pointOfViewChange, pointOfViewValue } from '../lib/pointOfView';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { PlanSelectField } from './PlanSelectField';
@@ -24,9 +25,10 @@ export interface ChapterPlanBasicsProps {
 export function ChapterPlanBasics({ plan, save }: ChapterPlanBasicsProps) {
   const { t } = useAtlasTranslation();
   const { fields } = plan;
-  // "None" first, then the story's characters by name.
+  // "None" first, then the Narrator (outside the story, G10c2), then the characters by name.
   const characterOptions = [
     { value: '', label: t('chapterPlan.none') },
+    { value: narratorValue, label: t('chapterPlan.narratorOption') },
     ...plan.characters.map((character) => ({ value: character.id, label: character.name })),
   ];
   const actOptions = [
@@ -61,8 +63,8 @@ export function ChapterPlanBasics({ plan, save }: ChapterPlanBasicsProps) {
         id="atlas-chapter-pov"
         label={t('chapterPlan.pov')}
         options={characterOptions}
-        savedValue={fields.povCharacterId ?? ''}
-        save={async (value) => save({ pov_character_id: value })}
+        savedValue={pointOfViewValue(fields)}
+        save={async (value) => save(pointOfViewChange(value))}
       />
       <PlanSelectField
         id="atlas-chapter-act"

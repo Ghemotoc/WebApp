@@ -9,6 +9,7 @@
  * - the move buttons move a card within and between acts, and a drag does the same; a move that
  *   renumbers published chapters asks first, and "Keep the order" changes nothing;
  * - "Add chapter" adds a draft at the end of its act;
+ * - a chapter told by the Narrator says so on the board and has its own lane (G10c2);
  * - the timeline adds, sorts, changes and deletes events beside dated chapters, and lists the
  *   undated chapters apart (S1-E17-20);
  * - the lanes show each chapter in its teller's column with its status in words (S1-E17-21);
@@ -311,6 +312,47 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
         .nth(1),
     ).toHaveText('Idea');
     await expect(table.getByTestId('atlas-lane-row')).toHaveCount(4);
+    await page.context().close();
+  });
+
+  test('a chapter told by the Narrator shows so on the board and gets its own lane', async ({
+    browser,
+  }) => {
+    // Pick the Narrator in the chapter's plan, in the writing view.
+    const page = await openAs(browser, 'adult_writer', `/write/s/${slug}/c/e2estor3`);
+    await page
+      .locator('#atlas-chapter-pov')
+      .selectOption({ label: 'Narrator (outside the story)' });
+    await expect(page.locator('#atlas-chapter-pov-save')).toHaveText('Saved');
+    // The board names the Narrator on the card.
+    await page.goto(storylineAddress);
+    await showView(page, 'Board');
+    await expect(page.getByTestId('atlas-board-card').filter({ hasText: 'Zorii' })).toContainText(
+      'POV: Narrator',
+    );
+    // The lanes give the Narrator the last column and a tile of their own.
+    await showView(page, 'POV lanes');
+    const table = page.getByRole('table', { name: 'Chapters by point-of-view character' });
+    await expect(table.getByRole('columnheader')).toHaveText([
+      'Chapter',
+      'Ana',
+      'Bogdan',
+      'Narratoroutside the story',
+    ]);
+    await expect(table.getByRole('row', { name: /Zorii/ }).getByRole('cell').nth(2)).toHaveText(
+      'Idea',
+    );
+    await expect(
+      page.getByRole('list', { name: 'Chapters by teller' }).getByRole('listitem'),
+    ).toHaveText(['Told by Ana1', 'Told by Bogdan1', 'Told by the Narrator1']);
+    // A character takes the Narrator off again (one teller at a time).
+    await page.goto(`/write/s/${slug}/c/e2estor3`);
+    await page.locator('#atlas-chapter-pov').selectOption({ label: 'Ana' });
+    await expect(page.locator('#atlas-chapter-pov-save')).toHaveText('Saved');
+    expect(
+      runSql(`select pov_is_narrator from public.chapter_plans
+        where chapter_id = (select id from public.chapters where code = 'e2estor3')`),
+    ).toBe('f');
     await page.context().close();
   });
 

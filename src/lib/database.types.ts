@@ -1343,6 +1343,7 @@ export type Database = {
           location: string;
           planning_status: string;
           pov_character_id: string | null;
+          pov_is_narrator: boolean;
           story_id: string;
           summary: string;
           updated_at: string;
@@ -1360,6 +1361,7 @@ export type Database = {
           location?: string;
           planning_status?: string;
           pov_character_id?: string | null;
+          pov_is_narrator?: boolean;
           story_id: string;
           summary?: string;
           updated_at?: string;
@@ -1376,6 +1378,7 @@ export type Database = {
           location?: string;
           planning_status?: string;
           pov_character_id?: string | null;
+          pov_is_narrator?: boolean;
           story_id?: string;
           summary?: string;
           updated_at?: string;
@@ -12818,6 +12821,7 @@ export type Database = {
           location: string;
           planning_status: string;
           pov_character_id: string | null;
+          pov_is_narrator: boolean;
           story_id: string;
           summary: string;
           updated_at: string;

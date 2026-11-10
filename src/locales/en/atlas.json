@@ -514,7 +514,10 @@
       "povAndPresent": "point of view, present",
       "chapter": "Chapter {{number}}: {{title}}",
       "loadFailed": "We couldn’t load where this character appears."
-    }
+    },
+    "narrator": "Narrator",
+    "narratorOption": "Narrator (outside the story)",
+    "narratorOutside": "outside the story"
   },
   "storyline": {
     "documentTitle": "Storyline of {{title}}: Story Atlas",
@@ -606,7 +609,8 @@
       "none": "No chapter has a point of view yet. Pick one in each chapter’s plan.",
       "noChapters": "This story has no chapters yet.",
       "countsLabel": "Chapters by teller",
-      "chaptersBy": "Told by {{name}}"
+      "chaptersBy": "Told by {{name}}",
+      "toldByNarrator": "Told by the Narrator"
     }
   },
   "ideas": {

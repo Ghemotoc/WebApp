@@ -79,14 +79,19 @@ function AddChapterButton({ name, onAdd }: { name: string; onAdd: () => Promise<
 
 /** The column's cards, each a drag source and a drop zone. */
 function ColumnCards(props: BoardColumnSectionProps & { column: BoardColumn }) {
+  const { t } = useAtlasTranslation();
   const { slug, storyline, column, draggingCode, move } = props;
   // Where a dropped card lands, counted without the card itself (it may come from this column).
   const othersBefore = (code: string) =>
     column.chapters
       .filter((chapter) => chapter.code !== draggingCode)
       .findIndex((chapter) => chapter.code === code);
-  const povNameOf = (id: string | null) =>
-    storyline.characters.find((character) => character.id === id)?.name ?? null;
+  // Who tells a chapter, in words: the Narrator, a character's name, or null for nobody yet.
+  const tellerOf = (chapter: BoardColumn['chapters'][number]) =>
+    chapter.povIsNarrator
+      ? t('chapterPlan.narrator')
+      : (storyline.characters.find((character) => character.id === chapter.povCharacterId)?.name ??
+        null);
   return (
     <ol className="m-0 flex list-none flex-col gap-3 p-0 empty:hidden">
       {column.chapters.map((chapter, index) => (
@@ -95,7 +100,7 @@ function ColumnCards(props: BoardColumnSectionProps & { column: BoardColumn }) {
           slug={slug}
           chapter={chapter}
           label={props.labelOf(chapter.code)}
-          povName={povNameOf(chapter.povCharacterId)}
+          povName={tellerOf(chapter)}
           onDragStart={() => props.setDraggingCode(chapter.code)}
           onDropOnCard={(event) => {
             event.preventDefault();

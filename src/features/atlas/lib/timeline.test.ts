@@ -23,6 +23,7 @@ function chapter(
     kind: 'chapter',
     planningStatus: 'idea',
     povCharacterId: pov,
+    povIsNarrator: false,
     actId: null,
     wordCount: 0,
     wordTarget: null,
