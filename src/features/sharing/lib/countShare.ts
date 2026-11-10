@@ -6,7 +6,8 @@
  * code it needs stays out of the chapter reader's 40 KB script budget
  * (e2e/reader-performance.spec.ts). A failure only means one share isn't counted, so the reader
  * isn't troubled with it, but it is logged.
- * Who calls it: ShareButton, PassageLinkButton and the picture card, through a dynamic import.
+ * Who calls it: ShareButton, PassageLinkButton, the picture card and SendInMessagesLink (GAPS-7a),
+ * through a dynamic import.
  * What it calls: api/sharing.ts → record_chapter_share(), or record_passage_share() for a passage or
  * picture link, which also counts each paragraph for the writer's most-loved lines (IDEAS-1d).
  */
@@ -17,16 +18,19 @@ import type { SpotRange } from '@/lib/chapter-blocks';
 
 import { recordChapterShare, recordPassageShare, type ChapterAddress } from '../api/sharing';
 
+/** How a chapter was shared: copied link, the device's share sheet, or sent into Messages. */
+export type ShareMethod = 'copy_link' | 'share_sheet' | 'message';
+
 /**
  * Counts the share; never throws.
  *
  * @param address - the chapter
- * @param method - how it was shared: copied link or the device's share sheet
+ * @param method - how it was shared: copied link, the device's share sheet or "Send in Messages"
  * @param range - the paragraphs a passage or picture link covers; left out for a whole chapter
  */
 export async function countShare(
   address: ChapterAddress,
-  method: 'copy_link' | 'share_sheet',
+  method: ShareMethod,
   range: SpotRange | null = null,
 ): Promise<void> {
   // The way it was shared only, never the chapter (docs/analytics-events.md).

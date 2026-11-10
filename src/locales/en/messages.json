@@ -50,6 +50,11 @@
     "noThanksReply": "{{name}} replied: “Thanks for writing, but I’d rather not chat right now.”",
     "noThanksAgain": "You can send a new request from {{date}}."
   },
+  "share": {
+    "pick": "Pick a chat, or start a new one, to send this link.",
+    "ready": "The link is in the message box. Add a few words, then press Send.",
+    "cancel": "Don’t send"
+  },
   "request": {
     "title": "{{name}} wants to message you",
     "explain": "They can’t send more until you accept. If you delete the request, they won’t be told.",

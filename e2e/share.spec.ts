@@ -14,7 +14,9 @@
  *   fifth criteria); the palette colours can be picked (fourth criterion);
  * - a second card from the same chapter shows the "One quote card per chapter" pop-up (second);
  * - the writer's Quote cards switch in story settings hides "Share quote" (third);
- * - both dialogs pass axe at 390 px in ro and en and fit at 320 px.
+ * - both dialogs pass axe at 390 px in ro and en and fit at 320 px;
+ * - "Send in Messages" opens Messages with only the chapter's path in the address, counts one
+ *   share, and "Don't send" drops it; a visitor isn't offered it (GAPS-7a).
  * Test data: adult_writer's story "Turnul cu ceas" with one chapter; blocked reads it (no other
  *   reader spec signs in as blocked). All removed afterwards.
  */
@@ -267,5 +269,50 @@ test.describe('share a chapter and the quote card (S1-E4-05, S1-E4-07)', () => {
     await expect(page.getByRole('button', { name: 'Share quote' })).toHaveCount(0);
     // Sharing the link still works.
     await expect(page.getByRole('button', { name: 'Share chapter 1' })).toBeVisible();
+  });
+
+  test('Send in Messages takes the link to Messages and counts the share (GAPS-7a)', async ({
+    browser,
+  }) => {
+    const page = await openChapter(browser);
+    await page.getByRole('button', { name: 'Share chapter 1' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Share this chapter' });
+    const sharesBefore = Number(sharesToday());
+    // Step 1: the link carries only the chapter's path, nothing about the reader.
+    const send = dialog.getByRole('link', { name: 'Send in Messages' });
+    await expect(send).toHaveAttribute(
+      'href',
+      `/messages?share=${encodeURIComponent(chapterPath)}`,
+    );
+    await send.click();
+    // Step 2: Messages shows the link and asks for a chat; the share is counted once.
+    await expect(page).toHaveURL(/\/messages\?share=/);
+    await expect(
+      page.getByText('Pick a chat, or start a new one, to send this link.'),
+    ).toBeVisible();
+    await expect(page.getByText(new RegExp(`${chapterPath}$`))).toBeVisible();
+    await expect.poll(() => Number(sharesToday())).toBe(sharesBefore + 1);
+    // Step 3: "Don't send" drops the link from the address.
+    await page.getByRole('button', { name: 'Don’t send' }).click();
+    await expect(page).toHaveURL(/\/messages$/);
+    await expect(page.getByText('Pick a chat, or start a new one, to send this link.')).toHaveCount(
+      0,
+    );
+  });
+
+  test('a visitor sees no Send in Messages in the share dialog (GAPS-7a)', async ({ browser }) => {
+    const context = await browser.newContext({
+      permissions: ['clipboard-read', 'clipboard-write'],
+    });
+    await context.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
+    const page = await context.newPage();
+    await page.goto(chapterPath);
+    const share = page.getByRole('button', { name: 'Share chapter 1' });
+    // A visitor reads the teaser; when it offers Share, the dialog has no Messages link.
+    if ((await share.count()) === 0) return;
+    await share.click();
+    const dialog = page.getByRole('dialog', { name: 'Share this chapter' });
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByRole('link', { name: 'Send in Messages' })).toHaveCount(0);
   });
 });

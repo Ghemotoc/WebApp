@@ -30,7 +30,7 @@ export interface AnalyticsEventProperties {
   /** A reader followed a story (never which). */
   story_followed: Record<string, never>;
   /** A reader shared a chapter: copied the link or used the device's share sheet. */
-  chapter_shared: { method: 'copy_link' | 'share_sheet' };
+  chapter_shared: { method: 'copy_link' | 'share_sheet' | 'message' };
   /** A reader saved a quote card picture. */
   quote_card_saved: Record<string, never>;
   /** A reader saved a picture card (S1-E4-11). */

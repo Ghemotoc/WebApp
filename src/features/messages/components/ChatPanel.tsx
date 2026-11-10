@@ -9,6 +9,8 @@
  * - the other person said "No thanks": their fixed reply and when to ask again (IDEAS-2 idea 7);
  * - otherwise "<name> isn't taking messages right now", whatever the reason (S1-E9-03).
  * The messages scroll inside their own region, which keeps the newest in view.
+ * A story link being sent from a share dialog (GAPS-7a) starts in the message box and leaves the
+ * address once the message is sent.
  * Who shows it: MessagesPage, with AboutChatPanel beside it. What it calls: useConversation.
  */
 import { useEffect, useRef } from 'react';
@@ -17,6 +19,7 @@ import { Notice } from '@/components/ui/Notice';
 
 import type { Conversation } from '../api/messages';
 import { useConversation } from '../hooks/useMessages';
+import { useSharedLink } from '../hooks/useSharedLink';
 import { useMessagesTranslation } from '../registerMessagesTranslations';
 
 import { AboutChatPanel } from './AboutChatPanel';
@@ -66,6 +69,15 @@ function NoThanksNote({ chat }: { chat: Conversation }) {
 function ChatBottom({ chat, state }: { chat: Conversation; state: ChatState }) {
   const { t } = useMessagesTranslation();
   const name = chat.displayName;
+  const shared = useSharedLink();
+
+  /** Sends the message, then drops the shared link from the address so it isn't offered again. */
+  async function sendAndForgetLink(body: string) {
+    const result = await state.send(body);
+    if (shared.link !== null) shared.clear();
+    return result;
+  }
+
   if (chat.isRequestToMe) {
     return (
       <RequestActions
@@ -85,7 +97,8 @@ function ChatBottom({ chat, state }: { chat: Conversation; state: ChatState }) {
           isSending={state.isSending}
           failure={state.sendState.failure}
           waitMinutes={state.sendState.waitMinutes}
-          onSend={state.send}
+          onSend={sendAndForgetLink}
+          initialBody={shared.link ?? ''}
         />
       </>
     );

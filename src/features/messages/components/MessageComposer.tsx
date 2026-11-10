@@ -4,10 +4,11 @@
  *
  * Text only: images in messages are OPEN and off (the story's proposal). The box takes at most
  * 2,000 characters, as the database does. A refusal shows in plain words; "isn't taking
- * messages" never says why (S1-E9-03). The box empties once the message is saved.
+ * messages" never says why (S1-E9-03). The box empties once the message is saved. It can start
+ * with words already in it: the story link a reader is sending from a share dialog (GAPS-7a).
  * Who shows it: ChatPanel. What it calls: the onSend it is given.
  */
-import { useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 
 import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Button } from '@/components/ui/Button';
@@ -24,6 +25,8 @@ export interface MessageComposerProps {
   failure: MessagesFailure | null;
   waitMinutes: number | null;
   onSend: (body: string) => Promise<unknown>;
+  /** Words the box starts with (a story link being shared); empty when left out. */
+  initialBody?: string;
 }
 
 /**
@@ -37,9 +40,18 @@ export function MessageComposer({
   failure,
   waitMinutes,
   onSend,
+  initialBody = '',
 }: MessageComposerProps) {
   const { t } = useMessagesTranslation();
-  const [body, setBody] = useState('');
+  const [body, setBody] = useState(initialBody);
+  const boxRef = useRef<HTMLTextAreaElement>(null);
+
+  // A box that starts with a link puts the caret after it, so words typed next follow the link
+  // instead of running into its start. Focus is left where it is.
+  useEffect(() => {
+    if (initialBody === '') return;
+    boxRef.current?.setSelectionRange(initialBody.length, initialBody.length);
+  }, [initialBody]);
 
   /** Sends the words and empties the box once saved; a failure keeps them for another try. */
   function send(event: FormEvent) {
@@ -58,6 +70,7 @@ export function MessageComposer({
         </label>
         <textarea
           id="message-body"
+          ref={boxRef}
           rows={1}
           maxLength={longestMessage}
           value={body}

@@ -50,6 +50,11 @@
     "noThanksReply": "{{name}} a răspuns: „Mulțumesc că mi-ai scris, dar acum aș prefera să nu vorbim.”",
     "noThanksAgain": "Poți trimite o cerere nouă începând cu {{date}}."
   },
+  "share": {
+    "pick": "Alege o conversație sau începe una nouă ca să trimiți acest link.",
+    "ready": "Linkul este în caseta de mesaj. Adaugă câteva cuvinte, apoi apasă Trimite.",
+    "cancel": "Nu trimite"
+  },
   "request": {
     "title": "{{name}} vrea să-ți scrie",
     "explain": "Nu poate trimite altele până nu accepți. Dacă ștergi cererea, nu va afla.",

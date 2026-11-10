@@ -10,17 +10,23 @@
  * column at a time: the chats at /messages, the chat (with "Chats" to go back, then About below
  * it) at /messages/:handle, so a phone never squeezes two lists side by side (CLAUDE.md rule 21).
  * A visitor is asked to log in.
+ * When a reader arrives from a share dialog's "Send in Messages" (bundle GAPS-7, part a; board
+ * 3.6 Share), a notice above the card shows the link and says what to do next: pick a chat, then
+ * send. "Don't send" drops the link.
  * Who shows it: the router; the profile's Message button and the top bar link here.
- * What it calls: ChatList, ChatPanel and NewChatButton.
+ * What it calls: ChatList, ChatPanel, NewChatButton and useSharedLink.
  */
 import { Link, useParams } from 'react-router';
 
 import { ActionIcon } from '@/components/icons/ActionIcon';
 import { NavIcon } from '@/components/icons/NavIcon';
+import { Button } from '@/components/ui/Button';
 import { buttonClassName } from '@/components/ui/buttonStyles';
+import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { useSession } from '@/features/auth/hooks/useSession';
 
+import { useSharedLink } from '../hooks/useSharedLink';
 import { useMessagesTranslation } from '../registerMessagesTranslations';
 
 import { ChatList } from './ChatList';
@@ -51,6 +57,7 @@ function PickAChat() {
  */
 function MessagesCard({ handle }: { handle: string | null }) {
   const { t } = useMessagesTranslation();
+  const shared = useSharedLink();
   // On a narrow screen the list gives way to the open chat.
   const listVisibility = handle === null ? 'flex' : 'hidden lg:flex';
   return (
@@ -63,7 +70,7 @@ function MessagesCard({ handle }: { handle: string | null }) {
       ) : (
         <>
           <Link
-            to="/messages"
+            to={`/messages${shared.query}`}
             className="inline-flex min-h-11 w-fit items-center gap-1.5 px-4 text-sm font-semibold text-link underline lg:hidden"
           >
             <NavIcon name="back" size={16} />
@@ -73,6 +80,30 @@ function MessagesCard({ handle }: { handle: string | null }) {
         </>
       )}
     </div>
+  );
+}
+
+/**
+ * The notice while a story link is being sent into a chat (GAPS-7a): the link, what to do next
+ * and a way out. Nothing is sent until the reader presses Send in a chat.
+ *
+ * @param props.hasOpenChat - true once a chat is open, when the link sits in the message box
+ * @returns the notice, or nothing when no link is being shared
+ */
+function SharedLinkNotice({ hasOpenChat }: { hasOpenChat: boolean }) {
+  const { t } = useMessagesTranslation();
+  const shared = useSharedLink();
+  if (shared.link === null) return null;
+  return (
+    <Notice tone="info">
+      <span className="flex flex-col gap-2">
+        <span>{t(hasOpenChat ? 'share.ready' : 'share.pick')}</span>
+        <span className="font-semibold [overflow-wrap:anywhere]">{shared.link}</span>
+        <Button variant="secondary" className="w-fit" onClick={shared.clear}>
+          {t('share.cancel')}
+        </Button>
+      </span>
+    </Notice>
   );
 }
 
@@ -125,6 +156,7 @@ export function MessagesPage() {
           </Link>
         </p>
       )}
+      {isSignedIn && <SharedLinkNotice hasOpenChat={handle !== null} />}
       {isSignedIn && <MessagesCard handle={handle} />}
     </PageContainer>
   );

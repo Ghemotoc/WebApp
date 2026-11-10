@@ -7,11 +7,12 @@
  * chat" and Done.
  * The Share button has already copied the link when this opens (S1-E4-05, first criterion), and
  * the line under the field says so; "Copy link" copies it again.
- * Differences from the board (docs/board-fixes.md): "Send in Messages" waits for private messages
- * (S1-E9-01); "Share a quote" is a hint, because a quote starts from text selected in the chapter;
+ * "Send in Messages" (bundle GAPS-7, part a) takes a signed-in reader to Messages with the link
+ * ready for the chat they pick; a visitor doesn't see it.
+ * Differences from the board (docs/board-fixes.md): "Share a quote" is a hint, because a quote starts from text selected in the chapter;
  * the chat preview shows the chapter, since the reader has no blurb at hand.
- * Who uses it: LoadedShareDialog. What it calls: ShareLinkRow (the link and Copy link) and
- * SharePrivacyNote, shared with the whole-story dialog since IDEAS-1c.
+ * Who uses it: LoadedShareDialog. What it calls: ShareLinkRow (the link and Copy link),
+ * SharePrivacyNote and SendInMessagesLink, shared with the whole-story dialog.
  */
 import { useTranslation } from 'react-i18next';
 
@@ -21,6 +22,7 @@ import { brand } from '@/config/brand';
 import type { SharedChapter } from '../lib/sharedChapter';
 import { chapterShareLink } from '../lib/shareLink';
 
+import { SendInMessagesLink } from './SendInMessagesLink';
 import { ShareLinkRow } from './ShareLinkRow';
 import { SharePrivacyNote } from './SharePrivacyNote';
 import { SharingModal } from './SharingModal';
@@ -86,6 +88,7 @@ export function ShareDialog({ isOpen, onClose, chapter, wasCopied }: ShareDialog
       <SharePrivacyNote text={t('dialog.privacy')} />
       <div className="flex flex-col gap-2">
         <h3 className="m-0 eyebrow">{t('dialog.otherWays')}</h3>
+        <SendInMessagesLink link={link} countedChapter={chapter.address} />
         <p className="m-0 text-sm text-body">{t('dialog.quoteHint')}</p>
         <p className="m-0 text-sm text-body">{t('dialog.deviceNote')}</p>
       </div>
