@@ -250,6 +250,11 @@ test.describe('Story Atlas for readers (S1-E17-32 to S1-E17-35)', () => {
       expect(overflow, `${address} scrolls sideways`).toBeLessThanOrEqual(0);
       await page.context().close();
     }
+    // The story and the character get their names back, so the tests after this one read the
+    // same story as the tests before it.
+    runSql(`
+      update public.story_characters set name = 'Ana' where id = '${anaId}';
+      update public.stories set title = 'Moara de pe deal' where id = '${storyId}';`);
   });
 
   test('turning an area off takes it away from readers at once', async ({ browser }) => {
