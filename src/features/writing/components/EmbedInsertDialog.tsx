@@ -18,12 +18,12 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { TextInput } from '@/components/ui/TextInput';
-import { EmbedAddError } from '@/features/embeds/api/embeds';
 import { useEmbedAddition } from '@/features/embeds/hooks/useEmbeds';
 import { EMBED_SERVICE_NAMES, parseEmbedLink } from '@/lib/embed-links';
 
 import { useNativeDialog } from '../hooks/useNativeDialog';
 import { insertChapterEmbed } from '../lib/chapterEmbedNode';
+import { embedFailureMessage } from '../lib/embedFailure';
 
 /** Which item opened the dialog; null while it is closed. */
 export type EmbedDialogKind = 'music' | 'video' | null;
@@ -35,19 +35,6 @@ export interface EmbedInsertDialogProps {
   chapterId: string;
   kind: EmbedDialogKind;
   onClose: () => void;
-}
-
-/**
- * The plain message for a refused link.
- *
- * @returns the translation key and its values (editor namespace)
- */
-function failureMessage(error: unknown): { key: string; values?: Record<string, number> } {
-  if (!(error instanceof EmbedAddError)) return { key: 'embedDialog.failed.unreachable' };
-  if (error.failure === 'too_many') {
-    return { key: 'embedDialog.failed.too_many', values: { minutes: error.waitMinutes ?? 60 } };
-  }
-  return { key: `embedDialog.failed.${error.failure}` };
 }
 
 /**
@@ -99,7 +86,7 @@ export function EmbedInsertDialog(props: EmbedInsertDialogProps) {
   const { link, setLink, fieldError, adding, submit, close } = useEmbedInsert(props);
   const dialogRef = useNativeDialog(props.kind !== null);
   const kind = props.kind ?? 'video';
-  const failure = adding.error === null ? null : failureMessage(adding.error);
+  const failure = adding.error === null ? null : embedFailureMessage(adding.error);
   return (
     <dialog
       ref={dialogRef}

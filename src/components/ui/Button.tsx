@@ -18,7 +18,7 @@
  * Who uses it: every screen. Pass any normal <button> attribute (type, onClick, disabled). Links
  * drawn as buttons use buttonClassName() from buttonStyles.ts for the same look.
  */
-import type { ButtonHTMLAttributes } from 'react';
+import type { ButtonHTMLAttributes, Ref } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -29,6 +29,8 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> &
   ButtonLook & {
     /** True while the action runs: the label stays, a spinner shows and the button is disabled. */
     isLoading?: boolean;
+    /** The button element itself, for a screen that puts the focus back on it. */
+    ref?: Ref<HTMLButtonElement>;
   };
 
 /**

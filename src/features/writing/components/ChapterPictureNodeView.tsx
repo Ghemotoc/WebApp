@@ -5,11 +5,12 @@
  * Board values: a soft paper card with a 1 px border and 16 px padding; the picture (or a quiet
  * box while it can't be shown) with its check state as a pill in the top-left corner; the alt
  * text field (required, 300 characters, its hint linked); the note on what readers see with the
- * shield icon; and "Remove picture". The board's "Replace picture" is left out: remove it and
- * insert another (docs/board-fixes.md).
+ * shield icon; "Replace picture" (bundle GAPS-8: a new upload with its own check, in the same
+ * place with the same alt text) and "Remove picture".
  * The writer sees their own picture at every stage of its check; readers don't (S1-E10-05).
  * Who uses it: the chapterPicture node (lib/chapterPictureNode.ts) through TipTap's React node
- * views. What it calls: useMyPictureStates (the picture's state and a signed address).
+ * views. What it calls: useMyPictureStates (the picture's state and a signed address),
+ * PictureReplaceControl and useEditingChapterId (the chapter a new upload belongs to).
  */
 import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react';
 import { useTranslation } from 'react-i18next';
@@ -21,6 +22,10 @@ import { TextInput } from '@/components/ui/TextInput';
 import type { PictureState, PictureView } from '@/features/pictures/api/pictures';
 import { useMyPictureStates } from '@/features/pictures/hooks/useChapterPictures';
 import { MAXIMUM_ALT_TEXT_LENGTH } from '@/lib/chapter-pictures';
+
+import { useEditingChapterId } from '../lib/editingChapter';
+
+import { PictureReplaceControl } from './PictureReplaceControl';
 
 /** The pill's tone for each state. */
 const stateTone: Record<PictureState, PillTone> = {
@@ -63,6 +68,7 @@ export function ChapterPictureNodeView({ node, updateAttributes, deleteNode }: N
   const { t } = useTranslation('editor');
   const pictureId = String(node.attrs.pictureId ?? '');
   const alt = String(node.attrs.alt ?? '');
+  const chapterId = useEditingChapterId();
   const { pictures, loadFailed } = useMyPictureStates([pictureId]);
   const view = pictures[pictureId];
   const state = view?.state ?? 'checking';
@@ -91,6 +97,13 @@ export function ChapterPictureNodeView({ node, updateAttributes, deleteNode }: N
           {t(`picture.note.${state}`)}
         </span>
       </div>
+      {chapterId !== null && (
+        <PictureReplaceControl
+          chapterId={chapterId}
+          pictureId={pictureId}
+          onReplaced={(newPictureId) => updateAttributes({ pictureId: newPictureId })}
+        />
+      )}
       <div>
         <Button variant="destructive" onClick={() => deleteNode()}>
           {t('picture.remove')}

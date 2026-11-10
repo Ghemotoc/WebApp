@@ -259,6 +259,54 @@ test.describe('pictures in chapters (S1-E3-09)', () => {
     await page.context().close();
   });
 
+  test('Replace picture puts a new, checked picture in the same place with the same alt text (GAPS-8)', async ({
+    browser,
+  }) => {
+    const page = await openAs(browser, 'adult_writer', editorAddress);
+    const figure = page.getByRole('figure', { name: 'Picture in this chapter' }).first();
+    const before = /!\[Map of the hills\]\(picture:([0-9a-f-]{36})\)/.exec(
+      runSql(`select draft_body from public.chapters where id = '${chapterId}'`),
+    )?.[1];
+    await figure.getByRole('button', { name: 'Replace picture' }).click();
+
+    // A file that isn't a picture is refused in words; the picture stays.
+    await figure
+      .getByLabel('New picture')
+      .setInputFiles({ name: 'notes.txt', mimeType: 'text/plain', buffer: Buffer.from('x') });
+    await expect(figure.getByText("That file isn't a JPEG, PNG or WebP picture.")).toBeVisible();
+
+    // Cancel closes the field and gives the focus back to the button.
+    await figure.getByRole('button', { name: 'Cancel' }).click();
+    await expect(figure.getByRole('button', { name: 'Replace picture' })).toBeFocused();
+
+    // A real picture: uploaded and checked like a new one, in the same block.
+    await figure.getByRole('button', { name: 'Replace picture' }).click();
+    await figure
+      .getByLabel('New picture')
+      .setInputFiles({ name: 'dealuri.png', mimeType: 'image/png', buffer: tinyPng });
+    await expect(figure.getByText('Picture replaced.')).toBeVisible();
+    await expect(figure.getByLabel('New picture')).toHaveCount(0);
+    await expect(figure.getByRole('textbox', { name: 'Alt text (required)' })).toHaveValue(
+      'Map of the hills',
+    );
+    // The seed story is All ages, so the new picture waits for a moderator like any other.
+    await expect(figure.getByText('Waiting for a person')).toBeVisible();
+    await expect(page.getByRole('figure', { name: 'Picture in this chapter' })).toHaveCount(2);
+
+    // The block's own controls aren't the text, so this is saved by the 10-second autosave.
+    await expect(page.getByRole('region', { name: 'Saving' }).getByRole('status')).toHaveText(
+      /Saved at \d/,
+      { timeout: 20_000 },
+    );
+    const after = /!\[Map of the hills\]\(picture:([0-9a-f-]{36})\)/.exec(
+      runSql(`select draft_body from public.chapters where id = '${chapterId}'`),
+    )?.[1];
+    expect(after).toBeDefined();
+    expect(after).not.toBe(before);
+    expect(runSql(`select status from public.picture_checks where id = '${after}'`)).toBe('held');
+    await page.context().close();
+  });
+
   test('with picture uploads off there is no Picture button and no Insert menu', async ({
     browser,
   }) => {
