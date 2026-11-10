@@ -72,6 +72,7 @@ import { useStoryPreview } from '../hooks/useStoryPreview';
 import { ParagraphCommentsContext, type ParagraphComments } from '../lib/paragraphCommentsContext';
 import { toSharedChapter } from '../lib/toSharedChapter';
 
+import { AppOnlyNotice } from './AppOnlyNotice';
 import { ChapterBar } from './ChapterBar';
 import { ChapterComments } from './ChapterComments';
 import { ChapterEnd } from './ChapterEnd';
@@ -398,7 +399,10 @@ function ChapterReading({ chapter, spot }: { chapter: ReaderChapter; spot: SpotR
   );
 }
 
-/** What the page shows once the read has answered: the chapter, the teaser or why not. */
+/**
+ * What the page shows once the read has answered: the chapter, the teaser, the app only notice
+ * or why not.
+ */
 function ChapterShown(props: {
   storySlug: string;
   chapterCode: string;
@@ -408,6 +412,8 @@ function ChapterShown(props: {
   if (props.chapter === null) {
     return <ChapterMissing storySlug={props.storySlug} chapterCode={props.chapterCode} />;
   }
+  // GAPS-15: the writer chose "In the app only" and it applies, so no text came (S1-E4-09).
+  if (props.chapter.appOnly) return <AppOnlyNotice chapter={props.chapter} />;
   if (props.chapter.isTeaser) return <TeaserPage chapter={props.chapter} />;
   return <ChapterReading chapter={props.chapter} spot={props.spot} />;
 }

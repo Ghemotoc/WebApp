@@ -209,6 +209,8 @@ export const storySettingsSchema = newStoryShape
     cardColour: z.enum(cardColourKeys).nullable(),
     /** Who can read it (NEW-1); saved through its own function. */
     visibility: z.enum(storyVisibilities),
+    /** "In the app only" (S1-E3-08, GAPS-15); saved through its own function. */
+    isAppOnly: z.boolean(),
   })
   .superRefine(labelRules);
 

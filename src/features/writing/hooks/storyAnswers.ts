@@ -29,6 +29,11 @@ export interface StoryAnswers {
   completionStatus: 'ongoing' | 'completed';
   /** Who can read it (NEW-1); public for a new story, changed in its settings. */
   visibility: StoryVisibility;
+  /**
+   * "In the app only" (S1-E3-08, GAPS-15): saved now, applies once the apps exist and staff turn
+   * the 'app_only_stories' switch on; false for a new story.
+   */
+  isAppOnly: boolean;
   /** Whether readers may comment (S1-E3-05; enforced by S1-E6-01); on for a new story. */
   commentsEnabled: boolean;
   /** The quote card switch (S1-E4-07); since S1-E4-11 it covers passage links too. */

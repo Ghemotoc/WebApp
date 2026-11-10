@@ -3211,6 +3211,7 @@ CREATE TABLE IF NOT EXISTS "public"."stories" (
     "visibility" "public"."story_visibility" DEFAULT 'public'::"public"."story_visibility" NOT NULL,
     "first_published_year" integer,
     "writing_prompt_id" "uuid",
+    "is_app_only" boolean DEFAULT false NOT NULL,
     CONSTRAINT "stories_abuse_needs_rating_and_note" CHECK (((NOT "deals_with_abuse_or_coercion") OR (("rating" = ANY (ARRAY['16_plus'::"public"."story_rating", '18_plus'::"public"."story_rating"])) AND ("btrim"("content_note") <> ''::"text")))),
     CONSTRAINT "stories_blurb_length" CHECK (("char_length"("blurb") <= 500)),
     CONSTRAINT "stories_card_colour_on_palette" CHECK ((("card_colour" IS NULL) OR ("card_colour" = ANY (ARRAY['plum'::"text", 'violet'::"text", 'gold'::"text", 'ink'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text"])))),
@@ -3322,6 +3323,10 @@ COMMENT ON COLUMN "public"."stories"."first_published_year" IS 'The year the wor
 
 
 COMMENT ON COLUMN "public"."stories"."writing_prompt_id" IS 'The writing prompt this story was started from, or null (GAPS-12c).';
+
+
+
+COMMENT ON COLUMN "public"."stories"."is_app_only" IS 'The writer chose "In the app only" (S1-E3-08). Applies only while the app_only_stories flag is on (GAPS-15).';
 
 
 
@@ -23473,6 +23478,7 @@ declare
   place integer;
   text_to_send text;
   teaser_words integer;
+  app_only boolean;
 begin
   -- Step 1: the story, if this caller may read it (age, blocks, deleted, moderated).
   select * into story from public.reader_visible_story(story_slug);
@@ -23490,8 +23496,13 @@ begin
   from public.chapters as others
   where others.story_id = story.id and public.chapter_is_readable(others.id);
   place := array_position(readable_codes, chapter.code);
-  -- Step 4: the text: all of it for a signed-in reader, the teaser for a signed-out visitor.
-  if caller_id is not null then
+  -- Step 4: the text. GAPS-15: none on the web while "In the app only" applies, except for the
+  -- writer; otherwise all of it for a signed-in reader and the teaser for a signed-out visitor.
+  app_only := public.story_app_only_applies(story.is_app_only)
+    and story.user_id is distinct from caller_id;
+  if app_only then
+    text_to_send := '';
+  elsif caller_id is not null then
     text_to_send := chapter.published_body;
   else
     select coalesce((settings.value #>> '{}')::integer, 600) into teaser_words
@@ -23520,9 +23531,11 @@ begin
     'edited_at', chapter.edited_at,
     'minutes_to_read', greatest(1, ceil(coalesce(chapter.published_word_count, 0) / 200.0))::integer,
     'is_owner', story.user_id = caller_id,
-    'needs_sign_in', caller_id is null,
-    'is_teaser', caller_id is null,
-    'text_continues', public.word_total(text_to_send) < public.word_total(chapter.published_body),
+    'needs_sign_in', caller_id is null and not app_only,
+    'is_teaser', caller_id is null and not app_only,
+    'app_only', app_only,
+    'text_continues', not app_only
+      and public.word_total(text_to_send) < public.word_total(chapter.published_body),
     'body', text_to_send,
     'pictures', public.chapter_picture_states(text_to_send, story.user_id),
     'embeds', public.chapter_embed_states(text_to_send, story.user_id));
@@ -23635,6 +23648,10 @@ begin
   select * into story from public.stories where stories.slug = story_slug and stories.deleted_at is null;
   select * into chapter from public.chapters where chapters.story_id = story.id and chapters.code = chapter_code;
   if not public.story_shares_content(story.rating) then
+    return null;
+  end if;
+  -- GAPS-15 (S1-E3-08): no chapter text in a link preview while "In the app only" applies.
+  if public.story_app_only_applies(story.is_app_only) then
     return null;
   end if;
   -- Step 2: each block in the range: a lone picture as its alt text, anything else as text.
@@ -23773,6 +23790,8 @@ begin
     'is_public', public.story_has_readable_chapter(story.id),
     'chapters', public.story_page_chapters(story.id, is_owner),
     'is_owner', is_owner,
+    -- GAPS-15: the "In the app only" notice (S1-E3-08), only once the apps exist.
+    'app_only', public.story_app_only_applies(story.is_app_only),
     'stats', jsonb_build_object(
       'likes', public.story_like_total(story.id),
       'comments', public.story_comment_total(story.id))
@@ -40333,6 +40352,38 @@ COMMENT ON FUNCTION "public"."set_my_signature"("signature_text" "text", "pictur
 
 
 
+CREATE OR REPLACE FUNCTION "public"."set_my_story_app_only"("story_slug" "text", "wanted" boolean) RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target_story_id uuid;
+begin
+  -- Step 1: a signed-in writer who may write, and their own live story.
+  if (select auth.uid()) is null then
+    raise exception 'Sign in to change a story.' using errcode = 'insufficient_privilege';
+  end if;
+  if not public.is_active_member() then
+    return jsonb_build_object('outcome', 'not_active');
+  end if;
+  target_story_id := public.my_live_story_id(story_slug);
+  if target_story_id is null then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  -- Step 2: save it. Library entries and follows stay as they are (S1-E3-08).
+  update public.stories set is_app_only = coalesce(wanted, false) where stories.id = target_story_id;
+  return jsonb_build_object('outcome', 'ok');
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_my_story_app_only"("story_slug" "text", "wanted" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_my_story_app_only"("story_slug" "text", "wanted" boolean) IS 'The writer sets whether their story is read in the app only (S1-E3-08; GAPS-15).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."set_my_story_visibility"("story_slug" "text", "wanted" "public"."story_visibility") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -43698,6 +43749,21 @@ COMMENT ON FUNCTION "public"."stories_refresh_writer_rank"() IS 'Trigger: works 
 
 
 
+CREATE OR REPLACE FUNCTION "public"."story_app_only_applies"("chosen" boolean) RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(chosen, false) and public.is_feature_enabled('app_only_stories');
+$$;
+
+
+ALTER FUNCTION "public"."story_app_only_applies"("chosen" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_app_only_applies"("chosen" boolean) IS 'True when a story is set to app only and the app_only_stories flag is on (GAPS-15).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."story_as_shown"("target" "public"."stories") RETURNS "public"."stories"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -43803,7 +43869,9 @@ CREATE OR REPLACE FUNCTION "public"."story_card_json"("target_story_id" "uuid") 
       where chapters.story_id = target_story_id
         and chapters.status = 'published' and chapters.deleted_at is null
         and public.chapter_is_readable(chapters.id)),
-    'last_chapter_published_at', stories.last_chapter_published_at)
+    'last_chapter_published_at', stories.last_chapter_published_at,
+    -- GAPS-15: the "In the app only" cover label, only once the apps exist.
+    'app_only', public.story_app_only_applies(stories.is_app_only))
   -- S1-E11-08: the story as the caller may see it (a hidden title or cover masked). In FROM, so
   -- story_as_shown() runs once, not once per column ("(story_as_shown(raw)).*", QA-2a).
   from public.stories as raw
@@ -63773,6 +63841,11 @@ GRANT ALL ON FUNCTION "public"."set_my_signature"("signature_text" "text", "pict
 
 
 
+REVOKE ALL ON FUNCTION "public"."set_my_story_app_only"("story_slug" "text", "wanted" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_my_story_app_only"("story_slug" "text", "wanted" boolean) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."set_my_story_visibility"("story_slug" "text", "wanted" "public"."story_visibility") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_my_story_visibility"("story_slug" "text", "wanted" "public"."story_visibility") TO "authenticated";
 
@@ -64265,6 +64338,12 @@ REVOKE ALL ON FUNCTION "public"."stories_fingerprint"("owner_id" "uuid", "chosen
 
 
 REVOKE ALL ON FUNCTION "public"."stories_refresh_writer_rank"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."story_app_only_applies"("chosen" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."story_app_only_applies"("chosen" boolean) TO "anon";
+GRANT ALL ON FUNCTION "public"."story_app_only_applies"("chosen" boolean) TO "authenticated";
 
 
 

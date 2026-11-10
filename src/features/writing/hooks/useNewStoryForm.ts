@@ -44,6 +44,8 @@ function emptyAnswers(): StoryAnswers {
     completionStatus: 'ongoing',
     // NEW-1: a new story is public; the writer can change it in the story's settings.
     visibility: 'public',
+    // GAPS-15: a new story reads on the web and in the app; the choice is in its settings.
+    isAppOnly: false,
     commentsEnabled: true,
     quoteCardsEnabled: true,
     pictureSharingEnabled: true,

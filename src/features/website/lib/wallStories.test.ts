@@ -30,6 +30,7 @@ function story(id: string, rating: ListedStory['rating']): ListedStory {
     drawnCover: null,
     chapterCount: 1,
     lastChapterPublishedAt: null,
+    appOnly: false,
   };
 }
 

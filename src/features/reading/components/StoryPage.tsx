@@ -133,6 +133,12 @@ export function StoryPage() {
           {/* A moderator confirmed this story copies a published work (S1-E10-08). */}
           <CopiedWorkNote storyId={story.id} />
           <StoryHeader story={story} />
+          {/* GAPS-15 (S1-E3-08): the chapters open in the app; the list stays to browse. */}
+          {story.appOnly && (
+            <Notice tone="info">
+              {t('storyPage.appOnly', { writer: story.writer.displayName })}
+            </Notice>
+          )}
           <StoryChapterList
             chapters={story.chapters}
             isOwner={story.isOwner}

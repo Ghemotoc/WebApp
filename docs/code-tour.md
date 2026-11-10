@@ -2653,3 +2653,16 @@ The account gate is the one place minors are held back: while `adults_only` is o
 - Resources: `/resources` (`ResourcesPage`), from the avatar menu (`AccountMenu`). It links to the writers' rights page, lists every how-to guide and ends with More help.
 - The guides and the rights page are CMS help pages (rule 4): keys `how-to-…` and `writers-rights`, in ro and en for the Romanian market. The migration publishes version 1 and admins edit them in Staff › Website › Help pages. Both pages read them through `useWebsiteContent('help_page', …)`, and each guide opens at `/help/<key>` (`HelpPageView`).
 - Migration `…_g9a_writers_hub.sql`. Tests: `supabase/tests/database/317-writers-hub.test.sql`, `src/features/hub/lib/hubDates.test.ts`, `src/features/hub/lib/howToGuides.test.ts`, `e2e/writers-hub.spec.ts`.
+
+### App only stories (GAPS-15)
+
+A writer picks "Where can people read this story?" in the story's settings
+(`src/features/writing/components/StoryReadOnSection.tsx`); `updateMyStory()` saves it last through
+`set_my_story_app_only()` into `stories.is_app_only`. Nothing changes for readers until staff turn
+the `app_only_stories` flag on (it waits for the apps): `story_app_only_applies()` is the one place
+that checks both. Then `get_chapter()` sends no text to anyone but the writer and says `app_only`,
+so `ChapterReaderPage` shows `AppOnlyNotice`; `get_shared_passage()` (and so link previews of
+passages and pictures) answers nothing; `get_story_page()` and `story_card_json()` carry `app_only`
+for the notice on the story page and the "In the app only" pill on cards
+(`ListedStoryCard`, `StoryHeader`). Tests: `supabase/tests/database/342-app-only.test.sql` and
+`e2e/app-only.spec.ts`.

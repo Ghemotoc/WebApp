@@ -33,6 +33,7 @@ function storiesOf(count: number): ListedStory[] {
     drawnCover: null,
     chapterCount: 1,
     lastChapterPublishedAt: null,
+    appOnly: false,
   }));
 }
 

@@ -7,6 +7,8 @@
  * design (S1-E3-13). An uploaded cover shows through StoryCoverArt once it passes its check
  * (S1-E10-05). Beside the status pill sits the writer's gold rank pill (IDEAS-3a), when the
  * database sends one: never for a classic, a writer who blocked the reader or a private profile.
+ * An "In the app only" pill shows when the writer chose it and the switch for it is on (GAPS-15;
+ * Q4, 16 Oct 2026: the label shows wherever stories appear on the website).
  * Who uses it: DiscoverShelf and StoryGrid.
  */
 import type { DrawnCoverChoice } from '@/components/covers/coverDesigns';
@@ -50,6 +52,7 @@ export function ListedStoryCard(props: {
           {story.completionStatus === 'ongoing' && (
             <InfoPill tone="sage">{t('status.ongoing', { ns: 'writing' })}</InfoPill>
           )}
+          {story.appOnly && <InfoPill tone="plum">{t('card.appOnly')}</InfoPill>}
           {story.writer.rank !== null && <RankChip rank={story.writer.rank} />}
         </span>
       }

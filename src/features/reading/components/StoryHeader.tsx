@@ -101,6 +101,8 @@ function StoryPills({ story }: { story: StoryPageData }) {
       {story.completionStatus === 'ongoing' && (
         <InfoPill tone="sage">{t('status.ongoing', { ns: 'writing' })}</InfoPill>
       )}
+      {/* GAPS-15: the board's "App only" pill, once the switch for it is on (S1-E3-08). */}
+      {story.appOnly && <InfoPill tone="sky">{t('storyPage.appOnlyPill')}</InfoPill>}
       <StoryLabelPills labels={story.labels} />
     </div>
   );

@@ -111,6 +111,7 @@ As a writer, I want to choose whether people can read my story in a browser or o
 
 - **Priority:** Must · **Size:** M · **Depends on:** S1-E3-01, S1-E3-05, S1-E4-04
 - **Added:** 16 Oct 2026, Robert's decision (chat).
+- **Built:** GAPS-15 (10 Nov 2026), behind the `app_only_stories` switch, off until the apps exist. The choice is in the story's settings only (docs/board-fixes.md).
 - **Acceptance criteria:**
   - Given story creation and story settings, when the writer sets "Where can people read this story?", then the options are "On the web and in the app" (default) and "In the app only", each with a one-line explanation.
   - Given an app-only story on the web, when anyone opens it, then they see the cover, title, blurb, writer and chapter list, but no chapter text, and opening a chapter shows the app-only notice (S1-E4-09).
