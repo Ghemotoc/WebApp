@@ -44879,6 +44879,32 @@ COMMENT ON FUNCTION "public"."writer_reader_stops"("target_chapter_id" "uuid", "
 
 
 
+CREATE OR REPLACE FUNCTION "public"."writers_hub_contests"() RETURNS TABLE("contest_id" "uuid", "name_ro" "text", "name_en" "text", "page_slug" "text", "entries_close_on" "date", "word_limit" integer, "prize_ro" "text", "prize_en" "text")
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select contests.id, contests.name_ro, contests.name_en, pages.slug,
+    contests.entries_close_on, contests.word_limit, contests.prize_ro, contests.prize_en
+  from public.contests
+  join public.landing_pages as pages on pages.id = contests.landing_page_id
+  -- Step 1: only signed-in writers; a visitor sees the contest on its landing page instead.
+  where (select auth.uid()) is not null
+    -- Step 2: the contest takes entries today and its landing page still shows.
+    and public.contest_takes_entries_today(contests)
+    and pages.archived_at is null
+    -- Step 3: the writer's age group and market are among the contest's (criterion 1).
+    and public.contest_writer_fits(contests)
+  order by contests.entries_close_on, contests.name_en;
+$$;
+
+
+ALTER FUNCTION "public"."writers_hub_contests"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."writers_hub_contests"() IS 'The contests the signed-in writer can enter today, for the Writers'' hub (G9a; S1-E11-15 rules).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."writers_published_by_market"("for_day" "date") RETURNS TABLE("market" "text", "writer_count" integer)
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -60561,6 +60587,11 @@ REVOKE ALL ON FUNCTION "public"."writer_loved_lines"("target_chapter_id" "uuid",
 
 
 REVOKE ALL ON FUNCTION "public"."writer_reader_stops"("target_chapter_id" "uuid", "writer_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."writers_hub_contests"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."writers_hub_contests"() TO "authenticated";
 
 
 

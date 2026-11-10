@@ -5,7 +5,7 @@
  * new)"; canvas Discover board).
  *
  * Below 1024 px AppLayout draws this instead of the website top bar, together with the floating
- * TabBar at the bottom. The logo pill is the link home; the right-hand pill holds the bell, the
+ * TabBar at the bottom. The logo pill is the link home (the Writers' hub when signed in, G9a); the right-hand pill holds the bell, the
  * chats button and the account bead while signed in, or "Log in" and "Join for free" for a
  * visitor. Each control is 44 px, the handoff's touch size (WCAG 2.5.8 asks for 24 px at least).
  * Who uses it: AppLayout. What it calls: BrandMark, NotificationBell, MessagesHeaderLink and
@@ -17,6 +17,7 @@ import { Link } from 'react-router';
 import { brand } from '@/config/brand';
 import { AccountLinks } from '@/features/auth/components/AccountLinks';
 import { BrandMark } from '@/features/branding/components/BrandMark';
+import { useHomeAddress } from '@/features/hub/hooks/useHomeAddress';
 import { MessagesHeaderLink } from '@/features/messages/components/MessagesHeaderLink';
 import { NotificationBell } from '@/features/notifications/components/NotificationBell';
 
@@ -27,11 +28,13 @@ import { NotificationBell } from '@/features/notifications/components/Notificati
  */
 export function PhoneHeader() {
   const { t } = useTranslation();
+  // Signed in, the logo opens the Writers' hub; signed out, the public home page (G9a).
+  const homeAddress = useHomeAddress();
   return (
     <header className="relative z-10 flex items-center justify-between gap-2 px-3.5 pt-4">
       {/* The logo pill: the way home, named for screen readers as on the board. */}
       <Link
-        to="/"
+        to={homeAddress}
         aria-label={t('shell.home', { productName: brand.productName })}
         className="glass-pill inline-flex h-13 items-center rounded-full pr-4 pl-2.5 font-heading text-[19px] font-bold text-heading no-underline"
       >

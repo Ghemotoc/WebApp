@@ -1,0 +1,78 @@
+{
+  "hub": {
+    "documentTitle": "Writers’ hub · {{productName}}",
+    "eyebrow": "Writers’ hub · {{day}}",
+    "heading": "Everything for the next chapter.",
+    "intro": "Open contests, step-by-step guides and the tools for planning and sharing stories.",
+    "startWriting": "Start writing",
+    "resources": "Resources",
+    "signedOut": "Log in to see contests, guides and writing tools.",
+    "signedOutEyebrow": "Writers’ hub",
+    "logIn": "Log in",
+    "contests": {
+      "eyebrow": "Contest · open now",
+      "emptyEyebrow": "Contests",
+      "closesToday": "Closes today",
+      "closesIn_one": "Closes in {{count}} day",
+      "closesIn_few": "Closes in {{count}} days",
+      "closesIn_other": "Closes in {{count}} days",
+      "wordLimit_one": "Up to {{words}} word",
+      "wordLimit_few": "Up to {{words}} words",
+      "wordLimit_other": "Up to {{words}} words",
+      "prize": "Prize: {{prize}}",
+      "howToEnter": "Enter a story from its story settings, under Contests.",
+      "open": "See the contest",
+      "openLabel": "See the contest: {{name}}",
+      "none": "No contest is open for entries right now. New contests show here.",
+      "loadFailed": "We couldn’t load the contests. Check the connection and try again."
+    },
+    "guides": {
+      "eyebrow": "How-to guides",
+      "seeEvery": "See every guide",
+      "previous": "Previous guides",
+      "next": "Next guides",
+      "regionLabel": "How-to guides, two at a time. The arrows show the next two.",
+      "position": "Guides {{first}} to {{last}} of {{total}}",
+      "steps": "Step by step",
+      "none": "The guides are on their way. Meanwhile, the Help centre has the answers."
+    },
+    "tools": {
+      "eyebrow": "Tools",
+      "atlasTitle": "Story Atlas",
+      "atlasLine": "Plan characters, places and chapters",
+      "writeTitle": "Writing",
+      "writeLine": "Stories, drafts and statistics",
+      "downloadTitle": "Download stories",
+      "downloadLine": "Word, PDF and EPUB copies",
+      "helpTitle": "Help centre",
+      "helpLine": "Answers to common questions"
+    }
+  },
+  "resources": {
+    "documentTitle": "Resources · {{productName}}",
+    "heading": "Resources",
+    "intro": "Know the way around: writers’ rights, step-by-step guides and where to get help.",
+    "rights": {
+      "heading": "Writers’ rights",
+      "body": "Stories stay with the people who write them. Writers keep every right to their work. We show it only where the writer chooses, and every story can be downloaded at any time.",
+      "link": "Read writers’ rights in full"
+    },
+    "guides": {
+      "heading": "How-to guides",
+      "intro": "Step-by-step help with using {{productName}}.",
+      "none": "The guides are on their way. Meanwhile, the Help centre has the answers.",
+      "loadFailed": "We couldn’t load the guides. Check the connection and try again."
+    },
+    "more": {
+      "heading": "More help",
+      "helpTitle": "Help centre",
+      "helpLine": "Answers to common questions",
+      "guidelinesTitle": "Community guidelines",
+      "guidelinesLine": "What’s allowed and what isn’t",
+      "contactTitle": "Contact us",
+      "contactLine": "Write to the {{productName}} team",
+      "legalTitle": "Privacy and terms",
+      "legalLine": "How we handle data, and the rules of the platform"
+    }
+  }
+}

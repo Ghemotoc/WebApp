@@ -503,6 +503,21 @@ const parentConsentRoutes: RouteObject[] = [
 ];
 
 /**
+ * The Writers' hub, the signed-in home the logo opens, and Resources, opened from the account menu
+ * (bundle G9 WRITING, part a), both loaded when opened.
+ */
+const hubRoutes: RouteObject[] = [
+  lazyPage(
+    '/hub',
+    async () => (await import('@/features/hub/components/WritersHubPage')).WritersHubPage,
+  ),
+  lazyPage(
+    '/resources',
+    async () => (await import('@/features/hub/components/ResourcesPage')).ResourcesPage,
+  ),
+];
+
+/**
  * Notifications (S1-E7-01), loaded when opened; the bell in the top bar links here. And the
  * one-click unsubscribe from a notification email (S1-E7-02), which works signed out.
  */
@@ -1228,6 +1243,7 @@ function pageRoutes(): RouteObject[] {
     ...ageCheckRoutes,
     ...parentConsentRoutes,
     ...notificationRoutes,
+    ...hubRoutes,
     // My reports and decisions (S1-E10-04): statements of reasons and the reports a person sent;
     // a decision's notification links here. Loaded when opened.
     {

@@ -181,6 +181,7 @@ Every section, in the order it was built (QA-5, finding R4). Search this list fo
 - [Handing a space over to a moderator (IDEAS-3e)](#handing-a-space-over-to-a-moderator-ideas-3e)
 - [The waiting list (WAITLIST-1)](#the-waiting-list-waitlist-1)
 - ["Tell me when you open here" (G5a)](#tell-me-when-you-open-here-g5a)
+- [The Writers' hub and Resources (G9a)](#the-writers-hub-and-resources-g9a)
 
 </details>
 
@@ -2575,3 +2576,11 @@ The account gate is the one place minors are held back: while `adults_only` is o
 - Clean-up: `purge_opening_list()` (pg_cron, 03:59 UTC) deletes unconfirmed addresses after 7 days and the rest 7 days after their opening email (`opening_list_keep_days`).
 - Staff › Waitlist: `OpeningListCounts` → `api/staffOpeningList.ts` → `admin_opening_list_counts()`: numbers by country, never an address.
 - Migration `…_g5a_opening_list.sql`. Tests: `supabase/tests/database/313-opening-list.test.sql`, `server/opening-list.test.ts`, `src/features/auth/components/OpeningListForm.test.tsx`.
+
+## The Writers' hub and Resources (G9a)
+
+- The signed-in home: `/hub` (`WritersHubPage`). The logo in `TopBar` and `PhoneHeader` asks `useHomeAddress()`, which gives `/hub` while signed in and `/` otherwise. A visitor who opens `/hub` signed out sees a log-in line.
+- The page, top to bottom: `HubHero` (the day from `formatHubDay()`, Start writing and Resources), `HubContests` → `useHubContests()` → `api/hubContests.ts` → `writers_hub_contests()` (open contests the signed-in writer's age group and market may enter, with the landing page address), `HubGuides` (the how-to guides two at a time, arrows from `lib/howToGuides.ts`) and `HubTools` (Story Atlas, Writing, Download stories, Help centre).
+- Resources: `/resources` (`ResourcesPage`), from the avatar menu (`AccountMenu`). It links to the writers' rights page, lists every how-to guide and ends with More help.
+- The guides and the rights page are CMS help pages (rule 4): keys `how-to-…` and `writers-rights`, in ro and en for the Romanian market. The migration publishes version 1 and admins edit them in Staff › Website › Help pages. Both pages read them through `useWebsiteContent('help_page', …)`, and each guide opens at `/help/<key>` (`HelpPageView`).
+- Migration `…_g9a_writers_hub.sql`. Tests: `supabase/tests/database/317-writers-hub.test.sql`, `src/features/hub/lib/hubDates.test.ts`, `src/features/hub/lib/howToGuides.test.ts`, `e2e/writers-hub.spec.ts`.

@@ -3,7 +3,7 @@
  * design/boards/Main.dc.html shows a round avatar button there).
  *
  * The panel starts with the person's name and @username, a link to their own public profile, then
- * "Edit profile" (Settings › Profile), Settings and Log out (bundle NAV-1; Robert, 6 Nov 2026,
+ * "Edit profile" (Settings › Profile), Settings, Resources (G9a) and Log out (bundle NAV-1; Robert, 6 Nov 2026,
  * 18:40 UTC: "when you press on the name, it should go to the public profile. But then, in the
  * dropdown, you also have the option to go to the settings profile"). Before a username is chosen
  * there is no public profile yet, so the name row and "Edit profile" are left out.
@@ -183,9 +183,13 @@ export function AccountMenu({ initial, name, handle }: AccountMenuProps) {
             </Link>
           </>
         )}
-        {/* Step 2: every setting, and logging out. */}
+        {/* Step 2: every setting, Resources (writers' rights and the how-to guides, G9a; Robert,
+            9 Nov 2026: "a separate Resources page from the avatar menu"), and logging out. */}
         <Link to="/settings" className={rowClasses} onClick={() => setIsOpen(false)}>
           {t('nav.settings')}
+        </Link>
+        <Link to="/resources" className={rowClasses} onClick={() => setIsOpen(false)}>
+          {t('nav.resources')}
         </Link>
         <button type="button" className={rowClasses} onClick={() => void logOut()}>
           {t('nav.logOut')}

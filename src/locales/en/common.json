@@ -48,6 +48,7 @@
     "viewProfile": "View public profile",
     "editProfile": "Edit profile",
     "settings": "Settings",
+    "resources": "Resources",
     "logIn": "Log in",
     "accountWithInitials": "Account, {{initials}}",
     "logOut": "Log out",
