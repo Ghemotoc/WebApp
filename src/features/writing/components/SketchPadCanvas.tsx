@@ -9,7 +9,6 @@
  * Who uses it: DrawingInsertDialog. What it calls: paintDrawing() in lib/sketchPad.ts.
  */
 import { useEffect, useState, type KeyboardEvent, type PointerEvent, type RefObject } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import {
   SKETCH_HEIGHT,
@@ -18,6 +17,7 @@ import {
   type SketchPoint,
   type SketchStroke,
 } from '../lib/sketchPad';
+import { useEditorTranslation } from '../registerEditorTranslations';
 
 /** What the sheet needs. */
 export interface SketchPadCanvasProps {
@@ -40,7 +40,7 @@ export interface SketchPadCanvasProps {
  */
 export function SketchPadCanvas(props: SketchPadCanvasProps) {
   const { canvasRef, strokes, keyboardPen } = props;
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   const [hasFocus, setHasFocus] = useState(false);
 
   // Step 1: repaint the whole drawing whenever the strokes change (a few hundred lines at most).

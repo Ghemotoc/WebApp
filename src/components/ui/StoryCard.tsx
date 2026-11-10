@@ -61,15 +61,20 @@ export function StoryCard({
     />
   );
   return (
-    <a href={href} className={`flex ${isFluid ? 'w-full' : 'w-[196px]'} flex-col no-underline`}>
+    // min-w-0 with break-words on the title: a title that is one long word wraps inside the card
+    // instead of running over the next one (GAPS-6 break test, 10 Nov 2026).
+    <a
+      href={href}
+      className={`flex ${isFluid ? 'w-full' : 'w-[196px]'} min-w-0 flex-col no-underline`}
+    >
       {wrapCover === undefined ? drawnCover : wrapCover(drawnCover)}
       {pill !== undefined && <span className="mt-3">{pill}</span>}
       <span
-        className={`${pill === undefined ? 'mt-3' : 'mt-2'} font-heading text-base font-semibold text-ink`}
+        className={`${pill === undefined ? 'mt-3' : 'mt-2'} font-heading text-base font-semibold break-words text-ink`}
       >
         {title}
       </span>
-      <span className="mt-0.5 text-[13px] text-meta">{metaLine}</span>
+      <span className="mt-0.5 text-[13px] break-words text-meta">{metaLine}</span>
     </a>
   );
 }

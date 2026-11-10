@@ -68,7 +68,8 @@
     "nothingYet": "Nothing published yet",
     "noWriters": "You don't follow any writers yet. Use “Follow” on a writer's profile.",
     "noStories": "You don't follow any stories yet. Use “Follow story” on a story's page.",
-    "new": "New"
+    "new": "New",
+    "notificationSettings": "Notification settings"
   },
   "button": {
     "label": "Library",
@@ -122,5 +123,64 @@
     "sentNote": "Sent. The writer will see that you finished their story.",
     "failed": "We couldn’t send it. Try again.",
     "notActive": "You can send this once your account is ready to take part."
+  },
+  "lists": {
+    "heading": "Reading lists",
+    "intro": "Group stories under any name. A list stays private until you make it public.",
+    "empty": "No lists yet. Make one, then add stories from a story's page.",
+    "loadFailed": "The reading lists couldn't be loaded. Check your connection and try again.",
+    "count_one": "{{count}} story",
+    "count_few": "{{count}} stories",
+    "count_other": "{{count}} stories",
+    "seenBy": {
+      "onlyYou": "Only you",
+      "public": "Anyone with the link"
+    },
+    "new": {
+      "button": "New list",
+      "nameLabel": "List name",
+      "nameHint": "Up to 60 characters.",
+      "create": "Create list",
+      "cancel": "Cancel"
+    },
+    "add": {
+      "button": "Add to a list",
+      "none": "No lists yet."
+    },
+    "errors": {
+      "nameLength": "A list name has 1 to 60 characters.",
+      "nameHtml": "A list name is plain text, with no HTML.",
+      "nameTaken": "Another list has that name. Choose a different one.",
+      "tooManyLists": "You have the most lists an account can hold. Delete one to make room.",
+      "tooManyStories": "This list is full. Take a story out to make room.",
+      "notActive": "This account can't make a list public right now.",
+      "saveFailed": "That didn't save. Try again."
+    },
+    "page": {
+      "documentTitle": "{{name}} · {{productName}}",
+      "breadcrumb": "Where this list sits",
+      "unknown": "There is no such list",
+      "unknownBody": "It may be private, or it was deleted.",
+      "backToLibrary": "Back to the Library",
+      "madeBy": "A list by",
+      "reportLabel": "the reading list “{{name}}”",
+      "toolsHeading": "Manage list",
+      "nameLabel": "List name",
+      "saveName": "Save name",
+      "saved": "Saved",
+      "audienceLabel": "Who sees it",
+      "audienceHint": "A public list shows its name, the stories in it and the username of whoever made it.",
+      "entriesHeading": "Stories in this list",
+      "remove": "Remove",
+      "removeLabel": "Remove {{title}} from this list",
+      "delete": "Delete list",
+      "deleteQuestion": "Delete “{{name}}”? The stories stay where they are.",
+      "deleteYes": "Yes, delete",
+      "deleteKeep": "Keep",
+      "emptyTitle": "No stories yet",
+      "emptyOwn": "Use “Add to a list” on a story's page.",
+      "emptyOther": "Nothing in this list is open to you right now.",
+      "discover": "Find stories"
+    }
   }
 }

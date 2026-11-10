@@ -23,9 +23,9 @@ import {
   type KeyboardEvent,
   type RefObject,
 } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { ActionIcon, type ActionIconName } from '@/components/icons/ActionIcon';
+import { useEditorTranslation } from '../registerEditorTranslations';
 
 /** One item of the menu. */
 export interface InsertMenuItem {
@@ -111,7 +111,7 @@ function useStayOnScreen() {
 /** The open menu: one row per item, each with its line icon, name and note. */
 function InsertMenuPanel(props: InsertMenuPanelProps) {
   const { menuRef, menuId, items, footnote, onKeyDown, onPicked } = props;
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   const { panelRef, shift } = useStayOnScreen();
   // The footnote sits outside the menu role (a menu holds only items) and describes it.
   const footnoteId = `${menuId}-note`;
@@ -176,7 +176,7 @@ function InsertMenuPanel(props: InsertMenuPanelProps) {
  * @returns the menu button; nothing when there are no items
  */
 export function InsertMenu({ items, footnote }: { items: InsertMenuItem[]; footnote?: string }) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   const menuId = useId();
   const buttonRef = useRef<HTMLButtonElement>(null);
   const { isOpen, setOpen, wrapperRef, menuRef } = useMenuState();

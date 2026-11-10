@@ -31,6 +31,7 @@ import { hasInk } from '../lib/sketchPad';
 
 import { SketchPadCanvas } from './SketchPadCanvas';
 import { SketchTools } from './SketchTools';
+import { useEditorTranslation } from '../registerEditorTranslations';
 
 /** What the dialog needs. */
 export interface DrawingInsertDialogProps {
@@ -121,7 +122,7 @@ function DrawingFields(props: {
   missing: MissingParts | null;
   onAltChange: (alt: string) => void;
 }) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   return (
     <>
       <TextInput
@@ -146,7 +147,7 @@ function DrawingSketch(props: {
   canvasRef: RefObject<HTMLCanvasElement | null>;
   isInkMissing: boolean;
 }) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   const { pad } = props;
   return (
     <>
@@ -177,7 +178,7 @@ function DrawingSketch(props: {
  * @returns the dialog element (closed when isOpen is false)
  */
 export function DrawingInsertDialog(props: DrawingInsertDialogProps) {
-  const { t } = useTranslation('editor');
+  const { t } = useEditorTranslation();
   const { t: tCommon } = useTranslation();
   const drawing = useDrawingInsert(props);
   const dialogRef = useNativeDialog(props.isOpen);

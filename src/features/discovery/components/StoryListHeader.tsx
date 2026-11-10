@@ -50,9 +50,10 @@ function ListBreadcrumb({ title }: { title: string }) {
             {t('seeAll.discover')}
           </Link>
         </li>
-        <li className="flex min-w-0 items-center gap-2">
+        {/* max-w-full and min-w-0 let one long word wrap inside a phone screen (GAPS-6 break test). */}
+        <li className="flex max-w-full min-w-0 items-center gap-2">
           <span aria-hidden="true">/</span>
-          <span aria-current="page" className="break-words text-heading">
+          <span aria-current="page" className="min-w-0 break-words text-heading">
             {title}
           </span>
         </li>

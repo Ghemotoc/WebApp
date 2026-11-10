@@ -8,13 +8,13 @@
  * Who uses it: EditorAside.
  */
 import type { TFunction } from 'i18next';
-import { useTranslation } from 'react-i18next';
 
 import { CheckIcon } from '@/components/icons/CheckIcon';
 import { dateLocaleFor } from '@/lib/romania-time';
 import { MAXIMUM_CHAPTER_CHARACTERS, MAXIMUM_CHAPTER_TITLE_LENGTH } from '@/schemas/chapter';
 
 import type { SaveState } from '../hooks/useAutosave';
+import { useEditorTranslation } from '../registerEditorTranslations';
 
 /** The box's tone per state, written out so Tailwind finds the classes. */
 const toneClasses: Record<SaveState['kind'], string> = {
@@ -63,7 +63,7 @@ function statusText(state: SaveState, t: TFunction<'editor'>, language: string):
  * @returns the role="status" paragraph
  */
 export function SaveStatus({ state }: { state: SaveState }) {
-  const { t, i18n } = useTranslation('editor');
+  const { t, i18n } = useEditorTranslation();
   return (
     <p
       role="status"

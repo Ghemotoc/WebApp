@@ -33,6 +33,8 @@ const FIRST_PARAGRAPH_BUDGET_MS = 2000;
  * cold download is what a reader on a phone waits for, so that is what is budgeted now. The
  * compressed sizes are budgeted too, by `npm run bundle:check` (scripts/check-bundle-size.ts).
  * Measured after QA-6: about 1,242 KB in 45 files (324 KB compressed); the budget leaves room.
+ * GAPS-6 (10 Nov 2026): the load had crept to 1,300 KB as texts were added; the chapter editor's
+ * texts (21 KB) no longer travel with every first page, which brought it back to about 1,280 KB.
  */
 const READER_SCRIPT_BUDGET_KB = 1300;
 
