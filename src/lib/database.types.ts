@@ -9165,6 +9165,7 @@ export type Database = {
         };
         Returns: number;
       };
+      add_plan_act: { Args: { act_name: string; story_slug: string }; Returns: Json };
       add_reading_minute: { Args: Record<PropertyKey, never>; Returns: number };
       add_story_event: {
         Args: {
@@ -11813,6 +11814,7 @@ export type Database = {
       delete_conversation: { Args: { other_handle: string }; Returns: Json };
       delete_forum_post: { Args: { post_id: string }; Returns: Json };
       delete_my_story: { Args: { story_slug: string }; Returns: Json };
+      delete_plan_act: { Args: { act_id: string; story_slug: string }; Returns: Json };
       delete_story_character: { Args: { character_id: string }; Returns: Json };
       delete_story_event: { Args: { event_id: string }; Returns: Json };
       delete_story_idea: { Args: { idea_id: string }; Returns: Json };
@@ -13897,6 +13899,10 @@ export type Database = {
       rename_chapter: { Args: { chapter_code: string; title: string }; Returns: Json };
       rename_character_detail_group: {
         Args: { group_name: string; new_name: string; story_slug: string };
+        Returns: Json;
+      };
+      rename_plan_act: {
+        Args: { act_id: string; act_name: string; story_slug: string };
         Returns: Json;
       };
       renumber_story_chapters: { Args: { target_story_id: string }; Returns: undefined };

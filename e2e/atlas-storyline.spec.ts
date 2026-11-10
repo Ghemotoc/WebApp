@@ -9,6 +9,9 @@
  * - the move buttons move a card within and between acts, and a drag does the same; a move that
  *   renumbers published chapters asks first, and "Keep the order" changes nothing;
  * - "Add chapter" adds a draft at the end of its act;
+ * - "Add act" adds a column, "Edit act" renames it, and deleting it asks first and moves its
+ *   chapters to "No act" without deleting any (GAPS-2a); a double click adds one act and another
+ *   act's name is refused in plain words;
  * - a chapter told by the Narrator says so on the board and has its own lane (G10c2);
  * - the timeline adds, sorts, changes and deletes events beside dated chapters, and lists the
  *   undated chapters apart (S1-E17-20);
@@ -353,6 +356,68 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
       runSql(`select pov_is_narrator from public.chapter_plans
         where chapter_id = (select id from public.chapters where code = 'e2estor3')`),
     ).toBe('f');
+    await page.context().close();
+  });
+
+  test('a writer adds an act, renames it and deletes it; its chapter stays in the book (GAPS-2a)', async ({
+    browser,
+  }) => {
+    const page = await openAs(browser, 'adult_writer', storylineAddress);
+    await showView(page, 'Board');
+    const chapterCount = () =>
+      runSql(`select count(*) from public.chapters where deleted_at is null
+        and story_id = (select id from public.stories where slug = '${slug}')`);
+    // "Add act" opens a small form; an empty name waits with a plain message.
+    await page.getByRole('button', { name: 'Add act', exact: true }).click();
+    await expect(page.getByRole('textbox', { name: 'Act name' })).toBeFocused();
+    await page.getByRole('button', { name: 'Add', exact: true }).click();
+    await expect(page.getByText('Give the act a name.')).toBeVisible();
+    // Break test (10 Nov 2026): another act's name is refused in plain words, capitals aside,
+    // and a double click on "Add" adds one act.
+    await page.getByRole('textbox', { name: 'Act name' }).fill('act ii');
+    await page.getByRole('button', { name: 'Add', exact: true }).click();
+    await expect(page.getByText('Another act has that name. Try a different one.')).toBeVisible();
+    await page.getByRole('textbox', { name: 'Act name' }).fill('Epilogue');
+    await page.getByRole('button', { name: 'Add', exact: true }).dblclick();
+    // The new act is a column after the others, before "No act".
+    await expect(page.getByTestId('atlas-board-column').getByRole('heading')).toHaveText([
+      'Act I',
+      'Act II',
+      'Act III',
+      'Epilogue',
+      'No act',
+    ]);
+    await page.getByRole('button', { name: 'Add chapter to Epilogue', exact: true }).click();
+    const epilogue = page.getByRole('region', { name: 'Epilogue', exact: true });
+    await expect(epilogue.getByTestId('atlas-board-card')).toHaveCount(1);
+    const chaptersBefore = chapterCount();
+    // "Edit act" renames it.
+    await page.getByRole('button', { name: 'Edit act: Epilogue', exact: true }).click();
+    await page.getByRole('textbox', { name: 'Act name' }).fill('Act I');
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await expect(page.getByText('Another act has that name. Try a different one.')).toBeVisible();
+    await page.getByRole('textbox', { name: 'Act name' }).fill('Aftermath');
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    const aftermath = page.getByRole('region', { name: 'Aftermath', exact: true });
+    await expect(aftermath.getByTestId('atlas-board-card')).toHaveCount(1);
+    // Deleting asks first; "Keep act" changes nothing.
+    await page.getByRole('button', { name: 'Edit act: Aftermath', exact: true }).click();
+    await aftermath.getByRole('button', { name: 'Delete act', exact: true }).click();
+    const question = aftermath.getByRole('group', { name: 'Delete act' });
+    await expect(question).toContainText(
+      'Delete Aftermath? 1 chapter stays in the book, under No act.',
+    );
+    await question.getByRole('button', { name: 'Keep act' }).click();
+    await expect(aftermath).toBeVisible();
+    // Deleting it moves its chapter to "No act"; no chapter is deleted.
+    const noActBefore = (await columnTitles(page, 'No act')).length;
+    await aftermath.getByRole('button', { name: 'Delete act', exact: true }).click();
+    await question.getByRole('button', { name: 'Delete act', exact: true }).click();
+    await expect(aftermath).toHaveCount(0);
+    await expect
+      .poll(async () => (await columnTitles(page, 'No act')).length)
+      .toBe(noActBefore + 1);
+    expect(chapterCount()).toBe(chaptersBefore);
     await page.context().close();
   });
 
