@@ -390,6 +390,8 @@
       "cancelled": "Mutare anulată. {{title}} rămâne unde era."
     },
     "rowTitle": "Capitolul {{number}}: {{title}}",
+    "movedFrom": "Mutat aici de la capitolul {{number}}",
+    "wasChapter": "A fost capitolul {{number}}",
     "chapterBoard": "Deschide tabla capitolelor",
     "stats": {
       "label": "Povestea în cifre",

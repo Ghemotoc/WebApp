@@ -81,6 +81,8 @@ select results_eq(
        ('certificates', 0::bigint),
       ('chapter_embeds', 0::bigint),
        ('chapter_likes', 0::bigint),
+       -- The record of a writer's chapter moves is theirs alone (GAPS-11).
+       ('chapter_moves', 0::bigint),
        ('chapter_plan_characters', 0::bigint),
        ('chapter_plans', 0::bigint),
        ('chapter_reads', 0::bigint),

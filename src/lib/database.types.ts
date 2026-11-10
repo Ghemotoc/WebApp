@@ -1277,6 +1277,65 @@ export type Database = {
           },
         ];
       };
+      chapter_moves: {
+        Row: {
+          chapter_id: string;
+          created_at: string;
+          from_position: number;
+          id: string;
+          story_id: string;
+          to_position: number;
+          updated_at: string;
+          user_id: string;
+          was_picked: boolean;
+        };
+        ComputedFields: never;
+        Insert: {
+          chapter_id: string;
+          created_at?: string;
+          from_position: number;
+          id?: string;
+          story_id: string;
+          to_position: number;
+          updated_at?: string;
+          user_id: string;
+          was_picked?: boolean;
+        };
+        Update: {
+          chapter_id?: string;
+          created_at?: string;
+          from_position?: number;
+          id?: string;
+          story_id?: string;
+          to_position?: number;
+          updated_at?: string;
+          user_id?: string;
+          was_picked?: boolean;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'chapter_moves_chapter_id_fkey';
+            columns: ['chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'chapter_moves_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: false;
+            referencedRelation: 'stories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'chapter_moves_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       chapter_plan_characters: {
         Row: {
           chapter_id: string;
@@ -11268,6 +11327,15 @@ export type Database = {
           story_id: string;
         }[];
       };
+      chapter_move_notes: {
+        Args: { story_slug: string };
+        Returns: {
+          chapter_code: string;
+          moved_at: string;
+          was_picked: boolean;
+          was_position: number;
+        }[];
+      };
       chapter_of_story: {
         Args: { chapter_code: string; target_story_id: string };
         Returns: string;
@@ -11296,6 +11364,7 @@ export type Database = {
         }[];
       };
       chapter_plan: { Args: { chapter_code: string }; Returns: Json };
+      chapter_positions: { Args: { target_story_id: string }; Returns: Json };
       chapter_publish_now: {
         Args: {
           chapter: Omit<
@@ -14038,6 +14107,10 @@ export type Database = {
         };
         Returns: Json;
       };
+      record_chapter_moves: {
+        Args: { picked_chapter_id: string; positions_before: Json; target_story_id: string };
+        Returns: undefined;
+      };
       record_chapter_read: { Args: { chapter_code: string; story_slug: string }; Returns: boolean };
       record_chapter_share: {
         Args: { chapter_code: string; story_slug: string };
@@ -14538,7 +14611,10 @@ export type Database = {
         Args: { chapter_code: string; character_id: string; is_present: boolean };
         Returns: Json;
       };
-      set_chapter_order: { Args: { chapter_codes: string[]; story_slug: string }; Returns: Json };
+      set_chapter_order: {
+        Args: { chapter_codes: string[]; moved_chapter_code?: string; story_slug: string };
+        Returns: Json;
+      };
       set_character_map_position: {
         Args: { character_id: string; x: number; y: number };
         Returns: Json;

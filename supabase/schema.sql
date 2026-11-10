@@ -1411,6 +1411,7 @@ CREATE OR REPLACE FUNCTION "public"."account_deletion_rules"() RETURNS TABLE("ta
     ('certificates', 'delete', 1, null),
     ('chapter_embeds', 'own_step', 0, 'deleted with their chapter, unless the chapter is kept for a case'),
     ('chapter_likes', 'delete', 1, null),
+    ('chapter_moves', 'delete', 1, null),
     ('chapter_plan_characters', 'delete', 1, null),
     ('chapter_plans', 'delete', 2, null),
     ('chapter_revisions', 'own_step', 0, 'deleted with their chapter, unless the chapter is kept for a case'),
@@ -1485,7 +1486,7 @@ $$;
 ALTER FUNCTION "public"."account_deletion_rules"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6).';
+COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11).';
 
 
 
@@ -14993,6 +14994,45 @@ COMMENT ON FUNCTION "public"."chapter_like_totals"() IS 'Internal: each readable
 
 
 
+CREATE OR REPLACE FUNCTION "public"."chapter_move_notes"("story_slug" "text") RETURNS TABLE("chapter_code" "text", "was_position" integer, "was_picked" boolean, "moved_at" timestamp with time zone)
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  with recent as (
+    -- Every move of this story's chapters in the last 7 days, oldest first per chapter.
+    select chapter_moves.chapter_id, chapter_moves.from_position, chapter_moves.was_picked,
+           chapter_moves.created_at,
+           row_number() over (partition by chapter_moves.chapter_id
+                              order by chapter_moves.created_at, chapter_moves.id) as move_number
+    from public.chapter_moves
+    where chapter_moves.story_id = public.my_live_story_id(story_slug)
+      and chapter_moves.user_id = (select auth.uid())
+      and chapter_moves.created_at > now() - interval '7 days'
+  ),
+  summed as (
+    -- Per chapter: the number before its first move, whether the writer ever picked it up,
+    -- and its last move.
+    select recent.chapter_id,
+           min(recent.from_position) filter (where recent.move_number = 1) as was_position,
+           bool_or(recent.was_picked) as was_picked,
+           max(recent.created_at) as moved_at
+    from recent group by recent.chapter_id
+  )
+  select chapters.code, summed.was_position, summed.was_picked, summed.moved_at
+  from summed
+  join public.chapters on chapters.id = summed.chapter_id
+  where chapters.deleted_at is null and chapters.position <> summed.was_position
+  order by chapters.position;
+$$;
+
+
+ALTER FUNCTION "public"."chapter_move_notes"("story_slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."chapter_move_notes"("story_slug" "text") IS 'The caller''s own story''s chapters whose number changed in the last 7 days, with the number each had before (GAPS-11).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."chapter_of_story"("target_story_id" "uuid", "chapter_code" "text") RETURNS "uuid"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -15162,6 +15202,23 @@ ALTER FUNCTION "public"."chapter_plan"("chapter_code" "text") OWNER TO "postgres
 
 
 COMMENT ON FUNCTION "public"."chapter_plan"("chapter_code" "text") IS 'The planning of one of the caller''s chapters, with its scenes and the story''s characters and acts (S1-E17-24).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."chapter_positions"("target_story_id" "uuid") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(jsonb_object_agg(chapters.id::text, chapters.position), '{}'::jsonb)
+  from public.chapters
+  where chapters.story_id = target_story_id and chapters.deleted_at is null;
+$$;
+
+
+ALTER FUNCTION "public"."chapter_positions"("target_story_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."chapter_positions"("target_story_id" "uuid") IS 'Internal: a story''s live chapters and their numbers before a reorder (GAPS-11).';
 
 
 
@@ -18795,6 +18852,7 @@ CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_
     ('certificates', true, null),
     ('chapter_embeds', true, null),
     ('chapter_likes', true, null),
+    ('chapter_moves', true, null),
     ('chapter_plan_characters', true, null),
     ('chapter_plans', true, null),
     ('chapter_revisions', true, null),
@@ -18868,7 +18926,7 @@ $$;
 ALTER FUNCTION "public"."data_export_tables"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6).';
+COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11).';
 
 
 
@@ -26814,6 +26872,7 @@ declare
   chapter public.chapters := public.my_live_chapter(chapter_code);
   refusal text := public.chapter_gate_outcome(chapter);
   neighbour public.chapters;
+  positions_before jsonb;
 begin
   if refusal is not null then
     return jsonb_build_object('outcome', refusal);
@@ -26829,9 +26888,11 @@ begin
   if not found then
     return jsonb_build_object('outcome', 'at_edge');
   end if;
-  -- Swap the two positions.
+  -- Swap the two positions, then record both changes: this chapter is the one the writer moved.
+  positions_before := public.chapter_positions(chapter.story_id);
   update public.chapters set position = neighbour.position where chapters.id = chapter.id;
   update public.chapters set position = chapter.position where chapters.id = neighbour.id;
+  perform public.record_chapter_moves(chapter.story_id, positions_before, chapter.id);
   return jsonb_build_object('outcome', 'ok');
 end;
 $$;
@@ -26840,7 +26901,7 @@ $$;
 ALTER FUNCTION "public"."move_chapter"("chapter_code" "text", "direction" integer) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."move_chapter"("chapter_code" "text", "direction" integer) IS 'Moves the caller''s own chapter one place up or down: {outcome: ok | not_active | not_found | at_edge} (S1-E3-04).';
+COMMENT ON FUNCTION "public"."move_chapter"("chapter_code" "text", "direction" integer) IS 'Moves the caller''s own chapter one place up or down and records it: {outcome: ok | not_active | not_found | at_edge} (S1-E3-04, GAPS-11).';
 
 
 
@@ -33470,6 +33531,44 @@ COMMENT ON FUNCTION "public"."record_age_check_result"("yoti_session_id" "text",
 
 
 
+CREATE OR REPLACE FUNCTION "public"."record_chapter_moves"("target_story_id" "uuid", "positions_before" "jsonb", "picked_chapter_id" "uuid") RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  -- The clock's time, not the transaction's, so two reorders in one transaction keep their order.
+  moved_time timestamptz := clock_timestamp();
+begin
+  -- Step 1: one row per chapter whose number changed.
+  insert into public.chapter_moves (user_id, story_id, chapter_id, from_position, to_position, was_picked, created_at)
+  select chapters.user_id, chapters.story_id, chapters.id,
+         (positions_before ->> chapters.id::text)::integer, chapters.position,
+         chapters.id is not distinct from picked_chapter_id, moved_time
+  from public.chapters
+  where chapters.story_id = target_story_id and chapters.deleted_at is null
+    and positions_before ? chapters.id::text
+    and (positions_before ->> chapters.id::text)::integer <> chapters.position;
+  -- Step 2: the record is kept 90 days, and a story keeps its newest 2,000 rows at most, so
+  -- reordering a long story over and over can't fill the table.
+  delete from public.chapter_moves
+  where chapter_moves.story_id = target_story_id
+    and (chapter_moves.created_at < now() - interval '90 days'
+         or chapter_moves.id in (
+           select older.id from public.chapter_moves as older
+           where older.story_id = target_story_id
+           order by older.created_at desc, older.id
+           offset 2000));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."record_chapter_moves"("target_story_id" "uuid", "positions_before" "jsonb", "picked_chapter_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."record_chapter_moves"("target_story_id" "uuid", "positions_before" "jsonb", "picked_chapter_id" "uuid") IS 'Internal: records which chapters changed number in a reorder, and drops rows over 90 days old or beyond the story''s newest 2,000 (GAPS-11).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."record_chapter_read"("story_slug" "text", "chapter_code" "text") RETURNS boolean
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -38331,13 +38430,15 @@ COMMENT ON FUNCTION "public"."set_chapter_character_present"("chapter_code" "tex
 
 
 
-CREATE OR REPLACE FUNCTION "public"."set_chapter_order"("story_slug" "text", "chapter_codes" "text"[]) RETURNS "jsonb"
+CREATE OR REPLACE FUNCTION "public"."set_chapter_order"("story_slug" "text", "chapter_codes" "text"[], "moved_chapter_code" "text" DEFAULT NULL::"text") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
 declare
   target_story_id uuid;
   live_codes text[];
+  positions_before jsonb;
+  picked_chapter_id uuid;
 begin
   if (select auth.uid()) is null then
     raise exception 'Sign in to reorder chapters.' using errcode = 'insufficient_privilege';
@@ -38360,19 +38461,27 @@ begin
      or (select array_agg(listed order by listed) from unnest(chapter_codes) as listed) is distinct from live_codes then
     return jsonb_build_object('outcome', 'wrong_list');
   end if;
-  -- Step 2: each chapter takes its place in the list (1-based).
+  -- Step 2: remember the numbers as they are, and which chapter was dragged (one of this
+  -- story's live chapters, or nobody).
+  positions_before := public.chapter_positions(target_story_id);
+  select chapters.id into picked_chapter_id from public.chapters
+  where chapters.code = moved_chapter_code and chapters.story_id = target_story_id
+    and chapters.deleted_at is null;
+  -- Step 3: each chapter takes its place in the list (1-based).
   update public.chapters set position = ordered.new_position
   from unnest(chapter_codes) with ordinality as ordered(code, new_position)
   where chapters.code = ordered.code and chapters.story_id = target_story_id;
+  -- Step 4: record every chapter whose number changed.
+  perform public.record_chapter_moves(target_story_id, positions_before, picked_chapter_id);
   return jsonb_build_object('outcome', 'ok');
 end;
 $$;
 
 
-ALTER FUNCTION "public"."set_chapter_order"("story_slug" "text", "chapter_codes" "text"[]) OWNER TO "postgres";
+ALTER FUNCTION "public"."set_chapter_order"("story_slug" "text", "chapter_codes" "text"[], "moved_chapter_code" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."set_chapter_order"("story_slug" "text", "chapter_codes" "text"[]) IS 'Reorders the caller''s own story''s live chapters: {outcome: ok | not_active | not_found | wrong_list} (S1-E3-04).';
+COMMENT ON FUNCTION "public"."set_chapter_order"("story_slug" "text", "chapter_codes" "text"[], "moved_chapter_code" "text") IS 'Reorders the caller''s own story''s live chapters and records it: {outcome: ok | not_active | not_found | wrong_list} (S1-E3-04, GAPS-11).';
 
 
 
@@ -47112,6 +47221,30 @@ Who likes which chapter (S1-E6-03). The count is public; who liked is nobody els
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."chapter_moves" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "story_id" "uuid" NOT NULL,
+    "chapter_id" "uuid" NOT NULL,
+    "from_position" integer NOT NULL,
+    "to_position" integer NOT NULL,
+    "was_picked" boolean DEFAULT false NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "chapter_moves_from_position_check" CHECK (("from_position" >= 1)),
+    CONSTRAINT "chapter_moves_number_changed" CHECK (("from_position" <> "to_position")),
+    CONSTRAINT "chapter_moves_to_position_check" CHECK (("to_position" >= 1))
+);
+
+
+ALTER TABLE "public"."chapter_moves" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."chapter_moves" IS 'kind: user_action
+Each time a chapter''s number changed because its writer reordered the story: where it was and where it went (GAPS-11).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."chapter_plan_characters" (
     "chapter_id" "uuid" NOT NULL,
     "character_id" "uuid" NOT NULL,
@@ -49531,6 +49664,11 @@ ALTER TABLE ONLY "public"."chapter_likes"
 
 
 
+ALTER TABLE ONLY "public"."chapter_moves"
+    ADD CONSTRAINT "chapter_moves_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."chapter_plan_characters"
     ADD CONSTRAINT "chapter_plan_characters_pkey" PRIMARY KEY ("chapter_id", "character_id");
 
@@ -50767,6 +50905,18 @@ CREATE INDEX "chapter_likes_chapter_id" ON "public"."chapter_likes" USING "btree
 
 
 
+CREATE INDEX "chapter_moves_chapter" ON "public"."chapter_moves" USING "btree" ("chapter_id");
+
+
+
+CREATE INDEX "chapter_moves_owner" ON "public"."chapter_moves" USING "btree" ("user_id");
+
+
+
+CREATE INDEX "chapter_moves_story_time" ON "public"."chapter_moves" USING "btree" ("story_id", "created_at");
+
+
+
 CREATE INDEX "chapter_plan_characters_character_id_idx" ON "public"."chapter_plan_characters" USING "btree" ("character_id");
 
 
@@ -51931,6 +52081,14 @@ CREATE OR REPLACE TRIGGER "chapter_likes_set_updated_at" BEFORE UPDATE ON "publi
 
 
 
+CREATE OR REPLACE TRIGGER "chapter_moves_refuse_user_id_change" BEFORE UPDATE ON "public"."chapter_moves" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"('user_id');
+
+
+
+CREATE OR REPLACE TRIGGER "chapter_moves_set_updated_at" BEFORE UPDATE ON "public"."chapter_moves" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
 CREATE OR REPLACE TRIGGER "chapter_plan_characters_refuse_user_id_change" BEFORE UPDATE ON "public"."chapter_plan_characters" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"('user_id');
 
 
@@ -53052,6 +53210,21 @@ ALTER TABLE ONLY "public"."chapter_likes"
 
 ALTER TABLE ONLY "public"."chapter_likes"
     ADD CONSTRAINT "chapter_likes_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."chapter_moves"
+    ADD CONSTRAINT "chapter_moves_chapter_id_fkey" FOREIGN KEY ("chapter_id") REFERENCES "public"."chapters"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."chapter_moves"
+    ADD CONSTRAINT "chapter_moves_story_id_fkey" FOREIGN KEY ("story_id") REFERENCES "public"."stories"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."chapter_moves"
+    ADD CONSTRAINT "chapter_moves_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
 
 
 
@@ -54766,6 +54939,13 @@ ALTER TABLE "public"."chapter_likes" ENABLE ROW LEVEL SECURITY;
 
 
 CREATE POLICY "chapter_likes_select_own" ON "public"."chapter_likes" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
+
+
+
+ALTER TABLE "public"."chapter_moves" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "chapter_moves_select_own" ON "public"."chapter_moves" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
 
 
 
@@ -58136,6 +58316,11 @@ REVOKE ALL ON FUNCTION "public"."chapter_like_totals"() FROM PUBLIC;
 
 
 
+REVOKE ALL ON FUNCTION "public"."chapter_move_notes"("story_slug" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."chapter_move_notes"("story_slug" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."chapter_of_story"("target_story_id" "uuid", "chapter_code" "text") FROM PUBLIC;
 
 
@@ -58163,6 +58348,10 @@ REVOKE ALL ON FUNCTION "public"."chapter_place"("target_chapter_id" "uuid") FROM
 
 REVOKE ALL ON FUNCTION "public"."chapter_plan"("chapter_code" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."chapter_plan"("chapter_code" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."chapter_positions"("target_story_id" "uuid") FROM PUBLIC;
 
 
 
@@ -60826,6 +61015,10 @@ GRANT ALL ON FUNCTION "public"."record_age_check_result"("yoti_session_id" "text
 
 
 
+REVOKE ALL ON FUNCTION "public"."record_chapter_moves"("target_story_id" "uuid", "positions_before" "jsonb", "picked_chapter_id" "uuid") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."record_chapter_read"("story_slug" "text", "chapter_code" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."record_chapter_read"("story_slug" "text", "chapter_code" "text") TO "authenticated";
 
@@ -61441,8 +61634,8 @@ GRANT ALL ON FUNCTION "public"."set_chapter_character_present"("chapter_code" "t
 
 
 
-REVOKE ALL ON FUNCTION "public"."set_chapter_order"("story_slug" "text", "chapter_codes" "text"[]) FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."set_chapter_order"("story_slug" "text", "chapter_codes" "text"[]) TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."set_chapter_order"("story_slug" "text", "chapter_codes" "text"[], "moved_chapter_code" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_chapter_order"("story_slug" "text", "chapter_codes" "text"[], "moved_chapter_code" "text") TO "authenticated";
 
 
 
@@ -62694,6 +62887,11 @@ GRANT SELECT ON TABLE "public"."categories" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."chapter_likes" TO "service_role";
 GRANT SELECT ON TABLE "public"."chapter_likes" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."chapter_moves" TO "service_role";
+GRANT SELECT ON TABLE "public"."chapter_moves" TO "authenticated";
 
 
 

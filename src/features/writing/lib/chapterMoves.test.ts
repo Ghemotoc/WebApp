@@ -26,6 +26,8 @@ function chapter(
     scheduledFor: null,
     unpublishedAt: null,
     deletedAt: null,
+    wasPosition: null,
+    wasPicked: false,
     ...extra,
   };
 }
