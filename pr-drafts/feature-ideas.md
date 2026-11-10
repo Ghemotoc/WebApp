@@ -92,3 +92,6 @@ As a writer, I want my story's settings to show the cover I just made in Canva a
   preview, pointing at chapter 1's teaser; S.
 - **"Most shared passages" for writers.** On the writer dashboard, the paragraphs readers link to most (counted per paragraph per day, never who), so a writer sees which lines land. Why: writers on Substack love seeing their most-highlighted lines; it rewards craft without any personal data. (Seen while building S1-E4-11.)
 - **Picture links in the preview image.** Once a passed picture can have a safe public copy, a picture link's preview shows the picture itself, not the cover colour. Why: picture links would stand out in chats, which is the whole point of a picture card. (S1-E4-11 follow-up.)
+
+### Sent 10 Nov 2026 (doc tabs by category in "Ghemotoc feature ideas"; Notion Feature ideas database)
+Twelve ideas IDEA-20261110-1 to 12: three next stories after the last chapter, browse by mood, Word manuscript import, craft tips, writing portfolio, club reading goal, draft nudge, rewrite a classic's ending (class), teen rules walkthrough, who sees what, printable QR bookmark, Nordic classics shelves.
