@@ -498,7 +498,21 @@
     "notYet_other": "Not yet ({{count, number}})",
     "nobodyYet": "Nobody has replied yet.",
     "everyone": "Everyone in the class has replied.",
-    "loadFailed": "We couldn’t load who has replied. Refresh the page to try again."
+    "loadFailed": "We couldn’t load who has replied. Refresh the page to try again.",
+    "late": "after the due date",
+    "due": {
+      "label": "Due date",
+      "hint": "The class sees it on the thread, and anyone who hasn’t replied gets one reminder the day before.",
+      "save": "Save date",
+      "clear": "Remove date",
+      "saved": "Saved.",
+      "failures": {
+        "due_in_past": "Choose today or a later day.",
+        "class_locked": "The class is locked, so its dates stay as they are.",
+        "not_teacher": "Only the class’s teacher can set a due date.",
+        "unknown": "We couldn’t save the date. Try again."
+      }
+    }
   },
   "welcome": {
     "eyebrow": "For new members",
@@ -567,5 +581,11 @@
     "privacy": "The link doesn’t include a name or tracking code. People who open it see only what the space lets their account see.",
     "done": "Done",
     "close": "Close"
+  },
+  "classAssignments": {
+    "title": "Assignments",
+    "due": "Due {{day}}",
+    "replied": "Replied",
+    "loadFailed": "We couldn’t load the assignments. Refresh the page to try again."
   }
 }

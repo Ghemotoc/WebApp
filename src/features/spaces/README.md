@@ -60,6 +60,12 @@ Each space owns one hidden forum, so its threads reuse the forums feature (`Thre
 - `archiveClassSpace()` in `api/classTools.ts` and `useArchiveClass()` (bundle CLASSES, part d):
   archiving a class for good; `ClassArchiveCard` in the class's settings. Staff set up pilot
   classes from `src/features/staff/components/schools/ClassSpacesPage.tsx`.
+- `api/classAssignments.ts`, `hooks/useClassAssignments.ts` and `lib/assignmentDue.ts` (bundle
+  MUST-1, part d): due dates for class assignments. `ClassDueDateField` in the teacher's
+  `ClassRepliesPanel` saves one (`set_forum_thread_due_date()`, through `saveThreadDueDate()`),
+  `ClassAssignmentsCard` lists the open ones on the class page (`class_space_assignments()`), and
+  the panel marks replies after the due date. The reminder the day before is a database job,
+  worded in the notifications feature.
 - `api/spaceWelcome.ts` and `hooks/useSpaceWelcome.ts` (bundle 14d IDEAS-3, part d): the welcome
   note new members see once (`set_space_welcome_note()`, `dismiss_space_welcome()`);
   `SpaceWelcomeNoteCard` on the settings page and `SpaceWelcomeNote` at the top of the space.

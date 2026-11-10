@@ -727,7 +727,8 @@ CREATE TYPE "public"."notification_kind" AS ENUM (
     'waitlist_admitted',
     'live_session_soon',
     'home_comment_invited',
-    'forum_reply'
+    'forum_reply',
+    'assignment_due'
 );
 
 
@@ -17023,6 +17024,38 @@ COMMENT ON FUNCTION "public"."class_invite_row"("code" "text") IS 'Internal: the
 
 
 
+CREATE OR REPLACE FUNCTION "public"."class_space_assignments"("slug" "text") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(jsonb_agg(jsonb_build_object(
+      'number', forum_threads.thread_number,
+      'forum_slug', forums.slug,
+      'title', forum_threads.title,
+      'due_on', forum_threads.due_on,
+      'has_replied', exists (select 1 from public.forum_posts
+                             where forum_posts.thread_id = forum_threads.id
+                               and forum_posts.user_id = (select auth.uid())
+                               and forum_posts.deleted_at is null))
+    order by forum_threads.due_on, forum_threads.thread_number), '[]'::jsonb)
+  from public.spaces
+  join public.forums on forums.space_id = spaces.id and forums.deleted_at is null
+  join public.forum_threads on forum_threads.forum_id = forums.id
+  where spaces.slug = class_space_assignments.slug
+    and spaces.kind = 'class'
+    and public.space_may_read(spaces)
+    and forum_threads.due_on >= public.romania_today()
+    and public.forum_thread_is_shown(forum_threads);
+$$;
+
+
+ALTER FUNCTION "public"."class_space_assignments"("slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."class_space_assignments"("slug" "text") IS 'The open assignments of a class space, soonest first, with whether the caller replied (MUST-1d).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."class_space_for_invites"("target_slug" "text") RETURNS "public"."spaces"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -17046,6 +17079,28 @@ ALTER FUNCTION "public"."class_space_for_invites"("target_slug" "text") OWNER TO
 
 
 COMMENT ON FUNCTION "public"."class_space_for_invites"("target_slug" "text") IS 'Internal: a class space for an invite change, for whoever manages its members (S1-E8-11).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."class_space_of_thread"("target_thread_id" "uuid") RETURNS "public"."spaces"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select spaces.*
+  from public.forum_threads
+  join public.forums on forums.id = forum_threads.forum_id
+  join public.spaces on spaces.id = forums.space_id
+  where forum_threads.id = target_thread_id
+    and forum_threads.deleted_at is null
+    and spaces.kind = 'class'
+    and spaces.deleted_at is null;
+$$;
+
+
+ALTER FUNCTION "public"."class_space_of_thread"("target_thread_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."class_space_of_thread"("target_thread_id" "uuid") IS 'Internal: the class space a live thread is in, or a null row (MUST-1d).';
 
 
 
@@ -17082,6 +17137,7 @@ CREATE OR REPLACE FUNCTION "public"."class_thread_replies"("target_thread_id" "u
     AS $$
 declare
   class_space public.spaces;
+  due date;
 begin
   -- Step 1: find the class space the thread lives in (a space's forum carries its space_id).
   select spaces.* into class_space
@@ -17095,6 +17151,9 @@ begin
   if class_space.id is null or not public.space_may_act(class_space, 'members') then
     return null;
   end if;
+  -- MUST-1d: the assignment's due date, to mark the replies that came after it.
+  select forum_threads.due_on into due from public.forum_threads
+  where forum_threads.id = target_thread_id;
   -- Step 3: every active member but the owner, marked by whether they have a live post here.
   return (
     with members as (
@@ -17103,7 +17162,14 @@ begin
              exists (select 1 from public.forum_posts
                      where forum_posts.thread_id = target_thread_id
                        and forum_posts.user_id = space_members.user_id
-                       and forum_posts.deleted_at is null) as has_replied
+                       and forum_posts.deleted_at is null) as has_replied,
+             -- MUST-1d: a first reply on a later day than the due date is "after the due date"
+             -- (Romanian calendar); only this teacher-only panel shows it.
+             coalesce(due < (select min(forum_posts.created_at at time zone 'Europe/Bucharest')::date
+                             from public.forum_posts
+                             where forum_posts.thread_id = target_thread_id
+                               and forum_posts.user_id = space_members.user_id
+                               and forum_posts.deleted_at is null), false) as is_late
       from public.space_members
       join public.profiles on profiles.id = space_members.user_id
       where space_members.space_id = class_space.id
@@ -17112,7 +17178,9 @@ begin
         and profiles.deleted_at is null
     )
     select jsonb_build_object(
-      'replied', coalesce(jsonb_agg(jsonb_build_object('handle', handle, 'display_name', display_name)
+      'due_on', due,
+      'replied', coalesce(jsonb_agg(jsonb_build_object('handle', handle, 'display_name', display_name,
+                                                       'is_late', is_late)
                    order by lower(display_name), handle) filter (where has_replied), '[]'::jsonb),
       'not_yet', coalesce(jsonb_agg(jsonb_build_object('handle', handle, 'display_name', display_name)
                    order by lower(display_name), handle) filter (where not has_replied), '[]'::jsonb))
@@ -22605,6 +22673,7 @@ CREATE TABLE IF NOT EXISTS "public"."forum_threads" (
     "bumped_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "answer_post_id" "uuid",
     "continues_in_thread_id" "uuid",
+    "due_on" "date",
     CONSTRAINT "forum_threads_lock_is_whole" CHECK (((("locked_at" IS NULL) AND ("lock_reason" IS NULL)) OR (("locked_at" IS NOT NULL) AND ("lock_reason" IS NOT NULL) AND ("btrim"("lock_reason") <> ''::"text") AND ("char_length"("lock_reason") <= 500)))),
     CONSTRAINT "forum_threads_next_is_another" CHECK (("continues_in_thread_id" IS DISTINCT FROM "id")),
     CONSTRAINT "forum_threads_next_needs_lock" CHECK ((("continues_in_thread_id" IS NULL) OR ("locked_at" IS NOT NULL))),
@@ -22657,6 +22726,10 @@ COMMENT ON COLUMN "public"."forum_threads"."answer_post_id" IS 'The reply the th
 
 
 COMMENT ON COLUMN "public"."forum_threads"."continues_in_thread_id" IS 'Where the conversation carries on after this thread was locked (GAPS-9); null when nowhere.';
+
+
+
+COMMENT ON COLUMN "public"."forum_threads"."due_on" IS 'The day a class assignment is due (Romanian time); set only by the class''s teacher through set_forum_thread_due_date(); null for every other thread (MUST-1d).';
 
 
 
@@ -23427,6 +23500,8 @@ CREATE OR REPLACE FUNCTION "public"."forum_thread_header_json"("target" "public"
     'view_count', coalesce((select views.total from public.forum_thread_views as views
                             where views.thread_id = target.id), 0),
     'last_post_number', target.last_post_number,
+    -- MUST-1d: the day a class assignment is due (null for every other thread).
+    'due_on', target.due_on,
     'is_sticky', target.is_sticky,
     'lock', case when target.locked_at is null then null
                  else jsonb_build_object('locked_at', target.locked_at, 'reason', target.lock_reason,
@@ -39373,6 +39448,71 @@ COMMENT ON FUNCTION "public"."search_writers"("term" "text", "page_size" integer
 
 
 
+CREATE OR REPLACE FUNCTION "public"."send_assignment_reminders"("run_at" timestamp with time zone DEFAULT "now"()) RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  due_student record;
+  sent integer := 0;
+  local_moment timestamp := run_at at time zone 'Europe/Bucharest';
+begin
+  -- Step 0: forget reminders 30 days after their due date (storage limitation, GDPR art. 5(1)(e)).
+  delete from public.assignment_reminders where assignment_reminders.due_on < local_moment::date - 30;
+  -- Step 1: never during quiet hours (22:00 to 07:00).
+  if public.is_in_quiet_hours(local_moment::time) then
+    return 0;
+  end if;
+  -- Step 2: each student who hasn't replied to an assignment due tomorrow and wasn't reminded.
+  for due_student in
+    select forum_threads.id as thread_id, forum_threads.due_on, spaces.id as space_id,
+           space_members.user_id
+    from public.forum_threads
+    join public.forums on forums.id = forum_threads.forum_id
+    join public.spaces on spaces.id = forums.space_id and spaces.kind = 'class'
+    join public.space_members on space_members.space_id = spaces.id
+    join public.profiles on profiles.id = space_members.user_id
+    where forum_threads.due_on = local_moment::date + 1
+      and forum_threads.deleted_at is null
+      and forum_threads.locked_at is null
+      and spaces.deleted_at is null
+      and not public.space_is_locked(spaces)
+      and space_members.status = 'active'
+      and space_members.role = 'member'
+      and profiles.deleted_at is null
+      and not exists (select 1 from public.forum_posts
+                      where forum_posts.thread_id = forum_threads.id
+                        and forum_posts.user_id = space_members.user_id
+                        and forum_posts.deleted_at is null)
+      and not exists (select 1 from public.assignment_reminders as reminders
+                      where reminders.thread_id = forum_threads.id
+                        and reminders.user_id = space_members.user_id
+                        and reminders.due_on = forum_threads.due_on)
+  loop
+    -- Step 3: remember it first, so a second run in the same hour sends nothing; when another run
+    -- got there first, the row already exists and nothing is sent.
+    insert into public.assignment_reminders (user_id, thread_id, due_on)
+    values (due_student.user_id, due_student.thread_id, due_student.due_on)
+    on conflict do nothing;
+    if not found then
+      continue;
+    end if;
+    perform public.notify(due_student.user_id, 'assignment_due', null,
+      jsonb_build_object('forum_thread_id', due_student.thread_id, 'space_id', due_student.space_id));
+    sent := sent + 1;
+  end loop;
+  return sent;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."send_assignment_reminders"("run_at" timestamp with time zone) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."send_assignment_reminders"("run_at" timestamp with time zone) IS 'Hourly job: one reminder the day before an assignment is due to each student who hasn''t replied, never in quiet hours (MUST-1d).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."send_finished_thanks"("story_slug" "text") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -40101,6 +40241,42 @@ ALTER FUNCTION "public"."set_class_lock"("slug" "text", "new_locks_at" timestamp
 
 
 COMMENT ON FUNCTION "public"."set_class_lock"("slug" "text", "new_locks_at" timestamp with time zone) IS 'Sets when a class space locks, locks it now or unlocks it; logged (S1-E8-11).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."set_forum_thread_due_date"("target_thread_id" "uuid", "due" "date") RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := public.require_live_profile();
+  class_space public.spaces;
+begin
+  -- Step 1: only in a class space, and only its teacher (or someone holding the members power).
+  class_space := public.class_space_of_thread(target_thread_id);
+  if class_space.id is null or not public.space_may_act(class_space, 'members') then
+    raise exception 'Only the class''s teacher can set a due date.'
+      using errcode = 'insufficient_privilege', hint = 'not_teacher';
+  end if;
+  -- Step 2: a locked or archived class keeps its dates as they were.
+  if public.space_is_locked(class_space) then
+    raise exception 'The class is locked.' using errcode = 'insufficient_privilege', hint = 'class_locked';
+  end if;
+  -- Step 3: a new date can't be a day already gone; clearing is always allowed.
+  if due is not null and due < public.romania_today() then
+    raise exception 'Choose today or a later day.' using errcode = 'check_violation', hint = 'due_in_past';
+  end if;
+  -- Step 4: save it.
+  update public.forum_threads set due_on = due, updated_at = now()
+  where forum_threads.id = target_thread_id;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_forum_thread_due_date"("target_thread_id" "uuid", "due" "date") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_forum_thread_due_date"("target_thread_id" "uuid", "due" "date") IS 'Sets or clears a class assignment''s due date; teacher only, never a day already gone (MUST-1d).';
 
 
 
@@ -48833,6 +49009,24 @@ COMMENT ON COLUMN "public"."appeals"."owner_reviewed_by_user_id" IS 'The owner w
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."assignment_reminders" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "thread_id" "uuid" NOT NULL,
+    "due_on" "date" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL
+);
+
+
+ALTER TABLE "public"."assignment_reminders" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."assignment_reminders" IS 'kind: platform
+The "due tomorrow" reminders already sent: one per student, assignment and due date, so the hourly job never sends twice; deleted 30 days after the due date (MUST-1d). Personal data: the link between a student and an assignment.';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."audit_log" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
@@ -51642,6 +51836,16 @@ ALTER TABLE ONLY "public"."appeals"
 
 
 
+ALTER TABLE ONLY "public"."assignment_reminders"
+    ADD CONSTRAINT "assignment_reminders_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."assignment_reminders"
+    ADD CONSTRAINT "assignment_reminders_thread_id_user_id_due_on_key" UNIQUE ("thread_id", "user_id", "due_on");
+
+
+
 ALTER TABLE ONLY "public"."audit_log"
     ADD CONSTRAINT "audit_log_pkey" PRIMARY KEY ("id");
 
@@ -53000,6 +53204,10 @@ CREATE INDEX "appeals_user_id_idx" ON "public"."appeals" USING "btree" ("user_id
 
 
 
+CREATE INDEX "assignment_reminders_user_id_idx" ON "public"."assignment_reminders" USING "btree" ("user_id");
+
+
+
 CREATE INDEX "audit_log_action_idx" ON "public"."audit_log" USING "btree" ("action");
 
 
@@ -53409,6 +53617,10 @@ CREATE INDEX "forum_threads_author" ON "public"."forum_threads" USING "btree" ("
 
 
 CREATE INDEX "forum_threads_continues_in_thread_id_fk_idx" ON "public"."forum_threads" USING "btree" ("continues_in_thread_id");
+
+
+
+CREATE INDEX "forum_threads_due_on_idx" ON "public"."forum_threads" USING "btree" ("due_on") WHERE ("due_on" IS NOT NULL);
 
 
 
@@ -55382,6 +55594,16 @@ ALTER TABLE ONLY "public"."appeals"
 
 
 
+ALTER TABLE ONLY "public"."assignment_reminders"
+    ADD CONSTRAINT "assignment_reminders_thread_id_fkey" FOREIGN KEY ("thread_id") REFERENCES "public"."forum_threads"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."assignment_reminders"
+    ADD CONSTRAINT "assignment_reminders_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
+
+
+
 ALTER TABLE ONLY "public"."audit_log"
     ADD CONSTRAINT "audit_log_target_user_id_fkey" FOREIGN KEY ("target_user_id") REFERENCES "public"."profiles"("id");
 
@@ -57102,6 +57324,10 @@ ALTER TABLE ONLY "public"."writing_prompts"
 
 
 
+CREATE POLICY "a student reads their own assignment reminders" ON "public"."assignment_reminders" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
+
+
+
 ALTER TABLE "public"."abuse_image_evidence" ENABLE ROW LEVEL SECURITY;
 
 
@@ -57206,6 +57432,9 @@ CREATE POLICY "appeals_select_staff" ON "public"."appeals" FOR SELECT TO "authen
 
 COMMENT ON POLICY "appeals_select_staff" ON "public"."appeals" IS 'Allows staff who decide appeals to read them; safeguarding ones need that permission (S1-E10-07).';
 
+
+
+ALTER TABLE "public"."assignment_reminders" ENABLE ROW LEVEL SECURITY;
 
 
 ALTER TABLE "public"."audit_log" ENABLE ROW LEVEL SECURITY;
@@ -61169,7 +61398,17 @@ REVOKE ALL ON FUNCTION "public"."class_invite_row"("code" "text") FROM PUBLIC;
 
 
 
+REVOKE ALL ON FUNCTION "public"."class_space_assignments"("slug" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."class_space_assignments"("slug" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."class_space_assignments"("slug" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."class_space_for_invites"("target_slug" "text") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."class_space_of_thread"("target_thread_id" "uuid") FROM PUBLIC;
 
 
 
@@ -64319,6 +64558,10 @@ GRANT ALL ON FUNCTION "public"."search_writers"("term" "text", "page_size" integ
 
 
 
+REVOKE ALL ON FUNCTION "public"."send_assignment_reminders"("run_at" timestamp with time zone) FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."send_finished_thanks"("story_slug" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."send_finished_thanks"("story_slug" "text") TO "authenticated";
 
@@ -64405,6 +64648,11 @@ GRANT ALL ON FUNCTION "public"."set_checks_personal_details"("should_check" bool
 
 REVOKE ALL ON FUNCTION "public"."set_class_lock"("slug" "text", "new_locks_at" timestamp with time zone) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_class_lock"("slug" "text", "new_locks_at" timestamp with time zone) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."set_forum_thread_due_date"("target_thread_id" "uuid", "due" "date") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_forum_thread_due_date"("target_thread_id" "uuid", "due" "date") TO "authenticated";
 
 
 
@@ -65638,6 +65886,11 @@ GRANT UPDATE ON SEQUENCE "public"."appeal_reference_seq" TO "service_role";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."appeals" TO "service_role";
 GRANT SELECT ON TABLE "public"."appeals" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."assignment_reminders" TO "service_role";
+GRANT SELECT ON TABLE "public"."assignment_reminders" TO "authenticated";
 
 
 

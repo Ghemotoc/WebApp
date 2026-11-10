@@ -100,7 +100,8 @@
     "waitlistAdmitted": "your place on the waiting list came up and your account is open. Welcome!",
     "forumReply_one": "replied in “{{title}}”.",
     "forumReply_few": "replied in “{{title}}”.",
-    "forumReply_other": "replied in “{{title}}”."
+    "forumReply_other": "replied in “{{title}}”.",
+    "assignmentDue": "“{{title}}” is due tomorrow."
   },
   "grouped": {
     "reactions_one": "{{count}} reaction",

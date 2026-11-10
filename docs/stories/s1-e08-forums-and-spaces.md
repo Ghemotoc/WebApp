@@ -133,6 +133,7 @@ As a teacher, I want a private space for my class so that my students can write,
 
 - **Priority:** Should (proposal: for the March test, staff set up class spaces by hand for the pilot schools; self-service teacher sign-up comes after March) · **Size:** L (split before building: 11a private visibility and invite codes, 11b the Class space option and teacher tools; the badge itself is S1-E2-11) · **Depends on:** S1-E8-06, S1-E8-07, S1-E2-08, S1-E2-03, S1-E2-11, S1-E11-01
 - **Added:** 16 Oct 2026, at Robert's request (canvas comment on the Facebook group mock-up).
+- **Built:** CLASSES a to d; the invite sheet and "Who has replied" in IDEAS-3b; due dates for assignments (the "Due" line, the class's Assignments card, a reminder the day before and late marks for the teacher) in MUST-1d (IDEA-20261108-8).
 - **Acceptance criteria:**
   - Given an account with a Teacher badge (S1-E2-11, or approved by staff for a pilot school), when its profile is shown, then it carries a "Teacher" badge and the teacher can create class spaces.
   - Given the Create a space form, when an account with a Teacher badge opens it, then it asks "What kind of space?" with Open space and Class space ("like a school class online"), and the class space page explains the three steps to start one; for every other account there is no Class space option and no "What kind of space?" question at all, and every space they make is an open space (Robert, canvas comments, 16 Oct 2026).

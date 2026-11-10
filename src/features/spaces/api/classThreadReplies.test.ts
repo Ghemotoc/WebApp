@@ -19,18 +19,20 @@ function fakeClient(answer: { data?: unknown; error?: { message: string } }) {
 }
 
 describe('fetchClassThreadReplies', () => {
-  it('reads both lists and asks about the right thread', async () => {
+  it('reads both lists, the due date and the late marks, and asks about the right thread', async () => {
     const { client, rpc } = fakeClient({
       data: {
-        replied: [{ handle: 'radu.c', display_name: 'Radu' }],
+        replied: [{ handle: 'radu.c', display_name: 'Radu', is_late: true }],
         not_yet: [{ handle: 'ioana.v' }],
+        due_on: '2026-11-13',
       },
     });
     const replies = await fetchClassThreadReplies(client, 'thread-1');
     expect(rpc).toHaveBeenCalledWith('class_thread_replies', { target_thread_id: 'thread-1' });
     expect(replies).toEqual({
-      replied: [{ handle: 'radu.c', displayName: 'Radu' }],
+      replied: [{ handle: 'radu.c', displayName: 'Radu', isLate: true }],
       notYet: [{ handle: 'ioana.v', displayName: 'ioana.v' }],
+      dueOn: '2026-11-13',
     });
   });
 

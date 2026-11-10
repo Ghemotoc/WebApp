@@ -65,7 +65,7 @@ select is(pg_temp.handles(public.class_thread_replies((select value::uuid from k
   'kid_14_waiting', 'and who hasn''t yet, without the teacher in either list');
 select is((select count(*)::integer from jsonb_object_keys(
     public.class_thread_replies((select value::uuid from kept where name = 'thread_id')) -> 'replied' -> 0)),
-  2, 'each name is a handle and a display name, never an age or an ID');
+  3, 'each name is a handle, a display name and whether it came after the due date (MUST-1d), never an age or an ID');
 
 /* ---------- 2. Nobody else sees them ---------- */
 

@@ -2154,6 +2154,14 @@ The liquid glass Library board draws "Your lists": lists of stories a reader mak
 - How a view travels: the thread loads → `useRecordThreadView()` checks sessionStorage (`forum-counted-threads`, thread numbers only) → `record_forum_thread_view(thread_number)` adds one unless the caller is the starter or may not open the thread → `forum_thread_header_json()` answers `view_count`.
 - Tests: `supabase/tests/database/345-thread-views.test.sql`, `src/features/forums/hooks/useRecordThreadView.test.tsx`, `e2e/forum-thread-views.spec.ts`.
 
+## Due dates for class assignments (MUST-1d)
+
+- Where it lives: `src/features/spaces/components/ClassDueDateField.tsx` (inside `ClassRepliesPanel`), `ClassAssignmentsCard.tsx` (on `SpacePage` through `ClassCards`), `api/classAssignments.ts`, `saveThreadDueDate()` in `api/classThreadReplies.ts`, `lib/assignmentDue.ts` (`dueDayText()`), the forums' `ThreadHeader` ("Due …" pill) and the notifications' `lib/assignmentDueText.ts`; `supabase/migrations/…_must1d_assignment_due_dates.sql`.
+- How a due date travels: the teacher picks a day → Save date → `set_forum_thread_due_date()` checks `space_may_act(…, 'members')`, the class lock and the day → `forum_threads.due_on` → `forum_thread_header_json()` answers `due_on` for the thread page, and `class_space_assignments()` lists it on the class space page with `has_replied` for the reader.
+- The reminder: pg_cron job `send-assignment-reminders` runs `send_assignment_reminders()` at five past every hour; outside quiet hours it writes one `assignment_reminders` row and one `assignment_due` notification per student who hasn't replied to an assignment due tomorrow, and forgets rows 30 days after their due date.
+- Late marks: `class_thread_replies()` answers `due_on` and each reply's `is_late` (first live post on a later Romanian day than the due date); only the teacher's panel reads it.
+- Tests: `supabase/tests/database/349-assignment-due-dates.test.sql`, `285-class-thread-replies.test.sql`, `src/features/spaces/lib/assignmentDue.test.ts`, `src/features/spaces/api/classThreadReplies.test.ts`, `src/features/notifications/lib/notificationText.test.ts`, `e2e/assignment-due-dates.spec.ts`.
+
 ## The rules walkthrough before an under-18's first post (MUST-1c)
 
 - Where it lives: `src/features/safety/hooks/useRulesWalkthrough.ts` (`useRulesWalkthrough` for the comment box through `useCommentComposer`, `useRulesBeforeSubmit` for the forum reply and new thread forms), `components/RulesWalkthrough.tsx`, `api/rulesWalkthrough.ts`, and `supabase/migrations/…_must1c_rules_walkthrough.sql`.

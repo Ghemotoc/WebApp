@@ -49,6 +49,7 @@ export type NotificationKind =
   | 'live_session_soon'
   | 'home_comment_invited'
   | 'forum_reply'
+  | 'assignment_due'
   | 'rank_reached'
   | 'space_handover_offered'
   | 'story_featured'

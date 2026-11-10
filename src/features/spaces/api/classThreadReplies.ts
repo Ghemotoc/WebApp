@@ -2,7 +2,8 @@
  * "Who has replied" for a class thread (bundle 14d IDEAS-3, part b; idea IDEA-20261102-5).
  *
  * Who calls it: hooks/useClassThreadReplies.ts. What it calls next: class_thread_replies() in
- * supabase/migrations/…_ideas3_b_who_has_replied.sql. The database decides who may see the lists
+ * supabase/migrations/…_ideas3_b_who_has_replied.sql (with the due date and the late marks since
+ * …_must1d_assignment_due_dates.sql, MUST-1d), and set_forum_thread_due_date() for the due date. The database decides who may see the lists
  * (the teacher, or someone holding the class's "members" power) and answers null for everyone
  * else; this file only reads its answer.
  */
@@ -15,11 +16,21 @@ export interface ClassMemberName {
   displayName: string;
 }
 
+/** A member who has replied, and whether the first reply came after the due date (MUST-1d). */
+export interface ClassReply extends ClassMemberName {
+  isLate: boolean;
+}
+
 /** The class split by whether each member has posted in the thread. */
 export interface ClassThreadReplies {
-  replied: ClassMemberName[];
+  replied: ClassReply[];
   notYet: ClassMemberName[];
+  /** The assignment's due day ("2026-11-14"), or null when it has none (MUST-1d). */
+  dueOn: string | null;
 }
+
+/** Why saving a due date failed, as the field explains it. */
+export type DueDateFailure = 'due_in_past' | 'class_locked' | 'not_teacher' | 'unknown';
 
 /**
  * Reads one list of members from the database's answer.
@@ -54,5 +65,58 @@ export async function fetchClassThreadReplies(
   });
   if (error) throw error;
   if (data === null || typeof data !== 'object' || Array.isArray(data)) return null;
-  return { replied: membersFrom(data['replied']), notYet: membersFrom(data['not_yet']) };
+  return {
+    replied: repliesFrom(data['replied']),
+    notYet: membersFrom(data['not_yet']),
+    dueOn: typeof data['due_on'] === 'string' ? data['due_on'] : null,
+  };
+}
+
+/**
+ * Reads the "replied" list, with each member's late mark.
+ *
+ * @param value - the "replied" array
+ * @returns the members who replied
+ */
+function repliesFrom(value: Json | undefined): ClassReply[] {
+  const names = membersFrom(value);
+  const rows = Array.isArray(value) ? value : [];
+  return names.map((name, index) => {
+    const row = rows[index];
+    const isLate =
+      row !== null && typeof row === 'object' && !Array.isArray(row) && row['is_late'] === true;
+    return { ...name, isLate };
+  });
+}
+
+/** An error from set_forum_thread_due_date(), carrying why it failed. */
+export class DueDateError extends Error {
+  constructor(readonly failure: DueDateFailure) {
+    super(failure);
+    this.name = 'DueDateError';
+  }
+}
+
+/**
+ * Sets or clears a class assignment's due date (the teacher only; the database checks).
+ *
+ * @param client - the Supabase client
+ * @param threadId - the thread's ID
+ * @param dueOn - the day ("2026-11-14"), or null to clear it
+ * @throws DueDateError saying why it was refused
+ */
+export async function saveThreadDueDate(
+  client: AppSupabaseClient,
+  threadId: string,
+  dueOn: string | null,
+): Promise<void> {
+  const { error } = await client.rpc('set_forum_thread_due_date', {
+    target_thread_id: threadId,
+    // Null clears the date; the generated type doesn't know a date argument may be null.
+    due: dueOn as string,
+  });
+  if (error === null) return;
+  const known: DueDateFailure[] = ['due_in_past', 'class_locked', 'not_teacher'];
+  const hint = known.find((failure) => failure === error.hint);
+  throw new DueDateError(hint ?? 'unknown');
 }

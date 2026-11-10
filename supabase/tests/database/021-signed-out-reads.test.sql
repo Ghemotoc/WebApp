@@ -61,6 +61,8 @@ select results_eq(
        ('age_check_attempts', 0::bigint),
        ('age_check_sessions', 0::bigint),
        ('appeals', 0::bigint),
+       -- A student's own "due tomorrow" reminders (MUST-1d).
+       ('assignment_reminders', 0::bigint),
        ('audit_log', 0::bigint),
        ('banned_email_hashes', 0::bigint),
        ('blocks', 0::bigint),

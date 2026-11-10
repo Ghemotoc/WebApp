@@ -588,6 +588,22 @@ describe('notificationText', () => {
     expect(notificationText(englishT(), goneRow, null).href).toBeNull();
   });
 
+  it('an assignment due tomorrow is a reminder that opens the thread (MUST-1d)', () => {
+    const dueRow: AppNotification = {
+      ...newChapter,
+      kind: 'assignment_due',
+      actors: [],
+      actorCount: 0,
+      story: null,
+      chapter: null,
+      forumThread: { number: 12, forumSlug: 'space-clasa-a-viii-a', title: 'Tema 1' },
+    };
+    const text = notificationText(englishT(), dueRow, null);
+    expect(text.who).toBe('Reminder:');
+    expect(text.what).toBe('“Tema 1” is due tomorrow.');
+    expect(text.href).toBe('/forums/space-clasa-a-viii-a/12');
+  });
+
   it('an invitation to the home page comes from the team and links to the hub (GAPS-13)', () => {
     const invitedRow: AppNotification = {
       ...newChapter,

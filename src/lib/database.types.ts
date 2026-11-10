@@ -500,6 +500,49 @@ export type Database = {
           },
         ];
       };
+      assignment_reminders: {
+        Row: {
+          created_at: string;
+          due_on: string;
+          id: string;
+          thread_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          due_on: string;
+          id?: string;
+          thread_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          due_on?: string;
+          id?: string;
+          thread_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'assignment_reminders_thread_id_fkey';
+            columns: ['thread_id'];
+            isOneToOne: false;
+            referencedRelation: 'forum_threads';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'assignment_reminders_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       audit_log: {
         Row: {
           action: string;
@@ -3704,6 +3747,7 @@ export type Database = {
           continues_in_thread_id: string | null;
           created_at: string;
           deleted_at: string | null;
+          due_on: string | null;
           forum_id: string;
           id: string;
           is_sticky: boolean;
@@ -3748,6 +3792,7 @@ export type Database = {
           continues_in_thread_id?: string | null;
           created_at?: string;
           deleted_at?: string | null;
+          due_on?: string | null;
           forum_id: string;
           id?: string;
           is_sticky?: boolean;
@@ -3767,6 +3812,7 @@ export type Database = {
           continues_in_thread_id?: string | null;
           created_at?: string;
           deleted_at?: string | null;
+          due_on?: string | null;
           forum_id?: string;
           id?: string;
           is_sticky?: boolean;
@@ -12135,8 +12181,44 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      class_space_assignments: { Args: { slug: string }; Returns: Json };
       class_space_for_invites: {
         Args: { target_slug: string };
+        Returns: {
+          age_group: Database['public']['Enums']['space_age_group'];
+          archived_at: string | null;
+          banner: Database['public']['Enums']['space_banner'];
+          banner_picture_id: string | null;
+          created_at: string;
+          deleted_at: string | null;
+          description: string;
+          handover_offered_at: string | null;
+          handover_to_user_id: string | null;
+          id: string;
+          joining: Database['public']['Enums']['space_joining'];
+          kind: Database['public']['Enums']['space_kind'];
+          locks_at: string | null;
+          logo_picture_id: string | null;
+          name: string;
+          name_key: string;
+          posting: Database['public']['Enums']['space_posting'];
+          readers: Database['public']['Enums']['space_readers'];
+          rules: string;
+          school_name: string | null;
+          slug: string;
+          updated_at: string;
+          user_id: string;
+          welcome_note: string | null;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'spaces';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      class_space_of_thread: {
+        Args: { target_thread_id: string };
         Returns: {
           age_group: Database['public']['Enums']['space_age_group'];
           archived_at: string | null;
@@ -13035,6 +13117,7 @@ export type Database = {
           continues_in_thread_id: string | null;
           created_at: string;
           deleted_at: string | null;
+          due_on: string | null;
           forum_id: string;
           id: string;
           is_sticky: boolean;
@@ -15370,6 +15453,7 @@ export type Database = {
         Args: { page_offset?: number; page_size?: number; term: string };
         Returns: Json;
       };
+      send_assignment_reminders: { Args: { run_at?: string }; Returns: number };
       send_finished_thanks: { Args: { story_slug: string }; Returns: Json };
       send_landing_reminders: { Args: Record<PropertyKey, never>; Returns: number };
       send_live_session_reminders: { Args: Record<PropertyKey, never>; Returns: number };
@@ -15407,6 +15491,10 @@ export type Database = {
       };
       set_checks_personal_details: { Args: { should_check: boolean }; Returns: undefined };
       set_class_lock: { Args: { new_locks_at?: string; slug: string }; Returns: Json };
+      set_forum_thread_due_date: {
+        Args: { due: string; target_thread_id: string };
+        Returns: undefined;
+      };
       set_landing_reminder: { Args: { page_slug: string; wanted: boolean }; Returns: Json };
       set_library_audience: {
         Args: { audience: Database['public']['Enums']['library_audience'] };
@@ -16786,7 +16874,8 @@ export type Database = {
         | 'waitlist_admitted'
         | 'live_session_soon'
         | 'home_comment_invited'
-        | 'forum_reply';
+        | 'forum_reply'
+        | 'assignment_due';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -17181,6 +17270,7 @@ export const Constants = {
         'live_session_soon',
         'home_comment_invited',
         'forum_reply',
+        'assignment_due',
       ],
       picture_kind: [
         'cover',
