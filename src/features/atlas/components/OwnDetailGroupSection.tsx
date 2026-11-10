@@ -7,7 +7,7 @@
  * (S1-E17-10). A group whose details are all removed doesn't show; bringing one back on the
  * at-a-glance page brings the group back.
  * Who uses it: CharacterSheet. What it calls: OwnDetailBoxes, AddDetailForm and useDetailChangers'
- * renameDetailGroup.
+ * renameDetailGroup and useDetailFormSave.
  */
 import { useEffect, useState } from 'react';
 
@@ -18,6 +18,7 @@ import { FormSection } from '@/features/writing/components/FormSection';
 
 import type { CharacterField, StoryCharacter } from '../api/characters';
 import { useDetailChangers } from '../hooks/useDetailChangers';
+import { useBuiltInGroupNames, useDetailFormSave } from '../hooks/useDetailFormSave';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { AddDetailForm } from './AddDetailForm';
@@ -36,6 +37,21 @@ export interface OwnDetailGroupSectionProps {
   saveValue: (fieldId: string, value: string) => Promise<void>;
 }
 
+/** The closed state of "Rename group": one grey glass button that names the group it renames. */
+function RenameGroupButton({ name, open }: { name: string; open: () => void }) {
+  const { t } = useAtlasTranslation();
+  return (
+    <Button
+      variant="secondary"
+      className="self-start"
+      aria-label={t('characters.details.renameGroupNamed', { group: name })}
+      onClick={open}
+    >
+      {t('characters.details.renameGroup')}
+    </Button>
+  );
+}
+
 /** "Rename group": one button, or the open box with Save and Cancel. */
 function RenameGroupForm({
   slug,
@@ -46,7 +62,8 @@ function RenameGroupForm({
   const { renameDetailGroup } = useDetailChangers(slug);
   const [isOpen, setIsOpen] = useState(false);
   const [newName, setNewName] = useState(name);
-  const [message, setMessage] = useState<string | null>(null);
+  const { message, isSaving, say, save } = useDetailFormSave();
+  const isBuiltInGroupName = useBuiltInGroupNames();
 
   const boxId = `atlas-rename-group-${index}`;
   // Opening the form puts the cursor in its box, so the keyboard carries on from the button.
@@ -56,25 +73,13 @@ function RenameGroupForm({
 
   /** Saves the new name and closes, or says why not. */
   async function rename() {
-    setMessage(null);
-    if (newName.trim() === '') return setMessage(t('characters.details.groupNameRequired'));
-    await renameDetailGroup(name, newName)
-      .then(() => setIsOpen(false))
-      .catch(() => setMessage(t('characters.details.renameFailed')));
+    if (newName.trim() === '') return say(t('characters.details.groupNameRequired'));
+    if (isBuiltInGroupName(newName)) return say(t('characters.details.groupNameTaken'));
+    const change = () => renameDetailGroup(name, newName);
+    if (await save(change, 'characters.details.renameFailed')) setIsOpen(false);
   }
 
-  if (!isOpen) {
-    return (
-      <Button
-        variant="secondary"
-        className="self-start"
-        aria-label={t('characters.details.renameGroupNamed', { group: name })}
-        onClick={() => setIsOpen(true)}
-      >
-        {t('characters.details.renameGroup')}
-      </Button>
-    );
-  }
+  if (!isOpen) return <RenameGroupButton name={name} open={() => setIsOpen(true)} />;
   return (
     <form
       className="flex min-w-0 flex-col gap-3"
@@ -93,7 +98,9 @@ function RenameGroupForm({
             onChange={(event) => setNewName(event.target.value)}
           />
         </div>
-        <Button type="submit">{t('characters.details.save')}</Button>
+        <Button type="submit" disabled={isSaving}>
+          {t('characters.details.save')}
+        </Button>
         <Button variant="secondary" onClick={() => setIsOpen(false)}>
           {t('characters.details.cancel')}
         </Button>

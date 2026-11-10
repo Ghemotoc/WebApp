@@ -22,7 +22,7 @@ export interface FormSectionProps {
 export function FormSection({ legend, children }: FormSectionProps) {
   return (
     <fieldset className="relative m-0 flex min-w-0 flex-col gap-5 rounded-card border border-border bg-surface px-7 py-[26px] shadow-card">
-      <legend className="float-left mb-4 w-fit max-w-full font-heading text-[26px] leading-[1.1] font-bold text-heading">
+      <legend className="float-left mb-4 w-fit max-w-full font-heading text-[26px] leading-[1.1] font-bold wrap-anywhere text-heading">
         {legend}
       </legend>
       {children}
