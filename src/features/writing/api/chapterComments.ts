@@ -13,6 +13,8 @@ import type { LatestComment } from './dashboard';
 
 /** One comment on the page: the dashboard card's fields, plus its story and whether it was cut. */
 export interface ChapterComment extends LatestComment {
+  /** The comment's own ID: the list's key, and where the next page starts. */
+  id: string;
   storyTitle: string;
   /** True when the comment is longer than what is shown; the chapter holds the rest. */
   isShortened: boolean;
@@ -31,8 +33,18 @@ export interface ChapterCommentsPage {
   hasMore: boolean;
 }
 
+/**
+ * Where the next page starts: the oldest comment shown so far. The ID settles comments written at
+ * the very same moment, so none is skipped between two pages (break test, 10 Nov 2026).
+ */
+export interface CommentsCursor {
+  createdAt: string;
+  id: string;
+}
+
 /** One comment as the database answers it. */
 interface ChapterCommentRow {
+  id: string;
   display_name: string;
   handle: string;
   story_slug: string;
@@ -62,6 +74,7 @@ export function chapterCommentsFrom(answer: ChapterCommentsAnswer): ChapterComme
     stories: answer.stories,
     hasMore: answer.has_more,
     comments: answer.comments.map((row) => ({
+      id: row.id,
       displayName: row.display_name,
       handle: row.handle,
       storySlug: row.story_slug,
@@ -79,19 +92,19 @@ export function chapterCommentsFrom(answer: ChapterCommentsAnswer): ChapterComme
  * Reads one page of the comments.
  *
  * @param client - the shared Supabase client
- * @param olderThan - the time of the oldest comment shown so far, or null for the first page
+ * @param after - the oldest comment shown so far (its time and ID), or null for the first page
  * @param storySlug - one of the writer's stories, or null for every story
  * @returns the page
  * Errors: throws with Supabase's message when the database refuses or can't be reached.
  */
 export async function fetchMyChapterComments(
   client: AppSupabaseClient,
-  olderThan: string | null,
+  after: CommentsCursor | null,
   storySlug: string | null,
 ): Promise<ChapterCommentsPage> {
   // Only the choices that were made are sent; the function's defaults cover the rest.
   const { data, error } = await client.rpc('my_chapter_comments', {
-    ...(olderThan === null ? {} : { older_than: olderThan }),
+    ...(after === null ? {} : { older_than: after.createdAt, older_than_id: after.id }),
     ...(storySlug === null ? {} : { only_story_slug: storySlug }),
   });
   if (error !== null) throw new Error(`Could not read the comments: ${error.message}`);

@@ -98,7 +98,7 @@ function CommentsBody() {
         >
           {list.comments.map((comment) => (
             <WriterCommentCard
-              key={`${comment.chapterCode}-${comment.createdAt}-${comment.handle}`}
+              key={comment.id}
               comment={comment}
               storyTitle={comment.storyTitle}
               isShortened={comment.isShortened}

@@ -21,10 +21,12 @@
  *
  * Inputs: older_than, the created_at of the oldest comment shown so far (null for the first
  *   page); only_story_slug, one of the caller's stories or null for all; page_size (1 to 50,
- *   20 when left out).
+ *   20 when left out); older_than_id, that oldest comment's ID, so comments written at the very
+ *   same moment as it aren't skipped between two pages (break test, 10 Nov 2026).
  * Returns: { stories: [{ slug, title }] (the caller's stories with a published chapter, by title,
- *   for the filter), has_more, comments: [{ display_name, handle, story_slug, story_title,
- *   chapter_code, chapter_position, body (the first 600 characters), is_shortened, created_at }] }.
+ *   for the filter), has_more, comments: [{ id (the comment's, never a person's), display_name,
+ *   handle, story_slug, story_title, chapter_code, chapter_position, body (the first 600
+ *   characters), is_shortened, created_at }] }.
  *   A story that isn't the caller's simply has no comments here.
  * Errors: insufficient_privilege when signed out.
  * Where it fits: /write/comments (features/writing/hooks/useMyChapterComments.ts), opened from
@@ -33,7 +35,8 @@
 create function public.my_chapter_comments(
   older_than timestamptz default null,
   only_story_slug text default null,
-  page_size integer default 20
+  page_size integer default 20,
+  older_than_id uuid default null
 )
 returns jsonb
 language plpgsql
@@ -60,6 +63,7 @@ begin
     select comments.created_at, comments.id,
       row_number() over (order by comments.created_at desc, comments.id) as place,
       jsonb_build_object(
+        'id', comments.id,
         'display_name', public.display_name(profiles.handle, profiles.pen_name),
         'handle', profiles.handle,
         'story_slug', stories.slug,
@@ -76,7 +80,10 @@ begin
     where stories.user_id = caller_id and stories.deleted_at is null and chapters.deleted_at is null
       and chapters.status = 'published' and comments.user_id <> caller_id
       and (only_story_slug is null or stories.slug = only_story_slug)
-      and (older_than is null or comments.created_at < older_than)
+      -- Older than the last one shown; at the very same moment, the ones after it by ID.
+      and (older_than is null or comments.created_at < older_than
+           or (older_than_id is not null and comments.created_at = older_than
+               and comments.id > older_than_id))
       and public.comment_is_shown_to_caller(comments)
     order by comments.created_at desc, comments.id
     limit wanted_rows + 1
@@ -96,8 +103,8 @@ begin
 end;
 $$;
 
-comment on function public.my_chapter_comments(timestamptz, text, integer) is
+comment on function public.my_chapter_comments(timestamptz, text, integer, uuid) is
   'One page of the comments readers wrote under the caller''s published chapters, newest first (GAPS-5; S1-E3-07).';
 
-revoke all on function public.my_chapter_comments(timestamptz, text, integer) from public;
-grant execute on function public.my_chapter_comments(timestamptz, text, integer) to authenticated;
+revoke all on function public.my_chapter_comments(timestamptz, text, integer, uuid) from public;
+grant execute on function public.my_chapter_comments(timestamptz, text, integer, uuid) to authenticated;

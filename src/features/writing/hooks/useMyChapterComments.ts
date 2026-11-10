@@ -6,12 +6,16 @@
  * my_chapter_comments(). Signed out, it never asks the database. Picking another story starts a
  * new list; the stories to pick from come from the first page.
  */
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
 import { useSession } from '@/features/auth/hooks/useSession';
 
-import { fetchMyChapterComments, type ChapterCommentsPage } from '../api/chapterComments';
+import {
+  fetchMyChapterComments,
+  type ChapterCommentsPage,
+  type CommentsCursor,
+} from '../api/chapterComments';
 
 /**
  * Loads the list.
@@ -26,12 +30,18 @@ export function useMyChapterComments(storySlug: string | null) {
     // Per person and per story, so another account's or another story's list never shows.
     queryKey: ['my-chapter-comments', userId, storySlug],
     enabled: userId !== null,
+    // While another story's list loads, the last list stays on the page: the story picker keeps
+    // its place and the keyboard's focus instead of vanishing (break test, 10 Nov 2026).
+    placeholderData: keepPreviousData,
     initialPageParam: null,
     // The next page starts after the oldest comment shown so far.
-    getNextPageParam: (lastPage) =>
-      lastPage.hasMore ? (lastPage.comments.at(-1)?.createdAt ?? null) : null,
+    getNextPageParam: (lastPage) => {
+      const oldest = lastPage.comments.at(-1);
+      if (!lastPage.hasMore || oldest === undefined) return null;
+      return { createdAt: oldest.createdAt, id: oldest.id };
+    },
     queryFn: async ({ pageParam }) =>
-      fetchMyChapterComments(await requireClient(), pageParam as string | null, storySlug),
+      fetchMyChapterComments(await requireClient(), pageParam as CommentsCursor | null, storySlug),
   });
   return {
     comments: list.data?.pages.flatMap((page) => page.comments) ?? [],

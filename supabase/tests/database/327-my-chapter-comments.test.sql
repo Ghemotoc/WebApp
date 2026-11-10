@@ -3,6 +3,8 @@
 -- What it proves:
 -- - only a signed-in person may ask, and each writer gets only the comments on their own chapters;
 -- - the list is newest first, a page at a time, and says whether older comments are left;
+-- - comments written at the very same moment are all shown across two pages, none skipped
+--   (break test, 10 Nov 2026), and each carries its own ID;
 -- - the writer's own comments, a deleted comment and one from a person the writer blocked are
 --   left out, as on the dashboard;
 -- - one story can be picked, and the stories to pick from are the ones with a published chapter;
@@ -13,7 +15,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(14);
+select plan(16);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -126,6 +128,31 @@ select is((select string_agg(story ->> 'slug', ',' order by place)
 select pg_temp.sign_in(pg_temp.persona(7)::text);
 select is(pg_temp.bodies(public.my_chapter_comments(null, 'statia-meteo-seed01')), '',
   'another person gets none of this writer''s comments, even by the story''s address');
+
+/* ---------- 6. Comments written at the very same moment ---------- */
+
+-- Three comments with one timestamp (now() is the same all through a transaction) join the one
+-- already on the second story, so a page of two ends in the middle of them.
+reset role;
+insert into public.comments (user_id, chapter_id, body, created_at)
+select pg_temp.persona(7), chapters.id, 'Deodată ' || number, now() - interval '10 days'
+from public.chapters, generate_series(1, 3) as number
+where chapters.code = 'c327bbbb';
+select pg_temp.sign_in(pg_temp.persona(1)::text);
+
+create temp table first_page on commit drop as
+select public.my_chapter_comments(null, 'a-doua-poveste-327', 2) as answer;
+select is((select count(distinct item ->> 'id')
+           from (select jsonb_array_elements(answer -> 'comments') as item from first_page
+                 union all
+                 select jsonb_array_elements(public.my_chapter_comments(
+                   (answer -> 'comments' -> 1 ->> 'created_at')::timestamptz, 'a-doua-poveste-327', 2,
+                   (answer -> 'comments' -> 1 ->> 'id')::uuid) -> 'comments')
+                 from first_page) as both_pages),
+  4::bigint, 'two pages of two show all four comments, though three were written at the same moment');
+select ok((select answer -> 'comments' -> 0 ->> 'id' from first_page) ~ '^[0-9a-f-]{36}$'
+  and position('00000000-0000-4000-8000' in (select answer::text from first_page)) = 0,
+  'each comment carries its own ID, and still nobody''s user ID');
 
 select * from finish();
 

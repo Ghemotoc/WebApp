@@ -26828,7 +26828,7 @@ COMMENT ON FUNCTION "public"."my_certificates"() IS 'The caller''s own certifica
 
 
 
-CREATE OR REPLACE FUNCTION "public"."my_chapter_comments"("older_than" timestamp with time zone DEFAULT NULL::timestamp with time zone, "only_story_slug" "text" DEFAULT NULL::"text", "page_size" integer DEFAULT 20) RETURNS "jsonb"
+CREATE OR REPLACE FUNCTION "public"."my_chapter_comments"("older_than" timestamp with time zone DEFAULT NULL::timestamp with time zone, "only_story_slug" "text" DEFAULT NULL::"text", "page_size" integer DEFAULT 20, "older_than_id" "uuid" DEFAULT NULL::"uuid") RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
@@ -26851,6 +26851,7 @@ begin
     select comments.created_at, comments.id,
       row_number() over (order by comments.created_at desc, comments.id) as place,
       jsonb_build_object(
+        'id', comments.id,
         'display_name', public.display_name(profiles.handle, profiles.pen_name),
         'handle', profiles.handle,
         'story_slug', stories.slug,
@@ -26867,7 +26868,10 @@ begin
     where stories.user_id = caller_id and stories.deleted_at is null and chapters.deleted_at is null
       and chapters.status = 'published' and comments.user_id <> caller_id
       and (only_story_slug is null or stories.slug = only_story_slug)
-      and (older_than is null or comments.created_at < older_than)
+      -- Older than the last one shown; at the very same moment, the ones after it by ID.
+      and (older_than is null or comments.created_at < older_than
+           or (older_than_id is not null and comments.created_at = older_than
+               and comments.id > older_than_id))
       and public.comment_is_shown_to_caller(comments)
     order by comments.created_at desc, comments.id
     limit wanted_rows + 1
@@ -26888,10 +26892,10 @@ end;
 $$;
 
 
-ALTER FUNCTION "public"."my_chapter_comments"("older_than" timestamp with time zone, "only_story_slug" "text", "page_size" integer) OWNER TO "postgres";
+ALTER FUNCTION "public"."my_chapter_comments"("older_than" timestamp with time zone, "only_story_slug" "text", "page_size" integer, "older_than_id" "uuid") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."my_chapter_comments"("older_than" timestamp with time zone, "only_story_slug" "text", "page_size" integer) IS 'One page of the comments readers wrote under the caller''s published chapters, newest first (GAPS-5; S1-E3-07).';
+COMMENT ON FUNCTION "public"."my_chapter_comments"("older_than" timestamp with time zone, "only_story_slug" "text", "page_size" integer, "older_than_id" "uuid") IS 'One page of the comments readers wrote under the caller''s published chapters, newest first (GAPS-5; S1-E3-07).';
 
 
 
@@ -58784,8 +58788,8 @@ GRANT ALL ON FUNCTION "public"."my_certificates"() TO "authenticated";
 
 
 
-REVOKE ALL ON FUNCTION "public"."my_chapter_comments"("older_than" timestamp with time zone, "only_story_slug" "text", "page_size" integer) FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."my_chapter_comments"("older_than" timestamp with time zone, "only_story_slug" "text", "page_size" integer) TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."my_chapter_comments"("older_than" timestamp with time zone, "only_story_slug" "text", "page_size" integer, "older_than_id" "uuid") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."my_chapter_comments"("older_than" timestamp with time zone, "only_story_slug" "text", "page_size" integer, "older_than_id" "uuid") TO "authenticated";
 
 
 
