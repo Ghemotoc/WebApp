@@ -937,11 +937,14 @@
       "notShown": "This character isn’t shown here."
     },
     "world": {
-      "none": "Nothing from the story’s world to show yet."
+      "none": "Nothing from the story’s world to show yet.",
+      "back": "World",
+      "more": "More from the world",
+      "notShown": "This entry isn’t shown here."
     },
     "timeline": {
       "none": "No events to show yet."
     },
-    "sharedByWriter": "Shared by the writer"
+    "byline": "by {{name}} · shared by the writer"
   }
 }

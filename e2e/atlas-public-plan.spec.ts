@@ -12,11 +12,14 @@
  * - "Preview as a reader" marks an event that waits for a chapter, a visitor doesn't see it,
  *   and a reader who reached that chapter does (S1-E17-35);
  * - a reader can report a public character (S1-E17-34);
+ * - every page opens with the story's cover and "by <writer> · shared by the writer", and each
+ *   world entry has its own page with "More from the world" beside it (GAPS-4);
  * - the reader pages pass axe, don't scroll sideways and draw no doodle at 390, 768
  *   and 1440 px, light and night, Romanian and English.
  * Test data: adult_writer gets one story of its own with two published chapters, two
  * characters and two events (all deleted at the end); teen_17 is the signed-in reader.
  */
+import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
@@ -30,6 +33,7 @@ const storyId = 'e2e17320-0000-4000-9000-000000000001';
 const storySlug = 'atlas-public-seed01';
 const anaId = 'e2e17320-0000-4000-8000-000000000001';
 const cezarId = 'e2e17320-0000-4000-8000-000000000002';
+const millEntryId = 'e2e17320-0000-4000-8000-0000000000e1';
 const settingsAddress = `/plan/s/${storySlug}/readers`;
 const readerBase = `/s/${storySlug}/atlas`;
 
@@ -38,6 +42,7 @@ function cleanUp() {
   runSql(`
     delete from public.reading_positions where story_id = '${storyId}';
     delete from public.story_events where story_id = '${storyId}';
+    delete from public.story_bible_entries where story_id = '${storyId}';
     delete from public.story_characters where story_id = '${storyId}';
     delete from public.story_plans where story_id = '${storyId}';
     delete from public.chapters where story_id = '${storyId}';
@@ -60,7 +65,17 @@ function seedStory() {
            ('${cezarId}', '${storyId}', '${writerId}', 'Cezar', '{}');
     insert into public.story_events (story_id, user_id, title, display_date, sort_value, description)
     values ('${storyId}', '${writerId}', 'Plecarea', 'Primăvara', 1, ''),
-           ('${storyId}', '${writerId}', 'Incendiul', 'Vara', 2, '');`);
+           ('${storyId}', '${writerId}', 'Incendiul', 'Vara', 2, '');
+    insert into public.story_bible_entries (id, story_id, user_id, section_id, title, tags, body)
+    select wanted.id::uuid, sections.story_id, sections.user_id, sections.id, wanted.title, wanted.tags::text[],
+      wanted.body
+    from (values
+      ('${millEntryId}', 'world', 'Moara', '{deal}', 'Moara macină noaptea. Aici lucrează [[Ana]].'),
+      ('e2e17320-0000-4000-8000-0000000000e2', 'world', 'Scocul', '{}', 'Apa vine pe scoc.'),
+      ('e2e17320-0000-4000-8000-0000000000e3', 'magic', 'Făina', '{}', 'Făina nu se termină.')
+    ) as wanted (id, preset, title, tags, body)
+    join public.story_bible_sections as sections
+      on sections.story_id = '${storyId}' and sections.preset::text = wanted.preset;`);
 }
 
 /** Opens an address in English, signed in as a persona or as a visitor, at a width. */
@@ -220,5 +235,65 @@ test.describe('Story Atlas for readers (S1-E17-32 to S1-E17-35)', () => {
     const visitor = await openAs(browser, null, `${readerBase}/timeline`);
     await expect(visitor.getByText('This isn’t available.', { exact: false })).toBeVisible();
     await visitor.context().close();
+  });
+  test('the band shows the cover and the writer, and a world entry has its own page', async ({
+    browser,
+  }) => {
+    // The writer turns World on.
+    const page = await openAs(browser, 'adult_writer', settingsAddress);
+    const areas = page.getByRole('group', { name: 'Areas readers see' });
+    await areas.getByRole('switch', { name: 'World' }).click();
+    await expect(areas.getByRole('switch', { name: 'World' })).toBeChecked();
+    // The preview opens an entry on its own page, with no Report button.
+    await page.goto(`/plan/s/${storySlug}/preview/world/${millEntryId}`);
+    await expect(page.getByRole('heading', { level: 2, name: 'Moara' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Report', exact: false })).toHaveCount(0);
+    await page.context().close();
+
+    // A visitor's World page: the band, then each section's entries as links.
+    const visitor = await openAs(browser, null, `${readerBase}/world`);
+    await visitor.emulateMedia({ reducedMotion: 'reduce' });
+    await expect(visitor.getByTestId('atlas-public-cover')).toBeVisible();
+    await expect(visitor.getByTestId('atlas-public-byline')).toHaveText(
+      /^by .+ · shared by the writer$/,
+    );
+    await expect(visitor.getByTestId('atlas-public-entry-row')).toHaveCount(3);
+    await expect(visitor.getByText('Moara macină noaptea.', { exact: false })).toHaveCount(0);
+
+    // One entry's page: its section, its text with a link to a public character, and the rest
+    // of the world beside it, the same section's entry first.
+    await visitor.getByRole('link', { name: 'Moara', exact: true }).click();
+    await expect(visitor).toHaveURL(new RegExp(`/atlas/world/${millEntryId}$`));
+    await expect(visitor).toHaveTitle(/^Moara: Moara de pe deal/);
+    const entry = visitor.getByTestId('atlas-public-entry');
+    await expect(entry.getByRole('heading', { level: 2, name: 'Moara' })).toBeVisible();
+    await expect(entry.getByText('World and places')).toBeVisible();
+    await expect(entry.getByRole('link', { name: 'Ana' })).toHaveAttribute(
+      'href',
+      `${readerBase}/characters/${anaId}`,
+    );
+    const more = visitor.getByRole('complementary', { name: 'More from the world' });
+    await expect(more.getByRole('link')).toHaveText([/Scocul/, /Făina/]);
+    const results = await new AxeBuilder({ page: visitor })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
+      .analyze();
+    expect(results.violations).toEqual([]);
+    await expectNoDoodles(visitor);
+
+    // "More from the world" opens the next entry; an entry that isn't there says so plainly.
+    await more.getByRole('link', { name: /Scocul/ }).click();
+    await expect(visitor.getByRole('heading', { level: 2, name: 'Scocul' })).toBeVisible();
+    await visitor.goto(`${readerBase}/world/${cezarId}`);
+    await expect(visitor.getByText('This entry isn’t shown here.')).toBeVisible();
+    await visitor.context().close();
+
+    // On a phone the band and the entry fit the screen: nothing scrolls sideways.
+    const phone = await openAs(browser, null, `${readerBase}/world/${millEntryId}`, 390);
+    await expect(phone.getByRole('heading', { level: 2, name: 'Moara' })).toBeVisible();
+    const overflow = await phone.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    expect(overflow).toBeLessThanOrEqual(0);
+    await phone.context().close();
   });
 });

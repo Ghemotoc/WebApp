@@ -937,11 +937,14 @@
       "notShown": "Acest personaj nu apare aici."
     },
     "world": {
-      "none": "Nimic din lumea poveștii de arătat încă."
+      "none": "Nimic din lumea poveștii de arătat încă.",
+      "back": "Lume",
+      "more": "Mai multe din lume",
+      "notShown": "Această intrare nu apare aici."
     },
     "timeline": {
       "none": "Niciun eveniment de arătat încă."
     },
-    "sharedByWriter": "Împărtășit de autor"
+    "byline": "de {{name}} · împărtășit de autor"
   }
 }

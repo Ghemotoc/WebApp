@@ -31262,6 +31262,7 @@ CREATE OR REPLACE FUNCTION "public"."public_plan_json"("target_story_id" "uuid",
     AS $$
 declare
   areas text[];
+  shown public.stories;
 begin
   -- Step 1: the areas the writer made public, in the settings' order.
   select array(select area from unnest(public.plan_area_names()) as area
@@ -31269,21 +31270,32 @@ begin
     into areas
   from public.story_plans where story_plans.story_id = target_story_id;
   areas := coalesce(areas, '{}');
-  -- Step 2: each area's items that show.
-  return (select jsonb_build_object(
-    'story', jsonb_build_object('slug', stories.slug, 'title', (public.story_as_shown(stories)).title),
+  -- Step 2: the story as this caller may see it (a title or cover staff hid is replaced).
+  select (public.story_as_shown(stories)).* into shown
+  from public.stories where stories.id = target_story_id;
+  if shown.id is null then
+    return null;
+  end if;
+  -- Step 3: the story's band, then each area's items that show.
+  return jsonb_build_object(
+    'story', jsonb_build_object(
+      'id', shown.id, 'slug', shown.slug, 'title', shown.title,
+      'cover', jsonb_build_object('kind', shown.cover_kind, 'design', shown.cover_design,
+        'background', shown.cover_background, 'accent', shown.cover_accent),
+      -- The pen name, else the username; never the user ID (rule 15).
+      'writer_name', (select public.story_writer_name(shown.id, profiles.handle, profiles.pen_name)
+                      from public.profiles where profiles.id = shown.user_id)),
     'areas', to_jsonb(areas),
-    'characters', public.public_plan_characters(stories.id, areas, as_preview),
-    'fields', public.public_plan_fields(stories.id, areas, as_preview),
-    'relationships', public.public_plan_relationships(stories.id, areas, as_preview),
-    'sections', public.public_plan_bible(stories.id, areas, as_preview),
-    'events', public.public_plan_events(stories.id, areas, as_preview),
+    'characters', public.public_plan_characters(shown.id, areas, as_preview),
+    'fields', public.public_plan_fields(shown.id, areas, as_preview),
+    'relationships', public.public_plan_relationships(shown.id, areas, as_preview),
+    'sections', public.public_plan_bible(shown.id, areas, as_preview),
+    'events', public.public_plan_events(shown.id, areas, as_preview),
     'chapters', coalesce((
       select jsonb_agg(jsonb_build_object('code', chapters.code, 'title', chapters.published_title)
         order by chapters.position)
       from public.chapters
-      where chapters.story_id = stories.id and public.chapter_is_readable(chapters.id)), '[]'::jsonb))
-    from public.stories where stories.id = target_story_id);
+      where chapters.story_id = shown.id and public.chapter_is_readable(chapters.id)), '[]'::jsonb));
 end;
 $$;
 
@@ -31291,7 +31303,7 @@ $$;
 ALTER FUNCTION "public"."public_plan_json"("target_story_id" "uuid", "as_preview" boolean) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."public_plan_json"("target_story_id" "uuid", "as_preview" boolean) IS 'Internal: everything readers see of one story''s plan (S1-E17-33).';
+COMMENT ON FUNCTION "public"."public_plan_json"("target_story_id" "uuid", "as_preview" boolean) IS 'Internal: what readers see of a story''s plan, with the story''s cover and writer''s name (S1-E17-33; GAPS-4).';
 
 
 

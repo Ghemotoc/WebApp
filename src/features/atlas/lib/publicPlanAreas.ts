@@ -88,7 +88,8 @@ export function publicTargetAddress(
   base: string,
 ): string | null {
   if (target.kind === 'chapter') return `/s/${plan.storySlug}/${target.ref}`;
-  if (target.kind === 'entry') return `${base}/world#atlas-world-entry-${target.ref}`;
+  // Each world entry has its own page (GAPS-4).
+  if (target.kind === 'entry') return `${base}/world/${target.ref}`;
   if (!plan.areas.includes('characters')) return null;
   return `${base}/characters/${target.ref}`;
 }

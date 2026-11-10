@@ -1,14 +1,16 @@
 /**
- * PublicWorld: the story bible a writer shares, in reading mode (story S1-E17-33: "the bible in
- * reading mode … read-only and with nothing private in it").
+ * PublicWorld: the story's world a writer shares, as a list readers browse (story S1-E17-33:
+ * "the bible in reading mode … read-only and with nothing private in it"; bundle GAPS-4).
  *
- * Each public section is a heading with its public entries under it; an entry shows its tags and
- * its text with [[Name]] links that open only public items (a private one reads as plain words,
- * S1-E17-32). Each entry has the shared Report button, and so does a section the writer named
- * themselves (S1-E17-34); the preview leaves the buttons out and marks entries waiting for a
- * chapter. Who uses it: PublicPlanView. What it calls: BibleMarkdown, useBibleSectionName,
- * ReportButton and PlanGuardPill.
+ * Each public section is a heading with its public entries under it, each a link to the entry's
+ * own page (PublicWorldEntry), with its tags. A section the writer named themselves has the
+ * shared Report button (S1-E17-34); an entry's is on its own page. The preview leaves the
+ * buttons out and marks entries waiting for a chapter. Who uses it: PublicPlanView. What it
+ * calls: useBibleSectionName, ReportButton and PlanGuardPill.
  */
+import { Link } from 'react-router';
+
+import { ChevronRightIcon } from '@/components/icons/ChevronRightIcon';
 import { InfoPill } from '@/components/ui/InfoPill';
 import { ReportButton } from '@/features/reporting/components/ReportButton';
 
@@ -16,23 +18,22 @@ import type { PublicEntry, PublicPlan } from '../api/publicPlan';
 import { useBibleSectionName } from '../hooks/useBibleSectionName';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
-import { BibleMarkdown } from './BibleMarkdown';
 import { PlanGuardPill } from './PlanGuardPill';
 
-/** One entry: its title, tags, guard mark, text and Report. */
-function WorldEntry({ entry, isPreview }: { entry: PublicEntry; isPreview: boolean }) {
+/** One entry's row: its title as the link to its page, then its tags and guard mark. */
+function WorldEntryRow({ entry, base }: { entry: PublicEntry; base: string }) {
   return (
-    <article
-      id={`atlas-world-entry-${entry.id}`}
-      aria-labelledby={`atlas-world-entry-${entry.id}-heading`}
-      className="flex min-w-0 scroll-mt-24 flex-col gap-3 border-t border-hairline pt-4 first:border-t-0 first:pt-0"
+    <li
+      data-testid="atlas-public-entry-row"
+      className="flex min-w-0 flex-col gap-2 border-t border-hairline py-3 first:border-t-0 first:pt-0 last:pb-0"
     >
-      <h3
-        id={`atlas-world-entry-${entry.id}-heading`}
-        className="m-0 font-heading text-xl font-bold break-words text-heading"
+      <Link
+        to={`${base}/world/${entry.id}`}
+        className="flex min-h-11 items-center justify-between gap-3 font-heading text-xl font-bold text-heading no-underline hover:underline"
       >
-        {entry.title}
-      </h3>
+        <span className="min-w-0 break-words">{entry.title}</span>
+        <ChevronRightIcon className="flex-none text-meta" />
+      </Link>
       {(entry.tags.length > 0 || entry.showFrom !== null) && (
         <div className="flex flex-wrap gap-2">
           {entry.tags.map((tag) => (
@@ -43,13 +44,7 @@ function WorldEntry({ entry, isPreview }: { entry: PublicEntry; isPreview: boole
           <PlanGuardPill guard={entry.showFrom} />
         </div>
       )}
-      <BibleMarkdown text={entry.body} />
-      {!isPreview && (
-        <div className="self-start">
-          <ReportButton itemType="atlas_item" itemReference={entry.id} itemLabel={entry.title} />
-        </div>
-      )}
-    </article>
+    </li>
   );
 }
 
@@ -57,10 +52,19 @@ function WorldEntry({ entry, isPreview }: { entry: PublicEntry; isPreview: boole
  * Renders the sections.
  *
  * @param props.plan - the public plan
+ * @param props.base - the base address of the readers' (or the preview's) pages
  * @param props.isPreview - true in the writer's preview
  * @returns one card per section, or a plain line when nothing is shown
  */
-export function PublicWorld({ plan, isPreview }: { plan: PublicPlan; isPreview: boolean }) {
+export function PublicWorld({
+  plan,
+  base,
+  isPreview,
+}: {
+  plan: PublicPlan;
+  base: string;
+  isPreview: boolean;
+}) {
   const { t } = useAtlasTranslation();
   const nameOf = useBibleSectionName();
   if (plan.sections.length === 0)
@@ -89,9 +93,11 @@ export function PublicWorld({ plan, isPreview }: { plan: PublicPlan; isPreview: 
               />
             )}
           </div>
-          {section.entries.map((entry) => (
-            <WorldEntry key={entry.id} entry={entry} isPreview={isPreview} />
-          ))}
+          <ul className="m-0 flex list-none flex-col p-0">
+            {section.entries.map((entry) => (
+              <WorldEntryRow key={entry.id} entry={entry} base={base} />
+            ))}
+          </ul>
         </section>
       ))}
     </div>

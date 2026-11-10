@@ -9,8 +9,12 @@ import type { PublicPlan } from '../api/publicPlan';
 import { areaFromPath, publicLinkTargets, publicTargetAddress } from './publicPlanAreas';
 
 const plan: PublicPlan = {
+  storyId: 's1',
   storySlug: 'farul',
   storyTitle: 'Farul',
+  coverKind: 'automatic',
+  drawnCover: null,
+  writerName: 'inkwolf',
   areas: ['characters', 'bible'],
   cast: {
     storyId: '',
@@ -75,7 +79,7 @@ describe('publicTargetAddress', () => {
       '/s/farul/atlas/characters/ana',
     );
     expect(entry && publicTargetAddress(entry, plan, '/s/farul/atlas')).toBe(
-      '/s/farul/atlas/world#atlas-world-entry-e1',
+      '/s/farul/atlas/world/e1',
     );
     expect(chapter && publicTargetAddress(chapter, plan, '/s/farul/atlas')).toBe(
       '/s/farul/abcd1234',
