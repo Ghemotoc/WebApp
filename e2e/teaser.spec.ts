@@ -119,7 +119,7 @@ test.describe('the web teaser and link previews (S1-E4-04)', () => {
     await expect(page.getByRole('heading', { name: 'Log in to read on' })).toHaveCount(0);
   });
 
-  test('16+ and 18+: a visitor sees the title and why, never the blurb or the text', async ({
+  test('16+ and 18+: a visitor sees the story’s details and why, never the text', async ({
     page,
   }) => {
     for (const rating of ['16_plus', '18_plus'] as const) {
@@ -135,7 +135,8 @@ test.describe('the web teaser and link previews (S1-E4-04)', () => {
         await expect(
           page.getByRole('link', { name: 'Log in to check if you can read it' }),
         ).toBeVisible();
-        expect(await page.content()).not.toContain('Bunica');
+        // S1-E11-36: the blurb shows like any story's; the chapter text never does (Q6).
+        expect(await page.content()).not.toContain('ultimul ultimul');
       }
     }
   });
@@ -150,7 +151,7 @@ test.describe('the web teaser and link previews (S1-E4-04)', () => {
       '<meta property="og:title" content="Stația meteo · Caietele bunicii">',
     );
     expect(chapterHtml).toMatch(
-      /<meta property="og:description" content="de Lia Scrie · Bunica mea/,
+      /<meta property="og:description" content="de Lia Scrie · [^"·]+ · Bunica mea/,
     );
     expect(chapterHtml).toMatch(
       /<meta property="og:image" content="http[^"]+\/link-previews\/sky\.png">/,
@@ -162,20 +163,31 @@ test.describe('the web teaser and link previews (S1-E4-04)', () => {
     // The picture it names is served.
     const image = await request.get('/link-previews/sky.png');
     expect(image.headers()['content-type']).toBe('image/png');
-    // A story page: indexable, with JSON-LD naming the title, blurb and pen name only.
+    // A story page: indexable, with JSON-LD naming the title, blurb, pen name, category and tags.
     const story = await request.get(`/s/${slug}`);
     const storyHtml = await story.text();
     expect(story.headers()['x-robots-tag']).toBeUndefined();
     expect(storyHtml).toContain('"@type":"CreativeWork"');
     expect(storyHtml).toContain('"author":{"@type":"Person","name":"Lia Scrie"}');
     expect(storyHtml).not.toContain('Vântul bate');
-    // A 16+ story: its title and a line saying why, nothing else.
+    // A 16+ story: the same details as any story, never its rating (S1-E11-36).
     rateStory('16_plus');
-    const hiddenHtml = await (await request.get(chapterAddress)).text();
-    expect(hiddenHtml).toContain('<meta property="og:title" content="Stația meteo">');
-    expect(hiddenHtml).toContain('Clasificată 16+. Conectează-te ca să vezi dacă o poți citi.');
-    expect(hiddenHtml).not.toContain('Bunica');
-    expect(hiddenHtml).not.toContain('Lia Scrie');
+    const sixteenHtml = await (await request.get(chapterAddress)).text();
+    expect(sixteenHtml).toContain(
+      '<meta property="og:title" content="Stația meteo · Caietele bunicii">',
+    );
+    expect(sixteenHtml).toMatch(
+      /<meta property="og:description" content="de Lia Scrie · [^"·]+ · Bunica mea/,
+    );
+    expect(sixteenHtml).not.toContain('16+');
+    expect(sixteenHtml).not.toContain('Vântul bate');
+    // An 18+ story: the same, with "For mature readers" and still no rating.
+    rateStory('18_plus');
+    const eighteenHtml = await (await request.get(`/s/${slug}`)).text();
+    expect(eighteenHtml).toMatch(
+      /<meta property="og:description" content="de Lia Scrie · Pentru cititori maturi · [^"·]+ · Bunica mea/,
+    );
+    expect(eighteenHtml).not.toContain('18+');
   });
 
   test('axe in all 12 views of the teaser and the notice; no doodle drawn', async ({ browser }) => {

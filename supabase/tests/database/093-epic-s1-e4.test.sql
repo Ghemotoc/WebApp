@@ -90,8 +90,8 @@ select is(public.get_chapter('statia-meteo-seed01', 'epice4aa'), null, 'nor does
 select pg_temp.sign_out();
 select is(public.get_chapter('statia-meteo-seed01', 'epice4aa'), null, 'nor a visitor, who gets no teaser');
 select ok(public.get_link_preview('statia-meteo-seed01', 'epice4aa') ->> 'hides_text' = 'true'
-  and public.get_link_preview('statia-meteo-seed01', 'epice4aa') ->> 'blurb' is null,
-  'and the link preview shows the title only');
+  and public.get_link_preview('statia-meteo-seed01', 'epice4aa') ->> 'blurb' is not null,
+  'and the link preview keeps the story''s details but says the text is hidden (S1-E11-36)');
 
 -- 5. 18+.
 reset role;

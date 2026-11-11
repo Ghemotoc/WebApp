@@ -1462,9 +1462,11 @@ Someone pastes `/s/<story>/<chapter>` into WhatsApp. Two things read it:
 1. The app's preview robot (no JavaScript):
    GET /s/…  → functions/s/[[path]].ts (Cloudflare; server/pages-functions-plugin.ts locally)
      → server/link-preview.ts: index.html + get_link_preview() with the anon key
-     → <title>, og:title "Story · Chapter", og:description "de <pen name> · <blurb>",
+     → <title>, og:title "Story · Chapter", og:description "de <pen name> · <category> · <blurb>",
+       keywords (category and tags), canonical,
        og:image /link-previews/<cover colour>.png (scripts/make-link-preview-images.ts),
-       noindex on chapters, JSON-LD on story pages (Q36); 16+ and 18+: the title only
+       noindex on chapters, JSON-LD with genre and keywords on story pages (Q36); every rating
+       the same, 18+ adds "For mature readers", 16+ and 18+ never share text (S1-E11-36)
 2. The visitor's browser: the same page, then the app starts as usual:
    ChapterReaderPage → get_chapter() → is_teaser? → TeaserPage
        TeaserStoryCard (get_story_page()) · the teaser (teaser_of(): whole paragraphs up to

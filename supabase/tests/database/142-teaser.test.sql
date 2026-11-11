@@ -14,7 +14,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(35);
+select plan(36);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -107,19 +107,22 @@ select is(public.get_link_preview('statia-meteo-seed01', 'teaserc3'), null, 'a d
 select is(public.get_link_preview('statia-meteo-seed01', 'nimicnim'), null, 'an unknown chapter has none');
 select is(public.get_link_preview('nu-exista'), null, 'an unknown story has none');
 
--- 8. 16+ and 18+: the title and the rating only (Q6).
+-- 8. 16+ and 18+: the same details as any story, but never the text (Q6; S1-E11-36).
 reset role;
 update public.stories set rating = '16_plus' where id = '00000000-0000-4000-9000-000000000001';
 select pg_temp.sign_out();
 select is(public.get_chapter('statia-meteo-seed01', 'teasera1'), null, 'a visitor gets no teaser of a 16+ story');
 select is(public.get_link_preview('statia-meteo-seed01', 'teasera1') ->> 'hides_text', 'true',
   'its preview says the text is hidden');
-select ok(public.get_link_preview('statia-meteo-seed01', 'teasera1') ->> 'blurb' is null
-  and public.get_link_preview('statia-meteo-seed01', 'teasera1') -> 'writer' = 'null'::jsonb
-  and public.get_link_preview('statia-meteo-seed01', 'teasera1') -> 'cover' = 'null'::jsonb
-  and public.get_link_preview('statia-meteo-seed01', 'teasera1') -> 'chapter' ->> 'title' is null,
-  'with no blurb, pen name, cover or chapter title');
-select is(public.get_link_preview('statia-meteo-seed01') ->> 'title', 'Stația meteo', 'only the story''s title');
+select ok(public.get_link_preview('statia-meteo-seed01', 'teasera1') ->> 'blurb' is not null
+  and public.get_link_preview('statia-meteo-seed01', 'teasera1') -> 'writer' ->> 'display_name' is not null
+  and public.get_link_preview('statia-meteo-seed01', 'teasera1') -> 'cover' <> 'null'::jsonb
+  and public.get_link_preview('statia-meteo-seed01', 'teasera1') -> 'chapter' ->> 'title' is not null
+  and public.get_link_preview('statia-meteo-seed01', 'teasera1') ->> 'category_slug' is not null
+  and jsonb_typeof(public.get_link_preview('statia-meteo-seed01', 'teasera1') -> 'tags') = 'array',
+  'with the blurb, pen name, cover, chapter title, category and tags, like any story (S1-E11-36)');
+select ok(public.get_link_preview('statia-meteo-seed01', 'teasera1')::text not like '%unu unu%',
+  'but still never chapter text');
 reset role;
 update public.stories set rating = '18_plus' where id = '00000000-0000-4000-9000-000000000001';
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
@@ -138,6 +141,9 @@ select ok(has_function_privilege('anon', 'public.get_link_preview(text, text)', 
 select ok(not has_function_privilege('anon', 'public.teaser_of(text, integer)', 'execute')
   and not has_function_privilege('authenticated', 'public.word_total(text)', 'execute'),
   'but not call the text helpers themselves');
+select ok(not has_function_privilege('anon', 'public.story_search_tags(uuid, text)', 'execute')
+  and not has_function_privilege('authenticated', 'public.story_search_tags(uuid, text)', 'execute'),
+  'nor the tags helper, which only the preview calls (S1-E11-36)');
 
 select * from finish();
 rollback;

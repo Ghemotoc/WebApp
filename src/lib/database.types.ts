@@ -16995,6 +16995,10 @@ export type Database = {
         };
         Returns: number;
       };
+      story_search_tags: {
+        Args: { story_language: string; target_story_id: string };
+        Returns: Json;
+      };
       story_search_text: { Args: { target_story_id: string }; Returns: string };
       story_search_texts: {
         Args: { target_story_id: string };

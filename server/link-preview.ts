@@ -7,22 +7,25 @@
  * under /s/ this handler takes the app's index.html, asks the database what a visitor who isn't
  * logged in may see (get_link_preview(), never the tables and never chapter text) and writes
  * into the page's <head>:
- * - <title>, the Open Graph tags (og:title, og:description, og:image, og:url, og:site_name) and
- *   the Twitter card, so every app shows the same card: title, pen name, blurb and a plain
- *   picture in the drawn cover's colour (plum otherwise);
- * - for story pages, JSON-LD (schema.org CreativeWork) with the title, blurb and pen name only;
+ * - <title>, the description, the Open Graph tags (og:title, og:description, og:image, og:url,
+ *   og:site_name), the Twitter card and a canonical link, so every app shows the same card: title,
+ *   pen name, category, blurb and a plain picture in the drawn cover's colour (plum otherwise);
+ * - for story pages, JSON-LD (schema.org CreativeWork) with the title, blurb, pen name, category
+ *   (`genre`) and tags (`keywords`), and a keywords meta tag with the category and tags;
  * - for chapter pages and unknown addresses, <meta name="robots" content="noindex"> and the same
  *   rule in an X-Robots-Tag header: only story pages are indexable (Q36).
- * 16+ and 18+ stories show the title and the rating only, never the blurb or pen name (signed-out
- * visitors count as under 16, Q6). Every value is HTML-escaped, so a title like "<script>" stays
- * text. If the database can't be reached, the page goes out unchanged: the preview is a nicety,
- * the page itself must always load.
+ * Every story gets the same details whatever its rating, and the rating itself is never shown
+ * (Robert, 11 Nov 2026; S1-E11-36, replacing Q6's "title and rating only"). An 18+ story adds a
+ * plain "For mature readers" note (16+ adds nothing). A 16+ or 18+ story still never shares a
+ * passage or a picture, because signed-out visitors can't read its text (Q6). Every value is
+ * HTML-escaped, so a title like "<script>" stays text. If the database can't be reached, the page
+ * goes out unchanged: the preview is a nicety, the page itself must always load.
  * Who calls it: functions/s/[[path]].ts on Cloudflare Pages, and server/pages-functions-plugin.ts
  * locally (npm run dev, npm run preview and the end-to-end tests).
  * What it calls: the Supabase REST endpoint /rest/v1/rpc/get_link_preview with the public anon key.
  * A link to a spot in a chapter (/s/<story>/<chapter>/p3-5, S1-E4-11) shows the passage instead of
  * the blurb, from get_shared_passage() (server/shared-passage.ts); for 16+ and 18+ it never has
- * one, and the preview stays the title and the rating. A link to one picture that may be shared
+ * one, and the preview keeps the blurb. A link to one picture that may be shared
  * shows the picture itself as og:image, served by /api/picture-preview/… (server/picture-
  * preview.ts, IDEAS-2f); a picture still in its check or removed keeps the cover colour.
  * Never logged: the request, the visitor or any user text (CLAUDE.md rule 12).
@@ -33,7 +36,9 @@
 // functions/ with an older esbuild that can't read import attributes ("Expected ';' but found
 // 'with'"), and every bundler that loads this file (Wrangler, Vite, Vitest) inlines the JSON anyway.
 import englishReading from '../src/locales/en/reading.json';
+import englishWriting from '../src/locales/en/writing.json';
 import romanianReading from '../src/locales/ro/reading.json';
+import romanianWriting from '../src/locales/ro/writing.json';
 
 import { parseSpot, type SpotRange } from '../src/lib/chapter-blocks.ts';
 
@@ -62,12 +67,19 @@ export interface LinkPreview {
   title: string;
   rating: 'all_ages' | '13_plus' | '16_plus' | '18_plus';
   languageCode: string;
-  /** True for 16+ and 18+: only the title and the rating may be shown. */
+  /**
+   * True for 16+ and 18+: visitors who aren't logged in never see the text, so no passage or
+   * picture is shared (Q6, S1-E11-36).
+   */
   hidesText: boolean;
   blurb: string | null;
   writerName: string | null;
   cover: { kind: string; background: string | null } | null;
   chapterTitle: string | null;
+  /** The story's category (genre) key, for example "fiction", or null. */
+  categorySlug: string | null;
+  /** The story's approved tags in its language, at most ten. */
+  tags: string[];
   /** True when the address names a chapter. */
   isChapter: boolean;
   /** The shared passage as one plain line (S1-E4-11), or null. */
@@ -101,9 +113,6 @@ const storySlugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 /** Chapter codes: 8 lower-case letters or digits (S1-E3-02a). */
 const chapterCodePattern = /^[a-z0-9]{8}$/;
-
-/** The ratings' short labels, the same in both languages. */
-const ratingLabels = { all_ages: 'All ages', '13_plus': '13+', '16_plus': '16+', '18_plus': '18+' };
 
 /**
  * Reads the spot part of an address: only one the reader can read (p3 or p3-5, S1-E4-11).
@@ -145,6 +154,8 @@ interface PreviewRow {
   blurb: string | null;
   writer: { display_name: string } | null;
   cover: { kind: string; background: string | null } | null;
+  category_slug: string | null;
+  tags: string[] | null;
   chapter: { code: string; title: string | null } | null;
 }
 
@@ -187,6 +198,16 @@ export async function fetchLinkPreview(
         });
   // Step 4: a link to one picture that may be shared shows the picture itself (IDEAS-2f).
   const picture = await findSharedPicture(settings, address, row.hides_text);
+  return { ...previewFromRow(row), isChapter: address.chapterCode !== null, passage, picture };
+}
+
+/**
+ * Turns the database's names into ours, for the parts that come straight from the row.
+ *
+ * @param row - what get_link_preview() answered
+ * @returns the preview without the address-dependent parts (chapter, passage, picture)
+ */
+function previewFromRow(row: PreviewRow): Omit<LinkPreview, 'isChapter' | 'passage' | 'picture'> {
   return {
     slug: row.slug,
     title: row.title,
@@ -197,16 +218,15 @@ export async function fetchLinkPreview(
     writerName: row.writer?.display_name ?? null,
     cover: row.cover,
     chapterTitle: row.chapter?.title ?? null,
-    isChapter: address.chapterCode !== null,
-    passage,
-    picture,
+    categorySlug: row.category_slug ?? null,
+    tags: row.tags ?? [],
   };
 }
 
 /**
  * The picture a one-block spot link points to, when it may be shared.
  *
- * @param hidesText - true for 16+ and 18+ stories, which never share a picture (Q6)
+ * @param hidesText - true for 16+ and 18+ stories, whose text and pictures visitors can't see (Q6)
  * @returns its spot and alt text, or null for a story, a chapter, a longer passage or text
  * Errors: throws when the database answers with an error or can't be reached.
  */
@@ -252,12 +272,25 @@ function previewWords(languageCode: string) {
   return languageCode === 'en' ? englishReading.linkPreview : romanianReading.linkPreview;
 }
 
+/**
+ * The category's name in the story's language, from the writing namespace's category labels.
+ *
+ * @param preview - the story's preview
+ * @returns the name, for example "Poetry", or null when the story has no known category
+ */
+export function categoryName(preview: LinkPreview): string | null {
+  if (preview.categorySlug === null) return null;
+  const labels: Record<string, string> =
+    preview.languageCode === 'en' ? englishWriting.categories : romanianWriting.categories;
+  return labels[preview.categorySlug] ?? null;
+}
+
 /** The palette's colour names, one picture each in public/link-previews/. */
 const previewColours: string[] = Object.keys(linkPreviewPalette);
 
 /**
  * The colour of the story's preview picture: the writer's drawn cover's background, otherwise
- * plum (automatic covers, and 16+ and 18+ stories, whose picture must say nothing about them).
+ * plum (automatic covers).
  *
  * @param preview - the story's preview
  * @returns one of the palette's colour names
@@ -269,39 +302,34 @@ export function previewColour(preview: LinkPreview): string {
 }
 
 /**
- * The preview card's title and description.
+ * The preview card's title and description: "by Pen name · Category · blurb", with "For mature
+ * readers" after the pen name for 18+ only (never the rating itself; Robert, 11 Nov 2026).
  *
  * @param preview - the story's preview
  * @returns { title, description } as plain text
  */
 export function previewText(preview: LinkPreview): { title: string; description: string } {
   const words = previewWords(preview.languageCode);
-  // A hidden story: its title, and a line saying why there is nothing more.
-  if (preview.hidesText) {
-    const rating = ratingLabels[preview.rating];
-    return {
-      title: preview.title,
-      description: words.hiddenDescription.replace('{{rating}}', rating),
-    };
-  }
-  // A chapter: "Story · Chapter"; a story page: its title.
+  // Step 1: a chapter shows "Story · Chapter"; a story page its title.
   const title =
     preview.chapterTitle === null ? preview.title : `${preview.title} · ${preview.chapterTitle}`;
-  const byLine = words.byWriter.replace('{{name}}', preview.writerName ?? '');
-  // A shared passage takes the blurb's place (S1-E4-11), in quotation marks.
-  if (preview.passage !== null) {
-    return {
-      title,
-      description: `${byLine} · ${words.quoted.replace('{{passage}}', preview.passage)}`,
-    };
-  }
-  const description =
-    preview.blurb === null || preview.blurb === '' ? byLine : `${byLine} · ${preview.blurb}`;
-  return { title, description };
+  // Step 2: the short parts, each only when the story has it.
+  const parts: string[] = [];
+  if (preview.writerName !== null)
+    parts.push(words.byWriter.replace('{{name}}', preview.writerName));
+  // Robert, 11 Nov 2026: only 18+ says so; 16+ looks like every other story.
+  if (preview.rating === '18_plus') parts.push(words.matureReaders);
+  const category = categoryName(preview);
+  if (category !== null) parts.push(category);
+  // Step 3: a shared passage takes the blurb's place (S1-E4-11), in quotation marks.
+  if (preview.passage !== null) parts.push(words.quoted.replace('{{passage}}', preview.passage));
+  else if (preview.blurb !== null && preview.blurb !== '') parts.push(preview.blurb);
+  return { title, description: parts.join(' · ') };
 }
 
 /**
- * The schema.org description of a story page: its title, blurb and pen name, never its text (Q36).
+ * The schema.org description of a story page: its title, blurb, pen name, category and tags, never
+ * its text (Q36, S1-E11-36).
  *
  * @param preview - the story's preview
  * @param pageUrl - the page's address
@@ -317,6 +345,9 @@ function structuredData(preview: LinkPreview, pageUrl: string): string {
   };
   if (preview.blurb !== null) data.description = preview.blurb;
   if (preview.writerName !== null) data.author = { '@type': 'Person', name: preview.writerName };
+  const category = categoryName(preview);
+  if (category !== null) data.genre = category;
+  if (preview.tags.length > 0) data.keywords = preview.tags.join(', ');
   // "<" is written as < so a title can never close the script element early.
   const json = JSON.stringify(data).replaceAll('<', '\\u003c');
   return `<script type="application/ld+json">${json}</script>`;
@@ -349,6 +380,19 @@ function imageTagsFor(preview: LinkPreview, origin: string): string[] {
 }
 
 /**
+ * The keywords meta tag: the category and the tags, which search engines may use as hints.
+ *
+ * @param preview - the story's preview
+ * @returns one tag in a list, or an empty list when the story has neither
+ */
+function keywordTagsFor(preview: LinkPreview): string[] {
+  const category = categoryName(preview);
+  const keywords = category === null ? preview.tags : [category, ...preview.tags];
+  if (keywords.length === 0) return [];
+  return [`<meta name="keywords" content="${escapeHtml(keywords.join(', '))}">`];
+}
+
+/**
  * Everything the preview adds to the page's <head>.
  *
  * @param preview - the story's preview
@@ -362,6 +406,8 @@ export function headTagsFor(
   const { title, description } = previewText(preview);
   const tags = [
     `<meta name="description" content="${escapeHtml(description)}">`,
+    ...keywordTagsFor(preview),
+    `<link rel="canonical" href="${escapeHtml(page.url)}">`,
     `<meta property="og:type" content="${preview.isChapter ? 'article' : 'book'}">`,
     `<meta property="og:site_name" content="${escapeHtml(page.siteName)}">`,
     `<meta property="og:title" content="${escapeHtml(title)}">`,
