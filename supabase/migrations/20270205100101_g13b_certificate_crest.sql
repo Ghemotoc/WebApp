@@ -5,7 +5,7 @@
  * What it adds:
  * - spaces.crest_picture_id: the crest or logo a class's teacher uploaded for its certificates. It
  *   goes through the picture check like every other upload (CLAUDE.md rule 19) and shows only once
- *   the check passed; until then the Ghemotoc cat shows.
+ *   the check passed; until then the brand’s cat shows.
  * - register_certificate_crest(), set_class_certificate_crest() and class_certificate_crest(): the
  *   teacher's upload, choice and read. Only the class's own teacher, the person who signs.
  * - certificates.look_seal ('cat' or 'crest'), look_crest_colours ('own' on a white seal, or
@@ -54,7 +54,7 @@ alter table public.certificates
   add constraint certificates_crest_matches_seal check (look_seal = 'crest' or crest_picture_id is null);
 
 comment on column public.certificates.look_seal is
-  'What the seal shows: the Ghemotoc cat or the school''s crest; saved at signing (G13b).';
+  'What the seal shows: the brand''s cat or the school''s crest; saved at signing (G13b).';
 comment on column public.certificates.look_crest_colours is
   'A crest in its own colours on a white seal, or in white on the certificate colour (G13b).';
 comment on column public.certificates.crest_picture_id is

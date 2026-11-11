@@ -15504,7 +15504,7 @@ COMMENT ON COLUMN "public"."certificates"."look_pattern" IS 'The faint pattern b
 
 
 
-COMMENT ON COLUMN "public"."certificates"."look_seal" IS 'What the seal shows: the Ghemotoc cat or the school''s crest; saved at signing (G13b).';
+COMMENT ON COLUMN "public"."certificates"."look_seal" IS 'What the seal shows: the brand''s cat or the school''s crest; saved at signing (G13b).';
 
 
 

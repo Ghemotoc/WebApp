@@ -8,7 +8,7 @@
  * the pattern is one of the cover patterns, drawn very faintly behind the words so the text keeps
  * its contrast. The hex values are the board's, each a deep pair, so the white seal mark and the
  * dark text on the paper both read well.
- * Since G13b the seal shows either the Ghemotoc cat or the school's crest, in its own colours on a
+ * Since G13b the seal shows either the brand’s cat or the school's crest, in its own colours on a
  * white seal or in white on the certificate colour.
  * Who calls it: CertificateSheet, CertificateLookPicker and the API readers in api/. What it
  * calls: nothing.
@@ -45,7 +45,7 @@ export const certificatePatterns = [
 /** One certificate pattern. */
 export type CertificatePattern = (typeof certificatePatterns)[number];
 
-/** What the seal shows: the Ghemotoc cat or the school's crest (G13b). */
+/** What the seal shows: the brand’s cat or the school's crest (G13b). */
 export const certificateSeals = ['cat', 'crest'] as const;
 
 /** One seal. */
