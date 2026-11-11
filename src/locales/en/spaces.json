@@ -307,7 +307,8 @@
       "logo_picture_changed": "{{actor}} changed the logo.",
       "post_hidden": "{{actor}} hid a post.",
       "post_shown": "{{actor}} showed a hidden post again.",
-      "post_moved": "{{actor}} moved a post to another thread."
+      "post_moved": "{{actor}} moved a post to another thread.",
+      "certificate_crest_changed": "{{actor}} changed the certificate crest."
     }
   },
   "bannerPicture": {

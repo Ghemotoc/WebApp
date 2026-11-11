@@ -42,6 +42,8 @@ const knownActions = [
   // Archiving a class (CLASSES-d) and its certificates (CLASSES-e; S1-E8-12).
   'class_archived',
   'certificates_issued',
+  // The school's crest for the class's certificates (bundle G13b).
+  'certificate_crest_changed',
   // The welcome note new members see once (bundle 14d IDEAS-3, part d).
   'welcome_note_changed',
   // Handing the space over to a moderator (bundle 14d IDEAS-3, part e).

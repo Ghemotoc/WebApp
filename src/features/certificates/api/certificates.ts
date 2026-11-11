@@ -13,9 +13,13 @@
 import type { Enums, Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
 
+import { pictureFromJson, type StoredPicture } from '@/features/pictures/api/pictures';
+
 import {
   certificateColourOf,
   certificatePatternOf,
+  certificateSealOf,
+  crestColoursOf,
   type CertificateLook,
 } from '../lib/certificateLook';
 
@@ -52,6 +56,8 @@ export interface MyCertificate {
   contestName: { ro: string; en: string } | null;
   /** The colour and pattern saved when it was signed (G13a); Plum with none for a contest. */
   look: CertificateLook;
+  /** The crest it was signed with (G13b), or null for the cat; its file only once checked. */
+  crest: StoredPicture | null;
 }
 
 /** What anyone sees when they check a code. Never a name. */
@@ -78,6 +84,7 @@ export type CertificateFailure =
   | 'name_length'
   | 'reason'
   | 'look'
+  | 'crest'
   | 'unreachable';
 
 /** The error a refused call throws. */
@@ -106,6 +113,7 @@ const failureForHint: Record<string, CertificateFailure> = {
   'certificate:name_length': 'name_length',
   'certificate:reason': 'reason',
   'certificate:look': 'look',
+  'certificate:crest': 'crest',
 };
 
 /**
@@ -179,6 +187,8 @@ export function lookFrom(row: Record<string, Json | undefined>): CertificateLook
   return {
     colour: certificateColourOf(row['look_colour']),
     pattern: certificatePatternOf(row['look_pattern']),
+    seal: certificateSealOf(row['look_seal']),
+    crestColours: crestColoursOf(row['look_crest_colours']),
   };
 }
 
@@ -207,6 +217,7 @@ export function myCertificateFrom(value: Json): MyCertificate {
     isContest: row['is_contest'] === true,
     contestName: contestNameFrom(row['contest_name']),
     look: lookFrom(row),
+    crest: pictureFromJson(row['crest'] ?? null),
   };
 }
 

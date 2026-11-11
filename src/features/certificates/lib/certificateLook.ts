@@ -8,6 +8,8 @@
  * the pattern is one of the cover patterns, drawn very faintly behind the words so the text keeps
  * its contrast. The hex values are the board's, each a deep pair, so the white seal mark and the
  * dark text on the paper both read well.
+ * Since G13b the seal shows either the Ghemotoc cat or the school's crest, in its own colours on a
+ * white seal or in white on the certificate colour.
  * Who calls it: CertificateSheet, CertificateLookPicker and the API readers in api/. What it
  * calls: nothing.
  */
@@ -43,14 +45,33 @@ export const certificatePatterns = [
 /** One certificate pattern. */
 export type CertificatePattern = (typeof certificatePatterns)[number];
 
+/** What the seal shows: the Ghemotoc cat or the school's crest (G13b). */
+export const certificateSeals = ['cat', 'crest'] as const;
+
+/** One seal. */
+export type CertificateSeal = (typeof certificateSeals)[number];
+
+/** How a crest is drawn: in its own colours on a white seal, or in white on the colour (G13b). */
+export const crestColourChoices = ['own', 'white'] as const;
+
+/** One way of drawing the crest. */
+export type CrestColours = (typeof crestColourChoices)[number];
+
 /** A certificate's look, as saved at signing. */
 export interface CertificateLook {
   colour: CertificateColour;
   pattern: CertificatePattern;
+  seal: CertificateSeal;
+  crestColours: CrestColours;
 }
 
-/** The look a certificate has when nobody chose one: Plum with no pattern. */
-export const defaultCertificateLook: CertificateLook = { colour: 'plum', pattern: 'none' };
+/** The look a certificate has when nobody chose one: Plum, no pattern and the cat on its seal. */
+export const defaultCertificateLook: CertificateLook = {
+  colour: 'plum',
+  pattern: 'none',
+  seal: 'cat',
+  crestColours: 'own',
+};
 
 /** Each colour's light and deep end, from the board (the frame is a gradient between them). */
 export const certificateColourHex: Record<CertificateColour, { light: string; deep: string }> = {
@@ -82,6 +103,48 @@ export function certificateColourOf(value: unknown): CertificateColour {
  */
 export function certificatePatternOf(value: unknown): CertificatePattern {
   return certificatePatterns.find((pattern) => pattern === value) ?? defaultCertificateLook.pattern;
+}
+
+/**
+ * Reads a seal the database sent, keeping the cat for anything unknown.
+ *
+ * @param value - the look_seal field
+ * @returns a known seal
+ */
+export function certificateSealOf(value: unknown): CertificateSeal {
+  return certificateSeals.find((seal) => seal === value) ?? defaultCertificateLook.seal;
+}
+
+/**
+ * Reads the crest colours the database sent, keeping "own" for anything unknown.
+ *
+ * @param value - the look_crest_colours field
+ * @returns a known choice
+ */
+export function crestColoursOf(value: unknown): CrestColours {
+  return (
+    crestColourChoices.find((choice) => choice === value) ?? defaultCertificateLook.crestColours
+  );
+}
+
+/**
+ * The look as issue_class_certificates() takes it.
+ *
+ * @param look - the teacher's choice
+ * @returns the JSON object the database reads
+ */
+export function certificateLookJson(look: CertificateLook): {
+  colour: string;
+  pattern: string;
+  seal: string;
+  crest_colours: string;
+} {
+  return {
+    colour: look.colour,
+    pattern: look.pattern,
+    seal: look.seal,
+    crest_colours: look.crestColours,
+  };
 }
 
 /**

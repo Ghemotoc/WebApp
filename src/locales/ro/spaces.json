@@ -307,7 +307,8 @@
       "logo_picture_changed": "{{actor}} a schimbat logoul.",
       "post_hidden": "{{actor}} a ascuns un mesaj.",
       "post_shown": "{{actor}} a arătat din nou un mesaj ascuns.",
-      "post_moved": "{{actor}} a mutat un mesaj în altă discuție."
+      "post_moved": "{{actor}} a mutat un mesaj în altă discuție.",
+      "certificate_crest_changed": "{{actor}} a schimbat stema de pe diplome."
     }
   },
   "bannerPicture": {

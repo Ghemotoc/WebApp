@@ -10,7 +10,7 @@
 import type { Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
 
-import type { CertificateLook } from '../lib/certificateLook';
+import { certificateLookJson, type CertificateLook } from '../lib/certificateLook';
 
 import {
   certificateErrorFrom,
@@ -116,7 +116,7 @@ export async function issueClassCertificates(
     slug: request.slug,
     programme_name: request.programmeName,
     results: request.results.map((entry) => ({ handle: entry.handle, result: entry.result })),
-    look: { colour: request.look.colour, pattern: request.look.pattern },
+    look: certificateLookJson(request.look),
   });
   if (error) throw certificateErrorFrom(error);
   return Number(objectOf(data)['issued'] ?? 0);

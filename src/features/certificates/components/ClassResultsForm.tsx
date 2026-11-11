@@ -6,7 +6,7 @@
  * finalist, winner) and "Approve and sign", with a note that the approval is the teacher's
  * electronic signature (proposal for OPEN Q71). After approving, how many certificates were made.
  * Since bundle G13a the teacher also picks the certificates' colour and pattern
- * (CertificateLookPicker); the look is saved on each certificate as it is signed, and the form
+ * (CertificateLookPicker), and since G13b what the seal shows; the look is saved on each certificate as it is signed, and the form
  * starts from the look last used in the class.
  * Who shows it: ClassCertificatesPage, to the class's teacher, while the class isn't archived.
  * What it calls: useIssueClassCertificates() → issue_class_certificates().
@@ -101,16 +101,19 @@ function ResultsList({
  * Renders the form.
  *
  * @param props.slug - the class's address
+ * @param props.spaceId - the class's ID, the folder its crest is uploaded to (G13b)
  * @param props.students - the class's students
  * @param props.startLook - the look to start from: the one last used in the class, or the default
  * @returns the form
  */
 export function ClassResultsForm({
   slug,
+  spaceId,
   students,
   startLook,
 }: {
   slug: string;
+  spaceId: string;
   students: ClassStudent[];
   startLook: CertificateLook;
 }) {
@@ -137,7 +140,12 @@ export function ClassResultsForm({
         onChange={(event) => setProgrammeName(event.target.value)}
       />
       <ResultsList students={students} picked={picked} onPick={setPicked} />
-      <CertificateLookPicker look={look} onChange={setLook} programmeName={programmeName} />
+      <CertificateLookPicker
+        look={look}
+        onChange={setLook}
+        programmeName={programmeName}
+        space={{ slug, spaceId }}
+      />
       <p className="m-0 text-sm text-body">{t('class.intro')}</p>
       <Button type="submit" className="self-start" disabled={issuing.isRunning}>
         {t('class.approve')}

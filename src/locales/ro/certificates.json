@@ -51,7 +51,8 @@
       "empty": "Nu am putut salva numele. Încearcă din nou.",
       "archived": "Nu am putut salva numele. Încearcă din nou.",
       "reason": "Nu am putut salva numele. Încearcă din nou.",
-      "look": "Nu am putut salva numele. Încearcă din nou."
+      "look": "Nu am putut salva numele. Încearcă din nou.",
+      "crest": "Nu am putut salva numele. Încearcă din nou."
     }
   },
   "sheet": {
@@ -130,7 +131,8 @@
       "name_length": "Nu am putut semna diplomele. Încearcă din nou.",
       "reason": "Nu am putut semna diplomele. Încearcă din nou.",
       "unreachable": "Nu am putut semna diplomele. Încearcă din nou.",
-      "look": "Alege o culoare și un model din listă."
+      "look": "Alege o culoare și un model din listă.",
+      "crest": "Încarcă mai întâi stema școlii sau alege pisica."
     }
   },
   "settingsCard": {
@@ -168,6 +170,29 @@
     "noneShort": "Fără",
     "patternHint": "Aceleași modele ca la coperți, în culoarea certificatului și foarte estompate, ca textul să se citească ușor.",
     "previewName": "Numele elevului",
-    "previewProgramme": "Numele programului"
+    "previewProgramme": "Numele programului",
+    "seal": "În sigiliu",
+    "seals": {
+      "cat": "Pisica {{productName}}",
+      "crest": "Stema școlii"
+    },
+    "crestColours": "Culorile stemei",
+    "crestColourChoices": {
+      "own": "Culorile originale",
+      "white": "Alb pe culoarea diplomei"
+    },
+    "crestColoursHint": "Păstrează o stemă colorată așa cum e, pe un sigiliu alb simplu, sau arat-o în alb pe culoarea diplomei.",
+    "crestUpload": "Încarcă stema sau sigla",
+    "crestHint": "PNG, SVG, JPEG sau WebP, până la 2 MB. O imagine pătrată se potrivește cel mai bine. Fiecare imagine e verificată automat înainte să apară.",
+    "crestRemove": "Șterge stema",
+    "crestRemoveFailed": "Nu am putut șterge stema. Încearcă din nou.",
+    "crestPreviewAlt": "Stema încărcată",
+    "crestStates": {
+      "none": "Încă nu e nicio stemă. Până se încarcă și se verifică una, apare pisica.",
+      "checking": "Se verifică. Apare în câteva minute; până atunci apare pisica.",
+      "waiting_for_person": "Un moderator se uită întâi la ea. Până atunci apare pisica.",
+      "visible": "Verificată. Apare în sigiliu.",
+      "removed": "Stema a fost scoasă. Încarcă alta sau alege pisica."
+    }
   }
 }
