@@ -4,7 +4,7 @@
  * Who uses it: PictureInsertDialog and DrawingInsertDialog, which show it under the form.
  * What it reads: the reason PictureUploadError carries (src/features/pictures/api/pictures.ts).
  */
-import { PictureUploadError } from '@/features/pictures/api/pictures';
+import { PictureUploadError } from '@/features/pictures/api/pictureUploads';
 
 /**
  * Picks the message for a refused upload.

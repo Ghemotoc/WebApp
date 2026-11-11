@@ -14,14 +14,8 @@ import type { AppSupabaseClient } from '@/lib/supabase';
 
 import { longestSideFor } from '../lib/preparePicture';
 
-import {
-  deleteStoredPicture,
-  pictureFromJson,
-  registrationFailure,
-  requestPictureCheck,
-  storePicture,
-  type StoredPicture,
-} from './pictures';
+import { pictureFromJson, requestPictureCheck, type StoredPicture } from './pictures';
+import { deleteStoredPicture, registrationFailure, storePicture } from './pictureUploads';
 
 /**
  * Uploads the reader's own background picture for quote cards, registers it and asks for its

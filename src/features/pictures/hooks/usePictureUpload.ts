@@ -10,7 +10,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
 
-import { PictureUploadError, uploadPicture, type PictureBucket } from '../api/pictures';
+import { type PictureBucket } from '../api/pictures';
+import { PictureUploadError, uploadPicture } from '../api/pictureUploads';
 
 /** What the field says after an upload. */
 export type UploadOutcome =

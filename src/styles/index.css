@@ -361,16 +361,70 @@ dialog.bg-surface,
   box-shadow: none;
 }
 
-.nav-track a:not([aria-current='page']):hover {
+/*
+ * Hover and focus show the website's .nav-pill state in full (GLASS-3; Robert, 11 Nov 2026: "you
+ * can't really see over which item you're in fact hovering"): the near-solid glass, the bright rim
+ * and the raised shadow, the same pill the current page sits on. The bar behind it is see-through
+ * at the top of a page, so the pill stands out against it, as on the website.
+ */
+.nav-track-link {
+  transition:
+    background-image 200ms ease,
+    box-shadow 200ms ease,
+    border-color 200ms ease;
+}
+
+.nav-track a.nav-track-link:not([aria-current='page']):is(:hover, :focus-visible) {
   background-image: var(--lg-float-bg);
-  box-shadow: inset 0 1px 0 var(--glass-highlight);
+  border-color: var(--lg-rim);
+  box-shadow: var(--lg-card-shadow);
 }
 
 .nav-bubble {
   background-color: transparent;
   background-image: var(--lg-float-bg);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--lg-pill-shadow);
+  border: 1px solid var(--lg-rim);
+  box-shadow: var(--lg-card-shadow);
+}
+
+/*
+ * The website top bar's two sizes (GLASS-3; the main website's Navbar: top 16 px and 12 px inside
+ * at rest, 10 px and 8 px once the page has scrolled 12 px, in 300 ms). At rest the pill is the
+ * website's see-through .lg-light glass; scrolled, glass-float's near-solid glass takes over.
+ * Reduce motion makes the change jump.
+ */
+.top-bar {
+  padding-top: 16px;
+  transition: padding-top 300ms ease;
+}
+
+.top-bar[data-scrolled='true'] {
+  padding-top: 10px;
+}
+
+.top-bar-pill {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  transition:
+    padding 300ms ease,
+    background-image 300ms ease;
+}
+
+.top-bar-pill[data-solid='true'] {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.top-bar-pill[data-solid='false']:not([data-area='staff'] *) {
+  background-image: var(--lg-card-bg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .top-bar,
+  .top-bar-pill,
+  .nav-track-link {
+    transition: none;
+  }
 }
 
 /*
@@ -467,6 +521,50 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
   box-shadow: var(--lg-card-shadow-hover);
 }
 
+/*
+ * Every other box and pill that paints bg-surface is the website's light glass too (GLASS-3;
+ * Robert, 11 Nov 2026: "copy the transparency of all the elements from the [main website], including
+ * transparency of the boxes ... a full-on match"). On the website everything that is not a photo
+ * is .lg-light: white at 72% thinning to 44%, the 24 px blur, the bright rim, a white top edge, a
+ * soft inner shade and the violet drop shadow. Here that reaches the cards with 2xl or 3xl corners,
+ * the round icon wells and the pills the rule above does not catch. Left out on purpose: dialogs
+ * and pop-overs (they float over text, so they stay near-solid), form fields (typing needs a steady
+ * surface), anything sticky or fixed (it floats over the page) and the flat staff area. An
+ * interactive pill keeps its 3:1 control edge (DoD, pill system); only soft edges take the rim.
+ */
+.bg-surface:not(
+  dialog,
+  .shadow-popover,
+  input,
+  select,
+  textarea,
+  .sticky,
+  .fixed,
+  .absolute,
+  [data-area='staff'],
+  [data-area='staff'] *
+) {
+  background-color: transparent;
+  background-image: var(--lg-card-bg);
+  -webkit-backdrop-filter: var(--lg-blur);
+  backdrop-filter: var(--lg-blur);
+  box-shadow: var(--lg-card-shadow);
+}
+
+.bg-surface:is(.border-border, .border-hairline):not(
+    dialog,
+    .shadow-popover,
+    [data-area='staff'] *
+  ) {
+  border-color: var(--lg-rim);
+}
+
+/* A pill or card that tints on hover keeps its tint under the glass (the rule above is unlayered,
+   so it would otherwise beat the hover:bg-tint utility). */
+.bg-surface[class*='hover:bg-tint']:not([data-area='staff'] *):hover {
+  background-color: var(--tint);
+}
+
 /* A card that tints on hover keeps doing so over its glass. */
 [class*='hover:bg-tint']:is(.rounded-card, [class*='rounded-[2']).bg-surface:not(
     [data-area='staff'] *
@@ -475,6 +573,7 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 }
 
 @media (max-width: 1023px) {
+  .bg-surface:not(dialog, .shadow-popover, [data-area='staff'] *),
   :is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surface.border-border:not(
       dialog,
       .shadow-popover,
@@ -642,6 +741,15 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
   .nav-bubble {
     background-color: var(--surface);
     background-image: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  /* Every other glass box and pill turns solid too (GLASS-3), and so does the top bar at rest. */
+  .bg-surface:not([data-area='staff'] *),
+  .top-bar-pill[data-solid='false'] {
+    background-image: none;
+    background-color: var(--surface);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }

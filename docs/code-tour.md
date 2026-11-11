@@ -1023,7 +1023,7 @@ Runbooks: `docs/runbooks/removal-orders.md` and `docs/runbooks/safeguarding.md`.
 
 ```
 Story settings › Cover / Settings › Profile picture (only while the picture_uploads flag is on)
-  PictureUploadField → hooks/usePictureUpload → api/pictures.ts
+  PictureUploadField → hooks/usePictureUpload → api/pictureUploads.ts
     1. storage.upload() into the private covers or avatars bucket (owner-only rules)
     2. rpc register_picture() → picture_checks row, status pending (rate-limited, S1-E10-12)
     3. POST /api/picture-check with the person's own token
@@ -1074,7 +1074,7 @@ admin_pictures_to_check() / admin_case_picture()
 ```
 Chapter editor › Picture button (only while the picture_uploads flag is on; its own toolbar button since G9e)
   PictureInsertDialog (file, alt text, "I have the right to use this picture")
-    → useChapterPictureUpload → uploadChapterPicture() (src/features/pictures/api/pictures.ts)
+    → useChapterPictureUpload → uploadChapterPicture() (src/features/pictures/api/pictureUploads.ts)
        preparePicture(): redrawn on a canvas, so no location data, at most 1600 px
        chapter-images/<chapter ID>/<ID>.webp, then rpc register_chapter_picture(), then the check
     → a chapterPicture block in the editor, stored as ![alt](picture:<ID>) on its own line
@@ -2315,7 +2315,7 @@ The app draws no doodles, stickers or hand-drawn icons anywhere (Robert, 7 Nov 2
 - A writer's own details in their place (GAPS-1): `SheetGroupSection` shows the details placed under its group (`OwnDetailBoxes`) and `AddDetailForm`; `OwnDetailGroupSection` is one of the writer's own groups (`lib/ownDetailGroups.ts` works the groups out from the details) with Rename; `AddDetailGroupForm` starts a group. They call `hooks/useDetailChangers.ts` → `api/characterDetails.ts` → `add_character_detail()` and `rename_character_detail_group()`, which write `story_character_fields.sheet_group` and `own_group`; `story_cast()` returns both. `CharacterSheetHeader` counts the point-of-view chapters from `character_appearances()`. `useDetailFormSave` gives the three small forms one save at a time (a double click saves once) and their messages; one name sits once in a place and group names don't mind capitals (`add_character_detail()`, break test of 10 Nov 2026).
 - Acts on the Storyline board (GAPS-2a): `AddActForm` (beside the board's hint, in `StorylinePage`) and `EditActForm` (under each act's name, in `BoardColumnSection`) call `useStoryline`'s `addAct`, `renameAct` and `deleteAct` → `api/storyline.ts` → `add_plan_act()`, `rename_plan_act()` and `delete_plan_act()` (`…_gaps2a_plan_acts.sql`), which write `story_plan_acts`. Deleting an act clears it from its chapters' plans through the foreign key; no chapter moves in the book. Tests: `323-plan-acts.test.sql` and `e2e/atlas-storyline.spec.ts`. Both run one change at a time (`useOneAtATime`), and `checkedAnswer()` throws an `AtlasChangeError` carrying the database's hint, so a form can say "another act has that name" or "12 acts at most" (`actFailureKey`; break test of 10 Nov 2026).
 - A writer's own marketing details (GAPS-2b): `MarketingDetails` (in `MarketingFields`, under the launch notes) lists one `MarketingDetailItem` per detail and holds "Add detail"; they call `useStoryMarketing`'s `addDetail`, `saveDetail` and `deleteDetail` → `api/marketing.ts` → `add_marketing_detail()`, `update_marketing_detail()` and `delete_marketing_detail()` (`…_gaps2b_marketing_details.sql`), which write the list `story_marketing.own_details`; `story_marketing()` returns it and `story_search_texts()` searches it (a result's ref is `detail-<id>`, the box's place on the page). `BackCoverPreview` signs the cover with the name `MarketingPage` reads from `useMyNames`. Tests: `324-marketing-details.test.sql` and `e2e/atlas-ideas-marketing.spec.ts`. The forms run one change at a time (`useOneAtATime`); a name another detail has is refused by the database and a fixed note's name by `useFixedNoteNames`, both in plain words (`marketingDetailFailureKey`; break test of 10 Nov 2026).
-- A picture: `uploadAtlasPicture()` in `src/features/pictures/api/pictures.ts` prepares, uploads, registers and checks it; `set_character_picture()` puts it on the sheet. `CharacterAvatar` shows it once it passed (`lib/characterPicture.ts`), and nothing at all without one: no initials (G10a).
+- A picture: `uploadAtlasPicture()` in `src/features/pictures/api/pictureUploads.ts` prepares, uploads, registers and checks it; `set_character_picture()` puts it on the sheet. `CharacterAvatar` shows it once it passed (`lib/characterPicture.ts`), and nothing at all without one: no initials (G10a).
 - On the at-a-glance page, `CastAtAGlance` lists the five characters edited last with "Open characters (N)", and `CharacterFieldsSection` adds, removes and brings back the writer's own fields.
 
 ## Story Atlas: connections (S1-E17-14 to S1-E17-16; ATLAS-c)
@@ -2393,7 +2393,7 @@ The app draws no doodles, stickers or hand-drawn icons anywhere (Robert, 7 Nov 2
 
 ## Space banners, join notifications and search by space (S1-E8-06, S1-E8-10; FORUMS-2c)
 
-- Where it lives: `src/features/spaces/api/spaceBanner.ts`, `hooks/useSpaceBanner.ts`, `SpaceBannerBand` (the header's band) and `SpaceBannerPictureCard` (settings); `uploadSpaceBanner()` in `src/features/pictures/api/pictures.ts`; the two notification kinds in `src/features/notifications/lib/notificationText.ts`; `spaceFilterOptions()` in `src/features/forums/lib/forumSearchAddress.ts`; `supabase/migrations/…_forums2_c_space_banners_and_notifications.sql`.
+- Where it lives: `src/features/spaces/api/spaceBanner.ts`, `hooks/useSpaceBanner.ts`, `SpaceBannerBand` (the header's band) and `SpaceBannerPictureCard` (settings); `uploadSpaceBanner()` in `src/features/pictures/api/pictureUploads.ts`; the two notification kinds in `src/features/notifications/lib/notificationText.ts`; `spaceFilterOptions()` in `src/features/forums/lib/forumSearchAddress.ts`; `supabase/migrations/…_forums2_c_space_banners_and_notifications.sql`.
 - Banner pictures follow the Story Atlas pattern: a private `space-banners` bucket with one folder per space ID, `register_space_banner()` (pending its check), then `set_space_banner_picture()` (the settings power; logged in the space's log). `space_json()` sends `banner_picture` as `picture_state_json()`, and the band draws the picture only once it passed (rule 19); until then everyone sees the colour.
 - How a click travels: "Choose a banner picture" → `useSpaceBannerChange().upload` → Storage upload → `register_space_banner()` → `/api/picture-check` → `set_space_banner_picture()` → the old file, if any, is deleted (`space_banners_delete_own` keeps one moderators still need).
 - Join notifications need no change to the join functions: the `space_members_notify` trigger calls `notify()` when a `pending` row is added (to the owner and moderators with the members power, one row per space per day) and when it becomes `active` (to the person, with no actor). `notifications.space_id` carries the space, and `notification_json()` shows `{slug, name}` while the reader may see it.
@@ -2402,7 +2402,7 @@ The app draws no doodles, stickers or hand-drawn icons anywhere (Robert, 7 Nov 2
 
 ## Space logos and banner colours (S1-E8-06; G8b)
 
-- Where it lives: `src/features/spaces/api/spaceLogo.ts`, `hooks/useSpaceLogo.ts`, `SpaceLogo` (header and cards) and `SpaceLogoCard` (settings); `uploadSpaceLogo()` in `src/features/pictures/api/pictures.ts`; the colours in `src/features/spaces/lib/spaceLook.ts`; `supabase/migrations/…_g8b_space_logo_enums.sql` and `…_g8b_space_logo_and_banners.sql`.
+- Where it lives: `src/features/spaces/api/spaceLogo.ts`, `hooks/useSpaceLogo.ts`, `SpaceLogo` (header and cards) and `SpaceLogoCard` (settings); `uploadSpaceLogo()` in `src/features/pictures/api/pictureUploads.ts`; the colours in `src/features/spaces/lib/spaceLook.ts`; `supabase/migrations/…_g8b_space_logo_enums.sql` and `…_g8b_space_logo_and_banners.sql`.
 - A logo is a picture of kind `space_logo` in the same `space-banners` bucket and space folder as the banner picture, so the bucket's storage policies cover it unchanged. `register_space_logo()` records it as pending its check; `set_space_logo_picture()` (the settings power) chooses it or takes it off, logged as `logo_picture_changed`. `space_json()` sends it as `logo_picture`; `SpaceLogo` draws it only once it passed (rule 19), and a space without one shows no picture at all (no initials badge).
 - How a click travels: "Choose a logo" → `useSpaceLogoChange().upload` → Storage upload → `register_space_logo()` → `/api/picture-check` → `set_space_logo_picture()` → the old file, if any, is deleted.
 - Banner colours: fourteen (`space_banner`), eight deep and six pastel; `spaces_banner_is_offered` keeps spaces off the retired `night` and `gold`. The header puts the name, description and buttons on the banner: `bannerTextColour()` picks white or dark plum, the shared `genre-band` utility points the text tokens at it, and `data-banner-tone="deep"` turns the buttons into white-edged pills (index.css).
@@ -2456,7 +2456,7 @@ The app draws no doodles, stickers or hand-drawn icons anywhere (Robert, 7 Nov 2
 
 ## Forum signatures and moderators' change requests (S1-E8-08; FORUMS-2d)
 
-- Where it lives: `src/features/forums/api/forumSignatures.ts`, `hooks/useForumSignatures.ts`, `lib/signatureLimits.ts`; the components `SignatureBody` (the shared drawing), `ProfileSignatureCard` (board 6.1), `SignatureSettingsSection` with `SignatureWordsForm` and `SignaturePictureControls` (Settings, `#forum-signature`), `ChangeRequestNotice` and `CustomisationChangeForm` (staff); `uploadSignaturePicture()` in `src/features/pictures/api/pictures.ts`; `src/lib/animated-picture.ts`; `supabase/migrations/…_forums2_d_signatures.sql`.
+- Where it lives: `src/features/forums/api/forumSignatures.ts`, `hooks/useForumSignatures.ts`, `lib/signatureLimits.ts`; the components `SignatureBody` (the shared drawing), `ProfileSignatureCard` (board 6.1), `SignatureSettingsSection` with `SignatureWordsForm` and `SignaturePictureControls` (Settings, `#forum-signature`), `ChangeRequestNotice` and `CustomisationChangeForm` (staff); `uploadSignaturePicture()` in `src/features/pictures/api/pictureUploads.ts`; `src/lib/animated-picture.ts`; `supabase/migrations/…_forums2_d_signatures.sql`.
 - The signature is two columns on `profiles` (words, at most 300 characters and three lines, and one picture). `forum_post_json()` adds `signature` to every post (`signature_json()`), and `ForumPostCard` draws it only from 768 px up (`hidden md:block`, Q25). It belongs to the profile, so reporting the profile covers it and a moderator hiding the profile hides it too.
 - One still picture: `storePicture()` refuses a moving PNG or WebP (`isAnimatedPicture()`), and the redraw on a canvas keeps only a still frame anyway; `server/picture-check.ts` holds a moving file that reached Storage some other way (`withStillPictureRule()`). The picture shows only once its check passed (rule 19).
 - How a click travels: "Save signature" → `useSignatureChange().save` → `set_my_signature()` (the account gate, the limits) → the old picture's file is deleted.
@@ -2574,7 +2574,7 @@ The account gate is the one place minors are held back: while `adults_only` is o
 
 - Routes `/staff/sponsors` (`StaffSponsorsPage`) and `/staff/sponsors/campaigns/:campaignId` (`CampaignEditorPage`, `new` for a new campaign), in the staff menu after Contests for staff with the sponsors area.
 - One click: "Approve" on a review card → `ReviewQueue` → `useSponsorChanges()` → `api/sponsors.ts` `reviewCampaign()` → `admin_review_sponsor_campaign()` (checks the role, every review check and the picture, writes the audit log) → `sponsor_campaigns`; the lists are read again and the card leaves the queue.
-- The creative: `CampaignCreativeUpload` → `uploadSponsorCreative()` (`src/features/pictures/api/pictures.ts`) → the `sponsor-creatives` bucket → `register_sponsor_creative()` → the picture check, so a moderator sees it before approval is possible.
+- The creative: `CampaignCreativeUpload` → `uploadSponsorCreative()` (`src/features/pictures/api/pictureUploads.ts`) → the `sponsor-creatives` bucket → `register_sponsor_creative()` → the picture check, so a moderator sees it before approval is possible.
 - Folder guide: `src/features/sponsors/README.md`. Test: `e2e/sponsors-admin.spec.ts`.
 
 ## A sponsor's ad on the pages (S1-E12-02; SPONSORS-b3)

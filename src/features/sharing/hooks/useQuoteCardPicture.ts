@@ -13,11 +13,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
 import { useSession } from '@/features/auth/hooks/useSession';
-import {
-  deleteStoredPicture,
-  pictureViewOf,
-  type PictureState,
-} from '@/features/pictures/api/pictures';
+import { pictureViewOf, type PictureState } from '@/features/pictures/api/pictures';
+import { deleteStoredPicture } from '@/features/pictures/api/pictureUploads';
 import {
   fetchMyQuoteCardPicture,
   removeMyQuoteCardPicture,

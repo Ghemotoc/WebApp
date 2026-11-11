@@ -8,12 +8,8 @@
  * in supabase/migrations/…_g8b_space_logo_and_banners.sql. The database decides who may change it
  * (the settings power) and when anyone else may see it (once its check passed; CLAUDE.md rule 19).
  */
-import {
-  deleteStoredPicture,
-  pictureViewOf,
-  uploadSpaceLogo,
-  type PictureView,
-} from '@/features/pictures/api/pictures';
+import { pictureViewOf, type PictureView } from '@/features/pictures/api/pictures';
+import { deleteStoredPicture, uploadSpaceLogo } from '@/features/pictures/api/pictureUploads';
 import type { Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
 
