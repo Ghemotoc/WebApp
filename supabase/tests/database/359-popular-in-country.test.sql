@@ -5,12 +5,13 @@
 -- - a story with fewer than 5 reads in a country isn't ranked there (the small-number rule);
 -- - a country with fewer than 5 ranked stories shows the overall ranking (popular_in is null);
 -- - a popular list follows a country's ranking once it has enough stories;
--- - a country not on the drop-down's list is refused, and only staff read the totals and scores.
+-- - a country not on the drop-down's list is refused, and only staff read the totals and scores
+--   (policies chapter_reads_by_country_select_staff and story_country_scores_select_staff).
 begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(14);
+select plan(17);
 
 create function pg_temp.sign_in_as(user_id uuid) returns void language sql as $$
   select set_config('request.jwt.claims', json_build_object('sub', user_id, 'role', 'authenticated')::text, true);
@@ -106,9 +107,18 @@ select is((select total from public.chapter_reads_by_country
 
 set local role authenticated;
 select pg_temp.sign_in_as('00000000-0000-4000-8000-000000000002');
-select is((select count(*)::integer from public.chapter_reads_by_country)
-          + (select count(*)::integer from public.story_country_scores), 0,
-  'a member reads no country totals or scores, not even for their own story');
+select is((select count(*)::integer from public.chapter_reads_by_country), 0,
+  'denied: chapter_reads_by_country_select_staff, a member reads no country totals');
+select is((select count(*)::integer from public.story_country_scores), 0,
+  'denied: story_country_scores_select_staff, nor the scores, not even for their own story');
+reset role;
+-- The admin (…09) may view stories.
+set local role authenticated;
+select pg_temp.sign_in_as('00000000-0000-4000-8000-000000000009');
+select ok((select count(*) from public.chapter_reads_by_country) > 0,
+  'allowed: chapter_reads_by_country_select_staff, staff who may view stories read the totals');
+select ok((select count(*) from public.story_country_scores) > 0,
+  'allowed: story_country_scores_select_staff, and the scores');
 reset role;
 set local role anon;
 select throws_ok($$ select count(*) from public.story_country_scores $$, '42501', null,
