@@ -56,7 +56,7 @@ select is((select count(*)::int from public.list_page_backgrounds), 3,
 select is(jsonb_array_length(public.admin_list_page_backgrounds()), 3, 'and the staff list has all three');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000010');
 select is((select count(*)::int from public.list_page_backgrounds), 0,
-  'denied: a moderator reads none of them');
+  'denied: list_page_backgrounds_select_website_staff shows a moderator none of them');
 select throws_ok($$ select public.admin_set_list_page_background('category', 'poetry', null, 'gold') $$,
   '42501', null, 'a moderator can''t choose a colour');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
