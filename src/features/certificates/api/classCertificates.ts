@@ -10,8 +10,11 @@
 import type { Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
 
+import type { CertificateLook } from '../lib/certificateLook';
+
 import {
   certificateErrorFrom,
+  lookFrom,
   objectOf,
   resultOrNull,
   textOrNull,
@@ -27,6 +30,8 @@ export interface ClassCertificate {
   code: string;
   signedAt: string;
   isRevoked: boolean;
+  /** The colour and pattern it was signed with (G13a). */
+  look: CertificateLook;
 }
 
 /** One line of the results list the teacher approves. */
@@ -68,6 +73,7 @@ export function classCertificateFrom(value: Json): ClassCertificate {
     code: String(row['code']),
     signedAt: String(row['signed_at']),
     isRevoked: row['is_revoked'] === true,
+    look: lookFrom(row),
   };
 }
 
@@ -92,18 +98,25 @@ export async function listClassCertificates(
  * The teacher approves and signs a programme's results.
  *
  * @param client - the Supabase client
- * @param request - the class, the programme's name and one result per student
+ * @param request - the class, the programme's name, one result per student and the look (G13a)
  * @returns how many certificates were made or changed
- * @throws CertificateError when refused (teacher_only, not_member, programme, empty, archived)
+ * @throws CertificateError when refused (teacher_only, not_member, programme, empty, archived,
+ *   look)
  */
 export async function issueClassCertificates(
   client: AppSupabaseClient,
-  request: { slug: string; programmeName: string; results: ClassResultEntry[] },
+  request: {
+    slug: string;
+    programmeName: string;
+    results: ClassResultEntry[];
+    look: CertificateLook;
+  },
 ): Promise<number> {
   const { data, error } = await client.rpc('issue_class_certificates', {
     slug: request.slug,
     programme_name: request.programmeName,
     results: request.results.map((entry) => ({ handle: entry.handle, result: entry.result })),
+    look: { colour: request.look.colour, pattern: request.look.pattern },
   });
   if (error) throw certificateErrorFrom(error);
   return Number(objectOf(data)['issued'] ?? 0);

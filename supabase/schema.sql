@@ -15320,6 +15320,38 @@ COMMENT ON FUNCTION "public"."cases_by_tier"("window_days" integer) IS 'Internal
 
 
 
+CREATE OR REPLACE FUNCTION "public"."certificate_look_from"("look" "jsonb", OUT "colour" "text", OUT "pattern" "text") RETURNS "record"
+    LANGUAGE "plpgsql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+begin
+  -- Step 1: no look means the default.
+  if look is null or look = 'null'::jsonb then
+    colour := 'plum';
+    pattern := 'none';
+    return;
+  end if;
+  if jsonb_typeof(look) <> 'object' then
+    raise exception 'Choose a colour and a pattern from the list.' using errcode = 'check_violation', hint = 'certificate:look';
+  end if;
+  -- Step 2: each part is one of the known names; a missing part keeps its default.
+  colour := coalesce(look ->> 'colour', 'plum');
+  pattern := coalesce(look ->> 'pattern', 'none');
+  if colour not in ('plum', 'ember', 'sea_glass', 'pistachio', 'candy', 'crimson', 'cobalt', 'autumn')
+     or pattern not in ('none', 'stripes', 'dots', 'grid', 'waves', 'starry', 'arches', 'rings', 'forestwaves') then
+    raise exception 'Choose a colour and a pattern from the list.' using errcode = 'check_violation', hint = 'certificate:look';
+  end if;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."certificate_look_from"("look" "jsonb", OUT "colour" "text", OUT "pattern" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."certificate_look_from"("look" "jsonb", OUT "colour" "text", OUT "pattern" "text") IS 'Internal: the certificate look a teacher sent, checked; the default for null (G13a).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."certificates" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "user_id" "uuid" NOT NULL,
@@ -15339,8 +15371,12 @@ CREATE TABLE IF NOT EXISTS "public"."certificates" (
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "contest_id" "uuid",
+    "look_colour" "text" DEFAULT 'plum'::"text" NOT NULL,
+    "look_pattern" "text" DEFAULT 'none'::"text" NOT NULL,
     CONSTRAINT "certificates_class_or_contest" CHECK ((("contest_id" IS NULL) OR ("space_id" IS NULL))),
     CONSTRAINT "certificates_class_prints_class_and_teacher" CHECK ((("contest_id" IS NOT NULL) OR (("class_name" IS NOT NULL) AND ("teacher_name" IS NOT NULL)))),
+    CONSTRAINT "certificates_look_colour_is_known" CHECK (("look_colour" = ANY (ARRAY['plum'::"text", 'ember'::"text", 'sea_glass'::"text", 'pistachio'::"text", 'candy'::"text", 'crimson'::"text", 'cobalt'::"text", 'autumn'::"text"]))),
+    CONSTRAINT "certificates_look_pattern_is_known" CHECK (("look_pattern" = ANY (ARRAY['none'::"text", 'stripes'::"text", 'dots'::"text", 'grid'::"text", 'waves'::"text", 'starry'::"text", 'arches'::"text", 'rings'::"text", 'forestwaves'::"text"]))),
     CONSTRAINT "certificates_printed_name_length" CHECK ((("printed_name" IS NULL) OR (("char_length"("printed_name") >= 1) AND ("char_length"("printed_name") <= 80)))),
     CONSTRAINT "certificates_programme_length" CHECK ((("char_length"("programme_name") >= 1) AND ("char_length"("programme_name") <= 120))),
     CONSTRAINT "certificates_revoke_reason_length" CHECK ((("revoke_reason" IS NULL) OR (("char_length"("revoke_reason") >= 1) AND ("char_length"("revoke_reason") <= 500))))
@@ -15356,6 +15392,14 @@ A student''s writing certificate from a class programme; the real name only with
 
 
 COMMENT ON COLUMN "public"."certificates"."contest_id" IS 'The contest a certificate came from; null for a class certificate (S1-E11-15 criterion 9).';
+
+
+
+COMMENT ON COLUMN "public"."certificates"."look_colour" IS 'The colour of the certificate''s frame, chosen by the teacher and saved at signing (G13a).';
+
+
+
+COMMENT ON COLUMN "public"."certificates"."look_pattern" IS 'The faint pattern behind the certificate''s text, or none; saved at signing (G13a).';
 
 
 
@@ -17067,7 +17111,8 @@ begin
     select jsonb_agg(jsonb_build_object('student', public.forum_person_json(certificates.user_id),
              'programme_name', certificates.programme_name, 'result', certificates.result,
              'code', certificates.code, 'signed_at', certificates.signed_at,
-             'is_revoked', certificates.revoked_at is not null)
+             'is_revoked', certificates.revoked_at is not null,
+             'look_colour', certificates.look_colour, 'look_pattern', certificates.look_pattern)
            order by certificates.signed_at desc, certificates.programme_name)
     from public.certificates where certificates.space_id = space.id), '[]'::jsonb);
 end;
@@ -25348,13 +25393,14 @@ COMMENT ON FUNCTION "public"."is_under_18_or_unknown"("person_id" "uuid") IS 'In
 
 
 
-CREATE OR REPLACE FUNCTION "public"."issue_class_certificates"("slug" "text", "programme_name" "text", "results" "jsonb") RETURNS "jsonb"
+CREATE OR REPLACE FUNCTION "public"."issue_class_certificates"("slug" "text", "programme_name" "text", "results" "jsonb", "look" "jsonb" DEFAULT NULL::"jsonb") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
 declare
   space public.spaces := public.space_for_power(slug, 'settings');
   clean_programme text := btrim(coalesce(programme_name, ''));
+  chosen record;
   teacher_display text;
   entry jsonb;
   student_id uuid;
@@ -25374,30 +25420,34 @@ begin
   if jsonb_typeof(results) is distinct from 'array' or jsonb_array_length(results) = 0 then
     raise exception 'Choose a result for at least one student.' using errcode = 'check_violation', hint = 'certificate:empty';
   end if;
+  -- Step 2: the look, checked before anything is written (G13a).
+  select * into chosen from public.certificate_look_from(look);
   select public.display_name(profiles.handle, profiles.pen_name) into teacher_display
   from public.profiles where profiles.id = space.user_id;
-  -- Step 2: one certificate per student named; a second approval changes the result.
+  -- Step 3: one certificate per student named; a second approval changes the result or the look.
   for entry in select value from jsonb_array_elements(results) loop
     student_id := public.certificate_student_id(space, entry ->> 'handle');
     wanted_result := public.certificate_result_from(entry ->> 'result');
-    issued_id := public.write_class_certificate(space, student_id, clean_programme, wanted_result, teacher_display);
+    issued_id := public.write_class_certificate(space, student_id, clean_programme, wanted_result,
+      teacher_display, array[chosen.colour, chosen.pattern]);
     if issued_id is not null then
       issued_count := issued_count + 1;
       perform public.notify(student_id, 'certificate_issued', null, jsonb_build_object('space_id', space.id));
     end if;
   end loop;
-  -- Step 3: the class's log.
+  -- Step 4: the class's log, with the look.
   perform public.log_space_action(space, 'certificates_issued', null, null, null,
-    jsonb_build_object('programme_name', clean_programme, 'count', issued_count));
+    jsonb_build_object('programme_name', clean_programme, 'count', issued_count,
+      'look_colour', chosen.colour, 'look_pattern', chosen.pattern));
   return jsonb_build_object('issued', issued_count);
 end;
 $$;
 
 
-ALTER FUNCTION "public"."issue_class_certificates"("slug" "text", "programme_name" "text", "results" "jsonb") OWNER TO "postgres";
+ALTER FUNCTION "public"."issue_class_certificates"("slug" "text", "programme_name" "text", "results" "jsonb", "look" "jsonb") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."issue_class_certificates"("slug" "text", "programme_name" "text", "results" "jsonb") IS 'The class''s teacher approves and signs a programme''s results; each student gets a certificate (S1-E8-12).';
+COMMENT ON FUNCTION "public"."issue_class_certificates"("slug" "text", "programme_name" "text", "results" "jsonb", "look" "jsonb") IS 'The class''s teacher approves and signs a programme''s results with a look; each student gets a certificate (S1-E8-12, G13a).';
 
 
 
@@ -28524,7 +28574,8 @@ begin
                                 where settings.key = 'certificate_signatory_name'),
              'is_contest', certificates.contest_id is not null,
              'contest_name', (select jsonb_build_object('ro', contests.name_ro, 'en', contests.name_en)
-                              from public.contests where contests.id = certificates.contest_id))
+                              from public.contests where contests.id = certificates.contest_id),
+             'look_colour', certificates.look_colour, 'look_pattern', certificates.look_pattern)
            order by certificates.signed_at desc)
     from public.certificates join public.profiles on profiles.id = certificates.user_id
     where certificates.user_id = caller_id), '[]'::jsonb);
@@ -48364,31 +48415,37 @@ COMMENT ON FUNCTION "public"."workspace_sign_in_holds"() IS 'Internal: true whil
 
 
 
-CREATE OR REPLACE FUNCTION "public"."write_class_certificate"("space" "public"."spaces", "student_id" "uuid", "clean_programme" "text", "wanted_result" "public"."certificate_result", "teacher_display" "text") RETURNS "uuid"
+CREATE OR REPLACE FUNCTION "public"."write_class_certificate"("space" "public"."spaces", "student_id" "uuid", "clean_programme" "text", "wanted_result" "public"."certificate_result", "teacher_display" "text", "wanted_look" "text"[]) RETURNS "uuid"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
 declare
   written_id uuid;
 begin
+  -- One certificate per student and programme; a revoked one is never brought back.
   insert into public.certificates (user_id, space_id, teacher_user_id, programme_name, result,
-    class_name, school_name, teacher_name, code)
+    class_name, school_name, teacher_name, code, look_colour, look_pattern)
   values (student_id, space.id, space.user_id, clean_programme, wanted_result,
-    space.name, space.school_name, teacher_display, public.new_certificate_code())
+    space.name, space.school_name, teacher_display, public.new_certificate_code(),
+    wanted_look[1], wanted_look[2])
   on conflict on constraint certificates_one_per_programme do update
     set result = excluded.result, teacher_name = excluded.teacher_name,
-        school_name = excluded.school_name, signed_at = now()
-    where certificates.revoked_at is null and certificates.result is distinct from excluded.result
+        school_name = excluded.school_name, look_colour = excluded.look_colour,
+        look_pattern = excluded.look_pattern, signed_at = now()
+    where certificates.revoked_at is null
+      and (certificates.result is distinct from excluded.result
+           or certificates.look_colour is distinct from excluded.look_colour
+           or certificates.look_pattern is distinct from excluded.look_pattern)
   returning certificates.id into written_id;
   return written_id;
 end;
 $$;
 
 
-ALTER FUNCTION "public"."write_class_certificate"("space" "public"."spaces", "student_id" "uuid", "clean_programme" "text", "wanted_result" "public"."certificate_result", "teacher_display" "text") OWNER TO "postgres";
+ALTER FUNCTION "public"."write_class_certificate"("space" "public"."spaces", "student_id" "uuid", "clean_programme" "text", "wanted_result" "public"."certificate_result", "teacher_display" "text", "wanted_look" "text"[]) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."write_class_certificate"("space" "public"."spaces", "student_id" "uuid", "clean_programme" "text", "wanted_result" "public"."certificate_result", "teacher_display" "text") IS 'Internal: writes one student''s class certificate (S1-E8-12).';
+COMMENT ON FUNCTION "public"."write_class_certificate"("space" "public"."spaces", "student_id" "uuid", "clean_programme" "text", "wanted_result" "public"."certificate_result", "teacher_display" "text", "wanted_look" "text"[]) IS 'Internal: writes one student''s class certificate with its look, or re-signs it when the result or look changed (S1-E8-12, G13a).';
 
 
 
@@ -61590,6 +61647,10 @@ REVOKE ALL ON FUNCTION "public"."cases_by_tier"("window_days" integer) FROM PUBL
 
 
 
+REVOKE ALL ON FUNCTION "public"."certificate_look_from"("look" "jsonb", OUT "colour" "text", OUT "pattern" "text") FROM PUBLIC;
+
+
+
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."certificates" TO "service_role";
 GRANT SELECT ON TABLE "public"."certificates" TO "authenticated";
 
@@ -63001,8 +63062,8 @@ REVOKE ALL ON FUNCTION "public"."is_under_18_or_unknown"("person_id" "uuid") FRO
 
 
 
-REVOKE ALL ON FUNCTION "public"."issue_class_certificates"("slug" "text", "programme_name" "text", "results" "jsonb") FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."issue_class_certificates"("slug" "text", "programme_name" "text", "results" "jsonb") TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."issue_class_certificates"("slug" "text", "programme_name" "text", "results" "jsonb", "look" "jsonb") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."issue_class_certificates"("slug" "text", "programme_name" "text", "results" "jsonb", "look" "jsonb") TO "authenticated";
 
 
 
@@ -66237,7 +66298,7 @@ REVOKE ALL ON FUNCTION "public"."workspace_sign_in_holds"() FROM PUBLIC;
 
 
 
-REVOKE ALL ON FUNCTION "public"."write_class_certificate"("space" "public"."spaces", "student_id" "uuid", "clean_programme" "text", "wanted_result" "public"."certificate_result", "teacher_display" "text") FROM PUBLIC;
+REVOKE ALL ON FUNCTION "public"."write_class_certificate"("space" "public"."spaces", "student_id" "uuid", "clean_programme" "text", "wanted_result" "public"."certificate_result", "teacher_display" "text", "wanted_look" "text"[]) FROM PUBLIC;
 
 
 

@@ -17,6 +17,8 @@ import {
   type ClassResultEntry,
 } from '../api/classCertificates';
 
+import type { CertificateLook } from '../lib/certificateLook';
+
 import { certificateFailureOf } from './useCertificates';
 
 /** The cache key of one class's certificates. */
@@ -48,7 +50,11 @@ export function useClassCertificates(slug: string) {
 export function useIssueClassCertificates(slug: string) {
   const queryClient = useQueryClient();
   const mutation = useMutation({
-    mutationFn: async (request: { programmeName: string; results: ClassResultEntry[] }) =>
+    mutationFn: async (request: {
+      programmeName: string;
+      results: ClassResultEntry[];
+      look: CertificateLook;
+    }) =>
       issueClassCertificates(await requireClient(), { slug, ...request }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: classCertificatesKey(slug) }),
   });
