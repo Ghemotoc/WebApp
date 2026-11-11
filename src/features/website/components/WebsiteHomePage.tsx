@@ -14,6 +14,7 @@
  * Who shows it: the router for "/". What it calls: useWebsiteContent for the home page and the
  * questions, HomeShelves, the four bands and HomeFooterColumns.
  */
+import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
@@ -172,6 +173,19 @@ function HomeSections({ entry }: { entry: ParsedEntry<HomePageContent> }) {
 }
 
 /**
+ * The tab's title: the site's name, or the search title staff gave the home page before it
+ * (S1-E11-37). server/website-head.ts writes the same text, so the tab and search results agree.
+ *
+ * @param searchTitle - the home page's search title, or an empty text
+ * @param t - the translation function
+ * @returns the text for <title>
+ */
+function homeDocumentTitle(searchTitle: string, t: TFunction): string {
+  const title = searchTitle.trim();
+  return title === '' ? t('home.documentTitle') : t('home.searchDocumentTitle', { title });
+}
+
+/**
  * Renders the page.
  *
  * @returns the page
@@ -182,7 +196,7 @@ export function WebsiteHomePage() {
   const homePage = entries.find((entry) => entry.entryKey === 'home');
   return (
     <PageContainer className="tmc-rise flex flex-col gap-14 pt-12 pb-16">
-      <title>{t('home.documentTitle')}</title>
+      <title>{homeDocumentTitle(homePage?.content.search?.title ?? '', t)}</title>
       {homePage !== undefined && <HomeSections entry={homePage} />}
       {homePage === undefined && readFailed && (
         <>

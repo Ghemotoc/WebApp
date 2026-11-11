@@ -29,6 +29,8 @@
  * GET /s/… (server/link-preview.ts, S1-E4-04: the shared link's Open Graph tags, read from the
  * local Supabase with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY, as on Cloudflare).
  * GET /c/… (server/landing-preview.ts, S1-E11-14: a landing page's Open Graph tags, the same way).
+ * GET / and GET /help/… (server/website-head.ts, S1-E11-37: the home page's and help pages' search
+ * and share tags, the same way; the country is LOCAL_FAKE_COUNTRY or the X-Fake-Country header).
  * Stand-ins:
  * - with PASSWORD_CHECK_STUB=1 (set by playwright.config.ts) the leaked-password check answers
  *   from a fixed list instead of the internet, so tests don't depend on an outside service: the
@@ -58,6 +60,7 @@ import { handleEmbed } from './embeds.ts';
 import { oembedLookup } from './embeds/oembed.ts';
 import { fetchLandingPreview, handleLandingLink, parseLandingAddress } from './landing-preview.ts';
 import { fetchLinkPreview, handleSharedLink, parseSharedAddress } from './link-preview.ts';
+import { fetchWebsiteHead, handleWebsitePage, parseWebsiteAddress } from './website-head.ts';
 import { handlePicturePreview } from './picture-preview.ts';
 import { handleNotice } from './notice.ts';
 import { handleOpeningEmails, handleOpeningList } from './opening-list.ts';
@@ -129,8 +132,9 @@ async function sendWebResponse(response: Response, nodeResponse: ServerResponse)
 type ReadIndexHtml = (url: string) => Promise<string>;
 
 /**
- * The handler for a shared story or chapter address, or a landing page at /c/<name> (part
- * CONTESTS-13a2c), with the local Supabase as the database.
+ * The handler for a shared story or chapter address, a landing page at /c/<name> (part
+ * CONTESTS-13a2c), or the home page or a help page (S1-E11-37), with the local Supabase as the
+ * database.
  *
  * @param readIndexHtml - how this server reads index.html
  * @param environment - the VITE_ values (the shell's win over the .env files, as in Vite)
@@ -146,6 +150,15 @@ function sharedLinkHandler(readIndexHtml: ReadIndexHtml, environment: Record<str
       new Response(await readIndexHtml(new URL(request.url).pathname), {
         headers: { 'Content-Type': 'text/html' },
       });
+    // The home page and the help pages have search and share tags of their own (S1-E11-37).
+    if (parseWebsiteAddress(new URL(request.url).pathname) !== null) {
+      return handleWebsitePage(request, {
+        fetchIndexHtml,
+        findHead: (address, country) => fetchWebsiteHead(settings, address, country),
+        cloudflareCountry:
+          request.headers.get('X-Fake-Country') ?? process.env.LOCAL_FAKE_COUNTRY ?? 'RO',
+      });
+    }
     // A landing page at /c/<name> has a preview of its own (S1-E11-14; CONTESTS-13a2c).
     if (parseLandingAddress(new URL(request.url).pathname) !== null) {
       return handleLandingLink(request, {
@@ -161,15 +174,20 @@ function sharedLinkHandler(readIndexHtml: ReadIndexHtml, environment: Record<str
 }
 
 /**
- * Whether an address gets a link preview: a shared story or chapter (S1-E4-04) or a landing page
- * (S1-E11-14). The query, if any, is ignored as on Cloudflare.
+ * Whether an address gets a link preview: a shared story or chapter (S1-E4-04), a landing page
+ * (S1-E11-14), or the home page or a help page (S1-E11-37). The query, if any, is ignored as on
+ * Cloudflare.
  *
  * @param url - the request's address
- * @returns true for /s/… and /c/<name>
+ * @returns true for /s/…, /c/<name>, / and /help/<address>
  */
 function isPreviewAddress(url: string | undefined): boolean {
   const pathname = (url ?? '').split('?')[0] ?? '';
-  return parseSharedAddress(pathname) !== null || parseLandingAddress(pathname) !== null;
+  return (
+    parseSharedAddress(pathname) !== null ||
+    parseLandingAddress(pathname) !== null ||
+    parseWebsiteAddress(pathname) !== null
+  );
 }
 
 /** A handler that answers one function's address. */
@@ -533,10 +551,8 @@ function pagesFunctionsMiddleware(
   environment: Record<string, string>,
 ): Connect.NextHandleFunction {
   return (request, response, next) => {
-    // Only page loads: the app's own files and data calls under /s/ don't exist, but be safe.
-    const isPagePath =
-      request.url?.startsWith('/s/') === true || request.url?.startsWith('/c/') === true;
-    if (request.method !== 'GET' && isPagePath) return next();
+    // Only page loads: a POST to a page address (none exist, but be safe) goes on to Vite.
+    if (request.method !== 'GET' && isPreviewAddress(request.url)) return next();
     const handler = handlerFor(request.url, sharedLink, environment);
     if (handler === null) return next();
     void toWebRequest(request)

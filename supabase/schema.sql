@@ -18604,7 +18604,8 @@ declare
   language text;
 begin
   if version_row.content_kind = 'home_page' then
-    return public.cms_home_page_problems(body);
+    -- A home page: its own fields, then its search fields (S1-E11-37).
+    return public.cms_home_page_problems(body) || public.cms_search_problems(body -> 'search');
   elsif version_row.content_kind = 'question' then
     -- A question: the question, the answer (safe Markdown) and where it shows.
     problems := problems || public.cms_text_problem(body ->> 'question', 'question', 160)
@@ -18612,11 +18613,12 @@ begin
       || public.cms_link_problems(body ->> 'answer', version_row.market_code, 'answer');
     if coalesce(body ->> 'showOn', '') not in ('home', 'help', 'both') then problems := problems || 'showOn:empty'::text; end if;
   elsif version_row.content_kind = 'help_page' then
-    -- A help page: its title, section and body (safe Markdown).
+    -- A help page: its title, section and body (safe Markdown), then its search fields.
     problems := problems || public.cms_text_problem(body ->> 'title', 'title', 80)
       || public.cms_text_problem(body ->> 'section', 'section', 40)
       || public.cms_text_problem(body ->> 'body', 'body', 20000)
-      || public.cms_link_problems(body ->> 'body', version_row.market_code, 'body');
+      || public.cms_link_problems(body ->> 'body', version_row.market_code, 'body')
+      || public.cms_search_problems(body -> 'search');
   else
     -- A notice: the text in every language of its market (S1-E11-10 criterion 2), a type and
     -- where it shows. Its link is one of our own pages, so a sponsor can't ride in on it.
@@ -18638,7 +18640,7 @@ $$;
 ALTER FUNCTION "public"."cms_content_problems"("version_row" "public"."cms_versions") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."cms_content_problems"("version_row" "public"."cms_versions") IS 'What stops a website content version from being published: field:problem pairs (S1-E11-06).';
+COMMENT ON FUNCTION "public"."cms_content_problems"("version_row" "public"."cms_versions") IS 'What stops a website content version from being published: field:problem pairs (S1-E11-06; search fields S1-E11-37).';
 
 
 
@@ -18815,6 +18817,32 @@ ALTER FUNCTION "public"."cms_live_versions"("wanted_kind" "text") OWNER TO "post
 
 
 COMMENT ON FUNCTION "public"."cms_live_versions"("wanted_kind" "text") IS 'Internal: the live version of each website entry of one kind (S1-E11-06).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."cms_search_problems"("search" "jsonb") RETURNS "text"[]
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select case
+    -- Anything but an object (a text, a list) is refused as a whole.
+    when search is not null and jsonb_typeof(search) <> 'object' then array['search:invalid']
+    else array_remove(array[
+      -- The title: Google shows about 60 characters; 70 leaves room for the brand after it.
+      case when char_length(coalesce(search ->> 'title', '')) > 70 then 'search.title:too_long' end,
+      -- The description: search results show about 160 characters; share cards a little more.
+      case when char_length(coalesce(search ->> 'description', '')) > 200 then 'search.description:too_long' end,
+      -- The switch is true or false when it is there at all.
+      case when search ? 'hidden' and jsonb_typeof(search -> 'hidden') <> 'boolean' then 'search.hidden:invalid' end
+    ], null)
+  end;
+$$;
+
+
+ALTER FUNCTION "public"."cms_search_problems"("search" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."cms_search_problems"("search" "jsonb") IS 'Internal: S1-E11-37: a home or help page''s search fields: title up to 70 characters, description up to 200, hidden true or false.';
 
 
 
@@ -64327,6 +64355,10 @@ REVOKE ALL ON FUNCTION "public"."cms_live_content_of"("version_row" "public"."cm
 
 
 REVOKE ALL ON FUNCTION "public"."cms_live_versions"("wanted_kind" "text") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."cms_search_problems"("search" "jsonb") FROM PUBLIC;
 
 
 

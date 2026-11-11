@@ -34,6 +34,7 @@ import { romaniaDateOf, sortEntryVersions } from '../../lib/versionState';
 import { CountedField } from './CountedField';
 import { HeroPreview } from './HeroPreview';
 import { PublishControls } from './PublishControls';
+import { SearchFieldsBox } from './SearchFieldsBox';
 import { VersionHistory } from './VersionHistory';
 
 /** What the editor needs. */
@@ -212,6 +213,14 @@ function HomePageForm({
         </div>
       </div>
       <LowerFieldsets page={page} language={language} state={state} onChange={change} />
+      {/* The search and share fields (S1-E11-37): empty ones use the headline and introduction. */}
+      <SearchFieldsBox
+        idPrefix="home"
+        search={page.search}
+        language={language}
+        problemOf={(path) => problemAt(state.failure, path)}
+        onChange={(search) => setPage((current) => ({ ...current, search }))}
+      />
       <PublishControls
         idPrefix="home"
         draft={draft}

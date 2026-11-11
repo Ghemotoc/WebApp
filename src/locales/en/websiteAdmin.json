@@ -132,7 +132,12 @@
         "firstStoryBand": "Gold “first story” band",
         "appsBand": "Apps band"
       },
-      "footerNote": "Footer: a few words about the site"
+      "footerNote": "Footer: a few words about the site",
+      "search": {
+        "title": "Search title",
+        "description": "Search description",
+        "hidden": "Hidden from search engines"
+      }
     },
     "bandsLegend": "Bands lower down and the footer"
   },
@@ -180,7 +185,12 @@
       "address": "Web address (/help/…)",
       "title": "Title",
       "section": "Section",
-      "body": "Page"
+      "body": "Page",
+      "search": {
+        "title": "Search title",
+        "description": "Search description",
+        "hidden": "Hidden from search engines"
+      }
     }
   },
   "questions": {
@@ -322,5 +332,13 @@
       "no_market": "That market doesn’t exist any more. Reload the page.",
       "unreachable": "We couldn’t reach the database. Check your connection and try again."
     }
+  },
+  "search": {
+    "legend": "Search and sharing",
+    "intro": "What search engines and share cards show. An empty field uses the page's own words.",
+    "titleHint": "About 60 characters show in search results.",
+    "descriptionHint": "About 160 characters show in search results.",
+    "hiddenLabel": "Hide this page from search engines",
+    "hiddenHint": "Visitors can still open it from a link."
   }
 }

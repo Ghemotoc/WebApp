@@ -75,6 +75,7 @@ import { PhoneHeader } from './PhoneHeader';
 import { TabBar } from './TabBar';
 import { TopBar } from './TopBar';
 import { useIsNarrowScreen } from './useIsNarrowScreen';
+import { useServerHeadReset } from './useServerHeadReset';
 
 /**
  * The website top bar, for windows from 1024 px: the main links with Messages, search, then
@@ -142,6 +143,8 @@ export function AppLayout() {
   useAccountAppearance();
   // Remember the page on screen for error reports (S1-E1-05).
   useTrackRoutePattern();
+  // The server's title for the first page goes back to the site's name on the next (S1-E11-37).
+  useServerHeadReset();
   // Check again any picture whose check couldn't run when it was uploaded (S1-E10-05).
   const { userId } = useSession();
   usePendingPictureRetry(userId);

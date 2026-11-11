@@ -4,7 +4,8 @@
     "eyebrow": "Pentru scriitori și cititori",
     "welcome": "Bun venit la {{productName}}",
     "tagline": "Un loc pentru povești, poezii și eseuri.",
-    "comingSoon": "Construim platforma chiar acum. Revino curând."
+    "comingSoon": "Construim platforma chiar acum. Revino curând.",
+    "searchDocumentTitle": "{{title}} · {{productName}}"
   },
   "shell": {
     "skipToContent": "Sari la conținut",
@@ -214,7 +215,7 @@
       "intro": "Ghiduri scurte despre scris, citit și siguranță aici, plus răspunsuri la întrebările puse cel mai des.",
       "questions": "Întrebări frecvente",
       "back": "Pagini de ajutor",
-      "pageTitle": "{{title}} · Ajutor",
+      "pageTitle": "{{title}} · {{productName}}",
       "notFoundHeading": "Nu găsim această pagină de ajutor",
       "notFound": "Poate a fost mutată sau scoasă. Toate paginile de ajutor sunt pe pagina Ajutor.",
       "searchLabel": "Caută în ajutor",

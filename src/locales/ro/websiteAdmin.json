@@ -132,7 +132,12 @@
         "firstStoryBand": "Banda aurie „prima poveste”",
         "appsBand": "Banda aplicațiilor"
       },
-      "footerNote": "Subsol: câteva cuvinte despre site"
+      "footerNote": "Subsol: câteva cuvinte despre site",
+      "search": {
+        "title": "Titlu pentru căutare",
+        "description": "Descriere pentru căutare",
+        "hidden": "Ascunsă de motoarele de căutare"
+      }
     },
     "bandsLegend": "Benzile de mai jos și subsolul"
   },
@@ -180,7 +185,12 @@
       "address": "Adresa web (/help/…)",
       "title": "Titlul",
       "section": "Secțiunea",
-      "body": "Pagina"
+      "body": "Pagina",
+      "search": {
+        "title": "Titlu pentru căutare",
+        "description": "Descriere pentru căutare",
+        "hidden": "Ascunsă de motoarele de căutare"
+      }
     }
   },
   "questions": {
@@ -322,5 +332,13 @@
       "no_market": "Piața aceasta nu mai există. Reîncarcă pagina.",
       "unreachable": "Nu am putut ajunge la baza de date. Verifică conexiunea și încearcă din nou."
     }
+  },
+  "search": {
+    "legend": "Căutare și distribuire",
+    "intro": "Ce arată motoarele de căutare și cardurile de distribuire. Un câmp gol folosește cuvintele paginii.",
+    "titleHint": "Rezultatele căutării arată cam 60 de caractere.",
+    "descriptionHint": "Rezultatele căutării arată cam 160 de caractere.",
+    "hiddenLabel": "Ascunde pagina de motoarele de căutare",
+    "hiddenHint": "Vizitatorii o pot deschide în continuare dintr-un link."
   }
 }

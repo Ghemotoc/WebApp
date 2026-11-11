@@ -41,6 +41,25 @@ export const homePageLimits = {
   footerNote: 300,
 } as const;
 
+/**
+ * The search and share fields' limits (story S1-E11-37; bundle SEO-1b). Search results show about
+ * 60 characters of a title and 160 of a description; the database refuses more than these
+ * (cms_search_problems()), and the staff screen of SEO-1d warns outside the usual ranges.
+ */
+export const pageSearchLimits = { title: 70, description: 200 } as const;
+
+/**
+ * A page's search and share fields (S1-E11-37). Every field may stay empty: the server then uses
+ * the page's own words (server/website-head.ts). `hidden` asks search engines not to list the page.
+ * Optional on each page, so versions saved before SEO-1b still read.
+ */
+export const pageSearchSchema = z.object({
+  title: z.string().default(''),
+  description: z.string().default(''),
+  hidden: z.boolean().default(false),
+});
+export type PageSearch = z.infer<typeof pageSearchSchema>;
+
 /** One "Why write here" card. */
 const whyCardSchema = z.object({ title: z.string(), body: z.string() });
 
@@ -101,6 +120,8 @@ export const homePageContentSchema = z.object({
   appsBand: homeBandSchema.optional(),
   /** The few words about the site in the big footer (LOOK-3). */
   footerNote: z.string().optional(),
+  /** The search and share fields (S1-E11-37). */
+  search: pageSearchSchema.optional(),
 });
 export type HomePageContent = z.infer<typeof homePageContentSchema>;
 
@@ -133,6 +154,8 @@ export const helpPageContentSchema = z.object({
   /** The page, in the safe Markdown subset. */
   body: z.string(),
   isLegal: z.boolean().default(false),
+  /** The search and share fields (S1-E11-37). */
+  search: pageSearchSchema.optional(),
 });
 export type HelpPageContent = z.infer<typeof helpPageContentSchema>;
 
