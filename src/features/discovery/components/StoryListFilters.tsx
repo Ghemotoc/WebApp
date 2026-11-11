@@ -17,7 +17,13 @@ import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { Select } from '@/components/ui/Select';
 import { useStoryFormOptions } from '@/features/writing/hooks/useStoryFormOptions';
 
-import type { CompletionStatus, ListRequest, SortOrder } from '../api/storyLists';
+import {
+  everyLanguage,
+  followsReadingLanguages,
+  type CompletionStatus,
+  type ListRequest,
+  type SortOrder,
+} from '../api/storyLists';
 import { categoryAccent } from '../lib/categoryAccents';
 import { sortChoicesFor } from '../lib/listAddresses';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
@@ -84,15 +90,22 @@ function StatusSegments({ request, onChange }: Omit<StoryListFiltersProps, 'sort
 
 /**
  * The language drop-down: every language stories may be written in, open or not, so an older
- * story still filters.
+ * story still filters. On the lists that follow the languages someone reads (MARKETS-2c), the
+ * first choice is "Languages I read" and "Every language" turns the filter off.
  *
  * @returns the drop-down
  */
 function LanguageSelect({ request, onChange }: Omit<StoryListFiltersProps, 'sortOrder'>) {
   const { t } = useDiscoveryTranslation();
   const { languages } = useStoryFormOptions();
+  const firstOptions = followsReadingLanguages(request.kind)
+    ? [
+        { value: anyValue, label: t('seeAll.readingLanguages') },
+        { value: everyLanguage, label: t('seeAll.everyLanguage') },
+      ]
+    : [{ value: anyValue, label: t('seeAll.anyLanguage') }];
   const languageOptions = [
-    { value: anyValue, label: t('seeAll.anyLanguage') },
+    ...firstOptions,
     ...languages.map(({ code }) => ({
       value: code,
       label: t(`languages.${code}`, { ns: 'writing', defaultValue: code }),

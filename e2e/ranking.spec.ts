@@ -84,8 +84,18 @@ async function shelfHeadings(page: Page): Promise<string[]> {
 
 test.describe('popularity ranking (S1-E5-03)', () => {
   test.describe.configure({ mode: 'serial' });
-  test.beforeAll(seedStories);
-  test.afterAll(cleanUp);
+  // The shelf setting as this run found it, put back afterwards so specs that run later in the
+  // same browser see the migrations' shelves, not this spec's longer list (MARKETS-2c).
+  let shelvesFound = '';
+  test.beforeAll(() => {
+    shelvesFound = runSql(`select value::text from public.settings where key = 'discover_shelves'`);
+    seedStories();
+  });
+  test.afterAll(() => {
+    cleanUp();
+    runSql(`update public.settings set value = '${shelvesFound.replaceAll("'", "''")}'::jsonb
+      where key = 'discover_shelves';`);
+  });
 
   test('Discover follows the shelf setting, and a new order needs no release', async ({
     browser,

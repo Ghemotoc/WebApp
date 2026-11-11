@@ -40,7 +40,7 @@ import { useSession } from '@/features/auth/hooks/useSession';
 import { usePublicSettings } from '@/features/flags/hooks/usePublicSettings';
 import { useStoryFormOptions } from '@/features/writing/hooks/useStoryFormOptions';
 
-import type { ListKind } from '../api/storyLists';
+import { everyLanguage, type ListKind } from '../api/storyLists';
 import { useStoryShelf } from '../hooks/useStoryShelf';
 import { discoverListKinds, plainList } from '../lib/listAddresses';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
@@ -193,8 +193,12 @@ function DiscoverShelves() {
   const { t } = useDiscoveryTranslation();
   const { userId } = useSession();
   const { wordsOf } = usePublicSettings();
-  // Recently updated holds every story a reader may see, so it tells whether there is anything.
-  const { shelf, loadFailed } = useStoryShelf(plainList('updated'));
+  // Recently updated in every language holds every story a reader may see, so it tells whether
+  // there is anything at all; the shelves below then follow the reader's languages (MARKETS-2c).
+  const { shelf, loadFailed } = useStoryShelf({
+    ...plainList('updated'),
+    languageCode: everyLanguage,
+  });
   if (loadFailed) return <Notice tone="error">{t('discover.loadFailed')}</Notice>;
   if (shelf === null) return null;
   if (shelf.total === 0) {

@@ -8,6 +8,7 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 
 import { useSession } from '@/features/auth/hooks/useSession';
+import { useReadingLanguageFilter } from '@/features/language/hooks/useReadingLanguages';
 import { getSupabaseClient } from '@/lib/supabase';
 
 import {
@@ -43,15 +44,21 @@ function nextOffset(lastPage: StoryListPage, allPages: StoryListPage[]): number 
  */
 export function useStoryList(request: ListRequest) {
   const { userId, isKnown } = useSession();
+  // The languages the reader reads (MARKETS-2c); null until known, so the list loads once.
+  const reading = useReadingLanguageFilter();
   const pages = useInfiniteQuery({
-    queryKey: [storyListQueryKey, 'page', request, userId],
-    enabled: isKnown,
+    queryKey: [storyListQueryKey, 'page', request, userId, reading.languages],
+    enabled: isKnown && reading.languages !== null,
     initialPageParam: 0,
     getNextPageParam: nextOffset,
     queryFn: async ({ pageParam }) => {
       const client = await getSupabaseClient();
       if (client === null) throw new Error('The app is not connected to its database.');
-      return fetchStoryList(client, request, { pageSize: storiesPerPage, offset: pageParam });
+      return fetchStoryList(client, request, {
+        pageSize: storiesPerPage,
+        offset: pageParam,
+        readingLanguages: reading.languages ?? [],
+      });
     },
   });
   const stories: ListedStory[] = (pages.data?.pages ?? []).flatMap((page) => page.stories);

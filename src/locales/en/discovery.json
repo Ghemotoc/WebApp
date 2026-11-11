@@ -68,6 +68,8 @@
     "completed": "Completed",
     "language": "Language",
     "anyLanguage": "Any language",
+    "readingLanguages": "Languages I read",
+    "everyLanguage": "Any language",
     "sortBy": "Sort by",
     "loadMore": "Load more stories",
     "loadingMore": "Loading…",

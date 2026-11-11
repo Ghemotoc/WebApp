@@ -15,7 +15,13 @@
  * Who uses it: DiscoverPage (each shelf's "View more"), StoryListPage, StoryBreadcrumb, the story
  * page's tags.
  */
-import type { CompletionStatus, ListKind, ListRequest, SortOrder } from '../api/storyLists';
+import {
+  everyLanguage,
+  type CompletionStatus,
+  type ListKind,
+  type ListRequest,
+  type SortOrder,
+} from '../api/storyLists';
 
 /** The lists Discover links to under /discover/all/. */
 export const discoverListKinds: readonly ListKind[] = [
@@ -149,6 +155,19 @@ export function sortFrom(value: string | null): SortOrder | null {
 }
 
 /**
+ * Reads the language filter from the address: one language code, or "any" for "Every language"
+ * (MARKETS-2c); anything else is ignored, so the list follows the languages the reader reads.
+ *
+ * @param language - the "language" part of the address, or null
+ * @returns the filter for the request
+ */
+function languageFrom(language: string | null): string | null {
+  if (language === everyLanguage) return everyLanguage;
+  if (language !== null && /^[a-z]{2}(-[A-Z]{2})?$/.test(language)) return language;
+  return null;
+}
+
+/**
  * The list behind an address.
  *
  * @param kind - which list the route stands for
@@ -169,7 +188,7 @@ export function requestFromAddress(
     // A category page is its own category filter.
     categorySlug: kind === 'category' ? null : search.get('category'),
     completion: completionFrom(search.get('status')),
-    languageCode: language !== null && /^[a-z]{2}(-[A-Z]{2})?$/.test(language) ? language : null,
+    languageCode: languageFrom(language),
     // "Best match" belongs to search only (S1-E5-04).
     sortOrder: sortOrder === 'relevance' && kind !== 'search' ? null : sortOrder,
   };

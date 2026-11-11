@@ -5795,6 +5795,7 @@ export type Database = {
           pen_name: string | null;
           pen_name_changed_at: string | null;
           profile_visible_to: Database['public']['Enums']['profile_audience'] | null;
+          reading_languages: string[] | null;
           region_code: string | null;
           rules_walkthrough_seen_at: string | null;
           seasonal_looks: boolean;
@@ -5869,6 +5870,7 @@ export type Database = {
           pen_name?: string | null;
           pen_name_changed_at?: string | null;
           profile_visible_to?: Database['public']['Enums']['profile_audience'] | null;
+          reading_languages?: string[] | null;
           region_code?: string | null;
           rules_walkthrough_seen_at?: string | null;
           seasonal_looks?: boolean;
@@ -5922,6 +5924,7 @@ export type Database = {
           pen_name?: string | null;
           pen_name_changed_at?: string | null;
           profile_visible_to?: Database['public']['Enums']['profile_audience'] | null;
+          reading_languages?: string[] | null;
           region_code?: string | null;
           rules_walkthrough_seen_at?: string | null;
           seasonal_looks?: boolean;
@@ -11985,6 +11988,7 @@ export type Database = {
           pen_name: string | null;
           pen_name_changed_at: string | null;
           profile_visible_to: Database['public']['Enums']['profile_audience'] | null;
+          reading_languages: string[] | null;
           region_code: string | null;
           rules_walkthrough_seen_at: string | null;
           seasonal_looks: boolean;
@@ -13977,6 +13981,7 @@ export type Database = {
           pen_name: string | null;
           pen_name_changed_at: string | null;
           profile_visible_to: Database['public']['Enums']['profile_audience'] | null;
+          reading_languages: string[] | null;
           region_code: string | null;
           rules_walkthrough_seen_at: string | null;
           seasonal_looks: boolean;
@@ -14804,6 +14809,7 @@ export type Database = {
           pen_name: string | null;
           pen_name_changed_at: string | null;
           profile_visible_to: Database['public']['Enums']['profile_audience'] | null;
+          reading_languages: string[] | null;
           region_code: string | null;
           rules_walkthrough_seen_at: string | null;
           seasonal_looks: boolean;
@@ -15718,6 +15724,7 @@ export type Database = {
       set_my_initials_colour: { Args: { colour: string }; Returns: string };
       set_my_locale: { Args: { new_locale: string }; Returns: string };
       set_my_pen_name: { Args: { new_pen_name: string }; Returns: string };
+      set_my_reading_languages: { Args: { wanted: string[] }; Returns: string[] };
       set_my_signature: { Args: { picture_id?: string; signature_text: string }; Returns: Json };
       set_my_story_app_only: { Args: { story_slug: string; wanted: boolean }; Returns: Json };
       set_my_story_visibility: {

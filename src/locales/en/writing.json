@@ -62,7 +62,10 @@
   },
   "languages": {
     "ro": "Română",
-    "en": "English"
+    "en": "English",
+    "sv": "Svenska",
+    "da": "Dansk",
+    "nb": "Norsk bokmål"
   },
   "cover": {
     "heading": "Cover",
