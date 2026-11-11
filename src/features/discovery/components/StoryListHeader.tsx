@@ -5,12 +5,14 @@
  *
  * A category page opens with a deep band in its category's colour (categoryAccents.ts) with a
  * soft light glow in the top right; the breadcrumb, eyebrow, title and count sit inside it in
- * white (the genre-band utility in index.css). Every other list (a tag, Trending, a writer's
- * stories, a search) has no band: the breadcrumb, eyebrow and a large title sit on the page, as
- * the DiscoverTag and DiscoverAll boards draw them. The count is announced politely when a
+ * white (the genre-band utility in index.css). An admin can choose another band colour for a
+ * genre, and a band for a tag page, in Staff › Website › Genre and tag pages (bundle G12b;
+ * useListPageBackground). Every other list (a tag with no band, Trending, a writer's stories, a
+ * search) has no band: the breadcrumb, eyebrow and a large title sit on the page, as the
+ * DiscoverTag and DiscoverAll boards draw them. The count is announced politely when a
  * filter changes it. A sponsored category says "Sponsored by" under its heading (bundle
  * SPONSORS-b3; S1-E12-02 criterion 3); the list itself is the same with or without a sponsor.
- * Who uses it: StoryListPage. What it calls: SponsoredByLine.
+ * Who uses it: StoryListPage. What it calls: useListPageBackground and SponsoredByLine.
  */
 import { Link } from 'react-router';
 
@@ -19,6 +21,7 @@ import { SponsoredByLine } from '@/features/ads/components/SponsoredByLine';
 import { cn } from '@/lib/utils';
 
 import type { ListRequest } from '../api/storyLists';
+import { useListPageBackground } from '../hooks/useListPageBackground';
 import type { ListTitle } from '../hooks/useListTitle';
 import { accentDeepBandClasses, categoryAccent } from '../lib/categoryAccents';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
@@ -90,7 +93,11 @@ function ListHeading({ heading, total }: Pick<StoryListHeaderProps, 'heading' | 
  * @returns the header
  */
 export function StoryListHeader({ request, heading, total }: StoryListHeaderProps) {
-  if (request.kind !== 'category') {
+  // Step 1: the band colour an admin chose for this genre or tag, if any (G12b).
+  const chosenTone = useListPageBackground(request);
+  // Step 2: a tag page with no chosen band, and every other list, keep the plain heading.
+  const isCategory = request.kind === 'category';
+  if (!isCategory && chosenTone === null) {
     return (
       <header className="flex flex-col gap-4">
         <ListBreadcrumb title={heading.title} />
@@ -98,13 +105,16 @@ export function StoryListHeader({ request, heading, total }: StoryListHeaderProp
       </header>
     );
   }
-  const categorySlug = request.key ?? '';
+  // Step 3: the band, in the chosen colour or the genre's own accent.
+  const listKey = request.key ?? '';
+  const bandTone = chosenTone ?? categoryAccent(listKey);
   return (
     <header
       className={cn(
         'genre-band relative flex flex-col gap-5 overflow-hidden rounded-[40px] px-[clamp(24px,4vw,48px)] py-[clamp(28px,4vw,48px)] shadow-card',
-        accentDeepBandClasses[categoryAccent(categorySlug)],
+        accentDeepBandClasses[bandTone],
       )}
+      data-band-tone={bandTone}
     >
       {/* The soft light in the top right corner (board DiscoverGenre); decoration only. */}
       <div
@@ -114,7 +124,7 @@ export function StoryListHeader({ request, heading, total }: StoryListHeaderProp
       <div className="relative flex flex-col gap-4">
         <ListBreadcrumb title={heading.title} />
         <ListHeading heading={heading} total={total} />
-        <SponsoredByLine kind="category" slug={categorySlug} />
+        {isCategory && <SponsoredByLine kind="category" slug={listKey} />}
       </div>
     </header>
   );

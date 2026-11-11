@@ -20,7 +20,8 @@
     "emails": "Șabloane de email",
     "landingPages": "Pagini de prezentare",
     "branding": "Identitate vizuală",
-    "seasonal": "Teme de sezon"
+    "seasonal": "Teme de sezon",
+    "listPages": "Pagini de gen și etichetă"
   },
   "picker": {
     "market": "Piața",
@@ -280,6 +281,45 @@
       "bad_day": "Ziua aceasta nu există. Alege alta.",
       "wrong_looks": "Zilele acestea nu pot fi salvate. Reîncarcă pagina și încearcă din nou.",
       "not_allowed": "Doar proprietarul și administratorii pot schimba temele de sezon.",
+      "unreachable": "Nu am putut ajunge la baza de date. Verifică conexiunea și încearcă din nou."
+    }
+  },
+  "listBackgrounds": {
+    "market": "Piața",
+    "everywhere": "Peste tot",
+    "marketNote": "O culoare aleasă pentru Peste tot apare în fiecare piață, dacă piața nu are una a ei.",
+    "genresHeading": "Fundalurile paginilor de gen",
+    "tagsHeading": "Fundalurile paginilor de etichetă",
+    "tagsNote": "Etichetele fără fundal propriu păstrează titlul simplu pe pagină.",
+    "tagName": "Etichetă",
+    "addTag": "Adaugă un fundal pentru o etichetă",
+    "edit": "Editează",
+    "editLabel": "Editează fundalul pentru {{name}}",
+    "defaultColour": "Implicit: {{colour}}",
+    "colourSetBy": "{{colour}} · ales de @{{handle}}",
+    "editing": "Editezi {{name}}",
+    "colour": "Culoare",
+    "contrastNote": "Fiecare culoare are text alb la un contrast de cel puțin 4,5:1, așa că titlul și textul mic rămân ușor de citit.",
+    "previewEyebrow": "Previzualizare",
+    "liveNote": "Schimbările apar pe site imediat și rămân în jurnalul de audit.",
+    "cancel": "Renunță",
+    "useDefault": "Folosește varianta implicită",
+    "save": "Salvează fundalul",
+    "saved": "Salvat. Pagina arată noul fundal.",
+    "cleared": "Pagina a revenit la fundalul implicit.",
+    "history": "Istoricul echipei",
+    "palettes": {
+      "plum": "Prună",
+      "sage": "Salvie",
+      "gold": "Auriu",
+      "sky": "Cer",
+      "blush": "Roz pal",
+      "neutral": "Gri"
+    },
+    "failures": {
+      "not_allowed": "Doar proprietarul și administratorii pot schimba fundalurile.",
+      "no_list": "Nu există o etichetă aprobată cu acest nume. Verifică ortografia.",
+      "no_market": "Piața aceasta nu mai există. Reîncarcă pagina.",
       "unreachable": "Nu am putut ajunge la baza de date. Verifică conexiunea și încearcă din nou."
     }
   }

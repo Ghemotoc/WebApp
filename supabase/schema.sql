@@ -4431,6 +4431,39 @@ COMMENT ON FUNCTION "public"."admin_clear_brand_asset"("target_slot" "public"."b
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_clear_list_page_background"("list_kind" "text", "list_key" "text", "market" "text") RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target record;
+  earlier_palette text;
+begin
+  perform public.require_website_staff();
+  -- Step 1: the row for this page and market, if there is one.
+  select * into target from public.list_page_target(list_kind, list_key);
+  delete from public.list_page_backgrounds
+  where category_id is not distinct from target.category_id and tag_id is not distinct from target.tag_id
+    and (target.category_id is not null or target.tag_id is not null)
+    and market_country is not distinct from market
+  returning palette into earlier_palette;
+  -- Step 2: the audit log, only when something changed.
+  if earlier_palette is not null then
+    perform public.log_staff_action('website.list_background_cleared', 'list_page_backgrounds',
+      list_kind || ':' || list_key || ':' || coalesce(market, 'everywhere'), null, null,
+      jsonb_build_object('palette', earlier_palette), jsonb_build_object('palette', null));
+  end if;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_clear_list_page_background"("list_kind" "text", "list_key" "text", "market" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_clear_list_page_background"("list_kind" "text", "list_key" "text", "market" "text") IS 'Takes a genre or tag page back to its default band; owner and admin only; logged (G12b).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admin_close_account_for_abuse_image"("target_case_id" "uuid", "note_text" "text", "account_message" "text") RETURNS boolean
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -6688,6 +6721,36 @@ ALTER FUNCTION "public"."admin_list_invites"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."admin_list_invites"() IS 'Every platform invite link with its status and maker, never who used it (owner and admin; S1-E11-17).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_list_page_backgrounds"() RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  perform public.require_website_staff();
+  return coalesce((
+    select jsonb_agg(jsonb_build_object(
+        'kind', case when backgrounds.category_id is not null then 'category' else 'tag' end,
+        'key', coalesce(categories.slug, tags.name),
+        'market', backgrounds.market_country,
+        'palette', backgrounds.palette,
+        'set_by', profiles.handle,
+        'updated_at', backgrounds.updated_at)
+      order by backgrounds.category_id is null, coalesce(categories.slug, tags.name), backgrounds.market_country nulls first)
+    from public.list_page_backgrounds as backgrounds
+    left join public.categories on categories.id = backgrounds.category_id
+    left join public.tags on tags.id = backgrounds.tag_id
+    left join public.profiles on profiles.id = backgrounds.user_id), '[]'::jsonb);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_list_page_backgrounds"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_list_page_backgrounds"() IS 'Staff: every genre and tag page background with who set it; owner and admin only (G12b).';
 
 
 
@@ -10943,6 +11006,50 @@ ALTER FUNCTION "public"."admin_set_launch_date"("new_date" "date") OWNER TO "pos
 
 
 COMMENT ON FUNCTION "public"."admin_set_launch_date"("new_date" "date") IS 'Sets or clears the launch date the ANCOM notice is due from; owner and admin only; audited (S1-E11-04).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_set_list_page_background"("list_kind" "text", "list_key" "text", "market" "text", "new_palette" "text") RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target record;
+  earlier_palette text;
+begin
+  -- Step 1: owner or admin (website content is admin-only, decided 17 Oct 2026, 19:19).
+  perform public.require_website_staff();
+  -- Step 2: a real genre or approved tag, a real market and one of the six colours.
+  select * into target from public.list_page_target(list_kind, list_key);
+  if target.category_id is null and target.tag_id is null then
+    raise exception 'There is no such genre or tag.' using errcode = 'check_violation', hint = 'no_list';
+  end if;
+  if market is not null and not exists (select 1 from public.markets where markets.country_code = market) then
+    raise exception 'There is no such market.' using errcode = 'check_violation', hint = 'no_market';
+  end if;
+  if new_palette is null or new_palette not in ('plum', 'sage', 'gold', 'sky', 'blush', 'neutral') then
+    raise exception 'Pick one of the colours.' using errcode = 'check_violation', hint = 'bad_palette';
+  end if;
+  -- Step 3: the choice, replacing any earlier one for the same page and market.
+  select palette into earlier_palette from public.list_page_backgrounds
+  where category_id is not distinct from target.category_id and tag_id is not distinct from target.tag_id
+    and market_country is not distinct from market;
+  insert into public.list_page_backgrounds (category_id, tag_id, market_country, palette, user_id)
+  values (target.category_id, target.tag_id, market, new_palette, (select auth.uid()))
+  on conflict on constraint list_page_backgrounds_one_per_place do update
+    set palette = excluded.palette, user_id = excluded.user_id, updated_at = now();
+  -- Step 4: the audit log, in the same transaction (architecture 1.8.1).
+  perform public.log_staff_action('website.list_background_set', 'list_page_backgrounds',
+    list_kind || ':' || list_key || ':' || coalesce(market, 'everywhere'), null, null,
+    jsonb_build_object('palette', earlier_palette), jsonb_build_object('palette', new_palette));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_set_list_page_background"("list_kind" "text", "list_key" "text", "market" "text", "new_palette" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_set_list_page_background"("list_kind" "text", "list_key" "text", "market" "text", "new_palette" "text") IS 'Chooses a genre or tag page''s band colour for every market or one; owner and admin only; logged (G12b).';
 
 
 
@@ -19705,6 +19812,7 @@ CREATE OR REPLACE FUNCTION "public"."data_export_held_tables"() RETURNS TABLE("t
     ('data_requests', true, null),
     ('featured_picks', false, 'user_id is the staff member who picked a story for Featured this week, not data about their account; the writer is told by a notification, which is in their export'),
     ('interface_text_overrides', false, 'user_id is the admin who edited interface text, not data about their account'),
+    ('list_page_backgrounds', false, 'user_id is the admin who chose a genre or tag page background, not data about their account'),
     ('moderated_items', true, null),
     ('on_call_rota', true, null),
     ('removed_passages', false, 'the exact words staff removed, which may be someone else''s personal data removed to protect them; the removal itself is in story_revisions'),
@@ -26633,6 +26741,48 @@ ALTER FUNCTION "public"."list_my_sessions"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."list_my_sessions"() IS 'The signed-in person''s own sessions: browser, start, last active, this device; never the IP (S1-E2-05).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."list_page_background"("list_kind" "text", "list_key" "text", "visitor_country" "text") RETURNS "text"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  -- The market's own choice first, then the one for every market.
+  select backgrounds.palette
+  from public.list_page_target(list_kind, list_key) as target
+  join public.list_page_backgrounds as backgrounds
+    on backgrounds.category_id is not distinct from target.category_id
+   and backgrounds.tag_id is not distinct from target.tag_id
+  where (target.category_id is not null or target.tag_id is not null)
+    and (backgrounds.market_country is null or backgrounds.market_country = upper(visitor_country))
+  order by backgrounds.market_country is null
+  limit 1;
+$$;
+
+
+ALTER FUNCTION "public"."list_page_background"("list_kind" "text", "list_key" "text", "visitor_country" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."list_page_background"("list_kind" "text", "list_key" "text", "visitor_country" "text") IS 'The band colour a genre or tag page shows in a market, or null for the default (G12b).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."list_page_target"("list_kind" "text", "list_key" "text") RETURNS TABLE("category_id" "uuid", "tag_id" "uuid")
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select
+    case when list_kind = 'category'
+         then (select categories.id from public.categories where categories.slug = list_key) end,
+    case when list_kind = 'tag' then public.tag_for_name(list_key) end;
+$$;
+
+
+ALTER FUNCTION "public"."list_page_target"("list_kind" "text", "list_key" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."list_page_target"("list_kind" "text", "list_key" "text") IS 'Internal: the category or approved tag a list kind and key name (G12b).';
 
 
 
@@ -50471,6 +50621,28 @@ Which story sits on which shelf of a reader''s library (S1-E4-03). Private to th
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."list_page_backgrounds" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "category_id" "uuid",
+    "tag_id" "uuid",
+    "market_country" "text",
+    "palette" "text" NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "list_page_backgrounds_market_shape" CHECK ((("market_country" IS NULL) OR ("market_country" ~ '^[A-Z]{2}$'::"text"))),
+    CONSTRAINT "list_page_backgrounds_one_list" CHECK (("num_nonnulls"("category_id", "tag_id") = 1)),
+    CONSTRAINT "list_page_backgrounds_palette" CHECK (("palette" = ANY (ARRAY['plum'::"text", 'sage'::"text", 'gold'::"text", 'sky'::"text", 'blush'::"text", 'neutral'::"text"])))
+);
+
+
+ALTER TABLE "public"."list_page_backgrounds" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."list_page_backgrounds" IS 'kind: staff; the band colour an admin chose for a genre or tag page, for every market or one (bundle G12b).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."live_session_reminders" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "user_id" "uuid" NOT NULL,
@@ -52693,6 +52865,16 @@ ALTER TABLE ONLY "public"."library_entries"
 
 
 
+ALTER TABLE ONLY "public"."list_page_backgrounds"
+    ADD CONSTRAINT "list_page_backgrounds_one_per_place" UNIQUE NULLS NOT DISTINCT ("category_id", "tag_id", "market_country");
+
+
+
+ALTER TABLE ONLY "public"."list_page_backgrounds"
+    ADD CONSTRAINT "list_page_backgrounds_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."live_session_reminders"
     ADD CONSTRAINT "live_session_reminders_one_per_session" UNIQUE ("user_id", "session_id");
 
@@ -53942,6 +54124,14 @@ CREATE INDEX "library_entries_story_id" ON "public"."library_entries" USING "btr
 
 
 
+CREATE INDEX "list_page_backgrounds_tag_id_idx" ON "public"."list_page_backgrounds" USING "btree" ("tag_id");
+
+
+
+CREATE INDEX "list_page_backgrounds_user_id_idx" ON "public"."list_page_backgrounds" USING "btree" ("user_id");
+
+
+
 CREATE INDEX "live_session_reminders_session_id_fk_idx" ON "public"."live_session_reminders" USING "btree" ("session_id");
 
 
@@ -55139,6 +55329,10 @@ CREATE OR REPLACE TRIGGER "legal_documents_set_updated_at" BEFORE UPDATE ON "pub
 
 
 CREATE OR REPLACE TRIGGER "library_entries_set_updated_at" BEFORE UPDATE ON "public"."library_entries" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "list_page_backgrounds_set_updated_at" BEFORE UPDATE ON "public"."list_page_backgrounds" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
 
@@ -56567,6 +56761,21 @@ ALTER TABLE ONLY "public"."library_entries"
 
 ALTER TABLE ONLY "public"."library_entries"
     ADD CONSTRAINT "library_entries_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."list_page_backgrounds"
+    ADD CONSTRAINT "list_page_backgrounds_category_id_fkey" FOREIGN KEY ("category_id") REFERENCES "public"."categories"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."list_page_backgrounds"
+    ADD CONSTRAINT "list_page_backgrounds_tag_id_fkey" FOREIGN KEY ("tag_id") REFERENCES "public"."tags"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."list_page_backgrounds"
+    ADD CONSTRAINT "list_page_backgrounds_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
 
 
 
@@ -58521,6 +58730,17 @@ CREATE POLICY "library_entries_select_own" ON "public"."library_entries" FOR SEL
 
 
 
+ALTER TABLE "public"."list_page_backgrounds" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "list_page_backgrounds_select_website_staff" ON "public"."list_page_backgrounds" FOR SELECT TO "authenticated" USING (( SELECT "public"."staff_may"('website_cms'::"text", 'act'::"text") AS "staff_may"));
+
+
+
+COMMENT ON POLICY "list_page_backgrounds_select_website_staff" ON "public"."list_page_backgrounds" IS 'Allows owner and admin to read the genre and tag page backgrounds; changes go only through admin_* functions (G12b).';
+
+
+
 ALTER TABLE "public"."live_session_reminders" ENABLE ROW LEVEL SECURITY;
 
 
@@ -59934,6 +60154,11 @@ GRANT ALL ON FUNCTION "public"."admin_clear_brand_asset"("target_slot" "public".
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_clear_list_page_background"("list_kind" "text", "list_key" "text", "market" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_clear_list_page_background"("list_kind" "text", "list_key" "text", "market" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_close_account_for_abuse_image"("target_case_id" "uuid", "note_text" "text", "account_message" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_close_account_for_abuse_image"("target_case_id" "uuid", "note_text" "text", "account_message" "text") TO "authenticated";
 
@@ -60227,6 +60452,11 @@ GRANT ALL ON FUNCTION "public"."admin_list_forums"() TO "authenticated";
 
 REVOKE ALL ON FUNCTION "public"."admin_list_invites"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_list_invites"() TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_list_page_backgrounds"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_list_page_backgrounds"() TO "authenticated";
 
 
 
@@ -60778,6 +61008,11 @@ GRANT ALL ON FUNCTION "public"."admin_set_language_status"("language_code" "text
 
 REVOKE ALL ON FUNCTION "public"."admin_set_launch_date"("new_date" "date") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_set_launch_date"("new_date" "date") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_set_list_page_background"("list_kind" "text", "list_key" "text", "market" "text", "new_palette" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_set_list_page_background"("list_kind" "text", "list_key" "text", "market" "text", "new_palette" "text") TO "authenticated";
 
 
 
@@ -62953,6 +63188,16 @@ REVOKE ALL ON FUNCTION "public"."list_holds_story"("target" "public"."stories", 
 
 REVOKE ALL ON FUNCTION "public"."list_my_sessions"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."list_my_sessions"() TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."list_page_background"("list_kind" "text", "list_key" "text", "visitor_country" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."list_page_background"("list_kind" "text", "list_key" "text", "visitor_country" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."list_page_background"("list_kind" "text", "list_key" "text", "visitor_country" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."list_page_target"("list_kind" "text", "list_key" "text") FROM PUBLIC;
 
 
 
@@ -66443,6 +66688,11 @@ GRANT SELECT ON TABLE "public"."legal_document_versions" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."library_entries" TO "service_role";
 GRANT SELECT ON TABLE "public"."library_entries" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."list_page_backgrounds" TO "service_role";
+GRANT SELECT ON TABLE "public"."list_page_backgrounds" TO "authenticated";
 
 
 
