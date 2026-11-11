@@ -33,7 +33,7 @@ export function WriteBand({ band, language }: { band: HomeBand; language: string
       id="write"
       aria-labelledby="write-band-heading"
       lang={language}
-      className="grid scroll-mt-6 gap-10 rounded-[32px] bg-primary p-[clamp(24px,4vw,56px)] lg:grid-cols-2"
+      className="grid scroll-mt-6 gap-10 rounded-[32px] bg-primary glass-band-deep p-[clamp(24px,4vw,56px)] lg:grid-cols-2"
     >
       <div className="flex flex-col gap-6">
         <BandText band={band} headingId="write-band-heading" tone="dark" />
@@ -46,7 +46,10 @@ export function WriteBand({ band, language }: { band: HomeBand; language: string
       {points.length > 0 && (
         <dl className="m-0 grid content-start gap-4 sm:grid-cols-2">
           {points.map((point) => (
-            <div key={point.title} className="rounded-[20px] border border-on-primary/25 p-5">
+            <div
+              key={point.title}
+              className="glass-band-inner rounded-[20px] border border-on-primary/25 p-5"
+            >
               <dt className="font-heading text-lg font-bold text-on-primary">
                 {withBrand(point.title)}
               </dt>
