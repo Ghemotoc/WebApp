@@ -26,7 +26,7 @@ drop function if exists public.admin_create_landing_page(text, text);
  *   empty draft), layout_name (contest, call_for_submissions, event or plain, or null).
  * Returns: the new page's id.
  * Errors: insufficient_privilege (no landing pages area), check_violation (the slug's problem,
- *   bad_type, bad_layout or too_big).
+ *   bad_type, bad_layout for an unknown layout or content that isn't one page object, or too_big).
  * Where it fits: Staff › Page builder › New landing page (S1-E11-14, S1-E11-34, S1-E11-35).
  */
 create or replace function public.admin_create_landing_page(
@@ -53,6 +53,10 @@ begin
   end if;
   if layout_name is not null and layout_name not in ('contest', 'call_for_submissions', 'event', 'plain') then
     raise exception 'Pick a layout from the list.' using errcode = 'check_violation', hint = 'bad_layout';
+  end if;
+  -- A layout's content is one page object; anything else is refused (CMS-2c break test).
+  if starting_content is not null and jsonb_typeof(starting_content) <> 'object' then
+    raise exception 'That layout can''t be used.' using errcode = 'check_violation', hint = 'bad_layout';
   end if;
   -- The same size limit as a saved draft (S1-E11-34 break test).
   if octet_length(coalesce(starting_content, '{}'::jsonb)::text) > 500000 then

@@ -7,7 +7,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(12);
+select plan(13);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -45,6 +45,8 @@ select is((select content from public.landing_page_versions
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000010');
 select throws_ok($$select public.admin_create_landing_page('odd-layout-test', 'campaign', '{}', 'magazine')$$,
   '23514', 'Pick a layout from the list.', 'an unknown layout is refused');
+select throws_ok($$select public.admin_create_landing_page('list-test', 'campaign', '[1, 2]', 'plain')$$,
+  '23514', 'That layout can''t be used.', 'a start that isn''t one page object is refused');
 select throws_ok($$select public.admin_create_landing_page('big-test', 'campaign', jsonb_build_object('x', repeat('x', 600000)), 'event')$$,
   '23514', 'This page is too big to save.', 'an oversized start is refused');
 

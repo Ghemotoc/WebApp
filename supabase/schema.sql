@@ -5028,6 +5028,10 @@ begin
   if layout_name is not null and layout_name not in ('contest', 'call_for_submissions', 'event', 'plain') then
     raise exception 'Pick a layout from the list.' using errcode = 'check_violation', hint = 'bad_layout';
   end if;
+  -- A layout's content is one page object; anything else is refused (CMS-2c break test).
+  if starting_content is not null and jsonb_typeof(starting_content) <> 'object' then
+    raise exception 'That layout can''t be used.' using errcode = 'check_violation', hint = 'bad_layout';
+  end if;
   -- The same size limit as a saved draft (S1-E11-34 break test).
   if octet_length(coalesce(starting_content, '{}'::jsonb)::text) > 500000 then
     raise exception 'This page is too big to save.' using errcode = 'check_violation', hint = 'too_big';
