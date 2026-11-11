@@ -125,7 +125,7 @@
       "sage": "Sage",
       "paper": "Paper"
     },
-    "uploadLater": "Want to use your own picture? Save the story first, then upload it in the story's settings.",
+    "uploadLater": "Want to use your own picture? Save the story first, then upload it in the story’s settings.",
     "uploadChosen": "Your uploaded picture is the cover. Pick a drawn design below to use that instead.",
     "newDesign": "New",
     "designNameNew": "{{name}}, new"
@@ -435,10 +435,10 @@
     "picked_few": "Showing the {{count}} tags you picked.",
     "picked_other": "Showing the {{count}} tags you picked.",
     "useBest": "Show the 3 best ranks instead",
-    "full": "You've picked 3. Switch one off to pick another.",
+    "full": "You’ve picked 3. Switch one off to pick another.",
     "noTags": "Approved tags appear here once you save the story with tags.",
     "saved": "Saved. Readers see the new badges within a few minutes.",
-    "saveFailed": "The badges couldn't be saved. Try again in a moment."
+    "saveFailed": "The badges couldn’t be saved. Try again in a moment."
   },
   "dashboard": {
     "continueDraft": "Continue draft",

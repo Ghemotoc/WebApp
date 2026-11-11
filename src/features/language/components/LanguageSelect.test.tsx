@@ -163,7 +163,7 @@ describe('the language drop-downs', () => {
 
     expect(
       await screen.findByText(
-        "We couldn't save the language to your account. It's kept on this device.",
+        'We couldn’t save the language to your account. It’s kept on this device.',
       ),
     ).toBeVisible();
     expect(window.localStorage.getItem(LANGUAGE_STORAGE_KEY)).toBe('en');

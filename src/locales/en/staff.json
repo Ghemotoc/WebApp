@@ -121,7 +121,7 @@
     "noAreas": "No area is open to your role yet. Ask an owner or admin if you need one.",
     "areas": {
       "roles": "Who on the team holds which role and permission.",
-      "call_log": "Every call the app made, where it failed, and the browser's crashes, for 30 days.",
+      "call_log": "Every call the app made, where it failed, and the browser’s crashes, for 30 days.",
       "audit_log": "Every staff action and sensitive read, searchable and exportable.",
       "users": "Find an account, see its status and sanctions, and act on it. Invite links are a tab here.",
       "waitlist": "See who is waiting, by answer and country, and let people in one by one or in waves.",
@@ -160,13 +160,13 @@
     "documentTitle": "Logs · Staff",
     "eyebrow": "Staff",
     "heading": "Logs",
-    "intro": "Every call the app made to the back end in the last 30 days, the calls that failed, and errors the browser hit. Nothing that was sent or came back is kept. Looking at one person's calls is written in the audit log.",
+    "intro": "Every call the app made to the back end in the last 30 days, the calls that failed, and errors the browser hit. Nothing that was sent or came back is kept. Looking at one person’s calls is written in the audit log.",
     "viewsLabel": "Show",
     "loading": "Loading…",
     "notAllowed": "Only an owner or admin can read the logs.",
     "failures": {
       "no_such_account": "There is no account with that username.",
-      "unreachable": "We couldn't load the log. Check your connection and try again.",
+      "unreachable": "We couldn’t load the log. Check your connection and try again.",
       "intro": "Failed calls of the last 7 days, grouped by what failed and how, the most frequent first. To see the calls, search Calls by the name with \"Only failures\" ticked.",
       "none": "No call failed in the last 7 days.",
       "columns": {
@@ -198,7 +198,7 @@
       "name": "Name",
       "nameHint": "Part of the name, for example my_discover_cards.",
       "person": "Username",
-      "personHint": "One account's calls, for example @lia. This is written in the audit log.",
+      "personHint": "One account’s calls, for example @lia. This is written in the audit log.",
       "onlyFailures": "Only failures",
       "search": "Search",
       "none": "No calls match.",
@@ -501,8 +501,8 @@
       "pages": "Pages of staff actions",
       "failures": {
         "not_allowed": "Only an owner or admin can read the staff actions on an account.",
-        "bad_filter": "This account's history couldn't be read. Reload the page to try again.",
-        "unreachable": "The staff actions couldn't be loaded. Check your connection and try again."
+        "bad_filter": "This account’s history couldn’t be read. Reload the page to try again.",
+        "unreachable": "The staff actions couldn’t be loaded. Check your connection and try again."
       }
     },
     "messages": {
@@ -523,7 +523,7 @@
     "notes": {
       "heading": "Staff notes",
       "fieldLabel": "Add a note for the team",
-      "fieldHint": "Up to {{count}} characters. Notes stay for good and can't be changed. Write facts, not opinions: the person can ask to see what we hold about them.",
+      "fieldHint": "Up to {{count}} characters. Notes stay for good and can’t be changed. Write facts, not opinions: the person can ask to see what we hold about them.",
       "add": "Add note",
       "adding": "Adding…",
       "none": "No notes on this account yet.",
@@ -533,7 +533,7 @@
         "not_allowed": "Only staff who can open accounts can read or add notes.",
         "empty_or_long": "Write a note of up to 2,000 characters.",
         "no_such_account": "This account no longer exists.",
-        "unreachable": "The notes couldn't be saved or loaded. Check your connection and try again."
+        "unreachable": "The notes couldn’t be saved or loaded. Check your connection and try again."
       }
     },
     "pager": {
@@ -544,9 +544,9 @@
     "documentTitle": "Waitlist · {{productName}}",
     "eyebrow": "Staff",
     "heading": "Waitlist",
-    "intro": "Everyone who signed up without an invite waits here. Let people in one by one with the ticks, or in a wave: writers first, by country if you like. Each person gets a \"You're in\" email and a notice in the app. Every admission goes to the audit log.",
+    "intro": "Everyone who signed up without an invite waits here. Let people in one by one with the ticks, or in a wave: writers first, by country if you like. Each person gets a \"You’re in\" email and a notice in the app. Every admission goes to the audit log.",
     "notAllowed": "Only owners and admins can see the waiting list.",
-    "loadFailed": "The waiting list couldn't load right now. Try again in a moment.",
+    "loadFailed": "The waiting list couldn’t load right now. Try again in a moment.",
     "loading": "Loading the waiting list…",
     "unknownCountry": "Unknown country",
     "noName": "No name yet",
@@ -581,9 +581,9 @@
       "sizeLabel": "How many people",
       "sizeInvalid": "Type a whole number from 1 to 1,000.",
       "submit": "Let them in",
-      "confirm_one": "Let {{count}} person in now? They get the \"You're in\" email straight away.",
-      "confirm_few": "Let {{count}} people in now? They get the \"You're in\" email straight away.",
-      "confirm_other": "Let {{count}} people in now? They get the \"You're in\" email straight away.",
+      "confirm_one": "Let {{count}} person in now? They get the \"You’re in\" email straight away.",
+      "confirm_few": "Let {{count}} people in now? They get the \"You’re in\" email straight away.",
+      "confirm_other": "Let {{count}} people in now? They get the \"You’re in\" email straight away.",
       "confirmYes": "Yes, let them in"
     },
     "table": {
@@ -958,7 +958,7 @@
     "save": "Save the languages",
     "saveLabel": "Save the languages @{{handle}} reads",
     "saved": "Saved.",
-    "failed": "The languages couldn't be saved. Try again."
+    "failed": "The languages couldn’t be saved. Try again."
   },
   "manualChecks": {
     "documentTitle": "Manual age checks",

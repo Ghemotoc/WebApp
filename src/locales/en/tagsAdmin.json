@@ -34,7 +34,7 @@
     "empty": "Give it a name.",
     "too_long": "Keep it to 40 characters.",
     "taken": "Another tag already has this name in this language.",
-    "unknown_language": "This language isn't open."
+    "unknown_language": "This language isn’t open."
   },
   "outcomes": {
     "approved": "Approved. Readers see it now.",
@@ -42,7 +42,7 @@
   },
   "failures": {
     "not_allowed": "Only the moderation team can decide on tags.",
-    "unreachable": "We couldn't reach the server. Try again.",
+    "unreachable": "We couldn’t reach the server. Try again.",
     "not_found": "This tag was already decided. The list is up to date now.",
     "invalid": "Fix the fields shown and try again."
   }

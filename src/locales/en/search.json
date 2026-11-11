@@ -6,9 +6,9 @@
     "count_one": "{{count}} result across stories, writers and tags.",
     "count_few": "{{count}} results across stories, writers and tags.",
     "count_other": "{{count}} results across stories, writers and tags.",
-    "start": "Find a story by its title, a tag or its writer's name.",
+    "start": "Find a story by its title, a tag or its writer’s name.",
     "tooShort": "Type at least 2 letters to search.",
-    "loadFailed": "Search isn't working right now. Try again in a moment."
+    "loadFailed": "Search isn’t working right now. Try again in a moment."
   },
   "form": {
     "label": "Search stories, writers and tags",

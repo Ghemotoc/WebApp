@@ -59,7 +59,7 @@ test.describe('Staff › Website › Seasonal looks (G12a)', () => {
     await form.getByLabel('Month').first().selectOption({ label: 'November' });
     await form.getByRole('button', { name: 'Save' }).click();
     await expect(
-      page.getByText("Two looks can't share a day. Move one of them first."),
+      page.getByText('Two looks can’t share a day. Move one of them first.'),
     ).toBeVisible();
     expect(
       runSql(`select value -> 0 ->> 'from' from public.settings where key = 'seasonal_look_dates'`),
