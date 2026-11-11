@@ -84,3 +84,26 @@ describe('a page on the Search and sharing screen', () => {
     ).toBeNull();
   });
 });
+
+describe('stored content that is broken', () => {
+  it('a landing page whose blocks are not a list, or hold empty slots, still gets a row', () => {
+    // SEO-1d break test: one bad version must not take down the whole screen.
+    const brokenContents: unknown[] = [
+      { blocks: 'not a list' },
+      { blocks: [null, 3, { kind: 'hero', ro: null }] },
+      { search: 'not an object', theme: 42 },
+      null,
+    ];
+    for (const content of brokenContents) {
+      const report = searchPageReportOf({
+        page_kind: 'landing_page',
+        market_code: null,
+        language_code: 'ro',
+        address: '/c/broken',
+        content,
+      });
+      expect(report?.sharePicture).toBe('/link-previews/plum.png');
+      expect(report?.warnings).toContain('main_heading_count');
+    }
+  });
+});

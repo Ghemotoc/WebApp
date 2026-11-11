@@ -15,6 +15,7 @@
  * What it calls: src/lib/searchWords.ts and the link preview colours (server/link-preview-palette.ts).
  */
 import {
+  landingBlocksOf,
   landingPageWords,
   searchWarnings,
   textOf,
@@ -65,13 +66,8 @@ const landingCardColours = Object.keys(linkPreviewPalette);
 
 /** A landing page's content, as far as the report reads it. */
 interface LandingContent {
-  theme?: string;
-  blocks?: Array<{
-    kind?: string;
-    picture_id?: string;
-    ro?: { title?: unknown; intro?: unknown; alt?: unknown };
-    en?: { alt?: unknown };
-  }>;
+  theme?: unknown;
+  blocks?: unknown;
   search?: { hidden?: unknown; ro?: unknown };
 }
 
@@ -137,7 +133,8 @@ function websiteReport(
 function landingReport(
   content: LandingContent,
 ): Pick<SearchPageReport, 'words' | 'resultTitle' | 'sharePicture' | 'warnings'> {
-  const blocks = content.blocks ?? [];
+  // Only blocks that are objects count; anything else in stored content is skipped.
+  const blocks = landingBlocksOf(content.blocks);
   const words = landingPageWords(content);
   // Step 1: the page's own pictures need alt text in both languages.
   const picturesWithoutAlt = blocks.filter(
@@ -145,7 +142,8 @@ function landingReport(
   ).length;
   // Step 2: the one main heading is the hero's title (LandingPageView).
   const heroTitle = landingPageWords({ blocks }).title;
-  const colour = landingCardColours.includes(content.theme ?? '') ? content.theme : 'plum';
+  const theme = typeof content.theme === 'string' ? content.theme : '';
+  const colour = landingCardColours.includes(theme) ? theme : 'plum';
   const warnings = searchWarnings({
     words,
     hasSharePicture: true,
@@ -155,7 +153,7 @@ function landingReport(
   return {
     words,
     resultTitle: { lead: words.title, withSiteName: false },
-    sharePicture: `/link-previews/${String(colour)}.png`,
+    sharePicture: `/link-previews/${colour}.png`,
     warnings,
   };
 }

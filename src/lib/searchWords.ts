@@ -138,8 +138,31 @@ export function websitePageWords(
 
 /** The parts of a landing page's content the words read. */
 interface LandingContentForWords {
-  blocks?: ReadonlyArray<{ kind?: string; ro?: { title?: unknown; intro?: unknown } }>;
+  blocks?: unknown;
   search?: { hidden?: unknown; ro?: unknown };
+}
+
+/** One block of a landing page, as far as the words read it. */
+export interface LandingBlockForWords {
+  kind?: unknown;
+  picture_id?: unknown;
+  ro?: { title?: unknown; intro?: unknown; alt?: unknown } | null;
+  en?: { alt?: unknown } | null;
+}
+
+/**
+ * A landing page's blocks, keeping only the ones that are objects. Stored content is checked on
+ * save, but the public tags and the staff screen must never break on a version that slipped
+ * through (SEO-1d break test: a list that isn't a list, or an empty slot in it).
+ *
+ * @param blocks - whatever the content holds under "blocks"
+ * @returns the blocks that can be read
+ */
+export function landingBlocksOf(blocks: unknown): LandingBlockForWords[] {
+  if (!Array.isArray(blocks)) return [];
+  return blocks.filter(
+    (block): block is LandingBlockForWords => typeof block === 'object' && block !== null,
+  );
 }
 
 /**
@@ -152,14 +175,16 @@ interface LandingContentForWords {
  */
 export function landingPageWords(content: LandingContentForWords): PageSearchWords {
   // Step 1: the hero's own words.
-  const hero = (content.blocks ?? []).find((block) => block.kind === 'hero');
+  const hero = landingBlocksOf(content.blocks).find((block) => block.kind === 'hero');
   const ownWords = {
     title: textOf(hero?.ro?.title),
     description: shortenedAtWord(textOf(hero?.ro?.intro), LANDING_DESCRIPTION_LONGEST),
   };
   // Step 2: staff's Romanian search fields win; the switch is shared by both languages.
-  const words = withSearchFields(content.search?.ro, ownWords);
-  return { ...words, isHidden: content.search?.hidden === true };
+  const search =
+    typeof content.search === 'object' && content.search !== null ? content.search : {};
+  const words = withSearchFields(search.ro, ownWords);
+  return { ...words, isHidden: search.hidden === true };
 }
 
 /** A warning the Search and sharing screen shows for a page (S1-E11-39). */
