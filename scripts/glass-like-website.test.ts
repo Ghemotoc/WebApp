@@ -63,6 +63,11 @@ describe('the main website glass on this app (GLASS-2)', () => {
     expect(indexCss).toContain('.glass-band-tint');
   });
 
+  it('draws the logo and wordmark in Revolver in the main look (LOGO-2)', () => {
+    const mainLook = blockAfter(tokensCss, ':root,');
+    expect(mainLook).toContain('--logo: #2a0e33;');
+  });
+
   it('keeps the staff area flat: no blur on its bars', () => {
     const staffBar = blockAfter(indexCss, "[data-area='staff'] .glass-float");
     expect(staffBar).toContain('backdrop-filter: none;');

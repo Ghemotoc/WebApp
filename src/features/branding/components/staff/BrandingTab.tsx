@@ -4,7 +4,7 @@
  * 14:25 UTC). The emblem is also the browser tab icon.
  *
  * What it shows: a short explanation, then one card per slot (BrandSlotCard). An empty slot shows
- * the bundled default: the curled cat logo for the emblem, the product name as text for the logo. Every
+ * the bundled default: the sleeping cat logo for the emblem, the product name as text for the logo. Every
  * change is in the audit log (website.brand_asset_set and website.brand_asset_cleared). Plain
  * staff components, no doodles.
  * Who shows it: WebsiteAdminPage (/staff/website/branding). What it calls: useBrandSlots().
