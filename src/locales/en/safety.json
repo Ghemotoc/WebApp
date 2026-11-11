@@ -85,5 +85,14 @@
       "not_found": "That contact no longer exists. Reload the page.",
       "unreachable": "We couldn’t reach the database. Check your connection and try again."
     }
+  },
+  "rulesWalkthrough": {
+    "intro": "Before a first comment or post, four short rules. The words in the box stay as typed.",
+    "progress": "{{current}} of {{total}}",
+    "back": "Back",
+    "next": "Next",
+    "skip": "Skip the rules",
+    "done": "Done",
+    "guidelines": "Community guidelines (opens in a new tab)"
   }
 }

@@ -39,6 +39,8 @@ export interface MyChapter {
   /** When it was last put live, and when it goes live if scheduled (S1-E3-03). */
   lastPublishedAt: string | null;
   scheduledFor: string | null;
+  /** True when the chapter is a poem: lines and indents kept as written (MUST-2). */
+  isPoem: boolean;
 }
 
 /** What create_chapter() answers. */
@@ -69,7 +71,7 @@ export async function fetchMyChapter(
   const { data, error } = await client
     .from('chapters')
     .select(
-      'id, code, position, draft_title, draft_body, draft_version, draft_saved_at, status, word_count, published_title, published_body, last_published_at, scheduled_for, stories!inner(slug, title)',
+      'id, code, position, draft_title, draft_body, draft_version, draft_saved_at, status, word_count, published_title, published_body, last_published_at, scheduled_for, is_poem, stories!inner(slug, title)',
     )
     .eq('code', code)
     .is('deleted_at', null)
@@ -91,7 +93,32 @@ export async function fetchMyChapter(
     publishedBody: data.published_body,
     lastPublishedAt: data.last_published_at,
     scheduledFor: data.scheduled_for,
+    isPoem: data.is_poem,
   };
+}
+
+/**
+ * Switches the writer's own chapter to poem mode or back (MUST-2). Only how the words are drawn
+ * changes; the words stay as they are.
+ *
+ * @param client - the shared Supabase client
+ * @param code - the chapter's code
+ * @param isPoem - true for poem mode
+ * @returns 'ok', or 'not_found' when the writer has no live chapter at that code
+ * Errors: throws when the database can't be reached or answers something unexpected.
+ */
+export async function setChapterPoemMode(
+  client: AppSupabaseClient,
+  code: string,
+  isPoem: boolean,
+): Promise<'ok' | 'not_found'> {
+  const { data, error } = await client.rpc('set_chapter_poem_mode', {
+    chapter_code: code,
+    poem: isPoem,
+  });
+  if (error !== null) throw new Error(`Could not change poem mode: ${error.message}`);
+  if (data === 'ok' || data === 'not_found') return data;
+  throw new Error(`Unexpected answer from set_chapter_poem_mode: ${JSON.stringify(data)}`);
 }
 
 /**

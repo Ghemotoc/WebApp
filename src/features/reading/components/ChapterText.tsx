@@ -18,6 +18,7 @@
  * A picture readers may share gets the Share button the reader passes in (pictureShare).
  * Paragraph comments (S1-E6-06): when the reader passes paragraphAddon, each top-level paragraph
  * sits in a two-column row (.tmc-paragraph-row) with the addon (the comment marker) beside it.
+ * Poems (MUST-2): with isPoem, lib/poemStanzas.ts draws stanzas and lines, styled by `.tmc-poem`.
  * Look: the shared `.tmc-chapter-text` styles (src/styles/index.css), board 4.3 and 3.5.
  * Who uses it: ChapterPreviewDialog (src/features/writing/); the chapter reader.
  */
@@ -31,6 +32,7 @@ import {
   type ComponentPropsWithoutRef,
   type ComponentType,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { SafeMarkdown } from '@/components/ui/SafeMarkdown';
 import { safeMarkdownElements } from '@/components/ui/safeMarkdownElements';
@@ -44,6 +46,7 @@ import { pictureIdFromAddress } from '@/lib/chapter-pictures';
 import { isAllowedLink } from '@/lib/safe-links';
 
 import { numberBlocks } from '../lib/numberBlocks';
+import { poemStanzas } from '../lib/poemStanzas';
 
 /**
  * Whether an image address is one of ours: a chapter picture or a music or video card.
@@ -87,6 +90,11 @@ export interface ChapterTextProps {
   markdown: string;
   /** The story's language, which can differ from the interface (WCAG 3.1.2). */
   language: string;
+  /**
+   * True for a poem (MUST-2): each paragraph is drawn as a stanza and each line as a line, with
+   * a hanging indent for long lines (lib/poemStanzas.ts).
+   */
+  isPoem?: boolean;
   className?: string;
   /** Each picture's state and address, by ID, from get_chapter() or my_picture_states(). */
   pictures?: Record<string, PictureView>;
@@ -224,6 +232,27 @@ const chapterComponents: Components = {
 };
 
 /**
+ * The rehype plugins: the block numbers and the highlight, and a poem's stanzas and lines. Worked
+ * out again only when the text, the spot, poem mode or the interface language changes.
+ *
+ * @param markdown - the chapter body
+ * @param spot - the shared passage, or null
+ * @param isPoem - true for a poem
+ * @returns the plugin list for SafeMarkdown
+ */
+function useChapterPlugins(markdown: string, spot: SpotRange | null, isPoem: boolean) {
+  const { t } = useTranslation('reading');
+  return useMemo<Options['rehypePlugins']>(() => {
+    const numbered: NonNullable<Options['rehypePlugins']> = [
+      [numberBlocks, { blocks: chapterBlocks(markdown), highlight: spot }],
+    ];
+    if (!isPoem) return numbered;
+    const stanzaLabel = (number: number) => t('poem.stanza', { number });
+    return [...numbered, [poemStanzas, { stanzaLabel }]];
+  }, [markdown, spot, isPoem, t]);
+}
+
+/**
  * Renders the text.
  *
  * @returns the chapter's words as HTML, with its pictures and cards where they sit
@@ -231,6 +260,7 @@ const chapterComponents: Components = {
 export function ChapterText({
   markdown,
   language,
+  isPoem = false,
   className = '',
   pictures = {},
   embeds = {},
@@ -252,17 +282,17 @@ export function ChapterText({
     }),
     [pictures, embeds, writerName, canReportMedia, pictureShare, paragraphAddon],
   );
-  // The block numbers and the highlight, worked out again only when the text or spot changes.
-  const rehypePlugins = useMemo<Options['rehypePlugins']>(
-    () => [[numberBlocks, { blocks: chapterBlocks(markdown), highlight: spot }]],
-    [markdown, spot],
-  );
+  const rehypePlugins = useChapterPlugins(markdown, spot, isPoem);
+  // A poem's lines are spans the plugin makes (raw HTML is never drawn, so none come from the text).
+  const elements = isPoem
+    ? [...safeMarkdownElements.chapter, 'h1', 'span']
+    : [...safeMarkdownElements.chapter, 'h1'];
   return (
-    <div lang={language} className={`tmc-chapter-text ${className}`}>
+    <div lang={language} className={`tmc-chapter-text ${isPoem ? 'tmc-poem' : ''} ${className}`}>
       <ChapterMediaContext.Provider value={media}>
         <SafeMarkdown
           text={markdown}
-          elements={[...safeMarkdownElements.chapter, 'h1']}
+          elements={elements}
           keepAddress={isKeptAddress}
           rehypePlugins={rehypePlugins}
           components={chapterComponents}

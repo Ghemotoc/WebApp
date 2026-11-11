@@ -5,7 +5,8 @@
  * Markdown turned into a document (chapterMarkdown.ts), tells the autosave on every change,
  * gives back the body as Markdown whenever a save needs it, and cleans pasted HTML first
  * (lib/pasteCleaning.ts, S1-E3-02b). The link dialog is opened by
- * the toolbar's Link button and by Ctrl+K (editorExtensions.ts).
+ * the toolbar's Link button and by Ctrl+K (editorExtensions.ts). In poem mode (MUST-2) it hands the
+ * switch to the PoemMode extension and keeps each line's leading spaces on save (lib/poemMode.ts).
  */
 import { useEditor, type Editor } from '@tiptap/react';
 import { useRef, useState } from 'react';
@@ -16,6 +17,7 @@ import {
   type EditorNode,
 } from '../lib/chapterMarkdown';
 import { chapterEditorExtensions } from '../lib/editorExtensions';
+import { keepLineIndents } from '../lib/poemMode';
 import { cleanPastedHtml } from '../lib/pasteCleaning';
 
 /** What the hook needs. */
@@ -28,6 +30,8 @@ export interface ChapterEditorOptions {
   onChange: () => void;
   /** Called when the text loses focus, so the autosave can save at once. */
   onBlur: () => void;
+  /** True when the chapter is a poem (MUST-2): Enter makes a new line and indents are kept. */
+  isPoem: boolean;
 }
 
 /**
@@ -36,7 +40,13 @@ export interface ChapterEditorOptions {
  * @returns editor (null until TipTap is ready), readBody (the text as Markdown),
  *   isLinkDialogOpen and closeLinkDialog / openLinkDialog
  */
-export function useChapterEditor({ initialBody, label, onChange, onBlur }: ChapterEditorOptions) {
+export function useChapterEditor({
+  initialBody,
+  label,
+  onChange,
+  onBlur,
+  isPoem,
+}: ChapterEditorOptions) {
   const [isLinkDialogOpen, setLinkDialogOpen] = useState(false);
   // A ref, so the extension list (built once) always reaches the latest opener.
   const openLinkDialogRef = useRef(() => setLinkDialogOpen(true));
@@ -56,11 +66,15 @@ export function useChapterEditor({ initialBody, label, onChange, onBlur }: Chapt
     onUpdate: onChange,
     onBlur,
   });
+  // Poem mode (MUST-2): the extension reads the switch from its storage on every key and paste.
+  if (editor !== null) editor.storage.poemMode.isPoem = isPoem;
 
   /** The body as the Markdown that is stored. */
   function readBody(): string {
     if (editor === null) return initialBody;
-    return editorDocumentToMarkdown(editor.getJSON() as EditorNode);
+    const document = editor.getJSON() as EditorNode;
+    // A poem keeps the spaces its lines start with, which Markdown would otherwise drop (MUST-2).
+    return editorDocumentToMarkdown(isPoem ? keepLineIndents(document) : document);
   }
 
   return {

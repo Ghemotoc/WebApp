@@ -85,5 +85,14 @@
       "not_found": "Contactul nu mai există. Reîncarcă pagina.",
       "unreachable": "Nu am putut ajunge la baza de date. Verifică conexiunea și încearcă din nou."
     }
+  },
+  "rulesWalkthrough": {
+    "intro": "Înainte de primul comentariu sau prima postare, patru reguli scurte. Textul scris rămâne în casetă.",
+    "progress": "{{current}} din {{total}}",
+    "back": "Înapoi",
+    "next": "Mai departe",
+    "skip": "Sari peste reguli",
+    "done": "Gata",
+    "guidelines": "Regulile comunității (se deschid într-o filă nouă)"
   }
 }

@@ -2154,6 +2154,28 @@ The liquid glass Library board draws "Your lists": lists of stories a reader mak
 - How a view travels: the thread loads → `useRecordThreadView()` checks sessionStorage (`forum-counted-threads`, thread numbers only) → `record_forum_thread_view(thread_number)` adds one unless the caller is the starter or may not open the thread → `forum_thread_header_json()` answers `view_count`.
 - Tests: `supabase/tests/database/345-thread-views.test.sql`, `src/features/forums/hooks/useRecordThreadView.test.tsx`, `e2e/forum-thread-views.spec.ts`.
 
+## Poem mode (MUST-2)
+
+- Where it lives: `src/features/writing/lib/poemMode.ts` (the `PoemMode` editor extension: Enter, paste, and `keepLineIndents()` on save), `components/PoemModeSwitch.tsx` above the text in `ChapterEditorPage`, `hooks/usePoemMode.ts` → `setChapterPoemMode()` in `api/chapters.ts`; the reader's `src/features/reading/lib/poemStanzas.ts` (a rehype plugin `ChapterText` runs when `isPoem` is true) and the `.tmc-poem` styles in `src/styles/index.css`; `supabase/migrations/…_must2_poem_mode.sql`.
+- How a poem travels: the writer ticks Poem mode → `set_chapter_poem_mode()` → `chapters.is_poem` → the editor's storage turns on the poem Enter → each save runs `keepLineIndents()` so leading spaces become non-breaking spaces → `save_chapter_draft()` stores Markdown with hard breaks ("  \n") → `get_chapter()` answers `is_poem` → `ChapterText` draws each paragraph as a `role="group"` stanza and each line as a `span.tmc-poem-line`.
+- A new chapter of a Poetry story starts in poem mode (trigger `chapters_start_as_poem`).
+- Tests: `supabase/tests/database/350-poem-mode.test.sql`, `src/features/writing/lib/poemMode.test.ts`, `src/features/reading/components/ChapterText.test.tsx`, `e2e/poem-mode.spec.ts`.
+
+## Due dates for class assignments (MUST-1d)
+
+- Where it lives: `src/features/spaces/components/ClassDueDateField.tsx` (inside `ClassRepliesPanel`), `ClassAssignmentsCard.tsx` (on `SpacePage` through `ClassCards`), `api/classAssignments.ts`, `saveThreadDueDate()` in `api/classThreadReplies.ts`, `lib/assignmentDue.ts` (`dueDayText()`), the forums' `ThreadHeader` ("Due …" pill) and the notifications' `lib/assignmentDueText.ts`; `supabase/migrations/…_must1d_assignment_due_dates.sql`.
+- How a due date travels: the teacher picks a day → Save date → `set_forum_thread_due_date()` checks `space_may_act(…, 'members')`, the class lock and the day → `forum_threads.due_on` → `forum_thread_header_json()` answers `due_on` for the thread page, and `class_space_assignments()` lists it on the class space page with `has_replied` for the reader.
+- The reminder: pg_cron job `send-assignment-reminders` runs `send_assignment_reminders()` at five past every hour; outside quiet hours it writes one `assignment_reminders` row and one `assignment_due` notification per student who hasn't replied to an assignment due tomorrow, and forgets rows 30 days after their due date.
+- Late marks: `class_thread_replies()` answers `due_on` and each reply's `is_late` (first live post on a later Romanian day than the due date); only the teacher's panel reads it.
+- Tests: `supabase/tests/database/349-assignment-due-dates.test.sql`, `285-class-thread-replies.test.sql`, `src/features/spaces/lib/assignmentDue.test.ts`, `src/features/spaces/api/classThreadReplies.test.ts`, `src/features/notifications/lib/notificationText.test.ts`, `e2e/assignment-due-dates.spec.ts`.
+
+## The rules walkthrough before an under-18's first post (MUST-1c)
+
+- Where it lives: `src/features/safety/hooks/useRulesWalkthrough.ts` (`useRulesWalkthrough` for the comment box through `useCommentComposer`, `useRulesBeforeSubmit` for the forum reply and new thread forms), `components/RulesWalkthrough.tsx`, `api/rulesWalkthrough.ts`, and `supabase/migrations/…_must1c_rules_walkthrough.sql`.
+- How a first post travels: Post → `shouldHold()` → `needs_rules_walkthrough()` said yes (under 18, able to post, `profiles.rules_walkthrough_seen_at` empty) and the cards loaded → the cards open under the box and the send waits → Skip or Done → `finish_rules_walkthrough()` records it and the focus goes back to the box → the next Post goes on to the kind-words nudge and the personal details note as usual.
+- The cards: help pages whose keys start `rules-walkthrough-`, read with `useWebsiteContent('help_page', …, { enabled })` only for someone who needs them, so staff edit them in Website › Help.
+- Tests: `src/features/safety/components/RulesWalkthrough.test.tsx`, `supabase/tests/database/348-rules-walkthrough.test.sql`, `e2e/rules-walkthrough.spec.ts`.
+
 ## A heads-up before sharing personal details (MUST-1b)
 
 - Where it lives: `src/features/privacy/lib/personalDetails.ts` (the patterns, pure and unit-tested), `hooks/usePersonalDetailsCheck.ts` (`usePersonalDetailsCheck` for the comment box, `usePersonalDetailsGate` for the forum reply and new thread forms, the message box and the bio), `components/PersonalDetailsNote.tsx` and the switch `components/PersonalDetailsSwitch.tsx` in Settings › Privacy; `supabase/migrations/…_must1b_personal_details_check.sql`.

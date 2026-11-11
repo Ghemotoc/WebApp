@@ -33,6 +33,7 @@ import { useSpace } from '../hooks/useSpaces';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
 import { ClassAboutCard } from './ClassAboutCard';
+import { ClassAssignmentsCard } from './ClassAssignmentsCard';
 import { ClassStoriesCard } from './ClassStoriesCard';
 import { SpaceBreadcrumb } from './SpaceBreadcrumb';
 import { SpaceHeaderCard } from './SpaceHeaderCard';
@@ -79,6 +80,22 @@ function SpaceThreads({ space }: { space: Space }) {
 }
 
 /**
+ * A class space's own cards, for a viewer who may read it: the open assignments, soonest first
+ * (MUST-1d), then the stories shared with the class.
+ *
+ * @param props.space - the class space
+ * @returns the two cards
+ */
+function ClassCards({ space }: { space: Space }) {
+  return (
+    <>
+      <ClassAssignmentsCard space={space} />
+      <ClassStoriesCard space={space} />
+    </>
+  );
+}
+
+/**
  * The space, once it has loaded.
  *
  * @returns the breadcrumb, the header and the two columns
@@ -101,7 +118,7 @@ function SpaceContent({ space }: { space: Space }) {
               {t('classSpace.lockedText')}
             </Notice>
           )}
-          {space.kind === 'class' && space.viewer.canRead && <ClassStoriesCard space={space} />}
+          {space.kind === 'class' && space.viewer.canRead && <ClassCards space={space} />}
           <SpaceThreads space={space} />
           {/* A public space's ad slot; a class space never has one (Q70; the server agrees). */}
           {space.kind !== 'class' && (

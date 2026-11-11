@@ -233,6 +233,7 @@ function ChapterTextBlock(props: {
         <ProtectedChapterText
           markdown={body}
           language={chapter.story.languageCode}
+          isPoem={chapter.isPoem}
           className="tmc-chapter-text--reader"
           pictures={chapter.pictures}
           embeds={chapter.embeds}

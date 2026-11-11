@@ -50,17 +50,23 @@ function parseEntries<Content>(entries: unknown, schema: ZodType<Content>): Pars
  *
  * @param kind - for example 'question'
  * @param schema - the kind's zod schema
+ * @param options.enabled - false waits without reading (the rules walkthrough reads its cards only
+ *   for someone who will see them, MUST-1c); true when left out
  * @returns entries (empty while loading), isLoaded and readFailed (true only when even the saved
  *   copy is missing)
  */
-export function useWebsiteContent<Content>(kind: WebsiteContentKind, schema: ZodType<Content>) {
+export function useWebsiteContent<Content>(
+  kind: WebsiteContentKind,
+  schema: ZodType<Content>,
+  options: { enabled?: boolean } = {},
+) {
   const { i18n } = useTranslation();
   const { countryCode, isKnown } = useVisitorCountry();
   const language = i18n.resolvedLanguage ?? 'ro';
   const cacheKey = `${kind}:${countryCode ?? 'none'}:${language}`;
   const content = useQuery<LiveEntry[]>({
     queryKey: ['website-content', kind, countryCode, language],
-    enabled: isKnown,
+    enabled: isKnown && options.enabled !== false,
     staleTime: contentFreshMilliseconds,
     refetchInterval: contentFreshMilliseconds,
     queryFn: async () => {

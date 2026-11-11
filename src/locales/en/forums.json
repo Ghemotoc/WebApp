@@ -78,7 +78,8 @@
       "hintOff": "Get a notification when someone replies.",
       "hintOn": "You get a notification when someone replies.",
       "failed": "That didn’t work. Try again."
-    }
+    },
+    "due": "Due {{day}}"
   },
   "post": {
     "label": "Post {{number}} by {{name}}",

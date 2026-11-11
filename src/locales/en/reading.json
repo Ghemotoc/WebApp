@@ -222,5 +222,8 @@
     "title": "This story is only in the app",
     "body": "{{writer}} chose to publish this story in the {{productName}} app only. The app gives writers more privacy and more control over their work, and makes chapters harder to copy.",
     "backToStory": "Back to the story"
+  },
+  "poem": {
+    "stanza": "Stanza {{number}}"
   }
 }

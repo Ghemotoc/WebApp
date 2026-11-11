@@ -17,7 +17,8 @@
  * Who uses it: ThreadPage. What it calls: useReplyToThread → reply_to_forum_thread();
  * ForumQuoteBlock for the picked posts.
  * Before sending, usePersonalDetailsGate asks "Post anyway?" when the words look like contact
- * details (MUST-1b; PersonalDetailsGateNote); it never blocks.
+ * details (MUST-1b; PersonalDetailsGateNote); it never blocks. Before an under-18's first post,
+ * RulesWalkthrough shows four short rules first (MUST-1c), keeping the words in the box.
  */
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
@@ -27,6 +28,8 @@ import { Notice } from '@/components/ui/Notice';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { PersonalDetailsGateNote } from '@/features/privacy/components/PersonalDetailsNote';
 import { usePersonalDetailsGate } from '@/features/privacy/hooks/usePersonalDetailsCheck';
+import { RulesWalkthrough } from '@/features/safety/components/RulesWalkthrough';
+import { useRulesBeforeSubmit } from '@/features/safety/hooks/useRulesWalkthrough';
 
 import type { ForumPost, ForumQuote, ForumThreadLock, ForumThreadSpace } from '../api/forumThreads';
 import { useReplyToThread } from '../hooks/useForumWrites';
@@ -182,9 +185,11 @@ function ReplyFields({ target }: { target: ReplyTarget }) {
 
   // MUST-1b: asks "Post anyway?" before words that look like contact details go out.
   const gate = usePersonalDetailsGate({ text: body, sendNow });
+  // MUST-1c: the rules walkthrough before an under-18's first post, then the gate.
+  const first = useRulesBeforeSubmit(gate.submit);
 
   return (
-    <form onSubmit={gate.submit} className="flex flex-col gap-4">
+    <form onSubmit={first.submit} className="flex flex-col gap-4">
       <PickedQuotes target={target} quotes={quotes} />
       <PostEditor
         id={replyBoxId}
@@ -192,6 +197,10 @@ function ReplyFields({ target }: { target: ReplyTarget }) {
         value={body}
         onChange={gate.whileEditing(setBody)}
         problem={messages.body}
+      />
+      <RulesWalkthrough
+        walkthrough={first.rules}
+        onClosed={() => document.getElementById(replyBoxId)?.focus()}
       />
       <PersonalDetailsGateNote gate={gate} isSending={replying.isRunning} />
       {isPreviewing && <ReplyPreview text={body} />}

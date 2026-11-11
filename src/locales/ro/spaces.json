@@ -498,7 +498,21 @@
     "notYet_other": "Încă nu ({{count, number}})",
     "nobodyYet": "Încă n-a răspuns nimeni.",
     "everyone": "Toată clasa a răspuns.",
-    "loadFailed": "Nu am putut încărca cine a răspuns. Reîncarcă pagina ca să încerci din nou."
+    "loadFailed": "Nu am putut încărca cine a răspuns. Reîncarcă pagina ca să încerci din nou.",
+    "late": "după termen",
+    "due": {
+      "label": "Termen",
+      "hint": "Clasa îl vede pe fir, iar cine n-a răspuns primește o singură amintire cu o zi înainte.",
+      "save": "Salvează termenul",
+      "clear": "Șterge termenul",
+      "saved": "Salvat.",
+      "failures": {
+        "due_in_past": "Alege ziua de azi sau una mai târzie.",
+        "class_locked": "Clasa e blocată, așa că termenele rămân cum sunt.",
+        "not_teacher": "Doar profesorul clasei poate stabili un termen.",
+        "unknown": "N-am putut salva termenul. Încearcă din nou."
+      }
+    }
   },
   "welcome": {
     "eyebrow": "Pentru membrii noi",
@@ -567,5 +581,11 @@
     "privacy": "Linkul nu include niciun nume și niciun cod de urmărire. Cine îl deschide vede doar ce îi permite spațiul contului său.",
     "done": "Gata",
     "close": "Închide"
+  },
+  "classAssignments": {
+    "title": "Teme",
+    "due": "Termen: {{day}}",
+    "replied": "Ai răspuns",
+    "loadFailed": "N-am putut încărca temele. Reîncarcă pagina ca să încerci din nou."
   }
 }

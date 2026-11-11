@@ -5,17 +5,21 @@
  * A closed box with a button; opening it shows two lists, "Replied" and "Not yet", with a count
  * on each. Students, other members and visitors never see it, because the database answers null
  * for them (criterion 2). The lists show names only, never ages.
+ * MUST-1d: the panel also holds the assignment's due date (ClassDueDateField), and a reply that
+ * came after it reads "after the due date" here, for the teacher only.
  * Who shows it: ThreadPage's side column, for a thread in a space.
- * What it calls: useClassThreadReplies → class_thread_replies().
+ * What it calls: useClassThreadReplies → class_thread_replies(); ClassDueDateField.
  */
 import { useId, useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 
-import type { ClassMemberName } from '../api/classThreadReplies';
+import type { ClassMemberName, ClassReply } from '../api/classThreadReplies';
 import { useClassThreadReplies } from '../hooks/useClassThreadReplies';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
+
+import { ClassDueDateField } from './ClassDueDateField';
 
 /**
  * One of the two lists, with its heading and count, or a line saying it is empty.
@@ -31,9 +35,10 @@ function MemberList({
   emptyText,
 }: {
   heading: string;
-  members: ClassMemberName[];
+  members: (ClassMemberName & Partial<Pick<ClassReply, 'isLate'>>)[];
   emptyText: string;
 }) {
+  const { t } = useSpacesTranslation();
   return (
     <div className="flex flex-col gap-1.5">
       <h3 className="m-0 text-sm font-semibold text-ink">{heading}</h3>
@@ -44,6 +49,9 @@ function MemberList({
           {members.map((member) => (
             <li key={member.handle} className="text-body">
               {member.displayName} <span className="text-meta">@{member.handle}</span>
+              {member.isLate === true && (
+                <span className="font-semibold text-body"> · {t('classReplies.late')}</span>
+              )}
             </li>
           ))}
         </ul>
@@ -110,6 +118,7 @@ export function ClassRepliesPanel({
           />
         </div>
       )}
+      <ClassDueDateField threadId={threadId} dueOn={replies.dueOn} />
     </section>
   );
 }

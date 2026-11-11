@@ -78,7 +78,8 @@
       "hintOff": "Primește o notificare când răspunde cineva.",
       "hintOn": "Primești o notificare când răspunde cineva.",
       "failed": "Nu a mers. Încearcă din nou."
-    }
+    },
+    "due": "Termen: {{day}}"
   },
   "post": {
     "label": "Mesajul {{number}}, de {{name}}",
