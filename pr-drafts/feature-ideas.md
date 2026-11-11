@@ -95,3 +95,6 @@ As a writer, I want my story's settings to show the cover I just made in Canva a
 
 ### Sent 10 Nov 2026 (doc tabs by category in "Ghemotoc feature ideas"; Notion Feature ideas database)
 Twelve ideas IDEA-20261110-1 to 12: three next stories after the last chapter, browse by mood, Word manuscript import, craft tips, writing portfolio, club reading goal, draft nudge, rewrite a classic's ending (class), teen rules walkthrough, who sees what, printable QR bookmark, Nordic classics shelves.
+
+### Sent 11 Nov 2026 (doc tabs by category in "Ghemotoc feature ideas"; Notion Feature ideas database)
+Ten ideas IDEA-20261111-1 to 10: several bookmarks in a story, Hidden gems shelf, chapter epigraph, weekly writer note, reply from a comment notification, agree to space rules before posting, mute one story's updates, saved feedback phrases for teachers, leave a conversation in one tap, account activity list.
