@@ -137,7 +137,7 @@ test.describe('epic S1-E11 journeys', () => {
     // Step 5: each role's menu (S1-E11-01 × S1-E2-07a × S1-E10-03a; SAFE-4 added moderator mail,
     // appeals and the safety contacts; CMS-1a added Settings; CMS-1b added Website; ADMIN-2a added
     // Stories, ADMIN-2c1 Data requests and ADMIN-2e1b Pictures to check; WAITLIST-1 added Waitlist;
-    // GAPS-12c added Writers’ hub).
+    // GAPS-12c added Writers’ hub; CMS-2b added Page builder for the owner, admins and moderators).
     expect(await menuLinks(owner)).toEqual([
       'Moderation',
       'Pictures to check',
@@ -158,6 +158,7 @@ test.describe('epic S1-E11 journeys', () => {
       'Contests',
       'Writers’ hub',
       'Website',
+      'Page builder',
       'Sponsors',
       'Settings',
       'Forums',
@@ -177,6 +178,7 @@ test.describe('epic S1-E11 journeys', () => {
       'Schools',
       'Stories',
       'Tags',
+      'Page builder',
       'Metrics',
     ]);
     const support = await openAs(browser, 'support', '/staff');
