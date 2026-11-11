@@ -33,13 +33,15 @@ function newestDefinition(functionName: string): string {
   const files = readdirSync(migrationsFolder)
     .filter((name) => name.endsWith('.sql'))
     .sort();
+  // Compare in lower case: some migrations write "CREATE OR REPLACE FUNCTION" in capitals, and
+  // missing those once made the test read an old list and skip newer tables (INACTIVE-1).
   const defining = files.filter((name) =>
-    readFileSync(join(migrationsFolder, name), 'utf8').includes(marker),
+    readFileSync(join(migrationsFolder, name), 'utf8').toLowerCase().includes(marker),
   );
   const newest = defining.at(-1);
   if (newest === undefined) throw new Error(`No migration defines ${functionName}()`);
   const text = readFileSync(join(migrationsFolder, newest), 'utf8');
-  return text.slice(text.indexOf(marker));
+  return text.slice(text.toLowerCase().indexOf(marker));
 }
 
 /** Every group name the export holds under "tables". */

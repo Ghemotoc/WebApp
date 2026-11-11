@@ -73,7 +73,7 @@ set local role authenticated;
 select is(
   (select count(*)::integer from public.account_last_used),
   1,
-  'a person reads their own day of use');
+  'allowed: account_last_used_select_own: a person reads their own day of use');
 reset role;
 
 select pg_temp.sign_in_as((select blocker from ids));
@@ -81,7 +81,7 @@ set local role authenticated;
 select is(
   (select count(*)::integer from public.account_last_used where user_id = (select adult_writer from ids)),
   0,
-  'nobody reads another person''s day of use');
+  'denied: account_last_used_select_own: nobody reads another person''s day of use');
 reset role;
 
 set local role anon;
