@@ -125,7 +125,9 @@ test.describe('Ad slots', () => {
     ['/u/adult_writer', ['wide']],
     ['/s/statia-meteo-seed01/adse2e01', ['wide']],
     ['/discover/all/classics', ['wide']],
-    ['/discover/all/new', ['list_card']],
+    // Every language: the list otherwise follows the reader's languages (MARKETS-2c), and the
+    // seeded new stories are Romanian while this reader reads English.
+    ['/discover/all/new?language=any', ['list_card']],
   ];
   for (const [address, shapes] of pagesAndShapes) {
     test(`${address} shows ${shapes.join(' and ')} at 1440 px`, async ({ page }) => {

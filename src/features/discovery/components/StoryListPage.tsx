@@ -24,7 +24,7 @@ import { brand } from '@/config/brand';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
 
-import type { ListRequest, SortOrder } from '../api/storyLists';
+import { everyLanguage, type ListRequest, type SortOrder } from '../api/storyLists';
 import { useListTitle } from '../hooks/useListTitle';
 import { useStoryList } from '../hooks/useStoryList';
 import {
@@ -139,7 +139,8 @@ function listAdSlot(request: ListRequest): ReactNode {
   const context = {
     category: request.kind === 'category' ? request.key : request.categorySlug,
     tag: request.kind === 'tag' ? request.key : null,
-    language: request.languageCode,
+    // "Every language" is a filter switched off, not a language, so the ad hears no language.
+    language: request.languageCode === everyLanguage ? null : request.languageCode,
   };
   return (
     <PageAdSlot
