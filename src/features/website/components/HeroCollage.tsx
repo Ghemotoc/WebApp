@@ -16,15 +16,18 @@
  *     the wall has no cover, and placed under the covers when they fill only one row.
  * The wall is at most 600 px wide, its width beside the headline on a desktop, so on a tablet,
  * where it moves under the headline, the covers keep their size instead of filling the screen.
- * Who uses it: HomeHero. What it calls: useStoryShelf('popular'), the same request as the
- * Trending shelf further down, so the browser asks the database once; wallStories() to pick the
- * stories; DrawnCover through designsForRow(), so two neighbours never share a design.
+ * Who uses it: HomeHero. What it calls: useStoryShelf('popular') in every language (the wall
+ * doesn't follow the visitor's reading languages, MARKETS-2c); wallStories() to pick the stories; DrawnCover through designsForRow(), so two neighbours never share a design.
  */
 import { useTranslation } from 'react-i18next';
 
 import { designsForRow } from '@/components/covers/automaticCover';
 import { DrawnCover } from '@/components/covers/DrawnCover';
-import type { ListedStory, ListRequest } from '@/features/discovery/api/storyLists';
+import {
+  everyLanguage,
+  type ListedStory,
+  type ListRequest,
+} from '@/features/discovery/api/storyLists';
 import { useStoryShelf } from '@/features/discovery/hooks/useStoryShelf';
 import type { HomeRightsCard } from '@/schemas/websiteContent';
 
@@ -33,13 +36,17 @@ import { wallStories } from '../lib/wallStories';
 
 import { HomeCommentCard } from './HomeCommentCard';
 
-/** The public Trending list, exactly as the Trending shelf asks for it (one cached request). */
+/**
+ * The public Trending list in every language. The wall is the home page's picture of what people
+ * read, so it doesn't follow the visitor's reading languages (MARKETS-2c): a visitor reading in
+ * Romanian would otherwise see an empty wall until Romanian stories trend.
+ */
 const trendingRequest: ListRequest = {
   kind: 'popular',
   key: null,
   categorySlug: null,
   completion: null,
-  languageCode: null,
+  languageCode: everyLanguage,
   sortOrder: null,
 };
 
