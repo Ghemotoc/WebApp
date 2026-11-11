@@ -155,5 +155,32 @@
     "e6eef6": "Sky",
     "f6e9eb": "Blush",
     "f4f0ec": "Neutral"
+  },
+  "initials": {
+    "heading": "Initials colour",
+    "intro": "Pick the colour of the initials bead. It shows on the profile, beside posts and in messages until an avatar is saved.",
+    "preview": "Others see these initials.",
+    "choicesLabel": "Colour for the initials",
+    "save": "Save colour",
+    "buildAvatar": "Build an avatar instead",
+    "saved": "Saved. The initials show in this colour everywhere.",
+    "colours": {
+      "plum": "Plum",
+      "violet": "Violet",
+      "ink": "Ink",
+      "gold": "Gold",
+      "blush": "Blush",
+      "sky": "Sky",
+      "sage": "Sage",
+      "lilac": "Lilac",
+      "paper": "Paper",
+      "cobalt": "Cobalt",
+      "forest": "Forest",
+      "indigo": "Indigo",
+      "ember": "Ember",
+      "berry": "Berry",
+      "cherry": "Cherry",
+      "slate": "Slate"
+    }
   }
 }

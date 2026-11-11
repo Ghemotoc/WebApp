@@ -12726,6 +12726,22 @@ COMMENT ON FUNCTION "public"."avatar_recipe_valid"("recipe" "jsonb") IS 'True fo
 
 
 
+CREATE OR REPLACE FUNCTION "public"."initials_colour_names"() RETURNS "text"[]
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select array['plum', 'violet', 'ink', 'gold', 'blush', 'sky', 'sage', 'lilac', 'paper',
+               'cobalt', 'forest', 'indigo', 'ember', 'berry', 'cherry', 'slate'];
+$$;
+
+
+ALTER FUNCTION "public"."initials_colour_names"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."initials_colour_names"() IS 'Internal: the sixteen initials bead colours, in the order of beadColours.ts (G11a).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."profiles" (
     "id" "uuid" NOT NULL,
     "birth_year" smallint,
@@ -12777,6 +12793,7 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     "shows_reader_level" boolean DEFAULT false NOT NULL,
     "checks_personal_details" boolean,
     "rules_walkthrough_seen_at" timestamp with time zone,
+    "initials_colour" "text",
     CONSTRAINT "profiles_avatar_recipe_shape" CHECK ("public"."avatar_recipe_valid"("avatar_recipe")),
     CONSTRAINT "profiles_bio_length" CHECK (("char_length"("bio") <= 300)),
     CONSTRAINT "profiles_birth_month_is_a_month" CHECK ((("birth_month" >= 1) AND ("birth_month" <= 12))),
@@ -12786,6 +12803,7 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     CONSTRAINT "profiles_colour_mode_known" CHECK (("colour_mode" = ANY (ARRAY['light'::"text", 'night'::"text", 'device'::"text"]))),
     CONSTRAINT "profiles_country_code_is_alpha2" CHECK (("country_code" ~ '^[A-Z]{2}$'::"text")),
     CONSTRAINT "profiles_handle_length" CHECK ((("handle" IS NULL) OR (("char_length"("handle") >= 3) AND ("char_length"("handle") <= 30)))),
+    CONSTRAINT "profiles_initials_colour_known" CHECK ((("initials_colour" IS NULL) OR ("initials_colour" = ANY ("public"."initials_colour_names"())))),
     CONSTRAINT "profiles_legal_region_shape" CHECK (("legal_region_code" ~ '^([A-Z0-9]{1,3})?$'::"text")),
     CONSTRAINT "profiles_locale_is_supported" CHECK (("locale" = ANY (ARRAY['ro'::"text", 'en'::"text"]))),
     CONSTRAINT "profiles_look_known" CHECK (("look" = ANY (ARRAY['lilac'::"text", 'sorbet'::"text", 'seaglass'::"text", 'pistachio'::"text", 'candy'::"text", 'tmc'::"text"]))),
@@ -12972,6 +12990,10 @@ COMMENT ON COLUMN "public"."profiles"."checks_personal_details" IS 'Whether the 
 
 
 COMMENT ON COLUMN "public"."profiles"."rules_walkthrough_seen_at" IS 'When the person finished or skipped the rules walkthrough shown to under-18s before a first comment or post; null until then (MUST-1c).';
+
+
+
+COMMENT ON COLUMN "public"."profiles"."initials_colour" IS 'The colour the member picked for their initials bead (one of initials_colour_names()); null means the colour comes from the username (G11a).';
 
 
 
@@ -32806,6 +32828,24 @@ COMMENT ON FUNCTION "public"."profile_audience_of"("person" "public"."profiles")
 
 
 
+CREATE OR REPLACE FUNCTION "public"."profile_avatar_look"("profile_handle" "text") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select jsonb_build_object('recipe', profiles.avatar_recipe, 'initials_colour', profiles.initials_colour)
+  from public.profiles
+  where profiles.handle = profile_handle and profiles.deleted_at is null
+    and (profiles.id = (select auth.uid()) or not public.is_moderated_away('profile', profiles.id));
+$$;
+
+
+ALTER FUNCTION "public"."profile_avatar_look"("profile_handle" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."profile_avatar_look"("profile_handle" "text") IS 'A profile''s drawn avatar and initials colour, or null (G11a; the same rule as profile_avatar_recipe()).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."profile_avatar_picture"("profile_handle" "text") RETURNS "jsonb"
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -40818,6 +40858,34 @@ ALTER FUNCTION "public"."set_my_handle"("new_handle" "text") OWNER TO "postgres"
 
 
 COMMENT ON FUNCTION "public"."set_my_handle"("new_handle" "text") IS 'Saves the signed-in person''s username, or says why not (S1-E2-04).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."set_my_initials_colour"("colour" "text") RETURNS "text"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  -- Step 1: the same people who may change their drawn avatar (active members and staff).
+  if not public.may_change_own_avatar() then
+    raise exception 'Your account can''t change its profile right now.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 2: only one of the sixteen colours, or null.
+  if colour is not null and not (colour = any (public.initials_colour_names())) then
+    raise exception 'That colour isn''t one of the choices.' using errcode = 'check_violation', hint = 'unknown_colour';
+  end if;
+  -- Step 3: save it on the caller's own profile.
+  update public.profiles set initials_colour = colour, updated_at = now()
+  where profiles.id = (select auth.uid());
+  return colour;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_my_initials_colour"("colour" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_my_initials_colour"("colour" "text") IS 'Saves or clears the colour of the signed-in person''s initials bead (G11a).';
 
 
 
@@ -60859,6 +60927,10 @@ GRANT ALL ON FUNCTION "public"."avatar_recipe_valid"("recipe" "jsonb") TO "authe
 
 
 
+REVOKE ALL ON FUNCTION "public"."initials_colour_names"() FROM PUBLIC;
+
+
+
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."profiles" TO "service_role";
 GRANT SELECT ON TABLE "public"."profiles" TO "authenticated";
 
@@ -63717,6 +63789,12 @@ REVOKE ALL ON FUNCTION "public"."profile_audience_of"("person" "public"."profile
 
 
 
+REVOKE ALL ON FUNCTION "public"."profile_avatar_look"("profile_handle" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."profile_avatar_look"("profile_handle" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."profile_avatar_look"("profile_handle" "text") TO "authenticated";
+
+
+
 GRANT ALL ON FUNCTION "public"."profile_avatar_picture"("profile_handle" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."profile_avatar_picture"("profile_handle" "text") TO "authenticated";
 
@@ -64793,6 +64871,11 @@ GRANT ALL ON FUNCTION "public"."set_my_country"("country_code" "text", "region_c
 
 REVOKE ALL ON FUNCTION "public"."set_my_handle"("new_handle" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_my_handle"("new_handle" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."set_my_initials_colour"("colour" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_my_initials_colour"("colour" "text") TO "authenticated";
 
 
 

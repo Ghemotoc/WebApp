@@ -5698,6 +5698,7 @@ export type Database = {
           handle_slug: string | null;
           highest_rank_notified: Database['public']['Enums']['writer_rank'] | null;
           id: string;
+          initials_colour: string | null;
           last_active_at: string | null;
           legal_region_code: string;
           library_visible_to: Database['public']['Enums']['library_audience'];
@@ -5771,6 +5772,7 @@ export type Database = {
           handle_slug?: string | null;
           highest_rank_notified?: Database['public']['Enums']['writer_rank'] | null;
           id: string;
+          initials_colour?: string | null;
           last_active_at?: string | null;
           legal_region_code?: string;
           library_visible_to?: Database['public']['Enums']['library_audience'];
@@ -5823,6 +5825,7 @@ export type Database = {
           handle_slug?: string | null;
           highest_rank_notified?: Database['public']['Enums']['writer_rank'] | null;
           id?: string;
+          initials_colour?: string | null;
           last_active_at?: string | null;
           legal_region_code?: string;
           library_visible_to?: Database['public']['Enums']['library_audience'];
@@ -11865,6 +11868,7 @@ export type Database = {
           handle_slug: string | null;
           highest_rank_notified: Database['public']['Enums']['writer_rank'] | null;
           id: string;
+          initials_colour: string | null;
           last_active_at: string | null;
           legal_region_code: string;
           library_visible_to: Database['public']['Enums']['library_audience'];
@@ -13245,6 +13249,7 @@ export type Database = {
         }[];
       };
       house_ad_for_slot: { Args: { used_keys: string[]; wanted_page_key: string }; Returns: Json };
+      initials_colour_names: { Args: Record<PropertyKey, never>; Returns: string[] };
       insert_class_space: {
         Args: {
           banner: Database['public']['Enums']['space_banner'];
@@ -13791,6 +13796,7 @@ export type Database = {
           handle_slug: string | null;
           highest_rank_notified: Database['public']['Enums']['writer_rank'] | null;
           id: string;
+          initials_colour: string | null;
           last_active_at: string | null;
           legal_region_code: string;
           library_visible_to: Database['public']['Enums']['library_audience'];
@@ -14585,6 +14591,7 @@ export type Database = {
         };
         Returns: Database['public']['Enums']['profile_audience'];
       };
+      profile_avatar_look: { Args: { profile_handle: string }; Returns: Json };
       profile_avatar_picture: { Args: { profile_handle: string }; Returns: Json };
       profile_avatar_recipe: { Args: { profile_handle: string }; Returns: Json };
       profile_for_handle: {
@@ -14615,6 +14622,7 @@ export type Database = {
           handle_slug: string | null;
           highest_rank_notified: Database['public']['Enums']['writer_rank'] | null;
           id: string;
+          initials_colour: string | null;
           last_active_at: string | null;
           legal_region_code: string;
           library_visible_to: Database['public']['Enums']['library_audience'];
@@ -15538,6 +15546,7 @@ export type Database = {
       set_my_birthday: { Args: { wanted_month?: number }; Returns: Json };
       set_my_country: { Args: { country_code: string; region_code?: string }; Returns: Json };
       set_my_handle: { Args: { new_handle: string }; Returns: string };
+      set_my_initials_colour: { Args: { colour: string }; Returns: string };
       set_my_locale: { Args: { new_locale: string }; Returns: string };
       set_my_pen_name: { Args: { new_pen_name: string }; Returns: string };
       set_my_signature: { Args: { picture_id?: string; signature_text: string }; Returns: Json };
