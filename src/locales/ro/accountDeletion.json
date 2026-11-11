@@ -49,7 +49,7 @@
     "keepFailed": "Nu am putut păstra contul. Încearcă din nou peste un minut.",
     "kept": "Bine ai revenit. Contul e din nou deschis.",
     "unusedBody": "Am închis contul pentru că nimeni nu s-a mai conectat de 5 ani. Îl ștergem definitiv pe {{date}}.",
-    "unusedChoices": "Mai jos poți descărca o copie a datelor. Descărcarea nu păstrează contul. Ca să-l păstrezi, alege Păstrez contul sau mergi mai departe pe orice altă pagină.",
+    "unusedChoices": "Mai jos poți descărca o copie a datelor. Descărcarea nu păstrează contul. Ca să-l păstrezi, alege Păstrez contul sau mergi mai departe pe orice altă pagină. După ce contul este șters, poveștile și Atlasul lor rămân 5 ani într-o arhivă privată; un cont nou cu aceeași adresă de email le poate aduce înapoi din Setări.",
     "keeping": "Redeschidem contul…"
   },
   "page": {

@@ -233,7 +233,7 @@ select is(public.purge_story_archives(), 1, 'the nightly job deletes an archive 
 select pg_temp.sign_in_as((select adult_writer from ids));
 set local role authenticated;
 select throws_ok(
-  $$ select public.restore_story_archives_of('00000000-0000-4000-8000-000000000015', '00000000-0000-4000-8000-000000000001') $$,
+  $$ select public.restore_story_archives_of('00000000-0000-4000-8000-000000000015', 'x', '00000000-0000-4000-8000-000000000001') $$,
   '42501', null, 'a member can''t run the restore step directly');
 select throws_ok($$ select public.archive_account_stories('00000000-0000-4000-8000-000000000005', now()) $$,
   '42501', null, 'nor archive someone''s stories');

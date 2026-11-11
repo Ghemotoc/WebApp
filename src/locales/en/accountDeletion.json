@@ -49,7 +49,7 @@
     "keepFailed": "We couldn’t keep the account. Try again in a minute.",
     "kept": "Welcome back. The account is open again.",
     "unusedBody": "We closed the account because nobody had logged in for 5 years. We delete it for good on {{date}}.",
-    "unusedChoices": "You can download a copy of the data below. Downloading doesn’t keep the account. To keep it, choose Keep account or go on to any other page.",
+    "unusedChoices": "You can download a copy of the data below. Downloading doesn’t keep the account. To keep it, choose Keep account or go on to any other page. After the account is deleted, the stories and their Story Atlas stay in a private archive for 5 years; a new account with the same email address can bring them back from Settings.",
     "keeping": "Opening the account again…"
   },
   "page": {

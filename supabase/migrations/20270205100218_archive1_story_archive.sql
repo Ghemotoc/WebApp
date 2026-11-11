@@ -547,11 +547,12 @@ revoke execute on function public.matching_story_archive_owner(integer, text) fr
 
 /**
  * restore_story_archives_of: brings back every archived story of one closed account.
- * Inputs: the closed account and the account the stories now belong to. Each story is restored
+ * Inputs: the closed account, the scrambled email its archive is filed under (so only rows of
+ * that email ever return) and the account the stories now belong to. Each story is restored
  * on its own: one that can't come back (its category is gone, say) stays in the archive and the
  * rest still return. Returns {"restored": n, "not_restored": n}. Raises nothing.
  */
-create or replace function public.restore_story_archives_of(closed_user_id uuid, new_user_id uuid)
+create or replace function public.restore_story_archives_of(closed_user_id uuid, archive_email_hash text, new_user_id uuid)
 returns jsonb
 language plpgsql
 security definer
@@ -569,7 +570,9 @@ begin
   perform public.email_worker_act_as(null, null);
   for archive in
     select story_archives.id, story_archives.story from public.story_archives
-    where story_archives.user_id = closed_user_id and story_archives.delete_after > now()
+    where story_archives.user_id = closed_user_id
+      and story_archives.email_hash = archive_email_hash
+      and story_archives.delete_after > now()
     order by story_archives.title
   loop
     begin
@@ -588,9 +591,9 @@ begin
 end;
 $$;
 
-comment on function public.restore_story_archives_of(uuid, uuid) is
+comment on function public.restore_story_archives_of(uuid, text, uuid) is
   'Internal: restores every archived story of one closed account to a new owner, each on its own (ARCHIVE-1).';
-revoke execute on function public.restore_story_archives_of(uuid, uuid) from public, anon, authenticated;
+revoke execute on function public.restore_story_archives_of(uuid, text, uuid) from public, anon, authenticated;
 
 /**
  * claim_story_archive: brings the caller's archived stories back into their account.
@@ -641,7 +644,7 @@ begin
     return jsonb_build_object('outcome', 'no_match', 'tries_left', allowed_tries - wrong_tries - 1);
   end if;
   -- Step 4: the stories come back as private drafts.
-  counts := public.restore_story_archives_of(closed_user_id, caller_id);
+  counts := public.restore_story_archives_of(closed_user_id, public.my_archive_email_hash(), caller_id);
   return counts || jsonb_build_object('outcome',
     case when (counts ->> 'restored')::integer > 0 then 'restored' else 'not_restored' end);
 end;

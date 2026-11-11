@@ -252,6 +252,7 @@ select results_eq(
        ('staff_roles', 0::bigint),
        ('statements_of_reasons', 0::bigint),
        ('stories', 0::bigint),
+       ('story_archives', 0::bigint),
        ('story_bible_entries', 0::bigint),
        ('story_bible_sections', 0::bigint),
        ('story_character_fields', 0::bigint),

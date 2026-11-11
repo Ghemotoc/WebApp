@@ -1481,6 +1481,7 @@ CREATE OR REPLACE FUNCTION "public"."account_deletion_rules"() RETURNS TABLE("ta
     ('spaces', 'kept', 0, 'the space stays for its members, its owner shown as a deleted account (a question for Robert, FORUMS-2a)'),
     ('statements_of_reasons', 'kept', 0, 'a moderation record, kept 6 months after the decision and as long as its case (DSA art. 17)'),
     ('stories', 'own_step', 0, 'deleted unless the story or one of its chapters is under an open case'),
+    ('story_archives', 'kept', 0, 'the archive of an unused account''s stories, kept story_archive_years so the writer can bring them back (ARCHIVE-1)'),
     ('story_bible_entries', 'delete', 1, null),
     ('story_bible_sections', 'delete', 2, null),
     ('story_character_fields', 'delete', 1, null),
@@ -14324,6 +14325,48 @@ COMMENT ON FUNCTION "public"."apply_support_change"("ticket" "public"."support_t
 
 
 
+CREATE OR REPLACE FUNCTION "public"."archive_account_stories"("target_user_id" "uuid", "closed_at" timestamp with time zone) RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  writer_email text;
+  keep_years integer := coalesce((public.setting_value('story_archive_years'))::integer, 5);
+  archived_count integer;
+begin
+  -- Step 1: the email the writer is recognised by; without one there is nothing to match later.
+  select users.email into writer_email from auth.users where users.id = target_user_id;
+  if writer_email is null or writer_email like '%@deleted.invalid' then
+    return 0;
+  end if;
+  -- Step 2: one archive row per story the closing hid, with who the writer was.
+  insert into public.story_archives (user_id, email_hash, birth_year, pen_name, handle, title,
+    story, delete_after)
+  select profiles.id, public.hash_email(writer_email), profiles.birth_year, profiles.pen_name,
+    profiles.handle, stories.title, public.archived_story_document(stories.id),
+    now() + make_interval(years => keep_years)
+  from public.stories
+  join public.profiles on profiles.id = stories.user_id
+  where stories.user_id = target_user_id
+    and stories.deleted_at = closed_at
+    and not public.is_moderated_away('story', stories.id)
+    and not public.content_is_held_for_moderation('story', stories.id)
+    and not exists (select 1 from public.chapters
+                    where chapters.story_id = stories.id
+                      and public.content_is_held_for_moderation('chapter', chapters.id));
+  get diagnostics archived_count = row_count;
+  return archived_count;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."archive_account_stories"("target_user_id" "uuid", "closed_at" timestamp with time zone) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."archive_account_stories"("target_user_id" "uuid", "closed_at" timestamp with time zone) IS 'Internal: archives the stories of an account closed for not being used, just before it is deleted (ARCHIVE-1).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."archive_class_space"("slug" "text") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -14358,6 +14401,112 @@ ALTER FUNCTION "public"."archive_class_space"("slug" "text") OWNER TO "postgres"
 
 
 COMMENT ON FUNCTION "public"."archive_class_space"("slug" "text") IS 'Teacher or staff: archives a class space for good; members still read it (S1-E8-11 criterion 8).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."archived_chapters_as_drafts"("archived_chapters" "jsonb") RETURNS "jsonb"
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(jsonb_agg(
+    chapter || jsonb_build_object(
+      'status', 'draft', 'scheduled_for', null, 'first_published_at', null,
+      'last_published_at', null, 'unpublished_at', null, 'published_word_count', null,
+      'published_title', null, 'published_body', null,
+      'draft_title', coalesce(nullif(chapter ->> 'draft_title', ''), chapter ->> 'published_title', ''),
+      'draft_body', coalesce(nullif(chapter ->> 'draft_body', ''), chapter ->> 'published_body', ''))
+  ), '[]'::jsonb)
+  from jsonb_array_elements(archived_chapters) as chapter;
+$$;
+
+
+ALTER FUNCTION "public"."archived_chapters_as_drafts"("archived_chapters" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."archived_chapters_as_drafts"("archived_chapters" "jsonb") IS 'Internal: archived chapters as drafts, keeping the published words as the draft when it was empty (ARCHIVE-1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."archived_rows_for_restore"("table_name" "text", "document" "jsonb") RETURNS "jsonb"
+    LANGUAGE "sql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select case table_name
+    when 'stories' then jsonb_build_array(public.archived_story_as_draft(document -> 'stories' -> 0))
+    when 'chapters' then public.archived_chapters_as_drafts(document -> 'chapters')
+    when 'story_characters' then (
+      select coalesce(jsonb_agg(person || jsonb_build_object('picture_id', null)), '[]'::jsonb)
+      from jsonb_array_elements(document -> 'story_characters') as person)
+    when 'story_tags' then (
+      select coalesce(jsonb_agg(story_tag), '[]'::jsonb)
+      from jsonb_array_elements(document -> 'story_tags') as story_tag
+      where exists (select 1 from public.tags where tags.id = (story_tag ->> 'tag_id')::uuid))
+    else document -> table_name
+  end;
+$$;
+
+
+ALTER FUNCTION "public"."archived_rows_for_restore"("table_name" "text", "document" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."archived_rows_for_restore"("table_name" "text", "document" "jsonb") IS 'Internal: one table''s archived rows, ready to be written back (ARCHIVE-1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."archived_story_as_draft"("archived_story" "jsonb") RETURNS "jsonb"
+    LANGUAGE "sql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select archived_story
+    || jsonb_build_object('visibility', 'private', 'deleted_at', null, 'class_only', false,
+         'class_space_id', null, 'classic_author_id', null, 'rank_badge_tag_ids', null,
+         'first_published_at', null, 'last_chapter_published_at', null, 'title_hidden_at', null,
+         'cover_hidden_at', null, 'slug', public.free_story_slug(archived_story ->> 'slug'))
+    || case when exists (select 1 from public.writing_prompts
+                         where writing_prompts.id = (archived_story ->> 'writing_prompt_id')::uuid)
+         then '{}'::jsonb else jsonb_build_object('writing_prompt_id', null) end
+    || case when archived_story ->> 'cover_kind' = 'upload'
+         then jsonb_build_object('cover_kind', 'automatic', 'cover_tall_path', null,
+                'cover_square_path', null)
+         else '{}'::jsonb end;
+$$;
+
+
+ALTER FUNCTION "public"."archived_story_as_draft"("archived_story" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."archived_story_as_draft"("archived_story" "jsonb") IS 'Internal: an archived story row as a private, unpublished story with a free address (ARCHIVE-1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."archived_story_document"("archived_story_id" "uuid") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $_$
+declare
+  table_name text;
+  key_column text;
+  table_rows jsonb;
+  document jsonb := '{}'::jsonb;
+begin
+  foreach table_name in array public.story_archive_tables() loop
+    -- The story's own row is found by id; every other table carries story_id.
+    key_column := case when table_name = 'stories' then 'id' else 'story_id' end;
+    execute format(
+      'select coalesce(jsonb_agg(to_jsonb(archived)), ''[]''::jsonb) from public.%I as archived where archived.%I = $1',
+      table_name, key_column)
+    into table_rows using archived_story_id;
+    document := document || jsonb_build_object(table_name, table_rows);
+  end loop;
+  return document;
+end;
+$_$;
+
+
+ALTER FUNCTION "public"."archived_story_document"("archived_story_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."archived_story_document"("archived_story_id" "uuid") IS 'Internal: one story, its chapters and its Story Atlas as a JSON document (ARCHIVE-1).';
 
 
 
@@ -17687,6 +17836,53 @@ COMMENT ON FUNCTION "public"."checks_personal_details_of"("target" "public"."pro
 
 
 
+CREATE OR REPLACE FUNCTION "public"."claim_story_archive"("birth_year" integer, "known_name" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  allowed_tries integer := coalesce((public.setting_value('story_archive_claim_tries'))::integer, 3);
+  wrong_tries integer;
+  closed_user_id uuid;
+  counts jsonb;
+begin
+  -- Step 1: who may ask.
+  if caller_id is null then
+    raise exception 'Log in first.' using errcode = 'insufficient_privilege';
+  end if;
+  if not public.is_feature_enabled('story_archive') then
+    return jsonb_build_object('outcome', 'unavailable');
+  end if;
+  if not public.is_active_member() or public.my_archive_email_hash() is null then
+    return jsonb_build_object('outcome', 'not_allowed');
+  end if;
+  -- Step 2: three wrong tries lock the form for a day.
+  wrong_tries := public.story_archive_wrong_tries();
+  if wrong_tries >= allowed_tries then
+    return jsonb_build_object('outcome', 'locked');
+  end if;
+  -- Step 3: the answers must match the closed account.
+  closed_user_id := public.matching_story_archive_owner(birth_year, known_name);
+  if closed_user_id is null then
+    insert into public.rate_limit_events (user_id, action) values (caller_id, 'story_archive_wrong_try');
+    return jsonb_build_object('outcome', 'no_match', 'tries_left', allowed_tries - wrong_tries - 1);
+  end if;
+  -- Step 4: the stories come back as private drafts.
+  counts := public.restore_story_archives_of(closed_user_id, public.my_archive_email_hash(), caller_id);
+  return counts || jsonb_build_object('outcome',
+    case when (counts ->> 'restored')::integer > 0 then 'restored' else 'not_restored' end);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."claim_story_archive"("birth_year" integer, "known_name" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."claim_story_archive"("birth_year" integer, "known_name" "text") IS 'Brings the caller''s archived stories back as private drafts when their confirmed email, year of birth and one name match; three wrong tries lock it for a day (ARCHIVE-1).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."class_certificate_crest"("slug" "text") RETURNS "jsonb"
     LANGUAGE "sql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -20975,6 +21171,7 @@ CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_
     ('spaces', true, null),
     ('statements_of_reasons', true, null),
     ('stories', true, null),
+    ('story_archives', false, 'the stories of a closed account, kept for their writer; a person who brings them back gets them as their own stories'),
     ('story_bible_entries', true, null),
     ('story_bible_sections', true, null),
     ('story_character_fields', true, null),
@@ -25082,6 +25279,31 @@ COMMENT ON FUNCTION "public"."forums_set_level"() IS 'Trigger: sets a forum''s l
 
 
 
+CREATE OR REPLACE FUNCTION "public"."free_story_slug"("wanted_slug" "text") RETURNS "text"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  candidate text := wanted_slug;
+  attempt integer := 1;
+begin
+  while exists (select 1 from public.stories where stories.slug = candidate) loop
+    attempt := attempt + 1;
+    -- 80 characters is the longest a slug may be (stories_slug_shape).
+    candidate := rtrim(left(wanted_slug, 72), '-') || '-' || attempt;
+  end loop;
+  return candidate;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."free_story_slug"("wanted_slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."free_story_slug"("wanted_slug" "text") IS 'Internal: a story address nobody uses, starting from the one the story had (ARCHIVE-1).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."generate_invite_code"() RETURNS "text"
     LANGUAGE "sql"
     SET "search_path" TO ''
@@ -29076,6 +29298,30 @@ COMMENT ON FUNCTION "public"."masked_email"("address" "text") IS 'Hides most of 
 
 
 
+CREATE OR REPLACE FUNCTION "public"."matching_story_archive_owner"("given_birth_year" integer, "given_name" "text") RETURNS "uuid"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select story_archives.user_id
+  from public.story_archives
+  where story_archives.email_hash = public.my_archive_email_hash()
+    and story_archives.delete_after > now()
+    and (story_archives.birth_year is null or story_archives.birth_year = given_birth_year)
+  group by story_archives.user_id
+  having bool_or(lower(btrim(given_name)) = lower(btrim(story_archives.title))
+    or lower(btrim(given_name)) = lower(btrim(coalesce(story_archives.pen_name, '')))
+    or lower(ltrim(btrim(given_name), '@')) = lower(story_archives.handle))
+  limit 1;
+$$;
+
+
+ALTER FUNCTION "public"."matching_story_archive_owner"("given_birth_year" integer, "given_name" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."matching_story_archive_owner"("given_birth_year" integer, "given_name" "text") IS 'Internal: the closed account whose archived stories the caller''s email, year of birth and name match (ARCHIVE-1).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."may_change_own_avatar"() RETURNS boolean
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -29826,6 +30072,22 @@ ALTER FUNCTION "public"."my_age_check"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."my_age_check"() IS 'The caller''s age check: result, method, the line a new check tests and whether one can start (S1-E2-08).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."my_archive_email_hash"() RETURNS "text"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select public.hash_email(users.email) from auth.users
+  where users.id = (select auth.uid()) and users.email_confirmed_at is not null;
+$$;
+
+
+ALTER FUNCTION "public"."my_archive_email_hash"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."my_archive_email_hash"() IS 'Internal: the SHA-256 hash of the caller''s confirmed email, or null (ARCHIVE-1).';
 
 
 
@@ -31329,6 +31591,38 @@ ALTER FUNCTION "public"."my_statements"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."my_statements"() IS 'The caller''s own statements of reasons, newest first, for My reports and decisions (S1-E10-04).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."my_story_archive"() RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  kept_until timestamptz;
+begin
+  if (select auth.uid()) is null then
+    raise exception 'Log in first.' using errcode = 'insufficient_privilege';
+  end if;
+  select min(story_archives.delete_after) into kept_until
+  from public.story_archives
+  where public.is_feature_enabled('story_archive')
+    and story_archives.email_hash = public.my_archive_email_hash()
+    and story_archives.delete_after > now();
+  if kept_until is null then
+    return jsonb_build_object('waiting', false);
+  end if;
+  return jsonb_build_object('waiting', true, 'kept_until', kept_until::date,
+    'locked', public.story_archive_wrong_tries()
+      >= coalesce((public.setting_value('story_archive_claim_tries'))::integer, 3));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."my_story_archive"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."my_story_archive"() IS 'Tells a logged-in person whether archived stories wait for their confirmed email address (ARCHIVE-1).';
 
 
 
@@ -35253,7 +35547,9 @@ declare
   deleted_count integer := 0;
 begin
   for request in
-    select account_deletions.id, account_deletions.user_id from public.account_deletions
+    select account_deletions.id, account_deletions.user_id, account_deletions.reason,
+      account_deletions.requested_at
+    from public.account_deletions
     where account_deletions.delete_after <= now()
       and account_deletions.cancelled_at is null and account_deletions.completed_at is null
       -- Evidence about a child abuse image keeps the account (part e2b).
@@ -35263,6 +35559,10 @@ begin
       and (public.active_sanction(account_deletions.user_id, 'ban')).id is null
     order by account_deletions.delete_after
   loop
+    -- The stories of an unused account go to the archive before anything is deleted.
+    if request.reason = 'unused' and public.is_feature_enabled('story_archive') then
+      perform public.archive_account_stories(request.user_id, request.requested_at);
+    end if;
     perform public.delete_account_data(request.user_id);
     update public.account_deletions set completed_at = now() where account_deletions.id = request.id;
     deleted_count := deleted_count + 1;
@@ -35275,7 +35575,7 @@ $$;
 ALTER FUNCTION "public"."purge_closed_accounts"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."purge_closed_accounts"() IS 'Nightly: deletes accounts whose 14 days have passed, except those with child abuse image evidence or a live ban (S1-E13-03, ADMIN-2 parts e2b and f1).';
+COMMENT ON FUNCTION "public"."purge_closed_accounts"() IS 'Nightly: deletes accounts whose 14 days have passed, except those with child abuse image evidence or a live ban; an unused account''s stories are archived first (S1-E13-03, ADMIN-2 parts e2b and f1, ARCHIVE-1).';
 
 
 
@@ -35827,6 +36127,27 @@ ALTER FUNCTION "public"."purge_sent_emails"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."purge_sent_emails"() IS 'Internal: deletes sent outbox rows after 30 days (S1-E7-02; docs/retention.md).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."purge_story_archives"() RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  purged integer;
+begin
+  delete from public.story_archives where story_archives.delete_after <= now();
+  get diagnostics purged = row_count;
+  return purged;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."purge_story_archives"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."purge_story_archives"() IS 'Nightly: deletes archived stories older than story_archive_years (ARCHIVE-1).';
 
 
 
@@ -39927,6 +40248,77 @@ COMMENT ON FUNCTION "public"."require_website_staff"() IS 'Internal: refuses any
 
 
 
+CREATE OR REPLACE FUNCTION "public"."restore_archived_rows"("table_name" "text", "archived_rows" "jsonb", "new_user_id" "uuid") RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $_$
+declare
+  column_list text;
+  owned_rows jsonb;
+  restored integer;
+begin
+  if archived_rows is null or jsonb_array_length(archived_rows) = 0 then
+    return 0;
+  end if;
+  -- Step 1: the columns both sides know.
+  select string_agg(format('%I', columns.column_name), ', ' order by columns.ordinal_position)
+  into column_list
+  from information_schema.columns as columns
+  where columns.table_schema = 'public' and columns.table_name = restore_archived_rows.table_name
+    and columns.is_generated = 'NEVER' and (archived_rows -> 0) ? columns.column_name;
+  -- Step 2: every row now belongs to the person bringing the story back.
+  select jsonb_agg(row_data || jsonb_build_object('user_id', new_user_id)) into owned_rows
+  from jsonb_array_elements(archived_rows) as row_data;
+  -- Step 3: write them.
+  execute format(
+    'insert into public.%I (%s) select %s from jsonb_populate_recordset(null::public.%I, $1)',
+    table_name, column_list, column_list, table_name)
+  using owned_rows;
+  get diagnostics restored = row_count;
+  return restored;
+end;
+$_$;
+
+
+ALTER FUNCTION "public"."restore_archived_rows"("table_name" "text", "archived_rows" "jsonb", "new_user_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."restore_archived_rows"("table_name" "text", "archived_rows" "jsonb", "new_user_id" "uuid") IS 'Internal: writes one table''s archived rows back under a new owner (ARCHIVE-1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."restore_archived_story"("document" "jsonb", "new_user_id" "uuid") RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  restored_story_id uuid := (document -> 'stories' -> 0 ->> 'id')::uuid;
+  table_name text;
+begin
+  foreach table_name in array public.story_archive_tables() loop
+    perform public.restore_archived_rows(table_name,
+      public.archived_rows_for_restore(table_name, document), new_user_id);
+    -- A new story starts with an empty plan, three acts and seven Story world sections, and a
+    -- new chapter with an empty plan (their insert triggers). The archived ones replace them.
+    if table_name = 'stories' then
+      delete from public.story_plan_acts where story_plan_acts.story_id = restored_story_id;
+      delete from public.story_bible_sections where story_bible_sections.story_id = restored_story_id;
+      delete from public.story_plans where story_plans.story_id = restored_story_id;
+    elsif table_name = 'chapters' then
+      delete from public.chapter_plans where chapter_plans.story_id = restored_story_id;
+    end if;
+  end loop;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."restore_archived_story"("document" "jsonb", "new_user_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."restore_archived_story"("document" "jsonb", "new_user_id" "uuid") IS 'Internal: writes one archived story, its chapters and its Story Atlas back as a private draft (ARCHIVE-1).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."restore_chapter"("chapter_code" "text") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -40007,6 +40399,51 @@ ALTER FUNCTION "public"."restore_my_story"("story_slug" "text") OWNER TO "postgr
 
 
 COMMENT ON FUNCTION "public"."restore_my_story"("story_slug" "text") IS 'Undoes a story''s deletion within content_purge_days (S1-E3-05).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."restore_story_archives_of"("closed_user_id" "uuid", "archive_email_hash" "text", "new_user_id" "uuid") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  archive record;
+  saved_claims text := current_setting('request.jwt.claims', true);
+  saved_subject text := current_setting('request.jwt.claim.sub', true);
+  restored integer := 0;
+  not_restored integer := 0;
+begin
+  -- Restoring is not writing: with nobody "logged in" for these inserts, the chapter trigger
+  -- that counts the day's words (count_writing_day) leaves the writing streak alone.
+  perform public.email_worker_act_as(null, null);
+  for archive in
+    select story_archives.id, story_archives.story from public.story_archives
+    where story_archives.user_id = closed_user_id
+      and story_archives.email_hash = archive_email_hash
+      and story_archives.delete_after > now()
+    order by story_archives.title
+  loop
+    begin
+      perform public.restore_archived_story(archive.story, new_user_id);
+      delete from public.story_archives where story_archives.id = archive.id;
+      restored := restored + 1;
+    exception when others then
+      -- The savepoint undid this story's rows; it stays in the archive for another try.
+      not_restored := not_restored + 1;
+    end;
+  end loop;
+  -- The caller is the caller again.
+  perform set_config('request.jwt.claims', coalesce(saved_claims, ''), true);
+  perform set_config('request.jwt.claim.sub', coalesce(saved_subject, ''), true);
+  return jsonb_build_object('restored', restored, 'not_restored', not_restored);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."restore_story_archives_of"("closed_user_id" "uuid", "archive_email_hash" "text", "new_user_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."restore_story_archives_of"("closed_user_id" "uuid", "archive_email_hash" "text", "new_user_id" "uuid") IS 'Internal: restores every archived story of one closed account to a new owner, each on its own (ARCHIVE-1).';
 
 
 
@@ -46638,6 +47075,44 @@ ALTER FUNCTION "public"."story_app_only_applies"("chosen" boolean) OWNER TO "pos
 
 
 COMMENT ON FUNCTION "public"."story_app_only_applies"("chosen" boolean) IS 'True when a story is set to app only and the app_only_stories flag is on (GAPS-15).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."story_archive_tables"() RETURNS "text"[]
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  -- chapters come right after the plan (a chapter's plan points at the story's plan) and before
+  -- the characters and Story world entries, which may point at a chapter.
+  select array['stories', 'story_plans', 'chapters', 'story_plan_acts', 'story_characters',
+    'story_character_fields', 'story_character_relationships', 'story_bible_sections',
+    'story_bible_entries', 'chapter_plans', 'chapter_scenes', 'chapter_plan_characters',
+    'story_events', 'story_ideas', 'story_marketing', 'story_tags'];
+$$;
+
+
+ALTER FUNCTION "public"."story_archive_tables"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_archive_tables"() IS 'Internal: the tables one archived story is made of, parents first (ARCHIVE-1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."story_archive_wrong_tries"() RETURNS integer
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select count(*)::integer from public.rate_limit_events
+  where rate_limit_events.user_id = (select auth.uid())
+    and rate_limit_events.action = 'story_archive_wrong_try'
+    and rate_limit_events.created_at > now() - interval '24 hours';
+$$;
+
+
+ALTER FUNCTION "public"."story_archive_wrong_tries"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_archive_wrong_tries"() IS 'Internal: the caller''s wrong tries at bringing archived stories back in the last 24 hours (ARCHIVE-1).';
 
 
 
@@ -54128,6 +54603,29 @@ COMMENT ON SEQUENCE "public"."statement_reference_seq" IS 'Numbers the statement
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."story_archives" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "email_hash" "text" NOT NULL,
+    "birth_year" integer,
+    "pen_name" "text",
+    "handle" "text" NOT NULL,
+    "title" "text" NOT NULL,
+    "story" "jsonb" NOT NULL,
+    "archived_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "delete_after" timestamp with time zone NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL
+);
+
+
+ALTER TABLE "public"."story_archives" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."story_archives" IS 'kind: user_action. The stories (with chapters and Story Atlas) of accounts closed for not being used, kept story_archive_years so the writer can bring them back; nobody reads it (ARCHIVE-1).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."story_character_fields" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "story_id" "uuid" NOT NULL,
@@ -55934,6 +56432,11 @@ ALTER TABLE ONLY "public"."stories"
 
 
 
+ALTER TABLE ONLY "public"."story_archives"
+    ADD CONSTRAINT "story_archives_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."story_bible_entries"
     ADD CONSTRAINT "story_bible_entries_pkey" PRIMARY KEY ("id");
 
@@ -57199,6 +57702,14 @@ CREATE INDEX "stories_writing_prompt_id" ON "public"."stories" USING "btree" ("w
 
 
 
+CREATE INDEX "story_archives_email_hash" ON "public"."story_archives" USING "btree" ("email_hash");
+
+
+
+CREATE INDEX "story_archives_user_id" ON "public"."story_archives" USING "btree" ("user_id");
+
+
+
 CREATE INDEX "story_bible_entries_section_id_idx" ON "public"."story_bible_entries" USING "btree" ("section_id");
 
 
@@ -58356,6 +58867,10 @@ CREATE OR REPLACE TRIGGER "stories_send_pictures_to_review" AFTER UPDATE OF "rat
 
 
 CREATE OR REPLACE TRIGGER "stories_set_updated_at" BEFORE UPDATE ON "public"."stories" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "story_archives_set_updated_at" BEFORE UPDATE ON "public"."story_archives" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
 
@@ -60139,6 +60654,11 @@ ALTER TABLE ONLY "public"."stories"
 
 ALTER TABLE ONLY "public"."stories"
     ADD CONSTRAINT "stories_writing_prompt_id_fkey" FOREIGN KEY ("writing_prompt_id") REFERENCES "public"."writing_prompts"("id");
+
+
+
+ALTER TABLE ONLY "public"."story_archives"
+    ADD CONSTRAINT "story_archives_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
 
 
 
@@ -62158,6 +62678,17 @@ CREATE POLICY "stories_select_own" ON "public"."stories" FOR SELECT TO "authenti
 
 
 COMMENT ON POLICY "stories_select_own" ON "public"."stories" IS 'Allows a writer to read only their own stories; readers go through get_story_page() and get_chapter() (ADR 0004).';
+
+
+
+ALTER TABLE "public"."story_archives" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "story_archives_select_own" ON "public"."story_archives" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
+
+
+
+COMMENT ON POLICY "story_archives_select_own" ON "public"."story_archives" IS 'Allows only the (closed) account a story belonged to; nobody else, staff included, reads an archive (ARCHIVE-1).';
 
 
 
@@ -64256,8 +64787,28 @@ REVOKE ALL ON FUNCTION "public"."apply_support_change"("ticket" "public"."suppor
 
 
 
+REVOKE ALL ON FUNCTION "public"."archive_account_stories"("target_user_id" "uuid", "closed_at" timestamp with time zone) FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."archive_class_space"("slug" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."archive_class_space"("slug" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."archived_chapters_as_drafts"("archived_chapters" "jsonb") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."archived_rows_for_restore"("table_name" "text", "document" "jsonb") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."archived_story_as_draft"("archived_story" "jsonb") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."archived_story_document"("archived_story_id" "uuid") FROM PUBLIC;
 
 
 
@@ -64717,6 +65268,11 @@ REVOKE ALL ON FUNCTION "public"."check_story_labels"("labels" "jsonb") FROM PUBL
 
 
 REVOKE ALL ON FUNCTION "public"."checks_personal_details_of"("target" "public"."profiles") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."claim_story_archive"("birth_year" integer, "known_name" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."claim_story_archive"("birth_year" integer, "known_name" "text") TO "authenticated";
 
 
 
@@ -65738,6 +66294,10 @@ REVOKE ALL ON FUNCTION "public"."forum_unread_post_count"("target" "public"."for
 
 
 
+REVOKE ALL ON FUNCTION "public"."free_story_slug"("wanted_slug" "text") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."generate_invite_code"() FROM PUBLIC;
 
 
@@ -66313,6 +66873,10 @@ GRANT ALL ON FUNCTION "public"."masked_email"("address" "text") TO "authenticate
 
 
 
+REVOKE ALL ON FUNCTION "public"."matching_story_archive_owner"("given_birth_year" integer, "given_name" "text") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."may_change_own_avatar"() FROM PUBLIC;
 
 
@@ -66431,6 +66995,10 @@ GRANT ALL ON FUNCTION "public"."my_account_deletion"() TO "authenticated";
 
 REVOKE ALL ON FUNCTION "public"."my_age_check"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."my_age_check"() TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."my_archive_email_hash"() FROM PUBLIC;
 
 
 
@@ -66679,6 +67247,11 @@ GRANT ALL ON FUNCTION "public"."my_staff_sign_in"() TO "authenticated";
 
 REVOKE ALL ON FUNCTION "public"."my_statements"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."my_statements"() TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."my_story_archive"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."my_story_archive"() TO "authenticated";
 
 
 
@@ -67328,6 +67901,10 @@ REVOKE ALL ON FUNCTION "public"."purge_sent_emails"() FROM PUBLIC;
 
 
 
+REVOKE ALL ON FUNCTION "public"."purge_story_archives"() FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."purge_unconfirmed_accounts"() FROM PUBLIC;
 
 
@@ -67886,6 +68463,14 @@ REVOKE ALL ON FUNCTION "public"."require_website_staff"() FROM PUBLIC;
 
 
 
+REVOKE ALL ON FUNCTION "public"."restore_archived_rows"("table_name" "text", "archived_rows" "jsonb", "new_user_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."restore_archived_story"("document" "jsonb", "new_user_id" "uuid") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."restore_chapter"("chapter_code" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."restore_chapter"("chapter_code" "text") TO "authenticated";
 
@@ -67893,6 +68478,10 @@ GRANT ALL ON FUNCTION "public"."restore_chapter"("chapter_code" "text") TO "auth
 
 REVOKE ALL ON FUNCTION "public"."restore_my_story"("story_slug" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."restore_my_story"("story_slug" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."restore_story_archives_of"("closed_user_id" "uuid", "archive_email_hash" "text", "new_user_id" "uuid") FROM PUBLIC;
 
 
 
@@ -68794,6 +69383,14 @@ REVOKE ALL ON FUNCTION "public"."stories_refresh_writer_rank"() FROM PUBLIC;
 REVOKE ALL ON FUNCTION "public"."story_app_only_applies"("chosen" boolean) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."story_app_only_applies"("chosen" boolean) TO "anon";
 GRANT ALL ON FUNCTION "public"."story_app_only_applies"("chosen" boolean) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."story_archive_tables"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."story_archive_wrong_tries"() FROM PUBLIC;
 
 
 
@@ -70060,6 +70657,11 @@ GRANT SELECT ON TABLE "public"."staff_roles" TO "authenticated";
 
 
 GRANT UPDATE ON SEQUENCE "public"."statement_reference_seq" TO "service_role";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."story_archives" TO "service_role";
+GRANT SELECT ON TABLE "public"."story_archives" TO "authenticated";
 
 
 
