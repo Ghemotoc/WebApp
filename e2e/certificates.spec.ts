@@ -81,9 +81,16 @@ function cleanUp() {
     update public.profiles set locale = 'ro' where handle in ('teacher', 'pending_check', 'moderator');`);
 }
 
-/** The class with the student in it, and picture uploads on for the crest (G13b). */
+/**
+ * The class with the student in it, and picture uploads on for the crest (G13b). The local server
+ * signs check results with PICTURE_CHECK_SECRET (playwright.config.ts) and the database checks them
+ * against the same value in its Vault, so the spec makes that test value itself instead of relying
+ * on another spec having run first. Never a real secret.
+ */
 function setUp() {
-  runSql(`update public.feature_flags set is_enabled = true where key = 'picture_uploads';`);
+  runSql(`update public.feature_flags set is_enabled = true where key = 'picture_uploads';
+    select vault.create_secret('local-e2e-picture-secret', 'picture_check_secret')
+    where not exists (select 1 from vault.secrets where name = 'picture_check_secret');`);
   runAs(teacherId, `select public.create_class_space('${className}', 'Cercul de scriere.');`);
   const code = runAs(
     teacherId,
