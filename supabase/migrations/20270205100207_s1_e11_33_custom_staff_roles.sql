@@ -616,8 +616,17 @@ declare
   changed_row_id uuid;
   domain text := public.staff_email_domain();
 begin
-  -- Step 1: the same checks as a built-in role (who, recent sign-in, never oneself, a reason).
-  perform public.require_role_change_allowed(target_user_id, reason_given);
+  -- Step 1: who may manage custom roles (with a recent sign-in and a reason), never for
+  -- themselves, and only to an account that exists. The checks are spelled out here rather than
+  -- taken from require_role_change_allowed(), which is for built-in roles only (below).
+  perform public.require_custom_role_staff(reason_given);
+  if target_user_id = (select auth.uid()) then
+    raise exception 'Nobody can change their own role.'
+      using errcode = 'insufficient_privilege', hint = 'own_role';
+  end if;
+  if not exists (select 1 from public.profiles where profiles.id = target_user_id and profiles.deleted_at is null) then
+    raise exception 'There is no such account.' using errcode = 'check_violation', hint = 'no_such_account';
+  end if;
   if not exists (select 1 from public.staff_custom_roles where id = target_role_id and deleted_at is null) then
     raise exception 'There is no such role.' using errcode = 'check_violation', hint = 'no_such_role';
   end if;
@@ -656,3 +665,56 @@ comment on function public.admin_set_custom_role_holder(uuid, uuid, boolean, tex
 
 revoke execute on function public.admin_set_custom_role_holder(uuid, uuid, boolean, text) from public, anon;
 grant execute on function public.admin_set_custom_role_holder(uuid, uuid, boolean, text) to authenticated;
+
+/* ---------- Built-in roles stay with built-in owners and admins ---------- */
+
+/**
+ * require_role_change_allowed (recreated): the shared checks before a built-in staff role, a
+ * permission or the intern marker changes (admin_grant_role, admin_remove_role,
+ * admin_set_permission, admin_set_intern).
+ * What changed in CMS-2a: the caller must hold the built-in owner or admin role. The owner may put
+ * the Roles area in a custom role, so that its holders manage custom roles; without this check
+ * they could also give built-in roles (moderator, support) or tick safeguarding, which reach areas
+ * they don't hold, breaking "an admin gives only what they hold" (Robert, 8 Nov 2026; found in
+ * the CMS-2a break test).
+ * Errors: insufficient_privilege (not_allowed, own_role), invalid_authorization_specification
+ *   (sign_in_again), check_violation (reason_missing, no_such_account).
+ */
+create or replace function public.require_role_change_allowed(target_user_id uuid, reason_given text)
+returns void
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $$
+begin
+  -- Step 1: the Roles area at Change, from a built-in owner or admin role, not a custom role.
+  if not public.staff_may('roles', 'act')
+     or not (public.is_staff('owner') or public.is_staff('admin')) then
+    raise exception 'Only an owner or admin can change staff roles.'
+      using errcode = 'insufficient_privilege', hint = 'not_allowed';
+  end if;
+  -- Step 2: a sign-in from the last 15 minutes (S1-E11-01).
+  if not public.staff_signed_in_recently() then
+    raise exception 'Sign in again to change a staff role.'
+      using errcode = 'invalid_authorization_specification', hint = 'sign_in_again';
+  end if;
+  -- Step 3: never one's own role (architecture 1.8.3).
+  if target_user_id = (select auth.uid()) then
+    raise exception 'Nobody can change their own role.'
+      using errcode = 'insufficient_privilege', hint = 'own_role';
+  end if;
+  -- Step 4: a reason for the audit log, and an account that exists.
+  if btrim(coalesce(reason_given, '')) = '' then
+    raise exception 'Give a reason.' using errcode = 'check_violation', hint = 'reason_missing';
+  end if;
+  if not exists (select 1 from public.profiles where profiles.id = target_user_id and profiles.deleted_at is null) then
+    raise exception 'There is no such account.' using errcode = 'check_violation', hint = 'no_such_account';
+  end if;
+end;
+$$;
+
+comment on function public.require_role_change_allowed(uuid, text) is
+  'Internal: the shared checks before a built-in staff role, permission or intern marker changes; only a built-in owner or admin passes; each refusal with a hint (S1-E2-07a, S1-E11-01, S1-E11-01b, S1-E11-33).';
+
+revoke execute on function public.require_role_change_allowed(uuid, text) from public, anon, authenticated;

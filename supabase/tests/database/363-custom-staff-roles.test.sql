@@ -8,7 +8,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(32);
+select plan(36);
 
 -- Leftovers from an earlier run that didn't roll back.
 delete from public.staff_custom_roles where name in ('Marketing e2e test', 'Role managers test');
@@ -135,6 +135,20 @@ select is(pg_temp.hint_of($$select public.admin_set_custom_role_holder((select m
 select is(pg_temp.hint_of($$select public.admin_remove_custom_role((select id from made where name = 'managers'), 'Try')$$),
   'role_out_of_reach', 'an admin can''t remove a role that holds more than they do');
 
+-- A custom role with Roles in it manages custom roles only: its holder can't give built-in roles
+-- or tick permissions, which reach areas they don't hold (CMS-2a break test).
+select pg_temp.sign_in_as((select owner from ids));
+select ok(public.admin_set_custom_role_holder((select helper from ids), (select id from made where name = 'managers'),
+  true, 'Manages the custom roles'), 'the owner gives a role with Roles in it');
+select pg_temp.sign_in_as((select helper from ids));
+select is(pg_temp.hint_of($$select public.admin_grant_role((select member from ids), 'moderator', 'Try')$$),
+  'not_allowed', 'a custom role''s holder can''t give a built-in role');
+select is(pg_temp.hint_of($$select public.admin_set_permission((select member from ids), 'safeguarding', true, 'Try')$$),
+  'not_allowed', 'a custom role''s holder can''t tick a permission');
+select pg_temp.sign_in_as((select owner from ids));
+select ok(public.admin_set_custom_role_holder((select helper from ids), (select id from made where name = 'managers'),
+  false, 'Done'), 'the owner takes it back');
+
 -- 6. A change and a removal apply at once.
 select ok(public.admin_save_custom_role((select id from made where name = 'marketing'), 'Marketing e2e test', '',
   '[{"area": "stories", "access": "view"}]'::jsonb, 'Featured moves to the editors') is not null,
@@ -158,7 +172,7 @@ reset role;
 select is((select count(*)::int from public.audit_log
            where action in ('staff.custom_role_created', 'staff.custom_role_changed', 'staff.custom_role_removed',
                             'staff.custom_role_granted')
-             and created_at >= now() - interval '1 minute'), 5,
+             and created_at >= now() - interval '1 minute'), 6,
   'making, changing, removing and giving roles are all in the audit log');
 
 select * from finish();
