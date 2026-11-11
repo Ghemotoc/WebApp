@@ -14,6 +14,8 @@ import { risingWritersQueryKey } from '@/features/discovery/hooks/useRisingWrite
 import { storyListQueryKey } from '@/features/discovery/hooks/useStoryShelf';
 import { readerLevelQueryKey } from '@/features/people/hooks/useReaderLevel';
 import { writerProfileQueryKey } from '@/features/people/hooks/useWriterProfile';
+import { suggestionsQueryKey } from '@/features/suggestions/hooks/useSuggestionRow';
+import type { AppSupabaseClient } from '@/lib/supabase';
 
 import {
   fetchPrivacySettings,
@@ -21,6 +23,7 @@ import {
   saveLibraryAudience,
   saveProfileAudience,
   saveChecksPersonalDetails,
+  saveSuggestsFromReading,
   saveReaderLevelVisibility,
   saveShowsOnlineStatus,
   saveSuggestMe,
@@ -49,57 +52,71 @@ export function usePrivacySettings() {
   });
 }
 
+/** One save: the database call that stores a value, given the shared client. */
+type PrivacySave<Value> = (client: AppSupabaseClient, value: Value) => Promise<void>;
+
 /**
- * Saving the privacy choices.
+ * One choice's save as a mutation: gets the client, saves, then reads everything again.
  *
- * @returns saveProfile(audience), saveLibrary(audience), saveOnline(shouldShow),
- *   saveSuggest(shouldSuggest), saveReaderLevel(visibility, G7a), savePersonalDetails(shouldCheck,
- *   MUST-1b), isSaving and hasFailed
+ * @param save - the api/privacy.ts function that stores the value
+ * @param refresh - what to read again after a save
+ * @returns TanStack Query's mutation
  */
-export function useSavePrivacySettings() {
+function usePrivacySave<Value>(save: PrivacySave<Value>, refresh: () => Promise<void>) {
+  return useMutation({
+    mutationFn: async (value: Value) => save(await requireClient(), value),
+    onSuccess: refresh,
+  });
+}
+
+/**
+ * After a save: the settings, the profiles, the story lists and the suggestion rows are read
+ * again, so every screen shows the new choice.
+ *
+ * @returns the refresh function
+ */
+function usePrivacyRefresh() {
   const queryClient = useQueryClient();
   const { userId } = useSession();
-  /** After a save: the settings, the profiles and the story lists are read again. */
-  const refresh = async () => {
+  return async () => {
     await queryClient.invalidateQueries({ queryKey: privacySettingsKey(userId) });
     await queryClient.invalidateQueries({ queryKey: [writerProfileQueryKey] });
     await queryClient.invalidateQueries({ queryKey: [storyListQueryKey] });
     await queryClient.invalidateQueries({ queryKey: [risingWritersQueryKey] });
     await queryClient.invalidateQueries({ queryKey: [readerLevelQueryKey] });
+    await queryClient.invalidateQueries({ queryKey: [suggestionsQueryKey] });
   };
-  const profile = useMutation({
-    mutationFn: async (audience: ProfileAudience) =>
-      saveProfileAudience(await requireClient(), audience),
-    onSuccess: refresh,
-  });
-  const library = useMutation({
-    mutationFn: async (audience: LibraryAudience) =>
-      saveLibraryAudience(await requireClient(), audience),
-    onSuccess: refresh,
-  });
-  const online = useMutation({
-    mutationFn: async (shouldShow: boolean) =>
-      saveShowsOnlineStatus(await requireClient(), shouldShow),
-    onSuccess: refresh,
-  });
-  const suggest = useMutation({
-    mutationFn: async (shouldSuggest: boolean) =>
-      saveSuggestMe(await requireClient(), shouldSuggest),
-    onSuccess: refresh,
-  });
-  const readerLevel = useMutation({
-    mutationFn: async (visibility: ReaderLevelVisibility) =>
-      saveReaderLevelVisibility(await requireClient(), visibility),
-    onSuccess: refresh,
-  });
-  const personalDetails = useMutation({
-    mutationFn: async (shouldCheck: boolean) =>
-      saveChecksPersonalDetails(await requireClient(), shouldCheck),
-    onSuccess: refresh,
-  });
-  const mutations = [profile, library, online, suggest, readerLevel, personalDetails];
+}
+
+/**
+ * Saving the privacy choices.
+ *
+ * @returns saveProfile(audience), saveLibrary(audience), saveOnline(shouldShow),
+ *   saveSuggest(shouldSuggest), saveReaderLevel(visibility, G7a), savePersonalDetails(shouldCheck,
+ *   MUST-1b), saveReadingSuggestions(shouldSuggest, S1-E15-06), isSaving and hasFailed
+ */
+export function useSavePrivacySettings() {
+  const refresh = usePrivacyRefresh();
+  const profile = usePrivacySave<ProfileAudience>(saveProfileAudience, refresh);
+  const library = usePrivacySave<LibraryAudience>(saveLibraryAudience, refresh);
+  const online = usePrivacySave<boolean>(saveShowsOnlineStatus, refresh);
+  const suggest = usePrivacySave<boolean>(saveSuggestMe, refresh);
+  const readerLevel = usePrivacySave<ReaderLevelVisibility>(saveReaderLevelVisibility, refresh);
+  const personalDetails = usePrivacySave<boolean>(saveChecksPersonalDetails, refresh);
+  const readingSuggestions = usePrivacySave<boolean>(saveSuggestsFromReading, refresh);
+  const mutations = [
+    profile,
+    library,
+    online,
+    suggest,
+    readerLevel,
+    personalDetails,
+    readingSuggestions,
+  ];
   return {
     savePersonalDetails: (shouldCheck: boolean) => personalDetails.mutateAsync(shouldCheck),
+    saveReadingSuggestions: (shouldSuggest: boolean) =>
+      readingSuggestions.mutateAsync(shouldSuggest),
     saveReaderLevel: (visibility: ReaderLevelVisibility) => readerLevel.mutateAsync(visibility),
     saveSuggest: (shouldSuggest: boolean) => suggest.mutateAsync(shouldSuggest),
     saveProfile: (audience: ProfileAudience) => profile.mutateAsync(audience),

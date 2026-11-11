@@ -21,7 +21,8 @@
  * personalised feed in Stage 1; S1-E5-09's legal note); the cards show only the member's own
  * places and drafts.
  * Popular ranks by totals only (reads, likes, comments; never downvotes), the same for everyone.
- * The wide ad slot sits after the first shelf (S1-E12-01; board 3.1).
+ * The wide ad slot sits after the first shelf (S1-E12-01; board 3.1), then, for a member with
+ * "Suggestions from reading" on, "Because you read" (BecauseYouReadShelf, S1-E15-06).
  * What it calls: FeaturedBand, GreetingHeading,
  * DiscoverCards, DiscoverShelf (useStoryShelf → browse_stories()) and RisingWritersShelf.
  * */
@@ -38,6 +39,7 @@ import { useMyNames } from '@/features/account/hooks/useMyNames';
 import { displayName } from '@/features/account/lib/nameRules';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { usePublicSettings } from '@/features/flags/hooks/usePublicSettings';
+import { BecauseYouReadShelf } from '@/features/suggestions/components/BecauseYouReadShelf';
 import { useStoryFormOptions } from '@/features/writing/hooks/useStoryFormOptions';
 
 import { everyLanguage, type ListKind } from '../api/storyLists';
@@ -226,6 +228,8 @@ function DiscoverShelves() {
           <ShelfFromSetting word={word} isSignedIn={isSignedIn} />
           {/* The wide ad slot comes after the first shelf, so the reader meets stories first. */}
           {index === 0 && <FirstShelfAd word={word} />}
+          {/* "Because you read" (S1-E15-06): a member's own row, after the first shelf. */}
+          {index === 0 && <BecauseYouReadShelf />}
         </Fragment>
       ))}
     </div>

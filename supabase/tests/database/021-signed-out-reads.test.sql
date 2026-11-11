@@ -255,6 +255,8 @@ select results_eq(
        ('story_events', 0::bigint),
        ('story_ideas', 0::bigint),
        ('story_marketing', 0::bigint),
+       -- Pairs of stories finished by the same readers: totals for suggestions, staff only (S1-E15-06).
+       ('story_pairs', 0::bigint),
        ('story_plan_acts', 0::bigint),
        ('story_plans', 0::bigint),
        -- Daily ranks for the Featured screen: staff with the Featured area only (LOOK-4a).

@@ -4,7 +4,9 @@
  *
  * Top to bottom as on the board: the intro, the under-18 note, "Who can see your profile", "Who
  * can message you", "Show when I'm online", "Suggest me and my stories to other people"
- * (SuggestMeSwitch, LOOK-4c), "Ask before I share contact details" (PersonalDetailsSwitch, MUST-1b), "Who can see your library", "Your reading level" (Hidden, the
+ * (SuggestMeSwitch, LOOK-4c), "Suggestions from my reading" (ReadingSuggestionsSwitch,
+ * S1-E15-06), "Ask before I share contact details" (PersonalDetailsSwitch, MUST-1b), "Who can see
+ * your library", "Your reading level" (Hidden, the
  * default for everyone, or "Show it on my profile"; G7a) and "How long we keep things"
  * (HowLongWeKeep, IDEAS-2a). Every choice saves at
  * once. Who can message you belongs to Messages (S1-E9-04), so here it is one line with Change,
@@ -31,6 +33,7 @@ import { AudienceRadios } from './AudienceRadios';
 import { HowLongWeKeep } from './HowLongWeKeep';
 import { OnlineStatusSwitch } from './OnlineStatusSwitch';
 import { PersonalDetailsSwitch } from './PersonalDetailsSwitch';
+import { ReadingSuggestionsSwitch } from './ReadingSuggestionsSwitch';
 import { SuggestMeSwitch } from './SuggestMeSwitch';
 
 /** "Who can message you: Everyone · Change", pointing at the Messages panel. */
@@ -55,6 +58,44 @@ function MessageAudienceLine({ settings }: { settings: PrivacySettings }) {
   );
 }
 
+/**
+ * The four on and off switches: online status, Suggest me, Suggestions from reading (S1-E15-06)
+ * and the personal details heads-up (MUST-1b).
+ *
+ * @param props.settings - the saved settings
+ * @param props.saving - the saves, from useSavePrivacySettings()
+ * @returns the switch rows
+ */
+function PrivacySwitches({
+  settings,
+  saving,
+}: {
+  settings: PrivacySettings;
+  saving: ReturnType<typeof useSavePrivacySettings>;
+}) {
+  return (
+    <>
+      <OnlineStatusSwitch
+        saved={settings.showsOnlineStatus}
+        isSaving={saving.isSaving}
+        onSave={saving.saveOnline}
+      />
+      <SuggestMeSwitch settings={settings} isSaving={saving.isSaving} onSave={saving.saveSuggest} />
+      <ReadingSuggestionsSwitch
+        saved={settings.suggestsFromReading}
+        isSaving={saving.isSaving}
+        onSave={saving.saveReadingSuggestions}
+      />
+      <PersonalDetailsSwitch
+        saved={settings.checksPersonalDetails}
+        isUnder18={settings.isUnder18}
+        isSaving={saving.isSaving}
+        onSave={saving.savePersonalDetails}
+      />
+    </>
+  );
+}
+
 /** The four settings once they are known. */
 function PrivacyChoices({ settings }: { settings: PrivacySettings }) {
   const { t } = usePrivacyTranslation();
@@ -75,18 +116,7 @@ function PrivacyChoices({ settings }: { settings: PrivacySettings }) {
         onSave={saving.saveProfile}
       />
       <MessageAudienceLine settings={settings} />
-      <OnlineStatusSwitch
-        saved={settings.showsOnlineStatus}
-        isSaving={saving.isSaving}
-        onSave={saving.saveOnline}
-      />
-      <SuggestMeSwitch settings={settings} isSaving={saving.isSaving} onSave={saving.saveSuggest} />
-      <PersonalDetailsSwitch
-        saved={settings.checksPersonalDetails}
-        isUnder18={settings.isUnder18}
-        isSaving={saving.isSaving}
-        onSave={saving.savePersonalDetails}
-      />
+      <PrivacySwitches settings={settings} saving={saving} />
       <div className="border-t border-border pt-4">
         <AudienceRadios
           name="library-audience"

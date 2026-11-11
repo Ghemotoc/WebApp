@@ -148,5 +148,14 @@
     "label": "Populare în",
     "everywhere": "Peste tot",
     "fallbackNote": "{{country}}: sunt încă prea puține povești în clasament acolo, așa că aici vezi clasamentul general."
+  },
+  "suggestions": {
+    "moreBy": "Mai multe de {{writer}}",
+    "likeThis": "Povești asemănătoare",
+    "becauseYouRead": "Pentru că ai citit {{title}}",
+    "why": "De ce văd asta?",
+    "whyMoreBy": "Alte povești ale autorului acesteia, pe care le poți citi.",
+    "whyLikeThis": "Cel puțin 5 cititori care au terminat povestea asta le-au terminat și pe acestea. Se numără doar totalurile, niciodată cine.",
+    "whyBecause": "Ai terminat {{title}}, iar cel puțin 5 cititori care au terminat-o le-au terminat și pe acestea. Poți opri asta din Setări › Confidențialitate, la Sugestii din lectură."
   }
 }
