@@ -11,7 +11,8 @@
  * The form starts from the version it is given and keeps its own copy; LandingPageEditor gives it
  * a new key when another version becomes the draft (after Restore), so it starts again from that.
  * Who shows it: LandingPageEditor. What it calls: the block helpers in lib/blocks.ts,
- * BlockListRow, BlockCard, AddBlockRow, LandingPreview and LandingPublishBar.
+ * BlockListRow, BlockCard, AddBlockRow, LandingPreview, LandingSearchFields (S1-E11-38) and
+ * LandingPublishBar.
  */
 import { useState } from 'react';
 
@@ -31,6 +32,7 @@ import { BlockCard } from './BlockCard';
 import { BlockListRow } from './BlockListRow';
 import { LandingPreview } from './LandingPreview';
 import { LandingPublishBar } from './LandingPublishBar';
+import { LandingSearchFields } from './LandingSearchFields';
 
 /** The id of the one editor panel, which every Edit button points at. */
 const editorId = 'landing-block-editor';
@@ -207,6 +209,11 @@ export function LandingEditorForm({ initial, pageType, today, state }: LandingEd
         />
       </div>
       <LandingPreview content={draft.content} pageType={pageType} pictures={pictures} />
+      <LandingSearchFields
+        search={draft.content.search}
+        problems={problems}
+        onChange={(search) => setContent({ ...draft.content, search })}
+      />
       <LandingPublishBar
         draft={draft}
         today={today}

@@ -7,7 +7,10 @@
  * product name. For these addresses this handler takes the app's index.html, asks
  * website_content() for the live page a visitor from this country sees (never a draft) and writes
  * into the page's <head>: the <title> ("<page title> · <site name>"), the description, a canonical
- * link, the Open Graph and Twitter tags and the page's language on <html>. Staff may fill in a
+ * link, the Open Graph and Twitter tags with the site's large share picture
+ * (public/link-previews/share.png, S1-E11-38) and the page's language on <html>. The home page
+ * also carries the organisation and website data (schema.org) and the search engines'
+ * verification codes staff entered in Staff › Settings (S1-E11-38). Staff may fill in a
  * search title and description for each page (src/schemas/websiteContent.ts, pageSearchSchema);
  * when they leave them empty the page's own words are used: the home page's headline and
  * introduction, or the help page's title and first lines. A page staff hid from search engines,
@@ -44,6 +47,11 @@ export interface WebsiteHead {
   language: string;
   /** True when staff asked search engines not to list the page. */
   isHidden: boolean;
+  /**
+   * The home page only: the search engines' verification codes staff entered in Staff › Settings
+   * (S1-E11-38); null on every other page, which carries neither the codes nor the organisation.
+   */
+  homeExtras: { googleCode: string; bingCode: string } | null;
 }
 
 /** What the handler needs from its host (Cloudflare or the local plugin). */
@@ -62,11 +70,18 @@ const helpAddressPattern = /^[a-z0-9][a-z0-9-]{0,59}$/;
 /** The longest description written from a page's own words; longer text is cut at a word. */
 const DESCRIPTION_LONGEST = 160;
 
-/** The plain picture every website page shares until SEO-1c adds a large default picture. */
-const SHARE_PICTURE = '/link-previews/plum.png';
+/** The site's large share picture, the emblem on plum (scripts/make-share-picture.ts, S1-E11-38). */
+const SHARE_PICTURE = '/link-previews/share.png';
 
-/** The size of the pictures in public/link-previews/ (scripts/make-link-preview-images.ts). */
-const SHARE_PICTURE_SIDE = 400;
+/** Its size: what share cards ask for, so they show it large (summary_large_image). */
+const SHARE_PICTURE_WIDTH = 1200;
+const SHARE_PICTURE_HEIGHT = 630;
+
+/** The emblem the organisation data names as the site's logo (LOGO-1). */
+const LOGO_PICTURE = '/brand/apple-touch-icon.png';
+
+/** What a verification code may hold: the letters, digits, "-" and "_" Google and Bing use. */
+const verificationCodePattern = /^[A-Za-z0-9_-]{1,100}$/;
 
 /**
  * Reads a website address from a path.
@@ -181,6 +196,7 @@ export function websiteHeadFrom(address: WebsiteAddress, row: WebsiteContentRow)
       textOf(search.description) === '' ? ownWords.description : textOf(search.description),
     language: row.language_code,
     isHidden: search.hidden === true,
+    homeExtras: address.kind === 'home_page' ? { googleCode: '', bingCode: '' } : null,
   };
 }
 
@@ -214,7 +230,81 @@ export async function fetchWebsiteHead(
   const rows = (await response.json()) as WebsiteContentRow[];
   const wantedKey = address.kind === 'home_page' ? 'home' : address.entryKey;
   const row = rows.find((candidate) => candidate.entry_key === wantedKey);
-  return row === undefined ? null : websiteHeadFrom(address, row);
+  if (row === undefined) return null;
+  const head = websiteHeadFrom(address, row);
+  // Step 3: the home page also carries the search engines' verification codes (S1-E11-38).
+  if (head.homeExtras !== null) head.homeExtras = await fetchVerificationCodes(settings);
+  return head;
+}
+
+/** One public setting as the REST endpoint answers it. */
+interface SettingRow {
+  key: string;
+  value: unknown;
+}
+
+/**
+ * Reads the verification codes from the public settings (S1-E11-38).
+ *
+ * @param settings - the Supabase address and public anon key
+ * @returns the two codes; empty ones when a setting is empty or can't be read, because the page
+ *   matters more than the codes
+ */
+export async function fetchVerificationCodes(
+  settings: DatabaseSettings,
+): Promise<{ googleCode: string; bingCode: string }> {
+  const address = `${settings.supabaseUrl}/rest/v1/settings?select=key,value&is_public=eq.true&key=in.(search_verification_google,search_verification_bing)`;
+  const response = await fetch(address, {
+    headers: { apikey: settings.anonKey, Authorization: `Bearer ${settings.anonKey}` },
+  });
+  if (!response.ok) return { googleCode: '', bingCode: '' };
+  const rows = (await response.json()) as SettingRow[];
+  const codeOf = (key: string) => textOf(rows.find((row) => row.key === key)?.value);
+  return {
+    googleCode: codeOf('search_verification_google'),
+    bingCode: codeOf('search_verification_bing'),
+  };
+}
+
+/**
+ * The home page's extra tags (S1-E11-38): the verification meta tags staff entered (meta tags
+ * only, never a script: CLAUDE.md rule 7), and the organisation and website data search engines
+ * use for the site's name and logo, with the name read from index.html (names are settings).
+ *
+ * @param extras - the verification codes
+ * @param page - the site's name and origin
+ * @returns the tags
+ */
+export function homeExtraTags(
+  extras: { googleCode: string; bingCode: string },
+  page: { siteName: string; origin: string },
+): string[] {
+  const tags: string[] = [];
+  // Step 1: a code goes in only when it looks like one, so a typo can't break the page.
+  if (verificationCodePattern.test(extras.googleCode)) {
+    tags.push(`<meta name="google-site-verification" content="${extras.googleCode}">`);
+  }
+  if (verificationCodePattern.test(extras.bingCode)) {
+    tags.push(`<meta name="msvalidate.01" content="${extras.bingCode}">`);
+  }
+  // Step 2: the organisation and the website (schema.org), in one block.
+  const home = `${page.origin}/`;
+  const data = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Organization',
+        name: page.siteName,
+        url: home,
+        logo: `${page.origin}${LOGO_PICTURE}`,
+      },
+      { '@type': 'WebSite', name: page.siteName, url: home },
+    ],
+  };
+  // "<" is written as \u003c, so nothing in a name can close the script element.
+  const json = JSON.stringify(data).replaceAll('<', '\\u003c');
+  tags.push(`<script type="application/ld+json">${json}</script>`);
+  return tags;
 }
 
 /**
@@ -236,9 +326,10 @@ export function websiteHeadTags(
     `<meta property="og:title" content="${escapeHtml(head.title)}">`,
     `<meta property="og:url" content="${escapeHtml(page.url)}">`,
     `<meta property="og:image" content="${escapeHtml(picture)}">`,
-    `<meta property="og:image:width" content="${SHARE_PICTURE_SIDE}">`,
-    `<meta property="og:image:height" content="${SHARE_PICTURE_SIDE}">`,
-    `<meta name="twitter:card" content="summary">`,
+    `<meta property="og:image:width" content="${SHARE_PICTURE_WIDTH}">`,
+    `<meta property="og:image:height" content="${SHARE_PICTURE_HEIGHT}">`,
+    `<meta property="og:image:alt" content="${escapeHtml(page.siteName)}">`,
+    `<meta name="twitter:card" content="summary_large_image">`,
     `<meta name="twitter:title" content="${escapeHtml(head.title)}">`,
   ];
   // Step 1: the description only when there are words for it.
@@ -252,6 +343,8 @@ export function websiteHeadTags(
   }
   // Step 2: a page staff hid from search engines says so (the header says it too).
   if (head.isHidden) tags.push('<meta name="robots" content="noindex">');
+  // Step 3: the home page's verification codes and organisation data (S1-E11-38).
+  if (head.homeExtras !== null) tags.push(...homeExtraTags(head.homeExtras, page));
   return tags.join('\n    ');
 }
 

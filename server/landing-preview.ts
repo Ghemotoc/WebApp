@@ -8,8 +8,9 @@
  * sees (only the live version, never a draft) and writes into the page's <head> the title, the
  * description and the Open Graph and Twitter tags: the hero's title and introduction, in Romanian
  * (the interface opens in Romanian for everyone, decided 17 Oct 2026), and a plain picture in the
- * page's theme colour. A live page is indexable; an unknown, archived or not yet live address gets
- * noindex. If the database can't be reached, the page goes out unchanged.
+ * page's theme colour. Staff's search title and description (S1-E11-38) win over the hero's words,
+ * and a canonical link names the page's one address. A live page is indexable unless staff hid it
+ * from search engines; an unknown, archived or not yet live address gets noindex. If the database can't be reached, the page goes out unchanged.
  * Who calls it: functions/c/[[path]].ts on Cloudflare Pages, and server/pages-functions-plugin.ts
  * locally (npm run dev, npm run preview and the end-to-end tests).
  * What it calls: the Supabase REST endpoint /rest/v1/rpc/landing_page with the public anon key,
@@ -25,6 +26,8 @@ export interface LandingPreview {
   description: string;
   /** One of the link preview colours: the page's theme. */
   colour: string;
+  /** True when staff asked search engines not to list the page (S1-E11-38). */
+  isHidden: boolean;
 }
 
 /** What the handler needs from its host (Cloudflare or the local plugin). */
@@ -63,6 +66,8 @@ interface LandingRow {
   content: {
     theme?: string;
     blocks?: Array<{ kind?: string; ro?: { title?: string; intro?: string } }>;
+    /** The search fields (S1-E11-38); the preview reads the Romanian words, as it does the hero's. */
+    search?: { hidden?: boolean; ro?: { title?: string; description?: string } };
   };
 }
 
@@ -92,6 +97,21 @@ function heroWordsOf(row: LandingRow): { title: string; intro: string } {
 }
 
 /**
+ * Staff's Romanian search words and their "hide" switch (S1-E11-38), trimmed; empty when unset.
+ *
+ * @param row - the page as the database answered it
+ * @returns the search title, the search description and whether the page is hidden
+ */
+function searchWordsOf(row: LandingRow): { title: string; description: string; isHidden: boolean } {
+  const search = row.content.search ?? {};
+  return {
+    title: (search.ro?.title ?? '').trim(),
+    description: (search.ro?.description ?? '').trim(),
+    isHidden: search.hidden === true,
+  };
+}
+
+/**
  * Turns landing_page()'s answer into the preview: the hero's Romanian title and introduction,
  * and the theme's colour (plum when the theme isn't one of the pictures).
  *
@@ -103,7 +123,14 @@ export function landingPreviewFrom(row: LandingRow): LandingPreview | null {
   if (words.title === '') return null;
   const theme = row.content.theme ?? '';
   const colour = Object.keys(linkPreviewPalette).includes(theme) ? theme : 'plum';
-  return { title: words.title, description: shortened(words.intro), colour };
+  // S1-E11-38: staff's search words win; an empty field keeps the hero's.
+  const search = searchWordsOf(row);
+  return {
+    title: search.title === '' ? words.title : search.title,
+    description: search.description === '' ? shortened(words.intro) : search.description,
+    colour,
+    isHidden: search.isHidden,
+  };
 }
 
 /**
@@ -147,6 +174,7 @@ export function landingHeadTags(
 ): string {
   const image = `${page.origin}/link-previews/${preview.colour}.png`;
   const tags = [
+    `<link rel="canonical" href="${escapeHtml(page.url)}">`,
     `<meta property="og:type" content="website">`,
     `<meta property="og:site_name" content="${escapeHtml(page.siteName)}">`,
     `<meta property="og:title" content="${escapeHtml(preview.title)}">`,
@@ -166,6 +194,8 @@ export function landingHeadTags(
       `<meta name="twitter:description" content="${description}">`,
     );
   }
+  // S1-E11-38: a page staff hid from search engines says so (the header says it too).
+  if (preview.isHidden) tags.push('<meta name="robots" content="noindex">');
   return tags.join('\n    ');
 }
 
@@ -211,6 +241,7 @@ export async function handleLandingLink(
     });
   }
   // Step 4: the tags; the page's address carries no query (no tracking codes, S1-E4-05).
+  if (preview.isHidden) headers.set('X-Robots-Tag', 'noindex');
   const tags = landingHeadTags(preview, {
     url: `${url.origin}${url.pathname}`,
     siteName: siteNameOf(html),

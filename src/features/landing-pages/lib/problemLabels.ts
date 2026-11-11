@@ -34,6 +34,20 @@ function blockNameOf(blockNumber: string, content: LandingContent, t: TFunction)
 }
 
 /**
+ * The words for one of the search fields (S1-E11-38): "Search and sharing, Romanian: Search title".
+ *
+ * @param field - the path from the server ("search.ro.title", "search.hidden")
+ * @param t - the landingPages translations
+ * @returns the label
+ */
+function searchFieldLabel(field: string, t: TFunction): string {
+  const [, language = '', name] = field.split('.');
+  const legend = t('editor.search.legend');
+  if (name === undefined || (language !== 'ro' && language !== 'en')) return legend;
+  return `${legend}, ${t(`languages.${language}`)}: ${t(`editor.search.${name}`)}`;
+}
+
+/**
  * The words for one field path, for the list of fields to fix.
  *
  * @param field - the path from the server ("theme", "blocks", "blocks.0.ro.title", "blocks.3.dates")
@@ -43,7 +57,9 @@ function blockNameOf(blockNumber: string, content: LandingContent, t: TFunction)
  */
 export function labelOfField(field: string, content: LandingContent, t: TFunction): string {
   const [first = '', blockNumber, part, name = ''] = field.split('.');
-  // Step 1: the page-wide fields.
+  // Step 1a: the search fields (S1-E11-38).
+  if (first === 'search') return searchFieldLabel(field, t);
+  // Step 1b: the page-wide fields.
   if (first !== 'blocks' || blockNumber === undefined) {
     return t(`editor.fields.${first}`, { defaultValue: field });
   }
