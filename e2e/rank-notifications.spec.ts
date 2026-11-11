@@ -44,7 +44,7 @@ function publishChapters() {
   runSql(`
     insert into public.stories (id, user_id, slug, title, language_code, category_id, rating,
       first_published_at, last_chapter_published_at)
-    values ('${storyId}', '${writerId}', '${storySlug}', '${title}', 'ro',
+    values ('${storyId}', '${writerId}', '${storySlug}', '${title}', 'en',
       (select id from public.categories where slug = 'fiction'), 'all_ages', now(), now());
     insert into public.chapters (story_id, user_id, code, position, draft_title, draft_body,
       word_count, status, published_title, published_body, published_word_count, first_published_at)
