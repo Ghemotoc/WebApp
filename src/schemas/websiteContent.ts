@@ -76,7 +76,10 @@ export const homePageContentSchema = z.object({
   eyebrow: z.string(),
   headlineFirst: z.string(),
   headlineSecond: z.string(),
-  /** The word of the headline that gets the gold underline (decoration only). */
+  /**
+   * The word that once got a gold underline. Nothing draws it since LOGO-2 (Robert, 11 Nov 2026),
+   * and the editor no longer shows it; it stays so every stored page version still reads.
+   */
   underlinedWord: z.string(),
   lede: z.string(),
   primaryButton: z.string(),

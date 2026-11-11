@@ -48,7 +48,21 @@ const textPairs: ContrastPair[] = [
     minimumRatio: 4.5,
     usedFor: 'main button text, bottom',
   },
+  {
+    foreground: 'on-plum',
+    background: 'plum-hover-from',
+    minimumRatio: 4.5,
+    usedFor: 'main button text on hover and press (GLASS-2)',
+  },
   { foreground: 'link', background: 'surface', minimumRatio: 4.5, usedFor: 'links on cards' },
+  // The wordmark beside the logo and the headline's second line (LOGO-2).
+  { foreground: 'logo', background: 'paper', minimumRatio: 4.5, usedFor: 'the wordmark' },
+  {
+    foreground: 'accent',
+    background: 'paper',
+    minimumRatio: 4.5,
+    usedFor: 'second line of the home headline (LOGO-2)',
+  },
   { foreground: 'link-hover', background: 'paper', minimumRatio: 4.5, usedFor: 'links on hover' },
   { foreground: 'destructive', background: 'paper', minimumRatio: 4.5, usedFor: 'delete actions' },
   {

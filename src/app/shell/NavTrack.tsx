@@ -76,10 +76,14 @@ export function NavTrack({ items, end }: NavTrackProps) {
   return (
     <ul
       ref={trackRef}
-      className="segmented-track relative m-0 flex list-none flex-wrap items-center gap-0.5 rounded-full p-1"
+      className="segmented-track nav-track relative m-0 flex list-none flex-wrap items-center gap-0.5 rounded-full p-1"
     >
       {box !== null && (
-        <li aria-hidden="true" className="segmented-bubble absolute rounded-full" style={box} />
+        <li
+          aria-hidden="true"
+          className="segmented-bubble nav-bubble absolute rounded-full"
+          style={box}
+        />
       )}
       {items.map((item) => (
         <li key={item.href} className="flex">
