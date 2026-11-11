@@ -4,7 +4,7 @@
  *
  * There are four slots (the database's brand_asset_slot): a logo and an emblem, each for the
  * light and the night theme. The emblem is also the browser tab icon. An empty slot means the
- * app's bundled default (the curled cat logo, LOGO-1).
+ * app's bundled default (the sleeping cat logo, LOGO-2).
  * Who calls it: useBrandSlots() on the staff page (Staff › Website › Branding).
  * What it calls next: the database functions admin_brand_assets(), admin_set_brand_asset() and
  * admin_clear_brand_asset() in migration 20270128100002, and pictureViewsFromJson() for the

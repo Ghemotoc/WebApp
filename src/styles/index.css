@@ -67,17 +67,27 @@
  */
 @utility button-main {
   background-color: var(--plum-to);
-  background-image: linear-gradient(180deg, var(--plum-from), var(--plum-to));
+  /* The website's dark sheen over the accent gradient (GLASS-2): lighter at the top, a soft shade
+     at the bottom, so the button reads as a raised drop of coloured glass. */
+  background-image: var(--lg-dark-sheen), linear-gradient(180deg, var(--plum-from), var(--plum-to));
   color: var(--on-plum);
   border: 1px solid var(--button-main-rim);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.35),
-    0 10px 22px -12px color-mix(in srgb, var(--plum-to) 70%, transparent);
+    inset 0 1px 0 rgb(255 255 255 / 0.42),
+    inset 0 -3px 8px rgb(0 0 0 / 0.22),
+    0 12px 26px -12px color-mix(in srgb, var(--plum-to) 70%, transparent);
   transition:
     transform 120ms ease-out,
     filter 120ms ease-out;
-  &:hover {
-    filter: brightness(1.1);
+  /* Hover, press and the current page (Write while writing) turn the main look's deep plum into
+     its brighter plum, as Robert asked (11 Nov 2026: "deep plum action buttons that change to the
+     other type of purple when you hover over and you click on it"); every other look takes a
+     slightly lighter version of its own accent (tokens.css, --plum-hover-from and -to). */
+  &:hover,
+  &:active,
+  &[aria-current='page'] {
+    background-image:
+      var(--lg-dark-sheen), linear-gradient(180deg, var(--plum-hover-from), var(--plum-hover-to));
   }
   &:active {
     transform: scale(0.98);
@@ -86,15 +96,22 @@
   &[aria-disabled='true'] {
     filter: none;
     transform: none;
+    background-image:
+      var(--lg-dark-sheen), linear-gradient(180deg, var(--plum-from), var(--plum-to));
   }
 }
 
 @utility button-glass {
   background-color: var(--surface-glass);
-  background-image: linear-gradient(rgb(36 19 58 / 0.05), rgb(36 19 58 / 0.05));
+  /* The website's light glass (GLASS-2): white that thins downwards over the grey wash, a bright
+     top edge, a soft bottom shade and a small shadow. */
+  background-image: var(--lg-card-bg), linear-gradient(rgb(36 19 58 / 0.05), rgb(36 19 58 / 0.05));
   color: var(--ink);
   border: 1px solid var(--control-border);
-  box-shadow: inset 0 1px 0 var(--glass-highlight);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    inset 0 -3px 8px rgb(42 14 51 / 0.06),
+    0 6px 14px -8px rgb(42 14 51 / 0.3);
   transition:
     transform 120ms ease-out,
     filter 120ms ease-out;
@@ -310,18 +327,50 @@ dialog.bg-surface,
  */
 @utility glass-pill {
   background-color: var(--nav-glass);
+  background-image: var(--lg-card-bg);
   border: 1px solid var(--glass-border);
   box-shadow:
     inset 0 1px 0 var(--glass-highlight),
+    inset 0 -3px 8px rgb(42 14 51 / 0.06),
     var(--shadow-nav);
 }
 
+/*
+ * Floating bars (top bar, phone header, tab bar, focus header): the website's navbar island
+ * (GLASS-2; the website's .lg-light with data-solid, its look once the page scrolls). Near-solid
+ * white that thins a little downwards, the strong blur, the bright rim, a white top edge, a soft
+ * inner shade and the violet drop shadow. Here the bar spans the width instead of being centred,
+ * so the space is used (Robert, 11 Nov 2026).
+ */
 @utility glass-float {
-  background-color: color-mix(in srgb, var(--surface) 96%, transparent);
+  background-color: transparent;
+  background-image: var(--lg-float-bg);
+  -webkit-backdrop-filter: var(--lg-blur);
+  backdrop-filter: var(--lg-blur);
   border: 1px solid var(--glass-border);
-  box-shadow:
-    inset 0 1px 0 var(--glass-highlight),
-    0 18px 40px -16px rgb(20 10 30 / 0.45);
+  box-shadow: var(--lg-card-shadow);
+}
+
+/*
+ * The top bar's links as the website's nav pills (GLASS-2): no recess, each link a pill, and the
+ * current page on a raised glass pill (the website's hover and active state) that NavTrack slides
+ * under it. Hovering a link shows the same pill, fainter.
+ */
+.nav-track {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+.nav-track a:not([aria-current='page']):hover {
+  background-image: var(--lg-float-bg);
+  box-shadow: inset 0 1px 0 var(--glass-highlight);
+}
+
+.nav-bubble {
+  background-color: transparent;
+  background-image: var(--lg-float-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--lg-pill-shadow);
 }
 
 /*
@@ -331,9 +380,37 @@ dialog.bg-surface,
  * above the text, so the text's contrast does not change, plus a one-pixel top highlight.
  */
 .bg-chip-on {
-  background-image: linear-gradient(180deg, rgb(255 255 255 / 0.1), rgb(255 255 255 / 0) 45%);
-  --tw-inset-shadow: inset 0 1px 0 rgb(255 255 255 / 0.3);
-  box-shadow: var(--tw-inset-shadow), var(--tw-shadow, 0 0 #0000);
+  /* The website's dark sheen on "on" pills (GLASS-2): it fades out above the text's middle and
+     only darkens below, so the white text keeps its contrast. */
+  background-image: var(--lg-dark-sheen);
+  --tw-inset-shadow: inset 0 1px 0 rgb(255 255 255 / 0.42), inset 0 -3px 8px rgb(0 0 0 / 0.22);
+  box-shadow:
+    var(--tw-inset-shadow),
+    0 8px 18px -10px rgb(42 14 51 / 0.45);
+}
+
+/* The staff area stays flat (GLASS-2 keeps its buttons as they were). */
+[data-area='staff'] .button-main {
+  background-image: linear-gradient(180deg, var(--plum-from), var(--plum-to));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.35),
+    0 10px 22px -12px color-mix(in srgb, var(--plum-to) 70%, transparent);
+}
+
+[data-area='staff'] .button-glass {
+  background-image: linear-gradient(rgb(36 19 58 / 0.05), rgb(36 19 58 / 0.05));
+  box-shadow: inset 0 1px 0 var(--glass-highlight);
+}
+
+[data-area='staff'] .glass-pill {
+  background-image: none;
+}
+
+[data-area='staff'] .glass-float {
+  background-color: var(--surface);
+  background-image: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 
 [data-area='staff'] .bg-chip-on {
@@ -353,9 +430,114 @@ dialog.bg-surface,
   --tw-inset-shadow: inset 0 1px 0 var(--glass-highlight);
 }
 
-[data-area='staff'] .rounded-card.bg-surface.border-border {
+/*
+ * 3D liquid glass on every member card (GLASS-2; Robert, 11 Nov 2026: "the same on this app like
+ * on the main website"). The recipe is the website's .surface-card: white that thins downwards
+ * (--lg-card-bg), a strong blur of what lies behind, the bright rim, a white top edge, a soft
+ * inner shade along the bottom and a violet drop shadow. This reverses the 7 Nov 2026 rule of
+ * blur only on dialogs and pop-overs; to stay light on weaker devices the blur drops to 8 px
+ * under 1024 px wide, as the website does, and "Reduce transparency" turns it off. A link or
+ * button drawn as a card lifts its shadow on hover. The staff area stays flat.
+ */
+:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surface.border-border:not(
+    dialog,
+    .shadow-popover,
+    [data-area='staff'] *
+  ) {
+  background-color: transparent;
+  background-image: var(--lg-card-bg);
+  -webkit-backdrop-filter: var(--lg-blur);
+  backdrop-filter: var(--lg-blur);
+  box-shadow: var(--lg-card-shadow);
+  transition:
+    box-shadow 160ms ease-out,
+    border-color 160ms ease-out;
+}
+
+a:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surface.border-border:not(
+    dialog,
+    .shadow-popover,
+    [data-area='staff'] *
+  ):hover,
+button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surface.border-border:not(
+    dialog,
+    .shadow-popover,
+    [data-area='staff'] *
+  ):hover {
+  box-shadow: var(--lg-card-shadow-hover);
+}
+
+/* A card that tints on hover keeps doing so over its glass. */
+[class*='hover:bg-tint']:is(.rounded-card, [class*='rounded-[2']).bg-surface:not(
+    [data-area='staff'] *
+  ):hover {
+  background-color: var(--tint);
+}
+
+@media (max-width: 1023px) {
+  :is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surface.border-border:not(
+      dialog,
+      .shadow-popover,
+      [data-area='staff'] *
+    ) {
+    -webkit-backdrop-filter: blur(8px) saturate(140%);
+    backdrop-filter: blur(8px) saturate(140%);
+  }
+}
+
+[data-area='staff']
+  :is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surface.border-border {
   border-color: var(--border);
   --tw-inset-shadow: 0 0 #0000;
+}
+
+/*
+ * The big coloured bands are glass too (GLASS-2; Robert, 11 Nov 2026: "the big coloured sections,
+ * they also are in glass"). A deep band keeps its colour under the website's dark sheen, a white
+ * rim at 28% and the deep drop shadow, as the website's .cta-room does. A tinted band (gold, sage
+ * and the rest) keeps its tint under a white wash that thins downwards, a bright rim, a white top
+ * edge and a soft violet shadow, as the website's .tint-card does. Cards inside a deep band are
+ * clear glass: a faint white wash and a white top edge. Text colours stay as they are, so contrast
+ * is unchanged: the washes are at most 16% white over colours chosen for 7:1.
+ */
+.glass-band-deep,
+.rounded-3xl.bg-primary:not([data-area='staff'] *) {
+  background-image: var(--lg-dark-sheen);
+  border: 1px solid rgb(255 255 255 / 0.28);
+  box-shadow: var(--lg-dark-shadow);
+}
+
+.glass-band-tint,
+:is(.rounded-card, .rounded-2xl, [class*='rounded-[2']).bg-tint:not([data-area='staff'] *) {
+  background-image: linear-gradient(180deg, rgb(255 255 255 / 0.4), rgb(255 255 255 / 0) 65%);
+  border: 1px solid rgb(255 255 255 / 0.75);
+  box-shadow: var(--lg-card-shadow);
+}
+
+.glass-band-inner {
+  background-image: linear-gradient(180deg, rgb(255 255 255 / 0.1), rgb(255 255 255 / 0.03));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.3);
+}
+
+/*
+ * At night the deep band is white (the monochrome night makes --primary white), so it takes the
+ * light glass recipe instead of the dark sheen, and its gold first button, white at night too,
+ * becomes the main button (GLASS-2 break test: it vanished white on white).
+ */
+[data-theme='night'] :is(.glass-band-deep, .rounded-3xl.bg-primary) {
+  background-image: linear-gradient(180deg, rgb(255 255 255 / 0.4), rgb(255 255 255 / 0) 65%);
+  border-color: rgb(255 255 255 / 0.75);
+  box-shadow: var(--lg-card-shadow);
+}
+
+[data-theme='night'] .glass-band-inner {
+  background-image: none;
+  box-shadow: none;
+}
+
+[data-theme='night'] .band-first-on-dark {
+  background-image: linear-gradient(180deg, var(--plum-from), var(--plum-to));
+  color: var(--on-plum);
 }
 
 /*
@@ -456,8 +638,24 @@ dialog.bg-surface,
     backdrop-filter: none;
   }
 
-  .glass-float {
+  .glass-float,
+  .nav-bubble {
     background-color: var(--surface);
+    background-image: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  /* The cards' 3D glass turns solid: the colour it looks like, no blur (GLASS-2). */
+  :is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surface.border-border:not(
+      dialog,
+      .shadow-popover,
+      [data-area='staff'] *
+    ) {
+    background-image: none;
+    background-color: var(--surface);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 }
 
