@@ -65,7 +65,7 @@ select throws_ok($$ select public.finish_rules_walkthrough() $$, '42501', null,
 reset role;
 select is(
   (select count(*) from public.cms_versions
-   where content_kind = 'help_page' and market_code = 'RO' and status = 'published'
+   where content_kind = 'help_page' and market_code is null and status = 'published'
      and entry_key like 'rules-walkthrough-%'),
   8::bigint, 'the four cards are published in English and Romanian');
 select is(

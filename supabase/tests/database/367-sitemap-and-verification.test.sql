@@ -20,9 +20,12 @@ create function pg_temp.story_path() returns text language sql as $$
   select '/s/' || slug from public.stories where id = '00000000-0000-4000-9000-000000000001';
 $$;
 
-select ok(pg_temp.listed('/') and pg_temp.listed('/discover') and pg_temp.listed('/help'),
+-- LOCALISE-1: website pages are listed at /<country>/<language>/..., for each open market.
+select ok(pg_temp.listed('/ro/ro') and pg_temp.listed('/ro/en') and pg_temp.listed('/discover')
+    and pg_temp.listed('/ro/ro/help') and pg_temp.listed('/ro/en/help'),
   'the home page, Discover and the help centre are listed');
-select ok(pg_temp.listed('/help/getting-started'), 'a live help page is listed');
+select ok(pg_temp.listed('/ro/ro/help/getting-started') and pg_temp.listed('/ro/en/help/getting-started'),
+  'a live help page is listed');
 select ok(pg_temp.listed(pg_temp.story_path()), 'a public story is listed, with its page address');
 
 -- Who a story is for decides whether it is listed.
@@ -40,7 +43,7 @@ update public.stories set deleted_at = null where id = '00000000-0000-4000-9000-
 update public.cms_versions
 set content = content || '{"search": {"title": "", "description": "", "hidden": true}}'::jsonb
 where content_kind = 'help_page' and entry_key = 'getting-started';
-select ok(not pg_temp.listed('/help/getting-started'), 'a help page hidden from search engines is not listed');
+select ok(not pg_temp.listed('/ro/en/help/getting-started') and not pg_temp.listed('/ro/ro/help/getting-started'), 'a help page hidden from search engines is not listed');
 
 -- A landing page's search fields are checked in each language (S1-E11-38).
 select is(public.landing_search_problems(

@@ -32,11 +32,11 @@ grant execute on all functions in schema pg_temp to anon, authenticated;
 /* ---------- 1. The copy and its checks ---------- */
 
 select is((select public.cms_home_page_problems(content) from public.cms_versions
-           where content_kind = 'home_page' and entry_key = 'home' and market_code = 'RO'
+           where content_kind = 'home_page' and entry_key = 'home' and market_code is null
              and language_code = 'en' and user_id is null),
   '{}'::text[], 'version 1 in English has the bands and footer note, all within their limits');
 select is((select public.cms_home_page_problems(content) from public.cms_versions
-           where content_kind = 'home_page' and entry_key = 'home' and market_code = 'RO'
+           where content_kind = 'home_page' and entry_key = 'home' and market_code is null
              and language_code = 'ro' and user_id is null),
   '{}'::text[], 'and in Romanian');
 select ok((select bool_and(not (content::text ~* 'parent|părinte|consimț|consent'))

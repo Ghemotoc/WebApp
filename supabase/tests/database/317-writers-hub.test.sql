@@ -147,7 +147,7 @@ insert into guide_keys values
 
 select is(
   (select count(*) from public.cms_versions as versions join guide_keys using (entry_key)
-   where versions.content_kind = 'help_page' and versions.market_code = 'RO' and versions.status = 'published'),
+   where versions.content_kind = 'help_page' and versions.market_code is null and versions.status = 'published'),
   30::bigint, 'each of the fifteen guides is published in English and Romanian');
 select is(
   (select count(distinct content ->> 'section') from public.cms_versions as versions join guide_keys using (entry_key)
@@ -159,7 +159,7 @@ select is(
   2::bigint, 'the rights page is published in English and Romanian');
 select is(
   (select count(*) from public.cms_versions as versions
-   where versions.content_kind = 'help_page' and versions.market_code = 'RO'
+   where versions.content_kind = 'help_page' and versions.market_code is null
      and (versions.entry_key like 'how-to-%' or versions.entry_key = 'writers-rights')
      and cardinality(public.cms_content_problems(versions)) > 0),
   0::bigint, 'every guide passes the checks a page published from Staff › Website passes');

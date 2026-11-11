@@ -2057,7 +2057,7 @@ export type Database = {
           id: string;
           is_removal: boolean;
           language_code: string | null;
-          market_code: string;
+          market_code: string | null;
           published_at: string | null;
           show_from: string | null;
           show_until: string | null;
@@ -2076,7 +2076,7 @@ export type Database = {
           id?: string;
           is_removal?: boolean;
           language_code?: string | null;
-          market_code: string;
+          market_code?: string | null;
           published_at?: string | null;
           show_from?: string | null;
           show_until?: string | null;
@@ -2092,7 +2092,7 @@ export type Database = {
           id?: string;
           is_removal?: boolean;
           language_code?: string | null;
-          market_code?: string;
+          market_code?: string | null;
           published_at?: string | null;
           show_from?: string | null;
           show_until?: string | null;
@@ -12975,6 +12975,7 @@ export type Database = {
         };
         Returns: string;
       };
+      cms_fill_empty: { Args: { fallback: Json; wanted: Json }; Returns: Json };
       cms_home_page_problems: { Args: { page: Json }; Returns: string[] };
       cms_link_problems: {
         Args: { field_name: string; markdown: string; market: string };
@@ -12999,7 +13000,7 @@ export type Database = {
           id: string;
           is_removal: boolean;
           language_code: string | null;
-          market_code: string;
+          market_code: string | null;
           published_at: string | null;
           show_from: string | null;
           show_until: string | null;

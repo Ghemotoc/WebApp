@@ -8808,6 +8808,7 @@ declare
   live_content jsonb;
 begin
   perform public.require_website_staff();
+  market_code := nullif(btrim(market_code), '');
   language_code := nullif(btrim(language_code), '');
   -- Step 1: the home page always has a version; it is replaced, never removed.
   if content_kind = 'home_page' then
@@ -9903,7 +9904,9 @@ declare
   draft_id uuid;
 begin
   perform public.require_website_staff();
-  -- Step 1: the entry's place must make sense. An empty language means none (a notice).
+  -- Step 1: the entry's place must make sense. An empty country means every country (the shared
+  -- page); an empty language means none (a notice).
+  market_code := nullif(btrim(market_code), '');
   language_code := nullif(btrim(language_code), '');
   place_problem := public.cms_entry_problem(content_kind, entry_key, market_code, language_code);
   if place_problem is not null then
@@ -9915,8 +9918,8 @@ begin
     show_until = new_show_until, user_id = (select auth.uid())
   where versions.status = 'draft' and versions.content_kind = admin_save_cms_draft.content_kind
     and versions.entry_key = admin_save_cms_draft.entry_key
-    and versions.market_code = admin_save_cms_draft.market_code
-    and coalesce(versions.language_code, '') = coalesce(admin_save_cms_draft.language_code, '')
+    and versions.market_code is not distinct from admin_save_cms_draft.market_code
+    and versions.language_code is not distinct from admin_save_cms_draft.language_code
   returning versions.id into draft_id;
   if draft_id is null then
     insert into public.cms_versions (content_kind, entry_key, market_code, language_code, content, show_from, show_until, user_id)
@@ -18911,7 +18914,7 @@ CREATE TABLE IF NOT EXISTS "public"."cms_versions" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "content_kind" "text" NOT NULL,
     "entry_key" "text" NOT NULL,
-    "market_code" "text" NOT NULL,
+    "market_code" "text",
     "language_code" "text",
     "content" "jsonb" DEFAULT '{}'::"jsonb" NOT NULL,
     "status" "text" DEFAULT 'draft'::"text" NOT NULL,
@@ -18935,7 +18938,11 @@ ALTER TABLE "public"."cms_versions" OWNER TO "postgres";
 
 
 COMMENT ON TABLE "public"."cms_versions" IS 'kind: platform
-Every version of the website''s pages, notices, help pages and questions, per market and language (S1-E11-06, 10, 12). Staff-written site copy, not user content; user_id is the admin who saved it.';
+Every version of the website''s pages, notices, help pages and questions. One page per entry, translated per language; market_code is null for the shared page and set only for wording one country needs (S1-E11-06, 10, 12; LOCALISE-1). Staff-written site copy, not user content; user_id is the admin who saved it.';
+
+
+
+COMMENT ON COLUMN "public"."cms_versions"."market_code" IS 'The country this wording is for; null for the shared page every country sees (LOCALISE-1).';
 
 
 
@@ -18946,12 +18953,12 @@ CREATE OR REPLACE FUNCTION "public"."cms_content_problems"("version_row" "public
 declare
   body jsonb := version_row.content;
   problems text[] := array[]::text[];
-  market_languages text[];
+  notice_languages text[];
   language text;
 begin
   if version_row.content_kind = 'home_page' then
     -- A home page: its own fields, then its search fields (S1-E11-37).
-    return public.cms_home_page_problems(body) || public.cms_search_problems(body -> 'search');
+    problems := public.cms_home_page_problems(body) || public.cms_search_problems(body -> 'search');
   elsif version_row.content_kind = 'question' then
     -- A question: the question, the answer (safe Markdown) and where it shows.
     problems := problems || public.cms_text_problem(body ->> 'question', 'question', 160)
@@ -18966,19 +18973,42 @@ begin
       || public.cms_link_problems(body ->> 'body', version_row.market_code, 'body')
       || public.cms_search_problems(body -> 'search');
   else
-    -- A notice: the text in every language of its market (S1-E11-10 criterion 2), a type and
-    -- where it shows. Its link is one of our own pages, so a sponsor can't ride in on it.
-    select markets.languages into market_languages from public.markets where markets.country_code = version_row.market_code;
-    foreach language in array coalesce(market_languages, array[]::text[]) loop
-      problems := problems || public.cms_text_problem(body -> 'texts' ->> language, 'texts.' || language, 120);
-    end loop;
+    -- A notice: a country's notice needs the text in every language of that country (S1-E11-10
+    -- criterion 2); a shared notice needs English, and any other language only fits the length.
+    if version_row.market_code is null then
+      problems := problems || public.cms_text_problem(body -> 'texts' ->> 'en', 'texts.en', 120);
+      select array_agg(languages.code order by languages.code) into notice_languages
+      from public.languages where languages.is_interface and languages.code <> 'en';
+      foreach language in array coalesce(notice_languages, array[]::text[]) loop
+        if char_length(coalesce(body -> 'texts' ->> language, '')) > 120 then
+          problems := problems || ('texts.' || language || ':too_long');
+        end if;
+      end loop;
+    else
+      select markets.languages into notice_languages from public.markets where markets.country_code = version_row.market_code;
+      foreach language in array coalesce(notice_languages, array[]::text[]) loop
+        problems := problems || public.cms_text_problem(body -> 'texts' ->> language, 'texts.' || language, 120);
+      end loop;
+    end if;
     if coalesce(body ->> 'noticeType', '') not in ('news', 'contest', 'important') then problems := problems || 'noticeType:empty'::text; end if;
     if coalesce(body ->> 'showOn', '') not in ('all', 'home') then problems := problems || 'showOn:empty'::text; end if;
     if coalesce(body ->> 'link', '') <> '' then
       problems := problems || public.cms_link_problems('](' || (body ->> 'link') || ')', version_row.market_code, 'link');
     end if;
   end if;
-  return array_remove(problems, null);
+  problems := array_remove(problems, null);
+  -- LOCALISE-1: a translation of the shared page may leave fields empty once there is an English
+  -- page to fill them from.
+  if version_row.market_code is null and version_row.language_code is not null
+    and version_row.language_code <> 'en'
+    and exists (
+      select 1 from public.cms_versions as english
+      where english.content_kind = version_row.content_kind and english.entry_key = version_row.entry_key
+        and english.market_code is null and english.language_code = 'en' and not english.is_removal
+    ) then
+    problems := array(select problem from unnest(problems) as listed (problem) where problem not like '%:empty');
+  end if;
+  return problems;
 end;
 $$;
 
@@ -18998,9 +19028,13 @@ CREATE OR REPLACE FUNCTION "public"."cms_entry_problem"("wanted_kind" "text", "w
     when wanted_kind not in ('home_page', 'notice', 'help_page', 'question') then 'unknown_kind'
     when wanted_key !~ '^[a-z0-9][a-z0-9-]{0,59}$' then 'bad_address'
     when wanted_kind = 'home_page' and wanted_key <> 'home' then 'bad_address'
-    when not exists (select 1 from public.markets where country_code = wanted_market) then 'unknown_market'
+    when wanted_market is not null
+      and not exists (select 1 from public.markets where country_code = wanted_market) then 'unknown_market'
     when wanted_kind = 'notice' and wanted_language is not null then 'unknown_language'
-    when wanted_kind <> 'notice' and not exists (
+    when wanted_kind <> 'notice' and wanted_market is null and not exists (
+      select 1 from public.languages where code = wanted_language and is_interface
+    ) then 'unknown_language'
+    when wanted_kind <> 'notice' and wanted_market is not null and not exists (
       select 1 from public.markets
       where country_code = wanted_market and wanted_language = any (languages)
     ) then 'unknown_language'
@@ -19012,6 +19046,50 @@ ALTER FUNCTION "public"."cms_entry_problem"("wanted_kind" "text", "wanted_key" "
 
 
 COMMENT ON FUNCTION "public"."cms_entry_problem"("wanted_kind" "text", "wanted_key" "text", "wanted_market" "text", "wanted_language" "text") IS 'Internal: a reason word when a draft''s place is wrong (S1-E11-06).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."cms_fill_empty"("wanted" "jsonb", "fallback" "jsonb") RETURNS "jsonb"
+    LANGUAGE "plpgsql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+begin
+  -- Step 1: nothing to fill from, or nothing written: the other side as it is.
+  if fallback is null then return wanted; end if;
+  if wanted is null or wanted = 'null'::jsonb then return fallback; end if;
+  -- Step 2: an empty text takes the English text.
+  if jsonb_typeof(wanted) = 'string' then
+    if btrim(wanted #>> '{}') = '' and jsonb_typeof(fallback) = 'string' then return fallback; end if;
+    return wanted;
+  end if;
+  -- Step 3: an object is filled field by field, the English page's extra fields included.
+  if jsonb_typeof(wanted) = 'object' and jsonb_typeof(fallback) = 'object' then
+    return (
+      select coalesce(jsonb_object_agg(fields.name, public.cms_fill_empty(wanted -> fields.name, fallback -> fields.name)), '{}'::jsonb)
+      from (
+        select jsonb_object_keys(wanted) as name
+        union
+        select jsonb_object_keys(fallback)
+      ) as fields
+    );
+  end if;
+  -- Step 4: a list is filled item by item.
+  if jsonb_typeof(wanted) = 'array' and jsonb_typeof(fallback) = 'array' then
+    return (
+      select coalesce(jsonb_agg(public.cms_fill_empty(wanted -> places.position, fallback -> places.position) order by places.position), '[]'::jsonb)
+      from generate_series(0, greatest(jsonb_array_length(wanted), jsonb_array_length(fallback)) - 1) as places (position)
+    );
+  end if;
+  -- Step 5: anything else (a number, a switch, a different shape) stays as written.
+  return wanted;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."cms_fill_empty"("wanted" "jsonb", "fallback" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."cms_fill_empty"("wanted" "jsonb", "fallback" "jsonb") IS 'Internal: a translation with its empty fields filled from the English page (LOCALISE-1).';
 
 
 
@@ -19092,11 +19170,11 @@ CREATE OR REPLACE FUNCTION "public"."cms_link_problems"("markdown" "text", "mark
     select (regexp_matches(coalesce(markdown, ''), '\]\((/[^)\s]*)\)', 'g'))[1] as address
   ) as links
   where case
-    -- A help page must exist in the same market, live or drafted.
+    -- A help page must exist as a shared page or in the same country, live or drafted.
     when links.address ~ '^/help/[a-z0-9-]+$' then not exists (
       select 1 from public.cms_versions as versions
       where versions.content_kind = 'help_page'
-        and versions.market_code = market
+        and (versions.market_code is null or versions.market_code = market)
         and versions.entry_key = substring(links.address from '^/help/([a-z0-9-]+)$')
     )
     -- A landing page must exist and not be archived (CONTESTS-13a2c).
@@ -19125,8 +19203,8 @@ CREATE OR REPLACE FUNCTION "public"."cms_live_content_of"("version_row" "public"
   select live.content
   from public.cms_live_versions(version_row.content_kind) as live
   where live.entry_key = version_row.entry_key
-    and live.market_code = version_row.market_code
-    and coalesce(live.language_code, '') = coalesce(version_row.language_code, '');
+    and live.market_code is not distinct from version_row.market_code
+    and live.language_code is not distinct from version_row.language_code;
 $$;
 
 
@@ -20104,15 +20182,27 @@ CREATE OR REPLACE FUNCTION "public"."contest_rules_are_published"("target" "publ
   select target.rules_page_key is not null
     and cardinality(target.market_codes) > 0
     and not exists (
-      -- Every market and both languages, with no gap among the live help pages.
       select 1
-      from unnest(target.market_codes) as markets (market_code)
-      cross join unnest(array['ro', 'en']) as languages (language_code)
+      from unnest(target.market_codes) as wanted (market_code)
       where not exists (
+        -- English, shared or the country's own.
         select 1 from public.cms_live_versions('help_page') as live
         where live.entry_key = target.rules_page_key
-          and live.market_code = markets.market_code
-          and live.language_code = languages.language_code
+          and (live.market_code is null or live.market_code = wanted.market_code)
+          and live.language_code = 'en'
+      )
+      and exists (
+        -- Or no gap among the country's own languages.
+        select 1
+        from public.markets
+        cross join unnest(markets.languages) as spoken (language_code)
+        where markets.country_code = wanted.market_code
+          and not exists (
+            select 1 from public.cms_live_versions('help_page') as live
+            where live.entry_key = target.rules_page_key
+              and (live.market_code is null or live.market_code = wanted.market_code)
+              and live.language_code = spoken.language_code
+          )
       )
     );
 $$;
@@ -20121,7 +20211,7 @@ $$;
 ALTER FUNCTION "public"."contest_rules_are_published"("target" "public"."contests") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."contest_rules_are_published"("target" "public"."contests") IS 'Internal: true when the contest rules help page is live in ro and en in every market of the contest (S1-E11-15).';
+COMMENT ON FUNCTION "public"."contest_rules_are_published"("target" "public"."contests") IS 'Internal: true when the contest rules help page is live for every market of the contest, in English or in each of the market''s languages (S1-E11-15; LOCALISE-1).';
 
 
 
@@ -44847,23 +44937,37 @@ CREATE OR REPLACE FUNCTION "public"."sitemap_entries"() RETURNS TABLE("path" "te
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
+  with places as (
+    -- Each open market in each of its languages: "/ro/ro", "/ro/en".
+    select markets.country_code, spoken.language_code,
+      '/' || lower(markets.country_code) || '/' || spoken.language_code as prefix
+    from public.markets
+    cross join unnest(markets.languages) as spoken (language_code)
+    where markets.is_open
+  )
   (
-    -- Step 1: the site's own public screens. The home page and Discover change every day.
-    select '/'::text, public.romania_today()
+    -- Step 1: the home page and the help centre at each place, and Discover. The home page and
+    -- Discover change every day.
+    select places.prefix, public.romania_today() from places
     union all
     select '/discover', public.romania_today()
     union all
-    select '/help', null::date
+    select places.prefix || '/help', null::date from places
     union all
-    -- Step 2: each help page with at least one live version staff didn't hide (S1-E11-37).
-    select '/help/' || live.entry_key, max(live.show_from)
-    from public.cms_live_versions('help_page') as live
+    -- Step 2: each help page a visitor there can read (in that language or in English), unless
+    -- staff hid it (S1-E11-37).
+    select places.prefix || '/help/' || live.entry_key, max(live.show_from)
+    from places
+    join public.cms_live_versions('help_page') as live
+      on (live.market_code is null or live.market_code = places.country_code)
+      and live.language_code in (places.language_code, 'en')
     where (live.content -> 'search' -> 'hidden') is distinct from 'true'::jsonb
-    group by live.entry_key
+    group by places.prefix, live.entry_key
     union all
     -- Step 3: each landing page with a live version, unless staff hid it (S1-E11-38).
-    select '/c/' || pages.slug, live.show_from
-    from public.landing_pages as pages
+    select places.prefix || '/c/' || pages.slug, live.show_from
+    from places
+    cross join public.landing_pages as pages
     cross join lateral public.landing_page_live_version(pages.id) as live
     where pages.archived_at is null and live.id is not null
       and (live.content -> 'search' -> 'hidden') is distinct from 'true'::jsonb
@@ -50988,44 +51092,53 @@ CREATE OR REPLACE FUNCTION "public"."website_content"("wanted_kind" "text", "vis
     SET "search_path" TO ''
     AS $$
 declare
-  chosen_market text;
-  market_languages text[];
-  chosen_language text;
+  country text;
+  language text;
 begin
-  -- Step 1: the visitor's own market, when it has live content of this kind.
-  select markets.country_code, markets.languages into chosen_market, market_languages
-  from public.markets
-  where markets.country_code = upper(coalesce(visitor_country, ''))
-    and exists (
-      select 1 from public.cms_live_versions(wanted_kind) as live
-      where live.market_code = markets.country_code
-    );
-  -- Step 2: otherwise Romania in English (decided 17 Oct 2026, 19:16).
-  if chosen_market is null then
-    chosen_market := 'RO';
-    chosen_language := 'en';
-  elsif wanted_kind = 'notice' then
-    -- A notice holds every language of its market, so the wanted one is there when the market has it.
-    chosen_language := case when wanted_language = any (market_languages) then wanted_language else market_languages[1] end;
-  else
-    -- Step 3: the wanted language when it has content here, else the market's first that has.
-    select candidate.code into chosen_language
-    from unnest(market_languages) with ordinality as candidate (code, position)
-    where exists (
-      select 1 from public.cms_live_versions(wanted_kind) as live
-      where live.market_code = chosen_market and live.language_code = candidate.code
-    )
-    order by (candidate.code = wanted_language) desc, candidate.position
-    limit 1;
+  -- Step 1: a country we know, or none; a language we know, or English.
+  select markets.country_code into country
+  from public.markets where markets.country_code = upper(coalesce(visitor_country, ''));
+  select languages.code into language
+  from public.languages where languages.code = wanted_language;
+  language := coalesce(language, 'en');
+  -- Step 2: a notice holds every language in one row; it shows in the wanted language when it has
+  -- that text, else in English.
+  if wanted_kind = 'notice' then
+    return query
+    select live.entry_key, live.market_code,
+      case when btrim(coalesce(live.content -> 'texts' ->> language, '')) <> '' then language else 'en' end,
+      live.content, live.show_from, live.show_until
+    from public.cms_live_versions('notice') as live
+    where live.market_code is null or live.market_code = country
+    order by live.entry_key;
+    return;
   end if;
-  -- Step 4: the live rows for that market and language (notices for the whole market).
+  -- Step 3: every other kind: per entry, the best row, then its empty fields from English.
   return query
-  select live.entry_key, live.market_code, coalesce(live.language_code, chosen_language),
-    live.content, live.show_from, live.show_until
-  from public.cms_live_versions(wanted_kind) as live
-  where live.market_code = chosen_market
-    and (live.language_code is null or live.language_code = chosen_language)
-  order by live.entry_key;
+  with candidates as (
+    select live.*
+    from public.cms_live_versions(wanted_kind) as live
+    where (live.market_code is null or live.market_code = country)
+      and live.language_code in (language, 'en')
+  ),
+  chosen as (
+    select distinct on (candidates.entry_key) candidates.*
+    from candidates
+    order by candidates.entry_key, (candidates.language_code = language) desc, (candidates.market_code is not null) desc
+  ),
+  english as (
+    select distinct on (candidates.entry_key) candidates.entry_key as english_key, candidates.content as english_content
+    from candidates
+    where candidates.language_code = 'en'
+    order by candidates.entry_key, (candidates.market_code is not null) desc
+  )
+  select chosen.entry_key, chosen.market_code, chosen.language_code,
+    case when chosen.language_code = 'en' then chosen.content
+      else public.cms_fill_empty(chosen.content, english.english_content) end,
+    chosen.show_from, chosen.show_until
+  from chosen
+  left join english on english.english_key = chosen.entry_key
+  order by chosen.entry_key;
 end;
 $$;
 
@@ -51033,7 +51146,7 @@ $$;
 ALTER FUNCTION "public"."website_content"("wanted_kind" "text", "visitor_country" "text", "wanted_language" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."website_content"("wanted_kind" "text", "visitor_country" "text", "wanted_language" "text") IS 'The live website content of one kind for a visitor''s country and language, with the fallbacks (S1-E11-06).';
+COMMENT ON FUNCTION "public"."website_content"("wanted_kind" "text", "visitor_country" "text", "wanted_language" "text") IS 'The live website content of one kind for a visitor''s country and language: the wanted language before English, the country''s wording before the shared page, empty fields from English (S1-E11-06; LOCALISE-1).';
 
 
 
@@ -56910,7 +57023,7 @@ CREATE INDEX "cms_versions_market_code_fk_idx" ON "public"."cms_versions" USING 
 
 
 
-CREATE UNIQUE INDEX "cms_versions_one_draft" ON "public"."cms_versions" USING "btree" ("content_kind", "entry_key", "market_code", COALESCE("language_code", ''::"text")) WHERE ("status" = 'draft'::"text");
+CREATE UNIQUE INDEX "cms_versions_one_draft" ON "public"."cms_versions" USING "btree" ("content_kind", "entry_key", COALESCE("market_code", ''::"text"), COALESCE("language_code", ''::"text")) WHERE ("status" = 'draft'::"text");
 
 
 
@@ -65440,6 +65553,10 @@ GRANT ALL ON FUNCTION "public"."cms_content_problems"("version_row" "public"."cm
 
 
 REVOKE ALL ON FUNCTION "public"."cms_entry_problem"("wanted_kind" "text", "wanted_key" "text", "wanted_market" "text", "wanted_language" "text") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."cms_fill_empty"("wanted" "jsonb", "fallback" "jsonb") FROM PUBLIC;
 
 
 
