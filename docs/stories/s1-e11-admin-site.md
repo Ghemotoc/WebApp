@@ -429,6 +429,49 @@ As staff building a page, I want to start from a ready-made layout and copy bloc
   - Given a page, when staff press Copy page, then a new draft with its own address is made and nothing goes live until it is published.
   - Given every copy, when it is made, then it is in the audit log: Copy page and a page started from a layout are logged when made; a copied block is part of the draft and is logged when the page is published, as every publish is.
 
+##### S1-E11-36 Story search and share details
+
+As a writer, I want my story to show up well in search engines and share cards without filling anything extra, so that readers find it and know what it is before they open it.
+
+- **Priority:** Should · **Size:** S · **Depends on:** S1-E4-04 · **Bundle:** SEO-1a
+- **Added:** 11 Nov 2026, 08:35 to 08:41 (Robert, Builder thread): a story's only search details are its title, pen name (or username), blurb, category and tags. Every rating is treated the same; the rating is never shown; 18+ adds "For mature readers".
+- **Acceptance criteria:**
+  - Given a shared or searched story page, when a robot reads it without JavaScript, then it gets the title, a description of "by pen name · category · blurb", a keywords tag with the category and tags, a canonical link and CreativeWork data with `genre` and `keywords`.
+  - Given a 16+ story, when its preview is built, then it is the same as an All ages story's and never names the rating.
+  - Given an 18+ story, when its preview is built, then it adds "For mature readers" ("Pentru cititori maturi") and never names the rating.
+  - Given a 16+ or 18+ story, when a visitor who isn't logged in opens or shares it, then they see its details but never its text, a shared passage or a shared picture (Q6).
+
+##### S1-E11-37 Search and share fields for website pages
+
+As an admin, I want to set each website page's search title, description and share picture, so that it looks right in search results and when shared.
+
+- **Priority:** Should · **Size:** M · **Depends on:** S1-E11-06, S1-E11-34 · **Bundle:** SEO-1b
+- **Acceptance criteria:**
+  - Given the home page, a help page or a landing page, when an admin edits it, then they can set a search title, a description, a share picture with alt text (through the picture check) and "Hide from search engines", stored with each page version.
+  - Given a field is empty, when the page is served, then a sensible default is used (the page's heading and the site's default description and picture).
+  - Given a public page, when a robot reads it without JavaScript, then the server has written its title, description, canonical, hreflang (with x-default), Open Graph and Twitter tags.
+
+##### S1-E11-38 Sitemap, robots file and organisation data
+
+As the founder, I want search engines to find every public page and nothing private, so that the site is indexed well and safely.
+
+- **Priority:** Should · **Size:** S · **Depends on:** S1-E11-36, S1-E11-37 · **Bundle:** SEO-1c
+- **Acceptance criteria:**
+  - Given the site, when /sitemap.xml is read, then it lists the published website pages, landing pages and public stories, and nothing private, unlisted, class-only, app-only, hidden by moderation or marked "Hide from search engines".
+  - Given /robots.txt, when it is read, then it points to the sitemap and blocks staff, account and editor addresses.
+  - Given the home page, when it is read, then it carries Organization data with the name and links from the brand config.
+  - Given an admin, when they enter a Google Search Console or Bing verification code, then it is added to the home page as a meta tag (no scripts, CLAUDE.md rule 7).
+
+##### S1-E11-39 Search and sharing screen
+
+As an admin, I want one screen that shows what every public page looks like in search and when shared, with what is missing, so that I can fix problems before they cost readers.
+
+- **Priority:** Should · **Size:** M · **Depends on:** S1-E11-37, S1-E11-38 · **Bundle:** SEO-1d
+- **Acceptance criteria:**
+  - Given Staff › Search and sharing, when an admin opens it, then each public page is listed with warnings: no description, a title outside 30 to 60 characters, a description outside 70 to 160, no share picture, a picture without alt text, or not exactly one main heading.
+  - Given a page, when the admin opens it, then they see a search result preview and a share card preview.
+  - Given someone without the Website area, when they open the screen or call its function, then they are refused.
+
 ##### S1-E11-QA Epic check: Admin site
 
 As the founder, I want every story in this epic tested together end to end so that the pieces work with each other, not just alone.

@@ -2,10 +2,10 @@
  * NoPreviewNotice: what a visitor who isn't logged in sees on a 16+ or 18+ story or chapter
  * (story S1-E4-04; board 3.8, "Other state · rated 16+ or 18+").
  *
- * The rule: signed-out visitors count as under 16 (decided 23 Oct 2026, Q6), so they see the
- * story's title and nothing of its text, and nothing written on a cover beyond the title (the
- * S1-E4-04 criterion). The board also shows the blurb; the story's criterion wins, so the blurb
- * stays hidden too (docs/board-fixes.md). The notice names the story's real rating, and offers
+ * The rule: signed-out visitors count as under 16 (decided 23 Oct 2026, Q6), so they see nothing
+ * of the story's text. They do see the story's details, its title, writer and blurb, like any
+ * other story (S1-E11-36; Robert, 11 Nov 2026, replacing the S1-E4-04 "title only" criterion, so
+ * board 3.8's blurb is right again). The notice names the story's real rating, and offers
  * "Log in to check if you can read it". No doodles and no icon: a plain notice.
  * Who uses it: ChapterReaderPage and StoryPage, when their read answered nothing and
  * useStoryPreview() found a hidden rating.
@@ -31,6 +31,19 @@ export function NoPreviewNotice({ preview }: { preview: HiddenStoryPreview }) {
       >
         {preview.title}
       </h1>
+      {preview.writerName === null ? null : (
+        <p className="m-0 text-base text-meta">
+          {t('linkPreview.byWriter', { name: preview.writerName })}
+        </p>
+      )}
+      {preview.blurb === '' ? null : (
+        <p
+          lang={preview.languageCode}
+          className="m-0 max-w-[640px] text-base leading-relaxed text-body"
+        >
+          {preview.blurb}
+        </p>
+      )}
       <section
         aria-labelledby="no-preview-title"
         className="flex max-w-[640px] flex-col items-start gap-2 rounded-card border border-border bg-tint px-6 py-5"

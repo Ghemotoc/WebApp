@@ -22,10 +22,13 @@ const chapterPreview: LinkPreview = {
   rating: 'all_ages',
   languageCode: 'ro',
   hidesText: false,
+  isListed: true,
   blurb: 'Bunica notează vremea.',
   writerName: 'Lia Scrie',
   cover: { kind: 'drawn', background: 'sky' },
   chapterTitle: 'Caietele bunicii',
+  categorySlug: null,
+  tags: [],
   isChapter: true,
   passage: null,
   picture: null,
@@ -104,21 +107,28 @@ describe('the preview card', () => {
     );
   });
 
-  it('shows only the title and the rating for a 16+ or 18+ story (Q6)', () => {
-    const hidden: LinkPreview = {
+  it('adds the category, and keeps the blurb for every rating, never naming the rating (S1-E11-36)', () => {
+    const withCategory: LinkPreview = { ...chapterPreview, categorySlug: 'poetry' };
+    expect(previewText(withCategory).description).toBe(
+      'de Lia Scrie · Poezie · Bunica notează vremea.',
+    );
+    const sixteen: LinkPreview = { ...withCategory, rating: '16_plus', hidesText: true };
+    expect(previewText(sixteen).description).toBe('de Lia Scrie · Poezie · Bunica notează vremea.');
+    expect(previewColour(sixteen)).toBe('sky');
+  });
+
+  it('says "For mature readers" on an 18+ story only', () => {
+    const eighteen: LinkPreview = {
       ...chapterPreview,
+      languageCode: 'en',
       rating: '18_plus',
       hidesText: true,
-      blurb: null,
-      writerName: null,
-      cover: null,
-      chapterTitle: null,
+      categorySlug: 'fiction',
     };
-    expect(previewText(hidden)).toEqual({
-      title: 'Stația meteo',
-      description: 'Clasificată 18+. Conectează-te ca să vezi dacă o poți citi.',
-    });
-    expect(previewColour(hidden)).toBe('plum');
+    expect(previewText(eighteen).description).toBe(
+      'by Lia Scrie · For mature readers · Fiction · Bunica notează vremea.',
+    );
+    expect(previewText(eighteen).description).not.toContain('18');
   });
 
   it('takes the drawn cover’s colour, and plum for an automatic cover', () => {
@@ -151,12 +161,16 @@ describe('the page a shared link serves', () => {
     expect(response.headers.get('ETag')).toBeNull();
   });
 
-  it('describes a story page for search engines with its title, blurb and pen name only', async () => {
+  it('describes a story page for search engines with its title, blurb, pen name, category and tags', async () => {
     const { response, html } = await open('/s/statia-meteo', {
       ...chapterPreview,
       chapterTitle: null,
       isChapter: false,
+      categorySlug: 'fiction',
+      tags: ['familie', 'vreme'],
     });
+    expect(html).toContain('<meta name="keywords" content="Ficțiune, familie, vreme">');
+    expect(html).toContain('<link rel="canonical" href="https://example.com/s/statia-meteo">');
     expect(response.headers.get('X-Robots-Tag')).toBeNull();
     expect(html).not.toContain('noindex');
     const json = /<script type="application\/ld\+json">(.*)<\/script>/.exec(html)?.[1] ?? '{}';
@@ -166,9 +180,24 @@ describe('the page a shared link serves', () => {
       name: 'Stația meteo',
       description: 'Bunica notează vremea.',
       author: { '@type': 'Person', name: 'Lia Scrie' },
+      genre: 'Ficțiune',
+      keywords: 'familie, vreme',
       inLanguage: 'ro',
       url: 'https://example.com/s/statia-meteo',
     });
+  });
+
+  it('previews an unlisted story from its link but keeps it out of search engines', async () => {
+    const { response, html } = await open('/s/statia-meteo', {
+      ...chapterPreview,
+      chapterTitle: null,
+      isChapter: false,
+      isListed: false,
+    });
+    expect(html).toContain('<meta property="og:title" content="Stația meteo">');
+    expect(html).toContain('<meta name="robots" content="noindex">');
+    expect(html).not.toContain('application/ld+json');
+    expect(response.headers.get('X-Robots-Tag')).toBe('noindex');
   });
 
   it('keeps a title with HTML in it as text, in the tags and in the structured data', async () => {

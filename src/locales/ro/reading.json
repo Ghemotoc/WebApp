@@ -134,7 +134,7 @@
   },
   "linkPreview": {
     "byWriter": "de {{name}}",
-    "hiddenDescription": "Clasificată {{rating}}. Conectează-te ca să vezi dacă o poți citi.",
+    "matureReaders": "Pentru cititori maturi",
     "picture": "Imagine: {{alt}}",
     "quoted": "„{{passage}}”"
   },

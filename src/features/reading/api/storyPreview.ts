@@ -4,8 +4,9 @@
  * Who calls it: hooks/useStoryPreview.ts, for the "No preview for this story" notice on the
  * reader and the story page.
  * What it calls next: get_link_preview(story_slug, chapter_code), the same function that fills a
- * shared link's Open Graph tags (server/link-preview.ts). For 16+ and 18+ stories it gives the
- * title and the rating only: signed-out visitors count as under 16 (decided 23 Oct 2026, Q6).
+ * shared link's Open Graph tags (server/link-preview.ts). Every story gives the same details, the
+ * title, blurb and writer's name (S1-E11-36, Robert, 11 Nov 2026); for 16+ and 18+ it says the
+ * text is hidden, because signed-out visitors count as under 16 (decided 23 Oct 2026, Q6).
  * Never the user ID and never chapter text.
  */
 import type { AppSupabaseClient } from '@/lib/supabase';
@@ -18,6 +19,10 @@ export interface HiddenStoryPreview {
   title: string;
   rating: HiddenRating;
   languageCode: string;
+  /** The story's blurb, or an empty text. */
+  blurb: string;
+  /** The writer's pen name or username, or null. */
+  writerName: string | null;
 }
 
 /** The part of get_link_preview()'s JSON this module reads. */
@@ -26,6 +31,8 @@ interface PreviewRow {
   rating: string;
   language_code: string;
   hides_text: boolean;
+  blurb: string | null;
+  writer: { display_name: string } | null;
 }
 
 /**
@@ -34,7 +41,7 @@ interface PreviewRow {
  * @param client - the shared Supabase client
  * @param storySlug - the story's public address
  * @param chapterCode - the chapter's code, or null for the story page
- * @returns the title and rating of a 16+ or 18+ story; null for anything else (an unknown
+ * @returns the title, rating, blurb and writer of a 16+ or 18+ story; null for anything else (an unknown
  *   address, or a story the visitor could open, which the caller treats as "not available")
  * Errors: throws with Supabase's message when the database can't be reached.
  */
@@ -53,5 +60,11 @@ export async function fetchHiddenStoryPreview(
   const row = data as unknown as PreviewRow;
   if (!row.hides_text) return null;
   if (row.rating !== '16_plus' && row.rating !== '18_plus') return null;
-  return { title: row.title, rating: row.rating, languageCode: row.language_code };
+  return {
+    title: row.title,
+    rating: row.rating,
+    languageCode: row.language_code,
+    blurb: row.blurb ?? '',
+    writerName: row.writer?.display_name ?? null,
+  };
 }

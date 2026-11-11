@@ -128,13 +128,13 @@
     "promptBody": "Reading and writing on {{productName}} are free, with no tracking ads. For now {{productName}} is a test for invited adults: if you have an invitation, log in, or join with the link in your invitation.",
     "appsNote": "{{productName}} is on the web for now. The desktop and phone apps come after the web launch.",
     "noPreviewTitle": "No preview for this story",
-    "noPreviewBody_16_plus": "The writer rated it 16+. We don’t know the age of visitors who aren’t logged in, so they see the title but none of the text.",
-    "noPreviewBody_18_plus": "The writer rated it 18+. We don’t know the age of visitors who aren’t logged in, so they see the title but none of the text.",
+    "noPreviewBody_16_plus": "The writer rated it 16+. We don’t know the age of visitors who aren’t logged in, so they see the story’s details but none of the text.",
+    "noPreviewBody_18_plus": "The writer rated it 18+. We don’t know the age of visitors who aren’t logged in, so they see the story’s details but none of the text.",
     "noPreviewLogIn": "Log in to check if you can read it"
   },
   "linkPreview": {
     "byWriter": "by {{name}}",
-    "hiddenDescription": "Rated {{rating}}. Log in to check if you can read it.",
+    "matureReaders": "For mature readers",
     "picture": "Picture: {{alt}}",
     "quoted": "“{{passage}}”"
   },

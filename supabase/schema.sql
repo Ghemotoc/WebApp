@@ -24990,44 +24990,47 @@ CREATE OR REPLACE FUNCTION "public"."get_link_preview"("story_slug" "text", "cha
 declare
   story public.stories;
   chapter public.chapters;
-  hides_text boolean;
   chapter_part jsonb;
 begin
   -- Step 1: a live story with at least one chapter published once, not hidden by a moderator.
+  -- A private story is the writer's alone (NEW-1) and a class-only story is the class's
+  -- (S1-E8-11): neither has a public preview (S1-E11-36).
   select * into story from public.stories
   where stories.slug = story_slug and stories.deleted_at is null and stories.first_published_at is not null;
-  if not found or public.is_moderated_away('story', story.id) then
+  if not found or story.visibility = 'private' or story.class_only
+     or public.is_moderated_away('story', story.id) then
     return null;
   end if;
   -- S1-E11-08: a link preview never shows a hidden title or cover.
   story := public.story_as_shown(story);
-  -- Step 2: 16+ and 18+ show nothing beyond the title to visitors who aren't logged in (Q6).
-  hides_text := story.rating in ('16_plus', '18_plus');
-  -- Step 3: the chapter, when the address names one; it must be readable.
+  -- Step 2: the chapter, when the address names one; it must be readable.
   if chapter_code is not null then
     select * into chapter from public.chapters
     where chapters.code = chapter_code and chapters.story_id = story.id;
     if not found or not public.chapter_is_readable(chapter.id) then
       return null;
     end if;
-    chapter_part := jsonb_build_object('code', chapter.code,
-      'title', case when hides_text then null else chapter.published_title end);
+    chapter_part := jsonb_build_object('code', chapter.code, 'title', chapter.published_title);
   end if;
-  -- Step 4: the preview, with the writer's pen name or username and never the user ID.
+  -- Step 3: the preview. The same details for every rating (Robert, 11 Nov 2026); only the text
+  -- stays closed to visitors on 16+ and 18+ (Q6), which `hides_text` tells the caller.
   return jsonb_build_object(
     'slug', story.slug,
     'title', story.title,
     'rating', story.rating,
     'language_code', story.language_code,
-    'hides_text', hides_text,
-    'blurb', case when hides_text then null else story.blurb end,
-    'writer', case when hides_text then null else (
-      select jsonb_build_object(
+    'hides_text', story.rating in ('16_plus', '18_plus'),
+    -- Only a public story is for search engines; an unlisted one is shared by its link only.
+    'is_listed', story.visibility = 'public',
+    'blurb', story.blurb,
+    'writer', (select jsonb_build_object(
         'display_name', public.story_writer_name(story.id, profiles.handle, profiles.pen_name))
-      from public.profiles where profiles.id = story.user_id) end,
-    'cover', case when hides_text then null else jsonb_build_object(
+      from public.profiles where profiles.id = story.user_id),
+    'cover', jsonb_build_object(
       'kind', story.cover_kind, 'design', story.cover_design,
-      'background', story.cover_background, 'accent', story.cover_accent) end,
+      'background', story.cover_background, 'accent', story.cover_accent),
+    'category_slug', (select categories.slug from public.categories where categories.id = story.category_id),
+    'tags', public.story_search_tags(story.id, story.language_code),
     'chapter', chapter_part);
 end;
 $$;
@@ -25036,7 +25039,7 @@ $$;
 ALTER FUNCTION "public"."get_link_preview"("story_slug" "text", "chapter_code" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."get_link_preview"("story_slug" "text", "chapter_code" "text") IS 'What a link preview may show a visitor who is not logged in: title and rating always, the rest only for All ages and 13+ (S1-E4-04).';
+COMMENT ON FUNCTION "public"."get_link_preview"("story_slug" "text", "chapter_code" "text") IS 'S1-E4-04, S1-E11-36: a story''s public details for link previews and search tags, the same for every rating; never the user ID or chapter text.';
 
 
 
@@ -47513,6 +47516,34 @@ COMMENT ON FUNCTION "public"."story_search_rank"("target" "public"."stories", "t
 
 
 
+CREATE OR REPLACE FUNCTION "public"."story_search_tags"("target_story_id" "uuid", "story_language" "text") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(jsonb_agg(chosen.name order by chosen.added_at), '[]'::jsonb)
+  from (
+    select coalesce(
+             (select tag_names.name from public.tag_names
+              where tag_names.tag_id = tags.id and tag_names.language_code = story_language
+              limit 1),
+             tags.name) as name,
+           story_tags.created_at as added_at
+    from public.story_tags
+    join public.tags on tags.id = story_tags.tag_id
+    where story_tags.story_id = target_story_id and tags.status = 'approved'
+    order by story_tags.created_at
+    limit 10
+  ) as chosen;
+$$;
+
+
+ALTER FUNCTION "public"."story_search_tags"("target_story_id" "uuid", "story_language" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_search_tags"("target_story_id" "uuid", "story_language" "text") IS 'S1-E11-36: a story''s approved tags in its language, at most ten, for link previews and search tags.';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."story_search_text"("target_story_id" "uuid") RETURNS "text"
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -68344,6 +68375,10 @@ REVOKE ALL ON FUNCTION "public"."story_search_from_tag"() FROM PUBLIC;
 
 
 REVOKE ALL ON FUNCTION "public"."story_search_rank"("target" "public"."stories", "term" "text") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."story_search_tags"("target_story_id" "uuid", "story_language" "text") FROM PUBLIC;
 
 
 

@@ -179,7 +179,9 @@ test.describe('epic check: reading (S1-E4-QA)', () => {
       await expect(
         kid.getByRole('heading', { name: 'This chapter isn’t available' }),
       ).toBeVisible();
-      expect(await kid.content()).not.toContain('Bunica');
+      // Nothing of the story on the page they see. The shared link's head tags carry the title for
+      // every rating (Robert, 11 Nov 2026; S1-E11-36), so the check reads the page, not <head>.
+      await expect(kid.locator('body')).not.toContainText('Bunica');
     }
     await page.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
     await page.goto(firstChapter);
