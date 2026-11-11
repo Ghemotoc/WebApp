@@ -53254,11 +53254,11 @@ Companies and public bodies that sponsor campaigns (S1-E12-02). No personal data
 
 CREATE TABLE IF NOT EXISTS "public"."staff_custom_role_areas" (
     "custom_role_id" "uuid" NOT NULL,
+    "user_id" "uuid" NOT NULL,
     "area" "text" NOT NULL,
     "access" "text" NOT NULL,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    "user_id" "uuid" NOT NULL,
     CONSTRAINT "staff_custom_role_areas_access_check" CHECK (("access" = ANY (ARRAY['view'::"text", 'act'::"text"])))
 );
 
