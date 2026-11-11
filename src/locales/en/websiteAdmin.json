@@ -25,12 +25,19 @@
     "listPages": "Genre and tag pages"
   },
   "picker": {
-    "market": "Market",
-    "language": "Language of the content"
+    "label": "Language and country",
+    "language": "Language",
+    "languageHint": "Fields left empty show the English text.",
+    "market": "Country wording",
+    "everyCountry": "Every country",
+    "marketHint": "One page shows in every country. Pick a country only to write wording that country alone needs."
   },
   "languages": {
     "ro": "Română",
-    "en": "English"
+    "en": "English",
+    "sv": "Svenska",
+    "da": "Dansk",
+    "nb": "Norsk bokmål"
   },
   "showFrom": "Show from",
   "showFromHint": "Today goes live within a minute. A later date goes live at 00:00 Romanian time that day, and the current version stays up until then. Save draft changes nothing on the website.",

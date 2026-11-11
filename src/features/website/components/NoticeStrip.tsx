@@ -14,6 +14,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router';
 
+import { pathWithoutPlace } from '@/lib/websitePlace';
 import { noticeContentSchema, type NoticeContent, type NoticeType } from '@/schemas/websiteContent';
 
 import { useWebsiteContent, type ParsedEntry } from '../hooks/useWebsiteContent';
@@ -31,7 +32,7 @@ const toneClasses: Record<NoticeType, string> = {
  * Picks the notice to show on this page.
  *
  * @param notices - the live notices
- * @param isHomePage - whether this is "/"
+ * @param isHomePage - whether this is the home page ("/se/sv", LOCALISE-1)
  * @returns the latest one that fits, or undefined
  */
 function noticeForPage(notices: ParsedEntry<NoticeContent>[], isHomePage: boolean) {
@@ -49,7 +50,7 @@ export function NoticeStrip() {
   const location = useLocation();
   const { entries } = useWebsiteContent('notice', noticeContentSchema);
   const [closedNow, setClosedNow] = useState<string | null>(null);
-  const notice = noticeForPage(entries, location.pathname === '/');
+  const notice = noticeForPage(entries, pathWithoutPlace(location.pathname) === '/');
   if (notice === undefined) return null;
   const closeKey = `${notice.marketCode}:${notice.entryKey}:${notice.showFrom}`;
   if (closedNow === closeKey || isNoticeClosed(closeKey)) return null;

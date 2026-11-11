@@ -10,7 +10,7 @@
  * readingMinutes and formatRomaniaDate.
  */
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router';
+import { useParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
@@ -21,6 +21,7 @@ import { helpPageContentSchema } from '@/schemas/websiteContent';
 import { useWebsiteContent, type ParsedEntry } from '../hooks/useWebsiteContent';
 import { withBrand } from '../lib/brandText';
 import { readingMinutes } from '../lib/cmsPlainText';
+import { WebsiteLink } from './WebsiteLink';
 
 import { CmsMarkdown } from './CmsMarkdown';
 
@@ -41,17 +42,17 @@ function HelpBreadcrumb({ title, section }: { title: string; section: string }) 
     <nav aria-label={t('website.help.breadcrumb')}>
       <ol className="m-0 flex list-none flex-wrap items-center gap-x-2 gap-y-1 p-0 text-sm">
         <li>
-          <Link to="/help" className={crumbLinkClass}>
+          <WebsiteLink to="/help" className={crumbLinkClass}>
             {t('website.help.eyebrow')}
-          </Link>
+          </WebsiteLink>
         </li>
         <li aria-hidden="true" className="text-meta">
           /
         </li>
         <li>
-          <Link to="/help" className={crumbLinkClass}>
+          <WebsiteLink to="/help" className={crumbLinkClass}>
             {section}
-          </Link>
+          </WebsiteLink>
         </li>
         <li aria-hidden="true" className="text-meta">
           /
@@ -119,9 +120,12 @@ export function HelpPageView() {
             {t('website.help.notFoundHeading')}
           </h1>
           <p className="m-0 text-body">{t('website.help.notFound')}</p>
-          <Link to="/help" className="inline-flex min-h-6 w-fit items-center text-link underline">
+          <WebsiteLink
+            to="/help"
+            className="inline-flex min-h-6 w-fit items-center text-link underline"
+          >
             {t('website.help.back')}
-          </Link>
+          </WebsiteLink>
         </>
       )}
     </PageContainer>

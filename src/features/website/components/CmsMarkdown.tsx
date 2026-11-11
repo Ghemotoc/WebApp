@@ -10,11 +10,12 @@
  */
 import type { ComponentPropsWithoutRef } from 'react';
 import Markdown, { type Components } from 'react-markdown';
-import { Link } from 'react-router';
 
 import { brand } from '@/config/brand';
 import { fillBrandTokens } from '@/features/legal/lib/fillBrandTokens';
 import { isAllowedLink } from '@/lib/safe-links';
+
+import { WebsiteLink } from './WebsiteLink';
 
 /** What the component needs. */
 interface CmsMarkdownProps {
@@ -33,9 +34,9 @@ function CmsLink({ href, children }: ComponentPropsWithoutRef<'a'>) {
   const linkClass = 'text-link underline hover:text-link-hover';
   if (address.startsWith('/')) {
     return (
-      <Link to={address} className={linkClass}>
+      <WebsiteLink to={address} className={linkClass}>
         {children}
-      </Link>
+      </WebsiteLink>
     );
   }
   if (!isAllowedLink(address)) return <>{children}</>;

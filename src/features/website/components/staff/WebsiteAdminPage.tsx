@@ -11,7 +11,8 @@
  * what search engines and share cards show for every public page) and Branding (/staff/website/branding, BRAND-1a: the
  * logo and emblem for each theme) and Seasonal looks (/staff/website/seasonal, G12a: the days
  * each seasonal look shows) and Genre and tag pages (/staff/website/list-pages, G12b: the band
- * colour of each genre and tag page). The website tabs start with the market and language picker. Plain
+ * colour of each genre and tag page). The website tabs have the language picker at the side
+ * (PagePlacePicker, LOCALISE-1): one page per entry, edited in the picked language. Plain
  * components (staff screens). The seasonal doodle schedule (S1-E11-11) was retired in bundle
  * NO-DOODLES (Robert, 9 Nov 2026); Seasonal looks replaces it. Staff without
  * the website area see why; the database refuses their changes anyway (decided 17 Oct 2026, 19:19).
@@ -31,13 +32,15 @@ import { BrandingTab } from '@/features/branding/components/staff/BrandingTab';
 import { LandingPagesTab } from '@/features/landing-pages/components/staff/LandingPagesTab';
 import { InterfaceTextTab } from '@/features/interface-text/components/InterfaceTextTab';
 
+import { everyCountry } from '../../api/websiteContentStore';
+import { mainContentLanguage, useInterfaceLanguages } from '../../hooks/useInterfaceLanguages';
 import { registerWebsiteAdminTranslations } from '../../registerWebsiteAdminTranslations';
 
 import { HelpEditor } from './HelpEditor';
 import { HomePageEditor } from './HomePageEditor';
 import { ListBackgroundsTab } from './ListBackgroundsTab';
-import { MarketLanguagePicker } from './MarketLanguagePicker';
 import { NoticeEditor } from './NoticeEditor';
+import { PagePlacePicker } from './PagePlacePicker';
 import { SearchSharingTab } from './SearchSharingTab';
 import { SeasonalLooksTab } from './SeasonalLooksTab';
 
@@ -124,33 +127,41 @@ function WebsiteEditors({ area }: { area: string | undefined }) {
 }
 
 /**
- * The market and language picker and the editor for a website tab.
+ * The language picker at the side and the editor for a website tab (LOCALISE-1).
+ *
+ * The editor opens on the shared page (every country) in English, the main language. On a narrow
+ * screen the picker sits above the editor.
  *
  * @returns the editing area
  */
 function MarketEditors({ area }: { area: string | undefined }) {
-  const [place, setPlace] = useState({
-    marketCode: 'RO',
-    language: 'ro',
-    marketLanguages: ['ro', 'en'],
-  });
+  const interfaceLanguages = useInterfaceLanguages();
+  const [place, setPlace] = useState<{
+    marketCode: string;
+    language: string;
+    languages: string[] | null;
+  }>({ marketCode: everyCountry, language: mainContentLanguage, languages: null });
+  // Until a place is picked, the languages are the interface's own (they arrive after the page).
+  const placeLanguages = place.languages ?? interfaceLanguages;
   return (
-    <div className="flex flex-col gap-6">
-      <MarketLanguagePicker
+    <div className="grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:items-start">
+      <PagePlacePicker
         marketCode={place.marketCode}
         language={place.language}
         isLanguageShown={area !== 'notices'}
-        onChange={(marketCode, language, marketLanguages) =>
-          setPlace({ marketCode, language, marketLanguages })
+        onChange={(marketCode, language, languages) =>
+          setPlace({ marketCode, language, languages })
         }
       />
-      {area === undefined && (
-        <HomePageEditor marketCode={place.marketCode} language={place.language} />
-      )}
-      {area === 'notices' && (
-        <NoticeEditor marketCode={place.marketCode} marketLanguages={place.marketLanguages} />
-      )}
-      {area === 'help' && <HelpEditor marketCode={place.marketCode} language={place.language} />}
+      <div className="flex min-w-0 flex-col gap-6">
+        {area === undefined && (
+          <HomePageEditor marketCode={place.marketCode} language={place.language} />
+        )}
+        {area === 'notices' && (
+          <NoticeEditor marketCode={place.marketCode} marketLanguages={placeLanguages} />
+        )}
+        {area === 'help' && <HelpEditor marketCode={place.marketCode} language={place.language} />}
+      </div>
     </div>
   );
 }

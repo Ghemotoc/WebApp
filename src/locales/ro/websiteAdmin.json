@@ -25,12 +25,19 @@
     "listPages": "Pagini de gen și etichetă"
   },
   "picker": {
-    "market": "Piața",
-    "language": "Limba conținutului"
+    "label": "Limba și țara",
+    "language": "Limba",
+    "languageHint": "Câmpurile lăsate goale arată textul în engleză.",
+    "market": "Text pentru o țară",
+    "everyCountry": "Fiecare țară",
+    "marketHint": "O pagină apare în fiecare țară. Alege o țară numai ca să scrii un text de care are nevoie doar țara aceea."
   },
   "languages": {
     "ro": "Română",
-    "en": "English"
+    "en": "English",
+    "sv": "Svenska",
+    "da": "Dansk",
+    "nb": "Norsk bokmål"
   },
   "showFrom": "Se afișează de la",
   "showFromHint": "Data de azi apare în cel mult un minut. O dată mai târzie apare la 00:00, ora României, în ziua aceea, iar versiunea de acum rămâne până atunci. Salvarea ciornei nu schimbă nimic pe site.",

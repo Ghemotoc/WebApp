@@ -1164,31 +1164,70 @@ const writeRoutes: RouteObject[] = [
   },
 ];
 
-/**
- * The website's own pages, all loaded when opened (QA-6): the home page, help, landing pages and
- * the Legal centre. Their copy comes from the CMS or the legal documents, not the app's text.
- */
-const websiteRoutes: RouteObject[] = [
+const websitePages: RouteObject[] = [
   // The public home page, all of its copy from the website CMS (S1-E5-08, S1-E11-06).
+  {
+    index: true,
+    HydrateFallback: () => null,
+    lazy: async () => ({
+      Component: (await import('@/features/website/components/WebsiteHomePage')).WebsiteHomePage,
+    }),
+  },
+  // Help: the CMS help pages and questions in the address's language (S1-E11-12).
   lazyPage(
-    '/',
-    async () => (await import('@/features/website/components/WebsiteHomePage')).WebsiteHomePage,
-  ),
-  // Help: the CMS help pages and questions for the visitor's market and language (S1-E11-12).
-  lazyPage(
-    '/help',
+    'help',
     async () => (await import('@/features/website/components/HelpCentrePage')).HelpCentrePage,
   ),
   lazyPage(
-    '/help/:slug',
+    'help/:slug',
     async () => (await import('@/features/website/components/HelpPageView')).HelpPageView,
   ),
   // S1-E11-14: a landing page for a contest, campaign or information, from the CMS.
   lazyPage(
-    '/c/:slug',
+    'c/:slug',
     async () =>
       (await import('@/features/landing-pages/components/LandingPageScreen')).LandingPageScreen,
   ),
+  // Anything else under a place ("/ro/en/nothing-here").
+  { path: '*', element: <NotFoundPage /> },
+];
+
+/**
+ * Loads the forwarder for an older website address.
+ *
+ * @param path - the older address ("/", "/help")
+ * @returns the route
+ */
+function forwardedPage(path: string): RouteObject {
+  return lazyPage(
+    path,
+    async () => (await import('@/features/website/components/WebsiteForward')).WebsiteForward,
+  );
+}
+
+/**
+ * The public website: the home page, Help, landing pages and the Legal centre.
+ *
+ * LOCALISE-1 (Robert, 11 Nov 2026): the CMS pages live at "/<country>/<language>/…", such as
+ * "/se/sv/help", one page translated per language. The older addresses ("/", "/help",
+ * "/help/<name>", "/c/<name>") forward to the visitor's country and language. The Legal centre
+ * keeps its one address: its texts are documents, not CMS pages, and the gates that keep it open
+ * during maintenance and account closing match on "/legal".
+ */
+const websiteRoutes: RouteObject[] = [
+  {
+    path: '/:country/:language',
+    HydrateFallback: () => null,
+    lazy: async () => ({
+      Component: (await import('@/features/website/components/LocalisedWebsiteLayout'))
+        .LocalisedWebsiteLayout,
+    }),
+    children: websitePages,
+  },
+  forwardedPage('/'),
+  forwardedPage('/help'),
+  forwardedPage('/help/:slug'),
+  forwardedPage('/c/:slug'),
   // The Legal centre (S1-E14-01): /legal opens the terms; each document has its own address.
   { path: '/legal', element: <Navigate to="/legal/terms" replace /> },
   lazyPage(
