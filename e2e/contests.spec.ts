@@ -175,6 +175,9 @@ test.describe('Contests (S1-E11-15)', () => {
     await expect(page.getByRole('group', { name: 'Contests' })).toBeVisible();
     await page.getByRole('button', { name: 'Enter The trial contest' }).click();
     await expect(page.getByText('This story is entered.')).toBeVisible();
+    // Reduce motion stops the fade-in, so axe measures the colours the page settles on: a CI run
+    // caught the settings text mid-fade and read it as low contrast (as in checkScreen).
+    await page.emulateMedia({ reducedMotion: 'reduce' });
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])
       .analyze();

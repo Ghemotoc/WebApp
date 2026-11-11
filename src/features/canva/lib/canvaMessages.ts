@@ -6,7 +6,7 @@
  * after Return, the reason a PictureUploadError carries (pictureFailureMessage, S1-E3-09).
  */
 import { pictureFailureMessage } from '@/features/writing/lib/pictureFailure';
-import { PictureUploadError } from '@/features/pictures/api/pictures';
+import { PictureUploadError } from '@/features/pictures/api/pictureUploads';
 
 import { CanvaError } from '../api/canva';
 

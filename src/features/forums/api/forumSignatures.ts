@@ -12,13 +12,15 @@
  * uploadSignaturePicture(), pictureViewOf() and deleteStoredPicture() in the pictures feature.
  */
 import {
-  deleteStoredPicture,
   pictureFromJson,
   pictureViewOf,
-  uploadSignaturePicture,
   type PictureView,
   type StoredPicture,
 } from '@/features/pictures/api/pictures';
+import {
+  deleteStoredPicture,
+  uploadSignaturePicture,
+} from '@/features/pictures/api/pictureUploads';
 import type { Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
 

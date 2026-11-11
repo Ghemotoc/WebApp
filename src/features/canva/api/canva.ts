@@ -8,7 +8,7 @@
  * (uploadPicture, which removes location data and asks for the picture check) and
  * update_my_story() to make it the story's cover.
  */
-import { uploadPicture } from '@/features/pictures/api/pictures';
+import { uploadPicture } from '@/features/pictures/api/pictureUploads';
 import type { AppSupabaseClient } from '@/lib/supabase';
 import {
   CANVA_STORY_HEADER,

@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
-import { pictureTypes } from '@/features/pictures/api/pictures';
+import { pictureTypes } from '@/features/pictures/api/pictureUploads';
 import { useChapterPictureUpload } from '@/features/pictures/hooks/useChapterPictures';
 
 import { pictureFailureMessage } from '../lib/pictureFailure';
