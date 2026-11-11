@@ -58,6 +58,10 @@ export interface PrivacySettings {
    * choice otherwise (off until chosen).
    */
   checksPersonalDetails: boolean;
+  /**
+   * "Suggestions from my reading" (S1-E15-06): on for adults and off under 18 until chosen.
+   */
+  suggestsFromReading: boolean;
 }
 
 /** not_needed (16 and over), agreed, asked (email sent, no answer yet) or none. */
@@ -75,6 +79,7 @@ interface PrivacySettingsRow {
   can_ask_parent: boolean;
   shows_reader_level: boolean;
   checks_personal_details: boolean;
+  suggests_from_reading: boolean;
 }
 
 /**
@@ -99,6 +104,7 @@ export async function fetchPrivacySettings(client: AppSupabaseClient): Promise<P
     canAskParent: row.can_ask_parent,
     showsReaderLevel: row.shows_reader_level,
     checksPersonalDetails: row.checks_personal_details,
+    suggestsFromReading: row.suggests_from_reading,
   };
 }
 
@@ -230,6 +236,23 @@ export async function saveReaderLevelVisibility(
  * @param shouldCheck - true to ask "Post anyway?" before text that looks like contact details
  * @throws Error with Supabase's message when the save is refused (under 18 it stays on)
  */
+/**
+ * Turns "Suggestions from my reading" on or off (S1-E15-06). Off takes the caller's finished
+ * stories out of the next night's totals and hides "Because you read" at once.
+ *
+ * @throws Error with Supabase's message when the save is refused
+ */
+export async function saveSuggestsFromReading(
+  client: AppSupabaseClient,
+  shouldSuggest: boolean,
+): Promise<void> {
+  const { error } = await client.rpc('set_suggests_from_reading', {
+    should_suggest: shouldSuggest,
+  });
+  if (error !== null)
+    throw new Error(`Could not save Suggestions from my reading: ${error.message}`);
+}
+
 export async function saveChecksPersonalDetails(
   client: AppSupabaseClient,
   shouldCheck: boolean,

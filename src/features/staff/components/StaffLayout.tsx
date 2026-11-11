@@ -75,7 +75,8 @@ export function StaffLayout() {
   if (!isKnown) return null;
 
   // Step 2: a visitor or a member sees the refusal page, with no staff bar at all.
-  const isStaff = access.roles.length > 0;
+  // A custom role counts as staff too (S1-E11-33, CMS-2a).
+  const isStaff = access.roles.length > 0 || access.holdsCustomRole;
   if (!isStaff) {
     return <StaffAccessRefused reason={isSignedIn ? 'not_staff' : 'signed_out'} />;
   }

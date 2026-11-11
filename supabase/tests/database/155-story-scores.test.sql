@@ -45,6 +45,9 @@ where id = '00000000-0000-4000-9000-000000000001';
 update public.stories set first_published_at = now() - interval '30 days', last_chapter_published_at = now() - interval '30 days'
 where id = '00000000-0000-4000-9000-000000000002';
 
+-- The seed's follow of seed01 (teen_17) would count since S1-E15-05; these tests start from none.
+delete from public.follows_stories where story_id = '00000000-0000-4000-9000-000000000001';
+
 /* ---------- 1. The job and its signals ---------- */
 
 select ok(public.compute_story_scores() >= 2, 'the job scores the readable stories (criterion 1)');

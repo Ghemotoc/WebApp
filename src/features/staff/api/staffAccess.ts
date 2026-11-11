@@ -36,6 +36,8 @@ export interface StaffAccess {
   areas: StaffAreaAccess[];
   /** The staff roles the person holds; empty for a member. */
   roles: Enums<'staff_role'>[];
+  /** True when the person holds a custom staff role (S1-E11-33, CMS-2a), with or without a role. */
+  holdsCustomRole: boolean;
   /** The person's username, for the staff bar; null before one is chosen. */
   handle: string | null;
   /** Whether staff powers wait for a Google Workspace sign-in (S1-E2-07b). */
@@ -84,6 +86,13 @@ export async function fetchStaffAccess(
   // Step 2: the person's own roles, for the label under their name.
   const rolesResult = await client.from('staff_roles').select('role').eq('user_id', userId);
   if (rolesResult.error !== null) throw new Error(rolesResult.error.message);
+  // A custom role makes someone staff too (S1-E11-33); their own holder rows are readable to them.
+  const customResult = await client
+    .from('staff_custom_role_holders')
+    .select('id')
+    .eq('user_id', userId)
+    .limit(1);
+  if (customResult.error !== null) throw new Error(customResult.error.message);
 
   // Step 3: whether staff powers wait for a Google Workspace sign-in (S1-E2-07b).
   const workspaceResult = await client.rpc('my_staff_sign_in');
@@ -108,6 +117,7 @@ export async function fetchStaffAccess(
       access: row.access === 'act' ? 'act' : 'view',
     })),
     roles: rolesResult.data.map((row) => row.role),
+    holdsCustomRole: customResult.data.length > 0,
     handle: profileResult.data?.handle ?? null,
     workspace: toWorkspaceSignIn(workspaceResult.data),
     sessionEnded: endedResult.data === true,

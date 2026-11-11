@@ -68,7 +68,8 @@
     "youAreHere": "You are here, {{percent}}%",
     "youAreHereLink": "You are here, {{percent}}% through chapter {{number}}. Go back to that place",
     "appOnly": "{{writer}} publishes this story in the app only. The chapter list is here, and the chapters open in the app.",
-    "appOnlyPill": "In the app only"
+    "appOnlyPill": "In the app only",
+    "rankingPlace": "#{{place}} in {{category}}"
   },
   "reader": {
     "documentTitle": "{{chapter}} · {{story}}",

@@ -1304,6 +1304,33 @@ export type Database = {
           },
         ];
       };
+      chapter_finishes: {
+        Row: {
+          chapter_id: string;
+          read_on: string;
+          total: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          chapter_id: string;
+          read_on: string;
+          total?: number;
+        };
+        Update: {
+          chapter_id?: string;
+          read_on?: string;
+          total?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'chapter_finishes_chapter_id_fkey';
+            columns: ['chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       chapter_likes: {
         Row: {
           chapter_id: string;
@@ -2841,6 +2868,34 @@ export type Database = {
             referencedColumns: ['id'];
           },
         ];
+      };
+      daily_activity_totals: {
+        Row: {
+          active_members: number;
+          activity_on: string;
+          created_at: string;
+          minutes_in_app: number;
+          minutes_reading: number;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          active_members?: number;
+          activity_on: string;
+          created_at?: string;
+          minutes_in_app?: number;
+          minutes_reading?: number;
+          updated_at?: string;
+        };
+        Update: {
+          active_members?: number;
+          activity_on?: string;
+          created_at?: string;
+          minutes_in_app?: number;
+          minutes_reading?: number;
+          updated_at?: string;
+        };
+        Relationships: [];
       };
       daily_metrics: {
         Row: {
@@ -4905,6 +4960,39 @@ export type Database = {
         };
         Relationships: [];
       };
+      member_last_active: {
+        Row: {
+          active_on: string;
+          created_at: string;
+          minute_noted_at: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          active_on: string;
+          created_at?: string;
+          minute_noted_at?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          active_on?: string;
+          created_at?: string;
+          minute_noted_at?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'member_last_active_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: true;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       messages: {
         Row: {
           body: string;
@@ -5834,6 +5922,7 @@ export type Database = {
           signature: string | null;
           signature_picture_id: string | null;
           suggest_me: boolean | null;
+          suggests_from_reading: boolean | null;
           teacher_badge_since: string | null;
           updated_at: string;
           age_check_can_ask_manual: boolean | null;
@@ -5909,6 +5998,7 @@ export type Database = {
           signature?: string | null;
           signature_picture_id?: string | null;
           suggest_me?: boolean | null;
+          suggests_from_reading?: boolean | null;
           teacher_badge_since?: string | null;
           updated_at?: string;
         };
@@ -5963,6 +6053,7 @@ export type Database = {
           signature?: string | null;
           signature_picture_id?: string | null;
           suggest_me?: boolean | null;
+          suggests_from_reading?: boolean | null;
           teacher_badge_since?: string | null;
           updated_at?: string;
         };
@@ -7761,6 +7852,138 @@ export type Database = {
           },
         ];
       };
+      staff_custom_role_areas: {
+        Row: {
+          access: string;
+          area: string;
+          created_at: string;
+          custom_role_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          access: string;
+          area: string;
+          created_at?: string;
+          custom_role_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          access?: string;
+          area?: string;
+          created_at?: string;
+          custom_role_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'staff_custom_role_areas_custom_role_id_fkey';
+            columns: ['custom_role_id'];
+            isOneToOne: false;
+            referencedRelation: 'staff_custom_roles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'staff_custom_role_areas_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      staff_custom_role_holders: {
+        Row: {
+          created_at: string;
+          custom_role_id: string;
+          granted_by_user_id: string | null;
+          id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          custom_role_id: string;
+          granted_by_user_id?: string | null;
+          id?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          custom_role_id?: string;
+          granted_by_user_id?: string | null;
+          id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'staff_custom_role_holders_custom_role_id_fkey';
+            columns: ['custom_role_id'];
+            isOneToOne: false;
+            referencedRelation: 'staff_custom_roles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'staff_custom_role_holders_granted_by_user_id_fkey';
+            columns: ['granted_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'staff_custom_role_holders_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      staff_custom_roles: {
+        Row: {
+          created_at: string;
+          deleted_at: string | null;
+          description: string;
+          id: string;
+          name: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          deleted_at?: string | null;
+          description?: string;
+          id?: string;
+          name: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          deleted_at?: string | null;
+          description?: string;
+          id?: string;
+          name?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'staff_custom_roles_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       staff_interns: {
         Row: {
           created_at: string;
@@ -8850,6 +9073,49 @@ export type Database = {
             columns: ['user_id'];
             isOneToOne: false;
             referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      story_pairs: {
+        Row: {
+          counted_at: string;
+          created_at: string;
+          paired_story_id: string;
+          readers: number;
+          story_id: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          counted_at?: string;
+          created_at?: string;
+          paired_story_id: string;
+          readers: number;
+          story_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          counted_at?: string;
+          created_at?: string;
+          paired_story_id?: string;
+          readers?: number;
+          story_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'story_pairs_paired_story_id_fkey';
+            columns: ['paired_story_id'];
+            isOneToOne: false;
+            referencedRelation: 'stories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'story_pairs_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: false;
+            referencedRelation: 'stories';
             referencedColumns: ['id'];
           },
         ];
@@ -10217,6 +10483,10 @@ export type Database = {
         Args: { idea_body: string; idea_kind: string; story_slug: string };
         Returns: Json;
       };
+      add_to_activity_totals: {
+        Args: { app_minutes: number; for_day: string; new_member: number; reading_minutes: number };
+        Returns: undefined;
+      };
       admin_abuse_image_evidence: { Args: { target_case_id: string }; Returns: Json };
       admin_account_notes: {
         Args: { page_number?: number; page_size?: number; target_user_id: string };
@@ -10500,6 +10770,7 @@ export type Database = {
         Args: { new_page_type: string; new_slug: string };
         Returns: string;
       };
+      admin_custom_roles: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_data_request: { Args: { target_request_id: string }; Returns: Json };
       admin_data_request_copy_target: {
         Args: { target_request_id: string };
@@ -10739,6 +11010,7 @@ export type Database = {
       };
       admin_house_ads: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_import_classics: { Args: { list_rows: Json }; Returns: Json };
+      admin_investor_numbers: { Args: { months?: number }; Returns: Json };
       admin_invite_home_comment: { Args: { target_comment: string }; Returns: string };
       admin_invite_writer_spotlight: {
         Args: { first_day: string; reason_en: string; reason_ro: string; target_handle: string };
@@ -11120,6 +11392,10 @@ export type Database = {
         };
         Returns: undefined;
       };
+      admin_remove_custom_role: {
+        Args: { reason_given: string; target_role_id: string };
+        Returns: boolean;
+      };
       admin_remove_name_word: { Args: { target_word_id: string }; Returns: boolean };
       admin_remove_nudge_word: { Args: { target_word_id: string }; Returns: boolean };
       admin_remove_on_call_shift: {
@@ -11235,6 +11511,16 @@ export type Database = {
         Returns: string;
       };
       admin_save_contest: { Args: { details: Json; target_contest_id: string }; Returns: string[] };
+      admin_save_custom_role: {
+        Args: {
+          new_areas: Json;
+          new_description: string;
+          new_name: string;
+          reason_given: string;
+          target_role_id: string;
+        };
+        Returns: string;
+      };
       admin_save_forum: {
         Args: {
           accent: Database['public']['Enums']['forum_accent'];
@@ -11352,6 +11638,15 @@ export type Database = {
       admin_set_contest_placing: {
         Args: { target_entry_id: string; wanted_placing: string };
         Returns: undefined;
+      };
+      admin_set_custom_role_holder: {
+        Args: {
+          reason_given: string;
+          should_hold: boolean;
+          target_role_id: string;
+          target_user_id: string;
+        };
+        Returns: boolean;
       };
       admin_set_evidence_hold: {
         Args: { evidence_id: string; reason_given: string; should_hold: boolean };
@@ -11933,6 +12228,7 @@ export type Database = {
         }[];
       };
       banned_email_hash: { Args: { email: string }; Returns: string };
+      because_you_read: { Args: Record<PropertyKey, never>; Returns: Json };
       begin_age_check: {
         Args: { signature: string; threshold: number; yoti_session_id: string };
         Returns: Json;
@@ -12064,6 +12360,7 @@ export type Database = {
           signature: string | null;
           signature_picture_id: string | null;
           suggest_me: boolean | null;
+          suggests_from_reading: boolean | null;
           teacher_badge_since: string | null;
           updated_at: string;
         };
@@ -12646,7 +12943,9 @@ export type Database = {
       comment_wait_minutes: { Args: { author_id: string }; Returns: number };
       compliance_times_problem: { Args: { completed: string; received: string }; Returns: string };
       compute_daily_metrics: { Args: { for_day?: string }; Returns: number };
+      compute_investor_metrics: { Args: { for_day: string }; Returns: number };
       compute_story_country_scores: { Args: Record<PropertyKey, never>; Returns: number };
+      compute_story_pairs: { Args: Record<PropertyKey, never>; Returns: number };
       compute_story_scores: { Args: Record<PropertyKey, never>; Returns: number };
       confirm_opening_list: { Args: { token: string }; Returns: string };
       confirm_teacher_email: { Args: { token: string }; Returns: Json };
@@ -12809,6 +13108,7 @@ export type Database = {
       count_links: { Args: { body: string }; Returns: number };
       count_words: { Args: { body: string }; Returns: number };
       country_has_ranking: { Args: { country: string }; Returns: boolean };
+      counts_for_metrics: { Args: { person_id: string }; Returns: boolean };
       cover_upload_allowed: { Args: { object_name: string }; Returns: boolean };
       create_bible_entry: { Args: { entry_title: string; section_id: string }; Returns: Json };
       create_chapter: { Args: { story_slug: string }; Returns: Json };
@@ -12864,6 +13164,19 @@ export type Database = {
         Args: { character_name: string; character_role: string; story_slug: string };
         Returns: Json;
       };
+      custom_role_area_in_reach: {
+        Args: { wanted_access: string; wanted_area: string };
+        Returns: boolean;
+      };
+      custom_role_area_problem: { Args: { new_areas: Json }; Returns: string };
+      custom_role_areas_json: { Args: { target_role_id: string }; Returns: Json };
+      custom_role_assignable_areas: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          area: string;
+        }[];
+      };
+      custom_role_in_reach: { Args: { target_role_id: string }; Returns: boolean };
       data_export_held_tables: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -13006,6 +13319,13 @@ export type Database = {
           >;
         };
         Returns: string;
+      };
+      day_totals_for_investors: {
+        Args: { for_day: string };
+        Returns: {
+          metric: string;
+          value: number;
+        }[];
       };
       decide_case: {
         Args: {
@@ -13547,6 +13867,7 @@ export type Database = {
         Args: { brand_names: string[]; file_placeholders: string[]; new_text: string };
         Returns: string[];
       };
+      investor_months: { Args: { months: number }; Returns: Json };
       invite_code_hash: { Args: { code: string }; Returns: string };
       invite_new_adults_to_age_check: { Args: Record<PropertyKey, never>; Returns: number };
       is_active_member: { Args: Record<PropertyKey, never>; Returns: boolean };
@@ -14060,6 +14381,7 @@ export type Database = {
           signature: string | null;
           signature_picture_id: string | null;
           suggest_me: boolean | null;
+          suggests_from_reading: boolean | null;
           teacher_badge_since: string | null;
           updated_at: string;
         };
@@ -14090,6 +14412,7 @@ export type Database = {
         Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
         Returns: Database['public']['Enums']['moderated_state'];
       };
+      more_by_writer: { Args: { story_slug: string }; Returns: Json };
       move_bible_section: { Args: { new_position: number; section_id: string }; Returns: Json };
       move_chapter: { Args: { chapter_code: string; direction: number }; Returns: Json };
       move_chapter_scene: { Args: { new_position: number; scene_id: string }; Returns: Json };
@@ -14492,6 +14815,7 @@ export type Database = {
       normalise_romanian_letters: { Args: { input_text: string }; Returns: string };
       normalise_tag: { Args: { tag_name: string }; Returns: string };
       normalised_email: { Args: { email: string }; Returns: string };
+      note_active_minute: { Args: { is_reading?: boolean }; Returns: Json };
       note_i_am_online: { Args: Record<PropertyKey, never>; Returns: undefined };
       note_safety_contact_gap: { Args: { wanted_country_code: string }; Returns: undefined };
       notification_category: {
@@ -14658,6 +14982,7 @@ export type Database = {
         };
       };
       page_ads: { Args: { context?: Json; page_key: string }; Returns: Json };
+      paired_cards: { Args: { left_out: string[]; source_story_id: string }; Returns: Json };
       paragraph_comment_counts: {
         Args: { chapter_code: string; story_slug: string };
         Returns: Json;
@@ -14888,6 +15213,7 @@ export type Database = {
           signature: string | null;
           signature_picture_id: string | null;
           suggest_me: boolean | null;
+          suggests_from_reading: boolean | null;
           teacher_badge_since: string | null;
           updated_at: string;
         }[];
@@ -15432,6 +15758,7 @@ export type Database = {
       };
       require_compliance_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_contest_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
+      require_custom_role_staff: { Args: { reason_given: string }; Returns: undefined };
       require_forum_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_forum_writer: { Args: Record<PropertyKey, never>; Returns: string };
       require_free_ad_slot: {
@@ -15588,6 +15915,7 @@ export type Database = {
         };
       };
       rising_writers: { Args: { page_size?: number }; Returns: Json };
+      rolling_retention: { Args: { after_days: number; joined_on: string }; Returns: number };
       romania_today: { Args: Record<PropertyKey, never>; Returns: string };
       run_daily_metrics: { Args: Record<PropertyKey, never>; Returns: number };
       run_email_worker: { Args: Record<PropertyKey, never>; Returns: boolean };
@@ -15843,6 +16171,7 @@ export type Database = {
         Returns: undefined;
       };
       set_suggest_me: { Args: { should_suggest: boolean }; Returns: undefined };
+      set_suggests_from_reading: { Args: { should_suggest: boolean }; Returns: undefined };
       setting_value: { Args: { setting_key: string }; Returns: Json };
       setting_value_problem: { Args: { new_value: Json; old_value: Json }; Returns: string };
       share_options: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
@@ -16487,6 +16816,7 @@ export type Database = {
         Returns: string;
       };
       stories_fingerprint: { Args: { chosen_story_id: string; owner_id: string }; Returns: string };
+      stories_like_this: { Args: { story_slug: string }; Returns: Json };
       story_app_only_applies: { Args: { chosen: boolean }; Returns: boolean };
       story_as_shown: {
         Args: {
@@ -16616,6 +16946,15 @@ export type Database = {
         };
         Returns: boolean;
       };
+      story_more_signals: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          finish_points: number;
+          follows: number;
+          growth: number;
+          story_id: string;
+        }[];
+      };
       story_page_chapters: { Args: { is_owner: boolean; target_story_id: string }; Returns: Json };
       story_plan: { Args: { story_slug: string }; Returns: Json };
       story_plan_chapters: { Args: { plan_story_id: string }; Returns: Json };
@@ -16627,6 +16966,7 @@ export type Database = {
           tag_rank: number;
         }[];
       };
+      story_rank_place: { Args: { story_slug: string }; Returns: Json };
       story_rating_reasons_from: {
         Args: { labels: Json };
         Returns: Database['public']['Enums']['story_rating_reason'][];
@@ -16711,6 +17051,8 @@ export type Database = {
         }[];
       };
       submit_teacher_proof: { Args: { proof_path: string }; Returns: Json };
+      suggestion_row_size: { Args: Record<PropertyKey, never>; Returns: number };
+      suggests_from_reading_of: { Args: { person_id: string }; Returns: boolean };
       suggests_me: { Args: { person_id: string }; Returns: boolean };
       support_assignee_id: { Args: { assignee_handle: string }; Returns: string };
       support_email_json: {
@@ -16870,6 +17212,13 @@ export type Database = {
         }[];
       };
       verify_certificate: { Args: { code: string }; Returns: Json };
+      visible_story_by_slug: {
+        Args: { story_slug: string };
+        Returns: {
+          story_id: string;
+          writer_id: string;
+        }[];
+      };
       vote_forum_post: { Args: { post_id: string; vote: string }; Returns: string };
       wait_minutes_until_free: { Args: { oldest_in_window: string }; Returns: number };
       waitlist_interest_matches: {

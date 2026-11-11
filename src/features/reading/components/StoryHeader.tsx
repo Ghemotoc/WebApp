@@ -31,6 +31,7 @@ import { useTagCatalogue } from '@/features/tags/hooks/useTagCatalogue';
 
 import type { StoryPageData } from '../api/storyPage';
 
+import { RankingPlacePill } from './RankingPlacePill';
 import { StoryLabelPills } from './StoryLabelPills';
 import { StoryStats } from './StoryStats';
 
@@ -81,7 +82,7 @@ function sharedStoryOf(story: StoryPageData): SharedStory {
 }
 
 /**
- * The pill row: the category, "Ongoing" while the story is still being written, and the rating
+ * The pill row: the category, the ranking place (S1-E15-05), "Ongoing" while the story is still being written, and the rating
  * and label pills (S1-E3-06). A finished story shows no status pill (Robert, 6 Nov 2026:
  * "Completed" is a filter, not a tag on pages); the "Status" row under "Labels from the writer"
  * still says it.
@@ -98,6 +99,8 @@ function StoryPills({ story }: { story: StoryPageData }) {
           defaultValue: story.categorySlug,
         })}
       </InfoPill>
+      {/* S1-E15-05: "#3 in Fantasy", when the story is in its category's first 100. */}
+      <RankingPlacePill storySlug={story.slug} />
       {story.completionStatus === 'ongoing' && (
         <InfoPill tone="sage">{t('status.ongoing', { ns: 'writing' })}</InfoPill>
       )}

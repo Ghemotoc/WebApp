@@ -2749,3 +2749,33 @@ passages and pictures) answers nothing; `get_story_page()` and `story_card_json(
 for the notice on the story page and the "In the app only" pill on cards
 (`ListedStoryCard`, `StoryHeader`). Tests: `supabase/tests/database/342-app-only.test.sql` and
 `e2e/app-only.spec.ts`.
+
+## Investor numbers (ANALYTICS-1a, S1-E15-04)
+
+- Where it starts: `ActiveMinutesCounter` (src/features/analytics), drawn once in `AppLayout`. While someone is signed in, `useActiveMinutes()` calls `note_active_minute(is_reading)` when the app opens and then once a minute while the tab is visible and the person scrolled, pressed a key or touched in the last two minutes. `is_reading` is true on a chapter address (`lib/activeMinute.ts`).
+- In the database: `note_active_minute()` keeps one row per member in `member_last_active` (only the last day and the last counted minute, overwritten) and adds to `daily_activity_totals` (members active today, minutes in the app, minutes reading; a second minute within 45 seconds is ignored). Staff and the classics account aren't counted (`counts_for_metrics()`). `save_reading_position()` adds one to `chapter_finishes` the first time a reader reaches 95% of a chapter.
+- At night: `compute_daily_metrics()` (pg_cron `count-daily-metrics`) now calls `compute_investor_metrics()`, which stores the day's totals in `daily_metrics` and, for yesterday only, the weekly and monthly active counts and rolling retention (`rolling_retention()`, empty under 5 new members). It also deletes last-day rows after 35 days.
+- On screen: Staff › Metrics, `InvestorNumbersSection` → `useInvestorNumbers()` → `admin_investor_numbers()` (owner and admins in a staff session): `InvestorLatestCard`, `InvestorMonthCard` and two spreadsheets (`lib/investorCsv.ts`).
+- Tests: `360-investor-numbers.test.sql`, `src/features/analytics/lib/activeMinute.test.ts`, `src/features/staff/lib/investorCsv.test.ts`, `e2e/investor-numbers.spec.ts`.
+
+## Ranking place (ANALYTICS-1b, S1-E15-05)
+
+- Where it starts: the story page's pills (`StoryHeader` → `RankingPlacePill`) and the staff story page (`StaffStoryPage` → `StaffRankingPlace`). Both call `useRankingPlace(slug)` → `api/rankingPlace.ts` → `story_rank_place(story_slug)`.
+- In the database: `story_rank_place()` checks the caller may see the story (rating, moderation, blocks; staff who may view stories always may), then counts the public, non-class-only stories in the same category with a higher `story_scores.score`. It answers `{place, category_slug}`, or null past `ranking_place_show_up_to` (100).
+- The score: the hourly `compute_story_scores()` now adds `story_more_signals()`: follows (decayed like likes, the writer's own left out), finished chapters times their reading minutes (from `chapter_finishes`) and growth against the score stored 7 days ago, capped at doubling. The weights are settings (`ranking_weight_follows`, `ranking_weight_finishes`, `ranking_weight_growth`).
+- Tests: `361-ranking-place.test.sql`, `src/features/reading/api/rankingPlace.test.ts`, `e2e/ranking-place.spec.ts`.
+
+## Suggestions from reading (ANALYTICS-1c, S1-E15-06)
+
+- Where it starts: the story page (`StoryPage` → `StorySuggestions`), the end of the latest chapter (`ChapterEnd` → `StorySuggestionsWhenNear`, which fetches the rows' file only when the end comes within about a screen, to keep the reader's script budget) and Discover (`DiscoverPage` → `BecauseYouReadShelf`, after the first shelf). Each row calls `useSuggestionRow(kind, slug)` → `api/suggestions.ts` → one database function, and `SuggestionShelf` draws it with "Why am I seeing this?".
+- In the database: `more_by_writer(slug)` lists the writer's other stories the caller may see, most popular first; `stories_like_this(slug)` lists the stories in `story_pairs` for that story; `because_you_read()` picks the caller's latest finished story that has pairs and leaves out stories already in their library. Every row goes through `listed_stories('popular')`, so ratings, blocks, moderation and class spaces apply, and holds at most `suggestions_row_size` (12) stories.
+- At night: `compute_story_pairs()` (pg_cron `compute-story-pairs`, 04:25) rebuilds `story_pairs` from the Finished shelf of live members whose switch is on, keeping a pair only when 5 or more readers (`metrics_minimum_group`) finished both. The table holds totals, never who.
+- The switch: Settings › Privacy › "Suggestions from reading" (`ReadingSuggestionsSwitch` → `set_suggests_from_reading()`), stored in `profiles.suggests_from_reading`; null means the default from `suggests_from_reading_of()`: on for adults, off under 18.
+- Tests: `362-suggestions.test.sql`, `src/features/suggestions/api/suggestions.test.ts`, `e2e/suggestions.spec.ts`.
+
+## Custom staff roles (CMS-2a, S1-E11-33)
+
+- Where it starts: `/staff/roles` → `StaffRolesPage` → `CustomRolesSection`, under the staff list. It lists the roles (`CustomRoleCard`, with `CustomRoleHolders` and an `AccountPicker` of its own) and opens `CustomRoleForm` with `CustomRoleAreaList` (one drop-down per area). All of it goes through `useCustomRoles` → `api/customRoles.ts`.
+- In the database: `admin_custom_roles()` reads the roles and the areas the caller may give (`custom_role_assignable_areas()` and `custom_role_area_in_reach()`); `admin_save_custom_role()`, `admin_remove_custom_role()` and `admin_set_custom_role_holder()` change them, each checking the caller with `require_custom_role_staff()` and writing the audit log. `staff_may()`, `is_staff()` and `my_staff_areas()` count custom roles, so the side menu and every staff function follow them with no other change.
+- The staff shell: `fetchStaffAccess()` also reads whether the person holds a custom role (`holdsCustomRole`), so someone with only a custom role gets the admin site with just its areas.
+- Tests: `363-custom-staff-roles.test.sql`, `src/features/staff/api/customRoles.test.ts`, `e2e/staff-custom-roles.spec.ts` (axe for the page is in `e2e/staff-roles.spec.ts`).

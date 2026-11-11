@@ -82,6 +82,7 @@ select results_eq(
        -- Certificates: the student's own, read through functions (S1-E8-12).
        ('certificates', 0::bigint),
       ('chapter_embeds', 0::bigint),
+       ('chapter_finishes', 0::bigint),
        ('chapter_likes', 0::bigint),
        -- The record of a writer's chapter moves is theirs alone (GAPS-11).
        ('chapter_moves', 0::bigint),
@@ -119,6 +120,7 @@ select results_eq(
        ('conversation_members', 0::bigint),
        ('conversations', 0::bigint),
        ('copied_work_notes', 0::bigint),
+       ('daily_activity_totals', 0::bigint),
        ('daily_metrics', 0::bigint),
        ('data_requests', 0::bigint),
        -- Throwaway email domains: staff who may view the settings only (ADMIN-2f1).
@@ -180,6 +182,7 @@ select results_eq(
        ('legal_documents', (select count(*) from public.legal_documents)),
        ('manual_age_checks', 0::bigint),
        ('markets', (select count(*) from public.markets)),
+       ('member_last_active', 0::bigint),
        ('messages', 0::bigint),
        ('moderated_items', 0::bigint),
        ('moderator_mail_messages', 0::bigint),
@@ -236,6 +239,10 @@ select results_eq(
        -- Sponsors and campaigns: owner and admin only; readers get live ads through page_ads() (SPONSORS-b1).
        ('sponsor_campaigns', 0::bigint),
        ('sponsors', 0::bigint),
+       -- Custom staff roles, their areas and holders: owner and admin only (S1-E11-33).
+       ('staff_custom_role_areas', 0::bigint),
+       ('staff_custom_role_holders', 0::bigint),
+       ('staff_custom_roles', 0::bigint),
        ('staff_interns', 0::bigint),
        ('staff_languages', 0::bigint),
        ('staff_permissions', 0::bigint),
@@ -252,6 +259,8 @@ select results_eq(
        ('story_events', 0::bigint),
        ('story_ideas', 0::bigint),
        ('story_marketing', 0::bigint),
+       -- Pairs of stories finished by the same readers: totals for suggestions, staff only (S1-E15-06).
+       ('story_pairs', 0::bigint),
        ('story_plan_acts', 0::bigint),
        ('story_plans', 0::bigint),
        -- Daily ranks for the Featured screen: staff with the Featured area only (LOOK-4a).

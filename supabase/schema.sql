@@ -1451,6 +1451,7 @@ CREATE OR REPLACE FUNCTION "public"."account_deletion_rules"() RETURNS TABLE("ta
     ('library_entries', 'delete', 1, null),
     ('live_session_reminders', 'delete', 1, null),
     ('manual_age_checks', 'delete', 1, null),
+    ('member_last_active', 'delete', 1, null),
     ('messages', 'own_step', 0, 'the person''s own messages are deleted, unless reported and still held (S1-E9-02)'),
     ('moderator_mail_messages', 'kept', 0, 'a moderation record, purged a year after the thread was last updated (docs/retention.md)'),
     ('moderator_mail_threads', 'kept', 0, 'a moderation record, purged a year after it was last updated (docs/retention.md)'),
@@ -1498,7 +1499,7 @@ $$;
 ALTER FUNCTION "public"."account_deletion_rules"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13, GAPS-16a, GAPS-16c).';
+COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13, GAPS-16a, GAPS-16c, S1-E15-04).';
 
 
 
@@ -2600,6 +2601,27 @@ ALTER FUNCTION "public"."add_story_idea"("story_slug" "text", "idea_kind" "text"
 
 
 COMMENT ON FUNCTION "public"."add_story_idea"("story_slug" "text", "idea_kind" "text", "idea_body" "text") IS 'Adds a question, idea, to-do or decision to one of the caller''s stories (S1-E17-27).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."add_to_activity_totals"("for_day" "date", "new_member" integer, "app_minutes" integer, "reading_minutes" integer) RETURNS "void"
+    LANGUAGE "sql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  insert into public.daily_activity_totals as totals
+    (activity_on, active_members, minutes_in_app, minutes_reading)
+  values (for_day, new_member, app_minutes, reading_minutes)
+  on conflict (activity_on) do update set
+    active_members = totals.active_members + excluded.active_members,
+    minutes_in_app = totals.minutes_in_app + excluded.minutes_in_app,
+    minutes_reading = totals.minutes_reading + excluded.minutes_reading;
+$$;
+
+
+ALTER FUNCTION "public"."add_to_activity_totals"("for_day" "date", "new_member" integer, "app_minutes" integer, "reading_minutes" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."add_to_activity_totals"("for_day" "date", "new_member" integer, "app_minutes" integer, "reading_minutes" integer) IS 'Internal: adds a member and minutes to one day''s activity totals (S1-E15-04).';
 
 
 
@@ -4974,6 +4996,56 @@ COMMENT ON FUNCTION "public"."admin_create_landing_page"("new_slug" "text", "new
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_custom_roles"() RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  role_list jsonb;
+  assignable_list jsonb;
+begin
+  -- Step 1: only staff who may see roles.
+  if not public.staff_may('roles', 'view') then
+    raise exception 'Only an owner or admin can see staff roles.'
+      using errcode = 'insufficient_privilege', hint = 'not_allowed';
+  end if;
+  -- Step 2: every live role with its areas and holders, by name.
+  select coalesce(jsonb_agg(jsonb_build_object(
+      'id', custom_roles.id,
+      'name', custom_roles.name,
+      'description', custom_roles.description,
+      'areas', public.custom_role_areas_json(custom_roles.id),
+      'in_reach', public.custom_role_in_reach(custom_roles.id),
+      'holders', (
+        select coalesce(jsonb_agg(jsonb_build_object('user_id', profiles.id, 'handle', profiles.handle)
+                                  order by profiles.handle), '[]'::jsonb)
+        from public.staff_custom_role_holders as holders
+        join public.profiles on profiles.id = holders.user_id and profiles.deleted_at is null
+        where holders.custom_role_id = custom_roles.id
+      )
+    ) order by lower(custom_roles.name)), '[]'::jsonb)
+  into role_list
+  from public.staff_custom_roles as custom_roles
+  where custom_roles.deleted_at is null;
+  -- Step 3: the areas the caller could put in a role, and at what level at most.
+  select coalesce(jsonb_agg(jsonb_build_object('area', assignable.area, 'highest',
+      case when public.custom_role_area_in_reach(assignable.area, 'act') then 'act' else 'view' end)
+    order by assignable.area), '[]'::jsonb)
+  into assignable_list
+  from public.custom_role_assignable_areas() as assignable
+  where public.custom_role_area_in_reach(assignable.area, 'view');
+  return jsonb_build_object('roles', role_list, 'assignable', assignable_list);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_custom_roles"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_custom_roles"() IS 'The custom staff roles with their areas and holders, and what the caller may put in one; owner and admin only (S1-E11-33).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admin_data_request"("target_request_id" "uuid") RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -6330,6 +6402,49 @@ $$;
 
 
 ALTER FUNCTION "public"."admin_import_classics"("list_rows" "jsonb") OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_investor_numbers"("months" integer DEFAULT 12) RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  listed_months integer := least(greatest(coalesce(months, 12), 1), 36);
+  counted_on date;
+begin
+  -- Step 1: owner and admins only (architecture 1.8.3), as the March numbers.
+  if not public.may_see_march_numbers() then
+    raise exception 'Only the owner and admins can see the investor numbers.'
+      using errcode = 'insufficient_privilege', hint = 'not_allowed';
+  end if;
+  -- Step 2: the latest night counted.
+  select max(metric_date) into counted_on from public.daily_metrics where metric = 'active_members';
+  -- Step 3: the latest numbers, the months and the days.
+  return jsonb_build_object(
+    'counted_on', counted_on,
+    'latest', jsonb_build_object(
+      'active_members', public.metric_on(counted_on, 'active_members'),
+      'weekly_active_members', public.metric_on(counted_on, 'weekly_active_members'),
+      'monthly_active_members', public.metric_on(counted_on, 'monthly_active_members'),
+      'retention_day_1', public.metric_on(counted_on, 'retention_day_1'),
+      'retention_day_7', public.metric_on(counted_on, 'retention_day_7'),
+      'retention_day_30', public.metric_on(counted_on, 'retention_day_30')),
+    'months', public.investor_months(listed_months),
+    'days', coalesce((
+      select jsonb_agg(jsonb_build_object('day', metric_date, 'metric', metric, 'value', value)
+                       order by metric_date, metric)
+      from public.daily_metrics
+      where market = 'all' and metric <> 'writers_published'
+        and metric_date > coalesce(counted_on, current_date) - 366), '[]'::jsonb));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_investor_numbers"("months" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_investor_numbers"("months" integer) IS 'The staff Metrics page''s investor numbers: latest, by month and by day, totals only, for the owner and admins (S1-E15-04).';
+
 
 
 CREATE OR REPLACE FUNCTION "public"."admin_invite_home_comment"("target_comment" "uuid") RETURNS "uuid"
@@ -8630,6 +8745,42 @@ COMMENT ON FUNCTION "public"."admin_remove_cms_entry"("content_kind" "text", "en
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_remove_custom_role"("target_role_id" "uuid", "reason_given" "text") RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  holder_ids jsonb;
+begin
+  -- Step 1: who may, and only a live role within reach.
+  perform public.require_custom_role_staff(reason_given);
+  if not exists (select 1 from public.staff_custom_roles where id = target_role_id and deleted_at is null) then
+    return false;
+  end if;
+  if not public.custom_role_in_reach(target_role_id) then
+    raise exception 'That role holds more than you do.' using errcode = 'insufficient_privilege', hint = 'role_out_of_reach';
+  end if;
+  -- Step 2: take it from its holders and mark it removed; the row stays for the audit trail.
+  select coalesce(jsonb_agg(holders.user_id), '[]'::jsonb) into holder_ids
+  from public.staff_custom_role_holders as holders where holders.custom_role_id = target_role_id;
+  delete from public.staff_custom_role_holders where custom_role_id = target_role_id;
+  update public.staff_custom_roles set deleted_at = now() where id = target_role_id;
+  -- Step 3: the audit log.
+  perform public.log_staff_action('staff.custom_role_removed', 'staff_custom_roles', target_role_id::text,
+    null, reason_given,
+    jsonb_build_object('areas', public.custom_role_areas_json(target_role_id), 'holders', holder_ids), null);
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_remove_custom_role"("target_role_id" "uuid", "reason_given" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_remove_custom_role"("target_role_id" "uuid", "reason_given" "text") IS 'Removes a custom staff role and takes it from its holders, with a reason; logged (S1-E11-33).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admin_remove_name_word"("target_word_id" "uuid") RETURNS boolean
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -9741,6 +9892,70 @@ COMMENT ON FUNCTION "public"."admin_save_contest"("target_contest_id" "uuid", "d
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_save_custom_role"("target_role_id" "uuid", "new_name" "text", "new_description" "text", "new_areas" "jsonb", "reason_given" "text") RETURNS "uuid"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  clean_name text := btrim(coalesce(new_name, ''));
+  clean_description text := btrim(coalesce(new_description, ''));
+  area_problem text;
+  areas_before jsonb;
+  saved_id uuid := target_role_id;
+begin
+  -- Step 1: who may, with a reason, and a name and areas that hold up.
+  perform public.require_custom_role_staff(reason_given);
+  if char_length(clean_name) not between 2 and 40 or char_length(clean_description) > 200 then
+    raise exception 'Give the role a name of 2 to 40 characters and a description of up to 200.'
+      using errcode = 'check_violation', hint = 'bad_name';
+  end if;
+  area_problem := public.custom_role_area_problem(new_areas);
+  if area_problem is not null then
+    raise exception 'That role''s areas can''t be saved.' using errcode = 'check_violation', hint = area_problem;
+  end if;
+  if exists (select 1 from public.staff_custom_roles as others
+             where lower(btrim(others.name)) = lower(clean_name) and others.deleted_at is null
+               and others.id is distinct from target_role_id) then
+    raise exception 'Another role has that name.' using errcode = 'check_violation', hint = 'name_taken';
+  end if;
+  -- Step 2: a new role, or a change to one the caller could have made.
+  if target_role_id is null then
+    insert into public.staff_custom_roles (user_id, name, description)
+    values ((select auth.uid()), clean_name, clean_description)
+    returning id into saved_id;
+  else
+    if not exists (select 1 from public.staff_custom_roles
+                   where id = target_role_id and deleted_at is null) then
+      raise exception 'There is no such role.' using errcode = 'check_violation', hint = 'no_such_role';
+    end if;
+    if not public.custom_role_in_reach(target_role_id) then
+      raise exception 'That role holds more than you do.' using errcode = 'insufficient_privilege', hint = 'role_out_of_reach';
+    end if;
+    areas_before := public.custom_role_areas_json(target_role_id);
+    update public.staff_custom_roles set name = clean_name, description = clean_description
+    where id = target_role_id;
+    delete from public.staff_custom_role_areas where custom_role_id = target_role_id;
+  end if;
+  -- Step 3: the areas, then the audit log in the same transaction.
+  insert into public.staff_custom_role_areas (custom_role_id, user_id, area, access)
+  select saved_id, (select auth.uid()), entry ->> 'area', entry ->> 'access'
+  from jsonb_array_elements(new_areas) as entry;
+  perform public.log_staff_action(
+    case when target_role_id is null then 'staff.custom_role_created' else 'staff.custom_role_changed' end,
+    'staff_custom_roles', saved_id::text, null, reason_given, areas_before,
+    jsonb_build_object('name', clean_name, 'areas', public.custom_role_areas_json(saved_id)));
+  return saved_id;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_save_custom_role"("target_role_id" "uuid", "new_name" "text", "new_description" "text", "new_areas" "jsonb", "reason_given" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_save_custom_role"("target_role_id" "uuid", "new_name" "text", "new_description" "text", "new_areas" "jsonb", "reason_given" "text") IS 'Makes or changes a custom staff role within the caller''s reach, with a reason; logged (S1-E11-33).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admin_save_forum"("forum_id" "uuid", "parent_id" "uuid", "slug" "text", "sort_position" integer, "is_pinned" boolean, "accent" "public"."forum_accent", "names" "jsonb") RETURNS "uuid"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -10689,6 +10904,66 @@ ALTER FUNCTION "public"."admin_set_contest_placing"("target_entry_id" "uuid", "w
 
 
 COMMENT ON FUNCTION "public"."admin_set_contest_placing"("target_entry_id" "uuid", "wanted_placing" "text") IS 'Owner and admins: mark a contest entry as winner, finalist or neither, once entries close (S1-E11-15 criterion 7).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_set_custom_role_holder"("target_user_id" "uuid", "target_role_id" "uuid", "should_hold" boolean, "reason_given" "text") RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  changed_row_id uuid;
+  domain text := public.staff_email_domain();
+begin
+  -- Step 1: who may manage custom roles (with a recent sign-in and a reason), never for
+  -- themselves, and only to an account that exists. The checks are spelled out here rather than
+  -- taken from require_role_change_allowed(), which is for built-in roles only (below).
+  perform public.require_custom_role_staff(reason_given);
+  if target_user_id = (select auth.uid()) then
+    raise exception 'Nobody can change their own role.'
+      using errcode = 'insufficient_privilege', hint = 'own_role';
+  end if;
+  if not exists (select 1 from public.profiles where profiles.id = target_user_id and profiles.deleted_at is null) then
+    raise exception 'There is no such account.' using errcode = 'check_violation', hint = 'no_such_account';
+  end if;
+  if not exists (select 1 from public.staff_custom_roles where id = target_role_id and deleted_at is null) then
+    raise exception 'There is no such role.' using errcode = 'check_violation', hint = 'no_such_role';
+  end if;
+  if not public.custom_role_in_reach(target_role_id) then
+    raise exception 'That role holds more than you do.' using errcode = 'insufficient_privilege', hint = 'role_out_of_reach';
+  end if;
+  -- Step 2: give it, once; once staff sign in through Google Workspace, only to a Workspace account.
+  if should_hold then
+    if domain is not null and not public.has_workspace_account(target_user_id, domain) then
+      raise exception 'This account has not signed in with a Google Workspace account on the staff domain.'
+        using errcode = 'check_violation', hint = 'no_workspace_account';
+    end if;
+    insert into public.staff_custom_role_holders (custom_role_id, user_id, granted_by_user_id)
+    values (target_role_id, target_user_id, (select auth.uid()))
+    on conflict (custom_role_id, user_id) do nothing
+    returning id into changed_row_id;
+  else
+    delete from public.staff_custom_role_holders
+    where custom_role_id = target_role_id and user_id = target_user_id
+    returning id into changed_row_id;
+  end if;
+  if changed_row_id is null then
+    return false;
+  end if;
+  -- Step 3: the audit log, in the same transaction.
+  perform public.log_staff_action(
+    case when should_hold then 'staff.custom_role_granted' else 'staff.custom_role_taken_back' end,
+    'staff_custom_role_holders', changed_row_id::text, target_user_id, reason_given, null,
+    jsonb_build_object('custom_role_id', target_role_id));
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_set_custom_role_holder"("target_user_id" "uuid", "target_role_id" "uuid", "should_hold" boolean, "reason_given" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_set_custom_role_holder"("target_user_id" "uuid", "target_role_id" "uuid", "should_hold" boolean, "reason_given" "text") IS 'Gives someone a custom staff role or takes it back, within the caller''s reach, never for themselves; logged (S1-E11-33).';
 
 
 
@@ -12979,6 +13254,7 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     "rules_walkthrough_seen_at" timestamp with time zone,
     "initials_colour" "text",
     "reading_languages" "text"[],
+    "suggests_from_reading" boolean,
     CONSTRAINT "profiles_avatar_recipe_shape" CHECK ("public"."avatar_recipe_valid"("avatar_recipe")),
     CONSTRAINT "profiles_bio_length" CHECK (("char_length"("bio") <= 300)),
     CONSTRAINT "profiles_birth_month_is_a_month" CHECK ((("birth_month" >= 1) AND ("birth_month" <= 12))),
@@ -13184,6 +13460,10 @@ COMMENT ON COLUMN "public"."profiles"."initials_colour" IS 'The colour the membe
 
 
 COMMENT ON COLUMN "public"."profiles"."reading_languages" IS 'The story languages the member reads (MARKETS-2c); null means the interface language plus English. Private to the member.';
+
+
+
+COMMENT ON COLUMN "public"."profiles"."suggests_from_reading" IS 'Suggestions from my reading (S1-E15-06): null until chosen (on for adults, off under 18). Private to the member.';
 
 
 
@@ -14430,6 +14710,49 @@ ALTER FUNCTION "public"."banned_email_hash"("email" "text") OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."banned_email_hash"("email" "text") IS 'Internal: HMAC-SHA256 of the normalised email with the Vault secret banned_email_secret, or null without the secret (S1-E10-06, Q8; normalised since ADMIN-2 part f1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."because_you_read"() RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  in_library uuid[];
+  finished record;
+  cards jsonb;
+begin
+  -- Step 1: signed in, with the switch on.
+  if caller_id is null or not coalesce(public.suggests_from_reading_of(caller_id), false) then
+    return jsonb_build_object('source', null, 'stories', '[]'::jsonb);
+  end if;
+  in_library := array(select library_entries.story_id from public.library_entries
+                      where library_entries.user_id = caller_id);
+  -- Step 2: the latest finished stories the caller may still see, newest first.
+  for finished in
+    select listed.id
+    from public.library_entries
+    join public.listed_stories('popular', null, null, null, null) as listed on listed.id = library_entries.story_id
+    where library_entries.user_id = caller_id and library_entries.shelf = 'finished'
+    order by library_entries.updated_at desc
+    limit 10
+  loop
+    -- Step 3: the first one with something to suggest gives the row.
+    cards := public.paired_cards(finished.id, in_library);
+    if jsonb_array_length(cards) > 0 then
+      return jsonb_build_object('source', public.story_card_json(finished.id), 'stories', cards);
+    end if;
+  end loop;
+  return jsonb_build_object('source', null, 'stories', '[]'::jsonb);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."because_you_read"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."because_you_read"() IS 'Because you read: stories paired with the caller''s latest finished story, worked out when asked, never stored (S1-E15-06).';
 
 
 
@@ -18724,8 +19047,10 @@ declare
   return_rate numeric := public.return_rate_on(counted_day);
   stored integer;
 begin
-  -- Step 1: forget the day's earlier numbers, so this run's are the only ones.
-  delete from public.daily_metrics where metric_date = counted_day;
+  -- Step 1: forget the day's earlier numbers, except those that only the night itself can count.
+  delete from public.daily_metrics where metric_date = counted_day
+    and metric not in ('weekly_active_members', 'monthly_active_members',
+                       'retention_day_1', 'retention_day_7', 'retention_day_30');
 
   -- Step 2: writers who published, in total and by market.
   insert into public.daily_metrics (metric_date, metric, market, value)
@@ -18744,7 +19069,10 @@ begin
     values (counted_day, 'return_rate', return_rate);
   end if;
 
-  -- Step 5: aggregated numbers are kept three years (decided 17 Oct 2026, 12:34).
+  -- Step 5 (S1-E15-04): the investor numbers.
+  perform public.compute_investor_metrics(counted_day);
+
+  -- Step 6: aggregated numbers are kept three years (decided 17 Oct 2026, 12:34).
   delete from public.daily_metrics
   where metric_date < (now() at time zone 'Europe/Bucharest')::date - make_interval(years => keep_years);
 
@@ -18757,7 +19085,59 @@ $$;
 ALTER FUNCTION "public"."compute_daily_metrics"("for_day" "date") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."compute_daily_metrics"("for_day" "date") IS 'Counts one day''s March test numbers and deletes those older than 3 years (S1-E15-02).';
+COMMENT ON FUNCTION "public"."compute_daily_metrics"("for_day" "date") IS 'Counts one day''s March test and investor numbers and deletes those older than 3 years (S1-E15-02, S1-E15-04).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."compute_investor_metrics"("for_day" "date") RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  today date := (now() at time zone 'Europe/Bucharest')::date;
+  stored integer;
+  nightly_stored integer;
+begin
+  -- Step 1: the totals that can be counted for any day.
+  insert into public.daily_metrics (metric_date, metric, value)
+  select for_day, totals.metric, totals.value from public.day_totals_for_investors(for_day) as totals
+  on conflict (metric_date, metric, market) do update set value = excluded.value;
+  get diagnostics stored = row_count;
+  -- Step 2: the counts that read each member's last day, only on the nightly run for yesterday.
+  if for_day = today - 1 then
+    insert into public.daily_metrics (metric_date, metric, value)
+    select for_day, counted.metric, counted.value
+    from (values
+      ('weekly_active_members', (select count(*) from public.member_last_active
+                                 where active_on > for_day - 7)::numeric),
+      ('monthly_active_members', (select count(*) from public.member_last_active
+                                  where active_on > for_day - 30)::numeric),
+      ('retention_day_1', public.rolling_retention(for_day - 1, 1)),
+      ('retention_day_7', public.rolling_retention(for_day - 7, 7)),
+      ('retention_day_30', public.rolling_retention(for_day - 30, 30))
+    ) as counted (metric, value)
+    where counted.value is not null
+    on conflict (metric_date, metric, market) do update set value = excluded.value;
+    get diagnostics nightly_stored = row_count;
+    stored := stored + nightly_stored;
+  end if;
+  -- Step 3: delete what is no longer needed (docs/retention.md).
+  delete from public.member_last_active
+  where active_on < today - coalesce(public.setting_value('member_last_active_keep_days') #>> '{}', '35')::integer;
+  delete from public.daily_activity_totals
+  where activity_on < today - make_interval(years => coalesce(
+    public.setting_value('daily_metrics_keep_years') #>> '{}', '3')::integer);
+  delete from public.chapter_finishes
+  where read_on < today - (public.ranking_setting('ranking_window_days', 60)::integer + 7);
+  return stored;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."compute_investor_metrics"("for_day" "date") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."compute_investor_metrics"("for_day" "date") IS 'Internal: stores one day''s investor numbers and deletes old last-day rows and totals (S1-E15-04).';
 
 
 
@@ -18801,6 +19181,46 @@ COMMENT ON FUNCTION "public"."compute_story_country_scores"() IS 'Hourly: each s
 
 
 
+CREATE OR REPLACE FUNCTION "public"."compute_story_pairs"() RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  smallest_group integer := coalesce((select (settings.value #>> '{}')::integer from public.settings
+                                      where settings.key = 'metrics_minimum_group'), 5);
+  kept integer;
+begin
+  -- Step 1: forget last night's pairs.
+  delete from public.story_pairs where true;
+  -- Step 2: each finished story of a counting member, then every two of them, counted.
+  with counting_finishes as (
+    select library_entries.user_id, library_entries.story_id
+    from public.library_entries
+    join public.profiles on profiles.id = library_entries.user_id and profiles.deleted_at is null
+    join public.stories on stories.id = library_entries.story_id and stories.deleted_at is null
+    where library_entries.shelf = 'finished'
+      and coalesce(public.suggests_from_reading_of(library_entries.user_id), false)
+  )
+  insert into public.story_pairs (story_id, paired_story_id, readers)
+  select first_story.story_id, second_story.story_id, count(*)::integer
+  from counting_finishes as first_story
+  join counting_finishes as second_story
+    on second_story.user_id = first_story.user_id and second_story.story_id <> first_story.story_id
+  group by first_story.story_id, second_story.story_id
+  having count(*) >= smallest_group;
+  get diagnostics kept = row_count;
+  return kept;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."compute_story_pairs"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."compute_story_pairs"() IS 'Nightly: how many members finished both of two stories, from switch-on members'' Finished shelves, kept at 5 or more (S1-E15-06).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."compute_story_scores"() RETURNS integer
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -18811,17 +19231,23 @@ declare
   comments_weight double precision := public.ranking_setting('ranking_weight_comments', 8);
   shares_weight double precision := public.ranking_setting('ranking_weight_shares', 10);
   through_weight double precision := public.ranking_setting('ranking_weight_read_through', 0.5);
+  follows_weight double precision := public.ranking_setting('ranking_weight_follows', 6);
+  finishes_weight double precision := public.ranking_setting('ranking_weight_finishes', 2);
+  growth_weight double precision := public.ranking_setting('ranking_weight_growth', 0.5);
   scored integer;
 begin
-  -- Step 1: a score for every readable story, shares included.
+  -- Step 1: a score for every readable story: the weighted sum, lifted by read-through and growth.
   insert into public.story_scores (story_id, score, computed_at)
   select signals.story_id,
     greatest(0, (signals.reads * reads_weight + signals.likes * likes_weight
-      + signals.comments * comments_weight + coalesce(shares.points, 0) * shares_weight)
-      * (1 + signals.read_through * through_weight)),
+      + signals.comments * comments_weight + coalesce(shares.points, 0) * shares_weight
+      + coalesce(more.follows, 0) * follows_weight + coalesce(more.finish_points, 0) * finishes_weight)
+      * (1 + signals.read_through * through_weight)
+      * (1 + coalesce(more.growth, 0) * growth_weight)),
     now()
   from public.story_signals() as signals
   left join public.story_share_points() as shares on shares.story_id = signals.story_id
+  left join public.story_more_signals() as more on more.story_id = signals.story_id
   on conflict (story_id) do update set score = excluded.score, computed_at = excluded.computed_at;
   get diagnostics scored = row_count;
 
@@ -18836,7 +19262,7 @@ $$;
 ALTER FUNCTION "public"."compute_story_scores"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."compute_story_scores"() IS 'Hourly: each story''s popularity score from reads, likes, comments, shares and read-through, never downvotes (S1-E5-03, S1-E4-05).';
+COMMENT ON FUNCTION "public"."compute_story_scores"() IS 'Hourly: each story''s popularity score from reads, likes, comments, shares, follows, finished chapters, read-through and growth, never downvotes (S1-E5-03, S1-E4-05, S1-E15-05).';
 
 
 
@@ -19585,6 +20011,25 @@ COMMENT ON FUNCTION "public"."country_has_ranking"("country" "text") IS 'Interna
 
 
 
+CREATE OR REPLACE FUNCTION "public"."counts_for_metrics"("person_id" "uuid") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select exists (
+    select 1 from public.profiles
+    where profiles.id = person_id and profiles.deleted_at is null
+      and profiles.handle is distinct from (public.setting_value('classics_account_handle') #>> '{}'))
+    and not exists (select 1 from public.staff_roles where staff_roles.user_id = person_id);
+$$;
+
+
+ALTER FUNCTION "public"."counts_for_metrics"("person_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."counts_for_metrics"("person_id" "uuid") IS 'Internal: whether a member counts in the investor numbers: live, not staff, not the classics account (S1-E15-04).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."cover_upload_allowed"("object_name" "text") RETURNS boolean
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -20057,6 +20502,118 @@ COMMENT ON FUNCTION "public"."create_story_character"("story_slug" "text", "char
 
 
 
+CREATE OR REPLACE FUNCTION "public"."custom_role_area_in_reach"("wanted_area" "text", "wanted_access" "text") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select exists (select 1 from public.custom_role_assignable_areas() as assignable
+                 where assignable.area = wanted_area)
+    and wanted_access in ('view', 'act')
+    and public.staff_may(wanted_area, wanted_access)
+    and (wanted_area <> 'roles' or public.is_staff('owner'));
+$$;
+
+
+ALTER FUNCTION "public"."custom_role_area_in_reach"("wanted_area" "text", "wanted_access" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."custom_role_area_in_reach"("wanted_area" "text", "wanted_access" "text") IS 'Internal: true when the caller may put this area at this level in a custom role (S1-E11-33).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."custom_role_area_problem"("new_areas" "jsonb") RETURNS "text"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  entry jsonb;
+  seen text[] := '{}';
+begin
+  -- Step 1: a non-empty list.
+  if new_areas is null or jsonb_typeof(new_areas) <> 'array' then
+    return 'bad_areas';
+  end if;
+  if jsonb_array_length(new_areas) = 0 then
+    return 'no_areas';
+  end if;
+  -- Step 2: each entry names an area once, at a level the caller may give.
+  for entry in select value from jsonb_array_elements(new_areas) loop
+    if jsonb_typeof(entry) <> 'object' or jsonb_typeof(entry -> 'area') <> 'string'
+       or (entry ->> 'area') = any (seen) then
+      return 'bad_areas';
+    end if;
+    seen := seen || (entry ->> 'area');
+    if not public.custom_role_area_in_reach(entry ->> 'area', entry ->> 'access') then
+      return 'area_out_of_reach:' || left(entry ->> 'area', 40);
+    end if;
+  end loop;
+  return null;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."custom_role_area_problem"("new_areas" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."custom_role_area_problem"("new_areas" "jsonb") IS 'Internal: names what is wrong with a custom role''s areas for this caller, or null (S1-E11-33).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."custom_role_areas_json"("target_role_id" "uuid") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(jsonb_agg(jsonb_build_object('area', custom_areas.area, 'access', custom_areas.access)
+                            order by custom_areas.area), '[]'::jsonb)
+  from public.staff_custom_role_areas as custom_areas
+  where custom_areas.custom_role_id = target_role_id;
+$$;
+
+
+ALTER FUNCTION "public"."custom_role_areas_json"("target_role_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."custom_role_areas_json"("target_role_id" "uuid") IS 'Internal: a custom staff role''s areas as a jsonb list, for the Roles page and the audit log (S1-E11-33).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."custom_role_assignable_areas"() RETURNS TABLE("area" "text")
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select distinct staff_role_areas.area
+  from public.staff_role_areas
+  where staff_role_areas.area not in ('safeguarding', 'removal_orders', 'open_market')
+  order by staff_role_areas.area;
+$$;
+
+
+ALTER FUNCTION "public"."custom_role_assignable_areas"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."custom_role_assignable_areas"() IS 'Internal: the admin areas a custom staff role may hold (not safeguarding, removal orders or opening a market; S1-E11-33).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."custom_role_in_reach"("target_role_id" "uuid") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select not exists (
+    select 1 from public.staff_custom_role_areas as custom_areas
+    where custom_areas.custom_role_id = target_role_id
+      and not public.custom_role_area_in_reach(custom_areas.area, custom_areas.access)
+  );
+$$;
+
+
+ALTER FUNCTION "public"."custom_role_in_reach"("target_role_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."custom_role_in_reach"("target_role_id" "uuid") IS 'Internal: true when every area of the custom role is within the caller''s reach (S1-E11-33).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."data_export_held_tables"() RETURNS TABLE("table_name" "text", "is_included" boolean, "why_left_out" "text")
     LANGUAGE "sql" IMMUTABLE
     SET "search_path" TO ''
@@ -20081,6 +20638,9 @@ CREATE OR REPLACE FUNCTION "public"."data_export_held_tables"() RETURNS TABLE("t
     ('safeguarding_referrals', false, 'referrals to the police or a prosecutor; handing them out could harm an investigation (GDPR art. 23; lawyer to check)'),
     ('sanctions', true, null),
     ('sign_up_ips', true, null),
+    ('staff_custom_role_areas', false, 'user_id is the admin who set an area in a custom role, not data about their account'),
+    ('staff_custom_role_holders', true, null),
+    ('staff_custom_roles', false, 'user_id is the admin who made the custom role; the roles someone holds are in staff_custom_role_holders'),
     ('staff_interns', true, null),
     ('staff_permissions', true, null),
     ('staff_roles', true, null),
@@ -20092,7 +20652,7 @@ $$;
 ALTER FUNCTION "public"."data_export_held_tables"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."data_export_held_tables"() IS 'Internal: every staff table with a user_id and whether Download my data''s "held_about_you" includes it, or why not (QA-7, LOGS-1a, LOOK-4a; GDPR art. 15).';
+COMMENT ON FUNCTION "public"."data_export_held_tables"() IS 'Internal: every staff table with a user_id and whether Download my data''s "held_about_you" includes it, or why not (QA-7, LOGS-1a, LOOK-4a, S1-E11-33; GDPR art. 15).';
 
 
 
@@ -20144,6 +20704,7 @@ CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_
     ('library_entries', true, null),
     ('live_session_reminders', true, null),
     ('manual_age_checks', true, null),
+    ('member_last_active', true, null),
     ('messages', true, null),
     ('moderator_mail_messages', true, null),
     ('moderator_mail_threads', true, null),
@@ -20191,7 +20752,7 @@ $$;
 ALTER FUNCTION "public"."data_export_tables"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13, GAPS-16a, GAPS-16c).';
+COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13, GAPS-16a, GAPS-16c, S1-E15-04).';
 
 
 
@@ -20495,6 +21056,45 @@ ALTER FUNCTION "public"."data_request_urgency"("request" "public"."data_requests
 
 
 COMMENT ON FUNCTION "public"."data_request_urgency"("request" "public"."data_requests") IS 'Internal: overdue, alert (2 days), reminder (7 days), on_time or closed (S1-E11-09, proposal).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."day_totals_for_investors"("for_day" "date") RETURNS TABLE("metric" "text", "value" numeric)
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select 'active_members', coalesce((select active_members from public.daily_activity_totals
+                                      where activity_on = for_day), 0)::numeric
+  union all
+  select 'minutes_in_app', coalesce((select minutes_in_app from public.daily_activity_totals
+                                      where activity_on = for_day), 0)::numeric
+  union all
+  select 'minutes_reading', coalesce((select minutes_reading from public.daily_activity_totals
+                                       where activity_on = for_day), 0)::numeric
+  union all
+  select 'sign_ups', (select count(*) from public.profiles
+                      join auth.users on users.id = profiles.id and users.email_confirmed_at is not null
+                      where (profiles.created_at at time zone 'Europe/Bucharest')::date = for_day
+                        and public.counts_for_metrics(profiles.id))::numeric
+  union all
+  select 'stories_read', (select count(distinct chapters.story_id) from public.chapter_reads
+                          join public.chapters on chapters.id = chapter_reads.chapter_id
+                          where chapter_reads.read_on = for_day and chapter_reads.total > 0)::numeric
+  union all
+  select 'chapters_finished', coalesce((select sum(total) from public.chapter_finishes
+                                         where read_on = for_day), 0)::numeric
+  union all
+  select 'writers_publishing', (select count(distinct chapters.user_id) from public.chapters
+                                where chapters.status = 'published'
+                                  and (chapters.first_published_at at time zone 'Europe/Bucharest')::date = for_day
+                                  and public.counts_for_metrics(chapters.user_id))::numeric;
+$$;
+
+
+ALTER FUNCTION "public"."day_totals_for_investors"("for_day" "date") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."day_totals_for_investors"("for_day" "date") IS 'Internal: one day''s investor totals that can be counted at any time (S1-E15-04).';
 
 
 
@@ -22166,6 +22766,12 @@ CREATE OR REPLACE FUNCTION "public"."export_held_about_of"("owner_id" "uuid") RE
     'staff_permissions', coalesce((select jsonb_agg(jsonb_build_object(
         'permission', held.permission, 'created_at', held.created_at) order by held.created_at)
       from public.staff_permissions as held where held.user_id = owner_id), '[]'::jsonb),
+    -- Custom roles they hold (S1-E11-33): the role's name and when it was given.
+    'staff_custom_role_holders', coalesce((select jsonb_agg(jsonb_build_object(
+        'role', roles.name, 'created_at', held.created_at) order by held.created_at)
+      from public.staff_custom_role_holders as held
+      join public.staff_custom_roles as roles on roles.id = held.custom_role_id
+      where held.user_id = owner_id), '[]'::jsonb),
     'staff_interns', coalesce((select jsonb_agg(jsonb_build_object(
         'created_at', held.created_at) order by held.created_at)
       from public.staff_interns as held where held.user_id = owner_id), '[]'::jsonb),
@@ -22178,7 +22784,7 @@ $$;
 ALTER FUNCTION "public"."export_held_about_of"("owner_id" "uuid") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."export_held_about_of"("owner_id" "uuid") IS 'Internal: what staff tables hold about one person, without staff names or internal notes, for their data export (QA-7, GDPR art. 15).';
+COMMENT ON FUNCTION "public"."export_held_about_of"("owner_id" "uuid") IS 'Internal: what staff tables hold about one person, without staff names or internal notes, for their data export (QA-7, S1-E11-33, GDPR art. 15).';
 
 
 
@@ -25268,6 +25874,70 @@ COMMENT ON FUNCTION "public"."interface_text_problems"("new_text" "text", "file_
 
 
 
+CREATE OR REPLACE FUNCTION "public"."investor_months"("months" integer) RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  with month_list as (
+    select month_start::date as month_start, (month_start + interval '1 month')::date as month_end
+    from generate_series(
+      date_trunc('month', (now() at time zone 'Europe/Bucharest')::date) - make_interval(months => months - 1),
+      date_trunc('month', (now() at time zone 'Europe/Bucharest')::date), interval '1 month') as month_start
+  ),
+  sums as (
+    select month_list.month_start,
+      sum(value) filter (where metric = 'sign_ups') as sign_ups,
+      round(avg(value) filter (where metric = 'active_members'), 1) as average_daily_active,
+      sum(value) filter (where metric = 'chapter_reads' and market = 'all') as chapter_reads,
+      sum(value) filter (where metric = 'chapters_finished') as chapters_finished,
+      sum(value) filter (where metric = 'minutes_in_app') as minutes_in_app,
+      sum(value) filter (where metric = 'minutes_reading') as minutes_reading,
+      round(avg(value) filter (where metric = 'retention_day_1'), 1) as retention_day_1,
+      round(avg(value) filter (where metric = 'retention_day_7'), 1) as retention_day_7,
+      round(avg(value) filter (where metric = 'retention_day_30'), 1) as retention_day_30,
+      (array_agg(value order by metric_date desc) filter (where metric = 'monthly_active_members'))[1]
+        as monthly_active
+    from month_list
+    left join public.daily_metrics on metric_date >= month_list.month_start
+      and metric_date < month_list.month_end
+    group by month_list.month_start
+  )
+  select coalesce(jsonb_agg(jsonb_build_object(
+    'month', to_char(sums.month_start, 'YYYY-MM'),
+    'sign_ups', coalesce(sums.sign_ups, 0),
+    'average_daily_active', sums.average_daily_active,
+    'monthly_active', sums.monthly_active,
+    'stories_read', (select count(distinct chapters.story_id) from public.chapter_reads
+                     join public.chapters on chapters.id = chapter_reads.chapter_id
+                     where chapter_reads.read_on >= sums.month_start
+                       and chapter_reads.read_on < (sums.month_start + interval '1 month')::date
+                       and chapter_reads.total > 0),
+    'chapter_reads', coalesce(sums.chapter_reads, 0),
+    'chapters_finished', coalesce(sums.chapters_finished, 0),
+    'finish_rate', case when coalesce(sums.chapter_reads, 0) > 0
+                        then round(100.0 * coalesce(sums.chapters_finished, 0) / sums.chapter_reads, 1) end,
+    'minutes_in_app', coalesce(sums.minutes_in_app, 0),
+    'minutes_reading', coalesce(sums.minutes_reading, 0),
+    'writers_publishing', (select count(distinct chapters.user_id) from public.chapters
+                           where chapters.status = 'published'
+                             and (chapters.first_published_at at time zone 'Europe/Bucharest')::date >= sums.month_start
+                             and (chapters.first_published_at at time zone 'Europe/Bucharest')::date
+                                 < (sums.month_start + interval '1 month')::date
+                             and public.counts_for_metrics(chapters.user_id)),
+    'retention_day_1', sums.retention_day_1,
+    'retention_day_7', sums.retention_day_7,
+    'retention_day_30', sums.retention_day_30) order by sums.month_start), '[]'::jsonb)
+  from sums;
+$$;
+
+
+ALTER FUNCTION "public"."investor_months"("months" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."investor_months"("months" integer) IS 'Internal: the investor numbers month by month, oldest first (S1-E15-04).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."invite_code_hash"("code" "text") RETURNS "text"
     LANGUAGE "sql" IMMUTABLE
     SET "search_path" TO ''
@@ -25581,6 +26251,17 @@ CREATE OR REPLACE FUNCTION "public"."is_staff"("required_role" "public"."staff_r
     where staff_roles.user_id = (select auth.uid())
       and profiles.deleted_at is null
       and (required_role is null or staff_roles.role = required_role)
+  )
+  or (
+    required_role is null
+    and exists (
+      select 1
+      from public.staff_custom_role_holders as holders
+      join public.staff_custom_roles as custom_roles
+        on custom_roles.id = holders.custom_role_id and custom_roles.deleted_at is null
+      join public.profiles on profiles.id = holders.user_id and profiles.deleted_at is null
+      where holders.user_id = (select auth.uid())
+    )
   );
 $$;
 
@@ -28493,6 +29174,34 @@ COMMENT ON FUNCTION "public"."moderated_state_of"("item_type" "public"."reportab
 
 
 
+CREATE OR REPLACE FUNCTION "public"."more_by_writer"("story_slug" "text") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  with shown_beside as (
+    select * from public.visible_story_by_slug(story_slug)
+  ),
+  others as (
+    select listed.id, coalesce(scores.score, 0) as score, listed.first_published_at
+    from public.listed_stories('popular', null, null, null, null) as listed
+    join shown_beside on shown_beside.writer_id = listed.user_id and listed.id <> shown_beside.story_id
+    left join public.story_scores as scores on scores.story_id = listed.id
+    order by score desc, listed.first_published_at desc nulls last
+    limit public.suggestion_row_size()
+  )
+  select jsonb_build_object('stories', coalesce(
+    (select jsonb_agg(public.story_card_json(others.id) order by others.score desc,
+                      others.first_published_at desc nulls last) from others), '[]'::jsonb));
+$$;
+
+
+ALTER FUNCTION "public"."more_by_writer"("story_slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."more_by_writer"("story_slug" "text") IS 'More by this writer: the writer''s other stories the caller may see, most popular first (S1-E15-06).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."move_bible_section"("section_id" "uuid", "new_position" integer) RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -29892,7 +30601,9 @@ CREATE OR REPLACE FUNCTION "public"."my_privacy_settings"() RETURNS "jsonb"
     'can_ask_parent', public.age_band_of(profiles.id) = '13_to_15' and public.has_parental_consent(profiles.id),
     'shows_reader_level', profiles.shows_reader_level,
     -- MUST-1b: whether the browser asks "Post anyway?" before sending what looks like contact details.
-    'checks_personal_details', public.checks_personal_details_of(profiles))
+    'checks_personal_details', public.checks_personal_details_of(profiles),
+    -- S1-E15-06: "Suggestions from my reading".
+    'suggests_from_reading', coalesce(public.suggests_from_reading_of(profiles.id), false))
   from public.profiles where profiles.id = public.require_live_profile();
 $$;
 
@@ -29900,7 +30611,7 @@ $$;
 ALTER FUNCTION "public"."my_privacy_settings"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."my_privacy_settings"() IS 'The signed-in member''s privacy settings, with Suggest me, the parent''s separate yes and the reading level switch (S1-E13-01, S1-E5-11, S1-E2-03b, G7a).';
+COMMENT ON FUNCTION "public"."my_privacy_settings"() IS 'The signed-in member''s privacy settings, with Suggest me, the parent''s separate yes, the reading level switch, the personal details heads-up and Suggestions from my reading (S1-E13-01, S1-E5-11, S1-E2-03b, G7a, MUST-1b, S1-E15-06).';
 
 
 
@@ -31103,6 +31814,55 @@ ALTER FUNCTION "public"."normalised_email"("email" "text") OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."normalised_email"("email" "text") IS 'Internal: lower case, no +tag, no Gmail dots; the form hashed for the banned list (bundle ADMIN-2, part f1; brief section 6).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."note_active_minute"("is_reading" boolean DEFAULT false) RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  today date := (now() at time zone 'Europe/Bucharest')::date;
+  previous public.member_last_active;
+  is_new_today boolean;
+  counts_minute boolean;
+begin
+  -- Step 1: a signed-in member who counts (staff and the classics account don't).
+  if caller_id is null then
+    raise exception 'Log in first.' using errcode = '42501';
+  end if;
+  if not public.counts_for_metrics(caller_id) then
+    return jsonb_build_object('counted', false);
+  end if;
+  -- Step 2: the member's last day, locked so two tabs can't both count the same minute.
+  select * into previous from public.member_last_active
+  where member_last_active.user_id = caller_id for update;
+  is_new_today := previous.user_id is null or previous.active_on < today;
+  counts_minute := previous.minute_noted_at is null
+    or previous.minute_noted_at < now() - interval '45 seconds';
+  if not is_new_today and not counts_minute then
+    return jsonb_build_object('counted', false);
+  end if;
+  -- Step 3: overwrite the one row: today, and now when a minute counts. No history is kept.
+  insert into public.member_last_active (user_id, active_on, minute_noted_at)
+  values (caller_id, today, now())
+  on conflict (user_id) do update set
+    active_on = excluded.active_on,
+    minute_noted_at = case when counts_minute then excluded.minute_noted_at
+                           else member_last_active.minute_noted_at end;
+  -- Step 4: the day's totals, which carry no name.
+  perform public.add_to_activity_totals(today, is_new_today::integer, counts_minute::integer,
+    (counts_minute and coalesce(is_reading, false))::integer);
+  return jsonb_build_object('counted', counts_minute);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."note_active_minute"("is_reading" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."note_active_minute"("is_reading" boolean) IS 'The app''s once-a-minute "here": counts the member active today and adds a minute in the app and reading (S1-E15-04).';
 
 
 
@@ -32409,6 +33169,33 @@ ALTER FUNCTION "public"."page_ads"("page_key" "text", "context" "jsonb") OWNER T
 
 
 COMMENT ON FUNCTION "public"."page_ads"("page_key" "text", "context" "jsonb") IS 'Public: a page''s ad slots, filled from the page''s context only, never the same ad twice (S1-E12-01).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."paired_cards"("source_story_id" "uuid", "left_out" "uuid"[]) RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  with paired as (
+    select listed.id, pairs.readers, coalesce(scores.score, 0) as score
+    from public.story_pairs as pairs
+    join public.listed_stories('popular', null, null, null, null) as listed on listed.id = pairs.paired_story_id
+    left join public.story_scores as scores on scores.story_id = listed.id
+    where pairs.story_id = source_story_id
+      and not (listed.id = any (coalesce(left_out, '{}'::uuid[])))
+    order by pairs.readers desc, score desc
+    limit public.suggestion_row_size()
+  )
+  select coalesce(jsonb_agg(public.story_card_json(paired.id) order by paired.readers desc, paired.score desc),
+                  '[]'::jsonb)
+  from paired;
+$$;
+
+
+ALTER FUNCTION "public"."paired_cards"("source_story_id" "uuid", "left_out" "uuid"[]) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."paired_cards"("source_story_id" "uuid", "left_out" "uuid"[]) IS 'Internal: cards for the stories paired with one story, as the caller may see them (S1-E15-06).';
 
 
 
@@ -38122,6 +38909,34 @@ COMMENT ON FUNCTION "public"."require_contest_staff"() IS 'Internal: refuses any
 
 
 
+CREATE OR REPLACE FUNCTION "public"."require_custom_role_staff"("reason_given" "text") RETURNS "void"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  if not public.staff_may('roles', 'act') then
+    raise exception 'Only an owner or admin can change staff roles.'
+      using errcode = 'insufficient_privilege', hint = 'not_allowed';
+  end if;
+  -- A role change needs a sign-in from the last 15 minutes (S1-E11-01, as for built-in roles).
+  if not public.staff_signed_in_recently() then
+    raise exception 'Sign in again to change a staff role.'
+      using errcode = 'invalid_authorization_specification', hint = 'sign_in_again';
+  end if;
+  if btrim(coalesce(reason_given, '')) = '' then
+    raise exception 'Give a reason.' using errcode = 'check_violation', hint = 'reason_missing';
+  end if;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."require_custom_role_staff"("reason_given" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."require_custom_role_staff"("reason_given" "text") IS 'Internal: refuses anyone who may not manage custom staff roles, or gives no reason (S1-E11-33).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."require_forum_staff"() RETURNS "void"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -38345,18 +39160,23 @@ CREATE OR REPLACE FUNCTION "public"."require_role_change_allowed"("target_user_i
     SET "search_path" TO ''
     AS $$
 begin
-  if not public.staff_may('roles', 'act') then
+  -- Step 1: the Roles area at Change, from a built-in owner or admin role, not a custom role.
+  if not public.staff_may('roles', 'act')
+     or not (public.is_staff('owner') or public.is_staff('admin')) then
     raise exception 'Only an owner or admin can change staff roles.'
       using errcode = 'insufficient_privilege', hint = 'not_allowed';
   end if;
+  -- Step 2: a sign-in from the last 15 minutes (S1-E11-01).
   if not public.staff_signed_in_recently() then
     raise exception 'Sign in again to change a staff role.'
       using errcode = 'invalid_authorization_specification', hint = 'sign_in_again';
   end if;
+  -- Step 3: never one's own role (architecture 1.8.3).
   if target_user_id = (select auth.uid()) then
     raise exception 'Nobody can change their own role.'
       using errcode = 'insufficient_privilege', hint = 'own_role';
   end if;
+  -- Step 4: a reason for the audit log, and an account that exists.
   if btrim(coalesce(reason_given, '')) = '' then
     raise exception 'Give a reason.' using errcode = 'check_violation', hint = 'reason_missing';
   end if;
@@ -38370,7 +39190,7 @@ $$;
 ALTER FUNCTION "public"."require_role_change_allowed"("target_user_id" "uuid", "reason_given" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."require_role_change_allowed"("target_user_id" "uuid", "reason_given" "text") IS 'Internal: the shared checks before a staff role or permission changes, each refusal with a hint (S1-E2-07a, S1-E11-01, S1-E11-01b).';
+COMMENT ON FUNCTION "public"."require_role_change_allowed"("target_user_id" "uuid", "reason_given" "text") IS 'Internal: the shared checks before a built-in staff role, permission or intern marker changes; only a built-in owner or admin passes; each refusal with a hint (S1-E2-07a, S1-E11-01, S1-E11-01b, S1-E11-33).';
 
 
 
@@ -38980,6 +39800,32 @@ COMMENT ON FUNCTION "public"."rising_writers"("page_size" integer) IS 'New and r
 
 
 
+CREATE OR REPLACE FUNCTION "public"."rolling_retention"("joined_on" "date", "after_days" integer) RETURNS numeric
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  with cohort as (
+    select profiles.id from public.profiles
+    join auth.users on users.id = profiles.id and users.email_confirmed_at is not null
+    where (profiles.created_at at time zone 'Europe/Bucharest')::date = joined_on
+      and public.counts_for_metrics(profiles.id)
+  )
+  select case when count(*) >= coalesce(public.setting_value('metrics_minimum_group') #>> '{}', '5')::integer
+    then round(100.0 * count(*) filter (where exists (
+      select 1 from public.member_last_active
+      where member_last_active.user_id = cohort.id
+        and member_last_active.active_on >= joined_on + after_days)) / count(*), 1) end
+  from cohort;
+$$;
+
+
+ALTER FUNCTION "public"."rolling_retention"("joined_on" "date", "after_days" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."rolling_retention"("joined_on" "date", "after_days" integer) IS 'Internal: the share of one day''s new members who came back after so many days, or null under 5 (S1-E15-04).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."romania_today"() RETURNS "date"
     LANGUAGE "sql" STABLE
     SET "search_path" TO ''
@@ -39586,6 +40432,8 @@ declare
   current_shelf public.library_shelf;
   new_shelf public.library_shelf;
   clamped integer := least(100, greatest(0, coalesce(read_percent, 0)));
+  furthest_before integer;
+  is_owner boolean;
 begin
   -- Step 1: signed in, and a chapter this reader may read.
   if caller_id is null then
@@ -39598,13 +40446,24 @@ begin
   if not found then
     raise exception 'There is no such chapter.' using errcode = 'no_data_found';
   end if;
-  -- Step 2: the place, one row per chapter; saving again moves it.
+  is_owner := exists (select 1 from public.stories
+                      where stories.id = chapter.story_id and stories.user_id = caller_id);
+  -- Step 2: how far the reader had got before, so a finish counts only once.
+  select reading_positions.furthest_percent into furthest_before from public.reading_positions
+  where reading_positions.user_id = caller_id and reading_positions.chapter_id = chapter.id;
+  -- Step 3: the place, one row per chapter; saving again moves it.
   insert into public.reading_positions (user_id, story_id, chapter_id, percent, device_kind)
   values (caller_id, chapter.story_id, chapter.id, clamped, device_kind)
   on conflict on constraint reading_positions_one_per_chapter
   do update set percent = excluded.percent, device_kind = excluded.device_kind, updated_at = now();
-  -- Step 3: the shelf. A writer's own story never fills their library.
-  if exists (select 1 from public.stories where stories.id = chapter.story_id and stories.user_id = caller_id) then
+  -- Step 4 (S1-E15-04): a first finish adds one to the day's total, never who finished.
+  if clamped >= 95 and coalesce(furthest_before, 0) < 95 and not is_owner then
+    insert into public.chapter_finishes as finishes (chapter_id, read_on, total)
+    values (chapter.id, (now() at time zone 'Europe/Bucharest')::date, 1)
+    on conflict (chapter_id, read_on) do update set total = finishes.total + 1;
+  end if;
+  -- Step 5: the shelf. A writer's own story never fills their library.
+  if is_owner then
     return jsonb_build_object('shelf', null);
   end if;
   select library_entries.shelf into current_shelf from public.library_entries
@@ -39627,7 +40486,7 @@ $$;
 ALTER FUNCTION "public"."save_reading_position"("story_slug" "text", "chapter_code" "text", "read_percent" integer, "device_kind" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."save_reading_position"("story_slug" "text", "chapter_code" "text", "read_percent" integer, "device_kind" "text") IS 'Keeps the caller''s place in a chapter and files the story on a shelf (S1-E4-03).';
+COMMENT ON FUNCTION "public"."save_reading_position"("story_slug" "text", "chapter_code" "text", "read_percent" integer, "device_kind" "text") IS 'Keeps the caller''s place in a chapter, files the story on a shelf and counts a first finish (S1-E4-03, S1-E15-04).';
 
 
 
@@ -42431,6 +43290,22 @@ COMMENT ON FUNCTION "public"."set_suggest_me"("should_suggest" boolean) IS 'The 
 
 
 
+CREATE OR REPLACE FUNCTION "public"."set_suggests_from_reading"("should_suggest" boolean) RETURNS "void"
+    LANGUAGE "sql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  update public.profiles set suggests_from_reading = coalesce(should_suggest, false), updated_at = now()
+  where profiles.id = public.require_live_profile();
+$$;
+
+
+ALTER FUNCTION "public"."set_suggests_from_reading"("should_suggest" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_suggests_from_reading"("should_suggest" boolean) IS 'The signed-in member turns Suggestions from my reading on or off (S1-E15-06).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."set_updated_at"() RETURNS "trigger"
     LANGUAGE "plpgsql"
     SET "search_path" TO ''
@@ -44578,22 +45453,39 @@ CREATE OR REPLACE FUNCTION "public"."staff_may"("target_area" "text", "wanted_ac
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
-  select public.is_staff_session() and exists (
-    select 1
-    from public.staff_roles as roles
-    join public.profiles on profiles.id = roles.user_id and profiles.deleted_at is null
-    join public.staff_role_areas as areas on areas.role = roles.role
-    where roles.user_id = (select auth.uid())
-      and areas.area = target_area
-      and (wanted_access = 'view' or areas.access = 'act')
-      and (
-        areas.required_permission is null
-        or exists (
-          select 1 from public.staff_permissions as permissions
-          where permissions.user_id = roles.user_id
-            and permissions.permission = areas.required_permission
+  select public.is_staff_session() and (
+    exists (
+      select 1
+      from public.staff_roles as roles
+      join public.profiles on profiles.id = roles.user_id and profiles.deleted_at is null
+      join public.staff_role_areas as areas on areas.role = roles.role
+      where roles.user_id = (select auth.uid())
+        and areas.area = target_area
+        and (wanted_access = 'view' or areas.access = 'act')
+        and (
+          areas.required_permission is null
+          or exists (
+            select 1 from public.staff_permissions as permissions
+            where permissions.user_id = roles.user_id
+              and permissions.permission = areas.required_permission
+          )
         )
+    )
+    or (
+      target_area not in ('safeguarding', 'removal_orders', 'open_market')
+      and exists (
+        select 1
+        from public.staff_custom_role_holders as holders
+        join public.staff_custom_roles as custom_roles
+          on custom_roles.id = holders.custom_role_id and custom_roles.deleted_at is null
+        join public.staff_custom_role_areas as custom_areas
+          on custom_areas.custom_role_id = custom_roles.id
+        join public.profiles on profiles.id = holders.user_id and profiles.deleted_at is null
+        where holders.user_id = (select auth.uid())
+          and custom_areas.area = target_area
+          and (wanted_access = 'view' or custom_areas.access = 'act')
       )
+    )
   );
 $$;
 
@@ -44601,7 +45493,7 @@ $$;
 ALTER FUNCTION "public"."staff_may"("target_area" "text", "wanted_access" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."staff_may"("target_area" "text", "wanted_access" "text") IS 'True when the caller''s staff role (and permission) allows the area and the session is a staff session (architecture 1.8.3, S1-E2-07a).';
+COMMENT ON FUNCTION "public"."staff_may"("target_area" "text", "wanted_access" "text") IS 'True when the caller''s staff role (and permission) or custom role allows the area and the session is a staff session (architecture 1.8.3, S1-E2-07a, S1-E11-33).';
 
 
 
@@ -45129,6 +46021,23 @@ ALTER FUNCTION "public"."stories_fingerprint"("owner_id" "uuid", "chosen_story_i
 
 
 COMMENT ON FUNCTION "public"."stories_fingerprint"("owner_id" "uuid", "chosen_story_id" "uuid") IS 'Internal: a summary of everything in the writer''s chosen stories and their plans, to spot a change (S1-E13-05).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."stories_like_this"("story_slug" "text") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select jsonb_build_object('stories', coalesce(
+    (select public.paired_cards(shown_beside.story_id, null)
+     from public.visible_story_by_slug(story_slug) as shown_beside), '[]'::jsonb));
+$$;
+
+
+ALTER FUNCTION "public"."stories_like_this"("story_slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."stories_like_this"("story_slug" "text") IS 'Stories like this: stories finished by at least 5 of the same readers, as the caller may see them (S1-E15-06).';
 
 
 
@@ -45896,6 +46805,65 @@ COMMENT ON FUNCTION "public"."story_matches_search"("target" "public"."stories",
 
 
 
+CREATE OR REPLACE FUNCTION "public"."story_more_signals"() RETURNS TABLE("story_id" "uuid", "follows" double precision, "finish_points" double precision, "growth" double precision)
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  with window_start as (
+    select now() - make_interval(days => public.ranking_setting('ranking_window_days', 60)::integer) as since,
+      public.ranking_setting('ranking_half_life_days', 7) as half_life,
+      (now() at time zone 'Europe/Bucharest')::date as today
+  ),
+  readable as materialized (
+    select * from public.readable_chapters_for_ranking()
+  ),
+  stories_ranked as (
+    select distinct readable.story_id, readable.user_id from readable
+  ),
+  follow_points as (
+    select follows.story_id, sum(power(0.5,
+      extract(epoch from now() - follows.created_at) / 86400 / window_start.half_life)) as points
+    from stories_ranked cross join window_start
+    join public.follows_stories as follows on follows.story_id = stories_ranked.story_id
+      and follows.user_id <> stories_ranked.user_id
+    join public.profiles on profiles.id = follows.user_id and profiles.deleted_at is null
+    where follows.created_at >= window_start.since
+    group by follows.story_id
+  ),
+  finished as (
+    select readable.story_id, sum(finishes.total
+      * least(60.0, greatest(1.0, coalesce(chapters.published_word_count, 0) / 230.0))
+      * power(0.5, (window_start.today - finishes.read_on) / window_start.half_life)) as points
+    from readable cross join window_start
+    join public.chapters on chapters.id = readable.id
+    join public.chapter_finishes as finishes on finishes.chapter_id = readable.id
+    where finishes.read_on >= (window_start.since at time zone 'Europe/Bucharest')::date
+    group by readable.story_id
+  ),
+  rise as (
+    select story_scores.story_id,
+      least(1.0, greatest(0.0, (story_scores.score - week_ago.score) / week_ago.score)) as ratio
+    from public.story_scores cross join window_start
+    join public.story_rank_snapshots as week_ago on week_ago.story_id = story_scores.story_id
+      and week_ago.snapshot_on = window_start.today - 7
+    where week_ago.score > 0
+  )
+  select stories_ranked.story_id, coalesce(follow_points.points, 0),
+    coalesce(finished.points, 0), coalesce(rise.ratio, 0)
+  from stories_ranked
+  left join follow_points on follow_points.story_id = stories_ranked.story_id
+  left join finished on finished.story_id = stories_ranked.story_id
+  left join rise on rise.story_id = stories_ranked.story_id;
+$$;
+
+
+ALTER FUNCTION "public"."story_more_signals"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_more_signals"() IS 'Internal: each readable story''s decayed follows, finished-chapter points and 7-day growth (S1-E15-05).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."story_page_chapters"("target_story_id" "uuid", "is_owner" boolean) RETURNS "jsonb"
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -46113,6 +47081,58 @@ ALTER FUNCTION "public"."story_rank_in_tag"("target_story_id" "uuid", "tag_name"
 
 
 COMMENT ON FUNCTION "public"."story_rank_in_tag"("target_story_id" "uuid", "tag_name" "text") IS 'Internal: a story''s place among the stories with a tag that this reader may see (CMS-1g).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."story_rank_place"("story_slug" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  story public.stories;
+  own_score double precision;
+  place integer;
+begin
+  -- Step 1: the story, which the caller may see.
+  select * into story from public.stories where stories.slug = story_slug and stories.deleted_at is null;
+  if not found then
+    return null;
+  end if;
+  if not public.staff_may('stories', 'view') and (
+       not public.rating_allows(story.rating)
+       or public.is_moderated_away('story', story.id)
+       or public.is_blocked_with(story.user_id)) then
+    return null;
+  end if;
+  -- Step 2: its score, if it is a story every reader could find.
+  if story.class_only or story.visibility <> 'public' then
+    return null;
+  end if;
+  select story_scores.score into own_score from public.story_scores where story_scores.story_id = story.id;
+  if own_score is null or own_score <= 0 then
+    return null;
+  end if;
+  -- Step 3: one more than the findable stories in the category with a higher score.
+  select 1 + count(*)::integer into place
+  from public.story_scores
+  join public.stories as others on others.id = story_scores.story_id
+  where others.category_id = story.category_id and others.deleted_at is null
+    and story_scores.score > own_score
+    and not others.class_only and others.visibility = 'public'
+    and not public.is_moderated_away('story', others.id);
+  if place > public.ranking_setting('ranking_place_show_up_to', 100) then
+    return null;
+  end if;
+  return jsonb_build_object('place', place,
+    'category_slug', (select categories.slug from public.categories where categories.id = story.category_id));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."story_rank_place"("story_slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_rank_place"("story_slug" "text") IS 'A story''s place in its category by score, up to place 100, for anyone who may see it and for staff (S1-E15-05).';
 
 
 
@@ -46958,6 +47978,38 @@ ALTER FUNCTION "public"."submit_teacher_proof"("proof_path" "text") OWNER TO "po
 
 
 COMMENT ON FUNCTION "public"."submit_teacher_proof"("proof_path" "text") IS 'Puts an uploaded proof that someone teaches in the staff queue (S1-E2-11).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."suggestion_row_size"() RETURNS integer
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select least(20, greatest(1, coalesce((select (settings.value #>> '{}')::integer from public.settings
+                                         where settings.key = 'suggestions_row_size'), 12)));
+$$;
+
+
+ALTER FUNCTION "public"."suggestion_row_size"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."suggestion_row_size"() IS 'Internal: how many stories a suggestion row shows, 1 to 20 (S1-E15-06).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."suggests_from_reading_of"("person_id" "uuid") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(profiles.suggests_from_reading, public.age_band_of(profiles.id) = '18_plus')
+  from public.profiles where profiles.id = person_id;
+$$;
+
+
+ALTER FUNCTION "public"."suggests_from_reading_of"("person_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."suggests_from_reading_of"("person_id" "uuid") IS 'Internal: the member''s Suggestions from my reading switch, on for adults and off under 18 until chosen (S1-E15-06).';
 
 
 
@@ -48657,6 +49709,23 @@ COMMENT ON FUNCTION "public"."verify_certificate"("code" "text") IS 'Public: whe
 
 
 
+CREATE OR REPLACE FUNCTION "public"."visible_story_by_slug"("story_slug" "text") RETURNS TABLE("story_id" "uuid", "writer_id" "uuid")
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select listed.id, listed.user_id
+  from public.listed_stories('popular', null, null, null, null) as listed
+  where listed.slug = story_slug;
+$$;
+
+
+ALTER FUNCTION "public"."visible_story_by_slug"("story_slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."visible_story_by_slug"("story_slug" "text") IS 'Internal: a story the caller may find in a list, by its slug (S1-E15-06).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."vote_forum_post"("post_id" "uuid", "vote" "text") RETURNS "text"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -50243,6 +51312,21 @@ The fixed story categories: fiction, poetry, nonfiction essays (Q52). Changed by
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."chapter_finishes" (
+    "chapter_id" "uuid" NOT NULL,
+    "read_on" "date" NOT NULL,
+    "total" integer DEFAULT 0 NOT NULL,
+    CONSTRAINT "chapter_finishes_total_not_negative" CHECK (("total" >= 0))
+);
+
+
+ALTER TABLE "public"."chapter_finishes" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."chapter_finishes" IS 'kind: platform. How many readers first reached 95% of each chapter each day: totals only, never who (S1-E15-04).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."chapter_likes" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "user_id" "uuid" NOT NULL,
@@ -50659,6 +51743,24 @@ A moderator''s request to change a signature or a space banner within 24 hours (
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."daily_activity_totals" (
+    "activity_on" "date" NOT NULL,
+    "active_members" integer DEFAULT 0 NOT NULL,
+    "minutes_in_app" integer DEFAULT 0 NOT NULL,
+    "minutes_reading" integer DEFAULT 0 NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "daily_activity_totals_not_negative" CHECK ((("active_members" >= 0) AND ("minutes_in_app" >= 0) AND ("minutes_reading" >= 0)))
+);
+
+
+ALTER TABLE "public"."daily_activity_totals" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."daily_activity_totals" IS 'kind: platform. Per day: members who used the app and minutes in the app and reading. Totals only (S1-E15-04).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."daily_metrics" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "metric_date" "date" NOT NULL,
@@ -50667,7 +51769,7 @@ CREATE TABLE IF NOT EXISTS "public"."daily_metrics" (
     "value" numeric NOT NULL,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    CONSTRAINT "daily_metrics_known_metric" CHECK (("metric" = ANY (ARRAY['writers_published'::"text", 'signed_up_readers'::"text", 'chapter_reads'::"text", 'return_rate'::"text"]))),
+    CONSTRAINT "daily_metrics_known_metric" CHECK (("metric" = ANY (ARRAY['writers_published'::"text", 'signed_up_readers'::"text", 'chapter_reads'::"text", 'return_rate'::"text", 'active_members'::"text", 'weekly_active_members'::"text", 'monthly_active_members'::"text", 'sign_ups'::"text", 'stories_read'::"text", 'chapters_finished'::"text", 'minutes_in_app'::"text", 'minutes_reading'::"text", 'writers_publishing'::"text", 'retention_day_1'::"text", 'retention_day_7'::"text", 'retention_day_30'::"text"]))),
     CONSTRAINT "daily_metrics_market_shape" CHECK ((("market" = ANY (ARRAY['all'::"text", 'other'::"text"])) OR ("market" ~ '^[A-Z]{2}$'::"text"))),
     CONSTRAINT "daily_metrics_value_not_negative" CHECK (("value" >= (0)::numeric))
 );
@@ -51352,6 +52454,22 @@ A request for a manual age check after a failed Yoti check, and the staff decisi
 
 
 COMMENT ON COLUMN "public"."manual_age_checks"."user_id" IS 'The person asking; never shown publicly (rule 15).';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."member_last_active" (
+    "user_id" "uuid" NOT NULL,
+    "active_on" "date" NOT NULL,
+    "minute_noted_at" timestamp with time zone,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL
+);
+
+
+ALTER TABLE "public"."member_last_active" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."member_last_active" IS 'kind: user_action. Each member''s last day in the app and last noted minute, overwritten each time: no history (S1-E15-04).';
 
 
 
@@ -52134,6 +53252,64 @@ Companies and public bodies that sponsor campaigns (S1-E12-02). No personal data
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."staff_custom_role_areas" (
+    "custom_role_id" "uuid" NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "area" "text" NOT NULL,
+    "access" "text" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "staff_custom_role_areas_access_check" CHECK (("access" = ANY (ARRAY['view'::"text", 'act'::"text"])))
+);
+
+
+ALTER TABLE "public"."staff_custom_role_areas" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."staff_custom_role_areas" IS 'kind: staff
+What a custom staff role may do in each admin area: view or act (S1-E11-33, CMS-2a).';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."staff_custom_role_holders" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "custom_role_id" "uuid" NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "granted_by_user_id" "uuid",
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL
+);
+
+
+ALTER TABLE "public"."staff_custom_role_holders" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."staff_custom_role_holders" IS 'kind: staff
+Who holds which custom staff role, and who gave it (S1-E11-33, CMS-2a).';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."staff_custom_roles" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "name" "text" NOT NULL,
+    "description" "text" DEFAULT ''::"text" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "deleted_at" timestamp with time zone,
+    CONSTRAINT "staff_custom_roles_description_check" CHECK (("char_length"("description") <= 200)),
+    CONSTRAINT "staff_custom_roles_name_check" CHECK ((("char_length"("btrim"("name")) >= 2) AND ("char_length"("btrim"("name")) <= 40)))
+);
+
+
+ALTER TABLE "public"."staff_custom_roles" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."staff_custom_roles" IS 'kind: staff
+Custom staff roles made by an owner or admin: a name and a description; what each may do is in staff_custom_role_areas (S1-E11-33, CMS-2a).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."staff_interns" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "user_id" "uuid" NOT NULL,
@@ -52330,6 +53506,25 @@ COMMENT ON COLUMN "public"."story_marketing"."user_id" IS 'The writer''s user ID
 
 
 COMMENT ON COLUMN "public"."story_marketing"."own_details" IS 'kind: user_content. The writer''s own marketing details, in the order added: a list of { id, name (1 to 80 characters), text (up to 5,000) }; at most 12 (GAPS-2b).';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."story_pairs" (
+    "story_id" "uuid" NOT NULL,
+    "paired_story_id" "uuid" NOT NULL,
+    "readers" integer NOT NULL,
+    "counted_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "story_pairs_readers_check" CHECK (("readers" > 0)),
+    CONSTRAINT "story_pairs_two_stories" CHECK (("story_id" <> "paired_story_id"))
+);
+
+
+ALTER TABLE "public"."story_pairs" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."story_pairs" IS 'kind: platform. Each night: how many members (with Suggestions from my reading on) finished both of two stories, kept only at 5 or more. Totals only, never who (S1-E15-06).';
 
 
 
@@ -53001,6 +54196,11 @@ ALTER TABLE ONLY "public"."chapter_embeds"
 
 
 
+ALTER TABLE ONLY "public"."chapter_finishes"
+    ADD CONSTRAINT "chapter_finishes_pkey" PRIMARY KEY ("chapter_id", "read_on");
+
+
+
 ALTER TABLE ONLY "public"."chapter_likes"
     ADD CONSTRAINT "chapter_likes_one_per_pair" UNIQUE ("user_id", "chapter_id");
 
@@ -53198,6 +54398,11 @@ ALTER TABLE ONLY "public"."country_age_rules"
 
 ALTER TABLE ONLY "public"."customisation_change_requests"
     ADD CONSTRAINT "customisation_change_requests_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."daily_activity_totals"
+    ADD CONSTRAINT "daily_activity_totals_pkey" PRIMARY KEY ("activity_on");
 
 
 
@@ -53566,6 +54771,11 @@ ALTER TABLE ONLY "public"."markets"
 
 
 
+ALTER TABLE ONLY "public"."member_last_active"
+    ADD CONSTRAINT "member_last_active_pkey" PRIMARY KEY ("user_id");
+
+
+
 ALTER TABLE ONLY "public"."messages"
     ADD CONSTRAINT "messages_pkey" PRIMARY KEY ("id");
 
@@ -53916,6 +55126,26 @@ ALTER TABLE ONLY "public"."sponsors"
 
 
 
+ALTER TABLE ONLY "public"."staff_custom_role_areas"
+    ADD CONSTRAINT "staff_custom_role_areas_pkey" PRIMARY KEY ("custom_role_id", "area");
+
+
+
+ALTER TABLE ONLY "public"."staff_custom_role_holders"
+    ADD CONSTRAINT "staff_custom_role_holders_custom_role_id_user_id_key" UNIQUE ("custom_role_id", "user_id");
+
+
+
+ALTER TABLE ONLY "public"."staff_custom_role_holders"
+    ADD CONSTRAINT "staff_custom_role_holders_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."staff_custom_roles"
+    ADD CONSTRAINT "staff_custom_roles_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."staff_interns"
     ADD CONSTRAINT "staff_interns_one_row_per_person" UNIQUE ("user_id");
 
@@ -54033,6 +55263,11 @@ ALTER TABLE ONLY "public"."story_ideas"
 
 ALTER TABLE ONLY "public"."story_marketing"
     ADD CONSTRAINT "story_marketing_pkey" PRIMARY KEY ("story_id");
+
+
+
+ALTER TABLE ONLY "public"."story_pairs"
+    ADD CONSTRAINT "story_pairs_pkey" PRIMARY KEY ("story_id", "paired_story_id");
 
 
 
@@ -55186,6 +56421,14 @@ CREATE INDEX "sponsors_user_id_fk_idx" ON "public"."sponsors" USING "btree" ("us
 
 
 
+CREATE INDEX "staff_custom_role_holders_user_idx" ON "public"."staff_custom_role_holders" USING "btree" ("user_id");
+
+
+
+CREATE UNIQUE INDEX "staff_custom_roles_name_key" ON "public"."staff_custom_roles" USING "btree" ("lower"("btrim"("name"))) WHERE ("deleted_at" IS NULL);
+
+
+
 CREATE INDEX "staff_languages_language_code_fk_idx" ON "public"."staff_languages" USING "btree" ("language_code");
 
 
@@ -55802,6 +57045,10 @@ CREATE OR REPLACE TRIGGER "country_age_rules_set_updated_at" BEFORE UPDATE ON "p
 
 
 
+CREATE OR REPLACE TRIGGER "daily_activity_totals_set_updated_at" BEFORE UPDATE ON "public"."daily_activity_totals" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
 CREATE OR REPLACE TRIGGER "daily_metrics_set_updated_at" BEFORE UPDATE ON "public"."daily_metrics" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
@@ -56035,6 +57282,10 @@ CREATE OR REPLACE TRIGGER "markets_keep_is_open" BEFORE INSERT OR UPDATE ON "pub
 
 
 CREATE OR REPLACE TRIGGER "markets_set_updated_at" BEFORE UPDATE ON "public"."markets" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "member_last_active_set_updated_at" BEFORE UPDATE ON "public"."member_last_active" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
 
@@ -56299,6 +57550,18 @@ CREATE OR REPLACE TRIGGER "sponsor_campaigns_set_updated_at" BEFORE UPDATE ON "p
 
 
 CREATE OR REPLACE TRIGGER "sponsors_set_updated_at" BEFORE UPDATE ON "public"."sponsors" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "staff_custom_role_areas_set_updated_at" BEFORE UPDATE ON "public"."staff_custom_role_areas" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "staff_custom_role_holders_set_updated_at" BEFORE UPDATE ON "public"."staff_custom_role_holders" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "staff_custom_roles_set_updated_at" BEFORE UPDATE ON "public"."staff_custom_roles" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
 
@@ -56844,6 +58107,11 @@ ALTER TABLE ONLY "public"."chapter_embeds"
 
 ALTER TABLE ONLY "public"."chapter_embeds"
     ADD CONSTRAINT "chapter_embeds_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."chapter_finishes"
+    ADD CONSTRAINT "chapter_finishes_chapter_id_fkey" FOREIGN KEY ("chapter_id") REFERENCES "public"."chapters"("id") ON DELETE CASCADE;
 
 
 
@@ -57487,6 +58755,11 @@ ALTER TABLE ONLY "public"."manual_age_checks"
 
 
 
+ALTER TABLE ONLY "public"."member_last_active"
+    ADD CONSTRAINT "member_last_active_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
+
+
+
 ALTER TABLE ONLY "public"."messages"
     ADD CONSTRAINT "messages_conversation_id_fkey" FOREIGN KEY ("conversation_id") REFERENCES "public"."conversations"("id") ON DELETE CASCADE;
 
@@ -58027,6 +59300,36 @@ ALTER TABLE ONLY "public"."sponsors"
 
 
 
+ALTER TABLE ONLY "public"."staff_custom_role_areas"
+    ADD CONSTRAINT "staff_custom_role_areas_custom_role_id_fkey" FOREIGN KEY ("custom_role_id") REFERENCES "public"."staff_custom_roles"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."staff_custom_role_areas"
+    ADD CONSTRAINT "staff_custom_role_areas_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."staff_custom_role_holders"
+    ADD CONSTRAINT "staff_custom_role_holders_custom_role_id_fkey" FOREIGN KEY ("custom_role_id") REFERENCES "public"."staff_custom_roles"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."staff_custom_role_holders"
+    ADD CONSTRAINT "staff_custom_role_holders_granted_by_user_id_fkey" FOREIGN KEY ("granted_by_user_id") REFERENCES "public"."profiles"("id") ON DELETE SET NULL;
+
+
+
+ALTER TABLE ONLY "public"."staff_custom_role_holders"
+    ADD CONSTRAINT "staff_custom_role_holders_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."staff_custom_roles"
+    ADD CONSTRAINT "staff_custom_roles_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
 ALTER TABLE ONLY "public"."staff_interns"
     ADD CONSTRAINT "staff_interns_marked_by_user_id_fkey" FOREIGN KEY ("marked_by_user_id") REFERENCES "public"."profiles"("id");
 
@@ -58234,6 +59537,16 @@ ALTER TABLE ONLY "public"."story_marketing"
 
 ALTER TABLE ONLY "public"."story_marketing"
     ADD CONSTRAINT "story_marketing_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."story_pairs"
+    ADD CONSTRAINT "story_pairs_paired_story_id_fkey" FOREIGN KEY ("paired_story_id") REFERENCES "public"."stories"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."story_pairs"
+    ADD CONSTRAINT "story_pairs_story_id_fkey" FOREIGN KEY ("story_id") REFERENCES "public"."stories"("id") ON DELETE CASCADE;
 
 
 
@@ -58721,6 +60034,13 @@ COMMENT ON POLICY "chapter_embeds_select_own" ON "public"."chapter_embeds" IS 'A
 
 
 
+ALTER TABLE "public"."chapter_finishes" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "chapter_finishes_select_staff" ON "public"."chapter_finishes" FOR SELECT TO "authenticated" USING (( SELECT "public"."staff_may"('stories'::"text", 'view'::"text") AS "staff_may"));
+
+
+
 ALTER TABLE "public"."chapter_likes" ENABLE ROW LEVEL SECURITY;
 
 
@@ -59014,6 +60334,13 @@ CREATE POLICY "customisation_change_requests_select_own_or_staff" ON "public"."c
 
 
 COMMENT ON POLICY "customisation_change_requests_select_own_or_staff" ON "public"."customisation_change_requests" IS 'Allows the person asked, and moderation staff, to read a change request (S1-E8-08).';
+
+
+
+ALTER TABLE "public"."daily_activity_totals" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "daily_activity_totals_select_metrics" ON "public"."daily_activity_totals" FOR SELECT TO "authenticated" USING (( SELECT "public"."may_see_march_numbers"() AS "may_see_march_numbers"));
 
 
 
@@ -59487,6 +60814,13 @@ CREATE POLICY "markets_select_public" ON "public"."markets" FOR SELECT TO "authe
 
 
 COMMENT ON POLICY "markets_select_public" ON "public"."markets" IS 'Allows anyone, signed out included, to read which countries are open; nothing in it is personal (S1-E2-10).';
+
+
+
+ALTER TABLE "public"."member_last_active" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "member_last_active_select_own" ON "public"."member_last_active" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
 
 
 
@@ -59965,6 +61299,27 @@ COMMENT ON POLICY "sponsors_select_sponsor_staff" ON "public"."sponsors" IS 'All
 
 
 
+ALTER TABLE "public"."staff_custom_role_areas" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "staff_custom_role_areas_select_role_staff" ON "public"."staff_custom_role_areas" FOR SELECT TO "authenticated" USING (( SELECT "public"."staff_may"('roles'::"text", 'view'::"text") AS "staff_may"));
+
+
+
+ALTER TABLE "public"."staff_custom_role_holders" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "staff_custom_role_holders_select_role_staff" ON "public"."staff_custom_role_holders" FOR SELECT TO "authenticated" USING ((( SELECT "public"."staff_may"('roles'::"text", 'view'::"text") AS "staff_may") OR ("user_id" = ( SELECT "auth"."uid"() AS "uid"))));
+
+
+
+ALTER TABLE "public"."staff_custom_roles" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "staff_custom_roles_select_role_staff" ON "public"."staff_custom_roles" FOR SELECT TO "authenticated" USING (( SELECT "public"."staff_may"('roles'::"text", 'view'::"text") AS "staff_may"));
+
+
+
 ALTER TABLE "public"."staff_interns" ENABLE ROW LEVEL SECURITY;
 
 
@@ -60160,6 +61515,13 @@ CREATE POLICY "story_marketing_select_own" ON "public"."story_marketing" FOR SEL
 
 
 COMMENT ON POLICY "story_marketing_select_own" ON "public"."story_marketing" IS 'Allows a writer to read the marketing notes of their own stories, and nobody else (S1-E17-29).';
+
+
+
+ALTER TABLE "public"."story_pairs" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "story_pairs_select_staff" ON "public"."story_pairs" FOR SELECT TO "authenticated" USING ("public"."staff_may"('stories'::"text", 'view'::"text"));
 
 
 
@@ -60622,6 +61984,10 @@ GRANT ALL ON FUNCTION "public"."add_story_idea"("story_slug" "text", "idea_kind"
 
 
 
+REVOKE ALL ON FUNCTION "public"."add_to_activity_totals"("for_day" "date", "new_member" integer, "app_minutes" integer, "reading_minutes" integer) FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_abuse_image_evidence"("target_case_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_abuse_image_evidence"("target_case_id" "uuid") TO "authenticated";
 
@@ -60936,6 +62302,11 @@ GRANT ALL ON FUNCTION "public"."admin_create_landing_page"("new_slug" "text", "n
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_custom_roles"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_custom_roles"() TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_data_request"("target_request_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_data_request"("target_request_id" "uuid") TO "authenticated";
 
@@ -61104,6 +62475,11 @@ GRANT ALL ON FUNCTION "public"."admin_house_ads"() TO "authenticated";
 
 REVOKE ALL ON FUNCTION "public"."admin_import_classics"("list_rows" "jsonb") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_import_classics"("list_rows" "jsonb") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_investor_numbers"("months" integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_investor_numbers"("months" integer) TO "authenticated";
 
 
 
@@ -61418,6 +62794,11 @@ GRANT ALL ON FUNCTION "public"."admin_remove_cms_entry"("content_kind" "text", "
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_remove_custom_role"("target_role_id" "uuid", "reason_given" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_remove_custom_role"("target_role_id" "uuid", "reason_given" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_remove_name_word"("target_word_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_remove_name_word"("target_word_id" "uuid") TO "authenticated";
 
@@ -61573,6 +62954,11 @@ GRANT ALL ON FUNCTION "public"."admin_save_contest"("target_contest_id" "uuid", 
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_save_custom_role"("target_role_id" "uuid", "new_name" "text", "new_description" "text", "new_areas" "jsonb", "reason_given" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_save_custom_role"("target_role_id" "uuid", "new_name" "text", "new_description" "text", "new_areas" "jsonb", "reason_given" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_save_forum"("forum_id" "uuid", "parent_id" "uuid", "slug" "text", "sort_position" integer, "is_pinned" boolean, "accent" "public"."forum_accent", "names" "jsonb") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_save_forum"("forum_id" "uuid", "parent_id" "uuid", "slug" "text", "sort_position" integer, "is_pinned" boolean, "accent" "public"."forum_accent", "names" "jsonb") TO "authenticated";
 
@@ -61675,6 +63061,11 @@ GRANT ALL ON FUNCTION "public"."admin_set_classic_chapters"("target_story_id" "u
 
 REVOKE ALL ON FUNCTION "public"."admin_set_contest_placing"("target_entry_id" "uuid", "wanted_placing" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_set_contest_placing"("target_entry_id" "uuid", "wanted_placing" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_set_custom_role_holder"("target_user_id" "uuid", "target_role_id" "uuid", "should_hold" boolean, "reason_given" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_set_custom_role_holder"("target_user_id" "uuid", "target_role_id" "uuid", "should_hold" boolean, "reason_given" "text") TO "authenticated";
 
 
 
@@ -62178,6 +63569,11 @@ REVOKE ALL ON FUNCTION "public"."banned_account_items"("target_user_id" "uuid") 
 
 
 REVOKE ALL ON FUNCTION "public"."banned_email_hash"("email" "text") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."because_you_read"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."because_you_read"() TO "authenticated";
 
 
 
@@ -62796,7 +64192,15 @@ REVOKE ALL ON FUNCTION "public"."compute_daily_metrics"("for_day" "date") FROM P
 
 
 
+REVOKE ALL ON FUNCTION "public"."compute_investor_metrics"("for_day" "date") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."compute_story_country_scores"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."compute_story_pairs"() FROM PUBLIC;
 
 
 
@@ -62917,6 +64321,10 @@ REVOKE ALL ON FUNCTION "public"."country_has_ranking"("country" "text") FROM PUB
 
 
 
+REVOKE ALL ON FUNCTION "public"."counts_for_metrics"("person_id" "uuid") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."cover_upload_allowed"("object_name" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."cover_upload_allowed"("object_name" "text") TO "authenticated";
 
@@ -62967,6 +64375,26 @@ GRANT ALL ON FUNCTION "public"."create_story"("title" "text", "blurb" "text", "l
 
 REVOKE ALL ON FUNCTION "public"."create_story_character"("story_slug" "text", "character_name" "text", "character_role" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."create_story_character"("story_slug" "text", "character_name" "text", "character_role" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."custom_role_area_in_reach"("wanted_area" "text", "wanted_access" "text") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."custom_role_area_problem"("new_areas" "jsonb") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."custom_role_areas_json"("target_role_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."custom_role_assignable_areas"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."custom_role_in_reach"("target_role_id" "uuid") FROM PUBLIC;
 
 
 
@@ -63026,6 +64454,10 @@ REVOKE ALL ON FUNCTION "public"."data_request_person_is_under_16"("person_id" "u
 
 
 REVOKE ALL ON FUNCTION "public"."data_request_urgency"("request" "public"."data_requests") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."day_totals_for_investors"("for_day" "date") FROM PUBLIC;
 
 
 
@@ -63674,6 +65106,10 @@ REVOKE ALL ON FUNCTION "public"."interface_text_live_text"("wanted_key" "text", 
 
 
 
+REVOKE ALL ON FUNCTION "public"."investor_months"("months" integer) FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."invite_new_adults_to_age_check"() FROM PUBLIC;
 
 
@@ -64175,6 +65611,12 @@ GRANT ALL ON FUNCTION "public"."moderated_state_of"("item_type" "public"."report
 
 
 
+REVOKE ALL ON FUNCTION "public"."more_by_writer"("story_slug" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."more_by_writer"("story_slug" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."more_by_writer"("story_slug" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."move_bible_section"("section_id" "uuid", "new_position" integer) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."move_bible_section"("section_id" "uuid", "new_position" integer) TO "authenticated";
 
@@ -64577,6 +66019,11 @@ REVOKE ALL ON FUNCTION "public"."normalised_email"("email" "text") FROM PUBLIC;
 
 
 
+REVOKE ALL ON FUNCTION "public"."note_active_minute"("is_reading" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."note_active_minute"("is_reading" boolean) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."note_i_am_online"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."note_i_am_online"() TO "authenticated";
 
@@ -64727,6 +66174,10 @@ REVOKE ALL ON FUNCTION "public"."owned_space_for_change"("target_slug" "text") F
 REVOKE ALL ON FUNCTION "public"."page_ads"("page_key" "text", "context" "jsonb") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."page_ads"("page_key" "text", "context" "jsonb") TO "anon";
 GRANT ALL ON FUNCTION "public"."page_ads"("page_key" "text", "context" "jsonb") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."paired_cards"("source_story_id" "uuid", "left_out" "uuid"[]) FROM PUBLIC;
 
 
 
@@ -65546,6 +66997,10 @@ REVOKE ALL ON FUNCTION "public"."require_contest_staff"() FROM PUBLIC;
 
 
 
+REVOKE ALL ON FUNCTION "public"."require_custom_role_staff"("reason_given" "text") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."require_forum_staff"() FROM PUBLIC;
 
 
@@ -65666,6 +67121,10 @@ REVOKE ALL ON FUNCTION "public"."reusable_stories_export"("owner_id" "uuid", "wa
 REVOKE ALL ON FUNCTION "public"."rising_writers"("page_size" integer) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."rising_writers"("page_size" integer) TO "anon";
 GRANT ALL ON FUNCTION "public"."rising_writers"("page_size" integer) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."rolling_retention"("joined_on" "date", "after_days" integer) FROM PUBLIC;
 
 
 
@@ -66105,6 +67564,11 @@ GRANT ALL ON FUNCTION "public"."set_suggest_me"("should_suggest" boolean) TO "au
 
 
 
+REVOKE ALL ON FUNCTION "public"."set_suggests_from_reading"("should_suggest" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_suggests_from_reading"("should_suggest" boolean) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."set_updated_at"() FROM PUBLIC;
 
 
@@ -66507,6 +67971,12 @@ REVOKE ALL ON FUNCTION "public"."stories_fingerprint"("owner_id" "uuid", "chosen
 
 
 
+REVOKE ALL ON FUNCTION "public"."stories_like_this"("story_slug" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."stories_like_this"("story_slug" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."stories_like_this"("story_slug" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."stories_refresh_writer_rank"() FROM PUBLIC;
 
 
@@ -66627,6 +68097,10 @@ REVOKE ALL ON FUNCTION "public"."story_matches_search"("target" "public"."storie
 
 
 
+REVOKE ALL ON FUNCTION "public"."story_more_signals"() FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."story_page_chapters"("target_story_id" "uuid", "is_owner" boolean) FROM PUBLIC;
 
 
@@ -66646,6 +68120,12 @@ GRANT ALL ON FUNCTION "public"."story_plan_visibility"("story_slug" "text") TO "
 
 
 REVOKE ALL ON FUNCTION "public"."story_rank_in_tag"("target_story_id" "uuid", "tag_name" "text") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."story_rank_place"("story_slug" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."story_rank_place"("story_slug" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."story_rank_place"("story_slug" "text") TO "authenticated";
 
 
 
@@ -66759,6 +68239,14 @@ GRANT ALL ON FUNCTION "public"."submit_public_notice"("payload" "text", "signatu
 
 REVOKE ALL ON FUNCTION "public"."submit_teacher_proof"("proof_path" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."submit_teacher_proof"("proof_path" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."suggestion_row_size"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."suggests_from_reading_of"("person_id" "uuid") FROM PUBLIC;
 
 
 
@@ -66968,6 +68456,10 @@ REVOKE ALL ON FUNCTION "public"."verified_signup_ips"("token" "text") FROM PUBLI
 REVOKE ALL ON FUNCTION "public"."verify_certificate"("code" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."verify_certificate"("code" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."verify_certificate"("code" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."visible_story_by_slug"("story_slug" "text") FROM PUBLIC;
 
 
 
@@ -67232,6 +68724,11 @@ GRANT SELECT ON TABLE "public"."categories" TO "authenticated";
 
 
 
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."chapter_finishes" TO "service_role";
+GRANT SELECT ON TABLE "public"."chapter_finishes" TO "authenticated";
+
+
+
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."chapter_likes" TO "service_role";
 GRANT SELECT ON TABLE "public"."chapter_likes" TO "authenticated";
 
@@ -67329,6 +68826,11 @@ GRANT SELECT ON TABLE "public"."copied_work_notes" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."customisation_change_requests" TO "service_role";
 GRANT SELECT ON TABLE "public"."customisation_change_requests" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."daily_activity_totals" TO "service_role";
+GRANT SELECT ON TABLE "public"."daily_activity_totals" TO "authenticated";
 
 
 
@@ -67497,6 +68999,11 @@ GRANT SELECT ON TABLE "public"."live_sessions" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."manual_age_checks" TO "service_role";
 GRANT SELECT ON TABLE "public"."manual_age_checks" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."member_last_active" TO "service_role";
+GRANT SELECT ON TABLE "public"."member_last_active" TO "authenticated";
 
 
 
@@ -67681,6 +69188,21 @@ GRANT SELECT ON TABLE "public"."sponsors" TO "authenticated";
 
 
 
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."staff_custom_role_areas" TO "service_role";
+GRANT SELECT ON TABLE "public"."staff_custom_role_areas" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."staff_custom_role_holders" TO "service_role";
+GRANT SELECT ON TABLE "public"."staff_custom_role_holders" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."staff_custom_roles" TO "service_role";
+GRANT SELECT ON TABLE "public"."staff_custom_roles" TO "authenticated";
+
+
+
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."staff_interns" TO "service_role";
 GRANT SELECT ON TABLE "public"."staff_interns" TO "authenticated";
 
@@ -67722,6 +69244,11 @@ GRANT SELECT ON TABLE "public"."story_country_scores" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."story_marketing" TO "service_role";
 GRANT SELECT ON TABLE "public"."story_marketing" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."story_pairs" TO "service_role";
+GRANT SELECT ON TABLE "public"."story_pairs" TO "authenticated";
 
 
 

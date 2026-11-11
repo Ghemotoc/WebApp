@@ -68,11 +68,11 @@ select is(public.my_privacy_settings(),
   -- LOOK-4c added "Suggest me" (on for adults, off for minors) and where a parent's yes stands; G7a
   -- added the reading level switch, hidden for everyone; MUST-1b the personal details heads-up, on
   -- under 18 and off for adults.
-  '{"profile_audience": "everyone", "library_audience": "only_me", "shows_online_status": false, "message_audience": "everyone", "is_under_18": false, "suggest_me": true, "can_ask_parent": false, "parent_spotlight": "not_needed", "shows_reader_level": false, "checks_personal_details": false}'::jsonb,
+  '{"profile_audience": "everyone", "library_audience": "only_me", "shows_online_status": false, "message_audience": "everyone", "is_under_18": false, "suggest_me": true, "can_ask_parent": false, "parent_spotlight": "not_needed", "shows_reader_level": false, "suggests_from_reading": true, "checks_personal_details": false}'::jsonb,
   'an adult starts with a public profile, a private library, online status off and messages from everyone');
 select pg_temp.sign_in('02');
 select is(public.my_privacy_settings(),
-  '{"profile_audience": "people_i_follow", "library_audience": "only_me", "shows_online_status": false, "message_audience": "people_i_follow", "is_under_18": true, "suggest_me": false, "can_ask_parent": false, "parent_spotlight": "not_needed", "shows_reader_level": false, "checks_personal_details": true}'::jsonb,
+  '{"profile_audience": "people_i_follow", "library_audience": "only_me", "shows_online_status": false, "message_audience": "people_i_follow", "is_under_18": true, "suggest_me": false, "can_ask_parent": false, "parent_spotlight": "not_needed", "shows_reader_level": false, "suggests_from_reading": false, "checks_personal_details": true}'::jsonb,
   'an under-18 starts on the most private value of every setting');
 select throws_ok($$ select public.set_profile_audience(null) $$, '23514', null, 'an empty profile choice is refused');
 select throws_ok($$ select public.set_library_audience(null) $$, '23514', null, 'an empty library choice is refused');

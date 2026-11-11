@@ -148,5 +148,14 @@
     "label": "Popular in",
     "everywhere": "Everywhere",
     "fallbackNote": "{{country}}: too few stories are ranked there yet, so this is the overall ranking."
+  },
+  "suggestions": {
+    "moreBy": "More by {{writer}}",
+    "likeThis": "Stories like this",
+    "becauseYouRead": "Because you read {{title}}",
+    "why": "Why am I seeing this?",
+    "whyMoreBy": "Other stories by the writer of this one that you can read.",
+    "whyLikeThis": "At least 5 readers who finished this story also finished these. Only totals are counted, never who.",
+    "whyBecause": "You finished {{title}}, and at least 5 readers who finished it also finished these. Turn this off in Settings › Privacy, under Suggestions from reading."
   }
 }

@@ -389,6 +389,46 @@ As an admin, I want to change the wording of every email the platform sends (sig
 - **By hand:** `BREVO_API_KEY` and the hook secret as Edge Function secrets on staging, and turning on the Send Email hook in the Supabase dashboard (Authentication › Hooks). After that no template is pasted by hand again.
 - **Legal and compliance:** Brevo is already on the processor list with a data processing agreement (decided 17 Oct 2026, 19:43). Emails carry no tracking pixels or tracked links (CLAUDE.md rule 7; Brevo's tracking switched off). Wording with legal weight follows the S1-E11-18 rules.
 
+##### S1-E11-33 Custom staff roles
+
+As the owner or an admin, I want to make a role with exactly the access a job needs (for example Marketing) and give it to people, so that nobody holds more than their work needs.
+
+- **Priority:** Should · **Size:** M · **Depends on:** S1-E2-07a, S1-E11-01b · **Bundle:** CMS-2a
+- **Added:** 8 Nov 2026 (Robert, Builder thread): a role is a named set of per-area permissions from a fixed list; an admin gives only what they hold; only the owner grants role management or opening a market; safeguarding, removal-order on-call and teacher checks stay separately ticked permissions; nobody changes their own role; every change goes in the audit log. Research doc "Research: CMS-2 page builder and custom staff roles".
+- **Acceptance criteria:**
+  - Given Staff › Roles, when the owner or an admin opens Custom roles, then they see every custom role with its access per area and who holds it, and can make a role with a name (2 to 40 characters, unique), what it is for (up to 200) and None, View or Change in each area.
+  - Given an admin, when they pick access, then only areas they hold are offered, Change only where they hold Change, and the Roles area only to the owner; the database refuses anything else (`area_out_of_reach`).
+  - Given safeguarding, removal orders or opening a market, when anyone makes a role, then those areas are never offered and the database never lets a custom role reach them.
+  - Given a role that holds more than the signed-in person, when they see it, then it says only the owner can change or give it, and the database refuses every change to it (`role_out_of_reach`).
+  - Given a custom role, when it is given to an account picked from a search, then that account becomes staff with exactly the role's areas in the staff menu, on top of any built-in role.
+  - Given anyone, when they try to give a role to themselves, then the database refuses (`own_role`).
+  - Given every change (make, change, remove, give, take back), when it is saved, then it needs a reason and is in the audit log with the before and after values.
+  - Given a member, a visitor or a moderator, when they call the custom role functions, then the database refuses.
+
+##### S1-E11-34 An easier page builder
+
+As a moderator, an admin or someone in marketing, I want to build a landing page from ready blocks in a grouped menu, so that making a page needs no help from an engineer.
+
+- **Priority:** Should · **Size:** M · **Depends on:** S1-E11-14, S1-E11-33 · **Bundle:** CMS-2b
+- **Added:** 10 Nov 2026 (Robert, Builder queue): "an easier staff page builder for moderators, admins and marketing". Engage Grow Hub is for ideas only (block families, a section library).
+- **Acceptance criteria:**
+  - Given the landing page editor, when staff add a block, then "Add a block" groups the blocks into families (Top of the page, Text and pictures, Lists and steps, Contest details, Ending) with one line on what each block is for.
+  - Given the new blocks (picture and text, cards with 2 to 4 cards, steps with 2 to 6 steps, a quote, a call to action), when they are saved, then the database checks their fields as it does the existing blocks, in ro and en.
+  - Given a call to action or a card's link, when it is saved, then it must be a page on the site or an https address, or it is refused.
+  - Given a new `landing_pages` staff area, when staff open landing pages, then the owner, admins, moderators and anyone with a custom role holding it can build them, while the home page, notices, help and interface text stay with `website_cms` (admins and the owner).
+  - Given every save and publish, when it happens, then it is in the audit log.
+
+##### S1-E11-35 Ready-made pages and copying
+
+As staff building a page, I want to start from a ready-made layout and copy blocks and pages, so that a new page takes minutes.
+
+- **Priority:** Should · **Size:** S · **Depends on:** S1-E11-34 · **Bundle:** CMS-2c
+- **Acceptance criteria:**
+  - Given "New page", when staff pick a layout (contest, call for submissions, event, plain page), then the page starts with that layout's blocks and starter words from the locale files, as a draft.
+  - Given a block, when staff press Copy block, then a copy appears below it.
+  - Given a page, when staff press Copy page, then a new draft with its own address is made and nothing goes live until it is published.
+  - Given every copy, when it is made, then it is in the audit log.
+
 ##### S1-E11-QA Epic check: Admin site
 
 As the founder, I want every story in this epic tested together end to end so that the pieces work with each other, not just alone.

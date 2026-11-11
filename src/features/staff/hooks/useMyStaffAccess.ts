@@ -17,6 +17,7 @@ import { fetchStaffAccess, type StaffAccess } from '../api/staffAccess';
 const noAccess: StaffAccess = {
   areas: [],
   roles: [],
+  holdsCustomRole: false,
   handle: null,
   workspace: { isNeeded: false, domain: null, isConnected: false },
   sessionEnded: false,

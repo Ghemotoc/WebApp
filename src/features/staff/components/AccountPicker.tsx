@@ -23,6 +23,11 @@ interface AccountPickerProps {
   picked: AccountMatch | null;
   onPick: (account: AccountMatch | null) => void;
   errorMessage?: string;
+  /**
+   * Makes the field's and the radios' ids unique when a page shows more than one picker (the
+   * grant form and each custom role card, CMS-2a). Defaults to the grant form's.
+   */
+  pickerId?: string;
 }
 
 /**
@@ -30,7 +35,12 @@ interface AccountPickerProps {
  *
  * @returns the search field, its button and the results
  */
-export function AccountPicker({ picked, onPick, errorMessage }: AccountPickerProps) {
+export function AccountPicker({
+  picked,
+  onPick,
+  errorMessage,
+  pickerId = 'grant-account',
+}: AccountPickerProps) {
   const { t } = useTranslation('staff');
   const search = useAccountSearch();
   const [searchText, setSearchText] = useState('');
@@ -51,7 +61,7 @@ export function AccountPicker({ picked, onPick, errorMessage }: AccountPickerPro
   return (
     <div className="flex flex-col gap-3">
       <TextInput
-        id="grant-account-search"
+        id={`${pickerId}-search`}
         type="search"
         label={t('roles.findAccount')}
         hint={t('roles.findAccountHint')}
@@ -69,7 +79,7 @@ export function AccountPicker({ picked, onPick, errorMessage }: AccountPickerPro
       >
         {t('roles.search')}
       </Button>
-      <AccountResults search={search} picked={picked} onPick={onPick} />
+      <AccountResults search={search} picked={picked} onPick={onPick} pickerId={pickerId} />
     </div>
   );
 }

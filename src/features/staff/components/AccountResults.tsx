@@ -19,6 +19,8 @@ interface AccountResultsProps {
   search: ReturnType<typeof useAccountSearch>;
   picked: AccountMatch | null;
   onPick: (account: AccountMatch) => void;
+  /** Keeps the radios' names and ids unique per picker (AccountPicker). */
+  pickerId: string;
 }
 
 /**
@@ -41,7 +43,7 @@ function useStatusLine(search: AccountResultsProps['search']): string | null {
  *
  * @returns the status line, a failure notice, and the radios to pick from
  */
-export function AccountResults({ search, picked, onPick }: AccountResultsProps) {
+export function AccountResults({ search, picked, onPick, pickerId }: AccountResultsProps) {
   const { t } = useTranslation('staff');
   const statusLine = useStatusLine(search);
   const failure = search.searchFailure ?? search.revealFailure;
@@ -60,6 +62,7 @@ export function AccountResults({ search, picked, onPick }: AccountResultsProps) 
               <AccountOption
                 key={account.userId}
                 account={account}
+                pickerId={pickerId}
                 isPicked={picked?.userId === account.userId}
                 shownEmail={search.shownEmails[account.userId]}
                 onPick={onPick}

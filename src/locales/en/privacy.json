@@ -109,5 +109,9 @@
     "explain": "A phone number, an email address, a street address or a school’s name lets people find you. Only you see this question.",
     "change": "Change it",
     "postAnyway": "Post anyway"
+  },
+  "readingSuggestions": {
+    "label": "Suggestions from reading",
+    "hint": "Stories you finish count, as totals with no names, towards \"Stories like this\", and Discover shows \"Because you read\". Starts off under 18."
   }
 }

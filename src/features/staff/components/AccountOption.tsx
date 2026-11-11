@@ -20,6 +20,8 @@ interface AccountOptionProps {
   shownEmail: string | undefined;
   onPick: (account: AccountMatch) => void;
   onRevealEmail: (userId: string) => void;
+  /** The picker this radio belongs to, so two pickers on one page never share a group. */
+  pickerId: string;
 }
 
 /**
@@ -47,7 +49,7 @@ export function AccountOption(props: AccountOptionProps) {
   const name = account.handle === null ? t('roles.noHandle') : `@${account.handle}`;
   const roleNames = account.staffRoles.map((role) => t(`roleNames.${role}`)).join(', ');
   const alreadyLabel = roleNames === '' ? null : t('roles.alreadyStaff', { roles: roleNames });
-  const inputId = `account-${account.userId}`;
+  const inputId = `${props.pickerId}-${account.userId}`;
   const canRevealEmail = account.emailMasked !== null && props.shownEmail === undefined;
 
   return (
@@ -55,7 +57,7 @@ export function AccountOption(props: AccountOptionProps) {
       <input
         id={inputId}
         type="radio"
-        name="grant-account"
+        name={props.pickerId}
         className="size-5 accent-(--focus-ring)"
         checked={props.isPicked}
         onChange={() => props.onPick(account)}

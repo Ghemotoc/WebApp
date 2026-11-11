@@ -109,5 +109,9 @@
     "explain": "Un număr de telefon, o adresă de email, o adresă de stradă sau numele unei școli îi ajută pe alții să te găsească. Doar tu vezi această întrebare.",
     "change": "Modifică",
     "postAnyway": "Publică oricum"
+  },
+  "readingSuggestions": {
+    "label": "Sugestii din lectură",
+    "hint": "Poveștile pe care le termini contează, ca totaluri fără nume, la „Povești asemănătoare”, iar în Descoperă apare „Pentru că ai citit”. Sub 18 ani pornește oprită."
   }
 }
