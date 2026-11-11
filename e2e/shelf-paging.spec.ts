@@ -80,6 +80,30 @@ async function pressAndMeasure(
   const leftNow = async () => cardAt((await measureRow(row)).cards, move.watchedIndex).left;
   if (move.forward) await expect.poll(leftNow).toBeLessThan(move.leftBefore);
   else await expect.poll(leftNow).toBeGreaterThan(move.leftBefore);
+  return settledMeasure(row);
+}
+
+/**
+ * Measures the row once it has stopped moving: the arrows scroll smoothly, so the first reading
+ * after the cards start to move can catch them half way. Two readings 150 ms apart must agree.
+ *
+ * @param row - the scrolling row
+ * @returns the measure of the row at rest
+ */
+async function settledMeasure(row: Locator): Promise<RowMeasure> {
+  let previous = JSON.stringify(await measureRow(row));
+  await expect
+    .poll(
+      async () => {
+        await new Promise((resolve) => setTimeout(resolve, 150));
+        const current = JSON.stringify(await measureRow(row));
+        const isSettled = current === previous;
+        previous = current;
+        return isSettled;
+      },
+      { timeout: 10_000 },
+    )
+    .toBe(true);
   return measureRow(row);
 }
 
