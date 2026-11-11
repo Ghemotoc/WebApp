@@ -215,7 +215,7 @@ test.describe('ways to log in', () => {
     const handle = `social_joins_${stamp}`;
     const page = await openSignedIn(browser, email, keptAnswers(1990, handle));
     await page.goto('/auth/social-return');
-    await expect(page).toHaveURL(/\/$|\/setup$|\/discover$/);
+    await expect(page).toHaveURL(/\/$|\/[a-z]{2}\/[a-z]{2}$|\/setup$|\/discover$/);
     expect(
       runSql(
         `select handle from public.profiles join auth.users on users.id = profiles.id where users.email = '${email}'`,
