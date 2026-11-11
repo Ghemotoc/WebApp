@@ -48,6 +48,12 @@ const textPairs: ContrastPair[] = [
     minimumRatio: 4.5,
     usedFor: 'main button text, bottom',
   },
+  {
+    foreground: 'on-plum',
+    background: 'plum-hover-from',
+    minimumRatio: 4.5,
+    usedFor: 'main button text on hover and press (GLASS-2)',
+  },
   { foreground: 'link', background: 'surface', minimumRatio: 4.5, usedFor: 'links on cards' },
   { foreground: 'link-hover', background: 'paper', minimumRatio: 4.5, usedFor: 'links on hover' },
   { foreground: 'destructive', background: 'paper', minimumRatio: 4.5, usedFor: 'delete actions' },
