@@ -80,6 +80,11 @@ export interface LinkPreview {
   categorySlug: string | null;
   /** The story's approved tags in its language, at most ten. */
   tags: string[];
+  /**
+   * True for a public story; an unlisted story (NEW-1) still previews from its link but carries
+   * noindex, as a chapter does (S1-E11-36).
+   */
+  isListed: boolean;
   /** True when the address names a chapter. */
   isChapter: boolean;
   /** The shared passage as one plain line (S1-E4-11), or null. */
@@ -151,6 +156,7 @@ interface PreviewRow {
   rating: LinkPreview['rating'];
   language_code: string;
   hides_text: boolean;
+  is_listed: boolean;
   blurb: string | null;
   writer: { display_name: string } | null;
   cover: { kind: string; background: string | null } | null;
@@ -214,6 +220,7 @@ function previewFromRow(row: PreviewRow): Omit<LinkPreview, 'isChapter' | 'passa
     rating: row.rating,
     languageCode: row.language_code,
     hidesText: row.hides_text,
+    isListed: row.is_listed,
     blurb: row.blurb,
     writerName: row.writer?.display_name ?? null,
     cover: row.cover,
@@ -393,6 +400,16 @@ function keywordTagsFor(preview: LinkPreview): string[] {
 }
 
 /**
+ * Whether search engines may list the page: a public story's own page only (Q36; S1-E11-36).
+ *
+ * @param preview - the story's preview
+ * @returns true for the page of a public story; false for a chapter or an unlisted story
+ */
+export function isIndexable(preview: LinkPreview): boolean {
+  return preview.isListed && !preview.isChapter;
+}
+
+/**
  * Everything the preview adds to the page's <head>.
  *
  * @param preview - the story's preview
@@ -418,8 +435,9 @@ export function headTagsFor(
     `<meta name="twitter:description" content="${escapeHtml(description)}">`,
   ];
   // Only story pages are indexable; chapters carry noindex and no structured data (Q36).
-  if (preview.isChapter) tags.push('<meta name="robots" content="noindex">');
-  else tags.push(structuredData(preview, page.url));
+  // An unlisted story is shared by its link only, so it is noindex too (S1-E11-36).
+  if (isIndexable(preview)) tags.push(structuredData(preview, page.url));
+  else tags.push('<meta name="robots" content="noindex">');
   return tags.join('\n    ');
 }
 
@@ -495,7 +513,7 @@ export async function handleSharedLink(request: Request, host: SharedLinkHost): 
     siteName: siteNameOf(html),
     origin: url.origin,
   });
-  if (preview.isChapter) headers.set('X-Robots-Tag', 'noindex');
+  if (!isIndexable(preview)) headers.set('X-Robots-Tag', 'noindex');
   return new Response(injectIntoHead(html, previewText(preview).title, tags), {
     status: page.status,
     headers,

@@ -14,7 +14,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(36);
+select plan(40);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -129,7 +129,23 @@ select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
 select is(public.get_link_preview('statia-meteo-seed01') ->> 'hides_text', 'true',
   'an 18+ preview hides the text whoever asks: it is the public preview');
 
--- 9. A deleted story, and who may call what.
+-- 9. Who the story is for: an unlisted story previews but isn't listed; a private or class-only
+-- story has no preview at all (S1-E11-36).
+reset role;
+select is(public.get_link_preview('statia-meteo-seed01') ->> 'is_listed', 'true',
+  'a public story is listed for search engines');
+update public.stories set visibility = 'unlisted' where id = '00000000-0000-4000-9000-000000000001';
+select is(public.get_link_preview('statia-meteo-seed01') ->> 'is_listed', 'false',
+  'an unlisted story previews from its link but is not listed');
+update public.stories set visibility = 'private' where id = '00000000-0000-4000-9000-000000000001';
+select is(public.get_link_preview('statia-meteo-seed01'), null,
+  'a private story has no preview: it is the writer''s alone');
+update public.stories set visibility = 'public', class_only = true where id = '00000000-0000-4000-9000-000000000001';
+select is(public.get_link_preview('statia-meteo-seed01'), null,
+  'a story shared only with a class has no public preview');
+update public.stories set class_only = false where id = '00000000-0000-4000-9000-000000000001';
+
+-- 10. A deleted story, and who may call what.
 reset role;
 update public.stories set deleted_at = now() where id = '00000000-0000-4000-9000-000000000001';
 select pg_temp.sign_out();

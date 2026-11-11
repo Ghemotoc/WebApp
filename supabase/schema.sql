@@ -24993,9 +24993,12 @@ declare
   chapter_part jsonb;
 begin
   -- Step 1: a live story with at least one chapter published once, not hidden by a moderator.
+  -- A private story is the writer's alone (NEW-1) and a class-only story is the class's
+  -- (S1-E8-11): neither has a public preview (S1-E11-36).
   select * into story from public.stories
   where stories.slug = story_slug and stories.deleted_at is null and stories.first_published_at is not null;
-  if not found or public.is_moderated_away('story', story.id) then
+  if not found or story.visibility = 'private' or story.class_only
+     or public.is_moderated_away('story', story.id) then
     return null;
   end if;
   -- S1-E11-08: a link preview never shows a hidden title or cover.
@@ -25017,6 +25020,8 @@ begin
     'rating', story.rating,
     'language_code', story.language_code,
     'hides_text', story.rating in ('16_plus', '18_plus'),
+    -- Only a public story is for search engines; an unlisted one is shared by its link only.
+    'is_listed', story.visibility = 'public',
     'blurb', story.blurb,
     'writer', (select jsonb_build_object(
         'display_name', public.story_writer_name(story.id, profiles.handle, profiles.pen_name))
