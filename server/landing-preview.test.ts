@@ -104,6 +104,8 @@ describe('handleLandingLink', () => {
     expect(html).toContain('<title>Poezie &lt;script&gt;</title>');
     expect(html).toContain('<meta property="og:url" content="https://example.test/c/poezie">');
     expect(html).toContain('/link-previews/gold.png');
+    // S1-E11-39: the colour card's alt text names the page it stands for.
+    expect(html).toContain('<meta property="og:image:alt" content="Poezie &lt;script&gt;">');
     expect(html).toContain('content="Scrie &quot;azi&quot;."');
     expect(html).toContain('<meta property="og:site_name" content="Brand">');
     // The page's one address, without the tracking query (S1-E11-38).

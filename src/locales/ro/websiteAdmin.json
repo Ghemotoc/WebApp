@@ -19,6 +19,7 @@
     "interfaceText": "Textele aplicației",
     "emails": "Șabloane de email",
     "landingPages": "Pagini de prezentare",
+    "search": "Căutare și distribuire",
     "branding": "Identitate vizuală",
     "seasonal": "Teme de sezon",
     "listPages": "Pagini de gen și etichetă"
@@ -340,5 +341,42 @@
     "descriptionHint": "Rezultatele căutării arată cam 160 de caractere.",
     "hiddenLabel": "Ascunde pagina de motoarele de căutare",
     "hiddenHint": "Vizitatorii o pot deschide în continuare dintr-un link."
+  },
+  "searchSharing": {
+    "heading": "Ce arată motoarele de căutare și cardurile de distribuire",
+    "intro": "Fiecare pagină publică, cu cuvintele folosite în rezultatele căutării și pe cardurile de distribuire. O pagină se repară acolo unde se editează, în caseta ei Căutare și distribuire.",
+    "summary_one": "{{count}} pagină, {{toFix}} de reparat.",
+    "summary_few": "{{count}} pagini, {{toFix}} de reparat.",
+    "summary_other": "{{count}} de pagini, {{toFix}} de reparat.",
+    "onlyToFix": "Doar paginile de reparat",
+    "empty": "Nimic de reparat.",
+    "noWarnings": "Nu lipsește nimic",
+    "warningCount_one": "{{count}} de reparat",
+    "warningCount_few": "{{count}} de reparat",
+    "warningCount_other": "{{count}} de reparat",
+    "kinds": {
+      "home_page": "Pagina principală",
+      "help_page": "Pagină de ajutor",
+      "landing_page": "Pagină de prezentare"
+    },
+    "searchResult": "Rezultat al căutării",
+    "shareCard": "Card de distribuire",
+    "noDescription": "Fără descriere. Motoarele de căutare aleg singure cuvinte din pagină.",
+    "allGood": "Nu lipsește nimic.",
+    "hidden": "Ascunsă de motoarele de căutare. Vizitatorii o pot deschide în continuare dintr-un link.",
+    "warnings": {
+      "no_description": "Fără descriere: scrie una în caseta Căutare și distribuire a paginii.",
+      "title_short": "Titlul are mai puțin de {{titleShortest}} de caractere.",
+      "title_long": "Titlul are mai mult de {{titleLongest}} de caractere, așa că rezultatele căutării îl taie.",
+      "description_short": "Descrierea are mai puțin de {{descriptionShortest}} de caractere.",
+      "description_long": "Descrierea are mai mult de {{descriptionLongest}} de caractere, așa că rezultatele căutării o taie.",
+      "no_share_picture": "Fără imagine pentru distribuire.",
+      "picture_without_alt": "O imagine nu are text alternativ într-una dintre limbi.",
+      "main_heading_count": "Pagina are nevoie de exact un titlu principal: completează-i titlul."
+    },
+    "failures": {
+      "not_allowed": "Doar personalul cu acces la site poate vedea asta.",
+      "unreachable": "Nu am putut ajunge la baza de date. Verifică conexiunea și încearcă din nou."
+    }
   }
 }

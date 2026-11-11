@@ -19,6 +19,7 @@
     "interfaceText": "Interface text",
     "emails": "Email templates",
     "landingPages": "Landing pages",
+    "search": "Search and sharing",
     "branding": "Branding",
     "seasonal": "Seasonal looks",
     "listPages": "Genre and tag pages"
@@ -340,5 +341,42 @@
     "descriptionHint": "About 160 characters show in search results.",
     "hiddenLabel": "Hide this page from search engines",
     "hiddenHint": "Visitors can still open it from a link."
+  },
+  "searchSharing": {
+    "heading": "What search engines and share cards show",
+    "intro": "Every public page, with the words search results and share cards use. Fix a page where it is edited, in its Search and sharing box.",
+    "summary_one": "{{count}} page, {{toFix}} to fix.",
+    "summary_few": "{{count}} pages, {{toFix}} to fix.",
+    "summary_other": "{{count}} pages, {{toFix}} to fix.",
+    "onlyToFix": "Only pages to fix",
+    "empty": "Nothing to fix.",
+    "noWarnings": "Nothing missing",
+    "warningCount_one": "{{count}} to fix",
+    "warningCount_few": "{{count}} to fix",
+    "warningCount_other": "{{count}} to fix",
+    "kinds": {
+      "home_page": "Home page",
+      "help_page": "Help page",
+      "landing_page": "Landing page"
+    },
+    "searchResult": "Search result",
+    "shareCard": "Share card",
+    "noDescription": "No description. Search engines pick words from the page themselves.",
+    "allGood": "Nothing missing.",
+    "hidden": "Hidden from search engines. Visitors can still open it from a link.",
+    "warnings": {
+      "no_description": "No description: write one in the page's Search and sharing box.",
+      "title_short": "The title is shorter than {{titleShortest}} characters.",
+      "title_long": "The title is longer than {{titleLongest}} characters, so search results cut it.",
+      "description_short": "The description is shorter than {{descriptionShortest}} characters.",
+      "description_long": "The description is longer than {{descriptionLongest}} characters, so search results cut it.",
+      "no_share_picture": "No share picture.",
+      "picture_without_alt": "A picture has no alt text in one of the languages.",
+      "main_heading_count": "The page needs exactly one main heading: fill in its title."
+    },
+    "failures": {
+      "not_allowed": "Only staff with the website area can see this.",
+      "unreachable": "We couldn’t reach the database. Check your connection and try again."
+    }
   }
 }

@@ -10593,6 +10593,42 @@ COMMENT ON FUNCTION "public"."admin_search_audit_log"("action_prefix" "text", "s
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_search_pages"() RETURNS TABLE("page_kind" "text", "market_code" "text", "language_code" "text", "address" "text", "content" "jsonb")
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  -- Step 1: only staff who may see the website area (S1-E11-39; decided 17 Oct 2026, 19:19).
+  if not public.staff_may('website_cms', 'view') then
+    raise exception 'Only staff with the website area can see search and sharing.'
+      using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 2: the home page and the help pages, live in each market and language.
+  return query
+  select live.content_kind, live.market_code, live.language_code, '/'::text, live.content
+  from public.cms_live_versions('home_page') as live
+  union all
+  select live.content_kind, live.market_code, live.language_code, '/help/' || live.entry_key,
+    live.content
+  from public.cms_live_versions('help_page') as live
+  union all
+  -- Step 3: each landing page with a live version that isn't archived (S1-E11-14).
+  select 'landing_page'::text, null::text, 'ro'::text, '/c/' || pages.slug, live.content
+  from public.landing_pages as pages
+  cross join lateral public.landing_page_live_version(pages.id) as live
+  where pages.archived_at is null and live.id is not null
+  order by 1, 4, 2, 3;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_search_pages"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_search_pages"() IS 'S1-E11-39: the live version of every public page with search and share tags, for staff with the website area.';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admin_search_stories"("search_text" "text" DEFAULT ''::"text", "story_status" "text" DEFAULT NULL::"text", "category_slug" "text" DEFAULT NULL::"text", "language_code" "text" DEFAULT NULL::"text", "wanted_rating" "public"."story_rating" DEFAULT NULL::"public"."story_rating", "only_open_reports" boolean DEFAULT false, "only_minor_writers" boolean DEFAULT false, "readable_by" "text" DEFAULT NULL::"text", "page_number" integer DEFAULT 0) RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -63308,6 +63344,11 @@ GRANT ALL ON FUNCTION "public"."admin_save_writing_prompt"("prompt_id" "uuid", "
 
 REVOKE ALL ON FUNCTION "public"."admin_search_audit_log"("action_prefix" "text", "staff_handle" "text", "target_user_id" "uuid", "from_date" "date", "to_date" "date", "page_size" integer, "page_number" integer) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_search_audit_log"("action_prefix" "text", "staff_handle" "text", "target_user_id" "uuid", "from_date" "date", "to_date" "date", "page_size" integer, "page_number" integer) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_search_pages"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_search_pages"() TO "authenticated";
 
 
 

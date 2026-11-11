@@ -11597,6 +11597,16 @@ export type Database = {
           isSetofReturn: true;
         };
       };
+      admin_search_pages: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          address: string;
+          content: Json;
+          language_code: string;
+          market_code: string;
+          page_kind: string;
+        }[];
+      };
       admin_search_stories: {
         Args: {
           category_slug?: string;
