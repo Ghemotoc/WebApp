@@ -20705,6 +20705,9 @@ CREATE OR REPLACE FUNCTION "public"."data_export_held_tables"() RETURNS TABLE("t
     ('safeguarding_referrals', false, 'referrals to the police or a prosecutor; handing them out could harm an investigation (GDPR art. 23; lawyer to check)'),
     ('sanctions', true, null),
     ('sign_up_ips', true, null),
+    ('staff_custom_role_areas', false, 'user_id is the admin who set an area in a custom role, not data about their account'),
+    ('staff_custom_role_holders', true, null),
+    ('staff_custom_roles', false, 'user_id is the admin who made the custom role; the roles someone holds are in staff_custom_role_holders'),
     ('staff_interns', true, null),
     ('staff_permissions', true, null),
     ('staff_roles', true, null),
@@ -20716,7 +20719,7 @@ $$;
 ALTER FUNCTION "public"."data_export_held_tables"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."data_export_held_tables"() IS 'Internal: every staff table with a user_id and whether Download my data''s "held_about_you" includes it, or why not (QA-7, LOGS-1a, LOOK-4a; GDPR art. 15).';
+COMMENT ON FUNCTION "public"."data_export_held_tables"() IS 'Internal: every staff table with a user_id and whether Download my data''s "held_about_you" includes it, or why not (QA-7, LOGS-1a, LOOK-4a, S1-E11-33; GDPR art. 15).';
 
 
 
@@ -22830,6 +22833,12 @@ CREATE OR REPLACE FUNCTION "public"."export_held_about_of"("owner_id" "uuid") RE
     'staff_permissions', coalesce((select jsonb_agg(jsonb_build_object(
         'permission', held.permission, 'created_at', held.created_at) order by held.created_at)
       from public.staff_permissions as held where held.user_id = owner_id), '[]'::jsonb),
+    -- Custom roles they hold (S1-E11-33): the role's name and when it was given.
+    'staff_custom_role_holders', coalesce((select jsonb_agg(jsonb_build_object(
+        'role', roles.name, 'created_at', held.created_at) order by held.created_at)
+      from public.staff_custom_role_holders as held
+      join public.staff_custom_roles as roles on roles.id = held.custom_role_id
+      where held.user_id = owner_id), '[]'::jsonb),
     'staff_interns', coalesce((select jsonb_agg(jsonb_build_object(
         'created_at', held.created_at) order by held.created_at)
       from public.staff_interns as held where held.user_id = owner_id), '[]'::jsonb),
@@ -22842,7 +22851,7 @@ $$;
 ALTER FUNCTION "public"."export_held_about_of"("owner_id" "uuid") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."export_held_about_of"("owner_id" "uuid") IS 'Internal: what staff tables hold about one person, without staff names or internal notes, for their data export (QA-7, GDPR art. 15).';
+COMMENT ON FUNCTION "public"."export_held_about_of"("owner_id" "uuid") IS 'Internal: what staff tables hold about one person, without staff names or internal notes, for their data export (QA-7, S1-E11-33, GDPR art. 15).';
 
 
 
