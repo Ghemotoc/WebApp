@@ -2172,7 +2172,7 @@ The liquid glass Library board draws "Your lists": lists of stories a reader mak
 ## The rules walkthrough before an under-18's first post (MUST-1c)
 
 - Where it lives: `src/features/safety/hooks/useRulesWalkthrough.ts` (`useRulesWalkthrough` for the comment box through `useCommentComposer`, `useRulesBeforeSubmit` for the forum reply and new thread forms), `components/RulesWalkthrough.tsx`, `api/rulesWalkthrough.ts`, and `supabase/migrations/…_must1c_rules_walkthrough.sql`.
-- How a first post travels: Post → `shouldHold()` → `needs_rules_walkthrough()` said yes (under 18, `profiles.rules_walkthrough_seen_at` empty) and the cards loaded → the cards open under the box and the send waits → Skip or Done → `finish_rules_walkthrough()` records it and the focus goes back to the box → the next Post goes on to the kind-words nudge and the personal details note as usual.
+- How a first post travels: Post → `shouldHold()` → `needs_rules_walkthrough()` said yes (under 18, able to post, `profiles.rules_walkthrough_seen_at` empty) and the cards loaded → the cards open under the box and the send waits → Skip or Done → `finish_rules_walkthrough()` records it and the focus goes back to the box → the next Post goes on to the kind-words nudge and the personal details note as usual.
 - The cards: help pages whose keys start `rules-walkthrough-`, read with `useWebsiteContent('help_page', …, { enabled })` only for someone who needs them, so staff edit them in Website › Help.
 - Tests: `src/features/safety/components/RulesWalkthrough.test.tsx`, `supabase/tests/database/348-rules-walkthrough.test.sql`, `e2e/rules-walkthrough.spec.ts`.
 
