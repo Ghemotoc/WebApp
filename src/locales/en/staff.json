@@ -572,7 +572,8 @@
       "writers": "Write (includes both)",
       "readers": "Read (includes both)",
       "countryLabel": "Country",
-      "allCountries": "Every country"
+      "allCountries": "Every country",
+      "countryClosed": "{{country}} ({{count}}), not open yet"
     },
     "wave": {
       "heading": "Let in a wave",
@@ -598,6 +599,7 @@
       "email": "Email",
       "confirmed": "Confirmed",
       "notConfirmed": "Not confirmed yet",
+      "countryClosed": "{{country}}, not open yet",
       "empty": "Nobody on the waiting list matches these filters."
     },
     "admitTicked_one": "Let in {{count}} chosen person",
@@ -609,6 +611,8 @@
     "admitted_few": "{{count}} people let in. They have been emailed.",
     "admitted_other": "{{count}} people let in. They have been emailed.",
     "admitFailed": "Nobody was let in. Try again in a moment.",
+    "admitMarketClosed": "Nobody was let in: someone ticked comes from a country that isn’t open yet. They stay on the list until it opens.",
+    "admitUnderAge": "Nobody was let in: someone ticked is under their country’s minimum age today. Untick them and try again.",
     "openingList": {
       "heading": "Waiting for a country to open",
       "intro": "People from countries we haven’t opened who asked to hear when we do. Each confirmed address gets one email on the day its country opens, then is deleted 7 days later.",

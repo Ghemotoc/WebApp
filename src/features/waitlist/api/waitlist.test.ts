@@ -1,7 +1,8 @@
 /**
  * Tests for the waiting list's calls on the screen side (bundle WAITLIST-1, story S1-E2-24):
  * reading one's own place, the staff list and letting people in. Supabase is a small fake here;
- * the database rules are in supabase/tests/database/310-waitlist.test.sql.
+ * the database rules are in supabase/tests/database/310-waitlist.test.sql and, for countries that
+ * aren't open yet, 357-waitlist-closed-markets.test.sql.
  *
  * Who runs it: `npm test`.
  */
@@ -24,7 +25,7 @@ import {
  * @param answer - what the database sends back
  * @returns the client and the rpc spy
  */
-function fakeClient(answer: { data?: unknown; error?: { code?: string } }) {
+function fakeClient(answer: { data?: unknown; error?: { code?: string; hint?: string } }) {
   const rpc = vi.fn().mockResolvedValue({ data: answer.data ?? null, error: answer.error ?? null });
   return { client: { rpc } as unknown as AppSupabaseClient, rpc };
 }
@@ -32,7 +33,10 @@ function fakeClient(answer: { data?: unknown; error?: { code?: string } }) {
 /** One page of the staff list, as admin_waitlist() answers it. */
 const staffAnswer = {
   counts: { waiting: 2, write: 1, read: 0, both: 1, admitted: 4 },
-  countries: [{ country: 'RO', waiting: 2 }],
+  countries: [
+    { country: 'RO', waiting: 2, open: true },
+    { country: 'SE', waiting: 1, open: false },
+  ],
   matching: 2,
   people: [
     {
@@ -43,6 +47,7 @@ const staffAnswer = {
       country: 'RO',
       joined_at: '2027-02-05T09:00:00Z',
       email_confirmed: true,
+      market_open: true,
     },
   ],
 };
@@ -55,9 +60,25 @@ describe('the holding page’s own place', () => {
       interest: 'both',
       joined_at: '2027-02-05T09:00:00Z',
       admitted_at: null,
+      country: 'RO',
+      market_open: true,
     };
     const { client } = fakeClient({ data: place });
     await expect(fetchMyWaitlist(client)).resolves.toEqual(place);
+  });
+
+  it('reads someone waiting for their country to open (MARKETS-2b)', async () => {
+    const place = {
+      on_list: true,
+      waiting: true,
+      interest: 'read',
+      joined_at: '2027-02-05T09:00:00Z',
+      admitted_at: null,
+      country: 'SE',
+      market_open: false,
+    };
+    const { client } = fakeClient({ data: place });
+    await expect(fetchMyWaitlist(client)).resolves.toMatchObject({ market_open: false });
   });
 
   it('reads a member who never waited as not on the list', async () => {
@@ -108,6 +129,27 @@ describe('Staff › Waitlist', () => {
     const { client, rpc } = fakeClient({ data: 2 });
     await expect(admitFromWaitlist(client, ['e1', 'e2'])).resolves.toBe(2);
     expect(rpc).toHaveBeenCalledWith('admin_admit_from_waitlist', { entry_ids: ['e1', 'e2'] });
+  });
+
+  it('says when someone ticked comes from a country that isn’t open yet (MARKETS-2b)', async () => {
+    const { client } = fakeClient({ error: { code: '23514', hint: 'market_closed' } });
+    await expect(admitFromWaitlist(client, ['e1'])).rejects.toEqual(
+      new WaitlistError('market_closed'),
+    );
+  });
+
+  it('says when someone ticked is under their country’s minimum age today', async () => {
+    const { client } = fakeClient({ error: { code: '23514', hint: 'under_market_age' } });
+    await expect(admitFromWaitlist(client, ['e1'])).rejects.toEqual(
+      new WaitlistError('under_market_age'),
+    );
+  });
+
+  it('reads any other refusal as a plain refusal', async () => {
+    const { client } = fakeClient({ error: { code: '23514', hint: 'wave_size' } });
+    await expect(
+      admitWaitlistWave(client, { interest: null, country: null, howMany: 5000 }),
+    ).rejects.toEqual(new WaitlistError('refused'));
   });
 
   it('sends a wave of everyone in every country as empty filters', async () => {

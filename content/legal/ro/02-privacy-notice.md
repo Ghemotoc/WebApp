@@ -252,6 +252,7 @@ Cereri și suport
 Înainte să te înscrii
 
 - „Anunță-mă când vă deschideți aici”: dacă nu îți confirmi adresa, o ștergem după 7 zile. După ce ai confirmat-o, o păstrăm până când îți scriem că am deschis, apoi o ștergem după 7 zile. O poți scoate oricând de pe listă cu linkul din email. [de verificat de avocat]
+- Înscrierea dintr-o țară în care încă nu ne-am deschis: contul tău așteaptă pe listă, cu țara și emailul tău, până când țara se deschide și te primim. Dacă nu îți confirmi emailul, ștergem contul după 7 zile. Îl poți șterge oricând din Setări. [de verificat de avocat]
 
 Extra, dacă vrei
 

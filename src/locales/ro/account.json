@@ -586,6 +586,8 @@
       "heading": "Ești pe listă",
       "joined": "Te-ai înscris pe {{date}}.",
       "next": "Primim oamenii câte puțin, scriitorii mai întâi. Când îți vine rândul, îți scriem pe email că ai intrat. Până atunci nu poți încă scrie, citi sau posta, dar îți poți pregăti profilul.",
+      "nextClosed": "Încă nu suntem deschiși în {{country}}. Când se deschide, îți scriem pe e-mail că ai intrat. Până atunci nu poți scrie, citi sau posta, dar îți poți pregăti profilul.",
+      "nextClosedUnknown": "Încă nu suntem deschiși în țara ta. Când se deschide, îți scriem pe e-mail că ai intrat. Până atunci nu poți scrie, citi sau posta, dar îți poți pregăti profilul.",
       "interestLabel": "Ce vrei să faci aici?",
       "saved": "Salvat.",
       "saveFailed": "Nu am putut salva. Verifică-ți conexiunea și încearcă din nou.",

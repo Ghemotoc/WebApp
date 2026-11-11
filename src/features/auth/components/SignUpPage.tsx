@@ -15,7 +15,8 @@
  * and privacy notice (useLegalVersions, so the sign-up records the versions shown) and the
  * country of the connection with its market (useSignUpMarket, S1-E2-10), which starts the
  * country picker, and the age rules by country (useAgeRules, MARKETS-1). Once sign-up is public,
- * a closed or unknown country goes to /not-open.
+ * a closed or unknown country joins the waiting list with its country while the list is on
+ * (MARKETS-2b, S1-E11-32), and goes to /not-open only while the list is off.
  */
 import { useTranslation } from 'react-i18next';
 import { Link, Navigate, useParams } from 'react-router';
@@ -102,6 +103,59 @@ function inviteGateReason(
 }
 
 /**
+ * Works out whether this sign-up joins the waiting list and which code it uses.
+ *
+ * From a country that isn't open yet, a code doesn't skip the queue (MARKETS-2b, S1-E11-32): the
+ * code is left unused and the person waits on the list with their country until it opens.
+ *
+ * @param isWaitlistOn - whether the waiting list is on
+ * @param isMarketClosed - whether the connection's country is closed or unknown, once public
+ * @param inviteCode - the code from the address, or null
+ * @returns waitsForMarket, the code sign-up uses (or null) and whether it joins the list
+ */
+function waitlistChoice(isWaitlistOn: boolean, isMarketClosed: boolean, inviteCode: string | null) {
+  const waitsForMarket = isWaitlistOn && isMarketClosed;
+  const codeUsed = waitsForMarket ? null : inviteCode;
+  return { waitsForMarket, codeUsed, joinsWaitlist: isWaitlistOn && codeUsed === null };
+}
+
+/**
+ * Picks the line under the heading.
+ *
+ * @param joinsWaitlist - whether this sign-up joins the waiting list
+ * @param waitsForMarket - whether the country isn't open yet (MARKETS-2b)
+ * @returns the locale key
+ */
+function signUpSubheadingKey(joinsWaitlist: boolean, waitsForMarket: boolean): string {
+  if (waitsForMarket) return 'signUp.waitlist.closedMarket';
+  if (joinsWaitlist) return 'signUp.waitlist.subheading';
+  return 'signUp.subheading';
+}
+
+/**
+ * The card's eyebrow, heading and the line under it: sign-up, the waiting list, or the waiting list
+ * for a country that isn't open yet (MARKETS-2b).
+ *
+ * @param props.joinsWaitlist - whether this sign-up joins the waiting list
+ * @param props.waitsForMarket - whether the country isn't open yet
+ * @returns the heading block
+ */
+function SignUpHeading(props: { joinsWaitlist: boolean; waitsForMarket: boolean }) {
+  const { t } = useTranslation('auth');
+  return (
+    <div className="flex flex-col gap-2">
+      <Eyebrow>{t('signUp.eyebrow')}</Eyebrow>
+      <h2 id="sign-up-heading" className="m-0 font-heading text-[30px] font-bold text-heading">
+        {t(props.joinsWaitlist ? 'signUp.waitlist.heading' : 'signUp.heading')}
+      </h2>
+      <p className="m-0 text-body">
+        {t(signUpSubheadingKey(props.joinsWaitlist, props.waitsForMarket))}
+      </p>
+    </div>
+  );
+}
+
+/**
  * Renders the page.
  *
  * @returns the sign-up screen
@@ -118,12 +172,16 @@ export function SignUpPage() {
   const isAdultsOnly = flags.isOn('adults_only', true);
   // The country of the connection (S1-E2-10): any country may join the invited test (Q6).
   const market = useSignUpMarket(isInviteOnly && isAdultsOnly);
-  const { context, legalFailed } = useSignUpContext(inviteCode, market, isWaitlistOn);
+  const { waitsForMarket, codeUsed, joinsWaitlist } = waitlistChoice(
+    isWaitlistOn,
+    market.isClosed,
+    inviteCode,
+  );
+  const { context, legalFailed } = useSignUpContext(codeUsed, market, isWaitlistOn);
   const form = useSignUpForm(context, isAdultsOnly);
-  const gateReason = inviteGateReason(isInviteOnly && !isWaitlistOn, inviteCode, invite);
-  const joinsWaitlist = isWaitlistOn && inviteCode === null;
-  // Once sign-up is public, a closed or unknown country sees the "not open yet" page instead.
-  if (market.isClosed) return <Navigate to="/not-open" replace />;
+  const gateReason = inviteGateReason(isInviteOnly && !isWaitlistOn, codeUsed, invite);
+  // With the waiting list off, a closed or unknown country sees the "not open yet" page instead.
+  if (market.isClosed && !isWaitlistOn) return <Navigate to="/not-open" replace />;
 
   return (
     <PageContainer className="tmc-rise flex flex-col pt-12 pb-7">
@@ -135,21 +193,10 @@ export function SignUpPage() {
           className="flex w-full max-w-[480px] flex-col gap-5 justify-self-center rounded-card border border-border bg-surface p-8 shadow-card"
         >
           <SignUpSteps includesAgeCheck={!isAdultsOnly} />
-          <div className="flex flex-col gap-2">
-            <Eyebrow>{t('signUp.eyebrow')}</Eyebrow>
-            <h2
-              id="sign-up-heading"
-              className="m-0 font-heading text-[30px] font-bold text-heading"
-            >
-              {t(joinsWaitlist ? 'signUp.waitlist.heading' : 'signUp.heading')}
-            </h2>
-            <p className="m-0 text-body">
-              {t(joinsWaitlist ? 'signUp.waitlist.subheading' : 'signUp.subheading')}
-            </p>
-          </div>
+          <SignUpHeading joinsWaitlist={joinsWaitlist} waitsForMarket={waitsForMarket} />
           <SignUpCardFlow
             gateReason={gateReason}
-            inviteCode={inviteCode}
+            inviteCode={codeUsed}
             form={form}
             context={context}
             legalFailed={legalFailed}

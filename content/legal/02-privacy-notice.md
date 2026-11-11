@@ -252,6 +252,7 @@ Requests and support
 Before you join
 
 - “Tell me when you open here”: if you don’t confirm your address, we delete it after 7 days. Once confirmed, we keep it until we email you that we’re open, then delete it 7 days later. You can take it off the list at any time with the link in the email. [lawyer to check]
+- Signing up from a country we haven’t opened yet: your account waits on the list with your country and email until that country opens and we let you in. If you don’t confirm your email, we delete the account after 7 days. You can delete it at any time in Settings. [lawyer to check]
 
 Optional extras
 

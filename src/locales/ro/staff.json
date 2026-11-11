@@ -572,7 +572,8 @@
       "writers": "Să scrie (inclusiv amândouă)",
       "readers": "Să citească (inclusiv amândouă)",
       "countryLabel": "Țară",
-      "allCountries": "Toate țările"
+      "allCountries": "Toate țările",
+      "countryClosed": "{{country}} ({{count}}), încă nedeschisă"
     },
     "wave": {
       "heading": "Lasă să intre un val",
@@ -598,6 +599,7 @@
       "email": "E-mail",
       "confirmed": "Confirmat",
       "notConfirmed": "Încă neconfirmat",
+      "countryClosed": "{{country}}, încă nedeschisă",
       "empty": "Nimeni de pe lista de așteptare nu se potrivește cu aceste filtre."
     },
     "admitTicked_one": "Lasă să intre {{count}} persoană aleasă",
@@ -609,6 +611,8 @@
     "admitted_few": "Au intrat {{count}} persoane. Au primit e-mailul.",
     "admitted_other": "Au intrat {{count}} de persoane. Au primit e-mailul.",
     "admitFailed": "Nu a intrat nimeni. Încearcă din nou peste puțin timp.",
+    "admitMarketClosed": "Nu a intrat nimeni: cineva bifat vine dintr-o țară care încă nu e deschisă. Rămâne pe listă până se deschide.",
+    "admitUnderAge": "Nu a intrat nimeni: cineva bifat are azi sub vârsta minimă din țara lui. Debifează-l și încearcă din nou.",
     "openingList": {
       "heading": "Așteaptă deschiderea în țara lor",
       "intro": "Oameni din țări în care nu ne-am deschis încă și care au cerut să afle când ne deschidem. Fiecare adresă confirmată primește un singur email în ziua în care se deschide țara ei și e ștearsă după 7 zile.",

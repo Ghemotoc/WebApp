@@ -128,7 +128,8 @@ select is(public.is_active_member(), false, 'someone waiting can''t write, read 
 reset role;
 select is(public.may_change_own_avatar(), true, 'someone waiting may build their avatar on the holding page');
 set local role authenticated;
-select is(public.my_waitlist() - 'joined_at', '{"on_list": true, "waiting": true, "interest": "write", "admitted_at": null}'::jsonb,
+select is(public.my_waitlist() - 'joined_at' - 'country' - 'market_open',
+  '{"on_list": true, "waiting": true, "interest": "write", "admitted_at": null}'::jsonb,
   'they see that they wait, and their answer, never a place in the queue');
 select results_eq($$ select count(*)::integer from public.waitlist_entries $$, $$ values (1) $$,
   'allowed: waitlist_entries_select_own: they read their own entry, and only it');

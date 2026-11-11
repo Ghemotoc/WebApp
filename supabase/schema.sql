@@ -2994,6 +2994,7 @@ CREATE OR REPLACE FUNCTION "public"."admin_admit_from_waitlist"("entry_ids" "uui
 declare
   wanted uuid;
   admitted integer := 0;
+  refusal text;
 begin
   -- Step 1: owner and admin only, in a staff session.
   if not public.staff_may('waitlist', 'act') then
@@ -3002,7 +3003,17 @@ begin
   if coalesce(cardinality(entry_ids), 0) not between 1 and 100 then
     raise exception 'Tick 1 to 100 people.' using errcode = 'check_violation', hint = 'pick_people';
   end if;
-  -- Step 2: each person, in the order ticked.
+  -- Step 2: MARKETS-2b: refuse the whole choice if one ticked person waiting can't come in yet.
+  select public.waitlist_market_outcome(entries.user_id) into refusal
+  from public.waitlist_entries as entries
+  where entries.id = any (entry_ids) and entries.admitted_at is null
+    and public.waitlist_market_outcome(entries.user_id) <> 'ok'
+  limit 1;
+  if refusal is not null then
+    raise exception 'Someone ticked can''t be let in yet: %.', refusal
+      using errcode = 'check_violation', hint = refusal;
+  end if;
+  -- Step 3: each person, in the order ticked.
   foreach wanted in array entry_ids loop
     if public.admit_waitlist_entry(wanted, 'one_by_one') then
       admitted := admitted + 1;
@@ -3037,7 +3048,13 @@ begin
   if coalesce(how_many, 0) not between 1 and 1000 then
     raise exception 'A wave is 1 to 1,000 people.' using errcode = 'check_violation', hint = 'wave_size';
   end if;
-  -- Step 2: the oldest confirmed people who fit, each let in and told.
+  -- Step 2: MARKETS-2b: a wave for one country needs that market open (an adult's birth year
+  -- stands in for the market check, which is all the country's door asks before the ages).
+  if country_filter is not null
+     and public.sign_up_market_outcome(country_filter, 1970, null, '') = 'market_closed' then
+    raise exception 'This country isn''t open yet.' using errcode = 'check_violation', hint = 'market_closed';
+  end if;
+  -- Step 3: the oldest confirmed people who fit and may come in today, each let in and told.
   for next_entry in
     select entries.id from public.waitlist_entries as entries
     join public.profiles on profiles.id = entries.user_id
@@ -3045,6 +3062,7 @@ begin
     where entries.admitted_at is null and profiles.deleted_at is null and users.email_confirmed_at is not null
       and public.waitlist_interest_matches(entries.interest, interest_filter)
       and (country_filter is null or profiles.country_code = country_filter)
+      and public.waitlist_market_outcome(entries.user_id) = 'ok'
     order by entries.joined_at, entries.id
     limit how_many
   loop
@@ -12515,7 +12533,7 @@ begin
   if not public.staff_may('waitlist', 'view') then
     raise exception 'Only an owner or admin can see the waiting list.' using errcode = 'insufficient_privilege';
   end if;
-  -- Step 2: the counts, the countries, and one page of the people who fit the filters.
+  -- Step 2: the counts, the countries (open or not), and one page of the people who fit.
   return jsonb_build_object(
     'counts', (select jsonb_build_object(
         'waiting', count(*) filter (where entries.admitted_at is null),
@@ -12524,7 +12542,8 @@ begin
         'both', count(*) filter (where entries.admitted_at is null and entries.interest = 'both'),
         'admitted', count(*) filter (where entries.admitted_at is not null))
       from public.waitlist_entries as entries),
-    'countries', coalesce((select jsonb_agg(jsonb_build_object('country', listed.country, 'waiting', listed.waiting)
+    'countries', coalesce((select jsonb_agg(jsonb_build_object('country', listed.country, 'waiting', listed.waiting,
+          'open', public.sign_up_market_outcome(nullif(listed.country, 'ZZ'), 1970, null, '') <> 'market_closed')
         order by listed.waiting desc, listed.country)
       from (select coalesce(profiles.country_code, 'ZZ') as country, count(*) as waiting
             from public.waitlist_entries as entries join public.profiles on profiles.id = entries.user_id
@@ -12540,7 +12559,8 @@ begin
               'entry_id', entries.id, 'handle', profiles.handle,
               'display_name', public.display_name(profiles.handle, profiles.pen_name),
               'interest', entries.interest, 'country', profiles.country_code,
-              'joined_at', entries.joined_at, 'email_confirmed', users.email_confirmed_at is not null) as row_json
+              'joined_at', entries.joined_at, 'email_confirmed', users.email_confirmed_at is not null,
+              'market_open', public.waitlist_market_outcome(entries.user_id) <> 'market_closed') as row_json
             from public.waitlist_entries as entries
             join public.profiles on profiles.id = entries.user_id
             join auth.users on users.id = entries.user_id
@@ -12676,11 +12696,13 @@ CREATE OR REPLACE FUNCTION "public"."admit_waitlist_entry"("target_entry_id" "uu
 declare
   entry public.waitlist_entries;
 begin
-  -- Step 1: only an entry still waiting, for a live account.
+  -- Step 1: only an entry still waiting, for a live account whose market lets them in today
+  -- (MARKETS-2b: the country's age row applies at this moment, S1-E2-22).
   update public.waitlist_entries set admitted_at = now()
   where waitlist_entries.id = target_entry_id and waitlist_entries.admitted_at is null
     and exists (select 1 from public.profiles
                 where profiles.id = waitlist_entries.user_id and profiles.deleted_at is null)
+    and public.waitlist_market_outcome(waitlist_entries.user_id) = 'ok'
   returning * into entry;
   if entry.id is null then
     return false;
@@ -19691,6 +19713,7 @@ declare
   country text;
   chosen_handle text;
   outcome text;
+  waits_for_market boolean := false;
 begin
   -- Step 1: the year (and month) of birth, and the product's own age rules (S1-E2-02).
   birth_year := public.sign_up_birth_year(sign_up_data);
@@ -19701,9 +19724,12 @@ begin
   end if;
 
   -- Step 2: the country: the person's own answer, else the connection's (S1-E2-10), and its rules.
+  -- MARKETS-2b: a closed or unknown market waits on the list while it is on.
   country := coalesce(place ->> 'country', public.verified_signup_country(sign_up_data ->> 'signup_context'));
   outcome := public.sign_up_market_outcome(country, birth_year, birth_month, place ->> 'region');
-  if outcome <> 'ok' then
+  if outcome = 'market_closed' and public.is_feature_enabled('waitlist') then
+    waits_for_market := true;
+  elsif outcome <> 'ok' then
     raise exception 'Sign-up refused by the market rules: %.', outcome using errcode = 'check_violation';
   end if;
 
@@ -19727,8 +19753,11 @@ begin
 
   -- Step 5: the waiting list (WAITLIST-1), else the invite while the test is invite only
   -- (S1-E11-17), after the profile so the invite's audit row can name the new account. A class
-  -- link counts too, and joins the class (IDEAS-3c).
-  if public.is_feature_enabled('waitlist') then
+  -- link counts too, and joins the class (IDEAS-3c). MARKETS-2b: from a closed market a code
+  -- doesn't skip the queue, so the code is left unused for someone it can let in.
+  if waits_for_market then
+    perform public.join_waitlist_at_sign_up(new_user_id, sign_up_data - 'invite_code');
+  elsif public.is_feature_enabled('waitlist') then
     perform public.join_waitlist_at_sign_up(new_user_id, sign_up_data);
   elsif public.is_feature_enabled('invite_only') then
     perform public.use_sign_up_invite(sign_up_data ->> 'invite_code', new_user_id);
@@ -30341,7 +30370,9 @@ begin
   return jsonb_build_object('on_list', true,
     'waiting', entry.admitted_at is null
       and not exists (select 1 from public.staff_roles where staff_roles.user_id = entry.user_id),
-    'interest', entry.interest, 'joined_at', entry.joined_at, 'admitted_at', entry.admitted_at);
+    'interest', entry.interest, 'joined_at', entry.joined_at, 'admitted_at', entry.admitted_at,
+    'country', (select profiles.country_code from public.profiles where profiles.id = entry.user_id),
+    'market_open', public.waitlist_market_outcome(entry.user_id) <> 'market_closed');
 end;
 $$;
 
@@ -48461,6 +48492,24 @@ ALTER FUNCTION "public"."waitlist_interest_matches"("answer" "public"."waitlist_
 
 
 COMMENT ON FUNCTION "public"."waitlist_interest_matches"("answer" "public"."waitlist_interest", "wanted" "text") IS 'Internal: an answer fits a filter; write and read both include both (WAITLIST-1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."waitlist_market_outcome"("target_user_id" "uuid") RETURNS "text"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce((
+    select public.sign_up_market_outcome(profiles.country_code, profiles.birth_year,
+      profiles.birth_month, coalesce(profiles.legal_region_code, ''))
+    from public.profiles where profiles.id = target_user_id), 'market_closed');
+$$;
+
+
+ALTER FUNCTION "public"."waitlist_market_outcome"("target_user_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."waitlist_market_outcome"("target_user_id" "uuid") IS 'ok, market_closed or under_market_age: whether a person on the waiting list may be let in now (MARKETS-2b).';
 
 
 
@@ -66588,6 +66637,10 @@ REVOKE ALL ON FUNCTION "public"."wait_minutes_until_free"("oldest_in_window" tim
 
 
 REVOKE ALL ON FUNCTION "public"."waitlist_interest_matches"("answer" "public"."waitlist_interest", "wanted" "text") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."waitlist_market_outcome"("target_user_id" "uuid") FROM PUBLIC;
 
 
 

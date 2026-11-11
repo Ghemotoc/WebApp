@@ -3,7 +3,8 @@
  * story S1-E2-24; Robert, 6 Nov 2026, 17:27 UTC: "a holding page where they can pick an avatar
  * and favourite genres, but can't write, read or post yet").
  *
- * Top to bottom: "You're on the list" with the day they joined and what happens next; their
+ * Top to bottom: "You're on the list" with the day they joined and what happens next (for someone
+ * whose country isn't open yet, that they wait for it to open; MARKETS-2b, S1-E11-32); their
  * "write, read or both" answer, which they can change; their avatar (AvatarBuilderSection, the
  * same as Settings › Profile); the kinds of stories they like (LikesSettingsSection); and links to
  * Settings (emails, occasional news, delete the account) and to log out.
@@ -34,6 +35,29 @@ interface WaitlistHoldingPageProps {
   interest: WaitlistInterest;
   /** When the person joined the list (ISO time). */
   joinedAt: string;
+  /** The person's country (two letters), or null when it isn't known. */
+  country: string | null;
+  /** Whether their country's market is open (MARKETS-2b). */
+  isMarketOpen: boolean;
+}
+
+/**
+ * The "what happens next" line: a place coming up, or the country opening first (MARKETS-2b).
+ *
+ * @param country - two letters, or null
+ * @param isMarketOpen - whether the country is open
+ * @returns the line, in the interface language
+ */
+function useNextLine(country: string | null, isMarketOpen: boolean): string {
+  const { t, i18n } = useTranslation('account');
+  if (isMarketOpen) return t('waitlist.holding.next');
+  // The country's name in the reader's language; an unknown country says "your country".
+  const countryName =
+    country === null || country === 'ZZ'
+      ? null
+      : (new Intl.DisplayNames([i18n.language], { type: 'region' }).of(country) ?? country);
+  if (countryName === null) return t('waitlist.holding.nextClosedUnknown');
+  return t('waitlist.holding.nextClosed', { country: countryName });
 }
 
 /**
@@ -71,9 +95,10 @@ function LogOutButton() {
  * The page's opening: the heading, when they joined and what comes next.
  *
  * @param props.joinedAt - when the person joined the list
+ * @param props.nextLine - what happens next
  * @returns the heading block
  */
-function HoldingIntro({ joinedAt }: { joinedAt: string }) {
+function HoldingIntro({ joinedAt, nextLine }: { joinedAt: string; nextLine: string }) {
   const { t, i18n } = useTranslation('account');
   // The day in the reader's language and Romanian time, like every date in the app.
   const joinedDay = new Intl.DateTimeFormat(i18n.language === 'en' ? 'en-GB' : 'ro', {
@@ -89,7 +114,7 @@ function HoldingIntro({ joinedAt }: { joinedAt: string }) {
         {t('waitlist.holding.heading')}
       </h1>
       <p className="m-0 text-body">{t('waitlist.holding.joined', { date: joinedDay })}</p>
-      <p className="m-0 text-body">{t('waitlist.holding.next')}</p>
+      <p className="m-0 text-body">{nextLine}</p>
     </div>
   );
 }
@@ -99,14 +124,16 @@ function HoldingIntro({ joinedAt }: { joinedAt: string }) {
  *
  * @returns the holding page
  */
-export function WaitlistHoldingPage({ interest, joinedAt }: WaitlistHoldingPageProps) {
+export function WaitlistHoldingPage(props: WaitlistHoldingPageProps) {
+  const { interest, joinedAt } = props;
   const { t } = useTranslation('account');
+  const nextLine = useNextLine(props.country, props.isMarketOpen);
   const { names } = useMyNames();
   const handle = names?.handle ?? null;
   return (
     <PageContainer className="flex flex-col gap-8 pt-12 pb-7">
       <title>{t('waitlist.holding.documentTitle')}</title>
-      <HoldingIntro joinedAt={joinedAt} />
+      <HoldingIntro joinedAt={joinedAt} nextLine={nextLine} />
       <section
         aria-label={t('waitlist.holding.interestLabel')}
         className="flex max-w-[860px] flex-col gap-3 rounded-card border border-border bg-surface p-6 shadow-card"
