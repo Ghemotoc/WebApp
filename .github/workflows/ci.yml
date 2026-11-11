@@ -147,6 +147,16 @@ jobs:
       # Up to three tries: the image registry sometimes refuses when every job pulls at once (QA-9).
       - run: scripts/ci/start-supabase.sh start -x studio,imgproxy,realtime,edge-runtime,logflare,vector,supavisor
       - run: npm run test:e2e -- --shard=${{ matrix.shard }}/4
+      # When a shard fails, show where the runner's disk went, so an ENOSPC can be traced to the
+      # folder that filled up instead of being rerun blind (CI-3, 11 Nov 2026: shard 3 ran out of
+      # space twice in the search tests with over 100 GB free at the start).
+      - name: Show disk use after a failure
+        if: failure()
+        run: |
+          df -h
+          sudo du -xsh /tmp /home/runner/.cache /home/runner/work /var/lib/docker /var/log 2>/dev/null || true
+          sudo du -xh --max-depth=2 /tmp /home/runner/work 2>/dev/null | sort -rh | head -20 || true
+          docker system df -v || true
       # Keep the report for a week when something fails, so the failure can be looked at.
       - uses: actions/upload-artifact@v4
         if: failure()
