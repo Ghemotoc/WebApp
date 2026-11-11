@@ -61,9 +61,9 @@ select results_eq(
   'First chapters has the board''s two subforums');
 select is_empty(
   $$ select forums.slug from public.forums, public.languages
-     where languages.is_interface and not exists (select 1 from public.forum_names
+     where languages.is_interface and languages.status = 'open' and not exists (select 1 from public.forum_names
        where forum_names.forum_id = forums.id and forum_names.language_code = languages.code) $$,
-  'every starting forum has a name in each interface language');
+  'every starting forum has a name in each open interface language (MARKETS-2a: sv, da and nb start closed)');
 
 /* ---------- 2. Who reads and writes ---------- */
 

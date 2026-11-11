@@ -48,10 +48,10 @@
     "empty": "Give it a name.",
     "too_long": "Keep the name to 80 characters.",
     "description_too_long": "Keep the description to 200 characters.",
-    "unknown_language": "This language isn't open.",
+    "unknown_language": "This language isn’t open.",
     "format": "Use lowercase letters, numbers and single hyphens, 2 to 60 characters.",
     "taken": "Another forum already uses this address.",
-    "too_deep": "A subforum can't hold forums. Pick a category or a forum.",
+    "too_deep": "A subforum can’t hold forums. Pick a category or a forum.",
     "missing": "That forum no longer exists.",
     "has_children": "Move or remove the forums inside it first.",
     "not_category": "Only a category can be pinned.",
@@ -66,6 +66,6 @@
     "not_allowed": "Only the owner and admins can change the forums.",
     "invalid": "Check the fields marked below.",
     "not_found": "That forum no longer exists. The list has been refreshed.",
-    "unreachable": "We couldn't reach the server. Try again."
+    "unreachable": "We couldn’t reach the server. Try again."
   }
 }

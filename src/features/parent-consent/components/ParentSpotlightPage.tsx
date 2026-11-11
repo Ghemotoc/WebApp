@@ -24,6 +24,7 @@ import type { SpotlightRequestDetails } from '../api/parentConsent';
 import { useSpotlightRequest } from '../hooks/useSpotlightRequest';
 
 import { ContactLine } from './ContactLine';
+import { writtenLanguageFor } from '@/schemas/interfaceLanguages';
 
 /** useSpotlightRequest's result, passed down once. */
 type SpotlightState = ReturnType<typeof useSpotlightRequest>;
@@ -56,7 +57,7 @@ function SpotlightQuestion({
   request: SpotlightRequestDetails;
 }) {
   const { t, i18n } = useTranslation('account');
-  const language = i18n.language === 'en' ? 'en' : 'ro';
+  const language = writtenLanguageFor(i18n.language);
   const decision = request.isAgreed ? 'withdraw' : 'agree';
   return (
     <>

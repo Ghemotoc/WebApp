@@ -7,8 +7,10 @@
  */
 import { z } from 'zod';
 
+import { writtenLanguages } from './interfaceLanguages';
+
 /** The two languages the school email can be in. */
-export const teacherCheckLanguages = ['ro', 'en'] as const;
+export const teacherCheckLanguages = writtenLanguages;
 export type TeacherCheckLanguage = (typeof teacherCheckLanguages)[number];
 
 /**

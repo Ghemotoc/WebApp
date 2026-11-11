@@ -1,5 +1,6 @@
 /**
- * Sets up translations: Romanian and English, Romanian first for everyone (story S1-E1-01).
+ * Sets up translations: Romanian and English, Romanian first for everyone (story S1-E1-01), plus
+ * Swedish, Danish and Norwegian Bokmål once their files land (bundle MARKETS-2, part a).
  *
  * Rule: the interface opens in Romanian whatever the device language, and English is one choice away
  * (decided 17 Oct 2026, 11:48). So there is no browser-language detection here, ever. The language
@@ -15,11 +16,21 @@
  * `useTranslation()` from react-i18next and then `t('home.welcome')`.
  * The check `npm run i18n:check` (scripts/check-i18n-keys.ts) fails when a key exists in one
  * language and not the other.
+ * The Nordic languages (MARKETS-2a): any JSON file in src/locales/sv/, da/ or nb/ is picked up on
+ * its own (import.meta.glob), so a translation lands by adding the file. A key that isn't
+ * translated yet falls back to English, never to Romanian (the brief: "missing keys fall back to
+ * English"). Which languages a person can pick is the languages table's status
+ * (useOpenInterfaceLanguages()); a closed language shows in no menu.
  */
 import i18next, { type i18n as I18nInstance } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
 import { brand } from '@/config/brand';
+import {
+  interfaceLanguages,
+  isInterfaceLanguage,
+  type InterfaceLanguage,
+} from '@/schemas/interfaceLanguages';
 import englishAccount from '@/locales/en/account.json';
 import englishAuth from '@/locales/en/auth.json';
 import englishCommon from '@/locales/en/common.json';
@@ -34,11 +45,14 @@ import englishWriting from '@/locales/en/writing.json';
 import romanianReading from '@/locales/ro/reading.json';
 import romanianWriting from '@/locales/ro/writing.json';
 
-/** The languages the interface is available in. Romanian comes first. */
-export const supportedLanguages = ['ro', 'en'] as const;
+/**
+ * The languages the interface knows (the one list in src/schemas/interfaceLanguages.ts). Open or
+ * not is the database's business; this is every code a translation instance accepts.
+ */
+export const supportedLanguages = interfaceLanguages;
 
 /** One of the supported language codes. */
-export type SupportedLanguage = (typeof supportedLanguages)[number];
+export type SupportedLanguage = InterfaceLanguage;
 
 /** Romanian for everyone on the first visit (decided 17 Oct 2026, 11:48). */
 export const defaultLanguage: SupportedLanguage = 'ro';
@@ -47,10 +61,35 @@ export const defaultLanguage: SupportedLanguage = 'ro';
  * Says whether a value is one of the interface languages.
  *
  * @param value - anything: a stored value, a database column, a drop-down value
- * @returns true for 'ro' or 'en'
+ * @returns true for en, ro, sv, da or nb
  */
 export function isSupportedLanguage(value: unknown): value is SupportedLanguage {
-  return supportedLanguages.includes(value as SupportedLanguage);
+  return isInterfaceLanguage(value);
+}
+
+/** The Nordic translation files, found at build time; none until the MARKETS thread sends them. */
+const nordicFiles = import.meta.glob<{ default: Record<string, unknown> }>(
+  '../locales/{sv,da,nb}/*.json',
+  { eager: true },
+);
+
+/**
+ * Groups the Nordic translation files by language and namespace, the shape i18next wants.
+ *
+ * @returns for example { sv: { common: {...} } }; an empty object while no file exists
+ */
+function nordicTranslations(): Record<string, Record<string, Record<string, unknown>>> {
+  const grouped: Record<string, Record<string, Record<string, unknown>>> = {};
+  for (const [path, file] of Object.entries(nordicFiles)) {
+    // Step 1: "../locales/sv/common.json" gives the language "sv" and the namespace "common".
+    const match = /\/locales\/([a-z]+)\/([a-z-]+)\.json$/.exec(path);
+    const language = match?.[1];
+    const namespace = match?.[2];
+    if (language === undefined || namespace === undefined) continue;
+    // Step 2: add it under its language.
+    grouped[language] = { ...grouped[language], [namespace]: file.default };
+  }
+  return grouped;
 }
 
 /** All translations, grouped by language and then by namespace (one JSON file per namespace). */
@@ -87,10 +126,12 @@ export function createI18n(language: SupportedLanguage = defaultLanguage): I18nI
 
   // Connect it to React and start it with the bundled translations.
   void instance.use(initReactI18next).init({
-    resources: translations,
+    resources: { ...nordicTranslations(), ...translations },
     lng: language,
-    fallbackLng: defaultLanguage,
-    supportedLngs: supportedLanguages,
+    // Romanian and English fall back to Romanian, as before; a Nordic key not translated yet reads
+    // in English (MARKETS-2a), then Romanian as the last resort.
+    fallbackLng: { sv: ['en'], da: ['en'], nb: ['en'], default: [defaultLanguage] },
+    supportedLngs: [...supportedLanguages],
     defaultNS: 'common',
     ns: ['common', 'legal', 'auth', 'account'],
     initAsync: false,

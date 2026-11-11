@@ -13,6 +13,8 @@
  */
 import { z } from 'zod';
 
+import { writtenLanguages } from './interfaceLanguages';
+
 import { Constants } from '../lib/database.types';
 
 import { copySourceLimits } from './report';
@@ -43,7 +45,7 @@ export const minimumFillMilliseconds = 3000;
 const sharedFields = {
   contentUrl: z.string().trim().min(1).max(noticeLimits.url),
   explanation: z.string().trim().min(1).max(noticeLimits.explanation),
-  language: z.enum(['ro', 'en']),
+  language: z.enum(writtenLanguages),
 };
 
 /** An email address, or nothing when the field was left empty. */

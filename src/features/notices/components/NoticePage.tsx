@@ -20,6 +20,7 @@ import { registerNoticeTranslations } from '../registerNoticeTranslations';
 import { NoticeForm } from './NoticeForm';
 import { NoticeReceived } from './NoticeReceived';
 import { NoticeSideColumn } from './NoticeSideColumn';
+import { writtenLanguageFor } from '@/schemas/interfaceLanguages';
 
 /**
  * The page's title block: eyebrow, heading, intro and the contact-point line.
@@ -50,7 +51,7 @@ export function NoticePage() {
   registerNoticeTranslations(i18n);
   const { t } = useTranslation('notices');
   const form = useNoticeForm();
-  const language = i18n.language === 'en' ? 'en' : 'ro';
+  const language = writtenLanguageFor(i18n.language);
   return (
     <PageContainer className="flex flex-col gap-8 pt-12 pb-7">
       <title>{t('documentTitle')}</title>

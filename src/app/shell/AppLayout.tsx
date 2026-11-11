@@ -7,6 +7,7 @@
  * Language (S1-E1-04): the English / Română drop-down sits only in the footer, and Settings has
  * a Language group (Robert, 9 Nov 2026, 12:20 UTC, bundle FIX-3; replaces Q11's "both the top
  * bar and the footer"). useAccountLanguage shows a signed-in person's account language on every device;
+ * useFirstVisitLanguage shows a first-time visitor the language for their country (MARKETS-2a);
  * useAccountAppearance does the same for their mode and look (bundle G2).
  * Accessibility: the first thing a keyboard user reaches is "Skip to content", which jumps past the
  * top bar to the page (WCAG 2.2, 2.4.1 Bypass blocks). The page sits in the one <main> landmark.
@@ -51,6 +52,7 @@ import { BrandTabIcon } from '@/features/branding/components/BrandTabIcon';
 import { LanguageSelect } from '@/features/language/components/LanguageSelect';
 import { useTrackRoutePattern } from '@/features/errors/hooks/useTrackRoutePattern';
 import { useAccountLanguage } from '@/features/language/hooks/useAccountLanguage';
+import { useFirstVisitLanguage } from '@/features/language/hooks/useFirstVisitLanguage';
 import { useAccountAppearance } from '@/features/theme/hooks/useAccountAppearance';
 import { MaintenanceGate } from '@/features/maintenance/components/MaintenanceGate';
 import { MessagesNavLink } from '@/features/messages/components/MessagesNavLink';
@@ -131,6 +133,8 @@ export function AppLayout() {
   const { t } = useTranslation();
   // Show a signed-in person's account language, whichever device they are on.
   useAccountLanguage();
+  // MARKETS-2a: a first-time visitor sees the language for their country.
+  useFirstVisitLanguage();
   // The member's mode and look, from their account on every device (bundle G2).
   useAccountAppearance();
   // Remember the page on screen for error reports (S1-E1-05).

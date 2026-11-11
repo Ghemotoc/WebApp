@@ -381,7 +381,7 @@
     "show": "Show the picture",
     "hide": "Blur the picture",
     "matchHidden": "This picture matched known child sexual abuse material. It is never shown, and its file has been deleted. Follow the safeguarding steps; the evidence is kept in the safeguarding section.",
-    "unreadable": "We couldn't open the picture. Try again in a moment.",
+    "unreadable": "We couldn’t open the picture. Try again in a moment.",
     "kind": "Kind",
     "kinds": {
       "cover": "Story cover",

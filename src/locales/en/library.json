@@ -7,7 +7,7 @@
     "body": "Log in to save stories for later and carry on from where you stopped, on any device.",
     "logIn": "Log in"
   },
-  "loadFailed": "Your library couldn't be loaded. Check your connection and try again.",
+  "loadFailed": "Your library couldn’t be loaded. Check your connection and try again.",
   "continue": {
     "heading": "Continue reading",
     "by": "by",
@@ -44,7 +44,7 @@
     "notStarted": "Not started",
     "empty": {
       "reading": "Nothing here yet. Open any chapter and the story joins this shelf.",
-      "saved": "Nothing saved for later. Use “Library” on a story's page to save it.",
+      "saved": "Nothing saved for later. Use “Library” on a story’s page to save it.",
       "finished": "Stories you read to the end land here.",
       "mine": "Stories you write show here, drafts included. Only you see this shelf."
     },
@@ -66,15 +66,15 @@
     "stories": "Stories ({{count}})",
     "lastUpdate": "Last update {{when}}",
     "nothingYet": "Nothing published yet",
-    "noWriters": "You don't follow any writers yet. Use “Follow” on a writer's profile.",
-    "noStories": "You don't follow any stories yet. Use “Follow story” on a story's page.",
+    "noWriters": "You don’t follow any writers yet. Use “Follow” on a writer’s profile.",
+    "noStories": "You don’t follow any stories yet. Use “Follow story” on a story’s page.",
     "new": "New",
     "notificationSettings": "Notification settings"
   },
   "button": {
     "label": "Library",
     "none": "Not in the library",
-    "saveFailed": "That didn't save. Try again.",
+    "saveFailed": "That didn’t save. Try again.",
     "logIn": "Log in to save it"
   },
   "startReading": "Start reading",
@@ -127,8 +127,8 @@
   "lists": {
     "heading": "Reading lists",
     "intro": "Group stories under any name. A list stays private until you make it public.",
-    "empty": "No lists yet. Make one, then add stories from a story's page.",
-    "loadFailed": "The reading lists couldn't be loaded. Check your connection and try again.",
+    "empty": "No lists yet. Make one, then add stories from a story’s page.",
+    "loadFailed": "The reading lists couldn’t be loaded. Check your connection and try again.",
     "count_one": "{{count}} story",
     "count_few": "{{count}} stories",
     "count_other": "{{count}} stories",
@@ -153,8 +153,8 @@
       "nameTaken": "Another list has that name. Choose a different one.",
       "tooManyLists": "You have the most lists an account can hold. Delete one to make room.",
       "tooManyStories": "This list is full. Take a story out to make room.",
-      "notActive": "This account can't make a list public right now.",
-      "saveFailed": "That didn't save. Try again."
+      "notActive": "This account can’t make a list public right now.",
+      "saveFailed": "That didn’t save. Try again."
     },
     "page": {
       "documentTitle": "{{name}} · {{productName}}",
@@ -178,7 +178,7 @@
       "deleteYes": "Yes, delete",
       "deleteKeep": "Keep",
       "emptyTitle": "No stories yet",
-      "emptyOwn": "Use “Add to a list” on a story's page.",
+      "emptyOwn": "Use “Add to a list” on a story’s page.",
       "emptyOther": "Nothing in this list is open to you right now.",
       "discover": "Find stories"
     }

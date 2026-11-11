@@ -32,6 +32,7 @@ import {
   userIdOf,
   type ReadyOptions,
 } from './shared';
+import { writtenLanguageFor } from '../../src/schemas/interfaceLanguages';
 
 /** What begin_spotlight_request() answers. */
 interface StoredRequest {
@@ -54,7 +55,7 @@ interface StoredSpotlightAnswer {
  * @returns ro or en
  */
 function languageOf(language: string | undefined): ConsentLanguage {
-  return language === 'en' ? 'en' : 'ro';
+  return writtenLanguageFor(language);
 }
 
 /**

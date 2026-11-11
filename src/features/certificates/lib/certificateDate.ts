@@ -4,6 +4,7 @@
  *
  * Who calls it: CertificateSheet, MyCertificatesPage, PrintedNameForm and VerifyCertificatePage.
  */
+import { writtenLanguageFor } from '@/schemas/interfaceLanguages';
 
 /** The two languages a certificate prints in. */
 export type CertificateLanguage = 'ro' | 'en';
@@ -22,12 +23,13 @@ export function certificateDate(isoDate: string, language: CertificateLanguage):
 }
 
 /**
- * The certificate language that matches the page's language: English for English, Romanian for
- * everything else (the interface opens in Romanian for everyone).
+ * The certificate language that matches the page's language: Romanian for Romanian, English for
+ * English, Swedish, Danish and Norwegian (MARKETS-2a: they read in English until their texts
+ * exist), Romanian when nothing is known.
  *
  * @param pageLanguage - i18n.language
  * @returns 'en' or 'ro'
  */
 export function certificateLanguageOf(pageLanguage: string): CertificateLanguage {
-  return pageLanguage === 'en' ? 'en' : 'ro';
+  return writtenLanguageFor(pageLanguage);
 }

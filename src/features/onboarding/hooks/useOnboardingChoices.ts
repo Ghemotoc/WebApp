@@ -13,6 +13,7 @@ import { requireClient } from '@/features/account/hooks/useMyNames';
 import { useStoryFormOptions } from '@/features/writing/hooks/useStoryFormOptions';
 
 import { fetchRegions, fetchTopics } from '../api/onboarding';
+import { writtenLanguageFor } from '@/schemas/interfaceLanguages';
 
 /**
  * Reads the choices.
@@ -21,7 +22,7 @@ import { fetchRegions, fetchTopics } from '../api/onboarding';
  */
 export function useOnboardingChoices() {
   const { i18n } = useTranslation();
-  const language = i18n.language === 'en' ? 'en' : 'ro';
+  const language = writtenLanguageFor(i18n.language);
   const { categories, loadFailed: categoriesFailed } = useStoryFormOptions();
   const regions = useQuery({
     queryKey: ['regions'],

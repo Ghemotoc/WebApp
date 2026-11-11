@@ -40,6 +40,7 @@ import {
 import { answerSpotlight, requestSpotlight } from './parent-consent/spotlight';
 import { bearerToken } from './picture-check';
 import { hmacHex } from './signup-context';
+import { writtenLanguageFor } from '../src/schemas/interfaceLanguages';
 
 /** Kept here for the callers that import them from this file. */
 export { newConsentToken, sha256Hex, userIdOf, type ParentConsentOptions };
@@ -131,7 +132,7 @@ async function sendFollowUp(
 ): Promise<void> {
   const handle = stored.handle ?? '';
   if (answer.decision === 'refuse' && stored.writer_email !== undefined) {
-    const writerLanguage = stored.writer_language === 'en' ? 'en' : 'ro';
+    const writerLanguage = writtenLanguageFor(stored.writer_language);
     await sendConsentEmail(options, 'refused', stored.writer_email, {
       language: writerLanguage,
       values: { handle },

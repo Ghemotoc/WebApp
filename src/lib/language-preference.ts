@@ -4,8 +4,9 @@
  * The rule, in order (decided 17 Oct 2026, 11:48; S1-E1-04 acceptance criteria):
  *   1. a signed-in person's account language (profiles.locale) wins, on every device;
  *   2. otherwise the language chosen in this browser, kept here;
- *   3. otherwise Romanian, whatever the browser or device language is. The browser's own language
- *      is never read.
+ *   3. otherwise the language for the connection's country, on a first visit (MARKETS-2a,
+ *      src/features/language/lib/firstVisitLanguage.ts);
+ *   4. otherwise Romanian. The browser's own language is never read.
  * This file is step 2. Step 1 is src/features/language/hooks/useAccountLanguage.ts.
  *
  * Who calls it: src/main.tsx (to start in the right language before the first paint) and the
@@ -29,6 +30,20 @@ export function readDeviceLanguage(): SupportedLanguage {
     return isSupportedLanguage(storedValue) ? storedValue : defaultLanguage;
   } catch {
     return defaultLanguage;
+  }
+}
+
+/**
+ * Says whether this browser holds a language choice at all (bundle MARKETS-2, part a): the
+ * first-visit hint from the country (useFirstVisitLanguage) runs only while it doesn't.
+ *
+ * @returns true when a valid language is saved; false when none is, or storage is unavailable
+ */
+export function hasDeviceLanguage(): boolean {
+  try {
+    return isSupportedLanguage(window.localStorage.getItem(LANGUAGE_STORAGE_KEY));
+  } catch {
+    return false;
   }
 }
 

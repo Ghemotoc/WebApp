@@ -32,6 +32,7 @@ import type { EmailSender, OutgoingEmail, SendEmail } from './contact';
 import { fillPlaceholders } from './notification-emails';
 import { textOf } from './send-email';
 import { hmacHex } from './signup-context';
+import { writtenLanguageFor } from '../src/schemas/interfaceLanguages';
 
 /** The texts of one language, as in email.json. */
 type EmailTexts = Record<string, string | Record<string, string>>;
@@ -175,7 +176,7 @@ export async function openingEmail(
   claimed: ClaimedOpeningEmail,
   siteUrl: string,
 ): Promise<OutgoingEmail> {
-  const language: OpeningLanguage = claimed.language === 'en' ? 'en' : 'ro';
+  const language: OpeningLanguage = writtenLanguageFor(claimed.language);
   const read = await readerFor(options, language);
   const values = {
     country: countryNameIn(claimed.country_code, language),

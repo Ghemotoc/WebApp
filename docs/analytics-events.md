@@ -8,7 +8,7 @@ The rule (S1-E15-03): every event the code sends is a row here and a line in `sr
 
 | Event | Fires when | Properties | Where | Story |
 | --- | --- | --- | --- | --- |
-| `language_changed` | someone picks another interface language | `language`: `ro` or `en` | `src/features/language/hooks/useInterfaceLanguage.ts` | S1-E1-04 |
+| `language_changed` | someone picks another interface language | `language`: `en`, `ro`, `sv`, `da` or `nb` (an open interface language; MARKETS-2a) | `src/features/language/hooks/useInterfaceLanguage.ts` | S1-E1-04 |
 | `sign_up_completed` | an account is created through the sign-up form | none | `src/features/auth/hooks/useSignUpForm.ts` | S1-E2-01 |
 | `story_created` | a writer creates a story | `category`: the category's slug | `src/features/writing/hooks/useNewStoryForm.ts` | S1-E3-01 |
 | `chapter_published` | a writer publishes a chapter now | none | `src/features/writing/hooks/useChapterPublishing.ts` | S1-E3-03 |

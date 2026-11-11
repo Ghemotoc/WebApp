@@ -4,7 +4,7 @@
     "eyebrow": "For writers and readers",
     "welcome": "Welcome to {{productName}}",
     "tagline": "A place for stories, poems and essays.",
-    "comingSoon": "We're building the platform right now. Come back soon."
+    "comingSoon": "We’re building the platform right now. Come back soon."
   },
   "shell": {
     "skipToContent": "Skip to content",
@@ -74,12 +74,15 @@
     "label": "Language",
     "en": "English",
     "ro": "Română",
+    "sv": "Svenska",
+    "da": "Dansk",
+    "nb": "Norsk bokmål",
     "savedToAccount": "Language saved to the account.",
-    "keptOnDevice": "We couldn't save the language to your account. It's kept on this device.",
+    "keptOnDevice": "We couldn’t save the language to your account. It’s kept on this device.",
     "settingsHeading": "Language",
     "settingsIntro": "The language of buttons, menus and emails. It is saved to the account, so it applies on every device.",
     "settingsLegend": "Interface language",
-    "settingsNote": "Before signing in, the site opens in Romanian, and English is in the language menu at the bottom of the page. Stories have their own language, which the writer picks."
+    "settingsNote": "Before signing in, the site opens in the language of the country it is visited from: Romanian in Romania and Moldova, English elsewhere. The language menu is at the bottom of the page. Stories have their own language, which the writer picks."
   },
   "shelf": {
     "regionLabel": "{{title}}, scrolls sideways",
@@ -150,14 +153,14 @@
     "waitingForPerson": "Waiting for a person",
     "uploading": "Uploading and checking the picture…",
     "passed": "The picture passed the check.",
-    "held": "A person on our moderation team will look at your picture before others can see it. We'll let you know.",
-    "pending": "Your picture is uploaded. We'll check it as soon as we can; until then only you can see it.",
+    "held": "A person on our moderation team will look at your picture before others can see it. We’ll let you know.",
+    "pending": "Your picture is uploaded. We’ll check it as soon as we can; until then only you can see it.",
     "failed": {
-      "wrong_type": "That file isn't a JPEG, PNG or WebP picture.",
+      "wrong_type": "That file isn’t a JPEG, PNG or WebP picture.",
       "too_big": "That picture is too big. Choose a smaller one.",
-      "too_many": "You've uploaded a lot of pictures in the last hour. Try again in {{minutes}} minutes.",
-      "not_allowed": "You can't upload this picture right now.",
-      "unreachable": "We couldn't upload your picture. Check your connection and try again.",
+      "too_many": "You’ve uploaded a lot of pictures in the last hour. Try again in {{minutes}} minutes.",
+      "not_allowed": "You can’t upload this picture right now.",
+      "unreachable": "We couldn’t upload your picture. Check your connection and try again.",
       "animated": "A signature picture can’t move. Choose a still picture."
     },
     "coverLabel": "Upload a picture",
@@ -191,7 +194,7 @@
     "trendingEyebrow": "Trending",
     "completed": "Completed stories",
     "completedEyebrow": "Finished",
-    "readFailed": "We couldn't load this page's text. Check your connection and try again.",
+    "readFailed": "We couldn’t load this page’s text. Check your connection and try again.",
     "noticeLabel": "Notice",
     "noticeMore": "Find out more",
     "noticeClose": "Close this notice",
@@ -203,7 +206,7 @@
       "questions": "Popular questions",
       "back": "Help pages",
       "pageTitle": "{{title}} · Help",
-      "notFoundHeading": "We can't find that help page",
+      "notFoundHeading": "We can’t find that help page",
       "notFound": "It may have moved or been taken down. All help pages are on the Help page.",
       "searchLabel": "Search help",
       "searchPlaceholder": "Search help pages and questions",

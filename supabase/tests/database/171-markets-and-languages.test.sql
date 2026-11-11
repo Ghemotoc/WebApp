@@ -25,7 +25,7 @@ insert into public.languages (code, status) values ('hu', 'closed');
 
 set local role anon;
 select results_eq($$ select code, is_open from public.story_language_choices() $$,
-  $$ values ('en', true), ('ro', true), ('hu', false) $$,
+  $$ values ('da', false), ('en', true), ('nb', false), ('ro', true), ('sv', false), ('hu', false) $$,
   'allowed: languages_select_public: a visitor sees every language and which can be chosen');
 select throws_ok($$ update public.languages set status = 'open' $$, '42501', null,
   'denied: languages_select_public: nobody opens a language through the API');

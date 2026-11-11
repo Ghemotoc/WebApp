@@ -273,7 +273,7 @@ test.describe('pictures in chapters (S1-E3-09)', () => {
     await figure
       .getByLabel('New picture')
       .setInputFiles({ name: 'notes.txt', mimeType: 'text/plain', buffer: Buffer.from('x') });
-    await expect(figure.getByText("That file isn't a JPEG, PNG or WebP picture.")).toBeVisible();
+    await expect(figure.getByText('That file isn’t a JPEG, PNG or WebP picture.')).toBeVisible();
 
     // Cancel closes the field and gives the focus back to the button.
     await figure.getByRole('button', { name: 'Cancel' }).click();

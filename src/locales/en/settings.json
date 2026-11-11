@@ -9,23 +9,23 @@
   "saved": "Saved. It applies within a minute.",
   "failures": {
     "not_allowed": "Only the owner and admins can change settings.",
-    "invalid": "That can't be saved.",
+    "invalid": "That can’t be saved.",
     "not_found": "That setting no longer exists. Reload the page.",
-    "already_there": "That's already on the list.",
-    "unreachable": "We couldn't reach the database. Check your connection and try again."
+    "already_there": "That’s already on the list.",
+    "unreachable": "We couldn’t reach the database. Check your connection and try again."
   },
   "reasons": {
     "wrong_kind": "The new value must be the same kind as the old one (a number stays a number).",
-    "below_zero": "Numbers can't go below zero.",
+    "below_zero": "Numbers can’t go below zero.",
     "bad_item": "Each item must be a word or a number of zero or more.",
     "repeated_item": "Each item may appear only once.",
     "changed_parts": "The value must keep every part.",
     "typed_invalid": "Type a number of zero or more, or a list separated by a comma and a space.",
     "no_moderator": "No moderator who reads this language is on the rota yet. Record the languages staff read on Staff › Roles first.",
     "interface_language": "The interface is in this language, so it stays open.",
-    "legal_check_not_done": "This market's legal check isn't done yet.",
+    "legal_check_not_done": "This market’s legal check isn’t done yet.",
     "owner_only": "Only the owner opens a market.",
-    "no_open_language": "None of this market's languages is open yet.",
+    "no_open_language": "None of this market’s languages is open yet.",
     "reason_needed": "Say why the rule changes."
   },
   "sections": {
@@ -66,7 +66,7 @@
       },
       "picture_uploads": {
         "label": "Picture uploads",
-        "description": "Covers and profile pictures. Every picture goes through the picture check first. Leave it off until the picture check's services are connected."
+        "description": "Covers and profile pictures. Every picture goes through the picture check first. Leave it off until the picture check’s services are connected."
       }
     }
   },
@@ -107,7 +107,7 @@
       "new_account_hours": "An account counts as new for (hours)",
       "comment_hourly_limit": "Comments an hour",
       "comment_hourly_limit_new_account": "Comments an hour for a new account",
-      "comment_new_account_hours": "Hours a new account's comments are limited",
+      "comment_new_account_hours": "Hours a new account’s comments are limited",
       "new_account_max_links": "Links in one comment from a new account",
       "report_hourly_limit": "Reports an hour",
       "reporting_pause_days": "Days reporting is paused after misuse",
@@ -144,7 +144,7 @@
     }
   },
   "discover": {
-    "intro": "The shelves on Discover and their order. Sponsors can't change this.",
+    "intro": "The shelves on Discover and their order. Sponsors can’t change this.",
     "shown": "Shown, in this order",
     "hidden": "Not shown",
     "noneHidden": "Every shelf is shown.",
@@ -227,7 +227,7 @@
   "markets": {
     "intro": "Romania opens first. Other countries open later, one by one, each after its legal check. A language opens only when moderators who read it are on the rota.",
     "languagesHeading": "Languages",
-    "languagesNote": "Writers pick a story's language from the open ones; the others show as \"coming when we have moderators for it\". The interface stays in English and Română.",
+    "languagesNote": "Writers pick a story’s language from the open ones; the others show as \"coming when we have moderators for it\". The interface stays in English and Română.",
     "marketsHeading": "Markets",
     "marketsNote": "A market opens only when its legal check is done and at least one of its languages is open. Only the owner opens a market. The market comes from the country of the connection, kept as a country code only, never the IP address.",
     "statusLabel": "Status of {{name}}",

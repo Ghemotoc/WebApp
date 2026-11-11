@@ -10,8 +10,10 @@
  */
 import { z } from 'zod';
 
+import { writtenLanguages } from './interfaceLanguages';
+
 /** The languages the emails are written in (email.json). */
-export const openingListLanguages = ['ro', 'en'] as const;
+export const openingListLanguages = writtenLanguages;
 
 /** One "tell me when you open here" request. */
 export const openingListRequestSchema = z.object({

@@ -22,6 +22,7 @@ import { countryCodes } from '@/lib/country-codes';
 
 import type { JoinOutcome } from '../api/openingList';
 import { useOpeningListForm } from '../hooks/useOpeningListForm';
+import { writtenLanguageFor } from '@/schemas/interfaceLanguages';
 
 /** What the form needs. */
 interface OpeningListFormProps {
@@ -73,7 +74,7 @@ function HoneypotField({ value, onChange }: { value: string; onChange: (value: s
  */
 export function OpeningListForm({ country }: OpeningListFormProps) {
   const { t, i18n } = useTranslation('auth');
-  const form = useOpeningListForm(country, i18n.language === 'en' ? 'en' : 'ro');
+  const form = useOpeningListForm(country, writtenLanguageFor(i18n.language));
   const { outcome } = form;
 
   if (outcome === 'listed') return <Notice tone="success">{t('notOpen.sent')}</Notice>;

@@ -23,6 +23,7 @@ import { registerContactTranslations } from '../registerContactTranslations';
 
 import { ContactForm } from './ContactForm';
 import { ContactOtherWays } from './ContactOtherWays';
+import { writtenLanguageFor } from '@/schemas/interfaceLanguages';
 
 /**
  * "Message sent", with the reference and a way to write again.
@@ -60,7 +61,7 @@ export function ContactPage() {
   registerContactTranslations(i18n);
   const { t } = useTranslation('contact');
   const form = useContactForm();
-  const language = i18n.language === 'en' ? 'en' : 'ro';
+  const language = writtenLanguageFor(i18n.language);
   return (
     <PageContainer className="flex flex-col gap-8 pt-12 pb-7">
       <title>{t('documentTitle')}</title>

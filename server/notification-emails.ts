@@ -27,6 +27,7 @@ import romanianEmail from '../src/locales/ro/email.json';
 
 import type { EmailSender, OutgoingEmail, SendEmail } from './contact';
 import { textOf } from './send-email';
+import { writtenLanguageFor } from '../src/schemas/interfaceLanguages';
 
 /** The texts of one language, as in email.json. */
 type EmailTexts = Record<string, string | Record<string, string>>;
@@ -395,7 +396,7 @@ async function callDatabase(
 function readersByLanguage(options: NotificationEmailOptions) {
   const readers = new Map<'ro' | 'en', Promise<ReadText>>();
   return (language: string): Promise<ReadText> => {
-    const locale = language === 'en' ? 'en' : 'ro';
+    const locale = writtenLanguageFor(language);
     const known = readers.get(locale);
     if (known !== undefined) return known;
     const reader = options
