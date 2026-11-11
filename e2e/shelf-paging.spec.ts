@@ -99,16 +99,19 @@ for (const width of [1440, 390]) {
     expect(fadedIndex).toBeGreaterThan(0);
 
     // Step 2: forward. That card is now clear of the right fade, and the one before peeks in.
-    const after = await pressAndMeasure(shelf, row, {
+    await pressAndMeasure(shelf, row, {
       button: 'Derulează înainte',
       watchedIndex: fadedIndex,
       leftBefore: cardAt(before.cards, fadedIndex).left,
       forward: true,
     });
+    // The Shelf rewrites its faded edges on the scroll event, a moment after the cards move,
+    // so wait for the middle-of-the-row edges before measuring again.
+    await expect.poll(async () => (await measureRow(row)).edges).toBe('left right');
+    const after = await measureRow(row);
     const shown = cardAt(after.cards, fadedIndex);
     const peeking = cardAt(after.cards, fadedIndex - 1);
     // In the middle of the row both edges fade, and the card sits clear of both.
-    expect(after.edges).toBe('left right');
     expect(shown.left).toBeGreaterThanOrEqual(after.fade - 1);
     expect(shown.right).toBeLessThanOrEqual(after.width - after.fade + 1);
     expect(peeking.right).toBeGreaterThan(0);
