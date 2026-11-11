@@ -69,6 +69,25 @@ test.describe('Website pages by country and language (LOCALISE-1)', () => {
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   });
 
+  test('a link clicked while the address is still forwarding opens its page, not the home page', async ({
+    page,
+  }) => {
+    // The forward waits for the list of places, and the legal centre's code takes a moment to
+    // load: both are slowed here so the click lands in between, as it can on a slow connection.
+    await page.route('**/rest/v1/rpc/website_places', async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await route.continue();
+    });
+    await page.route(/LegalCentrePage.*\.js/, async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await route.continue();
+    });
+    await page.goto('/');
+    await page.getByRole('contentinfo').getByRole('link', { name: 'Termeni' }).click();
+    await expect(page).toHaveURL(/\/legal\/terms$/);
+    await expect(page.getByRole('navigation', { name: 'Documente legale' })).toBeVisible();
+  });
+
   test('the language menu moves the address to the same page in that language', async ({
     page,
   }) => {

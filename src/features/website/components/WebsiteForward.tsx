@@ -7,11 +7,14 @@
  * language is the one the interface shows. A country with no market goes to Romania's pages
  * (decided 17 Oct 2026, 19:16). The query and the place on the page ("#questions") are kept, and
  * the older address is replaced in the history, so Back doesn't bounce.
+ * A visitor who has already clicked a link to somewhere else is left alone: the forward never
+ * pulls them back from the page they asked for (found by the epic S1-E14 journey, which clicked
+ * "Terms" in the footer while the country was still being read and landed on the home page).
  * Who shows it: the router, at each older website address. What it calls: useVisitorCountry,
  * useWebsiteMarkets and src/lib/websitePlace.ts.
  */
 import { useTranslation } from 'react-i18next';
-import { Navigate, useLocation } from 'react-router';
+import { Navigate, useLocation, useNavigation } from 'react-router';
 
 import { useVisitorCountry } from '@/features/safety/hooks/useVisitorCountry';
 import { pathAtPlace, placeForVisitor } from '@/lib/websitePlace';
@@ -19,16 +22,22 @@ import { pathAtPlace, placeForVisitor } from '@/lib/websitePlace';
 import { useWebsiteMarkets } from '../hooks/useWebsiteMarkets';
 
 /**
- * Renders nothing until the country and the markets are known, then forwards.
+ * Renders nothing until the country and the markets are known, then forwards, unless the
+ * visitor is already leaving for another page.
  *
- * @returns the redirect, or null while waiting
+ * @returns the redirect, or null while waiting or leaving
  */
 export function WebsiteForward() {
   const { i18n } = useTranslation();
   const location = useLocation();
   const { countryCode, isKnown: isCountryKnown } = useVisitorCountry();
   const { markets, isKnown: areMarketsKnown } = useWebsiteMarkets();
-  if (!isCountryKnown || !areMarketsKnown) return null;
+  // The page the visitor is already on their way to, when they clicked a link while this one
+  // was still waiting (its code may still be loading).
+  const navigation = useNavigation();
+  const isLeaving =
+    navigation.location !== undefined && navigation.location.pathname !== location.pathname;
+  if (!isCountryKnown || !areMarketsKnown || isLeaving) return null;
   // With no markets list (the read failed) this is the fallback place, which still opens.
   const place = placeForVisitor(markets, countryCode, i18n.resolvedLanguage ?? null);
   const target = `${pathAtPlace(place, location.pathname)}${location.search}${location.hash}`;
