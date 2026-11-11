@@ -100,9 +100,11 @@
      cobalt #5B95EE (NIGHT-1). */
   --accent: #672786;
   --accent-deep: #2a0e33;
-  /* The cat logo and the wordmark: the theme accent by day, soft white at night (Robert, 7 Nov
-     2026, 19:34 to 19:36; bundle G2). Favicon and emails keep the fixed plum #48125D. */
-  --logo: #672786;
+  /* The sleeping-cat logo and the wordmark: Revolver #2A0E33 in the main look (bundle LOGO-2;
+     Robert, 11 Nov 2026: "In the main theme, we only use revolver ... also for the text next to
+     it"), each other look's accent by day and soft white at night (bundle G2). The tab icon is
+     Revolver when the browser is light and white when it is dark (public/brand). */
+  --logo: #2a0e33;
   /* Every main action (Publish, Save, Continue; rulebook 5). In the main look it is the website's
      deep plum #2A0E33 with cream text, the colour of the website's action buttons (GLASS-2;
      Robert, 11 Nov 2026: "the same colour for the action buttons like we have on the main
