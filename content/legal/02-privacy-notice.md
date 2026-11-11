@@ -127,7 +127,7 @@ Keeping records in case of a dispute. Keeping reports and decisions for a limite
 
 Counting what works. We count reads, finished chapters, sign-ups, active members, minutes spent in the app and reading, and returning readers as totals, without cookies and without tracking anyone. For this we keep one date per member: the last day you used the app, replaced each day, never a list of the days or pages. It is deleted 35 days after your last visit. Legal basis: our legitimate interest. [Lawyer to confirm]
 
-Deleting accounts nobody uses. We also keep the last day you logged in or used the app, replaced each time. If nobody uses an account for 5 years, we email you about a month and again about a week before we delete it, with everything in it, in the same way as when you delete it yourself. Logging in at any time before then keeps it. Legal basis: we keep personal data only as long as it is needed (GDPR art. 5(1)(e)). [Lawyer to confirm]
+Deleting accounts nobody uses. We also keep the last day you logged in or used the app, replaced each time. While nobody uses an account we email a reminder once a year, and every 3 months in the fifth year. If nobody uses it for 5 years, we email you that it closes in 30 days. On the day it closes we email a link for downloading a copy of your data, which works for 14 days after you log in; then the account is deleted, with everything in it, in the same way as when you delete it yourself. Logging in and using the site at any time before then keeps it; downloading the copy alone does not. Legal basis: we keep personal data only as long as it is needed (GDPR art. 5(1)(e)). [Lawyer to confirm]
 
 Suggestions from reading. When you finish a story, it can count, as a total with no names, towards "Stories like this": stories that 5 or more of the same readers finished. Discover then shows "Because you read" from the stories you finished. It is on for adults and off for anyone under 18, and you can turn it off or on in Settings › Privacy. Legal basis: our legitimate interest, and your choice for members under 18. [Lawyer to confirm]
 
@@ -197,7 +197,7 @@ Ads. We don’t use your data to choose ads, for anyone.
 
 - [How long we keep each kind of data: to be set]
 - When you delete your account, we delete your data and your stories, apart from what the law says we must keep. Your forum posts stay, shown as “Deleted user”.
-- If nobody uses an account for 5 years, we delete it the same way, after emailing you a month and a week before.
+- If nobody uses an account for 5 years, we email you, close it 30 days later and delete it the same way 14 days after that.
 
 *Suggested new short line, now that the full text fills the placeholder:*
 

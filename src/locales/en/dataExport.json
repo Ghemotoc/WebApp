@@ -220,7 +220,7 @@
     "tablesHeading": "The groups under tables",
     "tables": {
       "account_deletions": "When you asked to delete your account, and whether you changed your mind.",
-      "account_last_used": "The last day you used the account, and when the notices about an unused account were sent.",
+      "account_last_used": "The last day you used the account, and which emails about an unused account were sent.",
       "age_check_attempts": "Each time you checked your age: the result and the date, never a photo.",
       "appeals": "Appeals against moderation decisions.",
       "blocks": "The accounts you blocked.",

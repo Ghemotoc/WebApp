@@ -9,6 +9,8 @@
  * - downloading doesn't keep the account: it is still closing afterwards;
  * - going on to an ordinary page (Discover) keeps the account, and the page opens;
  * - a visitor who isn't logged in is sent to the log-in page, which comes back to that address;
+ * - break test: an account that isn't closing is sent to Settings, and an account its owner chose
+ *   to delete is not kept by opening a page;
  * - axe at 390, 768 and 1440 px, light and night, ro and en, on the closing page with the
  *   download panel, and no sideways scroll.
  * The emails and the nightly job are proved by database test 369 and server/notification-emails.
@@ -138,5 +140,33 @@ test.describe('An account closed for not being used', () => {
       ).trim(),
     ).toBe('1');
     await context.close();
+  });
+
+  test('an account that isn’t closing opens Settings from the email’s address (break test)', async ({
+    page,
+  }) => {
+    // The test before kept the account, so the old link has nothing to close or download here.
+    expect(isClosed()).toBe(false);
+    await useSessionInBrowser(page.context(), (await signInPersona('failed_check')).session);
+    await page.goto('/account-closing');
+    await expect(page).toHaveURL(/\/settings#download-my-data$/);
+  });
+
+  test('an account its owner chose to delete isn’t kept by opening a page (break test)', async ({
+    page,
+  }) => {
+    // Only a closing for not being used is undone by using the site (Robert, 11 Nov 2026, 19:43
+    // UTC); "Delete my account" still needs the Keep button.
+    reopenAccount();
+    closeAsUnused();
+    runSql(
+      `update public.account_deletions set reason = 'requested' where user_id = '${sleeperId}';`,
+    );
+    await useSessionInBrowser(page.context(), (await signInPersona('failed_check')).session);
+    await page.goto('/discover');
+    await expect(page.locator('#download-my-data')).toBeVisible();
+    await page.goto('/account-closing');
+    await expect(page.locator('#download-my-data')).toBeVisible();
+    expect(isClosed()).toBe(true);
   });
 });

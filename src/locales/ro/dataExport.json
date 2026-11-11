@@ -220,7 +220,7 @@
     "tablesHeading": "Grupele din tables",
     "tables": {
       "account_deletions": "Când ai cerut ștergerea contului și dacă te-ai răzgândit.",
-      "account_last_used": "Ultima zi în care ai folosit contul și când s-au trimis anunțurile despre un cont nefolosit.",
+      "account_last_used": "Ultima zi în care ai folosit contul și ce emailuri despre un cont nefolosit au fost trimise.",
       "age_check_attempts": "De câte ori ți-ai verificat vârsta: rezultatul și data, niciodată o fotografie.",
       "appeals": "Contestații la deciziile moderatorilor.",
       "blocks": "Conturile pe care le-ai blocat.",
