@@ -79,7 +79,6 @@ import { ChapterEnd } from './ChapterEnd';
 import { ChapterReaderHeader } from './ChapterReaderHeader';
 import { CopyNotice } from './CopyNotice';
 import { EarlierVersionComments } from './EarlierVersionComments';
-import { NoPreviewNotice } from './NoPreviewNotice';
 import { ParagraphCommentMarker } from './ParagraphCommentMarker';
 import { ParagraphCommentsPanel } from './ParagraphCommentsPanel';
 import { ProtectedChapterText } from './ProtectedChapterText';
@@ -92,6 +91,15 @@ import { TeaserPage } from './TeaserPage';
 const PictureShareButton = lazy(async () => {
   const module = await import('@/features/sharing/components/PictureShareButton');
   return { default: module.PictureShareButton };
+});
+
+/**
+ * "No preview for this story", loaded only for a signed-out visitor on a 16+ or 18+ chapter, so it
+ * stays out of every other reader's cold load (the 1,300 KB script budget, S1-E4-01b).
+ */
+const NoPreviewNotice = lazy(async () => {
+  const module = await import('./NoPreviewNotice');
+  return { default: module.NoPreviewNotice };
 });
 
 /** The reading ruler, loaded only for a reader who turned it on (IDEAS-1 part a). */
@@ -127,7 +135,13 @@ function ChapterMissing({ storySlug, chapterCode }: { storySlug: string; chapter
   const { t } = useTranslation('reading');
   const { hidden, isSettled } = useStoryPreview(storySlug, chapterCode, true);
   if (!isSettled) return null;
-  if (hidden !== null) return <NoPreviewNotice preview={hidden} />;
+  if (hidden !== null) {
+    return (
+      <Suspense fallback={null}>
+        <NoPreviewNotice preview={hidden} />
+      </Suspense>
+    );
+  }
   return (
     <>
       <title>{t('reader.unavailableTitle')}</title>
