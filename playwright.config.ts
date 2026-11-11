@@ -77,7 +77,11 @@ export default defineConfig({
   reporter: process.env.CI === undefined ? 'list' : [['list'], ['html', { open: 'never' }]],
   use: {
     baseURL: previewUrl,
-    trace: 'retain-on-failure',
+    // A trace only for a test's retry, so only a test that failed once is recorded. Recording
+    // every test ('retain-on-failure') filled the CI runner's disk during a shard: with one worker
+    // for 700-odd tests, the traces' resources pile up until the worker ends (ENOSPC, 11 Nov 2026;
+    // CI-2). Locally there is no retry, so run a failing test again with --trace on to debug it.
+    trace: 'on-first-retry',
   },
   projects: [
     {
