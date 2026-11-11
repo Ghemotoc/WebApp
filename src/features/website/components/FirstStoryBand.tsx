@@ -29,7 +29,7 @@ export function FirstStoryBand({ band, language }: { band: HomeBand; language: s
       id="first-story"
       aria-labelledby="first-story-band-heading"
       lang={language}
-      className="scroll-mt-6 rounded-[32px] bg-gold p-[clamp(24px,4vw,56px)]"
+      className="scroll-mt-6 rounded-[32px] bg-gold glass-band-tint p-[clamp(24px,4vw,56px)]"
     >
       <div className="flex flex-col gap-6">
         <BandText band={band} headingId="first-story-band-heading" tone="gold" />

@@ -33,7 +33,6 @@ export const heroFields: HomePageField[] = [
   field('eyebrow', homePageLimits.eyebrow),
   field('headlineFirst', homePageLimits.headline),
   field('headlineSecond', homePageLimits.headline),
-  field('underlinedWord', homePageLimits.headline),
   field('lede', homePageLimits.lede, true),
   field('primaryButton', homePageLimits.button),
   field('secondaryButton', homePageLimits.button),

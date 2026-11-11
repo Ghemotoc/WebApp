@@ -48,6 +48,35 @@
   /* Input fill (handoff: --field). */
   --field: rgba(255, 255, 255, 0.78);
 
+  /*
+   * 3D liquid glass, the same recipe as the main website (engage-grow-hub, src/index.css "Liquid
+   * glass", Robert 10 Nov 2026; asked for here on 11 Nov 2026, GLASS-2): see-through white that
+   * thins downwards, a strong blur, a bright top edge, a soft inner shade along the bottom and a
+   * soft violet drop shadow. A clickable card lifts its shadow on hover.
+   */
+  --lg-card-bg: linear-gradient(180deg, rgb(255 255 255 / 0.72), rgb(255 255 255 / 0.44));
+  /* Floating bars and the current nav pill: the website's solid glass (.lg-light[data-solid]). */
+  --lg-float-bg: linear-gradient(180deg, rgb(255 255 255 / 0.94), rgb(255 255 255 / 0.84));
+  --lg-blur: blur(24px) saturate(180%);
+  --lg-card-shadow:
+    inset 0 1px 0 #ffffff, inset 0 -3px 8px rgb(42 14 51 / 0.06),
+    0 14px 32px -12px rgb(42 14 51 / 0.22);
+  --lg-card-shadow-hover:
+    inset 0 1px 0 #ffffff, inset 0 -3px 8px rgb(42 14 51 / 0.06),
+    0 22px 44px -16px rgb(42 14 51 / 0.3);
+  /* The sheen laid over a coloured fill (main buttons, chips that are on), as on the website. */
+  --lg-dark-sheen: linear-gradient(
+    180deg,
+    rgb(255 255 255 / 0.16),
+    rgb(255 255 255 / 0) 55%,
+    rgb(0 0 0 / 0.18)
+  );
+  --lg-dark-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.42), inset 0 -3px 8px rgb(0 0 0 / 0.25),
+    0 14px 30px -10px rgb(42 14 51 / 0.55);
+  /* Small pills and tags: a bright top edge and a small shadow. */
+  --lg-pill-shadow: inset 0 1px 0 rgb(255 255 255 / 0.7), 0 6px 14px -8px rgb(42 14 51 / 0.35);
+
   /* Text. Headings the darkest plum; eyebrows black, never gold (Robert, 7 Nov 2026, 11:48). */
   --ink: #24133a;
   --heading: #2a0e33;
@@ -71,14 +100,23 @@
      cobalt #5B95EE (NIGHT-1). */
   --accent: #672786;
   --accent-deep: #2a0e33;
-  /* The cat logo and the wordmark: the theme accent by day, soft white at night (Robert, 7 Nov
-     2026, 19:34 to 19:36; bundle G2). Favicon and emails keep the fixed plum #48125D. */
-  --logo: #672786;
-  /* The plum gradient on every main action (Publish, Save, Continue; rulebook 5). */
-  --plum-from: #672786;
+  /* The sleeping-cat logo and the wordmark: Revolver #2A0E33 in the main look (bundle LOGO-2;
+     Robert, 11 Nov 2026: "In the main theme, we only use revolver ... also for the text next to
+     it"), each other look's accent by day and soft white at night (bundle G2). The tab icon is
+     Revolver when the browser is light and white when it is dark (public/brand). */
+  --logo: #2a0e33;
+  /* Every main action (Publish, Save, Continue; rulebook 5). In the main look it is the website's
+     deep plum #2A0E33 with cream text, the colour of the website's action buttons (GLASS-2;
+     Robert, 11 Nov 2026: "the same colour for the action buttons like we have on the main
+     website for the main theme"). The other looks keep their own accent gradient. */
+  --plum-from: #2a0e33;
   --plum-to: #2a0e33;
-  /* Text on the plum (or theme accent) gradient of main buttons: white, by day and at night. */
-  --on-plum: #ffffff;
+  /* Text on the main buttons: the website's cream in the main look, white elsewhere. */
+  --on-plum: #fbf7ec;
+  /* Hover, press and current page: the brighter plum of the logo (GLASS-2). Every other look
+     uses its own accent made a little lighter, as light as white text still reads at 4.5:1. */
+  --plum-hover-from: #672786;
+  --plum-hover-to: #672786;
   /* The main button's white rim: 30% by day, 35% at night (bundle NIGHT-1). */
   --button-main-rim: rgba(255, 255, 255, 0.3);
   /* The segmented control's recessed track and its water bubble (bundle G3). */
@@ -210,6 +248,23 @@
   --glass-border: rgba(255, 255, 255, 0.14);
   --glass-highlight: rgba(255, 255, 255, 0.14);
   --field: rgba(255, 255, 255, 0.08);
+  /* The same 3D glass at night: white that thins downwards, darker shades, a black shadow. */
+  --lg-card-bg: linear-gradient(180deg, rgb(255 255 255 / 0.1), rgb(255 255 255 / 0.04));
+  --lg-float-bg: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--surface) 94%, transparent),
+    color-mix(in srgb, var(--surface) 86%, transparent)
+  );
+  --lg-card-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.16), inset 0 -3px 8px rgb(0 0 0 / 0.25),
+    0 14px 32px -12px rgb(0 0 0 / 0.6);
+  --lg-card-shadow-hover:
+    inset 0 1px 0 rgb(255 255 255 / 0.2), inset 0 -3px 8px rgb(0 0 0 / 0.25),
+    0 22px 44px -16px rgb(0 0 0 / 0.7);
+  --lg-dark-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.35), inset 0 -3px 8px rgb(0 0 0 / 0.3),
+    0 14px 30px -10px rgb(0 0 0 / 0.6);
+  --lg-pill-shadow: inset 0 1px 0 rgb(255 255 255 / 0.2), 0 6px 14px -8px rgb(0 0 0 / 0.6);
 
   /* Text #F5F5F5, muted #CCCCCC (night accessibility review, canvas v117), headings white. */
   --ink: #f5f5f5;
@@ -241,6 +296,8 @@
   --plum-from: #1a5bc4;
   --plum-to: #0047ab;
   --on-plum: #ffffff;
+  --plum-hover-from: #3a72cc;
+  --plum-hover-to: #2663b8;
   --button-main-rim: rgba(255, 255, 255, 0.35);
   --track: rgba(0, 0, 0, 0.35);
   /* The selected segment's knob: white glass at 22% (canvas v117). */
@@ -393,6 +450,9 @@
   --accent-deep: #6b1d12;
   --plum-from: #c2412d;
   --plum-to: #6b1d12;
+  --on-plum: #ffffff;
+  --plum-hover-from: #c64e3c;
+  --plum-hover-to: #813f36;
   --primary: #c2412d;
   --chip-on: #c2412d;
   --link: #c2412d;
@@ -418,6 +478,9 @@
   --accent-deep: #0b3d3a;
   --plum-from: #0f766e;
   --plum-to: #0b3d3a;
+  --on-plum: #ffffff;
+  --plum-hover-from: #25827b;
+  --plum-hover-to: #305a58;
   --primary: #0f766e;
   --chip-on: #0f766e;
   --link: #0f766e;
@@ -443,6 +506,9 @@
   --accent-deep: #1f3a0a;
   --plum-from: #4d7c0f;
   --plum-to: #1f3a0a;
+  --on-plum: #ffffff;
+  --plum-hover-from: #548119;
+  --plum-hover-to: #41582f;
   --primary: #4d7c0f;
   --chip-on: #4d7c0f;
   --link: #4d7c0f;
@@ -468,6 +534,9 @@
   --accent-deep: #5a0b2e;
   --plum-from: #c0266d;
   --plum-to: #5a0b2e;
+  --on-plum: #ffffff;
+  --plum-hover-from: #c84280;
+  --plum-hover-to: #73304d;
   --primary: #c0266d;
   --chip-on: #c0266d;
   --link: #c0266d;
@@ -493,6 +562,9 @@
   --accent-deep: #3b0a16;
   --plum-from: #9f1239;
   --plum-to: #3b0a16;
+  --on-plum: #ffffff;
+  --plum-hover-from: #ad3657;
+  --plum-hover-to: #582f39;
   --primary: #9f1239;
   --chip-on: #9f1239;
   --link: #9f1239;
@@ -518,6 +590,9 @@
   --accent-deep: #172554;
   --plum-from: #1d4ed8;
   --plum-to: #172554;
+  --on-plum: #ffffff;
+  --plum-hover-from: #3f69de;
+  --plum-hover-to: #3a466e;
   --primary: #1d4ed8;
   --chip-on: #1d4ed8;
   --link: #1d4ed8;
@@ -543,6 +618,9 @@
   --accent-deep: #4a1028;
   --plum-from: #b4235f;
   --plum-to: #4a1028;
+  --on-plum: #ffffff;
+  --plum-hover-from: #bf4477;
+  --plum-hover-to: #653448;
   --primary: #b4235f;
   --chip-on: #b4235f;
   --link: #b4235f;
@@ -568,6 +646,9 @@
   --accent-deep: #3d2c00;
   --plum-from: #946b00;
   --plum-to: #3d2c00;
+  --on-plum: #ffffff;
+  --plum-hover-from: #966e05;
+  --plum-hover-to: #5a4c26;
   --primary: #946b00;
   --chip-on: #946b00;
   --link: #946b00;
@@ -593,6 +674,9 @@
   --accent-deep: #232d12;
   --plum-from: #556b2f;
   --plum-to: #232d12;
+  --on-plum: #ffffff;
+  --plum-hover-from: #687b46;
+  --plum-hover-to: #444c36;
   --primary: #556b2f;
   --chip-on: #556b2f;
   --link: #556b2f;
@@ -640,6 +724,9 @@
   --accent-deep: #000000;
   --plum-from: #2b2119;
   --plum-to: #1f1a16;
+  --on-plum: #ffffff;
+  --plum-hover-from: #4b423c;
+  --plum-hover-to: #413c39;
 
   --border: #ddd1bf;
   --hairline: #e9dfcf;
@@ -695,6 +782,8 @@
   --plum-from: #1a5bc4;
   --plum-to: #0047ab;
   --on-plum: #ffffff;
+  --plum-hover-from: #3a72cc;
+  --plum-hover-to: #2663b8;
 
   --border: #3a3a3d;
   --hairline: #2a2a2d;

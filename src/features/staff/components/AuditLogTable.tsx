@@ -8,8 +8,12 @@
  * The target account appears by username and the first 8 characters of its user ID, never the
  * full ID (architecture 1.6). "Who" is a username, a short user ID for an account without a
  * username yet (a new account using an invite) or "System" when the platform acted (S1-E11-17).
+ * A long before or after value (a landing page's whole content, for example) shows its first
+ * words and a "Show all" toggle, so one entry can't squeeze every other column to a few letters
+ * (UX-QA); the CSV export keeps every value whole.
  * Who shows it: AuditLogPage.
  */
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { LabelRows } from '@/components/ui/LabelRows';
@@ -30,6 +34,29 @@ function valuesAsText(values: Json | null): string {
   return Object.entries(values)
     .map(([key, value]) => `${key}: ${typeof value === 'string' ? value : JSON.stringify(value)}`)
     .join(', ');
+}
+
+/** How many characters of a before or after value show before "Show all". */
+const shortValueLength = 240;
+
+/**
+ * A before or after value: whole when short, otherwise its start and a "Show all" toggle.
+ *
+ * @param props.text - the value as text
+ * @param props.showAllLabel - "Show all" in the page's language
+ * @returns the value for a cell
+ */
+function ValueText({ text, showAllLabel }: { text: string; showAllLabel: string }) {
+  if (text.length <= shortValueLength) return <>{text}</>;
+  // A native details element opens with the keyboard and tells screen readers it is collapsed.
+  return (
+    <details>
+      <summary className="inline-flex min-h-6 cursor-pointer items-center underline">
+        {`${text.slice(0, shortValueLength)}… ${showAllLabel}`}
+      </summary>
+      <span className="block pt-1">{text}</span>
+    </details>
+  );
 }
 
 /**
@@ -72,6 +99,32 @@ function timeAsText(isoTime: string, language: string): string {
 }
 
 /**
+ * One entry's cells, in the order of the column headings.
+ *
+ * @param entry - the audit entry
+ * @param language - the page's language code
+ * @param systemLabel - "System" in the page's language
+ * @param showAllLabel - "Show all" in the page's language
+ * @returns time, who, action, target, reason, before and after
+ */
+function cellsOfEntry(
+  entry: AuditLogEntry,
+  language: string,
+  systemLabel: string,
+  showAllLabel: string,
+): ReactNode[] {
+  return [
+    timeAsText(entry.createdAt, language),
+    actorAsText(entry, systemLabel),
+    entry.action,
+    `${entry.targetType} ${targetAsText(entry)}`.trim(),
+    entry.reason ?? '',
+    <ValueText key="before" text={valuesAsText(entry.beforeValues)} showAllLabel={showAllLabel} />,
+    <ValueText key="after" text={valuesAsText(entry.afterValues)} showAllLabel={showAllLabel} />,
+  ];
+}
+
+/**
  * Renders the rows.
  *
  * @param props.entries - the page's entries, newest first
@@ -90,15 +143,8 @@ export function AuditLogTable({ entries }: { entries: AuditLogEntry[] }) {
     t('auditLog.columns.before'),
     t('auditLog.columns.after'),
   ];
-  const cellsOf = (entry: AuditLogEntry) => [
-    timeAsText(entry.createdAt, i18n.language),
-    actorAsText(entry, t('auditLog.system')),
-    entry.action,
-    `${entry.targetType} ${targetAsText(entry)}`.trim(),
-    entry.reason ?? '',
-    valuesAsText(entry.beforeValues),
-    valuesAsText(entry.afterValues),
-  ];
+  const cellsOf = (entry: AuditLogEntry) =>
+    cellsOfEntry(entry, i18n.language, t('auditLog.system'), t('auditLog.showAll'));
 
   return (
     <>
@@ -131,7 +177,7 @@ export function AuditLogTable({ entries }: { entries: AuditLogEntry[] }) {
               rows={cellsOf(entry).map((cell, index) => ({
                 label: headings[index] ?? '',
                 // Action names and JSON have no spaces to wrap at, so they may break anywhere.
-                value: <span className="[overflow-wrap:anywhere]">{cell}</span>,
+                value: <div className="[overflow-wrap:anywhere]">{cell}</div>,
               }))}
             />
           </li>
