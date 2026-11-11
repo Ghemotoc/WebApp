@@ -1298,7 +1298,10 @@
       "noChapters": "This story has no chapters yet.",
       "noWordsNote": "Staff never see a draft’s words here. Owners, admins and moderators can open a published chapter’s words to remove an unlawful passage, but nobody on the staff can type in them.",
       "writerAge": "Writer’s age group",
-      "adult": "18 or over"
+      "adult": "18 or over",
+      "ranking": "Ranking place",
+      "rankingPlace": "#{{place}} in {{category}}",
+      "notRanked": "Not in the first 100"
     },
     "change": {
       "visibilityHeading": "Who can find it",

@@ -27,6 +27,7 @@ import { useStaffStory } from '../../hooks/useStaffStory';
 import { useStaffStoryWords } from '../../hooks/useStaffStoryWords';
 import { ShortUserId } from '../users/ShortUserId';
 
+import { StaffRankingPlace } from './StaffRankingPlace';
 import { StaffStoryChapters } from './StaffStoryChapters';
 import { StaffStoryCover } from './StaffStoryCover';
 import { StaffStoryHistory } from './StaffStoryHistory';
@@ -61,6 +62,8 @@ function StoryDetails({ story }: { story: StaffStoryOverview }) {
     { label: t('stories.columns.readBy'), value: words.audience(story.readableBy) },
     { label: t('stories.columns.rating'), value: words.rating(story.rating) },
     { label: t('stories.columns.category'), value: words.category(story.categorySlug) },
+    // S1-E15-05: the same place readers see on the story page.
+    { label: t('stories.page.ranking'), value: <StaffRankingPlace storySlug={story.slug} /> },
     { label: t('stories.columns.language'), value: words.language(story.languageCode) },
     {
       label: t('stories.page.comments'),
