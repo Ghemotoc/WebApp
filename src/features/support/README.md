@@ -10,3 +10,4 @@ Support tickets: every request for help as one numbered ticket (#1001 and up), a
 - Reports and data requests (part h4b): `TicketLinksPanel` with `ConvertToReportForm` and `OpenDataRequestForm` on the ticket page, `api/ticketLinks.ts` and `hooks/useTicketLinks.ts`.
 - Contact us messages become tickets in `server/contact.ts` (`submit_contact_ticket()`, signed with `SUPPORT_TICKET_SECRET`).
 - Text: `src/locales/{ro,en}/support.json`, loaded with the pages (`registerSupportTranslations.ts`). The database side: `…_admin2_h1_support_enums.sql` and `…_admin2_h1_support_tickets.sql`.
+- Liquid glass look (G11c): `SupportBackLink` (the link back at the top of each member page), `ReportInsteadCard` (sends reports to the report form), `lib/ticketStatusPill.ts` (the words and colour of a request's status) and the chat layout of `TicketMessageList`.

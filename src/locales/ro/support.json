@@ -28,8 +28,25 @@
     "write": "Cere ajutor",
     "empty": "Încă nu ai cerut ajutor.",
     "loadFailed": "Nu am putut încărca cererile tale. Verifică conexiunea și încearcă din nou.",
-    "meta": "#{{number}} · {{status}} · {{date}}",
-    "answered": "Ți-am răspuns"
+    "backToSettings": "Setări",
+    "requestNumber": "Cererea {{number}}",
+    "columns": {
+      "subject": "Subiect",
+      "status": "Stare",
+      "lastUpdate": "Ultima actualizare"
+    },
+    "states": {
+      "answered": "Ți-am răspuns",
+      "new": "Nouă",
+      "open": "Deschisă",
+      "pending_on_user": "Așteaptă răspunsul tău",
+      "on_hold": "În așteptare",
+      "solved": "Rezolvată",
+      "closed": "Închisă"
+    },
+    "reportHeading": "Ca să raportezi o poveste, un comentariu sau ceva ilegal",
+    "reportText": "Folosește formularul de raportare. E mai rapid, pentru că ajunge direct la moderatori.",
+    "reportLink": "Raportează ceva"
   },
   "new": {
     "documentTitle": "Cere ajutor",
@@ -43,11 +60,12 @@
     "send": "Trimite",
     "sending": "Se trimite…",
     "sent": "Trimis. Cererea ta este #{{number}}. Îți răspundem aici.",
-    "open": "Deschide o cerere"
+    "open": "Deschide o cerere",
+    "cancel": "Renunță",
+    "safetyHeading": "Ești în pericol chiar acum?"
   },
   "ticket": {
     "documentTitle": "Cererea de ajutor #{{number}}",
-    "meta": "#{{number}} · {{status}}",
     "messagesLabel": "Mesaje",
     "you": "Tu",
     "team": "Echipa de suport",
@@ -56,7 +74,8 @@
     "closed": "Această cerere este închisă. Dacă mai ai nevoie de ajutor, cere din nou și pomenește #{{number}}.",
     "notFound": "Nu am găsit această cerere în contul tău.",
     "loadFailed": "Nu am putut încărca această cerere. Verifică conexiunea și încearcă din nou.",
-    "mergedInto": "Această cerere continuă ca #{{number}}: am unit-o cu alta despre același lucru."
+    "mergedInto": "Această cerere continuă ca #{{number}}: am unit-o cu alta despre același lucru.",
+    "reopenNote": "Dacă răspunzi la o cerere rezolvată, se deschide din nou."
   },
   "failures": {
     "refused": "Completează toate câmpurile.",

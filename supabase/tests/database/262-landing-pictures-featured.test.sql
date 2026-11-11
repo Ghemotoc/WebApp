@@ -3,7 +3,8 @@
 -- What it proves:
 -- - owner and admin upload to `landing-pictures` (landing_pictures_insert_website_staff allowed),
 --   a moderator can't (denied); register_landing_picture() records it pending, for owner and admin
---   only; every landing page picture waits for a moderator (picture_needs_person());
+--   only; a landing page picture skips the moderator step, because staff upload it (picture_needs_person(),
+--   bundle G12a), while the automatic checks still run;
 -- - visitors read a picture's file only once approved (landing_pictures_select_visible allowed
 --   and denied); the uploader reads it at every stage and a member doesn't
 --   (landing_pictures_select_uploader_and_staff allowed and denied);
@@ -75,8 +76,8 @@ insert into kept (label, id) values ('picture', public.register_landing_picture(
 reset role;
 select is((select status::text from public.picture_checks where id = (select id from kept where label = 'picture')),
   'pending', 'the picture is recorded as pending its check');
-select ok(public.picture_needs_person((select picture_checks from public.picture_checks where id = (select id from kept where label = 'picture'))),
-  'a landing page picture waits for a moderator, like pictures in All ages stories');
+select ok(not public.picture_needs_person((select picture_checks from public.picture_checks where id = (select id from kept where label = 'picture'))),
+  'a landing page picture skips the moderator step once the automatic checks pass: staff uploaded it');
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000009');
 select is(public.admin_landing_picture_states((select id from kept where label = 'page'))

@@ -80,7 +80,9 @@ test.describe('support tickets (S1-E11-13, ADMIN-2h1)', () => {
     await expect(page.getByText(/Sent\. Your request is #\d+/)).toBeVisible();
     await page.getByRole('link', { name: 'Open a request' }).click();
     await expect(page.getByRole('heading', { name: subject })).toBeVisible();
-    await expect(page.getByText(`#${memberTicketNumber()} · New`)).toBeVisible();
+    // The request number sits above the subject and the status is a pill (G11c).
+    await expect(page.getByText(`Request ${memberTicketNumber()}`)).toBeVisible();
+    await expect(page.getByText('New', { exact: true })).toBeVisible();
   });
 
   test('support works on the ticket: fields, history, a note and an answer', async ({
@@ -121,10 +123,11 @@ test.describe('support tickets (S1-E11-13, ADMIN-2h1)', () => {
     const page = await openAs(browser, 'adult_writer', `/support/${memberTicketNumber()}`);
     await expect(page.getByText('The support team', { exact: true })).toBeVisible();
     await expect(page.getByText(/Checked the logs/)).toHaveCount(0);
-    await expect(page.getByText(/Waiting for an answer from you/)).toBeVisible();
+    // The status is a pill since G11c: the team wrote last, so it says "We answered".
+    await expect(page.getByText('We answered', { exact: true })).toBeVisible();
     await page.getByLabel('Answer').fill('Found them, thank you!');
     await page.getByRole('button', { name: 'Send' }).click();
-    await expect(page.getByText(`#${memberTicketNumber()} · Open`)).toBeVisible();
+    await expect(page.getByText('Open', { exact: true })).toBeVisible();
   });
 
   test('a visitor’s Contact us message becomes an email-only ticket', async ({ browser }) => {

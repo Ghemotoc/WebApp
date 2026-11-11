@@ -6,14 +6,21 @@
  * full) and "Reports you sent" (each with its outcome), and "Need to talk to us?" with a link to
  * the moderators. A decision's notification links here, to the statement's own anchor
  * (#S-000123). Appeals in the app are S1-E10-07 (after March): each statement links to Contact us.
+ * In the liquid glass look (bundle G11c, the canvas's MyReports board) a link leads back to
+ * Settings and a segmented "Show" control picks one list at a time, each with its count. It starts
+ * on the decisions when there are any (or when the address names one), otherwise on the reports.
  * Who shows it: the router, at /my-reports (loaded when opened). What it calls:
  * useMyReportsAndDecisions → my_statements(), my_reports().
  */
-import { Link } from 'react-router';
+import { useState } from 'react';
+import { Link, useLocation } from 'react-router';
+
+import { ChevronLeftIcon } from '@/components/icons/ChevronLeftIcon';
 
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { useSession } from '@/features/auth/hooks/useSession';
 
 import type { MyReport, StatementOfReasons } from '../api/statements';
@@ -81,7 +88,7 @@ function ContactCard() {
   return (
     <aside
       aria-labelledby="my-reports-contact-heading"
-      className="flex flex-col gap-2 rounded-card border border-panel-border bg-panel p-6"
+      className="flex flex-col gap-2 rounded-card border border-border bg-surface p-6 shadow-card"
     >
       <h2 id="my-reports-contact-heading" className="m-0 text-xl font-bold text-ink">
         {t('page.contactHeading')}
@@ -94,10 +101,59 @@ function ContactCard() {
   );
 }
 
+/** The two lists the "Show" control picks between. */
+type ShownList = 'decisions' | 'reports';
+
+/**
+ * The list to start on: the decisions when there are any, or when the address names one
+ * (a decision's notification links to #S-000123); otherwise the reports.
+ *
+ * @returns the list to show first
+ */
+function useFirstList(statementCount: number): ShownList {
+  const { hash } = useLocation();
+  if (statementCount > 0 || hash.startsWith('#S-')) return 'decisions';
+  return 'reports';
+}
+
+/**
+ * The two lists behind the "Show" control, one at a time.
+ *
+ * @returns the control and the list it picks
+ */
+function ShownLists({ lists }: { lists: ReturnType<typeof useMyReportsAndDecisions> }) {
+  const { t } = useStatementsTranslation();
+  const firstList = useFirstList(lists.statements.length);
+  const [shown, setShown] = useState<ShownList>(firstList);
+  return (
+    <div className="flex min-w-0 flex-[999_1_600px] flex-col gap-8">
+      <SegmentedControl
+        legend={t('page.showLegend')}
+        isLegendVisible={false}
+        name="my-reports-show"
+        value={shown}
+        onChange={setShown}
+        options={[
+          {
+            value: 'decisions',
+            label: t('page.showDecisions', { count: lists.statements.length }),
+          },
+          { value: 'reports', label: t('page.showReports', { count: lists.reports.length }) },
+        ]}
+      />
+      {shown === 'decisions' ? (
+        <DecisionsSection statements={lists.statements} />
+      ) : (
+        <ReportsSection reports={lists.reports} />
+      )}
+    </div>
+  );
+}
+
 /**
  * The lists for a signed-in person.
  *
- * @returns the two sections and the contact card, a wait, or a plain error
+ * @returns the lists and the contact card, a wait, or a plain error
  */
 function SignedInBody() {
   const { t } = useStatementsTranslation();
@@ -106,10 +162,7 @@ function SignedInBody() {
   if (lists.isLoading) return null;
   return (
     <div className="flex flex-wrap items-start gap-8 pb-16">
-      <div className="flex min-w-0 flex-[999_1_600px] flex-col gap-10">
-        <DecisionsSection statements={lists.statements} />
-        <ReportsSection reports={lists.reports} />
-      </div>
+      <ShownLists lists={lists} />
       <div className="flex min-w-0 flex-[1_1_300px] flex-col">
         <ContactCard />
       </div>
@@ -126,9 +179,16 @@ export function MyReportsPage() {
   const { t } = useStatementsTranslation();
   const { userId, isKnown } = useSession();
   return (
-    <PageContainer className="flex flex-col gap-8">
+    <PageContainer className="flex flex-col gap-8 pt-8">
       <title>{t('page.documentTitle')}</title>
-      <header className="flex max-w-[720px] flex-col gap-4 pt-14">
+      <Link
+        to="/settings"
+        className="inline-flex min-h-11 items-center gap-1.5 self-start text-sm font-semibold text-heading no-underline hover:underline"
+      >
+        <ChevronLeftIcon />
+        {t('page.backToSettings')}
+      </Link>
+      <header className="flex max-w-[720px] flex-col gap-4">
         <Eyebrow>{t('page.eyebrow')}</Eyebrow>
         <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-extrabold tracking-[-0.025em]">
           {t('page.title')}

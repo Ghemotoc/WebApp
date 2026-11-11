@@ -4,7 +4,10 @@
  *
  * What it is about, a subject and a message; once sent, the ticket number and a link to it. A
  * line points to 112 and to Report, because a ticket never replaces a report (the story's legal
- * note: the report form stays the contact point for illegal content).
+ * note: the report form stays the contact point for illegal content). In the liquid glass look
+ * (bundle G11c, the canvas's SupportNew board) a link back to the list sits on top, the form is a
+ * glass card with Cancel beside Send, and the 112 and Report line is a card of its own beside the
+ * form on wide screens (under it on narrow ones).
  * Who shows it: the router. What it calls: useNewSupportRequest.
  */
 import { useState, type FormEvent } from 'react';
@@ -24,6 +27,7 @@ import { useNewSupportRequest } from '../hooks/useMySupport';
 import { useSupportTranslation } from '../registerSupportTranslations';
 
 import { SignedOutLine } from './SignedOutLine';
+import { SupportBackLink } from './SupportBackLink';
 
 /**
  * What shows once the request is sent: the number and the way to the ticket.
@@ -39,6 +43,28 @@ function SentNotice({ ticketNumber }: { ticketNumber: number }) {
         {t('new.open')}
       </Link>
     </Notice>
+  );
+}
+
+/**
+ * Cancel and Send, at the end of the form, as on the board.
+ *
+ * @returns the row
+ */
+function SendRow({ isSending, isIncomplete }: { isSending: boolean; isIncomplete: boolean }) {
+  const { t } = useSupportTranslation();
+  return (
+    <div className="flex flex-wrap justify-end gap-2">
+      <Link
+        to="/support"
+        className="inline-flex h-11 items-center rounded-full button-glass px-5 text-sm font-semibold no-underline"
+      >
+        {t('new.cancel')}
+      </Link>
+      <Button type="submit" disabled={isSending || isIncomplete}>
+        {isSending ? t('new.sending') : t('new.send')}
+      </Button>
+    </div>
   );
 }
 
@@ -67,7 +93,7 @@ function NewRequestForm() {
     <form
       noValidate
       onSubmit={handleSubmit}
-      className="flex max-w-[720px] flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card"
+      className="flex min-w-0 flex-1 flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card sm:p-8"
     >
       <Select
         id="support-category"
@@ -101,12 +127,31 @@ function NewRequestForm() {
           </Notice>
         )}
       </div>
-      <div>
-        <Button type="submit" disabled={request.isSending || isIncomplete}>
-          {request.isSending ? t('new.sending') : t('new.send')}
-        </Button>
-      </div>
+      <SendRow isSending={request.isSending} isIncomplete={isIncomplete} />
     </form>
+  );
+}
+
+/**
+ * The card beside the form: 112 for danger, and the report form for anything to report.
+ *
+ * @returns the aside
+ */
+function SafetyCard() {
+  const { t } = useSupportTranslation();
+  return (
+    <aside
+      aria-labelledby="support-safety-heading"
+      className="flex flex-col gap-1.5 rounded-card border border-border bg-surface px-6 py-5 shadow-card lg:w-[320px] lg:flex-none"
+    >
+      <h2 id="support-safety-heading" className="m-0 text-base font-bold text-heading">
+        {t('new.safetyHeading')}
+      </h2>
+      <p className="m-0 text-sm text-meta">{t('new.safety')}</p>
+      <Link to="/report" className="w-fit text-sm font-semibold text-link underline">
+        {t('list.reportLink')}
+      </Link>
+    </aside>
   );
 }
 
@@ -119,21 +164,21 @@ export function NewSupportRequestPage() {
   const { t } = useSupportTranslation();
   const { userId, isKnown } = useSession();
   return (
-    <PageContainer className="flex flex-col gap-6 pb-16">
+    <PageContainer className="flex flex-col gap-6 pt-8 pb-16">
       <title>{t('new.documentTitle')}</title>
-      <header className="flex max-w-[720px] flex-col gap-4 pt-14">
+      <SupportBackLink to="/support" label={t('list.title')} />
+      <header className="flex max-w-[720px] flex-col gap-4">
         <Eyebrow>{t('eyebrow')}</Eyebrow>
         <h1 className="m-0 text-[clamp(32px,4vw,52px)] leading-[1.02] font-extrabold tracking-[-0.025em]">
           {t('new.title')}
         </h1>
         <p className="m-0 text-lg leading-relaxed text-body">{t('new.intro')}</p>
-        <Notice tone="info">{t('new.safety')}</Notice>
       </header>
       {isKnown && userId === null && <SignedOutLine />}
-      {isKnown && userId !== null && <NewRequestForm />}
-      <Link to="/support" className="w-fit text-sm font-semibold text-link underline">
-        {t('back')}
-      </Link>
+      <div className="flex flex-col items-start gap-6 lg:flex-row">
+        {isKnown && userId !== null && <NewRequestForm />}
+        <SafetyCard />
+      </div>
     </PageContainer>
   );
 }

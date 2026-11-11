@@ -19,7 +19,8 @@
     "interfaceText": "Textele aplicației",
     "emails": "Șabloane de email",
     "landingPages": "Pagini de prezentare",
-    "branding": "Identitate vizuală"
+    "branding": "Identitate vizuală",
+    "seasonal": "Teme de sezon"
   },
   "picker": {
     "market": "Piața",
@@ -218,7 +219,7 @@
   },
   "branding": {
     "heading": "Logo și emblemă",
-    "intro": "Încarcă logoul și emblema pentru tema luminoasă și pentru tema de noapte. Emblema stă lângă nume în bara de sus și este iconița din fila browserului. Fiecare imagine este verificată, iar un moderator o aprobă înainte să o vadă altcineva; până atunci, aplicația arată ce arată acum. Fiecare schimbare apare în jurnalul de audit.",
+    "intro": "Încarcă logoul și emblema pentru tema luminoasă și pentru tema de noapte. Emblema stă lângă nume în bara de sus și este iconița din fila browserului. Fiecare imagine este verificată înainte să o vadă altcineva; până atunci, aplicația arată ce arată acum. Fiecare schimbare apare în jurnalul de audit.",
     "upload": "Încarcă o imagine",
     "hint": "Cel mai bine merge PNG sau WebP cu fundal transparent, de cel mult 2 MB. Latura cea mai lungă este redusă la 1.024 px.",
     "useDefault": "Folosește varianta implicită",
@@ -245,12 +246,41 @@
     "states": {
       "default": "Aplicația arată varianta implicită.",
       "visible": "Aplicația arată această imagine.",
-      "checking_earlier": "Imaginea este în verificare. Până o aprobă un moderator, apare imaginea de dinainte.",
-      "checking_default": "Imaginea este în verificare. Până o aprobă un moderator, apare varianta implicită.",
+      "checking_earlier": "Imaginea este în verificare. Până trece verificarea, apare imaginea de dinainte.",
+      "checking_default": "Imaginea este în verificare. Până trece verificarea, apare varianta implicită.",
       "waiting_for_person_earlier": "Imaginea așteaptă un moderator. Până atunci apare imaginea de dinainte.",
       "waiting_for_person_default": "Imaginea așteaptă un moderator. Până atunci apare varianta implicită.",
       "removed_earlier": "Un moderator a scos imaginea. În locul ei apare imaginea de dinainte.",
       "removed_default": "Un moderator a scos imaginea. În locul ei apare varianta implicită."
+    }
+  },
+  "seasonal": {
+    "intro": "Alege în ce zile apare fiecare temă de sezon. Membrii văd o temă de sezon doar dacă pornesc Teme de sezon în Setări › Aspect.",
+    "listHeading": "Anul",
+    "looks": {
+      "winter": "Iarnă",
+      "spring": "Primăvară",
+      "summer": "Vară",
+      "autumn": "Toamnă"
+    },
+    "days": "{{from}} până la {{to}} · în fiecare an",
+    "change": "Schimbă",
+    "changeLabel": "Schimbă {{name}}",
+    "changeHeading": "Schimbă {{name}}",
+    "firstDay": "Prima zi",
+    "lastDay": "Ultima zi",
+    "lastDayHint": "Pentru zile peste Anul Nou, alege o ultimă zi mai devreme în an decât prima.",
+    "day": "Ziua",
+    "month": "Luna",
+    "cancel": "Renunță",
+    "save": "Salvează",
+    "saved": "Salvat. Membrii cu Teme de sezon pornite văd noile zile.",
+    "failures": {
+      "overlap": "Două teme nu pot avea aceeași zi. Mută mai întâi una dintre ele.",
+      "bad_day": "Ziua aceasta nu există. Alege alta.",
+      "wrong_looks": "Zilele acestea nu pot fi salvate. Reîncarcă pagina și încearcă din nou.",
+      "not_allowed": "Doar proprietarul și administratorii pot schimba temele de sezon.",
+      "unreachable": "Nu am putut ajunge la baza de date. Verifică conexiunea și încearcă din nou."
     }
   }
 }

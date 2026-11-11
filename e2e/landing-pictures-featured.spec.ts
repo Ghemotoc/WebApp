@@ -5,7 +5,8 @@
  * Who runs it: `npm run test:e2e` (Supabase started first).
  * What it proves:
  * - an admin adds a picture to the Hero with its alt text in both languages; it goes through the
- *   picture check and publishing waits until a moderator approves it (criterion 5);
+ *   picture check (no moderator step: staff uploaded it, bundle G12a) and then publishes
+ *   (criterion 5);
  * - a Featured stories block picked by hand shows the story to visitors (criterion 6);
  * - the visitor sees the picture with its alt text.
  * Test data: the page /c/pictures-e2e and one published chapter, deleted afterwards (the audit log
@@ -77,9 +78,7 @@ test.describe('Landing page pictures and featured stories (S1-E11-14)', () => {
       update public.profiles set locale = 'ro' where handle = 'admin';`);
   });
 
-  test('a picture waits for a moderator, then the page shows it and a featured story', async ({
-    browser,
-  }) => {
+  test('a picture is checked, then the page shows it and a featured story', async ({ browser }) => {
     const page = await openAs(browser, 'admin', '/staff/website/landing-pages');
     // Step 1: a campaign page with a Hero and a Featured stories block.
     await page.getByLabel('Address').fill('pictures-e2e');
@@ -94,29 +93,21 @@ test.describe('Landing page pictures and featured stories (S1-E11-14)', () => {
     await page.locator('#landing-b1-en-heading').fill('Chosen stories');
     await page.locator('#landing-b1-stories').fill('/s/statia-meteo-seed01');
 
-    // Step 2: the Hero gets a picture; it passes the check and waits for a moderator.
+    // Step 2: the Hero gets a picture; it passes the check with no moderator step (G12a).
     await page.getByLabel('Picture (optional)').setInputFiles({
       name: 'drawing.png',
       mimeType: 'image/png',
       buffer: tinyPng,
     });
-    await expect(
-      page.getByText('Picture waiting for a moderator to approve it.').first(),
-    ).toBeVisible();
+    await expect(page.getByText('Picture ready.').first()).toBeVisible();
     await page.locator('#landing-b0-ro-alt').fill('O pisică desenată cu creionul');
     await page.locator('#landing-b0-en-alt').fill('A cat drawn in pencil');
 
-    // Step 3: publishing is refused until the picture is approved.
-    await page.getByRole('button', { name: 'Publish' }).click();
-    await expect(page.getByText('Fix these before publishing:')).toBeVisible();
-    await expect(page.getByText(/the picture isn’t approved yet/i).first()).toBeVisible();
-
-    // Step 4: a moderator approves it (by SQL here; the queue has its own tests), then it publishes.
-    runSql(`update public.picture_checks set status = 'approved' where kind = 'landing_picture';`);
+    // Step 3: the page publishes.
     await page.getByRole('button', { name: 'Publish' }).click();
     await expect(page.getByText(/Published\. The page shows this version from/)).toBeVisible();
 
-    // Step 5: a visitor sees the picture with its alt text and the featured story.
+    // Step 4: a visitor sees the picture with its alt text and the featured story.
     const visitor = await openAs(browser, null, '/c/pictures-e2e');
     await expect(visitor.getByRole('heading', { level: 1 })).toHaveText('Drawing week');
     await expect(visitor.getByRole('img', { name: 'A cat drawn in pencil' })).toBeVisible();

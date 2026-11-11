@@ -142,10 +142,10 @@
       "link_bad_link": "Use one of our pages or an https:// address.",
       "age_groups": "Pick at least one age group.",
       "items": "Add at least one question, in both languages.",
-      "not_checked": "the picture isn’t approved yet",
+      "not_checked": "the picture isn’t checked yet",
       "not_allowed": "only a Hero or Text block can have a picture",
       "how_many": "pick between 1 and 12 stories",
-      "picture_not_checked": "The picture isn’t approved yet. Publish once a moderator approves it.",
+      "picture_not_checked": "The picture isn’t checked yet. Publish once the check passes.",
       "picture_unknown": "This picture no longer exists. Upload it again.",
       "picture_not_allowed": "Only a Hero or Text block can have a picture.",
       "stories_how_many": "Pick between 1 and 12 stories.",
@@ -182,7 +182,7 @@
     "archived": "This page is archived. Its address no longer works.",
     "picture": {
       "label": "Picture (optional)",
-      "hint": "A picture: JPEG, PNG or WebP, up to 5 MB. It is checked, then a moderator approves it before the page can be published.",
+      "hint": "A picture: JPEG, PNG or WebP, up to 5 MB. It is checked before the page can be published.",
       "remove": "Remove picture",
       "altHint": "Say what the picture shows, for people who can’t see it."
     },

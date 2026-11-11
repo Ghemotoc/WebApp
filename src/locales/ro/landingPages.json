@@ -142,10 +142,10 @@
       "link_bad_link": "Folosește una dintre paginile noastre sau o adresă https://.",
       "age_groups": "Alege cel puțin o grupă de vârstă.",
       "items": "Adaugă cel puțin o întrebare, în ambele limbi.",
-      "not_checked": "imaginea nu este încă aprobată",
+      "not_checked": "imaginea nu este încă verificată",
       "not_allowed": "doar un bloc Antet sau Text poate avea o imagine",
       "how_many": "alege între 1 și 12 povești",
-      "picture_not_checked": "Imaginea nu este încă aprobată. Publică după ce un moderator o aprobă.",
+      "picture_not_checked": "Imaginea nu este încă verificată. Publică după ce trece verificarea.",
       "picture_unknown": "Imaginea nu mai există. Încarc-o din nou.",
       "picture_not_allowed": "Doar un bloc Antet sau Text poate avea o imagine.",
       "stories_how_many": "Alege între 1 și 12 povești.",
@@ -182,7 +182,7 @@
     "archived": "Pagina este arhivată. Adresa ei nu mai funcționează.",
     "picture": {
       "label": "Imagine (opțional)",
-      "hint": "O imagine: JPEG, PNG sau WebP, până la 5 MB. Este verificată, apoi un moderator o aprobă înainte ca pagina să poată fi publicată.",
+      "hint": "O imagine: JPEG, PNG sau WebP, până la 5 MB. Este verificată înainte ca pagina să poată fi publicată.",
       "remove": "Elimină imaginea",
       "altHint": "Spune ce arată imaginea, pentru cei care nu o pot vedea."
     },
