@@ -335,9 +335,10 @@ function waitlistAdmittedText(t: TFunction): NotificationText {
 }
 
 /**
- * A notice that the account was about to be deleted because nobody had used it for almost
- * 5 years (INACTIVE-1). It reaches the person by email; anyone reading it here has logged in, which
- * already keeps the account, so the row only says so. Both notices read the same.
+ * An email to an account nobody had used for a long time: a yearly or quarterly nudge, or the
+ * notice 30 days before closing (INACTIVE-1, INACTIVE-2). It reaches the person by email; anyone
+ * reading it here has logged in, which already keeps the account, so the row only says so. The
+ * nudges and the notices read the same.
  *
  * @param t - the notifications translation function
  * @returns the row's words and link
@@ -346,6 +347,24 @@ function accountUnusedText(t: TFunction): NotificationText {
   return {
     who: t('who.yourAccount'),
     what: t('what.accountUnused'),
+    quote: null,
+    grouped: null,
+    actionLabel: t('actions.startExploring'),
+    href: '/discover',
+  };
+}
+
+/**
+ * The email that told an unused account it had closed (INACTIVE-2). Anyone reading it here came
+ * back and kept the account, so the row says it is open again.
+ *
+ * @param t - the notifications translation function
+ * @returns the row's words and link
+ */
+function accountUnusedClosedText(t: TFunction): NotificationText {
+  return {
+    who: t('who.yourAccount'),
+    what: t('what.accountUnusedClosed'),
     quote: null,
     grouped: null,
     actionLabel: t('actions.startExploring'),
@@ -645,6 +664,8 @@ const teamTextFor: Partial<
   waitlist_admitted: waitlistAdmittedText,
   account_unused_month: accountUnusedText,
   account_unused_week: accountUnusedText,
+  account_unused_nudge: accountUnusedText,
+  account_unused_closed: accountUnusedClosedText,
 };
 
 /**

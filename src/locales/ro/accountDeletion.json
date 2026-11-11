@@ -47,7 +47,10 @@
     "keep": "Păstrez contul",
     "logOut": "Deconectează-te",
     "keepFailed": "Nu am putut păstra contul. Încearcă din nou peste un minut.",
-    "kept": "Bine ai revenit. Contul e din nou deschis."
+    "kept": "Bine ai revenit. Contul e din nou deschis.",
+    "unusedBody": "Am închis contul pentru că nimeni nu s-a mai conectat de 5 ani. Îl ștergem definitiv pe {{date}}.",
+    "unusedChoices": "Mai jos poți descărca o copie a datelor. Descărcarea nu păstrează contul. Ca să-l păstrezi, alege Păstrez contul sau mergi mai departe pe orice altă pagină.",
+    "keeping": "Redeschidem contul…"
   },
   "page": {
     "heading": "Șterge contul",

@@ -8,8 +8,9 @@
  * or ready line (ExportStatus), then Download my stories (DownloadMyStoriesBlock, S1-E13-05) and
  * the note about downloading from 13. The section has id "download-my-data", so the "ready"
  * notification opens it.
- * Who shows it: SettingsPage. What it calls: useLatestDataExport, useDataExportRun and
- * useStartDataExport.
+ * Who shows it: SettingsPage, and ClosingAccountPage (INACTIVE-2) without Download my stories:
+ * a closing account's stories are hidden, and the full copy already holds every one of them.
+ * What it calls: useLatestDataExport, useDataExportRun and useStartDataExport.
  */
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
@@ -63,9 +64,15 @@ function StatusBody() {
 /**
  * Renders the section.
  *
+ * @param props.hidesStoriesBlock - true on the closing-account page, which leaves Download my
+ *   stories out
  * @returns the section
  */
-export function DownloadMyDataSection() {
+export function DownloadMyDataSection({
+  hidesStoriesBlock = false,
+}: {
+  hidesStoriesBlock?: boolean;
+}) {
   const { t } = useDataExportTranslation();
   return (
     <section
@@ -84,7 +91,7 @@ export function DownloadMyDataSection() {
       </div>
       <IncludedList />
       <StatusBody />
-      <DownloadMyStoriesBlock />
+      {!hidesStoriesBlock && <DownloadMyStoriesBlock />}
       <p className="m-0 rounded-2xl bg-tint px-4.5 py-4 text-[15px] leading-relaxed text-body">
         {t('settings.minorsNote')}
       </p>

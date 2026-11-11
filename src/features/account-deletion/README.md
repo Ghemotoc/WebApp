@@ -10,4 +10,10 @@ Delete my account (story S1-E13-03; board Settings 6.3, the Delete account tab; 
 
 How it works: the account closes at once (hidden everywhere, nothing can be written) and the nightly job `purge-closed-accounts` deletes it for good 14 days later, keeping only content under an open case. What happens to each table is in one list, `account_deletion_rules()`; database test 211 fails when a new user table is missing from it.
 
-Accounts nobody uses (INACTIVE-1): the nightly job `close-unused-accounts` emails a notice about a month and about a week before an account reaches 5 years without use, then closes it the same way (`hide_closing_account()`, reason `unused`), so the same closing page and "Keep my account" apply. Nothing on screen is new; the database side is `…_inactive1_02_unused_accounts.sql`.
+Accounts nobody uses (INACTIVE-1, INACTIVE-2): the nightly job `close-unused-accounts` emails a nudge after 1, 2 and 3 years without use and every 3 months from 4 years, a notice at 5 years, and closes the account 30 days after that notice the same way as "Delete my account" (`hide_closing_account()`, reason `unused`). The closing email links, through the log-in page, to `/account-closing` (`src/lib/account-closing-path.ts`).
+
+- `components/AccountClosingGate.tsx` tells the two kinds of closing apart (`my_account_deletion()` answers the reason). An account the person asked to delete sees the closing page on every page. An unused one sees it only at `/account-closing`; opening any other page keeps the account (`components/KeepByUsing.tsx`), because the person is using the site again (Robert, 11 Nov 2026, 19:43 UTC).
+- `components/ClosingAccountPage.tsx` also shows Download data (`features/data-export`, without Download my stories), loaded only there. A closing account can still make its copy; downloading doesn't keep it.
+- `components/AccountClosingRedirect.tsx`: what `/account-closing` shows to anyone whose account isn't closing (the log-in page, or Settings › Download data).
+
+The database side is `…_inactive1_02_unused_accounts.sql` and `…_inactive2_02_nudges_and_closing.sql`; tests `369`, `370` and `e2e/unused-account-closing.spec.ts`.

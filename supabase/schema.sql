@@ -730,7 +730,9 @@ CREATE TYPE "public"."notification_kind" AS ENUM (
     'forum_reply',
     'assignment_due',
     'account_unused_month',
-    'account_unused_week'
+    'account_unused_week',
+    'account_unused_nudge',
+    'account_unused_closed'
 );
 
 
@@ -18581,9 +18583,13 @@ CREATE OR REPLACE FUNCTION "public"."close_unused_account"("target_user_id" "uui
 declare
   deletion_days integer := public.unused_account_setting('account_deletion_days', 14);
 begin
+  -- Step 1: hidden everywhere, and due to be deleted for good.
   perform public.hide_closing_account(target_user_id);
   insert into public.account_deletions (user_id, delete_after, reason)
   values (target_user_id, now() + make_interval(days => deletion_days), 'unused');
+  -- Step 2: the closing email (Robert, 11 Nov 2026, 19:42 UTC: a link, never the data itself).
+  insert into public.notifications (user_id, kind, is_required)
+  values (target_user_id, 'account_unused_closed', true);
 end;
 $$;
 
@@ -18591,7 +18597,7 @@ $$;
 ALTER FUNCTION "public"."close_unused_account"("target_user_id" "uuid") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."close_unused_account"("target_user_id" "uuid") IS 'Internal: closes an account nobody used, to be deleted after account_deletion_days (INACTIVE-1).';
+COMMENT ON FUNCTION "public"."close_unused_account"("target_user_id" "uuid") IS 'Internal: closes an account nobody used, emails how to download its data, to be deleted after account_deletion_days (INACTIVE-2).';
 
 
 
@@ -18602,16 +18608,15 @@ CREATE OR REPLACE FUNCTION "public"."close_unused_accounts"() RETURNS "jsonb"
 declare
   account record;
   step text;
-  month_notices integer := 0;
-  week_notices integer := 0;
+  nudges integer := 0;
+  notices integer := 0;
   closed integer := 0;
-  month_days integer := public.unused_account_setting('unused_account_month_notice_days', 30);
-  years integer := public.unused_account_setting('unused_account_years', 5);
 begin
-  -- Step 1: the accounts whose month window has started (a cheap first cut in SQL).
+  -- Step 1: the accounts unused for a year or more: nothing is due sooner (a cheap first cut;
+  -- with quarterly nudges set to start before the first year, those start at a year too).
   for account in
     select candidates.user_id, candidates.last_used, last_use_rows.notices_for,
-           last_use_rows.month_notice_at, last_use_rows.week_notice_at
+           last_use_rows.closing_notice_at, last_use_rows.nudges_sent
     from (
       select profiles.id as user_id, public.account_last_used_on(profiles.id) as last_used
       from public.profiles
@@ -18620,7 +18625,7 @@ begin
         and not public.is_classics_account(profiles.id)
         -- A banned account is closed, never deleted (Robert, 2 Nov 2026; ADMIN-2 part f1), and an
         -- account with child abuse image evidence stays under that evidence's 5-year hold
-        -- (ADMIN-2e2b): purge_closed_accounts() would skip both, so they get no notice either.
+        -- (ADMIN-2e2b): purge_closed_accounts() would skip both, so they get no email either.
         and (public.active_sanction(profiles.id, 'ban')).id is null
         and not exists (select 1 from public.abuse_image_evidence
                         where abuse_image_evidence.user_id = profiles.id)
@@ -18630,22 +18635,21 @@ begin
                           and account_deletions.completed_at is null)
     ) as candidates
     left join public.account_last_used as last_use_rows on last_use_rows.user_id = candidates.user_id
-    where candidates.last_used + make_interval(years => years) - make_interval(days => month_days)
-          <= (now() at time zone 'Europe/Bucharest')::date
+    where candidates.last_used + interval '1 year' <= (now() at time zone 'Europe/Bucharest')::date
   loop
     -- Step 2: what is due for this account tonight.
     step := public.unused_account_step(account.last_used, account.notices_for,
-                                       account.month_notice_at, account.week_notice_at);
+                                       account.closing_notice_at, coalesce(account.nudges_sent, 0));
     -- Step 3: do it, and count it.
-    if step in ('month', 'week') then
+    if step in ('nudge', 'notice') then
       perform public.send_unused_account_notice(account.user_id, account.last_used, step);
-      if step = 'month' then month_notices := month_notices + 1; else week_notices := week_notices + 1; end if;
+      if step = 'nudge' then nudges := nudges + 1; else notices := notices + 1; end if;
     elsif step = 'close' then
       perform public.close_unused_account(account.user_id);
       closed := closed + 1;
     end if;
   end loop;
-  return jsonb_build_object('month_notices', month_notices, 'week_notices', week_notices, 'closed', closed);
+  return jsonb_build_object('nudges', nudges, 'notices', notices, 'closed', closed);
 end;
 $$;
 
@@ -18653,7 +18657,7 @@ $$;
 ALTER FUNCTION "public"."close_unused_accounts"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."close_unused_accounts"() IS 'Nightly: emails the notices to accounts nobody used for almost unused_account_years and closes them after (INACTIVE-1).';
+COMMENT ON FUNCTION "public"."close_unused_accounts"() IS 'Nightly: emails yearly then quarterly nudges and a notice at unused_account_years to accounts nobody uses, and closes them 30 days after the notice (INACTIVE-2).';
 
 
 
@@ -22312,7 +22316,8 @@ CREATE OR REPLACE FUNCTION "public"."email_delivery_for"("target_user_id" "uuid"
     when kind in ('moderation_decision', 'login_method_added', 'login_method_removed', 'class_archived',
                   'data_request_confirm', 'data_request_extended', 'data_request_copy_ready',
                   'picture_opened_by_staff', 'waitlist_admitted',
-                  'account_unused_month', 'account_unused_week') then 'required'
+                  'account_unused_month', 'account_unused_week',
+                  'account_unused_nudge', 'account_unused_closed') then 'required'
     else coalesce(
       (select settings.delivery from public.notification_email_settings as settings
        where settings.user_id = target_user_id and settings.kind = email_delivery_for.kind),
@@ -22414,9 +22419,11 @@ begin
     limit least(greatest(coalesce(batch_size, 50), 1), 100)
     for update skip locked
   loop
+    -- A live account, or a closed one being told that it closed (INACTIVE-2).
     select users.email, profiles.locale into recipient
     from public.profiles join auth.users on users.id = profiles.id
-    where profiles.id = queued.user_id and profiles.deleted_at is null
+    where profiles.id = queued.user_id
+      and (profiles.deleted_at is null or public.is_account_closed_email(queued))
       and users.email_confirmed_at is not null;
     -- The recipient's own view: blocks, ratings and moderation as on their Notifications page.
     perform public.email_worker_act_as(queued.user_id);
@@ -22447,7 +22454,7 @@ $$;
 ALTER FUNCTION "public"."email_worker_claim"("worker_key" "text", "batch_size" integer) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."email_worker_claim"("worker_key" "text", "batch_size" integer) IS 'The email worker''s due emails, claimed for 15 minutes; needs the Vault key (S1-E7-02, IDEAS-2 idea 6).';
+COMMENT ON FUNCTION "public"."email_worker_claim"("worker_key" "text", "batch_size" integer) IS 'The email worker''s due emails, claimed for 15 minutes; needs the Vault key (S1-E7-02, IDEAS-2 idea 6, INACTIVE-2).';
 
 
 
@@ -23164,6 +23171,31 @@ COMMENT ON FUNCTION "public"."export_staff_upload_allowed"("object_name" "text")
 
 
 
+CREATE OR REPLACE FUNCTION "public"."export_stories_as_before_closing"("tables" "jsonb", "closed_at" timestamp with time zone) RETURNS "jsonb"
+    LANGUAGE "sql" STABLE
+    SET "search_path" TO ''
+    AS $$
+  select case
+    when tables -> 'stories' is null then tables
+    else jsonb_set(tables, '{stories}', coalesce((
+      select jsonb_agg(
+        case when (story ->> 'deleted_at')::timestamptz = closed_at
+             then jsonb_set(story, '{deleted_at}', 'null'::jsonb)
+             else story end
+        order by position)
+      from jsonb_array_elements(tables -> 'stories') with ordinality as stories (story, position)
+    ), '[]'::jsonb))
+  end;
+$$;
+
+
+ALTER FUNCTION "public"."export_stories_as_before_closing"("tables" "jsonb", "closed_at" timestamp with time zone) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."export_stories_as_before_closing"("tables" "jsonb", "closed_at" timestamp with time zone) IS 'Internal: shows a closing account''s stories in its copy as they were before the account closed (INACTIVE-2).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."export_support_tickets_of"("owner_id" "uuid") RETURNS "jsonb"
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -23433,7 +23465,7 @@ CREATE OR REPLACE FUNCTION "public"."finish_data_export"("export_id" "uuid", "st
     SET "search_path" TO ''
     AS $$
 declare
-  caller_id uuid := public.require_live_profile();
+  caller_id uuid := public.require_export_caller();
   open_export public.exports;
   stored_size bigint;
 begin
@@ -26262,6 +26294,25 @@ ALTER FUNCTION "public"."invite_new_adults_to_age_check"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."invite_new_adults_to_age_check"() IS 'Daily: invites new adults holding only "13 or over" to an "18 or over" check (S1-E2-08b).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."is_account_closed_email"("queued" "public"."email_outbox") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select queued.delivery = 'required' and exists (
+    select 1 from public.notifications
+    where notifications.id = any (queued.notification_ids)
+      and notifications.user_id = queued.user_id
+      and notifications.kind = 'account_unused_closed');
+$$;
+
+
+ALTER FUNCTION "public"."is_account_closed_email"("queued" "public"."email_outbox") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."is_account_closed_email"("queued" "public"."email_outbox") IS 'Internal: whether a queued email tells an unused account that it closed (INACTIVE-2).';
 
 
 
@@ -29718,7 +29769,7 @@ begin
     and account_deletions.cancelled_at is null and account_deletions.completed_at is null;
   if found then
     return jsonb_build_object('state', 'closing', 'requested_at', request.requested_at,
-      'delete_after', request.delete_after);
+      'delete_after', request.delete_after, 'reason', request.reason);
   end if;
   -- Step 2: otherwise the account is open; say whether the log-in is fresh enough to confirm.
   return jsonb_build_object('state', 'open',
@@ -29731,7 +29782,7 @@ $$;
 ALTER FUNCTION "public"."my_account_deletion"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."my_account_deletion"() IS 'The caller''s account deletion state: closing with its date, or open with whether they may confirm now (S1-E13-03).';
+COMMENT ON FUNCTION "public"."my_account_deletion"() IS 'The caller''s account deletion state: closing with its date and reason, or open with whether they may confirm now (S1-E13-03, INACTIVE-2).';
 
 
 
@@ -30215,15 +30266,25 @@ CREATE OR REPLACE FUNCTION "public"."my_data_export"() RETURNS "jsonb"
     SET "search_path" TO ''
     AS $$
 declare
-  caller_id uuid := public.require_live_profile();
+  caller_id uuid := public.require_export_caller();
+  tables jsonb := public.export_tables_of(caller_id);
+  closed_at timestamptz;
 begin
+  -- Step 1: when the account is closing, the stories hidden by the closing count as live.
+  select account_deletions.requested_at into closed_at from public.account_deletions
+  where account_deletions.user_id = caller_id
+    and account_deletions.cancelled_at is null and account_deletions.completed_at is null;
+  if closed_at is not null then
+    tables := public.export_stories_as_before_closing(tables, closed_at);
+  end if;
+  -- Step 2: the data file.
   return jsonb_build_object(
     'format', 'data-export/1',
     'made_at', now(),
     'user_id', caller_id,
     'account', public.export_account_of(caller_id),
     'library', public.export_library_of(caller_id),
-    'tables', public.export_tables_of(caller_id));
+    'tables', tables);
 end;
 $$;
 
@@ -32336,6 +32397,8 @@ CREATE OR REPLACE FUNCTION "public"."notification_category"("kind" "public"."not
     when 'home_comment_invited' then 'staff'
     when 'account_unused_month' then 'staff'
     when 'account_unused_week' then 'staff'
+    when 'account_unused_nudge' then 'staff'
+    when 'account_unused_closed' then 'staff'
     else 'replies'
   end;
 $$;
@@ -39013,7 +39076,7 @@ CREATE OR REPLACE FUNCTION "public"."request_data_export"() RETURNS "jsonb"
     SET "search_path" TO ''
     AS $$
 declare
-  caller_id uuid := public.require_live_profile();
+  caller_id uuid := public.require_export_caller();
   new_export public.exports;
 begin
   -- Step 1: at most three an hour.
@@ -39303,6 +39366,36 @@ ALTER FUNCTION "public"."require_custom_role_staff"("reason_given" "text") OWNER
 
 
 COMMENT ON FUNCTION "public"."require_custom_role_staff"("reason_given" "text") IS 'Internal: refuses anyone who may not manage custom staff roles, or gives no reason (S1-E11-33).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."require_export_caller"() RETURNS "uuid"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+begin
+  if caller_id is not null and exists (
+    select 1 from public.profiles
+    where profiles.id = caller_id
+      and (profiles.deleted_at is null
+           or exists (select 1 from public.account_deletions
+                      where account_deletions.user_id = profiles.id
+                        and account_deletions.cancelled_at is null
+                        and account_deletions.completed_at is null))
+  ) then
+    return caller_id;
+  end if;
+  raise exception 'Sign in first.' using errcode = 'insufficient_privilege', hint = 'signed_out';
+end;
+$$;
+
+
+ALTER FUNCTION "public"."require_export_caller"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."require_export_caller"() IS 'Internal: the caller''s user ID if their account is live or still closing, for Download my data (INACTIVE-2).';
 
 
 
@@ -41789,21 +41882,30 @@ CREATE OR REPLACE FUNCTION "public"."send_unused_account_notice"("target_user_id
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
+declare
+  nudges_due integer := public.unused_account_nudges_due(last_used);
 begin
-  -- Step 1: the row remembers the notice, counted from this day of last use.
-  insert into public.account_last_used (user_id, notices_for, month_notice_at, week_notice_at)
+  -- Step 1: the row remembers the email, counted from this day of last use. A row kept for an
+  -- older day of use starts again first.
+  insert into public.account_last_used (user_id, notices_for, closing_notice_at, nudges_sent)
   values (target_user_id, last_used,
-          case when which_notice = 'month' then now() end,
-          case when which_notice = 'week' then now() end)
+          case when which_notice = 'notice' then now() end,
+          case when which_notice = 'nudge' then nudges_due else 0 end)
   on conflict (user_id) do update set
     notices_for = excluded.notices_for,
-    month_notice_at = coalesce(excluded.month_notice_at, account_last_used.month_notice_at),
-    week_notice_at = coalesce(excluded.week_notice_at, account_last_used.week_notice_at);
-  -- Step 2: the notice itself; the email goes out with the next run of the email worker.
+    closing_notice_at = case
+      when which_notice = 'notice' then excluded.closing_notice_at
+      when account_last_used.notices_for is distinct from excluded.notices_for then null
+      else account_last_used.closing_notice_at end,
+    nudges_sent = case
+      when which_notice = 'nudge' then excluded.nudges_sent
+      when account_last_used.notices_for is distinct from excluded.notices_for then 0
+      else account_last_used.nudges_sent end;
+  -- Step 2: the email itself goes out with the next run of the email worker.
   insert into public.notifications (user_id, kind, is_required)
   values (target_user_id,
-          case which_notice when 'month' then 'account_unused_month'
-                            else 'account_unused_week' end::public.notification_kind,
+          case which_notice when 'notice' then 'account_unused_month'
+                            else 'account_unused_nudge' end::public.notification_kind,
           true);
 end;
 $$;
@@ -41812,7 +41914,7 @@ $$;
 ALTER FUNCTION "public"."send_unused_account_notice"("target_user_id" "uuid", "last_used" "date", "which_notice" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."send_unused_account_notice"("target_user_id" "uuid", "last_used" "date", "which_notice" "text") IS 'Internal: sends the "about a month" or "about a week" unused-account notice and remembers it (INACTIVE-1).';
+COMMENT ON FUNCTION "public"."send_unused_account_notice"("target_user_id" "uuid", "last_used" "date", "which_notice" "text") IS 'Internal: sends a nudge or the closing notice for an unused account and remembers it (INACTIVE-2).';
 
 
 
@@ -49270,6 +49372,36 @@ COMMENT ON FUNCTION "public"."unsubscribe_from_emails"("unsubscribe_key" "text")
 
 
 
+CREATE OR REPLACE FUNCTION "public"."unused_account_nudges_due"("last_used" "date") RETURNS integer
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  with numbers as (
+    select public.unused_account_setting('unused_account_years', 5) as closing_years,
+           least(public.unused_account_setting('unused_account_quarterly_from_years', 4),
+                 public.unused_account_setting('unused_account_years', 5)) as quarterly_from
+  ),
+  nudge_days as (
+    -- The yearly nudges: 1 year, 2 years, up to the year before the quarterly ones start.
+    select (last_used + make_interval(years => year_number))::date as due_on
+    from numbers, generate_series(1, numbers.quarterly_from - 1) as year_number
+    union all
+    -- The quarterly nudges: from that year, every 3 months, stopping before the notice.
+    select (last_used + make_interval(years => numbers.quarterly_from, months => 3 * quarter_number))::date
+    from numbers, generate_series(0, (numbers.closing_years - numbers.quarterly_from) * 4 - 1) as quarter_number
+  )
+  select count(*)::integer from nudge_days
+  where nudge_days.due_on <= (now() at time zone 'Europe/Bucharest')::date;
+$$;
+
+
+ALTER FUNCTION "public"."unused_account_nudges_due"("last_used" "date") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."unused_account_nudges_due"("last_used" "date") IS 'Internal: how many yearly and quarterly nudges an account last used on that day should have had by today (INACTIVE-2).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."unused_account_setting"("setting_key" "text", "fallback" integer) RETURNS integer
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -49285,47 +49417,44 @@ COMMENT ON FUNCTION "public"."unused_account_setting"("setting_key" "text", "fal
 
 
 
-CREATE OR REPLACE FUNCTION "public"."unused_account_step"("last_used" "date", "notices_for" "date", "month_notice_at" timestamp with time zone, "week_notice_at" timestamp with time zone) RETURNS "text"
+CREATE OR REPLACE FUNCTION "public"."unused_account_step"("last_used" "date", "notices_for" "date", "closing_notice_at" timestamp with time zone, "nudges_sent" integer) RETURNS "text"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
 declare
   today date := (now() at time zone 'Europe/Bucharest')::date;
-  closes_on date := last_used + make_interval(years => public.unused_account_setting('unused_account_years', 5));
-  month_days integer := public.unused_account_setting('unused_account_month_notice_days', 30);
-  week_days integer := public.unused_account_setting('unused_account_week_notice_days', 7);
-  is_same_count boolean := notices_for is not distinct from last_used;
+  notice_on date := last_used + make_interval(years => public.unused_account_setting('unused_account_years', 5));
+  close_days integer := public.unused_account_setting('unused_account_close_days', 30);
 begin
-  -- Step 1: notices sent for an older day of use don't count: the person used it since.
-  if not is_same_count then
-    month_notice_at := null;
-    week_notice_at := null;
+  -- Step 1: emails sent for an older day of use don't count.
+  if notices_for is distinct from last_used then
+    closing_notice_at := null;
+    nudges_sent := 0;
   end if;
-  -- Step 2: nothing before the month window.
-  if today < closes_on - month_days then
+  -- Step 2: after the notice, the only step left is closing, once the notice is old enough.
+  if closing_notice_at is not null then
+    if closing_notice_at <= now() - make_interval(days => close_days) then
+      return 'close';
+    end if;
     return 'none';
   end if;
-  -- Step 3: the last notice, from the week window on (or the first night after a missed month).
-  if today >= closes_on - week_days and week_notice_at is null then
-    return 'week';
+  -- Step 3: the notice, from the day the account reaches 5 years without use.
+  if today >= notice_on then
+    return 'notice';
   end if;
-  -- Step 4: the first notice, inside the month window.
-  if today < closes_on - week_days then
-    return case when month_notice_at is null then 'month' else 'none' end;
-  end if;
-  -- Step 5: closing, once the day has come and the last notice is a week old.
-  if today >= closes_on and week_notice_at <= now() - make_interval(days => week_days) then
-    return 'close';
+  -- Step 4: a nudge, when another nudge day has passed.
+  if public.unused_account_nudges_due(last_used) > coalesce(nudges_sent, 0) then
+    return 'nudge';
   end if;
   return 'none';
 end;
 $$;
 
 
-ALTER FUNCTION "public"."unused_account_step"("last_used" "date", "notices_for" "date", "month_notice_at" timestamp with time zone, "week_notice_at" timestamp with time zone) OWNER TO "postgres";
+ALTER FUNCTION "public"."unused_account_step"("last_used" "date", "notices_for" "date", "closing_notice_at" timestamp with time zone, "nudges_sent" integer) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."unused_account_step"("last_used" "date", "notices_for" "date", "month_notice_at" timestamp with time zone, "week_notice_at" timestamp with time zone) IS 'Internal: tonight''s step for one unused account: none, month notice, week notice or close (INACTIVE-1).';
+COMMENT ON FUNCTION "public"."unused_account_step"("last_used" "date", "notices_for" "date", "closing_notice_at" timestamp with time zone, "nudges_sent" integer) IS 'Internal: tonight''s step for one unused account: none, nudge, notice or close (INACTIVE-2).';
 
 
 
@@ -51413,7 +51542,7 @@ COMMENT ON COLUMN "public"."account_deletions"."user_id" IS 'The account being d
 
 
 
-COMMENT ON COLUMN "public"."account_deletions"."reason" IS 'requested: the person chose "Delete my account" (S1-E13-03); unused: nobody used it for unused_account_years (INACTIVE-1).';
+COMMENT ON COLUMN "public"."account_deletions"."reason" IS 'requested: the person chose "Delete my account" (S1-E13-03); unused: nobody used it for unused_account_years and 30 days more (INACTIVE-1, INACTIVE-2).';
 
 
 
@@ -51421,17 +51550,25 @@ CREATE TABLE IF NOT EXISTS "public"."account_last_used" (
     "user_id" "uuid" NOT NULL,
     "used_on" "date",
     "notices_for" "date",
-    "month_notice_at" timestamp with time zone,
-    "week_notice_at" timestamp with time zone,
+    "closing_notice_at" timestamp with time zone,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "nudges_sent" integer DEFAULT 0 NOT NULL
 );
 
 
 ALTER TABLE "public"."account_last_used" OWNER TO "postgres";
 
 
-COMMENT ON TABLE "public"."account_last_used" IS 'kind: user_action. The last day each account was used and the unused-account notices sent for it; overwritten each time, no history (INACTIVE-1).';
+COMMENT ON TABLE "public"."account_last_used" IS 'kind: user_action. The last day each account was used and which unused-account emails went out for it (INACTIVE-1, INACTIVE-2). One row per account, overwritten: no history of log-ins is kept.';
+
+
+
+COMMENT ON COLUMN "public"."account_last_used"."closing_notice_at" IS 'When the closing notice (30 days before) was sent for the day of use in notices_for (INACTIVE-2).';
+
+
+
+COMMENT ON COLUMN "public"."account_last_used"."nudges_sent" IS 'How many nudges were due and covered for the day of use in notices_for (INACTIVE-2).';
 
 
 
@@ -65358,6 +65495,10 @@ GRANT ALL ON FUNCTION "public"."export_staff_upload_allowed"("object_name" "text
 
 
 
+REVOKE ALL ON FUNCTION "public"."export_stories_as_before_closing"("tables" "jsonb", "closed_at" timestamp with time zone) FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."export_support_tickets_of"("owner_id" "uuid") FROM PUBLIC;
 
 
@@ -65742,6 +65883,10 @@ REVOKE ALL ON FUNCTION "public"."investor_months"("months" integer) FROM PUBLIC;
 
 
 REVOKE ALL ON FUNCTION "public"."invite_new_adults_to_age_check"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."is_account_closed_email"("queued" "public"."email_outbox") FROM PUBLIC;
 
 
 
@@ -67648,6 +67793,10 @@ REVOKE ALL ON FUNCTION "public"."require_custom_role_staff"("reason_given" "text
 
 
 
+REVOKE ALL ON FUNCTION "public"."require_export_caller"() FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."require_forum_staff"() FROM PUBLIC;
 
 
@@ -69032,11 +69181,15 @@ GRANT ALL ON FUNCTION "public"."unsubscribe_from_emails"("unsubscribe_key" "text
 
 
 
+REVOKE ALL ON FUNCTION "public"."unused_account_nudges_due"("last_used" "date") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."unused_account_setting"("setting_key" "text", "fallback" integer) FROM PUBLIC;
 
 
 
-REVOKE ALL ON FUNCTION "public"."unused_account_step"("last_used" "date", "notices_for" "date", "month_notice_at" timestamp with time zone, "week_notice_at" timestamp with time zone) FROM PUBLIC;
+REVOKE ALL ON FUNCTION "public"."unused_account_step"("last_used" "date", "notices_for" "date", "closing_notice_at" timestamp with time zone, "nudges_sent" integer) FROM PUBLIC;
 
 
 

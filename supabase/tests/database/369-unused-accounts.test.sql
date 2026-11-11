@@ -1,21 +1,24 @@
--- Database tests for deleting accounts nobody has used for 5 years (bundle INACTIVE-1).
+-- Database tests for the journey of an account nobody uses (bundles INACTIVE-1 and INACTIVE-2).
 -- What it proves:
 -- - the app's once-a-minute "here" notes the day of use, once a day;
 -- - the day of last use is the latest of: the account made, the last log-in, the app open, and
 --   "Keep my account";
--- - tonight's step for one account: nothing before the month window, the "about a month" notice
---   in it, the "about a week" notice in the last week (or straight away when the month window was
---   missed), and closing only once the 5 years are up and the last notice is a week old;
--- - the nightly job sends each notice once, always by email, closes the account the same way as
---   "Delete my account" (to be deleted after 14 days), and never touches staff or a closing account;
--- - using the account again, or keeping it while it is closing, starts the 5 years again;
+-- - the nudge days: yearly for three years, then every 3 months in the fifth year;
+-- - tonight's step for one account: nothing in the first year, a nudge on each nudge day, the
+--   closing notice at 5 years, and closing only once that notice is 30 days old;
+-- - the nightly job sends each email once, always by email, closes the account the same way as
+--   "Delete my account" (to be deleted after 14 days), and never touches staff, a banned account
+--   or a closing account;
+-- - the closing email reaches the closed account, which can still make a copy of its data, and
+--   that alone doesn't keep it;
+-- - keeping the account starts the 5 years again;
 -- - nobody but the job can run it, and deleting an account and Download my data know the table.
 -- Policies covered: account_last_used_select_own, allowed and denied.
 begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(38);
+select plan(50);
 
 create temp table ids as select
   '00000000-0000-4000-8000-000000000001'::uuid as adult_writer,
@@ -114,98 +117,112 @@ select is(
   pg_temp.today() - 10,
   'keeping a closing account counts as using it');
 
+/* ---------- The nudge days ---------- */
+
+select is(public.unused_account_nudges_due((pg_temp.today() - interval '11 months')::date), 0,
+  'no nudge is due before the first year');
+select is(public.unused_account_nudges_due((pg_temp.today() - interval '3 years 6 months')::date), 3,
+  'before the fourth year the nudges are yearly: three by three and a half years');
+select is(public.unused_account_nudges_due((pg_temp.today() - interval '4 years 7 months')::date), 6,
+  'from the fourth year they are quarterly: 4 years, 4 years 3 months and 4 years 6 months more');
+select is(public.unused_account_nudges_due((pg_temp.today() - interval '6 years')::date), 7,
+  'there are seven nudges in all: three yearly and four quarterly');
+
 /* ---------- Tonight's step ---------- */
 
-select is(public.unused_account_step((pg_temp.today() - interval '4 years')::date, null::date, null::timestamptz, null::timestamptz),
-  'none', 'nothing happens before the month window');
-select is(public.unused_account_step((pg_temp.today() - interval '5 years' + interval '20 days')::date, null::date, null::timestamptz, null::timestamptz),
-  'month', 'about a month before, the first notice is due');
-select is(public.unused_account_step((pg_temp.today() - interval '5 years' + interval '20 days')::date,
-    (pg_temp.today() - interval '5 years' + interval '20 days')::date, now() - interval '1 day', null::timestamptz),
-  'none', 'the first notice goes once');
-select is(public.unused_account_step((pg_temp.today() - interval '5 years' + interval '3 days')::date,
-    (pg_temp.today() - interval '5 years' + interval '3 days')::date, now() - interval '20 days', null::timestamptz),
-  'week', 'about a week before, the last notice is due');
-select is(public.unused_account_step((pg_temp.today() - interval '5 years' + interval '3 days')::date, null::date, null::timestamptz, null::timestamptz),
-  'week', 'a missed month window sends the last notice straight away');
-select is(public.unused_account_step((pg_temp.today() - interval '5 years' - interval '1 day')::date,
-    (pg_temp.today() - interval '5 years' - interval '1 day')::date, now() - interval '30 days', now() - interval '3 days'),
-  'none', 'the account doesn''t close until the last notice is a week old');
-select is(public.unused_account_step((pg_temp.today() - interval '5 years' - interval '1 day')::date,
-    (pg_temp.today() - interval '5 years' - interval '1 day')::date, now() - interval '30 days', now() - interval '8 days'),
-  'close', 'after 5 years and a week after the last notice, the account closes');
-select is(public.unused_account_step((pg_temp.today() - interval '5 years' - interval '1 day')::date,
-    (pg_temp.today() - interval '6 years')::date, now() - interval '30 days', now() - interval '8 days'),
-  'week', 'notices sent for an older day of use don''t count: the countdown starts again');
+select is(public.unused_account_step((pg_temp.today() - interval '11 months')::date, null::date, null::timestamptz, 0),
+  'none', 'nothing happens in the first year');
+select is(public.unused_account_step((pg_temp.today() - interval '1 year')::date, null::date, null::timestamptz, 0),
+  'nudge', 'a year without use: the first yearly nudge is due');
+select is(public.unused_account_step((pg_temp.today() - interval '1 year 2 days')::date,
+    (pg_temp.today() - interval '1 year 2 days')::date, null::timestamptz, 1),
+  'none', 'each nudge goes once');
+select is(public.unused_account_step((pg_temp.today() - interval '4 years 3 months')::date,
+    (pg_temp.today() - interval '4 years 3 months')::date, null::timestamptz, 4),
+  'nudge', 'in the fifth year a nudge is due every 3 months');
+select is(public.unused_account_step((pg_temp.today() - interval '5 years')::date,
+    (pg_temp.today() - interval '5 years')::date, null::timestamptz, 7),
+  'notice', 'at 5 years the closing notice is due');
+select is(public.unused_account_step((pg_temp.today() - interval '5 years 20 days')::date,
+    (pg_temp.today() - interval '5 years 20 days')::date, now() - interval '20 days', 7),
+  'none', 'the account doesn''t close until the notice is 30 days old');
+select is(public.unused_account_step((pg_temp.today() - interval '6 years')::date,
+    (pg_temp.today() - interval '6 years')::date, now() - interval '3 days', 7),
+  'none', 'a late notice still gives its full 30 days');
+select is(public.unused_account_step((pg_temp.today() - interval '5 years 31 days')::date,
+    (pg_temp.today() - interval '5 years 31 days')::date, now() - interval '31 days', 7),
+  'close', '30 days after the notice, the account closes');
+select is(public.unused_account_step((pg_temp.today() - interval '2 years 1 day')::date,
+    (pg_temp.today() - interval '8 years')::date, now() - interval '40 days', 7),
+  'nudge', 'emails sent for an older day of use don''t count: everything starts again');
 
 /* ---------- The nightly job ---------- */
 
--- The adult writer: last used 5 years less 20 days ago. The owner (staff) just as long.
-select pg_temp.last_used_ago((select adult_writer from ids), interval '5 years' - interval '20 days');
-select pg_temp.last_used_ago((select owner from ids), interval '5 years' - interval '20 days');
-select pg_temp.last_used_ago((select banned_user from ids), interval '5 years' - interval '20 days');
+-- The adult writer: last used 2 years and a day ago. The owner (staff) and a banned account as
+-- long. The teacher: last used 6 months ago.
+select pg_temp.last_used_ago((select adult_writer from ids), interval '2 years 1 day');
+select pg_temp.last_used_ago((select owner from ids), interval '2 years 1 day');
+select pg_temp.last_used_ago((select banned_user from ids), interval '2 years 1 day');
 delete from public.account_deletions where user_id = (select teacher from ids);
-select pg_temp.last_used_ago((select teacher from ids), interval '1 year');
+select pg_temp.last_used_ago((select teacher from ids), interval '6 months');
 
 select is(
   public.close_unused_accounts(),
-  '{"month_notices": 1, "week_notices": 0, "closed": 0}'::jsonb,
-  'the job sends one "about a month" notice, and none to staff or a banned account');
+  '{"nudges": 1, "notices": 0, "closed": 0}'::jsonb,
+  'the job sends one nudge, and none to staff, a banned account or a recently used one');
+select is(
+  (select nudges_sent from public.account_last_used where user_id = (select adult_writer from ids)),
+  2,
+  'one nudge covers both years that passed, so a missed night doesn''t send two');
+select is(
+  (select delivery from public.email_outbox
+   join public.notifications on notifications.id = any (email_outbox.notification_ids)
+   where notifications.user_id = (select adult_writer from ids) and notifications.kind = 'account_unused_nudge'),
+  'required',
+  'the nudge is always emailed');
 select is(
   (select count(*)::integer from public.notifications
-   where user_id = (select adult_writer from ids) and kind = 'account_unused_month' and is_required),
-  1,
-  'the adult writer has the "about a month" notice');
+   where user_id in ((select owner from ids), (select banned_user from ids))
+     and kind in ('account_unused_nudge', 'account_unused_month', 'account_unused_closed')),
+  0,
+  'a staff account and a banned account get no email: staff stay, and a banned account is closed, never deleted');
+select is(
+  public.close_unused_accounts(),
+  '{"nudges": 0, "notices": 0, "closed": 0}'::jsonb,
+  'running again the same night sends nothing more');
+
+-- 5 years: the closing notice, and no closing yet.
+update public.profiles set created_at = now() - interval '5 years' where id = (select adult_writer from ids);
+update auth.users set last_sign_in_at = now() - interval '5 years' where id = (select adult_writer from ids);
+update public.account_last_used
+set notices_for = public.account_last_used_on((select adult_writer from ids)), nudges_sent = 7
+where user_id = (select adult_writer from ids);
+select is(
+  public.close_unused_accounts(),
+  '{"nudges": 0, "notices": 1, "closed": 0}'::jsonb,
+  'at 5 years the job sends the closing notice');
 select is(
   (select delivery from public.email_outbox
    join public.notifications on notifications.id = any (email_outbox.notification_ids)
    where notifications.user_id = (select adult_writer from ids) and notifications.kind = 'account_unused_month'),
   'required',
-  'the notice is always emailed');
+  'the closing notice is always emailed');
 select is(
-  (select count(*)::integer from public.notifications
-   where user_id = (select owner from ids) and kind in ('account_unused_month', 'account_unused_week')),
-  0,
-  'a staff account gets no notice');
-select is(
-  (select count(*)::integer from public.notifications
-   where user_id = (select banned_user from ids) and kind in ('account_unused_month', 'account_unused_week')),
-  0,
-  'a banned account gets no notice: it is closed, never deleted');
-select is(
-  public.close_unused_accounts(),
-  '{"month_notices": 0, "week_notices": 0, "closed": 0}'::jsonb,
-  'running again the same night sends nothing more');
-
--- A week before: the last notice, and no closing yet.
-update public.profiles set created_at = now() - interval '5 years' + interval '3 days'
-where id = (select adult_writer from ids);
-update auth.users set last_sign_in_at = now() - interval '5 years' + interval '3 days'
-where id = (select adult_writer from ids);
-update public.account_last_used set notices_for = public.account_last_used_on((select adult_writer from ids))
-where user_id = (select adult_writer from ids);
-select is(
-  public.close_unused_accounts(),
-  '{"month_notices": 0, "week_notices": 1, "closed": 0}'::jsonb,
-  'a week before, the job sends the "about a week" notice');
-select is(
-  public.notification_category('account_unused_week'),
+  public.notification_category('account_unused_nudge'),
   'staff',
-  'both notices are filed with the notices from the team');
+  'the nudge is filed with the notices from the team');
 
--- The 5 years are up and the last notice is 8 days old: the account closes.
-update public.profiles set created_at = now() - interval '5 years' - interval '2 days'
-where id = (select adult_writer from ids);
-update auth.users set last_sign_in_at = now() - interval '5 years' - interval '2 days'
-where id = (select adult_writer from ids);
+-- 31 days after the notice: the account closes.
+update public.profiles set created_at = now() - interval '5 years 31 days' where id = (select adult_writer from ids);
+update auth.users set last_sign_in_at = now() - interval '5 years 31 days' where id = (select adult_writer from ids);
 update public.account_last_used
 set notices_for = public.account_last_used_on((select adult_writer from ids)),
-    week_notice_at = now() - interval '8 days'
+    closing_notice_at = now() - interval '31 days'
 where user_id = (select adult_writer from ids);
 select is(
   public.close_unused_accounts(),
-  '{"month_notices": 0, "week_notices": 0, "closed": 1}'::jsonb,
-  'after 5 years and a week''s notice, the job closes the account');
+  '{"nudges": 0, "notices": 0, "closed": 1}'::jsonb,
+  '30 days after the notice, the job closes the account');
 select isnt(
   (select deleted_at from public.profiles where id = (select adult_writer from ids)),
   null,
@@ -227,10 +244,44 @@ select ok(
   'it is deleted for good after 14 days, like "Delete my account"');
 select is(
   public.close_unused_accounts(),
-  '{"month_notices": 0, "week_notices": 0, "closed": 0}'::jsonb,
+  '{"nudges": 0, "notices": 0, "closed": 0}'::jsonb,
   'a closing account is left alone');
 
--- Logging in during the 14 days and choosing "Keep my account" brings it back for 5 more years.
+/* ---------- The closing email and the copy of data ---------- */
+
+create temporary table worker (worker_key text) on commit drop;
+insert into worker select decrypted_secret from vault.decrypted_secrets where name = 'email_worker_key';
+create temporary table claimed (emails jsonb) on commit drop;
+insert into claimed select public.email_worker_claim((select worker_key from worker), 100);
+select is(
+  (select count(*)::integer from claimed, jsonb_array_elements(claimed.emails) as email,
+          jsonb_array_elements(email -> 'items') as item
+   where item ->> 'kind' = 'account_unused_closed'),
+  1,
+  'the closing email reaches the closed account');
+select is(
+  (select count(*)::integer from claimed, jsonb_array_elements(claimed.emails) as email,
+          jsonb_array_elements(email -> 'items') as item
+   where item ->> 'kind' in ('account_unused_nudge', 'account_unused_month')),
+  0,
+  'every other email to a closed account is dropped');
+
+select pg_temp.sign_in_as((select adult_writer from ids));
+set local role authenticated;
+select is(public.my_account_deletion() ->> 'reason', 'unused', 'the app is told the account closed for not being used');
+select is(public.my_data_export() ->> 'format', 'data-export/1', 'a closing account can still read its data');
+select ok((public.request_data_export() ->> 'export_id') is not null, 'and ask for its copy');
+select ok(
+  (select count(*) > 0 and count(*) = count(*) filter (where story ->> 'deleted_at' is null)
+   from jsonb_array_elements(public.my_data_export() -> 'tables' -> 'stories') as story),
+  'its copy shows the stories as they were before the account closed, so they get their Word files');
+reset role;
+select isnt(
+  (select deleted_at from public.profiles where id = (select adult_writer from ids)),
+  null,
+  'downloading the data doesn''t keep the account: it is still closing');
+
+-- Going on to use the site keeps it (the app calls cancel_account_deletion()) for 5 more years.
 select pg_temp.sign_in_as((select adult_writer from ids));
 set local role authenticated;
 select is(public.cancel_account_deletion() ->> 'outcome', 'ok', 'the person can keep the account');
@@ -245,8 +296,8 @@ select is(
   'keeping it starts the 5 years again');
 select is(
   public.close_unused_accounts(),
-  '{"month_notices": 0, "week_notices": 0, "closed": 0}'::jsonb,
-  'a kept account gets no more notices');
+  '{"nudges": 0, "notices": 0, "closed": 0}'::jsonb,
+  'a kept account gets no more emails');
 
 /* ---------- Who may run it, and the lists ---------- */
 
@@ -260,9 +311,9 @@ select throws_ok(
 reset role;
 
 select is(
-  public.email_delivery_for((select blocker from ids), 'account_unused_week'),
+  public.email_delivery_for((select blocker from ids), 'account_unused_closed'),
   'required',
-  'the last notice is always emailed too');
+  'the closing email is always emailed too');
 select is(
   (select action from public.account_deletion_rules() where table_name = 'account_last_used'),
   'delete',

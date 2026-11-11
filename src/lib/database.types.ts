@@ -146,32 +146,32 @@ export type Database = {
       };
       account_last_used: {
         Row: {
+          closing_notice_at: string | null;
           created_at: string;
-          month_notice_at: string | null;
           notices_for: string | null;
+          nudges_sent: number;
           updated_at: string;
           used_on: string | null;
           user_id: string;
-          week_notice_at: string | null;
         };
         ComputedFields: never;
         Insert: {
+          closing_notice_at?: string | null;
           created_at?: string;
-          month_notice_at?: string | null;
           notices_for?: string | null;
+          nudges_sent?: number;
           updated_at?: string;
           used_on?: string | null;
           user_id: string;
-          week_notice_at?: string | null;
         };
         Update: {
+          closing_notice_at?: string | null;
           created_at?: string;
-          month_notice_at?: string | null;
           notices_for?: string | null;
+          nudges_sent?: number;
           updated_at?: string;
           used_on?: string | null;
           user_id?: string;
-          week_notice_at?: string | null;
         };
         Relationships: [
           {
@@ -3131,9 +3131,10 @@ export type Database = {
           updated_at: string;
           user_id: string;
           email_worker_items: Json | null;
+          is_account_closed_email: boolean | null;
           message_email_items: Json | null;
         };
-        ComputedFields: 'email_worker_items' | 'message_email_items';
+        ComputedFields: 'email_worker_items' | 'is_account_closed_email' | 'message_email_items';
         Insert: {
           attempts?: number;
           claimed_at?: string | null;
@@ -13513,6 +13514,10 @@ export type Database = {
       export_row_for_owner: { Args: { stored_row: Json }; Returns: Json };
       export_staff_open_allowed: { Args: { object_name: string }; Returns: boolean };
       export_staff_upload_allowed: { Args: { object_name: string }; Returns: boolean };
+      export_stories_as_before_closing: {
+        Args: { closed_at: string; tables: Json };
+        Returns: Json;
+      };
       export_support_tickets_of: { Args: { owner_id: string }; Returns: Json };
       export_tables_of: { Args: { owner_id: string }; Returns: Json };
       export_upload_allowed: { Args: { object_name: string }; Returns: boolean };
@@ -13936,6 +13941,15 @@ export type Database = {
       investor_months: { Args: { months: number }; Returns: Json };
       invite_code_hash: { Args: { code: string }; Returns: string };
       invite_new_adults_to_age_check: { Args: Record<PropertyKey, never>; Returns: number };
+      is_account_closed_email: {
+        Args: {
+          queued: Omit<
+            Database['public']['Tables']['email_outbox']['Row'],
+            Database['public']['Tables']['email_outbox']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
       is_active_member: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_blocked_with: { Args: { other_user_id: string }; Returns: boolean };
       is_classics_account: { Args: { person_id: string }; Returns: boolean };
@@ -15828,6 +15842,7 @@ export type Database = {
       require_compliance_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_contest_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_custom_role_staff: { Args: { reason_given: string }; Returns: undefined };
+      require_export_caller: { Args: Record<PropertyKey, never>; Returns: string };
       require_forum_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_forum_writer: { Args: Record<PropertyKey, never>; Returns: string };
       require_free_ad_slot: {
@@ -17253,13 +17268,14 @@ export type Database = {
       unpublish_chapter: { Args: { chapter_code: string }; Returns: Json };
       unread_message_count: { Args: Record<PropertyKey, never>; Returns: number };
       unsubscribe_from_emails: { Args: { unsubscribe_key: string }; Returns: boolean };
+      unused_account_nudges_due: { Args: { last_used: string }; Returns: number };
       unused_account_setting: { Args: { fallback: number; setting_key: string }; Returns: number };
       unused_account_step: {
         Args: {
+          closing_notice_at: string;
           last_used: string;
-          month_notice_at: string;
           notices_for: string;
-          week_notice_at: string;
+          nudges_sent: number;
         };
         Returns: string;
       };
@@ -17602,7 +17618,9 @@ export type Database = {
         | 'forum_reply'
         | 'assignment_due'
         | 'account_unused_month'
-        | 'account_unused_week';
+        | 'account_unused_week'
+        | 'account_unused_nudge'
+        | 'account_unused_closed';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -18001,6 +18019,8 @@ export const Constants = {
         'assignment_due',
         'account_unused_month',
         'account_unused_week',
+        'account_unused_nudge',
+        'account_unused_closed',
       ],
       picture_kind: [
         'cover',

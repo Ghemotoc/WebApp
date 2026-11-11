@@ -91,11 +91,14 @@
     "waitlistAdmitted": "Ți-a venit rândul: contul tău {{productName}} e deschis. Acum poți scrie, citi, comenta și posta.",
     "subjectWaitlistAdmitted": "Ai intrat: contul {{productName}} e deschis",
     "waitlistSignIn": "Conectează-te ca să începi: {{link}}",
-    "accountUnusedMonth": "Nimeni nu s-a mai conectat la contul {{productName}} de aproape 5 ani, așa că îl vom șterge în aproximativ o lună, împreună cu poveștile, comentariile și postările din el. Ca să-l păstrezi, conectează-te până atunci. Nu trebuie să faci nimic altceva.",
-    "accountUnusedWeek": "Ultima notificare: nimeni nu s-a mai conectat la contul {{productName}} de aproape 5 ani, așa că îl vom șterge în aproximativ o săptămână, împreună cu poveștile, comentariile și postările din el. Ca să-l păstrezi, conectează-te până atunci.",
-    "subjectAccountUnusedMonth": "Contul {{productName}} va fi șters în aproximativ o lună",
-    "subjectAccountUnusedWeek": "Ultima notificare: contul {{productName}} va fi șters în aproximativ o săptămână",
-    "accountUnusedSignIn": "Conectează-te ca să-l păstrezi: {{link}}"
+    "accountUnusedNudge": "Nimeni nu s-a mai conectat de mult la contul {{productName}}. Conturile pe care nu le folosește nimeni timp de 5 ani sunt închise și apoi șterse, împreună cu poveștile, comentariile și postările din ele. Ca să-l păstrezi, conectează-te. Nu trebuie să faci nimic altceva.",
+    "accountUnusedMonth": "Nimeni nu s-a mai conectat la contul {{productName}} de 5 ani, așa că îl vom închide peste 30 de zile. Ca să-l păstrezi, conectează-te până atunci. Nu trebuie să faci nimic altceva. În ziua în care se închide trimitem pe email un link pentru descărcarea poveștilor și a celorlalte date din el. Linkul e valabil 14 zile și cere conectare.",
+    "accountUnusedClosed": "Am închis astăzi contul {{productName}}, pentru că nimeni nu s-a mai conectat de 5 ani. Timp de 14 zile te mai poți conecta ca să descarci o copie a poveștilor și a celorlalte date din el. Descărcarea nu păstrează contul: după cele 14 zile îl ștergem definitiv. Ca să-l păstrezi, conectează-te și mergi mai departe pe orice altă pagină sau alege Păstrez contul.",
+    "subjectAccountUnusedNudge": "Contul {{productName}} n-a mai fost folosit de ceva vreme",
+    "subjectAccountUnusedMonth": "Contul {{productName}} se închide peste 30 de zile",
+    "subjectAccountUnusedClosed": "Contul {{productName}} s-a închis: descarcă datele în 14 zile",
+    "accountUnusedSignIn": "Conectează-te ca să-l păstrezi: {{link}}",
+    "accountUnusedDownload": "Conectează-te ca să descarci datele: {{link}}"
   },
   "parentConsent": {
     "requestSubject": "@{{handle}} te roagă să fii de acord cu contul său {{productName}}",
