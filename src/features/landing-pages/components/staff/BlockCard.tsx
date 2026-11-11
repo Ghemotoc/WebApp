@@ -1,14 +1,15 @@
 /**
- * BlockCard: one block in the landing page editor, with Up, Down and Remove, its Romanian and
- * English fields side by side and the fields both languages share (story S1-E11-14 criteria 3
- * and 4; bundle CONTESTS-13a1).
+ * BlockCard: the editor panel for the one open block of a landing page: "Editing block 2 of 5",
+ * its Romanian and English fields side by side, the fields both languages share and "Next block"
+ * (story S1-E11-14 criteria 3 and 4; bundle CONTESTS-13a1; one block at a time beside the list
+ * since bundle G12c, the canvas's StaffWebsiteLandingEdit board).
  *
- * Moving uses buttons, never dragging, so every change works from the keyboard. The hero is fixed
- * at the top, so its card has no Up, Down or Remove; the page always keeps one h1.
- * Who shows it: LandingEditorForm, once for each block. What it calls: BlockLanguageColumn,
- * QuestionItemsFields and BlockSharedFields.
+ * Moving and removing blocks happen in the list (BlockListRow), so this panel only edits.
+ * Who shows it: LandingEditorForm, for the open block. What it calls: BlockLanguageColumn,
+ * BlockPictureField, QuestionItemsFields and BlockSharedFields.
  */
 import { Button } from '@/components/ui/Button';
+import { Eyebrow } from '@/components/ui/Eyebrow';
 import type { PictureView } from '@/features/pictures/api/pictures';
 import type { FieldProblem } from '@/features/website/api/websiteContentStore';
 import {
@@ -18,7 +19,6 @@ import {
   type LandingContent,
 } from '@/schemas/landingPages';
 
-import { canMove } from '../../lib/blocks';
 import { problemFor } from '../../lib/problemLabels';
 import { useLandingPageTranslation } from '../../registerLandingPageTranslations';
 
@@ -30,57 +30,44 @@ import { QuestionItemsFields } from './QuestionItemsFields';
 /** What the card needs. */
 interface BlockCardProps {
   pageId: string;
+  /** The panel's id, which the list's Edit buttons point at. */
+  editorId: string;
   /** The page's uploaded pictures and their check states (part a2a). */
   pictures: Record<string, PictureView>;
   content: LandingContent;
   index: number;
   problems: readonly FieldProblem[];
   onChange: (block: LandingBlock) => void;
-  onMove: (direction: -1 | 1) => void;
-  onRemove: () => void;
+  /** Opens the block after this one. */
+  onNext: () => void;
 }
 
 /**
- * The card's heading and its Up, Down and Remove buttons.
+ * The panel's heading: "Editing block 2 of 5", the block's kind and the way to the next block.
  *
  * @returns the header row
  */
-function BlockCardHeader({ content, index, onMove, onRemove }: BlockCardProps) {
+function BlockCardHeader({ content, index, onNext }: BlockCardProps) {
   const { t } = useLandingPageTranslation();
   const block = content.blocks[index];
-  const name = t('editor.blockName', {
-    number: index + 1,
-    kind: t(`kinds.${block?.kind ?? 'text'}`),
-  });
+  const next = content.blocks[index + 1];
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3">
-      <h3 className="m-0 font-heading text-lg font-bold text-heading">{name}</h3>
-      {block?.kind !== 'hero' && (
-        <div className="flex flex-wrap gap-2">
-          <Button
-            variant="secondary"
-            disabled={!canMove(content, index, -1)}
-            aria-label={t('editor.moveUp', { block: name })}
-            onClick={() => onMove(-1)}
-          >
-            {t('editor.up')}
-          </Button>
-          <Button
-            variant="secondary"
-            disabled={!canMove(content, index, 1)}
-            aria-label={t('editor.moveDown', { block: name })}
-            onClick={() => onMove(1)}
-          >
-            {t('editor.down')}
-          </Button>
-          <Button
-            variant="destructive"
-            aria-label={t('editor.removeBlock', { block: name })}
-            onClick={onRemove}
-          >
-            {t('editor.remove')}
-          </Button>
-        </div>
+    <div className="flex flex-wrap items-end justify-between gap-3">
+      <div className="flex flex-col gap-1">
+        <Eyebrow>
+          {t('editor.editingBlock', { number: index + 1, total: content.blocks.length })}
+        </Eyebrow>
+        <h3
+          id={`landing-editor-b${String(index)}-heading`}
+          className="m-0 font-heading text-xl font-bold text-heading"
+        >
+          {t(`kinds.${block?.kind ?? 'text'}`)}
+        </h3>
+      </div>
+      {next !== undefined && (
+        <Button variant="secondary" onClick={onNext}>
+          {t('editor.nextBlock', { kind: t(`kinds.${next.kind}`) })}
+        </Button>
       )}
     </div>
   );
@@ -98,7 +85,11 @@ export function BlockCard(props: BlockCardProps) {
   if (block === undefined) return null;
   const blockProblem = problemFor(problems, `blocks.${index}`);
   return (
-    <li className="flex flex-col gap-4 rounded-card border border-border bg-surface p-5">
+    <section
+      id={props.editorId}
+      aria-labelledby={`landing-editor-b${String(index)}-heading`}
+      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-5 shadow-card"
+    >
       <BlockCardHeader {...props} />
       {blockProblem !== null && (
         <p className="m-0 text-sm text-destructive">{t(`editor.problems.${blockProblem}`)}</p>
@@ -129,6 +120,6 @@ export function BlockCard(props: BlockCardProps) {
         <QuestionItemsFields block={block} index={index} problems={problems} onChange={onChange} />
       )}
       <BlockSharedFields block={block} index={index} problems={problems} onChange={onChange} />
-    </li>
+    </section>
   );
 }

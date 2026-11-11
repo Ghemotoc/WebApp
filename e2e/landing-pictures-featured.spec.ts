@@ -53,6 +53,11 @@ async function openAs(
   return page;
 }
 
+/** Opens one block's fields beside the list with its Edit button (one block at a time, G12c). */
+async function openBlock(page: Page, name: string): Promise<void> {
+  await page.getByRole('button', { name: `Edit ${name}`, exact: true }).click();
+}
+
 /** Adds one block of a kind with "Add a block". */
 async function addBlock(page: Page, kind: string): Promise<void> {
   await page.getByLabel('Block to add').selectOption({ label: kind });
@@ -87,13 +92,16 @@ test.describe('Landing page pictures and featured stories (S1-E11-14)', () => {
     await expect(page.getByRole('heading', { name: '/c/pictures-e2e (Campaign)' })).toBeVisible();
     await addBlock(page, 'Hero');
     await addBlock(page, 'Featured stories');
+    await openBlock(page, 'Block 1: Hero');
     await page.locator('#landing-b0-ro-title').fill('Săptămâna desenului');
     await page.locator('#landing-b0-en-title').fill('Drawing week');
+    await openBlock(page, 'Block 2: Featured stories');
     await page.locator('#landing-b1-ro-heading').fill('Povești alese');
     await page.locator('#landing-b1-en-heading').fill('Chosen stories');
     await page.locator('#landing-b1-stories').fill('/s/statia-meteo-seed01');
 
     // Step 2: the Hero gets a picture; it passes the check with no moderator step (G12a).
+    await openBlock(page, 'Block 1: Hero');
     await page.getByLabel('Picture (optional)').setInputFiles({
       name: 'drawing.png',
       mimeType: 'image/png',
