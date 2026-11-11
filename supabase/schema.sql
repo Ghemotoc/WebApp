@@ -30273,6 +30273,7 @@ CREATE OR REPLACE FUNCTION "public"."needs_rules_walkthrough"() RETURNS boolean
     AS $$
   select coalesce(
     (select public.message_age_group(profiles) <> 'adult' and profiles.rules_walkthrough_seen_at is null
+            and public.is_active_member()
      from public.profiles
      where profiles.id = (select auth.uid())),
     false);
@@ -30282,7 +30283,7 @@ $$;
 ALTER FUNCTION "public"."needs_rules_walkthrough"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."needs_rules_walkthrough"() IS 'True when the signed-in person is under 18 and hasn''t seen the rules walkthrough yet (MUST-1c).';
+COMMENT ON FUNCTION "public"."needs_rules_walkthrough"() IS 'True when the signed-in person is under 18, may post and hasn''t seen the rules walkthrough yet (MUST-1c).';
 
 
 

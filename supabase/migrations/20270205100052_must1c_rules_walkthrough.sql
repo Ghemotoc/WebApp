@@ -8,7 +8,8 @@
  * end or skips, the walkthrough never shows again.
  * What it adds:
  * - profiles.rules_walkthrough_seen_at: when the person finished or skipped it; null until then.
- * - needs_rules_walkthrough(): true for a signed-in person under 18 who hasn't seen it.
+ * - needs_rules_walkthrough(): true for a signed-in person under 18 who hasn't seen it and may
+ *   post (an account that can't post yet is told so by the box instead).
  * - finish_rules_walkthrough(): records that the signed-in person saw it (a second call keeps the
  *   first time).
  * - The four cards' text, as help pages in the CMS (entry keys rules-walkthrough-1-kindness to
@@ -28,7 +29,9 @@ comment on column public.profiles.rules_walkthrough_seen_at is
 /*
  * needs_rules_walkthrough(): whether the signed-in person should see the rules walkthrough before
  * posting. Inputs: none (the caller). Returns true for someone under 18 (or of unknown age) who
- * hasn't finished or skipped it; false for adults, for anyone who has, and when signed out.
+ * hasn't finished or skipped it and may post (is_active_member(): a read-only account would only
+ * reach "can't comment yet" after the cards, so it gets the box's own answer first); false for
+ * adults, for anyone who has seen it, for a read-only account and when signed out.
  * Raises nothing. Called by the comment and forum post boxes before their first send.
  */
 create function public.needs_rules_walkthrough()
@@ -40,12 +43,13 @@ set search_path = ''
 as $$
   select coalesce(
     (select public.message_age_group(profiles) <> 'adult' and profiles.rules_walkthrough_seen_at is null
+            and public.is_active_member()
      from public.profiles
      where profiles.id = (select auth.uid())),
     false);
 $$;
 comment on function public.needs_rules_walkthrough() is
-  'True when the signed-in person is under 18 and hasn''t seen the rules walkthrough yet (MUST-1c).';
+  'True when the signed-in person is under 18, may post and hasn''t seen the rules walkthrough yet (MUST-1c).';
 revoke all on function public.needs_rules_walkthrough() from public, anon;
 grant execute on function public.needs_rules_walkthrough() to authenticated;
 
