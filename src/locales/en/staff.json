@@ -271,7 +271,8 @@
       "bad_filter": "Check the user ID and the dates: a user ID has 36 characters, a date is a day.",
       "unreachable": "We couldn’t reach our server. Check your connection and try again.",
       "not_allowed": "Only an owner or admin can export the audit log."
-    }
+    },
+    "showAll": "Show all"
   },
   "invites": {
     "documentTitle": "Invite links · {{productName}}",

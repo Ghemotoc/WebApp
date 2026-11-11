@@ -99,12 +99,26 @@ function CoverColumns({ stories }: { stories: ListedStory[] }) {
 /**
  * The gold card on the wall, in the CMS's words.
  *
+ * @param card - the card's words from the CMS
+ * @param isOverWall - true when covers are drawn, so the card sits over their top right corner
  * @returns the card, or nothing while its title is empty
  */
-function RightsCard({ card }: { card: HomeRightsCard | undefined }) {
+function RightsCard({
+  card,
+  isOverWall,
+}: {
+  card: HomeRightsCard | undefined;
+  isOverWall: boolean;
+}) {
   if (card === undefined || card.title.trim() === '') return null;
+  // Over the covers the card floats at the wall's top right, as on the board. With no cover there
+  // is nothing under it, so it stays in the page's flow at the right: floated, it gave the figure
+  // no height and covered the next section's heading on phones and tablets (UX-QA).
+  const placement = isOverWall ? 'absolute top-0 right-0' : 'relative ml-auto';
   return (
-    <div className="absolute top-0 right-0 z-10 flex w-[210px] max-w-[46%] rotate-[5deg] flex-col gap-1 glass-band-tint rounded-[18px] bg-gold px-4 py-3.5 text-on-gold">
+    <div
+      className={`${placement} z-10 flex w-[210px] max-w-[46%] rotate-[5deg] flex-col gap-1 glass-band-tint rounded-[18px] bg-gold px-4 py-3.5 text-on-gold`}
+    >
       {/* The eyebrow's type in the card's dark text: dark gold on gold would be unreadable. */}
       <p className="eyebrow-type m-0">{withBrand(card.eyebrow)}</p>
       <p className="m-0 font-heading text-lg leading-[1.05] font-extrabold">
@@ -131,7 +145,7 @@ export function HeroCollage({ rightsCard }: HeroCollageProps) {
   return (
     <figure className="relative mx-auto my-0 min-w-0 max-w-[600px] flex-[1_1_520px] pt-10 pb-6">
       <CoverColumns stories={stories} />
-      <RightsCard card={rightsCard} />
+      <RightsCard card={rightsCard} isOverWall={stories.length > 0} />
       {/* On a wall of two rows the card sits over its bottom left corner, as on the board. Under
           a single row it goes below the covers, where it can't meet the other card on a phone;
           with no cover at all there is no wall to put it on. */}
