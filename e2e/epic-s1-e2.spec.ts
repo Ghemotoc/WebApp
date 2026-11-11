@@ -24,6 +24,7 @@ import { expect, test, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
+import { homeAddressPattern } from './support/homeAddress';
 import { appPathFromEmail, waitForEmail } from './support/mailpit';
 
 /** Turns the waiting list on or off (WAITLIST-1; on from its migration). */
@@ -81,7 +82,7 @@ test.describe('epic S1-E2 journeys', () => {
       // Confirm: the username came with the form, so the account is active at once (S1-E2-04).
       await page.goto(appPathFromEmail((await waitForEmail(address)).HTML));
       await page.getByRole('link', { name: 'Continue', exact: true }).click();
-      await expect(page).toHaveURL(/\/$/);
+      await expect(page).toHaveURL(homeAddressPattern);
       expect(runSql(`select account_state(id) from auth.users where email = '${address}'`)).toBe(
         'active',
       );
