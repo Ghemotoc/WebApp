@@ -5,7 +5,8 @@
  * Board values: the title field 52 px tall in Funnel Display 700 at 20 px (maxlength 120); the blurb
  * three rows with a live "n of 500 characters" counter; the language as choice chips, with the
  * note that more open once we have moderators who read them. Languages staff haven't opened yet
- * show as disabled chips, "coming when we have moderators for it" (S1-E11-05, criterion 5).
+ * show as disabled chips marked "(soon)", short enough to fit a phone; the hint under them says why
+ * (S1-E11-05, criterion 5; MARKETS-2c).
  * Who uses it: NewStoryPage. What it calls: useNewStoryForm's set().
  */
 import { useTranslation } from 'react-i18next';
