@@ -20,6 +20,7 @@ import romanianEmail from '../src/locales/ro/email.json';
 
 import type { EmailSender, SendEmail } from './contact';
 import { sameText } from './same-text';
+import { writtenLanguageFor } from '../src/schemas/interfaceLanguages';
 
 /** The texts of one language, as in email.json. */
 type EmailTexts = Record<string, string | Record<string, string>>;
@@ -260,7 +261,7 @@ export async function handleSendEmailHook(
     );
   }
   // Step 2: the person's language, Romanian unless they chose English, with the admins' wording.
-  const locale = payload.user.user_metadata?.locale === 'en' ? 'en' : 'ro';
+  const locale = writtenLanguageFor(payload.user.user_metadata?.locale);
   const overrides = await options.readOverrides(locale).catch(() => new Map<string, string>());
   const read = (path: string) => textOf(defaultTexts[locale], overrides, path, options);
   // Step 3: send, and tell Auth plainly when it couldn't be sent.

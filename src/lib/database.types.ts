@@ -13443,6 +13443,7 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      interface_language_codes: { Args: Record<PropertyKey, never>; Returns: string[] };
       interface_text_live: {
         Args: { wanted_locale: string };
         Returns: {
@@ -13481,12 +13482,14 @@ export type Database = {
       is_email_banned: { Args: { email: string }; Returns: boolean };
       is_feature_enabled: { Args: { flag_key: string }; Returns: boolean };
       is_in_quiet_hours: { Args: { time_of_day: string }; Returns: boolean };
+      is_interface_language: { Args: { code: string }; Returns: boolean };
       is_known_time_zone: { Args: { zone_name: string }; Returns: boolean };
       is_moderated_away: {
         Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
         Returns: boolean;
       };
       is_on_waitlist: { Args: { target_user_id: string }; Returns: boolean };
+      is_open_interface_language: { Args: { code: string }; Returns: boolean };
       is_personal_email_domain: { Args: { domain: string }; Returns: boolean };
       is_picture_reviewer: { Args: { person_id: string }; Returns: boolean };
       is_school_domain_trusted: { Args: { domain: string }; Returns: boolean };
@@ -16955,6 +16958,7 @@ export type Database = {
           writer_count: number;
         }[];
       };
+      written_language_for: { Args: { code: string }; Returns: string };
       youngest_age: {
         Args: { birth_month: number; birth_year: number; on_date: string };
         Returns: number;

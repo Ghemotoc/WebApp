@@ -28,6 +28,7 @@ import { ParentAnswerDetails } from './ParentAnswerDetails';
 import { ParentAnswerForm } from './ParentAnswerForm';
 import { ParentAnswerOutcome } from './ParentAnswerOutcome';
 import { errorShownByHook } from '@/lib/errorShownByHook';
+import { writtenLanguageFor } from '@/schemas/interfaceLanguages';
 
 /** useConsentRequest's result, passed down once. */
 type ConsentState = ReturnType<typeof useConsentRequest>;
@@ -138,7 +139,7 @@ function AnsweredCard({ state, request }: { state: ConsentState; request: Consen
         isAnswering={state.isAnswering}
         failure={state.answerFailure}
         onWithdraw={() => {
-          const language = i18n.language === 'en' ? 'en' : 'ro';
+          const language = writtenLanguageFor(i18n.language);
           void state
             .answer({
               token: state.token,

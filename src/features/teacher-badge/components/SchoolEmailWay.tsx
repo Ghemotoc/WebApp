@@ -22,6 +22,7 @@ import {
 } from '../../../schemas/teacherCheck';
 import type { TeacherBadgeFailure } from '../api/teacherBadge';
 import { errorShownByHook } from '@/lib/errorShownByHook';
+import { writtenLanguageFor } from '@/schemas/interfaceLanguages';
 
 /** What the way needs. */
 export interface SchoolEmailWayProps {
@@ -59,7 +60,7 @@ export function SchoolEmailWay({ idPrefix, isSending, failure, onSend }: SchoolE
   /** Checks the address here first; a personal one is never sent. */
   function submit(event: FormEvent) {
     event.preventDefault();
-    const language = i18n.language.startsWith('en') ? 'en' : 'ro';
+    const language = writtenLanguageFor(i18n.language);
     const parsed = teacherLinkRequestSchema.safeParse({ schoolEmail: email, language });
     if (!parsed.success) {
       setLocalFailure('invalid');

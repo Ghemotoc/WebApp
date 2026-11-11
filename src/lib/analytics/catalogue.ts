@@ -10,11 +10,12 @@
  * sets (a language, a category slug, a reason), never free text.
  * Who uses it: src/lib/analytics/track.ts and the screens that call trackEvent().
  */
+import type { InterfaceLanguage } from '@/schemas/interfaceLanguages';
 
 /** Each event's properties. An event without properties takes an empty object. */
 export interface AnalyticsEventProperties {
   /** The person picked another interface language in the language menu. */
-  language_changed: { language: 'ro' | 'en' };
+  language_changed: { language: InterfaceLanguage };
   /** An account was created through the sign-up form. */
   sign_up_completed: Record<string, never>;
   /** A writer created a story; the category's slug only. */

@@ -9,6 +9,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   checkLocales,
+  compareNordicLanguage,
   findCedillaLetters,
   findMissingKeys,
   flattenTranslations,
@@ -56,5 +57,27 @@ describe('the i18n key check', () => {
     const romanian = flattenTranslations({ greeting: 'Povești și țări' });
 
     expect(findCedillaLetters('common', romanian)).toEqual([]);
+  });
+
+  // MARKETS-2a: a Nordic folder being translated.
+  it('a Swedish file that is only part done gives a warning, not a failure', () => {
+    const english = new Map([['common', flattenTranslations({ save: 'Save', cancel: 'Cancel' })]]);
+    const swedish = new Map([['common', flattenTranslations({ save: 'Spara' })]]);
+
+    const findings = compareNordicLanguage('sv', swedish, english);
+
+    expect(findings.problems).toEqual([]);
+    expect(findings.warnings).toEqual([
+      'sv/common.json: 1 of 2 keys not translated yet (they read in English)',
+    ]);
+  });
+
+  it('a Swedish key that English doesn’t have fails the check', () => {
+    const english = new Map([['common', flattenTranslations({ save: 'Save' })]]);
+    const swedish = new Map([['common', flattenTranslations({ save: 'Spara', sav: 'Spara' })]]);
+
+    expect(compareNordicLanguage('sv', swedish, english).problems).toEqual([
+      'sv/common.json has "sav", which en doesn\'t',
+    ]);
   });
 });

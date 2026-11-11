@@ -8,8 +8,10 @@
  */
 import { z } from 'zod';
 
+import { writtenLanguages } from './interfaceLanguages';
+
 /** The two languages a parent's email and page can be in. */
-export const consentLanguages = ['ro', 'en'] as const;
+export const consentLanguages = writtenLanguages;
 export type ConsentLanguage = (typeof consentLanguages)[number];
 
 /** The writer asks: a parent's or guardian's email and the email's language (board 2.4). */

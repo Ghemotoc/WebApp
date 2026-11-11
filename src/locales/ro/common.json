@@ -74,12 +74,15 @@
     "label": "Limbă",
     "en": "English",
     "ro": "Română",
+    "sv": "Svenska",
+    "da": "Dansk",
+    "nb": "Norsk bokmål",
     "savedToAccount": "Limba a fost salvată în cont.",
     "keptOnDevice": "Nu am putut salva limba în cont. O păstrăm pe acest dispozitiv.",
     "settingsHeading": "Limbă",
     "settingsIntro": "Limba butoanelor, meniurilor și e-mailurilor. Se salvează în cont, așa că se aplică pe orice dispozitiv.",
     "settingsLegend": "Limba interfeței",
-    "settingsNote": "Înainte de conectare, site-ul se deschide în română, iar engleza se alege din meniul de limbă din josul paginii. Poveștile au limba lor, aleasă de autor."
+    "settingsNote": "Înainte de conectare, site-ul se deschide în limba țării din care este vizitat: română în România și în Republica Moldova, engleză în rest. Meniul de limbă este în josul paginii. Poveștile au limba lor, aleasă de autor."
   },
   "shelf": {
     "regionLabel": "{{title}}, se derulează lateral",

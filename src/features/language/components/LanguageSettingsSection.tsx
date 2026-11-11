@@ -15,12 +15,10 @@
 import { useTranslation } from 'react-i18next';
 
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
-import { isSupportedLanguage, type SupportedLanguage } from '@/lib/i18n';
+import { isSupportedLanguage } from '@/lib/i18n';
 
 import { useInterfaceLanguage, type LanguageSaveStatus } from '../hooks/useInterfaceLanguage';
-
-/** The languages in the board's order, each named in its own language. */
-const languageOrder: readonly SupportedLanguage[] = ['en', 'ro'];
+import { useLanguageOptions } from '../hooks/useLanguageOptions';
 
 /** The line each save result shows; nothing before a choice is made. */
 const saveMessageKeys: Record<LanguageSaveStatus, string | null> = {
@@ -38,12 +36,9 @@ export function LanguageSettingsSection() {
   const { t } = useTranslation();
   const { language, changeLanguage, saveStatus } = useInterfaceLanguage();
 
-  // Step 1: one radio button per language, labelled in that language ("English", "Română").
-  const options = languageOrder.map((code) => ({
-    value: code,
-    label: t(`language.${code}`),
-    lang: code,
-  }));
+  // Step 1: one radio button per open language, labelled in that language ("English", "Română";
+  // a Nordic language only once staff open it, MARKETS-2a).
+  const options = useLanguageOptions();
   const messageKey = saveMessageKeys[saveStatus];
 
   return (

@@ -6,7 +6,8 @@
  *
  * Board values (Discover): the label "Language" is shown beside the drop-down, or visually hidden
  * where a frame asks for it. Options in the board's order, each in its own language (English,
- * Română) with a lang attribute so screen readers pronounce them correctly. Height and style
+ * Română, and Svenska, Dansk or Norsk bokmål once staff open them; MARKETS-2a) with a lang
+ * attribute so screen readers pronounce them correctly. Height and style
  * follow the one Select (44 px everywhere, docs/board-fixes.md).
  * Who uses it: AppLayout's footer, and the staff frame (StaffLayout, StaffFooter).
  * What it calls: useInterfaceLanguage, which switches the screen and saves the choice.
@@ -14,9 +15,10 @@
 import { useTranslation } from 'react-i18next';
 
 import { Select } from '@/components/ui/Select';
-import { isSupportedLanguage, type SupportedLanguage } from '@/lib/i18n';
+import { isSupportedLanguage } from '@/lib/i18n';
 
 import { useInterfaceLanguage, type LanguageSaveStatus } from '../hooks/useInterfaceLanguage';
+import { useLanguageOptions } from '../hooks/useLanguageOptions';
 
 /** What the drop-down needs. */
 export interface LanguageSelectProps {
@@ -25,9 +27,6 @@ export interface LanguageSelectProps {
   /** Shown in the footer; hidden (but read by screen readers) where a frame has no room. */
   isLabelVisible?: boolean;
 }
-
-/** The languages in the board's order, each named in its own language. */
-const languageOrder: readonly SupportedLanguage[] = ['en', 'ro'];
 
 /** The message key for each save result; nothing is said before a choice is made. */
 const saveMessageKeys: Record<LanguageSaveStatus, string | null> = {
@@ -45,12 +44,9 @@ export function LanguageSelect({ id, isLabelVisible = false }: LanguageSelectPro
   const { t } = useTranslation();
   const { language, changeLanguage, saveStatus } = useInterfaceLanguage();
 
-  // The option names come from the locale files (language.en, language.ro).
-  const options = languageOrder.map((code) => ({
-    value: code,
-    label: t(`language.${code}`),
-    lang: code,
-  }));
+  // The open languages only, in the board's order (English, Română, then any Nordic language
+  // staff have opened; MARKETS-2a), each named in its own language.
+  const options = useLanguageOptions();
   const messageKey = saveMessageKeys[saveStatus];
 
   return (

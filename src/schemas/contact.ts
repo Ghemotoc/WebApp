@@ -6,6 +6,8 @@
  */
 import { z } from 'zod';
 
+import { writtenLanguages } from './interfaceLanguages';
+
 /** What a message can be about; the topic picks the subject line staff see. */
 export const contactTopics = ['question', 'account', 'data_request', 'other'] as const;
 export type ContactTopic = (typeof contactTopics)[number];
@@ -26,7 +28,7 @@ export const contactRequestSchema = z.object({
   topic: z.enum(contactTopics),
   message: z.string().trim().min(1).max(contactMessageMaxLength),
   email: z.string().trim().email().max(254),
-  language: z.enum(['ro', 'en']),
+  language: z.enum(writtenLanguages),
   handle: z.string().trim().min(1).max(60).optional(),
   userId: z.string().uuid().optional(),
   website: z.string().max(2000).optional(),

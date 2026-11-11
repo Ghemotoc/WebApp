@@ -35,6 +35,7 @@ import { newConsentToken } from './parent-consent';
 import { consentDate } from './parent-consent/emails';
 import { bearerToken } from './picture-check';
 import { hmacHex } from './signup-context';
+import { writtenLanguageFor } from '../src/schemas/interfaceLanguages';
 
 /** What the handler needs from its surroundings. */
 export interface DataRequestParentOptions {
@@ -166,7 +167,7 @@ async function sendParentEmail(
   details: ParentEmailDetails,
   link: string,
 ): Promise<boolean> {
-  const language: ParentEmailLanguage = details.language === 'en' ? 'en' : 'ro';
+  const language: ParentEmailLanguage = writtenLanguageFor(details.language);
   const overrides = await options.readOverrides(language).catch(() => new Map<string, string>());
   const values = {
     handle: details.handle ?? '',

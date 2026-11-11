@@ -6668,7 +6668,7 @@ begin
         jsonb_build_object('name', forum_names.name, 'description', forum_names.description))
       from public.forum_names where forum_names.forum_id = forums.id), '{}'::jsonb),
     array(select languages.code from public.languages
-      where languages.is_interface and not exists (
+      where languages.is_interface and languages.status = 'open' and not exists (
         select 1 from public.forum_names
         where forum_names.forum_id = forums.id and forum_names.language_code = languages.code)
       order by languages.code)
@@ -6801,7 +6801,7 @@ begin
       coalesce((select jsonb_object_agg(tag_names.language_code, tag_names.name)
         from public.tag_names where tag_names.tag_id = tags.id), '{}'::jsonb) as names,
       array(select languages.code from public.languages
-        where languages.is_interface and not exists (
+        where languages.is_interface and languages.status = 'open' and not exists (
           select 1 from public.tag_names
           where tag_names.tag_id = tags.id and tag_names.language_code = languages.code)
         order by languages.code) as missing_languages
@@ -10962,8 +10962,9 @@ begin
   if target.id is null then
     raise exception 'There is no such language.' using errcode = 'no_data_found';
   end if;
-  -- Step 1: the interface languages stay open: every screen is written in them.
-  if target.is_interface and new_status <> 'open' then
+  -- Step 1: Romanian and English stay open: every screen is written in them. MARKETS-2a: the
+  -- Nordic interface languages (sv, da, nb) open and close like any other.
+  if target.is_interface and target.code in ('ro', 'en') and new_status <> 'open' then
     raise exception 'The interface is in this language, so it stays open.' using errcode = 'check_violation', hint = 'interface_language';
   end if;
   -- Step 2: criterion 2: a language opens only with a moderator who reads it.
@@ -12888,6 +12889,21 @@ COMMENT ON FUNCTION "public"."initials_colour_names"() IS 'Internal: the sixteen
 
 
 
+CREATE OR REPLACE FUNCTION "public"."is_interface_language"("code" "text") RETURNS boolean
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(code = any (public.interface_language_codes()), false);
+$$;
+
+
+ALTER FUNCTION "public"."is_interface_language"("code" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."is_interface_language"("code" "text") IS 'True when the code is one of the interface languages (MARKETS-2a); used by the table checks.';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."profiles" (
     "id" "uuid" NOT NULL,
     "birth_year" smallint,
@@ -12951,7 +12967,7 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     CONSTRAINT "profiles_handle_length" CHECK ((("handle" IS NULL) OR (("char_length"("handle") >= 3) AND ("char_length"("handle") <= 30)))),
     CONSTRAINT "profiles_initials_colour_known" CHECK ((("initials_colour" IS NULL) OR ("initials_colour" = ANY ("public"."initials_colour_names"())))),
     CONSTRAINT "profiles_legal_region_shape" CHECK (("legal_region_code" ~ '^([A-Z0-9]{1,3})?$'::"text")),
-    CONSTRAINT "profiles_locale_is_supported" CHECK (("locale" = ANY (ARRAY['ro'::"text", 'en'::"text"]))),
+    CONSTRAINT "profiles_locale_is_supported" CHECK ("public"."is_interface_language"("locale")),
     CONSTRAINT "profiles_look_known" CHECK (("look" = ANY (ARRAY['lilac'::"text", 'sorbet'::"text", 'seaglass'::"text", 'pistachio'::"text", 'candy'::"text", 'tmc'::"text"]))),
     CONSTRAINT "profiles_pen_name_length" CHECK ((("pen_name" IS NULL) OR (("char_length"("pen_name") >= 1) AND ("char_length"("pen_name") <= 50)))),
     CONSTRAINT "profiles_signature_short" CHECK ((("signature" IS NULL) OR ((("char_length"("signature") >= 1) AND ("char_length"("signature") <= 300)) AND ("array_length"("string_to_array"("signature", '
@@ -12975,7 +12991,7 @@ COMMENT ON COLUMN "public"."profiles"."birth_month" IS 'Month of birth, only whe
 
 
 
-COMMENT ON COLUMN "public"."profiles"."locale" IS 'Interface language the person chose: ro (default for everyone, 17 Oct 2026) or en (S1-E1-04).';
+COMMENT ON COLUMN "public"."profiles"."locale" IS 'Interface language the person chose: one of interface_language_codes(), and only an open one is saved (set_my_locale(); S1-E1-04, MARKETS-2a).';
 
 
 
@@ -19641,7 +19657,9 @@ begin
   end if;
   perform public.take_rate_limit('support_ticket');
   -- Step 2: the ticket in the member's language, its first message and the first history line.
-  select case when profiles.locale = 'en' then 'en' else 'ro' end into caller_language
+  -- MARKETS-2a: the replies' language is the written one for the person's language (sv, da
+  -- and nb read in English until their texts exist).
+  select public.written_language_for(profiles.locale) into caller_language
   from public.profiles where profiles.id = caller_id;
   insert into public.support_tickets (requester_user_id, language, subject, channel, category)
   values (caller_id, coalesce(caller_language, 'ro'), clean_subject, 'in_app', coalesce(category, 'other'))
@@ -19699,7 +19717,8 @@ begin
     new_user_id,
     birth_year,
     birth_month,
-    case when chosen_locale in ('ro', 'en') then chosen_locale else 'ro' end,
+    -- MARKETS-2a: any open interface language (sv, da, nb once staff open them), else Romanian.
+    case when public.is_open_interface_language(chosen_locale) then chosen_locale else 'ro' end,
     country,
     place ->> 'region',
     case when place ->> 'country' is not null then now() end,
@@ -23231,7 +23250,7 @@ CREATE OR REPLACE FUNCTION "public"."forum_name_problems"("names" "jsonb") RETUR
     AS $$
   select array(
     select languages.code || ':empty' from public.languages
-    where languages.is_interface and coalesce(btrim(names -> languages.code ->> 'name'), '') = ''
+    where languages.is_interface and languages.status = 'open' and coalesce(btrim(names -> languages.code ->> 'name'), '') = ''
     union all
     select given.key || ':unknown_language' from jsonb_each(coalesce(names, '{}')) as given
     where not exists (select 1 from public.languages where languages.code = given.key)
@@ -25022,6 +25041,21 @@ COMMENT ON FUNCTION "public"."insert_class_space"("owner_id" "uuid", "name" "tex
 
 
 
+CREATE OR REPLACE FUNCTION "public"."interface_language_codes"() RETURNS "text"[]
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select array['en', 'ro', 'sv', 'da', 'nb']::text[];
+$$;
+
+
+ALTER FUNCTION "public"."interface_language_codes"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."interface_language_codes"() IS 'Every interface language the app knows, open or not: en, ro, sv, da, nb (MARKETS-2a). The twin of src/schemas/interfaceLanguages.ts.';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."interface_text_overrides" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "text_key" "text" NOT NULL,
@@ -25322,6 +25356,27 @@ COMMENT ON FUNCTION "public"."is_on_waitlist"("target_user_id" "uuid") IS 'Inter
 
 
 
+CREATE OR REPLACE FUNCTION "public"."is_open_interface_language"("code" "text") RETURNS boolean
+    LANGUAGE "sql" STABLE
+    SET "search_path" TO ''
+    AS $$
+  select public.is_interface_language(code)
+    and exists (
+      select 1 from public.languages
+      where languages.code = is_open_interface_language.code
+        and languages.status = 'open'
+        and languages.is_interface
+    );
+$$;
+
+
+ALTER FUNCTION "public"."is_open_interface_language"("code" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."is_open_interface_language"("code" "text") IS 'True for an interface language whose languages row is open (MARKETS-2a); a closed one is never saved as a person''s language.';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."is_personal_email_domain"("domain" "text") RETURNS boolean
     LANGUAGE "sql" IMMUTABLE
     SET "search_path" TO ''
@@ -25563,7 +25618,7 @@ begin
     nullif(btrim(coalesce(facts, '')), ''), ground, ground_key,
     coalesce((about ->> 'automated_detection')::boolean, false),
     (about ->> 'restriction_ends_at')::timestamptz,
-    coalesce((select case when profiles.locale = 'en' then 'en' else 'ro' end
+    coalesce((select public.written_language_for(profiles.locale)
               from public.profiles where profiles.id = recipient_id), 'ro'),
     now() + interval '6 months')
   returning * into new_statement;
@@ -41379,10 +41434,11 @@ begin
       using errcode = 'insufficient_privilege';
   end if;
 
-  -- Step 2: refuse anything but the two interface languages, with a clear message (the table's
-  -- check would refuse it too, but with a less helpful one).
-  if new_locale is null or new_locale not in ('ro', 'en') then
-    raise exception 'Unsupported interface language: %. Use ro or en.', coalesce(new_locale, 'null')
+  -- Step 2: refuse anything but an open interface language, with a clear message (the table's
+  -- check would refuse an unknown code too, but with a less helpful one, and it can't see status).
+  if new_locale is null or not public.is_open_interface_language(new_locale) then
+    raise exception 'Unsupported interface language: %. Use one of the open languages.',
+      coalesce(new_locale, 'null')
       using errcode = 'invalid_parameter_value';
   end if;
 
@@ -41406,7 +41462,7 @@ $$;
 ALTER FUNCTION "public"."set_my_locale"("new_locale" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."set_my_locale"("new_locale" "text") IS 'Saves the signed-in person''s interface language (ro or en) on their own profile (S1-E1-04).';
+COMMENT ON FUNCTION "public"."set_my_locale"("new_locale" "text") IS 'Saves the signed-in person''s interface language (any open one) on their own profile (S1-E1-04, MARKETS-2a).';
 
 
 
@@ -44470,7 +44526,8 @@ declare
   recent_acknowledgements integer;
 begin
   -- Step 1: the language: the account's, or Romanian (the acknowledgement then carries both).
-  select case when profiles.locale = 'en' then 'en' else 'ro' end into sender_language
+  -- MARKETS-2a: the written language for the account's language (sv, da, nb read in English).
+  select public.written_language_for(profiles.locale) into sender_language
   from public.profiles where profiles.id = sender_account;
   -- Step 2: the ticket, its first message and its first history line.
   insert into public.support_tickets (requester_user_id, requester_email, language, subject, channel,
@@ -46506,7 +46563,8 @@ begin
   end if;
   -- Step 2: who wrote, and in which language.
   sender_email := btrim(fields ->> 'email');
-  sender_language := case when fields ->> 'language' = 'en' then 'en' else 'ro' end;
+  -- MARKETS-2a: the written language for the page's language (sv, da, nb read in English).
+  sender_language := public.written_language_for(fields ->> 'language');
   sender_account_id := public.account_for_email(sender_email);
   -- Step 3: the ticket, its first message and the first history line.
   insert into public.support_tickets (requester_user_id, requester_email, language, subject, channel, category)
@@ -46996,7 +47054,7 @@ CREATE OR REPLACE FUNCTION "public"."tag_name_problems"("target_tag_id" "uuid", 
   -- Every interface language needs a name.
   select array(
     select languages.code || ':empty' from public.languages
-    where languages.is_interface and public.normalise_tag(names ->> languages.code) = ''
+    where languages.is_interface and languages.status = 'open' and public.normalise_tag(names ->> languages.code) = ''
     union all
     select given.key || ':unknown_language' from jsonb_each_text(coalesce(names, '{}')) as given
     where not exists (select 1 from public.languages where languages.code = given.key)
@@ -48740,7 +48798,7 @@ CREATE OR REPLACE FUNCTION "public"."write_space_forum_names"("target_space_id" 
     AS $$
   insert into public.forum_names (forum_id, language_code, name)
   select public.space_forum_id(target_space_id), languages.code, name
-  from public.languages where languages.is_interface
+  from public.languages where languages.is_interface and languages.status = 'open'
   on conflict on constraint forum_names_one_per_language do update set name = excluded.name;
 $$;
 
@@ -49370,6 +49428,25 @@ ALTER FUNCTION "public"."writers_published_by_market"("for_day" "date") OWNER TO
 
 
 COMMENT ON FUNCTION "public"."writers_published_by_market"("for_day" "date") IS 'Internal: writers with a readable chapter by the end of a day, in total and by market (S1-E15-02).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."written_language_for"("code" "text") RETURNS "text"
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select case
+    when code in ('ro', 'en') then code
+    when public.is_interface_language(code) then 'en'
+    else 'ro'
+  end;
+$$;
+
+
+ALTER FUNCTION "public"."written_language_for"("code" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."written_language_for"("code" "text") IS 'ro or en: the language an email or statement is written in for a person''s language; sv, da and nb read in English (MARKETS-2a).';
 
 
 
@@ -50924,7 +51001,7 @@ CREATE TABLE IF NOT EXISTS "public"."live_sessions" (
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "deleted_at" timestamp with time zone,
-    CONSTRAINT "live_sessions_language_known" CHECK (("language_code" = ANY (ARRAY['ro'::"text", 'en'::"text"]))),
+    CONSTRAINT "live_sessions_language_known" CHECK ("public"."is_interface_language"("language_code")),
     CONSTRAINT "live_sessions_link_is_https" CHECK ((("link_url" IS NULL) OR (("link_url" ~ '^https://[^\s"''<>]+$'::"text") AND (("char_length"("link_url") >= 12) AND ("char_length"("link_url") <= 500))))),
     CONSTRAINT "live_sessions_place_en_length" CHECK ((("char_length"("btrim"("place_en")) >= 1) AND ("char_length"("btrim"("place_en")) <= 80))),
     CONSTRAINT "live_sessions_place_ro_length" CHECK ((("char_length"("btrim"("place_ro")) >= 1) AND ("char_length"("btrim"("place_ro")) <= 80))),
@@ -61526,6 +61603,11 @@ REVOKE ALL ON FUNCTION "public"."initials_colour_names"() FROM PUBLIC;
 
 
 
+GRANT ALL ON FUNCTION "public"."is_interface_language"("code" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."is_interface_language"("code" "text") TO "authenticated";
+
+
+
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."profiles" TO "service_role";
 GRANT SELECT ON TABLE "public"."profiles" TO "authenticated";
 
@@ -63194,6 +63276,11 @@ REVOKE ALL ON FUNCTION "public"."insert_class_space"("owner_id" "uuid", "name" "
 
 
 
+GRANT ALL ON FUNCTION "public"."interface_language_codes"() TO "anon";
+GRANT ALL ON FUNCTION "public"."interface_language_codes"() TO "authenticated";
+
+
+
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."interface_text_overrides" TO "service_role";
 GRANT SELECT ON TABLE "public"."interface_text_overrides" TO "authenticated";
 
@@ -63243,6 +63330,11 @@ GRANT ALL ON FUNCTION "public"."is_moderated_away"("item_type" "public"."reporta
 
 
 REVOKE ALL ON FUNCTION "public"."is_on_waitlist"("target_user_id" "uuid") FROM PUBLIC;
+
+
+
+GRANT ALL ON FUNCTION "public"."is_open_interface_language"("code" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."is_open_interface_language"("code" "text") TO "authenticated";
 
 
 
@@ -66628,6 +66720,11 @@ GRANT ALL ON FUNCTION "public"."writers_hub_spotlight"() TO "authenticated";
 
 
 REVOKE ALL ON FUNCTION "public"."writers_published_by_market"("for_day" "date") FROM PUBLIC;
+
+
+
+GRANT ALL ON FUNCTION "public"."written_language_for"("code" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."written_language_for"("code" "text") TO "authenticated";
 
 
 

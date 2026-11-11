@@ -9,8 +9,16 @@
  *    (CLAUDE.md rule 4). Added here because a wrong letter is easy to paste and hard to see. It uses
  *    the same rule as the app's text fields, src/lib/romanian-text.ts (S1-E1-04): a text is wrong
  *    when correcting its letters would change it.
+ * 3. The Nordic folders (src/locales/sv/, da/, nb/; bundle MARKETS-2, part a). A folder may hold
+ *    only some files and some keys while it is being translated: what is missing reads in English,
+ *    so it is reported as a warning, never a failure. A key English doesn't have is a failure (a
+ *    typo, or a key renamed in English and not here). A language listed in
+ *    requiredFullLanguages must be complete: its missing keys fail the check. Add a language there
+ *    in the pull request that lands its last file, before staff open it in Staff › Settings
+ *    (the brief: "missing keys for closed languages as warnings and for open languages as errors";
+ *    the check can't read the database, so this list stands in for "open").
  */
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
@@ -18,6 +26,15 @@ import { normaliseRomanianLetters } from '../src/lib/romanian-text';
 
 /** The languages that must have the same keys. */
 export const localeLanguages = ['ro', 'en'] as const;
+
+/** The Nordic folders the check reads, when they exist (MARKETS-2a). */
+export const nordicLanguages = ['sv', 'da', 'nb'] as const;
+
+/**
+ * Nordic languages that must be complete: every English key translated. Empty until the first
+ * Nordic language is fully translated; add its code in the same pull request.
+ */
+export const requiredFullLanguages: readonly string[] = [];
 
 /** A translation file's contents: text values, possibly grouped in nested objects. */
 export interface TranslationTree {
@@ -146,11 +163,78 @@ export function checkLocales(localesFolder: string): TranslationProblem[] {
   return problems;
 }
 
+/** What the Nordic check found: failures, and warnings that don't fail the build. */
+export interface NordicFindings {
+  problems: TranslationProblem[];
+  warnings: string[];
+}
+
+/**
+ * Compares one Nordic language with English (check 3).
+ *
+ * @param language - "sv", "da" or "nb"
+ * @param nordicFiles - that language's flattened files
+ * @param englishFiles - English's flattened files
+ * @returns failures (keys English doesn't have; missing keys in a required language) and warnings
+ */
+export function compareNordicLanguage(
+  language: string,
+  nordicFiles: Map<string, Map<string, string>>,
+  englishFiles: Map<string, Map<string, string>>,
+): NordicFindings {
+  const findings: NordicFindings = { problems: [], warnings: [] };
+  const isRequired = requiredFullLanguages.includes(language);
+  for (const [namespace, english] of englishFiles) {
+    // Step 1: count the English keys this language hasn't translated yet.
+    const nordic = nordicFiles.get(namespace) ?? new Map<string, string>();
+    const missing = [...english.keys()].filter((key) => !nordic.has(key));
+    if (missing.length > 0) {
+      const line = `${language}/${namespace}.json: ${missing.length} of ${english.size} keys not translated yet (they read in English)`;
+      if (isRequired) findings.problems.push(line);
+      else findings.warnings.push(line);
+    }
+  }
+  for (const [namespace, nordic] of nordicFiles) {
+    // Step 2: a key English doesn't have is always a mistake.
+    const english = englishFiles.get(namespace) ?? new Map<string, string>();
+    for (const key of nordic.keys()) {
+      if (!english.has(key))
+        findings.problems.push(`${language}/${namespace}.json has "${key}", which en doesn't`);
+    }
+  }
+  return findings;
+}
+
+/**
+ * Runs check 3 on every Nordic folder that exists.
+ *
+ * @param localesFolder - absolute path of src/locales
+ * @returns the failures and warnings for all three languages
+ */
+export function checkNordicLocales(localesFolder: string): NordicFindings {
+  const englishFiles = readLanguage(localesFolder, 'en');
+  const findings: NordicFindings = { problems: [], warnings: [] };
+  for (const language of nordicLanguages) {
+    // A language with no folder at all hasn't started: nothing to say, unless it must be complete.
+    const nordicFiles = existsSync(join(localesFolder, language))
+      ? readLanguage(localesFolder, language)
+      : new Map<string, Map<string, string>>();
+    if (nordicFiles.size === 0 && !requiredFullLanguages.includes(language)) continue;
+    const languageFindings = compareNordicLanguage(language, nordicFiles, englishFiles);
+    findings.problems.push(...languageFindings.problems);
+    findings.warnings.push(...languageFindings.warnings);
+  }
+  return findings;
+}
+
 /** Runs the check from the command line and sets the exit code CI reads. */
 function main(): void {
   const localesFolder = fileURLToPath(new URL('../src/locales', import.meta.url));
-  const problems = checkLocales(localesFolder);
+  const nordic = checkNordicLocales(localesFolder);
+  const problems = [...checkLocales(localesFolder), ...nordic.problems];
 
+  // Warnings first: they never fail the build, but a translator wants to see them.
+  for (const warning of nordic.warnings) console.warn(`warning: ${warning}`);
   if (problems.length === 0) {
     console.log('i18n check passed: ro and en have the same keys and Romanian uses ș and ț.');
     return;

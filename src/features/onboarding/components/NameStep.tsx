@@ -18,6 +18,7 @@ import { Select } from '@/components/ui/Select';
 import { SetupForm } from '@/features/account/components/SetupForm';
 import { useMyNames } from '@/features/account/hooks/useMyNames';
 import { useInterfaceLanguage } from '@/features/language/hooks/useInterfaceLanguage';
+import { useLanguageOptions } from '@/features/language/hooks/useLanguageOptions';
 import { isSupportedLanguage } from '@/lib/i18n';
 
 import type { MyOnboarding } from '../api/onboarding';
@@ -27,12 +28,6 @@ import { useOnboardingChoices } from '../hooks/useOnboardingChoices';
 import { RegionSelect } from './RegionSelect';
 import { errorShownByHook } from '@/lib/errorShownByHook';
 
-/** The two interface languages, each named in its own language (WCAG 3.1.2). */
-const languageOptions = [
-  { value: 'ro', label: 'Română', lang: 'ro' },
-  { value: 'en', label: 'English', lang: 'en' },
-];
-
 /**
  * The interface language drop-down and its hint.
  *
@@ -41,6 +36,8 @@ const languageOptions = [
 function LanguageField() {
   const { t } = useTranslation('account');
   const { language, changeLanguage } = useInterfaceLanguage();
+  // The open interface languages, each named in its own language (WCAG 3.1.2; MARKETS-2a).
+  const languageOptions = useLanguageOptions();
   return (
     <div className="flex flex-col gap-1.5">
       <Select

@@ -27,6 +27,7 @@ import { useMyParentConsent } from '../hooks/useMyParentConsent';
 import { AskParentForm } from './AskParentForm';
 import { ConsentSentPanel } from './ConsentSentPanel';
 import { errorShownByHook } from '@/lib/errorShownByHook';
+import { writtenLanguageFor } from '@/schemas/interfaceLanguages';
 
 /** The class of a link drawn as a secondary button. */
 const linkButtonClass =
@@ -86,7 +87,7 @@ function AskingPanel({ state, consent }: { state: Consent; consent: MyParentCons
   }
   return (
     <AskParentForm
-      initialLanguage={consent.language ?? (i18n.language === 'en' ? 'en' : 'ro')}
+      initialLanguage={consent.language ?? writtenLanguageFor(i18n.language)}
       isSending={state.isSending}
       failure={hasResent ? null : state.sendFailure}
       onSend={async (request) => {
