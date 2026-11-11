@@ -4,7 +4,7 @@
  *
  * Who calls it: SpaceBannerPictureCard and SpaceLogoCard, which hand it to PictureUploadField.
  */
-import { PictureUploadError } from '@/features/pictures/api/pictures';
+import { PictureUploadError } from '@/features/pictures/api/pictureUploads';
 import type { UploadOutcome } from '@/features/pictures/hooks/usePictureUpload';
 
 /**

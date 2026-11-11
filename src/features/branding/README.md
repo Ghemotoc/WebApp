@@ -9,7 +9,7 @@ text for the logo. The app header, the staff header and the footers all show it 
 
 - `api/brandAssets.ts`: the four slots (`brand_asset_slot`), the staff read
   (`admin_brand_assets()`) and the `admin_set_brand_asset()` and `admin_clear_brand_asset()` calls.
-  The upload itself is `uploadBrandPicture()` in `src/features/pictures/api/pictures.ts`, so it
+  The upload itself is `uploadBrandPicture()` in `src/features/pictures/api/pictureUploads.ts`, so it
   goes through the picture check like every other upload (CLAUDE.md rule 19).
 - `lib/brandDefaults.ts`: the bundled default for each slot (`public/brand/`).
 - `hooks/useBrandSlots.ts`: the staff page's slots (read again while a picture waits), upload and

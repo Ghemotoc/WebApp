@@ -12,7 +12,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
-import { uploadBrandPicture } from '@/features/pictures/api/pictures';
+import { uploadBrandPicture } from '@/features/pictures/api/pictureUploads';
 
 import {
   clearBrandAsset,
