@@ -1304,6 +1304,33 @@ export type Database = {
           },
         ];
       };
+      chapter_finishes: {
+        Row: {
+          chapter_id: string;
+          read_on: string;
+          total: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          chapter_id: string;
+          read_on: string;
+          total?: number;
+        };
+        Update: {
+          chapter_id?: string;
+          read_on?: string;
+          total?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'chapter_finishes_chapter_id_fkey';
+            columns: ['chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       chapter_likes: {
         Row: {
           chapter_id: string;
@@ -2841,6 +2868,34 @@ export type Database = {
             referencedColumns: ['id'];
           },
         ];
+      };
+      daily_activity_totals: {
+        Row: {
+          active_members: number;
+          activity_on: string;
+          created_at: string;
+          minutes_in_app: number;
+          minutes_reading: number;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          active_members?: number;
+          activity_on: string;
+          created_at?: string;
+          minutes_in_app?: number;
+          minutes_reading?: number;
+          updated_at?: string;
+        };
+        Update: {
+          active_members?: number;
+          activity_on?: string;
+          created_at?: string;
+          minutes_in_app?: number;
+          minutes_reading?: number;
+          updated_at?: string;
+        };
+        Relationships: [];
       };
       daily_metrics: {
         Row: {
@@ -4904,6 +4959,39 @@ export type Database = {
           updated_at?: string;
         };
         Relationships: [];
+      };
+      member_last_active: {
+        Row: {
+          active_on: string;
+          created_at: string;
+          minute_noted_at: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          active_on: string;
+          created_at?: string;
+          minute_noted_at?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          active_on?: string;
+          created_at?: string;
+          minute_noted_at?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'member_last_active_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: true;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       messages: {
         Row: {
@@ -10217,6 +10305,10 @@ export type Database = {
         Args: { idea_body: string; idea_kind: string; story_slug: string };
         Returns: Json;
       };
+      add_to_activity_totals: {
+        Args: { app_minutes: number; for_day: string; new_member: number; reading_minutes: number };
+        Returns: undefined;
+      };
       admin_abuse_image_evidence: { Args: { target_case_id: string }; Returns: Json };
       admin_account_notes: {
         Args: { page_number?: number; page_size?: number; target_user_id: string };
@@ -10739,6 +10831,7 @@ export type Database = {
       };
       admin_house_ads: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_import_classics: { Args: { list_rows: Json }; Returns: Json };
+      admin_investor_numbers: { Args: { months?: number }; Returns: Json };
       admin_invite_home_comment: { Args: { target_comment: string }; Returns: string };
       admin_invite_writer_spotlight: {
         Args: { first_day: string; reason_en: string; reason_ro: string; target_handle: string };
@@ -12646,6 +12739,7 @@ export type Database = {
       comment_wait_minutes: { Args: { author_id: string }; Returns: number };
       compliance_times_problem: { Args: { completed: string; received: string }; Returns: string };
       compute_daily_metrics: { Args: { for_day?: string }; Returns: number };
+      compute_investor_metrics: { Args: { for_day: string }; Returns: number };
       compute_story_country_scores: { Args: Record<PropertyKey, never>; Returns: number };
       compute_story_scores: { Args: Record<PropertyKey, never>; Returns: number };
       confirm_opening_list: { Args: { token: string }; Returns: string };
@@ -12809,6 +12903,7 @@ export type Database = {
       count_links: { Args: { body: string }; Returns: number };
       count_words: { Args: { body: string }; Returns: number };
       country_has_ranking: { Args: { country: string }; Returns: boolean };
+      counts_for_metrics: { Args: { person_id: string }; Returns: boolean };
       cover_upload_allowed: { Args: { object_name: string }; Returns: boolean };
       create_bible_entry: { Args: { entry_title: string; section_id: string }; Returns: Json };
       create_chapter: { Args: { story_slug: string }; Returns: Json };
@@ -13006,6 +13101,13 @@ export type Database = {
           >;
         };
         Returns: string;
+      };
+      day_totals_for_investors: {
+        Args: { for_day: string };
+        Returns: {
+          metric: string;
+          value: number;
+        }[];
       };
       decide_case: {
         Args: {
@@ -13547,6 +13649,7 @@ export type Database = {
         Args: { brand_names: string[]; file_placeholders: string[]; new_text: string };
         Returns: string[];
       };
+      investor_months: { Args: { months: number }; Returns: Json };
       invite_code_hash: { Args: { code: string }; Returns: string };
       invite_new_adults_to_age_check: { Args: Record<PropertyKey, never>; Returns: number };
       is_active_member: { Args: Record<PropertyKey, never>; Returns: boolean };
@@ -14492,6 +14595,7 @@ export type Database = {
       normalise_romanian_letters: { Args: { input_text: string }; Returns: string };
       normalise_tag: { Args: { tag_name: string }; Returns: string };
       normalised_email: { Args: { email: string }; Returns: string };
+      note_active_minute: { Args: { is_reading?: boolean }; Returns: Json };
       note_i_am_online: { Args: Record<PropertyKey, never>; Returns: undefined };
       note_safety_contact_gap: { Args: { wanted_country_code: string }; Returns: undefined };
       notification_category: {
@@ -15588,6 +15692,7 @@ export type Database = {
         };
       };
       rising_writers: { Args: { page_size?: number }; Returns: Json };
+      rolling_retention: { Args: { after_days: number; joined_on: string }; Returns: number };
       romania_today: { Args: Record<PropertyKey, never>; Returns: string };
       run_daily_metrics: { Args: Record<PropertyKey, never>; Returns: number };
       run_email_worker: { Args: Record<PropertyKey, never>; Returns: boolean };

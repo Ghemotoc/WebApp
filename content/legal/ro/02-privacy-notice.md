@@ -125,7 +125,7 @@ Păstrarea postărilor de pe forum după ștergerea unui cont. Ca discuțiile s�
 
 Păstrarea evidențelor în caz de dispută. Păstrarea raportărilor și deciziilor un timp limitat după închiderea lor. Temei legal: interesul nostru legitim de a putea arăta ce s-a întâmplat dacă o decizie este contestată.
 
-Numărarea a ce funcționează. Numărăm citirile, înscrierile și cititorii care revin ca totaluri, fără cookie-uri și fără să urmărim pe nimeni. Temei legal: interesul nostru legitim.
+Numărarea a ce funcționează. Numărăm citirile, capitolele terminate, înscrierile, membrii activi, minutele petrecute în aplicație și citind și cititorii care revin ca totaluri, fără cookie-uri și fără să urmărim pe nimeni. Pentru asta păstrăm o singură dată pentru fiecare membru: ultima zi în care ai folosit aplicația, înlocuită în fiecare zi, niciodată o listă a zilelor sau a paginilor. Se șterge la 35 de zile după ultima ta vizită. Temei legal: interesul nostru legitim. [Avocatul trebuie să confirme]
 
 Acolo unde ne bazăm pe interesul legitim, te poți opune, cum explicăm în „Drepturile tale”.
 

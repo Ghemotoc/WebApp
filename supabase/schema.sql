@@ -1451,6 +1451,7 @@ CREATE OR REPLACE FUNCTION "public"."account_deletion_rules"() RETURNS TABLE("ta
     ('library_entries', 'delete', 1, null),
     ('live_session_reminders', 'delete', 1, null),
     ('manual_age_checks', 'delete', 1, null),
+    ('member_last_active', 'delete', 1, null),
     ('messages', 'own_step', 0, 'the person''s own messages are deleted, unless reported and still held (S1-E9-02)'),
     ('moderator_mail_messages', 'kept', 0, 'a moderation record, purged a year after the thread was last updated (docs/retention.md)'),
     ('moderator_mail_threads', 'kept', 0, 'a moderation record, purged a year after it was last updated (docs/retention.md)'),
@@ -1498,7 +1499,7 @@ $$;
 ALTER FUNCTION "public"."account_deletion_rules"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13, GAPS-16a, GAPS-16c).';
+COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13, GAPS-16a, GAPS-16c, S1-E15-04).';
 
 
 
@@ -2600,6 +2601,27 @@ ALTER FUNCTION "public"."add_story_idea"("story_slug" "text", "idea_kind" "text"
 
 
 COMMENT ON FUNCTION "public"."add_story_idea"("story_slug" "text", "idea_kind" "text", "idea_body" "text") IS 'Adds a question, idea, to-do or decision to one of the caller''s stories (S1-E17-27).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."add_to_activity_totals"("for_day" "date", "new_member" integer, "app_minutes" integer, "reading_minutes" integer) RETURNS "void"
+    LANGUAGE "sql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  insert into public.daily_activity_totals as totals
+    (activity_on, active_members, minutes_in_app, minutes_reading)
+  values (for_day, new_member, app_minutes, reading_minutes)
+  on conflict (activity_on) do update set
+    active_members = totals.active_members + excluded.active_members,
+    minutes_in_app = totals.minutes_in_app + excluded.minutes_in_app,
+    minutes_reading = totals.minutes_reading + excluded.minutes_reading;
+$$;
+
+
+ALTER FUNCTION "public"."add_to_activity_totals"("for_day" "date", "new_member" integer, "app_minutes" integer, "reading_minutes" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."add_to_activity_totals"("for_day" "date", "new_member" integer, "app_minutes" integer, "reading_minutes" integer) IS 'Internal: adds a member and minutes to one day''s activity totals (S1-E15-04).';
 
 
 
@@ -6330,6 +6352,49 @@ $$;
 
 
 ALTER FUNCTION "public"."admin_import_classics"("list_rows" "jsonb") OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_investor_numbers"("months" integer DEFAULT 12) RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  listed_months integer := least(greatest(coalesce(months, 12), 1), 36);
+  counted_on date;
+begin
+  -- Step 1: owner and admins only (architecture 1.8.3), as the March numbers.
+  if not public.may_see_march_numbers() then
+    raise exception 'Only the owner and admins can see the investor numbers.'
+      using errcode = 'insufficient_privilege', hint = 'not_allowed';
+  end if;
+  -- Step 2: the latest night counted.
+  select max(metric_date) into counted_on from public.daily_metrics where metric = 'active_members';
+  -- Step 3: the latest numbers, the months and the days.
+  return jsonb_build_object(
+    'counted_on', counted_on,
+    'latest', jsonb_build_object(
+      'active_members', public.metric_on(counted_on, 'active_members'),
+      'weekly_active_members', public.metric_on(counted_on, 'weekly_active_members'),
+      'monthly_active_members', public.metric_on(counted_on, 'monthly_active_members'),
+      'retention_day_1', public.metric_on(counted_on, 'retention_day_1'),
+      'retention_day_7', public.metric_on(counted_on, 'retention_day_7'),
+      'retention_day_30', public.metric_on(counted_on, 'retention_day_30')),
+    'months', public.investor_months(listed_months),
+    'days', coalesce((
+      select jsonb_agg(jsonb_build_object('day', metric_date, 'metric', metric, 'value', value)
+                       order by metric_date, metric)
+      from public.daily_metrics
+      where market = 'all' and metric <> 'writers_published'
+        and metric_date > coalesce(counted_on, current_date) - 366), '[]'::jsonb));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_investor_numbers"("months" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_investor_numbers"("months" integer) IS 'The staff Metrics page''s investor numbers: latest, by month and by day, totals only, for the owner and admins (S1-E15-04).';
+
 
 
 CREATE OR REPLACE FUNCTION "public"."admin_invite_home_comment"("target_comment" "uuid") RETURNS "uuid"
@@ -18724,8 +18789,10 @@ declare
   return_rate numeric := public.return_rate_on(counted_day);
   stored integer;
 begin
-  -- Step 1: forget the day's earlier numbers, so this run's are the only ones.
-  delete from public.daily_metrics where metric_date = counted_day;
+  -- Step 1: forget the day's earlier numbers, except those that only the night itself can count.
+  delete from public.daily_metrics where metric_date = counted_day
+    and metric not in ('weekly_active_members', 'monthly_active_members',
+                       'retention_day_1', 'retention_day_7', 'retention_day_30');
 
   -- Step 2: writers who published, in total and by market.
   insert into public.daily_metrics (metric_date, metric, market, value)
@@ -18744,7 +18811,10 @@ begin
     values (counted_day, 'return_rate', return_rate);
   end if;
 
-  -- Step 5: aggregated numbers are kept three years (decided 17 Oct 2026, 12:34).
+  -- Step 5 (S1-E15-04): the investor numbers.
+  perform public.compute_investor_metrics(counted_day);
+
+  -- Step 6: aggregated numbers are kept three years (decided 17 Oct 2026, 12:34).
   delete from public.daily_metrics
   where metric_date < (now() at time zone 'Europe/Bucharest')::date - make_interval(years => keep_years);
 
@@ -18757,7 +18827,59 @@ $$;
 ALTER FUNCTION "public"."compute_daily_metrics"("for_day" "date") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."compute_daily_metrics"("for_day" "date") IS 'Counts one day''s March test numbers and deletes those older than 3 years (S1-E15-02).';
+COMMENT ON FUNCTION "public"."compute_daily_metrics"("for_day" "date") IS 'Counts one day''s March test and investor numbers and deletes those older than 3 years (S1-E15-02, S1-E15-04).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."compute_investor_metrics"("for_day" "date") RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  today date := (now() at time zone 'Europe/Bucharest')::date;
+  stored integer;
+  nightly_stored integer;
+begin
+  -- Step 1: the totals that can be counted for any day.
+  insert into public.daily_metrics (metric_date, metric, value)
+  select for_day, totals.metric, totals.value from public.day_totals_for_investors(for_day) as totals
+  on conflict (metric_date, metric, market) do update set value = excluded.value;
+  get diagnostics stored = row_count;
+  -- Step 2: the counts that read each member's last day, only on the nightly run for yesterday.
+  if for_day = today - 1 then
+    insert into public.daily_metrics (metric_date, metric, value)
+    select for_day, counted.metric, counted.value
+    from (values
+      ('weekly_active_members', (select count(*) from public.member_last_active
+                                 where active_on > for_day - 7)::numeric),
+      ('monthly_active_members', (select count(*) from public.member_last_active
+                                  where active_on > for_day - 30)::numeric),
+      ('retention_day_1', public.rolling_retention(for_day - 1, 1)),
+      ('retention_day_7', public.rolling_retention(for_day - 7, 7)),
+      ('retention_day_30', public.rolling_retention(for_day - 30, 30))
+    ) as counted (metric, value)
+    where counted.value is not null
+    on conflict (metric_date, metric, market) do update set value = excluded.value;
+    get diagnostics nightly_stored = row_count;
+    stored := stored + nightly_stored;
+  end if;
+  -- Step 3: delete what is no longer needed (docs/retention.md).
+  delete from public.member_last_active
+  where active_on < today - coalesce(public.setting_value('member_last_active_keep_days') #>> '{}', '35')::integer;
+  delete from public.daily_activity_totals
+  where activity_on < today - make_interval(years => coalesce(
+    public.setting_value('daily_metrics_keep_years') #>> '{}', '3')::integer);
+  delete from public.chapter_finishes
+  where read_on < today - (public.ranking_setting('ranking_window_days', 60)::integer + 7);
+  return stored;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."compute_investor_metrics"("for_day" "date") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."compute_investor_metrics"("for_day" "date") IS 'Internal: stores one day''s investor numbers and deletes old last-day rows and totals (S1-E15-04).';
 
 
 
@@ -19585,6 +19707,25 @@ COMMENT ON FUNCTION "public"."country_has_ranking"("country" "text") IS 'Interna
 
 
 
+CREATE OR REPLACE FUNCTION "public"."counts_for_metrics"("person_id" "uuid") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select exists (
+    select 1 from public.profiles
+    where profiles.id = person_id and profiles.deleted_at is null
+      and profiles.handle is distinct from (public.setting_value('classics_account_handle') #>> '{}'))
+    and not exists (select 1 from public.staff_roles where staff_roles.user_id = person_id);
+$$;
+
+
+ALTER FUNCTION "public"."counts_for_metrics"("person_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."counts_for_metrics"("person_id" "uuid") IS 'Internal: whether a member counts in the investor numbers: live, not staff, not the classics account (S1-E15-04).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."cover_upload_allowed"("object_name" "text") RETURNS boolean
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -20144,6 +20285,7 @@ CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_
     ('library_entries', true, null),
     ('live_session_reminders', true, null),
     ('manual_age_checks', true, null),
+    ('member_last_active', true, null),
     ('messages', true, null),
     ('moderator_mail_messages', true, null),
     ('moderator_mail_threads', true, null),
@@ -20191,7 +20333,7 @@ $$;
 ALTER FUNCTION "public"."data_export_tables"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13, GAPS-16a, GAPS-16c).';
+COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13, GAPS-16a, GAPS-16c, S1-E15-04).';
 
 
 
@@ -20495,6 +20637,45 @@ ALTER FUNCTION "public"."data_request_urgency"("request" "public"."data_requests
 
 
 COMMENT ON FUNCTION "public"."data_request_urgency"("request" "public"."data_requests") IS 'Internal: overdue, alert (2 days), reminder (7 days), on_time or closed (S1-E11-09, proposal).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."day_totals_for_investors"("for_day" "date") RETURNS TABLE("metric" "text", "value" numeric)
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select 'active_members', coalesce((select active_members from public.daily_activity_totals
+                                      where activity_on = for_day), 0)::numeric
+  union all
+  select 'minutes_in_app', coalesce((select minutes_in_app from public.daily_activity_totals
+                                      where activity_on = for_day), 0)::numeric
+  union all
+  select 'minutes_reading', coalesce((select minutes_reading from public.daily_activity_totals
+                                       where activity_on = for_day), 0)::numeric
+  union all
+  select 'sign_ups', (select count(*) from public.profiles
+                      join auth.users on users.id = profiles.id and users.email_confirmed_at is not null
+                      where (profiles.created_at at time zone 'Europe/Bucharest')::date = for_day
+                        and public.counts_for_metrics(profiles.id))::numeric
+  union all
+  select 'stories_read', (select count(distinct chapters.story_id) from public.chapter_reads
+                          join public.chapters on chapters.id = chapter_reads.chapter_id
+                          where chapter_reads.read_on = for_day and chapter_reads.total > 0)::numeric
+  union all
+  select 'chapters_finished', coalesce((select sum(total) from public.chapter_finishes
+                                         where read_on = for_day), 0)::numeric
+  union all
+  select 'writers_publishing', (select count(distinct chapters.user_id) from public.chapters
+                                where chapters.status = 'published'
+                                  and (chapters.first_published_at at time zone 'Europe/Bucharest')::date = for_day
+                                  and public.counts_for_metrics(chapters.user_id))::numeric;
+$$;
+
+
+ALTER FUNCTION "public"."day_totals_for_investors"("for_day" "date") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."day_totals_for_investors"("for_day" "date") IS 'Internal: one day''s investor totals that can be counted at any time (S1-E15-04).';
 
 
 
@@ -25265,6 +25446,70 @@ ALTER FUNCTION "public"."interface_text_problems"("new_text" "text", "file_place
 
 
 COMMENT ON FUNCTION "public"."interface_text_problems"("new_text" "text", "file_placeholders" "text"[], "brand_names" "text"[]) IS 'What stops an interface text from being saved: empty, placeholders changed, a brand name (S1-E11-18).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."investor_months"("months" integer) RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  with month_list as (
+    select month_start::date as month_start, (month_start + interval '1 month')::date as month_end
+    from generate_series(
+      date_trunc('month', (now() at time zone 'Europe/Bucharest')::date) - make_interval(months => months - 1),
+      date_trunc('month', (now() at time zone 'Europe/Bucharest')::date), interval '1 month') as month_start
+  ),
+  sums as (
+    select month_list.month_start,
+      sum(value) filter (where metric = 'sign_ups') as sign_ups,
+      round(avg(value) filter (where metric = 'active_members'), 1) as average_daily_active,
+      sum(value) filter (where metric = 'chapter_reads' and market = 'all') as chapter_reads,
+      sum(value) filter (where metric = 'chapters_finished') as chapters_finished,
+      sum(value) filter (where metric = 'minutes_in_app') as minutes_in_app,
+      sum(value) filter (where metric = 'minutes_reading') as minutes_reading,
+      round(avg(value) filter (where metric = 'retention_day_1'), 1) as retention_day_1,
+      round(avg(value) filter (where metric = 'retention_day_7'), 1) as retention_day_7,
+      round(avg(value) filter (where metric = 'retention_day_30'), 1) as retention_day_30,
+      (array_agg(value order by metric_date desc) filter (where metric = 'monthly_active_members'))[1]
+        as monthly_active
+    from month_list
+    left join public.daily_metrics on metric_date >= month_list.month_start
+      and metric_date < month_list.month_end
+    group by month_list.month_start
+  )
+  select coalesce(jsonb_agg(jsonb_build_object(
+    'month', to_char(sums.month_start, 'YYYY-MM'),
+    'sign_ups', coalesce(sums.sign_ups, 0),
+    'average_daily_active', sums.average_daily_active,
+    'monthly_active', sums.monthly_active,
+    'stories_read', (select count(distinct chapters.story_id) from public.chapter_reads
+                     join public.chapters on chapters.id = chapter_reads.chapter_id
+                     where chapter_reads.read_on >= sums.month_start
+                       and chapter_reads.read_on < (sums.month_start + interval '1 month')::date
+                       and chapter_reads.total > 0),
+    'chapter_reads', coalesce(sums.chapter_reads, 0),
+    'chapters_finished', coalesce(sums.chapters_finished, 0),
+    'finish_rate', case when coalesce(sums.chapter_reads, 0) > 0
+                        then round(100.0 * coalesce(sums.chapters_finished, 0) / sums.chapter_reads, 1) end,
+    'minutes_in_app', coalesce(sums.minutes_in_app, 0),
+    'minutes_reading', coalesce(sums.minutes_reading, 0),
+    'writers_publishing', (select count(distinct chapters.user_id) from public.chapters
+                           where chapters.status = 'published'
+                             and (chapters.first_published_at at time zone 'Europe/Bucharest')::date >= sums.month_start
+                             and (chapters.first_published_at at time zone 'Europe/Bucharest')::date
+                                 < (sums.month_start + interval '1 month')::date
+                             and public.counts_for_metrics(chapters.user_id)),
+    'retention_day_1', sums.retention_day_1,
+    'retention_day_7', sums.retention_day_7,
+    'retention_day_30', sums.retention_day_30) order by sums.month_start), '[]'::jsonb)
+  from sums;
+$$;
+
+
+ALTER FUNCTION "public"."investor_months"("months" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."investor_months"("months" integer) IS 'Internal: the investor numbers month by month, oldest first (S1-E15-04).';
 
 
 
@@ -31103,6 +31348,55 @@ ALTER FUNCTION "public"."normalised_email"("email" "text") OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."normalised_email"("email" "text") IS 'Internal: lower case, no +tag, no Gmail dots; the form hashed for the banned list (bundle ADMIN-2, part f1; brief section 6).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."note_active_minute"("is_reading" boolean DEFAULT false) RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  today date := (now() at time zone 'Europe/Bucharest')::date;
+  previous public.member_last_active;
+  is_new_today boolean;
+  counts_minute boolean;
+begin
+  -- Step 1: a signed-in member who counts (staff and the classics account don't).
+  if caller_id is null then
+    raise exception 'Log in first.' using errcode = '42501';
+  end if;
+  if not public.counts_for_metrics(caller_id) then
+    return jsonb_build_object('counted', false);
+  end if;
+  -- Step 2: the member's last day, locked so two tabs can't both count the same minute.
+  select * into previous from public.member_last_active
+  where member_last_active.user_id = caller_id for update;
+  is_new_today := previous.user_id is null or previous.active_on < today;
+  counts_minute := previous.minute_noted_at is null
+    or previous.minute_noted_at < now() - interval '45 seconds';
+  if not is_new_today and not counts_minute then
+    return jsonb_build_object('counted', false);
+  end if;
+  -- Step 3: overwrite the one row: today, and now when a minute counts. No history is kept.
+  insert into public.member_last_active (user_id, active_on, minute_noted_at)
+  values (caller_id, today, now())
+  on conflict (user_id) do update set
+    active_on = excluded.active_on,
+    minute_noted_at = case when counts_minute then excluded.minute_noted_at
+                           else member_last_active.minute_noted_at end;
+  -- Step 4: the day's totals, which carry no name.
+  perform public.add_to_activity_totals(today, is_new_today::integer, counts_minute::integer,
+    (counts_minute and coalesce(is_reading, false))::integer);
+  return jsonb_build_object('counted', counts_minute);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."note_active_minute"("is_reading" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."note_active_minute"("is_reading" boolean) IS 'The app''s once-a-minute "here": counts the member active today and adds a minute in the app and reading (S1-E15-04).';
 
 
 
@@ -38980,6 +39274,32 @@ COMMENT ON FUNCTION "public"."rising_writers"("page_size" integer) IS 'New and r
 
 
 
+CREATE OR REPLACE FUNCTION "public"."rolling_retention"("joined_on" "date", "after_days" integer) RETURNS numeric
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  with cohort as (
+    select profiles.id from public.profiles
+    join auth.users on users.id = profiles.id and users.email_confirmed_at is not null
+    where (profiles.created_at at time zone 'Europe/Bucharest')::date = joined_on
+      and public.counts_for_metrics(profiles.id)
+  )
+  select case when count(*) >= coalesce(public.setting_value('metrics_minimum_group') #>> '{}', '5')::integer
+    then round(100.0 * count(*) filter (where exists (
+      select 1 from public.member_last_active
+      where member_last_active.user_id = cohort.id
+        and member_last_active.active_on >= joined_on + after_days)) / count(*), 1) end
+  from cohort;
+$$;
+
+
+ALTER FUNCTION "public"."rolling_retention"("joined_on" "date", "after_days" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."rolling_retention"("joined_on" "date", "after_days" integer) IS 'Internal: the share of one day''s new members who came back after so many days, or null under 5 (S1-E15-04).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."romania_today"() RETURNS "date"
     LANGUAGE "sql" STABLE
     SET "search_path" TO ''
@@ -39586,6 +39906,8 @@ declare
   current_shelf public.library_shelf;
   new_shelf public.library_shelf;
   clamped integer := least(100, greatest(0, coalesce(read_percent, 0)));
+  furthest_before integer;
+  is_owner boolean;
 begin
   -- Step 1: signed in, and a chapter this reader may read.
   if caller_id is null then
@@ -39598,13 +39920,24 @@ begin
   if not found then
     raise exception 'There is no such chapter.' using errcode = 'no_data_found';
   end if;
-  -- Step 2: the place, one row per chapter; saving again moves it.
+  is_owner := exists (select 1 from public.stories
+                      where stories.id = chapter.story_id and stories.user_id = caller_id);
+  -- Step 2: how far the reader had got before, so a finish counts only once.
+  select reading_positions.furthest_percent into furthest_before from public.reading_positions
+  where reading_positions.user_id = caller_id and reading_positions.chapter_id = chapter.id;
+  -- Step 3: the place, one row per chapter; saving again moves it.
   insert into public.reading_positions (user_id, story_id, chapter_id, percent, device_kind)
   values (caller_id, chapter.story_id, chapter.id, clamped, device_kind)
   on conflict on constraint reading_positions_one_per_chapter
   do update set percent = excluded.percent, device_kind = excluded.device_kind, updated_at = now();
-  -- Step 3: the shelf. A writer's own story never fills their library.
-  if exists (select 1 from public.stories where stories.id = chapter.story_id and stories.user_id = caller_id) then
+  -- Step 4 (S1-E15-04): a first finish adds one to the day's total, never who finished.
+  if clamped >= 95 and coalesce(furthest_before, 0) < 95 and not is_owner then
+    insert into public.chapter_finishes as finishes (chapter_id, read_on, total)
+    values (chapter.id, (now() at time zone 'Europe/Bucharest')::date, 1)
+    on conflict (chapter_id, read_on) do update set total = finishes.total + 1;
+  end if;
+  -- Step 5: the shelf. A writer's own story never fills their library.
+  if is_owner then
     return jsonb_build_object('shelf', null);
   end if;
   select library_entries.shelf into current_shelf from public.library_entries
@@ -39627,7 +39960,7 @@ $$;
 ALTER FUNCTION "public"."save_reading_position"("story_slug" "text", "chapter_code" "text", "read_percent" integer, "device_kind" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."save_reading_position"("story_slug" "text", "chapter_code" "text", "read_percent" integer, "device_kind" "text") IS 'Keeps the caller''s place in a chapter and files the story on a shelf (S1-E4-03).';
+COMMENT ON FUNCTION "public"."save_reading_position"("story_slug" "text", "chapter_code" "text", "read_percent" integer, "device_kind" "text") IS 'Keeps the caller''s place in a chapter, files the story on a shelf and counts a first finish (S1-E4-03, S1-E15-04).';
 
 
 
@@ -50243,6 +50576,21 @@ The fixed story categories: fiction, poetry, nonfiction essays (Q52). Changed by
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."chapter_finishes" (
+    "chapter_id" "uuid" NOT NULL,
+    "read_on" "date" NOT NULL,
+    "total" integer DEFAULT 0 NOT NULL,
+    CONSTRAINT "chapter_finishes_total_not_negative" CHECK (("total" >= 0))
+);
+
+
+ALTER TABLE "public"."chapter_finishes" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."chapter_finishes" IS 'kind: platform. How many readers first reached 95% of each chapter each day: totals only, never who (S1-E15-04).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."chapter_likes" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "user_id" "uuid" NOT NULL,
@@ -50659,6 +51007,24 @@ A moderator''s request to change a signature or a space banner within 24 hours (
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."daily_activity_totals" (
+    "activity_on" "date" NOT NULL,
+    "active_members" integer DEFAULT 0 NOT NULL,
+    "minutes_in_app" integer DEFAULT 0 NOT NULL,
+    "minutes_reading" integer DEFAULT 0 NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "daily_activity_totals_not_negative" CHECK ((("active_members" >= 0) AND ("minutes_in_app" >= 0) AND ("minutes_reading" >= 0)))
+);
+
+
+ALTER TABLE "public"."daily_activity_totals" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."daily_activity_totals" IS 'kind: platform. Per day: members who used the app and minutes in the app and reading. Totals only (S1-E15-04).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."daily_metrics" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "metric_date" "date" NOT NULL,
@@ -50667,7 +51033,7 @@ CREATE TABLE IF NOT EXISTS "public"."daily_metrics" (
     "value" numeric NOT NULL,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    CONSTRAINT "daily_metrics_known_metric" CHECK (("metric" = ANY (ARRAY['writers_published'::"text", 'signed_up_readers'::"text", 'chapter_reads'::"text", 'return_rate'::"text"]))),
+    CONSTRAINT "daily_metrics_known_metric" CHECK (("metric" = ANY (ARRAY['writers_published'::"text", 'signed_up_readers'::"text", 'chapter_reads'::"text", 'return_rate'::"text", 'active_members'::"text", 'weekly_active_members'::"text", 'monthly_active_members'::"text", 'sign_ups'::"text", 'stories_read'::"text", 'chapters_finished'::"text", 'minutes_in_app'::"text", 'minutes_reading'::"text", 'writers_publishing'::"text", 'retention_day_1'::"text", 'retention_day_7'::"text", 'retention_day_30'::"text"]))),
     CONSTRAINT "daily_metrics_market_shape" CHECK ((("market" = ANY (ARRAY['all'::"text", 'other'::"text"])) OR ("market" ~ '^[A-Z]{2}$'::"text"))),
     CONSTRAINT "daily_metrics_value_not_negative" CHECK (("value" >= (0)::numeric))
 );
@@ -51352,6 +51718,22 @@ A request for a manual age check after a failed Yoti check, and the staff decisi
 
 
 COMMENT ON COLUMN "public"."manual_age_checks"."user_id" IS 'The person asking; never shown publicly (rule 15).';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."member_last_active" (
+    "user_id" "uuid" NOT NULL,
+    "active_on" "date" NOT NULL,
+    "minute_noted_at" timestamp with time zone,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL
+);
+
+
+ALTER TABLE "public"."member_last_active" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."member_last_active" IS 'kind: user_action. Each member''s last day in the app and last noted minute, overwritten each time: no history (S1-E15-04).';
 
 
 
@@ -53001,6 +53383,11 @@ ALTER TABLE ONLY "public"."chapter_embeds"
 
 
 
+ALTER TABLE ONLY "public"."chapter_finishes"
+    ADD CONSTRAINT "chapter_finishes_pkey" PRIMARY KEY ("chapter_id", "read_on");
+
+
+
 ALTER TABLE ONLY "public"."chapter_likes"
     ADD CONSTRAINT "chapter_likes_one_per_pair" UNIQUE ("user_id", "chapter_id");
 
@@ -53198,6 +53585,11 @@ ALTER TABLE ONLY "public"."country_age_rules"
 
 ALTER TABLE ONLY "public"."customisation_change_requests"
     ADD CONSTRAINT "customisation_change_requests_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."daily_activity_totals"
+    ADD CONSTRAINT "daily_activity_totals_pkey" PRIMARY KEY ("activity_on");
 
 
 
@@ -53563,6 +53955,11 @@ ALTER TABLE ONLY "public"."markets"
 
 ALTER TABLE ONLY "public"."markets"
     ADD CONSTRAINT "markets_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."member_last_active"
+    ADD CONSTRAINT "member_last_active_pkey" PRIMARY KEY ("user_id");
 
 
 
@@ -55802,6 +56199,10 @@ CREATE OR REPLACE TRIGGER "country_age_rules_set_updated_at" BEFORE UPDATE ON "p
 
 
 
+CREATE OR REPLACE TRIGGER "daily_activity_totals_set_updated_at" BEFORE UPDATE ON "public"."daily_activity_totals" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
 CREATE OR REPLACE TRIGGER "daily_metrics_set_updated_at" BEFORE UPDATE ON "public"."daily_metrics" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
@@ -56035,6 +56436,10 @@ CREATE OR REPLACE TRIGGER "markets_keep_is_open" BEFORE INSERT OR UPDATE ON "pub
 
 
 CREATE OR REPLACE TRIGGER "markets_set_updated_at" BEFORE UPDATE ON "public"."markets" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "member_last_active_set_updated_at" BEFORE UPDATE ON "public"."member_last_active" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
 
@@ -56847,6 +57252,11 @@ ALTER TABLE ONLY "public"."chapter_embeds"
 
 
 
+ALTER TABLE ONLY "public"."chapter_finishes"
+    ADD CONSTRAINT "chapter_finishes_chapter_id_fkey" FOREIGN KEY ("chapter_id") REFERENCES "public"."chapters"("id") ON DELETE CASCADE;
+
+
+
 ALTER TABLE ONLY "public"."chapter_likes"
     ADD CONSTRAINT "chapter_likes_chapter_id_fkey" FOREIGN KEY ("chapter_id") REFERENCES "public"."chapters"("id") ON DELETE CASCADE;
 
@@ -57484,6 +57894,11 @@ ALTER TABLE ONLY "public"."live_sessions"
 
 ALTER TABLE ONLY "public"."manual_age_checks"
     ADD CONSTRAINT "manual_age_checks_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."member_last_active"
+    ADD CONSTRAINT "member_last_active_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
 
 
 
@@ -58721,6 +59136,13 @@ COMMENT ON POLICY "chapter_embeds_select_own" ON "public"."chapter_embeds" IS 'A
 
 
 
+ALTER TABLE "public"."chapter_finishes" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "chapter_finishes_select_staff" ON "public"."chapter_finishes" FOR SELECT TO "authenticated" USING (( SELECT "public"."staff_may"('stories'::"text", 'view'::"text") AS "staff_may"));
+
+
+
 ALTER TABLE "public"."chapter_likes" ENABLE ROW LEVEL SECURITY;
 
 
@@ -59014,6 +59436,13 @@ CREATE POLICY "customisation_change_requests_select_own_or_staff" ON "public"."c
 
 
 COMMENT ON POLICY "customisation_change_requests_select_own_or_staff" ON "public"."customisation_change_requests" IS 'Allows the person asked, and moderation staff, to read a change request (S1-E8-08).';
+
+
+
+ALTER TABLE "public"."daily_activity_totals" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "daily_activity_totals_select_metrics" ON "public"."daily_activity_totals" FOR SELECT TO "authenticated" USING (( SELECT "public"."may_see_march_numbers"() AS "may_see_march_numbers"));
 
 
 
@@ -59487,6 +59916,13 @@ CREATE POLICY "markets_select_public" ON "public"."markets" FOR SELECT TO "authe
 
 
 COMMENT ON POLICY "markets_select_public" ON "public"."markets" IS 'Allows anyone, signed out included, to read which countries are open; nothing in it is personal (S1-E2-10).';
+
+
+
+ALTER TABLE "public"."member_last_active" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "member_last_active_select_own" ON "public"."member_last_active" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
 
 
 
@@ -60622,6 +61058,10 @@ GRANT ALL ON FUNCTION "public"."add_story_idea"("story_slug" "text", "idea_kind"
 
 
 
+REVOKE ALL ON FUNCTION "public"."add_to_activity_totals"("for_day" "date", "new_member" integer, "app_minutes" integer, "reading_minutes" integer) FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_abuse_image_evidence"("target_case_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_abuse_image_evidence"("target_case_id" "uuid") TO "authenticated";
 
@@ -61104,6 +61544,11 @@ GRANT ALL ON FUNCTION "public"."admin_house_ads"() TO "authenticated";
 
 REVOKE ALL ON FUNCTION "public"."admin_import_classics"("list_rows" "jsonb") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_import_classics"("list_rows" "jsonb") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_investor_numbers"("months" integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_investor_numbers"("months" integer) TO "authenticated";
 
 
 
@@ -62796,6 +63241,10 @@ REVOKE ALL ON FUNCTION "public"."compute_daily_metrics"("for_day" "date") FROM P
 
 
 
+REVOKE ALL ON FUNCTION "public"."compute_investor_metrics"("for_day" "date") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."compute_story_country_scores"() FROM PUBLIC;
 
 
@@ -62917,6 +63366,10 @@ REVOKE ALL ON FUNCTION "public"."country_has_ranking"("country" "text") FROM PUB
 
 
 
+REVOKE ALL ON FUNCTION "public"."counts_for_metrics"("person_id" "uuid") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."cover_upload_allowed"("object_name" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."cover_upload_allowed"("object_name" "text") TO "authenticated";
 
@@ -63026,6 +63479,10 @@ REVOKE ALL ON FUNCTION "public"."data_request_person_is_under_16"("person_id" "u
 
 
 REVOKE ALL ON FUNCTION "public"."data_request_urgency"("request" "public"."data_requests") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."day_totals_for_investors"("for_day" "date") FROM PUBLIC;
 
 
 
@@ -63671,6 +64128,10 @@ REVOKE ALL ON FUNCTION "public"."interface_text_live"("wanted_locale" "text") FR
 
 
 REVOKE ALL ON FUNCTION "public"."interface_text_live_text"("wanted_key" "text", "wanted_locale" "text") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."investor_months"("months" integer) FROM PUBLIC;
 
 
 
@@ -64574,6 +65035,11 @@ GRANT ALL ON FUNCTION "public"."normalise_romanian_letters"("input_text" "text")
 
 
 REVOKE ALL ON FUNCTION "public"."normalised_email"("email" "text") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."note_active_minute"("is_reading" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."note_active_minute"("is_reading" boolean) TO "authenticated";
 
 
 
@@ -65666,6 +66132,10 @@ REVOKE ALL ON FUNCTION "public"."reusable_stories_export"("owner_id" "uuid", "wa
 REVOKE ALL ON FUNCTION "public"."rising_writers"("page_size" integer) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."rising_writers"("page_size" integer) TO "anon";
 GRANT ALL ON FUNCTION "public"."rising_writers"("page_size" integer) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."rolling_retention"("joined_on" "date", "after_days" integer) FROM PUBLIC;
 
 
 
@@ -67232,6 +67702,11 @@ GRANT SELECT ON TABLE "public"."categories" TO "authenticated";
 
 
 
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."chapter_finishes" TO "service_role";
+GRANT SELECT ON TABLE "public"."chapter_finishes" TO "authenticated";
+
+
+
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."chapter_likes" TO "service_role";
 GRANT SELECT ON TABLE "public"."chapter_likes" TO "authenticated";
 
@@ -67329,6 +67804,11 @@ GRANT SELECT ON TABLE "public"."copied_work_notes" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."customisation_change_requests" TO "service_role";
 GRANT SELECT ON TABLE "public"."customisation_change_requests" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."daily_activity_totals" TO "service_role";
+GRANT SELECT ON TABLE "public"."daily_activity_totals" TO "authenticated";
 
 
 
@@ -67497,6 +67977,11 @@ GRANT SELECT ON TABLE "public"."live_sessions" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."manual_age_checks" TO "service_role";
 GRANT SELECT ON TABLE "public"."manual_age_checks" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."member_last_active" TO "service_role";
+GRANT SELECT ON TABLE "public"."member_last_active" TO "authenticated";
 
 
 

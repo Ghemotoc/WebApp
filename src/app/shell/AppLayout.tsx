@@ -25,6 +25,8 @@
  * for error reports, as a pattern such as "/join/:code", never the address itself.
  * Notifications (S1-E7-01): the bell with the unread count sits after "Write" while signed in
  * (bundle G4 SHELL: search, Write, bell, avatar).
+ * Investor numbers (S1-E15-04): ActiveMinutesCounter says "here" once a minute while someone is
+ * signed in, for the day's totals; it draws nothing.
  * Pictures (S1-E10-05): usePendingPictureRetry asks once per signed-in visit for the check of any
  * picture whose services were down when it was uploaded.
  * The account notices (Terms, the country question, username, age check, consent and sanctions)
@@ -46,6 +48,7 @@ import { Outlet, useLocation } from 'react-router';
 
 import { shellScreenFor } from '@/app/shellScreens';
 
+import { ActiveMinutesCounter } from '@/features/analytics/components/ActiveMinutesCounter';
 import { AccountClosingGate } from '@/features/account-deletion/components/AccountClosingGate';
 import { AccountLinks } from '@/features/auth/components/AccountLinks';
 import { BrandTabIcon } from '@/features/branding/components/BrandTabIcon';
@@ -182,6 +185,7 @@ export function AppLayout() {
       </main>
       {/* "Show when I'm online": a beat a minute, only while switched on (S1-E13-01). */}
       <PresenceHeartbeat />
+      <ActiveMinutesCounter />
       <Footer endSlot={<LanguageSelect id="language-select-footer" isLabelVisible />} />
       {/* The floating tab bar, on narrow browse pages only (handoff "App header and tab bar"). */}
       {hasTabBar && <TabBar />}
