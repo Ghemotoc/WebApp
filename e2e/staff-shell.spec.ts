@@ -65,6 +65,7 @@ test.describe('admin shell (S1-E11-01)', () => {
   test('each staff persona sees only the areas its role allows', async ({ browser }) => {
     // Featured (LOOK-4a), Logs (LOGS-1) and Waitlist (WAITLIST-1) are for the owner and admins only.
     // Writers’ hub (GAPS-12c) is for staff with the contests area: the owner and admins.
+    // Page builder (S1-E11-34, CMS-2b) is for the owner, admins and moderators.
     const ownerPage = await openAs(browser, 'owner', '/staff');
     expect(await menuLinks(ownerPage)).toEqual([
       'Moderation',
@@ -86,6 +87,7 @@ test.describe('admin shell (S1-E11-01)', () => {
       'Contests',
       'Writers’ hub',
       'Website',
+      'Page builder',
       'Sponsors',
       'Settings',
       'Forums',
@@ -117,6 +119,7 @@ test.describe('admin shell (S1-E11-01)', () => {
       'Contests',
       'Writers’ hub',
       'Website',
+      'Page builder',
       'Sponsors',
       'Settings',
       'Forums',
@@ -127,7 +130,7 @@ test.describe('admin shell (S1-E11-01)', () => {
 
     // A moderator gets the queue (S1-E10-03a) with Pictures to check (ADMIN-2e1b), moderator mail (S1-E10-11), appeals (S1-E10-07),
     // reads the safety contacts (S1-E10-13b), has Users (S1-E11-02) and, with the seed's teacher
-    // checks permission, Schools (S1-E2-11).
+    // checks permission, Schools (S1-E2-11), and builds landing pages in the Page builder (S1-E11-34).
     const moderatorPage = await openAs(browser, 'moderator', '/staff');
     expect(await menuLinks(moderatorPage)).toEqual([
       'Moderation',
@@ -140,6 +143,7 @@ test.describe('admin shell (S1-E11-01)', () => {
       'Schools',
       'Stories',
       'Tags',
+      'Page builder',
       'Metrics',
     ]);
 
