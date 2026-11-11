@@ -12,10 +12,11 @@ import { useState } from 'react';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
 import { WebsiteContentError } from '@/features/website/api/websiteContentStore';
-import type { LandingPageType } from '@/schemas/landingPages';
+import type { LandingContent, LandingPageType } from '@/schemas/landingPages';
 
 import {
   archiveLandingPage,
+  copyLandingPage,
   createLandingPage,
   fetchLandingPageVersions,
   fetchStaffLandingPages,
@@ -75,6 +76,13 @@ async function runAction(action: LandingEditorAction): Promise<LandingEditorOutc
   return { action: 'archive', goesLive: null };
 }
 
+/** What "New landing page" sends: the address, the type and, when picked, a layout. */
+export interface NewLandingPage {
+  slug: string;
+  pageType: LandingPageType;
+  layout?: { name: string; content: LandingContent } | null;
+}
+
 /**
  * The staff list of pages, and starting a new one.
  *
@@ -88,8 +96,14 @@ export function useLandingPageList() {
     queryFn: async () => fetchStaffLandingPages(await requireClient()),
   });
   const creation = useMutation({
-    mutationFn: async (page: { slug: string; pageType: LandingPageType }) =>
-      createLandingPage(await requireClient(), page.slug, page.pageType),
+    mutationFn: async (page: NewLandingPage) =>
+      createLandingPage(await requireClient(), page.slug, page.pageType, page.layout ?? null),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['landing-pages'] }),
+  });
+  // Copy page (S1-E11-35): a new draft at its own address.
+  const copying = useMutation({
+    mutationFn: async (copy: { sourcePageId: string; slug: string }) =>
+      copyLandingPage(await requireClient(), copy.sourcePageId, copy.slug),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['landing-pages'] }),
   });
   return {
@@ -97,13 +111,21 @@ export function useLandingPageList() {
     isLoading: pages.isPending,
     loadFailure: pages.isError ? asWebsiteError(pages.error) : null,
     /** Starts a page; resolves to its id, or null when it was refused (see createFailure). */
-    create: (page: { slug: string; pageType: LandingPageType }) =>
+    create: (page: NewLandingPage) =>
       creation.mutateAsync(page).then(
         (id) => id,
         () => null,
       ),
     isCreating: creation.isPending,
     createFailure: creation.isError ? asWebsiteError(creation.error) : null,
+    /** Copies a page; resolves to the copy's id, or null when it was refused (see copyFailure). */
+    copy: (copy: { sourcePageId: string; slug: string }) =>
+      copying.mutateAsync(copy).then(
+        (id) => id,
+        () => null,
+      ),
+    isCopying: copying.isPending,
+    copyFailure: copying.isError ? asWebsiteError(copying.error) : null,
   };
 }
 

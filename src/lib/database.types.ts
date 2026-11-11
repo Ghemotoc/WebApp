@@ -10753,6 +10753,10 @@ export type Database = {
         };
         Returns: Json;
       };
+      admin_copy_landing_page: {
+        Args: { new_slug: string; source_page_id: string };
+        Returns: string;
+      };
       admin_create_class_space: {
         Args: { description: string; name: string; school_name: string; teacher_handle: string };
         Returns: Json;
@@ -10767,7 +10771,12 @@ export type Database = {
         }[];
       };
       admin_create_landing_page: {
-        Args: { new_page_type: string; new_slug: string };
+        Args: {
+          layout_name?: string;
+          new_page_type: string;
+          new_slug: string;
+          starting_content?: Json;
+        };
         Returns: string;
       };
       admin_custom_roles: { Args: Record<PropertyKey, never>; Returns: Json };

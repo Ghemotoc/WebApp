@@ -4838,6 +4838,54 @@ COMMENT ON FUNCTION "public"."admin_convert_ticket_to_report"("ticket_number" bi
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_copy_landing_page"("source_page_id" "uuid", "new_slug" "text") RETURNS "uuid"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  clean_slug text := lower(btrim(coalesce(new_slug, '')));
+  slug_problem text := public.landing_page_slug_problem(lower(btrim(coalesce(new_slug, ''))));
+  source_page public.landing_pages;
+  source_content jsonb;
+  new_page_id uuid;
+begin
+  perform public.require_landing_page_staff();
+  -- Step 1: the page to copy and a free, allowed address for the copy.
+  select * into source_page from public.landing_pages where id = source_page_id;
+  if not found then
+    raise exception 'There is no such page.' using errcode = 'no_data_found';
+  end if;
+  if slug_problem is not null then
+    raise exception 'That address can''t be used.' using errcode = 'check_violation', hint = slug_problem;
+  end if;
+  -- Step 2: the newest words: the draft first, otherwise the newest version of any kind.
+  select content into source_content
+  from public.landing_page_versions
+  where page_id = source_page_id
+  order by (status = 'draft') desc, created_at desc
+  limit 1;
+  -- Step 3: the new page, with those words as its draft; nothing goes live until published.
+  insert into public.landing_pages (slug, page_type, user_id)
+  values (clean_slug, source_page.page_type, (select auth.uid()))
+  returning id into new_page_id;
+  insert into public.landing_page_versions (page_id, content, user_id)
+  values (new_page_id, coalesce(source_content, '{"theme": "plum", "blocks": []}'::jsonb), (select auth.uid()));
+  -- Step 4: the audit log says which page it came from.
+  perform public.log_staff_action('landing_page.copied', 'landing_pages', new_page_id::text, null, null, null,
+    jsonb_build_object('slug', clean_slug, 'type', source_page.page_type,
+      'copied_from', source_page.id, 'copied_from_slug', source_page.slug));
+  return new_page_id;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_copy_landing_page"("source_page_id" "uuid", "new_slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_copy_landing_page"("source_page_id" "uuid", "new_slug" "text") IS 'Copies a landing page to a new address as a draft; staff with the landing pages area; logged (S1-E11-35).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admin_create_class_space"("teacher_handle" "text", "name" "text", "school_name" "text", "description" "text") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -4960,7 +5008,7 @@ COMMENT ON FUNCTION "public"."admin_create_invite"("admits" integer, "valid_days
 
 
 
-CREATE OR REPLACE FUNCTION "public"."admin_create_landing_page"("new_slug" "text", "new_page_type" "text") RETURNS "uuid"
+CREATE OR REPLACE FUNCTION "public"."admin_create_landing_page"("new_slug" "text", "new_page_type" "text", "starting_content" "jsonb" DEFAULT NULL::"jsonb", "layout_name" "text" DEFAULT NULL::"text") RETURNS "uuid"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
@@ -4970,29 +5018,43 @@ declare
   new_page_id uuid;
 begin
   perform public.require_landing_page_staff();
-  -- Step 1: a free, allowed address and a known type.
+  -- Step 1: a free, allowed address, a known type and, when given, a known layout.
   if slug_problem is not null then
     raise exception 'That address can''t be used.' using errcode = 'check_violation', hint = slug_problem;
   end if;
   if new_page_type is null or new_page_type not in ('contest', 'campaign', 'information') then
     raise exception 'Pick contest, campaign or information.' using errcode = 'check_violation', hint = 'bad_type';
   end if;
-  -- Step 2: the page and its first, empty draft.
+  if layout_name is not null and layout_name not in ('contest', 'call_for_submissions', 'event', 'plain') then
+    raise exception 'Pick a layout from the list.' using errcode = 'check_violation', hint = 'bad_layout';
+  end if;
+  -- A layout's content is one page object; anything else is refused (CMS-2c break test).
+  if starting_content is not null and jsonb_typeof(starting_content) <> 'object' then
+    raise exception 'That layout can''t be used.' using errcode = 'check_violation', hint = 'bad_layout';
+  end if;
+  -- The same size limit as a saved draft (S1-E11-34 break test).
+  if octet_length(coalesce(starting_content, '{}'::jsonb)::text) > 500000 then
+    raise exception 'This page is too big to save.' using errcode = 'check_violation', hint = 'too_big';
+  end if;
+  -- Step 2: the page and its first draft, empty (the column's own default) or with the layout's
+  -- blocks.
   insert into public.landing_pages (slug, page_type, user_id)
   values (clean_slug, new_page_type, (select auth.uid()))
   returning id into new_page_id;
-  insert into public.landing_page_versions (page_id, user_id) values (new_page_id, (select auth.uid()));
+  insert into public.landing_page_versions (page_id, content, user_id)
+  values (new_page_id, coalesce(starting_content, '{"theme": "plum", "blocks": []}'::jsonb), (select auth.uid()));
+  -- Step 3: the audit log names the layout, so a page's starting point can be traced.
   perform public.log_staff_action('landing_page.created', 'landing_pages', new_page_id::text, null, null, null,
-    jsonb_build_object('slug', clean_slug, 'type', new_page_type));
+    jsonb_strip_nulls(jsonb_build_object('slug', clean_slug, 'type', new_page_type, 'layout', layout_name)));
   return new_page_id;
 end;
 $$;
 
 
-ALTER FUNCTION "public"."admin_create_landing_page"("new_slug" "text", "new_page_type" "text") OWNER TO "postgres";
+ALTER FUNCTION "public"."admin_create_landing_page"("new_slug" "text", "new_page_type" "text", "starting_content" "jsonb", "layout_name" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."admin_create_landing_page"("new_slug" "text", "new_page_type" "text") IS 'Starts a landing page at /c/<slug>; staff with the landing pages area; logged (S1-E11-14, S1-E11-34).';
+COMMENT ON FUNCTION "public"."admin_create_landing_page"("new_slug" "text", "new_page_type" "text", "starting_content" "jsonb", "layout_name" "text") IS 'Starts a landing page at /c/<slug>, empty or from a ready-made layout; staff with the landing pages area; logged (S1-E11-14, S1-E11-34, S1-E11-35).';
 
 
 
@@ -62376,6 +62438,11 @@ GRANT ALL ON FUNCTION "public"."admin_convert_ticket_to_report"("ticket_number" 
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_copy_landing_page"("source_page_id" "uuid", "new_slug" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_copy_landing_page"("source_page_id" "uuid", "new_slug" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_create_class_space"("teacher_handle" "text", "name" "text", "school_name" "text", "description" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_create_class_space"("teacher_handle" "text", "name" "text", "school_name" "text", "description" "text") TO "authenticated";
 
@@ -62391,8 +62458,8 @@ GRANT ALL ON FUNCTION "public"."admin_create_invite"("admits" integer, "valid_da
 
 
 
-REVOKE ALL ON FUNCTION "public"."admin_create_landing_page"("new_slug" "text", "new_page_type" "text") FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."admin_create_landing_page"("new_slug" "text", "new_page_type" "text") TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."admin_create_landing_page"("new_slug" "text", "new_page_type" "text", "starting_content" "jsonb", "layout_name" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_create_landing_page"("new_slug" "text", "new_page_type" "text", "starting_content" "jsonb", "layout_name" "text") TO "authenticated";
 
 
 

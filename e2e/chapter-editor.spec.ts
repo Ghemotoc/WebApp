@@ -60,6 +60,9 @@ test.describe('chapter editor (S1-E3-02a)', () => {
     browser,
   }) => {
     const page = await openAsPersona(browser, 'adult_writer', '/write');
+    // The page's timers run on a clock the test controls (they keep pace with real time until
+    // paused below).
+    await page.clock.install();
     const card = page.getByRole('article', { name: 'Stația meteo' });
     await card.getByRole('button', { name: 'Write chapter one' }).click();
     await expect(page).toHaveURL(new RegExp(`/write/s/${slug}/c/[a-z0-9]{8}$`));
@@ -67,6 +70,10 @@ test.describe('chapter editor (S1-E3-02a)', () => {
     await expect(page.getByRole('region', { name: 'Saving' }).getByRole('status')).toHaveText(
       'Nothing to save yet.',
     );
+    // Hold the clock still, so the editor's 10-second autosave tick can't save between the typing
+    // and the "Unsaved changes." check (on a slow runner it did, and the test saw "Saved at"
+    // instead; CI-3). Saving on leaving the text doesn't wait on a timer, so it still runs.
+    await page.clock.pauseAt(await page.evaluate(() => Date.now() + 200));
 
     await page.getByRole('textbox', { name: 'Chapter title' }).fill('Caietele bunicii');
     const text = page.getByRole('textbox', { name: 'Chapter text' });

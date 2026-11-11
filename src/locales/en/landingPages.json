@@ -62,8 +62,11 @@
       "taken": "Another page already uses that address.",
       "bad_type": "Pick contest, campaign or information.",
       "not_allowed": "Only the owner and admins can make landing pages.",
-      "unreachable": "We couldn’t reach the server. Try again."
-    }
+      "unreachable": "We couldn’t reach the server. Try again.",
+      "bad_layout": "Pick a layout from the list.",
+      "too_big": "This page is too big to save. Remove some blocks or shorten the text."
+    },
+    "layout": "Layout"
   },
   "editor": {
     "back": "Back to landing pages",
@@ -233,7 +236,9 @@
         "remove": "Remove step {{number}}",
         "howMany": "Add between {{fewest}} and {{most}} steps, the same in both languages."
       }
-    }
+    },
+    "copyBlock": "Copy {{name}}",
+    "copy": "Copy"
   },
   "picture": {
     "states": {
@@ -294,5 +299,130 @@
     "eyebrow": "Website",
     "heading": "Page builder",
     "notAllowed": "Building landing pages isn’t part of your staff role."
+  },
+  "layouts": {
+    "names": {
+      "blank": "Blank page",
+      "contest": "Contest",
+      "call_for_submissions": "Call for submissions",
+      "event": "Event",
+      "plain": "Plain page"
+    },
+    "hints": {
+      "blank": "Start with no blocks and add them one by one.",
+      "contest": "Hero, key dates, who can enter, prize, how to enter, rules, questions and Remind me.",
+      "call_for_submissions": "Hero, text, steps, questions and a call to action.",
+      "event": "Hero, text, cards, a quote and a call to action.",
+      "plain": "Hero and text, for information."
+    },
+    "contest": {
+      "hero": {
+        "title": "Writing contest",
+        "intro": "A short line on what to write and why it is worth entering."
+      },
+      "dates": {
+        "heading": "Key dates",
+        "note": "Times are Romanian time."
+      },
+      "who": {
+        "heading": "Who can enter",
+        "body": "Members in these age groups can send one entry each."
+      },
+      "prize": {
+        "heading": "Prize",
+        "body": "What the winners get, and how many winners there are."
+      },
+      "how": {
+        "heading": "How to enter",
+        "body": "Write a new story, add the contest tag and publish it before entries close."
+      },
+      "rules": {
+        "heading": "Rules",
+        "body": "The main rules in a few lines. The full rules are on their own page.",
+        "link_label": "Read the full rules"
+      },
+      "questions": {
+        "heading": "Questions"
+      },
+      "remind": {
+        "heading": "Remind me",
+        "intro": "Get a reminder a few days before entries close."
+      }
+    },
+    "call_for_submissions": {
+      "hero": {
+        "title": "Call for submissions",
+        "intro": "What we are looking for, in one or two lines."
+      },
+      "about": {
+        "heading": "What we are looking for",
+        "body": "The theme, the length and the kind of writing that fits."
+      },
+      "steps": {
+        "heading": "How to send a piece",
+        "entry1": {
+          "title": "Write",
+          "body": "A new piece on the theme."
+        },
+        "entry2": {
+          "title": "Publish",
+          "body": "Add the tag and publish it before the closing date."
+        }
+      },
+      "questions": {
+        "heading": "Questions"
+      },
+      "action": {
+        "heading": "Ready to write?",
+        "body": "Start a new story now.",
+        "button_label": "Start writing"
+      }
+    },
+    "event": {
+      "hero": {
+        "title": "Event",
+        "intro": "When and where it happens, in one line."
+      },
+      "about": {
+        "heading": "About the event",
+        "body": "What happens, who it is for and how long it lasts."
+      },
+      "cards": {
+        "heading": "What to expect",
+        "entry1": {
+          "title": "Readings",
+          "body": "Writers read new work aloud."
+        },
+        "entry2": {
+          "title": "Conversations",
+          "body": "Questions and answers with the writers."
+        }
+      },
+      "quote": {
+        "quote": "A line from a writer or a past guest.",
+        "source": "Their pen name"
+      },
+      "action": {
+        "heading": "Join us",
+        "body": "Places are limited.",
+        "button_label": "Find out more"
+      }
+    },
+    "plain": {
+      "hero": {
+        "title": "Page title",
+        "intro": "A short line on what this page explains."
+      },
+      "about": {
+        "heading": "Heading",
+        "body": "The page text."
+      }
+    }
+  },
+  "copy": {
+    "heading": "Copy this page",
+    "address": "Address of the copy",
+    "button": "Copy page",
+    "hint": "The copy takes the saved draft, or the newest version, and stays a draft until it is published."
   }
 }

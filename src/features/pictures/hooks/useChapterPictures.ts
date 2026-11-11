@@ -10,12 +10,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
 
-import {
-  fetchMyPictureStates,
-  uploadChapterPicture,
-  type ChapterPictureUpload,
-  type PictureView,
-} from '../api/pictures';
+import { fetchMyPictureStates, type PictureView } from '../api/pictures';
+import { uploadChapterPicture, type ChapterPictureUpload } from '../api/pictureUploads';
 
 /** While a picture is still being checked, look again this often (milliseconds). */
 const checkingRefreshMilliseconds = 15 * 1000;

@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/Button';
 import { InfoPill } from '@/components/ui/InfoPill';
 import type { LandingContent } from '@/schemas/landingPages';
 
-import { canMove } from '../../lib/blocks';
+import { canCopyBlock, canMove } from '../../lib/blocks';
 import { useLandingPageTranslation } from '../../registerLandingPageTranslations';
 
 /** What the row needs. */
@@ -28,6 +28,8 @@ interface BlockListRowProps {
   onOpen: () => void;
   onMove: (direction: -1 | 1) => void;
   onRemove: () => void;
+  /** Copies the block below itself (S1-E11-35). */
+  onCopy: () => void;
 }
 
 /**
@@ -41,7 +43,10 @@ function MoveButtons({
   name,
   onMove,
   onRemove,
-}: Pick<BlockListRowProps, 'content' | 'index' | 'onMove' | 'onRemove'> & { name: string }) {
+  onCopy,
+}: Pick<BlockListRowProps, 'content' | 'index' | 'onMove' | 'onRemove' | 'onCopy'> & {
+  name: string;
+}) {
   const { t } = useLandingPageTranslation();
   return (
     <>
@@ -61,6 +66,11 @@ function MoveButtons({
       >
         {t('editor.down')}
       </Button>
+      {canCopyBlock(content.blocks[index]?.kind ?? 'hero') && (
+        <Button variant="secondary" aria-label={t('editor.copyBlock', { name })} onClick={onCopy}>
+          {t('editor.copy')}
+        </Button>
+      )}
       <Button
         variant="destructive"
         aria-label={t('editor.removeBlock', { block: name })}
