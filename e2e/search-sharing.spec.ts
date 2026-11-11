@@ -19,9 +19,12 @@ import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessib
 import { runSql } from './support/database';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
-/** The live English home page of the Romanian market: the version visitors get. */
+/**
+ * The live English home page: the version visitors get. Since LOCALISE-1 it is the shared page,
+ * the one every country shows (no country of its own).
+ */
 const liveEnglishHome = `(select live.id from public.cms_live_versions('home_page') as live
-  where live.market_code = 'RO' and live.language_code = 'en')`;
+  where live.market_code is null and live.language_code = 'en')`;
 
 /** Opens an address in English as a persona. */
 async function openAs(
@@ -62,7 +65,7 @@ test.describe('Staff › Website › Search and sharing (S1-E11-39)', () => {
     await expect(page.getByRole('status').getByText(/pages, \d+ to fix\./)).toBeVisible();
 
     // Step 2: the English home page opens on its search result and share card.
-    const homeRow = page.getByRole('listitem').filter({ hasText: 'Home page · RO · en' });
+    const homeRow = page.getByRole('listitem').filter({ hasText: 'Home page · en' });
     await homeRow.getByText('/', { exact: true }).click();
     await expect(homeRow.getByText('Search result')).toBeVisible();
     await expect(

@@ -199,7 +199,9 @@ test.describe('epic S1-E11 journeys', () => {
   }) => {
     const newLine = `O linie nouă pentru epic ${String(stamp)}.`;
     // Step 1: the admin changes the Romanian line with a "show from" date of tomorrow.
+    // The editor opens on the main language (English); Romanian is picked at the side (LOCALISE-1).
     const admin = await openAs(browser, 'admin', '/staff/website');
+    await admin.getByRole('radio', { name: 'Română' }).check();
     const lede = admin.getByRole('textbox', { name: 'Line under the headline' });
     await expect(lede).toHaveValue(/Publică povești/);
     await lede.fill(newLine);
