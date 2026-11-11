@@ -3,13 +3,13 @@
  * Website-Home, 1.1; the cover wall from bundle LOOK-2).
  *
  * Board values: two columns that wrap on narrow screens. On the left, an eyebrow, the Funnel Display
- * headline on two lines with a gold underline under the chosen word, the lede, two pill buttons
+ * headline on two lines, the second in the look's accent (LOGO-2), the lede, two pill buttons
  * with their line icons (the pen on "Start writing", the open book on "Start reading") and
  * three short points with the padlock, shield and book icons (ActionIcon, since NO-DOODLES). On the right, the cover wall
  * (HeroCollage). Every word comes from the published CMS version (never the locale files,
  * decided 17 Oct 2026, 19:14); the `lang` attribute is the copy's language, which can differ
  * from the interface after a fallback (WCAG 2.2, 3.1.2).
- * Who uses it: WebsiteHomePage. What it calls: HeadlineLine and HeroCollage.
+ * Who uses it: WebsiteHomePage. What it calls: HeadlineLines and HeroCollage.
  */
 import { Link } from 'react-router';
 
@@ -20,7 +20,7 @@ import type { HomePageContent } from '@/schemas/websiteContent';
 
 import { withBrand } from '../lib/brandText';
 
-import { HeadlineLine } from './HeadlineLine';
+import { HeadlineLines } from './HeadlineLines';
 import { HeroCollage } from './HeroCollage';
 
 /** What the hero needs. */
@@ -106,19 +106,10 @@ export function HomeHero({ page, language }: HomeHeroProps) {
       <div className="flex min-w-0 flex-[1_1_440px] flex-col gap-6">
         <Eyebrow>{withBrand(page.eyebrow)}</Eyebrow>
         <h1 className="m-0 font-heading text-[clamp(46px,6vw,92px)] leading-[0.94] font-extrabold tracking-[-0.025em] break-words text-heading">
-          {/* Two lines as blocks with a space between, so the heading reads as one sentence. */}
-          <span className="block">
-            <HeadlineLine
-              line={withBrand(page.headlineFirst)}
-              underlinedWord={page.underlinedWord}
-            />
-          </span>{' '}
-          <span className="block">
-            <HeadlineLine
-              line={withBrand(page.headlineSecond)}
-              underlinedWord={page.underlinedWord}
-            />
-          </span>
+          <HeadlineLines
+            first={withBrand(page.headlineFirst)}
+            second={withBrand(page.headlineSecond)}
+          />
         </h1>
         <p className="m-0 max-w-[560px] text-[19px] leading-[1.65] text-body">
           {withBrand(page.lede)}
