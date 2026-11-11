@@ -147,3 +147,25 @@ describe('the search list (S1-E5-04)', () => {
     expect(request.sortOrder).toBeNull();
   });
 });
+
+describe('"Popular in" in the address (MARKETS-2d)', () => {
+  it('keeps the country on the Popular See all page', () => {
+    const request = { ...plainList('popular'), popularIn: 'SE' };
+    expect(listAddress(request)).toBe('/discover/all/popular?country=SE');
+    const back = requestFromAddress('popular', null, new URLSearchParams('country=SE'));
+    expect(back.popularIn).toBe('SE');
+  });
+
+  it('reads "everywhere" and ignores anything else, or any other list', () => {
+    expect(
+      requestFromAddress('popular', null, new URLSearchParams('country=everywhere')).popularIn,
+    ).toBe('everywhere');
+    expect(
+      requestFromAddress('popular', null, new URLSearchParams('country=se')).popularIn,
+    ).toBeNull();
+    expect(
+      requestFromAddress('updated', null, new URLSearchParams('country=SE')).popularIn,
+    ).toBeUndefined();
+    expect(listAddress({ ...plainList('updated'), popularIn: 'SE' })).toBe('/discover/all/updated');
+  });
+});

@@ -74,6 +74,28 @@ export interface ListRequest {
    */
   languageCode: string | null;
   sortOrder: SortOrder | null;
+  /**
+   * "Popular in" (MARKETS-2d), on the popular list only: a two-letter country code for that
+   * country's ranking, everywhereRanking for the overall one, or null/absent when the page hasn't
+   * picked yet (it then starts on the reader's own country, usePopularIn).
+   */
+  popularIn?: string | null;
+}
+
+/** "Popular in › Everywhere": the overall ranking (MARKETS-2d). */
+export const everywhereRanking = 'everywhere';
+
+/**
+ * The country a list asks the database to rank by.
+ *
+ * @param request - the list
+ * @returns a two-letter country code, or null for the overall ranking
+ */
+export function popularInFor(request: ListRequest): string | null {
+  if (request.kind !== 'popular') return null;
+  const country = request.popularIn ?? null;
+  if (country === null || !/^[A-Z]{2}$/.test(country)) return null;
+  return country;
 }
 
 /** The See all filter's "Every language": no language filter, even where reading languages apply. */
@@ -153,6 +175,11 @@ export interface StoryListPage {
   /** How many stories the whole list holds for this reader. */
   total: number;
   stories: ListedStory[];
+  /**
+   * The country whose ranking ordered the list, or null for the overall ranking: a country with
+   * too few ranked stories falls back to it, and the page says so (MARKETS-2d).
+   */
+  popularIn: string | null;
 }
 
 /** One story as browse_stories() answers it. */
@@ -240,6 +267,7 @@ export async function fetchStoryList(
 ): Promise<StoryListPage> {
   // Step 1: only the filters that are set go to the database; the rest keep their defaults.
   const language = languageFilterFor(request, page.readingLanguages ?? []);
+  const popularIn = popularInFor(request);
   const { data, error } = await client.rpc('browse_stories', {
     list_kind: request.kind,
     ...(request.key === null ? {} : { list_key: request.key }),
@@ -247,11 +275,20 @@ export async function fetchStoryList(
     ...(request.completion === null ? {} : { completion: request.completion }),
     ...(language === null ? {} : { language }),
     ...(request.sortOrder === null ? {} : { sort_order: request.sortOrder }),
+    ...(popularIn === null ? {} : { popular_in: popularIn }),
     page_size: page.pageSize,
     page_offset: page.offset,
   });
   if (error !== null) throw new Error(`Could not read the stories: ${error.message}`);
   // Step 2: the screen's shape.
-  const answer = data as unknown as { total: number; stories: ListedStoryRow[] };
-  return { total: answer.total, stories: answer.stories.map(toListedStory) };
+  const answer = data as unknown as {
+    total: number;
+    stories: ListedStoryRow[];
+    popular_in?: string | null;
+  };
+  return {
+    total: answer.total,
+    stories: answer.stories.map(toListedStory),
+    popularIn: answer.popular_in ?? null,
+  };
 }

@@ -49,6 +49,7 @@ import { DiscoverCards } from './DiscoverCards';
 import { DiscoverShelf } from './DiscoverShelf';
 import { FeaturedBand } from './FeaturedBand';
 import { GreetingHeading } from './GreetingHeading';
+import { PopularShelf } from './PopularShelf';
 import { RisingWritersShelf } from './RisingWritersShelf';
 
 /**
@@ -159,6 +160,8 @@ function ShelfFromSetting({ word, isSignedIn }: { word: string; isSignedIn: bool
   if (kind === null) return null;
   // The follows shelf and "Picked for you" (S1-E2-06) belong to someone signed in.
   if ((kind === 'following' || kind === 'picked') && !isSignedIn) return null;
+  // MARKETS-2d: Popular carries its "Popular in" drop-down.
+  if (kind === 'popular') return <PopularShelf />;
   return (
     <DiscoverShelf
       eyebrow={t(`lists.${kind}Eyebrow`)}

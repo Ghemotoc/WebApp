@@ -88,6 +88,8 @@ select results_eq(
        ('chapter_plan_characters', 0::bigint),
        ('chapter_plans', 0::bigint),
        ('chapter_reads', 0::bigint),
+       -- Reads by country and the per-country scores: staff only (MARKETS-2d).
+       ('chapter_reads_by_country', 0::bigint),
        ('chapter_revisions', 0::bigint),
        ('chapter_scenes', 0::bigint),
        ('chapter_shares', 0::bigint),
@@ -246,6 +248,7 @@ select results_eq(
        ('story_character_fields', 0::bigint),
        ('story_character_relationships', 0::bigint),
        ('story_characters', 0::bigint),
+       ('story_country_scores', 0::bigint),
        ('story_events', 0::bigint),
        ('story_ideas', 0::bigint),
        ('story_marketing', 0::bigint),

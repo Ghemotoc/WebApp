@@ -28,6 +28,8 @@ import { categoryAccent } from '../lib/categoryAccents';
 import { sortChoicesFor } from '../lib/listAddresses';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
 
+import { PopularInSelect } from './PopularInSelect';
+
 /** What the filters need. */
 export interface StoryListFiltersProps {
   request: ListRequest;
@@ -175,6 +177,14 @@ export function StoryListFilters({ request, sortOrder, onChange }: StoryListFilt
         <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
           {request.kind !== 'completed' && <StatusSegments request={request} onChange={onChange} />}
           <LanguageSelect request={request} onChange={onChange} />
+          {/* MARKETS-2d: Popular can be ranked by one country. */}
+          {request.kind === 'popular' && (
+            <PopularInSelect
+              id="story-list-popular-in"
+              value={request.popularIn ?? ''}
+              onChange={(value) => onChange({ ...request, popularIn: value })}
+            />
+          )}
         </div>
         <SortSelect request={request} sortOrder={sortOrder} onChange={onChange} />
       </div>

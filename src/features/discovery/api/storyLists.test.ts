@@ -2,7 +2,8 @@
  * Tests for the story lists' language filter (bundle MARKETS-2, part c; IDEA-20261109-2): the
  * lists on Discover, the genre pages and See all show the languages someone reads, a language
  * picked in the filter wins, and "Any language" turns the filter off. The database side is in
- * supabase/tests/database/358-reading-languages.test.sql.
+ * supabase/tests/database/358-reading-languages.test.sql. Also "Popular in" a country (MARKETS-2d;
+ * database side in 359-popular-in-country.test.sql).
  *
  * Who runs it: `npm test`.
  */
@@ -14,7 +15,9 @@ import { plainList } from '../lib/listAddresses';
 
 import {
   everyLanguage,
+  everywhereRanking,
   fetchStoryList,
+  popularInFor,
   followsReadingLanguages,
   languageFilterFor,
 } from './storyLists';
@@ -58,5 +61,33 @@ describe('the language filter a list sends', () => {
       page_size: 21,
       page_offset: 0,
     });
+  });
+});
+
+describe('"Popular in" a country (MARKETS-2d)', () => {
+  it('asks for a country only on the popular list, and never for "Everywhere"', () => {
+    expect(popularInFor({ ...plainList('popular'), popularIn: 'SE' })).toBe('SE');
+    expect(popularInFor({ ...plainList('popular'), popularIn: everywhereRanking })).toBeNull();
+    expect(popularInFor({ ...plainList('updated'), popularIn: 'SE' })).toBeNull();
+    expect(popularInFor({ ...plainList('popular'), popularIn: 'se' })).toBeNull();
+  });
+
+  it('sends the country and says which ranking came back', async () => {
+    const rpc = vi
+      .fn()
+      .mockResolvedValue({ data: { total: 0, stories: [], popular_in: null }, error: null });
+    const client = { rpc } as unknown as AppSupabaseClient;
+    const page = await fetchStoryList(
+      client,
+      { ...plainList('popular'), popularIn: 'NO' },
+      { pageSize: 21, offset: 0 },
+    );
+    expect(rpc).toHaveBeenCalledWith('browse_stories', {
+      list_kind: 'popular',
+      popular_in: 'NO',
+      page_size: 21,
+      page_offset: 0,
+    });
+    expect(page.popularIn).toBeNull();
   });
 });

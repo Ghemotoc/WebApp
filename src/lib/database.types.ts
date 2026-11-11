@@ -1578,6 +1578,36 @@ export type Database = {
           },
         ];
       };
+      chapter_reads_by_country: {
+        Row: {
+          chapter_id: string;
+          country_code: string;
+          read_on: string;
+          total: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          chapter_id: string;
+          country_code: string;
+          read_on: string;
+          total?: number;
+        };
+        Update: {
+          chapter_id?: string;
+          country_code?: string;
+          read_on?: string;
+          total?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'chapter_reads_by_country_chapter_id_fkey';
+            columns: ['chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       chapter_revisions: {
         Row: {
           body: string;
@@ -8616,6 +8646,42 @@ export type Database = {
           },
         ];
       };
+      story_country_scores: {
+        Row: {
+          computed_at: string;
+          country_code: string;
+          created_at: string;
+          score: number;
+          story_id: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          computed_at?: string;
+          country_code: string;
+          created_at?: string;
+          score?: number;
+          story_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          computed_at?: string;
+          country_code?: string;
+          created_at?: string;
+          score?: number;
+          story_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'story_country_scores_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: false;
+            referencedRelation: 'stories';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       story_events: {
         Row: {
           created_at: string;
@@ -11936,6 +12002,7 @@ export type Database = {
           list_kind: string;
           page_offset?: number;
           page_size?: number;
+          popular_in?: string;
           sort_order?: string;
         };
         Returns: Json;
@@ -12579,6 +12646,7 @@ export type Database = {
       comment_wait_minutes: { Args: { author_id: string }; Returns: number };
       compliance_times_problem: { Args: { completed: string; received: string }; Returns: string };
       compute_daily_metrics: { Args: { for_day?: string }; Returns: number };
+      compute_story_country_scores: { Args: Record<PropertyKey, never>; Returns: number };
       compute_story_scores: { Args: Record<PropertyKey, never>; Returns: number };
       confirm_opening_list: { Args: { token: string }; Returns: string };
       confirm_teacher_email: { Args: { token: string }; Returns: Json };
@@ -12740,6 +12808,7 @@ export type Database = {
       conversation_with: { Args: { other_handle: string }; Returns: Json };
       count_links: { Args: { body: string }; Returns: number };
       count_words: { Args: { body: string }; Returns: number };
+      country_has_ranking: { Args: { country: string }; Returns: boolean };
       cover_upload_allowed: { Args: { object_name: string }; Returns: boolean };
       create_bible_entry: { Args: { entry_title: string; section_id: string }; Returns: Json };
       create_chapter: { Args: { story_slug: string }; Returns: Json };
@@ -13496,6 +13565,7 @@ export type Database = {
       is_open_interface_language: { Args: { code: string }; Returns: boolean };
       is_personal_email_domain: { Args: { domain: string }; Returns: boolean };
       is_picture_reviewer: { Args: { person_id: string }; Returns: boolean };
+      is_popular_in_country: { Args: { country: string }; Returns: boolean };
       is_school_domain_trusted: { Args: { domain: string }; Returns: boolean };
       is_social_provider: { Args: { provider: string }; Returns: boolean };
       is_staff: {
@@ -16497,6 +16567,18 @@ export type Database = {
       story_class_share: { Args: { story_slug: string }; Returns: Json };
       story_classic_author: { Args: { target_story_id: string }; Returns: Json };
       story_comment_total: { Args: { target_story_id: string }; Returns: number };
+      story_country_signals: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          comments: number;
+          country_code: string;
+          likes: number;
+          raw_reads: number;
+          read_through: number;
+          reads: number;
+          story_id: string;
+        }[];
+      };
       story_cover_picture: { Args: { story_slug: string }; Returns: Json };
       story_follow_state: { Args: { story_slug: string }; Returns: Json };
       story_follower_count_of: { Args: { target_story_id: string }; Returns: number };
