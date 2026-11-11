@@ -443,13 +443,15 @@ As a writer, I want my story to show up well in search engines and share cards w
 
 ##### S1-E11-37 Search and share fields for website pages
 
-As an admin, I want to set each website page's search title, description and share picture, so that it looks right in search results and when shared.
+As an admin, I want to set the home page's and each help page's search title and description, so that they look right in search results and when shared.
 
-- **Priority:** Should · **Size:** M · **Depends on:** S1-E11-06, S1-E11-34 · **Bundle:** SEO-1b
+- **Priority:** Should · **Size:** M · **Depends on:** S1-E11-06, S1-E11-12 · **Bundle:** SEO-1b
 - **Acceptance criteria:**
-  - Given the home page, a help page or a landing page, when an admin edits it, then they can set a search title, a description, a share picture with alt text (through the picture check) and "Hide from search engines", stored with each page version.
-  - Given a field is empty, when the page is served, then a sensible default is used (the page's heading and the site's default description and picture).
-  - Given a public page, when a robot reads it without JavaScript, then the server has written its title, description, canonical, hreflang (with x-default), Open Graph and Twitter tags.
+  - Given the home page or a help page, when an admin edits it, then they can set a search title (up to 70 characters), a search description (up to 200) and "Hide this page from search engines", stored with each page version; longer text is refused when publishing, with the field named.
+  - Given a field is empty, when the page is served, then the page's own words are used: the home page's headline and introduction, or the help page's title and first lines.
+  - Given the home page or a help page, when a robot reads it without JavaScript, then the server has written its title (the page's title, then the site's name), description, canonical link, page language, Open Graph and Twitter tags; a hidden page and an unknown help address carry noindex.
+  - Given the visitor's browser, when the page opens, then the tab shows the same title the server wrote, and the next screen goes back to its own.
+- **Not here, on purpose:** hreflang links, because one address serves every language (the visitor picks the language in the app), so there is no other-language address to point to; a share picture of their own for the home page and help pages, which share the site's picture (SEO-1c adds a large one). Landing pages already take their search words from the hero; their own fields and share picture come in SEO-1c.
 
 ##### S1-E11-38 Sitemap, robots file and organisation data
 
@@ -461,6 +463,8 @@ As the founder, I want search engines to find every public page and nothing priv
   - Given /robots.txt, when it is read, then it points to the sitemap and blocks staff, account and editor addresses.
   - Given the home page, when it is read, then it carries Organization data with the name and links from the brand config.
   - Given an admin, when they enter a Google Search Console or Bing verification code, then it is added to the home page as a meta tag (no scripts, CLAUDE.md rule 7).
+  - Given a page without a picture of its own, when it is shared, then the card shows a large default picture (1200 × 630) with the site's name.
+  - Given a landing page, when an admin edits it, then it has the same search title, description and "Hide this page from search engines" fields, in both languages, and its hero picture (already through the picture check) is its share picture.
 
 ##### S1-E11-39 Search and sharing screen
 

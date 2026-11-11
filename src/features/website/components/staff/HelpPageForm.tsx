@@ -2,7 +2,8 @@
  * HelpPageForm: one help page being written (story S1-E11-12 criteria 1, 5, 6 and 7).
  *
  * A web address (only for a new page; an address never changes once used), a title, a section and
- * the body in the safe Markdown subset, with a preview beside it. Legal wording is marked, and the
+ * the body in the safe Markdown subset, with a preview beside it, then the search and share
+ * fields (S1-E11-37). Legal wording is marked, and the
  * editor reminds the admin it must match the legal documents. Links to our own pages are checked
  * when publishing; a broken one is named.
  * Who shows it: HelpEditor. What it calls: the editor state's act().
@@ -21,6 +22,7 @@ import { CountedField } from './CountedField';
 import { LegalWordingBox } from './LegalWordingBox';
 import { MarkdownField } from './MarkdownField';
 import { PublishControls } from './PublishControls';
+import { SearchFieldsBox } from './SearchFieldsBox';
 
 /** What the form needs. */
 export interface HelpPageFormProps {
@@ -85,6 +87,14 @@ function HelpPageFields({ page, language, labelOf, problemOf, onChange }: HelpPa
         language={language}
         serverProblem={problemOf('body')}
         onChange={(body) => onChange({ ...page, body })}
+      />
+      {/* The search and share fields (S1-E11-37): empty ones use the title and first lines. */}
+      <SearchFieldsBox
+        idPrefix="help"
+        search={page.search}
+        language={language}
+        problemOf={problemOf}
+        onChange={(search) => onChange({ ...page, search })}
       />
     </>
   );

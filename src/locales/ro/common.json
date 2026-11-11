@@ -8,6 +8,7 @@
   },
   "shell": {
     "skipToContent": "Sari la conținut",
+    "pageTitle": "{{title}} · {{productName}}",
     "mainNavigation": "Principal",
     "footerNavigation": "Subsol",
     "madeBy": "O aplicație de la {{companyName}}",
@@ -214,7 +215,6 @@
       "intro": "Ghiduri scurte despre scris, citit și siguranță aici, plus răspunsuri la întrebările puse cel mai des.",
       "questions": "Întrebări frecvente",
       "back": "Pagini de ajutor",
-      "pageTitle": "{{title}} · Ajutor",
       "notFoundHeading": "Nu găsim această pagină de ajutor",
       "notFound": "Poate a fost mutată sau scoasă. Toate paginile de ajutor sunt pe pagina Ajutor.",
       "searchLabel": "Caută în ajutor",

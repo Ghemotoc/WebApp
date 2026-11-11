@@ -12895,6 +12895,7 @@ export type Database = {
           isSetofReturn: true;
         };
       };
+      cms_search_problems: { Args: { search: Json }; Returns: string[] };
       cms_text_problem: {
         Args: { field_name: string; field_value: string; longest: number };
         Returns: string;
