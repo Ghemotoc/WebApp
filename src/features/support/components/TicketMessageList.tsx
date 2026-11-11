@@ -56,7 +56,8 @@ function ChatBubbleItem({ message }: { message: TicketMessageItem }) {
         {message.body}
       </p>
       <p className="m-0 text-[13px] text-meta">
-        {message.author} · {when}
+        {/* The name in its own span, so it reads (and can be found) as one piece. */}
+        <span>{message.author}</span> · <time dateTime={message.at}>{when}</time>
       </p>
     </li>
   );
