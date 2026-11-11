@@ -127,6 +127,8 @@ Păstrarea evidențelor în caz de dispută. Păstrarea raportărilor și decizi
 
 Numărarea a ce funcționează. Numărăm citirile, capitolele terminate, înscrierile, membrii activi, minutele petrecute în aplicație și citind și cititorii care revin ca totaluri, fără cookie-uri și fără să urmărim pe nimeni. Pentru asta păstrăm o singură dată pentru fiecare membru: ultima zi în care ai folosit aplicația, înlocuită în fiecare zi, niciodată o listă a zilelor sau a paginilor. Se șterge la 35 de zile după ultima ta vizită. Temei legal: interesul nostru legitim. [Avocatul trebuie să confirme]
 
+Sugestii din lectură. Când termini o poveste, ea poate conta, ca total fără nume, pentru „Povești asemănătoare”: povești pe care le-au terminat 5 sau mai mulți dintre aceiași cititori. Descoperă îți arată apoi „Pentru că ai citit” din poveștile pe care le-ai terminat. Este pornită pentru adulți și oprită pentru cei sub 18 ani, iar o poți opri sau porni din Setări › Confidențialitate. Temei legal: interesul nostru legitim și alegerea ta pentru membrii sub 18 ani. [Avocatul trebuie să confirme]
+
 Acolo unde ne bazăm pe interesul legitim, te poți opune, cum explicăm în „Drepturile tale”.
 
 Retragerea acordului. Îți poți retrage acordul oricând și este la fel de ușor ca a-l da: [unde în Setări: de proiectat] sau scrie la [emailul pentru confidențialitate]. Retragerea nu face ilegal ce am făcut înainte. Pentru că avem nevoie de acord ca să-ți administrăm contul, [DESCHIS: ce se întâmplă cu contul, poveștile și postările lui când acordul este retras; decide avocatul (L1)].

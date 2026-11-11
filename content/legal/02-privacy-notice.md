@@ -127,6 +127,8 @@ Keeping records in case of a dispute. Keeping reports and decisions for a limite
 
 Counting what works. We count reads, finished chapters, sign-ups, active members, minutes spent in the app and reading, and returning readers as totals, without cookies and without tracking anyone. For this we keep one date per member: the last day you used the app, replaced each day, never a list of the days or pages. It is deleted 35 days after your last visit. Legal basis: our legitimate interest. [Lawyer to confirm]
 
+Suggestions from reading. When you finish a story, it can count, as a total with no names, towards "Stories like this": stories that 5 or more of the same readers finished. Discover then shows "Because you read" from the stories you finished. It is on for adults and off for anyone under 18, and you can turn it off or on in Settings › Privacy. Legal basis: our legitimate interest, and your choice for members under 18. [Lawyer to confirm]
+
 Where we rely on legitimate interest, you can object, as explained in “Your rights”.
 
 Withdrawing consent. You can withdraw your consent at any time, and it is as easy as giving it: [where in Settings: to be designed], or write to [privacy email]. Withdrawing doesn’t make what we did before unlawful. Because we need consent to run your account, [OPEN: what happens to the account, its stories and its posts when consent is withdrawn; lawyer to decide (L1)].

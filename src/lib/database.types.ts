@@ -5922,6 +5922,7 @@ export type Database = {
           signature: string | null;
           signature_picture_id: string | null;
           suggest_me: boolean | null;
+          suggests_from_reading: boolean | null;
           teacher_badge_since: string | null;
           updated_at: string;
           age_check_can_ask_manual: boolean | null;
@@ -5997,6 +5998,7 @@ export type Database = {
           signature?: string | null;
           signature_picture_id?: string | null;
           suggest_me?: boolean | null;
+          suggests_from_reading?: boolean | null;
           teacher_badge_since?: string | null;
           updated_at?: string;
         };
@@ -6051,6 +6053,7 @@ export type Database = {
           signature?: string | null;
           signature_picture_id?: string | null;
           suggest_me?: boolean | null;
+          suggests_from_reading?: boolean | null;
           teacher_badge_since?: string | null;
           updated_at?: string;
         };
@@ -8938,6 +8941,49 @@ export type Database = {
             columns: ['user_id'];
             isOneToOne: false;
             referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      story_pairs: {
+        Row: {
+          counted_at: string;
+          created_at: string;
+          paired_story_id: string;
+          readers: number;
+          story_id: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          counted_at?: string;
+          created_at?: string;
+          paired_story_id: string;
+          readers: number;
+          story_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          counted_at?: string;
+          created_at?: string;
+          paired_story_id?: string;
+          readers?: number;
+          story_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'story_pairs_paired_story_id_fkey';
+            columns: ['paired_story_id'];
+            isOneToOne: false;
+            referencedRelation: 'stories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'story_pairs_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: false;
+            referencedRelation: 'stories';
             referencedColumns: ['id'];
           },
         ];
@@ -12026,6 +12072,7 @@ export type Database = {
         }[];
       };
       banned_email_hash: { Args: { email: string }; Returns: string };
+      because_you_read: { Args: Record<PropertyKey, never>; Returns: Json };
       begin_age_check: {
         Args: { signature: string; threshold: number; yoti_session_id: string };
         Returns: Json;
@@ -12157,6 +12204,7 @@ export type Database = {
           signature: string | null;
           signature_picture_id: string | null;
           suggest_me: boolean | null;
+          suggests_from_reading: boolean | null;
           teacher_badge_since: string | null;
           updated_at: string;
         };
@@ -12741,6 +12789,7 @@ export type Database = {
       compute_daily_metrics: { Args: { for_day?: string }; Returns: number };
       compute_investor_metrics: { Args: { for_day: string }; Returns: number };
       compute_story_country_scores: { Args: Record<PropertyKey, never>; Returns: number };
+      compute_story_pairs: { Args: Record<PropertyKey, never>; Returns: number };
       compute_story_scores: { Args: Record<PropertyKey, never>; Returns: number };
       confirm_opening_list: { Args: { token: string }; Returns: string };
       confirm_teacher_email: { Args: { token: string }; Returns: Json };
@@ -14163,6 +14212,7 @@ export type Database = {
           signature: string | null;
           signature_picture_id: string | null;
           suggest_me: boolean | null;
+          suggests_from_reading: boolean | null;
           teacher_badge_since: string | null;
           updated_at: string;
         };
@@ -14193,6 +14243,7 @@ export type Database = {
         Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
         Returns: Database['public']['Enums']['moderated_state'];
       };
+      more_by_writer: { Args: { story_slug: string }; Returns: Json };
       move_bible_section: { Args: { new_position: number; section_id: string }; Returns: Json };
       move_chapter: { Args: { chapter_code: string; direction: number }; Returns: Json };
       move_chapter_scene: { Args: { new_position: number; scene_id: string }; Returns: Json };
@@ -14762,6 +14813,7 @@ export type Database = {
         };
       };
       page_ads: { Args: { context?: Json; page_key: string }; Returns: Json };
+      paired_cards: { Args: { left_out: string[]; source_story_id: string }; Returns: Json };
       paragraph_comment_counts: {
         Args: { chapter_code: string; story_slug: string };
         Returns: Json;
@@ -14992,6 +15044,7 @@ export type Database = {
           signature: string | null;
           signature_picture_id: string | null;
           suggest_me: boolean | null;
+          suggests_from_reading: boolean | null;
           teacher_badge_since: string | null;
           updated_at: string;
         }[];
@@ -15948,6 +16001,7 @@ export type Database = {
         Returns: undefined;
       };
       set_suggest_me: { Args: { should_suggest: boolean }; Returns: undefined };
+      set_suggests_from_reading: { Args: { should_suggest: boolean }; Returns: undefined };
       setting_value: { Args: { setting_key: string }; Returns: Json };
       setting_value_problem: { Args: { new_value: Json; old_value: Json }; Returns: string };
       share_options: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
@@ -16592,6 +16646,7 @@ export type Database = {
         Returns: string;
       };
       stories_fingerprint: { Args: { chosen_story_id: string; owner_id: string }; Returns: string };
+      stories_like_this: { Args: { story_slug: string }; Returns: Json };
       story_app_only_applies: { Args: { chosen: boolean }; Returns: boolean };
       story_as_shown: {
         Args: {
@@ -16826,6 +16881,8 @@ export type Database = {
         }[];
       };
       submit_teacher_proof: { Args: { proof_path: string }; Returns: Json };
+      suggestion_row_size: { Args: Record<PropertyKey, never>; Returns: number };
+      suggests_from_reading_of: { Args: { person_id: string }; Returns: boolean };
       suggests_me: { Args: { person_id: string }; Returns: boolean };
       support_assignee_id: { Args: { assignee_handle: string }; Returns: string };
       support_email_json: {
@@ -16985,6 +17042,13 @@ export type Database = {
         }[];
       };
       verify_certificate: { Args: { code: string }; Returns: Json };
+      visible_story_by_slug: {
+        Args: { story_slug: string };
+        Returns: {
+          story_id: string;
+          writer_id: string;
+        }[];
+      };
       vote_forum_post: { Args: { post_id: string; vote: string }; Returns: string };
       wait_minutes_until_free: { Args: { oldest_in_window: string }; Returns: number };
       waitlist_interest_matches: {

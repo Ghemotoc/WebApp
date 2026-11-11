@@ -7,13 +7,16 @@
  * the shared `<ReportButton>` (S1-E10-01; reportable type "chapter", with the chapter's row ID),
  * pushed to the right as on the board. Share comes after Like (S1-E4-05): the system share sheet
  * on a phone, or the copied link and "Share this chapter" on a computer; it is fetched when
- * the row nears the screen (ShareButtonWhenNear).
- * Who uses it: ChapterReaderPage. What it calls: LikeButton, ShareButtonWhenNear and ReportButton.
+ * the row nears the screen (ShareButtonWhenNear). After the latest chapter, "More by" and "Stories
+ * like this" follow, fetched when the end comes near (StorySuggestionsWhenNear, S1-E15-06).
+ * Who uses it: ChapterReaderPage. What it calls: LikeButton, ShareButtonWhenNear, ReportButton and
+ * StorySuggestionsWhenNear.
  */
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
 import { ReportButton } from '@/features/reporting/components/ReportButton';
+import { StorySuggestionsWhenNear } from '@/features/suggestions/components/StorySuggestionsWhenNear';
 import { ShareButtonWhenNear } from '@/features/sharing/components/ShareButtonWhenNear';
 
 import type { ReaderChapter } from '../api/chapter';
@@ -70,6 +73,12 @@ export function ChapterEnd({ chapter }: { chapter: ReaderChapter }) {
           />
         </span>
       </div>
+      {/* After the latest chapter, where to go next (S1-E15-06). */}
+      {chapter.nextCode === null && (
+        <div className="mt-12 lg:mr-20">
+          <StorySuggestionsWhenNear storySlug={chapter.story.slug} />
+        </div>
+      )}
     </>
   );
 }

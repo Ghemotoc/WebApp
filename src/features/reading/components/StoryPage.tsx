@@ -9,7 +9,8 @@
  * (cover, pills, title, "by <pen name>", numbers, Start reading and Library, Follow and Share, the
  * blurb and the tags), the chapter list, "The story's world" (S1-E17-33) and the wide ad slot
  * (S1-E12-01; none on a class-only story, Q70). The side column holds the writer card and "Labels
- * from the writer", then Report. The owner sees a note while nothing is published yet. No
+ * from the writer", then Report. Below both columns: "More by" and "Stories like this"
+ * (StorySuggestions, S1-E15-06). The owner sees a note while nothing is published yet. No
  * doodles since bundle G4.
  * A signed-out visitor on a 16+ or 18+ story gets its title and NoPreviewNotice instead of "not
  * available" (S1-E4-04; they count as under 16, Q6).
@@ -22,6 +23,7 @@ import { Link, useParams } from 'react-router';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
+import { StorySuggestions } from '@/features/suggestions/components/StorySuggestions';
 
 import { useStoryPage } from '../hooks/useStoryPage';
 import { useStoryPreview } from '../hooks/useStoryPreview';
@@ -152,6 +154,8 @@ export function StoryPage() {
           <StorySideColumn story={story} />
         </div>
       </div>
+      {/* "More by" and "Stories like this" (S1-E15-06), across the page's width. */}
+      <StorySuggestions storySlug={story.slug} />
     </PageContainer>
   );
 }
