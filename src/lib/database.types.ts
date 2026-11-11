@@ -13943,12 +13943,14 @@ export type Database = {
         }[];
       };
       landing_entries_open_on: { Args: { content: Json }; Returns: string };
+      landing_entry_text_ok: { Args: { longest: number; value: Json }; Returns: boolean };
       landing_featured_cards: { Args: { content: Json }; Returns: Json };
       landing_featured_problems: { Args: { block: Json; block_path: string }; Returns: string[] };
       landing_house_ad_for_slot: {
         Args: { used_keys: string[]; wanted_page_key: string };
         Returns: Json;
       };
+      landing_json_list: { Args: { value: Json }; Returns: Json };
       landing_page: { Args: { page_slug: string }; Returns: Json };
       landing_page_live_version: {
         Args: { target_page_id: string };
@@ -15770,6 +15772,7 @@ export type Database = {
         };
         Returns: undefined;
       };
+      require_landing_page_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_live_profile: { Args: Record<PropertyKey, never>; Returns: string };
       require_mail_thread_for_staff: {
         Args: { thread_reference: string };

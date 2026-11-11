@@ -412,11 +412,11 @@ As a moderator, an admin or someone in marketing, I want to build a landing page
 - **Priority:** Should · **Size:** M · **Depends on:** S1-E11-14, S1-E11-33 · **Bundle:** CMS-2b
 - **Added:** 10 Nov 2026 (Robert, Builder queue): "an easier staff page builder for moderators, admins and marketing". Engage Grow Hub is for ideas only (block families, a section library).
 - **Acceptance criteria:**
-  - Given the landing page editor, when staff add a block, then "Add a block" groups the blocks into families (Top of the page, Text and pictures, Lists and steps, Contest details, Ending) with one line on what each block is for.
+  - Given the landing page editor, when staff add a block, then "Add a block" groups the blocks into families (Top of the page, Words and pictures, Lists, Contest details, Stories, Ending) with one line on what each block is for.
   - Given the new blocks (picture and text, cards with 2 to 4 cards, steps with 2 to 6 steps, a quote, a call to action), when they are saved, then the database checks their fields as it does the existing blocks, in ro and en.
-  - Given a call to action or a card's link, when it is saved, then it must be a page on the site or an https address, or it is refused.
+  - Given a call to action's link, when the page is published, then it must be a page on the site or an https address, or it is refused (cards and steps carry no links, so they need no check).
   - Given a new `landing_pages` staff area, when staff open landing pages, then the owner, admins, moderators and anyone with a custom role holding it can build them, while the home page, notices, help and interface text stay with `website_cms` (admins and the owner).
-  - Given every save and publish, when it happens, then it is in the audit log.
+  - Given every publish, restore and archive, when it happens, then it is in the audit log (draft saves are not, as for every CMS editor: nothing a draft says reaches a visitor until it is published).
 
 ##### S1-E11-35 Ready-made pages and copying
 

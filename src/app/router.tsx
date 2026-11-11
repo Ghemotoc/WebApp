@@ -233,6 +233,15 @@ const staffRoutes: RouteObject = {
         return { Component: WebsiteAdminPage };
       },
     },
+    // The page builder (S1-E11-34): landing pages for anyone holding the landing_pages area.
+    {
+      path: 'landing-pages',
+      lazy: async () => {
+        const { LandingPagesAdminPage } =
+          await import('@/features/landing-pages/components/staff/LandingPagesAdminPage');
+        return { Component: LandingPagesAdminPage };
+      },
+    },
     // Content settings, markets and languages (S1-E11-03, S1-E11-05): owner and admin.
     {
       path: 'settings',

@@ -17,7 +17,12 @@
     "rules": "Rules",
     "questions": "Questions and answers",
     "featured": "Featured stories",
-    "remind_me": "Remind me"
+    "remind_me": "Remind me",
+    "picture_text": "Picture and text",
+    "cards": "Cards",
+    "steps": "Steps",
+    "quote": "Quote",
+    "call_to_action": "Call to action"
   },
   "languages": {
     "ro": "Română",
@@ -40,7 +45,7 @@
     "information": "This page is no longer up to date."
   },
   "list": {
-    "intro": "Landing pages live at their own address and are built from fixed blocks in Romanian and English. Only the owner and admins can make and publish them.",
+    "intro": "Landing pages live at their own address and are built from blocks in Romanian and English. The owner, admins, moderators and anyone whose role includes Landing pages can make and publish them.",
     "newHeading": "New landing page",
     "address": "Address",
     "addressHint": "The page will be at {{site}}/c/ and this name: lowercase letters, numbers and hyphens.",
@@ -116,7 +121,7 @@
       "body": "Text",
       "note": "Note",
       "link_label": "Link text",
-      "link": "Rules address",
+      "link": "Link address",
       "question": "Question",
       "answer": "Answer",
       "dates": "Key dates",
@@ -126,7 +131,13 @@
       "picture": "Picture",
       "stories": "Stories",
       "tag": "Tag",
-      "mode": "How stories are picked"
+      "mode": "How stories are picked",
+      "entryTitle": "Title",
+      "entryBody": "Words",
+      "quote": "Quote",
+      "source": "Who said it",
+      "button_label": "Button text",
+      "entries": "Cards and steps"
     },
     "problems": {
       "empty": "fill this in",
@@ -145,28 +156,31 @@
       "dates_empty": "Choose the three dates.",
       "dates_bad_date": "One of the dates isn’t valid.",
       "dates_out_of_order": "Entries open, then close, then the results come out.",
-      "link_empty": "Add the address of the rules.",
+      "link_empty": "Add the address it links to.",
       "link_bad_link": "Use one of our pages or an https:// address.",
       "age_groups": "Pick at least one age group.",
       "items": "Add at least one question, in both languages.",
       "not_checked": "the picture isn’t checked yet",
-      "not_allowed": "only a Hero or Text block can have a picture",
+      "not_allowed": "only a Hero, Text or Picture and text block can have a picture",
       "how_many": "pick between 1 and 12 stories",
       "picture_not_checked": "The picture isn’t checked yet. Publish once the check passes.",
       "picture_unknown": "This picture no longer exists. Upload it again.",
-      "picture_not_allowed": "Only a Hero or Text block can have a picture.",
+      "picture_not_allowed": "Only a Hero, Text or Picture and text block can have a picture.",
       "stories_how_many": "Pick between 1 and 12 stories.",
       "stories_unknown": "One of these addresses isn’t a story. Check each line.",
       "tag_unknown": "There is no tag with that name.",
       "one_remind_me": "a page can have one Remind me block",
-      "remind_me_needs_dates": "a Remind me block needs a Key dates block on the page"
+      "remind_me_needs_dates": "a Remind me block needs a Key dates block on the page",
+      "picture_empty": "Add a picture.",
+      "wrong_number": "the number of cards or steps is outside the limits, or differs between languages"
     },
     "failures": {
       "take_down_before_show_from": "The take-down date must come after the “show from” date.",
-      "not_allowed": "Only the owner and admins can change landing pages.",
+      "not_allowed": "Building landing pages isn’t part of your staff role.",
       "not_found": "This page or version no longer exists. Reload and try again.",
       "invalid": "Something on the page isn’t valid. Check it and try again.",
-      "unreachable": "We couldn’t reach the server. Try again."
+      "unreachable": "We couldn’t reach the server. Try again.",
+      "too_big": "This page is too big to save. Remove some blocks or shorten the text."
     },
     "outcomes": {
       "save": "Draft saved. Nothing has changed on the page yet.",
@@ -205,6 +219,20 @@
       "count": "{{count}} of {{most}} stories",
       "tag": "Tag name",
       "filterNote": "Visitors see only stories rated for the youngest readers in Who can enter (13 to 15 when the page has no such block), and a story hidden by moderation drops off at once."
+    },
+    "entries": {
+      "cards": {
+        "legend": "Card {{number}}, {{language}}",
+        "add": "Add a card",
+        "remove": "Remove card {{number}}",
+        "howMany": "Add between {{fewest}} and {{most}} cards, the same in both languages."
+      },
+      "steps": {
+        "legend": "Step {{number}}, {{language}}",
+        "add": "Add a step",
+        "remove": "Remove step {{number}}",
+        "howMany": "Add between {{fewest}} and {{most}} steps, the same in both languages."
+      }
     }
   },
   "picture": {
@@ -235,5 +263,36 @@
     "winners": "Winners",
     "finalists": "Finalists",
     "with": " with "
+  },
+  "families": {
+    "top": "Top of the page",
+    "words": "Words and pictures",
+    "lists": "Lists",
+    "contest": "Contest details",
+    "stories": "Stories",
+    "ending": "Ending"
+  },
+  "kindHints": {
+    "hero": "The page title, a short introduction and a picture, at the top.",
+    "text": "A heading and paragraphs, with an optional picture.",
+    "picture_text": "A picture beside a heading and paragraphs.",
+    "quote": "A short quote and who said it.",
+    "cards": "Two to four cards side by side, each with a title and a few words.",
+    "steps": "Two to six numbered steps, each with a title and a few words.",
+    "questions": "Questions that open to show their answers.",
+    "key_dates": "When entries open, when they close and when the results come out.",
+    "who_can_enter": "The age groups that can enter.",
+    "prize": "What the winners get.",
+    "how_to_enter": "How to send an entry.",
+    "rules": "A short summary with a link to the full rules.",
+    "featured": "Up to 12 stories, picked by hand or by tag.",
+    "call_to_action": "A heading, a line of text and one button.",
+    "remind_me": "Lets readers ask for a reminder before entries close."
+  },
+  "adminPage": {
+    "documentTitle": "Page builder",
+    "eyebrow": "Website",
+    "heading": "Page builder",
+    "notAllowed": "Building landing pages isn’t part of your staff role."
   }
 }

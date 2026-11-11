@@ -19,12 +19,14 @@ import {
   type LandingContent,
 } from '@/schemas/landingPages';
 
+import { isEntryKind } from '../../lib/entries';
 import { problemFor } from '../../lib/problemLabels';
 import { useLandingPageTranslation } from '../../registerLandingPageTranslations';
 
 import { BlockLanguageColumn } from './BlockLanguageColumn';
 import { BlockPictureField } from './BlockPictureField';
 import { BlockSharedFields } from './BlockSharedFields';
+import { EntryItemsFields } from './EntryItemsFields';
 import { QuestionItemsFields } from './QuestionItemsFields';
 
 /** What the card needs. */
@@ -118,6 +120,15 @@ export function BlockCard(props: BlockCardProps) {
       )}
       {block.kind === 'questions' && (
         <QuestionItemsFields block={block} index={index} problems={problems} onChange={onChange} />
+      )}
+      {isEntryKind(block.kind) && (
+        <EntryItemsFields
+          block={block}
+          kind={block.kind}
+          index={index}
+          problems={problems}
+          onChange={onChange}
+        />
       )}
       <BlockSharedFields block={block} index={index} problems={problems} onChange={onChange} />
     </section>

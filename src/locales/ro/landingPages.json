@@ -17,7 +17,12 @@
     "rules": "Regulament",
     "questions": "Întrebări și răspunsuri",
     "featured": "Povești recomandate",
-    "remind_me": "Amintește-mi"
+    "remind_me": "Amintește-mi",
+    "picture_text": "Imagine și text",
+    "cards": "Carduri",
+    "steps": "Pași",
+    "quote": "Citat",
+    "call_to_action": "Îndemn"
   },
   "languages": {
     "ro": "Română",
@@ -40,7 +45,7 @@
     "information": "Pagina nu mai este actuală."
   },
   "list": {
-    "intro": "Paginile de prezentare au adresa lor și se construiesc din blocuri fixe, în română și în engleză. Doar proprietarul și administratorii le pot crea și publica.",
+    "intro": "Paginile de prezentare au adresa lor și se construiesc din blocuri, în română și în engleză. Proprietarul, administratorii, moderatorii și oricine are în rol Pagini de prezentare le pot crea și publica.",
     "newHeading": "Pagină de prezentare nouă",
     "address": "Adresa",
     "addressHint": "Pagina va fi la {{site}}/c/ și acest nume: litere mici, cifre și cratime.",
@@ -116,7 +121,7 @@
       "body": "Textul",
       "note": "Nota",
       "link_label": "Textul linkului",
-      "link": "Adresa regulamentului",
+      "link": "Adresa linkului",
       "question": "Întrebarea",
       "answer": "Răspunsul",
       "dates": "Date importante",
@@ -126,7 +131,13 @@
       "picture": "Imaginea",
       "stories": "Poveștile",
       "tag": "Eticheta",
-      "mode": "Cum se aleg poveștile"
+      "mode": "Cum se aleg poveștile",
+      "entryTitle": "Titlu",
+      "entryBody": "Text",
+      "quote": "Citat",
+      "source": "Cine a spus-o",
+      "button_label": "Textul butonului",
+      "entries": "Carduri și pași"
     },
     "problems": {
       "empty": "completează câmpul",
@@ -145,28 +156,31 @@
       "dates_empty": "Alege cele trei date.",
       "dates_bad_date": "Una dintre date nu este validă.",
       "dates_out_of_order": "Întâi încep înscrierile, apoi se încheie, apoi apar rezultatele.",
-      "link_empty": "Adaugă adresa regulamentului.",
+      "link_empty": "Adaugă adresa la care duce.",
       "link_bad_link": "Folosește una dintre paginile noastre sau o adresă https://.",
       "age_groups": "Alege cel puțin o grupă de vârstă.",
       "items": "Adaugă cel puțin o întrebare, în ambele limbi.",
       "not_checked": "imaginea nu este încă verificată",
-      "not_allowed": "doar un bloc Antet sau Text poate avea o imagine",
+      "not_allowed": "doar un bloc Antet, Text sau Imagine și text poate avea o imagine",
       "how_many": "alege între 1 și 12 povești",
       "picture_not_checked": "Imaginea nu este încă verificată. Publică după ce trece verificarea.",
       "picture_unknown": "Imaginea nu mai există. Încarc-o din nou.",
-      "picture_not_allowed": "Doar un bloc Antet sau Text poate avea o imagine.",
+      "picture_not_allowed": "Doar un bloc Antet, Text sau Imagine și text poate avea o imagine.",
       "stories_how_many": "Alege între 1 și 12 povești.",
       "stories_unknown": "Una dintre adrese nu este a unei povești. Verifică fiecare rând.",
       "tag_unknown": "Nu există nicio etichetă cu acest nume.",
       "one_remind_me": "o pagină poate avea un singur bloc „Amintește-mi”",
-      "remind_me_needs_dates": "un bloc „Amintește-mi” are nevoie de un bloc „Date importante” pe pagină"
+      "remind_me_needs_dates": "un bloc „Amintește-mi” are nevoie de un bloc „Date importante” pe pagină",
+      "picture_empty": "Adaugă o imagine.",
+      "wrong_number": "numărul de carduri sau pași nu e în limite ori diferă între limbi"
     },
     "failures": {
       "take_down_before_show_from": "Data scoaterii trebuie să fie după data „Afișează de la”.",
-      "not_allowed": "Doar proprietarul și administratorii pot modifica paginile de prezentare.",
+      "not_allowed": "Construirea paginilor de prezentare nu face parte din rolul tău.",
       "not_found": "Pagina sau versiunea nu mai există. Reîncarcă și încearcă din nou.",
       "invalid": "Ceva de pe pagină nu este valid. Verifică și încearcă din nou.",
-      "unreachable": "Nu am putut contacta serverul. Încearcă din nou."
+      "unreachable": "Nu am putut contacta serverul. Încearcă din nou.",
+      "too_big": "Pagina e prea mare pentru a fi salvată. Șterge câteva blocuri sau scurtează textul."
     },
     "outcomes": {
       "save": "Ciorna a fost salvată. Pe pagină nu s-a schimbat încă nimic.",
@@ -205,6 +219,20 @@
       "count": "{{count}} din {{most}} povești",
       "tag": "Numele etichetei",
       "filterNote": "Vizitatorii văd doar povești potrivite pentru cei mai tineri cititori din „Cine poate participa” (13–15 ani dacă pagina nu are acest bloc), iar o poveste ascunsă de moderare dispare imediat."
+    },
+    "entries": {
+      "cards": {
+        "legend": "Cardul {{number}}, {{language}}",
+        "add": "Adaugă un card",
+        "remove": "Șterge cardul {{number}}",
+        "howMany": "Adaugă între {{fewest}} și {{most}} carduri, la fel în ambele limbi."
+      },
+      "steps": {
+        "legend": "Pasul {{number}}, {{language}}",
+        "add": "Adaugă un pas",
+        "remove": "Șterge pasul {{number}}",
+        "howMany": "Adaugă între {{fewest}} și {{most}} pași, la fel în ambele limbi."
+      }
     }
   },
   "picture": {
@@ -235,5 +263,36 @@
     "winners": "Înscrieri câștigătoare",
     "finalists": "Înscrieri din finală",
     "with": " cu "
+  },
+  "families": {
+    "top": "Începutul paginii",
+    "words": "Text și imagini",
+    "lists": "Liste",
+    "contest": "Detaliile concursului",
+    "stories": "Povești",
+    "ending": "Final"
+  },
+  "kindHints": {
+    "hero": "Titlul paginii, o scurtă introducere și o imagine, sus.",
+    "text": "Un titlu și paragrafe, cu o imagine opțională.",
+    "picture_text": "O imagine lângă un titlu și paragrafe.",
+    "quote": "Un citat scurt și cine l-a spus.",
+    "cards": "Două până la patru carduri alăturate, fiecare cu un titlu și câteva cuvinte.",
+    "steps": "Doi până la șase pași numerotați, fiecare cu un titlu și câteva cuvinte.",
+    "questions": "Întrebări care se deschid ca să arate răspunsurile.",
+    "key_dates": "Când se deschid înscrierile, când se închid și când apar rezultatele.",
+    "who_can_enter": "Grupele de vârstă care se pot înscrie.",
+    "prize": "Ce primesc câștigătorii.",
+    "how_to_enter": "Cum se trimite o lucrare.",
+    "rules": "Un scurt rezumat cu link la regulamentul complet.",
+    "featured": "Până la 12 povești, alese de mână sau după etichetă.",
+    "call_to_action": "Un titlu, un rând de text și un buton.",
+    "remind_me": "Cititorii pot cere o reamintire înainte să se închidă înscrierile."
+  },
+  "adminPage": {
+    "documentTitle": "Constructorul de pagini",
+    "eyebrow": "Site",
+    "heading": "Constructorul de pagini",
+    "notAllowed": "Construirea paginilor de prezentare nu face parte din rolul tău."
   }
 }

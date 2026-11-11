@@ -23,6 +23,12 @@ export interface SelectOption {
   lang?: string;
 }
 
+/** A named group of choices, drawn as an <optgroup> (the page builder's block families, CMS-2b). */
+export interface SelectGroup {
+  label: string;
+  options: SelectOption[];
+}
+
 /** What a Select needs. */
 export interface SelectProps {
   /** Unique id; the label points at it. */
@@ -31,12 +37,27 @@ export interface SelectProps {
   label: string;
   isLabelVisible?: boolean;
   options: SelectOption[];
+  /** When given, the choices are drawn in these named groups instead of `options`. */
+  groups?: SelectGroup[];
   value: string;
   onChange: (value: string) => void;
   /** 'bar' in the top bar and footer (plum chevron), 'form' in forms (ink chevron), as on the boards. */
   placement?: 'bar' | 'form';
   /** The id of a hint under the drop-down, read with it by screen readers (S1-E2-06). */
   descriptionId?: string;
+}
+
+/**
+ * The <option> elements of a list of choices.
+ *
+ * @returns the options
+ */
+function SelectOptions({ options }: { options: SelectOption[] }) {
+  return options.map((option) => (
+    <option key={option.value} value={option.value} lang={option.lang}>
+      {option.label}
+    </option>
+  ));
 }
 
 /**
@@ -49,6 +70,7 @@ export function Select({
   label,
   isLabelVisible = false,
   options,
+  groups,
   value,
   onChange,
   placement = 'form',
@@ -77,11 +99,15 @@ export function Select({
           onChange={handleChange}
           className="h-11 w-auto max-w-full cursor-pointer appearance-none text-ellipsis rounded-full border border-control-border bg-surface pr-9 pl-4 font-body text-sm font-semibold text-ink"
         >
-          {options.map((option) => (
-            <option key={option.value} value={option.value} lang={option.lang}>
-              {option.label}
-            </option>
-          ))}
+          {groups === undefined ? (
+            <SelectOptions options={options} />
+          ) : (
+            groups.map((group) => (
+              <optgroup key={group.label} label={group.label}>
+                <SelectOptions options={group.options} />
+              </optgroup>
+            ))
+          )}
         </select>
         <ChevronDownIcon
           className={cn(
