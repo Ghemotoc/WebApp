@@ -108,6 +108,9 @@ test.describe('comment lengths and the kind-words nudge', () => {
     await box.getByRole('button', { name: 'Post comment' }).click();
     const question = box.getByText('We’re a supportive place. Still want to send this?');
     await expect(question).toBeFocused();
+    // Reduce motion ends every animation at once, so axe measures the colours the screen
+    // settles on, not a fade half-way through (as in e2e/support/accessibility.ts; FINAL-1).
+    await page.emulateMedia({ reducedMotion: 'reduce' });
     const axe = await new AxeBuilder({ page })
       .include('form')
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])

@@ -148,6 +148,9 @@ test.describe('Sample EPUB and About the writer (IDEAS-2b)', () => {
       await page.setViewportSize({ width, height: 900 });
       await page.getByRole('button', { name: 'Make a sample EPUB' }).click();
       await expect(page.getByRole('dialog')).toBeVisible();
+      // Reduce motion ends every animation at once, so axe measures the colours the screen
+      // settles on, not a fade half-way through (as in e2e/support/accessibility.ts; FINAL-1).
+      await page.emulateMedia({ reducedMotion: 'reduce' });
       const results = await new AxeBuilder({ page })
         .include('dialog')
         .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])

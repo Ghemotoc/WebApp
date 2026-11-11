@@ -68,6 +68,9 @@ test.describe('the rules walkthrough before a first comment (MUST-1c)', () => {
     await page.getByRole('button', { name: 'Post comment' }).click();
     await expect(page.getByRole('heading', { name: 'Be kind' })).toBeFocused();
     await expect(page.getByText('1 of 4')).toBeVisible();
+    // Reduce motion ends every animation at once, so axe measures the colours the screen
+    // settles on, not a fade half-way through (as in e2e/support/accessibility.ts; FINAL-1).
+    await page.emulateMedia({ reducedMotion: 'reduce' });
     const results = await new AxeBuilder({ page })
       .include('section[aria-labelledby="comments-heading"]')
       .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])

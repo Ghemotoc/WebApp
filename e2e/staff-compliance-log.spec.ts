@@ -50,6 +50,9 @@ async function openMetrics(browser: Browser, width = 1440, language = 'en'): Pro
 async function expectAccessibleAndFitting(page: Page, width: number) {
   // The page rises in; axe would read the colours half-way through.
   await waitForAnimationsToFinish(page);
+  // Reduce motion ends every animation at once, so axe measures the colours the screen
+  // settles on, not a fade half-way through (as in e2e/support/accessibility.ts; FINAL-1).
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
     .analyze();

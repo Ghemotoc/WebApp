@@ -150,7 +150,9 @@ test.describe('drawings in chapters (S1-E3-11)', () => {
 
     await dialog.getByRole('textbox', { name: 'Alt text' }).fill('A storm cloud over the station');
     await dialog.getByRole('button', { name: 'Insert drawing' }).click();
-    await expect(dialog).toBeHidden();
+    // The dialog closes only once the drawing is uploaded and registered, which on a busy test
+    // machine took longer than the usual 5 seconds now and then (FINAL-1).
+    await expect(dialog).toBeHidden({ timeout: 20_000 });
 
     // Criterion 2: a picture like any other, checked, with its alt text in the stored Markdown.
     const figure = page.getByRole('figure', { name: 'Picture in this chapter' });
@@ -198,6 +200,9 @@ test.describe('drawings in chapters (S1-E3-11)', () => {
 /** Checks axe and the page width. */
 async function expectAccessibleAndFitting(page: Page, width: number) {
   await waitForAnimationsToFinish(page);
+  // Reduce motion ends every animation at once, so axe measures the colours the screen
+  // settles on, not a fade half-way through (as in e2e/support/accessibility.ts; FINAL-1).
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
     .analyze();

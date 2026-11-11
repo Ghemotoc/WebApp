@@ -76,6 +76,38 @@ describe('useAutosave', () => {
     expect(saveChapterDraft.mock.calls[1]?.[2]).toMatchObject({ expectedVersion: 2 });
   });
 
+  it('says "Unsaved changes" when the writer typed while a save was in flight', async () => {
+    // The save answers only when the test lets it, so typing can happen in between.
+    let finishSave: (result: unknown) => void = () => undefined;
+    saveChapterDraft.mockReturnValueOnce(
+      new Promise((resolve) => {
+        finishSave = resolve;
+      }),
+    );
+    const { hook } = renderAutosave();
+    act(() => hook.result.current.markChanged());
+    let saving: Promise<void> = Promise.resolve();
+    act(() => {
+      saving = hook.result.current.saveNow();
+    });
+    await act(() => vi.advanceTimersByTimeAsync(0));
+    expect(hook.result.current.state.kind).toBe('saving');
+    // The writer types more while the first save is on its way.
+    act(() => hook.result.current.markChanged());
+    await act(async () => {
+      finishSave({ status: 'saved', version: 2, savedAt: '2026-10-23T10:00:00Z', wordCount: 1 });
+      await saving;
+    });
+    // The newer words are not saved yet, so the status doesn't claim they are.
+    expect(hook.result.current.state.kind).toBe('unsaved');
+    expect(hook.result.current.isAllSaved()).toBe(false);
+    expect(forgetDraftOnDevice).not.toHaveBeenCalled();
+    // The next save sends them, from the version the first save gave.
+    await act(() => hook.result.current.saveNow());
+    expect(saveChapterDraft.mock.calls[1]?.[2]).toMatchObject({ expectedVersion: 2 });
+    expect(hook.result.current.state.kind).toBe('saved');
+  });
+
   it('stops after a conflict so nothing is overwritten', async () => {
     saveChapterDraft.mockResolvedValue({ status: 'conflict', version: 5, savedAt: null });
     const { hook } = renderAutosave();
