@@ -25,6 +25,7 @@ import { useSession } from '@/features/auth/hooks/useSession';
 import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
 
 import { everyLanguage, type ListRequest, type SortOrder } from '../api/storyLists';
+import { useWithPopularIn } from '../hooks/usePopularIn';
 import { useListTitle } from '../hooks/useListTitle';
 import { useStoryList } from '../hooks/useStoryList';
 import {
@@ -37,6 +38,7 @@ import { rememberedSort, rememberSort } from '../lib/sortMemory';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
 
 import { StoryGrid, type StoryGridAd } from './StoryGrid';
+import { PopularInNote } from './PopularInNote';
 import { StoryListFilters } from './StoryListFilters';
 import { StoryListHeader } from './StoryListHeader';
 
@@ -187,8 +189,10 @@ function KnownListPage({ kind, listKey }: { kind: ListRequest['kind']; listKey: 
   // Step 1: the list and its filters come from the address; the sort may come from this tab.
   const addressRequest = requestFromAddress(kind, listKey, search);
   const sortOrder = sortInUse(addressRequest);
-  const request = { ...addressRequest, sortOrder };
-  const list = useStoryList(request);
+  // MARKETS-2d: Popular starts on the reader's country; the list waits until that is known.
+  const withCountry = useWithPopularIn({ ...addressRequest, sortOrder });
+  const request = withCountry ?? { ...addressRequest, sortOrder };
+  const list = useStoryList(request, withCountry !== null);
   const heading = useListTitle(request, list.stories);
   // Step 2: a filter change rewrites the address in place (no new history entry per click).
   // A new sort is kept for the next list in this tab (S1-E5-02, fourth criterion).
@@ -214,6 +218,7 @@ function KnownListPage({ kind, listKey }: { kind: ListRequest['kind']; listKey: 
       ) : (
         <>
           <StoryListFilters request={request} sortOrder={sortOrder} onChange={changeRequest} />
+          <PopularInNote request={request} rankedCountry={list.popularIn} />
           <p className="m-0 text-sm text-meta">{t('seeAll.ratingNote')}</p>
           {/* The classics list's wide banner sits high, above the stories (G7e). */}
           {request.kind === 'classics' && listAdSlot(request)}

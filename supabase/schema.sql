@@ -14839,7 +14839,7 @@ COMMENT ON FUNCTION "public"."brand_slot_json"("brand_row" "public"."brand_asset
 
 
 
-CREATE OR REPLACE FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text" DEFAULT NULL::"text", "category_slug" "text" DEFAULT NULL::"text", "completion" "public"."completion_status" DEFAULT NULL::"public"."completion_status", "language" "text" DEFAULT NULL::"text", "sort_order" "text" DEFAULT NULL::"text", "page_size" integer DEFAULT 21, "page_offset" integer DEFAULT 0) RETURNS "jsonb"
+CREATE OR REPLACE FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text" DEFAULT NULL::"text", "category_slug" "text" DEFAULT NULL::"text", "completion" "public"."completion_status" DEFAULT NULL::"public"."completion_status", "language" "text" DEFAULT NULL::"text", "sort_order" "text" DEFAULT NULL::"text", "page_size" integer DEFAULT 21, "page_offset" integer DEFAULT 0, "popular_in" "text" DEFAULT NULL::"text") RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
@@ -14851,6 +14851,8 @@ declare
   -- For "relevance": the term as a word query and as a pattern, worked out once.
   search_terms tsquery := case when list_kind = 'search' then public.search_query(list_key) end;
   search_pattern text := case when list_kind = 'search' then public.search_like_pattern(list_key) end;
+  -- MARKETS-2d: the country whose ranking orders a popular list, or null for the overall one.
+  ranked_country text;
 begin
   -- Step 1: check what was asked for.
   if list_kind is null or not public.is_story_list_kind(list_kind) then
@@ -14866,6 +14868,17 @@ begin
   end if;
   if coalesce(page_offset, 0) < 0 then
     raise exception 'The page can''t start before the first story.' using errcode = 'invalid_parameter_value';
+  end if;
+  -- Step 1b (MARKETS-2d): "Popular in" a country. Only a country on the drop-down's list counts;
+  -- one with too few ranked stories falls back to the overall ranking (popular_in is then null
+  -- in the answer, so the page can say so).
+  if popular_in is not null then
+    if not public.is_popular_in_country(popular_in) then
+      raise exception 'Unknown country.' using errcode = 'invalid_parameter_value';
+    end if;
+    if ordering = 'popular' and public.country_has_ranking(popular_in) then
+      ranked_country := popular_in;
+    end if;
   end if;
   -- Step 2: the list once, numbered in the chosen order and counted in the same pass (QA-2a; it
   -- used to be read twice). Only one of the sort lines is switched on (the others are null for
@@ -14883,6 +14896,9 @@ begin
           + ts_rank(coalesce(documents.document, ''::tsvector), search_terms) end desc,
         -- IDEAS-1e: "Most shared this week", by the last 7 days' chapter shares.
         case when ordering = 'shared' then public.story_shares_this_week(listed.id) end desc,
+        -- MARKETS-2d: the country's own ranking first; a story with fewer than 5 readers there
+        -- isn't ranked in it and follows, in the overall order.
+        case when ranked_country is not null then coalesce(country_scores.score, -1) end desc,
         case when ordering in ('popular', 'relevance') then coalesce(scores.score, 0) end desc,
         case when ordering = 'updated' then listed.last_chapter_published_at end desc nulls last,
         case when ordering = 'newest' then listed.first_published_at end desc nulls last,
@@ -14896,6 +14912,9 @@ begin
     from listed
     join public.profiles on profiles.id = listed.user_id
     left join public.story_scores as scores on scores.story_id = listed.id
+    left join public.story_country_scores as country_scores
+      on ranked_country is not null and country_scores.story_id = listed.id
+      and country_scores.country_code = ranked_country
     left join public.story_search_documents as documents
       on ordering = 'relevance' and documents.story_id = listed.id
   ),
@@ -14914,15 +14933,15 @@ begin
   if total is null then
     select count(*) into total from public.listed_stories(list_kind, list_key, category_slug, completion, language);
   end if;
-  return jsonb_build_object('total', total, 'stories', page);
+  return jsonb_build_object('total', total, 'stories', page, 'popular_in', ranked_country);
 end;
 $$;
 
 
-ALTER FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer) OWNER TO "postgres";
+ALTER FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer) IS 'One page of a story list (Discover shelves, category, tag and See all pages) with its total, in the reader''s sort; popular by default (S1-E5-01, S1-E5-02, S1-E5-03).';
+COMMENT ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text") IS 'One page of a story list (Discover shelves, category, tag and See all pages) with its total, in the reader''s sort; popular by default, optionally by one country''s ranking (S1-E5-01, S1-E5-02, S1-E5-03, MARKETS-2d).';
 
 
 
@@ -18742,6 +18761,46 @@ COMMENT ON FUNCTION "public"."compute_daily_metrics"("for_day" "date") IS 'Count
 
 
 
+CREATE OR REPLACE FUNCTION "public"."compute_story_country_scores"() RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  reads_weight double precision := public.ranking_setting('ranking_weight_reads', 1);
+  likes_weight double precision := public.ranking_setting('ranking_weight_likes', 5);
+  comments_weight double precision := public.ranking_setting('ranking_weight_comments', 8);
+  through_weight double precision := public.ranking_setting('ranking_weight_read_through', 0.5);
+  minimum_readers double precision := public.ranking_setting('popular_in_minimum_readers', 5);
+  keep_days integer := public.ranking_setting('ranking_window_days', 60)::integer + 7;
+  scored integer;
+begin
+  -- Step 1: this hour's scores, replacing the last hour's in one go.
+  delete from public.story_country_scores;
+  insert into public.story_country_scores (story_id, country_code, score, computed_at)
+  select signals.story_id, signals.country_code,
+    greatest(0, (signals.reads * reads_weight + signals.likes * likes_weight
+      + signals.comments * comments_weight) * (1 + signals.read_through * through_weight)),
+    now()
+  from public.story_country_signals() as signals
+  -- The small-number rule: fewer than 5 reads in a country and the story doesn't rank there.
+  where signals.raw_reads >= minimum_readers;
+  get diagnostics scored = row_count;
+
+  -- Step 2: daily rows older than the ranking window (plus a week) are no longer needed.
+  delete from public.chapter_reads_by_country
+  where chapter_reads_by_country.read_on < (now() at time zone 'Europe/Bucharest')::date - keep_days;
+  return scored;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."compute_story_country_scores"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."compute_story_country_scores"() IS 'Hourly: each story''s popularity score per "Popular in" country; a story with fewer than 5 reads in a country isn''t ranked there (MARKETS-2d).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."compute_story_scores"() RETURNS integer
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -19507,6 +19566,22 @@ ALTER FUNCTION "public"."count_writing_day"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."count_writing_day"() IS 'Trigger on chapters: adds the change in a chapter''s word count to the writer''s own total for the day; prunes days older than 400 (GAPS-12f).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."country_has_ranking"("country" "text") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select count(*) >= public.ranking_setting('popular_in_minimum_stories', 5)
+  from public.story_country_scores where story_country_scores.country_code = country;
+$$;
+
+
+ALTER FUNCTION "public"."country_has_ranking"("country" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."country_has_ranking"("country" "text") IS 'Internal: whether a country has enough ranked stories for its own "Popular in" ranking (MARKETS-2d).';
 
 
 
@@ -25444,6 +25519,24 @@ ALTER FUNCTION "public"."is_picture_reviewer"("person_id" "uuid") OWNER TO "post
 
 
 COMMENT ON FUNCTION "public"."is_picture_reviewer"("person_id" "uuid") IS 'Internal: true for a staff member with the picture review permission, 18 or over and not an intern (ADMIN-2e2a).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."is_popular_in_country"("country" "text") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $_$
+  select coalesce((select settings.value ? country from public.settings
+                   where settings.key = 'popular_in_countries'
+                     and jsonb_typeof(settings.value) = 'array'), false)
+    and country ~ '^[A-Z]{2}$';
+$_$;
+
+
+ALTER FUNCTION "public"."is_popular_in_country"("country" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."is_popular_in_country"("country" "text") IS 'Internal: whether a country is on the "Popular in" list (MARKETS-2d).';
 
 
 
@@ -35502,6 +35595,14 @@ begin
   insert into public.chapter_reads (chapter_id, read_on, total)
   values (read_chapter_id, (now() at time zone 'Europe/Bucharest')::date, 1)
   on conflict (chapter_id, read_on) do update set total = public.chapter_reads.total + 1;
+  -- Step 3 (MARKETS-2d): the same one on the day's total for the reader's country (the country on
+  -- their profile), for "Popular in". Still a total only: no reader is kept.
+  insert into public.chapter_reads_by_country (chapter_id, read_on, country_code, total)
+  select read_chapter_id, (now() at time zone 'Europe/Bucharest')::date, profiles.country_code, 1
+  from public.profiles
+  where profiles.id = caller_id and profiles.country_code is not null
+  on conflict (chapter_id, read_on, country_code)
+    do update set total = public.chapter_reads_by_country.total + 1;
   return true;
 end;
 $$;
@@ -45376,6 +45477,96 @@ COMMENT ON FUNCTION "public"."story_comment_total"("target_story_id" "uuid") IS 
 
 
 
+CREATE OR REPLACE FUNCTION "public"."story_country_signals"() RETURNS TABLE("story_id" "uuid", "country_code" "text", "reads" double precision, "raw_reads" bigint, "likes" double precision, "comments" double precision, "read_through" double precision)
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  with window_start as (
+    select now() - make_interval(days => public.ranking_setting('ranking_window_days', 60)::integer) as since,
+      public.ranking_setting('ranking_half_life_days', 7) as half_life
+  ),
+  countries as (
+    select jsonb_array_elements_text(settings.value) as code from public.settings
+    where settings.key = 'popular_in_countries' and jsonb_typeof(settings.value) = 'array'
+  ),
+  readable as materialized (
+    select * from public.readable_chapters_for_ranking()
+  ),
+  read_points as (
+    select readable.story_id, reads.country_code,
+      sum(reads.total * power(0.5,
+        ((now() at time zone 'Europe/Bucharest')::date - reads.read_on) / window_start.half_life)) as points,
+      sum(reads.total) as raw_total
+    from readable cross join window_start
+    join public.chapter_reads_by_country as reads on reads.chapter_id = readable.id
+    join countries on countries.code = reads.country_code
+    where reads.read_on >= (window_start.since at time zone 'Europe/Bucharest')::date
+    group by readable.story_id, reads.country_code
+  ),
+  like_points as (
+    select readable.story_id, profiles.country_code, sum(power(0.5,
+      extract(epoch from now() - likes.created_at) / 86400 / window_start.half_life)) as points
+    from readable cross join window_start
+    join public.chapter_likes as likes on likes.chapter_id = readable.id and likes.user_id <> readable.user_id
+    join public.profiles on profiles.id = likes.user_id and profiles.deleted_at is null
+    join countries on countries.code = profiles.country_code
+    where likes.created_at >= window_start.since
+    group by readable.story_id, profiles.country_code
+  ),
+  comment_points as (
+    select readable.story_id, profiles.country_code, sum(power(0.5,
+      extract(epoch from now() - comments.created_at) / 86400 / window_start.half_life)) as points
+    from readable cross join window_start
+    join public.comments on comments.chapter_id = readable.id and comments.user_id <> readable.user_id
+      and comments.deleted_at is null
+    join public.profiles on profiles.id = comments.user_id and profiles.deleted_at is null
+    join countries on countries.code = profiles.country_code
+    where comments.created_at >= window_start.since
+    group by readable.story_id, profiles.country_code
+  ),
+  chapter_ends as (
+    select distinct on (readable.story_id) readable.story_id,
+      first_value(readable.id) over (partition by readable.story_id order by readable.chapter_position) as first_id,
+      last_value(readable.id) over (partition by readable.story_id order by readable.chapter_position
+        rows between unbounded preceding and unbounded following) as last_id
+    from readable
+  ),
+  through as (
+    select read_points.story_id, read_points.country_code,
+      case when chapter_ends.first_id = chapter_ends.last_id then 0
+           else least(1.0, coalesce(
+             (select sum(total) from public.chapter_reads_by_country as last_reads, window_start
+              where last_reads.chapter_id = chapter_ends.last_id
+                and last_reads.country_code = read_points.country_code
+                and last_reads.read_on >= (window_start.since at time zone 'Europe/Bucharest')::date)::double precision
+             / nullif((select sum(total) from public.chapter_reads_by_country as first_reads, window_start
+              where first_reads.chapter_id = chapter_ends.first_id
+                and first_reads.country_code = read_points.country_code
+                and first_reads.read_on >= (window_start.since at time zone 'Europe/Bucharest')::date), 0), 0))
+      end as ratio
+    from read_points join chapter_ends on chapter_ends.story_id = read_points.story_id
+  )
+  -- Only stories read in a country can rank there: reads drive the small-number rule.
+  select read_points.story_id, read_points.country_code,
+    read_points.points, read_points.raw_total,
+    coalesce(like_points.points, 0), coalesce(comment_points.points, 0), coalesce(through.ratio, 0)
+  from read_points
+  left join like_points on like_points.story_id = read_points.story_id
+    and like_points.country_code = read_points.country_code
+  left join comment_points on comment_points.story_id = read_points.story_id
+    and comment_points.country_code = read_points.country_code
+  left join through on through.story_id = read_points.story_id
+    and through.country_code = read_points.country_code;
+$$;
+
+
+ALTER FUNCTION "public"."story_country_signals"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_country_signals"() IS 'Internal: each story''s reads, likes, comments and read-through in each "Popular in" country (MARKETS-2d).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."story_cover_picture"("story_slug" "text") RETURNS "jsonb"
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -50130,6 +50321,23 @@ COMMENT ON TABLE "public"."chapter_reads" IS 'kind: platform. How many times eac
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."chapter_reads_by_country" (
+    "chapter_id" "uuid" NOT NULL,
+    "read_on" "date" NOT NULL,
+    "country_code" "text" NOT NULL,
+    "total" integer DEFAULT 0 NOT NULL,
+    CONSTRAINT "chapter_reads_by_country_code_is_alpha2" CHECK (("country_code" ~ '^[A-Z]{2}$'::"text")),
+    CONSTRAINT "chapter_reads_by_country_total_not_negative" CHECK (("total" >= 0))
+);
+
+
+ALTER TABLE "public"."chapter_reads_by_country" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."chapter_reads_by_country" IS 'kind: platform. How many times each chapter was read each day from each country, by the reader''s profile country: totals only, never who read (MARKETS-2d).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."chapter_revisions" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "chapter_id" "uuid" NOT NULL,
@@ -52070,6 +52278,25 @@ COMMENT ON COLUMN "public"."story_character_fields"."own_group" IS 'kind: user_c
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."story_country_scores" (
+    "story_id" "uuid" NOT NULL,
+    "country_code" "text" NOT NULL,
+    "score" double precision DEFAULT 0 NOT NULL,
+    "computed_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "story_country_scores_code_is_alpha2" CHECK (("country_code" ~ '^[A-Z]{2}$'::"text")),
+    CONSTRAINT "story_country_scores_not_negative" CHECK (("score" >= (0)::double precision))
+);
+
+
+ALTER TABLE "public"."story_country_scores" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."story_country_scores" IS 'kind: platform. Each story''s popularity score in each country, from the hourly job; only stories with at least 5 reads there; readers see only the order (MARKETS-2d).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."story_marketing" (
     "story_id" "uuid" NOT NULL,
     "user_id" "uuid" NOT NULL,
@@ -52796,6 +53023,11 @@ ALTER TABLE ONLY "public"."chapter_plan_characters"
 
 ALTER TABLE ONLY "public"."chapter_plans"
     ADD CONSTRAINT "chapter_plans_pkey" PRIMARY KEY ("chapter_id");
+
+
+
+ALTER TABLE ONLY "public"."chapter_reads_by_country"
+    ADD CONSTRAINT "chapter_reads_by_country_pkey" PRIMARY KEY ("chapter_id", "read_on", "country_code");
 
 
 
@@ -53781,6 +54013,11 @@ ALTER TABLE ONLY "public"."story_character_relationships"
 
 ALTER TABLE ONLY "public"."story_characters"
     ADD CONSTRAINT "story_characters_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."story_country_scores"
+    ADD CONSTRAINT "story_country_scores_pkey" PRIMARY KEY ("story_id", "country_code");
 
 
 
@@ -55069,6 +55306,10 @@ CREATE INDEX "story_characters_user_id_fk_idx" ON "public"."story_characters" US
 
 
 
+CREATE INDEX "story_country_scores_by_country" ON "public"."story_country_scores" USING "btree" ("country_code", "score" DESC);
+
+
+
 CREATE INDEX "story_events_show_from_chapter_id_fk_idx" ON "public"."story_events" USING "btree" ("show_from_chapter_id");
 
 
@@ -56173,6 +56414,10 @@ CREATE OR REPLACE TRIGGER "story_characters_set_updated_at" BEFORE UPDATE ON "pu
 
 
 
+CREATE OR REPLACE TRIGGER "story_country_scores_set_updated_at" BEFORE UPDATE ON "public"."story_country_scores" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
 CREATE OR REPLACE TRIGGER "story_events_refuse_user_id_change" BEFORE UPDATE ON "public"."story_events" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"('user_id');
 
 
@@ -56669,6 +56914,11 @@ ALTER TABLE ONLY "public"."chapter_plans"
 
 ALTER TABLE ONLY "public"."chapter_plans"
     ADD CONSTRAINT "chapter_plans_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."chapter_reads_by_country"
+    ADD CONSTRAINT "chapter_reads_by_country_chapter_id_fkey" FOREIGN KEY ("chapter_id") REFERENCES "public"."chapters"("id") ON DELETE CASCADE;
 
 
 
@@ -57947,6 +58197,11 @@ ALTER TABLE ONLY "public"."story_characters"
 
 
 
+ALTER TABLE ONLY "public"."story_country_scores"
+    ADD CONSTRAINT "story_country_scores_story_id_fkey" FOREIGN KEY ("story_id") REFERENCES "public"."stories"("id") ON DELETE CASCADE;
+
+
+
 ALTER TABLE ONLY "public"."story_events"
     ADD CONSTRAINT "story_events_show_from_chapter_id_fkey" FOREIGN KEY ("show_from_chapter_id") REFERENCES "public"."chapters"("id") ON DELETE SET NULL;
 
@@ -58503,6 +58758,13 @@ COMMENT ON POLICY "chapter_plans_select_own" ON "public"."chapter_plans" IS 'All
 
 
 ALTER TABLE "public"."chapter_reads" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."chapter_reads_by_country" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "chapter_reads_by_country_select_staff" ON "public"."chapter_reads_by_country" FOR SELECT TO "authenticated" USING (( SELECT "public"."staff_may"('stories'::"text", 'view'::"text") AS "staff_may"));
+
 
 
 CREATE POLICY "chapter_reads_select_owner" ON "public"."chapter_reads" FOR SELECT TO "authenticated" USING ((EXISTS ( SELECT 1
@@ -59858,6 +60120,13 @@ CREATE POLICY "story_characters_select_own" ON "public"."story_characters" FOR S
 
 
 COMMENT ON POLICY "story_characters_select_own" ON "public"."story_characters" IS 'Allows a writer to read the characters of their own story plans, and nobody else (S1-E17-08; private by default, Robert 31 Oct 2026).';
+
+
+
+ALTER TABLE "public"."story_country_scores" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "story_country_scores_select_staff" ON "public"."story_country_scores" FOR SELECT TO "authenticated" USING (( SELECT "public"."staff_may"('stories'::"text", 'view'::"text") AS "staff_may"));
 
 
 
@@ -61972,9 +62241,9 @@ REVOKE ALL ON FUNCTION "public"."brand_slot_json"("brand_row" "public"."brand_as
 
 
 
-REVOKE ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer) FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer) TO "anon";
-GRANT ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer) TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text") TO "authenticated";
 
 
 
@@ -62527,6 +62796,10 @@ REVOKE ALL ON FUNCTION "public"."compute_daily_metrics"("for_day" "date") FROM P
 
 
 
+REVOKE ALL ON FUNCTION "public"."compute_story_country_scores"() FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."compute_story_scores"() FROM PUBLIC;
 
 
@@ -62637,6 +62910,10 @@ GRANT ALL ON FUNCTION "public"."count_words"("body" "text") TO "authenticated";
 
 
 REVOKE ALL ON FUNCTION "public"."count_writing_day"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."country_has_ranking"("country" "text") FROM PUBLIC;
 
 
 
@@ -63448,6 +63725,10 @@ GRANT ALL ON FUNCTION "public"."is_personal_email_domain"("domain" "text") TO "a
 
 
 REVOKE ALL ON FUNCTION "public"."is_picture_reviewer"("person_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."is_popular_in_country"("country" "text") FROM PUBLIC;
 
 
 
@@ -66280,6 +66561,10 @@ REVOKE ALL ON FUNCTION "public"."story_comment_total"("target_story_id" "uuid") 
 
 
 
+REVOKE ALL ON FUNCTION "public"."story_country_signals"() FROM PUBLIC;
+
+
+
 GRANT ALL ON FUNCTION "public"."story_cover_picture"("story_slug" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."story_cover_picture"("story_slug" "text") TO "authenticated";
 
@@ -66967,6 +67252,11 @@ GRANT SELECT ON TABLE "public"."chapter_reads" TO "authenticated";
 
 
 
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."chapter_reads_by_country" TO "service_role";
+GRANT SELECT ON TABLE "public"."chapter_reads_by_country" TO "authenticated";
+
+
+
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."chapter_revisions" TO "service_role";
 GRANT SELECT ON TABLE "public"."chapter_revisions" TO "authenticated";
 
@@ -67422,6 +67712,11 @@ GRANT UPDATE ON SEQUENCE "public"."statement_reference_seq" TO "service_role";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."story_character_fields" TO "service_role";
 GRANT SELECT ON TABLE "public"."story_character_fields" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."story_country_scores" TO "service_role";
+GRANT SELECT ON TABLE "public"."story_country_scores" TO "authenticated";
 
 
 

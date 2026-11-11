@@ -143,5 +143,10 @@
   "risingWriters": {
     "eyebrow": "În ascensiune",
     "title": "Scriitori noi și în ascensiune"
+  },
+  "popularIn": {
+    "label": "Populare în",
+    "everywhere": "Peste tot",
+    "fallbackNote": "{{country}}: sunt încă prea puține povești în clasament acolo, așa că aici vezi clasamentul general."
   }
 }

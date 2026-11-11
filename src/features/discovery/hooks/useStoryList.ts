@@ -42,13 +42,13 @@ function nextOffset(lastPage: StoryListPage, allPages: StoryListPage[]): number 
  * @returns total (null while loading), every story loaded so far, hasMore, loadMore(),
  *   isLoadingMore, isLoaded and loadFailed
  */
-export function useStoryList(request: ListRequest) {
+export function useStoryList(request: ListRequest, isReady = true) {
   const { userId, isKnown } = useSession();
   // The languages the reader reads (MARKETS-2c); null until known, so the list loads once.
   const reading = useReadingLanguageFilter();
   const pages = useInfiniteQuery({
     queryKey: [storyListQueryKey, 'page', request, userId, reading.languages],
-    enabled: isKnown && reading.languages !== null,
+    enabled: isReady && isKnown && reading.languages !== null,
     initialPageParam: 0,
     getNextPageParam: nextOffset,
     queryFn: async ({ pageParam }) => {
@@ -61,9 +61,13 @@ export function useStoryList(request: ListRequest) {
       });
     },
   });
-  const stories: ListedStory[] = (pages.data?.pages ?? []).flatMap((page) => page.stories);
+  const loadedPages = pages.data?.pages ?? [];
+  const stories: ListedStory[] = loadedPages.flatMap((page) => page.stories);
+  const firstPage: StoryListPage | undefined = loadedPages[0];
   return {
-    total: pages.data?.pages[0]?.total ?? null,
+    total: firstPage === undefined ? null : firstPage.total,
+    /** The country that ranked a popular list (MARKETS-2d): undefined while loading. */
+    popularIn: firstPage === undefined ? undefined : firstPage.popularIn,
     stories,
     hasMore: pages.hasNextPage,
     loadMore: () => void pages.fetchNextPage(),

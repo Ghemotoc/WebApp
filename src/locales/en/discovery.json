@@ -143,5 +143,10 @@
   "risingWriters": {
     "eyebrow": "Rising",
     "title": "New and rising writers"
+  },
+  "popularIn": {
+    "label": "Popular in",
+    "everywhere": "Everywhere",
+    "fallbackNote": "{{country}}: too few stories are ranked there yet, so this is the overall ranking."
   }
 }

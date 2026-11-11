@@ -17,6 +17,7 @@
  */
 import {
   everyLanguage,
+  everywhereRanking,
   type CompletionStatus,
   type ListKind,
   type ListRequest,
@@ -66,6 +67,25 @@ export function sortChoicesFor(kind: ListKind): readonly SortOrder[] {
 }
 
 /**
+ * The query string of a list's address: the search term, the filters and the sort.
+ *
+ * @param request - the list
+ * @returns the query parts
+ */
+function listQuery(request: ListRequest): URLSearchParams {
+  const query = new URLSearchParams();
+  if (request.kind === 'search') query.set('q', request.key ?? '');
+  if (request.categorySlug !== null) query.set('category', request.categorySlug);
+  if (request.completion !== null) query.set('status', request.completion);
+  if (request.languageCode !== null) query.set('language', request.languageCode);
+  if (request.sortOrder !== null) query.set('sort', request.sortOrder);
+  // MARKETS-2d: "Popular in", on the popular list only.
+  if (request.kind === 'popular' && request.popularIn != null)
+    query.set('country', request.popularIn);
+  return query;
+}
+
+/**
  * The page that lists every story of a list (its See all page).
  *
  * @param request - the list and its filters
@@ -94,12 +114,7 @@ export function listAddress(request: ListRequest): string {
     reading_list: `/library/lists/${key}`,
   };
   // Step 2: the query string carries the search term, the filters and the sort.
-  const query = new URLSearchParams();
-  if (request.kind === 'search') query.set('q', request.key ?? '');
-  if (request.categorySlug !== null) query.set('category', request.categorySlug);
-  if (request.completion !== null) query.set('status', request.completion);
-  if (request.languageCode !== null) query.set('language', request.languageCode);
-  if (request.sortOrder !== null) query.set('sort', request.sortOrder);
+  const query = listQuery(request);
   const search = query.toString();
   return search === '' ? paths[request.kind] : `${paths[request.kind]}?${search}`;
 }
@@ -168,6 +183,20 @@ function languageFrom(language: string | null): string | null {
 }
 
 /**
+ * Reads "Popular in" from the address (MARKETS-2d): a two-letter country code or "everywhere";
+ * anything else is ignored, so the page starts on the reader's own country.
+ *
+ * @param kind - which list
+ * @param country - the "country" part of the address, or null
+ * @returns the choice, or null
+ */
+function popularInFrom(kind: ListKind, country: string | null): string | null {
+  if (kind !== 'popular' || country === null) return null;
+  if (country === everywhereRanking || /^[A-Z]{2}$/.test(country)) return country;
+  return null;
+}
+
+/**
  * The list behind an address.
  *
  * @param kind - which list the route stands for
@@ -191,6 +220,8 @@ export function requestFromAddress(
     languageCode: languageFrom(language),
     // "Best match" belongs to search only (S1-E5-04).
     sortOrder: sortOrder === 'relevance' && kind !== 'search' ? null : sortOrder,
+    // MARKETS-2d: only the popular list carries "Popular in".
+    ...(kind === 'popular' ? { popularIn: popularInFrom(kind, search.get('country')) } : {}),
   };
 }
 
