@@ -1,8 +1,7 @@
 /**
  * HeadlineLines: the two lines of the home page headline, the first in the heading colour and the
- * second in the look's accent (bundle LOGO-2; Robert, 11 Nov 2026: "remove that underlying thing
- * ... use the same strategy that we have on the magic coffin, which is one line is revolver and
- * one line is authentic violet").
+ * second in the look's accent (bundle LOGO-2; Robert, 11 Nov 2026: asked to drop the underline and
+ * colour the two lines like the main company website: one line Revolver, one line violet).
  *
  * In the main look that is Revolver (#2A0E33, --heading) then the website's violet (#672786,
  * --accent); every other look uses its own heading and accent colours, and at night the second
