@@ -53,7 +53,7 @@ function seedData() {
   cleanUp();
   const rows = stories.map(
     ([slug, title, rating]) =>
-      `('${adultWriterId}', '${slug}', '${title}', 'x', 'ro',
+      `('${adultWriterId}', '${slug}', '${title}', 'x', 'en',
         (select id from public.categories where slug = 'fiction'), 'ongoing', '${rating}', now(), now())`,
   );
   runSql(`insert into public.stories (user_id, slug, title, blurb, language_code, category_id,
