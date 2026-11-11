@@ -41,6 +41,9 @@ async function openAs(
 }
 
 /** The band tone a visitor's list page draws, or null when it has no band. */
+// The band shows the genre's own accent until the chosen colour arrives from the database, so a
+// read can land before the swap; each check therefore asks again until the colour settles
+// (expect.poll), instead of reading once (GLASS-3: a CI run read "gold" where "sky" was saved).
 async function bandToneAt(browser: Browser, address: string): Promise<string | null> {
   const visitor = await openAs(browser, null, address);
   await expect(visitor.getByRole('heading', { level: 1 })).toBeVisible();
@@ -76,7 +79,9 @@ test.describe('Staff › Website › Genre and tag pages (G12b)', () => {
     await editor.getByRole('button', { name: 'Save background' }).click();
     await expect(page.getByText('Saved. The page shows the new background.')).toBeVisible();
     await expect(genres.getByText('Sky · set by @admin')).toBeVisible();
-    expect(await bandToneAt(browser, '/discover/c/poetry')).toBe('sky');
+    await expect
+      .poll(() => bandToneAt(browser, '/discover/c/poetry'), { timeout: 15_000 })
+      .toBe('sky');
 
     // Step 2: an unknown tag is refused in words.
     const tags = page.getByRole('region', { name: 'Tag page backgrounds' });
@@ -91,14 +96,18 @@ test.describe('Staff › Website › Genre and tag pages (G12b)', () => {
     ).toBeVisible();
 
     // Step 3: the Fantasy tag page, plain before, gets a Sage band.
-    expect(await bandToneAt(browser, '/discover/t/Fantasy')).toBeNull();
+    await expect
+      .poll(() => bandToneAt(browser, '/discover/t/Fantasy'), { timeout: 15_000 })
+      .toBeNull();
     await tags.getByLabel('Tag', { exact: true }).fill('#Fantasy');
     await tags.getByRole('button', { name: 'Add a tag background' }).click();
     const tagEditor = page.getByRole('region', { name: 'Editing #Fantasy' });
     await tagEditor.getByRole('radio', { name: 'Sage' }).click();
     await tagEditor.getByRole('button', { name: 'Save background' }).click();
     await expect(tags.getByText('#Fantasy')).toBeVisible();
-    expect(await bandToneAt(browser, '/discover/t/Fantasy')).toBe('sage');
+    await expect
+      .poll(() => bandToneAt(browser, '/discover/t/Fantasy'), { timeout: 15_000 })
+      .toBe('sage');
 
     // Step 4: "Use the default" takes Poetry back to its own gold.
     await genres.getByRole('button', { name: 'Edit the background of Poetry' }).click();
@@ -107,7 +116,9 @@ test.describe('Staff › Website › Genre and tag pages (G12b)', () => {
       .getByRole('button', { name: 'Use the default' })
       .click();
     await expect(page.getByText('The page is back to its default background.')).toBeVisible();
-    expect(await bandToneAt(browser, '/discover/c/poetry')).toBe('gold');
+    await expect
+      .poll(() => bandToneAt(browser, '/discover/c/poetry'), { timeout: 15_000 })
+      .toBe('gold');
     await page.context().close();
   });
 
