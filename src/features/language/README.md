@@ -1,6 +1,6 @@
 # Language
 
-The language menus and saving the interface language. Built by S1-E1-04; the Nordic languages and the first-visit language by country came with MARKETS-2a.
+The language menus and saving the interface language. Built by S1-E1-04; the Nordic languages and the first-visit language by country came with MARKETS-2a, and the reading languages with MARKETS-2c.
 
 - `components/LanguageSelect.tsx`: the drop-down. AppLayout puts it in the footer (label shown); the top bar has none (Robert, 9 Nov 2026, bundle FIX-3).
 - `components/LanguageSettingsSection.tsx`: the Language panel in Settings (/settings#language), one row of radio buttons that saves to the account like the footer's drop-down (bundle FIX-3).
@@ -9,6 +9,7 @@ The language menus and saving the interface language. Built by S1-E1-04; the Nor
 - `hooks/useOpenInterfaceLanguages.ts`: which of the five interface languages (`src/schemas/interfaceLanguages.ts`: en, ro, sv, da, nb) staff have opened; a closed one shows in no menu. Romanian and English are always open.
 - `hooks/useLanguageOptions.ts`: the menus' choices, one per open language, each named in its own language (the footer, Settings and onboarding all use it).
 - `hooks/useFirstVisitLanguage.ts` and `lib/firstVisitLanguage.ts`: on a first visit, the language for the connection's country (Sweden, Denmark and Norway get their own language once it is open, English while it is closed; Romania and Moldova Romanian; other countries English; unknown, no change). It never saves its answer.
+- `components/ReadingLanguagesSection.tsx`, `hooks/useReadingLanguages.ts` and `api/readingLanguages.ts`: Settings › Language › Reading languages (MARKETS-2c; IDEA-20261109-2). A member ticks the story languages they read (`profiles.reading_languages`, saved through `set_my_reading_languages()`); with none ticked they read the interface language plus English, and a signed-out visitor reads only the language menu's language, with nothing stored. `useReadingLanguageFilter()` gives the story lists those languages (`src/features/discovery/api/storyLists.ts`, `languageFilterFor()`).
 - `api/profileLocale.ts`: reads `profiles.locale` (own row only, `profiles_select_own`) and saves through `set_my_locale()`.
 
 Which language is shown, in order (decided 17 Oct 2026, 11:48; step 3 added by MARKETS-2a):

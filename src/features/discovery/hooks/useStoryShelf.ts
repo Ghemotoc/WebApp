@@ -8,6 +8,7 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import { useSession } from '@/features/auth/hooks/useSession';
+import { useReadingLanguageFilter } from '@/features/language/hooks/useReadingLanguages';
 import { getSupabaseClient } from '@/lib/supabase';
 
 import { fetchStoryList, type ListRequest, type StoryListPage } from '../api/storyLists';
@@ -26,17 +27,23 @@ const shelfRows = 21;
  */
 export function useStoryShelf(request: ListRequest) {
   const { userId, isKnown } = useSession();
+  // The languages the reader reads (MARKETS-2c); null until known, so the list loads once.
+  const reading = useReadingLanguageFilter();
   const shelf = useQuery<StoryListPage>({
     // What each person sees differs (ratings, blocks, follows), so the key names them.
-    queryKey: [storyListQueryKey, 'shelf', request, userId],
+    queryKey: [storyListQueryKey, 'shelf', request, userId, reading.languages],
     // A shelf whose filter changes (the home page's genre chips, LOOK-3) keeps its stories until
     // the new ones arrive, so the row and its controls never vanish while it loads.
     placeholderData: keepPreviousData,
-    enabled: isKnown,
+    enabled: isKnown && reading.languages !== null,
     queryFn: async () => {
       const client = await getSupabaseClient();
       if (client === null) throw new Error('The app is not connected to its database.');
-      return fetchStoryList(client, request, { pageSize: shelfRows, offset: 0 });
+      return fetchStoryList(client, request, {
+        pageSize: shelfRows,
+        offset: 0,
+        readingLanguages: reading.languages ?? [],
+      });
     },
   });
   return { shelf: shelf.data ?? null, isLoaded: shelf.isSuccess, loadFailed: shelf.isError };

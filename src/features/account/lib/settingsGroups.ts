@@ -39,7 +39,7 @@ export const firstSettingsGroup: SettingsGroupKey = 'profile';
 const anchorsOfGroup: Record<SettingsGroupKey, readonly string[]> = {
   profile: ['forum-signature', 'teacher-badge'],
   appearance: [],
-  language: [],
+  language: ['reading-languages'],
   // Ways to log in sits here: while its sign-in flags are off it shows nothing, so it can't be a
   // group of its own; its old address (/settings#ways-to-log-in, in emails) still opens it.
   account: ['ways-to-log-in'],

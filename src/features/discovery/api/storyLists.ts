@@ -67,8 +67,64 @@ export interface ListRequest {
   key: string | null;
   categorySlug: string | null;
   completion: CompletionStatus | null;
+  /**
+   * One language code; everyLanguage for no filter at all; or null, which means the languages the
+   * reader reads on the lists that follow them (MARKETS-2c, readingLanguageKinds) and every
+   * language on the others.
+   */
   languageCode: string | null;
   sortOrder: SortOrder | null;
+}
+
+/** The See all filter's "Every language": no language filter, even where reading languages apply. */
+export const everyLanguage = 'any';
+
+/**
+ * The lists that follow the languages someone reads (MARKETS-2c; IDEA-20261109-2: "Discover,
+ * Trending, genres and See all"). Personal lists (library, reading lists, someone's profile, the
+ * writer's page, following) and search show every language, because the reader chose those
+ * stories or asked for them by name. The public-domain classics shelf shows every language too:
+ * it is a small curated shelf of Romanian and world classics, meant for every reader.
+ */
+const readingLanguageKinds: ReadonlySet<ListKind> = new Set<ListKind>([
+  'updated',
+  'new',
+  'completed',
+  'category',
+  'tag',
+  'popular',
+  'rising',
+  'picked',
+  'shared',
+]);
+
+/**
+ * Says whether a list follows the languages someone reads.
+ *
+ * @param kind - the list
+ * @returns true for Discover's lists, Trending and the genre pages
+ */
+export function followsReadingLanguages(kind: ListKind): boolean {
+  return readingLanguageKinds.has(kind);
+}
+
+/**
+ * The language filter browse_stories() gets: one code, several separated by commas, or none.
+ *
+ * @param request - the list and its filters
+ * @param readingLanguages - the languages the reader reads (useReadingLanguageFilter)
+ * @returns the filter, or null for every language
+ */
+export function languageFilterFor(
+  request: ListRequest,
+  readingLanguages: readonly string[],
+): string | null {
+  // Step 1: a language picked in the filter wins; "Every language" turns the filter off.
+  if (request.languageCode === everyLanguage) return null;
+  if (request.languageCode !== null) return request.languageCode;
+  // Step 2: otherwise the lists that follow them show the languages the reader reads.
+  if (!followsReadingLanguages(request.kind) || readingLanguages.length === 0) return null;
+  return readingLanguages.join(',');
 }
 
 /** One story as a card. */
@@ -172,22 +228,24 @@ export function toListedStory(row: ListedStoryRow): ListedStory {
  *
  * @param client - the shared Supabase client
  * @param request - the list and its filters
- * @param page - how many stories (pageSize) from where (offset)
+ * @param page - how many stories (pageSize) from where (offset), and the languages the reader
+ *   reads for the lists that follow them (MARKETS-2c)
  * @returns the page and the list's total
  * Errors: throws with Supabase's message when the database can't be reached or refuses the list.
  */
 export async function fetchStoryList(
   client: AppSupabaseClient,
   request: ListRequest,
-  page: { pageSize: number; offset: number },
+  page: { pageSize: number; offset: number; readingLanguages?: readonly string[] },
 ): Promise<StoryListPage> {
   // Step 1: only the filters that are set go to the database; the rest keep their defaults.
+  const language = languageFilterFor(request, page.readingLanguages ?? []);
   const { data, error } = await client.rpc('browse_stories', {
     list_kind: request.kind,
     ...(request.key === null ? {} : { list_key: request.key }),
     ...(request.categorySlug === null ? {} : { category_slug: request.categorySlug }),
     ...(request.completion === null ? {} : { completion: request.completion }),
-    ...(request.languageCode === null ? {} : { language: request.languageCode }),
+    ...(language === null ? {} : { language }),
     ...(request.sortOrder === null ? {} : { sort_order: request.sortOrder }),
     page_size: page.pageSize,
     page_offset: page.offset,

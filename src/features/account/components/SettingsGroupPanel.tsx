@@ -6,6 +6,7 @@
  * - Profile: the Account panel (username, pen name and country), About you, Your avatar, Forum
  *   signature, What you like, Birthday and the Teacher badge;
  * - Appearance: the theme, light or night mode and the seasonal looks (bundle G2 THEMES);
+ * - Language: the interface language and the reading languages (MARKETS-2c);
  * - Email and sign-in (key "account"): email address, ways to log in (hidden while their flags
  *   are off), signed-in devices and Canva;
  * - Privacy (with what a parent agreed to, and Blocked accounts); Notifications; Messages;
@@ -35,6 +36,7 @@ import { SupportRequestsSection } from '@/features/support/components/SupportReq
 import { TeacherBadgeSection } from '@/features/teacher-badge/components/TeacherBadgeSection';
 import { AppearanceSettingsSection } from '@/features/theme/components/AppearanceSettingsSection';
 import { LanguageSettingsSection } from '@/features/language/components/LanguageSettingsSection';
+import { ReadingLanguagesSection } from '@/features/language/components/ReadingLanguagesSection';
 
 import type { useMyNames } from '../hooks/useMyNames';
 import type { SettingsGroupKey } from '../lib/settingsGroups';
@@ -103,7 +105,13 @@ const plainGroups: Record<Exclude<SettingsGroupKey, 'profile'>, () => ReactNode>
   // The theme, mode and seasonal looks, saved on the account (bundle G2 THEMES).
   appearance: () => <AppearanceSettingsSection />,
   // The interface language; the footer has the other menu (S1-E1-04; bundle FIX-3).
-  language: () => <LanguageSettingsSection />,
+  language: () => (
+    <>
+      <LanguageSettingsSection />
+      {/* The story languages the member reads, for the story lists (MARKETS-2c). */}
+      <ReadingLanguagesSection />
+    </>
+  ),
   account: () => (
     <>
       {/* Every signed-in account sees and can change its own address, minors included. */}

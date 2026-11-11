@@ -12978,6 +12978,7 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     "checks_personal_details" boolean,
     "rules_walkthrough_seen_at" timestamp with time zone,
     "initials_colour" "text",
+    "reading_languages" "text"[],
     CONSTRAINT "profiles_avatar_recipe_shape" CHECK ("public"."avatar_recipe_valid"("avatar_recipe")),
     CONSTRAINT "profiles_bio_length" CHECK (("char_length"("bio") <= 300)),
     CONSTRAINT "profiles_birth_month_is_a_month" CHECK ((("birth_month" >= 1) AND ("birth_month" <= 12))),
@@ -12992,6 +12993,7 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     CONSTRAINT "profiles_locale_is_supported" CHECK ("public"."is_interface_language"("locale")),
     CONSTRAINT "profiles_look_known" CHECK (("look" = ANY (ARRAY['lilac'::"text", 'sorbet'::"text", 'seaglass'::"text", 'pistachio'::"text", 'candy'::"text", 'tmc'::"text"]))),
     CONSTRAINT "profiles_pen_name_length" CHECK ((("pen_name" IS NULL) OR (("char_length"("pen_name") >= 1) AND ("char_length"("pen_name") <= 50)))),
+    CONSTRAINT "profiles_reading_languages_shape" CHECK ((("reading_languages" IS NULL) OR ((("cardinality"("reading_languages") >= 1) AND ("cardinality"("reading_languages") <= 10)) AND ("array_to_string"("reading_languages", ','::"text") ~ '^[a-z]{2,3}(-[A-Z]{2})?(,[a-z]{2,3}(-[A-Z]{2})?)*$'::"text")))),
     CONSTRAINT "profiles_signature_short" CHECK ((("signature" IS NULL) OR ((("char_length"("signature") >= 1) AND ("char_length"("signature") <= 300)) AND ("array_length"("string_to_array"("signature", '
 '::"text"), 1) <= 3))))
 );
@@ -13178,6 +13180,10 @@ COMMENT ON COLUMN "public"."profiles"."rules_walkthrough_seen_at" IS 'When the p
 
 
 COMMENT ON COLUMN "public"."profiles"."initials_colour" IS 'The colour the member picked for their initials bead (one of initials_colour_names()); null means the colour comes from the username (G11a).';
+
+
+
+COMMENT ON COLUMN "public"."profiles"."reading_languages" IS 'The story languages the member reads (MARKETS-2c); null means the interface language plus English. Private to the member.';
 
 
 
@@ -27033,6 +27039,8 @@ declare
     when list_kind = 'reading_list'
       and list_key ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
     then list_key::uuid end;
+  -- MARKETS-2c: the language filter as a list of codes ("sv,en"), or null for every language.
+  wanted_languages text[] := case when language is not null then string_to_array(language, ',') end;
   search_terms tsquery;
   search_pattern text;
 begin
@@ -27089,7 +27097,8 @@ begin
           where entries.list_id = reading_list_id))
     and (category_slug is null or categories.slug = category_slug)
     and (completion is null or stories.completion_status = completion)
-    and (language is null or stories.language_code = language)
+    -- MARKETS-2c: one language or several (the languages someone reads).
+    and (wanted_languages is null or stories.language_code = any (wanted_languages))
     -- The list's own rule: the three open lists hold every story; search uses the indexes; the
     -- rest ask list_holds_story().
     and (
@@ -41543,6 +41552,51 @@ ALTER FUNCTION "public"."set_my_pen_name"("new_pen_name" "text") OWNER TO "postg
 
 
 COMMENT ON FUNCTION "public"."set_my_pen_name"("new_pen_name" "text") IS 'Saves or removes the signed-in person''s pen name, or says why not (S1-E2-04).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."set_my_reading_languages"("wanted" "text"[]) RETURNS "text"[]
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  me uuid := (select auth.uid());
+  cleaned text[];
+begin
+  -- Step 1: a signed-in member.
+  if me is null then
+    raise exception 'Sign in to choose the languages you read.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 2: drop repeats and blanks, keeping the order given.
+  select array_agg(code order by first_position) into cleaned
+  from (
+    select btrim(code) as code, min(position) as first_position
+    from unnest(coalesce(wanted, '{}')) with ordinality as given(code, position)
+    where btrim(code) <> ''
+    group by btrim(code)) as unique_codes;
+  -- Step 3: nothing picked means the default.
+  if cleaned is null then
+    update public.profiles set reading_languages = null where id = me;
+    return null;
+  end if;
+  if cardinality(cleaned) > 10 then
+    raise exception 'Pick up to ten languages.' using errcode = 'check_violation', hint = 'too_many';
+  end if;
+  -- Step 4: every code must be a language stories can be written in (the languages table).
+  if exists (select 1 from unnest(cleaned) as picked(picked_code)
+             where not exists (select 1 from public.languages where languages.code = picked.picked_code)) then
+    raise exception 'That isn''t a story language.' using errcode = 'check_violation', hint = 'unknown_language';
+  end if;
+  update public.profiles set reading_languages = cleaned where id = me;
+  return cleaned;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_my_reading_languages"("wanted" "text"[]) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_my_reading_languages"("wanted" "text"[]) IS 'A member saves the story languages they read; empty goes back to the default (MARKETS-2c).';
 
 
 
@@ -65663,6 +65717,11 @@ GRANT ALL ON FUNCTION "public"."set_my_locale"("new_locale" "text") TO "authenti
 
 REVOKE ALL ON FUNCTION "public"."set_my_pen_name"("new_pen_name" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_my_pen_name"("new_pen_name" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."set_my_reading_languages"("wanted" "text"[]) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_my_reading_languages"("wanted" "text"[]) TO "authenticated";
 
 
 

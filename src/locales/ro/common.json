@@ -82,7 +82,16 @@
     "settingsHeading": "Limbă",
     "settingsIntro": "Limba butoanelor, meniurilor și e-mailurilor. Se salvează în cont, așa că se aplică pe orice dispozitiv.",
     "settingsLegend": "Limba interfeței",
-    "settingsNote": "Înainte de conectare, site-ul se deschide în limba țării din care este vizitat: română în România și în Republica Moldova, engleză în rest. Meniul de limbă este în josul paginii. Poveștile au limba lor, aleasă de autor."
+    "settingsNote": "Înainte de conectare, site-ul se deschide în limba țării din care este vizitat: română în România și în Republica Moldova, engleză în rest. Meniul de limbă este în josul paginii. Poveștile au limba lor, aleasă de autor.",
+    "readingHeading": "Limbile în care citesc",
+    "readingIntro": "Listele de povești din Descoperă și de pe paginile de genuri arată povești în aceste limbi. Dacă nu bifezi niciuna, citești în {{interface}} și în engleză.",
+    "readingIntroEnglish": "Listele de povești din Descoperă și de pe paginile de genuri arată povești în aceste limbi. Dacă nu bifezi niciuna, citești în engleză.",
+    "readingLegend": "Limbile în care citesc",
+    "readingSave": "Salvează",
+    "readingSaving": "Se salvează…",
+    "readingSaved": "Salvat. Listele de povești urmează acum aceste limbi.",
+    "readingSaveFailed": "Nu am putut salva. Verifică conexiunea și încearcă din nou.",
+    "readingLoadFailed": "Nu am putut încărca limbile în care citești. Reîncarcă pagina ca să încerci din nou."
   },
   "shelf": {
     "regionLabel": "{{title}}, se derulează lateral",

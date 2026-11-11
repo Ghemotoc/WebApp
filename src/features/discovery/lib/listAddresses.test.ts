@@ -57,6 +57,12 @@ describe('requestFromAddress', () => {
     expect(requestFromAddress('updated', null, search)).toEqual(plainList('updated'));
   });
 
+  it('keeps "Any language" in the address, so the reading languages stay off (MARKETS-2c)', () => {
+    const request = { ...plainList('updated'), languageCode: 'any' };
+    const search = new URL(listAddress(request), 'https://example.test').searchParams;
+    expect(requestFromAddress('updated', null, search).languageCode).toBe('any');
+  });
+
   it('ignores a category filter on a category page, which is its own category', () => {
     const search = new URLSearchParams('category=poetry');
     expect(requestFromAddress('category', 'fiction', search).categorySlug).toBeNull();

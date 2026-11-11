@@ -91,8 +91,12 @@ test.describe('Discover and story lists (S1-E5-01, S1-E5-09)', () => {
       0,
     );
     // Every list keeps its See all page, which staff can still put back as a shelf.
+    // An English visitor reads English (MARKETS-2c); "Any language" brings the Romanian story back.
     await page.goto('/discover/all/updated');
     await expect(page.getByRole('heading', { level: 1, name: 'Recently updated' })).toBeVisible();
+    await expect(page.getByRole('link', { name: /Tide Tables/ })).toBeVisible();
+    await expect(page.getByRole('link', { name: /Farul de la Sulina/ })).toHaveCount(0);
+    await page.goto('/discover/all/updated?language=any');
     await expect(page.getByRole('link', { name: /Farul de la Sulina/ })).toBeVisible();
     await expect(page.getByRole('link', { name: /Tide Tables/ })).toBeVisible();
     await expect(page.getByRole('link', { name: /Noaptea lungă/ })).toHaveCount(0);
@@ -102,6 +106,12 @@ test.describe('Discover and story lists (S1-E5-01, S1-E5-09)', () => {
     const page = await openAsVisitor(browser, '/s/disc-e2e-farul');
     await page.getByRole('list', { name: 'Tags' }).getByRole('link', { name: tag }).click();
     await expect(page).toHaveURL(new RegExp(`/discover/t/${tag}$`));
+    // An English visitor reads English first; "Any language" shows the Romanian story too.
+    await expect(page.getByText('1 story', { exact: true })).toBeVisible();
+    await page
+      .getByRole('group', { name: 'Filters' })
+      .getByRole('combobox', { name: 'Language' })
+      .selectOption({ label: 'Any language' });
     await expect(page.getByText('2 stories')).toBeVisible();
     // Completed only: the status is a segmented control, so the reader clicks the segment's
     // visible label (its radio button is hidden inside it, G7c).
@@ -126,7 +136,7 @@ test.describe('Discover and story lists (S1-E5-01, S1-E5-09)', () => {
   test('the reader sorts a list, and the sort is kept for the next list (S1-E5-02)', async ({
     browser,
   }) => {
-    const page = await openAsVisitor(browser, `/discover/t/${tag}`);
+    const page = await openAsVisitor(browser, `/discover/t/${tag}?language=any`);
     const cards = page.getByRole('link', { name: /Tide Tables|Farul de la Sulina/ });
     await page.getByLabel('Sort by').selectOption({ label: 'Title, Z to A' });
     await expect(page).toHaveURL(/sort=title_za/);
