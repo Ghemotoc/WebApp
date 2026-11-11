@@ -46,7 +46,7 @@ const anchorsOfGroup: Record<SettingsGroupKey, readonly string[]> = {
   privacy: ['parent-consent'],
   notifications: [],
   messages: [],
-  'download-my-data': ['download-my-stories', 'data-requests'],
+  'download-my-data': ['download-my-stories', 'data-requests', 'archived-stories'],
   support: [],
   'delete-account': [],
 };

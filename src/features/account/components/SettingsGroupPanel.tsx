@@ -10,7 +10,7 @@
  * - Email and sign-in (key "account"): email address, ways to log in (hidden while their flags
  *   are off), signed-in devices and Canva;
  * - Privacy (with what a parent agreed to, and Blocked accounts); Notifications; Messages;
- * - Download my data (with data requests); Help and support (support requests and the Legal
+ * - Download my data (with data requests and, when some wait, Archived stories); Help and support (support requests and the Legal
  *   centre); Delete account.
  * The anchors other screens link to are listed per group in lib/settingsGroups.ts; keep the two
  * in step. Only the open group is drawn, so the others don't load their data.
@@ -24,6 +24,7 @@ import { CanvaSettingsSection } from '@/features/canva/components/CanvaSettingsS
 import { DeleteAccountSection } from '@/features/account-deletion/components/DeleteAccountSection';
 import { DownloadMyDataSection } from '@/features/data-export/components/DownloadMyDataSection';
 import { MyDataRequestsSection } from '@/features/data-requests/components/MyDataRequestsSection';
+import { ArchivedStoriesSection } from '@/features/story-archive/components/ArchivedStoriesSection';
 import { SignatureSettingsSection } from '@/features/forums/components/SignatureSettingsSection';
 import { MessageSettingsSection } from '@/features/messages/components/MessageSettingsSection';
 import { ParentConsentSummary } from '@/features/parent-consent/components/ParentConsentSummary';
@@ -137,6 +138,9 @@ const plainGroups: Record<Exclude<SettingsGroupKey, 'profile'>, () => ReactNode>
   messages: () => <MessageSettingsSection />,
   'download-my-data': () => (
     <>
+      {/* Stories of a closed account with this email, to bring back. Shown only when some wait,
+          and first, because it is what the person came for (ARCHIVE-1). */}
+      <ArchivedStoriesSection />
       {/* A copy of everything about the account, as one ZIP (S1-E13-02). */}
       <DownloadMyDataSection />
       {/* Requests about the person's data, and "Was it you?" (S1-E11-09; ADMIN-2c1). */}

@@ -667,6 +667,13 @@ The settings are `unused_account_years` (5), `unused_account_quarterly_from_year
 
 The user ID is never reused: the profile and the login row stay as an empty tombstone. A new user table must be added to `account_deletion_rules()` (`delete`, `own_step` or `kept` with a reason; test `211` fails until it is). Tests: `211`, `e2e/delete-my-account.spec.ts`.
 
+
+### The story archive (ARCHIVE-1)
+
+When `purge_closed_accounts()` deletes an account that closed for not being used, it first calls `archive_account_stories()`: each story becomes one row of `story_archives`, holding the story, its chapters and its Story Atlas as one JSON document (`archived_story_document()`; the tables are listed once, in `story_archive_tables()`), plus the scrambled email, year of birth, pen name and username. Nobody reads the table, staff included, and an account its owner chose to delete is never archived.
+
+Bringing stories back: Settings › Download data shows `ArchivedStoriesSection` (`src/features/story-archive`) only when `my_story_archive()` says stories wait for the account's confirmed email. The form sends the year of birth and one name to `claim_story_archive()`, which finds the closed account (`matching_story_archive_owner()`), then writes each story back as a private draft (`restore_archived_story()`, one savepoint per story, so one that can't return doesn't stop the rest). Three wrong tries lock the form for a day (rows in `rate_limit_events`). `purge-story-archives` deletes an archive after `story_archive_years` (5). Tests: `371`, `372`, `e2e/story-archive.spec.ts`.
+
 ## The retention clean-ups (S1-E13-04)
 
 ```

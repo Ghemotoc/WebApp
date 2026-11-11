@@ -8550,6 +8550,60 @@ export type Database = {
           },
         ];
       };
+      story_archives: {
+        Row: {
+          archived_at: string;
+          birth_year: number | null;
+          created_at: string;
+          delete_after: string;
+          email_hash: string;
+          handle: string;
+          id: string;
+          pen_name: string | null;
+          story: NonNullable<Json>;
+          title: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          archived_at?: string;
+          birth_year?: number | null;
+          created_at?: string;
+          delete_after: string;
+          email_hash: string;
+          handle: string;
+          id?: string;
+          pen_name?: string | null;
+          story: NonNullable<Json>;
+          title: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          archived_at?: string;
+          birth_year?: number | null;
+          created_at?: string;
+          delete_after?: string;
+          email_hash?: string;
+          handle?: string;
+          id?: string;
+          pen_name?: string | null;
+          story?: NonNullable<Json>;
+          title?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'story_archives_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       story_bible_entries: {
         Row: {
           body: string;
@@ -12238,7 +12292,15 @@ export type Database = {
         };
         Returns: undefined;
       };
+      archive_account_stories: {
+        Args: { closed_at: string; target_user_id: string };
+        Returns: number;
+      };
       archive_class_space: { Args: { slug: string }; Returns: Json };
+      archived_chapters_as_drafts: { Args: { archived_chapters: Json }; Returns: Json };
+      archived_rows_for_restore: { Args: { document: Json; table_name: string }; Returns: Json };
+      archived_story_as_draft: { Args: { archived_story: Json }; Returns: Json };
+      archived_story_document: { Args: { archived_story_id: string }; Returns: Json };
       atlas_fold: { Args: { value: string }; Returns: string };
       atlas_picture_file_may_go: { Args: { object_name: string }; Returns: boolean };
       atlas_picture_is_public: { Args: { object_name: string }; Returns: boolean };
@@ -12739,6 +12801,7 @@ export type Database = {
         };
         Returns: boolean;
       };
+      claim_story_archive: { Args: { birth_year: number; known_name: string }; Returns: Json };
       class_certificate_crest: { Args: { slug: string }; Returns: Json };
       class_certificates: { Args: { slug: string }; Returns: Json };
       class_invite: { Args: { slug: string }; Returns: Json };
@@ -13796,6 +13859,7 @@ export type Database = {
         };
         Returns: number;
       };
+      free_story_slug: { Args: { wanted_slug: string }; Returns: string };
       generate_invite_code: { Args: Record<PropertyKey, never>; Returns: string };
       get_chapter: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
       get_link_preview: { Args: { chapter_code?: string; story_slug: string }; Returns: Json };
@@ -14356,6 +14420,10 @@ export type Database = {
       marketing_email_allowed: { Args: { target_user_id: string }; Returns: boolean };
       mask_email: { Args: { address: string }; Returns: string };
       masked_email: { Args: { address: string }; Returns: string };
+      matching_story_archive_owner: {
+        Args: { given_birth_year: number; given_name: string };
+        Returns: string;
+      };
       may_change_own_avatar: { Args: Record<PropertyKey, never>; Returns: boolean };
       may_feature_writer: { Args: { person_id: string }; Returns: boolean };
       may_keep_writing: { Args: { other_id: string; writer_id: string }; Returns: boolean };
@@ -14501,6 +14569,7 @@ export type Database = {
       move_chapter_scene: { Args: { new_position: number; scene_id: string }; Returns: Json };
       my_account_deletion: { Args: Record<PropertyKey, never>; Returns: Json };
       my_age_check: { Args: Record<PropertyKey, never>; Returns: Json };
+      my_archive_email_hash: { Args: Record<PropertyKey, never>; Returns: string };
       my_bible_entry: {
         Args: { target_entry_id: string };
         Returns: {
@@ -14760,6 +14829,7 @@ export type Database = {
       my_staff_session_ended: { Args: Record<PropertyKey, never>; Returns: boolean };
       my_staff_sign_in: { Args: Record<PropertyKey, never>; Returns: Json };
       my_statements: { Args: Record<PropertyKey, never>; Returns: Json };
+      my_story_archive: { Args: Record<PropertyKey, never>; Returns: Json };
       my_story_character: {
         Args: { target_character_id: string };
         Returns: {
@@ -15395,6 +15465,7 @@ export type Database = {
       purge_opening_list: { Args: Record<PropertyKey, never>; Returns: number };
       purge_rate_limit_events: { Args: Record<PropertyKey, never>; Returns: number };
       purge_sent_emails: { Args: Record<PropertyKey, never>; Returns: number };
+      purge_story_archives: { Args: Record<PropertyKey, never>; Returns: number };
       purge_unconfirmed_accounts: { Args: Record<PropertyKey, never>; Returns: number };
       purge_unfinished_social_sign_ups: { Args: Record<PropertyKey, never>; Returns: number };
       queue_daily_digests: { Args: Record<PropertyKey, never>; Returns: number };
@@ -15950,8 +16021,17 @@ export type Database = {
       require_tag_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_teacher_checks_access: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_website_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
+      restore_archived_rows: {
+        Args: { archived_rows: Json; new_user_id: string; table_name: string };
+        Returns: number;
+      };
+      restore_archived_story: { Args: { document: Json; new_user_id: string }; Returns: undefined };
       restore_chapter: { Args: { chapter_code: string }; Returns: Json };
       restore_my_story: { Args: { story_slug: string }; Returns: Json };
+      restore_story_archives_of: {
+        Args: { archive_email_hash: string; closed_user_id: string; new_user_id: string };
+        Returns: Json;
+      };
       retention_periods: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -16914,6 +16994,8 @@ export type Database = {
       stories_fingerprint: { Args: { chosen_story_id: string; owner_id: string }; Returns: string };
       stories_like_this: { Args: { story_slug: string }; Returns: Json };
       story_app_only_applies: { Args: { chosen: boolean }; Returns: boolean };
+      story_archive_tables: { Args: Record<PropertyKey, never>; Returns: string[] };
+      story_archive_wrong_tries: { Args: Record<PropertyKey, never>; Returns: number };
       story_as_shown: {
         Args: {
           target: Omit<
