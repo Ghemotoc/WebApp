@@ -211,6 +211,9 @@ test.describe('The writer dashboard', () => {
     test(`passes axe, fits and draws no doodle at ${width} px`, async ({ browser }) => {
       const page = await openDashboard(browser, width);
       await expect(page.getByRole('heading', { name: /followers?$/ })).toBeVisible();
+      // Reduce motion ends every animation at once, so axe measures the colours the screen
+      // settles on, not a fade half-way through (as in e2e/support/accessibility.ts; FINAL-1).
+      await page.emulateMedia({ reducedMotion: 'reduce' });
       const results = await new AxeBuilder({ page })
         .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
         .analyze();
@@ -252,6 +255,9 @@ test.describe('The writer dashboard', () => {
     ).toHaveAttribute('href', `/s/${storySlug}/${publishedCode}#comments-heading`);
     // One story, so there is nothing to pick.
     await expect(page.getByLabel('Story')).toHaveCount(0);
+    // Reduce motion ends every animation at once, so axe measures the colours the screen
+    // settles on, not a fade half-way through (as in e2e/support/accessibility.ts; FINAL-1).
+    await page.emulateMedia({ reducedMotion: 'reduce' });
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
       .analyze();

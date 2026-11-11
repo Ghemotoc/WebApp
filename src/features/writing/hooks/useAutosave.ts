@@ -109,11 +109,19 @@ interface AutosaveContext {
 /**
  * Applies a save's answer: the new version (and the device copy goes unless the writer typed
  * meanwhile), a conflict (saving stops) or a refusal (the changes stay).
+ *
+ * When the writer typed while the save was in flight, the status goes back to "Unsaved changes"
+ * instead of "Saved": the newer words are still waiting for the next save (FINAL-1; before, the
+ * status said "Saved" until the next keystroke or tick).
  */
 function applyResult({ refs, device, setState }: AutosaveContext, result: SaveDraftResult) {
   if (result.status === 'saved') {
     refs.version.current = result.version;
-    if (!refs.hasChanges.current) device.forget();
+    if (refs.hasChanges.current) {
+      setState(refs.isOnline.current ? { kind: 'unsaved' } : { kind: 'offline' });
+      return;
+    }
+    device.forget();
   }
   if (result.status === 'conflict') refs.isStopped.current = true;
   if (result.status === 'not_active' || result.status === 'not_found')

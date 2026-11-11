@@ -142,6 +142,9 @@ test.describe('Contests (S1-E11-15)', () => {
     await page.getByRole('button', { name: 'Save', exact: true }).click();
     await expect(page.getByText('Saved.', { exact: true })).toBeVisible();
     await expect(page.getByText('Everything is in place.', { exact: false })).toBeVisible();
+    // Reduce motion ends every animation at once, so axe measures the colours the screen
+    // settles on, not a fade half-way through (as in e2e/support/accessibility.ts; FINAL-1).
+    await page.emulateMedia({ reducedMotion: 'reduce' });
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])
       .analyze();
@@ -218,6 +221,9 @@ test.describe('Contests (S1-E11-15)', () => {
     await admin
       .getByLabel('Why the entry breaks the rules')
       .fill('The story was published before the contest opened.');
+    // Reduce motion ends every animation at once, so axe measures the colours the screen
+    // settles on, not a fade half-way through (as in e2e/support/accessibility.ts; FINAL-1).
+    await admin.emulateMedia({ reducedMotion: 'reduce' });
     const results = await new AxeBuilder({ page: admin })
       .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])
       .analyze();
@@ -262,6 +268,9 @@ test.describe('Contests (S1-E11-15)', () => {
     await expect(admin.getByText(/consent for the delivery details is on file/)).toHaveCount(0);
     await admin.getByRole('button', { name: /^Mark .+’s prize as sent$/ }).click();
     await expect(admin.getByText(/^Sent on /)).toBeVisible();
+    // Reduce motion ends every animation at once, so axe measures the colours the screen
+    // settles on, not a fade half-way through (as in e2e/support/accessibility.ts; FINAL-1).
+    await admin.emulateMedia({ reducedMotion: 'reduce' });
     const results = await new AxeBuilder({ page: admin })
       .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])
       .analyze();
@@ -309,6 +318,9 @@ test.describe('Contests (S1-E11-15)', () => {
     await expect(
       writer.getByText('for winning the writing contest “The trial contest”.'),
     ).toBeVisible();
+    // Reduce motion ends every animation at once, so axe measures the colours the screen
+    // settles on, not a fade half-way through (as in e2e/support/accessibility.ts; FINAL-1).
+    await writer.emulateMedia({ reducedMotion: 'reduce' });
     const results = await new AxeBuilder({ page: writer })
       .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])
       .analyze();

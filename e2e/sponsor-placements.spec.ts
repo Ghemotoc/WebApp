@@ -164,6 +164,9 @@ test.describe('Staff › Sponsors › Placements (S1-E12-05)', () => {
     test(`Placements passes axe at ${width} px and never scrolls sideways`, async ({ browser }) => {
       const page = await openPlacements(browser);
       await page.setViewportSize({ width, height: 900 });
+      // Reduce motion ends every animation at once, so axe measures the colours the screen
+      // settles on, not a fade half-way through (as in e2e/support/accessibility.ts; FINAL-1).
+      await page.emulateMedia({ reducedMotion: 'reduce' });
       const results = await new AxeBuilder({ page })
         .include('section[aria-labelledby="placements-heading"]')
         .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])

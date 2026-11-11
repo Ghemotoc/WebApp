@@ -96,6 +96,9 @@ test.describe('the heads-up before sharing personal details (MUST-1b)', () => {
     await page.getByRole('button', { name: 'Post comment' }).click();
     await expect(page.getByText(question)).toBeVisible();
     await expect(page.getByRole('heading', { name: '1 comment' })).toBeVisible();
+    // Reduce motion ends every animation at once, so axe measures the colours the screen
+    // settles on, not a fade half-way through (as in e2e/support/accessibility.ts; FINAL-1).
+    await page.emulateMedia({ reducedMotion: 'reduce' });
     const results = await new AxeBuilder({ page })
       .include('section[aria-labelledby="comments-heading"]')
       .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])

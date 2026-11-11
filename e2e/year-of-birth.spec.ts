@@ -94,6 +94,9 @@ for (const width of [390, 768, 1440]) {
     await page.evaluate(() =>
       Promise.all(document.getAnimations().map((animation) => animation.finished)),
     );
+    // Reduce motion ends every animation at once, so axe measures the colours the screen
+    // settles on, not a fade half-way through (as in e2e/support/accessibility.ts; FINAL-1).
+    await page.emulateMedia({ reducedMotion: 'reduce' });
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
       .analyze();
