@@ -18618,6 +18618,12 @@ begin
       where profiles.deleted_at is null
         and not exists (select 1 from public.staff_roles where staff_roles.user_id = profiles.id)
         and not public.is_classics_account(profiles.id)
+        -- A banned account is closed, never deleted (Robert, 2 Nov 2026; ADMIN-2 part f1), and an
+        -- account with child abuse image evidence stays under that evidence's 5-year hold
+        -- (ADMIN-2e2b): purge_closed_accounts() would skip both, so they get no notice either.
+        and (public.active_sanction(profiles.id, 'ban')).id is null
+        and not exists (select 1 from public.abuse_image_evidence
+                        where abuse_image_evidence.user_id = profiles.id)
         and not exists (select 1 from public.account_deletions
                         where account_deletions.user_id = profiles.id
                           and account_deletions.cancelled_at is null

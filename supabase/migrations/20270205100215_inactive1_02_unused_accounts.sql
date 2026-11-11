@@ -11,7 +11,8 @@
 --   * at the end, the account closes the same way as "Delete my account" (S1-E13-03): hidden at
 --     once, and deleted for good after account_deletion_days (14), so logging in during those
 --     days and choosing "Keep my account" still brings it back;
---   * never staff accounts or the classics account.
+--   * never staff accounts or the classics account; never a banned account (closed, never deleted:
+--     Robert, 2 Nov 2026) or one with child abuse image evidence under its 5-year hold.
 --
 -- What it adds:
 --   1. Settings: unused_account_years (5), unused_account_month_notice_days (30),
@@ -403,8 +404,8 @@ comment on function public.unused_account_step(date, date, timestamptz, timestam
 revoke execute on function public.unused_account_step(date, date, timestamptz, timestamptz) from public, anon, authenticated;
 
 /**
- * close_unused_accounts: the nightly job. For every live account that isn't staff, isn't the
- * classics account and isn't already closing, it sends the notice that is due or closes the
+ * close_unused_accounts: the nightly job. For every live account that isn't staff, the classics
+ * account, banned, under an abuse image evidence hold or already closing, it sends the notice that is due or closes the
  * account (unused_account_step()).
  * Returns: { month_notices, week_notices, closed }. Runs nightly at 02:35 UTC
  * (job close-unused-accounts), before purge-closed-accounts at 03:05.
@@ -434,6 +435,12 @@ begin
       where profiles.deleted_at is null
         and not exists (select 1 from public.staff_roles where staff_roles.user_id = profiles.id)
         and not public.is_classics_account(profiles.id)
+        -- A banned account is closed, never deleted (Robert, 2 Nov 2026; ADMIN-2 part f1), and an
+        -- account with child abuse image evidence stays under that evidence's 5-year hold
+        -- (ADMIN-2e2b): purge_closed_accounts() would skip both, so they get no notice either.
+        and (public.active_sanction(profiles.id, 'ban')).id is null
+        and not exists (select 1 from public.abuse_image_evidence
+                        where abuse_image_evidence.user_id = profiles.id)
         and not exists (select 1 from public.account_deletions
                         where account_deletions.user_id = profiles.id
                           and account_deletions.cancelled_at is null

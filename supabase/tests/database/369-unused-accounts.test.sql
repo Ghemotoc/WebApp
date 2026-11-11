@@ -15,12 +15,13 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(37);
+select plan(38);
 
 create temp table ids as select
   '00000000-0000-4000-8000-000000000001'::uuid as adult_writer,
   '00000000-0000-4000-8000-000000000007'::uuid as teacher,
   '00000000-0000-4000-8000-000000000008'::uuid as owner,
+  '00000000-0000-4000-8000-000000000014'::uuid as banned_user,
   '00000000-0000-4000-8000-000000000015'::uuid as blocker;
 grant select on ids to authenticated, anon;
 
@@ -142,13 +143,14 @@ select is(public.unused_account_step((pg_temp.today() - interval '5 years' - int
 -- The adult writer: last used 5 years less 20 days ago. The owner (staff) just as long.
 select pg_temp.last_used_ago((select adult_writer from ids), interval '5 years' - interval '20 days');
 select pg_temp.last_used_ago((select owner from ids), interval '5 years' - interval '20 days');
+select pg_temp.last_used_ago((select banned_user from ids), interval '5 years' - interval '20 days');
 delete from public.account_deletions where user_id = (select teacher from ids);
 select pg_temp.last_used_ago((select teacher from ids), interval '1 year');
 
 select is(
   public.close_unused_accounts(),
   '{"month_notices": 1, "week_notices": 0, "closed": 0}'::jsonb,
-  'the job sends one "about a month" notice, and none to staff');
+  'the job sends one "about a month" notice, and none to staff or a banned account');
 select is(
   (select count(*)::integer from public.notifications
    where user_id = (select adult_writer from ids) and kind = 'account_unused_month' and is_required),
@@ -165,6 +167,11 @@ select is(
    where user_id = (select owner from ids) and kind in ('account_unused_month', 'account_unused_week')),
   0,
   'a staff account gets no notice');
+select is(
+  (select count(*)::integer from public.notifications
+   where user_id = (select banned_user from ids) and kind in ('account_unused_month', 'account_unused_week')),
+  0,
+  'a banned account gets no notice: it is closed, never deleted');
 select is(
   public.close_unused_accounts(),
   '{"month_notices": 0, "week_notices": 0, "closed": 0}'::jsonb,

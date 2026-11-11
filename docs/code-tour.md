@@ -640,7 +640,8 @@ nightly purge-closed-accounts → purge_closed_accounts() → delete_account_dat
 ```
 the app, once a minute while open → note_active_minute() → account_last_used.used_on = today (once a day)
 nightly close-unused-accounts (02:35 UTC) → close_unused_accounts()
-  → for each live account that isn't staff, the classics account or already closing:
+  → for each live account that isn't staff, the classics account, banned, under an abuse image
+    evidence hold or already closing:
       account_last_used_on(): latest of made, last log-in, app open, "Keep my account"
       unused_account_step(): none | 'month' notice | 'week' notice | 'close'
   → send_unused_account_notice() → notifications (account_unused_month / _week, always emailed)
