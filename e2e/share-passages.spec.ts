@@ -285,7 +285,9 @@ test.describe('share a passage or a picture (S1-E4-11)', () => {
     await expect(page.getByRole('button', { name: /Share picture/ })).toHaveCount(0);
     const description = await previewDescription(page, `${chapterPath}/p2`);
     expect(description).not.toContain(paragraphs[1]);
-    expect(description).toContain('16+');
+    // Previews treat every rating the same and never show an age (Robert, 11 Nov 2026; S1-E11-36):
+    // a 16+ story's preview has no age number and no note, only the title, writer and blurb.
+    expect(description).not.toContain('16+');
     setStory(`rating = 'all_ages'`);
     await page.context().close();
   });
