@@ -71,8 +71,7 @@ comment on column public.account_last_used.closing_notice_at is
 comment on column public.account_last_used.nudges_sent is
   'How many nudges were due and covered for the day of use in notices_for (INACTIVE-2).';
 comment on table public.account_last_used is
-  'kind: user
-The last day each account was used and which unused-account emails went out for it (INACTIVE-1, INACTIVE-2). One row per account, overwritten: no history of log-ins is kept.';
+  'kind: user_action. The last day each account was used and which unused-account emails went out for it (INACTIVE-1, INACTIVE-2). One row per account, overwritten: no history of log-ins is kept.';
 comment on column public.account_deletions.reason is
   'requested: the person chose "Delete my account" (S1-E13-03); unused: nobody used it for unused_account_years and 30 days more (INACTIVE-1, INACTIVE-2).';
 

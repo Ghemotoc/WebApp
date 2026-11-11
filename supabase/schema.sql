@@ -51560,8 +51560,7 @@ CREATE TABLE IF NOT EXISTS "public"."account_last_used" (
 ALTER TABLE "public"."account_last_used" OWNER TO "postgres";
 
 
-COMMENT ON TABLE "public"."account_last_used" IS 'kind: user
-The last day each account was used and which unused-account emails went out for it (INACTIVE-1, INACTIVE-2). One row per account, overwritten: no history of log-ins is kept.';
+COMMENT ON TABLE "public"."account_last_used" IS 'kind: user_action. The last day each account was used and which unused-account emails went out for it (INACTIVE-1, INACTIVE-2). One row per account, overwritten: no history of log-ins is kept.';
 
 
 
