@@ -124,7 +124,8 @@ jobs:
       # The runner's disk filled up during a shard more than once (ENOSPC while Playwright wrote
       # a trace, 9 Nov 2026: G8e and NO-DOODLES), which failed tests that pass. The runner image
       # carries toolchains this job never uses (.NET, Android, Haskell, CodeQL), so they go first;
-      # that frees well over 10 GB. Node comes from setup-node's own cache, which stays.
+      # that frees well over 10 GB. Node comes from setup-node's own cache, which stays. Since
+      # CI-2 (11 Nov 2026) Playwright also records a trace only on a retry (playwright.config.ts).
       - name: Free disk space on the runner
         run: |
           df -h /
