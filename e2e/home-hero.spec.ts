@@ -106,6 +106,30 @@ test.describe('the home page hero', () => {
     await expect(page.locator('#questions')).toBeInViewport();
   });
 
+  for (const width of [390, 768]) {
+    test(`with no cover on the wall, the gold card never covers the next heading at ${String(width)} px`, async ({
+      page,
+    }) => {
+      // Every story list answers empty, as on a new market's first day: the wall has no cover, so
+      // the card stays in the page's flow instead of floating over what follows (UX-QA).
+      await page.route('**/rest/v1/rpc/browse_stories*', (route) =>
+        route.fulfill({ json: { total: 0, stories: [] } }),
+      );
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto('/');
+      const card = page.getByText('Toate drepturile asupra textelor tale rămân ale tale');
+      await expect(card).toBeVisible();
+      const cardBox = await card.locator('..').boundingBox();
+      const nextHeading = page.getByRole('heading', { level: 2 }).first();
+      const headingBox = await nextHeading.boundingBox();
+      expect(cardBox).not.toBeNull();
+      expect(headingBox).not.toBeNull();
+      if (cardBox === null || headingBox === null) return;
+      // The card ends above the heading starts (its 5 degree tilt stays inside its own box).
+      expect(cardBox.y + cardBox.height).toBeLessThanOrEqual(headingBox.y);
+    });
+  }
+
   for (const view of everyView(['/'])) {
     test(`the hero passes axe and draws no doodle at ${view.width} px, ${view.theme}, ${view.language}`, async ({
       page,

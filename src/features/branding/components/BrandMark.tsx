@@ -4,7 +4,7 @@
  *
  * What it draws:
  *   - the emblem, decorative (hidden from screen readers), because the name beside it already
- *     says what the link is. The default curled cat is drawn as a CSS mask filled with the --logo
+ *     says what the link is. The default sleeping cat is drawn as a CSS mask filled with the --logo
  *     token, so it takes the look's accent by day and soft white at night (handoff doc "Design
  *     tokens and themes": "logo and wordmark recolour to the theme accent"; Robert, 7 Nov 2026).
  *     An emblem staff uploaded is a picture with its own colours, so it stays an <img>, one per

@@ -273,7 +273,8 @@
       "bad_filter": "Verifică ID-ul de utilizator și datele: un ID are 36 de caractere, o dată este o zi.",
       "unreachable": "Nu am putut ajunge la serverul nostru. Verifică-ți conexiunea și încearcă din nou.",
       "not_allowed": "Doar un proprietar sau un administrator poate exporta jurnalul de audit."
-    }
+    },
+    "showAll": "Arată tot"
   },
   "invites": {
     "documentTitle": "Linkuri de invitație · {{productName}}",
