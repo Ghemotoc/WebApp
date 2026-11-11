@@ -2772,3 +2772,10 @@ for the notice on the story page and the "In the app only" pill on cards
 - At night: `compute_story_pairs()` (pg_cron `compute-story-pairs`, 04:25) rebuilds `story_pairs` from the Finished shelf of live members whose switch is on, keeping a pair only when 5 or more readers (`metrics_minimum_group`) finished both. The table holds totals, never who.
 - The switch: Settings › Privacy › "Suggestions from reading" (`ReadingSuggestionsSwitch` → `set_suggests_from_reading()`), stored in `profiles.suggests_from_reading`; null means the default from `suggests_from_reading_of()`: on for adults, off under 18.
 - Tests: `362-suggestions.test.sql`, `src/features/suggestions/api/suggestions.test.ts`, `e2e/suggestions.spec.ts`.
+
+## Custom staff roles (CMS-2a, S1-E11-33)
+
+- Where it starts: `/staff/roles` → `StaffRolesPage` → `CustomRolesSection`, under the staff list. It lists the roles (`CustomRoleCard`, with `CustomRoleHolders` and an `AccountPicker` of its own) and opens `CustomRoleForm` with `CustomRoleAreaList` (one drop-down per area). All of it goes through `useCustomRoles` → `api/customRoles.ts`.
+- In the database: `admin_custom_roles()` reads the roles and the areas the caller may give (`custom_role_assignable_areas()` and `custom_role_area_in_reach()`); `admin_save_custom_role()`, `admin_remove_custom_role()` and `admin_set_custom_role_holder()` change them, each checking the caller with `require_custom_role_staff()` and writing the audit log. `staff_may()`, `is_staff()` and `my_staff_areas()` count custom roles, so the side menu and every staff function follow them with no other change.
+- The staff shell: `fetchStaffAccess()` also reads whether the person holds a custom role (`holdsCustomRole`), so someone with only a custom role gets the admin site with just its areas.
+- Tests: `363-custom-staff-roles.test.sql`, `src/features/staff/api/customRoles.test.ts`, `e2e/staff-custom-roles.spec.ts` (axe for the page is in `e2e/staff-roles.spec.ts`).

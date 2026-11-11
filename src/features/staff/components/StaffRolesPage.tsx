@@ -5,7 +5,8 @@
  * Who shows it: the router, inside StaffLayout, loaded only when someone opens it (architecture
  * 1.8.1: staff code never ships in the reader's bundle). Only owner and admin get the list; the database
  * refuses everyone else (admin_list_staff()), and the page says so.
- * What it calls: useStaffRoles → api/staffRoles.ts.
+ * What it calls: useStaffRoles → api/staffRoles.ts, and CustomRolesSection for custom roles
+ * (S1-E11-33).
  */
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
@@ -17,6 +18,7 @@ import { PageContainer } from '@/components/ui/PageContainer';
 import { useStaffRoles } from '../hooks/useStaffRoles';
 import { registerStaffTranslations } from '../registerStaffTranslations';
 
+import { CustomRolesSection } from './CustomRolesSection';
 import { GrantRoleForm } from './GrantRoleForm';
 import { StaffMemberCard } from './StaffMemberCard';
 
@@ -62,6 +64,8 @@ function StaffRolesBody({ roles }: { roles: ReturnType<typeof useStaffRoles> }) 
           />
         ))}
       </ul>
+      {/* Custom roles: a name and the access a job needs, given to people (S1-E11-33, CMS-2a). */}
+      <CustomRolesSection />
     </>
   );
 }

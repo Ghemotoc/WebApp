@@ -4996,6 +4996,56 @@ COMMENT ON FUNCTION "public"."admin_create_landing_page"("new_slug" "text", "new
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_custom_roles"() RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  role_list jsonb;
+  assignable_list jsonb;
+begin
+  -- Step 1: only staff who may see roles.
+  if not public.staff_may('roles', 'view') then
+    raise exception 'Only an owner or admin can see staff roles.'
+      using errcode = 'insufficient_privilege', hint = 'not_allowed';
+  end if;
+  -- Step 2: every live role with its areas and holders, by name.
+  select coalesce(jsonb_agg(jsonb_build_object(
+      'id', custom_roles.id,
+      'name', custom_roles.name,
+      'description', custom_roles.description,
+      'areas', public.custom_role_areas_json(custom_roles.id),
+      'in_reach', public.custom_role_in_reach(custom_roles.id),
+      'holders', (
+        select coalesce(jsonb_agg(jsonb_build_object('user_id', profiles.id, 'handle', profiles.handle)
+                                  order by profiles.handle), '[]'::jsonb)
+        from public.staff_custom_role_holders as holders
+        join public.profiles on profiles.id = holders.user_id and profiles.deleted_at is null
+        where holders.custom_role_id = custom_roles.id
+      )
+    ) order by lower(custom_roles.name)), '[]'::jsonb)
+  into role_list
+  from public.staff_custom_roles as custom_roles
+  where custom_roles.deleted_at is null;
+  -- Step 3: the areas the caller could put in a role, and at what level at most.
+  select coalesce(jsonb_agg(jsonb_build_object('area', assignable.area, 'highest',
+      case when public.custom_role_area_in_reach(assignable.area, 'act') then 'act' else 'view' end)
+    order by assignable.area), '[]'::jsonb)
+  into assignable_list
+  from public.custom_role_assignable_areas() as assignable
+  where public.custom_role_area_in_reach(assignable.area, 'view');
+  return jsonb_build_object('roles', role_list, 'assignable', assignable_list);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_custom_roles"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_custom_roles"() IS 'The custom staff roles with their areas and holders, and what the caller may put in one; owner and admin only (S1-E11-33).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admin_data_request"("target_request_id" "uuid") RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -8695,6 +8745,42 @@ COMMENT ON FUNCTION "public"."admin_remove_cms_entry"("content_kind" "text", "en
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_remove_custom_role"("target_role_id" "uuid", "reason_given" "text") RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  holder_ids jsonb;
+begin
+  -- Step 1: who may, and only a live role within reach.
+  perform public.require_custom_role_staff(reason_given);
+  if not exists (select 1 from public.staff_custom_roles where id = target_role_id and deleted_at is null) then
+    return false;
+  end if;
+  if not public.custom_role_in_reach(target_role_id) then
+    raise exception 'That role holds more than you do.' using errcode = 'insufficient_privilege', hint = 'role_out_of_reach';
+  end if;
+  -- Step 2: take it from its holders and mark it removed; the row stays for the audit trail.
+  select coalesce(jsonb_agg(holders.user_id), '[]'::jsonb) into holder_ids
+  from public.staff_custom_role_holders as holders where holders.custom_role_id = target_role_id;
+  delete from public.staff_custom_role_holders where custom_role_id = target_role_id;
+  update public.staff_custom_roles set deleted_at = now() where id = target_role_id;
+  -- Step 3: the audit log.
+  perform public.log_staff_action('staff.custom_role_removed', 'staff_custom_roles', target_role_id::text,
+    null, reason_given,
+    jsonb_build_object('areas', public.custom_role_areas_json(target_role_id), 'holders', holder_ids), null);
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_remove_custom_role"("target_role_id" "uuid", "reason_given" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_remove_custom_role"("target_role_id" "uuid", "reason_given" "text") IS 'Removes a custom staff role and takes it from its holders, with a reason; logged (S1-E11-33).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admin_remove_name_word"("target_word_id" "uuid") RETURNS boolean
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -9806,6 +9892,70 @@ COMMENT ON FUNCTION "public"."admin_save_contest"("target_contest_id" "uuid", "d
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_save_custom_role"("target_role_id" "uuid", "new_name" "text", "new_description" "text", "new_areas" "jsonb", "reason_given" "text") RETURNS "uuid"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  clean_name text := btrim(coalesce(new_name, ''));
+  clean_description text := btrim(coalesce(new_description, ''));
+  area_problem text;
+  areas_before jsonb;
+  saved_id uuid := target_role_id;
+begin
+  -- Step 1: who may, with a reason, and a name and areas that hold up.
+  perform public.require_custom_role_staff(reason_given);
+  if char_length(clean_name) not between 2 and 40 or char_length(clean_description) > 200 then
+    raise exception 'Give the role a name of 2 to 40 characters and a description of up to 200.'
+      using errcode = 'check_violation', hint = 'bad_name';
+  end if;
+  area_problem := public.custom_role_area_problem(new_areas);
+  if area_problem is not null then
+    raise exception 'That role''s areas can''t be saved.' using errcode = 'check_violation', hint = area_problem;
+  end if;
+  if exists (select 1 from public.staff_custom_roles as others
+             where lower(btrim(others.name)) = lower(clean_name) and others.deleted_at is null
+               and others.id is distinct from target_role_id) then
+    raise exception 'Another role has that name.' using errcode = 'check_violation', hint = 'name_taken';
+  end if;
+  -- Step 2: a new role, or a change to one the caller could have made.
+  if target_role_id is null then
+    insert into public.staff_custom_roles (user_id, name, description)
+    values ((select auth.uid()), clean_name, clean_description)
+    returning id into saved_id;
+  else
+    if not exists (select 1 from public.staff_custom_roles
+                   where id = target_role_id and deleted_at is null) then
+      raise exception 'There is no such role.' using errcode = 'check_violation', hint = 'no_such_role';
+    end if;
+    if not public.custom_role_in_reach(target_role_id) then
+      raise exception 'That role holds more than you do.' using errcode = 'insufficient_privilege', hint = 'role_out_of_reach';
+    end if;
+    areas_before := public.custom_role_areas_json(target_role_id);
+    update public.staff_custom_roles set name = clean_name, description = clean_description
+    where id = target_role_id;
+    delete from public.staff_custom_role_areas where custom_role_id = target_role_id;
+  end if;
+  -- Step 3: the areas, then the audit log in the same transaction.
+  insert into public.staff_custom_role_areas (custom_role_id, user_id, area, access)
+  select saved_id, (select auth.uid()), entry ->> 'area', entry ->> 'access'
+  from jsonb_array_elements(new_areas) as entry;
+  perform public.log_staff_action(
+    case when target_role_id is null then 'staff.custom_role_created' else 'staff.custom_role_changed' end,
+    'staff_custom_roles', saved_id::text, null, reason_given, areas_before,
+    jsonb_build_object('name', clean_name, 'areas', public.custom_role_areas_json(saved_id)));
+  return saved_id;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_save_custom_role"("target_role_id" "uuid", "new_name" "text", "new_description" "text", "new_areas" "jsonb", "reason_given" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_save_custom_role"("target_role_id" "uuid", "new_name" "text", "new_description" "text", "new_areas" "jsonb", "reason_given" "text") IS 'Makes or changes a custom staff role within the caller''s reach, with a reason; logged (S1-E11-33).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admin_save_forum"("forum_id" "uuid", "parent_id" "uuid", "slug" "text", "sort_position" integer, "is_pinned" boolean, "accent" "public"."forum_accent", "names" "jsonb") RETURNS "uuid"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -10754,6 +10904,66 @@ ALTER FUNCTION "public"."admin_set_contest_placing"("target_entry_id" "uuid", "w
 
 
 COMMENT ON FUNCTION "public"."admin_set_contest_placing"("target_entry_id" "uuid", "wanted_placing" "text") IS 'Owner and admins: mark a contest entry as winner, finalist or neither, once entries close (S1-E11-15 criterion 7).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_set_custom_role_holder"("target_user_id" "uuid", "target_role_id" "uuid", "should_hold" boolean, "reason_given" "text") RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  changed_row_id uuid;
+  domain text := public.staff_email_domain();
+begin
+  -- Step 1: who may manage custom roles (with a recent sign-in and a reason), never for
+  -- themselves, and only to an account that exists. The checks are spelled out here rather than
+  -- taken from require_role_change_allowed(), which is for built-in roles only (below).
+  perform public.require_custom_role_staff(reason_given);
+  if target_user_id = (select auth.uid()) then
+    raise exception 'Nobody can change their own role.'
+      using errcode = 'insufficient_privilege', hint = 'own_role';
+  end if;
+  if not exists (select 1 from public.profiles where profiles.id = target_user_id and profiles.deleted_at is null) then
+    raise exception 'There is no such account.' using errcode = 'check_violation', hint = 'no_such_account';
+  end if;
+  if not exists (select 1 from public.staff_custom_roles where id = target_role_id and deleted_at is null) then
+    raise exception 'There is no such role.' using errcode = 'check_violation', hint = 'no_such_role';
+  end if;
+  if not public.custom_role_in_reach(target_role_id) then
+    raise exception 'That role holds more than you do.' using errcode = 'insufficient_privilege', hint = 'role_out_of_reach';
+  end if;
+  -- Step 2: give it, once; once staff sign in through Google Workspace, only to a Workspace account.
+  if should_hold then
+    if domain is not null and not public.has_workspace_account(target_user_id, domain) then
+      raise exception 'This account has not signed in with a Google Workspace account on the staff domain.'
+        using errcode = 'check_violation', hint = 'no_workspace_account';
+    end if;
+    insert into public.staff_custom_role_holders (custom_role_id, user_id, granted_by_user_id)
+    values (target_role_id, target_user_id, (select auth.uid()))
+    on conflict (custom_role_id, user_id) do nothing
+    returning id into changed_row_id;
+  else
+    delete from public.staff_custom_role_holders
+    where custom_role_id = target_role_id and user_id = target_user_id
+    returning id into changed_row_id;
+  end if;
+  if changed_row_id is null then
+    return false;
+  end if;
+  -- Step 3: the audit log, in the same transaction.
+  perform public.log_staff_action(
+    case when should_hold then 'staff.custom_role_granted' else 'staff.custom_role_taken_back' end,
+    'staff_custom_role_holders', changed_row_id::text, target_user_id, reason_given, null,
+    jsonb_build_object('custom_role_id', target_role_id));
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_set_custom_role_holder"("target_user_id" "uuid", "target_role_id" "uuid", "should_hold" boolean, "reason_given" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_set_custom_role_holder"("target_user_id" "uuid", "target_role_id" "uuid", "should_hold" boolean, "reason_given" "text") IS 'Gives someone a custom staff role or takes it back, within the caller''s reach, never for themselves; logged (S1-E11-33).';
 
 
 
@@ -20292,6 +20502,118 @@ COMMENT ON FUNCTION "public"."create_story_character"("story_slug" "text", "char
 
 
 
+CREATE OR REPLACE FUNCTION "public"."custom_role_area_in_reach"("wanted_area" "text", "wanted_access" "text") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select exists (select 1 from public.custom_role_assignable_areas() as assignable
+                 where assignable.area = wanted_area)
+    and wanted_access in ('view', 'act')
+    and public.staff_may(wanted_area, wanted_access)
+    and (wanted_area <> 'roles' or public.is_staff('owner'));
+$$;
+
+
+ALTER FUNCTION "public"."custom_role_area_in_reach"("wanted_area" "text", "wanted_access" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."custom_role_area_in_reach"("wanted_area" "text", "wanted_access" "text") IS 'Internal: true when the caller may put this area at this level in a custom role (S1-E11-33).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."custom_role_area_problem"("new_areas" "jsonb") RETURNS "text"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  entry jsonb;
+  seen text[] := '{}';
+begin
+  -- Step 1: a non-empty list.
+  if new_areas is null or jsonb_typeof(new_areas) <> 'array' then
+    return 'bad_areas';
+  end if;
+  if jsonb_array_length(new_areas) = 0 then
+    return 'no_areas';
+  end if;
+  -- Step 2: each entry names an area once, at a level the caller may give.
+  for entry in select value from jsonb_array_elements(new_areas) loop
+    if jsonb_typeof(entry) <> 'object' or jsonb_typeof(entry -> 'area') <> 'string'
+       or (entry ->> 'area') = any (seen) then
+      return 'bad_areas';
+    end if;
+    seen := seen || (entry ->> 'area');
+    if not public.custom_role_area_in_reach(entry ->> 'area', entry ->> 'access') then
+      return 'area_out_of_reach:' || left(entry ->> 'area', 40);
+    end if;
+  end loop;
+  return null;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."custom_role_area_problem"("new_areas" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."custom_role_area_problem"("new_areas" "jsonb") IS 'Internal: names what is wrong with a custom role''s areas for this caller, or null (S1-E11-33).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."custom_role_areas_json"("target_role_id" "uuid") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(jsonb_agg(jsonb_build_object('area', custom_areas.area, 'access', custom_areas.access)
+                            order by custom_areas.area), '[]'::jsonb)
+  from public.staff_custom_role_areas as custom_areas
+  where custom_areas.custom_role_id = target_role_id;
+$$;
+
+
+ALTER FUNCTION "public"."custom_role_areas_json"("target_role_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."custom_role_areas_json"("target_role_id" "uuid") IS 'Internal: a custom staff role''s areas as a jsonb list, for the Roles page and the audit log (S1-E11-33).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."custom_role_assignable_areas"() RETURNS TABLE("area" "text")
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select distinct staff_role_areas.area
+  from public.staff_role_areas
+  where staff_role_areas.area not in ('safeguarding', 'removal_orders', 'open_market')
+  order by staff_role_areas.area;
+$$;
+
+
+ALTER FUNCTION "public"."custom_role_assignable_areas"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."custom_role_assignable_areas"() IS 'Internal: the admin areas a custom staff role may hold (not safeguarding, removal orders or opening a market; S1-E11-33).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."custom_role_in_reach"("target_role_id" "uuid") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select not exists (
+    select 1 from public.staff_custom_role_areas as custom_areas
+    where custom_areas.custom_role_id = target_role_id
+      and not public.custom_role_area_in_reach(custom_areas.area, custom_areas.access)
+  );
+$$;
+
+
+ALTER FUNCTION "public"."custom_role_in_reach"("target_role_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."custom_role_in_reach"("target_role_id" "uuid") IS 'Internal: true when every area of the custom role is within the caller''s reach (S1-E11-33).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."data_export_held_tables"() RETURNS TABLE("table_name" "text", "is_included" boolean, "why_left_out" "text")
     LANGUAGE "sql" IMMUTABLE
     SET "search_path" TO ''
@@ -20316,6 +20638,9 @@ CREATE OR REPLACE FUNCTION "public"."data_export_held_tables"() RETURNS TABLE("t
     ('safeguarding_referrals', false, 'referrals to the police or a prosecutor; handing them out could harm an investigation (GDPR art. 23; lawyer to check)'),
     ('sanctions', true, null),
     ('sign_up_ips', true, null),
+    ('staff_custom_role_areas', false, 'user_id is the admin who set an area in a custom role, not data about their account'),
+    ('staff_custom_role_holders', true, null),
+    ('staff_custom_roles', false, 'user_id is the admin who made the custom role; the roles someone holds are in staff_custom_role_holders'),
     ('staff_interns', true, null),
     ('staff_permissions', true, null),
     ('staff_roles', true, null),
@@ -20327,7 +20652,7 @@ $$;
 ALTER FUNCTION "public"."data_export_held_tables"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."data_export_held_tables"() IS 'Internal: every staff table with a user_id and whether Download my data''s "held_about_you" includes it, or why not (QA-7, LOGS-1a, LOOK-4a; GDPR art. 15).';
+COMMENT ON FUNCTION "public"."data_export_held_tables"() IS 'Internal: every staff table with a user_id and whether Download my data''s "held_about_you" includes it, or why not (QA-7, LOGS-1a, LOOK-4a, S1-E11-33; GDPR art. 15).';
 
 
 
@@ -22441,6 +22766,12 @@ CREATE OR REPLACE FUNCTION "public"."export_held_about_of"("owner_id" "uuid") RE
     'staff_permissions', coalesce((select jsonb_agg(jsonb_build_object(
         'permission', held.permission, 'created_at', held.created_at) order by held.created_at)
       from public.staff_permissions as held where held.user_id = owner_id), '[]'::jsonb),
+    -- Custom roles they hold (S1-E11-33): the role's name and when it was given.
+    'staff_custom_role_holders', coalesce((select jsonb_agg(jsonb_build_object(
+        'role', roles.name, 'created_at', held.created_at) order by held.created_at)
+      from public.staff_custom_role_holders as held
+      join public.staff_custom_roles as roles on roles.id = held.custom_role_id
+      where held.user_id = owner_id), '[]'::jsonb),
     'staff_interns', coalesce((select jsonb_agg(jsonb_build_object(
         'created_at', held.created_at) order by held.created_at)
       from public.staff_interns as held where held.user_id = owner_id), '[]'::jsonb),
@@ -22453,7 +22784,7 @@ $$;
 ALTER FUNCTION "public"."export_held_about_of"("owner_id" "uuid") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."export_held_about_of"("owner_id" "uuid") IS 'Internal: what staff tables hold about one person, without staff names or internal notes, for their data export (QA-7, GDPR art. 15).';
+COMMENT ON FUNCTION "public"."export_held_about_of"("owner_id" "uuid") IS 'Internal: what staff tables hold about one person, without staff names or internal notes, for their data export (QA-7, S1-E11-33, GDPR art. 15).';
 
 
 
@@ -25920,6 +26251,17 @@ CREATE OR REPLACE FUNCTION "public"."is_staff"("required_role" "public"."staff_r
     where staff_roles.user_id = (select auth.uid())
       and profiles.deleted_at is null
       and (required_role is null or staff_roles.role = required_role)
+  )
+  or (
+    required_role is null
+    and exists (
+      select 1
+      from public.staff_custom_role_holders as holders
+      join public.staff_custom_roles as custom_roles
+        on custom_roles.id = holders.custom_role_id and custom_roles.deleted_at is null
+      join public.profiles on profiles.id = holders.user_id and profiles.deleted_at is null
+      where holders.user_id = (select auth.uid())
+    )
   );
 $$;
 
@@ -38567,6 +38909,34 @@ COMMENT ON FUNCTION "public"."require_contest_staff"() IS 'Internal: refuses any
 
 
 
+CREATE OR REPLACE FUNCTION "public"."require_custom_role_staff"("reason_given" "text") RETURNS "void"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  if not public.staff_may('roles', 'act') then
+    raise exception 'Only an owner or admin can change staff roles.'
+      using errcode = 'insufficient_privilege', hint = 'not_allowed';
+  end if;
+  -- A role change needs a sign-in from the last 15 minutes (S1-E11-01, as for built-in roles).
+  if not public.staff_signed_in_recently() then
+    raise exception 'Sign in again to change a staff role.'
+      using errcode = 'invalid_authorization_specification', hint = 'sign_in_again';
+  end if;
+  if btrim(coalesce(reason_given, '')) = '' then
+    raise exception 'Give a reason.' using errcode = 'check_violation', hint = 'reason_missing';
+  end if;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."require_custom_role_staff"("reason_given" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."require_custom_role_staff"("reason_given" "text") IS 'Internal: refuses anyone who may not manage custom staff roles, or gives no reason (S1-E11-33).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."require_forum_staff"() RETURNS "void"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -38790,18 +39160,23 @@ CREATE OR REPLACE FUNCTION "public"."require_role_change_allowed"("target_user_i
     SET "search_path" TO ''
     AS $$
 begin
-  if not public.staff_may('roles', 'act') then
+  -- Step 1: the Roles area at Change, from a built-in owner or admin role, not a custom role.
+  if not public.staff_may('roles', 'act')
+     or not (public.is_staff('owner') or public.is_staff('admin')) then
     raise exception 'Only an owner or admin can change staff roles.'
       using errcode = 'insufficient_privilege', hint = 'not_allowed';
   end if;
+  -- Step 2: a sign-in from the last 15 minutes (S1-E11-01).
   if not public.staff_signed_in_recently() then
     raise exception 'Sign in again to change a staff role.'
       using errcode = 'invalid_authorization_specification', hint = 'sign_in_again';
   end if;
+  -- Step 3: never one's own role (architecture 1.8.3).
   if target_user_id = (select auth.uid()) then
     raise exception 'Nobody can change their own role.'
       using errcode = 'insufficient_privilege', hint = 'own_role';
   end if;
+  -- Step 4: a reason for the audit log, and an account that exists.
   if btrim(coalesce(reason_given, '')) = '' then
     raise exception 'Give a reason.' using errcode = 'check_violation', hint = 'reason_missing';
   end if;
@@ -38815,7 +39190,7 @@ $$;
 ALTER FUNCTION "public"."require_role_change_allowed"("target_user_id" "uuid", "reason_given" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."require_role_change_allowed"("target_user_id" "uuid", "reason_given" "text") IS 'Internal: the shared checks before a staff role or permission changes, each refusal with a hint (S1-E2-07a, S1-E11-01, S1-E11-01b).';
+COMMENT ON FUNCTION "public"."require_role_change_allowed"("target_user_id" "uuid", "reason_given" "text") IS 'Internal: the shared checks before a built-in staff role, permission or intern marker changes; only a built-in owner or admin passes; each refusal with a hint (S1-E2-07a, S1-E11-01, S1-E11-01b, S1-E11-33).';
 
 
 
@@ -45078,22 +45453,39 @@ CREATE OR REPLACE FUNCTION "public"."staff_may"("target_area" "text", "wanted_ac
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
-  select public.is_staff_session() and exists (
-    select 1
-    from public.staff_roles as roles
-    join public.profiles on profiles.id = roles.user_id and profiles.deleted_at is null
-    join public.staff_role_areas as areas on areas.role = roles.role
-    where roles.user_id = (select auth.uid())
-      and areas.area = target_area
-      and (wanted_access = 'view' or areas.access = 'act')
-      and (
-        areas.required_permission is null
-        or exists (
-          select 1 from public.staff_permissions as permissions
-          where permissions.user_id = roles.user_id
-            and permissions.permission = areas.required_permission
+  select public.is_staff_session() and (
+    exists (
+      select 1
+      from public.staff_roles as roles
+      join public.profiles on profiles.id = roles.user_id and profiles.deleted_at is null
+      join public.staff_role_areas as areas on areas.role = roles.role
+      where roles.user_id = (select auth.uid())
+        and areas.area = target_area
+        and (wanted_access = 'view' or areas.access = 'act')
+        and (
+          areas.required_permission is null
+          or exists (
+            select 1 from public.staff_permissions as permissions
+            where permissions.user_id = roles.user_id
+              and permissions.permission = areas.required_permission
+          )
         )
+    )
+    or (
+      target_area not in ('safeguarding', 'removal_orders', 'open_market')
+      and exists (
+        select 1
+        from public.staff_custom_role_holders as holders
+        join public.staff_custom_roles as custom_roles
+          on custom_roles.id = holders.custom_role_id and custom_roles.deleted_at is null
+        join public.staff_custom_role_areas as custom_areas
+          on custom_areas.custom_role_id = custom_roles.id
+        join public.profiles on profiles.id = holders.user_id and profiles.deleted_at is null
+        where holders.user_id = (select auth.uid())
+          and custom_areas.area = target_area
+          and (wanted_access = 'view' or custom_areas.access = 'act')
       )
+    )
   );
 $$;
 
@@ -45101,7 +45493,7 @@ $$;
 ALTER FUNCTION "public"."staff_may"("target_area" "text", "wanted_access" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."staff_may"("target_area" "text", "wanted_access" "text") IS 'True when the caller''s staff role (and permission) allows the area and the session is a staff session (architecture 1.8.3, S1-E2-07a).';
+COMMENT ON FUNCTION "public"."staff_may"("target_area" "text", "wanted_access" "text") IS 'True when the caller''s staff role (and permission) or custom role allows the area and the session is a staff session (architecture 1.8.3, S1-E2-07a, S1-E11-33).';
 
 
 
@@ -52860,6 +53252,64 @@ Companies and public bodies that sponsor campaigns (S1-E12-02). No personal data
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."staff_custom_role_areas" (
+    "custom_role_id" "uuid" NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "area" "text" NOT NULL,
+    "access" "text" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "staff_custom_role_areas_access_check" CHECK (("access" = ANY (ARRAY['view'::"text", 'act'::"text"])))
+);
+
+
+ALTER TABLE "public"."staff_custom_role_areas" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."staff_custom_role_areas" IS 'kind: staff
+What a custom staff role may do in each admin area: view or act (S1-E11-33, CMS-2a).';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."staff_custom_role_holders" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "custom_role_id" "uuid" NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "granted_by_user_id" "uuid",
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL
+);
+
+
+ALTER TABLE "public"."staff_custom_role_holders" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."staff_custom_role_holders" IS 'kind: staff
+Who holds which custom staff role, and who gave it (S1-E11-33, CMS-2a).';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."staff_custom_roles" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "name" "text" NOT NULL,
+    "description" "text" DEFAULT ''::"text" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "deleted_at" timestamp with time zone,
+    CONSTRAINT "staff_custom_roles_description_check" CHECK (("char_length"("description") <= 200)),
+    CONSTRAINT "staff_custom_roles_name_check" CHECK ((("char_length"("btrim"("name")) >= 2) AND ("char_length"("btrim"("name")) <= 40)))
+);
+
+
+ALTER TABLE "public"."staff_custom_roles" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."staff_custom_roles" IS 'kind: staff
+Custom staff roles made by an owner or admin: a name and a description; what each may do is in staff_custom_role_areas (S1-E11-33, CMS-2a).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."staff_interns" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "user_id" "uuid" NOT NULL,
@@ -54676,6 +55126,26 @@ ALTER TABLE ONLY "public"."sponsors"
 
 
 
+ALTER TABLE ONLY "public"."staff_custom_role_areas"
+    ADD CONSTRAINT "staff_custom_role_areas_pkey" PRIMARY KEY ("custom_role_id", "area");
+
+
+
+ALTER TABLE ONLY "public"."staff_custom_role_holders"
+    ADD CONSTRAINT "staff_custom_role_holders_custom_role_id_user_id_key" UNIQUE ("custom_role_id", "user_id");
+
+
+
+ALTER TABLE ONLY "public"."staff_custom_role_holders"
+    ADD CONSTRAINT "staff_custom_role_holders_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."staff_custom_roles"
+    ADD CONSTRAINT "staff_custom_roles_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."staff_interns"
     ADD CONSTRAINT "staff_interns_one_row_per_person" UNIQUE ("user_id");
 
@@ -55951,6 +56421,14 @@ CREATE INDEX "sponsors_user_id_fk_idx" ON "public"."sponsors" USING "btree" ("us
 
 
 
+CREATE INDEX "staff_custom_role_holders_user_idx" ON "public"."staff_custom_role_holders" USING "btree" ("user_id");
+
+
+
+CREATE UNIQUE INDEX "staff_custom_roles_name_key" ON "public"."staff_custom_roles" USING "btree" ("lower"("btrim"("name"))) WHERE ("deleted_at" IS NULL);
+
+
+
 CREATE INDEX "staff_languages_language_code_fk_idx" ON "public"."staff_languages" USING "btree" ("language_code");
 
 
@@ -57072,6 +57550,18 @@ CREATE OR REPLACE TRIGGER "sponsor_campaigns_set_updated_at" BEFORE UPDATE ON "p
 
 
 CREATE OR REPLACE TRIGGER "sponsors_set_updated_at" BEFORE UPDATE ON "public"."sponsors" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "staff_custom_role_areas_set_updated_at" BEFORE UPDATE ON "public"."staff_custom_role_areas" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "staff_custom_role_holders_set_updated_at" BEFORE UPDATE ON "public"."staff_custom_role_holders" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "staff_custom_roles_set_updated_at" BEFORE UPDATE ON "public"."staff_custom_roles" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
 
@@ -58807,6 +59297,36 @@ ALTER TABLE ONLY "public"."sponsor_campaigns"
 
 ALTER TABLE ONLY "public"."sponsors"
     ADD CONSTRAINT "sponsors_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE SET NULL;
+
+
+
+ALTER TABLE ONLY "public"."staff_custom_role_areas"
+    ADD CONSTRAINT "staff_custom_role_areas_custom_role_id_fkey" FOREIGN KEY ("custom_role_id") REFERENCES "public"."staff_custom_roles"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."staff_custom_role_areas"
+    ADD CONSTRAINT "staff_custom_role_areas_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."staff_custom_role_holders"
+    ADD CONSTRAINT "staff_custom_role_holders_custom_role_id_fkey" FOREIGN KEY ("custom_role_id") REFERENCES "public"."staff_custom_roles"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."staff_custom_role_holders"
+    ADD CONSTRAINT "staff_custom_role_holders_granted_by_user_id_fkey" FOREIGN KEY ("granted_by_user_id") REFERENCES "public"."profiles"("id") ON DELETE SET NULL;
+
+
+
+ALTER TABLE ONLY "public"."staff_custom_role_holders"
+    ADD CONSTRAINT "staff_custom_role_holders_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."staff_custom_roles"
+    ADD CONSTRAINT "staff_custom_roles_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
 
 
 
@@ -60779,6 +61299,27 @@ COMMENT ON POLICY "sponsors_select_sponsor_staff" ON "public"."sponsors" IS 'All
 
 
 
+ALTER TABLE "public"."staff_custom_role_areas" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "staff_custom_role_areas_select_role_staff" ON "public"."staff_custom_role_areas" FOR SELECT TO "authenticated" USING (( SELECT "public"."staff_may"('roles'::"text", 'view'::"text") AS "staff_may"));
+
+
+
+ALTER TABLE "public"."staff_custom_role_holders" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "staff_custom_role_holders_select_role_staff" ON "public"."staff_custom_role_holders" FOR SELECT TO "authenticated" USING ((( SELECT "public"."staff_may"('roles'::"text", 'view'::"text") AS "staff_may") OR ("user_id" = ( SELECT "auth"."uid"() AS "uid"))));
+
+
+
+ALTER TABLE "public"."staff_custom_roles" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "staff_custom_roles_select_role_staff" ON "public"."staff_custom_roles" FOR SELECT TO "authenticated" USING (( SELECT "public"."staff_may"('roles'::"text", 'view'::"text") AS "staff_may"));
+
+
+
 ALTER TABLE "public"."staff_interns" ENABLE ROW LEVEL SECURITY;
 
 
@@ -61761,6 +62302,11 @@ GRANT ALL ON FUNCTION "public"."admin_create_landing_page"("new_slug" "text", "n
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_custom_roles"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_custom_roles"() TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_data_request"("target_request_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_data_request"("target_request_id" "uuid") TO "authenticated";
 
@@ -62248,6 +62794,11 @@ GRANT ALL ON FUNCTION "public"."admin_remove_cms_entry"("content_kind" "text", "
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_remove_custom_role"("target_role_id" "uuid", "reason_given" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_remove_custom_role"("target_role_id" "uuid", "reason_given" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_remove_name_word"("target_word_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_remove_name_word"("target_word_id" "uuid") TO "authenticated";
 
@@ -62403,6 +62954,11 @@ GRANT ALL ON FUNCTION "public"."admin_save_contest"("target_contest_id" "uuid", 
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_save_custom_role"("target_role_id" "uuid", "new_name" "text", "new_description" "text", "new_areas" "jsonb", "reason_given" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_save_custom_role"("target_role_id" "uuid", "new_name" "text", "new_description" "text", "new_areas" "jsonb", "reason_given" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_save_forum"("forum_id" "uuid", "parent_id" "uuid", "slug" "text", "sort_position" integer, "is_pinned" boolean, "accent" "public"."forum_accent", "names" "jsonb") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_save_forum"("forum_id" "uuid", "parent_id" "uuid", "slug" "text", "sort_position" integer, "is_pinned" boolean, "accent" "public"."forum_accent", "names" "jsonb") TO "authenticated";
 
@@ -62505,6 +63061,11 @@ GRANT ALL ON FUNCTION "public"."admin_set_classic_chapters"("target_story_id" "u
 
 REVOKE ALL ON FUNCTION "public"."admin_set_contest_placing"("target_entry_id" "uuid", "wanted_placing" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_set_contest_placing"("target_entry_id" "uuid", "wanted_placing" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_set_custom_role_holder"("target_user_id" "uuid", "target_role_id" "uuid", "should_hold" boolean, "reason_given" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_set_custom_role_holder"("target_user_id" "uuid", "target_role_id" "uuid", "should_hold" boolean, "reason_given" "text") TO "authenticated";
 
 
 
@@ -63814,6 +64375,26 @@ GRANT ALL ON FUNCTION "public"."create_story"("title" "text", "blurb" "text", "l
 
 REVOKE ALL ON FUNCTION "public"."create_story_character"("story_slug" "text", "character_name" "text", "character_role" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."create_story_character"("story_slug" "text", "character_name" "text", "character_role" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."custom_role_area_in_reach"("wanted_area" "text", "wanted_access" "text") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."custom_role_area_problem"("new_areas" "jsonb") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."custom_role_areas_json"("target_role_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."custom_role_assignable_areas"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."custom_role_in_reach"("target_role_id" "uuid") FROM PUBLIC;
 
 
 
@@ -66416,6 +66997,10 @@ REVOKE ALL ON FUNCTION "public"."require_contest_staff"() FROM PUBLIC;
 
 
 
+REVOKE ALL ON FUNCTION "public"."require_custom_role_staff"("reason_given" "text") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."require_forum_staff"() FROM PUBLIC;
 
 
@@ -68600,6 +69185,21 @@ GRANT SELECT ON TABLE "public"."space_moderation_log" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."sponsors" TO "service_role";
 GRANT SELECT ON TABLE "public"."sponsors" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."staff_custom_role_areas" TO "service_role";
+GRANT SELECT ON TABLE "public"."staff_custom_role_areas" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."staff_custom_role_holders" TO "service_role";
+GRANT SELECT ON TABLE "public"."staff_custom_role_holders" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."staff_custom_roles" TO "service_role";
+GRANT SELECT ON TABLE "public"."staff_custom_roles" TO "authenticated";
 
 
 
