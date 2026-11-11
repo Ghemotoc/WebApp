@@ -74,7 +74,8 @@
       "download-my-data": "Download data",
       "support": "Help and support",
       "delete-account": "Delete account"
-    }
+    },
+    "certificatesLink": "Certificates"
   },
   "notice": {
     "heading": "Choose a username",

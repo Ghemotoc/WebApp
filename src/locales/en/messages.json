@@ -125,7 +125,9 @@
     "adultsLabel": "Let adults message me",
     "deleteNote": "To delete a chat, open it and choose Delete chat in About this chat. When both of you delete it, the messages are deleted for good.",
     "loadFailed": "We couldn’t load your message settings. Try again in a moment.",
-    "saveFailed": "We couldn’t save that. Try again."
+    "saveFailed": "We couldn’t save that. Try again.",
+    "on": "On",
+    "off": "Off"
   },
   "deleteChat": {
     "eyebrow": "Delete",

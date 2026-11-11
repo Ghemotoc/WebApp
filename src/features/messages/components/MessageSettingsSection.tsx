@@ -14,8 +14,10 @@
  */
 import { useState } from 'react';
 
+import { choiceRowClassName } from '@/components/ui/choiceRowStyles';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
+import { SettingSwitchRow } from '@/features/settings/components/SettingSwitchRow';
 
 import type { MessageAudience, MyMessageSettings } from '../api/messages';
 import { useMyMessageSettings } from '../hooks/useMessages';
@@ -58,20 +60,19 @@ function AudienceChoices({ settings, saving }: ChoicesProps) {
         {t('settings.whoLegend')}
       </legend>
       {audiences.map((audience) => (
-        <label
-          key={audience}
-          className="flex min-h-6 cursor-pointer items-center gap-3 text-[15px] text-body"
-        >
-          <input
-            type="radio"
-            name="message-audience"
-            value={audience}
-            checked={chosen === audience}
-            disabled={saving.isSaving}
-            onChange={() => void choose(audience)}
-            className="size-6 shrink-0 cursor-pointer accent-(--link)"
-          />
-          {t(`about.audience.${audience}`)}
+        <label key={audience} className={choiceRowClassName}>
+          <span className="flex items-center gap-3">
+            <input
+              type="radio"
+              name="message-audience"
+              value={audience}
+              checked={chosen === audience}
+              disabled={saving.isSaving}
+              onChange={() => void choose(audience)}
+              className="size-6 shrink-0 cursor-pointer accent-(--link)"
+            />
+            {t(`about.audience.${audience}`)}
+          </span>
         </label>
       ))}
       <p id="message-audience-hint" className="m-0 text-[13px] text-meta">
@@ -84,7 +85,7 @@ function AudienceChoices({ settings, saving }: ChoicesProps) {
 /**
  * "Let adults message me", for 16 and 17-year-olds only.
  *
- * @returns the checkbox with its label and hint
+ * @returns the switch with its name and hint (SettingSwitchRow, G11b)
  */
 function AdultsSwitch({ settings, saving }: ChoicesProps) {
   const { t } = useMessagesTranslation();
@@ -97,25 +98,15 @@ function AdultsSwitch({ settings, saving }: ChoicesProps) {
   }
 
   return (
-    <div className="flex flex-col gap-2 border-t border-border pt-4">
-      <div className="flex items-start gap-3">
-        <input
-          id="settings-adults-may-message"
-          type="checkbox"
-          checked={isAllowed}
-          disabled={saving.isSaving}
-          aria-describedby="settings-adults-hint"
-          onChange={(event) => void change(event.target.checked)}
-          className="mt-0.5 size-6 shrink-0 cursor-pointer accent-(--link)"
-        />
-        <label htmlFor="settings-adults-may-message" className="text-[15px] text-body">
-          {t('settings.adultsLabel')}
-        </label>
-      </div>
-      <p id="settings-adults-hint" className="m-0 text-[13px] text-meta">
-        {t('about.adultsHint')}
-      </p>
-    </div>
+    <SettingSwitchRow
+      id="settings-adults"
+      label={t('settings.adultsLabel')}
+      hint={t('about.adultsHint')}
+      isOn={isAllowed}
+      stateWord={t(isAllowed ? 'settings.on' : 'settings.off')}
+      isDisabled={saving.isSaving}
+      onToggle={() => void change(!isAllowed)}
+    />
   );
 }
 

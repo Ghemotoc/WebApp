@@ -5,7 +5,9 @@
     "under18": "You’re under 18, so every setting here started at its most private choice. You can change them any time.",
     "defaultForUnder18": "Default for under 18",
     "loadFailed": "Your privacy settings can’t be read right now. Try again in a moment.",
-    "saveFailed": "That didn’t save. Check your connection and try again."
+    "saveFailed": "That didn’t save. Check your connection and try again.",
+    "on": "On",
+    "off": "Off"
   },
   "profile": {
     "legend": "Who can see the profile",

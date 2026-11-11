@@ -1,12 +1,12 @@
 /**
  * SuggestMeSwitch: "Suggest me and my stories to other people" in Settings › Privacy (stories
- * S1-E5-11 and S1-E2-03b, bundle LOOK-4c; Robert, 6 Nov 2026: on for 18+, off for under-18s,
- * who turn it on themselves; under-16s are suggested only with their parent's expressed yes).
+ * S1-E5-11 and S1-E2-03b, bundle LOOK-4c; Robert, 6 Nov 2026: on for 18+, off for under-18s, who
+ * turn it on themselves; under-16s are suggested only with their parent's expressed yes).
  *
- * A checkbox saved the moment it changes, like "Show when I'm online". For a 13 to 15-year-old
- * whose parent agreed to the account, a line under it says where the parent's separate yes
- * stands: "Ask your parent" with a button, "Waiting for your parent" with "Send it again", or
- * "Your parent agreed". Until then nothing is suggested, and the line says so.
+ * A switch (SettingSwitchRow, G11b) saved the moment it changes, like "Show when I'm online". For a
+ * 13 to 15-year-old whose parent agreed to the account, a line under it says where the parent's
+ * separate yes stands: "Ask your parent" with a button, "Waiting for your parent" with "Send it
+ * again", or "Your parent agreed". Until then nothing is suggested, and the line says so.
  * Who uses it: PrivacySettingsSection. What it calls: onSave (set_suggest_me()) and
  * sendSpotlightRequest() (POST /api/parent-consent/spotlight-request).
  */
@@ -24,6 +24,8 @@ import {
 
 import type { PrivacySettings } from '../api/privacy';
 import { privacySettingsKey } from '../hooks/usePrivacySettings';
+import { SettingSwitchRow } from '@/features/settings/components/SettingSwitchRow';
+
 import { usePrivacyTranslation } from '../registerPrivacyTranslations';
 
 /** What the switch needs. */
@@ -91,7 +93,7 @@ function ParentLine({ settings }: { settings: PrivacySettings }) {
 }
 
 /**
- * Renders the checkbox with its label, hint and, for under-16s, the parent's line.
+ * Renders the switch with its name, hint and, for under-16s, the parent's line.
  *
  * @returns the switch row
  */
@@ -106,25 +108,16 @@ export function SuggestMeSwitch({ settings, isSaving, onSave }: SuggestMeSwitchP
   }
 
   return (
-    <div className="flex flex-col gap-2 border-t border-border pt-4">
-      <div className="flex items-start gap-3">
-        <input
-          id="privacy-suggest-me"
-          type="checkbox"
-          checked={isOn}
-          disabled={isSaving}
-          aria-describedby="privacy-suggest-hint"
-          onChange={(event) => void change(event.target.checked)}
-          className="mt-0.5 size-6 shrink-0 cursor-pointer accent-(--link)"
-        />
-        <label htmlFor="privacy-suggest-me" className="text-[15px] text-body">
-          {t('suggest.label')}
-        </label>
-      </div>
-      <p id="privacy-suggest-hint" className="m-0 text-[13px] text-meta">
-        {t('suggest.hint')}
-      </p>
+    <SettingSwitchRow
+      id="privacy-suggest"
+      label={t('suggest.label')}
+      hint={t('suggest.hint')}
+      isOn={isOn}
+      stateWord={t(isOn ? 'settings.on' : 'settings.off')}
+      isDisabled={isSaving}
+      onToggle={() => void change(!isOn)}
+    >
       {isOn && <ParentLine settings={settings} />}
-    </div>
+    </SettingSwitchRow>
   );
 }

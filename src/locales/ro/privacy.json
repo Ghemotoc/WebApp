@@ -5,7 +5,9 @@
     "under18": "Ai sub 18 ani, așa că fiecare setare de aici a pornit de la varianta cea mai privată. Le poți schimba oricând.",
     "defaultForUnder18": "Implicit sub 18 ani",
     "loadFailed": "Nu putem citi acum setările de confidențialitate. Încearcă din nou peste puțin timp.",
-    "saveFailed": "Nu s-a salvat. Verifică conexiunea și încearcă din nou."
+    "saveFailed": "Nu s-a salvat. Verifică conexiunea și încearcă din nou.",
+    "on": "Pornit",
+    "off": "Oprit"
   },
   "profile": {
     "legend": "Cine poate vedea profilul",

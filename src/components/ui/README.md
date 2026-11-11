@@ -20,5 +20,6 @@ The shared building blocks every screen uses, one component per file. Built by S
 | `Shelf` (+ `useShelfScroll`, `shelfPaging`, `ShelfArrows`, `ViewMoreCard`) | One sideways line of at most 20 stories, arrows only when it overflows, a fade at each edge with cards hidden past it (both in the middle of a row; 6 Nov 2026), arrows that move by whole cards so a faded card is always shown fully next (FIXES-1a), then "View more" |
 | `AdSlot` | Banner, portrait, side box and in-list card ad slots, labelled "Ad" or "Sponsored" |
 | `PageContainer` | The centred 1280 px column with responsive side padding |
+| `choiceRowStyles` | `choiceRowClassName`: one choice of a settings radio group as a glass row, the chosen one with a plum border (G11b) |
 
 Colours come from `src/styles/tokens.css` (light and night). The liquid glass looks shared by many components (`button-main`, `button-glass`, `field-box`, the card rim, the segmented track and bubble, avatar beads and the sheen on "on" states) are in `src/styles/index.css` (bundle G3 COMPONENTS). Member avatars are glass beads coloured from the username (`src/features/avatars/lib/beadColours.ts`). Icons in `src/components/icons/` are plain line SVGs in the current text colour (`NavIcon` for the header and tab bar, bundle G4); the liquid glass design has no doodles (Robert, 7 Nov 2026).

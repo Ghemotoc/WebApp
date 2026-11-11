@@ -9,13 +9,19 @@
  * and stays in view below the floating top bar (md:sticky, top-28 matching the page's
  * scroll-padding-top), so no link slides under the bar when a group's address scrolls the page
  * (NAV-1 follow-up: WCAG 2.5.8 target size and 2.4.11 focus not obscured).
- * The person's reports have their own page, so the menu also links to it ("Reports sent").
+ * The person's reports and certificates have their own pages, so the menu also links to them
+ * ("Reports sent" and "Certificates", the board's last two items). The open group is drawn as on
+ * the liquid glass board: a soft tint and bold text, with no bar on its edge (bundle G11b).
  * Who shows it: SettingsPage. What it calls: React Router's Link.
  */
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
 import { settingsGroupKeys, type SettingsGroupKey } from '../lib/settingsGroups';
+
+/** The look of the two links to pages outside Settings. */
+const pageLinkClassName =
+  'flex min-h-12 items-center rounded-2xl px-4 text-[15px] font-medium text-heading no-underline hover:bg-panel';
 
 /** What the menu needs. */
 export interface SettingsNavProps {
@@ -25,8 +31,8 @@ export interface SettingsNavProps {
 }
 
 /**
- * One group's link: the open one has the board's tint, bold text and a gold bar on its left
- * edge; "Delete account" is in the destructive red, as on the board.
+ * One group's link: the open one has the board's tint and bold text; "Delete account" is in the
+ * destructive red, as on the board.
  *
  * @returns the link
  */
@@ -43,16 +49,14 @@ function SettingsNavItem({
   // Step 1: the text colour: red for "Delete account", plum for the open group, ink otherwise.
   let textColour = isOpen ? 'text-primary' : 'text-heading';
   if (groupKey === 'delete-account') textColour = 'text-destructive';
-  // Step 2: the open group also gets the tint, bold text and the gold bar.
-  const look = isOpen
-    ? 'bg-tint font-bold shadow-[inset_3px_0_0_var(--color-gold)]'
-    : 'font-medium hover:bg-panel';
+  // Step 2: the open group also gets the tint and bold text.
+  const look = isOpen ? 'bg-tint font-bold' : 'font-medium hover:bg-panel';
   return (
     <Link
       to={{ hash: groupKey }}
       aria-current={isOpen ? 'true' : undefined}
       onClick={onPick}
-      className={`flex min-h-12 items-center rounded-[14px] px-4 text-[15px] no-underline ${look} ${textColour}`}
+      className={`flex min-h-12 items-center rounded-2xl px-4 text-[15px] no-underline ${look} ${textColour}`}
     >
       {t(`settings.groups.${groupKey}`)}
     </Link>
@@ -74,12 +78,12 @@ export function SettingsNav({ open, onPick }: SettingsNavProps) {
       {settingsGroupKeys.map((key) => (
         <SettingsNavItem key={key} groupKey={key} isOpen={key === open} onPick={onPick} />
       ))}
-      {/* The person's reports and appeals live on their own page (board: "Reports sent"). */}
-      <Link
-        to="/my-reports"
-        className="flex min-h-12 items-center rounded-[14px] px-4 text-[15px] font-medium text-heading no-underline hover:bg-panel"
-      >
+      {/* Reports, appeals and certificates live on pages of their own (the board's last two). */}
+      <Link to="/my-reports" className={pageLinkClassName}>
         {t('settings.myReportsLink')}
+      </Link>
+      <Link to="/certificates" className={pageLinkClassName}>
+        {t('settings.certificatesLink')}
       </Link>
     </nav>
   );
