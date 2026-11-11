@@ -23,6 +23,7 @@ import {
 import { useLandingPageEditor, type LandingEditorState } from '../../hooks/useLandingPageEditor';
 import { useLandingPageTranslation } from '../../registerLandingPageTranslations';
 
+import { CopyPageForm } from './CopyPageForm';
 import { LandingEditorForm } from './LandingEditorForm';
 import { LandingVersionHistory } from './LandingVersionHistory';
 
@@ -149,6 +150,8 @@ export function LandingPageEditor({ page, onClose }: LandingPageEditorProps) {
         />
       )}
       <LandingVersionHistory versions={state.versions} state={state} />
+      {/* S1-E11-35: a new draft at its own address, from this page's saved words. */}
+      <CopyPageForm page={page} />
       <ArchiveControl page={page} state={state} onClose={onClose} />
     </section>
   );

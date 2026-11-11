@@ -112,22 +112,51 @@ export async function fetchLandingPageVersions(
 }
 
 /**
- * Starts a page with an empty draft.
+ * Starts a page with an empty draft, or with a ready-made layout's blocks (S1-E11-35).
  *
  * @param client - the staff member's Supabase client
  * @param slug - the address part after /c/
  * @param pageType - contest, campaign or information
+ * @param layout - the layout's name and its starting content (lib/layouts.ts), or null
  * @returns the new page's id
- * @throws WebsiteContentError (reason bad_address, reserved, taken or bad_type)
+ * @throws WebsiteContentError (reason bad_address, reserved, taken, bad_type, bad_layout or
+ *   too_big)
  */
 export async function createLandingPage(
   client: AppSupabaseClient,
   slug: string,
   pageType: LandingPageType,
+  layout: { name: string; content: LandingContent } | null = null,
 ): Promise<string> {
+  // A layout's blocks and starter words go in the same call, so the page never exists half-made.
   const { data, error } = await client.rpc('admin_create_landing_page', {
     new_slug: slug,
     new_page_type: pageType,
+    starting_content: layout === null ? undefined : (layout.content as unknown as Json),
+    layout_name: layout === null ? undefined : layout.name,
+  });
+  if (error) throw websiteErrorFrom(error);
+  return data;
+}
+
+/**
+ * Copies a page to a new address as a draft (S1-E11-35): the same type and the source's newest
+ * words. Nothing goes live until the copy is published.
+ *
+ * @param client - the signed-in client
+ * @param sourcePageId - the page to copy
+ * @param slug - the copy's address
+ * @returns the copy's id
+ * @throws WebsiteContentError (not_allowed, not_found, or the address's problem)
+ */
+export async function copyLandingPage(
+  client: AppSupabaseClient,
+  sourcePageId: string,
+  slug: string,
+): Promise<string> {
+  const { data, error } = await client.rpc('admin_copy_landing_page', {
+    source_page_id: sourcePageId,
+    new_slug: slug,
   });
   if (error) throw websiteErrorFrom(error);
   return data;

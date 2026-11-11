@@ -62,8 +62,11 @@
       "taken": "Adresa este deja folosită de altă pagină.",
       "bad_type": "Alege concurs, campanie sau informații.",
       "not_allowed": "Doar proprietarul și administratorii pot crea pagini de prezentare.",
-      "unreachable": "Nu am putut contacta serverul. Încearcă din nou."
-    }
+      "unreachable": "Nu am putut contacta serverul. Încearcă din nou.",
+      "bad_layout": "Alege un șablon din listă.",
+      "too_big": "Pagina e prea mare pentru a fi salvată. Șterge câteva blocuri sau scurtează textul."
+    },
+    "layout": "Șablon"
   },
   "editor": {
     "back": "Înapoi la paginile de prezentare",
@@ -233,7 +236,9 @@
         "remove": "Șterge pasul {{number}}",
         "howMany": "Adaugă între {{fewest}} și {{most}} pași, la fel în ambele limbi."
       }
-    }
+    },
+    "copyBlock": "Copiază {{name}}",
+    "copy": "Copiază"
   },
   "picture": {
     "states": {
@@ -294,5 +299,130 @@
     "eyebrow": "Site",
     "heading": "Constructorul de pagini",
     "notAllowed": "Construirea paginilor de prezentare nu face parte din rolul tău."
+  },
+  "layouts": {
+    "names": {
+      "blank": "Pagină goală",
+      "contest": "Concurs",
+      "call_for_submissions": "Apel la texte",
+      "event": "Eveniment",
+      "plain": "Pagină simplă"
+    },
+    "hints": {
+      "blank": "Începi fără blocuri și le adaugi pe rând.",
+      "contest": "Antet, date importante, cine se poate înscrie, premiu, cum te înscrii, regulament, întrebări și Amintește-mi.",
+      "call_for_submissions": "Antet, text, pași, întrebări și un îndemn.",
+      "event": "Antet, text, carduri, un citat și un îndemn.",
+      "plain": "Antet și text, pentru informații."
+    },
+    "contest": {
+      "hero": {
+        "title": "Concurs de scriere",
+        "intro": "Un rând scurt despre ce se scrie și de ce merită să participi."
+      },
+      "dates": {
+        "heading": "Date importante",
+        "note": "Orele sunt în ora României."
+      },
+      "who": {
+        "heading": "Cine se poate înscrie",
+        "body": "Membrii din aceste grupe de vârstă pot trimite câte o lucrare."
+      },
+      "prize": {
+        "heading": "Premiu",
+        "body": "Ce primesc câștigătorii și câți câștigători sunt."
+      },
+      "how": {
+        "heading": "Cum te înscrii",
+        "body": "Scrie o poveste nouă, adaugă eticheta concursului și public-o înainte să se închidă înscrierile."
+      },
+      "rules": {
+        "heading": "Regulament",
+        "body": "Regulile principale în câteva rânduri. Regulamentul complet are pagina lui.",
+        "link_label": "Citește regulamentul complet"
+      },
+      "questions": {
+        "heading": "Întrebări"
+      },
+      "remind": {
+        "heading": "Amintește-mi",
+        "intro": "Primești o reamintire cu câteva zile înainte să se închidă înscrierile."
+      }
+    },
+    "call_for_submissions": {
+      "hero": {
+        "title": "Apel la texte",
+        "intro": "Ce căutăm, în unul sau două rânduri."
+      },
+      "about": {
+        "heading": "Ce căutăm",
+        "body": "Tema, lungimea și felul de text potrivit."
+      },
+      "steps": {
+        "heading": "Cum trimiți un text",
+        "entry1": {
+          "title": "Scrie",
+          "body": "Un text nou pe temă."
+        },
+        "entry2": {
+          "title": "Publică",
+          "body": "Adaugă eticheta și publică-l înainte de data de închidere."
+        }
+      },
+      "questions": {
+        "heading": "Întrebări"
+      },
+      "action": {
+        "heading": "Gata de scris?",
+        "body": "Începe acum o poveste nouă.",
+        "button_label": "Începe să scrii"
+      }
+    },
+    "event": {
+      "hero": {
+        "title": "Eveniment",
+        "intro": "Când și unde are loc, într-un rând."
+      },
+      "about": {
+        "heading": "Despre eveniment",
+        "body": "Ce se întâmplă, pentru cine este și cât durează."
+      },
+      "cards": {
+        "heading": "La ce să te aștepți",
+        "entry1": {
+          "title": "Lecturi",
+          "body": "Scriitorii citesc texte noi cu voce tare."
+        },
+        "entry2": {
+          "title": "Discuții",
+          "body": "Întrebări și răspunsuri cu scriitorii."
+        }
+      },
+      "quote": {
+        "quote": "Un rând de la un scriitor sau de la un invitat de data trecută.",
+        "source": "Pseudonimul lui"
+      },
+      "action": {
+        "heading": "Vino și tu",
+        "body": "Locurile sunt limitate.",
+        "button_label": "Află mai multe"
+      }
+    },
+    "plain": {
+      "hero": {
+        "title": "Titlul paginii",
+        "intro": "Un rând scurt despre ce explică pagina."
+      },
+      "about": {
+        "heading": "Titlu",
+        "body": "Textul paginii."
+      }
+    }
+  },
+  "copy": {
+    "heading": "Copiază pagina",
+    "address": "Adresa copiei",
+    "button": "Copiază pagina",
+    "hint": "Copia ia ciorna salvată sau cea mai nouă versiune și rămâne ciornă până e publicată."
   }
 }

@@ -96,6 +96,38 @@ export function removeBlock(content: LandingContent, index: number): LandingCont
   return { ...content, blocks: content.blocks.filter((_, position) => position !== index) };
 }
 
+/** The kinds a page holds only once, so Copy block isn't offered for them (S1-E11-35). */
+const onlyOnceKinds: readonly LandingBlockKind[] = ['hero', 'remind_me'];
+
+/**
+ * Whether a block can be copied: every kind but the hero and Remind me, which a page holds once.
+ *
+ * @param kind - the block's kind
+ * @returns true when Copy block is offered
+ */
+export function canCopyBlock(kind: LandingBlockKind): boolean {
+  return !onlyOnceKinds.includes(kind);
+}
+
+/**
+ * Copies one block, words, picture and links included, and puts the copy straight below it
+ * (S1-E11-35). The copy is part of the draft, so nothing changes for visitors until publishing.
+ *
+ * @param content - the page's content
+ * @param index - the block to copy
+ * @param newId - the copy's own key for the editor's list
+ * @returns the new content (the same object when the block can't be copied)
+ */
+export function copyBlock(content: LandingContent, index: number, newId: string): LandingContent {
+  const source = content.blocks[index];
+  if (source === undefined || !canCopyBlock(source.kind)) return content;
+  // A deep copy, so changing the copy's words never changes the block it came from.
+  const copy: LandingBlock = { ...structuredClone(source), id: newId };
+  const blocks = [...content.blocks];
+  blocks.splice(index + 1, 0, copy);
+  return { ...content, blocks };
+}
+
 /**
  * Adds a block at the end, or a hero at the top (there is only ever one).
  *

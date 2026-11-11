@@ -20,6 +20,8 @@ in 13a2a; Remind me in 13a2b; the link preview (`server/landing-preview.ts`) and
 - `components/staff/LandingPagesAdminPage.tsx` (Staff › Page builder, the `landing_pages` area),
   `components/BuilderBlocks.tsx`, `components/staff/EntryItemsFields.tsx`, `lib/entries.ts` and
   `lib/builderKinds.ts`: the easier page builder and its five blocks (story S1-E11-34, CMS-2b).
+- `lib/layouts.ts`, `components/staff/NewLandingPageForm.tsx` and `CopyPageForm.tsx`: ready-made
+  layouts with starter words from the locale files, Copy block and Copy page (story S1-E11-35, CMS-2c).
 - `lib/blocks.ts`: adding, moving and changing blocks without a server; `lib/problemLabels.ts`:
   names the fields the server says to fix.
 

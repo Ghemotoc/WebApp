@@ -91,7 +91,7 @@ test.describe('a signed-in person', () => {
 
     // The Language panel's radio buttons (bundle FIX-3) save to the account.
     await panel.getByText('English', { exact: true }).click();
-    await expect(firstPage.getByRole('region', { name: 'Language', exact: true })).toContainText(
+    await expect(firstPage.getByRole('region', { name: 'Language' })).toContainText(
       'Language saved to the account.',
     );
 

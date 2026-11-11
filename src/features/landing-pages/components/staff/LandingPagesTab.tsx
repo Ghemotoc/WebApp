@@ -2,9 +2,10 @@
  * LandingPagesTab: Staff › Website › Landing pages, the list of pages and "New page", or one page
  * open in the editor (story S1-E11-14; bundle CONTESTS-13a1).
  *
- * The open page is in the address (?page=<id>), so it survives a reload and Back closes it. Only
- * the owner and admins reach this tab; the database refuses everyone else anyway.
- * Who shows it: WebsiteAdminPage at /staff/website/landing-pages. What it calls:
+ * The open page is in the address (?page=<id>), so it survives a reload and Back closes it. Staff
+ * with the landing pages area reach it (S1-E11-34); the database refuses everyone else anyway.
+ * Who shows it: WebsiteAdminPage at /staff/website/landing-pages and LandingPagesAdminPage at
+ * /staff/landing-pages. What it calls:
  * useLandingPageList, NewLandingPageForm and LandingPageEditor.
  */
 import { Link, useSearchParams } from 'react-router';

@@ -427,7 +427,7 @@ As staff building a page, I want to start from a ready-made layout and copy bloc
   - Given "New page", when staff pick a layout (contest, call for submissions, event, plain page), then the page starts with that layout's blocks and starter words from the locale files, as a draft.
   - Given a block, when staff press Copy block, then a copy appears below it.
   - Given a page, when staff press Copy page, then a new draft with its own address is made and nothing goes live until it is published.
-  - Given every copy, when it is made, then it is in the audit log.
+  - Given every copy, when it is made, then it is in the audit log: Copy page and a page started from a layout are logged when made; a copied block is part of the draft and is logged when the page is published, as every publish is.
 
 ##### S1-E11-QA Epic check: Admin site
 

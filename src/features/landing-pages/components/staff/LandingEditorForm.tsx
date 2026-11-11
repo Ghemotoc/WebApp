@@ -22,7 +22,7 @@ import { landingThemes, type LandingContent } from '@/schemas/landingPages';
 import type { LandingDraftInput } from '../../api/landingPages';
 import type { LandingEditorState } from '../../hooks/useLandingPageEditor';
 import { useLandingPictureStates } from '../../hooks/useLandingPictures';
-import { addBlock, moveBlock, removeBlock, updateBlock } from '../../lib/blocks';
+import { addBlock, copyBlock, moveBlock, removeBlock, updateBlock } from '../../lib/blocks';
 import { problemFor } from '../../lib/problemLabels';
 import { useLandingPageTranslation } from '../../registerLandingPageTranslations';
 
@@ -108,6 +108,10 @@ function BlockList({ content, openIndex, problems, onOpen, onContentChange }: Bl
             onOpen={() => onOpen(index)}
             onMove={(direction) => move(index, direction)}
             onRemove={() => remove(index)}
+            // The copy lands below its block and opens, so staff change it straight away.
+            onCopy={() =>
+              onContentChange(copyBlock(content, index, crypto.randomUUID()), index + 1)
+            }
           />
         ))}
       </ol>
