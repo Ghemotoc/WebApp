@@ -16721,15 +16721,6 @@ export type Database = {
         };
         Returns: boolean;
       };
-      story_more_signals: {
-        Args: Record<PropertyKey, never>;
-        Returns: {
-          finish_points: number;
-          follows: number;
-          growth: number;
-          story_id: string;
-        }[];
-      };
       story_page_chapters: { Args: { is_owner: boolean; target_story_id: string }; Returns: Json };
       story_plan: { Args: { story_slug: string }; Returns: Json };
       story_plan_chapters: { Args: { plan_story_id: string }; Returns: Json };
@@ -16741,7 +16732,6 @@ export type Database = {
           tag_rank: number;
         }[];
       };
-      story_rank_place: { Args: { story_slug: string }; Returns: Json };
       story_rating_reasons_from: {
         Args: { labels: Json };
         Returns: Database['public']['Enums']['story_rating_reason'][];
