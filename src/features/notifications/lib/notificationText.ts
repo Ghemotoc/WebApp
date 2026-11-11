@@ -14,6 +14,7 @@ import type { AppNotification } from '../api/notifications';
 
 import { dataRequestNoticeText } from './dataRequestNoticeText';
 import { landingEntriesOpenText } from './landingEntriesOpenText';
+import { forumReplyText } from './forumReplyText';
 import { homeCommentInvitedText } from './homeCommentInvitedText';
 import { liveSessionSoonText } from './liveSessionSoonText';
 import { rankReachedText } from './rankReachedText';
@@ -614,6 +615,7 @@ const teamTextFor: Partial<
   landing_entries_open: landingEntriesOpenText,
   live_session_soon: liveSessionSoonText,
   home_comment_invited: homeCommentInvitedText,
+  forum_reply: forumReplyText,
   rank_reached: rankReachedText,
   space_handover_offered: spaceHandoverOfferedText,
   story_featured: storyFeaturedText,

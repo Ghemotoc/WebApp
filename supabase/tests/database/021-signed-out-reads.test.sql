@@ -139,7 +139,12 @@ select results_eq(
        ('forum_posts', 0::bigint),
        -- Read marks and thread reads: only one's own (FORUMS-1d).
        ('forum_read_marks', 0::bigint),
+       -- A member's own votes and followed threads (GAPS-16a, GAPS-16c).
+       ('forum_post_votes', 0::bigint),
+       ('forum_thread_follows', 0::bigint),
        ('forum_thread_reads', 0::bigint),
+       -- View totals: through the thread page only (GAPS-16d).
+       ('forum_thread_views', 0::bigint),
        ('forum_threads', 0::bigint),
        ('forums', (select count(*) from public.forums where deleted_at is null and space_id is null)),
        -- Home page comment picks: the reader's own and featured staff's; visitors get the card through a function (GAPS-13).

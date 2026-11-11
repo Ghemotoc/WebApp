@@ -15,6 +15,7 @@ As a reader, I want to comment on a chapter so that I can talk to the writer and
   - Given the writer of the story, when they view comments, then they can delete any comment on their own story.
   - Given an account over its comment limit (set in admin by S1-E10-12 and S1-E11-03; the starting proposal on canvas 8.6 is 5 an hour in the first 24 hours and 60 an hour after), when the next comment is sent, then it is refused with a message saying how long to wait.
 - **Legal and compliance:** every comment has a report button (DSA Art 16). Links get `rel="nofollow ugc"`. Emoji-only comments are never deleted automatically (decided 16 Oct 2026, late evening, Q25).
+- **Built:** S1-E6-01; "Who can comment" (Everyone, Followers only or Nobody) in MUST-1a (IDEA-20261106-2).
 
 ##### S1-E6-02 Emoji reactions on comments
 

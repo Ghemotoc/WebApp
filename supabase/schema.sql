@@ -726,7 +726,8 @@ CREATE TYPE "public"."notification_kind" AS ENUM (
     'spotlight_consent_withdrawn',
     'waitlist_admitted',
     'live_session_soon',
-    'home_comment_invited'
+    'home_comment_invited',
+    'forum_reply'
 );
 
 
@@ -1436,6 +1437,8 @@ CREATE OR REPLACE FUNCTION "public"."account_deletion_rules"() RETURNS TABLE("ta
     ('forum_post_revisions', 'own_step', 0, 'deleted with the account''s posts, unless a case holds the post'),
     ('forum_posts', 'own_step', 0, 'words erased unless under an open case; the post keeps its number as a "Post deleted" marker so the thread''s numbering stays'),
     ('forum_read_marks', 'delete', 1, null),
+    ('forum_post_votes', 'delete', 1, null),
+    ('forum_thread_follows', 'delete', 1, null),
     ('forum_thread_reads', 'delete', 1, null),
     ('forum_threads', 'own_step', 0, 'deleted when nobody else posted in it; otherwise kept for the other people''s replies, its starter shown as a deleted account'),
     ('home_comment_picks', 'delete', 1, null),
@@ -1493,7 +1496,7 @@ $$;
 ALTER FUNCTION "public"."account_deletion_rules"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13).';
+COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13, GAPS-16a, GAPS-16c).';
 
 
 
@@ -3212,10 +3215,12 @@ CREATE TABLE IF NOT EXISTS "public"."stories" (
     "first_published_year" integer,
     "writing_prompt_id" "uuid",
     "is_app_only" boolean DEFAULT false NOT NULL,
+    "comment_audience" "text" DEFAULT 'everyone'::"text" NOT NULL,
     CONSTRAINT "stories_abuse_needs_rating_and_note" CHECK (((NOT "deals_with_abuse_or_coercion") OR (("rating" = ANY (ARRAY['16_plus'::"public"."story_rating", '18_plus'::"public"."story_rating"])) AND ("btrim"("content_note") <> ''::"text")))),
     CONSTRAINT "stories_blurb_length" CHECK (("char_length"("blurb") <= 500)),
     CONSTRAINT "stories_card_colour_on_palette" CHECK ((("card_colour" IS NULL) OR ("card_colour" = ANY (ARRAY['plum'::"text", 'violet'::"text", 'gold'::"text", 'ink'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text"])))),
     CONSTRAINT "stories_class_link_only_when_class_only" CHECK (("class_only" OR ("class_space_id" IS NULL))),
+    CONSTRAINT "stories_comment_audience_known" CHECK (("comment_audience" = ANY (ARRAY['everyone'::"text", 'followers'::"text"]))),
     CONSTRAINT "stories_content_note_length" CHECK (("char_length"("content_note") <= 300)),
     CONSTRAINT "stories_cover_colours_are_in_the_palette" CHECK (((("cover_background" IS NULL) OR ("cover_background" = ANY (ARRAY['plum'::"text", 'ink'::"text", 'violet'::"text", 'gold'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text"]))) AND (("cover_accent" IS NULL) OR ("cover_accent" = ANY (ARRAY['plum'::"text", 'ink'::"text", 'violet'::"text", 'gold'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text"]))))),
     CONSTRAINT "stories_cover_columns_match_kind" CHECK (
@@ -3327,6 +3332,10 @@ COMMENT ON COLUMN "public"."stories"."writing_prompt_id" IS 'The writing prompt 
 
 
 COMMENT ON COLUMN "public"."stories"."is_app_only" IS 'The writer chose "In the app only" (S1-E3-08). Applies only while the app_only_stories flag is on (GAPS-15).';
+
+
+
+COMMENT ON COLUMN "public"."stories"."comment_audience" IS 'Who may add comments while they are on: everyone, or the writer''s followers only (MUST-1a).';
 
 
 
@@ -12760,6 +12769,7 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     "seasonal_looks" boolean DEFAULT false NOT NULL,
     "appearance_saved_at" timestamp with time zone,
     "shows_reader_level" boolean DEFAULT false NOT NULL,
+    "checks_personal_details" boolean,
     CONSTRAINT "profiles_avatar_recipe_shape" CHECK ("public"."avatar_recipe_valid"("avatar_recipe")),
     CONSTRAINT "profiles_bio_length" CHECK (("char_length"("bio") <= 300)),
     CONSTRAINT "profiles_birth_month_is_a_month" CHECK ((("birth_month" >= 1) AND ("birth_month" <= 12))),
@@ -12947,6 +12957,10 @@ COMMENT ON COLUMN "public"."profiles"."appearance_saved_at" IS 'When the member 
 
 
 COMMENT ON COLUMN "public"."profiles"."shows_reader_level" IS 'Settings › Privacy › Your reading level: false keeps it hidden (the default for everyone), true shows it on the profile (G7a).';
+
+
+
+COMMENT ON COLUMN "public"."profiles"."checks_personal_details" IS 'Whether the browser asks "Post anyway?" before sending text that looks like contact details; null is the age default: on under 18, off for adults (MUST-1b).';
 
 
 
@@ -15444,6 +15458,10 @@ begin
   -- Step 3: the answer; the extra comment only says there is more.
   return jsonb_build_object(
     'comments_enabled', true,
+    -- MUST-1a: who may add comments, and whether that includes the caller, so the page shows
+    -- the comment box or "Only the writer's followers can comment here".
+    'comment_audience', story.comment_audience,
+    'audience_allows_me', public.comment_audience_allows(story, (select auth.uid())),
     'total', (select count(*)::integer from public.comments
               where comments.chapter_id = chapter.id and public.comment_is_shown_to_caller(comments)),
     'has_more', page_count > page_size,
@@ -16822,6 +16840,21 @@ COMMENT ON FUNCTION "public"."check_story_labels"("labels" "jsonb") IS 'Internal
 
 
 
+CREATE OR REPLACE FUNCTION "public"."checks_personal_details_of"("target" "public"."profiles") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select public.message_age_group(target) <> 'adult' or coalesce(target.checks_personal_details, false);
+$$;
+
+
+ALTER FUNCTION "public"."checks_personal_details_of"("target" "public"."profiles") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."checks_personal_details_of"("target" "public"."profiles") IS 'Internal: whether the personal details heads-up is on for this person (MUST-1b).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."class_certificates"("slug" "text") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -17946,6 +17979,25 @@ ALTER FUNCTION "public"."cms_text_problem"("field_value" "text", "field_name" "t
 
 
 COMMENT ON FUNCTION "public"."cms_text_problem"("field_value" "text", "field_name" "text", "longest" integer) IS 'Internal: empty or too long, for one CMS field (S1-E11-06).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."comment_audience_allows"("story" "public"."stories", "caller_id" "uuid") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select story.comment_audience = 'everyone'
+    or caller_id = story.user_id
+    or exists (select 1 from public.follows_users
+               where follows_users.user_id = caller_id
+                 and follows_users.followed_user_id = story.user_id);
+$$;
+
+
+ALTER FUNCTION "public"."comment_audience_allows"("story" "public"."stories", "caller_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."comment_audience_allows"("story" "public"."stories", "caller_id" "uuid") IS 'Internal: whether a story''s comment setting lets this person comment (MUST-1a).';
 
 
 
@@ -19405,7 +19457,7 @@ begin
     id, user_id, slug, title, blurb, language_code, category_id,
     cover_kind, cover_design, cover_background, cover_accent, cover_tall_path, cover_square_path,
     rating, is_fan_fiction, is_parody, deals_with_abuse_or_coercion, content_note, ai_disclosure,
-    rating_reasons
+    rating_reasons, comment_audience
   ) values (
     new_story_id, caller_id, new_slug, clean_title, clean_blurb, language_code, chosen_category_id,
     (cover ->> 'kind')::public.cover_kind, cover ->> 'design', cover ->> 'background', cover ->> 'accent',
@@ -19417,7 +19469,9 @@ begin
     btrim(coalesce(labels ->> 'content_note', '')),
     (labels ->> 'ai_disclosure')::public.ai_disclosure,
     -- Why it is 16+ or 18+ (SPONSORS-f); empty for a younger rating.
-    public.story_rating_reasons_from(labels)
+    public.story_rating_reasons_from(labels),
+    -- MUST-1a (IDEA-20261106-2, proposal): a writer aged 13 to 17 starts at Followers only.
+    case when public.age_band() in ('13_to_15', '16_to_17') then 'followers' else 'everyone' end
   );
 
   -- Step 4: the tags, merged and capped.
@@ -19547,6 +19601,8 @@ CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_
     ('forum_post_revisions', true, null),
     ('forum_posts', true, null),
     ('forum_read_marks', true, null),
+    ('forum_post_votes', true, null),
+    ('forum_thread_follows', true, null),
     ('forum_thread_reads', true, null),
     ('forum_threads', true, null),
     ('home_comment_picks', true, null),
@@ -19604,7 +19660,7 @@ $$;
 ALTER FUNCTION "public"."data_export_tables"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13).';
+COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13, GAPS-16a, GAPS-16c).';
 
 
 
@@ -22251,6 +22307,44 @@ COMMENT ON FUNCTION "public"."fold_old_daily_totals"() IS 'Job: folds daily read
 
 
 
+CREATE OR REPLACE FUNCTION "public"."follow_forum_thread"("thread_number" bigint, "wanted" boolean) RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  thread public.forum_threads;
+begin
+  -- Step 1: only a signed-in member follows anything.
+  if caller_id is null then
+    raise exception 'Log in to follow a thread.' using errcode = 'insufficient_privilege';
+  end if;
+  select * into thread from public.forum_threads
+  where forum_threads.thread_number = follow_forum_thread.thread_number;
+  -- Step 2: unfollowing always works, even for a thread the caller can no longer open.
+  if not coalesce(wanted, false) then
+    delete from public.forum_thread_follows
+    where forum_thread_follows.user_id = caller_id and forum_thread_follows.thread_id = thread.id;
+    return false;
+  end if;
+  -- Step 3: following needs a thread the caller may open (the same rule as the thread page).
+  if thread.id is null or not public.forum_thread_is_shown(thread) then
+    raise exception 'That thread isn''t there any more.' using errcode = 'no_data_found', hint = 'thread:missing';
+  end if;
+  insert into public.forum_thread_follows (user_id, thread_id) values (caller_id, thread.id)
+  on conflict on constraint forum_thread_follows_one_per_thread do nothing;
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."follow_forum_thread"("thread_number" bigint, "wanted" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."follow_forum_thread"("thread_number" bigint, "wanted" boolean) IS 'Follows or unfollows a forum thread for the caller; returns whether they follow it now (GAPS-16a).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."follow_story"("story_slug" "text", "should_follow" boolean) RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -22833,6 +22927,9 @@ declare
   is_shown boolean := state in ('live', 'hidden');
   is_space_hidden boolean := public.forum_post_is_space_hidden(target);
   space public.spaces := public.space_of_post(target);
+  is_thread_open boolean := not exists (select 1 from public.forum_threads
+                                        where forum_threads.id = target.thread_id
+                                          and forum_threads.locked_at is not null);
 begin
   return jsonb_build_object(
     'id', target.id,
@@ -22870,7 +22967,12 @@ begin
       and space.id is not null and public.space_may_act(space, 'posts')
       and (state = 'live' or is_space_hidden)
       and (target.user_id <> space.user_id or space.user_id = caller_id
-           or public.space_acts_as_platform(space)), false));
+           or public.space_acts_as_platform(space)), false),
+    -- GAPS-16c: the upvote count and the caller's own vote (never a downvote count), and
+    -- whether they may vote: a live post by someone else in an open thread, by an active member.
+    'votes', case when is_shown then public.forum_post_votes_json(target,
+      caller_id is not null and not is_own and state = 'live' and is_thread_open
+      and public.is_active_member()) end);
 end;
 $$;
 
@@ -22878,7 +22980,7 @@ $$;
 ALTER FUNCTION "public"."forum_post_json"("target" "public"."forum_posts", "starter_id" "uuid") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."forum_post_json"("target" "public"."forum_posts", "starter_id" "uuid") IS 'Internal: one post as the thread page draws it, with its quotes and its author''s signature and rank, never a user ID (S1-E8-02, S1-E8-03, S1-E8-08, S1-E8-09).';
+COMMENT ON FUNCTION "public"."forum_post_json"("target" "public"."forum_posts", "starter_id" "uuid") IS 'Internal: one post as the thread page draws it, with its quotes, its author''s signature and rank, and its upvotes, never a user ID or a downvote count (S1-E8-02, S1-E8-03, S1-E8-08, S1-E8-09, GAPS-16c).';
 
 
 
@@ -22931,6 +23033,59 @@ ALTER FUNCTION "public"."forum_post_state_for_caller"("target" "public"."forum_p
 
 
 COMMENT ON FUNCTION "public"."forum_post_state_for_caller"("target" "public"."forum_posts") IS 'Internal: live, hidden, removed, deleted or null for the caller (S1-E8-02).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."forum_post_vote_target"("post_id" "uuid") RETURNS "public"."forum_posts"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target public.forum_posts;
+  thread public.forum_threads;
+begin
+  -- Step 1: the post must be live for the caller, in a thread they may open.
+  select * into target from public.forum_posts where forum_posts.id = post_id;
+  select * into thread from public.forum_threads where forum_threads.id = target.thread_id;
+  if target.id is null or thread.id is null or not public.forum_thread_is_shown(thread)
+     or public.forum_post_state_for_caller(target) is distinct from 'live' then
+    raise exception 'That post isn''t there any more.' using errcode = 'no_data_found', hint = 'post:missing';
+  end if;
+  -- Step 2: never one's own post.
+  if target.user_id = (select auth.uid()) then
+    raise exception 'You can''t vote on your own post.' using errcode = 'check_violation', hint = 'post:own';
+  end if;
+  return target;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."forum_post_vote_target"("post_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."forum_post_vote_target"("post_id" "uuid") IS 'Internal: the live forum post a vote is about, checked for the caller (GAPS-16c).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."forum_post_votes_json"("target" "public"."forum_posts", "can_vote" boolean) RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select jsonb_build_object(
+    'up', (select count(*) from public.forum_post_votes as votes
+           join public.profiles on profiles.id = votes.user_id
+           where votes.post_id = target.id and votes.is_upvote and profiles.deleted_at is null),
+    'mine', (select case when votes.is_upvote then 'up' else 'down' end
+             from public.forum_post_votes as votes
+             where votes.post_id = target.id and votes.user_id = (select auth.uid())),
+    'can_vote', can_vote);
+$$;
+
+
+ALTER FUNCTION "public"."forum_post_votes_json"("target" "public"."forum_posts", "can_vote" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."forum_post_votes_json"("target" "public"."forum_posts", "can_vote" boolean) IS 'Internal: a forum post''s upvote count and the caller''s own vote, never a downvote count (GAPS-16c).';
 
 
 
@@ -23142,6 +23297,41 @@ COMMENT ON FUNCTION "public"."forum_thread"("thread_number" bigint, "after_post"
 
 
 
+CREATE OR REPLACE FUNCTION "public"."forum_thread_follow_on_post"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  follower record;
+begin
+  -- Step 1: a new thread is followed by the person who started it.
+  if new.post_number = 1 then
+    insert into public.forum_thread_follows (user_id, thread_id)
+    values (new.user_id, new.thread_id)
+    on conflict on constraint forum_thread_follows_one_per_thread do nothing;
+    return null;
+  end if;
+  -- Step 2: a reply reaches every other follower, one grouped row per thread a day.
+  for follower in
+    select follows.user_id from public.forum_thread_follows as follows
+    where follows.thread_id = new.thread_id and follows.user_id <> new.user_id
+  loop
+    perform public.notify(follower.user_id, 'forum_reply', new.user_id,
+      jsonb_build_object('forum_thread_id', new.thread_id),
+      'forum_reply:' || new.thread_id::text, interval '24 hours');
+  end loop;
+  return null;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."forum_thread_follow_on_post"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."forum_thread_follow_on_post"() IS 'Trigger: a thread''s starter follows it; a reply tells the other followers (GAPS-16a).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."forum_thread_for_moderation"("thread_number" bigint, "reason" "text") RETURNS "public"."forum_threads"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -23194,6 +23384,10 @@ CREATE OR REPLACE FUNCTION "public"."forum_thread_header_json"("target" "public"
               from public.space_of_forum(target.forum_id) as space where space.id is not null),
     'author', public.forum_person_json(target.user_id),
     'is_mine', target.user_id = (select auth.uid()),
+    -- GAPS-16a: whether the reader follows this thread (false when signed out).
+    'is_following', exists (select 1 from public.forum_thread_follows as follows
+                            where follows.thread_id = target.id
+                              and follows.user_id = (select auth.uid())),
     'state', case when public.moderated_state_of('forum_thread', target.id) = 'hidden' then 'hidden' else 'live' end,
     'created_at', target.created_at,
     'reply_count', greatest(public.forum_live_post_count(target.id) - 1, 0),
@@ -23201,6 +23395,9 @@ CREATE OR REPLACE FUNCTION "public"."forum_thread_header_json"("target" "public"
                      where forum_posts.thread_id = target.id
                        and public.forum_post_state_for_caller(forum_posts) in ('live', 'hidden')),
     'last_post_at', target.last_post_at,
+    -- GAPS-16d: how many times the thread was opened, a total only (never who).
+    'view_count', coalesce((select views.total from public.forum_thread_views as views
+                            where views.thread_id = target.id), 0),
     'last_post_number', target.last_post_number,
     'is_sticky', target.is_sticky,
     'lock', case when target.locked_at is null then null
@@ -23233,7 +23430,7 @@ $$;
 ALTER FUNCTION "public"."forum_thread_header_json"("target" "public"."forum_threads") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."forum_thread_header_json"("target" "public"."forum_threads") IS 'Internal: a thread''s heading, numbers, sticky, lock, rules strip and pointer, never a user ID (S1-E8-02, S1-E8-05, GAPS-9).';
+COMMENT ON FUNCTION "public"."forum_thread_header_json"("target" "public"."forum_threads") IS 'Internal: a thread''s heading, numbers (views included), sticky, lock, rules strip, pointer and whether the reader follows it, never a user ID (S1-E8-02, S1-E8-05, GAPS-9, GAPS-16a, GAPS-16d).';
 
 
 
@@ -29020,7 +29217,9 @@ CREATE OR REPLACE FUNCTION "public"."my_privacy_settings"() RETURNS "jsonb"
       else 'none'
     end,
     'can_ask_parent', public.age_band_of(profiles.id) = '13_to_15' and public.has_parental_consent(profiles.id),
-    'shows_reader_level', profiles.shows_reader_level)
+    'shows_reader_level', profiles.shows_reader_level,
+    -- MUST-1b: whether the browser asks "Post anyway?" before sending what looks like contact details.
+    'checks_personal_details', public.checks_personal_details_of(profiles))
   from public.profiles where profiles.id = public.require_live_profile();
 $$;
 
@@ -30336,7 +30535,8 @@ CREATE TABLE IF NOT EXISTS "public"."notifications" (
     "data_request_id" "uuid",
     "landing_page_id" "uuid",
     "writer_rank" "public"."writer_rank",
-    "live_session_id" "uuid"
+    "live_session_id" "uuid",
+    "forum_thread_id" "uuid"
 );
 
 
@@ -30388,6 +30588,10 @@ COMMENT ON COLUMN "public"."notifications"."live_session_id" IS 'The live sessio
 
 
 
+COMMENT ON COLUMN "public"."notifications"."forum_thread_id" IS 'The followed forum thread a forum_reply notification is about (GAPS-16a).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."notification_is_shown"("target" "public"."notifications") RETURNS boolean
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -30395,6 +30599,7 @@ CREATE OR REPLACE FUNCTION "public"."notification_is_shown"("target" "public"."n
 declare
   address record;
   comment public.comments;
+  thread public.forum_threads;
 begin
   -- Step 1: only the owner, and a moderation decision always reaches them (DSA art. 17).
   if target.user_id is distinct from (select auth.uid()) then
@@ -30426,7 +30631,15 @@ begin
       return false;
     end if;
   end if;
-  -- Step 5: the comment must still be live, or hidden only from others.
+  -- Step 5 (GAPS-16a): a followed thread must still be one the reader may open: not deleted,
+  -- not moderated away, not in a space they have left, not started by someone they block.
+  if target.forum_thread_id is not null then
+    select * into thread from public.forum_threads where forum_threads.id = target.forum_thread_id;
+    if thread.id is null or not public.forum_thread_is_shown(thread) then
+      return false;
+    end if;
+  end if;
+  -- Step 6: the comment must still be live, or hidden only from others.
   if target.comment_id is not null then
     select * into comment from public.comments where comments.id = target.comment_id;
     return public.comment_state_for_caller(comment) in ('live', 'hidden');
@@ -30582,6 +30795,14 @@ CREATE OR REPLACE FUNCTION "public"."notification_json"("target" "public"."notif
                        'title_en', live_sessions.title_en, 'starts_at', live_sessions.starts_at)
                      from public.live_sessions
                      where live_sessions.id = target.live_session_id and live_sessions.deleted_at is null),
+    -- GAPS-16a: the followed thread with new replies, while the reader may still open it.
+    'forum_thread', (select jsonb_build_object('number', forum_threads.thread_number,
+                       'forum_slug', (select forums.slug from public.forums
+                                      where forums.id = forum_threads.forum_id),
+                       'title', forum_threads.title)
+                     from public.forum_threads
+                     where forum_threads.id = target.forum_thread_id
+                       and public.forum_thread_is_shown(forum_threads)),
     -- IDEAS-3a: the rank a writer just reached, and their own handle for the link to their profile.
     'writer_rank', case when target.kind = 'rank_reached' then target.writer_rank end,
     'own_handle', case when target.kind = 'rank_reached'
@@ -30662,7 +30883,7 @@ begin
   -- the alert that staff opened an uploaded picture (ADMIN-2e2a).
   insert into public.notifications (user_id, kind, actor_user_ids, actor_count, story_id, chapter_id,
     comment_id, case_id, decision, statement_id, appeal_id, mail_thread_id, space_id, change_request_id,
-    story_revision_id, data_request_id, landing_page_id, live_session_id, group_key, is_required)
+    story_revision_id, data_request_id, landing_page_id, live_session_id, forum_thread_id, group_key, is_required)
   values (recipient_id, notification_kind,
     case when actor_id is null then '{}'::uuid[] else array[actor_id] end,
     case when actor_id is null then 0 else 1 end,
@@ -30671,7 +30892,8 @@ begin
     (about ->> 'statement_id')::uuid, (about ->> 'appeal_id')::uuid, (about ->> 'mail_thread_id')::uuid,
     (about ->> 'space_id')::uuid, (about ->> 'change_request_id')::uuid,
     (about ->> 'story_revision_id')::uuid, (about ->> 'data_request_id')::uuid,
-    (about ->> 'landing_page_id')::uuid, (about ->> 'live_session_id')::uuid, notify.group_key,
+    (about ->> 'landing_page_id')::uuid, (about ->> 'live_session_id')::uuid,
+    (about ->> 'forum_thread_id')::uuid, notify.group_key,
     notification_kind in ('moderation_decision', 'appeal_decided', 'customisation_change_requested',
                           'story_changed_by_staff', 'data_request_confirm',
                           'data_request_extended', 'data_request_copy_ready', 'picture_opened_by_staff'));
@@ -31114,6 +31336,43 @@ COMMENT ON FUNCTION "public"."open_downvote_case"("target" "public"."comments") 
 
 
 
+CREATE OR REPLACE FUNCTION "public"."open_forum_post_downvote_case"("target" "public"."forum_posts") RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  threshold integer := coalesce(public.setting_value('downvote_case_threshold'), '5')::text::integer;
+  counted integer;
+begin
+  -- Step 1: how many accounts count.
+  select count(*) into counted
+  from public.forum_post_votes as votes
+  join public.profiles on profiles.id = votes.user_id
+  where votes.post_id = target.id and not votes.is_upvote and votes.is_counted
+    and profiles.deleted_at is null;
+  if counted < threshold then
+    return;
+  end if;
+  -- Step 2: one open case per item; a report may already have opened it.
+  if exists (select 1 from public.cases
+             where cases.item_type = 'forum_post' and cases.item_id = target.id and cases.status = 'open') then
+    return;
+  end if;
+  insert into public.cases (reference, user_id, item_type, item_id, source, tier, received_at, deadline_at)
+  values ('D-' || lpad(nextval('public.downvote_case_reference_seq')::text, 6, '0'), target.user_id,
+          'forum_post', target.id, 'downvotes', 'seven_days', now(),
+          now() + make_interval(hours => public.tier_hours('seven_days')));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."open_forum_post_downvote_case"("target" "public"."forum_posts") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."open_forum_post_downvote_case"("target" "public"."forum_posts") IS 'Internal: opens a lowest-tier case once a forum post has enough counted downvotes (GAPS-16c, S1-E6-04).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."picture_checks" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "user_id" "uuid" NOT NULL,
@@ -31549,6 +31808,10 @@ begin
   -- Step 3: the answer, with the total the thread's heading says.
   return jsonb_build_object(
     'comments_enabled', true,
+    -- MUST-1a: who may add comments, and whether that includes the caller, so the page shows
+    -- the comment box or "Only the writer's followers can comment here".
+    'comment_audience', story.comment_audience,
+    'audience_allows_me', public.comment_audience_allows(story, (select auth.uid())),
     'total', (select count(*)::integer from public.comments
               where comments.chapter_id = chapter.id
                 and comments.paragraph_key is not null
@@ -34668,6 +34931,36 @@ COMMENT ON FUNCTION "public"."record_chapter_share"("story_slug" "text", "chapte
 
 
 
+CREATE OR REPLACE FUNCTION "public"."record_forum_thread_view"("thread_number" bigint) RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  thread public.forum_threads;
+begin
+  -- Step 1: a thread the caller may open, and not their own.
+  select * into thread from public.forum_threads
+  where forum_threads.thread_number = record_forum_thread_view.thread_number;
+  if thread.id is null or not public.forum_thread_is_shown(thread)
+     or thread.user_id is not distinct from (select auth.uid()) then
+    return false;
+  end if;
+  -- Step 2: one more on the total; nothing about the reader is kept.
+  insert into public.forum_thread_views (thread_id, total) values (thread.id, 1)
+  on conflict (thread_id) do update
+  set total = public.forum_thread_views.total + 1, updated_at = now();
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."record_forum_thread_view"("thread_number" bigint) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."record_forum_thread_view"("thread_number" bigint) IS 'Adds one to a forum thread''s view total; keeps nothing about who opened it (GAPS-16d).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."record_passage_share"("story_slug" "text", "chapter_code" "text", "first_block" integer, "last_block" integer) RETURNS boolean
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -36996,6 +37289,11 @@ declare
 begin
   if not story.comments_enabled then
     raise exception 'The writer has turned comments off for this story.' using errcode = 'object_not_in_prerequisite_state';
+  end if;
+  -- MUST-1a: on Followers only, someone who doesn't follow the writer can't add a comment.
+  if not public.comment_audience_allows(story, caller_id) then
+    raise exception 'Only the writer''s followers can comment on this story.'
+      using errcode = 'insufficient_privilege', hint = 'followers_only';
   end if;
   if not public.is_active_member() then
     raise exception 'Your account can''t comment right now.' using errcode = 'insufficient_privilege';
@@ -39681,6 +39979,36 @@ ALTER FUNCTION "public"."set_character_updated_at"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."set_character_updated_at"() IS 'Trigger: keeps story_characters.updated_at current, except when only the map place changed (G10b2).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."set_checks_personal_details"("should_check" boolean) RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := public.require_live_profile();
+  caller public.profiles;
+begin
+  -- Step 1: a choice is needed.
+  if should_check is null then
+    raise exception 'Choose whether to get the heads-up.' using errcode = 'check_violation';
+  end if;
+  -- Step 2: under 18 it stays on (IDEA-20261108-6).
+  select * into caller from public.profiles where profiles.id = caller_id;
+  if not should_check and public.message_age_group(caller) <> 'adult' then
+    raise exception 'Under 18, the heads-up stays on.' using errcode = 'check_violation', hint = 'under_18';
+  end if;
+  -- Step 3: save it.
+  update public.profiles set checks_personal_details = should_check where profiles.id = caller_id;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_checks_personal_details"("should_check" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_checks_personal_details"("should_check" boolean) IS 'Saves whether the signed-in person gets the personal details heads-up; stays on under 18 (MUST-1b).';
 
 
 
@@ -46545,6 +46873,8 @@ begin
     category_id = new_category_id,
     completion_status = coalesce((changes ->> 'completion_status')::public.completion_status, completion_status),
     comments_enabled = coalesce((changes ->> 'comments_enabled')::boolean, comments_enabled),
+    -- MUST-1a: everyone or followers only; the column's check refuses anything else.
+    comment_audience = coalesce(changes ->> 'comment_audience', comment_audience),
     -- S1-E4-07: the writer's switch for quote cards.
     quote_cards_enabled = coalesce((changes ->> 'quote_cards_enabled')::boolean, quote_cards_enabled),
     -- S1-E4-11: the writer's switch for sharing the chapters' pictures.
@@ -47160,6 +47490,59 @@ ALTER FUNCTION "public"."verify_certificate"("code" "text") OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."verify_certificate"("code" "text") IS 'Public: whether a certificate code is valid, revoked or no longer available, never the name (S1-E8-12).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."vote_forum_post"("post_id" "uuid", "vote" "text") RETURNS "text"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  target public.forum_posts;
+  new_account_hours integer := coalesce(public.setting_value('downvote_new_account_hours'), '24')::text::integer;
+begin
+  -- Step 1: signed in, a vote we know, and a post the caller may vote on.
+  if caller_id is null then
+    raise exception 'Log in to vote.' using errcode = 'insufficient_privilege', hint = 'signed_out';
+  end if;
+  if vote is not null and vote not in ('up', 'down') then
+    raise exception 'A vote is up or down.' using errcode = 'invalid_parameter_value';
+  end if;
+  target := public.forum_post_vote_target(post_id);
+  -- Step 2: taking the vote back is always allowed.
+  if vote is null then
+    delete from public.forum_post_votes as votes
+    where votes.post_id = target.id and votes.user_id = caller_id;
+    return null;
+  end if;
+  -- Step 3: adding or swapping a vote is a write: the account gate, and an open thread.
+  if not public.is_active_member() then
+    raise exception 'Your account can''t vote right now.' using errcode = 'insufficient_privilege', hint = 'not_active';
+  end if;
+  if exists (select 1 from public.forum_threads
+             where forum_threads.id = target.thread_id and forum_threads.locked_at is not null) then
+    raise exception 'This thread is locked.' using errcode = 'check_violation', hint = 'thread:locked';
+  end if;
+  -- Step 4: one row per person per post; a new account's vote is kept but not counted.
+  insert into public.forum_post_votes (user_id, post_id, is_upvote, is_counted)
+  select caller_id, target.id, vote = 'up', profiles.created_at <= now() - make_interval(hours => new_account_hours)
+  from public.profiles where profiles.id = caller_id
+  on conflict on constraint forum_post_votes_one_per_person
+  do update set is_upvote = excluded.is_upvote;
+  -- Step 5: enough downvotes put the post in the queue.
+  if vote = 'down' then
+    perform public.open_forum_post_downvote_case(target);
+  end if;
+  return vote;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."vote_forum_post"("post_id" "uuid", "vote" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."vote_forum_post"("post_id" "uuid", "vote" "text") IS 'Sets, swaps or takes back the caller''s vote on a forum post; answers only the caller''s own vote (GAPS-16c, S1-E6-04).';
 
 
 
@@ -49226,6 +49609,25 @@ Earlier versions of edited forum posts; only moderation staff and the author rea
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."forum_post_votes" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "post_id" "uuid" NOT NULL,
+    "is_upvote" boolean NOT NULL,
+    "is_counted" boolean NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL
+);
+
+
+ALTER TABLE "public"."forum_post_votes" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."forum_post_votes" IS 'kind: user_action
+One vote per person per forum post: an upvote everyone can count, or a private downvote only moderation sees (GAPS-16c, S1-E6-04). Read by the voter (their own) and moderation staff only.';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."forum_read_marks" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "user_id" "uuid" NOT NULL,
@@ -49245,6 +49647,23 @@ COMMENT ON TABLE "public"."forum_read_marks" IS 'kind: user_action
 
 
 COMMENT ON COLUMN "public"."forum_read_marks"."forum_id" IS 'The forum marked as read; null for the whole board.';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."forum_thread_follows" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "thread_id" "uuid" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL
+);
+
+
+ALTER TABLE "public"."forum_thread_follows" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."forum_thread_follows" IS 'kind: user_action
+Which forum threads a member follows, so new replies reach their notifications (GAPS-16a). Private to the member.';
 
 
 
@@ -49269,6 +49688,21 @@ The last post a person has seen in each forum thread they opened (S1-E8-04). Pri
 
 
 COMMENT ON COLUMN "public"."forum_thread_reads"."last_read_post_number" IS 'The highest post number they have had on screen.';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."forum_thread_views" (
+    "thread_id" "uuid" NOT NULL,
+    "total" bigint DEFAULT 0 NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "forum_thread_views_total_not_negative" CHECK (("total" >= 0))
+);
+
+
+ALTER TABLE "public"."forum_thread_views" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."forum_thread_views" IS 'kind: platform. How many times each forum thread was opened: a total only, never who (GAPS-16d).';
 
 
 
@@ -51586,6 +52020,16 @@ ALTER TABLE ONLY "public"."forum_post_revisions"
 
 
 
+ALTER TABLE ONLY "public"."forum_post_votes"
+    ADD CONSTRAINT "forum_post_votes_one_per_person" UNIQUE ("user_id", "post_id");
+
+
+
+ALTER TABLE ONLY "public"."forum_post_votes"
+    ADD CONSTRAINT "forum_post_votes_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."forum_posts"
     ADD CONSTRAINT "forum_posts_number_in_thread" UNIQUE ("thread_id", "post_number");
 
@@ -51606,6 +52050,16 @@ ALTER TABLE ONLY "public"."forum_read_marks"
 
 
 
+ALTER TABLE ONLY "public"."forum_thread_follows"
+    ADD CONSTRAINT "forum_thread_follows_one_per_thread" UNIQUE ("user_id", "thread_id");
+
+
+
+ALTER TABLE ONLY "public"."forum_thread_follows"
+    ADD CONSTRAINT "forum_thread_follows_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."forum_thread_reads"
     ADD CONSTRAINT "forum_thread_reads_one_each" UNIQUE ("user_id", "thread_id");
 
@@ -51613,6 +52067,11 @@ ALTER TABLE ONLY "public"."forum_thread_reads"
 
 ALTER TABLE ONLY "public"."forum_thread_reads"
     ADD CONSTRAINT "forum_thread_reads_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."forum_thread_views"
+    ADD CONSTRAINT "forum_thread_views_pkey" PRIMARY KEY ("thread_id");
 
 
 
@@ -52870,6 +53329,10 @@ CREATE INDEX "forum_post_revisions_post" ON "public"."forum_post_revisions" USIN
 
 
 
+CREATE INDEX "forum_post_votes_post_id" ON "public"."forum_post_votes" USING "btree" ("post_id");
+
+
+
 CREATE INDEX "forum_posts_author_recent" ON "public"."forum_posts" USING "btree" ("user_id", "created_at" DESC);
 
 
@@ -52879,6 +53342,10 @@ CREATE INDEX "forum_posts_moved_from_thread_id_fk_idx" ON "public"."forum_posts"
 
 
 CREATE INDEX "forum_read_marks_forum_id_fk_idx" ON "public"."forum_read_marks" USING "btree" ("forum_id");
+
+
+
+CREATE INDEX "forum_thread_follows_thread_id_fk_idx" ON "public"."forum_thread_follows" USING "btree" ("thread_id");
 
 
 
@@ -53079,6 +53546,10 @@ CREATE INDEX "notifications_comment_id_fk_idx" ON "public"."notifications" USING
 
 
 CREATE INDEX "notifications_data_request_id_fk_idx" ON "public"."notifications" USING "btree" ("data_request_id");
+
+
+
+CREATE INDEX "notifications_forum_thread_id_fk_idx" ON "public"."notifications" USING "btree" ("forum_thread_id") WHERE ("forum_thread_id" IS NOT NULL);
 
 
 
@@ -54042,6 +54513,18 @@ CREATE OR REPLACE TRIGGER "forum_post_revisions_set_updated_at" BEFORE UPDATE ON
 
 
 
+CREATE OR REPLACE TRIGGER "forum_post_votes_refuse_user_id_change" BEFORE UPDATE ON "public"."forum_post_votes" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"('user_id');
+
+
+
+CREATE OR REPLACE TRIGGER "forum_post_votes_set_updated_at" BEFORE UPDATE ON "public"."forum_post_votes" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "forum_posts_follow_on_insert" AFTER INSERT ON "public"."forum_posts" FOR EACH ROW EXECUTE FUNCTION "public"."forum_thread_follow_on_post"();
+
+
+
 CREATE OR REPLACE TRIGGER "forum_posts_refuse_locked_edit" BEFORE UPDATE OF "body" ON "public"."forum_posts" FOR EACH ROW WHEN (("new"."body" IS DISTINCT FROM "old"."body")) EXECUTE FUNCTION "public"."refuse_locked_space_edit"();
 
 
@@ -54063,6 +54546,14 @@ CREATE OR REPLACE TRIGGER "forum_read_marks_refuse_user_id_change" BEFORE UPDATE
 
 
 CREATE OR REPLACE TRIGGER "forum_read_marks_set_updated_at" BEFORE UPDATE ON "public"."forum_read_marks" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "forum_thread_follows_refuse_user_id_change" BEFORE UPDATE ON "public"."forum_thread_follows" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"();
+
+
+
+CREATE OR REPLACE TRIGGER "forum_thread_follows_set_updated_at" BEFORE UPDATE ON "public"."forum_thread_follows" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
 
@@ -55384,6 +55875,16 @@ ALTER TABLE ONLY "public"."forum_post_revisions"
 
 
 
+ALTER TABLE ONLY "public"."forum_post_votes"
+    ADD CONSTRAINT "forum_post_votes_post_id_fkey" FOREIGN KEY ("post_id") REFERENCES "public"."forum_posts"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."forum_post_votes"
+    ADD CONSTRAINT "forum_post_votes_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
 ALTER TABLE ONLY "public"."forum_posts"
     ADD CONSTRAINT "forum_posts_moved_from_thread_id_fkey" FOREIGN KEY ("moved_from_thread_id") REFERENCES "public"."forum_threads"("id") ON DELETE SET NULL;
 
@@ -55409,6 +55910,16 @@ ALTER TABLE ONLY "public"."forum_read_marks"
 
 
 
+ALTER TABLE ONLY "public"."forum_thread_follows"
+    ADD CONSTRAINT "forum_thread_follows_thread_id_fkey" FOREIGN KEY ("thread_id") REFERENCES "public"."forum_threads"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."forum_thread_follows"
+    ADD CONSTRAINT "forum_thread_follows_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
+
+
+
 ALTER TABLE ONLY "public"."forum_thread_reads"
     ADD CONSTRAINT "forum_thread_reads_thread_id_fkey" FOREIGN KEY ("thread_id") REFERENCES "public"."forum_threads"("id") ON DELETE CASCADE;
 
@@ -55416,6 +55927,11 @@ ALTER TABLE ONLY "public"."forum_thread_reads"
 
 ALTER TABLE ONLY "public"."forum_thread_reads"
     ADD CONSTRAINT "forum_thread_reads_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."forum_thread_views"
+    ADD CONSTRAINT "forum_thread_views_thread_id_fkey" FOREIGN KEY ("thread_id") REFERENCES "public"."forum_threads"("id") ON DELETE CASCADE;
 
 
 
@@ -55676,6 +56192,11 @@ ALTER TABLE ONLY "public"."notifications"
 
 ALTER TABLE ONLY "public"."notifications"
     ADD CONSTRAINT "notifications_data_request_id_fkey" FOREIGN KEY ("data_request_id") REFERENCES "public"."data_requests"("id") ON DELETE SET NULL;
+
+
+
+ALTER TABLE ONLY "public"."notifications"
+    ADD CONSTRAINT "notifications_forum_thread_id_fkey" FOREIGN KEY ("forum_thread_id") REFERENCES "public"."forum_threads"("id") ON DELETE CASCADE;
 
 
 
@@ -57221,6 +57742,17 @@ COMMENT ON POLICY "forum_post_revisions_select_own" ON "public"."forum_post_revi
 
 
 
+ALTER TABLE "public"."forum_post_votes" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "forum_post_votes_select_moderation" ON "public"."forum_post_votes" FOR SELECT TO "authenticated" USING (( SELECT "public"."staff_may"('moderation'::"text", 'view'::"text") AS "staff_may"));
+
+
+
+CREATE POLICY "forum_post_votes_select_own" ON "public"."forum_post_votes" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
+
+
+
 ALTER TABLE "public"."forum_posts" ENABLE ROW LEVEL SECURITY;
 
 
@@ -57251,6 +57783,17 @@ COMMENT ON POLICY "forum_read_marks_select_own" ON "public"."forum_read_marks" I
 
 
 
+ALTER TABLE "public"."forum_thread_follows" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "forum_thread_follows_select_own" ON "public"."forum_thread_follows" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
+
+
+
+COMMENT ON POLICY "forum_thread_follows_select_own" ON "public"."forum_thread_follows" IS 'Allows a member to read the forum threads they follow, and nobody else''s (GAPS-16a).';
+
+
+
 ALTER TABLE "public"."forum_thread_reads" ENABLE ROW LEVEL SECURITY;
 
 
@@ -57259,6 +57802,13 @@ CREATE POLICY "forum_thread_reads_select_own" ON "public"."forum_thread_reads" F
 
 
 COMMENT ON POLICY "forum_thread_reads_select_own" ON "public"."forum_thread_reads" IS 'A person reads their own thread reads; nobody else (S1-E8-04).';
+
+
+
+ALTER TABLE "public"."forum_thread_views" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "forum_thread_views_select_moderation" ON "public"."forum_thread_views" FOR SELECT TO "authenticated" USING (( SELECT "public"."staff_may"('moderation'::"text", 'view'::"text") AS "staff_may"));
 
 
 
@@ -60539,6 +61089,10 @@ REVOKE ALL ON FUNCTION "public"."check_story_labels"("labels" "jsonb") FROM PUBL
 
 
 
+REVOKE ALL ON FUNCTION "public"."checks_personal_details_of"("target" "public"."profiles") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."class_certificates"("slug" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."class_certificates"("slug" "text") TO "authenticated";
 
@@ -60700,6 +61254,10 @@ REVOKE ALL ON FUNCTION "public"."cms_live_versions"("wanted_kind" "text") FROM P
 
 
 REVOKE ALL ON FUNCTION "public"."cms_text_problem"("field_value" "text", "field_name" "text", "longest" integer) FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."comment_audience_allows"("story" "public"."stories", "caller_id" "uuid") FROM PUBLIC;
 
 
 
@@ -61301,6 +61859,11 @@ REVOKE ALL ON FUNCTION "public"."fold_old_daily_totals"() FROM PUBLIC;
 
 
 
+REVOKE ALL ON FUNCTION "public"."follow_forum_thread"("thread_number" bigint, "wanted" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."follow_forum_thread"("thread_number" bigint, "wanted" boolean) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."follow_story"("story_slug" "text", "should_follow" boolean) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."follow_story"("story_slug" "text", "should_follow" boolean) TO "authenticated";
 
@@ -61402,6 +61965,14 @@ REVOKE ALL ON FUNCTION "public"."forum_post_state_for_caller"("target" "public".
 
 
 
+REVOKE ALL ON FUNCTION "public"."forum_post_vote_target"("post_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."forum_post_votes_json"("target" "public"."forum_posts", "can_vote" boolean) FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."forum_post_wait_minutes"("author_id" "uuid") FROM PUBLIC;
 
 
@@ -61424,6 +61995,10 @@ REVOKE ALL ON FUNCTION "public"."forum_search_snippet"("body" "text") FROM PUBLI
 
 GRANT ALL ON FUNCTION "public"."forum_thread"("thread_number" bigint, "after_post" integer, "up_to_post" integer) TO "anon";
 GRANT ALL ON FUNCTION "public"."forum_thread"("thread_number" bigint, "after_post" integer, "up_to_post" integer) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."forum_thread_follow_on_post"() FROM PUBLIC;
 
 
 
@@ -62563,6 +63138,10 @@ REVOKE ALL ON FUNCTION "public"."open_downvote_case"("target" "public"."comments
 
 
 
+REVOKE ALL ON FUNCTION "public"."open_forum_post_downvote_case"("target" "public"."forum_posts") FROM PUBLIC;
+
+
+
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."picture_checks" TO "service_role";
 GRANT SELECT ON TABLE "public"."picture_checks" TO "authenticated";
 
@@ -63120,6 +63699,12 @@ GRANT ALL ON FUNCTION "public"."record_chapter_read"("story_slug" "text", "chapt
 
 REVOKE ALL ON FUNCTION "public"."record_chapter_share"("story_slug" "text", "chapter_code" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."record_chapter_share"("story_slug" "text", "chapter_code" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."record_forum_thread_view"("thread_number" bigint) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."record_forum_thread_view"("thread_number" bigint) TO "anon";
+GRANT ALL ON FUNCTION "public"."record_forum_thread_view"("thread_number" bigint) TO "authenticated";
 
 
 
@@ -63753,6 +64338,11 @@ GRANT ALL ON FUNCTION "public"."set_character_public_parts"("character_id" "uuid
 
 
 REVOKE ALL ON FUNCTION "public"."set_character_updated_at"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."set_checks_personal_details"("should_check" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_checks_personal_details"("should_check" boolean) TO "authenticated";
 
 
 
@@ -64797,6 +65387,11 @@ GRANT ALL ON FUNCTION "public"."verify_certificate"("code" "text") TO "authentic
 
 
 
+REVOKE ALL ON FUNCTION "public"."vote_forum_post"("post_id" "uuid", "vote" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."vote_forum_post"("post_id" "uuid", "vote" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."wait_minutes_until_free"("oldest_in_window" timestamp with time zone) FROM PUBLIC;
 
 
@@ -65190,13 +65785,28 @@ GRANT SELECT ON TABLE "public"."forum_post_revisions" TO "authenticated";
 
 
 
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."forum_post_votes" TO "service_role";
+GRANT SELECT ON TABLE "public"."forum_post_votes" TO "authenticated";
+
+
+
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."forum_read_marks" TO "service_role";
 GRANT SELECT ON TABLE "public"."forum_read_marks" TO "authenticated";
 
 
 
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."forum_thread_follows" TO "service_role";
+GRANT SELECT ON TABLE "public"."forum_thread_follows" TO "authenticated";
+
+
+
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."forum_thread_reads" TO "service_role";
 GRANT SELECT ON TABLE "public"."forum_thread_reads" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."forum_thread_views" TO "service_role";
+GRANT SELECT ON TABLE "public"."forum_thread_views" TO "authenticated";
 
 
 

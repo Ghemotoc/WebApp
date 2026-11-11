@@ -98,5 +98,14 @@
     "hint": "Your level comes from chapters read and stories finished. Hidden means only you see it on your profile.",
     "hidden": "Hidden",
     "shown": "Show it on the profile"
+  },
+  "personalDetails": {
+    "label": "Ask before I share contact details",
+    "hint": "Before a comment, post, message or bio goes out, we check in this browser for something that looks like a phone number, an email address, a street address or a school’s name, and ask first. Nothing is saved or sent to anyone.",
+    "hintUnder18": "On for everyone under 18. Before a comment, post, message or bio goes out, we check in this browser for something that looks like contact details, and ask first. Nothing is saved or sent to anyone.",
+    "question": "This looks like personal contact details. Post anyway?",
+    "explain": "A phone number, an email address, a street address or a school’s name lets people find you. Only you see this question.",
+    "change": "Change it",
+    "postAnyway": "Post anyway"
   }
 }

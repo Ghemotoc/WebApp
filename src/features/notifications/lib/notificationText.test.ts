@@ -44,6 +44,7 @@ const newChapter: AppNotification = {
   dataRequest: null,
   landingPage: null,
   liveSession: null,
+  forumThread: null,
   writerRank: null,
   ownHandle: null,
   isRequired: false,
@@ -540,10 +541,51 @@ describe('notificationText', () => {
       story: null,
       chapter: null,
       liveSession: null,
+      forumThread: null,
     };
     const text = notificationText(englishT(), goneRow, null);
     expect(text.what).toContain('cancelled');
     expect(text.href).toBeNull();
+  });
+
+  it('new replies in a followed thread name the people and the thread (GAPS-16a)', () => {
+    const replyRow: AppNotification = {
+      ...newChapter,
+      kind: 'forum_reply',
+      actors: [
+        { handle: 'inkwolf', displayName: 'Ink Wolf' },
+        { handle: 'corbu', displayName: 'corbu' },
+      ],
+      actorCount: 4,
+      story: null,
+      chapter: null,
+      forumThread: { number: 42, forumSlug: 'first-chapters', title: 'Show your first lines' },
+    };
+    const text = notificationText(englishT(), replyRow, null);
+    expect(text.who).toBe('Ink Wolf, corbu and 2 others');
+    expect(text.what).toBe('replied in “Show your first lines”.');
+    expect(text.href).toBe('/forums/first-chapters/42');
+    expect(text.actionLabel).toBe('Open the thread');
+  });
+
+  it('in Romanian, several people "au răspuns" (GAPS-16a)', () => {
+    const i18n = createI18n('ro');
+    registerNotificationsTranslations(i18n);
+    const replyRow: AppNotification = {
+      ...newChapter,
+      kind: 'forum_reply',
+      actorCount: 3,
+      story: null,
+      chapter: null,
+      forumThread: { number: 7, forumSlug: 'reading', title: 'Ce citiți?' },
+    };
+    const text = notificationText(i18n.getFixedT('ro', 'notifications'), replyRow, null);
+    expect(text.what).toBe('au răspuns în „Ce citiți?”.');
+  });
+
+  it('a followed thread the reader can no longer open has no link (GAPS-16a)', () => {
+    const goneRow: AppNotification = { ...newChapter, kind: 'forum_reply', forumThread: null };
+    expect(notificationText(englishT(), goneRow, null).href).toBeNull();
   });
 
   it('an invitation to the home page comes from the team and links to the hub (GAPS-13)', () => {

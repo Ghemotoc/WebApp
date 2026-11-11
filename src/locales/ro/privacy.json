@@ -98,5 +98,14 @@
     "hint": "Nivelul vine din capitolele citite și poveștile terminate. Ascuns înseamnă că doar tu îl vezi pe profil.",
     "hidden": "Ascuns",
     "shown": "Arată-l pe profil"
+  },
+  "personalDetails": {
+    "label": "Întreabă-mă înainte să dau date de contact",
+    "hint": "Înainte să trimiți un comentariu, o postare, un mesaj sau descrierea profilului, verificăm în acest browser dacă apare ceva ce seamănă cu un număr de telefon, o adresă de email, o adresă de stradă sau numele unei școli și te întrebăm întâi. Nu se salvează și nu se trimite nimic nimănui.",
+    "hintUnder18": "Pornit pentru toți cei sub 18 ani. Înainte să trimiți un comentariu, o postare, un mesaj sau descrierea profilului, verificăm în acest browser dacă apare ceva ce seamănă cu date de contact și te întrebăm întâi. Nu se salvează și nu se trimite nimic nimănui.",
+    "question": "Pare că sunt date de contact personale. Publici oricum?",
+    "explain": "Un număr de telefon, o adresă de email, o adresă de stradă sau numele unei școli îi ajută pe alții să te găsească. Doar tu vezi această întrebare.",
+    "change": "Modifică",
+    "postAnyway": "Publică oricum"
   }
 }

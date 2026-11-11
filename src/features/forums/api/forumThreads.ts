@@ -48,6 +48,16 @@ export interface ForumQuote {
   forumSlug: string | null;
 }
 
+/**
+ * The vote chip under a post (GAPS-16c): the number of upvotes, the reader's own vote and whether
+ * they may vote. There is never a downvote count (Q22: downvotes are private).
+ */
+export interface ForumPostVotes {
+  up: number;
+  mine: 'up' | 'down' | null;
+  canVote: boolean;
+}
+
 /** One post in a thread. */
 export interface ForumPost {
   id: string;
@@ -82,6 +92,8 @@ export interface ForumPost {
   wasMoved: boolean;
   /** The reader may hide, show again or move this reply in its space (GAPS-10). */
   canSpaceModerate: boolean;
+  /** The vote chip (GAPS-16c); null for a deleted or removed post. */
+  votes: ForumPostVotes | null;
 }
 
 /** The space a thread lives in (FORUMS-2a, S1-E8-06): its address and name. */
@@ -98,11 +110,15 @@ export interface ForumThreadHeader {
   forumSlug: string;
   author: ForumPerson;
   isMine: boolean;
+  /** The reader follows it and hears about new replies (GAPS-16a); false when signed out. */
+  isFollowing: boolean;
   state: 'live' | 'hidden';
   createdAt: string;
   replyCount: number;
   writerCount: number;
   lastPostAt: string;
+  /** How many times the thread was opened (GAPS-16d): a total only, never who. */
+  viewCount: number;
   /** Pinned to the top of its forum by a moderator (S1-E8-05). */
   isSticky: boolean;
   /** Null while open; when and why the moderation team locked it (S1-E8-05). */
@@ -275,6 +291,19 @@ function hiddenByFrom(value: Json | undefined): 'space' | 'team' | null {
 }
 
 /**
+ * Reads a post's vote chip.
+ *
+ * @param value - forum_post_json()'s "votes": {up, mine, can_vote}, or null
+ * @returns the chip, or null when the post shows none
+ */
+function votesFrom(value: Json | undefined): ForumPostVotes | null {
+  const votes = objectOf(value);
+  if (typeof votes['up'] !== 'number') return null;
+  const mine = votes['mine'] === 'up' || votes['mine'] === 'down' ? votes['mine'] : null;
+  return { up: votes['up'], mine, canVote: votes['can_vote'] === true };
+}
+
+/**
  * Reads one post.
  *
  * @param row - forum_post_json()'s answer
@@ -302,6 +331,7 @@ export function postFrom(row: JsonObject): ForumPost {
     hiddenBy: hiddenByFrom(row['hidden_by']),
     wasMoved: row['was_moved'] === true,
     canSpaceModerate: row['can_space_moderate'] === true,
+    votes: votesFrom(row['votes']),
   };
 }
 
@@ -332,11 +362,13 @@ function headerFrom(row: JsonObject): ForumThreadHeader {
     forumSlug: String(row['forum_slug']),
     author: personFrom(row['author']),
     isMine: row['is_mine'] === true,
+    isFollowing: row['is_following'] === true,
     state: row['state'] === 'hidden' ? 'hidden' : 'live',
     createdAt: String(row['created_at']),
     replyCount: Number(row['reply_count']),
     writerCount: Number(row['writer_count']),
     lastPostAt: String(row['last_post_at']),
+    viewCount: Number(row['view_count'] ?? 0),
     isSticky: row['is_sticky'] === true,
     lock: lockFrom(row['lock']),
     canReply: row['can_reply'] === true,

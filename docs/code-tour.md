@@ -1642,7 +1642,7 @@ Most screens draw their buttons, fields and cards with plain Tailwind classes, s
 
 ### The shell: top bar, phone headers and tab bar (G4 SHELL)
 
-`AppLayout` draws one header at a time. `useIsNarrowScreen` follows the browser's `(max-width: 1023.98px)` query. From 1024 px the website `TopBar` is a glass pill (`glass-pill` in `src/styles/index.css`) holding the logo, `NavTrack` (the main links in a recessed track with the white water bubble measured under the current page; `MessagesNavLink` joins it while signed in), `HeaderSearch` (a search form that opens `/search?q=`; left out on the Search page, which has its own field), then `WriteLink`, `NotificationBell` and `AccountLinks`. Below 1024 px `shellScreenFor(pathname)` in `src/app/shellScreens.ts` decides: an address in its `focusScreens` list (the editor, reading, chat, threads, sign-up, log-in and the rest) gets `FocusHeader` (Back and a short title from `shell.focus.*`; Back goes to the previous page when it is ours, otherwise to the rule's parent address), and every other address gets `PhoneHeader` (the logo pill and a pill with the bell, `MessagesHeaderLink` and the account bead) with `TabBar` fixed at the bottom (Discover, Library, Write, Forums and a round Search). A new page that people type or read on adds one line to `focusScreens`. The header icons are plain line drawings in `src/components/icons/NavIcon.tsx`; the action icons of the messages and notifications pages (Block, Send, Settings, plus, info, the tick, the shield, the lock and the row icons) are in `ActionIcon.tsx`, kept apart so the bundle every page loads stays small (the reader has a script budget). Tests: `src/app/shellScreens.test.ts`, `src/app/shell/AppLayout.test.tsx`.
+`AppLayout` draws one header at a time. `useIsNarrowScreen` follows the browser's `(max-width: 1023.98px)` query. Every header is sticky and floats over the page however far it scrolls (NAV-1): its pills are `glass-float` (almost solid, no blur), its own box takes no clicks (`pointer-events-none`, the pills take them back), and `scroll-padding-top` on `html` keeps anchors and keyboard focus below it (tested in `e2e/floating-header.spec.ts`). From 1024 px the website `TopBar` is one such pill holding the logo, `NavTrack` (the main links in a recessed track with the white water bubble measured under the current page; `MessagesNavLink` joins it while signed in), `HeaderSearch` (a search form that opens `/search?q=`; left out on the Search page, which has its own field), then `WriteLink`, `NotificationBell` and `AccountLinks`. Below 1024 px `shellScreenFor(pathname)` in `src/app/shellScreens.ts` decides: an address in its `focusScreens` list (the editor, reading, chat, threads, sign-up, log-in and the rest) gets `FocusHeader` (Back and a short title from `shell.focus.*`; Back goes to the previous page when it is ours, otherwise to the rule's parent address), and every other address gets `PhoneHeader` (the logo pill and a pill with the bell, `MessagesHeaderLink` and the account bead) with `TabBar` fixed at the bottom (Discover, Library, Write, Forums and a round Search). A new page that people type or read on adds one line to `focusScreens`. The header icons are plain line drawings in `src/components/icons/NavIcon.tsx`; the action icons of the messages and notifications pages (Block, Send, Settings, plus, info, the tick, the shield, the lock and the row icons) are in `ActionIcon.tsx`, kept apart so the bundle every page loads stays small (the reader has a script budget). Tests: `src/app/shellScreens.test.ts`, `src/app/shell/AppLayout.test.tsx`.
 
 ### Featured this week (S1-E5-10, LOOK-4a)
 
@@ -2146,6 +2146,51 @@ The liquid glass Library board draws "Your lists": lists of stories a reader mak
 - Who sees what: both links come from `forum_thread_pointer_json()`, which answers null unless `forum_thread_is_shown()` says the caller may open that thread, so a strip or a link never tells anyone a hidden thread's title. A moderator pointing at a thread they may not open gets the same "isn't there" as for a number that doesn't exist.
 - Preview: "Preview" beside "Post reply" opens `ReplyPreview`, which draws what is in the box with `ForumPostText`, the component a posted reply uses (so raw HTML is never drawn). It is made on the reader's device and sends nothing.
 - Tests: `supabase/tests/database/330-forum-rules-and-pointers.test.sql`, `src/features/forums/lib/forumAddresses.test.ts`, `src/features/forums/api/forumModeration.test.ts`, `e2e/forum-rules-and-pointers.spec.ts`.
+
+## A forum thread's view total (GAPS-16d)
+
+- Where it lives: `src/features/forums/hooks/useRecordThreadView.ts` (called by `ThreadPage`), `api/forumViews.ts`, the Views row in `ThreadSidePanel`, and `supabase/migrations/…_gaps16d_thread_views.sql`.
+- The table: `forum_thread_views` (thread and total, one row per thread; no user ID). Moderation staff may read it; members see the number only through the thread page.
+- How a view travels: the thread loads → `useRecordThreadView()` checks sessionStorage (`forum-counted-threads`, thread numbers only) → `record_forum_thread_view(thread_number)` adds one unless the caller is the starter or may not open the thread → `forum_thread_header_json()` answers `view_count`.
+- Tests: `supabase/tests/database/345-thread-views.test.sql`, `src/features/forums/hooks/useRecordThreadView.test.tsx`, `e2e/forum-thread-views.spec.ts`.
+
+## A heads-up before sharing personal details (MUST-1b)
+
+- Where it lives: `src/features/privacy/lib/personalDetails.ts` (the patterns, pure and unit-tested), `hooks/usePersonalDetailsCheck.ts` (`usePersonalDetailsCheck` for the comment box, `usePersonalDetailsGate` for the forum reply and new thread forms, the message box and the bio), `components/PersonalDetailsNote.tsx` and the switch `components/PersonalDetailsSwitch.tsx` in Settings › Privacy; `supabase/migrations/…_must1b_personal_details_check.sql`.
+- How a send travels: Post → the box asks the gate → `findPersonalDetails()` in the browser → if something looks like contact details, the note asks "Post anyway?" and the send waits → "Post anyway" sends the words as typed, "Change it" goes back to the box. Nothing about the check leaves the browser.
+- The setting: `profiles.checks_personal_details` (null until an adult chooses); `checks_personal_details_of()` makes it always on under 18; `my_privacy_settings()` answers it and `set_checks_personal_details()` saves it.
+- Tests: `src/features/privacy/lib/personalDetails.test.ts`, `supabase/tests/database/347-personal-details-check.test.sql`, `e2e/personal-details-heads-up.spec.ts`.
+
+## Who can comment on a story (MUST-1a)
+
+- Where it lives: `CommentAudienceField` in `src/features/writing/components/StoryStatusSection.tsx` (story settings), `CommentEntry` in `src/features/comments/components/CommentsSection.tsx` and `ThreadFoot` in `ParagraphThread.tsx`, and `supabase/migrations/…_must1a_comment_audience.sql`.
+- The data: `stories.comments_enabled` (Nobody when off) and `stories.comment_audience` (`everyone` or `followers`). `update_my_story()` saves both; `create_story()` starts a writer aged 13 to 17 at `followers`.
+- The check: `comment_audience_allows(story, caller)` is true on Everyone, for the writer, and for a follower (`follows_users`). `require_comment_allowed()` refuses anyone else (42501, hint `followers_only`, shown by `commentErrorFrom()`), and `chapter_comments()` and `paragraph_comments()` answer `audience_allows_me` so the page shows the line instead of the box.
+- Tests: `supabase/tests/database/346-comment-audience.test.sql`, `src/features/comments/api/comments.test.ts`, `e2e/comment-audience.spec.ts`, `e2e/story-settings.spec.ts`.
+
+## Votes on forum posts (GAPS-16c)
+
+- Where it lives: `src/features/forums/components/PostVotes.tsx` (at the start of `PostActions`), the "How votes work" box in `ThreadSidePanel`, `hooks/usePostVote.ts`, `api/forumVotes.ts`, and `supabase/migrations/…_gaps16c_forum_post_votes.sql`.
+- The table: `forum_post_votes` (member, post, up or down, and whether a downvote counts; one row per member per post). The voter reads their own row, moderation staff read every row, nobody writes to it directly.
+- How a vote travels: the Upvote chip or "Downvote privately" → `usePostVote()` → `vote_forum_post(post_id, 'up' | 'down' | null)` → `forum_post_vote_target()` checks the post is live in a thread the member may open and isn't theirs → the account gate and an open thread for a new vote → one row upserted → a downvote may call `open_forum_post_downvote_case()`, which opens a lowest-tier `downvotes` case at the same threshold comments use.
+- What the page gets: `forum_post_json()` answers `votes` = `{up, mine, can_vote}` from `forum_post_votes_json()`. There is never a downvote count (Q22).
+- Tests: `supabase/tests/database/344-forum-post-votes.test.sql`, `e2e/forum-post-votes.spec.ts`.
+
+## Formatting buttons on forum posts (GAPS-16b)
+
+- Where it lives: `src/features/forums/components/PostFormatToolbar.tsx` (drawn by `PostEditor`, so the reply box, the new-thread box and the edit box all have it), `hooks/usePostFormatting.ts` and `lib/postFormatting.ts`; the link, quote and list icons are in `src/components/icons/ActionIcon.tsx`.
+- How a press travels: a button (or Ctrl+B, Ctrl+I in the box) → `usePostFormatting().format()` reads the box's text and selection → `applyPostFormat()` works out the new text and what to select (pure, unit-tested) → the form gets the new text through `onChange` → after the box redraws, a layout effect focuses it and selects the words, so typing goes on.
+- Nothing new reaches the server: the buttons only type the Markdown a writer could type (`**`, `*`, `[words](https://)`, `> `, `- `), which `check_forum_post_text()` and `ForumPostText` already handle.
+- Tests: `src/features/forums/lib/postFormatting.test.ts`, `e2e/forum-formatting.spec.ts`.
+
+## Following a forum thread (GAPS-16a)
+
+- Where it lives: `src/features/forums/components/ThreadFollowButton.tsx` (in `ThreadSidePanel`), `hooks/useThreadFollow.ts`, `api/forumFollows.ts`, `src/features/notifications/lib/forumReplyText.ts`, and `supabase/migrations/…_gaps16a_forum_reply_kind.sql` and `…_gaps16a_thread_follows.sql`.
+- The table: `forum_thread_follows` (member and thread, one row each; the member reads only their own rows, nobody writes to it directly). `notifications.forum_thread_id` says which thread a `forum_reply` row is about.
+- How a follow travels: "Follow thread" → `useThreadFollow()` → `follow_forum_thread(thread_number, wanted)`, which checks the member may open the thread (`forum_thread_is_shown()`) before following; unfollowing always works → `forum_thread_header_json()` answers `is_following` and the button turns to "Following".
+- How a reply reaches followers: the trigger `forum_posts_follow_on_insert` runs `forum_thread_follow_on_post()` after every new post. Post #1 follows the thread for its starter. A reply calls `notify()` for every other follower with the group key `forum_reply:<thread>` and a 24-hour window, so a day's replies share one row that names the newest people. `notify()` skips blocks either way.
+- Who sees the row: `notification_is_shown()` drops it once the reader can no longer open the thread (deleted, hidden or removed by moderators, a space they left, a starter they block), and `notification_json()` answers `forum_thread` (number, forum and title) only while they can. `forumReplyText()` writes "ana and 3 others replied in …" with "Open the thread".
+- Tests: `supabase/tests/database/343-thread-follows.test.sql`, `src/features/notifications/lib/notificationText.test.ts`, `e2e/forum-thread-follows.spec.ts`.
 
 ## A space hides and moves replies, and Share on a space (GAPS-10)
 

@@ -57,8 +57,10 @@ export function TopBar({
   const homeAddress = useHomeAddress();
 
   return (
-    <header className="relative z-10 px-[clamp(16px,4vw,64px)] pt-5">
-      <div className="glass-pill mx-auto flex max-w-[1280px] flex-wrap items-center gap-x-4 gap-y-2.5 rounded-[36px] py-2 pr-2 pl-5">
+    // NAV-1 (Robert, 10 Nov 2026): the bar floats over the page however far it scrolls. The
+    // header's own box lets clicks through to the page around the pill; the pill takes them.
+    <header className="pointer-events-none sticky top-0 z-30 px-[clamp(16px,4vw,64px)] pt-5">
+      <div className="glass-float pointer-events-auto mx-auto flex max-w-[1280px] flex-wrap items-center gap-x-4 gap-y-2.5 rounded-[36px] py-2 pr-2 pl-5">
         <Link
           to={homeAddress}
           className="inline-flex min-h-11 items-center font-heading text-[22px] font-extrabold tracking-[-0.01em] text-heading no-underline"

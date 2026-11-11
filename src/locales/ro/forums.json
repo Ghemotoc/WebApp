@@ -63,6 +63,7 @@
     "facts": {
       "title": "Despre discuție",
       "replies": "Răspunsuri",
+      "views": "Vizualizări",
       "writers": "Participanți",
       "lastReply": "Ultimul răspuns"
     },
@@ -70,7 +71,14 @@
       "title": "Ceva nu e în regulă?",
       "text": "Apasă Raportează la orice mesaj. Un om din echipa noastră citește fiecare raport și îți spune ce am hotărât."
     },
-    "reportLabel": "discuția „{{title}}”"
+    "reportLabel": "discuția „{{title}}”",
+    "follow": {
+      "follow": "Urmărește discuția",
+      "following": "Urmărești",
+      "hintOff": "Primește o notificare când răspunde cineva.",
+      "hintOn": "Primești o notificare când răspunde cineva.",
+      "failed": "Nu a mers. Încearcă din nou."
+    }
   },
   "post": {
     "label": "Mesajul {{number}}, de {{name}}",
@@ -112,7 +120,16 @@
     "reply": "Răspuns",
     "help": "Doar formatare simplă: aldine, cursive, linkuri, citate și liste.",
     "counter": "{{count}} / {{limit}}",
-    "counterLabel": "{{count}} din {{limit}} caractere folosite"
+    "counterLabel": "{{count}} din {{limit}} caractere folosite",
+    "format": {
+      "label": "Formatare",
+      "bold": "Aldine",
+      "italic": "Cursive",
+      "link": "Adaugă un link",
+      "quote": "Citat",
+      "list": "Listă",
+      "linkWords": "textul linkului"
+    }
   },
   "reply": {
     "heading": "Răspuns",
@@ -380,6 +397,22 @@
       "target_same": "Mesajul e deja în acea discuție.",
       "target_locked": "Discuția aceea e închisă.",
       "unreachable": "Nu am putut salva. Verifică-ți conexiunea și încearcă din nou."
+    }
+  },
+  "votes": {
+    "count_one": "{{count}} vot pozitiv",
+    "count_few": "{{count}} voturi pozitive",
+    "count_other": "{{count}} de voturi pozitive",
+    "upvoteLabel_one": "{{count}} vot pozitiv. Votează pozitiv postarea {{number}}",
+    "upvoteLabel_few": "{{count}} voturi pozitive. Votează pozitiv postarea {{number}}",
+    "upvoteLabel_other": "{{count}} de voturi pozitive. Votează pozitiv postarea {{number}}",
+    "downvote": "Vot negativ privat",
+    "downvoteLabel": "Votează negativ postarea {{number}}, în privat",
+    "private": "Doar moderatorii văd voturile negative.",
+    "failed": "Nu a mers. Încearcă din nou.",
+    "help": {
+      "title": "Cum funcționează voturile",
+      "text": "Toată lumea vede voturile pozitive. Voturile negative sunt private. Nu apar niciodată ca scor. Îi ajută doar pe moderatori să găsească postările de verificat."
     }
   }
 }

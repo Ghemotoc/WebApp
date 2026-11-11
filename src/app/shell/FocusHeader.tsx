@@ -57,17 +57,19 @@ export function FocusHeader({ titleKey, backTo }: FocusHeaderProps) {
   }
 
   return (
-    <header className="relative z-10 flex items-center gap-2 px-3.5 pt-4">
+    // NAV-1 (Robert, 10 Nov 2026): Back and the title float over the page however far it
+    // scrolls; the header's own box lets clicks through to the page beside them.
+    <header className="pointer-events-none sticky top-0 z-30 flex items-center gap-2 px-3.5 pt-4">
       <button
         type="button"
         onClick={goBack}
         aria-label={t('shell.back')}
-        className="glass-pill inline-flex size-12 shrink-0 items-center justify-center rounded-full text-ink"
+        className="glass-float pointer-events-auto inline-flex size-12 shrink-0 items-center justify-center rounded-full text-ink"
       >
         <NavIcon name="back" size={22} />
       </button>
       {/* The title wraps rather than being cut off on the narrowest phones (CLAUDE.md rule 21). */}
-      <p className="glass-pill m-0 inline-flex min-h-12 min-w-0 items-center rounded-[24px] px-5 py-2 font-heading text-[17px] leading-tight font-bold text-heading">
+      <p className="glass-float pointer-events-auto m-0 inline-flex min-h-12 min-w-0 items-center rounded-[24px] px-5 py-2 font-heading text-[17px] leading-tight font-bold text-heading">
         {t(`shell.focus.${titleKey}`)}
       </p>
     </header>

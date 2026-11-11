@@ -54,7 +54,7 @@ function SettingsGroups({ account }: { account: ReturnType<typeof useMyNames> })
         ref={panel}
         id={settingsPanelId}
         tabIndex={-1}
-        className="flex min-w-0 flex-[999_1_560px] flex-col gap-6 outline-none"
+        className="flex min-w-0 flex-[999_1_420px] flex-col gap-6 outline-none"
       >
         <SettingsGroupPanel group={group} account={account} names={names} />
       </div>

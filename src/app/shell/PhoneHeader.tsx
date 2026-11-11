@@ -31,12 +31,14 @@ export function PhoneHeader() {
   // Signed in, the logo opens the Writers' hub; signed out, the public home page (G9a).
   const homeAddress = useHomeAddress();
   return (
-    <header className="relative z-10 flex items-center justify-between gap-2 px-3.5 pt-4">
+    // NAV-1 (Robert, 10 Nov 2026): the pills float over the page however far it scrolls; the
+    // header's own box lets clicks through to the page between them.
+    <header className="pointer-events-none sticky top-0 z-30 flex items-center justify-between gap-2 px-3.5 pt-4">
       {/* The logo pill: the way home, named for screen readers as on the board. */}
       <Link
         to={homeAddress}
         aria-label={t('shell.home', { productName: brand.productName })}
-        className="glass-pill inline-flex h-13 items-center rounded-full pr-4 pl-2.5 font-heading text-[19px] font-bold text-heading no-underline"
+        className="glass-float pointer-events-auto inline-flex h-13 items-center rounded-full pr-4 pl-2.5 font-heading text-[19px] font-bold text-heading no-underline"
       >
         <BrandMark />
       </Link>
@@ -46,7 +48,7 @@ export function PhoneHeader() {
       <div
         role="group"
         aria-label={t('shell.accountTools')}
-        className="glass-pill flex min-h-13 flex-wrap items-center justify-end gap-1 rounded-[26px] p-1"
+        className="glass-float pointer-events-auto flex min-h-13 flex-wrap items-center justify-end gap-1 rounded-[26px] p-1"
       >
         <NotificationBell />
         <MessagesHeaderLink />

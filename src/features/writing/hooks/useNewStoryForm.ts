@@ -47,6 +47,9 @@ function emptyAnswers(): StoryAnswers {
     // GAPS-15: a new story reads on the web and in the app; the choice is in its settings.
     isAppOnly: false,
     commentsEnabled: true,
+    // MUST-1a: the database starts a writer under 18 at Followers only; the new story form
+    // doesn't show the setting (docs/board-fixes.md), so this is only the form's own default.
+    commentAudience: 'everyone',
     quoteCardsEnabled: true,
     pictureSharingEnabled: true,
     // IDEAS-1c: our default card colour; the writer can pick one in the story's settings.

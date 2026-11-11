@@ -7,6 +7,7 @@
     "newestFirst": "Newest first",
     "empty": "No comments yet. Be the first to say what you thought.",
     "off": "The writer has turned comments off for this story.",
+    "followersOnly": "Only the writer’s followers can comment here.",
     "showMore": "Show more comments",
     "loadFailed": "We couldn’t load the comments. Check your connection and try again.",
     "logIn": "Log in to comment"
@@ -32,6 +33,7 @@
     "too_many_other": "You’ve posted a lot of comments. Wait {{count}} minutes before the next one.",
     "too_many_unknown": "You’ve posted a lot of comments. Wait a little before the next one.",
     "comments_off": "The writer has turned comments off for this story.",
+    "followers_only": "Only the writer’s followers can comment on this story. Follow the writer to join in.",
     "refused": "That can’t be posted. A comment needs some words, at most {{limit}} characters and no HTML.",
     "gone": "That comment isn’t there any more.",
     "unreachable": "We couldn’t save that. Check your connection and try again.",
