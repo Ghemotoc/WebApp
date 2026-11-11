@@ -54,8 +54,7 @@ export function useIssueClassCertificates(slug: string) {
       programmeName: string;
       results: ClassResultEntry[];
       look: CertificateLook;
-    }) =>
-      issueClassCertificates(await requireClient(), { slug, ...request }),
+    }) => issueClassCertificates(await requireClient(), { slug, ...request }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: classCertificatesKey(slug) }),
   });
   return {

@@ -111,6 +111,7 @@ export function CertificateSeal({
  * @param props.look - the certificate's look
  * @param props.patternId - a unique id for this sheet's pattern
  * @param props.isCompact - true for the small preview (less padding)
+ * @param props.className - more classes, such as "certificate-sheet" for the page that prints
  * @param props.children - the sheet's words
  * @returns the frame
  */
@@ -118,17 +119,20 @@ export function CertificateFrame({
   look,
   patternId,
   isCompact = false,
+  className = '',
   children,
 }: {
   look: CertificateLook;
   patternId: string;
   isCompact?: boolean;
+  className?: string;
   children: ReactNode;
 }) {
   return (
     <div
       data-certificate-colour={look.colour}
-      className={`certificate-frame relative overflow-hidden rounded-[26px] ${isCompact ? 'p-4' : 'p-4 sm:p-8'}`}
+      data-certificate-pattern-name={look.pattern}
+      className={`certificate-frame relative overflow-hidden rounded-[26px] ${isCompact ? 'p-4' : 'p-4 sm:p-8'} ${className}`}
       style={{ background: certificateFrameBackground(look.colour) }}
     >
       <div className="certificate-paper relative overflow-hidden rounded-[18px] border border-white/95 bg-white/90 text-[#2A1E14] shadow-[inset_0_1px_0_#FFFFFF,0_20px_40px_-18px_rgba(0,0,0,0.5)]">

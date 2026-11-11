@@ -155,19 +155,61 @@ describe('the teacher and staff', () => {
     expect(row).toMatchObject({ studentName: 'Ana Scrie', result: 'participant' });
   });
 
-  it('approving sends one result per student and returns how many changed', async () => {
+  it('approving sends one result per student and the look, and returns how many changed', async () => {
     const { client, rpc } = fakeClient({ data: { issued: 2 } });
     const issued = await issueClassCertificates(client, {
       slug: 'clasa',
       programmeName: 'Cercul',
       results: [{ handle: 'ana', result: 'winner' }],
+      look: { colour: 'sea_glass', pattern: 'waves' },
     });
     expect(issued).toBe(2);
     expect(rpc).toHaveBeenCalledWith('issue_class_certificates', {
       slug: 'clasa',
       programme_name: 'Cercul',
       results: [{ handle: 'ana', result: 'winner' }],
+      look: { colour: 'sea_glass', pattern: 'waves' },
     });
+  });
+
+  it('a certificate reads its look, and an unknown one falls back to Plum with no pattern', async () => {
+    const { client } = fakeClient({
+      data: [
+        {
+          id: 'a',
+          code: 'A',
+          programme_name: 'P',
+          result: 'winner',
+          signed_at: 'x',
+          look_colour: 'cobalt',
+          look_pattern: 'rings',
+        },
+        {
+          id: 'b',
+          code: 'B',
+          programme_name: 'P',
+          result: 'winner',
+          signed_at: 'x',
+          look_colour: 'neon',
+          look_pattern: 'zigzag',
+        },
+      ],
+    });
+    const [chosen, unknown] = await listMyCertificates(client);
+    expect(chosen?.look).toEqual({ colour: 'cobalt', pattern: 'rings' });
+    expect(unknown?.look).toEqual({ colour: 'plum', pattern: 'none' });
+  });
+
+  it('a refused look is named in plain words', async () => {
+    const { client } = fakeClient({ error: { hint: 'certificate:look' } });
+    await expect(
+      issueClassCertificates(client, {
+        slug: 'clasa',
+        programmeName: 'Cercul',
+        results: [{ handle: 'ana', result: 'winner' }],
+        look: { colour: 'plum', pattern: 'none' },
+      }),
+    ).rejects.toMatchObject({ failure: 'look' });
   });
 
   it('staff get null for a code with no certificate', async () => {

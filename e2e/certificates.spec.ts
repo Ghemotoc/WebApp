@@ -129,6 +129,10 @@ test.describe('writing certificates (CLASSES-e, S1-E8-12)', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'Certificates' })).toBeVisible();
     await page.getByLabel('Programme').fill(programme);
     await page.getByLabel(`Result for ${studentName()}`).selectOption('winner');
+    // G13a: the teacher picks the look; it is saved on the certificate at signing.
+    await page.getByRole('radio', { name: 'Sea glass', exact: true }).check({ force: true });
+    await page.getByRole('radio', { name: 'Waves', exact: true }).check({ force: true });
+    await expect(page.locator('[data-certificate-colour="sea_glass"]')).toBeVisible();
     await page.getByRole('button', { name: 'Approve and sign' }).click();
     await expect(page.getByText('Signed: 1 certificate made or changed.')).toBeVisible();
     await expect(page.getByText(certificate().code)).toBeVisible();
@@ -145,6 +149,14 @@ test.describe('writing certificates (CLASSES-e, S1-E8-12)', () => {
     await expect(sheet.getByText('Ana Popescu')).toBeVisible();
     await expect(sheet.getByRole('heading', { name: 'Certificate of achievement' })).toBeVisible();
     await expect(sheet.getByText(certificate().code)).toBeVisible();
+    // The look the teacher signed with, and a real link to the check page.
+    const frame = page.locator('.certificate-sheet');
+    await expect(frame).toHaveAttribute('data-certificate-colour', 'sea_glass');
+    await expect(frame.locator('[data-certificate-pattern="waves"]')).toHaveCount(1);
+    await expect(sheet.getByRole('link', { name: /\/verify$/ })).toHaveAttribute(
+      'href',
+      new RegExp(`/verify\\?code=${certificate().code}$`),
+    );
     await page.getByLabel('Language of the certificate').selectOption('ro');
     await expect(
       page

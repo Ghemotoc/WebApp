@@ -785,7 +785,7 @@ dialog.bg-surface,
 }
 
 /* Writing certificates (S1-E8-12): printing a certificate's page prints only the certificate, as
-   one A4 page with white paper and black ink; everything else on the page is hidden. The
+   one A4 page; everything else on the page is hidden. The
    browser's "Save as PDF" keeps it as real, tagged text. */
 @media print {
   @page {
@@ -799,14 +799,15 @@ dialog.bg-surface,
   body:has(.certificate-sheet) .certificate-sheet * {
     visibility: visible;
   }
+  /* Since G13a the sheet keeps its look on paper: the frame's colour and the faint pattern print
+     as they show, so the PDF matches the screen (Certificate board: "Students see it on their
+     certificate and in the PDF"). */
   .certificate-sheet {
     position: absolute;
     inset: 0;
-    border: none;
-    background: #fff;
-    color: #000;
     min-height: 100%;
-    justify-content: space-between;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
   }
 }
 
