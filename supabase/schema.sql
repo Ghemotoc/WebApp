@@ -1451,6 +1451,7 @@ CREATE OR REPLACE FUNCTION "public"."account_deletion_rules"() RETURNS TABLE("ta
     ('library_entries', 'delete', 1, null),
     ('live_session_reminders', 'delete', 1, null),
     ('manual_age_checks', 'delete', 1, null),
+    ('member_last_active', 'delete', 1, null),
     ('messages', 'own_step', 0, 'the person''s own messages are deleted, unless reported and still held (S1-E9-02)'),
     ('moderator_mail_messages', 'kept', 0, 'a moderation record, purged a year after the thread was last updated (docs/retention.md)'),
     ('moderator_mail_threads', 'kept', 0, 'a moderation record, purged a year after it was last updated (docs/retention.md)'),
@@ -1498,7 +1499,7 @@ $$;
 ALTER FUNCTION "public"."account_deletion_rules"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13, GAPS-16a, GAPS-16c).';
+COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13, GAPS-16a, GAPS-16c, S1-E15-04).';
 
 
 
@@ -18932,17 +18933,23 @@ declare
   comments_weight double precision := public.ranking_setting('ranking_weight_comments', 8);
   shares_weight double precision := public.ranking_setting('ranking_weight_shares', 10);
   through_weight double precision := public.ranking_setting('ranking_weight_read_through', 0.5);
+  follows_weight double precision := public.ranking_setting('ranking_weight_follows', 6);
+  finishes_weight double precision := public.ranking_setting('ranking_weight_finishes', 2);
+  growth_weight double precision := public.ranking_setting('ranking_weight_growth', 0.5);
   scored integer;
 begin
-  -- Step 1: a score for every readable story, shares included.
+  -- Step 1: a score for every readable story: the weighted sum, lifted by read-through and growth.
   insert into public.story_scores (story_id, score, computed_at)
   select signals.story_id,
     greatest(0, (signals.reads * reads_weight + signals.likes * likes_weight
-      + signals.comments * comments_weight + coalesce(shares.points, 0) * shares_weight)
-      * (1 + signals.read_through * through_weight)),
+      + signals.comments * comments_weight + coalesce(shares.points, 0) * shares_weight
+      + coalesce(more.follows, 0) * follows_weight + coalesce(more.finish_points, 0) * finishes_weight)
+      * (1 + signals.read_through * through_weight)
+      * (1 + coalesce(more.growth, 0) * growth_weight)),
     now()
   from public.story_signals() as signals
   left join public.story_share_points() as shares on shares.story_id = signals.story_id
+  left join public.story_more_signals() as more on more.story_id = signals.story_id
   on conflict (story_id) do update set score = excluded.score, computed_at = excluded.computed_at;
   get diagnostics scored = row_count;
 
@@ -18957,7 +18964,7 @@ $$;
 ALTER FUNCTION "public"."compute_story_scores"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."compute_story_scores"() IS 'Hourly: each story''s popularity score from reads, likes, comments, shares and read-through, never downvotes (S1-E5-03, S1-E4-05).';
+COMMENT ON FUNCTION "public"."compute_story_scores"() IS 'Hourly: each story''s popularity score from reads, likes, comments, shares, follows, finished chapters, read-through and growth, never downvotes (S1-E5-03, S1-E4-05, S1-E15-05).';
 
 
 
@@ -20284,6 +20291,7 @@ CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_
     ('library_entries', true, null),
     ('live_session_reminders', true, null),
     ('manual_age_checks', true, null),
+    ('member_last_active', true, null),
     ('messages', true, null),
     ('moderator_mail_messages', true, null),
     ('moderator_mail_threads', true, null),
@@ -20331,7 +20339,7 @@ $$;
 ALTER FUNCTION "public"."data_export_tables"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13, GAPS-16a, GAPS-16c).';
+COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13, GAPS-16a, GAPS-16c, S1-E15-04).';
 
 
 
@@ -46227,6 +46235,65 @@ COMMENT ON FUNCTION "public"."story_matches_search"("target" "public"."stories",
 
 
 
+CREATE OR REPLACE FUNCTION "public"."story_more_signals"() RETURNS TABLE("story_id" "uuid", "follows" double precision, "finish_points" double precision, "growth" double precision)
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  with window_start as (
+    select now() - make_interval(days => public.ranking_setting('ranking_window_days', 60)::integer) as since,
+      public.ranking_setting('ranking_half_life_days', 7) as half_life,
+      (now() at time zone 'Europe/Bucharest')::date as today
+  ),
+  readable as materialized (
+    select * from public.readable_chapters_for_ranking()
+  ),
+  stories_ranked as (
+    select distinct readable.story_id, readable.user_id from readable
+  ),
+  follow_points as (
+    select follows.story_id, sum(power(0.5,
+      extract(epoch from now() - follows.created_at) / 86400 / window_start.half_life)) as points
+    from stories_ranked cross join window_start
+    join public.follows_stories as follows on follows.story_id = stories_ranked.story_id
+      and follows.user_id <> stories_ranked.user_id
+    join public.profiles on profiles.id = follows.user_id and profiles.deleted_at is null
+    where follows.created_at >= window_start.since
+    group by follows.story_id
+  ),
+  finished as (
+    select readable.story_id, sum(finishes.total
+      * least(60.0, greatest(1.0, coalesce(chapters.published_word_count, 0) / 230.0))
+      * power(0.5, (window_start.today - finishes.read_on) / window_start.half_life)) as points
+    from readable cross join window_start
+    join public.chapters on chapters.id = readable.id
+    join public.chapter_finishes as finishes on finishes.chapter_id = readable.id
+    where finishes.read_on >= (window_start.since at time zone 'Europe/Bucharest')::date
+    group by readable.story_id
+  ),
+  rise as (
+    select story_scores.story_id,
+      least(1.0, greatest(0.0, (story_scores.score - week_ago.score) / week_ago.score)) as ratio
+    from public.story_scores cross join window_start
+    join public.story_rank_snapshots as week_ago on week_ago.story_id = story_scores.story_id
+      and week_ago.snapshot_on = window_start.today - 7
+    where week_ago.score > 0
+  )
+  select stories_ranked.story_id, coalesce(follow_points.points, 0),
+    coalesce(finished.points, 0), coalesce(rise.ratio, 0)
+  from stories_ranked
+  left join follow_points on follow_points.story_id = stories_ranked.story_id
+  left join finished on finished.story_id = stories_ranked.story_id
+  left join rise on rise.story_id = stories_ranked.story_id;
+$$;
+
+
+ALTER FUNCTION "public"."story_more_signals"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_more_signals"() IS 'Internal: each readable story''s decayed follows, finished-chapter points and 7-day growth (S1-E15-05).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."story_page_chapters"("target_story_id" "uuid", "is_owner" boolean) RETURNS "jsonb"
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -46444,6 +46511,58 @@ ALTER FUNCTION "public"."story_rank_in_tag"("target_story_id" "uuid", "tag_name"
 
 
 COMMENT ON FUNCTION "public"."story_rank_in_tag"("target_story_id" "uuid", "tag_name" "text") IS 'Internal: a story''s place among the stories with a tag that this reader may see (CMS-1g).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."story_rank_place"("story_slug" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  story public.stories;
+  own_score double precision;
+  place integer;
+begin
+  -- Step 1: the story, which the caller may see.
+  select * into story from public.stories where stories.slug = story_slug and stories.deleted_at is null;
+  if not found then
+    return null;
+  end if;
+  if not public.staff_may('stories', 'view') and (
+       not public.rating_allows(story.rating)
+       or public.is_moderated_away('story', story.id)
+       or public.is_blocked_with(story.user_id)) then
+    return null;
+  end if;
+  -- Step 2: its score, if it is a story every reader could find.
+  if story.class_only or story.visibility <> 'public' then
+    return null;
+  end if;
+  select story_scores.score into own_score from public.story_scores where story_scores.story_id = story.id;
+  if own_score is null or own_score <= 0 then
+    return null;
+  end if;
+  -- Step 3: one more than the findable stories in the category with a higher score.
+  select 1 + count(*)::integer into place
+  from public.story_scores
+  join public.stories as others on others.id = story_scores.story_id
+  where others.category_id = story.category_id and others.deleted_at is null
+    and story_scores.score > own_score
+    and not others.class_only and others.visibility = 'public'
+    and not public.is_moderated_away('story', others.id);
+  if place > public.ranking_setting('ranking_place_show_up_to', 100) then
+    return null;
+  end if;
+  return jsonb_build_object('place', place,
+    'category_slug', (select categories.slug from public.categories where categories.id = story.category_id));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."story_rank_place"("story_slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_rank_place"("story_slug" "text") IS 'A story''s place in its category by score, up to place 100, for anyone who may see it and for staff (S1-E15-05).';
 
 
 
@@ -67095,6 +67214,10 @@ REVOKE ALL ON FUNCTION "public"."story_matches_search"("target" "public"."storie
 
 
 
+REVOKE ALL ON FUNCTION "public"."story_more_signals"() FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."story_page_chapters"("target_story_id" "uuid", "is_owner" boolean) FROM PUBLIC;
 
 
@@ -67114,6 +67237,12 @@ GRANT ALL ON FUNCTION "public"."story_plan_visibility"("story_slug" "text") TO "
 
 
 REVOKE ALL ON FUNCTION "public"."story_rank_in_tag"("target_story_id" "uuid", "tag_name" "text") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."story_rank_place"("story_slug" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."story_rank_place"("story_slug" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."story_rank_place"("story_slug" "text") TO "authenticated";
 
 
 
