@@ -523,7 +523,7 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 
 /*
  * Every other box and pill that paints bg-surface is the website's light glass too (GLASS-3;
- * Robert, 11 Nov 2026: "copy the transparency of all the elements from the Magic Coffin, including
+ * Robert, 11 Nov 2026: "copy the transparency of all the elements from the [main website], including
  * transparency of the boxes ... a full-on match"). On the website everything that is not a photo
  * is .lg-light: white at 72% thinning to 44%, the 24 px blur, the bright rim, a white top edge, a
  * soft inner shade and the violet drop shadow. Here that reaches the cards with 2xl or 3xl corners,
