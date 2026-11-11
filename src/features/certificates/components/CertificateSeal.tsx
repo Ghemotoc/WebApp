@@ -3,7 +3,7 @@
  * since G13b; the canvas's Certificate and SpaceCertificates boards, "In the seal").
  *
  * The seal shows one of two marks:
- * - the curled cat, in white on the certificate colour (the default, and every contest certificate);
+ * - the sleeping cat, in white on the certificate colour (the default, and every contest certificate);
  * - the school's crest, once its picture check passed (CLAUDE.md rule 19). In its own colours it
  *   sits on a plain white seal; in white it is drawn as a white shape on the certificate colour.
  * A crest seal whose picture isn't visible yet (still being checked, waiting for a moderator or
@@ -54,7 +54,7 @@ function whiteDisc(): CSSProperties {
 }
 
 /**
- * The curled cat, cut out of white by the brand's emblem.
+ * The sleeping cat, cut out of white by the brand's emblem.
  *
  * @returns the mark
  */
