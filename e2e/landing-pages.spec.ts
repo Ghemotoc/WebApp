@@ -60,15 +60,25 @@ async function addBlock(page: Page, kind: string): Promise<void> {
   await page.getByRole('button', { name: 'Add a block' }).click();
 }
 
+/** Opens one block's fields beside the list with its Edit button (one block at a time, G12c). */
+async function openBlock(page: Page, name: string): Promise<void> {
+  await page.getByRole('button', { name: `Edit ${name}`, exact: true }).click();
+}
+
 /** Fills the hero, key dates and rules blocks of the contest page (blocks 0, 1 and 2). */
 async function fillContest(page: Page): Promise<void> {
+  await openBlock(page, 'Block 1: Hero');
   await page.locator('#landing-b0-ro-title').fill('Concursul de toamnă');
   await page.locator('#landing-b0-en-title').fill('The autumn contest');
+  // Next opens the block after the hero.
+  await page.getByRole('button', { name: 'Next block: Key dates' }).click();
+  await expect(page.getByText('Editing block 2 of 3')).toBeVisible();
   await page.locator('#landing-b1-ro-heading').fill('Date importante');
   await page.locator('#landing-b1-en-heading').fill('Key dates');
   await page.locator('#landing-b1-entries_open').fill('2027-01-10');
   await page.locator('#landing-b1-entries_close').fill('2027-02-10');
   await page.locator('#landing-b1-results').fill('2027-03-01');
+  await openBlock(page, 'Block 3: Rules');
   await page.locator('#landing-b2-ro-heading').fill('Regulament');
   await page.locator('#landing-b2-en-heading').fill('Rules');
   await page.locator('#landing-b2-ro-link_label').fill('Citește regulamentul');
@@ -101,6 +111,8 @@ test.describe('Landing pages (S1-E11-14)', () => {
     await addBlock(page, 'Key dates');
     await addBlock(page, 'Rules');
     await addBlock(page, 'Text');
+    // A new block opens straight away beside the list.
+    await expect(page.getByText('Editing block 4 of 4')).toBeVisible();
     await page.getByRole('button', { name: 'Move Block 4: Text up' }).click();
     await expect(page.getByRole('heading', { name: 'Block 3: Text' })).toBeVisible();
     // The hero stays at the top, so the block under it can't move above it.
@@ -112,6 +124,10 @@ test.describe('Landing pages (S1-E11-14)', () => {
     await page.getByRole('button', { name: 'Publish' }).click();
     await expect(page.getByText('Fix these before publishing:')).toBeVisible();
     await expect(page.getByText('Block 3: Rules, English: Link text: fill this in')).toBeVisible();
+    // The list marks the block the server asked to fix, so a closed block's problem shows too.
+    await expect(
+      page.getByRole('listitem').filter({ hasText: 'Block 3: Rules' }).getByText('Needs a fix'),
+    ).toBeVisible();
     // Step 4: filled in, the page goes live today, and the preview shows it.
     await page.locator('#landing-b2-en-link_label').fill('Read the rules');
     await page.getByRole('button', { name: 'Publish' }).click();

@@ -20,7 +20,8 @@
     "emails": "Email templates",
     "landingPages": "Landing pages",
     "branding": "Branding",
-    "seasonal": "Seasonal looks"
+    "seasonal": "Seasonal looks",
+    "listPages": "Genre and tag pages"
   },
   "picker": {
     "market": "Market",
@@ -280,6 +281,45 @@
       "bad_day": "That day doesn't exist. Pick another.",
       "wrong_looks": "These days can't be saved. Reload the page and try again.",
       "not_allowed": "Only the owner and admins can change the seasonal looks.",
+      "unreachable": "We couldn't reach the database. Check your connection and try again."
+    }
+  },
+  "listBackgrounds": {
+    "market": "Market",
+    "everywhere": "Everywhere",
+    "marketNote": "A colour set for Everywhere shows in every market unless a market has its own.",
+    "genresHeading": "Genre page backgrounds",
+    "tagsHeading": "Tag page backgrounds",
+    "tagsNote": "Tags without their own background keep the plain heading on the page.",
+    "tagName": "Tag",
+    "addTag": "Add a tag background",
+    "edit": "Edit",
+    "editLabel": "Edit the background of {{name}}",
+    "defaultColour": "Default: {{colour}}",
+    "colourSetBy": "{{colour}} · set by @{{handle}}",
+    "editing": "Editing {{name}}",
+    "colour": "Colour",
+    "contrastNote": "Every colour carries white text at 4.5:1 or more, so the heading and small text stay readable.",
+    "previewEyebrow": "Preview",
+    "liveNote": "Changes show on the website straight away and are kept in the audit log.",
+    "cancel": "Cancel",
+    "useDefault": "Use the default",
+    "save": "Save background",
+    "saved": "Saved. The page shows the new background.",
+    "cleared": "The page is back to its default background.",
+    "history": "Staff history",
+    "palettes": {
+      "plum": "Plum",
+      "sage": "Sage",
+      "gold": "Gold",
+      "sky": "Sky",
+      "blush": "Blush",
+      "neutral": "Grey"
+    },
+    "failures": {
+      "not_allowed": "Only the owner and admins can change the backgrounds.",
+      "no_list": "There is no approved tag with that name. Check the spelling.",
+      "no_market": "That market doesn't exist any more. Reload the page.",
       "unreachable": "We couldn't reach the database. Check your connection and try again."
     }
   }

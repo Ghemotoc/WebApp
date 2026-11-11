@@ -168,6 +168,8 @@ select results_eq(
        ('learning_path_progress', 0::bigint),
        ('learning_path_steps', 0::bigint),
        ('library_entries', 0::bigint),
+       -- Genre and tag page backgrounds: staff choices read through list_page_background() (G12b).
+       ('list_page_backgrounds', 0::bigint),
        -- Live sessions: staff content read through a function; a member's own reminders (GAPS-12h).
        ('live_session_reminders', 0::bigint),
        ('live_sessions', 0::bigint),
