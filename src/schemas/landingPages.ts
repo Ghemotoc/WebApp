@@ -226,10 +226,30 @@ export const landingBlockSchema = z.object({
 });
 export type LandingBlock = z.infer<typeof landingBlockSchema>;
 
+/**
+ * A landing page's search fields in one language (S1-E11-38): empty fields use the hero's title
+ * and introduction (server/landing-preview.ts). The limits match the website pages'
+ * (pageSearchLimits) and landing_search_problems().
+ */
+const landingSearchWordsSchema = z.object({
+  title: z.string().default(''),
+  description: z.string().default(''),
+});
+
+/** A landing page's search fields: the words in each language, and the "hide" switch. */
+export const landingSearchSchema = z.object({
+  hidden: z.boolean().default(false),
+  ro: landingSearchWordsSchema.default({ title: '', description: '' }),
+  en: landingSearchWordsSchema.default({ title: '', description: '' }),
+});
+export type LandingSearch = z.infer<typeof landingSearchSchema>;
+
 /** A version's content. */
 export const landingContentSchema = z.object({
   theme: z.enum(landingThemes),
   blocks: z.array(landingBlockSchema),
+  /** The search and share fields (S1-E11-38); optional, so older versions still read. */
+  search: landingSearchSchema.optional(),
 });
 export type LandingContent = z.infer<typeof landingContentSchema>;
 

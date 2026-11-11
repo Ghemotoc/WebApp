@@ -451,7 +451,7 @@ As an admin, I want to set the home page's and each help page's search title and
   - Given a field is empty, when the page is served, then the page's own words are used: the home page's headline and introduction, or the help page's title and first lines.
   - Given the home page or a help page, when a robot reads it without JavaScript, then the server has written its title (the page's title, then the site's name), description, canonical link, page language, Open Graph and Twitter tags; a hidden page and an unknown help address carry noindex.
   - Given the visitor's browser, when the page opens, then the tab shows the same title the server wrote, and the next screen goes back to its own.
-- **Not here, on purpose:** hreflang links, because one address serves every language (the visitor picks the language in the app), so there is no other-language address to point to; a share picture of their own for the home page and help pages, which share the site's picture (SEO-1c adds a large one). Landing pages already take their search words from the hero; their own fields and share picture come in SEO-1c.
+- **Not here, on purpose:** hreflang links, because one address serves every language (the visitor picks the language in the app), so there is no other-language address to point to; a share picture of their own for the home page and help pages, which share the site's picture (SEO-1c adds a large one). Landing pages already take their search words from the hero; their own fields come in SEO-1c.
 
 ##### S1-E11-38 Sitemap, robots file and organisation data
 
@@ -463,8 +463,9 @@ As the founder, I want search engines to find every public page and nothing priv
   - Given /robots.txt, when it is read, then it points to the sitemap and blocks staff, account and editor addresses.
   - Given the home page, when it is read, then it carries Organization data with the name and links from the brand config.
   - Given an admin, when they enter a Google Search Console or Bing verification code, then it is added to the home page as a meta tag (no scripts, CLAUDE.md rule 7).
-  - Given a page without a picture of its own, when it is shared, then the card shows a large default picture (1200 × 630) with the site's name.
-  - Given a landing page, when an admin edits it, then it has the same search title, description and "Hide this page from search engines" fields, in both languages, and its hero picture (already through the picture check) is its share picture.
+  - Given the home page or a help page, when it is shared, then the card shows the site's large picture (1200 × 630, the emblem on plum, no words), with the page's title beside it.
+  - Given a landing page, when an admin edits it, then it has the same search title, description and "Hide this page from search engines" fields, in both languages; the share card keeps the page's theme colour.
+- **Not here, on purpose:** a landing page's hero picture as its share picture, because landing pictures sit in a private bucket and a share card needs a lasting public address (a follow-up can serve it as /api/picture-preview does for chapter pictures).
 
 ##### S1-E11-39 Search and sharing screen
 

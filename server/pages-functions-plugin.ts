@@ -31,6 +31,7 @@
  * GET /c/… (server/landing-preview.ts, S1-E11-14: a landing page's Open Graph tags, the same way).
  * GET / and GET /help/… (server/website-head.ts, S1-E11-37: the home page's and help pages' search
  * and share tags, the same way; the country is LOCAL_FAKE_COUNTRY or the X-Fake-Country header).
+ * GET /sitemap.xml and GET /robots.txt (server/sitemap.ts, S1-E11-38), from the local Supabase.
  * Stand-ins:
  * - with PASSWORD_CHECK_STUB=1 (set by playwright.config.ts) the leaked-password check answers
  *   from a fixed list instead of the internet, so tests don't depend on an outside service: the
@@ -60,6 +61,7 @@ import { handleEmbed } from './embeds.ts';
 import { oembedLookup } from './embeds/oembed.ts';
 import { fetchLandingPreview, handleLandingLink, parseLandingAddress } from './landing-preview.ts';
 import { fetchLinkPreview, handleSharedLink, parseSharedAddress } from './link-preview.ts';
+import { fetchSitemapEntries, handleSitemapFiles } from './sitemap.ts';
 import { fetchWebsiteHead, handleWebsitePage, parseWebsiteAddress } from './website-head.ts';
 import { handlePicturePreview } from './picture-preview.ts';
 import { handleNotice } from './notice.ts';
@@ -476,6 +478,31 @@ function signedLinkHandlerFor(
 }
 
 /**
+ * The handler for the sitemap and the robots file (S1-E11-38), from the local Supabase.
+ *
+ * @param url - the request's address
+ * @param environment - the VITE_ values: the local Supabase's address and anon key
+ * @returns the function that answers /sitemap.xml or /robots.txt, or null for every other address
+ */
+function sitemapHandlerFor(
+  url: string | undefined,
+  environment: Record<string, string>,
+): FunctionHandler | null {
+  const pathname = (url ?? '').split('?')[0];
+  if (pathname !== '/sitemap.xml' && pathname !== '/robots.txt') return null;
+  const settings = {
+    supabaseUrl: environment.VITE_SUPABASE_URL ?? '',
+    anonKey: environment.VITE_SUPABASE_ANON_KEY ?? '',
+  };
+  return async (request) => {
+    const answer = await handleSitemapFiles(request, {
+      findEntries: () => fetchSitemapEntries(settings),
+    });
+    return answer ?? new Response('', { status: 404 });
+  };
+}
+
+/**
  * Picks the handler for an address, or none.
  *
  * @param url - the request's address
@@ -553,7 +580,9 @@ function pagesFunctionsMiddleware(
   return (request, response, next) => {
     // Only page loads: a POST to a page address (none exist, but be safe) goes on to Vite.
     if (request.method !== 'GET' && isPreviewAddress(request.url)) return next();
-    const handler = handlerFor(request.url, sharedLink, environment);
+    const handler =
+      handlerFor(request.url, sharedLink, environment) ??
+      sitemapHandlerFor(request.url, environment);
     if (handler === null) return next();
     void toWebRequest(request)
       .then(handler)

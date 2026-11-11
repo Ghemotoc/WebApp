@@ -140,7 +140,8 @@
       "quote": "Quote",
       "source": "Who said it",
       "button_label": "Button text",
-      "entries": "Cards and steps"
+      "entries": "Cards and steps",
+      "search": "Search and sharing"
     },
     "problems": {
       "empty": "fill this in",
@@ -238,7 +239,15 @@
       }
     },
     "copyBlock": "Copy {{name}}",
-    "copy": "Copy"
+    "copy": "Copy",
+    "search": {
+      "legend": "Search and sharing",
+      "intro": "What search engines and share cards show, in each language. An empty field uses the hero's title and introduction.",
+      "title": "Search title",
+      "description": "Search description",
+      "hidden": "Hide this page from search engines",
+      "hiddenHint": "Visitors can still open it from a link."
+    }
   },
   "picture": {
     "states": {

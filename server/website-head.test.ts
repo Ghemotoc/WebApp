@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest';
 import {
   documentTitleOf,
   handleWebsitePage,
+  homeExtraTags,
   parseWebsiteAddress,
   plainWordsOf,
   websiteHeadFrom,
@@ -47,6 +48,7 @@ const romanianHome: WebsiteHead = {
   description: 'Publică povești și poezii.',
   language: 'ro',
   isHidden: false,
+  homeExtras: { googleCode: '', bingCode: '' },
 };
 
 describe('parseWebsiteAddress', () => {
@@ -90,6 +92,7 @@ describe('websiteHeadFrom', () => {
       description: 'Share your writing.',
       language: 'en',
       isHidden: false,
+      homeExtras: { googleCode: '', bingCode: '' },
     });
   });
 
@@ -143,6 +146,34 @@ describe('documentTitleOf', () => {
   });
 });
 
+describe('homeExtraTags', () => {
+  const page = { siteName: 'Brand', origin: 'https://example.test' };
+
+  it('adds the verification codes staff entered as meta tags', () => {
+    const tags = homeExtraTags({ googleCode: 'abc_DEF-123', bingCode: '0A1B2C' }, page);
+    expect(tags).toContain('<meta name="google-site-verification" content="abc_DEF-123">');
+    expect(tags).toContain('<meta name="msvalidate.01" content="0A1B2C">');
+  });
+
+  it('leaves out an empty code and anything that isn’t a code, so a pasted tag can’t break the page', () => {
+    const tags = homeExtraTags(
+      { googleCode: '"><script>alert(1)</script>', bingCode: '' },
+      page,
+    ).join('');
+    expect(tags).not.toContain('google-site-verification');
+    expect(tags).not.toContain('msvalidate');
+    expect(tags).not.toContain('<script>alert');
+  });
+
+  it('keeps a site name with HTML in it inside the data block', () => {
+    const tags = homeExtraTags(
+      { googleCode: '', bingCode: '' },
+      { ...page, siteName: '</script><b>' },
+    );
+    expect(tags.join('')).not.toContain('</script><b>');
+  });
+});
+
 describe('handleWebsitePage', () => {
   it('writes the title, description, canonical link, share tags and language into the home page', async () => {
     const asked: Asked = { address: null, country: null };
@@ -162,7 +193,23 @@ describe('handleWebsitePage', () => {
     // The canonical address carries no query, so tracking codes never spread (S1-E4-05).
     expect(html).toContain('<link rel="canonical" href="https://example.test/">');
     expect(html).toContain('<meta property="og:site_name" content="Brand">');
-    expect(html).toContain('og:image" content="https://example.test/link-previews/plum.png"');
+    // The large share picture, shown large on every card (S1-E11-38).
+    expect(html).toContain('og:image" content="https://example.test/link-previews/share.png"');
+    expect(html).toContain('<meta name="twitter:card" content="summary_large_image">');
+    // The organisation and website data, named from index.html (S1-E11-38).
+    const json = /<script type="application\/ld\+json">(.*)<\/script>/.exec(html)?.[1] ?? '{}';
+    expect(JSON.parse(json)).toEqual({
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'Organization',
+          name: 'Brand',
+          url: 'https://example.test/',
+          logo: 'https://example.test/brand/apple-touch-icon.png',
+        },
+        { '@type': 'WebSite', name: 'Brand', url: 'https://example.test/' },
+      ],
+    });
     expect(html).not.toContain('noindex');
     expect(response.headers.get('ETag')).toBeNull();
   });

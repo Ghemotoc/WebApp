@@ -27310,6 +27310,8 @@ begin
       || public.landing_featured_problems(block, 'blocks.' || block_number);
     block_number := block_number + 1;
   end loop;
+  -- S1-E11-38: the page's search fields, in both languages.
+  problems := problems || public.landing_search_problems(content -> 'search');
   return problems;
 end;
 $$;
@@ -27318,7 +27320,7 @@ $$;
 ALTER FUNCTION "public"."landing_page_problems"("page_type" "text", "content" "jsonb") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."landing_page_problems"("page_type" "text", "content" "jsonb") IS 'What stops a landing page version from being published (S1-E11-14 criterion 9).';
+COMMENT ON FUNCTION "public"."landing_page_problems"("page_type" "text", "content" "jsonb") IS 'What stops a landing page version from being published (S1-E11-14 criterion 9; search fields S1-E11-38).';
 
 
 
@@ -27430,6 +27432,31 @@ ALTER FUNCTION "public"."landing_reminder_json"("target_page_id" "uuid", "conten
 
 
 COMMENT ON FUNCTION "public"."landing_reminder_json"("target_page_id" "uuid", "content" "jsonb") IS 'Internal: a landing page''s Remind me state for the reader (CONTESTS-13a2b).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."landing_search_problems"("search" "jsonb") RETURNS "text"[]
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select case
+    -- Anything but an object is refused as a whole.
+    when search is not null and jsonb_typeof(search) <> 'object' then array['search:invalid']
+    else array_remove(array[
+      case when search ? 'hidden' and jsonb_typeof(search -> 'hidden') <> 'boolean' then 'search.hidden:invalid' end,
+      case when char_length(coalesce(search -> 'ro' ->> 'title', '')) > 70 then 'search.ro.title:too_long' end,
+      case when char_length(coalesce(search -> 'en' ->> 'title', '')) > 70 then 'search.en.title:too_long' end,
+      case when char_length(coalesce(search -> 'ro' ->> 'description', '')) > 200 then 'search.ro.description:too_long' end,
+      case when char_length(coalesce(search -> 'en' ->> 'description', '')) > 200 then 'search.en.description:too_long' end
+    ], null)
+  end;
+$$;
+
+
+ALTER FUNCTION "public"."landing_search_problems"("search" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."landing_search_problems"("search" "jsonb") IS 'Internal: S1-E11-38: a landing page''s search fields in each language: title up to 70 characters, description up to 200, hidden true or false.';
 
 
 
@@ -44068,6 +44095,51 @@ ALTER FUNCTION "public"."signed_up_reader_count"("for_day" "date") OWNER TO "pos
 
 
 COMMENT ON FUNCTION "public"."signed_up_reader_count"("for_day" "date") IS 'Internal: confirmed, live, non-staff accounts by the end of a day (S1-E15-02).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."sitemap_entries"() RETURNS TABLE("path" "text", "changed_on" "date")
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  (
+    -- Step 1: the site's own public screens. The home page and Discover change every day.
+    select '/'::text, public.romania_today()
+    union all
+    select '/discover', public.romania_today()
+    union all
+    select '/help', null::date
+    union all
+    -- Step 2: each help page with at least one live version staff didn't hide (S1-E11-37).
+    select '/help/' || live.entry_key, max(live.show_from)
+    from public.cms_live_versions('help_page') as live
+    where (live.content -> 'search' -> 'hidden') is distinct from 'true'::jsonb
+    group by live.entry_key
+    union all
+    -- Step 3: each landing page with a live version, unless staff hid it (S1-E11-38).
+    select '/c/' || pages.slug, live.show_from
+    from public.landing_pages as pages
+    cross join lateral public.landing_page_live_version(pages.id) as live
+    where pages.archived_at is null and live.id is not null
+      and (live.content -> 'search' -> 'hidden') is distinct from 'true'::jsonb
+    union all
+    -- Step 4: public stories: published once, public, for everyone (not a class's), readable on
+    -- the web, not deleted and not hidden by a moderator. Every rating alike (S1-E11-36).
+    select '/s/' || stories.slug, coalesce(stories.last_chapter_published_at, stories.first_published_at)::date
+    from public.stories
+    where stories.first_published_at is not null and stories.deleted_at is null
+      and stories.visibility = 'public' and not stories.class_only
+      and not public.story_app_only_applies(stories.is_app_only)
+      and not public.is_moderated_away('story', stories.id)
+  )
+  limit 50000;
+$$;
+
+
+ALTER FUNCTION "public"."sitemap_entries"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."sitemap_entries"() IS 'S1-E11-38: every address search engines may list, with the day it last changed, for /sitemap.xml.';
 
 
 
@@ -65539,6 +65611,10 @@ REVOKE ALL ON FUNCTION "public"."landing_reminder_json"("target_page_id" "uuid",
 
 
 
+REVOKE ALL ON FUNCTION "public"."landing_search_problems"("search" "jsonb") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."landing_text_problem"("block" "jsonb", "language_code" "text", "field_name" "text", "field_path" "text", "longest" integer, "is_required" boolean) FROM PUBLIC;
 
 
@@ -67898,6 +67974,12 @@ GRANT ALL ON FUNCTION "public"."signature_picture_file_may_go"("object_name" "te
 
 
 REVOKE ALL ON FUNCTION "public"."signed_up_reader_count"("for_day" "date") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."sitemap_entries"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."sitemap_entries"() TO "anon";
+GRANT ALL ON FUNCTION "public"."sitemap_entries"() TO "authenticated";
 
 
 

@@ -140,7 +140,8 @@
       "quote": "Citat",
       "source": "Cine a spus-o",
       "button_label": "Textul butonului",
-      "entries": "Carduri și pași"
+      "entries": "Carduri și pași",
+      "search": "Căutare și distribuire"
     },
     "problems": {
       "empty": "completează câmpul",
@@ -238,7 +239,15 @@
       }
     },
     "copyBlock": "Copiază {{name}}",
-    "copy": "Copiază"
+    "copy": "Copiază",
+    "search": {
+      "legend": "Căutare și distribuire",
+      "intro": "Ce arată motoarele de căutare și cardurile de distribuire, în fiecare limbă. Un câmp gol folosește titlul și introducerea din primul bloc.",
+      "title": "Titlu pentru căutare",
+      "description": "Descriere pentru căutare",
+      "hidden": "Ascunde pagina de motoarele de căutare",
+      "hiddenHint": "Vizitatorii o pot deschide în continuare dintr-un link."
+    }
   },
   "picture": {
     "states": {

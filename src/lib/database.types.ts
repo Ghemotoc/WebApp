@@ -13989,6 +13989,7 @@ export type Database = {
       landing_picture_problems: { Args: { block: Json; block_path: string }; Returns: string[] };
       landing_picture_upload_allowed: { Args: { object_name: string }; Returns: boolean };
       landing_reminder_json: { Args: { content: Json; target_page_id: string }; Returns: Json };
+      landing_search_problems: { Args: { search: Json }; Returns: string[] };
       landing_text_problem: {
         Args: {
           block: Json;
@@ -16242,6 +16243,13 @@ export type Database = {
       signature_json: { Args: { person_id: string }; Returns: Json };
       signature_picture_file_may_go: { Args: { object_name: string }; Returns: boolean };
       signed_up_reader_count: { Args: { for_day: string }; Returns: number };
+      sitemap_entries: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          changed_on: string;
+          path: string;
+        }[];
+      };
       snapshot_story_ranks: { Args: Record<PropertyKey, never>; Returns: number };
       space_acts_as_platform: {
         Args: {
