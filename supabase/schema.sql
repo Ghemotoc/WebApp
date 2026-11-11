@@ -3548,7 +3548,7 @@ $$;
 ALTER FUNCTION "public"."admin_archive_landing_page"("target_page_id" "uuid") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."admin_archive_landing_page"("target_page_id" "uuid") IS 'Takes a landing page''s address down for good; owner and admin only; logged (S1-E11-14).';
+COMMENT ON FUNCTION "public"."admin_archive_landing_page"("target_page_id" "uuid") IS 'Takes a landing page''s address down for good; staff with the landing pages area; logged (S1-E11-14, S1-E11-34).';
 
 
 
@@ -4992,7 +4992,7 @@ $$;
 ALTER FUNCTION "public"."admin_create_landing_page"("new_slug" "text", "new_page_type" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."admin_create_landing_page"("new_slug" "text", "new_page_type" "text") IS 'Starts a landing page at /c/<slug>; owner and admin only; logged (S1-E11-14).';
+COMMENT ON FUNCTION "public"."admin_create_landing_page"("new_slug" "text", "new_page_type" "text") IS 'Starts a landing page at /c/<slug>; staff with the landing pages area; logged (S1-E11-14, S1-E11-34).';
 
 
 
@@ -6589,7 +6589,7 @@ $$;
 ALTER FUNCTION "public"."admin_landing_picture_states"("target_page_id" "uuid") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."admin_landing_picture_states"("target_page_id" "uuid") IS 'The check state of every picture uploaded for a landing page; owner and admin only (CONTESTS-13a2a).';
+COMMENT ON FUNCTION "public"."admin_landing_picture_states"("target_page_id" "uuid") IS 'The check state of every picture uploaded for a landing page; staff with the landing pages area (CONTESTS-13a2a, S1-E11-34).';
 
 
 
@@ -8292,7 +8292,7 @@ $$;
 ALTER FUNCTION "public"."admin_publish_landing_page"("version_id" "uuid") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."admin_publish_landing_page"("version_id" "uuid") IS 'Publishes a landing page draft from its show-from date; owner and admin only; logged (S1-E11-14).';
+COMMENT ON FUNCTION "public"."admin_publish_landing_page"("version_id" "uuid") IS 'Publishes a landing page draft from its show-from date; staff with the landing pages area; logged (S1-E11-14, S1-E11-34).';
 
 
 
@@ -9379,7 +9379,7 @@ $$;
 ALTER FUNCTION "public"."admin_restore_landing_page_version"("version_id" "uuid") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."admin_restore_landing_page_version"("version_id" "uuid") IS 'Brings an earlier landing page version back as the draft; logged (S1-E11-14).';
+COMMENT ON FUNCTION "public"."admin_restore_landing_page_version"("version_id" "uuid") IS 'Brings an earlier landing page version back as the draft; staff with the landing pages area; logged (S1-E11-14, S1-E11-34).';
 
 
 
@@ -10128,6 +10128,11 @@ begin
   if new_take_down_on is not null and new_show_from is not null and new_take_down_on <= new_show_from then
     raise exception 'The page must come down after it goes up.' using errcode = 'check_violation', hint = 'take_down_before_show_from';
   end if;
+  -- A page of 30 full blocks in both languages is well under 500 kB; anything bigger is not a
+  -- page someone typed, so it is refused before it fills the table (CMS-2b break test).
+  if octet_length(coalesce(new_content, '{}'::jsonb)::text) > 500000 then
+    raise exception 'This page is too big to save.' using errcode = 'check_violation', hint = 'too_big';
+  end if;
   -- Step 2: update the page's draft, or start one.
   update public.landing_page_versions
   set content = coalesce(new_content, '{}'::jsonb), show_from = new_show_from,
@@ -10147,7 +10152,7 @@ $$;
 ALTER FUNCTION "public"."admin_save_landing_page_draft"("target_page_id" "uuid", "new_content" "jsonb", "new_show_from" "date", "new_take_down_on" "date") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."admin_save_landing_page_draft"("target_page_id" "uuid", "new_content" "jsonb", "new_show_from" "date", "new_take_down_on" "date") IS 'Saves a landing page draft; owner and admin only (S1-E11-14).';
+COMMENT ON FUNCTION "public"."admin_save_landing_page_draft"("target_page_id" "uuid", "new_content" "jsonb", "new_show_from" "date", "new_take_down_on" "date") IS 'Saves a landing page draft; staff with the landing pages area (S1-E11-14, S1-E11-34).';
 
 
 
@@ -26806,23 +26811,24 @@ begin
       problems := problems || (block_path || '.age_groups:empty');
     end if;
   elsif block ->> 'kind' in ('rules', 'call_to_action') then
-    -- A link is one of our pages ("/help/contest-rules") or an https address (S1-E11-34).
+    -- A link is one of our pages ("/help/contest-rules") or an https address (S1-E11-34). A
+    -- leading "//" is refused: a browser reads "//host" as another site (CMS-2b break test).
     if rules_link = '' then
       problems := problems || (block_path || '.link:empty');
-    elsif rules_link !~ '^(/[a-z0-9/_-]*|https://[^\s]+)$' then
+    elsif rules_link !~ '^(/([a-z0-9_-][a-z0-9/_-]*)?|https://[^\s]+)$' then
       problems := problems || (block_path || '.link:bad_link');
     end if;
   elsif block ->> 'kind' = 'questions' then
     -- Questions are the same list in both languages.
-    if jsonb_array_length(coalesce(block #> '{ro,items}', '[]')) = 0
-       or jsonb_array_length(coalesce(block #> '{ro,items}', '[]')) <> jsonb_array_length(coalesce(block #> '{en,items}', '[]')) then
+    if jsonb_array_length(public.landing_json_list(block #> '{ro,items}')) = 0
+       or jsonb_array_length(public.landing_json_list(block #> '{ro,items}')) <> jsonb_array_length(public.landing_json_list(block #> '{en,items}')) then
       problems := problems || (block_path || '.items:unequal');
     end if;
     foreach language_code in array array['ro', 'en'] loop
       item_number := 0;
-      for item in select value from jsonb_array_elements(coalesce(block #> array[language_code, 'items'], '[]')) loop
-        if btrim(coalesce(item ->> 'question', '')) = '' or btrim(coalesce(item ->> 'answer', '')) = ''
-           or char_length(item ->> 'question') > 200 or char_length(item ->> 'answer') > 1000 then
+      for item in select value from jsonb_array_elements(public.landing_json_list(block #> array[language_code, 'items'])) loop
+        if not public.landing_entry_text_ok(item -> 'question', 200)
+           or not public.landing_entry_text_ok(item -> 'answer', 1000) then
           problems := problems || (block_path || '.' || language_code || '.items.' || item_number || ':empty');
         end if;
         item_number := item_number + 1;
@@ -26837,15 +26843,15 @@ begin
     -- 2 to 4 cards or 2 to 6 steps, the same number in both languages, each with a title of up to
     -- 80 characters and words of up to 300 (S1-E11-34).
     entry_counts := case when block ->> 'kind' = 'cards' then int4range(2, 4, '[]') else int4range(2, 6, '[]') end;
-    if not (jsonb_array_length(coalesce(block #> '{ro,entries}', '[]')) <@ entry_counts)
-       or jsonb_array_length(coalesce(block #> '{ro,entries}', '[]')) <> jsonb_array_length(coalesce(block #> '{en,entries}', '[]')) then
-      problems := problems || (block_path || '.entries:count');
+    if not (jsonb_array_length(public.landing_json_list(block #> '{ro,entries}')) <@ entry_counts)
+       or jsonb_array_length(public.landing_json_list(block #> '{ro,entries}')) <> jsonb_array_length(public.landing_json_list(block #> '{en,entries}')) then
+      problems := problems || (block_path || '.entries:wrong_number');
     end if;
     foreach language_code in array array['ro', 'en'] loop
       item_number := 0;
-      for item in select value from jsonb_array_elements(coalesce(block #> array[language_code, 'entries'], '[]')) loop
-        if btrim(coalesce(item ->> 'title', '')) = '' or btrim(coalesce(item ->> 'body', '')) = ''
-           or char_length(item ->> 'title') > 80 or char_length(item ->> 'body') > 300 then
+      for item in select value from jsonb_array_elements(public.landing_json_list(block #> array[language_code, 'entries'])) loop
+        if not public.landing_entry_text_ok(item -> 'title', 80)
+           or not public.landing_entry_text_ok(item -> 'body', 300) then
           problems := problems || (block_path || '.' || language_code || '.entries.' || item_number || ':empty');
         end if;
         item_number := item_number + 1;
@@ -26922,6 +26928,24 @@ ALTER FUNCTION "public"."landing_entries_open_on"("content" "jsonb") OWNER TO "p
 
 
 COMMENT ON FUNCTION "public"."landing_entries_open_on"("content" "jsonb") IS 'Internal: the day a landing page version''s entries open, or null (CONTESTS-13a2b).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."landing_entry_text_ok"("value" "jsonb", "longest" integer) RETURNS boolean
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  -- coalesce: a missing part (null) is "not OK", never unknown.
+  select coalesce(jsonb_typeof(value) = 'string'
+     and btrim(value #>> '{}') <> ''
+     and char_length(value #>> '{}') <= longest, false);
+$$;
+
+
+ALTER FUNCTION "public"."landing_entry_text_ok"("value" "jsonb", "longest" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."landing_entry_text_ok"("value" "jsonb", "longest" integer) IS 'True when a landing list part is non-blank text within its limit (S1-E11-34).';
 
 
 
@@ -27016,6 +27040,21 @@ ALTER FUNCTION "public"."landing_house_ad_for_slot"("wanted_page_key" "text", "u
 
 
 COMMENT ON FUNCTION "public"."landing_house_ad_for_slot"("wanted_page_key" "text", "used_keys" "text"[]) IS 'Internal: the next house ad for one of our landing pages not yet on the page (S1-E12-04, S1-E12-05).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."landing_json_list"("value" "jsonb") RETURNS "jsonb"
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select case when jsonb_typeof(value) = 'array' then value else '[]'::jsonb end;
+$$;
+
+
+ALTER FUNCTION "public"."landing_json_list"("value" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."landing_json_list"("value" "jsonb") IS 'A landing block''s list when it is one, otherwise []; keeps the publish checks from failing on a broken draft (S1-E11-34).';
 
 
 
@@ -27297,6 +27336,8 @@ CREATE OR REPLACE FUNCTION "public"."landing_text_problem"("block" "jsonb", "lan
     SET "search_path" TO ''
     AS $$
   select case
+    when jsonb_typeof(block #> array[language_code, field_name]) not in ('string', 'null')
+      then field_path || '.' || language_code || '.' || field_name || ':invalid'
     when is_required and btrim(coalesce(block #>> array[language_code, field_name], '')) = ''
       then field_path || '.' || language_code || '.' || field_name || ':empty'
     when char_length(coalesce(block #>> array[language_code, field_name], '')) > longest
@@ -27308,7 +27349,7 @@ $$;
 ALTER FUNCTION "public"."landing_text_problem"("block" "jsonb", "language_code" "text", "field_name" "text", "field_path" "text", "longest" integer, "is_required" boolean) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."landing_text_problem"("block" "jsonb", "language_code" "text", "field_name" "text", "field_path" "text", "longest" integer, "is_required" boolean) IS 'Internal: one landing page text field''s problem, or null (S1-E11-14).';
+COMMENT ON FUNCTION "public"."landing_text_problem"("block" "jsonb", "language_code" "text", "field_name" "text", "field_path" "text", "longest" integer, "is_required" boolean) IS 'Internal: one landing page text field''s problem, or null; text only (S1-E11-14, S1-E11-34).';
 
 
 
@@ -37420,7 +37461,7 @@ $$;
 ALTER FUNCTION "public"."register_landing_picture"("target_path" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."register_landing_picture"("target_path" "text") IS 'Records a just-uploaded landing page picture as pending its check; owner and admin only (CONTESTS-13a2a).';
+COMMENT ON FUNCTION "public"."register_landing_picture"("target_path" "text") IS 'Records a just-uploaded landing page picture as pending its check; staff with the landing pages area (CONTESTS-13a2a, S1-E11-34).';
 
 
 
@@ -65294,6 +65335,12 @@ REVOKE ALL ON FUNCTION "public"."landing_entries_open_on"("content" "jsonb") FRO
 
 
 
+REVOKE ALL ON FUNCTION "public"."landing_entry_text_ok"("value" "jsonb", "longest" integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."landing_entry_text_ok"("value" "jsonb", "longest" integer) TO "anon";
+GRANT ALL ON FUNCTION "public"."landing_entry_text_ok"("value" "jsonb", "longest" integer) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."landing_featured_cards"("content" "jsonb") FROM PUBLIC;
 
 
@@ -65303,6 +65350,12 @@ REVOKE ALL ON FUNCTION "public"."landing_featured_problems"("block" "jsonb", "bl
 
 
 REVOKE ALL ON FUNCTION "public"."landing_house_ad_for_slot"("wanted_page_key" "text", "used_keys" "text"[]) FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."landing_json_list"("value" "jsonb") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."landing_json_list"("value" "jsonb") TO "anon";
+GRANT ALL ON FUNCTION "public"."landing_json_list"("value" "jsonb") TO "authenticated";
 
 
 

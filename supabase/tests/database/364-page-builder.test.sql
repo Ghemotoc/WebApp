@@ -7,7 +7,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(16);
+select plan(20);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -55,6 +55,9 @@ select ok('blocks.4.link:bad_link' = any(public.landing_page_problems('campaign'
 select ok('blocks.4.link:bad_link' = any(public.landing_page_problems('campaign',
   jsonb_set((select value from kept where label = 'page'), '{blocks,4,link}', '"http://example.com"'))),
   'a plain http link is refused');
+select ok('blocks.4.link:bad_link' = any(public.landing_page_problems('campaign',
+  jsonb_set((select value from kept where label = 'page'), '{blocks,4,link}', '"//3232235777"'))),
+  'a link starting with // is refused, since a browser reads it as another site');
 select ok('blocks.4.link:empty' = any(public.landing_page_problems('campaign',
   jsonb_set((select value from kept where label = 'page'), '{blocks,4,link}', '""'))),
   'a call to action needs a link');
@@ -83,6 +86,19 @@ select ok('blocks.1.picture:empty' = any(public.landing_page_problems('campaign'
 select ok('blocks.3.picture:not_allowed' = any(public.landing_page_problems('campaign',
   jsonb_set((select value from kept where label = 'page'), '{blocks,3,picture_id}', '"00000000-0000-4000-8000-000000000001"'))),
   'a quote can''t carry a picture');
+
+-- Break test (CMS-2b): a broken draft gives "fix this" problems, never a database error, and a
+-- page too big to be typed is refused on save.
+select ok(public.landing_page_problems('campaign',
+  jsonb_set((select value from kept where label = 'page'), '{blocks,1,en,entries}', '"not a list"'))
+  @> array['blocks.1.entries:wrong_number'], 'cards that are not a list are a problem, not an error');
+select ok('blocks.3.ro.quote:invalid' = any(public.landing_page_problems('campaign',
+  jsonb_set((select value from kept where label = 'page'), '{blocks,3,ro,quote}', '{"x": 1}'))),
+  'a quote that is not text is invalid');
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000010');
+select throws_ok(format($$select public.admin_save_landing_page_draft(%L, jsonb_build_object('blocks', repeat('x', 600000)))$$,
+  (select id from kept where label = 'made')), '23514', 'This page is too big to save.', 'a page too big to have been typed is refused');
+reset role;
 
 select * from finish();
 rollback;

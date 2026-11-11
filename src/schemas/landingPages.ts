@@ -132,6 +132,25 @@ export const landingFieldRules: Record<
 /** The blocks that may carry a picture, and the longest its alt text may be (part a2a). */
 export const landingPictureKinds: readonly LandingBlockKind[] = ['hero', 'text', 'picture_text'];
 
+/**
+ * The links a block may carry: one of our pages ("/help/contest-rules", never "//" which a browser
+ * reads as another site) or an https address. The same rule as landing_block_extra_problems() in
+ * the database (S1-E11-34 break test: a draft's link is drawn in the staff preview before publish
+ * checks it, so the page draws only links that pass).
+ */
+export const landingLinkPattern = /^(\/([a-z0-9_-][a-z0-9/_-]*)?|https:\/\/\S+)$/;
+
+/**
+ * The address to draw for a block's link, or "#" when it isn't one we allow.
+ *
+ * @param link - the block's link as stored
+ * @returns a safe href
+ */
+export function safeLandingLink(link: string | undefined): string {
+  const trimmed = (link ?? '').trim();
+  return landingLinkPattern.test(trimmed) ? trimmed : '#';
+}
+
 /** The blocks that link somewhere: one of our pages or an https address. */
 export const landingLinkKinds: readonly LandingBlockKind[] = ['rules', 'call_to_action'];
 

@@ -176,10 +176,11 @@
     },
     "failures": {
       "take_down_before_show_from": "Data scoaterii trebuie să fie după data „Afișează de la”.",
-      "not_allowed": "Doar proprietarul și administratorii pot modifica paginile de prezentare.",
+      "not_allowed": "Construirea paginilor de prezentare nu face parte din rolul tău.",
       "not_found": "Pagina sau versiunea nu mai există. Reîncarcă și încearcă din nou.",
       "invalid": "Ceva de pe pagină nu este valid. Verifică și încearcă din nou.",
-      "unreachable": "Nu am putut contacta serverul. Încearcă din nou."
+      "unreachable": "Nu am putut contacta serverul. Încearcă din nou.",
+      "too_big": "Pagina e prea mare pentru a fi salvată. Șterge câteva blocuri sau scurtează textul."
     },
     "outcomes": {
       "save": "Ciorna a fost salvată. Pe pagină nu s-a schimbat încă nimic.",

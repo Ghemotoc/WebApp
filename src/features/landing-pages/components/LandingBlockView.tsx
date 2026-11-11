@@ -14,6 +14,7 @@
 import { CmsMarkdown } from '@/features/website/components/CmsMarkdown';
 import { formatRomaniaDate } from '@/lib/romania-time';
 import type { LandingBlock, LandingLanguage } from '@/schemas/landingPages';
+import { safeLandingLink } from '@/schemas/landingPages';
 
 import type { LandingExtras } from '../api/landingPages';
 import { wordsOf } from '../lib/blocks';
@@ -143,7 +144,7 @@ function Rules({ block, language }: BlockProps) {
       </h2>
       {body !== '' && <CmsMarkdown markdown={body} language={language} />}
       <a
-        href={block.link ?? '#'}
+        href={safeLandingLink(block.link)}
         className="inline-flex min-h-11 w-fit items-center font-semibold text-link underline"
       >
         {wordsOf(block, language, 'link_label')}

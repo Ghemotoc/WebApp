@@ -176,10 +176,11 @@
     },
     "failures": {
       "take_down_before_show_from": "The take-down date must come after the “show from” date.",
-      "not_allowed": "Only the owner and admins can change landing pages.",
+      "not_allowed": "Building landing pages isn’t part of your staff role.",
       "not_found": "This page or version no longer exists. Reload and try again.",
       "invalid": "Something on the page isn’t valid. Check it and try again.",
-      "unreachable": "We couldn’t reach the server. Try again."
+      "unreachable": "We couldn’t reach the server. Try again.",
+      "too_big": "This page is too big to save. Remove some blocks or shorten the text."
     },
     "outcomes": {
       "save": "Draft saved. Nothing has changed on the page yet.",

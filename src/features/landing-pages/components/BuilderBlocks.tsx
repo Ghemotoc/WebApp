@@ -10,6 +10,7 @@
 import { buttonClassName } from '@/components/ui/buttonStyles';
 import { CmsMarkdown } from '@/features/website/components/CmsMarkdown';
 import type { LandingBlock, LandingLanguage } from '@/schemas/landingPages';
+import { safeLandingLink } from '@/schemas/landingPages';
 
 import type { LandingExtras } from '../api/landingPages';
 import { wordsOf } from '../lib/blocks';
@@ -137,7 +138,7 @@ function CallToAction(props: BuilderBlockProps) {
     <section className="flex flex-col items-start gap-3 rounded-card border border-border bg-surface p-6 shadow-card">
       <BlockHeading {...props} />
       {body !== '' && <p className="m-0 text-body">{body}</p>}
-      <a href={block.link ?? '#'} className={buttonClassName({ variant: 'primary' })}>
+      <a href={safeLandingLink(block.link)} className={buttonClassName({ variant: 'primary' })}>
         {wordsOf(block, language, 'button_label')}
       </a>
     </section>

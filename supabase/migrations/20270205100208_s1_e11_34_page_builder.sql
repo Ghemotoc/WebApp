@@ -159,6 +159,11 @@ begin
   if new_take_down_on is not null and new_show_from is not null and new_take_down_on <= new_show_from then
     raise exception 'The page must come down after it goes up.' using errcode = 'check_violation', hint = 'take_down_before_show_from';
   end if;
+  -- A page of 30 full blocks in both languages is well under 500 kB; anything bigger is not a
+  -- page someone typed, so it is refused before it fills the table (CMS-2b break test).
+  if octet_length(coalesce(new_content, '{}'::jsonb)::text) > 500000 then
+    raise exception 'This page is too big to save.' using errcode = 'check_violation', hint = 'too_big';
+  end if;
   -- Step 2: update the page's draft, or start one.
   update public.landing_page_versions
   set content = coalesce(new_content, '{}'::jsonb), show_from = new_show_from,
@@ -312,6 +317,49 @@ $$;
 
 -- A block's own checks: links for a call to action, a picture for picture and text, and the
 -- cards and steps lists.
+/**
+ * landing_json_list: a block's list ("items" or "entries") when it really is a list, otherwise an
+ * empty one. A draft is saved as staff type it, so a broken draft (a string or a number where a list
+ * belongs) must give "fix this" problems on publish, never a database error (CMS-2b break test).
+ *
+ * @param value - the stored list, or anything
+ * @returns the list, or []
+ */
+create or replace function public.landing_json_list(value jsonb) returns jsonb
+language sql immutable
+set search_path = ''
+as $$
+  select case when jsonb_typeof(value) = 'array' then value else '[]'::jsonb end;
+$$;
+
+comment on function public.landing_json_list(jsonb) is
+  'A landing block''s list when it is one, otherwise []; keeps the publish checks from failing on a broken draft (S1-E11-34).';
+revoke all on function public.landing_json_list(jsonb) from public;
+grant execute on function public.landing_json_list(jsonb) to anon, authenticated;
+
+/**
+ * landing_entry_text_ok: true when a card, step, question or answer part is a string, not blank,
+ * and no longer than its limit. A part that is an object or a number is never shown.
+ *
+ * @param value - the part as stored
+ * @param longest - its limit in characters
+ * @returns true when it can be published
+ */
+create or replace function public.landing_entry_text_ok(value jsonb, longest integer) returns boolean
+language sql immutable
+set search_path = ''
+as $$
+  -- coalesce: a missing part (null) is "not OK", never unknown.
+  select coalesce(jsonb_typeof(value) = 'string'
+     and btrim(value #>> '{}') <> ''
+     and char_length(value #>> '{}') <= longest, false);
+$$;
+
+comment on function public.landing_entry_text_ok(jsonb, integer) is
+  'True when a landing list part is non-blank text within its limit (S1-E11-34).';
+revoke all on function public.landing_entry_text_ok(jsonb, integer) from public;
+grant execute on function public.landing_entry_text_ok(jsonb, integer) to anon, authenticated;
+
 CREATE OR REPLACE FUNCTION "public"."landing_block_extra_problems"("block" "jsonb", "block_path" "text") RETURNS "text"[]
     LANGUAGE "plpgsql" IMMUTABLE
     SET "search_path" TO ''
@@ -349,23 +397,24 @@ begin
       problems := problems || (block_path || '.age_groups:empty');
     end if;
   elsif block ->> 'kind' in ('rules', 'call_to_action') then
-    -- A link is one of our pages ("/help/contest-rules") or an https address (S1-E11-34).
+    -- A link is one of our pages ("/help/contest-rules") or an https address (S1-E11-34). A
+    -- leading "//" is refused: a browser reads "//host" as another site (CMS-2b break test).
     if rules_link = '' then
       problems := problems || (block_path || '.link:empty');
-    elsif rules_link !~ '^(/[a-z0-9/_-]*|https://[^\s]+)$' then
+    elsif rules_link !~ '^(/([a-z0-9_-][a-z0-9/_-]*)?|https://[^\s]+)$' then
       problems := problems || (block_path || '.link:bad_link');
     end if;
   elsif block ->> 'kind' = 'questions' then
     -- Questions are the same list in both languages.
-    if jsonb_array_length(coalesce(block #> '{ro,items}', '[]')) = 0
-       or jsonb_array_length(coalesce(block #> '{ro,items}', '[]')) <> jsonb_array_length(coalesce(block #> '{en,items}', '[]')) then
+    if jsonb_array_length(public.landing_json_list(block #> '{ro,items}')) = 0
+       or jsonb_array_length(public.landing_json_list(block #> '{ro,items}')) <> jsonb_array_length(public.landing_json_list(block #> '{en,items}')) then
       problems := problems || (block_path || '.items:unequal');
     end if;
     foreach language_code in array array['ro', 'en'] loop
       item_number := 0;
-      for item in select value from jsonb_array_elements(coalesce(block #> array[language_code, 'items'], '[]')) loop
-        if btrim(coalesce(item ->> 'question', '')) = '' or btrim(coalesce(item ->> 'answer', '')) = ''
-           or char_length(item ->> 'question') > 200 or char_length(item ->> 'answer') > 1000 then
+      for item in select value from jsonb_array_elements(public.landing_json_list(block #> array[language_code, 'items'])) loop
+        if not public.landing_entry_text_ok(item -> 'question', 200)
+           or not public.landing_entry_text_ok(item -> 'answer', 1000) then
           problems := problems || (block_path || '.' || language_code || '.items.' || item_number || ':empty');
         end if;
         item_number := item_number + 1;
@@ -380,15 +429,15 @@ begin
     -- 2 to 4 cards or 2 to 6 steps, the same number in both languages, each with a title of up to
     -- 80 characters and words of up to 300 (S1-E11-34).
     entry_counts := case when block ->> 'kind' = 'cards' then int4range(2, 4, '[]') else int4range(2, 6, '[]') end;
-    if not (jsonb_array_length(coalesce(block #> '{ro,entries}', '[]')) <@ entry_counts)
-       or jsonb_array_length(coalesce(block #> '{ro,entries}', '[]')) <> jsonb_array_length(coalesce(block #> '{en,entries}', '[]')) then
+    if not (jsonb_array_length(public.landing_json_list(block #> '{ro,entries}')) <@ entry_counts)
+       or jsonb_array_length(public.landing_json_list(block #> '{ro,entries}')) <> jsonb_array_length(public.landing_json_list(block #> '{en,entries}')) then
       problems := problems || (block_path || '.entries:wrong_number');
     end if;
     foreach language_code in array array['ro', 'en'] loop
       item_number := 0;
-      for item in select value from jsonb_array_elements(coalesce(block #> array[language_code, 'entries'], '[]')) loop
-        if btrim(coalesce(item ->> 'title', '')) = '' or btrim(coalesce(item ->> 'body', '')) = ''
-           or char_length(item ->> 'title') > 80 or char_length(item ->> 'body') > 300 then
+      for item in select value from jsonb_array_elements(public.landing_json_list(block #> array[language_code, 'entries'])) loop
+        if not public.landing_entry_text_ok(item -> 'title', 80)
+           or not public.landing_entry_text_ok(item -> 'body', 300) then
           problems := problems || (block_path || '.' || language_code || '.entries.' || item_number || ':empty');
         end if;
         item_number := item_number + 1;
@@ -441,3 +490,46 @@ begin
   return problems;
 end;
 $_$;
+
+-- The functions' comments name who may call them now: anyone holding the landing_pages area.
+comment on function public.admin_archive_landing_page(uuid) is
+  'Takes a landing page''s address down for good; staff with the landing pages area; logged (S1-E11-14, S1-E11-34).';
+comment on function public.admin_create_landing_page(text, text) is
+  'Starts a landing page at /c/<slug>; staff with the landing pages area; logged (S1-E11-14, S1-E11-34).';
+comment on function public.admin_landing_picture_states(uuid) is
+  'The check state of every picture uploaded for a landing page; staff with the landing pages area (CONTESTS-13a2a, S1-E11-34).';
+comment on function public.admin_publish_landing_page(uuid) is
+  'Publishes a landing page draft from its show-from date; staff with the landing pages area; logged (S1-E11-14, S1-E11-34).';
+comment on function public.admin_restore_landing_page_version(uuid) is
+  'Brings an earlier landing page version back as the draft; staff with the landing pages area; logged (S1-E11-14, S1-E11-34).';
+comment on function public.admin_save_landing_page_draft(uuid, jsonb, date, date) is
+  'Saves a landing page draft; staff with the landing pages area (S1-E11-14, S1-E11-34).';
+comment on function public.register_landing_picture(text) is
+  'Records a just-uploaded landing page picture as pending its check; staff with the landing pages area (CONTESTS-13a2a, S1-E11-34).';
+
+/**
+ * landing_text_problem: one text field's problem, in the form "<field>:<reason>", or null.
+ * What changed in CMS-2b: a field that holds something other than text (an object, a list or a
+ * number) is "invalid", so a broken draft can't be published and then vanish for visitors, whose
+ * page treats unreadable content as missing (CMS-2b break test).
+ * Inputs: the block, the language, the field, its path for the message, its limit and whether
+ * it is required. Returns: the problem, or null. Internal; landing_page_problems() calls it.
+ */
+create or replace function public.landing_text_problem(
+  block jsonb, language_code text, field_name text, field_path text, longest integer, is_required boolean
+) returns text
+language sql immutable
+set search_path = ''
+as $$
+  select case
+    when jsonb_typeof(block #> array[language_code, field_name]) not in ('string', 'null')
+      then field_path || '.' || language_code || '.' || field_name || ':invalid'
+    when is_required and btrim(coalesce(block #>> array[language_code, field_name], '')) = ''
+      then field_path || '.' || language_code || '.' || field_name || ':empty'
+    when char_length(coalesce(block #>> array[language_code, field_name], '')) > longest
+      then field_path || '.' || language_code || '.' || field_name || ':too_long'
+  end;
+$$;
+
+comment on function public.landing_text_problem(jsonb, text, text, text, integer, boolean) is
+  'Internal: one landing page text field''s problem, or null; text only (S1-E11-14, S1-E11-34).';
