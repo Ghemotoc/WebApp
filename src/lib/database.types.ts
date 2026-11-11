@@ -7852,6 +7852,138 @@ export type Database = {
           },
         ];
       };
+      staff_custom_role_areas: {
+        Row: {
+          access: string;
+          area: string;
+          created_at: string;
+          custom_role_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          access: string;
+          area: string;
+          created_at?: string;
+          custom_role_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          access?: string;
+          area?: string;
+          created_at?: string;
+          custom_role_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'staff_custom_role_areas_custom_role_id_fkey';
+            columns: ['custom_role_id'];
+            isOneToOne: false;
+            referencedRelation: 'staff_custom_roles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'staff_custom_role_areas_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      staff_custom_role_holders: {
+        Row: {
+          created_at: string;
+          custom_role_id: string;
+          granted_by_user_id: string | null;
+          id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          custom_role_id: string;
+          granted_by_user_id?: string | null;
+          id?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          custom_role_id?: string;
+          granted_by_user_id?: string | null;
+          id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'staff_custom_role_holders_custom_role_id_fkey';
+            columns: ['custom_role_id'];
+            isOneToOne: false;
+            referencedRelation: 'staff_custom_roles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'staff_custom_role_holders_granted_by_user_id_fkey';
+            columns: ['granted_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'staff_custom_role_holders_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      staff_custom_roles: {
+        Row: {
+          created_at: string;
+          deleted_at: string | null;
+          description: string;
+          id: string;
+          name: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          deleted_at?: string | null;
+          description?: string;
+          id?: string;
+          name: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          deleted_at?: string | null;
+          description?: string;
+          id?: string;
+          name?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'staff_custom_roles_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       staff_interns: {
         Row: {
           created_at: string;
@@ -10638,6 +10770,7 @@ export type Database = {
         Args: { new_page_type: string; new_slug: string };
         Returns: string;
       };
+      admin_custom_roles: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_data_request: { Args: { target_request_id: string }; Returns: Json };
       admin_data_request_copy_target: {
         Args: { target_request_id: string };
@@ -11259,6 +11392,10 @@ export type Database = {
         };
         Returns: undefined;
       };
+      admin_remove_custom_role: {
+        Args: { reason_given: string; target_role_id: string };
+        Returns: boolean;
+      };
       admin_remove_name_word: { Args: { target_word_id: string }; Returns: boolean };
       admin_remove_nudge_word: { Args: { target_word_id: string }; Returns: boolean };
       admin_remove_on_call_shift: {
@@ -11374,6 +11511,16 @@ export type Database = {
         Returns: string;
       };
       admin_save_contest: { Args: { details: Json; target_contest_id: string }; Returns: string[] };
+      admin_save_custom_role: {
+        Args: {
+          new_areas: Json;
+          new_description: string;
+          new_name: string;
+          reason_given: string;
+          target_role_id: string;
+        };
+        Returns: string;
+      };
       admin_save_forum: {
         Args: {
           accent: Database['public']['Enums']['forum_accent'];
@@ -11491,6 +11638,15 @@ export type Database = {
       admin_set_contest_placing: {
         Args: { target_entry_id: string; wanted_placing: string };
         Returns: undefined;
+      };
+      admin_set_custom_role_holder: {
+        Args: {
+          reason_given: string;
+          should_hold: boolean;
+          target_role_id: string;
+          target_user_id: string;
+        };
+        Returns: boolean;
       };
       admin_set_evidence_hold: {
         Args: { evidence_id: string; reason_given: string; should_hold: boolean };
@@ -13008,6 +13164,19 @@ export type Database = {
         Args: { character_name: string; character_role: string; story_slug: string };
         Returns: Json;
       };
+      custom_role_area_in_reach: {
+        Args: { wanted_access: string; wanted_area: string };
+        Returns: boolean;
+      };
+      custom_role_area_problem: { Args: { new_areas: Json }; Returns: string };
+      custom_role_areas_json: { Args: { target_role_id: string }; Returns: Json };
+      custom_role_assignable_areas: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          area: string;
+        }[];
+      };
+      custom_role_in_reach: { Args: { target_role_id: string }; Returns: boolean };
       data_export_held_tables: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -15589,6 +15758,7 @@ export type Database = {
       };
       require_compliance_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_contest_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
+      require_custom_role_staff: { Args: { reason_given: string }; Returns: undefined };
       require_forum_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_forum_writer: { Args: Record<PropertyKey, never>; Returns: string };
       require_free_ad_slot: {

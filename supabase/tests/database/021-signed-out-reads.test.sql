@@ -239,6 +239,10 @@ select results_eq(
        -- Sponsors and campaigns: owner and admin only; readers get live ads through page_ads() (SPONSORS-b1).
        ('sponsor_campaigns', 0::bigint),
        ('sponsors', 0::bigint),
+       -- Custom staff roles, their areas and holders: owner and admin only (S1-E11-33).
+       ('staff_custom_role_areas', 0::bigint),
+       ('staff_custom_role_holders', 0::bigint),
+       ('staff_custom_roles', 0::bigint),
        ('staff_interns', 0::bigint),
        ('staff_languages', 0::bigint),
        ('staff_permissions', 0::bigint),
