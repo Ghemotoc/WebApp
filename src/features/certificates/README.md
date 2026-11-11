@@ -10,6 +10,10 @@ Certificate-Participation and Certificate-Winner). Contests (S1-E12-02) will iss
   `issue_class_certificates()`) and the staff look-up and revoke (`admin_certificate()`,
   `admin_revoke_certificate()`).
 - `hooks/useCertificates.ts` and `hooks/useClassCertificates.ts`: the reads and changes.
+- `lib/certificateLook.ts` (G13a): the eight colours and the patterns a certificate can be drawn in,
+  saved on each certificate at signing; `components/CertificateFrame.tsx` draws the frame, the
+  faint pattern and the seal, and `CertificateLookPicker.tsx` is the teacher's choice with a
+  preview.
 - `lib/certificateDate.ts`: dates in the certificate's language; `lib/pickedResults.ts`: the
   teacher's choices as the list the database takes.
 - `components/MyCertificatesPage.tsx` (`/certificates`), `CertificatePage.tsx`
