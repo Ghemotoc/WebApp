@@ -2757,3 +2757,10 @@ for the notice on the story page and the "In the app only" pill on cards
 - At night: `compute_daily_metrics()` (pg_cron `count-daily-metrics`) now calls `compute_investor_metrics()`, which stores the day's totals in `daily_metrics` and, for yesterday only, the weekly and monthly active counts and rolling retention (`rolling_retention()`, empty under 5 new members). It also deletes last-day rows after 35 days.
 - On screen: Staff › Metrics, `InvestorNumbersSection` → `useInvestorNumbers()` → `admin_investor_numbers()` (owner and admins in a staff session): `InvestorLatestCard`, `InvestorMonthCard` and two spreadsheets (`lib/investorCsv.ts`).
 - Tests: `360-investor-numbers.test.sql`, `src/features/analytics/lib/activeMinute.test.ts`, `src/features/staff/lib/investorCsv.test.ts`, `e2e/investor-numbers.spec.ts`.
+
+## Ranking place (ANALYTICS-1b, S1-E15-05)
+
+- Where it starts: the story page's pills (`StoryHeader` → `RankingPlacePill`) and the staff story page (`StaffStoryPage` → `StaffRankingPlace`). Both call `useRankingPlace(slug)` → `api/rankingPlace.ts` → `story_rank_place(story_slug)`.
+- In the database: `story_rank_place()` checks the caller may see the story (rating, moderation, blocks; staff who may view stories always may), then counts the public, non-class-only stories in the same category with a higher `story_scores.score`. It answers `{place, category_slug}`, or null past `ranking_place_show_up_to` (100).
+- The score: the hourly `compute_story_scores()` now adds `story_more_signals()`: follows (decayed like likes, the writer's own left out), finished chapters times their reading minutes (from `chapter_finishes`) and growth against the score stored 7 days ago, capped at doubling. The weights are settings (`ranking_weight_follows`, `ranking_weight_finishes`, `ranking_weight_growth`).
+- Tests: `361-ranking-place.test.sql`, `src/features/reading/api/rankingPlace.test.ts`, `e2e/ranking-place.spec.ts`.

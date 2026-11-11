@@ -1299,7 +1299,10 @@
       "noChapters": "Povestea nu are încă niciun capitol.",
       "noWordsNote": "Echipa nu vede niciodată aici cuvintele unei ciorne. Proprietarii, administratorii și moderatorii pot deschide cuvintele unui capitol publicat ca să elimine un pasaj ilegal, dar nimeni din echipă nu poate scrie în ele.",
       "writerAge": "Grupa de vârstă",
-      "adult": "18 ani sau peste"
+      "adult": "18 ani sau peste",
+      "ranking": "Locul în clasament",
+      "rankingPlace": "Locul {{place}} în {{category}}",
+      "notRanked": "Nu e în primele 100"
     },
     "change": {
       "visibilityHeading": "Cine o poate găsi",

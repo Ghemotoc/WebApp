@@ -68,7 +68,8 @@
     "youAreHere": "Ești aici, {{percent}}%",
     "youAreHereLink": "Ești aici, {{percent}}% din capitolul {{number}}. Mergi înapoi acolo",
     "appOnly": "{{writer}} publică această poveste doar în aplicație. Lista capitolelor e aici, iar capitolele se deschid în aplicație.",
-    "appOnlyPill": "Doar în aplicație"
+    "appOnlyPill": "Doar în aplicație",
+    "rankingPlace": "Locul {{place}} în {{category}}"
   },
   "reader": {
     "documentTitle": "{{chapter}} · {{story}}",
