@@ -4,7 +4,13 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { handleStorageSweep, planDeleteCalls, type FileToSweep, type SweepOptions } from './sweep';
+import {
+  handleStorageSweep,
+  isSameKey,
+  planDeleteCalls,
+  type FileToSweep,
+  type SweepOptions,
+} from './sweep';
 
 /** A call the fake fetch saw. */
 interface SeenCall {
@@ -50,6 +56,14 @@ describe('the Storage sweep', () => {
     const response = await handleStorageSweep(callWithKey('wrong'), options);
     expect(response.status).toBe(401);
     expect(calls).toHaveLength(0);
+  });
+
+  it('accepts the exact key only: not a part of it, a longer one or nothing', () => {
+    expect(isSameKey('the-sweep-key', 'the-sweep-key')).toBe(true);
+    expect(isSameKey('the-sweep', 'the-sweep-key')).toBe(false);
+    expect(isSameKey('the-sweep-key-and-more', 'the-sweep-key')).toBe(false);
+    expect(isSameKey('', 'the-sweep-key')).toBe(false);
+    expect(isSameKey('the-sweep-kez', 'the-sweep-key')).toBe(false);
   });
 
   it('does nothing while the sweep key is not set', async () => {

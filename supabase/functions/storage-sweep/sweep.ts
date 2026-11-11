@@ -125,6 +125,26 @@ export async function deleteFiles(options: SweepOptions, files: FileToSweep[]): 
 }
 
 /**
+ * Compares the key a caller gave with the real one, taking the same time whatever they gave.
+ * A plain "===" stops at the first wrong character, so the time it takes says how much of a guess
+ * was right; this looks at every character each time (final security check, 11 Nov 2026).
+ *
+ * @param given - the key in the call
+ * @param expected - the sweep key
+ * @returns true when they are the same
+ */
+export function isSameKey(given: string, expected: string): boolean {
+  const givenBytes = new TextEncoder().encode(given);
+  const expectedBytes = new TextEncoder().encode(expected);
+  // A different length is already a different key; the loop still runs over the real key's length.
+  let difference = givenBytes.length ^ expectedBytes.length;
+  for (let index = 0; index < expectedBytes.length; index += 1) {
+    difference |= (givenBytes[index] ?? 0) ^ (expectedBytes[index] ?? 0);
+  }
+  return difference === 0;
+}
+
+/**
  * Answers one call from the database.
  *
  * @param request - the call from run_storage_sweep(), with "Authorization: Bearer <sweep key>"
@@ -140,7 +160,7 @@ export async function handleStorageSweep(request: Request, options: SweepOptions
     return Response.json({ error: 'not_set_up' }, { status: 503 });
   }
   const given = (request.headers.get('Authorization') ?? '').replace(/^Bearer\s+/i, '');
-  if (given !== sweepKey) return Response.json({ error: 'not_allowed' }, { status: 401 });
+  if (!isSameKey(given, sweepKey)) return Response.json({ error: 'not_allowed' }, { status: 401 });
   // Step 2: which files are due.
   let files: FileToSweep[];
   try {

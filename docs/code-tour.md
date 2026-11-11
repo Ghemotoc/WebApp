@@ -550,7 +550,7 @@ Settings shows one group at a time (Profile, Email and sign-in, Privacy, Notific
   useSaveMessageSettings → set_message_audience() and set_adults_may_message() (16 and 17 only)
 About this chat → DeleteChatControl → useDeleteChat → delete_conversation(handle)
   → conversation_members.deleted_at for the caller; my_conversations(), conversation_with() and the
-    messages_select_member policy leave out what came before it (chat_cleared_at())
+    messages_select_member policy leave out what came before it (chat_cleared_at(), which answers a signed-in caller about their own chats only; FINAL-2)
 pg_cron 'purge-deleted-chats' nightly → purge_deleted_chats() → keeps held_message_ids() (reported + context)
 ```
 

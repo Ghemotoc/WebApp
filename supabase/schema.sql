@@ -17223,14 +17223,16 @@ CREATE OR REPLACE FUNCTION "public"."chat_cleared_at"("chat_id" "uuid", "person_
     SET "search_path" TO ''
     AS $$
   select conversation_members.deleted_at from public.conversation_members
-  where conversation_members.conversation_id = chat_id and conversation_members.user_id = person_id;
+  where conversation_members.conversation_id = chat_id and conversation_members.user_id = person_id
+    -- A signed-in caller is answered about themselves only; a database job has no caller.
+    and ((select auth.uid()) is null or person_id = (select auth.uid()));
 $$;
 
 
 ALTER FUNCTION "public"."chat_cleared_at"("chat_id" "uuid", "person_id" "uuid") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."chat_cleared_at"("chat_id" "uuid", "person_id" "uuid") IS 'Internal: when a person last deleted a chat, or null (S1-E9-04).';
+COMMENT ON FUNCTION "public"."chat_cleared_at"("chat_id" "uuid", "person_id" "uuid") IS 'Internal: when a person last deleted a chat, or null; a signed-in caller is answered about themselves only (S1-E9-04; FINAL-2).';
 
 
 
