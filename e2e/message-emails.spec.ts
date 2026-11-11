@@ -136,6 +136,9 @@ test.describe('Message emails with quiet hours (IDEAS-2c1)', () => {
       await page.setViewportSize({ width, height: 900 });
       // Settings rises into place (tmc-rise); axe reads colours only once it has settled.
       await waitForAnimationsToFinish(page);
+      // Reduce motion ends every animation at once, so axe measures the colours the screen
+      // settles on, not a fade half-way through (as in e2e/support/accessibility.ts; FINAL-1).
+      await page.emulateMedia({ reducedMotion: 'reduce' });
       const results = await new AxeBuilder({ page })
         .include('#messages')
         .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])

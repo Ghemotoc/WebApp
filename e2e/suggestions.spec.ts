@@ -120,8 +120,14 @@ test.describe('suggestions from reading (S1-E15-06)', () => {
     await page.goto('/settings#privacy');
     const toggle = page.getByRole('switch', { name: /Suggestions from reading/ });
     await expect(toggle).toHaveAttribute('aria-checked', 'true');
+    // The switch shows "off" at once and saves in the background, so wait for the database's
+    // answer before leaving: loading another page mid-save cancels it and the row stays (FINAL-1).
+    const saved = page.waitForResponse(
+      (response) => response.url().includes('/rpc/set_suggests_from_reading') && response.ok(),
+    );
     await toggle.click();
     await expect(toggle).toHaveAttribute('aria-checked', 'false');
+    await saved;
     await page.goto('/discover');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     await page.waitForTimeout(800);

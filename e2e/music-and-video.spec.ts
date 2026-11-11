@@ -292,6 +292,9 @@ test.describe('music and video in chapters (S1-E3-10)', () => {
 /** Checks axe and the page width. */
 async function expectAccessibleAndFitting(page: Page, width: number) {
   await waitForAnimationsToFinish(page);
+  // Reduce motion ends every animation at once, so axe measures the colours the screen
+  // settles on, not a fade half-way through (as in e2e/support/accessibility.ts; FINAL-1).
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
     .analyze();
