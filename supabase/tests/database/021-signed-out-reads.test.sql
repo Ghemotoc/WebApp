@@ -51,6 +51,8 @@ select results_eq(
        ('abuse_image_evidence', 0::bigint),
        -- Delete my account: each person's own requests (S1-E13-03).
        ('account_deletions', 0::bigint),
+       -- The last day each account was used: each person's own row (INACTIVE-1).
+       ('account_last_used', 0::bigint),
        -- Staff notes on an account: staff with the Users area only (LOGS-1a).
        ('account_staff_notes', 0::bigint),
        -- Slot bookings and our own house ads: owner and admin only (SPONSORS-e1).

@@ -335,6 +335,25 @@ function waitlistAdmittedText(t: TFunction): NotificationText {
 }
 
 /**
+ * A notice that the account was about to be deleted because nobody had used it for almost
+ * 5 years (INACTIVE-1). It reaches the person by email; anyone reading it here has logged in, which
+ * already keeps the account, so the row only says so. Both notices read the same.
+ *
+ * @param t - the notifications translation function
+ * @returns the row's words and link
+ */
+function accountUnusedText(t: TFunction): NotificationText {
+  return {
+    who: t('who.yourAccount'),
+    what: t('what.accountUnused'),
+    quote: null,
+    grouped: null,
+    actionLabel: t('actions.startExploring'),
+    href: '/discover',
+  };
+}
+
+/**
  * The Teacher badge request was decided (approved or turned down), or staff removed the badge
  * (S1-E2-11, criteria 6 and 8). The row leads to Settings › Teacher badge, which shows the
  * outcome, the team's reason and how to try again.
@@ -624,6 +643,8 @@ const teamTextFor: Partial<
   spotlight_consent_agreed: spotlightConsentText,
   spotlight_consent_withdrawn: spotlightConsentText,
   waitlist_admitted: waitlistAdmittedText,
+  account_unused_month: accountUnusedText,
+  account_unused_week: accountUnusedText,
 };
 
 /**

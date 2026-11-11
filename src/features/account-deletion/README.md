@@ -9,3 +9,5 @@ Delete my account (story S1-E13-03; board Settings 6.3, the Delete account tab; 
 - `components/DeleteAccountPage.tsx`: `/delete-account`, the website's deletion page for people without the app.
 
 How it works: the account closes at once (hidden everywhere, nothing can be written) and the nightly job `purge-closed-accounts` deletes it for good 14 days later, keeping only content under an open case. What happens to each table is in one list, `account_deletion_rules()`; database test 211 fails when a new user table is missing from it.
+
+Accounts nobody uses (INACTIVE-1): the nightly job `close-unused-accounts` emails a notice about a month and about a week before an account reaches 5 years without use, then closes it the same way (`hide_closing_account()`, reason `unused`), so the same closing page and "Keep my account" apply. Nothing on screen is new; the database side is `…_inactive1_02_unused_accounts.sql`.

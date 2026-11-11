@@ -626,13 +626,31 @@ Only the writer, only a Completed story, only published chapters, never the Atla
 /settings#delete-account → DeleteAccountSection → "Delete my account"         src/features/account-deletion/
   → DeleteAccountConfirm → ConfirmLogIn while the log-in is old (password, passkey or a provider with mode=confirm)
   → useRequestAccountDeletion → request_account_deletion() (account_signed_in_recently())
-      profile, stories and comments marked deleted at once → account_deletions row (delete_after)
+      hide_closing_account(): profile, stories, comments and forum posts marked deleted at once
+      → account_deletions row (delete_after, reason 'requested')
   → AccountClosingGate (in AppLayout) → ClosingAccountPage: "Keep my account" → cancel_account_deletion()
 nightly purge-closed-accounts → purge_closed_accounts() → delete_account_data()
   → delete_account_stories() + delete_account_conversation() (content_is_held_for_moderation() keeps what a case holds)
   → every 'delete' table of account_deletion_rules() → erase_closed_account() (the tombstone)
 /delete-account (DeleteAccountPage) → the steps, or /settings#delete-account when signed in
 ```
+
+### Accounts nobody uses (INACTIVE-1)
+
+```
+the app, once a minute while open → note_active_minute() → account_last_used.used_on = today (once a day)
+nightly close-unused-accounts (02:35 UTC) → close_unused_accounts()
+  → for each live account that isn't staff, the classics account, banned, under an abuse image
+    evidence hold or already closing:
+      account_last_used_on(): latest of made, last log-in, app open, "Keep my account"
+      unused_account_step(): none | 'month' notice | 'week' notice | 'close'
+  → send_unused_account_notice() → notifications (account_unused_month / _week, always emailed)
+      → email_outbox → server/notification-emails.ts ("Log in to keep it")
+  → close_unused_account() → hide_closing_account() + account_deletions (reason 'unused')
+      → 14 days later purge-closed-accounts deletes it, unless someone logs in and keeps it
+```
+
+The settings are `unused_account_years` (5), `unused_account_month_notice_days` (30) and `unused_account_week_notice_days` (7); the email copy says "5 years", so a change to the first needs a copy change in `email.json` and `notifications.json` too. The account never closes sooner than a week after the last notice. Test: `369`.
 
 The user ID is never reused: the profile and the login row stay as an empty tombstone. A new user table must be added to `account_deletion_rules()` (`delete`, `own_step` or `kept` with a reason; test `211` fails until it is). Tests: `211`, `e2e/delete-my-account.spec.ts`.
 

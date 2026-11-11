@@ -728,7 +728,9 @@ CREATE TYPE "public"."notification_kind" AS ENUM (
     'live_session_soon',
     'home_comment_invited',
     'forum_reply',
-    'assignment_due'
+    'assignment_due',
+    'account_unused_month',
+    'account_unused_week'
 );
 
 
@@ -1408,6 +1410,7 @@ CREATE OR REPLACE FUNCTION "public"."account_deletion_rules"() RETURNS TABLE("ta
     AS $$
   values
     ('account_deletions', 'kept', 0, 'the record that the account was deleted, with no personal data in it'),
+    ('account_last_used', 'delete', 1, null),
     ('age_check_attempts', 'delete', 1, null),
     ('age_check_sessions', 'delete', 1, null),
     ('appeals', 'kept', 0, 'a moderation record, kept as long as its statement of reasons and case (docs/retention.md)'),
@@ -1536,6 +1539,30 @@ ALTER FUNCTION "public"."account_is_new"("target_user_id" "uuid") OWNER TO "post
 
 
 COMMENT ON FUNCTION "public"."account_is_new"("target_user_id" "uuid") IS 'Internal: true while the account is younger than new_account_hours (S1-E10-12 criterion 1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."account_last_used_on"("target_user_id" "uuid") RETURNS "date"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select greatest(
+    (profiles.created_at at time zone 'Europe/Bucharest')::date,
+    (users.last_sign_in_at at time zone 'Europe/Bucharest')::date,
+    (select account_last_used.used_on from public.account_last_used
+     where account_last_used.user_id = profiles.id),
+    (select (max(account_deletions.cancelled_at) at time zone 'Europe/Bucharest')::date
+     from public.account_deletions where account_deletions.user_id = profiles.id))
+  from public.profiles
+  left join auth.users on users.id = profiles.id
+  where profiles.id = target_user_id;
+$$;
+
+
+ALTER FUNCTION "public"."account_last_used_on"("target_user_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."account_last_used_on"("target_user_id" "uuid") IS 'Internal: the last day an account was made, logged in to, open in the app or kept from closing (INACTIVE-1).';
 
 
 
@@ -18547,6 +18574,89 @@ COMMENT ON FUNCTION "public"."close_finished_safety_checks"("target_country" "te
 
 
 
+CREATE OR REPLACE FUNCTION "public"."close_unused_account"("target_user_id" "uuid") RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  deletion_days integer := public.unused_account_setting('account_deletion_days', 14);
+begin
+  perform public.hide_closing_account(target_user_id);
+  insert into public.account_deletions (user_id, delete_after, reason)
+  values (target_user_id, now() + make_interval(days => deletion_days), 'unused');
+end;
+$$;
+
+
+ALTER FUNCTION "public"."close_unused_account"("target_user_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."close_unused_account"("target_user_id" "uuid") IS 'Internal: closes an account nobody used, to be deleted after account_deletion_days (INACTIVE-1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."close_unused_accounts"() RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  account record;
+  step text;
+  month_notices integer := 0;
+  week_notices integer := 0;
+  closed integer := 0;
+  month_days integer := public.unused_account_setting('unused_account_month_notice_days', 30);
+  years integer := public.unused_account_setting('unused_account_years', 5);
+begin
+  -- Step 1: the accounts whose month window has started (a cheap first cut in SQL).
+  for account in
+    select candidates.user_id, candidates.last_used, last_use_rows.notices_for,
+           last_use_rows.month_notice_at, last_use_rows.week_notice_at
+    from (
+      select profiles.id as user_id, public.account_last_used_on(profiles.id) as last_used
+      from public.profiles
+      where profiles.deleted_at is null
+        and not exists (select 1 from public.staff_roles where staff_roles.user_id = profiles.id)
+        and not public.is_classics_account(profiles.id)
+        -- A banned account is closed, never deleted (Robert, 2 Nov 2026; ADMIN-2 part f1), and an
+        -- account with child abuse image evidence stays under that evidence's 5-year hold
+        -- (ADMIN-2e2b): purge_closed_accounts() would skip both, so they get no notice either.
+        and (public.active_sanction(profiles.id, 'ban')).id is null
+        and not exists (select 1 from public.abuse_image_evidence
+                        where abuse_image_evidence.user_id = profiles.id)
+        and not exists (select 1 from public.account_deletions
+                        where account_deletions.user_id = profiles.id
+                          and account_deletions.cancelled_at is null
+                          and account_deletions.completed_at is null)
+    ) as candidates
+    left join public.account_last_used as last_use_rows on last_use_rows.user_id = candidates.user_id
+    where candidates.last_used + make_interval(years => years) - make_interval(days => month_days)
+          <= (now() at time zone 'Europe/Bucharest')::date
+  loop
+    -- Step 2: what is due for this account tonight.
+    step := public.unused_account_step(account.last_used, account.notices_for,
+                                       account.month_notice_at, account.week_notice_at);
+    -- Step 3: do it, and count it.
+    if step in ('month', 'week') then
+      perform public.send_unused_account_notice(account.user_id, account.last_used, step);
+      if step = 'month' then month_notices := month_notices + 1; else week_notices := week_notices + 1; end if;
+    elsif step = 'close' then
+      perform public.close_unused_account(account.user_id);
+      closed := closed + 1;
+    end if;
+  end loop;
+  return jsonb_build_object('month_notices', month_notices, 'week_notices', week_notices, 'closed', closed);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."close_unused_accounts"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."close_unused_accounts"() IS 'Nightly: emails the notices to accounts nobody used for almost unused_account_years and closes them after (INACTIVE-1).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."cms_band_problems"("band" "jsonb", "field_prefix" "text", "has_points" boolean) RETURNS "text"[]
     LANGUAGE "plpgsql" IMMUTABLE
     SET "search_path" TO ''
@@ -20793,6 +20903,7 @@ CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_
     AS $$
   values
     ('account_deletions', true, null),
+    ('account_last_used', true, null),
     ('age_check_attempts', true, null),
     ('age_check_sessions', false, 'a short-lived link to a Yoti session, deleted once the result is stored; the result is in the account part'),
     ('appeals', true, null),
@@ -22200,7 +22311,8 @@ CREATE OR REPLACE FUNCTION "public"."email_delivery_for"("target_user_id" "uuid"
   select case
     when kind in ('moderation_decision', 'login_method_added', 'login_method_removed', 'class_archived',
                   'data_request_confirm', 'data_request_extended', 'data_request_copy_ready',
-                  'picture_opened_by_staff', 'waitlist_admitted') then 'required'
+                  'picture_opened_by_staff', 'waitlist_admitted',
+                  'account_unused_month', 'account_unused_week') then 'required'
     else coalesce(
       (select settings.delivery from public.notification_email_settings as settings
        where settings.user_id = target_user_id and settings.kind = email_delivery_for.kind),
@@ -25711,6 +25823,39 @@ ALTER FUNCTION "public"."hide_banned_account"("ban" "public"."sanctions") OWNER 
 
 
 COMMENT ON FUNCTION "public"."hide_banned_account"("ban" "public"."sanctions") IS 'Internal: hides a banned account''s profile and content, linked to the ban (part f1; brief section 6).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."hide_closing_account"("target_user_id" "uuid") RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  -- Step 1: the account closes: hidden everywhere, and online status forgotten.
+  update public.profiles set deleted_at = now(), last_active_at = null where profiles.id = target_user_id;
+  -- Step 2: the live stories and comments (chapters follow their story).
+  update public.stories set deleted_at = now()
+  where stories.user_id = target_user_id and stories.deleted_at is null;
+  update public.comments set deleted_at = now(), deleted_by = 'author'
+  where comments.user_id = target_user_id and comments.deleted_at is null;
+  -- Step 3: the forums (S1-E8-02): the person's posts become "Post deleted" markers, and a thread
+  -- nobody else has a live post in goes with them.
+  update public.forum_posts set deleted_at = now()
+  where forum_posts.user_id = target_user_id and forum_posts.deleted_at is null;
+  update public.forum_threads set deleted_at = now()
+  where forum_threads.user_id = target_user_id and forum_threads.deleted_at is null
+    and not exists (select 1 from public.forum_posts
+                    where forum_posts.thread_id = forum_threads.id
+                      and forum_posts.user_id <> target_user_id
+                      and forum_posts.deleted_at is null);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."hide_closing_account"("target_user_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."hide_closing_account"("target_user_id" "uuid") IS 'Internal: hides a closing account and what it published, with one time so a cancel brings back exactly that (S1-E13-03, INACTIVE-1).';
 
 
 
@@ -32058,14 +32203,20 @@ declare
   is_new_today boolean;
   counts_minute boolean;
 begin
-  -- Step 1: a signed-in member who counts (staff and the classics account don't).
+  -- Step 1: a signed-in person.
   if caller_id is null then
     raise exception 'Log in first.' using errcode = '42501';
   end if;
+  -- Step 2: today is the account's last day of use (INACTIVE-1); the "where" keeps it to one
+  -- write a day.
+  insert into public.account_last_used (user_id, used_on) values (caller_id, today)
+  on conflict (user_id) do update set used_on = excluded.used_on
+  where account_last_used.used_on is null or account_last_used.used_on < excluded.used_on;
+  -- Step 3: only members who count go on (staff and the classics account don't, S1-E15-04).
   if not public.counts_for_metrics(caller_id) then
     return jsonb_build_object('counted', false);
   end if;
-  -- Step 2: the member's last day, locked so two tabs can't both count the same minute.
+  -- Step 4: the member's last day, locked so two tabs can't both count the same minute.
   select * into previous from public.member_last_active
   where member_last_active.user_id = caller_id for update;
   is_new_today := previous.user_id is null or previous.active_on < today;
@@ -32074,14 +32225,14 @@ begin
   if not is_new_today and not counts_minute then
     return jsonb_build_object('counted', false);
   end if;
-  -- Step 3: overwrite the one row: today, and now when a minute counts. No history is kept.
+  -- Step 5: overwrite the one row: today, and now when a minute counts. No history is kept.
   insert into public.member_last_active (user_id, active_on, minute_noted_at)
   values (caller_id, today, now())
   on conflict (user_id) do update set
     active_on = excluded.active_on,
     minute_noted_at = case when counts_minute then excluded.minute_noted_at
                            else member_last_active.minute_noted_at end;
-  -- Step 4: the day's totals, which carry no name.
+  -- Step 6: the day's totals, which carry no name.
   perform public.add_to_activity_totals(today, is_new_today::integer, counts_minute::integer,
     (counts_minute and coalesce(is_reading, false))::integer);
   return jsonb_build_object('counted', counts_minute);
@@ -32092,7 +32243,7 @@ $$;
 ALTER FUNCTION "public"."note_active_minute"("is_reading" boolean) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."note_active_minute"("is_reading" boolean) IS 'The app''s once-a-minute "here": counts the member active today and adds a minute in the app and reading (S1-E15-04).';
+COMMENT ON FUNCTION "public"."note_active_minute"("is_reading" boolean) IS 'The app''s once-a-minute "here": notes the day of use (INACTIVE-1), counts the member active today and adds a minute in the app and reading (S1-E15-04).';
 
 
 
@@ -32183,6 +32334,8 @@ CREATE OR REPLACE FUNCTION "public"."notification_category"("kind" "public"."not
     when 'spotlight_consent_withdrawn' then 'staff'
     when 'waitlist_admitted' then 'staff'
     when 'home_comment_invited' then 'staff'
+    when 'account_unused_month' then 'staff'
+    when 'account_unused_week' then 'staff'
     else 'replies'
   end;
 $$;
@@ -38838,25 +38991,11 @@ begin
   if exists (select 1 from public.staff_roles where staff_roles.user_id = caller_id) then
     raise exception 'A staff account can''t be deleted here.' using errcode = 'check_violation', hint = 'staff_account';
   end if;
-  -- Step 3: the account closes: hidden everywhere, and online status forgotten.
-  update public.profiles set deleted_at = now(), last_active_at = null where profiles.id = caller_id;
-  -- Step 4: the live stories and comments go out of sight with the same time, so a cancel
-  -- brings back exactly these (chapters follow their story).
-  update public.stories set deleted_at = now()
-  where stories.user_id = caller_id and stories.deleted_at is null;
-  update public.comments set deleted_at = now(), deleted_by = 'author'
-  where comments.user_id = caller_id and comments.deleted_at is null;
-  -- Step 5: the forums (S1-E8-02): the person's posts become "Post deleted" markers, and a
-  -- thread nobody else has a live post in goes with them; a cancel brings back exactly these.
-  update public.forum_posts set deleted_at = now()
-  where forum_posts.user_id = caller_id and forum_posts.deleted_at is null;
-  update public.forum_threads set deleted_at = now()
-  where forum_threads.user_id = caller_id and forum_threads.deleted_at is null
-    and not exists (select 1 from public.forum_posts
-                    where forum_posts.thread_id = forum_threads.id and forum_posts.user_id <> caller_id
-                      and forum_posts.deleted_at is null);
-  -- Step 6: the request, for the closing page and the nightly job.
-  insert into public.account_deletions (user_id, delete_after) values (caller_id, closes_on);
+  -- Step 3: the account and what it published go out of sight.
+  perform public.hide_closing_account(caller_id);
+  -- Step 4: the request, for the closing page and the nightly job.
+  insert into public.account_deletions (user_id, delete_after, reason)
+  values (caller_id, closes_on, 'requested');
   return jsonb_build_object('delete_after', closes_on);
 end;
 $$;
@@ -41643,6 +41782,37 @@ ALTER FUNCTION "public"."send_story_pictures_to_review"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."send_story_pictures_to_review"() IS 'Trigger: lowering a story to All ages or 13+ holds its live pictures for a moderator again (ADMIN-2e1b).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."send_unused_account_notice"("target_user_id" "uuid", "last_used" "date", "which_notice" "text") RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  -- Step 1: the row remembers the notice, counted from this day of last use.
+  insert into public.account_last_used (user_id, notices_for, month_notice_at, week_notice_at)
+  values (target_user_id, last_used,
+          case when which_notice = 'month' then now() end,
+          case when which_notice = 'week' then now() end)
+  on conflict (user_id) do update set
+    notices_for = excluded.notices_for,
+    month_notice_at = coalesce(excluded.month_notice_at, account_last_used.month_notice_at),
+    week_notice_at = coalesce(excluded.week_notice_at, account_last_used.week_notice_at);
+  -- Step 2: the notice itself; the email goes out with the next run of the email worker.
+  insert into public.notifications (user_id, kind, is_required)
+  values (target_user_id,
+          case which_notice when 'month' then 'account_unused_month'
+                            else 'account_unused_week' end::public.notification_kind,
+          true);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."send_unused_account_notice"("target_user_id" "uuid", "last_used" "date", "which_notice" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."send_unused_account_notice"("target_user_id" "uuid", "last_used" "date", "which_notice" "text") IS 'Internal: sends the "about a month" or "about a week" unused-account notice and remembers it (INACTIVE-1).';
 
 
 
@@ -49100,6 +49270,65 @@ COMMENT ON FUNCTION "public"."unsubscribe_from_emails"("unsubscribe_key" "text")
 
 
 
+CREATE OR REPLACE FUNCTION "public"."unused_account_setting"("setting_key" "text", "fallback" integer) RETURNS integer
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce((public.setting_value(setting_key) #>> '{}')::integer, fallback);
+$$;
+
+
+ALTER FUNCTION "public"."unused_account_setting"("setting_key" "text", "fallback" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."unused_account_setting"("setting_key" "text", "fallback" integer) IS 'Internal: an unused-account setting as a number, with its default (INACTIVE-1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."unused_account_step"("last_used" "date", "notices_for" "date", "month_notice_at" timestamp with time zone, "week_notice_at" timestamp with time zone) RETURNS "text"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  today date := (now() at time zone 'Europe/Bucharest')::date;
+  closes_on date := last_used + make_interval(years => public.unused_account_setting('unused_account_years', 5));
+  month_days integer := public.unused_account_setting('unused_account_month_notice_days', 30);
+  week_days integer := public.unused_account_setting('unused_account_week_notice_days', 7);
+  is_same_count boolean := notices_for is not distinct from last_used;
+begin
+  -- Step 1: notices sent for an older day of use don't count: the person used it since.
+  if not is_same_count then
+    month_notice_at := null;
+    week_notice_at := null;
+  end if;
+  -- Step 2: nothing before the month window.
+  if today < closes_on - month_days then
+    return 'none';
+  end if;
+  -- Step 3: the last notice, from the week window on (or the first night after a missed month).
+  if today >= closes_on - week_days and week_notice_at is null then
+    return 'week';
+  end if;
+  -- Step 4: the first notice, inside the month window.
+  if today < closes_on - week_days then
+    return case when month_notice_at is null then 'month' else 'none' end;
+  end if;
+  -- Step 5: closing, once the day has come and the last notice is a week old.
+  if today >= closes_on and week_notice_at <= now() - make_interval(days => week_days) then
+    return 'close';
+  end if;
+  return 'none';
+end;
+$$;
+
+
+ALTER FUNCTION "public"."unused_account_step"("last_used" "date", "notices_for" "date", "month_notice_at" timestamp with time zone, "week_notice_at" timestamp with time zone) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."unused_account_step"("last_used" "date", "notices_for" "date", "month_notice_at" timestamp with time zone, "week_notice_at" timestamp with time zone) IS 'Internal: tonight''s step for one unused account: none, month notice, week notice or close (INACTIVE-1).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."update_bible_entry"("entry_id" "uuid", "changes" "jsonb") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -51165,8 +51394,10 @@ CREATE TABLE IF NOT EXISTS "public"."account_deletions" (
     "completed_at" timestamp with time zone,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "reason" "text" DEFAULT 'requested'::"text" NOT NULL,
     CONSTRAINT "account_deletions_after_request" CHECK (("delete_after" > "requested_at")),
-    CONSTRAINT "account_deletions_ends_once" CHECK ((("cancelled_at" IS NULL) OR ("completed_at" IS NULL)))
+    CONSTRAINT "account_deletions_ends_once" CHECK ((("cancelled_at" IS NULL) OR ("completed_at" IS NULL))),
+    CONSTRAINT "account_deletions_reason_is_known" CHECK (("reason" = ANY (ARRAY['requested'::"text", 'unused'::"text"])))
 );
 
 
@@ -51179,6 +51410,28 @@ A person''s request to delete their account: closed at once, deleted for good af
 
 
 COMMENT ON COLUMN "public"."account_deletions"."user_id" IS 'The account being deleted; never shown publicly (rule 15).';
+
+
+
+COMMENT ON COLUMN "public"."account_deletions"."reason" IS 'requested: the person chose "Delete my account" (S1-E13-03); unused: nobody used it for unused_account_years (INACTIVE-1).';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."account_last_used" (
+    "user_id" "uuid" NOT NULL,
+    "used_on" "date",
+    "notices_for" "date",
+    "month_notice_at" timestamp with time zone,
+    "week_notice_at" timestamp with time zone,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL
+);
+
+
+ALTER TABLE "public"."account_last_used" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."account_last_used" IS 'kind: user_action. The last day each account was used and the unused-account notices sent for it; overwritten each time, no history (INACTIVE-1).';
 
 
 
@@ -54339,6 +54592,11 @@ ALTER TABLE ONLY "public"."account_deletions"
 
 
 
+ALTER TABLE ONLY "public"."account_last_used"
+    ADD CONSTRAINT "account_last_used_pkey" PRIMARY KEY ("user_id");
+
+
+
 ALTER TABLE ONLY "public"."account_staff_notes"
     ADD CONSTRAINT "account_staff_notes_pkey" PRIMARY KEY ("id");
 
@@ -57064,6 +57322,10 @@ CREATE OR REPLACE TRIGGER "account_deletions_set_updated_at" BEFORE UPDATE ON "p
 
 
 
+CREATE OR REPLACE TRIGGER "account_last_used_set_updated_at" BEFORE UPDATE ON "public"."account_last_used" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
 CREATE OR REPLACE TRIGGER "ad_blocked_categories_set_updated_at" BEFORE UPDATE ON "public"."ad_blocked_categories" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
@@ -58210,6 +58472,11 @@ ALTER TABLE ONLY "public"."abuse_image_evidence"
 
 ALTER TABLE ONLY "public"."account_deletions"
     ADD CONSTRAINT "account_deletions_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."account_last_used"
+    ADD CONSTRAINT "account_last_used_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
 
 
 
@@ -60112,6 +60379,17 @@ CREATE POLICY "account_deletions_select_own" ON "public"."account_deletions" FOR
 
 
 COMMENT ON POLICY "account_deletions_select_own" ON "public"."account_deletions" IS 'Allows a signed-in person to read only their own deletion requests (S1-E13-03).';
+
+
+
+ALTER TABLE "public"."account_last_used" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "account_last_used_select_own" ON "public"."account_last_used" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
+
+
+
+COMMENT ON POLICY "account_last_used_select_own" ON "public"."account_last_used" IS 'Allows a signed-in person to read only their own last day of use (INACTIVE-1).';
 
 
 
@@ -62178,6 +62456,10 @@ REVOKE ALL ON FUNCTION "public"."account_for_email"("address" "text") FROM PUBLI
 
 
 REVOKE ALL ON FUNCTION "public"."account_is_new"("target_user_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."account_last_used_on"("target_user_id" "uuid") FROM PUBLIC;
 
 
 
@@ -64442,6 +64724,14 @@ REVOKE ALL ON FUNCTION "public"."close_finished_safety_checks"("target_country" 
 
 
 
+REVOKE ALL ON FUNCTION "public"."close_unused_account"("target_user_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."close_unused_accounts"() FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."cms_band_problems"("band" "jsonb", "field_prefix" "text", "has_points" boolean) FROM PUBLIC;
 
 
@@ -65400,6 +65690,10 @@ REVOKE ALL ON FUNCTION "public"."hidden_title_marker"("language_code" "text") FR
 
 
 REVOKE ALL ON FUNCTION "public"."hide_banned_account"("ban" "public"."sanctions") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."hide_closing_account"("target_user_id" "uuid") FROM PUBLIC;
 
 
 
@@ -67668,6 +67962,10 @@ REVOKE ALL ON FUNCTION "public"."send_story_pictures_to_review"() FROM PUBLIC;
 
 
 
+REVOKE ALL ON FUNCTION "public"."send_unused_account_notice"("target_user_id" "uuid", "last_used" "date", "which_notice" "text") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."set_adults_may_message"("allowed" boolean) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_adults_may_message"("allowed" boolean) TO "authenticated";
 
@@ -68734,6 +69032,14 @@ GRANT ALL ON FUNCTION "public"."unsubscribe_from_emails"("unsubscribe_key" "text
 
 
 
+REVOKE ALL ON FUNCTION "public"."unused_account_setting"("setting_key" "text", "fallback" integer) FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."unused_account_step"("last_used" "date", "notices_for" "date", "month_notice_at" timestamp with time zone, "week_notice_at" timestamp with time zone) FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."update_bible_entry"("entry_id" "uuid", "changes" "jsonb") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."update_bible_entry"("entry_id" "uuid", "changes" "jsonb") TO "authenticated";
 
@@ -68992,6 +69298,11 @@ GRANT ALL ON FUNCTION "public"."youngest_age"("birth_year" integer, "birth_month
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."account_deletions" TO "service_role";
 GRANT SELECT ON TABLE "public"."account_deletions" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."account_last_used" TO "service_role";
+GRANT SELECT ON TABLE "public"."account_last_used" TO "authenticated";
 
 
 
