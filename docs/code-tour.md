@@ -2840,3 +2840,10 @@ for the notice on the story page and the "In the app only" pill on cards
 - Copy block: the Copy button on each block row (`BlockListRow`) calls `copyBlock()` in `lib/blocks.ts`, which deep-copies the block below itself; it is saved and published with the draft.
 - Copy page: `CopyPageForm` under the editor calls `admin_copy_landing_page(source_page_id, new_slug)`, which makes a page of the same type with the source's saved draft (or newest version) as its draft and logs `landing_page.copied` with where it came from.
 - Tests: `365-landing-layouts-copying.test.sql`, `src/features/landing-pages/lib/layouts.test.ts`, `e2e/landing-layouts.spec.ts`.
+
+## The platform-wide break test (FINAL-3, added 11 Nov 2026)
+
+`supabase/tests/database/376-platform-break-test.test.sql` sweeps the whole database in one go, as a visitor and as an ordinary member (the seed persona blocker), instead of one feature at a time:
+
+- **Tables:** a visitor may read rows only from the tables named in the test (settings, markets, languages, categories, tags, forums, legal documents, safety contacts and the like). **A new table a visitor can read fails the test until its name is added there on purpose.** A member can't change or delete a row that isn't theirs in any table.
+- **Staff functions:** every `admin_*`, `staff_*`, `moderator_*` and `owner_*` function is called with empty arguments. Each must refuse (`insufficient_privilege`) before it says anything about its target, so "no such report" can't be told from "not allowed". The four that answer without an error are named in the test and answer nothing. **A new staff function therefore checks who is asking as its first step**; `…_final3_break_test_permission_first.sql` moved that check to the top of four older functions.
