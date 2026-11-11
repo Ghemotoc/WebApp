@@ -22,11 +22,16 @@
  * Who calls it: functions/index.ts and functions/help/[[path]].ts on Cloudflare Pages, and
  * server/pages-functions-plugin.ts locally (npm run dev, npm run preview and the end-to-end tests).
  * What it calls: the Supabase REST endpoint /rest/v1/rpc/website_content with the public anon key,
- * and the shared helpers in server/link-preview.ts.
+ * the shared helpers in server/link-preview.ts, and src/lib/searchWords.ts for the words (shared
+ * with Staff › Website › Search and sharing, S1-E11-39).
  * Never logged: the request, the visitor or any page text (CLAUDE.md rule 12).
  */
 import { escapeHtml, injectIntoHead, siteNameOf, type DatabaseSettings } from './link-preview.ts';
 import { countryOfConnection } from './signup-context.ts';
+import { textOf, websitePageWords } from '../src/lib/searchWords';
+
+/** Kept here for the tests and older callers: the shared Markdown-to-words helper. */
+export { plainWordsOf } from '../src/lib/searchWords';
 
 /** A website address this handler answers: the home page, or one help page by its address. */
 export type WebsiteAddress = { kind: 'home_page' } | { kind: 'help_page'; entryKey: string };
@@ -67,9 +72,6 @@ export interface WebsiteHeadHost {
 /** Help page addresses: the same pattern as every CMS entry key (entryKeySchema). */
 const helpAddressPattern = /^[a-z0-9][a-z0-9-]{0,59}$/;
 
-/** The longest description written from a page's own words; longer text is cut at a word. */
-const DESCRIPTION_LONGEST = 160;
-
 /** The site's large share picture, the emblem on plum (scripts/make-share-picture.ts, S1-E11-38). */
 const SHARE_PICTURE = '/link-previews/share.png';
 
@@ -98,37 +100,6 @@ export function parseWebsiteAddress(pathname: string): WebsiteAddress | null {
   return helpAddressPattern.test(entryKey) ? { kind: 'help_page', entryKey } : null;
 }
 
-/**
- * Shortens a text at a word, with an ellipsis, so search results and cards stay readable.
- *
- * @param text - the text
- * @returns at most DESCRIPTION_LONGEST characters
- */
-function shortened(text: string): string {
-  if (text.length <= DESCRIPTION_LONGEST) return text;
-  const cut = text.slice(0, DESCRIPTION_LONGEST);
-  const lastSpace = cut.lastIndexOf(' ');
-  return `${(lastSpace > 0 ? cut.slice(0, lastSpace) : cut).trimEnd()}…`;
-}
-
-/**
- * Turns a help page's safe Markdown into one line of plain words: links keep their text, and the
- * marks for headings, lists, bold, italics, quotes and code go.
- *
- * @param markdown - the help page's body
- * @returns the words, on one line
- */
-export function plainWordsOf(markdown: string): string {
-  // Step 1: a link keeps only its text ("[report a story](/help/report)" → "report a story").
-  const withoutLinks = markdown.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1');
-  // Step 2: the formatting marks go; every run of spaces and line breaks becomes one space.
-  return withoutLinks
-    .replace(/^\s{0,3}(#{1,6}|>|[-*+]|\d+\.)\s+/gm, '')
-    .replace(/[*_`~]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
 /** The parts of a page's search fields the head reads (any of them may be missing). */
 interface SearchFields {
   title?: unknown;
@@ -144,38 +115,6 @@ interface WebsiteContentRow {
 }
 
 /**
- * A text from the content, trimmed, or an empty text when it isn't one.
- *
- * @param value - whatever the content holds there
- * @returns the text
- */
-function textOf(value: unknown): string {
-  return typeof value === 'string' ? value.trim() : '';
-}
-
-/**
- * The page's own words: the home page's headline and introduction, or the help page's title and
- * the start of its body.
- *
- * @param address - which kind of page it is
- * @param content - the live version's content
- * @returns the fallback title and description
- */
-function ownWordsOf(
-  address: WebsiteAddress,
-  content: WebsiteContentRow['content'],
-): { title: string; description: string } {
-  if (address.kind === 'home_page') {
-    const headline = `${textOf(content.headlineFirst)} ${textOf(content.headlineSecond)}`.trim();
-    return { title: headline, description: shortened(textOf(content.lede)) };
-  }
-  return {
-    title: textOf(content.title),
-    description: shortened(plainWordsOf(textOf(content.body))),
-  };
-}
-
-/**
  * Turns the live page into its head: staff's search fields first, the page's own words when a
  * field is empty.
  *
@@ -184,18 +123,18 @@ function ownWordsOf(
  * @returns the head
  */
 export function websiteHeadFrom(address: WebsiteAddress, row: WebsiteContentRow): WebsiteHead {
-  const search = row.content.search ?? {};
-  const ownWords = ownWordsOf(address, row.content);
-  const title = textOf(search.title) === '' ? ownWords.title : textOf(search.title);
+  // Step 1: staff's search fields first, the page's own words when a field is empty
+  // (src/lib/searchWords.ts, shared with Staff › Website › Search and sharing, S1-E11-39).
+  const words = websitePageWords(address.kind, row.content);
+  const searchTitle = textOf(row.content.search?.title);
   return {
-    title,
+    title: words.title,
     // The home page's tab shows the site's name alone unless staff gave it a search title; a help
     // page's tab shows its title (S1-E11-12), or its search title.
-    tabTitle: address.kind === 'home_page' ? textOf(search.title) : title,
-    description:
-      textOf(search.description) === '' ? ownWords.description : textOf(search.description),
+    tabTitle: address.kind === 'home_page' ? searchTitle : words.title,
+    description: words.description,
     language: row.language_code,
-    isHidden: search.hidden === true,
+    isHidden: words.isHidden,
     homeExtras: address.kind === 'home_page' ? { googleCode: '', bingCode: '' } : null,
   };
 }

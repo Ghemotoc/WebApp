@@ -14,11 +14,13 @@
  * Who calls it: functions/c/[[path]].ts on Cloudflare Pages, and server/pages-functions-plugin.ts
  * locally (npm run dev, npm run preview and the end-to-end tests).
  * What it calls: the Supabase REST endpoint /rest/v1/rpc/landing_page with the public anon key,
- * and the shared helpers in server/link-preview.ts.
+ * the shared helpers in server/link-preview.ts, and src/lib/searchWords.ts for the words (shared
+ * with Staff › Website › Search and sharing, S1-E11-39).
  * Never logged: the request, the visitor or any page text (CLAUDE.md rule 12).
  */
 import { escapeHtml, injectIntoHead, siteNameOf, type DatabaseSettings } from './link-preview.ts';
 import { linkPreviewPalette } from './link-preview-palette.ts';
+import { landingPageWords } from '../src/lib/searchWords';
 
 /** What a landing page's preview shows. */
 export interface LandingPreview {
@@ -43,9 +45,6 @@ const PREVIEW_IMAGE_SIDE = 400;
 
 /** Landing page names: lower-case letters, digits and hyphens (landing_page_slug_problem()). */
 const landingSlugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-
-/** The longest description the card carries; longer introductions are cut at a word. */
-const DESCRIPTION_LONGEST = 200;
 
 /**
  * Reads a landing page's name from a path.
@@ -72,46 +71,6 @@ interface LandingRow {
 }
 
 /**
- * Shortens a description at a word, with an ellipsis, so the card stays readable.
- *
- * @param text - the introduction
- * @returns at most DESCRIPTION_LONGEST characters
- */
-function shortened(text: string): string {
-  if (text.length <= DESCRIPTION_LONGEST) return text;
-  const cut = text.slice(0, DESCRIPTION_LONGEST);
-  const lastSpace = cut.lastIndexOf(' ');
-  return `${(lastSpace > 0 ? cut.slice(0, lastSpace) : cut).trimEnd()}…`;
-}
-
-/**
- * The hero's Romanian title and introduction, trimmed (empty when missing).
- *
- * @param row - the page as the database answered it
- * @returns the title and the introduction
- */
-function heroWordsOf(row: LandingRow): { title: string; intro: string } {
-  const hero = (row.content.blocks ?? []).find((block) => block.kind === 'hero');
-  const romanian = hero?.ro ?? {};
-  return { title: (romanian.title ?? '').trim(), intro: (romanian.intro ?? '').trim() };
-}
-
-/**
- * Staff's Romanian search words and their "hide" switch (S1-E11-38), trimmed; empty when unset.
- *
- * @param row - the page as the database answered it
- * @returns the search title, the search description and whether the page is hidden
- */
-function searchWordsOf(row: LandingRow): { title: string; description: string; isHidden: boolean } {
-  const search = row.content.search ?? {};
-  return {
-    title: (search.ro?.title ?? '').trim(),
-    description: (search.ro?.description ?? '').trim(),
-    isHidden: search.hidden === true,
-  };
-}
-
-/**
  * Turns landing_page()'s answer into the preview: the hero's Romanian title and introduction,
  * and the theme's colour (plum when the theme isn't one of the pictures).
  *
@@ -119,18 +78,29 @@ function searchWordsOf(row: LandingRow): { title: string; description: string; i
  * @returns the preview, or null when the page has no hero title
  */
 export function landingPreviewFrom(row: LandingRow): LandingPreview | null {
-  const words = heroWordsOf(row);
-  if (words.title === '') return null;
-  const theme = row.content.theme ?? '';
-  const colour = Object.keys(linkPreviewPalette).includes(theme) ? theme : 'plum';
-  // S1-E11-38: staff's search words win; an empty field keeps the hero's.
-  const search = searchWordsOf(row);
+  // Step 1: the words: staff's Romanian search fields win, an empty one keeps the hero's
+  // (S1-E11-38; src/lib/searchWords.ts, shared with Staff › Website › Search and sharing).
+  const heroTitle = landingPageWords({ blocks: row.content.blocks }).title;
+  if (heroTitle === '') return null;
+  const words = landingPageWords(row.content);
+  // Step 2: the theme's colour, plum when the theme isn't one of the pictures.
   return {
-    title: search.title === '' ? words.title : search.title,
-    description: search.description === '' ? shortened(words.intro) : search.description,
-    colour,
-    isHidden: search.isHidden,
+    title: words.title,
+    description: words.description,
+    colour: landingPreviewColour(row.content.theme),
+    isHidden: words.isHidden,
   };
+}
+
+/**
+ * The link preview picture's colour for a landing page's theme.
+ *
+ * @param theme - the page's theme, as stored
+ * @returns one of the colours in public/link-previews/, plum when the theme isn't one of them
+ */
+export function landingPreviewColour(theme: string | undefined): string {
+  const wanted = theme ?? '';
+  return Object.keys(linkPreviewPalette).includes(wanted) ? wanted : 'plum';
 }
 
 /**
@@ -182,6 +152,8 @@ export function landingHeadTags(
     `<meta property="og:image" content="${escapeHtml(image)}">`,
     `<meta property="og:image:width" content="${PREVIEW_IMAGE_SIDE}">`,
     `<meta property="og:image:height" content="${PREVIEW_IMAGE_SIDE}">`,
+    // S1-E11-39: the picture is a plain colour card, so its alt text names the page it stands for.
+    `<meta property="og:image:alt" content="${escapeHtml(preview.title)}">`,
     `<meta name="twitter:card" content="summary">`,
     `<meta name="twitter:title" content="${escapeHtml(preview.title)}">`,
   ];

@@ -7,7 +7,8 @@
  * (/staff/website/notices), Help and questions (/staff/website/help), Interface text
  * (/staff/website/interface-text, S1-E11-18), Email templates (/staff/website/emails,
  * S1-E11-19) and Landing pages
- * (/staff/website/landing-pages, S1-E11-14) and Branding (/staff/website/branding, BRAND-1a: the
+ * (/staff/website/landing-pages, S1-E11-14), Search and sharing (/staff/website/search, S1-E11-39:
+ * what search engines and share cards show for every public page) and Branding (/staff/website/branding, BRAND-1a: the
  * logo and emblem for each theme) and Seasonal looks (/staff/website/seasonal, G12a: the days
  * each seasonal look shows) and Genre and tag pages (/staff/website/list-pages, G12b: the band
  * colour of each genre and tag page). The website tabs start with the market and language picker. Plain
@@ -37,6 +38,7 @@ import { HomePageEditor } from './HomePageEditor';
 import { ListBackgroundsTab } from './ListBackgroundsTab';
 import { MarketLanguagePicker } from './MarketLanguagePicker';
 import { NoticeEditor } from './NoticeEditor';
+import { SearchSharingTab } from './SearchSharingTab';
 import { SeasonalLooksTab } from './SeasonalLooksTab';
 
 /** The tabs: their address part and label key. */
@@ -49,6 +51,8 @@ const tabs = [
   { area: 'emails', href: '/staff/website/emails', labelKey: 'tabs.emails' },
   // S1-E11-14: landing pages for contests and campaigns, written in both languages side by side.
   { area: 'landing-pages', href: '/staff/website/landing-pages', labelKey: 'tabs.landingPages' },
+  // S1-E11-39: what search engines and share cards show for every public page.
+  { area: 'search', href: '/staff/website/search', labelKey: 'tabs.search' },
   // BRAND-1a: the logo and emblem for the light and night themes; the emblem is the tab icon.
   { area: 'branding', href: '/staff/website/branding', labelKey: 'tabs.branding' },
   // G12a: which days each seasonal look shows, for members who turned seasonal looks on.
@@ -100,6 +104,8 @@ function WebsiteEditors({ area }: { area: string | undefined }) {
   if (area === 'interface-text') return <InterfaceTextTab />;
   // Landing pages carry both languages in one version and have no market (S1-E11-14).
   if (area === 'landing-pages') return <LandingPagesTab />;
+  // Search and sharing lists every market's pages and the landing pages at once (S1-E11-39).
+  if (area === 'search') return <SearchSharingTab />;
   // The logo and emblem are the same in every market and language (BRAND-1a).
   if (area === 'branding') return <BrandingTab />;
   // The seasonal looks show on the same days in every market (bundle G12a).
