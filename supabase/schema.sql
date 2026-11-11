@@ -1451,6 +1451,7 @@ CREATE OR REPLACE FUNCTION "public"."account_deletion_rules"() RETURNS TABLE("ta
     ('library_entries', 'delete', 1, null),
     ('live_session_reminders', 'delete', 1, null),
     ('manual_age_checks', 'delete', 1, null),
+    ('member_last_active', 'delete', 1, null),
     ('messages', 'own_step', 0, 'the person''s own messages are deleted, unless reported and still held (S1-E9-02)'),
     ('moderator_mail_messages', 'kept', 0, 'a moderation record, purged a year after the thread was last updated (docs/retention.md)'),
     ('moderator_mail_threads', 'kept', 0, 'a moderation record, purged a year after it was last updated (docs/retention.md)'),
@@ -1498,7 +1499,7 @@ $$;
 ALTER FUNCTION "public"."account_deletion_rules"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13, GAPS-16a, GAPS-16c).';
+COMMENT ON FUNCTION "public"."account_deletion_rules"() IS 'Internal: what deleting an account does to each user table, and why anything is kept (S1-E13-03, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13, GAPS-16a, GAPS-16c, S1-E15-04).';
 
 
 
@@ -20290,6 +20291,7 @@ CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_
     ('library_entries', true, null),
     ('live_session_reminders', true, null),
     ('manual_age_checks', true, null),
+    ('member_last_active', true, null),
     ('messages', true, null),
     ('moderator_mail_messages', true, null),
     ('moderator_mail_threads', true, null),
@@ -20337,7 +20339,7 @@ $$;
 ALTER FUNCTION "public"."data_export_tables"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13, GAPS-16a, GAPS-16c).';
+COMMENT ON FUNCTION "public"."data_export_tables"() IS 'Internal: every user table and whether Download my data includes it (S1-E13-02, IDEAS-1b, IDEAS-1c, S1-E8-02, S1-E8-04, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, GAPS-6, GAPS-11, GAPS-12e, GAPS-12f, GAPS-12g, GAPS-12h, GAPS-13, GAPS-16a, GAPS-16c, S1-E15-04).';
 
 
 
