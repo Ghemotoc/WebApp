@@ -273,5 +273,10 @@
     "uploading": "Saving and checking the drawing…",
     "insert": "Insert drawing",
     "cancel": "Cancel"
+  },
+  "poemMode": {
+    "label": "Poem mode",
+    "hint": "Enter starts a new line and a second Enter a new stanza. Spaces at the start of a line stay, and readers see each line as you wrote it.",
+    "failed": "We couldn’t change poem mode. Try again."
   }
 }

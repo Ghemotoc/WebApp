@@ -26,6 +26,8 @@ export interface ChapterPreviewDialogProps {
   title: string;
   /** The body as Markdown, read from the editor when the dialog opens. */
   markdown: string;
+  /** True for a poem, drawn line by line as the reader will see it (MUST-2). */
+  isPoem: boolean;
   language: string;
   onClose: () => void;
 }
@@ -39,6 +41,7 @@ export function ChapterPreviewDialog({
   isOpen,
   title,
   markdown,
+  isPoem,
   language,
   onClose,
 }: ChapterPreviewDialogProps) {
@@ -80,6 +83,7 @@ export function ChapterPreviewDialog({
         </h2>
         <ChapterText
           markdown={markdown}
+          isPoem={isPoem}
           language={language}
           className="mx-auto w-full max-w-[680px]"
           pictures={pictures}

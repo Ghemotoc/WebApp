@@ -50,6 +50,8 @@ export interface ReaderChapter {
    * body is empty and the reader shows the app only notice instead (S1-E4-09).
    */
   appOnly: boolean;
+  /** True when the chapter is a poem: drawn line by line, stanza by stanza (MUST-2). */
+  isPoem: boolean;
   /** The published text as the Markdown subset (ADR 0005), or only its teaser. */
   body: string | null;
   /**
@@ -85,6 +87,7 @@ interface ChapterRow {
   text_continues: boolean;
   /** GAPS-15: missing from answers saved before the switch existed (prefetch caches). */
   app_only?: boolean;
+  is_poem?: boolean;
   body: string | null;
   pictures?: Json;
   embeds?: Json;
@@ -132,6 +135,7 @@ export async function fetchChapter(
     needsSignIn: row.needs_sign_in,
     isTeaser: row.is_teaser,
     appOnly: row.app_only === true,
+    isPoem: row.is_poem === true,
     textContinues: row.text_continues,
     body: row.body,
     // Signed addresses for the pictures the reader may see; Storage refuses the others.

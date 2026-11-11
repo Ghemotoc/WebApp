@@ -2154,6 +2154,13 @@ The liquid glass Library board draws "Your lists": lists of stories a reader mak
 - How a view travels: the thread loads → `useRecordThreadView()` checks sessionStorage (`forum-counted-threads`, thread numbers only) → `record_forum_thread_view(thread_number)` adds one unless the caller is the starter or may not open the thread → `forum_thread_header_json()` answers `view_count`.
 - Tests: `supabase/tests/database/345-thread-views.test.sql`, `src/features/forums/hooks/useRecordThreadView.test.tsx`, `e2e/forum-thread-views.spec.ts`.
 
+## Poem mode (MUST-2)
+
+- Where it lives: `src/features/writing/lib/poemMode.ts` (the `PoemMode` editor extension: Enter, paste, and `keepLineIndents()` on save), `components/PoemModeSwitch.tsx` above the text in `ChapterEditorPage`, `hooks/usePoemMode.ts` → `setChapterPoemMode()` in `api/chapters.ts`; the reader's `src/features/reading/lib/poemStanzas.ts` (a rehype plugin `ChapterText` runs when `isPoem` is true) and the `.tmc-poem` styles in `src/styles/index.css`; `supabase/migrations/…_must2_poem_mode.sql`.
+- How a poem travels: the writer ticks Poem mode → `set_chapter_poem_mode()` → `chapters.is_poem` → the editor's storage turns on the poem Enter → each save runs `keepLineIndents()` so leading spaces become non-breaking spaces → `save_chapter_draft()` stores Markdown with hard breaks ("  \n") → `get_chapter()` answers `is_poem` → `ChapterText` draws each paragraph as a `role="group"` stanza and each line as a `span.tmc-poem-line`.
+- A new chapter of a Poetry story starts in poem mode (trigger `chapters_start_as_poem`).
+- Tests: `supabase/tests/database/350-poem-mode.test.sql`, `src/features/writing/lib/poemMode.test.ts`, `src/features/reading/components/ChapterText.test.tsx`, `e2e/poem-mode.spec.ts`.
+
 ## Due dates for class assignments (MUST-1d)
 
 - Where it lives: `src/features/spaces/components/ClassDueDateField.tsx` (inside `ClassRepliesPanel`), `ClassAssignmentsCard.tsx` (on `SpacePage` through `ClassCards`), `api/classAssignments.ts`, `saveThreadDueDate()` in `api/classThreadReplies.ts`, `lib/assignmentDue.ts` (`dueDayText()`), the forums' `ThreadHeader` ("Due …" pill) and the notifications' `lib/assignmentDueText.ts`; `supabase/migrations/…_must1d_assignment_due_dates.sql`.

@@ -11869,6 +11869,7 @@ CREATE TABLE IF NOT EXISTS "public"."chapters" (
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "unpublished_at" timestamp with time zone,
     "published_word_count" integer,
+    "is_poem" boolean DEFAULT false NOT NULL,
     CONSTRAINT "chapters_code_shape" CHECK (("code" ~ '^[a-z0-9]{8}$'::"text")),
     CONSTRAINT "chapters_draft_title_length" CHECK (("char_length"("draft_title") <= 120)),
     CONSTRAINT "chapters_draft_version_positive" CHECK (("draft_version" >= 1)),
@@ -11903,6 +11904,10 @@ COMMENT ON COLUMN "public"."chapters"."unpublished_at" IS 'When the writer last 
 
 
 COMMENT ON COLUMN "public"."chapters"."published_word_count" IS 'The published copy''s word count, for the minutes to read (S1-E4-01a); the draft has its own.';
+
+
+
+COMMENT ON COLUMN "public"."chapters"."is_poem" IS 'True when the chapter is a poem: the editor keeps every line and indent and the reader draws each line and stanza (MUST-2). Set by the writer through set_chapter_poem_mode(); a new chapter of a Poetry story starts true.';
 
 
 
@@ -15943,6 +15948,29 @@ ALTER FUNCTION "public"."chapters_refresh_writer_rank"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."chapters_refresh_writer_rank"() IS 'Trigger: works out the writer''s rank again when a chapter is published, changed or deleted (S1-E8-09).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."chapters_start_as_poem"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  -- Step 1: only when the story's category is Poetry (the fixed key 'poetry', S1-E3-01).
+  if exists (select 1 from public.stories
+             join public.categories on categories.id = stories.category_id
+             where stories.id = new.story_id and categories.slug = 'poetry') then
+    new.is_poem := true;
+  end if;
+  return new;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."chapters_start_as_poem"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."chapters_start_as_poem"() IS 'Trigger: a new chapter of a Poetry story starts in poem mode (MUST-2).';
 
 
 
@@ -23834,6 +23862,8 @@ begin
     'needs_sign_in', caller_id is null and not app_only,
     'is_teaser', caller_id is null and not app_only,
     'app_only', app_only,
+    -- MUST-2: a poem's lines and stanzas are drawn as written.
+    'is_poem', chapter.is_poem,
     'text_continues', not app_only
       and public.word_total(text_to_send) < public.word_total(chapter.published_body),
     'body', text_to_send,
@@ -40038,6 +40068,37 @@ COMMENT ON FUNCTION "public"."set_chapter_order"("story_slug" "text", "chapter_c
 
 
 
+CREATE OR REPLACE FUNCTION "public"."set_chapter_poem_mode"("chapter_code" "text", "poem" boolean) RETURNS "text"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := auth.uid();
+begin
+  -- Step 1: a signed-in writer only.
+  if caller_id is null then
+    raise exception 'Sign in to change a chapter.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 2: only their own live chapter; the words aren't touched, only how they are drawn.
+  update public.chapters set is_poem = coalesce(poem, false), updated_at = now()
+  where chapters.code = chapter_code
+    and chapters.user_id = caller_id
+    and chapters.deleted_at is null;
+  if not found then
+    return 'not_found';
+  end if;
+  return 'ok';
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_chapter_poem_mode"("chapter_code" "text", "poem" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_chapter_poem_mode"("chapter_code" "text", "poem" boolean) IS 'Switches the caller''s own chapter to poem mode or back (MUST-2).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."set_character_map_position"("character_id" "uuid", "x" integer, "y" integer) RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -54580,6 +54641,10 @@ CREATE OR REPLACE TRIGGER "chapters_set_updated_at" BEFORE UPDATE ON "public"."c
 
 
 
+CREATE OR REPLACE TRIGGER "chapters_start_as_poem" BEFORE INSERT ON "public"."chapters" FOR EACH ROW EXECUTE FUNCTION "public"."chapters_start_as_poem"();
+
+
+
 CREATE OR REPLACE TRIGGER "chapters_user_id_matches_story" BEFORE INSERT OR UPDATE ON "public"."chapters" FOR EACH ROW EXECUTE FUNCTION "public"."chapters_user_id_matches_story"();
 
 
@@ -61244,6 +61309,10 @@ REVOKE ALL ON FUNCTION "public"."chapters_refresh_writer_rank"() FROM PUBLIC;
 
 
 
+REVOKE ALL ON FUNCTION "public"."chapters_start_as_poem"() FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."chapters_user_id_matches_story"() FROM PUBLIC;
 
 
@@ -64619,6 +64688,11 @@ GRANT ALL ON FUNCTION "public"."set_chapter_character_present"("chapter_code" "t
 
 REVOKE ALL ON FUNCTION "public"."set_chapter_order"("story_slug" "text", "chapter_codes" "text"[], "moved_chapter_code" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_chapter_order"("story_slug" "text", "chapter_codes" "text"[], "moved_chapter_code" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."set_chapter_poem_mode"("chapter_code" "text", "poem" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_chapter_poem_mode"("chapter_code" "text", "poem" boolean) TO "authenticated";
 
 
 

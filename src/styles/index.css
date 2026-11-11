@@ -727,6 +727,22 @@ dialog.bg-surface,
   margin-top: 24px;
 }
 
+/* A poem (bundle MUST-2; IDEA-20261106-1): each stanza keeps the gap above, each line is a block
+   of its own (lib/poemStanzas.ts), and a line too long for the screen wraps under a hanging indent
+   so its shape stays readable; a very long word may break rather than scroll sideways at 390 px.
+   An empty line keeps its height. Leading spaces are stored as non-breaking spaces, so they show
+   without any white-space rule. */
+.tmc-chapter-text.tmc-poem p {
+  text-align: start;
+  overflow-wrap: anywhere;
+}
+.tmc-chapter-text .tmc-poem-line {
+  display: block;
+  min-height: 1lh;
+  padding-inline-start: 1.5em;
+  text-indent: -1.5em;
+}
+
 /* Story Atlas (S1-E17-06): the words-against-target bar. The track is the control border colour
    (at least 3:1 against the card, WCAG 1.4.11) and the fill is plum ink; the percentage is also
    written beside it, so the bar never carries the meaning alone. */

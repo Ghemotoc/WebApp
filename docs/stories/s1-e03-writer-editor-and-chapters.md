@@ -38,6 +38,7 @@ As a writer, I want a simple editor that saves as I type so that I never lose a 
   - Given text pasted from Word or Google Docs, when it lands in the editor, then only the allowed formatting survives (headings, bold, italic, quote, lists, scene break, links).
   - Given a keyboard-only or screen reader user, when they use the toolbar, then every button has a label, a visible focus state and a keyboard shortcut.
 - **Legal and compliance:** writers can write in the browser (Q5). Content is stored as sanitised structured text so no script can be injected. WCAG 2.2 AA.
+- **Built (MUST-2, IDEA-20261106-1):** a "Poem mode" switch per chapter keeps every line break, the blank line between stanzas and the spaces a line starts with; readers see stanzas as named groups and lines that wrap under a hanging indent.
 
 ##### S1-E3-03 Publish, unpublish and schedule chapters
 

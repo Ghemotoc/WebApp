@@ -45,6 +45,7 @@ import { useOnlineStatus } from '@/features/offline/hooks/useOnlineStatus';
 import { useAutosave } from '../hooks/useAutosave';
 import { useChapterDraft } from '../hooks/useChapterDraft';
 import { useChapterEditor } from '../hooks/useChapterEditor';
+import { usePoemMode } from '../hooks/usePoemMode';
 import { useChapterPublishing } from '../hooks/useChapterPublishing';
 import { useDeviceDraft } from '../hooks/useDeviceDraft';
 import { useMyStories } from '../hooks/useMyStories';
@@ -56,6 +57,7 @@ import { ChapterPreviewDialog } from './ChapterPreviewDialog';
 import { CompareVersionsDialog } from './CompareVersionsDialog';
 import { EditorAside } from './EditorAside';
 import { EditorToolbar } from './EditorToolbar';
+import { PoemModeSwitch } from './PoemModeSwitch';
 import { LinkDialog } from './LinkDialog';
 import { NewChapterButton } from './NewChapterButton';
 import { PublishPanel } from './PublishPanel';
@@ -184,9 +186,12 @@ function useLoadedEditor(chapter: MyChapter, start: EditorStart) {
     readDraft: () => ({ title, body: editing.readBody() }),
     isOnline,
   });
+  // Poem mode (MUST-2): the switch, which the editor and the saved Markdown follow.
+  const poem = usePoemMode(chapter);
   const editing = useChapterEditor({
     initialBody: start.body,
     label: t('bodyLabel'),
+    isPoem: poem.isPoem,
     onChange: () => {
       autosave.markChanged();
       const text = editing.editor?.getText() ?? '';
@@ -210,7 +215,7 @@ function useLoadedEditor(chapter: MyChapter, start: EditorStart) {
     setWordCount(other.wordCount);
     autosave.acceptOther(other.draftVersion);
   }
-  return { title, changeTitle, wordCount, characterCount, autosave, editing, loadOther };
+  return { title, changeTitle, wordCount, characterCount, autosave, editing, loadOther, poem };
 }
 
 /** The conflict's two choices and the compare dialog's open state (S1-E3-02b). */
@@ -323,7 +328,10 @@ function EditorMainColumn(props: {
           chapterId={chapter.id}
         />
       )}
-      <div className="tmc-chapter-text rounded-card border border-border bg-surface p-[clamp(24px,4vw,56px)] shadow-card">
+      <PoemModeSwitch {...loaded.poem} />
+      <div
+        className={`tmc-chapter-text ${loaded.poem.isPoem ? 'tmc-poem' : ''} rounded-card border border-border bg-surface p-[clamp(24px,4vw,56px)] shadow-card`}
+      >
         {/* The blocks inside the text (pictures, cards) read the chapter from here (GAPS-8). */}
         <EditingChapterContext value={chapter.id}>
           <EditorContent editor={editing.editor} />
@@ -342,6 +350,7 @@ function EditorMainColumn(props: {
         isOpen={props.isPreviewOpen}
         title={title}
         markdown={props.isPreviewOpen ? editing.readBody() : ''}
+        isPoem={loaded.poem.isPoem}
         language={props.language}
         onClose={props.closePreview}
       />

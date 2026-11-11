@@ -2,7 +2,10 @@
  * ChapterText shows the allowed formatting and nothing that could run (story S1-E3-03; rule 8).
  */
 import { render, screen } from '@testing-library/react';
+import { I18nextProvider } from 'react-i18next';
 import { describe, expect, it } from 'vitest';
+
+import { createI18n } from '@/lib/i18n';
 
 import { ChapterText } from './ChapterText';
 
@@ -103,5 +106,38 @@ describe('ChapterText', () => {
   it('draws paragraphs on their own without an addon', () => {
     const { container } = render(<ChapterText language="ro" markdown={'Primul.\n\nAl doilea.'} />);
     expect(container.querySelector('.tmc-paragraph-row')).toBeNull();
+  });
+
+  it('draws a poem as stanzas and lines, keeping indents (MUST-2)', () => {
+    const nbsp = '\u00a0';
+    const { container } = render(
+      <I18nextProvider i18n={createI18n('en')}>
+        <ChapterText
+          language="ro"
+          isPoem
+          markdown={`Plouă pe acoperiș,  \n${nbsp}${nbsp}încet.  \n  \nApoi\ntace.\n\nA doua strofă.`}
+        />
+      </I18nextProvider>,
+    );
+    // Criterion 3: each stanza is a group a screen reader announces, each line a line of its own.
+    const stanzas = screen.getAllByRole('group');
+    expect(stanzas).toHaveLength(3);
+    expect(stanzas[0]).toHaveAccessibleName('Stanza 1');
+    const lines = [...(stanzas[0]?.querySelectorAll('.tmc-poem-line') ?? [])].map(
+      (line) => line.textContent,
+    );
+    // The blank line in a stanza ends it ("  \n  \n" is a paragraph break in Markdown), so
+    // the first stanza is two lines; a plain new line still starts a line in the next one.
+    expect(lines).toEqual(['Plouă pe acoperiș,', `${nbsp}${nbsp}încet.`]);
+    const secondLines = [...(stanzas[1]?.querySelectorAll('.tmc-poem-line') ?? [])].map(
+      (line) => line.textContent,
+    );
+    expect(secondLines).toEqual(['Apoi', 'tace.']);
+    expect(container.querySelector('.tmc-poem')).not.toBeNull();
+  });
+
+  it('draws prose as before, with no stanzas', () => {
+    render(<ChapterText language="ro" markdown={'Un rând  \nAltul'} />);
+    expect(screen.queryByRole('group')).toBeNull();
   });
 });

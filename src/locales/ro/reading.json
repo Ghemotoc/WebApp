@@ -222,5 +222,8 @@
     "title": "Povestea e doar în aplicație",
     "body": "{{writer}} a ales să publice această poveste doar în aplicația {{productName}}. Aplicația le oferă scriitorilor mai multă intimitate și mai mult control asupra textelor și face capitolele mai greu de copiat.",
     "backToStory": "Înapoi la poveste"
+  },
+  "poem": {
+    "stanza": "Strofa {{number}}"
   }
 }

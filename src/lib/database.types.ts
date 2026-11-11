@@ -1721,6 +1721,7 @@ export type Database = {
           edited_at: string | null;
           first_published_at: string | null;
           id: string;
+          is_poem: boolean;
           last_published_at: string | null;
           position: number;
           published_body: string | null;
@@ -1748,6 +1749,7 @@ export type Database = {
           edited_at?: string | null;
           first_published_at?: string | null;
           id?: string;
+          is_poem?: boolean;
           last_published_at?: string | null;
           position: number;
           published_body?: string | null;
@@ -1772,6 +1774,7 @@ export type Database = {
           edited_at?: string | null;
           first_published_at?: string | null;
           id?: string;
+          is_poem?: boolean;
           last_published_at?: string | null;
           position?: number;
           published_body?: string | null;
@@ -14015,6 +14018,7 @@ export type Database = {
           edited_at: string | null;
           first_published_at: string | null;
           id: string;
+          is_poem: boolean;
           last_published_at: string | null;
           position: number;
           published_body: string | null;
@@ -14787,6 +14791,7 @@ export type Database = {
           edited_at: string | null;
           first_published_at: string | null;
           id: string;
+          is_poem: boolean;
           last_published_at: string | null;
           position: number;
           published_body: string | null;
@@ -14820,6 +14825,7 @@ export type Database = {
           edited_at: string | null;
           first_published_at: string | null;
           id: string;
+          is_poem: boolean;
           last_published_at: string | null;
           position: number;
           published_body: string | null;
@@ -15477,6 +15483,7 @@ export type Database = {
         Args: { chapter_codes: string[]; moved_chapter_code?: string; story_slug: string };
         Returns: Json;
       };
+      set_chapter_poem_mode: { Args: { chapter_code: string; poem: boolean }; Returns: string };
       set_character_map_position: {
         Args: { character_id: string; x: number; y: number };
         Returns: Json;

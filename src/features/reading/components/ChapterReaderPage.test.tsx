@@ -35,6 +35,7 @@ const chapter: ReaderChapter = {
   needsSignIn: false,
   isTeaser: false,
   appOnly: false,
+  isPoem: false,
   textContinues: false,
   body: 'Primul paragraf.\n\nAl doilea paragraf.',
   pictures: {},
