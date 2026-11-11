@@ -22,6 +22,7 @@ const chapterPreview: LinkPreview = {
   rating: 'all_ages',
   languageCode: 'ro',
   hidesText: false,
+  isListed: true,
   blurb: 'Bunica notează vremea.',
   writerName: 'Lia Scrie',
   cover: { kind: 'drawn', background: 'sky' },
@@ -184,6 +185,19 @@ describe('the page a shared link serves', () => {
       inLanguage: 'ro',
       url: 'https://example.com/s/statia-meteo',
     });
+  });
+
+  it('previews an unlisted story from its link but keeps it out of search engines', async () => {
+    const { response, html } = await open('/s/statia-meteo', {
+      ...chapterPreview,
+      chapterTitle: null,
+      isChapter: false,
+      isListed: false,
+    });
+    expect(html).toContain('<meta property="og:title" content="Stația meteo">');
+    expect(html).toContain('<meta name="robots" content="noindex">');
+    expect(html).not.toContain('application/ld+json');
+    expect(response.headers.get('X-Robots-Tag')).toBe('noindex');
   });
 
   it('keeps a title with HTML in it as text, in the tags and in the structured data', async () => {

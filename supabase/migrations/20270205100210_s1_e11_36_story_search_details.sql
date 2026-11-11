@@ -8,7 +8,10 @@
  * the S1-E4-04 rule (Q6) that a 16+ or 18+ preview showed the title and the rating only.
  *
  * What changes: get_link_preview() now gives the blurb, the writer's name, the cover colour and the
- * chapter title for every rating, plus two new fields, `category_slug` and `tags`. What stays:
+ * chapter title for every rating, plus two new fields, `category_slug` and `tags`. It also closes two
+ * gaps the previews had: a private story (NEW-1) and a story shared only with a class (S1-E8-11)
+ * now give no preview at all, and `is_listed` says whether the story is public, so an unlisted
+ * story's link still previews but carries noindex. What stays:
  * `hides_text` is still true for 16+ and 18+, because visitors who aren't logged in count as under
  * 16 (Q6) and so never see the story's text: no teaser, no shared passage, no shared picture.
  * Who calls it: server/link-preview.ts (shared links' Open Graph tags and search engine tags) and
@@ -61,8 +64,10 @@ revoke all on function public.story_search_tags(uuid, text) from public, anon, a
  * @param chapter_code - a chapter's code, or null for the story page
  * @returns the title, blurb, writer's name, cover colours, category, tags, the chapter's title and
  *   `hides_text` (true for 16+ and 18+: visitors who aren't logged in never see the text, Q6);
- *   null for an unknown, deleted, unpublished or moderated-away story, or a chapter that can't be
- *   read. Never the user ID and never chapter text.
+ *   `hides_text` and `is_listed` (true only for a public story; an unlisted one previews from its
+ *   link but is not for search engines); null for an unknown, deleted, unpublished, private,
+ *   class-only or moderated-away story, or a chapter that can't be read. Never the user ID and
+ *   never chapter text.
  * Where it fits: shared links' head tags (server/link-preview.ts) and the in-app notice for a story
  * a visitor can't open (storyPreview.ts).
  */
@@ -79,9 +84,12 @@ declare
   chapter_part jsonb;
 begin
   -- Step 1: a live story with at least one chapter published once, not hidden by a moderator.
+  -- A private story is the writer's alone (NEW-1) and a class-only story is the class's
+  -- (S1-E8-11): neither has a public preview (S1-E11-36).
   select * into story from public.stories
   where stories.slug = story_slug and stories.deleted_at is null and stories.first_published_at is not null;
-  if not found or public.is_moderated_away('story', story.id) then
+  if not found or story.visibility = 'private' or story.class_only
+     or public.is_moderated_away('story', story.id) then
     return null;
   end if;
   -- S1-E11-08: a link preview never shows a hidden title or cover.
@@ -103,6 +111,8 @@ begin
     'rating', story.rating,
     'language_code', story.language_code,
     'hides_text', story.rating in ('16_plus', '18_plus'),
+    -- Only a public story is for search engines; an unlisted one is shared by its link only.
+    'is_listed', story.visibility = 'public',
     'blurb', story.blurb,
     'writer', (select jsonb_build_object(
         'display_name', public.story_writer_name(story.id, profiles.handle, profiles.pen_name))
