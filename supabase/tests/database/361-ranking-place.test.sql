@@ -15,6 +15,11 @@ create function pg_temp.sign_in_as(user_id uuid) returns void language sql as $$
   select set_config('request.jwt.claims', json_build_object('sub', user_id, 'role', 'authenticated')::text, true);
 $$;
 
+-- A visitor: no claims left from an earlier sign-in (they last until the transaction ends).
+create function pg_temp.sign_out() returns void language sql as $$
+  select set_config('request.jwt.claims', '', true), set_config('role', 'anon', true);
+$$;
+
 /* ---------- Set-up: three readable fiction stories with the same reads ---------- */
 
 insert into public.chapters (story_id, user_id, code, position, draft_title, draft_body, word_count,
@@ -87,14 +92,14 @@ where story_id in ('00000000-0000-4000-9000-000000000001', '00000000-0000-4000-9
 delete from public.story_scores where story_id not in ('00000000-0000-4000-9000-000000000001',
   '00000000-0000-4000-9000-000000000002', '00000000-0000-4000-9000-000000000003');
 
-set local role anon;
+select pg_temp.sign_out();
 select is(public.story_rank_place('statia-meteo-seed01'),
   '{"place": 2, "category_slug": "fiction"}'::jsonb, 'a visitor sees "#2 in Fiction"');
 reset role;
 
 -- An 18+ story hides its place from a visitor, but not from staff.
 update public.stories set rating = '18_plus' where id = '00000000-0000-4000-9000-000000000003';
-set local role anon;
+select pg_temp.sign_out();
 select is(public.story_rank_place('scrisori-din-cutia-postala-seed03'), null,
   'a visitor gets no place for a story their age doesn''t allow');
 reset role;
@@ -106,7 +111,7 @@ reset role;
 
 -- An unlisted story isn't ranked among the stories readers can find.
 update public.stories set visibility = 'unlisted' where id = '00000000-0000-4000-9000-000000000002';
-set local role anon;
+select pg_temp.sign_out();
 select is((public.story_rank_place('statia-meteo-seed01') ->> 'place')::integer, 1,
   'an unlisted story leaves the places, so seed01 moves up');
 select is(public.story_rank_place('the-girl-who-fixed-radios-seed02'), null,
@@ -116,7 +121,7 @@ reset role;
 -- Past the setting, no place.
 update public.settings set value = '1'::jsonb where key = 'ranking_place_show_up_to';
 update public.stories set rating = 'all_ages' where id = '00000000-0000-4000-9000-000000000003';
-set local role anon;
+select pg_temp.sign_out();
 select is(public.story_rank_place('scrisori-din-cutia-postala-seed03'), null,
   'a story past the last place shown gets none');
 reset role;
