@@ -10,17 +10,20 @@ import { withBrand } from '../lib/brandText';
 
 /** The look of the buttons on each background. */
 const buttonClasses = {
+  // The first button is the main action (button-main: the website's deep plum by day, with the
+  // lighter plum on hover and press, GLASS-2). On the deep band it stays gold by day, and turns
+  // into the main button at night, when the band itself is white (band-first-on-dark, index.css).
   page: {
-    first: 'bg-primary text-on-primary',
-    second: 'border border-control-border bg-surface text-heading',
+    first: 'button-main',
+    second: 'border border-control-border bg-surface text-heading hover:opacity-90',
   },
   dark: {
-    first: 'bg-gold text-on-gold',
-    second: 'border border-on-primary text-on-primary',
+    first: 'bg-gold text-on-gold band-first-on-dark hover:opacity-90',
+    second: 'border border-on-primary text-on-primary hover:opacity-90',
   },
   gold: {
-    first: 'bg-primary text-on-primary',
-    second: 'border border-on-gold text-on-gold',
+    first: 'button-main',
+    second: 'border border-on-gold text-on-gold hover:opacity-90',
   },
 } as const;
 
@@ -38,7 +41,7 @@ interface BandButtonsProps {
  */
 export function BandButtons({ tone, first, second }: BandButtonsProps) {
   const pill =
-    'inline-flex min-h-12 items-center rounded-full px-6 text-[15px] font-semibold no-underline hover:opacity-90';
+    'inline-flex min-h-12 items-center rounded-full px-6 text-[15px] font-semibold no-underline';
   return (
     <div className="flex flex-wrap items-center gap-3">
       <Link to={first.to} className={`${pill} ${buttonClasses[tone].first}`}>
