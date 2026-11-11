@@ -125,7 +125,7 @@ Keeping forum posts after an account is deleted. So that conversations still mak
 
 Keeping records in case of a dispute. Keeping reports and decisions for a limited time after they close. Legal basis: our legitimate interest in being able to show what happened if a decision is challenged.
 
-Counting what works. We count reads, sign-ups and returning readers as totals, without cookies and without tracking anyone. Legal basis: our legitimate interest.
+Counting what works. We count reads, finished chapters, sign-ups, active members, minutes spent in the app and reading, and returning readers as totals, without cookies and without tracking anyone. For this we keep one date per member: the last day you used the app, replaced each day, never a list of the days or pages. It is deleted 35 days after your last visit. Legal basis: our legitimate interest. [Lawyer to confirm]
 
 Where we rely on legitimate interest, you can object, as explained in “Your rights”.
 

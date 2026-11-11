@@ -2749,3 +2749,11 @@ passages and pictures) answers nothing; `get_story_page()` and `story_card_json(
 for the notice on the story page and the "In the app only" pill on cards
 (`ListedStoryCard`, `StoryHeader`). Tests: `supabase/tests/database/342-app-only.test.sql` and
 `e2e/app-only.spec.ts`.
+
+## Investor numbers (ANALYTICS-1a, S1-E15-04)
+
+- Where it starts: `ActiveMinutesCounter` (src/features/analytics), drawn once in `AppLayout`. While someone is signed in, `useActiveMinutes()` calls `note_active_minute(is_reading)` when the app opens and then once a minute while the tab is visible and the person scrolled, pressed a key or touched in the last two minutes. `is_reading` is true on a chapter address (`lib/activeMinute.ts`).
+- In the database: `note_active_minute()` keeps one row per member in `member_last_active` (only the last day and the last counted minute, overwritten) and adds to `daily_activity_totals` (members active today, minutes in the app, minutes reading; a second minute within 45 seconds is ignored). Staff and the classics account aren't counted (`counts_for_metrics()`). `save_reading_position()` adds one to `chapter_finishes` the first time a reader reaches 95% of a chapter.
+- At night: `compute_daily_metrics()` (pg_cron `count-daily-metrics`) now calls `compute_investor_metrics()`, which stores the day's totals in `daily_metrics` and, for yesterday only, the weekly and monthly active counts and rolling retention (`rolling_retention()`, empty under 5 new members). It also deletes last-day rows after 35 days.
+- On screen: Staff › Metrics, `InvestorNumbersSection` → `useInvestorNumbers()` → `admin_investor_numbers()` (owner and admins in a staff session): `InvestorLatestCard`, `InvestorMonthCard` and two spreadsheets (`lib/investorCsv.ts`).
+- Tests: `360-investor-numbers.test.sql`, `src/features/analytics/lib/activeMinute.test.ts`, `src/features/staff/lib/investorCsv.test.ts`, `e2e/investor-numbers.spec.ts`.

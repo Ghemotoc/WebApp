@@ -82,6 +82,7 @@ select results_eq(
        -- Certificates: the student's own, read through functions (S1-E8-12).
        ('certificates', 0::bigint),
       ('chapter_embeds', 0::bigint),
+       ('chapter_finishes', 0::bigint),
        ('chapter_likes', 0::bigint),
        -- The record of a writer's chapter moves is theirs alone (GAPS-11).
        ('chapter_moves', 0::bigint),
@@ -119,6 +120,7 @@ select results_eq(
        ('conversation_members', 0::bigint),
        ('conversations', 0::bigint),
        ('copied_work_notes', 0::bigint),
+       ('daily_activity_totals', 0::bigint),
        ('daily_metrics', 0::bigint),
        ('data_requests', 0::bigint),
        -- Throwaway email domains: staff who may view the settings only (ADMIN-2f1).
@@ -180,6 +182,7 @@ select results_eq(
        ('legal_documents', (select count(*) from public.legal_documents)),
        ('manual_age_checks', 0::bigint),
        ('markets', (select count(*) from public.markets)),
+       ('member_last_active', 0::bigint),
        ('messages', 0::bigint),
        ('moderated_items', 0::bigint),
        ('moderator_mail_messages', 0::bigint),

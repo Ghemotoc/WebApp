@@ -690,7 +690,7 @@ Removing one passage instead of the whole story is also in line with DSA art. 14
 
 ### 1.10 Privacy by design
 
-- **Collect only:** email, handle, optional pen name, year of birth (and the month only when the year leaves the age unclear at 13 or 16), the country code from the connection, the age check result with its date and method, language, settings and the content people choose to publish (Q78, updated by the 16 Oct 2026 decisions).
+- **Collect only:** email, handle, optional pen name, year of birth (and the month only when the year leaves the age unclear at 13 or 16), the country code from the connection, the age check result with its date and method, language, settings and the content people choose to publish (Q78, updated by the 16 Oct 2026 decisions), plus the last day a member used the app, overwritten each day, for the investor numbers' totals (S1-E15-04).
 - **Year of birth, then a Yoti age check (decided 16 Oct 2026):** onboarding asks for year of birth, never a full date. Yoti confirms "13 or over" or "18 or over" by facial age estimation (Yoti deletes the photo after the check) or an ID document. The platform stores only `birth_year`, `age_check_result`, `age_checked_at` and `age_check_method`. Minimum age 13 (decided 15 Oct 2026). A wrong result can be appealed to a manual check (S1-E2-08).
 - **Private by default** for under-18s: messages from people they follow only, no messaging with adults (never possible for under-16s; 16 and 17-year-olds can switch it on themselves), library private, online status off, no marketing email, quiet hours for push (decided 16 Oct 2026, late evening, Q50).
 - **No profiling** in Stage 1: no ad tracking, no personalised feed (that is Stage 2), ranking uses aggregate signals only.
