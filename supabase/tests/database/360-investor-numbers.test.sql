@@ -12,7 +12,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(24);
+select plan(26);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -33,6 +33,11 @@ update public.stories set first_published_at = now(), last_chapter_published_at 
   rating = 'all_ages' where id = '00000000-0000-4000-9000-000000000002';
 
 /* ---------- 1. Noting minutes ---------- */
+
+-- Start from no activity, whatever ran before (rolled back at the end).
+delete from public.member_last_active;
+delete from public.daily_activity_totals;
+delete from public.chapter_finishes;
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000002');
 select is(public.note_active_minute(false) ->> 'counted', 'true', 'the first minute of the day counts');
@@ -75,7 +80,7 @@ select is((select array_agg(active_on) from public.member_last_active), array[(s
   'allowed: member_last_active_select_own, the member reads their one row, with only today');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000008');
 select is((select count(*)::integer from public.member_last_active), 0,
-  'denied: the owner reads no one''s row');
+  'denied: member_last_active_select_own, the owner reads no one''s row');
 select throws_ok($$ update public.member_last_active set active_on = current_date $$, '42501', null,
   'and nobody writes the rows directly');
 reset role;
@@ -125,15 +130,17 @@ select is(public.metric_on((select day from today), 'weekly_active_members'), nu
 /* ---------- 5. Who reads them ---------- */
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000009');
-select ok((select count(*) from public.daily_activity_totals) > 0
-          and (select count(*) from public.chapter_finishes) > 0,
-  'allowed: daily_activity_totals_select_metrics and chapter_finishes_select_staff, an admin reads both');
+select ok((select count(*) from public.daily_activity_totals) > 0,
+  'allowed: daily_activity_totals_select_metrics, an admin reads the activity totals');
+select ok((select count(*) from public.chapter_finishes) > 0,
+  'allowed: chapter_finishes_select_staff, and the finished totals');
 select ok(public.admin_investor_numbers()::text !~ '00000000-0000-4000-8000',
   'admin_investor_numbers() answers the admin, with no user ID anywhere');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
-select is((select count(*)::integer from public.daily_activity_totals)
-          + (select count(*)::integer from public.chapter_finishes), 0,
-  'denied: a member reads neither table');
+select is((select count(*)::integer from public.daily_activity_totals), 0,
+  'denied: daily_activity_totals_select_metrics, a member reads no activity totals');
+select is((select count(*)::integer from public.chapter_finishes), 0,
+  'denied: chapter_finishes_select_staff, nor the finished totals');
 select throws_ok($$ select public.admin_investor_numbers() $$, '42501', null,
   'and admin_investor_numbers() refuses the member');
 
