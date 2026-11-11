@@ -165,8 +165,15 @@ function chapterList(page: Page) {
 async function confirmMove(page: Page) {
   const dialog = page.getByRole('alertdialog', { name: 'Move a published chapter?' });
   await expect(dialog).toBeVisible();
-  await dialog.getByRole('button', { name: 'Move chapter', exact: true }).click();
-  await expect(dialog).toBeHidden();
+  // Right after a mouse drag, dnd-kit swallows the next click on the page for a moment (it stops
+  // the click a drag would otherwise fire), and on a slow CI machine our click can land in that
+  // moment. So press again while the question is still open: one press that counts closes it.
+  await expect(async () => {
+    if (await dialog.isVisible()) {
+      await dialog.getByRole('button', { name: 'Move chapter', exact: true }).click();
+    }
+    await expect(dialog).toBeHidden({ timeout: 1_500 });
+  }).toPass({ timeout: 10_000 });
 }
 
 /** axe's serious and critical issues on the page as it is now (WCAG 2.2 AA). */
