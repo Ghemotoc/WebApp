@@ -13044,6 +13044,7 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     "rules_walkthrough_seen_at" timestamp with time zone,
     "initials_colour" "text",
     "reading_languages" "text"[],
+    "suggests_from_reading" boolean,
     CONSTRAINT "profiles_avatar_recipe_shape" CHECK ("public"."avatar_recipe_valid"("avatar_recipe")),
     CONSTRAINT "profiles_bio_length" CHECK (("char_length"("bio") <= 300)),
     CONSTRAINT "profiles_birth_month_is_a_month" CHECK ((("birth_month" >= 1) AND ("birth_month" <= 12))),
@@ -13249,6 +13250,10 @@ COMMENT ON COLUMN "public"."profiles"."initials_colour" IS 'The colour the membe
 
 
 COMMENT ON COLUMN "public"."profiles"."reading_languages" IS 'The story languages the member reads (MARKETS-2c); null means the interface language plus English. Private to the member.';
+
+
+
+COMMENT ON COLUMN "public"."profiles"."suggests_from_reading" IS 'Suggestions from my reading (S1-E15-06): null until chosen (on for adults, off under 18). Private to the member.';
 
 
 
@@ -14495,6 +14500,49 @@ ALTER FUNCTION "public"."banned_email_hash"("email" "text") OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."banned_email_hash"("email" "text") IS 'Internal: HMAC-SHA256 of the normalised email with the Vault secret banned_email_secret, or null without the secret (S1-E10-06, Q8; normalised since ADMIN-2 part f1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."because_you_read"() RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  in_library uuid[];
+  finished record;
+  cards jsonb;
+begin
+  -- Step 1: signed in, with the switch on.
+  if caller_id is null or not coalesce(public.suggests_from_reading_of(caller_id), false) then
+    return jsonb_build_object('source', null, 'stories', '[]'::jsonb);
+  end if;
+  in_library := array(select library_entries.story_id from public.library_entries
+                      where library_entries.user_id = caller_id);
+  -- Step 2: the latest finished stories the caller may still see, newest first.
+  for finished in
+    select listed.id
+    from public.library_entries
+    join public.listed_stories('popular', null, null, null, null) as listed on listed.id = library_entries.story_id
+    where library_entries.user_id = caller_id and library_entries.shelf = 'finished'
+    order by library_entries.updated_at desc
+    limit 10
+  loop
+    -- Step 3: the first one with something to suggest gives the row.
+    cards := public.paired_cards(finished.id, in_library);
+    if jsonb_array_length(cards) > 0 then
+      return jsonb_build_object('source', public.story_card_json(finished.id), 'stories', cards);
+    end if;
+  end loop;
+  return jsonb_build_object('source', null, 'stories', '[]'::jsonb);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."because_you_read"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."because_you_read"() IS 'Because you read: stories paired with the caller''s latest finished story, worked out when asked, never stored (S1-E15-06).';
 
 
 
@@ -18920,6 +18968,46 @@ ALTER FUNCTION "public"."compute_story_country_scores"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."compute_story_country_scores"() IS 'Hourly: each story''s popularity score per "Popular in" country; a story with fewer than 5 reads in a country isn''t ranked there (MARKETS-2d).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."compute_story_pairs"() RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  smallest_group integer := coalesce((select (settings.value #>> '{}')::integer from public.settings
+                                      where settings.key = 'metrics_minimum_group'), 5);
+  kept integer;
+begin
+  -- Step 1: forget last night's pairs.
+  delete from public.story_pairs where true;
+  -- Step 2: each finished story of a counting member, then every two of them, counted.
+  with counting_finishes as (
+    select library_entries.user_id, library_entries.story_id
+    from public.library_entries
+    join public.profiles on profiles.id = library_entries.user_id and profiles.deleted_at is null
+    join public.stories on stories.id = library_entries.story_id and stories.deleted_at is null
+    where library_entries.shelf = 'finished'
+      and coalesce(public.suggests_from_reading_of(library_entries.user_id), false)
+  )
+  insert into public.story_pairs (story_id, paired_story_id, readers)
+  select first_story.story_id, second_story.story_id, count(*)::integer
+  from counting_finishes as first_story
+  join counting_finishes as second_story
+    on second_story.user_id = first_story.user_id and second_story.story_id <> first_story.story_id
+  group by first_story.story_id, second_story.story_id
+  having count(*) >= smallest_group;
+  get diagnostics kept = row_count;
+  return kept;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."compute_story_pairs"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."compute_story_pairs"() IS 'Nightly: how many members finished both of two stories, from switch-on members'' Finished shelves, kept at 5 or more (S1-E15-06).';
 
 
 
@@ -28744,6 +28832,34 @@ COMMENT ON FUNCTION "public"."moderated_state_of"("item_type" "public"."reportab
 
 
 
+CREATE OR REPLACE FUNCTION "public"."more_by_writer"("story_slug" "text") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  with shown_beside as (
+    select * from public.visible_story_by_slug(story_slug)
+  ),
+  others as (
+    select listed.id, coalesce(scores.score, 0) as score, listed.first_published_at
+    from public.listed_stories('popular', null, null, null, null) as listed
+    join shown_beside on shown_beside.writer_id = listed.user_id and listed.id <> shown_beside.story_id
+    left join public.story_scores as scores on scores.story_id = listed.id
+    order by score desc, listed.first_published_at desc nulls last
+    limit public.suggestion_row_size()
+  )
+  select jsonb_build_object('stories', coalesce(
+    (select jsonb_agg(public.story_card_json(others.id) order by others.score desc,
+                      others.first_published_at desc nulls last) from others), '[]'::jsonb));
+$$;
+
+
+ALTER FUNCTION "public"."more_by_writer"("story_slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."more_by_writer"("story_slug" "text") IS 'More by this writer: the writer''s other stories the caller may see, most popular first (S1-E15-06).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."move_bible_section"("section_id" "uuid", "new_position" integer) RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -30143,7 +30259,9 @@ CREATE OR REPLACE FUNCTION "public"."my_privacy_settings"() RETURNS "jsonb"
     'can_ask_parent', public.age_band_of(profiles.id) = '13_to_15' and public.has_parental_consent(profiles.id),
     'shows_reader_level', profiles.shows_reader_level,
     -- MUST-1b: whether the browser asks "Post anyway?" before sending what looks like contact details.
-    'checks_personal_details', public.checks_personal_details_of(profiles))
+    'checks_personal_details', public.checks_personal_details_of(profiles),
+    -- S1-E15-06: "Suggestions from my reading".
+    'suggests_from_reading', coalesce(public.suggests_from_reading_of(profiles.id), false))
   from public.profiles where profiles.id = public.require_live_profile();
 $$;
 
@@ -30151,7 +30269,7 @@ $$;
 ALTER FUNCTION "public"."my_privacy_settings"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."my_privacy_settings"() IS 'The signed-in member''s privacy settings, with Suggest me, the parent''s separate yes and the reading level switch (S1-E13-01, S1-E5-11, S1-E2-03b, G7a).';
+COMMENT ON FUNCTION "public"."my_privacy_settings"() IS 'The signed-in member''s privacy settings, with Suggest me, the parent''s separate yes, the reading level switch, the personal details heads-up and Suggestions from my reading (S1-E13-01, S1-E5-11, S1-E2-03b, G7a, MUST-1b, S1-E15-06).';
 
 
 
@@ -32709,6 +32827,33 @@ ALTER FUNCTION "public"."page_ads"("page_key" "text", "context" "jsonb") OWNER T
 
 
 COMMENT ON FUNCTION "public"."page_ads"("page_key" "text", "context" "jsonb") IS 'Public: a page''s ad slots, filled from the page''s context only, never the same ad twice (S1-E12-01).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."paired_cards"("source_story_id" "uuid", "left_out" "uuid"[]) RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  with paired as (
+    select listed.id, pairs.readers, coalesce(scores.score, 0) as score
+    from public.story_pairs as pairs
+    join public.listed_stories('popular', null, null, null, null) as listed on listed.id = pairs.paired_story_id
+    left join public.story_scores as scores on scores.story_id = listed.id
+    where pairs.story_id = source_story_id
+      and not (listed.id = any (coalesce(left_out, '{}'::uuid[])))
+    order by pairs.readers desc, score desc
+    limit public.suggestion_row_size()
+  )
+  select coalesce(jsonb_agg(public.story_card_json(paired.id) order by paired.readers desc, paired.score desc),
+                  '[]'::jsonb)
+  from paired;
+$$;
+
+
+ALTER FUNCTION "public"."paired_cards"("source_story_id" "uuid", "left_out" "uuid"[]) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."paired_cards"("source_story_id" "uuid", "left_out" "uuid"[]) IS 'Internal: cards for the stories paired with one story, as the caller may see them (S1-E15-06).';
 
 
 
@@ -42770,6 +42915,22 @@ COMMENT ON FUNCTION "public"."set_suggest_me"("should_suggest" boolean) IS 'The 
 
 
 
+CREATE OR REPLACE FUNCTION "public"."set_suggests_from_reading"("should_suggest" boolean) RETURNS "void"
+    LANGUAGE "sql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  update public.profiles set suggests_from_reading = coalesce(should_suggest, false), updated_at = now()
+  where profiles.id = public.require_live_profile();
+$$;
+
+
+ALTER FUNCTION "public"."set_suggests_from_reading"("should_suggest" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_suggests_from_reading"("should_suggest" boolean) IS 'The signed-in member turns Suggestions from my reading on or off (S1-E15-06).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."set_updated_at"() RETURNS "trigger"
     LANGUAGE "plpgsql"
     SET "search_path" TO ''
@@ -45471,6 +45632,23 @@ COMMENT ON FUNCTION "public"."stories_fingerprint"("owner_id" "uuid", "chosen_st
 
 
 
+CREATE OR REPLACE FUNCTION "public"."stories_like_this"("story_slug" "text") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select jsonb_build_object('stories', coalesce(
+    (select public.paired_cards(shown_beside.story_id, null)
+     from public.visible_story_by_slug(story_slug) as shown_beside), '[]'::jsonb));
+$$;
+
+
+ALTER FUNCTION "public"."stories_like_this"("story_slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."stories_like_this"("story_slug" "text") IS 'Stories like this: stories finished by at least 5 of the same readers, as the caller may see them (S1-E15-06).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."stories_refresh_writer_rank"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -47411,6 +47589,38 @@ COMMENT ON FUNCTION "public"."submit_teacher_proof"("proof_path" "text") IS 'Put
 
 
 
+CREATE OR REPLACE FUNCTION "public"."suggestion_row_size"() RETURNS integer
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select least(20, greatest(1, coalesce((select (settings.value #>> '{}')::integer from public.settings
+                                         where settings.key = 'suggestions_row_size'), 12)));
+$$;
+
+
+ALTER FUNCTION "public"."suggestion_row_size"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."suggestion_row_size"() IS 'Internal: how many stories a suggestion row shows, 1 to 20 (S1-E15-06).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."suggests_from_reading_of"("person_id" "uuid") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(profiles.suggests_from_reading, public.age_band_of(profiles.id) = '18_plus')
+  from public.profiles where profiles.id = person_id;
+$$;
+
+
+ALTER FUNCTION "public"."suggests_from_reading_of"("person_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."suggests_from_reading_of"("person_id" "uuid") IS 'Internal: the member''s Suggestions from my reading switch, on for adults and off under 18 until chosen (S1-E15-06).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."suggests_me"("person_id" "uuid") RETURNS boolean
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -49104,6 +49314,23 @@ ALTER FUNCTION "public"."verify_certificate"("code" "text") OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."verify_certificate"("code" "text") IS 'Public: whether a certificate code is valid, revoked or no longer available, never the name (S1-E8-12).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."visible_story_by_slug"("story_slug" "text") RETURNS TABLE("story_id" "uuid", "writer_id" "uuid")
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select listed.id, listed.user_id
+  from public.listed_stories('popular', null, null, null, null) as listed
+  where listed.slug = story_slug;
+$$;
+
+
+ALTER FUNCTION "public"."visible_story_by_slug"("story_slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."visible_story_by_slug"("story_slug" "text") IS 'Internal: a story the caller may find in a list, by its slug (S1-E15-06).';
 
 
 
@@ -52832,6 +53059,25 @@ COMMENT ON COLUMN "public"."story_marketing"."own_details" IS 'kind: user_conten
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."story_pairs" (
+    "story_id" "uuid" NOT NULL,
+    "paired_story_id" "uuid" NOT NULL,
+    "readers" integer NOT NULL,
+    "counted_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "story_pairs_readers_check" CHECK (("readers" > 0)),
+    CONSTRAINT "story_pairs_two_stories" CHECK (("story_id" <> "paired_story_id"))
+);
+
+
+ALTER TABLE "public"."story_pairs" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."story_pairs" IS 'kind: platform. Each night: how many members (with Suggestions from my reading on) finished both of two stories, kept only at 5 or more. Totals only, never who (S1-E15-06).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."story_plan_acts" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "story_id" "uuid" NOT NULL,
@@ -54547,6 +54793,11 @@ ALTER TABLE ONLY "public"."story_ideas"
 
 ALTER TABLE ONLY "public"."story_marketing"
     ADD CONSTRAINT "story_marketing_pkey" PRIMARY KEY ("story_id");
+
+
+
+ALTER TABLE ONLY "public"."story_pairs"
+    ADD CONSTRAINT "story_pairs_pkey" PRIMARY KEY ("story_id", "paired_story_id");
 
 
 
@@ -58769,6 +59020,16 @@ ALTER TABLE ONLY "public"."story_marketing"
 
 
 
+ALTER TABLE ONLY "public"."story_pairs"
+    ADD CONSTRAINT "story_pairs_paired_story_id_fkey" FOREIGN KEY ("paired_story_id") REFERENCES "public"."stories"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."story_pairs"
+    ADD CONSTRAINT "story_pairs_story_id_fkey" FOREIGN KEY ("story_id") REFERENCES "public"."stories"("id") ON DELETE CASCADE;
+
+
+
 ALTER TABLE ONLY "public"."story_plan_acts"
     ADD CONSTRAINT "story_plan_acts_story_id_fkey" FOREIGN KEY ("story_id") REFERENCES "public"."story_plans"("story_id") ON DELETE CASCADE;
 
@@ -60713,6 +60974,13 @@ CREATE POLICY "story_marketing_select_own" ON "public"."story_marketing" FOR SEL
 
 
 COMMENT ON POLICY "story_marketing_select_own" ON "public"."story_marketing" IS 'Allows a writer to read the marketing notes of their own stories, and nobody else (S1-E17-29).';
+
+
+
+ALTER TABLE "public"."story_pairs" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "story_pairs_select_staff" ON "public"."story_pairs" FOR SELECT TO "authenticated" USING ("public"."staff_may"('stories'::"text", 'view'::"text"));
 
 
 
@@ -62743,6 +63011,11 @@ REVOKE ALL ON FUNCTION "public"."banned_email_hash"("email" "text") FROM PUBLIC;
 
 
 
+REVOKE ALL ON FUNCTION "public"."because_you_read"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."because_you_read"() TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."begin_age_check"("yoti_session_id" "text", "threshold" smallint, "signature" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."begin_age_check"("yoti_session_id" "text", "threshold" smallint, "signature" "text") TO "authenticated";
 
@@ -63363,6 +63636,10 @@ REVOKE ALL ON FUNCTION "public"."compute_investor_metrics"("for_day" "date") FRO
 
 
 REVOKE ALL ON FUNCTION "public"."compute_story_country_scores"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."compute_story_pairs"() FROM PUBLIC;
 
 
 
@@ -64753,6 +65030,12 @@ GRANT ALL ON FUNCTION "public"."moderated_state_of"("item_type" "public"."report
 
 
 
+REVOKE ALL ON FUNCTION "public"."more_by_writer"("story_slug" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."more_by_writer"("story_slug" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."more_by_writer"("story_slug" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."move_bible_section"("section_id" "uuid", "new_position" integer) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."move_bible_section"("section_id" "uuid", "new_position" integer) TO "authenticated";
 
@@ -65310,6 +65593,10 @@ REVOKE ALL ON FUNCTION "public"."owned_space_for_change"("target_slug" "text") F
 REVOKE ALL ON FUNCTION "public"."page_ads"("page_key" "text", "context" "jsonb") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."page_ads"("page_key" "text", "context" "jsonb") TO "anon";
 GRANT ALL ON FUNCTION "public"."page_ads"("page_key" "text", "context" "jsonb") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."paired_cards"("source_story_id" "uuid", "left_out" "uuid"[]) FROM PUBLIC;
 
 
 
@@ -66692,6 +66979,11 @@ GRANT ALL ON FUNCTION "public"."set_suggest_me"("should_suggest" boolean) TO "au
 
 
 
+REVOKE ALL ON FUNCTION "public"."set_suggests_from_reading"("should_suggest" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_suggests_from_reading"("should_suggest" boolean) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."set_updated_at"() FROM PUBLIC;
 
 
@@ -67094,6 +67386,12 @@ REVOKE ALL ON FUNCTION "public"."stories_fingerprint"("owner_id" "uuid", "chosen
 
 
 
+REVOKE ALL ON FUNCTION "public"."stories_like_this"("story_slug" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."stories_like_this"("story_slug" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."stories_like_this"("story_slug" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."stories_refresh_writer_rank"() FROM PUBLIC;
 
 
@@ -67359,6 +67657,14 @@ GRANT ALL ON FUNCTION "public"."submit_teacher_proof"("proof_path" "text") TO "a
 
 
 
+REVOKE ALL ON FUNCTION "public"."suggestion_row_size"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."suggests_from_reading_of"("person_id" "uuid") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."suggests_me"("person_id" "uuid") FROM PUBLIC;
 
 
@@ -67565,6 +67871,10 @@ REVOKE ALL ON FUNCTION "public"."verified_signup_ips"("token" "text") FROM PUBLI
 REVOKE ALL ON FUNCTION "public"."verify_certificate"("code" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."verify_certificate"("code" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."verify_certificate"("code" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."visible_story_by_slug"("story_slug" "text") FROM PUBLIC;
 
 
 
@@ -68334,6 +68644,11 @@ GRANT SELECT ON TABLE "public"."story_country_scores" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."story_marketing" TO "service_role";
 GRANT SELECT ON TABLE "public"."story_marketing" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."story_pairs" TO "service_role";
+GRANT SELECT ON TABLE "public"."story_pairs" TO "authenticated";
 
 
 
