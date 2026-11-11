@@ -234,6 +234,36 @@ describe('the notification email worker', () => {
     expect(email?.headers).toBeUndefined();
   });
 
+  it('warns about a month and about a week before deleting an unused account, with a link to log in (INACTIVE-1)', async () => {
+    const unused = (kind: EmailNotificationItem['kind']): EmailNotificationItem => ({
+      ...followers,
+      kind,
+      actors: [],
+      actor_count: 0,
+    });
+    const [monthEmail, weekEmail] = await sendOnce([
+      claimed({
+        delivery: 'required',
+        unsubscribe_key: null,
+        items: [unused('account_unused_month')],
+      }),
+      claimed({
+        delivery: 'required',
+        unsubscribe_key: null,
+        items: [unused('account_unused_week')],
+      }),
+    ]);
+    expect(monthEmail?.subject).toBe('The Product account will be deleted in about a month');
+    expect(monthEmail?.text).toContain('almost 5 years');
+    expect(monthEmail?.text).toMatch(/Log in to keep it: \S+\/sign-in/);
+    expect(monthEmail?.text).toContain('we always send it');
+    expect(monthEmail?.headers).toBeUndefined();
+    expect(weekEmail?.subject).toBe(
+      'Last notice: the Product account will be deleted in about a week',
+    );
+    expect(weekEmail?.text).toContain('in about a week');
+  });
+
   it('tells a teacher their class is archived, always, naming the class (S1-E8-12)', async () => {
     const archived: EmailNotificationItem = {
       ...followers,

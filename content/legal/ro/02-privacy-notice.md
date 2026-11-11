@@ -127,6 +127,8 @@ Păstrarea evidențelor în caz de dispută. Păstrarea raportărilor și decizi
 
 Numărarea a ce funcționează. Numărăm citirile, capitolele terminate, înscrierile, membrii activi, minutele petrecute în aplicație și citind și cititorii care revin ca totaluri, fără cookie-uri și fără să urmărim pe nimeni. Pentru asta păstrăm o singură dată pentru fiecare membru: ultima zi în care ai folosit aplicația, înlocuită în fiecare zi, niciodată o listă a zilelor sau a paginilor. Se șterge la 35 de zile după ultima ta vizită. Temei legal: interesul nostru legitim. [Avocatul trebuie să confirme]
 
+Ștergerea conturilor pe care nu le folosește nimeni. Mai păstrăm și ultima zi în care te-ai conectat sau ai folosit aplicația, înlocuită de fiecare dată. Dacă nimeni nu folosește un cont timp de 5 ani, îți scriem cu aproximativ o lună și din nou cu aproximativ o săptămână înainte să-l ștergem, cu tot ce e în el, la fel ca atunci când îl ștergi tu. Dacă te conectezi oricând până atunci, contul rămâne. Temei legal: păstrăm datele personale doar cât e nevoie de ele (art. 5 alin. (1) lit. (e) din GDPR). [Avocatul trebuie să confirme]
+
 Sugestii din lectură. Când termini o poveste, ea poate conta, ca total fără nume, pentru „Povești asemănătoare”: povești pe care le-au terminat 5 sau mai mulți dintre aceiași cititori. Descoperă îți arată apoi „Pentru că ai citit” din poveștile pe care le-ai terminat. Este pornită pentru adulți și oprită pentru cei sub 18 ani, iar o poți opri sau porni din Setări › Confidențialitate. Temei legal: interesul nostru legitim și alegerea ta pentru membrii sub 18 ani. [Avocatul trebuie să confirme]
 
 Acolo unde ne bazăm pe interesul legitim, te poți opune, cum explicăm în „Drepturile tale”.
@@ -195,6 +197,7 @@ Reclame. Nu îți folosim datele ca să alegem reclame, pentru nimeni.
 
 - [Cât timp păstrăm fiecare fel de date: de stabilit]
 - Când îți ștergi contul, îți ștergem datele și poveștile, în afară de ce legea spune că trebuie să păstrăm. Postările tale de pe forum rămân și apar ca „Utilizator șters”.
+- Dacă nimeni nu folosește un cont timp de 5 ani, îl ștergem la fel, după ce îți scriem cu o lună și cu o săptămână înainte.
 
 *Rând scurt nou propus, acum că textul complet înlocuiește locul liber:*
 

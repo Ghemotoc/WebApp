@@ -90,7 +90,12 @@
     "messageWhy": "Primești aceste emailuri pentru că așa ai ales în Setări, la Mesaje, unde poți seta și orele de liniște: {{link}}",
     "waitlistAdmitted": "Ți-a venit rândul: contul tău {{productName}} e deschis. Acum poți scrie, citi, comenta și posta.",
     "subjectWaitlistAdmitted": "Ai intrat: contul {{productName}} e deschis",
-    "waitlistSignIn": "Conectează-te ca să începi: {{link}}"
+    "waitlistSignIn": "Conectează-te ca să începi: {{link}}",
+    "accountUnusedMonth": "Nimeni nu s-a mai conectat la contul {{productName}} de aproape 5 ani, așa că îl vom șterge în aproximativ o lună, împreună cu poveștile, comentariile și postările din el. Ca să-l păstrezi, conectează-te până atunci. Nu trebuie să faci nimic altceva.",
+    "accountUnusedWeek": "Ultima notificare: nimeni nu s-a mai conectat la contul {{productName}} de aproape 5 ani, așa că îl vom șterge în aproximativ o săptămână, împreună cu poveștile, comentariile și postările din el. Ca să-l păstrezi, conectează-te până atunci.",
+    "subjectAccountUnusedMonth": "Contul {{productName}} va fi șters în aproximativ o lună",
+    "subjectAccountUnusedWeek": "Ultima notificare: contul {{productName}} va fi șters în aproximativ o săptămână",
+    "accountUnusedSignIn": "Conectează-te ca să-l păstrezi: {{link}}"
   },
   "parentConsent": {
     "requestSubject": "@{{handle}} te roagă să fii de acord cu contul său {{productName}}",

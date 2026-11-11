@@ -106,6 +106,7 @@ export type Database = {
           created_at: string;
           delete_after: string;
           id: string;
+          reason: string;
           requested_at: string;
           updated_at: string;
           user_id: string;
@@ -117,6 +118,7 @@ export type Database = {
           created_at?: string;
           delete_after: string;
           id?: string;
+          reason?: string;
           requested_at?: string;
           updated_at?: string;
           user_id: string;
@@ -127,6 +129,7 @@ export type Database = {
           created_at?: string;
           delete_after?: string;
           id?: string;
+          reason?: string;
           requested_at?: string;
           updated_at?: string;
           user_id?: string;
@@ -136,6 +139,45 @@ export type Database = {
             foreignKeyName: 'account_deletions_user_id_fkey';
             columns: ['user_id'];
             isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      account_last_used: {
+        Row: {
+          created_at: string;
+          month_notice_at: string | null;
+          notices_for: string | null;
+          updated_at: string;
+          used_on: string | null;
+          user_id: string;
+          week_notice_at: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          month_notice_at?: string | null;
+          notices_for?: string | null;
+          updated_at?: string;
+          used_on?: string | null;
+          user_id: string;
+          week_notice_at?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          month_notice_at?: string | null;
+          notices_for?: string | null;
+          updated_at?: string;
+          used_on?: string | null;
+          user_id?: string;
+          week_notice_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'account_last_used_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: true;
             referencedRelation: 'profiles';
             referencedColumns: ['id'];
           },
@@ -10365,6 +10407,7 @@ export type Database = {
       };
       account_for_email: { Args: { address: string }; Returns: string };
       account_is_new: { Args: { target_user_id: string }; Returns: boolean };
+      account_last_used_on: { Args: { target_user_id: string }; Returns: string };
       account_set_up_before_now: { Args: { target_user_id: string }; Returns: boolean };
       account_signed_in_recently: { Args: Record<PropertyKey, never>; Returns: boolean };
       account_state: {
@@ -12844,6 +12887,8 @@ export type Database = {
         Returns: boolean;
       };
       close_finished_safety_checks: { Args: { target_country: string }; Returns: undefined };
+      close_unused_account: { Args: { target_user_id: string }; Returns: undefined };
+      close_unused_accounts: { Args: Record<PropertyKey, never>; Returns: Json };
       cms_band_problems: {
         Args: { band: Json; field_prefix: string; has_points: boolean };
         Returns: string[];
@@ -13788,6 +13833,7 @@ export type Database = {
         };
         Returns: number;
       };
+      hide_closing_account: { Args: { target_user_id: string }; Returns: undefined };
       home_comment_can_show: { Args: { target_comment: string }; Returns: boolean };
       home_comment_card: {
         Args: Record<PropertyKey, never>;
@@ -16073,6 +16119,10 @@ export type Database = {
         Returns: Json;
       };
       send_reading_reminders: { Args: Record<PropertyKey, never>; Returns: number };
+      send_unused_account_notice: {
+        Args: { last_used: string; target_user_id: string; which_notice: string };
+        Returns: undefined;
+      };
       set_adults_may_message: { Args: { allowed: boolean }; Returns: undefined };
       set_block: { Args: { should_block: boolean; target_handle: string }; Returns: Json };
       set_certificate_printed_name: {
@@ -17203,6 +17253,16 @@ export type Database = {
       unpublish_chapter: { Args: { chapter_code: string }; Returns: Json };
       unread_message_count: { Args: Record<PropertyKey, never>; Returns: number };
       unsubscribe_from_emails: { Args: { unsubscribe_key: string }; Returns: boolean };
+      unused_account_setting: { Args: { fallback: number; setting_key: string }; Returns: number };
+      unused_account_step: {
+        Args: {
+          last_used: string;
+          month_notice_at: string;
+          notices_for: string;
+          week_notice_at: string;
+        };
+        Returns: string;
+      };
       update_bible_entry: { Args: { changes: Json; entry_id: string }; Returns: Json };
       update_chapter_plan: { Args: { changes: Json; chapter_code: string }; Returns: Json };
       update_chapter_scene: { Args: { changes: Json; scene_id: string }; Returns: Json };
@@ -17540,7 +17600,9 @@ export type Database = {
         | 'live_session_soon'
         | 'home_comment_invited'
         | 'forum_reply'
-        | 'assignment_due';
+        | 'assignment_due'
+        | 'account_unused_month'
+        | 'account_unused_week';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -17937,6 +17999,8 @@ export const Constants = {
         'home_comment_invited',
         'forum_reply',
         'assignment_due',
+        'account_unused_month',
+        'account_unused_week',
       ],
       picture_kind: [
         'cover',

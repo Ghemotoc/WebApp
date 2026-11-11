@@ -98,6 +98,7 @@
     "spotlightAgreed": "your parent or guardian agreed that we may suggest you and your stories to other readers.",
     "spotlightWithdrawn": "we no longer suggest you or your stories to other readers, because the yes from your parent or guardian was withdrawn.",
     "waitlistAdmitted": "your place on the waiting list came up and your account is open. Welcome!",
+    "accountUnused": "the account hadn’t been used for almost 5 years and was due to be deleted. Logging in kept it, so nothing else is needed.",
     "forumReply_one": "replied in “{{title}}”.",
     "forumReply_few": "replied in “{{title}}”.",
     "forumReply_other": "replied in “{{title}}”.",

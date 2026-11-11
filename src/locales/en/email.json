@@ -90,7 +90,12 @@
     "messageWhy": "You get these emails because of your choices in Settings, under Messages, where you can also set quiet hours: {{link}}",
     "waitlistAdmitted": "Your place came up: your {{productName}} account is open. You can now write, read, comment and post.",
     "subjectWaitlistAdmitted": "You’re in: the {{productName}} account is open",
-    "waitlistSignIn": "Log in to start: {{link}}"
+    "waitlistSignIn": "Log in to start: {{link}}",
+    "accountUnusedMonth": "Nobody has logged in to the {{productName}} account for almost 5 years, so we’ll delete it in about a month, with the stories, comments and posts in it. To keep it, log in before then. Nothing else is needed.",
+    "accountUnusedWeek": "This is the last notice: nobody has logged in to the {{productName}} account for almost 5 years, so we’ll delete it in about a week, with the stories, comments and posts in it. To keep it, log in before then.",
+    "subjectAccountUnusedMonth": "The {{productName}} account will be deleted in about a month",
+    "subjectAccountUnusedWeek": "Last notice: the {{productName}} account will be deleted in about a week",
+    "accountUnusedSignIn": "Log in to keep it: {{link}}"
   },
   "parentConsent": {
     "requestSubject": "@{{handle}} asked you to agree to their {{productName}} account",
