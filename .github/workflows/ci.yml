@@ -137,7 +137,18 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
+      # Chromium itself comes from Playwright's own download. Its system packages (mostly fonts)
+      # come from Ubuntu's servers, which the runner sometimes can't reach (11 Nov 2026: every e2e
+      # job died at this step for over an hour with "Temporary failure resolving
+      # archive.ubuntu.com"). The runner image already has the libraries Chromium needs, so a failed
+      # package install is reported as a warning and the tests still run (CI-3, Robert agreed).
+      - name: Install Chromium for Playwright
+        run: npx playwright install chromium
+      - name: Install Chromium's system packages (a warning if Ubuntu's servers can't be reached)
+        run: |
+          if ! npx playwright install-deps chromium; then
+            echo "::warning::Ubuntu's package servers could not be reached; Chromium runs with the packages already on the runner."
+          fi
       # The local Supabase for signed-in tests (S1-E1-04): the database, Auth, the API and Storage.
       # playwright.config.ts reads its address and public anon key from `supabase status`.
       # Mailpit stays on: sign-up and password-reset tests read their emails from it (S1-E2-01).
