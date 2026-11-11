@@ -28,6 +28,16 @@ import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './su
 const className = 'Clasa a VIII-a diplome';
 const classSlug = 'clasa-a-viii-a-diplome';
 const programme = 'Writing club 2027';
+/**
+ * A school crest drawn as an SVG with a script in it (G13b): the browser redraws it as a PNG before
+ * upload, so the script is never stored and never runs.
+ */
+const crestSvg = Buffer.from(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">' +
+    '<script>document.title = "crest script ran"</script>' +
+    '<circle cx="32" cy="32" r="28" fill="#0F766E"/></svg>',
+);
+
 /** The personas' user IDs, to act as them in SQL. */
 const teacherId = '00000000-0000-4000-8000-000000000007';
 const studentId = '00000000-0000-4000-8000-000000000005';
@@ -57,6 +67,9 @@ function cleanUp() {
       delete from public.certificates where space_id in ${space};
       delete from public.retired_certificate_codes where code = any (gone_codes);
     end $$;
+    delete from public.picture_checks where kind = 'certificate_crest'
+      and split_part(path, '/', 1) in (select id::text from public.spaces where slug = '${classSlug}');
+    update public.feature_flags set is_enabled = false where key = 'picture_uploads';
     delete from public.email_outbox where user_id = '${teacherId}';
     delete from public.notifications where kind in ('certificate_issued', 'class_archived')
       and user_id in ('${teacherId}', '${studentId}');
@@ -68,8 +81,16 @@ function cleanUp() {
     update public.profiles set locale = 'ro' where handle in ('teacher', 'pending_check', 'moderator');`);
 }
 
-/** The class with the student in it. */
+/**
+ * The class with the student in it, and picture uploads on for the crest (G13b). The local server
+ * signs check results with PICTURE_CHECK_SECRET (playwright.config.ts) and the database checks them
+ * against the same value in its Vault, so the spec makes that test value itself instead of relying
+ * on another spec having run first. Never a real secret.
+ */
 function setUp() {
+  runSql(`update public.feature_flags set is_enabled = true where key = 'picture_uploads';
+    select vault.create_secret('local-e2e-picture-secret', 'picture_check_secret')
+    where not exists (select 1 from vault.secrets where name = 'picture_check_secret');`);
   runAs(teacherId, `select public.create_class_space('${className}', 'Cercul de scriere.');`);
   const code = runAs(
     teacherId,
@@ -133,6 +154,20 @@ test.describe('writing certificates (CLASSES-e, S1-E8-12)', () => {
     await page.getByRole('radio', { name: 'Sea glass', exact: true }).check({ force: true });
     await page.getByRole('radio', { name: 'Waves', exact: true }).check({ force: true });
     await expect(page.locator('[data-certificate-colour="sea_glass"]')).toBeVisible();
+    // G13b: the school's crest in the seal, uploaded as an SVG and stored only as pixels (WebP or PNG).
+    await page.getByRole('radio', { name: 'School crest' }).click();
+    await page.getByRole('radio', { name: 'White on the certificate colour' }).click();
+    await page
+      .getByLabel('Upload a crest or logo')
+      .setInputFiles({ name: 'crest.svg', mimeType: 'image/svg+xml', buffer: crestSvg });
+    await expect(page.getByText('Checked. It shows in the seal.')).toBeVisible();
+    await expect(page.locator('[data-certificate-seal="crest"]')).toBeVisible();
+    expect(
+      runSql(
+        `select path ~ '\\.(webp|png)$' from public.picture_checks where kind = 'certificate_crest' order by created_at desc limit 1;`,
+      ).trim(),
+    ).toBe('t');
+    await expect(page).not.toHaveTitle('crest script ran');
     await page.getByRole('button', { name: 'Approve and sign' }).click();
     await expect(page.getByText('Signed: 1 certificate made or changed.')).toBeVisible();
     await expect(page.getByText(certificate().code)).toBeVisible();
@@ -153,6 +188,7 @@ test.describe('writing certificates (CLASSES-e, S1-E8-12)', () => {
     const frame = page.locator('.certificate-sheet');
     await expect(frame).toHaveAttribute('data-certificate-colour', 'sea_glass');
     await expect(frame.locator('[data-certificate-pattern="waves"]')).toHaveCount(1);
+    await expect(frame.locator('[data-certificate-seal="crest"]')).toBeVisible();
     await expect(sheet.getByRole('link', { name: /\/verify$/ })).toHaveAttribute(
       'href',
       new RegExp(`/verify\\?code=${certificate().code}$`),

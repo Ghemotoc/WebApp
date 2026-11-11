@@ -13,7 +13,9 @@ Certificate-Participation and Certificate-Winner). Contests (S1-E12-02) will iss
 - `lib/certificateLook.ts` (G13a): the eight colours and the patterns a certificate can be drawn in,
   saved on each certificate at signing; `components/CertificateFrame.tsx` draws the frame, the
   faint pattern and the seal, and `CertificateLookPicker.tsx` is the teacher's choice with a
-  preview.
+  preview. Since G13b the seal shows the cat or the school's crest (`CertificateSeal.tsx`,
+  `CertificateSealChoices.tsx`, `CertificateCrestField.tsx`; `api/certificateCrest.ts` and
+  `hooks/useCertificateCrest.ts` upload, choose and read it).
 - `lib/certificateDate.ts`: dates in the certificate's language; `lib/pickedResults.ts`: the
   teacher's choices as the list the database takes.
 - `components/MyCertificatesPage.tsx` (`/certificates`), `CertificatePage.tsx`

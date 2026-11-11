@@ -85,12 +85,12 @@ function studentsOf(
 /**
  * The results form, with the class's students, or why there is none.
  *
- * @param props.slug - the class's address
- * @param props.isArchived - whether the class is archived
+ * @param props.space - the class
  * @returns the form or a note
  */
-function NewResults({ slug, isArchived }: { slug: string; isArchived: boolean }) {
+function NewResults({ space }: { space: Space }) {
   const { t } = useCertificatesTranslation();
+  const { slug, isArchived } = space;
   const members = useSpaceMembers(slug, !isArchived);
   // G13a: the form starts from the look of the newest certificate signed in the class.
   const signed = useClassCertificates(slug);
@@ -101,7 +101,9 @@ function NewResults({ slug, isArchived }: { slug: string; isArchived: boolean })
   }
   if (students.length === 0 || signed.isPending) return null;
   const startLook = signed.data?.[0]?.look ?? defaultCertificateLook;
-  return <ClassResultsForm slug={slug} students={students} startLook={startLook} />;
+  return (
+    <ClassResultsForm slug={slug} spaceId={space.id} students={students} startLook={startLook} />
+  );
 }
 
 /**
@@ -120,7 +122,7 @@ function ClassCertificatesBody({ slug, space }: { slug: string; space: Space | n
   }
   return (
     <>
-      <NewResults slug={slug} isArchived={space.isArchived} />
+      <NewResults space={space} />
       <SignedCertificates slug={slug} />
     </>
   );

@@ -751,7 +751,8 @@ CREATE TYPE "public"."picture_kind" AS ENUM (
     'landing_picture',
     'sponsor_creative',
     'brand_asset',
-    'space_logo'
+    'space_logo',
+    'certificate_crest'
 );
 
 
@@ -15320,140 +15321,6 @@ COMMENT ON FUNCTION "public"."cases_by_tier"("window_days" integer) IS 'Internal
 
 
 
-CREATE OR REPLACE FUNCTION "public"."certificate_look_from"("look" "jsonb", OUT "colour" "text", OUT "pattern" "text") RETURNS "record"
-    LANGUAGE "plpgsql" IMMUTABLE
-    SET "search_path" TO ''
-    AS $$
-begin
-  -- Step 1: no look means the default.
-  if look is null or look = 'null'::jsonb then
-    colour := 'plum';
-    pattern := 'none';
-    return;
-  end if;
-  if jsonb_typeof(look) <> 'object' then
-    raise exception 'Choose a colour and a pattern from the list.' using errcode = 'check_violation', hint = 'certificate:look';
-  end if;
-  -- Step 2: each part is one of the known names; a missing part keeps its default.
-  colour := coalesce(look ->> 'colour', 'plum');
-  pattern := coalesce(look ->> 'pattern', 'none');
-  if colour not in ('plum', 'ember', 'sea_glass', 'pistachio', 'candy', 'crimson', 'cobalt', 'autumn')
-     or pattern not in ('none', 'stripes', 'dots', 'grid', 'waves', 'starry', 'arches', 'rings', 'forestwaves') then
-    raise exception 'Choose a colour and a pattern from the list.' using errcode = 'check_violation', hint = 'certificate:look';
-  end if;
-end;
-$$;
-
-
-ALTER FUNCTION "public"."certificate_look_from"("look" "jsonb", OUT "colour" "text", OUT "pattern" "text") OWNER TO "postgres";
-
-
-COMMENT ON FUNCTION "public"."certificate_look_from"("look" "jsonb", OUT "colour" "text", OUT "pattern" "text") IS 'Internal: the certificate look a teacher sent, checked; the default for null (G13a).';
-
-
-
-CREATE TABLE IF NOT EXISTS "public"."certificates" (
-    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
-    "user_id" "uuid" NOT NULL,
-    "space_id" "uuid",
-    "teacher_user_id" "uuid",
-    "programme_name" "text" NOT NULL,
-    "result" "public"."certificate_result" NOT NULL,
-    "class_name" "text",
-    "school_name" "text",
-    "teacher_name" "text",
-    "code" "text" NOT NULL,
-    "printed_name" "text",
-    "signed_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    "revoked_at" timestamp with time zone,
-    "revoke_reason" "text",
-    "revoked_by_user_id" "uuid",
-    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    "contest_id" "uuid",
-    "look_colour" "text" DEFAULT 'plum'::"text" NOT NULL,
-    "look_pattern" "text" DEFAULT 'none'::"text" NOT NULL,
-    CONSTRAINT "certificates_class_or_contest" CHECK ((("contest_id" IS NULL) OR ("space_id" IS NULL))),
-    CONSTRAINT "certificates_class_prints_class_and_teacher" CHECK ((("contest_id" IS NOT NULL) OR (("class_name" IS NOT NULL) AND ("teacher_name" IS NOT NULL)))),
-    CONSTRAINT "certificates_look_colour_is_known" CHECK (("look_colour" = ANY (ARRAY['plum'::"text", 'ember'::"text", 'sea_glass'::"text", 'pistachio'::"text", 'candy'::"text", 'crimson'::"text", 'cobalt'::"text", 'autumn'::"text"]))),
-    CONSTRAINT "certificates_look_pattern_is_known" CHECK (("look_pattern" = ANY (ARRAY['none'::"text", 'stripes'::"text", 'dots'::"text", 'grid'::"text", 'waves'::"text", 'starry'::"text", 'arches'::"text", 'rings'::"text", 'forestwaves'::"text"]))),
-    CONSTRAINT "certificates_printed_name_length" CHECK ((("printed_name" IS NULL) OR (("char_length"("printed_name") >= 1) AND ("char_length"("printed_name") <= 80)))),
-    CONSTRAINT "certificates_programme_length" CHECK ((("char_length"("programme_name") >= 1) AND ("char_length"("programme_name") <= 120))),
-    CONSTRAINT "certificates_revoke_reason_length" CHECK ((("revoke_reason" IS NULL) OR (("char_length"("revoke_reason") >= 1) AND ("char_length"("revoke_reason") <= 500))))
-);
-
-
-ALTER TABLE "public"."certificates" OWNER TO "postgres";
-
-
-COMMENT ON TABLE "public"."certificates" IS 'kind: user_action
-A student''s writing certificate from a class programme; the real name only with it, deleted 30 days after the class is archived (S1-E8-12).';
-
-
-
-COMMENT ON COLUMN "public"."certificates"."contest_id" IS 'The contest a certificate came from; null for a class certificate (S1-E11-15 criterion 9).';
-
-
-
-COMMENT ON COLUMN "public"."certificates"."look_colour" IS 'The colour of the certificate''s frame, chosen by the teacher and saved at signing (G13a).';
-
-
-
-COMMENT ON COLUMN "public"."certificates"."look_pattern" IS 'The faint pattern behind the certificate''s text, or none; saved at signing (G13a).';
-
-
-
-CREATE OR REPLACE FUNCTION "public"."certificate_name_deleted_on"("target" "public"."certificates") RETURNS timestamp with time zone
-    LANGUAGE "sql" STABLE SECURITY DEFINER
-    SET "search_path" TO ''
-    AS $$
-  select spaces.archived_at + interval '30 days'
-  from public.spaces where spaces.id = target.space_id;
-$$;
-
-
-ALTER FUNCTION "public"."certificate_name_deleted_on"("target" "public"."certificates") OWNER TO "postgres";
-
-
-COMMENT ON FUNCTION "public"."certificate_name_deleted_on"("target" "public"."certificates") IS 'Internal: when a class certificate''s printed name is deleted (S1-E8-12).';
-
-
-
-CREATE OR REPLACE FUNCTION "public"."certificate_result_from"("typed" "text") RETURNS "public"."certificate_result"
-    LANGUAGE "plpgsql" IMMUTABLE
-    SET "search_path" TO ''
-    AS $$
-begin
-  if typed is null or typed not in ('participant', 'finalist', 'winner') then
-    raise exception 'Choose taking part, finalist or winner.' using errcode = 'check_violation', hint = 'certificate:result';
-  end if;
-  return typed::public.certificate_result;
-end;
-$$;
-
-
-ALTER FUNCTION "public"."certificate_result_from"("typed" "text") OWNER TO "postgres";
-
-
-COMMENT ON FUNCTION "public"."certificate_result_from"("typed" "text") IS 'Internal: a certificate result from the teacher''s list (S1-E8-12).';
-
-
-
-CREATE OR REPLACE FUNCTION "public"."certificate_status"("target" "public"."certificates") RETURNS "text"
-    LANGUAGE "sql" IMMUTABLE
-    SET "search_path" TO ''
-    AS $$
-  select case when target.revoked_at is null then 'valid' else 'revoked' end;
-$$;
-
-
-ALTER FUNCTION "public"."certificate_status"("target" "public"."certificates") OWNER TO "postgres";
-
-
-COMMENT ON FUNCTION "public"."certificate_status"("target" "public"."certificates") IS 'Internal: a certificate''s state on the check page (S1-E8-12).';
-
-
-
 CREATE TABLE IF NOT EXISTS "public"."spaces" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "user_id" "uuid" NOT NULL,
@@ -15479,6 +15346,7 @@ CREATE TABLE IF NOT EXISTS "public"."spaces" (
     "handover_to_user_id" "uuid",
     "handover_offered_at" timestamp with time zone,
     "logo_picture_id" "uuid",
+    "crest_picture_id" "uuid",
     CONSTRAINT "spaces_16_plus_read_by_everybody" CHECK ((("kind" = 'class'::"public"."space_kind") OR ("age_group" = 'under_16'::"public"."space_age_group") OR ("readers" = 'everybody'::"public"."space_readers"))),
     CONSTRAINT "spaces_archived_only_class" CHECK ((("archived_at" IS NULL) OR ("kind" = 'class'::"public"."space_kind"))),
     CONSTRAINT "spaces_banner_is_offered" CHECK (("banner" <> ALL (ARRAY['night'::"public"."space_banner", 'gold'::"public"."space_banner"]))),
@@ -15547,7 +15415,208 @@ COMMENT ON COLUMN "public"."spaces"."logo_picture_id" IS 'The uploaded logo (G8b
 
 
 
+COMMENT ON COLUMN "public"."spaces"."crest_picture_id" IS 'The school crest the class''s teacher uploaded for its certificates (G13b); shown once its check passed.';
+
+
+
 COMMENT ON CONSTRAINT "spaces_banner_is_offered" ON "public"."spaces" IS 'A space uses one of the fourteen banner colours the boards offer; night and gold are retired (G8b).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."certificate_class_for_teacher"("slug" "text") RETURNS "public"."spaces"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  space public.spaces := public.space_for_power(slug, 'settings');
+begin
+  perform public.check_certificate_class(space);
+  if space.user_id is distinct from (select auth.uid()) then
+    raise exception 'Only the class''s teacher signs its certificates.'
+      using errcode = 'insufficient_privilege', hint = 'certificate:teacher_only';
+  end if;
+  return space;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."certificate_class_for_teacher"("slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."certificate_class_for_teacher"("slug" "text") IS 'Internal: the live class whose own teacher is the caller (G13b).';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."certificates" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "space_id" "uuid",
+    "teacher_user_id" "uuid",
+    "programme_name" "text" NOT NULL,
+    "result" "public"."certificate_result" NOT NULL,
+    "class_name" "text",
+    "school_name" "text",
+    "teacher_name" "text",
+    "code" "text" NOT NULL,
+    "printed_name" "text",
+    "signed_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "revoked_at" timestamp with time zone,
+    "revoke_reason" "text",
+    "revoked_by_user_id" "uuid",
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "contest_id" "uuid",
+    "look_colour" "text" DEFAULT 'plum'::"text" NOT NULL,
+    "look_pattern" "text" DEFAULT 'none'::"text" NOT NULL,
+    "look_seal" "text" DEFAULT 'cat'::"text" NOT NULL,
+    "look_crest_colours" "text" DEFAULT 'own'::"text" NOT NULL,
+    "crest_picture_id" "uuid",
+    CONSTRAINT "certificates_class_or_contest" CHECK ((("contest_id" IS NULL) OR ("space_id" IS NULL))),
+    CONSTRAINT "certificates_class_prints_class_and_teacher" CHECK ((("contest_id" IS NOT NULL) OR (("class_name" IS NOT NULL) AND ("teacher_name" IS NOT NULL)))),
+    CONSTRAINT "certificates_crest_matches_seal" CHECK ((("look_seal" = 'crest'::"text") OR ("crest_picture_id" IS NULL))),
+    CONSTRAINT "certificates_look_colour_is_known" CHECK (("look_colour" = ANY (ARRAY['plum'::"text", 'ember'::"text", 'sea_glass'::"text", 'pistachio'::"text", 'candy'::"text", 'crimson'::"text", 'cobalt'::"text", 'autumn'::"text"]))),
+    CONSTRAINT "certificates_look_crest_colours_is_known" CHECK (("look_crest_colours" = ANY (ARRAY['own'::"text", 'white'::"text"]))),
+    CONSTRAINT "certificates_look_pattern_is_known" CHECK (("look_pattern" = ANY (ARRAY['none'::"text", 'stripes'::"text", 'dots'::"text", 'grid'::"text", 'waves'::"text", 'starry'::"text", 'arches'::"text", 'rings'::"text", 'forestwaves'::"text"]))),
+    CONSTRAINT "certificates_look_seal_is_known" CHECK (("look_seal" = ANY (ARRAY['cat'::"text", 'crest'::"text"]))),
+    CONSTRAINT "certificates_printed_name_length" CHECK ((("printed_name" IS NULL) OR (("char_length"("printed_name") >= 1) AND ("char_length"("printed_name") <= 80)))),
+    CONSTRAINT "certificates_programme_length" CHECK ((("char_length"("programme_name") >= 1) AND ("char_length"("programme_name") <= 120))),
+    CONSTRAINT "certificates_revoke_reason_length" CHECK ((("revoke_reason" IS NULL) OR (("char_length"("revoke_reason") >= 1) AND ("char_length"("revoke_reason") <= 500))))
+);
+
+
+ALTER TABLE "public"."certificates" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."certificates" IS 'kind: user_action
+A student''s writing certificate from a class programme; the real name only with it, deleted 30 days after the class is archived (S1-E8-12).';
+
+
+
+COMMENT ON COLUMN "public"."certificates"."contest_id" IS 'The contest a certificate came from; null for a class certificate (S1-E11-15 criterion 9).';
+
+
+
+COMMENT ON COLUMN "public"."certificates"."look_colour" IS 'The colour of the certificate''s frame, chosen by the teacher and saved at signing (G13a).';
+
+
+
+COMMENT ON COLUMN "public"."certificates"."look_pattern" IS 'The faint pattern behind the certificate''s text, or none; saved at signing (G13a).';
+
+
+
+COMMENT ON COLUMN "public"."certificates"."look_seal" IS 'What the seal shows: the brand''s cat or the school''s crest; saved at signing (G13b).';
+
+
+
+COMMENT ON COLUMN "public"."certificates"."look_crest_colours" IS 'A crest in its own colours on a white seal, or in white on the certificate colour (G13b).';
+
+
+
+COMMENT ON COLUMN "public"."certificates"."crest_picture_id" IS 'The crest the certificate was signed with, when the seal shows one (G13b).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."certificate_crest_json"("target" "public"."certificates") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select public.picture_state_json(picture_checks) from public.picture_checks
+  where picture_checks.id = target.crest_picture_id and picture_checks.deleted_at is null;
+$$;
+
+
+ALTER FUNCTION "public"."certificate_crest_json"("target" "public"."certificates") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."certificate_crest_json"("target" "public"."certificates") IS 'Internal: a certificate''s crest as picture_state_json(), or null (G13b).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."certificate_look_from"("look" "jsonb", OUT "colour" "text", OUT "pattern" "text", OUT "seal" "text", OUT "crest_colours" "text") RETURNS "record"
+    LANGUAGE "plpgsql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+begin
+  -- Step 1: no look means the default.
+  colour := 'plum';
+  pattern := 'none';
+  seal := 'cat';
+  crest_colours := 'own';
+  if look is null or look = 'null'::jsonb then
+    return;
+  end if;
+  if jsonb_typeof(look) <> 'object' then
+    raise exception 'Choose a colour and a pattern from the list.' using errcode = 'check_violation', hint = 'certificate:look';
+  end if;
+  -- Step 2: each part is one of the known names; a missing part keeps its default.
+  colour := coalesce(look ->> 'colour', colour);
+  pattern := coalesce(look ->> 'pattern', pattern);
+  seal := coalesce(look ->> 'seal', seal);
+  crest_colours := coalesce(look ->> 'crest_colours', crest_colours);
+  if colour not in ('plum', 'ember', 'sea_glass', 'pistachio', 'candy', 'crimson', 'cobalt', 'autumn')
+     or pattern not in ('none', 'stripes', 'dots', 'grid', 'waves', 'starry', 'arches', 'rings', 'forestwaves')
+     or seal not in ('cat', 'crest') or crest_colours not in ('own', 'white') then
+    raise exception 'Choose a colour and a pattern from the list.' using errcode = 'check_violation', hint = 'certificate:look';
+  end if;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."certificate_look_from"("look" "jsonb", OUT "colour" "text", OUT "pattern" "text", OUT "seal" "text", OUT "crest_colours" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."certificate_look_from"("look" "jsonb", OUT "colour" "text", OUT "pattern" "text", OUT "seal" "text", OUT "crest_colours" "text") IS 'Internal: the certificate look a teacher sent, checked; the default for null (G13a, G13b).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."certificate_name_deleted_on"("target" "public"."certificates") RETURNS timestamp with time zone
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select spaces.archived_at + interval '30 days'
+  from public.spaces where spaces.id = target.space_id;
+$$;
+
+
+ALTER FUNCTION "public"."certificate_name_deleted_on"("target" "public"."certificates") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."certificate_name_deleted_on"("target" "public"."certificates") IS 'Internal: when a class certificate''s printed name is deleted (S1-E8-12).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."certificate_result_from"("typed" "text") RETURNS "public"."certificate_result"
+    LANGUAGE "plpgsql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+begin
+  if typed is null or typed not in ('participant', 'finalist', 'winner') then
+    raise exception 'Choose taking part, finalist or winner.' using errcode = 'check_violation', hint = 'certificate:result';
+  end if;
+  return typed::public.certificate_result;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."certificate_result_from"("typed" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."certificate_result_from"("typed" "text") IS 'Internal: a certificate result from the teacher''s list (S1-E8-12).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."certificate_status"("target" "public"."certificates") RETURNS "text"
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select case when target.revoked_at is null then 'valid' else 'revoked' end;
+$$;
+
+
+ALTER FUNCTION "public"."certificate_status"("target" "public"."certificates") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."certificate_status"("target" "public"."certificates") IS 'Internal: a certificate''s state on the check page (S1-E8-12).';
 
 
 
@@ -17100,6 +17169,24 @@ COMMENT ON FUNCTION "public"."checks_personal_details_of"("target" "public"."pro
 
 
 
+CREATE OR REPLACE FUNCTION "public"."class_certificate_crest"("slug" "text") RETURNS "jsonb"
+    LANGUAGE "sql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select public.picture_state_json(picture_checks)
+  from public.picture_checks
+  where picture_checks.id = (public.certificate_class_for_teacher(slug)).crest_picture_id
+    and picture_checks.deleted_at is null;
+$$;
+
+
+ALTER FUNCTION "public"."class_certificate_crest"("slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."class_certificate_crest"("slug" "text") IS 'The class''s certificate crest for its teacher, as picture_state_json() (G13b).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."class_certificates"("slug" "text") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -17112,7 +17199,8 @@ begin
              'programme_name', certificates.programme_name, 'result', certificates.result,
              'code', certificates.code, 'signed_at', certificates.signed_at,
              'is_revoked', certificates.revoked_at is not null,
-             'look_colour', certificates.look_colour, 'look_pattern', certificates.look_pattern)
+             'look_colour', certificates.look_colour, 'look_pattern', certificates.look_pattern,
+             'look_seal', certificates.look_seal, 'look_crest_colours', certificates.look_crest_colours)
            order by certificates.signed_at desc, certificates.programme_name)
     from public.certificates where certificates.space_id = space.id), '[]'::jsonb);
 end;
@@ -25420,8 +25508,11 @@ begin
   if jsonb_typeof(results) is distinct from 'array' or jsonb_array_length(results) = 0 then
     raise exception 'Choose a result for at least one student.' using errcode = 'check_violation', hint = 'certificate:empty';
   end if;
-  -- Step 2: the look, checked before anything is written (G13a).
+  -- Step 2: the look, checked before anything is written (G13a); a crest seal needs a crest (G13b).
   select * into chosen from public.certificate_look_from(look);
+  if chosen.seal = 'crest' and space.crest_picture_id is null then
+    raise exception 'Upload the school''s crest first, or choose the cat.' using errcode = 'check_violation', hint = 'certificate:crest';
+  end if;
   select public.display_name(profiles.handle, profiles.pen_name) into teacher_display
   from public.profiles where profiles.id = space.user_id;
   -- Step 3: one certificate per student named; a second approval changes the result or the look.
@@ -25429,7 +25520,7 @@ begin
     student_id := public.certificate_student_id(space, entry ->> 'handle');
     wanted_result := public.certificate_result_from(entry ->> 'result');
     issued_id := public.write_class_certificate(space, student_id, clean_programme, wanted_result,
-      teacher_display, array[chosen.colour, chosen.pattern]);
+      teacher_display, array[chosen.colour, chosen.pattern, chosen.seal, chosen.crest_colours]);
     if issued_id is not null then
       issued_count := issued_count + 1;
       perform public.notify(student_id, 'certificate_issued', null, jsonb_build_object('space_id', space.id));
@@ -25438,7 +25529,7 @@ begin
   -- Step 4: the class's log, with the look.
   perform public.log_space_action(space, 'certificates_issued', null, null, null,
     jsonb_build_object('programme_name', clean_programme, 'count', issued_count,
-      'look_colour', chosen.colour, 'look_pattern', chosen.pattern));
+      'look_colour', chosen.colour, 'look_pattern', chosen.pattern, 'look_seal', chosen.seal));
   return jsonb_build_object('issued', issued_count);
 end;
 $$;
@@ -28575,7 +28666,9 @@ begin
              'is_contest', certificates.contest_id is not null,
              'contest_name', (select jsonb_build_object('ro', contests.name_ro, 'en', contests.name_en)
                               from public.contests where contests.id = certificates.contest_id),
-             'look_colour', certificates.look_colour, 'look_pattern', certificates.look_pattern)
+             'look_colour', certificates.look_colour, 'look_pattern', certificates.look_pattern,
+             'look_seal', certificates.look_seal, 'look_crest_colours', certificates.look_crest_colours,
+             'crest', public.certificate_crest_json(certificates))
            order by certificates.signed_at desc)
     from public.certificates join public.profiles on profiles.id = certificates.user_id
     where certificates.user_id = caller_id), '[]'::jsonb);
@@ -31813,7 +31906,7 @@ CREATE TABLE IF NOT EXISTS "public"."picture_checks" (
     CONSTRAINT "picture_checks_file_sha256_shape" CHECK ((("file_sha256" IS NULL) OR ("file_sha256" ~ '^[0-9a-f]{64}$'::"text"))),
     CONSTRAINT "picture_checks_ip_period_shape" CHECK ((("uploader_ip_period" IS NULL) OR ("uploader_ip_period" ~ '^[0-9]{4}-[0-9]{2}$'::"text"))),
     CONSTRAINT "picture_checks_ip_shape" CHECK ((("uploader_ip_scrambled" IS NULL) OR ("uploader_ip_scrambled" ~ '^[0-9a-f]{64}$'::"text"))),
-    CONSTRAINT "picture_checks_kind_matches_bucket" CHECK (((("kind" = 'cover'::"public"."picture_kind") AND ("bucket" = 'covers'::"text")) OR (("kind" = 'avatar'::"public"."picture_kind") AND ("bucket" = 'avatars'::"text")) OR (("kind" = ANY (ARRAY['chapter_picture'::"public"."picture_kind", 'drawing'::"public"."picture_kind"])) AND ("bucket" = 'chapter-images'::"text")) OR (("kind" = 'atlas_image'::"public"."picture_kind") AND ("bucket" = 'atlas-images'::"text")) OR (("kind" = ANY (ARRAY['space_banner'::"public"."picture_kind", 'space_logo'::"public"."picture_kind"])) AND ("bucket" = 'space-banners'::"text")) OR (("kind" = 'signature_picture'::"public"."picture_kind") AND ("bucket" = 'signature-pictures'::"text")) OR (("kind" = 'landing_picture'::"public"."picture_kind") AND ("bucket" = 'landing-pictures'::"text")) OR (("kind" = 'sponsor_creative'::"public"."picture_kind") AND ("bucket" = 'sponsor-creatives'::"text")) OR (("kind" = 'brand_asset'::"public"."picture_kind") AND ("bucket" = 'brand-assets'::"text")) OR (("kind" = 'quote_card'::"public"."picture_kind") AND ("bucket" = 'quote-card-pictures'::"text"))))
+    CONSTRAINT "picture_checks_kind_matches_bucket" CHECK (((("kind" = 'cover'::"public"."picture_kind") AND ("bucket" = 'covers'::"text")) OR (("kind" = 'avatar'::"public"."picture_kind") AND ("bucket" = 'avatars'::"text")) OR (("kind" = ANY (ARRAY['chapter_picture'::"public"."picture_kind", 'drawing'::"public"."picture_kind"])) AND ("bucket" = 'chapter-images'::"text")) OR (("kind" = 'atlas_image'::"public"."picture_kind") AND ("bucket" = 'atlas-images'::"text")) OR (("kind" = ANY (ARRAY['space_banner'::"public"."picture_kind", 'space_logo'::"public"."picture_kind", 'certificate_crest'::"public"."picture_kind"])) AND ("bucket" = 'space-banners'::"text")) OR (("kind" = 'signature_picture'::"public"."picture_kind") AND ("bucket" = 'signature-pictures'::"text")) OR (("kind" = 'landing_picture'::"public"."picture_kind") AND ("bucket" = 'landing-pictures'::"text")) OR (("kind" = 'sponsor_creative'::"public"."picture_kind") AND ("bucket" = 'sponsor-creatives'::"text")) OR (("kind" = 'brand_asset'::"public"."picture_kind") AND ("bucket" = 'brand-assets'::"text")) OR (("kind" = 'quote_card'::"public"."picture_kind") AND ("bucket" = 'quote-card-pictures'::"text"))))
 );
 
 
@@ -36150,6 +36243,54 @@ ALTER FUNCTION "public"."register_brand_picture"("target_path" "text") OWNER TO 
 
 
 COMMENT ON FUNCTION "public"."register_brand_picture"("target_path" "text") IS 'Records a just-uploaded logo or emblem as pending its check; owner and admin only (BRAND-1a).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."register_certificate_crest"("target_path" "text") RETURNS "uuid"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  new_id uuid;
+begin
+  -- Step 1: a member who may write, while uploads are on.
+  if caller_id is null or not public.is_active_member() then
+    raise exception 'Your account can''t add pictures right now.' using errcode = 'insufficient_privilege';
+  end if;
+  if not public.is_feature_enabled('picture_uploads') then
+    raise exception 'Picture uploads are switched off.' using errcode = 'feature_not_supported';
+  end if;
+  -- Step 2: the file is there and the caller uploaded it, under a class they teach.
+  if not public.space_banner_upload_allowed(target_path)
+     or not exists (select 1 from storage.objects where objects.bucket_id = 'space-banners'
+                    and objects.name = target_path and objects.owner_id = caller_id::text) then
+    raise exception 'That picture isn''t uploaded to a space you can change.' using errcode = 'check_violation';
+  end if;
+  if not exists (select 1 from public.spaces
+                 where spaces.id = split_part(target_path, '/', 1)::uuid
+                   and spaces.kind = 'class' and spaces.user_id = caller_id) then
+    raise exception 'Only the class''s teacher signs its certificates.'
+      using errcode = 'insufficient_privilege', hint = 'certificate:teacher_only';
+  end if;
+  -- Step 3: the upload limit (S1-E10-12), then the pending row.
+  perform public.take_rate_limit('picture_upload');
+  insert into public.picture_checks (user_id, bucket, path, kind)
+  values (caller_id, 'space-banners', target_path, 'certificate_crest')
+  on conflict (bucket, path) do nothing
+  returning id into new_id;
+  if new_id is null then
+    raise exception 'That picture is already registered.' using errcode = 'check_violation';
+  end if;
+  return new_id;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."register_certificate_crest"("target_path" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."register_certificate_crest"("target_path" "text") IS 'Records a just-uploaded school crest for a class''s certificates as pending its check (G13b).';
 
 
 
@@ -40591,6 +40732,49 @@ ALTER FUNCTION "public"."set_checks_personal_details"("should_check" boolean) OW
 
 
 COMMENT ON FUNCTION "public"."set_checks_personal_details"("should_check" boolean) IS 'Saves whether the signed-in person gets the personal details heads-up; stays on under 18 (MUST-1b).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."set_class_certificate_crest"("slug" "text", "picture_id" "uuid" DEFAULT NULL::"uuid") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  space public.spaces := public.certificate_class_for_teacher(slug);
+  old_file jsonb;
+begin
+  -- Step 1: the new picture is the caller's own crest, under this class's folder.
+  if set_class_certificate_crest.picture_id is not null and not exists (
+      select 1 from public.picture_checks
+      where picture_checks.id = set_class_certificate_crest.picture_id
+        and picture_checks.kind = 'certificate_crest' and picture_checks.deleted_at is null
+        and picture_checks.user_id = (select auth.uid())
+        and split_part(picture_checks.path, '/', 1) = space.id::text) then
+    raise exception 'That picture isn''t a crest you uploaded for this class.' using errcode = 'check_violation', hint = 'picture:not_yours';
+  end if;
+  -- Step 2: the old crest is marked deleted and its file handed back, unless a certificate shows it.
+  if space.crest_picture_id is not null
+     and space.crest_picture_id is distinct from set_class_certificate_crest.picture_id
+     and not exists (select 1 from public.certificates
+                     where certificates.crest_picture_id = space.crest_picture_id) then
+    update public.picture_checks set deleted_at = coalesce(deleted_at, now())
+    where picture_checks.id = space.crest_picture_id
+    returning jsonb_build_object('bucket', picture_checks.bucket, 'path', picture_checks.path) into old_file;
+  end if;
+  -- Step 3: the change, then the class's log.
+  update public.spaces set crest_picture_id = set_class_certificate_crest.picture_id, updated_at = now()
+  where spaces.id = space.id;
+  perform public.log_space_action(space, 'certificate_crest_changed', null, null, null,
+    jsonb_build_object('has_picture', set_class_certificate_crest.picture_id is not null));
+  return jsonb_build_object('old_file', old_file);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_class_certificate_crest"("slug" "text", "picture_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_class_certificate_crest"("slug" "text", "picture_id" "uuid") IS 'Makes an uploaded crest a class''s certificate crest, or takes it off; the class''s teacher; logged (G13b).';
 
 
 
@@ -48420,22 +48604,30 @@ CREATE OR REPLACE FUNCTION "public"."write_class_certificate"("space" "public"."
     SET "search_path" TO ''
     AS $$
 declare
+  wanted_seal text := coalesce(wanted_look[3], 'cat');
+  wanted_crest uuid := case when coalesce(wanted_look[3], 'cat') = 'crest' then space.crest_picture_id end;
   written_id uuid;
 begin
   -- One certificate per student and programme; a revoked one is never brought back.
   insert into public.certificates (user_id, space_id, teacher_user_id, programme_name, result,
-    class_name, school_name, teacher_name, code, look_colour, look_pattern)
+    class_name, school_name, teacher_name, code, look_colour, look_pattern, look_seal,
+    look_crest_colours, crest_picture_id)
   values (student_id, space.id, space.user_id, clean_programme, wanted_result,
     space.name, space.school_name, teacher_display, public.new_certificate_code(),
-    wanted_look[1], wanted_look[2])
+    wanted_look[1], wanted_look[2], wanted_seal, coalesce(wanted_look[4], 'own'), wanted_crest)
   on conflict on constraint certificates_one_per_programme do update
     set result = excluded.result, teacher_name = excluded.teacher_name,
         school_name = excluded.school_name, look_colour = excluded.look_colour,
-        look_pattern = excluded.look_pattern, signed_at = now()
+        look_pattern = excluded.look_pattern, look_seal = excluded.look_seal,
+        look_crest_colours = excluded.look_crest_colours,
+        crest_picture_id = excluded.crest_picture_id, signed_at = now()
     where certificates.revoked_at is null
       and (certificates.result is distinct from excluded.result
            or certificates.look_colour is distinct from excluded.look_colour
-           or certificates.look_pattern is distinct from excluded.look_pattern)
+           or certificates.look_pattern is distinct from excluded.look_pattern
+           or certificates.look_seal is distinct from excluded.look_seal
+           or certificates.look_crest_colours is distinct from excluded.look_crest_colours
+           or certificates.crest_picture_id is distinct from excluded.crest_picture_id)
   returning certificates.id into written_id;
   return written_id;
 end;
@@ -48445,7 +48637,7 @@ $$;
 ALTER FUNCTION "public"."write_class_certificate"("space" "public"."spaces", "student_id" "uuid", "clean_programme" "text", "wanted_result" "public"."certificate_result", "teacher_display" "text", "wanted_look" "text"[]) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."write_class_certificate"("space" "public"."spaces", "student_id" "uuid", "clean_programme" "text", "wanted_result" "public"."certificate_result", "teacher_display" "text", "wanted_look" "text"[]) IS 'Internal: writes one student''s class certificate with its look, or re-signs it when the result or look changed (S1-E8-12, G13a).';
+COMMENT ON FUNCTION "public"."write_class_certificate"("space" "public"."spaces", "student_id" "uuid", "clean_programme" "text", "wanted_result" "public"."certificate_result", "teacher_display" "text", "wanted_look" "text"[]) IS 'Internal: writes one student''s class certificate with its look and seal, or re-signs it when the result or look changed (S1-E8-12, G13a, G13b).';
 
 
 
@@ -54537,6 +54729,10 @@ CREATE INDEX "spaces_banner_picture_id_fk_idx" ON "public"."spaces" USING "btree
 
 
 
+CREATE INDEX "spaces_crest_picture" ON "public"."spaces" USING "btree" ("crest_picture_id") WHERE ("crest_picture_id" IS NOT NULL);
+
+
+
 CREATE INDEX "spaces_handover_to_user_id_fk_idx" ON "public"."spaces" USING "btree" ("handover_to_user_id");
 
 
@@ -56192,6 +56388,11 @@ ALTER TABLE ONLY "public"."certificates"
 
 
 ALTER TABLE ONLY "public"."certificates"
+    ADD CONSTRAINT "certificates_crest_picture_id_fkey" FOREIGN KEY ("crest_picture_id") REFERENCES "public"."picture_checks"("id") ON DELETE SET NULL;
+
+
+
+ALTER TABLE ONLY "public"."certificates"
     ADD CONSTRAINT "certificates_revoked_by_user_id_fkey" FOREIGN KEY ("revoked_by_user_id") REFERENCES "public"."profiles"("id") ON DELETE SET NULL;
 
 
@@ -57338,6 +57539,11 @@ ALTER TABLE ONLY "public"."space_moderation_log"
 
 ALTER TABLE ONLY "public"."spaces"
     ADD CONSTRAINT "spaces_banner_picture_id_fkey" FOREIGN KEY ("banner_picture_id") REFERENCES "public"."picture_checks"("id") ON DELETE SET NULL;
+
+
+
+ALTER TABLE ONLY "public"."spaces"
+    ADD CONSTRAINT "spaces_crest_picture_id_fkey" FOREIGN KEY ("crest_picture_id") REFERENCES "public"."picture_checks"("id") ON DELETE SET NULL;
 
 
 
@@ -61647,12 +61853,25 @@ REVOKE ALL ON FUNCTION "public"."cases_by_tier"("window_days" integer) FROM PUBL
 
 
 
-REVOKE ALL ON FUNCTION "public"."certificate_look_from"("look" "jsonb", OUT "colour" "text", OUT "pattern" "text") FROM PUBLIC;
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."spaces" TO "service_role";
+GRANT SELECT ON TABLE "public"."spaces" TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."certificate_class_for_teacher"("slug" "text") FROM PUBLIC;
 
 
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."certificates" TO "service_role";
 GRANT SELECT ON TABLE "public"."certificates" TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."certificate_crest_json"("target" "public"."certificates") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."certificate_look_from"("look" "jsonb", OUT "colour" "text", OUT "pattern" "text", OUT "seal" "text", OUT "crest_colours" "text") FROM PUBLIC;
 
 
 
@@ -61665,11 +61884,6 @@ REVOKE ALL ON FUNCTION "public"."certificate_result_from"("typed" "text") FROM P
 
 
 REVOKE ALL ON FUNCTION "public"."certificate_status"("target" "public"."certificates") FROM PUBLIC;
-
-
-
-GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."spaces" TO "service_role";
-GRANT SELECT ON TABLE "public"."spaces" TO "authenticated";
 
 
 
@@ -61901,6 +62115,11 @@ REVOKE ALL ON FUNCTION "public"."check_story_labels"("labels" "jsonb") FROM PUBL
 
 
 REVOKE ALL ON FUNCTION "public"."checks_personal_details_of"("target" "public"."profiles") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."class_certificate_crest"("slug" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."class_certificate_crest"("slug" "text") TO "authenticated";
 
 
 
@@ -64655,6 +64874,11 @@ GRANT ALL ON FUNCTION "public"."register_brand_picture"("target_path" "text") TO
 
 
 
+REVOKE ALL ON FUNCTION "public"."register_certificate_crest"("target_path" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."register_certificate_crest"("target_path" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."register_chapter_embed"("target_chapter_id" "uuid", "embed_service" "public"."embed_service", "embed_media_path" "text", "embed_source_url" "text", "embed_title" "text", "embed_author_name" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."register_chapter_embed"("target_chapter_id" "uuid", "embed_service" "public"."embed_service", "embed_media_path" "text", "embed_source_url" "text", "embed_title" "text", "embed_author_name" "text") TO "authenticated";
 
@@ -65203,6 +65427,11 @@ REVOKE ALL ON FUNCTION "public"."set_character_updated_at"() FROM PUBLIC;
 
 REVOKE ALL ON FUNCTION "public"."set_checks_personal_details"("should_check" boolean) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_checks_personal_details"("should_check" boolean) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."set_class_certificate_crest"("slug" "text", "picture_id" "uuid") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_class_certificate_crest"("slug" "text", "picture_id" "uuid") TO "authenticated";
 
 
 

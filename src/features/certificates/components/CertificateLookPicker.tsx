@@ -8,8 +8,10 @@
  * one carries a check mark as well as a ring, so the choice never rests on colour alone (DoD pill
  * system). The preview is the same frame and seal as the student's certificate, with the class's
  * name and the programme, so the teacher sees what they sign.
- * Who shows it: ClassResultsForm. What it calls: CertificateFrame, CertificateSeal and the look
- * helpers in lib/certificateLook.ts.
+ * Since G13b the seal can show the school's crest (CertificateSealChoices); the preview draws it
+ * once its check passed, as the students will see it.
+ * Who shows it: ClassResultsForm. What it calls: CertificateFrame, CertificateSeal,
+ * CertificateSealChoices, useClassCertificateCrest and the look helpers in lib/certificateLook.ts.
  */
 import { CheckIcon } from '@/components/icons/CheckIcon';
 import { coverArtwork } from '@/components/covers/coverDesigns';
@@ -22,9 +24,12 @@ import {
   type CertificateLook,
   type CertificatePattern,
 } from '../lib/certificateLook';
+import { useClassCertificateCrest } from '../hooks/useCertificateCrest';
 import { useCertificatesTranslation } from '../registerCertificatesTranslations';
 
-import { CertificateFrame, CertificateSeal } from './CertificateFrame';
+import { CertificateFrame } from './CertificateFrame';
+import { CertificateSeal } from './CertificateSeal';
+import { CertificateSealChoices } from './CertificateSealChoices';
 
 /** The styles every choice shares: a visible focus ring on the hidden input's label. */
 const choiceClasses =
@@ -152,14 +157,22 @@ interface CertificateLookPickerProps {
  * @param props.look - the look chosen so far
  * @param props.onChange - called with the new look
  * @param props.programmeName - the programme, for the preview
+ * @param props.space - the class's address and ID, for its crest
  * @returns the section
  */
 export function CertificateLookPicker({
   look,
   onChange,
   programmeName,
-}: CertificateLookPickerProps & { programmeName: string }) {
+  space,
+}: CertificateLookPickerProps & {
+  programmeName: string;
+  space: { slug: string; spaceId: string };
+}) {
   const { t } = useCertificatesTranslation();
+  // G13b: the preview draws the crest only once it passed its check, as students will see it.
+  const crest = useClassCertificateCrest(space.slug).data ?? null;
+  const crestUrl = crest?.state === 'visible' ? crest.url : null;
   return (
     <section aria-labelledby="certificate-look-heading" className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
@@ -175,13 +188,14 @@ export function CertificateLookPicker({
         <div className="flex flex-col gap-5">
           <ColourChoices look={look} onChange={onChange} />
           <PatternChoices look={look} onChange={onChange} />
+          <CertificateSealChoices look={look} onChange={onChange} space={space} />
         </div>
         <CertificateFrame look={look} patternId="certificate-look-preview" isCompact>
           <div
             aria-hidden="true"
             className="flex flex-col items-center gap-2 px-4 py-6 text-center"
           >
-            <CertificateSeal look={look} size="small" />
+            <CertificateSeal look={look} size="small" crestUrl={crestUrl} />
             <p className="m-0 font-heading text-lg font-bold">{t('look.previewName')}</p>
             <p className="m-0 text-sm break-words">
               {programmeName.trim() || t('look.previewProgramme')}

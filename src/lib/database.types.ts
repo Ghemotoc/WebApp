@@ -1125,9 +1125,12 @@ export type Database = {
           code: string;
           contest_id: string | null;
           created_at: string;
+          crest_picture_id: string | null;
           id: string;
           look_colour: string;
+          look_crest_colours: string;
           look_pattern: string;
+          look_seal: string;
           printed_name: string | null;
           programme_name: string;
           result: Database['public']['Enums']['certificate_result'];
@@ -1141,18 +1144,23 @@ export type Database = {
           teacher_user_id: string | null;
           updated_at: string;
           user_id: string;
+          certificate_crest_json: Json | null;
           certificate_name_deleted_on: string | null;
           certificate_status: string | null;
         };
-        ComputedFields: 'certificate_name_deleted_on' | 'certificate_status';
+        ComputedFields:
+          'certificate_crest_json' | 'certificate_name_deleted_on' | 'certificate_status';
         Insert: {
           class_name?: string | null;
           code: string;
           contest_id?: string | null;
           created_at?: string;
+          crest_picture_id?: string | null;
           id?: string;
           look_colour?: string;
+          look_crest_colours?: string;
           look_pattern?: string;
+          look_seal?: string;
           printed_name?: string | null;
           programme_name: string;
           result: Database['public']['Enums']['certificate_result'];
@@ -1172,9 +1180,12 @@ export type Database = {
           code?: string;
           contest_id?: string | null;
           created_at?: string;
+          crest_picture_id?: string | null;
           id?: string;
           look_colour?: string;
+          look_crest_colours?: string;
           look_pattern?: string;
+          look_seal?: string;
           printed_name?: string | null;
           programme_name?: string;
           result?: Database['public']['Enums']['certificate_result'];
@@ -1195,6 +1206,13 @@ export type Database = {
             columns: ['contest_id'];
             isOneToOne: false;
             referencedRelation: 'contests';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'certificates_crest_picture_id_fkey';
+            columns: ['crest_picture_id'];
+            isOneToOne: false;
+            referencedRelation: 'picture_checks';
             referencedColumns: ['id'];
           },
           {
@@ -3517,6 +3535,7 @@ export type Database = {
             banner: Database['public']['Enums']['space_banner'];
             banner_picture_id: string | null;
             created_at: string;
+            crest_picture_id: string | null;
             deleted_at: string | null;
             description: string;
             handover_offered_at: string | null;
@@ -7392,6 +7411,7 @@ export type Database = {
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
           created_at: string;
+          crest_picture_id: string | null;
           deleted_at: string | null;
           description: string;
           handover_offered_at: string | null;
@@ -7445,6 +7465,7 @@ export type Database = {
           banner?: Database['public']['Enums']['space_banner'];
           banner_picture_id?: string | null;
           created_at?: string;
+          crest_picture_id?: string | null;
           deleted_at?: string | null;
           description: string;
           handover_offered_at?: string | null;
@@ -7471,6 +7492,7 @@ export type Database = {
           banner?: Database['public']['Enums']['space_banner'];
           banner_picture_id?: string | null;
           created_at?: string;
+          crest_picture_id?: string | null;
           deleted_at?: string | null;
           description?: string;
           handover_offered_at?: string | null;
@@ -7495,6 +7517,13 @@ export type Database = {
           {
             foreignKeyName: 'spaces_banner_picture_id_fkey';
             columns: ['banner_picture_id'];
+            isOneToOne: false;
+            referencedRelation: 'picture_checks';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'spaces_crest_picture_id_fkey';
+            columns: ['crest_picture_id'];
             isOneToOne: false;
             referencedRelation: 'picture_checks';
             referencedColumns: ['id'];
@@ -12036,6 +12065,51 @@ export type Database = {
         Returns: boolean;
       };
       cases_by_tier: { Args: { window_days: number }; Returns: Json };
+      certificate_class_for_teacher: {
+        Args: { slug: string };
+        Returns: {
+          age_group: Database['public']['Enums']['space_age_group'];
+          archived_at: string | null;
+          banner: Database['public']['Enums']['space_banner'];
+          banner_picture_id: string | null;
+          created_at: string;
+          crest_picture_id: string | null;
+          deleted_at: string | null;
+          description: string;
+          handover_offered_at: string | null;
+          handover_to_user_id: string | null;
+          id: string;
+          joining: Database['public']['Enums']['space_joining'];
+          kind: Database['public']['Enums']['space_kind'];
+          locks_at: string | null;
+          logo_picture_id: string | null;
+          name: string;
+          name_key: string;
+          posting: Database['public']['Enums']['space_posting'];
+          readers: Database['public']['Enums']['space_readers'];
+          rules: string;
+          school_name: string | null;
+          slug: string;
+          updated_at: string;
+          user_id: string;
+          welcome_note: string | null;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'spaces';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      certificate_crest_json: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['certificates']['Row'],
+            Database['public']['Tables']['certificates']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
       certificate_look_from: { Args: { look: Json }; Returns: Record<string, unknown> };
       certificate_name_deleted_on: {
         Args: {
@@ -12234,6 +12308,7 @@ export type Database = {
         };
         Returns: boolean;
       };
+      class_certificate_crest: { Args: { slug: string }; Returns: Json };
       class_certificates: { Args: { slug: string }; Returns: Json };
       class_invite: { Args: { slug: string }; Returns: Json };
       class_invite_opens_sign_up: { Args: { code: string }; Returns: boolean };
@@ -12270,6 +12345,7 @@ export type Database = {
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
           created_at: string;
+          crest_picture_id: string | null;
           deleted_at: string | null;
           description: string;
           handover_offered_at: string | null;
@@ -12305,6 +12381,7 @@ export type Database = {
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
           created_at: string;
+          crest_picture_id: string | null;
           deleted_at: string | null;
           description: string;
           handover_offered_at: string | null;
@@ -13338,6 +13415,7 @@ export type Database = {
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
           created_at: string;
+          crest_picture_id: string | null;
           deleted_at: string | null;
           description: string;
           handover_offered_at: string | null;
@@ -14473,6 +14551,7 @@ export type Database = {
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
           created_at: string;
+          crest_picture_id: string | null;
           deleted_at: string | null;
           description: string;
           handover_offered_at: string | null;
@@ -15107,6 +15186,7 @@ export type Database = {
       refresh_writer_rank: { Args: { person_id: string }; Returns: undefined };
       register_atlas_picture: { Args: { target_path: string }; Returns: string };
       register_brand_picture: { Args: { target_path: string }; Returns: string };
+      register_certificate_crest: { Args: { target_path: string }; Returns: string };
       register_chapter_embed: {
         Args: {
           embed_author_name: string;
@@ -15590,6 +15670,7 @@ export type Database = {
         Returns: Json;
       };
       set_checks_personal_details: { Args: { should_check: boolean }; Returns: undefined };
+      set_class_certificate_crest: { Args: { picture_id?: string; slug: string }; Returns: Json };
       set_class_lock: { Args: { new_locks_at?: string; slug: string }; Returns: Json };
       set_forum_thread_due_date: {
         Args: { due: string; target_thread_id: string };
@@ -15777,6 +15858,7 @@ export type Database = {
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
           created_at: string;
+          crest_picture_id: string | null;
           deleted_at: string | null;
           description: string;
           handover_offered_at: string | null;
@@ -15812,6 +15894,7 @@ export type Database = {
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
           created_at: string;
+          crest_picture_id: string | null;
           deleted_at: string | null;
           description: string;
           handover_offered_at: string | null;
@@ -16006,6 +16089,7 @@ export type Database = {
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
           created_at: string;
+          crest_picture_id: string | null;
           deleted_at: string | null;
           description: string;
           handover_offered_at: string | null;
@@ -16046,6 +16130,7 @@ export type Database = {
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
           created_at: string;
+          crest_picture_id: string | null;
           deleted_at: string | null;
           description: string;
           handover_offered_at: string | null;
@@ -16990,7 +17075,8 @@ export type Database = {
         | 'landing_picture'
         | 'sponsor_creative'
         | 'brand_asset'
-        | 'space_logo';
+        | 'space_logo'
+        | 'certificate_crest';
       picture_status: 'pending' | 'passed' | 'held' | 'approved' | 'removed';
       profile_audience: 'everyone' | 'members' | 'people_i_follow';
       reaction_kind: 'heart' | 'fire' | 'laugh' | 'wow' | 'sad' | 'star';
@@ -17387,6 +17473,7 @@ export const Constants = {
         'sponsor_creative',
         'brand_asset',
         'space_logo',
+        'certificate_crest',
       ],
       picture_status: ['pending', 'passed', 'held', 'approved', 'removed'],
       profile_audience: ['everyone', 'members', 'people_i_follow'],

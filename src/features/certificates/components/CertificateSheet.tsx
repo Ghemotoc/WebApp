@@ -16,7 +16,8 @@
  * Since bundle G13a the sheet sits in its look (CertificateFrame): the colour and faint pattern the
  * teacher chose at signing, and the seal at the top. The words are on near-white paper in fixed
  * dark ink, the same by day and at night, so they keep their contrast on every colour; the frame
- * prints in colour too.
+ * prints in colour too. Since G13b the seal shows the school's crest when the teacher chose it and
+ * its picture passed the check; until then, the cat.
  * Who shows it: CertificatePage. Decorative: the frame, pattern and seal, hidden from screen
  * readers (no doodles; the boards' QR code is left out).
  */
@@ -27,7 +28,9 @@ import { brand } from '@/config/brand';
 
 import type { MyCertificate } from '../api/certificates';
 import { certificateDate, type CertificateLanguage } from '../lib/certificateDate';
-import { CertificateFrame, CertificateSeal } from './CertificateFrame';
+import { CertificateFrame } from './CertificateFrame';
+import { CertificateSeal } from './CertificateSeal';
+import { useSignedCertificateCrest } from '../hooks/useCertificateCrest';
 import { useCertificatesTranslation } from '../registerCertificatesTranslations';
 
 /** The paper's fixed inks (G13a): dark on near-white, whatever the theme. */
@@ -189,6 +192,8 @@ export function CertificateSheet({
   const awardedName = certificate.printedName ?? certificate.penName;
   const isAchievement = certificate.result !== 'participant';
   const school = certificate.schoolName;
+  // G13b: the crest it was signed with, once its check passed; null keeps the cat.
+  const crestUrl = useSignedCertificateCrest(certificate.crest).data ?? null;
   return (
     <CertificateFrame
       look={certificate.look}
@@ -214,7 +219,7 @@ export function CertificateSheet({
           )}
         </header>
         <div className="flex flex-col items-center gap-3 text-center">
-          <CertificateSeal look={certificate.look} size="large" />
+          <CertificateSeal look={certificate.look} size="large" crestUrl={crestUrl} />
           <h2
             className={`m-0 font-heading text-[clamp(28px,5vw,44px)] leading-tight font-extrabold ${ink.heading}`}
           >

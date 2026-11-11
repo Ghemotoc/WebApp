@@ -33,6 +33,8 @@ export interface PictureUploadFieldProps {
   isUploading: boolean;
   outcome: UploadOutcome | null;
   onPick: (file: File) => void;
+  /** The file types the picker offers; JPEG, PNG and WebP unless a field takes others (G13b). */
+  accept?: string;
 }
 
 /**
@@ -72,6 +74,7 @@ export function PictureUploadField({
   isUploading,
   outcome,
   onPick,
+  accept = 'image/jpeg,image/png,image/webp',
 }: PictureUploadFieldProps) {
   const { t } = useTranslation();
   const inputId = useId();
@@ -86,7 +89,7 @@ export function PictureUploadField({
       <input
         id={inputId}
         type="file"
-        accept="image/jpeg,image/png,image/webp"
+        accept={accept}
         aria-describedby={`${hintId} ${pictureRulesIds(rulesId)}`}
         disabled={isUploading}
         className="min-h-11 text-sm text-body file:mr-3 file:h-11 file:rounded-full file:border file:border-control-border file:bg-surface file:px-4 file:font-semibold file:text-heading"

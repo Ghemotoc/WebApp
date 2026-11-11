@@ -51,7 +51,8 @@
       "empty": "We couldn’t save the name. Try again.",
       "archived": "We couldn’t save the name. Try again.",
       "reason": "We couldn’t save the name. Try again.",
-      "look": "We couldn’t save the name. Try again."
+      "look": "We couldn’t save the name. Try again.",
+      "crest": "We couldn’t save the name. Try again."
     }
   },
   "sheet": {
@@ -130,7 +131,8 @@
       "name_length": "We couldn’t sign the certificates. Try again.",
       "reason": "We couldn’t sign the certificates. Try again.",
       "unreachable": "We couldn’t sign the certificates. Try again.",
-      "look": "Choose a colour and a pattern from the list."
+      "look": "Choose a colour and a pattern from the list.",
+      "crest": "Upload the school’s crest first, or choose the cat."
     }
   },
   "settingsCard": {
@@ -168,6 +170,29 @@
     "noneShort": "None",
     "patternHint": "The same patterns as the covers, in the certificate colour and kept very faint so the text stays easy to read.",
     "previewName": "Student’s name",
-    "previewProgramme": "Programme name"
+    "previewProgramme": "Programme name",
+    "seal": "In the seal",
+    "seals": {
+      "cat": "{{productName}} cat",
+      "crest": "School crest"
+    },
+    "crestColours": "Crest colours",
+    "crestColourChoices": {
+      "own": "Original colours",
+      "white": "White on the certificate colour"
+    },
+    "crestColoursHint": "Keep a colourful crest as it is on a plain white seal, or show it in white on the certificate colour.",
+    "crestUpload": "Upload a crest or logo",
+    "crestHint": "PNG, SVG, JPEG or WebP, up to 2 MB. A square picture fits best. Every picture is checked automatically before it shows.",
+    "crestRemove": "Remove the crest",
+    "crestRemoveFailed": "We couldn’t remove the crest. Try again.",
+    "crestPreviewAlt": "Uploaded crest",
+    "crestStates": {
+      "none": "No crest yet. Until one is uploaded and checked, the cat shows.",
+      "checking": "Being checked. It shows in a minute or two; until then, the cat shows.",
+      "waiting_for_person": "A moderator looks at it first. Until then, the cat shows.",
+      "visible": "Checked. It shows in the seal.",
+      "removed": "This crest was taken down. Upload another, or choose the cat."
+    }
   }
 }

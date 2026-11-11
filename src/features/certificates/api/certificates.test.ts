@@ -8,6 +8,8 @@ import { describe, expect, it, vi } from 'vitest';
 
 import type { AppSupabaseClient } from '@/lib/supabase';
 
+import { defaultCertificateLook } from '../lib/certificateLook';
+
 import {
   certificateCheckFrom,
   certificateErrorFrom,
@@ -161,18 +163,18 @@ describe('the teacher and staff', () => {
       slug: 'clasa',
       programmeName: 'Cercul',
       results: [{ handle: 'ana', result: 'winner' }],
-      look: { colour: 'sea_glass', pattern: 'waves' },
+      look: { colour: 'sea_glass', pattern: 'waves', seal: 'crest', crestColours: 'white' },
     });
     expect(issued).toBe(2);
     expect(rpc).toHaveBeenCalledWith('issue_class_certificates', {
       slug: 'clasa',
       programme_name: 'Cercul',
       results: [{ handle: 'ana', result: 'winner' }],
-      look: { colour: 'sea_glass', pattern: 'waves' },
+      look: { colour: 'sea_glass', pattern: 'waves', seal: 'crest', crest_colours: 'white' },
     });
   });
 
-  it('a certificate reads its look, and an unknown one falls back to Plum with no pattern', async () => {
+  it('a certificate reads its look, and an unknown one falls back to Plum, no pattern and the cat', async () => {
     const { client } = fakeClient({
       data: [
         {
@@ -183,6 +185,9 @@ describe('the teacher and staff', () => {
           signed_at: 'x',
           look_colour: 'cobalt',
           look_pattern: 'rings',
+          look_seal: 'crest',
+          look_crest_colours: 'white',
+          crest: { state: 'visible', bucket: 'space-banners', path: 'class/crest.png' },
         },
         {
           id: 'b',
@@ -192,12 +197,25 @@ describe('the teacher and staff', () => {
           signed_at: 'x',
           look_colour: 'neon',
           look_pattern: 'zigzag',
+          look_seal: 'shield',
+          look_crest_colours: 'gold',
         },
       ],
     });
     const [chosen, unknown] = await listMyCertificates(client);
-    expect(chosen?.look).toEqual({ colour: 'cobalt', pattern: 'rings' });
-    expect(unknown?.look).toEqual({ colour: 'plum', pattern: 'none' });
+    expect(chosen?.look).toEqual({
+      colour: 'cobalt',
+      pattern: 'rings',
+      seal: 'crest',
+      crestColours: 'white',
+    });
+    expect(chosen?.crest).toEqual({
+      state: 'visible',
+      bucket: 'space-banners',
+      path: 'class/crest.png',
+    });
+    expect(unknown?.look).toEqual(defaultCertificateLook);
+    expect(unknown?.crest).toBeNull();
   });
 
   it('a refused look is named in plain words', async () => {
@@ -207,9 +225,21 @@ describe('the teacher and staff', () => {
         slug: 'clasa',
         programmeName: 'Cercul',
         results: [{ handle: 'ana', result: 'winner' }],
-        look: { colour: 'plum', pattern: 'none' },
+        look: defaultCertificateLook,
       }),
     ).rejects.toMatchObject({ failure: 'look' });
+  });
+
+  it('a crest seal without a crest is named in plain words', async () => {
+    const { client } = fakeClient({ error: { hint: 'certificate:crest' } });
+    await expect(
+      issueClassCertificates(client, {
+        slug: 'clasa',
+        programmeName: 'Cercul',
+        results: [{ handle: 'ana', result: 'winner' }],
+        look: { ...defaultCertificateLook, seal: 'crest' },
+      }),
+    ).rejects.toMatchObject({ failure: 'crest' });
   });
 
   it('staff get null for a code with no certificate', async () => {
