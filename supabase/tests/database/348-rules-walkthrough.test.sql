@@ -1,7 +1,8 @@
 -- Database tests for the rules walkthrough before an under-18's first comment or post (bundle
 -- MUST-1, part c; IDEA-20261108-7).
 -- What it proves:
--- - someone under 18 needs the walkthrough until they finish or skip it, then never again;
+-- - someone under 18 who may post needs the walkthrough until they finish or skip it, then never
+--   again; one who can't post yet (adults_only on) doesn't, so the box says why instead;
 -- - finishing twice keeps the first time;
 -- - adults and signed-out visitors never need it, and signed out nobody can record it;
 -- - the four cards are help pages in the CMS, in English and Romanian, that pass the same checks
@@ -11,7 +12,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(10);
+select plan(11);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -23,6 +24,13 @@ $$;
 grant execute on all functions in schema pg_temp to anon, authenticated;
 
 /* ---------- 1. Under 18 ---------- */
+
+-- While the March test is adults only, teen_17 can't post, so the box answers first.
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000002');
+select is(public.needs_rules_walkthrough(), false,
+  'a 17-year-old who can''t post yet is told so instead of seeing the cards');
+reset role;
+update public.feature_flags set is_enabled = false where key = 'adults_only';
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000002');
 select is(public.needs_rules_walkthrough(), true, 'a 17-year-old sees the walkthrough before a first post');
