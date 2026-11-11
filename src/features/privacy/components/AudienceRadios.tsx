@@ -4,11 +4,13 @@
  *
  * The choice is saved the moment one is picked. It shows at once and goes back if the save fails,
  * so it never looks stuck (as MessageSettingsSection, S1-E9-04). The under-18 default carries the
- * "Default for under 18" pill, as on the board; the pill is information, not a control.
+ * "Default for under 18" pill, as on the board; the pill is information, not a control. Each
+ * choice is a glass row and the chosen one has a plum border (choiceRowStyles, G11b).
  * Who uses it: PrivacySettingsSection. What it calls: the onSave it is given.
  */
 import { useState } from 'react';
 
+import { choiceRowClassName } from '@/components/ui/choiceRowStyles';
 import { InfoPill } from '@/components/ui/InfoPill';
 
 import { usePrivacyTranslation } from '../registerPrivacyTranslations';
@@ -50,20 +52,19 @@ export function AudienceRadios<Choice extends string>(props: AudienceRadiosProps
     <fieldset className="m-0 flex flex-col gap-3 border-0 p-0" aria-describedby={`${name}-hint`}>
       <legend className="mb-2 p-0 text-[15px] font-semibold text-ink">{legend}</legend>
       {choices.map((choice) => (
-        <label
-          key={choice}
-          className="flex min-h-6 cursor-pointer flex-wrap items-center gap-x-3 gap-y-1 text-[15px] text-body"
-        >
-          <input
-            type="radio"
-            name={name}
-            value={choice}
-            checked={chosen === choice}
-            disabled={isSaving}
-            onChange={() => void choose(choice)}
-            className="size-6 shrink-0 cursor-pointer accent-(--link)"
-          />
-          {labelOf(choice)}
+        <label key={choice} className={choiceRowClassName}>
+          <span className="flex items-center gap-3">
+            <input
+              type="radio"
+              name={name}
+              value={choice}
+              checked={chosen === choice}
+              disabled={isSaving}
+              onChange={() => void choose(choice)}
+              className="size-6 shrink-0 cursor-pointer accent-(--link)"
+            />
+            {labelOf(choice)}
+          </span>
           {choice === under18Default && (
             <InfoPill tone="plum">{t('settings.defaultForUnder18')}</InfoPill>
           )}

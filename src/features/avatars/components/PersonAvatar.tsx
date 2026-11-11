@@ -3,17 +3,20 @@
  * LOOK-7: "one avatar style everywhere"; boards Thread 5.2, Story 3.4, Messages 5.5, Library 3.7).
  *
  * The person's initials on a glass bead (bundle G3 COMPONENTS: member avatars are 3D glass beads;
- * the bead's colour comes from the username, beadColours.ts), with their drawn avatar over them
+ * the bead's colour is the one they picked, or else comes from the username, beadColours.ts;
+ * bundle G11a), with their drawn avatar over them
  * when they have built one (AVATAR-1). A deleted account (no username) keeps the initials only,
  * coloured from the name.
  * Decorative: the name is always written beside it, so it is hidden from screen readers.
  * The large picture on a profile page is ProfileAvatar, in the same style.
  * Who shows it: forum posts, comments, chats, the Library's followed writers and the writer
- * dashboard's latest comments and the Writers to follow cards. What it calls: AvatarImage.
+ * dashboard's latest comments and the Writers to follow cards. What it calls: useAvatarLook,
+ * AvatarImage.
  */
 import { initialsOf } from '@/features/people/lib/formatting';
 import { cn } from '@/lib/utils';
 
+import { useAvatarLook } from '../hooks/useAvatarRecipe';
 import { beadStyleFor } from '../lib/beadColours';
 
 import { AvatarImage } from './AvatarImage';
@@ -48,12 +51,15 @@ export interface PersonAvatarProps {
  * @returns the round avatar, hidden from screen readers
  */
 export function PersonAvatar({ name, handle, size = 'medium' }: PersonAvatarProps) {
+  // The picked colour, if any (the same read AvatarImage makes, so one request per person).
+  const look = useAvatarLook(handle ?? '');
+  const pickedColour = look.data?.initialsColour ?? null;
   return (
     <span aria-hidden="true" className={cn('relative inline-flex flex-none', sizeClasses[size])}>
       {/* Step 1: the initials, always there underneath. */}
       <span
         data-avatar-bead
-        style={beadStyleFor(handle ?? name)}
+        style={beadStyleFor(handle ?? name, pickedColour)}
         className="avatar-bead inline-flex size-full items-center justify-center rounded-full font-heading font-extrabold"
       >
         <span className="avatar-bead-initials">{initialsOf(name)}</span>

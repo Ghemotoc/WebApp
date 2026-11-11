@@ -4,7 +4,8 @@
  *
  * The state shows as the knob's place and the words On or Off beside it, never colour alone
  * (WCAG 1.4.1). Who uses it: FlagRow, the Appearance settings
- * section and the "Unread only" switch on the notifications page (G8d).
+ * section, the "Unread only" switch on the notifications page (G8d) and the switches in
+ * Settings › Privacy (PrivacySwitchRow, G11b).
  */
 import { cn } from '@/lib/utils';
 
@@ -17,6 +18,8 @@ interface SwitchButtonProps {
   stateWord: string;
   isDisabled: boolean;
   onToggle: () => void;
+  /** The id of a line that explains the switch, read after its name (optional). */
+  describedBy?: string;
 }
 
 /**
@@ -24,13 +27,21 @@ interface SwitchButtonProps {
  *
  * @returns the button
  */
-export function SwitchButton({ label, isOn, stateWord, isDisabled, onToggle }: SwitchButtonProps) {
+export function SwitchButton({
+  label,
+  isOn,
+  stateWord,
+  isDisabled,
+  onToggle,
+  describedBy,
+}: SwitchButtonProps) {
   return (
     <button
       type="button"
       role="switch"
       aria-checked={isOn}
       aria-label={label}
+      aria-describedby={describedBy}
       disabled={isDisabled}
       onClick={onToggle}
       className="inline-flex h-11 shrink-0 items-center gap-2 rounded-full px-1 text-sm font-semibold text-heading disabled:opacity-60"

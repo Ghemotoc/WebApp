@@ -2,12 +2,14 @@
  * PersonalDetailsSwitch: "Ask before I share contact details" in Settings › Privacy (bundle MUST-1,
  * part b; IDEA-20261108-6: "Adults can switch it on too").
  *
- * A checkbox saved the moment it changes, like "Show when I'm online". Under 18 it is on and
- * can't be turned off, so the box is ticked and disabled with a line saying why; the database
- * refuses the change too (set_checks_personal_details(), hint under_18).
+ * A switch (SettingSwitchRow, G11b) saved the moment it changes, like "Show when I'm online". Under
+ * 18 it is on and can't be turned off, so the switch is on and disabled with a line saying why; the
+ * database refuses the change too (set_checks_personal_details(), hint under_18).
  * Who uses it: PrivacySettingsSection. What it calls: the onSave it is given.
  */
 import { useState } from 'react';
+
+import { SettingSwitchRow } from '@/features/settings/components/SettingSwitchRow';
 
 import { usePrivacyTranslation } from '../registerPrivacyTranslations';
 
@@ -20,7 +22,7 @@ interface PersonalDetailsSwitchProps {
 }
 
 /**
- * Renders the checkbox with its label and hint.
+ * Renders the switch with its name and hint.
  *
  * @returns the switch row
  */
@@ -40,24 +42,14 @@ export function PersonalDetailsSwitch({
   }
 
   return (
-    <div className="flex flex-col gap-2 border-t border-border pt-4">
-      <div className="flex items-start gap-3">
-        <input
-          id="privacy-personal-details"
-          type="checkbox"
-          checked={isUnder18 || isOn}
-          disabled={isUnder18 || isSaving}
-          aria-describedby="privacy-personal-details-hint"
-          onChange={(event) => void change(event.target.checked)}
-          className="mt-0.5 size-6 shrink-0 cursor-pointer accent-(--link) disabled:cursor-default"
-        />
-        <label htmlFor="privacy-personal-details" className="text-[15px] text-body">
-          {t('personalDetails.label')}
-        </label>
-      </div>
-      <p id="privacy-personal-details-hint" className="m-0 text-[13px] text-meta">
-        {t(isUnder18 ? 'personalDetails.hintUnder18' : 'personalDetails.hint')}
-      </p>
-    </div>
+    <SettingSwitchRow
+      id="privacy-personal-details"
+      label={t('personalDetails.label')}
+      hint={t(isUnder18 ? 'personalDetails.hintUnder18' : 'personalDetails.hint')}
+      isOn={isUnder18 || isOn}
+      stateWord={t(isUnder18 || isOn ? 'settings.on' : 'settings.off')}
+      isDisabled={isUnder18 || isSaving}
+      onToggle={() => void change(!isOn)}
+    />
   );
 }

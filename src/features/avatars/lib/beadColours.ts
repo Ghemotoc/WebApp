@@ -3,16 +3,53 @@
  * 2026-11-07, "Initials colours": the brand colours plus cobalt, forest, indigo, ember, berry,
  * cherry and slate; light beads carry dark initials #26142E so they stay at 4.5:1 or better).
  *
- * Every member without a drawn avatar shows their initials on a glass bead. The bead's colour comes
+ * Every member without a drawn avatar shows their initials on a glass bead. The bead's colour is
+ * the one they picked in Settings › Profile (bundle G11a, profiles.initials_colour), or else comes
  * from their username (or name, for a deleted account), so the same person always has the same
  * colour on every screen and every device, and a page of comments is not all one plum.
- * Who uses it: PersonAvatar and ProfileAvatar. What it calls: nothing.
+ * Who uses it: PersonAvatar, ProfileAvatar and InitialsColourSection. What it calls: nothing.
  */
 import type { CSSProperties } from 'react';
 
+/**
+ * The sixteen bead names, in a fixed order (changing the order would change everyone's colour).
+ * The database's initials_colour_names() lists the same names in the same order.
+ */
+export const beadColourNames = [
+  'plum',
+  'violet',
+  'ink',
+  'gold',
+  'blush',
+  'sky',
+  'sage',
+  'lilac',
+  'paper',
+  'cobalt',
+  'forest',
+  'indigo',
+  'ember',
+  'berry',
+  'cherry',
+  'slate',
+] as const;
+
+/** One of the sixteen bead names. */
+export type BeadColourName = (typeof beadColourNames)[number];
+
+/**
+ * Whether a text is one of the sixteen bead names.
+ *
+ * @param text - a name read from the database
+ * @returns true for a known bead
+ */
+export function isBeadColourName(text: string): text is BeadColourName {
+  return (beadColourNames as readonly string[]).includes(text);
+}
+
 /** One bead: its colour and the colour of the initials on it. */
 export interface BeadColour {
-  name: string;
+  name: BeadColourName;
   background: string;
   initials: string;
 }
@@ -26,8 +63,8 @@ const darkInitials = '#26142E';
 const plumBead: BeadColour = { name: 'plum', background: '#4D1B5E', initials: lightInitials };
 
 /**
- * The sixteen beads, in a fixed order (changing the order would change everyone's colour).
- * beadColours.test.ts checks every pair reaches 4.5:1 (WCAG 1.4.3).
+ * The sixteen beads, in the order of beadColourNames. beadColours.test.ts checks the order and
+ * that every pair reaches 4.5:1 (WCAG 1.4.3).
  */
 export const beadColours: readonly BeadColour[] = [
   plumBead,
@@ -49,19 +86,23 @@ export const beadColours: readonly BeadColour[] = [
 ];
 
 /**
- * Picks the bead for a person: a simple sum of the key's character codes, so the same key always
- * gives the same bead.
+ * Picks the bead for a person: the colour they picked, or else a simple sum of the key's character
+ * codes, so the same key always gives the same bead.
  *
  * @param key - the username, or the name when there is no username
+ * @param picked - the colour the person picked (profiles.initials_colour), or null
  * @returns the bead's colours
  */
-export function beadColourFor(key: string): BeadColour {
-  // Step 1: add up the character codes (any stable spread will do; this one is easy to read).
+export function beadColourFor(key: string, picked: BeadColourName | null = null): BeadColour {
+  // Step 1: a colour the person picked wins.
+  const chosen = beadColours.find((bead) => bead.name === picked);
+  if (chosen !== undefined) return chosen;
+  // Step 2: add up the character codes (any stable spread will do; this one is easy to read).
   let total = 0;
   for (const character of key.toLowerCase()) {
     total += character.codePointAt(0) ?? 0;
   }
-  // Step 2: wrap the total round the list.
+  // Step 3: wrap the total round the list.
   return beadColours[total % beadColours.length] ?? plumBead;
 }
 
@@ -70,9 +111,10 @@ export function beadColourFor(key: string): BeadColour {
  * properties.
  *
  * @param key - the username, or the name when there is no username
+ * @param picked - the colour the person picked, or null
  * @returns the style for the bead's element
  */
-export function beadStyleFor(key: string): CSSProperties {
-  const bead = beadColourFor(key);
+export function beadStyleFor(key: string, picked: BeadColourName | null = null): CSSProperties {
+  const bead = beadColourFor(key, picked);
   return { '--bead': bead.background, '--bead-initials': bead.initials } as CSSProperties;
 }

@@ -6,7 +6,7 @@ new release (stories S1-E11-03 and S1-E11-05; board AdminSettings, 8.6). Every c
 values; the page links to those log lines (`/staff/audit-log?action=settings.`).
 
 - `components/SettingsPage.tsx`: the page and its "On this page" links.
-- `components/FlagsSection.tsx` and `SwitchButton.tsx`: the feature flags.
+- `components/FlagsSection.tsx` and `SwitchButton.tsx`: the feature flags. `SwitchButton` is also the switch of every member setting, through `SettingSwitchRow.tsx` (a setting's name, its explanation and the switch; Settings › Privacy and Messages, G11b).
 - `components/ValueSettingsSection.tsx` and `ValueSettingRow.tsx`: every named setting, grouped by
   `lib/settingGroups.ts`; `lib/settingValue.ts` reads a typed field back into a value.
 - `components/DiscoverMixEditor.tsx` and `RateLimitsEditor.tsx`: the two settings with their own

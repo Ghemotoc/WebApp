@@ -2,11 +2,13 @@
  * OnlineStatusSwitch: "Show when I'm online" in Settings › Privacy (story S1-E13-01; board 6.3;
  * Q50: off unless the person turns it on).
  *
- * A checkbox saved the moment it changes; it shows at once and goes back if the save fails.
- * Turning it off also makes the database forget when the person was last active.
+ * A switch (SettingSwitchRow, G11b) saved the moment it changes; it shows at once and goes back if
+ * the save fails. Turning it off also makes the database forget when the person was last active.
  * Who uses it: PrivacySettingsSection. What it calls: the onSave it is given.
  */
 import { useState } from 'react';
+
+import { SettingSwitchRow } from '@/features/settings/components/SettingSwitchRow';
 
 import { usePrivacyTranslation } from '../registerPrivacyTranslations';
 
@@ -18,7 +20,7 @@ interface OnlineStatusSwitchProps {
 }
 
 /**
- * Renders the checkbox with its label and hint.
+ * Renders the switch with its name and hint.
  *
  * @returns the switch row
  */
@@ -33,24 +35,14 @@ export function OnlineStatusSwitch({ saved, isSaving, onSave }: OnlineStatusSwit
   }
 
   return (
-    <div className="flex flex-col gap-2 border-t border-border pt-4">
-      <div className="flex items-start gap-3">
-        <input
-          id="privacy-online-status"
-          type="checkbox"
-          checked={isOn}
-          disabled={isSaving}
-          aria-describedby="privacy-online-hint"
-          onChange={(event) => void change(event.target.checked)}
-          className="mt-0.5 size-6 shrink-0 cursor-pointer accent-(--link)"
-        />
-        <label htmlFor="privacy-online-status" className="text-[15px] text-body">
-          {t('online.label')}
-        </label>
-      </div>
-      <p id="privacy-online-hint" className="m-0 text-[13px] text-meta">
-        {t('online.hint')}
-      </p>
-    </div>
+    <SettingSwitchRow
+      id="privacy-online"
+      label={t('online.label')}
+      hint={t('online.hint')}
+      isOn={isOn}
+      stateWord={t(isOn ? 'settings.on' : 'settings.off')}
+      isDisabled={isSaving}
+      onToggle={() => void change(!isOn)}
+    />
   );
 }

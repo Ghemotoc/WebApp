@@ -125,7 +125,9 @@
     "adultsLabel": "Permite adulților să-mi trimită mesaje",
     "deleteNote": "Ca să ștergi o conversație, deschide-o și alege Șterge conversația în Despre conversație. Când o ștergeți amândoi, mesajele se șterg definitiv.",
     "loadFailed": "Nu am putut încărca setările pentru mesaje. Încearcă din nou peste câteva clipe.",
-    "saveFailed": "Nu am putut salva. Încearcă din nou."
+    "saveFailed": "Nu am putut salva. Încearcă din nou.",
+    "on": "Pornit",
+    "off": "Oprit"
   },
   "deleteChat": {
     "eyebrow": "Ștergere",

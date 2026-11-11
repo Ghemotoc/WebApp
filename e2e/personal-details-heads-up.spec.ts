@@ -74,7 +74,7 @@ test.describe('the heads-up before sharing personal details (MUST-1b)', () => {
 
   test('an adult turns it on in Settings › Privacy', async ({ browser }) => {
     const page = await openAsTeacher(browser, '/settings#privacy');
-    const box = page.getByRole('checkbox', { name: 'Ask before I share contact details' });
+    const box = page.getByRole('switch', { name: 'Ask before I share contact details' });
     await expect(box).not.toBeChecked();
     await box.check();
     await expect

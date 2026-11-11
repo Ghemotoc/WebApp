@@ -29,6 +29,7 @@ import { ParentConsentSummary } from '@/features/parent-consent/components/Paren
 import { LikesSettingsSection } from '@/features/onboarding/components/LikesSettingsSection';
 import { NotificationEmailsSection } from '@/features/notifications/components/NotificationEmailsSection';
 import { AvatarBuilderSection } from '@/features/avatars/components/AvatarBuilderSection';
+import { InitialsColourSection } from '@/features/avatars/components/InitialsColourSection';
 import { PrivacySettingsSection } from '@/features/privacy/components/PrivacySettingsSection';
 import { SupportRequestsSection } from '@/features/support/components/SupportRequestsSection';
 import { TeacherBadgeSection } from '@/features/teacher-badge/components/TeacherBadgeSection';
@@ -84,6 +85,8 @@ function ProfileGroup({ account, names }: { account: LoadedAccount; names: Loade
       <AccountNamesSection account={account} names={names} />
       <BioSettingsSection handle={handle} />
       <AvatarBuilderSection handle={handle} />
+      {/* The colour of the initials bead, for anyone who keeps their initials (G11a). */}
+      <InitialsColourSection handle={handle} name={names.penName ?? handle} />
       {/* The line under one's forum posts (S1-E8-08). */}
       <SignatureSettingsSection />
       {/* The county, likes and (16 and 17) adult messages chosen in setup (S1-E2-06). */}

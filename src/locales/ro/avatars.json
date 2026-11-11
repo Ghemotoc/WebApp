@@ -155,5 +155,32 @@
     "e6eef6": "Cer",
     "f6e9eb": "Roz pal",
     "f4f0ec": "Neutru"
+  },
+  "initials": {
+    "heading": "Culoarea inițialelor",
+    "intro": "Alege culoarea bulei cu inițiale. Apare pe profil, lângă postări și în mesaje până când salvezi un avatar.",
+    "preview": "Ceilalți văd aceste inițiale.",
+    "choicesLabel": "Culoarea inițialelor",
+    "save": "Salvează culoarea",
+    "buildAvatar": "Fă mai bine un avatar",
+    "saved": "Salvat. Inițialele apar peste tot în această culoare.",
+    "colours": {
+      "plum": "Prună",
+      "violet": "Violet",
+      "ink": "Cerneală",
+      "gold": "Auriu",
+      "blush": "Roz pal",
+      "sky": "Cer",
+      "sage": "Salvie",
+      "lilac": "Liliachiu",
+      "paper": "Hârtie",
+      "cobalt": "Cobalt",
+      "forest": "Pădure",
+      "indigo": "Indigo",
+      "ember": "Jar",
+      "berry": "Mure",
+      "cherry": "Cireașă",
+      "slate": "Ardezie"
+    }
   }
 }

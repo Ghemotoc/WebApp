@@ -66,10 +66,14 @@ test.describe('Settings groups (PROFILE-1)', () => {
     await page.goBack();
     await expect(page.getByRole('region', { name: 'Avatar' })).toBeVisible();
 
-    // The menu also leads to My reports.
+    // The menu also leads to the reports and the certificates pages (G11b).
     await expect(menu.getByRole('link', { name: 'Reports sent' })).toHaveAttribute(
       'href',
       '/my-reports',
+    );
+    await expect(menu.getByRole('link', { name: 'Certificates' })).toHaveAttribute(
+      'href',
+      '/certificates',
     );
   });
 
