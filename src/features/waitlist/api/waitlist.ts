@@ -21,8 +21,13 @@ export type WaitlistInterest = Enums<'waitlist_interest'>;
 /** The staff filters: writers ('write', which includes both), readers, or everyone (null). */
 export type WaitlistFilter = 'write' | 'read' | null;
 
-/** Why a call didn't work, in words the page can explain. */
-export type WaitlistFailure = 'not_allowed' | 'refused' | 'unreachable';
+/**
+ * Why a call didn't work, in words the page can explain. market_closed and under_market_age come
+ * from letting people in (MARKETS-2b, S1-E11-32): someone's country isn't open yet, or they are
+ * under its minimum age at the moment they would be let in.
+ */
+export type WaitlistFailure =
+  'not_allowed' | 'refused' | 'market_closed' | 'under_market_age' | 'unreachable';
 
 /** The error a refused call throws. */
 export class WaitlistError extends Error {
@@ -31,16 +36,21 @@ export class WaitlistError extends Error {
   }
 }
 
+/** The refusals the database names in its hint when letting people in (MARKETS-2b). */
+const namedRefusals: readonly WaitlistFailure[] = ['market_closed', 'under_market_age'];
+
 /**
  * Turns a database error into a reason.
  *
- * @param code - Postgres's error code
- * @returns not_allowed (42501), refused (23514) or unreachable
+ * @param error - Postgres's error code and hint
+ * @returns not_allowed (42501); for a refusal (23514), the named refusal in the hint or refused;
+ *   otherwise unreachable
  */
-function failureFromCode(code: string | undefined): WaitlistFailure {
-  if (code === '42501') return 'not_allowed';
-  if (code === '23514') return 'refused';
-  return 'unreachable';
+function failureFromError(error: { code?: string; hint?: string }): WaitlistFailure {
+  if (error.code === '42501') return 'not_allowed';
+  if (error.code !== '23514') return 'unreachable';
+  const named = namedRefusals.find((refusal) => refusal === error.hint);
+  return named ?? 'refused';
 }
 
 /** The answers' shapes, as the functions return them. */
@@ -53,6 +63,10 @@ const myWaitlistSchema = z.union([
     interest: interestSchema,
     joined_at: z.string(),
     admitted_at: z.string().nullable(),
+    // The person's country and whether it is open yet (MARKETS-2b): the holding page says when
+    // they wait for their country rather than for a place.
+    country: z.string().nullable(),
+    market_open: z.boolean(),
   }),
 ]);
 const staffWaitlistSchema = z.object({
@@ -63,7 +77,8 @@ const staffWaitlistSchema = z.object({
     both: z.number(),
     admitted: z.number(),
   }),
-  countries: z.array(z.object({ country: z.string(), waiting: z.number() })),
+  // 'open' says whether the country's market is open yet (MARKETS-2b); ZZ is "no country".
+  countries: z.array(z.object({ country: z.string(), waiting: z.number(), open: z.boolean() })),
   matching: z.number(),
   people: z.array(
     z.object({
@@ -74,6 +89,7 @@ const staffWaitlistSchema = z.object({
       country: z.string().nullable(),
       joined_at: z.string(),
       email_confirmed: z.boolean(),
+      market_open: z.boolean(),
     }),
   ),
 });
@@ -96,7 +112,7 @@ export type WaitingPerson = StaffWaitlist['people'][number];
  */
 export async function fetchMyWaitlist(client: AppSupabaseClient): Promise<MyWaitlist> {
   const { data, error } = await client.rpc('my_waitlist');
-  if (error !== null) throw new WaitlistError(failureFromCode(error.code));
+  if (error !== null) throw new WaitlistError(failureFromError(error));
   const parsed = myWaitlistSchema.safeParse(data);
   if (!parsed.success) throw new WaitlistError('unreachable');
   return parsed.data;
@@ -114,7 +130,7 @@ export async function saveMyWaitlistInterest(
   wanted: WaitlistInterest,
 ): Promise<void> {
   const { error } = await client.rpc('set_my_waitlist_interest', { wanted });
-  if (error !== null) throw new WaitlistError(failureFromCode(error.code));
+  if (error !== null) throw new WaitlistError(failureFromError(error));
 }
 
 /** What the staff list asks for. */
@@ -144,7 +160,7 @@ export async function fetchStaffWaitlist(
     page_size: query.pageSize,
     page_offset: query.pageOffset,
   });
-  if (error !== null) throw new WaitlistError(failureFromCode(error.code));
+  if (error !== null) throw new WaitlistError(failureFromError(error));
   const parsed = staffWaitlistSchema.safeParse(data);
   if (!parsed.success) throw new WaitlistError('unreachable');
   return parsed.data;
@@ -163,7 +179,7 @@ export async function admitFromWaitlist(
   entryIds: string[],
 ): Promise<number> {
   const { data, error } = await client.rpc('admin_admit_from_waitlist', { entry_ids: entryIds });
-  if (error !== null) throw new WaitlistError(failureFromCode(error.code));
+  if (error !== null) throw new WaitlistError(failureFromError(error));
   return data;
 }
 
@@ -191,6 +207,6 @@ export async function admitWaitlistWave(
     wanted_country: wave.country ?? '',
     how_many: wave.howMany,
   });
-  if (error !== null) throw new WaitlistError(failureFromCode(error.code));
+  if (error !== null) throw new WaitlistError(failureFromError(error));
   return data;
 }

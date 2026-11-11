@@ -7,7 +7,8 @@
  *   local stand-in of our Pages Function) as the first answer of the country picker, and Settings
  *   shows "Romania" (MARKETS-1);
  * - while invite_only and adults_only are on, an invitation works from a closed country too (Q6);
- * - once sign-up is public, a closed or unknown country sees "We're not open in your country yet",
+ * - once sign-up is public with the waiting list off, a closed or unknown country sees "We're not
+ *   open in your country yet" (with the list on it joins the list: waitlist-closed-markets.spec.ts),
  *   and an under-16 in a 16-and-over market (Australia, Q19) is refused with nothing kept;
  * - on the "not open" page, "Tell me when you open here" sends a confirm email whose links put the
  *   address on the list and take it off again (bundle G5, part a);
@@ -150,10 +151,13 @@ test.describe('country from the connection (S1-E2-10)', () => {
     }
   });
 
-  test('once sign-up is public, a closed or unknown country sees the "not open yet" page', async ({
+  test('once sign-up is public with the waiting list off, a closed or unknown country sees the "not open yet" page', async ({
     page,
   }) => {
     setPublicSignUp(true);
+    // With the waiting list on, a closed country joins the list instead (MARKETS-2b;
+    // e2e/waitlist-closed-markets.spec.ts).
+    runSql(`update public.feature_flags set is_enabled = false where key = 'waitlist';`);
     try {
       await openSignUpFrom(page, 'GB', '/sign-up');
       await expect(page).toHaveURL(/\/not-open$/);
@@ -167,6 +171,7 @@ test.describe('country from the connection (S1-E2-10)', () => {
       await expect(page.getByText(/we couldn’t tell which country you’re in/)).toBeVisible();
     } finally {
       setPublicSignUp(false);
+      runSql(`update public.feature_flags set is_enabled = true where key = 'waitlist';`);
     }
   });
 

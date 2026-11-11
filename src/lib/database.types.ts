@@ -16787,6 +16787,7 @@ export type Database = {
         Args: { answer: Database['public']['Enums']['waitlist_interest']; wanted: string };
         Returns: boolean;
       };
+      waitlist_market_outcome: { Args: { target_user_id: string }; Returns: string };
       website_content: {
         Args: { visitor_country?: string; wanted_kind: string; wanted_language?: string };
         Returns: {

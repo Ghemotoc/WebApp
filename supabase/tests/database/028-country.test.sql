@@ -72,8 +72,9 @@ select lives_ok($$ select pg_temp.sign_up('from.gb@example.com', pg_temp.sign_up
 select lives_ok($$ select pg_temp.sign_up('unknown@example.com', pg_temp.sign_up_data(pg_temp.years_ago(30), null)) $$,
   'while invite_only and adults_only are on, an invite admits an unknown country, VPN or Tor (Q6b)');
 
--- 4. Once sign-up is public.
-update public.feature_flags set is_enabled = false where key in ('invite_only', 'adults_only');
+-- 4. Once sign-up is public. The waiting list is off here: with it on, a closed market waits on
+-- the list instead (MARKETS-2b, test 357).
+update public.feature_flags set is_enabled = false where key in ('invite_only', 'adults_only', 'waitlist');
 select throws_ok($$ select pg_temp.sign_up('closed@example.com', pg_temp.sign_up_data(pg_temp.years_ago(30), pg_temp.token_for('GB', 5))) $$,
   '23514', null, 'once public, a closed market is refused');
 select throws_ok($$ select pg_temp.sign_up('unknown.public@example.com', pg_temp.sign_up_data(pg_temp.years_ago(30), null)) $$,

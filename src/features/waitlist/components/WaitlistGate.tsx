@@ -54,7 +54,12 @@ export function WaitlistGate({ children }: { children: ReactNode }) {
     // Nothing shows for the moment the page's code takes to arrive, rather than the page behind it.
     return (
       <Suspense fallback={null}>
-        <WaitlistHoldingPage interest={place.data.interest} joinedAt={place.data.joined_at} />
+        <WaitlistHoldingPage
+          interest={place.data.interest}
+          joinedAt={place.data.joined_at}
+          country={place.data.country}
+          isMarketOpen={place.data.market_open}
+        />
       </Suspense>
     );
   }

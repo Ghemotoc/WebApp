@@ -33,7 +33,12 @@ function usePersonTexts(person: WaitingPerson) {
     // A pen name when there is one, else the username; the username line shows only beside a pen
     // name, so it is never said twice.
     name: person.display_name ?? person.handle ?? t('waitlist.noName'),
-    country: countryName(person.country, i18n.language, t),
+    // A person whose country isn't open yet can't be let in until it opens (MARKETS-2b).
+    country: person.market_open
+      ? countryName(person.country, i18n.language, t)
+      : t('waitlist.table.countryClosed', {
+          country: countryName(person.country, i18n.language, t),
+        }),
     joined: new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium' }).format(
       new Date(person.joined_at),
     ),

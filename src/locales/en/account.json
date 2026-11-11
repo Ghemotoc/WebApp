@@ -586,6 +586,8 @@
       "heading": "You’re on the list",
       "joined": "You joined on {{date}}.",
       "next": "We let people in a few at a time, writers first. When your place comes up, we’ll email you to say you’re in. Until then you can’t write, read or post yet, but you can get your profile ready.",
+      "nextClosed": "We’re not open in {{country}} yet. Once it opens, we’ll email you to say you’re in. Until then you can’t write, read or post yet, but you can get your profile ready.",
+      "nextClosedUnknown": "We’re not open in your country yet. Once it opens, we’ll email you to say you’re in. Until then you can’t write, read or post yet, but you can get your profile ready.",
       "interestLabel": "What do you want to do here?",
       "saved": "Saved.",
       "saveFailed": "We couldn’t save that. Check your connection and try again.",

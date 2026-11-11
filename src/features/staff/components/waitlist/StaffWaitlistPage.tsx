@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/Button';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
+import type { WaitlistFailure } from '@/features/waitlist/api/waitlist';
 
 import { useStaffWaitlist, waitlistPageSize } from '../../hooks/useStaffWaitlist';
 
@@ -73,6 +74,19 @@ function TableActions({ waitlist }: { waitlist: Waitlist }) {
 }
 
 /**
+ * Picks the words for a refused admission: a country that isn't open yet, someone under their
+ * country's minimum age (MARKETS-2b, S1-E11-32), or the general "try again".
+ *
+ * @param failure - why letting people in didn't work
+ * @returns the locale key
+ */
+function admitFailureKey(failure: WaitlistFailure): string {
+  if (failure === 'market_closed') return 'waitlist.admitMarketClosed';
+  if (failure === 'under_market_age') return 'waitlist.admitUnderAge';
+  return 'waitlist.admitFailed';
+}
+
+/**
  * What goes under the heading: a refusal, an error, or the list and its actions.
  *
  * @returns the page's body
@@ -93,7 +107,9 @@ function WaitlistBody({ waitlist }: { waitlist: Waitlist }) {
       {waitlist.admittedCount !== null && (
         <Notice tone="success">{t('waitlist.admitted', { count: waitlist.admittedCount })}</Notice>
       )}
-      {waitlist.admitFailure !== null && <Notice tone="error">{t('waitlist.admitFailed')}</Notice>}
+      {waitlist.admitFailure !== null && (
+        <Notice tone="error">{t(admitFailureKey(waitlist.admitFailure))}</Notice>
+      )}
       <WaitlistFilters
         interest={filters.interest}
         country={filters.country}
