@@ -79,9 +79,7 @@ function HelpArticle({ page }: { page: ParsedEntry<HelpPageContent> }) {
   return (
     <>
       {/* The search title when staff gave one (S1-E11-37), as server/website-head.ts writes it. */}
-      <title>
-        {t('website.help.pageTitle', { title: page.content.search?.title.trim() || title })}
-      </title>
+      <title>{t('shell.pageTitle', { title: page.content.search?.title.trim() || title })}</title>
       <HelpBreadcrumb title={title} section={withBrand(page.content.section)} />
       <article
         lang={page.languageCode}
