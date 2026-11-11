@@ -63,6 +63,11 @@ function publishPanel(page: Page) {
 async function expectAccessibleAt(page: Page, widths: number[]) {
   for (const width of widths) {
     await page.setViewportSize({ width, height: 900 });
+    // Measure from the top of the page. After a resize the browser keeps whatever was on screen
+    // in view (scroll anchoring), so the scroll position would depend on the width before; at some
+    // positions the floating Back button sits over a control by design, which says nothing about
+    // the layout (GLASS-3: the glass boxes changed which element the browser anchors to).
+    await page.evaluate(() => window.scrollTo(0, 0));
     // axe measures colours as they are, so let every entrance animation finish first.
     await page.waitForFunction(() =>
       document.getAnimations().every((animation) => animation.playState !== 'running'),
