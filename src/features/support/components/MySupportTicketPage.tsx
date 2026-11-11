@@ -6,19 +6,24 @@
  * internal note), then a box to answer: answering a solved request, or one waiting for the
  * person, opens it again (criterion 7). A closed request says to ask again; one staff merged
  * into another links to it (part h4a, criterion 9). A number that isn't theirs reads as "not
- * found".
- * Who shows it: the router. What it calls: useMyTicket.
+ * found". In the liquid glass look (bundle G11c, the canvas's SupportRequest board) the page opens
+ * with a link back to the list, the request number above the subject and a status pill beside it,
+ * then the messages as a chat and the answer box in a glass card.
+ * Who shows it: the router. What it calls: useMyTicket, ticketStatusPill.
  */
 import { Link, useParams } from 'react-router';
 
 import { Eyebrow } from '@/components/ui/Eyebrow';
+import { InfoPill } from '@/components/ui/InfoPill';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 
 import type { MyTicket } from '../api/supportTickets';
 import { useMyTicket } from '../hooks/useMySupport';
+import { ticketStatusPill } from '../lib/ticketStatusPill';
 import { useSupportTranslation } from '../registerSupportTranslations';
 
+import { SupportBackLink } from './SupportBackLink';
 import { SupportReplyForm } from './SupportReplyForm';
 import { TicketMessageList, type TicketMessageItem } from './TicketMessageList';
 
@@ -51,17 +56,20 @@ function LoadedTicket({
 }) {
   const { t } = useSupportTranslation();
   const items = useMessageItems(ticket);
+  const lastFromTeam = ticket.messages.at(-1)?.fromTeam ?? false;
+  const pill = ticketStatusPill(ticket.status, lastFromTeam);
   return (
     <div className="flex max-w-[760px] flex-col gap-6">
-      <div className="flex flex-col gap-2">
-        <h1 className="m-0 font-heading text-[clamp(28px,3.4vw,40px)] leading-[1.05] font-bold break-words text-heading">
-          {ticket.subject}
-        </h1>
-        <p className="m-0 text-sm text-meta">
-          {t('ticket.meta', { number: ticket.number, status: t(`statuses.${ticket.status}`) })}
-        </p>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="flex min-w-0 flex-col gap-2">
+          <Eyebrow>{t('list.requestNumber', { number: ticket.number })}</Eyebrow>
+          <h1 className="m-0 font-heading text-[clamp(28px,3.4vw,40px)] leading-[1.05] font-bold break-words text-heading">
+            {ticket.subject}
+          </h1>
+        </div>
+        <InfoPill tone={pill.tone}>{t(`list.states.${pill.state}`)}</InfoPill>
       </div>
-      <TicketMessageList messages={items} label={t('ticket.messagesLabel')} />
+      <TicketMessageList messages={items} label={t('ticket.messagesLabel')} layout="chat" />
       {ticket.mergedInto !== null && (
         <p className="m-0 text-body">
           <Link to={`/support/${String(ticket.mergedInto)}`}>
@@ -72,7 +80,21 @@ function LoadedTicket({
       {ticket.status === 'closed' && ticket.mergedInto === null && (
         <p className="m-0 text-body">{t('ticket.closed', { number: ticket.number })}</p>
       )}
-      {ticket.status !== 'closed' && (
+      {ticket.status !== 'closed' && <ReplyCard ticket={ticket} state={state} />}
+    </div>
+  );
+}
+
+/**
+ * The answer box in its glass card, with the line that says answering opens a solved request.
+ *
+ * @returns the card
+ */
+function ReplyCard({ ticket, state }: { ticket: MyTicket; state: ReturnType<typeof useMyTicket> }) {
+  const { t } = useSupportTranslation();
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="rounded-card border border-border bg-surface p-5 shadow-card">
         <SupportReplyForm
           id="support-reply"
           label={t('ticket.replyLabel')}
@@ -82,6 +104,9 @@ function LoadedTicket({
           waitMinutes={state.waitMinutes}
           onSend={(body) => state.reply(body)}
         />
+      </div>
+      {ticket.status === 'solved' && (
+        <p className="m-0 text-sm text-meta">{t('ticket.reopenNote')}</p>
       )}
     </div>
   );
@@ -110,13 +135,10 @@ export function MySupportTicketPage() {
   const ticketNumber = Number(useParams().number ?? '0');
   const state = useMyTicket(ticketNumber);
   return (
-    <PageContainer className="flex flex-col gap-6 pt-14 pb-16">
+    <PageContainer className="flex flex-col gap-6 pt-8 pb-16">
       <title>{t('ticket.documentTitle', { number: ticketNumber })}</title>
-      <Eyebrow>{t('eyebrow')}</Eyebrow>
+      <SupportBackLink to="/support" label={t('list.title')} />
       <TicketBody state={state} />
-      <Link to="/support" className="w-fit text-sm font-semibold text-link underline">
-        {t('back')}
-      </Link>
     </PageContainer>
   );
 }

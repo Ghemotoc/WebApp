@@ -9,7 +9,11 @@
     "loadFailed": "Nu am putut încărca raportările și deciziile tale. Verifică conexiunea și încearcă din nou.",
     "contactHeading": "Vrei să vorbești cu noi?",
     "contactBody": "Scrie echipei de moderare despre o raportare sau o decizie.",
-    "contactLink": "Scrie moderatorilor"
+    "contactLink": "Scrie moderatorilor",
+    "backToSettings": "Setări",
+    "showLegend": "Arată",
+    "showDecisions": "Decizii despre postări · {{count}}",
+    "showReports": "Rapoarte trimise · {{count}}"
   },
   "decisions": {
     "heading": "Decizii despre postări",

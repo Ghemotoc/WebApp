@@ -80,7 +80,9 @@ test.describe('support tickets (S1-E11-13, ADMIN-2h1)', () => {
     await expect(page.getByText(/Sent\. Your request is #\d+/)).toBeVisible();
     await page.getByRole('link', { name: 'Open a request' }).click();
     await expect(page.getByRole('heading', { name: subject })).toBeVisible();
-    await expect(page.getByText(`#${memberTicketNumber()} · New`)).toBeVisible();
+    // The request number sits above the subject and the status is a pill (G11c).
+    await expect(page.getByText(`Request ${memberTicketNumber()}`)).toBeVisible();
+    await expect(page.getByText('New', { exact: true })).toBeVisible();
   });
 
   test('support works on the ticket: fields, history, a note and an answer', async ({

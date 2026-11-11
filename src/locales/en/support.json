@@ -28,8 +28,25 @@
     "write": "Ask for help",
     "empty": "You haven’t asked for help yet.",
     "loadFailed": "We couldn’t load your requests. Check your connection and try again.",
-    "meta": "#{{number}} · {{status}} · {{date}}",
-    "answered": "We answered"
+    "backToSettings": "Settings",
+    "requestNumber": "Request {{number}}",
+    "columns": {
+      "subject": "Subject",
+      "status": "Status",
+      "lastUpdate": "Last update"
+    },
+    "states": {
+      "answered": "We answered",
+      "new": "New",
+      "open": "Open",
+      "pending_on_user": "Waiting for you",
+      "on_hold": "On hold",
+      "solved": "Solved",
+      "closed": "Closed"
+    },
+    "reportHeading": "To report a story, a comment or something illegal",
+    "reportText": "Use the report form instead. It’s faster, because it goes straight to the moderators.",
+    "reportLink": "Report something"
   },
   "new": {
     "documentTitle": "Ask for help",
@@ -43,11 +60,12 @@
     "send": "Send",
     "sending": "Sending…",
     "sent": "Sent. Your request is #{{number}}. We’ll answer you here.",
-    "open": "Open a request"
+    "open": "Open a request",
+    "cancel": "Cancel",
+    "safetyHeading": "In danger right now?"
   },
   "ticket": {
     "documentTitle": "Support request #{{number}}",
-    "meta": "#{{number}} · {{status}}",
     "messagesLabel": "Messages",
     "you": "You",
     "team": "The support team",
@@ -56,7 +74,8 @@
     "closed": "This request is closed. If you need more help, ask again and mention #{{number}}.",
     "notFound": "We couldn’t find this request on your account.",
     "loadFailed": "We couldn’t load this request. Check your connection and try again.",
-    "mergedInto": "This request continues as #{{number}}: we joined it with another one about the same thing."
+    "mergedInto": "This request continues as #{{number}}: we joined it with another one about the same thing.",
+    "reopenNote": "Answering a solved request opens it again."
   },
   "failures": {
     "refused": "Fill in every field.",
