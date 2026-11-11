@@ -5,8 +5,9 @@
  * Who calls them: BrandingTab (the slots) and BrandSlotCard (upload and "Use the default").
  * What they call: fetchStaffBrandSlots(), setBrandAsset() and clearBrandAsset() in
  * api/brandAssets.ts, and uploadBrandPicture() in pictures/api/pictures.ts.
- * Why the slots are read again: a new picture waits for its check and then for a moderator, so
- * the page reads the slots every 15 seconds while one isn't ready, and stops once all are.
+ * Why the slots are read again: a new picture waits for its check (and for a moderator only when
+ * the check flags it, bundle G12a), so the page reads the slots every 15 seconds while one isn't
+ * ready, and stops once all are.
  */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -72,7 +73,7 @@ export function useBrandUpload(slot: BrandSlot) {
       // Step 1: the upload, its registration and the check request.
       const client = await requireClient();
       const uploaded = await uploadBrandPicture(client, { slot, file });
-      // Step 2: the slot now points at it; the app shows it once a moderator approves it.
+      // Step 2: the slot now points at it; the app shows it once the check clears it (G12a).
       await setBrandAsset(client, slot, uploaded.pictureId);
       return uploaded;
     },

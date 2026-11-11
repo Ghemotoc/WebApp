@@ -5,9 +5,9 @@
  * Who runs it: `npm run test:e2e` (Supabase started first).
  * What it proves:
  * - an empty slot shows the default (Nicole's cat for the emblem, the name as text for the logo);
- * - an admin uploads a light-theme emblem; it goes through the picture check and waits for a
- *   moderator, and the page says the default shows until then (CLAUDE.md rule 19);
- * - once a moderator approves it, the page says the app shows it, and a visitor's top bar and
+ * - an admin uploads a light-theme emblem; it goes through the picture check, with no moderator
+ *   step because staff uploaded it (CLAUDE.md rule 19; bundle G12a);
+ * - once the check clears it, the page says the app shows it, and a visitor's top bar and
  *   browser tab show it (part b) while the night theme keeps the default; "Use the default"
  *   empties the slot again;
  * - a moderator is told the page isn't theirs;
@@ -20,7 +20,6 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { approveWaitingPictures } from './support/pictures';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 /** A 1 by 1 pixel PNG, small enough to upload in a moment. */
@@ -67,9 +66,7 @@ test.describe('Staff › Website › Branding (BRAND-1a)', () => {
       update public.profiles set locale = 'ro' where handle in ('admin', 'moderator');`);
   });
 
-  test('an emblem waits for a moderator, then shows, and the default comes back', async ({
-    browser,
-  }) => {
+  test('an emblem is checked, then shows, and the default comes back', async ({ browser }) => {
     const page = await openAs(browser, 'admin', '/staff/website/branding');
     const emblem = page.getByRole('region', { name: 'Emblem, light theme' });
     const logo = page.getByRole('region', { name: 'Logo, night theme' });
@@ -79,21 +76,24 @@ test.describe('Staff › Website › Branding (BRAND-1a)', () => {
     await expect(emblem.getByText('The app shows the default.')).toBeVisible();
     await expect(logo.getByText('The app shows the default.')).toBeVisible();
 
-    // Step 2: the upload passes the check and waits for a moderator; the default stays up.
+    // Step 2: the upload passes the check; staff uploaded it, so no moderator step (G12a).
     await emblem.getByLabel('Upload a picture').setInputFiles({
       name: 'emblem.png',
       mimeType: 'image/png',
       buffer: tinyPng,
     });
     await expect(
-      emblem.getByText('This picture is waiting for a moderator. The default shows until then.'),
-    ).toBeVisible();
-    await expect(
       emblem.getByRole('img', { name: 'The uploaded picture for Emblem, light theme' }),
     ).toBeVisible();
 
-    // Step 3: a moderator approves it (as the Approve button does), and the page says it shows.
-    approveWaitingPictures(`kind = 'brand_asset'`);
+    // Step 3: once the check answered, the page says the app shows it.
+    await expect
+      .poll(() =>
+        runSql(
+          `select count(*) from public.picture_checks where kind = 'brand_asset' and status = 'passed'`,
+        ),
+      )
+      .toBe('1');
     await page.reload();
     await expect(emblem.getByText('The app shows this picture.')).toBeVisible();
 

@@ -3,8 +3,8 @@
 -- What it proves:
 -- - only owner and admin upload a logo or emblem, and only under a slot's folder
 --   (brand_assets_insert_website_staff, allowed and denied);
--- - the picture goes through the check and a moderator approves it before anyone else sees it
---   (CLAUDE.md rule 19; brand_assets_select_visible and brand_assets_select_uploader_and_staff,
+-- - the picture goes through the automatic check before anyone else sees it, with no moderator
+--   step because staff upload it (CLAUDE.md rule 19; bundle G12a; brand_assets_select_visible and brand_assets_select_uploader_and_staff,
 --   allowed and denied);
 -- - only owner and admin read and change the slots (brand_assets_select_website_staff, allowed
 --   and denied), a picture can't go in another slot, and every change is in the audit log;
@@ -57,8 +57,8 @@ select throws_ok($$ select public.register_brand_picture('emblem_dark/x.png') $$
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000009');
 insert into kept (label, id) values ('picture', public.register_brand_picture((select value from kept where label = 'path')));
 reset role;
-select ok(public.picture_needs_person((select picture_checks from public.picture_checks where id = (select id from kept where label = 'picture'))),
-  'every brand picture waits for a moderator, because the logo is on every screen');
+select ok(not public.picture_needs_person((select picture_checks from public.picture_checks where id = (select id from kept where label = 'picture'))),
+  'a brand picture skips the moderator step once the automatic checks pass: staff uploaded it');
 
 /* ---------- 2. Who reads the file while it is checked ---------- */
 

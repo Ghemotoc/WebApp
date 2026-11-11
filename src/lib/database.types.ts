@@ -11248,6 +11248,7 @@ export type Database = {
         };
         Returns: boolean;
       };
+      admin_set_seasonal_look_dates: { Args: { new_windows: Json }; Returns: Json };
       admin_set_setting: { Args: { new_value: Json; setting_key: string }; Returns: Json };
       admin_set_staff_languages: {
         Args: { language_codes: string[]; target_user_id: string };
@@ -15467,6 +15468,7 @@ export type Database = {
         Args: { page_offset?: number; page_size?: number; term: string };
         Returns: Json;
       };
+      seasonal_window_problem: { Args: { windows: Json }; Returns: string };
       send_assignment_reminders: { Args: { run_at?: string }; Returns: number };
       send_finished_thanks: { Args: { story_slug: string }; Returns: Json };
       send_landing_reminders: { Args: Record<PropertyKey, never>; Returns: number };

@@ -2,9 +2,10 @@
  * BlockPictureField: the picture of a Hero or Text block in the editor: upload, its check state
  * and "Remove picture" (story S1-E11-14 criterion 5; bundle CONTESTS-13a2a).
  *
- * The upload goes through the picture check like every other (CLAUDE.md rule 19), and a
- * moderator approves it, because a landing page is for every age. The block keeps the picture's
- * ID; its alt text is written in each language column. Publishing waits until it is approved.
+ * The upload goes through the picture check like every other (CLAUDE.md rule 19). Staff upload
+ * it, so it skips the moderator step (bundle G12a); a picture the check flags still waits for a
+ * moderator. The block keeps the picture's ID; its alt text is written in each language column.
+ * Publishing waits until the picture is cleared.
  * Who shows it: BlockCard for a Hero or Text block. What it calls: useLandingPictureUpload() and
  * PictureUploadField from the pictures feature.
  */

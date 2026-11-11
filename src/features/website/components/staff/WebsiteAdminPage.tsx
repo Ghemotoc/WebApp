@@ -8,11 +8,12 @@
  * (/staff/website/interface-text, S1-E11-18), Email templates (/staff/website/emails,
  * S1-E11-19) and Landing pages
  * (/staff/website/landing-pages, S1-E11-14) and Branding (/staff/website/branding, BRAND-1a: the
- * logo and emblem for each theme). The website tabs start
- * with the market and language picker. Plain components (staff screens). The seasonal doodle
- * schedule (S1-E11-11) was retired in bundle NO-DOODLES (Robert, 9 Nov 2026). Staff without
+ * logo and emblem for each theme) and Seasonal looks (/staff/website/seasonal, G12a: the days
+ * each seasonal look shows). The website tabs start with the market and language picker. Plain
+ * components (staff screens). The seasonal doodle schedule (S1-E11-11) was retired in bundle
+ * NO-DOODLES (Robert, 9 Nov 2026); Seasonal looks replaces it. Staff without
  * the website area see why; the database refuses their changes anyway (decided 17 Oct 2026, 19:19).
- * Who shows it: the router, inside StaffLayout. What it calls: the three editors.
+ * Who shows it: the router, inside StaffLayout. What it calls: the editor for each tab.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -34,6 +35,7 @@ import { HelpEditor } from './HelpEditor';
 import { HomePageEditor } from './HomePageEditor';
 import { MarketLanguagePicker } from './MarketLanguagePicker';
 import { NoticeEditor } from './NoticeEditor';
+import { SeasonalLooksTab } from './SeasonalLooksTab';
 
 /** The tabs: their address part and label key. */
 const tabs = [
@@ -47,6 +49,8 @@ const tabs = [
   { area: 'landing-pages', href: '/staff/website/landing-pages', labelKey: 'tabs.landingPages' },
   // BRAND-1a: the logo and emblem for the light and night themes; the emblem is the tab icon.
   { area: 'branding', href: '/staff/website/branding', labelKey: 'tabs.branding' },
+  // G12a: which days each seasonal look shows, for members who turned seasonal looks on.
+  { area: 'seasonal', href: '/staff/website/seasonal', labelKey: 'tabs.seasonal' },
 ] as const;
 
 /** The email templates are the keys of the email namespace (S1-E11-19). */
@@ -94,6 +98,8 @@ function WebsiteEditors({ area }: { area: string | undefined }) {
   if (area === 'landing-pages') return <LandingPagesTab />;
   // The logo and emblem are the same in every market and language (BRAND-1a).
   if (area === 'branding') return <BrandingTab />;
+  // The seasonal looks show on the same days in every market (bundle G12a).
+  if (area === 'seasonal') return <SeasonalLooksTab />;
   if (area === 'emails') {
     return (
       <div className="flex flex-col gap-4">

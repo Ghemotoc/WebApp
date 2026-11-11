@@ -19,7 +19,8 @@
     "interfaceText": "Interface text",
     "emails": "Email templates",
     "landingPages": "Landing pages",
-    "branding": "Branding"
+    "branding": "Branding",
+    "seasonal": "Seasonal looks"
   },
   "picker": {
     "market": "Market",
@@ -218,7 +219,7 @@
   },
   "branding": {
     "heading": "Logo and emblem",
-    "intro": "Upload the logo and the emblem for the light and the night theme. The emblem sits beside the name in the top bar and is the icon in the browser tab. Every picture is checked, and a moderator approves it before anyone else sees it; until then the app keeps showing what it shows now. Every change is in the audit log.",
+    "intro": "Upload the logo and the emblem for the light and the night theme. The emblem sits beside the name in the top bar and is the icon in the browser tab. Every picture is checked before anyone else sees it; until then the app keeps showing what it shows now. Every change is in the audit log.",
     "upload": "Upload a picture",
     "hint": "PNG or WebP with a transparent background works best, up to 2 MB. It is resized to 1,024 px on its longest side.",
     "useDefault": "Use the default",
@@ -245,12 +246,41 @@
     "states": {
       "default": "The app shows the default.",
       "visible": "The app shows this picture.",
-      "checking_earlier": "This picture is being checked. The earlier picture shows until a moderator approves it.",
-      "checking_default": "This picture is being checked. The default shows until a moderator approves it.",
+      "checking_earlier": "This picture is being checked. The earlier picture shows until the check passes.",
+      "checking_default": "This picture is being checked. The default shows until the check passes.",
       "waiting_for_person_earlier": "This picture is waiting for a moderator. The earlier picture shows until then.",
       "waiting_for_person_default": "This picture is waiting for a moderator. The default shows until then.",
       "removed_earlier": "A moderator removed this picture. The earlier picture shows instead.",
       "removed_default": "A moderator removed this picture. The default shows instead."
+    }
+  },
+  "seasonal": {
+    "intro": "Plan which days each seasonal look shows. Members see a seasonal look only if they turn on Seasonal themes in Settings › Appearance.",
+    "listHeading": "The year",
+    "looks": {
+      "winter": "Winter",
+      "spring": "Spring",
+      "summer": "Summer",
+      "autumn": "Autumn"
+    },
+    "days": "{{from}} to {{to}} · every year",
+    "change": "Change",
+    "changeLabel": "Change {{name}}",
+    "changeHeading": "Change {{name}}",
+    "firstDay": "First day",
+    "lastDay": "Last day",
+    "lastDayHint": "For days across New Year, pick a last day earlier in the year than the first.",
+    "day": "Day",
+    "month": "Month",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saved": "Saved. Members with Seasonal themes on see the new days.",
+    "failures": {
+      "overlap": "Two looks can't share a day. Move one of them first.",
+      "bad_day": "That day doesn't exist. Pick another.",
+      "wrong_looks": "These days can't be saved. Reload the page and try again.",
+      "not_allowed": "Only the owner and admins can change the seasonal looks.",
+      "unreachable": "We couldn't reach the database. Check your connection and try again."
     }
   }
 }

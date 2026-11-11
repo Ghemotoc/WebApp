@@ -11098,6 +11098,44 @@ COMMENT ON FUNCTION "public"."admin_set_permission"("target_user_id" "uuid", "ch
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_set_seasonal_look_dates"("new_windows" "jsonb") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  old_value jsonb;
+  clean_windows jsonb;
+  problem text := public.seasonal_window_problem(new_windows);
+begin
+  -- Step 1: the owner and admins only (decided 17 Oct 2026, 19:19: website content is admin-only).
+  perform public.require_website_staff();
+  -- Step 2: the shape the members' devices read.
+  if problem is not null then
+    raise exception 'These dates can''t be saved (%).', problem using errcode = 'check_violation', hint = problem;
+  end if;
+  -- Step 3: keep only the three known parts of each window, in the order given, so nothing else
+  -- rides along into a public setting every device reads.
+  select jsonb_agg(jsonb_build_object('look', item ->> 'look', 'from', item ->> 'from', 'to', item ->> 'to')
+                   order by position)
+  into clean_windows
+  from jsonb_array_elements(new_windows) with ordinality as entry (item, position);
+  -- Step 4: the change and its log line, with the old value for the audit log.
+  select value into old_value from public.settings where key = 'seasonal_look_dates' for update;
+  update public.settings set value = clean_windows where key = 'seasonal_look_dates';
+  perform public.log_staff_action('website.seasonal_looks', 'settings', 'seasonal_look_dates', null, null,
+    jsonb_build_object('value', old_value), jsonb_build_object('value', clean_windows));
+  return clean_windows;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_set_seasonal_look_dates"("new_windows" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_set_seasonal_look_dates"("new_windows" "jsonb") IS 'Changes when each seasonal look shows; owner and admin only; logged (bundle G12a).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admin_set_setting"("setting_key" "text", "new_value" "jsonb") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -32309,7 +32347,7 @@ CREATE OR REPLACE FUNCTION "public"."picture_needs_person"("picture" "public"."p
     SET "search_path" TO ''
     AS $$
   select public.age_band_of(picture.user_id) in ('under_13', '13_to_15')
-    or picture.kind in ('landing_picture', 'sponsor_creative', 'brand_asset')
+    or picture.kind = 'sponsor_creative'
     or exists (select 1 from public.stories
                where stories.id = picture.story_id and stories.rating in ('all_ages', '13_plus'));
 $$;
@@ -32318,7 +32356,7 @@ $$;
 ALTER FUNCTION "public"."picture_needs_person"("picture" "public"."picture_checks") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."picture_needs_person"("picture" "public"."picture_checks") IS 'Internal: true when a moderator must approve the picture first: All ages or 13+ stories, and uploaders under 16 (ADMIN-2e1b).';
+COMMENT ON FUNCTION "public"."picture_needs_person"("picture" "public"."picture_checks") IS 'Internal: true when a moderator must approve the picture first: All ages or 13+ stories, uploaders under 16 and sponsor creatives; staff website uploads skip it (ADMIN-2e1b, G12a).';
 
 
 
@@ -39516,6 +39554,60 @@ ALTER FUNCTION "public"."search_writers"("term" "text", "page_size" integer, "pa
 
 
 COMMENT ON FUNCTION "public"."search_writers"("term" "text", "page_size" integer, "page_offset" integer) IS 'Writers whose username or pen name answers a search, with a story the reader may see (S1-E5-04).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."seasonal_window_problem"("windows" "jsonb") RETURNS "text"
+    LANGUAGE "plpgsql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+declare
+  shown_looks text[];
+begin
+  -- Step 1: a list of exactly four objects.
+  if windows is null or jsonb_typeof(windows) <> 'array' or jsonb_array_length(windows) <> 4 then
+    return 'not_a_list';
+  end if;
+  if exists (select 1 from jsonb_array_elements(windows) as item where jsonb_typeof(item) <> 'object') then
+    return 'not_a_list';
+  end if;
+  -- Step 2: each of the four seasonal looks exactly once.
+  select array_agg(item ->> 'look' order by item ->> 'look') into shown_looks
+  from jsonb_array_elements(windows) as item;
+  if shown_looks is distinct from array['autumn', 'spring', 'summer', 'winter'] then
+    return 'wrong_looks';
+  end if;
+  -- Step 3: every first and last day is a real day of the year (29 February included).
+  if exists (
+    select 1 from jsonb_array_elements(windows) as item
+    cross join lateral (values (item ->> 'from'), (item ->> 'to')) as day (month_day)
+    where day.month_day is null
+       or day.month_day not in (
+         select to_char(calendar_day, 'MM-DD')
+         from generate_series(date '2000-01-01', date '2000-12-31', interval '1 day') as calendar_day)) then
+    return 'bad_day';
+  end if;
+  -- Step 4: no day of the year falls inside two windows. A window whose first day comes after its
+  -- last (for example 12-15 to 01-06) crosses the new year, as src/lib/looks.ts reads it.
+  if exists (
+    select 1
+    from generate_series(date '2000-01-01', date '2000-12-31', interval '1 day') as calendar_day
+    cross join lateral (select to_char(calendar_day, 'MM-DD') as month_day) as today
+    where (select count(*) from jsonb_array_elements(windows) as item
+           where case when item ->> 'from' <= item ->> 'to'
+                      then today.month_day between item ->> 'from' and item ->> 'to'
+                      else today.month_day >= item ->> 'from' or today.month_day <= item ->> 'to' end) > 1) then
+    return 'overlap';
+  end if;
+  return null;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."seasonal_window_problem"("windows" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."seasonal_window_problem"("windows" "jsonb") IS 'Internal: a reason word when a set of seasonal windows can''t be saved, or null (bundle G12a).';
 
 
 
@@ -60709,6 +60801,11 @@ GRANT ALL ON FUNCTION "public"."admin_set_permission"("target_user_id" "uuid", "
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_set_seasonal_look_dates"("new_windows" "jsonb") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_set_seasonal_look_dates"("new_windows" "jsonb") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_set_setting"("setting_key" "text", "new_value" "jsonb") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_set_setting"("setting_key" "text", "new_value" "jsonb") TO "authenticated";
 
@@ -64703,6 +64800,10 @@ GRANT ALL ON FUNCTION "public"."search_tags"("term" "text", "page_size" integer,
 
 GRANT ALL ON FUNCTION "public"."search_writers"("term" "text", "page_size" integer, "page_offset" integer) TO "anon";
 GRANT ALL ON FUNCTION "public"."search_writers"("term" "text", "page_size" integer, "page_offset" integer) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."seasonal_window_problem"("windows" "jsonb") FROM PUBLIC;
 
 
 
