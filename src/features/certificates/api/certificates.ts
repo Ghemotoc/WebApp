@@ -13,6 +13,12 @@
 import type { Enums, Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
 
+import {
+  certificateColourOf,
+  certificatePatternOf,
+  type CertificateLook,
+} from '../lib/certificateLook';
+
 /** What a certificate says the student did: took part, reached the final or won. */
 export type CertificateResult = Enums<'certificate_result'>;
 
@@ -44,6 +50,8 @@ export interface MyCertificate {
   isContest: boolean;
   /** The contest's name in both languages, so the sheet prints the one it is in; null for a class. */
   contestName: { ro: string; en: string } | null;
+  /** The colour and pattern saved when it was signed (G13a); Plum with none for a contest. */
+  look: CertificateLook;
 }
 
 /** What anyone sees when they check a code. Never a name. */
@@ -69,6 +77,7 @@ export type CertificateFailure =
   | 'name_deleted'
   | 'name_length'
   | 'reason'
+  | 'look'
   | 'unreachable';
 
 /** The error a refused call throws. */
@@ -96,6 +105,7 @@ const failureForHint: Record<string, CertificateFailure> = {
   'certificate:name_deleted': 'name_deleted',
   'certificate:name_length': 'name_length',
   'certificate:reason': 'reason',
+  'certificate:look': 'look',
 };
 
 /**
@@ -160,6 +170,19 @@ function contestNameFrom(value: Json | undefined): { ro: string; en: string } | 
 }
 
 /**
+ * Reads a certificate's look from a row (G13a); anything unknown keeps the default.
+ *
+ * @param row - one row of my_certificates() or class_certificates()
+ * @returns the colour and pattern
+ */
+export function lookFrom(row: Record<string, Json | undefined>): CertificateLook {
+  return {
+    colour: certificateColourOf(row['look_colour']),
+    pattern: certificatePatternOf(row['look_pattern']),
+  };
+}
+
+/**
  * Reads one certificate from my_certificates().
  *
  * @param value - one element of the answer
@@ -183,6 +206,7 @@ export function myCertificateFrom(value: Json): MyCertificate {
     signatoryName: String(row['signatory_name'] ?? ''),
     isContest: row['is_contest'] === true,
     contestName: contestNameFrom(row['contest_name']),
+    look: lookFrom(row),
   };
 }
 

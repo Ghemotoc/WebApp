@@ -50,7 +50,8 @@
       "programme": "We couldn’t save the name. Try again.",
       "empty": "We couldn’t save the name. Try again.",
       "archived": "We couldn’t save the name. Try again.",
-      "reason": "We couldn’t save the name. Try again."
+      "reason": "We couldn’t save the name. Try again.",
+      "look": "We couldn’t save the name. Try again."
     }
   },
   "sheet": {
@@ -128,7 +129,8 @@
       "name_deleted": "We couldn’t sign the certificates. Try again.",
       "name_length": "We couldn’t sign the certificates. Try again.",
       "reason": "We couldn’t sign the certificates. Try again.",
-      "unreachable": "We couldn’t sign the certificates. Try again."
+      "unreachable": "We couldn’t sign the certificates. Try again.",
+      "look": "Choose a colour and a pattern from the list."
     }
   },
   "settingsCard": {
@@ -136,5 +138,36 @@
     "title": "Certificates",
     "body": "Approve a programme’s results and each student gets a certificate under Certificates.",
     "link": "Open certificates"
+  },
+  "look": {
+    "title": "Colour and pattern",
+    "intro": "Pick how this programme’s certificates look. Students see it on their certificate and in the PDF.",
+    "colour": "Colour",
+    "colours": {
+      "plum": "Plum",
+      "ember": "Ember",
+      "sea_glass": "Sea glass",
+      "pistachio": "Pistachio",
+      "candy": "Candy",
+      "crimson": "Crimson",
+      "cobalt": "Cobalt",
+      "autumn": "Autumn"
+    },
+    "pattern": "Pattern behind the text",
+    "patterns": {
+      "none": "No pattern",
+      "stripes": "Stripes",
+      "dots": "Polka dots",
+      "grid": "Grid paper",
+      "waves": "Waves",
+      "starry": "Starry night",
+      "arches": "Arches",
+      "rings": "Rings",
+      "forestwaves": "Forest waves"
+    },
+    "noneShort": "None",
+    "patternHint": "The same patterns as the covers, in the certificate colour and kept very faint so the text stays easy to read.",
+    "previewName": "Student’s name",
+    "previewProgramme": "Programme name"
   }
 }

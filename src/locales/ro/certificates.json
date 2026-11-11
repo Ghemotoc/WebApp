@@ -50,7 +50,8 @@
       "programme": "Nu am putut salva numele. Încearcă din nou.",
       "empty": "Nu am putut salva numele. Încearcă din nou.",
       "archived": "Nu am putut salva numele. Încearcă din nou.",
-      "reason": "Nu am putut salva numele. Încearcă din nou."
+      "reason": "Nu am putut salva numele. Încearcă din nou.",
+      "look": "Nu am putut salva numele. Încearcă din nou."
     }
   },
   "sheet": {
@@ -128,7 +129,8 @@
       "name_deleted": "Nu am putut semna diplomele. Încearcă din nou.",
       "name_length": "Nu am putut semna diplomele. Încearcă din nou.",
       "reason": "Nu am putut semna diplomele. Încearcă din nou.",
-      "unreachable": "Nu am putut semna diplomele. Încearcă din nou."
+      "unreachable": "Nu am putut semna diplomele. Încearcă din nou.",
+      "look": "Alege o culoare și un model din listă."
     }
   },
   "settingsCard": {
@@ -136,5 +138,36 @@
     "title": "Diplome",
     "body": "Aprobă rezultatele unui program și fiecare elev primește o diplomă în Diplome.",
     "link": "Deschide diplomele"
+  },
+  "look": {
+    "title": "Culoare și model",
+    "intro": "Alege cum arată certificatele acestui program. Elevii le văd așa pe certificat și în PDF.",
+    "colour": "Culoare",
+    "colours": {
+      "plum": "Prună",
+      "ember": "Jar",
+      "sea_glass": "Sticlă de mare",
+      "pistachio": "Fistic",
+      "candy": "Bomboană",
+      "crimson": "Carmin",
+      "cobalt": "Cobalt",
+      "autumn": "Toamnă"
+    },
+    "pattern": "Model în spatele textului",
+    "patterns": {
+      "none": "Fără model",
+      "stripes": "Dungi",
+      "dots": "Buline",
+      "grid": "Hârtie cu pătrățele",
+      "waves": "Valuri",
+      "starry": "Noapte înstelată",
+      "arches": "Arcade",
+      "rings": "Inele",
+      "forestwaves": "Valuri de pădure"
+    },
+    "noneShort": "Fără",
+    "patternHint": "Aceleași modele ca la coperți, în culoarea certificatului și foarte estompate, ca textul să se citească ușor.",
+    "previewName": "Numele elevului",
+    "previewProgramme": "Numele programului"
   }
 }

@@ -13,7 +13,12 @@
  * (proposal: a server-made PDF comes with S1-E11-09b).
  * A contest certificate (S1-E11-15 criterion 9; CONTESTS-13b2c) names the contest in the sheet's
  * language, has no school, class or teacher and only our signature.
- * Who shows it: CertificatePage. Decorative: none (no doodles; the boards' QR code is left out).
+ * Since bundle G13a the sheet sits in its look (CertificateFrame): the colour and faint pattern the
+ * teacher chose at signing, and the seal at the top. The words are on near-white paper in fixed
+ * dark ink, the same by day and at night, so they keep their contrast on every colour; the frame
+ * prints in colour too.
+ * Who shows it: CertificatePage. Decorative: the frame, pattern and seal, hidden from screen
+ * readers (no doodles; the boards' QR code is left out).
  */
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -22,7 +27,17 @@ import { brand } from '@/config/brand';
 
 import type { MyCertificate } from '../api/certificates';
 import { certificateDate, type CertificateLanguage } from '../lib/certificateDate';
+import { CertificateFrame, CertificateSeal } from './CertificateFrame';
 import { useCertificatesTranslation } from '../registerCertificatesTranslations';
+
+/** The paper's fixed inks (G13a): dark on near-white, whatever the theme. */
+const ink = {
+  text: 'text-[#2A1E14]',
+  heading: 'text-[#2A0E33]',
+  muted: 'text-[#5A4A40]',
+  line: 'border-[#2A1E14]',
+  softLine: 'border-[#2A1E14]/20',
+} as const;
 
 /** The sentence that says what the student did, by result. */
 const reasonKeys = {
@@ -89,16 +104,16 @@ function CertificateSignatures({
       : t('sheet.teacherRoleAtSchool', { school: certificate.schoolName });
   return (
     <div className="grid gap-6 sm:grid-cols-2">
-      <div className="flex flex-col gap-1 border-t border-ink pt-2">
-        <p className="m-0 text-xs text-body">{signedOn}</p>
-        <p className="m-0 font-semibold text-ink">{certificate.signatoryName}</p>
-        <p className="m-0 text-sm text-body">{t('sheet.companyRole')}</p>
+      <div className={`flex flex-col gap-1 border-t ${ink.line} pt-2`}>
+        <p className={`m-0 text-xs ${ink.muted}`}>{signedOn}</p>
+        <p className="m-0 font-semibold">{certificate.signatoryName}</p>
+        <p className={`m-0 text-sm ${ink.muted}`}>{t('sheet.companyRole')}</p>
       </div>
       {!certificate.isContest && (
-        <div className="flex flex-col gap-1 border-t border-ink pt-2">
-          <p className="m-0 text-xs text-body">{signedOn}</p>
-          <p className="m-0 font-semibold text-ink">{certificate.teacherName}</p>
-          <p className="m-0 text-sm text-body">{teacherRole}</p>
+        <div className={`flex flex-col gap-1 border-t ${ink.line} pt-2`}>
+          <p className={`m-0 text-xs ${ink.muted}`}>{signedOn}</p>
+          <p className="m-0 font-semibold">{certificate.teacherName}</p>
+          <p className={`m-0 text-sm ${ink.muted}`}>{teacherRole}</p>
         </div>
       )}
     </div>
@@ -129,14 +144,22 @@ function CertificateFooter({
   if (certificate.isContest) footerText = t('sheet.contestFooter');
   else if (school !== null) footerText = t('sheet.footerSchool', { school });
   return (
-    <footer className="flex flex-col gap-3 border-t border-border pt-4 text-sm text-body">
+    <footer className={`flex flex-col gap-3 border-t ${ink.softLine} pt-4 text-sm ${ink.muted}`}>
       <div className="flex flex-wrap justify-between gap-4">
         <p className="m-0">
           {t(certificate.isContest ? 'sheet.contestLabel' : 'sheet.programmeLabel')} ·{' '}
           {t(`results.${certificate.result}`)} · {year}
         </p>
         <p className="m-0">
-          {t('sheet.checkTitle')}: {brand.siteDomain}/verify · <strong>{certificate.code}</strong> ·{' '}
+          {t('sheet.checkTitle')}:{' '}
+          {/* G13: a real link to the check, built from the site address in the brand config. */}
+          <a
+            href={`${brand.siteUrl}/verify?code=${encodeURIComponent(certificate.code)}`}
+            className="underline underline-offset-2"
+          >
+            {brand.siteDomain}/verify
+          </a>{' '}
+          · <strong>{certificate.code}</strong> ·{' '}
           {t('sheet.issued', { date: certificateDate(certificate.signedAt, language) })}
         </p>
       </div>
@@ -167,34 +190,47 @@ export function CertificateSheet({
   const isAchievement = certificate.result !== 'participant';
   const school = certificate.schoolName;
   return (
-    <article
-      lang={language}
-      aria-label={t('sheet.label')}
-      className="certificate-sheet flex flex-col gap-8 rounded-card border border-border bg-surface p-6 text-ink sm:p-12"
+    <CertificateFrame
+      look={certificate.look}
+      patternId={`certificate-pattern-${certificate.id}`}
+      className="certificate-sheet"
     >
-      <header className="flex flex-wrap items-start justify-between gap-4">
-        <div className="flex flex-col">
-          <p className="m-0 font-heading text-2xl font-extrabold text-heading">
-            {brand.productName}
+      <article
+        lang={language}
+        aria-label={t('sheet.label')}
+        className={`flex flex-col gap-8 p-6 sm:p-12 ${ink.text}`}
+      >
+        <header className="flex flex-wrap items-start justify-between gap-4">
+          <div className="flex flex-col">
+            <p className={`m-0 font-heading text-2xl font-extrabold ${ink.heading}`}>
+              {brand.productName}
+            </p>
+            <p className={`m-0 text-sm ${ink.muted}`}>
+              {t('common:shell.madeBy', { lng: language })}
+            </p>
+          </div>
+          {school !== null && (
+            <p className={`m-0 text-sm ${ink.muted}`}>{t('sheet.partnership', { school })}</p>
+          )}
+        </header>
+        <div className="flex flex-col items-center gap-3 text-center">
+          <CertificateSeal look={certificate.look} size="large" />
+          <h2
+            className={`m-0 font-heading text-[clamp(28px,5vw,44px)] leading-tight font-extrabold ${ink.heading}`}
+          >
+            {t(isAchievement ? 'sheet.titleAchievement' : 'sheet.titleParticipation')}
+          </h2>
+          <p className={`m-0 eyebrow-type ${ink.heading}`}>{t('sheet.awardedTo')}</p>
+          <p
+            className={`m-0 font-story text-[clamp(24px,4vw,40px)] font-semibold break-words ${ink.heading}`}
+          >
+            {awardedName}
           </p>
-          <p className="m-0 text-sm text-body">{t('common:shell.madeBy', { lng: language })}</p>
+          <p className="m-0 max-w-[52ch]">{reasonSentence(certificate, language, t)}</p>
         </div>
-        {school !== null && (
-          <p className="m-0 text-sm text-body">{t('sheet.partnership', { school })}</p>
-        )}
-      </header>
-      <div className="flex flex-col items-center gap-3 text-center">
-        <h2 className="m-0 font-heading text-[clamp(28px,5vw,44px)] leading-tight font-extrabold text-heading">
-          {t(isAchievement ? 'sheet.titleAchievement' : 'sheet.titleParticipation')}
-        </h2>
-        <p className="m-0 eyebrow">{t('sheet.awardedTo')}</p>
-        <p className="m-0 font-heading text-[clamp(24px,4vw,36px)] font-bold break-words text-ink">
-          {awardedName}
-        </p>
-        <p className="m-0 max-w-[52ch] text-body">{reasonSentence(certificate, language, t)}</p>
-      </div>
-      <CertificateSignatures certificate={certificate} language={language} />
-      <CertificateFooter certificate={certificate} language={language} />
-    </article>
+        <CertificateSignatures certificate={certificate} language={language} />
+        <CertificateFooter certificate={certificate} language={language} />
+      </article>
+    </CertificateFrame>
   );
 }

@@ -21,6 +21,7 @@ import { useSpaceMembers } from '@/features/spaces/hooks/useSpaceModeration';
 import { useSpace } from '@/features/spaces/hooks/useSpaces';
 
 import { useClassCertificates } from '../hooks/useClassCertificates';
+import { defaultCertificateLook } from '../lib/certificateLook';
 import { useCertificatesTranslation } from '../registerCertificatesTranslations';
 
 import { ClassResultsForm, type ClassStudent } from './ClassResultsForm';
@@ -65,6 +66,23 @@ function SignedCertificates({ slug }: { slug: string }) {
 }
 
 /**
+ * The class's students: every member but the teacher, with a name to show.
+ *
+ * @param members - the class's members
+ * @returns the students the results list offers
+ */
+function studentsOf(
+  members: NonNullable<ReturnType<typeof useSpaceMembers>['data']>,
+): ClassStudent[] {
+  const students: ClassStudent[] = [];
+  for (const member of members) {
+    if (member.role === 'owner' || member.person === null) continue;
+    students.push({ handle: member.person.handle, displayName: member.person.displayName });
+  }
+  return students;
+}
+
+/**
  * The results form, with the class's students, or why there is none.
  *
  * @param props.slug - the class's address
@@ -74,17 +92,16 @@ function SignedCertificates({ slug }: { slug: string }) {
 function NewResults({ slug, isArchived }: { slug: string; isArchived: boolean }) {
   const { t } = useCertificatesTranslation();
   const members = useSpaceMembers(slug, !isArchived);
+  // G13a: the form starts from the look of the newest certificate signed in the class.
+  const signed = useClassCertificates(slug);
   if (isArchived) return <Notice tone="info">{t('class.archived')}</Notice>;
-  const students: ClassStudent[] = [];
-  for (const member of members.data ?? []) {
-    if (member.role === 'owner' || member.person === null) continue;
-    students.push({ handle: member.person.handle, displayName: member.person.displayName });
-  }
+  const students = studentsOf(members.data ?? []);
   if (members.isSuccess && students.length === 0) {
     return <p className="m-0 text-body">{t('class.noStudents')}</p>;
   }
-  if (students.length === 0) return null;
-  return <ClassResultsForm slug={slug} students={students} />;
+  if (students.length === 0 || signed.isPending) return null;
+  const startLook = signed.data?.[0]?.look ?? defaultCertificateLook;
+  return <ClassResultsForm slug={slug} students={students} startLook={startLook} />;
 }
 
 /**

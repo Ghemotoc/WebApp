@@ -1126,6 +1126,8 @@ export type Database = {
           contest_id: string | null;
           created_at: string;
           id: string;
+          look_colour: string;
+          look_pattern: string;
           printed_name: string | null;
           programme_name: string;
           result: Database['public']['Enums']['certificate_result'];
@@ -1149,6 +1151,8 @@ export type Database = {
           contest_id?: string | null;
           created_at?: string;
           id?: string;
+          look_colour?: string;
+          look_pattern?: string;
           printed_name?: string | null;
           programme_name: string;
           result: Database['public']['Enums']['certificate_result'];
@@ -1169,6 +1173,8 @@ export type Database = {
           contest_id?: string | null;
           created_at?: string;
           id?: string;
+          look_colour?: string;
+          look_pattern?: string;
           printed_name?: string | null;
           programme_name?: string;
           result?: Database['public']['Enums']['certificate_result'];
@@ -12030,6 +12036,7 @@ export type Database = {
         Returns: boolean;
       };
       cases_by_tier: { Args: { window_days: number }; Returns: Json };
+      certificate_look_from: { Args: { look: Json }; Returns: Record<string, unknown> };
       certificate_name_deleted_on: {
         Args: {
           target: Omit<
@@ -13415,7 +13422,7 @@ export type Database = {
       is_story_restricted: { Args: { target_story_id: string }; Returns: boolean };
       is_under_18_or_unknown: { Args: { person_id: string }; Returns: boolean };
       issue_class_certificates: {
-        Args: { programme_name: string; results: Json; slug: string };
+        Args: { look?: Json; programme_name: string; results: Json; slug: string };
         Returns: Json;
       };
       issue_statement_of_reasons: {
@@ -16718,6 +16725,7 @@ export type Database = {
           >;
           student_id: string;
           teacher_display: string;
+          wanted_look: string[];
           wanted_result: Database['public']['Enums']['certificate_result'];
         };
         Returns: string;
