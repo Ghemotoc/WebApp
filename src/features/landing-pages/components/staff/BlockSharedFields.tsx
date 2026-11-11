@@ -11,7 +11,7 @@
 import { Chip } from '@/components/ui/Chip';
 import { TextInput } from '@/components/ui/TextInput';
 import type { FieldProblem } from '@/features/website/api/websiteContentStore';
-import { landingAgeGroups, type LandingBlock } from '@/schemas/landingPages';
+import { landingAgeGroups, landingLinkKinds, type LandingBlock } from '@/schemas/landingPages';
 
 import { problemFor } from '../../lib/problemLabels';
 import { useLandingPageTranslation } from '../../registerLandingPageTranslations';
@@ -105,11 +105,11 @@ function AgeGroupFields({ block, index, problems, onChange }: BlockSharedFieldsP
 }
 
 /**
- * The address the Rules block links to.
+ * The address a Rules block or a call to action links to (S1-E11-34 added the call to action).
  *
  * @returns the field
  */
-function RulesLinkField({ block, index, problems, onChange }: BlockSharedFieldsProps) {
+function LinkField({ block, index, problems, onChange }: BlockSharedFieldsProps) {
   const { t } = useLandingPageTranslation();
   const problem = problemFor(problems, `blocks.${index}.link`);
   return (
@@ -134,7 +134,8 @@ function RulesLinkField({ block, index, problems, onChange }: BlockSharedFieldsP
 export function BlockSharedFields(props: BlockSharedFieldsProps) {
   if (props.block.kind === 'key_dates') return <KeyDatesFields {...props} />;
   if (props.block.kind === 'who_can_enter') return <AgeGroupFields {...props} />;
-  if (props.block.kind === 'rules') return <RulesLinkField {...props} />;
+  // A Rules block and a call to action both link to a page of ours or an https address.
+  if (landingLinkKinds.includes(props.block.kind)) return <LinkField {...props} />;
   if (props.block.kind === 'featured') return <FeaturedFields {...props} />;
   return null;
 }

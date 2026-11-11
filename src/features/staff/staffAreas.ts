@@ -202,6 +202,15 @@ export const staffAreaPages: StaffAreaPage[] = [
     labelKey: 'nav.website',
     descriptionKey: 'home.areas.website_cms',
   },
+  // The page builder (S1-E11-34, CMS-2b): landing pages for contests, campaigns and information.
+  // Moderators build them too, so it has its own area and menu item beside Website.
+  {
+    area: 'landing_pages',
+    href: '/staff/landing-pages',
+    group: 'website',
+    labelKey: 'nav.landingPages',
+    descriptionKey: 'home.areas.landing_pages',
+  },
   // Sponsors (S1-E12-02; SPONSORS-b2): owner and admin (architecture 1.8.3), beside the website
   // pages their banners show on.
   {

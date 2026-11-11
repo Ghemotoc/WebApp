@@ -89,7 +89,8 @@
     "supportTickets": "Tichete de suport",
     "dataRequests": "Cereri privind datele",
     "pictures": "Imagini de verificat",
-    "featured": "Recomandate"
+    "featured": "Recomandate",
+    "landingPages": "Constructor de pagini"
   },
   "shell": {
     "eyebrow": "Echipă",
@@ -144,7 +145,8 @@
       "support_tickets": "Fiecare cerere de ajutor venită pe email, prin Contactează-ne sau din aplicație, ca tichet numerotat.",
       "data_requests": "Înregistrează și rezolvă cererile de a vedea, muta, corecta sau șterge datele cuiva, fiecare în termenul ei.",
       "pictures": "Imaginile din poveștile pentru toate vârstele și 13+ și imaginile de la cei sub 16 ani, care așteaptă un moderator.",
-      "featured": "Alege Recomandatele săptămânii pentru Descoperă, din clasament."
+      "featured": "Alege Recomandatele săptămânii pentru Descoperă, din clasament.",
+      "landing_pages": "Pagini pentru concursuri, campanii și informații, construite din blocuri gata făcute, în ambele limbi."
     },
     "pictureOpenings": {
       "heading": "Imagini încărcate deschise de echipă",

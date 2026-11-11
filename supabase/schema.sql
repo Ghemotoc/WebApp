@@ -3535,7 +3535,7 @@ CREATE OR REPLACE FUNCTION "public"."admin_archive_landing_page"("target_page_id
     SET "search_path" TO ''
     AS $$
 begin
-  perform public.require_website_staff();
+  perform public.require_landing_page_staff();
   update public.landing_pages set archived_at = now() where id = target_page_id and archived_at is null;
   if not found then
     raise exception 'There is no such page.' using errcode = 'no_data_found';
@@ -4969,7 +4969,7 @@ declare
   slug_problem text := public.landing_page_slug_problem(lower(btrim(coalesce(new_slug, ''))));
   new_page_id uuid;
 begin
-  perform public.require_website_staff();
+  perform public.require_landing_page_staff();
   -- Step 1: a free, allowed address and a known type.
   if slug_problem is not null then
     raise exception 'That address can''t be used.' using errcode = 'check_violation', hint = slug_problem;
@@ -6576,7 +6576,7 @@ CREATE OR REPLACE FUNCTION "public"."admin_landing_picture_states"("target_page_
     SET "search_path" TO ''
     AS $$
 begin
-  perform public.require_website_staff();
+  perform public.require_landing_page_staff();
   return (
     select coalesce(jsonb_object_agg(picture_checks.id, public.picture_state_json(picture_checks)), '{}'::jsonb)
     from public.picture_checks
@@ -8261,7 +8261,7 @@ declare
   problems text[];
   goes_live date;
 begin
-  perform public.require_website_staff();
+  perform public.require_landing_page_staff();
   -- Step 1: the draft, locked so it is published once, and its page.
   select * into draft from public.landing_page_versions where id = version_id and status = 'draft' for update;
   select * into page from public.landing_pages where id = draft.page_id and archived_at is null;
@@ -9363,7 +9363,7 @@ declare
   earlier public.landing_page_versions;
   draft_id uuid;
 begin
-  perform public.require_website_staff();
+  perform public.require_landing_page_staff();
   select * into earlier from public.landing_page_versions where id = version_id and status = 'published';
   if earlier.id is null then
     raise exception 'There is no published version with that id.' using errcode = 'no_data_found';
@@ -10120,7 +10120,7 @@ CREATE OR REPLACE FUNCTION "public"."admin_save_landing_page_draft"("target_page
 declare
   draft_id uuid;
 begin
-  perform public.require_website_staff();
+  perform public.require_landing_page_staff();
   -- Step 1: a page that is still in use, and dates the right way round.
   if not exists (select 1 from public.landing_pages where id = target_page_id and archived_at is null) then
     raise exception 'There is no such page.' using errcode = 'no_data_found';
@@ -26779,6 +26779,7 @@ declare
   close_on date;
   results_on date;
   rules_link text := btrim(coalesce(block ->> 'link', ''));
+  entry_counts int4range;
   language_code text;
   item jsonb;
   item_number integer;
@@ -26804,7 +26805,8 @@ begin
                   where groups.value not in ('13_to_15', '16_to_17', '18_and_over')) then
       problems := problems || (block_path || '.age_groups:empty');
     end if;
-  elsif block ->> 'kind' = 'rules' then
+  elsif block ->> 'kind' in ('rules', 'call_to_action') then
+    -- A link is one of our pages ("/help/contest-rules") or an https address (S1-E11-34).
     if rules_link = '' then
       problems := problems || (block_path || '.link:empty');
     elsif rules_link !~ '^(/[a-z0-9/_-]*|https://[^\s]+)$' then
@@ -26822,6 +26824,29 @@ begin
         if btrim(coalesce(item ->> 'question', '')) = '' or btrim(coalesce(item ->> 'answer', '')) = ''
            or char_length(item ->> 'question') > 200 or char_length(item ->> 'answer') > 1000 then
           problems := problems || (block_path || '.' || language_code || '.items.' || item_number || ':empty');
+        end if;
+        item_number := item_number + 1;
+      end loop;
+    end loop;
+  elsif block ->> 'kind' = 'picture_text' then
+    -- Picture and text needs its picture; landing_picture_problems() checks it and its alt text.
+    if btrim(coalesce(block ->> 'picture_id', '')) = '' then
+      problems := problems || (block_path || '.picture:empty');
+    end if;
+  elsif block ->> 'kind' in ('cards', 'steps') then
+    -- 2 to 4 cards or 2 to 6 steps, the same number in both languages, each with a title of up to
+    -- 80 characters and words of up to 300 (S1-E11-34).
+    entry_counts := case when block ->> 'kind' = 'cards' then int4range(2, 4, '[]') else int4range(2, 6, '[]') end;
+    if not (jsonb_array_length(coalesce(block #> '{ro,entries}', '[]')) <@ entry_counts)
+       or jsonb_array_length(coalesce(block #> '{ro,entries}', '[]')) <> jsonb_array_length(coalesce(block #> '{en,entries}', '[]')) then
+      problems := problems || (block_path || '.entries:count');
+    end if;
+    foreach language_code in array array['ro', 'en'] loop
+      item_number := 0;
+      for item in select value from jsonb_array_elements(coalesce(block #> array[language_code, 'entries'], '[]')) loop
+        if btrim(coalesce(item ->> 'title', '')) = '' or btrim(coalesce(item ->> 'body', '')) = ''
+           or char_length(item ->> 'title') > 80 or char_length(item ->> 'body') > 300 then
+          problems := problems || (block_path || '.' || language_code || '.entries.' || item_number || ':empty');
         end if;
         item_number := item_number + 1;
       end loop;
@@ -26853,7 +26878,14 @@ CREATE OR REPLACE FUNCTION "public"."landing_block_field_rules"() RETURNS TABLE(
     ('rules', 'heading', 80, true), ('rules', 'body', 1000, false), ('rules', 'link_label', 80, true),
     ('questions', 'heading', 80, true),
     ('featured', 'heading', 80, true), ('featured', 'intro', 300, false),
-    ('remind_me', 'heading', 80, true), ('remind_me', 'intro', 300, false);
+    ('remind_me', 'heading', 80, true), ('remind_me', 'intro', 300, false),
+    -- S1-E11-34: the page builder's new blocks.
+    ('picture_text', 'heading', 80, true), ('picture_text', 'body', 2000, true),
+    ('cards', 'heading', 80, true),
+    ('steps', 'heading', 80, true),
+    ('quote', 'quote', 300, true), ('quote', 'source', 80, false),
+    ('call_to_action', 'heading', 80, true), ('call_to_action', 'body', 300, false),
+    ('call_to_action', 'button_label', 40, true);
 $$;
 
 
@@ -27182,7 +27214,8 @@ begin
   if picture_id_text is null then
     return problems;
   end if;
-  if block ->> 'kind' not in ('hero', 'text') then
+  -- Picture and text joins Hero and Text (S1-E11-34).
+  if block ->> 'kind' not in ('hero', 'text', 'picture_text') then
     return array[block_path || '.picture:not_allowed'];
   end if;
   -- Step 1: alt text in both languages.
@@ -27222,7 +27255,7 @@ CREATE OR REPLACE FUNCTION "public"."landing_picture_upload_allowed"("object_nam
     SET "search_path" TO ''
     AS $_$
   select public.is_feature_enabled('picture_uploads')
-    and public.staff_may('website_cms', 'act')
+    and public.staff_may('landing_pages', 'act')
     and coalesce(object_name, '') ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.(jpe?g|png|webp)$'
     and exists (
       select 1 from public.landing_pages
@@ -27233,7 +27266,7 @@ $_$;
 ALTER FUNCTION "public"."landing_picture_upload_allowed"("object_name" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."landing_picture_upload_allowed"("object_name" "text") IS 'True for owner and admin, a random file name under a live landing page''s ID and picture_uploads on (CONTESTS-13a2a).';
+COMMENT ON FUNCTION "public"."landing_picture_upload_allowed"("object_name" "text") IS 'True for staff with the landing pages area, a random file name under a live landing page''s ID and picture_uploads on (CONTESTS-13a2a, S1-E11-34).';
 
 
 
@@ -37360,7 +37393,7 @@ declare
   new_id uuid;
 begin
   -- Step 1: owner or admin, while uploads are on.
-  perform public.require_website_staff();
+  perform public.require_landing_page_staff();
   if not public.is_feature_enabled('picture_uploads') then
     raise exception 'Picture uploads are switched off.' using errcode = 'feature_not_supported';
   end if;
@@ -39010,6 +39043,26 @@ ALTER FUNCTION "public"."require_free_ad_slot"("wanted_slot_key" "text", "first_
 
 
 COMMENT ON FUNCTION "public"."require_free_ad_slot"("wanted_slot_key" "text", "first_day" "date", "last_day" "date", "leave_out_id" "uuid") IS 'Internal: locks an ad slot and refuses days another live booking holds (S1-E12-05).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."require_landing_page_staff"() RETURNS "void"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  if not public.staff_may('landing_pages', 'act') then
+    raise exception 'Only staff with the landing pages area can build landing pages.'
+      using errcode = 'insufficient_privilege';
+  end if;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."require_landing_page_staff"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."require_landing_page_staff"() IS 'Internal: refuses anyone who may not build landing pages (S1-E11-34).';
 
 
 
@@ -60664,22 +60717,22 @@ COMMENT ON POLICY "landing_page_reminders_select_own" ON "public"."landing_page_
 ALTER TABLE "public"."landing_page_versions" ENABLE ROW LEVEL SECURITY;
 
 
-CREATE POLICY "landing_page_versions_select_staff" ON "public"."landing_page_versions" FOR SELECT TO "authenticated" USING (( SELECT "public"."staff_may"('website_cms'::"text", 'view'::"text") AS "staff_may"));
+CREATE POLICY "landing_page_versions_select_staff" ON "public"."landing_page_versions" FOR SELECT TO "authenticated" USING (( SELECT "public"."staff_may"('landing_pages'::"text", 'view'::"text") AS "staff_may"));
 
 
 
-COMMENT ON POLICY "landing_page_versions_select_staff" ON "public"."landing_page_versions" IS 'Allows owner and admin, in a staff session, to read every landing page version (S1-E11-14).';
+COMMENT ON POLICY "landing_page_versions_select_staff" ON "public"."landing_page_versions" IS 'Allows staff with the landing pages area to read every version, drafts included, for the editor (S1-E11-14, S1-E11-34).';
 
 
 
 ALTER TABLE "public"."landing_pages" ENABLE ROW LEVEL SECURITY;
 
 
-CREATE POLICY "landing_pages_select_staff" ON "public"."landing_pages" FOR SELECT TO "authenticated" USING (( SELECT "public"."staff_may"('website_cms'::"text", 'view'::"text") AS "staff_may"));
+CREATE POLICY "landing_pages_select_staff" ON "public"."landing_pages" FOR SELECT TO "authenticated" USING (( SELECT "public"."staff_may"('landing_pages'::"text", 'view'::"text") AS "staff_may"));
 
 
 
-COMMENT ON POLICY "landing_pages_select_staff" ON "public"."landing_pages" IS 'Allows owner and admin, in a staff session, to read every landing page (S1-E11-14).';
+COMMENT ON POLICY "landing_pages_select_staff" ON "public"."landing_pages" IS 'Allows staff with the landing pages area (owner, admin, moderator, or a custom role) to read every page, for the editor (S1-E11-14, S1-E11-34).';
 
 
 
@@ -67001,6 +67054,10 @@ REVOKE ALL ON FUNCTION "public"."require_forum_writer"() FROM PUBLIC;
 
 
 REVOKE ALL ON FUNCTION "public"."require_free_ad_slot"("wanted_slot_key" "text", "first_day" "date", "last_day" "date", "leave_out_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."require_landing_page_staff"() FROM PUBLIC;
 
 
 

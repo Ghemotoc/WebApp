@@ -15770,6 +15770,7 @@ export type Database = {
         };
         Returns: undefined;
       };
+      require_landing_page_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_live_profile: { Args: Record<PropertyKey, never>; Returns: string };
       require_mail_thread_for_staff: {
         Args: { thread_reference: string };

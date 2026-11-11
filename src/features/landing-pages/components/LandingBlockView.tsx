@@ -7,7 +7,8 @@
  * (CmsMarkdown: no raw HTML, links get rel="nofollow ugc noopener"). No countdowns and no "only
  * today": copy aimed at minors must not pressure them (story legal notes).
  * Part a2a: a Text block may carry a picture (LandingPicture), and Featured stories draws a
- * shelf of story cards (FeaturedStoriesBlock). Part a2b: Remind me (RemindMeBlock).
+ * shelf of story cards (FeaturedStoriesBlock). Part a2b: Remind me (RemindMeBlock). The page
+ * builder's blocks (S1-E11-34) are drawn by BuilderBlocks.
  * Who shows it: LandingPageView. What it calls: CmsMarkdown and the shared formatters.
  */
 import { CmsMarkdown } from '@/features/website/components/CmsMarkdown';
@@ -16,8 +17,10 @@ import type { LandingBlock, LandingLanguage } from '@/schemas/landingPages';
 
 import type { LandingExtras } from '../api/landingPages';
 import { wordsOf } from '../lib/blocks';
+import { isBuilderKind } from '../lib/builderKinds';
 import { useLandingPageTranslation } from '../registerLandingPageTranslations';
 
+import { BuilderBlockView } from './BuilderBlocks';
 import { FeaturedStoriesBlock } from './FeaturedStoriesBlock';
 import { LandingPicture } from './LandingPicture';
 import { RemindMeBlock } from './RemindMeBlock';
@@ -190,17 +193,14 @@ function Questions({ block, language }: BlockProps) {
 }
 
 /**
- * Renders one block by its kind. The hero is drawn by LandingPageView, around the page title.
+ * Draws the blocks that need data beyond their own words: featured stories and the reminder
+ * sign-up. Anything else is a heading and Markdown text (text, prize and how to enter, and a text
+ * block's picture too).
  *
- * @returns the block, or nothing for the hero
+ * @returns the block
  */
-export function LandingBlockView(props: LandingBlockViewProps) {
+function ExtrasOrTextBlock(props: LandingBlockViewProps) {
   const { block, language, extras } = props;
-  if (block.kind === 'key_dates') return <KeyDates block={block} language={language} />;
-  if (block.kind === 'who_can_enter') return <WhoCanEnter block={block} language={language} />;
-  if (block.kind === 'rules') return <Rules block={block} language={language} />;
-  if (block.kind === 'questions') return <Questions block={block} language={language} />;
-  if (block.kind === 'hero') return null;
   if (block.kind === 'featured') {
     const stories = extras.featured === null ? null : (extras.featured[block.id] ?? []);
     return <FeaturedStoriesBlock block={block} language={language} stories={stories} />;
@@ -208,6 +208,22 @@ export function LandingBlockView(props: LandingBlockViewProps) {
   if (block.kind === 'remind_me') {
     return <RemindMeBlock block={block} language={language} reminder={extras.reminder} />;
   }
-  // text, prize and how to enter are a heading and Markdown text (a text block's picture too).
   return <TextSection {...props} />;
+}
+
+/**
+ * Renders one block by its kind. The hero is drawn by LandingPageView, around the page title.
+ *
+ * @returns the block, or nothing for the hero
+ */
+export function LandingBlockView(props: LandingBlockViewProps) {
+  const { block, language } = props;
+  if (block.kind === 'key_dates') return <KeyDates block={block} language={language} />;
+  if (block.kind === 'who_can_enter') return <WhoCanEnter block={block} language={language} />;
+  if (block.kind === 'rules') return <Rules block={block} language={language} />;
+  if (block.kind === 'questions') return <Questions block={block} language={language} />;
+  if (block.kind === 'hero') return null;
+  // The page builder's blocks (S1-E11-34) live in BuilderBlocks.tsx.
+  if (isBuilderKind(block.kind)) return <BuilderBlockView {...props} />;
+  return <ExtrasOrTextBlock {...props} />;
 }

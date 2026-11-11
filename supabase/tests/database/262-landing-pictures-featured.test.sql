@@ -2,7 +2,7 @@
 -- and 9; bundle CONTESTS-13a2a; CLAUDE.md rules 1, 18 and 19).
 -- What it proves:
 -- - owner and admin upload to `landing-pictures` (landing_pictures_insert_website_staff allowed),
---   a moderator can't (denied); register_landing_picture() records it pending, for owner and admin
+--   support can't (denied); register_landing_picture() records it pending, for owner and admin
 --   only; a landing page picture skips the moderator step, because staff upload it (picture_needs_person(),
 --   bundle G12a), while the automatic checks still run;
 -- - visitors read a picture's file only once approved (landing_pictures_select_visible allowed
@@ -63,13 +63,13 @@ select 'path', id::text || '/' || gen_random_uuid()::text || '.png' from kept wh
 select lives_ok(format($$ insert into storage.objects (bucket_id, name, owner_id)
   values ('landing-pictures', %L, '00000000-0000-4000-8000-000000000009') $$, (select value from kept where label = 'path')),
   'allowed: landing_pictures_insert_website_staff lets an admin upload under a page');
-select pg_temp.sign_in('00000000-0000-4000-8000-000000000010');
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000011');
 select throws_ok(format($$ insert into storage.objects (bucket_id, name, owner_id)
-  values ('landing-pictures', %L, '00000000-0000-4000-8000-000000000010') $$,
+  values ('landing-pictures', %L, '00000000-0000-4000-8000-000000000011') $$,
   (select id::text from kept where label = 'page') || '/' || gen_random_uuid()::text || '.png'),
-  '42501', null, 'denied: landing_pictures_insert_website_staff refuses a moderator');
+  '42501', null, 'denied: landing_pictures_insert_website_staff refuses support');
 select throws_ok(format($$ select public.register_landing_picture(%L) $$, (select value from kept where label = 'path')),
-  '42501', null, 'a moderator can''t register a landing page picture');
+  '42501', null, 'support can''t register a landing page picture');
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000009');
 insert into kept (label, id) values ('picture', public.register_landing_picture((select value from kept where label = 'path')));
@@ -83,9 +83,9 @@ select pg_temp.sign_in('00000000-0000-4000-8000-000000000009');
 select is(public.admin_landing_picture_states((select id from kept where label = 'page'))
   #>> array[(select id::text from kept where label = 'picture'), 'state'], 'checking',
   'the editor reads the picture''s state: being checked');
-select pg_temp.sign_in('00000000-0000-4000-8000-000000000010');
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000011');
 select throws_ok(format($$ select public.admin_landing_picture_states(%L) $$, (select id from kept where label = 'page')),
-  '42501', null, 'a moderator can''t read the editor''s picture states');
+  '42501', null, 'support can''t read the editor''s picture states');
 reset role;
 
 /* ---------- Who reads the file ---------- */

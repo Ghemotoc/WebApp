@@ -1,6 +1,6 @@
 # Landing pages
 
-Pages at `/c/<name>` for contests, campaigns and information, built by admins from fixed blocks in
+Pages at `/c/<name>` for contests, campaigns and information, built by staff from fixed blocks in
 Romanian and English (story S1-E11-14). Built in bundle CONTESTS-13a1; pictures and featured stories
 in 13a2a; Remind me in 13a2b; the link preview (`server/landing-preview.ts`) and CMS links to /c/ in 13a2c, contests themselves in 13b.
 
@@ -17,6 +17,9 @@ in 13a2a; Remind me in 13a2b; the link preview (`server/landing-preview.ts`) and
 - `hooks/useLandingReminder.ts` and `components/RemindMeBlock.tsx`: Remind me (part 13a2b).
 - `components/ContestResultsBlock.tsx`: a contest's published winners and finalists by pen name
   (contests part 13b2b).
+- `components/staff/LandingPagesAdminPage.tsx` (Staff › Page builder, the `landing_pages` area),
+  `components/BuilderBlocks.tsx`, `components/staff/EntryItemsFields.tsx`, `lib/entries.ts` and
+  `lib/builderKinds.ts`: the easier page builder and its five blocks (story S1-E11-34, CMS-2b).
 - `lib/blocks.ts`: adding, moving and changing blocks without a server; `lib/problemLabels.ts`:
   names the fields the server says to fix.
 

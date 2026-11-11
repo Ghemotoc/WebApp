@@ -8,11 +8,14 @@
  */
 import {
   landingFieldRules,
+  landingLinkKinds,
   type LandingBlock,
   type LandingBlockKind,
   type LandingContent,
   type LandingLanguage,
 } from '@/schemas/landingPages';
+
+import { emptyEntries, isEntryKind } from './entries';
 
 /**
  * A new, empty block of one kind, with every text field present in both languages.
@@ -29,7 +32,13 @@ export function newBlock(kind: LandingBlockKind, id: string): LandingBlock {
   // Step 2: the fields some kinds share between the languages.
   if (kind === 'key_dates') block.dates = { entries_open: '', entries_close: '', results: '' };
   if (kind === 'who_can_enter') block.age_groups = [];
-  if (kind === 'rules') block.link = '';
+  // A Rules block and a call to action both link somewhere (S1-E11-34).
+  if (landingLinkKinds.includes(kind)) block.link = '';
+  // Cards and Steps start with the fewest entries they need, in both languages (S1-E11-34).
+  if (isEntryKind(kind)) {
+    block.ro.entries = emptyEntries(kind);
+    block.en.entries = emptyEntries(kind);
+  }
   if (kind === 'featured') {
     block.mode = 'hand';
     block.story_slugs = [];

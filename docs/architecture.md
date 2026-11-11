@@ -576,6 +576,7 @@ Stage 1 staff roles are **owner**, **admin**, **moderator**, **support** and **c
 | Schools and teacher checks | Act | Act | with the permission | None | None |
 | Website CMS (pages, notices, help and questions) | Act | Act | None | None | None |
 | Interface text (S1-E11-18) | Act | Act | None | None | None |
+| Landing pages: page builder (S1-E11-14, S1-E11-34) | Act | Act | Act | None | None |
 | Sponsors | Act | Act | None | None | None |
 | Settings and flags | Act | Act | None | None | None |
 | Markets: open a market | Act | None | None | None | None |

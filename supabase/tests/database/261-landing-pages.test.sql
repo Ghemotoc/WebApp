@@ -2,7 +2,7 @@
 -- What it proves:
 -- - only owner and admin read pages and versions (landing_pages_select_staff and
 --   landing_page_versions_select_staff, allowed and denied) and create, save, publish, restore
---   or archive; a moderator, a content editor and a member are refused (decided 17 Oct 2026, 19:19);
+--   or archive; support, a content editor and a member are refused (decided 17 Oct 2026, 19:19);
 -- - an address must be well formed, not reserved and not taken (criterion 1), and "c" is now a
 --   reserved name, so no one can sign up as @c;
 -- - a draft or an empty page is never shown at /c/<slug>; publishing refuses a page without a hero
@@ -49,9 +49,9 @@ insert into kept (label, value) values ('contest', $json${"theme": "gold", "bloc
 
 /* ---------- Who writes ---------- */
 
-select pg_temp.sign_in('00000000-0000-4000-8000-000000000010');
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000011');
 select throws_ok($$ select public.admin_create_landing_page('toamna', 'contest') $$,
-  '42501', null, 'a moderator can''t create a landing page');
+  '42501', null, 'support can''t create a landing page');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000012');
 select throws_ok($$ select public.admin_create_landing_page('toamna', 'contest') $$,
   '42501', null, 'a content editor can''t create one (admin role only)');
@@ -88,11 +88,11 @@ select ok((select count(*) from public.landing_page_versions) > 0,
   'allowed: landing_page_versions_select_staff lets an admin read the versions');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000008');
 select ok((select count(*) from public.landing_pages) > 0, 'allowed: the owner reads the pages too');
-select pg_temp.sign_in('00000000-0000-4000-8000-000000000010');
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000011');
 select is((select count(*)::integer from public.landing_pages), 0,
-  'denied: landing_pages_select_staff hides the pages from a moderator');
+  'denied: landing_pages_select_staff hides the pages from support');
 select is((select count(*)::integer from public.landing_page_versions), 0,
-  'denied: landing_page_versions_select_staff hides the versions from a moderator');
+  'denied: landing_page_versions_select_staff hides the versions from support');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 select is((select count(*)::integer from public.landing_page_versions), 0,
   'denied: landing_page_versions_select_staff hides the versions from a member');
