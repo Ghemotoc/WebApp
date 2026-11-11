@@ -9,10 +9,16 @@
 import { signInWithPassword, type SignInResult } from '@/features/auth/api/signIn';
 import type { AppSupabaseClient } from '@/lib/supabase';
 
+/**
+ * Why an account is closing: the person chose "Delete my account", or nobody used it for 5 years
+ * and the nightly job closed it (INACTIVE-2).
+ */
+export type ClosingReason = 'requested' | 'unused';
+
 /** Where the account stands: open (with whether it may be deleted now) or closing. */
 export type AccountDeletionState =
   | { state: 'open'; signedInRecently: boolean; deletionDays: number }
-  | { state: 'closing'; requestedAt: string; deleteAfter: string };
+  | { state: 'closing'; requestedAt: string; deleteAfter: string; reason: ClosingReason };
 
 /** What request_account_deletion() answered. */
 export type DeletionRequestOutcome =
@@ -29,6 +35,7 @@ interface DeletionStateReply {
   deletion_days?: number;
   requested_at?: string;
   delete_after?: string;
+  reason?: string;
 }
 
 /**
@@ -50,7 +57,13 @@ export async function fetchMyAccountDeletion(
     reply.requested_at !== undefined &&
     reply.delete_after !== undefined
   ) {
-    return { state: 'closing', requestedAt: reply.requested_at, deleteAfter: reply.delete_after };
+    return {
+      state: 'closing',
+      requestedAt: reply.requested_at,
+      deleteAfter: reply.delete_after,
+      // Anything but 'unused' is treated as the person's own request, the careful reading.
+      reason: reply.reason === 'unused' ? 'unused' : 'requested',
+    };
   }
   return {
     state: 'open',

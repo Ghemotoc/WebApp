@@ -27,6 +27,7 @@ import romanianEmail from '../src/locales/ro/email.json';
 
 import type { EmailSender, OutgoingEmail, SendEmail } from './contact';
 import { textOf } from './send-email';
+import { ACCOUNT_CLOSING_PATH } from '../src/lib/account-closing-path';
 import { writtenLanguageFor } from '../src/schemas/interfaceLanguages';
 
 /** The texts of one language, as in email.json. */
@@ -52,8 +53,9 @@ export interface EmailNotificationItem {
     | 'data_request_copy_ready'
     | 'picture_opened_by_staff'
     | 'waitlist_admitted'
+    | 'account_unused_nudge'
     | 'account_unused_month'
-    | 'account_unused_week'
+    | 'account_unused_closed'
     | 'new_message';
   actors: { handle: string; display_name: string }[];
   actor_count: number;
@@ -112,16 +114,17 @@ const lineKeys: Record<EmailNotificationItem['kind'], string> = {
   data_request_copy_ready: 'dataRequestCopyReady',
   picture_opened_by_staff: 'pictureOpenedByStaff',
   waitlist_admitted: 'waitlistAdmitted',
+  account_unused_nudge: 'accountUnusedNudge',
   account_unused_month: 'accountUnusedMonth',
-  account_unused_week: 'accountUnusedWeek',
+  account_unused_closed: 'accountUnusedClosed',
   new_message: 'newMessage',
 };
 
 /**
  * The kinds that are about the person's own account, never about other people, so their line has
  * no "who" and no plural form: decisions (S1-E10-04), ways to log in (S1-E2-09), an archived
- * class (S1-E8-12), data requests (S1-E11-09), "You're in" (WAITLIST-1) and the two notices before
- * an unused account is deleted (INACTIVE-1).
+ * class (S1-E8-12), data requests (S1-E11-09), "You're in" (WAITLIST-1) and the emails to an
+ * account nobody uses: the nudges, the closing notice and the closing email (INACTIVE-2).
  */
 const accountKinds = new Set<EmailNotificationItem['kind']>([
   'moderation_decision',
@@ -132,8 +135,9 @@ const accountKinds = new Set<EmailNotificationItem['kind']>([
   'data_request_extended',
   'data_request_copy_ready',
   'waitlist_admitted',
+  'account_unused_nudge',
   'account_unused_month',
-  'account_unused_week',
+  'account_unused_closed',
 ]);
 
 /** The subject of each kind that is always sent (delivery 'required'), by its email.json key. */
@@ -147,8 +151,9 @@ const requiredSubjectKeys: Partial<Record<EmailNotificationItem['kind'], string>
   data_request_copy_ready: 'subjectDataRequestCopyReady',
   picture_opened_by_staff: 'subjectPictureOpenedByStaff',
   waitlist_admitted: 'subjectWaitlistAdmitted',
+  account_unused_nudge: 'subjectAccountUnusedNudge',
   account_unused_month: 'subjectAccountUnusedMonth',
-  account_unused_week: 'subjectAccountUnusedWeek',
+  account_unused_closed: 'subjectAccountUnusedClosed',
 };
 
 /**
@@ -317,8 +322,33 @@ function introOf(claimed: ClaimedEmail, read: ReadText): string {
 }
 
 /**
+ * The link in an email to an account nobody uses (INACTIVE-2): the log-in page for a nudge and
+ * the closing notice, because logging in is all it takes to keep the account; for a closed
+ * account, the log-in page followed by the page where the data can be downloaded without keeping
+ * the account (Robert, 11 Nov 2026, 19:42 and 19:43 UTC).
+ *
+ * @param kind - the email's first notification kind
+ * @returns the line, or null for every other kind
+ */
+function unusedAccountLinkOf(
+  kind: EmailNotificationItem['kind'] | undefined,
+  siteUrl: string,
+  read: ReadText,
+): string | null {
+  if (kind === 'account_unused_nudge' || kind === 'account_unused_month') {
+    return read('notificationEmails.accountUnusedSignIn', { link: `${siteUrl}/sign-in` });
+  }
+  if (kind === 'account_unused_closed') {
+    return read('notificationEmails.accountUnusedDownload', {
+      link: `${siteUrl}/sign-in?next=${encodeURIComponent(ACCOUNT_CLOSING_PATH)}`,
+    });
+  }
+  return null;
+}
+
+/**
  * The link back: the chat itself for a private message (by the sender's username), the log-in page
- * for "You're in" and for the notices before an unused account is deleted, otherwise the
+ * for "You're in" and the emails to an unused account (the download page once it is closed), otherwise the
  * Notifications page.
  *
  * @returns the line
@@ -328,11 +358,9 @@ function seeAllOf(claimed: ClaimedEmail, siteUrl: string, read: ReadText): strin
   if (claimed.items[0]?.kind === 'waitlist_admitted') {
     return read('notificationEmails.waitlistSignIn', { link: `${siteUrl}/sign-in` });
   }
-  // An unused account (INACTIVE-1): logging in is all it takes to keep it, so the link goes there.
-  const firstKind = claimed.items[0]?.kind;
-  if (firstKind === 'account_unused_month' || firstKind === 'account_unused_week') {
-    return read('notificationEmails.accountUnusedSignIn', { link: `${siteUrl}/sign-in` });
-  }
+  // An account nobody uses (INACTIVE-2) gets a link of its own.
+  const unusedAccountLink = unusedAccountLinkOf(claimed.items[0]?.kind, siteUrl, read);
+  if (unusedAccountLink !== null) return unusedAccountLink;
   const sender = claimed.items[0]?.actors[0]?.handle;
   if (claimed.delivery === 'message' && sender !== undefined) {
     return read('notificationEmails.messageOpen', {

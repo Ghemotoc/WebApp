@@ -1,14 +1,17 @@
--- Database tests for misusing the unused-account job (bundle INACTIVE-1, its break test).
+-- Database tests for misusing the unused-account job (bundles INACTIVE-1 and INACTIVE-2, their
+-- break test).
 -- What it proves:
 -- - a signed-in member can't call the job's internal steps (hide, close, notice, last use) or write
 --   the day of use by hand to stop or speed up the countdown; a visitor can't note a day of use;
 -- - the job runs over every persona at once and never closes the classics account, an account with
 --   abuse image evidence, an account already closing or a staff account;
--- - a suspended (not banned) account closes like any other.
+-- - a suspended (not banned) account closes like any other;
+-- - a member can't reach the new internal steps either, and a deleted account or a visitor can't
+--   ask for a copy of data (only a live or still-closing account can).
 -- Who runs it: `npx supabase test db`.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(14);
+select plan(19);
 
 create function pg_temp.sign_in_as(user_id uuid) returns void language sql as $$
   select set_config('request.jwt.claims', json_build_object('sub', user_id, 'role', 'authenticated')::text, true);
@@ -24,7 +27,7 @@ select pg_temp.sign_in_as('00000000-0000-4000-8000-000000000001');
 set local role authenticated;
 select throws_ok($$select public.hide_closing_account('00000000-0000-4000-8000-000000000015')$$, '42501', null, 'a member can''t hide someone else''s account');
 select throws_ok($$select public.close_unused_account('00000000-0000-4000-8000-000000000015')$$, '42501', null, 'a member can''t close someone else''s account');
-select throws_ok($$select public.send_unused_account_notice('00000000-0000-4000-8000-000000000015', current_date, 'week')$$, '42501', null, 'a member can''t send a notice');
+select throws_ok($$select public.send_unused_account_notice('00000000-0000-4000-8000-000000000015', current_date, 'notice')$$, '42501', null, 'a member can''t send a notice');
 select throws_ok($$select public.account_last_used_on('00000000-0000-4000-8000-000000000015')$$, '42501', null, 'a member can''t read another account''s last use');
 -- 5-7: nor write the day of use by hand, to stop or speed up the countdown.
 select throws_ok($$insert into public.account_last_used (user_id, used_on) values ('00000000-0000-4000-8000-000000000001', current_date + 3650)$$, '42501', null, 'a member can''t write a day of use far in the future');
@@ -37,13 +40,13 @@ set local role anon;
 select throws_ok($$select public.note_active_minute(false)$$, '42501', null, 'a visitor can''t note a day of use');
 reset role;
 
--- Every persona looks unused for 5 years and 2 days, with the week notice 8 days old.
-select pg_temp.last_used_ago(id, interval '5 years 2 days') from public.profiles where deleted_at is null;
-insert into public.account_last_used (user_id, notices_for, month_notice_at, week_notice_at)
-select id, public.account_last_used_on(id), now() - interval '30 days', now() - interval '8 days'
+-- Every persona looks unused for 5 years and 32 days, with the closing notice 31 days old.
+select pg_temp.last_used_ago(id, interval '5 years 32 days') from public.profiles where deleted_at is null;
+insert into public.account_last_used (user_id, notices_for, closing_notice_at)
+select id, public.account_last_used_on(id), now() - interval '31 days'
 from public.profiles where deleted_at is null
 on conflict (user_id) do update set notices_for = excluded.notices_for,
-  month_notice_at = excluded.month_notice_at, week_notice_at = excluded.week_notice_at;
+  closing_notice_at = excluded.closing_notice_at;
 
 -- The classics account is "blocked" for this test; "teacher" has abuse image evidence held;
 -- "teen_17" has an open deletion request already.
@@ -62,6 +65,24 @@ select is((select count(*)::integer from public.account_deletions a join public.
 
 -- 14: everyone else who qualifies did close, the suspended account included.
 select isnt((select deleted_at from public.profiles where id = '00000000-0000-4000-8000-000000000013'), null, 'a suspended (not banned) account closes like any other');
+
+-- 15-17: the new internal steps are closed to members too (INACTIVE-2).
+select pg_temp.sign_in_as('00000000-0000-4000-8000-000000000015');
+set local role authenticated;
+select throws_ok($$select public.unused_account_nudges_due(current_date - 2000)$$, '42501', null, 'a member can''t ask how many nudges are due');
+select throws_ok($$select public.unused_account_step(current_date - 2000, null, null, 0)$$, '42501', null, 'a member can''t ask for tonight''s step');
+select throws_ok($$select public.require_export_caller()$$, '42501', null, 'a member can''t call the export check by hand');
+reset role;
+
+-- 18-19: only a live or still-closing account gets a copy of data.
+update public.account_deletions set completed_at = now() where user_id = '00000000-0000-4000-8000-000000000013';
+select pg_temp.sign_in_as('00000000-0000-4000-8000-000000000013');
+set local role authenticated;
+select throws_ok($$select public.my_data_export()$$, '42501', null, 'an account whose deletion was carried out gets no copy');
+reset role;
+set local role anon;
+select throws_ok($$select public.my_data_export()$$, '42501', null, 'a visitor gets no copy');
+reset role;
 
 select * from finish();
 rollback;

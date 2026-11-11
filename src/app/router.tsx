@@ -11,6 +11,7 @@ import { Navigate, type RouteObject } from 'react-router';
 
 import { ErrorPage } from '@/features/errors/components/ErrorPage';
 import { prefetchChapter } from '@/features/reading/api/chapterPrefetch';
+import { ACCOUNT_CLOSING_PATH } from '@/lib/account-closing-path';
 
 import { AppLayout } from './shell/AppLayout';
 import { NotFoundPage } from './shell/NotFoundPage';
@@ -435,6 +436,18 @@ const accountDeletionRoutes: RouteObject[] = [
       const { DeleteAccountPage } =
         await import('@/features/account-deletion/components/DeleteAccountPage');
       return { Component: DeleteAccountPage };
+    },
+  },
+  {
+    // Where the closing email's link lands after logging in (INACTIVE-2). While the account is
+    // closing, AccountClosingGate shows the closing page here instead; this route only sends
+    // everyone else on.
+    path: ACCOUNT_CLOSING_PATH,
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { AccountClosingRedirect } =
+        await import('@/features/account-deletion/components/AccountClosingRedirect');
+      return { Component: AccountClosingRedirect };
     },
   },
 ];

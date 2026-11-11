@@ -47,7 +47,10 @@
     "keep": "Keep account",
     "logOut": "Log out",
     "keepFailed": "We couldn’t keep the account. Try again in a minute.",
-    "kept": "Welcome back. The account is open again."
+    "kept": "Welcome back. The account is open again.",
+    "unusedBody": "We closed the account because nobody had logged in for 5 years. We delete it for good on {{date}}.",
+    "unusedChoices": "You can download a copy of the data below. Downloading doesn’t keep the account. To keep it, choose Keep account or go on to any other page.",
+    "keeping": "Opening the account again…"
   },
   "page": {
     "heading": "Delete account",

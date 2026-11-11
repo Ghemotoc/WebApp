@@ -234,34 +234,38 @@ describe('the notification email worker', () => {
     expect(email?.headers).toBeUndefined();
   });
 
-  it('warns about a month and about a week before deleting an unused account, with a link to log in (INACTIVE-1)', async () => {
+  it('nudges, warns 30 days before and tells an unused account it closed, each with its link (INACTIVE-2)', async () => {
     const unused = (kind: EmailNotificationItem['kind']): EmailNotificationItem => ({
       ...followers,
       kind,
       actors: [],
       actor_count: 0,
     });
-    const [monthEmail, weekEmail] = await sendOnce([
-      claimed({
-        delivery: 'required',
-        unsubscribe_key: null,
-        items: [unused('account_unused_month')],
-      }),
-      claimed({
-        delivery: 'required',
-        unsubscribe_key: null,
-        items: [unused('account_unused_week')],
-      }),
+    const required = (kind: EmailNotificationItem['kind']) =>
+      claimed({ delivery: 'required', unsubscribe_key: null, items: [unused(kind)] });
+    const [nudgeEmail, noticeEmail, closedEmail] = await sendOnce([
+      required('account_unused_nudge'),
+      required('account_unused_month'),
+      required('account_unused_closed'),
     ]);
-    expect(monthEmail?.subject).toBe('The Product account will be deleted in about a month');
-    expect(monthEmail?.text).toContain('almost 5 years');
-    expect(monthEmail?.text).toMatch(/Log in to keep it: \S+\/sign-in/);
-    expect(monthEmail?.text).toContain('we always send it');
-    expect(monthEmail?.headers).toBeUndefined();
-    expect(weekEmail?.subject).toBe(
-      'Last notice: the Product account will be deleted in about a week',
+    // The nudge: no date, only the rule and how to keep the account.
+    expect(nudgeEmail?.subject).toBe('The Product account hasn’t been used for a while');
+    expect(nudgeEmail?.text).toContain('Accounts nobody uses for 5 years are closed');
+    expect(nudgeEmail?.text).toMatch(/Log in to keep it: \S+\/sign-in/);
+    expect(nudgeEmail?.headers).toBeUndefined();
+    // The notice: 30 days, and the promise of the download link.
+    expect(noticeEmail?.subject).toBe('The Product account closes in 30 days');
+    expect(noticeEmail?.text).toContain('we’ll email a link for downloading');
+    expect(noticeEmail?.text).toMatch(/Log in to keep it: \S+\/sign-in/);
+    expect(noticeEmail?.text).toContain('we always send it');
+    // The closing email: the link logs in and opens the download page; no data in the email.
+    expect(closedEmail?.subject).toBe(
+      'The Product account is closed: download the data within 14 days',
     );
-    expect(weekEmail?.text).toContain('in about a week');
+    expect(closedEmail?.text).toContain('Downloading doesn’t keep the account');
+    expect(closedEmail?.text).toMatch(
+      /Log in to download the data: \S+\/sign-in\?next=%2Faccount-closing/,
+    );
   });
 
   it('tells a teacher their class is archived, always, naming the class (S1-E8-12)', async () => {

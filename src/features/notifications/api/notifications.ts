@@ -57,7 +57,9 @@ export type NotificationKind =
   | 'spotlight_consent_withdrawn'
   | 'waitlist_admitted'
   | 'account_unused_month'
-  | 'account_unused_week';
+  | 'account_unused_week'
+  | 'account_unused_nudge'
+  | 'account_unused_closed';
 
 /** The board's filter chips (All is every category). */
 export type NotificationCategory = 'replies' | 'follows' | 'stories' | 'staff';
