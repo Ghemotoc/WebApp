@@ -26,9 +26,15 @@ import { useCertificatesTranslation } from '../registerCertificatesTranslations'
 
 import { CertificateFrame, CertificateSeal } from './CertificateFrame';
 
-/** The styles every choice shares: a 44 px target with a visible focus ring on the input. */
+/** The styles every choice shares: a visible focus ring on the hidden input's label. */
 const choiceClasses =
-  'relative flex h-11 w-11 cursor-pointer items-center justify-center rounded-full has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-(--focus-ring) has-[:focus-visible]:outline-solid';
+  'relative flex cursor-pointer items-center justify-center has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-(--focus-ring) has-[:focus-visible]:outline-solid';
+
+/** A colour swatch: a 44 px circle (the board's 40 px, raised to the 44 px touch target). */
+const swatchClasses = `${choiceClasses} h-11 w-11 rounded-full`;
+
+/** A pattern tile: the board's 56 px square with 14 px corners. */
+const tileClasses = `${choiceClasses} h-14 w-14 rounded-[14px]`;
 
 /**
  * The colour swatches.
@@ -44,7 +50,7 @@ function ColourChoices({ look, onChange }: CertificateLookPickerProps) {
         {certificateColours.map((colour) => (
           <label
             key={colour}
-            className={choiceClasses}
+            className={swatchClasses}
             style={{ background: certificateFrameBackground(colour) }}
           >
             <input
@@ -78,7 +84,7 @@ function PatternTile({ pattern, look }: { pattern: CertificatePattern; look: Cer
       preserveAspectRatio="xMidYMid slice"
       aria-hidden="true"
       focusable="false"
-      className="absolute inset-0 h-full w-full rounded-full opacity-40"
+      className="absolute inset-0 h-full w-full opacity-40"
       style={{ color: certificateColourHex[look.colour].light }}
     >
       {artwork.fillPath !== '' && <path d={artwork.fillPath} fill="currentColor" />}
@@ -108,7 +114,7 @@ function PatternChoices({ look, onChange }: CertificateLookPickerProps) {
         {certificatePatterns.map((pattern) => (
           <label
             key={pattern}
-            className={`${choiceClasses} overflow-hidden border border-control bg-white`}
+            className={`${tileClasses} overflow-hidden border border-control bg-white`}
           >
             <input
               type="radio"
