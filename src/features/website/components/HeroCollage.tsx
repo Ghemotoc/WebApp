@@ -104,7 +104,7 @@ function CoverColumns({ stories }: { stories: ListedStory[] }) {
 function RightsCard({ card }: { card: HomeRightsCard | undefined }) {
   if (card === undefined || card.title.trim() === '') return null;
   return (
-    <div className="absolute top-0 right-0 z-10 flex w-[210px] max-w-[46%] rotate-[5deg] flex-col gap-1 rounded-[18px] bg-gold px-4 py-3.5 text-on-gold shadow-[0_20px_36px_-18px_rgba(38,20,46,0.55)]">
+    <div className="absolute top-0 right-0 z-10 flex w-[210px] max-w-[46%] rotate-[5deg] flex-col gap-1 glass-band-tint rounded-[18px] bg-gold px-4 py-3.5 text-on-gold">
       {/* The eyebrow's type in the card's dark text: dark gold on gold would be unreadable. */}
       <p className="eyebrow-type m-0">{withBrand(card.eyebrow)}</p>
       <p className="m-0 font-heading text-lg leading-[1.05] font-extrabold">
