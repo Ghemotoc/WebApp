@@ -8,7 +8,7 @@
  * - an animated WebP is a RIFF file with a "VP8X" header whose animation flag is set, or with an
  *   "ANIM" chunk.
  * JPEG can't move, and GIF is refused earlier as the wrong type.
- * Who calls it: src/features/pictures/api/pictures.ts (refuses an animated signature picture
+ * Who calls it: src/features/pictures/api/pictureUploads.ts (refuses an animated signature picture
  * before it is uploaded) and server/picture-check.ts (holds one that reached Storage some other
  * way). What it calls: nothing; it only reads the bytes it is given.
  */

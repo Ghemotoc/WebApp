@@ -43,6 +43,8 @@
   --nav-glass: rgba(255, 255, 255, 0.5);
   /* The bright rim of every glass surface (handoff: --glass-border). */
   --glass-border: rgba(255, 255, 255, 0.8);
+  /* The main website's glass rim (--lg-rim, engage-grow-hub): raised pills and glass boxes (GLASS-3). */
+  --lg-rim: rgb(255 255 255 / 0.85);
   /* The soft highlight along the top inside edge of glass. */
   --glass-highlight: rgba(255, 255, 255, 0.95);
   /* Input fill (handoff: --field). */
@@ -246,6 +248,7 @@
   --nav-glass: rgba(255, 255, 255, 0.06);
   /* The glass rim: white at 14%. */
   --glass-border: rgba(255, 255, 255, 0.14);
+  --lg-rim: rgba(255, 255, 255, 0.14);
   --glass-highlight: rgba(255, 255, 255, 0.14);
   --field: rgba(255, 255, 255, 0.08);
   /* The same 3D glass at night: white that thins downwards, darker shades, a black shadow. */

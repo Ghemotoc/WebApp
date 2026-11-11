@@ -9,7 +9,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
-import { PictureUploadError, uploadSponsorCreative } from '@/features/pictures/api/pictures';
+import { PictureUploadError, uploadSponsorCreative } from '@/features/pictures/api/pictureUploads';
 import type { CampaignFields } from '@/schemas/sponsors';
 
 import {

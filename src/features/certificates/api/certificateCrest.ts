@@ -11,16 +11,18 @@
  * class's own teacher) and when anyone else may see it (once its check passed; CLAUDE.md rule 19).
  */
 import {
-  deleteStoredPicture,
   pictureFromJson,
-  PictureUploadError,
   pictureViewOf,
-  registrationFailure,
   requestPictureCheck,
-  storePicture,
   type PictureView,
   type StoredPicture,
 } from '@/features/pictures/api/pictures';
+import {
+  deleteStoredPicture,
+  PictureUploadError,
+  registrationFailure,
+  storePicture,
+} from '@/features/pictures/api/pictureUploads';
 import { longestSideFor } from '@/features/pictures/lib/preparePicture';
 import { SvgDrawingError, svgToPng, svgType } from '@/features/pictures/lib/svgToPng';
 import type { Json } from '@/lib/database.types';

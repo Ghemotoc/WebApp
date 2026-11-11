@@ -8,7 +8,7 @@
  * Who uses it: PictureInsertDialog.
  */
 
-import { pictureTypes } from '@/features/pictures/api/pictures';
+import { pictureTypes } from '@/features/pictures/api/pictureUploads';
 import { useEditorTranslation } from '../registerEditorTranslations';
 
 /** What the field needs. */

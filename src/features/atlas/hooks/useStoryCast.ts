@@ -11,7 +11,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
 import { useSession } from '@/features/auth/hooks/useSession';
-import { uploadAtlasPicture } from '@/features/pictures/api/pictures';
+import { uploadAtlasPicture } from '@/features/pictures/api/pictureUploads';
 
 import {
   addCharacterField,
