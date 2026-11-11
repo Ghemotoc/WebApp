@@ -29,8 +29,8 @@ interface Asked {
 
 /** Two markets: Romania is open, Sweden isn't yet. */
 const markets: WebsiteMarket[] = [
-  { countryCode: 'RO', languages: ['ro', 'en'], isOpen: true },
-  { countryCode: 'SE', languages: ['sv', 'en'], isOpen: false },
+  { countryCode: 'RO', languages: ['ro', 'en'], listedLanguages: ['ro', 'en'] },
+  { countryCode: 'SE', languages: ['sv', 'en'], listedLanguages: [] },
 ];
 
 /** A host that serves indexHtml and answers with the given head (or throws). */

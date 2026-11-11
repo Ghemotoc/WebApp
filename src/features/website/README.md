@@ -8,13 +8,21 @@ the locale files; the buttons and labels around it are interface text in `common
 - `api/websiteContentStore.ts`: the `WebsiteContentStore` contract and its March store, the app's
   own database. The schemas are in `src/schemas/websiteContent.ts`.
 - `hooks/useWebsiteContent.ts`: what a visitor sees of one kind, parsed and with the last known copy
-  as a fallback. `hooks/useWebsiteEditor.ts`: one kind in one market for the editors.
-  `hooks/useMarkets.ts`: the markets and their languages.
+  as a fallback. `hooks/useWebsiteEditor.ts`: one kind for the editors, the shared pages or one
+  country's own wording. `hooks/useMarkets.ts`: the markets and their languages.
+- Addresses (bundle LOCALISE-1): every page here lives at `/<country>/<language>/…`.
+  `components/LocalisedWebsiteLayout.tsx` checks the place and keeps the address and interface in
+  one language; `components/WebsiteForward.tsx` sends the older addresses there;
+  `components/WebsiteLink.tsx` and `hooks/useWebsitePlace.ts` keep a reader's place in links;
+  `hooks/useWebsiteMarkets.ts` reads which places exist. The text handling is in
+  `src/lib/websitePlace.ts`, shared with the server.
 - Public pages: `components/WebsiteHomePage.tsx` (with `HomeHero`, `WhyWriteSection`,
   `SafetySection`, `QuestionList`, `QuestionsStructuredData`), `NoticeStrip.tsx`,
   `HelpCentrePage.tsx` (with `HelpTopicTiles` and `HelpStillStuck`), `HelpPageView.tsx` and
   `CmsMarkdown.tsx`, which shows the safe Markdown subset. G5b gave them the glass look.
-- Staff pages: `components/staff/WebsiteAdminPage.tsx` with the three editors (`HomePageEditor`,
+- Staff pages: `components/staff/WebsiteAdminPage.tsx` with the language picker at the side
+  (`PagePlacePicker`, with `hooks/useInterfaceLanguages.ts`: one page per entry, edited in the
+  picked language), the three editors (`HomePageEditor`,
   `NoticeEditor`, `HelpEditor`) and the parts they share (`CountedField`, `MarkdownField`,
   `PublishControls`, `VersionHistory`, `EditorFeedback`).
 - `lib/`: small pure helpers, each with a test where it holds logic (`versionState.ts` sorts an

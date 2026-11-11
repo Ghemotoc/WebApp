@@ -279,6 +279,9 @@ begin
   if version_row.content_kind = 'home_page' then
     -- A home page: its own fields, then its search fields (S1-E11-37).
     problems := public.cms_home_page_problems(body) || public.cms_search_problems(body -> 'search');
+    -- The underlined word is no longer drawn and the editor no longer shows it (LOGO-2; Robert,
+    -- 11 Nov 2026), so a page written from nothing (a new language) has none: not a problem.
+    problems := array_remove(problems, 'underlinedWord:not_in_headline');
   elsif version_row.content_kind = 'question' then
     -- A question: the question, the answer (safe Markdown) and where it shows.
     problems := problems || public.cms_text_problem(body ->> 'question', 'question', 160)
@@ -455,7 +458,9 @@ begin
   end if;
   -- Step 2: a published removal from today hides the entry; earlier versions stay for Restore.
   insert into public.cms_versions (content_kind, entry_key, market_code, language_code, status, is_removal, show_from, user_id, published_at)
-  values (content_kind, entry_key, market_code, language_code, 'published', true, public.romania_today(), (select auth.uid()), now())
+  -- clock_timestamp(), not now(): a removal made in the same transaction as the publish it takes
+  -- down must still count as the later of the two (cms_live_versions() picks the latest).
+  values (content_kind, entry_key, market_code, language_code, 'published', true, public.romania_today(), (select auth.uid()), clock_timestamp())
   returning * into removal;
   perform public.log_staff_action('website.removed', 'cms_versions', removal.id::text, null, null,
     jsonb_build_object('content', live_content),
@@ -513,12 +518,46 @@ comment on function public.contest_rules_are_published(public.contests) is
   'Internal: true when the contest rules help page is live for every market of the contest, in English or in each of the market''s languages (S1-E11-15; LOCALISE-1).';
 
 /**
+ * website_places: which "/<country>/<language>" places the website has.
+ *
+ * @returns one row per market: its country code, the languages its pages can be read in
+ *   (markets.languages) and, of those, the ones search engines are told about: the open languages
+ *   of an open market (none while the market or the language is closed)
+ * Where it fits: the app checks an address's place against it and sends a visitor without one to
+ * theirs (src/lib/websitePlace.ts); the server writes the hreflang links from it; the sitemap
+ * lists the same places (LOCALISE-1). Anyone may call it: which countries and languages exist is
+ * public, and nothing in it is personal.
+ */
+create or replace function public.website_places()
+returns table (country_code text, languages text[], listed_languages text[])
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select markets.country_code, markets.languages,
+    case when markets.is_open then coalesce((
+      select array_agg(spoken.language_code order by spoken.position)
+      from unnest(markets.languages) with ordinality as spoken (language_code, position)
+      join public.languages on languages.code = spoken.language_code
+      where languages.status = 'open'
+    ), array[]::text[]) else array[]::text[] end
+  from public.markets
+  order by markets.country_code;
+$$;
+
+comment on function public.website_places() is
+  'The website''s places: each market with its languages and the ones search engines are told about (LOCALISE-1).';
+revoke execute on function public.website_places() from public;
+grant execute on function public.website_places() to anon, authenticated;
+
+/**
  * sitemap_entries: every address search engines may list.
  *
  * @returns each path with the day it last changed (null when unknown), at most 50,000
  * Where it fits: server/sitemap.ts builds /sitemap.xml from it. Website pages are listed at their
- * own addresses, /<country>/<language>/..., once for each language of each open market
- * (LOCALISE-1); Discover and the stories have one address each.
+ * own addresses, /<country>/<language>/..., once for each open language of each open market
+ * (website_places(), LOCALISE-1); Discover and the stories have one address each.
  */
 create or replace function public.sitemap_entries()
 returns table (path text, changed_on date)
@@ -528,12 +567,11 @@ security definer
 set search_path = ''
 as $$
   with places as (
-    -- Each open market in each of its languages: "/ro/ro", "/ro/en".
-    select markets.country_code, spoken.language_code,
-      '/' || lower(markets.country_code) || '/' || spoken.language_code as prefix
-    from public.markets
-    cross join unnest(markets.languages) as spoken (language_code)
-    where markets.is_open
+    -- Each open market in each of its open languages: "/ro/ro", "/ro/en".
+    select listed.country_code, spoken.language_code,
+      '/' || lower(listed.country_code) || '/' || spoken.language_code as prefix
+    from public.website_places() as listed
+    cross join unnest(listed.listed_languages) as spoken (language_code)
   )
   (
     -- Step 1: the home page and the help centre at each place, and Discover. The home page and

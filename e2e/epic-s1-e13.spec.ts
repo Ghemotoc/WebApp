@@ -13,7 +13,8 @@
  *    Word file and makes its EPUB from the same block; once the Word copy's seven days are over
  *    the nightly clean-up removes it and the block no longer offers it;
  * 4. Delete my account × Download my data: teen_17 closes their account, the closing page stands
- *    in front of Settings, and after "Keep account" Download my data works again;
+ *    in front of Settings and keeps only Download my data (INACTIVE-2), and after "Keep account"
+ *    Settings is back with Download my data working;
  * 5. Settings at 390, 768 and 1440 px, at night, in Romanian, as kid_14_ok, scrolled to each of the
  *    epic's four sections: no serious axe issue and nothing scrolls sideways.
  * Test data: everything this file makes is removed at the start and the end; adults_only is
@@ -196,7 +197,7 @@ test.describe('epic S1-E13 journeys', () => {
     await context.close();
   });
 
-  test('journey 4: a closing account keeps nothing open until the person keeps it, then downloads work again', async ({
+  test('journey 4: a closing account keeps only Download my data open until the person keeps it', async ({
     browser,
   }) => {
     test.setTimeout(90_000);
@@ -204,12 +205,14 @@ test.describe('epic S1-E13 journeys', () => {
     const { context, page } = await openSettings(browser, 'teen_17', 'delete-account');
     const panel = page.locator('#delete-account');
     await panel.getByRole('button', { name: 'Delete account' }).click();
-    // Step 2: the closing page stands in front of Settings and its downloads (S1-E13-03).
+    // Step 2: the closing page stands in front of Settings (S1-E13-03). It keeps Download my data,
+    // so nobody loses their data by closing (INACTIVE-2), and nothing else of Settings.
     await expect(page.getByRole('heading', { name: 'Account closing' })).toBeVisible();
     await page.goto('/settings#download-my-data');
     await expect(page.getByRole('heading', { name: 'Account closing' })).toBeVisible();
-    await expect(page.locator('#download-my-data')).toHaveCount(0);
-    // Step 3: "Keep account", and Download my data works again (S1-E13-02).
+    await expect(page.locator('#download-my-data')).toBeVisible();
+    await expect(page.locator('#delete-account')).toHaveCount(0);
+    // Step 3: "Keep account", and Settings is back with Download my data working (S1-E13-02).
     await page.getByRole('button', { name: 'Keep account' }).click();
     await expect(page.getByRole('heading', { name: 'Account closing' })).toHaveCount(0);
     await page.goto('/settings#download-my-data');

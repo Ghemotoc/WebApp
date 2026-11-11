@@ -114,8 +114,8 @@ select pg_temp.sign_in('02', 1);
 select lives_ok($$ select public.request_data_export() $$, 'teen_17 asks for their data');
 select lives_ok($$ select public.request_account_deletion() $$,
   'then closes the account, with a log-in from a minute ago (S1-E13-03)');
-select throws_ok($$ select public.my_data_export() $$, '42501', null,
-  'a closing account can''t build a data file; logging in and keeping the account brings it back (known gap in the epic report)');
+select lives_ok($$ select public.my_data_export() $$,
+  'a closing account can still build its data file, so nobody loses their data by closing (INACTIVE-2; it was a known gap in the epic report)');
 select pg_temp.as_owner();
 update public.account_deletions set requested_at = now() - interval '15 days', delete_after = now() - interval '1 day'
 where user_id = '00000000-0000-4000-8000-000000000002' and cancelled_at is null;

@@ -8822,7 +8822,9 @@ begin
   end if;
   -- Step 2: a published removal from today hides the entry; earlier versions stay for Restore.
   insert into public.cms_versions (content_kind, entry_key, market_code, language_code, status, is_removal, show_from, user_id, published_at)
-  values (content_kind, entry_key, market_code, language_code, 'published', true, public.romania_today(), (select auth.uid()), now())
+  -- clock_timestamp(), not now(): a removal made in the same transaction as the publish it takes
+  -- down must still count as the later of the two (cms_live_versions() picks the latest).
+  values (content_kind, entry_key, market_code, language_code, 'published', true, public.romania_today(), (select auth.uid()), clock_timestamp())
   returning * into removal;
   perform public.log_staff_action('website.removed', 'cms_versions', removal.id::text, null, null,
     jsonb_build_object('content', live_content),
@@ -18959,6 +18961,9 @@ begin
   if version_row.content_kind = 'home_page' then
     -- A home page: its own fields, then its search fields (S1-E11-37).
     problems := public.cms_home_page_problems(body) || public.cms_search_problems(body -> 'search');
+    -- The underlined word is no longer drawn and the editor no longer shows it (LOGO-2; Robert,
+    -- 11 Nov 2026), so a page written from nothing (a new language) has none: not a problem.
+    problems := array_remove(problems, 'underlinedWord:not_in_headline');
   elsif version_row.content_kind = 'question' then
     -- A question: the question, the answer (safe Markdown) and where it shows.
     problems := problems || public.cms_text_problem(body ->> 'question', 'question', 160)
@@ -44938,12 +44943,11 @@ CREATE OR REPLACE FUNCTION "public"."sitemap_entries"() RETURNS TABLE("path" "te
     SET "search_path" TO ''
     AS $$
   with places as (
-    -- Each open market in each of its languages: "/ro/ro", "/ro/en".
-    select markets.country_code, spoken.language_code,
-      '/' || lower(markets.country_code) || '/' || spoken.language_code as prefix
-    from public.markets
-    cross join unnest(markets.languages) as spoken (language_code)
-    where markets.is_open
+    -- Each open market in each of its open languages: "/ro/ro", "/ro/en".
+    select listed.country_code, spoken.language_code,
+      '/' || lower(listed.country_code) || '/' || spoken.language_code as prefix
+    from public.website_places() as listed
+    cross join unnest(listed.listed_languages) as spoken (language_code)
   )
   (
     -- Step 1: the home page and the help centre at each place, and Discover. The home page and
@@ -51147,6 +51151,29 @@ ALTER FUNCTION "public"."website_content"("wanted_kind" "text", "visitor_country
 
 
 COMMENT ON FUNCTION "public"."website_content"("wanted_kind" "text", "visitor_country" "text", "wanted_language" "text") IS 'The live website content of one kind for a visitor''s country and language: the wanted language before English, the country''s wording before the shared page, empty fields from English (S1-E11-06; LOCALISE-1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."website_places"() RETURNS TABLE("country_code" "text", "languages" "text"[], "listed_languages" "text"[])
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select markets.country_code, markets.languages,
+    case when markets.is_open then coalesce((
+      select array_agg(spoken.language_code order by spoken.position)
+      from unnest(markets.languages) with ordinality as spoken (language_code, position)
+      join public.languages on languages.code = spoken.language_code
+      where languages.status = 'open'
+    ), array[]::text[]) else array[]::text[] end
+  from public.markets
+  order by markets.country_code;
+$$;
+
+
+ALTER FUNCTION "public"."website_places"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."website_places"() IS 'The website''s places: each market with its languages and the ones search engines are told about (LOCALISE-1).';
 
 
 
@@ -70023,6 +70050,12 @@ REVOKE ALL ON FUNCTION "public"."waitlist_market_outcome"("target_user_id" "uuid
 REVOKE ALL ON FUNCTION "public"."website_content"("wanted_kind" "text", "visitor_country" "text", "wanted_language" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."website_content"("wanted_kind" "text", "visitor_country" "text", "wanted_language" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."website_content"("wanted_kind" "text", "visitor_country" "text", "wanted_language" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."website_places"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."website_places"() TO "anon";
+GRANT ALL ON FUNCTION "public"."website_places"() TO "authenticated";
 
 
 

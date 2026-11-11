@@ -17431,6 +17431,14 @@ export type Database = {
           show_until: string;
         }[];
       };
+      website_places: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          country_code: string;
+          languages: string[];
+          listed_languages: string[];
+        }[];
+      };
       who_is_online: { Args: { wanted_handles: string[] }; Returns: string[] };
       with_comma_below: { Args: { value: string }; Returns: string };
       withdraw_contest_entry: { Args: { target_contest_id: string }; Returns: undefined };

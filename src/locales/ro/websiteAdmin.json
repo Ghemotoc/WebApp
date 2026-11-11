@@ -2,7 +2,7 @@
   "documentTitle": "Site · Echipă",
   "eyebrow": "Echipă",
   "heading": "Site",
-  "intro": "Editează pagina principală a site-ului, anunțurile, paginile de ajutor și întrebările, pentru fiecare piață și limbă. Alege întâi piața și limba. O versiune apare la 00:00, ora României, în data de la care se afișează, iar fiecare publicare e în jurnalul de audit.",
+  "intro": "Editează pagina principală a site-ului, anunțurile, paginile de ajutor și întrebările. O pagină apare în fiecare țară: alege limba în lateral, iar câmpurile lăsate goale arată textul în engleză. O versiune apare la 00:00, ora României, în data de la care se afișează, iar fiecare publicare e în jurnalul de audit.",
   "auditLink": "Vezi toate schimbările site-ului în jurnalul de audit",
   "loading": "Se încarcă…",
   "counter": "{{used}} din {{limit}} caractere",

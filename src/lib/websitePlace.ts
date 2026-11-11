@@ -16,11 +16,15 @@ export interface WebsitePlace {
   language: string;
 }
 
-/** A market as the places list needs it: its country code ("SE") and the languages it offers. */
+/**
+ * A market as the places list needs it (the database's website_places()): its country code
+ * ("SE"), the languages its pages can be read in, and the ones search engines are told about
+ * (the open languages of an open market; none while either is closed).
+ */
 export interface WebsiteMarket {
   countryCode: string;
   languages: string[];
-  isOpen: boolean;
+  listedLanguages: string[];
 }
 
 /**

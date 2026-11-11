@@ -2,8 +2,9 @@
  * useWebsiteMarkets: the markets and their languages, for the website's addresses (bundle
  * LOCALISE-1): which "/<country>/<language>" places exist and where a visitor without one goes.
  *
- * Who calls it: LocalisedWebsiteLayout and WebsiteForward. What it calls: the public markets
- * table (anyone may read which countries there are and their languages; nothing in it is personal).
+ * Who calls it: LocalisedWebsiteLayout and WebsiteForward. What it calls: website_places()
+ * (anyone may read which countries there are, their languages and which of those are open and so
+ * listed for search engines; nothing in it is personal).
  */
 import { useQuery } from '@tanstack/react-query';
 
@@ -23,15 +24,13 @@ export function useWebsiteMarkets() {
       // Step 1: without database settings there is no list; the pages then use the fallback place.
       const client = await getSupabaseClient();
       if (client === null) throw new Error('The app is not connected to its database.');
-      // Step 2: each market with the languages it offers.
-      const { data, error } = await client
-        .from('markets')
-        .select('country_code, languages, is_open');
+      // Step 2: each market with the languages it offers and the ones that are open.
+      const { data, error } = await client.rpc('website_places');
       if (error !== null) throw new Error(`Could not read the markets: ${error.message}`);
       return data.map((market) => ({
         countryCode: market.country_code,
         languages: market.languages,
-        isOpen: market.is_open,
+        listedLanguages: market.listed_languages,
       }));
     },
   });

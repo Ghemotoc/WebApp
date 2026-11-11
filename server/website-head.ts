@@ -216,7 +216,8 @@ export async function fetchWebsiteHead(
 interface MarketRow {
   country_code: string;
   languages: string[];
-  is_open: boolean;
+  /** The open languages of an open market: the ones search engines are told about. */
+  listed_languages: string[];
 }
 
 /**
@@ -227,21 +228,28 @@ interface MarketRow {
  * Errors: throws when the database answers with an error or can't be reached.
  */
 export async function fetchWebsiteMarkets(settings: DatabaseSettings): Promise<WebsiteMarket[]> {
-  const address = `${settings.supabaseUrl}/rest/v1/markets?select=country_code,languages,is_open`;
+  // website_places() is a database function, so the request is a POST with no arguments.
+  const address = `${settings.supabaseUrl}/rest/v1/rpc/website_places`;
   const response = await fetch(address, {
-    headers: { apikey: settings.anonKey, Authorization: `Bearer ${settings.anonKey}` },
+    method: 'POST',
+    headers: {
+      apikey: settings.anonKey,
+      Authorization: `Bearer ${settings.anonKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: '{}',
   });
   if (!response.ok) throw new Error(`markets answered ${response.status}`);
   const rows = (await response.json()) as MarketRow[];
   return rows.map((row) => ({
     countryCode: row.country_code,
     languages: row.languages,
-    isOpen: row.is_open,
+    listedLanguages: row.listed_languages,
   }));
 }
 
 /**
- * Lists the other places a page can be read at: each language of each open market (hreflang).
+ * Lists the other places a page can be read at: each open language of each open market (hreflang).
  *
  * @param markets - the markets list
  * @param origin - the site's origin
@@ -254,8 +262,8 @@ export function pageAlternates(
   page: string,
 ): PageAlternate[] {
   const alternates: PageAlternate[] = [];
-  for (const market of markets.filter((candidate) => candidate.isOpen)) {
-    for (const language of market.languages) {
+  for (const market of markets) {
+    for (const language of market.listedLanguages) {
       const place = { country: market.countryCode.toLowerCase(), language };
       alternates.push({
         hreflang: `${language}-${market.countryCode}`,

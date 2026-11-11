@@ -13,7 +13,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(19);
+select plan(21);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -124,6 +124,18 @@ select public.admin_remove_cms_entry('help_page', 'one-page-test', '', 'sv');
 select is((select language_code || ':' || (content ->> 'title') from public.website_content('help_page', 'DK', 'sv')
     where entry_key = 'one-page-test'),
   'en:Help', 'a translation that was taken down shows the English page again');
+
+/* ---------- A home page in a new language ---------- */
+
+-- The editor no longer shows the underlined word (LOGO-2), so a page written from nothing has none.
+select public.admin_save_cms_draft('home_page', 'home', '', 'sv', '{"headlineFirst": "Skriv berättelser."}'::jsonb);
+select lives_ok($$ select public.admin_publish_cms_version((select id from public.cms_versions
+    where entry_key = 'home' and language_code = 'sv' and status = 'draft')) $$,
+  'a Swedish home page with one line written publishes: the rest is left to English');
+select is(
+  (select language_code || ':' || (content ->> 'headlineFirst') || ':' || ((content ->> 'lede') <> '')::text
+   from public.website_content('home_page', 'SE', 'sv') where entry_key = 'home'),
+  'sv:Skriv berättelser.:true', 'a visitor in Sweden reads that line in Swedish and the English line under it');
 
 /* ---------- A shared notice ---------- */
 

@@ -17,9 +17,9 @@ import {
 } from './websitePlace';
 
 const markets: WebsiteMarket[] = [
-  { countryCode: 'RO', languages: ['ro', 'en'], isOpen: true },
-  { countryCode: 'SE', languages: ['sv', 'en'], isOpen: false },
-  { countryCode: 'GB', languages: ['en'], isOpen: false },
+  { countryCode: 'RO', languages: ['ro', 'en'], listedLanguages: ['ro', 'en'] },
+  { countryCode: 'SE', languages: ['sv', 'en'], listedLanguages: [] },
+  { countryCode: 'GB', languages: ['en'], listedLanguages: [] },
 ];
 
 describe('placeOfPath', () => {

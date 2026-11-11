@@ -7,7 +7,8 @@
  *    "/se/ro", or an unknown address that only looks like a place) shows the "page not found" page.
  * 2. Keeps the address and the interface in the same language. A signed-out visitor who has not
  *    chosen a language in this browser gets the interface in the address's language for this
- *    visit (nothing is saved: a link is not a choice). Anyone who has chosen a language, or is
+ *    visit when that language is open (nothing is saved: a link is not a choice). That happens
+ *    once, on arrival: picking a language from the menu afterwards moves the address instead. Anyone who has chosen a language, or is
  *    signed in (the account's language), keeps it: the address moves to their language when the
  *    market offers it, so the language menu changes the address too. When the market doesn't
  *    offer their language the page stays as addressed.
@@ -16,13 +17,13 @@
  * What it calls: useWebsiteMarkets, useSession, src/lib/websitePlace.ts and
  * src/lib/language-preference.ts.
  */
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useLocation, useNavigate } from 'react-router';
 
 import { NotFoundPage } from '@/app/shell/NotFoundPage';
 import { useSession } from '@/features/auth/hooks/useSession';
-import { isSupportedLanguage } from '@/lib/i18n';
+import { useOpenInterfaceLanguagesState } from '@/features/language/hooks/useOpenInterfaceLanguages';
 import { hasDeviceLanguage } from '@/lib/language-preference';
 import {
   isKnownPlace,
@@ -36,6 +37,58 @@ import {
 
 import { useWebsiteMarkets } from '../hooks/useWebsiteMarkets';
 
+/** What the visitor's own state says about taking a language from an address. */
+interface VisitorLanguageState {
+  /** The interface language now. */
+  interfaceLanguage: string;
+  /** True for a signed-out visitor who has not chosen a language in this browser. */
+  hasNoChoice: boolean;
+  /** The languages the language menu offers. */
+  openLanguages: readonly string[];
+}
+
+/** The two notes the layout keeps between renders (see useSameLanguage). */
+interface ArrivalNotes {
+  /** The place this visitor last arrived at. */
+  arrivedAt: string | null;
+  /** The place whose language the interface is switching to right now. */
+  adoptingAt: string | null;
+}
+
+/**
+ * Decides what to do when the address and the interface may differ in language.
+ *
+ * @param place - the place in the address
+ * @param visitor - the visitor's language state
+ * @param notes - the arrival notes; this function updates them
+ * @returns 'adopt' (the interface takes the address's language), 'move' (the address follows the
+ *   interface) or 'stay'
+ */
+function languageStepAt(
+  place: WebsitePlace,
+  visitor: VisitorLanguageState,
+  notes: ArrivalNotes,
+): 'adopt' | 'move' | 'stay' {
+  // Step 1: note the arrival at this place, before anything else can return.
+  const placeKey = `${place.country}/${place.language}`;
+  const isArrival = notes.arrivedAt !== placeKey;
+  notes.arrivedAt = placeKey;
+  if (place.language === visitor.interfaceLanguage) {
+    notes.adoptingAt = null;
+    return 'stay';
+  }
+  // Step 2: a signed-out visitor with no language chosen, arriving: the interface takes the
+  // address's language, when the language menu offers it (a closed language has no interface
+  // text to show yet). This happens on arrival only: the menu saves a choice a moment after it
+  // switches the screen, and must not be switched back in between.
+  if (isArrival && visitor.hasNoChoice && visitor.openLanguages.includes(place.language)) {
+    notes.adoptingAt = placeKey;
+    return 'adopt';
+  }
+  // Step 3: while that switch is under way the address stays; otherwise it follows the interface.
+  return notes.adoptingAt === placeKey ? 'stay' : 'move';
+}
+
 /**
  * Keeps the address and the interface in the same language (step 2 of the file header).
  *
@@ -47,18 +100,28 @@ function useSameLanguage(markets: WebsiteMarket[], place: WebsitePlace | null): 
   const navigate = useNavigate();
   const location = useLocation();
   const { userId, isKnown: isSessionKnown } = useSession();
+  const { languages: openLanguages, isKnown: areLanguagesKnown } = useOpenInterfaceLanguagesState();
+  // Kept between renders: the interface takes an address's language once, on arrival, never
+  // again when the visitor then picks another language from the menu.
+  const notes = useRef<ArrivalNotes>({ arrivedAt: null, adoptingAt: null });
   const interfaceLanguage = i18n.resolvedLanguage ?? '';
   const country = place?.country ?? null;
   const language = place?.language ?? null;
+  const isReady = isSessionKnown && areLanguagesKnown;
   useEffect(() => {
-    if (country === null || language === null || language === interfaceLanguage) return;
-    if (!isSessionKnown) return;
-    // A signed-out visitor with no language chosen: the interface takes the address's language.
-    if (userId === null && !hasDeviceLanguage() && isSupportedLanguage(language)) {
+    if (country === null || language === null || !isReady) return;
+    const hasNoChoice = userId === null && !hasDeviceLanguage();
+    const step = languageStepAt(
+      { country, language },
+      { interfaceLanguage, hasNoChoice, openLanguages },
+      notes.current,
+    );
+    if (step === 'stay') return;
+    if (step === 'adopt') {
       void i18n.changeLanguage(language);
       return;
     }
-    // Anyone else keeps their language; the address follows it when the market offers it.
+    // The address follows the interface language when the market offers it.
     const moved = placeInInterfaceLanguage(markets, { country, language }, interfaceLanguage);
     if (moved === null) return;
     const page = pathWithoutPlace(location.pathname);
@@ -69,8 +132,9 @@ function useSameLanguage(markets: WebsiteMarket[], place: WebsitePlace | null): 
     country,
     language,
     interfaceLanguage,
-    isSessionKnown,
+    isReady,
     userId,
+    openLanguages,
     markets,
     i18n,
     navigate,
