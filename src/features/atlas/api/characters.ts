@@ -20,11 +20,8 @@ import type { Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
 
 import { checkedAnswer } from './checkedAnswer';
-import {
-  deleteStoredPicture,
-  pictureViewsFromJson,
-  type PictureView,
-} from '@/features/pictures/api/pictures';
+import { pictureViewsFromJson, type PictureView } from '@/features/pictures/api/pictures';
+import { deleteStoredPicture } from '@/features/pictures/api/pictureUploads';
 
 /** The groups of the cast list, in the order they show (S1-E17-08). */
 export const characterRoles = [

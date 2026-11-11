@@ -17,7 +17,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { useFeatureFlags } from '@/features/flags/hooks/useFeatureFlags';
-import { PictureUploadError } from '@/features/pictures/api/pictures';
+import { PictureUploadError } from '@/features/pictures/api/pictureUploads';
 import { PictureUploadField } from '@/features/pictures/components/PictureUploadField';
 import type { UploadOutcome } from '@/features/pictures/hooks/usePictureUpload';
 

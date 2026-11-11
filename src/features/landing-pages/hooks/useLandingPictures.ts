@@ -11,7 +11,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
-import { uploadLandingPicture } from '@/features/pictures/api/pictures';
+import { uploadLandingPicture } from '@/features/pictures/api/pictureUploads';
 
 import { fetchLandingPictureStates } from '../api/staff/landingPagesAdmin';
 
