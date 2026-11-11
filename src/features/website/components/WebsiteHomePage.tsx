@@ -182,7 +182,7 @@ function HomeSections({ entry }: { entry: ParsedEntry<HomePageContent> }) {
  */
 function homeDocumentTitle(searchTitle: string, t: TFunction): string {
   const title = searchTitle.trim();
-  return title === '' ? t('home.documentTitle') : t('home.searchDocumentTitle', { title });
+  return title === '' ? t('home.documentTitle') : t('shell.pageTitle', { title });
 }
 
 /**
