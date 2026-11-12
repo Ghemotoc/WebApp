@@ -100,17 +100,19 @@ function WriteChapterLink({
 function StoryCardSummary({ story, cover }: { story: MyStory; cover: DrawnCoverChoice }) {
   const { t } = useTranslation('writing');
   return (
-    <div className="flex gap-5">
+    // GLASS-4: on the narrowest phones (under 360 px) the cover and the gap shrink, so the
+    // "Write chapter one" button fits beside the cover instead of spilling past the card.
+    <div className="flex gap-5 max-[359px]:gap-3">
       <StoryCoverArt
         story={story}
-        className="w-24 shrink-0 self-start"
+        className="w-24 shrink-0 self-start max-[359px]:w-14"
         drawn={
           <DrawnCover
             title={story.title}
             choice={cover}
             size="tile"
             isDecorative
-            className="w-24 shrink-0 self-start"
+            className="w-24 shrink-0 self-start max-[359px]:w-14"
           />
         }
       />
@@ -165,7 +167,7 @@ export function WriterStoryCard({ story, cover, chapterNumbers }: WriterStoryCar
   return (
     <article
       aria-labelledby={`story-${story.id}-title`}
-      className="flex flex-col gap-5 rounded-card border border-border bg-surface p-5 shadow-card"
+      className="flex flex-col gap-5 rounded-card border border-border bg-surface p-5 shadow-card max-[359px]:p-3"
     >
       <StoryCardSummary story={story} cover={cover} />
       {chapterNumbers.length > 0 && (

@@ -157,6 +157,12 @@ test.describe('Downloads and privacy (IDEAS-2a)', () => {
       // Reduce motion ends every animation at once, so axe measures the colours the screen
       // settles on, not a fade half-way through (as in e2e/support/accessibility.ts; FINAL-1).
       await page.emulateMedia({ reducedMotion: 'reduce' });
+      // Opening the list scrolls the page, and wherever it stops, the floating phone header may
+      // sit over part of a radio button. axe then reports that button as "partially obscured",
+      // which says where the page was scrolled to, not how big the button is. Measure with the
+      // page at rest (scrolled to the top), where the header covers nothing (GLASS-4: the
+      // narrower column moved the stop by a few pixels and put a button under the header).
+      await page.evaluate(() => window.scrollTo(0, 0));
       const results = await new AxeBuilder({ page })
         .include('#privacy')
         .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])
