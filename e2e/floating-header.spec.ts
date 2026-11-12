@@ -7,6 +7,8 @@
  * - the space beside the floating pills doesn't swallow clicks meant for the page under it;
  * - a keyboard focus that scrolls the page stops below the header, not under it
  *   (WCAG 2.2, 2.4.11 Focus not obscured);
+ * - on a phone, tabbing down a long page never leaves the focused control under the floating tab
+ *   bar at the foot (the same criterion; GLASS-4 follow-up, 12 Nov 2026);
  * - nothing scrolls sideways.
  * Test data: the seed's public pages; nothing is changed.
  */
@@ -80,6 +82,52 @@ for (const width of [1440, 390]) {
     await target.focus();
     const box = await target.boundingBox();
     expect(box?.y ?? 0).toBeGreaterThanOrEqual((await headerBottom(page)) - 1);
+    await context.close();
+  });
+}
+
+for (const width of [390, 768]) {
+  test(`at ${String(width)} px tabbing through Settings never leaves the focus under the tab bar`, async ({
+    browser,
+  }) => {
+    // A short window, so most of the page is reached only by the Tab key scrolling it.
+    const context = await browser.newContext({ viewport: { width, height: 600 } });
+    await useSessionInBrowser(context, (await signInPersona('adult_writer')).session);
+    const page = await context.newPage();
+    await page.goto('/settings');
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    const tabBar = page.locator('nav.fixed');
+    await expect(tabBar).toBeVisible();
+    const covered: string[] = [];
+    let stops = 0;
+    for (let press = 0; press < 80; press += 1) {
+      await page.keyboard.press('Tab');
+      // How far the focused control reaches under the tab bar, when it is not part of the bar.
+      const overlap = await page.evaluate(() => {
+        const focused = document.activeElement;
+        const bar = document.querySelector('nav.fixed');
+        if (focused === null || focused === document.body || bar === null) return null;
+        if (bar.contains(focused)) return null;
+        const focusBox = focused.getBoundingClientRect();
+        const barBox = bar.getBoundingClientRect();
+        const across =
+          Math.min(focusBox.right, barBox.right) - Math.max(focusBox.left, barBox.left);
+        const down = Math.min(focusBox.bottom, barBox.bottom) - Math.max(focusBox.top, barBox.top);
+        const name = (focused.getAttribute('aria-label') ?? focused.textContent ?? '').trim();
+        // A control taller than the free space between the header (88 px) and the bar cannot
+        // clear both: it passes when its top is in view, so it is never wholly hidden.
+        const isTallerThanFreeSpace = focusBox.height > barBox.top - 88;
+        const isUnderBar = across > 1 && down > 1;
+        const isCovered = isTallerThanFreeSpace ? focusBox.top >= barBox.top : isUnderBar;
+        return { name: name.slice(0, 40), isCovered };
+      });
+      if (overlap === null) continue;
+      stops += 1;
+      if (overlap.isCovered) covered.push(overlap.name);
+    }
+    // The walk really moved through the page, and no stop sat under the bar.
+    expect(stops).toBeGreaterThan(30);
+    expect(covered).toEqual([]);
     await context.close();
   });
 }
