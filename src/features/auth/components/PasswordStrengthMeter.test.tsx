@@ -45,6 +45,8 @@ describe('PasswordStrengthMeter', () => {
 
   it('speaks Romanian', () => {
     renderWithProviders(<PasswordStrengthMeter password="short" id="strength" />, 'ro');
-    expect(document.getElementById('strength')).toHaveTextContent('Puterea parolei: Slabă. Minimum 10 caractere.');
+    expect(document.getElementById('strength')).toHaveTextContent(
+      'Puterea parolei: Slabă. Minimum 10 caractere.',
+    );
   });
 });
