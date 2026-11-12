@@ -12,7 +12,8 @@
  *   a visitor who has chosen a language keeps it and the address follows;
  * - a place that isn't a market, or a language the market doesn't offer, is "page not found";
  * - an admin picks Svenska at the side, publishes a page with one field filled, and a visitor at
- *   "/se/sv" reads that field in Swedish and the rest in English;
+ *   "/se/sv" still reads the whole English page, because the translation is not finished
+ *   (LOCALISE-2, Robert, 12 Nov 2026);
  * - before any JavaScript runs, a page names its own address as canonical with one alternate
  *   per open language, and a place that isn't a market is noindex.
  * Test data: the seeded version 1 (Romania open, in ro and en; Sweden a market, not open yet).
@@ -128,7 +129,7 @@ test.describe('Website pages by country and language (LOCALISE-1)', () => {
     }
   });
 
-  test('an admin publishes a Swedish page with one field, and the rest shows in English', async ({
+  test('an admin publishes a Swedish page with one field, and visitors keep the whole English page', async ({
     browser,
   }) => {
     // Step 1: the admin picks Svenska at the side and fills the first headline line only.
@@ -148,12 +149,15 @@ test.describe('Website pages by country and language (LOCALISE-1)', () => {
     await staff.getByRole('button', { name: 'Publish' }).click();
     await expect(staff.getByText(/Published\. It goes live on/)).toBeVisible();
 
-    // Step 2: a visitor at Sweden's Swedish address reads that line, and English for the rest.
+    // Step 2: a visitor at Sweden's Swedish address reads the English page, with nothing Swedish
+    // mixed in, until every field of the translation is filled.
     const visitorContext = await browser.newContext();
     const visitor = await visitorContext.newPage();
     await visitor.goto('/se/sv');
-    await expect(visitor.getByRole('heading', { level: 1 })).toContainText('Skriv berättelser.');
-    await expect(visitor.getByRole('heading', { level: 1 })).toContainText('Get read.');
+    await expect(visitor.getByRole('heading', { level: 1 })).toHaveText(englishHeading);
+    await expect(visitor.getByRole('heading', { level: 1 })).not.toContainText(
+      'Skriv berättelser.',
+    );
     await expect(visitor.getByText(/Post your stories/)).toBeVisible();
     await expect(visitor).toHaveURL(/\/se\/sv$/);
   });

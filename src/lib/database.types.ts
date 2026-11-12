@@ -12977,6 +12977,10 @@ export type Database = {
       };
       cms_fill_empty: { Args: { fallback: Json; wanted: Json }; Returns: Json };
       cms_home_page_problems: { Args: { page: Json }; Returns: string[] };
+      cms_is_fully_translated: {
+        Args: { english_page: Json; translation: Json };
+        Returns: boolean;
+      };
       cms_link_problems: {
         Args: { field_name: string; markdown: string; market: string };
         Returns: string[];

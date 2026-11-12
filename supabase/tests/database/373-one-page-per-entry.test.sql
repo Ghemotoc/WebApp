@@ -2,18 +2,19 @@
 -- country's own wording only where needed (Robert, 11 Nov 2026).
 -- What it proves:
 -- - the shared page (no country) can be written in every interface language, and in no other;
--- - a translation may leave fields empty once the English page exists, and visitors then see the
---   English text in those fields; the English page itself must be complete;
+-- - a translation may be published with empty fields once the English page exists, but visitors
+--   read the whole English page until it is fully translated (LOCALISE-2, Robert, 12 Nov 2026);
+--   the English page itself must be complete;
 -- - a visitor gets their language before English and their country's wording before the shared page;
 -- - a translation that is taken down shows the English page again;
 -- - a shared notice needs English only and shows English where a language has no text;
--- - the helper that fills empty fields is internal (nobody outside the database's own functions
+-- - the helpers that find empty fields are internal (nobody outside the database's own functions
 --   can call it), and a visitor can't write a draft.
 begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(21);
+select plan(23);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -51,6 +52,9 @@ select is(public.cms_fill_empty('{"title": "Titel"}'::jsonb, null), '{"title": "
 select ok(not has_function_privilege('anon', 'public.cms_fill_empty(jsonb, jsonb)', 'execute')
     and not has_function_privilege('authenticated', 'public.cms_fill_empty(jsonb, jsonb)', 'execute'),
   'denied: the filling helper is internal');
+select ok(not has_function_privilege('anon', 'public.cms_is_fully_translated(jsonb, jsonb)', 'execute')
+    and not has_function_privilege('authenticated', 'public.cms_is_fully_translated(jsonb, jsonb)', 'execute'),
+  'denied: the "fully translated" helper is internal');
 
 /* ---------- Where a page can be written ---------- */
 
@@ -97,12 +101,25 @@ set local role anon;
 select is(
   (select language_code || ':' || (content ->> 'title') || ':' || (content ->> 'section') || ':' || (content ->> 'body')
    from public.website_content('help_page', 'SE', 'sv') where entry_key = 'one-page-test'),
-  'sv:Hjälp:Basics:The English body.',
-  'a visitor reads the translation, with its empty fields in English');
+  'en:Help:Basics:The English body.',
+  'a translation with empty fields is not shown: the visitor reads the whole English page');
 select is((select language_code from public.website_content('help_page', 'SE', 'da') where entry_key = 'one-page-test'),
   'en', 'a language with no translation reads the English page');
 select throws_ok($$ select public.admin_save_cms_draft('help_page', 'one-page-test', '', 'sv', '{}'::jsonb) $$,
   '42501', null, 'denied: a visitor can''t write a draft');
+reset role;
+
+-- The Swedish translation, finished: now it shows. The unfinished version goes first: both would
+-- be published in this one transaction, at the same instant, and the newer one could not be told.
+delete from public.cms_versions where entry_key = 'one-page-test' and language_code = 'sv';
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000009');
+select public.admin_save_cms_draft('help_page', 'one-page-test', '', 'sv',
+  '{"title": "Hjälp", "section": "Grunder", "body": "Svensk brödtext.", "isLegal": false}'::jsonb);
+select pg_temp.publish_draft('one-page-test');
+select is(
+  (select language_code || ':' || (content ->> 'title') || ':' || (content ->> 'body')
+   from public.website_content('help_page', 'DK', 'sv') where entry_key = 'one-page-test'),
+  'sv:Hjälp:Svensk brödtext.', 'a fully translated page shows in its language');
 reset role;
 
 -- Sweden's own wording, in Swedish: Swedish visitors get it; everyone else keeps the shared page.
@@ -131,11 +148,12 @@ select is((select language_code || ':' || (content ->> 'title') from public.webs
 select public.admin_save_cms_draft('home_page', 'home', '', 'sv', '{"headlineFirst": "Skriv berättelser."}'::jsonb);
 select lives_ok($$ select public.admin_publish_cms_version((select id from public.cms_versions
     where entry_key = 'home' and language_code = 'sv' and status = 'draft')) $$,
-  'a Swedish home page with one line written publishes: the rest is left to English');
+  'a Swedish home page with one line written publishes, so the work is kept');
 select is(
   (select language_code || ':' || (content ->> 'headlineFirst') || ':' || ((content ->> 'lede') <> '')::text
    from public.website_content('home_page', 'SE', 'sv') where entry_key = 'home'),
-  'sv:Skriv berättelser.:true', 'a visitor in Sweden reads that line in Swedish and the English line under it');
+  'en:' || (select content ->> 'headlineFirst' from public.website_content('home_page', 'SE', 'en') where entry_key = 'home') || ':true',
+  'a visitor in Sweden reads the whole English home page until the Swedish one is finished');
 
 /* ---------- A shared notice ---------- */
 
