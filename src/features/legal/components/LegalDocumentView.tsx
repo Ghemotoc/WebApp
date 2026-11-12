@@ -45,8 +45,8 @@ function LegalStatusPills({ chosen }: Pick<LegalDocumentViewProps, 'chosen'>) {
   );
   return (
     <ul aria-label={t('status.label')} className="m-0 flex list-none flex-wrap gap-2 p-0">
-      <li>
-        <InfoPill tone="gold">
+      <li className="max-w-full">
+        <InfoPill tone="gold" canWrap>
           {current.is_lawyer_reviewed ? t('status.reviewed') : t('status.draft')}
         </InfoPill>
       </li>
