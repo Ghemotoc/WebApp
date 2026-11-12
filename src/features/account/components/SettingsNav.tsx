@@ -73,7 +73,11 @@ export function SettingsNav({ open, onPick }: SettingsNavProps) {
   return (
     <nav
       aria-label={t('settings.groupsLabel')}
-      className="flex min-w-0 flex-[1_1_220px] flex-col gap-0.5 self-start rounded-card border border-border bg-surface p-2.5 shadow-card md:sticky md:top-28 md:max-w-[320px]"
+      // While it stays in view (md:sticky) the list is never taller than the window: in a short
+      // window it scrolls inside its own box, so its last links are not stuck under the floating
+      // tab bar (under 1024 px: 96 px kept free at the foot) or below the window's edge
+      // (WCAG 2.2, 2.4.11; GLASS-4 follow-up, 12 Nov 2026).
+      className="flex min-w-0 flex-[1_1_220px] flex-col gap-0.5 self-start rounded-card border border-border bg-surface p-2.5 shadow-card md:sticky md:top-28 md:max-h-[calc(100dvh-7rem-96px)] md:max-w-[320px] md:overflow-y-auto lg:max-h-[calc(100dvh-8rem)]"
     >
       {settingsGroupKeys.map((key) => (
         <SettingsNavItem key={key} groupKey={key} isOpen={key === open} onPick={onPick} />

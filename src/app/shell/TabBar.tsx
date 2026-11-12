@@ -10,12 +10,16 @@
  * board, rather than stretching across. It is fixed to the bottom and keeps clear of a phone's home bar
  * (env(safe-area-inset-bottom)); AppLayout pads the page so nothing hides under it.
  * Who uses it: AppLayout, below 1024 px, on header B pages only (never while typing or reading).
- * What it calls: React Router's NavLink, NavIcon.
+ * What it calls: React Router's NavLink, NavIcon, useFocusClearOfTabBar (keeps the focused
+ * control out from under the bar).
  */
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router';
 
 import { NavIcon, type NavIconName } from '@/components/icons/NavIcon';
+
+import { useFocusClearOfTabBar } from './useFocusClearOfTabBar';
 
 /** One tab: where it goes, its icon and the locale key of its label. */
 interface Tab {
@@ -53,8 +57,12 @@ function tabClasses({ isActive }: { isActive: boolean }): string {
  */
 export function TabBar() {
   const { t } = useTranslation();
+  // A control the keyboard lands on is never left hidden under the bar (WCAG 2.2, 2.4.11).
+  const barRef = useRef<HTMLElement>(null);
+  useFocusClearOfTabBar(barRef);
   return (
     <nav
+      ref={barRef}
       aria-label={t('shell.mainNavigation')}
       className="fixed inset-x-3.5 bottom-[calc(14px+env(safe-area-inset-bottom))] z-20 mx-auto flex max-w-[620px] items-center gap-2.5"
     >
