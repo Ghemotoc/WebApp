@@ -98,3 +98,6 @@ Twelve ideas IDEA-20261110-1 to 12: three next stories after the last chapter, b
 
 ### Sent 11 Nov 2026 (doc tabs by category in "Ghemotoc feature ideas"; Notion Feature ideas database)
 Ten ideas IDEA-20261111-1 to 10: several bookmarks in a story, Hidden gems shelf, chapter epigraph, weekly writer note, reply from a comment notification, agree to space rules before posting, mute one story's updates, saved feedback phrases for teachers, leave a conversation in one tap, account activity list.
+
+### Sent 12 Nov 2026 (doc tabs by category in "Ghemotoc feature ideas"; Notion Feature ideas database)
+Twelve ideas IDEA-20261112-1 to 12: new chapters from followed stories in one queue, Popular in my country this week shelf, writing month with a goal each writer sets, sort comments, poll in a thread, archive a conversation, anonymous peer feedback in a class, next steps after a block, shared computer at log-in, story card to embed, quotation marks in the story's language, Bokmål or Nynorsk on a Norwegian story.
