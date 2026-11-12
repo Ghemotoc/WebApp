@@ -7,12 +7,12 @@
  * order. Four tiles across on a wide screen, two on a tablet and one on a phone.
  * Who shows it: HelpCentrePage, with the pages its search left. What it calls: withBrand.
  */
-import { Link } from 'react-router';
 
 import type { HelpPageContent } from '@/schemas/websiteContent';
 
 import type { ParsedEntry } from '../hooks/useWebsiteContent';
 import { withBrand } from '../lib/brandText';
+import { WebsiteLink } from './WebsiteLink';
 
 /**
  * Groups the pages by their section, keeping the sections in the order they first appear.
@@ -53,12 +53,12 @@ export function HelpTopicTiles({ pages }: { pages: ParsedEntry<HelpPageContent>[
           <ul className="m-0 flex list-none flex-col gap-1 p-0">
             {sectionPages.map((page) => (
               <li key={page.entryKey}>
-                <Link
+                <WebsiteLink
                   to={`/help/${page.entryKey}`}
                   className="inline-flex min-h-6 items-center py-0.5 text-link underline"
                 >
                   {withBrand(page.content.title)}
-                </Link>
+                </WebsiteLink>
               </li>
             ))}
           </ul>

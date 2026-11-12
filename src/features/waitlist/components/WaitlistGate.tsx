@@ -15,6 +15,8 @@
 import { lazy, Suspense, type ReactNode } from 'react';
 import { useLocation } from 'react-router';
 
+import { pathWithoutPlace } from '@/lib/websitePlace';
+
 import { useMyWaitlist } from '../hooks/useMyWaitlist';
 
 /** The holding page, in its own file, fetched the first time it is needed. */
@@ -49,7 +51,9 @@ const waitlistOpenPathPrefixes = [
 export function WaitlistGate({ children }: { children: ReactNode }) {
   const place = useMyWaitlist();
   const { pathname } = useLocation();
-  const isOpenPath = waitlistOpenPathPrefixes.some((prefix) => pathname.startsWith(prefix));
+  // A website page's address starts with its country and language ("/se/sv/help", LOCALISE-1).
+  const pagePath = pathWithoutPlace(pathname);
+  const isOpenPath = waitlistOpenPathPrefixes.some((prefix) => pagePath.startsWith(prefix));
   if (place.data?.on_list === true && place.data.waiting && !isOpenPath) {
     // Nothing shows for the moment the page's code takes to arrive, rather than the page behind it.
     return (

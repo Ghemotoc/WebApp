@@ -65,7 +65,8 @@ test.describe('Website CMS (S1-E11-06, S1-E11-10, S1-E11-12, S1-E5-08)', () => {
   test('an admin publishes a new line and visitors see it, logged', async ({ browser }) => {
     const page = await openAs(browser, 'admin', '/staff/website');
     await expect(page.getByRole('heading', { level: 1, name: 'Website' })).toBeVisible();
-    await page.getByLabel('Language of the content').selectOption('en');
+    // The shared page opens in English, the main language (LOCALISE-1).
+    await expect(page.getByRole('radio', { name: 'English' })).toBeChecked();
     const lede = page.getByRole('textbox', { name: 'Line under the headline' });
     await expect(lede).toHaveValue(/Post your stories/);
     // Step 1: an empty field stops the publish, named.

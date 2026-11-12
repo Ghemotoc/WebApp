@@ -62,7 +62,12 @@ import { oembedLookup } from './embeds/oembed.ts';
 import { fetchLandingPreview, handleLandingLink, parseLandingAddress } from './landing-preview.ts';
 import { fetchLinkPreview, handleSharedLink, parseSharedAddress } from './link-preview.ts';
 import { fetchSitemapEntries, handleSitemapFiles } from './sitemap.ts';
-import { fetchWebsiteHead, handleWebsitePage, parseWebsiteAddress } from './website-head.ts';
+import {
+  fetchWebsiteHead,
+  fetchWebsiteMarkets,
+  handleWebsitePage,
+  parseWebsiteAddress,
+} from './website-head.ts';
 import { handlePicturePreview } from './picture-preview.ts';
 import { handleNotice } from './notice.ts';
 import { handleOpeningEmails, handleOpeningList } from './opening-list.ts';
@@ -156,7 +161,8 @@ function sharedLinkHandler(readIndexHtml: ReadIndexHtml, environment: Record<str
     if (parseWebsiteAddress(new URL(request.url).pathname) !== null) {
       return handleWebsitePage(request, {
         fetchIndexHtml,
-        findHead: (address, country) => fetchWebsiteHead(settings, address, country),
+        findHead: (address, place) => fetchWebsiteHead(settings, address, place),
+        findMarkets: () => fetchWebsiteMarkets(settings),
         cloudflareCountry:
           request.headers.get('X-Fake-Country') ?? process.env.LOCAL_FAKE_COUNTRY ?? 'RO',
       });
@@ -181,7 +187,8 @@ function sharedLinkHandler(readIndexHtml: ReadIndexHtml, environment: Record<str
  * Cloudflare.
  *
  * @param url - the request's address
- * @returns true for /s/…, /c/<name>, / and /help/<address>
+ * @returns true for /s/…, /c/<name>, / and /help/<address>, and for the last three with a country
+ *   and language in front ("/se/sv/help/<address>", LOCALISE-1)
  */
 function isPreviewAddress(url: string | undefined): boolean {
   const pathname = (url ?? '').split('?')[0] ?? '';

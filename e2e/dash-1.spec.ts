@@ -19,6 +19,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
+import { ownHomeAddressPattern } from './support/homeAddress';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 /** The staff personas this file sets to English, and back to Romanian at the end. */
@@ -162,7 +163,7 @@ test.describe('staff dashboard and side menu (DASH-1)', () => {
     await page.getByLabel('Email', { exact: true }).fill('support@personas.test');
     await page.getByLabel('Password', { exact: true }).fill('Persona-Test-2026!');
     await page.getByRole('button', { name: 'Log in', exact: true }).click();
-    await expect(page).toHaveURL(/^http:\/\/[^/]+\/$/);
+    await expect(page).toHaveURL(ownHomeAddressPattern);
   });
 
   for (const view of everyView(['/staff'])) {

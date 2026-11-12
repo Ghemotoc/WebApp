@@ -10,12 +10,12 @@
  * Who shows it: WebsiteHomePage. What it calls: nothing beyond the router's links.
  */
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
 
 import { brand } from '@/config/brand';
 import { BrandMark } from '@/features/branding/components/BrandMark';
 
 import { withBrand } from '../lib/brandText';
+import { WebsiteLink } from './WebsiteLink';
 
 /** One link: where it goes and its words' key; a "#" address stays on this page. */
 interface FooterLink {
@@ -66,9 +66,9 @@ function FooterColumnLink({ link }: { link: FooterLink }) {
     );
   }
   return (
-    <Link to={link.to} className={className}>
+    <WebsiteLink to={link.to} className={className}>
       {t(link.labelKey)}
-    </Link>
+    </WebsiteLink>
   );
 }
 

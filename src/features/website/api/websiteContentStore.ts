@@ -85,9 +85,17 @@ export function websiteErrorFrom(error: {
   return new WebsiteContentError(failure, error.message, problems, reason);
 }
 
+/**
+ * The country code that means "every country": the shared page (LOCALISE-1). The database stores
+ * it as no country at all (null); the editors and pages use this empty text instead, so a
+ * country is always a string.
+ */
+export const everyCountry = '';
+
 /** What a visitor sees of one entry, before its content is parsed. */
 export interface LiveEntry {
   entryKey: string;
+  /** The country this wording is for; everyCountry for the shared page. */
   marketCode: string;
   /** The language chosen for the visitor, after the fallbacks. */
   languageCode: string;
@@ -107,6 +115,7 @@ export interface ContentVersion {
   id: string;
   kind: WebsiteContentKind;
   entryKey: string;
+  /** The country this wording is for; everyCountry for the shared page. */
   marketCode: string;
   languageCode: string | null;
   content: unknown;
@@ -140,13 +149,14 @@ export interface EntryPlace {
 
 /** What the public pages need: the live content (architecture 1.8.6). */
 export interface WebsiteContentReader {
-  /** What a visitor sees of one kind, with the market and language fallbacks. */
+  /** What a visitor sees of one kind: their language before English, their country's wording
+   * before the shared page (LOCALISE-1). */
   readLive(kind: WebsiteContentKind, visitor: Visitor): Promise<LiveEntry[]>;
 }
 
 /** What the staff editors need (owner and admin only; api/staff/websiteContentEditor.ts). */
 export interface WebsiteContentEditor {
-  /** Every version of one kind in one market (staff). */
+  /** Every version of one kind for one country, or of the shared pages for everyCountry (staff). */
   listVersions(kind: WebsiteContentKind, marketCode: string): Promise<ContentVersion[]>;
   /** Saves the entry's draft; returns its id. */
   saveDraft(draft: DraftInput): Promise<string>;
@@ -167,7 +177,8 @@ export type WebsiteContentStore = WebsiteContentReader & WebsiteContentEditor;
 /** A website_content() row as the database gives it. */
 interface LiveRow {
   entry_key: string;
-  market_code: string;
+  /** Null for the shared page (LOCALISE-1). */
+  market_code: string | null;
   language_code: string;
   content: Json;
   show_from: string;
@@ -183,7 +194,7 @@ interface LiveRow {
 function liveEntryFromRow(row: LiveRow): LiveEntry {
   return {
     entryKey: row.entry_key,
-    marketCode: row.market_code,
+    marketCode: row.market_code ?? everyCountry,
     languageCode: row.language_code,
     content: row.content,
     showFrom: row.show_from,

@@ -21,6 +21,7 @@ import { expect, test, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
+import { homeAddressPattern } from './support/homeAddress';
 import { appPathFromEmail, waitForEmail } from './support/mailpit';
 
 /** The seeded invite that works (supabase/seed.sql). */
@@ -123,7 +124,7 @@ test.describe('country from the connection (S1-E2-10)', () => {
       // Confirm, then Settings shows the country.
       await page.goto(appPathFromEmail((await waitForEmail(address)).HTML));
       await page.getByRole('link', { name: 'Continue', exact: true }).click();
-      await expect(page).toHaveURL(/\/$/);
+      await expect(page).toHaveURL(homeAddressPattern);
       await page.goto('/settings');
       // The country picker started on the connection's country (MARKETS-1).
       await expect(page.getByText('Romania', { exact: true })).toBeVisible();

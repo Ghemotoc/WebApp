@@ -16,20 +16,20 @@ select plan(6);
 
 select is(
   (select content -> 'rightsCard' from public.cms_versions
-   where content_kind = 'home_page' and entry_key = 'home' and market_code = 'RO'
+   where content_kind = 'home_page' and entry_key = 'home' and market_code is null
      and language_code = 'en' and user_id is null),
   jsonb_build_object('eyebrow', 'Your rights', 'title', 'You keep all the rights to your work',
     'body', 'Publish it anywhere else too'),
   'version 1 of the English home page carries the rights card');
 select is(
   (select content -> 'rightsCard' ->> 'title' from public.cms_versions
-   where content_kind = 'home_page' and entry_key = 'home' and market_code = 'RO'
+   where content_kind = 'home_page' and entry_key = 'home' and market_code is null
      and language_code = 'ro' and user_id is null),
   'Toate drepturile asupra textelor tale rămân ale tale',
   'version 1 of the Romanian home page carries the rights card, with ș and ț as written');
 select is(
   (select public.cms_home_page_problems(content) from public.cms_versions
-   where content_kind = 'home_page' and entry_key = 'home' and market_code = 'RO'
+   where content_kind = 'home_page' and entry_key = 'home' and market_code is null
      and language_code = 'en' and user_id is null),
   array[]::text[], 'the seeded English home page, card included, passes every check');
 
@@ -38,7 +38,7 @@ select is(
 -- Start from the seeded page, so only the card differs between the cases.
 create temporary table seeded_page on commit drop as
   select content as page from public.cms_versions
-  where content_kind = 'home_page' and entry_key = 'home' and market_code = 'RO'
+  where content_kind = 'home_page' and entry_key = 'home' and market_code is null
     and language_code = 'en' and user_id is null;
 
 select is(

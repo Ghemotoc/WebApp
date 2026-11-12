@@ -13,6 +13,7 @@ import type { WebsiteContentKind } from '@/schemas/websiteContent';
 
 import {
   appDatabaseReader,
+  everyCountry,
   websiteErrorFrom,
   type ContentVersion,
   type WebsiteContentEditor,
@@ -24,7 +25,8 @@ interface VersionRow {
   id: string;
   content_kind: string;
   entry_key: string;
-  market_code: string;
+  /** Null for the shared page (LOCALISE-1). */
+  market_code: string | null;
   language_code: string | null;
   content: Json;
   status: string;
@@ -46,7 +48,7 @@ function versionFromRow(row: VersionRow): ContentVersion {
     id: row.id,
     kind: row.content_kind as WebsiteContentKind,
     entryKey: row.entry_key,
-    marketCode: row.market_code,
+    marketCode: row.market_code ?? everyCountry,
     languageCode: row.language_code,
     content: row.content,
     status: row.status === 'draft' ? 'draft' : 'published',
@@ -71,12 +73,13 @@ const versionColumns =
 export function appDatabaseEditor(client: AppSupabaseClient): WebsiteContentEditor {
   return {
     async listVersions(kind, marketCode) {
-      const { data, error } = await client
-        .from('cms_versions')
-        .select(versionColumns)
-        .eq('content_kind', kind)
-        .eq('market_code', marketCode)
-        .order('updated_at', { ascending: false });
+      // The shared pages have no country in the table (LOCALISE-1); a country's own wording has.
+      const versions = client.from('cms_versions').select(versionColumns).eq('content_kind', kind);
+      const ofPlace =
+        marketCode === everyCountry
+          ? versions.is('market_code', null)
+          : versions.eq('market_code', marketCode);
+      const { data, error } = await ofPlace.order('updated_at', { ascending: false });
       if (error !== null) throw websiteErrorFrom(error);
       return data.map(versionFromRow);
     },
@@ -84,8 +87,9 @@ export function appDatabaseEditor(client: AppSupabaseClient): WebsiteContentEdit
       const { data, error } = await client.rpc('admin_save_cms_draft', {
         content_kind: draft.kind,
         entry_key: draft.entryKey,
+        // The database reads an empty country as every country (the shared page) and an empty
+        // language as none: a notice holds every language.
         market_code: draft.marketCode,
-        // The database reads an empty language as none: a notice holds every language.
         language_code: draft.languageCode ?? '',
         new_content: draft.content,
         new_show_from: draft.showFrom ?? undefined,

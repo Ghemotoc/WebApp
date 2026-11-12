@@ -1,6 +1,7 @@
 /**
- * Search and share tags for the website's own pages: the home page at "/" and each help page at
- * "/help/<address>" (story S1-E11-37; bundle SEO-1b).
+ * Search and share tags for the website's own pages: the home page and each help page, at their
+ * addresses with a country and language ("/se/sv", "/se/sv/help/<address>"; bundle LOCALISE-1) and
+ * at the older ones ("/", "/help/<address>") that forward there (story S1-E11-37; bundle SEO-1b).
  *
  * Why it exists: search engines and share bots (WhatsApp, Facebook, LinkedIn) read a page's HTML
  * and many of them never run its JavaScript, so a single-page app alone shows them only the
@@ -16,9 +17,12 @@
  * introduction, or the help page's title and first lines. A page staff hid from search engines,
  * and an unknown help address, get noindex. If the database can't be reached, the page goes out
  * unchanged: the tags are a nicety, the page itself must always load.
- * The country comes from Cloudflare (CF-IPCountry), as for sign-up (S1-E2-10), so a visitor gets
- * the same market's page the app then shows; with no country, Romania's English page (decided
- * 17 Oct 2026, 19:16, inside website_content()).
+ * The country and language come from the address. An older address has none: its place is the
+ * visitor's country from Cloudflare (CF-IPCountry, as for sign-up, S1-E2-10) in that market's
+ * first language, or Romania's English page with no market (decided 17 Oct 2026, 19:16), and its
+ * canonical link names the address with the place, so search engines list one address per page.
+ * Each page also names its other languages and countries (hreflang) for every open market. An
+ * address whose place isn't a market gets noindex.
  * Who calls it: functions/index.ts and functions/help/[[path]].ts on Cloudflare Pages, and
  * server/pages-functions-plugin.ts locally (npm run dev, npm run preview and the end-to-end tests).
  * What it calls: the Supabase REST endpoint /rest/v1/rpc/website_content with the public anon key,
@@ -29,12 +33,33 @@
 import { escapeHtml, injectIntoHead, siteNameOf, type DatabaseSettings } from './link-preview.ts';
 import { countryOfConnection } from './signup-context.ts';
 import { textOf, websitePageWords } from '../src/lib/searchWords';
+import {
+  isKnownPlace,
+  pathAtPlace,
+  pathWithoutPlace,
+  placeForVisitor,
+  placeOfPath,
+  type WebsiteMarket,
+  type WebsitePlace,
+} from '../src/lib/websitePlace';
 
 /** Kept here for the tests and older callers: the shared Markdown-to-words helper. */
 export { plainWordsOf } from '../src/lib/searchWords';
 
-/** A website address this handler answers: the home page, or one help page by its address. */
-export type WebsiteAddress = { kind: 'home_page' } | { kind: 'help_page'; entryKey: string };
+/**
+ * A website address this handler answers: the home page, or one help page by its address, with
+ * the country and language the address starts with (null for an older address without them).
+ */
+export type WebsiteAddress = { place: WebsitePlace | null } & (
+  { kind: 'home_page' } | { kind: 'help_page'; entryKey: string }
+);
+
+/** Another language or country a page can be read in, for its hreflang link. */
+export interface PageAlternate {
+  /** For example "sv-SE". */
+  hreflang: string;
+  url: string;
+}
 
 /** What the head tags carry for one page. */
 export interface WebsiteHead {
@@ -63,8 +88,10 @@ export interface WebsiteHead {
 export interface WebsiteHeadHost {
   /** The app's index.html as the host would serve it. */
   fetchIndexHtml: () => Promise<Response>;
-  /** The head for an address and a country, or null when there is no live page. */
-  findHead: (address: WebsiteAddress, country: string | null) => Promise<WebsiteHead | null>;
+  /** The head for an address read at a place, or null when there is no live page. */
+  findHead: (address: WebsiteAddress, place: WebsitePlace) => Promise<WebsiteHead | null>;
+  /** The markets and their languages: which places exist. */
+  findMarkets: () => Promise<WebsiteMarket[]>;
   /** Cloudflare's own idea of the visitor's country (request.cf.country), when it has one. */
   cloudflareCountry?: string;
 }
@@ -88,16 +115,21 @@ const verificationCodePattern = /^[A-Za-z0-9_-]{1,100}$/;
 /**
  * Reads a website address from a path.
  *
- * @param pathname - the request's path, for example "/" or "/help/raportare"
+ * @param pathname - the request's path, for example "/se/sv", "/se/sv/help/reporting" or the
+ *   older "/" and "/help/raportare"
  * @returns the address, or null for any other path (the help centre itself included)
  */
 export function parseWebsiteAddress(pathname: string): WebsiteAddress | null {
-  if (pathname === '/' || pathname === '') return { kind: 'home_page' };
-  const parts = pathname.replace(/\/+$/, '').split('/');
+  // Step 1: the country and language, when the path starts with them.
+  const trimmed = pathname.replace(/\/+$/, '');
+  const place = placeOfPath(trimmed);
+  const page = pathWithoutPlace(trimmed);
+  if (page === '/' || page === '') return { kind: 'home_page', place };
+  const parts = page.split('/');
   // parts[0] is the empty text before the first slash; then "help" and the page's address.
   if (parts.length !== 3 || parts[1] !== 'help') return null;
   const entryKey = parts[2] ?? '';
-  return helpAddressPattern.test(entryKey) ? { kind: 'help_page', entryKey } : null;
+  return helpAddressPattern.test(entryKey) ? { kind: 'help_page', entryKey, place } : null;
 }
 
 /** The parts of a page's search fields the head reads (any of them may be missing). */
@@ -144,17 +176,17 @@ export function websiteHeadFrom(address: WebsiteAddress, row: WebsiteContentRow)
  *
  * @param settings - the Supabase address and public anon key
  * @param address - the home page or a help page
- * @param country - the visitor's country, or null when unknown
+ * @param place - the country and language to read the page in
  * @returns the head, or null when there is no live page at that address
  * Errors: throws when the database answers with an error or can't be reached.
  */
 export async function fetchWebsiteHead(
   settings: DatabaseSettings,
   address: WebsiteAddress,
-  country: string | null,
+  place: WebsitePlace,
 ): Promise<WebsiteHead | null> {
   // Step 1: the public read of live content, as a visitor (the anon key); the database picks the
-  // market and the language with the usual fallbacks.
+  // wanted language before English and the country's wording before the shared page.
   const response = await fetch(`${settings.supabaseUrl}/rest/v1/rpc/website_content`, {
     method: 'POST',
     headers: {
@@ -162,7 +194,11 @@ export async function fetchWebsiteHead(
       Authorization: `Bearer ${settings.anonKey}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ wanted_kind: address.kind, visitor_country: country }),
+    body: JSON.stringify({
+      wanted_kind: address.kind,
+      visitor_country: place.country.toUpperCase(),
+      wanted_language: place.language,
+    }),
   });
   if (!response.ok) throw new Error(`website_content answered ${response.status}`);
   // Step 2: the home page's one row, or the help page with this address.
@@ -174,6 +210,68 @@ export async function fetchWebsiteHead(
   // Step 3: the home page also carries the search engines' verification codes (S1-E11-38).
   if (head.homeExtras !== null) head.homeExtras = await fetchVerificationCodes(settings);
   return head;
+}
+
+/** One market as the REST endpoint answers it. */
+interface MarketRow {
+  country_code: string;
+  languages: string[];
+  /** The open languages of an open market: the ones search engines are told about. */
+  listed_languages: string[];
+}
+
+/**
+ * Reads the markets and their languages: which places exist (LOCALISE-1).
+ *
+ * @param settings - the Supabase address and public anon key
+ * @returns the markets
+ * Errors: throws when the database answers with an error or can't be reached.
+ */
+export async function fetchWebsiteMarkets(settings: DatabaseSettings): Promise<WebsiteMarket[]> {
+  // website_places() is a database function, so the request is a POST with no arguments.
+  const address = `${settings.supabaseUrl}/rest/v1/rpc/website_places`;
+  const response = await fetch(address, {
+    method: 'POST',
+    headers: {
+      apikey: settings.anonKey,
+      Authorization: `Bearer ${settings.anonKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: '{}',
+  });
+  if (!response.ok) throw new Error(`markets answered ${response.status}`);
+  const rows = (await response.json()) as MarketRow[];
+  return rows.map((row) => ({
+    countryCode: row.country_code,
+    languages: row.languages,
+    listedLanguages: row.listed_languages,
+  }));
+}
+
+/**
+ * Lists the other places a page can be read at: each open language of each open market (hreflang).
+ *
+ * @param markets - the markets list
+ * @param origin - the site's origin
+ * @param page - the page's own path ("/", "/help/reporting")
+ * @returns one alternate per place, the page's own included (as search engines ask)
+ */
+export function pageAlternates(
+  markets: WebsiteMarket[],
+  origin: string,
+  page: string,
+): PageAlternate[] {
+  const alternates: PageAlternate[] = [];
+  for (const market of markets) {
+    for (const language of market.listedLanguages) {
+      const place = { country: market.countryCode.toLowerCase(), language };
+      alternates.push({
+        hreflang: `${language}-${market.countryCode}`,
+        url: `${origin}${pathAtPlace(place, page)}`,
+      });
+    }
+  }
+  return alternates;
 }
 
 /** One public setting as the REST endpoint answers it. */
@@ -250,12 +348,13 @@ export function homeExtraTags(
  * Everything the head adds to the page's <head>.
  *
  * @param head - the page's head
- * @param page - the page's address, the site's name and the site's origin
+ * @param page - the page's address, the site's name, the site's origin and, when there are any,
+ *   the other places the page can be read at
  * @returns the tags as one HTML text
  */
 export function websiteHeadTags(
   head: WebsiteHead,
-  page: { url: string; siteName: string; origin: string },
+  page: { url: string; siteName: string; origin: string; alternates?: PageAlternate[] },
 ): string {
   const picture = `${page.origin}${SHARE_PICTURE}`;
   const tags = [
@@ -282,6 +381,12 @@ export function websiteHeadTags(
   }
   // Step 2: a page staff hid from search engines says so (the header says it too).
   if (head.isHidden) tags.push('<meta name="robots" content="noindex">');
+  // The same page in each language of each open market (LOCALISE-1).
+  for (const alternate of page.alternates ?? []) {
+    tags.push(
+      `<link rel="alternate" hreflang="${escapeHtml(alternate.hreflang)}" href="${escapeHtml(alternate.url)}">`,
+    );
+  }
   // Step 3: the home page's verification codes and organisation data (S1-E11-38).
   if (head.homeExtras !== null) tags.push(...homeExtraTags(head.homeExtras, page));
   return tags.join('\n    ');
@@ -329,12 +434,46 @@ function withLanguage(html: string, language: string): string {
 }
 
 /**
- * Answers a request for "/" or "/help/<address>" with the app's page and its head tags.
+ * The page a request would be without any tags, marked as not for search engines.
  *
- * @param request - the incoming GET request
- * @param host - how to read index.html and the head
- * @returns the page with its tags; noindex for an unknown help address or a hidden page; unchanged
- *   for any other address or when the database can't be reached
+ * @returns the answer
+ */
+function notIndexable(html: string, status: number, headers: Headers): Response {
+  headers.set('X-Robots-Tag', 'noindex');
+  return new Response(injectIntoHead(html, null, '<meta name="robots" content="noindex">'), {
+    status,
+    headers,
+  });
+}
+
+/**
+ * Finds the place a request is read at and the page's head there.
+ *
+ * @param request - the request
+ * @param address - its website address
+ * @param host - the host's reads
+ * @returns the markets, the place (null when the address names one that isn't a market) and the
+ *   head (null when there is no live page)
+ * Errors: throws when the database can't be reached.
+ */
+async function readPage(request: Request, address: WebsiteAddress, host: WebsiteHeadHost) {
+  const markets = await host.findMarkets();
+  // An address with a place must name a real one; an older address takes the visitor's.
+  if (address.place !== null && !isKnownPlace(markets, address.place)) {
+    return { markets, place: null, head: null };
+  }
+  const country = countryOfConnection(request, host.cloudflareCountry);
+  const place = address.place ?? placeForVisitor(markets, country, null);
+  return { markets, place, head: await host.findHead(address, place) };
+}
+
+/**
+ * Answers a request for a website page with the app's page and its head tags.
+ *
+ * @param request - the incoming request
+ * @param host - how to get index.html, the markets and the page's head
+ * @returns the page with its tags; noindex for an unknown help address, a place that isn't a
+ *   market or a hidden page; unchanged for any other address or when the database can't be reached
  */
 export async function handleWebsitePage(
   request: Request,
@@ -351,34 +490,36 @@ export async function handleWebsitePage(
   // The page's text changes, so the static file's length and version tag no longer apply.
   headers.delete('Content-Length');
   headers.delete('ETag');
-  // Step 2: the head; when the database can't be reached, the page still loads, unchanged.
-  let head: WebsiteHead | null;
+  // Step 2: the place and the head; when the database can't be reached, the page still loads,
+  // unchanged.
+  let read: Awaited<ReturnType<typeof readPage>>;
   try {
-    head = await host.findHead(address, countryOfConnection(request, host.cloudflareCountry));
+    read = await readPage(request, address, host);
   } catch {
     console.warn('Website head: the database could not be reached; the page went out as it is.');
     return new Response(html, { status: page.status, headers });
   }
-  // Step 3: no live page here (an unknown help address, or no home page yet): not indexable.
-  if (head === null) {
+  // Step 3: no such place, or no live page here (an unknown help address, or no home page yet):
+  // not indexable. A home page with no content yet at a real place goes out as it is.
+  if (read.place === null) return notIndexable(html, page.status, headers);
+  if (read.head === null) {
     if (address.kind === 'home_page') return new Response(html, { status: page.status, headers });
-    headers.set('X-Robots-Tag', 'noindex');
-    return new Response(injectIntoHead(html, null, '<meta name="robots" content="noindex">'), {
-      status: page.status,
-      headers,
-    });
+    return notIndexable(html, page.status, headers);
   }
-  // Step 4: the tags; the canonical address carries no query (no tracking codes, S1-E4-05).
+  // Step 4: the tags. The canonical address is the one with the place and carries no query (no
+  // tracking codes, S1-E4-05), so an older address points search engines at the new one.
+  const ownPath = pathWithoutPlace(url.pathname.replace(/\/+$/, '')) || '/';
   const siteName = siteNameOf(html);
-  const tags = websiteHeadTags(head, {
-    url: `${url.origin}${url.pathname === '/' ? '/' : url.pathname.replace(/\/+$/, '')}`,
+  const tags = websiteHeadTags(read.head, {
+    url: `${url.origin}${pathAtPlace(read.place, ownPath)}`,
     siteName,
     origin: url.origin,
+    alternates: pageAlternates(read.markets, url.origin, ownPath),
   });
-  if (head.isHidden) headers.set('X-Robots-Tag', 'noindex');
+  if (read.head.isHidden) headers.set('X-Robots-Tag', 'noindex');
   const titled = withMarkedTitle(
-    withLanguage(html, head.language),
-    documentTitleOf(head, siteName),
+    withLanguage(html, read.head.language),
+    documentTitleOf(read.head, siteName),
     siteName,
   );
   const changed = injectIntoHead(titled, null, tags);

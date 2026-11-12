@@ -1,8 +1,10 @@
 -- Database tests for the website CMS (stories S1-E11-06, S1-E11-10 and S1-E11-12; CLAUDE.md rule 1).
 -- What it proves:
--- - anyone reads the live home page for their market and language, with the fallbacks: a
---   country with no content gets Romania in English, a language the market lacks gets its first
---   (S1-E11-06 criterion 10);
+-- - anyone reads the live home page for their country and language, with the fallbacks: a
+--   country with no wording of its own gets the shared page, a language with no page gets English
+--   (S1-E11-06 criterion 10; LOCALISE-1, which replaced "Romania in English");
+-- - a country can have its own wording, which its visitors get instead of the shared page (the
+--   drafts below are Romania's own wording);
 -- - only owner and admin read the versions (cms_versions_select_staff) and save, publish, restore
 --   or remove; a moderator, a content editor and a member are refused (criterion 9);
 -- - a draft changes nothing; publishing refuses empty or too-long fields with the list of fields;
@@ -41,19 +43,19 @@ grant all on kept to authenticated;
 -- The seeded Romanian home page, to edit below.
 insert into kept (label, value)
 select 'ro_home', content from public.cms_versions
-where content_kind = 'home_page' and market_code = 'RO' and language_code = 'ro' and status = 'published';
+where content_kind = 'home_page' and market_code is null and language_code = 'ro' and status = 'published';
 
 /* ---------- Reading, with the fallbacks ---------- */
 
 set local role anon;
 select is((select content ->> 'headlineFirst' from public.website_content('home_page', 'RO', 'ro')),
   'Scrie povești.', 'a visitor from Romania reads the Romanian home page');
-select is((select market_code || ':' || language_code from public.website_content('home_page', 'GB', 'en')),
-  'RO:en', 'a country with no page of its own gets Romania in English');
+select is((select coalesce(market_code, 'shared') || ':' || language_code from public.website_content('home_page', 'GB', 'en')),
+  'shared:en', 'a country with no wording of its own gets the shared page');
 select is((select language_code from public.website_content('home_page', null, 'ro')),
-  'en', 'an unknown country gets Romania in English too');
+  'ro', 'an unknown country gets the shared page too, in the wanted language');
 select is((select language_code from public.website_content('home_page', 'RO', 'hu')),
-  'ro', 'a language the market lacks gets the market''s first language');
+  'en', 'a language with no page gets English');
 select is((select count(*)::integer from public.website_content('question', 'RO', 'en')), 8,
   'the eight seeded questions are live in English');
 select throws_ok($$ select public.admin_save_cms_draft('home_page', 'home', 'RO', 'ro', '{}'::jsonb) $$,
@@ -100,21 +102,21 @@ select matches(
 select throws_ok($$ select public.admin_save_cms_draft('home_page', 'home', 'RO', 'de', '{}'::jsonb) $$,
   '23514', null, 'a language that isn''t the market''s is refused');
 
--- Tomorrow: scheduled, the current version stays up.
-select public.admin_save_cms_draft('home_page', 'home', 'RO', 'ro',
+-- The shared page (no country, LOCALISE-1), in Romanian. Tomorrow: scheduled, the current version stays up.
+select public.admin_save_cms_draft('home_page', 'home', '', 'ro',
   (select value from kept where label = 'ro_home') || '{"headlineFirst": "Scrie mâine."}'::jsonb,
   public.romania_today() + 1);
 select is(public.admin_publish_cms_version((select id from public.cms_versions
-    where content_kind = 'home_page' and language_code = 'ro' and status = 'draft')),
+    where content_kind = 'home_page' and market_code is null and language_code = 'ro' and status = 'draft')),
   public.romania_today() + 1, 'a version for tomorrow is scheduled for tomorrow');
 select is((select content ->> 'headlineFirst' from public.website_content('home_page', 'RO', 'ro')),
   'Scrie povești.', 'and the current version stays up until then');
 
 -- Today: live within the transaction.
-select public.admin_save_cms_draft('home_page', 'home', 'RO', 'ro',
+select public.admin_save_cms_draft('home_page', 'home', '', 'ro',
   (select value from kept where label = 'ro_home') || '{"headlineFirst": "Scrie azi."}'::jsonb);
 select is(public.admin_publish_cms_version((select id from public.cms_versions
-    where content_kind = 'home_page' and language_code = 'ro' and status = 'draft')),
+    where content_kind = 'home_page' and market_code is null and language_code = 'ro' and status = 'draft')),
   public.romania_today(), 'a version with no date goes live today');
 select is((select content ->> 'headlineFirst' from public.website_content('home_page', 'RO', 'ro')),
   'Scrie azi.', 'and visitors see it at once');
@@ -122,8 +124,8 @@ reset role;
 select ok(exists (select 1 from public.audit_log where action = 'website.published'
     and before_values -> 'content' ->> 'headlineFirst' = 'Scrie povești.'
     and after_values -> 'content' ->> 'headlineFirst' = 'Scrie azi.'
-    and after_values ->> 'market' = 'RO' and after_values ->> 'language' = 'ro'),
-  'the publish is logged with the market, language and before and after copy');
+    and after_values ->> 'market' is null and after_values ->> 'language' = 'ro'),
+  'the publish is logged with the place (no country: the shared page), language and before and after copy');
 
 /* ---------- Restore ---------- */
 
@@ -132,7 +134,7 @@ select lives_ok($$ select public.admin_restore_cms_version((select id from publi
     where content_kind = 'home_page' and language_code = 'ro' and user_id is null)) $$,
   'the owner restores version 1');
 select is((select content ->> 'headlineFirst' from public.cms_versions
-    where content_kind = 'home_page' and language_code = 'ro' and status = 'draft'),
+    where content_kind = 'home_page' and market_code is null and language_code = 'ro' and status = 'draft'),
   'Scrie povești.', 'it comes back as a draft');
 select is((select content ->> 'headlineFirst' from public.website_content('home_page', 'RO', 'ro')),
   'Scrie azi.', 'and the website doesn''t change until it is published');
@@ -174,7 +176,7 @@ select public.admin_save_cms_draft('help_page', 'links-test', 'RO', 'en',
 select is(pg_temp.hint_of($$ select public.admin_publish_cms_version((select id from public.cms_versions
     where entry_key = 'links-test' and status = 'draft')) $$),
   'body:broken_link:/help/no-such-page', 'a link to a help page that doesn''t exist stops the publish, named');
-select lives_ok($$ select public.admin_remove_cms_entry('question', 'is-it-free', 'RO', 'en') $$,
+select lives_ok($$ select public.admin_remove_cms_entry('question', 'is-it-free', '', 'en') $$,
   'an admin removes a question');
 select is((select count(*)::integer from public.website_content('question', 'RO', 'en') where entry_key = 'is-it-free'), 0,
   'and it no longer shows');

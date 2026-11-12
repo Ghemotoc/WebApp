@@ -4,9 +4,9 @@
  * address is not copy. The second button shows only when staff gave it words.
  * Who uses it: WriteBand, CommunityBand, FirstStoryBand and AppsBand.
  */
-import { Link } from 'react-router';
 
 import { withBrand } from '../lib/brandText';
+import { WebsiteLink } from './WebsiteLink';
 
 /** The look of the buttons on each background. */
 const buttonClasses = {
@@ -44,13 +44,13 @@ export function BandButtons({ tone, first, second }: BandButtonsProps) {
     'inline-flex min-h-12 items-center rounded-full px-6 text-[15px] font-semibold no-underline';
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <Link to={first.to} className={`${pill} ${buttonClasses[tone].first}`}>
+      <WebsiteLink to={first.to} className={`${pill} ${buttonClasses[tone].first}`}>
         {withBrand(first.label)}
-      </Link>
+      </WebsiteLink>
       {second.label.trim() !== '' && (
-        <Link to={second.to} className={`${pill} ${buttonClasses[tone].second}`}>
+        <WebsiteLink to={second.to} className={`${pill} ${buttonClasses[tone].second}`}>
           {withBrand(second.label)}
-        </Link>
+        </WebsiteLink>
       )}
     </div>
   );

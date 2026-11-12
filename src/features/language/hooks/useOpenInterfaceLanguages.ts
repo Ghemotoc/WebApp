@@ -7,7 +7,8 @@
  * shows in no menu (the brief: "Given the language menu, when a language is closed, then it does
  * not show"). Romanian and English are always open (admin_set_language_status() refuses to close
  * them), so they are the answer while the list loads or when the database can't be reached.
- * Who calls it: useLanguageOptions (the footer, Settings and onboarding menus), and
+ * Who calls it: useLanguageOptions (the footer, Settings and onboarding menus),
+ * LocalisedWebsiteLayout (through useOpenInterfaceLanguagesState()), and
  * useFirstVisitLanguage through fetchOpenInterfaceLanguages(). What it calls: the public languages table (policy languages_select_public: anyone
  * reads it; nothing in it is personal).
  */
@@ -46,11 +47,15 @@ export async function fetchOpenInterfaceLanguages(): Promise<InterfaceLanguage[]
 }
 
 /**
- * Follows the open interface languages.
+ * Follows the open interface languages, and says whether the answer has arrived.
  *
- * @returns the languages to offer; Romanian and English until the answer arrives
+ * @returns languages (Romanian and English until the answer arrives, or when the read fails) and
+ *   isKnown (the read finished, well or not), for a caller that must not act on the fallback
  */
-export function useOpenInterfaceLanguages(): readonly InterfaceLanguage[] {
+export function useOpenInterfaceLanguagesState(): {
+  languages: readonly InterfaceLanguage[];
+  isKnown: boolean;
+} {
   const languages = useQuery({
     queryKey: ['open-interface-languages'],
     queryFn: fetchOpenInterfaceLanguages,
@@ -58,6 +63,18 @@ export function useOpenInterfaceLanguages(): readonly InterfaceLanguage[] {
     staleTime: 60 * 60 * 1000,
   });
   // A failed read is not shown to anyone: the menu keeps the two languages always open.
-  if (languages.data === undefined || languages.data.length === 0) return alwaysOpenLanguages;
-  return languages.data;
+  const hasAnswer = languages.data !== undefined && languages.data.length > 0;
+  return {
+    languages: hasAnswer ? languages.data : alwaysOpenLanguages,
+    isKnown: !languages.isPending,
+  };
+}
+
+/**
+ * Follows the open interface languages.
+ *
+ * @returns the languages to offer; Romanian and English until the answer arrives
+ */
+export function useOpenInterfaceLanguages(): readonly InterfaceLanguage[] {
+  return useOpenInterfaceLanguagesState().languages;
 }

@@ -1,5 +1,6 @@
 /**
- * Tests for the website pages' search and share tags (story S1-E11-37; bundle SEO-1b).
+ * Tests for the website pages' search and share tags (story S1-E11-37; bundle SEO-1b), at the
+ * addresses with a country and language and at the older ones (bundle LOCALISE-1).
  */
 import { describe, expect, it } from 'vitest';
 
@@ -14,29 +15,37 @@ import {
   type WebsiteHead,
   type WebsiteHeadHost,
 } from './website-head';
+import type { WebsiteMarket, WebsitePlace } from '../src/lib/websitePlace';
 
 /** A small index.html like the one the build makes, with the product name as its title. */
 const indexHtml =
   '<!doctype html><html lang="ro"><head><title>Brand</title></head><body><div id="root"></div></body></html>';
 
-/** What the fake host was asked, so a test can check the country it passed on. */
+/** What the fake host was asked, so a test can check the place it passed on. */
 interface Asked {
   address: WebsiteAddress | null;
-  country: string | null;
+  place: WebsitePlace | null;
 }
+
+/** Two markets: Romania is open, Sweden isn't yet. */
+const markets: WebsiteMarket[] = [
+  { countryCode: 'RO', languages: ['ro', 'en'], listedLanguages: ['ro', 'en'] },
+  { countryCode: 'SE', languages: ['sv', 'en'], listedLanguages: [] },
+];
 
 /** A host that serves indexHtml and answers with the given head (or throws). */
 function fakeHost(head: WebsiteHead | null | Error, asked?: Asked): WebsiteHeadHost {
   return {
     fetchIndexHtml: async () => new Response(indexHtml, { headers: { ETag: '"abc"' } }),
-    findHead: async (address, country) => {
+    findHead: async (address, place) => {
       if (asked !== undefined) {
         asked.address = address;
-        asked.country = country;
+        asked.place = place;
       }
       if (head instanceof Error) throw head;
       return head;
     },
+    findMarkets: async () => markets,
     cloudflareCountry: 'se',
   };
 }
@@ -53,15 +62,30 @@ const romanianHome: WebsiteHead = {
 
 describe('parseWebsiteAddress', () => {
   it('reads the home page and a help page, with or without a final slash', () => {
-    expect(parseWebsiteAddress('/')).toEqual({ kind: 'home_page' });
+    expect(parseWebsiteAddress('/')).toEqual({ kind: 'home_page', place: null });
     expect(parseWebsiteAddress('/help/raportare')).toEqual({
       kind: 'help_page',
       entryKey: 'raportare',
+      place: null,
     });
     expect(parseWebsiteAddress('/help/raportare/')).toEqual({
       kind: 'help_page',
       entryKey: 'raportare',
+      place: null,
     });
+  });
+
+  it('reads the country and language an address starts with', () => {
+    const place = { country: 'se', language: 'sv' };
+    expect(parseWebsiteAddress('/se/sv')).toEqual({ kind: 'home_page', place });
+    expect(parseWebsiteAddress('/se/sv/')).toEqual({ kind: 'home_page', place });
+    expect(parseWebsiteAddress('/se/sv/help/rapportera')).toEqual({
+      kind: 'help_page',
+      entryKey: 'rapportera',
+      place,
+    });
+    expect(parseWebsiteAddress('/se/sv/help')).toBeNull();
+    expect(parseWebsiteAddress('/se/sv/discover')).toBeNull();
   });
 
   it('leaves the help centre, other pages and odd addresses alone', () => {
@@ -75,7 +99,7 @@ describe('parseWebsiteAddress', () => {
 describe('websiteHeadFrom', () => {
   it('uses the search fields staff filled in', () => {
     const head = websiteHeadFrom(
-      { kind: 'home_page' },
+      { kind: 'home_page', place: null },
       {
         entry_key: 'home',
         language_code: 'en',
@@ -98,7 +122,7 @@ describe('websiteHeadFrom', () => {
 
   it('falls back to the home page’s headline and introduction when the fields are empty', () => {
     const head = websiteHeadFrom(
-      { kind: 'home_page' },
+      { kind: 'home_page', place: null },
       {
         entry_key: 'home',
         language_code: 'ro',
@@ -120,7 +144,7 @@ describe('websiteHeadFrom', () => {
   it('falls back to a help page’s title and the plain words of its body, cut at a word', () => {
     const body = `## Cum raportezi\n\nApasă **Raportează** sau [scrie-ne](/contact). ${'cuvânt '.repeat(40)}`;
     const head = websiteHeadFrom(
-      { kind: 'help_page', entryKey: 'raportare' },
+      { kind: 'help_page', entryKey: 'raportare', place: null },
       { entry_key: 'raportare', language_code: 'ro', content: { title: 'Raportare', body } },
     );
     expect(head.title).toBe('Raportare');
@@ -176,22 +200,35 @@ describe('homeExtraTags', () => {
 
 describe('handleWebsitePage', () => {
   it('writes the title, description, canonical link, share tags and language into the home page', async () => {
-    const asked: Asked = { address: null, country: null };
+    const asked: Asked = { address: null, place: null };
     const response = await handleWebsitePage(
       new Request('https://example.test/?utm_source=x'),
       fakeHost({ ...romanianHome, language: 'en' }, asked),
     );
     const html = await response.text();
-    // The country from Cloudflare goes to the database, in capitals.
-    expect(asked).toEqual({ address: { kind: 'home_page' }, country: 'SE' });
+    // An older address is read at the visitor's place: the country from Cloudflare, in that
+    // market's first language.
+    expect(asked).toEqual({
+      address: { kind: 'home_page', place: null },
+      place: { country: 'se', language: 'sv' },
+    });
     // The title is marked, so the app puts the site's name back on the next screen.
     expect(html).toContain(
       '<title data-page-head data-site-name="Brand">Scrie aici, capitol cu capitol · Brand</title>',
     );
     expect(html).toContain('<html lang="en">');
     expect(html).toContain('<meta name="description" content="Publică povești și poezii.">');
-    // The canonical address carries no query, so tracking codes never spread (S1-E4-05).
-    expect(html).toContain('<link rel="canonical" href="https://example.test/">');
+    // The canonical address is the one with the place, so search engines list one address per
+    // page; it carries no query, so tracking codes never spread (S1-E4-05).
+    expect(html).toContain('<link rel="canonical" href="https://example.test/se/sv">');
+    // The page's other places: each language of each open market (Sweden isn't open yet).
+    expect(html).toContain(
+      '<link rel="alternate" hreflang="ro-RO" href="https://example.test/ro/ro">',
+    );
+    expect(html).toContain(
+      '<link rel="alternate" hreflang="en-RO" href="https://example.test/ro/en">',
+    );
+    expect(html).not.toContain('hreflang="sv-SE"');
     expect(html).toContain('<meta property="og:site_name" content="Brand">');
     // The large share picture, shown large on every card (S1-E11-38).
     expect(html).toContain('og:image" content="https://example.test/link-previews/share.png"');
@@ -236,7 +273,37 @@ describe('handleWebsitePage', () => {
     const html = await response.text();
     expect(response.headers.get('X-Robots-Tag')).toBe('noindex');
     expect(html).toContain('<meta name="robots" content="noindex">');
-    expect(html).toContain('<link rel="canonical" href="https://example.test/help/ajutor">');
+    expect(html).toContain('<link rel="canonical" href="https://example.test/se/sv/help/ajutor">');
+  });
+
+  it('reads a page at the country and language in its address', async () => {
+    const asked: Asked = { address: null, place: null };
+    const response = await handleWebsitePage(
+      new Request('https://example.test/ro/en/help/reporting?utm_source=x'),
+      fakeHost({ ...romanianHome, language: 'en', homeExtras: null }, asked),
+    );
+    const html = await response.text();
+    expect(asked.place).toEqual({ country: 'ro', language: 'en' });
+    expect(html).toContain(
+      '<link rel="canonical" href="https://example.test/ro/en/help/reporting">',
+    );
+    expect(html).toContain(
+      '<link rel="alternate" hreflang="ro-RO" href="https://example.test/ro/ro/help/reporting">',
+    );
+    expect(html).toContain('<html lang="en">');
+  });
+
+  it('marks an address whose place isn’t a market noindex, without reading the page', async () => {
+    const asked: Asked = { address: null, place: null };
+    for (const address of ['/fr/en', '/se/ro/help/ajutor']) {
+      const response = await handleWebsitePage(
+        new Request(`https://example.test${address}`),
+        fakeHost(romanianHome, asked),
+      );
+      expect(response.headers.get('X-Robots-Tag')).toBe('noindex');
+      expect(await response.text()).not.toContain('og:title');
+    }
+    expect(asked.address).toBeNull();
   });
 
   it('marks an unknown help page noindex and writes no tags', async () => {

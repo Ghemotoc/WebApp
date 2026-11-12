@@ -21,6 +21,7 @@
 import { escapeHtml, injectIntoHead, siteNameOf, type DatabaseSettings } from './link-preview.ts';
 import { linkPreviewPalette } from './link-preview-palette.ts';
 import { landingPageWords } from '../src/lib/searchWords';
+import { pathWithoutPlace } from '../src/lib/websitePlace';
 
 /** What a landing page's preview shows. */
 export interface LandingPreview {
@@ -49,11 +50,12 @@ const landingSlugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 /**
  * Reads a landing page's name from a path.
  *
- * @param pathname - the request's path, for example "/c/concursul-de-toamna"
+ * @param pathname - the request's path, for example "/ro/ro/c/concursul-de-toamna" (with the
+ *   country and language, LOCALISE-1) or the older "/c/concursul-de-toamna"
  * @returns the name, or null for any other path
  */
 export function parseLandingAddress(pathname: string): string | null {
-  const parts = pathname.replace(/\/+$/, '').split('/');
+  const parts = pathWithoutPlace(pathname.replace(/\/+$/, '')).split('/');
   // parts[0] is the empty text before the first slash; parts[1] must be "c".
   if (parts[1] !== 'c' || parts.length !== 3) return null;
   const slug = parts[2] ?? '';

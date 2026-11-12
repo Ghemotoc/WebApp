@@ -16,7 +16,10 @@ test('the home page carries its description, canonical link and share tags for s
   expect(html).toMatch(
     /<meta name="description" content="Publică povești, poezii și eseuri[^"]*">/,
   );
-  expect(html).toMatch(/<link rel="canonical" href="http:\/\/[^"]+\/">/);
+  // LOCALISE-1: the address without a place is read at the visitor's place, and the canonical link
+  // names that place, with one alternate per open language of each open market.
+  expect(html).toMatch(/<link rel="canonical" href="http:\/\/[^"]+\/ro\/ro">/);
+  expect(html).toMatch(/<link rel="alternate" hreflang="en-RO" href="http:\/\/[^"]+\/ro\/en">/);
   expect(html).toContain('<meta property="og:title" content="Scrie povești. Fii citit.">');
   expect(html).toContain('<title data-page-head');
 });

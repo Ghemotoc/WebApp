@@ -3,7 +3,10 @@
  * S1-E11-10, S1-E11-12 and S1-E5-08).
  *
  * Who calls it: the public home page, the notice strip and Help.
- * What it calls: useVisitorCountry (the country from the connection, S1-E2-10) and the
+ * Whose content: on a website page the country and language in the address ("/se/sv/help",
+ * LOCALISE-1); on any other page (the notice strip on Discover, the rules walkthrough) the
+ * visitor's country and the interface language.
+ * What it calls: useWebsitePlace, useVisitorCountry (the country from the connection, S1-E2-10) and the
  * WebsiteContentStore's readLive(), then parses each entry with its zod schema from
  * src/schemas/websiteContent.ts and leaves out anything that doesn't fit (a draft can't reach
  * here, but an older shape could). A failed read falls back to the last copy this browser saw
@@ -19,6 +22,7 @@ import type { WebsiteContentKind } from '@/schemas/websiteContent';
 
 import { appDatabaseReader, type LiveEntry } from '../api/websiteContentStore';
 import { recallContent, rememberContent } from '../lib/lastKnownContent';
+import { useWebsitePlace } from './useWebsitePlace';
 
 /** How long a read stays fresh: a publish shows within a minute (S1-E11-06 criterion 6). */
 const contentFreshMilliseconds = 60 * 1000;
@@ -46,6 +50,26 @@ function parseEntries<Content>(entries: unknown, schema: ZodType<Content>): Pars
 }
 
 /**
+ * Says whose content to read: the address decides on a website page ("/se/sv/help", LOCALISE-1);
+ * the visitor's country and the interface language decide everywhere else.
+ *
+ * @returns the country (upper case, or null when unknown), the language and whether both are known
+ */
+function useContentVisitor() {
+  const { i18n } = useTranslation();
+  const place = useWebsitePlace();
+  const visitor = useVisitorCountry();
+  if (place !== null) {
+    return { countryCode: place.country.toUpperCase(), language: place.language, isKnown: true };
+  }
+  return {
+    countryCode: visitor.countryCode,
+    language: i18n.resolvedLanguage ?? 'ro',
+    isKnown: visitor.isKnown,
+  };
+}
+
+/**
  * Reads the live entries of one kind.
  *
  * @param kind - for example 'question'
@@ -60,9 +84,7 @@ export function useWebsiteContent<Content>(
   schema: ZodType<Content>,
   options: { enabled?: boolean } = {},
 ) {
-  const { i18n } = useTranslation();
-  const { countryCode, isKnown } = useVisitorCountry();
-  const language = i18n.resolvedLanguage ?? 'ro';
+  const { countryCode, language, isKnown } = useContentVisitor();
   const cacheKey = `${kind}:${countryCode ?? 'none'}:${language}`;
   const content = useQuery<LiveEntry[]>({
     queryKey: ['website-content', kind, countryCode, language],
