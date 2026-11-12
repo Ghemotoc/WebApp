@@ -2,6 +2,7 @@
  * PasswordFields: "Password" and "Confirm password", or the emailed-link choice instead, board 2.1
  * (story S1-E2-01).
  *
+ * Both fields have a Show / Hide button (PasswordInput).
  * Rules: at least 10 characters, pasting allowed (no blocking of paste or of password managers:
  * WCAG 2.2, 3.3.8), checked against leaked passwords on submit. As soon as the second field has
  * something in it, a line under it says whether the two match, so the person knows before they
@@ -13,8 +14,8 @@ import { useTranslation } from 'react-i18next';
 
 import { CheckIcon } from '@/components/icons/CheckIcon';
 import { Button } from '@/components/ui/Button';
-import { TextInput } from '@/components/ui/TextInput';
 import type { SignUpMethod } from '@/schemas/signUp';
+import { PasswordInput } from './PasswordInput';
 import { PasswordStrengthMeter } from './PasswordStrengthMeter';
 
 /** What the fields need from the form. */
@@ -76,26 +77,25 @@ export function PasswordFields(props: PasswordFieldsProps) {
   return (
     <>
       <div className="flex flex-col gap-1">
-        <TextInput
+        {/* One line under the field: the rule while it is empty, then the strength line takes its
+            place as the person types (PASSWORD-1; Robert, 12 Nov 2026: one line, no checklist). */}
+        <PasswordInput
           id="sign-up-password"
-          type="password"
           autoComplete="new-password"
           label={t('signUp.password.label')}
-          hint={t('signUp.password.hint')}
+          hint={props.password === '' ? t('signUp.password.hint') : undefined}
           errorMessage={props.passwordProblem === undefined ? undefined : t(props.passwordProblem)}
           value={props.password}
           onChange={(event) => props.onPasswordChange(event.target.value)}
         />
-        {/* How strong it looks, as the person types (bundle G3; a hint, not a rule). */}
         <PasswordStrengthMeter password={props.password} id="sign-up-password-strength" />
         <Button variant="text" className="self-start" onClick={() => props.onMethodChange('link')}>
           {t('signUp.useLink')}
         </Button>
       </div>
       <div className="flex flex-col gap-1">
-        <TextInput
+        <PasswordInput
           id="sign-up-confirm-password"
-          type="password"
           autoComplete="new-password"
           label={t('signUp.confirmPassword.label')}
           errorMessage={props.confirmProblem === undefined ? undefined : t(props.confirmProblem)}

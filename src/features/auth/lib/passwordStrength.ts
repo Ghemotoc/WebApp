@@ -1,7 +1,8 @@
 /**
- * passwordStrength: how strong a new password looks, for the four-segment meter under the
- * password field (bundle G3 COMPONENTS; handoff "Fields and forms": four segments, red (weak),
- * yellow (fair), green (strong), dark green (very strong), with the word underneath).
+ * passwordStrength: how strong a new password looks, for the bar and the line under the
+ * password field (bundle G3 COMPONENTS; handoff "Fields and forms": four steps, red (weak),
+ * yellow (fair), green (strong), dark green (very strong), with the word underneath; one bar and
+ * one line since PASSWORD-1).
  *
  * The meter is a hint, never a rule: the only rules are the ones sign-up already checks (at least
  * 10 characters, not on a list of leaked passwords; canvas 2.1). Length counts most, because a
