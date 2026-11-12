@@ -15,7 +15,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(16);
+select plan(21);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -101,6 +101,22 @@ select lives_ok($$ select public.cms_fill_empty('5'::jsonb, '"text"'::jsonb),
   'the filling helper raises nothing on a number, null or a field whose shape differs');
 select is(public.cms_fill_empty('["a"]'::jsonb, '{"a": "b"}'::jsonb), '["a"]'::jsonb,
   'a list where the English page has fields stays as written');
+
+/* ---------- "Fully translated" (LOCALISE-2) ---------- */
+
+select ok(not public.cms_is_fully_translated('{"items": ["ett"]}'::jsonb, '{"items": ["one", "two"]}'::jsonb),
+  'a translation with fewer list items than the English page is not fully translated');
+select ok(not public.cms_is_fully_translated('{"title": "   "}'::jsonb, '{"title": "Help"}'::jsonb),
+  'a field of spaces only counts as empty');
+select ok(public.cms_is_fully_translated('{"title": "Hjälp"}'::jsonb, '{"title": "Help", "searchTitle": "", "isLegal": false}'::jsonb),
+  'a field the English page leaves empty, and a switch, are not asked of the translation');
+select ok(public.cms_is_fully_translated('{"title": "Hjälp"}'::jsonb, '{"title": "Help", "search": {"title": "Help centre"}}'::jsonb),
+  'the optional search fields never hold a translation back');
+select lives_ok($$ select public.cms_is_fully_translated('5'::jsonb, '"text"'::jsonb),
+    public.cms_is_fully_translated('null'::jsonb, '{"a": 1}'::jsonb),
+    public.cms_is_fully_translated(null, null),
+    public.cms_is_fully_translated('{"a": {"b": ""}}'::jsonb, '{"a": "text"}'::jsonb) $$,
+  'the "fully translated" check raises nothing on a number, null or a field whose shape differs');
 
 /* ---------- The checks a translation still meets ---------- */
 
