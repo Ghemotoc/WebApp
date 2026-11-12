@@ -4604,6 +4604,10 @@ CREATE OR REPLACE FUNCTION "public"."admin_close_unmatched_notice"("target_notic
 declare
   notice public.public_notices;
 begin
+  -- Who is asking comes first, so a refusal says nothing about whether the target exists (FINAL-3).
+  if not public.staff_may('moderation', 'act') then
+    raise exception 'Only moderators close notices.' using errcode = 'insufficient_privilege';
+  end if;
   -- Step 1: who may act, and on which notice.
   select * into notice from public.public_notices
     where id = target_notice_id and case_id is null and closed_at is null for update;
@@ -8107,6 +8111,10 @@ CREATE OR REPLACE FUNCTION "public"."admin_pause_reporting"("reporter_handle" "t
 declare
   reporter_id uuid;
 begin
+  -- Who is asking comes first, so a refusal says nothing about whether the target exists (FINAL-3).
+  if not public.staff_may('user_sanctions', 'act') then
+    raise exception 'Only moderation staff can pause reporting.' using errcode = 'insufficient_privilege';
+  end if;
   select id into reporter_id from public.profiles
     where profiles.handle = reporter_handle and profiles.deleted_at is null;
   if reporter_id is null then
@@ -9247,6 +9255,10 @@ declare
   target public.reports;
   target_case public.cases;
 begin
+  -- Who is asking comes first, so a refusal says nothing about whether the target exists (FINAL-3).
+  if not public.staff_may('moderation', 'act') then
+    raise exception 'You can''t ask about this report.' using errcode = 'insufficient_privilege';
+  end if;
   -- Step 1: the report and its case, and whether the caller may act on it.
   select * into target from public.reports where reports.reference = report_reference;
   if target.id is null then
@@ -12599,6 +12611,10 @@ CREATE OR REPLACE FUNCTION "public"."admin_unlink_returning_user"("link_id" "uui
 declare
   link public.case_account_links;
 begin
+  -- Who is asking comes first, so a refusal says nothing about whether the target exists (FINAL-3).
+  if not public.staff_may('moderation', 'act') then
+    raise exception 'You can''t see this case.' using errcode = 'insufficient_privilege';
+  end if;
   select * into link from public.case_account_links where id = link_id and removed_at is null;
   if link.id is null then
     raise exception 'This link is already gone.' using errcode = 'check_violation', hint = 'not_found';
