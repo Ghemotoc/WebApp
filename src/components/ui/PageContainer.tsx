@@ -1,10 +1,12 @@
 /**
- * PageContainer: the centred column every page, the top bar and the footer sit in (story S1-E1-03).
+ * PageContainer: the centred column every page and the footer sit in (story S1-E1-03).
  *
- * Board values: at most 1280 px wide, with side padding that grows from 16 px on phones to 64 px
- * on wide screens (clamp(16px, 4vw, 64px)), so nothing touches the screen edge at any width
- * (CLAUDE.md rule 21).
- * Who uses it: AppLayout, TopBar, Footer and the pages.
+ * The column is a little narrower than the floating navigation bar above it: 10 px in from each
+ * of the bar's edges, at every screen width, so the bar reads as floating over the page instead of
+ * sharing its edges (GLASS-4; Robert, 12 Nov 2026). The bar (TopBar) is at most 1280 px wide with
+ * side space of clamp(16px, 4vw, 64px); the column is therefore at most 1260 px wide with that
+ * side space plus 10 px. Nothing touches the screen edge at any width (CLAUDE.md rule 21).
+ * Who uses it: AppLayout, Footer and the pages.
  */
 import type { HTMLAttributes } from 'react';
 
@@ -18,7 +20,10 @@ import { cn } from '@/lib/utils';
 export function PageContainer({ className, ...divProps }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn('mx-auto box-content max-w-[1280px] px-[clamp(16px,4vw,64px)]', className)}
+      className={cn(
+        'mx-auto box-content max-w-[1260px] px-[calc(clamp(16px,4vw,64px)+10px)]',
+        className,
+      )}
       {...divProps}
     />
   );
