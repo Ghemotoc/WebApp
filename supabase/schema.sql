@@ -19112,7 +19112,7 @@ $$;
 ALTER FUNCTION "public"."cms_fill_empty"("wanted" "jsonb", "fallback" "jsonb") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."cms_fill_empty"("wanted" "jsonb", "fallback" "jsonb") IS 'Internal: a translation with its empty fields filled from the English page (LOCALISE-1).';
+COMMENT ON FUNCTION "public"."cms_fill_empty"("wanted" "jsonb", "fallback" "jsonb") IS 'Internal: a translation with its empty fields filled from the English page. No longer used by website_content() since LOCALISE-2; kept for its tests and for a later "copy from English" in the editor.';
 
 
 
@@ -19181,6 +19181,56 @@ ALTER FUNCTION "public"."cms_home_page_problems"("page" "jsonb") OWNER TO "postg
 
 
 COMMENT ON FUNCTION "public"."cms_home_page_problems"("page" "jsonb") IS 'Internal: the home page''s field checks (S1-E11-06), with the optional "Your rights" card (LOOK-2), four bands and the footer note (LOOK-3).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."cms_is_fully_translated"("translation" "jsonb", "english_page" "jsonb") RETURNS boolean
+    LANGUAGE "plpgsql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+begin
+  -- Step 1: nothing in English to compare with: nothing is missing.
+  if english_page is null or english_page = 'null'::jsonb then return true; end if;
+  -- Step 2: an English text asks for a text in the translation, unless the English one is empty.
+  if jsonb_typeof(english_page) = 'string' then
+    if btrim(english_page #>> '{}') = '' then return true; end if;
+    return translation is not null
+      and jsonb_typeof(translation) = 'string'
+      and btrim(translation #>> '{}') <> '';
+  end if;
+  -- Step 3: an object is checked field by field. A translation of another shape has no fields.
+  -- The search fields ("search": title and description for search engines, SEO-1b) are optional
+  -- extras with defaults of their own, so leaving them empty never holds a translation back.
+  if jsonb_typeof(english_page) = 'object' then
+    return not exists (
+      select 1
+      from jsonb_each(english_page) as fields (name, english_value)
+      where fields.name <> 'search'
+        and not public.cms_is_fully_translated(
+        case when jsonb_typeof(translation) = 'object' then translation -> fields.name end,
+        fields.english_value)
+    );
+  end if;
+  -- Step 4: a list is checked item by item, so a shorter translated list is not complete.
+  if jsonb_typeof(english_page) = 'array' then
+    return not exists (
+      select 1
+      from jsonb_array_elements(english_page) with ordinality as items (english_value, place)
+      where not public.cms_is_fully_translated(
+        case when jsonb_typeof(translation) = 'array' then translation -> (items.place - 1)::int end,
+        items.english_value)
+    );
+  end if;
+  -- Step 5: numbers and switches are settings, not words to translate.
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."cms_is_fully_translated"("translation" "jsonb", "english_page" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."cms_is_fully_translated"("translation" "jsonb", "english_page" "jsonb") IS 'Internal: true when a translation has every text its English page has (LOCALISE-2).';
 
 
 
@@ -51135,7 +51185,8 @@ begin
     order by live.entry_key;
     return;
   end if;
-  -- Step 3: every other kind: per entry, the best row, then its empty fields from English.
+  -- Step 3: every other kind. Per entry: the best row in the wanted language, and the best
+  -- English row. The wanted one shows only when it is fully translated; else the English one.
   return query
   with candidates as (
     select live.*
@@ -51149,18 +51200,31 @@ begin
     order by candidates.entry_key, (candidates.language_code = language) desc, (candidates.market_code is not null) desc
   ),
   english as (
-    select distinct on (candidates.entry_key) candidates.entry_key as english_key, candidates.content as english_content
+    select distinct on (candidates.entry_key) candidates.*
     from candidates
     where candidates.language_code = 'en'
     order by candidates.entry_key, (candidates.market_code is not null) desc
+  ),
+  judged as (
+    select chosen.entry_key as judged_key,
+      chosen.language_code <> 'en'
+        and english.entry_key is not null
+        and not public.cms_is_fully_translated(chosen.content, english.content) as shows_english
+    from chosen
+    left join english on english.entry_key = chosen.entry_key
   )
-  select chosen.entry_key, chosen.market_code, chosen.language_code,
-    case when chosen.language_code = 'en' then chosen.content
-      else public.cms_fill_empty(chosen.content, english.english_content) end,
-    chosen.show_from, chosen.show_until
-  from chosen
-  left join english on english.english_key = chosen.entry_key
-  order by chosen.entry_key;
+  select shown.entry_key, shown.market_code, shown.language_code, shown.content, shown.show_from, shown.show_until
+  from judged
+  join chosen on chosen.entry_key = judged.judged_key
+  left join english on english.entry_key = judged.judged_key
+  cross join lateral (
+    select chosen.entry_key, chosen.market_code, chosen.language_code, chosen.content, chosen.show_from, chosen.show_until
+    where not judged.shows_english
+    union all
+    select english.entry_key, english.market_code, english.language_code, english.content, english.show_from, english.show_until
+    where judged.shows_english
+  ) as shown
+  order by shown.entry_key;
 end;
 $$;
 
@@ -51168,7 +51232,7 @@ $$;
 ALTER FUNCTION "public"."website_content"("wanted_kind" "text", "visitor_country" "text", "wanted_language" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."website_content"("wanted_kind" "text", "visitor_country" "text", "wanted_language" "text") IS 'The live website content of one kind for a visitor''s country and language: the wanted language before English, the country''s wording before the shared page, empty fields from English (S1-E11-06; LOCALISE-1).';
+COMMENT ON FUNCTION "public"."website_content"("wanted_kind" "text", "visitor_country" "text", "wanted_language" "text") IS 'The live website content of one kind for a visitor''s country and language: the wanted language before English, the country''s wording before the shared page; a translation with anything missing gives way to the whole English page (S1-E11-06; LOCALISE-1; LOCALISE-2).';
 
 
 
@@ -65606,6 +65670,10 @@ REVOKE ALL ON FUNCTION "public"."cms_fill_empty"("wanted" "jsonb", "fallback" "j
 
 
 REVOKE ALL ON FUNCTION "public"."cms_home_page_problems"("page" "jsonb") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."cms_is_fully_translated"("translation" "jsonb", "english_page" "jsonb") FROM PUBLIC;
 
 
 

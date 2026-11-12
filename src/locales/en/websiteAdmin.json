@@ -2,7 +2,7 @@
   "documentTitle": "Website · Staff",
   "eyebrow": "Staff",
   "heading": "Website",
-  "intro": "Edit the website’s home page, notice banners, help pages and questions. One page shows in every country: pick its language at the side, and fields left empty show the English text. A version goes live at 00:00 Romanian time on its show-from date, and every publish is in the audit log.",
+  "intro": "Edit the website’s home page, notice banners, help pages and questions. One page shows in every country: pick its language at the side, and a translation shows once every field is filled. Until then visitors read the English page. A version goes live at 00:00 Romanian time on its show-from date, and every publish is in the audit log.",
   "auditLink": "See every website change in the audit log",
   "loading": "Loading…",
   "counter": "{{used}} of {{limit}} characters",
@@ -27,7 +27,7 @@
   "picker": {
     "label": "Language and country",
     "language": "Language",
-    "languageHint": "Fields left empty show the English text.",
+    "languageHint": "Shows once every field is filled. Until then visitors read the English page.",
     "market": "Country wording",
     "everyCountry": "Every country",
     "marketHint": "One page shows in every country. Pick a country only to write wording that country alone needs."
