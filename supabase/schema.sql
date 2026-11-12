@@ -19199,11 +19199,14 @@ begin
       and btrim(translation #>> '{}') <> '';
   end if;
   -- Step 3: an object is checked field by field. A translation of another shape has no fields.
+  -- The search fields ("search": title and description for search engines, SEO-1b) are optional
+  -- extras with defaults of their own, so leaving them empty never holds a translation back.
   if jsonb_typeof(english_page) = 'object' then
     return not exists (
       select 1
       from jsonb_each(english_page) as fields (name, english_value)
-      where not public.cms_is_fully_translated(
+      where fields.name <> 'search'
+        and not public.cms_is_fully_translated(
         case when jsonb_typeof(translation) = 'object' then translation -> fields.name end,
         fields.english_value)
     );
