@@ -3,7 +3,7 @@
  *
  * The rule: a pastel tint, a soft border and dark text of the same hue (text at least 7:1 in light
  * mode), content centred with equal padding, 24 px tall, 12 px bold text. Six tones from the
- * boards: plum, sage, gold, sky, neutral, blush. Night mode swaps in dark tints with light text
+ * boards: plum, sage, gold, sky, neutral, blush. A pill holding a whole sentence may wrap (canWrap). Night mode swaps in dark tints with light text
  * (src/styles/tokens.css). Interactive choices are Chips, not pills.
  * Who uses it: story labels, statuses, "Staff", ratings and so on.
  */
@@ -26,6 +26,12 @@ const toneClasses: Record<PillTone, string> = {
 export interface InfoPillProps {
   tone: PillTone;
   children: ReactNode;
+  /**
+   * True for a pill holding a whole sentence (the legal "Draft: a lawyer reviews this" line): it
+   * may wrap onto a second line on a narrow phone instead of pushing the page sideways (rule 21;
+   * GLASS-4). Short labels leave it off and stay on one 24 px line.
+   */
+  canWrap?: boolean;
 }
 
 /**
@@ -33,10 +39,14 @@ export interface InfoPillProps {
  *
  * @returns the pill
  */
-export function InfoPill({ tone, children }: InfoPillProps) {
+export function InfoPill({ tone, children, canWrap = false }: InfoPillProps) {
+  // A wrapping pill grows taller than 24 px only when its text needs a second line.
+  const shapeClasses = canWrap
+    ? 'min-h-6 max-w-full py-1 text-center leading-tight whitespace-normal'
+    : 'h-6 leading-none whitespace-nowrap';
   return (
     <span
-      className={`inline-flex h-6 items-center justify-center gap-1.5 rounded-full border px-2.5 text-xs leading-none font-bold whitespace-nowrap ${toneClasses[tone]}`}
+      className={`inline-flex items-center justify-center gap-1.5 rounded-full border px-2.5 text-xs font-bold ${shapeClasses} ${toneClasses[tone]}`}
     >
       {children}
     </span>

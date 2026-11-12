@@ -20,6 +20,8 @@ import { cn } from '@/lib/utils';
 export function PageContainer({ className, ...divProps }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
+      // Lets the layout test find the column and measure it against the bar (GLASS-4).
+      data-page-column
       className={cn(
         'mx-auto box-content max-w-[1260px] px-[calc(clamp(16px,4vw,64px)+10px)]',
         className,
