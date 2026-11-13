@@ -4,7 +4,9 @@
  * The button shows the typed password as text and back, so people can check it (WCAG 2.2, 3.3.8:
  * no memory test). It is a real button with an accessible name ("Show password") and
  * aria-pressed, 44 px tall, inside the field's pill. Pasting and password managers work.
- * Who uses it: SignInForm and NewPasswordForm.
+ * While the password is hidden its dots get a little even space between them, so they read as a
+ * tidy row and are easy to count before pressing Show (PASSWORD-1; Robert, 12 Nov 2026).
+ * Who uses it: SignInForm, PasswordFields (sign-up) and NewPasswordForm.
  */
 import { useState, type InputHTMLAttributes } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -65,6 +67,8 @@ export function PasswordInput({
           className={cn(
             'h-12 w-full field-box pr-20 pl-4 font-body text-[15px]',
             errorMessage !== undefined && 'border-destructive',
+            // Hidden dots sit evenly apart; shown text keeps its normal spacing.
+            !isShown && 'tracking-[0.18em]',
             className,
           )}
           {...inputProps}

@@ -45,11 +45,12 @@ export function NewPasswordForm({ form }: { form: ReturnType<typeof useNewPasswo
         id="reset-password"
         autoComplete="new-password"
         label={t('reset.newPassword')}
+        hint={form.password === '' ? t('signUp.password.hint') : undefined}
         errorMessage={passwordError}
         value={form.password}
         onChange={(event) => form.setPassword(event.target.value)}
       />
-      {/* How strong it looks, as the person types (bundle G3; a hint, not a rule). */}
+      {/* The strength line takes the rule's place as the person types (PASSWORD-1). */}
       <PasswordStrengthMeter password={form.password} id="reset-password-strength" />
       <PasswordInput
         id="reset-confirm-password"
