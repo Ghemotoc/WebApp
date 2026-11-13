@@ -97,7 +97,7 @@ test.describe('Writers to follow and the parent’s separate yes (S1-E5-11, S1-E
     await expect(card).toBeVisible();
     await expect(card.getByRole('link', { name: 'Harta din pod' })).toBeVisible();
     // Signed out, Follow is a link to log in.
-    await expect(card.getByRole('link', { name: 'Log in to follow' })).toBeVisible();
+    await expect(card.getByRole('link', { name: 'Get in to follow' })).toBeVisible();
     await expect(page.getByRole('article', { name: 'kid_14_ok' })).toHaveCount(0);
     await page.context().close();
   });

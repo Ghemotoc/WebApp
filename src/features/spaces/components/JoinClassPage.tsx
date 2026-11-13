@@ -6,7 +6,7 @@
  * the code. The page lives under /class/ rather than /spaces/ so a code can never clash with a
  * space's address.
  * What it shows: which class the code is for (only when the code works, and only the class's
- * name, class_invite_preview()), "Join the class", or "Log in to join" for a signed-out visitor;
+ * name, class_invite_preview()), "Join the class", or "Get in to join" for a signed-out visitor;
  * a plain note when the code has ended or is unknown. After joining, the student goes straight to
  * the class; a student whose account isn't ready yet (a parent still to agree) is told they are
  * in and will read once it is.
@@ -42,7 +42,7 @@ import { ClassJoinCard } from './ClassJoinCard';
 const buttonRowClasses = 'flex flex-wrap items-center gap-3';
 
 /**
- * "Log in to join" for a signed-out visitor, and the way to make an account. While sign-up is by
+ * "Get in to join" for a signed-out visitor, and the way to make an account. While sign-up is by
  * invitation, the class code is the invitation (IDEAS-3c), so the second link opens sign-up with
  * it; when anyone may sign up, the note says to make an account and open the link again.
  *
@@ -80,7 +80,7 @@ function SignedOutJoin({ code }: { code: string }) {
 type Joining = ReturnType<typeof useJoinClass>;
 
 /**
- * "Join the class" for a signed-in student, or "Log in to join".
+ * "Join the class" for a signed-in student, or "Get in to join".
  *
  * @param props.code - the code from the link
  * @param props.joining - the join call, held by the page so its answer outlives the preview

@@ -11,7 +11,7 @@
  * - On a story on the Finished shelf, "Tell the writer you finished it" (FinishedThanksButton,
  *   IDEAS-1c), which turns into "Sent" once it went.
  * The story's writer sees none of them (their own story never fills their library). A signed-out
- * visitor sees "Start reading" and a "Log in to save it" link.
+ * visitor sees "Start reading" and a "Get in to save it" link.
  * Who uses it: StoryHeader. What it calls: useStoryLibraryState → story_library_state() and
  * set_library_shelf(), AddToReadingList and FinishedThanksButton.
  */

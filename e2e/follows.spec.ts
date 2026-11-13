@@ -97,7 +97,7 @@ test.describe('follows (S1-E6-05)', () => {
   test('a visitor sees the count and a log-in link, never the list', async ({ browser }) => {
     const page = await openAs(browser, null, '/u/adult_writer');
     await expect(page.locator('dl')).toContainText('only Lia Scrie sees who');
-    await expect(page.getByRole('link', { name: 'Log in to follow' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Get in to follow' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'See who follows you' })).toHaveCount(0);
     await page.context().close();
   });

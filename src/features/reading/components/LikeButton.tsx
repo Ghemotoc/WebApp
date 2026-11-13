@@ -5,7 +5,7 @@
  * Board values: a 48 px pill with a heart; not liked, a white pill with a #672786 border and text;
  * liked, filled #481C5F with white text and a filled heart. It is a toggle: aria-pressed says
  * whether the reader likes it, so the state never rests on colour alone, and the count is part of
- * the name ("Like this chapter 12 likes": the visible words, so speech input matches, WCAG 2.5.3). Signed out, it is a "Log in to like" link with the
+ * the name ("Like this chapter 12 likes": the visible words, so speech input matches, WCAG 2.5.3). Signed out, it is a "Get in to like" link with the
  * count. A read-only account is told why it can't like. Nothing shows while the state loads.
  * Who uses it: ChapterEnd. What it calls: useChapterLike → like_chapter().
  */

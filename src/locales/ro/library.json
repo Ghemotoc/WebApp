@@ -5,7 +5,7 @@
   "signedOut": {
     "title": "Păstrează o bibliotecă",
     "body": "Intră în cont ca să păstrezi povești pentru mai târziu și să continui de unde ai rămas, pe orice dispozitiv.",
-    "logIn": "Intră în cont"
+    "logIn": "Intră"
   },
   "loadFailed": "Biblioteca nu s-a putut încărca. Verifică conexiunea și încearcă din nou.",
   "continue": {
@@ -75,7 +75,7 @@
     "label": "Bibliotecă",
     "none": "Nu e în bibliotecă",
     "saveFailed": "Nu s-a salvat. Încearcă din nou.",
-    "logIn": "Intră în cont ca s-o păstrezi"
+    "logIn": "Intră ca s-o păstrezi"
   },
   "startReading": "Începe lectura",
   "continueChapter": "Continuă capitolul {{number}}",

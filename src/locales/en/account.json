@@ -192,7 +192,7 @@
     "readOnly": "Until the check is done, you can read but not post.",
     "byYoti": "Age check by Yoti",
     "signedOut": "Log in to check age.",
-    "logIn": "Log in",
+    "logIn": "Get in",
     "loadFailed": "We couldn’t load your age check. Try again in a moment.",
     "nothingToDo": "There’s no age check to do right now.",
     "birthYearInSettings": "Year of birth is in Settings.",
@@ -277,7 +277,7 @@
     "withdrawnBody": "Your account is read-only for now: you can read, but not publish, comment, post or send messages. We’ll tell you and them what happens next.",
     "nothingToDo": "There’s nothing to ask a parent or guardian for right now.",
     "signedOut": "Log in to ask a parent or guardian.",
-    "logIn": "Log in",
+    "logIn": "Get in",
     "loadFailed": "We couldn’t load this page. Try again in a moment.",
     "failures": {
       "signed_out": "Log in again, then send the email.",

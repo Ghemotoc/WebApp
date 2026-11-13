@@ -123,7 +123,7 @@ test.describe('the learning path (GAPS-12g)', () => {
     await page.goto('/hub/path');
     const main = page.getByRole('main');
     await expect(main.getByText('Intră în cont ca să urmezi traseul de învățare.')).toBeVisible();
-    await expect(main.getByRole('link', { name: 'Conectare' })).toHaveAttribute('href', '/sign-in');
+    await expect(main.getByRole('link', { name: 'Intră' })).toHaveAttribute('href', '/sign-in');
     await expect(page.getByRole('article')).toHaveCount(0);
   });
 

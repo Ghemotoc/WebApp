@@ -76,7 +76,7 @@ test.describe('Remind me on landing pages (S1-E11-14)', () => {
     const visitor = await openAs(browser, null, '/c/remind-e2e');
     await expect(visitor.getByRole('heading', { name: 'Don’t miss the start' })).toBeVisible();
     await expect(visitor.getByText(/Log in and we’ll remind you that day/)).toBeVisible();
-    await expect(visitor.getByRole('link', { name: 'Log in' }).last()).toHaveAttribute(
+    await expect(visitor.getByRole('link', { name: 'Get in' }).last()).toHaveAttribute(
       'href',
       '/sign-in',
     );

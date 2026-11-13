@@ -33,7 +33,7 @@ export function WhyWriteSection({ page, language }: WhyWriteSectionProps) {
         <Eyebrow>{t('website.whyEyebrow')}</Eyebrow>
         <h2
           id="why-write-heading"
-          className="m-0 font-heading text-[clamp(28px,3vw,40px)] leading-[1.08] font-bold tracking-[-0.015em] text-heading"
+          className="m-0 font-heading text-[clamp(28px,3vw,40px)] leading-[1.08] font-bold tracking-[-0.015em] text-balance text-heading"
         >
           {withBrand(page.whyHeading)}
         </h2>
