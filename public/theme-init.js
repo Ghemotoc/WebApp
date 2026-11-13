@@ -1,12 +1,12 @@
 /*
- * Picks light or night mode, and the member's look, before the page draws (story S1-E1-03; looks
- * from bundle G2 THEMES).
+ * Picks light or night mode, the member's look and the "Less motion" switch before the page draws
+ * (story S1-E1-03; looks from bundle G2 THEMES; less motion from bundle MOTION-1).
  *
  * Why a separate file: index.html loads it in <head>, before any CSS or React, so a reader in
  * night mode never sees a white flash. It is a plain file rather than an inline script so a
  * strict Content Security Policy can allow it later without exceptions (architecture 1.9).
- * It repeats the first steps of src/lib/theme.ts and src/lib/looks.ts; keep the storage keys, the
- * attributes and the list of looks the same in all three files.
+ * It repeats the first steps of src/lib/theme.ts, src/lib/looks.ts and src/lib/motion.ts; keep the
+ * storage keys, the attributes and the list of looks the same in all four files.
  * After this, React takes over (src/features/theme/hooks/useAccountAppearance.ts).
  */
 (function chooseThemeBeforeFirstPaint() {
@@ -53,4 +53,20 @@
     // Storage is blocked: the default look.
   }
   document.documentElement.setAttribute('data-look', look);
+})();
+
+/*
+ * Marks the page for the "Less motion" switch before it draws, so nothing slides in while the app
+ * loads (bundle MOTION-1). src/styles/index.css reads the attribute; the device's own
+ * reduced-motion setting works by itself, without it. A function of its own to keep each one short.
+ */
+(function chooseMotionBeforeFirstPaint() {
+  try {
+    // The member left the switch on in Settings › Appearance on this device.
+    if (window.localStorage.getItem('less-motion') === 'on') {
+      document.documentElement.setAttribute('data-motion', 'less');
+    }
+  } catch {
+    // Storage is blocked: only the device's setting counts.
+  }
 })();

@@ -5943,6 +5943,7 @@ export type Database = {
           initials_colour: string | null;
           last_active_at: string | null;
           legal_region_code: string;
+          less_motion: boolean;
           library_visible_to: Database['public']['Enums']['library_audience'];
           locale: string;
           look: string;
@@ -6019,6 +6020,7 @@ export type Database = {
           initials_colour?: string | null;
           last_active_at?: string | null;
           legal_region_code?: string;
+          less_motion?: boolean;
           library_visible_to?: Database['public']['Enums']['library_audience'];
           locale?: string;
           look?: string;
@@ -6074,6 +6076,7 @@ export type Database = {
           initials_colour?: string | null;
           last_active_at?: string | null;
           legal_region_code?: string;
+          less_motion?: boolean;
           library_visible_to?: Database['public']['Enums']['library_audience'];
           locale?: string;
           look?: string;
@@ -12463,6 +12466,7 @@ export type Database = {
           initials_colour: string | null;
           last_active_at: string | null;
           legal_region_code: string;
+          less_motion: boolean;
           library_visible_to: Database['public']['Enums']['library_audience'];
           locale: string;
           look: string;
@@ -14515,6 +14519,7 @@ export type Database = {
           initials_colour: string | null;
           last_active_at: string | null;
           legal_region_code: string;
+          less_motion: boolean;
           library_visible_to: Database['public']['Enums']['library_audience'];
           locale: string;
           look: string;
@@ -15349,6 +15354,7 @@ export type Database = {
           initials_colour: string | null;
           last_active_at: string | null;
           legal_region_code: string;
+          less_motion: boolean;
           library_visible_to: Database['public']['Enums']['library_audience'];
           locale: string;
           look: string;
@@ -16285,7 +16291,12 @@ export type Database = {
         Returns: Json;
       };
       set_my_appearance: {
-        Args: { new_colour_mode: string; new_look: string; new_seasonal_looks: boolean };
+        Args: {
+          new_colour_mode: string;
+          new_less_motion?: boolean;
+          new_look: string;
+          new_seasonal_looks: boolean;
+        };
         Returns: Json;
       };
       set_my_avatar_recipe: { Args: { recipe: Json }; Returns: Json };

@@ -3,9 +3,10 @@
  * is no database here, so a change is kept on this device, as for someone signed out.
  */
 import { fireEvent, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { readStoredLookChoice } from '@/lib/looks';
+import { readLessMotionChoice } from '@/lib/motion';
 import { renderWithProviders } from '@/test/renderWithProviders';
 
 import { getAppearance, replaceAppearance } from '../lib/appearanceStore';
@@ -13,8 +14,9 @@ import { getAppearance, replaceAppearance } from '../lib/appearanceStore';
 import { AppearanceSettingsSection } from './AppearanceSettingsSection';
 
 afterEach(() => {
-  replaceAppearance({ mode: 'device', look: 'lilac', isSeasonalOn: false });
+  replaceAppearance({ mode: 'device', look: 'lilac', isSeasonalOn: false, isLessMotionOn: false });
   window.localStorage.clear();
+  vi.unstubAllGlobals();
 });
 
 describe('AppearanceSettingsSection', () => {
@@ -51,9 +53,42 @@ describe('AppearanceSettingsSection', () => {
     expect(readStoredLookChoice().isSeasonalOn).toBe(true);
   });
 
+  it('keeps Less motion off until the member turns it on, then remembers it', () => {
+    renderWithProviders(<AppearanceSettingsSection />, 'en');
+    const lessMotion = screen.getByRole('switch', { name: 'Less motion' });
+    expect(lessMotion).toHaveAttribute('aria-checked', 'false');
+    fireEvent.click(lessMotion);
+    expect(lessMotion).toHaveAttribute('aria-checked', 'true');
+    expect(getAppearance().isLessMotionOn).toBe(true);
+    expect(readLessMotionChoice()).toBe(true);
+    fireEvent.click(lessMotion);
+    expect(lessMotion).toHaveAttribute('aria-checked', 'false');
+    expect(readLessMotionChoice()).toBe(false);
+  });
+
+  it('shows Less motion as on, and says why, on a device that already asks for it', () => {
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn().mockReturnValue({
+        matches: true,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      }),
+    );
+    renderWithProviders(<AppearanceSettingsSection />, 'en');
+    const lessMotion = screen.getByRole('switch', { name: 'Less motion' });
+    expect(lessMotion).toHaveAttribute('aria-checked', 'true');
+    expect(lessMotion).toBeDisabled();
+    expect(screen.getByText(/This device already asks for less motion/)).toBeInTheDocument();
+    // The member's own choice is untouched: it is the device that asks.
+    expect(getAppearance().isLessMotionOn).toBe(false);
+  });
+
   it('is in Romanian with ș and ț', () => {
+    expect.hasAssertions();
     renderWithProviders(<AppearanceSettingsSection />, 'ro');
     expect(screen.getByRole('switch', { name: 'Teme de sezon' })).toBeInTheDocument();
+    expect(screen.getByRole('switch', { name: 'Mai puțină mișcare' })).toBeInTheDocument();
     expect(screen.getByText(/Modul de noapte arată la fel/)).toBeInTheDocument();
   });
 });

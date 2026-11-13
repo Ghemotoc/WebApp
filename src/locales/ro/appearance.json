@@ -1,0 +1,31 @@
+{
+  "eyebrow": "Aspect",
+  "heading": "Temă",
+  "intro": "Alegerea te urmează pe fiecare dispozitiv.",
+  "themeLegend": "Temă",
+  "looks": {
+    "lilac": "Ceață de liliac",
+    "sorbet": "Sorbet de piersici",
+    "seaglass": "Sticlă de mare",
+    "pistachio": "Fistic și unt",
+    "candy": "Vată de zahăr",
+    "tmc": "Crem Magic Coffin"
+  },
+  "modeLegend": "Mod",
+  "modes": {
+    "light": "Luminos",
+    "night": "Noapte",
+    "device": "Ca pe dispozitiv"
+  },
+  "seasonalLabel": "Teme de sezon",
+  "seasonalHint": "Temele de iarnă, primăvară, vară și toamnă pornesc singure câteva săptămâni în fiecare anotimp. Sunt oprite până le pornești tu.",
+  "lessMotionLabel": "Mai puțină mișcare",
+  "lessMotionHint": "Oprește animațiile și glisările. Paginile se schimbă pe loc.",
+  "lessMotionDeviceHint": "Dispozitivul cere deja mai puțină mișcare, așa că rămâne pornit aici.",
+  "on": "Pornit",
+  "off": "Oprit",
+  "nightNote": "Modul de noapte arată la fel cu fiecare temă.",
+  "saving": "Se salvează…",
+  "saved": "Salvat. Îl vezi pe fiecare dispozitiv pe care te conectezi.",
+  "saveFailed": "Nu am putut salva asta în contul tău, așa că doar acest dispozitiv o arată. Încearcă din nou mai târziu."
+}

@@ -427,6 +427,13 @@ dialog.bg-surface,
   }
 }
 
+/* The same for a member who turned "Less motion" on in Settings › Appearance (bundle MOTION-1). */
+:root[data-motion='less'] .top-bar,
+:root[data-motion='less'] .top-bar-pill,
+:root[data-motion='less'] .nav-track-link {
+  transition: none;
+}
+
 /*
  * "On" states (bundle G3 COMPONENTS; handoff: "Every pill is liquid glass. Plum is for finishing
  * actions and 'on' states"). Every pressed chip, chosen reason and other bg-chip-on fill keeps its
@@ -797,6 +804,20 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
   }
 }
 
+/*
+ * The "Less motion" switch in Settings › Appearance does the same on a device that doesn't ask for
+ * it, for people who don't know the device setting or can't change it, such as on a school
+ * computer (bundle MOTION-1; Robert, 13 Nov 2026). useAccountAppearance and public/theme-init.js
+ * set data-motion="less" on <html>. Keep these two blocks the same.
+ */
+:root[data-motion='less'] *,
+:root[data-motion='less'] *::before,
+:root[data-motion='less'] *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
 /* A sideways list with scroll arrows hides its scrollbar but stays scrollable (DoD design rules). */
 .tmc-noscroll {
   scrollbar-width: none;
@@ -1134,6 +1155,10 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
  * to an anchor and a keyboard focus that scrolls the page stop below it, never under it
  * (WCAG 2.2, 2.4.11 Focus not obscured). 112 px clears the website top bar; phones' headers are
  * shorter, so 88 px there.
+ * The same holds at the foot on narrow screens (GLASS-4 follow-up, 12 Nov 2026): the floating tab
+ * bar (64 px tall, 14 px above the edge, plus a phone's home bar) covered a link or button that
+ * the Tab key had just scrolled to the bottom edge. 92 px keeps the focused control clear of it,
+ * with a little air. Pages without the tab bar only gain a little room under the focused control.
  */
 html {
   scroll-padding-top: 112px;
@@ -1141,5 +1166,6 @@ html {
 @media (width < 1024px) {
   html {
     scroll-padding-top: 88px;
+    scroll-padding-bottom: calc(92px + env(safe-area-inset-bottom));
   }
 }

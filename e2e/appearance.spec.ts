@@ -9,6 +9,9 @@
  * - the look a device remembers is drawn before the app's code loads (public/theme-init.js), so
  *   there is no flash of Lilac mist;
  * - with Seasonal themes on, the summer look shows in summer;
+ * - "Less motion" (bundle MOTION-1) stops transitions the moment it is switched on, follows the
+ *   member to another device, is marked on the page before the app's code loads, and shows as on
+ *   and fixed on a device that already asks for reduced motion;
  * - the page passes axe at 390, 768 and 1440 px, in both themes and languages.
  * Uses the seed persona adult_writer and puts their profile back afterwards.
  */
@@ -21,12 +24,15 @@ import { signInPersona, useSessionInBrowser } from './support/personas';
 /** What src/lib/looks.ts and src/lib/theme.ts keep on the device. */
 const SHOWN_LOOK_KEY = 'theme-shown-look';
 const LOOK_CHOICE_KEY = 'theme-look-choice';
+/** What src/lib/motion.ts keeps on the device. */
+const LESS_MOTION_KEY = 'less-motion';
 
 /** Puts adult_writer's appearance back to "never chosen". */
 function resetAppearance() {
   runSql(`
     update public.profiles
-      set look = 'lilac', colour_mode = 'device', seasonal_looks = false, appearance_saved_at = null,
+      set look = 'lilac', colour_mode = 'device', seasonal_looks = false, less_motion = false,
+          appearance_saved_at = null,
           locale = 'en'
       where handle = 'adult_writer';
   `);
@@ -110,6 +116,59 @@ test.describe('Settings › Appearance (G2 THEMES)', () => {
     );
     await page.goto('/');
     await expect(page.locator('html')).toHaveAttribute('data-look', 'summer');
+  });
+
+  test('Less motion stops transitions at once and follows the member to another device', async ({
+    browser,
+  }) => {
+    // Step 1: the switch starts off, and the switch's own knob still slides.
+    const page = await openAsWriter(browser, '/settings#appearance');
+    const lessMotion = page.getByRole('switch', { name: 'Less motion' });
+    await expect(lessMotion).toHaveAttribute('aria-checked', 'false');
+    await expect(page.locator('html')).not.toHaveAttribute('data-motion');
+    const knob = lessMotion.locator('span span');
+    expect(await knob.evaluate((el) => getComputedStyle(el).transitionDuration)).not.toBe('0s');
+
+    // Step 2: switched on, the page is marked and nothing has a transition any more.
+    await lessMotion.click();
+    await expect(lessMotion).toHaveAttribute('aria-checked', 'true');
+    await expect(page.locator('html')).toHaveAttribute('data-motion', 'less');
+    expect(await knob.evaluate((el) => getComputedStyle(el).transitionProperty)).toBe('none');
+    await expect(
+      page.locator('#appearance').getByText('Saved. Every device you sign in on shows it.'),
+    ).toBeVisible();
+    expect(
+      runSql(`select less_motion::text from public.profiles where handle = 'adult_writer'`),
+    ).toBe('true');
+    await page.context().close();
+
+    // Step 3: another device (a fresh browser) stays still after sign-in.
+    const otherDevice = await openAsWriter(browser, '/discover');
+    await expect(otherDevice.locator('html')).toHaveAttribute('data-motion', 'less');
+    await otherDevice.context().close();
+  });
+
+  test('Less motion is marked on the page before the app’s code loads', async ({ page }) => {
+    await page.addInitScript((key) => localStorage.setItem(key, 'on'), LESS_MOTION_KEY);
+    // Block the app's bundle: only public/theme-init.js runs, as in the moment before first paint.
+    await page.route('**/assets/**', (route) => route.abort());
+    await page.goto('/');
+    await expect(page.locator('html')).toHaveAttribute('data-motion', 'less');
+  });
+
+  test('on a device that asks for reduced motion, Less motion shows as on and says why', async ({
+    browser,
+  }) => {
+    const context = await browser.newContext({ colorScheme: 'light', reducedMotion: 'reduce' });
+    await useSessionInBrowser(context, (await signInPersona('adult_writer')).session);
+    await context.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
+    const page = await context.newPage();
+    await page.goto('/settings#appearance');
+    const lessMotion = page.getByRole('switch', { name: 'Less motion' });
+    await expect(lessMotion).toHaveAttribute('aria-checked', 'true');
+    await expect(lessMotion).toBeDisabled();
+    await expect(page.getByText('This device already asks for less motion')).toBeVisible();
+    await context.close();
   });
 
   for (const view of everyView(['/settings#appearance'])) {
