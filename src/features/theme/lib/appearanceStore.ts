@@ -1,22 +1,23 @@
 /**
  * appearanceStore: the one copy of the member's appearance choices on this page: mode (light,
- * night or device), year-round look, the seasonal switch (bundle G2 THEMES) and the "Less motion"
- * switch (bundle MOTION-1).
+ * night or device), year-round look, the seasonal switch (bundle G2 THEMES), the "Less motion"
+ * switch (bundle MOTION-1) and the "High contrast" switch (bundle CONTRAST-1).
  *
  * Why a store: Settings › Appearance, the footer's mode drop-down and the account sync all read
  * and change the same choices, and each must see the others' changes at once. React reads it with
  * useSyncExternalStore (hooks/useAppearance.ts).
  * It also counts the choices made on this page, so a slow read of the account never switches back
  * a choice the member has just made (the same guard as the account language, S1-E1-QA).
- * What it calls: src/lib/theme.ts, src/lib/looks.ts and src/lib/motion.ts to remember the choices
- * on this device.
+ * What it calls: src/lib/theme.ts, src/lib/looks.ts, src/lib/motion.ts and src/lib/highContrast.ts
+ * to remember the choices on this device.
  * Who calls it: hooks/useAppearance.ts and hooks/useAccountAppearance.ts.
  */
+import { readHighContrastChoice, saveHighContrastChoice } from '@/lib/highContrast';
 import { readStoredLookChoice, saveStoredLookChoice, type YearRoundLook } from '@/lib/looks';
 import { readLessMotionChoice, saveLessMotionChoice } from '@/lib/motion';
 import { readThemePreference, saveThemePreference, type ThemePreference } from '@/lib/theme';
 
-/** The member's four choices. */
+/** The member's five choices. */
 export interface Appearance {
   /** Light, night or device ("Match my device"). */
   mode: ThemePreference;
@@ -26,6 +27,8 @@ export interface Appearance {
   isSeasonalOn: boolean;
   /** Whether the member turned "Less motion" on (the device's own setting counts by itself). */
   isLessMotionOn: boolean;
+  /** Whether the member turned "High contrast" on (the device's own setting counts by itself). */
+  isHighContrastOn: boolean;
 }
 
 /**
@@ -40,6 +43,7 @@ function readStoredAppearance(): Appearance {
     look: lookChoice.look,
     isSeasonalOn: lookChoice.isSeasonalOn,
     isLessMotionOn: readLessMotionChoice(),
+    isHighContrastOn: readHighContrastChoice(),
   };
 }
 
@@ -82,6 +86,7 @@ export function replaceAppearance(next: Appearance): void {
   saveThemePreference(next.mode);
   saveStoredLookChoice({ look: next.look, isSeasonalOn: next.isSeasonalOn });
   saveLessMotionChoice(next.isLessMotionOn);
+  saveHighContrastChoice(next.isHighContrastOn);
   listeners.forEach((listener) => listener());
 }
 

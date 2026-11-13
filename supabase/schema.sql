@@ -13410,6 +13410,7 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     "reading_languages" "text"[],
     "suggests_from_reading" boolean,
     "less_motion" boolean DEFAULT false NOT NULL,
+    "high_contrast" boolean DEFAULT false NOT NULL,
     CONSTRAINT "profiles_avatar_recipe_shape" CHECK ("public"."avatar_recipe_valid"("avatar_recipe")),
     CONSTRAINT "profiles_bio_length" CHECK (("char_length"("bio") <= 300)),
     CONSTRAINT "profiles_birth_month_is_a_month" CHECK ((("birth_month" >= 1) AND ("birth_month" <= 12))),
@@ -13623,6 +13624,10 @@ COMMENT ON COLUMN "public"."profiles"."suggests_from_reading" IS 'Suggestions fr
 
 
 COMMENT ON COLUMN "public"."profiles"."less_motion" IS 'Whether the member turned "Less motion" on in Settings › Appearance: transitions and animations are replaced by instant changes (bundle MOTION-1). The device''s own reduced-motion setting still counts by itself.';
+
+
+
+COMMENT ON COLUMN "public"."profiles"."high_contrast" IS 'Whether the member turned "High contrast" on in Settings › Appearance: plain white pages (black at night), darker text and edges, the theme kept in its deep accent (bundle CONTRAST-1). The device''s own contrast setting still counts by itself.';
 
 
 
@@ -43286,7 +43291,7 @@ COMMENT ON FUNCTION "public"."set_message_emails"("wanted_emails_on" boolean, "w
 
 
 
-CREATE OR REPLACE FUNCTION "public"."set_my_appearance"("new_look" "text", "new_colour_mode" "text", "new_seasonal_looks" boolean, "new_less_motion" boolean DEFAULT NULL::boolean) RETURNS "jsonb"
+CREATE OR REPLACE FUNCTION "public"."set_my_appearance"("new_look" "text", "new_colour_mode" "text", "new_seasonal_looks" boolean, "new_less_motion" boolean DEFAULT NULL::boolean, "new_high_contrast" boolean DEFAULT NULL::boolean) RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
@@ -43314,10 +43319,12 @@ begin
   end if;
 
   -- Step 3: change the caller's own row only, and only while the account is live. A call that
-  -- leaves new_less_motion out keeps the saved value (an older page doesn't know the switch).
+  -- leaves new_less_motion or new_high_contrast out keeps the saved value (an older page doesn't
+  -- know the switch).
   update public.profiles
     set look = new_look, colour_mode = new_colour_mode, seasonal_looks = new_seasonal_looks,
         less_motion = coalesce(new_less_motion, profiles.less_motion),
+        high_contrast = coalesce(new_high_contrast, profiles.high_contrast),
         appearance_saved_at = now()
     where profiles.id = (select auth.uid()) and profiles.deleted_at is null
     returning * into saved;
@@ -43329,15 +43336,16 @@ begin
   end if;
 
   return jsonb_build_object('look', saved.look, 'colour_mode', saved.colour_mode,
-    'seasonal_looks', saved.seasonal_looks, 'less_motion', saved.less_motion);
+    'seasonal_looks', saved.seasonal_looks, 'less_motion', saved.less_motion,
+    'high_contrast', saved.high_contrast);
 end;
 $$;
 
 
-ALTER FUNCTION "public"."set_my_appearance"("new_look" "text", "new_colour_mode" "text", "new_seasonal_looks" boolean, "new_less_motion" boolean) OWNER TO "postgres";
+ALTER FUNCTION "public"."set_my_appearance"("new_look" "text", "new_colour_mode" "text", "new_seasonal_looks" boolean, "new_less_motion" boolean, "new_high_contrast" boolean) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."set_my_appearance"("new_look" "text", "new_colour_mode" "text", "new_seasonal_looks" boolean, "new_less_motion" boolean) IS 'Saves the signed-in member''s look, mode, seasonal switch and Less motion switch on their own profile (bundles G2 and MOTION-1).';
+COMMENT ON FUNCTION "public"."set_my_appearance"("new_look" "text", "new_colour_mode" "text", "new_seasonal_looks" boolean, "new_less_motion" boolean, "new_high_contrast" boolean) IS 'Saves the signed-in member''s look, mode, seasonal switch, Less motion switch and High contrast switch on their own profile (bundles G2, MOTION-1 and CONTRAST-1).';
 
 
 
@@ -69045,8 +69053,8 @@ GRANT ALL ON FUNCTION "public"."set_message_emails"("wanted_emails_on" boolean, 
 
 
 
-REVOKE ALL ON FUNCTION "public"."set_my_appearance"("new_look" "text", "new_colour_mode" "text", "new_seasonal_looks" boolean, "new_less_motion" boolean) FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."set_my_appearance"("new_look" "text", "new_colour_mode" "text", "new_seasonal_looks" boolean, "new_less_motion" boolean) TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."set_my_appearance"("new_look" "text", "new_colour_mode" "text", "new_seasonal_looks" boolean, "new_less_motion" boolean, "new_high_contrast" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_my_appearance"("new_look" "text", "new_colour_mode" "text", "new_seasonal_looks" boolean, "new_less_motion" boolean, "new_high_contrast" boolean) TO "authenticated";
 
 
 
