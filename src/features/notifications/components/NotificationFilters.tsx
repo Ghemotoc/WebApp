@@ -38,7 +38,7 @@ export function NotificationFilters({ counts, chosen, onChoose }: NotificationFi
           {t(`filters.${filter}`)}
           <span
             className={cn(
-              'inline-flex h-[22px] min-w-[22px] items-center justify-center rounded-full px-1.5 text-xs leading-none font-bold',
+              'ml-1.5 inline-flex h-[22px] min-w-[22px] items-center justify-center rounded-full px-1.5 text-xs leading-none font-bold',
               chosen === filter
                 ? 'bg-gold text-on-gold'
                 : 'border border-(--pill-plum-border) bg-(--pill-plum-bg) text-(--pill-plum-text)',

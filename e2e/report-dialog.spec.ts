@@ -134,7 +134,7 @@ test.describe('report dialog (S1-E10-01)', () => {
     await page.getByRole('button', { name: 'Report @adult_writer' }).click();
     const dialog = page.getByRole('dialog', { name: 'Report this profile' });
     await expect(dialog.getByText('Log in to report this.')).toBeVisible();
-    await expect(dialog.getByRole('link', { name: 'Log in' })).toHaveAttribute('href', '/sign-in');
+    await expect(dialog.getByRole('link', { name: 'Get in' })).toHaveAttribute('href', '/sign-in');
     await expect(dialog.getByRole('radio')).toHaveCount(0);
   });
 

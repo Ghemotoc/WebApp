@@ -10,7 +10,7 @@
     "followersOnly": "Only the writer’s followers can comment here.",
     "showMore": "Show more comments",
     "loadFailed": "We couldn’t load the comments. Check your connection and try again.",
-    "logIn": "Log in to comment"
+    "logIn": "Get in to comment"
   },
   "composer": {
     "label": "Add a comment",

@@ -16,7 +16,7 @@
     "revoked": "Retrasă",
     "checkLink": "Verifică codul unei diplome",
     "signedOut": "Conectează-te ca să vezi diplomele.",
-    "logIn": "Conectează-te"
+    "logIn": "Intră"
   },
   "page": {
     "documentTitle": "Diplomă: {{programme}}",

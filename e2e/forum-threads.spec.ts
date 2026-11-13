@@ -112,7 +112,7 @@ test.describe('forum threads and posts (FORUMS-1b, S1-E8-02)', () => {
   }) => {
     const page = await openAs(browser, null, `${threadAddress()}?post=2`);
     await expect(postCard(page, 2)).toBeFocused();
-    await expect(page.getByRole('link', { name: 'Log in to reply' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Get in to reply' })).toBeVisible();
     await postCard(page, 2).getByRole('button', { name: 'Report' }).click();
     await expect(page.getByRole('dialog').getByText('Report this post')).toBeVisible();
     await page.context().close();

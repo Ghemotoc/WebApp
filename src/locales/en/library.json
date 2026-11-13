@@ -5,7 +5,7 @@
   "signedOut": {
     "title": "Keep a library",
     "body": "Log in to save stories for later and carry on from where you stopped, on any device.",
-    "logIn": "Log in"
+    "logIn": "Get in"
   },
   "loadFailed": "Your library couldn’t be loaded. Check your connection and try again.",
   "continue": {
@@ -75,7 +75,7 @@
     "label": "Library",
     "none": "Not in the library",
     "saveFailed": "That didn’t save. Try again.",
-    "logIn": "Log in to save it"
+    "logIn": "Get in to save it"
   },
   "startReading": "Start reading",
   "continueChapter": "Continue chapter {{number}}",

@@ -16,7 +16,7 @@
     "revoked": "Revoked",
     "checkLink": "Check a certificate’s code",
     "signedOut": "Log in to see certificates.",
-    "logIn": "Log in"
+    "logIn": "Get in"
   },
   "page": {
     "documentTitle": "Certificate: {{programme}}",

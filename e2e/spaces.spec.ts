@@ -121,7 +121,7 @@ test.describe('spaces people create (FORUMS-2a, S1-E8-06)', () => {
 
   test('a visitor reads a 16+ space but not a members-only under-16 one', async ({ browser }) => {
     const page = await openAs(browser, null, fantasyAddress);
-    await expect(page.getByRole('link', { name: 'Log in to join' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Get in to join' })).toBeVisible();
     await expect(page.getByText(threadTitle)).toBeVisible();
     await page.goto('/spaces/young-poets');
     await expect(page.getByRole('heading', { name: 'This space isn’t here' })).toBeVisible();

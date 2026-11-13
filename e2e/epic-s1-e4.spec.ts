@@ -159,7 +159,7 @@ test.describe('epic check: reading (S1-E4-QA)', () => {
     await expect(visitor.locator('.tmc-chapter-text p')).toHaveCount(2);
     expect(await copyFirstParagraph(visitor)).toBe('before');
     expect(readsOf('epicfou1')).toBe('0');
-    await visitor.getByRole('link', { name: 'Log in' }).last().click();
+    await visitor.getByRole('link', { name: 'Get in' }).last().click();
     await expect(visitor).toHaveURL(/\/sign-in$/);
     // Signed in, the same address is the whole chapter in the reader.
     const reader = await openAs(browser, 'teen_17', firstChapter);

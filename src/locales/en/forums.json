@@ -40,7 +40,7 @@
     "lastReply": "Last post {{time}} by {{name}}",
     "showMore": "Show more threads",
     "loadFailed": "We couldn’t load the threads. Check your connection and try again.",
-    "logInToStart": "Log in to start a thread",
+    "logInToStart": "Get in to start a thread",
     "categoryNote": "Threads go in the forums inside this category.",
     "replies_few": "{{count, number}} replies",
     "pinned": "Pinned",
@@ -135,7 +135,7 @@
   "reply": {
     "heading": "Reply",
     "post": "Post reply",
-    "logIn": "Log in to reply",
+    "logIn": "Get in to reply",
     "notActive": "This account can’t post yet.",
     "posted": "Reply posted as #{{number}}.",
     "quoted_one": "{{count}} post quoted",
@@ -158,7 +158,7 @@
     "heading": "Start a thread in {{forum}}",
     "post": "Post the thread",
     "cancel": "Cancel",
-    "logIn": "Log in to start a thread."
+    "logIn": "Get in to start a thread."
   },
   "failures": {
     "signed_out": "Log in first.",
