@@ -75,6 +75,9 @@
     "bannerChangeRequested": "schimbă imaginea de banner a spațiului {{space}} în 24 de ore, altfel va fi ștearsă.",
     "certificateIssued": "ai primit o diplomă semnată în {{space}}. O găsești în Diplome.",
     "classArchived": "spațiul clasei „{{space}}” a fost arhivat. Salvează-ți copii ale diplomelor în 30 de zile: apoi numele reale tipărite pe ele se șterg.",
+    "classCompetitionWon": "ai câștigat concursul clasei din „{{space}}”. Felicitări!",
+    "classReadersChoice": "colegii au dat cele mai multe puncte în clasă capitolelor cu care te-ai înscris în „{{space}}”: Alegerea cititorilor.",
+    "classCompetitionResults": "rezultatele concursului clasei din „{{space}}” au fost publicate.",
     "staffChangedStory": "am schimbat {{fields}} pentru povestea ta „{{story}}”.",
     "staffShowedStory": "povestea ta „{{story}}” poate fi găsită din nou.",
     "staffShowedChapter": "capitolul {{number}} din „{{story}}” se vede din nou.",
@@ -126,7 +129,8 @@
     "space_join_note": "mesajul tău cu cererea de a intra într-un spațiu",
     "reading_list": "lista ta de lectură",
     "class_point_note": "notița ta trimisă cu puncte în clasă",
-    "class_teacher_note": "notița ta de pe lucrarea unui elev"
+    "class_teacher_note": "notița ta de pe lucrarea unui elev",
+    "class_competition": "concursul clasei tale"
   },
   "decisions": {
     "no_action": "un moderator a verificat o raportare despre {{item}} și nu a luat nicio măsură, așa că nu se schimbă nimic.",

@@ -32,6 +32,7 @@ import type { Space } from '../api/spaces';
 import { useSpace } from '../hooks/useSpaces';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
+import { ClassCompetitionCard } from '@/features/class-competitions/components/ClassCompetitionCard';
 import { ClassPointsCard } from '@/features/class-points/components/ClassPointsCard';
 
 import { ClassAboutCard } from './ClassAboutCard';
@@ -82,16 +83,18 @@ function SpaceThreads({ space }: { space: Space }) {
 }
 
 /**
- * A class space's own cards, for a viewer who may read it: the open assignments, soonest first
- * (MUST-1d), then the stories shared with the class.
+ * A class space's own cards, for a viewer who may read it: class points (CLASS-POINTS, part 1),
+ * the class competition and its Winner cards (part 2; S1-E8-15), the open assignments, soonest
+ * first (MUST-1d), then the stories shared with the class.
  *
  * @param props.space - the class space
- * @returns the two cards
+ * @returns the cards
  */
 function ClassCards({ space }: { space: Space }) {
   return (
     <>
       <ClassPointsCard slug={space.slug} />
+      <ClassCompetitionCard slug={space.slug} />
       <ClassAssignmentsCard space={space} />
       <ClassStoriesCard space={space} />
     </>

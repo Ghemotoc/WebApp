@@ -1975,6 +1975,328 @@ export type Database = {
           },
         ];
       };
+      class_competition_criteria: {
+        Row: {
+          competition_id: string;
+          created_at: string;
+          description: string;
+          id: string;
+          label: string;
+          max_points: number;
+          outcomes: string[];
+          position: number;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          competition_id: string;
+          created_at?: string;
+          description: string;
+          id?: string;
+          label: string;
+          max_points: number;
+          outcomes: string[];
+          position: number;
+          user_id: string;
+        };
+        Update: {
+          competition_id?: string;
+          created_at?: string;
+          description?: string;
+          id?: string;
+          label?: string;
+          max_points?: number;
+          outcomes?: string[];
+          position?: number;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'class_competition_criteria_competition_id_fkey';
+            columns: ['competition_id'];
+            isOneToOne: false;
+            referencedRelation: 'class_competitions';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'class_competition_criteria_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      class_competition_entrants: {
+        Row: {
+          competition_id: string;
+          created_at: string;
+          id: string;
+          space_id: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          competition_id: string;
+          created_at?: string;
+          id?: string;
+          space_id: string;
+          user_id: string;
+        };
+        Update: {
+          competition_id?: string;
+          created_at?: string;
+          id?: string;
+          space_id?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'class_competition_entrants_competition_id_fkey';
+            columns: ['competition_id'];
+            isOneToOne: false;
+            referencedRelation: 'class_competitions';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'class_competition_entrants_space_id_fkey';
+            columns: ['space_id'];
+            isOneToOne: false;
+            referencedRelation: 'spaces';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'class_competition_entrants_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      class_competition_results: {
+        Row: {
+          competition_id: string;
+          created_at: string;
+          id: string;
+          pupil_user_id: string;
+          readers_choice: boolean;
+          result: Database['public']['Enums']['certificate_result'];
+          user_id: string;
+          winning_chapter_id: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          competition_id: string;
+          created_at?: string;
+          id?: string;
+          pupil_user_id: string;
+          readers_choice?: boolean;
+          result: Database['public']['Enums']['certificate_result'];
+          user_id: string;
+          winning_chapter_id?: string | null;
+        };
+        Update: {
+          competition_id?: string;
+          created_at?: string;
+          id?: string;
+          pupil_user_id?: string;
+          readers_choice?: boolean;
+          result?: Database['public']['Enums']['certificate_result'];
+          user_id?: string;
+          winning_chapter_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'class_competition_results_competition_id_fkey';
+            columns: ['competition_id'];
+            isOneToOne: false;
+            referencedRelation: 'class_competitions';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'class_competition_results_pupil_user_id_fkey';
+            columns: ['pupil_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'class_competition_results_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'class_competition_results_winning_chapter_id_fkey';
+            columns: ['winning_chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      class_competition_scores: {
+        Row: {
+          competition_id: string;
+          created_at: string;
+          criterion_id: string;
+          id: string;
+          points: number;
+          pupil_user_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          competition_id: string;
+          created_at?: string;
+          criterion_id: string;
+          id?: string;
+          points: number;
+          pupil_user_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          competition_id?: string;
+          created_at?: string;
+          criterion_id?: string;
+          id?: string;
+          points?: number;
+          pupil_user_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'class_competition_scores_competition_id_fkey';
+            columns: ['competition_id'];
+            isOneToOne: false;
+            referencedRelation: 'class_competitions';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'class_competition_scores_criterion_id_fkey';
+            columns: ['criterion_id'];
+            isOneToOne: false;
+            referencedRelation: 'class_competition_criteria';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'class_competition_scores_pupil_user_id_fkey';
+            columns: ['pupil_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'class_competition_scores_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      class_competitions: {
+        Row: {
+          created_at: string;
+          ended_at: string | null;
+          ends_on: string;
+          id: string;
+          name: string;
+          published_at: string | null;
+          space_id: string;
+          starts_on: string;
+          updated_at: string;
+          user_id: string;
+          class_competition_last_day: string | null;
+          class_competition_log_details: Json | null;
+          class_competition_phase: string | null;
+        };
+        ComputedFields:
+          | 'class_competition_last_day'
+          | 'class_competition_log_details'
+          | 'class_competition_phase';
+        Insert: {
+          created_at?: string;
+          ended_at?: string | null;
+          ends_on: string;
+          id?: string;
+          name: string;
+          published_at?: string | null;
+          space_id: string;
+          starts_on: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          ended_at?: string | null;
+          ends_on?: string;
+          id?: string;
+          name?: string;
+          published_at?: string | null;
+          space_id?: string;
+          starts_on?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'class_competitions_space_id_fkey';
+            columns: ['space_id'];
+            isOneToOne: false;
+            referencedRelation: 'spaces';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'class_competitions_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      class_criteria_templates: {
+        Row: {
+          created_at: string;
+          criteria: NonNullable<Json>;
+          id: string;
+          name: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          criteria: NonNullable<Json>;
+          id?: string;
+          name: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          criteria?: NonNullable<Json>;
+          id?: string;
+          name?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'class_criteria_templates_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       class_point_flags: {
         Row: {
           chapter_id: string | null;
@@ -3963,6 +4285,7 @@ export type Database = {
             archived_at: string | null;
             banner: Database['public']['Enums']['space_banner'];
             banner_picture_id: string | null;
+            class_grade: number | null;
             class_points_on: boolean;
             created_at: string;
             crest_picture_id: string | null;
@@ -7885,6 +8208,7 @@ export type Database = {
           archived_at: string | null;
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
+          class_grade: number | null;
           class_points_on: boolean;
           created_at: string;
           crest_picture_id: string | null;
@@ -7940,6 +8264,7 @@ export type Database = {
           archived_at?: string | null;
           banner?: Database['public']['Enums']['space_banner'];
           banner_picture_id?: string | null;
+          class_grade?: number | null;
           class_points_on?: boolean;
           created_at?: string;
           crest_picture_id?: string | null;
@@ -7968,6 +8293,7 @@ export type Database = {
           archived_at?: string | null;
           banner?: Database['public']['Enums']['space_banner'];
           banner_picture_id?: string | null;
+          class_grade?: number | null;
           class_points_on?: boolean;
           created_at?: string;
           crest_picture_id?: string | null;
@@ -12885,6 +13211,7 @@ export type Database = {
           archived_at: string | null;
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
+          class_grade: number | null;
           class_points_on: boolean;
           created_at: string;
           crest_picture_id: string | null;
@@ -13091,7 +13418,12 @@ export type Database = {
       check_chapter_pictures: { Args: { body: string; owner_id: string }; Returns: undefined };
       check_chapter_text: { Args: { body: string }; Returns: string };
       check_character_texts: { Args: { allowed_keys: string[]; texts: Json }; Returns: undefined };
+      check_class_criteria: { Args: { criteria: Json }; Returns: Json };
       check_class_note: { Args: { longest: number; value: string }; Returns: string };
+      check_class_plain_text: {
+        Args: { failure_hint: string; longest: number; value: string };
+        Returns: string;
+      };
       check_comment_text: { Args: { body: string }; Returns: string };
       check_custom_value_keys: {
         Args: { custom: Json; target_story_id: string };
@@ -13127,6 +13459,132 @@ export type Database = {
       class_certificate_crest: { Args: { slug: string }; Returns: Json };
       class_certificates: { Args: { slug: string }; Returns: Json };
       class_chapter_points: { Args: { target_chapter_id: string }; Returns: Json };
+      class_competition_card_json: {
+        Args: {
+          competition: Omit<
+            Database['public']['Tables']['class_competitions']['Row'],
+            Database['public']['Tables']['class_competitions']['ComputedFields']
+          >;
+          is_teacher: boolean;
+        };
+        Returns: Json;
+      };
+      class_competition_class_points: {
+        Args: {
+          competition: Omit<
+            Database['public']['Tables']['class_competitions']['Row'],
+            Database['public']['Tables']['class_competitions']['ComputedFields']
+          >;
+          pupil_id: string;
+        };
+        Returns: number;
+      };
+      class_competition_criteria_json: { Args: { target_competition_id: string }; Returns: Json };
+      class_competition_entrant_id: {
+        Args: {
+          competition: Omit<
+            Database['public']['Tables']['class_competitions']['Row'],
+            Database['public']['Tables']['class_competitions']['ComputedFields']
+          >;
+          typed_handle: string;
+        };
+        Returns: string;
+      };
+      class_competition_for_pupil: {
+        Args: { target_competition_id: string };
+        Returns: {
+          created_at: string;
+          ended_at: string | null;
+          ends_on: string;
+          id: string;
+          name: string;
+          published_at: string | null;
+          space_id: string;
+          starts_on: string;
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'class_competitions';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      class_competition_for_teacher: {
+        Args: { target_competition_id: string };
+        Returns: {
+          created_at: string;
+          ended_at: string | null;
+          ends_on: string;
+          id: string;
+          name: string;
+          published_at: string | null;
+          space_id: string;
+          starts_on: string;
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'class_competitions';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      class_competition_is_scored: {
+        Args: {
+          competition: Omit<
+            Database['public']['Tables']['class_competitions']['Row'],
+            Database['public']['Tables']['class_competitions']['ComputedFields']
+          >;
+          pupil_id: string;
+        };
+        Returns: boolean;
+      };
+      class_competition_last_day: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['class_competitions']['Row'],
+            Database['public']['Tables']['class_competitions']['ComputedFields']
+          >;
+        };
+        Returns: string;
+      };
+      class_competition_log_details: {
+        Args: {
+          competition: Omit<
+            Database['public']['Tables']['class_competitions']['Row'],
+            Database['public']['Tables']['class_competitions']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
+      class_competition_phase: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['class_competitions']['Row'],
+            Database['public']['Tables']['class_competitions']['ComputedFields']
+          >;
+        };
+        Returns: string;
+      };
+      class_competition_running_json: {
+        Args: {
+          competition: Omit<
+            Database['public']['Tables']['class_competitions']['Row'],
+            Database['public']['Tables']['class_competitions']['ComputedFields']
+          >;
+          is_teacher: boolean;
+          space: Omit<
+            Database['public']['Tables']['spaces']['Row'],
+            Database['public']['Tables']['spaces']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
+      class_competition_scoring: { Args: { target_competition_id: string }; Returns: Json };
+      class_competitions: { Args: { slug: string }; Returns: Json };
       class_invite: { Args: { slug: string }; Returns: Json };
       class_invite_opens_sign_up: { Args: { code: string }; Returns: boolean };
       class_invite_preview: { Args: { code: string }; Returns: Json };
@@ -13160,6 +13618,7 @@ export type Database = {
           archived_at: string | null;
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
+          class_grade: number | null;
           class_points_on: boolean;
           created_at: string;
           crest_picture_id: string | null;
@@ -13216,6 +13675,7 @@ export type Database = {
           archived_at: string | null;
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
+          class_grade: number | null;
           class_points_on: boolean;
           created_at: string;
           crest_picture_id: string | null;
@@ -13253,6 +13713,7 @@ export type Database = {
           archived_at: string | null;
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
+          class_grade: number | null;
           class_points_on: boolean;
           created_at: string;
           crest_picture_id: string | null;
@@ -13295,7 +13756,9 @@ export type Database = {
       };
       class_thread_replies: { Args: { target_thread_id: string }; Returns: Json };
       class_thread_teacher_points: { Args: { target_thread_id: string }; Returns: Json };
+      class_today: { Args: Record<PropertyKey, never>; Returns: string };
       class_waiting_members: { Args: { slug: string }; Returns: Json };
+      class_winners_allowed: { Args: { grade: number }; Returns: boolean };
       classic_authors_dying_in: { Args: { died: number }; Returns: Json };
       classic_fix_is_small: {
         Args: { corrected_text: string; live_text: string };
@@ -13891,8 +14354,10 @@ export type Database = {
       delete_chapter: { Args: { chapter_code: string }; Returns: Json };
       delete_chapter_scene: { Args: { scene_id: string }; Returns: Json };
       delete_character_relationship: { Args: { relationship_id: string }; Returns: Json };
+      delete_class_competition: { Args: { target_competition_id: string }; Returns: Json };
       delete_comment: { Args: { comment_id: string }; Returns: boolean };
       delete_conversation: { Args: { other_handle: string }; Returns: Json };
+      delete_criteria_template: { Args: { target_template_id: string }; Returns: Json };
       delete_forum_post: { Args: { post_id: string }; Returns: Json };
       delete_marketing_detail: { Args: { detail_id: string; story_slug: string }; Returns: Json };
       delete_my_story: { Args: { story_slug: string }; Returns: Json };
@@ -13943,6 +14408,7 @@ export type Database = {
         };
         Returns: Json;
       };
+      end_class_competition: { Args: { target_competition_id: string }; Returns: Json };
       end_class_invite: { Args: { slug: string }; Returns: boolean };
       end_live_class_invites: { Args: { target_space_id: string }; Returns: number };
       end_my_session: { Args: { target_session_id: string }; Returns: boolean };
@@ -14342,6 +14808,7 @@ export type Database = {
           archived_at: string | null;
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
+          class_grade: number | null;
           class_points_on: boolean;
           created_at: string;
           crest_picture_id: string | null;
@@ -14465,6 +14932,7 @@ export type Database = {
           owner_user_id: string;
         }[];
       };
+      join_class_competition: { Args: { target_competition_id: string }; Returns: Json };
       join_class_space: { Args: { code: string }; Returns: Json };
       join_opening_list: { Args: { payload: string; signature: string }; Returns: string };
       join_space: { Args: { note?: string; slug: string }; Returns: Json };
@@ -14557,6 +15025,7 @@ export type Database = {
       latest_material_legal_version: { Args: { target_document_id: string }; Returns: string };
       latest_place_json: { Args: { target_story_id: string }; Returns: Json };
       launch_task: { Args: Record<PropertyKey, never>; Returns: Json };
+      leave_class_competition: { Args: { target_competition_id: string }; Returns: Json };
       leave_opening_list: { Args: { token: string }; Returns: boolean };
       leave_space: { Args: { slug: string }; Returns: undefined };
       legal_documents_to_accept: {
@@ -14807,6 +15276,19 @@ export type Database = {
       mark_forums_read: { Args: { forum_slug?: string }; Returns: undefined };
       mark_learning_step: { Args: { is_done: boolean; target_day: number }; Returns: boolean };
       mark_notifications_read: { Args: { notification_ids?: string[] }; Returns: number };
+      mark_readers_choice: {
+        Args: {
+          competition: Omit<
+            Database['public']['Tables']['class_competitions']['Row'],
+            Database['public']['Tables']['class_competitions']['ComputedFields']
+          >;
+          space: Omit<
+            Database['public']['Tables']['spaces']['Row'],
+            Database['public']['Tables']['spaces']['ComputedFields']
+          >;
+        };
+        Returns: undefined;
+      };
       market_change_problem: {
         Args: {
           new_legal_check: Database['public']['Enums']['legal_check_status'];
@@ -15096,6 +15578,7 @@ export type Database = {
           status: Database['public']['Enums']['conversation_status'];
         }[];
       };
+      my_criteria_templates: { Args: Record<PropertyKey, never>; Returns: Json };
       my_data_export: { Args: Record<PropertyKey, never>; Returns: Json };
       my_data_requests: { Args: Record<PropertyKey, never>; Returns: Json };
       my_discover_cards: { Args: Record<PropertyKey, never>; Returns: Json };
@@ -15508,6 +15991,7 @@ export type Database = {
           archived_at: string | null;
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
+          class_grade: number | null;
           class_points_on: boolean;
           created_at: string;
           crest_picture_id: string | null;
@@ -15835,6 +16319,10 @@ export type Database = {
         Returns: Json;
       };
       publish_chapter: { Args: { chapter_code: string }; Returns: Json };
+      publish_class_competition: {
+        Args: { results: Json; target_competition_id: string };
+        Returns: Json;
+      };
       publish_due_chapters: { Args: Record<PropertyKey, never>; Returns: number };
       published_interface_text: {
         Args: { wanted_locale: string };
@@ -16551,6 +17039,18 @@ export type Database = {
         Args: { body: string; chapter_code: string; expected_version: number; title: string };
         Returns: Json;
       };
+      save_class_competition: {
+        Args: { details: Json; slug: string; target_competition_id?: string };
+        Returns: Json;
+      };
+      save_class_competition_scores: {
+        Args: { pupil_handle: string; scores: Json; target_competition_id: string };
+        Returns: Json;
+      };
+      save_criteria_template: {
+        Args: { criteria: Json; target_template_id?: string; template_name: string };
+        Returns: Json;
+      };
       save_my_preferences: {
         Args: { read_categories: string[]; topic_tag_ids: string[]; write_categories: string[] };
         Returns: undefined;
@@ -16658,6 +17158,7 @@ export type Database = {
       };
       set_checks_personal_details: { Args: { should_check: boolean }; Returns: undefined };
       set_class_certificate_crest: { Args: { picture_id?: string; slug: string }; Returns: Json };
+      set_class_grade: { Args: { grade: number; slug: string }; Returns: Json };
       set_class_lock: { Args: { new_locks_at?: string; slug: string }; Returns: Json };
       set_class_points: { Args: { slug: string; turn_on: boolean }; Returns: Json };
       set_forum_thread_due_date: {
@@ -16864,6 +17365,7 @@ export type Database = {
           archived_at: string | null;
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
+          class_grade: number | null;
           class_points_on: boolean;
           created_at: string;
           crest_picture_id: string | null;
@@ -16901,6 +17403,7 @@ export type Database = {
           archived_at: string | null;
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
+          class_grade: number | null;
           class_points_on: boolean;
           created_at: string;
           crest_picture_id: string | null;
@@ -17097,6 +17600,7 @@ export type Database = {
           archived_at: string | null;
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
+          class_grade: number | null;
           class_points_on: boolean;
           created_at: string;
           crest_picture_id: string | null;
@@ -17139,6 +17643,7 @@ export type Database = {
           archived_at: string | null;
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
+          class_grade: number | null;
           class_points_on: boolean;
           created_at: string;
           crest_picture_id: string | null;
@@ -17753,6 +18258,19 @@ export type Database = {
       teacher_check_is_signed: { Args: { payload: string; signature: string }; Returns: boolean };
       teacher_proof_upload_allowed: { Args: { object_name: string }; Returns: boolean };
       teaser_of: { Args: { chapter_body: string; word_limit: number }; Returns: string };
+      tell_class_competition_results: {
+        Args: {
+          competition: Omit<
+            Database['public']['Tables']['class_competitions']['Row'],
+            Database['public']['Tables']['class_competitions']['ComputedFields']
+          >;
+          space: Omit<
+            Database['public']['Tables']['spaces']['Row'],
+            Database['public']['Tables']['spaces']['ComputedFields']
+          >;
+        };
+        Returns: undefined;
+      };
       text_placeholders: { Args: { value: string }; Returns: string[] };
       tier_hours: {
         Args: { target_tier: Database['public']['Enums']['case_tier'] };
@@ -18136,7 +18654,10 @@ export type Database = {
         | 'account_unused_month'
         | 'account_unused_week'
         | 'account_unused_nudge'
-        | 'account_unused_closed';
+        | 'account_unused_closed'
+        | 'class_competition_won'
+        | 'class_competition_results'
+        | 'class_readers_choice';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -18188,7 +18709,8 @@ export type Database = {
         | 'space_join_note'
         | 'reading_list'
         | 'class_point_note'
-        | 'class_teacher_note';
+        | 'class_teacher_note'
+        | 'class_competition';
       revision_reason: 'published' | 'edited' | 'restored';
       safety_contact_kind:
         | 'emergency'
@@ -18539,6 +19061,9 @@ export const Constants = {
         'account_unused_week',
         'account_unused_nudge',
         'account_unused_closed',
+        'class_competition_won',
+        'class_competition_results',
+        'class_readers_choice',
       ],
       picture_kind: [
         'cover',
@@ -18594,6 +19119,7 @@ export const Constants = {
         'reading_list',
         'class_point_note',
         'class_teacher_note',
+        'class_competition',
       ],
       revision_reason: ['published', 'edited', 'restored'],
       safety_contact_kind: [

@@ -16,7 +16,8 @@
       "space_join_note": "Raportează mesajul",
       "reading_list": "Raportează lista",
       "class_point_note": "Raportează notița",
-      "class_teacher_note": "Raportează notița"
+      "class_teacher_note": "Raportează notița",
+      "class_competition": "Raportează concursul"
     },
     "anonymous": "{{item}}. Nu va vedea cine a raportat.",
     "whatIsWrong": "Ce nu e în regulă?",

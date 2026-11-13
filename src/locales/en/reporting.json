@@ -16,7 +16,8 @@
       "space_join_note": "Report this note",
       "reading_list": "Report this list",
       "class_point_note": "Report this note",
-      "class_teacher_note": "Report this note"
+      "class_teacher_note": "Report this note",
+      "class_competition": "Report this competition"
     },
     "anonymous": "{{item}}. They won’t see who reported it.",
     "whatIsWrong": "What’s wrong?",
