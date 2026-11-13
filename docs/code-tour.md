@@ -146,6 +146,7 @@ Every section, in the order it was built (QA-5, finding R4). Search this list fo
   - [Stories shared only with a class (CLASSES-c)](#stories-shared-only-with-a-class-classes-c)
   - [The staff pilot set-up and archiving a class (CLASSES-d)](#the-staff-pilot-set-up-and-archiving-a-class-classes-d)
   - [Writing certificates (CLASSES-e; S1-E8-12)](#writing-certificates-classes-e-s1-e8-12)
+  - [Class points (CLASS-POINTS part 1; S1-E8-13, 14 and 16)](#class-points-class-points-part-1-s1-e8-13-14-and-16)
 - [Forum signatures and moderators' change requests (S1-E8-08; FORUMS-2d)](#forum-signatures-and-moderators-change-requests-s1-e8-08-forums-2d)
 - [Writer ranks (S1-E8-09; FORUMS-2e)](#writer-ranks-s1-e8-09-forums-2e)
   - [One journey through the whole epic (S1-E8-QA)](#one-journey-through-the-whole-epic-s1-e8-qa)
@@ -2500,6 +2501,17 @@ The app draws no doodles, stickers or hand-drawn icons anywhere (Robert, 7 Nov 2
 - The PDF: `CertificateSheet` is real text in the certificate's own language (`i18n.getFixedT`), with `lang` set; the print styles in `src/styles/index.css` print only the sheet as an A4 page, and the browser's "Save as PDF" keeps it as tagged text (proposal while the PDF tool is OPEN, Q49).
 - The check: `verify_certificate(code)` for anyone answers valid, revoked, retired (deleted with its account: the code alone is kept in `retired_certificate_codes` by a trigger) or unknown, never a name. Staff revoke through `admin_revoke_certificate()` (Schools access, audit log).
 - Tests: `supabase/tests/database/236-certificates.test.sql`, `src/features/certificates/api/certificates.test.ts`, `src/features/certificates/lib/certificateLib.test.ts`, `server/notification-emails.test.ts`, `e2e/certificates.spec.ts`.
+
+### Class points (CLASS-POINTS part 1; S1-E8-13, 14 and 16)
+
+- Where it lives: `src/features/class-points/` (its README lists every file); `supabase/migrations/…_classpoints1_01_enums.sql` and `…_classpoints1_02_class_points.sql`. Wired into `ChapterEnd` (the chapter reader), `SpacePage` and `SpaceSettingsPage` (the class), `ForumPostCard` and `ThreadPage` (replies in a class thread), `router.tsx` (`/spaces/:spaceSlug/points`, `/staff/schools/points`) and `SchoolsTabs`.
+- The rules (Robert, 13 Nov 2026): off until the class's teacher turns them on (`spaces.class_points_on`, `set_class_points()`); a pupil has 10 points a week (`class_points_weekly_budget`), at most 3 to one chapter (`class_points_chapter_cap`), only for a classmate's chapter they opened; a week runs Monday to Sunday in `class_points_timezone`; points can move until the week ends. No ranking anywhere. The teacher is the class's owner.
+- Who sees what: `class_point_gifts`, `class_teacher_points`, `class_chapter_opens` and `class_point_flags` have RLS on and no read policy for members, so every read goes through a function. `class_chapter_points()` answers a classmate with what they may give and no counter, the writer with the total, the lines (never the giver) and the teacher's points, and the teacher with the total and their own points. `class_points_table()` gives the teacher each pupil's two numbers. Only `admin_class_gifts()` says who gave points, for moderation staff, and that read is written to the audit log.
+- How a click travels: a classmate nears the end of a chapter → `ChapterClassPointsWhenNear` → `useChapterClassPoints` → `class_chapter_points()` (which notes the chapter was opened) → `GivePointsForm` → `useGiveClassPoints().give` → `give_class_points()` (cap, budget, opened, note rules) → every class points read is fetched again.
+- Teacher points and private notes: `TeacherPointsForm` → `set_teacher_points()` on a chapter or a reply in a class thread, 0 to `class_teacher_points_max`. The note has no reply box; the pupil, the teacher and moderators read it, the pupil can report it (`class_teacher_note`), and every save is a line in the class's log. The staff switch `class_teacher_notes` turns notes off everywhere.
+- Safety: a line for the writer is reportable by the writer (`class_point_note`); the teacher reports a chapter's points from the table (`report_class_points()`); `flag_class_point_pairs()` (pg_cron, Mondays 02:20 UTC) flags two pupils who gave each other most of their points three weeks running. Moderators work flags at Staff › Schools › Class points and remove a gift with a reason (`admin_remove_class_gift()`).
+- Leaving and deleting: `forget_class_points_of_member()` deletes what a person gave and received when they leave the class; `purge_class_points()` in `run_retention_jobs()` deletes a class's points 30 days after it is archived (docs/retention.md).
+- Tests: `supabase/tests/database/377-class-points.test.sql`, `378-class-points-safety.test.sql`, `src/features/class-points/api/classPoints.test.ts`, `lib/sortPupils.test.ts`, `lib/classPointsDates.test.ts`, `e2e/class-points.spec.ts`.
 
 ## Forum signatures and moderators' change requests (S1-E8-08; FORUMS-2d)
 

@@ -17675,8 +17675,11 @@ begin
   if public.has_html_tag(clean) then
     raise exception 'HTML tags are not allowed (CLAUDE.md rule 8).' using errcode = 'check_violation', hint = 'note:html';
   end if;
-  if public.has_unsafe_link(clean) then
-    raise exception 'Only http, https and mailto links are allowed (CLAUDE.md rule 8).' using errcode = 'check_violation', hint = 'note:link';
+  -- No web address and no email address at all, stricter than a comment: a note with points
+  -- goes to one pupil, often a minor, and the teacher's note is private, so it must not point
+  -- anywhere a conversation could carry on unseen (break test, 13 Nov 2026; architecture 1.10).
+  if public.has_unsafe_link(clean) or clean ~* '(https?://|www\.|mailto:|[^[:space:]@]+@[^[:space:]@]+\.[[:alpha:]]{2,}|[[:alnum:]-]+\.[[:alpha:]]{2,}/)' then
+    raise exception 'A note with points holds no link and no email address.' using errcode = 'check_violation', hint = 'note:link';
   end if;
   return clean;
 end;
@@ -17686,7 +17689,7 @@ $$;
 ALTER FUNCTION "public"."check_class_note"("value" "text", "longest" integer) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."check_class_note"("value" "text", "longest" integer) IS 'Internal: a note with class points, cleaned and checked like a comment (S1-E8-13, rule 8).';
+COMMENT ON FUNCTION "public"."check_class_note"("value" "text", "longest" integer) IS 'Internal: a note with class points, cleaned and checked: no HTML, no link, no email address (S1-E8-13, rule 8).';
 
 
 
@@ -18235,6 +18238,7 @@ begin
       'cap', public.class_points_number('class_points_chapter_cap', 3),
       'given', case when my_gift.removed_at is null then coalesce(my_gift.points, 0) else 0 end,
       'note', case when my_gift.removed_at is null then my_gift.note end,
+      'note_max', public.class_points_number('class_point_note_max_characters', 140),
       'resets_on', week + 7,
       -- Not offered in a locked class, to someone blocked either way, or after a moderator
       -- removed this week's gift to this chapter.
@@ -18253,6 +18257,7 @@ begin
     'teacher', case when viewer_role in ('writer', 'teacher') then public.class_teacher_points_json(teacher_row) end,
     'teacher_max', case when viewer_role = 'teacher' then public.class_points_number('class_teacher_points_max', 10) end,
     'notes_on', case when viewer_role = 'teacher' then public.is_feature_enabled('class_teacher_notes') end,
+    'note_max', case when viewer_role = 'teacher' then public.class_points_number('class_teacher_note_max_characters', 1000) end,
     'is_locked', public.space_is_locked(space));
 end;
 $$;
@@ -18494,7 +18499,7 @@ CREATE OR REPLACE FUNCTION "public"."class_points_summary"("slug" "text") RETURN
     'enabled', class.class_points_on,
     'role', case when class.is_teacher then 'teacher' else 'pupil' end,
     'can_switch', class.is_teacher and class.archived_at is null,
-    'budget', case when not class.is_teacher then public.class_points_number('class_points_weekly_budget', 10) end,
+    'budget', public.class_points_number('class_points_weekly_budget', 10),
     'left', case when not class.is_teacher then
       greatest(public.class_points_number('class_points_weekly_budget', 10)
                - public.class_points_spent(class.id, (select auth.uid()), class.week), 0) end,
@@ -18833,6 +18838,7 @@ CREATE OR REPLACE FUNCTION "public"."class_thread_teacher_points"("target_thread
     'is_teacher', class.is_teacher,
     'teacher_max', public.class_points_number('class_teacher_points_max', 10),
     'notes_on', public.is_feature_enabled('class_teacher_notes'),
+    'note_max', public.class_points_number('class_teacher_note_max_characters', 1000),
     'is_locked', public.space_is_locked(public.class_space_of_thread(target_thread_id)),
     'replies', (
       select coalesce(jsonb_agg(public.class_teacher_points_json(marks)
@@ -45311,7 +45317,7 @@ COMMENT ON FUNCTION "public"."set_suggests_from_reading"("should_suggest" boolea
 
 
 
-CREATE OR REPLACE FUNCTION "public"."set_teacher_points"("target_kind" "text", "target_id" "uuid", "new_points" integer, "new_note" "text" DEFAULT NULL::"text") RETURNS "jsonb"
+CREATE OR REPLACE FUNCTION "public"."set_teacher_points"("target_kind" "text", "target_id" "uuid", "new_points" integer DEFAULT NULL::integer, "new_note" "text" DEFAULT NULL::"text") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
     AS $$

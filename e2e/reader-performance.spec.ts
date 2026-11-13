@@ -37,6 +37,8 @@ const FIRST_PARAGRAPH_BUDGET_MS = 2000;
  * texts (21 KB) no longer travel with every first page, which brought it back to about 1,280 KB.
  * MOTION-1 (13 Nov 2026): the "Less motion" switch took it to 1,302 KB; the texts of Settings ›
  * Appearance (2 KB) now load with that section only (src/locales/<language>/appearance.json).
+ * CLASS-POINTS (13 Nov 2026): class points took it to 1,300.1 KB; the texts of Settings › Ways to
+ * log in (4 KB) now load with that section only (src/locales/<language>/loginMethods.json).
  */
 const READER_SCRIPT_BUDGET_KB = 1300;
 

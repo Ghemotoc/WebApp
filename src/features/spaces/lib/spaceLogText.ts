@@ -51,6 +51,13 @@ const knownActions = [
   'handover_cancelled',
   'handover_declined',
   'handover_accepted',
+  // Class points (bundle CLASS-POINTS; S1-E8-13, 14 and 16).
+  'class_points_on',
+  'class_points_off',
+  'teacher_points_saved',
+  'teacher_points_removed',
+  'class_points_reported',
+  'class_points_removed',
 ];
 
 /**

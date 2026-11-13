@@ -16760,7 +16760,7 @@ export type Database = {
       set_suggest_me: { Args: { should_suggest: boolean }; Returns: undefined };
       set_suggests_from_reading: { Args: { should_suggest: boolean }; Returns: undefined };
       set_teacher_points: {
-        Args: { new_note?: string; new_points: number; target_id: string; target_kind: string };
+        Args: { new_note?: string; new_points?: number; target_id: string; target_kind: string };
         Returns: Json;
       };
       setting_value: { Args: { setting_key: string }; Returns: Json };

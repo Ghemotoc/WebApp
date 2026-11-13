@@ -15,6 +15,7 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
+import { ChapterClassPointsWhenNear } from '@/features/class-points/components/ChapterClassPointsWhenNear';
 import { ReportButton } from '@/features/reporting/components/ReportButton';
 import { StorySuggestionsWhenNear } from '@/features/suggestions/components/StorySuggestionsWhenNear';
 import { ShareButtonWhenNear } from '@/features/sharing/components/ShareButtonWhenNear';
@@ -72,6 +73,10 @@ export function ChapterEnd({ chapter }: { chapter: ReaderChapter }) {
             })}
           />
         </span>
+      </div>
+      {/* CLASS-POINTS: class points, only on a chapter shared with a class that has them on. */}
+      <div className="mt-8 lg:mr-20">
+        <ChapterClassPointsWhenNear chapterId={chapter.id} />
       </div>
       {/* After the latest chapter, where to go next (S1-E15-06). */}
       {chapter.nextCode === null && (

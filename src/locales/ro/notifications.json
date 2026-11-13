@@ -124,7 +124,9 @@
     "forum_post": "mesajul tău de pe forum",
     "space": "spațiul tău",
     "space_join_note": "mesajul tău cu cererea de a intra într-un spațiu",
-    "reading_list": "lista ta de lectură"
+    "reading_list": "lista ta de lectură",
+    "class_point_note": "notița ta trimisă cu puncte în clasă",
+    "class_teacher_note": "notița ta de pe lucrarea unui elev"
   },
   "decisions": {
     "no_action": "un moderator a verificat o raportare despre {{item}} și nu a luat nicio măsură, așa că nu se schimbă nimic.",

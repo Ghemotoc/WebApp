@@ -18,7 +18,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(62);
+select plan(65);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -150,6 +150,10 @@ select is(pg_temp.hint_of(format($$select public.give_class_points(%L, 1, %L)$$,
   'note:too_long', 'criterion 6: a note has at most 140 characters');
 select is(pg_temp.hint_of(format($$select public.give_class_points(%L, 1, 'un <b>text</b>')$$, pg_temp.kept('kid_chapter_1'))),
   'note:html', 'and goes through a comment''s filters');
+select is(pg_temp.hint_of(format($$select public.give_class_points(%L, 1, 'scrie-mi pe https://altundeva.example')$$, pg_temp.kept('kid_chapter_1'))),
+  'note:link', 'a note holds no link');
+select is(pg_temp.hint_of(format($$select public.give_class_points(%L, 1, 'scrie-mi la ana@altundeva.example')$$, pg_temp.kept('kid_chapter_1'))),
+  'note:link', 'nor an email address');
 select is(public.give_class_points(pg_temp.kept_id('kid_chapter_1'), 2, 'Mi-a plăcut finalul!') -> 'giving' ->> 'left', '8',
   'criterion 5: until the week ends a pupil can move points: 3 becomes 2');
 select public.class_chapter_points(pg_temp.kept_id('kid_chapter_2'));
@@ -243,6 +247,8 @@ select is(pg_temp.hint_of(format($$select public.set_teacher_points('chapter', %
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
 select is(pg_temp.hint_of(format($$select public.set_teacher_points('chapter', %L, 11)$$, pg_temp.kept('kid_chapter_1'))),
   'points:range', 'criterion 1: teacher points are 0 to 10');
+select is(pg_temp.hint_of(format($$select public.set_teacher_points('chapter', %L, 5, 'Vezi www.altundeva.example/pagina')$$, pg_temp.kept('kid_chapter_1'))),
+  'note:link', 'a teacher''s private note holds no link either');
 select is(public.set_teacher_points('chapter', pg_temp.kept_id('kid_chapter_1'), 7, 'Un început bun. Lucrează la dialog.') ->> 'points',
   '7', 'the teacher gives 7 points with a private note');
 select is(public.set_teacher_points('chapter', pg_temp.kept_id('kid_chapter_1'), 8, 'Un început bun. Lucrează la dialog.') ->> 'points',

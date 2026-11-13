@@ -380,8 +380,8 @@ revoke execute on function public.class_points_spent(uuid, uuid, date, uuid) fro
  * check_class_note: cleans a note written with points and refuses what a comment would refuse.
  * Inputs: value, the typed note (null or empty for none); longest, the limit in characters.
  * Returns: the clean note on one line, or null for none.
- * Errors: check_violation with hint 'note:too_long', 'note:html' or 'note:link' (the same filters
- *   as a comment: no raw HTML, only http, https and mailto links; CLAUDE.md rule 8).
+ * Errors: check_violation with hint 'note:too_long', 'note:html' (no raw HTML, as in a comment;
+ *   CLAUDE.md rule 8) or 'note:link' (no web address and no email address at all).
  * Internal: give_class_points() and set_teacher_points().
  */
 create function public.check_class_note(value text, longest integer)
@@ -403,14 +403,17 @@ begin
   if public.has_html_tag(clean) then
     raise exception 'HTML tags are not allowed (CLAUDE.md rule 8).' using errcode = 'check_violation', hint = 'note:html';
   end if;
-  if public.has_unsafe_link(clean) then
-    raise exception 'Only http, https and mailto links are allowed (CLAUDE.md rule 8).' using errcode = 'check_violation', hint = 'note:link';
+  -- No web address and no email address at all, stricter than a comment: a note with points
+  -- goes to one pupil, often a minor, and the teacher's note is private, so it must not point
+  -- anywhere a conversation could carry on unseen (break test, 13 Nov 2026; architecture 1.10).
+  if public.has_unsafe_link(clean) or clean ~* '(https?://|www\.|mailto:|[^[:space:]@]+@[^[:space:]@]+\.[[:alpha:]]{2,}|[[:alnum:]-]+\.[[:alpha:]]{2,}/)' then
+    raise exception 'A note with points holds no link and no email address.' using errcode = 'check_violation', hint = 'note:link';
   end if;
   return clean;
 end;
 $$;
 comment on function public.check_class_note(text, integer) is
-  'Internal: a note with class points, cleaned and checked like a comment (S1-E8-13, rule 8).';
+  'Internal: a note with class points, cleaned and checked: no HTML, no link, no email address (S1-E8-13, rule 8).';
 revoke execute on function public.check_class_note(text, integer) from public, anon, authenticated;
 
 /* ---------- 5. Turning class points on and off ---------- */
@@ -460,8 +463,8 @@ grant execute on function public.set_class_points(text, boolean) to authenticate
  * Input: slug, the class's address.
  * Returns: null for anyone who isn't the teacher or a pupil who may read the class. Otherwise JSON
  *   {enabled, role ('teacher' or 'pupil'), can_switch, budget, left, cap, resets_on,
- *   received_total}. budget, left and resets_on are for a pupil: this week's budget, what is left
- *   of it and the day a new budget starts. received_total is the points the pupil's own chapters
+ *   received_total}. budget is the weekly budget of every pupil. left and resets_on are for a
+ *   pupil: what is left of this week's budget and the day a new budget starts. received_total is the points the pupil's own chapters
  *   received in this class. A teacher gets nulls there.
  * Errors: none. Where it fits: ClassPointsCard on the class page and in its settings.
  */
@@ -484,7 +487,7 @@ as $$
     'enabled', class.class_points_on,
     'role', case when class.is_teacher then 'teacher' else 'pupil' end,
     'can_switch', class.is_teacher and class.archived_at is null,
-    'budget', case when not class.is_teacher then public.class_points_number('class_points_weekly_budget', 10) end,
+    'budget', public.class_points_number('class_points_weekly_budget', 10),
     'left', case when not class.is_teacher then
       greatest(public.class_points_number('class_points_weekly_budget', 10)
                - public.class_points_spent(class.id, (select auth.uid()), class.week), 0) end,
@@ -535,11 +538,12 @@ revoke execute on function public.class_teacher_points_json(public.class_teacher
  * Returns: null when the chapter isn't shared with a class, the class has points off, or the
  *   caller isn't the writer, the teacher or a pupil of that class. Otherwise JSON
  *   {class: {slug, name}, role, giving, received, teacher}:
- *   - role 'classmate': giving = {budget, left, cap, given, note, resets_on, can_give}; received
+ *   - role 'classmate': giving = {budget, left, cap, given, note, note_max, resets_on, can_give}; received
  *     and teacher are null, so a classmate never sees a counter (criterion 8).
  *   - role 'writer': received = {total, notes: [{id, note}]}, never who gave them (criterion 7);
  *     teacher = {id, points, note} or null.
- *   - role 'teacher': teacher = {id, points, note} or null, plus teacher_max and notes_on; received
+ *   - role 'teacher': teacher = {id, points, note} or null, plus teacher_max, notes_on and note_max (the
+ *     longest note); received
  *     = {total} without the notes, which are for the writer.
  * Side effect: for a classmate it records that they opened the chapter, which give_class_points()
  *   asks for (criterion 4). That is why it is not a plain read.
@@ -604,6 +608,7 @@ begin
       'cap', public.class_points_number('class_points_chapter_cap', 3),
       'given', case when my_gift.removed_at is null then coalesce(my_gift.points, 0) else 0 end,
       'note', case when my_gift.removed_at is null then my_gift.note end,
+      'note_max', public.class_points_number('class_point_note_max_characters', 140),
       'resets_on', week + 7,
       -- Not offered in a locked class, to someone blocked either way, or after a moderator
       -- removed this week's gift to this chapter.
@@ -622,6 +627,7 @@ begin
     'teacher', case when viewer_role in ('writer', 'teacher') then public.class_teacher_points_json(teacher_row) end,
     'teacher_max', case when viewer_role = 'teacher' then public.class_points_number('class_teacher_points_max', 10) end,
     'notes_on', case when viewer_role = 'teacher' then public.is_feature_enabled('class_teacher_notes') end,
+    'note_max', case when viewer_role = 'teacher' then public.class_points_number('class_teacher_note_max_characters', 1000) end,
     'is_locked', public.space_is_locked(space));
 end;
 $$;
@@ -712,7 +718,8 @@ grant execute on function public.give_class_points(uuid, integer, text) to authe
  * set_teacher_points: the teacher gives points to a pupil's chapter or assignment reply, changes
  *   them, or takes them away.
  * Inputs: target_kind, 'chapter' or 'reply'; target_id, the chapter's or the reply's ID;
- *   new_points, 0 to the setting class_teacher_points_max, or null to take the points away;
+ *   new_points, 0 to the setting class_teacher_points_max; null (or left out) takes the points
+ *   away;
  *   new_note, the optional private note.
  * Returns: JSON {id, points, note}, or null after taking the points away.
  * Errors: insufficient_privilege with hint 'signed_out', or 'points:not_teacher' when the caller
@@ -724,7 +731,7 @@ grant execute on function public.give_class_points(uuid, integer, text) to authe
  * Where it fits: TeacherPointsForm under a chapter and beside an assignment reply. Each save is
  *   written to the class's log (who and how many points, never the note's words).
  */
-create function public.set_teacher_points(target_kind text, target_id uuid, new_points integer, new_note text default null)
+create function public.set_teacher_points(target_kind text, target_id uuid, new_points integer default null, new_note text default null)
 returns jsonb
 language plpgsql
 volatile
@@ -809,7 +816,7 @@ grant execute on function public.set_teacher_points(text, uuid, integer, text) t
  * Input: target_thread_id.
  * Returns: null when the thread isn't in a class with points on, or the caller is neither its
  *   teacher nor a pupil who may read it. Otherwise JSON {is_teacher, teacher_max, notes_on,
- *   is_locked, replies: [{post_id, id, points, note}]}: every marked reply for the teacher, only
+ *   note_max, is_locked, replies: [{post_id, id, points, note}]}: every marked reply for the teacher, only
  *   the caller's own replies for a pupil.
  * Errors: none. Where it fits: ReplyTeacherPoints beside each reply of a class thread.
  */
@@ -830,6 +837,7 @@ as $$
     'is_teacher', class.is_teacher,
     'teacher_max', public.class_points_number('class_teacher_points_max', 10),
     'notes_on', public.is_feature_enabled('class_teacher_notes'),
+    'note_max', public.class_points_number('class_teacher_note_max_characters', 1000),
     'is_locked', public.space_is_locked(public.class_space_of_thread(target_thread_id)),
     'replies', (
       select coalesce(jsonb_agg(public.class_teacher_points_json(marks)
