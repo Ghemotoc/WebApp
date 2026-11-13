@@ -586,8 +586,9 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
       .shadow-popover,
       [data-area='staff'] *
     ) {
-    -webkit-backdrop-filter: blur(8px) saturate(140%);
-    backdrop-filter: blur(8px) saturate(140%);
+    /* High contrast sets --lg-blur-narrow to none (tokens.css; CONTRAST-1). */
+    -webkit-backdrop-filter: var(--lg-blur-narrow, blur(8px) saturate(140%));
+    backdrop-filter: var(--lg-blur-narrow, blur(8px) saturate(140%));
   }
 }
 
@@ -772,6 +773,92 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
+}
+
+/*
+ * High contrast (bundle CONTRAST-1; Robert, 13 Nov 2026: "Build, plain white pages"). Most of it
+ * is colours, in tokens.css under data-contrast="more": white pages (black at night), black text,
+ * dark edges and each theme kept in its deep accent. These rules cover what a colour can't: the
+ * blobs and the galaxy are not drawn, nothing is see-through or blurred, the soft sheens and
+ * shadows written into the rules above give way to plain lines, and links are always underlined
+ * so colour is never the only cue (WCAG 2.2, 1.4.1 and 1.4.6). src/lib/highContrast.ts and
+ * public/theme-init.js set the attribute on <html>, for the member's switch in Settings ›
+ * Appearance and for a device that asks for more contrast.
+ */
+:root[data-contrast='more'] body::before {
+  background: none;
+}
+
+:root[data-contrast='more'] dialog.bg-surface,
+:root[data-contrast='more'] .bg-surface.shadow-popover {
+  background-color: var(--surface);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* Buttons: flat fills with a plain edge; the grey button darkens to the tint on hover. */
+:root[data-contrast='more'] .button-main {
+  box-shadow: none;
+}
+
+:root[data-contrast='more'] .button-glass {
+  background-color: var(--surface);
+  background-image: none;
+  box-shadow: none;
+}
+
+:root[data-contrast='more'] .button-glass:hover {
+  background-color: var(--tint);
+}
+
+:root[data-contrast='more'] .bg-chip-on {
+  box-shadow: none;
+}
+
+:root[data-contrast='more'] .glass-pill {
+  box-shadow: var(--shadow-nav);
+}
+
+/* The segmented control: the picked option is ringed, so it is not told apart by a pale fill. */
+:root[data-contrast='more'] .segmented-track {
+  box-shadow: inset 0 0 0 1px var(--control-border);
+}
+
+:root[data-contrast='more'] .segmented-bubble {
+  box-shadow: inset 0 0 0 2px var(--control-border);
+}
+
+/* Bands: no sheen or white wash, and a plain edge. */
+:root[data-contrast='more'] :is(.glass-band-deep, .rounded-3xl.bg-primary),
+:root[data-contrast='more'] .glass-band-tint,
+:root[data-contrast='more'] :is(.rounded-card, .rounded-2xl, [class*='rounded-[2']).bg-tint {
+  background-image: none;
+  border-color: var(--border);
+  box-shadow: none;
+}
+
+:root[data-contrast='more'] .glass-band-inner {
+  background-image: none;
+  box-shadow: inset 0 0 0 1px currentcolor;
+}
+
+/* A switch's knob is ringed, so it shows on the pale "off" track. */
+:root[data-contrast='more'] [role='switch'] > span > span {
+  box-shadow: 0 0 0 1px var(--control-border);
+}
+
+/* An "on" switch at night keeps its cobalt and takes a full white edge. */
+:root[data-contrast='more'][data-theme='night'] .switch-track-on {
+  border-color: #ffffff;
+}
+
+/* Links in text are underlined whatever the component chose: a plain link (no classes of its
+   own) and anything drawn in the link colour. At night links are white like the text around
+   them, so the line is what tells them apart. */
+:root[data-contrast='more'] a:not([class]),
+:root[data-contrast='more'] a[class*='text-link'],
+:root[data-contrast='more'] .tmc-chapter-text a {
+  text-decoration: underline;
 }
 
 /* Gentle entrance used by page headers on the boards (tmcRise). */

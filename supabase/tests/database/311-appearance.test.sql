@@ -4,14 +4,15 @@
 -- signed-in member reads and changes only their own look (allowed and denied, CLAUDE.md rule 1);
 -- unknown values and signed-out visitors are refused; the API still can't update profiles
 -- directly; the seasonal look dates are a public setting; "Less motion" is off until a member
--- turns it on, is saved with the look and is kept by a call that leaves it out (bundle MOTION-1).
+-- turns it on, is saved with the look and is kept by a call that leaves it out (bundle MOTION-1);
+-- "High contrast" follows the same rules (bundle CONTRAST-1).
 -- How a persona is "signed in": the authenticated role plus the JWT claims, as in
 -- 014-profile-locale.test.sql. Persona IDs are listed in supabase/README.md.
 begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(18);
+select plan(23);
 
 -- Defaults: what every member sees today.
 select is_empty(
@@ -29,6 +30,11 @@ select is_empty(
   'every account starts with Less motion off'
 );
 
+select is_empty(
+  $$ select id from public.profiles where high_contrast $$,
+  'every account starts with High contrast off'
+);
+
 -- Sign in as adult_writer.
 set local role authenticated;
 set local request.jwt.claims to '{"sub": "00000000-0000-4000-8000-000000000001", "role": "authenticated"}';
@@ -41,7 +47,7 @@ select is(
 
 select is(
   public.set_my_appearance('seaglass', 'night', true),
-  '{"look": "seaglass", "colour_mode": "night", "seasonal_looks": true, "less_motion": false}'::jsonb,
+  '{"look": "seaglass", "colour_mode": "night", "seasonal_looks": true, "less_motion": false, "high_contrast": false}'::jsonb,
   'adult_writer saves Sea glass, Night and seasonal themes on'
 );
 
@@ -73,6 +79,30 @@ select is(
   public.set_my_appearance('lilac', 'light', false, false) ->> 'less_motion',
   'false',
   'adult_writer turns Less motion off again'
+);
+
+select is(
+  public.set_my_appearance('lilac', 'light', false, false, true) ->> 'high_contrast',
+  'true',
+  'adult_writer turns High contrast on and it is saved on the account'
+);
+
+select is(
+  (select high_contrast from public.profiles),
+  true,
+  'allowed: profiles_select_own: adult_writer reads their own High contrast choice'
+);
+
+select is(
+  public.set_my_appearance('lilac', 'light', false, true) ->> 'high_contrast',
+  'true',
+  'a save that leaves High contrast out (a page loaded before the switch existed) keeps it on'
+);
+
+select is(
+  public.set_my_appearance('lilac', 'light', false, false, false) ->> 'high_contrast',
+  'false',
+  'adult_writer turns High contrast off again'
 );
 
 select is_empty(

@@ -22,6 +22,9 @@
  * set. Any element can also carry data-theme, which is how /design shows both side by side.
  * The @theme block at the end turns them into Tailwind classes such as bg-paper and text-ink.
  *
+ * High contrast (bundle CONTRAST-1) is a further set near the end of this file, under
+ * data-contrast="more": plain white or black pages with each theme kept as its deep accent.
+ *
  * Contrast: src/styles/contrast.test.ts reads this file and checks every text and background pair
  * listed in src/styles/contrast-pairs.ts against WCAG 2.2 AA, in both themes. Change a value here
  * and that test tells you if a pair drops below the line.
@@ -806,6 +809,380 @@
   --pill-neutral-text: #e6e6e6;
 
   --progress-from: #cccccc;
+  --progress-to: #ffffff;
+}
+
+/*
+ * High contrast (bundle CONTRAST-1; Robert, 13 Nov 2026: "people should still be able to use the
+ * themes they like, but at high contrast", and his choice the same day: "Build, plain white
+ * pages"; idea IDEA-20261113-14). src/lib/highContrast.ts puts data-contrast="more" on <html>
+ * when the member turns "High contrast" on in Settings › Appearance or the device asks for more
+ * contrast (prefers-contrast: more); public/theme-init.js does the same before the page draws.
+ *
+ * What changes: the page and every card are plain white (black at night) with no glass, blur,
+ * blobs or soft shadows; text is black (white at night); every edge is a dark line instead of a
+ * shadow. The theme stays in one place: its deep accent (each look's --accent-deep) colours main
+ * buttons, chips that are on, links, focus rings, progress bars and the logo.
+ * The lines: text 7:1 or more (WCAG 2.2, 1.4.6 Contrast (Enhanced)), edges of controls and cards
+ * 4.5:1 or more (above 1.4.11's 3:1). scripts/token-contrast.test.ts checks every pair in
+ * contrast-pairs.ts against those two lines, for every look and at night.
+ * Order matters: these blocks come after the look blocks and have the same weight, so they win.
+ * Tokens written var(--accent-deep) take the look's own deep accent, so no look needs a block here.
+ */
+[data-contrast='more'] [data-theme='light'],
+[data-contrast='more'][data-theme='light'] {
+  /* Surfaces: plain white, solid (Robert, 13 Nov 2026). */
+  --paper: #ffffff;
+  --surface: #ffffff;
+  --surface-glass: #ffffff;
+  /* Hover and tinted bands: a light grey, the one fill that is not white. */
+  --tint: #ebebeb;
+  --panel: #ffffff;
+  --panel-border: #595959;
+  --nav-glass: #ffffff;
+  --glass-border: #595959;
+  --lg-rim: #595959;
+  --glass-highlight: transparent;
+  --field: #ffffff;
+  /* No glass: solid fills, no blur, and a dark line where the soft shadow was. */
+  --lg-card-bg: linear-gradient(var(--surface), var(--surface));
+  --lg-float-bg: linear-gradient(var(--surface), var(--surface));
+  --lg-blur: none;
+  --lg-blur-narrow: none;
+  --lg-card-shadow: 0 0 0 1px var(--border);
+  --lg-card-shadow-hover: 0 0 0 2px var(--control-border);
+  --lg-dark-sheen: linear-gradient(transparent, transparent);
+  --lg-dark-shadow: 0 0 0 0 transparent;
+  --lg-pill-shadow: 0 0 0 0 transparent;
+
+  /* Text: black and near-black; links take the theme's deep accent and are underlined (index.css). */
+  --ink: #000000;
+  --heading: #000000;
+  --body: #1f1f1f;
+  --meta: #333333;
+  --eyebrow: #000000;
+  --link: var(--accent-deep);
+  --link-hover: #000000;
+  --destructive: #8f1025;
+
+  /* The theme: its deep accent, in every place the accent was. */
+  --gold: #f3dc9b;
+  --on-gold: #000000;
+  --primary: var(--accent-deep);
+  --on-primary: #ffffff;
+  --chip-on: var(--accent-deep);
+  --chip-on-text: #ffffff;
+  --accent: var(--accent-deep);
+  --logo: var(--accent-deep);
+  --plum-from: var(--accent-deep);
+  --plum-to: var(--accent-deep);
+  --on-plum: #ffffff;
+  /* Hover and press: black, the text colour (written as a reference, like the accent). */
+  --plum-hover-from: var(--ink);
+  --plum-hover-to: var(--ink);
+  --button-main-rim: transparent;
+  --track: #e0e0e0;
+  --bubble: #ffffff;
+  --strength-weak: #8f1025;
+  --strength-fair: #7a5600;
+  --strength-strong: #1e6b47;
+  --strength-very-strong: #0f4a30;
+
+  /* Lines: every edge 4.5:1 or more on white; controls darker than cards. */
+  --border: #595959;
+  --hairline: #767676;
+  --control-border: #1f1f1f;
+  --dashed-border: #595959;
+  --focus-ring: var(--accent-deep);
+  --focus-halo: #ffffff;
+
+  /* No colour blobs (index.css also stops drawing them). */
+  --blob-1: #ffffff;
+  --blob-2: #ffffff;
+  --blob-3: #ffffff;
+
+  --story-paper: #ffffff;
+  --story-ink: #000000;
+
+  --progress-from: var(--accent-deep);
+  --progress-to: var(--accent-deep);
+
+  /* Notices and pills: white, with the hue kept in a dark edge and dark text. */
+  --success-bg: #ffffff;
+  --success-border: #0f4a30;
+  --success-text: #0f4a30;
+  --info-bg: #ffffff;
+  --info-border: #1f1f1f;
+  --info-text: #1f1f1f;
+  --warning-bg: #ffffff;
+  --warning-border: #5c3000;
+  --warning-text: #5c3000;
+  --error-bg: #ffffff;
+  --error-border: #7d0d20;
+  --error-text: #7d0d20;
+  --pill-plum-bg: #ffffff;
+  --pill-plum-border: #3b1050;
+  --pill-plum-text: #3b1050;
+  --pill-sage-bg: #ffffff;
+  --pill-sage-border: #0f4a30;
+  --pill-sage-text: #0f4a30;
+  --pill-gold-bg: #ffffff;
+  --pill-gold-border: #4f3700;
+  --pill-gold-text: #4f3700;
+  --pill-sky-bg: #ffffff;
+  --pill-sky-border: #1e3566;
+  --pill-sky-text: #1e3566;
+  --pill-neutral-bg: #ffffff;
+  --pill-neutral-border: #1f1f1f;
+  --pill-neutral-text: #1f1f1f;
+  --pill-blush-bg: #ffffff;
+  --pill-blush-border: #7d0d20;
+  --pill-blush-text: #7d0d20;
+
+  /* Genre bands: each hue's darker end across the whole band, so white text has 7:1 everywhere. */
+  --band-plum-from: #43143b;
+  --band-sage-from: #003728;
+  --band-gold-from: #4a3400;
+  --band-sky-from: #002b67;
+  --band-neutral-from: #201a53;
+  --band-blush-from: #6a010e;
+
+  /* A dark line instead of each soft shadow. */
+  --shadow-nav: 0 0 0 1px var(--border);
+  --shadow-card: 0 0 0 1px var(--border);
+  --shadow-popover: 0 0 0 2px var(--control-border);
+}
+
+/* High contrast at night: plain black, white text, white edges; main buttons stay cobalt, which
+   carries white text at 8.6:1, with a white rim so their shape shows on black (CONTRAST-1). */
+[data-contrast='more'] [data-theme='night'],
+[data-contrast='more'][data-theme='night'] {
+  --paper: #000000;
+  --surface: #000000;
+  --surface-glass: #000000;
+  --tint: #262626;
+  --panel: #000000;
+  --panel-border: #b3b3b3;
+  --nav-glass: #000000;
+  --glass-border: #b3b3b3;
+  --lg-rim: #b3b3b3;
+  --glass-highlight: transparent;
+  --field: #000000;
+  --lg-card-bg: linear-gradient(var(--surface), var(--surface));
+  --lg-float-bg: linear-gradient(var(--surface), var(--surface));
+  --lg-blur: none;
+  --lg-blur-narrow: none;
+  --lg-card-shadow: 0 0 0 1px var(--border);
+  --lg-card-shadow-hover: 0 0 0 2px var(--control-border);
+  --lg-dark-sheen: linear-gradient(transparent, transparent);
+  --lg-dark-shadow: 0 0 0 0 transparent;
+  --lg-pill-shadow: 0 0 0 0 transparent;
+
+  --ink: #ffffff;
+  --heading: #ffffff;
+  --body: #f0f0f0;
+  --meta: #e0e0e0;
+  --eyebrow: #ffffff;
+  --link: #ffffff;
+  --link-hover: #e0e0e0;
+  --destructive: #ffb3bd;
+
+  --gold: #ffffff;
+  --on-gold: #000000;
+  --primary: #ffffff;
+  --on-primary: #000000;
+  --chip-on: #ffffff;
+  --chip-on-text: #000000;
+  --accent: #8fb8ff;
+  --accent-deep: #000000;
+  --logo: #ffffff;
+  --plum-from: #0047ab;
+  --plum-to: #0047ab;
+  --on-plum: #ffffff;
+  --plum-hover-from: #003a8c;
+  --plum-hover-to: #003a8c;
+  --button-main-rim: #ffffff;
+  --track: #333333;
+  /* The picked segment is black with a white ring (index.css): its label stays white, as the
+     segmented control and the tab bar write it at night. */
+  --bubble: #000000;
+  --strength-weak: #ffb3bd;
+  --strength-fair: #ffd36a;
+  --strength-strong: #8fe0b5;
+  --strength-very-strong: #3fcf8a;
+
+  --border: #b3b3b3;
+  --hairline: #8c8c8c;
+  --control-border: #ffffff;
+  --dashed-border: #b3b3b3;
+  --focus-ring: #ffffff;
+  --focus-halo: #000000;
+
+  --blob-1: #000000;
+  --blob-2: #000000;
+  --blob-3: #000000;
+  /* No galaxy: plain black. */
+  --night-sky: #000000;
+
+  --story-paper: #000000;
+  --story-ink: #ffffff;
+
+  --progress-from: #ffffff;
+  --progress-to: #ffffff;
+
+  --success-bg: #000000;
+  --success-border: #9df0c4;
+  --success-text: #9df0c4;
+  --info-bg: #000000;
+  --info-border: #ffffff;
+  --info-text: #ffffff;
+  --warning-bg: #000000;
+  --warning-border: #ffd9a8;
+  --warning-text: #ffd9a8;
+  --error-bg: #000000;
+  --error-border: #ffb3bd;
+  --error-text: #ffb3bd;
+  --pill-plum-bg: #000000;
+  --pill-plum-border: #ffffff;
+  --pill-plum-text: #ffffff;
+  --pill-sage-bg: #000000;
+  --pill-sage-border: #c8f0d8;
+  --pill-sage-text: #c8f0d8;
+  --pill-gold-bg: #000000;
+  --pill-gold-border: #ffe2b8;
+  --pill-gold-text: #ffe2b8;
+  --pill-sky-bg: #000000;
+  --pill-sky-border: #d6e4ff;
+  --pill-sky-text: #d6e4ff;
+  --pill-neutral-bg: #000000;
+  --pill-neutral-border: #ffffff;
+  --pill-neutral-text: #ffffff;
+  --pill-blush-bg: #000000;
+  --pill-blush-border: #ffc9d1;
+  --pill-blush-text: #ffc9d1;
+
+  --band-plum-from: #18181a;
+  --band-sage-from: #003728;
+  --band-gold-from: #4a3400;
+  --band-sky-from: #002b67;
+  --band-neutral-from: #141416;
+  --band-blush-from: #6a010e;
+
+  --shadow-nav: 0 0 0 1px var(--border);
+  --shadow-card: 0 0 0 1px var(--border);
+  --shadow-popover: 0 0 0 2px var(--control-border);
+}
+
+/* The staff area at high contrast: the same plain white, with black where members have their
+   theme's accent, so it still has no purple (handoff, Staff tab; CONTRAST-1). */
+[data-contrast='more'] [data-area='staff'] {
+  --logo: #000000;
+  --paper: #ffffff;
+  --surface: #ffffff;
+  --surface-glass: #ffffff;
+  --tint: #ebebeb;
+  --panel: #ffffff;
+  --panel-border: #595959;
+  --nav-glass: #ffffff;
+  --glass-border: #595959;
+  --glass-highlight: transparent;
+  --field: #ffffff;
+
+  --ink: #000000;
+  --heading: #000000;
+  --body: #1f1f1f;
+  --meta: #333333;
+  --eyebrow: #000000;
+  --link: #000000;
+  --link-hover: #000000;
+  --destructive: #8f1025;
+
+  --primary: #000000;
+  --on-primary: #ffffff;
+  --chip-on: #000000;
+  --chip-on-text: #ffffff;
+  --accent: #000000;
+  --accent-deep: #000000;
+  --plum-from: #000000;
+  --plum-to: #000000;
+  --on-plum: #ffffff;
+  --plum-hover-from: #333333;
+  --plum-hover-to: #333333;
+
+  --border: #595959;
+  --hairline: #767676;
+  --control-border: #1f1f1f;
+  --dashed-border: #595959;
+  --focus-ring: #000000;
+  --focus-halo: #ffffff;
+
+  --info-bg: #ffffff;
+  --info-border: #1f1f1f;
+  --info-text: #1f1f1f;
+  --pill-plum-bg: #ffffff;
+  --pill-plum-border: #1f1f1f;
+  --pill-plum-text: #1f1f1f;
+  --pill-neutral-bg: #ffffff;
+  --pill-neutral-border: #1f1f1f;
+  --pill-neutral-text: #1f1f1f;
+
+  --progress-from: #000000;
+  --progress-to: #000000;
+}
+
+/* The staff area at high contrast at night: plain black, as for members. */
+[data-contrast='more'][data-theme='night'] [data-area='staff'] {
+  --logo: #ffffff;
+  --paper: #000000;
+  --surface: #000000;
+  --surface-glass: #000000;
+  --tint: #262626;
+  --panel: #000000;
+  --panel-border: #b3b3b3;
+  --nav-glass: #000000;
+  --glass-border: #b3b3b3;
+  --glass-highlight: transparent;
+  --field: #000000;
+
+  --ink: #ffffff;
+  --heading: #ffffff;
+  --body: #f0f0f0;
+  --meta: #e0e0e0;
+  --eyebrow: #ffffff;
+  --link: #ffffff;
+  --link-hover: #e0e0e0;
+  --destructive: #ffb3bd;
+
+  --primary: #ffffff;
+  --on-primary: #000000;
+  --chip-on: #ffffff;
+  --chip-on-text: #000000;
+  --accent: #8fb8ff;
+  --accent-deep: #000000;
+  --plum-from: #0047ab;
+  --plum-to: #0047ab;
+  --on-plum: #ffffff;
+  --plum-hover-from: #003a8c;
+  --plum-hover-to: #003a8c;
+
+  --border: #b3b3b3;
+  --hairline: #8c8c8c;
+  --control-border: #ffffff;
+  --dashed-border: #b3b3b3;
+  --focus-ring: #ffffff;
+  --focus-halo: #000000;
+
+  --info-bg: #000000;
+  --info-border: #ffffff;
+  --info-text: #ffffff;
+  --pill-plum-bg: #000000;
+  --pill-plum-border: #ffffff;
+  --pill-plum-text: #ffffff;
+  --pill-neutral-bg: #000000;
+  --pill-neutral-border: #ffffff;
+  --pill-neutral-text: #ffffff;
+
+  --progress-from: #ffffff;
   --progress-to: #ffffff;
 }
 

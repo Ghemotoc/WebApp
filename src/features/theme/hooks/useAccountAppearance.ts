@@ -5,18 +5,25 @@
  * 1. Show the choices: night or light (following the device live with "Match my device") on
  *    <html data-theme>, and the look on <html data-look>: the season's look when Seasonal themes
  *    is on and a season is running (public setting seasonal_look_dates), otherwise the member's
- *    year-round theme. The "Less motion" switch goes on <html data-motion> (bundle MOTION-1).
+ *    year-round theme. The "Less motion" switch goes on <html data-motion> (bundle MOTION-1) and
+ *    high contrast on <html data-contrast>, for the member's switch or a device that asks for
+ *    more contrast (bundle CONTRAST-1).
  * 2. Follow the account: when a member signs in (or the page opens with a stored session), read
  *    their saved choices and show them, so the look follows them to every device. A choice made on
  *    this page while the read was on its way wins (the same guard as the account language).
  * Who calls it: AppLayout and StaffLayout (the staff area ignores looks in tokens.css, but its
  * night mode follows the same choice).
- * What it calls: lib/appearanceStore.ts, api/appearance.ts, src/lib/theme.ts, src/lib/looks.ts and
- * src/lib/motion.ts.
+ * What it calls: lib/appearanceStore.ts, api/appearance.ts, src/lib/theme.ts, src/lib/looks.ts,
+ * src/lib/motion.ts and src/lib/highContrast.ts.
  */
 import { useEffect, useMemo, useSyncExternalStore } from 'react';
 
 import { usePublicSettings } from '@/features/flags/hooks/usePublicSettings';
+import {
+  applyHighContrast,
+  deviceAsksForMoreContrast,
+  subscribeToDeviceContrast,
+} from '@/lib/highContrast';
 import {
   applyLook,
   decidedSeasonalWindows,
@@ -72,6 +79,20 @@ function useShowAppearance(windows: readonly SeasonalWindow[]): void {
     deviceDarkQuery.addEventListener('change', showMode);
     return () => deviceDarkQuery.removeEventListener('change', showMode);
   }, [appearance, windows]);
+}
+
+/**
+ * Job 1, high contrast: draws the page in high contrast while the member's switch is on or the
+ * device asks for more contrast, and follows the device live (bundle CONTRAST-1).
+ */
+function useShowHighContrast(): void {
+  const appearance = useSyncExternalStore(subscribeToAppearance, getAppearance);
+  const isDeviceAsking = useSyncExternalStore(subscribeToDeviceContrast, deviceAsksForMoreContrast);
+
+  useEffect(() => {
+    // Either one is enough: the switch can only add contrast (src/lib/highContrast.ts).
+    applyHighContrast(appearance.isHighContrastOn || isDeviceAsking);
+  }, [appearance.isHighContrastOn, isDeviceAsking]);
 }
 
 /**
@@ -139,5 +160,6 @@ export function useAccountAppearance(): void {
     [windowsText],
   );
   useShowAppearance(windows);
+  useShowHighContrast();
   useFollowAccountAppearance();
 }

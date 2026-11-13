@@ -5938,6 +5938,7 @@ export type Database = {
           handle_changed_at: string | null;
           handle_skeleton: string | null;
           handle_slug: string | null;
+          high_contrast: boolean;
           highest_rank_notified: Database['public']['Enums']['writer_rank'] | null;
           id: string;
           initials_colour: string | null;
@@ -6015,6 +6016,7 @@ export type Database = {
           handle_changed_at?: string | null;
           handle_skeleton?: string | null;
           handle_slug?: string | null;
+          high_contrast?: boolean;
           highest_rank_notified?: Database['public']['Enums']['writer_rank'] | null;
           id: string;
           initials_colour?: string | null;
@@ -6071,6 +6073,7 @@ export type Database = {
           handle_changed_at?: string | null;
           handle_skeleton?: string | null;
           handle_slug?: string | null;
+          high_contrast?: boolean;
           highest_rank_notified?: Database['public']['Enums']['writer_rank'] | null;
           id?: string;
           initials_colour?: string | null;
@@ -12461,6 +12464,7 @@ export type Database = {
           handle_changed_at: string | null;
           handle_skeleton: string | null;
           handle_slug: string | null;
+          high_contrast: boolean;
           highest_rank_notified: Database['public']['Enums']['writer_rank'] | null;
           id: string;
           initials_colour: string | null;
@@ -14514,6 +14518,7 @@ export type Database = {
           handle_changed_at: string | null;
           handle_skeleton: string | null;
           handle_slug: string | null;
+          high_contrast: boolean;
           highest_rank_notified: Database['public']['Enums']['writer_rank'] | null;
           id: string;
           initials_colour: string | null;
@@ -15349,6 +15354,7 @@ export type Database = {
           handle_changed_at: string | null;
           handle_skeleton: string | null;
           handle_slug: string | null;
+          high_contrast: boolean;
           highest_rank_notified: Database['public']['Enums']['writer_rank'] | null;
           id: string;
           initials_colour: string | null;
@@ -16293,6 +16299,7 @@ export type Database = {
       set_my_appearance: {
         Args: {
           new_colour_mode: string;
+          new_high_contrast?: boolean;
           new_less_motion?: boolean;
           new_look: string;
           new_seasonal_looks: boolean;

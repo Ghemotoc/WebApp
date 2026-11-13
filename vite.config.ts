@@ -5,14 +5,16 @@
  * which runs `npm run build` and publishes the `dist` folder (decided 17 Oct 2026, 12:57).
  * What it does next: compiles src/main.tsx and everything it imports into dist/, fills the page
  * title in index.html from src/config/brand.ts, writes dist/_headers (server/security-headers.ts,
- * QA-1c), and serves our Cloudflare Pages Functions
+ * QA-1c), shrinks dist/theme-init.js (CONTRAST-1), and serves our Cloudflare Pages Functions
  * (functions/) during development and preview (server/pages-functions-plugin.ts, S1-E2-01).
  */
+import { readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { fileURLToPath, URL } from 'node:url';
 
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
-import { loadEnv, type Plugin } from 'vite';
+import { loadEnv, minifySync, type Plugin } from 'vite';
 import { defineConfig } from 'vitest/config';
 
 import { pagesFunctionsPlugin } from './server/pages-functions-plugin.ts';
@@ -75,6 +77,40 @@ function securityHeadersPlugin(supabaseUrl: string): Plugin {
   };
 }
 
+/**
+ * A small Vite plugin that shrinks dist/theme-init.js after a build (bundle CONTRAST-1).
+ *
+ * Why: public/theme-init.js runs before the page draws, on every page, and Vite copies files in
+ * public/ as they are. Its comments are for developers (CLAUDE.md, Readable code) and were most of
+ * what every visitor downloaded: about 3.9 KB written, under 1 KB shrunk. The reader's cold-load
+ * script budget (e2e/reader-performance.spec.ts) counts this file too.
+ * The source file stays fully commented; the dev server serves it as written.
+ *
+ * @returns the plugin for Vite's plugin list
+ * Errors: fails the build, naming the problem, when the file can't be read or doesn't parse; a
+ *   broken first-paint script must never be published quietly.
+ */
+function shrinkThemeInitPlugin(): Plugin {
+  let outputFolder = 'dist';
+  return {
+    name: 'shrink-theme-init',
+    apply: 'build',
+    // Step 1: note where this build writes (dist, unless a command says otherwise).
+    configResolved(config) {
+      outputFolder = join(config.root, config.build.outDir);
+    },
+    // Step 2: once every file is written, replace the copied file with its shrunk version.
+    closeBundle() {
+      const filePath = join(outputFolder, 'theme-init.js');
+      const shrunk = minifySync('theme-init.js', readFileSync(filePath, 'utf8'));
+      if (shrunk.errors.length > 0) {
+        throw new Error(`public/theme-init.js could not be shrunk: ${shrunk.errors[0]?.message}`);
+      }
+      writeFileSync(filePath, shrunk.code);
+    },
+  };
+}
+
 export default defineConfig(({ mode }) => {
   // Read the VITE_ variables for this mode (from .env files and the shell), as the app will see them.
   const environment = loadEnv(mode, process.cwd(), 'VITE_');
@@ -83,6 +119,7 @@ export default defineConfig(({ mode }) => {
   return {
     // pagesFunctionsPlugin serves functions/ (Cloudflare Pages Functions) locally (S1-E2-01).
     // securityHeadersPlugin writes dist/_headers and sends them from the preview server (QA-1c).
+    // shrinkThemeInitPlugin strips the comments from dist/theme-init.js (CONTRAST-1).
     plugins: [
       react(),
       tailwindcss(),
@@ -90,6 +127,7 @@ export default defineConfig(({ mode }) => {
       // Before the functions plugin, so its answers (the /s/ link previews) get the headers too.
       securityHeadersPlugin(environment.VITE_SUPABASE_URL ?? ''),
       pagesFunctionsPlugin(),
+      shrinkThemeInitPlugin(),
     ],
     // The build's version, read by src/config/appVersion.ts for error reports (S1-E1-05).
     define: { 'import.meta.env.VITE_APP_VERSION': JSON.stringify(appVersion()) },

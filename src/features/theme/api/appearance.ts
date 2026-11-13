@@ -1,13 +1,14 @@
 /**
- * Reads and saves the member's appearance (mode, look, the seasonal switch and the "Less motion"
- * switch) on their account (bundle G2 THEMES: "saved on the profile and used on every device";
- * less motion from bundle MOTION-1).
+ * Reads and saves the member's appearance (mode, look, the seasonal switch, the "Less motion"
+ * switch and the "High contrast" switch) on their account (bundle G2 THEMES: "saved on the profile
+ * and used on every device"; less motion from bundle MOTION-1, high contrast from CONTRAST-1).
  *
  * Who calls it: hooks/useAccountAppearance.ts (read at sign-in) and hooks/useAppearance.ts (save).
  * What it calls next: Supabase. Reading goes to profiles through the profiles_select_own policy
  * (a member reads only their own row); saving goes through set_my_appearance(), which changes the
  * caller's own appearance columns and nothing else
- * (supabase/migrations/20270205100008_g2_appearance.sql and 20270205100223_motion1_less_motion.sql).
+ * (supabase/migrations/20270205100008_g2_appearance.sql, 20270205100223_motion1_less_motion.sql and
+ * 20270205100224_contrast1_high_contrast.sql).
  * Signed out: there is no account, so reading answers null and nothing is saved.
  */
 import { isYearRoundLook } from '@/lib/looks';
@@ -34,7 +35,7 @@ export async function readAccountAppearance(client: AppSupabaseClient): Promise<
   // Step 2: the member's own row (row-level security allows only that one).
   const { data, error } = await client
     .from('profiles')
-    .select('look, colour_mode, seasonal_looks, less_motion, appearance_saved_at')
+    .select('look, colour_mode, seasonal_looks, less_motion, high_contrast, appearance_saved_at')
     .eq('id', userId)
     .maybeSingle();
   if (error !== null) throw new Error(`Could not read the account look: ${error.message}`);
@@ -49,6 +50,7 @@ export async function readAccountAppearance(client: AppSupabaseClient): Promise<
     look: data.look,
     isSeasonalOn: data.seasonal_looks,
     isLessMotionOn: data.less_motion,
+    isHighContrastOn: data.high_contrast,
   };
 }
 
@@ -56,7 +58,7 @@ export async function readAccountAppearance(client: AppSupabaseClient): Promise<
  * Saves the choices on the signed-in member's account, so every device they sign in on shows them.
  *
  * @param client - the shared Supabase client
- * @param appearance - the four choices
+ * @param appearance - the five choices
  * Errors: throws when the database refuses or can't be reached; Settings › Appearance then says
  *   the choice is kept on this device only.
  */
@@ -69,6 +71,7 @@ export async function saveAccountAppearance(
     new_colour_mode: appearance.mode,
     new_seasonal_looks: appearance.isSeasonalOn,
     new_less_motion: appearance.isLessMotionOn,
+    new_high_contrast: appearance.isHighContrastOn,
   });
   if (error !== null) throw new Error(`Could not save the account look: ${error.message}`);
 }
