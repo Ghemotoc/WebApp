@@ -101,3 +101,6 @@ Ten ideas IDEA-20261111-1 to 10: several bookmarks in a story, Hidden gems shelf
 
 ### Sent 12 Nov 2026 (doc tabs by category in "Ghemotoc feature ideas"; Notion Feature ideas database)
 Twelve ideas IDEA-20261112-1 to 12: new chapters from followed stories in one queue, Popular in my country this week shelf, writing month with a goal each writer sets, sort comments, poll in a thread, archive a conversation, anonymous peer feedback in a class, next steps after a block, shared computer at log-in, story card to embed, quotation marks in the story's language, Bokmål or Nynorsk on a Norwegian story.
+
+### Sent 13 Nov 2026 (doc tabs by category in "Ghemotoc feature ideas"; Notion Feature ideas database)
+IDEA-20261113-1 Set a story aside; -2 A "New voices" shelf; -3 Find and replace across a story; -4 Where my readers are; -5 Collapse a long reply thread; -6 Thread templates for feedback requests; -7 Likes gathered into one notification a day; -8 A class reading log; -9 Hide like and read counts from myself; -10 Sign in with a passkey; -11 Print my own draft for proofreading; -12 A "Less motion" switch in settings; -13 British or American spelling on an English story.
