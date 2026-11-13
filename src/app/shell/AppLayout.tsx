@@ -98,7 +98,7 @@ function WideHeader({ hasSearch }: { hasSearch: boolean }) {
           <WriteLink />
           {/* The bell with the unread count, while signed in (S1-E7-01). */}
           <NotificationBell />
-          {/* "Log in" and "Join for free" while signed out (S1-E2-01); the account bead after. */}
+          {/* "Get in" while signed out (S1-E2-01, GETIN-1); the account bead after. */}
           <AccountLinks />
         </>
       }

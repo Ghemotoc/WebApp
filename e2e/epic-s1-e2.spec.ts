@@ -96,7 +96,7 @@ test.describe('epic S1-E2 journeys', () => {
       // Log out, then back in through the log-in screen (S1-E2-05).
       await page.getByRole('button', { name: 'Account' }).click();
       await page.getByRole('button', { name: 'Log out' }).click();
-      await expect(page.getByRole('link', { name: 'Log in' })).toBeVisible();
+      await expect(page.getByRole('link', { name: 'Get in', exact: true })).toBeVisible();
       await logInWithScreen(page, address, firstPassword);
 
       // Settings: names, country and this device (S1-E2-04, S1-E2-10, S1-E2-05).
