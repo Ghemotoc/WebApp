@@ -243,14 +243,14 @@ select is(public.class_competitions('clasa-a-ix-a-d') -> 'published' -> 0 ->> 'm
 /* ---------- 5. Each results policy: allowed and denied (CLAUDE.md rule 1) ---------- */
 
 select is((select count(*)::integer from public.class_competition_results), 0,
-  'class_competition_results_select_own denies: a pupil reads no result from the table, not even their own');
+  'denied: class_competition_results_select_own: a pupil reads no result from the table, not even their own');
 select is((select count(*)::integer from public.class_competition_scores), 0,
-  'class_competition_scores_select_own denies: and no score');
+  'denied: class_competition_scores_select_own: and no score');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
 select is((select count(*)::integer from public.class_competition_results), 2,
-  'class_competition_results_select_own allows: the teacher reads the results they confirmed');
+  'allowed: class_competition_results_select_own: the teacher reads the results they confirmed');
 select is((select count(*)::integer from public.class_competition_scores), 4,
-  'class_competition_scores_select_own allows: and the scores they gave');
+  'allowed: class_competition_scores_select_own: and the scores they gave');
 
 /* ---------- 6. A competition is reportable, and hidden once our moderators hide it ---------- */
 
@@ -295,10 +295,10 @@ select is((select count(*)::integer from public.class_competition_criteria
   'a competition already made doesn''t change with the template');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
 select is((select count(*)::integer from public.class_criteria_templates), 1,
-  'class_criteria_templates_select_own allows: the teacher reads their template');
+  'allowed: class_criteria_templates_select_own: the teacher reads their template');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000010');
 select is((select count(*)::integer from public.class_criteria_templates), 0,
-  'class_criteria_templates_select_own denies: nobody else does, staff included');
+  'denied: class_criteria_templates_select_own: nobody else does, staff included');
 select is(public.my_criteria_templates(), '[]'::jsonb, 'another person''s list is empty');
 select is(pg_temp.hint_of(format($$select public.save_criteria_template('Furat', %L, %L)$$,
     pg_temp.criteria(), pg_temp.kept('template'))), 'template:not_teacher', 'someone who teaches no class has no templates to change');
