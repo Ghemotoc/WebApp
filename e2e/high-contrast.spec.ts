@@ -28,12 +28,18 @@ const SHOWN_LOOK_KEY = 'theme-shown-look';
 const LOOK_CHOICE_KEY = 'theme-look-choice';
 const THEME_KEY = 'theme-preference';
 
-/** Puts adult_writer's appearance back to "never chosen". */
-function resetAppearance() {
+/**
+ * Puts adult_writer's appearance back to "never chosen".
+ *
+ * @param language - the account's language afterwards: English while these tests run, and the
+ *   seed's Romanian once they are done, so a later spec in the same run (the home page hero reads
+ *   Romanian names) finds the persona as the seed left it
+ */
+function resetAppearance(language: 'en' | 'ro' = 'en') {
   runSql(`
     update public.profiles
       set look = 'lilac', colour_mode = 'device', seasonal_looks = false, less_motion = false,
-          high_contrast = false, appearance_saved_at = null, locale = 'en'
+          high_contrast = false, appearance_saved_at = null, locale = '${language}'
       where handle = 'adult_writer';
   `);
 }
@@ -64,8 +70,8 @@ async function rootToken(page: Page, name: string): Promise<string> {
 }
 
 test.describe('Settings › Appearance: High contrast (CONTRAST-1)', () => {
-  test.beforeEach(resetAppearance);
-  test.afterAll(resetAppearance);
+  test.beforeEach(() => resetAppearance());
+  test.afterAll(() => resetAppearance('ro'));
 
   test('High contrast turns the page plain white at once and follows the member to another device', async ({
     browser,
