@@ -1,0 +1,31 @@
+{
+  "eyebrow": "Appearance",
+  "heading": "Theme",
+  "intro": "The choice follows you on every device.",
+  "themeLegend": "Theme",
+  "looks": {
+    "lilac": "Lilac mist",
+    "sorbet": "Peach sorbet",
+    "seaglass": "Sea glass",
+    "pistachio": "Pistachio and butter",
+    "candy": "Candy floss",
+    "tmc": "Magic Coffin cream"
+  },
+  "modeLegend": "Mode",
+  "modes": {
+    "light": "Light",
+    "night": "Night",
+    "device": "Match the device"
+  },
+  "seasonalLabel": "Seasonal themes",
+  "seasonalHint": "Winter, spring, summer and autumn looks switch on by themselves for a few weeks each season. Off unless you turn it on.",
+  "lessMotionLabel": "Less motion",
+  "lessMotionHint": "Stops animations and sliding. Pages change at once instead.",
+  "lessMotionDeviceHint": "This device already asks for less motion, so it stays on here.",
+  "on": "On",
+  "off": "Off",
+  "nightNote": "Night mode looks the same with every theme.",
+  "saving": "Saving…",
+  "saved": "Saved. Every device you sign in on shows it.",
+  "saveFailed": "We couldn’t save this on your account, so only this device shows it. Try again later."
+}

@@ -7,6 +7,7 @@ Light and night mode, the colour looks members pick and the "Less motion" switch
 - `hooks/useAccountAppearance.ts`: run once by AppLayout and StaffLayout. Shows the choices on `<html>` (`data-theme`, `data-look`, `data-motion`) and, at sign-in, takes the choices saved on the account.
 - `api/appearance.ts`: reads `profiles.look`, `colour_mode`, `seasonal_looks`, `less_motion` and `appearance_saved_at`; saves through `set_my_appearance()`.
 - `components/AppearanceSettingsSection.tsx`: Settings › Appearance, with `LookTiles.tsx` (the six themes) `ModeChoice.tsx` (Light, Night, Match my device), the Seasonal themes switch and `LessMotionRow.tsx` (the "Less motion" switch; on and fixed when the device already asks for reduced motion).
+- `registerAppearanceTranslations.ts`: the section's text (`src/locales/<language>/appearance.json`), added when the section first renders so it stays out of the first page's download (MOTION-1).
 - `components/ThemeSelect.tsx`: the Mode drop-down in the footer (Device, Light or Night); it changes the same mode as Settings.
 
 How it fits together:

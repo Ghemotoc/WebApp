@@ -13,9 +13,10 @@
  * src/lib/motion.ts; it reports the click upwards.
  */
 import { useSyncExternalStore } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { SwitchButton } from '@/features/settings/components/SwitchButton';
+
+import { useAppearanceTranslation } from '../registerAppearanceTranslations';
 import { DEVICE_LESS_MOTION_QUERY, deviceAsksForLessMotion } from '@/lib/motion';
 
 /**
@@ -48,24 +49,24 @@ export interface LessMotionRowProps {
  * @returns the switch with its name and hint
  */
 export function LessMotionRow({ isOn, onToggle }: LessMotionRowProps) {
-  const { t } = useTranslation();
+  const { t } = useAppearanceTranslation();
   // Step 1: follow the device's own setting live, so the row is right the moment it changes.
   const isDeviceAsking = useSyncExternalStore(subscribeToDeviceMotion, deviceAsksForLessMotion);
   // Step 2: the device's setting counts by itself, so the switch shows on and stays put.
   const isShownOn = isOn || isDeviceAsking;
-  const hintKey = isDeviceAsking ? 'appearance.lessMotionDeviceHint' : 'appearance.lessMotionHint';
+  const hintKey = isDeviceAsking ? 'lessMotionDeviceHint' : 'lessMotionHint';
   return (
     <div className="flex min-h-[52px] items-center justify-between gap-4">
       <span className="flex min-w-0 flex-col gap-0.5">
-        <span className="text-[15px] font-bold text-ink">{t('appearance.lessMotionLabel')}</span>
+        <span className="text-[15px] font-bold text-ink">{t('lessMotionLabel')}</span>
         <span id="appearance-less-motion-hint" className="text-[13px] text-meta">
           {t(hintKey)}
         </span>
       </span>
       <SwitchButton
-        label={t('appearance.lessMotionLabel')}
+        label={t('lessMotionLabel')}
         isOn={isShownOn}
-        stateWord={t(isShownOn ? 'appearance.on' : 'appearance.off')}
+        stateWord={t(isShownOn ? 'on' : 'off')}
         isDisabled={isDeviceAsking}
         onToggle={onToggle}
         describedBy="appearance-less-motion-hint"
