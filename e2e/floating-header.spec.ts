@@ -103,7 +103,14 @@ for (const width of [390, 768]) {
     for (let press = 0; press < 80; press += 1) {
       await page.keyboard.press('Tab');
       // How far the focused control reaches under the tab bar, when it is not part of the bar.
-      const overlap = await page.evaluate(() => {
+      const overlap = await page.evaluate(async () => {
+        // Measure what the person sees: the page is given two frames to draw first. A section
+        // that arrives late makes the page taller, and the app moves the page in the frame that
+        // follows; measuring inside that same frame saw a control under the bar that was never
+        // drawn there (the walk failed once in CI when its 80 presses took 0.6 s, 13 Nov 2026).
+        await new Promise<void>((resolve) => {
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+        });
         const focused = document.activeElement;
         const bar = document.querySelector('nav.fixed');
         if (focused === null || focused === document.body || bar === null) return null;
