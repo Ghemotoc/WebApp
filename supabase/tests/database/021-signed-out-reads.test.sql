@@ -100,6 +100,12 @@ select results_eq(
        -- Which classmates' chapters a pupil opened, so points follow reading: own rows only (S1-E8-13).
        ('class_chapter_opens', 0::bigint),
        -- Flags about class points for our moderators: moderation staff only (S1-E8-16).
+       ('class_competition_criteria', 0::bigint),
+       ('class_competition_entrants', 0::bigint),
+       ('class_competition_results', 0::bigint),
+       ('class_competition_scores', 0::bigint),
+       ('class_competitions', 0::bigint),
+       ('class_criteria_templates', 0::bigint),
        ('class_point_flags', 0::bigint),
        -- Points a pupil gave to classmates' chapters: the giver's own rows and our moderators (S1-E8-13).
        ('class_point_gifts', 0::bigint),
