@@ -2,8 +2,8 @@
  * ClassResultsForm: the teacher's results list for one programme (bundle CLASSES, part e; story
  * S1-E8-12 criteria 1 and 5).
  *
- * What it shows: the programme's name, one drop-down per student (no certificate, took part,
- * finalist, winner) and "Approve and sign", with a note that the approval is the teacher's
+ * What it shows: the programme's name, one drop-down per student (no certificate, Contestant,
+ * Finalist, Winner) and "Approve and sign", with a note that the approval is the teacher's
  * electronic signature (proposal for OPEN Q71). After approving, how many certificates were made.
  * Since bundle G13a the teacher also picks the certificates' colour and pattern
  * (CertificateLookPicker), and since G13b what the seal shows; the look is saved on each certificate as it is signed, and the form
@@ -14,7 +14,6 @@
 import { type FormEvent, useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
-import { Notice } from '@/components/ui/Notice';
 import { Select } from '@/components/ui/Select';
 import { TextInput } from '@/components/ui/TextInput';
 
@@ -25,6 +24,7 @@ import { pickedResults } from '../lib/pickedResults';
 import { useCertificatesTranslation } from '../registerCertificatesTranslations';
 
 import { CertificateLookPicker } from './CertificateLookPicker';
+import { IssueAnswer } from './IssueAnswer';
 
 /** One student the list offers. */
 export interface ClassStudent {
@@ -33,23 +33,7 @@ export interface ClassStudent {
 }
 
 /**
- * The answer under the button: a refusal, nothing new, or how many were signed.
- *
- * @param props.issuing - the issue call
- * @returns the notice, or nothing
- */
-function IssueAnswer({ issuing }: { issuing: ReturnType<typeof useIssueClassCertificates> }) {
-  const { t } = useCertificatesTranslation();
-  if (issuing.failure !== null) {
-    return <Notice tone="error">{t(`class.failures.${issuing.failure.failure}`)}</Notice>;
-  }
-  if (issuing.issued === null) return null;
-  if (issuing.issued === 0) return <Notice tone="info">{t('class.nothingChanged')}</Notice>;
-  return <Notice tone="success">{t('class.approved', { count: issuing.issued })}</Notice>;
-}
-
-/**
- * One drop-down per student: no certificate, took part, finalist or winner.
+ * One drop-down per student: no certificate, Contestant, Finalist or Winner.
  *
  * @param props.students - the class's students
  * @param props.picked - the result picked for each handle so far

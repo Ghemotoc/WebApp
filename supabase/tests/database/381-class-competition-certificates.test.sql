@@ -18,7 +18,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(21);
+select plan(22);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -160,6 +160,9 @@ select is(pg_temp.hint_of($$select public.issue_class_certificates('clasa-a-ix-a
 select is(pg_temp.hint_of($$select public.issue_class_certificates('clasa-a-ix-a-f', 'Concursul de iarnă',
     '[{"handle": "teen_17", "result": "finalist"}]')$$), 'certificate:competition_result',
   'nor can the Winner be printed as a Finalist');
+select is(pg_temp.hint_of($$select public.issue_class_certificates('clasa-a-ix-a-f', 'CONCURSUL DE IARNĂ',
+    '[{"handle": "kid_14_ok", "result": "winner"}]')$$), 'certificate:competition_result',
+  'typing the competition''s name in capitals doesn''t get around its results');
 select is(pg_temp.hint_of($$select public.issue_class_certificates('clasa-a-ix-a-f', 'Concursul de iarnă',
     '[{"handle": "adult_writer", "result": "participant"}]')$$), 'certificate:competition_result',
   'a pupil who didn''t join gets no certificate for the competition');

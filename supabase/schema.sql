@@ -17719,7 +17719,8 @@ begin
   left join public.class_competition_results as results
     on results.competition_id = competitions.id and results.pupil_user_id = student_id
   where competitions.space_id = space.id and competitions.published_at is not null
-    and competitions.name = clean_programme;
+    -- Capitals don't make it another programme: "Spring Contest" is "spring contest".
+    and lower(competitions.name) = lower(clean_programme);
   -- Step 3: Readers' choice comes only from a competition.
   if wanted_result = 'readers_choice' and not is_confirmed then
     raise exception 'Readers'' choice comes from a class competition''s results.'

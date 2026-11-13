@@ -15,6 +15,10 @@
  * - the class then sees the Winner card with the Winner's pen name and chapter and the Readers'
  *   choice pen name, each entrant reads only their own result, and each is told in
  *   Notifications;
+ * - the Winner card's "Issue certificates" opens the certificates with the confirmed results
+ *   filled in and locked; approving signs one per entrant and a second one for Readers' choice,
+ *   and a certificate typed by hand under the competition's name can't say anything else
+ *   (part 3; S1-E8-17);
  * - the class page, the form, the templates page and the results page pass axe at 390, 768 and
  *   1440 px, light and night, ro and en, and no doodle is drawn.
  * Test data: the teacher persona starts the class with SQL; pending_check and adult_writer
@@ -63,8 +67,16 @@ function cleanUp() {
   const space = `(select id from public.spaces where slug = '${classSlug}')`;
   const competitions = `(select id from public.class_competitions where space_id in ${space})`;
   const stories = `('${writerStory.id}', '${classmateStory.id}')`;
-  runSql(`delete from public.notifications where kind in
-      ('class_competition_won', 'class_competition_results', 'class_readers_choice');
+  // Deleting a certificate keeps its code as retired, so the codes are read before the delete.
+  runSql(`do $$
+    declare gone_codes text[];
+    begin
+      select array_agg(code) into gone_codes from public.certificates where space_id in ${space};
+      delete from public.certificates where space_id in ${space};
+      delete from public.retired_certificate_codes where code = any (gone_codes);
+    end $$;
+    delete from public.notifications where kind in ('class_competition_won',
+      'class_competition_results', 'class_readers_choice', 'certificate_issued');
     delete from public.class_competition_results where competition_id in ${competitions};
     delete from public.class_competition_scores where competition_id in ${competitions};
     delete from public.class_competition_entrants where competition_id in ${competitions};
@@ -160,6 +172,15 @@ function resultsAddress(): string {
      where space_id = (select id from public.spaces where slug = '${classSlug}');`,
   ).trim();
   return `/spaces/${classSlug}/competition/${id}/results`;
+}
+
+/** The certificates page, opened the way the Winner card's link opens it. */
+function certificatesAddress(): string {
+  const id = runSql(
+    `select id from public.class_competitions
+     where space_id = (select id from public.spaces where slug = '${classSlug}');`,
+  ).trim();
+  return `/spaces/${classSlug}/certificates?competition=${id}`;
 }
 
 /**
@@ -414,15 +435,75 @@ test.describe('class competitions (CLASS-POINTS, S1-E8-15, 17 and 19)', () => {
     await winner.context().close();
   });
 
+  test('the teacher signs certificates filled in from the confirmed results', async ({
+    browser,
+  }) => {
+    const teacher = await openAs(browser, 'teacher', `/spaces/${classSlug}`);
+    await teacher.getByRole('link', { name: 'Issue certificates' }).click();
+    await expect(teacher).toHaveURL(/\/certificates\?competition=/);
+    // The competition's name is the programme and the results are the confirmed ones, locked.
+    await expect(
+      teacher.getByText(`Results of the competition “${competitionName}”.`, { exact: false }),
+    ).toBeVisible();
+    const results = teacher.getByRole('region', { name: 'Confirmed results' });
+    const winnerRow = results.getByRole('listitem').filter({ hasText: classmateName });
+    await expect(winnerRow.getByText('Winner', { exact: true })).toBeVisible();
+    const finalistRow = results.getByRole('listitem').filter({ hasText: writerName });
+    await expect(finalistRow.getByText('Finalist', { exact: true })).toBeVisible();
+    await expect(finalistRow.getByText('Readers’ choice', { exact: true })).toBeVisible();
+    await expect(teacher.getByLabel(/^Result for /)).toHaveCount(0);
+    await expect(teacher.getByLabel('Programme')).toHaveCount(0);
+    // One certificate per entrant, and a second one for Readers' choice.
+    await teacher.getByRole('button', { name: 'Approve and sign' }).click();
+    await expect(teacher.getByText('Signed: 3 certificates made or changed.')).toBeVisible();
+    const signed = teacher.getByRole('region', { name: 'Signed certificates' });
+    await expect(signed.getByRole('listitem')).toHaveCount(3);
+    await expect(signed.getByText('Readers’ choice', { exact: true })).toBeVisible();
+
+    // By hand, a certificate named after the competition can't say anything else.
+    await teacher.getByRole('link', { name: 'Sign another programme' }).click();
+    await teacher.getByLabel('Programme').fill(competitionName);
+    await teacher.getByLabel(`Result for ${writerName}`).selectOption('winner');
+    await teacher.getByRole('button', { name: 'Approve and sign' }).click();
+    await expect(
+      teacher.getByText('This programme is a confirmed competition', { exact: false }),
+    ).toBeVisible();
+    await expect(signed.getByRole('listitem')).toHaveCount(3);
+    await teacher.context().close();
+  });
+
+  test('a pupil finds a certificate for their result and one for Readers’ choice', async ({
+    browser,
+  }) => {
+    const writer = await openAs(browser, 'pending_check', '/certificates');
+    const links = writer.getByRole('link', { name: `Open “${competitionName}”` });
+    await expect(links).toHaveCount(2);
+    // The link's name ends with the result, so the two can be told apart without sight.
+    await links.filter({ hasText: 'Readers’ choice' }).click();
+    const sheet = writer.getByRole('article', { name: 'Certificate' });
+    await expect(
+      sheet.getByText(`for Readers’ choice in “${competitionName}”, in ${className}.`),
+    ).toBeVisible();
+    await writer.context().close();
+
+    // The Winner has one certificate; nobody has "Took part" any more.
+    const winner = await openAs(browser, 'adult_writer', '/certificates');
+    await expect(winner.getByRole('link', { name: `Open “${competitionName}”` })).toHaveCount(1);
+    await expect(winner.getByText('Winner', { exact: true })).toBeVisible();
+    await expect(winner.getByText('Took part')).toHaveCount(0);
+    await winner.context().close();
+  });
+
   test('axe once results are out: the class page, the results and the next form', async ({
     browser,
   }) => {
     test.setTimeout(600_000);
-    await checkScreens(browser, 'pending_check', [`/spaces/${classSlug}`]);
+    await checkScreens(browser, 'pending_check', [`/spaces/${classSlug}`, '/certificates']);
     await checkScreens(browser, 'teacher', [
       `/spaces/${classSlug}`,
       resultsAddress(),
       `/spaces/${classSlug}/competition`,
+      certificatesAddress(),
     ]);
   });
 });

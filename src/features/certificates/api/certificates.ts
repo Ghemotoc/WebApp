@@ -23,11 +23,20 @@ import {
   type CertificateLook,
 } from '../lib/certificateLook';
 
-/** What a certificate says the student did: took part, reached the final or won. */
+/**
+ * What a certificate says the student did: Contestant, Finalist, Winner or, from a class
+ * competition only, Readers' choice (CLASS-POINTS part 3; story S1-E8-17).
+ */
 export type CertificateResult = Enums<'certificate_result'>;
 
 /** The three results, in the order the teacher's list offers them. */
 export const certificateResults: CertificateResult[] = ['participant', 'finalist', 'winner'];
+
+/**
+ * Every result a certificate can carry. Readers' choice is never picked by hand: it comes from
+ * a competition's confirmed results (Robert, 13 Nov 2026, decision 16).
+ */
+const everyCertificateResult: CertificateResult[] = [...certificateResults, 'readers_choice'];
 
 /** One of the signed-in student's certificates, as "Certificates" and the sheet draw it. */
 export interface MyCertificate {
@@ -85,6 +94,9 @@ export type CertificateFailure =
   | 'reason'
   | 'look'
   | 'crest'
+  | 'no_winners'
+  | 'readers_choice'
+  | 'competition_result'
   | 'unreachable';
 
 /** The error a refused call throws. */
@@ -114,6 +126,9 @@ const failureForHint: Record<string, CertificateFailure> = {
   'certificate:reason': 'reason',
   'certificate:look': 'look',
   'certificate:crest': 'crest',
+  'certificate:no_winners': 'no_winners',
+  'certificate:readers_choice': 'readers_choice',
+  'certificate:competition_result': 'competition_result',
 };
 
 /**
@@ -153,13 +168,13 @@ export function textOrNull(value: Json | undefined): string | null {
 }
 
 /**
- * A result from the answer, or null when it isn't one of the three.
+ * A result from the answer, or null when it isn't one a certificate can carry.
  *
  * @param value - one field of the answer
  * @returns the result, or null
  */
 export function resultOrNull(value: Json | undefined): CertificateResult | null {
-  const found = certificateResults.find((result) => result === value);
+  const found = everyCertificateResult.find((result) => result === value);
   return found ?? null;
 }
 

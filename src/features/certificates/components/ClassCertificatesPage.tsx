@@ -2,14 +2,16 @@
  * ClassCertificatesPage: /spaces/:spaceSlug/certificates, a class's certificates for its teacher
  * (bundle CLASSES, part e; story S1-E8-12 criteria 1 and 5).
  *
- * What it shows: the results form for a new programme (only while the class isn't archived) and
- * every certificate signed in the class, with each student's name, the programme, the result and
+ * What it shows: the results form for a new programme (only while the class isn't archived),
+ * filled in from a class competition's confirmed results when the Winner card opened the page
+ * (CLASS-POINTS part 3; story S1-E8-17), and every certificate signed in the class, with each student's name, the programme, the result and
  * the code. Never a student's printed real name.
  * Who shows it: the router; the class's settings link here (ClassCertificatesCard). The database
  * lets in only whoever holds the class's settings power, and only the teacher signs.
- * What it calls: useSpace() and useSpaceMembers() from spaces, useClassCertificates().
+ * What it calls: useSpace() and useSpaceMembers() from spaces, useClassCertificates() and
+ * useCompetitionScoring() from class-competitions.
  */
-import { useParams } from 'react-router';
+import { useParams, useSearchParams } from 'react-router';
 
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { InfoPill } from '@/components/ui/InfoPill';
@@ -19,12 +21,15 @@ import type { Space } from '@/features/spaces/api/spaces';
 import { SpaceBreadcrumb } from '@/features/spaces/components/SpaceBreadcrumb';
 import { useSpaceMembers } from '@/features/spaces/hooks/useSpaceModeration';
 import { useSpace } from '@/features/spaces/hooks/useSpaces';
+import type { CompetitionScoring } from '@/features/class-competitions/api/competitionScoring';
+import { useCompetitionScoring } from '@/features/class-competitions/hooks/useCompetitionScoring';
 
 import { useClassCertificates } from '../hooks/useClassCertificates';
-import { defaultCertificateLook } from '../lib/certificateLook';
+import { defaultCertificateLook, type CertificateLook } from '../lib/certificateLook';
 import { useCertificatesTranslation } from '../registerCertificatesTranslations';
 
 import { ClassResultsForm, type ClassStudent } from './ClassResultsForm';
+import { CompetitionCertificatesForm } from './CompetitionCertificatesForm';
 
 /**
  * The certificates already signed in the class.
@@ -83,27 +88,92 @@ function studentsOf(
 }
 
 /**
- * The results form, with the class's students, or why there is none.
+ * The results form for a programme the teacher names, with the class's students, or why there
+ * is none.
  *
  * @param props.space - the class
+ * @param props.startLook - the look to start from
  * @returns the form or a note
  */
-function NewResults({ space }: { space: Space }) {
+function ManualResults({ space, startLook }: { space: Space; startLook: CertificateLook }) {
   const { t } = useCertificatesTranslation();
-  const { slug, isArchived } = space;
-  const members = useSpaceMembers(slug, !isArchived);
-  // G13a: the form starts from the look of the newest certificate signed in the class.
-  const signed = useClassCertificates(slug);
-  if (isArchived) return <Notice tone="info">{t('class.archived')}</Notice>;
+  const members = useSpaceMembers(space.slug, true);
   const students = studentsOf(members.data ?? []);
   if (members.isSuccess && students.length === 0) {
     return <p className="m-0 text-body">{t('class.noStudents')}</p>;
   }
-  if (students.length === 0 || signed.isPending) return null;
-  const startLook = signed.data?.[0]?.look ?? defaultCertificateLook;
+  if (students.length === 0) return null;
   return (
-    <ClassResultsForm slug={slug} spaceId={space.id} students={students} startLook={startLook} />
+    <ClassResultsForm
+      slug={space.slug}
+      spaceId={space.id}
+      students={students}
+      startLook={startLook}
+    />
   );
+}
+
+/**
+ * A competition only when its results are confirmed and it belongs to this class. Anything
+ * else (still being assessed, another class's, gone) is null, so the page falls back to the
+ * list the teacher fills in by hand.
+ *
+ * @param competition - what class_competition_scoring() answered, if anything
+ * @param slug - the class's address
+ * @returns the competition, or null
+ */
+function confirmedCompetitionOf(
+  competition: CompetitionScoring | undefined,
+  slug: string,
+): CompetitionScoring | null {
+  if (competition === undefined) return null;
+  const isConfirmedHere = competition.phase === 'published' && competition.classSlug === slug;
+  return isConfirmedHere ? competition : null;
+}
+
+/**
+ * The form for new certificates in a class that isn't archived: filled in from a competition's
+ * confirmed results when the Winner card opened the page (?competition=<id>; S1-E8-17),
+ * otherwise the list the teacher fills in by hand.
+ *
+ * @param props.space - the class
+ * @returns the form, or nothing while loading
+ */
+function OpenClassResults({ space }: { space: Space }) {
+  const { slug } = space;
+  const [searchParams] = useSearchParams();
+  // The competition the Winner card named, if any.
+  const competitionId = searchParams.get('competition');
+  const scoring = useCompetitionScoring(competitionId);
+  // G13a: the form starts from the look of the newest certificate signed in the class.
+  const signed = useClassCertificates(slug);
+  // Wait for the last look and, when a competition was named, for its results.
+  const isWaitingForCompetition = competitionId !== null && scoring.isPending;
+  if (signed.isPending || isWaitingForCompetition) return null;
+  const startLook = signed.data?.[0]?.look ?? defaultCertificateLook;
+  const competition = confirmedCompetitionOf(scoring.data, slug);
+  if (competition === null) return <ManualResults space={space} startLook={startLook} />;
+  return (
+    <CompetitionCertificatesForm
+      slug={slug}
+      spaceId={space.id}
+      competitionName={competition.name}
+      entrants={competition.entrants}
+      startLook={startLook}
+    />
+  );
+}
+
+/**
+ * The form for new certificates, or a note that an archived class issues none.
+ *
+ * @param props.space - the class
+ * @returns the form or the note
+ */
+function NewResults({ space }: { space: Space }) {
+  const { t } = useCertificatesTranslation();
+  if (space.isArchived) return <Notice tone="info">{t('class.archived')}</Notice>;
+  return <OpenClassResults space={space} />;
 }
 
 /**

@@ -148,6 +148,7 @@ Every section, in the order it was built (QA-5, finding R4). Search this list fo
   - [Writing certificates (CLASSES-e; S1-E8-12)](#writing-certificates-classes-e-s1-e8-12)
   - [Class points (CLASS-POINTS part 1; S1-E8-13, 14 and 16)](#class-points-class-points-part-1-s1-e8-13-14-and-16)
   - [Class competitions (CLASS-POINTS part 2; S1-E8-15, 17 and 19)](#class-competitions-class-points-part-2-s1-e8-15-17-and-19)
+  - [Certificates from a competition's results (CLASS-POINTS part 3; S1-E8-17 and S1-E8-QA2)](#certificates-from-a-competitions-results-class-points-part-3-s1-e8-17-and-s1-e8-qa2)
 - [Forum signatures and moderators' change requests (S1-E8-08; FORUMS-2d)](#forum-signatures-and-moderators-change-requests-s1-e8-08-forums-2d)
 - [Writer ranks (S1-E8-09; FORUMS-2e)](#writer-ranks-s1-e8-09-forums-2e)
   - [One journey through the whole epic (S1-E8-QA)](#one-journey-through-the-whole-epic-s1-e8-qa)
@@ -2525,6 +2526,14 @@ The app draws no doodles, stickers or hand-drawn icons anywhere (Robert, 7 Nov 2
 - Safety: a competition's name and criteria are text the teacher wrote for the class, so they are reportable (`class_competition`, the Report button on the pupil's card) and a hidden competition disappears for pupils.
 - Leaving and deleting: a pupil who leaves the class loses their entry, scores and result (`forget_class_points_of_member()`); `purge_class_points()` deletes a class's competitions 30 days after it is archived; templates go with the teacher's account (docs/retention.md).
 - Tests: `supabase/tests/database/379-class-competitions.test.sql`, `380-class-competition-results.test.sql`, `src/features/class-competitions/api/classCompetitions.test.ts`, `lib/criteriaDraft.test.ts`, `lib/typedScores.test.ts`, `lib/competitionDates.test.ts`, `e2e/class-competitions.spec.ts`.
+
+### Certificates from a competition's results (CLASS-POINTS part 3; S1-E8-17 and S1-E8-QA2)
+
+- Where it lives: `src/features/certificates/components/CompetitionCertificatesForm.tsx`, `IssueAnswer.tsx`, `lib/competitionCertificates.ts`, the `?competition=<id>` branch of `ClassCertificatesPage.tsx`; `supabase/migrations/…_classpoints3_01_enums.sql` and `…_classpoints3_02_certificates_from_results.sql`.
+- How a click travels: the teacher presses "Issue certificates" on a Winner card (`WinnerCard`) → `/spaces/:spaceSlug/certificates?competition=<id>` → `ClassCertificatesPage` reads `useCompetitionScoring()` (class-competitions) → `CompetitionCertificatesForm` lists every entrant with the confirmed result, read-only, with the competition's name as the programme → "Approve and sign" → `competitionCertificateEntries()` → `issue_class_certificates()` → `check_class_certificate_result()` for every line → `certificates`.
+- The rules: the third result reads "Contestant" ("Concurent"), in certificates and in staff contests (Robert, 13 Nov 2026). Readers' choice is a second certificate for the same programme: `certificate_result` gained `readers_choice`, and `certificates.award_slot` (worked out from the result) lets one pupil hold a result and Readers' choice side by side. Nobody picks Readers' choice by hand. A certificate named after a confirmed competition of the class must say what the teacher confirmed there, and a pupil who didn't enter gets none; below the 8th grade no class certificate says Winner or Finalist.
+- Without `?competition`, or when the competition isn't confirmed or belongs to another class, the page shows the list the teacher fills in by hand (S1-E8-12), as before.
+- Tests: `supabase/tests/database/381-class-competition-certificates.test.sql`, `src/features/certificates/lib/competitionCertificates.test.ts`, `e2e/class-competitions.spec.ts` (the last three tests) and the closing check `e2e/epic-s1-e8-class-points.spec.ts` (S1-E8-QA2: a teacher, a 17-year-old and a 14-year-old through points, a competition, certificates, the archive and the retention job).
 
 ## Forum signatures and moderators' change requests (S1-E8-08; FORUMS-2d)
 
