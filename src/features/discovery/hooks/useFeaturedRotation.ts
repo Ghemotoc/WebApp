@@ -3,25 +3,19 @@
  * S1-E5-10; board Discover: "slides itself every 7 seconds, pausable, arrows and dots work").
  *
  * The band turns to the next story every 7 seconds, but never when:
- * - the reader prefers reduced motion (it starts paused; WCAG 2.2.2 and 2.3.3);
+ * - the reader's device asks for reduced motion, or they turned "Less motion" on in Settings (it
+ *   starts paused; WCAG 2.2.2 and 2.3.3; bundle MOTION-1);
  * - the reader paused it with the button;
  * - the keyboard focus or the pointer is inside the band (so it doesn't move while being read).
- * Who calls it: components/FeaturedBand.tsx. What it calls: the browser's matchMedia and timers.
+ * Who calls it: components/FeaturedBand.tsx. What it calls: src/lib/motion.ts and the
+ * browser's timers.
  */
 import { useCallback, useEffect, useState } from 'react';
 
+import { wantsLessMotion } from '@/lib/motion';
+
 /** How long each story stays before the next (board: 7 seconds). */
 const turnEveryMs = 7000;
-
-/**
- * True when the reader asked their system for less motion.
- *
- * @returns whether to start paused
- */
-function prefersReducedMotion(): boolean {
-  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false;
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-}
 
 /**
  * Follows the current story and the pause states.
@@ -32,7 +26,7 @@ function prefersReducedMotion(): boolean {
  */
 export function useFeaturedRotation(count: number) {
   const [index, setIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(prefersReducedMotion);
+  const [isPaused, setIsPaused] = useState(wantsLessMotion);
   const [isHeld, setIsHeld] = useState(false);
   const isTurning = count > 1 && !isPaused && !isHeld;
 

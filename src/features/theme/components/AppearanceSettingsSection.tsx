@@ -1,7 +1,8 @@
 /**
  * AppearanceSettingsSection: Settings › Appearance, where a member picks their theme, light or
- * night mode and whether the seasonal looks switch on by themselves (bundle G2 THEMES; design/
- * boards Settings.dc.html, "Appearance"; handoff "Themes: members choose their look").
+ * night mode, whether the seasonal looks switch on by themselves (bundle G2 THEMES; design/
+ * boards Settings.dc.html, "Appearance"; handoff "Themes: members choose their look") and
+ * whether the app stays still ("Less motion", bundle MOTION-1; Robert, 13 Nov 2026).
  *
  * Every choice shows at once and is saved on the account, so it follows the member to every
  * device they sign in on (set_my_appearance); this device remembers it too, so the next visit
@@ -9,9 +10,11 @@
  * whether the last change was saved, or kept on this device only when the save failed.
  * Rules: six year-round themes, Lilac mist by default; the seasonal switch is off by default;
  * night mode is the same with every theme (Robert, 7 Nov 2026; handoff "Design tokens and
- * themes").
+ * themes"). "Less motion" is off by default; on a device that already asks for reduced motion
+ * it shows as on and can't be switched off here, because the device's setting always counts
+ * (WCAG 2.2, 2.3.3).
  * Who shows it: the Appearance group of Settings (SettingsGroupPanel). What it calls:
- * useAppearance, LookTiles, ModeChoice and the shared SwitchButton.
+ * useAppearance, LookTiles, ModeChoice, LessMotionRow and the shared SwitchButton.
  */
 import { useTranslation } from 'react-i18next';
 
@@ -20,6 +23,7 @@ import { SwitchButton } from '@/features/settings/components/SwitchButton';
 
 import { useAppearance, type AppearanceSaveState } from '../hooks/useAppearance';
 
+import { LessMotionRow } from './LessMotionRow';
 import { LookTiles } from './LookTiles';
 import { ModeChoice } from './ModeChoice';
 
@@ -86,6 +90,10 @@ export function AppearanceSettingsSection() {
       <SeasonalRow
         isOn={appearance.isSeasonalOn}
         onToggle={() => void change({ isSeasonalOn: !appearance.isSeasonalOn })}
+      />
+      <LessMotionRow
+        isOn={appearance.isLessMotionOn}
+        onToggle={() => void change({ isLessMotionOn: !appearance.isLessMotionOn })}
       />
       <p className="m-0 text-[13px] text-meta">{t('appearance.nightNote')}</p>
       {/* Where the last change stands, read out politely by screen readers. */}

@@ -427,6 +427,13 @@ dialog.bg-surface,
   }
 }
 
+/* The same for a member who turned "Less motion" on in Settings › Appearance (bundle MOTION-1). */
+:root[data-motion='less'] .top-bar,
+:root[data-motion='less'] .top-bar-pill,
+:root[data-motion='less'] .nav-track-link {
+  transition: none;
+}
+
 /*
  * "On" states (bundle G3 COMPONENTS; handoff: "Every pill is liquid glass. Plum is for finishing
  * actions and 'on' states"). Every pressed chip, chosen reason and other bg-chip-on fill keeps its
@@ -795,6 +802,20 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
     transition: none !important;
     scroll-behavior: auto !important;
   }
+}
+
+/*
+ * The "Less motion" switch in Settings › Appearance does the same on a device that doesn't ask for
+ * it, for people who don't know the device setting or can't change it, such as on a school
+ * computer (bundle MOTION-1; Robert, 13 Nov 2026). useAccountAppearance and public/theme-init.js
+ * set data-motion="less" on <html>. Keep these two blocks the same.
+ */
+:root[data-motion='less'] *,
+:root[data-motion='less'] *::before,
+:root[data-motion='less'] *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
 }
 
 /* A sideways list with scroll arrows hides its scrollbar but stays scrollable (DoD design rules). */

@@ -39,7 +39,7 @@ function useNarrowWindow() {
 afterEach(() => {
   window.matchMedia = wideMatchMedia;
   // The appearance store lives for the whole page, so each test starts again from the defaults.
-  replaceAppearance({ mode: 'device', look: 'lilac', isSeasonalOn: false });
+  replaceAppearance({ mode: 'device', look: 'lilac', isSeasonalOn: false, isLessMotionOn: false });
   window.localStorage.clear();
   delete document.documentElement.dataset.theme;
   delete document.documentElement.dataset.look;
