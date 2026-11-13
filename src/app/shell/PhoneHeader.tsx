@@ -44,7 +44,7 @@ export function PhoneHeader() {
       </Link>
       {/* The account pill. A group with a name, so a screen reader hears what the round buttons
           are for before it reaches them. It wraps rather than pushing the page sideways when
-          "Log in" and "Join for free" are long (CLAUDE.md rule 21). */}
+          its contents are long (CLAUDE.md rule 21). */}
       <div
         role="group"
         aria-label={t('shell.accountTools')}

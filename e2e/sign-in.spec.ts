@@ -130,7 +130,7 @@ test('a person logs in, sees their devices and logs the others out', async ({ br
     // The account menu logs this device out too.
     await laptop.getByRole('button', { name: 'Account' }).click();
     await laptop.getByRole('button', { name: 'Log out' }).click();
-    await expect(laptop.getByRole('link', { name: 'Log in' })).toBeVisible();
+    await expect(laptop.getByRole('link', { name: 'Get in', exact: true })).toBeVisible();
   } finally {
     removeTestAccount(account.email);
   }

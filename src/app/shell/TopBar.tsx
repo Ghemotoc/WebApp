@@ -6,8 +6,8 @@
  *
  * From left to right: the logo and wordmark (BrandMark, in the theme's accent), the main links in a
  * recessed track with the white water bubble under the page on screen (NavTrack), the search pill
- * (HeaderSearch), then the end slot: Write, the bell and the account bead, or "Log in" and
- * "Join for free" for a visitor. The pill wraps onto a second row when a window is only just wide
+ * (HeaderSearch), then the end slot: Write, the bell and the account bead, or the one
+ * "Get in" button for a visitor (GETIN-1). The pill wraps onto a second row when a window is only just wide
  * enough, so nothing is cut off. Day and night, and the language, live in the footer and in
  * Settings, never here (handoff; Robert, 9 Nov 2026, 12:20 UTC, bundle FIX-3). Below 1024 px AppLayout draws PhoneHeader or FocusHeader instead.
  * Decisions: links appear only when their page exists (src/app/navigation.ts). Messages, with its
@@ -87,8 +87,8 @@ export function TopBar({
           </nav>
         )}
         {hasSearch && <HeaderSearch />}
-        {/* Wraps when the window is only just wide enough, so "Log in" and "Join for free" never
-            push the page sideways (S1-E2-05; CLAUDE.md rule 21). */}
+        {/* Wraps when the window is only just wide enough, so the end slot never
+            pushes the page sideways (S1-E2-05; CLAUDE.md rule 21). */}
         <div className="ml-auto flex flex-wrap items-center justify-end gap-1.5">{endSlot}</div>
       </div>
     </header>

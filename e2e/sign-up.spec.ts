@@ -79,9 +79,11 @@ test('with the waiting list off, sign-up without a code explains it is by invita
   runSql(`update public.feature_flags set is_enabled = false where key = 'waitlist';`);
   try {
     await openInEnglish(page, '/');
-    // The header's button: the home page can draw a second "Join for free" (#first-story) when
-    // other specs have left a featured story, so the header's is named exactly.
-    await page.getByRole('banner').getByRole('link', { name: 'Join for free' }).click();
+    // The header has one way in, "Get in", which opens log-in; sign-up is one line under its
+    // form (GETIN-1).
+    await page.getByRole('banner').getByRole('link', { name: 'Get in', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'Log in', exact: true })).toBeVisible();
+    await page.getByRole('main').getByRole('link', { name: 'Join for free' }).click();
     await expect(page.getByRole('heading', { name: 'The test is by invitation' })).toBeVisible();
     await expect(page.getByRole('form', { name: 'Join with email' })).toHaveCount(0);
 
