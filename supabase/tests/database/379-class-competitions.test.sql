@@ -210,28 +210,28 @@ select is(pg_temp.hint_of(format($$select public.delete_class_competition(%L)$$,
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
 select is((select count(*)::integer from public.class_competitions), 1,
-  'class_competitions_select_own allows: the teacher reads their competition');
+  'allowed: class_competitions_select_own: the teacher reads their competition');
 select is((select count(*)::integer from public.class_competition_criteria), 2,
-  'class_competition_criteria_select_own allows: the teacher reads their criteria');
+  'allowed: class_competition_criteria_select_own: the teacher reads their criteria');
 select is((select count(*)::integer from public.class_competition_entrants), 0,
-  'class_competition_entrants_select_own denies: the teacher doesn''t read entries from the table');
+  'denied: class_competition_entrants_select_own: the teacher doesn''t read entries from the table');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000003');
 select is((select count(*)::integer from public.class_competitions), 0,
-  'class_competitions_select_own denies: a pupil doesn''t read the table');
+  'denied: class_competitions_select_own: a pupil doesn''t read the table');
 select is((select count(*)::integer from public.class_competition_criteria), 0,
-  'class_competition_criteria_select_own denies: nor the criteria table');
+  'denied: class_competition_criteria_select_own: nor the criteria table');
 select is((select count(*)::integer from public.class_competition_entrants), 1,
-  'class_competition_entrants_select_own allows: a pupil reads their own entry, and only theirs');
+  'allowed: class_competition_entrants_select_own: a pupil reads their own entry, and only theirs');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000010');
 select is((select count(*)::integer from public.class_competitions), 1,
-  'class_competitions_select_moderators allows: a moderator reads a competition');
+  'allowed: class_competitions_select_moderators: a moderator reads a competition');
 select is((select count(*)::integer from public.class_competition_criteria), 2,
-  'class_competition_criteria_select_moderators allows: and its criteria');
+  'allowed: class_competition_criteria_select_moderators: and its criteria');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000011');
 select is((select count(*)::integer from public.class_competitions), 0,
-  'class_competitions_select_moderators denies: support staff don''t');
+  'denied: class_competitions_select_moderators: support staff don''t');
 select is((select count(*)::integer from public.class_competition_criteria), 0,
-  'class_competition_criteria_select_moderators denies: nor the criteria');
+  'denied: class_competition_criteria_select_moderators: nor the criteria');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000003');
 select throws_ok(format($$insert into public.class_competition_entrants (user_id, competition_id, space_id)
     select %L, %L, id from public.spaces where slug = 'clasa-a-ix-a-c'$$,
