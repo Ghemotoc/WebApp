@@ -7,7 +7,7 @@
  *   count goes from 0 to 1; tapping again takes it back (first criterion);
  * - the like reaches the table the popularity job reads (second criterion; the job's own sum is
  *   proved in database test 148);
- * - a visitor sees the count and a "Log in to like" link; a read-only account is told why it
+ * - a visitor sees the count and a "Get in to like" link; a read-only account is told why it
  *   can't like;
  * - "Report chapter" sits at the end of the same row and opens the report dialog for this
  *   chapter (S1-E10-01's shared button);

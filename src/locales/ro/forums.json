@@ -41,7 +41,7 @@
     "lastReply": "Ultimul mesaj {{time}}, de {{name}}",
     "showMore": "Arată mai multe discuții",
     "loadFailed": "Nu am putut încărca discuțiile. Verifică-ți conexiunea și încearcă din nou.",
-    "logInToStart": "Intră în cont ca să începi o discuție",
+    "logInToStart": "Intră ca să începi o discuție",
     "categoryNote": "Discuțiile se poartă în forumurile din această categorie.",
     "pinned": "Fixată",
     "locked": "Închisă",
@@ -135,7 +135,7 @@
   "reply": {
     "heading": "Răspuns",
     "post": "Trimite răspunsul",
-    "logIn": "Intră în cont ca să răspunzi",
+    "logIn": "Intră ca să răspunzi",
     "notActive": "Contul nu poate scrie încă.",
     "posted": "Răspuns publicat ca #{{number}}.",
     "quoted_one": "{{count}} postare citată",
@@ -158,7 +158,7 @@
     "heading": "Începe o discuție în {{forum}}",
     "post": "Publică discuția",
     "cancel": "Renunță",
-    "logIn": "Intră în cont ca să începi o discuție."
+    "logIn": "Intră ca să începi o discuție."
   },
   "failures": {
     "signed_out": "Intră mai întâi în cont.",

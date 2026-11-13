@@ -106,7 +106,7 @@ test.describe('the web teaser and link previews (S1-E4-04)', () => {
     // The prompt.
     await expect(page.getByText('1 more chapter')).toBeVisible();
     await expect(page.getByRole('heading', { level: 2, name: 'Log in to read on' })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Log in' }).last()).toHaveAttribute(
+    await expect(page.getByRole('link', { name: 'Get in' }).last()).toHaveAttribute(
       'href',
       '/sign-in',
     );
@@ -133,7 +133,7 @@ test.describe('the web teaser and link previews (S1-E4-04)', () => {
         ).toBeVisible();
         await expect(page.getByText(`The writer rated it ${label}.`)).toBeVisible();
         await expect(
-          page.getByRole('link', { name: 'Log in to check if you can read it' }),
+          page.getByRole('link', { name: 'Get in to check if you can read it' }),
         ).toBeVisible();
         // S1-E11-36: the blurb shows like any story's; the chapter text never does (Q6).
         expect(await page.content()).not.toContain('ultimul ultimul');

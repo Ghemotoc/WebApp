@@ -92,7 +92,7 @@ test.describe('writer profile and blocks (S1-E5-05)', () => {
     expect(text).not.toContain(String(new Date().getFullYear() - 30));
     // A visitor has no Report or Block (both need an account) and a log-in link instead of Follow.
     await expect(page.getByRole('button', { name: /Block/ })).toHaveCount(0);
-    await expect(page.getByRole('link', { name: 'Log in to follow' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Get in to follow' })).toBeVisible();
     await page.context().close();
   });
 

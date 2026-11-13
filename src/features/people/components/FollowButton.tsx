@@ -4,7 +4,7 @@
  *
  * A toggle button: aria-pressed says whether the reader follows, and "Following" carries a tick
  * so the state never rests on colour alone (DoD pills and chips). Its accessible name names what
- * is followed ("Follow Ana Pop": the visible words, then the name for screen readers). Signed out, it is a "Log in to follow" link instead. A
+ * is followed ("Follow Ana Pop": the visible words, then the name for screen readers). Signed out, it is a "Get in to follow" link instead. A
  * read-only account (for example under 18 during the invited test) is told why it can't follow.
  * Nothing shows while the target can't be seen (a block, a hidden story).
  * Who uses it: ProfileHeader, the story page's writer card and StoryHeader.

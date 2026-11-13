@@ -145,7 +145,7 @@ test.describe('library and continue reading (S1-E4-03)', () => {
   test('a visitor gets a log-in card, never a library', async ({ browser }) => {
     const page = await openAs(browser, null, '/library');
     await expect(page.getByRole('heading', { name: 'Keep a library' })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Log in' }).last()).toHaveAttribute(
+    await expect(page.getByRole('link', { name: 'Get in' }).last()).toHaveAttribute(
       'href',
       '/sign-in',
     );

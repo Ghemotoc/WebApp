@@ -92,7 +92,7 @@
     "readNext": "Read chapter {{number}}",
     "latestChapter": "That’s the latest chapter so far.",
     "backToStory": "Back to the story",
-    "signIn": "Log in",
+    "signIn": "Get in",
     "unavailableTitle": "This chapter isn’t available",
     "unavailableBody": "It may not be published, it may be rated for older readers, it may have been removed, or the link may be wrong.",
     "loadFailed": "We couldn’t load this chapter. Check your connection and try again.",
@@ -130,7 +130,7 @@
     "noPreviewTitle": "No preview for this story",
     "noPreviewBody_16_plus": "The writer rated it 16+. We don’t know the age of visitors who aren’t logged in, so they see the story’s details but none of the text.",
     "noPreviewBody_18_plus": "The writer rated it 18+. We don’t know the age of visitors who aren’t logged in, so they see the story’s details but none of the text.",
-    "noPreviewLogIn": "Log in to check if you can read it"
+    "noPreviewLogIn": "Get in to check if you can read it"
   },
   "linkPreview": {
     "byWriter": "by {{name}}",
@@ -141,7 +141,7 @@
   "likes": {
     "like": "Like this chapter",
     "liked": "Liked",
-    "logIn": "Log in to like",
+    "logIn": "Get in to like",
     "count_one": "{{count}} like",
     "count_few": "{{count}} likes",
     "count_other": "{{count}} likes",

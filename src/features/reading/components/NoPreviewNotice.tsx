@@ -6,7 +6,7 @@
  * of the story's text. They do see the story's details, its title, writer and blurb, like any
  * other story (S1-E11-36; Robert, 11 Nov 2026, replacing the S1-E4-04 "title only" criterion, so
  * board 3.8's blurb is right again). The notice names the story's real rating, and offers
- * "Log in to check if you can read it". No doodles and no icon: a plain notice.
+ * "Get in to check if you can read it". No doodles and no icon: a plain notice.
  * Who uses it: ChapterReaderPage and StoryPage, when their read answered nothing and
  * useStoryPreview() found a hidden rating.
  */

@@ -268,7 +268,7 @@
     "cancel": "Don’t remind me",
     "open": "Entries are open.",
     "signIn": "Entries open on {{date}}. Log in and we’ll remind you that day.",
-    "signInLink": "Log in",
+    "signInLink": "Get in",
     "failed": "We couldn’t save that. Try again.",
     "previewNote": "Signed-in readers can ask here for one notification on the day entries open."
   },

@@ -4,7 +4,7 @@
  * Board values: the eyebrow "Comments", the heading "86 comments" (28 px, Funnel Display) with
  * "Newest first" beside it, the composer card, then one white card (24 px corners) listing the
  * comments with fine lines between them, and "Show more comments" under it. A visitor gets a
- * "Log in to comment" link instead of the composer; with comments off the section says so and
+ * "Get in to comment" link instead of the composer; with comments off the section says so and
  * lists nothing (the story's setting, S1-E3-05). No doodles (DoD: none on the chapter reader).
  * Who uses it: src/features/reading/components/ChapterComments.tsx, which fetches this file after
  * the chapter text. What it calls: useChapterComments → chapter_comments(); CommentComposer;

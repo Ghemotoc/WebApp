@@ -192,7 +192,7 @@
     "readOnly": "Până se termină verificarea, poți citi, dar nu poți posta.",
     "byYoti": "Verificarea vârstei prin Yoti",
     "signedOut": "Intră în cont ca să verifici vârsta.",
-    "logIn": "Intră în cont",
+    "logIn": "Intră",
     "loadFailed": "Nu am putut încărca verificarea vârstei. Încearcă din nou peste puțin timp.",
     "nothingToDo": "Acum nu e nicio verificare a vârstei de făcut.",
     "birthYearInSettings": "Anul nașterii e în Setări.",
@@ -277,7 +277,7 @@
     "withdrawnBody": "Deocamdată contul tău e doar pentru citit: poți citi, dar nu poți publica, comenta, posta sau trimite mesaje. Îți spunem ție și lor ce urmează.",
     "nothingToDo": "Acum nu e nevoie să rogi un părinte sau tutore.",
     "signedOut": "Intră în cont ca să rogi un părinte sau tutore.",
-    "logIn": "Intră în cont",
+    "logIn": "Intră",
     "loadFailed": "Nu am putut încărca pagina. Încearcă din nou peste puțin timp.",
     "failures": {
       "signed_out": "Intră din nou în cont, apoi trimite emailul.",
