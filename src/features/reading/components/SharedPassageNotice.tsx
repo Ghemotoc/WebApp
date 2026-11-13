@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
+import { wantsLessMotion } from '@/lib/motion';
 
 /**
  * Finds the highlighted passage once and brings it into view.
@@ -28,8 +29,8 @@ function useBringPassageIntoView(): boolean | null {
       const passage = document.querySelector<HTMLElement>('[data-shared-start]');
       setIsFound(passage !== null);
       if (passage === null) return;
-      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      passage.scrollIntoView({ block: 'center', behavior: reduceMotion ? 'auto' : 'smooth' });
+      // The device's setting or the member's "Less motion" switch: jump instead of gliding.
+      passage.scrollIntoView({ block: 'center', behavior: wantsLessMotion() ? 'auto' : 'smooth' });
       passage.focus({ preventScroll: true });
     });
     return () => window.cancelAnimationFrame(frame);

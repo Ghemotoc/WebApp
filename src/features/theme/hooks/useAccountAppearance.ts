@@ -5,13 +5,14 @@
  * 1. Show the choices: night or light (following the device live with "Match my device") on
  *    <html data-theme>, and the look on <html data-look>: the season's look when Seasonal themes
  *    is on and a season is running (public setting seasonal_look_dates), otherwise the member's
- *    year-round theme.
+ *    year-round theme. The "Less motion" switch goes on <html data-motion> (bundle MOTION-1).
  * 2. Follow the account: when a member signs in (or the page opens with a stored session), read
  *    their saved choices and show them, so the look follows them to every device. A choice made on
  *    this page while the read was on its way wins (the same guard as the account language).
  * Who calls it: AppLayout and StaffLayout (the staff area ignores looks in tokens.css, but its
  * night mode follows the same choice).
- * What it calls: lib/appearanceStore.ts, api/appearance.ts, src/lib/theme.ts and src/lib/looks.ts.
+ * What it calls: lib/appearanceStore.ts, api/appearance.ts, src/lib/theme.ts, src/lib/looks.ts and
+ * src/lib/motion.ts.
  */
 import { useEffect, useMemo, useSyncExternalStore } from 'react';
 
@@ -23,6 +24,7 @@ import {
   shownLookFor,
   type SeasonalWindow,
 } from '@/lib/looks';
+import { applyLessMotion } from '@/lib/motion';
 import { getSupabaseClient, type AppSupabaseClient } from '@/lib/supabase';
 import { applyTheme, DEVICE_DARK_QUERY, resolveTheme } from '@/lib/theme';
 
@@ -60,7 +62,9 @@ function useShowAppearance(windows: readonly SeasonalWindow[]): void {
   useEffect(() => {
     // Step 1: the look (it only changes the light colours; night is the same monochrome set with every look).
     applyLook(shownLookFor(appearance.look, appearance.isSeasonalOn, new Date(), windows));
-    // Step 2: night or light, now and whenever the device switches (for "Match my device").
+    // Step 2: the member's "Less motion" switch (src/styles/index.css stops every animation).
+    applyLessMotion(appearance.isLessMotionOn);
+    // Step 3: night or light, now and whenever the device switches (for "Match my device").
     const deviceDarkQuery = window.matchMedia(DEVICE_DARK_QUERY);
     const showMode = () => applyTheme(resolveTheme(appearance.mode, deviceDarkQuery.matches));
     showMode();

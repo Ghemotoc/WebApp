@@ -13409,6 +13409,7 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     "initials_colour" "text",
     "reading_languages" "text"[],
     "suggests_from_reading" boolean,
+    "less_motion" boolean DEFAULT false NOT NULL,
     CONSTRAINT "profiles_avatar_recipe_shape" CHECK ("public"."avatar_recipe_valid"("avatar_recipe")),
     CONSTRAINT "profiles_bio_length" CHECK (("char_length"("bio") <= 300)),
     CONSTRAINT "profiles_birth_month_is_a_month" CHECK ((("birth_month" >= 1) AND ("birth_month" <= 12))),
@@ -13618,6 +13619,10 @@ COMMENT ON COLUMN "public"."profiles"."reading_languages" IS 'The story language
 
 
 COMMENT ON COLUMN "public"."profiles"."suggests_from_reading" IS 'Suggestions from my reading (S1-E15-06): null until chosen (on for adults, off under 18). Private to the member.';
+
+
+
+COMMENT ON COLUMN "public"."profiles"."less_motion" IS 'Whether the member turned "Less motion" on in Settings › Appearance: transitions and animations are replaced by instant changes (bundle MOTION-1). The device''s own reduced-motion setting still counts by itself.';
 
 
 
@@ -43281,7 +43286,7 @@ COMMENT ON FUNCTION "public"."set_message_emails"("wanted_emails_on" boolean, "w
 
 
 
-CREATE OR REPLACE FUNCTION "public"."set_my_appearance"("new_look" "text", "new_colour_mode" "text", "new_seasonal_looks" boolean) RETURNS "jsonb"
+CREATE OR REPLACE FUNCTION "public"."set_my_appearance"("new_look" "text", "new_colour_mode" "text", "new_seasonal_looks" boolean, "new_less_motion" boolean DEFAULT NULL::boolean) RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
@@ -43308,9 +43313,11 @@ begin
       using errcode = 'invalid_parameter_value';
   end if;
 
-  -- Step 3: change the caller's own row only, and only while the account is live.
+  -- Step 3: change the caller's own row only, and only while the account is live. A call that
+  -- leaves new_less_motion out keeps the saved value (an older page doesn't know the switch).
   update public.profiles
     set look = new_look, colour_mode = new_colour_mode, seasonal_looks = new_seasonal_looks,
+        less_motion = coalesce(new_less_motion, profiles.less_motion),
         appearance_saved_at = now()
     where profiles.id = (select auth.uid()) and profiles.deleted_at is null
     returning * into saved;
@@ -43322,15 +43329,15 @@ begin
   end if;
 
   return jsonb_build_object('look', saved.look, 'colour_mode', saved.colour_mode,
-    'seasonal_looks', saved.seasonal_looks);
+    'seasonal_looks', saved.seasonal_looks, 'less_motion', saved.less_motion);
 end;
 $$;
 
 
-ALTER FUNCTION "public"."set_my_appearance"("new_look" "text", "new_colour_mode" "text", "new_seasonal_looks" boolean) OWNER TO "postgres";
+ALTER FUNCTION "public"."set_my_appearance"("new_look" "text", "new_colour_mode" "text", "new_seasonal_looks" boolean, "new_less_motion" boolean) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."set_my_appearance"("new_look" "text", "new_colour_mode" "text", "new_seasonal_looks" boolean) IS 'Saves the signed-in member''s look, mode and seasonal switch on their own profile (bundle G2).';
+COMMENT ON FUNCTION "public"."set_my_appearance"("new_look" "text", "new_colour_mode" "text", "new_seasonal_looks" boolean, "new_less_motion" boolean) IS 'Saves the signed-in member''s look, mode, seasonal switch and Less motion switch on their own profile (bundles G2 and MOTION-1).';
 
 
 
@@ -69038,8 +69045,8 @@ GRANT ALL ON FUNCTION "public"."set_message_emails"("wanted_emails_on" boolean, 
 
 
 
-REVOKE ALL ON FUNCTION "public"."set_my_appearance"("new_look" "text", "new_colour_mode" "text", "new_seasonal_looks" boolean) FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."set_my_appearance"("new_look" "text", "new_colour_mode" "text", "new_seasonal_looks" boolean) TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."set_my_appearance"("new_look" "text", "new_colour_mode" "text", "new_seasonal_looks" boolean, "new_less_motion" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_my_appearance"("new_look" "text", "new_colour_mode" "text", "new_seasonal_looks" boolean, "new_less_motion" boolean) TO "authenticated";
 
 
 

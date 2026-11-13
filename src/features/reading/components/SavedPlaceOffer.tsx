@@ -15,6 +15,7 @@ import { useEffect, useState, type RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
+import { wantsLessMotion } from '@/lib/motion';
 
 import { scrollTopForPlace } from '../lib/savedPlace';
 
@@ -28,7 +29,8 @@ function scrollToPlace(text: HTMLElement | null, percent: number) {
   const box = text?.getBoundingClientRect();
   if (box === undefined) return;
   const top = scrollTopForPlace(box.top + window.scrollY, box.height, window.innerHeight, percent);
-  window.scrollTo({ top, behavior: 'smooth' });
+  // The device's setting or the member's "Less motion" switch: jump instead of gliding.
+  window.scrollTo({ top, behavior: wantsLessMotion() ? 'auto' : 'smooth' });
 }
 
 /**

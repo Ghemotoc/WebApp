@@ -5,9 +5,10 @@
  * Who shows it: AppearanceSettingsSection. What it calls: SegmentedControl; it reports the pick
  * upwards.
  */
-import { useTranslation } from 'react-i18next';
 
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
+
+import { useAppearanceTranslation } from '../registerAppearanceTranslations';
 import type { ThemePreference } from '@/lib/theme';
 
 /** The modes in the board's order. */
@@ -25,14 +26,14 @@ export interface ModeChoiceProps {
  * @returns the segmented control
  */
 export function ModeChoice({ picked, onPick }: ModeChoiceProps) {
-  const { t } = useTranslation();
+  const { t } = useAppearanceTranslation();
   const options = modesInOrder.map((mode) => ({
     value: mode,
-    label: t(`appearance.modes.${mode}`),
+    label: t(`modes.${mode}`),
   }));
   return (
     <SegmentedControl
-      legend={t('appearance.modeLegend')}
+      legend={t('modeLegend')}
       name="appearance-mode"
       options={options}
       value={picked}

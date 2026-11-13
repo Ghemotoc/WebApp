@@ -11,9 +11,10 @@
  * visible at night too.
  * Who shows it: AppearanceSettingsSection. What it calls: nothing; it reports the pick upwards.
  */
-import { useTranslation } from 'react-i18next';
 
 import { CheckIcon } from '@/components/icons/CheckIcon';
+
+import { useAppearanceTranslation } from '../registerAppearanceTranslations';
 import { yearRoundLooks, type YearRoundLook } from '@/lib/looks';
 
 /** What the tiles need. */
@@ -54,10 +55,10 @@ function LookSwatch({ look, isPicked }: { look: YearRoundLook; isPicked: boolean
  * @returns the fieldset
  */
 export function LookTiles({ picked, onPick }: LookTilesProps) {
-  const { t } = useTranslation();
+  const { t } = useAppearanceTranslation();
   return (
     <fieldset className="m-0 flex flex-col gap-3 border-0 p-0">
-      <legend className="sr-only">{t('appearance.themeLegend')}</legend>
+      <legend className="sr-only">{t('themeLegend')}</legend>
       <div className="flex flex-wrap gap-x-3.5 gap-y-4">
         {yearRoundLooks.map((look) => {
           const isPicked = look === picked;
@@ -75,9 +76,7 @@ export function LookTiles({ picked, onPick }: LookTilesProps) {
                 className="sr-only"
               />
               <LookSwatch look={look} isPicked={isPicked} />
-              <span className={isPicked ? 'font-bold' : 'font-medium'}>
-                {t(`appearance.looks.${look}`)}
-              </span>
+              <span className={isPicked ? 'font-bold' : 'font-medium'}>{t(`looks.${look}`)}</span>
             </label>
           );
         })}

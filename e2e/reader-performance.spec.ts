@@ -35,6 +35,8 @@ const FIRST_PARAGRAPH_BUDGET_MS = 2000;
  * Measured after QA-6: about 1,242 KB in 45 files (324 KB compressed); the budget leaves room.
  * GAPS-6 (10 Nov 2026): the load had crept to 1,300 KB as texts were added; the chapter editor's
  * texts (21 KB) no longer travel with every first page, which brought it back to about 1,280 KB.
+ * MOTION-1 (13 Nov 2026): the "Less motion" switch took it to 1,302 KB; the texts of Settings ›
+ * Appearance (2 KB) now load with that section only (src/locales/<language>/appearance.json).
  */
 const READER_SCRIPT_BUDGET_KB = 1300;
 
