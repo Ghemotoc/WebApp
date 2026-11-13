@@ -97,6 +97,14 @@ select results_eq(
        ('chapter_scenes', 0::bigint),
        ('chapter_shares', 0::bigint),
        ('chapters', 0::bigint),
+       -- Which classmates' chapters a pupil opened, so points follow reading: own rows only (S1-E8-13).
+       ('class_chapter_opens', 0::bigint),
+       -- Flags about class points for our moderators: moderation staff only (S1-E8-16).
+       ('class_point_flags', 0::bigint),
+       -- Points a pupil gave to classmates' chapters: the giver's own rows and our moderators (S1-E8-13).
+       ('class_point_gifts', 0::bigint),
+       -- A teacher's points and private notes on pupils' work: the teacher's own rows and our moderators (S1-E8-14).
+       ('class_teacher_points', 0::bigint),
        -- The real authors of public-domain classics, public on every byline (S1-E5-06).
        ('classic_authors', (select count(*) from public.classic_authors)),
        -- Classics' public-domain details are staff-only (S1-E11-16); readers get the source
