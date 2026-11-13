@@ -181,10 +181,13 @@ select is((select sum(total)::integer from public.chapter_reads where chapter_id
 /* ---------- The nightly job and its record ---------- */
 
 select is(public.run_retention_jobs() >= 0, true, 'run_retention_jobs() runs every clean-up');
-select is((select count(*)::integer from public.retention_runs where ran_at = now()), 8, 'each clean-up writes one line of the record (the eighth is CLASSES-e''s certificate names)');
+-- Eleven clean-ups: the six of S1-E13-04, the audit log, abuse image evidence, and (back since
+-- S1-E8-16, which found them missing from the list) reading minutes and certificate names, plus
+-- class points.
+select is((select count(*)::integer from public.retention_runs where ran_at = now()), 11, 'each clean-up writes one line of the record');
 
 select pg_temp.sign_in('09');
-select is((select count(*)::integer from public.retention_runs where ran_at = now()), 8,
+select is((select count(*)::integer from public.retention_runs where ran_at = now()), 11,
   'allowed: retention_runs_select_admin: an admin reads the clean-up record');
 select pg_temp.sign_in('01');
 select is((select count(*)::integer from public.retention_runs), 0,

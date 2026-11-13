@@ -101,6 +101,7 @@ function ThreadPosts({
               threadNumber={threadNumber}
               threadTitle={post.number === 1 ? thread.title : null}
               quotePicks={picksForPosts}
+              spaceThreadId={thread.space !== null ? thread.id : null}
             />
           </li>
         ))}

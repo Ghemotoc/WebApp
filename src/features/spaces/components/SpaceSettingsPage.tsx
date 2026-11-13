@@ -24,6 +24,7 @@ import { useParams } from 'react-router';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { ClassCertificatesCard } from '@/features/certificates/components/ClassCertificatesCard';
+import { ClassPointsSettingsCard } from '@/features/class-points/components/ClassPointsSettingsCard';
 
 import type { Space, SpaceSettings } from '../api/spaces';
 import { useSpace, useUpdateSpace } from '../hooks/useSpaces';
@@ -113,6 +114,7 @@ function ClassCards({ space }: { space: Space }) {
       {canInvite && <ClassWaitingCard space={space} />}
       {canManage && <ClassLockCard space={space} />}
       {canManage && <ClassArchiveCard space={space} />}
+      {space.viewer.membership === 'owner' && <ClassPointsSettingsCard slug={space.slug} />}
       {space.viewer.membership === 'owner' && <ClassCertificatesCard slug={space.slug} />}
     </>
   );

@@ -640,7 +640,9 @@ CREATE TYPE "public"."reportable_type" AS ENUM (
     'forum_post',
     'space',
     'space_join_note',
-    'reading_list'
+    'reading_list',
+    'class_point_note',
+    'class_teacher_note'
 );
 
 
@@ -1427,6 +1429,9 @@ CREATE OR REPLACE FUNCTION "public"."account_deletion_rules"() RETURNS TABLE("ta
     ('chapter_revisions', 'own_step', 0, 'deleted with their chapter, unless the chapter is kept for a case'),
     ('chapter_scenes', 'delete', 1, null),
     ('chapters', 'own_step', 0, 'deleted unless under an open case'),
+    ('class_chapter_opens', 'delete', 1, null),
+    ('class_point_gifts', 'delete', 1, null),
+    ('class_teacher_points', 'delete', 1, null),
     ('comment_downvotes', 'delete', 1, null),
     ('comment_reactions', 'delete', 1, null),
     ('comments', 'own_step', 0, 'deleted unless under an open case; one with replies keeps its place, with its words erased'),
@@ -4397,6 +4402,93 @@ COMMENT ON FUNCTION "public"."admin_claim_case"("target_case_id" "uuid") IS 'A m
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_class_gifts"("target_chapter_id" "uuid" DEFAULT NULL::"uuid", "first_handle" "text" DEFAULT NULL::"text", "second_handle" "text" DEFAULT NULL::"text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  first_id uuid;
+  second_id uuid;
+begin
+  if not public.staff_may('moderation', 'view') then
+    raise exception 'Only the moderation team sees who gave class points.' using errcode = 'insufficient_privilege';
+  end if;
+  select profiles.id into first_id from public.profiles where profiles.handle = first_handle;
+  select profiles.id into second_id from public.profiles where profiles.handle = second_handle;
+  -- The sensitive read, logged before the answer.
+  perform public.log_staff_action('class_points.givers_viewed', 'class_point_gifts',
+    coalesce(target_chapter_id::text, first_handle || ' + ' || second_handle), first_id, null, null, null);
+  return (
+    select coalesce(jsonb_agg(jsonb_build_object(
+        'id', gifts.id,
+        'giver_handle', givers.handle,
+        'receiver_handle', receivers.handle,
+        'story_title', stories.title,
+        'chapter_position', chapters.position,
+        'points', gifts.points,
+        'note', gifts.note,
+        'week_start', gifts.week_start,
+        'removed_at', gifts.removed_at,
+        'removed_reason', gifts.removed_reason) order by gifts.week_start desc, gifts.created_at), '[]'::jsonb)
+    from public.class_point_gifts as gifts
+    join public.profiles as givers on givers.id = gifts.user_id
+    join public.profiles as receivers on receivers.id = gifts.receiver_user_id
+    join public.chapters on chapters.id = gifts.chapter_id
+    join public.stories on stories.id = chapters.story_id
+    where (target_chapter_id is not null and gifts.chapter_id = target_chapter_id)
+       or (target_chapter_id is null and first_id is not null and second_id is not null
+           and ((gifts.user_id = first_id and gifts.receiver_user_id = second_id)
+                or (gifts.user_id = second_id and gifts.receiver_user_id = first_id))));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_class_gifts"("target_chapter_id" "uuid", "first_handle" "text", "second_handle" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_class_gifts"("target_chapter_id" "uuid", "first_handle" "text", "second_handle" "text") IS 'Staff: a chapter''s or a pair''s class points gifts with their givers; the read is in the audit log (S1-E8-16).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_class_point_flags"() RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  if not public.staff_may('moderation', 'view') then
+    raise exception 'Only the moderation team reads class points flags.' using errcode = 'insufficient_privilege';
+  end if;
+  return (
+    select coalesce(jsonb_agg(jsonb_build_object(
+        'id', flags.id,
+        'kind', flags.kind,
+        'class', jsonb_build_object('slug', spaces.slug, 'name', spaces.name),
+        'chapter', case when chapters.id is not null then jsonb_build_object(
+          'id', chapters.id, 'story_title', stories.title, 'position', chapters.position,
+          'title', chapters.published_title) end,
+        'writer_handle', (select profiles.handle from public.profiles where profiles.id = chapters.user_id),
+        'pair', case when flags.kind = 'pair' then jsonb_build_array(
+          (select profiles.handle from public.profiles where profiles.id = flags.first_user_id),
+          (select profiles.handle from public.profiles where profiles.id = flags.second_user_id)) end,
+        'week_start', flags.week_start,
+        'note', flags.note,
+        'created_at', flags.created_at) order by flags.created_at), '[]'::jsonb)
+    from public.class_point_flags as flags
+    join public.spaces on spaces.id = flags.space_id
+    left join public.chapters on chapters.id = flags.chapter_id
+    left join public.stories on stories.id = chapters.story_id
+    where flags.closed_at is null);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_class_point_flags"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_class_point_flags"() IS 'Staff: the open class points flags, for the moderation team (S1-E8-16).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admin_class_spaces"() RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -4564,6 +4656,36 @@ ALTER FUNCTION "public"."admin_close_account_for_abuse_image"("target_case_id" "
 
 
 COMMENT ON FUNCTION "public"."admin_close_account_for_abuse_image"("target_case_id" "uuid", "note_text" "text", "account_message" "text") IS 'Safeguarding staff: closes the account that uploaded a matched abuse image for good (ADMIN-2e2b).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_close_class_point_flag"("flag_id" "uuid") RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  flag public.class_point_flags;
+begin
+  if not public.staff_may('moderation', 'act') then
+    raise exception 'Only the moderation team closes class points flags.' using errcode = 'insufficient_privilege';
+  end if;
+  update public.class_point_flags as flags
+  set closed_at = now(), closed_by_user_id = (select auth.uid())
+  where flags.id = flag_id and flags.closed_at is null
+  returning flags.* into flag;
+  if flag.id is null then
+    raise exception 'There is no such open flag.' using errcode = 'no_data_found', hint = 'flag:missing';
+  end if;
+  perform public.log_staff_action('class_points.flag_closed', 'class_point_flags', flag.id::text,
+    null, null, null, jsonb_build_object('kind', flag.kind));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_close_class_point_flag"("flag_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_close_class_point_flag"("flag_id" "uuid") IS 'Staff: closes a class points flag once it was looked into; in the audit log (S1-E8-16).';
 
 
 
@@ -8804,6 +8926,49 @@ ALTER FUNCTION "public"."admin_remove_chapter_passage"("target_chapter_id" "uuid
 
 
 COMMENT ON FUNCTION "public"."admin_remove_chapter_passage"("target_chapter_id" "uuid", "passage" "text", "occurrence" integer, "case_reference" "text", "reason_code" "text", "reason_text" "text") IS 'Staff cut one exact passage out of a chapter, leaving the marker; versioned, audited, the writer gets a statement of reasons (S1-E11-08).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_remove_class_gift"("gift_id" "uuid", "reason" "text") RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  clean_reason text := btrim(coalesce(reason, ''));
+  gift public.class_point_gifts;
+  space public.spaces;
+begin
+  if not public.staff_may('moderation', 'act') then
+    raise exception 'Only the moderation team removes class points.' using errcode = 'insufficient_privilege';
+  end if;
+  if clean_reason = '' then
+    raise exception 'Say why.' using errcode = 'check_violation', hint = 'reason:empty';
+  end if;
+  if char_length(clean_reason) > 500 then
+    raise exception 'At most 500 characters.' using errcode = 'check_violation', hint = 'reason:too_long';
+  end if;
+  update public.class_point_gifts as gifts
+  set removed_at = now(), removed_by_user_id = (select auth.uid()), removed_reason = clean_reason
+  where gifts.id = gift_id and gifts.removed_at is null
+  returning gifts.* into gift;
+  if gift.id is null then
+    raise exception 'There is no such gift.' using errcode = 'no_data_found', hint = 'gift:missing';
+  end if;
+  select * into space from public.spaces where spaces.id = gift.space_id;
+  -- The class's log: about the writer whose chapter lost points, with the reason, no giver.
+  perform public.log_space_action(space, 'class_points_removed', gift.receiver_user_id, null, clean_reason,
+    jsonb_build_object('points', gift.points));
+  -- The audit log: the giver, for our own records only.
+  perform public.log_staff_action('class_points.gift_removed', 'class_point_gifts', gift.id::text,
+    gift.user_id, clean_reason, null, jsonb_build_object('points', gift.points, 'week_start', gift.week_start));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_remove_class_gift"("gift_id" "uuid", "reason" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_remove_class_gift"("gift_id" "uuid", "reason" "text") IS 'Staff: removes a gift of class points with a reason; logged in the class''s log and the audit log (S1-E8-16).';
 
 
 
@@ -15954,6 +16119,21 @@ CREATE OR REPLACE FUNCTION "public"."case_item_content"("target" "public"."cases
           join public.stories on stories.id = entries.story_id
           where entries.list_id = reading_lists.id))
         from public.reading_lists where reading_lists.id = target.item_id)
+    -- A note with class points: its words, the points, the class and the chapter (S1-E8-13).
+    when 'class_point_note' then (select jsonb_build_object('text', gifts.note, 'points', gifts.points,
+        'class', spaces.name, 'story', stories.title, 'chapter_position', chapters.position,
+        'created_at', gifts.created_at)
+        from public.class_point_gifts as gifts
+        join public.spaces on spaces.id = gifts.space_id
+        join public.chapters on chapters.id = gifts.chapter_id
+        join public.stories on stories.id = chapters.story_id
+        where gifts.id = target.item_id)
+    -- A teacher's private note to a pupil: its words, the points and the class (S1-E8-14).
+    when 'class_teacher_note' then (select jsonb_build_object('text', marks.note, 'points', marks.points,
+        'class', spaces.name, 'created_at', marks.created_at)
+        from public.class_teacher_points as marks
+        join public.spaces on spaces.id = marks.space_id
+        where marks.id = target.item_id)
   end;
 $$;
 
@@ -16045,10 +16225,12 @@ CREATE TABLE IF NOT EXISTS "public"."spaces" (
     "handover_offered_at" timestamp with time zone,
     "logo_picture_id" "uuid",
     "crest_picture_id" "uuid",
+    "class_points_on" boolean DEFAULT false NOT NULL,
     CONSTRAINT "spaces_16_plus_read_by_everybody" CHECK ((("kind" = 'class'::"public"."space_kind") OR ("age_group" = 'under_16'::"public"."space_age_group") OR ("readers" = 'everybody'::"public"."space_readers"))),
     CONSTRAINT "spaces_archived_only_class" CHECK ((("archived_at" IS NULL) OR ("kind" = 'class'::"public"."space_kind"))),
     CONSTRAINT "spaces_banner_is_offered" CHECK (("banner" <> ALL (ARRAY['night'::"public"."space_banner", 'gold'::"public"."space_banner"]))),
     CONSTRAINT "spaces_class_is_private" CHECK ((("kind" = 'open'::"public"."space_kind") OR (("readers" = 'members'::"public"."space_readers") AND ("posting" = 'members'::"public"."space_posting")))),
+    CONSTRAINT "spaces_class_points_only_class" CHECK (((NOT "class_points_on") OR ("kind" = 'class'::"public"."space_kind"))),
     CONSTRAINT "spaces_description_length" CHECK (("char_length"("description") <= 2000)),
     CONSTRAINT "spaces_name_is_written" CHECK ((("btrim"("name") <> ''::"text") AND ("char_length"("name") <= 200))),
     CONSTRAINT "spaces_only_classes_lock" CHECK ((("kind" = 'class'::"public"."space_kind") OR ("locks_at" IS NULL))),
@@ -16114,6 +16296,10 @@ COMMENT ON COLUMN "public"."spaces"."logo_picture_id" IS 'The uploaded logo (G8b
 
 
 COMMENT ON COLUMN "public"."spaces"."crest_picture_id" IS 'The school crest the class''s teacher uploaded for its certificates (G13b); shown once its check passed.';
+
+
+
+COMMENT ON COLUMN "public"."spaces"."class_points_on" IS 'Whether the teacher turned class points on for this class; off for every new class (S1-E8-16 criterion 1).';
 
 
 
@@ -17472,6 +17658,41 @@ COMMENT ON FUNCTION "public"."check_character_texts"("texts" "jsonb", "allowed_k
 
 
 
+CREATE OR REPLACE FUNCTION "public"."check_class_note"("value" "text", "longest" integer) RETURNS "text"
+    LANGUAGE "plpgsql" STABLE
+    SET "search_path" TO ''
+    AS $$
+declare
+  -- One line with single spaces, and Romanian letters with the comma below.
+  clean text := btrim(regexp_replace(public.normalise_romanian_letters(coalesce(value, '')), '\s+', ' ', 'g'));
+begin
+  if clean = '' then
+    return null;
+  end if;
+  if char_length(clean) > longest then
+    raise exception 'At most % characters.', longest using errcode = 'check_violation', hint = 'note:too_long';
+  end if;
+  if public.has_html_tag(clean) then
+    raise exception 'HTML tags are not allowed (CLAUDE.md rule 8).' using errcode = 'check_violation', hint = 'note:html';
+  end if;
+  -- No web address and no email address at all, stricter than a comment: a note with points
+  -- goes to one pupil, often a minor, and the teacher's note is private, so it must not point
+  -- anywhere a conversation could carry on unseen (break test, 13 Nov 2026; architecture 1.10).
+  if public.has_unsafe_link(clean) or clean ~* '(https?://|www\.|mailto:|[^[:space:]@]+@[^[:space:]@]+\.[[:alpha:]]{2,}|[[:alnum:]-]+\.[[:alpha:]]{2,}/)' then
+    raise exception 'A note with points holds no link and no email address.' using errcode = 'check_violation', hint = 'note:link';
+  end if;
+  return clean;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."check_class_note"("value" "text", "longest" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."check_class_note"("value" "text", "longest" integer) IS 'Internal: a note with class points, cleaned and checked: no HTML, no link, no email address (S1-E8-13, rule 8).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."check_comment_text"("body" "text") RETURNS "text"
     LANGUAGE "plpgsql" STABLE
     SET "search_path" TO ''
@@ -17961,6 +18182,94 @@ COMMENT ON FUNCTION "public"."class_certificates"("slug" "text") IS 'A class''s 
 
 
 
+CREATE OR REPLACE FUNCTION "public"."class_chapter_points"("target_chapter_id" "uuid") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  space public.spaces;
+  writer_id uuid;
+  viewer_role text;
+  week date := public.class_points_week_start();
+  budget integer := public.class_points_number('class_points_weekly_budget', 10);
+  my_gift public.class_point_gifts;
+  teacher_row public.class_teacher_points;
+  received_total integer;
+begin
+  -- Step 1: only a chapter shared with a class that has points on, and only for a signed-in reader.
+  if caller_id is null then
+    return null;
+  end if;
+  space := public.class_points_chapter_space(target_chapter_id);
+  if space.id is null or not space.class_points_on then
+    return null;
+  end if;
+  -- Step 2: who is looking: the writer, the teacher or a classmate. Anyone else gets nothing.
+  select chapters.user_id into writer_id from public.chapters where chapters.id = target_chapter_id;
+  viewer_role := case
+    when writer_id = caller_id then 'writer'
+    when space.user_id = caller_id then 'teacher'
+    when public.class_points_is_pupil(space, caller_id) and public.is_active_member() then 'classmate' end;
+  if viewer_role is null then
+    return null;
+  end if;
+  -- Step 3: a classmate has now opened the chapter (criterion 4).
+  if viewer_role = 'classmate' then
+    insert into public.class_chapter_opens (user_id, space_id, chapter_id)
+    values (caller_id, space.id, target_chapter_id)
+    on conflict on constraint class_chapter_opens_once do nothing;
+    select * into my_gift from public.class_point_gifts as gifts
+    where gifts.user_id = caller_id and gifts.chapter_id = target_chapter_id and gifts.week_start = week;
+  end if;
+  -- Step 4: the totals, for the writer and the teacher only.
+  select coalesce(sum(gifts.points), 0)::integer into received_total
+  from public.class_point_gifts as gifts
+  where gifts.chapter_id = target_chapter_id and gifts.space_id = space.id and gifts.removed_at is null;
+  select * into teacher_row from public.class_teacher_points as marks
+  where marks.space_id = space.id and marks.chapter_id = target_chapter_id;
+  -- Step 5: the answer, with only the parts this viewer may see.
+  return jsonb_build_object(
+    'class', jsonb_build_object('slug', space.slug, 'name', space.name),
+    'role', viewer_role,
+    'giving', case when viewer_role = 'classmate' then jsonb_build_object(
+      'budget', budget,
+      'left', greatest(budget - public.class_points_spent(space.id, caller_id, week), 0),
+      'cap', public.class_points_number('class_points_chapter_cap', 3),
+      'given', case when my_gift.removed_at is null then coalesce(my_gift.points, 0) else 0 end,
+      'note', case when my_gift.removed_at is null then my_gift.note end,
+      'note_max', public.class_points_number('class_point_note_max_characters', 140),
+      'resets_on', week + 7,
+      -- Not offered in a locked class, to someone blocked either way, or after a moderator
+      -- removed this week's gift to this chapter.
+      'can_give', not public.space_is_locked(space) and not public.is_blocked_with(writer_id)
+                  and my_gift.removed_at is null) end,
+    'received', case
+      when viewer_role = 'writer' then jsonb_build_object(
+        'total', received_total,
+        'notes', (select coalesce(jsonb_agg(jsonb_build_object('id', gifts.id, 'note', gifts.note)
+                    order by gifts.created_at), '[]'::jsonb)
+                  from public.class_point_gifts as gifts
+                  where gifts.chapter_id = target_chapter_id and gifts.space_id = space.id
+                    and gifts.removed_at is null and gifts.note is not null
+                    and not public.is_moderated_away('class_point_note', gifts.id)))
+      when viewer_role = 'teacher' then jsonb_build_object('total', received_total) end,
+    'teacher', case when viewer_role in ('writer', 'teacher') then public.class_teacher_points_json(teacher_row) end,
+    'teacher_max', case when viewer_role = 'teacher' then public.class_points_number('class_teacher_points_max', 10) end,
+    'notes_on', case when viewer_role = 'teacher' then public.is_feature_enabled('class_teacher_notes') end,
+    'note_max', case when viewer_role = 'teacher' then public.class_points_number('class_teacher_note_max_characters', 1000) end,
+    'is_locked', public.space_is_locked(space));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."class_chapter_points"("target_chapter_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."class_chapter_points"("target_chapter_id" "uuid") IS 'Class points on one chapter for its writer, the teacher or a classmate; records that a classmate opened it (S1-E8-13, S1-E8-14).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."class_invite"("slug" "text") RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -18099,6 +18408,204 @@ COMMENT ON FUNCTION "public"."class_invite_row"("code" "text") IS 'Internal: the
 
 
 
+CREATE OR REPLACE FUNCTION "public"."class_points_chapter_space"("target_chapter_id" "uuid") RETURNS "public"."spaces"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select spaces.*
+  from public.chapters
+  join public.stories on stories.id = chapters.story_id
+  join public.spaces on spaces.id = stories.class_space_id
+  where chapters.id = target_chapter_id
+    and stories.class_only
+    and spaces.kind = 'class'
+    and spaces.deleted_at is null
+    and public.chapter_is_readable(chapters.id);
+$$;
+
+
+ALTER FUNCTION "public"."class_points_chapter_space"("target_chapter_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."class_points_chapter_space"("target_chapter_id" "uuid") IS 'Internal: the class a readable chapter is shared with, or a null row (S1-E8-13).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."class_points_is_pupil"("target" "public"."spaces", "person_id" "uuid") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select target.kind = 'class' and target.user_id is distinct from person_id and exists (
+    select 1 from public.space_members
+    where space_members.space_id = target.id and space_members.user_id = person_id
+      and space_members.status = 'active');
+$$;
+
+
+ALTER FUNCTION "public"."class_points_is_pupil"("target" "public"."spaces", "person_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."class_points_is_pupil"("target" "public"."spaces", "person_id" "uuid") IS 'Internal: whether a person is an active member of a class and not its teacher (S1-E8-13).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."class_points_number"("setting_key" "text", "fallback" integer) RETURNS integer
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce((public.setting_value(setting_key))::integer, fallback);
+$$;
+
+
+ALTER FUNCTION "public"."class_points_number"("setting_key" "text", "fallback" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."class_points_number"("setting_key" "text", "fallback" integer) IS 'Internal: one class points setting as a whole number, or the fallback (S1-E8-13).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."class_points_spent"("target_space_id" "uuid", "giver_id" "uuid", "week" "date", "skip_chapter_id" "uuid" DEFAULT NULL::"uuid") RETURNS integer
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(sum(gifts.points), 0)::integer
+  from public.class_point_gifts as gifts
+  where gifts.space_id = target_space_id and gifts.user_id = giver_id and gifts.week_start = week
+    and gifts.removed_at is null
+    and (skip_chapter_id is null or gifts.chapter_id <> skip_chapter_id);
+$$;
+
+
+ALTER FUNCTION "public"."class_points_spent"("target_space_id" "uuid", "giver_id" "uuid", "week" "date", "skip_chapter_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."class_points_spent"("target_space_id" "uuid", "giver_id" "uuid", "week" "date", "skip_chapter_id" "uuid") IS 'Internal: the points a pupil gave in a class in one week, removed gifts left out (S1-E8-13).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."class_points_summary"("slug" "text") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  with class as (
+    select spaces.*, spaces.user_id = (select auth.uid()) as is_teacher,
+           public.class_points_week_start() as week
+    from public.spaces
+    where spaces.slug = class_points_summary.slug and spaces.kind = 'class' and spaces.deleted_at is null
+      and public.space_may_read(spaces)
+      and (spaces.user_id = (select auth.uid()) or public.class_points_is_pupil(spaces, (select auth.uid())))
+  )
+  select jsonb_build_object(
+    'enabled', class.class_points_on,
+    'role', case when class.is_teacher then 'teacher' else 'pupil' end,
+    'can_switch', class.is_teacher and class.archived_at is null,
+    'budget', public.class_points_number('class_points_weekly_budget', 10),
+    'left', case when not class.is_teacher then
+      greatest(public.class_points_number('class_points_weekly_budget', 10)
+               - public.class_points_spent(class.id, (select auth.uid()), class.week), 0) end,
+    'cap', public.class_points_number('class_points_chapter_cap', 3),
+    'resets_on', case when not class.is_teacher then class.week + 7 end,
+    'received_total', case when not class.is_teacher then (
+      select coalesce(sum(gifts.points), 0)::integer from public.class_point_gifts as gifts
+      where gifts.space_id = class.id and gifts.receiver_user_id = (select auth.uid())
+        and gifts.removed_at is null) end)
+  from class;
+$$;
+
+
+ALTER FUNCTION "public"."class_points_summary"("slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."class_points_summary"("slug" "text") IS 'Class points on a class page: on or off, and for a pupil their budget and the points they received (S1-E8-13).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."class_points_table"("slug" "text") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  with class as (
+    select spaces.* from public.spaces
+    where spaces.slug = class_points_table.slug and spaces.kind = 'class' and spaces.deleted_at is null
+      and spaces.class_points_on and spaces.user_id = (select auth.uid())
+  ),
+  pupils as (
+    select space_members.user_id, profiles.handle,
+           public.display_name(profiles.handle, profiles.pen_name) as display_name
+    from class
+    join public.space_members on space_members.space_id = class.id and space_members.status = 'active'
+    join public.profiles on profiles.id = space_members.user_id and profiles.deleted_at is null
+    where space_members.user_id <> class.user_id
+  ),
+  -- Every chapter a pupil shares with this class now, with its two numbers.
+  pieces as (
+    select chapters.id as chapter_id, chapters.user_id, chapters.code, chapters.position,
+           chapters.published_title, stories.slug as story_slug, stories.title as story_title,
+           (select coalesce(sum(gifts.points), 0)::integer from public.class_point_gifts as gifts
+            where gifts.chapter_id = chapters.id and gifts.space_id = class.id and gifts.removed_at is null) as class_points,
+           (select marks.points from public.class_teacher_points as marks
+            where marks.chapter_id = chapters.id and marks.space_id = class.id) as teacher_points,
+           exists (select 1 from public.class_point_flags as flags
+                   where flags.chapter_id = chapters.id and flags.kind = 'teacher_report'
+                     and flags.closed_at is null) as is_reported
+    from class
+    join public.stories on stories.class_space_id = class.id and stories.class_only and stories.deleted_at is null
+    join public.chapters on chapters.story_id = stories.id and chapters.status = 'published'
+                        and chapters.deleted_at is null
+    where not public.is_moderated_away('story', stories.id)
+      and not public.is_moderated_away('chapter', chapters.id)
+  )
+  select jsonb_build_object('pupils', coalesce((
+    select jsonb_agg(jsonb_build_object(
+        'handle', pupils.handle,
+        'display_name', pupils.display_name,
+        'class_points', (select coalesce(sum(pieces.class_points), 0)::integer from pieces
+                         where pieces.user_id = pupils.user_id),
+        -- Teacher points on chapters and on assignment replies together.
+        'teacher_points', (select coalesce(sum(marks.points), 0)::integer
+                           from public.class_teacher_points as marks, class
+                           where marks.space_id = class.id and marks.pupil_user_id = pupils.user_id),
+        'chapters', (select coalesce(jsonb_agg(jsonb_build_object(
+              'chapter_id', pieces.chapter_id,
+              'story_slug', pieces.story_slug,
+              'story_title', pieces.story_title,
+              'chapter_code', pieces.code,
+              'chapter_position', pieces.position,
+              'chapter_title', pieces.published_title,
+              'class_points', pieces.class_points,
+              'teacher_points', pieces.teacher_points,
+              'is_reported', pieces.is_reported)
+            order by pieces.story_title, pieces.position), '[]'::jsonb)
+          from pieces where pieces.user_id = pupils.user_id))
+      order by pupils.display_name, pupils.handle)
+    from pupils), '[]'::jsonb))
+  from class;
+$$;
+
+
+ALTER FUNCTION "public"."class_points_table"("slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."class_points_table"("slug" "text") IS 'The teacher''s table: each pupil''s class points and teacher points, with no rank and no givers (S1-E8-14).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."class_points_week_start"("moment" timestamp with time zone DEFAULT "now"()) RETURNS "date"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select date_trunc('week', moment at time zone
+    coalesce(public.setting_value('class_points_timezone') #>> '{}', 'Europe/Bucharest'))::date;
+$$;
+
+
+ALTER FUNCTION "public"."class_points_week_start"("moment" timestamp with time zone) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."class_points_week_start"("moment" timestamp with time zone) IS 'Internal: the Monday of the class points week a moment falls in (S1-E8-13).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."class_space_assignments"("slug" "text") RETURNS "jsonb"
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -18206,6 +18713,52 @@ COMMENT ON FUNCTION "public"."class_space_stories"("slug" "text") IS 'The storie
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."class_teacher_points" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "space_id" "uuid" NOT NULL,
+    "pupil_user_id" "uuid" NOT NULL,
+    "chapter_id" "uuid",
+    "forum_post_id" "uuid",
+    "points" smallint NOT NULL,
+    "note" "text",
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "class_teacher_points_not_own_work" CHECK (("user_id" <> "pupil_user_id")),
+    CONSTRAINT "class_teacher_points_note_length" CHECK ((("note" IS NULL) OR (("char_length"("note") >= 1) AND ("char_length"("note") <= 5000)))),
+    CONSTRAINT "class_teacher_points_one_target" CHECK ((("chapter_id" IS NULL) <> ("forum_post_id" IS NULL))),
+    CONSTRAINT "class_teacher_points_points_range" CHECK ((("points" >= 0) AND ("points" <= 100)))
+);
+
+
+ALTER TABLE "public"."class_teacher_points" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."class_teacher_points" IS 'kind: user_content; reportable: class_teacher_note
+A teacher''s points on one piece of a pupil''s work in their class, with an optional private note (S1-E8-14). The pupil reads theirs through class_chapter_points() and class_thread_teacher_points().';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."class_teacher_points_json"("target" "public"."class_teacher_points") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select case when target.id is not null then jsonb_build_object(
+    'id', target.id,
+    'points', target.points,
+    'note', case when public.is_feature_enabled('class_teacher_notes')
+                      and not public.is_moderated_away('class_teacher_note', target.id)
+                 then target.note end) end;
+$$;
+
+
+ALTER FUNCTION "public"."class_teacher_points_json"("target" "public"."class_teacher_points") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."class_teacher_points_json"("target" "public"."class_teacher_points") IS 'Internal: a teacher''s points and note on one piece of work, the note only while it may show (S1-E8-14).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."class_thread_replies"("target_thread_id" "uuid") RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -18268,6 +18821,41 @@ ALTER FUNCTION "public"."class_thread_replies"("target_thread_id" "uuid") OWNER 
 
 
 COMMENT ON FUNCTION "public"."class_thread_replies"("target_thread_id" "uuid") IS 'Who in a class has posted in one of its threads and who hasn''t yet, for the teacher only (IDEAS-3b).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."class_thread_teacher_points"("target_thread_id" "uuid") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  with class as (
+    select space.*, space.user_id = (select auth.uid()) as is_teacher
+    from public.class_space_of_thread(target_thread_id) as space
+    where space.id is not null and space.class_points_on and public.space_may_read(space)
+      and (space.user_id = (select auth.uid()) or public.class_points_is_pupil(space, (select auth.uid())))
+  )
+  select jsonb_build_object(
+    'is_teacher', class.is_teacher,
+    'teacher_max', public.class_points_number('class_teacher_points_max', 10),
+    'notes_on', public.is_feature_enabled('class_teacher_notes'),
+    'note_max', public.class_points_number('class_teacher_note_max_characters', 1000),
+    'is_locked', public.space_is_locked(public.class_space_of_thread(target_thread_id)),
+    'replies', (
+      select coalesce(jsonb_agg(public.class_teacher_points_json(marks)
+                 || jsonb_build_object('post_id', marks.forum_post_id) order by forum_posts.post_number), '[]'::jsonb)
+      from public.class_teacher_points as marks
+      join public.forum_posts on forum_posts.id = marks.forum_post_id
+      where marks.space_id = class.id and forum_posts.thread_id = target_thread_id
+        and forum_posts.deleted_at is null
+        and (class.is_teacher or marks.pupil_user_id = (select auth.uid()))))
+  from class;
+$$;
+
+
+ALTER FUNCTION "public"."class_thread_teacher_points"("target_thread_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."class_thread_teacher_points"("target_thread_id" "uuid") IS 'The teacher points on a class thread''s replies: all for the teacher, their own for a pupil (S1-E8-14).';
 
 
 
@@ -21291,6 +21879,9 @@ CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_
     ('chapter_revisions', true, null),
     ('chapter_scenes', true, null),
     ('chapters', true, null),
+    ('class_chapter_opens', true, null),
+    ('class_point_gifts', true, null),
+    ('class_teacher_points', true, null),
     ('comment_downvotes', true, null),
     ('comment_reactions', true, null),
     ('comments', true, null),
@@ -23983,6 +24574,66 @@ COMMENT ON FUNCTION "public"."finishes_story"("target_chapter" "public"."chapter
 
 
 
+CREATE OR REPLACE FUNCTION "public"."flag_class_point_pairs"("run_at" timestamp with time zone DEFAULT "now"()) RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  this_week date := public.class_points_week_start(run_at);
+  new_flags integer;
+begin
+  with given as (
+    -- What each pupil gave each classmate in each of the last three whole weeks.
+    select gifts.space_id, gifts.week_start, gifts.user_id, gifts.receiver_user_id, sum(gifts.points) as points
+    from public.class_point_gifts as gifts
+    where gifts.removed_at is null
+      and gifts.week_start in (this_week - 7, this_week - 14, this_week - 21)
+    group by gifts.space_id, gifts.week_start, gifts.user_id, gifts.receiver_user_id
+  ),
+  totals as (
+    select given.space_id, given.week_start, given.user_id, sum(given.points) as points
+    from given group by given.space_id, given.week_start, given.user_id
+  ),
+  -- A week in which each of the two gave the other more than half of what they gave.
+  swap_weeks as (
+    select one.space_id, one.week_start, one.user_id as first_user_id, other.user_id as second_user_id
+    from given as one
+    join given as other
+      on other.space_id = one.space_id and other.week_start = one.week_start
+     and other.user_id = one.receiver_user_id and other.receiver_user_id = one.user_id
+    join totals as one_total
+      on one_total.space_id = one.space_id and one_total.week_start = one.week_start and one_total.user_id = one.user_id
+    join totals as other_total
+      on other_total.space_id = other.space_id and other_total.week_start = other.week_start and other_total.user_id = other.user_id
+    where one.user_id < other.user_id
+      and one.points * 2 > one_total.points
+      and other.points * 2 > other_total.points
+  ),
+  pairs as (
+    select swap_weeks.space_id, swap_weeks.first_user_id, swap_weeks.second_user_id
+    from swap_weeks
+    group by swap_weeks.space_id, swap_weeks.first_user_id, swap_weeks.second_user_id
+    having count(*) = 3
+  ),
+  written as (
+    insert into public.class_point_flags (space_id, kind, first_user_id, second_user_id, week_start)
+    select pairs.space_id, 'pair', pairs.first_user_id, pairs.second_user_id, this_week - 7 from pairs
+    on conflict (space_id, first_user_id, second_user_id, week_start) where kind = 'pair' do nothing
+    returning 1
+  )
+  select count(*)::integer into new_flags from written;
+  return new_flags;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."flag_class_point_pairs"("run_at" timestamp with time zone) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."flag_class_point_pairs"("run_at" timestamp with time zone) IS 'Weekly job: flags pupils who gave each other most of their class points three weeks running, for moderators only (S1-E8-16).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."flag_possible_returning_user"("new_user_id" "uuid") RETURNS "uuid"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -24275,6 +24926,32 @@ ALTER FUNCTION "public"."forget_character_picture"("old_picture_id" "uuid") OWNE
 
 
 COMMENT ON FUNCTION "public"."forget_character_picture"("old_picture_id" "uuid") IS 'Internal: marks a character''s picture deleted and returns where its file is (S1-E17-11, S1-E17-13).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."forget_class_points_of_member"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  delete from public.class_point_gifts as gifts
+  where gifts.space_id = old.space_id and (gifts.user_id = old.user_id or gifts.receiver_user_id = old.user_id);
+  delete from public.class_teacher_points as marks
+  where marks.space_id = old.space_id and marks.pupil_user_id = old.user_id;
+  delete from public.class_chapter_opens as opens
+  where opens.space_id = old.space_id and opens.user_id = old.user_id;
+  delete from public.class_point_flags as flags
+  where flags.space_id = old.space_id and flags.kind = 'pair'
+    and (flags.first_user_id = old.user_id or flags.second_user_id = old.user_id);
+  return null;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."forget_class_points_of_member"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."forget_class_points_of_member"() IS 'Trigger: deletes the class points a person gave and received when they leave a class (S1-E8-16).';
 
 
 
@@ -25911,6 +26588,68 @@ ALTER FUNCTION "public"."get_writer_profile"("wanted_handle" "text") OWNER TO "p
 
 
 COMMENT ON FUNCTION "public"."get_writer_profile"("wanted_handle" "text") IS 'A writer''s public profile by username; never the user ID, age, email or online status (S1-E5-05).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."give_class_points"("target_chapter_id" "uuid", "new_points" integer, "new_note" "text" DEFAULT NULL::"text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := public.require_live_profile();
+  space public.spaces := public.class_points_chapter_space(target_chapter_id);
+  writer_id uuid;
+  week date := public.class_points_week_start();
+  clean_note text;
+begin
+  -- Step 1: the control is offered only to a pupil of a class with points on, on a classmate's
+  -- chapter, while the class is open and the two haven't blocked each other.
+  select chapters.user_id into writer_id from public.chapters where chapters.id = target_chapter_id;
+  if space.id is null or not space.class_points_on or writer_id = caller_id
+     or not public.class_points_is_pupil(space, caller_id) or not public.is_active_member()
+     or public.space_is_locked(space) or public.is_blocked_with(writer_id)
+     or exists (select 1 from public.class_point_gifts as gifts
+                where gifts.user_id = caller_id and gifts.chapter_id = target_chapter_id
+                  and gifts.week_start = week and gifts.removed_at is not null) then
+    raise exception 'Points can''t be given here.' using errcode = 'check_violation', hint = 'points:not_offered';
+  end if;
+  -- Step 2: only work the pupil opened (criterion 4).
+  if not exists (select 1 from public.class_chapter_opens as opens
+                 where opens.user_id = caller_id and opens.chapter_id = target_chapter_id) then
+    raise exception 'Open the chapter first.' using errcode = 'check_violation', hint = 'points:not_opened';
+  end if;
+  -- Step 3: at most the cap for one chapter, and never more than is left of this week's budget.
+  -- The pupil's own row for this class and week is locked so two taps can't both pass the sum.
+  perform 1 from public.space_members
+  where space_members.space_id = space.id and space_members.user_id = caller_id for update;
+  if new_points is null or new_points < 0
+     or new_points > public.class_points_number('class_points_chapter_cap', 3) then
+    raise exception 'Too many points for one chapter.' using errcode = 'check_violation', hint = 'points:cap';
+  end if;
+  if public.class_points_spent(space.id, caller_id, week, target_chapter_id) + new_points
+     > public.class_points_number('class_points_weekly_budget', 10) then
+    raise exception 'Not enough points left this week.' using errcode = 'check_violation', hint = 'points:budget';
+  end if;
+  -- Step 4: zero takes the points back; anything else saves this week's row with its note.
+  if new_points = 0 then
+    delete from public.class_point_gifts as gifts
+    where gifts.user_id = caller_id and gifts.chapter_id = target_chapter_id and gifts.week_start = week;
+    return public.class_chapter_points(target_chapter_id);
+  end if;
+  clean_note := public.check_class_note(new_note, public.class_points_number('class_point_note_max_characters', 140));
+  insert into public.class_point_gifts (user_id, space_id, chapter_id, receiver_user_id, week_start, points, note)
+  values (caller_id, space.id, target_chapter_id, writer_id, week, new_points, clean_note)
+  on conflict on constraint class_point_gifts_one_per_week
+  do update set points = excluded.points, note = excluded.note;
+  return public.class_chapter_points(target_chapter_id);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."give_class_points"("target_chapter_id" "uuid", "new_points" integer, "new_note" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."give_class_points"("target_chapter_id" "uuid", "new_points" integer, "new_note" "text") IS 'A pupil gives this week''s points to a classmate''s chapter they opened, within the cap and the weekly budget (S1-E8-13).';
 
 
 
@@ -35711,6 +36450,42 @@ COMMENT ON FUNCTION "public"."purge_class_certificate_names"() IS 'Internal rete
 
 
 
+CREATE OR REPLACE FUNCTION "public"."purge_class_points"() RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  cutoff timestamptz := now() - make_interval(days => public.class_points_number('class_points_retention_days', 30));
+  removed_now integer;
+  removed_count integer := 0;
+begin
+  delete from public.class_point_gifts as gifts using public.spaces
+  where spaces.id = gifts.space_id and spaces.archived_at < cutoff;
+  get diagnostics removed_now = row_count;
+  removed_count := removed_count + removed_now;
+  delete from public.class_teacher_points as marks using public.spaces
+  where spaces.id = marks.space_id and spaces.archived_at < cutoff;
+  get diagnostics removed_now = row_count;
+  removed_count := removed_count + removed_now;
+  delete from public.class_chapter_opens as opens using public.spaces
+  where spaces.id = opens.space_id and spaces.archived_at < cutoff;
+  get diagnostics removed_now = row_count;
+  removed_count := removed_count + removed_now;
+  delete from public.class_point_flags as flags using public.spaces
+  where spaces.id = flags.space_id and spaces.archived_at < cutoff;
+  get diagnostics removed_now = row_count;
+  return removed_count + removed_now;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."purge_class_points"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."purge_class_points"() IS 'Internal retention job: deletes class points, notes, opens and flags 30 days after the class is archived (S1-E8-16).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."purge_closed_accounts"() RETURNS integer
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -39177,6 +39952,42 @@ COMMENT ON FUNCTION "public"."reply_to_forum_thread"("thread_number" bigint, "bo
 
 
 
+CREATE OR REPLACE FUNCTION "public"."report_class_points"("target_chapter_id" "uuid", "why" "text" DEFAULT NULL::"text") RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := public.require_live_profile();
+  space public.spaces := public.class_points_chapter_space(target_chapter_id);
+  writer_id uuid;
+  clean_why text;
+begin
+  if space.id is null or not space.class_points_on then
+    raise exception 'There are no class points here.' using errcode = 'check_violation', hint = 'points:not_offered';
+  end if;
+  if space.user_id is distinct from caller_id then
+    raise exception 'Only the class''s teacher can report its points.'
+      using errcode = 'insufficient_privilege', hint = 'points:not_teacher';
+  end if;
+  clean_why := public.check_class_note(why, 500);
+  select chapters.user_id into writer_id from public.chapters where chapters.id = target_chapter_id;
+  insert into public.class_point_flags (space_id, kind, chapter_id, reporter_user_id, note)
+  values (space.id, 'teacher_report', target_chapter_id, caller_id, clean_why)
+  on conflict (chapter_id) where kind = 'teacher_report' and closed_at is null do nothing;
+  if found then
+    perform public.log_space_action(space, 'class_points_reported', writer_id, null, null);
+  end if;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."report_class_points"("target_chapter_id" "uuid", "why" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."report_class_points"("target_chapter_id" "uuid", "why" "text") IS 'The teacher reports a chapter''s class points as suspicious to our moderators (S1-E8-16).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."report_client_error"("error_name" "text", "error_message" "text", "route_path" "text", "app_version" "text", "browser_family" "text") RETURNS "uuid"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -39419,6 +40230,21 @@ begin
         select reading_lists.id, reading_lists.user_id from public.reading_lists
         where is_row_id and reading_lists.id = item_reference::uuid
           and reading_lists.is_public and public.reading_list_is_visible(reading_lists);
+    -- A note with class points only for the chapter's writer, the one person who reads it, so
+    -- nobody else can reach a note, or learn who wrote it, through the report form (S1-E8-13).
+    when 'class_point_note' then
+      return query
+        select gifts.id, gifts.user_id from public.class_point_gifts as gifts
+        where is_row_id and gifts.id = item_reference::uuid
+          and gifts.note is not null and gifts.removed_at is null
+          and gifts.receiver_user_id = (select auth.uid());
+    -- A teacher's private note only for the pupil it was written to (S1-E8-14).
+    when 'class_teacher_note' then
+      return query
+        select marks.id, marks.user_id from public.class_teacher_points as marks
+        where is_row_id and marks.id = item_reference::uuid
+          and marks.note is not null
+          and marks.pupil_user_id = (select auth.uid());
   end case;
   if not found then
     raise exception 'There is no such % to report.', item_type using errcode = 'check_violation';
@@ -39518,6 +40344,21 @@ begin
     when 'reading_list' then
       select format('Reading list "%s"', reading_lists.name) into summary
       from public.reading_lists where reading_lists.id = item_id;
+    when 'class_point_note' then
+      select format('Note with class points on chapter %s of %s: %s', chapters.position, stories.title,
+          case when char_length(gifts.note) > 80 then left(gifts.note, 80) || '…' else gifts.note end)
+        into summary
+      from public.class_point_gifts as gifts
+      join public.chapters on chapters.id = gifts.chapter_id
+      join public.stories on stories.id = chapters.story_id
+      where gifts.id = item_id;
+    when 'class_teacher_note' then
+      select format('Teacher''s note in the class "%s": %s', spaces.name,
+          case when char_length(marks.note) > 80 then left(marks.note, 80) || '…' else marks.note end)
+        into summary
+      from public.class_teacher_points as marks
+      join public.spaces on spaces.id = marks.space_id
+      where marks.id = item_id;
   end case;
   return coalesce(summary, '(gone)');
 end;
@@ -41062,7 +41903,8 @@ begin
   foreach job_name in array array[
     'purge_unconfirmed_accounts', 'purge_expired_exports', 'purge_deleted_pictures',
     'purge_old_staff_records', 'purge_old_audit_log', 'fold_old_daily_totals',
-    'purge_abuse_image_evidence', 'blank_old_scrambled_ips']
+    'purge_abuse_image_evidence', 'blank_old_scrambled_ips',
+    'purge_old_reading_minutes', 'purge_class_certificate_names', 'purge_class_points']
   loop
     execute format('select public.%I()', job_name) into removed_count;
     perform public.record_retention_run(job_name, removed_count);
@@ -43010,6 +43852,38 @@ COMMENT ON FUNCTION "public"."set_class_lock"("slug" "text", "new_locks_at" time
 
 
 
+CREATE OR REPLACE FUNCTION "public"."set_class_points"("slug" "text", "turn_on" boolean) RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  space public.spaces := public.space_for_power(slug, 'settings');
+begin
+  -- Step 1: only a class has points, and an archived class starts nothing new.
+  if space.kind <> 'class' then
+    raise exception 'Only a class space has class points.' using errcode = 'check_violation', hint = 'space:not_class';
+  end if;
+  if turn_on and space.archived_at is not null then
+    raise exception 'This class is archived.' using errcode = 'check_violation', hint = 'space:archived';
+  end if;
+  -- Step 2: save the switch and write it in the class's log, only when it changes.
+  if space.class_points_on is distinct from turn_on then
+    update public.spaces set class_points_on = turn_on, updated_at = now() where spaces.id = space.id;
+    perform public.log_space_action(space,
+      case when turn_on then 'class_points_on' else 'class_points_off' end, null, null, null);
+  end if;
+  return public.class_points_summary(slug);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_class_points"("slug" "text", "turn_on" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_class_points"("slug" "text", "turn_on" boolean) IS 'The teacher turns class points on or off for their class; off for every new class (S1-E8-16).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."set_forum_thread_due_date"("target_thread_id" "uuid", "due" "date") RETURNS "void"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -44440,6 +45314,87 @@ ALTER FUNCTION "public"."set_suggests_from_reading"("should_suggest" boolean) OW
 
 
 COMMENT ON FUNCTION "public"."set_suggests_from_reading"("should_suggest" boolean) IS 'The signed-in member turns Suggestions from my reading on or off (S1-E15-06).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."set_teacher_points"("target_kind" "text", "target_id" "uuid", "new_points" integer DEFAULT NULL::integer, "new_note" "text" DEFAULT NULL::"text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := public.require_live_profile();
+  space public.spaces;
+  pupil_id uuid;
+  thread_id uuid;
+  clean_note text;
+  saved public.class_teacher_points;
+begin
+  -- Step 1: find the class the work is in and whose work it is.
+  if target_kind = 'chapter' then
+    space := public.class_points_chapter_space(target_id);
+    select chapters.user_id into pupil_id from public.chapters where chapters.id = target_id;
+  elsif target_kind = 'reply' then
+    select forum_posts.user_id, forum_posts.thread_id into pupil_id, thread_id
+    from public.forum_posts where forum_posts.id = target_id and forum_posts.deleted_at is null;
+    space := public.class_space_of_thread(thread_id);
+  end if;
+  if space.id is null or not space.class_points_on or pupil_id is null then
+    raise exception 'Points can''t be given here.' using errcode = 'check_violation', hint = 'points:not_offered';
+  end if;
+  -- Step 2: only the class's teacher marks (GDPR art. 22: a person decides, and it is the teacher).
+  if space.user_id is distinct from caller_id then
+    raise exception 'Only the class''s teacher gives teacher points.'
+      using errcode = 'insufficient_privilege', hint = 'points:not_teacher';
+  end if;
+  -- Step 3: only a pupil's work, in a class that is still open.
+  if not public.class_points_is_pupil(space, pupil_id) or public.space_is_locked(space) then
+    raise exception 'Points can''t be given here.' using errcode = 'check_violation', hint = 'points:not_offered';
+  end if;
+  -- Step 4: no points means the teacher takes them away, with the note.
+  if new_points is null then
+    delete from public.class_teacher_points as marks
+    where marks.space_id = space.id
+      and ((target_kind = 'chapter' and marks.chapter_id = target_id)
+           or (target_kind = 'reply' and marks.forum_post_id = target_id));
+    if found then
+      perform public.log_space_action(space, 'teacher_points_removed', pupil_id, thread_id, null);
+    end if;
+    return null;
+  end if;
+  -- Step 5: the range, and the note with the same filters as a comment.
+  if new_points < 0 or new_points > public.class_points_number('class_teacher_points_max', 10) then
+    raise exception 'Outside the range of teacher points.' using errcode = 'check_violation', hint = 'points:range';
+  end if;
+  clean_note := public.check_class_note(new_note, public.class_points_number('class_teacher_note_max_characters', 1000));
+  if clean_note is not null and not public.is_feature_enabled('class_teacher_notes') then
+    raise exception 'Teacher notes are switched off.' using errcode = 'check_violation', hint = 'note:off';
+  end if;
+  -- Step 6: one row per piece of work; saving again changes it.
+  update public.class_teacher_points as marks
+  set points = new_points, note = clean_note
+  where marks.space_id = space.id
+    and ((target_kind = 'chapter' and marks.chapter_id = target_id)
+         or (target_kind = 'reply' and marks.forum_post_id = target_id))
+  returning marks.* into saved;
+  if saved.id is null then
+    insert into public.class_teacher_points (user_id, space_id, pupil_user_id, chapter_id, forum_post_id, points, note)
+    values (caller_id, space.id, pupil_id,
+            case when target_kind = 'chapter' then target_id end,
+            case when target_kind = 'reply' then target_id end, new_points, clean_note)
+    returning * into saved;
+  end if;
+  -- Step 7: the class's log says that points were saved and whether a note came with them.
+  perform public.log_space_action(space, 'teacher_points_saved', pupil_id, thread_id, null,
+    jsonb_build_object('points', new_points, 'with_note', clean_note is not null));
+  return public.class_teacher_points_json(saved);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_teacher_points"("target_kind" "text", "target_id" "uuid", "new_points" integer, "new_note" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_teacher_points"("target_kind" "text", "target_id" "uuid", "new_points" integer, "new_note" "text") IS 'The class''s teacher gives points and an optional private note to a pupil''s chapter or assignment reply (S1-E8-14).';
 
 
 
@@ -52882,6 +53837,81 @@ COMMENT ON TABLE "public"."chapter_shares" IS 'kind: platform. How many times ea
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."class_chapter_opens" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "space_id" "uuid" NOT NULL,
+    "chapter_id" "uuid" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL
+);
+
+
+ALTER TABLE "public"."class_chapter_opens" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."class_chapter_opens" IS 'kind: user_action
+That a pupil opened a classmate''s chapter in a class with points on, so points go only to work that was opened (S1-E8-13 criterion 4). Only inside classes; deleted with the class''s points.';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."class_point_flags" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "space_id" "uuid" NOT NULL,
+    "kind" "text" NOT NULL,
+    "chapter_id" "uuid",
+    "reporter_user_id" "uuid",
+    "first_user_id" "uuid",
+    "second_user_id" "uuid",
+    "week_start" "date",
+    "note" "text",
+    "closed_at" timestamp with time zone,
+    "closed_by_user_id" "uuid",
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "class_point_flags_kind_is_known" CHECK (("kind" = ANY (ARRAY['teacher_report'::"text", 'pair'::"text"]))),
+    CONSTRAINT "class_point_flags_note_length" CHECK ((("note" IS NULL) OR (("char_length"("note") >= 1) AND ("char_length"("note") <= 500)))),
+    CONSTRAINT "class_point_flags_shape" CHECK (((("kind" = 'teacher_report'::"text") AND ("chapter_id" IS NOT NULL) AND ("first_user_id" IS NULL) AND ("second_user_id" IS NULL)) OR (("kind" = 'pair'::"text") AND ("chapter_id" IS NULL) AND ("first_user_id" IS NOT NULL) AND ("second_user_id" IS NOT NULL) AND ("week_start" IS NOT NULL))))
+);
+
+
+ALTER TABLE "public"."class_point_flags" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."class_point_flags" IS 'kind: platform
+Quiet flags about class points for our moderation team only: a teacher''s report of a chapter''s points, or two pupils swapping most of their points three weeks running (S1-E8-16 criteria 2 and 3). The teacher never sees a pair flag.';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."class_point_gifts" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "space_id" "uuid" NOT NULL,
+    "chapter_id" "uuid" NOT NULL,
+    "receiver_user_id" "uuid" NOT NULL,
+    "week_start" "date" NOT NULL,
+    "points" smallint NOT NULL,
+    "note" "text",
+    "removed_at" timestamp with time zone,
+    "removed_by_user_id" "uuid",
+    "removed_reason" "text",
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "class_point_gifts_not_own_chapter" CHECK (("user_id" <> "receiver_user_id")),
+    CONSTRAINT "class_point_gifts_note_length" CHECK ((("note" IS NULL) OR (("char_length"("note") >= 1) AND ("char_length"("note") <= 500)))),
+    CONSTRAINT "class_point_gifts_points_range" CHECK ((("points" >= 1) AND ("points" <= 20))),
+    CONSTRAINT "class_point_gifts_removal_is_whole" CHECK ((("removed_at" IS NULL) = ("removed_reason" IS NULL))),
+    CONSTRAINT "class_point_gifts_removed_reason_length" CHECK ((("removed_reason" IS NULL) OR (("char_length"("removed_reason") >= 1) AND ("char_length"("removed_reason") <= 500))))
+);
+
+
+ALTER TABLE "public"."class_point_gifts" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."class_point_gifts" IS 'kind: user_content; reportable: class_point_note
+Points one pupil gave to a classmate''s chapter in one week, with an optional one-line note (S1-E8-13). Read only through class_chapter_points() and class_points_table(), which never say who gave them.';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."classic_authors" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "name" "text" NOT NULL,
@@ -55719,6 +56749,36 @@ ALTER TABLE ONLY "public"."chapters"
 
 
 
+ALTER TABLE ONLY "public"."class_chapter_opens"
+    ADD CONSTRAINT "class_chapter_opens_once" UNIQUE ("user_id", "chapter_id");
+
+
+
+ALTER TABLE ONLY "public"."class_chapter_opens"
+    ADD CONSTRAINT "class_chapter_opens_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."class_point_flags"
+    ADD CONSTRAINT "class_point_flags_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."class_point_gifts"
+    ADD CONSTRAINT "class_point_gifts_one_per_week" UNIQUE ("user_id", "chapter_id", "week_start");
+
+
+
+ALTER TABLE ONLY "public"."class_point_gifts"
+    ADD CONSTRAINT "class_point_gifts_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."class_teacher_points"
+    ADD CONSTRAINT "class_teacher_points_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."classic_authors"
     ADD CONSTRAINT "classic_authors_name_key" UNIQUE ("name");
 
@@ -57135,6 +58195,42 @@ CREATE INDEX "chapters_user_id_fk_idx" ON "public"."chapters" USING "btree" ("us
 
 
 
+CREATE INDEX "class_chapter_opens_space" ON "public"."class_chapter_opens" USING "btree" ("space_id");
+
+
+
+CREATE UNIQUE INDEX "class_point_flags_one_open_report" ON "public"."class_point_flags" USING "btree" ("chapter_id") WHERE (("kind" = 'teacher_report'::"text") AND ("closed_at" IS NULL));
+
+
+
+CREATE UNIQUE INDEX "class_point_flags_one_pair_per_week" ON "public"."class_point_flags" USING "btree" ("space_id", "first_user_id", "second_user_id", "week_start") WHERE ("kind" = 'pair'::"text");
+
+
+
+CREATE INDEX "class_point_gifts_chapter" ON "public"."class_point_gifts" USING "btree" ("chapter_id");
+
+
+
+CREATE INDEX "class_point_gifts_receiver" ON "public"."class_point_gifts" USING "btree" ("receiver_user_id");
+
+
+
+CREATE INDEX "class_point_gifts_space_week" ON "public"."class_point_gifts" USING "btree" ("space_id", "week_start");
+
+
+
+CREATE UNIQUE INDEX "class_teacher_points_one_per_chapter" ON "public"."class_teacher_points" USING "btree" ("space_id", "chapter_id") WHERE ("chapter_id" IS NOT NULL);
+
+
+
+CREATE UNIQUE INDEX "class_teacher_points_one_per_post" ON "public"."class_teacher_points" USING "btree" ("forum_post_id") WHERE ("forum_post_id" IS NOT NULL);
+
+
+
+CREATE INDEX "class_teacher_points_pupil" ON "public"."class_teacher_points" USING "btree" ("pupil_user_id");
+
+
+
 CREATE INDEX "client_errors_created_at_idx" ON "public"."client_errors" USING "btree" ("created_at");
 
 
@@ -58387,6 +59483,26 @@ CREATE OR REPLACE TRIGGER "chapters_user_id_matches_story" BEFORE INSERT OR UPDA
 
 
 
+CREATE OR REPLACE TRIGGER "class_point_flags_set_updated_at" BEFORE UPDATE ON "public"."class_point_flags" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "class_point_gifts_refuse_user_id_change" BEFORE UPDATE ON "public"."class_point_gifts" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"('user_id');
+
+
+
+CREATE OR REPLACE TRIGGER "class_point_gifts_set_updated_at" BEFORE UPDATE ON "public"."class_point_gifts" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "class_teacher_points_refuse_user_id_change" BEFORE UPDATE ON "public"."class_teacher_points" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"('user_id');
+
+
+
+CREATE OR REPLACE TRIGGER "class_teacher_points_set_updated_at" BEFORE UPDATE ON "public"."class_teacher_points" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
 CREATE OR REPLACE TRIGGER "classic_authors_set_updated_at" BEFORE UPDATE ON "public"."classic_authors" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
@@ -58984,6 +60100,10 @@ CREATE OR REPLACE TRIGGER "space_join_notes_refuse_user_id_change" BEFORE UPDATE
 
 
 CREATE OR REPLACE TRIGGER "space_join_notes_set_updated_at" BEFORE UPDATE ON "public"."space_join_notes" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "space_members_forget_class_points" AFTER DELETE ON "public"."space_members" FOR EACH ROW EXECUTE FUNCTION "public"."forget_class_points_of_member"();
 
 
 
@@ -59721,6 +60841,101 @@ ALTER TABLE ONLY "public"."chapters"
 
 ALTER TABLE ONLY "public"."chapters"
     ADD CONSTRAINT "chapters_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."class_chapter_opens"
+    ADD CONSTRAINT "class_chapter_opens_chapter_id_fkey" FOREIGN KEY ("chapter_id") REFERENCES "public"."chapters"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."class_chapter_opens"
+    ADD CONSTRAINT "class_chapter_opens_space_id_fkey" FOREIGN KEY ("space_id") REFERENCES "public"."spaces"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."class_chapter_opens"
+    ADD CONSTRAINT "class_chapter_opens_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."class_point_flags"
+    ADD CONSTRAINT "class_point_flags_chapter_id_fkey" FOREIGN KEY ("chapter_id") REFERENCES "public"."chapters"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."class_point_flags"
+    ADD CONSTRAINT "class_point_flags_closed_by_user_id_fkey" FOREIGN KEY ("closed_by_user_id") REFERENCES "public"."profiles"("id") ON DELETE SET NULL;
+
+
+
+ALTER TABLE ONLY "public"."class_point_flags"
+    ADD CONSTRAINT "class_point_flags_first_user_id_fkey" FOREIGN KEY ("first_user_id") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."class_point_flags"
+    ADD CONSTRAINT "class_point_flags_reporter_user_id_fkey" FOREIGN KEY ("reporter_user_id") REFERENCES "public"."profiles"("id") ON DELETE SET NULL;
+
+
+
+ALTER TABLE ONLY "public"."class_point_flags"
+    ADD CONSTRAINT "class_point_flags_second_user_id_fkey" FOREIGN KEY ("second_user_id") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."class_point_flags"
+    ADD CONSTRAINT "class_point_flags_space_id_fkey" FOREIGN KEY ("space_id") REFERENCES "public"."spaces"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."class_point_gifts"
+    ADD CONSTRAINT "class_point_gifts_chapter_id_fkey" FOREIGN KEY ("chapter_id") REFERENCES "public"."chapters"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."class_point_gifts"
+    ADD CONSTRAINT "class_point_gifts_receiver_user_id_fkey" FOREIGN KEY ("receiver_user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."class_point_gifts"
+    ADD CONSTRAINT "class_point_gifts_removed_by_user_id_fkey" FOREIGN KEY ("removed_by_user_id") REFERENCES "public"."profiles"("id") ON DELETE SET NULL;
+
+
+
+ALTER TABLE ONLY "public"."class_point_gifts"
+    ADD CONSTRAINT "class_point_gifts_space_id_fkey" FOREIGN KEY ("space_id") REFERENCES "public"."spaces"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."class_point_gifts"
+    ADD CONSTRAINT "class_point_gifts_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."class_teacher_points"
+    ADD CONSTRAINT "class_teacher_points_chapter_id_fkey" FOREIGN KEY ("chapter_id") REFERENCES "public"."chapters"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."class_teacher_points"
+    ADD CONSTRAINT "class_teacher_points_forum_post_id_fkey" FOREIGN KEY ("forum_post_id") REFERENCES "public"."forum_posts"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."class_teacher_points"
+    ADD CONSTRAINT "class_teacher_points_pupil_user_id_fkey" FOREIGN KEY ("pupil_user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."class_teacher_points"
+    ADD CONSTRAINT "class_teacher_points_space_id_fkey" FOREIGN KEY ("space_id") REFERENCES "public"."spaces"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."class_teacher_points"
+    ADD CONSTRAINT "class_teacher_points_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
 
 
 
@@ -61627,6 +62842,42 @@ CREATE POLICY "chapters_select_own" ON "public"."chapters" FOR SELECT TO "authen
 
 
 COMMENT ON POLICY "chapters_select_own" ON "public"."chapters" IS 'Allows a writer to read only their own chapters; readers go through get_chapter() (ADR 0004).';
+
+
+
+ALTER TABLE "public"."class_chapter_opens" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "class_chapter_opens_select_own" ON "public"."class_chapter_opens" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
+
+
+
+ALTER TABLE "public"."class_point_flags" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "class_point_flags_select_moderators" ON "public"."class_point_flags" FOR SELECT TO "authenticated" USING ("public"."staff_may"('moderation'::"text", 'view'::"text"));
+
+
+
+ALTER TABLE "public"."class_point_gifts" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "class_point_gifts_select_moderators" ON "public"."class_point_gifts" FOR SELECT TO "authenticated" USING ("public"."staff_may"('moderation'::"text", 'view'::"text"));
+
+
+
+CREATE POLICY "class_point_gifts_select_own" ON "public"."class_point_gifts" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
+
+
+
+ALTER TABLE "public"."class_teacher_points" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "class_teacher_points_select_moderators" ON "public"."class_teacher_points" FOR SELECT TO "authenticated" USING ("public"."staff_may"('moderation'::"text", 'view'::"text"));
+
+
+
+CREATE POLICY "class_teacher_points_select_own" ON "public"."class_teacher_points" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
 
 
 
@@ -63722,6 +64973,16 @@ GRANT ALL ON FUNCTION "public"."admin_claim_case"("target_case_id" "uuid") TO "a
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_class_gifts"("target_chapter_id" "uuid", "first_handle" "text", "second_handle" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_class_gifts"("target_chapter_id" "uuid", "first_handle" "text", "second_handle" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_class_point_flags"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_class_point_flags"() TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_class_spaces"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_class_spaces"() TO "authenticated";
 
@@ -63749,6 +65010,11 @@ GRANT ALL ON FUNCTION "public"."admin_clear_list_page_background"("list_kind" "t
 
 REVOKE ALL ON FUNCTION "public"."admin_close_account_for_abuse_image"("target_case_id" "uuid", "note_text" "text", "account_message" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_close_account_for_abuse_image"("target_case_id" "uuid", "note_text" "text", "account_message" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_close_class_point_flag"("flag_id" "uuid") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_close_class_point_flag"("flag_id" "uuid") TO "authenticated";
 
 
 
@@ -64301,6 +65567,11 @@ GRANT ALL ON FUNCTION "public"."admin_remove_ad_blocked_category"("target_key" "
 
 REVOKE ALL ON FUNCTION "public"."admin_remove_chapter_passage"("target_chapter_id" "uuid", "passage" "text", "occurrence" integer, "case_reference" "text", "reason_code" "text", "reason_text" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_remove_chapter_passage"("target_chapter_id" "uuid", "passage" "text", "occurrence" integer, "case_reference" "text", "reason_code" "text", "reason_text" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_remove_class_gift"("gift_id" "uuid", "reason" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_remove_class_gift"("gift_id" "uuid", "reason" "text") TO "authenticated";
 
 
 
@@ -65455,6 +66726,10 @@ REVOKE ALL ON FUNCTION "public"."check_character_texts"("texts" "jsonb", "allowe
 
 
 
+REVOKE ALL ON FUNCTION "public"."check_class_note"("value" "text", "longest" integer) FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."check_comment_text"("body" "text") FROM PUBLIC;
 
 
@@ -65523,6 +66798,11 @@ GRANT ALL ON FUNCTION "public"."class_certificates"("slug" "text") TO "authentic
 
 
 
+REVOKE ALL ON FUNCTION "public"."class_chapter_points"("target_chapter_id" "uuid") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."class_chapter_points"("target_chapter_id" "uuid") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."class_invite"("slug" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."class_invite"("slug" "text") TO "authenticated";
 
@@ -65547,6 +66827,36 @@ REVOKE ALL ON FUNCTION "public"."class_invite_row"("code" "text") FROM PUBLIC;
 
 
 
+REVOKE ALL ON FUNCTION "public"."class_points_chapter_space"("target_chapter_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."class_points_is_pupil"("target" "public"."spaces", "person_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."class_points_number"("setting_key" "text", "fallback" integer) FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."class_points_spent"("target_space_id" "uuid", "giver_id" "uuid", "week" "date", "skip_chapter_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."class_points_summary"("slug" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."class_points_summary"("slug" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."class_points_table"("slug" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."class_points_table"("slug" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."class_points_week_start"("moment" timestamp with time zone) FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."class_space_assignments"("slug" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."class_space_assignments"("slug" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."class_space_assignments"("slug" "text") TO "authenticated";
@@ -65566,8 +66876,22 @@ GRANT ALL ON FUNCTION "public"."class_space_stories"("slug" "text") TO "authenti
 
 
 
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."class_teacher_points" TO "service_role";
+GRANT SELECT ON TABLE "public"."class_teacher_points" TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."class_teacher_points_json"("target" "public"."class_teacher_points") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."class_thread_replies"("target_thread_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."class_thread_replies"("target_thread_id" "uuid") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."class_thread_teacher_points"("target_thread_id" "uuid") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."class_thread_teacher_points"("target_thread_id" "uuid") TO "authenticated";
 
 
 
@@ -66355,6 +67679,10 @@ REVOKE ALL ON FUNCTION "public"."finishes_story"("target_chapter" "public"."chap
 
 
 
+REVOKE ALL ON FUNCTION "public"."flag_class_point_pairs"("run_at" timestamp with time zone) FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."flag_possible_returning_user"("new_user_id" "uuid") FROM PUBLIC;
 
 
@@ -66387,6 +67715,10 @@ REVOKE ALL ON FUNCTION "public"."follower_count_of"("writer_id" "uuid") FROM PUB
 
 
 REVOKE ALL ON FUNCTION "public"."forget_character_picture"("old_picture_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."forget_class_points_of_member"() FROM PUBLIC;
 
 
 
@@ -66584,6 +67916,11 @@ GRANT ALL ON FUNCTION "public"."get_story_page"("story_slug" "text") TO "authent
 
 GRANT ALL ON FUNCTION "public"."get_writer_profile"("wanted_handle" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."get_writer_profile"("wanted_handle" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."give_class_points"("target_chapter_id" "uuid", "new_points" integer, "new_note" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."give_class_points"("target_chapter_id" "uuid", "new_points" integer, "new_note" "text") TO "authenticated";
 
 
 
@@ -68058,6 +69395,10 @@ REVOKE ALL ON FUNCTION "public"."purge_class_certificate_names"() FROM PUBLIC;
 
 
 
+REVOKE ALL ON FUNCTION "public"."purge_class_points"() FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."purge_closed_accounts"() FROM PUBLIC;
 
 
@@ -68544,6 +69885,11 @@ GRANT ALL ON FUNCTION "public"."reply_to_forum_thread"("thread_number" bigint, "
 
 
 
+REVOKE ALL ON FUNCTION "public"."report_class_points"("target_chapter_id" "uuid", "why" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."report_class_points"("target_chapter_id" "uuid", "why" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."report_client_error"("error_name" "text", "error_message" "text", "route_path" "text", "app_version" "text", "browser_family" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."report_client_error"("error_name" "text", "error_message" "text", "route_path" "text", "app_version" "text", "browser_family" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."report_client_error"("error_name" "text", "error_message" "text", "route_path" "text", "app_version" "text", "browser_family" "text") TO "authenticated";
@@ -69013,6 +70359,11 @@ GRANT ALL ON FUNCTION "public"."set_class_lock"("slug" "text", "new_locks_at" ti
 
 
 
+REVOKE ALL ON FUNCTION "public"."set_class_points"("slug" "text", "turn_on" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_class_points"("slug" "text", "turn_on" boolean) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."set_forum_thread_due_date"("target_thread_id" "uuid", "due" "date") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_forum_thread_due_date"("target_thread_id" "uuid", "due" "date") TO "authenticated";
 
@@ -69204,6 +70555,11 @@ GRANT ALL ON FUNCTION "public"."set_suggest_me"("should_suggest" boolean) TO "au
 
 REVOKE ALL ON FUNCTION "public"."set_suggests_from_reading"("should_suggest" boolean) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_suggests_from_reading"("should_suggest" boolean) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."set_teacher_points"("target_kind" "text", "target_id" "uuid", "new_points" integer, "new_note" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_teacher_points"("target_kind" "text", "target_id" "uuid", "new_points" integer, "new_note" "text") TO "authenticated";
 
 
 
@@ -70440,6 +71796,21 @@ GRANT SELECT ON TABLE "public"."chapter_revisions" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."chapter_shares" TO "service_role";
 GRANT SELECT ON TABLE "public"."chapter_shares" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."class_chapter_opens" TO "service_role";
+GRANT SELECT ON TABLE "public"."class_chapter_opens" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."class_point_flags" TO "service_role";
+GRANT SELECT ON TABLE "public"."class_point_flags" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."class_point_gifts" TO "service_role";
+GRANT SELECT ON TABLE "public"."class_point_gifts" TO "authenticated";
 
 
 

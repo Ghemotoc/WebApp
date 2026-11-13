@@ -15,6 +15,8 @@ const schoolsTabs = [
   { href: '/staff/schools/teachers', labelKey: 'schoolsTabs.teachers' },
   { href: '/staff/schools/classes', labelKey: 'schoolsTabs.classes' },
   { href: '/staff/schools/certificates', labelKey: 'schoolsTabs.certificates' },
+  // CLASS-POINTS (S1-E8-16): flags about class points, for the moderation team.
+  { href: '/staff/schools/points', labelKey: 'schoolsTabs.points' },
 ] as const;
 
 /**

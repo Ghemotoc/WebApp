@@ -428,58 +428,6 @@
       "saved": "Salvat."
     }
   },
-  "loginMethods": {
-    "heading": "Moduri de autentificare",
-    "intro": "Intră cu oricare dintre acestea. Google, Apple și Microsoft înlocuiesc doar parola. Ai nevoie de cel puțin unul.",
-    "ageLine": "Tot ai nevoie de verificarea vârstei. Google, Apple și Microsoft nu ne spun câți ani ai.",
-    "listLabel": "Moduri de autentificare",
-    "loadFailed": "Nu am putut încărca modurile tale de autentificare. Verifică conexiunea și încearcă din nou.",
-    "connected": "Conectat",
-    "notConnected": "Neconectat",
-    "connect": "Conectează",
-    "connectNamed": "Conectează {{what}}",
-    "disconnect": "Deconectează",
-    "disconnectNamed": "Deconectează {{what}}",
-    "lastWay": "Nu poți deconecta ultimul mod de autentificare. Conectează întâi altul.",
-    "count_one": "Ai {{count}} mod de autentificare.",
-    "count_few": "Ai {{count}} moduri de autentificare.",
-    "count_other": "Ai {{count}} de moduri de autentificare.",
-    "email": {
-      "name": "Email și parolă",
-      "detailOn": "Adresa ta de email și parola. Ca să schimbi parola, folosește „Ți-ai uitat parola?” pe pagina de autentificare.",
-      "detailOff": "Încă nu ai o parolă. Setează una ca să poți intra și cu emailul.",
-      "setPassword": "Setează o parolă"
-    },
-    "google": {
-      "name": "Google",
-      "detail": "Folosește un cont Google"
-    },
-    "apple": {
-      "name": "Apple",
-      "detail": "Folosește un cont Apple"
-    },
-    "microsoft": {
-      "name": "Microsoft (Outlook)",
-      "detail": "Folosește un cont Outlook sau Microsoft"
-    },
-    "passkey": {
-      "name": "Cheie de acces",
-      "anotherName": "Altă cheie de acces",
-      "detail": "Intră cu amprenta, fața sau codul PIN al dispozitivului",
-      "addedOn": "Adăugată pe {{date}}",
-      "named": "cheia de acces, {{detail}}",
-      "add": "Adaugă o cheie de acces",
-      "addAnother": "Adaugă altă cheie de acces"
-    },
-    "notes": {
-      "lastWay": "Nu poți deconecta ultimul mod de autentificare. Conectează întâi altul.",
-      "actionFailed": "Nu a mers. Verifică conexiunea și încearcă din nou.",
-      "passkeyAdded": "Cheia de acces a fost adăugată. Data viitoare, alege „Folosește o cheie de acces” pe pagina de autentificare.",
-      "passkeyCancelled": "Nu s-a adăugat nicio cheie de acces.",
-      "passwordLinkSent": "Ți-am trimis pe email un link ca să-ți alegi o parolă.",
-      "tooManyAttempts": "Prea multe încercări. Așteaptă câteva minute și încearcă din nou."
-    }
-  },
   "teacherBadge": {
     "heading": "Ești profesor?",
     "stepLine": "Pasul {{step}} din {{total}} · pentru adulți (18+) · opțional",

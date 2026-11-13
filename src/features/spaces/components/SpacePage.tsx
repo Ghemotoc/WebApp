@@ -32,6 +32,8 @@ import type { Space } from '../api/spaces';
 import { useSpace } from '../hooks/useSpaces';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
+import { ClassPointsCard } from '@/features/class-points/components/ClassPointsCard';
+
 import { ClassAboutCard } from './ClassAboutCard';
 import { ClassAssignmentsCard } from './ClassAssignmentsCard';
 import { ClassStoriesCard } from './ClassStoriesCard';
@@ -89,6 +91,7 @@ function SpaceThreads({ space }: { space: Space }) {
 function ClassCards({ space }: { space: Space }) {
   return (
     <>
+      <ClassPointsCard slug={space.slug} />
       <ClassAssignmentsCard space={space} />
       <ClassStoriesCard space={space} />
     </>

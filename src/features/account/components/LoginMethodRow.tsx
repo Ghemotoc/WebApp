@@ -8,7 +8,7 @@
  * (aria-describedby), as the board does.
  * Who shows it: LoginMethodsSection.
  */
-import { useTranslation } from 'react-i18next';
+import { useLoginMethodsTranslation } from '@/features/account/registerLoginMethodsTranslations';
 
 import { ActionIcon, type ActionIconName } from '@/components/icons/ActionIcon';
 import { Button } from '@/components/ui/Button';
@@ -50,7 +50,7 @@ interface LoginMethodRowProps {
  * @returns a list item
  */
 export function LoginMethodRow(props: LoginMethodRowProps) {
-  const { t } = useTranslation('account');
+  const { t } = useLoginMethodsTranslation();
   const { action } = props;
   return (
     <li className="flex flex-wrap items-center gap-x-4 gap-y-3 border-t border-border px-[18px] py-4 first:border-t-0">
@@ -67,7 +67,7 @@ export function LoginMethodRow(props: LoginMethodRowProps) {
       </span>
       {props.isConnected !== null && (
         <InfoPill tone={props.isConnected ? 'sage' : 'neutral'}>
-          {props.isConnected ? t('loginMethods.connected') : t('loginMethods.notConnected')}
+          {props.isConnected ? t('connected') : t('notConnected')}
         </InfoPill>
       )}
       {action !== null && (

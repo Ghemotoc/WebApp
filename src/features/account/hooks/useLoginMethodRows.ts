@@ -10,7 +10,7 @@
  * - Disconnect is disabled on the last way in (criterion 3).
  */
 import type { TFunction } from 'i18next';
-import { useTranslation } from 'react-i18next';
+import { useLoginMethodsTranslation } from '@/features/account/registerLoginMethodsTranslations';
 
 import appleLogo from '@/assets/brands/apple.svg';
 import googleLogo from '@/assets/brands/google.svg';
@@ -41,7 +41,7 @@ interface RowSettings {
   lastWayNoteId: string;
 }
 
-/** Each provider's logo and its text group under loginMethods in account.json. */
+/** Each provider's logo and its text group in loginMethods.json. */
 const providerParts: Record<SocialProvider, { logo: string; textKey: string }> = {
   google: { logo: googleLogo, textKey: 'google' },
   apple: { logo: appleLogo, textKey: 'apple' },
@@ -75,8 +75,8 @@ function disconnectAction(
   onPress: () => void,
 ): LoginMethodAction {
   return {
-    label: context.t('loginMethods.disconnect'),
-    accessibleName: context.t('loginMethods.disconnectNamed', { what }),
+    label: context.t('disconnect'),
+    accessibleName: context.t('disconnectNamed', { what }),
     onPress,
     isRemoval: true,
     disabledBecauseOf: context.blockedBy,
@@ -102,14 +102,12 @@ function addAction(label: string, accessibleName: string, onPress: () => void): 
  * @returns the row
  */
 function emailRowOf({ t, methods, login }: RowContext): LoginMethodRowData {
-  const setPasswordLabel = t('loginMethods.email.setPassword');
+  const setPasswordLabel = t('email.setPassword');
   return {
     key: 'email',
     icon: { lineIcon: 'mail' },
-    name: t('loginMethods.email.name'),
-    detail: methods.hasPassword
-      ? t('loginMethods.email.detailOn')
-      : t('loginMethods.email.detailOff'),
+    name: t('email.name'),
+    detail: methods.hasPassword ? t('email.detailOn') : t('email.detailOff'),
     isConnected: methods.hasPassword,
     action: methods.hasPassword
       ? null
@@ -127,18 +125,18 @@ function emailRowOf({ t, methods, login }: RowContext): LoginMethodRowData {
 function providerRowOf(context: RowContext, provider: SocialProvider): LoginMethodRowData {
   const { t, methods, login } = context;
   const { logo, textKey } = providerParts[provider];
-  const name = t(`loginMethods.${textKey}.name`);
+  const name = t(`${textKey}.name`);
   const isConnected = methods.providers.includes(provider);
-  const connectName = t('loginMethods.connectNamed', { what: name });
+  const connectName = t('connectNamed', { what: name });
   return {
     key: provider,
     icon: { brandLogo: logo },
     name,
-    detail: t(`loginMethods.${textKey}.detail`),
+    detail: t(`${textKey}.detail`),
     isConnected,
     action: isConnected
       ? disconnectAction(context, name, () => login.disconnect(provider))
-      : addAction(t('loginMethods.connect'), connectName, () => login.connect(provider)),
+      : addAction(t('connect'), connectName, () => login.connect(provider)),
   };
 }
 
@@ -152,12 +150,12 @@ function providerRowOf(context: RowContext, provider: SocialProvider): LoginMeth
 function passkeyRowOf(context: RowContext, passkey: MyPasskey): LoginMethodRowData {
   const { t, language, login } = context;
   const added = formatRomaniaDate(new Date(passkey.createdAt), language);
-  const detail = passkey.name ?? t('loginMethods.passkey.addedOn', { date: added });
-  const what = t('loginMethods.passkey.named', { detail });
+  const detail = passkey.name ?? t('passkey.addedOn', { date: added });
+  const what = t('passkey.named', { detail });
   return {
     key: passkey.id,
     icon: { lineIcon: 'lock' },
-    name: t('loginMethods.passkey.name'),
+    name: t('passkey.name'),
     detail,
     isConnected: true,
     action: disconnectAction(context, what, () => login.removePasskey(passkey.id)),
@@ -172,12 +170,12 @@ function passkeyRowOf(context: RowContext, passkey: MyPasskey): LoginMethodRowDa
  */
 function addPasskeyRowOf({ t, methods, login }: RowContext): LoginMethodRowData {
   const hasPasskeys = methods.passkeys.length > 0;
-  const label = hasPasskeys ? t('loginMethods.passkey.addAnother') : t('loginMethods.passkey.add');
+  const label = hasPasskeys ? t('passkey.addAnother') : t('passkey.add');
   return {
     key: 'add-passkey',
     icon: { lineIcon: 'lock' },
-    name: hasPasskeys ? t('loginMethods.passkey.anotherName') : t('loginMethods.passkey.name'),
-    detail: t('loginMethods.passkey.detail'),
+    name: hasPasskeys ? t('passkey.anotherName') : t('passkey.name'),
+    detail: t('passkey.detail'),
     isConnected: hasPasskeys ? null : false,
     action: addAction(label, label, login.addPasskey),
   };
@@ -194,7 +192,7 @@ export function useLoginMethodRows(
   login: ReturnType<typeof useLoginMethods>,
   settings: RowSettings,
 ): LoginMethodRowData[] {
-  const { t, i18n } = useTranslation('account');
+  const { t, i18n } = useLoginMethodsTranslation();
   const methods = login.methods ?? noMethods;
   const context: RowContext = {
     t,

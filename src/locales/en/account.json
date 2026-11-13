@@ -428,58 +428,6 @@
       "saved": "Saved."
     }
   },
-  "loginMethods": {
-    "heading": "Ways to log in",
-    "intro": "Log in with any of these. Google, Apple and Microsoft only replace your password. You need at least one.",
-    "ageLine": "You still need the age check. Google, Apple and Microsoft don’t tell us how old you are.",
-    "listLabel": "Ways to log in",
-    "loadFailed": "We couldn’t load your ways to log in. Check your connection and try again.",
-    "connected": "Connected",
-    "notConnected": "Not connected",
-    "connect": "Connect",
-    "connectNamed": "Connect {{what}}",
-    "disconnect": "Disconnect",
-    "disconnectNamed": "Disconnect {{what}}",
-    "lastWay": "You can’t disconnect your last way to log in. Connect another one first.",
-    "count_one": "You have {{count}} way to log in.",
-    "count_few": "You have {{count}} ways to log in.",
-    "count_other": "You have {{count}} ways to log in.",
-    "email": {
-      "name": "Email and password",
-      "detailOn": "Your email address and your password. To change the password, use “Forgot your password?” on the log-in page.",
-      "detailOff": "No password yet. Set one to log in with your email too.",
-      "setPassword": "Set a password"
-    },
-    "google": {
-      "name": "Google",
-      "detail": "Use a Google account"
-    },
-    "apple": {
-      "name": "Apple",
-      "detail": "Use an Apple account"
-    },
-    "microsoft": {
-      "name": "Microsoft (Outlook)",
-      "detail": "Use an Outlook or Microsoft account"
-    },
-    "passkey": {
-      "name": "Passkey",
-      "anotherName": "Another passkey",
-      "detail": "Log in with your fingerprint, face or device PIN",
-      "addedOn": "Added on {{date}}",
-      "named": "passkey, {{detail}}",
-      "add": "Add a passkey",
-      "addAnother": "Add another passkey"
-    },
-    "notes": {
-      "lastWay": "You can’t disconnect your last way to log in. Connect another one first.",
-      "actionFailed": "That didn’t work. Check your connection and try again.",
-      "passkeyAdded": "Passkey added. Next time, choose “Use a passkey” on the log-in page.",
-      "passkeyCancelled": "No passkey was added.",
-      "passwordLinkSent": "We’ve emailed you a link to choose a password.",
-      "tooManyAttempts": "Too many tries. Wait a few minutes and try again."
-    }
-  },
   "teacherBadge": {
     "heading": "Are you a teacher?",
     "stepLine": "Step {{step}} of {{total}} · for adults (18+) · optional",

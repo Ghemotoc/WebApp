@@ -1119,7 +1119,8 @@
     "label": "Schools",
     "teachers": "Verify teachers",
     "classes": "Class spaces",
-    "certificates": "Certificates"
+    "certificates": "Certificates",
+    "points": "Class points"
   },
   "classSpaces": {
     "documentTitle": "Class spaces",

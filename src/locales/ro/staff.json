@@ -1119,7 +1119,8 @@
     "label": "Școli",
     "teachers": "Verifică profesorii",
     "classes": "Spații de clasă",
-    "certificates": "Diplome"
+    "certificates": "Diplome",
+    "points": "Puncte în clasă"
   },
   "classSpaces": {
     "documentTitle": "Spații de clasă",

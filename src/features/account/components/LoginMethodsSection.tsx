@@ -11,7 +11,7 @@
  * Settings looks as it did before S1-E2-09.
  * Who shows it: SettingsPage. What it calls: hooks/useLoginMethods.ts.
  */
-import { useTranslation } from 'react-i18next';
+import { useLoginMethodsTranslation } from '@/features/account/registerLoginMethodsTranslations';
 
 import { Notice } from '@/components/ui/Notice';
 import { useFeatureFlags } from '@/features/flags/hooks/useFeatureFlags';
@@ -47,7 +47,7 @@ function hasSomethingConnected(methods: MyLoginMethods | null): boolean {
  * @returns the note
  */
 function WaysCount({ methods }: { methods: MyLoginMethods }) {
-  const { t } = useTranslation('account');
+  const { t } = useLoginMethodsTranslation();
   const count = countLoginMethods(methods);
   const isLast = count === 1 && !methods.hasPassword;
   return (
@@ -56,7 +56,7 @@ function WaysCount({ methods }: { methods: MyLoginMethods }) {
       role="status"
       className={isLast ? 'm-0 text-sm font-semibold text-destructive' : 'm-0 text-sm text-meta'}
     >
-      {isLast ? t('loginMethods.lastWay') : t('loginMethods.count', { count })}
+      {isLast ? t('lastWay') : t('count', { count })}
     </p>
   );
 }
@@ -67,7 +67,7 @@ function WaysCount({ methods }: { methods: MyLoginMethods }) {
  * @returns the Ways to log in section
  */
 export function LoginMethodsSection() {
-  const { t } = useTranslation('account');
+  const { t } = useLoginMethodsTranslation();
   const flags = useFeatureFlags();
   const login = useLoginMethods();
   const isSocialLoginOn = flags.isOn('social_login', false);
@@ -86,15 +86,13 @@ export function LoginMethodsSection() {
         id="settings-login-methods-heading"
         className="m-0 font-heading text-[24px] font-bold text-heading"
       >
-        {t('loginMethods.heading')}
+        {t('heading')}
       </h2>
-      <p className="m-0 text-body">{t('loginMethods.intro')}</p>
-      <p className="m-0 rounded-2xl bg-tint px-4 py-3 text-sm text-body">
-        {t('loginMethods.ageLine')}
-      </p>
-      {login.loadFailed && <Notice tone="error">{t('loginMethods.loadFailed')}</Notice>}
+      <p className="m-0 text-body">{t('intro')}</p>
+      <p className="m-0 rounded-2xl bg-tint px-4 py-3 text-sm text-body">{t('ageLine')}</p>
+      {login.loadFailed && <Notice tone="error">{t('loadFailed')}</Notice>}
       <ul
-        aria-label={t('loginMethods.listLabel')}
+        aria-label={t('listLabel')}
         className="m-0 list-none rounded-2xl border border-border p-0"
       >
         {rows.map(({ key, ...row }) => (
@@ -104,7 +102,7 @@ export function LoginMethodsSection() {
       {methods !== null && <WaysCount methods={methods} />}
       {login.note !== null && (
         <Notice tone={goodNotes.has(login.note) ? 'success' : 'error'}>
-          {t(`loginMethods.notes.${login.note}`)}
+          {t(`notes.${login.note}`)}
         </Notice>
       )}
     </section>

@@ -1928,6 +1928,307 @@ export type Database = {
           },
         ];
       };
+      class_chapter_opens: {
+        Row: {
+          chapter_id: string;
+          created_at: string;
+          id: string;
+          space_id: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          chapter_id: string;
+          created_at?: string;
+          id?: string;
+          space_id: string;
+          user_id: string;
+        };
+        Update: {
+          chapter_id?: string;
+          created_at?: string;
+          id?: string;
+          space_id?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'class_chapter_opens_chapter_id_fkey';
+            columns: ['chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'class_chapter_opens_space_id_fkey';
+            columns: ['space_id'];
+            isOneToOne: false;
+            referencedRelation: 'spaces';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'class_chapter_opens_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      class_point_flags: {
+        Row: {
+          chapter_id: string | null;
+          closed_at: string | null;
+          closed_by_user_id: string | null;
+          created_at: string;
+          first_user_id: string | null;
+          id: string;
+          kind: string;
+          note: string | null;
+          reporter_user_id: string | null;
+          second_user_id: string | null;
+          space_id: string;
+          updated_at: string;
+          week_start: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          chapter_id?: string | null;
+          closed_at?: string | null;
+          closed_by_user_id?: string | null;
+          created_at?: string;
+          first_user_id?: string | null;
+          id?: string;
+          kind: string;
+          note?: string | null;
+          reporter_user_id?: string | null;
+          second_user_id?: string | null;
+          space_id: string;
+          updated_at?: string;
+          week_start?: string | null;
+        };
+        Update: {
+          chapter_id?: string | null;
+          closed_at?: string | null;
+          closed_by_user_id?: string | null;
+          created_at?: string;
+          first_user_id?: string | null;
+          id?: string;
+          kind?: string;
+          note?: string | null;
+          reporter_user_id?: string | null;
+          second_user_id?: string | null;
+          space_id?: string;
+          updated_at?: string;
+          week_start?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'class_point_flags_chapter_id_fkey';
+            columns: ['chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'class_point_flags_closed_by_user_id_fkey';
+            columns: ['closed_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'class_point_flags_first_user_id_fkey';
+            columns: ['first_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'class_point_flags_reporter_user_id_fkey';
+            columns: ['reporter_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'class_point_flags_second_user_id_fkey';
+            columns: ['second_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'class_point_flags_space_id_fkey';
+            columns: ['space_id'];
+            isOneToOne: false;
+            referencedRelation: 'spaces';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      class_point_gifts: {
+        Row: {
+          chapter_id: string;
+          created_at: string;
+          id: string;
+          note: string | null;
+          points: number;
+          receiver_user_id: string;
+          removed_at: string | null;
+          removed_by_user_id: string | null;
+          removed_reason: string | null;
+          space_id: string;
+          updated_at: string;
+          user_id: string;
+          week_start: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          chapter_id: string;
+          created_at?: string;
+          id?: string;
+          note?: string | null;
+          points: number;
+          receiver_user_id: string;
+          removed_at?: string | null;
+          removed_by_user_id?: string | null;
+          removed_reason?: string | null;
+          space_id: string;
+          updated_at?: string;
+          user_id: string;
+          week_start: string;
+        };
+        Update: {
+          chapter_id?: string;
+          created_at?: string;
+          id?: string;
+          note?: string | null;
+          points?: number;
+          receiver_user_id?: string;
+          removed_at?: string | null;
+          removed_by_user_id?: string | null;
+          removed_reason?: string | null;
+          space_id?: string;
+          updated_at?: string;
+          user_id?: string;
+          week_start?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'class_point_gifts_chapter_id_fkey';
+            columns: ['chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'class_point_gifts_receiver_user_id_fkey';
+            columns: ['receiver_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'class_point_gifts_removed_by_user_id_fkey';
+            columns: ['removed_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'class_point_gifts_space_id_fkey';
+            columns: ['space_id'];
+            isOneToOne: false;
+            referencedRelation: 'spaces';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'class_point_gifts_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      class_teacher_points: {
+        Row: {
+          chapter_id: string | null;
+          created_at: string;
+          forum_post_id: string | null;
+          id: string;
+          note: string | null;
+          points: number;
+          pupil_user_id: string;
+          space_id: string;
+          updated_at: string;
+          user_id: string;
+          class_teacher_points_json: Json | null;
+        };
+        ComputedFields: 'class_teacher_points_json';
+        Insert: {
+          chapter_id?: string | null;
+          created_at?: string;
+          forum_post_id?: string | null;
+          id?: string;
+          note?: string | null;
+          points: number;
+          pupil_user_id: string;
+          space_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          chapter_id?: string | null;
+          created_at?: string;
+          forum_post_id?: string | null;
+          id?: string;
+          note?: string | null;
+          points?: number;
+          pupil_user_id?: string;
+          space_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'class_teacher_points_chapter_id_fkey';
+            columns: ['chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'class_teacher_points_forum_post_id_fkey';
+            columns: ['forum_post_id'];
+            isOneToOne: false;
+            referencedRelation: 'forum_posts';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'class_teacher_points_pupil_user_id_fkey';
+            columns: ['pupil_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'class_teacher_points_space_id_fkey';
+            columns: ['space_id'];
+            isOneToOne: false;
+            referencedRelation: 'spaces';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'class_teacher_points_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       classic_authors: {
         Row: {
           created_at: string;
@@ -3662,6 +3963,7 @@ export type Database = {
             archived_at: string | null;
             banner: Database['public']['Enums']['space_banner'];
             banner_picture_id: string | null;
+            class_points_on: boolean;
             created_at: string;
             crest_picture_id: string | null;
             deleted_at: string | null;
@@ -7583,6 +7885,7 @@ export type Database = {
           archived_at: string | null;
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
+          class_points_on: boolean;
           created_at: string;
           crest_picture_id: string | null;
           deleted_at: string | null;
@@ -7637,6 +7940,7 @@ export type Database = {
           archived_at?: string | null;
           banner?: Database['public']['Enums']['space_banner'];
           banner_picture_id?: string | null;
+          class_points_on?: boolean;
           created_at?: string;
           crest_picture_id?: string | null;
           deleted_at?: string | null;
@@ -7664,6 +7968,7 @@ export type Database = {
           archived_at?: string | null;
           banner?: Database['public']['Enums']['space_banner'];
           banner_picture_id?: string | null;
+          class_points_on?: boolean;
           created_at?: string;
           crest_picture_id?: string | null;
           deleted_at?: string | null;
@@ -10817,6 +11122,11 @@ export type Database = {
       };
       admin_chapter_text: { Args: { target_chapter_id: string }; Returns: Json };
       admin_claim_case: { Args: { target_case_id: string }; Returns: boolean };
+      admin_class_gifts: {
+        Args: { first_handle?: string; second_handle?: string; target_chapter_id?: string };
+        Returns: Json;
+      };
+      admin_class_point_flags: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_class_spaces: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_classic_chapter: { Args: { target_chapter_code: string }; Returns: Json };
       admin_classic_suggestions: { Args: Record<PropertyKey, never>; Returns: Json };
@@ -10832,6 +11142,7 @@ export type Database = {
         Args: { account_message: string; note_text: string; target_case_id: string };
         Returns: boolean;
       };
+      admin_close_class_point_flag: { Args: { flag_id: string }; Returns: undefined };
       admin_close_data_request: {
         Args: { outcome: string; target_request_id: string };
         Returns: Json;
@@ -11496,6 +11807,7 @@ export type Database = {
         };
         Returns: string;
       };
+      admin_remove_class_gift: { Args: { gift_id: string; reason: string }; Returns: undefined };
       admin_remove_cms_entry: {
         Args: {
           content_kind: string;
@@ -12573,6 +12885,7 @@ export type Database = {
           archived_at: string | null;
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
+          class_points_on: boolean;
           created_at: string;
           crest_picture_id: string | null;
           deleted_at: string | null;
@@ -12778,6 +13091,7 @@ export type Database = {
       check_chapter_pictures: { Args: { body: string; owner_id: string }; Returns: undefined };
       check_chapter_text: { Args: { body: string }; Returns: string };
       check_character_texts: { Args: { allowed_keys: string[]; texts: Json }; Returns: undefined };
+      check_class_note: { Args: { longest: number; value: string }; Returns: string };
       check_comment_text: { Args: { body: string }; Returns: string };
       check_custom_value_keys: {
         Args: { custom: Json; target_story_id: string };
@@ -12812,6 +13126,7 @@ export type Database = {
       claim_story_archive: { Args: { birth_year: number; known_name: string }; Returns: Json };
       class_certificate_crest: { Args: { slug: string }; Returns: Json };
       class_certificates: { Args: { slug: string }; Returns: Json };
+      class_chapter_points: { Args: { target_chapter_id: string }; Returns: Json };
       class_invite: { Args: { slug: string }; Returns: Json };
       class_invite_opens_sign_up: { Args: { code: string }; Returns: boolean };
       class_invite_preview: { Args: { code: string }; Returns: Json };
@@ -12838,6 +13153,61 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      class_points_chapter_space: {
+        Args: { target_chapter_id: string };
+        Returns: {
+          age_group: Database['public']['Enums']['space_age_group'];
+          archived_at: string | null;
+          banner: Database['public']['Enums']['space_banner'];
+          banner_picture_id: string | null;
+          class_points_on: boolean;
+          created_at: string;
+          crest_picture_id: string | null;
+          deleted_at: string | null;
+          description: string;
+          handover_offered_at: string | null;
+          handover_to_user_id: string | null;
+          id: string;
+          joining: Database['public']['Enums']['space_joining'];
+          kind: Database['public']['Enums']['space_kind'];
+          locks_at: string | null;
+          logo_picture_id: string | null;
+          name: string;
+          name_key: string;
+          posting: Database['public']['Enums']['space_posting'];
+          readers: Database['public']['Enums']['space_readers'];
+          rules: string;
+          school_name: string | null;
+          slug: string;
+          updated_at: string;
+          user_id: string;
+          welcome_note: string | null;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'spaces';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      class_points_is_pupil: {
+        Args: {
+          person_id: string;
+          target: Omit<
+            Database['public']['Tables']['spaces']['Row'],
+            Database['public']['Tables']['spaces']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
+      class_points_number: { Args: { fallback: number; setting_key: string }; Returns: number };
+      class_points_spent: {
+        Args: { giver_id: string; skip_chapter_id?: string; target_space_id: string; week: string };
+        Returns: number;
+      };
+      class_points_summary: { Args: { slug: string }; Returns: Json };
+      class_points_table: { Args: { slug: string }; Returns: Json };
+      class_points_week_start: { Args: { moment?: string }; Returns: string };
       class_space_assignments: { Args: { slug: string }; Returns: Json };
       class_space_for_invites: {
         Args: { target_slug: string };
@@ -12846,6 +13216,7 @@ export type Database = {
           archived_at: string | null;
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
+          class_points_on: boolean;
           created_at: string;
           crest_picture_id: string | null;
           deleted_at: string | null;
@@ -12882,6 +13253,7 @@ export type Database = {
           archived_at: string | null;
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
+          class_points_on: boolean;
           created_at: string;
           crest_picture_id: string | null;
           deleted_at: string | null;
@@ -12912,7 +13284,17 @@ export type Database = {
         };
       };
       class_space_stories: { Args: { slug: string }; Returns: Json };
+      class_teacher_points_json: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['class_teacher_points']['Row'],
+            Database['public']['Tables']['class_teacher_points']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
       class_thread_replies: { Args: { target_thread_id: string }; Returns: Json };
+      class_thread_teacher_points: { Args: { target_thread_id: string }; Returns: Json };
       class_waiting_members: { Args: { slug: string }; Returns: Json };
       classic_authors_dying_in: { Args: { died: number }; Returns: Json };
       classic_fix_is_small: {
@@ -13644,6 +14026,7 @@ export type Database = {
         };
         Returns: boolean;
       };
+      flag_class_point_pairs: { Args: { run_at?: string }; Returns: number };
       flag_possible_returning_user: { Args: { new_user_id: string }; Returns: string };
       fold_look_alike_characters: { Args: { name: string }; Returns: string };
       fold_old_daily_totals: { Args: Record<PropertyKey, never>; Returns: number };
@@ -13887,6 +14270,10 @@ export type Database = {
       };
       get_story_page: { Args: { story_slug: string }; Returns: Json };
       get_writer_profile: { Args: { wanted_handle: string }; Returns: Json };
+      give_class_points: {
+        Args: { new_note?: string; new_points: number; target_chapter_id: string };
+        Returns: Json;
+      };
       grant_teacher_badge: { Args: { target_user_id: string }; Returns: undefined };
       greeting_for: {
         Args: { birthday_month: number; greeting_day: string; joined_at: string };
@@ -13955,6 +14342,7 @@ export type Database = {
           archived_at: string | null;
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
+          class_points_on: boolean;
           created_at: string;
           crest_picture_id: string | null;
           deleted_at: string | null;
@@ -15120,6 +15508,7 @@ export type Database = {
           archived_at: string | null;
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
+          class_points_on: boolean;
           created_at: string;
           crest_picture_id: string | null;
           deleted_at: string | null;
@@ -15460,6 +15849,7 @@ export type Database = {
       };
       purge_abuse_image_evidence: { Args: Record<PropertyKey, never>; Returns: number };
       purge_class_certificate_names: { Args: Record<PropertyKey, never>; Returns: number };
+      purge_class_points: { Args: Record<PropertyKey, never>; Returns: number };
       purge_closed_accounts: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_chapters: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_chats: { Args: Record<PropertyKey, never>; Returns: number };
@@ -15825,6 +16215,10 @@ export type Database = {
       reply_to_forum_thread: {
         Args: { body: string; bump?: boolean; quoted_posts?: string[]; thread_number: number };
         Returns: Json;
+      };
+      report_class_points: {
+        Args: { target_chapter_id: string; why?: string };
+        Returns: undefined;
       };
       report_client_error: {
         Args: {
@@ -16265,6 +16659,7 @@ export type Database = {
       set_checks_personal_details: { Args: { should_check: boolean }; Returns: undefined };
       set_class_certificate_crest: { Args: { picture_id?: string; slug: string }; Returns: Json };
       set_class_lock: { Args: { new_locks_at?: string; slug: string }; Returns: Json };
+      set_class_points: { Args: { slug: string; turn_on: boolean }; Returns: Json };
       set_forum_thread_due_date: {
         Args: { due: string; target_thread_id: string };
         Returns: undefined;
@@ -16364,6 +16759,10 @@ export type Database = {
       };
       set_suggest_me: { Args: { should_suggest: boolean }; Returns: undefined };
       set_suggests_from_reading: { Args: { should_suggest: boolean }; Returns: undefined };
+      set_teacher_points: {
+        Args: { new_note?: string; new_points?: number; target_id: string; target_kind: string };
+        Returns: Json;
+      };
       setting_value: { Args: { setting_key: string }; Returns: Json };
       setting_value_problem: { Args: { new_value: Json; old_value: Json }; Returns: string };
       share_options: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
@@ -16465,6 +16864,7 @@ export type Database = {
           archived_at: string | null;
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
+          class_points_on: boolean;
           created_at: string;
           crest_picture_id: string | null;
           deleted_at: string | null;
@@ -16501,6 +16901,7 @@ export type Database = {
           archived_at: string | null;
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
+          class_points_on: boolean;
           created_at: string;
           crest_picture_id: string | null;
           deleted_at: string | null;
@@ -16696,6 +17097,7 @@ export type Database = {
           archived_at: string | null;
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
+          class_points_on: boolean;
           created_at: string;
           crest_picture_id: string | null;
           deleted_at: string | null;
@@ -16737,6 +17139,7 @@ export type Database = {
           archived_at: string | null;
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
+          class_points_on: boolean;
           created_at: string;
           crest_picture_id: string | null;
           deleted_at: string | null;
@@ -17783,7 +18186,9 @@ export type Database = {
         | 'forum_post'
         | 'space'
         | 'space_join_note'
-        | 'reading_list';
+        | 'reading_list'
+        | 'class_point_note'
+        | 'class_teacher_note';
       revision_reason: 'published' | 'edited' | 'restored';
       safety_contact_kind:
         | 'emergency'
@@ -18187,6 +18592,8 @@ export const Constants = {
         'space',
         'space_join_note',
         'reading_list',
+        'class_point_note',
+        'class_teacher_note',
       ],
       revision_reason: ['published', 'edited', 'restored'],
       safety_contact_kind: [

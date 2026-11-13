@@ -17,7 +17,7 @@
  * Who uses it: ThreadPage. What it calls: ForumQuoteBlock, ForumPostText, PostActions,
  * PostEditForm, PostHistory, PostSpaceModeration, RankChip, SignatureBody.
  */
-import { useId, useState } from 'react';
+import { lazy, Suspense, useId, useState } from 'react';
 import { Link } from 'react-router';
 
 import { InfoPill } from '@/components/ui/InfoPill';
@@ -48,7 +48,18 @@ export interface ForumPostCardProps {
   threadTitle: string | null;
   /** The thread page's quote picks, or null when the reader can't reply (S1-E8-03). */
   quotePicks: QuotePicks | null;
+  /**
+   * The thread's row ID when the thread is in a space, otherwise null. A class thread shows
+   * teacher points under its replies (CLASS-POINTS, S1-E8-14).
+   */
+  spaceThreadId: string | null;
 }
+
+/** Teacher points under a reply of a class thread, in their own file (CLASS-POINTS). */
+const ReplyTeacherPoints = lazy(async () => {
+  const module = await import('@/features/class-points/components/ReplyTeacherPoints');
+  return { default: module.ReplyTeacherPoints };
+});
 
 /**
  * The author's username for their avatar, or null for a deleted account.
@@ -208,6 +219,17 @@ export function ForumPostCard(props: ForumPostCardProps) {
         />
       )}
       {mode === 'reading' && <PostSpaceModeration post={post} forumSlug={props.forumSlug} />}
+      {/* CLASS-POINTS: the teacher's points on a pupil's reply; nothing outside a class. */}
+      {mode === 'reading' && props.spaceThreadId !== null && (
+        <Suspense fallback={null}>
+          <ReplyTeacherPoints
+            threadId={props.spaceThreadId}
+            postId={post.id}
+            postNumber={post.number}
+            isMine={post.isMine}
+          />
+        </Suspense>
+      )}
     </article>
   );
 }

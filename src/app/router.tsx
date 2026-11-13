@@ -396,6 +396,15 @@ const staffRoutes: RouteObject = {
         return { Component: StaffCertificatesPage };
       },
     },
+    // Schools › Class points (bundle CLASS-POINTS; S1-E8-16): flags for the moderation team.
+    {
+      path: 'schools/points',
+      lazy: async () => {
+        const { StaffClassPointsPage } =
+          await import('@/features/class-points/components/staff/StaffClassPointsPage');
+        return { Component: StaffClassPointsPage };
+      },
+    },
     // The March test numbers (S1-E15-02): owner and admin; moderators see a pointer to the queue.
     {
       path: 'metrics',
@@ -1068,6 +1077,16 @@ const writeRoutes: RouteObject[] = [
     lazy: async () => {
       const { ClassStoriesPage } = await import('@/features/spaces/components/ClassStoriesPage');
       return { Component: ClassStoriesPage };
+    },
+  },
+  // A class's points table, for its teacher (bundle CLASS-POINTS; S1-E8-14).
+  {
+    path: '/spaces/:spaceSlug/points',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { ClassPointsPage } =
+        await import('@/features/class-points/components/ClassPointsPage');
+      return { Component: ClassPointsPage };
     },
   },
   // A class's certificates, for its teacher (bundle CLASSES, part e; S1-E8-12).

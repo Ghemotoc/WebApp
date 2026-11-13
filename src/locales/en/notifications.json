@@ -124,7 +124,9 @@
     "forum_post": "your forum post",
     "space": "your space",
     "space_join_note": "your note asking to join a space",
-    "reading_list": "your reading list"
+    "reading_list": "your reading list",
+    "class_point_note": "your note with class points",
+    "class_teacher_note": "your note on a pupil’s work"
   },
   "decisions": {
     "no_action": "a moderator checked a report about {{item}} and took no action, so nothing changes.",

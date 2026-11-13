@@ -23,7 +23,7 @@ import {
 
 import { requireClient } from './useMyNames';
 
-/** What the section says after an action, as a key under loginMethods.notes in account.json. */
+/** What the section says after an action, as a key under notes in loginMethods.json. */
 export type LoginMethodNote =
   | 'lastWay'
   | 'actionFailed'
