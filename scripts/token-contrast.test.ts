@@ -98,6 +98,55 @@ const lookTokens = new Map(
     .map((look) => [look, readTokenBlock(`[data-look-swatch='${look}']`)] as const),
 );
 
+/**
+ * Reads one high contrast block (bundle CONTRAST-1). Besides plain colours it follows
+ * "--name: var(--other);", which is how those blocks hand each look's own deep accent to buttons,
+ * links and the focus ring.
+ *
+ * @param selector - the block's last selector line, exactly as written
+ * @param under - the tokens the block lies over (the look by day, or the night set)
+ * @returns the tokens an element ends up with in high contrast
+ */
+function highContrastTokens(selector: string, under: Map<string, string>): Map<string, string> {
+  // Step 1: the block's plain colours over what lies under it.
+  const tokens = layered(under, readTokenBlock(selector));
+  // Step 2: the block's references, each answered from the colours the element now has (the
+  // look's deep accent from under the block, black text from the block itself).
+  const escapedSelector = selector.replace(/[[\]]/g, '\\$&');
+  const startIndex = tokensCss.search(new RegExp(`(^|\\n)${escapedSelector}\\s*\\{`));
+  const block = tokensCss.slice(startIndex, tokensCss.indexOf('\n}', startIndex));
+  for (const match of block.matchAll(/--([a-z0-9-]+):\s*var\(--([a-z0-9-]+)\)\s*;/gi)) {
+    const referenced = match[2] === undefined ? undefined : tokens.get(match[2]);
+    if (match[1] !== undefined && referenced !== undefined) tokens.set(match[1], referenced);
+  }
+  return tokens;
+}
+
+const highContrastLight = "[data-contrast='more'][data-theme='light']";
+const highContrastNight = "[data-contrast='more'][data-theme='night']";
+
+/**
+ * The lines high contrast must reach: text 7:1 (WCAG 2.2, 1.4.6 Contrast (Enhanced)) where the
+ * normal themes reach 4.5:1, and edges 4.5:1 where they reach 3:1 (bundle CONTRAST-1).
+ *
+ * @param tokens - one high contrast set
+ * @returns one line per failing pair (empty when all pass)
+ */
+function failingHighContrastPairs(tokens: Map<string, string>): string[] {
+  return contrastPairs.flatMap((pair) => {
+    const foreground = tokens.get(pair.foreground);
+    const background = tokens.get(pair.background);
+    if (foreground === undefined || background === undefined) {
+      return [`${pair.foreground} on ${pair.background}: token missing`];
+    }
+    const minimumRatio = pair.minimumRatio === 4.5 ? 7 : 4.5;
+    const ratio = contrastRatio(foreground, background);
+    return ratio < minimumRatio
+      ? [`${pair.foreground} on ${pair.background} (${pair.usedFor}): ${ratio.toFixed(2)}`]
+      : [];
+  });
+}
+
 describe('design token contrast', () => {
   it('every token pair meets WCAG 2.2 AA in light mode', () => {
     expect(failingPairs(themes.light)).toEqual([]);
@@ -185,5 +234,73 @@ describe('design token contrast', () => {
       );
       expect(leaking).toEqual([]);
     }
+  });
+  it('reaches 7:1 for text and 4.5:1 for edges in high contrast, with every look (CONTRAST-1)', () => {
+    const looksByDay = new Map([
+      ['lilac', lightTokens],
+      ...[...lookTokens].map(([look, tokens]) => [look, layered(lightTokens, tokens)] as const),
+    ]);
+    for (const [look, day] of looksByDay) {
+      const tokens = highContrastTokens(highContrastLight, day);
+      expect({ look, failing: failingHighContrastPairs(tokens) }).toEqual({ look, failing: [] });
+    }
+  });
+
+  it('reaches the same lines in high contrast at night (CONTRAST-1)', () => {
+    const tokens = highContrastTokens(highContrastNight, nightTokens);
+    expect(failingHighContrastPairs(tokens)).toEqual([]);
+  });
+
+  it('draws high contrast on plain white by day and plain black at night (Robert, 13 Nov 2026)', () => {
+    const day = highContrastTokens(highContrastLight, lightTokens);
+    const night = highContrastTokens(highContrastNight, nightTokens);
+    for (const surface of ['paper', 'surface', 'story-paper']) {
+      expect({ surface, colour: day.get(surface) }).toEqual({ surface, colour: '#ffffff' });
+      expect({ surface, colour: night.get(surface) }).toEqual({ surface, colour: '#000000' });
+    }
+  });
+
+  it('keeps each theme in high contrast as its own deep accent', () => {
+    for (const [look, tokens] of lookTokens) {
+      const day = layered(lightTokens, tokens);
+      const highContrast = highContrastTokens(highContrastLight, day);
+      const deepAccent = day.get('accent-deep');
+      for (const name of ['primary', 'link', 'chip-on', 'plum-from', 'focus-ring', 'logo']) {
+        expect({ look, name, colour: highContrast.get(name) }).toEqual({
+          look,
+          name,
+          colour: deepAccent,
+        });
+      }
+    }
+    // No two themes share a deep accent, so the theme still shows.
+    const deepAccents = [...lookTokens.values()].map((tokens) => tokens.get('accent-deep'));
+    expect(new Set(deepAccents).size).toBe(deepAccents.length);
+  });
+
+  it('gives high contrast the same tokens by day and at night', () => {
+    const dayNames = [...readTokenBlock(highContrastLight).keys()];
+    const nightNames = new Set(readTokenBlock(highContrastNight).keys());
+    // By day the accent tokens are references to the look's deep accent, so they are not plain
+    // colours there; everything the day block sets as a colour, night sets too.
+    expect(dayNames.filter((name) => !nightNames.has(name))).toEqual([]);
+  });
+
+  it('reaches the high contrast lines in the staff area too, with no purple', () => {
+    const staffDay = layered(
+      highContrastTokens(highContrastLight, layered(lightTokens, staffLightTokens)),
+      readTokenBlock("[data-contrast='more'] [data-area='staff']"),
+    );
+    const staffNight = layered(
+      highContrastTokens(
+        highContrastNight,
+        layered(nightTokens, staffLightTokens, staffNightTokens),
+      ),
+      readTokenBlock("[data-contrast='more'] [data-area='staff']"),
+      readTokenBlock("[data-contrast='more'][data-theme='night'] [data-area='staff']"),
+    );
+    expect(failingHighContrastPairs(staffDay)).toEqual([]);
+    expect(failingHighContrastPairs(staffNight)).toEqual([]);
+    expect([...staffDay.values()]).not.toContain('#2a0e33');
   });
 });

@@ -13,6 +13,7 @@
  *   member to another device, is marked on the page before the app's code loads, and shows as on
  *   and fixed on a device that already asks for reduced motion;
  * - the page passes axe at 390, 768 and 1440 px, in both themes and languages.
+ * The "High contrast" switch (bundle CONTRAST-1) has its own file, e2e/high-contrast.spec.ts.
  * Uses the seed persona adult_writer and puts their profile back afterwards.
  */
 import { expect, test, type Browser, type Page } from '@playwright/test';
@@ -32,6 +33,7 @@ function resetAppearance() {
   runSql(`
     update public.profiles
       set look = 'lilac', colour_mode = 'device', seasonal_looks = false, less_motion = false,
+          high_contrast = false,
           appearance_saved_at = null,
           locale = 'en'
       where handle = 'adult_writer';
