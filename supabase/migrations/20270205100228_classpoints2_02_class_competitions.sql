@@ -677,7 +677,9 @@ revoke execute on function public.class_competition_card_json(public.class_compe
  * class_competitions: what a class page says about competitions to the person looking.
  * Input: slug, the class's address.
  * Returns: null for anyone who isn't the teacher or a pupil who may read the class. Otherwise JSON
- *   {role ('teacher' or 'pupil'), grade, winners_allowed, is_archived, running (the competition
+ *   {role ('teacher' or 'pupil'), grade, winners_allowed, is_archived, today (today's date where
+ *   class weeks are counted, so the form starts on a day the database accepts whatever the
+ *   device's clock says), running (the competition
  *   whose results aren't published yet, see class_competition_running_json(), or null),
  *   published (Winner cards, newest first, see class_competition_card_json())}. A competition our
  *   moderators hid is left out for pupils.
@@ -717,6 +719,7 @@ begin
     'grade', space.class_grade,
     'winners_allowed', public.class_winners_allowed(space.class_grade),
     'is_archived', space.archived_at is not null,
+    'today', public.class_today(),
     'running', case when running.id is not null then
       public.class_competition_running_json(running, space, is_teacher) end,
     'published', (

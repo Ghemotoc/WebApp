@@ -75,6 +75,9 @@
     "bannerChangeRequested": "change the banner picture of {{space}} within 24 hours, or it will be removed.",
     "certificateIssued": "your teacher signed a certificate for you in {{space}}. It’s in Certificates.",
     "classArchived": "the class space “{{space}}” is archived. Save your own copies of its certificates within 30 days: then the real names printed on them are deleted.",
+    "classCompetitionWon": "you are the Winner of the class competition in “{{space}}”. Congratulations!",
+    "classReadersChoice": "classmates gave the chapters you entered the most class points in “{{space}}”: Readers’ choice.",
+    "classCompetitionResults": "the results of the class competition in “{{space}}” are out.",
     "staffChangedStory": "we changed {{fields}} of your story “{{story}}”.",
     "staffShowedStory": "your story “{{story}}” can be found again.",
     "staffShowedChapter": "chapter {{number}} of “{{story}}” is shown again.",
@@ -126,7 +129,8 @@
     "space_join_note": "your note asking to join a space",
     "reading_list": "your reading list",
     "class_point_note": "your note with class points",
-    "class_teacher_note": "your note on a pupil’s work"
+    "class_teacher_note": "your note on a pupil’s work",
+    "class_competition": "your class competition"
   },
   "decisions": {
     "no_action": "a moderator checked a report about {{item}} and took no action, so nothing changes.",

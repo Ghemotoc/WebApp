@@ -18764,6 +18764,7 @@ begin
     'grade', space.class_grade,
     'winners_allowed', public.class_winners_allowed(space.class_grade),
     'is_archived', space.archived_at is not null,
+    'today', public.class_today(),
     'running', case when running.id is not null then
       public.class_competition_running_json(running, space, is_teacher) end,
     'published', (

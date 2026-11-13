@@ -15,7 +15,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(62);
+select plan(63);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -87,6 +87,8 @@ select is(pg_temp.hint_of($$select public.set_class_grade('clasa-a-ix-a-c', 14)$
   'a school year is 1 to 13');
 select is(public.set_class_grade('clasa-a-ix-a-c', 9) ->> 'winners_allowed', 'true',
   'the 9th grade has a Winner and Finalists');
+select is((public.class_competitions('clasa-a-ix-a-c') ->> 'today')::date, pg_temp.today(),
+  'the class page carries today''s date as the database counts it, for the form''s first day');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000002');
 select is(pg_temp.hint_of($$select public.set_class_grade('clasa-a-ix-a-c', 5)$$), 'space:not_allowed',
   'a pupil can''t set the school year');

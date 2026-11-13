@@ -1089,6 +1089,32 @@ const writeRoutes: RouteObject[] = [
       return { Component: ClassPointsPage };
     },
   },
+  // A class competition, for its teacher (bundle CLASS-POINTS, part 2; S1-E8-15, 17 and 19):
+  // the form, the teacher's criteria templates and the results. One file holds the three pages.
+  {
+    path: '/spaces/:spaceSlug/competition',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const pages = await import('@/features/class-competitions/competitionPages');
+      return { Component: pages.CompetitionFormPage };
+    },
+  },
+  {
+    path: '/spaces/:spaceSlug/competition/templates',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const pages = await import('@/features/class-competitions/competitionPages');
+      return { Component: pages.CriteriaTemplatesPage };
+    },
+  },
+  {
+    path: '/spaces/:spaceSlug/competition/:competitionId/results',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const pages = await import('@/features/class-competitions/competitionPages');
+      return { Component: pages.CompetitionResultsPage };
+    },
+  },
   // A class's certificates, for its teacher (bundle CLASSES, part e; S1-E8-12).
   {
     path: '/spaces/:spaceSlug/certificates',

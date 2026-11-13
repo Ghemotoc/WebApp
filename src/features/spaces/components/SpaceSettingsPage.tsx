@@ -15,7 +15,8 @@
  * database checks again. A new name keeps the space's address, so links to it still work.
  * What it calls: useSpace → space_page(); useUpdateSpace → update_space(); SpaceLogoCard; SpaceBannerPictureCard;
  * SpaceModeratorsCard; ClassInviteCard; ClassWaitingCard; ClassLockCard; ClassArchiveCard; and the
- * teacher's ClassCertificatesCard (CLASSES-e, S1-E8-12); SpaceWelcomeNoteCard → set_space_welcome_note(),
+ * teacher's ClassPointsSettingsCard and ClassGradeCard (the class's school year; CLASS-POINTS; S1-E8-15) and
+ * ClassCertificatesCard (CLASSES-e, S1-E8-12); SpaceWelcomeNoteCard → set_space_welcome_note(),
  * the welcome note new members see once (bundle 14d IDEAS-3, part d), for the settings power.
  */
 import { useState } from 'react';
@@ -24,6 +25,7 @@ import { useParams } from 'react-router';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { ClassCertificatesCard } from '@/features/certificates/components/ClassCertificatesCard';
+import { ClassGradeCard } from '@/features/class-competitions/components/ClassGradeCard';
 import { ClassPointsSettingsCard } from '@/features/class-points/components/ClassPointsSettingsCard';
 
 import type { Space, SpaceSettings } from '../api/spaces';
@@ -115,6 +117,7 @@ function ClassCards({ space }: { space: Space }) {
       {canManage && <ClassLockCard space={space} />}
       {canManage && <ClassArchiveCard space={space} />}
       {space.viewer.membership === 'owner' && <ClassPointsSettingsCard slug={space.slug} />}
+      {space.viewer.membership === 'owner' && <ClassGradeCard slug={space.slug} />}
       {space.viewer.membership === 'owner' && <ClassCertificatesCard slug={space.slug} />}
     </>
   );

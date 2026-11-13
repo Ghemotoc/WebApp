@@ -58,6 +58,13 @@ const knownActions = [
   'teacher_points_removed',
   'class_points_reported',
   'class_points_removed',
+  // The class's school year and its competitions (bundle CLASS-POINTS, part 2; S1-E8-15 and 17).
+  'class_grade_set',
+  'competition_started',
+  'competition_changed',
+  'competition_ended',
+  'competition_deleted',
+  'competition_published',
 ];
 
 /**

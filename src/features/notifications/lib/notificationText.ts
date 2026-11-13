@@ -621,6 +621,37 @@ function classArchivedText(t: TFunction, notification: AppNotification): Notific
   };
 }
 
+/** The words for each class competition notice (bundle CLASS-POINTS, part 2; S1-E8-15). */
+const classCompetitionWhat = {
+  class_competition_won: 'what.classCompetitionWon',
+  class_readers_choice: 'what.classReadersChoice',
+  class_competition_results: 'what.classCompetitionResults',
+} as const;
+
+/**
+ * A class competition's results are out: the Winner is told they won, a Readers' choice pupil
+ * that classmates gave their chapters the most points, and everyone else in the class that the
+ * results are out (S1-E8-15 criterion 10: the Winner is told first, then the class). The row
+ * names the class only, never a score, and links to the class page, where the Winner card is.
+ *
+ * @param t - the notifications translation function
+ * @param notification - a class_competition_won, class_readers_choice or
+ *   class_competition_results row
+ * @returns the row's words
+ */
+function classCompetitionText(t: TFunction, notification: AppNotification): NotificationText {
+  const space = notification.space;
+  const kind = notification.kind as keyof typeof classCompetitionWhat;
+  return {
+    who: t('who.yourAccount'),
+    what: t(classCompetitionWhat[kind], { space: space?.name ?? '' }),
+    quote: null,
+    grouped: null,
+    actionLabel: space === null ? null : t('actions.openSpace'),
+    href: space === null ? null : `/spaces/${space.slug}`,
+  };
+}
+
 /** The kinds with words of their own (the team's, the account's and the spaces') and the function for each. */
 const teamTextFor: Partial<
   Record<AppNotification['kind'], (t: TFunction, notification: AppNotification) => NotificationText>
@@ -646,6 +677,9 @@ const teamTextFor: Partial<
   customisation_change_requested: changeRequestText,
   certificate_issued: certificateIssuedText,
   class_archived: classArchivedText,
+  class_competition_won: classCompetitionText,
+  class_readers_choice: classCompetitionText,
+  class_competition_results: classCompetitionText,
   story_changed_by_staff: staffChangeText,
   data_request_confirm: dataRequestNoticeText,
   data_request_extended: dataRequestNoticeText,
