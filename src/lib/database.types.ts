@@ -1163,6 +1163,7 @@ export type Database = {
       };
       certificates: {
         Row: {
+          award_slot: number;
           class_name: string | null;
           code: string;
           contest_id: string | null;
@@ -1193,6 +1194,7 @@ export type Database = {
         ComputedFields:
           'certificate_crest_json' | 'certificate_name_deleted_on' | 'certificate_status';
         Insert: {
+          award_slot?: never;
           class_name?: string | null;
           code: string;
           contest_id?: string | null;
@@ -1218,6 +1220,7 @@ export type Database = {
           user_id: string;
         };
         Update: {
+          award_slot?: never;
           class_name?: string | null;
           code?: string;
           contest_id?: string | null;
@@ -13418,6 +13421,18 @@ export type Database = {
       check_chapter_pictures: { Args: { body: string; owner_id: string }; Returns: undefined };
       check_chapter_text: { Args: { body: string }; Returns: string };
       check_character_texts: { Args: { allowed_keys: string[]; texts: Json }; Returns: undefined };
+      check_class_certificate_result: {
+        Args: {
+          clean_programme: string;
+          space: Omit<
+            Database['public']['Tables']['spaces']['Row'],
+            Database['public']['Tables']['spaces']['ComputedFields']
+          >;
+          student_id: string;
+          wanted_result: Database['public']['Enums']['certificate_result'];
+        };
+        Returns: undefined;
+      };
       check_class_criteria: { Args: { criteria: Json }; Returns: Json };
       check_class_note: { Args: { longest: number; value: string }; Returns: string };
       check_class_plain_text: {
@@ -18581,7 +18596,7 @@ export type Database = {
         | 'returning_user';
       case_status: 'open' | 'decided';
       case_tier: 'one_hour' | 'same_day' | 'two_days' | 'seven_days';
-      certificate_result: 'participant' | 'finalist' | 'winner';
+      certificate_result: 'participant' | 'finalist' | 'winner' | 'readers_choice';
       chapter_status: 'draft' | 'scheduled' | 'published';
       classic_kind: 'novel' | 'short_story' | 'fairy_tale' | 'poem' | 'play' | 'essay';
       comment_deleted_by: 'author' | 'writer';
@@ -18979,7 +18994,7 @@ export const Constants = {
       ],
       case_status: ['open', 'decided'],
       case_tier: ['one_hour', 'same_day', 'two_days', 'seven_days'],
-      certificate_result: ['participant', 'finalist', 'winner'],
+      certificate_result: ['participant', 'finalist', 'winner', 'readers_choice'],
       chapter_status: ['draft', 'scheduled', 'published'],
       classic_kind: ['novel', 'short_story', 'fairy_tale', 'poem', 'play', 'essay'],
       comment_deleted_by: ['author', 'writer'],

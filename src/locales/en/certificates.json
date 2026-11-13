@@ -1,8 +1,9 @@
 {
   "results": {
-    "participant": "Took part",
+    "participant": "Contestant",
     "finalist": "Finalist",
-    "winner": "Winner"
+    "winner": "Winner",
+    "readers_choice": "Readers’ choice"
   },
   "my": {
     "documentTitle": "Certificates",
@@ -52,7 +53,10 @@
       "archived": "We couldn’t save the name. Try again.",
       "reason": "We couldn’t save the name. Try again.",
       "look": "We couldn’t save the name. Try again.",
-      "crest": "We couldn’t save the name. Try again."
+      "crest": "We couldn’t save the name. Try again.",
+      "no_winners": "We couldn’t save the name. Try again.",
+      "readers_choice": "We couldn’t save the name. Try again.",
+      "competition_result": "We couldn’t save the name. Try again."
     }
   },
   "sheet": {
@@ -77,7 +81,8 @@
     "forContestFinalist": "for reaching the final of the writing contest “{{programme}}”.",
     "forContestParticipant": "for taking part in the writing contest “{{programme}}”.",
     "contestLabel": "Writing contest",
-    "contestFooter": "Writing contest run by {{productName}}. Signed by {{productName}}."
+    "contestFooter": "Writing contest run by {{productName}}. Signed by {{productName}}.",
+    "forReadersChoice": "for Readers’ choice in “{{programme}}”, in {{className}}."
   },
   "verify": {
     "documentTitle": "Check a certificate",
@@ -121,7 +126,7 @@
       "not_allowed": "Only the class’s teacher signs its certificates.",
       "teacher_only": "Only the class’s teacher signs its certificates.",
       "not_member": "Certificates go only to the class’s students.",
-      "result": "Choose taking part, finalist or winner.",
+      "result": "Choose Contestant, Finalist or Winner.",
       "programme": "Name the programme in 1 to 120 characters.",
       "empty": "Choose a result for at least one student.",
       "archived": "This class is archived, so it issues no more certificates.",
@@ -132,8 +137,16 @@
       "reason": "We couldn’t sign the certificates. Try again.",
       "unreachable": "We couldn’t sign the certificates. Try again.",
       "look": "Choose a colour and a pattern from the list.",
-      "crest": "Upload the school’s crest first, or choose the cat."
-    }
+      "crest": "Upload the school’s crest first, or choose the cat.",
+      "no_winners": "In this school year nobody is Winner or Finalist.",
+      "readers_choice": "Readers’ choice comes only from the confirmed results of a competition.",
+      "competition_result": "This programme is a confirmed competition, so each certificate says what was confirmed there. Open it from the Winner card."
+    },
+    "fromCompetition": "Results of the competition “{{name}}”. They are confirmed and locked, so they can’t change here.",
+    "competitionIntro": "Approving signs one certificate per entrant, and a second one for Readers’ choice. The approval is an electronic signature: the teacher’s name prints as the second signatory, with “signed electronically” and the date.",
+    "competitionResultsTitle": "Confirmed results",
+    "noEntrants": "Nobody joined this competition, so there is nothing to sign.",
+    "otherProgramme": "Sign another programme"
   },
   "settingsCard": {
     "eyebrow": "Class programme",

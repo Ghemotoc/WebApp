@@ -6,7 +6,7 @@
  * chapter; the Readers' choice pen names beside it; no other name, score or number. An entrant
  * also reads their own result. Below the 8th grade there is no Winner, so it says the results
  * are out and every entrant is a Contestant. The teacher gets the links to the results and to
- * the certificates.
+ * the certificates, which open with this competition's results filled in (S1-E8-17).
  * Who shows it: ClassCompetitionCard. What it calls: nothing.
  */
 import { Link } from 'react-router';
@@ -104,7 +104,10 @@ export function WinnerCard({ card, slug, isTeacher }: WinnerCardProps) {
           >
             {t('winner.seeResults')}
           </Link>
-          <Link to={`/spaces/${slug}/certificates`} className="font-semibold text-link underline">
+          <Link
+            to={`/spaces/${slug}/certificates?competition=${card.id}`}
+            className="font-semibold text-link underline"
+          >
             {t('winner.issueCertificates')}
           </Link>
         </div>

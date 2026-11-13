@@ -40,6 +40,9 @@ function CertificateRow({ certificate }: { certificate: MyCertificate }) {
       <h2 className="m-0 font-heading text-xl font-bold text-heading">
         <Link to={`/certificates/${certificate.id}`} className="text-link underline">
           {t('my.open', { programme: certificate.programmeName })}
+          {/* Two certificates can share a programme (a result and Readers' choice, S1-E8-17),
+              so a screen reader also hears which one this link opens. */}
+          <span className="sr-only">, {t(`results.${certificate.result}`)}</span>
         </Link>
       </h2>
       <p className="m-0 text-body">

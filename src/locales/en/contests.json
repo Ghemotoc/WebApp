@@ -211,7 +211,7 @@
       "publishedOn": "Results published on {{date}}. The landing page shows the winners and finalists by pen name.",
       "placingFor": "Placing for {{name}}",
       "placings": {
-        "none": "None",
+        "none": "Contestant",
         "finalist": "Finalist",
         "winner": "Winner"
       },

@@ -31,3 +31,9 @@ Certificate-Participation and Certificate-Winner). Contests (S1-E12-02) will iss
   from Staff › Contests (`src/features/contests/`).
 - Texts: the `certificates` namespace (`src/locales/*/certificates.json`), registered by
   `registerCertificatesTranslations.ts` when a certificate screen first renders.
+- Certificates from a class competition (CLASS-POINTS part 3; S1-E8-17): the Winner card opens
+  `ClassCertificatesPage` with `?competition=<id>`, and `CompetitionCertificatesForm` lists the
+  confirmed results read-only (Winner, Finalist, Contestant, and Readers' choice as a second
+  certificate). `lib/competitionCertificates.ts` turns them into the list the database takes;
+  `IssueAnswer.tsx` is the answer under "Approve and sign", shared with `ClassResultsForm`. The
+  database checks every line against the competition's results.

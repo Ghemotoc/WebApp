@@ -249,7 +249,8 @@ COMMENT ON TYPE "public"."case_tier" IS 'How fast a case must be handled: 1 hour
 CREATE TYPE "public"."certificate_result" AS ENUM (
     'participant',
     'finalist',
-    'winner'
+    'winner',
+    'readers_choice'
 );
 
 
@@ -16380,6 +16381,11 @@ CREATE TABLE IF NOT EXISTS "public"."certificates" (
     "look_seal" "text" DEFAULT 'cat'::"text" NOT NULL,
     "look_crest_colours" "text" DEFAULT 'own'::"text" NOT NULL,
     "crest_picture_id" "uuid",
+    "award_slot" smallint GENERATED ALWAYS AS (
+CASE
+    WHEN ("result" = 'readers_choice'::"public"."certificate_result") THEN 2
+    ELSE 1
+END) STORED NOT NULL,
     CONSTRAINT "certificates_class_or_contest" CHECK ((("contest_id" IS NULL) OR ("space_id" IS NULL))),
     CONSTRAINT "certificates_class_prints_class_and_teacher" CHECK ((("contest_id" IS NOT NULL) OR (("class_name" IS NOT NULL) AND ("teacher_name" IS NOT NULL)))),
     CONSTRAINT "certificates_crest_matches_seal" CHECK ((("look_seal" = 'crest'::"text") OR ("crest_picture_id" IS NULL))),
@@ -16422,6 +16428,10 @@ COMMENT ON COLUMN "public"."certificates"."look_crest_colours" IS 'A crest in it
 
 
 COMMENT ON COLUMN "public"."certificates"."crest_picture_id" IS 'The crest the certificate was signed with, when the seal shows one (G13b).';
+
+
+
+COMMENT ON COLUMN "public"."certificates"."award_slot" IS 'Worked out from the result: 1 for Winner, Finalist or Contestant, 2 for Readers'' choice, so one pupil can hold both for one programme (S1-E8-17).';
 
 
 
@@ -16499,8 +16509,9 @@ CREATE OR REPLACE FUNCTION "public"."certificate_result_from"("typed" "text") RE
     SET "search_path" TO ''
     AS $$
 begin
-  if typed is null or typed not in ('participant', 'finalist', 'winner') then
-    raise exception 'Choose taking part, finalist or winner.' using errcode = 'check_violation', hint = 'certificate:result';
+  if typed is null or typed not in ('participant', 'finalist', 'winner', 'readers_choice') then
+    raise exception 'Choose Contestant, Finalist, Winner or Readers'' choice.'
+      using errcode = 'check_violation', hint = 'certificate:result';
   end if;
   return typed::public.certificate_result;
 end;
@@ -17680,6 +17691,54 @@ ALTER FUNCTION "public"."check_character_texts"("texts" "jsonb", "allowed_keys" 
 
 
 COMMENT ON FUNCTION "public"."check_character_texts"("texts" "jsonb", "allowed_keys" "text"[]) IS 'Internal: refuses unknown keys, values that aren''t text and text over 20,000 characters (S1-E17-09, S1-E17-10).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."check_class_certificate_result"("space" "public"."spaces", "student_id" "uuid", "clean_programme" "text", "wanted_result" "public"."certificate_result") RETURNS "void"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  has_competition boolean;
+  is_confirmed boolean;
+begin
+  -- Step 1: the school year's rule.
+  if wanted_result in ('winner', 'finalist') and space.class_grade is not null
+     and not public.class_winners_allowed(space.class_grade) then
+    raise exception 'In this school year nobody is Winner or Finalist.'
+      using errcode = 'check_violation', hint = 'certificate:no_winners';
+  end if;
+  -- Step 2: is the programme a confirmed competition of this class, and what did the teacher
+  -- confirm for this pupil there?
+  select count(*) > 0,
+         coalesce(bool_or(results.pupil_user_id is not null and (
+           (wanted_result = 'readers_choice' and results.readers_choice)
+           or (wanted_result <> 'readers_choice' and results.result = wanted_result))), false)
+    into has_competition, is_confirmed
+  from public.class_competitions as competitions
+  left join public.class_competition_results as results
+    on results.competition_id = competitions.id and results.pupil_user_id = student_id
+  where competitions.space_id = space.id and competitions.published_at is not null
+    -- Capitals don't make it another programme: "Spring Contest" is "spring contest".
+    and lower(competitions.name) = lower(clean_programme);
+  -- Step 3: Readers' choice comes only from a competition.
+  if wanted_result = 'readers_choice' and not is_confirmed then
+    raise exception 'Readers'' choice comes from a class competition''s results.'
+      using errcode = 'check_violation', hint = 'certificate:readers_choice';
+  end if;
+  -- Step 4: a competition's certificate says what was confirmed.
+  if has_competition and not is_confirmed then
+    raise exception 'This certificate must match the competition''s confirmed results.'
+      using errcode = 'check_violation', hint = 'certificate:competition_result';
+  end if;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."check_class_certificate_result"("space" "public"."spaces", "student_id" "uuid", "clean_programme" "text", "wanted_result" "public"."certificate_result") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."check_class_certificate_result"("space" "public"."spaces", "student_id" "uuid", "clean_programme" "text", "wanted_result" "public"."certificate_result") IS 'Internal: a class certificate follows the school year''s rule and, for a competition, its confirmed results (S1-E8-17).';
 
 
 
@@ -28482,10 +28541,12 @@ begin
   end if;
   select public.display_name(profiles.handle, profiles.pen_name) into teacher_display
   from public.profiles where profiles.id = space.user_id;
-  -- Step 3: one certificate per student named; a second approval changes the result or the look.
+  -- Step 3: one certificate per student and slot; a second approval changes the result or the
+  -- look. Each line must fit the school year and the competition's results (S1-E8-17).
   for entry in select value from jsonb_array_elements(results) loop
     student_id := public.certificate_student_id(space, entry ->> 'handle');
     wanted_result := public.certificate_result_from(entry ->> 'result');
+    perform public.check_class_certificate_result(space, student_id, clean_programme, wanted_result);
     issued_id := public.write_class_certificate(space, student_id, clean_programme, wanted_result,
       teacher_display, array[chosen.colour, chosen.pattern, chosen.seal, chosen.crest_colours]);
     if issued_id is not null then
@@ -55052,7 +55113,8 @@ CREATE TABLE IF NOT EXISTS "public"."class_competition_results" (
     "winning_chapter_id" "uuid",
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     CONSTRAINT "class_competition_results_chapter_only_winner" CHECK ((("winning_chapter_id" IS NULL) OR ("result" = 'winner'::"public"."certificate_result"))),
-    CONSTRAINT "class_competition_results_not_own" CHECK (("user_id" <> "pupil_user_id"))
+    CONSTRAINT "class_competition_results_not_own" CHECK (("user_id" <> "pupil_user_id")),
+    CONSTRAINT "class_competition_results_result_is_placing" CHECK (("result" = ANY (ARRAY['winner'::"public"."certificate_result", 'finalist'::"public"."certificate_result", 'participant'::"public"."certificate_result"])))
 );
 
 
@@ -55061,6 +55123,10 @@ ALTER TABLE "public"."class_competition_results" OWNER TO "postgres";
 
 COMMENT ON TABLE "public"."class_competition_results" IS 'kind: user_action
 The result the teacher confirmed for one entrant of a class competition: Winner, Finalist or Contestant, and whether they are the Readers'' choice (S1-E8-15). The class sees only the Winner card through class_competitions(); an entrant reads their own result there.';
+
+
+
+COMMENT ON CONSTRAINT "class_competition_results_result_is_placing" ON "public"."class_competition_results" IS 'A competition result is Winner, Finalist or Contestant; Readers'' choice is the flag beside it (S1-E8-15).';
 
 
 
@@ -57917,7 +57983,7 @@ ALTER TABLE ONLY "public"."certificates"
 
 
 ALTER TABLE ONLY "public"."certificates"
-    ADD CONSTRAINT "certificates_one_per_programme" UNIQUE ("user_id", "space_id", "programme_name");
+    ADD CONSTRAINT "certificates_one_per_programme" UNIQUE ("user_id", "space_id", "programme_name", "award_slot");
 
 
 
@@ -68235,6 +68301,10 @@ REVOKE ALL ON FUNCTION "public"."check_chapter_text"("body" "text") FROM PUBLIC;
 
 
 REVOKE ALL ON FUNCTION "public"."check_character_texts"("texts" "jsonb", "allowed_keys" "text"[]) FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."check_class_certificate_result"("space" "public"."spaces", "student_id" "uuid", "clean_programme" "text", "wanted_result" "public"."certificate_result") FROM PUBLIC;
 
 
 

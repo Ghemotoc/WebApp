@@ -47,6 +47,7 @@ const reasonKeys = {
   winner: 'sheet.forWinner',
   finalist: 'sheet.forFinalist',
   participant: 'sheet.forParticipant',
+  readers_choice: 'sheet.forReadersChoice',
 } as const;
 
 /** The same sentence for a writing contest, which has no class (CONTESTS-13b2c). */
@@ -54,6 +55,8 @@ const contestReasonKeys = {
   winner: 'sheet.forContestWinner',
   finalist: 'sheet.forContestFinalist',
   participant: 'sheet.forContestParticipant',
+  // A writing contest has no Readers' choice; the key is here only so every result has a sentence.
+  readers_choice: 'sheet.forContestParticipant',
 } as const;
 
 /**

@@ -1,8 +1,9 @@
 {
   "results": {
-    "participant": "Participare",
-    "finalist": "Calificare în finală",
-    "winner": "Locul întâi"
+    "participant": "Concurent",
+    "finalist": "Finalist",
+    "winner": "Câștigător",
+    "readers_choice": "Alegerea cititorilor"
   },
   "my": {
     "documentTitle": "Diplome",
@@ -52,7 +53,10 @@
       "archived": "Nu am putut salva numele. Încearcă din nou.",
       "reason": "Nu am putut salva numele. Încearcă din nou.",
       "look": "Nu am putut salva numele. Încearcă din nou.",
-      "crest": "Nu am putut salva numele. Încearcă din nou."
+      "crest": "Nu am putut salva numele. Încearcă din nou.",
+      "no_winners": "Nu am putut salva numele. Încearcă din nou.",
+      "readers_choice": "Nu am putut salva numele. Încearcă din nou.",
+      "competition_result": "Nu am putut salva numele. Încearcă din nou."
     }
   },
   "sheet": {
@@ -77,7 +81,8 @@
     "forContestFinalist": "pentru calificarea în finala concursului de scriere „{{programme}}”.",
     "forContestParticipant": "pentru participarea la concursul de scriere „{{programme}}”.",
     "contestLabel": "Concurs de scriere",
-    "contestFooter": "Concurs de scriere organizat de {{productName}}. Semnată de {{productName}}."
+    "contestFooter": "Concurs de scriere organizat de {{productName}}. Semnată de {{productName}}.",
+    "forReadersChoice": "pentru Alegerea cititorilor la „{{programme}}”, la {{className}}."
   },
   "verify": {
     "documentTitle": "Verifică o diplomă",
@@ -121,7 +126,7 @@
       "not_allowed": "Doar cadrul didactic al clasei semnează diplomele.",
       "teacher_only": "Doar cadrul didactic al clasei semnează diplomele.",
       "not_member": "Diplomele se dau doar elevilor clasei.",
-      "result": "Alege participare, calificare în finală sau locul întâi.",
+      "result": "Alege Concurent, Finalist sau Câștigător.",
       "programme": "Numește programul în 1–120 de caractere.",
       "empty": "Alege un rezultat pentru cel puțin un elev.",
       "archived": "Clasa este arhivată, așa că nu mai emite diplome.",
@@ -132,8 +137,16 @@
       "reason": "Nu am putut semna diplomele. Încearcă din nou.",
       "unreachable": "Nu am putut semna diplomele. Încearcă din nou.",
       "look": "Alege o culoare și un model din listă.",
-      "crest": "Încarcă mai întâi stema școlii sau alege pisica."
-    }
+      "crest": "Încarcă mai întâi stema școlii sau alege pisica.",
+      "no_winners": "În acest an școlar nimeni nu este Câștigător sau Finalist.",
+      "readers_choice": "Alegerea cititorilor vine doar din rezultatele confirmate ale unui concurs.",
+      "competition_result": "Acest program este un concurs confirmat, așa că fiecare diplomă spune ce s-a confirmat acolo. Deschide-l din cardul Câștigător."
+    },
+    "fromCompetition": "Rezultatele concursului „{{name}}”. Sunt confirmate și blocate, așa că nu se pot schimba aici.",
+    "competitionIntro": "Aprobarea semnează câte o diplomă pentru fiecare elev înscris și încă una pentru Alegerea cititorilor. Aprobarea este o semnătură electronică: numele cadrului didactic apare ca al doilea semnatar, cu „semnat electronic” și data.",
+    "competitionResultsTitle": "Rezultate confirmate",
+    "noEntrants": "Nimeni nu s-a înscris la acest concurs, așa că nu este nimic de semnat.",
+    "otherProgramme": "Semnează alt program"
   },
   "settingsCard": {
     "eyebrow": "Program al clasei",

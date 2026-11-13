@@ -211,7 +211,7 @@
       "publishedOn": "Rezultate publicate pe {{date}}. Pagina de prezentare arată înscrierile câștigătoare și pe cele din finală, după pseudonim.",
       "placingFor": "Rezultat pentru {{name}}",
       "placings": {
-        "none": "Fără loc",
+        "none": "Concurent",
         "finalist": "În finală",
         "winner": "Câștigă"
       },
