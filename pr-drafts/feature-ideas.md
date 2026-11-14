@@ -104,3 +104,6 @@ Twelve ideas IDEA-20261112-1 to 12: new chapters from followed stories in one qu
 
 ### Sent 13 Nov 2026 (doc tabs by category in "Ghemotoc feature ideas"; Notion Feature ideas database)
 IDEA-20261113-1 Set a story aside; -2 A "New voices" shelf; -3 Find and replace across a story; -4 Where my readers are; -5 Collapse a long reply thread; -6 Thread templates for feedback requests; -7 Likes gathered into one notification a day; -8 A class reading log; -9 Hide like and read counts from myself; -10 Sign in with a passkey; -11 Print my own draft for proofreading; -12 A "Less motion" switch in settings; -13 British or American spelling on an English story.
+
+### Sent 14 Nov 2026 (doc tabs by category in "Ghemotoc feature ideas"; Notion Feature ideas database)
+IDEA-20261114-1 Start a story again and keep the first read; -2 Leave out stories I have finished; -3 Line up drafts to publish on a rhythm; -4 How readers found this story; -5 A bookshelf in a space; -6 Away until a date; -7 Start next year's class from this one; -8 A term summary per pupil for a parent meeting; -9 "Is it still happening?" after a report; -10 Remove my comments in one go; -11 Credit a translator.
