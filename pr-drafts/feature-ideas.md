@@ -107,3 +107,6 @@ IDEA-20261113-1 Set a story aside; -2 A "New voices" shelf; -3 Find and replace 
 
 ### Sent 14 Nov 2026 (doc tabs by category in "Ghemotoc feature ideas"; Notion Feature ideas database)
 IDEA-20261114-1 Start a story again and keep the first read; -2 Leave out stories I have finished; -3 Line up drafts to publish on a rhythm; -4 How readers found this story; -5 A bookshelf in a space; -6 Away until a date; -7 Start next year's class from this one; -8 A term summary per pupil for a parent meeting; -9 "Is it still happening?" after a report; -10 Remove my comments in one go; -11 Credit a translator.
+
+### Sent 15 Nov 2026 (doc tabs by category in "Ghemotoc feature ideas"; Notion Feature ideas database)
+IDEA-20261115-1 A private line about a story I finished; -2 More from writers I follow; -3 "New since your last visit" in comments; -4 Slow mode for a heated thread; -5 A second teacher for a class; -6 Keep my profile out of search and suggestions; -7 A large-print copy of my story; -8 School years named the local way.
