@@ -8418,19 +8418,38 @@ begin
   if work is null then
     raise exception 'That isn''t a classic.' using errcode = 'no_data_found', hint = 'not_a_classic';
   end if;
-  -- Step 1: free in Romania today, or it stays a draft (Law 8/1996 art. 28(1)).
+  -- Step 1: a translation says why it may be shown.
+  if (work ->> 'edition_of_story_id' is not null or work ->> 'language_code' <> work ->> 'original_language')
+     and work ->> 'translation_rights' is null then
+    raise exception 'Choose the translation rights first.'
+      using errcode = 'check_violation', hint = 'translation_rights_missing';
+  end if;
+  if work ->> 'translation_rights' = 'public_domain' and work ->> 'translator_name' is not null
+     and work ->> 'translator_died_year' is null then
+    raise exception 'Add the year the translator died.'
+      using errcode = 'check_violation', hint = 'translator_year_missing';
+  end if;
+  -- Step 2: free in Romania today, or it stays a draft (Law 8/1996 art. 28(1)).
   if not (work -> 'free_markets' ->> 'RO')::boolean then
     raise exception 'This work isn''t in the public domain in Romania yet.'
       using errcode = 'check_violation', hint = 'not_free_in_romania';
   end if;
-  -- Step 2: a work from a research list is checked by a person before it goes live (16b).
+  -- Step 3: a work from a research list is checked by a person before it goes live (16b).
   if not (work ->> 'details_checked')::boolean then
     raise exception 'Check and save the details first.' using errcode = 'check_violation', hint = 'details_unchecked';
   end if;
   if jsonb_array_length(work -> 'chapters') = 0 then
     raise exception 'Add the text first.' using errcode = 'check_violation', hint = 'no_chapters';
   end if;
-  -- Step 3: every chapter that isn't live goes live, in order.
+  -- Step 4: an edition follows its original: every chapter it translates must be live already.
+  if exists (select 1 from public.chapters as translated
+      join public.chapters as original on original.id = translated.translation_of_chapter_id
+      where translated.story_id = target_story_id and translated.deleted_at is null
+        and (original.status <> 'published' or original.deleted_at is not null)) then
+    raise exception 'Publish the original first.'
+      using errcode = 'check_violation', hint = 'original_not_published';
+  end if;
+  -- Step 5: every chapter that isn't live goes live, in order.
   for chapter in select * from public.chapters
     where chapters.story_id = target_story_id and chapters.deleted_at is null and chapters.status <> 'published'
     order by chapters.position
@@ -10137,25 +10156,39 @@ CREATE OR REPLACE FUNCTION "public"."admin_save_classic_work"("details" "jsonb",
     AS $$
 declare
   before_values jsonb := case when target_story_id is null then null else public.classic_work_json(target_story_id) end;
+  first_edition_id uuid;
   saved_story_id uuid;
 begin
   perform public.require_classics_staff();
-  -- Step 1: the story itself (title, rating, category, author byline).
+  -- Step 1: an edition (an existing one, or a new one that names its classic) is completed from
+  -- its first edition.
+  if target_story_id is null then
+    first_edition_id := nullif(details ->> 'edition_of_story_id', '')::uuid;
+  else
+    select stories.edition_of_story_id into first_edition_id from public.stories where stories.id = target_story_id;
+  end if;
+  if first_edition_id is not null then
+    details := public.classic_edition_details(first_edition_id, target_story_id, details);
+  end if;
+  -- Step 2: the story itself (title, rating, category, author byline).
   saved_story_id := public.classic_upsert_story(target_story_id, details, public.classic_story_category(details));
-  -- Step 2: the public-domain details, kept beside it. A person saved them, so they are checked.
+  -- Step 3: the public-domain details, kept beside it. A person saved them, so they are checked.
   insert into public.classic_works (story_id, kind, original_language, source_title, source_url,
-    translator_name, translator_died_year, first_published_year, added_by_user_id, details_checked)
+    translator_name, translator_died_year, translation_rights, first_published_year,
+    added_by_user_id, details_checked)
   values (saved_story_id, (details ->> 'kind')::public.classic_kind, details ->> 'original_language',
     btrim(details ->> 'source_title'), btrim(details ->> 'source_url'),
     nullif(btrim(coalesce(details ->> 'translator_name', '')), ''),
-    (details ->> 'translator_died_year')::integer, (details ->> 'first_published_year')::integer,
-    (select auth.uid()), true)
+    (details ->> 'translator_died_year')::integer,
+    nullif(details ->> 'translation_rights', ''),
+    (details ->> 'first_published_year')::integer, (select auth.uid()), true)
   on conflict (story_id) do update set kind = excluded.kind,
     original_language = excluded.original_language, source_title = excluded.source_title,
     source_url = excluded.source_url, translator_name = excluded.translator_name,
     translator_died_year = excluded.translator_died_year,
+    translation_rights = excluded.translation_rights,
     first_published_year = excluded.first_published_year, details_checked = true;
-  -- Step 3: the audit log, then the saved work.
+  -- Step 4: the audit log, then the saved work.
   perform public.log_staff_action('classics.work_saved', 'stories', saved_story_id::text,
     public.classics_account_id(), null, before_values, public.classic_work_json(saved_story_id));
   return public.classic_work_json(saved_story_id);
@@ -11232,13 +11265,16 @@ CREATE OR REPLACE FUNCTION "public"."admin_set_classic_chapters"("target_story_i
     AS $$
 declare
   owner_id uuid;
+  first_edition_id uuid;
+  original_chapter_id uuid;
   chapter jsonb;
   chapter_number integer := 0;
   clean_body text;
 begin
   perform public.require_classics_staff();
   -- Step 1: a classic that isn't live yet, and at least one chapter.
-  select stories.user_id into owner_id from public.stories
+  select stories.user_id, stories.edition_of_story_id into owner_id, first_edition_id
+  from public.stories
   join public.classic_works on classic_works.story_id = stories.id
   where stories.id = target_story_id and stories.deleted_at is null;
   if owner_id is null then
@@ -11258,10 +11294,24 @@ begin
   for chapter in select * from jsonb_array_elements(chapter_list) loop
     chapter_number := chapter_number + 1;
     clean_body := public.check_chapter_text(coalesce(chapter ->> 'body', ''));
-    insert into public.chapters (story_id, user_id, code, position, draft_title, draft_body, draft_saved_at, word_count)
+    -- An edition's chapter translates the original's chapter with the same number.
+    original_chapter_id := null;
+    if first_edition_id is not null then
+      select numbered.id into original_chapter_id
+      from (select chapters.id, row_number() over (order by chapters.position) as number
+            from public.chapters
+            where chapters.story_id = first_edition_id and chapters.deleted_at is null) as numbered
+      where numbered.number = chapter_number;
+      if original_chapter_id is null then
+        raise exception 'An edition can''t have more chapters than its original.'
+          using errcode = 'check_violation', hint = 'edition_too_many_chapters';
+      end if;
+    end if;
+    insert into public.chapters (story_id, user_id, code, position, draft_title, draft_body,
+      draft_saved_at, word_count, translation_of_chapter_id)
     values (target_story_id, owner_id, public.chapter_code(), chapter_number,
       left(public.normalise_romanian_letters(btrim(coalesce(chapter ->> 'title', ''))), 120),
-      clean_body, now(), public.count_words(clean_body));
+      clean_body, now(), public.count_words(clean_body), original_chapter_id);
   end loop;
   -- Step 3: the audit log keeps how many chapters and words, not the text itself.
   perform public.log_staff_action('classics.text_set', 'stories', target_story_id::text, owner_id, null,
@@ -19719,6 +19769,47 @@ COMMENT ON FUNCTION "public"."classic_authors_dying_in"("died" integer) IS 'Inte
 
 
 
+CREATE OR REPLACE FUNCTION "public"."classic_edition_details"("first_edition_id" "uuid", "edition_id" "uuid", "details" "jsonb") RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  first_work jsonb := public.classic_work_json(first_edition_id);
+begin
+  -- Step 1: the work it is an edition of must be a classic that isn't an edition itself.
+  if first_work is null or first_work ->> 'edition_of_story_id' is not null then
+    raise exception 'That isn''t a classic.' using errcode = 'no_data_found', hint = 'not_a_classic';
+  end if;
+  -- Step 2: one edition per language (the unique index would refuse it with a bare error).
+  if exists (select 1 from public.stories
+      where (stories.id = first_edition_id or stories.edition_of_story_id = first_edition_id)
+        and stories.id is distinct from edition_id and stories.deleted_at is null
+        and stories.language_code = details ->> 'language_code') then
+    raise exception 'This classic already has that language.'
+      using errcode = 'check_violation', hint = 'edition_language_taken';
+  end if;
+  -- Step 3: the shared facts come from the first edition; the source only when none was typed.
+  return details || jsonb_build_object(
+    'author_id', first_work -> 'author' ->> 'id',
+    'kind', first_work ->> 'kind',
+    'rating', first_work ->> 'rating',
+    'category_slug', first_work ->> 'category_slug',
+    'content_note', first_work ->> 'content_note',
+    'original_language', first_work ->> 'original_language',
+    'first_published_year', first_work -> 'first_published_year',
+    'source_title', coalesce(nullif(btrim(coalesce(details ->> 'source_title', '')), ''), first_work ->> 'source_title'),
+    'source_url', coalesce(nullif(btrim(coalesce(details ->> 'source_url', '')), ''), first_work ->> 'source_url'));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."classic_edition_details"("first_edition_id" "uuid", "edition_id" "uuid", "details" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."classic_edition_details"("first_edition_id" "uuid", "edition_id" "uuid", "details" "jsonb") IS 'Internal: an edition''s details completed from its first edition, refusing a language the classic already has (TRANSLATE-1d).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."classic_fix_is_small"("live_text" "text", "corrected_text" "text") RETURNS boolean
     LANGUAGE "sql" IMMUTABLE
     SET "search_path" TO ''
@@ -19890,11 +19981,12 @@ begin
   if saved_story_id is null then
     -- A new classic: owned by the classics account (owner ids never change), automatic cover.
     insert into public.stories (user_id, slug, title, blurb, language_code, category_id, rating,
-      content_note, classic_author_id, completion_status)
+      content_note, classic_author_id, completion_status, edition_of_story_id)
     values (public.classics_account_id(), public.story_slug_for(clean_title), clean_title,
       coalesce(details ->> 'blurb', ''), details ->> 'language_code', wanted_category_id,
       (details ->> 'rating')::public.story_rating, coalesce(details ->> 'content_note', ''),
-      (details ->> 'author_id')::uuid, 'completed')
+      (details ->> 'author_id')::uuid, 'completed',
+      nullif(details ->> 'edition_of_story_id', '')::uuid)
     returning id into saved_story_id;
     return saved_story_id;
   end if;
@@ -19930,9 +20022,13 @@ CREATE OR REPLACE FUNCTION "public"."classic_work_json"("target_story_id" "uuid"
     'kind', works.kind, 'original_language', works.original_language,
     'source_title', works.source_title, 'source_url', works.source_url,
     'translator_name', works.translator_name, 'translator_died_year', works.translator_died_year,
+    'translation_rights', works.translation_rights,
+    'edition_of_story_id', stories.edition_of_story_id,
     'first_published_year', works.first_published_year,
     'details_checked', works.details_checked,
-    'free_markets', public.classic_free_markets(classic_authors.died_year, works.translator_died_year,
+    'free_markets', public.classic_free_markets(classic_authors.died_year,
+      case when works.translation_rights in ('signed_licence', 'made_for_platform') then null
+           else works.translator_died_year end,
       works.first_published_year, (now() at time zone 'Europe/Bucharest')::date),
     'chapters', coalesce((
       select jsonb_agg(jsonb_build_object('code', chapters.code, 'title', chapters.draft_title,
@@ -50561,7 +50657,9 @@ CREATE OR REPLACE FUNCTION "public"."story_edition_json"("story" "public"."stori
       where chapters.story_id = first_edition.id and public.chapter_is_readable(chapters.id)),
     'chapters_here', (select count(*) from public.chapters
       where chapters.story_id = story.id and public.chapter_is_readable(chapters.id)),
-    'translator_name', works.translator_name)
+    'translator_name', works.translator_name,
+    'is_classic', works.story_id is not null,
+    'translation_rights', works.translation_rights)
   from public.stories as first_edition
   left join public.classic_works as works on works.story_id = story.id
   where first_edition.id = coalesce(story.edition_of_story_id, story.id);
@@ -56235,13 +56333,15 @@ CREATE TABLE IF NOT EXISTS "public"."classic_works" (
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "details_checked" boolean DEFAULT true NOT NULL,
+    "translation_rights" "text",
     CONSTRAINT "classic_works_first_published_year_check" CHECK ((("first_published_year" >= 1) AND ("first_published_year" <= 2100))),
     CONSTRAINT "classic_works_original_language_check" CHECK (("original_language" ~ '^[a-z]{2}$'::"text")),
     CONSTRAINT "classic_works_source_title_check" CHECK ((("btrim"("source_title") <> ''::"text") AND ("char_length"("source_title") <= 200))),
     CONSTRAINT "classic_works_source_url_check" CHECK ((("source_url" ~ '^https://'::"text") AND ("char_length"("source_url") <= 500))),
-    CONSTRAINT "classic_works_translator_complete" CHECK ((("translator_name" IS NULL) = ("translator_died_year" IS NULL))),
+    CONSTRAINT "classic_works_translation_rights_check" CHECK (("translation_rights" = ANY (ARRAY['public_domain'::"text", 'signed_licence'::"text", 'made_for_platform'::"text"]))),
     CONSTRAINT "classic_works_translator_died_year_check" CHECK ((("translator_died_year" >= 1) AND ("translator_died_year" <= 2100))),
-    CONSTRAINT "classic_works_translator_name_check" CHECK ((("translator_name" IS NULL) OR (("btrim"("translator_name") <> ''::"text") AND ("char_length"("translator_name") <= 120))))
+    CONSTRAINT "classic_works_translator_name_check" CHECK ((("translator_name" IS NULL) OR (("btrim"("translator_name") <> ''::"text") AND ("char_length"("translator_name") <= 120)))),
+    CONSTRAINT "classic_works_translator_year_needs_name" CHECK ((("translator_died_year" IS NULL) OR ("translator_name" IS NOT NULL)))
 );
 
 
@@ -56253,6 +56353,10 @@ COMMENT ON TABLE "public"."classic_works" IS 'kind: platform. The public-domain 
 
 
 COMMENT ON COLUMN "public"."classic_works"."details_checked" IS 'False for a work imported from a research list until staff save its details: the rating, category and source must be checked before publishing (S1-E11-16b).';
+
+
+
+COMMENT ON COLUMN "public"."classic_works"."translation_rights" IS 'Why a translated classic may be shown: public_domain (the translator''s rights have run out), signed_licence, or made_for_platform. Null until staff choose; a translation can''t be published without it (TRANSLATE-1d).';
 
 
 
@@ -69592,6 +69696,10 @@ REVOKE ALL ON FUNCTION "public"."class_winners_allowed"("grade" smallint) FROM P
 
 
 REVOKE ALL ON FUNCTION "public"."classic_authors_dying_in"("died" integer) FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."classic_edition_details"("first_edition_id" "uuid", "edition_id" "uuid", "details" "jsonb") FROM PUBLIC;
 
 
 

@@ -32,9 +32,12 @@ export interface ClassicTextFormProps {
  * @returns the list
  */
 function ChapterPreview({
+  storyId,
   chapters,
   onTitle,
 }: {
+  /** Keeps the fields' ids apart when two works' previews are open (TRANSLATE-1d). */
+  storyId: string;
   chapters: ClassicChapterDraft[];
   onTitle: (index: number, title: string) => void;
 }) {
@@ -47,7 +50,7 @@ function ChapterPreview({
       {chapters.map((chapter, index) => (
         <li key={index} className="flex flex-col gap-1 border-b border-border pb-3">
           <TextInput
-            id={`classic-chapter-title-${index}`}
+            id={`classic-chapter-title-${storyId}-${index}`}
             label={t('classics.text.chapterTitle', { number: index + 1 })}
             value={chapter.title}
             maxLength={120}
@@ -146,6 +149,7 @@ export function ClassicTextForm({ storyId, isSaving, onSave }: ClassicTextFormPr
       {chapters !== null && chapters.length > 0 && (
         <>
           <ChapterPreview
+            storyId={storyId}
             chapters={chapters}
             onTitle={(index, title) =>
               setChapters(

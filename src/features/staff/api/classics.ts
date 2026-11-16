@@ -46,8 +46,20 @@ export interface ClassicDetails {
   sourceUrl: string;
   translatorName: string;
   translatorDiedYear: string;
+  /** Why a translation may be shown; '' until staff choose (TRANSLATE-1d). */
+  translationRights: TranslationRights | '';
   firstPublishedYear: string;
+  /** The classic this work is an edition of, by story id; '' for a first edition (TRANSLATE-1d). */
+  editionOfStoryId: string;
 }
+
+/** Why a translated classic may be shown (classic_works.translation_rights). */
+export const translationRightsChoices = [
+  'public_domain',
+  'signed_licence',
+  'made_for_platform',
+] as const;
+export type TranslationRights = (typeof translationRightsChoices)[number];
 
 /** A new work's starting values: a Romanian novel for all ages in fiction. */
 export const emptyClassicDetails: ClassicDetails = {
@@ -64,7 +76,9 @@ export const emptyClassicDetails: ClassicDetails = {
   sourceUrl: '',
   translatorName: '',
   translatorDiedYear: '',
+  translationRights: '',
   firstPublishedYear: '',
+  editionOfStoryId: '',
 };
 
 /** One classic on the staff page. */
@@ -103,6 +117,11 @@ export const classicsFailures = [
   'no_chapters',
   'not_free_in_romania',
   'details_unchecked',
+  'translation_rights_missing',
+  'translator_year_missing',
+  'original_not_published',
+  'edition_language_taken',
+  'edition_too_many_chapters',
   'reason_missing',
   'no_change',
   'too_big',
@@ -150,6 +169,8 @@ interface ClassicWorkRow {
   source_url: string;
   translator_name: string | null;
   translator_died_year: number | null;
+  translation_rights: TranslationRights | null;
+  edition_of_story_id: string | null;
   first_published_year: number | null;
   free_markets: FreeMarkets;
   chapters: { code: string; title: string; word_count: number; status: Enums<'chapter_status'> }[];
@@ -183,6 +204,8 @@ function workFrom(row: ClassicWorkRow): ClassicWork {
     sourceUrl: row.source_url,
     translatorName: row.translator_name ?? '',
     translatorDiedYear: row.translator_died_year === null ? '' : String(row.translator_died_year),
+    translationRights: row.translation_rights ?? '',
+    editionOfStoryId: row.edition_of_story_id ?? '',
     firstPublishedYear: row.first_published_year === null ? '' : String(row.first_published_year),
     freeMarkets: row.free_markets,
     chapters: row.chapters.map((chapter) => ({
@@ -279,6 +302,9 @@ export function detailsJson(details: ClassicDetails) {
     source_url: details.sourceUrl.trim(),
     translator_name: details.translatorName.trim() === '' ? null : details.translatorName.trim(),
     translator_died_year: yearOrNull(details.translatorDiedYear),
+    translation_rights: details.translationRights === '' ? null : details.translationRights,
+    // Only a new work reads this: an edition stays an edition of the same classic.
+    edition_of_story_id: details.editionOfStoryId === '' ? null : details.editionOfStoryId,
     first_published_year: yearOrNull(details.firstPublishedYear),
   };
 }

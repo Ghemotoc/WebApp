@@ -2600,6 +2600,7 @@ export type Database = {
           source_title: string;
           source_url: string;
           story_id: string;
+          translation_rights: string | null;
           translator_died_year: number | null;
           translator_name: string | null;
           updated_at: string;
@@ -2615,6 +2616,7 @@ export type Database = {
           source_title: string;
           source_url: string;
           story_id: string;
+          translation_rights?: string | null;
           translator_died_year?: number | null;
           translator_name?: string | null;
           updated_at?: string;
@@ -2629,6 +2631,7 @@ export type Database = {
           source_title?: string;
           source_url?: string;
           story_id?: string;
+          translation_rights?: string | null;
           translator_died_year?: number | null;
           translator_name?: string | null;
           updated_at?: string;
@@ -13812,6 +13815,10 @@ export type Database = {
       class_waiting_members: { Args: { slug: string }; Returns: Json };
       class_winners_allowed: { Args: { grade: number }; Returns: boolean };
       classic_authors_dying_in: { Args: { died: number }; Returns: Json };
+      classic_edition_details: {
+        Args: { details: Json; edition_id: string; first_edition_id: string };
+        Returns: Json;
+      };
       classic_fix_is_small: {
         Args: { corrected_text: string; live_text: string };
         Returns: boolean;

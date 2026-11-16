@@ -74,6 +74,22 @@ describe('editionFactsFrom', () => {
       chaptersHere: 4,
       chaptersInStory: 6,
       translatorName: null,
+      isClassic: false,
+      translationRights: null,
     });
+  });
+
+  it('reads a translated classic’s rights (TRANSLATE-1d)', () => {
+    const facts = editionFactsFrom({
+      original_language: 'ro',
+      is_original: false,
+      chapters_here: 6,
+      chapters_in_story: 6,
+      translator_name: 'Ana Vlad',
+      is_classic: true,
+      translation_rights: 'made_for_platform',
+    });
+    expect(facts?.isClassic).toBe(true);
+    expect(facts?.translationRights).toBe('made_for_platform');
   });
 });

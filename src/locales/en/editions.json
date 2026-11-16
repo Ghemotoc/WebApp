@@ -16,6 +16,11 @@
     "thisEdition": "This edition",
     "translator": "Translator",
     "rights": "Rights",
+    "rightsValues": {
+      "public_domain": "Public domain",
+      "signed_licence": "Licensed translation",
+      "made_for_platform": "Translated for {{productName}}"
+    },
     "alsoIn": "Also in"
   },
   "countedOnceTitle": "One story, counted once.",

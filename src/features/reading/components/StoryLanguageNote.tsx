@@ -7,7 +7,7 @@
  * - StoryLanguageNote: "Shown in English because this page is in English. Also in Română, the
  *   original. Your choice is remembered for this story."
  * - AboutEditionCard: the side card "About this edition" (original language, this edition, the
- *   translator, also in) with "One story, counted once" under it.
+ *   translator, a classic's rights, also in) with "One story, counted once" under it.
  * Robert's rule (16 Nov 2026, 12:23 UTC): the note and the card show only when the story has
  * more than one language. A story in one language names its language only in "Labels from the
  * writer" (StorySideColumn).
@@ -20,7 +20,7 @@ import { ActionIcon } from '@/components/icons/ActionIcon';
 import { LabelRows } from '@/components/ui/LabelRows';
 import { languageNameIn, languageOwnName } from '@/lib/language-names';
 
-import type { StoryEdition } from '../api/editions';
+import type { EditionFacts, StoryEdition, TranslationRights } from '../api/editions';
 import type { StoryPageData } from '../api/storyPage';
 import { useEditionsTranslation } from '../registerEditionsTranslations';
 
@@ -110,6 +110,19 @@ function AlsoInLinks({ others }: { others: StoryEdition[] }) {
 }
 
 /**
+ * The words of the "Rights" row of a classic (TRANSLATE-1d; board TrStory): the original is in
+ * the public domain; a translation says what staff recorded for it ("A translation has its own
+ * copyright"). A member's story has no such row: its writer keeps the rights.
+ *
+ * @param facts - the edition facts of the story on screen
+ * @returns the key under "about.rightsValues" in the editions texts, or null for no row
+ */
+function rightsKey(facts: EditionFacts): TranslationRights | null {
+  if (!facts.isClassic) return null;
+  return facts.isOriginal ? 'public_domain' : facts.translationRights;
+}
+
+/**
  * The side card "About this edition", with "One story, counted once" under it.
  *
  * @returns the card, or nothing for a story in one language
@@ -123,6 +136,9 @@ export function AboutEditionCard({ story }: { story: StoryPageData }) {
     facts.translatorName === null || facts.isOriginal
       ? []
       : [{ label: t('about.translator'), value: facts.translatorName }];
+  const rights = rightsKey(facts);
+  const rightsRows =
+    rights === null ? [] : [{ label: t('about.rights'), value: t(`about.rightsValues.${rights}`) }];
   return (
     <div className="flex flex-col gap-3 rounded-card border border-border bg-surface p-6 shadow-card">
       <h2 className="m-0 eyebrow">{t('about.heading')}</h2>
@@ -139,6 +155,7 @@ export function AboutEditionCard({ story }: { story: StoryPageData }) {
             value: <span lang={story.languageCode}>{languageOwnName(story.languageCode)}</span>,
           },
           ...translatorRows,
+          ...rightsRows,
           { label: t('about.alsoIn'), value: <AlsoInLinks others={others} /> },
         ]}
       />

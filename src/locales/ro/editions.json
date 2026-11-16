@@ -16,6 +16,11 @@
     "thisEdition": "Această ediție",
     "translator": "Traducător",
     "rights": "Drepturi",
+    "rightsValues": {
+      "public_domain": "Domeniu public",
+      "signed_licence": "Traducere sub licență",
+      "made_for_platform": "Tradus pentru {{productName}}"
+    },
     "alsoIn": "Disponibil și în"
   },
   "countedOnceTitle": "O poveste, numărată o singură dată.",

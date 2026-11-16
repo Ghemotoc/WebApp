@@ -44,7 +44,14 @@ export interface EditionFacts {
   chaptersInStory: number;
   /** A classic's translator; null for a member's story (only the writer translates it). */
   translatorName: string | null;
+  /** True for a public-domain classic (TRANSLATE-1d): its page says why it may be shown. */
+  isClassic: boolean;
+  /** Why a translated classic may be shown; null when staff haven't said, or for an original. */
+  translationRights: TranslationRights | null;
 }
+
+/** Why a translated classic may be shown (classic_works.translation_rights). */
+export type TranslationRights = 'public_domain' | 'signed_licence' | 'made_for_platform';
 
 /** One edition as the database answers it (story_editions_json()). */
 interface StoryEditionRow {
@@ -64,6 +71,9 @@ interface EditionFactsRow {
   chapters_here: number;
   chapters_in_story: number;
   translator_name: string | null;
+  /** Missing from answers saved before TRANSLATE-1d. */
+  is_classic?: boolean;
+  translation_rights?: TranslationRights | null;
 }
 
 /**
@@ -101,6 +111,8 @@ export function editionFactsFrom(row: unknown): EditionFacts | null {
     chaptersHere: facts.chapters_here,
     chaptersInStory: facts.chapters_in_story,
     translatorName: facts.translator_name,
+    isClassic: facts.is_classic ?? false,
+    translationRights: facts.translation_rights ?? null,
   };
 }
 

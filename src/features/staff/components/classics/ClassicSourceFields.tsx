@@ -1,7 +1,8 @@
 /**
  * ClassicSourceFields: the public-domain part of the "Add a classic work" form (story S1-E11-16
  * AC 1): the kind, the original language, the source edition and its link, the translator and
- * the year of first publication.
+ * the year of first publication. TRANSLATE-1d adds the translation rights: a translated text has
+ * its own copyright, so staff say why it may be shown.
  *
  * Who shows it: ClassicWorkForm. What it calls: onChange. Language names come from Intl in the
  * interface language, so the code holds none.
@@ -14,6 +15,7 @@ import { TextInput } from '@/components/ui/TextInput';
 import type { ClassicKind } from '../../api/classics';
 
 import type { ClassicFieldsProps } from './ClassicStoryFields';
+import { TranslationRightsSelect } from './TranslationRightsSelect';
 
 /** The kinds of work (the classic_kind enum). */
 const kinds: ClassicKind[] = ['novel', 'short_story', 'fairy_tale', 'poem', 'play', 'essay'];
@@ -33,12 +35,46 @@ function languageName(code: string, interfaceLanguage: string): string {
 }
 
 /**
+ * The kind of work and its original language.
+ *
+ * @returns the two drop-downs
+ */
+function KindAndLanguage({ details, onChange }: ClassicFieldsProps) {
+  const { t, i18n } = useTranslation('staff');
+  return (
+    <div className="flex flex-wrap gap-4">
+      <Select
+        id="classic-kind"
+        label={t('classics.form.kind')}
+        isLabelVisible
+        placement="form"
+        value={details.kind}
+        onChange={(value) => onChange('kind', value)}
+        options={kinds.map((kind) => ({ value: kind, label: t(`classics.kinds.${kind}`) }))}
+      />
+      <Select
+        id="classic-original-language"
+        label={t('classics.form.originalLanguage')}
+        isLabelVisible
+        placement="form"
+        value={details.originalLanguage}
+        onChange={(value) => onChange('originalLanguage', value)}
+        options={originalLanguages.map((code) => ({
+          value: code,
+          label: languageName(code, i18n.language),
+        }))}
+      />
+    </div>
+  );
+}
+
+/**
  * Renders the fields.
  *
  * @returns the source fields
  */
 export function ClassicSourceFields({ details, onChange }: ClassicFieldsProps) {
-  const { t, i18n } = useTranslation('staff');
+  const { t } = useTranslation('staff');
   /** A short text input for one field. */
   const field = (name: 'sourceTitle' | 'sourceUrl' | 'translatorName', type = 'text') => (
     <TextInput
@@ -65,33 +101,16 @@ export function ClassicSourceFields({ details, onChange }: ClassicFieldsProps) {
       <legend className="mb-2 font-heading text-lg font-bold text-heading">
         {t('classics.form.sourceLegend')}
       </legend>
-      <div className="flex flex-wrap gap-4">
-        <Select
-          id="classic-kind"
-          label={t('classics.form.kind')}
-          isLabelVisible
-          placement="form"
-          value={details.kind}
-          onChange={(value) => onChange('kind', value)}
-          options={kinds.map((kind) => ({ value: kind, label: t(`classics.kinds.${kind}`) }))}
-        />
-        <Select
-          id="classic-original-language"
-          label={t('classics.form.originalLanguage')}
-          isLabelVisible
-          placement="form"
-          value={details.originalLanguage}
-          onChange={(value) => onChange('originalLanguage', value)}
-          options={originalLanguages.map((code) => ({
-            value: code,
-            label: languageName(code, i18n.language),
-          }))}
-        />
-      </div>
+      <KindAndLanguage details={details} onChange={onChange} />
       {field('sourceTitle')}
       {field('sourceUrl', 'url')}
       <p className="m-0 text-sm text-meta">{t('classics.form.translatorHint')}</p>
       {field('translatorName')}
+      <TranslationRightsSelect
+        id="classic-translation-rights"
+        value={details.translationRights}
+        onChange={(value) => onChange('translationRights', value)}
+      />
       <div className="flex flex-wrap gap-4">
         {year('translatorDiedYear')}
         {year('firstPublishedYear')}
