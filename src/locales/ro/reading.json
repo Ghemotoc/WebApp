@@ -226,5 +226,8 @@
   },
   "poem": {
     "stanza": "Strofa {{number}}"
+  },
+  "editions": {
+    "translatedFromBy": "Tradus din {{language}} de {{name}}"
   }
 }

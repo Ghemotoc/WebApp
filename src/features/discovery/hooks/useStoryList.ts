@@ -6,6 +6,7 @@
  * pages never overlap (S1-E5-09, third criterion).
  */
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 
 import { useSession } from '@/features/auth/hooks/useSession';
 import { useReadingLanguageFilter } from '@/features/language/hooks/useReadingLanguages';
@@ -46,8 +47,11 @@ export function useStoryList(request: ListRequest, isReady = true) {
   const { userId, isKnown } = useSession();
   // The languages the reader reads (MARKETS-2c); null until known, so the list loads once.
   const reading = useReadingLanguageFilter();
+  const { i18n } = useTranslation();
   const pages = useInfiniteQuery({
-    queryKey: [storyListQueryKey, 'page', request, userId, reading.languages],
+    // TRANSLATE-1b: a story in several languages is listed in the page's language, so the
+    // list is read again when the interface language changes.
+    queryKey: [storyListQueryKey, 'page', request, userId, reading.languages, i18n.language],
     enabled: isReady && isKnown && reading.languages !== null,
     initialPageParam: 0,
     getNextPageParam: nextOffset,

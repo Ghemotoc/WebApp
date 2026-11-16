@@ -8,9 +8,9 @@
  * The facts come from parental_consent_request(); the words from account.json.
  */
 import type { ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import type { ConsentRequestDetails } from '../api/parentConsent';
+import { useParentConsentTranslation } from '../registerParentConsentTranslations';
 
 /** The four protections, in the board's order. */
 const protectionKeys = ['protectMessages', 'protectReports', 'protectRatings', 'protectAds'];
@@ -38,7 +38,7 @@ function DetailBlock({ title, children }: { title: string; children: ReactNode }
  * @returns the links
  */
 function LegalLinks({ request }: { request: ConsentRequestDetails }) {
-  const { t } = useTranslation('account');
+  const { t } = useParentConsentTranslation();
   const links = [
     { slug: 'privacy', key: 'privacyLink', version: request.privacyVersion },
     { slug: 'terms', key: 'termsLink', version: request.termsVersion },
@@ -48,7 +48,7 @@ function LegalLinks({ request }: { request: ConsentRequestDetails }) {
       {links.map((link) => (
         <li key={link.slug}>
           <a href={`/legal/${link.slug}`} target="_blank" rel="noopener" className={textLinkClass}>
-            {t(`parentConsent.parent.${link.key}`, { version: link.version ?? '1' })}
+            {t(`parent.${link.key}`, { version: link.version ?? '1' })}
           </a>
         </li>
       ))}
@@ -63,23 +63,23 @@ function LegalLinks({ request }: { request: ConsentRequestDetails }) {
  * @returns the blocks a parent reads before answering
  */
 export function ParentAnswerDetails({ request }: { request: ConsentRequestDetails }) {
-  const { t } = useTranslation('account');
+  const { t } = useParentConsentTranslation();
   return (
     <div className="flex flex-col gap-5">
-      <DetailBlock title={t('parentConsent.parent.whatHeading')}>
-        <p className="m-0 text-body">{t('parentConsent.parent.whatBody')}</p>
+      <DetailBlock title={t('parent.whatHeading')}>
+        <p className="m-0 text-body">{t('parent.whatBody')}</p>
       </DetailBlock>
-      <DetailBlock title={t('parentConsent.parent.keepHeading')}>
-        <p className="m-0 text-body">{t('parentConsent.parent.keepBody')}</p>
+      <DetailBlock title={t('parent.keepHeading')}>
+        <p className="m-0 text-body">{t('parent.keepBody')}</p>
       </DetailBlock>
-      <DetailBlock title={t('parentConsent.parent.protectHeading')}>
+      <DetailBlock title={t('parent.protectHeading')}>
         <ul className="m-0 flex list-disc flex-col gap-1.5 pl-5 text-body">
           {protectionKeys.map((key) => (
-            <li key={key}>{t(`parentConsent.parent.${key}`)}</li>
+            <li key={key}>{t(`parent.${key}`)}</li>
           ))}
         </ul>
       </DetailBlock>
-      <DetailBlock title={t('parentConsent.parent.legalIntro')}>
+      <DetailBlock title={t('parent.legalIntro')}>
         <LegalLinks request={request} />
       </DetailBlock>
     </div>

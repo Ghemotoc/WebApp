@@ -9,7 +9,6 @@
  * (GDPR art. 7(3)).
  */
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
@@ -17,6 +16,7 @@ import { formatRomaniaDate } from '@/lib/romania-time';
 
 import type { ConsentFailure } from '../../../schemas/parentConsent';
 import type { ConsentRequestDetails } from '../api/parentConsent';
+import { useParentConsentTranslation } from '../registerParentConsentTranslations';
 
 /** What the block needs. */
 export interface ParentAnswerOutcomeProps {
@@ -32,12 +32,12 @@ export interface ParentAnswerOutcomeProps {
  * @returns the button, or the question and its two answers
  */
 function WithdrawControl(props: { isAnswering: boolean; onWithdraw: () => void }) {
-  const { t } = useTranslation('account');
+  const { t } = useParentConsentTranslation();
   const [isConfirming, setIsConfirming] = useState(false);
   if (!isConfirming) {
     return (
       <Button variant="destructive" className="self-start" onClick={() => setIsConfirming(true)}>
-        {t('parentConsent.parent.withdraw')}
+        {t('parent.withdraw')}
       </Button>
     );
   }
@@ -48,14 +48,14 @@ function WithdrawControl(props: { isAnswering: boolean; onWithdraw: () => void }
       className="flex flex-col gap-3"
     >
       <p id="parent-consent-withdraw-question" className="m-0 font-semibold text-heading">
-        {t('parentConsent.parent.withdrawConfirm')}
+        {t('parent.withdrawConfirm')}
       </p>
       <div className="flex flex-wrap gap-3">
         <Button variant="destructive" disabled={props.isAnswering} onClick={props.onWithdraw}>
-          {t('parentConsent.parent.withdrawYes')}
+          {t('parent.withdrawYes')}
         </Button>
         <Button variant="secondary" onClick={() => setIsConfirming(false)}>
-          {t('parentConsent.parent.cancel')}
+          {t('parent.cancel')}
         </Button>
       </div>
     </div>
@@ -73,7 +73,7 @@ export function ParentAnswerOutcome({
   failure,
   onWithdraw,
 }: ParentAnswerOutcomeProps) {
-  const { t, i18n } = useTranslation('account');
+  const { t, i18n } = useParentConsentTranslation();
   const handle = request.handle;
   if (request.status === 'agreed') {
     const date =
@@ -82,24 +82,24 @@ export function ParentAnswerOutcome({
         : formatRomaniaDate(new Date(request.decidedAt), i18n.language);
     return (
       <div className="flex flex-col gap-4">
-        <Notice tone="success" title={t('parentConsent.parent.agreedHeading', { date })}>
-          {t('parentConsent.parent.agreedBody', { handle })}
+        <Notice tone="success" title={t('parent.agreedHeading', { date })}>
+          {t('parent.agreedBody', { handle })}
         </Notice>
-        {failure !== null && <Notice tone="error">{t(`parentConsent.failures.${failure}`)}</Notice>}
+        {failure !== null && <Notice tone="error">{t(`failures.${failure}`)}</Notice>}
         <WithdrawControl isAnswering={isAnswering} onWithdraw={onWithdraw} />
       </div>
     );
   }
   if (request.status === 'withdrawn') {
     return (
-      <Notice tone="info" title={t('parentConsent.parent.withdrawnHeading')}>
-        {t('parentConsent.parent.withdrawnBody', { handle })}
+      <Notice tone="info" title={t('parent.withdrawnHeading')}>
+        {t('parent.withdrawnBody', { handle })}
       </Notice>
     );
   }
   return (
-    <Notice tone="info" title={t('parentConsent.parent.refusedHeading')}>
-      {t('parentConsent.parent.refusedBody')}
+    <Notice tone="info" title={t('parent.refusedHeading')}>
+      {t('parent.refusedBody')}
     </Notice>
   );
 }

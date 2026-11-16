@@ -49,7 +49,10 @@
     "meta_one": "{{writer}} · {{count}} capitol",
     "meta_few": "{{writer}} · {{count}} capitole",
     "meta_other": "{{writer}} · {{count}} de capitole",
-    "appOnly": "Doar în aplicație"
+    "appOnly": "Doar în aplicație",
+    "languageOriginal": "{{code}} · original",
+    "originalHidden": ", limba originală",
+    "writerAndTranslator": "{{writer}} · Tradus de {{translator}}"
   },
   "seeAll": {
     "documentTitle": "{{title}} · {{productName}}",

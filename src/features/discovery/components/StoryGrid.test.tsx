@@ -34,6 +34,8 @@ function storiesOf(count: number): ListedStory[] {
     chapterCount: 1,
     lastChapterPublishedAt: null,
     appOnly: false,
+    languages: [],
+    translatorName: null,
   }));
 }
 

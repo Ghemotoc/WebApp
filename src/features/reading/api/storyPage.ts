@@ -7,10 +7,20 @@
  * deleted or is hidden by a moderator (the owner always gets their own), and never the user ID.
  * It applies the rating rule (rating_allows(), S1-E3-06), serves the labels and the chapter list,
  * and shows a story only while it has a published chapter (S1-E3-03).
+ * Since TRANSLATE-1b it also carries the languages the story can be read in (`editions`, empty
+ * for a story in one language) and what "About this edition" says (`edition`); the parsers are
+ * in api/editions.ts.
  */
 import type { CoverColourKey, CoverDesignKey } from '@/components/covers/coverDesigns';
 import type { AppSupabaseClient } from '@/lib/supabase';
 import type { AiDisclosure, StoryRating } from '@/schemas/story';
+
+import {
+  editionFactsFrom,
+  storyEditionsFrom,
+  type EditionFacts,
+  type StoryEdition,
+} from './editions';
 
 /** One chapter in the story page's list (S1-E3-03). */
 export interface StoryPageChapter {
@@ -22,6 +32,11 @@ export interface StoryPageChapter {
   publishedAt: string | null;
   editedAt: string | null;
   wordCount: number | null;
+  /**
+   * False in a later language edition for a chapter that isn't translated yet (TRANSLATE-1b): the
+   * row then carries the original's title and code, and the list says "<language> only for now".
+   */
+  isTranslated: boolean;
 }
 
 /** What the story page shows. */
@@ -60,6 +75,13 @@ export interface StoryPageData {
   appOnly: boolean;
   /** The chapters: the readable ones for readers; every live one for the owner (S1-E3-03). */
   chapters: StoryPageChapter[];
+  /**
+   * The languages the story can be read in, the first edition first (TRANSLATE-1b). Empty for a
+   * story in one language, which then shows no switch (Robert, 16 Nov 2026).
+   */
+  editions: StoryEdition[];
+  /** What "About this edition" says; null in answers saved before TRANSLATE-1. */
+  edition: EditionFacts | null;
   /**
    * The stats row's totals (S1-E5-03): likes on its chapters and live comments. Read totals stay
    * private to the writer (S1-E3-07), so they aren't here.
@@ -113,7 +135,12 @@ interface StoryPageRow {
     published_at: string | null;
     edited_at: string | null;
     word_count: number | null;
+    /** Only in a later language edition's list (edition_page_chapters()). */
+    is_translated?: boolean;
   }[];
+  /** TRANSLATE-1a: missing from answers saved before it. */
+  editions?: unknown;
+  edition?: unknown;
   /** Missing only from an answer older than S1-E5-03. */
   stats?: { likes: number; comments: number };
   labels: {
@@ -233,7 +260,10 @@ export async function fetchStoryPage(
       publishedAt: chapter.published_at,
       editedAt: chapter.edited_at,
       wordCount: chapter.word_count,
+      isTranslated: chapter.is_translated !== false,
     })),
+    editions: storyEditionsFrom(row.editions),
+    edition: editionFactsFrom(row.edition),
     labels: {
       rating: row.labels.rating,
       isFanFiction: row.labels.is_fan_fiction,

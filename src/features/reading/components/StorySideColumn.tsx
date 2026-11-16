@@ -11,6 +11,8 @@
  * can't report their own story (the database refuses it too).
  * A public-domain classic shows its real author instead of the writer card (S1-E5-06). The
  * writer card shows the writer's gold rank pill under the handle (IDEAS-3a).
+ * A story in several languages adds "About this edition" under the labels (AboutEditionCard,
+ * TRANSLATE-1b); a story in one language keeps only the Language row here (Robert, 16 Nov 2026).
  * Who uses it: StoryPage.
  */
 import type { TFunction } from 'i18next';
@@ -25,6 +27,8 @@ import { ratingMinimumAge } from '@/schemas/story';
 
 import type { ClassicAuthor, StoryPageData } from '../api/storyPage';
 import { ProfileRankChip } from '@/features/forums/components/ProfileRankChip';
+
+import { AboutEditionCard } from './StoryLanguageNote';
 
 /**
  * Where a classic's text comes from: the source edition as a link, and the translator (S1-E11-16
@@ -218,6 +222,8 @@ export function StorySideColumn({ story }: { story: StoryPageData }) {
           ]}
         />
       </div>
+      {/* TRANSLATE-1b: only for a story in several languages. */}
+      <AboutEditionCard story={story} />
       {/* The Report row shows only to readers: the owner can't report their own story. */}
       {!story.isOwner && (
         <div className="relative flex items-center">

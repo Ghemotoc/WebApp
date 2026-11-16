@@ -49,7 +49,10 @@
     "meta_one": "{{writer}} · {{count}} chapter",
     "meta_few": "{{writer}} · {{count}} chapters",
     "meta_other": "{{writer}} · {{count}} chapters",
-    "appOnly": "In the app only"
+    "appOnly": "In the app only",
+    "languageOriginal": "{{code}} · original",
+    "originalHidden": ", the original",
+    "writerAndTranslator": "{{writer}} · Translated by {{translator}}"
   },
   "seeAll": {
     "documentTitle": "{{title}} · {{productName}}",

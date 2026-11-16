@@ -12,6 +12,9 @@
  * (RankBadges, CMS-1g). Under the stats, "Start reading" or "Continue chapter n" and the
  * Library drop-down (StoryReadingActions, S1-E4-03), then Follow and, since IDEAS-1c, Share for the
  * whole story (StoryShareButton).
+ * A story in several languages (TRANSLATE-1b; board TrStory) adds the "Read in" switch beside
+ * the title, "Translated from <language> by <name>" under a classic's author, and under the blurb
+ * the note saying which language is shown and which others exist (StoryLanguageNote).
  * Who uses it: StoryPage.
  */
 import { useTranslation } from 'react-i18next';
@@ -31,6 +34,8 @@ import { useTagCatalogue } from '@/features/tags/hooks/useTagCatalogue';
 
 import type { StoryPageData } from '../api/storyPage';
 
+import { ReadInSwitch } from './ReadInSwitch';
+import { StoryLanguageNote, TranslationCredit } from './StoryLanguageNote';
 import { RankingPlacePill } from './RankingPlacePill';
 import { StoryLabelPills } from './StoryLabelPills';
 import { StoryStats } from './StoryStats';
@@ -141,6 +146,36 @@ function StoryActions({ story }: { story: StoryPageData }) {
 }
 
 /**
+ * The title with "Read in" beside it (it wraps under the title on narrow screens), then "by
+ * <name>" and, for a translated classic, who translated it (TRANSLATE-1b; board TrStory).
+ *
+ * @returns the title block
+ */
+function StoryTitleBlock({ story }: { story: StoryPageData }) {
+  const { t } = useTranslation('reading');
+  return (
+    <>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <h1
+          lang={story.languageCode}
+          className="m-0 min-w-0 flex-[1_1_240px] text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-extrabold tracking-[-0.025em] break-words"
+        >
+          {story.title}
+        </h1>
+        <ReadInSwitch editions={story.editions} chapterNumber={null} />
+      </div>
+      <div className="flex flex-col gap-1">
+        <p className="m-0 text-base text-body">
+          {t('storyPage.by')}{' '}
+          <strong className="font-bold text-heading">{story.writer.displayName}</strong>
+        </p>
+        <TranslationCredit story={story} />
+      </div>
+    </>
+  );
+}
+
+/**
  * Renders the header.
  *
  * @returns the header block
@@ -174,18 +209,18 @@ export function StoryHeader({ story }: { story: StoryPageData }) {
       {/* Step 2: the words, beside the cover (or under it on narrow screens). */}
       <div className="flex min-w-0 flex-[1_1_360px] flex-col gap-4">
         <StoryPills story={story} />
-        <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-extrabold tracking-[-0.025em] break-words">
-          {story.title}
-        </h1>
-        <p className="m-0 text-base text-body">
-          {t('storyPage.by')}{' '}
-          <strong className="font-bold text-heading">{story.writer.displayName}</strong>
-        </p>
+        <StoryTitleBlock story={story} />
         <StoryStats story={story} />
         <StoryActions story={story} />
         {story.blurb !== '' && (
-          <p className="m-0 max-w-[640px] text-[17px] leading-[1.6] text-body">{story.blurb}</p>
+          <p
+            lang={story.languageCode}
+            className="m-0 max-w-[640px] text-[17px] leading-[1.6] text-body"
+          >
+            {story.blurb}
+          </p>
         )}
+        <StoryLanguageNote story={story} />
         {story.labels.contentNote !== '' && (
           <div className="flex max-w-[640px] flex-col gap-1 rounded-card border border-border bg-tint px-4 py-3">
             <p className="m-0 eyebrow">{t('storyPage.contentNoteHeading')}</p>

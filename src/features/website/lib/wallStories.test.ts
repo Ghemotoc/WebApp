@@ -31,6 +31,8 @@ function story(id: string, rating: ListedStory['rating']): ListedStory {
     chapterCount: 1,
     lastChapterPublishedAt: null,
     appOnly: false,
+    languages: [],
+    translatorName: null,
   };
 }
 

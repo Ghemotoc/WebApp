@@ -11,11 +11,33 @@
  * do the music and video cards, each with its service and what to play (S1-E3-10).
  * record_chapter_read(story_slug, chapter_code) adds one to today's total, never who read
  * (supabase/migrations/…_s1_e4_01a_reader.sql).
+ * A story in several languages (TRANSLATE-1b): the answer lists the languages with each one's
+ * address for this same chapter (`editions`), and a chapter the edition doesn't have yet comes
+ * back as `missingTranslation` with no text (…_translate1_01_story_editions.sql).
  */
 import { embedViewsFromJson, type EmbedView } from '@/features/embeds/api/embeds';
 import { pictureViewsFromJson, type PictureView } from '@/features/pictures/api/pictures';
 import type { Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
+
+import {
+  editionFactsFrom,
+  storyEditionsFrom,
+  type EditionFacts,
+  type StoryEdition,
+} from './editions';
+
+/** A chapter this language edition doesn't have yet (TRANSLATE-1b; board TrMissing). */
+export interface MissingTranslation {
+  /** The chapter in the language the reader can read it in now. */
+  original: { slug: string; languageCode: string; code: string; title: string };
+  /** The unbroken run of translated chapters from chapter one ("chapters 1 to 4"); 0 for none. */
+  translatedThrough: number;
+  /** A classic's translator; null for a member's story (its writer translates it). */
+  translatorName: string | null;
+  /** The nearest earlier chapter this edition has, for "Back to chapter n"; null for none. */
+  previousNumber: number | null;
+}
 
 /** One chapter as the reader shows it. */
 export interface ReaderChapter {
@@ -61,6 +83,18 @@ export interface ReaderChapter {
   pictures: Record<string, PictureView>;
   /** The music and video cards in that text by ID (S1-E3-10). */
   embeds: Record<string, EmbedView>;
+  /**
+   * The languages the story can be read in, each with its address for this chapter; empty for a
+   * story in one language (TRANSLATE-1b; Robert, 16 Nov 2026).
+   */
+  editions: StoryEdition[];
+  /** The original language and a classic's translator, for the credit; null in one language. */
+  edition: EditionFacts | null;
+  /**
+   * Set when this edition doesn't have the chapter yet: the page shows the notice instead of a
+   * text, and id, body and the dates are empty.
+   */
+  missingTranslation: MissingTranslation | null;
 }
 
 /** The shape get_chapter() answers, as JSON. */
@@ -91,6 +125,78 @@ interface ChapterRow {
   body: string | null;
   pictures?: Json;
   embeds?: Json;
+  /** TRANSLATE-1a: missing from answers saved before it. */
+  editions?: unknown;
+  edition?: unknown;
+}
+
+/** The shape get_chapter() answers for a chapter the edition doesn't have yet. */
+interface MissingChapterRow {
+  missing_translation: true;
+  story: ChapterRow['story'];
+  number: number;
+  total: number;
+  original: { slug: string; language_code: string; code: string; title: string | null };
+  translated_through: number;
+  translator_name: string | null;
+  previous_number: number | null;
+  previous_code: string | null;
+  editions?: unknown;
+}
+
+/** The story part of an answer, in the app's shape. */
+function storyFrom(story: ChapterRow['story']): ReaderChapter['story'] {
+  return {
+    slug: story.slug,
+    title: story.title,
+    languageCode: story.language_code,
+    writer: { displayName: story.writer.display_name, handle: story.writer.handle },
+  };
+}
+
+/**
+ * A "not translated yet" answer as a ReaderChapter with no text, so the page can draw the bar
+ * ("Chapter 5 of 6", Read in) and the notice from one shape.
+ *
+ * @param row - the database's answer
+ * @returns the chapter with missingTranslation set
+ */
+function missingChapterFrom(row: MissingChapterRow): ReaderChapter {
+  return {
+    story: storyFrom(row.story),
+    id: '',
+    code: row.original.code,
+    title: row.original.title ?? '',
+    number: row.number,
+    total: row.total,
+    previousCode: row.previous_code,
+    nextCode: null,
+    publishedAt: null,
+    editedAt: null,
+    minutesToRead: 0,
+    isOwner: false,
+    needsSignIn: false,
+    isTeaser: false,
+    textContinues: false,
+    appOnly: false,
+    isPoem: false,
+    body: null,
+    pictures: {},
+    embeds: {},
+    editions: storyEditionsFrom(row.editions),
+    edition: null,
+    missingTranslation: {
+      original: {
+        slug: row.original.slug,
+        languageCode: row.original.language_code,
+        code: row.original.code,
+        title: row.original.title ?? '',
+      },
+      translatedThrough: row.translated_through,
+      translatorName: row.translator_name,
+      previousNumber: row.previous_number,
+    },
+  };
 }
 
 /**
@@ -113,14 +219,13 @@ export async function fetchChapter(
   });
   if (error !== null) throw new Error(`Could not read the chapter: ${error.message}`);
   if (data === null) return null;
+  // TRANSLATE-1b: this language edition doesn't have the chapter yet.
+  if ((data as { missing_translation?: boolean }).missing_translation === true) {
+    return missingChapterFrom(data as unknown as MissingChapterRow);
+  }
   const row = data as unknown as ChapterRow;
   return {
-    story: {
-      slug: row.story.slug,
-      title: row.story.title,
-      languageCode: row.story.language_code,
-      writer: { displayName: row.story.writer.display_name, handle: row.story.writer.handle },
-    },
+    story: storyFrom(row.story),
     id: row.id,
     code: row.code,
     title: row.title,
@@ -141,6 +246,9 @@ export async function fetchChapter(
     // Signed addresses for the pictures the reader may see; Storage refuses the others.
     pictures: await pictureViewsFromJson(client, row.pictures),
     embeds: embedViewsFromJson(row.embeds),
+    editions: storyEditionsFrom(row.editions),
+    edition: editionFactsFrom(row.edition),
+    missingTranslation: null,
   };
 }
 

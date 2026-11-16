@@ -11,13 +11,13 @@
  * counts only with "I agree".
  */
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { formatRomaniaDate } from '@/lib/romania-time';
 
 import type { ConsentFailure } from '../../../schemas/parentConsent';
+import { useParentConsentTranslation } from '../registerParentConsentTranslations';
 
 /** What the form needs. */
 export interface ParentAnswerFormProps {
@@ -34,7 +34,7 @@ export interface ParentAnswerFormProps {
  * @returns the checkbox row
  */
 function SpotlightCheckbox(props: { isChecked: boolean; onChange: (isChecked: boolean) => void }) {
-  const { t } = useTranslation('account');
+  const { t } = useParentConsentTranslation();
   return (
     <div className="flex items-start gap-3">
       <input
@@ -47,10 +47,10 @@ function SpotlightCheckbox(props: { isChecked: boolean; onChange: (isChecked: bo
       />
       <div className="flex flex-col gap-1">
         <label htmlFor="parent-consent-spotlight" className="text-[15px] text-body">
-          {t('parentConsent.parent.spotlightBox')}
+          {t('parent.spotlightBox')}
         </label>
         <p id="parent-consent-spotlight-hint" className="m-0 text-sm text-meta">
-          {t('parentConsent.parent.spotlightHint')}
+          {t('parent.spotlightHint')}
         </p>
       </div>
     </div>
@@ -67,7 +67,7 @@ function GuardianCheckbox(props: {
   isMissing: boolean;
   onChange: (isChecked: boolean) => void;
 }) {
-  const { t } = useTranslation('account');
+  const { t } = useParentConsentTranslation();
   const errorId = props.isMissing ? 'parent-consent-guardian-error' : undefined;
   return (
     <div className="flex flex-col gap-1.5">
@@ -82,12 +82,12 @@ function GuardianCheckbox(props: {
           className="mt-0.5 size-6 shrink-0 cursor-pointer accent-(--link)"
         />
         <label htmlFor="parent-consent-guardian" className="text-[15px] text-body">
-          {t('parentConsent.parent.guardian')}
+          {t('parent.guardian')}
         </label>
       </div>
       {props.isMissing && (
         <p id={errorId} className="m-0 text-sm text-destructive">
-          {t('parentConsent.parent.guardianNeeded')}
+          {t('parent.guardianNeeded')}
         </p>
       )}
     </div>
@@ -105,7 +105,7 @@ export function ParentAnswerForm({
   failure,
   onAnswer,
 }: ParentAnswerFormProps) {
-  const { t, i18n } = useTranslation('account');
+  const { t, i18n } = useParentConsentTranslation();
   const [isGuardian, setIsGuardian] = useState(false);
   const [isGuardianMissing, setIsGuardianMissing] = useState(false);
   const [allowsSpotlight, setAllowsSpotlight] = useState(false);
@@ -129,16 +129,16 @@ export function ParentAnswerForm({
         }}
       />
       <SpotlightCheckbox isChecked={allowsSpotlight} onChange={setAllowsSpotlight} />
-      {failure !== null && <Notice tone="error">{t(`parentConsent.failures.${failure}`)}</Notice>}
+      {failure !== null && <Notice tone="error">{t(`failures.${failure}`)}</Notice>}
       <div className="flex flex-wrap gap-3">
         <Button disabled={isAnswering} onClick={() => answer('agree')}>
-          {t('parentConsent.parent.agree')}
+          {t('parent.agree')}
         </Button>
         <Button variant="secondary" disabled={isAnswering} onClick={() => answer('refuse')}>
-          {t('parentConsent.parent.disagree')}
+          {t('parent.disagree')}
         </Button>
       </div>
-      <p className="m-0 text-sm text-meta">{t('parentConsent.parent.deadline', { date })}</p>
+      <p className="m-0 text-sm text-meta">{t('parent.deadline', { date })}</p>
     </div>
   );
 }

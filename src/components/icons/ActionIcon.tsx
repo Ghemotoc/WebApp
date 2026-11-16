@@ -60,6 +60,14 @@ const drawings = {
   ),
   // Done: a tick (bundle G8d, "Mark all as read").
   check: <path d="M5 12.5l4.5 4.5L19 7" />,
+  // Languages: a globe (TRANSLATE-1b, the "Read in" switch).
+  globe: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M3 12h18" />
+      <path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18z" />
+    </>
+  ),
   // Stories: an open book (bundle G8d, Notifications board).
   book: (
     <>

@@ -27209,6 +27209,7 @@ declare
   place integer;
   earlier_place integer;
   story_json jsonb;
+  editions_json jsonb;
   text_to_send text;
   teaser_words integer;
   app_only boolean;
@@ -27264,6 +27265,8 @@ begin
         'classic_author', public.story_classic_author(story.id))
       from public.profiles where profiles.id = story.user_id));
 
+  editions_json := public.story_editions_json(story, source_chapter.id);
+
   -- Step 4: this edition doesn't have the chapter yet (handoff, "A chapter that isn't translated").
   -- The answer names the original to read instead and the nearest earlier chapter this edition has.
   if chapter.id is null then
@@ -27297,7 +27300,7 @@ begin
       'previous_number', earlier_place,
       'previous_code', case when earlier_place is not null then
         public.edition_chapter_code(story.id, first_edition.id, source_ids[earlier_place]) end,
-      'editions', public.story_editions_json(story, source_chapter.id));
+      'editions', editions_json);
   end if;
 
   -- Step 5: the text. GAPS-15: none on the web while "In the app only" applies, except for the
@@ -27342,7 +27345,10 @@ begin
     'embeds', public.chapter_embed_states(text_to_send, story.user_id),
     -- TRANSLATE-1a: the "Read in" switch, each language with its address for this same chapter;
     -- empty for a story in one language (Robert, 16 Nov 2026, 12:23 UTC).
-    'editions', public.story_editions_json(story, source_chapter.id));
+    'editions', editions_json,
+    -- The language the story was written in and a classic's translator, for the credit under
+    -- the title; only for a story in several languages.
+    'edition', case when jsonb_array_length(editions_json) > 0 then public.story_edition_json(story) end);
 end;
 $$;
 
@@ -50575,7 +50581,10 @@ CREATE OR REPLACE FUNCTION "public"."story_editions_json"("story" "public"."stor
     AS $$
   with editions as (
     select raw.id, raw.slug, raw.language_code, raw.edition_of_story_id, raw.created_at,
-      shown.title, public.edition_is_original(raw) as is_original
+      shown.title, public.edition_is_original(raw) as is_original,
+      -- A classic's translator, for "Translated by" in the menu; a member's story has none.
+      (select works.translator_name from public.classic_works as works
+       where works.story_id = raw.id) as translator_name
     from public.stories as raw
     -- S1-E11-08: a title moderators hid stays hidden here too.
     cross join lateral public.story_as_shown(raw) as shown
@@ -50589,6 +50598,7 @@ CREATE OR REPLACE FUNCTION "public"."story_editions_json"("story" "public"."stor
         'slug', editions.slug,
         'title', editions.title,
         'is_original', editions.is_original,
+        'translator_name', editions.translator_name,
         'is_current', editions.id = story.id)
       || case when source_chapter_id is null then '{}'::jsonb else jsonb_build_object(
         'chapter_code', public.edition_chapter_code(

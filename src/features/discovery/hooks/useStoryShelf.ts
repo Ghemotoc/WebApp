@@ -6,6 +6,7 @@
  * it knows, and the total names the count ("View all 54 in Recently updated").
  */
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 
 import { useSession } from '@/features/auth/hooks/useSession';
 import { useReadingLanguageFilter } from '@/features/language/hooks/useReadingLanguages';
@@ -29,9 +30,12 @@ export function useStoryShelf(request: ListRequest) {
   const { userId, isKnown } = useSession();
   // The languages the reader reads (MARKETS-2c); null until known, so the list loads once.
   const reading = useReadingLanguageFilter();
+  const { i18n } = useTranslation();
   const shelf = useQuery<StoryListPage>({
     // What each person sees differs (ratings, blocks, follows), so the key names them.
-    queryKey: [storyListQueryKey, 'shelf', request, userId, reading.languages],
+    // TRANSLATE-1b: a story in several languages is listed in the page's language, so the
+    // list is read again when the interface language changes.
+    queryKey: [storyListQueryKey, 'shelf', request, userId, reading.languages, i18n.language],
     // A shelf whose filter changes (the home page's genre chips, LOOK-3) keeps its stories until
     // the new ones arrive, so the row and its controls never vanish while it loads.
     placeholderData: keepPreviousData,

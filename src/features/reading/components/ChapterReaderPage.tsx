@@ -35,6 +35,8 @@
  * clock or a pick by hand (useChapterTheme), ReadingRuler draws the band over the line being
  * read, and an address ending "#resume" (the story page's "You are here") goes straight back to
  * the saved place instead of offering it.
+ * One story in several languages (TRANSLATE-1b): ChapterBar carries the "Read in" switch, and a
+ * chapter this language edition doesn't have yet shows MissingTranslationNotice instead of a text.
  */
 import {
   lazy,
@@ -100,6 +102,12 @@ const PictureShareButton = lazy(async () => {
 const NoPreviewNotice = lazy(async () => {
   const module = await import('./NoPreviewNotice');
   return { default: module.NoPreviewNotice };
+});
+
+/** The screen for a chapter not translated yet: rare, so fetched only when needed (TRANSLATE-1b). */
+const MissingTranslationNotice = lazy(async () => {
+  const module = await import('./MissingTranslationNotice');
+  return { default: module.MissingTranslationNotice };
 });
 
 /** The reading ruler, loaded only for a reader who turned it on (IDEAS-1 part a). */
@@ -426,6 +434,17 @@ function ChapterShown(props: {
 }) {
   if (props.chapter === null) {
     return <ChapterMissing storySlug={props.storySlug} chapterCode={props.chapterCode} />;
+  }
+  // TRANSLATE-1b: this language edition doesn't have the chapter yet.
+  if (props.chapter.missingTranslation !== null) {
+    return (
+      <Suspense fallback={null}>
+        <MissingTranslationNotice
+          chapter={props.chapter}
+          missing={props.chapter.missingTranslation}
+        />
+      </Suspense>
+    );
   }
   // GAPS-15: the writer chose "In the app only" and it applies, so no text came (S1-E4-09).
   if (props.chapter.appOnly) return <AppOnlyNotice chapter={props.chapter} />;

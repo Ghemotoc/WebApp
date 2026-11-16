@@ -1,0 +1,34 @@
+{
+  "readIn": "Citește în: {{language}}",
+  "readInList": "Citește în",
+  "staysOnChapter": "Rămâi la capitolul {{number}}.",
+  "original": "Original",
+  "translatedBy": "Tradus de {{name}}",
+  "shownForPage": "Afișat în {{language}} pentru că pagina este în {{language}}. Disponibil și în {{others}}. Alegerea ta se păstrează pentru această poveste.",
+  "shown": "Afișat în {{language}}. Disponibil și în {{others}}. Alegerea ta se păstrează pentru această poveste.",
+  "theOriginal": "{{language}}, limba originală",
+  "alsoInOriginal": "{{language}} (original)",
+  "chaptersIn": "{{count}} din {{total}} în {{language}}",
+  "onlyForNow": "Doar în {{language}} deocamdată",
+  "about": {
+    "heading": "Despre această ediție",
+    "originalLanguage": "Limba originală",
+    "thisEdition": "Această ediție",
+    "translator": "Traducător",
+    "rights": "Drepturi",
+    "alsoIn": "Disponibil și în"
+  },
+  "countedOnceTitle": "O poveste, numărată o singură dată.",
+  "countedOnceBody": "Aprecierile, salvările și citirile din toate limbile se adună la aceeași poveste. Rafturile și căutarea o arată o singură dată.",
+  "missing": {
+    "documentTitle": "{{title}} · {{story}}",
+    "eyebrow": "Capitolul {{number}} · {{title}}",
+    "title": "Acest capitol nu este încă în {{language}}",
+    "translatedFirst": "{{translator}} a tradus capitolul 1.",
+    "translatedThrough": "{{translator}} a tradus capitolele 1–{{through}}.",
+    "body": "Poți citi capitolul {{number}} în {{original}}, limba originală, și te poți întoarce la {{language}} pentru următorul.",
+    "readOriginal": "Citește capitolul {{number}} în {{original}}",
+    "back": "Înapoi la capitolul {{number}}",
+    "follow": "Urmărești povestea? Primești o notificare când capitolul {{number}} apare în {{language}}."
+  }
+}

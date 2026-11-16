@@ -10,6 +10,9 @@
  * "You are here" (IDEAS-1 part a, IDEA-20261031-4): a signed-in reader's latest place in the
  * story is marked beside its chapter, in words ("You are here, 42%"), and the mark is a link that
  * opens the chapter at that place (the address ends "#resume", which the reader jumps to).
+ * In a later language edition (TRANSLATE-1b; board TrStory) the list holds every chapter of the
+ * story: one that isn't translated yet carries the pill "<language> only for now" and opens the
+ * "not translated yet" notice, and the heading row says "4 of 6 in English".
  * Who uses it: StoryPage. What it calls: useStoryLibraryState → story_library_state(), the same
  * place "Continue chapter n" uses.
  */
@@ -19,9 +22,19 @@ import { Link } from 'react-router';
 import { InfoPill } from '@/components/ui/InfoPill';
 import type { StoryPlace } from '@/features/library/api/library';
 import { useStoryLibraryState } from '@/features/library/hooks/useStoryLibraryState';
+import { languageNameIn, languageOwnName } from '@/lib/language-names';
 import { formatRomaniaDate } from '@/lib/romania-time';
 
+import type { EditionFacts } from '../api/editions';
 import type { StoryPageChapter } from '../api/storyPage';
+import { useEditionsTranslation } from '../registerEditionsTranslations';
+
+/** What a later language edition tells the list (TRANSLATE-1b); null for any other story. */
+export interface ChapterListEdition {
+  /** The language of the edition on screen. */
+  languageCode: string;
+  facts: EditionFacts;
+}
 
 /** The "You are here" link beside the chapter the reader stopped in. */
 function YouAreHere(props: { place: StoryPlace; storySlug: string; chapterNumber: number }) {
@@ -82,9 +95,12 @@ function ChapterRow(props: {
   chapter: StoryPageChapter;
   storySlug: string;
   place: StoryPlace | null;
+  /** The language the story was written in, named on a chapter that isn't translated yet. */
+  originalLanguage: string | null;
 }) {
-  const { chapter, storySlug, place } = props;
+  const { chapter, storySlug, place, originalLanguage } = props;
   const { t } = useTranslation('reading');
+  const { t: editionsText } = useEditionsTranslation();
   const isHere =
     place !== null && place.chapterCode === chapter.code && chapter.status === 'published';
   return (
@@ -102,6 +118,12 @@ function ChapterRow(props: {
         {isHere && (
           <YouAreHere place={place} storySlug={storySlug} chapterNumber={chapter.number} />
         )}
+        {/* TRANSLATE-1b: this edition doesn't have the chapter yet. */}
+        {!chapter.isTranslated && originalLanguage !== null && (
+          <InfoPill tone="neutral">
+            {editionsText('onlyForNow', { language: languageOwnName(originalLanguage) })}
+          </InfoPill>
+        )}
       </div>
       <ChapterTitle chapter={chapter} storySlug={storySlug} />
       <ChapterDates chapter={chapter} />
@@ -118,13 +140,19 @@ export function StoryChapterList({
   chapters,
   isOwner,
   storySlug,
+  edition = null,
 }: {
   chapters: StoryPageChapter[];
   isOwner: boolean;
   /** The story's address, for each chapter's link to the reader. */
   storySlug: string;
+  /** For a story in several languages: the edition on screen (TRANSLATE-1b). */
+  edition?: ChapterListEdition | null;
 }) {
-  const { t } = useTranslation('reading');
+  const { t, i18n } = useTranslation('reading');
+  const { t: editionsText } = useEditionsTranslation();
+  // "4 of 6 in English": only while this edition is behind the story.
+  const isBehind = edition !== null && edition.facts.chaptersHere < edition.facts.chaptersInStory;
   // The reader's latest place in the story; null signed out or before they read.
   const { state } = useStoryLibraryState(storySlug);
   const place = state?.place ?? null;
@@ -133,15 +161,32 @@ export function StoryChapterList({
       aria-labelledby="story-chapters-heading"
       className="flex flex-col gap-3 rounded-card border border-border bg-surface p-6 shadow-card"
     >
-      <h2 id="story-chapters-heading" className="m-0 w-fit eyebrow">
-        {t('storyPage.chaptersHeading')}
-      </h2>
+      <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-1">
+        <h2 id="story-chapters-heading" className="m-0 w-fit eyebrow">
+          {t('storyPage.chaptersHeading')}
+        </h2>
+        {isBehind && (
+          <p className="m-0 text-[13px] text-meta">
+            {editionsText('chaptersIn', {
+              count: edition.facts.chaptersHere,
+              total: edition.facts.chaptersInStory,
+              language: languageNameIn(edition.languageCode, i18n.language),
+            })}
+          </p>
+        )}
+      </div>
       {chapters.length === 0 && isOwner && (
         <p className="m-0 text-sm text-body">{t('storyPage.noChaptersOwner')}</p>
       )}
       <ol className="m-0 list-none p-0">
         {chapters.map((chapter) => (
-          <ChapterRow key={chapter.code} chapter={chapter} storySlug={storySlug} place={place} />
+          <ChapterRow
+            key={chapter.code}
+            chapter={chapter}
+            storySlug={storySlug}
+            place={place}
+            originalLanguage={edition?.facts.originalLanguage ?? null}
+          />
         ))}
       </ol>
     </section>
