@@ -110,3 +110,6 @@ IDEA-20261114-1 Start a story again and keep the first read; -2 Leave out storie
 
 ### Sent 15 Nov 2026 (doc tabs by category in "Ghemotoc feature ideas"; Notion Feature ideas database)
 IDEA-20261115-1 A private line about a story I finished; -2 More from writers I follow; -3 "New since your last visit" in comments; -4 Slow mode for a heated thread; -5 A second teacher for a class; -6 Keep my profile out of search and suggestions; -7 A large-print copy of my story; -8 School years named the local way.
+
+### Sent 16 Nov 2026 (doc tabs by category in "Ghemotoc feature ideas"; Notion Feature ideas database)
+IDEA-20261116-1 "Changed since you read it" on the chapter list; -2 "Not for me" on a story card; -3 Save a comment to my revision list; -4 "About an earlier version" on old comments; -5 Close a quiet space and keep it readable; -6 "While you were away" after a long break; -7 Hand in to the teacher first; -8 School holidays pause the weekly points; -9 Clear my reading history; -10 Copy a reference for school work; -11 A letter bar for ă, ș, ț, å, ä, ö, æ and ø.
