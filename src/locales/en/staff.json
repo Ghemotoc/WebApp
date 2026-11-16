@@ -899,7 +899,12 @@
       "details_unchecked": "This work came from a research list. Check its details (rating, category and source) and save them before publishing.",
       "no_change": "Nothing changed. Correct the typo in the text first.",
       "too_big": "That is more than a typo fix, so it wasn’t saved. Staff correct typos from the source edition; they never rewrite or shorten a work.",
-      "too_many_rows": "That list is too long. Import at most 500 rows at a time."
+      "too_many_rows": "That list is too long. Import at most 500 rows at a time.",
+      "translation_rights_missing": "Choose the translation rights first. A translation has its own copyright.",
+      "translator_year_missing": "Add the year the translator died, or choose other translation rights.",
+      "original_not_published": "Publish the original first.",
+      "edition_language_taken": "This classic already has that language.",
+      "edition_too_many_chapters": "An edition can’t have more chapters than its original."
     },
     "done": {
       "save": "Saved as a draft.",
@@ -1030,6 +1035,57 @@
       "fixes_one": "{{count}} earlier fix",
       "fixes_few": "{{count}} earlier fixes",
       "fixes_other": "{{count}} earlier fixes"
+    },
+    "editions": {
+      "eyebrow": "Editions",
+      "heading": "Languages of this classic",
+      "show": "Editions",
+      "add": "Add an edition",
+      "caption": "Languages of {{title}}",
+      "columns": {
+        "language": "Language",
+        "title": "Title",
+        "translator": "Translator",
+        "rights": "Translation rights",
+        "chapters": "Chapters",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "original": "Original",
+      "noTranslator": "No translator",
+      "chaptersOf": "{{count}} of {{total}}",
+      "rightsOriginal": "Public domain (author died {{year}})",
+      "rightsValues": {
+        "public_domain": "Public domain",
+        "signed_licence": "Signed licence",
+        "made_for_platform": "Made for {{productName}}"
+      },
+      "notChecked": "Not checked",
+      "edit": "Edit",
+      "editLabel": "Edit the {{language}} edition",
+      "publish": "Publish edition",
+      "unpublish": "Unpublish",
+      "fixTypo": "Fix a typo",
+      "textHeading": "Text of the {{language}} edition",
+      "textHint": "Chapters are matched to the original in order, so the edition can’t have more chapters than the original.",
+      "noLanguagesLeft": "This classic is already in every language on the list.",
+      "form": {
+        "legend": "Add an edition",
+        "editLegend": "The {{language}} edition",
+        "language": "Language",
+        "title": "Title",
+        "blurb": "Short description (optional)",
+        "translator": "Translator",
+        "translatorHint": "Shown as “Translated by …”. Leave empty only if the translator is unknown.",
+        "translatorDiedYear": "Year the translator died",
+        "translatorDiedYearHint": "Needed for a public-domain translation: it stays protected for 70 years after its translator’s death.",
+        "rights": "Translation rights",
+        "chooseOne": "Choose one",
+        "rightsHint": "Public domain, a signed licence, or made for {{productName}}. A translation has its own copyright.",
+        "saveDraft": "Save as draft",
+        "saving": "Saving…",
+        "cancel": "Cancel"
+      }
     }
   },
   "languages": {

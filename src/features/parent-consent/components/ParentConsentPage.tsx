@@ -12,7 +12,6 @@
  * Signed out, it asks the writer to log in. Plain page: no doodles near the form.
  */
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
 import { Eyebrow } from '@/components/ui/Eyebrow';
@@ -28,6 +27,8 @@ import { AskParentForm } from './AskParentForm';
 import { ConsentSentPanel } from './ConsentSentPanel';
 import { errorShownByHook } from '@/lib/errorShownByHook';
 import { writtenLanguageFor } from '@/schemas/interfaceLanguages';
+import { useTranslation } from 'react-i18next';
+import { useParentConsentTranslation } from '../registerParentConsentTranslations';
 
 /** The class of a link drawn as a secondary button. */
 const linkButtonClass =
@@ -42,16 +43,16 @@ type Consent = ReturnType<typeof useMyParentConsent>;
  * @returns the block
  */
 function AgreedPanel({ consent }: { consent: MyParentConsent }) {
-  const { t, i18n } = useTranslation('account');
+  const { t, i18n } = useParentConsentTranslation();
   const date =
     consent.decidedAt === null ? '' : formatRomaniaDate(new Date(consent.decidedAt), i18n.language);
   return (
     <div className="flex flex-col gap-4">
-      <Notice tone="success" title={t('parentConsent.agreedHeading')}>
-        {t('parentConsent.agreedBody', { date })}
+      <Notice tone="success" title={t('agreedHeading')}>
+        {t('agreedBody', { date })}
       </Notice>
       <Link to="/settings" className={linkButtonClass}>
-        {t('parentConsent.setUpProfile')}
+        {t('setUpProfile')}
       </Link>
     </div>
   );
@@ -63,7 +64,7 @@ function AgreedPanel({ consent }: { consent: MyParentConsent }) {
  * @returns the block
  */
 function AskingPanel({ state, consent }: { state: Consent; consent: MyParentConsent }) {
-  const { i18n } = useTranslation('account');
+  const { i18n } = useParentConsentTranslation();
   const [isChanging, setIsChanging] = useState(false);
   const [hasResent, setHasResent] = useState(false);
   const isWaiting = consent.status === 'waiting' && consent.parentEmail !== null;
@@ -105,18 +106,20 @@ function AskingPanel({ state, consent }: { state: Consent; consent: MyParentCons
  * @returns the right block for where the consent stands
  */
 function ConsentBody({ state, consent }: { state: Consent; consent: MyParentConsent }) {
-  const { t } = useTranslation('account');
+  const { t } = useParentConsentTranslation();
+  // This heading is shared with the notice under the top bar, so it lives in account.json.
+  const { t: accountText } = useTranslation('account');
   if (consent.status === 'withdrawn') {
     return (
-      <Notice tone="warning" title={t('parentConsent.withdrawnHeading')}>
-        {t('parentConsent.withdrawnBody')}
+      <Notice tone="warning" title={accountText('parentConsent.withdrawnHeading')}>
+        {t('withdrawnBody')}
       </Notice>
     );
   }
   if (consent.status === 'agreed' && !consent.needsConsent)
     return <AgreedPanel consent={consent} />;
   if (consent.canSend) return <AskingPanel state={state} consent={consent} />;
-  return <p className="m-0 text-body">{t('parentConsent.nothingToDo')}</p>;
+  return <p className="m-0 text-body">{t('nothingToDo')}</p>;
 }
 
 /**
@@ -125,24 +128,23 @@ function ConsentBody({ state, consent }: { state: Consent; consent: MyParentCons
  * @returns the body
  */
 function ParentConsentCardBody() {
-  const { t } = useTranslation('account');
+  const { t } = useParentConsentTranslation();
   const { userId, isKnown } = useSession();
   const state = useMyParentConsent();
   if (!isKnown) return null;
   if (userId === null) {
     return (
       <div className="flex flex-col gap-3">
-        <p className="m-0 text-body">{t('parentConsent.signedOut')}</p>
+        <p className="m-0 text-body">{t('signedOut')}</p>
         <Link to="/sign-in" className={linkButtonClass}>
-          {t('parentConsent.logIn')}
+          {t('logIn')}
         </Link>
       </div>
     );
   }
-  if (state.loadFailed) return <Notice tone="error">{t('parentConsent.loadFailed')}</Notice>;
+  if (state.loadFailed) return <Notice tone="error">{t('loadFailed')}</Notice>;
   if (state.consent === undefined) return null;
-  if (state.consent === null)
-    return <p className="m-0 text-body">{t('parentConsent.nothingToDo')}</p>;
+  if (state.consent === null) return <p className="m-0 text-body">{t('nothingToDo')}</p>;
   return <ConsentBody state={state} consent={state.consent} />;
 }
 
@@ -152,23 +154,23 @@ function ParentConsentCardBody() {
  * @returns the writer's consent screen
  */
 export function ParentConsentPage() {
-  const { t } = useTranslation('account');
+  const { t } = useParentConsentTranslation();
   return (
     <PageContainer className="tmc-rise flex justify-center pt-12 pb-7">
-      <title>{t('parentConsent.documentTitle')}</title>
+      <title>{t('documentTitle')}</title>
       <section
         aria-labelledby="parent-consent-heading"
         className="flex w-full max-w-[640px] flex-col gap-5 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
       >
         <div className="flex flex-col gap-2">
-          <Eyebrow>{t('parentConsent.eyebrow')}</Eyebrow>
+          <Eyebrow>{t('eyebrow')}</Eyebrow>
           <h1
             id="parent-consent-heading"
             className="m-0 font-heading text-[30px] font-bold text-heading"
           >
-            {t('parentConsent.heading')}
+            {t('heading')}
           </h1>
-          <p className="m-0 text-body">{t('parentConsent.intro')}</p>
+          <p className="m-0 text-body">{t('intro')}</p>
         </div>
         <ParentConsentCardBody />
       </section>

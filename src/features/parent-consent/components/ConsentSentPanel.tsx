@@ -7,7 +7,6 @@
  * What it calls: onResend() (the same email and language again: a new link replaces the old one)
  * and onChange() (back to AskParentForm).
  */
-import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
@@ -16,6 +15,7 @@ import { formatRomaniaDate } from '@/lib/romania-time';
 
 import type { ConsentFailure } from '../../../schemas/parentConsent';
 import type { MyParentConsent } from '../api/parentConsent';
+import { useParentConsentTranslation } from '../registerParentConsentTranslations';
 
 /** What the panel needs. */
 export interface ConsentSentPanelProps {
@@ -43,37 +43,33 @@ export function ConsentSentPanel({
   onResend,
   onChange,
 }: ConsentSentPanelProps) {
-  const { t, i18n } = useTranslation('account');
+  const { t, i18n } = useParentConsentTranslation();
   const deadline =
     consent.deadline === null ? null : formatRomaniaDate(new Date(consent.deadline), i18n.language);
 
   return (
     <div className="flex flex-col gap-4">
-      <Notice tone="success" title={t('parentConsent.sentHeading')}>
-        {t('parentConsent.sentBody', { email: consent.parentEmail ?? '' })}
+      <Notice tone="success" title={t('sentHeading')}>
+        {t('sentBody', { email: consent.parentEmail ?? '' })}
       </Notice>
       <div className="flex flex-col gap-1">
-        <p className="m-0 font-semibold text-heading">{t('parentConsent.meanwhile')}</p>
-        <p className="m-0 text-body">{t('parentConsent.opensAfter')}</p>
+        <p className="m-0 font-semibold text-heading">{t('meanwhile')}</p>
+        <p className="m-0 text-body">{t('opensAfter')}</p>
       </div>
-      {deadline !== null && (
-        <p className="m-0 text-body">{t('parentConsent.deadline', { date: deadline })}</p>
-      )}
-      {resendState === 'sent' && (
-        <p className="m-0 text-sm text-meta">{t('parentConsent.sentAgain')}</p>
-      )}
+      {deadline !== null && <p className="m-0 text-body">{t('deadline', { date: deadline })}</p>}
+      {resendState === 'sent' && <p className="m-0 text-sm text-meta">{t('sentAgain')}</p>}
       {resendState !== null && resendState !== 'sent' && (
-        <Notice tone="error">{t(`parentConsent.failures.${resendState}`)}</Notice>
+        <Notice tone="error">{t(`failures.${resendState}`)}</Notice>
       )}
       <div className="flex flex-wrap gap-2">
         <Button variant="secondary" disabled={isSending} onClick={onResend}>
-          {t('parentConsent.sendAgain')}
+          {t('sendAgain')}
         </Button>
         <Button variant="secondary" onClick={onChange}>
-          {t('parentConsent.changeEmail')}
+          {t('changeEmail')}
         </Button>
         <Link to="/discover" className={linkButtonClass}>
-          {t('parentConsent.readStories')}
+          {t('readStories')}
         </Link>
       </div>
     </div>

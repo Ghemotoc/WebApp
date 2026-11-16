@@ -5,12 +5,15 @@
  * H1 (Funnel Display 800, 36 to 64 px), and the meta line "by <pen name> · 9 Oct 2026 ·
  * 3 min read" in 14 px. An edited chapter adds "edited <date>" (S1-E3-03, Q10). The pen name
  * links to the writer's profile once profiles exist (S1-E5-05); until then it is plain text.
+ * A translated classic in a story with several languages adds "Translated from <language> by
+ * <name>" after the author (TRANSLATE-1b; board TrReader).
  * Who uses it: ChapterReaderPage.
  */
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 
 import { Eyebrow } from '@/components/ui/Eyebrow';
+import { languageNameIn } from '@/lib/language-names';
 import { formatRomaniaShortDate } from '@/lib/romania-time';
 
 import type { ReaderChapter } from '../api/chapter';
@@ -18,6 +21,16 @@ import type { ReaderChapter } from '../api/chapter';
 /** The meta line's parts after "by <name>". */
 function metaParts(chapter: ReaderChapter, language: string, t: TFunction<'reading'>) {
   const parts: string[] = [];
+  // TRANSLATE-1b: the translator of a classic, named with the language it was translated from.
+  const facts = chapter.edition;
+  if (facts !== null && !facts.isOriginal && facts.translatorName !== null) {
+    parts.push(
+      t('editions.translatedFromBy', {
+        language: languageNameIn(facts.originalLanguage, language),
+        name: facts.translatorName,
+      }),
+    );
+  }
   if (chapter.publishedAt !== null) {
     parts.push(formatRomaniaShortDate(new Date(chapter.publishedAt), language));
   }

@@ -1,0 +1,39 @@
+{
+  "readIn": "Read in: {{language}}",
+  "readInList": "Read in",
+  "staysOnChapter": "You stay on chapter {{number}}.",
+  "original": "Original",
+  "translatedBy": "Translated by {{name}}",
+  "shownForPage": "Shown in {{language}} because this page is in {{language}}. Also in {{others}}. Your choice is remembered for this story.",
+  "shown": "Shown in {{language}}. Also in {{others}}. Your choice is remembered for this story.",
+  "theOriginal": "{{language}}, the original",
+  "alsoInOriginal": "{{language}} (original)",
+  "chaptersIn": "{{count}} of {{total}} in {{language}}",
+  "onlyForNow": "{{language}} only for now",
+  "about": {
+    "heading": "About this edition",
+    "originalLanguage": "Original language",
+    "thisEdition": "This edition",
+    "translator": "Translator",
+    "rights": "Rights",
+    "rightsValues": {
+      "public_domain": "Public domain",
+      "signed_licence": "Licensed translation",
+      "made_for_platform": "Translated for {{productName}}"
+    },
+    "alsoIn": "Also in"
+  },
+  "countedOnceTitle": "One story, counted once.",
+  "countedOnceBody": "Likes, saves and reads from every language add up on the same story. Shelves and search show it once.",
+  "missing": {
+    "documentTitle": "{{title}} · {{story}}",
+    "eyebrow": "Chapter {{number}} · {{title}}",
+    "title": "This chapter isn’t in {{language}} yet",
+    "translatedFirst": "{{translator}} has translated chapter 1.",
+    "translatedThrough": "{{translator}} has translated chapters 1 to {{through}}.",
+    "body": "You can read chapter {{number}} in {{original}}, the original, and come back to {{language}} for the next one.",
+    "readOriginal": "Read chapter {{number}} in {{original}}",
+    "back": "Back to chapter {{number}}",
+    "follow": "Following the story? You get a notification when chapter {{number}} comes out in {{language}}."
+  }
+}

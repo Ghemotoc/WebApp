@@ -226,5 +226,8 @@
   },
   "poem": {
     "stanza": "Stanza {{number}}"
+  },
+  "editions": {
+    "translatedFromBy": "Translated from {{language}} by {{name}}"
   }
 }

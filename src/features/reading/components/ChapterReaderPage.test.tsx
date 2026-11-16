@@ -14,7 +14,7 @@ import type { ReaderChapter } from '../api/chapter';
 import { ChapterReaderPage } from './ChapterReaderPage';
 
 /** A published chapter with two paragraphs. */
-const chapter: ReaderChapter = {
+const publishedChapter: ReaderChapter = {
   story: {
     slug: 'statia-meteo',
     title: 'Stația meteo',
@@ -40,6 +40,52 @@ const chapter: ReaderChapter = {
   body: 'Primul paragraf.\n\nAl doilea paragraf.',
   pictures: {},
   embeds: {},
+  editions: [],
+  edition: null,
+  missingTranslation: null,
+};
+
+/** The chapter useChapter() answers in each test. */
+let chapter: ReaderChapter = publishedChapter;
+
+/** Chapter 5 of an English edition that stops at chapter 4 (TRANSLATE-1b; board TrMissing). */
+const untranslatedChapter: ReaderChapter = {
+  ...publishedChapter,
+  story: { ...publishedChapter.story, slug: 'the-weather-station', languageCode: 'en' },
+  id: '',
+  code: 'rofive55',
+  title: 'Furtuna',
+  number: 5,
+  total: 6,
+  previousCode: 'enfour44',
+  nextCode: null,
+  body: '',
+  editions: [
+    {
+      languageCode: 'ro',
+      slug: 'statia-meteo',
+      title: 'Stația meteo',
+      isOriginal: true,
+      translatorName: null,
+      isCurrent: false,
+      chapterCode: 'rofive55',
+    },
+    {
+      languageCode: 'en',
+      slug: 'the-weather-station',
+      title: 'The Weather Station',
+      isOriginal: false,
+      translatorName: null,
+      isCurrent: true,
+      chapterCode: null,
+    },
+  ],
+  missingTranslation: {
+    original: { slug: 'statia-meteo', languageCode: 'ro', code: 'rofive55', title: 'Furtuna' },
+    translatedThrough: 4,
+    translatorName: null,
+    previousNumber: 4,
+  },
 };
 
 /** What page_ads() answers for the chapter page in each test. */
@@ -70,6 +116,7 @@ function renderReader() {
 describe('the chapter reader’s ad slot', () => {
   beforeEach(() => {
     slots = [];
+    chapter = publishedChapter;
   });
 
   it('shows nothing at all where the page has no ad (a class-only story)', () => {
@@ -109,5 +156,32 @@ describe('the chapter reader’s ad slot', () => {
       'href',
       '/write/new',
     );
+  });
+});
+
+describe('a chapter that isn’t in the chosen language yet', () => {
+  beforeEach(() => {
+    slots = [];
+    chapter = untranslatedChapter;
+  });
+
+  it('says so, and offers the original and the last translated chapter', async () => {
+    const { container } = renderReader();
+    // The notice is fetched when needed, so it arrives a moment after the page.
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'This chapter isn’t in English yet' }),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/Lia Scrie has translated chapters 1 to 4\./)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Read chapter 5 in Română' })).toHaveAttribute(
+      'href',
+      '/s/statia-meteo/rofive55',
+    );
+    expect(screen.getByRole('link', { name: 'Back to chapter 4' })).toHaveAttribute(
+      'href',
+      '/s/the-weather-station/enfour44',
+    );
+    // No chapter text and no ad on a page with nothing to read.
+    expect(container.querySelector('.tmc-chapter-text')).toBeNull();
+    expect(container.querySelector('[data-ad]')).toBeNull();
   });
 });

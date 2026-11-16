@@ -14,8 +14,11 @@
  * doodles since bundle G4.
  * A signed-out visitor on a 16+ or 18+ story gets its title and NoPreviewNotice instead of "not
  * available" (S1-E4-04; they count as under 16, Q6).
+ * A story in several languages (TRANSLATE-1b): useOpeningEdition moves the reader to the language
+ * the story should open in (their own earlier choice, the page's language, a language they read,
+ * then the original), and the header, chapter list and side column show the language parts.
  * What it calls: useStoryPage → get_story_page() (ADR 0004: never the tables); useStoryPreview →
- * get_link_preview() only when that answered nothing.
+ * get_link_preview() only when that answered nothing; useOpeningEdition → story_opening_edition().
  */
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router';
@@ -25,12 +28,14 @@ import { PageContainer } from '@/components/ui/PageContainer';
 import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
 import { StorySuggestions } from '@/features/suggestions/components/StorySuggestions';
 
+import type { StoryPageData } from '../api/storyPage';
+import { useOpeningEdition } from '../hooks/useOpeningEdition';
 import { useStoryPage } from '../hooks/useStoryPage';
 import { useStoryPreview } from '../hooks/useStoryPreview';
 
 import { NoPreviewNotice } from './NoPreviewNotice';
 import { StoryBreadcrumb } from './StoryBreadcrumb';
-import { StoryChapterList } from './StoryChapterList';
+import { StoryChapterList, type ChapterListEdition } from './StoryChapterList';
 import { CopiedWorkNote } from './CopiedWorkNote';
 import { StoryHeader } from './StoryHeader';
 import { StorySideColumn } from './StorySideColumn';
@@ -95,6 +100,17 @@ function StoryAdSlot({
 }
 
 /**
+ * What the chapter list needs to know about a story in several languages (TRANSLATE-1b).
+ *
+ * @param story - the story the page shows
+ * @returns the edition on screen, or null for a story in one language
+ */
+function chapterListEdition(story: StoryPageData): ChapterListEdition | null {
+  if (story.editions.length < 2 || story.edition === null) return null;
+  return { languageCode: story.languageCode, facts: story.edition };
+}
+
+/**
  * Renders the page.
  *
  * @returns the story screen, a wait, or "not available"
@@ -103,6 +119,8 @@ export function StoryPage() {
   const { t } = useTranslation('reading');
   const { storySlug = '' } = useParams();
   const { story, isLoaded, loadFailed } = useStoryPage(storySlug);
+  // TRANSLATE-1b: a story in several languages opens in this reader's language.
+  useOpeningEdition(story);
 
   if (loadFailed) {
     return (
@@ -145,6 +163,7 @@ export function StoryPage() {
             chapters={story.chapters}
             isOwner={story.isOwner}
             storySlug={story.slug}
+            edition={chapterListEdition(story)}
           />
           {/* The parts of the plan the writer shares (S1-E17-33). */}
           <StoryWorldLinks storySlug={story.slug} />

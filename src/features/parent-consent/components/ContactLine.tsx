@@ -4,8 +4,8 @@
  *
  * Who shows it: ParentAnswerPage. What it links to: /contact (S1-E14-04).
  */
-import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
+import { useParentConsentTranslation } from '../registerParentConsentTranslations';
 
 /**
  * Renders the line.
@@ -13,12 +13,12 @@ import { Link } from 'react-router';
  * @returns the line
  */
 export function ContactLine() {
-  const { t } = useTranslation('account');
+  const { t } = useParentConsentTranslation();
   return (
     <p className="m-0 text-sm text-meta">
-      {t('parentConsent.parent.questions')}{' '}
+      {t('parent.questions')}{' '}
       <Link to="/contact" className="text-link underline hover:text-link-hover">
-        {t('parentConsent.parent.contactUs')}
+        {t('parent.contactUs')}
       </Link>
     </p>
   );

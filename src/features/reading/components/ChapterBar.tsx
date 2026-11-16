@@ -12,7 +12,10 @@
  * On a phone the bar keeps only Back, the story name and Aa (rulebook, "On a phone, the reader's
  * top bar keeps only Back, the story name and Aa"): the chapter links move to the end of the
  * chapter, where ChapterEnd already offers the next one.
- * Who uses it: ChapterReaderPage. What it calls: ReadingSettingsControl; the rest are links.
+ * A story in several languages adds "Read in: <language>" before Aa, on every screen size
+ * (TRANSLATE-1b; boards TrReader and PhoneTrReader); it keeps the chapter.
+ * Who uses it: ChapterReaderPage and MissingTranslationNotice. What it calls:
+ * ReadingSettingsControl and ReadInSwitch; the rest are links.
  */
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
@@ -20,6 +23,7 @@ import { Link } from 'react-router';
 import type { ReaderChapter } from '../api/chapter';
 
 import { ReadingSettingsControl } from './ReadingSettingsControl';
+import { LazyReadInSwitch } from './LazyReadInSwitch';
 import { BackIcon, ContentsIcon, ForwardIcon } from './ReaderIcons';
 
 /** The classes shared by the glass links. */
@@ -91,9 +95,19 @@ function ProgressLine({ progress }: { progress: number }) {
  */
 export function ChapterBar({ chapter, progress, deviceSize }: ChapterBarProps) {
   const { t } = useTranslation('reading');
+  // On a phone a story in several languages puts its controls on a second row, so "Read in"
+  // never covers the title (board PhoneTrReader); one language keeps the single row.
+  const phoneColumns =
+    chapter.editions.length > 1
+      ? 'grid-cols-1 md:grid-cols-[minmax(0,1fr)_auto]'
+      : 'grid-cols-[minmax(0,1fr)_auto]';
+  const phoneControls =
+    chapter.editions.length > 1 ? 'justify-start md:justify-end' : 'justify-end';
   return (
     <div className="glass-pill relative z-[2] rounded-[28px] px-2.5 pt-2.5">
-      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2.5 xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
+      <div
+        className={`grid items-center gap-2.5 xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] ${phoneColumns}`}
+      >
         <Link
           to={`/s/${chapter.story.slug}`}
           className="inline-flex min-h-11 min-w-0 items-center gap-1.5 justify-self-start rounded-full pr-[18px] pl-3 text-[15px] font-semibold break-words text-heading no-underline hover:underline"
@@ -106,7 +120,9 @@ export function ChapterBar({ chapter, progress, deviceSize }: ChapterBarProps) {
         <p className="m-0 hidden text-[15px] whitespace-nowrap text-body xl:block">
           {t('reader.kicker', { number: chapter.number, total: chapter.total })}
         </p>
-        <div className="flex items-center justify-end gap-2">
+        <div className={`flex flex-wrap items-center gap-2 ${phoneControls}`}>
+          {/* TRANSLATE-1b: nothing for a story in one language (Robert, 16 Nov 2026). */}
+          <LazyReadInSwitch editions={chapter.editions} chapterNumber={chapter.number} />
           {deviceSize !== null && (
             <ReadingSettingsControl deviceSize={deviceSize} chapterCode={chapter.code} />
           )}

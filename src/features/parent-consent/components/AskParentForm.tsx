@@ -7,7 +7,6 @@
  * the link, so the writer never sees it. The email is checked with the shared zod schema first.
  */
 import { useState, type FormEvent } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
@@ -22,6 +21,7 @@ import {
   type ConsentRequest,
 } from '../../../schemas/parentConsent';
 import { errorShownByHook } from '@/lib/errorShownByHook';
+import { useParentConsentTranslation } from '../registerParentConsentTranslations';
 
 /** What the form needs. */
 export interface AskParentFormProps {
@@ -38,7 +38,7 @@ export interface AskParentFormProps {
  * @returns the email field, the language drop-down and the button
  */
 export function AskParentForm({ initialLanguage, isSending, failure, onSend }: AskParentFormProps) {
-  const { t } = useTranslation('account');
+  const { t } = useParentConsentTranslation();
   const [email, setEmail] = useState('');
   const [language, setLanguage] = useState<ConsentLanguage>(initialLanguage);
   const [isEmailWrong, setIsEmailWrong] = useState(false);
@@ -57,27 +57,27 @@ export function AskParentForm({ initialLanguage, isSending, failure, onSend }: A
         id="parent-consent-email"
         type="email"
         autoComplete="off"
-        label={t('parentConsent.emailLabel')}
+        label={t('emailLabel')}
         value={email}
-        errorMessage={isEmailWrong ? t('parentConsent.failures.invalid') : undefined}
+        errorMessage={isEmailWrong ? t('failures.invalid') : undefined}
         onChange={(event) => setEmail(event.target.value)}
       />
       <Select
         id="parent-consent-language"
-        label={t('parentConsent.languageLabel')}
+        label={t('languageLabel')}
         isLabelVisible
         placement="form"
         value={language}
         onChange={(value) => setLanguage(value === 'en' ? 'en' : 'ro')}
         options={consentLanguages.map((code) => ({
           value: code,
-          label: t(`parentConsent.languages.${code}`),
+          label: t(`languages.${code}`),
           lang: code,
         }))}
       />
-      {failure !== null && <Notice tone="error">{t(`parentConsent.failures.${failure}`)}</Notice>}
+      {failure !== null && <Notice tone="error">{t(`failures.${failure}`)}</Notice>}
       <Button type="submit" className="self-start" disabled={isSending}>
-        {isSending ? t('parentConsent.sending') : t('parentConsent.send')}
+        {isSending ? t('sending') : t('send')}
       </Button>
     </form>
   );

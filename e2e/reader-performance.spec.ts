@@ -39,6 +39,10 @@ const FIRST_PARAGRAPH_BUDGET_MS = 2000;
  * Appearance (2 KB) now load with that section only (src/locales/<language>/appearance.json).
  * CLASS-POINTS (13 Nov 2026): class points took it to 1,300.1 KB; the texts of Settings › Ways to
  * log in (4 KB) now load with that section only (src/locales/<language>/loginMethods.json).
+ * TRANSLATE-1 (16 Nov 2026): a story's languages took it to 1,314 KB. The "Read in" switch and
+ * its texts now load only for a story in several languages (LazyReadInSwitch, editions.json), and
+ * the parental consent screens' texts (13 KB) load with those screens only (parentConsent.json;
+ * the notice under the top bar keeps its lines in account.json).
  */
 const READER_SCRIPT_BUDGET_KB = 1300;
 

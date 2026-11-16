@@ -6,6 +6,9 @@
  * What it calls next: browse_stories() (…_s1_e5_01_browse_stories.sql), which applies every
  * reader rule in the database: ratings (CLAUDE.md rule 18), blocks, moderation and drafts. It
  * answers the writer's username and display name, never a user ID.
+ * A story in several languages comes once, in the edition for this reader, with the languages it
+ * exists in (`languages`) for the card's small tags; a story in one language has none
+ * (TRANSLATE-1b; Robert, 16 Nov 2026).
  */
 import type {
   CoverColourKey,
@@ -168,6 +171,13 @@ export interface ListedStory {
   lastChapterPublishedAt: string | null;
   /** The writer chose "In the app only" and it applies now: the card's label (GAPS-15, Q4). */
   appOnly: boolean;
+  /**
+   * The languages the story can be read in, for the card's tags ("EN", "RO · original"); empty
+   * for a story in one language, which shows no tag (TRANSLATE-1b; Robert, 16 Nov 2026).
+   */
+  languages: { code: string; isOriginal: boolean }[];
+  /** A classic's translator, for "Translated by" under the author; null otherwise. */
+  translatorName: string | null;
 }
 
 /** One page of a list. */
@@ -188,7 +198,13 @@ export interface ListedStoryRow {
   slug: string;
   title: string;
   blurb: string;
-  writer: { handle: string; display_name: string; rank?: WriterRank | null };
+  writer: {
+    handle: string;
+    display_name: string;
+    rank?: WriterRank | null;
+    /** A classic's record (story_classic_author()); only the translator is used on a card. */
+    classic_author?: { translator_name?: string | null } | null;
+  };
   category_slug: string;
   language_code: string;
   completion_status: CompletionStatus;
@@ -203,6 +219,8 @@ export interface ListedStoryRow {
   last_chapter_published_at: string | null;
   /** GAPS-15 (story_card_json()); missing from functions that build their own cards. */
   app_only?: boolean;
+  /** TRANSLATE-1a (story_card_json()); missing from functions that build their own cards. */
+  languages?: { language_code: string; is_original: boolean }[];
 }
 
 /**
@@ -247,6 +265,11 @@ export function toListedStory(row: ListedStoryRow): ListedStory {
     chapterCount: row.chapter_count,
     lastChapterPublishedAt: row.last_chapter_published_at,
     appOnly: row.app_only === true,
+    languages: (row.languages ?? []).map((language) => ({
+      code: language.language_code,
+      isOriginal: language.is_original,
+    })),
+    translatorName: row.writer.classic_author?.translator_name ?? null,
   };
 }
 

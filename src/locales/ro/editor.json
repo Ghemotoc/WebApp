@@ -84,6 +84,7 @@
       "empty": "Scrie ceva înainte să publici.",
       "badTime": "Alege o dată și o oră din viitor, cel mult peste un an.",
       "notActive": "Contul nu poate publica încă.",
+      "originalNotPublished": "Publică mai întâi capitolul original.",
       "failed": "Nu am putut face asta. Verifică conexiunea și încearcă din nou."
     },
     "webReadingNote": "Cititorii conectați pot citi capitolul în browser până apar aplicațiile. Copierea e mai grea, dar capturile de ecran funcționează în continuare pe web."

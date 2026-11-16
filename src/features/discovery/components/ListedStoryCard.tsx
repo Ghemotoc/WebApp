@@ -9,6 +9,9 @@
  * database sends one: never for a classic, a writer who blocked the reader or a private profile.
  * An "In the app only" pill shows when the writer chose it and the switch for it is on (GAPS-15;
  * Q4, 16 Oct 2026: the label shows wherever stories appear on the website).
+ * A story in several languages gets small language tags ("EN", "RO · original"), and a
+ * translated classic "Translated by <name>" after the author (TRANSLATE-1b; board TrCards). A
+ * story in one language gets no tag (Robert, 16 Nov 2026).
  * Who uses it: DiscoverShelf and StoryGrid.
  */
 import type { DrawnCoverChoice } from '@/components/covers/coverDesigns';
@@ -17,8 +20,37 @@ import { StoryCard } from '@/components/ui/StoryCard';
 import { RankChip } from '@/features/forums/components/RankChip';
 import { StoryCoverArt } from '@/features/pictures/components/StoryCoverArt';
 
+import { languageOwnName } from '@/lib/language-names';
+
 import type { ListedStory } from '../api/storyLists';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
+
+/**
+ * The language tags of a story in several languages: the code in capitals, "· original" on the
+ * language it was written in, and the language's name for screen readers.
+ *
+ * @returns the tags, or nothing for a story in one language
+ */
+function LanguageTags({ languages }: { languages: ListedStory['languages'] }) {
+  const { t } = useDiscoveryTranslation();
+  if (languages.length < 2) return null;
+  return (
+    <>
+      {languages.map((language) => {
+        const code = language.code.slice(0, 2).toUpperCase();
+        return (
+          <InfoPill key={language.code} tone="neutral">
+            <span className="sr-only">{languageOwnName(language.code)} </span>
+            <span aria-hidden="true">
+              {language.isOriginal ? t('card.languageOriginal', { code }) : code}
+            </span>
+            {language.isOriginal && <span className="sr-only">{t('card.originalHidden')}</span>}
+          </InfoPill>
+        );
+      })}
+    </>
+  );
+}
 
 /**
  * Renders the card.
@@ -36,10 +68,18 @@ export function ListedStoryCard(props: {
 }) {
   const { story, cover, isFluid = false } = props;
   const { t } = useDiscoveryTranslation();
+  // "Ion Creangă · Translated by Ana Vlad": only a translated classic has a second credit.
+  const writerLine =
+    story.translatorName === null
+      ? story.writer.displayName
+      : t('card.writerAndTranslator', {
+          writer: story.writer.displayName,
+          translator: story.translatorName,
+        });
   return (
     <StoryCard
       title={story.title}
-      metaLine={t('card.meta', { writer: story.writer.displayName, count: story.chapterCount })}
+      metaLine={t('card.meta', { writer: writerLine, count: story.chapterCount })}
       cover={cover}
       href={`/s/${story.slug}`}
       isFluid={isFluid}
@@ -54,6 +94,7 @@ export function ListedStoryCard(props: {
           )}
           {story.appOnly && <InfoPill tone="plum">{t('card.appOnly')}</InfoPill>}
           {story.writer.rank !== null && <RankChip rank={story.writer.rank} />}
+          <LanguageTags languages={story.languages} />
         </span>
       }
     />

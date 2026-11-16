@@ -1,11 +1,11 @@
 /**
  * ClassicCard: one classic on /staff/classics (story S1-E11-16): its title, author, status,
  * the public-domain check and its chapters, with Edit details, the text form, Publish and
- * Unpublish.
+ * Unpublish. "Editions" opens the classic's other languages (TRANSLATE-1d).
  *
  * Who shows it: ClassicsPage. What it calls: ClassicWorkForm, ClassicTextForm, ReasonForm
  * (unpublishing needs a reason for the audit log), ClassicTypoFix (16b: a typo fix in a published
- * work) and the page's onChange / onSave. A work imported from a research list says its details
+ * work) and the page's onChange / onSave, and ClassicEditionsPanel for the editions. A work imported from a research list says its details
  * need checking until staff save them (16b).
  * Plain components, no doodles (staff screens).
  */
@@ -21,6 +21,7 @@ import type { ClassicDetails, ClassicWork } from '../../api/classics';
 import type { ClassicChange } from '../../hooks/useClassics';
 
 import type { NewAuthor } from './ClassicAuthorFields';
+import { ClassicEditionsPanel } from './ClassicEditionsPanel';
 import { ClassicTextForm } from './ClassicTextForm';
 import { ClassicTypoFix } from './ClassicTypoFix';
 import { ClassicWorkForm } from './ClassicWorkForm';
@@ -29,6 +30,8 @@ import { FreeMarketsList } from './FreeMarketsList';
 /** What the card needs. */
 export interface ClassicCardProps {
   work: ClassicWork;
+  /** The classic's later editions: the same work in other languages (TRANSLATE-1d). */
+  editions: ClassicWork[];
   authors: Parameters<typeof ClassicWorkForm>[0]['authors'];
   isChanging: boolean;
   onChange: (change: ClassicChange) => Promise<unknown>;
@@ -40,7 +43,7 @@ export interface ClassicCardProps {
 }
 
 /** Which panel of the card is open. */
-type OpenPanel = 'none' | 'details' | 'unpublish' | 'typo';
+type OpenPanel = 'none' | 'details' | 'unpublish' | 'typo' | 'editions';
 
 /**
  * The card's buttons, as the work's state allows.
@@ -65,6 +68,9 @@ function CardButtons({
     <div className="flex flex-wrap gap-2">
       <Button variant="secondary" onClick={() => onOpen('details')}>
         {t('classics.card.editDetails')}
+      </Button>
+      <Button variant="secondary" onClick={() => onOpen('editions')}>
+        {t('classics.editions.show')}
       </Button>
       {canPublish && (
         <Button disabled={isChanging} onClick={onPublish}>
@@ -96,7 +102,7 @@ function CardPanel({
   ...card
 }: ClassicCardProps & { openPanel: OpenPanel; onClose: () => void }) {
   const { t } = useTranslation('staff');
-  const { work, authors, isChanging, onChange, onSave } = card;
+  const { work, editions, authors, isChanging, onChange, onSave } = card;
   return (
     <>
       {openPanel === 'details' && (
@@ -109,6 +115,14 @@ function CardPanel({
             onClose();
           }}
           onCancel={() => onClose()}
+        />
+      )}
+      {openPanel === 'editions' && (
+        <ClassicEditionsPanel
+          work={work}
+          editions={editions}
+          isChanging={isChanging}
+          onChange={onChange}
         />
       )}
       {openPanel === 'typo' && <ClassicTypoFix work={work} />}
@@ -130,20 +144,15 @@ function CardPanel({
 }
 
 /**
- * Renders the card.
+ * The top of the card: the title, its status, the byline, where it is free and the story's link.
  *
- * @returns the card
+ * @returns the card's facts
  */
-export function ClassicCard({ work, authors, isChanging, onChange, onSave }: ClassicCardProps) {
+function CardFacts({ work, headingId }: { work: ClassicWork; headingId: string }) {
   const { t } = useTranslation('staff');
-  const [openPanel, setOpenPanel] = useState<OpenPanel>('none');
   const isLive = work.chapters.some((chapter) => chapter.status === 'published');
-  const headingId = `classic-${work.storyId}`;
   return (
-    <article
-      aria-labelledby={headingId}
-      className="flex flex-col gap-3 rounded-card border border-border bg-surface p-5"
-    >
+    <>
       <div className="flex flex-wrap items-center gap-2">
         <h3 id={headingId} className="m-0 font-heading text-xl font-bold text-heading">
           {work.title}
@@ -166,6 +175,31 @@ export function ClassicCard({ work, authors, isChanging, onChange, onSave }: Cla
           {t('classics.card.open')}
         </Link>
       )}
+    </>
+  );
+}
+
+/**
+ * Renders the card.
+ *
+ * @returns the card
+ */
+export function ClassicCard({
+  work,
+  editions,
+  authors,
+  isChanging,
+  onChange,
+  onSave,
+}: ClassicCardProps) {
+  const [openPanel, setOpenPanel] = useState<OpenPanel>('none');
+  const headingId = `classic-${work.storyId}`;
+  return (
+    <article
+      aria-labelledby={headingId}
+      className="flex flex-col gap-3 rounded-card border border-border bg-surface p-5"
+    >
+      <CardFacts work={work} headingId={headingId} />
       <CardButtons
         work={work}
         isChanging={isChanging}
@@ -176,6 +210,7 @@ export function ClassicCard({ work, authors, isChanging, onChange, onSave }: Cla
         openPanel={openPanel}
         onClose={() => setOpenPanel('none')}
         work={work}
+        editions={editions}
         authors={authors}
         isChanging={isChanging}
         onChange={onChange}

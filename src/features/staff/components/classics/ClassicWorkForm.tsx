@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 
 import type { ClassicAuthorChoice, ClassicDetails } from '../../api/classics';
-import { freeMarketsIn, romanianYear } from '../../lib/publicDomain';
+import { freeMarketsIn, romanianYear, type PublicDomainYears } from '../../lib/publicDomain';
 
 import { ClassicAuthorFields, newAuthorChoice, type NewAuthor } from './ClassicAuthorFields';
 import { ClassicSourceFields } from './ClassicSourceFields';
@@ -48,6 +48,27 @@ function authorDiedYear(
 }
 
 /**
+ * The years the public-domain check reads from the form.
+ *
+ * @param details - the form's values
+ * @param authorDied - the author's year of death, or null when none is known yet
+ * @returns the years; a blank field is null
+ */
+function yearsOf(details: ClassicDetails, authorDied: number | null): PublicDomainYears {
+  const yearOf = (text: string) => (text === '' ? null : Number(text));
+  // A licensed translation, or one made for the platform, is shown by agreement, so its
+  // translator's year of death doesn't count (classic_work_json(), TRANSLATE-1d).
+  const isByAgreement =
+    details.translationRights === 'signed_licence' ||
+    details.translationRights === 'made_for_platform';
+  return {
+    authorDied,
+    translatorDied: isByAgreement ? null : yearOf(details.translatorDiedYear),
+    firstPublished: yearOf(details.firstPublishedYear),
+  };
+}
+
+/**
  * Renders the form.
  *
  * @returns the details form with the live check and the buttons
@@ -66,13 +87,8 @@ export function ClassicWorkForm({
   const update = (field: keyof ClassicDetails, value: string) =>
     setDetails((previous) => ({ ...previous, [field]: value }));
   // The check as staff type; the database decides again on Publish.
-  const yearOf = (text: string) => (text === '' ? null : Number(text));
   const check = freeMarketsIn(
-    {
-      authorDied: authorDiedYear(authors, authorChoice, newAuthor),
-      translatorDied: yearOf(details.translatorDiedYear),
-      firstPublished: yearOf(details.firstPublishedYear),
-    },
+    yearsOf(details, authorDiedYear(authors, authorChoice, newAuthor)),
     romanianYear(new Date()),
   );
 

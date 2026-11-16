@@ -9,6 +9,7 @@
  * for each one. A work is published under the official classics account with its real author
  * as the byline (S1-E5-06). Part 16b adds ClassicsImport (the research lists as drafts) and
  * ClassicSuggestionsPanel (who became free on 1 January); typo fixes sit on each published card.
+ * TRANSLATE-1d: a classic in several languages is one card, with its editions inside it.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -70,6 +71,8 @@ function ClassicsBody({ classics }: { classics: Classics }) {
   const { t } = useTranslation('staff');
   const [isAdding, setIsAdding] = useState(false);
   const save = saverFor(classics);
+  // One card per classic: its other languages are listed inside it, under "Editions" (TRANSLATE-1d).
+  const firstEditions = classics.works.filter((work) => work.editionOfStoryId === '');
   if (classics.loadFailure === 'not_allowed')
     return <p className="m-0 text-body">{t('classics.notAllowed')}</p>;
   if (classics.loadFailure !== null) {
@@ -99,10 +102,11 @@ function ClassicsBody({ classics }: { classics: Classics }) {
       {!classics.isLoading && classics.works.length === 0 && (
         <p className="m-0 text-body">{t('classics.empty')}</p>
       )}
-      {classics.works.map((work) => (
+      {firstEditions.map((work) => (
         <ClassicCard
           key={work.storyId}
           work={work}
+          editions={classics.works.filter((other) => other.editionOfStoryId === work.storyId)}
           authors={classics.authors}
           isChanging={classics.isChanging}
           onChange={classics.change}

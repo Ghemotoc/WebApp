@@ -60,5 +60,32 @@ async function makeClient(): Promise<AppSupabaseClient | null> {
   const { createClient } = await import('@supabase/supabase-js');
   return createClient<Database>(supabaseUrl, anonKey, {
     auth: { storageKey: AUTH_SESSION_STORAGE_KEY, persistSession: true, autoRefreshToken: true },
+    global: { fetch: fetchWithPageLanguage },
   });
+}
+
+/**
+ * Sends a request with the page's language in its Accept-Language header (TRANSLATE-1b).
+ *
+ * Why: a story in several languages opens in the language of the page (Robert, 16 Nov 2026), and
+ * the database picks the edition from this header (page_language() in
+ * supabase/migrations/…_translate1_01_story_editions.sql). The language is read at the moment of
+ * each request, so it follows the language menu without a new client. It is never stored.
+ *
+ * @param input - the address or request, as fetch takes it
+ * @param init - the request's options, as fetch takes them
+ * @returns the response
+ * Errors: rejects as fetch does when the network fails; each api/ file handles that.
+ */
+export function fetchWithPageLanguage(
+  input: RequestInfo | URL,
+  init?: RequestInit,
+): Promise<Response> {
+  // Step 1: the language the page is drawn in (src/lib/i18n.ts keeps <html lang> in step).
+  const pageLanguage = typeof document === 'undefined' ? '' : document.documentElement.lang;
+  if (pageLanguage === '') return fetch(input, init);
+  // Step 2: the same request with that one header added.
+  const headers = new Headers(init?.headers);
+  headers.set('Accept-Language', pageLanguage);
+  return fetch(input, { ...init, headers });
 }

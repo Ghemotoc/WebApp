@@ -29,6 +29,7 @@ import { useStoryPage } from '../hooks/useStoryPage';
 
 import { CopyNotice } from './CopyNotice';
 import { ProtectedChapterText } from './ProtectedChapterText';
+import { LazyReadInSwitch } from './LazyReadInSwitch';
 import { SignUpPrompt } from './SignUpPrompt';
 import { TeaserStoryCard } from './TeaserStoryCard';
 
@@ -86,6 +87,12 @@ export function TeaserPage({ chapter }: { chapter: ReaderChapter }) {
           chapterNumber={chapter.number}
           chapterTotal={chapter.total}
         />
+      )}
+      {/* TRANSLATE-1b: a visitor can change language too; nothing for a story in one language. */}
+      {chapter.editions.length > 1 && (
+        <div className="flex justify-end">
+          <LazyReadInSwitch editions={chapter.editions} chapterNumber={chapter.number} />
+        </div>
       )}
       <TeaserChapter chapter={chapter} />
       <SignUpPrompt storySlug={chapter.story.slug} chaptersAfter={chapter.total - chapter.number} />

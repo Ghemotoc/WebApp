@@ -8,9 +8,9 @@
  * section says so, and what they can still do. Members who never needed consent see nothing.
  * Who shows it: SettingsPage. What it calls: useMyParentConsent (my_parental_consent()).
  */
-import { useTranslation } from 'react-i18next';
 
 import { useMyParentConsent } from '../hooks/useMyParentConsent';
+import { useParentConsentTranslation } from '../registerParentConsentTranslations';
 
 /** What the yes covers, in the order a teen reads it. */
 const coversKeys = ['coversWrite', 'coversMessages', 'coversData', 'coversWithdraw'];
@@ -40,11 +40,11 @@ function dateInWords(value: string, language: string): string {
 
 /** One plain list of lines from account.json. */
 function PlainList({ keys }: { keys: string[] }) {
-  const { t } = useTranslation('account');
+  const { t } = useParentConsentTranslation();
   return (
     <ul className="m-0 flex list-disc flex-col gap-1.5 pl-5 text-body">
       {keys.map((key) => (
-        <li key={key}>{t(`parentConsent.summary.${key}`)}</li>
+        <li key={key}>{t(`summary.${key}`)}</li>
       ))}
     </ul>
   );
@@ -56,7 +56,7 @@ function PlainList({ keys }: { keys: string[] }) {
  * @returns the section
  */
 export function ParentConsentSummary() {
-  const { t, i18n } = useTranslation('account');
+  const { t, i18n } = useParentConsentTranslation();
   const { consent } = useMyParentConsent();
   // Step 1: only an agreed or withdrawn consent, with its date, has anything to show.
   const status = consent?.status ?? null;
@@ -75,12 +75,10 @@ export function ParentConsentSummary() {
         id="parent-consent-summary-heading"
         className="m-0 font-heading text-[24px] font-bold text-heading"
       >
-        {t('parentConsent.summary.heading')}
+        {t('summary.heading')}
       </h2>
-      <p className="m-0 font-semibold text-ink">
-        {t(`parentConsent.summary.${words.dateKey}`, { date })}
-      </p>
-      <p className="m-0 text-body">{t(`parentConsent.summary.${words.introKey}`)}</p>
+      <p className="m-0 font-semibold text-ink">{t(`summary.${words.dateKey}`, { date })}</p>
+      <p className="m-0 text-body">{t(`summary.${words.introKey}`)}</p>
       <PlainList keys={words.listKeys} />
     </section>
   );

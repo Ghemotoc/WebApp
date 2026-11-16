@@ -25,6 +25,7 @@ import { useSpotlightRequest } from '../hooks/useSpotlightRequest';
 
 import { ContactLine } from './ContactLine';
 import { writtenLanguageFor } from '@/schemas/interfaceLanguages';
+import { useParentConsentTranslation } from '../registerParentConsentTranslations';
 
 /** useSpotlightRequest's result, passed down once. */
 type SpotlightState = ReturnType<typeof useSpotlightRequest>;
@@ -56,26 +57,22 @@ function SpotlightQuestion({
   state: SpotlightState;
   request: SpotlightRequestDetails;
 }) {
-  const { t, i18n } = useTranslation('account');
+  const { t, i18n } = useParentConsentTranslation();
   const language = writtenLanguageFor(i18n.language);
   const decision = request.isAgreed ? 'withdraw' : 'agree';
   return (
     <>
-      <p className="m-0 text-body">
-        {t('parentConsent.spotlight.intro', { handle: request.handle })}
-      </p>
+      <p className="m-0 text-body">{t('spotlight.intro', { handle: request.handle })}</p>
       <ul className="m-0 flex list-disc flex-col gap-1.5 pl-5 text-body">
-        <li>{t('parentConsent.spotlight.whereShown')}</li>
-        <li>{t('parentConsent.spotlight.whatShown')}</li>
-        <li>{t('parentConsent.spotlight.whatNot')}</li>
+        <li>{t('spotlight.whereShown')}</li>
+        <li>{t('spotlight.whatShown')}</li>
+        <li>{t('spotlight.whatNot')}</li>
       </ul>
       {request.isAgreed && (
-        <Notice tone="success">
-          {t('parentConsent.spotlight.agreedNow', { handle: request.handle })}
-        </Notice>
+        <Notice tone="success">{t('spotlight.agreedNow', { handle: request.handle })}</Notice>
       )}
       {state.answerFailure !== null && (
-        <Notice tone="error">{t(`parentConsent.failures.${state.answerFailure}`)}</Notice>
+        <Notice tone="error">{t(`failures.${state.answerFailure}`)}</Notice>
       )}
       <Button
         variant={request.isAgreed ? 'secondary' : 'primary'}
@@ -85,9 +82,9 @@ function SpotlightQuestion({
           void state.answer({ token: state.token, decision, language }).catch(errorShownByHook);
         }}
       >
-        {t(request.isAgreed ? 'parentConsent.spotlight.withdraw' : 'parentConsent.spotlight.agree')}
+        {t(request.isAgreed ? 'spotlight.withdraw' : 'spotlight.agree')}
       </Button>
-      <p className="m-0 text-sm text-meta">{t('parentConsent.spotlight.noAnswer')}</p>
+      <p className="m-0 text-sm text-meta">{t('spotlight.noAnswer')}</p>
     </>
   );
 }
@@ -98,12 +95,10 @@ function SpotlightQuestion({
  * @returns the card's heading and body
  */
 function SpotlightBody({ state }: { state: SpotlightState }) {
-  const { t } = useTranslation('account');
-  if (state.loadFailed) return <Notice tone="error">{t('parentConsent.loadFailed')}</Notice>;
-  if (state.request === undefined)
-    return <p className="m-0 text-body">{t('parentConsent.parent.loading')}</p>;
-  if (state.request === null)
-    return <p className="m-0 text-body">{t('parentConsent.parent.goneBody')}</p>;
+  const { t } = useParentConsentTranslation();
+  if (state.loadFailed) return <Notice tone="error">{t('loadFailed')}</Notice>;
+  if (state.request === undefined) return <p className="m-0 text-body">{t('parent.loading')}</p>;
+  if (state.request === null) return <p className="m-0 text-body">{t('parent.goneBody')}</p>;
   return <SpotlightQuestion state={state} request={state.request} />;
 }
 
@@ -113,23 +108,20 @@ function SpotlightBody({ state }: { state: SpotlightState }) {
  * @returns the parent's suggestions screen
  */
 export function ParentSpotlightPage() {
-  const { t } = useTranslation('account');
+  const { t } = useParentConsentTranslation();
   const token = useLocation().hash.replace(/^#/, '');
   const state = useSpotlightRequest(token);
   useParentLanguage(state.request);
-  const heading =
-    state.request === null
-      ? t('parentConsent.parent.goneHeading')
-      : t('parentConsent.spotlight.heading');
+  const heading = state.request === null ? t('parent.goneHeading') : t('spotlight.heading');
   return (
     <PageContainer className="tmc-rise flex justify-center pt-12 pb-7">
-      <title>{t('parentConsent.spotlight.documentTitle')}</title>
+      <title>{t('spotlight.documentTitle')}</title>
       <section
         aria-labelledby="parent-spotlight-heading"
         className="flex w-full max-w-[720px] flex-col gap-5 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
       >
         <div className="flex flex-col gap-2">
-          <Eyebrow>{t('parentConsent.parent.eyebrow')}</Eyebrow>
+          <Eyebrow>{t('parent.eyebrow')}</Eyebrow>
           <h1
             id="parent-spotlight-heading"
             className="m-0 font-heading text-[30px] font-bold text-heading"

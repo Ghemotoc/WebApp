@@ -899,7 +899,12 @@
       "details_unchecked": "Opera vine dintr-o listă de cercetare. Verifică detaliile (clasificarea, categoria și sursa) și salvează-le înainte de publicare.",
       "no_change": "Nu s-a schimbat nimic. Corectează întâi greșeala din text.",
       "too_big": "Asta e mai mult decât o greșeală de tipar, așa că nu s-a salvat. Echipa corectează greșelile din ediția-sursă; nu rescrie și nu scurtează niciodată o operă.",
-      "too_many_rows": "Lista e prea lungă. Importă cel mult 500 de rânduri odată."
+      "too_many_rows": "Lista e prea lungă. Importă cel mult 500 de rânduri odată.",
+      "translation_rights_missing": "Alege mai întâi drepturile asupra traducerii. O traducere are propriile drepturi de autor.",
+      "translator_year_missing": "Adaugă anul în care a murit traducătorul sau alege alte drepturi asupra traducerii.",
+      "original_not_published": "Publică mai întâi originalul.",
+      "edition_language_taken": "Clasicul are deja această limbă.",
+      "edition_too_many_chapters": "O ediție nu poate avea mai multe capitole decât originalul."
     },
     "done": {
       "save": "Salvată ca ciornă.",
@@ -1030,6 +1035,57 @@
       "fixes_one": "{{count}} corectură anterioară",
       "fixes_few": "{{count}} corecturi anterioare",
       "fixes_other": "{{count}} de corecturi anterioare"
+    },
+    "editions": {
+      "eyebrow": "Ediții",
+      "heading": "Limbile acestui clasic",
+      "show": "Ediții",
+      "add": "Adaugă o ediție",
+      "caption": "Limbile operei {{title}}",
+      "columns": {
+        "language": "Limbă",
+        "title": "Titlu",
+        "translator": "Traducător",
+        "rights": "Drepturi asupra traducerii",
+        "chapters": "Capitole",
+        "status": "Stare",
+        "actions": "Acțiuni"
+      },
+      "original": "Original",
+      "noTranslator": "Fără traducător",
+      "chaptersOf": "{{count}} din {{total}}",
+      "rightsOriginal": "Domeniu public (autor decedat în {{year}})",
+      "rightsValues": {
+        "public_domain": "Domeniu public",
+        "signed_licence": "Licență semnată",
+        "made_for_platform": "Realizată pentru {{productName}}"
+      },
+      "notChecked": "Neverificat",
+      "edit": "Editează",
+      "editLabel": "Editează ediția în {{language}}",
+      "publish": "Publică ediția",
+      "unpublish": "Retrage",
+      "fixTypo": "Corectează o greșeală",
+      "textHeading": "Textul ediției în {{language}}",
+      "textHint": "Capitolele sunt potrivite cu originalul în ordine, deci ediția nu poate avea mai multe capitole decât originalul.",
+      "noLanguagesLeft": "Clasicul există deja în fiecare limbă din listă.",
+      "form": {
+        "legend": "Adaugă o ediție",
+        "editLegend": "Ediția în {{language}}",
+        "language": "Limbă",
+        "title": "Titlu",
+        "blurb": "Descriere scurtă (opțional)",
+        "translator": "Traducător",
+        "translatorHint": "Apare ca „Tradus de …”. Lasă gol doar dacă traducătorul nu este cunoscut.",
+        "translatorDiedYear": "Anul în care a murit traducătorul",
+        "translatorDiedYearHint": "Necesar pentru o traducere din domeniul public: rămâne protejată 70 de ani după moartea traducătorului.",
+        "rights": "Drepturi asupra traducerii",
+        "chooseOne": "Alege una",
+        "rightsHint": "Domeniu public, licență semnată sau realizată pentru {{productName}}. O traducere are propriile drepturi de autor.",
+        "saveDraft": "Salvează ca ciornă",
+        "saving": "Se salvează…",
+        "cancel": "Anulează"
+      }
     }
   },
   "languages": {
