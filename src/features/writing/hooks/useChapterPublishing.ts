@@ -43,7 +43,8 @@ export interface PublishingState {
 }
 
 /** The message under the buttons: a refusal or a failure, as a key in editor.json. */
-export type PublishProblem = 'notSaved' | 'empty' | 'badTime' | 'notActive' | 'failed';
+export type PublishProblem =
+  'notSaved' | 'empty' | 'badTime' | 'notActive' | 'originalNotPublished' | 'failed';
 
 /** What the hook needs from the autosave. */
 export interface AutosaveForPublishing {
@@ -72,6 +73,8 @@ function problemFor(outcome: ChapterActionOutcome): PublishProblem {
   if (outcome === 'empty') return 'empty';
   if (outcome === 'bad_time') return 'badTime';
   if (outcome === 'not_active') return 'notActive';
+  // A translated chapter opened in the full editor: its original is still a draft (TRANSLATE-1).
+  if (outcome === 'original_not_published') return 'originalNotPublished';
   return 'failed';
 }
 

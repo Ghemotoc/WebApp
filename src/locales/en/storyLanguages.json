@@ -1,0 +1,135 @@
+{
+  "breadcrumb": {
+    "label": "Breadcrumb",
+    "write": "Write",
+    "languages": "Languages"
+  },
+  "page": {
+    "documentTitle": "Languages · {{story}}",
+    "eyebrow": "Story settings",
+    "heading": "Languages",
+    "intro": "The original and every translation of this story.",
+    "signedOut": "Log in to manage the languages of a story.",
+    "notFound": "That story isn’t among the stories of this account.",
+    "loadFailed": "The languages couldn’t be loaded. Check the connection and try again."
+  },
+  "table": {
+    "caption": "Languages of this story",
+    "language": "Language",
+    "title": "Title",
+    "translatedBy": "Translated by",
+    "chapters": "Chapters",
+    "status": "Status",
+    "actions": "Actions",
+    "original": "Original",
+    "you": "You",
+    "nobody": "Not a translation",
+    "chaptersOf": "{{count}} of {{total}}",
+    "published": "Published",
+    "draft": "Draft",
+    "open": "Open",
+    "openLabel": "Open the chapters of {{title}}",
+    "translate": "Translate",
+    "translateLabel": "Translate into {{language}}"
+  },
+  "add": {
+    "eyebrow": "Add a language",
+    "heading": "A new edition of this story",
+    "language": "Language",
+    "chooseLanguage": "Choose a language",
+    "title": "Title in that language",
+    "blurb": "Description in that language",
+    "translateYourself": "You translate it yourself, with the original beside you. Other members can’t translate your story.",
+    "chaptersAppear": "Chapters appear in this language as you publish them. Until then, readers get a link to the original.",
+    "cancel": "Cancel",
+    "submit": "Add the language",
+    "adding": "Adding…",
+    "noneLeft": "This story is already in every language open for writing.",
+    "problems": {
+      "languageMissing": "Choose a language.",
+      "titleMissing": "Add a title in that language.",
+      "languageTaken": "This story already has that language.",
+      "tooMany": "A story can have up to {{max}} languages.",
+      "notActive": "This account can’t publish yet.",
+      "failed": "The language wasn’t added. Check the connection and try again."
+    }
+  },
+  "side": {
+    "heading": "One story, many languages",
+    "body": "Every language is an edition of the same story: likes, saves and reads add up, and readers can switch at any chapter. Only you can translate your story."
+  },
+  "chapters": {
+    "documentTitle": "Translate · {{story}}",
+    "eyebrow": "Translation · {{language}}",
+    "intro": "Translate one chapter at a time, with the original beside it. A chapter can be published here once the original is published.",
+    "listHeading": "Chapters",
+    "chapterNumber": "Chapter {{number}}",
+    "untitled": "Untitled chapter",
+    "empty": "The original has no chapters yet.",
+    "originalNotPublished": "Original not published",
+    "status": {
+      "notStarted": "Not started",
+      "draft": "Draft",
+      "scheduled": "Scheduled",
+      "published": "Published"
+    },
+    "start": "Translate",
+    "startLabel": "Translate chapter {{number}}",
+    "continue": "Continue",
+    "continueLabel": "Continue chapter {{number}}",
+    "startFailed": "The translation couldn’t be started. Check the connection and try again.",
+    "notAnEdition": "This is the original of the story. Pick a language to translate into.",
+    "backToLanguages": "Languages",
+    "seePage": "See story page"
+  },
+  "details": {
+    "heading": "Title and description",
+    "title": "Title in {{language}}",
+    "blurb": "Description in {{language}}",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Saved.",
+    "titleMissing": "Add a title.",
+    "failed": "Not saved. Check the connection and try again."
+  },
+  "remove": {
+    "heading": "Remove this language",
+    "body": "The {{language}} edition and its chapters are deleted. The original and the other languages stay.",
+    "button": "Remove {{language}}",
+    "confirm": "Remove {{language}}? It can be brought back for 30 days, under Recently deleted on the Write page.",
+    "yes": "Yes, remove",
+    "no": "Keep it",
+    "failed": "The language wasn’t removed. Check the connection and try again."
+  },
+  "editor": {
+    "documentTitle": "Translate chapter {{number}} · {{story}}",
+    "place": "Chapter {{number}} · {{title}}",
+    "saveDraft": "Save draft",
+    "publish": "Publish in {{language}}",
+    "publishChanges": "Publish changes",
+    "working": "Working…",
+    "original": "Original",
+    "translation": "Translation",
+    "progress": "{{language}} · {{count}} of {{total}} paragraphs",
+    "chapterTitle": "Chapter title in {{language}}",
+    "paragraphNumber": "Paragraph {{number}}",
+    "translateParagraph": "Translate paragraph {{number}}",
+    "tip": "Paragraphs stay side by side. A paragraph you leave empty is shown to readers in the original until it’s translated.",
+    "fullEditor": "Open in the full editor",
+    "fullEditorHint": "For headings, pictures and other formatting.",
+    "noParagraphs": "The original chapter has no text yet.",
+    "unsaved": "Unsaved changes",
+    "notFound": "That chapter isn’t among the translations of this account.",
+    "loadFailed": "The chapter couldn’t be loaded. Check the connection and try again.",
+    "outcomes": {
+      "saved": "Draft saved.",
+      "published": "Published in {{language}}.",
+      "conflict": "This chapter was saved somewhere else since it was opened. Reload the page to get the latest text.",
+      "originalNotPublished": "Publish the original chapter first. The translation is saved as a draft.",
+      "empty": "Translate at least one paragraph before publishing.",
+      "notActive": "This account can’t publish yet.",
+      "tooLong": "The text is too long to save.",
+      "failed": "Not saved. Check the connection and try again."
+    }
+  }
+}

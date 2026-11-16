@@ -1,0 +1,14 @@
+# Story languages
+
+The writer's side of one story in several languages (bundle TRANSLATE-1c; Robert, 16 Nov 2026; boards TrSettings and TrEditor). Only the writer adds and translates a language of their own story (Robert, 16 Nov 2026, 12:20 UTC). The reader's side ("Read in", the missing-translation notice) is in `src/features/reading/`; the database side in `supabase/migrations/…_translate1_01_story_editions.sql`.
+
+- `api/storyLanguages.ts`: `story_languages()`, `add_story_language()`, `update_story_language()`, `story_translation_chapters()`, `start_chapter_translation()`, `chapter_translation_source()`, and publishing through `publish_chapter()` / `update_published_chapter()`.
+- `components/StoryLanguagesPage.tsx` (`/write/s/:storySlug/languages`, from "Languages" in Story settings): the table of languages (`LanguagesTable`), the "Add a language" form (`AddLanguageForm`, `hooks/useAddLanguage.ts`) and the card "One story, many languages".
+- `components/TranslateChaptersPage.tsx` (`/write/s/:storySlug/translate`, the address being that language's own): the original's chapters with where each translation stands (`TranslationChapterList`, `hooks/useTranslationChapters.ts`), the title and description in that language (`EditionDetailsForm`) and "Remove this language" (`RemoveLanguageCard`), both through `hooks/useEditionDetails.ts`. Removing is `delete_my_story()` on that edition: it can be undone for 30 days from "Recently deleted" on the Write page.
+- `components/TranslationEditorPage.tsx` (`/write/s/:storySlug/translate/:chapterCode`): one chapter side by side with its original (`TranslationEditorBar`, `ParagraphPairs`, `hooks/useTranslationEditor.ts`). "Save draft" is `save_chapter_draft()`; there is no autosave, and the page warns before a tab with unsaved changes closes.
+- `lib/paragraphs.ts`: the rule from the handoff, "a paragraph you leave empty is shown to readers in the original until it's translated": the saved text always has every paragraph (the original where a field is empty), and a paragraph that is word for word the original reads back as empty. No extra column.
+- `components/LoadProblem.tsx` and `LanguagesBreadcrumb.tsx`: shared by the three pages.
+- Texts: the `storyLanguages` namespace (`src/locales/<language>/storyLanguages.json`), added when a screen first renders through `registerStoryLanguagesTranslations.ts`, so it stays out of every first page's download.
+- The Write page lists a story once: `fetchMyStories()` in `src/features/writing/api/stories.ts` leaves live later editions out (a removed one still shows under "Recently deleted").
+
+Tests: `api/storyLanguages.test.ts`, `lib/paragraphs.test.ts`, `components/LanguagesTable.test.tsx`, `e2e/story-languages-writer.spec.ts` and `supabase/tests/database/382-story-editions.test.sql`.

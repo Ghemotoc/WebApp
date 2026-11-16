@@ -1,0 +1,135 @@
+{
+  "breadcrumb": {
+    "label": "Calea paginii",
+    "write": "Scrie",
+    "languages": "Limbi"
+  },
+  "page": {
+    "documentTitle": "Limbi · {{story}}",
+    "eyebrow": "Setările poveștii",
+    "heading": "Limbi",
+    "intro": "Originalul și fiecare traducere a acestei povești.",
+    "signedOut": "Intră în cont pentru a gestiona limbile unei povești.",
+    "notFound": "Povestea nu se află printre poveștile acestui cont.",
+    "loadFailed": "Limbile nu au putut fi încărcate. Verifică conexiunea și încearcă din nou."
+  },
+  "table": {
+    "caption": "Limbile acestei povești",
+    "language": "Limbă",
+    "title": "Titlu",
+    "translatedBy": "Tradus de",
+    "chapters": "Capitole",
+    "status": "Stare",
+    "actions": "Acțiuni",
+    "original": "Original",
+    "you": "Tu",
+    "nobody": "Nu este o traducere",
+    "chaptersOf": "{{count}} din {{total}}",
+    "published": "Publicată",
+    "draft": "Ciornă",
+    "open": "Deschide",
+    "openLabel": "Deschide capitolele poveștii {{title}}",
+    "translate": "Tradu",
+    "translateLabel": "Tradu în {{language}}"
+  },
+  "add": {
+    "eyebrow": "Adaugă o limbă",
+    "heading": "O ediție nouă a acestei povești",
+    "language": "Limbă",
+    "chooseLanguage": "Alege o limbă",
+    "title": "Titlul în acea limbă",
+    "blurb": "Descrierea în acea limbă",
+    "translateYourself": "O traduci chiar tu, cu originalul alături. Alți membri nu îți pot traduce povestea.",
+    "chaptersAppear": "Capitolele apar în această limbă pe măsură ce le publici. Până atunci, cititorii primesc un link către original.",
+    "cancel": "Renunță",
+    "submit": "Adaugă limba",
+    "adding": "Se adaugă…",
+    "noneLeft": "Povestea este deja în fiecare limbă deschisă pentru scris.",
+    "problems": {
+      "languageMissing": "Alege o limbă.",
+      "titleMissing": "Adaugă un titlu în acea limbă.",
+      "languageTaken": "Povestea are deja această limbă.",
+      "tooMany": "O poveste poate avea cel mult {{max}} limbi.",
+      "notActive": "Acest cont nu poate publica încă.",
+      "failed": "Limba nu a fost adăugată. Verifică conexiunea și încearcă din nou."
+    }
+  },
+  "side": {
+    "heading": "O poveste, mai multe limbi",
+    "body": "Fiecare limbă este o ediție a aceleiași povești: aprecierile, salvările și citirile se adună, iar cititorii pot schimba limba la orice capitol. Doar tu îți poți traduce povestea."
+  },
+  "chapters": {
+    "documentTitle": "Tradu · {{story}}",
+    "eyebrow": "Traducere · {{language}}",
+    "intro": "Tradu câte un capitol, cu originalul alături. Un capitol poate fi publicat aici după ce originalul este publicat.",
+    "listHeading": "Capitole",
+    "chapterNumber": "Capitolul {{number}}",
+    "untitled": "Capitol fără titlu",
+    "empty": "Originalul nu are încă niciun capitol.",
+    "originalNotPublished": "Originalul nu este publicat",
+    "status": {
+      "notStarted": "Neînceput",
+      "draft": "Ciornă",
+      "scheduled": "Programat",
+      "published": "Publicat"
+    },
+    "start": "Tradu",
+    "startLabel": "Tradu capitolul {{number}}",
+    "continue": "Continuă",
+    "continueLabel": "Continuă capitolul {{number}}",
+    "startFailed": "Traducerea nu a putut fi începută. Verifică conexiunea și încearcă din nou.",
+    "notAnEdition": "Acesta este originalul poveștii. Alege o limbă în care să traduci.",
+    "backToLanguages": "Limbi",
+    "seePage": "Vezi pagina poveștii"
+  },
+  "details": {
+    "heading": "Titlu și descriere",
+    "title": "Titlul în {{language}}",
+    "blurb": "Descrierea în {{language}}",
+    "save": "Salvează",
+    "saving": "Se salvează…",
+    "saved": "Salvat.",
+    "titleMissing": "Adaugă un titlu.",
+    "failed": "Nu s-a salvat. Verifică conexiunea și încearcă din nou."
+  },
+  "remove": {
+    "heading": "Elimină această limbă",
+    "body": "Ediția în {{language}} și capitolele ei sunt șterse. Originalul și celelalte limbi rămân.",
+    "button": "Elimină {{language}}",
+    "confirm": "Elimini {{language}}? Poate fi adusă înapoi timp de 30 de zile, la Șterse recent, pe pagina Scrie.",
+    "yes": "Da, elimină",
+    "no": "Păstreaz-o",
+    "failed": "Limba nu a fost eliminată. Verifică conexiunea și încearcă din nou."
+  },
+  "editor": {
+    "documentTitle": "Tradu capitolul {{number}} · {{story}}",
+    "place": "Capitolul {{number}} · {{title}}",
+    "saveDraft": "Salvează ciorna",
+    "publish": "Publică în {{language}}",
+    "publishChanges": "Publică modificările",
+    "working": "Se lucrează…",
+    "original": "Original",
+    "translation": "Traducere",
+    "progress": "{{language}} · {{count}} din {{total}} paragrafe",
+    "chapterTitle": "Titlul capitolului în {{language}}",
+    "paragraphNumber": "Paragraful {{number}}",
+    "translateParagraph": "Tradu paragraful {{number}}",
+    "tip": "Paragrafele stau unul lângă altul. Un paragraf lăsat gol apare cititorilor în original până când îl traduci.",
+    "fullEditor": "Deschide în editorul complet",
+    "fullEditorHint": "Pentru titluri, imagini și alte formatări.",
+    "noParagraphs": "Capitolul original nu are încă text.",
+    "unsaved": "Modificări nesalvate",
+    "notFound": "Capitolul nu se află printre traducerile acestui cont.",
+    "loadFailed": "Capitolul nu a putut fi încărcat. Verifică conexiunea și încearcă din nou.",
+    "outcomes": {
+      "saved": "Ciorna a fost salvată.",
+      "published": "Publicat în {{language}}.",
+      "conflict": "Capitolul a fost salvat în altă parte de când a fost deschis. Reîncarcă pagina pentru textul cel mai nou.",
+      "originalNotPublished": "Publică mai întâi capitolul original. Traducerea este salvată ca ciornă.",
+      "empty": "Tradu cel puțin un paragraf înainte de a publica.",
+      "notActive": "Acest cont nu poate publica încă.",
+      "tooLong": "Textul este prea lung pentru a fi salvat.",
+      "failed": "Nu s-a salvat. Verifică conexiunea și încearcă din nou."
+    }
+  }
+}

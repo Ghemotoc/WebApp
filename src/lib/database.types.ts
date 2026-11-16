@@ -18447,6 +18447,10 @@ export type Database = {
       update_story_character: { Args: { changes: Json; character_id: string }; Returns: Json };
       update_story_event: { Args: { changes: Json; event_id: string }; Returns: Json };
       update_story_idea: { Args: { changes: Json; idea_id: string }; Returns: Json };
+      update_story_language: {
+        Args: { blurb: string; story_slug: string; title: string };
+        Returns: Json;
+      };
       update_story_marketing: { Args: { changes: Json; story_slug: string }; Returns: Json };
       update_story_plan: { Args: { changes: Json; story_slug: string }; Returns: Json };
       use_platform_invite: { Args: { code: string; new_user_id: string }; Returns: undefined };

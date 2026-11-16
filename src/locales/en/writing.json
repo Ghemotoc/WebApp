@@ -167,6 +167,7 @@
     "chapterCount_few": "{{count}} chapters",
     "chapterCount_other": "{{count}} chapters",
     "manageChapters": "Manage chapters",
+    "languages": "Languages",
     "plan": "Plan"
   },
   "status": {

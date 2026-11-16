@@ -84,6 +84,7 @@
       "empty": "Write something before you publish.",
       "badTime": "Pick a date and time in the future, at most a year ahead.",
       "notActive": "This account can’t publish yet.",
+      "originalNotPublished": "Publish the original chapter first.",
       "failed": "We couldn’t do that. Check your connection and try again."
     },
     "webReadingNote": "Signed-in readers can read this chapter in the browser until the apps exist. Copying is made harder; screenshots still work on the web."

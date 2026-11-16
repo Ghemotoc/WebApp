@@ -770,6 +770,58 @@ revoke execute on function public.add_story_language(text, text, text, text) fro
 grant execute on function public.add_story_language(text, text, text, text) to authenticated;
 
 /**
+ * Changes the title and description of one language of the caller's own story.
+ * What it does: checks the caller owns the story and may write, checks the new title and
+ * description with the rules of a new story, and saves them on that edition only. The address
+ * stays the same, so links keep working. Everything else an edition has is shared with the
+ * first edition and changed in Story settings.
+ * Inputs: the edition's slug; the new title and description.
+ * Returns: {outcome: 'ok' | 'not_active' | 'not_found'}.
+ * Errors: insufficient_privilege when signed out; check_violation for a bad title or
+ * description (check_story_basics()).
+ * Where it fits: Story settings > Languages > a language > "Title and description" (part 1c).
+ */
+create or replace function public.update_story_language(story_slug text, title text, blurb text)
+returns jsonb
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  caller_id uuid := (select auth.uid());
+  clean_title text := regexp_replace(btrim(coalesce(title, '')), '\s+', ' ', 'g');
+  clean_blurb text := btrim(coalesce(blurb, ''));
+  edition public.stories;
+begin
+  -- Step 1: a signed-in writer who may write (the account gate), and their own live story.
+  if caller_id is null then
+    raise exception 'Sign in to change a language.' using errcode = 'insufficient_privilege';
+  end if;
+  if not public.is_active_member() then
+    return jsonb_build_object('outcome', 'not_active');
+  end if;
+  select stories.* into edition from public.stories
+  where stories.id = public.my_live_story_id(story_slug)
+  for update;
+  if edition.id is null then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+
+  -- Step 2: the same rules as a new story's title and description (S1-E3-01).
+  perform public.check_story_basics(clean_title, clean_blurb, edition.language_code,
+    (select categories.slug from public.categories where categories.id = edition.category_id));
+
+  -- Step 3: only the words of this language change.
+  update public.stories set title = clean_title, blurb = clean_blurb where stories.id = edition.id;
+  return jsonb_build_object('outcome', 'ok');
+end;
+$$;
+comment on function public.update_story_language(text, text, text) is
+  'A writer changes the title and description of one language of their own story (TRANSLATE-1c).';
+revoke execute on function public.update_story_language(text, text, text) from public, anon;
+grant execute on function public.update_story_language(text, text, text) to authenticated;
+
+/**
  * The languages of the caller's own story, for Story settings > Languages.
  * What it does: lists the first edition and every other live edition with how far each one is:
  * how many of the story's chapters it has published and how many are drafts.

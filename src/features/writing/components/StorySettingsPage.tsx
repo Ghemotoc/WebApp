@@ -193,7 +193,7 @@ function SettingsBody({
   return <SettingsForm story={story} penName={penName} />;
 }
 
-/** The header: back link, eyebrow, the story's title, the line under it and the two links. */
+/** The header: back link, eyebrow, the story's title, the line under it and the three links. */
 function SettingsHeader({ story }: { story: MyStory | undefined }) {
   const { t } = useTranslation('writing');
   return (
@@ -219,6 +219,10 @@ function SettingsHeader({ story }: { story: MyStory | undefined }) {
           <Link to={`/write/s/${story.slug}/chapters`} className={headerLinkClass}>
             {t('storyCard.manageChapters')}
           </Link>
+          {/* One story in several languages (TRANSLATE-1c): the languages and their translations. */}
+          <Link to={`/write/s/${story.slug}/languages`} className={headerLinkClass}>
+            {t('storyCard.languages')}
+          </Link>
           <Link to={`/s/${story.slug}`} className={headerLinkClass}>
             {t('storyCard.seePage')}
           </Link>
@@ -228,7 +232,7 @@ function SettingsHeader({ story }: { story: MyStory | undefined }) {
   );
 }
 
-/** The two glass pills in the header (the board's clear pills). */
+/** The glass pills in the header (the board's clear pills). */
 const headerLinkClass =
   'inline-flex h-12 items-center rounded-full button-glass px-[22px] text-[15px] font-semibold no-underline';
 

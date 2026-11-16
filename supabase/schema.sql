@@ -53844,6 +53844,48 @@ COMMENT ON FUNCTION "public"."update_story_idea"("idea_id" "uuid", "changes" "js
 
 
 
+CREATE OR REPLACE FUNCTION "public"."update_story_language"("story_slug" "text", "title" "text", "blurb" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  clean_title text := regexp_replace(btrim(coalesce(title, '')), '\s+', ' ', 'g');
+  clean_blurb text := btrim(coalesce(blurb, ''));
+  edition public.stories;
+begin
+  -- Step 1: a signed-in writer who may write (the account gate), and their own live story.
+  if caller_id is null then
+    raise exception 'Sign in to change a language.' using errcode = 'insufficient_privilege';
+  end if;
+  if not public.is_active_member() then
+    return jsonb_build_object('outcome', 'not_active');
+  end if;
+  select stories.* into edition from public.stories
+  where stories.id = public.my_live_story_id(story_slug)
+  for update;
+  if edition.id is null then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+
+  -- Step 2: the same rules as a new story's title and description (S1-E3-01).
+  perform public.check_story_basics(clean_title, clean_blurb, edition.language_code,
+    (select categories.slug from public.categories where categories.id = edition.category_id));
+
+  -- Step 3: only the words of this language change.
+  update public.stories set title = clean_title, blurb = clean_blurb where stories.id = edition.id;
+  return jsonb_build_object('outcome', 'ok');
+end;
+$$;
+
+
+ALTER FUNCTION "public"."update_story_language"("story_slug" "text", "title" "text", "blurb" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."update_story_language"("story_slug" "text", "title" "text", "blurb" "text") IS 'A writer changes the title and description of one language of their own story (TRANSLATE-1c).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."update_story_marketing"("story_slug" "text", "changes" "jsonb") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -74229,6 +74271,11 @@ GRANT ALL ON FUNCTION "public"."update_story_event"("event_id" "uuid", "changes"
 
 REVOKE ALL ON FUNCTION "public"."update_story_idea"("idea_id" "uuid", "changes" "jsonb") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."update_story_idea"("idea_id" "uuid", "changes" "jsonb") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."update_story_language"("story_slug" "text", "title" "text", "blurb" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."update_story_language"("story_slug" "text", "title" "text", "blurb" "text") TO "authenticated";
 
 
 

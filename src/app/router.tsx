@@ -855,6 +855,35 @@ const writeRoutes: RouteObject[] = [
       return { Component: StorySettingsPage };
     },
   },
+  // One story in several languages (TRANSLATE-1c; Robert, 16 Nov 2026): the story's languages,
+  // one language's chapter list, and one chapter translated side by side with its original.
+  {
+    path: '/write/s/:storySlug/languages',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { StoryLanguagesPage } =
+        await import('@/features/story-languages/components/StoryLanguagesPage');
+      return { Component: StoryLanguagesPage };
+    },
+  },
+  {
+    path: '/write/s/:storySlug/translate',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { TranslateChaptersPage } =
+        await import('@/features/story-languages/components/TranslateChaptersPage');
+      return { Component: TranslateChaptersPage };
+    },
+  },
+  {
+    path: '/write/s/:storySlug/translate/:chapterCode',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { TranslationEditorPage } =
+        await import('@/features/story-languages/components/TranslationEditorPage');
+      return { Component: TranslationEditorPage };
+    },
+  },
   // Design it in Canva (S1-E3-12): the new tab's two pages, on the way to Canva and back.
   {
     path: '/canva/start',

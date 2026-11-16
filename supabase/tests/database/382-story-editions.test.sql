@@ -15,7 +15,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(42);
+select plan(47);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -152,6 +152,22 @@ select is(public.story_languages('statia-meteo-seed01'), null, 'another member g
 select is(public.story_translation_chapters(pg_temp.edition_slug()), null, 'nor the edition''s chapter list');
 select is(public.chapter_translation_source((select code from public.chapters where translation_of_chapter_id = '00000000-0000-4000-a000-000000000a01')), null,
   'nor the original beside someone else''s translation');
+
+-- 6b. The writer changes one language's title and description; nobody else can.
+select pg_temp.sign_out();
+select throws_ok($$ select public.update_story_language('statia-meteo-seed01', 'Other', 'Other words here.') $$,
+  '42501', null, 'a signed-out visitor can''t change a language');
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
+select is(public.update_story_language(pg_temp.edition_slug(), 'Mine now', 'Taken over by someone else.') ->> 'outcome',
+  'not_found', 'another member can''t change a language of someone else''s story');
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
+select is(public.update_story_language(pg_temp.edition_slug(), '  The   Weather Hut ', 'A grandmother writes down the weather.') ->> 'outcome',
+  'ok', 'the writer changes the English title and description');
+reset role;
+select is((select title || ' | ' || blurb from public.stories where id = pg_temp.edition_id()),
+  'The Weather Hut | A grandmother writes down the weather.', 'the words are saved, tidied, on that language only');
+select is((select title from public.stories where id = '00000000-0000-4000-9000-000000000001'), 'Stația meteo',
+  'the original keeps its own title');
 
 -- 7. The limit.
 reset role;

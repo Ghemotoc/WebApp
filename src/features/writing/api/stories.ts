@@ -212,6 +212,10 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
     .select(
       'id, slug, title, blurb, language_code, cover_kind, cover_design, cover_background, cover_accent, cover_tall_path, first_published_at, created_at, completion_status, visibility, is_app_only, comments_enabled, comment_audience, quote_cards_enabled, picture_sharing_enabled, card_colour, deleted_at, rating, is_fan_fiction, is_parody, deals_with_abuse_or_coercion, content_note, ai_disclosure, rating_reasons, ai_undisclosed_labelled_at, categories(slug), story_tags(tags(name)), chapters(code, position, status)',
     )
+    // A story in several languages shows once, as its original; its other languages are on its
+    // Languages page (TRANSLATE-1c). A removed language still comes back, so "Recently deleted"
+    // can offer to undo it.
+    .or('edition_of_story_id.is.null,deleted_at.not.is.null')
     // Only live chapters, in order; the deleted ones wait for the purge (S1-E3-04 shows undo).
     .is('chapters.deleted_at', null)
     .order('position', { referencedTable: 'chapters', ascending: true })

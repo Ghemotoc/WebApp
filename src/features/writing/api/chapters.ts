@@ -231,7 +231,14 @@ function toSaveDraftResult(data: unknown): SaveDraftResult {
 
 /** What the publishing functions answer (S1-E3-03). */
 export type ChapterActionOutcome =
-  'ok' | 'not_active' | 'not_found' | 'empty' | 'wrong_state' | 'bad_time';
+  | 'ok'
+  | 'not_active'
+  | 'not_found'
+  | 'empty'
+  | 'wrong_state'
+  | 'bad_time'
+  // A translated chapter can't go live before its original does (TRANSLATE-1).
+  | 'original_not_published';
 
 /** The publishing functions, each taking the chapter's code. */
 type ChapterAction =
@@ -245,6 +252,7 @@ const knownOutcomes: readonly string[] = [
   'empty',
   'wrong_state',
   'bad_time',
+  'original_not_published',
 ];
 
 /**
