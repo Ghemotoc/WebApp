@@ -1856,6 +1856,7 @@ export type Database = {
           scheduled_for: string | null;
           status: Database['public']['Enums']['chapter_status'];
           story_id: string;
+          translation_of_chapter_id: string | null;
           unpublished_at: string | null;
           updated_at: string;
           user_id: string;
@@ -1884,6 +1885,7 @@ export type Database = {
           scheduled_for?: string | null;
           status?: Database['public']['Enums']['chapter_status'];
           story_id: string;
+          translation_of_chapter_id?: string | null;
           unpublished_at?: string | null;
           updated_at?: string;
           user_id: string;
@@ -1909,6 +1911,7 @@ export type Database = {
           scheduled_for?: string | null;
           status?: Database['public']['Enums']['chapter_status'];
           story_id?: string;
+          translation_of_chapter_id?: string | null;
           unpublished_at?: string | null;
           updated_at?: string;
           user_id?: string;
@@ -1920,6 +1923,13 @@ export type Database = {
             columns: ['story_id'];
             isOneToOne: false;
             referencedRelation: 'stories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'chapters_translation_of_chapter_id_fkey';
+            columns: ['translation_of_chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
             referencedColumns: ['id'];
           },
           {
@@ -8989,6 +8999,7 @@ export type Database = {
           created_at: string;
           deals_with_abuse_or_coercion: boolean;
           deleted_at: string | null;
+          edition_of_story_id: string | null;
           first_published_at: string | null;
           first_published_year: number | null;
           id: string;
@@ -9013,6 +9024,8 @@ export type Database = {
           admin_story_row: Json | null;
           admin_story_settings_json: Json | null;
           admin_story_status: string | null;
+          edition_is_original: boolean | null;
+          edition_is_readable: boolean | null;
           story_as_shown: {
             ai_disclosure: Database['public']['Enums']['ai_disclosure'];
             ai_undisclosed_labelled_at: string | null;
@@ -9036,6 +9049,7 @@ export type Database = {
             created_at: string;
             deals_with_abuse_or_coercion: boolean;
             deleted_at: string | null;
+            edition_of_story_id: string | null;
             first_published_at: string | null;
             first_published_year: number | null;
             id: string;
@@ -9057,13 +9071,17 @@ export type Database = {
             visibility: Database['public']['Enums']['story_visibility'];
             writing_prompt_id: string | null;
           } | null;
+          story_edition_json: Json | null;
         };
         ComputedFields:
           | 'admin_story_cover_json'
           | 'admin_story_row'
           | 'admin_story_settings_json'
           | 'admin_story_status'
-          | 'story_as_shown';
+          | 'edition_is_original'
+          | 'edition_is_readable'
+          | 'story_as_shown'
+          | 'story_edition_json';
         Insert: {
           ai_disclosure?: Database['public']['Enums']['ai_disclosure'];
           ai_undisclosed_labelled_at?: string | null;
@@ -9087,6 +9105,7 @@ export type Database = {
           created_at?: string;
           deals_with_abuse_or_coercion?: boolean;
           deleted_at?: string | null;
+          edition_of_story_id?: string | null;
           first_published_at?: string | null;
           first_published_year?: number | null;
           id?: string;
@@ -9131,6 +9150,7 @@ export type Database = {
           created_at?: string;
           deals_with_abuse_or_coercion?: boolean;
           deleted_at?: string | null;
+          edition_of_story_id?: string | null;
           first_published_at?: string | null;
           first_published_year?: number | null;
           id?: string;
@@ -9172,6 +9192,13 @@ export type Database = {
             columns: ['classic_author_id'];
             isOneToOne: false;
             referencedRelation: 'classic_authors';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'stories_edition_of_story_id_fkey';
+            columns: ['edition_of_story_id'];
+            isOneToOne: false;
+            referencedRelation: 'stories';
             referencedColumns: ['id'];
           },
           {
@@ -11221,6 +11248,10 @@ export type Database = {
         Args: { idea_body: string; idea_kind: string; story_slug: string };
         Returns: Json;
       };
+      add_story_language: {
+        Args: { blurb: string; language_code: string; story_slug: string; title: string };
+        Returns: Json;
+      };
       add_to_activity_totals: {
         Args: { app_minutes: number; for_day: string; new_member: number; reading_minutes: number };
         Returns: undefined;
@@ -12532,6 +12563,7 @@ export type Database = {
           created_at: string;
           deals_with_abuse_or_coercion: boolean;
           deleted_at: string | null;
+          edition_of_story_id: string | null;
           first_published_at: string | null;
           first_published_year: number | null;
           id: string;
@@ -13014,6 +13046,10 @@ export type Database = {
         Args: { school_domain: string; signature: string; token_hash: string };
         Returns: Json;
       };
+      best_edition_id: {
+        Args: { first_edition_id: string; wanted_languages: string[] };
+        Returns: string;
+      };
       bio_for_caller: {
         Args: {
           person: Omit<
@@ -13379,6 +13415,7 @@ export type Database = {
         Returns: undefined;
       };
       chapter_scenes_json: { Args: { target_chapter_id: string }; Returns: Json };
+      chapter_translation_source: { Args: { chapter_code: string }; Returns: Json };
       character_appearances: { Args: { character_id: string }; Returns: Json };
       character_json: {
         Args: {
@@ -14389,6 +14426,32 @@ export type Database = {
         Returns: boolean;
       };
       edit_forum_post: { Args: { body: string; post_id: string; title?: string }; Returns: Json };
+      edition_chapter_code: {
+        Args: { edition_id: string; first_edition_id: string; source_chapter_id: string };
+        Returns: string;
+      };
+      edition_is_original: {
+        Args: {
+          edition: Omit<
+            Database['public']['Tables']['stories']['Row'],
+            Database['public']['Tables']['stories']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
+      edition_is_readable: {
+        Args: {
+          edition: Omit<
+            Database['public']['Tables']['stories']['Row'],
+            Database['public']['Tables']['stories']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
+      edition_page_chapters: {
+        Args: { edition_id: string; first_edition_id: string };
+        Returns: Json;
+      };
       email_delivery_for: {
         Args: { kind: Database['public']['Enums']['notification_kind']; target_user_id: string };
         Returns: string;
@@ -15139,6 +15202,7 @@ export type Database = {
           created_at: string;
           deals_with_abuse_or_coercion: boolean;
           deleted_at: string | null;
+          edition_of_story_id: string | null;
           first_published_at: string | null;
           first_published_year: number | null;
           id: string;
@@ -15649,6 +15713,7 @@ export type Database = {
           scheduled_for: string | null;
           status: Database['public']['Enums']['chapter_status'];
           story_id: string;
+          translation_of_chapter_id: string | null;
           unpublished_at: string | null;
           updated_at: string;
           user_id: string;
@@ -16038,6 +16103,7 @@ export type Database = {
         };
       };
       page_ads: { Args: { context?: Json; page_key: string }; Returns: Json };
+      page_language: { Args: Record<PropertyKey, never>; Returns: string };
       paired_cards: { Args: { left_out: string[]; source_story_id: string }; Returns: Json };
       paragraph_comment_counts: {
         Args: { chapter_code: string; story_slug: string };
@@ -16440,6 +16506,7 @@ export type Database = {
           scheduled_for: string | null;
           status: Database['public']['Enums']['chapter_status'];
           story_id: string;
+          translation_of_chapter_id: string | null;
           unpublished_at: string | null;
           updated_at: string;
           user_id: string;
@@ -16474,6 +16541,7 @@ export type Database = {
           scheduled_for: string | null;
           status: Database['public']['Enums']['chapter_status'];
           story_id: string;
+          translation_of_chapter_id: string | null;
           unpublished_at: string | null;
           updated_at: string;
           user_id: string;
@@ -16532,6 +16600,7 @@ export type Database = {
           created_at: string;
           deals_with_abuse_or_coercion: boolean;
           deleted_at: string | null;
+          edition_of_story_id: string | null;
           first_published_at: string | null;
           first_published_year: number | null;
           id: string;
@@ -17858,6 +17927,10 @@ export type Database = {
       staff_may: { Args: { target_area: string; wanted_access?: string }; Returns: boolean };
       staff_session_started_at: { Args: Record<PropertyKey, never>; Returns: string };
       staff_signed_in_recently: { Args: Record<PropertyKey, never>; Returns: boolean };
+      start_chapter_translation: {
+        Args: { original_chapter_code: string; story_slug: string };
+        Returns: Json;
+      };
       start_consent_grace_for_rule: { Args: { rule_id: string }; Returns: number };
       start_conversation: {
         Args: { recipient_id: string; sender_id: string };
@@ -17972,6 +18045,7 @@ export type Database = {
           created_at: string;
           deals_with_abuse_or_coercion: boolean;
           deleted_at: string | null;
+          edition_of_story_id: string | null;
           first_published_at: string | null;
           first_published_year: number | null;
           id: string;
@@ -18034,6 +18108,26 @@ export type Database = {
         }[];
       };
       story_cover_picture: { Args: { story_slug: string }; Returns: Json };
+      story_edition_json: {
+        Args: {
+          story: Omit<
+            Database['public']['Tables']['stories']['Row'],
+            Database['public']['Tables']['stories']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
+      story_editions_json: {
+        Args: {
+          source_chapter_id?: string;
+          story: Omit<
+            Database['public']['Tables']['stories']['Row'],
+            Database['public']['Tables']['stories']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
+      story_family_ids: { Args: { target_story_id: string }; Returns: string[] };
       story_follow_state: { Args: { story_slug: string }; Returns: Json };
       story_follower_count_of: { Args: { target_story_id: string }; Returns: number };
       story_has_copied_work_note: { Args: { target_story_id: string }; Returns: boolean };
@@ -18046,6 +18140,7 @@ export type Database = {
           is_open: boolean;
         }[];
       };
+      story_languages: { Args: { story_slug: string }; Returns: Json };
       story_library_state: { Args: { story_slug: string }; Returns: Json };
       story_like_total: { Args: { target_story_id: string }; Returns: number };
       story_link_targets: { Args: { story_slug: string }; Returns: Json };
@@ -18079,6 +18174,7 @@ export type Database = {
           story_id: string;
         }[];
       };
+      story_opening_edition: { Args: { story_slug: string }; Returns: Json };
       story_page_chapters: { Args: { is_owner: boolean; target_story_id: string }; Returns: Json };
       story_plan: { Args: { story_slug: string }; Returns: Json };
       story_plan_chapters: { Args: { plan_story_id: string }; Returns: Json };
@@ -18156,6 +18252,7 @@ export type Database = {
           tag_rank: number;
         }[];
       };
+      story_translation_chapters: { Args: { story_slug: string }; Returns: Json };
       story_visibility_allows: {
         Args: {
           story_visibility: Database['public']['Enums']['story_visibility'];

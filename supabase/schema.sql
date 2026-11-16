@@ -2650,6 +2650,81 @@ COMMENT ON FUNCTION "public"."add_story_idea"("story_slug" "text", "idea_kind" "
 
 
 
+CREATE OR REPLACE FUNCTION "public"."add_story_language"("story_slug" "text", "language_code" "text", "title" "text", "blurb" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  clean_title text := regexp_replace(btrim(coalesce(title, '')), '\s+', ' ', 'g');
+  clean_blurb text := btrim(coalesce(blurb, ''));
+  first_edition public.stories;
+  languages_max integer := coalesce((public.setting_value('story_languages_max') #>> '{}')::integer, 10);
+  new_slug text;
+begin
+  -- Step 1: a signed-in writer who may write (the account gate), and their own live story.
+  if caller_id is null then
+    raise exception 'Sign in to add a language.' using errcode = 'insufficient_privilege';
+  end if;
+  if not public.is_active_member() then
+    return jsonb_build_object('outcome', 'not_active');
+  end if;
+  select first_editions.* into first_edition
+  from public.stories as asked
+  join public.stories as first_editions on first_editions.id = coalesce(asked.edition_of_story_id, asked.id)
+  where asked.id = public.my_live_story_id(story_slug) and first_editions.deleted_at is null
+  for update of first_editions;
+  if first_edition.id is null then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+
+  -- Step 2: the same rules as a new story's title, description and language (S1-E3-01).
+  perform public.check_story_basics(clean_title, clean_blurb, language_code,
+    (select categories.slug from public.categories where categories.id = first_edition.category_id));
+
+  -- Step 3: a language the story doesn't have yet, and room for one more.
+  if language_code = first_edition.language_code or exists (
+      select 1 from public.stories as editions
+      where editions.edition_of_story_id = first_edition.id and editions.deleted_at is null
+        and editions.language_code = add_story_language.language_code) then
+    return jsonb_build_object('outcome', 'language_taken');
+  end if;
+  if (select count(*) from public.stories as editions
+      where editions.edition_of_story_id = first_edition.id and editions.deleted_at is null) + 1 >= languages_max then
+    return jsonb_build_object('outcome', 'too_many');
+  end if;
+
+  -- Step 4: the edition, with a fresh address. stories_edition_rules() copies the shared
+  -- settings; the ones a row can't be saved without are sent here as well.
+  loop
+    new_slug := public.story_slug_for(clean_title);
+    exit when not exists (select 1 from public.stories where stories.slug = new_slug);
+  end loop;
+  insert into public.stories (user_id, slug, title, blurb, language_code, category_id, rating,
+    ai_disclosure, edition_of_story_id)
+  values (caller_id, new_slug, clean_title, clean_blurb, language_code, first_edition.category_id,
+    first_edition.rating, first_edition.ai_disclosure, first_edition.id);
+
+  -- Step 5: the first edition's tags (later changes follow through story_tags_reach_editions()).
+  insert into public.story_tags (story_id, tag_id, user_id)
+  select editions.id, story_tags.tag_id, caller_id
+  from public.stories as editions
+  join public.story_tags on story_tags.story_id = first_edition.id
+  where editions.slug = new_slug
+  on conflict do nothing;
+
+  return jsonb_build_object('outcome', 'ok', 'slug', new_slug);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."add_story_language"("story_slug" "text", "language_code" "text", "title" "text", "blurb" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."add_story_language"("story_slug" "text", "language_code" "text", "title" "text", "blurb" "text") IS 'A writer adds a language to their own story: a new edition with its own title and description; only the writer can (TRANSLATE-1a; Robert, 16 Nov 2026).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."add_to_activity_totals"("for_day" "date", "new_member" integer, "app_minutes" integer, "reading_minutes" integer) RETURNS "void"
     LANGUAGE "sql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -3304,6 +3379,7 @@ CREATE TABLE IF NOT EXISTS "public"."stories" (
     "writing_prompt_id" "uuid",
     "is_app_only" boolean DEFAULT false NOT NULL,
     "comment_audience" "text" DEFAULT 'everyone'::"text" NOT NULL,
+    "edition_of_story_id" "uuid",
     CONSTRAINT "stories_abuse_needs_rating_and_note" CHECK (((NOT "deals_with_abuse_or_coercion") OR (("rating" = ANY (ARRAY['16_plus'::"public"."story_rating", '18_plus'::"public"."story_rating"])) AND ("btrim"("content_note") <> ''::"text")))),
     CONSTRAINT "stories_blurb_length" CHECK (("char_length"("blurb") <= 500)),
     CONSTRAINT "stories_card_colour_on_palette" CHECK ((("card_colour" IS NULL) OR ("card_colour" = ANY (ARRAY['plum'::"text", 'violet'::"text", 'gold'::"text", 'ink'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text"])))),
@@ -3319,6 +3395,7 @@ CASE "cover_kind"
     ELSE NULL::boolean
 END),
     CONSTRAINT "stories_cover_design_is_approved" CHECK ((("cover_design" IS NULL) OR ("cover_design" = ANY (ARRAY['plum'::"text", 'ink'::"text", 'violet'::"text", 'gold'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text", 'stripes'::"text", 'dots'::"text", 'grid'::"text", 'waves'::"text", 'starry'::"text", 'sparkles'::"text", 'twotone'::"text", 'arches'::"text", 'rings'::"text", 'forestwaves'::"text"])))),
+    CONSTRAINT "stories_edition_not_of_itself" CHECK ((("edition_of_story_id" IS NULL) OR ("edition_of_story_id" <> "id"))),
     CONSTRAINT "stories_first_published_year_range" CHECK ((("first_published_year" >= 1) AND ("first_published_year" <= 2100))),
     CONSTRAINT "stories_language_code_shape" CHECK (("language_code" ~ '^[a-z]{2}(-[A-Z]{2})?$'::"text")),
     CONSTRAINT "stories_rank_badge_tag_ids_check" CHECK ((("rank_badge_tag_ids" IS NULL) OR ("cardinality"("rank_badge_tag_ids") <= 3))),
@@ -3424,6 +3501,10 @@ COMMENT ON COLUMN "public"."stories"."is_app_only" IS 'The writer chose "In the 
 
 
 COMMENT ON COLUMN "public"."stories"."comment_audience" IS 'Who may add comments while they are on: everyone, or the writer''s followers only (MUST-1a).';
+
+
+
+COMMENT ON COLUMN "public"."stories"."edition_of_story_id" IS 'For a later language edition of a story: the first edition it belongs to. Null for a story in one language and for every first edition (TRANSLATE-1a).';
 
 
 
@@ -12636,12 +12717,14 @@ CREATE TABLE IF NOT EXISTS "public"."chapters" (
     "unpublished_at" timestamp with time zone,
     "published_word_count" integer,
     "is_poem" boolean DEFAULT false NOT NULL,
+    "translation_of_chapter_id" "uuid",
     CONSTRAINT "chapters_code_shape" CHECK (("code" ~ '^[a-z0-9]{8}$'::"text")),
     CONSTRAINT "chapters_draft_title_length" CHECK (("char_length"("draft_title") <= 120)),
     CONSTRAINT "chapters_draft_version_positive" CHECK (("draft_version" >= 1)),
     CONSTRAINT "chapters_position_positive" CHECK (("position" >= 1)),
     CONSTRAINT "chapters_published_has_copy" CHECK ((("status" <> 'published'::"public"."chapter_status") OR ("published_body" IS NOT NULL))),
-    CONSTRAINT "chapters_scheduled_has_time" CHECK ((("status" <> 'scheduled'::"public"."chapter_status") OR ("scheduled_for" IS NOT NULL)))
+    CONSTRAINT "chapters_scheduled_has_time" CHECK ((("status" <> 'scheduled'::"public"."chapter_status") OR ("scheduled_for" IS NOT NULL))),
+    CONSTRAINT "chapters_translation_not_of_itself" CHECK ((("translation_of_chapter_id" IS NULL) OR ("translation_of_chapter_id" <> "id")))
 );
 
 
@@ -12674,6 +12757,10 @@ COMMENT ON COLUMN "public"."chapters"."published_word_count" IS 'The published c
 
 
 COMMENT ON COLUMN "public"."chapters"."is_poem" IS 'True when the chapter is a poem: the editor keeps every line and indent and the reader draws each line and stanza (MUST-2). Set by the writer through set_chapter_poem_mode(); a new chapter of a Poetry story starts true.';
+
+
+
+COMMENT ON COLUMN "public"."chapters"."translation_of_chapter_id" IS 'For a chapter of a later language edition: the first edition''s chapter it translates. Null for every other chapter (TRANSLATE-1a).';
 
 
 
@@ -15418,6 +15505,35 @@ COMMENT ON FUNCTION "public"."begin_teacher_email_check"("school_domain" "text",
 
 
 
+CREATE OR REPLACE FUNCTION "public"."best_edition_id"("first_edition_id" "uuid", "wanted_languages" "text"[]) RETURNS "uuid"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  with reader as (
+    select coalesce(profiles.reading_languages, array[profiles.locale, 'en']) as languages
+    from public.profiles where profiles.id = (select auth.uid())
+  )
+  select editions.id
+  from public.stories as editions
+  where (editions.id = first_edition_id or editions.edition_of_story_id = first_edition_id)
+    and public.edition_is_readable(editions)
+    and (wanted_languages is null or editions.language_code = any (wanted_languages))
+  order by
+    (editions.language_code = public.page_language()) desc nulls last,
+    array_position((select reader.languages from reader), editions.language_code) asc nulls last,
+    (editions.edition_of_story_id is null) desc,
+    editions.created_at
+  limit 1;
+$$;
+
+
+ALTER FUNCTION "public"."best_edition_id"("first_edition_id" "uuid", "wanted_languages" "text"[]) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."best_edition_id"("first_edition_id" "uuid", "wanted_languages" "text"[]) IS 'Internal: the language edition of a story a reader gets: the page''s language, then a language they read, then the first edition (TRANSLATE-1a).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."bio_for_caller"("person" "public"."profiles") RETURNS "text"
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -16769,6 +16885,9 @@ CREATE OR REPLACE FUNCTION "public"."chapter_is_readable"("chapter_id" "uuid") R
       and public.story_class_allows(stories.class_only, stories.class_space_id, stories.user_id)
       -- NEW-1: a private story opens only for its writer.
       and public.story_visibility_allows(stories.visibility, stories.user_id)
+      -- TRANSLATE-1a: a translated chapter can be read only while the chapter it translates can.
+      and (chapters.translation_of_chapter_id is null
+           or public.chapter_is_readable(chapters.translation_of_chapter_id))
   );
 $$;
 
@@ -17129,6 +17248,37 @@ COMMENT ON FUNCTION "public"."chapter_scenes_json"("target_chapter_id" "uuid") I
 
 
 
+CREATE OR REPLACE FUNCTION "public"."chapter_translation_source"("chapter_code" "text") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select jsonb_build_object(
+    'language_code', editions.language_code,
+    'original', jsonb_build_object(
+      'code', originals.code,
+      'language_code', first_editions.language_code,
+      'story_slug', first_editions.slug,
+      'title', case when originals.status = 'published' then originals.published_title else originals.draft_title end,
+      'body', case when originals.status = 'published' then originals.published_body else originals.draft_body end,
+      'is_published', originals.status = 'published',
+      'is_poem', originals.is_poem))
+  from public.chapters as translations
+  join public.chapters as originals on originals.id = translations.translation_of_chapter_id
+  join public.stories as editions on editions.id = translations.story_id
+  join public.stories as first_editions on first_editions.id = originals.story_id
+  where translations.code = chapter_code
+    and translations.user_id = (select auth.uid())
+    and translations.deleted_at is null;
+$$;
+
+
+ALTER FUNCTION "public"."chapter_translation_source"("chapter_code" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."chapter_translation_source"("chapter_code" "text") IS 'A writer''s own translated chapter: the chapter it translates, title and text, for the side-by-side editor (TRANSLATE-1a).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."chapters_refresh_writer_rank"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -17171,6 +17321,52 @@ ALTER FUNCTION "public"."chapters_start_as_poem"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."chapters_start_as_poem"() IS 'Trigger: a new chapter of a Poetry story starts in poem mode (MUST-2).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."chapters_translation_rules"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  first_edition_id uuid;
+  translated_story_id uuid;
+begin
+  if tg_op = 'UPDATE' and new.translation_of_chapter_id is distinct from old.translation_of_chapter_id then
+    raise exception 'A translated chapter stays the translation of the same chapter.'
+      using errcode = 'check_violation', hint = 'translation_fixed';
+  end if;
+  -- Nothing to check again when neither the story nor the link is being set.
+  if tg_op = 'UPDATE' then
+    return new;
+  end if;
+  select stories.edition_of_story_id into first_edition_id from public.stories where stories.id = new.story_id;
+  if first_edition_id is null then
+    if new.translation_of_chapter_id is not null then
+      raise exception 'Only a chapter of another language edition can be a translation.'
+        using errcode = 'check_violation', hint = 'translation_wrong_story';
+    end if;
+    return new;
+  end if;
+  if new.translation_of_chapter_id is null then
+    raise exception 'A chapter in another language translates a chapter of the story.'
+      using errcode = 'check_violation', hint = 'translation_needed';
+  end if;
+  select chapters.story_id into translated_story_id from public.chapters
+  where chapters.id = new.translation_of_chapter_id and chapters.deleted_at is null;
+  if translated_story_id is distinct from first_edition_id then
+    raise exception 'That chapter belongs to another story.'
+      using errcode = 'check_violation', hint = 'translation_wrong_story';
+  end if;
+  return new;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."chapters_translation_rules"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."chapters_translation_rules"() IS 'Trigger: in a later language edition every chapter translates one chapter of the first edition, and the link never changes (TRANSLATE-1a).';
 
 
 
@@ -21048,6 +21244,20 @@ begin
   -- Step 2: a story with no readable chapter left drops out of the scores.
   delete from public.story_scores
   where not public.story_has_readable_chapter(story_scores.story_id);
+
+  -- Step 3 (TRANSLATE-1a): one score per story, shared by its language editions.
+  with families as (
+    select coalesce(stories.edition_of_story_id, stories.id) as first_edition_id,
+      sum(story_scores.score) as score, count(*) as editions
+    from public.story_scores
+    join public.stories on stories.id = story_scores.story_id
+    group by coalesce(stories.edition_of_story_id, stories.id)
+  )
+  update public.story_scores set score = families.score
+  from families, public.stories
+  where families.editions > 1
+    and stories.id = story_scores.story_id
+    and coalesce(stories.edition_of_story_id, stories.id) = families.first_edition_id;
   return scored;
 end;
 $$;
@@ -21923,6 +22133,10 @@ begin
   target_story_id := public.my_live_story_id(story_slug);
   if target_story_id is null then
     return jsonb_build_object('outcome', 'not_found');
+  end if;
+  if exists (select 1 from public.stories
+      where stories.id = target_story_id and stories.edition_of_story_id is not null) then
+    return jsonb_build_object('outcome', 'is_translation');
   end if;
   -- Step 2: the next position after the story's live chapters, and a fresh address.
   select coalesce(max(chapters.position), 0) + 1 into new_position
@@ -23583,6 +23797,13 @@ begin
     return jsonb_build_object('outcome', 'not_found');
   end if;
   -- Hidden at once: every reader path checks deleted_at; the owner still sees it for undo.
+  -- TRANSLATE-1a: the later editions first (an edition can't stay live without its story).
+  update public.chapters set deleted_at = deleted_time
+  where chapters.deleted_at is null and chapters.story_id in (
+    select editions.id from public.stories as editions
+    where editions.edition_of_story_id = target_story_id and editions.deleted_at is null);
+  update public.stories set deleted_at = deleted_time
+  where stories.edition_of_story_id = target_story_id and stories.deleted_at is null;
   update public.stories set deleted_at = deleted_time where stories.id = target_story_id;
   -- The chapters go with it, stamped with the same moment so undo brings back exactly these.
   update public.chapters set deleted_at = deleted_time
@@ -23927,6 +24148,105 @@ ALTER FUNCTION "public"."edit_forum_post"("post_id" "uuid", "body" "text", "titl
 
 
 COMMENT ON FUNCTION "public"."edit_forum_post"("post_id" "uuid", "body" "text", "title" "text") IS 'Changes the caller''s own post (and the title on #1), keeping the earlier version for moderators (S1-E8-02).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."edition_chapter_code"("edition_id" "uuid", "first_edition_id" "uuid", "source_chapter_id" "uuid") RETURNS "text"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(
+    (select translations.code from public.chapters as translations
+     where edition_id <> first_edition_id
+       and translations.story_id = edition_id
+       and translations.translation_of_chapter_id = source_chapter_id
+       and public.chapter_is_readable(translations.id)),
+    (select sources.code from public.chapters as sources where sources.id = source_chapter_id));
+$$;
+
+
+ALTER FUNCTION "public"."edition_chapter_code"("edition_id" "uuid", "first_edition_id" "uuid", "source_chapter_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."edition_chapter_code"("edition_id" "uuid", "first_edition_id" "uuid", "source_chapter_id" "uuid") IS 'Internal: the code a language edition uses for a chapter of the first edition: its readable translation, else the first edition''s own code (TRANSLATE-1a).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."edition_is_original"("edition" "public"."stories") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(
+    (select works.original_language = left(edition.language_code, 2)
+     from public.classic_works as works where works.story_id = edition.id),
+    edition.edition_of_story_id is null);
+$$;
+
+
+ALTER FUNCTION "public"."edition_is_original"("edition" "public"."stories") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."edition_is_original"("edition" "public"."stories") IS 'Internal: whether a language edition is in the language the work was first written in (TRANSLATE-1a).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."edition_is_readable"("edition" "public"."stories") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select edition.deleted_at is null
+    and not public.is_moderated_away('story', edition.id)
+    and public.story_has_readable_chapter(edition.id);
+$$;
+
+
+ALTER FUNCTION "public"."edition_is_readable"("edition" "public"."stories") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."edition_is_readable"("edition" "public"."stories") IS 'Internal: whether a language edition is live, not moderated away and has a chapter readers can open (TRANSLATE-1a).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."edition_page_chapters"("edition_id" "uuid", "first_edition_id" "uuid") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(jsonb_agg(jsonb_build_object(
+      'code', coalesce(listed.translation_code, listed.source_code),
+      'number', listed.number,
+      'title', coalesce(listed.translation_title, listed.source_title),
+      'status', 'published',
+      'published_at', coalesce(listed.translation_published_at, listed.source_published_at),
+      'edited_at', listed.edited_at,
+      'word_count', coalesce(listed.translation_word_count, listed.source_word_count),
+      'is_translated', listed.translation_code is not null
+    ) order by listed.number), '[]'::jsonb)
+  from (
+    select sources.code as source_code,
+      row_number() over (order by sources.position) as number,
+      sources.published_title as source_title,
+      sources.first_published_at as source_published_at,
+      sources.published_word_count as source_word_count,
+      translations.code as translation_code,
+      translations.published_title as translation_title,
+      translations.first_published_at as translation_published_at,
+      translations.published_word_count as translation_word_count,
+      translations.edited_at
+    from public.chapters as sources
+    left join public.chapters as translations
+      on translations.story_id = edition_id
+      and translations.translation_of_chapter_id = sources.id
+      and public.chapter_is_readable(translations.id)
+    where sources.story_id = first_edition_id
+      and public.chapter_is_readable(sources.id)
+  ) as listed;
+$$;
+
+
+ALTER FUNCTION "public"."edition_page_chapters"("edition_id" "uuid", "first_edition_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."edition_page_chapters"("edition_id" "uuid", "first_edition_id" "uuid") IS 'Internal: a later language edition''s chapter list in the first edition''s order, each marked translated or not (TRANSLATE-1a).';
 
 
 
@@ -26882,9 +27202,13 @@ CREATE OR REPLACE FUNCTION "public"."get_chapter"("story_slug" "text", "chapter_
 declare
   caller_id uuid := (select auth.uid());
   story public.stories;
+  first_edition public.stories;
   chapter public.chapters;
-  readable_codes text[];
+  source_chapter public.chapters;
+  source_ids uuid[];
   place integer;
+  earlier_place integer;
+  story_json jsonb;
   text_to_send text;
   teaser_words integer;
   app_only boolean;
@@ -26894,18 +27218,89 @@ begin
   if not found then
     return null;
   end if;
-  -- Step 2: the chapter, published and not moderated away.
+  select * into first_edition from public.stories
+  where stories.id = coalesce(story.edition_of_story_id, story.id);
+
+  -- Step 2: the chapter, published and not moderated away. `source_chapter` is the first
+  -- edition's chapter it stands for (itself, in a story with one language).
   select * into chapter from public.chapters
   where chapters.code = chapter_code and chapters.story_id = story.id;
-  if not found or not public.chapter_is_readable(chapter.id) then
+  if found and public.chapter_is_readable(chapter.id) then
+    select * into source_chapter from public.chapters
+    where chapters.id = coalesce(chapter.translation_of_chapter_id, chapter.id);
+  elsif story.edition_of_story_id is not null then
+    -- A chapter of the first edition asked for under this edition's address: the reader switched
+    -- language or followed "next" onto a chapter that may not be translated yet.
+    select * into source_chapter from public.chapters
+    where chapters.code = chapter_code and chapters.story_id = first_edition.id;
+    if not found or not public.chapter_is_readable(source_chapter.id) then
+      return null;
+    end if;
+    select * into chapter from public.chapters
+    where chapters.story_id = story.id and chapters.translation_of_chapter_id = source_chapter.id
+      and public.chapter_is_readable(chapters.id);
+    if not found then
+      chapter := null;
+    end if;
+  else
     return null;
   end if;
-  -- Step 3: its place among the chapters readers can open, for "Chapter n of N" and the arrows.
-  select array_agg(others.code order by others.position) into readable_codes
+
+  -- Step 3: its place among the story's chapters readers can open, for "Chapter n of N" and the
+  -- arrows. Every edition counts in the first edition's chapters, so the number stays the same
+  -- when the reader changes language.
+  select array_agg(others.id order by others.position) into source_ids
   from public.chapters as others
-  where others.story_id = story.id and public.chapter_is_readable(others.id);
-  place := array_position(readable_codes, chapter.code);
-  -- Step 4: the text. GAPS-15: none on the web while "In the app only" applies, except for the
+  where others.story_id = first_edition.id and public.chapter_is_readable(others.id);
+  place := array_position(source_ids, source_chapter.id);
+
+  story_json := jsonb_build_object(
+    'slug', story.slug,
+    'title', story.title,
+    'language_code', story.language_code,
+    'writer', (select jsonb_build_object(
+        'display_name', public.story_writer_name(story.id, profiles.handle, profiles.pen_name),
+        'handle', profiles.handle,
+        'classic_author', public.story_classic_author(story.id))
+      from public.profiles where profiles.id = story.user_id));
+
+  -- Step 4: this edition doesn't have the chapter yet (handoff, "A chapter that isn't translated").
+  -- The answer names the original to read instead and the nearest earlier chapter this edition has.
+  if chapter.id is null then
+    select max(earlier.spot) into earlier_place
+    from unnest(source_ids) with ordinality as earlier (source_id, spot)
+    where earlier.spot < place and exists (
+      select 1 from public.chapters as translations
+      where translations.story_id = story.id and translations.translation_of_chapter_id = earlier.source_id
+        and public.chapter_is_readable(translations.id));
+    return jsonb_build_object(
+      'missing_translation', true,
+      'story', story_json,
+      'number', place,
+      'total', array_length(source_ids, 1),
+      'original', jsonb_build_object(
+        'slug', first_edition.slug,
+        'language_code', first_edition.language_code,
+        'code', source_chapter.code,
+        'title', source_chapter.published_title),
+      -- "Ana Vlad has translated chapters 1 to 4": the unbroken run from chapter one, and the
+      -- translator of a classic (a member's story is translated by its writer).
+      'translated_through', coalesce((
+        select min(gaps.spot) - 1
+        from unnest(source_ids) with ordinality as gaps (source_id, spot)
+        where not exists (
+          select 1 from public.chapters as translations
+          where translations.story_id = story.id and translations.translation_of_chapter_id = gaps.source_id
+            and public.chapter_is_readable(translations.id))), 0),
+      'translator_name', (select works.translator_name from public.classic_works as works
+        where works.story_id = story.id),
+      'previous_number', earlier_place,
+      'previous_code', case when earlier_place is not null then
+        public.edition_chapter_code(story.id, first_edition.id, source_ids[earlier_place]) end,
+      'editions', public.story_editions_json(story, source_chapter.id));
+  end if;
+
+  -- Step 5: the text. GAPS-15: none on the web while "In the app only" applies, except for the
   -- writer; otherwise all of it for a signed-in reader and the teaser for a signed-out visitor.
   app_only := public.story_app_only_applies(story.is_app_only)
     and story.user_id is distinct from caller_id;
@@ -26918,24 +27313,19 @@ begin
     from public.settings where settings.key = 'teaser_length';
     text_to_send := public.teaser_of(chapter.published_body, coalesce(teaser_words, 600));
   end if;
-  -- Step 5: the answer, with the pictures and cards in the text that is sent.
+
+  -- Step 6: the answer, with the pictures and cards in the text that is sent.
   return jsonb_build_object(
-    'story', jsonb_build_object(
-      'slug', story.slug,
-      'title', story.title,
-      'language_code', story.language_code,
-      'writer', (select jsonb_build_object(
-          'display_name', public.story_writer_name(story.id, profiles.handle, profiles.pen_name),
-          'handle', profiles.handle,
-          'classic_author', public.story_classic_author(story.id))
-        from public.profiles where profiles.id = story.user_id)),
+    'story', story_json,
     'id', chapter.id,
     'code', chapter.code,
     'title', chapter.published_title,
     'number', place,
-    'total', array_length(readable_codes, 1),
-    'previous_code', case when place > 1 then readable_codes[place - 1] end,
-    'next_code', readable_codes[place + 1],
+    'total', array_length(source_ids, 1),
+    'previous_code', case when place > 1 then
+      public.edition_chapter_code(story.id, first_edition.id, source_ids[place - 1]) end,
+    'next_code', case when place < array_length(source_ids, 1) then
+      public.edition_chapter_code(story.id, first_edition.id, source_ids[place + 1]) end,
     'published_at', chapter.first_published_at,
     'edited_at', chapter.edited_at,
     'minutes_to_read', greatest(1, ceil(coalesce(chapter.published_word_count, 0) / 200.0))::integer,
@@ -26949,7 +27339,10 @@ begin
       and public.word_total(text_to_send) < public.word_total(chapter.published_body),
     'body', text_to_send,
     'pictures', public.chapter_picture_states(text_to_send, story.user_id),
-    'embeds', public.chapter_embed_states(text_to_send, story.user_id));
+    'embeds', public.chapter_embed_states(text_to_send, story.user_id),
+    -- TRANSLATE-1a: the "Read in" switch, each language with its address for this same chapter;
+    -- empty for a story in one language (Robert, 16 Nov 2026, 12:23 UTC).
+    'editions', public.story_editions_json(story, source_chapter.id));
 end;
 $$;
 
@@ -27202,7 +27595,12 @@ begin
     'first_published_at', story.first_published_at,
     'last_chapter_published_at', story.last_chapter_published_at,
     'is_public', public.story_has_readable_chapter(story.id),
-    'chapters', public.story_page_chapters(story.id, is_owner),
+    -- TRANSLATE-1a: a reader of a later edition sees every chapter of the story, in order.
+    'chapters', case when story.edition_of_story_id is not null and not is_owner
+      then public.edition_page_chapters(story.id, story.edition_of_story_id)
+      else public.story_page_chapters(story.id, is_owner) end,
+    'editions', public.story_editions_json(story),
+    'edition', public.story_edition_json(story),
     'is_owner', is_owner,
     -- GAPS-15: the "In the app only" notice (S1-E3-08), only once the apps exist.
     'app_only', public.story_app_only_applies(story.is_app_only),
@@ -30145,6 +30543,9 @@ begin
       where chapters.story_id = stories.id
         and chapters.status = 'published'
         and chapters.deleted_at is null
+        -- TRANSLATE-1a: a translated chapter counts only while its original can be read.
+        and (chapters.translation_of_chapter_id is null
+             or public.chapter_is_readable(chapters.translation_of_chapter_id))
         and not exists (
           select 1 from public.moderated_items
           where moderated_items.item_type = 'chapter' and moderated_items.item_id = chapters.id
@@ -30164,7 +30565,9 @@ begin
          or stories.user_id = caller_id
          or not exists (
            select 1 from public.story_restrictions
-           where story_restrictions.story_id = stories.id and story_restrictions.lifted_at is null))
+           -- TRANSLATE-1a: a restriction on the story holds for its other languages too.
+           where story_restrictions.story_id in (stories.id, stories.edition_of_story_id)
+             and story_restrictions.lifted_at is null))
     -- CLAUDE.md rules 18 and 6: the rating, and blocks, unless it is the caller's own story.
     and (stories.user_id = caller_id
          or (stories.rating = any (allowed_ratings) and not (stories.user_id = any (blocked_ids))))
@@ -30176,12 +30579,28 @@ begin
     and (completion is null or stories.completion_status = completion)
     -- MARKETS-2c: one language or several (the languages someone reads).
     and (wanted_languages is null or stories.language_code = any (wanted_languages))
+    -- TRANSLATE-1a: a story in several languages is listed once, in this reader's edition
+    -- (handoff, "Shelves and search"). A story in one language is answered by the first line,
+    -- through the index, without the function.
+    and (list_kind in ('library', 'reader_library', 'reading_list')
+         or (stories.edition_of_story_id is null and not exists (
+               select 1 from public.stories as editions
+               where editions.edition_of_story_id = stories.id and editions.deleted_at is null))
+         or stories.id = public.best_edition_id(
+              coalesce(stories.edition_of_story_id, stories.id), wanted_languages))
     -- The list's own rule: the three open lists hold every story; search uses the indexes; the
     -- rest ask list_holds_story().
     and (
       list_kind in ('updated', 'new', 'popular')
+      -- TRANSLATE-1a: a match in any edition finds the story, whichever edition is shown.
       or (is_search and stories.id in (
-            select documents.story_id from public.story_search_documents as documents
+            select related.id
+            from public.story_search_documents as documents
+            join public.stories as matched on matched.id = documents.story_id
+            join public.stories as related
+              on related.id = matched.id
+              or related.id = matched.edition_of_story_id
+              or related.edition_of_story_id = coalesce(matched.edition_of_story_id, matched.id)
             where documents.document @@ search_terms or documents.search_text like search_pattern))
       or (list_kind not in ('updated', 'new', 'popular', 'search')
           and public.list_holds_story(stories, list_kind, list_key)));
@@ -34866,8 +35285,15 @@ begin
     -- the people who follow that story.
     select follows_users.user_id from public.follows_users
     where follows_users.followed_user_id = story.user_id and story.visibility = 'public'
+      -- TRANSLATE-1a: not again for a translation.
+      and story.edition_of_story_id is null
     union
     select follows_stories.user_id from public.follows_stories where follows_stories.story_id = story.id
+    union
+    -- TRANSLATE-1a: a translation also tells whoever follows the story in another language.
+    select follows_stories.user_id from public.follows_stories
+    where story.edition_of_story_id is not null
+      and follows_stories.story_id in (select public.story_family_ids(story.id))
   loop
     -- S1-E8-11: a chapter of a class-only story tells only followers who are in that class, so
     -- nobody else learns its title.
@@ -35615,6 +36041,23 @@ ALTER FUNCTION "public"."page_ads"("page_key" "text", "context" "jsonb") OWNER T
 
 
 COMMENT ON FUNCTION "public"."page_ads"("page_key" "text", "context" "jsonb") IS 'Public: a page''s ad slots, filled from the page''s context only, never the same ad twice (S1-E12-01).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."page_language"() RETURNS "text"
+    LANGUAGE "sql" STABLE
+    SET "search_path" TO ''
+    AS $_$
+  select lower(substring(
+    coalesce(nullif(current_setting('request.headers', true), '')::jsonb ->> 'accept-language', '')
+    from '^\s*([A-Za-z]{2})(?:[-_,;\s]|$)'));
+$_$;
+
+
+ALTER FUNCTION "public"."page_language"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."page_language"() IS 'Internal: the two-letter language of the page the reader is on, from the request''s Accept-Language header; never stored (TRANSLATE-1a).';
 
 
 
@@ -37104,6 +37547,13 @@ begin
   end if;
   if btrim(chapter.draft_body) = '' then
     return jsonb_build_object('outcome', 'empty');
+  end if;
+  -- TRANSLATE-1a: a translation goes out only after the chapter it translates.
+  if chapter.translation_of_chapter_id is not null and not exists (
+      select 1 from public.chapters as originals
+      where originals.id = chapter.translation_of_chapter_id
+        and originals.status = 'published' and originals.deleted_at is null) then
+    return jsonb_build_object('outcome', 'original_not_published');
   end if;
   perform public.chapter_publish_now(chapter);
   return jsonb_build_object('outcome', 'ok', 'published_at', now());
@@ -42343,10 +42793,23 @@ begin
   if not found then
     return jsonb_build_object('outcome', 'not_found');
   end if;
+  -- TRANSLATE-1a: a later edition needs its story back first.
+  if story.edition_of_story_id is not null and exists (
+      select 1 from public.stories as first_editions
+      where first_editions.id = story.edition_of_story_id and first_editions.deleted_at is not null) then
+    return jsonb_build_object('outcome', 'story_deleted');
+  end if;
   -- Step 2: the story and the chapters that went with it (same deleted_at) come back.
   update public.chapters set deleted_at = null
   where chapters.story_id = story.id and chapters.deleted_at = story.deleted_at;
   update public.stories set deleted_at = null where stories.id = story.id;
+  -- TRANSLATE-1a: and the editions that went with it, with their chapters.
+  update public.chapters set deleted_at = null
+  where chapters.deleted_at = story.deleted_at and chapters.story_id in (
+    select editions.id from public.stories as editions
+    where editions.edition_of_story_id = story.id and editions.deleted_at = story.deleted_at);
+  update public.stories set deleted_at = null
+  where stories.edition_of_story_id = story.id and stories.deleted_at = story.deleted_at;
   return jsonb_build_object('outcome', 'ok');
 end;
 $$;
@@ -43651,6 +44114,13 @@ begin
   end if;
   if publish_at is null or publish_at <= now() or publish_at > now() + interval '1 year' then
     return jsonb_build_object('outcome', 'bad_time');
+  end if;
+  -- TRANSLATE-1a: a translation goes out only after the chapter it translates.
+  if chapter.translation_of_chapter_id is not null and not exists (
+      select 1 from public.chapters as originals
+      where originals.id = chapter.translation_of_chapter_id
+        and originals.status = 'published' and originals.deleted_at is null) then
+    return jsonb_build_object('outcome', 'original_not_published');
   end if;
   update public.chapters set status = 'scheduled', scheduled_for = publish_at where chapters.id = chapter.id;
   return jsonb_build_object('outcome', 'ok', 'scheduled_for', publish_at);
@@ -48854,6 +49324,57 @@ COMMENT ON FUNCTION "public"."staff_signed_in_recently"() IS 'True when the pers
 
 
 
+CREATE OR REPLACE FUNCTION "public"."start_chapter_translation"("story_slug" "text", "original_chapter_code" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  edition public.stories;
+  original public.chapters;
+  translation_code text;
+begin
+  -- Step 1: a signed-in writer who may write, and their own later edition.
+  if caller_id is null then
+    raise exception 'Sign in to translate a chapter.' using errcode = 'insufficient_privilege';
+  end if;
+  if not public.is_active_member() then
+    return jsonb_build_object('outcome', 'not_active');
+  end if;
+  select * into edition from public.stories
+  where stories.id = public.my_live_story_id(story_slug) and stories.edition_of_story_id is not null
+  for update;
+  if edition.id is null then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  -- Step 2: the chapter to translate, a live chapter of the first edition.
+  select * into original from public.chapters
+  where chapters.code = original_chapter_code and chapters.story_id = edition.edition_of_story_id
+    and chapters.deleted_at is null;
+  if original.id is null then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  -- Step 3: the translation that already exists, or a new empty draft.
+  select chapters.code into translation_code from public.chapters
+  where chapters.story_id = edition.id and chapters.translation_of_chapter_id = original.id
+    and chapters.deleted_at is null;
+  if translation_code is null then
+    translation_code := public.chapter_code();
+    insert into public.chapters (story_id, user_id, code, position, translation_of_chapter_id, is_poem)
+    values (edition.id, caller_id, translation_code, original.position, original.id, original.is_poem);
+  end if;
+  return jsonb_build_object('outcome', 'ok', 'code', translation_code);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."start_chapter_translation"("story_slug" "text", "original_chapter_code" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."start_chapter_translation"("story_slug" "text", "original_chapter_code" "text") IS 'A writer starts (or finds) the translation of one chapter in their own later language edition (TRANSLATE-1a).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."start_consent_grace_for_rule"("rule_id" "uuid") RETURNS integer
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -49261,6 +49782,163 @@ COMMENT ON FUNCTION "public"."stories_clear_hidden_presentation"() IS 'Trigger: 
 
 
 
+CREATE OR REPLACE FUNCTION "public"."stories_edition_rules"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  first_edition public.stories;
+begin
+  -- Step 1: a story that isn't a later edition only has to keep its language apart from its editions.
+  if new.edition_of_story_id is null then
+    if tg_op = 'UPDATE' and old.edition_of_story_id is not null then
+      raise exception 'An edition stays an edition of the same story.'
+        using errcode = 'check_violation', hint = 'edition_fixed';
+    end if;
+    if tg_op = 'UPDATE' and new.language_code is distinct from old.language_code and exists (
+        select 1 from public.stories as editions
+        where editions.edition_of_story_id = new.id and editions.deleted_at is null
+          and editions.language_code = new.language_code) then
+      raise exception 'The story already has an edition in that language.'
+        using errcode = 'check_violation', hint = 'edition_language';
+    end if;
+    return new;
+  end if;
+
+  -- Step 2: the link never changes once the edition exists.
+  if tg_op = 'UPDATE' and new.edition_of_story_id is distinct from old.edition_of_story_id then
+    raise exception 'An edition stays an edition of the same story.'
+      using errcode = 'check_violation', hint = 'edition_fixed';
+  end if;
+
+  -- Step 3: the first edition: it exists, it isn't an edition itself and nothing points at this row.
+  select * into first_edition from public.stories where stories.id = new.edition_of_story_id;
+  if first_edition.id is null or first_edition.edition_of_story_id is not null
+      or exists (select 1 from public.stories as editions where editions.edition_of_story_id = new.id) then
+    raise exception 'An edition belongs to a story that isn''t an edition itself.'
+      using errcode = 'check_violation', hint = 'edition_chain';
+  end if;
+
+  -- Step 4: only the writer translates their own story (Robert, 16 Nov 2026, 12:20 UTC).
+  if new.user_id <> first_edition.user_id then
+    raise exception 'Only the story''s writer can add a language to it.'
+      using errcode = 'check_violation', hint = 'edition_owner';
+  end if;
+
+  -- Step 5: another language than the first edition (other editions: the unique index).
+  if new.language_code = first_edition.language_code then
+    raise exception 'The story is already in that language.'
+      using errcode = 'check_violation', hint = 'edition_language';
+  end if;
+
+  -- Step 6: a live edition needs a live first edition (deleting the story takes its editions too).
+  if new.deleted_at is null and first_edition.deleted_at is not null then
+    raise exception 'Restore the story before its other languages.'
+      using errcode = 'check_violation', hint = 'edition_story_deleted';
+  end if;
+
+  -- Step 7: the shared settings, always the first edition's. Who can read a story (CLAUDE.md
+  -- rule 18: the rating; NEW-1: the visibility; S1-E8-11: class only) must be the same in every
+  -- language, or a translation could show what the original hides.
+  new.category_id := first_edition.category_id;
+  new.rating := first_edition.rating;
+  new.rating_reasons := first_edition.rating_reasons;
+  new.is_fan_fiction := first_edition.is_fan_fiction;
+  new.is_parody := first_edition.is_parody;
+  new.deals_with_abuse_or_coercion := first_edition.deals_with_abuse_or_coercion;
+  new.ai_disclosure := first_edition.ai_disclosure;
+  new.ai_undisclosed_labelled_at := first_edition.ai_undisclosed_labelled_at;
+  new.classic_author_id := first_edition.classic_author_id;
+  new.first_published_year := first_edition.first_published_year;
+  new.visibility := first_edition.visibility;
+  new.class_only := first_edition.class_only;
+  new.class_space_id := first_edition.class_space_id;
+  new.is_app_only := first_edition.is_app_only;
+  new.comments_enabled := first_edition.comments_enabled;
+  new.comment_audience := first_edition.comment_audience;
+  new.quote_cards_enabled := first_edition.quote_cards_enabled;
+  new.picture_sharing_enabled := first_edition.picture_sharing_enabled;
+  new.card_colour := first_edition.card_colour;
+  new.cover_kind := first_edition.cover_kind;
+  new.cover_design := first_edition.cover_design;
+  new.cover_background := first_edition.cover_background;
+  new.cover_accent := first_edition.cover_accent;
+  new.cover_tall_path := first_edition.cover_tall_path;
+  new.cover_square_path := first_edition.cover_square_path;
+  new.cover_hidden_at := first_edition.cover_hidden_at;
+  -- The content note is words, so each edition has its own; an empty one borrows the first
+  -- edition's, because a story about abuse must carry a note (stories_abuse_needs_rating_and_note).
+  if btrim(coalesce(new.content_note, '')) = '' then
+    new.content_note := first_edition.content_note;
+  end if;
+  return new;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."stories_edition_rules"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."stories_edition_rules"() IS 'Trigger: checks a language edition''s link and copies the settings every edition shares from the first edition (TRANSLATE-1a).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."stories_editions_follow_first"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  update public.stories as editions set
+    category_id = new.category_id,
+    rating = new.rating,
+    rating_reasons = new.rating_reasons,
+    is_fan_fiction = new.is_fan_fiction,
+    is_parody = new.is_parody,
+    deals_with_abuse_or_coercion = new.deals_with_abuse_or_coercion,
+    ai_disclosure = new.ai_disclosure,
+    visibility = new.visibility,
+    class_only = new.class_only,
+    class_space_id = new.class_space_id,
+    is_app_only = new.is_app_only,
+    comments_enabled = new.comments_enabled,
+    comment_audience = new.comment_audience,
+    cover_kind = new.cover_kind,
+    cover_design = new.cover_design,
+    cover_background = new.cover_background,
+    cover_accent = new.cover_accent,
+    cover_tall_path = new.cover_tall_path,
+    cover_square_path = new.cover_square_path
+  where editions.edition_of_story_id = new.id
+    -- Only when something shared really changed; stories_edition_rules() copies the rest.
+    and (editions.category_id, editions.rating, editions.rating_reasons, editions.is_fan_fiction,
+         editions.is_parody, editions.deals_with_abuse_or_coercion, editions.ai_disclosure,
+         editions.ai_undisclosed_labelled_at, editions.classic_author_id, editions.first_published_year,
+         editions.visibility, editions.class_only, editions.class_space_id, editions.is_app_only,
+         editions.comments_enabled, editions.comment_audience, editions.quote_cards_enabled,
+         editions.picture_sharing_enabled, editions.card_colour, editions.cover_kind,
+         editions.cover_design, editions.cover_background, editions.cover_accent,
+         editions.cover_tall_path, editions.cover_square_path, editions.cover_hidden_at)
+      is distinct from
+        (new.category_id, new.rating, new.rating_reasons, new.is_fan_fiction,
+         new.is_parody, new.deals_with_abuse_or_coercion, new.ai_disclosure,
+         new.ai_undisclosed_labelled_at, new.classic_author_id, new.first_published_year,
+         new.visibility, new.class_only, new.class_space_id, new.is_app_only,
+         new.comments_enabled, new.comment_audience, new.quote_cards_enabled,
+         new.picture_sharing_enabled, new.card_colour, new.cover_kind,
+         new.cover_design, new.cover_background, new.cover_accent,
+         new.cover_tall_path, new.cover_square_path, new.cover_hidden_at);
+  return null;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."stories_editions_follow_first"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."stories_editions_follow_first"() IS 'Trigger: after a first edition changes, its other language editions take the same shared settings (TRANSLATE-1a).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."stories_export_choice_problem"("owner_id" "uuid", "chosen_story_id" "uuid", "chosen_chapter_ids" "uuid"[], "anything_chosen" boolean) RETURNS "text"
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -49536,7 +50214,13 @@ CREATE OR REPLACE FUNCTION "public"."story_card_json"("target_story_id" "uuid") 
         and public.chapter_is_readable(chapters.id)),
     'last_chapter_published_at', stories.last_chapter_published_at,
     -- GAPS-15: the "In the app only" cover label, only once the apps exist.
-    'app_only', public.story_app_only_applies(stories.is_app_only))
+    'app_only', public.story_app_only_applies(stories.is_app_only),
+    -- TRANSLATE-1a: a story in one language is answered by the index alone.
+    'languages', case
+      when raw.edition_of_story_id is null and not exists (
+        select 1 from public.stories as editions
+        where editions.edition_of_story_id = raw.id and editions.deleted_at is null) then '[]'::jsonb
+      else public.story_editions_json(raw) end)
   -- S1-E11-08: the story as the caller may see it (a hidden title or cover masked). In FROM, so
   -- story_as_shown() runs once, not once per column ("(story_as_shown(raw)).*", QA-2a).
   from public.stories as raw
@@ -49857,6 +50541,90 @@ COMMENT ON FUNCTION "public"."story_cover_picture"("story_slug" "text") IS 'A st
 
 
 
+CREATE OR REPLACE FUNCTION "public"."story_edition_json"("story" "public"."stories") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select jsonb_build_object(
+    'original_language', coalesce(works.original_language, first_edition.language_code),
+    'is_original', public.edition_is_original(story),
+    'is_first_edition', story.edition_of_story_id is null,
+    'first_edition_slug', first_edition.slug,
+    'first_edition_language', first_edition.language_code,
+    'chapters_in_story', (select count(*) from public.chapters
+      where chapters.story_id = first_edition.id and public.chapter_is_readable(chapters.id)),
+    'chapters_here', (select count(*) from public.chapters
+      where chapters.story_id = story.id and public.chapter_is_readable(chapters.id)),
+    'translator_name', works.translator_name)
+  from public.stories as first_edition
+  left join public.classic_works as works on works.story_id = story.id
+  where first_edition.id = coalesce(story.edition_of_story_id, story.id);
+$$;
+
+
+ALTER FUNCTION "public"."story_edition_json"("story" "public"."stories") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_edition_json"("story" "public"."stories") IS 'Internal: the "About this edition" facts of a story page: original language, chapters in this language, the classic''s translator (TRANSLATE-1a).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."story_editions_json"("story" "public"."stories", "source_chapter_id" "uuid" DEFAULT NULL::"uuid") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  with editions as (
+    select raw.id, raw.slug, raw.language_code, raw.edition_of_story_id, raw.created_at,
+      shown.title, public.edition_is_original(raw) as is_original
+    from public.stories as raw
+    -- S1-E11-08: a title moderators hid stays hidden here too.
+    cross join lateral public.story_as_shown(raw) as shown
+    where (raw.id = coalesce(story.edition_of_story_id, story.id)
+           or raw.edition_of_story_id = coalesce(story.edition_of_story_id, story.id))
+      and (raw.id = story.id or public.edition_is_readable(raw))
+  )
+  select case when count(*) < 2 then '[]'::jsonb else jsonb_agg(
+      jsonb_build_object(
+        'language_code', editions.language_code,
+        'slug', editions.slug,
+        'title', editions.title,
+        'is_original', editions.is_original,
+        'is_current', editions.id = story.id)
+      || case when source_chapter_id is null then '{}'::jsonb else jsonb_build_object(
+        'chapter_code', public.edition_chapter_code(
+          editions.id, coalesce(story.edition_of_story_id, story.id), source_chapter_id)) end
+      order by (editions.edition_of_story_id is null) desc, editions.created_at) end
+  from editions;
+$$;
+
+
+ALTER FUNCTION "public"."story_editions_json"("story" "public"."stories", "source_chapter_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_editions_json"("story" "public"."stories", "source_chapter_id" "uuid") IS 'Internal: the languages a story can be read in, for the Read in switch; empty unless there are at least two (TRANSLATE-1a; Robert, 16 Nov 2026).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."story_family_ids"("target_story_id" "uuid") RETURNS SETOF "uuid"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select family.id
+  from public.stories as target
+  join public.stories as family
+    on family.id = coalesce(target.edition_of_story_id, target.id)
+    or family.edition_of_story_id = coalesce(target.edition_of_story_id, target.id)
+  where target.id = target_story_id;
+$$;
+
+
+ALTER FUNCTION "public"."story_family_ids"("target_story_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_family_ids"("target_story_id" "uuid") IS 'Internal: the IDs of every language edition of the story a story row belongs to (TRANSLATE-1a).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."story_follow_state"("story_slug" "text") RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -49932,6 +50700,9 @@ CREATE OR REPLACE FUNCTION "public"."story_has_readable_chapter"("target_story_i
       and chapters.status = 'published'
       and chapters.deleted_at is null
       and not public.is_moderated_away('chapter', chapters.id)
+      -- TRANSLATE-1a: a translated chapter can be read only while the chapter it translates can.
+      and (chapters.translation_of_chapter_id is null
+           or public.chapter_is_readable(chapters.translation_of_chapter_id))
   );
 $$;
 
@@ -49992,6 +50763,50 @@ COMMENT ON FUNCTION "public"."story_language_choices"() IS 'Every language with 
 
 
 
+CREATE OR REPLACE FUNCTION "public"."story_languages"("story_slug" "text") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  with first_edition as (
+    select first_editions.* from public.stories as asked
+    join public.stories as first_editions on first_editions.id = coalesce(asked.edition_of_story_id, asked.id)
+    where asked.id = public.my_live_story_id(story_slug) and first_editions.deleted_at is null
+  ),
+  story_chapters as (
+    select count(*) as total from public.chapters, first_edition
+    where chapters.story_id = first_edition.id and chapters.deleted_at is null
+  )
+  select jsonb_build_object(
+    'first_edition_slug', first_edition.slug,
+    'languages_max', coalesce((public.setting_value('story_languages_max') #>> '{}')::integer, 10),
+    'editions', (
+      select jsonb_agg(jsonb_build_object(
+          'slug', editions.slug,
+          'language_code', editions.language_code,
+          'title', editions.title,
+          'blurb', editions.blurb,
+          'is_first_edition', editions.edition_of_story_id is null,
+          'chapters_in_story', (select story_chapters.total from story_chapters),
+          'chapters_published', (select count(*) from public.chapters
+            where chapters.story_id = editions.id and chapters.deleted_at is null and chapters.status = 'published'),
+          'chapters_in_draft', (select count(*) from public.chapters
+            where chapters.story_id = editions.id and chapters.deleted_at is null and chapters.status <> 'published'),
+          'is_public', public.story_has_readable_chapter(editions.id))
+        order by (editions.edition_of_story_id is null) desc, editions.created_at)
+      from public.stories as editions
+      where (editions.id = first_edition.id or editions.edition_of_story_id = first_edition.id)
+        and editions.deleted_at is null))
+  from first_edition;
+$$;
+
+
+ALTER FUNCTION "public"."story_languages"("story_slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_languages"("story_slug" "text") IS 'A writer''s own story: its language editions and how many chapters each has published or in draft (TRANSLATE-1a).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."story_library_state"("story_slug" "text") RETURNS "jsonb"
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -50021,7 +50836,7 @@ CREATE OR REPLACE FUNCTION "public"."story_like_total"("target_story_id" "uuid")
   from public.chapter_likes
   join public.chapters on chapters.id = chapter_likes.chapter_id
   join public.profiles on profiles.id = chapter_likes.user_id
-  where chapters.story_id = target_story_id
+  where chapters.story_id in (select public.story_family_ids(target_story_id))
     and public.chapter_is_readable(chapters.id)
     and profiles.deleted_at is null;
 $$;
@@ -50216,6 +51031,43 @@ ALTER FUNCTION "public"."story_more_signals"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."story_more_signals"() IS 'Internal: each readable story''s decayed follows, finished-chapter points and 7-day growth (S1-E15-05).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."story_opening_edition"("story_slug" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  story public.stories;
+  chosen public.stories;
+begin
+  -- Step 1: the story, if this caller may read it (age, blocks, deleted, moderated).
+  select * into story from public.reader_visible_story(story_slug);
+  if not found then
+    return null;
+  end if;
+  -- Step 2: one language only, so nothing to choose.
+  if story.edition_of_story_id is null and not exists (
+      select 1 from public.stories as editions
+      where editions.edition_of_story_id = story.id and editions.deleted_at is null) then
+    return null;
+  end if;
+  -- Step 3: the edition for this reader.
+  select * into chosen from public.stories
+  where stories.id = public.best_edition_id(coalesce(story.edition_of_story_id, story.id), null);
+  if chosen.id is null then
+    return null;
+  end if;
+  return jsonb_build_object('slug', chosen.slug, 'language_code', chosen.language_code);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."story_opening_edition"("story_slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_opening_edition"("story_slug" "text") IS 'The language edition a story should open in for this reader: the page''s language, then one they read, then the first edition; null for a story in one language (TRANSLATE-1a).';
 
 
 
@@ -51091,6 +51943,76 @@ ALTER FUNCTION "public"."story_tag_ranks"("story_slug" "text") OWNER TO "postgre
 
 
 COMMENT ON FUNCTION "public"."story_tag_ranks"("story_slug" "text") IS 'A story''s rank in each of its approved tags among the stories the reader may see, and which ones the cover shows (CMS-1g).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."story_tags_reach_editions"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  if tg_op = 'INSERT' then
+    insert into public.story_tags (story_id, tag_id, user_id)
+    select editions.id, new.tag_id, new.user_id
+    from public.stories as editions
+    where editions.edition_of_story_id = new.story_id
+    on conflict do nothing;
+  else
+    delete from public.story_tags
+    where story_tags.tag_id = old.tag_id
+      and story_tags.story_id in (
+        select editions.id from public.stories as editions where editions.edition_of_story_id = old.story_id);
+  end if;
+  return null;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."story_tags_reach_editions"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_tags_reach_editions"() IS 'Trigger: tags added to or taken off a first edition are added to or taken off its other language editions (TRANSLATE-1a).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."story_translation_chapters"("story_slug" "text") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce((
+      select jsonb_agg(jsonb_build_object(
+          'number', listed.number,
+          'original_code', listed.original_code,
+          'original_title', listed.original_title,
+          'original_status', listed.original_status,
+          'code', listed.code,
+          'title', listed.title,
+          'status', listed.status,
+          'word_count', listed.word_count,
+          'draft_saved_at', listed.draft_saved_at) order by listed.number)
+      from (
+        select row_number() over (order by sources.position) as number,
+          sources.code as original_code,
+          coalesce(nullif(sources.draft_title, ''), sources.published_title) as original_title,
+          sources.status as original_status,
+          translations.code, translations.draft_title as title, translations.status,
+          translations.word_count, translations.draft_saved_at
+        from public.chapters as sources
+        left join public.chapters as translations
+          on translations.story_id = editions.id
+          and translations.translation_of_chapter_id = sources.id
+          and translations.deleted_at is null
+        where sources.story_id = editions.edition_of_story_id and sources.deleted_at is null
+      ) as listed), '[]'::jsonb)
+  from public.stories as editions
+  where editions.id = public.my_live_story_id(story_slug) and editions.edition_of_story_id is not null;
+$$;
+
+
+ALTER FUNCTION "public"."story_translation_chapters"("story_slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_translation_chapters"("story_slug" "text") IS 'A writer''s own later language edition: every chapter of the story with its translation''s code, title and status, if started (TRANSLATE-1a).';
 
 
 
@@ -59543,6 +60465,10 @@ CREATE INDEX "chapter_scenes_user_id_fk_idx" ON "public"."chapter_scenes" USING 
 
 
 
+CREATE UNIQUE INDEX "chapters_one_translation_per_edition" ON "public"."chapters" USING "btree" ("story_id", "translation_of_chapter_id") WHERE (("translation_of_chapter_id" IS NOT NULL) AND ("deleted_at" IS NULL));
+
+
+
 CREATE INDEX "chapters_published_idx" ON "public"."chapters" USING "btree" ("story_id", "position") WHERE (("status" = 'published'::"public"."chapter_status") AND ("deleted_at" IS NULL));
 
 
@@ -59556,6 +60482,10 @@ CREATE INDEX "chapters_story_id_fk_idx" ON "public"."chapters" USING "btree" ("s
 
 
 CREATE INDEX "chapters_story_position_idx" ON "public"."chapters" USING "btree" ("story_id", "position") WHERE ("deleted_at" IS NULL);
+
+
+
+CREATE INDEX "chapters_translation_of_chapter_id_idx" ON "public"."chapters" USING "btree" ("translation_of_chapter_id") WHERE ("translation_of_chapter_id" IS NOT NULL);
 
 
 
@@ -60443,7 +61373,15 @@ CREATE INDEX "stories_completion_status_idx" ON "public"."stories" USING "btree"
 
 
 
+CREATE INDEX "stories_edition_of_story_id_idx" ON "public"."stories" USING "btree" ("edition_of_story_id") WHERE ("edition_of_story_id" IS NOT NULL);
+
+
+
 CREATE INDEX "stories_hidden_cover_paths" ON "public"."stories" USING "btree" ("cover_tall_path", "cover_square_path") WHERE ("cover_hidden_at" IS NOT NULL);
+
+
+
+CREATE UNIQUE INDEX "stories_one_edition_per_language" ON "public"."stories" USING "btree" ("edition_of_story_id", "language_code") WHERE (("edition_of_story_id" IS NOT NULL) AND ("deleted_at" IS NULL));
 
 
 
@@ -60900,6 +61838,10 @@ CREATE OR REPLACE TRIGGER "chapters_set_updated_at" BEFORE UPDATE ON "public"."c
 
 
 CREATE OR REPLACE TRIGGER "chapters_start_as_poem" BEFORE INSERT ON "public"."chapters" FOR EACH ROW EXECUTE FUNCTION "public"."chapters_start_as_poem"();
+
+
+
+CREATE OR REPLACE TRIGGER "chapters_translation_rules" BEFORE INSERT OR UPDATE OF "translation_of_chapter_id", "story_id" ON "public"."chapters" FOR EACH ROW EXECUTE FUNCTION "public"."chapters_translation_rules"();
 
 
 
@@ -61643,7 +62585,15 @@ CREATE OR REPLACE TRIGGER "statements_of_reasons_refuse_user_id_change" BEFORE U
 
 
 
+CREATE OR REPLACE TRIGGER "stories_a_edition_rules" BEFORE INSERT OR UPDATE ON "public"."stories" FOR EACH ROW EXECUTE FUNCTION "public"."stories_edition_rules"();
+
+
+
 CREATE OR REPLACE TRIGGER "stories_clear_hidden_presentation" BEFORE UPDATE OF "title", "cover_kind", "cover_design", "cover_background", "cover_accent", "cover_tall_path" ON "public"."stories" FOR EACH ROW EXECUTE FUNCTION "public"."stories_clear_hidden_presentation"();
+
+
+
+CREATE OR REPLACE TRIGGER "stories_editions_follow_first" AFTER UPDATE ON "public"."stories" FOR EACH ROW WHEN (("new"."edition_of_story_id" IS NULL)) EXECUTE FUNCTION "public"."stories_editions_follow_first"();
 
 
 
@@ -61808,6 +62758,10 @@ CREATE OR REPLACE TRIGGER "story_search_on_tag_name_change" AFTER INSERT OR DELE
 
 
 CREATE OR REPLACE TRIGGER "story_tags_at_most_ten" BEFORE INSERT ON "public"."story_tags" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_eleventh_story_tag"();
+
+
+
+CREATE OR REPLACE TRIGGER "story_tags_reach_editions" AFTER INSERT OR DELETE ON "public"."story_tags" FOR EACH ROW EXECUTE FUNCTION "public"."story_tags_reach_editions"();
 
 
 
@@ -62284,6 +63238,11 @@ ALTER TABLE ONLY "public"."chapter_shares"
 
 ALTER TABLE ONLY "public"."chapters"
     ADD CONSTRAINT "chapters_story_id_fkey" FOREIGN KEY ("story_id") REFERENCES "public"."stories"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."chapters"
+    ADD CONSTRAINT "chapters_translation_of_chapter_id_fkey" FOREIGN KEY ("translation_of_chapter_id") REFERENCES "public"."chapters"("id") ON DELETE CASCADE;
 
 
 
@@ -63624,6 +64583,11 @@ ALTER TABLE ONLY "public"."stories"
 
 ALTER TABLE ONLY "public"."stories"
     ADD CONSTRAINT "stories_classic_author_id_fkey" FOREIGN KEY ("classic_author_id") REFERENCES "public"."classic_authors"("id");
+
+
+
+ALTER TABLE ONLY "public"."stories"
+    ADD CONSTRAINT "stories_edition_of_story_id_fkey" FOREIGN KEY ("edition_of_story_id") REFERENCES "public"."stories"("id") ON DELETE CASCADE;
 
 
 
@@ -66323,6 +67287,11 @@ GRANT ALL ON FUNCTION "public"."add_story_idea"("story_slug" "text", "idea_kind"
 
 
 
+REVOKE ALL ON FUNCTION "public"."add_story_language"("story_slug" "text", "language_code" "text", "title" "text", "blurb" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."add_story_language"("story_slug" "text", "language_code" "text", "title" "text", "blurb" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."add_to_activity_totals"("for_day" "date", "new_member" integer, "app_minutes" integer, "reading_minutes" integer) FROM PUBLIC;
 
 
@@ -67986,6 +68955,10 @@ GRANT ALL ON FUNCTION "public"."begin_teacher_email_check"("school_domain" "text
 
 
 
+REVOKE ALL ON FUNCTION "public"."best_edition_id"("first_edition_id" "uuid", "wanted_languages" "text"[]) FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."bio_for_caller"("person" "public"."profiles") FROM PUBLIC;
 
 
@@ -68224,11 +69197,20 @@ REVOKE ALL ON FUNCTION "public"."chapter_scenes_json"("target_chapter_id" "uuid"
 
 
 
+REVOKE ALL ON FUNCTION "public"."chapter_translation_source"("chapter_code" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."chapter_translation_source"("chapter_code" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."chapters_refresh_writer_rank"() FROM PUBLIC;
 
 
 
 REVOKE ALL ON FUNCTION "public"."chapters_start_as_poem"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."chapters_translation_rules"() FROM PUBLIC;
 
 
 
@@ -69151,6 +70133,22 @@ GRANT ALL ON FUNCTION "public"."downvote_comment"("comment_id" "uuid", "should_d
 
 REVOKE ALL ON FUNCTION "public"."edit_forum_post"("post_id" "uuid", "body" "text", "title" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."edit_forum_post"("post_id" "uuid", "body" "text", "title" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."edition_chapter_code"("edition_id" "uuid", "first_edition_id" "uuid", "source_chapter_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."edition_is_original"("edition" "public"."stories") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."edition_is_readable"("edition" "public"."stories") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."edition_page_chapters"("edition_id" "uuid", "first_edition_id" "uuid") FROM PUBLIC;
 
 
 
@@ -70812,6 +71810,10 @@ REVOKE ALL ON FUNCTION "public"."owned_space_for_change"("target_slug" "text") F
 REVOKE ALL ON FUNCTION "public"."page_ads"("page_key" "text", "context" "jsonb") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."page_ads"("page_key" "text", "context" "jsonb") TO "anon";
 GRANT ALL ON FUNCTION "public"."page_ads"("page_key" "text", "context" "jsonb") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."page_language"() FROM PUBLIC;
 
 
 
@@ -72630,6 +73632,11 @@ GRANT ALL ON FUNCTION "public"."staff_signed_in_recently"() TO "authenticated";
 
 
 
+REVOKE ALL ON FUNCTION "public"."start_chapter_translation"("story_slug" "text", "original_chapter_code" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."start_chapter_translation"("story_slug" "text", "original_chapter_code" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."start_consent_grace_for_rule"("rule_id" "uuid") FROM PUBLIC;
 
 
@@ -72680,6 +73687,14 @@ GRANT ALL ON FUNCTION "public"."stop_reading_habit"() TO "authenticated";
 
 REVOKE ALL ON FUNCTION "public"."storage_files_to_sweep"("max_files" integer) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."storage_files_to_sweep"("max_files" integer) TO "service_role";
+
+
+
+REVOKE ALL ON FUNCTION "public"."stories_edition_rules"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."stories_editions_follow_first"() FROM PUBLIC;
 
 
 
@@ -72768,6 +73783,18 @@ GRANT ALL ON FUNCTION "public"."story_cover_picture"("story_slug" "text") TO "au
 
 
 
+REVOKE ALL ON FUNCTION "public"."story_edition_json"("story" "public"."stories") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."story_editions_json"("story" "public"."stories", "source_chapter_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."story_family_ids"("target_story_id" "uuid") FROM PUBLIC;
+
+
+
 GRANT ALL ON FUNCTION "public"."story_follow_state"("story_slug" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."story_follow_state"("story_slug" "text") TO "authenticated";
 
@@ -72794,6 +73821,11 @@ GRANT ALL ON FUNCTION "public"."story_ideas"("story_slug" "text") TO "authentica
 
 GRANT ALL ON FUNCTION "public"."story_language_choices"() TO "anon";
 GRANT ALL ON FUNCTION "public"."story_language_choices"() TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."story_languages"("story_slug" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."story_languages"("story_slug" "text") TO "authenticated";
 
 
 
@@ -72826,6 +73858,12 @@ REVOKE ALL ON FUNCTION "public"."story_matches_search"("target" "public"."storie
 
 
 REVOKE ALL ON FUNCTION "public"."story_more_signals"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."story_opening_edition"("story_slug" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."story_opening_edition"("story_slug" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."story_opening_edition"("story_slug" "text") TO "authenticated";
 
 
 
@@ -72937,6 +73975,15 @@ GRANT ALL ON FUNCTION "public"."story_storyline"("story_slug" "text") TO "authen
 
 GRANT ALL ON FUNCTION "public"."story_tag_ranks"("story_slug" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."story_tag_ranks"("story_slug" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."story_tags_reach_editions"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."story_translation_chapters"("story_slug" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."story_translation_chapters"("story_slug" "text") TO "authenticated";
 
 
 
