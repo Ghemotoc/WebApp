@@ -194,7 +194,12 @@ describe('dates without a time follow the viewer too (Robert, 20 Nov 2026, 18:36
   });
 
   it('shows a stored calendar day as it is, with no zone shift, east or west', () => {
-    for (const zone of ['Pacific/Honolulu', 'America/New_York', 'Europe/Bucharest', 'Pacific/Kiritimati']) {
+    for (const zone of [
+      'Pacific/Honolulu',
+      'America/New_York',
+      'Europe/Bucharest',
+      'Pacific/Kiritimati',
+    ]) {
       inTimeZone(zone, () => {
         expect(formatCalendarDate('2027-02-28', 'en')).toBe('28 February 2027');
         expect(formatCalendarShortDate('2027-02-28', 'ro')).toBe('28 feb. 2027');
