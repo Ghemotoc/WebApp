@@ -1,5 +1,6 @@
 /**
- * Tests for PersonAvatar, the one small avatar beside a name (bundle LOOK-7).
+ * Tests for PersonAvatar, the one small avatar beside a name (bundle LOOK-7; sizes and the plain
+ * circle from bundle CALM-3).
  * The drawn avatar comes from AvatarImage, mocked here so no database is needed.
  */
 import { describe, expect, it, vi } from 'vitest';
@@ -32,10 +33,19 @@ describe('PersonAvatar', () => {
     expect(queryByTestId(/^drawn-/)).toBeNull();
   });
 
-  it('a reply uses the small 34 px size', () => {
-    const { container } = renderWithProviders(
+  it('a comment uses the small 32 px size and a list the 36 px one', () => {
+    const small = renderWithProviders(
       <PersonAvatar name="Lia" handle="adult_writer" size="small" />,
     );
-    expect(container.firstElementChild?.className).toContain('size-[34px]');
+    expect(small.container.firstElementChild?.className).toContain('size-8');
+    const medium = renderWithProviders(<PersonAvatar name="Lia" handle="adult_writer" />);
+    expect(medium.container.firstElementChild?.className).toContain('size-9');
+  });
+
+  it('draws the initials in Inter 600 on a plain circle', () => {
+    const { container } = renderWithProviders(<PersonAvatar name="Lia" handle={null} />);
+    const circle = container.querySelector('[data-avatar-bead]');
+    expect(circle?.className).toContain('font-body');
+    expect(circle?.className).toContain('font-semibold');
   });
 });

@@ -1,11 +1,14 @@
 /**
- * InitialsColourSection: "Initials colour" in Settings › Profile (bundle G11a; the canvas's
- * SettingsProfile board, "If you keep your initials").
+ * InitialsColourSection: "Circle colour" in Settings › Profile (bundle G11a; reshaped in CALM-3,
+ * the simplified design, handover Step 4: "a member who keeps their initials gets a plain coloured
+ * circle, its colour picked at random from the cover palette, and they can change it", Robert,
+ * 20 Nov 2026, 12:12 UTC).
  *
- * Until someone saves a drawn avatar, their initials show on a glass bead beside their name. Here
- * they pick the bead's colour from the sixteen in beadColours.ts: a large preview, the sixteen
- * beads as a group of radio buttons (arrow keys move between them, as for any radio group), and
- * "Save colour". With no colour saved, the colour from the username is chosen to begin with.
+ * Until someone saves a drawn avatar, their initials show on a plain coloured circle beside their
+ * name. Here they pick the circle's colour from the seven in beadColours.ts: a 72 px preview, the
+ * seven 32 px circles as a group of radio buttons (each inside a 44 px target and named for its
+ * colour; arrow keys move between them, as for any radio group), and "Save colour". Every profile
+ * has a colour (picked at random on joining), so the saved one is chosen to begin with.
  * "Build an avatar instead" jumps to the avatar builder just above.
  * Who shows it: SettingsGroupPanel (the Profile group), under AvatarBuilderSection.
  * What it calls: useAvatarLook and useSaveInitialsColour.
@@ -15,7 +18,6 @@ import { useId, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { initialsOf } from '@/features/people/lib/formatting';
-import { cn } from '@/lib/utils';
 
 import { useAvatarLook, useSaveInitialsColour } from '../hooks/useAvatarRecipe';
 import { beadColourFor, beadColours, beadStyleFor, type BeadColourName } from '../lib/beadColours';
@@ -30,27 +32,17 @@ export interface InitialsColourSectionProps {
 }
 
 /**
- * One round bead with the initials, decorative (the colour's name is written beside it).
+ * The 72 px preview: the chosen colour with the initials in Inter 600, as on a profile.
+ * Decorative, because the chosen radio button already says which colour it is.
  *
- * @returns the bead
+ * @returns the preview circle
  */
-function Bead({
-  initials,
-  colour,
-  large = false,
-}: {
-  initials: string;
-  colour: BeadColourName;
-  large?: boolean;
-}) {
+function PreviewCircle({ initials, colour }: { initials: string; colour: BeadColourName }) {
   return (
     <span
       aria-hidden="true"
       style={beadStyleFor('', colour)}
-      className={cn(
-        'avatar-bead inline-flex flex-none items-center justify-center rounded-full font-heading font-extrabold',
-        large ? 'size-[120px] text-[44px]' : 'size-12 text-[17px]',
-      )}
+      className="avatar-bead inline-flex size-[72px] flex-none items-center justify-center rounded-full font-body text-[24px] font-semibold"
     >
       <span className="avatar-bead-initials">{initials}</span>
     </span>
@@ -58,16 +50,15 @@ function Bead({
 }
 
 /**
- * The sixteen colours as radio buttons, each a bead with its name under it.
+ * The seven colours as radio buttons: a plain 32 px circle each, inside a 44 px target, named for
+ * its colour (the design system's swatches; the name is the radio's accessible name).
  *
  * @returns the group
  */
 function ColourChoices({
-  initials,
   chosen,
   onChoose,
 }: {
-  initials: string;
   chosen: BeadColourName;
   onChoose: (colour: BeadColourName) => void;
 }) {
@@ -78,25 +69,28 @@ function ColourChoices({
       <legend className="mb-3 p-0 text-[13px] font-semibold text-heading">
         {t('initials.choicesLabel')}
       </legend>
-      <div className="flex flex-wrap gap-x-4 gap-y-3.5">
+      <div className="flex flex-wrap gap-1">
         {beadColours.map((bead) => (
           <label
             key={bead.name}
-            className="flex w-[64px] cursor-pointer flex-col items-center gap-1.5 text-center text-[13px] text-body"
+            className="flex size-11 cursor-pointer items-center justify-center rounded-full"
           >
             <input
               type="radio"
               name={groupName}
               value={bead.name}
+              aria-label={t(`initials.colours.${bead.name}`)}
               checked={bead.name === chosen}
               onChange={() => onChoose(bead.name)}
               className="peer sr-only"
             />
-            {/* The ring shows the chosen bead, and the focus ring the one the keyboard is on. */}
-            <span className="rounded-full p-[3px] ring-2 ring-transparent peer-checked:ring-(--link) peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-(--focus-ring)">
-              <Bead initials={initials} colour={bead.name} />
-            </span>
-            <span className="peer-checked:font-bold">{t(`initials.colours.${bead.name}`)}</span>
+            {/* The chosen circle gets a 2 px ring in --primary with a gap of the card's colour
+                (handover Step 4); the focus outline shows the one the keyboard is on. */}
+            <span
+              aria-hidden="true"
+              style={{ backgroundColor: bead.background }}
+              className="block size-8 rounded-full peer-checked:shadow-[0_0_0_2px_var(--surface),0_0_0_4px_var(--primary)] peer-focus-visible:outline-2 peer-focus-visible:outline-offset-4 peer-focus-visible:outline-(--focus-ring)"
+            />
           </label>
         ))}
       </div>
@@ -156,7 +150,8 @@ export function InitialsColourSection({ handle, name }: InitialsColourSectionPro
   const { t } = useAvatarsTranslation();
   const look = useAvatarLook(handle);
   const saving = useSaveInitialsColour(handle);
-  // The colour shown to begin with: the saved one, or the one the username gives.
+  // The colour shown to begin with: the saved one (every profile has one since CALM-3; the
+  // username's colour is only a fallback while the look is still loading).
   const savedColour = beadColourFor(handle, look.data?.initialsColour ?? null).name;
   const [picked, setPicked] = useState<BeadColourName | null>(null);
   const chosen = picked ?? savedColour;
@@ -177,12 +172,11 @@ export function InitialsColourSection({ handle, name }: InitialsColourSectionPro
       {look.isError && <Notice tone="error">{t('builder.failures.unreachable')}</Notice>}
       <div className="flex flex-col items-start gap-7 sm:flex-row sm:items-center">
         <div className="flex flex-none flex-col items-center gap-2">
-          <Bead initials={initials} colour={chosen} large />
+          <PreviewCircle initials={initials} colour={chosen} />
           <span className="text-[13px] text-meta">{t('initials.preview')}</span>
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-4">
           <ColourChoices
-            initials={initials}
             chosen={chosen}
             onChoose={(colour) => {
               setPicked(colour);

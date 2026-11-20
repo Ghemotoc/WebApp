@@ -1,7 +1,8 @@
 /**
  * CommentItem: one comment, with its replies one level deep (story S1-E6-01; board 3.5).
  *
- * Board values: a 40 px round avatar (34 px on a reply; PersonAvatar, LOOK-7), the author's name as
+ * Board values: a 32 px round avatar on a comment and a reply alike (PersonAvatar, LOOK-7; CALM-3,
+ * design system Avatar/README.md), the author's name as
  * a link to their profile (15 px bold), the "Writer" pill on the story's writer's comments, the
  * date ("2 days ago", 13 px), then the words in 16 px. A reply sits under its comment after a fine
  * line, 18 px in. Each part is a real <article> with the author named, so a screen reader can move
@@ -158,11 +159,8 @@ export function CommentItem({
         isReply ? 'mt-4 border-t border-hairline pt-4 pl-[18px]' : 'py-5',
       )}
     >
-      <PersonAvatar
-        name={name}
-        handle={comment.author.handle}
-        size={isReply ? 'small' : 'medium'}
-      />
+      {/* 32 px on a comment and a reply alike (CALM-3, design system Avatar/README.md). */}
+      <PersonAvatar name={name} handle={comment.author.handle} size="small" />
       <div className="min-w-0 flex-1">
         {!isReply && <ParagraphLabel paragraph={comment.paragraph} />}
         <CommentHeader comment={comment} />
