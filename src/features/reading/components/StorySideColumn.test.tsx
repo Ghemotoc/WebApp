@@ -1,6 +1,6 @@
 /**
  * The "Comments" row beside the story (story S1-E3-05; bundle CALM-8): Off, On, or while the
- * writer has paused new comments, until when, in Romania time, so a reader knows before opening a
+ * writer has paused new comments, until when, in the reader's own local time (CALM-8b), so a reader knows before opening a
  * chapter.
  */
 import { screen } from '@testing-library/react';
@@ -9,6 +9,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { SupportedLanguage } from '@/lib/i18n';
 import { renderWithProviders } from '@/test/renderWithProviders';
+import { inTimeZone, pinViewerTimeZone } from '@/test/viewerTimeZone';
 
 import type { StoryPageData } from '../api/storyPage';
 
@@ -82,9 +83,12 @@ function commentsRowOf(story: StoryPageData, language: SupportedLanguage) {
 }
 
 describe('StorySideColumn, the Comments row', () => {
+  // A reader in Stockholm, an hour behind Romania in November.
+  pinViewerTimeZone('Europe/Stockholm');
+
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ['Date'] });
-    // Friday 20 November 2026, 18:40 in Bucharest.
+    // Friday 20 November 2026, 17:40 in Stockholm.
     vi.setSystemTime(new Date('2026-11-20T16:40:00Z'));
   });
   afterEach(() => vi.useRealTimers());
@@ -97,18 +101,21 @@ describe('StorySideColumn, the Comments row', () => {
     expect(commentsRowOf(storyWith({ commentsEnabled: false }), 'en')).toBe('Off');
   });
 
-  it('says until when new comments are paused, in Romania time', () => {
+  it("says until when new comments are paused, in the reader's own time", () => {
     const story = storyWith({ commentsPausedUntil: '2026-11-21T16:40:00Z' });
-    expect(commentsRowOf(story, 'en')).toBe(
-      'Paused until Saturday 21 November, 18:40, Romania time',
-    );
+    expect(commentsRowOf(story, 'en')).toBe('Paused until Saturday 21 November, 17:40');
+  });
+
+  it('gives a reader in New York the time on their own clock', () => {
+    const story = storyWith({ commentsPausedUntil: '2026-11-21T16:40:00Z' });
+    inTimeZone('America/New_York', () => {
+      expect(commentsRowOf(story, 'en')).toBe('Paused until Saturday 21 November, 11:40');
+    });
   });
 
   it('says it in Romanian with the date written the Romanian way', () => {
     const story = storyWith({ commentsPausedUntil: '2026-11-21T16:40:00Z' });
-    expect(commentsRowOf(story, 'ro')).toBe(
-      'Oprite până sâmbătă, 21 noiembrie, 18:40, ora României',
-    );
+    expect(commentsRowOf(story, 'ro')).toBe('Oprite până sâmbătă, 21 noiembrie, 17:40');
   });
 
   it('says On again once the pause has ended, even before the page is read again', () => {

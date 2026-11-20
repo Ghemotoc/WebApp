@@ -218,7 +218,7 @@
   "commentPause": {
     "label": "Pause new comments",
     "offNote": "Comments already posted stay, and reporting still works.",
-    "until": "Paused until {{when}}, Romania time.",
+    "until": "Paused until {{when}}.",
     "lengthLabel": "For how long",
     "lengths": {
       "24h": "24 hours",

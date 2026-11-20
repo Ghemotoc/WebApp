@@ -7,7 +7,6 @@ import { describe, expect, it } from 'vitest';
 import {
   defaultScheduleFields,
   formatRomaniaDateTime,
-  formatRomaniaDayAndTime,
   formatRomaniaShortDate,
   withShortSeptember,
   romaniaTimeToInstant,
@@ -87,49 +86,5 @@ describe('the fields and the label', () => {
     expect(formatRomaniaShortDate(new Date('2026-09-05T09:00:00Z'), 'en')).toBe('5 Sep 2026');
     expect(withShortSeptember('5 Sept 2026')).toBe('5 Sep 2026');
     expect(withShortSeptember('5 sept. 2026')).toBe('5 sept. 2026');
-  });
-});
-
-describe('formatRomaniaDayAndTime (CALM-8)', () => {
-  it('writes when a pause ends with the weekday, the date and the time after a comma', () => {
-    // 16:40 UTC on 22 November is 18:40 in Bucharest (winter time, UTC+2).
-    const moment = new Date('2026-11-22T16:40:00Z');
-    expect(formatRomaniaDayAndTime(moment, 'en')).toBe('Sunday 22 November, 18:40');
-    expect(formatRomaniaDayAndTime(moment, 'ro')).toBe('duminică, 22 noiembrie, 18:40');
-  });
-
-  it('reads the Bucharest clock in summer time too', () => {
-    // 15:05 UTC on 1 July is 18:05 in Bucharest (summer time, UTC+3).
-    expect(formatRomaniaDayAndTime(new Date('2027-07-01T15:05:00Z'), 'en')).toBe(
-      'Thursday 1 July, 18:05',
-    );
-  });
-
-  it('names the Romanian day, not the UTC one, just before and after midnight UTC', () => {
-    // 21:59 UTC on Saturday is 23:59 the same evening in Bucharest.
-    expect(formatRomaniaDayAndTime(new Date('2026-11-21T21:59:00Z'), 'en')).toBe(
-      'Saturday 21 November, 23:59',
-    );
-    // 22:30 UTC on Saturday is already 00:30 on Sunday in Bucharest.
-    expect(formatRomaniaDayAndTime(new Date('2026-11-21T22:30:00Z'), 'en')).toBe(
-      'Sunday 22 November, 00:30',
-    );
-    expect(formatRomaniaDayAndTime(new Date('2026-11-21T22:30:00Z'), 'ro')).toBe(
-      'duminică, 22 noiembrie, 00:30',
-    );
-    // 00:30 UTC on Sunday is 02:30 on Sunday: the UTC and Bucharest days agree again.
-    expect(formatRomaniaDayAndTime(new Date('2026-11-22T00:30:00Z'), 'en')).toBe(
-      'Sunday 22 November, 02:30',
-    );
-  });
-
-  it('jumps over the hour the clocks skip when summer time starts', () => {
-    // At 01:00 UTC on 28 March 2027 Bucharest goes from 02:59 straight to 04:00.
-    expect(formatRomaniaDayAndTime(new Date('2027-03-28T00:59:00Z'), 'en')).toBe(
-      'Sunday 28 March, 02:59',
-    );
-    expect(formatRomaniaDayAndTime(new Date('2027-03-28T01:00:00Z'), 'en')).toBe(
-      'Sunday 28 March, 04:00',
-    );
   });
 });

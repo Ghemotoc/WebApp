@@ -218,7 +218,7 @@
   "commentPause": {
     "label": "Oprește comentariile noi",
     "offNote": "Comentariile deja scrise rămân, iar raportarea funcționează în continuare.",
-    "until": "Oprite până {{when}}, ora României.",
+    "until": "Oprite până {{when}}.",
     "lengthLabel": "Pentru cât timp",
     "lengths": {
       "24h": "24 de ore",

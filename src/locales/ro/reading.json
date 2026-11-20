@@ -15,7 +15,7 @@
     "commentsLabel": "Comentarii",
     "commentsOn": "Pornite",
     "commentsOff": "Oprite",
-    "commentsPaused": "Oprite până {{when}}, ora României",
+    "commentsPaused": "Oprite până {{when}}",
     "unavailableTitle": "Povestea nu este disponibilă",
     "unavailableBody": "Poate nu e publicată încă, poate e clasificată pentru cititori mai mari, poate a fost eliminată sau linkul e greșit.",
     "goHome": "Mergi la Acasă",
