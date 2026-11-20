@@ -159,7 +159,15 @@ export function EntrantScoreCard({ competitionId, criteria, entrant }: EntrantSc
           ? t('scoring.notScored')
           : t('scoring.total', { total, max: maxTotal(criteria) })}
       </p>
-      <Button type="submit" variant="secondary" className="w-fit" disabled={saver.isRunning}>
+      {/* The label holds the member's name, which can be long: it wraps onto a second line
+          rather than push the card past a 390 px screen (CLAUDE.md rule 21). CALM-2's 15 px
+          button text made "Salvează punctajele pentru …" too wide for one line. */}
+      <Button
+        type="submit"
+        variant="secondary"
+        className="h-auto min-h-11 w-fit max-w-full py-3 text-center whitespace-normal"
+        disabled={saver.isRunning}
+      >
         {t('scoring.saveScores', { name: entrant.displayName })}
       </Button>
       <div aria-live="polite">
