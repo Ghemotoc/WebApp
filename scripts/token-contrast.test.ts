@@ -20,11 +20,14 @@ const tokensCss = readFileSync(
 );
 
 /**
- * Reads the "--name: #hex;" declarations from one block of tokens.css.
+ * Reads the colour tokens from one block of tokens.css: plain colours ("--name: #hex;") and plain
+ * references to one other token ("--name: var(--other);", such as "--thread: var(--accent);").
  *
  * @param selector - the block's selector exactly as written, for example [data-theme='night']
- * @returns token name → hex colour (colours with transparency, such as the glass, are skipped:
- *   the test measures the solid look-alikes, such as --surface)
+ * @returns token name → hex colour, or the text "var(--other)" for a reference, which
+ *   resolveReferences answers once the blocks are laid over each other (colours with
+ *   transparency, such as the glass, are skipped: the test measures the solid look-alikes, such
+ *   as --surface)
  * Errors: throws when tokens.css has no block with that selector.
  */
 function readTokenBlock(selector: string): Map<string, string> {
@@ -35,20 +38,79 @@ function readTokenBlock(selector: string): Map<string, string> {
   const block = tokensCss.slice(startIndex, tokensCss.indexOf('\n}', startIndex));
   const tokens = new Map<string, string>();
 
-  for (const match of block.matchAll(/--([a-z0-9-]+):\s*(#[0-9a-f]{6})\s*;/gi)) {
+  // Each value is either a hex colour or a reference to one other token.
+  const declaration = /--([a-z0-9-]+):\s*(#[0-9a-f]{6}|var\(--[a-z0-9-]+\))\s*;/gi;
+  for (const match of block.matchAll(declaration)) {
     if (match[1] !== undefined && match[2] !== undefined) tokens.set(match[1], match[2]);
   }
   return tokens;
 }
 
 /**
- * Lays one set of tokens over another, as the cascade does for an element inside another.
+ * Lays one set of tokens over another, as the cascade does for blocks that apply to one element.
  *
- * @param layers - token sets from the outermost to the innermost
- * @returns the tokens an element in the innermost set ends up with
+ * @param layers - token sets from the first block to the last
+ * @returns the tokens the element ends up with, references not yet answered
  */
 function layered(...layers: Map<string, string>[]): Map<string, string> {
   return new Map(layers.flatMap((layer) => [...layer]));
+}
+
+/**
+ * Follows one token's references to the colour at the end of the chain, for example
+ * --thread → --accent → --accent-deep in high contrast.
+ *
+ * @param tokens - one element's tokens, references included
+ * @param name - the token to follow
+ * @param visited - the tokens already passed, so a loop ends instead of running for ever
+ * @returns the colour, or undefined when the chain ends at a missing token or loops
+ */
+function followReference(
+  tokens: Map<string, string>,
+  name: string,
+  visited: Set<string>,
+): string | undefined {
+  const value = tokens.get(name);
+  if (value === undefined || visited.has(name)) return undefined;
+  const referencedName = /^var\(--([a-z0-9-]+)\)$/i.exec(value)?.[1];
+  // A plain colour ends the chain.
+  if (referencedName === undefined) return value;
+  visited.add(name);
+  return followReference(tokens, referencedName, visited);
+}
+
+/**
+ * Answers every reference in one element's tokens, the way a browser does: "var(--accent)" takes
+ * the value --accent has on the same element.
+ *
+ * @param tokens - one element's tokens, references included
+ * @returns the same tokens as colours only; a reference that leads nowhere is left out, so the
+ *   pair that needs it reports "token missing"
+ */
+function resolveReferences(tokens: Map<string, string>): Map<string, string> {
+  const resolved = new Map<string, string>();
+  for (const name of tokens.keys()) {
+    const colour = followReference(tokens, name, new Set());
+    if (colour !== undefined) resolved.set(name, colour);
+  }
+  return resolved;
+}
+
+/**
+ * The colours of an element inside another, such as the staff area inside the page. The outer
+ * element's references are answered there first and reach the inner element as finished colours
+ * (so --thread on <html> stays the member accent); then the inner element's own blocks lie over
+ * them, and their references are answered with the inner element's colours.
+ *
+ * @param outer - the outer element's tokens, references included
+ * @param innerLayers - the inner element's blocks, from the first in tokens.css to the last
+ * @returns the inner element's colours
+ */
+function inside(
+  outer: Map<string, string>,
+  ...innerLayers: Map<string, string>[]
+): Map<string, string> {
+  return resolveReferences(layered(resolveReferences(outer), ...innerLayers));
 }
 
 const lightTokens = readTokenBlock("[data-theme='light']");
@@ -61,10 +123,10 @@ const staffNightTokens = readTokenBlock("[data-theme='night'] [data-area='staff'
  * (the staff area sits inside the page, so its values lie over the member ones).
  */
 const themes = {
-  light: lightTokens,
-  night: nightTokens,
-  staffLight: layered(lightTokens, staffLightTokens),
-  staffNight: layered(nightTokens, staffLightTokens, staffNightTokens),
+  light: resolveReferences(lightTokens),
+  night: resolveReferences(nightTokens),
+  staffLight: inside(lightTokens, staffLightTokens),
+  staffNight: inside(nightTokens, staffLightTokens, staffNightTokens),
 };
 
 /**
@@ -99,27 +161,34 @@ const lookTokens = new Map(
 );
 
 /**
- * Reads one high contrast block (bundle CONTRAST-1). Besides plain colours it follows
- * "--name: var(--other);", which is how those blocks hand each look's own deep accent to buttons,
- * links and the focus ring.
+ * Mixes a colour with white the way the page mesh does in tokens.css
+ * ("color-mix(in srgb, var(--blob-1) 60%, #fff)"; the simplified design, CALM-1).
+ *
+ * @param hex - the blob colour, "#rrggbb"
+ * @param colourShare - how much of the blob stays, from 0 to 1 (0.6 for the mesh)
+ * @returns the lifted colour, "#rrggbb"
+ */
+function liftedWithWhite(hex: string, colourShare: number): string {
+  const channels = [1, 3, 5].map((start) => Number.parseInt(hex.slice(start, start + 2), 16));
+  const mixed = channels.map((channel) =>
+    Math.round(channel * colourShare + 255 * (1 - colourShare)),
+  );
+  return `#${mixed.map((channel) => channel.toString(16).padStart(2, '0')).join('')}`;
+}
+
+/**
+ * Reads one high contrast block (bundle CONTRAST-1) over the theme and look it lies on. The block
+ * sits on the same element (<html>), so its references are answered together with theirs: that
+ * is how each look's own deep accent reaches buttons, links, the focus ring and the thread
+ * (--thread → --accent → --accent-deep).
  *
  * @param selector - the block's last selector line, exactly as written
- * @param under - the tokens the block lies over (the look by day, or the night set)
- * @returns the tokens an element ends up with in high contrast
+ * @param under - the tokens the block lies over (the look by day, or the night set), references
+ *   included
+ * @returns the colours an element ends up with in high contrast
  */
 function highContrastTokens(selector: string, under: Map<string, string>): Map<string, string> {
-  // Step 1: the block's plain colours over what lies under it.
-  const tokens = layered(under, readTokenBlock(selector));
-  // Step 2: the block's references, each answered from the colours the element now has (the
-  // look's deep accent from under the block, black text from the block itself).
-  const escapedSelector = selector.replace(/[[\]]/g, '\\$&');
-  const startIndex = tokensCss.search(new RegExp(`(^|\\n)${escapedSelector}\\s*\\{`));
-  const block = tokensCss.slice(startIndex, tokensCss.indexOf('\n}', startIndex));
-  for (const match of block.matchAll(/--([a-z0-9-]+):\s*var\(--([a-z0-9-]+)\)\s*;/gi)) {
-    const referenced = match[2] === undefined ? undefined : tokens.get(match[2]);
-    if (match[1] !== undefined && referenced !== undefined) tokens.set(match[1], referenced);
-  }
-  return tokens;
+  return resolveReferences(layered(under, readTokenBlock(selector)));
 }
 
 const highContrastLight = "[data-contrast='more'][data-theme='light']";
@@ -181,6 +250,66 @@ describe('design token contrast', () => {
     expect(themes.night.get('plum-to')).toBe('#0047ab');
   });
 
+  it('draws the main button in one flat colour, plum by day and cobalt at night (CALM-1)', () => {
+    // Robert, 20 Nov 2026: flat plum #48125D, replacing the 11 Nov Revolver button.
+    expect(themes.light.get('plum-from')).toBe('#48125d');
+    expect(themes.light.get('plum-to')).toBe('#48125d');
+    expect(themes.light.get('plum-hover-from')).toBe('#672786');
+    expect(themes.light.get('plum-hover-to')).toBe('#672786');
+    for (const night of [themes.night, themes.staffNight]) {
+      expect(night.get('plum-from')).toBe('#0047ab');
+      expect(night.get('plum-to')).toBe('#0047ab');
+      expect(night.get('plum-hover-from')).toBe('#2663b8');
+      expect(night.get('plum-hover-to')).toBe('#2663b8');
+    }
+  });
+
+  it("draws the thread in each look's own accent by day and white at night (CALM-1)", () => {
+    expect(themes.light.get('thread')).toBe('#672786');
+    expect(themes.night.get('thread')).toBe('#f5f5f5');
+    expect(themes.staffLight.get('thread')).toBe(themes.staffLight.get('accent'));
+    for (const [look, tokens] of lookTokens) {
+      const day = resolveReferences(layered(lightTokens, tokens));
+      expect({ look, thread: day.get('thread') }).toEqual({ look, thread: day.get('accent') });
+    }
+  });
+
+  it('lifts the page mesh to the design system colours in Lilac mist (CALM-1)', () => {
+    for (const [mesh, blob] of [
+      ['lilac', 1],
+      ['blue', 2],
+      ['peach', 3],
+    ] as const) {
+      expect(tokensCss).toContain(
+        `--mesh-${mesh}: color-mix(in srgb, var(--blob-${blob}) 60%, #fff);`,
+      );
+    }
+    const lifted = ['blob-1', 'blob-2', 'blob-3'].map((blob) =>
+      liftedWithWhite(themes.light.get(blob) ?? '', 0.6),
+    );
+    expect(lifted).toEqual(['#e8e0f9', '#dfe8fa', '#fbe8e2']);
+  });
+
+  it('keeps text, headings and meta lines readable on the paler mesh, in every look (CALM-1)', () => {
+    const looksByDay = new Map([
+      ['lilac', themes.light],
+      ...[...lookTokens].map(
+        ([look, tokens]) => [look, resolveReferences(layered(lightTokens, tokens))] as const,
+      ),
+    ]);
+    // Each look's three mesh colours, then every text colour on each of them.
+    const failing = [...looksByDay].flatMap(([look, day]) =>
+      ['blob-1', 'blob-2', 'blob-3'].flatMap((blob) => {
+        const mesh = liftedWithWhite(day.get(blob) ?? '', 0.6);
+        return ['ink', 'heading', 'body', 'meta']
+          .map((text) => ({ text, ratio: contrastRatio(day.get(text) ?? '', mesh) }))
+          .filter(({ ratio }) => ratio < 4.5)
+          .map(({ text, ratio }) => `${look}: ${text} on ${blob}'s mesh ${ratio.toFixed(2)}`);
+      }),
+    );
+    expect(failing).toEqual([]);
+  });
+
   it('keeps purple out of the staff area', () => {
     const staffColours = [...staffLightTokens.values(), ...staffNightTokens.values()];
     expect(staffColours).not.toContain('#672786');
@@ -202,7 +331,9 @@ describe('design token contrast', () => {
 
   it('every look meets WCAG 2.2 AA by day (bundle G2 THEMES)', () => {
     for (const [look, tokens] of lookTokens) {
-      expect({ look, failing: failingPairs(layered(lightTokens, tokens)) }).toEqual({
+      // The look's block lies on <html> with the day block, so references are answered after.
+      const day = resolveReferences(layered(lightTokens, tokens));
+      expect({ look, failing: failingPairs(day) }).toEqual({
         look,
         failing: [],
       });
@@ -211,7 +342,7 @@ describe('design token contrast', () => {
 
   it('keeps white readable on every accent and every accent readable on its page', () => {
     for (const [look, tokens] of lookTokens) {
-      const day = layered(lightTokens, tokens);
+      const day = resolveReferences(layered(lightTokens, tokens));
       const accent = day.get('accent') ?? '';
       expect({ look, onAccent: contrastRatio('#ffffff', accent) >= 4.5 }).toEqual({
         look,
@@ -279,11 +410,13 @@ describe('design token contrast', () => {
   });
 
   it('gives high contrast the same tokens by day and at night', () => {
-    const dayNames = [...readTokenBlock(highContrastLight).keys()];
-    const nightNames = new Set(readTokenBlock(highContrastNight).keys());
     // By day the accent tokens are references to the look's deep accent, so they are not plain
     // colours there; everything the day block sets as a colour, night sets too.
-    expect(dayNames.filter((name) => !nightNames.has(name))).toEqual([]);
+    const dayColourNames = [...readTokenBlock(highContrastLight)]
+      .filter(([, value]) => value.startsWith('#'))
+      .map(([name]) => name);
+    const nightNames = new Set(readTokenBlock(highContrastNight).keys());
+    expect(dayColourNames.filter((name) => !nightNames.has(name))).toEqual([]);
   });
 
   it('reaches the high contrast lines in the staff area too, with no purple', () => {

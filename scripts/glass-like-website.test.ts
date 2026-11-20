@@ -3,8 +3,8 @@
  * (Robert, 11 Nov 2026: "check the Engage Grow Hub and replicate").
  *
  * It reads the two style files as text and checks the rules a later change could quietly drop:
- * the main look's deep plum action buttons with cream text, a lighter hover and press colour in
- * every look, the floating bars and cards as blurred glass, the coloured bands as glass, and the
+ * the main look's plum action buttons with cream text (flat plum #48125D since the simplified
+ * design, Robert, 20 Nov 2026; bundle CALM-1), a lighter hover and press colour in every look, the floating bars and cards as blurred glass, the coloured bands as glass, and the
  * staff area kept flat. Colour contrast itself is tested in token-contrast.test.ts.
  * Who runs it: Vitest (npm test). What it reads: src/styles/tokens.css and src/styles/index.css.
  */
@@ -29,10 +29,11 @@ function blockAfter(css: string, selectorStart: string): string {
 }
 
 describe('the main website glass on this app (GLASS-2)', () => {
-  it("gives the main look's action buttons the website's deep plum and cream text", () => {
+  it("gives the main look's action buttons one flat plum and cream text", () => {
     const mainLook = blockAfter(tokensCss, ':root,');
-    expect(mainLook).toContain('--plum-from: #2a0e33;');
-    expect(mainLook).toContain('--plum-to: #2a0e33;');
+    // Robert, 20 Nov 2026: flat plum #48125D, replacing the 11 Nov Revolver #2A0E33 (CALM-1).
+    expect(mainLook).toContain('--plum-from: #48125d;');
+    expect(mainLook).toContain('--plum-to: #48125d;');
     expect(mainLook).toContain('--on-plum: #fbf7ec;');
     expect(mainLook).toContain('--plum-hover-from: #672786;');
   });

@@ -17,8 +17,10 @@
  * applyHighContrast before the page draws; keep HIGH_CONTRAST_STORAGE_KEY, the media query and the
  * attribute the same in both files.
  * What it changes: the data-contrast attribute on <html>, which picks the high contrast colours in
- * src/styles/tokens.css and the flat, solid surfaces in src/styles/index.css.
+ * src/styles/tokens.css and the flat, solid surfaces in src/styles/index.css, and then the phone's
+ * bar colour to match the white (or black) page (src/lib/browserBarColour.ts, bundle CALM-1).
  */
+import { matchBrowserBarsToPage } from './browserBarColour';
 
 /** The localStorage key; public/theme-init.js uses the same one. */
 export const HIGH_CONTRAST_STORAGE_KEY = 'high-contrast';
@@ -91,9 +93,12 @@ export function subscribeToDeviceContrast(listener: () => void): () => void {
  * @param isOn - whether the member's switch is on or the device asks for more contrast
  */
 export function applyHighContrast(isOn: boolean): void {
+  // Step 1: set or clear the attribute that tokens.css and index.css read.
   if (isOn) {
     document.documentElement.dataset.contrast = 'more';
-    return;
+  } else {
+    delete document.documentElement.dataset.contrast;
   }
-  delete document.documentElement.dataset.contrast;
+  // Step 2: the browser's bars take the page colour now in force (bundle CALM-1).
+  matchBrowserBarsToPage();
 }

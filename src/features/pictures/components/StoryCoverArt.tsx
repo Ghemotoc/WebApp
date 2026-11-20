@@ -30,7 +30,9 @@ export interface StoryCoverArtProps {
 }
 
 /**
- * The box a picture or its placeholder sits in: the drawn cover's 5:8 shape and corners.
+ * The box a picture or its placeholder sits in: the drawn cover's 5:8 shape, its 4 px corners and
+ * its hairline edge, with no shadow (the simplified design, Robert, 20 Nov 2026; bundle CALM-1).
+ * The hairline (cover-edge, index.css) sits over the picture, so a pale picture keeps its shape.
  *
  * @returns the box
  */
@@ -38,7 +40,7 @@ function CoverBox({ className, children }: { className?: string; children: React
   return (
     <span
       className={cn(
-        'relative block aspect-[5/8] overflow-hidden rounded-[16px] border border-border bg-panel',
+        'cover-edge relative block aspect-[5/8] overflow-hidden rounded-cover bg-panel',
         className,
       )}
     >

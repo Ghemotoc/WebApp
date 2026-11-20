@@ -8,7 +8,16 @@
 <html lang="ro">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- viewport-fit=cover: on a phone the page draws under the status bar and the home bar, so they
+         show the page's colours instead of black (the simplified design, CALM-1; Robert, 20 Nov 2026,
+         13:10 UTC). The headers keep clear of the notch with env(safe-area-inset-top). -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <!-- The colour a phone browser gives its own bars before any script runs: the day page colour on
+         a light phone, the night one on a dark phone. theme-init.js and src/lib/browserBarColour.ts
+         then set both to the page colour in force (the member's theme, look and high contrast). They
+         sit before theme-init.js so it can find them. -->
+    <meta name="theme-color" content="#f3eefb" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#111113" media="(prefers-color-scheme: dark)" />
     <title>%BRAND_PRODUCT_NAME%</title>
     <!-- The tab icon is the emblem, the sleeping cat (BRAND-1b; LOGO-2): a small PNG for browsers that can't draw SVG, then the
          Revolver emblem when the browser is light and the white one when it is dark (Robert, 11 Nov 2026). BrandTabIcon swaps in an approved upload. -->

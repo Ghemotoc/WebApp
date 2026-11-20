@@ -13,6 +13,12 @@
  * values changed, so every screen took the new colours without being edited. New tokens for the
  * glass look (blobs, glass edge, story paper, progress, accent) sit beside them.
  *
+ * The simplified design (Robert, 20 Nov 2026; bundle CALM-1, from the handover doc linked in
+ * design/README.md) changed only a few of them: the flat main button (plum #48125D by day, cobalt
+ * #0047AB at night), the thread (--thread), the paler page mesh (--mesh-lilac, --mesh-blue,
+ * --mesh-peach), the cover hairline (--cover-edge) and the corners in the @theme block at the end.
+ * Every other colour and shadow already matched its design system (design/simplified-system/).
+ *
  * Glass: cards (bg-surface) are see-through white over the moving colour blobs. `--surface` keeps
  * the solid colour the glass looks like on the page, because the contrast test can only measure
  * solid colours; `--surface-glass` is what the card actually paints (see @theme inline below).
@@ -25,8 +31,9 @@
  * High contrast (bundle CONTRAST-1) is a further set near the end of this file, under
  * data-contrast="more": plain white or black pages with each theme kept as its deep accent.
  *
- * Contrast: src/styles/contrast.test.ts reads this file and checks every text and background pair
- * listed in src/styles/contrast-pairs.ts against WCAG 2.2 AA, in both themes. Change a value here
+ * Contrast: scripts/token-contrast.test.ts reads this file and checks every text and background
+ * pair listed in src/styles/contrast-pairs.ts against WCAG 2.2 AA, in both themes. It reads plain
+ * colours and plain references to another token ("--thread: var(--accent);"). Change a value here
  * and that test tells you if a pair drops below the line.
  */
 
@@ -110,12 +117,12 @@
      it"), each other look's accent by day and soft white at night (bundle G2). The tab icon is
      Revolver when the browser is light and white when it is dark (public/brand). */
   --logo: #2a0e33;
-  /* Every main action (Publish, Save, Continue; rulebook 5). In the main look it is the website's
-     deep plum #2A0E33 with cream text, the colour of the website's action buttons (GLASS-2;
-     Robert, 11 Nov 2026: "the same colour for the action buttons like we have on the main
-     website for the main theme"). The other looks keep their own accent gradient. */
-  --plum-from: #2a0e33;
-  --plum-to: #2a0e33;
+  /* Every main action (Publish, Save, Continue; rulebook 5). Robert, 20 Nov 2026: flat plum
+     #48125D, replacing the 11 Nov Revolver button (the simplified design, CALM-1; the cream text
+     reads at 12.9:1 on it). Both ends are the same colour, so the fill is flat. The other looks
+     keep their own accent gradient until CALM-2 makes every main button flat. */
+  --plum-from: #48125d;
+  --plum-to: #48125d;
   /* Text on the main buttons: the website's cream in the main look, white elsewhere. */
   --on-plum: #fbf7ec;
   /* Hover, press and current page: the brighter plum of the logo (GLASS-2). Every other look
@@ -133,6 +140,13 @@
    * (CI-1, 8 Nov 2026), below WCAG 1.4.3's 4.5:1; the night design has white selected tabs.
    */
   --tab-current: var(--link);
+  /*
+   * The thread (the simplified design, Robert, 20 Nov 2026; CALM-1): the one 2px line for progress
+   * under covers, the current tab, the unread row, the current chapter dot and a line chart's line.
+   * It is the theme accent, so each look gets its own (the look blocks set --accent on this same
+   * element); white at night. A mark, so it needs 3:1 on the page: 8.3:1 by day (contrast-pairs.ts).
+   */
+  --thread: var(--accent);
   /* The password strength meter's four segments (handoff: red, yellow, green, dark green). */
   --strength-weak: #c2283c;
   --strength-fair: #d9a400;
@@ -152,10 +166,24 @@
   --blob-1: #d9ccf5;
   --blob-2: #c9d8f7;
   --blob-3: #f9d9cf;
+  /*
+   * The paler page mesh drawn behind every page (the simplified design, Robert, 20 Nov 2026,
+   * 12:16 UTC: paler, so nothing reads as lines; index.css, body::before). Each blob is lifted with
+   * 40% white: exactly the design system's #e8e0f9, #dfe8fa and #fbe8e2 in Lilac mist, and the same
+   * lift in every other look, because each look sets its own blobs on this same element. Meta text
+   * (--body) keeps 6.3:1 or more on all three.
+   */
+  --mesh-lilac: color-mix(in srgb, var(--blob-1) 60%, #fff);
+  --mesh-blue: color-mix(in srgb, var(--blob-2) 60%, #fff);
+  --mesh-peach: color-mix(in srgb, var(--blob-3) 60%, #fff);
 
   /* Story paper: only where story text sits (reader, editor; rulebook 3). */
   --story-paper: #fffbf2;
   --story-ink: #2b211c;
+
+  /* The hairline just inside every cover's edge, so a pale cover keeps its shape on the pale page
+     (the simplified design, Robert, 20 Nov 2026; the cover-edge utility in index.css). */
+  --cover-edge: rgba(38, 20, 46, 0.16);
 
   /* Progress bars run from very dark plum to light lilac (rulebook 6). */
   --progress-from: #2a0e33;
@@ -298,17 +326,22 @@
   --accent-deep: #111113;
   /* The logo and wordmark are soft white at night (Robert, 7 Nov 2026, 19:36). */
   --logo: #f5f5f5;
-  /* Main buttons: cobalt, lighter at the top, with white labels and a 35% white rim. */
-  --plum-from: #1a5bc4;
+  /* Main buttons: flat cobalt #0047AB, a lighter cobalt on hover, with white labels (the
+     simplified design, Robert, 20 Nov 2026; both ends one colour, CALM-1). The white label reads
+     at 8.4:1, and 5.9:1 on hover. The 35% white rim stays until CALM-2 takes the rim and sheen off
+     every main button. */
+  --plum-from: #0047ab;
   --plum-to: #0047ab;
   --on-plum: #ffffff;
-  --plum-hover-from: #3a72cc;
+  --plum-hover-from: #2663b8;
   --plum-hover-to: #2663b8;
   --button-main-rim: rgba(255, 255, 255, 0.35);
   --track: rgba(0, 0, 0, 0.35);
   /* The selected segment's knob: white glass at 22% (canvas v117). */
   --bubble: rgba(255, 255, 255, 0.22);
   --tab-current: var(--ink);
+  /* The thread is white at night (the simplified design; the day block explains it). */
+  --thread: #f5f5f5;
   --strength-weak: #ff9aa8;
   --strength-fair: #ffd36a;
   --strength-strong: #8fe0b5;
@@ -337,6 +370,9 @@
   /* Dark reading paper with light text (canvas v117). */
   --story-paper: #1a1a1c;
   --story-ink: #ededed;
+
+  /* The cover hairline is white at night, so a dark cover keeps its shape on the night page. */
+  --cover-edge: rgba(255, 255, 255, 0.16);
 
   /* Progress bars are white (canvas v117: "bars white"). */
   --progress-from: #cccccc;
@@ -439,6 +475,18 @@
   --blob-2: #c9d8f7;
   --blob-3: #f9d9cf;
   --accent: #672786;
+}
+
+/*
+ * Every swatch works out its paler mesh again from its own blobs (the simplified design, CALM-1;
+ * index.css, .look-swatch). The mesh tokens on <html> were already worked out from the page's
+ * look, and a tile inherits them as finished colours, so without this every tile would show the
+ * page's mesh instead of its own look's.
+ */
+[data-look-swatch] {
+  --mesh-lilac: color-mix(in srgb, var(--blob-1) 60%, #fff);
+  --mesh-blue: color-mix(in srgb, var(--blob-2) 60%, #fff);
+  --mesh-peach: color-mix(in srgb, var(--blob-3) 60%, #fff);
 }
 
 /* Peach sorbet: accent coral. */
@@ -728,6 +776,9 @@
   --chip-on-text: #ffffff;
   --accent: #2b2119;
   --accent-deep: #000000;
+  /* The thread follows the staff accent: set again here, because the one on <html> was already
+     worked out from the member accent before it reached this element. */
+  --thread: var(--accent);
   --plum-from: #2b2119;
   --plum-to: #1f1a16;
   --on-plum: #ffffff;
@@ -785,10 +836,12 @@
   --chip-on-text: #111113;
   --accent: #5b95ee;
   --accent-deep: #111113;
-  --plum-from: #1a5bc4;
+  --thread: #f5f5f5;
+  /* The same flat cobalt as the members' night (the simplified design, CALM-1). */
+  --plum-from: #0047ab;
   --plum-to: #0047ab;
   --on-plum: #ffffff;
-  --plum-hover-from: #3a72cc;
+  --plum-hover-from: #2663b8;
   --plum-hover-to: #2663b8;
 
   --border: #3a3a3d;
@@ -1201,6 +1254,8 @@
   --color-surface-solid: var(--surface);
   --color-field: var(--field);
   --color-accent: var(--accent);
+  /* The thread (the simplified design, CALM-1): bg-thread for the 2px progress and current lines. */
+  --color-thread: var(--thread);
   --color-logo: var(--logo);
   --color-story-paper: var(--story-paper);
   --color-story-ink: var(--story-ink);
@@ -1257,10 +1312,16 @@
   --text-h3: 21px;
   --text-h4: 19px;
 
-  /* Radii: --r-sm 16, --r-md 24, --r-lg 28 (cards), pills fully round (handoff). */
+  /*
+   * Radii (the simplified design, Robert, 20 Nov 2026; the design system's radius tokens):
+   * covers 4 px at every size, because a cover is a book and not an app tile (rounded-cover);
+   * cards, sheets, dialogs, side panels and the hero 24 px (rounded-card); text fields, menu rows
+   * and small tiles 12 px (rounded-field); pills fully round. The floating bars (--radius-nav) and
+   * the adverts (--radius-ad) keep the liquid glass values until their own bundles redraw them.
+   */
   --radius-nav: 2.1rem;
-  --radius-card: 28px;
+  --radius-card: 24px;
   --radius-ad: 24px;
-  --radius-cover: 16px;
-  --radius-field: 14px;
+  --radius-cover: 4px;
+  --radius-field: 12px;
 }

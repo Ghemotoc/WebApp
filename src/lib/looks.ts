@@ -16,9 +16,12 @@
  * in both files.
  * Who calls it: src/features/theme/ (the appearance store, the account sync and Settings ›
  * Appearance). What it changes: the data-look attribute on <html>, which picks the colour block in
- * src/styles/tokens.css.
+ * src/styles/tokens.css, and then the phone's bar colour to match (src/lib/browserBarColour.ts,
+ * bundle CALM-1).
  */
 import { z } from 'zod';
+
+import { matchBrowserBarsToPage } from './browserBarColour';
 
 /** The year-round themes, in the order Settings › Appearance shows them. */
 export const yearRoundLooks = ['lilac', 'sorbet', 'seaglass', 'pistachio', 'candy', 'tmc'] as const;
@@ -162,14 +165,19 @@ export function shownLookFor(
 }
 
 /**
- * Shows a look by setting data-look on <html>, and remembers it on this device so the next page
- * load draws it before anything else (public/theme-init.js). Storage can be blocked; the look is
- * then still shown, just not remembered.
+ * Shows a look by setting data-look on <html>, gives the phone's bars the look's page colour
+ * (bundle CALM-1), and remembers the look on this device so the next page load draws it before
+ * anything else (public/theme-init.js). Storage can be blocked; the look is then still shown, just
+ * not remembered.
  *
  * @param look - the look to show
  */
 export function applyLook(look: ShownLook): void {
+  // Step 1: tokens.css reads the attribute and switches the day colours.
   document.documentElement.dataset.look = look;
+  // Step 2: the browser's bars take the look's own page colour (bundle CALM-1).
+  matchBrowserBarsToPage();
+  // Step 3: remember the look for the next page load.
   try {
     window.localStorage.setItem(SHOWN_LOOK_STORAGE_KEY, look);
   } catch {

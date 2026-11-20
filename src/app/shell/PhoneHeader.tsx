@@ -33,7 +33,9 @@ export function PhoneHeader() {
   return (
     // NAV-1 (Robert, 10 Nov 2026): the pills float over the page however far it scrolls; the
     // header's own box lets clicks through to the page between them.
-    <header className="pointer-events-none sticky top-0 z-30 flex items-center justify-between gap-2 px-3.5 pt-4">
+    // The page draws under a phone's status bar (viewport-fit=cover, bundle CALM-1), so the pills
+    // sit 16 px below the notch or status bar, not under it (env() is 0 where there is none).
+    <header className="pointer-events-none sticky top-0 z-30 flex items-center justify-between gap-2 px-3.5 pt-[calc(16px+env(safe-area-inset-top))]">
       {/* The logo pill: the way home, named for screen readers as on the board. */}
       <Link
         to={homeAddress}

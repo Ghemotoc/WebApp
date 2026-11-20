@@ -56,6 +56,134 @@
 }
 
 /*
+ * Type styles (the simplified design, Robert, 20 Nov 2026; bundle CALM-1): one short scale,
+ * copied from the design system (design/simplified-system/README.md, "Type", and tokens.json).
+ * The pages the simplified design draws use these instead of sizes of their own; no screen uses
+ * more than five sizes, and tab labels and chart axes are the one extra size (12 px). The older
+ * --text-h1 to --text-h4 (tokens.css) stay for the pages not redrawn yet (the sweep is CALM-9).
+ *   type-display     Funnel Display 48/52, 700: the one page title on wide screens
+ *   type-title       Funnel Display 32/38, 700: a story's title; page titles on phones
+ *   type-heading     Funnel Display 24/30, 600: section headings, with no eyebrow above them
+ *   type-subheading  Funnel Display 20/26, 600: card, bookshelf, sheet and dialog titles
+ *   type-body        Inter 15/24, 400: interface text, blurbs, comments
+ *   type-label       Inter 15/20, 600: buttons, tabs, names
+ *   type-meta        Inter 13/18, 400, in the muted text colour: meta lines, captions, times
+ *   type-kicker      Inter 11/16, 700, capitals, 0.18em: at most one per page, in the kicker colour
+ *   type-reading     Literata 20/34, 400 (17/28 on phones): story text
+ * As in the design system, the four heading styles take the heading colour, meta the muted
+ * colour (--body) and the kicker the eyebrow colour; a text colour class still overrides them.
+ * The kicker's capitals come from CSS only: the locale text stays in sentence case and screen
+ * readers read the words as written.
+ */
+@utility type-display {
+  font-family: var(--font-heading);
+  font-size: 48px;
+  line-height: 52px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--heading);
+}
+
+@utility type-title {
+  font-family: var(--font-heading);
+  font-size: 32px;
+  line-height: 38px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--heading);
+}
+
+@utility type-heading {
+  font-family: var(--font-heading);
+  font-size: 24px;
+  line-height: 30px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--heading);
+}
+
+@utility type-subheading {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  line-height: 26px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--heading);
+}
+
+@utility type-body {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 24px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+@utility type-label {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+@utility type-meta {
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--body);
+}
+
+@utility type-kicker {
+  font-family: var(--font-eyebrow);
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--eyebrow);
+}
+
+@utility type-reading {
+  font-family: var(--font-story);
+  font-size: 20px;
+  line-height: 34px;
+  font-weight: 400;
+  letter-spacing: 0;
+  /* Phones (narrower than 640 px, Tailwind's sm): the design system's 17/28. */
+  @media (width < 640px) {
+    font-size: 17px;
+    line-height: 28px;
+  }
+}
+
+/*
+ * cover-edge: the hairline just inside every cover's edge (the simplified design, Robert,
+ * 20 Nov 2026; the design system's .gh-book::after). A 1 px line in --cover-edge (dark at 16% by
+ * day, white at 16% at night) lies over the cover's own edge, so a pale cover keeps its shape on
+ * the pale page and a dark cover on the night page. Covers have no spine shade and cast no shadow.
+ * Put it on the cover's own box, together with rounded-cover and overflow-hidden; the box must be
+ * positioned (relative or absolute), because the line is placed against it. The line follows the
+ * corners, takes no clicks and lies over a picture or the drawn artwork. `isolation: isolate`
+ * keeps its z-index inside the cover, so it never paints over a bar the page scrolls under.
+ * An <img> cannot hold the line itself: wrap the picture in a box that carries cover-edge.
+ */
+@utility cover-edge {
+  isolation: isolate;
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 1px var(--cover-edge);
+    pointer-events: none;
+  }
+}
+
+/*
  * Buttons (bundle G3 COMPONENTS; handoff "Components: variants and states", "Buttons and pills").
  * button-main is the action that finishes a task (Publish, Save, Continue): the theme accent's
  * gradient (plum in Lilac mist, cobalt at night; black in the staff area by day), white text, a soft top
@@ -205,6 +333,12 @@
     color: var(--ink);
     font-size: 15px;
     line-height: 1.5;
+    /* viewport-fit=cover (index.html, bundle CALM-1) also lets the page run under a phone's notch
+       and rounded corners when the phone is turned sideways. This keeps the content clear of
+       them, while the page colour and the background (body::before, fixed to the window) still
+       reach the edges. env() is 0 on every screen without a notch on its side. */
+    padding-right: env(safe-area-inset-right);
+    padding-left: env(safe-area-inset-left);
   }
 
   h1,
@@ -243,23 +377,118 @@
 }
 
 /*
- * The background (the liquid glass design; bundle G1): three large, soft colour blobs behind every
- * page, fixed to the window, taking no clicks. They stay still and there is no film grain, on
- * every screen size, as on the phone and tablet boards (Robert, 7 Nov 2026, 21:46 UTC: the moving
- * background and the grain were too much). The staff area paints its own flat beige over them
+ * The background. The simplified design (Robert, 20 Nov 2026, 12:16 UTC): four soft blobs, lifted
+ * with 40% white, sized in px and fading in six steps, so no band shows. It replaces the three
+ * larger blobs of the liquid glass design (bundle G1). The colours are --mesh-lilac, --mesh-blue
+ * and --mesh-peach (tokens.css): each look's own blobs mixed with white, so every look gets the
+ * same lift. The gradients are copied from .gh-mesh and .gh-mesh--phone in
+ * design/simplified-system/components/bundle.css, without their last layer: the page colour is
+ * already on <html>.
+ * Each blob fades in six even steps: 100, 90, 65, 35, 10 and 0% of its colour at 0, 20, 40, 60, 80
+ * and 100% of its radius, so no edge or band shows. The blobs stay still and there is no film
+ * grain (Robert, 7 Nov 2026, 21:46 UTC). The staff area paints its own flat beige over them
  * (data-area="staff").
+ * Phones (Robert, 20 Nov 2026, 13:10 UTC: "at the moment it shows black on website on phone"):
+ * the layer is as tall as the large viewport (100lvh, with 100vh for older browsers), so it also
+ * fills the space behind a phone browser's toolbars as they slide away. With viewport-fit=cover in
+ * index.html the page draws under the status bar and the home bar, and the lilac blobs in the
+ * top-left and bottom-right corners give those edges the soft colour fade.
  */
 body::before {
   content: '';
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  height: 100lvh;
   z-index: -1;
   pointer-events: none;
-  /* Each blob is a radial gradient fading to nothing, so the edges are soft. */
+  /* Wide screens (1024 px and wider): four large blobs, two on each side. */
   background:
-    radial-gradient(42vmax 42vmax at 12% 18%, var(--blob-1), transparent 70%),
-    radial-gradient(38vmax 38vmax at 88% 22%, var(--blob-2), transparent 70%),
-    radial-gradient(46vmax 46vmax at 60% 92%, var(--blob-3), transparent 70%);
+    radial-gradient(
+      1100px 800px at 8% 0%,
+      color-mix(in srgb, var(--mesh-lilac) 100%, transparent) 0%,
+      color-mix(in srgb, var(--mesh-lilac) 90%, transparent) 20%,
+      color-mix(in srgb, var(--mesh-lilac) 65%, transparent) 40%,
+      color-mix(in srgb, var(--mesh-lilac) 35%, transparent) 60%,
+      color-mix(in srgb, var(--mesh-lilac) 10%, transparent) 80%,
+      color-mix(in srgb, var(--mesh-lilac) 0%, transparent) 100%
+    ),
+    radial-gradient(
+      1000px 800px at 96% 14%,
+      color-mix(in srgb, var(--mesh-blue) 100%, transparent) 0%,
+      color-mix(in srgb, var(--mesh-blue) 90%, transparent) 20%,
+      color-mix(in srgb, var(--mesh-blue) 65%, transparent) 40%,
+      color-mix(in srgb, var(--mesh-blue) 35%, transparent) 60%,
+      color-mix(in srgb, var(--mesh-blue) 10%, transparent) 80%,
+      color-mix(in srgb, var(--mesh-blue) 0%, transparent) 100%
+    ),
+    radial-gradient(
+      1100px 900px at 4% 48%,
+      color-mix(in srgb, var(--mesh-peach) 100%, transparent) 0%,
+      color-mix(in srgb, var(--mesh-peach) 90%, transparent) 20%,
+      color-mix(in srgb, var(--mesh-peach) 65%, transparent) 40%,
+      color-mix(in srgb, var(--mesh-peach) 35%, transparent) 60%,
+      color-mix(in srgb, var(--mesh-peach) 10%, transparent) 80%,
+      color-mix(in srgb, var(--mesh-peach) 0%, transparent) 100%
+    ),
+    radial-gradient(
+      1000px 900px at 94% 80%,
+      color-mix(in srgb, var(--mesh-lilac) 100%, transparent) 0%,
+      color-mix(in srgb, var(--mesh-lilac) 90%, transparent) 20%,
+      color-mix(in srgb, var(--mesh-lilac) 65%, transparent) 40%,
+      color-mix(in srgb, var(--mesh-lilac) 35%, transparent) 60%,
+      color-mix(in srgb, var(--mesh-lilac) 10%, transparent) 80%,
+      color-mix(in srgb, var(--mesh-lilac) 0%, transparent) 100%
+    );
+}
+
+/*
+ * Narrower than 1024 px: the same four blobs drawn smaller and pushed into the corners and sides,
+ * as on the phone boards (.gh-mesh--phone). Lilac sits in the top-left and bottom-right corners,
+ * so the top and bottom of a phone screen show the soft fade (no separate gradient bar).
+ */
+@media (width < 1024px) {
+  body::before {
+    background:
+      radial-gradient(
+        420px 340px at 0% 0%,
+        color-mix(in srgb, var(--mesh-lilac) 100%, transparent) 0%,
+        color-mix(in srgb, var(--mesh-lilac) 90%, transparent) 20%,
+        color-mix(in srgb, var(--mesh-lilac) 65%, transparent) 40%,
+        color-mix(in srgb, var(--mesh-lilac) 35%, transparent) 60%,
+        color-mix(in srgb, var(--mesh-lilac) 10%, transparent) 80%,
+        color-mix(in srgb, var(--mesh-lilac) 0%, transparent) 100%
+      ),
+      radial-gradient(
+        380px 340px at 100% 32%,
+        color-mix(in srgb, var(--mesh-blue) 100%, transparent) 0%,
+        color-mix(in srgb, var(--mesh-blue) 90%, transparent) 20%,
+        color-mix(in srgb, var(--mesh-blue) 65%, transparent) 40%,
+        color-mix(in srgb, var(--mesh-blue) 35%, transparent) 60%,
+        color-mix(in srgb, var(--mesh-blue) 10%, transparent) 80%,
+        color-mix(in srgb, var(--mesh-blue) 0%, transparent) 100%
+      ),
+      radial-gradient(
+        420px 360px at 0% 70%,
+        color-mix(in srgb, var(--mesh-peach) 100%, transparent) 0%,
+        color-mix(in srgb, var(--mesh-peach) 90%, transparent) 20%,
+        color-mix(in srgb, var(--mesh-peach) 65%, transparent) 40%,
+        color-mix(in srgb, var(--mesh-peach) 35%, transparent) 60%,
+        color-mix(in srgb, var(--mesh-peach) 10%, transparent) 80%,
+        color-mix(in srgb, var(--mesh-peach) 0%, transparent) 100%
+      ),
+      radial-gradient(
+        380px 320px at 100% 100%,
+        color-mix(in srgb, var(--mesh-lilac) 100%, transparent) 0%,
+        color-mix(in srgb, var(--mesh-lilac) 90%, transparent) 20%,
+        color-mix(in srgb, var(--mesh-lilac) 65%, transparent) 40%,
+        color-mix(in srgb, var(--mesh-lilac) 35%, transparent) 60%,
+        color-mix(in srgb, var(--mesh-lilac) 10%, transparent) 80%,
+        color-mix(in srgb, var(--mesh-lilac) 0%, transparent) 100%
+      );
+  }
 }
 
 /*
@@ -1227,14 +1456,16 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 
 /*
  * The theme tiles in Settings › Appearance (bundle G2 THEMES; LookTiles.tsx): the look's page
- * colour with its three blobs, drawn small, as on the Settings board. Each tile carries
- * data-look-swatch, so these variables are that look's day colours (tokens.css, "Swatches").
+ * colour with its blobs, drawn small, as on the Settings board. Since the simplified design
+ * (bundle CALM-1) the blobs are the paler mesh colours, so each tile shows the background its look
+ * now has. Each tile carries data-look-swatch, so these variables are that look's day colours
+ * (tokens.css, "Swatches", which also works out each tile's own --mesh-* colours).
  */
 .look-swatch {
   background:
-    radial-gradient(60% 70% at 20% 20%, var(--blob-1), transparent 70%),
-    radial-gradient(60% 70% at 85% 30%, var(--blob-2), transparent 70%),
-    radial-gradient(70% 70% at 50% 100%, var(--blob-3), transparent 70%), var(--paper);
+    radial-gradient(60% 70% at 20% 20%, var(--mesh-lilac), transparent 70%),
+    radial-gradient(60% 70% at 85% 30%, var(--mesh-blue), transparent 70%),
+    radial-gradient(70% 70% at 50% 100%, var(--mesh-peach), transparent 70%), var(--paper);
 }
 
 /*
@@ -1246,13 +1477,16 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
  * bar (64 px tall, 14 px above the edge, plus a phone's home bar) covered a link or button that
  * the Tab key had just scrolled to the bottom edge. 92 px keeps the focused control clear of it,
  * with a little air. Pages without the tab bar only gain a little room under the focused control.
+ * Since the page draws under a phone's status bar (viewport-fit=cover, bundle CALM-1) the phone
+ * headers sit lower by the notch's height, env(safe-area-inset-top), so the top padding grows by
+ * the same amount; it is 0 on a screen without a notch, so nothing else changes.
  */
 html {
   scroll-padding-top: 112px;
 }
 @media (width < 1024px) {
   html {
-    scroll-padding-top: 88px;
+    scroll-padding-top: calc(88px + env(safe-area-inset-top));
     scroll-padding-bottom: calc(92px + env(safe-area-inset-bottom));
   }
 }
