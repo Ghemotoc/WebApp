@@ -92,7 +92,9 @@ test.describe('epic S1-E11, round two', () => {
     await member.getByRole('link', { name: 'Ask for help' }).click();
     await member.getByLabel('What is it about?').selectOption({ label: 'A safety question' });
     await member.getByLabel('Subject').fill(subject);
-    await member.getByLabel('Message', { exact: true }).fill('Stația meteo copies my poem word for word.');
+    await member
+      .getByLabel('Message', { exact: true })
+      .fill('Stația meteo copies my poem word for word.');
     await member.getByRole('button', { name: 'Send' }).click();
     await expect(member.getByText(/Sent\. Your request is #\d+/)).toBeVisible();
     const number = runSql(`select number from public.support_tickets where subject = '${subject}'`);

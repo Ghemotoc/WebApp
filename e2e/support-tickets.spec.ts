@@ -75,7 +75,9 @@ test.describe('support tickets (S1-E11-13, ADMIN-2h1)', () => {
     await page.getByRole('link', { name: 'Ask for help' }).click();
     await page.getByLabel('What is it about?').selectOption({ label: 'Writing' });
     await page.getByLabel('Subject').fill(subject);
-    await page.getByLabel('Message', { exact: true }).fill(`I saved three chapters yesterday ${stamp}.`);
+    await page
+      .getByLabel('Message', { exact: true })
+      .fill(`I saved three chapters yesterday ${stamp}.`);
     await page.getByRole('button', { name: 'Send' }).click();
     await expect(page.getByText(/Sent\. Your request is #\d+/)).toBeVisible();
     await page.getByRole('link', { name: 'Open a request' }).click();
