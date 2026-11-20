@@ -3,9 +3,9 @@
  * replaces the uploaded profile picture of S1-E10-05: avatars are built or initials only, Robert,
  * 2 Nov 2026).
  *
- * Decorative, like the initials: the name is always written beside it. The picture sits in the
- * floating glass frame (`avatar-picture` in src/styles/index.css; Robert, 8 Nov 2026), so it looks
- * like it floats above the page, as the initials bead does.
+ * Decorative, like the initials: the name is always written beside it. The picture sits in a
+ * plain flat circle on the tint (`avatar-picture` in src/styles/index.css; bundle CALM-3, design
+ * system Avatar/README.md: no ring, sheen or shadow).
  * Who uses it: ProfileAvatar (profile header) and ChatAvatar (messages). What it calls:
  * useAvatarRecipe, AvatarDrawing.
  */

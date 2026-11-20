@@ -100,7 +100,8 @@ export function useSaveAvatarRecipe(handle: string) {
 }
 
 /**
- * Saves the colour of the signed-in person's initials and updates every bead of theirs on screen.
+ * Saves the colour of the circle behind the signed-in person's initials and updates every circle
+ * of theirs on screen.
  *
  * @param handle - the signed-in person's username
  * @returns save(), its state and the failure, if any
@@ -108,7 +109,7 @@ export function useSaveAvatarRecipe(handle: string) {
 export function useSaveInitialsColour(handle: string) {
   const queryClient = useQueryClient();
   const save = useMutation({
-    mutationFn: async (colour: BeadColourName | null) =>
+    mutationFn: async (colour: BeadColourName) =>
       saveMyInitialsColour(await requireClient(), colour),
     // The saved colour is what the database kept, so it goes straight into the cache.
     onSuccess: (_nothing, initialsColour) =>
@@ -118,7 +119,7 @@ export function useSaveInitialsColour(handle: string) {
       })),
   });
   return {
-    save: (colour: BeadColourName | null) => save.mutateAsync(colour),
+    save: (colour: BeadColourName) => save.mutateAsync(colour),
     /** Forgets the last save's outcome, once the person picks another colour. */
     reset: save.reset,
     isSaving: save.isPending,
