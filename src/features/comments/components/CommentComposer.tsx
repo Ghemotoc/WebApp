@@ -73,8 +73,8 @@ function useFocusWhenAsked(
 }
 
 /**
- * The words for a post refused during a pause of new comments (CALM-8): until when, in Romania
- * time, or only that they are paused when the refusal didn't say.
+ * The words for a post refused during a pause of new comments (CALM-8): until when, on the
+ * viewer's own clock, or only that they are paused when the refusal didn't say.
  *
  * @param pausedUntil - when new comments open again, from the refusal, or null
  * @param language - the interface language

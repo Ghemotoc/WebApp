@@ -48,7 +48,7 @@ interface ReminderActionProps {
  * @returns the date as readers read it
  */
 function dayInWords(day: string, language: LandingLanguage): string {
-  // Noon UTC keeps the date the same in Romanian time.
+  // A stored calendar day: shown as stored, the same day for every viewer.
   return formatCalendarDate(day, language);
 }
 

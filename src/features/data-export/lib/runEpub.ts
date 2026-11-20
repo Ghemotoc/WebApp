@@ -191,10 +191,8 @@ function bookWords(options: EpubRunOptions, madeAt: Date): EpubWords {
   const { bookText, form } = options;
   const values = {
     author: form.name,
-    // The year as Romania sees it, like the date below.
-    year: new Intl.DateTimeFormat('en', { timeZone: 'Europe/Bucharest', year: 'numeric' }).format(
-      madeAt,
-    ),
+    // The year on the writer's own calendar, like the date below (Robert, 20 Nov 2026, 18:36 UTC).
+    year: String(madeAt.getFullYear()),
     date: formatLocalDate(madeAt, options.bookLanguage),
     siteUrl: brand.siteUrl,
   };
