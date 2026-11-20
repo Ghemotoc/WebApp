@@ -24,7 +24,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(64);
+select plan(65);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -196,6 +196,8 @@ select is(public.email_delivery_for('00000000-0000-4000-8000-000000000001', 'com
 select is(public.end_comment_pauses(), 0, 'run again, the job finds nothing and sends no second note');
 select is((select schedule from cron.job where jobname = 'end-comment-pauses'), '*/5 * * * *',
   'the job runs every 5 minutes');
+select is(public.notification_category('comments_resumed'), 'stories',
+  'the note sits under Stories on the Notifications page, not under Replies');
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 select is(jsonb_path_query_first(public.my_notifications(null, 50),

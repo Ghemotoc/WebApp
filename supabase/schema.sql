@@ -35076,6 +35076,7 @@ CREATE OR REPLACE FUNCTION "public"."notification_category"("kind" "public"."not
     when 'class_competition_won' then 'staff'
     when 'class_competition_results' then 'staff'
     when 'class_readers_choice' then 'staff'
+    when 'comments_resumed' then 'stories'
     else 'replies'
   end;
 $$;

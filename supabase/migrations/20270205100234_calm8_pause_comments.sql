@@ -845,3 +845,67 @@ begin
   );
 end;
 $$;
+
+/* ---------- Notifications: the resumed note sits with the story notices ---------- */
+
+/**
+ * notification_category: as in CLASSPOINTS-2, and comments_resumed (CALM-8) sits under Stories with
+ *   the other notes about a writer's own story, not under Replies, which falls through for unknown kinds.
+ * Inputs: kind. Returns: 'stories', 'follows', 'staff' or 'replies'. Errors: none.
+ * Where it fits: the tabs of the Notifications page.
+ */
+create or replace function public.notification_category(kind public.notification_kind)
+ RETURNS text
+ LANGUAGE sql
+ IMMUTABLE
+ SET search_path TO ''
+AS $$
+  select case kind
+    when 'new_chapter' then 'stories'
+    when 'new_follower' then 'follows'
+    when 'moderation_decision' then 'staff'
+    when 'report_outcome' then 'staff'
+    when 'appeal_decided' then 'staff'
+    when 'moderator_mail_reply' then 'staff'
+    when 'tag_rejected' then 'staff'
+    when 'age_check_decided' then 'staff'
+    when 'age_check_18_invite' then 'staff'
+    when 'parental_consent_agreed' then 'staff'
+    when 'parental_consent_withdrawn' then 'staff'
+    when 'login_method_added' then 'staff'
+    when 'login_method_removed' then 'staff'
+    when 'teacher_check_decided' then 'staff'
+    when 'teacher_badge_removed' then 'staff'
+    when 'data_export_ready' then 'staff'
+    when 'stories_export_ready' then 'staff'
+    when 'reading_reminder' then 'staff'
+    when 'space_join_request' then 'follows'
+    when 'space_join_approved' then 'follows'
+    when 'customisation_change_requested' then 'staff'
+    when 'certificate_issued' then 'staff'
+    when 'class_archived' then 'staff'
+    when 'story_changed_by_staff' then 'staff'
+    when 'data_request_confirm' then 'staff'
+    when 'data_request_extended' then 'staff'
+    when 'data_request_copy_ready' then 'staff'
+    when 'picture_opened_by_staff' then 'staff'
+    when 'landing_entries_open' then 'stories'
+    when 'live_session_soon' then 'stories'
+    when 'rank_reached' then 'stories'
+    when 'space_handover_offered' then 'follows'
+    when 'story_featured' then 'stories'
+    when 'spotlight_consent_agreed' then 'staff'
+    when 'spotlight_consent_withdrawn' then 'staff'
+    when 'waitlist_admitted' then 'staff'
+    when 'home_comment_invited' then 'staff'
+    when 'account_unused_month' then 'staff'
+    when 'account_unused_week' then 'staff'
+    when 'account_unused_nudge' then 'staff'
+    when 'account_unused_closed' then 'staff'
+    when 'class_competition_won' then 'staff'
+    when 'class_competition_results' then 'staff'
+    when 'class_readers_choice' then 'staff'
+    when 'comments_resumed' then 'stories'
+    else 'replies'
+  end;
+$$;
