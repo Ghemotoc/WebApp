@@ -13647,15 +13647,14 @@ CREATE OR REPLACE FUNCTION "public"."initials_colour_names"() RETURNS "text"[]
     LANGUAGE "sql" IMMUTABLE
     SET "search_path" TO ''
     AS $$
-  select array['plum', 'violet', 'ink', 'gold', 'blush', 'sky', 'sage', 'lilac', 'paper',
-               'cobalt', 'forest', 'indigo', 'ember', 'berry', 'cherry', 'slate'];
+  select array['plum', 'violet', 'gold', 'lilac', 'blush', 'sky', 'sage'];
 $$;
 
 
 ALTER FUNCTION "public"."initials_colour_names"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."initials_colour_names"() IS 'Internal: the sixteen initials bead colours, in the order of beadColours.ts (G11a).';
+COMMENT ON FUNCTION "public"."initials_colour_names"() IS 'Internal: the seven circle colours from the cover palette, in the order of beadColours.ts (CALM-3).';
 
 
 
@@ -13671,6 +13670,22 @@ ALTER FUNCTION "public"."is_interface_language"("code" "text") OWNER TO "postgre
 
 
 COMMENT ON FUNCTION "public"."is_interface_language"("code" "text") IS 'True when the code is one of the interface languages (MARKETS-2a); used by the table checks.';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."random_initials_colour"() RETURNS "text"
+    LANGUAGE "sql"
+    SET "search_path" TO ''
+    AS $$
+  -- floor(random() * 7) is 0 to 6; Postgres arrays count from 1.
+  select (public.initials_colour_names())[1 + floor(random() * cardinality(public.initials_colour_names()))::integer];
+$$;
+
+
+ALTER FUNCTION "public"."random_initials_colour"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."random_initials_colour"() IS 'Internal: one of the seven circle colours at random, the default of profiles.initials_colour (CALM-3).';
 
 
 
@@ -13725,7 +13740,7 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     "shows_reader_level" boolean DEFAULT false NOT NULL,
     "checks_personal_details" boolean,
     "rules_walkthrough_seen_at" timestamp with time zone,
-    "initials_colour" "text",
+    "initials_colour" "text" DEFAULT "public"."random_initials_colour"() NOT NULL,
     "reading_languages" "text"[],
     "suggests_from_reading" boolean,
     "less_motion" boolean DEFAULT false NOT NULL,
@@ -13739,7 +13754,7 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     CONSTRAINT "profiles_colour_mode_known" CHECK (("colour_mode" = ANY (ARRAY['light'::"text", 'night'::"text", 'device'::"text"]))),
     CONSTRAINT "profiles_country_code_is_alpha2" CHECK (("country_code" ~ '^[A-Z]{2}$'::"text")),
     CONSTRAINT "profiles_handle_length" CHECK ((("handle" IS NULL) OR (("char_length"("handle") >= 3) AND ("char_length"("handle") <= 30)))),
-    CONSTRAINT "profiles_initials_colour_known" CHECK ((("initials_colour" IS NULL) OR ("initials_colour" = ANY ("public"."initials_colour_names"())))),
+    CONSTRAINT "profiles_initials_colour_known" CHECK (("initials_colour" = ANY ("public"."initials_colour_names"()))),
     CONSTRAINT "profiles_legal_region_shape" CHECK (("legal_region_code" ~ '^([A-Z0-9]{1,3})?$'::"text")),
     CONSTRAINT "profiles_locale_is_supported" CHECK ("public"."is_interface_language"("locale")),
     CONSTRAINT "profiles_look_known" CHECK (("look" = ANY (ARRAY['lilac'::"text", 'sorbet'::"text", 'seaglass'::"text", 'pistachio'::"text", 'candy'::"text", 'tmc'::"text"]))),
@@ -13930,7 +13945,7 @@ COMMENT ON COLUMN "public"."profiles"."rules_walkthrough_seen_at" IS 'When the p
 
 
 
-COMMENT ON COLUMN "public"."profiles"."initials_colour" IS 'The colour the member picked for their initials bead (one of initials_colour_names()); null means the colour comes from the username (G11a).';
+COMMENT ON COLUMN "public"."profiles"."initials_colour" IS 'The colour of the circle behind the member''s initials (one of initials_colour_names()): picked at random on joining, changeable in Settings › Profile (CALM-3; replaces null for "from the username", G11a).';
 
 
 
@@ -28509,6 +28524,32 @@ ALTER FUNCTION "public"."house_ad_for_slot"("wanted_page_key" "text", "used_keys
 
 
 COMMENT ON FUNCTION "public"."house_ad_for_slot"("wanted_page_key" "text", "used_keys" "text"[]) IS 'Internal: the next house ad not yet on the page (S1-E12-01, S1-E12-02).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."initials_colour_from_retired"("colour" "text") RETURNS "text"
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select case colour
+    when 'ink' then 'plum'
+    when 'berry' then 'plum'
+    when 'indigo' then 'violet'
+    when 'ember' then 'gold'
+    when 'paper' then 'lilac'
+    when 'cherry' then 'blush'
+    when 'cobalt' then 'sky'
+    when 'slate' then 'sky'
+    when 'forest' then 'sage'
+    else colour
+  end;
+$$;
+
+
+ALTER FUNCTION "public"."initials_colour_from_retired"("colour" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."initials_colour_from_retired"("colour" "text") IS 'Internal: the circle colour that replaces one retired in CALM-3 (ink and berry plum, indigo violet, ember gold, paper lilac, cherry blush, cobalt and slate sky, forest sage).';
 
 
 
@@ -46333,8 +46374,8 @@ begin
   if not public.may_change_own_avatar() then
     raise exception 'Your account can''t change its profile right now.' using errcode = 'insufficient_privilege';
   end if;
-  -- Step 2: only one of the sixteen colours, or null.
-  if colour is not null and not (colour = any (public.initials_colour_names())) then
+  -- Step 2: only one of the seven colours; null is no longer a choice (CALM-3).
+  if colour is null or not (colour = any (public.initials_colour_names())) then
     raise exception 'That colour isn''t one of the choices.' using errcode = 'check_violation', hint = 'unknown_colour';
   end if;
   -- Step 3: save it on the caller's own profile.
@@ -46348,7 +46389,7 @@ $$;
 ALTER FUNCTION "public"."set_my_initials_colour"("colour" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."set_my_initials_colour"("colour" "text") IS 'Saves or clears the colour of the signed-in person''s initials bead (G11a).';
+COMMENT ON FUNCTION "public"."set_my_initials_colour"("colour" "text") IS 'Saves the colour of the circle behind the signed-in person''s initials, one of seven (G11a; CALM-3).';
 
 
 
@@ -69051,6 +69092,10 @@ GRANT ALL ON FUNCTION "public"."is_interface_language"("code" "text") TO "authen
 
 
 
+REVOKE ALL ON FUNCTION "public"."random_initials_colour"() FROM PUBLIC;
+
+
+
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."profiles" TO "service_role";
 GRANT SELECT ON TABLE "public"."profiles" TO "authenticated";
 
@@ -71032,6 +71077,10 @@ REVOKE ALL ON FUNCTION "public"."house_ad_candidates"("page_key" "text") FROM PU
 
 
 REVOKE ALL ON FUNCTION "public"."house_ad_for_slot"("wanted_page_key" "text", "used_keys" "text"[]) FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."initials_colour_from_retired"("colour" "text") FROM PUBLIC;
 
 
 

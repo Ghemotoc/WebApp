@@ -15,7 +15,10 @@ import { isBeadColourName, type BeadColourName } from '../lib/beadColours';
 export interface AvatarLook {
   /** The drawn avatar, or null for the initials. */
   recipe: AvatarRecipe | null;
-  /** The colour the person picked for their initials, or null to take it from the username. */
+  /**
+   * The colour of the circle behind the initials (every profile has one since CALM-3), or null
+   * when it couldn't be read, so the circle takes a colour from the username instead.
+   */
   initialsColour: BeadColourName | null;
 }
 
@@ -29,7 +32,7 @@ export class AvatarSaveError extends Error {
   }
 }
 
-/** The look of a profile with nothing chosen: the initials, coloured from the username. */
+/** The look when nothing could be read: the initials, coloured from the username. */
 export const plainAvatarLook: AvatarLook = { recipe: null, initialsColour: null };
 
 /**
@@ -77,21 +80,18 @@ export async function saveMyAvatarRecipe(
 }
 
 /**
- * Saves the colour of the signed-in person's initials bead, or goes back to the username's.
+ * Saves the colour of the circle behind the signed-in person's initials.
  *
  * @param client - the shared Supabase client
- * @param colour - one of the sixteen bead names, or null
+ * @param colour - one of the seven circle names (CALM-3; null is no longer a choice)
  * @throws AvatarSaveError: not_allowed for an account that may not change its profile now,
  *   invalid for a colour the database refuses, unreachable otherwise
  */
 export async function saveMyInitialsColour(
   client: AppSupabaseClient,
-  colour: BeadColourName | null,
+  colour: BeadColourName,
 ): Promise<void> {
-  const { error } = await client.rpc('set_my_initials_colour', {
-    // The generated type says string, but the function takes null for "from the username".
-    colour: colour as string,
-  });
+  const { error } = await client.rpc('set_my_initials_colour', { colour });
   if (error === null) return;
   if (error.code === '42501') throw new AvatarSaveError('not_allowed');
   if (error.code === '23514') throw new AvatarSaveError('invalid');

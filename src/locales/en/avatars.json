@@ -157,30 +157,21 @@
     "f4f0ec": "Neutral"
   },
   "initials": {
-    "heading": "Initials colour",
-    "intro": "Pick the colour of the initials bead. It shows on the profile, beside posts and in messages until an avatar is saved.",
+    "heading": "Circle colour",
+    "intro": "The colour of the circle behind the initials. It shows on the profile, beside comments and posts, and in messages until an avatar is saved.",
     "preview": "Others see these initials.",
-    "choicesLabel": "Colour for the initials",
+    "choicesLabel": "Colour for the circle",
     "save": "Save colour",
     "buildAvatar": "Build an avatar instead",
-    "saved": "Saved. The initials show in this colour everywhere.",
+    "saved": "Saved. The circle shows in this colour everywhere.",
     "colours": {
       "plum": "Plum",
       "violet": "Violet",
-      "ink": "Ink",
       "gold": "Gold",
+      "lilac": "Lilac",
       "blush": "Blush",
       "sky": "Sky",
-      "sage": "Sage",
-      "lilac": "Lilac",
-      "paper": "Paper",
-      "cobalt": "Cobalt",
-      "forest": "Forest",
-      "indigo": "Indigo",
-      "ember": "Ember",
-      "berry": "Berry",
-      "cherry": "Cherry",
-      "slate": "Slate"
+      "sage": "Sage"
     }
   }
 }
