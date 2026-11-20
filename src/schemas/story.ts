@@ -204,6 +204,26 @@ export const commentAudiences = ['everyone', 'followers'] as const;
 /** One of commentAudiences. */
 export type CommentAudience = (typeof commentAudiences)[number];
 
+/**
+ * How long a writer pauses new comments (bundle CALM-8; IDEA-20261109-8): 24 hours, 3 days or 7
+ * days, the idea's three lengths. update_my_story() works out the end from these on the
+ * database's clock.
+ */
+export const commentPauseLengths = ['24h', '3d', '7d'] as const;
+
+/** One of commentPauseLengths. */
+export type CommentPauseLength = (typeof commentPauseLengths)[number];
+
+/**
+ * What the story settings form asks of the pause when it saves: a length pauses new comments from
+ * the save, 'off' ends a pause that runs. update_my_story() refuses anything else
+ * (check_violation).
+ */
+export const commentPauseChoices = [...commentPauseLengths, 'off'] as const;
+
+/** One of commentPauseChoices. */
+export type CommentPauseChoice = (typeof commentPauseChoices)[number];
+
 /** The story settings form's answers (S1-E3-05): the same fields plus status, comments and the sharing switches. */
 export const storySettingsSchema = newStoryShape
   .omit({ storyId: true })
@@ -212,6 +232,11 @@ export const storySettingsSchema = newStoryShape
     commentsEnabled: z.boolean(),
     /** Who may comment while comments are on (MUST-1a; stories.comment_audience). */
     commentAudience: z.enum(commentAudiences),
+    /**
+     * The pause of new comments asked for in this save (CALM-8), or null to leave it as it is, so
+     * saving another setting never starts a pause again.
+     */
+    commentPause: z.enum(commentPauseChoices).nullable(),
     /** The writer's switch for quote cards (S1-E4-07) and passage links (S1-E4-11). */
     quoteCardsEnabled: z.boolean(),
     /** The writer's switch for sharing the chapters' pictures (S1-E4-11). */

@@ -63,6 +63,8 @@ function answersFrom(story: MyStory): StoryAnswers {
     isAppOnly: story.isAppOnly,
     commentsEnabled: story.commentsEnabled,
     commentAudience: story.commentAudience,
+    // CALM-8: nothing asked yet; the pause that runs is read from the story.
+    commentPause: null,
     quoteCardsEnabled: story.quoteCardsEnabled,
     pictureSharingEnabled: story.pictureSharingEnabled,
     cardColour: story.cardColour,
@@ -127,10 +129,14 @@ export function useStorySettingsForm(story: MyStory) {
     }
     // The answers as sent become the new starting point once the save goes through, so the
     // save bar stops saying "unsaved" (they are kept as typed, so the comparison stays exact).
-    const sentAnswers = answers;
+    // The pause asked for is done once saved (CALM-8): it goes back to "as saved", so the next
+    // save doesn't start it again, and the switch reads the new end from the refreshed story.
+    const sentAnswers = { ...answers, commentPause: null };
     save.mutate(result.data, {
       onSuccess: (outcomeOfSave) => {
-        if (outcomeOfSave === 'ok') setSavedAnswers(sentAnswers);
+        if (outcomeOfSave !== 'ok') return;
+        setSavedAnswers(sentAnswers);
+        setAnswers((current) => ({ ...current, commentPause: null }));
       },
     });
   }

@@ -50,6 +50,8 @@ function emptyAnswers(): StoryAnswers {
     // MUST-1a: the database starts a writer under 18 at Followers only; the new story form
     // doesn't show the setting (docs/board-fixes.md), so this is only the form's own default.
     commentAudience: 'everyone',
+    // CALM-8: a new story starts without a pause of new comments (it is set in its settings).
+    commentPause: null,
     quoteCardsEnabled: true,
     pictureSharingEnabled: true,
     // IDEAS-1c: our default card colour; the writer can pick one in the story's settings.

@@ -10,6 +10,7 @@
 import type {
   AiDisclosure,
   CommentAudience,
+  CommentPauseChoice,
   StoryCoverChoice,
   StoryRating,
   StoryRatingReason,
@@ -43,6 +44,12 @@ export interface StoryAnswers {
    * Nobody (comments off).
    */
   commentAudience: CommentAudience;
+  /**
+   * The pause of new comments the writer asks for in this save (CALM-8; IDEA-20261109-8): '24h',
+   * '3d' or '7d' pauses from the save, 'off' ends the pause that runs, and null (the start) leaves
+   * it as saved. The pause that runs comes from the story itself (MyStory.commentsPausedUntil).
+   */
+  commentPause: CommentPauseChoice | null;
   /** The quote card switch (S1-E4-07); since S1-E4-11 it covers passage links too. */
   quoteCardsEnabled: boolean;
   /** Whether readers may share the chapters' pictures (S1-E4-11); on for a new story. */

@@ -71,6 +71,12 @@ export interface MyStory {
   commentsEnabled: boolean;
   /** Who may comment while comments are on (MUST-1a). */
   commentAudience: CommentAudience;
+  /**
+   * When the writer's pause of new comments ends (CALM-8; IDEA-20261109-8), or null when none was
+   * set. It may already have passed for a few minutes before end_comment_pauses() clears it, so
+   * screens check it against the time now (lib/commentPause.ts).
+   */
+  commentsPausedUntil: string | null;
   /** Whether readers may make quote cards and passage links from its chapters (S1-E4-07, S1-E4-11). */
   quoteCardsEnabled: boolean;
   /** Whether readers may share its chapters' pictures (S1-E4-11). */
@@ -210,7 +216,7 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
   const { data, error } = await client
     .from('stories')
     .select(
-      'id, slug, title, blurb, language_code, cover_kind, cover_design, cover_background, cover_accent, cover_tall_path, first_published_at, created_at, completion_status, visibility, is_app_only, comments_enabled, comment_audience, quote_cards_enabled, picture_sharing_enabled, card_colour, deleted_at, rating, is_fan_fiction, is_parody, deals_with_abuse_or_coercion, content_note, ai_disclosure, rating_reasons, ai_undisclosed_labelled_at, categories(slug), story_tags(tags(name)), chapters(code, position, status)',
+      'id, slug, title, blurb, language_code, cover_kind, cover_design, cover_background, cover_accent, cover_tall_path, first_published_at, created_at, completion_status, visibility, is_app_only, comments_enabled, comment_audience, comments_paused_until, quote_cards_enabled, picture_sharing_enabled, card_colour, deleted_at, rating, is_fan_fiction, is_parody, deals_with_abuse_or_coercion, content_note, ai_disclosure, rating_reasons, ai_undisclosed_labelled_at, categories(slug), story_tags(tags(name)), chapters(code, position, status)',
     )
     // A story in several languages shows once, as its original; its other languages are on its
     // Languages page (TRANSLATE-1c). A removed language still comes back, so "Recently deleted"
@@ -249,6 +255,7 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
     isAppOnly: row.is_app_only,
     commentsEnabled: row.comments_enabled,
     commentAudience: row.comment_audience === 'followers' ? 'followers' : 'everyone',
+    commentsPausedUntil: row.comments_paused_until,
     quoteCardsEnabled: row.quote_cards_enabled,
     pictureSharingEnabled: row.picture_sharing_enabled,
     cardColour: row.card_colour,
@@ -308,6 +315,8 @@ export async function updateMyStory(
       completion_status: settings.completionStatus,
       comments_enabled: settings.commentsEnabled,
       comment_audience: settings.commentAudience,
+      // CALM-8: sent only when the writer asked for a pause or its end; left out, it stays.
+      ...(settings.commentPause === null ? {} : { comments_pause: settings.commentPause }),
       quote_cards_enabled: settings.quoteCardsEnabled,
       picture_sharing_enabled: settings.pictureSharingEnabled,
       card_colour: settings.cardColour,

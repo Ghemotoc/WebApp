@@ -7,6 +7,7 @@ import { describe, expect, it } from 'vitest';
 import {
   defaultScheduleFields,
   formatRomaniaDateTime,
+  formatRomaniaDayAndTime,
   formatRomaniaShortDate,
   withShortSeptember,
   romaniaTimeToInstant,
@@ -86,5 +87,21 @@ describe('the fields and the label', () => {
     expect(formatRomaniaShortDate(new Date('2026-09-05T09:00:00Z'), 'en')).toBe('5 Sep 2026');
     expect(withShortSeptember('5 Sept 2026')).toBe('5 Sep 2026');
     expect(withShortSeptember('5 sept. 2026')).toBe('5 sept. 2026');
+  });
+});
+
+describe('formatRomaniaDayAndTime (CALM-8)', () => {
+  it('writes when a pause ends with the weekday, the date and the time after a comma', () => {
+    // 16:40 UTC on 22 November is 18:40 in Bucharest (winter time, UTC+2).
+    const moment = new Date('2026-11-22T16:40:00Z');
+    expect(formatRomaniaDayAndTime(moment, 'en')).toBe('Sunday 22 November, 18:40');
+    expect(formatRomaniaDayAndTime(moment, 'ro')).toBe('duminică, 22 noiembrie, 18:40');
+  });
+
+  it('reads the Bucharest clock in summer time too', () => {
+    // 15:05 UTC on 1 July is 18:05 in Bucharest (summer time, UTC+3).
+    expect(formatRomaniaDayAndTime(new Date('2027-07-01T15:05:00Z'), 'en')).toBe(
+      'Thursday 1 July, 18:05',
+    );
   });
 });

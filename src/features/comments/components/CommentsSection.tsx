@@ -5,10 +5,12 @@
  * "Newest first" beside it, the composer card, then one white card (24 px corners) listing the
  * comments with fine lines between them, and "Show more comments" under it. A visitor gets a
  * "Get in to comment" link instead of the composer; with comments off the section says so and
- * lists nothing (the story's setting, S1-E3-05). No doodles (DoD: none on the chapter reader).
+ * lists nothing (the story's setting, S1-E3-05). While the writer has paused new comments, the
+ * line "New comments are paused until …" stands where the composer was and Reply is hidden (bundle
+ * CALM-8; the design handover's Step 4, points 5 and 7). No doodles (DoD: none on the reader).
  * Who uses it: src/features/reading/components/ChapterComments.tsx, which fetches this file after
  * the chapter text. What it calls: useChapterComments → chapter_comments(); CommentComposer;
- * CommentItem.
+ * CommentsPausedLine; CommentItem.
  */
 import { Link } from 'react-router';
 
@@ -17,6 +19,7 @@ import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { useSession } from '@/features/auth/hooks/useSession';
 import type { ChapterAddress } from '@/features/reading/api/likes';
+import { runningPauseEnd } from '@/lib/comment-pause';
 
 import type { CommentsPage } from '../api/comments';
 import { useChapterComments } from '../hooks/useChapterComments';
@@ -24,6 +27,7 @@ import { useCommentsTranslation } from '../registerCommentsTranslations';
 
 import { CommentComposer } from './CommentComposer';
 import { CommentItem } from './CommentItem';
+import { CommentsPausedLine } from './CommentsPausedLine';
 
 /**
  * The composer for a member, the log-in link for a visitor.
@@ -46,15 +50,29 @@ function AddComment({ address }: { address: ChapterAddress }) {
   return <CommentComposer address={address} />;
 }
 
+/** What the line above the list needs. */
+interface CommentEntryProps {
+  address: ChapterAddress;
+  page: CommentsPage;
+  /** When the writer's pause of new comments ends, while it runs (CALM-8); otherwise null. */
+  pauseEnd: Date | null;
+}
+
 /**
  * What sits above the list: the way to add a comment, or a line saying why there is none (the
- * writer turned comments off, or takes them from followers only, MUST-1a).
+ * writer turned comments off, paused new comments for a while, CALM-8, or takes them from
+ * followers only, MUST-1a).
  *
  * @returns the composer, the log-in link or the line
  */
-function CommentEntry({ address, page }: { address: ChapterAddress; page: CommentsPage }) {
+function CommentEntry({ address, page, pauseEnd }: CommentEntryProps) {
   const { t } = useCommentsTranslation();
   if (!page.commentsEnabled) return <p className="m-0 text-base text-body">{t('section.off')}</p>;
+  // CALM-8: nobody can post during a pause, the writer included, so this line comes before the
+  // followers-only one and shows to visitors too.
+  if (pauseEnd !== null) {
+    return <CommentsPausedLine address={address} end={pauseEnd} canResume={page.pause.canResume} />;
+  }
   if (!page.audienceAllowsMe) {
     return <p className="m-0 text-base text-body">{t('section.followersOnly')}</p>;
   }
@@ -73,6 +91,9 @@ export function CommentsSection({ address }: { address: ChapterAddress }) {
   if (comments.loadFailed) return <Notice tone="error">{t('section.loadFailed')}</Notice>;
   const firstPage = comments.firstPage;
   if (firstPage === null) return null;
+  // The list was read a little while ago, so a pause that has ended since counts as none.
+  const pauseEnd = runningPauseEnd(firstPage.pause.pausedUntil, new Date());
+  const isPaused = pauseEnd !== null;
   return (
     <section aria-labelledby="comments-heading" className="mt-14 flex flex-col">
       <div className="mb-[18px] flex flex-wrap items-end justify-between gap-3">
@@ -89,14 +110,14 @@ export function CommentsSection({ address }: { address: ChapterAddress }) {
           <span className="text-sm text-meta">{t('section.newestFirst')}</span>
         )}
       </div>
-      <CommentEntry address={address} page={firstPage} />
-      {firstPage.commentsEnabled && comments.comments.length === 0 && (
+      <CommentEntry address={address} page={firstPage} pauseEnd={pauseEnd} />
+      {firstPage.commentsEnabled && !isPaused && comments.comments.length === 0 && (
         <p className="m-0 mt-4 text-base text-body">{t('section.empty')}</p>
       )}
       {comments.comments.length > 0 && (
         <div className="mt-4 divide-y divide-hairline rounded-[24px] border border-border bg-surface px-6 py-1 shadow-[0_1px_2px_rgba(38,20,46,0.04),0_18px_40px_-28px_rgba(38,20,46,0.3)]">
           {comments.comments.map((comment) => (
-            <CommentItem key={comment.id} address={address} comment={comment} />
+            <CommentItem key={comment.id} address={address} comment={comment} isPaused={isPaused} />
           ))}
         </div>
       )}

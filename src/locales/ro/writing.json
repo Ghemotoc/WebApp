@@ -215,6 +215,17 @@
     "followersNote": "Doar cei care te urmăresc pot adăuga comentarii. Comentariile deja scrise rămân.",
     "nobodyNote": "Comentariile existente sunt ascunse și nimeni nu poate adăuga altele."
   },
+  "commentPause": {
+    "label": "Oprește comentariile noi",
+    "offNote": "Comentariile deja scrise rămân, iar raportarea funcționează în continuare.",
+    "until": "Oprite până {{when}}, ora României.",
+    "lengthLabel": "Pentru cât timp",
+    "lengths": {
+      "24h": "24 de ore",
+      "3d": "3 zile",
+      "7d": "7 zile"
+    }
+  },
   "quoteCards": {
     "label": "Carduri cu citate și linkuri către pasaje",
     "on": "Pornit. Cititorii pot face dintr-un pasaj scurt o imagine de distribuit, una pe capitol, și pot trimite un link care deschide capitolul la un pasaj.",

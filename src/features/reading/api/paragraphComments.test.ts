@@ -36,7 +36,24 @@ describe('fetchParagraphCounts', () => {
       story_slug: 'statia-meteo',
       chapter_code: 'abc12345',
     });
-    expect(counts).toEqual({ commentsEnabled: true, byParagraph: { 2: 3, 5: 1 }, earlier: 2 });
+    expect(counts).toEqual({
+      commentsEnabled: true,
+      byParagraph: { 2: 3, 5: 1 },
+      earlier: 2,
+      commentsPausedUntil: null,
+    });
+  });
+
+  it('says when a pause of new comments ends, while one runs (CALM-8)', async () => {
+    const { client } = clientAnswering({
+      comments_enabled: true,
+      paragraphs: [{ block: 1, count: 2 }],
+      earlier: 0,
+      comments_paused_until: '2026-11-22T16:40:00+00:00',
+    });
+    const counts = await fetchParagraphCounts(client, address);
+    expect(counts?.commentsPausedUntil).toBe('2026-11-22T16:40:00+00:00');
+    expect(counts?.byParagraph).toEqual({ 1: 2 });
   });
 
   it('answers null when the reader may not read the chapter', async () => {

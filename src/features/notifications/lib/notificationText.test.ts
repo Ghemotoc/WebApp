@@ -659,6 +659,40 @@ describe('notificationText', () => {
     expect(text.href).toBe('/s/the-salt-mine-choir');
   });
 
+  it('comments open again after a pause: a quiet reminder that names the story and opens it (CALM-8)', () => {
+    const resumedRow: AppNotification = {
+      ...newChapter,
+      kind: 'comments_resumed',
+      category: 'replies',
+      actors: [],
+      actorCount: 0,
+      chapter: null,
+      story: { slug: 'statia-meteo', title: 'Stația meteo' },
+    };
+    const text = notificationText(englishT(), resumedRow, 'corbu');
+    expect(`${text.who} ${text.what}`).toBe(
+      'Reminder: new comments are open again on “Stația meteo”.',
+    );
+    expect(text.quote).toBeNull();
+    expect(text.actionLabel).toBe('Open the story');
+    expect(text.href).toBe('/s/statia-meteo');
+  });
+
+  it('comments open again on a story the reader can no longer open: the row has no link (CALM-8)', () => {
+    const resumedRow: AppNotification = {
+      ...newChapter,
+      kind: 'comments_resumed',
+      category: 'replies',
+      actors: [],
+      actorCount: 0,
+      chapter: null,
+      story: null,
+    };
+    const text = notificationText(englishT(), resumedRow, 'corbu');
+    expect(text.actionLabel).toBeNull();
+    expect(text.href).toBeNull();
+  });
+
   it('the parent’s yes to suggestions, and its withdrawal, lead to Settings › Privacy (S1-E2-03b)', () => {
     const spotlightRow: AppNotification = {
       ...newChapter,

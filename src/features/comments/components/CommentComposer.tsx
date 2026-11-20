@@ -6,7 +6,8 @@
  * #FAF8F5), "Hide as a spoiler", the "0 / 3,000" counter, the solid "Post comment" button and
  * "Be kind. Every report is read by a person." The counter is linked to the box with
  * aria-describedby, so a screen reader hears it with the field. A refusal is said in plain words,
- * the limit with the minutes to wait (criterion 4).
+ * the limit with the minutes to wait (criterion 4), a pause of new comments with its end in
+ * Romania time (bundle CALM-8: the writer paused them after the box was drawn).
  * The same box, without the card, posts a comment on one paragraph in its thread (S1-E6-06).
  * Lengths (Robert, 2 Nov 2026): 3,000 characters on the whole chapter and its replies, 500 on a
  * paragraph and every reply in its thread, from the public settings (useCommentLimit).
@@ -24,6 +25,7 @@ import { Button } from '@/components/ui/Button';
 import { PersonalDetailsNote } from '@/features/privacy/components/PersonalDetailsNote';
 import { RulesWalkthrough } from '@/features/safety/components/RulesWalkthrough';
 import type { ChapterAddress } from '@/features/reading/api/likes';
+import { formatRomaniaDayAndTime } from '@/lib/romania-time';
 import { cn } from '@/lib/utils';
 
 import type { CommentError } from '../api/comments';
@@ -47,16 +49,38 @@ export interface CommentComposerProps {
 }
 
 /**
+ * The words for a post refused during a pause of new comments (CALM-8): until when, in Romania
+ * time, or only that they are paused when the refusal didn't say.
+ *
+ * @param pausedUntil - when new comments open again, from the refusal, or null
+ * @param language - the interface language
+ * @returns the translation key and its values
+ */
+function pausedText(
+  pausedUntil: string | null,
+  language: string,
+): [string, Record<string, unknown>] {
+  if (pausedUntil === null) return ['failures.paused_unknown', {}];
+  return ['failures.paused', { when: formatRomaniaDayAndTime(new Date(pausedUntil), language) }];
+}
+
+/**
  * The words for a failed post.
  *
  * @param failure - the error
  * @param limit - the box's character limit, named by the length refusals
+ * @param language - the interface language, for the end of a pause
  * @returns the translation key and its values
  */
-function failureText(failure: CommentError, limit: string): [string, Record<string, unknown>] {
+function failureText(
+  failure: CommentError,
+  limit: string,
+  language: string,
+): [string, Record<string, unknown>] {
   if (failure.failure === 'refused' || failure.failure === 'too_long') {
     return [`failures.${failure.failure}`, { limit }];
   }
+  if (failure.failure === 'paused') return pausedText(failure.pausedUntil, language);
   if (failure.failure !== 'too_many') return [`failures.${failure.failure}`, {}];
   if (failure.waitMinutes === null) return ['failures.too_many_unknown', {}];
   return ['failures.too_many', { count: failure.waitMinutes }];
@@ -123,13 +147,13 @@ function ComposerFeedback(props: {
   limit: string;
   isCompact: boolean;
 }) {
-  const { t } = useCommentsTranslation();
+  const { t, i18n } = useCommentsTranslation();
   const failure = props.composer.posting.failure;
   return (
     <>
       {failure !== null && (
         <p role="alert" className="m-0 text-sm text-destructive">
-          {t(...failureText(failure, props.limit))}
+          {t(...failureText(failure, props.limit, i18n.language))}
         </p>
       )}
       <p role="status" className="sr-only">

@@ -3,7 +3,8 @@
  * comment can also be on one paragraph (S1-E6-06): it carries which one, and postComment sends
  * it through post_paragraph_comment().
  * Each comment also carries its reactions (S1-E6-02, api/reactions.ts) and whether the reader
- * downvoted it (S1-E6-04, api/downvotes.ts).
+ * downvoted it (S1-E6-04, api/downvotes.ts). A page also says when a pause of new comments ends
+ * while one runs (CALM-8, api/commentPause.ts), and a refused comment says until when.
  *
  * Who calls it: hooks/useChapterComments.ts and hooks/useCommentActions.ts.
  * What it calls next: chapter_comments(), post_comment() and delete_comment()
@@ -15,6 +16,7 @@ import type { AppSupabaseClient } from '@/lib/supabase';
 
 import type { ChapterAddress } from '@/features/reading/api/likes';
 
+import { commentPauseFrom, type CommentPause, type CommentPauseRow } from './commentPause';
 import type { CommentReactions, ReactionsRow } from './reactions';
 
 /** What the reader sees in a comment's place (comment_state_for_caller()). */
@@ -54,6 +56,11 @@ export interface CommentsPage {
    * (MUST-1a): the page shows a line instead of the comment box. True for a visitor on Everyone.
    */
   audienceAllowsMe: boolean;
+  /**
+   * The writer's pause of new comments (CALM-8): while it runs the page shows "New comments are
+   * paused until …" instead of the comment box, and no Reply.
+   */
+  pause: CommentPause;
   /** Every comment and reply the reader may read, for the heading. */
   total: number;
   hasMore: boolean;
@@ -67,16 +74,21 @@ export type CommentFailure =
   | 'too_many_links'
   | 'too_long'
   | 'comments_off'
+  | 'paused'
   | 'followers_only'
   | 'refused'
   | 'gone'
   | 'unreachable';
 
-/** The error a refused comment throws; waitMinutes is set for too_many. */
+/**
+ * The error a refused comment throws; waitMinutes is set for too_many, and pausedUntil (when new
+ * comments open again, ISO time) for paused when the database said (CALM-8).
+ */
 export class CommentError extends Error {
   constructor(
     public readonly failure: CommentFailure,
     public readonly waitMinutes: number | null = null,
+    public readonly pausedUntil: string | null = null,
   ) {
     super(`Comment failed: ${failure}`);
   }
@@ -99,8 +111,11 @@ export interface CommentRow {
   paragraph?: number | 'earlier' | null;
 }
 
-/** The JSON a page arrives as (chapter_comments() and paragraph_comments()). */
-export interface CommentsPageRow {
+/**
+ * The JSON a page arrives as (chapter_comments() and paragraph_comments()); the pause's two fields
+ * come only while a pause runs (CALM-8).
+ */
+export interface CommentsPageRow extends CommentPauseRow {
   comments_enabled: boolean;
   /** Left out when comments are off (MUST-1a). */
   audience_allows_me?: boolean;
@@ -158,6 +173,7 @@ export async function fetchCommentsPage(
   return {
     commentsEnabled: row.comments_enabled,
     audienceAllowsMe: row.audience_allows_me !== false,
+    pause: commentPauseFrom(row),
     total: row.total,
     hasMore: row.has_more,
     comments: row.comments.map(commentFrom),
@@ -191,11 +207,27 @@ function notAllowedErrorFrom(hint: string | null | undefined): CommentError {
 }
 
 /**
+ * Which refusal an object_not_in_prerequisite_state (55000) was: the writer paused new comments
+ * (hint "paused_until:<end>", CALM-8), or turned comments off.
+ *
+ * @param hint - the error's hint
+ * @returns paused with the end, or comments_off
+ */
+function closedErrorFrom(hint: string | null | undefined): CommentError {
+  if (hint?.startsWith('paused_until:') === true) {
+    const end = hint.slice('paused_until:'.length);
+    return new CommentError('paused', null, end === '' ? null : end);
+  }
+  return new CommentError('comments_off');
+}
+
+/**
  * Turns a database error into a CommentError.
  *
  * @param error - Postgres's code and hint
  * @returns the error: followers_only (42501 with that hint, MUST-1a), read_only (42501), too_many with the minutes (54000, hint
- *   "wait_minutes:n"), comments_off (55000), too_many_links (23514 with the hint
+ *   "wait_minutes:n"), paused (55000 with the hint "paused_until:<end>", CALM-8), comments_off
+ *   (55000), too_many_links (23514 with the hint
  *   "too_many_links": a new account's comment with more than one link, S1-E10-12), too_long
  *   (23514 with the hint "paragraph_too_long:<limit>"), refused (23514: the text), gone (P0002), or
  *   unreachable
@@ -206,7 +238,7 @@ export function commentErrorFrom(error: { code?: string; hint?: string | null })
     const minutes = Number((error.hint ?? '').replace('wait_minutes:', ''));
     return new CommentError('too_many', Number.isFinite(minutes) && minutes > 0 ? minutes : null);
   }
-  if (error.code === '55000') return new CommentError('comments_off');
+  if (error.code === '55000') return closedErrorFrom(error.hint);
   if (error.code === '23514') return refusedErrorFrom(error.hint);
   if (error.code === 'P0002') return new CommentError('gone');
   return new CommentError('unreachable');

@@ -11,13 +11,17 @@
  * and Close shut it and hand focus back to what opened it. No doodles (DoD: none on the reader).
  * It sits inside the chapter text, so data-paragraph-thread tells the copy protection and the
  * "Share quote" bar that these are readers' words, not the writer's.
+ * While the writer has paused new comments, the box at the foot gives way to the same line as
+ * under the chapter ("New comments are paused until …") and Reply is hidden (bundle CALM-8; the
+ * design handover's Step 4, points 6 and 7); the comments already there can still be read.
  * From 1280 px it opens in the reader's side column instead (bundle G7d2; board ReaderComments):
  * a glass card titled "31 comments on paragraph 3", which takes focus when the reader opened it,
  * because it sits away from its button. LazyParagraphThread decides where it goes.
  * Who uses it: ParagraphCommentMarker and EarlierVersionComments (src/features/reading/), which
  * fetch this file only when a reader opens a thread.
  * What it calls: useParagraphComments → paragraph_comments(); CommentItem (each comment, with its
- * replies, reactions and Report button); CommentComposer (posting on the paragraph).
+ * replies, reactions and Report button); CommentComposer (posting on the paragraph);
+ * CommentsPausedLine (during a pause).
  */
 import { useEffect, useRef, type RefObject } from 'react';
 
@@ -25,6 +29,7 @@ import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import type { ChapterAddress } from '@/features/reading/api/likes';
 import type { ParagraphPlace } from '@/features/reading/api/paragraphComments';
+import { runningPauseEnd } from '@/lib/comment-pause';
 
 import type { ParagraphThread as ParagraphThreadData } from '../api/paragraphComments';
 
@@ -33,6 +38,7 @@ import { useCommentsTranslation } from '../registerCommentsTranslations';
 
 import { CommentComposer } from './CommentComposer';
 import { CommentItem } from './CommentItem';
+import { CommentsPausedLine } from './CommentsPausedLine';
 
 /** What the thread needs. */
 export interface ParagraphThreadProps {
@@ -136,19 +142,46 @@ function useThreadKeyboard(
 }
 
 /**
- * What closes the thread: the box to comment on the paragraph, or a note saying why there is
- * none (an earlier version: the paragraph has changed since; or a followers-only story, MUST-1a).
+ * When the writer's pause of new comments ends, while it runs (CALM-8). The thread was read a
+ * little while ago, so a pause that has ended since counts as none.
  *
- * @returns the composer or the note
+ * @param thread - the thread, or null while it loads
+ * @returns the end, or null when no pause runs (or the thread hasn't loaded)
  */
-function ThreadFoot({
-  address,
-  place,
-  thread,
-}: Pick<ParagraphThreadProps, 'address' | 'place'> & { thread: ParagraphThreadData | null }) {
+function pauseEndOf(thread: ParagraphThreadData | null): Date | null {
+  if (thread === null) return null;
+  return runningPauseEnd(thread.pause.pausedUntil, new Date());
+}
+
+/** What the foot of the thread needs. */
+interface ThreadFootProps extends Pick<ParagraphThreadProps, 'address' | 'place'> {
+  thread: ParagraphThreadData | null;
+  /** When the writer's pause of new comments ends, while it runs (CALM-8); otherwise null. */
+  pauseEnd: Date | null;
+}
+
+/**
+ * What closes the thread: the box to comment on the paragraph, or a note saying why there is
+ * none (an earlier version: the paragraph has changed since; a pause of new comments, CALM-8; or
+ * a followers-only story, MUST-1a).
+ *
+ * @returns the composer, the paused line or the note
+ */
+function ThreadFoot({ address, place, thread, pauseEnd }: ThreadFootProps) {
   const { t } = useCommentsTranslation();
   if (place === 'earlier') {
     return <p className="m-0 mt-3 text-sm text-meta">{t('paragraph.earlierNote')}</p>;
+  }
+  // CALM-8: the same line as under the chapter, where the box was; nobody can post during a pause.
+  if (thread !== null && pauseEnd !== null) {
+    return (
+      <CommentsPausedLine
+        address={address}
+        end={pauseEnd}
+        canResume={thread.pause.canResume}
+        className="mt-3 border-t border-hairline pt-4"
+      />
+    );
   }
   // MUST-1a: on a followers-only story, someone who doesn't follow the writer sees why. Until the
   // thread loads, the box shows; the database refuses a comment it mustn't take.
@@ -174,6 +207,7 @@ export function ParagraphThread(props: ParagraphThreadProps) {
   const { t } = useCommentsTranslation();
   const { thread, loadFailed } = useParagraphComments(address, place);
   const texts = threadTexts(place, thread?.total ?? 0, isInSidePanel);
+  const pauseEnd = pauseEndOf(thread);
   const sectionRef = useRef<HTMLElement>(null);
   useThreadKeyboard(sectionRef, onClose, takesFocus);
 
@@ -198,11 +232,17 @@ export function ParagraphThread(props: ParagraphThreadProps) {
       {thread !== null && thread.comments.length > 0 && (
         <div className="divide-y divide-hairline">
           {thread.comments.map((comment) => (
-            <CommentItem key={comment.id} address={address} comment={comment} isInParagraphThread />
+            <CommentItem
+              key={comment.id}
+              address={address}
+              comment={comment}
+              isInParagraphThread
+              isPaused={pauseEnd !== null}
+            />
           ))}
         </div>
       )}
-      <ThreadFoot address={address} place={place} thread={thread} />
+      <ThreadFoot address={address} place={place} thread={thread} pauseEnd={pauseEnd} />
     </section>
   );
 }

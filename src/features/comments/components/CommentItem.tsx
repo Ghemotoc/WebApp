@@ -6,7 +6,9 @@
  * date ("2 days ago", 13 px), then the words in 16 px. A reply sits under its comment after a fine
  * line, 18 px in. Each part is a real <article> with the author named, so a screen reader can move
  * from comment to comment. A comment on one paragraph says which ("On paragraph 4", 13 px, 600, in
- * the link colour; S1-E6-06), or that the writer has since changed it.
+ * the link colour; S1-E6-06), or that the writer has since changed it. While the writer has paused
+ * new comments, Reply is hidden; likes, reactions, Report and More stay (bundle CALM-8; the design
+ * handover's Step 4, point 7).
  * Who uses it: CommentsSection (and itself, for replies). What it calls: CommentBody,
  * CommentActions (with CommentReactions at the start of its row, S1-E6-02), CommentComposer (the
  * reply box).
@@ -34,6 +36,8 @@ export interface CommentItemProps {
   isReply?: boolean;
   /** True inside a paragraph's thread (S1-E6-06), where replies have the shorter limit. */
   isInParagraphThread?: boolean;
+  /** True while the writer has paused new comments (CALM-8): no Reply and no reply box. */
+  isPaused?: boolean;
 }
 
 /**
@@ -86,6 +90,49 @@ function ParagraphLabel({ paragraph }: { paragraph: ChapterComment['paragraph'] 
   );
 }
 
+/** What the part under a top-level comment needs: its reply box and its replies. */
+interface CommentRepliesProps {
+  address: ChapterAddress;
+  comment: ChapterComment;
+  /** True while the reader writes a reply (Reply was pressed, and comments aren't paused). */
+  isReplying: boolean;
+  /** Closes the reply box, after a post or on Cancel. */
+  onReplyDone: () => void;
+  isInParagraphThread: boolean;
+}
+
+/**
+ * The reply box, while the reader writes a reply, and the replies one level deep.
+ *
+ * @returns the box and the group of replies; nothing when there is neither
+ */
+function CommentReplies(props: CommentRepliesProps) {
+  const { address, comment } = props;
+  const { t } = useCommentsTranslation();
+  const name = comment.author.displayName;
+  return (
+    <>
+      {props.isReplying && (
+        <div className="mt-3">
+          <CommentComposer
+            address={address}
+            replyTo={{ commentId: comment.id, authorName: name }}
+            onDone={props.onReplyDone}
+            isOnParagraph={props.isInParagraphThread || comment.paragraph !== null}
+          />
+        </div>
+      )}
+      {comment.replies.length > 0 && (
+        <div role="group" aria-label={t('comment.replies', { name })}>
+          {comment.replies.map((reply) => (
+            <CommentItem key={reply.id} address={address} comment={reply} isReply />
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
+
 /**
  * Renders the comment and, for a top-level one, its replies and the reply box.
  *
@@ -96,10 +143,13 @@ export function CommentItem({
   comment,
   isReply = false,
   isInParagraphThread = false,
+  isPaused = false,
 }: CommentItemProps) {
-  const { t } = useCommentsTranslation();
   const [isReplying, setIsReplying] = useState(false);
   const name = comment.author.displayName;
+  // Replies are one level deep, and nobody replies during a pause (CALM-8): a box left open when
+  // the pause began closes too, as the database would refuse what it sends.
+  const canReply = !isReply && !isPaused;
   return (
     <article
       aria-label={name}
@@ -120,26 +170,16 @@ export function CommentItem({
         <CommentActions
           address={address}
           comment={comment}
-          onReply={isReply ? null : () => setIsReplying(true)}
+          onReply={canReply ? () => setIsReplying(true) : null}
           before={<CommentReactions address={address} comment={comment} />}
         />
-        {isReplying && (
-          <div className="mt-3">
-            <CommentComposer
-              address={address}
-              replyTo={{ commentId: comment.id, authorName: name }}
-              onDone={() => setIsReplying(false)}
-              isOnParagraph={isInParagraphThread || comment.paragraph !== null}
-            />
-          </div>
-        )}
-        {comment.replies.length > 0 && (
-          <div role="group" aria-label={t('comment.replies', { name })}>
-            {comment.replies.map((reply) => (
-              <CommentItem key={reply.id} address={address} comment={reply} isReply />
-            ))}
-          </div>
-        )}
+        <CommentReplies
+          address={address}
+          comment={comment}
+          isReplying={canReply && isReplying}
+          onReplyDone={() => setIsReplying(false)}
+          isInParagraphThread={isInParagraphThread}
+        />
       </div>
     </article>
   );
