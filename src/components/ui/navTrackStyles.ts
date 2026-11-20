@@ -6,7 +6,7 @@
  * so the page shows by shape and weight, not colour alone (WCAG 1.4.1); aria-current="page" says it
  * to screen readers. Every link is at least 40 px tall inside the 48 px track and 44 px wide or more.
  * Hovering or focusing a link shows the website's raised glass pill under it (GLASS-3, index.css).
- * Who uses it: NavTrack (src/app/shell/) and MessagesNavLink, which adds Messages while signed in.
+ * Who uses it: NavTrack (src/app/shell/).
  */
 
 /**

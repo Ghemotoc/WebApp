@@ -268,7 +268,7 @@
     "next": "Mai departe",
     "skip": "Sari peste",
     "saving": "Se salvează…",
-    "goToDiscover": "Mergi la Descoperă",
+    "goToDiscover": "Mergi la Citește",
     "saveFailed": "Nu am putut salva. Încearcă din nou peste puțin timp.",
     "loadFailed": "Nu am putut încărca profilul. Încearcă din nou peste puțin timp.",
     "name": {
@@ -312,12 +312,12 @@
     },
     "notice": {
       "heading": "Termină de configurat profilul",
-      "body": "Alege-ți limba și ce îți place, ca Descoperă să-ți arate mai mult din asta. Durează un minut și poți sări peste orice pas.",
+      "body": "Alege-ți limba și ce îți place, ca Citește să-ți arate mai mult din asta. Durează un minut și poți sări peste orice pas.",
       "action": "Continuă configurarea"
     },
     "settings": {
       "heading": "Ce îți place",
-      "intro": "Județul tău și alegerile care umplu „Alese pentru tine” în Descoperă. Doar tu le vezi.",
+      "intro": "Județul tău și alegerile care umplu „Alese pentru tine” în Citește. Doar tu le vezi.",
       "save": "Salvează",
       "saved": "Salvat."
     }
@@ -374,7 +374,7 @@
       "no_file": "Alege mai întâi un fișier."
     },
     "skip": "Nu ești profesor? Sari peste",
-    "goToDiscover": "Mergi la Descoperă",
+    "goToDiscover": "Mergi la Citește",
     "settings": {
       "heading": "Insigna de Profesor",
       "intro": "Cu o insignă de Profesor poți crea spații private de clasă pentru elevii tăi. Pe profilul tău apare „Profesor”.",

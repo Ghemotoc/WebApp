@@ -2,8 +2,8 @@
  * The links in the top bar and the footer (story S1-E1-03).
  *
  * Rule: a link appears only once its page exists, so nobody lands on a page that isn't built yet
- * (docs/board-fixes.md). The boards draw the full top bar (Home, Discover, Library, Forums,
- * Messages) and footer (Help, Community guidelines, Terms, Privacy, Accessibility, Contact us,
+ * (docs/board-fixes.md). The boards draw the full top bar (Home, Read, Library, Together, then
+ * Messages as an icon) and footer (Help, Community guidelines, Terms, Privacy, Accessibility, Contact us,
  * Report without an account); each story that builds one of those pages adds its link here.
  * Who reads it: TopBar and Footer (src/app/shell/). The /design page shows the full board version.
  */
@@ -15,14 +15,24 @@ export interface NavigationItem {
 }
 
 /**
- * Top bar links that exist today: Discover (S1-E5-01), Library (S1-E4-03; a visitor gets a
- * log-in card there) and Forums (FORUMS-1a, S1-E8-01). Coming: Home (S1-E5-08). Messages (S1-E9-01) is only for
- * signed-in people, so it isn't in this list: MessagesNavLink adds it after these, with its count.
+ * The address that stands for "Home" in the list. Home is not one fixed page: it is the Writers'
+ * hub when signed in and the public home page when not (useHomeAddress, G9a), so NavTrack swaps
+ * this placeholder for the real address when it draws the link.
+ */
+export const homeNavigationPlaceholder = '#home';
+
+/**
+ * Top bar links, in the simplified design's order (bundle CALM-2; the DESIGN handover, Step 2,
+ * "Top bar"): Home, Read, Library and Together. Read is the page at /discover (S1-E5-01) and
+ * Together the page at /forums (FORUMS-1a, S1-E8-01): only the words changed, the addresses stay
+ * (a new address is on hold). Library is S1-E4-03; a visitor gets a log-in card there. Messages
+ * (S1-E9-01) is not in the track any more: it is an icon button beside the bell (MessagesHeaderLink).
  */
 export const primaryNavigation: NavigationItem[] = [
-  { href: '/discover', labelKey: 'nav.discover' },
+  { href: homeNavigationPlaceholder, labelKey: 'nav.home' },
+  { href: '/discover', labelKey: 'nav.read' },
   { href: '/library', labelKey: 'nav.library' },
-  { href: '/forums', labelKey: 'nav.forums' },
+  { href: '/forums', labelKey: 'nav.together' },
 ];
 
 /**
@@ -54,9 +64,9 @@ export const footerNavigation: NavigationItem[] = [
 /** The full top bar from the boards, for the /design page only. */
 export const boardPrimaryNavigation: NavigationItem[] = [
   { href: '/design#top-bar', labelKey: 'nav.home' },
-  { href: '/design', labelKey: 'nav.discover' },
+  { href: '/design', labelKey: 'nav.read' },
   { href: '/design#library', labelKey: 'nav.library' },
-  { href: '/design#forums', labelKey: 'nav.forums' },
+  { href: '/design#forums', labelKey: 'nav.together' },
   { href: '/design#messages', labelKey: 'nav.messages' },
 ];
 

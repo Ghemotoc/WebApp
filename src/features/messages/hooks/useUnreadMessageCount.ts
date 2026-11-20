@@ -5,7 +5,7 @@
  * download every page waits for, the chapter reader's included (whose script budget is checked by
  * e2e/reader-performance.spec.ts). Kept apart from useMessages.ts and api/messages.ts, the count
  * brings only itself; the chats, sending and settings load with the Messages page (bundle G8c).
- * Who calls it: MessagesNavLink (wide screens) and MessagesHeaderLink (phones).
+ * Who calls it: MessagesHeaderLink (the top bar and the phone header, bundle CALM-2).
  * What it calls: the database function unread_message_count(), every minute and when the person
  * comes back to the tab.
  */

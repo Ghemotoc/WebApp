@@ -43,7 +43,7 @@
   "empty": {
     "title": "No results for “{{term}}”",
     "description": "Check the spelling, use fewer words or search for a tag such as “fantasy”.",
-    "browse": "Browse Discover"
+    "browse": "Browse Read"
   },
   "seeAll": {
     "writersEyebrow": "Search",

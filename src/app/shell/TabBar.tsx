@@ -2,9 +2,12 @@
  * TabBar: the floating tab bar at the bottom of a narrow screen (bundle G4 SHELL; handoff "App
  * header and tab bar": "floating 64px tab bar at the bottom"; canvas Discover board).
  *
- * A 64 px glass pill with Discover, Library, Write and Forums, each an icon over a short label,
- * and a round 64 px Search button beside it. The page on screen sits on the white bubble, in bold
- * and the accent, with aria-current, so it never relies on colour alone. It is the main navigation
+ * A 64 px glass pill with Read, Library, Write and Together (the pages at /discover and /forums;
+ * the simplified design, bundle CALM-2), each an icon over a short label, and a round 64 px Search
+ * button beside it. The page on screen no longer sits on a bubble: its label turns the heading
+ * colour, bold, with a 2 px thread line under it, and the others are the body colour; with
+ * aria-current too, it never relies on colour alone (TabBar/README.md). On /search the Search
+ * button turns solid with the same line. It is the main navigation
  * on a narrow screen, so it carries the same "Main" name as the website top bar (only one of the
  * two is ever drawn). On a tablet it stays 620 px wide in the middle, as on the DiscoverTablet
  * board, rather than stretching across. It is fixed to the bottom and keeps clear of a phone's home bar
@@ -30,24 +33,48 @@ interface Tab {
 
 /** The four tabs, in the board's order. Every page exists (Write opens a log-in card for a visitor). */
 const tabs: readonly Tab[] = [
-  { href: '/discover', icon: 'discover', labelKey: 'nav.discover' },
+  { href: '/discover', icon: 'discover', labelKey: 'nav.read' },
   { href: '/library', icon: 'library', labelKey: 'nav.library' },
   { href: '/write', icon: 'write', labelKey: 'nav.write' },
-  { href: '/forums', icon: 'forums', labelKey: 'nav.forums' },
+  { href: '/forums', icon: 'forums', labelKey: 'nav.together' },
 ];
 
 /**
- * The classes for one tab: the current page sits on the bubble in bold.
+ * The classes for one tab: the current page's label is bold in the heading colour.
  *
  * @param state.isActive - true when the tab's page is on screen (React Router)
  * @returns the class list
  */
 function tabClasses({ isActive }: { isActive: boolean }): string {
   const base =
-    'flex h-14 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-full text-[11px] leading-tight no-underline';
-  // The current page's colour is a token: the link colour by day, the light ink at night (tokens.css).
-  if (isActive) return `${base} segmented-bubble font-bold text-(--tab-current)`;
-  return `${base} font-medium text-ink hover:bg-ink/5`;
+    'flex h-14 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-full text-[12px] leading-tight no-underline hover:bg-ink/5';
+  if (isActive) return `${base} font-bold text-heading`;
+  return `${base} font-medium text-body`;
+}
+
+/**
+ * The classes for the round Search button: solid (--surface) on the Search page.
+ *
+ * @param state.isActive - true on /search (React Router)
+ * @returns the class list
+ */
+function searchButtonClasses({ isActive }: { isActive: boolean }): string {
+  const base =
+    'inline-flex size-16 shrink-0 flex-col items-center justify-center gap-1 rounded-full text-heading';
+  if (isActive) return `${base} bg-surface shadow-card`;
+  return `${base} glass-float`;
+}
+
+/**
+ * The 2 px thread line under the current tab's label (or the Search icon on /search). It is a
+ * picture of the state only: aria-current already tells a screen reader which page is on screen.
+ *
+ * @param props.isActive - true when the tab's page is on screen
+ * @returns the line, or nothing for the other tabs
+ */
+function CurrentLine({ isActive }: { isActive: boolean }) {
+  if (!isActive) return null;
+  return <span aria-hidden="true" data-current-line className="h-0.5 w-5 rounded-full bg-thread" />;
 }
 
 /**
@@ -70,20 +97,24 @@ export function TabBar() {
         {tabs.map((tab) => (
           <li key={tab.href} className="flex min-w-0 flex-1">
             <NavLink to={tab.href} className={tabClasses}>
-              <NavIcon name={tab.icon} size={22} />
-              {t(tab.labelKey)}
+              {({ isActive }) => (
+                <>
+                  <NavIcon name={tab.icon} size={22} />
+                  <span>{t(tab.labelKey)}</span>
+                  <CurrentLine isActive={isActive} />
+                </>
+              )}
             </NavLink>
           </li>
         ))}
       </ul>
-      <NavLink
-        to="/search"
-        aria-label={t('shell.search')}
-        className={({ isActive }) =>
-          `glass-float inline-flex size-16 shrink-0 items-center justify-center rounded-full ${isActive ? 'text-link' : 'text-ink'}`
-        }
-      >
-        <NavIcon name="search" size={24} />
+      <NavLink to="/search" aria-label={t('shell.search')} className={searchButtonClasses}>
+        {({ isActive }) => (
+          <>
+            <NavIcon name="search" size={24} />
+            <CurrentLine isActive={isActive} />
+          </>
+        )}
       </NavLink>
     </nav>
   );

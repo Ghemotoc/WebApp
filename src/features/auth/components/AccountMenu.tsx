@@ -12,8 +12,8 @@
  * (aria-expanded) and the panel holds an ordinary link and button, so Tab and Enter work as
  * everywhere else. Escape closes it and puts focus back on the button; clicking elsewhere closes
  * it too. The button is the person's own avatar: their drawn avatar, or their initials on the glass
- * bead in their colour (bundle G4 SHELL; PersonAvatar); its accessible name is "Account" with
- * the initials on the bead ("Account, AW"; WCAG 2.5.3, label in name).
+ * bead in their colour (bundle G4 SHELL; PersonAvatar); its accessible name is "Account and
+ * settings" (the simplified design, bundle CALM-2; TopBar/README.md), which says where it leads.
  * Who shows it: AccountLinks, once someone is signed in, with the shown name and username.
  * What it calls: api/signIn.ts → signOutHere(); after logging out it goes to the home page.
  */
@@ -23,7 +23,6 @@ import { Link, useNavigate } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
 import { PersonAvatar } from '@/features/avatars/components/PersonAvatar';
-import { initialsOf } from '@/features/people/lib/formatting';
 import { getSupabaseClient } from '@/lib/supabase';
 
 import { signOutHere } from '../api/signIn';
@@ -158,14 +157,13 @@ export function AccountMenu({ initial, name, handle }: AccountMenuProps) {
         type="button"
         aria-expanded={isOpen}
         aria-controls="account-menu-panel"
-        aria-label={t('nav.accountWithInitials', { initials: initialsOf(name ?? initial) })}
+        aria-label={t('nav.account')}
         onClick={() => setIsOpen(!isOpen)}
         className="inline-flex size-11 items-center justify-center rounded-full"
       >
         {/* The same bead (or drawn avatar) as beside the person's name everywhere else. The
-            initials on it are part of the button's name ("Account, AW"), because WCAG 2.5.3
-            (label in name) asks that text a person can see is also in what they can say to
-            voice control. */}
+            button's name is "Account and settings" (CALM-2); the bead itself is a picture of
+            the person, not a label. */}
         <PersonAvatar name={name ?? initial} handle={handle} size="large" />
       </button>
       <div

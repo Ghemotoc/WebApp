@@ -2,7 +2,7 @@
   "eyebrow_one": "{{count, number}} discuție",
   "eyebrow_few": "{{count, number}} discuții",
   "eyebrow_other": "{{count, number}} de discuții",
-  "title": "Forumuri",
+  "title": "Împreună",
   "intro": "Pune întrebări despre scris, fă schimb de păreri și cunoaște alți scriitori. Oricine poate citi forumurile. Ca să scrii, ai nevoie de un cont.",
   "loadFailed": "Nu am putut încărca forumurile. Verifică-ți conexiunea și încearcă din nou.",
   "empty": "Încă nu există forumuri.",

@@ -188,8 +188,8 @@
       "private": "Private"
     },
     "hints": {
-      "public": "Anyone can find it in Discover, search, tags and on your profile.",
-      "unlisted": "Only people with the link can read it. It isn’t in Discover, search, tags or on your profile. People who saved or follow it keep it.",
+      "public": "Anyone can find it in Read, search, tags and on your profile.",
+      "unlisted": "Only people with the link can read it. It isn’t in Read, search, tags or on your profile. People who saved or follow it keep it.",
       "private": "Only you can read it, even after you publish chapters. Nobody is told about new chapters."
     }
   },
@@ -289,7 +289,7 @@
     "rating": "Rating",
     "required": "(required)",
     "ratingNoteAllAges": "Anyone can find and read it. Pick 13+, 16+ or 18+ if your story isn’t right for younger readers; it’s then hidden from anyone younger.",
-    "ratingNoteHidden": "Hidden from anyone under {{age}}, in search, on Discover and on your profile. Readers see the rating before they open the story.",
+    "ratingNoteHidden": "Hidden from anyone under {{age}}, in search, on Read and on your profile. Readers see the rating before they open the story.",
     "ratingUnderSixteen": "Writers under 16 can rate a story All ages or 13+.",
     "guide": {
       "all_ages": {

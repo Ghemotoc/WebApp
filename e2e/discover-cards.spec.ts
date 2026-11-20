@@ -89,7 +89,7 @@ test.describe('Discover greeting, cards and five shelves (S1-E5-12)', () => {
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(
       /^(Good (morning|afternoon|evening), .+\.|Happy .+!)$/,
     );
-    await expect(page.getByText(/^Discover · /)).toBeVisible();
+    await expect(page.getByText(/^Read · /)).toBeVisible();
     const dashboard = page.getByRole('complementary', { name: 'Dashboard' });
     const continueCard = dashboard.getByRole('link', { name: /Farul de pe dig/ });
     await expect(continueCard).toContainText('Chapter 1 of 2');

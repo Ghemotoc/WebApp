@@ -3,10 +3,9 @@
  * every signed-in board draws it before "Write").
  *
  * Look (bundle G4 SHELL; handoff "App header and tab bar": bell 44 px, a mark when something is
- * new): a clear 44 px round button with the line bell in ink. The board marks unread with a dot;
- * the story asks for the count, so the mark is a small bubble with the number, in the theme's
- * "on" colour (the accent by day, pale at night) with its tested text (docs/board-fixes.md). Its
- * accessible name says the number too ("Notifications, 3 new"), so it never relies on the picture.
+ * new): a clear 44 px round button with the line bell in ink. Something new shows one 8 px dot in
+ * the thread colour, never a number badge (the simplified design, bundle CALM-2; TopBar/README.md);
+ * the count lives in the accessible name ("Notifications, 3 new"), so it never relies on the dot.
  * Who shows it: AppLayout, in the top bar's end slot and the phone header, only while signed in.
  * Where it goes: /notifications. What it calls: hooks/useUnreadNotificationCount.ts (every minute
  * and on focus). Its words are in common.json (nav.notifications…), because the bell is on every
@@ -19,9 +18,6 @@ import { NavIcon } from '@/components/icons/NavIcon';
 
 import { useUnreadNotificationCount } from '../hooks/useUnreadNotificationCount';
 
-/** Above this the badge says "99+", so it stays small. */
-const largestShownCount = 99;
-
 /**
  * Renders the bell.
  *
@@ -31,7 +27,6 @@ export function NotificationBell() {
   const { t } = useTranslation();
   const { isSignedIn, unreadCount } = useUnreadNotificationCount();
   if (!isSignedIn) return null;
-  const badge = unreadCount > largestShownCount ? `${largestShownCount}+` : String(unreadCount);
   return (
     <NavLink
       to="/notifications"
@@ -46,10 +41,9 @@ export function NotificationBell() {
       {unreadCount > 0 && (
         <span
           aria-hidden="true"
-          className="absolute top-0 right-0 inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-chip-on px-1 text-[11px] leading-none font-bold text-chip-on-text"
-        >
-          {badge}
-        </span>
+          data-new-dot
+          className="absolute top-2.5 right-2.5 size-2 rounded-full bg-thread"
+        />
       )}
     </NavLink>
   );

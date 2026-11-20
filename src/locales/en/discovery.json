@@ -1,14 +1,14 @@
 {
   "discover": {
-    "documentTitle": "Discover · {{productName}}",
-    "eyebrow": "Discover",
+    "documentTitle": "Read · {{productName}}",
+    "eyebrow": "Read",
     "heading": "Find the next story",
     "intro": "New chapters from writers on {{productName}}, by category and tag. Nothing here is picked from what you read.",
     "loadFailed": "We couldn’t load the stories. Check your connection and try again.",
     "empty": "No stories are published yet. Be the first: start writing.",
     "writeLink": "Start writing",
     "howRanking": "How ranking works",
-    "eyebrowDated": "Discover · {{date}}"
+    "eyebrowDated": "Read · {{date}}"
   },
   "lists": {
     "following": "New from writers you follow",
@@ -58,7 +58,7 @@
     "documentTitle": "{{title}} · {{productName}}",
     "eyebrow": "See all",
     "breadcrumb": "Where you are",
-    "discover": "Discover",
+    "discover": "Read",
     "count_one": "{{count}} story",
     "count_few": "{{count}} stories",
     "count_other": "{{count}} stories",

@@ -227,7 +227,7 @@ test.describe('fixes from the staging check (17 Oct 2026)', () => {
     await page.goto('/some/page/that/does/not/exist');
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('We can’t find that page');
     await expect(page.getByRole('link', { name: /^Search / })).toHaveAttribute('href', '/search');
-    await page.getByRole('link', { name: 'Go to Discover' }).click();
+    await page.getByRole('link', { name: 'Go to Read' }).click();
     await expect(page).toHaveURL('/discover');
   });
 });

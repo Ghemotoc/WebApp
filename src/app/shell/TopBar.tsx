@@ -4,14 +4,15 @@
  * "Website top bar: recessed track, water bubble on the current page, search, Write, bell, avatar";
  * canvas Discover.web board).
  *
- * From left to right: the logo and wordmark (BrandMark, in the theme's accent), the main links in a
- * recessed track with the white water bubble under the page on screen (NavTrack), the search pill
- * (HeaderSearch), then the end slot: Write, the bell and the account bead, or the one
- * "Get in" button for a visitor (GETIN-1). The pill wraps onto a second row when a window is only just wide
+ * From left to right (the simplified design, bundle CALM-2): the logo and wordmark (BrandMark), one
+ * link named "<brand name>, Home"; Home, Read, Library and Together in a recessed track with the
+ * white bubble under the page on screen (NavTrack); the search field (HeaderSearch); then the end
+ * slot: the quiet Write button, Messages and Notifications as icon buttons and the account avatar,
+ * or the one "Get in" button for a visitor (GETIN-1). The pill wraps onto a second row when a window is only just wide
  * enough, so nothing is cut off. Day and night, and the language, live in the footer and in
  * Settings, never here (handoff; Robert, 9 Nov 2026, 12:20 UTC, bundle FIX-3). Below 1024 px AppLayout draws PhoneHeader or FocusHeader instead.
- * Decisions: links appear only when their page exists (src/app/navigation.ts). Messages, with its
- * unread count, comes in through navigationEnd while signed in (S1-E9-01).
+ * Decisions: links appear only when their page exists (src/app/navigation.ts). Messages is an icon
+ * button in the end slot since CALM-2 (it was a link in the track, S1-E9-01).
  * Two sizes, as on the main website (GLASS-3; Robert, 11 Nov 2026): at the top of a page the pill
  * sits a little lower, a little taller and more see-through (the website's .lg-light glass); once
  * the page scrolls more than 12 px it moves up, tightens and turns nearly solid, so its links stay
@@ -25,6 +26,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
 import { primaryNavigation, type NavigationItem } from '@/app/navigation';
+import { brand } from '@/config/brand';
 import { BrandMark } from '@/features/branding/components/BrandMark';
 import { useHomeAddress } from '@/features/hub/hooks/useHomeAddress';
 
@@ -39,7 +41,7 @@ export interface TopBarProps {
   endSlot?: ReactNode;
   /** The navigation's accessible name; a specimen on /design passes its own so it isn't a second "Main". */
   navigationLabel?: string;
-  /** Links after the list that decide themselves whether to show, such as Messages while signed in (S1-E9-01). */
+  /** Links after the list that decide themselves whether to show (the /design specimen's extras). */
   navigationEnd?: ReactNode;
   /** The search pill; the /design specimen leaves it out so the page has one search region. */
   hasSearch?: boolean;
@@ -77,6 +79,7 @@ export function TopBar({
       >
         <Link
           to={homeAddress}
+          aria-label={t('shell.home', { productName: brand.productName })}
           className="inline-flex min-h-11 items-center font-heading text-[22px] font-extrabold tracking-[-0.01em] text-heading no-underline"
         >
           <BrandMark />

@@ -28,7 +28,7 @@
   "space": {
     "eyebrow": "Space · run by members",
     "breadcrumb": "Where you are",
-    "forums": "Forums",
+    "forums": "Together",
     "members_one": "{{count, number}} member",
     "members_few": "{{count, number}} members",
     "members_other": "{{count, number}} members",
@@ -456,7 +456,7 @@
     "step2Title": "They create a space and pick “Class space”",
     "step2Text": "Same form as any space. The class space is private and comes with an invite code.",
     "step3Title": "Students join with the code",
-    "step3Text": "The teacher writes the code on the board or shares the link. Students type it in Forums › Join a class.",
+    "step3Text": "The teacher writes the code on the board or shares the link. Students type it in Together › Join a class.",
     "yearEndTitle": "When the school year ends",
     "yearEndText": "At the end of the school year the space locks, so nobody can post any more. Every member can still read it for as long as they have an account, and you keep your own stories and drafts.",
     "locksOn": "It locks on {{date}}.",

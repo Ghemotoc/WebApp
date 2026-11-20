@@ -13,9 +13,9 @@
     "footerNavigation": "Subsol",
     "madeBy": "O aplicație de la {{companyName}}",
     "search": "Caută",
-    "searchLabel": "Caută povești, scriitori și etichete",
+    "searchLabel": "Caută povești, scriitori și în Împreună",
     "back": "Înapoi",
-    "home": "Pagina principală {{productName}}",
+    "home": "{{productName}}, Acasă",
     "accountTools": "Notificări, conversații și cont",
     "focus": {
       "signUp": "Înscrie-te",
@@ -35,9 +35,9 @@
   },
   "nav": {
     "home": "Acasă",
-    "discover": "Descoperă",
+    "read": "Citește",
     "library": "Biblioteca",
-    "forums": "Forumuri",
+    "together": "Împreună",
     "messages": "Mesaje",
     "messagesUnread_one": "Mesaje, {{count}} conversație cu mesaje noi",
     "messagesUnread_few": "Mesaje, {{count}} conversații cu mesaje noi",
@@ -50,7 +50,7 @@
     "editProfile": "Editează profilul",
     "settings": "Setări",
     "resources": "Resurse",
-    "accountWithInitials": "Cont, {{initials}}",
+    "account": "Cont și setări",
     "logOut": "Deconectare",
     "logOutFailed": "Nu te-am putut deconecta. Verifică-ți conexiunea și încearcă din nou.",
     "contact": "Companie și contacte legale",
@@ -84,8 +84,8 @@
     "settingsLegend": "Limba interfeței",
     "settingsNote": "Înainte de conectare, site-ul se deschide în limba țării din care este vizitat: română în România și în Republica Moldova, engleză în rest. Meniul de limbă este în josul paginii. Poveștile au limba lor, aleasă de autor.",
     "readingHeading": "Limbile în care citesc",
-    "readingIntro": "Listele de povești din Descoperă și de pe paginile de genuri arată povești în aceste limbi. Dacă nu bifezi niciuna, citești în {{interface}} și în engleză.",
-    "readingIntroEnglish": "Listele de povești din Descoperă și de pe paginile de genuri arată povești în aceste limbi. Dacă nu bifezi niciuna, citești în engleză.",
+    "readingIntro": "Listele de povești din Citește și de pe paginile de genuri arată povești în aceste limbi. Dacă nu bifezi niciuna, citești în {{interface}} și în engleză.",
+    "readingIntroEnglish": "Listele de povești din Citește și de pe paginile de genuri arată povești în aceste limbi. Dacă nu bifezi niciuna, citești în engleză.",
     "readingLegend": "Limbile în care citesc",
     "readingSave": "Salvează",
     "readingSaving": "Se salvează…",
@@ -123,10 +123,10 @@
   "notFound": {
     "documentTitle": "Pagina nu a fost găsită",
     "heading": "Nu găsim pagina asta",
-    "body": "Poate a fost mutată sau povestea a devenit privată. Încearcă o căutare sau întoarce-te la Descoperă.",
+    "body": "Poate a fost mutată sau povestea a devenit privată. Încearcă o căutare sau întoarce-te la Citește.",
     "eyebrow": "Eroare 404",
     "search": "Caută pe {{productName}}",
-    "goDiscover": "Mergi la Descoperă"
+    "goDiscover": "Mergi la Citește"
   },
   "errorPage": {
     "documentTitle": "A apărut o problemă",
