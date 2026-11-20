@@ -465,12 +465,6 @@
     --browser-bar: #1d244f;
   }
 }
-/* High contrast at night and the staff area draw no galaxy: their bars stay their flat page colour. */
-[data-contrast='more'] [data-theme='night'],
-[data-contrast='more'][data-theme='night'],
-[data-theme='night'] [data-area='staff'] {
-  --browser-bar: var(--paper);
-}
 
 /*
  * Looks (bundle G2 THEMES; handoff "Design tokens and themes", "Themes" and "Accent colour per
@@ -841,6 +835,8 @@
      cobalt main buttons (bundle NIGHT-1; Robert, 8 Nov 2026: "every theme, members, staff"). */
   --logo: #f5f5f5;
   --paper: #111113;
+  /* No galaxy here, so the phone's bars keep the flat page colour (CALM-1). */
+  --browser-bar: #111113;
   --surface: #1f1f21;
   --surface-glass: #1f1f21;
   --tint: #2a2a2d;
@@ -1041,6 +1037,8 @@
 [data-contrast='more'] [data-theme='night'],
 [data-contrast='more'][data-theme='night'] {
   --paper: #000000;
+  /* No galaxy in high contrast, so the phone's bars stay plain black (CALM-1). */
+  --browser-bar: #000000;
   --surface: #000000;
   --surface-glass: #000000;
   --tint: #262626;
@@ -1217,6 +1215,7 @@
 [data-contrast='more'][data-theme='night'] [data-area='staff'] {
   --logo: #ffffff;
   --paper: #000000;
+  --browser-bar: #000000;
   --surface: #000000;
   --surface-glass: #000000;
   --tint: #262626;
