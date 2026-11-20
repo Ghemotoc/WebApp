@@ -16,7 +16,7 @@
     "searchLabel": "Search stories, writers and Together",
     "back": "Back",
     "home": "{{productName}}, Home",
-    "accountTools": "Notifications, chats and account",
+    "accountTools": "Chats, notifications and account",
     "focus": {
       "signUp": "Join",
       "logIn": "Log in",
@@ -50,7 +50,7 @@
     "editProfile": "Edit profile",
     "settings": "Settings",
     "resources": "Resources",
-    "account": "Account and settings",
+    "accountWithInitials": "Account and settings, {{initials}}",
     "logOut": "Log out",
     "logOutFailed": "We couldn’t log you out. Check your connection and try again.",
     "contact": "Company and legal contacts",

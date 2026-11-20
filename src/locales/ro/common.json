@@ -16,7 +16,7 @@
     "searchLabel": "Caută povești, scriitori și în Împreună",
     "back": "Înapoi",
     "home": "{{productName}}, Acasă",
-    "accountTools": "Notificări, conversații și cont",
+    "accountTools": "Conversații, notificări și cont",
     "focus": {
       "signUp": "Înscrie-te",
       "logIn": "Conectare",
@@ -50,7 +50,7 @@
     "editProfile": "Editează profilul",
     "settings": "Setări",
     "resources": "Resurse",
-    "account": "Cont și setări",
+    "accountWithInitials": "Cont și setări, {{initials}}",
     "logOut": "Deconectare",
     "logOutFailed": "Nu te-am putut deconecta. Verifică-ți conexiunea și încearcă din nou.",
     "contact": "Companie și contacte legale",
