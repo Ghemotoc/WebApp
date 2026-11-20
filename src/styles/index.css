@@ -322,7 +322,8 @@
    * Body text is Inter at 15 px with a 1.5 line height (handoff: --font-ui).
    */
   html {
-    background-color: var(--paper);
+    /* --browser-bar is set only at night, where it is the night sky's edge colour (tokens.css). */
+    background-color: var(--browser-bar, var(--paper));
     color: var(--ink);
     font-family: var(--font-body);
   }

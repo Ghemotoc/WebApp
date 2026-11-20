@@ -115,13 +115,16 @@
   // before that, the plain day or night page colour for the theme chosen above.
   function pageColourNow() {
     const staffArea = document.querySelector('[data-area="staff"]');
-    const fromTokens = window
-      .getComputedStyle(staffArea || document.documentElement)
-      .getPropertyValue('--paper')
-      .trim();
+    const style = window.getComputedStyle(staffArea || document.documentElement);
+    // At night --browser-bar is the night sky's dark blue edge (tokens.css); elsewhere it is unset.
+    const barColour = style.getPropertyValue('--browser-bar').trim();
+    if (barColour !== '') return barColour;
+    const fromTokens = style.getPropertyValue('--paper').trim();
     if (fromTokens !== '') return fromTokens;
     const isNight = document.documentElement.getAttribute('data-theme') === 'night';
-    return isNight ? '#111113' : '#f3eefb';
+    if (!isNight) return '#f3eefb';
+    // Before the style sheet: the night sky's edge, as in tokens.css (phones under 1024 px).
+    return window.matchMedia('(max-width: 1023px)').matches ? '#1d244f' : '#0e1538';
   }
 
   // Step 2: both metas get it, because the member's choice beats the device's light or dark

@@ -29,6 +29,12 @@ export const THEME_COLOUR_META_SELECTOR = 'meta[name="theme-color"]';
 /** The page colour token in src/styles/tokens.css. */
 export const PAGE_COLOUR_TOKEN = '--paper';
 
+/**
+ * The bar colour token in src/styles/tokens.css: set only at night, where the galaxy's dark blue
+ * edge, not --paper, is what the member sees next to the bars (Robert, 20 Nov 2026, 16:04 UTC).
+ */
+export const BROWSER_BAR_TOKEN = '--browser-bar';
+
 /** The staff area's frame, which paints its own page colour over the member's (StaffLayout). */
 export const STAFF_AREA_SELECTOR = '[data-area="staff"]';
 
@@ -51,7 +57,11 @@ function pageColourElement(): HTMLElement {
  *   the style sheet has not loaded yet
  */
 export function readPageColour(root: HTMLElement = pageColourElement()): string {
-  return getComputedStyle(root).getPropertyValue(PAGE_COLOUR_TOKEN).trim();
+  // The night sky's edge colour wins where tokens.css sets one; every other look uses --paper.
+  const style = getComputedStyle(root);
+  const barColour = style.getPropertyValue(BROWSER_BAR_TOKEN).trim();
+  if (barColour !== '') return barColour;
+  return style.getPropertyValue(PAGE_COLOUR_TOKEN).trim();
 }
 
 /**

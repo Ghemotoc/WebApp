@@ -56,6 +56,40 @@ const dayPaper = paperIn("[data-theme='light']");
 const nightPaper = paperIn("[data-theme='night']");
 
 /**
+ * The night sky's edge colours tokens.css gives the phone's bars at night (--browser-bar): the
+ * first for wide windows, the second for phones and tablets under 1024 px.
+ */
+const nightBarColours = [...tokensCss.matchAll(/--browser-bar:\s*(#[0-9a-f]{6})\s*;/gi)].map(
+  (match) => match[1],
+);
+const nightBarWide = nightBarColours[0] ?? '';
+const nightBarPhone = nightBarColours[1] ?? '';
+
+/** The media query theme-init.js and tokens.css use for phones and tablets. */
+const phoneQuery = '(max-width: 1023px)';
+
+/**
+ * The bar colour the loaded style sheet gives: the night sky's edge at night, except in high
+ * contrast and on the staff area's frame, which draw no galaxy (tokens.css, --browser-bar).
+ *
+ * @param attributes - the attributes theme-init.js set on <html>
+ * @param onStaffFrame - true when the colour is read from the staff area's frame
+ * @param onPhone - true when the device matches the phone media query
+ * @returns the bar colour, or an empty string where tokens.css sets none
+ */
+function barFromTokens(
+  attributes: Record<string, string>,
+  onStaffFrame: boolean,
+  onPhone: boolean,
+): string {
+  if (attributes['data-theme'] !== 'night') return '';
+  if (attributes['data-contrast'] === 'more' || onStaffFrame) {
+    return paperFromTokens(attributes, onStaffFrame);
+  }
+  return onPhone ? nightBarPhone : nightBarWide;
+}
+
+/**
  * The page colour the loaded style sheet gives, as tokens.css works it out for the attributes on
  * <html> (the staff area's own colours on its frame).
  *
@@ -146,10 +180,15 @@ function firstPaintBy(code: string, device: Device): FirstPaint {
     matchMedia: (query: string) => ({ matches: device.matching.includes(query) }),
     // Before the load event the style sheet has not arrived, so --paper reads as empty.
     getComputedStyle: (element: object) => ({
-      getPropertyValue: (name: string) =>
-        styleSheetLoaded && name === '--paper'
-          ? paperFromTokens(attributes, element === staffFrame)
-          : '',
+      getPropertyValue: (name: string) => {
+        if (!styleSheetLoaded) return '';
+        const onStaffFrame = element === staffFrame;
+        if (name === '--paper') return paperFromTokens(attributes, onStaffFrame);
+        if (name === '--browser-bar') {
+          return barFromTokens(attributes, onStaffFrame, device.matching.includes(phoneQuery));
+        }
+        return '';
+      },
     }),
     addEventListener: (type: string, listener: () => void) => {
       if (type === 'load') loadListeners.push(listener);
@@ -257,16 +296,22 @@ describe("public/theme-init.js gives a phone's bars the page colour (CALM-1)", (
     expect(paint.barsAfterLoad).toEqual([dayPaper, dayPaper]);
   });
 
-  it('gives both bars the night page colour for a device in dark mode', () => {
+  it("gives both bars the night sky's edge colour for a device in dark mode", () => {
     const paint = firstPaintBy(written, device('a device in dark mode'));
-    expect(paint.barsBeforeLoad).toEqual([nightPaper, nightPaper]);
-    expect(paint.barsAfterLoad).toEqual([nightPaper, nightPaper]);
+    expect(paint.barsBeforeLoad).toEqual([nightBarWide, nightBarWide]);
+    expect(paint.barsAfterLoad).toEqual([nightBarWide, nightBarWide]);
   });
 
-  it('gives a reader who chose night the night colour on both bars, even on a light phone', () => {
-    const paint = firstPaintBy(written, { stored: { 'theme-preference': 'night' }, matching: [] });
-    expect(paint.barsBeforeLoad).toEqual([nightPaper, nightPaper]);
-    expect(paint.barsAfterLoad).toEqual([nightPaper, nightPaper]);
+  it('gives a reader who chose night the night sky on both bars, even on a light phone', () => {
+    const onPhone = { stored: { 'theme-preference': 'night' }, matching: [phoneQuery] };
+    const paint = firstPaintBy(written, onPhone);
+    expect(paint.barsBeforeLoad).toEqual([nightBarPhone, nightBarPhone]);
+    expect(paint.barsAfterLoad).toEqual([nightBarPhone, nightBarPhone]);
+  });
+
+  it('never gives the night bars black, so they blend into the dark blue sky', () => {
+    expect(nightBarWide).not.toBe(nightPaper);
+    expect(nightBarPhone).not.toBe(nightPaper);
   });
 
   it("gives a look its own page colour once the style sheet has loaded (Sorbet's peach)", () => {
@@ -282,7 +327,7 @@ describe("public/theme-init.js gives a phone's bars the page colour (CALM-1)", (
       Array(2).fill(paperIn("[data-contrast='more'][data-theme='light']")),
     );
     const atNight = firstPaintBy(written, device('remembered choices'));
-    expect(atNight.barsBeforeLoad).toEqual([nightPaper, nightPaper]);
+    expect(atNight.barsBeforeLoad).toEqual([nightBarWide, nightBarWide]);
     expect(atNight.barsAfterLoad).toEqual(
       Array(2).fill(paperIn("[data-contrast='more'][data-theme='night']")),
     );
@@ -324,16 +369,18 @@ describe('the first-paint colours match tokens.css, day and night (CALM-1)', () 
     return meta.exec(indexHtml)?.[1];
   }
 
-  it("names tokens.css's day and night --paper in index.html's two theme-color metas", () => {
+  it("names tokens.css's day --paper and the phone's night sky in index.html's theme-color metas", () => {
     expect(indexHtmlBarColour('light')).toBe(dayPaper);
-    expect(indexHtmlBarColour('dark')).toBe(nightPaper);
+    expect(indexHtmlBarColour('dark')).toBe(nightBarPhone);
   });
 
-  it("uses tokens.css's day and night --paper in theme-init.js before the style sheet loads", () => {
-    // Before the load event the script can only use its own two plain colours.
+  it("uses tokens.css's day --paper and night sky colours in theme-init.js before the style sheet loads", () => {
+    // Before the load event the script can only use its own plain colours.
     expect(firstPaintBy(written, device('a first visit')).barsBeforeLoad[0]).toBe(dayPaper);
     expect(firstPaintBy(written, device('a device in dark mode')).barsBeforeLoad[0]).toBe(
-      nightPaper,
+      nightBarWide,
     );
+    const darkPhone = { stored: {}, matching: ['(prefers-color-scheme: dark)', phoneQuery] };
+    expect(firstPaintBy(written, darkPhone).barsBeforeLoad[0]).toBe(nightBarPhone);
   });
 });

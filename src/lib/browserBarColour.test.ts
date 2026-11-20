@@ -15,6 +15,7 @@ import { applyTheme } from './theme';
 const pageColours = {
   lilacDay: '#f3eefb',
   night: '#111113',
+  nightSky: '#1d244f',
   sorbetDay: '#fff1ea',
   highContrastDay: '#ffffff',
   staffDay: '#f3ece0',
@@ -23,11 +24,11 @@ const pageColours = {
 /** A stand-in for tokens.css: --paper by day, at night, in Sorbet and in high contrast. */
 const tokensStandIn = `
   :root, [data-theme='light'] { --paper: ${pageColours.lilacDay}; }
-  [data-theme='night'] { --paper: ${pageColours.night}; }
+  [data-theme='night'] { --paper: ${pageColours.night}; --browser-bar: ${pageColours.nightSky}; }
   [data-theme='light'][data-look='sorbet'] { --paper: ${pageColours.sorbetDay}; }
   :root[data-contrast='more'][data-theme='light'] { --paper: ${pageColours.highContrastDay}; }
   [data-area='staff'] { --paper: ${pageColours.staffDay}; }
-  [data-theme='night'] [data-area='staff'] { --paper: ${pageColours.night}; }
+  [data-theme='night'] [data-area='staff'] { --paper: ${pageColours.night}; --browser-bar: ${pageColours.night}; }
 `;
 
 /**
@@ -91,11 +92,11 @@ describe('the browser bar colour', () => {
     expect(metas.map((meta) => meta.content)).toEqual([pageColours.lilacDay, pageColours.lilacDay]);
   });
 
-  it('gives a reader in night mode on a light phone the night page colour', () => {
+  it("gives a reader in night mode on a light phone the night sky's dark blue, not black", () => {
     document.documentElement.dataset.theme = 'night';
     matchBrowserBarsToPage();
     // The light device's meta is the one a light phone uses: it must say night too.
-    expect(metas.map((meta) => meta.content)).toEqual([pageColours.night, pageColours.night]);
+    expect(metas.map((meta) => meta.content)).toEqual([pageColours.nightSky, pageColours.nightSky]);
   });
 
   it("gives a look its own page colour, so Sorbet's bars are peach", () => {
@@ -124,7 +125,7 @@ describe('the browser bar colour', () => {
 describe('the bars follow every change of the page colour', () => {
   it('follows the theme when night mode is switched on and off', () => {
     applyTheme('night');
-    expect(metas[0].content).toBe(pageColours.night);
+    expect(metas[0].content).toBe(pageColours.nightSky);
     applyTheme('light');
     expect(metas[0].content).toBe(pageColours.lilacDay);
   });

@@ -450,6 +450,29 @@
 }
 
 /*
+ * The phone browser's own bars at night (Robert, 20 Nov 2026, 16:04 UTC, screenshot: the status
+ * bar and the toolbar showed black over the night sky). The galaxy is dark blue at its edges, not
+ * the #111113 under it, so the bars (src/lib/browserBarColour.ts, public/theme-init.js) and the
+ * page colour on <html> (index.css, seen when a phone over-scrolls) take the sky's own edge
+ * colour: the average of the top 30 px of each galaxy picture, measured at 1440 x 900 and
+ * 390 x 844. Every other look has no --browser-bar and the bars keep --paper.
+ */
+[data-theme='night'] {
+  --browser-bar: #0e1538;
+}
+@media (max-width: 1023px) {
+  [data-theme='night'] {
+    --browser-bar: #1d244f;
+  }
+}
+/* High contrast at night and the staff area draw no galaxy: their bars stay their flat page colour. */
+[data-contrast='more'] [data-theme='night'],
+[data-contrast='more'][data-theme='night'],
+[data-theme='night'] [data-area='staff'] {
+  --browser-bar: var(--paper);
+}
+
+/*
  * Looks (bundle G2 THEMES; handoff "Design tokens and themes", "Themes" and "Accent colour per
  * theme"): the year-round themes a member picks in Settings › Appearance and the seasonal looks.
  * src/lib/looks.ts sets data-look on <html>; each block applies only by day (data-theme="light"),

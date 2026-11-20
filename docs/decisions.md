@@ -513,3 +513,4 @@ These are settled unless you reopen them. Q numbers point to your answers file; 
 | Writers mark the last chapter with a "This is the last chapter" switch when publishing or scheduling; only then do readers see "of 15", and the story turns Completed when that chapter is out | Robert, DESIGN thread, 20 Nov 2026, 12:43 UTC |
 | The chapter title in the reader is set in Literata | Robert, DESIGN thread, 20 Nov 2026, 11:42 UTC |
 | The story page's rating reads "13+", with nothing in brackets | Robert, DESIGN thread, 20 Nov 2026, 12:23 UTC |
+| On phones the top and bottom edges (status bar and browser toolbar) take the page's own colour, never black; at night they take the night sky's dark blue | Robert, Builder thread, 20 Nov 2026, 13:10 and 16:04 UTC |
