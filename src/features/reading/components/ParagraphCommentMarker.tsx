@@ -7,6 +7,10 @@
  * none: a dashed border, no fill and a plus, named "Comment on this paragraph". Open: filled
  * plum with light text. Its name says the count ("3 comments on this paragraph") and
  * aria-expanded says whether the thread is open; the thread spans the row under the paragraph.
+ * While the writer has paused new comments (bundle CALM-8; the design handover's Step 4, point 6),
+ * a count still opens its thread for reading, but a paragraph without comments has no button:
+ * nobody can start a thread there. An empty placeholder keeps its column, so every paragraph keeps
+ * the same width.
  * Plain SVG icons (under 18 px; DoD: no doodles on the chapter reader).
  * Who uses it: ChapterText draws it beside each paragraph when the reader passes it in
  * (paragraphAddon). What it reads: ParagraphCommentsContext (the counts and which thread is
@@ -15,6 +19,7 @@
 import { useContext, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { runningPauseEnd } from '@/lib/comment-pause';
 import { cn } from '@/lib/utils';
 
 import { ParagraphCommentsContext } from '../lib/paragraphCommentsContext';
@@ -71,6 +76,12 @@ export function ParagraphCommentMarker({ block }: { block: number }) {
   const count = comments.counts.byParagraph[block] ?? 0;
   const isOpen = comments.openPlace === block;
   const threadId = `paragraph-thread-${block}`;
+  // CALM-8: during a pause there is nothing to open on a paragraph without comments. The class
+  // keeps the marker's column (.tmc-paragraph-row in index.css), so the text doesn't widen.
+  const isPaused = runningPauseEnd(comments.counts.commentsPausedUntil, new Date()) !== null;
+  if (isPaused && count === 0 && !isOpen) {
+    return <span aria-hidden="true" className="tmc-paragraph-marker" />;
+  }
 
   /** Shuts the thread and gives focus back to the marker. */
   function close() {

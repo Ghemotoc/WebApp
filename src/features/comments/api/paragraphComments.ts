@@ -4,13 +4,15 @@
  * Who calls it: hooks/useParagraphComments.ts.
  * What it calls next: paragraph_comments() (…_s1_e6_06_paragraph_comments.sql), which applies
  * the reader's rules (rating, blocks, moderation) and never answers a user ID. Posting goes
- * through postComment() in api/comments.ts, with the paragraph's number.
+ * through postComment() in api/comments.ts, with the paragraph's number. While the writer has
+ * paused new comments, the thread says until when (CALM-8, api/commentPause.ts).
  */
 import type { AppSupabaseClient } from '@/lib/supabase';
 
 import type { ChapterAddress } from '@/features/reading/api/likes';
 import type { ParagraphPlace } from '@/features/reading/api/paragraphComments';
 
+import { commentPauseFrom, type CommentPause } from './commentPause';
 import { commentFrom, type ChapterComment, type CommentsPageRow } from './comments';
 
 /** One paragraph's thread. */
@@ -19,6 +21,8 @@ export interface ParagraphThread {
   total: number;
   /** False on a followers-only story for someone who doesn't follow the writer (MUST-1a). */
   audienceAllowsMe: boolean;
+  /** The writer's pause of new comments (CALM-8): the paused line replaces the box at the foot. */
+  pause: CommentPause;
   /** Newest first, each with its replies. */
   comments: ChapterComment[];
 }
@@ -49,6 +53,7 @@ export async function fetchParagraphThread(
   return {
     total: row.total,
     audienceAllowsMe: row.audience_allows_me !== false,
+    pause: commentPauseFrom(row),
     comments: row.comments.map(commentFrom),
   };
 }

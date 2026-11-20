@@ -23,13 +23,20 @@ export interface ParagraphCounts {
   byParagraph: Record<number, number>;
   /** Comments left on paragraphs the writer has since changed or taken out. */
   earlier: number;
+  /**
+   * When the writer's pause of new comments ends (CALM-8), or null when none runs: during it a
+   * paragraph without comments shows no marker, as nobody can start a thread there; a count
+   * still opens its thread for reading.
+   */
+  commentsPausedUntil: string | null;
 }
 
-/** The JSON paragraph_comment_counts() answers. */
+/** The JSON paragraph_comment_counts() answers; comments_paused_until only while a pause runs. */
 interface ParagraphCountsRow {
   comments_enabled: boolean;
   paragraphs: { block: number; count: number }[];
   earlier: number;
+  comments_paused_until?: string | null;
 }
 
 /**
@@ -67,5 +74,10 @@ export async function fetchParagraphCounts(
   // Step: the list becomes a lookup by paragraph number, which each marker reads.
   const byParagraph: Record<number, number> = {};
   for (const paragraph of row.paragraphs) byParagraph[paragraph.block] = paragraph.count;
-  return { commentsEnabled: row.comments_enabled, byParagraph, earlier: row.earlier };
+  return {
+    commentsEnabled: row.comments_enabled,
+    byParagraph,
+    earlier: row.earlier,
+    commentsPausedUntil: row.comments_paused_until ?? null,
+  };
 }

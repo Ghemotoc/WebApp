@@ -15,6 +15,7 @@
     "commentsLabel": "Comments",
     "commentsOn": "On",
     "commentsOff": "Off",
+    "commentsPaused": "Paused until {{when}}, Romania time",
     "unavailableTitle": "This story isn’t available",
     "unavailableBody": "It may not be published yet, it may be rated for older readers, it may have been removed, or the link may be wrong.",
     "goHome": "Go to Home",

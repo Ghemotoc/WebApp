@@ -103,3 +103,31 @@ describe('newStorySchema', () => {
     expect(result.success).toBe(false);
   });
 });
+
+describe('storySettingsSchema: pausing new comments (CALM-8)', () => {
+  /** A complete settings answer, with the pause asked for. */
+  function settingsWith(commentPause: unknown) {
+    return storySettingsSchema.safeParse({
+      ...good,
+      completionStatus: 'ongoing',
+      commentsEnabled: true,
+      commentAudience: 'everyone',
+      commentPause,
+      quoteCardsEnabled: true,
+      pictureSharingEnabled: true,
+      cardColour: null,
+      visibility: 'public',
+      isAppOnly: false,
+    });
+  }
+
+  it('takes 24 hours, 3 days, 7 days, off, or nothing asked', () => {
+    for (const choice of ['24h', '3d', '7d', 'off', null]) {
+      expect(settingsWith(choice).success).toBe(true);
+    }
+  });
+
+  it('refuses any other length', () => {
+    expect(settingsWith('2w').success).toBe(false);
+  });
+});

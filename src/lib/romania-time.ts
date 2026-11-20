@@ -209,3 +209,30 @@ export function formatRomaniaShortDate(instant: Date, language: string): string 
   }).format(instant);
   return withShortSeptember(text);
 }
+
+/**
+ * Shows a moment as Romania time with the weekday, the date and the time after a comma:
+ * "Sunday 22 November, 18:40" or "duminică, 22 noiembrie, 18:40" (bundle CALM-8: when a pause of
+ * new comments ends, as the design handover's Step 4 writes it).
+ *
+ * @param instant - the moment
+ * @param language - the interface language ("ro" or "en")
+ * @returns the text, without the zone's name (the sentence around it adds "Romania time")
+ */
+export function formatRomaniaDayAndTime(instant: Date, language: string): string {
+  // Step 1: the weekday and the date, as the Bucharest calendar reads them.
+  const day = new Intl.DateTimeFormat(dateLocaleFor(language), {
+    timeZone: ROMANIA_TIME_ZONE,
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  }).format(instant);
+  // Step 2: the time on the 24-hour clock, as the Bucharest clock reads it.
+  const time = new Intl.DateTimeFormat(dateLocaleFor(language), {
+    timeZone: ROMANIA_TIME_ZONE,
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+  }).format(instant);
+  return `${day}, ${time}`;
+}

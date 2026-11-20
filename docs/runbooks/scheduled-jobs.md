@@ -26,6 +26,7 @@ The database runs a few jobs on a timer with `pg_cron`. Each is a named job, cre
 | `run-retention-jobs` | 03:47 every day | `run_retention_jobs()` | the retention clean-ups: unconfirmed accounts after 7 days, expired exports, removed pictures after 30 days, old staff records, audit rows older than 3 years and daily read and share totals older than 3 years (folded into one total) and reading streak minutes older than 14 days (IDEAS-1b); writes one `retention_runs` row per clean-up | S1-E13-04 |
 | `run-storage-sweep` | 04:17 every day | `run_storage_sweep()` | when files no row points at are due (`storage_files_to_sweep()`), calls the `storage-sweep` Edge Function through pg_net, which deletes them through the Storage API; does nothing while the Vault lacks `storage_sweep_url` or `storage_sweep_key` | S1-E13-04 |
 | `send-reading-reminders` | every 5 minutes | `send_reading_reminders()` | sends one in-app "a few minutes of reading today?" a day to a reader who asked for it and is short of their target at their chosen time, on their own clock; never in quiet hours for under-18s, never by email | IDEAS-1b |
+| `end-comment-pauses` | every 5 minutes | `end_comment_pauses()` | opens new comments again on every story whose writer's pause has run out (`stories.comments_paused_until`), and leaves the writer one quiet `comments_resumed` note in the app (no email, no push); a story deleted or with comments turned off in the meantime gets no note | CALM-8 |
 
 ## See what ran
 

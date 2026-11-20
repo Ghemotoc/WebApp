@@ -12,6 +12,7 @@ import { paragraphHash } from '@/lib/paragraph-link';
 
 import type { AppNotification } from '../api/notifications';
 
+import { commentsResumedText } from './commentsResumedText';
 import { dataRequestNoticeText } from './dataRequestNoticeText';
 import { landingEntriesOpenText } from './landingEntriesOpenText';
 import { assignmentDueText } from './assignmentDueText';
@@ -700,6 +701,7 @@ const teamTextFor: Partial<
   account_unused_week: accountUnusedText,
   account_unused_nudge: accountUnusedText,
   account_unused_closed: accountUnusedClosedText,
+  comments_resumed: commentsResumedText,
 };
 
 /**

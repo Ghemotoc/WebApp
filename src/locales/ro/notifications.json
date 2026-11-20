@@ -43,6 +43,7 @@
     "yourAccount": "Cont:",
     "yourLibrary": "Bibliotecă:",
     "reminder": "Memento:",
+    "story": "Poveste:",
     "rank": "Rang:",
     "ourTeam": "Echipa:"
   },
@@ -98,6 +99,7 @@
     "rankReached": "acum ai rangul {{rank}}. Felicitări!",
     "spaceHandoverOffered": "ți-a oferit {{space}}. Deschide-l ca să accepți sau să refuzi.",
     "storyFeatured": "povestea ta „{{story}}” este printre Recomandatele săptămânii, pe Descoperă.",
+    "commentsResumed": "comentariile noi sunt din nou deschise la „{{story}}”.",
     "spotlightAgreed": "părintele sau tutorele tău a fost de acord să te recomandăm, pe tine și poveștile tale, altor cititori.",
     "spotlightWithdrawn": "nu te mai recomandăm altor cititori, nici poveștile tale, pentru că acordul părintelui sau tutorelui tău a fost retras.",
     "waitlistAdmitted": "ți-a venit rândul pe lista de așteptare și contul tău e deschis. Bine ai venit!",

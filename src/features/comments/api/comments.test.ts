@@ -1,5 +1,5 @@
 /**
- * Unit tests for commentErrorFrom (story S1-E6-01; MUST-1a, who can comment).
+ * Unit tests for commentErrorFrom (story S1-E6-01; MUST-1a, who can comment; CALM-8, the pause).
  * Who runs it: `npm test`. What it proves: each database refusal becomes the failure the composer
  * explains, and a followers-only refusal is told apart from an account that can't comment yet.
  */
@@ -20,6 +20,15 @@ describe('commentErrorFrom', () => {
 
   it('comments switched off', () => {
     expect(commentErrorFrom({ code: '55000' }).failure).toBe('comments_off');
+  });
+
+  it('new comments paused by the writer, with when they open again (CALM-8)', () => {
+    const error = commentErrorFrom({
+      code: '55000',
+      hint: 'paused_until:2026-11-22T16:40:00+00:00',
+    });
+    expect(error.failure).toBe('paused');
+    expect(error.pausedUntil).toBe('2026-11-22T16:40:00+00:00');
   });
 
   it('the comment limit, with the minutes to wait', () => {
