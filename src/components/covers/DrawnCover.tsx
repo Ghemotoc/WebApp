@@ -9,10 +9,14 @@
  *   - Dark or light title text is chosen so it always reaches 4.5:1 on its surface.
  *   - On a patterned design the words sit on a solid box, so no line crosses them (FIXES-1b;
  *     titleSurfaceFor() in coverDesigns.ts).
- * Board values (NewStory 4.2, the `cover()` sizes): tile (in the picker) 6 px padding, 8 px
- * radius, 12 px title; preview 14 px padding, 16 px radius, 21 px title; card 22 px padding,
- * 16 px radius, 28 px title. The story card on shelves uses 18 px padding and a 21 px title
- * (Discover board). The artwork is drawn on a 100 × 160 canvas and scaled to the box.
+ * Board values (NewStory 4.2, the `cover()` sizes): tile (in the picker) 6 px padding, 12 px
+ * title; preview 14 px padding, 21 px title; card 22 px padding, 28 px title. The story card on
+ * shelves uses 18 px padding and a 21 px title (Discover board). The artwork is drawn on a
+ * 100 × 160 canvas and scaled to the box.
+ * Corners and edge (the simplified design, Robert, 20 Nov 2026; bundle CALM-1): every cover has
+ * 4 px corners at every size (--radius-cover, rounded-cover) and a 1 px hairline just inside its
+ * edge (the cover-edge utility in index.css), with no shadow. They replace the boards' 8 and 16 px
+ * corners and the darker 1 px border.
  * Who uses it: StoryCard (shelves), DrawnCoverPicker and StoryPreviewAside (the new story form),
  * WriterStoryCard (Your writing), and later the story page and the teaser.
  */
@@ -33,17 +37,28 @@ import {
 /** The sizes a drawn cover is shown at, with the board's values for each. */
 export type DrawnCoverSize = 'tile' | 'preview' | 'card' | 'shelf' | 'wall';
 
-/** Padding, radius, title size, pen name size and the accent bar for each size. */
+/**
+ * Padding, the corner of the solid box behind the words, title size, pen name size and the accent
+ * bar for each size. The cover's own corners are the same 4 px at every size (rounded-cover), so
+ * they are not in this table. wordsBoxRadius keeps the words box exactly as it was before CALM-1
+ * (half the boards' old cover corner); the cover kinds in bundle CALM-4 redraw that box.
+ */
 const sizeValues: Record<
   DrawnCoverSize,
-  { padding: number; radius: number; title: number; penName: number; bar: [number, number] }
+  {
+    padding: number;
+    wordsBoxRadius: number;
+    title: number;
+    penName: number;
+    bar: [number, number];
+  }
 > = {
-  tile: { padding: 6, radius: 8, title: 12, penName: 10, bar: [14, 2] },
-  preview: { padding: 14, radius: 16, title: 21, penName: 13, bar: [40, 3] },
-  card: { padding: 22, radius: 16, title: 28, penName: 13, bar: [52, 3] },
-  shelf: { padding: 18, radius: 16, title: 21, penName: 13, bar: [40, 3] },
+  tile: { padding: 6, wordsBoxRadius: 4, title: 12, penName: 10, bar: [14, 2] },
+  preview: { padding: 14, wordsBoxRadius: 8, title: 21, penName: 13, bar: [40, 3] },
+  card: { padding: 22, wordsBoxRadius: 8, title: 28, penName: 13, bar: [52, 3] },
+  shelf: { padding: 18, wordsBoxRadius: 8, title: 21, penName: 13, bar: [40, 3] },
   // The home page's cover wall (board Website-Home, LOOK-2): its title shrinks with the screen.
-  wall: { padding: 12, radius: 16, title: 20, penName: 12, bar: [28, 3] },
+  wall: { padding: 12, wordsBoxRadius: 8, title: 20, penName: 12, bar: [28, 3] },
 };
 
 /**
@@ -135,7 +150,7 @@ function CoverWords({
       : {
           backgroundColor: boxFill,
           padding: `${values.padding / 2}px ${values.padding * 0.7}px`,
-          borderRadius: values.radius / 2,
+          borderRadius: values.wordsBoxRadius,
           alignSelf: 'flex-start',
           maxWidth: '100%',
         };
@@ -176,7 +191,9 @@ function CoverWords({
 
 /**
  * Renders the cover: the background, the artwork, then the words at the bottom. The box keeps
- * a 5:8 shape; give it a width or height with className.
+ * a 5:8 shape (the boards draw 2:3, but uploads and the picture check use 5:8, so the shape stays
+ * an open question); give it a width or height with className. It has 4 px corners and the
+ * hairline edge, and casts no shadow (the simplified design, CALM-1).
  *
  * @returns the cover
  */
@@ -194,13 +211,12 @@ export function DrawnCover({
       aria-hidden={isDecorative ? 'true' : undefined}
       data-cover-design={choice.design}
       className={cn(
-        'relative box-border flex aspect-[5/8] flex-col justify-end overflow-hidden border border-[rgba(38,20,46,0.14)]',
+        'cover-edge relative box-border flex aspect-[5/8] flex-col justify-end overflow-hidden rounded-cover',
         className,
       )}
       style={{
         backgroundColor: coverPalette[choice.background],
         padding: values.padding,
-        borderRadius: values.radius,
       }}
     >
       <CoverArtwork choice={choice} />

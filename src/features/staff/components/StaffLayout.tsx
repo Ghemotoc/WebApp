@@ -14,7 +14,8 @@
  * own as well: every staff read and write goes through policies and admin_* functions that ask
  * staff_may(); this frame only keeps a member from seeing empty staff screens.
  * What it calls: useMyStaffAccess, staffAreas.ts (which areas have a page), StaffSideMenu,
- * StaffAccessRefused, StaffWorkspaceSignIn and StaffSessionEnded.
+ * StaffAccessRefused, StaffWorkspaceSignIn, StaffSessionEnded and StaffBrowserBars (the phone's
+ * bars in the staff area's page colour, CALM-1).
  */
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router';
@@ -32,6 +33,7 @@ import { registerStaffTranslations } from '../registerStaffTranslations';
 import { pagesForAreas } from '../staffAreas';
 
 import { StaffAccessRefused } from './StaffAccessRefused';
+import { StaffBrowserBars } from './StaffBrowserBars';
 import { StaffFooter } from './StaffFooter';
 import { StaffSessionEnded } from './StaffSessionEnded';
 import { StaffSideMenu } from './StaffSideMenu';
@@ -108,8 +110,9 @@ export function StaffLayout() {
       >
         {t('shell.skipToContent')}
       </a>
-      {/* The approved emblem in the browser tab (BRAND-1b). */}
+      {/* The approved emblem in the tab (BRAND-1b); the phone's bars in staff colours (CALM-1). */}
       <BrandTabIcon />
+      <StaffBrowserBars />
       <StaffBar
         staffName={access.handle === null ? tStaff('shell.noHandle') : `@${access.handle}`}
         roleLabel={roleLabel(access.roles, tStaff)}

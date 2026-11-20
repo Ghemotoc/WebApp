@@ -65,12 +65,16 @@ export function CoverUploadField({ storyId, onUploaded }: CoverUploadFieldProps)
   }, [uploadedPath, onUploaded]);
   return (
     <div className="flex flex-col gap-4 rounded-[14px] bg-panel p-4 sm:flex-row sm:items-start">
+      {/* The preview has the cover's 4 px corners and hairline edge (the simplified design,
+          CALM-1). An <img> can't hold the hairline itself, so a box around it carries it. */}
       {preview !== null && (
-        <img
-          src={preview}
-          alt={t('pictures.coverPreview')}
-          className="aspect-[5/8] w-[120px] shrink-0 rounded-[16px] border border-border object-cover"
-        />
+        <span className="cover-edge relative block w-[120px] shrink-0 overflow-hidden rounded-cover">
+          <img
+            src={preview}
+            alt={t('pictures.coverPreview')}
+            className="block aspect-[5/8] w-full object-cover"
+          />
+        </span>
       )}
       <div className="flex min-w-0 flex-1 flex-col gap-2">
         <PictureUploadField

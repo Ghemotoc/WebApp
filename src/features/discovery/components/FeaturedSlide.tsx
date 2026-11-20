@@ -29,7 +29,9 @@ export interface FeaturedSlideProps {
 }
 
 /**
- * The tilted cover (board: the slide's cover, 210 by 300 px, turned 3 degrees).
+ * The tilted cover (board: the slide's cover, 210 by 300 px, turned 3 degrees). Since the
+ * simplified design (Robert, 20 Nov 2026; bundle CALM-1) it has the cover's 4 px corners and casts
+ * no shadow, like every cover; the band itself is redrawn with the Read page (CALM-7).
  *
  * @returns the decorative cover
  */
@@ -46,7 +48,7 @@ function TiltedCover({ story }: { story: ListedStory }) {
   );
   return (
     <div aria-hidden="true" className="flex flex-[0_0_210px] justify-center max-sm:hidden">
-      <span className="block w-[210px] rotate-[3deg] overflow-hidden rounded-[22px] shadow-[0_30px_60px_rgba(20,10,30,0.3)]">
+      <span className="block w-[210px] rotate-[3deg] overflow-hidden rounded-cover">
         <StoryCoverArt story={story} drawn={drawn} className="w-[210px]" />
       </span>
     </div>

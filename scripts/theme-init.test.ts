@@ -1,12 +1,16 @@
 /**
  * Tests public/theme-init.js, the script that marks <html> before the page draws, as written and
- * as the build shrinks it (vite.config.ts, shrinkThemeInitPlugin; bundle CONTRAST-1).
+ * as the build shrinks it (vite.config.ts, shrinkThemeInitPlugin; bundle CONTRAST-1), and the
+ * colour it gives a phone browser's own bars (bundle CALM-1).
  *
  * Why here: the file is plain JavaScript outside src/, loaded by index.html, so nothing imports
  * it. This test runs its text against a pretend window and document, in plain Node.
- * What it proves: the written file and the shrunk file set the same attributes, for a first
- * visit, for remembered choices (night, a look, less motion, high contrast), for a device that
- * asks for dark mode or more contrast, and when storage is blocked.
+ * What it proves: the written file and the shrunk file set the same attributes and the same bar
+ * colours, for a first visit, for remembered choices (night, a look, less motion, high contrast),
+ * for a device that asks for dark mode or more contrast, and when storage is blocked; both
+ * theme-color metas get the page colour before the style sheet loads and once it has; a page
+ * without the metas is left alone; and the plain first-paint colours in index.html and
+ * theme-init.js are the day and night --paper of src/styles/tokens.css.
  */
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -14,29 +18,158 @@ import { fileURLToPath } from 'node:url';
 import { minifySync } from 'vite';
 import { describe, expect, it } from 'vitest';
 
-const written = readFileSync(
-  fileURLToPath(new URL('../public/theme-init.js', import.meta.url)),
-  'utf8',
-);
-const shrunk = minifySync('theme-init.js', written);
+/**
+ * Reads a file of the project as text.
+ *
+ * @param path - the file's path from the project's root
+ * @returns the file's text
+ */
+function projectFile(path: string): string {
+  return readFileSync(fileURLToPath(new URL(`../${path}`, import.meta.url)), 'utf8');
+}
 
-/** What one pretend device remembers and asks for. */
+const written = projectFile('public/theme-init.js');
+const shrunk = minifySync('theme-init.js', written);
+const tokensCss = projectFile('src/styles/tokens.css');
+const indexHtml = projectFile('index.html');
+
+/**
+ * Reads --paper from one block of tokens.css.
+ *
+ * @param selector - the block's last selector line, exactly as written, for example
+ *   [data-theme='night']
+ * @returns the block's page colour, "#rrggbb"
+ * Errors: throws when tokens.css has no such block, or the block sets no --paper.
+ */
+function paperIn(selector: string): string {
+  const escapedSelector = selector.replace(/[[\]]/g, '\\$&');
+  const startIndex = tokensCss.search(new RegExp(`(^|\\n)${escapedSelector}\\s*\\{`));
+  if (startIndex === -1) throw new Error(`tokens.css has no ${selector} block.`);
+  const block = tokensCss.slice(startIndex, tokensCss.indexOf('\n}', startIndex));
+  const paper = /--paper:\s*(#[0-9a-f]{6})\s*;/i.exec(block)?.[1];
+  if (paper === undefined) throw new Error(`The ${selector} block sets no --paper.`);
+  return paper;
+}
+
+/** The page colours tokens.css gives by day and at night, in Lilac mist (the default look). */
+const dayPaper = paperIn("[data-theme='light']");
+const nightPaper = paperIn("[data-theme='night']");
+
+/**
+ * The night sky's edge colours tokens.css gives the phone's bars at night (--browser-bar): the
+ * first for wide windows, the second for phones and tablets under 1024 px.
+ */
+const nightBarColours = [...tokensCss.matchAll(/--browser-bar:\s*(#[0-9a-f]{6})\s*;/gi)].map(
+  (match) => match[1],
+);
+const nightBarWide = nightBarColours[0] ?? '';
+const nightBarPhone = nightBarColours[1] ?? '';
+
+/** The media query theme-init.js and tokens.css use for phones and tablets. */
+const phoneQuery = '(max-width: 1023px)';
+
+/**
+ * The bar colour the loaded style sheet gives: the night sky's edge at night, except in high
+ * contrast and on the staff area's frame, which draw no galaxy (tokens.css, --browser-bar).
+ *
+ * @param attributes - the attributes theme-init.js set on <html>
+ * @param onStaffFrame - true when the colour is read from the staff area's frame
+ * @param onPhone - true when the device matches the phone media query
+ * @returns the bar colour, or an empty string where tokens.css sets none
+ */
+function barFromTokens(
+  attributes: Record<string, string>,
+  onStaffFrame: boolean,
+  onPhone: boolean,
+): string {
+  if (attributes['data-theme'] !== 'night') return '';
+  if (attributes['data-contrast'] === 'more' || onStaffFrame) {
+    return paperFromTokens(attributes, onStaffFrame);
+  }
+  return onPhone ? nightBarPhone : nightBarWide;
+}
+
+/**
+ * The page colour the loaded style sheet gives, as tokens.css works it out for the attributes on
+ * <html> (the staff area's own colours on its frame).
+ *
+ * @param attributes - the attributes theme-init.js set on <html>
+ * @param onStaffFrame - true when the colour is read from the staff area's frame
+ * @returns the page colour, "#rrggbb"
+ */
+function paperFromTokens(attributes: Record<string, string>, onStaffFrame: boolean): string {
+  const isNight = attributes['data-theme'] === 'night';
+  const area = onStaffFrame ? " [data-area='staff']" : '';
+  if (attributes['data-contrast'] === 'more') {
+    if (onStaffFrame)
+      return paperIn(
+        isNight
+          ? `[data-contrast='more'][data-theme='night']${area}`
+          : `[data-contrast='more']${area}`,
+      );
+    return paperIn(`[data-contrast='more'][data-theme='${isNight ? 'night' : 'light'}']`);
+  }
+  if (isNight) return paperIn(`[data-theme='night']${area}`);
+  if (onStaffFrame) return paperIn("[data-area='staff']");
+  const look = attributes['data-look'] ?? 'lilac';
+  return look === 'lilac' ? dayPaper : paperIn(`[data-look-swatch='${look}']`);
+}
+
+/** What one pretend device remembers and asks for, and the page it opens. */
 interface Device {
   /** localStorage contents; null means storage is blocked and every read throws. */
   stored: Record<string, string> | null;
   /** The media queries that are true on this device. */
   matching: string[];
+  /** False for a page without theme-color metas (true when left out). */
+  hasMetas?: boolean;
+  /** True for a staff page, whose frame paints its own page colour (false when left out). */
+  isStaffPage?: boolean;
+}
+
+/** What the script did to one pretend page. */
+interface FirstPaint {
+  /** The attributes the script set on <html>. */
+  attributes: Record<string, string>;
+  /** Both metas' colours before the style sheet has loaded (empty without metas). */
+  barsBeforeLoad: string[];
+  /** Both metas' colours once the page has loaded (empty without metas). */
+  barsAfterLoad: string[];
+}
+
+/** A pretend theme-color meta that keeps the colour it is given. */
+interface PretendMeta {
+  content: string;
+  setAttribute(name: string, value: string): void;
 }
 
 /**
- * Runs the script's text on a pretend device.
+ * Makes the two theme-color metas index.html starts with.
+ *
+ * @returns the light device's meta and the dark device's meta
+ */
+function pretendMetas(): PretendMeta[] {
+  return ['light', 'dark'].map((device) => ({
+    content: device === 'light' ? dayPaper : nightPaper,
+    setAttribute(name: string, value: string) {
+      if (name === 'content') this.content = value;
+    },
+  }));
+}
+
+/**
+ * Runs the script's text on a pretend device, then fires the page's load event.
  *
  * @param code - the script, written or shrunk
  * @param device - what the device remembers and asks for
- * @returns the attributes the script set on <html>
+ * @returns the attributes and the bar colours before and after the style sheet loaded
  */
-function attributesSetBy(code: string, device: Device): Record<string, string> {
+function firstPaintBy(code: string, device: Device): FirstPaint {
   const attributes: Record<string, string> = {};
+  const metas = device.hasMetas === false ? [] : pretendMetas();
+  const staffFrame = { isStaffFrame: true };
+  const loadListeners: (() => void)[] = [];
+  let styleSheetLoaded = false;
   const pretendWindow = {
     localStorage: {
       getItem(key: string): string | null {
@@ -45,17 +178,41 @@ function attributesSetBy(code: string, device: Device): Record<string, string> {
       },
     },
     matchMedia: (query: string) => ({ matches: device.matching.includes(query) }),
+    // Before the load event the style sheet has not arrived, so --paper reads as empty.
+    getComputedStyle: (element: object) => ({
+      getPropertyValue: (name: string) => {
+        if (!styleSheetLoaded) return '';
+        const onStaffFrame = element === staffFrame;
+        if (name === '--paper') return paperFromTokens(attributes, onStaffFrame);
+        if (name === '--browser-bar') {
+          return barFromTokens(attributes, onStaffFrame, device.matching.includes(phoneQuery));
+        }
+        return '';
+      },
+    }),
+    addEventListener: (type: string, listener: () => void) => {
+      if (type === 'load') loadListeners.push(listener);
+    },
   };
   const pretendDocument = {
     documentElement: {
       setAttribute(name: string, value: string) {
         attributes[name] = value;
       },
+      getAttribute: (name: string) => attributes[name] ?? null,
     },
+    querySelectorAll: (selector: string) => (selector === 'meta[name="theme-color"]' ? metas : []),
+    querySelector: (selector: string) =>
+      device.isStaffPage === true && selector === '[data-area="staff"]' ? staffFrame : null,
   };
   // The script is our own file, run with stand-ins for the two globals it reads.
   new Function('window', 'document', code)(pretendWindow, pretendDocument);
-  return attributes;
+  const barsBeforeLoad = metas.map((meta) => meta.content);
+  styleSheetLoaded = true;
+  loadListeners.forEach((listener) => {
+    listener();
+  });
+  return { attributes, barsBeforeLoad, barsAfterLoad: metas.map((meta) => meta.content) };
 }
 
 const devices: Record<string, Device> = {
@@ -76,7 +233,24 @@ const devices: Record<string, Device> = {
   },
   'a device that asks for more contrast': { stored: {}, matching: ['(prefers-contrast: more)'] },
   'blocked storage': { stored: null, matching: ['(prefers-contrast: more)'] },
+  'a remembered look by day': { stored: { 'theme-shown-look': 'sorbet' }, matching: [] },
+  'high contrast by day': { stored: { 'high-contrast': 'on' }, matching: [] },
+  'a staff page': { stored: {}, matching: [], isStaffPage: true },
+  'a page without theme-color metas': { stored: {}, matching: [], hasMetas: false },
 };
+
+/**
+ * Picks one of the pretend devices above.
+ *
+ * @param name - the device's name in the list
+ * @returns the device
+ * Errors: throws when the list has no device of that name.
+ */
+function device(name: string): Device {
+  const found = devices[name];
+  if (found === undefined) throw new Error(`No pretend device called "${name}".`);
+  return found;
+}
 
 describe('public/theme-init.js', () => {
   it('shrinks without errors to well under the written size', () => {
@@ -84,21 +258,23 @@ describe('public/theme-init.js', () => {
     expect(shrunk.code.length).toBeLessThan(written.length / 2);
   });
 
-  for (const [name, device] of Object.entries(devices)) {
-    it(`sets the same attributes written and shrunk: ${name}`, () => {
-      expect(attributesSetBy(shrunk.code, device)).toEqual(attributesSetBy(written, device));
+  for (const [name, pretendDevice] of Object.entries(devices)) {
+    it(`sets the same attributes and bar colours written and shrunk: ${name}`, () => {
+      expect(firstPaintBy(shrunk.code, pretendDevice)).toEqual(
+        firstPaintBy(written, pretendDevice),
+      );
     });
   }
 
   it('marks a first visit light, in Lilac mist, with nothing else', () => {
-    expect(attributesSetBy(written, { stored: {}, matching: [] })).toEqual({
+    expect(firstPaintBy(written, device('a first visit')).attributes).toEqual({
       'data-theme': 'light',
       'data-look': 'lilac',
     });
   });
 
   it('marks remembered choices: night, the look, less motion and high contrast', () => {
-    expect(attributesSetBy(written, devices['remembered choices'] as Device)).toEqual({
+    expect(firstPaintBy(written, device('remembered choices')).attributes).toEqual({
       'data-theme': 'night',
       'data-look': 'candy',
       'data-motion': 'less',
@@ -107,8 +283,104 @@ describe('public/theme-init.js', () => {
   });
 
   it('marks high contrast for a device that asks for it, even with storage blocked', () => {
-    const attributes = attributesSetBy(written, devices['blocked storage'] as Device);
+    const { attributes } = firstPaintBy(written, device('blocked storage'));
     expect(attributes['data-contrast']).toBe('more');
     expect(attributes['data-motion']).toBeUndefined();
+  });
+});
+
+describe("public/theme-init.js gives a phone's bars the page colour (CALM-1)", () => {
+  it('gives both bars the day page colour on a first visit, before and after the style sheet loads', () => {
+    const paint = firstPaintBy(written, device('a first visit'));
+    expect(paint.barsBeforeLoad).toEqual([dayPaper, dayPaper]);
+    expect(paint.barsAfterLoad).toEqual([dayPaper, dayPaper]);
+  });
+
+  it("gives both bars the night sky's edge colour for a device in dark mode", () => {
+    const paint = firstPaintBy(written, device('a device in dark mode'));
+    expect(paint.barsBeforeLoad).toEqual([nightBarWide, nightBarWide]);
+    expect(paint.barsAfterLoad).toEqual([nightBarWide, nightBarWide]);
+  });
+
+  it('gives a reader who chose night the night sky on both bars, even on a light phone', () => {
+    const onPhone = { stored: { 'theme-preference': 'night' }, matching: [phoneQuery] };
+    const paint = firstPaintBy(written, onPhone);
+    expect(paint.barsBeforeLoad).toEqual([nightBarPhone, nightBarPhone]);
+    expect(paint.barsAfterLoad).toEqual([nightBarPhone, nightBarPhone]);
+  });
+
+  it('never gives the night bars black, so they blend into the dark blue sky', () => {
+    expect(nightBarWide).not.toBe(nightPaper);
+    expect(nightBarPhone).not.toBe(nightPaper);
+  });
+
+  it("gives a look its own page colour once the style sheet has loaded (Sorbet's peach)", () => {
+    const paint = firstPaintBy(written, device('a remembered look by day'));
+    expect(paint.barsBeforeLoad).toEqual([dayPaper, dayPaper]);
+    expect(paint.barsAfterLoad).toEqual(Array(2).fill(paperIn("[data-look-swatch='sorbet']")));
+    expect(paint.barsAfterLoad[0]).not.toBe(dayPaper);
+  });
+
+  it('gives high contrast its plain page colour by day and at night once the style sheet has loaded', () => {
+    const byDay = firstPaintBy(written, device('high contrast by day'));
+    expect(byDay.barsAfterLoad).toEqual(
+      Array(2).fill(paperIn("[data-contrast='more'][data-theme='light']")),
+    );
+    const atNight = firstPaintBy(written, device('remembered choices'));
+    expect(atNight.barsBeforeLoad).toEqual([nightBarWide, nightBarWide]);
+    expect(atNight.barsAfterLoad).toEqual(
+      Array(2).fill(paperIn("[data-contrast='more'][data-theme='night']")),
+    );
+  });
+
+  it('colours the bars by the device alone when storage is blocked', () => {
+    const paint = firstPaintBy(written, device('blocked storage'));
+    expect(paint.barsBeforeLoad).toEqual([dayPaper, dayPaper]);
+    expect(paint.barsAfterLoad).toEqual(
+      Array(2).fill(paperIn("[data-contrast='more'][data-theme='light']")),
+    );
+  });
+
+  it("gives a staff page the staff area's own page colour once it has loaded", () => {
+    const paint = firstPaintBy(written, device('a staff page'));
+    expect(paint.barsAfterLoad).toEqual(Array(2).fill(paperIn("[data-area='staff']")));
+  });
+
+  it('leaves a page without theme-color metas alone and still marks <html>', () => {
+    const paint = firstPaintBy(written, device('a page without theme-color metas'));
+    expect(paint.barsBeforeLoad).toEqual([]);
+    expect(paint.barsAfterLoad).toEqual([]);
+    expect(paint.attributes['data-theme']).toBe('light');
+  });
+});
+
+describe('the first-paint colours match tokens.css, day and night (CALM-1)', () => {
+  /**
+   * Reads the colour of index.html's theme-color meta for a light or a dark device.
+   *
+   * @param scheme - the device's colour scheme in the meta's media query
+   * @returns the meta's colour, or undefined when index.html has no such meta
+   */
+  function indexHtmlBarColour(scheme: 'light' | 'dark'): string | undefined {
+    const meta = new RegExp(
+      `<meta name="theme-color" content="(#[0-9a-f]{6})" media="\\(prefers-color-scheme: ${scheme}\\)"`,
+      'i',
+    );
+    return meta.exec(indexHtml)?.[1];
+  }
+
+  it("names tokens.css's day --paper and the phone's night sky in index.html's theme-color metas", () => {
+    expect(indexHtmlBarColour('light')).toBe(dayPaper);
+    expect(indexHtmlBarColour('dark')).toBe(nightBarPhone);
+  });
+
+  it("uses tokens.css's day --paper and night sky colours in theme-init.js before the style sheet loads", () => {
+    // Before the load event the script can only use its own plain colours.
+    expect(firstPaintBy(written, device('a first visit')).barsBeforeLoad[0]).toBe(dayPaper);
+    expect(firstPaintBy(written, device('a device in dark mode')).barsBeforeLoad[0]).toBe(
+      nightBarWide,
+    );
+    const darkPhone = { stored: {}, matching: ['(prefers-color-scheme: dark)', phoneQuery] };
+    expect(firstPaintBy(written, darkPhone).barsBeforeLoad[0]).toBe(nightBarPhone);
   });
 });

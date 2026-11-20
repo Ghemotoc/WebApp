@@ -10,8 +10,10 @@
  * public/theme-init.js repeats the first two steps before the page draws, so night readers never
  * see a white flash; keep THEME_STORAGE_KEY and the attribute name the same in both files.
  * What it changes: the data-theme attribute on <html>, which picks the token set in
- * src/styles/tokens.css.
+ * src/styles/tokens.css, and then the phone's bar colour to match (src/lib/browserBarColour.ts,
+ * bundle CALM-1).
  */
+import { matchBrowserBarsToPage } from './browserBarColour';
 
 /** What the reader picked in the footer. */
 export type ThemePreference = 'device' | 'light' | 'night';
@@ -84,10 +86,14 @@ export function resolveTheme(preference: ThemePreference, deviceIsDark: boolean)
 }
 
 /**
- * Shows a theme by setting data-theme on <html>.
+ * Shows a theme by setting data-theme on <html>, then gives the phone's bars the new page colour,
+ * so a reader in night mode never sees light bars, nor black ones by day (bundle CALM-1).
  *
  * @param theme - the theme to show
  */
 export function applyTheme(theme: ResolvedTheme): void {
+  // Step 1: tokens.css reads the attribute and switches every colour.
   document.documentElement.dataset.theme = theme;
+  // Step 2: the browser's bars take the page colour now in force.
+  matchBrowserBarsToPage();
 }

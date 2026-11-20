@@ -59,7 +59,9 @@ export function FocusHeader({ titleKey, backTo }: FocusHeaderProps) {
   return (
     // NAV-1 (Robert, 10 Nov 2026): Back and the title float over the page however far it
     // scrolls; the header's own box lets clicks through to the page beside them.
-    <header className="pointer-events-none sticky top-0 z-30 flex items-center gap-2 px-3.5 pt-4">
+    // The page draws under a phone's status bar (viewport-fit=cover, bundle CALM-1), so Back and
+    // the title sit 16 px below the notch or status bar; the reader's chapter bar follows below.
+    <header className="pointer-events-none sticky top-0 z-30 flex items-center gap-2 px-3.5 pt-[calc(16px+env(safe-area-inset-top))]">
       <button
         type="button"
         onClick={goBack}

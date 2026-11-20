@@ -39,7 +39,9 @@ const saveStateKey: Partial<Record<AppearanceSaveState, string>> = {
 };
 
 /**
- * The seasonal switch with its name and hint, as one row.
+ * The seasonal switch with its name and hint, as one row. The hint is tied to the switch
+ * (aria-describedby), so a screen reader reads it with the switch, as on the High contrast and
+ * Less motion rows (bundle CALM-1's break test found it missing).
  *
  * @returns the row
  */
@@ -59,6 +61,7 @@ function SeasonalRow({ isOn, onToggle }: { isOn: boolean; onToggle: () => void }
         stateWord={t(isOn ? 'on' : 'off')}
         isDisabled={false}
         onToggle={onToggle}
+        describedBy="appearance-seasonal-hint"
       />
     </div>
   );
