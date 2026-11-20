@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>New: Together</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/ghemotoc/tokens.css">
+<link rel="stylesheet" href="ds/ghemotoc/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@400;600;700&amp;family=Inter:wght@400;600;700&amp;family=Literata:ital,wght@0,400;0,600;1,400&amp;display=swap">
+<style>
+body{margin:0;background:var(--surface-page)}
+a{color:var(--ink-link)}a:hover{color:var(--ink-accent)}
+/* A pale Lilac mist mesh behind the page: four large soft blobs with smooth edges, so the glass reads as glass without bands; the night sky at night. */
+.pg{min-height:100vh;box-sizing:border-box;padding:24px clamp(16px,4.5vw,64px) 0;color:var(--ink);font-family:var(--font-sans);background:radial-gradient(1100px 800px at 8% 0%,rgb(232 224 249 / 1) 0%,rgb(232 224 249 / 0.9) 20%,rgb(232 224 249 / 0.65) 40%,rgb(232 224 249 / 0.35) 60%,rgb(232 224 249 / 0.1) 80%,rgb(232 224 249 / 0) 100%),radial-gradient(1000px 800px at 96% 14%,rgb(223 232 250 / 1) 0%,rgb(223 232 250 / 0.9) 20%,rgb(223 232 250 / 0.65) 40%,rgb(223 232 250 / 0.35) 60%,rgb(223 232 250 / 0.1) 80%,rgb(223 232 250 / 0) 100%),radial-gradient(1100px 900px at 4% 48%,rgb(251 232 226 / 1) 0%,rgb(251 232 226 / 0.9) 20%,rgb(251 232 226 / 0.65) 40%,rgb(251 232 226 / 0.35) 60%,rgb(251 232 226 / 0.1) 80%,rgb(251 232 226 / 0) 100%),radial-gradient(1000px 900px at 94% 80%,rgb(232 224 249 / 1) 0%,rgb(232 224 249 / 0.9) 20%,rgb(232 224 249 / 0.65) 40%,rgb(232 224 249 / 0.35) 60%,rgb(232 224 249 / 0.1) 80%,rgb(232 224 249 / 0) 100%),var(--surface-page)}
+.pg[data-theme="night"]{background:#111113 url(nightbg/night-galaxy-desktop.svg) center top/cover no-repeat}
+.pg main{max-width:1280px;margin:0 auto;padding:40px 0 64px;display:flex;flex-direction:column;gap:40px}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:56px;align-items:start}
+.plain{list-style:none;margin:0;padding:0}
+.forums li{display:grid;grid-template-columns:12px minmax(0,1fr) 140px 250px;gap:16px;align-items:start;padding:16px 0;border-top:1px solid var(--line-hairline)}
+.mark{display:block;width:8px;height:8px;margin-top:6px;border-radius:var(--radius-full);border:1.5px solid var(--line-control);box-sizing:border-box}
+.is-new .mark{background:var(--thread);border-color:var(--thread)}
+.forums .desc{margin:2px 0 4px;color:var(--ink-muted)}
+.latest a,.ttl{font-weight:600;font-size:15px;line-height:20px;color:var(--ink-heading);text-decoration:none}
+.latest a:hover,.ttl:hover{text-decoration:underline}
+.panel{border-radius:var(--radius-card);padding:20px}
+.search{position:relative;max-width:560px}
+.search .gh-input{width:100%;box-sizing:border-box;padding-left:40px;border-radius:var(--radius-full)}
+.search svg{position:absolute;left:12px;top:50%;margin-top:-12px;color:var(--ink-muted)}
+.rules{margin:8px 0 0;padding-left:18px}
+.rules li{margin:0 0 6px}
+.foot{max-width:1280px;margin:0 auto;padding:40px 0 32px;border-top:1px solid var(--line)}
+.foot ul{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:2px}
+.foot li a{display:inline-flex;min-height:32px;align-items:center;color:var(--ink);text-decoration:none;font-size:15px}
+.foot li a:hover{text-decoration:underline}
+@media (max-width: 1100px){.forums li{grid-template-columns:12px minmax(0,1fr)}.forums li > :nth-child(n+3){grid-column:2}}
+@media (max-width: 900px){.cols{grid-template-columns:minmax(0,1fr)}}
+</style>
+</helmet>
+<div class="pg" data-theme="{{theme}}">
+<a class="gh-sr" href="#main">Skip to content</a>
+<header class="gh-topbar gh-glass">
+<a class="gh-brand" href="#" aria-label="ghemotoc, Home"><img class="gh-logo-day" src="/_blob/8b27bf58143f9e8c418eedbd47b0130f" alt=""><img class="gh-logo-night" src="/_blob/c9011ab65e50ffe835eb9e127f69bca0" alt="">ghemotoc</a>
+<nav aria-label="Main"><div class="gh-track"><a href="#">Home</a><a href="#">Read</a><a href="#">Library</a><a href="#" aria-current="page">Together</a></div></nav>
+<div class="gh-topbar__end">
+<a class="gh-btn gh-btn--quiet" href="#"><svg class="gh-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Write</a>
+<button type="button" class="gh-iconbtn" aria-label="Search stories, writers and Together"><svg class="gh-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+<button type="button" class="gh-iconbtn" aria-label="Messages, 2 new"><svg class="gh-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8"/><path d="M8 13h5"/></svg><span class="gh-dot"></span></button>
+<button type="button" class="gh-iconbtn" aria-label="Notifications, 2 new"><svg class="gh-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="gh-dot"></span></button>
+<button type="button" class="gh-iconbtn" aria-label="Account and settings"><img class="gh-avatar" src="avatars/lia.svg" alt=""></button>
+</div>
+</header>
+<main id="main">
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px">
+<div style="max-width: 640px">
+<p class="meta" style="margin: 0 0 6px">1,762 threads</p>
+<h1 class="display" style="margin: 0">Together</h1>
+<p class="body" style="margin: 12px 0 0">Ask questions about writing, swap feedback and meet other young writers. Anyone can read the forums. Posting needs an account.</p>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 12px"><button type="button" class="gh-btn gh-btn--quiet">Mark all as read</button><a class="gh-btn gh-btn--main" href="#">New thread</a></div>
+</div>
+
+<div class="cols">
+<div style="display: flex; flex-direction: column; gap: 40px; min-width: 0">
+<div class="search"><label class="gh-sr" for="forum-search">Search the forums</label><input id="forum-search" class="gh-input" type="search" placeholder="Search forum threads and posts"><svg class="gh-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></div>
+
+<section aria-labelledby="g-craft">
+<div class="gh-shelf__head"><h2 class="heading" id="g-craft">Writing craft</h2><div class="gh-shelf__tools"><span class="meta">4 forums</span><button type="button" class="gh-btn gh-btn--text">Mark as read</button></div></div>
+<ul class="plain forums">
+<li class="is-new"><span class="mark" role="img" aria-label="New posts"></span><div><a class="ttl" href="#">First chapters</a><p class="body desc">Openings and the first 1,000 words of a story</p><p class="gh-metaline"><span>Subforums: <a href="#">Fantasy and sci-fi openings</a>, <a href="#">School and everyday life</a></span></p></div><p class="gh-metaline"><span>312 threads</span><span>4.1k posts</span></p><div class="latest"><a href="#">How do you start a chapter without a prologue?</a><p class="gh-metaline"><span>poppyverse</span><span>12 min ago</span></p></div></li>
+<li class="is-new"><span class="mark" role="img" aria-label="New posts"></span><div><a class="ttl" href="#">Worldbuilding</a><p class="body desc">Maps, magic systems and invented places</p></div><p class="gh-metaline"><span>198 threads</span><span>2.6k posts</span></p><div class="latest"><a href="#">Maps: do you draw first or write first?</a><p class="gh-metaline"><span>inkwolf</span><span>1 hour ago</span></p></div></li>
+<li class="is-new"><span class="mark" role="img" aria-label="New posts"></span><div><a class="ttl" href="#">Language help</a><p class="body desc">Grammar, diacritics and writing in Romanian or English</p></div><p class="gh-metaline"><span>87 threads</span><span>940 posts</span></p><div class="latest"><a href="#">Can I start a sentence with “Iar”?</a><p class="gh-metaline"><span>ilinca.r</span><span>40 min ago</span></p></div></li>
+<li><span class="mark" role="img" aria-label="No new posts"></span><div><a class="ttl" href="#">Feedback swap</a><p class="body desc">Swap chapters and give each other honest feedback</p><p class="gh-metaline"><span>Subforums: <a href="#">Poetry swaps</a>, <a href="#">Long reads (over 3,000 words)</a></span></p></div><p class="gh-metaline"><span>421 threads</span><span>5.8k posts</span></p><div class="latest"><a href="#">Swap: 2,000 words of fantasy for 2,000 words of anything</a><p class="gh-metaline"><span>Ana Radu</span><span>3 hours ago</span></p></div></li>
+</ul>
+</section>
+
+<aside aria-label="Advertisement" style="width: 728px; max-width: 100%; min-height: 90px; box-sizing: border-box; padding: 12px 16px; border: 1.5px dashed var(--line-dashed); border-radius: var(--radius-field); display: flex; flex-direction: column; justify-content: center; gap: 2px">
+<p class="gh-metaline"><span style="font-weight: 600; color: var(--ink)">Advertisement</span><span>Ads match the page, not you</span><span>No tracking</span></p>
+<p class="gh-metaline"><span>728 × 90 banner, AdSense limited ads</span></p>
+</aside>
+
+<section aria-labelledby="g-reading">
+<div class="gh-shelf__head"><h2 class="heading" id="g-reading">Reading</h2><div class="gh-shelf__tools"><span class="meta">2 forums</span><button type="button" class="gh-btn gh-btn--text">Mark as read</button></div></div>
+<ul class="plain forums">
+<li class="is-new"><span class="mark" role="img" aria-label="New posts"></span><div><a class="ttl" href="#">Book talk</a><p class="body desc">What members are reading and what they think of it</p></div><p class="gh-metaline"><span>156 threads</span><span>1.9k posts</span></p><div class="latest"><a href="#">What are you reading this month?</a><p class="gh-metaline"><span>matei.writes</span><span>yesterday</span></p></div></li>
+<li class="is-new"><span class="mark" role="img" aria-label="New posts"></span><div><a class="ttl" href="#">School reading list</a><p class="body desc">Talk about the books set for school</p></div><p class="gh-metaline"><span>92 threads</span><span>1.1k posts</span></p><div class="latest"><a href="#">Is Enigma Otiliei actually good or just long?</a><p class="gh-metaline"><span>mara.p</span><span>4 hours ago</span></p></div></li>
+</ul>
+</section>
+
+<section aria-labelledby="g-essays">
+<div class="gh-shelf__head"><h2 class="heading" id="g-essays">Essays and true stories</h2><div class="gh-shelf__tools"><span class="meta">2 forums</span><button type="button" class="gh-btn gh-btn--text">Mark as read</button></div></div>
+<ul class="plain forums">
+<li><span class="mark" role="img" aria-label="No new posts"></span><div><a class="ttl" href="#">True stories and memoir</a><p class="body desc">Writing about one’s own life, family and the places they know</p></div><p class="gh-metaline"><span>64 threads</span><span>710 posts</span></p><div class="latest"><a href="#">How much of your family can you put in a memoir?</a><p class="gh-metaline"><span>matei.writes</span><span>2 hours ago</span></p></div></li>
+<li><span class="mark" role="img" aria-label="No new posts"></span><div><a class="ttl" href="#">Essays and opinion</a><p class="body desc">Personal essays, opinion pieces and how to make an argument</p></div><p class="gh-metaline"><span>48 threads</span><span>520 posts</span></p><div class="latest"><a href="#">How personal is too personal in an essay?</a><p class="gh-metaline"><span>Ana Radu</span><span>yesterday</span></p></div></li>
+</ul>
+</section>
+
+<section aria-labelledby="g-community">
+<div class="gh-shelf__head"><h2 class="heading" id="g-community">Community</h2><div class="gh-shelf__tools"><span class="meta">3 forums</span><button type="button" class="gh-btn gh-btn--text">Mark as read</button></div></div>
+<ul class="plain forums">
+<li class="is-new"><span class="mark" role="img" aria-label="New posts"></span><div><a class="ttl" href="#">Introductions</a><p class="body desc">Say hello and tell everyone what you write</p></div><p class="gh-metaline"><span>289 threads</span><span>1.4k posts</span></p><div class="latest"><a href="#">Hi from Iași, I mostly write poetry</a><p class="gh-metaline"><span>poppyverse</span><span>5 hours ago</span></p></div></li>
+<li><span class="mark" role="img" aria-label="No new posts"></span><div><a class="ttl" href="#">Help and ideas</a><p class="body desc">Questions about ghemotoc, bug reports and ideas for new features</p></div><p class="gh-metaline"><span>73 threads</span><span>610 posts</span></p><div class="latest"><a href="#">Can I schedule a chapter for a set time?</a><p class="gh-metaline"><span>lia.writes</span><span>2 days ago</span></p></div></li>
+<li><span class="mark" role="img" aria-label="No new posts"></span><div><a class="ttl" href="#">Contests</a><p class="body desc">Writing contests, prompts and challenges</p></div><p class="gh-metaline"><span>22 threads</span><span>300 posts</span></p><div class="latest"><a href="#">How contests work on ghemotoc</a><p class="gh-metaline"><span>Andrei Mureșan</span><span>yesterday</span></p></div></li>
+</ul>
+</section>
+
+<p class="gh-metaline" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px"><span style="display: inline-flex; align-items: center; gap: 8px"><span class="mark is-new" style="margin: 0; background: var(--thread); border-color: var(--thread)" aria-hidden="true"></span>New posts since the last visit</span><span style="display: inline-flex; align-items: center; gap: 8px"><span class="mark" style="margin: 0" aria-hidden="true"></span>No new posts</span></p>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 40px" role="complementary" aria-label="Spaces, class and rules">
+<section class="panel gh-glass" aria-labelledby="new-h">
+<p class="meta" style="margin: 0">Since the last visit</p>
+<h2 class="subheading" id="new-h" style="margin: 2px 0 4px">New for you</h2>
+<ul class="gh-rows" style="max-width: none">
+<li><span class="gh-rows__text"><a class="gh-rows__title" href="#">How do you start a chapter without a prologue?</a><span class="gh-metaline"><span>First chapters</span><span class="gh-state">3 new</span></span></span></li>
+<li><span class="gh-rows__text"><a class="gh-rows__title" href="#">Is Enigma Otiliei actually good or just long?</a><span class="gh-metaline"><span>School reading list</span><span class="gh-state">8 new</span></span></span></li>
+<li><span class="gh-rows__text"><a class="gh-rows__title" href="#">Maps: do you draw first or write first?</a><span class="gh-metaline"><span>Worldbuilding</span><span class="gh-state">1 new</span></span></span></li>
+</ul>
+</section>
+
+<section aria-labelledby="spaces-h">
+<p class="meta" style="margin: 0">Run by members</p>
+<h2 class="subheading" id="spaces-h" style="margin: 2px 0 6px">Spaces</h2>
+<p class="body" style="margin: 0 0 4px; color: var(--ink-muted)">Members create and run spaces. Anyone can read them. The owner decides who can post.</p>
+<ul class="gh-rows" style="max-width: none">
+<li style="justify-content: flex-start"><span class="gh-avatar gh-avatar--plum" aria-hidden="true">FW</span><span class="gh-rows__text"><a class="gh-rows__title" href="#">Fantasy writers’ circle</a><span class="gh-metaline"><span>214 members</span><span>members-only posting</span></span></span></li>
+<li style="justify-content: flex-start"><span class="gh-avatar gh-avatar--violet" aria-hidden="true">PA</span><span class="gh-rows__text"><a class="gh-rows__title" href="#">Poetry at Midnight</a><span class="gh-metaline"><span>88 members</span><span>anyone can post</span></span></span></li>
+<li style="justify-content: flex-start"><span class="gh-avatar gh-avatar--sky" aria-hidden="true">CS</span><span class="gh-rows__text"><a class="gh-rows__title" href="#">Cluj Student Writers</a><span class="gh-metaline"><span>132 members</span><span>anyone can post</span></span></span></li>
+<li style="justify-content: flex-start"><span class="gh-avatar gh-avatar--blush" aria-hidden="true">EC</span><span class="gh-rows__text"><a class="gh-rows__title" href="#">Essay Club</a><span class="gh-metaline"><span>41 members</span><span>members-only posting</span></span></span></li>
+</ul>
+</section>
+
+<section aria-labelledby="class-h">
+<h2 class="subheading" id="class-h" style="margin: 0 0 6px">Class</h2>
+<div style="display: flex; align-items: center; gap: 12px"><span class="gh-avatar gh-avatar--gold" role="img" aria-label="Class 9B logo">9B</span><span class="gh-rows__text"><a class="gh-rows__title" href="#">Class 9B</a><span class="gh-metaline"><span class="gh-state">Private</span><span>only class members see it</span></span></span></div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-top: 20px"><a class="gh-btn gh-btn--quiet" href="#">Create a space</a><a class="gh-btn gh-btn--text" href="#">See 37 spaces</a></div>
+</section>
+
+<section aria-labelledby="rules-h">
+<h2 class="subheading" id="rules-h" style="margin: 0">Forum rules in short</h2>
+<ul class="rules body">
+<li>Comment on the writing, not the writer.</li>
+<li>Don’t message people who asked you not to.</li>
+<li>Every post has a Report button. A person reads every report.</li>
+</ul>
+<a class="gh-btn gh-btn--text" href="#" style="margin-left: -12px">Read the community guidelines</a>
+</section>
+
+<aside aria-label="Advertisement" style="width: 300px; height: 250px; box-sizing: border-box; padding: 12px 16px; border: 1.5px dashed var(--line-dashed); border-radius: var(--radius-field); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 2px">
+<p class="gh-metaline"><span style="font-weight: 600; color: var(--ink)">Advertisement</span></p>
+<p class="gh-metaline"><span>Ads match the page, not you</span><span>No tracking</span></p>
+</aside>
+</div>
+</div>
+</main>
+<footer class="foot">
+<div style="display: grid; grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr)); gap: 32px">
+<div>
+<a class="gh-brand" href="#" aria-label="ghemotoc, Home"><img class="gh-logo-day" src="/_blob/8b27bf58143f9e8c418eedbd47b0130f" alt=""><img class="gh-logo-night" src="/_blob/c9011ab65e50ffe835eb9e127f69bca0" alt="">ghemotoc</a>
+<p class="body" style="margin: 12px 0 0; max-width: 46ch; color: var(--ink-muted)">A free website for writing and reading stories, poems and essays. Apps come after the web launch. Writers keep the rights to their work, and there are no tracking ads. Everyone aged 13 or older is welcome. In Romanian and English. Starting in Romania; English-speaking countries follow.</p>
+</div>
+<nav aria-label="Read links"><h2 class="subheading" style="margin: 0">Read</h2><ul><li><a href="#">Trending this week</a></li><li><a href="#">New writers</a></li><li><a href="#">About the apps</a></li></ul></nav>
+<nav aria-label="Write and talk links"><h2 class="subheading" style="margin: 0">Write and talk</h2><ul><li><a href="#">Start writing</a></li><li><a href="#">Start a first story</a></li><li><a href="#">Together</a></li><li><a href="#">For teachers</a></li><li><a href="#">For partners</a></li></ul></nav>
+<nav aria-label="Help and legal links"><h2 class="subheading" style="margin: 0">Help and legal</h2><ul><li><a href="#">Help</a></li><li><a href="#">Legal</a></li><li><a href="#">Community guidelines</a></li><li><a href="#">Contact us</a></li><li><a href="#">Report without an account</a></li></ul></nav>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; margin-top: 32px">
+<p class="meta" style="margin: 0">An app by The Magic Coffin</p>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+<button type="button" class="gh-btn gh-btn--quiet" aria-pressed="false">Night mode</button>
+<label class="gh-sr" for="lang-together">Language</label>
+<span class="gh-select"><select id="lang-together"><option>English</option><option lang="ro">Română</option></select><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></span>
+</div>
+</div>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","night"],"default":"light"},"$preview":{"width":1440,"height":2550}}'>
+class Component extends DCLogic {
+  renderVals() {
+    // Day or night, from the Tweaks panel. Together is today's Forums page, renamed (Robert, 20 Nov 11:23 UTC),
+    // with every forum group, subforum, count, latest post, New for you, Spaces, the class, the rules and both ads kept.
+    return { theme: this.props.theme ?? 'light' };
+  }
+}
+</script>
+</body>
+</html>

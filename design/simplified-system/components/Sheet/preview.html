@@ -1,0 +1,39 @@
+<!-- @dsCard group="Surfaces" height=460 width=1000 subtitle="Glass sheets carry tools: reading settings, publishing" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sheet</title>
+</head>
+<body>
+
+<div class="gh-stage gh-mesh">
+  <div class="gh-row" style="align-items:flex-start;gap:32px">
+  <div class="gh-sheet gh-glass" role="dialog" aria-labelledby="aa-title">
+    <div class="gh-sheet__head"><h2 class="subheading" id="aa-title">Reading settings</h2>
+      <button type="button" class="gh-iconbtn" aria-label="Close"><svg class="gh-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12"/><path d="M18 6 6 18"/></svg></button></div>
+    <div class="gh-sheet__row"><span class="label">Text size</span>
+      <div class="gh-segment"><button type="button" aria-label="Smaller">A−</button><button type="button" aria-pressed="true">20</button><button type="button" aria-label="Larger">A+</button></div></div>
+    <div class="gh-sheet__row"><span class="label">Typeface</span>
+      <div class="gh-segment"><button type="button" aria-pressed="true">Literata</button><button type="button" aria-pressed="false">Atkinson</button><button type="button" aria-pressed="false">OpenDyslexic</button></div></div>
+    <div class="gh-sheet__row"><span class="label">Page</span>
+      <div class="gh-segment"><button type="button" aria-pressed="true">Day</button><button type="button" aria-pressed="false">Night</button></div></div>
+    <div class="gh-sheet__row"><span class="label">Time left</span>
+      <div class="gh-segment"><button type="button" aria-pressed="true">In the bar</button><button type="button" aria-pressed="false">On the page</button></div></div>
+  </div>
+  <div class="gh-sheet gh-glass" role="dialog" aria-labelledby="pub-title">
+    <div class="gh-sheet__head"><h2 class="subheading" id="pub-title">Publish chapter 15</h2>
+      <button type="button" class="gh-iconbtn" aria-label="Close"><svg class="gh-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12"/><path d="M18 6 6 18"/></svg></button></div>
+    <div class="gh-sheet__row"><span class="label">When</span>
+      <div class="gh-segment"><button type="button" aria-pressed="false">Now</button><button type="button" aria-pressed="true">Later</button></div></div>
+    <div class="gh-sheet__row"><label class="label" for="pub-when">Date and time</label>
+      <input class="gh-input" id="pub-when" value="Thu 27 Nov, 17:00" style="width:180px"></div>
+    <div class="gh-sheet__row"><span style="max-width:280px"><span class="label" id="last-label" style="display:block;color:var(--ink-heading)">This is the last chapter</span>
+      <span class="meta" id="last-hint" style="display:block">Readers see "of 15", and the story turns Completed when this chapter is out.</span></span>
+      <button type="button" class="gh-switch" role="switch" aria-checked="true" aria-labelledby="last-label" aria-describedby="last-hint"></button></div>
+    <div style="padding-top:16px"><button type="button" class="gh-btn gh-btn--main">Schedule chapter 15</button></div>
+  </div>
+  </div>
+</div>
+</body>
+</html>

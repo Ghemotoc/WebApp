@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>New: story page</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/ghemotoc/tokens.css">
+<link rel="stylesheet" href="ds/ghemotoc/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@400;600;700&amp;family=Inter:wght@400;600;700&amp;family=Literata:ital,wght@0,400;0,600;1,400&amp;display=swap">
+<style>
+body{margin:0;background:var(--surface-page)}
+a{color:var(--ink-link)}a:hover{color:var(--ink-accent)}
+/* A pale Lilac mist mesh behind the page: four large soft blobs with smooth edges, so the glass reads as glass without bands; the night sky at night. */
+.pg{min-height:100vh;box-sizing:border-box;padding:24px clamp(16px,4.5vw,64px) 0;color:var(--ink);font-family:var(--font-sans);background:radial-gradient(1100px 800px at 8% 0%,rgb(232 224 249 / 1) 0%,rgb(232 224 249 / 0.9) 20%,rgb(232 224 249 / 0.65) 40%,rgb(232 224 249 / 0.35) 60%,rgb(232 224 249 / 0.1) 80%,rgb(232 224 249 / 0) 100%),radial-gradient(1000px 800px at 96% 14%,rgb(223 232 250 / 1) 0%,rgb(223 232 250 / 0.9) 20%,rgb(223 232 250 / 0.65) 40%,rgb(223 232 250 / 0.35) 60%,rgb(223 232 250 / 0.1) 80%,rgb(223 232 250 / 0) 100%),radial-gradient(1100px 900px at 4% 48%,rgb(251 232 226 / 1) 0%,rgb(251 232 226 / 0.9) 20%,rgb(251 232 226 / 0.65) 40%,rgb(251 232 226 / 0.35) 60%,rgb(251 232 226 / 0.1) 80%,rgb(251 232 226 / 0) 100%),radial-gradient(1000px 900px at 94% 80%,rgb(232 224 249 / 1) 0%,rgb(232 224 249 / 0.9) 20%,rgb(232 224 249 / 0.65) 40%,rgb(232 224 249 / 0.35) 60%,rgb(232 224 249 / 0.1) 80%,rgb(232 224 249 / 0) 100%),var(--surface-page)}
+.pg[data-theme="night"]{background:#111113 url(nightbg/night-galaxy-desktop.svg) center top/cover no-repeat}
+.pg main{max-width:1280px;margin:0 auto;padding:32px 0 64px;display:flex;flex-direction:column;gap:40px}
+.hero{border-radius:var(--radius-card);padding:40px;display:grid;grid-template-columns:240px minmax(0,1fr);gap:48px;align-items:start}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:64px;align-items:start}
+.plain{list-style:none;margin:0;padding:0}
+.crumbs{display:flex;flex-wrap:wrap;gap:8px;margin:0;font-size:13px;line-height:18px;color:var(--ink-muted)}
+.crumbs a{color:var(--ink)}
+.chapters{columns:2;column-gap:48px}
+.chapters li{break-inside:avoid;display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:10px;align-items:baseline;padding:12px 0;border-top:1px solid var(--line-hairline)}
+.chapters .n{font-variant-numeric:tabular-nums;color:var(--ink-muted);font-size:13px}
+.chapters a{font-weight:600;font-size:15px;line-height:20px;color:var(--ink-heading);text-decoration:none}
+.chapters a:hover{text-decoration:underline}
+.facts{display:grid;grid-template-columns:180px minmax(0,1fr);margin:0}
+.facts dt,.facts dd{margin:0;padding:10px 0;border-top:1px solid var(--line-hairline);font-size:15px;line-height:20px}
+.facts dt{font-weight:600;color:var(--ink-heading)}
+.tags{display:flex;flex-wrap:wrap;gap:4px 16px;margin:16px 0 0;padding:0;list-style:none}
+.tags a{color:var(--ink);font-size:15px}
+.stat{display:flex;flex-direction:column}
+.stat b{font-family:var(--font-display);font-size:24px;line-height:28px;font-weight:600;color:var(--ink-heading)}
+.foot{max-width:1280px;margin:0 auto;padding:40px 0 32px;border-top:1px solid var(--line)}
+.foot ul{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:2px}
+.foot li a{display:inline-flex;min-height:32px;align-items:center;color:var(--ink);text-decoration:none;font-size:15px}
+.foot li a:hover{text-decoration:underline}
+@media (max-width: 900px){.hero,.cols{grid-template-columns:minmax(0,1fr)}.chapters{columns:1}}
+</style>
+</helmet>
+<div class="pg" data-theme="{{theme}}">
+<a class="gh-sr" href="#main">Skip to content</a>
+<header class="gh-topbar gh-glass">
+<a class="gh-brand" href="#" aria-label="ghemotoc, Home"><img class="gh-logo-day" src="/_blob/8b27bf58143f9e8c418eedbd47b0130f" alt=""><img class="gh-logo-night" src="/_blob/c9011ab65e50ffe835eb9e127f69bca0" alt="">ghemotoc</a>
+<nav aria-label="Main"><div class="gh-track"><a href="#">Home</a><a href="#" aria-current="page">Read</a><a href="#">Library</a><a href="#">Together</a></div></nav>
+<div class="gh-topbar__end">
+<a class="gh-btn gh-btn--quiet" href="#"><svg class="gh-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Write</a>
+<button type="button" class="gh-iconbtn" aria-label="Search stories, writers and Together"><svg class="gh-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+<button type="button" class="gh-iconbtn" aria-label="Messages, 2 new"><svg class="gh-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8"/><path d="M8 13h5"/></svg><span class="gh-dot"></span></button>
+<button type="button" class="gh-iconbtn" aria-label="Notifications, 2 new"><svg class="gh-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="gh-dot"></span></button>
+<button type="button" class="gh-iconbtn" aria-label="Account and settings"><img class="gh-avatar" src="avatars/lia.svg" alt=""></button>
+</div>
+</header>
+<main id="main">
+<nav aria-label="Breadcrumb"><p class="crumbs"><a href="#">Read</a><span aria-hidden="true">/</span><a href="#">Fiction</a><span aria-hidden="true">/</span><span aria-current="page">The Salt Mine Choir</span></p></nav>
+
+<section class="hero gh-glass" aria-labelledby="story-title">
+<span class="gh-book gh-book--starry gh-acc-gold gh-book--lg" aria-hidden="true" style="width: 240px"><span class="gh-book__label" aria-hidden="true" style="--fit:0.821"><span class="gh-book__title">The Salt Mine Choir</span><span class="gh-book__rule"></span><span class="gh-book__by">inkwolf</span></span></span>
+<div>
+<p class="gh-metaline"><span>Fiction</span><span class="gh-state">Ongoing</span><span>No AI</span><span>13+</span><span>Web and app</span></p>
+<h1 class="display" id="story-title" style="margin: 8px 0 4px">The Salt Mine Choir</h1>
+<p class="body" style="margin: 0">by <a href="#">inkwolf</a></p>
+<p class="gh-metaline" style="margin-top: 10px"><span>1.2k reads</span><span>418 likes</span><span>640 comments</span><span>15 chapters</span><span>31.4k words</span><span>Updated 16 Oct 2026</span></p>
+<p class="body" style="margin: 18px 0 0; max-width: 62ch">Every Thursday, 14 teenagers take the lift 200 metres down into an old salt mine to rehearse. Their choir director counts them on the way down.</p>
+<p class="body" style="margin: 10px 0 0; max-width: 62ch">One night she counts 15, and nobody can say where the new boy came from, least of all the register.</p>
+<ul class="tags" aria-label="Tags"><li><a href="#">mystery</a></li><li><a href="#">set in Romania</a></li><li><a href="#">music</a></li><li><a href="#">school life</a></li><li><a href="#">friendship</a></li></ul>
+<div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px">
+<a class="gh-btn gh-btn--main" href="#">Continue chapter 14</a>
+<button type="button" class="gh-btn gh-btn--quiet" aria-pressed="true">Following</button>
+<button type="button" class="gh-btn gh-btn--quiet" aria-pressed="true">In library</button>
+<button type="button" class="gh-btn gh-btn--quiet" aria-pressed="false">Like</button>
+<button type="button" class="gh-btn gh-btn--text">Share</button>
+</div>
+<p class="meta" style="margin: 12px 0 0">A notification comes when a new chapter is out. Unfollow any time.</p>
+</div>
+</section>
+
+<div class="cols">
+<div style="display: flex; flex-direction: column; gap: 48px; min-width: 0">
+<section aria-labelledby="chapters-h">
+<div class="gh-shelf__head"><h2 class="heading" id="chapters-h">15 chapters</h2><div class="gh-shelf__tools"><p class="gh-metaline"><span>Read 13 of 15</span><span>a new chapter most Thursdays</span></p></div></div>
+<ol class="plain chapters">
+<li><span class="n">1</span><a href="#">Fifteen</a><span class="meta">10 Jul</span></li>
+<li><span class="n">2</span><a href="#">The boy in the grey jumper</a><span class="meta">17 Jul</span></li>
+<li><span class="n">3</span><a href="#">Mara asks around</a><span class="meta">24 Jul</span></li>
+<li><span class="n">4</span><a href="#">Twelve degrees</a><span class="meta">31 Jul</span></li>
+<li><span class="n">5</span><a href="#">Teo has a theory</a><span class="meta">7 Aug</span></li>
+<li><span class="n">6</span><a href="#">The tourists’ photos</a><span class="meta">14 Aug</span></li>
+<li><span class="n">7</span><a href="#">Foaie verde</a><span class="meta">21 Aug</span></li>
+<li><span class="n">8</span><a href="#">The lift stops halfway</a><span class="meta">28 Aug</span></li>
+<li><span class="n">9</span><a href="#">Corina counts too</a><span class="meta">4 Sep</span></li>
+<li><span class="n">10</span><a href="#">Mrs Dobre’s clipboard</a><span class="meta">11 Sep</span></li>
+<li><span class="n">11</span><a href="#">Ilie misses a week</a><span class="meta">18 Sep</span></li>
+<li><span class="n">12</span><a href="#">The school website</a><span class="meta">25 Sep</span></li>
+<li><span class="n">13</span><a href="#">What Teo saw</a><span class="meta">2 Oct</span></li>
+<li><span class="n">14</span><a href="#" aria-current="step">The register</a><span class="meta"><span class="gh-state">Reading</span> · 9 Oct</span></li>
+<li><span class="n">15</span><a href="#">Somebody coming down</a><span class="meta"><span class="gh-state">New</span> · 16 Oct</span></li>
+</ol>
+</section>
+
+<section aria-labelledby="world-h">
+<p class="meta" style="margin: 0">The story’s world</p>
+<h2 class="heading" id="world-h" style="margin: 2px 0 8px">Shared by the writer</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 10px"><a class="gh-btn gh-btn--quiet" href="#">Characters</a><a class="gh-btn gh-btn--quiet" href="#">Relationship map</a><a class="gh-btn gh-btn--quiet" href="#">Story world</a></div>
+</section>
+
+<section aria-labelledby="labels-h">
+<h2 class="heading" id="labels-h" style="margin: 0 0 8px">Labels from the writer</h2>
+<dl class="facts">
+<dt>Fan fiction</dt><dd>No, original story</dd>
+<dt>Parody</dt><dd>No</dd>
+<dt>Rating</dt><dd>13+</dd>
+<dt>AI use</dt><dd>No AI</dd>
+<dt>Language</dt><dd>English</dd>
+<dt>Where to read</dt><dd>On the web, and in the apps once they launch</dd>
+<dt>Quote cards</dt><dd>Allowed</dd>
+</dl>
+<h3 class="subheading" style="margin: 24px 0 6px">Content notes from the writer</h3>
+<p class="body" style="margin: 0; max-width: 62ch">Some tense scenes underground and one in a stuck lift. Suitable for readers 13 and up.</p>
+</section>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 40px" role="complementary" aria-label="About this story">
+<section aria-labelledby="writer-h">
+<p class="meta" style="margin: 0">The writer</p>
+<div style="display: flex; align-items: center; gap: 12px; margin-top: 8px"><img class="gh-avatar" src="avatars/inkwolf.svg" alt=""><span class="gh-rows__text"><a class="gh-rows__title" id="writer-h" href="#">inkwolf</a><span class="gh-metaline"><span>Writes mystery and fantasy</span></span></span></div>
+<p class="body" style="margin: 12px 0 0">Stories set in small Romanian towns. A new chapter most weeks.</p>
+<div style="display: flex; gap: 32px; margin-top: 16px"><p class="stat" style="margin: 0"><b>412</b><span class="meta">Followers</span></p><p class="stat" style="margin: 0"><b>2.6k</b><span class="meta">Reads</span></p></div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px"><button type="button" class="gh-btn gh-btn--quiet" aria-label="Follow inkwolf">Follow</button><a class="gh-btn gh-btn--text" href="#">See profile</a></div>
+<p class="meta" style="margin: 10px 0 0">The number of followers is public. Only inkwolf can see who they are.</p>
+</section>
+<aside aria-label="Advertisement" style="width: 300px; height: 250px; box-sizing: border-box; padding: 12px 16px; border: 1.5px dashed var(--line-dashed); border-radius: var(--radius-field); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 2px">
+<p class="gh-metaline"><span style="font-weight: 600; color: var(--ink)">Advertisement</span></p>
+<p class="gh-metaline"><span>Ads match the page, not you</span><span>No tracking</span></p>
+</aside>
+<a class="gh-btn gh-btn--text" href="#" style="align-self: flex-start; margin-left: -12px">Report this story</a>
+</div>
+</div>
+</main>
+<footer class="foot">
+<div style="display: grid; grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr)); gap: 32px">
+<div>
+<a class="gh-brand" href="#" aria-label="ghemotoc, Home"><img class="gh-logo-day" src="/_blob/8b27bf58143f9e8c418eedbd47b0130f" alt=""><img class="gh-logo-night" src="/_blob/c9011ab65e50ffe835eb9e127f69bca0" alt="">ghemotoc</a>
+<p class="body" style="margin: 12px 0 0; max-width: 46ch; color: var(--ink-muted)">A free website for writing and reading stories, poems and essays. Apps come after the web launch. Writers keep the rights to their work, and there are no tracking ads. Everyone aged 13 or older is welcome. In Romanian and English. Starting in Romania; English-speaking countries follow.</p>
+</div>
+<nav aria-label="Read links"><h2 class="subheading" style="margin: 0">Read</h2><ul><li><a href="#">Trending this week</a></li><li><a href="#">New writers</a></li><li><a href="#">About the apps</a></li></ul></nav>
+<nav aria-label="Write and talk links"><h2 class="subheading" style="margin: 0">Write and talk</h2><ul><li><a href="#">Start writing</a></li><li><a href="#">Start a first story</a></li><li><a href="#">Together</a></li><li><a href="#">For teachers</a></li><li><a href="#">For partners</a></li></ul></nav>
+<nav aria-label="Help and legal links"><h2 class="subheading" style="margin: 0">Help and legal</h2><ul><li><a href="#">Help</a></li><li><a href="#">Legal</a></li><li><a href="#">Community guidelines</a></li><li><a href="#">Contact us</a></li><li><a href="#">Report without an account</a></li></ul></nav>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; margin-top: 32px">
+<p class="meta" style="margin: 0">An app by The Magic Coffin</p>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+<button type="button" class="gh-btn gh-btn--quiet" aria-pressed="false">Night mode</button>
+<label class="gh-sr" for="lang-story">Language</label>
+<span class="gh-select"><select id="lang-story"><option>English</option><option lang="ro">Română</option></select><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></span>
+</div>
+</div>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","night"],"default":"light"},"$preview":{"width":1440,"height":2200}}'>
+class Component extends DCLogic {
+  renderVals() {
+    // Day or night, from the Tweaks panel. Every control on today's story page is kept: breadcrumb, facts,
+    // stats, tags, Continue, Following, In library, Like, Share, the follow note, chapters with dates and states,
+    // the story world links, the writer card, every label, content notes, the ad and Report this story.
+    return { theme: this.props.theme ?? 'light' };
+  }
+}
+</script>
+</body>
+</html>

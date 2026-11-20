@@ -1,0 +1,62 @@
+<!-- @dsCard height=288 -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Cover</title>
+<style>
+  /* One fixed 960 x 288 picture: the page scales it down on narrow screens. */
+  body { margin: 0; }
+  .cv { position: relative; width: 960px; height: 288px; overflow: hidden; background: var(--surface-page); }
+  .cv__art { position: absolute; left: 480px; top: 0; width: 480px; height: 288px; display: block; }
+  .cv__text { position: absolute; left: 48px; bottom: 48px; max-width: 432px; margin: 0; }
+  .cv__name { margin: 0; font-family: var(--font-display); font-size: 88px; line-height: .92; font-weight: 700; letter-spacing: -0.02em; color: var(--ink-heading); }
+  .cv__tag { margin: var(--space-4) 0 0; font-family: var(--font-sans); font-size: 14px; line-height: 20px; color: var(--ink-muted); }
+
+  /* Every fill, stroke and corner comes from a token. */
+  .cv-slab   { fill: var(--action-main); rx: var(--radius-card); }
+  .cv-thread { fill: none; stroke: var(--surface-page); stroke-width: 2px; }
+  .cv-violet { fill: var(--ink-accent); rx: var(--radius-book); }
+  .cv-gold   { fill: var(--cover-gold); rx: var(--radius-book); }
+  .cv-lilac  { fill: var(--cover-lilac); rx: var(--radius-book); }
+</style>
+</head>
+<body>
+
+<div class="cv">
+  <svg class="cv__art" viewBox="0 0 480 288" width="480" height="288" aria-hidden="true" focusable="false">
+    <!--
+      Blocks: action-main slab 176x256 (radius-card), books in ink-accent 112x168, cover-gold 64x96 and cover-lilac 80x120 (radius-book, 2:3 like every cover).
+      Arrangement: one tall slab bleeding off the top with satellites, all standing face-out on one line, the last running off the right edge, the way a row of covers stands books.
+      Pattern: the literal-motif row, because the system has one thread (README rule 4) and the name is a ball of thread (ghem): five 2px arcs cut out of the slab in surface-page.
+      Scales: arc pitch space-8 (32), gaps space-4 (16), insets space-8 and space-12, corners radius-card (24) and radius-book (4).
+    -->
+    <defs>
+      <clipPath id="cv-slab-clip"><rect x="32" y="-24" width="176" height="256" rx="24"/></clipPath>
+    </defs>
+
+    <!-- The slab: the brand colour, the ball of thread unwinding from its foot. -->
+    <rect class="cv-slab" x="32" y="-24" width="176" height="256"/>
+    <g clip-path="url(#cv-slab-clip)">
+      <circle class="cv-thread" cx="208" cy="232" r="32"/>
+      <circle class="cv-thread" cx="208" cy="232" r="64"/>
+      <circle class="cv-thread" cx="208" cy="232" r="96"/>
+      <circle class="cv-thread" cx="208" cy="232" r="128"/>
+      <circle class="cv-thread" cx="208" cy="232" r="160"/>
+    </g>
+
+    <!-- Satellites: three books standing face-out, the last one running off the edge. -->
+    <rect class="cv-violet" x="224" y="64" width="112" height="168"/>
+    <rect class="cv-gold" x="352" y="136" width="64" height="96"/>
+    <rect class="cv-lilac" x="432" y="112" width="80" height="120"/>
+
+  </svg>
+
+  <div class="cv__text">
+    <p class="cv__name">ghemotoc</p>
+    <p class="cv__tag">Paper for words, glass for tools.</p>
+  </div>
+</div>
+
+</body>
+</html>
