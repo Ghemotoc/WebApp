@@ -16,6 +16,13 @@ describe('pauseEndFrom', () => {
     expect(pauseEndFrom('3d', now).toISOString()).toBe('2026-11-23T16:40:00.000Z');
     expect(pauseEndFrom('7d', now).toISOString()).toBe('2026-11-27T16:40:00.000Z');
   });
+
+  it('counts hours across a summer-time change, as the database does', () => {
+    // Romania moves its clocks forward on 28 March 2027: 3 days is still 72 hours, so the end the
+    // switch names is the end comment_pause_end() saves (387-pause-comments.test.sql).
+    const beforeTheChange = new Date('2027-03-26T18:00:00Z');
+    expect(pauseEndFrom('3d', beforeTheChange).toISOString()).toBe('2027-03-29T18:00:00.000Z');
+  });
 });
 
 describe('commentPauseView', () => {

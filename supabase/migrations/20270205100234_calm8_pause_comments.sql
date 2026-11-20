@@ -318,14 +318,18 @@ $$;
 /* ---------- 5. The writer pauses and ends a pause ---------- */
 
 /*
- * comment_pause_end(pause_choice): when a pause the writer asks for ends, worked out on the
- * database's clock so a device set to the wrong time can't stretch or shorten it.
- * Input: '24h', '3d' or '7d' for a pause from now (the idea's three lengths), or 'off'.
- * Returns now() plus 24 hours, 3 days or 7 days; null for 'off'.
+ * comment_pause_end(pause_choice, starting_at): when a pause the writer asks for ends, worked out
+ * on the database's clock so a device set to the wrong time can't stretch or shorten it.
+ * Inputs: '24h', '3d' or '7d' for a pause from now (the idea's three lengths), or 'off'; and when
+ * it starts, now() unless a test gives another moment.
+ * Returns the start plus 24, 72 or 168 hours; null for 'off'. Counted in hours, not days: '3 days'
+ * follows the session's calendar, so in a session on Romania time it comes out an hour short or
+ * long across a summer-time change, unlike the end the switch named while the writer picked
+ * (pauseEndFrom() in src/features/writing/lib/commentPause.ts; break test, 20 Nov 2026).
  * Raises check_violation (hint unknown_comment_pause) for anything else, null included.
  * Called by comment_pause_after_changes().
  */
-create function public.comment_pause_end(pause_choice text)
+create function public.comment_pause_end(pause_choice text, starting_at timestamptz default now())
 returns timestamptz
 language plpgsql
 stable
@@ -333,9 +337,9 @@ set search_path = ''
 as $$
 begin
   case pause_choice
-    when '24h' then return now() + interval '24 hours';
-    when '3d' then return now() + interval '3 days';
-    when '7d' then return now() + interval '7 days';
+    when '24h' then return starting_at + interval '24 hours';
+    when '3d' then return starting_at + interval '72 hours';
+    when '7d' then return starting_at + interval '168 hours';
     when 'off' then return null;
     else
       raise exception 'A pause of new comments lasts 24 hours, 3 days or 7 days, or is turned off.'
@@ -343,9 +347,9 @@ begin
   end case;
 end;
 $$;
-comment on function public.comment_pause_end(text) is
-  'Internal: the end of a pause of new comments from now (24h, 3d, 7d) or null (off); refuses anything else (CALM-8).';
-revoke all on function public.comment_pause_end(text) from public, anon, authenticated;
+comment on function public.comment_pause_end(text, timestamptz) is
+  'Internal: the end of a pause of new comments, 24, 72 or 168 hours from now (24h, 3d, 7d), or null (off); refuses anything else (CALM-8).';
+revoke all on function public.comment_pause_end(text, timestamptz) from public, anon, authenticated;
 
 /*
  * comment_pause_after_changes(current_row, changes): when the story's pause of new comments ends

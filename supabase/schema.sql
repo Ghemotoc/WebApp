@@ -21024,15 +21024,15 @@ COMMENT ON FUNCTION "public"."comment_pause_after_changes"("current_row" "public
 
 
 
-CREATE OR REPLACE FUNCTION "public"."comment_pause_end"("pause_choice" "text") RETURNS timestamp with time zone
+CREATE OR REPLACE FUNCTION "public"."comment_pause_end"("pause_choice" "text", "starting_at" timestamp with time zone DEFAULT "now"()) RETURNS timestamp with time zone
     LANGUAGE "plpgsql" STABLE
     SET "search_path" TO ''
     AS $$
 begin
   case pause_choice
-    when '24h' then return now() + interval '24 hours';
-    when '3d' then return now() + interval '3 days';
-    when '7d' then return now() + interval '7 days';
+    when '24h' then return starting_at + interval '24 hours';
+    when '3d' then return starting_at + interval '72 hours';
+    when '7d' then return starting_at + interval '168 hours';
     when 'off' then return null;
     else
       raise exception 'A pause of new comments lasts 24 hours, 3 days or 7 days, or is turned off.'
@@ -21042,10 +21042,10 @@ end;
 $$;
 
 
-ALTER FUNCTION "public"."comment_pause_end"("pause_choice" "text") OWNER TO "postgres";
+ALTER FUNCTION "public"."comment_pause_end"("pause_choice" "text", "starting_at" timestamp with time zone) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."comment_pause_end"("pause_choice" "text") IS 'Internal: the end of a pause of new comments from now (24h, 3d, 7d) or null (off); refuses anything else (CALM-8).';
+COMMENT ON FUNCTION "public"."comment_pause_end"("pause_choice" "text", "starting_at" timestamp with time zone) IS 'Internal: the end of a pause of new comments, 24, 72 or 168 hours from now (24h, 3d, 7d), or null (off); refuses anything else (CALM-8).';
 
 
 
@@ -70045,7 +70045,7 @@ REVOKE ALL ON FUNCTION "public"."comment_pause_after_changes"("current_row" "pub
 
 
 
-REVOKE ALL ON FUNCTION "public"."comment_pause_end"("pause_choice" "text") FROM PUBLIC;
+REVOKE ALL ON FUNCTION "public"."comment_pause_end"("pause_choice" "text", "starting_at" timestamp with time zone) FROM PUBLIC;
 
 
 

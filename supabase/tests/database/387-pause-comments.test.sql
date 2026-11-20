@@ -2,7 +2,8 @@
 -- S1-E6-01; the design handover's Step 4, "Pausing new comments", point 14).
 -- What it proves:
 -- - the writer pauses new comments for 24 hours, 3 days or 7 days through update_my_story(), the
---   end worked out on the database's clock; any other length is refused;
+--   end worked out on the database's clock, in hours, so a summer-time change can't shift it;
+--   any other length is refused;
 -- - another member can't pause or resume someone else's story, and a signed-out visitor can't
 --   either (denied);
 -- - during a pause a reader's comment, reply and paragraph comment are refused with the hint
@@ -23,7 +24,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(62);
+select plan(64);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -267,7 +268,18 @@ select is((select count(*)::integer from public.notifications
   where user_id = '00000000-0000-4000-8000-000000000001' and kind = 'comments_resumed'), 2,
   'one more note, not one per language');
 
-/* ---------- 10. Download my data ---------- */
+/* ---------- 10. Lengths are hours, whatever the session's time zone ---------- */
+
+-- Romania moves its clocks forward at 03:00 on 28 March 2027. Three days from 18:00 UTC on 26 March
+-- is 72 hours later, as the switch shows the writer, even in a session on Romania time.
+set local timezone = 'Europe/Bucharest';
+select is(public.comment_pause_end('3d', '2027-03-26 18:00+00'), '2027-03-29 18:00+00'::timestamptz,
+  'a 3-day pause across the summer-time change lasts 72 hours, as the switch showed');
+select is(public.comment_pause_end('7d', '2027-10-29 18:00+00'), '2027-11-05 18:00+00'::timestamptz,
+  'and a 7-day pause across the change back lasts 168 hours');
+reset timezone;
+
+/* ---------- 11. Download my data ---------- */
 
 select ok(public.export_tables_of('00000000-0000-4000-8000-000000000001') -> 'stories' -> 0 ? 'comments_paused_until',
   'Download my data carries the pause with each story');

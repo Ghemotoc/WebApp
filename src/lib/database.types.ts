@@ -13994,7 +13994,7 @@ export type Database = {
         };
         Returns: string;
       };
-      comment_pause_end: { Args: { pause_choice: string }; Returns: string };
+      comment_pause_end: { Args: { pause_choice: string; starting_at?: string }; Returns: string };
       comment_pause_json: {
         Args: {
           story: Omit<
