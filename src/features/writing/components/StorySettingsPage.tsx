@@ -169,7 +169,11 @@ function SettingsFields({
       <StoryLabelsSection answers={form.answers} errors={form.errors} set={form.set} />
       <StoryVisibilitySection answers={form.answers} set={form.set} />
       <StoryReadOnSection answers={form.answers} set={form.set} />
-      <StoryStatusSection answers={form.answers} set={form.set} />
+      <StoryStatusSection
+        answers={form.answers}
+        set={form.set}
+        pausedUntil={story.commentsPausedUntil}
+      />
       <SaveBar form={form} />
       <DeleteStoryCard story={story} />
     </form>

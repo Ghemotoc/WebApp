@@ -9,7 +9,7 @@ In-app notifications (S1-E7-01), built by READ-3: the bell in the top bar and th
 - `components/NotificationsEmpty.tsx`: "You're all caught up".
 - `components/DecisionsCard.tsx`: "Decisions about your posts": they always arrive and can't be switched off.
 - `components/EmailChoicesCard.tsx`: "Email choices", how each kind arrives by email (from `useEmailSettings`), with a link to Settings (G8d).
-- `lib/notificationText.ts`: what each kind says and where it leads; `lib/dayGroups.ts`: the day headings, in Romanian time.
+- `lib/notificationText.ts`: what each kind says and where it leads (some kinds have a file of their own beside it, such as `lib/commentsResumedText.ts`, the quiet note when a pause of new comments ends, CALM-8); `lib/dayGroups.ts`: the day headings, in Romanian time.
 - `api/notifications.ts` and the hooks: `my_notifications()`, `my_unread_notification_count()`, `mark_notifications_read()`. The bell asks every minute and on focus (no Realtime yet).
 - `registerNotificationsTranslations.ts`: the `notifications` text namespace, added when the page first renders.
 - The database side: `supabase/migrations/…_s1_e7_01_notifications.sql`; tests `154-notifications.test.sql`, `e2e/notifications.spec.ts`.

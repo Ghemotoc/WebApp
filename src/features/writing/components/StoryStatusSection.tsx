@@ -6,10 +6,12 @@
  * Readers can filter by it."; then "Who can comment" (MUST-1a, IDEA-20261106-2), one setting in
  * place of the board's Comments switch: Everyone, Followers only or Nobody, with a line saying
  * what the choice means. Nobody is the old switch turned off (comments_enabled); Followers only
- * is stories.comment_audience. The database enforces both (S1-E6-01). A switch, Quote cards
+ * is stories.comment_audience. The database enforces both (S1-E6-01). Straight under it, while
+ * comments are on, "Pause new comments" (CALM-8, CommentPauseField). A switch, Quote cards
  * (S1-E4-07, third criterion), hides "Share quote" on every chapter when it is off. Then the
  * picture switch (S1-E4-11) and the card colour drop-down (IDEAS-1c, CardColourField).
  * Who uses it: StorySettingsPage (the new story form keeps the defaults; docs/board-fixes.md).
+ * What it calls: ChoiceChips, CommentPauseField, StorySwitch and CardColourField.
  */
 import { useTranslation } from 'react-i18next';
 
@@ -18,63 +20,16 @@ import { ChoiceChips } from '@/components/ui/ChoiceChips';
 import type { SetStoryAnswer, StoryAnswers } from '../hooks/storyAnswers';
 
 import { CardColourField } from './CardColourField';
+import { CommentPauseField } from './CommentPauseField';
 import { FormSection } from './FormSection';
+import { StorySwitch } from './StorySwitch';
 
 /** What the section needs. */
 export interface StoryStatusSectionProps {
   answers: StoryAnswers;
   set: SetStoryAnswer;
-}
-
-/** What one switch needs. */
-interface StorySwitchProps {
-  /** Starts the ids of the label and the note, which must be unique on the page. */
-  idPrefix: string;
-  label: string;
-  isOn: boolean;
-  /** The line beside the switch saying what on or off means now. */
-  note: string;
-  onToggle: () => void;
-}
-
-/**
- * One on/off switch as the board draws it: role="switch", 60 x 34 px, with its note beside it.
- *
- * @returns the label, the switch and the note
- */
-function StorySwitch({ idPrefix, label, isOn, note, onToggle }: StorySwitchProps) {
-  const labelId = `${idPrefix}-label`;
-  const noteId = `${idPrefix}-note`;
-  return (
-    <div className="flex flex-col gap-1.5">
-      <span id={labelId} className="text-sm font-semibold text-ink">
-        {label}
-      </span>
-      <div className="flex flex-wrap items-center gap-3">
-        <button
-          type="button"
-          role="switch"
-          aria-checked={isOn}
-          aria-labelledby={labelId}
-          aria-describedby={noteId}
-          onClick={onToggle}
-          className={`relative inline-flex h-[34px] w-[60px] shrink-0 items-center rounded-full border transition-colors ${
-            isOn ? 'border-chip-on bg-chip-on' : 'border-dashed-border bg-panel'
-          }`}
-        >
-          <span
-            aria-hidden="true"
-            className={`absolute top-[3px] size-[26px] rounded-full bg-surface shadow-card transition-[left] ${
-              isOn ? 'left-[29px]' : 'left-[3px]'
-            }`}
-          />
-        </button>
-        <p id={noteId} className="m-0 text-sm text-body">
-          {note}
-        </p>
-      </div>
-    </div>
-  );
+  /** When the story's saved pause of new comments ends (CALM-8), or null when none was set. */
+  pausedUntil?: string | null;
 }
 
 /** The three answers of "Who can comment", as the chips show them. */
@@ -95,7 +50,7 @@ function commentChoiceOf(answers: StoryAnswers): CommentChoice {
  *
  * @returns the chip group with its note
  */
-function CommentAudienceField({ answers, set }: StoryStatusSectionProps) {
+function CommentAudienceField({ answers, set }: Pick<StoryStatusSectionProps, 'answers' | 'set'>) {
   const { t } = useTranslation('writing');
   const choice = commentChoiceOf(answers);
   /** Nobody turns comments off and keeps the audience for when they come back on. */
@@ -129,7 +84,7 @@ function CommentAudienceField({ answers, set }: StoryStatusSectionProps) {
  *
  * @returns the fieldset
  */
-export function StoryStatusSection({ answers, set }: StoryStatusSectionProps) {
+export function StoryStatusSection({ answers, set, pausedUntil = null }: StoryStatusSectionProps) {
   const { t } = useTranslation('writing');
   return (
     <FormSection legend={t('status.heading')}>
@@ -148,6 +103,14 @@ export function StoryStatusSection({ answers, set }: StoryStatusSectionProps) {
         description={t('status.hint')}
       />
       <CommentAudienceField answers={answers} set={set} />
+      {/* CALM-8: with Nobody there is nothing to pause (the handover's Step 4, point 4). */}
+      {answers.commentsEnabled && (
+        <CommentPauseField
+          answer={answers.commentPause}
+          pausedUntil={pausedUntil}
+          onChange={(answer) => set('commentPause', answer)}
+        />
+      )}
       <StorySwitch
         idPrefix="story-quote-cards"
         label={t('quoteCards.label')}

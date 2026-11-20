@@ -215,6 +215,17 @@
     "followersNote": "Only people who follow you can add comments. Comments already posted stay.",
     "nobodyNote": "Existing comments are hidden and nobody can add new ones."
   },
+  "commentPause": {
+    "label": "Pause new comments",
+    "offNote": "Comments already posted stay, and reporting still works.",
+    "until": "Paused until {{when}}, Romania time.",
+    "lengthLabel": "For how long",
+    "lengths": {
+      "24h": "24 hours",
+      "3d": "3 days",
+      "7d": "7 days"
+    }
+  },
   "quoteCards": {
     "label": "Quote cards and passage links",
     "on": "On. Readers can turn a short passage into a picture to share, one per chapter, and share a link that opens the chapter at a passage.",
