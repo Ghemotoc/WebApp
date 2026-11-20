@@ -2,7 +2,7 @@
 
 The reader's side: the story page, the chapter reader and the teaser. Started by S1-E3-05.
 
-- `components/StoryPage.tsx`: `/s/:storySlug` (board 3.4): `StoryHeader` (cover, pills, title, writer, blurb, tags) and `StorySideColumn` (the writer card, "Labels from the writer", "Report this story"). The rating, label and AI pills, the content note (under the blurb) and the Rating, Labels and AI rows are S1-E3-06. The chapter list comes with S1-E3-03; its published titles link to the reader (S1-E4-01a).
+- `components/StoryPage.tsx`: `/s/:storySlug` (board 3.4): `StoryHeader` (cover, pills, title, writer, blurb, tags) and `StorySideColumn` (the writer card, "Labels from the writer", "Report this story"). The rating, label and AI pills, the content note (under the blurb) and the Rating, Labels and AI rows are S1-E3-06. The chapter list comes with S1-E3-03; its published titles link to the reader (S1-E4-01a). While the writer has paused new comments, the Comments row says until when, in Romania time (CALM-8).
 - `components/StoryLabelPills.tsx` (S1-E3-06): the pills a story's labels add (13+/16+/18+, Fan fiction, Parody, the AI answer, "AI-written, not disclosed"); the writer's preview and card use it too.
 - `components/StoryChapterList.tsx` (S1-E3-03): "Chapters" on the story page; a published chapter's title links to the reader (S1-E4-01a).
 - `components/ChapterText.tsx` (S1-E3-03): a chapter's Markdown as reading text (no raw HTML, the allowed elements only, safe links with `rel="nofollow ugc noopener"`); the editor's preview and the reader use it (the reader adds `tmc-chapter-text--reader`, 19 px unless the reader picks another size).

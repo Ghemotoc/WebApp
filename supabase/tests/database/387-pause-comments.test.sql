@@ -7,7 +7,8 @@
 --   either (denied);
 -- - during a pause a reader's comment, reply and paragraph comment are refused with the hint
 --   'paused_until:<end>', and so is the writer's own (the idea says "nobody");
--- - the comment lists carry the end while the pause runs, with "Resume now" for the writer only;
+-- - the comment lists carry the end while the pause runs, with "Resume now" for the writer only,
+--   and so does the story page, for its Comments row, except to a reader the writer blocks;
 -- - reactions, a report and a moderator's decision carry on during a pause;
 -- - once the time has passed, comments are allowed again, even before the job runs;
 -- - end_comment_pauses() clears the pause and sends the writer one comments_resumed note, in the
@@ -16,13 +17,13 @@
 -- - a language edition shares its story's pause, and the job sends one note for the story;
 -- - Download my data carries the pause with the story row.
 -- Personas: adult_writer (…01, the writer), teacher (…07, a reader), moderator (…10), blocker
--- (…15, who reports).
+-- (…15, who reports), blocked (…16, whom the writer blocks for one test).
 -- Rolled back.
 begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(57);
+select plan(62);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -118,6 +119,22 @@ select ok(public.paragraph_comments('statia-meteo-seed01', 'pau00001', 1) ? 'com
   'the paragraph thread carries the end too');
 select ok(public.paragraph_comment_counts('statia-meteo-seed01', 'pau00001') ? 'comments_paused_until',
   'and the paragraph counts, so a paragraph without comments offers no new thread');
+select is((public.get_story_page('statia-meteo-seed01') ->> 'comments_paused_until')::timestamptz,
+  now() + interval '24 hours', 'the story page carries the end too, for its Comments row');
+select pg_temp.sign_out();
+select is((public.get_story_page('statia-meteo-seed01') ->> 'comments_paused_until')::timestamptz,
+  now() + interval '24 hours', 'and so does a signed-out visitor''s story page');
+
+-- A reader the writer blocks gets no story page at all, so the end doesn't reach them either.
+reset role;
+insert into public.blocks (user_id, blocked_user_id)
+values ('00000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000016');
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000016');
+select is(public.get_story_page('statia-meteo-seed01'), null,
+  'a reader the writer blocks gets no story page, so no end (denied)');
+reset role;
+delete from public.blocks
+where user_id = '00000000-0000-4000-8000-000000000001' and blocked_user_id = '00000000-0000-4000-8000-000000000016';
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 select is(public.chapter_comments('statia-meteo-seed01', 'pau00001') ->> 'can_resume_comments', 'true',
@@ -154,6 +171,8 @@ select ok(public.post_comment('statia-meteo-seed01', 'pau00001', 'Iar se poate.'
   'once the time has passed, a reader comments again, even before the job runs');
 select ok(not (public.chapter_comments('statia-meteo-seed01', 'pau00001') ? 'comments_paused_until'),
   'and the list no longer says paused');
+select is(public.get_story_page('statia-meteo-seed01') ->> 'comments_paused_until', null,
+  'nor does the story page''s Comments row');
 
 /* ---------- 7. The job ends the pause with one quiet note ---------- */
 
@@ -223,6 +242,9 @@ where edition_of_story_id = '00000000-0000-4000-9000-000000000001' and language_
 select public.update_my_story('statia-meteo-seed01', '{"comments_pause": "24h"}');
 select is((select comments_paused_until from public.stories where id = (select id from named where label = 'edition')),
   now() + interval '24 hours', 'a pause on the story pauses its English edition too, like comments on or off');
+select is((public.get_story_page((select slug from public.stories where id = (select id from named where label = 'edition')))
+    ->> 'comments_paused_until')::timestamptz,
+  now() + interval '24 hours', 'and the English edition''s page shows the same end');
 select is(public.update_my_story((select slug from public.stories where id = (select id from named where label = 'edition')),
     '{"comments_pause": "off"}') ->> 'outcome', 'ok',
   'a change sent to the English edition alone is taken');

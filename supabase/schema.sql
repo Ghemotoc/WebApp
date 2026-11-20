@@ -27837,6 +27837,8 @@ begin
       where story_tags.story_id = story.id and tags.status = 'approved'), '[]'::jsonb),
     'completion_status', story.completion_status,
     'comments_enabled', story.comments_enabled,
+    -- CALM-8: the end of a running pause of new comments; null when none runs or it has passed.
+    'comments_paused_until', public.running_comment_pause(story),
     'cover', jsonb_build_object('kind', story.cover_kind, 'design', story.cover_design,
       'background', story.cover_background, 'accent', story.cover_accent),
     'labels', jsonb_build_object('rating', story.rating, 'is_fan_fiction', story.is_fan_fiction,

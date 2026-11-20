@@ -56,7 +56,16 @@ describe('CommentsPausedLine', () => {
     renderWithProviders(<CommentsPausedLine address={address} end={end} canResume />, 'en');
     fireEvent.click(screen.getByRole('button', { name: 'Resume now' }));
     expect(resume).toHaveBeenCalledTimes(1);
-    expect(useResumeComments).toHaveBeenCalledWith(address);
+    expect(useResumeComments).toHaveBeenCalledWith(address, undefined);
+  });
+
+  it('hands "Resume now" the parent’s callback, so the box that comes back can take the focus', () => {
+    const onResumed = vi.fn();
+    renderWithProviders(
+      <CommentsPausedLine address={address} end={end} canResume onResumed={onResumed} />,
+      'en',
+    );
+    expect(useResumeComments).toHaveBeenCalledWith(address, onResumed);
   });
 
   it('says so in Romanian too', () => {

@@ -12,6 +12,7 @@
  * the chapter text. What it calls: useChapterComments → chapter_comments(); CommentComposer;
  * CommentsPausedLine; CommentItem.
  */
+import { useState } from 'react';
 import { Link } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
@@ -32,9 +33,12 @@ import { CommentsPausedLine } from './CommentsPausedLine';
 /**
  * The composer for a member, the log-in link for a visitor.
  *
+ * @param props.address - the chapter the comment goes on
+ * @param props.focusOnMount - true when the box comes back after "Resume now" (CALM-8), so it
+ *   takes the focus
  * @returns the way to add a comment
  */
-function AddComment({ address }: { address: ChapterAddress }) {
+function AddComment({ address, focusOnMount }: { address: ChapterAddress; focusOnMount: boolean }) {
   const { t } = useCommentsTranslation();
   const { userId } = useSession();
   if (userId === null) {
@@ -47,7 +51,7 @@ function AddComment({ address }: { address: ChapterAddress }) {
       </Link>
     );
   }
-  return <CommentComposer address={address} />;
+  return <CommentComposer address={address} focusOnMount={focusOnMount} />;
 }
 
 /** What the line above the list needs. */
@@ -67,16 +71,26 @@ interface CommentEntryProps {
  */
 function CommentEntry({ address, page, pauseEnd }: CommentEntryProps) {
   const { t } = useCommentsTranslation();
+  // CALM-8: true once the writer's "Resume now" has worked; the box that comes back in place of
+  // the line then takes the focus, so the writer isn't left on a button that has gone.
+  const [hasResumed, setHasResumed] = useState(false);
   if (!page.commentsEnabled) return <p className="m-0 text-base text-body">{t('section.off')}</p>;
   // CALM-8: nobody can post during a pause, the writer included, so this line comes before the
   // followers-only one and shows to visitors too.
   if (pauseEnd !== null) {
-    return <CommentsPausedLine address={address} end={pauseEnd} canResume={page.pause.canResume} />;
+    return (
+      <CommentsPausedLine
+        address={address}
+        end={pauseEnd}
+        canResume={page.pause.canResume}
+        onResumed={() => setHasResumed(true)}
+      />
+    );
   }
   if (!page.audienceAllowsMe) {
     return <p className="m-0 text-base text-body">{t('section.followersOnly')}</p>;
   }
-  return <AddComment address={address} />;
+  return <AddComment address={address} focusOnMount={hasResumed} />;
 }
 
 /**

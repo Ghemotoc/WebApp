@@ -5,7 +5,8 @@
  * Board values: the writer card (name, 22 px, the bio, Follow and "See profile"; S1-E5-05 and
  * S1-E6-05; the writer's numbers stay on the profile), the label rows with a fine line between them (LabelRows: language,
  * rating, labels, AI, status, first published (6 Nov 2026), comments; "Where to read" joins with S1-E3-08) and the "Report
- * this story" link. The content note sits in StoryHeader, under the blurb. No doodles since bundle G4.
+ * this story" link. While the writer has paused new comments, the comments row says until when, in
+ * Romania time (bundle CALM-8). The content note sits in StoryHeader, under the blurb. No doodles since bundle G4.
  * Report button (CLAUDE.md rule 6): Lane C's shared <ReportButton> (S1-E10-01; architecture
  * 1.7.11), which opens the one report dialog for this story. Not shown to the story's owner, who
  * can't report their own story (the database refuses it too).
@@ -23,6 +24,8 @@ import { Eyebrow } from '@/components/ui/Eyebrow';
 import { LabelRows } from '@/components/ui/LabelRows';
 import { FollowButton } from '@/features/people/components/FollowButton';
 import { ReportButton } from '@/features/reporting/components/ReportButton';
+import { runningPauseEnd } from '@/lib/comment-pause';
+import { formatRomaniaDayAndTime } from '@/lib/romania-time';
 import { ratingMinimumAge } from '@/schemas/story';
 
 import type { ClassicAuthor, StoryPageData } from '../api/storyPage';
@@ -176,12 +179,30 @@ function firstPublishedRows(story: StoryPageData, t: TFunction<'reading'>) {
 }
 
 /**
+ * The comments row: "Off", "On", or while the writer has paused new comments, "Paused until
+ * Saturday 21 November, 18:40, Romania time" (bundle CALM-8), the end written the way the paused
+ * line under a chapter writes it.
+ *
+ * @param story - the story page's data
+ * @param t - the reading namespace's translate function
+ * @param language - the interface language, for the date
+ * @returns the row's value
+ */
+function commentsRowText(story: StoryPageData, t: TFunction<'reading'>, language: string) {
+  if (!story.commentsEnabled) return t('storyPage.commentsOff');
+  // The page was read a little while ago, so a pause that has ended since counts as none.
+  const pauseEnd = runningPauseEnd(story.commentsPausedUntil, new Date());
+  if (pauseEnd === null) return t('storyPage.commentsOn');
+  return t('storyPage.commentsPaused', { when: formatRomaniaDayAndTime(pauseEnd, language) });
+}
+
+/**
  * Renders the column.
  *
  * @returns the side column
  */
 export function StorySideColumn({ story }: { story: StoryPageData }) {
-  const { t } = useTranslation('reading');
+  const { t, i18n } = useTranslation('reading');
   return (
     <aside className="flex flex-col gap-5">
       {story.writer.classicAuthor === null ? (
@@ -217,7 +238,7 @@ export function StorySideColumn({ story }: { story: StoryPageData }) {
             ...firstPublishedRows(story, t),
             {
               label: t('storyPage.commentsLabel'),
-              value: story.commentsEnabled ? t('storyPage.commentsOn') : t('storyPage.commentsOff'),
+              value: commentsRowText(story, t, i18n.language),
             },
           ]}
         />

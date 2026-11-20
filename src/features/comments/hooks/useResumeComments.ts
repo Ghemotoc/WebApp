@@ -6,7 +6,8 @@
  * What it calls: api/commentPause.ts → end_my_comment_pause(), which ends the pause in every
  * language of the story. After it, the story's comment lists are read again: the comments under the
  * chapter, the paragraph counts and any open paragraph thread all have keys that start with
- * storyCommentsQueryKey(), so the comment box and Reply come back at once.
+ * storyCommentsQueryKey(), so the comment box and Reply come back at once. Just before that, it
+ * tells the line's parent (onResumed), so the box that comes back can take the focus.
  */
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -52,16 +53,20 @@ function resumeFailureOf(
  * Ends the pause on the chapter's story.
  *
  * @param address - the chapter the line sits under (its story's address is what counts)
+ * @param onResumed - called once the database has ended the pause, before the lists are read
+ *   again, so the parent can move the focus into the comment box that comes back
  * @returns resume(), isResuming while the call runs, and the last failure or null
  */
-export function useResumeComments(address: ChapterAddress) {
+export function useResumeComments(address: ChapterAddress, onResumed?: () => void) {
   const queryClient = useQueryClient();
   const resume = useMutation({
     // Step 1: ask the database to end the pause; it checks that the story is the caller's own.
     mutationFn: async () => endMyCommentPause(await requireClient(), address.storySlug),
-    // Step 2: once it has ended, read the story's comment lists again, so the box comes back.
+    // Step 2: once it has ended, say so, then read the story's comment lists again, so the box
+    // comes back. This runs even though the line (and its button) goes away meanwhile.
     onSuccess: async (outcome) => {
       if (outcome !== 'ok') return;
+      onResumed?.();
       await queryClient.invalidateQueries({ queryKey: storyCommentsQueryKey(address.storySlug) });
     },
   });

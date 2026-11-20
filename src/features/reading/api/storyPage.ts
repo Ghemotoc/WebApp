@@ -51,6 +51,12 @@ export interface StoryPageData {
   tags: string[];
   completionStatus: 'ongoing' | 'completed';
   commentsEnabled: boolean;
+  /**
+   * When the writer's pause of new comments ends, while one runs (bundle CALM-8); null otherwise.
+   * The database stops sending it once the end has passed; the screen also checks the time,
+   * because the page may have been read a while ago (runningPauseEnd()).
+   */
+  commentsPausedUntil: string | null;
   coverKind: 'automatic' | 'drawn' | 'upload';
   drawnCover: { design: CoverDesignKey; background: CoverColourKey; accent: CoverColourKey } | null;
   /**
@@ -110,6 +116,8 @@ interface StoryPageRow {
   tags: string[];
   completion_status: 'ongoing' | 'completed';
   comments_enabled: boolean;
+  /** CALM-8: missing from a database without the pause, so it may be absent. */
+  comments_paused_until?: string | null;
   cover: {
     kind: 'automatic' | 'drawn' | 'upload';
     design: string | null;
@@ -238,6 +246,7 @@ export async function fetchStoryPage(
     tags: row.tags,
     completionStatus: row.completion_status,
     commentsEnabled: row.comments_enabled,
+    commentsPausedUntil: row.comments_paused_until ?? null,
     coverKind: cover.kind,
     drawnCover: drawnCoverFrom(cover),
     writer: {

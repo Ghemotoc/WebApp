@@ -20,9 +20,10 @@ const address = { storySlug: 'statia-meteo', chapterCode: 'reace001' };
  * Runs the hook against a database that answers the given result.
  *
  * @param result - what end_my_comment_pause() answers
+ * @param onResumed - the parent's callback, if the test watches it
  * @returns the hook, the rpc spy and the cache's invalidate spy
  */
-function renderResume(result: { data: unknown; error: unknown }) {
+function renderResume(result: { data: unknown; error: unknown }, onResumed?: () => void) {
   const rpc = vi.fn().mockResolvedValue(result);
   vi.mocked(requireClient).mockResolvedValue({ rpc } as unknown as AppSupabaseClient);
   const queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
@@ -30,7 +31,7 @@ function renderResume(result: { data: unknown; error: unknown }) {
   const wrapper = ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
-  const hook = renderHook(() => useResumeComments(address), { wrapper });
+  const hook = renderHook(() => useResumeComments(address, onResumed), { wrapper });
   return { hook, rpc, invalidate };
 }
 
@@ -44,11 +45,24 @@ describe('useResumeComments', () => {
     expect(hook.result.current.failure).toBeNull();
   });
 
+  it('tells the parent once the pause has ended, so the box that comes back can take the focus', async () => {
+    const onResumed = vi.fn();
+    const { hook, invalidate } = renderResume({ data: { outcome: 'ok' }, error: null }, onResumed);
+    act(() => hook.result.current.resume());
+    await waitFor(() => expect(invalidate).toHaveBeenCalled());
+    expect(onResumed).toHaveBeenCalledTimes(1);
+  });
+
   it('says the account can’t change stories now, and reads nothing again', async () => {
-    const { hook, invalidate } = renderResume({ data: { outcome: 'not_active' }, error: null });
+    const onResumed = vi.fn();
+    const { hook, invalidate } = renderResume(
+      { data: { outcome: 'not_active' }, error: null },
+      onResumed,
+    );
     act(() => hook.result.current.resume());
     await waitFor(() => expect(hook.result.current.failure).toBe('not_active'));
     expect(invalidate).not.toHaveBeenCalled();
+    expect(onResumed).not.toHaveBeenCalled();
   });
 
   it('treats someone else’s story as a plain failure', async () => {

@@ -23,7 +23,7 @@
  * replies, reactions and Report button); CommentComposer (posting on the paragraph);
  * CommentsPausedLine (during a pause).
  */
-import { useEffect, useRef, type RefObject } from 'react';
+import { useEffect, useRef, useState, type RefObject } from 'react';
 
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
@@ -169,6 +169,9 @@ interface ThreadFootProps extends Pick<ParagraphThreadProps, 'address' | 'place'
  */
 function ThreadFoot({ address, place, thread, pauseEnd }: ThreadFootProps) {
   const { t } = useCommentsTranslation();
+  // CALM-8: true once the writer's "Resume now" has worked; the box that comes back in place of
+  // the line then takes the focus, so the writer isn't left on a button that has gone.
+  const [hasResumed, setHasResumed] = useState(false);
   if (place === 'earlier') {
     return <p className="m-0 mt-3 text-sm text-meta">{t('paragraph.earlierNote')}</p>;
   }
@@ -180,6 +183,7 @@ function ThreadFoot({ address, place, thread, pauseEnd }: ThreadFootProps) {
         end={pauseEnd}
         canResume={thread.pause.canResume}
         className="mt-3 border-t border-hairline pt-4"
+        onResumed={() => setHasResumed(true)}
       />
     );
   }
@@ -190,7 +194,7 @@ function ThreadFoot({ address, place, thread, pauseEnd }: ThreadFootProps) {
   }
   return (
     <div className="mt-3 border-t border-hairline pt-4">
-      <CommentComposer address={address} paragraph={place} />
+      <CommentComposer address={address} paragraph={place} focusOnMount={hasResumed} />
     </div>
   );
 }
