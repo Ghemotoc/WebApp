@@ -114,6 +114,9 @@ IDEA-20261115-1 A private line about a story I finished; -2 More from writers I 
 ### Sent 16 Nov 2026 (doc tabs by category in "Ghemotoc feature ideas"; Notion Feature ideas database)
 IDEA-20261116-1 "Changed since you read it" on the chapter list; -2 "Not for me" on a story card; -3 Save a comment to my revision list; -4 "About an earlier version" on old comments; -5 Close a quiet space and keep it readable; -6 "While you were away" after a long break; -7 Hand in to the teacher first; -8 School holidays pause the weekly points; -9 Clear my reading history; -10 Copy a reference for school work; -11 A letter bar for ă, ș, ț, å, ä, ö, æ and ø.
 
+### Sent 20 Nov 2026 (doc tabs by category in "Product: feature ideas", now 10 categories; Notion Feature ideas database)
+IDEA-20261120-1 Read a classic side by side in two languages; -2 Pasting from another editor keeps italics and bold; -3 A feedback swap board; -4 Blur covers of mature stories until tapped; -5 Message requests expire after 30 days; -6 A weekly roundup from a space I joined; -7 A self-check before handing in; -8 A larger buttons switch; -9 An "On this day" shelf; -10 Read a finished story on one page.
+
 ### Sent 19 Nov 2026 (doc tabs by category in "Product: feature ideas"; Notion Feature ideas database)
 IDEA-20261119-1 A heads-up before a scheduled chapter goes out; -2 Choose the day and time of my weekly email; -3 A poem as a printable poster; -4 Copy a story fact sheet; -5 A text alternative for music and video in a chapter; -6 Text size remembered for each device; -7 Show only comments from people I follow; -8 Browse by first line; -9 Poems by form; -10 What I agreed to, on one page; -11 An announcements thread only moderators can post in; -12 Hold off comments from brand-new accounts on my story.
 
