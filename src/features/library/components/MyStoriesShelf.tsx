@@ -50,7 +50,7 @@ function MyStoryCard({ story, cover }: { story: MyStory; cover: DrawnCoverChoice
       metaLine={statusLine(story, t)}
       cover={cover}
       href={`/write/s/${encodeURIComponent(story.slug)}/chapters`}
-      wrapCover={(drawn) => <StoryCoverArt story={story} drawn={drawn} className="w-[165px]" />}
+      wrapCover={(drawn) => <StoryCoverArt story={story} drawn={drawn} className="w-full" />}
     />
   );
 }

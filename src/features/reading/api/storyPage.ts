@@ -59,6 +59,9 @@ export interface StoryPageData {
   commentsPausedUntil: string | null;
   coverKind: 'automatic' | 'drawn' | 'upload';
   drawnCover: { design: CoverDesignKey; background: CoverColourKey; accent: CoverColourKey } | null;
+  /** The cover's look and title font (cover.style, cover.title_font; bundle CALM-4). */
+  coverStyle?: string | null;
+  titleFont?: string | null;
   /**
    * The writer's public name, username and bio (S1-E5-05). For a public-domain classic the name
    * is its real author and classicAuthor says who (S1-E5-06, 25 Oct 2026); null otherwise.
@@ -123,6 +126,9 @@ interface StoryPageRow {
     design: string | null;
     background: string | null;
     accent: string | null;
+    /** CALM-4 (get_story_page()); missing from functions that build their own cards. */
+    style?: string | null;
+    title_font?: string | null;
   };
   writer: {
     display_name: string;
@@ -249,6 +255,8 @@ export async function fetchStoryPage(
     commentsPausedUntil: row.comments_paused_until ?? null,
     coverKind: cover.kind,
     drawnCover: drawnCoverFrom(cover),
+    coverStyle: cover.style ?? null,
+    titleFont: cover.title_font ?? null,
     writer: {
       displayName: row.writer.display_name,
       handle: row.writer.handle,

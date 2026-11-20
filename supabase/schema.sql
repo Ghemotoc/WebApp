@@ -356,6 +356,37 @@ COMMENT ON TYPE "public"."cover_kind" IS 'automatic (drawn from the story ID, no
 
 
 
+CREATE TYPE "public"."cover_style" AS ENUM (
+    'label',
+    'big_title',
+    'initial',
+    'picture',
+    'custom'
+);
+
+
+ALTER TYPE "public"."cover_style" OWNER TO "postgres";
+
+
+COMMENT ON TYPE "public"."cover_style" IS 'How a cover is drawn (CALM-4): label, big_title and initial for drawn and automatic covers, picture and custom for uploads.';
+
+
+
+CREATE TYPE "public"."cover_title_font" AS ENUM (
+    'reading',
+    'display',
+    'sans',
+    'hand'
+);
+
+
+ALTER TYPE "public"."cover_title_font" OWNER TO "postgres";
+
+
+COMMENT ON TYPE "public"."cover_title_font" IS 'The title''s font on the covers we draw (CALM-4): reading = Literata, display = Funnel Display, sans = Inter, hand = Playwrite Cuba.';
+
+
+
 CREATE TYPE "public"."data_request_channel" AS ENUM (
     'in_app',
     'email',
@@ -3382,6 +3413,8 @@ CREATE TABLE IF NOT EXISTS "public"."stories" (
     "comment_audience" "text" DEFAULT 'everyone'::"text" NOT NULL,
     "edition_of_story_id" "uuid",
     "comments_paused_until" timestamp with time zone,
+    "cover_style" "public"."cover_style" DEFAULT 'label'::"public"."cover_style" NOT NULL,
+    "cover_title_font" "public"."cover_title_font" DEFAULT 'reading'::"public"."cover_title_font" NOT NULL,
     CONSTRAINT "stories_abuse_needs_rating_and_note" CHECK (((NOT "deals_with_abuse_or_coercion") OR (("rating" = ANY (ARRAY['16_plus'::"public"."story_rating", '18_plus'::"public"."story_rating"])) AND ("btrim"("content_note") <> ''::"text")))),
     CONSTRAINT "stories_blurb_length" CHECK (("char_length"("blurb") <= 500)),
     CONSTRAINT "stories_card_colour_on_palette" CHECK ((("card_colour" IS NULL) OR ("card_colour" = ANY (ARRAY['plum'::"text", 'violet'::"text", 'gold'::"text", 'ink'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text"])))),
@@ -3397,6 +3430,13 @@ CASE "cover_kind"
     ELSE NULL::boolean
 END),
     CONSTRAINT "stories_cover_design_is_approved" CHECK ((("cover_design" IS NULL) OR ("cover_design" = ANY (ARRAY['plum'::"text", 'ink'::"text", 'violet'::"text", 'gold'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text", 'stripes'::"text", 'dots'::"text", 'grid'::"text", 'waves'::"text", 'starry'::"text", 'sparkles'::"text", 'twotone'::"text", 'arches'::"text", 'rings'::"text", 'forestwaves'::"text"])))),
+    CONSTRAINT "stories_cover_style_fits_kind" CHECK (
+CASE "cover_kind"
+    WHEN 'automatic'::"public"."cover_kind" THEN ("cover_style" = 'label'::"public"."cover_style")
+    WHEN 'drawn'::"public"."cover_kind" THEN ("cover_style" = ANY (ARRAY['label'::"public"."cover_style", 'big_title'::"public"."cover_style", 'initial'::"public"."cover_style"]))
+    WHEN 'upload'::"public"."cover_kind" THEN ("cover_style" = ANY (ARRAY['picture'::"public"."cover_style", 'custom'::"public"."cover_style"]))
+    ELSE NULL::boolean
+END),
     CONSTRAINT "stories_edition_not_of_itself" CHECK ((("edition_of_story_id" IS NULL) OR ("edition_of_story_id" <> "id"))),
     CONSTRAINT "stories_first_published_year_range" CHECK ((("first_published_year" >= 1) AND ("first_published_year" <= 2100))),
     CONSTRAINT "stories_language_code_shape" CHECK (("language_code" ~ '^[a-z]{2}(-[A-Z]{2})?$'::"text")),
@@ -3514,7 +3554,19 @@ COMMENT ON COLUMN "public"."stories"."comments_paused_until" IS 'When the writer
 
 
 
+COMMENT ON COLUMN "public"."stories"."cover_style" IS 'How the cover is drawn (CALM-4); see the cover_style type. Readers see Label while staff hide a cover.';
+
+
+
+COMMENT ON COLUMN "public"."stories"."cover_title_font" IS 'The title''s font on the covers we draw (CALM-4); pen names stay Inter.';
+
+
+
 COMMENT ON CONSTRAINT "stories_cover_design_is_approved" ON "public"."stories" IS 'A drawn cover uses one of the designs the app can draw (src/components/covers/coverDesigns.ts); "doodles" was renamed "sparkles" in NO-DOODLES, and G9c added arches, rings and forestwaves.';
+
+
+
+COMMENT ON CONSTRAINT "stories_cover_style_fits_kind" ON "public"."stories" IS 'An automatic cover is a Label; a drawn cover is Label, Big title or Initial; an upload is Picture or Custom (CALM-4).';
 
 
 
@@ -27670,7 +27722,9 @@ begin
       from public.profiles where profiles.id = story.user_id),
     'cover', jsonb_build_object(
       'kind', story.cover_kind, 'design', story.cover_design,
-      'background', story.cover_background, 'accent', story.cover_accent),
+      'background', story.cover_background, 'accent', story.cover_accent,
+        -- CALM-4: how the cover is drawn and the title's font.
+        'style', story.cover_style, 'title_font', story.cover_title_font),
     'category_slug', (select categories.slug from public.categories where categories.id = story.category_id),
     'tags', public.story_search_tags(story.id, story.language_code),
     'chapter', chapter_part);
@@ -27855,7 +27909,9 @@ begin
     -- CALM-8: the end of a running pause of new comments; null when none runs or it has passed.
     'comments_paused_until', public.running_comment_pause(story),
     'cover', jsonb_build_object('kind', story.cover_kind, 'design', story.cover_design,
-      'background', story.cover_background, 'accent', story.cover_accent),
+      'background', story.cover_background, 'accent', story.cover_accent,
+        -- CALM-4: how the cover is drawn and the title's font.
+        'style', story.cover_style, 'title_font', story.cover_title_font),
     'labels', jsonb_build_object('rating', story.rating, 'is_fan_fiction', story.is_fan_fiction,
       'is_parody', story.is_parody, 'deals_with_abuse_or_coercion', story.deals_with_abuse_or_coercion,
       'content_note', story.content_note, 'ai_disclosure', story.ai_disclosure,
@@ -37515,7 +37571,9 @@ CREATE OR REPLACE FUNCTION "public"."profile_story_cards"("writer_id" "uuid", "i
       'completion_status', stories.completion_status,
       'rating', stories.rating,
       'cover', jsonb_build_object('kind', stories.cover_kind, 'design', stories.cover_design,
-        'background', stories.cover_background, 'accent', stories.cover_accent),
+        'background', stories.cover_background, 'accent', stories.cover_accent,
+        -- CALM-4: how the cover is drawn and the title's font.
+        'style', stories.cover_style, 'title_font', stories.cover_title_font),
       -- QA-2a: only published, undeleted chapters can be readable; saying so lets Postgres use
       -- chapters_published_idx.
       'chapter_count', (select count(*) from public.chapters
@@ -37784,7 +37842,9 @@ begin
     'story', jsonb_build_object(
       'id', shown.id, 'slug', shown.slug, 'title', shown.title,
       'cover', jsonb_build_object('kind', shown.cover_kind, 'design', shown.cover_design,
-        'background', shown.cover_background, 'accent', shown.cover_accent),
+        'background', shown.cover_background, 'accent', shown.cover_accent,
+        -- CALM-4: how the cover is drawn and the title's font.
+        'style', shown.cover_style, 'title_font', shown.cover_title_font),
       -- The pen name, else the username; never the user ID (rule 15).
       'writer_name', (select public.story_writer_name(shown.id, profiles.handle, profiles.pen_name)
                       from public.profiles where profiles.id = shown.user_id)),
@@ -39453,6 +39513,10 @@ CREATE OR REPLACE FUNCTION "public"."reading_list_json"("target" "public"."readi
     from public.listed_stories('reading_list', target.id::text, null, null, null) as shown
     join public.reading_list_stories as entries
       on entries.list_id = target.id and entries.story_id = shown.id
+  ),
+  shelf_size as (
+    -- How many places one bookshelf has (CALM-4); 10 when the setting is missing.
+    select coalesce(public.setting_value('reading_list_stories_max') #>> '{}', '10')::integer as places
   )
   select jsonb_build_object(
     'id', target.id,
@@ -39463,14 +39527,16 @@ CREATE OR REPLACE FUNCTION "public"."reading_list_json"("target" "public"."readi
               from public.profiles where profiles.id = target.user_id),
     'story_count', (select count(*) from listed),
     'covers', (select coalesce(jsonb_agg(public.story_card_json(latest.id) order by latest.added_at desc), '[]'::jsonb)
-               from (select listed.id, listed.added_at from listed order by listed.added_at desc limit 3) as latest));
+               from (select listed.id, listed.added_at from listed
+                     order by listed.added_at desc
+                     limit (select places from shelf_size)) as latest));
 $$;
 
 
 ALTER FUNCTION "public"."reading_list_json"("target" "public"."reading_lists") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."reading_list_json"("target" "public"."reading_lists") IS 'Internal: a reading list with its owner, its count and its three latest covers, as this caller may see them (GAPS-6).';
+COMMENT ON FUNCTION "public"."reading_list_json"("target" "public"."reading_lists") IS 'Internal: a bookshelf (reading list) with its owner, its count and its latest covers up to the places one bookshelf has, as this caller may see them (GAPS-6; CALM-4).';
 
 
 
@@ -46615,6 +46681,53 @@ COMMENT ON FUNCTION "public"."set_my_story_app_only"("story_slug" "text", "wante
 
 
 
+CREATE OR REPLACE FUNCTION "public"."set_my_story_cover_look"("story_slug" "text", "style" "public"."cover_style", "title_font" "public"."cover_title_font") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target_story_id uuid;
+  current_kind public.cover_kind;
+begin
+  -- Step 1: a signed-in writer who may write, and their own live story (as update_my_story()).
+  if (select auth.uid()) is null then
+    raise exception 'Sign in to change a story.' using errcode = 'insufficient_privilege';
+  end if;
+  if not public.is_active_member() then
+    return jsonb_build_object('outcome', 'not_active');
+  end if;
+  target_story_id := public.my_live_story_id(story_slug);
+  if target_story_id is null then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+
+  -- Step 2: the style must fit the cover the story has.
+  select stories.cover_kind into current_kind from public.stories where stories.id = target_story_id;
+  if not (
+    (current_kind = 'automatic' and style = 'label')
+    or (current_kind = 'drawn' and style in ('label', 'big_title', 'initial'))
+    or (current_kind = 'upload' and style in ('picture', 'custom'))
+  ) then
+    raise exception 'That cover style doesn''t fit this cover.'
+      using errcode = 'invalid_parameter_value', hint = 'style_does_not_fit';
+  end if;
+
+  -- Step 3: save both; editions follow through stories_editions_follow_cover_look().
+  update public.stories
+  set cover_style = style, cover_title_font = title_font
+  where stories.id = target_story_id;
+  return jsonb_build_object('outcome', 'saved', 'style', style, 'title_font', title_font);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_my_story_cover_look"("story_slug" "text", "style" "public"."cover_style", "title_font" "public"."cover_title_font") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_my_story_cover_look"("story_slug" "text", "style" "public"."cover_style", "title_font" "public"."cover_title_font") IS 'The writer changes their own story''s cover style and title font (CALM-4).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."set_my_story_visibility"("story_slug" "text", "wanted" "public"."story_visibility") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -47480,7 +47593,10 @@ begin
       'story_id', story.id,
       'design', case when cover_kind = 'drawn' then story.cover_design end,
       'background', case when cover_kind = 'drawn' then story.cover_background end,
-      'accent', case when cover_kind = 'drawn' then story.cover_accent end));
+      'accent', case when cover_kind = 'drawn' then story.cover_accent end,
+      -- CALM-4: how the cover is drawn and the title's font (a hidden cover draws as a Label).
+      'style', case when cover_kind = story.cover_kind then story.cover_style else 'label' end,
+      'title_font', story.cover_title_font));
 end;
 $$;
 
@@ -50106,6 +50222,41 @@ COMMENT ON FUNCTION "public"."stories_clear_hidden_presentation"() IS 'Trigger: 
 
 
 
+CREATE OR REPLACE FUNCTION "public"."stories_cover_style_fits"() RETURNS "trigger"
+    LANGUAGE "plpgsql"
+    SET "search_path" TO ''
+    AS $$
+declare
+  first_edition public.stories;
+begin
+  -- Step 1: an edition shares its cover with the first edition.
+  if new.edition_of_story_id is not null then
+    select * into first_edition from public.stories where stories.id = new.edition_of_story_id;
+    if found then
+      new.cover_style := first_edition.cover_style;
+      new.cover_title_font := first_edition.cover_title_font;
+    end if;
+  end if;
+  -- Step 2: a style that no longer fits the kind falls back to the plain one for that kind.
+  if new.cover_kind = 'automatic' then
+    new.cover_style := 'label';
+  elsif new.cover_kind = 'drawn' and new.cover_style not in ('label', 'big_title', 'initial') then
+    new.cover_style := 'label';
+  elsif new.cover_kind = 'upload' and new.cover_style not in ('picture', 'custom') then
+    new.cover_style := 'custom';
+  end if;
+  return new;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."stories_cover_style_fits"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."stories_cover_style_fits"() IS 'Trigger: keeps cover_style fitting cover_kind and copies an edition''s style and font from the first edition (CALM-4).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."stories_edition_rules"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -50206,6 +50357,29 @@ ALTER FUNCTION "public"."stories_edition_rules"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."stories_edition_rules"() IS 'Trigger: checks a language edition''s link and copies the settings every edition shares from the first edition (TRANSLATE-1a).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."stories_editions_follow_cover_look"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  update public.stories as editions set
+    cover_style = new.cover_style,
+    cover_title_font = new.cover_title_font
+  where editions.edition_of_story_id = new.id
+    and (editions.cover_style, editions.cover_title_font)
+      is distinct from (new.cover_style, new.cover_title_font);
+  return null;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."stories_editions_follow_cover_look"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."stories_editions_follow_cover_look"() IS 'Trigger: language editions take the first edition''s cover style and title font (CALM-4).';
 
 
 
@@ -50532,7 +50706,9 @@ CREATE OR REPLACE FUNCTION "public"."story_card_json"("target_story_id" "uuid") 
     'completion_status', stories.completion_status,
     'rating', stories.rating,
     'cover', jsonb_build_object('kind', stories.cover_kind, 'design', stories.cover_design,
-      'background', stories.cover_background, 'accent', stories.cover_accent),
+      'background', stories.cover_background, 'accent', stories.cover_accent,
+        -- CALM-4: how the cover is drawn and the title's font.
+        'style', stories.cover_style, 'title_font', stories.cover_title_font),
     -- QA-2a: only published, undeleted chapters can be readable, and saying so lets Postgres
     -- read just this story's chapters through chapters_published_idx.
     'chapter_count', (select count(*) from public.chapters
@@ -51751,7 +51927,9 @@ CREATE OR REPLACE FUNCTION "public"."story_reading_lists"("story_slug" "text") R
       'has_story', exists (
         select 1 from public.reading_list_stories as entries
         join public.stories on stories.id = entries.story_id
-        where entries.list_id = reading_lists.id and stories.slug = story_slug))
+        where entries.list_id = reading_lists.id and stories.slug = story_slug),
+      'book_count', (select count(*) from public.reading_list_stories as entries
+                     where entries.list_id = reading_lists.id))
     order by lower(reading_lists.name), reading_lists.id), '[]'::jsonb)
   from public.reading_lists
   where reading_lists.user_id = (select auth.uid()) and reading_lists.deleted_at is null;
@@ -51761,7 +51939,7 @@ $$;
 ALTER FUNCTION "public"."story_reading_lists"("story_slug" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."story_reading_lists"("story_slug" "text") IS 'The caller''s reading lists with whether a story is in each, for "Add to a list" on the story page (GAPS-6).';
+COMMENT ON FUNCTION "public"."story_reading_lists"("story_slug" "text") IS 'The caller''s bookshelves (reading lists) with whether a story is on each and how many books each holds, for "Add to a bookshelf" on the story page (GAPS-6; CALM-4).';
 
 
 
@@ -62976,6 +63154,10 @@ CREATE OR REPLACE TRIGGER "stories_clear_hidden_presentation" BEFORE UPDATE OF "
 
 
 
+CREATE OR REPLACE TRIGGER "stories_editions_follow_cover_look" AFTER UPDATE OF "cover_style", "cover_title_font" ON "public"."stories" FOR EACH ROW EXECUTE FUNCTION "public"."stories_editions_follow_cover_look"();
+
+
+
 CREATE OR REPLACE TRIGGER "stories_editions_follow_first" AFTER UPDATE ON "public"."stories" FOR EACH ROW WHEN (("new"."edition_of_story_id" IS NULL)) EXECUTE FUNCTION "public"."stories_editions_follow_first"();
 
 
@@ -63005,6 +63187,10 @@ CREATE OR REPLACE TRIGGER "stories_send_pictures_to_review" AFTER UPDATE OF "rat
 
 
 CREATE OR REPLACE TRIGGER "stories_set_updated_at" BEFORE UPDATE ON "public"."stories" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "stories_zz_cover_style_fits" BEFORE INSERT OR UPDATE OF "cover_kind", "cover_style", "cover_title_font", "edition_of_story_id" ON "public"."stories" FOR EACH ROW EXECUTE FUNCTION "public"."stories_cover_style_fits"();
 
 
 
@@ -73606,6 +73792,11 @@ GRANT ALL ON FUNCTION "public"."set_my_story_app_only"("story_slug" "text", "wan
 
 
 
+REVOKE ALL ON FUNCTION "public"."set_my_story_cover_look"("story_slug" "text", "style" "public"."cover_style", "title_font" "public"."cover_title_font") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_my_story_cover_look"("story_slug" "text", "style" "public"."cover_style", "title_font" "public"."cover_title_font") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."set_my_story_visibility"("story_slug" "text", "wanted" "public"."story_visibility") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_my_story_visibility"("story_slug" "text", "wanted" "public"."story_visibility") TO "authenticated";
 
@@ -74110,7 +74301,15 @@ GRANT ALL ON FUNCTION "public"."storage_files_to_sweep"("max_files" integer) TO 
 
 
 
+REVOKE ALL ON FUNCTION "public"."stories_cover_style_fits"() FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."stories_edition_rules"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."stories_editions_follow_cover_look"() FROM PUBLIC;
 
 
 

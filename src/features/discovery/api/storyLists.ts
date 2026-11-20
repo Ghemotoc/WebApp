@@ -167,6 +167,9 @@ export interface ListedStory {
   rating: StoryRating;
   coverKind: 'automatic' | 'drawn' | 'upload';
   drawnCover: DrawnCoverChoice | null;
+  /** The cover's look and title font (cover.style, cover.title_font; bundle CALM-4). */
+  coverStyle?: string | null;
+  titleFont?: string | null;
   chapterCount: number;
   lastChapterPublishedAt: string | null;
   /** The writer chose "In the app only" and it applies now: the card's label (GAPS-15, Q4). */
@@ -214,6 +217,9 @@ export interface ListedStoryRow {
     design: string | null;
     background: string | null;
     accent: string | null;
+    /** CALM-4 (story_card_json()); missing from functions that build their own cards. */
+    style?: string | null;
+    title_font?: string | null;
   };
   chapter_count: number;
   last_chapter_published_at: string | null;
@@ -262,6 +268,8 @@ export function toListedStory(row: ListedStoryRow): ListedStory {
     rating: row.rating,
     coverKind: row.cover.kind,
     drawnCover: drawnCoverOf(row.cover),
+    coverStyle: row.cover.style ?? null,
+    titleFont: row.cover.title_font ?? null,
     chapterCount: row.chapter_count,
     lastChapterPublishedAt: row.last_chapter_published_at,
     appOnly: row.app_only === true,

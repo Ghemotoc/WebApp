@@ -57,16 +57,10 @@ function LanguageTags({ languages }: { languages: ListedStory['languages'] }) {
  *
  * @param props.story - the story
  * @param props.cover - the cover this list gives it
- * @param props.isFluid - fill the grid column (See all) instead of 196 px (shelves)
  * @returns the card, one link to the story page
  */
-export function ListedStoryCard(props: {
-  story: ListedStory;
-  cover: DrawnCoverChoice;
-  /** True in the See all grid: the card fills its column. */
-  isFluid?: boolean;
-}) {
-  const { story, cover, isFluid = false } = props;
+export function ListedStoryCard(props: { story: ListedStory; cover: DrawnCoverChoice }) {
+  const { story, cover } = props;
   const { t } = useDiscoveryTranslation();
   // "Ion Creangă · Translated by Ana Vlad": only a translated classic has a second credit.
   const writerLine =
@@ -82,10 +76,7 @@ export function ListedStoryCard(props: {
       metaLine={t('card.meta', { writer: writerLine, count: story.chapterCount })}
       cover={cover}
       href={`/s/${story.slug}`}
-      isFluid={isFluid}
-      wrapCover={(drawn) => (
-        <StoryCoverArt story={story} drawn={drawn} className={isFluid ? 'w-full' : 'w-[165px]'} />
-      )}
+      wrapCover={(drawn) => <StoryCoverArt story={story} drawn={drawn} className="w-full" />}
       pill={
         <span className="flex flex-wrap gap-1.5">
           {/* Robert, 6 Nov 2026: only "Ongoing" shows as a pill; "Completed" is a filter. */}

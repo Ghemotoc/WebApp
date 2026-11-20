@@ -1,9 +1,14 @@
 /**
- * ShelfArrows: the "scroll back" and "scroll forward" buttons beside a shelf heading
- * (story S1-E1-03).
+ * ShelfArrows: Previous and Next beside a row's heading (story S1-E1-03; redrawn in CALM-4).
  *
- * Board values: 44 px circles, #8E7B99 border, white, plum chevrons, 8 px apart. The Shelf shows
- * them only when the row overflows, and disables the one pointing at an end (DoD design rules).
+ * The rules (the simplified design, Robert, 20 Nov 2026; Shelf/README.md):
+ *   - Quiet 44 px buttons at the top right of the row, beside "View 54".
+ *   - Each is named for its row ("Next in Trending"), so a screen reader that lists the buttons
+ *     on a page with several rows can tell them apart.
+ *   - At either end the arrow pointing that way dims and gets aria-disabled="true"; it stays
+ *     focusable, so keyboard focus doesn't jump away when the row reaches its end.
+ *   - Phones (under 600 px) have no arrows: a swipe moves the row, and the third cover's edge
+ *     shows there is more.
  * Who uses it: Shelf (src/components/ui/Shelf.tsx).
  */
 import { useTranslation } from 'react-i18next';
@@ -15,43 +20,73 @@ import type { ScrollDirection } from './useShelfScroll';
 
 /** What the arrows need. */
 export interface ShelfArrowsProps {
+  /** The row's heading, for the arrows' names. */
+  rowTitle: string;
   isBackDisabled: boolean;
   isForwardDisabled: boolean;
   onScroll: (direction: ScrollDirection) => void;
 }
 
-/** The classes both arrows share. */
+/** The classes both arrows share: quiet, a 44 px target, dimmed at an end. */
 const arrowClasses =
-  'inline-flex h-11 w-11 items-center justify-center rounded-full border border-control-border bg-surface text-heading hover:bg-tint';
+  'inline-flex h-11 w-11 items-center justify-center rounded-full text-heading hover:bg-tint aria-disabled:cursor-default aria-disabled:text-control-border aria-disabled:hover:bg-transparent';
+
+/** One arrow. A press at the end does nothing, because the button says it is disabled. */
+function ShelfArrow({
+  label,
+  isDisabled,
+  onPress,
+  children,
+}: {
+  label: string;
+  isDisabled: boolean;
+  onPress: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      className={arrowClasses}
+      aria-label={label}
+      aria-disabled={isDisabled ? 'true' : undefined}
+      onClick={() => {
+        if (!isDisabled) onPress();
+      }}
+    >
+      {children}
+    </button>
+  );
+}
 
 /**
- * Renders the two arrow buttons.
+ * Renders Previous and Next, hidden on phones.
  *
  * @returns the arrow group
  */
-export function ShelfArrows({ isBackDisabled, isForwardDisabled, onScroll }: ShelfArrowsProps) {
+export function ShelfArrows({
+  rowTitle,
+  isBackDisabled,
+  isForwardDisabled,
+  onScroll,
+}: ShelfArrowsProps) {
   const { t } = useTranslation();
 
   return (
-    <div className="flex gap-2">
-      <button
-        type="button"
-        className={arrowClasses}
-        aria-label={t('shelf.scrollBack')}
-        disabled={isBackDisabled}
-        onClick={() => onScroll('back')}
+    <div className="hidden gap-1 min-[600px]:flex">
+      <ShelfArrow
+        label={t('shelf.previousIn', { title: rowTitle })}
+        isDisabled={isBackDisabled}
+        onPress={() => onScroll('back')}
       >
         <ChevronLeftIcon size={18} />
-      </button>
-      <button
-        type="button"
-        className={arrowClasses}
-        aria-label={t('shelf.scrollForward')}
-        disabled={isForwardDisabled}
-        onClick={() => onScroll('forward')}
+      </ShelfArrow>
+      <ShelfArrow
+        label={t('shelf.nextIn', { title: rowTitle })}
+        isDisabled={isForwardDisabled}
+        onPress={() => onScroll('forward')}
       >
         <ChevronRightIcon size={18} />
-      </button>
+      </ShelfArrow>
     </div>
   );
 }

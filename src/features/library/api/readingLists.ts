@@ -31,7 +31,7 @@ export interface ReadingList {
   ownerName: string;
   /** How many of its stories this reader may see. */
   storyCount: number;
-  /** The three stories added last, for the row's stacked covers. */
+  /** The stories added last, as many as one bookshelf holds (CALM-4), for its places. */
   covers: ListedStory[];
 }
 
@@ -52,6 +52,8 @@ export interface StoryListChoice {
   name: string;
   isPublic: boolean;
   hasStory: boolean;
+  /** How many books the bookshelf holds, for "7 of 10" in the sheet (CALM-4). */
+  bookCount: number;
 }
 
 /** The database's JSON for a list (reading_list_json()). */
@@ -202,12 +204,15 @@ export async function fetchStoryListChoices(
     name: string;
     is_public: boolean;
     has_story: boolean;
+    /** CALM-4; older databases leave it out. */
+    book_count?: number;
   }[];
   return rows.map((row) => ({
     id: row.id,
     name: row.name,
     isPublic: row.is_public,
     hasStory: row.has_story,
+    bookCount: row.book_count ?? 0,
   }));
 }
 

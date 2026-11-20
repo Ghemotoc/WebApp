@@ -24,6 +24,8 @@ import {
   coverDesigns,
   defaultChoiceFor,
   type CoverDesignKey,
+  type CoverTitleFont,
+  type DrawnCoverStyle,
   type DrawnCoverChoice,
 } from './coverDesigns';
 
@@ -43,6 +45,36 @@ export interface CoverSource {
   id: string;
   coverKind: 'automatic' | 'drawn' | 'upload';
   drawnCover: DrawnCoverChoice | null;
+  /**
+   * The cover's look and title font as the database sends them (cover.style and
+   * cover.title_font, bundle CALM-4). Left out by callers that don't read them yet: the cover
+   * then draws as a label in Literata, which is how every cover looked before.
+   */
+  coverStyle?: string | null;
+  titleFont?: string | null;
+}
+
+const drawnStyles: readonly string[] = ['label', 'big_title', 'initial'];
+const titleFonts: readonly string[] = ['reading', 'display', 'sans', 'hand'];
+
+/**
+ * The look and title font to draw, from what the database sent (CALM-4). An automatic cover is
+ * always a label; a style the drawing can't make (Picture and Custom are uploads) falls back to
+ * a label too, so nothing is ever drawn blank.
+ *
+ * @param story - the story's cover kind, style and font
+ * @returns the style and font to set on the drawn choice
+ */
+export function coverLookOf(story: CoverSource): Pick<DrawnCoverChoice, 'style' | 'titleFont'> {
+  const isDrawn = story.coverKind === 'drawn';
+  const style =
+    isDrawn && drawnStyles.includes(story.coverStyle ?? '')
+      ? (story.coverStyle as DrawnCoverStyle)
+      : 'label';
+  const titleFont = titleFonts.includes(story.titleFont ?? '')
+    ? (story.titleFont as CoverTitleFont)
+    : 'reading';
+  return { style, titleFont };
 }
 
 /**
@@ -100,8 +132,12 @@ export function automaticCoverFor(storyId: string): DrawnCoverChoice {
  * @returns what to draw
  */
 export function resolveCoverChoice(story: CoverSource): DrawnCoverChoice {
-  if (story.coverKind === 'drawn' && story.drawnCover !== null) return story.drawnCover;
-  return automaticCoverFor(story.id);
+  // The look and font the writer picked travel with the colours (CALM-4).
+  const look = coverLookOf(story);
+  if (story.coverKind === 'drawn' && story.drawnCover !== null) {
+    return { ...story.drawnCover, ...look };
+  }
+  return { ...automaticCoverFor(story.id), ...look };
 }
 
 /**
@@ -118,14 +154,15 @@ export function designsForRow(stories: CoverSource[]): DrawnCoverChoice[] {
   for (const story of stories) {
     const previous = covers[covers.length - 1];
     // A design the writer chose is never changed, even when it repeats the neighbour's.
+    const look = coverLookOf(story);
     if (story.coverKind === 'drawn' && story.drawnCover !== null) {
-      covers.push(story.drawnCover);
+      covers.push({ ...story.drawnCover, ...look });
       continue;
     }
     // The first choice from the ID, unless the card before shows the same design.
     const choices = automaticDesignChoices(story.id, 3);
     const design = choices.find((candidate) => candidate !== previous?.design) ?? choices[0];
-    covers.push(defaultChoiceFor(design ?? 'stripes'));
+    covers.push({ ...defaultChoiceFor(design ?? 'stripes'), ...look });
   }
   return covers;
 }

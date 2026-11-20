@@ -60,6 +60,9 @@ export interface MyStory {
   coverTallPath: string | null;
   /** The drawn cover's design and colours; null for the other kinds. */
   drawnCover: { design: CoverDesignKey; background: CoverColourKey; accent: CoverColourKey } | null;
+  /** The cover's look and title font (bundle CALM-4; set_my_story_cover_look()). */
+  coverStyle: Database['public']['Enums']['cover_style'];
+  titleFont: Database['public']['Enums']['cover_title_font'];
   firstPublishedAt: string | null;
   createdAt: string;
   /** Ongoing or Completed (S1-E3-05). */
@@ -205,6 +208,29 @@ export async function createStory(
 }
 
 /**
+ * A drawn cover's design and colours from the writer's own story row, when every part is there.
+ *
+ * @param row - the cover columns of the stories row
+ * @returns the drawn choice, or null for the other kinds (or a drawn cover missing a part)
+ */
+function drawnCoverOfRow(row: {
+  cover_kind: StoredCoverKind;
+  cover_design: string | null;
+  cover_background: string | null;
+  cover_accent: string | null;
+}): MyStory['drawnCover'] {
+  if (row.cover_kind !== 'drawn') return null;
+  if (row.cover_design === null || row.cover_background === null || row.cover_accent === null) {
+    return null;
+  }
+  return {
+    design: row.cover_design as CoverDesignKey,
+    background: row.cover_background as CoverColourKey,
+    accent: row.cover_accent as CoverColourKey,
+  };
+}
+
+/**
  * Reads the signed-in writer's own stories, newest first, deleted ones included (the screen
  * shows those under "Recently deleted" with undo).
  *
@@ -216,7 +242,7 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
   const { data, error } = await client
     .from('stories')
     .select(
-      'id, slug, title, blurb, language_code, cover_kind, cover_design, cover_background, cover_accent, cover_tall_path, first_published_at, created_at, completion_status, visibility, is_app_only, comments_enabled, comment_audience, comments_paused_until, quote_cards_enabled, picture_sharing_enabled, card_colour, deleted_at, rating, is_fan_fiction, is_parody, deals_with_abuse_or_coercion, content_note, ai_disclosure, rating_reasons, ai_undisclosed_labelled_at, categories(slug), story_tags(tags(name)), chapters(code, position, status)',
+      'id, slug, title, blurb, language_code, cover_kind, cover_design, cover_background, cover_accent, cover_style, cover_title_font, cover_tall_path, first_published_at, created_at, completion_status, visibility, is_app_only, comments_enabled, comment_audience, comments_paused_until, quote_cards_enabled, picture_sharing_enabled, card_colour, deleted_at, rating, is_fan_fiction, is_parody, deals_with_abuse_or_coercion, content_note, ai_disclosure, rating_reasons, ai_undisclosed_labelled_at, categories(slug), story_tags(tags(name)), chapters(code, position, status)',
     )
     // A story in several languages shows once, as its original; its other languages are on its
     // Languages page (TRANSLATE-1c). A removed language still comes back, so "Recently deleted"
@@ -237,17 +263,9 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
     tags: row.story_tags.map((link) => link.tags.name),
     coverKind: row.cover_kind,
     coverTallPath: row.cover_kind === 'upload' ? row.cover_tall_path : null,
-    drawnCover:
-      row.cover_kind === 'drawn' &&
-      row.cover_design !== null &&
-      row.cover_background !== null &&
-      row.cover_accent !== null
-        ? {
-            design: row.cover_design as CoverDesignKey,
-            background: row.cover_background as CoverColourKey,
-            accent: row.cover_accent as CoverColourKey,
-          }
-        : null,
+    drawnCover: drawnCoverOfRow(row),
+    coverStyle: row.cover_style,
+    titleFont: row.cover_title_font,
     firstPublishedAt: row.first_published_at,
     createdAt: row.created_at,
     completionStatus: row.completion_status,
@@ -377,6 +395,45 @@ export async function setMyStoryAppOnly(
   if (error !== null)
     throw new Error(`Could not save where the story can be read: ${error.message}`);
   return toSettingsOutcome(data);
+}
+
+/** A cover look and a title font, as set_my_story_cover_look() takes them (CALM-4). */
+export type CoverStyleValue = Database['public']['Enums']['cover_style'];
+export type CoverTitleFontValue = Database['public']['Enums']['cover_title_font'];
+
+/** What saving a cover look can answer: the settings outcomes, or a look that doesn't fit. */
+export type CoverLookOutcome = SettingsOutcome | 'style_does_not_fit';
+
+/**
+ * Saves the look and title font of the writer's own cover (bundle CALM-4): Label, Big title or
+ * Initial for a drawn cover, Picture or Custom for an upload; an automatic cover is always a
+ * Label. It saves at once, on its own, like the visibility.
+ *
+ * @param client - the shared Supabase client
+ * @param slug - the story's public address
+ * @param style - the look
+ * @param titleFont - the title's font
+ * @returns 'ok', 'not_active', 'not_found' or 'style_does_not_fit'
+ * Errors: throws when the database can't be reached or answers something unexpected.
+ */
+export async function setMyStoryCoverLook(
+  client: AppSupabaseClient,
+  slug: string,
+  style: CoverStyleValue,
+  titleFont: CoverTitleFontValue,
+): Promise<CoverLookOutcome> {
+  const { data, error } = await client.rpc('set_my_story_cover_look', {
+    story_slug: slug,
+    style,
+    title_font: titleFont,
+  });
+  // The database names a look that doesn't fit the cover with the hint style_does_not_fit.
+  if (error !== null && error.hint === 'style_does_not_fit') return 'style_does_not_fit';
+  if (error !== null) throw new Error(`Could not save the cover's look: ${error.message}`);
+  const outcome = (data as { outcome?: string } | null)?.outcome;
+  if (outcome === 'saved') return 'ok';
+  if (outcome === 'not_active' || outcome === 'not_found') return outcome;
+  throw new Error(`Unexpected answer from the cover look: ${JSON.stringify(data)}`);
 }
 
 /**

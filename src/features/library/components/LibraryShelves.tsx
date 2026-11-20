@@ -3,9 +3,10 @@
  * (story S1-E4-03, second and fifth criteria; board 3.7 Library).
  *
  * The chosen shelf is the shared Shelf: one scrolling line of at most 20 stories, then a "View
- * more" card to its See all page at /library/<shelf> (CLAUDE.md rule 20; S1-E5-09), a fade at
- * each edge with cards hidden past it and scroll arrows. Each card shows the full title on its cover and "Chapter 14 of
- * 15" under it, from the reader's place. The chips are a radiogroup with a tick on the chosen one
+ * more" card to its See all page at /library/<shelf> (CLAUDE.md rule 20; S1-E5-09), whole covers
+ * and Previous and Next (CALM-4). Each card shows the full title on its cover and "Chapter 14 of
+ * 15" under it, from the reader's place; on Reading a 2 px thread line under the cover shows how
+ * far they got (the simplified design, Shelf/README.md). The chips are a radiogroup with a tick on the chosen one
  * (DoD pill system), each with the shelf's size. A fourth chip, "My stories", shows the reader's
  * own stories as a writer, drafts included (MyStoriesShelf; bundle NAV-1, Robert, 6 Nov 2026).
  * Who uses it: LibraryPage. What it calls: useStoryShelf → browse_stories('library', <shelf>),
@@ -43,9 +44,16 @@ function LibraryStoryCard(props: {
   story: ListedStory;
   cover: DrawnCoverChoice;
   place: { number: number; total: number } | undefined;
+  /** True on the Reading chip, where each cover carries its progress line. */
+  showsProgress: boolean;
 }) {
   const { t } = useLibraryTranslation();
-  const { story, cover, place } = props;
+  const { story, cover, place, showsProgress } = props;
+  // The progress line: the share of chapters reached, only where the reader has a place.
+  const progressPercent =
+    showsProgress && place !== undefined && place.total > 0
+      ? (place.number / place.total) * 100
+      : undefined;
   const progress =
     place === undefined
       ? t('shelves.notStarted')
@@ -56,7 +64,8 @@ function LibraryStoryCard(props: {
       metaLine={`${story.writer.displayName} · ${progress}`}
       cover={cover}
       href={`/s/${story.slug}`}
-      wrapCover={(drawn) => <StoryCoverArt story={story} drawn={drawn} className="w-[165px]" />}
+      wrapCover={(drawn) => <StoryCoverArt story={story} drawn={drawn} className="w-full" />}
+      progressPercent={progressPercent}
     />
   );
 }
@@ -89,6 +98,7 @@ function ShelfStories({
             story={story}
             cover={covers[index] ?? resolveCoverChoice(story)}
             place={places[story.slug]}
+            showsProgress={shelf === 'reading'}
           />
         ),
       }))}

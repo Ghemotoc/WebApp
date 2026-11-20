@@ -45,6 +45,11 @@ export interface CoverSectionProps {
   onChange: (cover: StoryCoverChoice) => void;
   /** True in Story settings, where the story exists and a picture can be uploaded (S1-E10-05). */
   canUpload?: boolean;
+  /**
+   * The saved cover's look and title font (bundle CALM-4), so the preview draws them; picked in
+   * CoverLookPicker. Left out on a new story, which starts as a Label in Literata.
+   */
+  look?: Pick<DrawnCoverChoice, 'style' | 'titleFont'>;
 }
 
 /**
@@ -170,13 +175,18 @@ export function CoverSection({
   cover,
   onChange,
   canUpload = false,
+  look,
 }: CoverSectionProps) {
   const { t } = useTranslation('writing');
   const drawnChoice = cover.kind === 'drawn' ? cover : null;
   // While the cover is automatic, the preview shows the design the story gets from its ID
   // (S1-E3-13), so "Skip this" is never a surprise.
   const automaticChoice = automaticCoverFor(storyId);
-  const previewChoice = drawnChoice ?? automaticChoice;
+  // The look applies to a drawn cover only; an automatic one is always a Label (CALM-4).
+  const previewChoice: DrawnCoverChoice =
+    drawnChoice === null
+      ? { ...automaticChoice, titleFont: look?.titleFont }
+      : { ...drawnChoice, ...look };
   const shownTitle = title.trim() === '' ? t('cover.untitled') : title;
 
   /** Picks a design, starting from its board colours. */
