@@ -18,16 +18,15 @@ import { useSearchTranslation } from '../registerSearchTranslations';
  * Renders the card.
  *
  * @param props.tag - the tag
- * @param props.isFluid - fill the grid column instead of the shelf's 200 px
  * @returns the card
  */
-export function TagResultCard({ tag, isFluid = false }: { tag: FoundTag; isFluid?: boolean }) {
+export function TagResultCard({ tag }: { tag: FoundTag }) {
   const { t } = useSearchTranslation();
   const { showTag } = useTagCatalogue();
   return (
     <Link
       to={listAddress(plainList('tag', tag.name))}
-      className={`flex h-full flex-col gap-1 rounded-card border border-border bg-surface p-5 no-underline shadow-card hover:bg-tint ${isFluid ? 'w-full' : 'w-[200px]'}`}
+      className={`flex h-full flex-col gap-1 rounded-card border border-border bg-surface p-5 no-underline shadow-card hover:bg-tint w-full`}
     >
       <span className="font-heading text-lg leading-tight font-bold break-words text-heading">
         {showTag(tag.name)}

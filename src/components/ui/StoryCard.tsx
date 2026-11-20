@@ -1,16 +1,20 @@
 /**
- * StoryCard: one story in a shelf, with a drawn cover (story S1-E1-03; S1-E3-01 moved the
- * drawing into DrawnCover so every cover in the app is drawn by one component).
+ * StoryCard: one story in a row of covers (story S1-E1-03; redrawn in bundle CALM-4).
  *
- * Board values (Discover shelf card): 196 px wide, a 264 px cover with 18 px padding and 16 px
- * radius, the title drawn at the bottom of the cover, then an optional pill, the title in
- * Funnel Display 16 px and a 13 px meta line.
- * Rules: the drawn title is always shown in full, wrapping on spaces and stepping down in size
- * (DoD covers; src/lib/cover-title.ts). The real title sits right under the cover as text, so the
- * drawn one is hidden from screen readers to avoid reading it twice.
- * Who uses it: shelves on Discover (S1-E5-01), Classics, Library and the website home page.
+ * The rules (the simplified design, Robert, 20 Nov 2026; Shelf/README.md and BookCover/README.md):
+ *   - The cover takes its width from its column: a fifth of the row on wide screens (Shelf), or the
+ *     See all grid's column. It keeps its shape and draws its title in full (DoD covers).
+ *   - Under every cover, whatever the cover shows: the title (Inter 600 15/20, the heading colour)
+ *     and the meta line (the pen name, and anything the caller adds), so every story is named in
+ *     text and a custom cover with small lettering still reads.
+ *   - The whole card is one link. The drawn title is hidden from screen readers, because the real
+ *     title is written right under it.
+ *   - Continue reading adds a 2 px thread line under the cover with the progress, and the value in
+ *     the link's name ("72% read").
+ * Who uses it: rows on Read and Discover (ListedStoryCard), the Library, profiles and /design.
  */
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { DrawnCover } from '@/components/covers/DrawnCover';
 import type { DrawnCoverChoice } from '@/components/covers/coverDesigns';
@@ -25,15 +29,25 @@ export interface StoryCardProps {
   /** An optional InfoPill such as "Chapter 15". */
   pill?: ReactNode;
   /**
-   * Fill the column instead of the board's fixed 196 px, keeping the cover's 5:8 shape:
-   * the See all grid (S1-E5-09) uses it, so two cards fit side by side on a 390 px phone.
-   */
-  isFluid?: boolean;
-  /**
    * Draws the cover in place of the drawn one, given the drawn one as its fall-back: an uploaded
    * cover passes StoryCoverArt here (S1-E10-05), so this shared card stays free of features.
    */
   wrapCover?: (drawnCover: ReactNode) => ReactNode;
+  /** How much of the story the reader has read, 0 to 100, for Continue reading rows. */
+  progressPercent?: number;
+}
+
+/**
+ * The 2 px progress line under a cover: the thread on its track. Decorative, because the link's
+ * name carries the value.
+ */
+function ProgressLine({ percent }: { percent: number }) {
+  const clamped = Math.min(100, Math.max(0, Math.round(percent)));
+  return (
+    <span aria-hidden="true" className="mt-2 block h-0.5 w-full bg-[var(--track)]">
+      <span className="block h-full bg-thread" style={{ width: `${String(clamped)}%` }} />
+    </span>
+  );
 }
 
 /**
@@ -47,34 +61,30 @@ export function StoryCard({
   cover,
   href,
   pill,
-  isFluid = false,
   wrapCover,
+  progressPercent,
 }: StoryCardProps) {
+  const { t } = useTranslation();
   // The drawn cover: decorative, because the title is repeated as text below.
   const drawnCover = (
-    <DrawnCover
-      title={title}
-      choice={cover}
-      size="shelf"
-      isDecorative
-      className={isFluid ? 'w-full' : 'h-[264px]'}
-    />
+    <DrawnCover title={title} choice={cover} size="shelf" isDecorative className="w-full" />
   );
   return (
     // min-w-0 with break-words on the title: a title that is one long word wraps inside the card
     // instead of running over the next one (GAPS-6 break test, 10 Nov 2026).
-    <a
-      href={href}
-      className={`flex ${isFluid ? 'w-full' : 'w-[196px]'} min-w-0 flex-col no-underline`}
-    >
+    <a href={href} className="flex w-full min-w-0 flex-col no-underline">
       {wrapCover === undefined ? drawnCover : wrapCover(drawnCover)}
+      {progressPercent !== undefined && <ProgressLine percent={progressPercent} />}
       {pill !== undefined && <span className="mt-3">{pill}</span>}
-      <span
-        className={`${pill === undefined ? 'mt-3' : 'mt-2'} font-heading text-base font-semibold break-words text-ink`}
-      >
+      <span className={`${pill === undefined ? 'mt-2' : 'mt-1.5'} type-label break-words text-heading`}>
         {title}
       </span>
-      <span className="mt-0.5 text-[13px] break-words text-meta">{metaLine}</span>
+      <span className="type-meta break-words">{metaLine}</span>
+      {progressPercent !== undefined && (
+        <span className="sr-only">
+          {t('shelf.percentRead', { percent: Math.round(progressPercent) })}
+        </span>
+      )}
     </a>
   );
 }

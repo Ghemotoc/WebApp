@@ -73,7 +73,6 @@ export function StoryGrid({ stories, hasMore, isLoadingMore, onLoadMore, ad }: S
               <ListedStoryCard
                 story={story}
                 cover={covers[index] ?? resolveCoverChoice(story)}
-                isFluid
               />
             </li>,
             hasAdAfter && (

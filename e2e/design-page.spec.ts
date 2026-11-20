@@ -117,34 +117,87 @@ test('headings, body, eyebrows and handwriting use the fonts from the DoD', asyn
   );
 });
 
-test('a shelf that fits has no arrows; a long one has arrows disabled at each end', async ({
+test('a row that fits has no arrows; a long one shows five whole covers, no fade, and arrows dimmed at each end', async ({
   page,
 }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/design');
 
-  // The short shelf (3 stories) fits on a wide screen: no arrows.
+  // The short row (3 stories) fits on a wide screen: no arrows (CALM-4).
   await expect(page.getByTestId('short-shelf').getByRole('button')).toHaveCount(0);
 
-  // The long shelf overflows: at the start "back" is disabled and "forward" isn't.
+  // The long row overflows: at the start Previous is dimmed and Next isn't.
   const longShelf = page.getByTestId('long-shelf');
-  const back = longShelf.getByRole('button', { name: 'Derulează înapoi' });
-  const forward = longShelf.getByRole('button', { name: 'Derulează înainte' });
-  await expect(back).toBeDisabled();
-  await expect(forward).toBeEnabled();
+  const back = longShelf.getByRole('button', { name: 'Înapoi în În tendințe' });
+  const forward = longShelf.getByRole('button', { name: 'Mai departe în În tendințe' });
+  await expect(back).toHaveAttribute('aria-disabled', 'true');
+  await expect(forward).not.toHaveAttribute('aria-disabled', 'true');
 
-  // After moving forward, "back" works; at the very end, "forward" is disabled.
+  // No fade: the row has no mask (Robert, 20 Nov 2026: the fade was visual overload).
+  const row = longShelf.getByRole('region', { name: /se derulează lateral/ });
+  expect(await row.evaluate((element) => getComputedStyle(element).maskImage)).toBe('none');
+
+  // Five whole covers in view: the sixth starts past the row's right edge.
+  const places = await row.evaluate((element) => {
+    const rowBox = element.getBoundingClientRect();
+    return Array.from(element.querySelectorAll('li')).map((item) => {
+      const box = item.getBoundingClientRect();
+      return { left: box.left - rowBox.left, right: box.right - rowBox.left, width: rowBox.width };
+    });
+  });
+  expect(places[4]?.right ?? 0).toBeLessThanOrEqual((places[4]?.width ?? 0) + 1);
+  expect(places[5]?.left ?? 0).toBeGreaterThanOrEqual((places[5]?.width ?? 0) - 1);
+
+  // One press moves one screenful: the sixth cover starts the row.
   await forward.click();
-  await expect(back).toBeEnabled();
-  await longShelf
-    .getByRole('region', { name: /se derulează lateral/ })
-    .evaluate((row) => row.scrollTo({ left: row.scrollWidth }));
-  await expect(forward).toBeDisabled();
+  await expect(back).not.toHaveAttribute('aria-disabled', 'true');
+  await expect
+    .poll(() =>
+      row.evaluate((element) => {
+        const sixth = element.querySelectorAll('li')[5];
+        return Math.round(
+          (sixth?.getBoundingClientRect().left ?? 0) - element.getBoundingClientRect().left,
+        );
+      }),
+    )
+    .toBe(0);
+  await row.evaluate((element) => element.scrollTo({ left: element.scrollWidth }));
+  await expect(forward).toHaveAttribute('aria-disabled', 'true');
 
-  // 25 stories: 20 cards, then the "View more" card named with the total.
+  // 25 stories: 20 covers, then the View more card, and "Vezi 25" beside the heading.
   await expect(
-    longShelf.getByRole('link', { name: 'Vezi mai multe Toate cele 25 din În tendințe' }),
+    longShelf.getByRole('link', { name: 'Vezi mai multe 25 în În tendințe' }),
   ).toBeVisible();
+  await expect(longShelf.getByRole('link', { name: 'Vezi 25 în În tendințe' })).toBeVisible();
+});
+
+test('a row on a phone shows two whole covers and the edge of a third, with no arrows', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/design');
+
+  const longShelf = page.getByTestId('long-shelf');
+  await expect(longShelf.getByRole('button', { name: /Mai departe în/ })).toBeHidden();
+  const row = longShelf.getByRole('region', { name: /se derulează lateral/ });
+  const places = await row.evaluate((element) => {
+    const rowBox = element.getBoundingClientRect();
+    return Array.from(element.querySelectorAll('li'))
+      .slice(0, 3)
+      .map((item) => {
+        const box = item.getBoundingClientRect();
+        return {
+          left: box.left - rowBox.left,
+          right: box.right - rowBox.left,
+          width: rowBox.width,
+        };
+      });
+  });
+  // The second cover ends inside the row; the third starts inside it and runs past the edge.
+  expect(places[1]?.right ?? 0).toBeLessThanOrEqual((places[1]?.width ?? 0) + 1);
+  expect(places[2]?.left ?? 0).toBeLessThan(places[2]?.width ?? 0);
+  expect(places[2]?.right ?? 0).toBeGreaterThan(places[2]?.width ?? 0);
 });
 
 test('a drop-down is only as wide as its longest option, never stretched', async ({ page }) => {

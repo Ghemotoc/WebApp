@@ -1,66 +1,96 @@
 /**
- * Tests for the drawn cover (story S1-E3-01; DoD design rules, covers).
+ * Tests for the drawn cover (story S1-E3-01; bundle CALM-4, the three looks; DoD design rules,
+ * covers).
  */
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { MINIMUM_COVER_TITLE_SIZE } from '@/lib/cover-title';
-
-import { coverDesigns, defaultChoiceFor } from './coverDesigns';
+import { coverDesigns, defaultChoiceFor, type DrawnCoverStyle } from './coverDesigns';
 import { DrawnCover } from './DrawnCover';
 
 const longTitle =
   'O poveste foarte lungă despre un oraș de munte și despre toți oamenii care au plecat din el';
 
+const styles: DrawnCoverStyle[] = ['label', 'big_title', 'initial'];
+
 describe('DrawnCover', () => {
-  it('shows the full title as real text, never clipped, at every size', () => {
-    for (const size of ['tile', 'preview', 'card', 'shelf'] as const) {
+  it('shows the full title as real text, never clipped, in every look', () => {
+    for (const style of styles) {
       const { unmount } = render(
-        <DrawnCover title={longTitle} choice={defaultChoiceFor('starry')} size={size} />,
+        <DrawnCover
+          title={longTitle}
+          choice={{ ...defaultChoiceFor('starry'), style }}
+          size="card"
+        />,
       );
       const title = screen.getByText(longTitle);
       // No ellipsis or line clamp anywhere on the way to the title.
       expect(title.className).not.toMatch(/truncate|line-clamp/);
-      expect(title.style.fontSize).not.toBe('');
-      expect(parseFloat(title.style.fontSize)).toBeGreaterThanOrEqual(MINIMUM_COVER_TITLE_SIZE);
+      expect(title).toHaveClass('cover-words-title');
       unmount();
     }
   });
 
-  it('steps the title size down with its length', () => {
-    render(<DrawnCover title="Zori" choice={defaultChoiceFor('plum')} size="card" />);
-    render(<DrawnCover title={longTitle} choice={defaultChoiceFor('plum')} size="card" />);
-    const short = parseFloat(screen.getByText('Zori').style.fontSize);
-    const long = parseFloat(screen.getByText(longTitle).style.fontSize);
-    expect(short).toBe(28);
-    expect(long).toBeLessThan(short);
+  it('steps the title size down with its length through --fit', () => {
+    const { container: short } = render(
+      <DrawnCover title="Zori" choice={defaultChoiceFor('plum')} size="card" />,
+    );
+    const { container: long } = render(
+      <DrawnCover title={longTitle} choice={defaultChoiceFor('plum')} size="card" />,
+    );
+    const fitOf = (element: Element) =>
+      (element.firstElementChild as HTMLElement).style.getPropertyValue('--fit');
+    expect(fitOf(short)).toBe('1');
+    expect(fitOf(long)).toBe('0.62');
   });
 
-  it('on the cover wall follows the screen width but never drops below the 11 px floor', () => {
-    render(<DrawnCover title="Zori" choice={defaultChoiceFor('plum')} size="wall" />);
-    render(<DrawnCover title={longTitle} choice={defaultChoiceFor('plum')} size="wall" />);
-    // The board's own sizing for the wall: clamp(15px, 1.5vw, 20px) for a short title.
-    expect(screen.getByText('Zori').style.fontSize).toBe('clamp(15px, 1.5vw, 20px)');
-    const longSize = screen.getByText(longTitle).style.fontSize;
-    const smallest = parseFloat(longSize.replace('clamp(', ''));
-    expect(smallest).toBeGreaterThanOrEqual(MINIMUM_COVER_TITLE_SIZE);
+  it('draws the label look by default, so covers saved before CALM-4 keep a label', () => {
+    const { container } = render(
+      <DrawnCover title="Titlu" choice={defaultChoiceFor('dots')} size="shelf" />,
+    );
+    expect(container.firstElementChild).toHaveAttribute('data-cover-style', 'label');
+    expect(container.querySelector('.cover-label')).not.toBeNull();
   });
 
-  it('draws every design without an error and hides the artwork from screen readers', () => {
+  it('draws the title font the writer picked, Literata when there is none', () => {
+    const { container } = render(
+      <DrawnCover
+        title="Titlu"
+        choice={{ ...defaultChoiceFor('ink'), titleFont: 'hand' }}
+        size="card"
+      />,
+    );
+    expect(container.firstElementChild).toHaveAttribute('data-title-font', 'hand');
+  });
+
+  it('on the initial look draws the first letter whole, marks included', () => {
+    const { container } = render(
+      <DrawnCover
+        title="Șapte nopți"
+        choice={{ ...defaultChoiceFor('violet'), style: 'initial' }}
+        size="card"
+      />,
+    );
+    expect(container.querySelector('.cover-glyph')).toHaveTextContent('Ș');
+  });
+
+  it('draws every design in every look and hides the artwork from screen readers', () => {
     for (const design of coverDesigns) {
-      const { container, unmount } = render(
-        <DrawnCover
-          title="Titlu"
-          penName="lia.scrie"
-          choice={defaultChoiceFor(design.key)}
-          size="preview"
-        />,
-      );
-      for (const svg of container.querySelectorAll('svg')) {
-        expect(svg).toHaveAttribute('aria-hidden', 'true');
+      for (const style of styles) {
+        const { container, unmount } = render(
+          <DrawnCover
+            title="Titlu"
+            penName="lia.scrie"
+            choice={{ ...defaultChoiceFor(design.key), style }}
+            size="preview"
+          />,
+        );
+        for (const svg of container.querySelectorAll('svg')) {
+          expect(svg).toHaveAttribute('aria-hidden', 'true');
+        }
+        expect(screen.getByText('lia.scrie')).toBeInTheDocument();
+        unmount();
       }
-      expect(screen.getByText('lia.scrie')).toBeInTheDocument();
-      unmount();
     }
   });
 

@@ -10,19 +10,31 @@
  * - removed by a moderator, or not readable: the automatic cover the caller passes, so a card is
  *   never empty.
  * The picture is decorative, like a drawn cover: the title is always beside it as text.
+ * Picture covers (bundle CALM-4, cover.style 'picture'): the writer's picture with the same paper
+ * label as a drawn Label cover on top of it, holding the title and pen name; a Custom cover
+ * ('custom', and every upload saved before CALM-4) is the picture alone.
  * Who uses it: StoryCard rows (ListedStoryCard, ProfileStories), StoryHeader, TeaserStoryCard
  * and WriterStoryCard. What it calls: useStoryCoverPicture.
  */
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { coverTitleScale } from '@/lib/cover-title';
 import { cn } from '@/lib/utils';
 
 import { useStoryCoverPicture } from '../hooks/usePictures';
 
 /** What it needs. */
 export interface StoryCoverArtProps {
-  story: { slug: string; coverKind: 'automatic' | 'drawn' | 'upload' };
+  story: {
+    slug: string;
+    coverKind: 'automatic' | 'drawn' | 'upload';
+    /** The cover's look (CALM-4): 'picture' draws the label over the upload. */
+    coverStyle?: string | null;
+    /** The title and pen name the Picture label shows. */
+    title?: string;
+    writer?: { displayName: string };
+  };
   /** The drawn cover to show for drawn and automatic covers, and as the fall-back. */
   drawn: ReactNode;
   /** The box's width classes, the same as the drawn cover's (the shape is always 5:8). */
@@ -40,11 +52,34 @@ function CoverBox({ className, children }: { className?: string; children: React
   return (
     <span
       className={cn(
-        'cover-edge relative block aspect-[5/8] overflow-hidden rounded-cover bg-panel',
+        'cover-book cover-edge relative block aspect-[5/8] overflow-hidden rounded-cover bg-panel',
         className,
       )}
     >
       {children}
+    </span>
+  );
+}
+
+/**
+ * The paper label over a Picture cover (CALM-4): the same label as a drawn Label cover, with the
+ * title and pen name. The label is paper with dark ink, so it reads on any picture. Hidden from
+ * screen readers, because the title is written beside every cover.
+ *
+ * @returns the label, or nothing when the cover is not a Picture cover
+ */
+function PictureLabel({ story }: { story: StoryCoverArtProps['story'] }) {
+  if (story.coverStyle !== 'picture' || story.title === undefined) return null;
+  const fit = { '--fit': String(coverTitleScale(story.title)) } as CSSProperties;
+  return (
+    <span className="cover-label" aria-hidden="true" style={fit}>
+      <span className="cover-words-title">{story.title}</span>
+      {story.writer !== undefined && (
+        <>
+          <span className="cover-label-rule" />
+          <span className="cover-words-by">{story.writer.displayName}</span>
+        </>
+      )}
     </span>
   );
 }
@@ -85,6 +120,7 @@ export function StoryCoverArt({ story, drawn, className }: StoryCoverArtProps) {
   return (
     <CoverBox className={className}>
       <img src={view.url} alt="" className="size-full object-cover" />
+      <PictureLabel story={story} />
       {view.state !== 'visible' && (
         <span className="absolute inset-x-2 bottom-2 inline-flex h-6 items-center justify-center rounded-full border border-border bg-surface-solid px-2 text-xs leading-none font-semibold text-heading">
           {t(waitingKey(view.state))}

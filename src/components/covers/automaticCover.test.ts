@@ -75,13 +75,34 @@ describe('automaticDesignChoices', () => {
   });
 });
 
+/** The look every cover had before CALM-4, and still has when the story names none. */
+const plainLook = { style: 'label', titleFont: 'reading' } as const;
+
 describe('resolveCoverChoice', () => {
   it('keeps the writer’s drawn choice and gives an automatic story its ID design', () => {
     const drawn = { design: 'starry', background: 'sky', accent: 'gold' } as const;
     expect(resolveCoverChoice({ id: storyId(1), coverKind: 'drawn', drawnCover: drawn })).toEqual(
-      drawn,
+      { ...drawn, ...plainLook },
     );
-    expect(resolveCoverChoice(automatic(1))).toEqual(automaticCoverFor(storyId(1)));
+    expect(resolveCoverChoice(automatic(1))).toEqual({
+      ...automaticCoverFor(storyId(1)),
+      ...plainLook,
+    });
+  });
+
+  it('carries the look and font the writer picked, and keeps an automatic cover a label', () => {
+    const drawn = { design: 'ink', background: 'ink', accent: 'gold' } as const;
+    const story: CoverSource = {
+      id: storyId(1),
+      coverKind: 'drawn',
+      drawnCover: drawn,
+      coverStyle: 'initial',
+      titleFont: 'hand',
+    };
+    expect(resolveCoverChoice(story)).toEqual({ ...drawn, style: 'initial', titleFont: 'hand' });
+    const automaticStory = { ...automatic(1), coverStyle: 'big_title', titleFont: 'sans' };
+    expect(resolveCoverChoice(automaticStory).style).toBe('label');
+    expect(resolveCoverChoice(automaticStory).titleFont).toBe('sans');
   });
 });
 
@@ -104,7 +125,7 @@ describe('designsForRow', () => {
     expect(clashing).toBeDefined();
     if (clashing === undefined) return;
     const covers = designsForRow([first, clashing]);
-    expect(covers[0]).toEqual(automaticCoverFor(first.id));
+    expect(covers[0]).toEqual({ ...automaticCoverFor(first.id), ...plainLook });
     expect(covers[1]?.design).toBe(automaticDesignChoices(clashing.id, 2)[1]);
     // The same row again gives the same answer; adding a card at the end changes nothing before it.
     expect(designsForRow([first, clashing])).toEqual(covers);
@@ -117,6 +138,9 @@ describe('designsForRow', () => {
       { id: storyId(1), coverKind: 'drawn', drawnCover: chosen },
       { id: storyId(2), coverKind: 'drawn', drawnCover: chosen },
     ];
-    expect(designsForRow(row)).toEqual([chosen, chosen]);
+    expect(designsForRow(row)).toEqual([
+      { ...chosen, ...plainLook },
+      { ...chosen, ...plainLook },
+    ]);
   });
 });

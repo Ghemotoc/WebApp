@@ -8999,7 +8999,9 @@ export type Database = {
           cover_hidden_at: string | null;
           cover_kind: Database['public']['Enums']['cover_kind'];
           cover_square_path: string | null;
+          cover_style: Database['public']['Enums']['cover_style'];
           cover_tall_path: string | null;
+          cover_title_font: Database['public']['Enums']['cover_title_font'];
           created_at: string;
           deals_with_abuse_or_coercion: boolean;
           deleted_at: string | null;
@@ -9052,7 +9054,9 @@ export type Database = {
             cover_hidden_at: string | null;
             cover_kind: Database['public']['Enums']['cover_kind'];
             cover_square_path: string | null;
+            cover_style: Database['public']['Enums']['cover_style'];
             cover_tall_path: string | null;
+            cover_title_font: Database['public']['Enums']['cover_title_font'];
             created_at: string;
             deals_with_abuse_or_coercion: boolean;
             deleted_at: string | null;
@@ -9111,7 +9115,9 @@ export type Database = {
           cover_hidden_at?: string | null;
           cover_kind?: Database['public']['Enums']['cover_kind'];
           cover_square_path?: string | null;
+          cover_style?: Database['public']['Enums']['cover_style'];
           cover_tall_path?: string | null;
+          cover_title_font?: Database['public']['Enums']['cover_title_font'];
           created_at?: string;
           deals_with_abuse_or_coercion?: boolean;
           deleted_at?: string | null;
@@ -9157,7 +9163,9 @@ export type Database = {
           cover_hidden_at?: string | null;
           cover_kind?: Database['public']['Enums']['cover_kind'];
           cover_square_path?: string | null;
+          cover_style?: Database['public']['Enums']['cover_style'];
           cover_tall_path?: string | null;
+          cover_title_font?: Database['public']['Enums']['cover_title_font'];
           created_at?: string;
           deals_with_abuse_or_coercion?: boolean;
           deleted_at?: string | null;
@@ -12571,7 +12579,9 @@ export type Database = {
           cover_hidden_at: string | null;
           cover_kind: Database['public']['Enums']['cover_kind'];
           cover_square_path: string | null;
+          cover_style: Database['public']['Enums']['cover_style'];
           cover_tall_path: string | null;
+          cover_title_font: Database['public']['Enums']['cover_title_font'];
           created_at: string;
           deals_with_abuse_or_coercion: boolean;
           deleted_at: string | null;
@@ -15237,7 +15247,9 @@ export type Database = {
           cover_hidden_at: string | null;
           cover_kind: Database['public']['Enums']['cover_kind'];
           cover_square_path: string | null;
+          cover_style: Database['public']['Enums']['cover_style'];
           cover_tall_path: string | null;
+          cover_title_font: Database['public']['Enums']['cover_title_font'];
           created_at: string;
           deals_with_abuse_or_coercion: boolean;
           deleted_at: string | null;
@@ -16636,7 +16648,9 @@ export type Database = {
           cover_hidden_at: string | null;
           cover_kind: Database['public']['Enums']['cover_kind'];
           cover_square_path: string | null;
+          cover_style: Database['public']['Enums']['cover_style'];
           cover_tall_path: string | null;
+          cover_title_font: Database['public']['Enums']['cover_title_font'];
           created_at: string;
           deals_with_abuse_or_coercion: boolean;
           deleted_at: string | null;
@@ -17346,6 +17360,14 @@ export type Database = {
       set_my_reading_languages: { Args: { wanted: string[] }; Returns: string[] };
       set_my_signature: { Args: { picture_id?: string; signature_text: string }; Returns: Json };
       set_my_story_app_only: { Args: { story_slug: string; wanted: boolean }; Returns: Json };
+      set_my_story_cover_look: {
+        Args: {
+          story_slug: string;
+          style: Database['public']['Enums']['cover_style'];
+          title_font: Database['public']['Enums']['cover_title_font'];
+        };
+        Returns: Json;
+      };
       set_my_story_visibility: {
         Args: { story_slug: string; wanted: Database['public']['Enums']['story_visibility'] };
         Returns: Json;
@@ -18091,7 +18113,9 @@ export type Database = {
           cover_hidden_at: string | null;
           cover_kind: Database['public']['Enums']['cover_kind'];
           cover_square_path: string | null;
+          cover_style: Database['public']['Enums']['cover_style'];
           cover_tall_path: string | null;
+          cover_title_font: Database['public']['Enums']['cover_title_font'];
           created_at: string;
           deals_with_abuse_or_coercion: boolean;
           deleted_at: string | null;
@@ -18755,6 +18779,8 @@ export type Database = {
       compliance_entry_kind: 'authority_order' | 'legal_request' | 'launch_notice';
       conversation_status: 'request' | 'accepted' | 'declined';
       cover_kind: 'automatic' | 'drawn' | 'upload';
+      cover_style: 'label' | 'big_title' | 'initial' | 'picture' | 'custom';
+      cover_title_font: 'reading' | 'display' | 'sans' | 'hand';
       data_request_channel: 'in_app' | 'email' | 'post';
       data_request_identity: 'not_needed' | 'not_asked' | 'asked' | 'confirmed' | 'denied';
       data_request_state: 'open' | 'closed';
@@ -19154,6 +19180,8 @@ export const Constants = {
       compliance_entry_kind: ['authority_order', 'legal_request', 'launch_notice'],
       conversation_status: ['request', 'accepted', 'declined'],
       cover_kind: ['automatic', 'drawn', 'upload'],
+      cover_style: ['label', 'big_title', 'initial', 'picture', 'custom'],
+      cover_title_font: ['reading', 'display', 'sans', 'hand'],
       data_request_channel: ['in_app', 'email', 'post'],
       data_request_identity: ['not_needed', 'not_asked', 'asked', 'confirmed', 'denied'],
       data_request_state: ['open', 'closed'],

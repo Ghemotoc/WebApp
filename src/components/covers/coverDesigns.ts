@@ -114,11 +114,30 @@ export const coverDesigns: readonly CoverDesign[] = [
   { key: 'forestwaves', kind: 'forestwaves', background: 'sage', accent: 'ink', isNew: true },
 ];
 
+/**
+ * The three looks a drawn cover can have (bundle CALM-4, the simplified design's cover kinds):
+ * Label (the pattern with a paper label near the top), Big title (the title large on a plain
+ * colour) and Initial (one big letter in the accent, cropped by the edge). The two other kinds,
+ * Picture and Custom, are uploads, drawn by StoryCoverArt. The database column is
+ * stories.cover_style (migration …_calm4_cover_styles.sql).
+ */
+export type DrawnCoverStyle = 'label' | 'big_title' | 'initial';
+
+/**
+ * The fonts a writer can pick for the title on a cover (CALM-4): Literata (reading, the default),
+ * Funnel Display (display), Inter (sans) or Playwrite Cuba (hand). stories.cover_title_font.
+ */
+export type CoverTitleFont = 'reading' | 'display' | 'sans' | 'hand';
+
 /** A writer's drawn cover choice, as stored on the story. */
 export interface DrawnCoverChoice {
   design: CoverDesignKey;
   background: CoverColourKey;
   accent: CoverColourKey;
+  /** The look (CALM-4); Label when left out, which is how every cover looked before. */
+  style?: DrawnCoverStyle;
+  /** The title's font (CALM-4); Literata when left out. */
+  titleFont?: CoverTitleFont;
 }
 
 /**

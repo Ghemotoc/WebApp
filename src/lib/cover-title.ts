@@ -18,13 +18,22 @@ export const MINIMUM_COVER_TITLE_SIZE = 11;
  * @returns the font size in pixels, never below 11
  */
 export function coverTitleSize(title: string, baseSize: number): number {
-  const length = title.trim().length;
-
-  // Pick the step for this length.
-  let scale = 0.62;
-  if (length <= 18) scale = 1;
-  else if (length <= 28) scale = 0.85;
-  else if (length <= 40) scale = 0.72;
-
+  const scale = coverTitleScale(title);
   return Math.max(MINIMUM_COVER_TITLE_SIZE, Math.round(baseSize * scale * 10) / 10);
+}
+
+/**
+ * The step a title's size takes for its length, on its own (bundle CALM-4): the drawn covers set
+ * it as --fit and the CSS multiplies their size in cqi by it (index.css, cover-label and friends),
+ * so the same cover looks the same at every width.
+ *
+ * @param title - the full story title
+ * @returns 1 up to 18 characters, 0.85 for 19 to 28, 0.72 for 29 to 40, 0.62 for longer ones
+ */
+export function coverTitleScale(title: string): number {
+  const length = title.trim().length;
+  if (length <= 18) return 1;
+  if (length <= 28) return 0.85;
+  if (length <= 40) return 0.72;
+  return 0.62;
 }

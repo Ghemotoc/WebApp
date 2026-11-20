@@ -29,7 +29,7 @@ export function WriterToFollowCard({ writer }: { writer: RisingWriter }) {
   return (
     <article
       aria-label={writer.displayName}
-      className="flex h-full w-[248px] flex-col gap-3.5 rounded-[24px] border border-border bg-surface p-5 shadow-card"
+      className="flex h-full w-full flex-col gap-3.5 rounded-[24px] border border-border bg-surface p-5 shadow-card"
     >
       <div className="flex items-center gap-3">
         <PersonAvatar name={writer.displayName} handle={writer.handle} size="xlarge" />

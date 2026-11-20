@@ -81,6 +81,9 @@ export interface PublicPlan {
   /** The cover for the band at the top (GAPS-4): its kind, and the drawn choice when there is one. */
   coverKind: 'automatic' | 'drawn' | 'upload';
   drawnCover: DrawnCoverChoice | null;
+  /** The cover's look and title font (cover.style, cover.title_font; bundle CALM-4). */
+  coverStyle?: string | null;
+  titleFont?: string | null;
   /** The writer's pen name, else the username; a classic's real author. */
   writerName: string;
   areas: PlanArea[];
@@ -121,6 +124,9 @@ interface PublicCoverRow {
   design: string | null;
   background: string | null;
   accent: string | null;
+  /** CALM-4 (public_plan_json()). */
+  style?: string | null;
+  title_font?: string | null;
 }
 
 /** The answer of get_public_story_plan() and preview_story_plan(). */
@@ -257,6 +263,8 @@ export async function publicPlanFrom(
     storyTitle: row.story.title,
     coverKind: row.story.cover.kind,
     drawnCover: drawnCoverFrom(row.story.cover),
+    coverStyle: row.story.cover.style ?? null,
+    titleFont: row.story.cover.title_font ?? null,
     writerName: row.story.writer_name,
     areas: row.areas,
     cast,

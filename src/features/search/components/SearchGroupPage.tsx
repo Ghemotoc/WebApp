@@ -79,7 +79,7 @@ function WritersPage({ term }: { term: string }) {
   const list = useFoundWritersList(term);
   const cards = list.items.map((writer) => ({
     key: writer.handle,
-    content: <WriterResultCard writer={writer} isFluid />,
+    content: <WriterResultCard writer={writer} />,
   }));
   return (
     <GroupListLayout
@@ -100,7 +100,7 @@ function TagsPage({ term }: { term: string }) {
   const list = useFoundTagsList(term);
   const cards = list.items.map((tag) => ({
     key: tag.name,
-    content: <TagResultCard tag={tag} isFluid />,
+    content: <TagResultCard tag={tag} />,
   }));
   return (
     <GroupListLayout

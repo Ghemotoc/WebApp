@@ -82,7 +82,7 @@ select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
 select is(public.share_options('quote-backgrounds-329', 'nosuch01') -> 'cover', 'null'::jsonb,
   'a chapter that doesn''t exist gets no cover');
 select is(public.share_options('quote-backgrounds-329', 'qcb1ch01') -> 'cover',
-  '{"kind": "drawn", "story_id": "32900000-0000-4000-8000-000000000001", "design": "stripes", "background": "sage", "accent": "plum"}'::jsonb,
+  '{"kind": "drawn", "story_id": "32900000-0000-4000-8000-000000000001", "design": "stripes", "background": "sage", "accent": "plum", "style": "label", "title_font": "reading"}'::jsonb,
   'a reader gets the drawn cover''s design and colours');
 select is(public.share_options('quote-backgrounds-329', 'qcb1ch01')::text like '%00000000-0000-4000-8000-000000000001%', false,
   'and never the writer''s user ID');
@@ -90,7 +90,7 @@ select pg_temp.as_postgres();
 update public.stories set cover_hidden_at = now() where slug = 'quote-backgrounds-329';
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
 select is(public.share_options('quote-backgrounds-329', 'qcb1ch01') -> 'cover',
-  '{"kind": "automatic", "story_id": "32900000-0000-4000-8000-000000000001", "design": null, "background": null, "accent": null}'::jsonb,
+  '{"kind": "automatic", "story_id": "32900000-0000-4000-8000-000000000001", "design": null, "background": null, "accent": null, "style": "label", "title_font": "reading"}'::jsonb,
   'a cover staff hid counts as the automatic one');
 select pg_temp.as_postgres();
 update public.stories set cover_hidden_at = null, cover_kind = 'automatic', cover_design = null,

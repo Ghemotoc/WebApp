@@ -49,7 +49,7 @@ export function ProfileStories({ profile }: { profile: WriterProfile }) {
             cover={covers[index] ?? resolveCoverChoice(story)}
             href={`/s/${story.slug}`}
             wrapCover={(drawn) => (
-              <StoryCoverArt story={story} drawn={drawn} className="w-[165px]" />
+              <StoryCoverArt story={story} drawn={drawn} className="w-full" />
             )}
             // Robert, 6 Nov 2026: only "Ongoing" shows as a pill; "Completed" is a filter.
             pill={

@@ -95,10 +95,13 @@
   },
   "shelf": {
     "regionLabel": "{{title}}, se derulează lateral",
-    "scrollBack": "Derulează înapoi",
-    "scrollForward": "Derulează înainte",
+    "previousIn": "Înapoi în {{title}}",
+    "nextIn": "Mai departe în {{title}}",
     "viewMore": "Vezi mai multe",
-    "viewMoreHint": "Toate cele {{count}} din {{title}}"
+    "viewMoreHint": "{{count}} în {{title}}",
+    "viewCount": "Vezi {{count}}",
+    "inRow": "în {{title}}",
+    "percentRead": "{{percent}}% citit"
   },
   "ads": {
     "regionLabel": "Reclamă",

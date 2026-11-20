@@ -23,6 +23,7 @@
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router';
 
+import { coverLookOf } from '@/components/covers/automaticCover';
 import { ChevronLeftIcon } from '@/components/icons/ChevronLeftIcon';
 import { Button } from '@/components/ui/Button';
 import { Eyebrow } from '@/components/ui/Eyebrow';
@@ -41,6 +42,7 @@ import { useStorySettingsForm } from '../hooks/useStorySettingsForm';
 
 import { ArrivedCoverNote } from './ArrivedCoverNote';
 import { CategoryTagsSection } from './CategoryTagsSection';
+import { CoverLookPicker } from './CoverLookPicker';
 import { CoverSection } from './CoverSection';
 import { DeleteStoryControl } from './DeleteStoryControl';
 import { StoryBasicsSection } from './StoryBasicsSection';
@@ -162,7 +164,9 @@ function SettingsFields({
         cover={form.answers.cover}
         onChange={(cover) => form.set('cover', cover)}
         canUpload
+        look={coverLookOf(story)}
       />
+      <CoverLookPicker story={story} formCoverKind={form.answers.cover.kind} />
       {form.arrivedCoverPath !== null && (
         <ArrivedCoverNote story={{ id: story.id, slug: story.slug, title: story.title }} />
       )}

@@ -17,12 +17,21 @@
  * 4 px corners at every size (--radius-cover, rounded-cover) and a 1 px hairline just inside its
  * edge (the cover-edge utility in index.css), with no shadow. They replace the boards' 8 and 16 px
  * corners and the darker 1 px border.
+ * The three looks (bundle CALM-4, handover Step 2; choice.style): Label puts the pattern behind a
+ * paper label near the top (80.8% of the width, 9.6% each side, 8.9% from the top), Big title sets
+ * the title large on the plain background with a short accent rule and the pen name at the foot,
+ * and Initial draws the title's first letter huge in the accent, cropped by the edge. Every size
+ * inside is in cqi (1% of the cover's width; the cover-* classes in index.css), so a cover looks
+ * the same at every width; under 100 px it shows the title only, because the title is written
+ * beside it. The title font is Literata 600 unless the writer picked another (choice.titleFont).
+ * These replace the per-size padding and title tables of S1-E3-01; `size` stays as a label for
+ * tests and styles.
  * Who uses it: StoryCard (shelves), DrawnCoverPicker and StoryPreviewAside (the new story form),
  * WriterStoryCard (Your writing), and later the story page and the teaser.
  */
 import type { CSSProperties } from 'react';
 
-import { coverTitleSize, MINIMUM_COVER_TITLE_SIZE } from '@/lib/cover-title';
+import { coverTitleScale } from '@/lib/cover-title';
 import { cn } from '@/lib/utils';
 
 import {
@@ -30,53 +39,14 @@ import {
   coverDesignByKey,
   coverPalette,
   titleColourOn,
-  titleSurfaceFor,
   type DrawnCoverChoice,
 } from './coverDesigns';
 
-/** The sizes a drawn cover is shown at, with the board's values for each. */
+/**
+ * The places a drawn cover is shown. Since CALM-4 the sizes inside the cover follow its width, so
+ * this only names the place (data-cover-size), for tests and for anyone reading the page.
+ */
 export type DrawnCoverSize = 'tile' | 'preview' | 'card' | 'shelf' | 'wall';
-
-/**
- * Padding, the corner of the solid box behind the words, title size, pen name size and the accent
- * bar for each size. The cover's own corners are the same 4 px at every size (rounded-cover), so
- * they are not in this table. wordsBoxRadius keeps the words box exactly as it was before CALM-1
- * (half the boards' old cover corner); the cover kinds in bundle CALM-4 redraw that box.
- */
-const sizeValues: Record<
-  DrawnCoverSize,
-  {
-    padding: number;
-    wordsBoxRadius: number;
-    title: number;
-    penName: number;
-    bar: [number, number];
-  }
-> = {
-  tile: { padding: 6, wordsBoxRadius: 4, title: 12, penName: 10, bar: [14, 2] },
-  preview: { padding: 14, wordsBoxRadius: 8, title: 21, penName: 13, bar: [40, 3] },
-  card: { padding: 22, wordsBoxRadius: 8, title: 28, penName: 13, bar: [52, 3] },
-  shelf: { padding: 18, wordsBoxRadius: 8, title: 21, penName: 13, bar: [40, 3] },
-  // The home page's cover wall (board Website-Home, LOOK-2): its title shrinks with the screen.
-  wall: { padding: 12, wordsBoxRadius: 8, title: 20, penName: 12, bar: [28, 3] },
-};
-
-/**
- * The title's CSS font size. On the cover wall the size also follows the screen width, as on
- * the board (clamp(15px, 1.5vw, 20px)), so the three narrow columns on a phone still show the
- * whole title; it never goes below the DoD's 11 px floor.
- *
- * @param title - the story's title
- * @param size - the cover's size
- * @returns the font size, for example "21px" or "clamp(15px, 1.5vw, 20px)"
- */
-function titleFontSize(title: string, size: DrawnCoverSize): string {
-  const largest = coverTitleSize(title, sizeValues[size].title);
-  if (size !== 'wall') return `${String(largest)}px`;
-  const smallest = Math.max(MINIMUM_COVER_TITLE_SIZE, Math.round(largest * 7.5) / 10);
-  const followingScreen = Math.round(largest * 0.75) / 10;
-  return `clamp(${String(smallest)}px, ${String(followingScreen)}vw, ${String(largest)}px)`;
-}
 
 /** What a DrawnCover needs. */
 export interface DrawnCoverProps {
@@ -126,74 +96,85 @@ function CoverArtwork({ choice }: { choice: DrawnCoverChoice }) {
   );
 }
 
+/** The title and pen name, shared by the three looks; each look places and sizes them. */
+interface CoverWordsProps {
+  title: string;
+  penName?: string;
+}
+
 /**
- * The words on the cover: the title, the accent line (plain designs) and the pen name, on a
- * solid box on every patterned design.
+ * Label: the paper label near the top, with the title, a short rule in the accent and the pen
+ * name. The label is always paper with dark ink, so it reads at 4.5:1 on every pattern.
  *
- * @returns the title block
+ * @returns the label
  */
-function CoverWords({
-  title,
-  penName,
-  choice,
-  size,
-}: Pick<DrawnCoverProps, 'title' | 'penName' | 'choice' | 'size'>) {
-  const values = sizeValues[size];
-  const { kind } = coverDesignByKey(choice.design);
-  const { boxFill, surface } = titleSurfaceFor(choice);
-  const textColour = titleColourOn(surface);
-
-  // On every patterned design a solid box sits behind the words, so no line crosses them.
-  const boxStyle: CSSProperties =
-    boxFill === null
-      ? {}
-      : {
-          backgroundColor: boxFill,
-          padding: `${values.padding / 2}px ${values.padding * 0.7}px`,
-          borderRadius: values.wordsBoxRadius,
-          alignSelf: 'flex-start',
-          maxWidth: '100%',
-        };
-
+function LabelWords({ title, penName }: CoverWordsProps) {
   return (
-    <span className="relative flex min-w-0 flex-col items-start gap-1.5" style={boxStyle}>
-      <span
-        className="font-heading leading-[1.05] font-bold break-words"
-        style={{
-          fontSize: titleFontSize(title, size),
-          color: textColour,
-          maxWidth: '100%',
-        }}
-      >
-        {title}
-      </span>
-      {kind === 'plain' && (
-        <span
-          className="block rounded-sm"
-          style={{
-            width: values.bar[0],
-            height: values.bar[1],
-            backgroundColor: coverPalette[choice.accent],
-          }}
-        />
-      )}
+    <span className="cover-label">
+      <span className="cover-words-title">{title}</span>
       {penName !== undefined && (
-        <span
-          className="font-body font-medium"
-          style={{ fontSize: `${values.penName}px`, color: textColour }}
-        >
-          {penName}
-        </span>
+        <>
+          <span className="cover-label-rule" aria-hidden="true" />
+          <span className="cover-words-by">{penName}</span>
+        </>
       )}
     </span>
   );
 }
 
 /**
- * Renders the cover: the background, the artwork, then the words at the bottom. The box keeps
- * a 5:8 shape (the boards draw 2:3, but uploads and the picture check use 5:8, so the shape stays
- * an open question); give it a width or height with className. It has 4 px corners and the
- * hairline edge, and casts no shadow (the simplified design, CALM-1).
+ * Big title: the title large at the top with a short accent rule under it, the pen name at the
+ * foot, straight on the plain background in whichever ink reads best on it.
+ *
+ * @returns the words
+ */
+function BigTitleWords({ title, penName }: CoverWordsProps) {
+  return (
+    <span className="cover-inner cover-big">
+      <span>
+        <span className="cover-words-title">{title}</span>
+        <span className="cover-big-rule" aria-hidden="true" />
+      </span>
+      {penName !== undefined && <span className="cover-words-by">{penName}</span>}
+    </span>
+  );
+}
+
+/**
+ * Initial: the title and pen name at the top, above the title's first letter drawn huge in the
+ * accent and cropped by the cover's bottom and right edges.
+ *
+ * @returns the words and the letter
+ */
+function InitialWords({ title, penName }: CoverWordsProps) {
+  // The first letter, so "Șapte" gives "Ș"; Array.from keeps a letter with a mark whole.
+  const firstLetter = Array.from(title.trim())[0] ?? '';
+  return (
+    <>
+      <svg
+        viewBox="0 0 120 180"
+        preserveAspectRatio="xMinYMax slice"
+        aria-hidden="true"
+        focusable="false"
+        className="absolute inset-0 h-full w-full"
+      >
+        <text className="cover-glyph" x="12" y="186">
+          {firstLetter}
+        </text>
+      </svg>
+      <span className="cover-inner cover-initial">
+        <span className="cover-words-title">{title}</span>
+        {penName !== undefined && <span className="cover-words-by">{penName}</span>}
+      </span>
+    </>
+  );
+}
+
+/**
+ * Renders the cover: the background, then the look the writer picked. The box keeps a 5:8 shape
+ * (the boards draw 2:3, but uploads and the picture check use 5:8, so the shape stays an open
+ * question); give it a width with className. It has 4 px corners and the hairline edge, and casts
+ * no shadow (the simplified design, CALM-1).
  *
  * @returns the cover
  */
@@ -205,22 +186,35 @@ export function DrawnCover({
   isDecorative = false,
   className,
 }: DrawnCoverProps) {
-  const values = sizeValues[size];
+  const style = choice.style ?? 'label';
+  const background = coverPalette[choice.background];
+
+  // The values the CSS reads: the accent, the title's length step and, off the label, the ink
+  // that reads best on the background (the label itself is always paper with dark ink).
+  const coverStyle = {
+    backgroundColor: background,
+    color: titleColourOn(background),
+    '--book-accent': coverPalette[choice.accent],
+    '--fit': String(coverTitleScale(title)),
+  } as CSSProperties;
+
   return (
     <span
       aria-hidden={isDecorative ? 'true' : undefined}
       data-cover-design={choice.design}
+      data-cover-style={style}
+      data-cover-size={size}
+      data-title-font={choice.titleFont ?? 'reading'}
       className={cn(
-        'cover-edge relative box-border flex aspect-[5/8] flex-col justify-end overflow-hidden rounded-cover',
+        'cover-book cover-edge relative box-border block aspect-[5/8] overflow-hidden rounded-cover',
         className,
       )}
-      style={{
-        backgroundColor: coverPalette[choice.background],
-        padding: values.padding,
-      }}
+      style={coverStyle}
     >
-      <CoverArtwork choice={choice} />
-      <CoverWords title={title} penName={penName} choice={choice} size={size} />
+      {style === 'label' && <CoverArtwork choice={choice} />}
+      {style === 'label' && <LabelWords title={title} penName={penName} />}
+      {style === 'big_title' && <BigTitleWords title={title} penName={penName} />}
+      {style === 'initial' && <InitialWords title={title} penName={penName} />}
     </span>
   );
 }
