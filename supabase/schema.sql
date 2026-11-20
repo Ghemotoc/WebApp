@@ -39472,6 +39472,10 @@ CREATE OR REPLACE FUNCTION "public"."reading_list_json"("target" "public"."readi
     from public.listed_stories('reading_list', target.id::text, null, null, null) as shown
     join public.reading_list_stories as entries
       on entries.list_id = target.id and entries.story_id = shown.id
+  ),
+  shelf_size as (
+    -- How many places one bookshelf has (CALM-4); 10 when the setting is missing.
+    select coalesce(public.setting_value('reading_list_stories_max') #>> '{}', '10')::integer as places
   )
   select jsonb_build_object(
     'id', target.id,
@@ -39515,10 +39519,6 @@ $$;
 ALTER FUNCTION "public"."rebuild_story_search_documents"() OWNER TO "postgres";
 
 
-  ),
-  shelf_size as (
-    -- How many places one bookshelf has (CALM-4); 10 when the setting is missing.
-    select coalesce(public.setting_value('reading_list_stories_max') #>> '{}', '10')::integer as places
 COMMENT ON FUNCTION "public"."rebuild_story_search_documents"() IS 'Rebuilds every story''s search row; safe to run again (QA-2a).';
 
 
@@ -46640,47 +46640,6 @@ COMMENT ON FUNCTION "public"."set_my_story_app_only"("story_slug" "text", "wante
 
 
 
-CREATE OR REPLACE FUNCTION "public"."set_my_story_visibility"("story_slug" "text", "wanted" "public"."story_visibility") RETURNS "jsonb"
-    LANGUAGE "plpgsql" SECURITY DEFINER
-    SET "search_path" TO ''
-    AS $$
-declare
-  target_story_id uuid;
-begin
-  -- Step 1: a signed-in writer who may write, and their own live story.
-  if (select auth.uid()) is null then
-    raise exception 'Sign in to change a story.' using errcode = 'insufficient_privilege';
-  end if;
-  if not public.is_active_member() then
-    return jsonb_build_object('outcome', 'not_active');
-  end if;
-  target_story_id := public.my_live_story_id(story_slug);
-  if target_story_id is null then
-    return jsonb_build_object('outcome', 'not_found');
-  end if;
-  -- Step 2: save it. Staff Restrict and Hide are kept apart and still win (S1-E11-08).
-  update public.stories set visibility = wanted where stories.id = target_story_id;
-  return jsonb_build_object('outcome', 'ok');
-end;
-$$;
-
-
-ALTER FUNCTION "public"."set_my_story_visibility"("story_slug" "text", "wanted" "public"."story_visibility") OWNER TO "postgres";
-
-
-COMMENT ON FUNCTION "public"."set_my_story_visibility"("story_slug" "text", "wanted" "public"."story_visibility") IS 'The writer sets who can read their story: public, unlisted or private (NEW-1).';
-
-
-
-CREATE OR REPLACE FUNCTION "public"."set_my_waitlist_interest"("wanted" "public"."waitlist_interest") RETURNS "void"
-    LANGUAGE "plpgsql" SECURITY DEFINER
-    SET "search_path" TO ''
-    AS $$
-begin
-  if (select auth.uid()) is null then
-    raise exception 'Sign in to change your answer.' using errcode = 'insufficient_privilege';
-  end if;
-  update public.waitlist_entries set interest = coalesce(wanted, 'both')
 CREATE OR REPLACE FUNCTION "public"."set_my_story_cover_look"("story_slug" "text", "style" "public"."cover_style", "title_font" "public"."cover_title_font") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -46728,6 +46687,47 @@ COMMENT ON FUNCTION "public"."set_my_story_cover_look"("story_slug" "text", "sty
 
 
 
+CREATE OR REPLACE FUNCTION "public"."set_my_story_visibility"("story_slug" "text", "wanted" "public"."story_visibility") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target_story_id uuid;
+begin
+  -- Step 1: a signed-in writer who may write, and their own live story.
+  if (select auth.uid()) is null then
+    raise exception 'Sign in to change a story.' using errcode = 'insufficient_privilege';
+  end if;
+  if not public.is_active_member() then
+    return jsonb_build_object('outcome', 'not_active');
+  end if;
+  target_story_id := public.my_live_story_id(story_slug);
+  if target_story_id is null then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  -- Step 2: save it. Staff Restrict and Hide are kept apart and still win (S1-E11-08).
+  update public.stories set visibility = wanted where stories.id = target_story_id;
+  return jsonb_build_object('outcome', 'ok');
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_my_story_visibility"("story_slug" "text", "wanted" "public"."story_visibility") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_my_story_visibility"("story_slug" "text", "wanted" "public"."story_visibility") IS 'The writer sets who can read their story: public, unlisted or private (NEW-1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."set_my_waitlist_interest"("wanted" "public"."waitlist_interest") RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  if (select auth.uid()) is null then
+    raise exception 'Sign in to change your answer.' using errcode = 'insufficient_privilege';
+  end if;
+  update public.waitlist_entries set interest = coalesce(wanted, 'both')
   where waitlist_entries.user_id = (select auth.uid()) and waitlist_entries.admitted_at is null;
   if not found then
     raise exception 'You''re not waiting on the list.' using errcode = 'check_violation', hint = 'not_on_list';
@@ -50181,6 +50181,41 @@ COMMENT ON FUNCTION "public"."stories_clear_hidden_presentation"() IS 'Trigger: 
 
 
 
+CREATE OR REPLACE FUNCTION "public"."stories_cover_style_fits"() RETURNS "trigger"
+    LANGUAGE "plpgsql"
+    SET "search_path" TO ''
+    AS $$
+declare
+  first_edition public.stories;
+begin
+  -- Step 1: an edition shares its cover with the first edition.
+  if new.edition_of_story_id is not null then
+    select * into first_edition from public.stories where stories.id = new.edition_of_story_id;
+    if found then
+      new.cover_style := first_edition.cover_style;
+      new.cover_title_font := first_edition.cover_title_font;
+    end if;
+  end if;
+  -- Step 2: a style that no longer fits the kind falls back to the plain one for that kind.
+  if new.cover_kind = 'automatic' then
+    new.cover_style := 'label';
+  elsif new.cover_kind = 'drawn' and new.cover_style not in ('label', 'big_title', 'initial') then
+    new.cover_style := 'label';
+  elsif new.cover_kind = 'upload' and new.cover_style not in ('picture', 'custom') then
+    new.cover_style := 'custom';
+  end if;
+  return new;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."stories_cover_style_fits"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."stories_cover_style_fits"() IS 'Trigger: keeps cover_style fitting cover_kind and copies an edition''s style and font from the first edition (CALM-4).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."stories_edition_rules"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -50222,41 +50257,6 @@ begin
   if new.user_id <> first_edition.user_id then
     raise exception 'Only the story''s writer can add a language to it.'
       using errcode = 'check_violation', hint = 'edition_owner';
-CREATE OR REPLACE FUNCTION "public"."stories_cover_style_fits"() RETURNS "trigger"
-    LANGUAGE "plpgsql"
-    SET "search_path" TO ''
-    AS $$
-declare
-  first_edition public.stories;
-begin
-  -- Step 1: an edition shares its cover with the first edition.
-  if new.edition_of_story_id is not null then
-    select * into first_edition from public.stories where stories.id = new.edition_of_story_id;
-    if found then
-      new.cover_style := first_edition.cover_style;
-      new.cover_title_font := first_edition.cover_title_font;
-    end if;
-  end if;
-  -- Step 2: a style that no longer fits the kind falls back to the plain one for that kind.
-  if new.cover_kind = 'automatic' then
-    new.cover_style := 'label';
-  elsif new.cover_kind = 'drawn' and new.cover_style not in ('label', 'big_title', 'initial') then
-    new.cover_style := 'label';
-  elsif new.cover_kind = 'upload' and new.cover_style not in ('picture', 'custom') then
-    new.cover_style := 'custom';
-  end if;
-  return new;
-end;
-$$;
-
-
-ALTER FUNCTION "public"."stories_cover_style_fits"() OWNER TO "postgres";
-
-
-COMMENT ON FUNCTION "public"."stories_cover_style_fits"() IS 'Trigger: keeps cover_style fitting cover_kind and copies an edition''s style and font from the first edition (CALM-4).';
-
-
-
   end if;
 
   -- Step 5: another language than the first edition (other editions: the unique index).
@@ -50319,6 +50319,29 @@ COMMENT ON FUNCTION "public"."stories_edition_rules"() IS 'Trigger: checks a lan
 
 
 
+CREATE OR REPLACE FUNCTION "public"."stories_editions_follow_cover_look"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  update public.stories as editions set
+    cover_style = new.cover_style,
+    cover_title_font = new.cover_title_font
+  where editions.edition_of_story_id = new.id
+    and (editions.cover_style, editions.cover_title_font)
+      is distinct from (new.cover_style, new.cover_title_font);
+  return null;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."stories_editions_follow_cover_look"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."stories_editions_follow_cover_look"() IS 'Trigger: language editions take the first edition''s cover style and title font (CALM-4).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."stories_editions_follow_first"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -50360,29 +50383,6 @@ begin
          new.is_parody, new.deals_with_abuse_or_coercion, new.ai_disclosure,
          new.ai_undisclosed_labelled_at, new.classic_author_id, new.first_published_year,
          new.visibility, new.class_only, new.class_space_id, new.is_app_only,
-CREATE OR REPLACE FUNCTION "public"."stories_editions_follow_cover_look"() RETURNS "trigger"
-    LANGUAGE "plpgsql" SECURITY DEFINER
-    SET "search_path" TO ''
-    AS $$
-begin
-  update public.stories as editions set
-    cover_style = new.cover_style,
-    cover_title_font = new.cover_title_font
-  where editions.edition_of_story_id = new.id
-    and (editions.cover_style, editions.cover_title_font)
-      is distinct from (new.cover_style, new.cover_title_font);
-  return null;
-end;
-$$;
-
-
-ALTER FUNCTION "public"."stories_editions_follow_cover_look"() OWNER TO "postgres";
-
-
-COMMENT ON FUNCTION "public"."stories_editions_follow_cover_look"() IS 'Trigger: language editions take the first edition''s cover style and title font (CALM-4).';
-
-
-
          new.comments_enabled, new.comment_audience, new.comments_paused_until,
          new.quote_cards_enabled, new.picture_sharing_enabled, new.card_colour,
          new.cover_kind, new.cover_design, new.cover_background, new.cover_accent,
@@ -63113,6 +63113,10 @@ CREATE OR REPLACE TRIGGER "stories_clear_hidden_presentation" BEFORE UPDATE OF "
 
 
 
+CREATE OR REPLACE TRIGGER "stories_editions_follow_cover_look" AFTER UPDATE OF "cover_style", "cover_title_font" ON "public"."stories" FOR EACH ROW EXECUTE FUNCTION "public"."stories_editions_follow_cover_look"();
+
+
+
 CREATE OR REPLACE TRIGGER "stories_editions_follow_first" AFTER UPDATE ON "public"."stories" FOR EACH ROW WHEN (("new"."edition_of_story_id" IS NULL)) EXECUTE FUNCTION "public"."stories_editions_follow_first"();
 
 
@@ -63145,6 +63149,10 @@ CREATE OR REPLACE TRIGGER "stories_set_updated_at" BEFORE UPDATE ON "public"."st
 
 
 
+CREATE OR REPLACE TRIGGER "stories_zz_cover_style_fits" BEFORE INSERT OR UPDATE OF "cover_kind", "cover_style", "cover_title_font", "edition_of_story_id" ON "public"."stories" FOR EACH ROW EXECUTE FUNCTION "public"."stories_cover_style_fits"();
+
+
+
 CREATE OR REPLACE TRIGGER "story_archives_set_updated_at" BEFORE UPDATE ON "public"."story_archives" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
@@ -63154,10 +63162,6 @@ CREATE OR REPLACE TRIGGER "story_bible_entries_refuse_user_id_change" BEFORE UPD
 
 
 CREATE OR REPLACE TRIGGER "story_bible_entries_set_updated_at" BEFORE UPDATE ON "public"."story_bible_entries" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
-CREATE OR REPLACE TRIGGER "stories_editions_follow_cover_look" AFTER UPDATE OF "cover_style", "cover_title_font" ON "public"."stories" FOR EACH ROW EXECUTE FUNCTION "public"."stories_editions_follow_cover_look"();
-
-
-
 
 
 
@@ -63190,10 +63194,6 @@ CREATE OR REPLACE TRIGGER "story_characters_refuse_user_id_change" BEFORE UPDATE
 
 
 CREATE OR REPLACE TRIGGER "story_characters_set_updated_at" BEFORE UPDATE ON "public"."story_characters" FOR EACH ROW EXECUTE FUNCTION "public"."set_character_updated_at"();
-CREATE OR REPLACE TRIGGER "stories_zz_cover_style_fits" BEFORE INSERT OR UPDATE OF "cover_kind", "cover_style", "cover_title_font", "edition_of_story_id" ON "public"."stories" FOR EACH ROW EXECUTE FUNCTION "public"."stories_cover_style_fits"();
-
-
-
 
 
 
@@ -73743,6 +73743,11 @@ GRANT ALL ON FUNCTION "public"."set_my_story_app_only"("story_slug" "text", "wan
 
 
 
+REVOKE ALL ON FUNCTION "public"."set_my_story_cover_look"("story_slug" "text", "style" "public"."cover_style", "title_font" "public"."cover_title_font") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_my_story_cover_look"("story_slug" "text", "style" "public"."cover_style", "title_font" "public"."cover_title_font") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."set_my_story_visibility"("story_slug" "text", "wanted" "public"."story_visibility") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_my_story_visibility"("story_slug" "text", "wanted" "public"."story_visibility") TO "authenticated";
 
@@ -73790,11 +73795,6 @@ GRANT ALL ON FUNCTION "public"."set_shows_reader_level"("should_show" boolean) T
 
 REVOKE ALL ON FUNCTION "public"."set_space_banner_picture"("slug" "text", "picture_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_space_banner_picture"("slug" "text", "picture_id" "uuid") TO "authenticated";
-
-
-REVOKE ALL ON FUNCTION "public"."set_my_story_cover_look"("story_slug" "text", "style" "public"."cover_style", "title_font" "public"."cover_title_font") FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."set_my_story_cover_look"("story_slug" "text", "style" "public"."cover_style", "title_font" "public"."cover_title_font") TO "authenticated";
-
 
 
 
@@ -74252,7 +74252,15 @@ GRANT ALL ON FUNCTION "public"."storage_files_to_sweep"("max_files" integer) TO 
 
 
 
+REVOKE ALL ON FUNCTION "public"."stories_cover_style_fits"() FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."stories_edition_rules"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."stories_editions_follow_cover_look"() FROM PUBLIC;
 
 
 
@@ -74301,15 +74309,7 @@ GRANT ALL ON FUNCTION "public"."story_bible"("story_slug" "text") TO "authentica
 
 
 
-REVOKE ALL ON FUNCTION "public"."stories_cover_style_fits"() FROM PUBLIC;
-
-
-
 REVOKE ALL ON FUNCTION "public"."story_card_json"("target_story_id" "uuid") FROM PUBLIC;
-
-
-
-REVOKE ALL ON FUNCTION "public"."stories_editions_follow_cover_look"() FROM PUBLIC;
 
 
 
