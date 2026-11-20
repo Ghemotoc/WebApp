@@ -14,7 +14,7 @@ import { brand } from '@/config/brand';
 import { useAtlasTranslation } from '@/features/atlas/registerAtlasTranslations';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { unreadCountQueryKey } from '@/features/notifications/hooks/useUnreadNotificationCount';
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatLocalDate } from '@/lib/local-time';
 import type { WordLabels } from '@/lib/word/wordTypes';
 
 import { fetchMyDataExports, type DataExport } from '../api/dataExport';
@@ -149,7 +149,7 @@ export function useExportGuideWords(language?: string): ExportGuideWordsFor {
   return (madeAt) => ({
     fileName: t('guide.fileName'),
     title: t('guide.title'),
-    intro: t('guide.intro', { date: formatRomaniaDate(new Date(madeAt), dateLanguage) }),
+    intro: t('guide.intro', { date: formatLocalDate(new Date(madeAt), dateLanguage) }),
     filesHeading: t('guide.filesHeading'),
     files: {
       data: t('guide.files.data'),
@@ -213,7 +213,7 @@ export function useStartDataExport() {
         planText,
         libraryLabels,
         guideWords,
-        formatDate: (isoDate) => formatRomaniaDate(new Date(isoDate), i18n.language),
+        formatDate: (isoDate) => formatLocalDate(new Date(isoDate), i18n.language),
       });
       await queryClient.invalidateQueries({ queryKey: dataExportsKey(userId) });
       await queryClient.invalidateQueries({ queryKey: unreadCountQueryKey(userId) });

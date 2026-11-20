@@ -25,7 +25,7 @@ import { EvidenceActions } from './EvidenceActions';
  *
  * @param evidence - the evidence
  * @param t - the moderation translations
- * @param format - the date and time format, in Romania time
+ * @param format - the date and time format, on the viewer's own clock (Robert, 20 Nov 2026, 18:19 UTC)
  * @returns the rows
  */
 function factRows(
@@ -74,7 +74,6 @@ export function AbuseImageEvidencePanel({ caseId }: { caseId: string }) {
   const format = new Intl.DateTimeFormat(i18n.language, {
     dateStyle: 'medium',
     timeStyle: 'short',
-    timeZone: 'Europe/Bucharest',
   });
   return (
     <section aria-labelledby="abuse-evidence-heading" className="flex flex-col gap-3">

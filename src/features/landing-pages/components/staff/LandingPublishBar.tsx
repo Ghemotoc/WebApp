@@ -11,7 +11,7 @@
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { TextInput } from '@/components/ui/TextInput';
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatCalendarDate } from '@/lib/local-time';
 import type { LandingContent } from '@/schemas/landingPages';
 
 import type { LandingDraftInput } from '../../api/landingPages';
@@ -70,10 +70,7 @@ function LandingFeedback({
   }
   if (outcome === null) return null;
   // Step 3: what worked; a publish says the day the page goes live.
-  const date =
-    outcome.goesLive === null
-      ? ''
-      : formatRomaniaDate(new Date(`${outcome.goesLive}T12:00:00Z`), i18n.language);
+  const date = outcome.goesLive === null ? '' : formatCalendarDate(outcome.goesLive, i18n.language);
   return (
     <p className="m-0 text-sm text-(--success-text)">
       {t(`editor.outcomes.${outcome.action}`, { date })}

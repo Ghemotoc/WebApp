@@ -240,7 +240,7 @@
   "commentPause": {
     "label": "Oprește comentariile noi",
     "offNote": "Comentariile deja scrise rămân, iar raportarea funcționează în continuare.",
-    "until": "Oprite până {{when}}, ora României.",
+    "until": "Oprite până {{when}}.",
     "lengthLabel": "Pentru cât timp",
     "lengths": {
       "24h": "24 de ore",
@@ -413,7 +413,7 @@
       "words_few": "{{count}} cuvinte",
       "words_other": "{{count}} de cuvinte",
       "saved": "salvat pe {{date}}",
-      "scheduled": "Apare {{when}}, ora României",
+      "scheduled": "Apare {{when}}, ora locală",
       "unpublished": "Retras pe {{date}}",
       "unpublishedNote": "cititorii nu-l pot deschide · comentariile sunt ascunse, dar păstrate"
     },
@@ -523,7 +523,7 @@
       "untitled": "Capitolul {{number}}, fără titlu",
       "titled": "Capitolul {{number}}: {{title}}",
       "draftMeta": "{{story}} · {{words}} · salvat {{when}}",
-      "scheduledMeta": "Se publică {{when}}, ora României",
+      "scheduledMeta": "Se publică {{when}}, ora locală",
       "edit": "Editează",
       "reschedule": "Reprogramează"
     },

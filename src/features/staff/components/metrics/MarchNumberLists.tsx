@@ -10,7 +10,7 @@
 import { useTranslation } from 'react-i18next';
 
 import { LabelRows } from '@/components/ui/LabelRows';
-import { formatRomaniaShortDate } from '@/lib/romania-time';
+import { formatCalendarShortDate } from '@/lib/local-time';
 
 import type { DayReads, MarketWriters } from '../../api/marchNumbers';
 
@@ -66,7 +66,7 @@ export function MarchNumberLists({
   const { t, i18n } = useTranslation('staff');
   // Newest day first, so today's number is at the top.
   const dayRows = [...readsPerDay].reverse().map((day) => ({
-    label: formatRomaniaShortDate(new Date(`${day.day}T12:00:00Z`), i18n.language),
+    label: formatCalendarShortDate(day.day, i18n.language),
     value: day.reads.toLocaleString(i18n.language),
   }));
   const marketRows = writersByMarket.map((row) => ({

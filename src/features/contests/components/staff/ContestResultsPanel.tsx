@@ -14,7 +14,7 @@
  */
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
-import { formatRomaniaDateTime } from '@/lib/romania-time';
+import { formatLocalDateTime } from '@/lib/local-time';
 
 import type { StaffContest } from '../../api/contests';
 import type { useContestEntries } from '../../hooks/useContestEntries';
@@ -36,7 +36,7 @@ function PublishedState({
   entries: ContestEntries;
 }) {
   const { t, i18n } = useContestTranslation();
-  const date = formatRomaniaDateTime(new Date(publishedAt), i18n.language);
+  const date = formatLocalDateTime(new Date(publishedAt), i18n.language);
   return (
     <div className="flex flex-col gap-2">
       <p className="m-0 text-sm text-body">{t('staff.results.publishedOn', { date })}</p>

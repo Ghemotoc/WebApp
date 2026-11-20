@@ -5,10 +5,11 @@
  *
  * Who calls it: ProfileHeader and ProfileStats.
  */
-import { dateLocaleFor, ROMANIA_TIME_ZONE } from '@/lib/romania-time';
+import { dateLocaleFor } from '@/lib/romania-time';
 
 /**
- * The month and year someone joined: "May 2026" or "mai 2026", by Romania's calendar (Q7).
+ * The month and year someone joined: "May 2026" or "mai 2026", on the viewer's own calendar
+ * (Robert, 20 Nov 2026, 18:36 UTC).
  *
  * @param joinedAt - when the account was made, as stored
  * @param language - the interface language
@@ -16,7 +17,6 @@ import { dateLocaleFor, ROMANIA_TIME_ZONE } from '@/lib/romania-time';
  */
 export function formatJoinedMonth(joinedAt: string, language: string): string {
   return new Intl.DateTimeFormat(dateLocaleFor(language), {
-    timeZone: ROMANIA_TIME_ZONE,
     month: 'long',
     year: 'numeric',
   }).format(new Date(joinedAt));

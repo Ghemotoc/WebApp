@@ -25,7 +25,7 @@ const wordsByStatus = {
 };
 
 /**
- * A date in words in the reader's language, Romanian time.
+ * A date in words in the reader's language, on the reader's own calendar (Robert, 20 Nov 2026, 18:36 UTC).
  *
  * @returns "4 November 2026" or "4 noiembrie 2026"
  */
@@ -34,7 +34,6 @@ function dateInWords(value: string, language: string): string {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
-    timeZone: 'Europe/Bucharest',
   }).format(new Date(value));
 }
 

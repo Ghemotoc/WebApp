@@ -3,9 +3,9 @@
  * "Publish", "Scheduled" and "Published" states).
  *
  * Board values: a draft shows "When to publish" (Publish now | Schedule for later; native radio
- * buttons), the Date and Time fields with the Romania time note when scheduling, Preview and the
+ * buttons), the Date and Time fields with the local time note when scheduling, Preview and the
  * dark "Publish chapter" / "Schedule chapter" button, and the line about followers. A scheduled
- * chapter shows "Scheduled for …, Romania time." with "Cancel schedule". A published one shows
+ * chapter shows "Scheduled for …, local time." with "Cancel schedule". A published one shows
  * "Published …" with "Update chapter" (Q10). Under all three: "Unpublish chapter", red, usable
  * only when published, with its note.
  * Who uses it: EditorAside, given the state and actions by ChapterEditorPage
@@ -17,9 +17,10 @@ import { Button } from '@/components/ui/Button';
 import { TextInput } from '@/components/ui/TextInput';
 import {
   defaultScheduleFields,
-  formatRomaniaDateTime,
-  romaniaTimeToInstant,
-} from '@/lib/romania-time';
+  formatLocalDateTime,
+  localTimeToInstant,
+  skippedHourRunTime,
+} from '@/lib/local-time';
 
 import type { PublishAction, PublishingState, PublishProblem } from '../hooks/useChapterPublishing';
 import { useEditorTranslation } from '../registerEditorTranslations';
@@ -68,6 +69,21 @@ function WhenChoice({
   );
 }
 
+/**
+ * A quiet note when the typed time falls in the hour the clocks skip: it says the hour it will
+ * really run (DESIGN thread, 20 Nov 2026, 20:09 UTC). Shows nothing for an ordinary time.
+ */
+function SkippedHourNote({ date, time }: { date: string; time: string }) {
+  const { t } = useEditorTranslation();
+  const runTime = skippedHourRunTime(date, time);
+  if (runTime === null) return null;
+  return (
+    <p className="m-0 w-full text-[13px] text-meta" role="status">
+      {t('publish.skippedHourNote', { time: runTime })}
+    </p>
+  );
+}
+
 /** A draft: when, the date and time, Preview and the publish button. */
 function DraftControls({
   isBusy,
@@ -78,10 +94,10 @@ function DraftControls({
   const [isLater, setLater] = useState(false);
   const [fields, setFields] = useState(() => defaultScheduleFields(new Date()));
 
-  /** Publish now, or schedule the Romania date and time (Q7); a bad date asks again. */
+  /** Publish now, or schedule the date and time on the writer's own clock (Robert, 20 Nov 2026, 18:19 UTC); a bad date asks again. */
   function submit() {
     if (!isLater) return onAction({ kind: 'publish' });
-    const at = romaniaTimeToInstant(fields.date, fields.time);
+    const at = localTimeToInstant(fields.date, fields.time);
     onAction(at === null ? { kind: 'schedule', at: new Date(0) } : { kind: 'schedule', at });
   }
 
@@ -109,6 +125,7 @@ function DraftControls({
             />
           </div>
           <p className="m-0 w-full text-[13px] text-meta">{t('publish.zoneNote')}</p>
+          <SkippedHourNote date={fields.date} time={fields.time} />
         </div>
       )}
       <div className="flex flex-wrap gap-2">
@@ -134,7 +151,7 @@ function ScheduledControls({
 }: Pick<PublishPanelProps, 'state' | 'isBusy' | 'onAction'>) {
   const { t, i18n } = useEditorTranslation();
   const when =
-    state.scheduledFor === null ? '' : formatRomaniaDateTime(state.scheduledFor, i18n.language);
+    state.scheduledFor === null ? '' : formatLocalDateTime(state.scheduledFor, i18n.language);
   return (
     <div className="flex flex-col gap-3">
       <p className="m-0 rounded-card bg-tint px-3.5 py-3 text-[15px] font-semibold text-heading">
@@ -161,9 +178,7 @@ function PublishedControls({
 }: Omit<PublishPanelProps, 'problem'>) {
   const { t, i18n } = useEditorTranslation();
   const when =
-    state.lastPublishedAt === null
-      ? ''
-      : formatRomaniaDateTime(state.lastPublishedAt, i18n.language);
+    state.lastPublishedAt === null ? '' : formatLocalDateTime(state.lastPublishedAt, i18n.language);
   return (
     <div className="flex flex-col gap-3">
       <p className="m-0 rounded-card bg-(--success-bg) px-3.5 py-3 text-[15px] font-semibold text-(--success-text)">

@@ -38,10 +38,10 @@ function useNoticeTitle() {
 function NoticeCard({ notice }: { notice: CaseNotice }) {
   const { t, i18n } = useTranslation('moderation');
   const titleOf = useNoticeTitle();
+  // On the viewer's own clock (Robert, 20 Nov 2026, 18:19 UTC: every time in local time).
   const when = new Intl.DateTimeFormat(i18n.language, {
     dateStyle: 'medium',
     timeStyle: 'medium',
-    timeZone: 'Europe/Bucharest',
   }).format(new Date(notice.receivedAt));
   const sender =
     notice.notifierEmail === null

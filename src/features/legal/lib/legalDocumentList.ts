@@ -41,7 +41,8 @@ export function isLegalDocumentSlug(value: string | undefined): value is LegalDo
 const dateLocales: Record<string, string> = { en: 'en-GB', ro: 'ro' };
 
 /**
- * Writes a version's date the way the reader's language does, in Romanian time (the first market).
+ * Writes a version's date the way the reader's language does, on the reader's own calendar
+ * (Robert, 20 Nov 2026, 18:36 UTC).
  *
  * @param isoDate - published_at from the database
  * @param language - the interface language, for example 'ro'
@@ -50,6 +51,5 @@ const dateLocales: Record<string, string> = { en: 'en-GB', ro: 'ro' };
 export function formatLegalDate(isoDate: string, language: string): string {
   return new Intl.DateTimeFormat(dateLocales[language] ?? language, {
     dateStyle: 'long',
-    timeZone: 'Europe/Bucharest',
   }).format(new Date(isoDate));
 }

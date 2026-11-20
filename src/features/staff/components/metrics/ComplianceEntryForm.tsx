@@ -3,7 +3,7 @@
  * board AdminMetrics).
  *
  * Fields: what it is (an authority order, a legal request or the ANCOM launch notice), the
- * authority, when it arrived (Romania time), what was asked and, when it is already dealt with,
+ * authority, when it arrived (on the staff member's own clock), what was asked and, when it is already dealt with,
  * the action taken and when. lib/complianceEntryForm.ts checks the fields; the database checks
  * them again. Who shows it: ComplianceLogSection. What it calls: the onSave it is given.
  */
@@ -15,7 +15,7 @@ import { Notice } from '@/components/ui/Notice';
 import { Select } from '@/components/ui/Select';
 import { Textarea } from '@/components/ui/Textarea';
 import { TextInput } from '@/components/ui/TextInput';
-import { romaniaNowFields } from '@/lib/romania-time';
+import { localFieldsFor } from '@/lib/local-time';
 
 import type { ComplianceEntryKind, NewComplianceEntry } from '../../api/complianceLog';
 import {
@@ -164,7 +164,7 @@ export function ComplianceEntryForm({
   onCancel,
 }: ComplianceEntryFormProps) {
   const { t } = useTranslation('staff');
-  const [values, setValues] = useState(() => emptyComplianceForm(romaniaNowFields(new Date())));
+  const [values, setValues] = useState(() => emptyComplianceForm(localFieldsFor(new Date())));
   const [problem, setProblem] = useState<string | null>(null);
 
   /** Checks the fields in plain words, then hands the entry to the section. */

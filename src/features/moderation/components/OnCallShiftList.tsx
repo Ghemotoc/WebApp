@@ -17,7 +17,7 @@ import type { useOnCallRota } from '../hooks/useOnCallRota';
 import { ReasonForm } from './ReasonForm';
 
 /**
- * A time in Romania time.
+ * A time on the viewer's own clock (Robert, 20 Nov 2026, 18:19 UTC: every time in local time).
  *
  * @returns a function from an ISO time to the text
  */
@@ -26,7 +26,6 @@ function useRotaTime() {
   const format = new Intl.DateTimeFormat(i18n.language, {
     dateStyle: 'medium',
     timeStyle: 'short',
-    timeZone: 'Europe/Bucharest',
   });
   return (isoTime: string) => format.format(new Date(isoTime));
 }

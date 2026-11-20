@@ -4,7 +4,7 @@
  *
  * Who calls it: StoryContestCard and the staff screens.
  */
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatCalendarDate } from '@/lib/local-time';
 
 /** Anything with a name in both languages. */
 interface NamedInBothLanguages {
@@ -36,7 +36,7 @@ export function contestNameIn(contest: NamedInBothLanguages, language: string): 
  */
 export function contestDayInWords(day: string, language: string): string {
   // Noon UTC keeps the same calendar day in Romanian time.
-  return formatRomaniaDate(new Date(`${day}T12:00:00Z`), language);
+  return formatCalendarDate(day, language);
 }
 
 /**

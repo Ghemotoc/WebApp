@@ -56,7 +56,7 @@
     "emailed": "We’ve sent a receipt to {{email}}. A person will read your report, and we’ll email you our decision.",
     "noEmail": "A person will read your report. You didn’t give an email, so we can’t write back.",
     "unsent": "We saved your report, but we couldn’t send the receipt. Keep the reference above.",
-    "orderBody": "Our reference is {{reference}}. Time of receipt: {{time}} (Romania time). The person on call has been alerted.",
+    "orderBody": "Our reference is {{reference}}. Time of receipt: {{time}}. The person on call has been alerted.",
     "again": "Send another report",
     "home": "Back to {{productName}}"
   },

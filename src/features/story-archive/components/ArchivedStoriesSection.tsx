@@ -11,7 +11,7 @@
  */
 import { useTranslation } from 'react-i18next';
 
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatCalendarDate } from '@/lib/local-time';
 
 import { useMyStoryArchive } from '../hooks/useStoryArchive';
 import { useStoryArchiveTranslation } from '../registerStoryArchiveTranslations';
@@ -29,7 +29,7 @@ export function ArchivedStoriesSection() {
   const archive = useMyStoryArchive();
   // Nothing waits, or the answer hasn't come (or failed): the panel stays out of the way.
   if (archive.data === undefined || !archive.data.waiting) return null;
-  const keptUntil = formatRomaniaDate(new Date(archive.data.keptUntil), i18n.language);
+  const keptUntil = formatCalendarDate(archive.data.keptUntil, i18n.language);
   return (
     <section
       id="archived-stories"

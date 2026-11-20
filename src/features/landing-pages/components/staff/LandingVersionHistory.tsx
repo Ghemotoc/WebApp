@@ -7,7 +7,7 @@
  * Who shows it: LandingPageEditor. What it calls: act({ kind: 'restore' }).
  */
 import { Button } from '@/components/ui/Button';
-import { formatRomaniaDate, formatRomaniaDateTime } from '@/lib/romania-time';
+import { formatCalendarDate, formatLocalDateTime } from '@/lib/local-time';
 
 import type { LandingPageVersion } from '../../api/landingPages';
 import type { LandingEditorState } from '../../hooks/useLandingPageEditor';
@@ -26,7 +26,7 @@ interface LandingVersionHistoryProps {
  * @returns the formatted date, or "" when there is none
  */
 function dayOf(date: string | null, language: string): string {
-  return date === null ? '' : formatRomaniaDate(new Date(`${date}T12:00:00Z`), language);
+  return date === null ? '' : formatCalendarDate(date, language);
 }
 
 /**
@@ -61,7 +61,7 @@ export function LandingVersionHistory({ versions, state }: LandingVersionHistory
                   published:
                     version.publishedAt === null
                       ? ''
-                      : formatRomaniaDateTime(new Date(version.publishedAt), language),
+                      : formatLocalDateTime(new Date(version.publishedAt), language),
                 })}
                 {version.takeDownOn !== null && (
                   <span className="block text-meta">

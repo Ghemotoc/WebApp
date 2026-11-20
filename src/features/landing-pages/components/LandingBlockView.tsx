@@ -12,7 +12,7 @@
  * Who shows it: LandingPageView. What it calls: CmsMarkdown and the shared formatters.
  */
 import { CmsMarkdown } from '@/features/website/components/CmsMarkdown';
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatCalendarDate } from '@/lib/local-time';
 import type { LandingBlock, LandingLanguage } from '@/schemas/landingPages';
 import { safeLandingLink } from '@/schemas/landingPages';
 
@@ -90,9 +90,7 @@ function KeyDates({ block, language }: BlockProps) {
           >
             <dt className="text-meta">{row.label}</dt>
             <dd className="m-0 font-semibold text-ink">
-              {row.value === ''
-                ? ''
-                : formatRomaniaDate(new Date(`${row.value}T12:00:00Z`), language)}
+              {row.value === '' ? '' : formatCalendarDate(row.value, language)}
             </dd>
           </div>
         ))}

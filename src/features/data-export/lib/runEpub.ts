@@ -44,7 +44,7 @@ import type {
   EpubSample,
   EpubWords,
 } from '@/lib/epub/epubTypes';
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatLocalDate } from '@/lib/local-time';
 import type { AppSupabaseClient } from '@/lib/supabase';
 import type { WordPicture } from '@/lib/word/wordTypes';
 
@@ -191,11 +191,9 @@ function bookWords(options: EpubRunOptions, madeAt: Date): EpubWords {
   const { bookText, form } = options;
   const values = {
     author: form.name,
-    // The year as Romania sees it, like the date below.
-    year: new Intl.DateTimeFormat('en', { timeZone: 'Europe/Bucharest', year: 'numeric' }).format(
-      madeAt,
-    ),
-    date: formatRomaniaDate(madeAt, options.bookLanguage),
+    // The year on the writer's own calendar, like the date below (Robert, 20 Nov 2026, 18:36 UTC).
+    year: String(madeAt.getFullYear()),
+    date: formatLocalDate(madeAt, options.bookLanguage),
     siteUrl: brand.siteUrl,
   };
   const copyrightKeys = ['rights', 'noCopying', 'ownership', 'prepared'] as const;

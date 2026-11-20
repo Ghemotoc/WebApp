@@ -7,7 +7,8 @@
  * "Be kind. Every report is read by a person." The counter is linked to the box with
  * aria-describedby, so a screen reader hears it with the field. A refusal is said in plain words,
  * the limit with the minutes to wait (criterion 4), a pause of new comments with its end in
- * Romania time (bundle CALM-8: the writer paused them after the box was drawn). When the box comes
+ * the viewer's own local time (bundles CALM-8 and CALM-8b: the writer paused them after the box
+ * was drawn). When the box comes
  * back after the writer's "Resume now", it takes the focus (focusOnMount; CALM-8).
  * The same box, without the card, posts a comment on one paragraph in its thread (S1-E6-06).
  * Lengths (Robert, 2 Nov 2026): 3,000 characters on the whole chapter and its replies, 500 on a
@@ -26,7 +27,7 @@ import { Button } from '@/components/ui/Button';
 import { PersonalDetailsNote } from '@/features/privacy/components/PersonalDetailsNote';
 import { RulesWalkthrough } from '@/features/safety/components/RulesWalkthrough';
 import type { ChapterAddress } from '@/features/reading/api/likes';
-import { formatRomaniaDayAndTime } from '@/lib/romania-time';
+import { formatLocalDayAndTime } from '@/lib/local-time';
 import { cn } from '@/lib/utils';
 
 import type { CommentError } from '../api/comments';
@@ -72,8 +73,8 @@ function useFocusWhenAsked(
 }
 
 /**
- * The words for a post refused during a pause of new comments (CALM-8): until when, in Romania
- * time, or only that they are paused when the refusal didn't say.
+ * The words for a post refused during a pause of new comments (CALM-8): until when, on the
+ * viewer's own clock, or only that they are paused when the refusal didn't say.
  *
  * @param pausedUntil - when new comments open again, from the refusal, or null
  * @param language - the interface language
@@ -84,7 +85,7 @@ function pausedText(
   language: string,
 ): [string, Record<string, unknown>] {
   if (pausedUntil === null) return ['failures.paused_unknown', {}];
-  return ['failures.paused', { when: formatRomaniaDayAndTime(new Date(pausedUntil), language) }];
+  return ['failures.paused', { when: formatLocalDayAndTime(new Date(pausedUntil), language) }];
 }
 
 /**

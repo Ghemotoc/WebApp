@@ -31,16 +31,15 @@ const recentOrderDays = 7;
 type QueueNotices = ReturnType<typeof useQueueNotices>;
 
 /**
- * A time in Romania time, as the order's acknowledgement writes it.
+ * A time on the viewer's own clock (Robert, 20 Nov 2026, 18:19 UTC: every time in local time).
  *
  * @returns a function from an ISO time to the text
  */
-function useRomaniaTime() {
+function useLocalTime() {
   const { i18n } = useTranslation();
   const format = new Intl.DateTimeFormat(i18n.language, {
     dateStyle: 'medium',
     timeStyle: 'short',
-    timeZone: 'Europe/Bucharest',
   });
   return (isoTime: string) => format.format(new Date(isoTime));
 }
@@ -53,7 +52,7 @@ function useRomaniaTime() {
  */
 function AlertState({ alert }: { alert: OnCallAlert }) {
   const { t } = useTranslation('moderation');
-  const timeOf = useRomaniaTime();
+  const timeOf = useLocalTime();
   const { acknowledge, isAcknowledging, acknowledgeFailure } = useAcknowledgeAlert();
   const who =
     alert.onCallHandle === null
@@ -95,7 +94,7 @@ function AlertState({ alert }: { alert: OnCallAlert }) {
  */
 function RecentOrders({ alerts }: { alerts: OnCallAlert[] }) {
   const { t } = useTranslation('moderation');
-  const timeOf = useRomaniaTime();
+  const timeOf = useLocalTime();
   const now = useNow();
   const since = now.getTime() - recentOrderDays * 24 * 60 * 60 * 1000;
   const recent = alerts.filter((alert) => new Date(alert.createdAt).getTime() >= since);
@@ -139,7 +138,7 @@ function RecentOrders({ alerts }: { alerts: OnCallAlert[] }) {
  */
 function UnmatchedCard({ notice, queue }: { notice: UnmatchedNotice; queue: QueueNotices }) {
   const { t } = useTranslation('moderation');
-  const timeOf = useRomaniaTime();
+  const timeOf = useLocalTime();
   const [isClosing, setIsClosing] = useState(false);
   const title =
     notice.kind === 'removal_order'

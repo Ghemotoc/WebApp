@@ -3,6 +3,8 @@
  */
 import { describe, expect, it } from 'vitest';
 
+import { inTimeZone } from '@/test/viewerTimeZone';
+
 import { formatJoinedMonth, formatStatNumber, initialsOf } from './formatting';
 
 describe('formatJoinedMonth', () => {
@@ -14,8 +16,13 @@ describe('formatJoinedMonth', () => {
     expect(formatJoinedMonth('2026-05-12T10:00:00Z', 'ro')).toBe('mai 2026');
   });
 
-  it('uses Romania’s calendar, so late on 31 May in London is already June', () => {
-    expect(formatJoinedMonth('2026-05-31T22:30:00Z', 'en')).toBe('June 2026');
+  it('uses the viewer’s own calendar, so 22:30 UTC on 31 May is June in Bucharest and May in London', () => {
+    inTimeZone('Europe/Bucharest', () => {
+      expect(formatJoinedMonth('2026-05-31T22:30:00Z', 'en')).toBe('June 2026');
+    });
+    inTimeZone('Europe/London', () => {
+      expect(formatJoinedMonth('2026-05-31T22:30:00Z', 'en')).toBe('May 2026');
+    });
   });
 });
 

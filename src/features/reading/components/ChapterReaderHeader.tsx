@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { languageNameIn } from '@/lib/language-names';
-import { formatRomaniaShortDate } from '@/lib/romania-time';
+import { formatLocalShortDate } from '@/lib/local-time';
 
 import type { ReaderChapter } from '../api/chapter';
 
@@ -32,11 +32,11 @@ function metaParts(chapter: ReaderChapter, language: string, t: TFunction<'readi
     );
   }
   if (chapter.publishedAt !== null) {
-    parts.push(formatRomaniaShortDate(new Date(chapter.publishedAt), language));
+    parts.push(formatLocalShortDate(new Date(chapter.publishedAt), language));
   }
   if (chapter.editedAt !== null) {
     parts.push(
-      t('reader.edited', { date: formatRomaniaShortDate(new Date(chapter.editedAt), language) }),
+      t('reader.edited', { date: formatLocalShortDate(new Date(chapter.editedAt), language) }),
     );
   }
   parts.push(t('reader.minutes', { count: chapter.minutesToRead }));

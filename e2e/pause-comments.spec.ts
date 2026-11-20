@@ -8,7 +8,8 @@
  *   the end 72 hours later;
  * - a reader sees "New comments are paused until …" instead of the comment box, under the chapter
  *   and in a paragraph's thread, and no "Resume now";
- * - the story page says the pause in its comments line;
+ * - the story page says the pause in its comments line, in the reader's own time zone: a reader
+ *   in New York and one in Honolulu each see the end on their own clock (CALM-8b);
  * - the writer's "Resume now" opens comments again and puts focus in the comment box;
  * - when a pause ends on its own (end_comment_pauses()), the writer gets the in-app note;
  * - the screens pass axe at 390, 768 and 1440 px.
@@ -26,7 +27,7 @@ const storyId = '00000000-0000-4000-9000-000000000001';
 const storySlug = 'statia-meteo-seed01';
 const chapterCode = 'pausq001';
 const chapterAddress = `/s/${storySlug}/${chapterCode}`;
-const pausedLine = /New comments are paused until .+, Romania time\./;
+const pausedLine = /New comments are paused until [^.]+\./;
 
 /** Removes this spec's chapter, comments and notes, and ends any pause. */
 function cleanUp() {
@@ -58,19 +59,48 @@ async function seedChapter() {
   if (error !== null) throw new Error(`Could not seed the paragraph comment: ${error.message}`);
 }
 
-/** Opens an address in English, as a persona, in a fresh browser context. */
+/**
+ * Opens an address in English, as a persona, in a fresh browser context.
+ * @param timeZone the browser's own time zone (an IANA name); left out, the machine's zone
+ */
 async function openAs(
   browser: Browser,
   persona: SignInPersonaName,
   address: string,
+  timeZone?: string,
 ): Promise<Page> {
-  const context = await browser.newContext();
+  // The browser's time zone stands in for where the reader is (CALM-8b).
+  const context = await browser.newContext(timeZone === undefined ? {} : { timezoneId: timeZone });
   runSql(`update public.profiles set locale = 'en' where handle = '${persona}';`);
   await useSessionInBrowser(context, (await signInPersona(persona)).session);
   await context.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
   const page = await context.newPage();
   await page.goto(address);
   return page;
+}
+
+/**
+ * The saved pause end as a reader in one time zone should read it: the same wording the app uses
+ * ("Saturday 21 November, 17:40"), worked out here in Node with that zone named.
+ * @param timeZone an IANA zone name, for example 'America/New_York'
+ */
+function pauseEndOnTheClockOf(timeZone: string): string {
+  const savedEnd = runSql(`select to_char(comments_paused_until at time zone 'UTC',
+      'YYYY-MM-DD"T"HH24:MI:SS"Z"') from public.stories where id = '${storyId}';`).trim();
+  const instant = new Date(savedEnd);
+  const day = new Intl.DateTimeFormat('en-GB', {
+    timeZone,
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  }).format(instant);
+  const time = new Intl.DateTimeFormat('en-GB', {
+    timeZone,
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+  }).format(instant);
+  return `${day}, ${time}`;
 }
 
 /** Hours from now until the story's saved pause ends, rounded. */
@@ -120,9 +150,20 @@ test.describe('pause new comments for a while (CALM-8)', () => {
 
   test('the story page says comments are paused', async ({ browser }) => {
     const page = await openAs(browser, 'teacher', `/s/${storySlug}`);
-    await expect(page.getByText(/Paused until .+, Romania time/).first()).toBeVisible();
+    await expect(page.getByText(/Paused until .+, \d\d:\d\d/).first()).toBeVisible();
     await page.context().close();
   });
+
+  // Robert, design canvas comment, 20 Nov 2026, 17:49 UTC: the time adapts to the viewer's own
+  // local time. New York and Honolulu are 5 hours apart, so the two readers see different clocks.
+  for (const timeZone of ['America/New_York', 'Pacific/Honolulu']) {
+    test(`a reader in ${timeZone} sees the end on their own clock`, async ({ browser }) => {
+      const page = await openAs(browser, 'teacher', `/s/${storySlug}`, timeZone);
+      const expected = `Paused until ${pauseEndOnTheClockOf(timeZone)}`;
+      await expect(page.getByText(expected, { exact: true }).first()).toBeVisible();
+      await page.context().close();
+    });
+  }
 
   for (const view of [
     { width: 390, theme: 'night', language: 'ro' },

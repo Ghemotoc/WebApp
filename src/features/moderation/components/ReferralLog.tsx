@@ -91,10 +91,10 @@ export function ReferralLog({
   safeguarding: ReturnType<typeof useSafeguarding>;
 }) {
   const { t, i18n } = useTranslation('moderation');
+  // On the viewer's own clock (Robert, 20 Nov 2026, 18:19 UTC: every time in local time).
   const format = new Intl.DateTimeFormat(i18n.language, {
     dateStyle: 'medium',
     timeStyle: 'short',
-    timeZone: 'Europe/Bucharest',
   });
   return (
     <div className="flex flex-col gap-3">

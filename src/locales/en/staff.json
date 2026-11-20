@@ -756,7 +756,7 @@
         "authorityHint": "Who sent it, or for the launch notice, who it went to.",
         "receivedDate": "Received on",
         "doneDate": "Done on",
-        "time": "Time (Romania)",
+        "time": "Time",
         "content": "What they asked for",
         "contentHint": "Name an account by its username only.",
         "isDone": "Already dealt with",

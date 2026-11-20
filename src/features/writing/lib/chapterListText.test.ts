@@ -8,6 +8,8 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import enWriting from '@/locales/en/writing.json';
 import roWriting from '@/locales/ro/writing.json';
 
+import { inTimeZone } from '@/test/viewerTimeZone';
+
 import type { ManagedChapter } from '../api/manageChapters';
 import { chapterMeta, chapterMovedNote, chapterSummary, deletedMeta } from './chapterListText';
 
@@ -84,11 +86,18 @@ describe('chapterMeta', () => {
     );
   });
 
-  it('a scheduled chapter shows when it goes live in Romania time', () => {
+  it('a scheduled chapter shows when it goes live on the writer’s own clock (CALM-8b)', () => {
     const scheduled = chapter({ state: 'scheduled', scheduledFor: '2026-10-24T15:00:00Z' });
-    expect(chapterMeta(english, scheduled, 'en')).toBe(
-      'Goes live Saturday 24 October at 18:00, Romania time',
-    );
+    inTimeZone('Europe/Bucharest', () => {
+      expect(chapterMeta(english, scheduled, 'en')).toBe(
+        'Goes live Saturday 24 October at 18:00, local time',
+      );
+    });
+    inTimeZone('Europe/Stockholm', () => {
+      expect(chapterMeta(romanian, scheduled, 'ro')).toBe(
+        'Apare sâmbătă, 24 octombrie la 17:00, ora locală',
+      );
+    });
   });
 
   it('an unpublished chapter says readers can’t open it and comments are kept', () => {

@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { ActionIcon, type ActionIconName } from '@/components/icons/ActionIcon';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatLocalDate } from '@/lib/local-time';
 
 import type { DashboardPeriod, WriterDashboard } from '../api/dashboard';
 import { formatShownCount, formatShownPercent } from '../lib/dashboardNumbers';
@@ -72,7 +72,7 @@ function readsNote(
   if (dashboard.period === 'last_30_days') return t('dashboard.totals.readsLast30');
   if (dashboard.firstPublishedAt === null) return t('dashboard.totals.readsNone');
   return t('dashboard.totals.readsSince', {
-    date: formatRomaniaDate(new Date(dashboard.firstPublishedAt), language),
+    date: formatLocalDate(new Date(dashboard.firstPublishedAt), language),
   });
 }
 

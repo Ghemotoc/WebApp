@@ -16,7 +16,7 @@ import appleLogo from '@/assets/brands/apple.svg';
 import googleLogo from '@/assets/brands/google.svg';
 import microsoftLogo from '@/assets/brands/microsoft.svg';
 import { socialProviders, type SocialProvider } from '@/features/auth/api/socialSignIn';
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatLocalDate } from '@/lib/local-time';
 
 import { countLoginMethods, type MyLoginMethods, type MyPasskey } from '../api/loginMethods';
 import type { LoginMethodAction, LoginMethodIcon } from '../components/LoginMethodRow';
@@ -149,7 +149,7 @@ function providerRowOf(context: RowContext, provider: SocialProvider): LoginMeth
  */
 function passkeyRowOf(context: RowContext, passkey: MyPasskey): LoginMethodRowData {
   const { t, language, login } = context;
-  const added = formatRomaniaDate(new Date(passkey.createdAt), language);
+  const added = formatLocalDate(new Date(passkey.createdAt), language);
   const detail = passkey.name ?? t('passkey.addedOn', { date: added });
   const what = t('passkey.named', { detail });
   return {

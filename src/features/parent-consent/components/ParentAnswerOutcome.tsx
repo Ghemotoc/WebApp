@@ -12,7 +12,7 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatLocalDate } from '@/lib/local-time';
 
 import type { ConsentFailure } from '../../../schemas/parentConsent';
 import type { ConsentRequestDetails } from '../api/parentConsent';
@@ -77,9 +77,7 @@ export function ParentAnswerOutcome({
   const handle = request.handle;
   if (request.status === 'agreed') {
     const date =
-      request.decidedAt === null
-        ? ''
-        : formatRomaniaDate(new Date(request.decidedAt), i18n.language);
+      request.decidedAt === null ? '' : formatLocalDate(new Date(request.decidedAt), i18n.language);
     return (
       <div className="flex flex-col gap-4">
         <Notice tone="success" title={t('parent.agreedHeading', { date })}>

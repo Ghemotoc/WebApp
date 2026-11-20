@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/Button';
 import { InfoPill } from '@/components/ui/InfoPill';
 import { Notice } from '@/components/ui/Notice';
 import { TextInput } from '@/components/ui/TextInput';
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatCalendarDate, formatLocalDate } from '@/lib/local-time';
 
 import type { LaunchTask } from '../../api/complianceLog';
 
@@ -37,12 +37,13 @@ interface LaunchTaskCardProps {
  */
 function useLaunchLine(launch: LaunchTask): string {
   const { t, i18n } = useTranslation('staff');
-  // A calendar date read at noon UTC is the same day in Bucharest.
-  const day = (date: string) =>
-    formatRomaniaDate(new Date(`${date.slice(0, 10)}T12:00:00Z`), i18n.language);
+  // The launch and due dates are stored calendar days (SQL dates): shown as stored, no shift.
+  const day = (date: string) => formatCalendarDate(date, i18n.language);
   if (launch.noticeDoneAt !== null && launch.noticeReference !== null) {
     return t('metrics.launch.done', {
-      date: day(launch.noticeDoneAt),
+      // When the notice was done is a moment (a timestamp): its day on the viewer's own calendar
+      // (Robert, 20 Nov 2026, 18:36 UTC).
+      date: formatLocalDate(new Date(launch.noticeDoneAt), i18n.language),
       reference: launch.noticeReference,
     });
   }

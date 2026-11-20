@@ -7,7 +7,7 @@
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatCalendarDate } from '@/lib/local-time';
 
 import type { InterfaceTextEditorState } from '../hooks/useInterfaceTextEditor';
 import type { LocaleVersions } from '../lib/textVersionState';
@@ -25,7 +25,7 @@ interface EarlierTextsProps {
  * @returns the formatted date, or an empty text
  */
 function dayOf(date: string | null, language: string): string {
-  return date === null ? '' : formatRomaniaDate(new Date(`${date}T12:00:00Z`), language);
+  return date === null ? '' : formatCalendarDate(date, language);
 }
 
 /**

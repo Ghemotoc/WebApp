@@ -13,7 +13,7 @@
 import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatLocalDate } from '@/lib/local-time';
 
 import type { DataExport } from '../api/dataExport';
 import type { DataExportRunState } from '../lib/exportRunStore';
@@ -46,7 +46,7 @@ function PreparingLine() {
 /** "Your file is ready", its size and the download. */
 function ReadyLine({ copy, onStart }: { copy: DataExport; onStart: () => void }) {
   const { t, i18n } = useDataExportTranslation();
-  const expiresOn = formatRomaniaDate(new Date(copy.expires_at ?? copy.created_at), i18n.language);
+  const expiresOn = formatLocalDate(new Date(copy.expires_at ?? copy.created_at), i18n.language);
   const size = fileSizeText(copy.file_size ?? 0, i18n.language);
   return (
     <div className="flex flex-col gap-3">

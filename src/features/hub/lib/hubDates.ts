@@ -4,15 +4,16 @@
  * "Closes in 23 days").
  *
  * Who calls it: HubHero and HubContests. What it calls: lib/romania-time.ts, because contests
- * open and close by the Romanian calendar (S1-E11-15).
+ * open and close by the Romanian calendar (S1-E11-15); today's day is shown on the viewer's own
+ * calendar (Robert, 20 Nov 2026, 18:36 UTC).
  */
-import { dateLocaleFor, ROMANIA_TIME_ZONE, romaniaNowFields } from '@/lib/romania-time';
+import { dateLocaleFor, romaniaNowFields } from '@/lib/romania-time';
 
 /** Milliseconds in one day, for counting days between two calendar dates. */
 const dayLength = 24 * 60 * 60 * 1000;
 
 /**
- * Writes today as Romania sees it, with the weekday: "Friday 7 November" or "vineri, 7 noiembrie".
+ * Writes today on the viewer's own calendar, with the weekday: "Friday 7 November" or "vineri, 7 noiembrie".
  *
  * @param now - the moment to write
  * @param language - the interface language ("ro" or "en")
@@ -20,7 +21,6 @@ const dayLength = 24 * 60 * 60 * 1000;
  */
 export function formatHubDay(now: Date, language: string): string {
   return new Intl.DateTimeFormat(dateLocaleFor(language), {
-    timeZone: ROMANIA_TIME_ZONE,
     weekday: 'long',
     day: 'numeric',
     month: 'long',
