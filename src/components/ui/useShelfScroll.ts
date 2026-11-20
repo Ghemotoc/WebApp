@@ -10,10 +10,20 @@
  *     pointing that way is dimmed and says so to screen readers (aria-disabled).
  *   - Each press moves one screenful; the row snaps to a cover, so a screenful always starts on a
  *     whole cover. Smooth scrolling comes from the row's CSS and only without reduced motion.
+ *   - Quick presses add up: a press during a smooth scroll counts from where the last press was
+ *     heading, not from where the row has got to (CALM-4 break test, 20 Nov 2026: six quick
+ *     presses of Next moved one screenful).
  * Who uses it: Shelf (src/components/ui/Shelf.tsx).
  * Returns the state the Shelf draws, plus scrollByPage() for the arrow buttons.
  */
-import { useCallback, useEffect, useState, type RefObject } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type MutableRefObject,
+  type RefObject,
+} from 'react';
 
 /** Which way an arrow press moves the row. */
 export type ScrollDirection = 'back' | 'forward';
@@ -36,6 +46,41 @@ export interface ShelfScrollState {
 export function screenfulOf(row: HTMLElement): number {
   const gap = Number.parseFloat(getComputedStyle(row).columnGap);
   return row.clientWidth + (Number.isNaN(gap) ? 0 : gap);
+}
+
+/**
+ * Forgets where the last arrow press was heading once the row stops, or once a swipe or a wheel
+ * takes over, so the next press counts from where the row really is.
+ *
+ * @param rowRef - the scrolling element
+ * @param headingTo - the target the last press set, or null at rest
+ */
+function useForgetTargetWhenSettled(
+  rowRef: RefObject<HTMLElement | null>,
+  headingTo: MutableRefObject<number | null>,
+) {
+  useEffect(() => {
+    const row = rowRef.current;
+    if (row === null) return undefined;
+    const settle = () => {
+      headingTo.current = null;
+    };
+    // Browsers without scrollend: the row has arrived when it is within a pixel of the target.
+    const settleOnArrival = () => {
+      const target = headingTo.current;
+      if (target !== null && Math.abs(row.scrollLeft - target) <= 1) settle();
+    };
+    row.addEventListener('scrollend', settle);
+    row.addEventListener('scroll', settleOnArrival, { passive: true });
+    row.addEventListener('pointerdown', settle);
+    row.addEventListener('wheel', settle, { passive: true });
+    return () => {
+      row.removeEventListener('scrollend', settle);
+      row.removeEventListener('scroll', settleOnArrival);
+      row.removeEventListener('pointerdown', settle);
+      row.removeEventListener('wheel', settle);
+    };
+  }, [rowRef]);
 }
 
 /**
@@ -78,16 +123,28 @@ export function useShelfScroll(rowRef: RefObject<HTMLElement | null>) {
     };
   }, [rowRef, measure]);
 
+  // Where the last press sent the row, while it is still on its way there (null: at rest).
+  const headingTo = useRef<number | null>(null);
+
   /** Moves one screenful back or forward; the row's snapping lands it on a whole cover. */
   const scrollByPage = useCallback(
     (direction: ScrollDirection) => {
       const row = rowRef.current;
       if (row === null) return;
+      // Step 1: start from where an earlier press is still heading, or from where the row is.
+      const start = headingTo.current ?? row.scrollLeft;
+      // Step 2: one screenful that way, kept between the two ends.
       const distance = screenfulOf(row);
-      row.scrollBy({ left: direction === 'forward' ? distance : -distance });
+      const furthest = row.scrollWidth - row.clientWidth;
+      const step = direction === 'forward' ? distance : -distance;
+      const target = Math.min(furthest, Math.max(0, start + step));
+      headingTo.current = target;
+      row.scrollTo({ left: target });
     },
     [rowRef],
   );
+
+  useForgetTargetWhenSettled(rowRef, headingTo);
 
   return { state, scrollByPage };
 }
