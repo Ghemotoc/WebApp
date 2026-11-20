@@ -8990,6 +8990,7 @@ export type Database = {
           classic_author_id: string | null;
           comment_audience: string;
           comments_enabled: boolean;
+          comments_paused_until: string | null;
           completion_status: Database['public']['Enums']['completion_status'];
           content_note: string;
           cover_accent: string | null;
@@ -9027,8 +9028,10 @@ export type Database = {
           admin_story_row: Json | null;
           admin_story_settings_json: Json | null;
           admin_story_status: string | null;
+          comment_pause_json: Json | null;
           edition_is_original: boolean | null;
           edition_is_readable: boolean | null;
+          running_comment_pause: string | null;
           story_as_shown: {
             ai_disclosure: Database['public']['Enums']['ai_disclosure'];
             ai_undisclosed_labelled_at: string | null;
@@ -9040,6 +9043,7 @@ export type Database = {
             classic_author_id: string | null;
             comment_audience: string;
             comments_enabled: boolean;
+            comments_paused_until: string | null;
             completion_status: Database['public']['Enums']['completion_status'];
             content_note: string;
             cover_accent: string | null;
@@ -9081,8 +9085,10 @@ export type Database = {
           | 'admin_story_row'
           | 'admin_story_settings_json'
           | 'admin_story_status'
+          | 'comment_pause_json'
           | 'edition_is_original'
           | 'edition_is_readable'
+          | 'running_comment_pause'
           | 'story_as_shown'
           | 'story_edition_json';
         Insert: {
@@ -9096,6 +9102,7 @@ export type Database = {
           classic_author_id?: string | null;
           comment_audience?: string;
           comments_enabled?: boolean;
+          comments_paused_until?: string | null;
           completion_status?: Database['public']['Enums']['completion_status'];
           content_note?: string;
           cover_accent?: string | null;
@@ -9141,6 +9148,7 @@ export type Database = {
           classic_author_id?: string | null;
           comment_audience?: string;
           comments_enabled?: boolean;
+          comments_paused_until?: string | null;
           completion_status?: Database['public']['Enums']['completion_status'];
           content_note?: string;
           cover_accent?: string | null;
@@ -12554,6 +12562,7 @@ export type Database = {
           classic_author_id: string | null;
           comment_audience: string;
           comments_enabled: boolean;
+          comments_paused_until: string | null;
           completion_status: Database['public']['Enums']['completion_status'];
           content_note: string;
           cover_accent: string | null;
@@ -13975,6 +13984,26 @@ export type Database = {
         };
         Returns: Json;
       };
+      comment_pause_after_changes: {
+        Args: {
+          changes: Json;
+          current_row: Omit<
+            Database['public']['Tables']['stories']['Row'],
+            Database['public']['Tables']['stories']['ComputedFields']
+          >;
+        };
+        Returns: string;
+      };
+      comment_pause_end: { Args: { pause_choice: string }; Returns: string };
+      comment_pause_json: {
+        Args: {
+          story: Omit<
+            Database['public']['Tables']['stories']['Row'],
+            Database['public']['Tables']['stories']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
       comment_reactions_json: { Args: { target_comment_id: string }; Returns: Json };
       comment_replies_json: { Args: { parent_id: string; story_writer_id: string }; Returns: Json };
       comment_state_for_caller: {
@@ -14495,7 +14524,9 @@ export type Database = {
       };
       end_class_competition: { Args: { target_competition_id: string }; Returns: Json };
       end_class_invite: { Args: { slug: string }; Returns: boolean };
+      end_comment_pauses: { Args: Record<PropertyKey, never>; Returns: number };
       end_live_class_invites: { Args: { target_space_id: string }; Returns: number };
+      end_my_comment_pause: { Args: { story_slug: string }; Returns: Json };
       end_my_session: { Args: { target_session_id: string }; Returns: boolean };
       enter_contest: {
         Args: { story_slug: string; target_contest_id: string };
@@ -15197,6 +15228,7 @@ export type Database = {
           classic_author_id: string | null;
           comment_audience: string;
           comments_enabled: boolean;
+          comments_paused_until: string | null;
           completion_status: Database['public']['Enums']['completion_status'];
           content_note: string;
           cover_accent: string | null;
@@ -16595,6 +16627,7 @@ export type Database = {
           classic_author_id: string | null;
           comment_audience: string;
           comments_enabled: boolean;
+          comments_paused_until: string | null;
           completion_status: Database['public']['Enums']['completion_status'];
           content_note: string;
           cover_accent: string | null;
@@ -17079,6 +17112,15 @@ export type Database = {
       run_retention_jobs: { Args: Record<PropertyKey, never>; Returns: number };
       run_storage_sweep: { Args: Record<PropertyKey, never>; Returns: boolean };
       run_support_email_worker: { Args: Record<PropertyKey, never>; Returns: boolean };
+      running_comment_pause: {
+        Args: {
+          story: Omit<
+            Database['public']['Tables']['stories']['Row'],
+            Database['public']['Tables']['stories']['ComputedFields']
+          >;
+        };
+        Returns: string;
+      };
       safeguarding_evidence_target: {
         Args: { evidence_id: string };
         Returns: {
@@ -18040,6 +18082,7 @@ export type Database = {
           classic_author_id: string | null;
           comment_audience: string;
           comments_enabled: boolean;
+          comments_paused_until: string | null;
           completion_status: Database['public']['Enums']['completion_status'];
           content_note: string;
           cover_accent: string | null;
@@ -18780,7 +18823,8 @@ export type Database = {
         | 'account_unused_closed'
         | 'class_competition_won'
         | 'class_competition_results'
-        | 'class_readers_choice';
+        | 'class_readers_choice'
+        | 'comments_resumed';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -19187,6 +19231,7 @@ export const Constants = {
         'class_competition_won',
         'class_competition_results',
         'class_readers_choice',
+        'comments_resumed',
       ],
       picture_kind: [
         'cover',

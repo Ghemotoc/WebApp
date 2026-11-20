@@ -739,7 +739,8 @@ CREATE TYPE "public"."notification_kind" AS ENUM (
     'account_unused_closed',
     'class_competition_won',
     'class_competition_results',
-    'class_readers_choice'
+    'class_readers_choice',
+    'comments_resumed'
 );
 
 
@@ -3380,6 +3381,7 @@ CREATE TABLE IF NOT EXISTS "public"."stories" (
     "is_app_only" boolean DEFAULT false NOT NULL,
     "comment_audience" "text" DEFAULT 'everyone'::"text" NOT NULL,
     "edition_of_story_id" "uuid",
+    "comments_paused_until" timestamp with time zone,
     CONSTRAINT "stories_abuse_needs_rating_and_note" CHECK (((NOT "deals_with_abuse_or_coercion") OR (("rating" = ANY (ARRAY['16_plus'::"public"."story_rating", '18_plus'::"public"."story_rating"])) AND ("btrim"("content_note") <> ''::"text")))),
     CONSTRAINT "stories_blurb_length" CHECK (("char_length"("blurb") <= 500)),
     CONSTRAINT "stories_card_colour_on_palette" CHECK ((("card_colour" IS NULL) OR ("card_colour" = ANY (ARRAY['plum'::"text", 'violet'::"text", 'gold'::"text", 'ink'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text"])))),
@@ -3505,6 +3507,10 @@ COMMENT ON COLUMN "public"."stories"."comment_audience" IS 'Who may add comments
 
 
 COMMENT ON COLUMN "public"."stories"."edition_of_story_id" IS 'For a later language edition of a story: the first edition it belongs to. Null for a story in one language and for every first edition (TRANSLATE-1a).';
+
+
+
+COMMENT ON COLUMN "public"."stories"."comments_paused_until" IS 'When the writer''s pause of new comments ends (CALM-8; IDEA-20261109-8): until then nobody, the writer included, adds a comment or a reply. Null when no pause runs; end_comment_pauses() clears it once the time has passed.';
 
 
 
@@ -16842,7 +16848,9 @@ begin
     'total', (select count(*)::integer from public.comments
               where comments.chapter_id = chapter.id and public.comment_is_shown_to_caller(comments)),
     'has_more', page_count > page_size,
-    'comments', case when page_count > page_size then page - page_size else page end);
+    'comments', case when page_count > page_size then page - page_size else page end)
+    -- CALM-8: while new comments are paused, until when and whether the caller may end it.
+    || public.comment_pause_json(story);
 end;
 $$;
 
@@ -20989,6 +20997,78 @@ COMMENT ON FUNCTION "public"."comment_paragraph_json"("target" "public"."comment
 
 
 
+CREATE OR REPLACE FUNCTION "public"."comment_pause_after_changes"("current_row" "public"."stories", "changes" "jsonb") RETURNS timestamp with time zone
+    LANGUAGE "plpgsql" STABLE
+    SET "search_path" TO ''
+    AS $$
+declare
+  asked_end timestamptz := current_row.comments_paused_until;
+begin
+  -- Step 1: a pause the writer asked for is checked first, so an unknown value is always refused.
+  if changes ? 'comments_pause' then
+    asked_end := public.comment_pause_end(changes ->> 'comments_pause');
+  end if;
+  -- Step 2: comments off (Nobody): nothing to pause.
+  if not coalesce((changes ->> 'comments_enabled')::boolean, current_row.comments_enabled) then
+    return null;
+  end if;
+  return asked_end;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."comment_pause_after_changes"("current_row" "public"."stories", "changes" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."comment_pause_after_changes"("current_row" "public"."stories", "changes" "jsonb") IS 'Internal: the pause''s end once update_my_story() saves the writer''s changes (CALM-8).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."comment_pause_end"("pause_choice" "text") RETURNS timestamp with time zone
+    LANGUAGE "plpgsql" STABLE
+    SET "search_path" TO ''
+    AS $$
+begin
+  case pause_choice
+    when '24h' then return now() + interval '24 hours';
+    when '3d' then return now() + interval '3 days';
+    when '7d' then return now() + interval '7 days';
+    when 'off' then return null;
+    else
+      raise exception 'A pause of new comments lasts 24 hours, 3 days or 7 days, or is turned off.'
+        using errcode = 'check_violation', hint = 'unknown_comment_pause';
+  end case;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."comment_pause_end"("pause_choice" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."comment_pause_end"("pause_choice" "text") IS 'Internal: the end of a pause of new comments from now (24h, 3d, 7d) or null (off); refuses anything else (CALM-8).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."comment_pause_json"("story" "public"."stories") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE
+    SET "search_path" TO ''
+    AS $$
+  select case
+    when public.running_comment_pause(story) is null then '{}'::jsonb
+    else jsonb_build_object(
+      'comments_paused_until', public.running_comment_pause(story),
+      'can_resume_comments', coalesce(story.user_id = (select auth.uid()), false))
+  end;
+$$;
+
+
+ALTER FUNCTION "public"."comment_pause_json"("story" "public"."stories") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."comment_pause_json"("story" "public"."stories") IS 'Internal: the pause''s end and whether the caller may end it, for the comment lists, while a pause runs (CALM-8).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."comment_reactions_json"("target_comment_id" "uuid") RETURNS "jsonb"
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -24721,6 +24801,43 @@ COMMENT ON FUNCTION "public"."end_class_invite"("slug" "text") IS 'Stops a class
 
 
 
+CREATE OR REPLACE FUNCTION "public"."end_comment_pauses"() RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  ended public.stories;
+  ended_count integer := 0;
+begin
+  for ended in
+    select * from public.stories
+    where stories.comments_paused_until <= now()
+      and stories.edition_of_story_id is null
+    order by stories.comments_paused_until
+    for update skip locked
+  loop
+    -- Step 1: the quiet note, only where comments are open again: a deleted story, or one whose
+    -- comments are off, has nothing to reopen.
+    if ended.deleted_at is null and ended.comments_enabled then
+      perform public.notify(ended.user_id, 'comments_resumed', null,
+        jsonb_build_object('story_id', ended.id));
+    end if;
+    -- Step 2: the pause is over, in every language.
+    update public.stories set comments_paused_until = null where stories.id = ended.id;
+    ended_count := ended_count + 1;
+  end loop;
+  return ended_count;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."end_comment_pauses"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."end_comment_pauses"() IS 'Every 5 minutes: ends the pauses of new comments whose time is up and tells each writer in the app (CALM-8).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."end_live_class_invites"("target_space_id" "uuid") RETURNS integer
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -24741,6 +24858,43 @@ ALTER FUNCTION "public"."end_live_class_invites"("target_space_id" "uuid") OWNER
 
 
 COMMENT ON FUNCTION "public"."end_live_class_invites"("target_space_id" "uuid") IS 'Internal: stops a class space''s working codes (S1-E8-11).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."end_my_comment_pause"("story_slug" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target_story_id uuid;
+  first_edition_id uuid;
+begin
+  -- Step 1: a signed-in writer who may change their stories, and their own live story.
+  if (select auth.uid()) is null then
+    raise exception 'Sign in to change a story.' using errcode = 'insufficient_privilege';
+  end if;
+  if not public.is_active_member() then
+    return jsonb_build_object('outcome', 'not_active');
+  end if;
+  target_story_id := public.my_live_story_id(story_slug);
+  if target_story_id is null then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  -- Step 2: the pause belongs to the first edition (TRANSLATE-1); ending it there ends it in
+  -- every language.
+  select coalesce(stories.edition_of_story_id, stories.id) into first_edition_id
+  from public.stories where stories.id = target_story_id;
+  update public.stories set comments_paused_until = null
+  where stories.id = first_edition_id and stories.comments_paused_until is not null;
+  return jsonb_build_object('outcome', 'ok');
+end;
+$$;
+
+
+ALTER FUNCTION "public"."end_my_comment_pause"("story_slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."end_my_comment_pause"("story_slug" "text") IS 'The writer ends the pause of new comments on their own story at once: "Resume now" under a chapter (CALM-8).';
 
 
 
@@ -36219,12 +36373,13 @@ begin
   counted as (
     select placed.block, count(*)::integer as total from placed where placed.block is not null group by placed.block
   )
-  -- Step 3: the counts by paragraph, and the earlier-version ones.
+  -- Step 3: the counts by paragraph, the earlier-version ones and, during a pause (CALM-8), its end.
   select jsonb_build_object(
     'comments_enabled', true,
     'paragraphs', coalesce((select jsonb_agg(jsonb_build_object('block', counted.block, 'count', counted.total)
                               order by counted.block) from counted), '[]'::jsonb),
     'earlier', (select count(*)::integer from placed where placed.block is null))
+    || public.comment_pause_json(story)
   into answer;
   return answer;
 end;
@@ -36292,7 +36447,9 @@ begin
                 and public.paragraph_now(chapter.published_body, comments.paragraph_key, comments.paragraph_number)
                     is not distinct from paragraph_comments.block_number),
     'has_more', page_count > most_shown,
-    'comments', case when page_count > most_shown then page - most_shown else page end);
+    'comments', case when page_count > most_shown then page - most_shown else page end)
+    -- CALM-8: while new comments are paused, until when and whether the caller may end it.
+    || public.comment_pause_json(story);
 end;
 $$;
 
@@ -42108,6 +42265,12 @@ begin
   if not story.comments_enabled then
     raise exception 'The writer has turned comments off for this story.' using errcode = 'object_not_in_prerequisite_state';
   end if;
+  -- CALM-8: while the writer has paused new comments, nobody adds one, the writer included.
+  if public.running_comment_pause(story) is not null then
+    raise exception 'New comments on this story are paused for a while.'
+      using errcode = 'object_not_in_prerequisite_state',
+            hint = 'paused_until:' || (to_jsonb(story.comments_paused_until) #>> '{}');
+  end if;
   -- MUST-1a: on Followers only, someone who doesn't follow the writer can't add a comment.
   if not public.comment_audience_allows(story, caller_id) then
     raise exception 'Only the writer''s followers can comment on this story.'
@@ -42128,7 +42291,7 @@ $$;
 ALTER FUNCTION "public"."require_comment_allowed"("caller_id" "uuid", "story" "public"."stories") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."require_comment_allowed"("caller_id" "uuid", "story" "public"."stories") IS 'Internal: comments on, the account gate, the comment limit (S1-E6-01).';
+COMMENT ON FUNCTION "public"."require_comment_allowed"("caller_id" "uuid", "story" "public"."stories") IS 'Internal: comments on, not paused (CALM-8), who may comment (MUST-1a), the account gate, the comment limit (S1-E6-01).';
 
 
 
@@ -43488,6 +43651,21 @@ ALTER FUNCTION "public"."run_support_email_worker"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."run_support_email_worker"() IS 'Internal: calls the support email worker through pg_net when ticket emails are due (S1-E11-13); pg_cron every minute.';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."running_comment_pause"("story" "public"."stories") RETURNS timestamp with time zone
+    LANGUAGE "sql" STABLE
+    SET "search_path" TO ''
+    AS $$
+  select case when story.comments_paused_until > now() then story.comments_paused_until end;
+$$;
+
+
+ALTER FUNCTION "public"."running_comment_pause"("story" "public"."stories") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."running_comment_pause"("story" "public"."stories") IS 'Internal: when a story''s pause of new comments ends, while it runs; null otherwise (CALM-8).';
 
 
 
@@ -49958,6 +50136,8 @@ begin
   new.is_app_only := first_edition.is_app_only;
   new.comments_enabled := first_edition.comments_enabled;
   new.comment_audience := first_edition.comment_audience;
+  -- CALM-8: a pause of new comments covers every language, like the comments setting.
+  new.comments_paused_until := first_edition.comments_paused_until;
   new.quote_cards_enabled := first_edition.quote_cards_enabled;
   new.picture_sharing_enabled := first_edition.picture_sharing_enabled;
   new.card_colour := first_edition.card_colour;
@@ -50004,6 +50184,7 @@ begin
     is_app_only = new.is_app_only,
     comments_enabled = new.comments_enabled,
     comment_audience = new.comment_audience,
+    comments_paused_until = new.comments_paused_until,
     cover_kind = new.cover_kind,
     cover_design = new.cover_design,
     cover_background = new.cover_background,
@@ -50016,18 +50197,18 @@ begin
          editions.is_parody, editions.deals_with_abuse_or_coercion, editions.ai_disclosure,
          editions.ai_undisclosed_labelled_at, editions.classic_author_id, editions.first_published_year,
          editions.visibility, editions.class_only, editions.class_space_id, editions.is_app_only,
-         editions.comments_enabled, editions.comment_audience, editions.quote_cards_enabled,
-         editions.picture_sharing_enabled, editions.card_colour, editions.cover_kind,
-         editions.cover_design, editions.cover_background, editions.cover_accent,
+         editions.comments_enabled, editions.comment_audience, editions.comments_paused_until,
+         editions.quote_cards_enabled, editions.picture_sharing_enabled, editions.card_colour,
+         editions.cover_kind, editions.cover_design, editions.cover_background, editions.cover_accent,
          editions.cover_tall_path, editions.cover_square_path, editions.cover_hidden_at)
       is distinct from
         (new.category_id, new.rating, new.rating_reasons, new.is_fan_fiction,
          new.is_parody, new.deals_with_abuse_or_coercion, new.ai_disclosure,
          new.ai_undisclosed_labelled_at, new.classic_author_id, new.first_published_year,
          new.visibility, new.class_only, new.class_space_id, new.is_app_only,
-         new.comments_enabled, new.comment_audience, new.quote_cards_enabled,
-         new.picture_sharing_enabled, new.card_colour, new.cover_kind,
-         new.cover_design, new.cover_background, new.cover_accent,
+         new.comments_enabled, new.comment_audience, new.comments_paused_until,
+         new.quote_cards_enabled, new.picture_sharing_enabled, new.card_colour,
+         new.cover_kind, new.cover_design, new.cover_background, new.cover_accent,
          new.cover_tall_path, new.cover_square_path, new.cover_hidden_at);
   return null;
 end;
@@ -53629,6 +53810,8 @@ begin
     comments_enabled = coalesce((changes ->> 'comments_enabled')::boolean, comments_enabled),
     -- MUST-1a: everyone or followers only; the column's check refuses anything else.
     comment_audience = coalesce(changes ->> 'comment_audience', comment_audience),
+    -- CALM-8: a pause of new comments from now, its end, or as it was (comment_pause_after_changes()).
+    comments_paused_until = public.comment_pause_after_changes(current_row, changes),
     -- S1-E4-07: the writer's switch for quote cards.
     quote_cards_enabled = coalesce((changes ->> 'quote_cards_enabled')::boolean, quote_cards_enabled),
     -- S1-E4-11: the writer's switch for sharing the chapters' pictures.
@@ -69856,6 +70039,18 @@ REVOKE ALL ON FUNCTION "public"."comment_paragraph_json"("target" "public"."comm
 
 
 
+REVOKE ALL ON FUNCTION "public"."comment_pause_after_changes"("current_row" "public"."stories", "changes" "jsonb") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."comment_pause_end"("pause_choice" "text") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."comment_pause_json"("story" "public"."stories") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."comment_reactions_json"("target_comment_id" "uuid") FROM PUBLIC;
 
 
@@ -70374,7 +70569,16 @@ GRANT ALL ON FUNCTION "public"."end_class_invite"("slug" "text") TO "authenticat
 
 
 
+REVOKE ALL ON FUNCTION "public"."end_comment_pauses"() FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."end_live_class_invites"("target_space_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."end_my_comment_pause"("story_slug" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."end_my_comment_pause"("story_slug" "text") TO "authenticated";
 
 
 
@@ -72995,6 +73199,10 @@ REVOKE ALL ON FUNCTION "public"."run_storage_sweep"() FROM PUBLIC;
 
 
 REVOKE ALL ON FUNCTION "public"."run_support_email_worker"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."running_comment_pause"("story" "public"."stories") FROM PUBLIC;
 
 
 
