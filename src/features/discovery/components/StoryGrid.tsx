@@ -70,10 +70,7 @@ export function StoryGrid({ stories, hasMore, isLoadingMore, onLoadMore, ad }: S
             isAdAfterStory(storyNumber, stories.length, ad.firstAfter, ad.isShortListAdded);
           return [
             <li key={story.slug} className="w-full max-w-[248px] min-w-0">
-              <ListedStoryCard
-                story={story}
-                cover={covers[index] ?? resolveCoverChoice(story)}
-              />
+              <ListedStoryCard story={story} cover={covers[index] ?? resolveCoverChoice(story)} />
             </li>,
             hasAdAfter && (
               <li key={`ad-after-${storyNumber}`} className={adPlaceClasses(ad.spansRow)}>

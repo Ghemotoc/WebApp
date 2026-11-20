@@ -81,9 +81,10 @@ const plainLook = { style: 'label', titleFont: 'reading' } as const;
 describe('resolveCoverChoice', () => {
   it('keeps the writer’s drawn choice and gives an automatic story its ID design', () => {
     const drawn = { design: 'starry', background: 'sky', accent: 'gold' } as const;
-    expect(resolveCoverChoice({ id: storyId(1), coverKind: 'drawn', drawnCover: drawn })).toEqual(
-      { ...drawn, ...plainLook },
-    );
+    expect(resolveCoverChoice({ id: storyId(1), coverKind: 'drawn', drawnCover: drawn })).toEqual({
+      ...drawn,
+      ...plainLook,
+    });
     expect(resolveCoverChoice(automatic(1))).toEqual({
       ...automaticCoverFor(storyId(1)),
       ...plainLook,

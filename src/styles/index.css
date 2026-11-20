@@ -1047,7 +1047,7 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 [data-theme='night'] .switch-track-on {
   /* An "on" switch at night is cobalt with a 35% white rim, so its edge still reads on the black
      page (WCAG 2.2, 1.4.11); its white knob and the On word say the state (canvas v117; NIGHT-1).
-     By day it is the theme's solid colour (bg-primary in SwitchButton.tsx). */
+     By day it is the theme's solid colour (bg-primary in src/components/ui/Switch.tsx). */
   background-color: #0047ab;
   border-color: rgb(255 255 255 / 0.35);
 }

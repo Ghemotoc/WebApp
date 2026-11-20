@@ -59,10 +59,7 @@ function LanguageTags({ languages }: { languages: ListedStory['languages'] }) {
  * @param props.cover - the cover this list gives it
  * @returns the card, one link to the story page
  */
-export function ListedStoryCard(props: {
-  story: ListedStory;
-  cover: DrawnCoverChoice;
-}) {
+export function ListedStoryCard(props: { story: ListedStory; cover: DrawnCoverChoice }) {
   const { story, cover } = props;
   const { t } = useDiscoveryTranslation();
   // "Ion Creangă · Translated by Ana Vlad": only a translated classic has a second credit.
@@ -79,9 +76,7 @@ export function ListedStoryCard(props: {
       metaLine={t('card.meta', { writer: writerLine, count: story.chapterCount })}
       cover={cover}
       href={`/s/${story.slug}`}
-      wrapCover={(drawn) => (
-        <StoryCoverArt story={story} drawn={drawn} className="w-full" />
-      )}
+      wrapCover={(drawn) => <StoryCoverArt story={story} drawn={drawn} className="w-full" />}
       pill={
         <span className="flex flex-wrap gap-1.5">
           {/* Robert, 6 Nov 2026: only "Ongoing" shows as a pill; "Completed" is a filter. */}

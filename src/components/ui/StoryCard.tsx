@@ -76,7 +76,9 @@ export function StoryCard({
       {wrapCover === undefined ? drawnCover : wrapCover(drawnCover)}
       {progressPercent !== undefined && <ProgressLine percent={progressPercent} />}
       {pill !== undefined && <span className="mt-3">{pill}</span>}
-      <span className={`${pill === undefined ? 'mt-2' : 'mt-1.5'} type-label break-words text-heading`}>
+      <span
+        className={`${pill === undefined ? 'mt-2' : 'mt-1.5'} type-label break-words text-heading`}
+      >
         {title}
       </span>
       <span className="type-meta break-words">{metaLine}</span>

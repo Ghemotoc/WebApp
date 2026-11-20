@@ -15,7 +15,8 @@
     "shelves": "Shelves",
     "notices": "Notices and empty states",
     "ads": "Ad and sponsor slots",
-    "shell": "Top bar, staff bar and footer"
+    "shell": "Top bar, staff bar and footer",
+    "calm": "Hero, meter, switch and sheet"
   },
   "colours": {
     "light": "Light",
@@ -126,5 +127,18 @@
     "title": "Report button",
     "intro": "The one Report action every kind of user content shows (S1-E10-01). It opens the report dialog with the item filled in. Signed in as a test persona, the report is real and lands in the moderation queue.",
     "sampleItem": "A sample profile: @adult_writer"
+  },
+  "calm": {
+    "heroTitle": "One glass hero a page",
+    "heroText": "Only the hero is glass. Everything under it sits on the page.",
+    "meterLabel": "Chapters read",
+    "meterValue": "{{read}} of {{total}} chapters read",
+    "switchLabel": "Sample switch",
+    "on": "On",
+    "off": "Off",
+    "openSheet": "Open a sheet",
+    "sheetTitle": "Sample sheet",
+    "sheetRowOne": "A row",
+    "sheetRowTwo": "Another row"
   }
 }

@@ -271,5 +271,8 @@
       "commented": "commented",
       "place": "{{story}} · Chapter {{position}}"
     }
+  },
+  "sheet": {
+    "close": "Close"
   }
 }

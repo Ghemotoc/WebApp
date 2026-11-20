@@ -36,9 +36,7 @@ describe('Shelf', () => {
       'en',
     );
 
-    expect(
-      screen.getByRole('link', { name: /View more\s*54 in Trending/ }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /View more\s*54 in Trending/ })).toBeInTheDocument();
   });
 
   it('has no "View more" card when 20 or fewer stories fit the limit', () => {

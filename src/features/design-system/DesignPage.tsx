@@ -15,6 +15,7 @@ import { PageContainer } from '@/components/ui/PageContainer';
 
 import { AdSection } from './components/AdSection';
 import { ButtonSection } from './components/ButtonSection';
+import { CalmSection } from './components/CalmSection';
 import { CardSection } from './components/CardSection';
 import { ColourSection } from './components/ColourSection';
 import { FormSection } from './components/FormSection';
@@ -55,6 +56,7 @@ export function DesignPage() {
       <PillSection />
       <CardSection />
       <ShelfSection />
+      <CalmSection />
       <NoticeSection />
       {/* The shared Report button and dialog (S1-E10-01). */}
       <ReportSection />

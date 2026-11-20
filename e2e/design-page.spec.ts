@@ -195,9 +195,11 @@ test('a row on a phone shows two whole covers and the edge of a third, with no a
       });
   });
   // The second cover ends inside the row; the third starts inside it and runs past the edge.
-  expect(places[1]?.right ?? 0).toBeLessThanOrEqual((places[1]?.width ?? 0) + 1);
-  expect(places[2]?.left ?? 0).toBeLessThan(places[2]?.width ?? 0);
-  expect(places[2]?.right ?? 0).toBeGreaterThan(places[2]?.width ?? 0);
+  const [, second, third] = places;
+  if (second === undefined || third === undefined) throw new Error('The row has fewer than 3.');
+  expect(second.right).toBeLessThanOrEqual(second.width + 1);
+  expect(third.left).toBeLessThan(third.width);
+  expect(third.right).toBeGreaterThan(third.width);
 });
 
 test('a drop-down is only as wide as its longest option, never stretched', async ({ page }) => {

@@ -39482,14 +39482,16 @@ CREATE OR REPLACE FUNCTION "public"."reading_list_json"("target" "public"."readi
               from public.profiles where profiles.id = target.user_id),
     'story_count', (select count(*) from listed),
     'covers', (select coalesce(jsonb_agg(public.story_card_json(latest.id) order by latest.added_at desc), '[]'::jsonb)
-               from (select listed.id, listed.added_at from listed order by listed.added_at desc limit 3) as latest));
+               from (select listed.id, listed.added_at from listed
+                     order by listed.added_at desc
+                     limit (select places from shelf_size)) as latest));
 $$;
 
 
 ALTER FUNCTION "public"."reading_list_json"("target" "public"."reading_lists") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."reading_list_json"("target" "public"."reading_lists") IS 'Internal: a reading list with its owner, its count and its three latest covers, as this caller may see them (GAPS-6).';
+COMMENT ON FUNCTION "public"."reading_list_json"("target" "public"."reading_lists") IS 'Internal: a bookshelf (reading list) with its owner, its count and its latest covers up to the places one bookshelf has, as this caller may see them (GAPS-6; CALM-4).';
 
 
 
@@ -39513,6 +39515,10 @@ $$;
 ALTER FUNCTION "public"."rebuild_story_search_documents"() OWNER TO "postgres";
 
 
+  ),
+  shelf_size as (
+    -- How many places one bookshelf has (CALM-4); 10 when the setting is missing.
+    select coalesce(public.setting_value('reading_list_stories_max') #>> '{}', '10')::integer as places
 COMMENT ON FUNCTION "public"."rebuild_story_search_documents"() IS 'Rebuilds every story''s search row; safe to run again (QA-2a).';
 
 
@@ -51880,7 +51886,9 @@ CREATE OR REPLACE FUNCTION "public"."story_reading_lists"("story_slug" "text") R
       'has_story', exists (
         select 1 from public.reading_list_stories as entries
         join public.stories on stories.id = entries.story_id
-        where entries.list_id = reading_lists.id and stories.slug = story_slug))
+        where entries.list_id = reading_lists.id and stories.slug = story_slug),
+      'book_count', (select count(*) from public.reading_list_stories as entries
+                     where entries.list_id = reading_lists.id))
     order by lower(reading_lists.name), reading_lists.id), '[]'::jsonb)
   from public.reading_lists
   where reading_lists.user_id = (select auth.uid()) and reading_lists.deleted_at is null;
@@ -51890,7 +51898,7 @@ $$;
 ALTER FUNCTION "public"."story_reading_lists"("story_slug" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."story_reading_lists"("story_slug" "text") IS 'The caller''s reading lists with whether a story is in each, for "Add to a list" on the story page (GAPS-6).';
+COMMENT ON FUNCTION "public"."story_reading_lists"("story_slug" "text") IS 'The caller''s bookshelves (reading lists) with whether a story is on each and how many books each holds, for "Add to a bookshelf" on the story page (GAPS-6; CALM-4).';
 
 
 

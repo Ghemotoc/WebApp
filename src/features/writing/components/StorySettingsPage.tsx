@@ -121,6 +121,40 @@ function SettingsForm({ story, penName }: { story: MyStory; penName: string }) {
   );
 }
 
+/**
+ * The cover: the drawn designs and uploads, its look and title font (CALM-4) and the note when a
+ * new upload has arrived.
+ *
+ * @returns the cover's parts of the form
+ */
+function CoverFields({
+  story,
+  penName,
+  form,
+}: {
+  story: MyStory;
+  penName: string;
+  form: ReturnType<typeof useStorySettingsForm>;
+}) {
+  return (
+    <>
+      <CoverSection
+        storyId={story.id}
+        title={form.answers.title}
+        penName={penName}
+        cover={form.answers.cover}
+        onChange={(cover) => form.set('cover', cover)}
+        canUpload
+        look={coverLookOf(story)}
+      />
+      <CoverLookPicker story={story} formCoverKind={form.answers.cover.kind} />
+      {form.arrivedCoverPath !== null && (
+        <ArrivedCoverNote story={{ id: story.id, slug: story.slug, title: story.title }} />
+      )}
+    </>
+  );
+}
+
 /** The form's sections, the save bar and the delete card. */
 function SettingsFields({
   story,
@@ -157,19 +191,7 @@ function SettingsFields({
       <RankBadgePicker slug={story.slug} />
       <StoryClassCard slug={story.slug} />
       <StoryContestCard slug={story.slug} />
-      <CoverSection
-        storyId={story.id}
-        title={form.answers.title}
-        penName={penName}
-        cover={form.answers.cover}
-        onChange={(cover) => form.set('cover', cover)}
-        canUpload
-        look={coverLookOf(story)}
-      />
-      <CoverLookPicker story={story} formCoverKind={form.answers.cover.kind} />
-      {form.arrivedCoverPath !== null && (
-        <ArrivedCoverNote story={{ id: story.id, slug: story.slug, title: story.title }} />
-      )}
+      <CoverFields story={story} penName={penName} form={form} />
       <StoryLabelsSection answers={form.answers} errors={form.errors} set={form.set} />
       <StoryVisibilitySection answers={form.answers} set={form.set} />
       <StoryReadOnSection answers={form.answers} set={form.set} />

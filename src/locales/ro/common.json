@@ -271,5 +271,8 @@
       "commented": "a comentat",
       "place": "{{story}} · Capitolul {{position}}"
     }
+  },
+  "sheet": {
+    "close": "Închide"
   }
 }

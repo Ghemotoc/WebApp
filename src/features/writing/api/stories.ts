@@ -208,6 +208,29 @@ export async function createStory(
 }
 
 /**
+ * A drawn cover's design and colours from the writer's own story row, when every part is there.
+ *
+ * @param row - the cover columns of the stories row
+ * @returns the drawn choice, or null for the other kinds (or a drawn cover missing a part)
+ */
+function drawnCoverOfRow(row: {
+  cover_kind: StoredCoverKind;
+  cover_design: string | null;
+  cover_background: string | null;
+  cover_accent: string | null;
+}): MyStory['drawnCover'] {
+  if (row.cover_kind !== 'drawn') return null;
+  if (row.cover_design === null || row.cover_background === null || row.cover_accent === null) {
+    return null;
+  }
+  return {
+    design: row.cover_design as CoverDesignKey,
+    background: row.cover_background as CoverColourKey,
+    accent: row.cover_accent as CoverColourKey,
+  };
+}
+
+/**
  * Reads the signed-in writer's own stories, newest first, deleted ones included (the screen
  * shows those under "Recently deleted" with undo).
  *
@@ -240,17 +263,7 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
     tags: row.story_tags.map((link) => link.tags.name),
     coverKind: row.cover_kind,
     coverTallPath: row.cover_kind === 'upload' ? row.cover_tall_path : null,
-    drawnCover:
-      row.cover_kind === 'drawn' &&
-      row.cover_design !== null &&
-      row.cover_background !== null &&
-      row.cover_accent !== null
-        ? {
-            design: row.cover_design as CoverDesignKey,
-            background: row.cover_background as CoverColourKey,
-            accent: row.cover_accent as CoverColourKey,
-          }
-        : null,
+    drawnCover: drawnCoverOfRow(row),
     coverStyle: row.cover_style,
     titleFont: row.cover_title_font,
     firstPublishedAt: row.first_published_at,

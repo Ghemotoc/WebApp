@@ -48,9 +48,7 @@ export function ProfileStories({ profile }: { profile: WriterProfile }) {
             metaLine={t('profile.storyMeta', { count: story.chapterCount })}
             cover={covers[index] ?? resolveCoverChoice(story)}
             href={`/s/${story.slug}`}
-            wrapCover={(drawn) => (
-              <StoryCoverArt story={story} drawn={drawn} className="w-full" />
-            )}
+            wrapCover={(drawn) => <StoryCoverArt story={story} drawn={drawn} className="w-full" />}
             // Robert, 6 Nov 2026: only "Ongoing" shows as a pill; "Completed" is a filter.
             pill={
               story.completionStatus === 'ongoing' ? (

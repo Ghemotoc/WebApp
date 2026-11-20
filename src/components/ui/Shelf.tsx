@@ -17,7 +17,7 @@
  *     "bookshelf" means one thing (Bookshelf, the collections members make).
  * Who uses it: Discover, Classics, Library, profiles, search, the website home page and /design.
  */
-import { useId, useRef, type ReactNode } from 'react';
+import { useId, useRef, type ReactNode, type RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Eyebrow } from './Eyebrow';
@@ -78,6 +78,46 @@ function SeeAllLink({ href, count, title }: { href: string; count: number; title
 }
 
 /**
+ * The scrolling row: a focusable region (so the keyboard can scroll it) holding the list of
+ * places, each a snap point, then the View more card when there is one.
+ *
+ * @returns the region
+ */
+function ShelfRow({
+  rowRef,
+  title,
+  items,
+  viewMore,
+}: {
+  rowRef: RefObject<HTMLDivElement | null>;
+  title: string;
+  items: ShelfItem[];
+  viewMore?: ReactNode;
+}) {
+  const { t } = useTranslation();
+  return (
+    <div
+      ref={rowRef}
+      role="region"
+      tabIndex={0}
+      aria-label={t('shelf.regionLabel', { title })}
+      className={regionClasses}
+    >
+      <ul className={listClasses}>
+        {/* Each item is "relative", so nothing absolutely positioned inside a card (a
+            screen-reader-only label, a badge) can escape the row and widen the page (17 CHECK). */}
+        {items.map((item) => (
+          <li key={item.key} className="relative min-w-0 snap-start">
+            {item.content}
+          </li>
+        ))}
+        {viewMore !== undefined && <li className="relative min-w-0 snap-start">{viewMore}</li>}
+      </ul>
+    </div>
+  );
+}
+
+/**
  * Renders the heading, View and the arrows, then the row.
  *
  * @returns the row's section
@@ -91,7 +131,6 @@ export function Shelf({
   toolbar,
   anchorId,
 }: ShelfProps) {
-  const { t } = useTranslation();
   const headingId = useId();
   const rowRef = useRef<HTMLDivElement>(null);
   const { state, scrollByPage } = useShelfScroll(rowRef);
@@ -106,10 +145,7 @@ export function Shelf({
       <div className="mb-4 flex items-center justify-between gap-4">
         <div className="min-w-0">
           {eyebrow !== undefined && <Eyebrow>{eyebrow}</Eyebrow>}
-          <h2
-            id={headingId}
-            className="m-0 type-heading"
-          >
+          <h2 id={headingId} className="m-0 type-heading">
             {title}
           </h2>
         </div>
@@ -126,28 +162,16 @@ export function Shelf({
         </div>
       </div>
       {toolbar !== undefined && <div className="mb-4">{toolbar}</div>}
-      <div
-        ref={rowRef}
-        role="region"
-        tabIndex={0}
-        aria-label={t('shelf.regionLabel', { title })}
-        className={regionClasses}
-      >
-        <ul role="list" className={listClasses}>
-          {/* Each item is "relative", so nothing absolutely positioned inside a card (a
-            screen-reader-only label, a badge) can escape the row and widen the page (17 CHECK). */}
-          {visibleItems.map((item) => (
-            <li key={item.key} className="relative min-w-0 snap-start">
-              {item.content}
-            </li>
-          ))}
-          {hasMore && (
-            <li className="relative min-w-0 snap-start">
-              <ViewMoreCard href={seeAllHref} shelfTitle={title} totalCount={listSize} />
-            </li>
-          )}
-        </ul>
-      </div>
+      <ShelfRow
+        rowRef={rowRef}
+        title={title}
+        items={visibleItems}
+        viewMore={
+          hasMore ? (
+            <ViewMoreCard href={seeAllHref} shelfTitle={title} totalCount={listSize} />
+          ) : undefined
+        }
+      />
     </section>
   );
 }
