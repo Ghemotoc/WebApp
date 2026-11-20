@@ -66,6 +66,7 @@
     "date": "Date",
     "time": "Time",
     "zoneNote": "Local time on this device. It goes live within 5 minutes of this time.",
+    "skippedHourNote": "That time does not exist on that day because the clocks go forward. It will run at {{time}}.",
     "preview": "Preview",
     "publishButton": "Publish chapter",
     "scheduleButton": "Schedule chapter",

@@ -17,6 +17,7 @@ import {
   formatLocalShortDate,
   localFieldsFor,
   localTimeToInstant,
+  skippedHourRunTime,
 } from './local-time';
 
 describe('formatLocalDayAndTime (CALM-8b)', () => {
@@ -205,5 +206,23 @@ describe('dates without a time follow the viewer too (Robert, 20 Nov 2026, 18:36
         expect(formatCalendarShortDate('2027-02-28', 'ro')).toBe('28 feb. 2027');
       });
     }
+  });
+});
+
+describe('skippedHourRunTime (DESIGN, 20 Nov 2026, 20:09 UTC)', () => {
+  it('an ordinary time needs no note', () => {
+    expect(skippedHourRunTime('2026-11-21', '18:00')).toBeNull();
+  });
+
+  it('a date that is not real needs no note', () => {
+    expect(skippedHourRunTime('2026-02-30', '18:00')).toBeNull();
+  });
+
+  it('a time in the hour the clocks skip says the hour it will run', () => {
+    // Romania's clocks go from 03:00 to 04:00 on 29 March 2026, so 03:30 that night doesn't exist.
+    inTimeZone('Europe/Bucharest', () => {
+      expect(skippedHourRunTime('2026-03-29', '03:30')).toBe('04:30');
+      expect(skippedHourRunTime('2026-03-29', '04:30')).toBeNull();
+    });
   });
 });

@@ -123,6 +123,26 @@ export function localTimeToInstant(date: string, time: string): Date | null {
 }
 
 /**
+ * Finds a time typed in the hour the clocks skip, so the screen can say when it will really run
+ * (DESIGN thread, 20 Nov 2026, 20:09 UTC: a quiet note under the time field).
+ *
+ * @param date - "YYYY-MM-DD", as an <input type="date"> gives it
+ * @param time - "HH:MM", as an <input type="time"> gives it
+ * @returns the "HH:MM" it will run at when the typed time doesn't exist on that day (the night
+ *   the clocks go forward), or null when the time exists or isn't a real date and time
+ * Where it fits: the Publish panel shows the note under its date and time fields.
+ */
+export function skippedHourRunTime(date: string, time: string): string | null {
+  // Step 1: the moment the browser reads for the typed numbers.
+  const instant = localTimeToInstant(date, time);
+  if (instant === null) return null;
+  // Step 2: read it back; on a skipped hour the browser has moved it on, so the fields differ.
+  const landed = localFieldsFor(instant);
+  if (landed.date === date && landed.time === time) return null;
+  return landed.time;
+}
+
+/**
  * The fields' values for a moment, on the viewer's own clock.
  *
  * @param instant - the moment

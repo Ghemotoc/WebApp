@@ -66,6 +66,7 @@
     "date": "Data",
     "time": "Ora",
     "zoneNote": "Ora locală a acestui dispozitiv. Apare în cel mult 5 minute după această oră.",
+    "skippedHourNote": "Ora aceasta nu există în ziua respectivă, pentru că ceasurile se dau înainte. Se publică la {{time}}.",
     "preview": "Previzualizare",
     "publishButton": "Publică capitolul",
     "scheduleButton": "Programează capitolul",
