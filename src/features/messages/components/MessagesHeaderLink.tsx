@@ -1,13 +1,13 @@
 /**
- * MessagesHeaderLink: the chats button in the phone header, beside the bell (bundle G4 SHELL;
+ * MessagesHeaderLink: the chats button in the phone header and, since the simplified design
+ * (bundle CALM-2), in the wide top bar too, before the bell (bundle G4 SHELL;
  * handoff "App header and tab bar": header B has "a pill with bell, chats and avatar (44px each,
  * dot when something is new)"; "Apps: chats sit in the header next to the bell").
  *
- * A clear 44 px round link with the chats icon. A dot in the theme's "on" colour (the accent by day, pale at night) shows when a chat has
- * new messages, and the accessible name says how many ("Messages, 2 chats with new messages"), so
- * it never relies on the dot. On a wide screen Messages is a link in the top bar's track instead
- * (MessagesNavLink).
- * Who shows it: PhoneHeader, only while signed in. Where it goes: /messages.
+ * A clear 44 px round link with the chats icon. One 8 px dot in the thread colour shows when a chat
+ * has new messages, never a number badge, and the accessible name says how many ("Messages, 2
+ * chats with new messages"), so it never relies on the dot.
+ * Who shows it: PhoneHeader and AppLayout's top bar, only while signed in. Where it goes: /messages.
  * What it calls: useUnreadMessageCount (every minute and on focus).
  */
 import { useTranslation } from 'react-i18next';
@@ -39,7 +39,7 @@ export function MessagesHeaderLink() {
         <span
           aria-hidden="true"
           data-new-dot
-          className="absolute top-2.5 right-2.5 size-2 rounded-full bg-chip-on"
+          className="absolute top-2.5 right-2.5 size-2 rounded-full bg-thread"
         />
       )}
     </NavLink>

@@ -8,14 +8,18 @@
  * again whenever the track changes size (a longer translation, Messages appearing at sign-in), and
  * slides in 280 ms; reduce motion makes it jump (index.css). On a page outside the track, such as a
  * story, there is no bubble.
- * Who uses it: TopBar. What it calls: React Router's NavLink.
+ * Home (bundle CALM-2) is the first link: its address depends on who is looking (the Writers' hub
+ * when signed in, the public home page when not), so the list carries a placeholder that this
+ * component swaps for useHomeAddress's answer.
+ * Who uses it: TopBar. What it calls: React Router's NavLink and useHomeAddress.
  */
 import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, useLocation } from 'react-router';
 
-import type { NavigationItem } from '@/app/navigation';
+import { homeNavigationPlaceholder, type NavigationItem } from '@/app/navigation';
 import { navTrackLinkClasses } from '@/components/ui/navTrackStyles';
+import { useHomeAddress } from '@/features/hub/hooks/useHomeAddress';
 
 /** Where the bubble sits inside the track, in pixels. */
 type BubbleBox = Pick<CSSProperties, 'left' | 'top' | 'width' | 'height'>;
@@ -73,6 +77,8 @@ function useCurrentLinkBox() {
 export function NavTrack({ items, end }: NavTrackProps) {
   const { t } = useTranslation();
   const { trackRef, box } = useCurrentLinkBox();
+  // Where "Home" goes for this person: the Writers' hub or the public home page (G9a).
+  const homeAddress = useHomeAddress();
   return (
     <ul
       ref={trackRef}
@@ -87,7 +93,11 @@ export function NavTrack({ items, end }: NavTrackProps) {
       )}
       {items.map((item) => (
         <li key={item.href} className="flex">
-          <NavLink to={item.href} end className={navTrackLinkClasses}>
+          <NavLink
+            to={item.href === homeNavigationPlaceholder ? homeAddress : item.href}
+            end
+            className={navTrackLinkClasses}
+          >
             {t(item.labelKey)}
           </NavLink>
         </li>

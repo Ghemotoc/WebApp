@@ -325,76 +325,90 @@
 }
 
 /*
- * Buttons (bundle G3 COMPONENTS; handoff "Components: variants and states", "Buttons and pills").
- * button-main is the action that finishes a task (Publish, Save, Continue): the theme accent's
- * gradient (plum in Lilac mist, cobalt at night; black in the staff area by day), white text, a soft top
- * highlight and a white rim (30% by day, 35% at night). button-glass is every add action and "not yet" state (New story, Add chapter,
- * Follow): clear grey glass with ink text and a 3:1 edge. Both brighten a little on hover and
- * press to 98 % (120 ms); reduce motion turns the press off with every other transition. A
- * disabled button is half see-through and takes no pointer. Button.tsx uses these, and so do
- * links drawn as buttons, so the look changes in this one place.
+ * Buttons (bundle G3 COMPONENTS; flattened in bundle CALM-2, the simplified design: Robert picked
+ * the soft tint look on 20 Nov 2026, 10:07 to 10:18 UTC; design/simplified-system/components/
+ * Button/README.md). Three kinds, and one main button on a screen:
+ * - button-main is the one next step (Publish, Continue): a flat fill of the theme accent (plum
+ *   #48125D in Lilac mist, cobalt at night), --on-plum text, no sheen, rim or coloured shadow;
+ *   hover, press and the current page take --plum-hover-from and -to (violet #672786 by day).
+ * - button-glass is the quiet button (Follow, Share, Add to a bookshelf): the --tint fill with no
+ *   edge, no blur and no shadow, --ink text; --border on hover. Its label (13.7:1) carries it,
+ *   as WCAG 1.4.11 allows for a button named by its text.
+ * - The text button lives in buttonStyles.ts ('text' variant): ink, underlined.
+ * Both keep a transparent 1 px border so a button's size does not change from the old look, press
+ * to 98 % (120 ms; reduce motion turns it off) and leave disabled buttons as they are for now
+ * ("never greyed out" is on hold). Button.tsx uses these, and so do links drawn as buttons, so the
+ * look changes in this one place.
  */
 @utility button-main {
   background-color: var(--plum-to);
-  /* The website's dark sheen over the accent gradient (GLASS-2): lighter at the top, a soft shade
-     at the bottom, so the button reads as a raised drop of coloured glass. */
-  background-image: var(--lg-dark-sheen), linear-gradient(180deg, var(--plum-from), var(--plum-to));
+  /* One colour in Lilac mist and at night, where both ends match; the other looks keep a gentle
+     gradient of their own accent, flat in feel because nothing else is drawn on it. */
+  background-image: linear-gradient(180deg, var(--plum-from), var(--plum-to));
   color: var(--on-plum);
-  border: 1px solid var(--button-main-rim);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.42),
-    inset 0 -3px 8px rgb(0 0 0 / 0.22),
-    0 12px 26px -12px color-mix(in srgb, var(--plum-to) 70%, transparent);
-  transition:
-    transform 120ms ease-out,
-    filter 120ms ease-out;
-  /* Hover, press and the current page (Write while writing) turn the main look's deep plum into
-     its brighter plum, as Robert asked (11 Nov 2026: "deep plum action buttons that change to the
-     other type of purple when you hover over and you click on it"); every other look takes a
-     slightly lighter version of its own accent (tokens.css, --plum-hover-from and -to). */
+  border: 1px solid transparent;
+  box-shadow: none;
+  transition: transform 120ms ease-out;
+  /* Hover, press and the current page turn deep plum into the brighter plum (Robert, 11 Nov 2026;
+     kept by CALM-2); every other look takes a slightly lighter version of its own accent. */
   &:hover,
   &:active,
   &[aria-current='page'] {
-    background-image:
-      var(--lg-dark-sheen), linear-gradient(180deg, var(--plum-hover-from), var(--plum-hover-to));
+    background-image: linear-gradient(180deg, var(--plum-hover-from), var(--plum-hover-to));
   }
   &:active {
     transform: scale(0.98);
   }
   &:disabled,
   &[aria-disabled='true'] {
-    filter: none;
     transform: none;
-    background-image:
-      var(--lg-dark-sheen), linear-gradient(180deg, var(--plum-from), var(--plum-to));
+    background-image: linear-gradient(180deg, var(--plum-from), var(--plum-to));
   }
 }
 
 @utility button-glass {
-  background-color: var(--surface-glass);
-  /* The website's light glass (GLASS-2): white that thins downwards over the grey wash, a bright
-     top edge, a soft bottom shade and a small shadow. */
-  background-image: var(--lg-card-bg), linear-gradient(rgb(36 19 58 / 0.05), rgb(36 19 58 / 0.05));
+  background-color: var(--tint);
+  background-image: none;
   color: var(--ink);
-  border: 1px solid var(--control-border);
-  box-shadow:
-    inset 0 1px 0 var(--glass-highlight),
-    inset 0 -3px 8px rgb(42 14 51 / 0.06),
-    0 6px 14px -8px rgb(42 14 51 / 0.3);
+  border: 1px solid transparent;
+  box-shadow: none;
   transition:
     transform 120ms ease-out,
-    filter 120ms ease-out;
+    background-color 120ms ease-out;
   &:hover {
-    filter: brightness(1.04);
+    background-color: var(--border);
   }
   &:active {
     transform: scale(0.98);
   }
   &:disabled,
   &[aria-disabled='true'] {
-    filter: none;
     transform: none;
+    background-color: var(--tint);
   }
+}
+
+/*
+ * The meta line (bundle CALM-2; MetaLine.tsx; MetaLine/README.md): facts under a title in one
+ * quiet line, Inter 13/18 in the body colour, each its own list item with a middot drawn here, so
+ * screen readers read only the words. It wraps between facts on a narrow screen.
+ */
+.meta-line {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--body);
+}
+.meta-line > li + li::before {
+  content: '·';
+  margin: 0 6px;
+  font-weight: 400;
+  color: var(--body);
 }
 
 /*
@@ -1133,10 +1147,14 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 /* Buttons: flat fills with a plain edge; the grey button darkens to the tint on hover. */
 :root[data-contrast='more'] .button-main {
   box-shadow: none;
+  /* High contrast keeps an edge round the main button (white at night, none by day): the flat
+     simplified button has no rim of its own (CALM-2), but the stark black page needs one. */
+  border-color: var(--button-main-rim);
 }
 
 :root[data-contrast='more'] .button-glass {
   background-color: var(--surface);
+  border-color: var(--control-border);
   background-image: none;
   box-shadow: none;
 }

@@ -2,7 +2,7 @@
   "storyPage": {
     "documentTitle": "{{title}} · {{productName}}",
     "breadcrumb": "Where you are",
-    "breadcrumbDiscover": "Discover",
+    "breadcrumbDiscover": "Read",
     "by": "by",
     "tags": "Tags",
     "writerEyebrow": "The writer",

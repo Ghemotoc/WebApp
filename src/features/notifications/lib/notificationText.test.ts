@@ -652,9 +652,7 @@ describe('notificationText', () => {
     };
     const text = notificationText(englishT(), featuredRow, 'corbu');
     expect(text.who).toBe('The team:');
-    expect(text.what).toBe(
-      'your story “The Salt Mine Choir” is in Featured this week on Discover.',
-    );
+    expect(text.what).toBe('your story “The Salt Mine Choir” is in Featured this week on Read.');
     expect(text.actionLabel).toBe('Open the story');
     expect(text.href).toBe('/s/the-salt-mine-choir');
   });

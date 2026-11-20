@@ -112,6 +112,6 @@
   },
   "readingSuggestions": {
     "label": "Suggestions from reading",
-    "hint": "Stories you finish count, as totals with no names, towards \"Stories like this\", and Discover shows \"Because you read\". Starts off under 18."
+    "hint": "Stories you finish count, as totals with no names, towards \"Stories like this\", and Read shows \"Because you read\". Starts off under 18."
   }
 }

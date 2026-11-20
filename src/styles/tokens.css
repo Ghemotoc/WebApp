@@ -129,8 +129,6 @@
      uses its own accent made a little lighter, as light as white text still reads at 4.5:1. */
   --plum-hover-from: #672786;
   --plum-hover-to: #672786;
-  /* The main button's white rim: 30% by day, 35% at night (bundle NIGHT-1). */
-  --button-main-rim: rgba(255, 255, 255, 0.3);
   /* The segmented control's recessed track and its water bubble (bundle G3). */
   --track: rgba(36, 19, 58, 0.08);
   --bubble: rgba(255, 255, 255, 1);
@@ -335,7 +333,6 @@
   --on-plum: #ffffff;
   --plum-hover-from: #2663b8;
   --plum-hover-to: #2663b8;
-  --button-main-rim: rgba(255, 255, 255, 0.35);
   --track: rgba(0, 0, 0, 0.35);
   /* The selected segment's knob: white glass at 22% (canvas v117). */
   --bubble: rgba(255, 255, 255, 0.22);

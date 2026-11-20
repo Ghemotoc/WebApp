@@ -87,25 +87,24 @@ test.describe('in-app notifications (S1-E7-01)', () => {
   test.beforeAll(seedNotifications);
   test.afterAll(cleanUp);
 
-  test('in night mode the bell’s count is near-black on white, readable at over 7:1', async ({
+  test('in night mode the bell shows one white dot and no number; the count is in its name', async ({
     browser,
   }) => {
-    // The accessibility check of 6 Nov 2026 found light text on the badge in night mode (1.5:1).
-    // Since bundle G4 SHELL the count uses the theme's "on" colour: at night (NIGHT-1) white
-    // (--chip-on, #f5f5f5) with near-black text (--chip-on-text, #111113), about 17:1.
-    // axe can't see it: the badge is aria-hidden because the link's name already says the count.
+    // The simplified design (bundle CALM-2; TopBar/README.md): something new shows one 8 px dot
+    // in the thread colour, never a number badge. At night the thread is white (#f5f5f5), 17:1
+    // on the night sky; the link's name ("Notifications, 3 new") carries the count, so the dot is
+    // aria-hidden and never the only cue.
     const page = await openSignedIn(browser);
     await page
       .context()
       .addInitScript(([key]) => localStorage.setItem(key, 'night'), [THEME_STORAGE_KEY] as const);
     await page.goto('/discover');
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'night');
-    const badge = page
-      .getByRole('link', { name: /^Notifications, \d+ new$/ })
-      .locator('span[aria-hidden=true]')
-      .last();
-    await expect(badge).toHaveCSS('color', 'rgb(17, 17, 19)');
-    await expect(badge).toHaveCSS('background-color', 'rgb(245, 245, 245)');
+    const bell = page.getByRole('link', { name: /^Notifications, \d+ new$/ });
+    const dot = bell.locator('[data-new-dot]');
+    await expect(dot).toHaveCSS('background-color', 'rgb(245, 245, 245)');
+    await expect(dot).toHaveCSS('width', '8px');
+    await expect(bell).not.toContainText(/\d/);
     await page.context().close();
   });
 

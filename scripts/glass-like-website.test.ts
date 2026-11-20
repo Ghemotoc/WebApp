@@ -4,7 +4,8 @@
  *
  * It reads the two style files as text and checks the rules a later change could quietly drop:
  * the main look's plum action buttons with cream text (flat plum #48125D since the simplified
- * design, Robert, 20 Nov 2026; bundle CALM-1), a lighter hover and press colour in every look, the floating bars and cards as blurred glass, the coloured bands as glass, and the
+ * design, Robert, 20 Nov 2026; bundle CALM-1; drawn flat with no sheen and the quiet button as the
+ * tint since CALM-2), a lighter hover and press colour in every look, the floating bars and cards as blurred glass, the coloured bands as glass, and the
  * staff area kept flat. Colour contrast itself is tested in token-contrast.test.ts.
  * Who runs it: Vitest (npm test). What it reads: src/styles/tokens.css and src/styles/index.css.
  */
@@ -46,10 +47,19 @@ describe('the main website glass on this app (GLASS-2)', () => {
   });
 
   it('turns the main button to its hover colour on hover, press and the current page', () => {
-    const mainButton = blockAfter(indexCss, '@utility button-main');
     expect(indexCss).toContain("&[aria-current='page']");
     expect(indexCss).toContain('var(--plum-hover-from), var(--plum-hover-to)');
-    expect(mainButton).toContain('var(--lg-dark-sheen)');
+  });
+
+  it('draws the main button flat and the quiet button as the tint with no edge (CALM-2)', () => {
+    // Robert, 20 Nov 2026, 10:07 to 10:18 UTC: no sheen, rim or coloured shadow on the main
+    // button; the quiet button has no edge, blur or shadow.
+    const mainButton = blockAfter(indexCss, '@utility button-main');
+    expect(mainButton).not.toContain('var(--lg-dark-sheen)');
+    expect(mainButton).toContain('box-shadow: none;');
+    const quietButton = blockAfter(indexCss, '@utility button-glass');
+    expect(quietButton).toContain('background-color: var(--tint);');
+    expect(quietButton).toContain('box-shadow: none;');
   });
 
   it('draws the floating bars as the website navbar island: blurred near-solid glass', () => {

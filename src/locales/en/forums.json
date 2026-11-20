@@ -2,7 +2,7 @@
   "eyebrow_one": "{{count, number}} thread",
   "eyebrow_few": "{{count, number}} threads",
   "eyebrow_other": "{{count, number}} threads",
-  "title": "Forums",
+  "title": "Together",
   "intro": "Ask questions about writing, swap feedback and meet other writers. Anyone can read the forums. You need an account to post.",
   "loadFailed": "We couldn’t load the forums. Check your connection and try again.",
   "empty": "There are no forums yet.",

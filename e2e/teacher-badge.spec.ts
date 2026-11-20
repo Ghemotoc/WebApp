@@ -153,7 +153,7 @@ test.describe('the Teacher badge (S1-E2-11)', () => {
     await page.getByRole('button', { name: 'Send link' }).click();
     await expect(page.getByText(`Link sent to ${trustedAddress}`)).toBeVisible();
     await expect(page.getByText('Teacher badge · pending')).toBeVisible();
-    await page.getByRole('button', { name: 'Go to Discover' }).click();
+    await page.getByRole('button', { name: 'Go to Read' }).click();
     await expect(page).toHaveURL(/\/discover$/);
 
     // The emailed link gives the badge at once for .edu.ro (criterion 3); only the domain is kept.

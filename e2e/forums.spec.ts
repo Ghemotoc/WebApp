@@ -68,9 +68,9 @@ test.describe('forum categories and subforums (FORUMS-1a, S1-E8-01)', () => {
 
   test('a visitor reads the forum index, category by category', async ({ browser }) => {
     const page = await openAs(browser, null, '/discover');
-    await page.getByRole('banner').getByRole('link', { name: 'Forums' }).click();
+    await page.getByRole('banner').getByRole('link', { name: 'Together', exact: true }).click();
     await expect(page).toHaveURL(/\/forums$/);
-    await expect(page.getByRole('heading', { level: 1, name: 'Forums' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'Together' })).toBeVisible();
     // The starting categories, pinned in the board's order (Q45).
     const categories = page.getByRole('heading', { level: 2 });
     await expect(categories.first()).toHaveText('Writing craft');
@@ -100,7 +100,7 @@ test.describe('forum categories and subforums (FORUMS-1a, S1-E8-01)', () => {
     await page.getByRole('link', { name: 'Fantasy and sci-fi openings' }).first().click();
     const breadcrumb = page.getByRole('navigation', { name: 'Where you are' });
     await expect(breadcrumb.getByRole('listitem')).toHaveText([
-      'Forums',
+      'Together',
       '›Writing craft',
       '›First chapters',
       '›Fantasy and sci-fi openings',

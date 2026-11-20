@@ -28,7 +28,7 @@
   "space": {
     "eyebrow": "Spațiu · condus de membri",
     "breadcrumb": "Unde te afli",
-    "forums": "Forumuri",
+    "forums": "Împreună",
     "members_one": "{{count, number}} membru",
     "members_few": "{{count, number}} membri",
     "members_other": "{{count, number}} de membri",
@@ -456,7 +456,7 @@
     "step2Title": "Creează un spațiu și alege „Spațiul unei clase”",
     "step2Text": "Același formular ca pentru orice spațiu. Spațiul clasei e privat și vine cu un cod de invitație.",
     "step3Title": "Elevii intră cu codul",
-    "step3Text": "Profesorul scrie codul pe tablă sau trimite linkul. Elevii îl scriu în Forumuri › Intră într-o clasă.",
+    "step3Text": "Profesorul scrie codul pe tablă sau trimite linkul. Elevii îl scriu în Împreună › Intră într-o clasă.",
     "yearEndTitle": "Când se termină anul școlar",
     "yearEndText": "La sfârșitul anului școlar spațiul se închide, așa că nimeni nu mai poate posta. Fiecare membru îl poate citi în continuare cât timp are cont și își păstrează poveștile și ciornele.",
     "locksOn": "Se închide pe {{date}}.",

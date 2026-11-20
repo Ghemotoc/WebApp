@@ -268,7 +268,7 @@
     "next": "Next",
     "skip": "Skip",
     "saving": "Saving…",
-    "goToDiscover": "Go to Discover",
+    "goToDiscover": "Go to Read",
     "saveFailed": "We couldn’t save that. Try again in a moment.",
     "loadFailed": "We couldn’t load your profile. Try again in a moment.",
     "name": {
@@ -312,12 +312,12 @@
     },
     "notice": {
       "heading": "Finish setting up your profile",
-      "body": "Pick your language and what you like, so Discover shows you more of it. It takes a minute, and you can skip any step.",
+      "body": "Pick your language and what you like, so Read shows you more of it. It takes a minute, and you can skip any step.",
       "action": "Continue setting up"
     },
     "settings": {
       "heading": "What you like",
-      "intro": "Your county and the picks that fill “Picked for you” on Discover. Only you see them.",
+      "intro": "Your county and the picks that fill “Picked for you” on Read. Only you see them.",
       "save": "Save",
       "saved": "Saved."
     }
@@ -374,7 +374,7 @@
       "no_file": "Choose a file first."
     },
     "skip": "Not a teacher? Skip this",
-    "goToDiscover": "Go to Discover",
+    "goToDiscover": "Go to Read",
     "settings": {
       "heading": "Teacher badge",
       "intro": "With a Teacher badge you can create private class spaces for your students. It shows as “Teacher” on your profile.",

@@ -108,6 +108,25 @@ function CriterionScoreRow({ fieldId, criterion, typed, onType }: CriterionScore
 type Outcome = 'saved' | 'range' | null;
 
 /**
+ * The card's save button. Its label holds the member's name, which can be long, so it wraps onto a
+ * second line rather than push the card past a 390 px screen (CLAUDE.md rule 21): CALM-2's 15 px
+ * button text made "Salvează punctajele pentru …" too wide for one line.
+ */
+function SaveScoresButton({ name, isRunning }: { name: string; isRunning: boolean }) {
+  const { t } = useClassCompetitionsTranslation();
+  return (
+    <Button
+      type="submit"
+      variant="secondary"
+      className="h-auto min-h-11 w-fit max-w-full py-3 text-center whitespace-normal"
+      disabled={isRunning}
+    >
+      {t('scoring.saveScores', { name })}
+    </Button>
+  );
+}
+
+/**
  * Renders the card.
  *
  * @returns the entrant's form
@@ -159,9 +178,7 @@ export function EntrantScoreCard({ competitionId, criteria, entrant }: EntrantSc
           ? t('scoring.notScored')
           : t('scoring.total', { total, max: maxTotal(criteria) })}
       </p>
-      <Button type="submit" variant="secondary" className="w-fit" disabled={saver.isRunning}>
-        {t('scoring.saveScores', { name: entrant.displayName })}
-      </Button>
+      <SaveScoresButton name={entrant.displayName} isRunning={saver.isRunning} />
       <div aria-live="polite">
         {outcome === 'range' && <Notice tone="error">{t('failures.score_range')}</Notice>}
         {saver.failure !== null && outcome === null && (

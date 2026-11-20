@@ -106,8 +106,8 @@
     "errorTitle": "Nu a mers.",
     "errorText": "Conexiunea s-a întrerupt. Textul tău e păstrat pe acest dispozitiv; încearcă din nou.",
     "emptyTitle": "Încă nicio poveste aici",
-    "emptyDescription": "Urmărește scriitori sau răsfoiește Descoperă, iar capitolele noi vor apărea aici.",
-    "emptyAction": "Răsfoiește Descoperă"
+    "emptyDescription": "Urmărește scriitori sau răsfoiește Citește, iar capitolele noi vor apărea aici.",
+    "emptyAction": "Răsfoiește Citește"
   },
   "ads": {
     "intro": "Doar exemple: reclamele și sponsorii reali vin cu S1-E12. Formatul portret și caseta laterală apar doar pe ecrane de 1200 px sau mai late.",

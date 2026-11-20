@@ -80,7 +80,7 @@ test.describe('Discover and story lists (S1-E5-01, S1-E5-09)', () => {
     browser,
   }) => {
     const page = await openAsVisitor(browser, '/');
-    await page.getByRole('banner').getByRole('link', { name: 'Discover' }).click();
+    await page.getByRole('banner').getByRole('link', { name: 'Read', exact: true }).click();
     await expect(
       page.getByRole('heading', { level: 1, name: 'Find the next story' }),
     ).toBeVisible();

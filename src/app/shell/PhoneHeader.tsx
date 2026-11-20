@@ -5,10 +5,11 @@
  * new)"; canvas Discover board).
  *
  * Below 1024 px AppLayout draws this instead of the website top bar, together with the floating
- * TabBar at the bottom. The logo pill is the link home (the Writers' hub when signed in, G9a); the right-hand pill holds the bell, the
- * chats button and the account bead while signed in, or "Log in" and "Join for free" for a
+ * TabBar at the bottom. The logo pill is the link home (the Writers' hub when signed in, G9a); the right-hand pill holds the chats
+ * button, the bell and the account avatar while signed in (that order since bundle CALM-2, to
+ * match the top bar), or "Log in" and "Join for free" for a
  * visitor. Each control is 44 px, the handoff's touch size (WCAG 2.5.8 asks for 24 px at least).
- * Who uses it: AppLayout. What it calls: BrandMark, NotificationBell, MessagesHeaderLink and
+ * Who uses it: AppLayout. What it calls: BrandMark, MessagesHeaderLink, NotificationBell and
  * AccountLinks.
  */
 import { useTranslation } from 'react-i18next';
@@ -52,8 +53,9 @@ export function PhoneHeader() {
         aria-label={t('shell.accountTools')}
         className="glass-float pointer-events-auto flex min-h-13 flex-wrap items-center justify-end gap-1 rounded-[26px] p-1"
       >
-        <NotificationBell />
+        {/* Messages, Notifications, then the account, in the top bar's order (CALM-2). */}
         <MessagesHeaderLink />
+        <NotificationBell />
         <AccountLinks />
       </div>
     </header>

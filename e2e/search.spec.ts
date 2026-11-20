@@ -64,7 +64,7 @@ test.describe('search (S1-E5-04)', () => {
     await page.goto('/discover');
     // The top bar's search pill (bundle G4 SHELL): Enter opens the Search page.
     const topBarSearch = page.getByRole('banner').getByRole('searchbox', {
-      name: 'Search stories, writers and tags',
+      name: 'Search stories, writers and Together',
     });
     await topBarSearch.fill(foldedWord);
     await topBarSearch.press('Enter');
@@ -108,7 +108,7 @@ test.describe('search (S1-E5-04)', () => {
     await expect(
       page.getByRole('heading', { name: `No results for “${missingWord}”` }),
     ).toBeVisible();
-    await page.getByRole('link', { name: 'Browse Discover' }).click();
+    await page.getByRole('link', { name: 'Browse Read' }).click();
     await expect(page).toHaveURL(/\/discover$/);
   });
 

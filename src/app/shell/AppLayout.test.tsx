@@ -62,7 +62,10 @@ describe('the app shell', () => {
   it('shows the wordmark from the brand config as a link home', () => {
     renderApp();
 
-    expect(screen.getByRole('link', { name: brand.productName })).toHaveAttribute('href', '/');
+    expect(screen.getByRole('link', { name: `${brand.productName}, Home` })).toHaveAttribute(
+      'href',
+      '/',
+    );
   });
 
   it('says "An app by" with the company name from the brand config in the footer', () => {
@@ -106,22 +109,40 @@ describe('the shell on a wide window (bundle G4 SHELL)', () => {
     expect(screen.getAllByRole('navigation', { name: 'Main' })).toHaveLength(1);
     expect(screen.queryByRole('link', { name: 'Search' })).not.toBeInTheDocument();
   });
+
+  it('lists Home, Read, Library and Together in the top bar, Home first (bundle CALM-2)', () => {
+    renderApp('/discover');
+
+    const topBar = screen.getByRole('navigation', { name: 'Main' });
+    const names = within(topBar)
+      .getAllByRole('link')
+      .map((link) => link.textContent);
+    expect(names).toEqual(['Home', 'Read', 'Library', 'Together']);
+    expect(within(topBar).getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
+    expect(within(topBar).getByRole('link', { name: 'Read' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
+  });
 });
 
 describe('the shell on a narrow window (bundle G4 SHELL)', () => {
-  it('gives a browsing page header B and the floating tab bar, with the page on the bubble', () => {
+  it('gives a browsing page header B and the floating tab bar, with the current tab marked', () => {
     useNarrowWindow();
     renderApp('/discover');
 
-    expect(screen.getByRole('link', { name: `${brand.productName} home` })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: `${brand.productName}, Home` })).toHaveAttribute(
       'href',
       '/',
     );
     const tabBar = screen.getByRole('navigation', { name: 'Main' });
-    expect(within(tabBar).getByRole('link', { name: 'Discover' })).toHaveAttribute(
-      'aria-current',
-      'page',
-    );
+    const readTab = within(tabBar).getByRole('link', { name: 'Read' });
+    expect(readTab).toHaveAttribute('aria-current', 'page');
+    // The current tab shows the 2 px thread line under its label, and no other tab does (CALM-2).
+    expect(readTab.querySelector('[data-current-line]')).not.toBeNull();
+    expect(
+      within(tabBar).getByRole('link', { name: 'Together' }).querySelector('[data-current-line]'),
+    ).toBeNull();
     expect(within(tabBar).getByRole('link', { name: 'Write' })).toHaveAttribute('href', '/write');
     expect(within(tabBar).getByRole('link', { name: 'Search' })).toHaveAttribute('href', '/search');
     // The website top bar and its search pill are not drawn as well.

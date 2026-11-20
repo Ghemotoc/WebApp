@@ -31,7 +31,7 @@ const footerColumns: { titleKey: string; links: FooterLink[] }[] = [
       { to: '#trending', labelKey: 'website.trending' },
       { to: '#completed', labelKey: 'website.completed' },
       { to: '#writers', labelKey: 'website.footer.newWriters' },
-      { to: '/discover', labelKey: 'nav.discover' },
+      { to: '/discover', labelKey: 'nav.read' },
     ],
   },
   {
@@ -39,7 +39,7 @@ const footerColumns: { titleKey: string; links: FooterLink[] }[] = [
     links: [
       { to: '/write/new', labelKey: 'website.footer.startWriting' },
       { to: '#first-story', labelKey: 'website.footer.firstStory' },
-      { to: '/forums', labelKey: 'nav.forums' },
+      { to: '/forums', labelKey: 'nav.together' },
     ],
   },
   {

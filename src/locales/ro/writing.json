@@ -210,8 +210,8 @@
       "private": "Privată"
     },
     "hints": {
-      "public": "Oricine o poate găsi în Descoperă, în căutare, la etichete și pe profilul tău.",
-      "unlisted": "O pot citi doar cei care au linkul. Nu apare în Descoperă, în căutare, la etichete sau pe profilul tău. Cine a salvat-o sau o urmărește o păstrează.",
+      "public": "Oricine o poate găsi în Citește, în căutare, la etichete și pe profilul tău.",
+      "unlisted": "O pot citi doar cei care au linkul. Nu apare în Citește, în căutare, la etichete sau pe profilul tău. Cine a salvat-o sau o urmărește o păstrează.",
       "private": "Doar tu o poți citi, chiar și după ce publici capitole. Nimeni nu află de capitolele noi."
     }
   },
@@ -311,7 +311,7 @@
     "rating": "Clasificare",
     "required": "(obligatoriu)",
     "ratingNoteAllAges": "Oricine o poate găsi și citi. Alege 13+, 16+ sau 18+ dacă povestea nu e potrivită pentru cititorii mai mici; atunci e ascunsă de oricine e mai mic.",
-    "ratingNoteHidden": "Ascunsă de oricine are sub {{age}} ani, în căutare, pe Descoperă și pe profilul tău. Cititorii văd clasificarea înainte să deschidă povestea.",
+    "ratingNoteHidden": "Ascunsă de oricine are sub {{age}} ani, în căutare, în Citește și pe profilul tău. Cititorii văd clasificarea înainte să deschidă povestea.",
     "ratingUnderSixteen": "Scriitorii sub 16 ani pot alege pentru o poveste doar Toate vârstele sau 13+.",
     "guide": {
       "all_ages": {

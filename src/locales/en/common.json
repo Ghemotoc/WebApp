@@ -13,10 +13,10 @@
     "footerNavigation": "Footer",
     "madeBy": "An app by {{companyName}}",
     "search": "Search",
-    "searchLabel": "Search stories, writers and tags",
+    "searchLabel": "Search stories, writers and Together",
     "back": "Back",
-    "home": "{{productName}} home",
-    "accountTools": "Notifications, chats and account",
+    "home": "{{productName}}, Home",
+    "accountTools": "Chats, notifications and account",
     "focus": {
       "signUp": "Join",
       "logIn": "Log in",
@@ -35,9 +35,9 @@
   },
   "nav": {
     "home": "Home",
-    "discover": "Discover",
+    "read": "Read",
     "library": "Library",
-    "forums": "Forums",
+    "together": "Together",
     "messages": "Messages",
     "messagesUnread_one": "Messages, {{count}} chat with new messages",
     "messagesUnread_few": "Messages, {{count}} chats with new messages",
@@ -50,7 +50,7 @@
     "editProfile": "Edit profile",
     "settings": "Settings",
     "resources": "Resources",
-    "accountWithInitials": "Account, {{initials}}",
+    "accountWithInitials": "Account and settings, {{initials}}",
     "logOut": "Log out",
     "logOutFailed": "We couldn’t log you out. Check your connection and try again.",
     "contact": "Company and legal contacts",
@@ -84,8 +84,8 @@
     "settingsLegend": "Interface language",
     "settingsNote": "Before signing in, the site opens in the language of the country it is visited from: Romanian in Romania and Moldova, English elsewhere. The language menu is at the bottom of the page. Stories have their own language, which the writer picks.",
     "readingHeading": "Reading languages",
-    "readingIntro": "The story lists on Discover and the genre pages show stories in these languages. With none ticked, you read {{interface}} and English.",
-    "readingIntroEnglish": "The story lists on Discover and the genre pages show stories in these languages. With none ticked, you read English.",
+    "readingIntro": "The story lists on Read and the genre pages show stories in these languages. With none ticked, you read {{interface}} and English.",
+    "readingIntroEnglish": "The story lists on Read and the genre pages show stories in these languages. With none ticked, you read English.",
     "readingLegend": "Languages I read",
     "readingSave": "Save",
     "readingSaving": "Saving…",
@@ -126,10 +126,10 @@
   "notFound": {
     "documentTitle": "Page not found",
     "heading": "We can’t find that page",
-    "body": "It may have moved, or the story was made private. Try searching, or go back to Discover.",
+    "body": "It may have moved, or the story was made private. Try searching, or go back to Read.",
     "eyebrow": "Error 404",
     "search": "Search {{productName}}",
-    "goDiscover": "Go to Discover"
+    "goDiscover": "Go to Read"
   },
   "errorPage": {
     "documentTitle": "Something went wrong",

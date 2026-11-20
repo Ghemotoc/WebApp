@@ -23,8 +23,9 @@
  * MaintenanceGate swaps the notices and the page for the maintenance page while maintenance mode is
  * on (staff and the log-in pages excepted); useTrackRoutePattern remembers which page is on screen
  * for error reports, as a pattern such as "/join/:code", never the address itself.
- * Notifications (S1-E7-01): the bell with the unread count sits after "Write" while signed in
- * (bundle G4 SHELL: search, Write, bell, avatar).
+ * Notifications (S1-E7-01): the bell sits after "Write" and Messages while signed in, with one dot
+ * when something is new and the count in its name (bundle CALM-2: search, Write, Messages, bell,
+ * avatar).
  * Investor numbers (S1-E15-04): ActiveMinutesCounter says "here" once a minute while someone is
  * signed in, for the day's totals; it draws nothing.
  * Pictures (S1-E10-05): usePendingPictureRetry asks once per signed-in visit for the check of any
@@ -58,7 +59,7 @@ import { useAccountLanguage } from '@/features/language/hooks/useAccountLanguage
 import { useFirstVisitLanguage } from '@/features/language/hooks/useFirstVisitLanguage';
 import { useAccountAppearance } from '@/features/theme/hooks/useAccountAppearance';
 import { MaintenanceGate } from '@/features/maintenance/components/MaintenanceGate';
-import { MessagesNavLink } from '@/features/messages/components/MessagesNavLink';
+import { MessagesHeaderLink } from '@/features/messages/components/MessagesHeaderLink';
 import { NotificationBell } from '@/features/notifications/components/NotificationBell';
 import { OfflineBanner } from '@/features/offline/components/OfflineBanner';
 import { PresenceHeartbeat } from '@/features/privacy/components/PresenceHeartbeat';
@@ -78,8 +79,8 @@ import { useIsNarrowScreen } from './useIsNarrowScreen';
 import { useServerHeadReset } from './useServerHeadReset';
 
 /**
- * The website top bar, for windows from 1024 px: the main links with Messages, search, then
- * Write, the bell and the account (handoff "Navigation"). The Search page has its
+ * The website top bar, for windows from 1024 px: Home, Read, Library and Together, search, then
+ * Write, Messages, Notifications and the account (the simplified design, bundle CALM-2). The Search page has its
  * own, bigger field with the filters, so the top bar leaves its search pill out there and the page
  * keeps one search region.
  *
@@ -90,13 +91,13 @@ function WideHeader({ hasSearch }: { hasSearch: boolean }) {
   return (
     <TopBar
       hasSearch={hasSearch}
-      // Messages with its unread count, while signed in (S1-E9-01).
-      navigationEnd={<MessagesNavLink />}
       endSlot={
         <>
-          {/* "Write", while signed in (S1-E3-01). */}
+          {/* "Write", a quiet button, while signed in (S1-E3-01; CALM-2). */}
           <WriteLink />
-          {/* The bell with the unread count, while signed in (S1-E7-01). */}
+          {/* Messages as an icon button, as on phones, while signed in (S1-E9-01; CALM-2). */}
+          <MessagesHeaderLink />
+          {/* The bell, with a dot when something is new, while signed in (S1-E7-01). */}
           <NotificationBell />
           {/* "Get in" while signed out (S1-E2-01, GETIN-1); the account bead after. */}
           <AccountLinks />

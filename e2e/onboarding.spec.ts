@@ -200,7 +200,7 @@ test.describe('onboarding (S1-E2-06)', () => {
     // Step 3, for adults only and optional: "Are you a teacher?" (S1-E2-11).
     await expect(page.getByText('Step 3 of 3 · for adults (18+) · optional')).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Are you a teacher?' })).toBeFocused();
-    await page.getByRole('button', { name: 'Go to Discover' }).click();
+    await page.getByRole('button', { name: 'Go to Read' }).click();
 
     // Discover, with "Picked for you"; setup is done and the notice is gone.
     await expect(page).toHaveURL(/\/discover$/);

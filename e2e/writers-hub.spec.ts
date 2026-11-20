@@ -203,7 +203,7 @@ test.describe('the Writers’ hub and Resources (G9a)', () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/hub');
     // Step 1: Resources sits in the avatar menu.
-    await page.getByRole('button', { name: /^Account, / }).click();
+    await page.getByRole('button', { name: 'Account and settings' }).click();
     await page.locator('#account-menu-panel').getByRole('link', { name: 'Resources' }).click();
     await expect(page).toHaveURL(/\/resources$/);
     await expect(page.getByRole('heading', { level: 1, name: 'Resources' })).toBeVisible();
