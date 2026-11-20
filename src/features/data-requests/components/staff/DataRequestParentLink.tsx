@@ -8,7 +8,7 @@
  * onResend(), which useDataRequestCopy sends to POST /api/data-request-parent/send.
  */
 import { Button } from '@/components/ui/Button';
-import { formatRomaniaDateTime } from '@/lib/romania-time';
+import { formatLocalDateTime } from '@/lib/local-time';
 
 import type { DataRequestDetail } from '../../api/dataRequests';
 import { useDataRequestsTranslation } from '../../registerDataRequestsTranslations';
@@ -27,7 +27,7 @@ interface DataRequestParentLinkProps {
  */
 function useLinkLine(request: DataRequestDetail): string {
   const { t, i18n } = useDataRequestsTranslation();
-  const when = (isoTime: string) => formatRomaniaDateTime(new Date(isoTime), i18n.language);
+  const when = (isoTime: string) => formatLocalDateTime(new Date(isoTime), i18n.language);
   if (request.parentCopySentAt === null) return t('copy.parentLink.notSent');
   if (request.parentCopyOpenedAt === null) {
     return t('copy.parentLink.sent', { sent: when(request.parentCopySentAt) });

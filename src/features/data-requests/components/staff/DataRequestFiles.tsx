@@ -9,7 +9,7 @@
  */
 import { Button } from '@/components/ui/Button';
 import { fileSizeText } from '@/features/data-export/lib/fileSize';
-import { formatRomaniaDateTime } from '@/lib/romania-time';
+import { formatLocalDateTime } from '@/lib/local-time';
 
 import type { DataRequestFile } from '../../api/dataRequests';
 import { useDataRequestsTranslation } from '../../registerDataRequestsTranslations';
@@ -47,7 +47,7 @@ export function DataRequestFiles({ files, forParent, onOpen }: DataRequestFilesP
               <span className="text-sm text-meta">
                 {t('copy.fileLine', {
                   size: fileSizeText(file.fileSize ?? 0, i18n.language),
-                  date: formatRomaniaDateTime(new Date(file.expiresAt), i18n.language),
+                  date: formatLocalDateTime(new Date(file.expiresAt), i18n.language),
                 })}
               </span>
             </div>

@@ -8,7 +8,7 @@
  */
 import { ExportDownloadButton } from '@/features/data-export/components/ExportDownloadButton';
 import { fileSizeText } from '@/features/data-export/lib/fileSize';
-import { formatRomaniaDateTime } from '@/lib/romania-time';
+import { formatLocalDateTime } from '@/lib/local-time';
 
 import type { MyDataRequestFile } from '../api/myDataRequests';
 import { useDataRequestsTranslation } from '../registerDataRequestsTranslations';
@@ -26,7 +26,7 @@ export function MyDataRequestFiles({ files }: { files: MyDataRequestFile[] }) {
     <div className="flex flex-col gap-2">
       <p className="m-0 font-semibold text-ink">
         {t('mine.copyReady', {
-          date: formatRomaniaDateTime(new Date(first.expiresAt), i18n.language),
+          date: formatLocalDateTime(new Date(first.expiresAt), i18n.language),
         })}
       </p>
       <ul className="m-0 flex list-none flex-col gap-2 p-0">

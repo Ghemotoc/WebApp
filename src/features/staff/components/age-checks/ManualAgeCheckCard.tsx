@@ -12,7 +12,8 @@ import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
 import { LabelRows } from '@/components/ui/LabelRows';
-import { formatRomaniaDate, formatRomaniaDateTime } from '@/lib/romania-time';
+import { formatLocalDateTime } from '@/lib/local-time';
+import { formatRomaniaDate } from '@/lib/romania-time';
 
 import type {
   AgeCheckAttempt,
@@ -42,7 +43,7 @@ function AttemptList({ attempts }: { attempts: AgeCheckAttempt[] }) {
       {attempts.map((attempt) => (
         <li key={attempt.at}>
           {t('manualChecks.attempt', {
-            when: formatRomaniaDateTime(new Date(attempt.at), i18n.language),
+            when: formatLocalDateTime(new Date(attempt.at), i18n.language),
             line: attempt.threshold,
             outcome: t(`manualChecks.outcomes.${attempt.outcome}`),
             method: t(`manualChecks.methods.${attempt.method}`),
@@ -80,7 +81,7 @@ export function ManualAgeCheckCard({ request, isDeciding, onDecide }: ManualAgeC
     { label: t('manualChecks.result'), value: t(`users.ageChecks.${request.ageCheckResult}`) },
     {
       label: t('manualChecks.asked'),
-      value: formatRomaniaDateTime(new Date(request.requestedAt), i18n.language),
+      value: formatLocalDateTime(new Date(request.requestedAt), i18n.language),
     },
     {
       label: t('manualChecks.answerBy'),

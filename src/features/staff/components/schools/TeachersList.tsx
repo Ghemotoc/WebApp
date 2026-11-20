@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
 import { ReasonForm } from '@/features/moderation/components/ReasonForm';
-import { formatRomaniaDateTime } from '@/lib/romania-time';
+import { formatLocalDateTime } from '@/lib/local-time';
 
 import type { Teacher } from '../../api/teacherChecks';
 
@@ -39,7 +39,7 @@ function TeacherRow({
   const { t, i18n } = useTranslation('staff');
   const [isRemoving, setIsRemoving] = useState(false);
   const handle = teacher.handle ?? '';
-  const since = formatRomaniaDateTime(new Date(teacher.badgeSince), i18n.language);
+  const since = formatLocalDateTime(new Date(teacher.badgeSince), i18n.language);
   return (
     <li className="flex flex-col gap-3 border-b border-border py-3 last:border-b-0">
       <div className="flex flex-wrap items-center justify-between gap-3">

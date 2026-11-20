@@ -7,7 +7,8 @@
  * Who shows it: LandingPageEditor. What it calls: act({ kind: 'restore' }).
  */
 import { Button } from '@/components/ui/Button';
-import { formatRomaniaDate, formatRomaniaDateTime } from '@/lib/romania-time';
+import { formatLocalDateTime } from '@/lib/local-time';
+import { formatRomaniaDate } from '@/lib/romania-time';
 
 import type { LandingPageVersion } from '../../api/landingPages';
 import type { LandingEditorState } from '../../hooks/useLandingPageEditor';
@@ -61,7 +62,7 @@ export function LandingVersionHistory({ versions, state }: LandingVersionHistory
                   published:
                     version.publishedAt === null
                       ? ''
-                      : formatRomaniaDateTime(new Date(version.publishedAt), language),
+                      : formatLocalDateTime(new Date(version.publishedAt), language),
                 })}
                 {version.takeDownOn !== null && (
                   <span className="block text-meta">

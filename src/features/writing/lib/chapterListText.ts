@@ -6,12 +6,14 @@
  *
  * Who calls it: ChapterListCard, ManagedChapterRow and RecentlyDeletedChapters.
  * What it calls: i18next's t() for the words (writing.json, manageChapters.*) and
- * src/lib/romania-time.ts for the dates, which are always Romania time in March
- * (decided 23 Oct 2026, Q7). Kept apart from the components so it can be tested on its own.
+ * src/lib/romania-time.ts for the short dates (Romania's calendar, Q7) and
+ * src/lib/local-time.ts for a scheduled chapter's time, on the writer's own clock (Robert,
+ * 20 Nov 2026, 18:19 UTC). Kept apart from the components so it can be tested on its own.
  */
 import type { TFunction } from 'i18next';
 
-import { dateLocaleFor, formatRomaniaDateTime, withShortSeptember } from '@/lib/romania-time';
+import { formatLocalDateTime } from '@/lib/local-time';
+import { dateLocaleFor, withShortSeptember } from '@/lib/romania-time';
 
 import type { ManagedChapter, ManagedChapterState } from '../api/manageChapters';
 import { purgeDateFor } from './purgeDate';
@@ -88,7 +90,7 @@ function draftMeta(t: TFunction, chapter: ManagedChapter, language: string): str
  * @param t - the writing namespace's t()
  * @param chapter - the chapter
  * @param language - the interface language
- * @returns the line, for example "Goes live Saturday, 24 October at 18:00, Romania time"
+ * @returns the line, for example "Goes live Saturday 24 October at 18:00, local time"
  */
 export function chapterMeta(t: TFunction, chapter: ManagedChapter, language: string): string {
   switch (chapter.state) {
@@ -96,7 +98,7 @@ export function chapterMeta(t: TFunction, chapter: ManagedChapter, language: str
       return publishedMeta(t, chapter, language);
     case 'scheduled':
       return t('manageChapters.meta.scheduled', {
-        when: formatRomaniaDateTime(new Date(chapter.scheduledFor ?? ''), language),
+        when: formatLocalDateTime(new Date(chapter.scheduledFor ?? ''), language),
       });
     case 'unpublished':
       return [

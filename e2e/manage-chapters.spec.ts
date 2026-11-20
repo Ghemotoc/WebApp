@@ -220,7 +220,7 @@ test.describe('Manage chapters (S1-E3-04)', () => {
     await expect(rows.nth(0)).toContainText('Published');
     await expect(rows.nth(1)).toContainText(/readers see “Edited on \d+ \w+”/);
     await expect(rows.nth(2)).toContainText('Draft · 228 words · saved');
-    await expect(rows.nth(3)).toContainText(/Goes live .*, Romania time/);
+    await expect(rows.nth(3)).toContainText(/Goes live .*, local time/);
     await expect(rows.nth(4)).toContainText('readers can’t open it · comments hidden but kept');
     await expect(page.getByRole('button', { name: 'Move chapter 1 up' })).toHaveAttribute(
       'aria-disabled',

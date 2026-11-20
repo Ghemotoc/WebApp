@@ -756,7 +756,7 @@
         "authorityHint": "Cine a trimis-o sau, pentru notificarea la lansare, cui i-a fost trimisă.",
         "receivedDate": "Primită pe",
         "doneDate": "Rezolvată pe",
-        "time": "Ora (România)",
+        "time": "Ora",
         "content": "Ce au cerut",
         "contentHint": "Numește un cont doar prin numele de utilizator.",
         "isDone": "Deja rezolvată",

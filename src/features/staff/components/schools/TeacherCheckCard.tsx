@@ -14,7 +14,7 @@ import type { TFunction } from 'i18next';
 
 import { Button } from '@/components/ui/Button';
 import { LabelRows } from '@/components/ui/LabelRows';
-import { formatRomaniaDateTime } from '@/lib/romania-time';
+import { formatLocalDateTime } from '@/lib/local-time';
 
 import type { TeacherCheckRequest, TeacherDecision } from '../../api/teacherChecks';
 
@@ -61,7 +61,7 @@ export function TeacherCheckCard({
   const rows = [
     {
       label: t('teacherChecks.asked'),
-      value: formatRomaniaDateTime(new Date(request.requestedAt), i18n.language),
+      value: formatLocalDateTime(new Date(request.requestedAt), i18n.language),
     },
     { label: t('teacherChecks.how'), value: howConfirmed(request, t) },
   ];

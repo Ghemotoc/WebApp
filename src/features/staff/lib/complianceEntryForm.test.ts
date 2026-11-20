@@ -4,6 +4,8 @@
  */
 import { describe, expect, it } from 'vitest';
 
+import { inTimeZone, pinViewerTimeZone } from '@/test/viewerTimeZone';
+
 import { complianceEntryFrom, emptyComplianceForm } from './complianceEntryForm';
 
 const filled = {
@@ -13,7 +15,10 @@ const filled = {
 };
 
 describe('the Log a request form', () => {
-  it('builds an open entry with the Romania time as a moment', () => {
+  // The times are typed on the staff member's own clock (CALM-8b; Robert, 20 Nov 2026, 18:19 UTC).
+  pinViewerTimeZone('Europe/Bucharest');
+
+  it('builds an open entry with the typed time as a moment', () => {
     expect(complianceEntryFrom(filled)).toEqual({
       kind: 'legal_request',
       authority: 'ANCOM',
@@ -22,6 +27,13 @@ describe('the Log a request form', () => {
       content: 'Asked for our DSA contact point details',
       actionTaken: '',
       completedAt: null,
+    });
+  });
+
+  it('reads the typed time on the staff member’s own clock: 09:14 in Stockholm is 08:14 UTC', () => {
+    inTimeZone('Europe/Stockholm', () => {
+      const entry = complianceEntryFrom(filled);
+      expect(typeof entry === 'object' && entry.receivedAt).toBe('2027-03-02T08:14:00.000Z');
     });
   });
 

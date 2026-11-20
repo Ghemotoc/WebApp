@@ -3,8 +3,8 @@
  * when, and why (story S1-E10-09). Only people with the "on call for removal orders" permission
  * are offered; the database checks it again, and refuses a shift that overlaps another.
  *
- * The times are typed in the browser's own time and sent as exact moments, so the rota shows them
- * in Romania time whatever the editor's clock says.
+ * The times are typed in the browser's own time and sent as exact moments, so each person reading
+ * the rota sees them on their own clock (Robert, 20 Nov 2026, 18:19 UTC).
  * Who shows it: OnCallRotaPage. What it calls: the add() it is given (useOnCallRota).
  */
 import { useState, type FormEvent } from 'react';
@@ -122,7 +122,7 @@ export function AddShiftForm({
     event.preventDefault();
     setIsMissing(!isComplete(fields));
     if (!isComplete(fields)) return;
-    // The browser's local times become exact moments, so the rota can show them in Romania time.
+    // The browser's local times become exact moments, so each reader of the rota sees them on their own clock.
     const shift = {
       userId: fields.userId,
       startsAt: new Date(fields.startsAt).toISOString(),

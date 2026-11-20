@@ -9,7 +9,8 @@
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
-import { formatRomaniaDate, formatRomaniaDateTime } from '@/lib/romania-time';
+import { formatLocalDateTime } from '@/lib/local-time';
+import { formatRomaniaDate } from '@/lib/romania-time';
 
 import type { ContentVersion } from '../../api/websiteContentStore';
 import type { WebsiteEditorState } from '../../hooks/useWebsiteEditor';
@@ -76,7 +77,7 @@ export function VersionHistory({ entry, state, describe }: VersionHistoryProps) 
                   published:
                     version.publishedAt === null
                       ? ''
-                      : formatRomaniaDateTime(new Date(version.publishedAt), language),
+                      : formatLocalDateTime(new Date(version.publishedAt), language),
                 })}
                 <span className="block text-meta">{describe(version)}</span>
               </span>

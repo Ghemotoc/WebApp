@@ -1,8 +1,11 @@
 /**
- * The day headings on the Notifications page (story S1-E7-01; board 6.2), counted in Romanian
- * time.
+ * The day headings on the Notifications page (story S1-E7-01; board 6.2), counted on the viewer's
+ * own clock (CALM-8b; Robert, 20 Nov 2026, 18:19 UTC). The tests pin the viewer to Bucharest and
+ * check that a viewer in New York gets their own midnight.
  */
 import { describe, expect, it } from 'vitest';
+
+import { inTimeZone, pinViewerTimeZone } from '@/test/viewerTimeZone';
 
 import { dayGroupOf } from './dayGroups';
 
@@ -10,12 +13,20 @@ import { dayGroupOf } from './dayGroups';
 const now = new Date('2026-10-25T09:00:00Z');
 
 describe('dayGroupOf', () => {
+  pinViewerTimeZone('Europe/Bucharest');
+
   it('puts something from this morning under Today', () => {
     expect(dayGroupOf('2026-10-25T05:00:00Z', now)).toBe('today');
   });
 
-  it('counts the day in Romania, so 23:30 UTC the night before is already today there', () => {
+  it('counts the viewer’s own day, so 22:30 UTC the night before is already today in Bucharest', () => {
     expect(dayGroupOf('2026-10-24T22:30:00Z', now)).toBe('today');
+  });
+
+  it('gives a viewer in New York their own midnight: the same moment is still yesterday there', () => {
+    inTimeZone('America/New_York', () => {
+      expect(dayGroupOf('2026-10-24T22:30:00Z', now)).toBe('yesterday');
+    });
   });
 
   it('puts yesterday under Yesterday', () => {

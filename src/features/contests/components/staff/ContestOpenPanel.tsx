@@ -9,7 +9,7 @@
  */
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
-import { formatRomaniaDateTime } from '@/lib/romania-time';
+import { formatLocalDateTime } from '@/lib/local-time';
 
 import type { StaffContest } from '../../api/contests';
 import type { useContestEditor } from '../../hooks/useStaffContests';
@@ -77,7 +77,7 @@ export function ContestOpenPanel({
       ) : (
         <p className="m-0 text-sm text-body">
           {t('staff.editor.openSince', {
-            date: formatRomaniaDateTime(new Date(contest.openedAt), i18n.language),
+            date: formatLocalDateTime(new Date(contest.openedAt), i18n.language),
           })}
         </p>
       )}
