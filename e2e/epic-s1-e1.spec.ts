@@ -41,9 +41,10 @@ const personaIds: Record<PersonaName, string> = {
   kid_14_waiting: '00000000-0000-4000-8000-000000000004',
 };
 
-/** The page background in each theme, from src/styles/tokens.css (--paper): Lilac mist by day,
- * near-black at night (the liquid glass design, bundle G1; monochrome night, NIGHT-1). */
-const paperColour = { light: 'rgb(243, 238, 251)', night: 'rgb(17, 17, 19)' };
+/** The page background in each theme, from src/styles/tokens.css: Lilac mist by day (--paper);
+ * at night the night sky's edge on a wide window (--browser-bar, #0e1538), so a phone's bars
+ * and over-scroll match the galaxy instead of showing black (CALM-1; Robert, 20 Nov 2026). */
+const paperColour = { light: 'rgb(243, 238, 251)', night: 'rgb(14, 21, 56)' };
 
 /** The home heading in each language. */
 const homeHeading = {
@@ -58,8 +59,8 @@ async function waitForAnimations(page: Page) {
   );
 }
 
-/** The page's computed background colour: <html> paints the --paper token in use (since G1 the
- * app frame is see-through so the colour blobs show). */
+/** The page's computed background colour: <html> paints --browser-bar or else --paper (since G1
+ * the app frame is see-through so the colour blobs show). */
 async function pageBackground(page: Page) {
   return page.evaluate(() => getComputedStyle(document.documentElement).backgroundColor);
 }
