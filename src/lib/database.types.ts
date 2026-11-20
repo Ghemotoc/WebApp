@@ -6582,7 +6582,7 @@ export type Database = {
           high_contrast: boolean;
           highest_rank_notified: Database['public']['Enums']['writer_rank'] | null;
           id: string;
-          initials_colour: string | null;
+          initials_colour: string;
           last_active_at: string | null;
           legal_region_code: string;
           less_motion: boolean;
@@ -6660,7 +6660,7 @@ export type Database = {
           high_contrast?: boolean;
           highest_rank_notified?: Database['public']['Enums']['writer_rank'] | null;
           id: string;
-          initials_colour?: string | null;
+          initials_colour?: string;
           last_active_at?: string | null;
           legal_region_code?: string;
           less_motion?: boolean;
@@ -6717,7 +6717,7 @@ export type Database = {
           high_contrast?: boolean;
           highest_rank_notified?: Database['public']['Enums']['writer_rank'] | null;
           id?: string;
-          initials_colour?: string | null;
+          initials_colour?: string;
           last_active_at?: string | null;
           legal_region_code?: string;
           less_motion?: boolean;
@@ -13166,7 +13166,7 @@ export type Database = {
           high_contrast: boolean;
           highest_rank_notified: Database['public']['Enums']['writer_rank'] | null;
           id: string;
-          initials_colour: string | null;
+          initials_colour: string;
           last_active_at: string | null;
           legal_region_code: string;
           less_motion: boolean;
@@ -14919,6 +14919,7 @@ export type Database = {
         }[];
       };
       house_ad_for_slot: { Args: { used_keys: string[]; wanted_page_key: string }; Returns: Json };
+      initials_colour_from_retired: { Args: { colour: string }; Returns: string };
       initials_colour_names: { Args: Record<PropertyKey, never>; Returns: string[] };
       insert_class_space: {
         Args: {
@@ -15521,7 +15522,7 @@ export type Database = {
           high_contrast: boolean;
           highest_rank_notified: Database['public']['Enums']['writer_rank'] | null;
           id: string;
-          initials_colour: string | null;
+          initials_colour: string;
           last_active_at: string | null;
           legal_region_code: string;
           less_motion: boolean;
@@ -16362,7 +16363,7 @@ export type Database = {
           high_contrast: boolean;
           highest_rank_notified: Database['public']['Enums']['writer_rank'] | null;
           id: string;
-          initials_colour: string | null;
+          initials_colour: string;
           last_active_at: string | null;
           legal_region_code: string;
           less_motion: boolean;
@@ -16513,6 +16514,7 @@ export type Database = {
         };
         Returns: undefined;
       };
+      random_initials_colour: { Args: Record<PropertyKey, never>; Returns: string };
       rank_for: {
         Args: { chapter_count: number; word_count: number };
         Returns: Database['public']['Enums']['writer_rank'];

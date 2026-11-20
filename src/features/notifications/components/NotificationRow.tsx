@@ -7,14 +7,19 @@
  * a decision and the one action in bold. A "new rank"
  * row also names the rank in its pill (bundle G4; DESIGN thread, 8 Nov 2026: no sticker).
  * Opening a row marks it as read. A row whose item is gone (no address) is plain text.
+ * A row about a person (a follow, a reply, a new chapter) starts with that person's avatar, the
+ * first of them when several are grouped (CALM-3, the simplified design: avatars show at every
+ * notification row); a staff row, or one with nobody named, keeps the category icon, so a
+ * moderator is never shown.
  * Who uses it: NotificationsPage. What it calls: lib/notificationText.ts for the words,
- * hooks/useMarkNotificationsRead.ts when opened.
+ * hooks/useMarkNotificationsRead.ts when opened, PersonAvatar or NotificationIcon at the start.
  */
 import { Link } from 'react-router';
 
 import { ActionIcon } from '@/components/icons/ActionIcon';
 import { InfoPill } from '@/components/ui/InfoPill';
 import { timeAgo } from '@/features/comments/lib/timeAgo';
+import { PersonAvatar } from '@/features/avatars/components/PersonAvatar';
 import { RankChip } from '@/features/forums/components/RankChip';
 import { cn } from '@/lib/utils';
 
@@ -74,6 +79,20 @@ function RowWords({
 }
 
 /**
+ * The start of the row: the first person's avatar, or the category icon when the row names nobody
+ * or comes from staff (staff decisions never show who made them).
+ *
+ * @returns the decorative avatar or icon
+ */
+function RowStart({ notification }: { notification: AppNotification }) {
+  const firstActor = notification.actors[0];
+  if (notification.category === 'staff' || firstActor === undefined) {
+    return <NotificationIcon category={notification.category} />;
+  }
+  return <PersonAvatar name={firstActor.displayName} handle={firstActor.handle} size="medium" />;
+}
+
+/**
  * Renders the row.
  *
  * @returns the list item
@@ -90,7 +109,7 @@ export function NotificationRow({ notification, ownHandle, onOpen }: Notificatio
         isUnread ? 'bg-tint/40' : 'bg-surface',
       )}
     >
-      <NotificationIcon category={notification.category} />
+      <RowStart notification={notification} />
       {text.href === null ? (
         <div className={wordsClasses}>
           <RowWords text={text} notification={notification} />
