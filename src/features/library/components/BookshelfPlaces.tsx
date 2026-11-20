@@ -29,7 +29,7 @@ const placesGrid =
 
 /** A dashed ghost place, the size and shape of a cover. */
 const ghostClasses =
-  'flex aspect-[5/8] w-full items-center justify-center rounded-cover border border-dashed border-dashed-border';
+  'flex aspect-[2/3] w-full items-center justify-center rounded-cover border border-dashed border-dashed-border';
 
 /**
  * The first ghost: a + that links to Read, so an empty place says how to fill it.

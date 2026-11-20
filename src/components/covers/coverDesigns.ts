@@ -6,7 +6,7 @@
  * after the first 16, which stay as they were.
  *
  * Where the values come from: design/boards/NewStory.dc.html (4.2), its `designs`, `pal` and
- * `art` lists, copied, not guessed. The artwork is drawn on a 100 × 160 (5:8) canvas so tiles,
+ * `art` lists, copied, not guessed. The artwork is drawn on a 100 × 160 (5:8) canvas, sliced to the 2:3 cover (CALM-4), so tiles,
  * previews and cards match exactly. One board mismatch: Waves' default accent (#6E93BF) is not
  * in the palette, so it defaults to Violet here, and the three G9c patterns' blues and greens are
  * mapped to the nearest palette colours the same way (docs/board-fixes.md).

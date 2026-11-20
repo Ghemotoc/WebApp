@@ -5,7 +5,7 @@
  * that opens the See all page (S1-E5-09). It is a real link whose visible text is its whole
  * accessible name ("View more 54 in Trending"), so voice control users can say what they see
  * (WCAG 2.2, 2.5.3 Label in Name).
- * Look: the same width and 5:8 shape as the covers beside it (it fills its column; CALM-4), a 2 px
+ * Look: the same width and 2:3 shape as the covers beside it (it fills its column; CALM-4), a 2 px
  * dashed border, a 52 px plum circle with an arrow and the words in the subheading style.
  * Who uses it: Shelf (src/components/ui/Shelf.tsx).
  */
@@ -31,7 +31,7 @@ export function ViewMoreCard({ href, shelfTitle, totalCount }: ViewMoreCardProps
   return (
     <a
       href={href}
-      className="flex aspect-[5/8] w-full flex-col items-start justify-center gap-3 rounded-cover border-2 border-dashed border-dashed-border p-4 no-underline"
+      className="flex aspect-[2/3] w-full flex-col items-start justify-center gap-3 rounded-cover border-2 border-dashed border-dashed-border p-4 no-underline"
     >
       <span className="inline-flex h-13 w-13 items-center justify-center rounded-full bg-chip-on text-chip-on-text">
         <ArrowRightIcon size={22} />

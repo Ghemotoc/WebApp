@@ -31,7 +31,7 @@
  */
 import type { CSSProperties } from 'react';
 
-import { coverTitleScale } from '@/lib/cover-title';
+import { coverTitleFit } from '@/lib/cover-title';
 import { cn } from '@/lib/utils';
 
 import {
@@ -171,9 +171,9 @@ function InitialWords({ title, penName }: CoverWordsProps) {
 }
 
 /**
- * Renders the cover: the background, then the look the writer picked. The box keeps a 5:8 shape
- * (the boards draw 2:3, but uploads and the picture check use 5:8, so the shape stays an open
- * question); give it a width with className. It has 4 px corners and the hairline edge, and casts
+ * Renders the cover: the background, then the look the writer picked. The box is 2:3 (DESIGN,
+ * 20 Nov 2026, CALM-4 check: "covers are 2:3"; bundle.css aspect-ratio 2 / 3); an upload is
+ * cropped to it with object-fit: cover (StoryCoverArt). Give it a width with className. It has 4 px corners and the hairline edge, and casts
  * no shadow (the simplified design, CALM-1).
  *
  * @returns the cover
@@ -189,13 +189,14 @@ export function DrawnCover({
   const style = choice.style ?? 'label';
   const background = coverPalette[choice.background];
 
-  // The values the CSS reads: the accent, the title's length step and, off the label, the ink
-  // that reads best on the background (the label itself is always paper with dark ink).
+  // The values the CSS reads: the accent, the title's size step (its length, its longest word and
+  // the room the look leaves it) and, off the label, the ink that reads best on the background
+  // (the label itself is always paper with dark ink).
   const coverStyle = {
     backgroundColor: background,
     color: titleColourOn(background),
     '--book-accent': coverPalette[choice.accent],
-    '--fit': String(coverTitleScale(title)),
+    '--fit': String(coverTitleFit(title, style, choice.titleFont ?? 'reading')),
   } as CSSProperties;
 
   return (
@@ -206,7 +207,7 @@ export function DrawnCover({
       data-cover-size={size}
       data-title-font={choice.titleFont ?? 'reading'}
       className={cn(
-        'cover-book cover-edge relative box-border block aspect-[5/8] overflow-hidden rounded-cover',
+        'cover-book cover-edge relative box-border block aspect-[2/3] overflow-hidden rounded-cover',
         className,
       )}
       style={coverStyle}

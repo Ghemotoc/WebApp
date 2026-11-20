@@ -19,7 +19,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { coverTitleScale } from '@/lib/cover-title';
+import { coverTitleFit } from '@/lib/cover-title';
 import { cn } from '@/lib/utils';
 
 import { useStoryCoverPicture } from '../hooks/usePictures';
@@ -37,12 +37,12 @@ export interface StoryCoverArtProps {
   };
   /** The drawn cover to show for drawn and automatic covers, and as the fall-back. */
   drawn: ReactNode;
-  /** The box's width classes, the same as the drawn cover's (the shape is always 5:8). */
+  /** The box's width classes, the same as the drawn cover's (the shape is always 2:3). */
   className?: string;
 }
 
 /**
- * The box a picture or its placeholder sits in: the drawn cover's 5:8 shape, its 4 px corners and
+ * The box a picture or its placeholder sits in: the drawn cover's 2:3 shape (an upload, kept at 5:8, is cropped to it by object-cover; DESIGN, 20 Nov 2026), its 4 px corners and
  * its hairline edge, with no shadow (the simplified design, Robert, 20 Nov 2026; bundle CALM-1).
  * The hairline (cover-edge, index.css) sits over the picture, so a pale picture keeps its shape.
  *
@@ -52,7 +52,7 @@ function CoverBox({ className, children }: { className?: string; children: React
   return (
     <span
       className={cn(
-        'cover-book cover-edge relative block aspect-[5/8] overflow-hidden rounded-cover bg-panel',
+        'cover-book cover-edge relative block aspect-[2/3] overflow-hidden rounded-cover bg-panel',
         className,
       )}
     >
@@ -70,7 +70,7 @@ function CoverBox({ className, children }: { className?: string; children: React
  */
 function PictureLabel({ story }: { story: StoryCoverArtProps['story'] }) {
   if (story.coverStyle !== 'picture' || story.title === undefined) return null;
-  const fit = { '--fit': String(coverTitleScale(story.title)) } as CSSProperties;
+  const fit = { '--fit': String(coverTitleFit(story.title, 'label', 'reading')) } as CSSProperties;
   return (
     <span className="cover-label" aria-hidden="true" style={fit}>
       <span className="cover-words-title">{story.title}</span>

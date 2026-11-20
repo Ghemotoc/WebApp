@@ -7,7 +7,8 @@
  * light and night mode; nothing scrolls sideways (CLAUDE.md rule 21); night mode follows the
  * device and the footer drop-down overrides it; reduce motion removes animations; the fonts are
  * the four the DoD names; shelves show arrows only when they overflow and disable them at the
- * ends; drop-downs are only as wide as their longest option.
+ * ends, show 5 whole 2:3 covers on a desktop, 4 on a tablet and 2 and an edge on a phone, and
+ * quick presses of Next add up (CALM-4); drop-downs are only as wide as their longest option.
  */
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
@@ -156,8 +157,11 @@ test('a row that fits has no arrows; a long one shows five whole covers, no fade
     .poll(() =>
       row.evaluate((element) => {
         const sixth = element.querySelectorAll('li')[5];
-        return Math.round(
-          (sixth?.getBoundingClientRect().left ?? 0) - element.getBoundingClientRect().left,
+        // Math.abs, because a sub-pixel offset rounds to -0, which toBe(0) refuses.
+        return Math.abs(
+          Math.round(
+            (sixth?.getBoundingClientRect().left ?? 0) - element.getBoundingClientRect().left,
+          ),
         );
       }),
     )
@@ -200,6 +204,46 @@ test('a row on a phone shows two whole covers and the edge of a third, with no a
   expect(second.right).toBeLessThanOrEqual(second.width + 1);
   expect(third.left).toBeLessThan(third.width);
   expect(third.right).toBeGreaterThan(third.width);
+});
+
+test('a row on a tablet shows four whole 2:3 covers, with arrows', async ({ page }) => {
+  await page.setViewportSize({ width: 768, height: 1024 });
+  await page.goto('/design');
+
+  const longShelf = page.getByTestId('long-shelf');
+  await expect(longShelf.getByRole('button', { name: /Mai departe în/ })).toBeVisible();
+  const row = longShelf.getByRole('region', { name: /se derulează lateral/ });
+  const places = await row.evaluate((element) => {
+    const rowBox = element.getBoundingClientRect();
+    return Array.from(element.querySelectorAll('li')).map((item) => {
+      const box = item.getBoundingClientRect();
+      return { left: box.left - rowBox.left, right: box.right - rowBox.left, width: rowBox.width };
+    });
+  });
+  // The fourth cover ends inside the row and the fifth starts past it (DESIGN, 20 Nov 2026).
+  expect(places[3]?.right ?? 0).toBeLessThanOrEqual((places[3]?.width ?? 0) + 1);
+  expect(places[4]?.left ?? 0).toBeGreaterThanOrEqual((places[4]?.width ?? 0) - 1);
+  // Covers are 2:3 (DESIGN, 20 Nov 2026; bundle.css aspect-ratio 2 / 3).
+  const coverShape = await row
+    .locator('[data-cover-style]')
+    .first()
+    .evaluate(
+      (cover) => cover.getBoundingClientRect().height / cover.getBoundingClientRect().width,
+    );
+  expect(coverShape).toBeCloseTo(1.5, 1);
+});
+
+test('quick presses of Next add up instead of moving the row one screenful', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/design');
+
+  // Smooth scrolling stays on: the bug was a press during the animation counting from mid-way.
+  const longShelf = page.getByTestId('long-shelf');
+  const forward = longShelf.getByRole('button', { name: 'Mai departe în În tendințe' });
+  await forward.focus();
+  for (let press = 0; press < 6; press += 1) await page.keyboard.press('Enter');
+  await expect(forward).toHaveAttribute('aria-disabled', 'true');
+  await expect(forward).toBeFocused();
 });
 
 test('a drop-down is only as wide as its longest option, never stretched', async ({ page }) => {

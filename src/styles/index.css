@@ -194,7 +194,8 @@
  *   cover-big         Big title: the title large at the top, a short rule, the pen name at the foot
  *   cover-initial     Initial: the title and pen name above one big letter, cropped by the edge
  * The title's size comes from --fit (src/lib/cover-title.ts: x0.85 from 19 characters, x0.72 from
- * 29, x0.62 from 41), never breaks a word and never goes below 11 px. Under 100 px a cover is a
+ * 29, x0.62 from 41, then smaller until the longest word and every line fit) and never goes below
+ * 11 px; only at that floor does a word too long for its line break. Under 100 px a cover is a
  * miniature: the title only, at the cover's own scale, because its title is always written beside
  * it. The title font comes from --cover-font (Literata 600 unless the writer picked another).
  */
@@ -241,7 +242,9 @@
   font-weight: var(--cover-weight);
   letter-spacing: var(--cover-track);
   line-height: 1.05;
-  overflow-wrap: normal;
+  /* The size step (--fit, coverTitleFit) makes the longest word fit its line; only when the 11 px
+     floor stops it, a word breaks rather than running past the cover's edge (CALM-4 break test). */
+  overflow-wrap: break-word;
   hyphens: none;
 }
 .cover-label .cover-words-title {
