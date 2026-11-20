@@ -25,6 +25,9 @@ export interface ProfileStory {
   rating: StoryRating;
   coverKind: 'automatic' | 'drawn' | 'upload';
   drawnCover: { design: CoverDesignKey; background: CoverColourKey; accent: CoverColourKey } | null;
+  /** The cover's look and title font (cover.style, cover.title_font; bundle CALM-4). */
+  coverStyle?: string | null;
+  titleFont?: string | null;
   chapterCount: number;
   lastChapterPublishedAt: string | null;
 }
@@ -74,6 +77,9 @@ interface ProfileStoryRow {
     design: string | null;
     background: string | null;
     accent: string | null;
+    /** CALM-4 (profile_story_cards()). */
+    style?: string | null;
+    title_font?: string | null;
   };
   chapter_count: number;
   last_chapter_published_at: string | null;
@@ -131,6 +137,8 @@ function toProfileStory(row: ProfileStoryRow): ProfileStory {
     rating: row.rating,
     coverKind: row.cover.kind,
     drawnCover: drawnCoverOf(row.cover),
+    coverStyle: row.cover.style ?? null,
+    titleFont: row.cover.title_font ?? null,
     chapterCount: row.chapter_count,
     lastChapterPublishedAt: row.last_chapter_published_at,
   };

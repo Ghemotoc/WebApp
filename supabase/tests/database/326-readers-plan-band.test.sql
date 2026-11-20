@@ -47,7 +47,7 @@ select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
 select is(pg_temp.band() ->> 'id', '00000000-0000-4000-9000-000000000001',
   'a reader''s answer carries the story''s ID, for the automatic cover');
 select is(pg_temp.band() -> 'cover',
-  '{"kind": "drawn", "design": "waves", "background": "sky", "accent": "violet"}'::jsonb,
+  '{"kind": "drawn", "design": "waves", "background": "sky", "accent": "violet", "style": "label", "title_font": "reading"}'::jsonb,
   'and the cover the writer chose');
 select is(pg_temp.band() ->> 'writer_name', 'Lia Scrie', 'and the writer''s pen name');
 select ok(position('00000000-0000-4000-8000-000000000001' in public.get_public_story_plan('statia-meteo-seed01')::text) = 0,

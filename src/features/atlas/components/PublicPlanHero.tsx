@@ -27,6 +27,8 @@ function HeroCover({ plan }: { plan: PublicPlan }) {
     id: plan.storyId,
     coverKind: plan.coverKind,
     drawnCover: plan.drawnCover,
+    coverStyle: plan.coverStyle,
+    titleFont: plan.titleFont,
   });
   return (
     <div className="flex-none" data-testid="atlas-public-cover">

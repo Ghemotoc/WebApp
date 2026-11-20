@@ -72,7 +72,7 @@ export function CoverUploadField({ storyId, onUploaded }: CoverUploadFieldProps)
           <img
             src={preview}
             alt={t('pictures.coverPreview')}
-            className="block aspect-[5/8] w-full object-cover"
+            className="block aspect-[2/3] w-full object-cover"
           />
         </span>
       )}

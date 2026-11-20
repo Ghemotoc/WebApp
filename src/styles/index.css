@@ -184,6 +184,147 @@
 }
 
 /*
+ * Drawn covers (bundle CALM-4; the simplified design, Robert, 20 Nov 2026, 10:07 to 11:55 UTC;
+ * design/simplified-system/components/BookCover/README.md and the gh-book classes in bundle.css).
+ * DrawnCover (src/components/covers/DrawnCover.tsx) draws three styles with these classes:
+ *   cover-book        the cover's box: a size container, so every size inside it is in cqi (1% of
+ *                     the cover's width) and a cover looks the same at every size
+ *   cover-label       Label: the paper label near the top, 80.8% of the cover's width with 9.6%
+ *                     on each side, an outline and rule in the accent
+ *   cover-big         Big title: the title large at the top, a short rule, the pen name at the foot
+ *   cover-initial     Initial: the title and pen name above one big letter, cropped by the edge
+ * The title's size comes from --fit (src/lib/cover-title.ts: x0.85 from 19 characters, x0.72 from
+ * 29, x0.62 from 41, then smaller until the longest word and every line fit) and never goes below
+ * 11 px; only at that floor does a word too long for its line break. Under 100 px a cover is a
+ * miniature: the title only, at the cover's own scale, because its title is always written beside
+ * it. The title font comes from --cover-font (Literata 600 unless the writer picked another).
+ */
+.cover-book {
+  container-type: inline-size;
+  /* The accent: the writer's palette colour on drawn covers (set inline), plum on a Picture. */
+  --book-accent: var(--primary);
+  --cover-font: var(--font-story);
+  --cover-weight: 600;
+  --cover-track: 0em;
+}
+.cover-book[data-title-font='display'] {
+  --cover-font: var(--font-heading);
+  --cover-weight: 700;
+  --cover-track: -0.01em;
+}
+.cover-book[data-title-font='sans'] {
+  --cover-font: var(--font-body);
+  --cover-weight: 700;
+  --cover-track: -0.01em;
+}
+.cover-book[data-title-font='hand'] {
+  --cover-font: var(--font-hand);
+  --cover-weight: 400;
+}
+.cover-label {
+  position: absolute;
+  left: 9.6%;
+  right: 9.6%;
+  top: 8.9%;
+  z-index: 2;
+  box-sizing: border-box;
+  padding: 8.3cqi 5.8cqi 7.5cqi;
+  text-align: center;
+  background: #faf8f5;
+  color: #26142e;
+  border-radius: 2px;
+  outline: 1px solid var(--book-accent);
+  outline-offset: -3.3cqi;
+}
+.cover-words-title {
+  display: block;
+  font-family: var(--cover-font);
+  font-weight: var(--cover-weight);
+  letter-spacing: var(--cover-track);
+  line-height: 1.05;
+  /* The size step (--fit, coverTitleFit) makes the longest word fit its line; only when the 11 px
+     floor stops it, a word breaks rather than running past the cover's edge (CALM-4 break test). */
+  overflow-wrap: break-word;
+  hyphens: none;
+}
+.cover-label .cover-words-title {
+  font-size: max(11px, calc(11.67cqi * var(--fit, 1)));
+}
+.cover-label-rule {
+  display: block;
+  width: 15cqi;
+  height: 1px;
+  margin: 5cqi auto 4.2cqi;
+  background: var(--book-accent);
+}
+.cover-words-by {
+  display: block;
+  font-family: var(--font-body);
+  font-size: max(11px, 8.33cqi);
+  line-height: 1.2;
+  font-weight: 600;
+}
+.cover-inner {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+.cover-big {
+  justify-content: space-between;
+  padding: 10cqi 10.4cqi 8.3cqi;
+}
+.cover-big .cover-words-title {
+  font-size: max(11px, calc(20cqi * var(--fit, 1)));
+}
+.cover-big-rule {
+  display: block;
+  width: 23.3cqi;
+  height: 2px;
+  margin-top: 8.3cqi;
+  border-radius: 1px;
+  background: var(--book-accent);
+}
+.cover-big .cover-words-by,
+.cover-initial .cover-words-by {
+  font-size: max(11px, 9.17cqi);
+}
+.cover-initial {
+  padding: 9.2cqi 10.4cqi 0;
+}
+.cover-initial .cover-words-title {
+  font-size: max(11px, calc(12.5cqi * var(--fit, 1)));
+}
+.cover-initial .cover-words-by {
+  margin-top: 2.5cqi;
+}
+.cover-glyph {
+  font-family: var(--cover-font);
+  font-weight: var(--cover-weight);
+  font-size: 170px;
+  letter-spacing: -0.04em;
+  fill: var(--book-accent);
+}
+@container (max-width: 99px) {
+  .cover-label-rule,
+  .cover-big-rule,
+  .cover-words-by {
+    display: none;
+  }
+  .cover-label .cover-words-title {
+    font-size: calc(11.67cqi * var(--fit, 1));
+  }
+  .cover-big .cover-words-title {
+    font-size: calc(20cqi * var(--fit, 1));
+  }
+  .cover-initial .cover-words-title {
+    font-size: calc(12.5cqi * var(--fit, 1));
+  }
+}
+
+/*
  * Buttons (bundle G3 COMPONENTS; handoff "Components: variants and states", "Buttons and pills").
  * button-main is the action that finishes a task (Publish, Save, Continue): the theme accent's
  * gradient (plum in Lilac mist, cobalt at night; black in the staff area by day), white text, a soft top
@@ -901,7 +1042,7 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 [data-theme='night'] .switch-track-on {
   /* An "on" switch at night is cobalt with a 35% white rim, so its edge still reads on the black
      page (WCAG 2.2, 1.4.11); its white knob and the On word say the state (canvas v117; NIGHT-1).
-     By day it is the theme's solid colour (bg-primary in SwitchButton.tsx). */
+     By day it is the theme's solid colour (bg-primary in src/components/ui/Switch.tsx). */
   background-color: #0047ab;
   border-color: rgb(255 255 255 / 0.35);
 }

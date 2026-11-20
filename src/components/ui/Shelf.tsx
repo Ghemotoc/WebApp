@@ -1,33 +1,34 @@
 /**
- * Shelf: one horizontally scrolling line of stories (story S1-E1-03).
+ * Shelf: one sideways row of covers (story S1-E1-03; redrawn in bundle CALM-4).
  *
- * The rules (DoD design rules; CLAUDE.md rule 20; Robert, 16 and 17 Oct 2026):
- *   - One scrollable line, never a grid; at most 20 items, then a "View more" card.
- *   - Arrows show only when the row overflows, and the one pointing at an end is disabled.
- *   - A row with arrows hides its scrollbar but stays scrollable by swipe, trackpad and keyboard
- *     (the row is a focusable, labelled region).
- *   - Each edge fades while cards are hidden past it, so in the middle of a long row both edges
- *     fade (Robert, 6 Nov 2026). The fade is a CSS mask on the row itself, so cards and shadows
- *     fade together (useShelfScroll works out which edges).
- *   - An arrow press moves by whole cards: the card a fade covered becomes fully visible
- *     (Robert, 5 Nov 2026; shelfPaging.ts). The row doesn't snap, because snapping would pull
- *     each press back to a card's edge and leave that card under the fade again.
- * Board values: heading Funnel Display 30 px, 18 px below it; cards 20 px apart; a 140 px fade on
- * each faded edge (narrower on small screens, so a whole card still fits between two fades).
- * Who uses it: Discover (S1-E5-01), Classics, Library, the website home page and /design.
+ * The rules (CLAUDE.md rule 20; the simplified design, Robert, 20 Nov 2026, 10:18 UTC;
+ * design/simplified-system/components/Shelf/README.md):
+ *   - One row, never a grid: at most 20 covers, then a View more card to the See all page.
+ *   - Whole covers only: 5 in view from 1024 px, 4 from 600 px, and on phones 2 and the edge of a
+ *     third. Each cover takes its width from the row (a fifth of the column less the gaps); gaps
+ *     are 24 px, 16 px on phones.
+ *   - No fade at the edges and no scroll bar (the fade was visual overload). The row snaps to a
+ *     cover, scrolls smoothly only without reduced motion and never turns by itself.
+ *   - Previous and Next sit at the top right beside "View 54", from 600 px; each press moves one
+ *     screenful (useShelfScroll). Phones swipe.
+ *   - The row is a list: each cover is one link in a list item. The row itself is a labelled,
+ *     focusable region, so a keyboard can scroll it with the arrow keys.
+ *   - In the interface these are rows with plain headings ("Trending"), never "shelves", so
+ *     "bookshelf" means one thing (Bookshelf, the collections members make).
+ * Who uses it: Discover, Classics, Library, profiles, search, the website home page and /design.
  */
-import { useId, useRef, type ReactNode } from 'react';
+import { useId, useRef, type ReactNode, type RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Eyebrow } from './Eyebrow';
 import { ShelfArrows } from './ShelfArrows';
-import { useShelfScroll, type ShelfScrollState } from './useShelfScroll';
+import { useShelfScroll } from './useShelfScroll';
 import { ViewMoreCard } from './ViewMoreCard';
 
-/** A shelf never shows more than this many items (CLAUDE.md rule 20). */
+/** A row never shows more than this many items (CLAUDE.md rule 20). */
 export const MAXIMUM_SHELF_ITEMS = 20;
 
-/** One item in the shelf: a stable key and what to draw (usually a StoryCard). */
+/** One item in the row: a stable key and what to draw (usually a StoryCard). */
 export interface ShelfItem {
   key: string;
   content: ReactNode;
@@ -38,15 +39,9 @@ export interface ShelfProps {
   title: string;
   eyebrow?: string;
   items: ShelfItem[];
-  /**
-   * The See all page for this shelf (S1-E5-09); left out for a shelf that never holds more
-   * than 20 (Writers to follow, S1-E5-11).
-   */
+  /** The See all page for this row (S1-E5-09); left out for a row that never holds more than 20. */
   seeAllHref?: string;
-  /**
-   * How many the whole list holds, when the caller has only its first page (S1-E5-01's shelves
-   * load 21); defaults to the number of items.
-   */
+  /** How many the whole list holds, when the caller has only its first page; defaults to the items. */
   totalCount?: number;
   /** Controls between the heading and the row, such as the home page's genre chips (LOOK-3). */
   toolbar?: ReactNode;
@@ -55,66 +50,77 @@ export interface ShelfProps {
 }
 
 /**
- * The CSS mask that fades the row's edges: fully transparent at a faded edge, solid from one fade
- * width in (boards: 140 px). An edge that doesn't fade gets a width of 0, so it stays solid.
- *
- * @param state - which edges fade and how wide
- * @returns the mask, or undefined when neither edge fades
+ * The row's grid: one column per cover, sized so 5, 4 or 2.3 covers fill the row. The variables
+ * are the design system's (.gh-shelf__row in bundle.css); Tailwind's arbitrary properties set them.
  */
-function fadeMask(state: ShelfScrollState): string | undefined {
-  const { left, right } = state.fadeEdges;
-  if (!left && !right) return undefined;
-  const leftWidth = left ? state.fadeWidth : 0;
-  const rightWidth = right ? state.fadeWidth : 0;
-  return `linear-gradient(to right, transparent 0, #000 ${leftWidth}px, #000 calc(100% - ${rightWidth}px), transparent 100%)`;
-}
+const listClasses = [
+  '[--per-page:2.3] [--gap:16px] min-[600px]:[--per-page:4] min-[600px]:[--gap:24px] min-[1024px]:[--per-page:5]',
+  'grid auto-cols-[calc((100%-(var(--per-page)-1)*var(--gap))/var(--per-page))] grid-flow-col gap-(--gap)',
+  'm-0 list-none p-0',
+].join(' ');
 
-/**
- * The faded edges as a word list for the row's data-fade attribute ("left right", "right", or
- * "none"), so tests and the browser's inspector can read them without parsing the mask.
- *
- * @returns the word list
- */
-function fadeEdgesLabel(state: ShelfScrollState): string {
-  const edges = [];
-  if (state.fadeEdges.left) edges.push('left');
-  if (state.fadeEdges.right) edges.push('right');
-  return edges.length === 0 ? 'none' : edges.join(' ');
-}
+/** The scrolling region around the list: no scroll bar, snapping to covers, smooth only with motion. */
+const regionClasses =
+  'overflow-x-auto overscroll-x-contain tmc-noscroll snap-x snap-mandatory motion-safe:scroll-smooth';
 
-/**
- * The shelf's eyebrow and heading, with the arrows beside them when the row overflows.
- *
- * @returns the header row
- */
-function ShelfHeader({
-  headingId,
-  eyebrow,
-  title,
-  arrows,
-}: {
-  headingId: string;
-  eyebrow: string | undefined;
-  title: string;
-  arrows: ReactNode;
-}) {
+/** The "View 54" link beside the arrows; its full name says which row it opens. */
+function SeeAllLink({ href, count, title }: { href: string; count: number; title: string }) {
+  const { t } = useTranslation();
   return (
-    <div className="mb-[18px] flex items-end justify-between gap-4">
-      <div>
-        {eyebrow !== undefined && <Eyebrow>{eyebrow}</Eyebrow>}
-        <h2 id={headingId} className="m-0 text-[30px] font-bold tracking-[-0.01em]">
-          {title}
-        </h2>
-      </div>
-      {arrows}
+    <a
+      href={href}
+      className="inline-flex min-h-11 items-center px-2 text-sm font-semibold text-link"
+    >
+      {t('shelf.viewCount', { count })}{' '}
+      <span className="sr-only">{t('shelf.inRow', { title })}</span>
+    </a>
+  );
+}
+
+/**
+ * The scrolling row: a focusable region (so the keyboard can scroll it) holding the list of
+ * places, each a snap point, then the View more card when there is one.
+ *
+ * @returns the region
+ */
+function ShelfRow({
+  rowRef,
+  title,
+  items,
+  viewMore,
+}: {
+  rowRef: RefObject<HTMLDivElement | null>;
+  title: string;
+  items: ShelfItem[];
+  viewMore?: ReactNode;
+}) {
+  const { t } = useTranslation();
+  return (
+    <div
+      ref={rowRef}
+      role="region"
+      tabIndex={0}
+      aria-label={t('shelf.regionLabel', { title })}
+      className={regionClasses}
+    >
+      <ul className={listClasses}>
+        {/* Each item is "relative", so nothing absolutely positioned inside a card (a
+            screen-reader-only label, a badge) can escape the row and widen the page (17 CHECK). */}
+        {items.map((item) => (
+          <li key={item.key} className="relative min-w-0 snap-start">
+            {item.content}
+          </li>
+        ))}
+        {viewMore !== undefined && <li className="relative min-w-0 snap-start">{viewMore}</li>}
+      </ul>
     </div>
   );
 }
 
 /**
- * Renders the heading, the arrows and the row.
+ * Renders the heading, View and the arrows, then the row.
  *
- * @returns the shelf section
+ * @returns the row's section
  */
 export function Shelf({
   title,
@@ -125,57 +131,47 @@ export function Shelf({
   toolbar,
   anchorId,
 }: ShelfProps) {
-  const { t } = useTranslation();
   const headingId = useId();
   const rowRef = useRef<HTMLDivElement>(null);
   const { state, scrollByPage } = useShelfScroll(rowRef);
-  const mask = fadeMask(state);
 
-  // Show the first 20; the rest are reached through the "View more" card.
+  // Show the first 20; the rest are reached through the View more card and the View link.
   const visibleItems = items.slice(0, MAXIMUM_SHELF_ITEMS);
   const listSize = totalCount ?? items.length;
-  const hasMore = listSize > MAXIMUM_SHELF_ITEMS;
+  const hasMore = listSize > MAXIMUM_SHELF_ITEMS && seeAllHref !== undefined;
 
   return (
     <section id={anchorId} aria-labelledby={headingId} className="scroll-mt-6">
-      <ShelfHeader
-        headingId={headingId}
-        eyebrow={eyebrow}
-        title={title}
-        arrows={
-          state.overflows ? (
+      <div className="mb-4 flex items-center justify-between gap-4">
+        <div className="min-w-0">
+          {eyebrow !== undefined && <Eyebrow>{eyebrow}</Eyebrow>}
+          <h2 id={headingId} className="m-0 type-heading">
+            {title}
+          </h2>
+        </div>
+        <div className="flex flex-none items-center gap-1">
+          {hasMore && <SeeAllLink href={seeAllHref} count={listSize} title={title} />}
+          {state.overflows && (
             <ShelfArrows
+              rowTitle={title}
               isBackDisabled={state.atStart}
               isForwardDisabled={state.atEnd}
               onScroll={scrollByPage}
             />
-          ) : null
+          )}
+        </div>
+      </div>
+      {toolbar !== undefined && <div className="mb-4">{toolbar}</div>}
+      <ShelfRow
+        rowRef={rowRef}
+        title={title}
+        items={visibleItems}
+        viewMore={
+          hasMore ? (
+            <ViewMoreCard href={seeAllHref} shelfTitle={title} totalCount={listSize} />
+          ) : undefined
         }
       />
-      {toolbar !== undefined && <div className="mb-[18px]">{toolbar}</div>}
-      <div
-        ref={rowRef}
-        role="region"
-        tabIndex={0}
-        aria-label={t('shelf.regionLabel', { title })}
-        className={`-mx-1 flex scroll-px-1 scroll-smooth gap-5 overflow-x-auto px-1 pt-1 pb-4 ${state.overflows ? 'tmc-noscroll' : ''}`}
-        style={{ maskImage: mask, WebkitMaskImage: mask }}
-        data-fade={fadeEdgesLabel(state)}
-        data-fade-width={state.fadeWidth}
-      >
-        {/* Each cell is "relative", so nothing absolutely positioned inside a card (a
-            screen-reader-only label, a badge) can escape the row and widen the page (17 CHECK). */}
-        {visibleItems.map((item) => (
-          <div key={item.key} className="relative flex-none">
-            {item.content}
-          </div>
-        ))}
-        {hasMore && seeAllHref !== undefined && (
-          <div className="relative flex-none">
-            <ViewMoreCard href={seeAllHref} shelfTitle={title} totalCount={listSize} />
-          </div>
-        )}
-      </div>
     </section>
   );
 }

@@ -6,7 +6,7 @@
  * after the first 16, which stay as they were.
  *
  * Where the values come from: design/boards/NewStory.dc.html (4.2), its `designs`, `pal` and
- * `art` lists, copied, not guessed. The artwork is drawn on a 100 × 160 (5:8) canvas so tiles,
+ * `art` lists, copied, not guessed. The artwork is drawn on a 100 × 160 (5:8) canvas, sliced to the 2:3 cover (CALM-4), so tiles,
  * previews and cards match exactly. One board mismatch: Waves' default accent (#6E93BF) is not
  * in the palette, so it defaults to Violet here, and the three G9c patterns' blues and greens are
  * mapped to the nearest palette colours the same way (docs/board-fixes.md).
@@ -114,11 +114,30 @@ export const coverDesigns: readonly CoverDesign[] = [
   { key: 'forestwaves', kind: 'forestwaves', background: 'sage', accent: 'ink', isNew: true },
 ];
 
+/**
+ * The three looks a drawn cover can have (bundle CALM-4, the simplified design's cover kinds):
+ * Label (the pattern with a paper label near the top), Big title (the title large on a plain
+ * colour) and Initial (one big letter in the accent, cropped by the edge). The two other kinds,
+ * Picture and Custom, are uploads, drawn by StoryCoverArt. The database column is
+ * stories.cover_style (migration …_calm4_cover_styles.sql).
+ */
+export type DrawnCoverStyle = 'label' | 'big_title' | 'initial';
+
+/**
+ * The fonts a writer can pick for the title on a cover (CALM-4): Literata (reading, the default),
+ * Funnel Display (display), Inter (sans) or Playwrite Cuba (hand). stories.cover_title_font.
+ */
+export type CoverTitleFont = 'reading' | 'display' | 'sans' | 'hand';
+
 /** A writer's drawn cover choice, as stored on the story. */
 export interface DrawnCoverChoice {
   design: CoverDesignKey;
   background: CoverColourKey;
   accent: CoverColourKey;
+  /** The look (CALM-4); Label when left out, which is how every cover looked before. */
+  style?: DrawnCoverStyle;
+  /** The title's font (CALM-4); Literata when left out. */
+  titleFont?: CoverTitleFont;
 }
 
 /**

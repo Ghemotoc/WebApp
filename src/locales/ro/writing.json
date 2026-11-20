@@ -131,7 +131,29 @@
     "uploadLater": "Vrei să folosești o imagine proprie? Salvează mai întâi povestea, apoi încarc-o din setările poveștii.",
     "uploadChosen": "Imaginea încărcată este coperta. Alege mai jos un model desenat dacă vrei să-l folosești pe acela.",
     "newDesign": "Nou",
-    "designNameNew": "{{name}}, nou"
+    "designNameNew": "{{name}}, nou",
+    "look": {
+      "styleLabel": "Aspect",
+      "fontLabel": "Fontul titlului",
+      "styles": {
+        "label": "Etichetă",
+        "big_title": "Titlu mare",
+        "initial": "Inițială",
+        "picture": "Imagine",
+        "custom": "Personalizată"
+      },
+      "fonts": {
+        "reading": "Literata",
+        "display": "Funnel Display",
+        "sans": "Inter",
+        "hand": "Playwrite Cuba"
+      },
+      "automaticNote": "O copertă automată are mereu o etichetă. Îi poți schimba fontul titlului.",
+      "saveCoverFirst": "Salvează întâi coperta, apoi alege-i aspectul.",
+      "saved": "Aspect salvat.",
+      "failed": "Nu am putut salva aspectul. Încearcă din nou.",
+      "doesNotFit": "Aspectul nu se potrivește cu această copertă. Salvează întâi coperta."
+    }
   },
   "preview": {
     "eyebrow": "Cum o vor vedea cititorii",

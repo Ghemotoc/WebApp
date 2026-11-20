@@ -2,7 +2,7 @@
  * DrawnCoverPicker: the 19 approved backgrounds as small tiles (story S1-E3-01; board
  * NewStory 4.2, "Pick a background"; bundle G9 WRITING, part c, adds three patterns).
  *
- * Board values: a grid of tiles at least 76 px wide (3 per row on phones), each a 5:8 cover with
+ * Board values: a grid of tiles at least 76 px wide (3 per row on phones), each a 2:3 cover (5:8 on the board; CALM-4) with
  * a "Title" label and its name under it; the chosen tile has a 2 px violet ring. It is a
  * radiogroup: arrow keys move between tiles, Space or Enter picks one.
  * The three designs G9c added (Arches, Rings, Forest waves) carry the liquid glass board's "New"

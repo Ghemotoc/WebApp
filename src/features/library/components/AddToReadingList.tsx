@@ -1,74 +1,70 @@
 /**
- * AddToReadingList: "Add to a list" on the story page: the reader's reading lists as checkboxes,
- * and a way to make a new list with the story already in it (bundle GAPS-6).
+ * AddToReadingList: "Add to a bookshelf" on the story page: a sheet with a row for each of the
+ * reader's bookshelves and a way to make a new one with the story already on it (bundle GAPS-6;
+ * redrawn as a sheet in bundle CALM-4).
  *
- * The button opens a small panel under itself (aria-expanded says so). Each list is a checkbox
- * that saves at once: ticked puts the story in, cleared takes it out. "New list" swaps the
- * checkboxes for the name form; the new list gets the story as soon as it exists. Nothing is read
- * until the panel opens, so the story page loads nothing extra.
+ * The rules (the simplified design, Robert, 20 Nov 2026; handover Step 2, Bookshelves and Sheets):
+ *   - One row per bookshelf, split by hairlines: its name, "7 of 10" and a + (or a tick when the
+ *     story is on it) that saves at once.
+ *   - A full bookshelf says "10 of 10 · Full" with a lock, never in red; the story can still come
+ *     off one it is on.
+ *   - "New bookshelf" is the last row; the free plan's limit is written once, at the bottom.
+ * Nothing is read until the sheet opens, so the story page loads nothing extra.
  * Who uses it: StoryReadingActions, for a signed-in reader who isn't the story's writer.
- * What it calls: useStoryListChoices → story_reading_lists(); useReadingListActions →
- * set_story_in_reading_list() and create_reading_list().
+ * What it calls: Sheet; useStoryListChoices → story_reading_lists(); useReadingListActions →
+ * set_story_in_reading_list() and create_reading_list(); useBookshelfLimits for the limits.
  */
 import { useState } from 'react';
 
+import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
+import { Sheet } from '@/components/ui/Sheet';
 
 import { readingListFailureKey, type StoryListChoice } from '../api/readingLists';
+import { useBookshelfLimits } from '../hooks/useBookshelfLimits';
 import { useReadingListActions, useStoryListChoices } from '../hooks/useReadingLists';
 import { useLibraryTranslation } from '../registerLibraryTranslations';
 
+import { BookshelfChoiceRow } from './BookshelfChoiceRow';
 import { NewReadingListForm } from './NewReadingListForm';
 
-/**
- * One list as a checkbox, with who sees the list under its name. The tick shows at once and is
- * taken back if the change doesn't save, so the box never feels stuck while the answer travels.
- */
-function ListCheckbox(props: {
-  storySlug: string;
-  choice: StoryListChoice;
-  /** Saves the change; rejects when it didn't save (the panel says why). */
+/** The rows, "New bookshelf" and the line with the limits. */
+function BookshelfRows(props: {
+  choices: StoryListChoice[];
   onChange: (listId: string, isIn: boolean) => Promise<void>;
+  onNew: () => void;
 }) {
   const { t } = useLibraryTranslation();
-  // What the reader just chose, until the saved value arrives (null: show the saved value).
-  const [chosen, setChosen] = useState<boolean | null>(null);
-  const id = `reading-list-choice-${props.storySlug}-${props.choice.id}`;
-
-  /** Shows the choice, saves it, and goes back to the saved value either way. */
-  function change(isIn: boolean) {
-    setChosen(isIn);
-    props
-      .onChange(props.choice.id, isIn)
-      .catch(() => undefined)
-      .finally(() => setChosen(null));
-  }
-
+  const limits = useBookshelfLimits();
   return (
-    <li className="flex min-h-11 items-start gap-3 py-1">
-      <input
-        id={id}
-        type="checkbox"
-        className="mt-0.5 h-5 w-5 shrink-0"
-        checked={chosen ?? props.choice.hasStory}
-        onChange={(event) => change(event.target.checked)}
-      />
-      <label htmlFor={id} className="flex min-w-0 flex-col">
-        {/* "anywhere" lets a name that is one long word wrap and also lets the panel shrink to a
-            phone's width; break-words alone kept the panel as wide as the word (break test). */}
-        <span className="font-semibold [overflow-wrap:anywhere] text-heading">
-          {props.choice.name}
-        </span>
-        <span className="text-[13px] text-meta">
-          {t(props.choice.isPublic ? 'lists.seenBy.public' : 'lists.seenBy.onlyYou')}
-        </span>
-      </label>
-    </li>
+    <>
+      <ul aria-label={t('lists.heading')} className="m-0 list-none divide-y divide-border p-0">
+        {props.choices.map((choice) => (
+          <BookshelfChoiceRow
+            key={choice.id}
+            choice={choice}
+            places={limits.books}
+            onChange={props.onChange}
+          />
+        ))}
+        {/* "New bookshelf" is always the last row (handover Step 2). */}
+        <li className="py-2">
+          <Button variant="text" onClick={props.onNew}>
+            <ActionIcon name="plus" size={16} />
+            {t('lists.new.button')}
+          </Button>
+        </li>
+      </ul>
+      {props.choices.length === 0 && <p className="m-0 text-sm text-body">{t('lists.add.none')}</p>}
+      <p className="m-0 type-meta">
+        {t('lists.add.limitNote', { shelves: limits.shelves, books: limits.books })}
+      </p>
+    </>
   );
 }
 
-/** The open panel: the checkboxes with "New list", or the name form. */
+/** The open sheet's content: the rows, or the name form for a new bookshelf. */
 function ListChoices({ storySlug }: { storySlug: string }) {
   const { t } = useLibraryTranslation();
   const { choices, loadFailed } = useStoryListChoices(storySlug, true);
@@ -78,7 +74,7 @@ function ListChoices({ storySlug }: { storySlug: string }) {
   if (loadFailed) return <Notice tone="error">{t('lists.loadFailed')}</Notice>;
   if (choices === null) return null;
 
-  /** Puts the story in a list or takes it out; says why, and rejects, when it can't. */
+  /** Puts the story on a bookshelf or takes it off; says why, and rejects, when it can't. */
   async function change(listId: string, isIn: boolean): Promise<void> {
     setErrorMessage(null);
     try {
@@ -96,7 +92,7 @@ function ListChoices({ storySlug }: { storySlug: string }) {
         onCreate={createList}
         onCreated={(listId) => {
           setIsNaming(false);
-          // A failure is already said under the checkboxes by change().
+          // A failure is already said under the rows by change().
           change(listId, true).catch(() => undefined);
         }}
         onCancel={() => setIsNaming(false)}
@@ -104,19 +100,8 @@ function ListChoices({ storySlug }: { storySlug: string }) {
     );
   }
   return (
-    <div className="flex flex-col gap-2 rounded-card border border-border bg-surface p-4">
-      {choices.length === 0 ? (
-        <p className="m-0 text-sm text-body">{t('lists.add.none')}</p>
-      ) : (
-        <ul aria-label={t('lists.heading')} className="m-0 list-none p-0">
-          {choices.map((choice) => (
-            <ListCheckbox key={choice.id} storySlug={storySlug} choice={choice} onChange={change} />
-          ))}
-        </ul>
-      )}
-      <Button variant="text" className="self-start" onClick={() => setIsNaming(true)}>
-        {t('lists.new.button')}
-      </Button>
+    <div className="flex flex-col gap-3">
+      <BookshelfRows choices={choices} onChange={change} onNew={() => setIsNaming(true)} />
       <div aria-live="polite">
         {errorMessage !== null && <Notice tone="error">{errorMessage}</Notice>}
       </div>
@@ -125,7 +110,7 @@ function ListChoices({ storySlug }: { storySlug: string }) {
 }
 
 /**
- * Renders the button and, once pressed, the panel.
+ * Renders the button and, once pressed, the sheet.
  *
  * @param props.storySlug - the story's address
  * @returns the control
@@ -133,19 +118,19 @@ function ListChoices({ storySlug }: { storySlug: string }) {
 export function AddToReadingList({ storySlug }: { storySlug: string }) {
   const { t } = useLibraryTranslation();
   const [isOpen, setIsOpen] = useState(false);
-  const panelId = `add-to-list-${storySlug}`;
   return (
     <div className="flex min-w-0 flex-col gap-2">
       <Button
         variant="secondary"
         className="self-start"
-        aria-expanded={isOpen}
-        aria-controls={panelId}
-        onClick={() => setIsOpen(!isOpen)}
+        aria-haspopup="dialog"
+        onClick={() => setIsOpen(true)}
       >
         {t('lists.add.button')}
       </Button>
-      <div id={panelId}>{isOpen && <ListChoices storySlug={storySlug} />}</div>
+      <Sheet isOpen={isOpen} onClose={() => setIsOpen(false)} title={t('lists.add.button')}>
+        {isOpen && <ListChoices storySlug={storySlug} />}
+      </Sheet>
     </div>
   );
 }
