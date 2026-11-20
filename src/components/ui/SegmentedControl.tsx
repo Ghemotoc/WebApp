@@ -105,7 +105,8 @@ export function SegmentedControl<Value extends string>({
         ref={trackRef}
         style={columns}
         className={cn(
-          'segmented-track relative gap-1 rounded-[26px] p-1',
+          // overflow-visible: the track never scrolls or shows a scrollbar (canvas v38; CALM-1b).
+          'segmented-track relative gap-1 overflow-visible rounded-[26px] p-1',
           isFullWidth ? 'grid' : 'grid sm:inline-flex sm:self-start sm:rounded-full',
         )}
       >

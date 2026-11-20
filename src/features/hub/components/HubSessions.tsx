@@ -29,7 +29,7 @@ import { useHubTranslation } from '../registerHubTranslations';
 function DateTile({ month, day }: { month: string; day: string }) {
   return (
     <div className="flex size-14 shrink-0 flex-col items-center justify-center rounded-xl border border-border bg-surface-soft">
-      <span className="text-[11px] leading-none font-bold tracking-[0.12em] text-meta uppercase">
+      <span className="text-xs leading-none font-bold tracking-[0.12em] text-meta uppercase">
         {month}
       </span>
       <span className="font-heading text-xl leading-tight font-bold text-heading">{day}</span>

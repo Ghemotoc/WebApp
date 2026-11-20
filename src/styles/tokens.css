@@ -18,6 +18,9 @@
  * #0047AB at night), the thread (--thread), the paler page mesh (--mesh-lilac, --mesh-blue,
  * --mesh-peach), the cover hairline (--cover-edge) and the corners in the @theme block at the end.
  * Every other colour and shadow already matched its design system (design/simplified-system/).
+ * CALM-1b (canvas v38, Robert via DESIGN, 20 Nov 2026, 21:03 UTC) then deepened the muted text,
+ * the link and the control edge for contrast, lifted the night warning pill's text and added the
+ * pressed quiet button's night colours (--quiet-pressed-*).
  *
  * Glass: cards (bg-surface) are see-through white over the moving colour blobs. `--surface` keeps
  * the solid colour the glass looks like on the page, because the contrast test can only measure
@@ -92,10 +95,11 @@
   /* Text. Headings the darkest plum; eyebrows black, never gold (Robert, 7 Nov 2026, 11:48). */
   --ink: #24133a;
   --heading: #2a0e33;
-  --body: #584a6e;
-  --meta: #584a6e;
+  /* Muted text and links deepened for contrast (canvas v38 contrast audit, Robert via DESIGN, 20 Nov 2026, 21:03 UTC; CALM-1b). */
+  --body: #4a3e60;
+  --meta: #4a3e60;
   --eyebrow: #141114;
-  --link: #4b4fa8;
+  --link: #3d4290;
   --link-hover: #2a0e33;
   --destructive: #a3122a;
 
@@ -154,7 +158,13 @@
   /* Lines. control-border reaches 3:1 for form fields and chips (WCAG 2.2, 1.4.11). */
   --border: #d9cdea;
   --hairline: #e8e0f3;
-  --control-border: #8e7b99;
+  /* #725F88 since CALM-1b (canvas v38): a firmer edge on fields and chips. */
+  --control-border: #725f88;
+  /* A pressed quiet button (Following) by day takes the main button's fill and text (canvas v38;
+     CALM-1b). The looks change --plum-to, and these follow it. */
+  --quiet-pressed-bg: var(--plum-to);
+  --quiet-pressed-hover: var(--plum-hover-to);
+  --quiet-pressed-text: var(--on-plum);
   --dashed-border: #b3a5c8;
   /* Focus ring: 3 px plum with a 6 px soft white halo, so it shows on any glass (handoff). */
   --focus-ring: #48125d;
@@ -301,8 +311,9 @@
   /* Text #F5F5F5, muted #CCCCCC (night accessibility review, canvas v117), headings white. */
   --ink: #f5f5f5;
   --heading: #ffffff;
-  --body: #cccccc;
-  --meta: #cccccc;
+  /* Muted text lifted to #D6D6D6 (canvas v38 contrast audit, Robert via DESIGN, 20 Nov 2026, 21:03 UTC; CALM-1b). */
+  --body: #d6d6d6;
+  --meta: #d6d6d6;
   --eyebrow: #ffffff;
   /* Links are white; in running text they keep their underline, so colour is never the only cue. */
   --link: #ffffff;
@@ -347,7 +358,13 @@
   /* Lines are white at 16%; field and chip edges stay at 3:1 or more (WCAG 2.2, 1.4.11). */
   --border: #3a3a3d;
   --hairline: #2a2a2d;
-  --control-border: #8a8a8e;
+  /* #A3A3A8 since CALM-1b (canvas v38). */
+  --control-border: #a3a3a8;
+  /* A pressed quiet button (Following) at night: a near-white fill with dark text, because a
+     cobalt fill would look like the main button (canvas v38; CALM-1b). */
+  --quiet-pressed-bg: #f5f5f5;
+  --quiet-pressed-hover: #ffffff;
+  --quiet-pressed-text: #111113;
   --dashed-border: #6e6e72;
   --focus-ring: #ffffff;
   --focus-halo: rgba(17, 17, 19, 0.9);
@@ -399,7 +416,8 @@
   --pill-sage-text: #bfe3cd;
   --pill-gold-bg: #3f2c14;
   --pill-gold-border: #8a6a33;
-  --pill-gold-text: #ffdcae;
+  /* The warning pill's text is #FFF4E4 at night (canvas v38; CALM-1b). */
+  --pill-gold-text: #fff4e4;
   --pill-sky-bg: #1e2a40;
   --pill-sky-border: #4f6a99;
   --pill-sky-text: #cfdcf2;
@@ -784,8 +802,9 @@
 
   --ink: #2b2119;
   --heading: #2b2119;
-  --body: #5c5046;
-  --meta: #5c5046;
+  /* Staff muted text #4F443A by day (canvas v38 contrast audit, Robert via DESIGN, 20 Nov 2026, 21:03 UTC; CALM-1b); staff stays flat beige. */
+  --body: #4f443a;
+  --meta: #4f443a;
   --eyebrow: #141114;
   --link: #2b2119;
   --link-hover: #000000;

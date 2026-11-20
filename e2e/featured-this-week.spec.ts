@@ -114,9 +114,9 @@ test.describe('Featured this week (S1-E5-10)', () => {
     await expect(
       band.getByRole('group', { name: /^1 din 2: Fata care repara radiouri$/ }),
     ).toBeVisible();
-    const pause = band.getByRole('button', { name: 'Oprește derularea poveștilor' });
-    await pause.click();
-    await expect(pause).toHaveAttribute('aria-pressed', 'true');
+    // The pill says what it will do: "Pause slideshow", then "Play slideshow" once paused (CALM-1b).
+    await band.getByRole('button', { name: 'Oprește prezentarea' }).click();
+    await expect(band.getByRole('button', { name: 'Pornește prezentarea' })).toBeVisible();
     await band.getByRole('button', { name: 'Povestea următoare' }).click();
     await expect(band.getByRole('group', { name: /^2 din 2: Corul din salină$/ })).toBeVisible();
     await band.getByRole('link', { name: 'Citește povestea' }).click();

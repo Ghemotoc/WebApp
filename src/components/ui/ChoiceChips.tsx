@@ -5,7 +5,7 @@
  * radiogroup of role="radio" buttons, as the boards draw language, category, status and rating
  * (NewStory 4.2, class .tmc-chip with role="radio"). Keyboard: Tab reaches the chosen chip, the
  * arrow keys move the choice, Space or Enter picks the focused one (the ARIA radio pattern).
- * Look: the same as Chip (white, #8E7B99 border, 36 px tall with a 44 px touch target; the chosen
+ * Look: the same as Chip (white, the control-border edge (#725F88 by day, CALM-1b), 36 px tall with a 44 px touch target; the chosen
  * one plum with a tick, never colour alone). A disabled choice is dashed and greyed, as on the
  * board's "coming" languages.
  * Who uses it: the new story form (language, category) and story settings; later Discover's

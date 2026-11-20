@@ -4,10 +4,12 @@
  *
  * Board values (liquid glass board Discover, bundle G7): a row under the slide with the dots on the
  * left (44 px targets, an 8 px bar that widens for the current story) and, on the right, the glass
- * Pause pill with its word, then the round previous and next buttons. Each dot is a button that
- * shows one story (marked aria-current); the arrows step through them and Pause stops the band
- * turning by itself (aria-pressed). Its visible word ("Pause") is the start of its name, so voice
- * control finds it (WCAG 2.5.3). Every button is 44 px tall (CLAUDE.md rule 9: 24 px minimum).
+ * Pause pill with its words, then the round previous and next buttons. Each dot is a button that
+ * shows one story (marked aria-current); the arrows step through them and the pill stops or starts
+ * the band turning by itself. The pill says what it will do, "Pause slideshow" or "Play
+ * slideshow" (canvas v38; Robert via DESIGN, 20 Nov 2026, 21:03 UTC; CALM-1b), and its visible
+ * words are its whole name, so voice control finds it (WCAG 2.5.3). Because the words change, it
+ * carries no aria-pressed: a toggle that also renames itself would be announced twice. Every button is 44 px tall (CLAUDE.md rule 9: 24 px minimum).
  * With one story there is nothing to step through, so the band shows no controls at all.
  * Who shows it: FeaturedBand.
  */
@@ -65,15 +67,14 @@ export function FeaturedControls(props: FeaturedControlsProps) {
         ))}
       </div>
       <div className="flex items-center gap-1.5">
+        {/* The pill names the next action: Play while paused, Pause while turning. */}
         <button
           type="button"
-          aria-label={t('featured.pause')}
-          aria-pressed={isPaused}
           onClick={props.togglePause}
           className="inline-flex h-11 cursor-pointer items-center gap-1.5 rounded-full button-glass px-4 text-sm font-semibold"
         >
           {isPaused ? <PlayIcon /> : <PauseIcon />}
-          <span aria-hidden="true">{t('featured.pauseShort')}</span>
+          {isPaused ? t('featured.play') : t('featured.pause')}
         </button>
         <button
           type="button"

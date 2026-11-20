@@ -3,7 +3,7 @@
  * canvas comment, 17 Oct 2026).
  *
  * The rule: only as wide as its longest option (never stretched), a 14 px chevron 14 px from the
- * right edge and vertically centred, 36 px right padding, a #8E7B99 border (3:1), 44 px tall and
+ * right edge and vertically centred, 36 px right padding, a control-border edge (#725F88 by day since CALM-1b, 3:1), 44 px tall and
  * a visible focus ring. The boards also draw 40 and 48 px versions; the DoD's 44 px wins
  * (docs/board-fixes.md). It is a real <select>, so keyboards and screen readers work as usual.
  *

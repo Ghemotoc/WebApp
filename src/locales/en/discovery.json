@@ -113,8 +113,8 @@
     "showSlide": "Show story {{position}}: {{title}}",
     "previous": "Previous story",
     "next": "Next story",
-    "pause": "Pause the stories",
-    "pauseShort": "Pause"
+    "pause": "Pause slideshow",
+    "play": "Play slideshow"
   },
   "writersToFollow": {
     "eyebrow": "Rising",
