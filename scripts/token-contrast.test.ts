@@ -290,18 +290,19 @@ describe('design token contrast', () => {
     expect(lifted).toEqual(['#e8e0f9', '#dfe8fa', '#fbe8e2']);
   });
 
-  it('keeps text, headings and meta lines readable on the paler mesh, in every look (CALM-1)', () => {
+  it('keeps text, headings, meta lines and links readable on the paler mesh, in every look (CALM-1)', () => {
     const looksByDay = new Map([
       ['lilac', themes.light],
       ...[...lookTokens].map(
         ([look, tokens]) => [look, resolveReferences(layered(lightTokens, tokens))] as const,
       ),
     ]);
-    // Each look's three mesh colours, then every text colour on each of them.
+    // Each look's three mesh colours, then every text colour on each of them. Links count too:
+    // Sorbet, Pistachio, Summer and Autumn draw them a shade darker than their accent for this.
     const failing = [...looksByDay].flatMap(([look, day]) =>
       ['blob-1', 'blob-2', 'blob-3'].flatMap((blob) => {
         const mesh = liftedWithWhite(day.get(blob) ?? '', 0.6);
-        return ['ink', 'heading', 'body', 'meta']
+        return ['ink', 'heading', 'body', 'meta', 'link']
           .map((text) => ({ text, ratio: contrastRatio(day.get(text) ?? '', mesh) }))
           .filter(({ ratio }) => ratio < 4.5)
           .map(({ text, ratio }) => `${look}: ${text} on ${blob}'s mesh ${ratio.toFixed(2)}`);

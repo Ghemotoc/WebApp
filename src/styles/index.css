@@ -389,8 +389,10 @@
  * grain (Robert, 7 Nov 2026, 21:46 UTC). The staff area paints its own flat beige over them
  * (data-area="staff").
  * Phones (Robert, 20 Nov 2026, 13:10 UTC: "at the moment it shows black on website on phone"):
- * the layer is as tall as the large viewport (100lvh, with 100vh for older browsers), so it also
- * fills the space behind a phone browser's toolbars as they slide away. With viewport-fit=cover in
+ * the layer is as tall as the large viewport (100lvh), so it also fills the space behind a phone
+ * browser's toolbars as they slide away. Browsers without the lvh unit get 100vh: the rule just
+ * after this one switches to 100lvh only where it is supported, because the build drops a plain
+ * second "height" line as a duplicate. With viewport-fit=cover in
  * index.html the page draws under the status bar and the home bar, and the lilac blobs in the
  * top-left and bottom-right corners give those edges the soft colour fade.
  */
@@ -401,7 +403,6 @@ body::before {
   left: 0;
   right: 0;
   height: 100vh;
-  height: 100lvh;
   z-index: -1;
   pointer-events: none;
   /* Wide screens (1024 px and wider): four large blobs, two on each side. */
@@ -442,6 +443,13 @@ body::before {
       color-mix(in srgb, var(--mesh-lilac) 10%, transparent) 80%,
       color-mix(in srgb, var(--mesh-lilac) 0%, transparent) 100%
     );
+}
+
+/* The large viewport's height wherever the browser knows the lvh unit (see the comment above). */
+@supports (height: 100lvh) {
+  body::before {
+    height: 100lvh;
+  }
 }
 
 /*

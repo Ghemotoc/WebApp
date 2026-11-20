@@ -17,6 +17,7 @@ const pageColours = {
   night: '#111113',
   sorbetDay: '#fff1ea',
   highContrastDay: '#ffffff',
+  staffDay: '#f3ece0',
 };
 
 /** A stand-in for tokens.css: --paper by day, at night, in Sorbet and in high contrast. */
@@ -25,6 +26,8 @@ const tokensStandIn = `
   [data-theme='night'] { --paper: ${pageColours.night}; }
   [data-theme='light'][data-look='sorbet'] { --paper: ${pageColours.sorbetDay}; }
   :root[data-contrast='more'][data-theme='light'] { --paper: ${pageColours.highContrastDay}; }
+  [data-area='staff'] { --paper: ${pageColours.staffDay}; }
+  [data-theme='night'] [data-area='staff'] { --paper: ${pageColours.night}; }
 `;
 
 /**
@@ -136,5 +139,43 @@ describe('the bars follow every change of the page colour', () => {
     expect(metas[0].content).toBe(pageColours.highContrastDay);
     applyHighContrast(false);
     expect(metas[0].content).toBe(pageColours.lilacDay);
+  });
+});
+
+describe("the staff area's own page colour", () => {
+  /**
+   * Adds the staff frame, which sets --paper again (StaffLayout's data-area="staff").
+   *
+   * @returns the frame, so a test can take it away again
+   */
+  function addStaffFrame(): HTMLDivElement {
+    const frame = document.createElement('div');
+    frame.dataset.area = 'staff';
+    document.body.append(frame);
+    return frame;
+  }
+
+  it("gives both bars the staff area's beige while the staff frame is on the page", () => {
+    const frame = addStaffFrame();
+    expect(matchBrowserBarsToPage()).toBe(pageColours.staffDay);
+    expect(metas.map((meta) => meta.content)).toEqual([pageColours.staffDay, pageColours.staffDay]);
+    frame.remove();
+  });
+
+  it('follows night mode inside the staff area', () => {
+    const frame = addStaffFrame();
+    applyTheme('night');
+    expect(metas[0].content).toBe(pageColours.night);
+    applyTheme('light');
+    expect(metas[0].content).toBe(pageColours.staffDay);
+    frame.remove();
+  });
+
+  it("goes back to the member's page colour once the staff frame has gone", () => {
+    const frame = addStaffFrame();
+    matchBrowserBarsToPage();
+    frame.remove();
+    expect(matchBrowserBarsToPage()).toBe(pageColours.lilacDay);
+    expect(metas[1].content).toBe(pageColours.lilacDay);
   });
 });

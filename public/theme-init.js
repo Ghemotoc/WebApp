@@ -9,8 +9,8 @@
  * strict Content Security Policy can allow it later without exceptions (architecture 1.9).
  * It repeats the first steps of src/lib/theme.ts, src/lib/looks.ts, src/lib/motion.ts,
  * src/lib/highContrast.ts and src/lib/browserBarColour.ts; keep the storage keys, the attributes,
- * the media queries, the list of looks, the theme-color meta and the --paper token the same in all
- * six files.
+ * the media queries, the list of looks, the theme-color meta, the staff area's selector and the
+ * --paper token the same in all six files.
  * After this, React takes over (src/features/theme/hooks/useAccountAppearance.ts).
  */
 (function chooseThemeBeforeFirstPaint() {
@@ -110,11 +110,13 @@
   const metas = document.querySelectorAll('meta[name="theme-color"]');
   if (metas.length === 0) return;
 
-  // Step 1: the page colour now in force: --paper on <html> once tokens.css has loaded; before
-  // that, the plain day or night page colour for the theme chosen above.
+  // Step 1: the page colour now in force: --paper once tokens.css has loaded, read from the staff
+  // area's frame on a staff page (it paints its own colours) and from <html> everywhere else;
+  // before that, the plain day or night page colour for the theme chosen above.
   function pageColourNow() {
+    const staffArea = document.querySelector('[data-area="staff"]');
     const fromTokens = window
-      .getComputedStyle(document.documentElement)
+      .getComputedStyle(staffArea || document.documentElement)
       .getPropertyValue('--paper')
       .trim();
     if (fromTokens !== '') return fromTokens;

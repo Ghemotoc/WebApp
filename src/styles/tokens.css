@@ -456,11 +456,14 @@
  * because night mode is the same monochrome set with every look. Lilac mist is the :root set above. A look
  * changes the page colour, the text colours, the three blobs and its one accent, which colours
  * main buttons, chips that are on, links, focus rings, progress bars and the logo (Robert, 7 Nov
- * 2026, 17:52 and 18:44). White on every accent and every accent on its page pass AA (checked by
- * scripts/token-contrast.test.ts). The staff area ignores looks: its own block sets every one of
- * these again. --surface is the solid colour glass looks like on that page (white at 50%).
- * Summer's and Autumn's dark ends are the canvas kit's --a2 values (#3D2C00, #232D12; DESIGN
- * thread, 8 Nov 2026).
+ * 2026, 17:52 and 18:44). One exception: Sorbet, Pistachio, Summer and Autumn draw links a
+ * shade darker than their accent, because the accent itself reaches only 3.8 to 4.3:1 on the
+ * centre of the paler mesh (bundle CALM-1; a design deviation, listed in docs/board-fixes.md).
+ * White on every accent and every accent on its page pass AA, and links reach 4.5:1 on every mesh
+ * colour (checked by scripts/token-contrast.test.ts). The staff area ignores looks: its own block
+ * sets every one of these again. --surface is the solid colour glass looks like on that page
+ * (white at 50%). Summer's and Autumn's dark ends are the canvas kit's --a2 values (#3D2C00,
+ * #232D12; DESIGN thread, 8 Nov 2026).
  */
 
 /*
@@ -509,7 +512,8 @@
   --plum-hover-to: #813f36;
   --primary: #c2412d;
   --chip-on: #c2412d;
-  --link: #c2412d;
+  /* A shade darker than the accent: 4.5:1 on the centre of the paler mesh (CALM-1). */
+  --link: #b83e2b;
   --link-hover: #6b1d12;
   --focus-ring: #c2412d;
   --progress-from: #6b1d12;
@@ -565,7 +569,8 @@
   --plum-hover-to: #41582f;
   --primary: #4d7c0f;
   --chip-on: #4d7c0f;
-  --link: #4d7c0f;
+  /* A shade darker than the accent: 4.5:1 on the centre of the paler mesh (CALM-1). */
+  --link: #48730e;
   --link-hover: #1f3a0a;
   --focus-ring: #4d7c0f;
   --progress-from: #1f3a0a;
@@ -705,7 +710,8 @@
   --plum-hover-to: #5a4c26;
   --primary: #946b00;
   --chip-on: #946b00;
-  --link: #946b00;
+  /* A shade darker than the accent: 4.5:1 on the centre of the paler mesh (CALM-1). */
+  --link: #835e00;
   --link-hover: #3d2c00;
   --focus-ring: #946b00;
   --progress-from: #3d2c00;
@@ -733,7 +739,8 @@
   --plum-hover-to: #444c36;
   --primary: #556b2f;
   --chip-on: #556b2f;
-  --link: #556b2f;
+  /* A shade darker than the accent: 4.5:1 on the centre of the paler mesh (CALM-1). */
+  --link: #50652d;
   --link-hover: #232d12;
   --focus-ring: #556b2f;
   --progress-from: #232d12;

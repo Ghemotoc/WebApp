@@ -10,10 +10,16 @@
  * or high contrast changes, both metas are set to --paper as tokens.css works it out on <html>:
  * a reader in night mode on a light phone then gets #111113, and Sorbet gets its own colour.
  *
+ * The staff area paints its own flat beige (or its own night and high contrast colours) over the
+ * member's page: its frame carries data-area="staff" and sets --paper again (tokens.css). While
+ * that frame is on the page, its --paper is the one the bars take.
+ *
  * Who calls it: applyTheme (src/lib/theme.ts), applyLook (src/lib/looks.ts) and applyHighContrast
- * (src/lib/highContrast.ts), each right after it changes its attribute on <html>.
- * public/theme-init.js repeats this before the page draws (it can't import modules); keep the
- * meta's name and the token name the same in both files.
+ * (src/lib/highContrast.ts), each right after it changes its attribute on <html>, and
+ * StaffBrowserBars (src/features/staff/components/StaffBrowserBars.tsx) when the staff frame
+ * appears and goes. public/theme-init.js repeats this before the page draws (it can't import
+ * modules); keep the meta's name, the staff area's selector and the token name the same in both
+ * files.
  * What it changes: the content of every <meta name="theme-color"> in the page's <head>.
  */
 
@@ -23,15 +29,28 @@ export const THEME_COLOUR_META_SELECTOR = 'meta[name="theme-color"]';
 /** The page colour token in src/styles/tokens.css. */
 export const PAGE_COLOUR_TOKEN = '--paper';
 
+/** The staff area's frame, which paints its own page colour over the member's (StaffLayout). */
+export const STAFF_AREA_SELECTOR = '[data-area="staff"]';
+
 /**
- * Reads the page colour now in force: --paper on <html>, as tokens.css works it out for the
- * theme, the look and high contrast on show.
+ * Finds the element whose --paper paints the page now.
  *
- * @param root - the element to read it from; <html> unless a test passes another
+ * @returns the staff area's frame while a staff page is on screen, <html> everywhere else
+ */
+function pageColourElement(): HTMLElement {
+  return document.querySelector<HTMLElement>(STAFF_AREA_SELECTOR) ?? document.documentElement;
+}
+
+/**
+ * Reads the page colour now in force: --paper as tokens.css works it out for the theme, the look
+ * and high contrast on show, in the staff area's own colours on a staff page.
+ *
+ * @param root - the element to read it from; the staff frame or <html> unless a test passes
+ *   another
  * @returns the colour as written in tokens.css (for example "#f3eefb"), or an empty string while
  *   the style sheet has not loaded yet
  */
-export function readPageColour(root: HTMLElement = document.documentElement): string {
+export function readPageColour(root: HTMLElement = pageColourElement()): string {
   return getComputedStyle(root).getPropertyValue(PAGE_COLOUR_TOKEN).trim();
 }
 
