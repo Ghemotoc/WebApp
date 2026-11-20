@@ -28,7 +28,7 @@ import { StorySwitch } from './StorySwitch';
 export interface StoryStatusSectionProps {
   answers: StoryAnswers;
   set: SetStoryAnswer;
-  /** When the story's saved pause of new comments ends (CALM-8), or null; the new story form has none. */
+  /** When the story's saved pause of new comments ends (CALM-8), or null when none was set. */
   pausedUntil?: string | null;
 }
 

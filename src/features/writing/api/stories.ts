@@ -74,7 +74,7 @@ export interface MyStory {
   /**
    * When the writer's pause of new comments ends (CALM-8; IDEA-20261109-8), or null when none was
    * set. It may already have passed for a few minutes before end_comment_pauses() clears it, so
-   * screens check it against the time now (lib/commentPause.ts).
+   * screens check it against the time now (runningPauseEnd() in src/lib/comment-pause.ts).
    */
   commentsPausedUntil: string | null;
   /** Whether readers may make quote cards and passage links from its chapters (S1-E4-07, S1-E4-11). */
