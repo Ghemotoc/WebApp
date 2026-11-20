@@ -175,7 +175,7 @@ test.describe('pause new comments for a while (CALM-8)', () => {
       where id = '${storyId}';
       select public.end_comment_pauses();`);
     const page = await openAs(browser, 'adult_writer', '/notifications');
-    await expect(page.getByText(/new comments are open again on “.+”\./)).toBeVisible();
+    await expect(page.getByText(/Story: new comments are open again on “.+”\./)).toBeVisible();
     await page.context().close();
   });
 });

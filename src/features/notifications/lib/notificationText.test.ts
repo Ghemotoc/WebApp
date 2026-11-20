@@ -671,7 +671,7 @@ describe('notificationText', () => {
     };
     const text = notificationText(englishT(), resumedRow, 'corbu');
     expect(`${text.who} ${text.what}`).toBe(
-      'Reminder: new comments are open again on “Stația meteo”.',
+      'Story: new comments are open again on “Stația meteo”.',
     );
     expect(text.quote).toBeNull();
     expect(text.actionLabel).toBe('Open the story');

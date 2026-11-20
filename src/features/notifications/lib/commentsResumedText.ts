@@ -25,7 +25,8 @@ import type { NotificationText } from './notificationText';
 export function commentsResumedText(t: TFunction, notification: AppNotification): NotificationText {
   const story = notification.story;
   return {
-    who: t('who.reminder'),
+    // Not a reminder: the note says what happened to the writer's story, so it leads with Story.
+    who: t('who.story'),
     what: t('what.commentsResumed', { story: story?.title ?? '' }),
     quote: null,
     grouped: null,
