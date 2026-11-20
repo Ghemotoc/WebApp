@@ -135,6 +135,9 @@ const interfacePairs: ContrastPair[] = [
     usedFor: 'focus ring on cards',
   },
   { foreground: 'primary', background: 'paper', minimumRatio: 3, usedFor: 'primary button shape' },
+  // The thread: the 2px line for progress, the current tab, the unread row and the current
+  // chapter dot (the simplified design, Robert, 20 Nov 2026; CALM-1).
+  { foreground: 'thread', background: 'paper', minimumRatio: 3, usedFor: 'the thread' },
   // Story Atlas relationship lines on the map's card (S1-E17-15).
   ...['family', 'love', 'lineage', 'allies', 'conflict', 'other'].map((category): ContrastPair => ({
     foreground: `atlas-line-${category}`,

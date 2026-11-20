@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>New: Write</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/ghemotoc/tokens.css">
+<link rel="stylesheet" href="ds/ghemotoc/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@400;600;700&amp;family=Inter:wght@400;600;700&amp;family=Literata:ital,wght@0,400;0,600;1,400&amp;display=swap">
+<style>
+body{margin:0;background:var(--surface-page)}
+a{color:var(--ink-link)}a:hover{color:var(--ink-accent)}
+/* A pale Lilac mist mesh behind the page: four large soft blobs with smooth edges, so the glass reads as glass without bands; the night sky at night. */
+.pg{min-height:100vh;box-sizing:border-box;padding:24px clamp(16px,4.5vw,64px) 0;color:var(--ink);font-family:var(--font-sans);background:radial-gradient(1100px 800px at 8% 0%,rgb(232 224 249 / 1) 0%,rgb(232 224 249 / 0.9) 20%,rgb(232 224 249 / 0.65) 40%,rgb(232 224 249 / 0.35) 60%,rgb(232 224 249 / 0.1) 80%,rgb(232 224 249 / 0) 100%),radial-gradient(1000px 800px at 96% 14%,rgb(223 232 250 / 1) 0%,rgb(223 232 250 / 0.9) 20%,rgb(223 232 250 / 0.65) 40%,rgb(223 232 250 / 0.35) 60%,rgb(223 232 250 / 0.1) 80%,rgb(223 232 250 / 0) 100%),radial-gradient(1100px 900px at 4% 48%,rgb(251 232 226 / 1) 0%,rgb(251 232 226 / 0.9) 20%,rgb(251 232 226 / 0.65) 40%,rgb(251 232 226 / 0.35) 60%,rgb(251 232 226 / 0.1) 80%,rgb(251 232 226 / 0) 100%),radial-gradient(1000px 900px at 94% 80%,rgb(232 224 249 / 1) 0%,rgb(232 224 249 / 0.9) 20%,rgb(232 224 249 / 0.65) 40%,rgb(232 224 249 / 0.35) 60%,rgb(232 224 249 / 0.1) 80%,rgb(232 224 249 / 0) 100%),var(--surface-page)}
+.pg[data-theme="night"]{background:#111113 url(nightbg/night-galaxy-desktop.svg) center top/cover no-repeat}
+.pg main{max-width:1280px;margin:0 auto;padding:40px 0 64px;display:flex;flex-direction:column;gap:56px}
+.plain{list-style:none;margin:0;padding:0}
+.hero{border-radius:var(--radius-card);padding:32px 40px}
+.stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:24px;margin:24px 0 0;padding:0;list-style:none}
+.stats li{display:flex;flex-direction:column;gap:2px;padding-top:12px;border-top:2px solid var(--thread)}
+.stats b{font-family:var(--font-display);font-size:32px;line-height:38px;font-weight:700;color:var(--ink-heading)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:64px;align-items:start}
+.rows>li{display:flex;align-items:center;gap:16px;padding:14px 0;border-top:1px solid var(--line-hairline)}
+.rows .gh-rows__text{flex:1;min-width:0}
+.fhead{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.ffig{margin:20px 0 0}
+.fplot{position:relative}
+.fchart{display:block;width:100%;height:auto;overflow:visible}
+.fchart .grid line{stroke:var(--line-hairline);stroke-width:1}
+.fchart .ax text{fill:var(--ink-muted);font:400 12px/1 var(--font-sans)}
+.fchart .area{fill:var(--thread);fill-opacity:0.1;stroke:none}
+.fchart .line{fill:none;stroke:var(--thread);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.fchart .end{fill:var(--thread);stroke:var(--surface-page);stroke-width:2}
+.fchart .endlabel{fill:var(--ink-heading);font:600 13px/1 var(--font-sans)}
+.hits{position:absolute;inset:0;margin:0;padding:0;list-style:none}
+.hits li{position:absolute;top:0;bottom:0;width:7.2%;transform:translateX(-50%)}
+.hits li::before{content:"";position:absolute;left:50%;top:6%;bottom:0;border-left:1px solid var(--line);opacity:0}
+.hits .tip{position:absolute;left:50%;top:calc(var(--y) - 64px);transform:translateX(-50%);padding:6px 10px;border-radius:var(--radius-field);background:var(--surface-solid);box-shadow:var(--shadow-raised);font:400 13px/18px var(--font-sans);color:var(--ink);white-space:nowrap;opacity:0;pointer-events:none}
+.hits .tip b{font-weight:600;color:var(--ink-heading)}
+.hits li:hover::before,.hits li:hover .tip{opacity:1}
+.story{display:grid;grid-template-columns:120px minmax(0,1fr);gap:28px;align-items:start;padding-top:24px;border-top:1px solid var(--line-hairline)}
+table.ch{width:100%;border-collapse:collapse;margin-top:12px;font-size:15px;line-height:20px}
+.ch th{padding:8px 12px 8px 0;font:600 13px/18px var(--font-sans);color:var(--ink-muted);text-align:left;border-bottom:1px solid var(--line)}
+.ch td{padding:12px 12px 12px 0;border-bottom:1px solid var(--line-hairline);vertical-align:top}
+.ch .num{text-align:right;font-variant-numeric:tabular-nums}
+.ch td:first-child{font-weight:600;color:var(--ink-heading)}
+.ch .sub{display:block;font-weight:400;font-size:13px;line-height:18px;color:var(--ink-muted)}
+.lines{margin:8px 0 0;padding:0;list-style:none}
+.lines li{padding:10px 0;border-top:1px solid var(--line-hairline)}
+.lines q{font-family:var(--font-reading);font-style:italic;font-size:17px;line-height:28px;color:var(--ink)}
+.av{background:var(--surface-tint);color:var(--ink-heading)}
+.foot{max-width:1280px;margin:0 auto;padding:40px 0 32px;border-top:1px solid var(--line)}
+.foot ul{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:2px}
+.foot li a{display:inline-flex;min-height:32px;align-items:center;color:var(--ink);text-decoration:none;font-size:15px}
+.foot li a:hover{text-decoration:underline}
+@media (max-width: 900px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.two,.story{grid-template-columns:minmax(0,1fr)}}
+</style>
+</helmet>
+<div class="pg" data-theme="{{theme}}">
+<a class="gh-sr" href="#main">Skip to content</a>
+<header class="gh-topbar gh-glass">
+<a class="gh-brand" href="#" aria-label="ghemotoc, Home"><img class="gh-logo-day" src="/_blob/8b27bf58143f9e8c418eedbd47b0130f" alt=""><img class="gh-logo-night" src="/_blob/c9011ab65e50ffe835eb9e127f69bca0" alt="">ghemotoc</a>
+<nav aria-label="Main"><div class="gh-track"><a href="#">Home</a><a href="#">Read</a><a href="#">Library</a><a href="#">Together</a></div></nav>
+<div class="gh-topbar__end">
+<a class="gh-btn gh-btn--quiet" href="#" aria-current="page"><svg class="gh-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Write</a>
+<button type="button" class="gh-iconbtn" aria-label="Search stories, writers and Together"><svg class="gh-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+<button type="button" class="gh-iconbtn" aria-label="Messages, 2 new"><svg class="gh-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8"/><path d="M8 13h5"/></svg><span class="gh-dot"></span></button>
+<button type="button" class="gh-iconbtn" aria-label="Notifications, 2 new"><svg class="gh-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="gh-dot"></span></button>
+<button type="button" class="gh-iconbtn" aria-label="Account and settings"><img class="gh-avatar" src="avatars/lia.svg" alt=""></button>
+</div>
+</header>
+<main id="main">
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 32px">
+<div>
+<h1 class="display" style="margin: 0">Write</h1>
+<p class="body" style="margin: 8px 0 0; max-width: 62ch">See how each story is doing, pick up drafts and read what readers said.</p>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 10px"><a class="gh-btn gh-btn--main" href="#">Continue draft</a><a class="gh-btn gh-btn--quiet" href="#">New story</a></div>
+</div>
+
+<section class="hero gh-glass" aria-labelledby="respond-h">
+<div class="gh-shelf__head" style="margin: 0">
+<h2 class="heading" id="respond-h" style="margin: 0">How readers respond</h2>
+<div class="gh-shelf__tools"><div class="gh-segment" role="group" aria-label="Time range"><button type="button" aria-pressed="false">Last 30 days</button><button type="button" aria-pressed="true">All time</button></div></div>
+</div>
+<ul class="stats">
+<li><span class="label">Reads</span><b>1,431</b><span class="meta">Since chapter 1 on 5 September</span></li>
+<li><span class="label">Read-through</span><b>61%</b><span class="meta">Share of readers who got to the end</span></li>
+<li><span class="label">Likes</span><b>201</b><span class="meta">Across 6 chapters</span></li>
+<li><span class="label">Comments</span><b>72</b><span class="meta">Including 18 paragraph comments</span></li>
+<li><span class="label">Followers</span><b>147</b><span class="meta">People who follow you</span></li>
+</ul>
+<p class="meta" style="margin: 20px 0 0; max-width: 90ch">These are totals only. You never see which readers opened a chapter. Any number that comes from fewer than 5 readers shows as “fewer than 5”, so nobody can be picked out.</p>
+</section>
+
+<div class="two">
+<section aria-labelledby="followers-h">
+<div class="fhead">
+<div>
+<h2 class="heading" id="followers-h" style="margin: 0">147 followers</h2>
+<p class="gh-metaline" style="margin-top: 4px"><span class="gh-state">+21 this week</span><span>Followers over time</span></p>
+</div>
+<label class="gh-sr" for="followers-range">Time range</label>
+<span class="gh-select"><select id="followers-range"><option>Last 7 days</option><option>Last 30 days</option><option selected>Last 90 days</option><option>Last 365 days</option></select><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></span>
+</div>
+<figure class="ffig">
+<div class="fplot">
+<svg class="fchart" viewBox="0 0 608 200" aria-hidden="true" focusable="false"><g class="grid"><line x1="36" x2="564" y1="172.0" y2="172.0"/><line x1="36" x2="564" y1="118.67" y2="118.67"/><line x1="36" x2="564" y1="65.33" y2="65.33"/><line x1="36" x2="564" y1="12.0" y2="12.0"/></g><g class="ax"><text x="28" y="176.0" text-anchor="end">0</text><text x="28" y="122.67" text-anchor="end">50</text><text x="28" y="69.33" text-anchor="end">100</text><text x="28" y="16.0" text-anchor="end">150</text><text x="36" y="194" text-anchor="middle">11 Aug</text><text x="212" y="194" text-anchor="middle">8 Sep</text><text x="388" y="194" text-anchor="middle">6 Oct</text><text x="564" y="194" text-anchor="middle">3 Nov</text></g><path class="area" d="M36,172 L36,143.2 L80,140.0 L124,135.7 L168,129.3 L212,124.0 L256,116.5 L300,106.9 L344,98.4 L388,85.6 L432,73.9 L476,57.9 L520,37.6 L564,15.2 L564,172 Z"/><path class="line" d="M36,143.2 L80,140.0 L124,135.7 L168,129.3 L212,124.0 L256,116.5 L300,106.9 L344,98.4 L388,85.6 L432,73.9 L476,57.9 L520,37.6 L564,15.2"/><circle class="end" cx="564" cy="15.2" r="4"/><text class="endlabel" x="574" y="19.2">147</text></svg>
+<ol class="hits" aria-hidden="true"><li style="left: 5.921%; --y: 71.6%"><span class="tip"><b>27</b> followers<br>week of 11 Aug · +2</span></li><li style="left: 13.158%; --y: 70.0%"><span class="tip"><b>30</b> followers<br>week of 18 Aug · +3</span></li><li style="left: 20.395%; --y: 67.85%"><span class="tip"><b>34</b> followers<br>week of 25 Aug · +4</span></li><li style="left: 27.632%; --y: 64.65%"><span class="tip"><b>40</b> followers<br>week of 1 Sep · +6</span></li><li style="left: 34.868%; --y: 62.0%"><span class="tip"><b>45</b> followers<br>week of 8 Sep · +5</span></li><li style="left: 42.105%; --y: 58.25%"><span class="tip"><b>52</b> followers<br>week of 15 Sep · +7</span></li><li style="left: 49.342%; --y: 53.45%"><span class="tip"><b>61</b> followers<br>week of 22 Sep · +9</span></li><li style="left: 56.579%; --y: 49.2%"><span class="tip"><b>69</b> followers<br>week of 29 Sep · +8</span></li><li style="left: 63.816%; --y: 42.8%"><span class="tip"><b>81</b> followers<br>week of 6 Oct · +12</span></li><li style="left: 71.053%; --y: 36.95%"><span class="tip"><b>92</b> followers<br>week of 13 Oct · +11</span></li><li style="left: 78.289%; --y: 28.95%"><span class="tip"><b>107</b> followers<br>week of 20 Oct · +15</span></li><li style="left: 85.526%; --y: 18.8%"><span class="tip"><b>126</b> followers<br>week of 27 Oct · +19</span></li><li style="left: 92.763%; --y: 7.6%"><span class="tip"><b>147</b> followers<br>week of 3 Nov · +21</span></li></ol>
+</div>
+<table class="gh-sr"><caption>Followers at the end of each week, last 90 days</caption><thead><tr><th scope="col">Week of</th><th scope="col">Followers</th><th scope="col">New that week</th></tr></thead><tbody><tr><th scope="row">11 Aug</th><td>27</td><td>2</td></tr><tr><th scope="row">18 Aug</th><td>30</td><td>3</td></tr><tr><th scope="row">25 Aug</th><td>34</td><td>4</td></tr><tr><th scope="row">1 Sep</th><td>40</td><td>6</td></tr><tr><th scope="row">8 Sep</th><td>45</td><td>5</td></tr><tr><th scope="row">15 Sep</th><td>52</td><td>7</td></tr><tr><th scope="row">22 Sep</th><td>61</td><td>9</td></tr><tr><th scope="row">29 Sep</th><td>69</td><td>8</td></tr><tr><th scope="row">6 Oct</th><td>81</td><td>12</td></tr><tr><th scope="row">13 Oct</th><td>92</td><td>11</td></tr><tr><th scope="row">20 Oct</th><td>107</td><td>15</td></tr><tr><th scope="row">27 Oct</th><td>126</td><td>19</td></tr><tr><th scope="row">3 Nov</th><td>147</td><td>21</td></tr></tbody></table>
+<figcaption class="meta">Followers at the end of each week. Weeks start on Monday.</figcaption>
+</figure>
+</section>
+
+<section aria-labelledby="unpublished-h">
+<h2 class="heading" id="unpublished-h" style="margin: 0 0 8px">Not published yet</h2>
+<ul class="plain rows">
+<li><span class="gh-rows__text"><span class="gh-metaline"><span class="gh-state">Draft</span><span>The Weather Station</span></span><a class="gh-rows__title" href="#">Chapter one, untitled</a><span class="gh-metaline"><span>1,240 words</span><span>saved 2 min ago</span></span></span><a class="gh-btn gh-btn--quiet" href="#">Edit</a></li>
+<li><span class="gh-rows__text"><span class="gh-metaline"><span class="gh-state">Draft</span><span>The Girl Who Fixed Radios</span></span><a class="gh-rows__title" href="#">Chapter 7: Saturday at the Shop</a><span class="gh-metaline"><span>228 words</span><span>saved yesterday</span></span></span><a class="gh-btn gh-btn--quiet" href="#">Edit</a></li>
+<li><span class="gh-rows__text"><span class="gh-metaline"><span class="gh-state">Scheduled</span><span>The Girl Who Fixed Radios</span></span><a class="gh-rows__title" href="#">Chapter 8: The Radio from Câmpina</a><span class="gh-metaline"><span>Publishes Saturday 24 October, 18:00 Romania time</span></span></span><a class="gh-btn gh-btn--quiet" href="#">Reschedule</a></li>
+</ul>
+</section>
+</div>
+
+<section aria-labelledby="stories-h" style="display: flex; flex-direction: column; gap: 24px">
+<div class="gh-shelf__head" style="margin: 0">
+<h2 class="heading" id="stories-h" style="margin: 0">Story by story</h2>
+<div class="gh-shelf__tools"><div class="gh-segment" role="group" aria-label="Filter stories"><button type="button" aria-pressed="true">Every story</button><button type="button" aria-pressed="false">Ongoing</button><button type="button" aria-pressed="false">Completed</button></div></div>
+</div>
+
+<article class="story" aria-labelledby="radios-h">
+<span class="gh-book gh-book--sage gh-acc-gold" aria-hidden="true"><span class="gh-book__label" aria-hidden="true" style="--fit:0.821"><span class="gh-book__title">The Girl Who Fixed Radios</span><span class="gh-book__rule"></span><span class="gh-book__by">lia.writes</span></span></span>
+<div style="min-width: 0">
+<h3 class="subheading" id="radios-h" style="margin: 0">The Girl Who Fixed Radios</h3>
+<p class="gh-metaline" style="margin-top: 4px"><span>Fiction</span><span class="gh-state">Ongoing</span><span>No AI</span><span>6 chapters published</span><span>last updated 10 October</span></p>
+<p class="body" style="margin: 10px 0 0; max-width: 72ch">Ana spends her summer in her grandfather’s repair shop in Ploiești. One old radio keeps picking up a station that stopped broadcasting in 1989, and tonight it said her name.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px"><a class="gh-btn gh-btn--quiet" href="#">Manage chapters</a><a class="gh-btn gh-btn--quiet" href="#">Story settings</a><a class="gh-btn gh-btn--text" href="#">See story page</a></div>
+<table class="ch">
+<caption class="gh-sr">Chapters of The Girl Who Fixed Radios</caption>
+<thead><tr><th scope="col">Chapter</th><th scope="col">Status</th><th scope="col" class="num">Reads</th><th scope="col" class="num">Read-through</th><th scope="col" class="num">Likes</th><th scope="col" class="num">Comments</th></tr></thead>
+<tbody>
+<tr><td>1. Grandad’s Repair Shop</td><td>Published<span class="sub">5 Sep</span></td><td class="num">412</td><td class="num">78%</td><td class="num">58</td><td class="num">22</td></tr>
+<tr><td>2. The Radio on the Top Shelf</td><td>Published<span class="sub">12 Sep</span></td><td class="num">296</td><td class="num">71%</td><td class="num">41</td><td class="num">15</td></tr>
+<tr><td>3. Static After Midnight</td><td>Published<span class="sub">19 Sep</span></td><td class="num">251</td><td class="num">69%</td><td class="num">37</td><td class="num">12</td></tr>
+<tr><td>4. The Soldering Iron</td><td>Published<span class="sub">26 Sep · edited 12 Oct</span></td><td class="num">210</td><td class="num">66%</td><td class="num">30</td><td class="num">11</td></tr>
+<tr><td>5. The Station from 1989</td><td>Published<span class="sub">3 Oct</span></td><td class="num">188</td><td class="num">64%</td><td class="num">26</td><td class="num">9</td></tr>
+<tr><td>6. Ana, Are You There?</td><td>Published<span class="sub">10 Oct</span></td><td class="num">74</td><td class="num">58%</td><td class="num">9</td><td class="num">fewer than 5</td></tr>
+<tr><td>7. Saturday at the Shop</td><td><span class="gh-state">Draft</span><span class="sub">saved yesterday</span></td><td class="num" colspan="4"><span class="meta">not published</span></td></tr>
+<tr><td>8. The Radio from Câmpina</td><td><span class="gh-state">Scheduled</span><span class="sub">24 Oct, 18:00</span></td><td class="num" colspan="4"><span class="meta">not published</span></td></tr>
+</tbody>
+</table>
+<p class="meta" style="margin: 10px 0 0">Per chapter, all time. Read-through is the share of readers who got to the end of the chapter.</p>
+</div>
+</article>
+
+<article class="story" aria-labelledby="weather-h">
+<span class="gh-book gh-book--waves gh-acc-plum" aria-hidden="true"><span class="gh-book__label" aria-hidden="true" style="--fit:0.821"><span class="gh-book__title">The Weather Station</span><span class="gh-book__rule"></span><span class="gh-book__by">lia.writes</span></span></span>
+<div style="min-width: 0">
+<h3 class="subheading" id="weather-h" style="margin: 0">The Weather Station</h3>
+<p class="gh-metaline" style="margin-top: 4px"><span class="gh-state">Not published yet</span><span>Only you</span></p>
+<p class="body" style="margin: 10px 0 0; max-width: 72ch">My grandmother has written down the weather every morning since 1971. The day she went into hospital, I found she had already filled in the rest of the week.</p>
+<p class="meta" style="margin: 10px 0 0">Only you can see this story until you publish its first chapter. No numbers yet.</p>
+<a class="gh-btn gh-btn--quiet" href="#" style="margin-top: 14px">Write chapter one</a>
+</div>
+</article>
+</section>
+
+<div class="two">
+<section aria-labelledby="lines-h">
+<p class="gh-metaline"><span>Lines and stops</span></p>
+<h2 class="heading" id="lines-h" style="margin: 2px 0 0">Chapter 6: Ana, Are You There?</h2>
+<h3 class="subheading" style="margin: 20px 0 0">Most-loved lines</h3>
+<ul class="lines">
+<li><q>Ana, are you there?</q> <span class="meta">· 31 likes</span></li>
+<li><q>The static sounded like rain on a tin roof.</q> <span class="meta">· 12 likes</span></li>
+</ul>
+<h3 class="subheading" style="margin: 20px 0 6px">Where readers stop</h3>
+<p class="body" style="margin: 0">Most readers who stop leave around paragraph 14, just after the shop scene.</p>
+<p class="meta" style="margin: 6px 0 0">Counted only when 5 or more readers stop at the same place.</p>
+</section>
+
+<section aria-labelledby="latest-h">
+<div class="gh-shelf__head" style="margin-bottom: 4px"><h2 class="heading" id="latest-h" style="margin: 0">Latest comments</h2><div class="gh-shelf__tools"><a class="gh-btn gh-btn--text" href="#">View 72 comments</a></div></div>
+<ul class="plain rows">
+<li style="align-items: flex-start"><img class="gh-avatar av" src="avatars/inkwolf.svg" alt=""><span class="gh-rows__text"><span class="gh-metaline"><span><a href="#" style="font-weight: 600; color: var(--ink-heading); text-decoration: none">inkwolf</a></span><span>on chapter 6</span><span>2 hours ago</span></span><span class="body">ok the radio saying “Ana, are you there?” at the very end gave me actual chills</span></span><a class="gh-btn gh-btn--text" href="#">Reply</a></li>
+<li style="align-items: flex-start"><img class="gh-avatar av" src="avatars/ilinca.r.svg" alt=""><span class="gh-rows__text"><span class="gh-metaline"><span><a href="#" style="font-weight: 600; color: var(--ink-heading); text-decoration: none">ilinca.r</a></span><span>on chapter 6</span><span>yesterday</span></span><span class="body">Please tell me we find out who was on that station in 1989. I need to know.</span></span><a class="gh-btn gh-btn--text" href="#">Reply</a></li>
+<li style="align-items: flex-start"><span class="gh-avatar gh-avatar--sage" aria-hidden="true">C</span><span class="gh-rows__text"><span class="gh-metaline"><span><a href="#" style="font-weight: 600; color: var(--ink-heading); text-decoration: none">corbu</a></span><span>on chapter 4</span><span>3 days ago</span></span><span class="body">Good detail about the soldering iron. My dad fixes things like this too.</span></span><a class="gh-btn gh-btn--text" href="#">Reply</a></li>
+</ul>
+</section>
+</div>
+
+<section aria-labelledby="deleted-h">
+<h2 class="heading" id="deleted-h" style="margin: 0 0 8px">Recently deleted</h2>
+<ul class="plain rows">
+<li><span class="gh-rows__text"><span class="gh-rows__title">Summer Notes</span><span class="gh-metaline"><span>deleted 3 days ago</span><span>kept for 27 more days</span></span></span><button type="button" class="gh-btn gh-btn--quiet">Undo</button></li>
+</ul>
+</section>
+</main>
+<footer class="foot">
+<div style="display: grid; grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr)); gap: 32px">
+<div>
+<a class="gh-brand" href="#" aria-label="ghemotoc, Home"><img class="gh-logo-day" src="/_blob/8b27bf58143f9e8c418eedbd47b0130f" alt=""><img class="gh-logo-night" src="/_blob/c9011ab65e50ffe835eb9e127f69bca0" alt="">ghemotoc</a>
+<p class="body" style="margin: 12px 0 0; max-width: 46ch; color: var(--ink-muted)">A free website for writing and reading stories, poems and essays. Apps come after the web launch. Writers keep the rights to their work, and there are no tracking ads. Everyone aged 13 or older is welcome. In Romanian and English. Starting in Romania; English-speaking countries follow.</p>
+</div>
+<nav aria-label="Read links"><h2 class="subheading" style="margin: 0">Read</h2><ul><li><a href="#">Trending this week</a></li><li><a href="#">New writers</a></li><li><a href="#">About the apps</a></li></ul></nav>
+<nav aria-label="Write and talk links"><h2 class="subheading" style="margin: 0">Write and talk</h2><ul><li><a href="#">Start writing</a></li><li><a href="#">Start a first story</a></li><li><a href="#">Together</a></li><li><a href="#">For teachers</a></li><li><a href="#">For partners</a></li></ul></nav>
+<nav aria-label="Help and legal links"><h2 class="subheading" style="margin: 0">Help and legal</h2><ul><li><a href="#">Help</a></li><li><a href="#">Legal</a></li><li><a href="#">Community guidelines</a></li><li><a href="#">Contact us</a></li><li><a href="#">Report without an account</a></li></ul></nav>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; margin-top: 32px">
+<p class="meta" style="margin: 0">An app by The Magic Coffin</p>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+<button type="button" class="gh-btn gh-btn--quiet" aria-pressed="false">Night mode</button>
+<label class="gh-sr" for="lang-write">Language</label>
+<span class="gh-select"><select id="lang-write"><option>English</option><option lang="ro">Română</option></select><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></span>
+</div>
+</div>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","night"],"default":"light"},"$preview":{"width":1440,"height":2900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    // Day or night, from the Tweaks panel. Every section of today's Your writing page is kept: Continue draft and
+    // New story, reader numbers with the time range and the privacy note, followers over time, drafts and scheduled
+    // chapters, story by story with the chapter table, lines and stops, latest comments with Reply, and Undo.
+    return { theme: this.props.theme ?? 'light' };
+  }
+}
+</script>
+</body>
+</html>

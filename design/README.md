@@ -1,5 +1,22 @@
 # Designs
 
+## The simplified design (approved for building 20 Nov 2026, 12:43 UTC)
+
+Robert approved a simpler look on 20 Nov 2026. It keeps every page and every feature: each page keeps its sections, controls and features, and only the look changes (calmer pages, glass only on what floats, flat buttons, covers that look like books). Where it and the liquid glass handoff or a 17 Oct board differ, the simplified design wins.
+
+- The handover doc (what to build, step by step, with every decision and its time): https://claude.ai/artifact/SgT9staH8zeR46A1SR3H35
+- The comparison canvas with the nine "New:" boards (version 32): https://claude.ai/artifact/GCKpzF1mxXytakV1qTES83
+- The design system (tokens, type, components and their rules, version 19): https://claude.ai/artifact/YbuN3B4hhXRk3Va9nFhs1n
+
+Copies made on 20 Nov 2026 sit in two folders:
+
+- `boards/simplified/`: the nine boards (`New-Home`, `New-Read`, `New-Story`, `New-Reader`, `New-Library`, `New-Write`, `New-Together`, `New-PhoneReader` and `New-PhoneSearch`, each a `.dc.html` file). The member pictures they show (`avatars/`) are not copied; open the canvas to see them.
+- `simplified-system/`: the design system's `README.md` (the rules), `tokens.json` (every token's day and night value, and its name in the app at the end of its `usage`, for example "Code: --tint"), `components/bundle.css` (the CSS the boards use) and, for each component, a `README.md` and a `preview.html`.
+
+Both folders are reference only: never import `bundle.css` or a `gh-` class into the app. Rebuild each piece with `src/styles/tokens.css`, Tailwind and the components in `src/components/ui/`. A board's token names map to the app's like this: `--surface-tint` is `--tint`, `--ink-muted` is `--body`, `--surface-solid` is `--surface`, `--surface-page` is `--paper`, `--action-main` is `--plum-from` and `--plum-to`, `--shadow-rest` is `--shadow-card` and `--shadow-raised` is `--shadow-popover`. If a live artifact is newer than the copy here, the artifact wins.
+
+It is built in bundles CALM-1 to CALM-9, in the order the handover doc's "Step 5" tab gives. CALM-1 put in the colour changes, the paler four-blob background, the type styles (`type-display` to `type-reading`), the smaller corners, the cover hairline and the page colour at the top and bottom of a phone screen.
+
 ## The new look: liquid glass (approved 7 Nov 2026, 19:51 UTC)
 
 Robert approved a new look for the whole app on 7 Nov 2026. It replaces the colours, glass, type and backgrounds of the boards below, and adds some new features; each page keeps its sections, order, text and controls. Where it and a 17 Oct board differ, the new look wins.

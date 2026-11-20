@@ -51,7 +51,9 @@ function StackedCovers({ covers }: { covers: ListedStory[] }) {
           size="tile"
           isDecorative
           // 44 px wide and 28 px over the cover before it, so 16 px of each earlier cover shows.
-          className={index === 0 ? 'w-[44px]' : '-ml-[28px] w-[44px] shadow-card'}
+          // No shadow: covers cast none (the simplified design, CALM-1); each cover's hairline
+          // edge keeps the overlapping covers apart.
+          className={index === 0 ? 'w-[44px]' : '-ml-[28px] w-[44px]'}
         />
       ))}
     </span>

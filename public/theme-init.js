@@ -1,14 +1,16 @@
 /*
  * Picks light or night mode, the member's look, the "Less motion" switch and high contrast before
- * the page draws (story S1-E1-03; looks from bundle G2 THEMES; less motion from bundle MOTION-1;
- * high contrast from bundle CONTRAST-1).
+ * the page draws, then gives a phone browser's bars the page colour (story S1-E1-03; looks from
+ * bundle G2 THEMES; less motion from bundle MOTION-1; high contrast from bundle CONTRAST-1; the
+ * bar colour from bundle CALM-1).
  *
  * Why a separate file: index.html loads it in <head>, before any CSS or React, so a reader in
  * night mode never sees a white flash. It is a plain file rather than an inline script so a
  * strict Content Security Policy can allow it later without exceptions (architecture 1.9).
- * It repeats the first steps of src/lib/theme.ts, src/lib/looks.ts, src/lib/motion.ts and
- * src/lib/highContrast.ts; keep the storage keys, the attributes, the media queries and the list
- * of looks the same in all five files.
+ * It repeats the first steps of src/lib/theme.ts, src/lib/looks.ts, src/lib/motion.ts,
+ * src/lib/highContrast.ts and src/lib/browserBarColour.ts; keep the storage keys, the attributes,
+ * the media queries, the list of looks, the theme-color meta, the staff area's selector and the
+ * --paper token the same in all six files.
  * After this, React takes over (src/features/theme/hooks/useAccountAppearance.ts).
  */
 (function chooseThemeBeforeFirstPaint() {
@@ -92,4 +94,49 @@
     isWanted = window.matchMedia('(prefers-contrast: more)').matches;
   }
   if (isWanted) document.documentElement.setAttribute('data-contrast', 'more');
+})();
+
+/*
+ * Gives a phone browser's own bars the page colour, never black (the simplified design, bundle
+ * CALM-1; Robert, 20 Nov 2026, 13:10 UTC). index.html names the day colour for a light phone and
+ * the night colour for a dark one; here both theme-color metas follow the theme chosen above, so a
+ * reader in night mode on a light phone gets night bars from the first paint. The style sheet has
+ * not loaded yet at this point, so a look's own page colour (Sorbet's peach, high contrast's
+ * white) is read from --paper once the page has loaded. src/lib/browserBarColour.ts does the same
+ * whenever the app changes the theme, the look or high contrast; the two plain colours are the
+ * ones in index.html.
+ */
+(function matchBrowserBarsBeforeFirstPaint() {
+  const metas = document.querySelectorAll('meta[name="theme-color"]');
+  if (metas.length === 0) return;
+
+  // Step 1: the page colour now in force: --paper once tokens.css has loaded, read from the staff
+  // area's frame on a staff page (it paints its own colours) and from <html> everywhere else;
+  // before that, the plain day or night page colour for the theme chosen above.
+  function pageColourNow() {
+    const staffArea = document.querySelector('[data-area="staff"]');
+    const style = window.getComputedStyle(staffArea || document.documentElement);
+    // At night --browser-bar is the night sky's dark blue edge (tokens.css); elsewhere it is unset.
+    const barColour = style.getPropertyValue('--browser-bar').trim();
+    if (barColour !== '') return barColour;
+    const fromTokens = style.getPropertyValue('--paper').trim();
+    if (fromTokens !== '') return fromTokens;
+    const isNight = document.documentElement.getAttribute('data-theme') === 'night';
+    if (!isNight) return '#f3eefb';
+    // Before the style sheet: the night sky's edge, as in tokens.css (phones under 1024 px).
+    return window.matchMedia('(max-width: 1023px)').matches ? '#1d244f' : '#0e1538';
+  }
+
+  // Step 2: both metas get it, because the member's choice beats the device's light or dark
+  // setting that each meta's media query follows.
+  function matchBars() {
+    const colour = pageColourNow();
+    metas.forEach(function setBarColour(meta) {
+      meta.setAttribute('content', colour);
+    });
+  }
+
+  matchBars();
+  // Step 3: once the style sheet has loaded, the exact page colour of the look on show.
+  window.addEventListener('load', matchBars, { once: true });
 })();

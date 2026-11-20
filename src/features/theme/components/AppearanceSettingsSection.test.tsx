@@ -54,6 +54,7 @@ describe('AppearanceSettingsSection', () => {
   it('keeps seasonal themes off until the member turns them on', () => {
     renderWithProviders(<AppearanceSettingsSection />, 'en');
     const seasonal = screen.getByRole('switch', { name: 'Seasonal themes' });
+    expect(seasonal).toHaveAccessibleDescription(/switch on by themselves for a few weeks/);
     expect(seasonal).toHaveAttribute('aria-checked', 'false');
     fireEvent.click(seasonal);
     expect(seasonal).toHaveAttribute('aria-checked', 'true');

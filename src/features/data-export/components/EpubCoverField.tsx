@@ -109,7 +109,11 @@ function CoverFileInput({
   );
 }
 
-/** The preview of the cover the book will get. */
+/**
+ * The preview of the cover the book will get. Every kind has the cover's 4 px corners; a picked
+ * file also gets the hairline edge, from a box around it because an <img> can't hold it (the
+ * simplified design, CALM-1).
+ */
 function CoverPreview({ story, title, name, usesFile, file }: EpubCoverFieldProps) {
   const { t } = useDataExportTranslation();
   const address = useLocalPreview(usesFile ? file : null);
@@ -119,15 +123,13 @@ function CoverPreview({ story, title, name, usesFile, file }: EpubCoverFieldProp
   return (
     <figure className="m-0 flex w-[140px] shrink-0 flex-col gap-1.5">
       {address !== null && (
-        <img
-          src={address}
-          alt=""
-          className="aspect-[5/8] w-full rounded-[16px] border border-border object-cover"
-        />
+        <span className="cover-edge relative block w-full overflow-hidden rounded-cover">
+          <img src={address} alt="" className="block aspect-[5/8] w-full object-cover" />
+        </span>
       )}
       {address === null && !usesFile && <StoryCoverArt story={story} drawn={drawn} />}
       {address === null && usesFile && (
-        <span className="block aspect-[5/8] w-full rounded-[16px] border border-dashed border-control-border bg-panel" />
+        <span className="block aspect-[5/8] w-full rounded-cover border border-dashed border-control-border bg-panel" />
       )}
       <figcaption className="text-[13px] text-meta">{t('epub.coverPreview')}</figcaption>
     </figure>
