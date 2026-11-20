@@ -11,7 +11,7 @@ import { usePeopleTranslation } from '../registerPeopleTranslations';
 import { Link } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatLocalDate } from '@/lib/local-time';
 
 import { useMyFollowers } from '../hooks/useMyFollowers';
 
@@ -50,7 +50,7 @@ function FollowersList() {
           <span className="text-[13px] text-meta">
             @{follower.handle} ·{' '}
             {t('followers.followedOn', {
-              date: formatRomaniaDate(new Date(follower.followedAt), i18n.language),
+              date: formatLocalDate(new Date(follower.followedAt), i18n.language),
             })}
           </span>
         </li>

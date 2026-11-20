@@ -12,8 +12,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
 import { LabelRows } from '@/components/ui/LabelRows';
-import { formatLocalDateTime } from '@/lib/local-time';
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatCalendarDate, formatLocalDateTime } from '@/lib/local-time';
 
 import type {
   AgeCheckAttempt,
@@ -85,7 +84,7 @@ export function ManualAgeCheckCard({ request, isDeciding, onDecide }: ManualAgeC
     },
     {
       label: t('manualChecks.answerBy'),
-      value: formatRomaniaDate(new Date(`${request.answerBy}T12:00:00Z`), i18n.language),
+      value: formatCalendarDate(request.answerBy, i18n.language),
     },
     { label: t('manualChecks.attempts'), value: <AttemptList attempts={request.attempts} /> },
   ];

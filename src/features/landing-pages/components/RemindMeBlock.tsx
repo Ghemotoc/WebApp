@@ -13,7 +13,7 @@ import { Link } from 'react-router';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { useSession } from '@/features/auth/hooks/useSession';
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatCalendarDate } from '@/lib/local-time';
 import type { LandingBlock, LandingLanguage, LandingReminder } from '@/schemas/landingPages';
 
 import type { LandingExtras } from '../api/landingPages';
@@ -49,7 +49,7 @@ interface ReminderActionProps {
  */
 function dayInWords(day: string, language: LandingLanguage): string {
   // Noon UTC keeps the date the same in Romanian time.
-  return formatRomaniaDate(new Date(`${day}T12:00:00Z`), language);
+  return formatCalendarDate(day, language);
 }
 
 /**

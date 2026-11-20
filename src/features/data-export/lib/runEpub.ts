@@ -44,7 +44,7 @@ import type {
   EpubSample,
   EpubWords,
 } from '@/lib/epub/epubTypes';
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatLocalDate } from '@/lib/local-time';
 import type { AppSupabaseClient } from '@/lib/supabase';
 import type { WordPicture } from '@/lib/word/wordTypes';
 
@@ -195,7 +195,7 @@ function bookWords(options: EpubRunOptions, madeAt: Date): EpubWords {
     year: new Intl.DateTimeFormat('en', { timeZone: 'Europe/Bucharest', year: 'numeric' }).format(
       madeAt,
     ),
-    date: formatRomaniaDate(madeAt, options.bookLanguage),
+    date: formatLocalDate(madeAt, options.bookLanguage),
     siteUrl: brand.siteUrl,
   };
   const copyrightKeys = ['rights', 'noCopying', 'ownership', 'prepared'] as const;

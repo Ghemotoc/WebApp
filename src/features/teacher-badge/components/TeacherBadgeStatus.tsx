@@ -8,7 +8,7 @@
  */
 import { useTranslation } from 'react-i18next';
 
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatLocalDate } from '@/lib/local-time';
 
 import type { MyTeacherCheck } from '../api/teacherBadge';
 
@@ -28,7 +28,7 @@ interface StatusLine {
 function useStatusLine(teacherCheck: MyTeacherCheck): StatusLine | null {
   const { t, i18n } = useTranslation('account');
   const date = (moment: string | null) =>
-    moment === null ? '' : formatRomaniaDate(new Date(moment), i18n.language);
+    moment === null ? '' : formatLocalDate(new Date(moment), i18n.language);
   const latest = teacherCheck.latest;
   if (teacherCheck.isTeacher) {
     return {

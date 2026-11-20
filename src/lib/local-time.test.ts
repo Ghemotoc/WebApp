@@ -9,8 +9,12 @@ import { inTimeZone } from '@/test/viewerTimeZone';
 
 import {
   defaultScheduleFields,
+  formatCalendarDate,
+  formatCalendarShortDate,
+  formatLocalDate,
   formatLocalDateTime,
   formatLocalDayAndTime,
+  formatLocalShortDate,
   localFieldsFor,
   localTimeToInstant,
 } from './local-time';
@@ -170,5 +174,31 @@ describe('the schedule fields start on the writer’s own clock', () => {
         time: '18:05',
       });
     });
+  });
+});
+
+describe('dates without a time follow the viewer too (Robert, 20 Nov 2026, 18:36 UTC)', () => {
+  // 22:30 UTC on 8 Oct is 01:30 on 9 Oct in Bucharest but 18:30 on 8 Oct in New York.
+  const lateEvening = new Date('2026-10-08T22:30:00Z');
+
+  it('names the viewer’s own day for a timestamp', () => {
+    expect(formatLocalShortDate(lateEvening, 'en', 'Europe/Bucharest')).toBe('9 Oct 2026');
+    expect(formatLocalShortDate(lateEvening, 'ro', 'Europe/Bucharest')).toBe('9 oct. 2026');
+    expect(formatLocalShortDate(lateEvening, 'en', 'America/New_York')).toBe('8 Oct 2026');
+    expect(formatLocalDate(lateEvening, 'en', 'America/New_York')).toBe('8 October 2026');
+    expect(formatLocalDate(lateEvening, 'ro', 'Europe/Bucharest')).toBe('9 octombrie 2026');
+  });
+
+  it('writes September as "Sep" in English (CTO, 24 Oct 2026)', () => {
+    expect(formatLocalShortDate(new Date('2026-09-05T09:00:00Z'), 'en', 'UTC')).toBe('5 Sep 2026');
+  });
+
+  it('shows a stored calendar day as it is, with no zone shift, east or west', () => {
+    for (const zone of ['Pacific/Honolulu', 'America/New_York', 'Europe/Bucharest', 'Pacific/Kiritimati']) {
+      inTimeZone(zone, () => {
+        expect(formatCalendarDate('2027-02-28', 'en')).toBe('28 February 2027');
+        expect(formatCalendarShortDate('2027-02-28', 'ro')).toBe('28 feb. 2027');
+      });
+    }
   });
 });

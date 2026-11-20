@@ -13,13 +13,14 @@
 import { useTranslation } from 'react-i18next';
 
 import { Eyebrow } from '@/components/ui/Eyebrow';
-import { dateLocaleFor, ROMANIA_TIME_ZONE } from '@/lib/romania-time';
+import { dateLocaleFor } from '@/lib/romania-time';
 
 import type { FollowersWeek } from '../api/dashboard';
 import { barHeightPercent, formatShownCount } from '../lib/dashboardNumbers';
 
 /**
- * A week's Monday as "5 Oct".
+ * A week's Monday as "5 Oct". It is a stored calendar day with no clock, so it is written as it
+ * is, in UTC, and reads the same day for every viewer (Robert, 20 Nov 2026, 18:36 UTC).
  *
  * @param weekStart - YYYY-MM-DD
  * @param language - the interface language
@@ -27,7 +28,7 @@ import { barHeightPercent, formatShownCount } from '../lib/dashboardNumbers';
  */
 function weekLabel(weekStart: string, language: string): string {
   return new Intl.DateTimeFormat(dateLocaleFor(language), {
-    timeZone: ROMANIA_TIME_ZONE,
+    timeZone: 'UTC',
     day: 'numeric',
     month: 'short',
   }).format(new Date(`${weekStart}T12:00:00Z`));

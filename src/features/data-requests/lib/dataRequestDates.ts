@@ -4,10 +4,10 @@
  * alert 2 days before).
  *
  * Who calls it: the staff list and page (components/staff/) and Settings › Data requests.
- * What it calls: src/lib/romania-time.ts for the date in the interface language.
+ * What it calls: src/lib/local-time.ts for a calendar day in the interface language.
  */
 import type { PillTone } from '@/components/ui/InfoPill';
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatCalendarDate as formatStoredDay } from '@/lib/local-time';
 
 import type { DataRequestUrgency } from '../api/dataRequests';
 
@@ -19,8 +19,8 @@ import type { DataRequestUrgency } from '../api/dataRequests';
  * @returns the date in words
  */
 export function formatCalendarDate(calendarDate: string, language: string): string {
-  // Noon UTC is the same day in Bucharest whatever the season, so the day never slips.
-  return formatRomaniaDate(new Date(`${calendarDate}T12:00:00Z`), language);
+  // A stored day has no clock: it reads the same day for every viewer, with no zone shift.
+  return formatStoredDay(calendarDate, language);
 }
 
 /**

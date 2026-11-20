@@ -10,7 +10,7 @@ import { useSyncExternalStore } from 'react';
 import { requireClient } from '@/features/account/hooks/useMyNames';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { unreadCountQueryKey } from '@/features/notifications/hooks/useUnreadNotificationCount';
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatLocalDate } from '@/lib/local-time';
 
 import {
   fetchChapterChoices,
@@ -89,7 +89,7 @@ export function useStartStoriesExport() {
         wordLabels,
         statusLabels,
         planText,
-        formatDate: (isoDate) => formatRomaniaDate(new Date(isoDate), i18n.language),
+        formatDate: (isoDate) => formatLocalDate(new Date(isoDate), i18n.language),
         choices,
       });
       await queryClient.invalidateQueries({ queryKey: storiesExportsKey(userId) });

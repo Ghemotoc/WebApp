@@ -10,7 +10,7 @@ import type { TFunction } from 'i18next';
 import type { StatementOfReasons } from '../api/statements';
 
 /**
- * A date as people read it, in Romania's time zone.
+ * A date as people read it, on the reader's own calendar (Robert, 20 Nov 2026, 18:36 UTC).
  *
  * @param isoTime - the database's time
  * @param language - the page's language
@@ -19,7 +19,6 @@ import type { StatementOfReasons } from '../api/statements';
 export function readableDate(isoTime: string, language: string): string {
   return new Intl.DateTimeFormat(language, {
     dateStyle: 'long',
-    timeZone: 'Europe/Bucharest',
   }).format(new Date(isoTime));
 }
 

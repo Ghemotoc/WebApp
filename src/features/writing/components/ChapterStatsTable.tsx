@@ -15,7 +15,7 @@
 import { useTranslation } from 'react-i18next';
 
 import { InfoPill, type PillTone } from '@/components/ui/InfoPill';
-import { formatRomaniaShortDate } from '@/lib/romania-time';
+import { formatLocalShortDate } from '@/lib/local-time';
 
 import type { DashboardChapter } from '../api/dashboard';
 import { dashboardChapterState, type DashboardChapterState } from '../lib/dashboardChapters';
@@ -38,7 +38,7 @@ const pillTones: Record<DashboardChapterState, PillTone> = {
  */
 function stateDate(chapter: DashboardChapter, language: string): string | null {
   const moment = chapter.scheduledFor ?? chapter.firstPublishedAt ?? chapter.draftSavedAt;
-  return moment === null ? null : formatRomaniaShortDate(new Date(moment), language);
+  return moment === null ? null : formatLocalShortDate(new Date(moment), language);
 }
 
 /** The header cell style: small capitals in the meta colour. */

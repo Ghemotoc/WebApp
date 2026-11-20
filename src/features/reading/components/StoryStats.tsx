@@ -13,7 +13,7 @@
 import { useTranslation } from 'react-i18next';
 
 import { ActionIcon, type ActionIconName } from '@/components/icons/ActionIcon';
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatLocalDate } from '@/lib/local-time';
 
 import type { StoryPageData } from '../api/storyPage';
 
@@ -68,7 +68,7 @@ export function StoryStats({ story }: { story: StoryPageData }) {
         <StatItem
           icon={'clock'}
           text={t('storyPage.updated', {
-            date: formatRomaniaDate(new Date(story.lastChapterPublishedAt), i18n.language),
+            date: formatLocalDate(new Date(story.lastChapterPublishedAt), i18n.language),
           })}
         />
       )}

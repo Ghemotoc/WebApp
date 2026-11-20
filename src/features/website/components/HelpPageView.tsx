@@ -7,14 +7,14 @@
  * and the body's headings start at h2 (CmsMarkdown). An address with no live page says so plainly,
  * with a link back to Help.
  * Who shows it: the router for "/help/:slug". What it calls: useWebsiteContent('help_page'),
- * readingMinutes and formatRomaniaDate.
+ * readingMinutes and formatLocalDate.
  */
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatCalendarDate } from '@/lib/local-time';
 import type { HelpPageContent } from '@/schemas/websiteContent';
 import { helpPageContentSchema } from '@/schemas/websiteContent';
 
@@ -75,7 +75,7 @@ function HelpArticle({ page }: { page: ParsedEntry<HelpPageContent> }) {
   const { t, i18n } = useTranslation();
   const title = withBrand(page.content.title);
   // "Updated 4 November 2026 · 3 min read": the date this version went live (its "show from").
-  const updated = formatRomaniaDate(new Date(page.showFrom), i18n.language);
+  const updated = formatCalendarDate(page.showFrom, i18n.language);
   const minutes = readingMinutes(page.content.body);
   return (
     <>

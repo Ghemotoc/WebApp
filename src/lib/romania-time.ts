@@ -1,13 +1,13 @@
 /**
- * Romania's calendar (Europe/Bucharest) for days the app counts as rules, and the dates (without
- * a time) readers see (story S1-E3-03; decided 23 Oct 2026, Q7).
+ * Romania's calendar (Europe/Bucharest) for days the app counts as rules (story S1-E3-03;
+ * decided 23 Oct 2026, Q7), and the date format every screen shares.
  *
- * Times of day are not here: every time the app shows or asks for is on the viewer's own clock
- * (Robert, 20 Nov 2026, 18:19 UTC: "All of them in local time"; src/lib/local-time.ts). What stays
- * is the calendar day in Romania: "today" for contest, hub and data request deadlines, and the
- * date-only lines (published on, joined in), which read a moment's day the way Bucharest does.
- * Who calls it: the story page's chapter dates, the reader's meta line, the hub, contests, data
- * requests and the staff metrics.
+ * Nothing shown is here: every time and date the app shows or asks for is on the viewer's own
+ * clock (Robert, 20 Nov 2026, 18:19 UTC: "All of them in local time"; 18:36 UTC: dates without a
+ * time too; src/lib/local-time.ts). What stays is "today" on Romania's calendar, for the rules
+ * that count whole days there (contest, hub and data request deadlines), plus dateLocaleFor()
+ * and withShortSeptember(), which local-time.ts uses for the language's date order.
+ * Who calls it: the hub, contests, data requests and src/lib/local-time.ts.
  * English dates are written the British way ("5 Sep 2026", "Saturday 17 October at 18:00"):
  * Robert writes British English (CTO, 24 Oct 2026). dateLocaleFor() is the one place that says so.
  */
@@ -73,38 +73,4 @@ export function romaniaNowFields(now: Date): { date: string; time: string } {
     date: `${parts.year}-${pad(parts.month)}-${pad(parts.day)}`,
     time: `${pad(parts.hour)}:${pad(parts.minute)}`,
   };
-}
-
-/**
- * Shows a date as Romania sees it: "17 octombrie 2026" or "17 October 2026".
- *
- * @param instant - the moment
- * @param language - the interface language
- * @returns the text
- */
-export function formatRomaniaDate(instant: Date, language: string): string {
-  return new Intl.DateTimeFormat(dateLocaleFor(language), {
-    timeZone: ROMANIA_TIME_ZONE,
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  }).format(instant);
-}
-
-/**
- * Shows a date as Romania sees it, with the short month: "9 oct. 2026" or "9 Oct 2026" (the
- * reader's meta line, board 3.5, S1-E4-01a).
- *
- * @param instant - the moment
- * @param language - the interface language
- * @returns the text
- */
-export function formatRomaniaShortDate(instant: Date, language: string): string {
-  const text = new Intl.DateTimeFormat(dateLocaleFor(language), {
-    timeZone: ROMANIA_TIME_ZONE,
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  }).format(instant);
-  return withShortSeptember(text);
 }

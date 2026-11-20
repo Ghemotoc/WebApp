@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/Button';
 import { InfoPill } from '@/components/ui/InfoPill';
 import { Notice } from '@/components/ui/Notice';
 import { TextInput } from '@/components/ui/TextInput';
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatCalendarDate } from '@/lib/local-time';
 
 import type { LaunchTask } from '../../api/complianceLog';
 
@@ -38,8 +38,7 @@ interface LaunchTaskCardProps {
 function useLaunchLine(launch: LaunchTask): string {
   const { t, i18n } = useTranslation('staff');
   // A calendar date read at noon UTC is the same day in Bucharest.
-  const day = (date: string) =>
-    formatRomaniaDate(new Date(`${date.slice(0, 10)}T12:00:00Z`), i18n.language);
+  const day = (date: string) => formatCalendarDate(date.slice(0, 10), i18n.language);
   if (launch.noticeDoneAt !== null && launch.noticeReference !== null) {
     return t('metrics.launch.done', {
       date: day(launch.noticeDoneAt),

@@ -15,7 +15,7 @@
  * What it calls: the browser's Intl.DateTimeFormat and Date; dateLocaleFor() for the language's
  * date order.
  */
-import { dateLocaleFor } from './romania-time';
+import { dateLocaleFor, withShortSeptember } from './romania-time';
 
 /**
  * Shows a moment on the viewer's own clock with the weekday, the date and the time after a comma:
@@ -144,4 +144,73 @@ export function localFieldsFor(instant: Date): { date: string; time: string } {
 export function defaultScheduleFields(now: Date): { date: string; time: string } {
   const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 12);
   return { date: localFieldsFor(tomorrow).date, time: '18:00' };
+}
+
+/**
+ * Shows the day of a moment on the viewer's own calendar: "17 octombrie 2026" or
+ * "17 October 2026" (Robert, 20 Nov 2026, 18:36 UTC: dates without a time follow the viewer too).
+ *
+ * @param instant - the moment (a timestamp from the database)
+ * @param language - the interface language
+ * @param timeZone - an IANA zone for tests; left out, the browser's own zone is used
+ * @returns the text
+ */
+export function formatLocalDate(instant: Date, language: string, timeZone?: string): string {
+  return new Intl.DateTimeFormat(dateLocaleFor(language), {
+    timeZone,
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(instant);
+}
+
+/**
+ * Shows the day of a moment on the viewer's own calendar with the short month: "9 oct. 2026" or
+ * "9 Oct 2026" (the reader's meta line, board 3.5, S1-E4-01a).
+ *
+ * @param instant - the moment (a timestamp from the database)
+ * @param language - the interface language
+ * @param timeZone - an IANA zone for tests; left out, the browser's own zone is used
+ * @returns the text
+ */
+export function formatLocalShortDate(instant: Date, language: string, timeZone?: string): string {
+  const text = new Intl.DateTimeFormat(dateLocaleFor(language), {
+    timeZone,
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  }).format(instant);
+  return withShortSeptember(text);
+}
+
+/**
+ * The moment a stored calendar day ("YYYY-MM-DD", an SQL date) is written from: noon UTC on that
+ * day. A calendar day has no clock, so it is formatted in UTC and reads the same day for every
+ * viewer, east or west of Romania.
+ */
+function calendarDayMoment(day: string): Date {
+  return new Date(`${day.slice(0, 10)}T12:00:00Z`);
+}
+
+/**
+ * Shows a stored calendar day as it is, with no zone shift: "17 octombrie 2026" or
+ * "17 October 2026". For SQL dates (a CMS "show from" date, a deadline day), never timestamps.
+ *
+ * @param day - "YYYY-MM-DD" (anything after the tenth character is ignored)
+ * @param language - the interface language
+ * @returns the text
+ */
+export function formatCalendarDate(day: string, language: string): string {
+  return formatLocalDate(calendarDayMoment(day), language, 'UTC');
+}
+
+/**
+ * Shows a stored calendar day as it is, with the short month: "9 oct. 2026" or "9 Oct 2026".
+ *
+ * @param day - "YYYY-MM-DD"
+ * @param language - the interface language
+ * @returns the text
+ */
+export function formatCalendarShortDate(day: string, language: string): string {
+  return formatLocalShortDate(calendarDayMoment(day), language, 'UTC');
 }

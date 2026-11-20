@@ -51,7 +51,6 @@ function NoThanksNote({ chat }: { chat: Conversation }) {
       : new Intl.DateTimeFormat(i18n.language === 'en' ? 'en-GB' : 'ro', {
           day: 'numeric',
           month: 'long',
-          timeZone: 'Europe/Bucharest',
         }).format(askAgain);
   return (
     <div className="flex flex-col gap-2 border-t border-border p-4">

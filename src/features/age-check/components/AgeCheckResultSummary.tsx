@@ -8,7 +8,7 @@
  */
 import { useTranslation } from 'react-i18next';
 
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatLocalDate } from '@/lib/local-time';
 
 import type { MyAgeCheck } from '../api/ageCheck';
 
@@ -22,7 +22,7 @@ export function AgeCheckResultSummary({ check }: { check: MyAgeCheck }) {
   const { t, i18n } = useTranslation('account');
   // The date and method line, only when both are known.
   const date =
-    check.checkedAt === null ? null : formatRomaniaDate(new Date(check.checkedAt), i18n.language);
+    check.checkedAt === null ? null : formatLocalDate(new Date(check.checkedAt), i18n.language);
   const method = check.method === null ? null : t(`ageCheck.methods.${check.method}`);
 
   return (

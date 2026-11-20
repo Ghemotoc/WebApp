@@ -11,7 +11,7 @@ import { Link } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatLocalDate } from '@/lib/local-time';
 
 import type { ConsentFailure } from '../../../schemas/parentConsent';
 import type { MyParentConsent } from '../api/parentConsent';
@@ -45,7 +45,7 @@ export function ConsentSentPanel({
 }: ConsentSentPanelProps) {
   const { t, i18n } = useParentConsentTranslation();
   const deadline =
-    consent.deadline === null ? null : formatRomaniaDate(new Date(consent.deadline), i18n.language);
+    consent.deadline === null ? null : formatLocalDate(new Date(consent.deadline), i18n.language);
 
   return (
     <div className="flex flex-col gap-4">

@@ -9,7 +9,7 @@
 import { useTranslation } from 'react-i18next';
 
 import { Notice } from '@/components/ui/Notice';
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatCalendarDate } from '@/lib/local-time';
 
 import type { WebsiteContentError } from '../../api/websiteContentStore';
 
@@ -63,7 +63,7 @@ export function EditorFeedback({ state, labelOf }: EditorFeedbackProps) {
           {outcome.goesLive === null
             ? t(`outcomes.${outcome.action}`)
             : t('outcomes.publish', {
-                date: formatRomaniaDate(new Date(`${outcome.goesLive}T12:00:00Z`), i18n.language),
+                date: formatCalendarDate(outcome.goesLive, i18n.language),
               })}
         </p>
       )}

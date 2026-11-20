@@ -21,7 +21,7 @@ import { Eyebrow } from '@/components/ui/Eyebrow';
 import { InfoPill } from '@/components/ui/InfoPill';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
-import { formatRomaniaShortDate } from '@/lib/romania-time';
+import { formatCalendarShortDate } from '@/lib/local-time';
 
 import type { MarchNumbers } from '../../api/marchNumbers';
 import { useMarchNumbers } from '../../hooks/useMarchNumbers';
@@ -95,10 +95,7 @@ function MarchNumbersBody() {
         {numbers.countedOn === null
           ? t('metrics.notCountedYet')
           : t('metrics.countedOn', {
-              date: formatRomaniaShortDate(
-                new Date(`${numbers.countedOn}T12:00:00Z`),
-                i18n.language,
-              ),
+              date: formatCalendarShortDate(numbers.countedOn, i18n.language),
             })}
       </p>
       <MarchTargets numbers={numbers} />

@@ -35,7 +35,7 @@ interface CountryChangeFormProps {
 }
 
 /**
- * A date in words in the reader's language, Romanian time.
+ * A date in words in the reader's language, on the reader's own calendar (Robert, 20 Nov 2026, 18:36 UTC).
  *
  * @param value - the moment
  * @param language - the reader's language
@@ -46,7 +46,6 @@ function dateInWords(value: string, language: string): string {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
-    timeZone: 'Europe/Bucharest',
   }).format(new Date(value));
 }
 
