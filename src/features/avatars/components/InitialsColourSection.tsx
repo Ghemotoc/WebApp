@@ -85,11 +85,13 @@ function ColourChoices({
               className="peer sr-only"
             />
             {/* The chosen circle gets a 2 px ring in --primary with a gap of the card's colour
-                (handover Step 4); the focus outline shows the one the keyboard is on. */}
+                (handover Step 4); the focus outline shows the one the keyboard is on. Every
+                swatch has the covers' hairline edge (--cover-edge), so the pale lilac, blush and
+                sky still show their shape on a pale card, and plum on the night page. */}
             <span
               aria-hidden="true"
               style={{ backgroundColor: bead.background }}
-              className="block size-8 rounded-full peer-checked:shadow-[0_0_0_2px_var(--surface),0_0_0_4px_var(--primary)] peer-focus-visible:outline-2 peer-focus-visible:outline-offset-4 peer-focus-visible:outline-(--focus-ring)"
+              className="block size-8 rounded-full border border-(--cover-edge) peer-checked:shadow-[0_0_0_2px_var(--surface),0_0_0_4px_var(--primary)] peer-focus-visible:outline-2 peer-focus-visible:outline-offset-4 peer-focus-visible:outline-(--focus-ring)"
             />
           </label>
         ))}
