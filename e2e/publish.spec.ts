@@ -9,8 +9,9 @@
  * - edits after publishing save as a draft; readers see them only after "Update chapter", with an
  *   "Edited" date (Q10);
  * - "Unpublish chapter" takes it away from readers (the story is private again);
- * - "Schedule for later" in Romania time shows "Scheduled for …"; "Cancel schedule" undoes it; a
- *   time in the past is refused; when its time comes (the job, run here directly) it is published;
+ * - "Schedule for later" takes the time on the writer's own clock (a browser in Stockholm here;
+ *   CALM-8b, Robert, 20 Nov 2026, 18:19 UTC) and shows "Scheduled for …, local time.";
+ *   "Cancel schedule" undoes it; a time in the past is refused; when its time comes (the job, run here directly) it is published;
  * - the panel's states and the story page's chapter list pass axe at 390 and 1440 px.
  * Test data: chapters made in SQL on the seed story "Stația meteo"; deleted after.
  */
@@ -43,9 +44,10 @@ function makeDraft(code: string) {
 }
 
 /** Opens the editor on a chapter as adult_writer, in English. */
-async function openEditor(browser: Browser, code: string): Promise<Page> {
+async function openEditor(browser: Browser, code: string, timezoneId?: string): Promise<Page> {
   runSql(`update public.profiles set locale = 'en' where id = '${writerId}';`);
-  const context = await browser.newContext();
+  // A browser in a given time zone, when the test needs one (scheduling is on the writer's clock).
+  const context = await browser.newContext({ timezoneId });
   await useSessionInBrowser(context, (await signInPersona('adult_writer')).session);
   await context.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
   const page = await context.newPage();
@@ -162,15 +164,13 @@ test.describe('publish, update, unpublish and schedule (S1-E3-03)', () => {
     ).toBeVisible();
   });
 
-  test('Schedule in Romania time, cancel, refuse the past, and publish when the time comes', async ({
+  test('Schedule on the writer’s own clock, cancel, refuse the past, and publish when the time comes', async ({
     browser,
   }) => {
-    const page = await openEditor(browser, 'publish1');
+    const page = await openEditor(browser, 'publish1', 'Europe/Stockholm');
     const panel = publishPanel(page);
     await panel.getByRole('radio', { name: 'Schedule for later' }).check();
-    await expect(
-      panel.getByText('Romania time (Europe/Bucharest).', { exact: false }),
-    ).toBeVisible();
+    await expect(panel.getByText('Local time on this device.', { exact: false })).toBeVisible();
 
     // A date in the past is refused.
     await panel.getByLabel('Date').fill('2020-01-01');
@@ -179,19 +179,17 @@ test.describe('publish, update, unpublish and schedule (S1-E3-03)', () => {
       'Pick a date and time in the future, at most a year ahead.',
     );
 
-    // Tomorrow-ish: 1 January next year at 09:30 Romania time (UTC+2 in winter).
+    // 1 January next year at 09:30 on the writer's clock in Stockholm (UTC+1 in winter).
     const nextYear = new Date().getUTCFullYear() + 1;
     await panel.getByLabel('Date').fill(`${nextYear}-01-01`);
     await panel.getByLabel('Time').fill('09:30');
     await panel.getByRole('button', { name: 'Schedule chapter' }).click();
-    await expect(
-      panel.getByText(/^Scheduled for .*1 January.*09:30, Romania time\.$/),
-    ).toBeVisible();
+    await expect(panel.getByText(/^Scheduled for .*1 January.*09:30, local time\.$/)).toBeVisible();
     expect(
       runSql(
         `select to_char(scheduled_for at time zone 'UTC', 'YYYY-MM-DD HH24:MI') from public.chapters where code = 'publish1'`,
       ),
-    ).toBe(`${nextYear}-01-01 07:30`);
+    ).toBe(`${nextYear}-01-01 08:30`);
     await expectAccessibleAt(page, [390, 1440]);
 
     await panel.getByRole('button', { name: 'Cancel schedule' }).click();

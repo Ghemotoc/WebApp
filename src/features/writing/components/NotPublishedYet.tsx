@@ -4,7 +4,7 @@
  *
  * Board values: a white card with the eyebrow,
  * the 26 px heading, and one sand row per waiting chapter: a gold "Draft" or sky "Scheduled" pill,
- * "Chapter n: title", the story, words and when it was saved (or when it publishes, Romania time)
+ * "Chapter n: title", the story, words and when it was saved (or when it publishes, on the writer's own clock)
  * and an "Edit" or "Reschedule" link to the editor. Newest first, at most four.
  * Who uses it: WriterDashboardTop. Its rows come from writer_dashboard() (the chapters list).
  */
@@ -14,7 +14,7 @@ import { Link } from 'react-router';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { InfoPill } from '@/components/ui/InfoPill';
 import { timeAgo } from '@/features/comments/lib/timeAgo';
-import { formatRomaniaDateTime } from '@/lib/romania-time';
+import { formatLocalDateTime } from '@/lib/local-time';
 
 import type { DashboardChapter } from '../api/dashboard';
 
@@ -30,7 +30,7 @@ function WaitingRow({ chapter, storyTitle }: { chapter: DashboardChapter; storyT
       : t('dashboard.notPublished.titled', { number: chapter.position, title: chapter.title });
   const meta = isScheduled
     ? t('dashboard.notPublished.scheduledMeta', {
-        when: formatRomaniaDateTime(new Date(chapter.scheduledFor ?? ''), i18n.language),
+        when: formatLocalDateTime(new Date(chapter.scheduledFor ?? ''), i18n.language),
       })
     : t('dashboard.notPublished.draftMeta', {
         story: storyTitle,

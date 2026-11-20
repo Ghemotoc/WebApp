@@ -10,6 +10,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AppProviders } from '@/app/AppProviders';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { createI18n } from '@/lib/i18n';
+import { pinViewerTimeZone } from '@/test/viewerTimeZone';
 import { renderWithProviders } from '@/test/renderWithProviders';
 
 import type { CommentsPage } from '../api/comments';
@@ -27,7 +28,7 @@ vi.mock('../hooks/useCommentComposer', () => ({ useCommentComposer: vi.fn() }));
 vi.mock('../hooks/useCommentLimit', () => ({ useCommentLimit: vi.fn() }));
 
 const address = { storySlug: 'statia-meteo-seed01', chapterCode: 'reace001' };
-// Saturday 21 November 2026, 18:40 in Bucharest: a pause that is still running in these tests.
+// Saturday 21 November 2026, 17:40 in Stockholm, where these tests' reader is: a pause that is still running in these tests.
 const pauseEnd = '2026-11-21T16:40:00Z';
 
 /**
@@ -74,6 +75,9 @@ function emptyComposer(): CommentComposerState {
 }
 
 describe('CommentsSection during a pause of new comments', () => {
+  // The end shows in the reader's own time (CALM-8b); this reader is in Stockholm.
+  pinViewerTimeZone('Europe/Stockholm');
+
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ['Date'] });
     vi.setSystemTime(new Date('2026-11-20T16:40:00Z'));
@@ -93,7 +97,7 @@ describe('CommentsSection during a pause of new comments', () => {
     commentsAnswer(pauseEnd);
     renderWithProviders(<CommentsSection address={address} />, 'en');
     expect(
-      screen.getByText('New comments are paused until Saturday 21 November, 18:40, Romania time.'),
+      screen.getByText('New comments are paused until Saturday 21 November, 17:40.'),
     ).toBeInTheDocument();
     expect(screen.queryByRole('textbox')).toBeNull();
   });

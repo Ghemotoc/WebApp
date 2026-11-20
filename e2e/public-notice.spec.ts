@@ -161,7 +161,7 @@ test.describe('public report form (S1-E10-02)', () => {
     await form.getByRole('button', { name: 'Send removal order' }).click();
 
     const received = page.getByRole('region', { name: 'Report received' });
-    await expect(received.getByText(/Time of receipt: .*\(Romania time\)/)).toBeVisible();
+    await expect(received.getByText(/Time of receipt: .+\./)).toBeVisible();
     const reference = /TCO-\d{4,}/.exec(await received.innerText())?.[0] ?? '';
     expect(reference).toMatch(/^TCO-\d{4,}$/);
 

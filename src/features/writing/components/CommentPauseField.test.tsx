@@ -8,6 +8,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { CommentPauseChoice } from '@/schemas/story';
 import { renderWithProviders } from '@/test/renderWithProviders';
+import { pinViewerTimeZone } from '@/test/viewerTimeZone';
 
 import { CommentPauseField } from './CommentPauseField';
 
@@ -27,8 +28,11 @@ function pauseSwitch() {
   return screen.getByRole('switch', { name: 'Pause new comments' });
 }
 
+// The writer is in Stockholm: the end shows in their own time, not Romania time (CALM-8b).
+pinViewerTimeZone('Europe/Stockholm');
+
 beforeEach(() => {
-  // Friday 20 November 2026, 18:40 in Bucharest. Only the clock is faked, so clicks still work.
+  // Friday 20 November 2026, 17:40 in Stockholm. Only the clock is faked, so clicks still work.
   vi.useFakeTimers({ toFake: ['Date'] });
   vi.setSystemTime(new Date('2026-11-20T16:40:00Z'));
 });
@@ -47,14 +51,12 @@ describe('CommentPauseField', () => {
     expect(screen.queryByRole('group', { name: 'For how long' })).toBeNull();
   });
 
-  it('turned on, asks for how long with 24 hours chosen and names the end in Romania time', () => {
+  it("turned on, asks for how long with 24 hours chosen and names the end in the writer's own time", () => {
     renderWithProviders(<FieldWithAnswer pausedUntil={null} />, 'en');
     fireEvent.click(pauseSwitch());
     expect(pauseSwitch()).toHaveAttribute('aria-checked', 'true');
     expect(screen.getByRole('radio', { name: '24 hours' })).toBeChecked();
-    expect(pauseSwitch()).toHaveAccessibleDescription(
-      'Paused until Saturday 21 November, 18:40, Romania time.',
-    );
+    expect(pauseSwitch()).toHaveAccessibleDescription('Paused until Saturday 21 November, 17:40.');
     expect(screen.getByTestId('answer')).toHaveTextContent('24h');
   });
 
@@ -62,9 +64,7 @@ describe('CommentPauseField', () => {
     renderWithProviders(<FieldWithAnswer pausedUntil={null} />, 'en');
     fireEvent.click(pauseSwitch());
     fireEvent.click(screen.getByRole('radio', { name: '7 days' }));
-    expect(pauseSwitch()).toHaveAccessibleDescription(
-      'Paused until Friday 27 November, 18:40, Romania time.',
-    );
+    expect(pauseSwitch()).toHaveAccessibleDescription('Paused until Friday 27 November, 17:40.');
     expect(screen.getByTestId('answer')).toHaveTextContent('7d');
   });
 
@@ -79,9 +79,7 @@ describe('CommentPauseField', () => {
   it('while a pause runs, is on and names its end, and turning it off ends it on save', () => {
     renderWithProviders(<FieldWithAnswer pausedUntil="2026-11-23T10:15:00Z" />, 'en');
     expect(pauseSwitch()).toHaveAttribute('aria-checked', 'true');
-    expect(pauseSwitch()).toHaveAccessibleDescription(
-      'Paused until Monday 23 November, 12:15, Romania time.',
-    );
+    expect(pauseSwitch()).toHaveAccessibleDescription('Paused until Monday 23 November, 11:15.');
     expect(screen.queryByRole('group', { name: 'For how long' })).toBeNull();
     fireEvent.click(pauseSwitch());
     expect(pauseSwitch()).toHaveAttribute('aria-checked', 'false');
@@ -99,6 +97,6 @@ describe('CommentPauseField', () => {
     expect(screen.getByRole('radio', { name: '24 de ore' })).toBeChecked();
     expect(
       screen.getByRole('switch', { name: 'Oprește comentariile noi' }),
-    ).toHaveAccessibleDescription('Oprite până sâmbătă, 21 noiembrie, 18:40, ora României.');
+    ).toHaveAccessibleDescription('Oprite până sâmbătă, 21 noiembrie, 17:40.');
   });
 });

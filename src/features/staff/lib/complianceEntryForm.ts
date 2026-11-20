@@ -1,13 +1,13 @@
 /**
  * Checks the "Log a request" form and turns it into a new compliance log entry (story S1-E11-04).
  *
- * Who calls it: components/metrics/ComplianceEntryForm.tsx. The times are typed as Romania time
- * (date and time fields) and sent as moments, so a request logged from abroad still shows the time
- * it arrived in Bucharest (Q7). The database checks every rule again
+ * Who calls it: components/metrics/ComplianceEntryForm.tsx. The times are typed on the staff
+ * member's own clock (date and time fields) and sent as moments, so each viewer of the log sees
+ * them on their own clock (Robert, 20 Nov 2026, 18:19 UTC: every time in local time). The database checks every rule again
  * (admin_log_compliance_entry()); this only catches mistakes before the round trip.
  * Pure, so it is unit-tested on its own.
  */
-import { romaniaTimeToInstant } from '@/lib/romania-time';
+import { localTimeToInstant } from '@/lib/local-time';
 
 import type { ComplianceEntryKind, NewComplianceEntry } from '../api/complianceLog';
 
@@ -31,7 +31,7 @@ export type ComplianceFormProblem = 'empty' | 'badTime' | 'done_before_received'
 /**
  * The form's starting values: a legal request that arrived now.
  *
- * @param today - "YYYY-MM-DD" and "HH:MM", Romania time
+ * @param today - "YYYY-MM-DD" and "HH:MM", on the staff member's own clock
  * @returns the values
  */
 export function emptyComplianceForm(today: { date: string; time: string }): ComplianceFormValues {
@@ -59,7 +59,7 @@ function donePart(
 ): { actionTaken: string; completedAt: Date } | null | ComplianceFormProblem {
   if (!values.isDone) return null;
   if (values.actionTaken.trim() === '') return 'empty';
-  const completedAt = romaniaTimeToInstant(values.doneDate, values.doneTime);
+  const completedAt = localTimeToInstant(values.doneDate, values.doneTime);
   return completedAt === null ? 'badTime' : { actionTaken: values.actionTaken.trim(), completedAt };
 }
 
@@ -74,8 +74,8 @@ export function complianceEntryFrom(
 ): NewComplianceEntry | ComplianceFormProblem {
   // Step 1: every entry names the authority and what was asked.
   if (values.authority.trim() === '' || values.content.trim() === '') return 'empty';
-  // Step 2: the time it arrived, typed as Romania time.
-  const receivedAt = romaniaTimeToInstant(values.receivedDate, values.receivedTime);
+  // Step 2: the time it arrived, typed on the staff member's own clock.
+  const receivedAt = localTimeToInstant(values.receivedDate, values.receivedTime);
   if (receivedAt === null) return 'badTime';
   // Step 3: what was done, if it already was, and never before it arrived.
   const done = donePart(values);

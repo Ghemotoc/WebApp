@@ -56,7 +56,7 @@
     "emailed": "Ți-am trimis o confirmare la {{email}}. O persoană îți va citi raportarea și îți vom trimite decizia noastră pe email.",
     "noEmail": "O persoană îți va citi raportarea. Nu ne-ai lăsat o adresă de email, așa că nu îți putem răspunde.",
     "unsent": "Ți-am salvat raportarea, dar nu am putut trimite confirmarea. Păstrează referința de mai sus.",
-    "orderBody": "Referința noastră este {{reference}}. Ora primirii: {{time}} (ora României). Persoana de serviciu a fost alertată.",
+    "orderBody": "Referința noastră este {{reference}}. Ora primirii: {{time}}. Persoana de serviciu a fost alertată.",
     "again": "Trimite altă raportare",
     "home": "Înapoi la {{productName}}"
   },

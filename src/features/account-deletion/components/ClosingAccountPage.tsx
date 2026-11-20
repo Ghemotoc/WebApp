@@ -20,7 +20,7 @@ import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { requireClient } from '@/features/account/hooks/useMyNames';
 import { signOutHere } from '@/features/auth/api/signIn';
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatLocalDate } from '@/lib/local-time';
 
 import type { ClosingReason } from '../api/accountDeletion';
 import { useCancelAccountDeletion } from '../hooks/useAccountDeletion';
@@ -51,7 +51,7 @@ export function ClosingAccountPage({ deleteAfter, reason }: ClosingAccountPagePr
   const navigate = useNavigate();
   const keep = useCancelAccountDeletion();
   const isUnused = reason === 'unused';
-  const date = formatRomaniaDate(new Date(deleteAfter), i18n.language);
+  const date = formatLocalDate(new Date(deleteAfter), i18n.language);
   const logOut = async () => {
     await signOutHere(await requireClient());
     void navigate('/');

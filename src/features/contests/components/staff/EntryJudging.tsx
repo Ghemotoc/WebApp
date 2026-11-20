@@ -15,7 +15,7 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatLocalDate } from '@/lib/local-time';
 import type { ContestPlacing, StaffContestEntry } from '@/schemas/contests';
 
 import type { useContestEntries } from '../../hooks/useContestEntries';
@@ -117,7 +117,7 @@ export function PrizeControl({
   const { t, i18n } = useContestTranslation();
   if (entry.status !== 'valid' || entry.placing !== 'winner' || !resultsPublished) return null;
   if (entry.prize_sent_at !== null) {
-    const date = formatRomaniaDate(new Date(entry.prize_sent_at), i18n.language);
+    const date = formatLocalDate(new Date(entry.prize_sent_at), i18n.language);
     return <>{t('staff.results.prizeSentOn', { date })}</>;
   }
   return <MarkPrizeSent entry={entry} entries={entries} />;

@@ -16,7 +16,7 @@ import {
   usePlanText,
   useWordLabels,
 } from '@/features/data-export/hooks/useDataExport';
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatLocalDate } from '@/lib/local-time';
 import { getSupabaseClient } from '@/lib/supabase';
 
 import { openDataRequestFileAddress } from '../api/dataRequestCopy';
@@ -63,7 +63,7 @@ export function useDataRequestCopy(request: DataRequestDetail) {
         planText,
         libraryLabels,
         guideWords,
-        formatDate: (isoDate) => formatRomaniaDate(new Date(isoDate), request.language),
+        formatDate: (isoDate) => formatLocalDate(new Date(isoDate), request.language),
         requestId: request.id,
         reference: request.reference,
         format,

@@ -14,7 +14,7 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatLocalDate } from '@/lib/local-time';
 
 import type { ConsentFailure } from '../../../schemas/parentConsent';
 import { useParentConsentTranslation } from '../registerParentConsentTranslations';
@@ -117,7 +117,7 @@ export function ParentAnswerForm({
     if (!isMissing) onAnswer(decision, isGuardian, decision === 'agree' && allowsSpotlight);
   }
 
-  const date = formatRomaniaDate(new Date(deadline), i18n.language);
+  const date = formatLocalDate(new Date(deadline), i18n.language);
   return (
     <div className="flex flex-col gap-4 border-t border-border pt-5">
       <GuardianCheckbox

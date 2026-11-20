@@ -2,10 +2,10 @@
  * Which day heading a notification sits under: Today, Yesterday, Earlier this week or Older
  * (story S1-E7-01; board 6.2).
  *
- * Who calls it: NotificationsPage. Days are counted in Romanian time (src/lib/romania-time.ts),
- * the market's clock for March, so "Today" turns over at midnight in Bucharest.
+ * Who calls it: NotificationsPage. Days are counted on the viewer's own clock (Robert,
+ * 20 Nov 2026, 18:19 UTC: every time the app shows is in local time), so "Today" turns over at the
+ * reader's own midnight.
  */
-import { ROMANIA_TIME_ZONE } from '@/lib/romania-time';
 
 /** The four headings, newest first. */
 export const dayGroups = ['today', 'yesterday', 'thisWeek', 'older'] as const;
@@ -13,22 +13,23 @@ export const dayGroups = ['today', 'yesterday', 'thisWeek', 'older'] as const;
 /** One of the headings. */
 export type DayGroup = (typeof dayGroups)[number];
 
-/** The calendar day of a moment in Romania, as YYYY-MM-DD (en-CA writes dates that way). */
-const romanianDay = new Intl.DateTimeFormat('en-CA', {
-  timeZone: ROMANIA_TIME_ZONE,
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
-});
+/** The calendar day of a moment on the viewer's clock, as YYYY-MM-DD (en-CA writes dates that way). */
+function viewerDay(instant: Date): string {
+  return new Intl.DateTimeFormat('en-CA', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(instant);
+}
 
 /**
- * Whole days between two moments' calendar days in Romania.
+ * Whole days between two moments' calendar days on the viewer's clock.
  *
  * @returns 0 for the same day, 1 for the day before and so on
  */
 function calendarDaysBetween(earlier: Date, later: Date): number {
-  const earlierDay = Date.parse(romanianDay.format(earlier));
-  const laterDay = Date.parse(romanianDay.format(later));
+  const earlierDay = Date.parse(viewerDay(earlier));
+  const laterDay = Date.parse(viewerDay(later));
   return Math.round((laterDay - earlierDay) / (24 * 3600 * 1000));
 }
 

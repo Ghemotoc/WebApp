@@ -18,7 +18,7 @@ import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { useSession } from '@/features/auth/hooks/useSession';
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatLocalDate } from '@/lib/local-time';
 
 import type { MyParentConsent } from '../api/parentConsent';
 import { useMyParentConsent } from '../hooks/useMyParentConsent';
@@ -45,7 +45,7 @@ type Consent = ReturnType<typeof useMyParentConsent>;
 function AgreedPanel({ consent }: { consent: MyParentConsent }) {
   const { t, i18n } = useParentConsentTranslation();
   const date =
-    consent.decidedAt === null ? '' : formatRomaniaDate(new Date(consent.decidedAt), i18n.language);
+    consent.decidedAt === null ? '' : formatLocalDate(new Date(consent.decidedAt), i18n.language);
   return (
     <div className="flex flex-col gap-4">
       <Notice tone="success" title={t('agreedHeading')}>

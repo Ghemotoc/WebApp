@@ -6,12 +6,13 @@
  *
  * Who calls it: ChapterListCard, ManagedChapterRow and RecentlyDeletedChapters.
  * What it calls: i18next's t() for the words (writing.json, manageChapters.*) and
- * src/lib/romania-time.ts for the dates, which are always Romania time in March
- * (decided 23 Oct 2026, Q7). Kept apart from the components so it can be tested on its own.
+ * src/lib/local-time.ts and src/lib/romania-time.ts for the dates and a scheduled chapter's
+ * time, all on the writer's own clock (Robert, 20 Nov 2026, 18:19 and 18:36 UTC). Kept apart from the components so it can be tested on its own.
  */
 import type { TFunction } from 'i18next';
 
-import { dateLocaleFor, formatRomaniaDateTime, withShortSeptember } from '@/lib/romania-time';
+import { formatLocalDateTime } from '@/lib/local-time';
+import { dateLocaleFor, withShortSeptember } from '@/lib/romania-time';
 
 import type { ManagedChapter, ManagedChapterState } from '../api/manageChapters';
 import { purgeDateFor } from './purgeDate';
@@ -20,15 +21,14 @@ import { purgeDateFor } from './purgeDate';
 const summaryOrder: ManagedChapterState[] = ['published', 'draft', 'scheduled', 'unpublished'];
 
 /**
- * A short date in Romania time: "5 Sep" (British order) or "5 sept.".
+ * A short date on the viewer's own calendar: "5 Sep" (British order) or "5 sept.".
  *
  * @param isoTime - the moment, as an ISO timestamp
  * @param language - the interface language
  * @returns the text
  */
-export function shortRomaniaDate(isoTime: string, language: string): string {
+export function shortLocalDate(isoTime: string, language: string): string {
   const text = new Intl.DateTimeFormat(dateLocaleFor(language), {
-    timeZone: 'Europe/Bucharest',
     day: 'numeric',
     month: 'short',
   }).format(new Date(isoTime));
@@ -57,12 +57,12 @@ export function chapterSummary(t: TFunction, chapters: ManagedChapter[]): string
 function publishedMeta(t: TFunction, chapter: ManagedChapter, language: string): string {
   const parts = [
     t('manageChapters.meta.published', {
-      date: shortRomaniaDate(chapter.firstPublishedAt ?? '', language),
+      date: shortLocalDate(chapter.firstPublishedAt ?? '', language),
     }),
   ];
   if (chapter.editedAt !== null) {
     parts.push(
-      t('manageChapters.meta.edited', { date: shortRomaniaDate(chapter.editedAt, language) }),
+      t('manageChapters.meta.edited', { date: shortLocalDate(chapter.editedAt, language) }),
     );
   }
   return parts.join(' · ');
@@ -76,7 +76,7 @@ function draftMeta(t: TFunction, chapter: ManagedChapter, language: string): str
   ];
   if (chapter.draftSavedAt !== null) {
     parts.push(
-      t('manageChapters.meta.saved', { date: shortRomaniaDate(chapter.draftSavedAt, language) }),
+      t('manageChapters.meta.saved', { date: shortLocalDate(chapter.draftSavedAt, language) }),
     );
   }
   return parts.join(' · ');
@@ -88,7 +88,7 @@ function draftMeta(t: TFunction, chapter: ManagedChapter, language: string): str
  * @param t - the writing namespace's t()
  * @param chapter - the chapter
  * @param language - the interface language
- * @returns the line, for example "Goes live Saturday, 24 October at 18:00, Romania time"
+ * @returns the line, for example "Goes live Saturday 24 October at 18:00, local time"
  */
 export function chapterMeta(t: TFunction, chapter: ManagedChapter, language: string): string {
   switch (chapter.state) {
@@ -96,12 +96,12 @@ export function chapterMeta(t: TFunction, chapter: ManagedChapter, language: str
       return publishedMeta(t, chapter, language);
     case 'scheduled':
       return t('manageChapters.meta.scheduled', {
-        when: formatRomaniaDateTime(new Date(chapter.scheduledFor ?? ''), language),
+        when: formatLocalDateTime(new Date(chapter.scheduledFor ?? ''), language),
       });
     case 'unpublished':
       return [
         t('manageChapters.meta.unpublished', {
-          date: shortRomaniaDate(chapter.unpublishedAt ?? '', language),
+          date: shortLocalDate(chapter.unpublishedAt ?? '', language),
         }),
         t('manageChapters.meta.unpublishedNote'),
       ].join(' · ');
@@ -120,7 +120,7 @@ export function chapterMeta(t: TFunction, chapter: ManagedChapter, language: str
  */
 export function deletedMeta(t: TFunction, deletedAt: string, language: string): string {
   return t('manageChapters.deleted.meta', {
-    date: shortRomaniaDate(deletedAt, language),
+    date: shortLocalDate(deletedAt, language),
     purgeDate: purgeDateFor(deletedAt, language),
   });
 }

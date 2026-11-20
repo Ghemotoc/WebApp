@@ -7,7 +7,7 @@
  */
 import type { TFunction } from 'i18next';
 
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatLocalDate } from '@/lib/local-time';
 
 import type { DataExport } from '../api/dataExport';
 import { fileSizeText } from '../lib/fileSize';
@@ -88,7 +88,7 @@ function useHoldsLine() {
 export function StoriesExportReady({ copy, story, wasReused }: StoriesExportReadyProps) {
   const { t, i18n } = useDataExportTranslation();
   const holdsLine = useHoldsLine();
-  const expiresOn = formatRomaniaDate(new Date(copy.expires_at ?? copy.created_at), i18n.language);
+  const expiresOn = formatLocalDate(new Date(copy.expires_at ?? copy.created_at), i18n.language);
   const size = fileSizeText(copy.file_size ?? 0, i18n.language);
   const day = (copy.ready_at ?? copy.created_at).slice(0, 10);
   const kind = fileKindOf(copy);

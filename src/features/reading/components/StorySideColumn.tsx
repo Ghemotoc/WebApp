@@ -6,7 +6,7 @@
  * S1-E6-05; the writer's numbers stay on the profile), the label rows with a fine line between them (LabelRows: language,
  * rating, labels, AI, status, first published (6 Nov 2026), comments; "Where to read" joins with S1-E3-08) and the "Report
  * this story" link. While the writer has paused new comments, the comments row says until when, in
- * Romania time (bundle CALM-8). The content note sits in StoryHeader, under the blurb. No doodles since bundle G4.
+ * the reader's own local time (bundles CALM-8 and CALM-8b). The content note sits in StoryHeader, under the blurb. No doodles since bundle G4.
  * Report button (CLAUDE.md rule 6): Lane C's shared <ReportButton> (S1-E10-01; architecture
  * 1.7.11), which opens the one report dialog for this story. Not shown to the story's owner, who
  * can't report their own story (the database refuses it too).
@@ -25,7 +25,7 @@ import { LabelRows } from '@/components/ui/LabelRows';
 import { FollowButton } from '@/features/people/components/FollowButton';
 import { ReportButton } from '@/features/reporting/components/ReportButton';
 import { runningPauseEnd } from '@/lib/comment-pause';
-import { formatRomaniaDayAndTime } from '@/lib/romania-time';
+import { formatLocalDayAndTime } from '@/lib/local-time';
 import { ratingMinimumAge } from '@/schemas/story';
 
 import type { ClassicAuthor, StoryPageData } from '../api/storyPage';
@@ -180,7 +180,7 @@ function firstPublishedRows(story: StoryPageData, t: TFunction<'reading'>) {
 
 /**
  * The comments row: "Off", "On", or while the writer has paused new comments, "Paused until
- * Saturday 21 November, 18:40, Romania time" (bundle CALM-8), the end written the way the paused
+ * Saturday 21 November, 18:40" (bundle CALM-8; the reader's own time, CALM-8b), the end written the way the paused
  * line under a chapter writes it.
  *
  * @param story - the story page's data
@@ -193,7 +193,7 @@ function commentsRowText(story: StoryPageData, t: TFunction<'reading'>, language
   // The page was read a little while ago, so a pause that has ended since counts as none.
   const pauseEnd = runningPauseEnd(story.commentsPausedUntil, new Date());
   if (pauseEnd === null) return t('storyPage.commentsOn');
-  return t('storyPage.commentsPaused', { when: formatRomaniaDayAndTime(pauseEnd, language) });
+  return t('storyPage.commentsPaused', { when: formatLocalDayAndTime(pauseEnd, language) });
 }
 
 /**

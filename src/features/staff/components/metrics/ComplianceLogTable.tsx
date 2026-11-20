@@ -4,7 +4,7 @@
  *
  * Columns from the board: reference, authority, received, content, action taken and done, plus
  * the kind. A removal order from the public form (TCO-…) shows its moderation decision as the
- * action; an open logged entry has a "Record the action" button. Times are Romania time. On wide
+ * action; an open logged entry has a "Record the action" button. Times are on the viewer's own clock (CALM-8b). On wide
  * screens a real table; on phones label and value rows with a fine line between them (DoD).
  * Who shows it: ComplianceLogSection.
  */
@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
 import { LabelRows } from '@/components/ui/LabelRows';
-import { formatRomaniaDateTime } from '@/lib/romania-time';
+import { formatLocalDateTime } from '@/lib/local-time';
 
 import type { ComplianceEntry } from '../../api/complianceLog';
 
@@ -36,7 +36,7 @@ const columns = ['reference', 'kind', 'authority', 'received', 'content', 'actio
 function useCells() {
   const { t, i18n } = useTranslation(['staff', 'moderation']);
   const time = (iso: string | null) =>
-    iso === null ? null : formatRomaniaDateTime(new Date(iso), i18n.language);
+    iso === null ? null : formatLocalDateTime(new Date(iso), i18n.language);
   return (entry: ComplianceEntry, onComplete: (reference: string) => void): ReactNode[] => {
     const action =
       entry.actionTaken ??

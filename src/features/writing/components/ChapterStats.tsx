@@ -12,7 +12,7 @@
 import { useTranslation } from 'react-i18next';
 
 import type { ManagedChapter } from '../api/manageChapters';
-import { shortRomaniaDate } from '../lib/chapterListText';
+import { shortLocalDate } from '../lib/chapterListText';
 import { storyNumbers } from '../lib/chapterMoves';
 
 /** One tile: the big number and its label under it. */
@@ -39,7 +39,7 @@ export function ChapterStats({ chapters }: { chapters: ManagedChapter[] }) {
   const next =
     numbers.nextScheduledFor === null
       ? t('manageChapters.stats.noneScheduled')
-      : shortRomaniaDate(numbers.nextScheduledFor, i18n.language);
+      : shortLocalDate(numbers.nextScheduledFor, i18n.language);
 
   return (
     <section aria-label={t('manageChapters.stats.label')}>

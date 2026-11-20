@@ -3,12 +3,12 @@
  * S1-E2-08, part 08a; board AgeCheck.dc.html, "Passed").
  *
  * Who shows it: AgeCheckPage (when the check is already done) and AgeCheckReturnPage (after a
- * pass). What it calls: nothing; it shows the stored result, its date in Romania time and its
+ * pass). What it calls: nothing; it shows the stored result, its date on the viewer's own calendar and its
  * method. Only these three are ever kept (criterion 5; CLAUDE.md rule 5).
  */
 import { useTranslation } from 'react-i18next';
 
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatLocalDate } from '@/lib/local-time';
 
 import type { MyAgeCheck } from '../api/ageCheck';
 
@@ -22,7 +22,7 @@ export function AgeCheckResultSummary({ check }: { check: MyAgeCheck }) {
   const { t, i18n } = useTranslation('account');
   // The date and method line, only when both are known.
   const date =
-    check.checkedAt === null ? null : formatRomaniaDate(new Date(check.checkedAt), i18n.language);
+    check.checkedAt === null ? null : formatLocalDate(new Date(check.checkedAt), i18n.language);
   const method = check.method === null ? null : t(`ageCheck.methods.${check.method}`);
 
   return (

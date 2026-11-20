@@ -5,19 +5,20 @@
  *
  * A switch, off by default, with the note "Comments already posted stay, and reporting still
  * works." Turning it on shows "For how long" (24 hours, 3 days or 7 days; 24 hours chosen) and the
- * note becomes "Paused until Sunday 22 November, 18:40, Romania time." It saves with the form:
+ * note becomes "Paused until Sunday 22 November, 18:40." It saves with the form:
  * update_my_story() works out the real end on the database's clock. While a pause runs, the
  * switch is on and the note names its end; turning it off ends the pause when the form saves.
  * StoryStatusSection leaves it out when Who can comment is Nobody: there is nothing to pause.
  * The switch is the section's own StorySwitch (role="switch"; there is no shared Switch yet) and
  * "For how long" the shared SegmentedControl, a radio group; CALM-4 and CALM-5 restyle them later.
  * Who uses it: StoryStatusSection. What it calls: lib/commentPause.ts for what to show, and
- * formatRomaniaDayAndTime() for the end, in Romania time like every date writers set.
+ * formatLocalDayAndTime() for the end, in the writer's own local time (CALM-8b): a pause is a
+ * length the writer picks, not a time they type, so it reads like the times readers see.
  */
 import { useTranslation } from 'react-i18next';
 
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
-import { formatRomaniaDayAndTime } from '@/lib/romania-time';
+import { formatLocalDayAndTime } from '@/lib/local-time';
 import {
   commentPauseLengths,
   type CommentPauseChoice,
@@ -51,7 +52,7 @@ export function CommentPauseField({ answer, pausedUntil, onChange }: CommentPaus
   const note =
     view.end === null
       ? t('commentPause.offNote')
-      : t('commentPause.until', { when: formatRomaniaDayAndTime(view.end, i18n.language) });
+      : t('commentPause.until', { when: formatLocalDayAndTime(view.end, i18n.language) });
   const lengthOptions = commentPauseLengths.map((length) => ({
     value: length,
     label: t(`commentPause.lengths.${length}`),

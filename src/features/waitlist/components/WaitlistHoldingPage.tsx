@@ -100,9 +100,9 @@ function LogOutButton() {
  */
 function HoldingIntro({ joinedAt, nextLine }: { joinedAt: string; nextLine: string }) {
   const { t, i18n } = useTranslation('account');
-  // The day in the reader's language and Romanian time, like every date in the app.
+  // The day in the reader's language, on the reader's own calendar, like every date in the app
+  // (Robert, 20 Nov 2026, 18:36 UTC).
   const joinedDay = new Intl.DateTimeFormat(i18n.language === 'en' ? 'en-GB' : 'ro', {
-    timeZone: 'Europe/Bucharest',
     day: 'numeric',
     month: 'long',
     year: 'numeric',

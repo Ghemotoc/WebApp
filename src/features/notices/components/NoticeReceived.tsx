@@ -23,7 +23,8 @@ export interface NoticeReceivedProps {
 }
 
 /**
- * The time of receipt in Romania time, as the acknowledgement email writes it.
+ * The time of receipt on the sender's own clock (Robert, 20 Nov 2026, 18:19 UTC: every time
+ * the app shows is in local time; the acknowledgement email still writes it as the server sends it).
  *
  * @param isoTime - the server's time of receipt
  * @param language - the page's language
@@ -31,7 +32,6 @@ export interface NoticeReceivedProps {
  */
 function receiptTime(isoTime: string, language: 'ro' | 'en'): string {
   return new Intl.DateTimeFormat(language === 'ro' ? 'ro-RO' : 'en-GB', {
-    timeZone: 'Europe/Bucharest',
     dateStyle: 'long',
     timeStyle: 'medium',
   }).format(new Date(isoTime));

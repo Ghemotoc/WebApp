@@ -5,7 +5,7 @@
  *
  * Who shows it: DataRequestCopyPanel. What it calls: nothing.
  */
-import { formatRomaniaDateTime } from '@/lib/romania-time';
+import { formatLocalDateTime } from '@/lib/local-time';
 
 import type { DataRequestCopySent } from '../../api/dataRequests';
 import { useDataRequestsTranslation } from '../../registerDataRequestsTranslations';
@@ -18,7 +18,7 @@ import { useDataRequestsTranslation } from '../../registerDataRequestsTranslatio
 export function DataRequestCopiesSent({ copies }: { copies: DataRequestCopySent[] }) {
   const { t, i18n } = useDataRequestsTranslation();
   if (copies.length === 0) return null;
-  const when = (isoTime: string) => formatRomaniaDateTime(new Date(isoTime), i18n.language);
+  const when = (isoTime: string) => formatLocalDateTime(new Date(isoTime), i18n.language);
   return (
     <div className="flex flex-col gap-2">
       <h3 className="m-0 text-base font-semibold text-heading">{t('copy.sentHeading')}</h3>

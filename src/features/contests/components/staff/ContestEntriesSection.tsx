@@ -18,7 +18,8 @@ import { Link } from 'react-router';
 import { InfoPill } from '@/components/ui/InfoPill';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
-import { formatRomaniaDate, romaniaNowFields } from '@/lib/romania-time';
+import { formatLocalDate } from '@/lib/local-time';
+import { romaniaNowFields } from '@/lib/romania-time';
 import type { StaffContestEntry } from '@/schemas/contests';
 
 import type { StaffContest } from '../../api/contests';
@@ -77,7 +78,7 @@ function EntryRow({ entry, context }: { entry: StaffContestEntry; context: RowCo
       </td>
       <td className="py-3 pr-4 text-body">{entry.words.toLocaleString(i18n.language)}</td>
       <td className="py-3 pr-4 text-body">
-        {formatRomaniaDate(new Date(entry.entered_at), i18n.language)}
+        {formatLocalDate(new Date(entry.entered_at), i18n.language)}
       </td>
       <td className="py-3 pr-4 text-body">
         <EntryStatus entry={entry} />

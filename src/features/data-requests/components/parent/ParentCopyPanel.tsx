@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { ExportDownloadButton } from '@/features/data-export/components/ExportDownloadButton';
 import { fileSizeText } from '@/features/data-export/lib/fileSize';
-import { formatRomaniaDateTime } from '@/lib/romania-time';
+import { formatLocalDateTime } from '@/lib/local-time';
 
 import type { OpenedParentCopy, ParentCopyLink } from '../../api/dataRequestParent';
 import { useDataRequestsTranslation } from '../../registerDataRequestsTranslations';
@@ -37,7 +37,7 @@ function ParentCopyFiles({ opened }: { opened: Extract<OpenedParentCopy, { outco
     <div className="flex flex-col gap-2">
       <p className="m-0 font-semibold text-ink">
         {t('parent.openUntil', {
-          time: formatRomaniaDateTime(new Date(opened.openUntil), i18n.language),
+          time: formatLocalDateTime(new Date(opened.openUntil), i18n.language),
         })}
       </p>
       <ul className="m-0 flex list-none flex-col gap-2 p-0">

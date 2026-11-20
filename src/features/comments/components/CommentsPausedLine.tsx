@@ -1,5 +1,5 @@
 /**
- * CommentsPausedLine: "New comments are paused until Saturday 21 November, 18:40, Romania time."
+ * CommentsPausedLine: "New comments are paused until Saturday 21 November, 18:40."
  * in place of the comment box while the writer has paused new comments (bundle CALM-8;
  * IDEA-20261109-8; the design handover's Step 4, "Pausing new comments", points 5, 6 and 8).
  *
@@ -10,12 +10,12 @@
  * the comment box comes back where this line was; onResumed lets the parent give it the focus, so
  * a keyboard or screen reader user isn't left on a button that has gone (WCAG 2.4.3).
  * Who uses it: CommentsSection (under the chapter) and ParagraphThread (the thread's foot).
- * What it calls: useResumeComments → end_my_comment_pause(); formatRomaniaDayAndTime() for the end,
- * in Romania time like every date writers set.
+ * What it calls: useResumeComments → end_my_comment_pause(); formatLocalDayAndTime() for the end,
+ * in the viewer's own local time (CALM-8b; Robert, design canvas comment, 20 Nov 2026, 17:49 UTC).
  */
 import { Button } from '@/components/ui/Button';
 import type { ChapterAddress } from '@/features/reading/api/likes';
-import { formatRomaniaDayAndTime } from '@/lib/romania-time';
+import { formatLocalDayAndTime } from '@/lib/local-time';
 import { cn } from '@/lib/utils';
 
 import { useResumeComments, type ResumeFailure } from '../hooks/useResumeComments';
@@ -78,8 +78,8 @@ export function CommentsPausedLine({
   onResumed,
 }: CommentsPausedLineProps) {
   const { t, i18n } = useCommentsTranslation();
-  // The end in Romania time, the way the switch in Story settings names it.
-  const when = formatRomaniaDayAndTime(end, i18n.language);
+  // The end in the viewer's own local time, the way the switch in Story settings names it.
+  const when = formatLocalDayAndTime(end, i18n.language);
   return (
     <div className={cn('flex flex-wrap items-center gap-x-3 gap-y-1', className)}>
       <p className="m-0 text-[15px] text-body">{t('section.paused', { when })}</p>

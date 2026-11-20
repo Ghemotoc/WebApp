@@ -26,7 +26,7 @@ import { errorShownByHook } from '@/lib/errorShownByHook';
 type OrderState = ReturnType<typeof useRemovalOrder>;
 
 /**
- * The order's times, in Romania time, as label rows.
+ * The order's times, on the viewer's own clock (Robert, 20 Nov 2026, 18:19 UTC), as label rows.
  *
  * @returns the rows
  */
@@ -35,7 +35,6 @@ function TimelineRows({ timeline }: { timeline: OrderTimeline }) {
   const format = new Intl.DateTimeFormat(i18n.language, {
     dateStyle: 'medium',
     timeStyle: 'medium',
-    timeZone: 'Europe/Bucharest',
   });
   const timeOf = (isoTime: string | null) =>
     isoTime === null ? t('orders.notYet') : format.format(new Date(isoTime));

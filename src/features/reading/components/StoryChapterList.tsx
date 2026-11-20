@@ -23,7 +23,7 @@ import { InfoPill } from '@/components/ui/InfoPill';
 import type { StoryPlace } from '@/features/library/api/library';
 import { useStoryLibraryState } from '@/features/library/hooks/useStoryLibraryState';
 import { languageNameIn, languageOwnName } from '@/lib/language-names';
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatLocalDate } from '@/lib/local-time';
 
 import type { EditionFacts } from '../api/editions';
 import type { StoryPageChapter } from '../api/storyPage';
@@ -58,14 +58,14 @@ function ChapterDates({ chapter }: { chapter: StoryPageChapter }) {
   if (chapter.publishedAt !== null) {
     parts.push(
       t('storyPage.publishedOn', {
-        date: formatRomaniaDate(new Date(chapter.publishedAt), i18n.language),
+        date: formatLocalDate(new Date(chapter.publishedAt), i18n.language),
       }),
     );
   }
   if (chapter.editedAt !== null) {
     parts.push(
       t('storyPage.editedOn', {
-        date: formatRomaniaDate(new Date(chapter.editedAt), i18n.language),
+        date: formatLocalDate(new Date(chapter.editedAt), i18n.language),
       }),
     );
   }

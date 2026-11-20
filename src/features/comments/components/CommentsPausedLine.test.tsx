@@ -7,6 +7,7 @@ import { fireEvent, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderWithProviders } from '@/test/renderWithProviders';
+import { pinViewerTimeZone } from '@/test/viewerTimeZone';
 
 import { useResumeComments, type ResumeFailure } from '../hooks/useResumeComments';
 
@@ -16,7 +17,7 @@ vi.mock('../hooks/useResumeComments', () => ({ useResumeComments: vi.fn() }));
 
 const resume = vi.fn();
 const address = { storySlug: 'statia-meteo-seed01', chapterCode: 'reace001' };
-// Saturday 21 November 2026, 18:40 in Bucharest.
+// Saturday 21 November 2026, 17:40 in Stockholm, where these tests' reader is.
 const end = new Date('2026-11-21T16:40:00Z');
 
 /**
@@ -30,15 +31,18 @@ function resumeReports(failure: ResumeFailure | null, isResuming = false) {
 }
 
 describe('CommentsPausedLine', () => {
+  // The end shows in the reader's own time (CALM-8b), not Romania time.
+  pinViewerTimeZone('Europe/Stockholm');
+
   beforeEach(() => {
     resume.mockReset();
     resumeReports(null);
   });
 
-  it('tells a reader until when new comments are paused, in Romania time, with no button', () => {
+  it('tells a reader until when new comments are paused, in their own time, with no button', () => {
     renderWithProviders(<CommentsPausedLine address={address} end={end} canResume={false} />, 'en');
     expect(
-      screen.getByText('New comments are paused until Saturday 21 November, 18:40, Romania time.'),
+      screen.getByText('New comments are paused until Saturday 21 November, 17:40.'),
     ).toBeInTheDocument();
     expect(screen.queryByRole('button')).toBeNull();
   });
@@ -46,9 +50,7 @@ describe('CommentsPausedLine', () => {
   it('speaks Romanian with the date written the Romanian way', () => {
     renderWithProviders(<CommentsPausedLine address={address} end={end} canResume={false} />, 'ro');
     expect(
-      screen.getByText(
-        'Comentariile noi sunt oprite până sâmbătă, 21 noiembrie, 18:40, ora României.',
-      ),
+      screen.getByText('Comentariile noi sunt oprite până sâmbătă, 21 noiembrie, 17:40.'),
     ).toBeInTheDocument();
   });
 

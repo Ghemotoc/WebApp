@@ -240,7 +240,7 @@
   "commentPause": {
     "label": "Pause new comments",
     "offNote": "Comments already posted stay, and reporting still works.",
-    "until": "Paused until {{when}}, Romania time.",
+    "until": "Paused until {{when}}.",
     "lengthLabel": "For how long",
     "lengths": {
       "24h": "24 hours",
@@ -413,7 +413,7 @@
       "words_few": "{{count}} words",
       "words_other": "{{count}} words",
       "saved": "saved {{date}}",
-      "scheduled": "Goes live {{when}}, Romania time",
+      "scheduled": "Goes live {{when}}, local time",
       "unpublished": "Unpublished {{date}}",
       "unpublishedNote": "readers can’t open it · comments hidden but kept"
     },
@@ -523,7 +523,7 @@
       "untitled": "Chapter {{number}}, untitled",
       "titled": "Chapter {{number}}: {{title}}",
       "draftMeta": "{{story}} · {{words}} · saved {{when}}",
-      "scheduledMeta": "Publishes {{when}}, Romania time",
+      "scheduledMeta": "Publishes {{when}}, local time",
       "edit": "Edit",
       "reschedule": "Reschedule"
     },

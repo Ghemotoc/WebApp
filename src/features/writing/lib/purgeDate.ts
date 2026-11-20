@@ -2,8 +2,8 @@
  * The date a deleted story or chapter is deleted for good, as the screen says it
  * (story S1-E3-05; "gone for good on 15 Nov", board Chapters 4.4).
  *
- * The rule: content_purge_days (30, a public setting) after the deletion, counted in Romanian
- * time, the same way delete_my_story() works it out. The screen uses the fixed 30 so it never
+ * The rule: content_purge_days (30, a public setting) after the deletion, shown on the
+ * reader's own calendar (Robert, 20 Nov 2026, 18:36 UTC); delete_my_story() works out the real date. The screen uses the fixed 30 so it never
  * has to wait for a settings read; the database's own date is the one that counts.
  * Who calls it: DeleteStoryControl and RecentlyDeleted.
  */
@@ -26,6 +26,5 @@ export function purgeDateFor(deletedAt: string, language: string): string {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
-    timeZone: 'Europe/Bucharest',
   }).format(purgeDate);
 }

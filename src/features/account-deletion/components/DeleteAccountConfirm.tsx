@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/Button';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { DownloadStoriesFirst } from '@/features/data-export/components/DownloadStoriesFirst';
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatLocalDate } from '@/lib/local-time';
 
 import { useRequestAccountDeletion } from '../hooks/useAccountDeletion';
 import { useAccountDeletionTranslation } from '../registerAccountDeletionTranslations';
@@ -76,7 +76,7 @@ export function DeleteAccountConfirm({
         {t('confirm.heading')}
       </h3>
       <p className="m-0 text-body">
-        {t('confirm.body', { date: formatRomaniaDate(deletedOn, i18n.language) })}
+        {t('confirm.body', { date: formatLocalDate(deletedOn, i18n.language) })}
       </p>
       <div className="flex flex-col gap-2">
         <Eyebrow>{t('confirm.consequencesLabel')}</Eyebrow>
