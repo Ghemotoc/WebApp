@@ -88,7 +88,7 @@ function ProfileGroup({ account, names }: { account: LoadedAccount; names: Loade
       <AccountNamesSection account={account} names={names} />
       <BioSettingsSection handle={handle} />
       <AvatarBuilderSection handle={handle} />
-      {/* The colour of the initials bead, for anyone who keeps their initials (G11a). */}
+      {/* The colour of the circle behind the initials, for anyone who keeps them (G11a; CALM-3). */}
       <InitialsColourSection handle={handle} name={names.penName ?? handle} />
       {/* The line under one's forum posts (S1-E8-08). */}
       <SignatureSettingsSection />

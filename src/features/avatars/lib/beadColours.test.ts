@@ -1,73 +1,64 @@
 /**
- * Tests for the initials bead colours (bundle G3 COMPONENTS; design rules 2026-11-07, "Initials
- * colours").
+ * Tests for the circle colours behind a member's initials (bundle CALM-3; design system
+ * Avatar/README.md: seven cover palette colours, light ones with ink initials).
  */
 import { describe, expect, it } from 'vitest';
 
+import { coverPalette } from '@/components/covers/coverDesigns';
 import { contrastRatio } from '@/lib/contrast';
 
 import { beadColourFor, beadColourNames, beadColours, isBeadColourName } from './beadColours';
 
 describe('beadColours', () => {
-  it('has the sixteen colours the design rules name', () => {
+  it('has the seven cover palette colours the handover names', () => {
     expect(beadColours.map((bead) => bead.name)).toEqual([
       'plum',
       'violet',
-      'ink',
       'gold',
+      'lilac',
       'blush',
       'sky',
       'sage',
-      'lilac',
-      'paper',
-      'cobalt',
-      'forest',
-      'indigo',
-      'ember',
-      'berry',
-      'cherry',
-      'slate',
     ]);
   });
 
-  it('lists the beads in the order of the names the database keeps (initials_colour_names())', () => {
+  it('lists the circles in the order of the names the database keeps (initials_colour_names())', () => {
     expect(beadColours.map((bead) => bead.name)).toEqual([...beadColourNames]);
   });
 
-  it.each(beadColours)('keeps the initials on the $name bead at 4.5:1 or better', (bead) => {
+  it('takes every circle colour from the cover palette, never a new hex code', () => {
+    beadColours.forEach((bead) => expect(bead.background).toBe(coverPalette[bead.name]));
+  });
+
+  it.each(beadColours)('keeps the initials on the $name circle at 4.5:1 or better', (bead) => {
     expect(contrastRatio(bead.initials, bead.background)).toBeGreaterThanOrEqual(4.5);
   });
 
-  it('gives light beads the dark initials #26142E', () => {
-    const lightBeads = beadColours.filter((bead) => bead.initials !== '#FFFFFF');
-    expect(lightBeads.map((bead) => bead.name)).toEqual([
-      'gold',
-      'blush',
-      'sky',
-      'sage',
-      'lilac',
-      'paper',
-    ]);
-    lightBeads.forEach((bead) => expect(bead.initials).toBe('#26142E'));
+  it('gives plum and violet paper initials and the five light circles ink initials', () => {
+    const paperCircles = beadColours.filter((bead) => bead.initials === coverPalette.paper);
+    expect(paperCircles.map((bead) => bead.name)).toEqual(['plum', 'violet']);
+    const inkCircles = beadColours.filter((bead) => bead.initials === coverPalette.ink);
+    expect(inkCircles.map((bead) => bead.name)).toEqual(['gold', 'lilac', 'blush', 'sky', 'sage']);
   });
 
-  it('gives the same person the same bead every time, whatever the letter case', () => {
+  it('gives the same person the same circle every time, whatever the letter case', () => {
     expect(beadColourFor('inkwolf')).toEqual(beadColourFor('InkWolf'));
   });
 
-  it('uses the colour the person picked, whatever their username (G11a)', () => {
-    expect(beadColourFor('inkwolf', 'cobalt').name).toBe('cobalt');
+  it('uses the person’s stored colour, whatever their username', () => {
+    expect(beadColourFor('inkwolf', 'sky').name).toBe('sky');
     expect(beadColourFor('inkwolf', null)).toEqual(beadColourFor('inkwolf'));
   });
 
-  it('knows the sixteen names and nothing else', () => {
+  it('knows the seven names and nothing else, the retired ones included', () => {
     expect(isBeadColourName('sage')).toBe(true);
+    expect(isBeadColourName('cobalt')).toBe(false);
     expect(isBeadColourName('neon')).toBe(false);
   });
 
-  it('spreads different people over different beads', () => {
-    const handles = ['inkwolf', 'lia', 'adult_writer', 'teen_17', 'moderator', 'mara', 'ion'];
-    const picked = new Set(handles.map((handle) => beadColourFor(handle).name));
+  it('spreads deleted accounts over different circles', () => {
+    const names = ['inkwolf', 'lia', 'adult_writer', 'teen_17', 'moderator', 'mara', 'ion'];
+    const picked = new Set(names.map((name) => beadColourFor(name).name));
     expect(picked.size).toBeGreaterThan(3);
   });
 });
