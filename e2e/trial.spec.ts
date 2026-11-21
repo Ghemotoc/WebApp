@@ -31,12 +31,22 @@ function setFlags(flags: { trialFeedback: boolean; desktopOnly: boolean }) {
   );
 }
 
-/** Opens an address in English as adult_writer, on a computer. */
-async function openAsMember(browser: Browser, address: string): Promise<Page> {
-  runSql(`update public.profiles set locale = 'en' where handle = 'adult_writer';`);
+/**
+ * Opens an address as adult_writer, on a computer, in one language. The account's own language
+ * wins over the browser's once signed in, so both are set.
+ */
+async function openAsMember(
+  browser: Browser,
+  address: string,
+  language: 'ro' | 'en' = 'en',
+): Promise<Page> {
+  runSql(`update public.profiles set locale = '${language}' where handle = 'adult_writer';`);
   const context = await browser.newContext();
   await useSessionInBrowser(context, (await signInPersona('adult_writer')).session);
-  await context.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
+  await context.addInitScript(([key, value]) => localStorage.setItem(key, value), [
+    LANGUAGE_STORAGE_KEY,
+    language,
+  ] as const);
   const page = await context.newPage();
   await page.goto(address);
   return page;
@@ -129,7 +139,7 @@ test.describe('the trial (TRIAL-FEEDBACK, TRIAL-DESKTOP)', () => {
     for (const language of ['ro', 'en'] as const) {
       for (const theme of ['light', 'night'] as const) {
         // The panel, on a computer at 1440 px.
-        const member = await openAsMember(browser, '/library');
+        const member = await openAsMember(browser, '/library', language);
         const panelView: ScreenView = { address: '/library', width: 1440, theme, language };
         await checkScreen(member, panelView, async (opened) => {
           await opened.locator('[data-bug-report-tab]').click();
