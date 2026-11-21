@@ -1765,5 +1765,14 @@
       "no_such_role": "That role isn’t there any more. Reload the page.",
       "role_out_of_reach": "This role holds more than you do, so only the owner can change it or give it."
     }
+  },
+  "classicCountries": {
+    "heading": "Where it shows",
+    "intro": "Hide this work in countries you choose. Readers there get a page saying it is not yet available in their country, with no reason.",
+    "save": "Save where it shows",
+    "saved": "Saved.",
+    "failed": "Couldn’t save. Try again.",
+    "summaryNone": "Hidden in no country",
+    "summarySome": "Hidden in {{countries}}"
   }
 }

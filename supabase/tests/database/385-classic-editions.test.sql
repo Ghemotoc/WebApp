@@ -76,7 +76,7 @@ select is(public.classic_work_json((select edition_id from saved)) - 'story_id' 
     'category_slug', 'fiction', 'kind', 'novel', 'original_language', 'ro',
     'source_title', 'Wikisource, ediția 1892', 'source_url', 'https://ro.wikisource.org/wiki/Amintiri',
     'translator_name', 'Ana Vlad', 'translator_died_year', null, 'translation_rights', null,
-    'first_published_year', null),
+    'first_published_year', null, 'hidden_in_countries', '[]'::jsonb),
   'it takes the rating, category, kind, original language and source from the first edition');
 select is(public.classic_work_json((select edition_id from saved)) -> 'author' ->> 'name', 'Ion Creangă',
   'and the author');

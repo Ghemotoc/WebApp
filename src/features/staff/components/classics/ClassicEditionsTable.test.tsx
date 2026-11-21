@@ -46,6 +46,7 @@ const original: ClassicWork = {
   chapters: [chapter('published'), chapter('published')],
   wasPublished: true,
   detailsChecked: true,
+  hiddenInCountries: [],
   updatedAt: '2026-11-16T10:00:00Z',
 };
 

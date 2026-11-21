@@ -51,6 +51,7 @@ import { StoryPreviewAside } from './StoryPreviewAside';
 import { StoryStatusSection } from './StoryStatusSection';
 import { StoryReadOnSection } from './StoryReadOnSection';
 import { StoryVisibilitySection } from './StoryVisibilitySection';
+import { StoryWhereItShowsSection } from './StoryWhereItShowsSection';
 
 /** The message under the save button for each outcome. */
 function SaveOutcome({ outcome }: { outcome: ReturnType<typeof useStorySettingsForm>['outcome'] }) {
@@ -195,6 +196,7 @@ function SettingsFields({
       <StoryLabelsSection answers={form.answers} errors={form.errors} set={form.set} />
       <StoryVisibilitySection answers={form.answers} set={form.set} />
       <StoryReadOnSection answers={form.answers} set={form.set} />
+      <StoryWhereItShowsSection answers={form.answers} set={form.set} />
       <StoryStatusSection
         answers={form.answers}
         set={form.set}

@@ -71,6 +71,8 @@ export interface MyStory {
   visibility: StoryVisibility;
   /** The writer chose "In the app only" (S1-E3-08, GAPS-15); applies once the switch is on. */
   isAppOnly: boolean;
+  /** The countries where the story is hidden (COUNTRY-1); empty when it shows everywhere. */
+  hiddenInCountries: string[];
   commentsEnabled: boolean;
   /** Who may comment while comments are on (MUST-1a). */
   commentAudience: CommentAudience;
@@ -242,7 +244,7 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
   const { data, error } = await client
     .from('stories')
     .select(
-      'id, slug, title, blurb, language_code, cover_kind, cover_design, cover_background, cover_accent, cover_style, cover_title_font, cover_tall_path, first_published_at, created_at, completion_status, visibility, is_app_only, comments_enabled, comment_audience, comments_paused_until, quote_cards_enabled, picture_sharing_enabled, card_colour, deleted_at, rating, is_fan_fiction, is_parody, deals_with_abuse_or_coercion, content_note, ai_disclosure, rating_reasons, ai_undisclosed_labelled_at, categories(slug), story_tags(tags(name)), chapters(code, position, status)',
+      'id, slug, title, blurb, language_code, cover_kind, cover_design, cover_background, cover_accent, cover_style, cover_title_font, cover_tall_path, first_published_at, created_at, completion_status, visibility, is_app_only, hidden_in_countries, comments_enabled, comment_audience, comments_paused_until, quote_cards_enabled, picture_sharing_enabled, card_colour, deleted_at, rating, is_fan_fiction, is_parody, deals_with_abuse_or_coercion, content_note, ai_disclosure, rating_reasons, ai_undisclosed_labelled_at, categories(slug), story_tags(tags(name)), chapters(code, position, status)',
     )
     // A story in several languages shows once, as its original; its other languages are on its
     // Languages page (TRANSLATE-1c). A removed language still comes back, so "Recently deleted"
@@ -271,6 +273,7 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
     completionStatus: row.completion_status,
     visibility: row.visibility,
     isAppOnly: row.is_app_only,
+    hiddenInCountries: row.hidden_in_countries,
     commentsEnabled: row.comments_enabled,
     commentAudience: row.comment_audience === 'followers' ? 'followers' : 'everyone',
     commentsPausedUntil: row.comments_paused_until,
@@ -348,7 +351,34 @@ export async function updateMyStory(
   const visibilityOutcome = await setMyStoryVisibility(client, slug, settings.visibility);
   // GAPS-15: then where it can be read, also by its own function.
   if (visibilityOutcome !== 'ok') return visibilityOutcome;
-  return setMyStoryAppOnly(client, slug, settings.isAppOnly);
+  const appOnlyOutcome = await setMyStoryAppOnly(client, slug, settings.isAppOnly);
+  // COUNTRY-1: then the countries where it is hidden.
+  if (appOnlyOutcome !== 'ok') return appOnlyOutcome;
+  return setMyStoryHiddenCountries(client, slug, settings.hiddenInCountries);
+}
+
+/**
+ * Saves the countries where the writer's own story is hidden (bundle COUNTRY-1, board D07).
+ * Readers whose connection is in one of them can't find or open it; the writer always can.
+ *
+ * @param client - the shared Supabase client
+ * @param slug - the story's public address
+ * @param countries - two-letter codes; an empty list shows the story everywhere
+ * @returns the outcome
+ * Errors: throws when the database refuses a code or can't be reached.
+ */
+export async function setMyStoryHiddenCountries(
+  client: AppSupabaseClient,
+  slug: string,
+  countries: string[],
+): Promise<SettingsOutcome> {
+  const { data, error } = await client.rpc('set_my_story_hidden_countries', {
+    story_slug: slug,
+    countries,
+  });
+  if (error !== null)
+    throw new Error(`Could not save the countries where the story is hidden: ${error.message}`);
+  return toSettingsOutcome(data);
 }
 
 /**

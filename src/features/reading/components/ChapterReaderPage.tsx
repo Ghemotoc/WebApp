@@ -13,8 +13,10 @@
  *     explains why (useStoryPreview → get_link_preview(), only when the chapter answered nothing);
  *   - MissingTranslationNotice for a chapter this language edition doesn't have yet
  *     (TRANSLATE-1b), and AppOnlyNotice when the writer chose "In the app only" (S1-E4-09);
+ *   - UnavailableHereNotice (board B11) when the story is hidden in the reader's country
+ *     (COUNTRY-1, useUnavailableHere → story_unavailable_here());
  *   - otherwise "This chapter isn't available", with the way home.
- * What it calls: useChapter, useStoryPreview, ChapterReading and the notices above.
+ * What it calls: useChapter, useStoryPreview, useUnavailableHere, ChapterReading and the notices above.
  */
 import { lazy, Suspense, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -22,6 +24,8 @@ import { Link, useParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
+import { UnavailableHereNotice } from '@/features/country-block/components/UnavailableHereNotice';
+import { useUnavailableHere } from '@/features/country-block/hooks/useUnavailableHere';
 import { parseSpot, type SpotRange } from '@/lib/chapter-blocks';
 
 import type { ReaderChapter } from '../api/chapter';
@@ -84,7 +88,10 @@ function ChapterUnavailable() {
 function ChapterMissing({ storySlug, chapterCode }: { storySlug: string; chapterCode: string }) {
   const { t } = useTranslation('reading');
   const { hidden, isSettled } = useStoryPreview(storySlug, chapterCode, true);
-  if (!isSettled) return null;
+  // COUNTRY-1: a story hidden in the reader's country gets board B11's page instead.
+  const country = useUnavailableHere(storySlug, true);
+  if (!isSettled || !country.isSettled) return null;
+  if (country.isHere) return <UnavailableHereNotice />;
   if (hidden !== null) {
     return (
       <Suspense fallback={null}>

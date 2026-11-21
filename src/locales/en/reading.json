@@ -247,5 +247,11 @@
   },
   "editions": {
     "translatedFromBy": "Translated from {{language}} by {{name}}"
+  },
+  "unavailableHere": {
+    "title": "This page isn’t available here",
+    "body": "Unfortunately, this page is not yet available in your country.",
+    "goHome": "Go to the home page",
+    "search": "Search stories"
   }
 }

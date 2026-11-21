@@ -2963,3 +2963,25 @@ Two switches for the invited-adults trial, both off until staff turn them on in 
 
 - Report a bug (`trial_feedback`): `AppLayout` → `TrialFeedback` loads `MemberTrialFeedback` (which reads the flags) only once someone is signed in, and that loads `BugReportTab` only while the flag is on, so a visitor's first download carries almost none of it. The tab sits on the right edge, halfway down. It opens `BugReportPanel` (the shared `Sheet`), with `BugReportForm`: what it is (three chips), what happened, and Send. `useBugReport()` → `sendContactMessage()` → POST /api/contact with the topic `bug_report`, the kind and `currentPageContext()` (`lib/pageContext.ts`: the path without its query or hash, the browser as a name and version, the window and screen sizes). `server/contact.ts` (`messageForStaff()`) puts those details above the words, in the staff email and in the ticket; `submit_contact_ticket()` files it under Bug as "Bug report".
 - Computers only (`desktop_only`): `AppLayout` sits inside `DesktopOnlyGate`. On a touch-first device (`lib/touchFirstDevice.ts`: a finger as the main pointer and no mouse or trackpad, never the window's width) it loads `TouchDeviceGate`, which reads the flags; while the flag is on it shows `ComputerOnlyPage` ("For now, the test runs on a computer", Copy link) instead of the whole frame. `lib/openOnPhones.ts` keeps the Legal centre, Contact us, the report form, the email link's landing page, a new password and unsubscribe open. Staff pages have their own frame and stay open.
+
+## Hiding a story in chosen countries (COUNTRY-1)
+
+A writer (or staff, for a classic) hides a story in countries; readers connecting from there can't find or open it (migration `20270205100416_country1_hide_in_countries.sql`; boards D07, B11, S29). The shared screen parts live in `src/features/country-block/`.
+
+```
+every Supabase request (src/lib/supabase.ts)
+  │  src/lib/viewerCountry.ts: GET /api/signup-context every 20 minutes → the signed country token
+  │  header X-Viewer-Country: v1.<country>.<seconds>.<signature>
+  ▼
+viewer_country()          the token's country (verified_country_token(), at most an hour old),
+                          else the member's profiles.country_code, else null
+story_hidden_here()       stories.hidden_in_countries holds that country; never for the writer
+  ▲ used by reader_visible_story() (reader, chapter list, sharing), get_story_page(),
+    listed_stories() (every shelf, See all, search, the Library), profile_story_cards(),
+    featured_stories_now()
+```
+
+- Writer: Story settings › Where it shows (`StoryWhereItShowsSection` → `HiddenCountriesPicker`), saved after the other settings by `setMyStoryHiddenCountries()` → `set_my_story_hidden_countries()`.
+- Staff: Classics › a classic's "Where it shows" (`ClassicCountriesPanel`) → `admin_set_classic_hidden_countries()`, logged as `classics.hidden_countries_changed`.
+- Reader: when the story page or the reader gets nothing back, `useUnavailableHere()` → `story_unavailable_here()` says whether the country is the only reason, and `UnavailableHereNotice` (board B11) shows instead of "not available".
+- Every edition of a story shares the list (`set_story_family_hidden_countries()`, and the insert trigger `stories_copy_hidden_countries` for a new edition).

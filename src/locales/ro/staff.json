@@ -1765,5 +1765,14 @@
       "no_such_role": "Rolul nu mai există. Reîncarcă pagina.",
       "role_out_of_reach": "Acest rol are mai mult decât ai tu, așa că doar proprietarul îl poate schimba sau da."
     }
+  },
+  "classicCountries": {
+    "heading": "Unde apare",
+    "intro": "Ascunde opera în țările pe care le alegi. Cititorii de acolo văd o pagină care spune că nu este încă disponibilă în țara lor, fără motiv.",
+    "save": "Salvează unde apare",
+    "saved": "Salvat.",
+    "failed": "Nu s-a putut salva. Încearcă din nou.",
+    "summaryNone": "Ascunsă în nicio țară",
+    "summarySome": "Ascunsă în {{countries}}"
   }
 }

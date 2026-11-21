@@ -618,5 +618,9 @@
     "listLabel": "Comentarii",
     "showOlder": "Arată mai vechi",
     "loadFailed": "Comentariile nu s-au putut încărca. Verifică conexiunea și încearcă din nou."
+  },
+  "whereItShows": {
+    "heading": "Unde apare",
+    "intro": "Ascunde povestea în țările pe care le alegi. Contează conexiunea cititorului, așa că funcționează ca o blocare, nu ca un lacăt: un VPN o poate ocoli."
   }
 }

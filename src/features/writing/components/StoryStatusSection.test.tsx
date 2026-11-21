@@ -24,6 +24,7 @@ const answersWithComments: StoryAnswers = {
   completionStatus: 'ongoing',
   visibility: 'public',
   isAppOnly: false,
+  hiddenInCountries: [],
   commentsEnabled: true,
   commentAudience: 'everyone',
   commentPause: null,
