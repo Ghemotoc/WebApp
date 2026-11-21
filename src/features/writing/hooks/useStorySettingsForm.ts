@@ -61,6 +61,7 @@ function answersFrom(story: MyStory): StoryAnswers {
     completionStatus: story.completionStatus,
     visibility: story.visibility,
     isAppOnly: story.isAppOnly,
+    hiddenInCountries: story.hiddenInCountries,
     commentsEnabled: story.commentsEnabled,
     commentAudience: story.commentAudience,
     // CALM-8: nothing asked yet; the pause that runs is read from the story.

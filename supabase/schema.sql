@@ -3415,6 +3415,7 @@ CREATE TABLE IF NOT EXISTS "public"."stories" (
     "comments_paused_until" timestamp with time zone,
     "cover_style" "public"."cover_style" DEFAULT 'label'::"public"."cover_style" NOT NULL,
     "cover_title_font" "public"."cover_title_font" DEFAULT 'reading'::"public"."cover_title_font" NOT NULL,
+    "hidden_in_countries" "text"[] DEFAULT '{}'::"text"[] NOT NULL,
     CONSTRAINT "stories_abuse_needs_rating_and_note" CHECK (((NOT "deals_with_abuse_or_coercion") OR (("rating" = ANY (ARRAY['16_plus'::"public"."story_rating", '18_plus'::"public"."story_rating"])) AND ("btrim"("content_note") <> ''::"text")))),
     CONSTRAINT "stories_blurb_length" CHECK (("char_length"("blurb") <= 500)),
     CONSTRAINT "stories_card_colour_on_palette" CHECK ((("card_colour" IS NULL) OR ("card_colour" = ANY (ARRAY['plum'::"text", 'violet'::"text", 'gold'::"text", 'ink'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text"])))),
@@ -3439,6 +3440,7 @@ CASE "cover_kind"
 END),
     CONSTRAINT "stories_edition_not_of_itself" CHECK ((("edition_of_story_id" IS NULL) OR ("edition_of_story_id" <> "id"))),
     CONSTRAINT "stories_first_published_year_range" CHECK ((("first_published_year" >= 1) AND ("first_published_year" <= 2100))),
+    CONSTRAINT "stories_hidden_in_countries_are_codes" CHECK ((("cardinality"("hidden_in_countries") <= 60) AND ("array_to_string"("hidden_in_countries", ','::"text") ~ '^([A-Z]{2}(,[A-Z]{2})*)?$'::"text"))),
     CONSTRAINT "stories_language_code_shape" CHECK (("language_code" ~ '^[a-z]{2}(-[A-Z]{2})?$'::"text")),
     CONSTRAINT "stories_rank_badge_tag_ids_check" CHECK ((("rank_badge_tag_ids" IS NULL) OR ("cardinality"("rank_badge_tag_ids") <= 3))),
     CONSTRAINT "stories_slug_shape" CHECK ((("slug" ~ '^[a-z0-9]+(-[a-z0-9]+)*$'::"text") AND ("char_length"("slug") <= 80))),
@@ -3559,6 +3561,10 @@ COMMENT ON COLUMN "public"."stories"."cover_style" IS 'How the cover is drawn (C
 
 
 COMMENT ON COLUMN "public"."stories"."cover_title_font" IS 'The title''s font on the covers we draw (CALM-4); pen names stay Inter.';
+
+
+
+COMMENT ON COLUMN "public"."stories"."hidden_in_countries" IS 'The countries where readers can''t find or open the story, by the connection''s country (COUNTRY-1).';
 
 
 
@@ -11380,6 +11386,38 @@ $$;
 
 
 ALTER FUNCTION "public"."admin_set_classic_chapters"("target_story_id" "uuid", "chapter_list" "jsonb") OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_set_classic_hidden_countries"("target_story_id" "uuid", "countries" "text"[]) RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  cleaned text[] := public.clean_country_codes(countries);
+  before_countries text[];
+begin
+  -- Step 1: staff with the classics role, and a live classic.
+  perform public.require_classics_staff();
+  if public.classic_work_json(target_story_id) is null then
+    raise exception 'That isn''t a classic.' using errcode = 'no_data_found', hint = 'not_a_classic';
+  end if;
+  -- Step 2: save it on every edition, and log the change with both lists.
+  select hidden_in_countries into before_countries from public.stories where stories.id = target_story_id;
+  perform public.set_story_family_hidden_countries(target_story_id, cleaned);
+  perform public.log_staff_action('classics.hidden_countries_changed', 'stories', target_story_id::text,
+    public.classics_account_id(), 'Where it shows',
+    jsonb_build_object('hidden_in_countries', to_jsonb(before_countries)),
+    jsonb_build_object('hidden_in_countries', to_jsonb(cleaned)));
+  return public.classic_work_json(target_story_id);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_set_classic_hidden_countries"("target_story_id" "uuid", "countries" "text"[]) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_set_classic_hidden_countries"("target_story_id" "uuid", "countries" "text"[]) IS 'Staff with the classics role set the countries where a classic is hidden, logged (COUNTRY-1, board S29).';
+
 
 
 CREATE OR REPLACE FUNCTION "public"."admin_set_contest_placing"("target_entry_id" "uuid", "wanted_placing" "text") RETURNS "void"
@@ -20174,6 +20212,8 @@ CREATE OR REPLACE FUNCTION "public"."classic_work_json"("target_story_id" "uuid"
       case when works.translation_rights in ('signed_licence', 'made_for_platform') then null
            else works.translator_died_year end,
       works.first_published_year, (now() at time zone 'Europe/Bucharest')::date),
+    -- COUNTRY-1: the countries where readers can't find or open it.
+    'hidden_in_countries', to_jsonb(stories.hidden_in_countries),
     'chapters', coalesce((
       select jsonb_agg(jsonb_build_object('code', chapters.code, 'title', chapters.draft_title,
           'word_count', chapters.word_count, 'status', chapters.status) order by chapters.position)
@@ -20260,6 +20300,36 @@ ALTER FUNCTION "public"."clean_certificate_code"("typed" "text") OWNER TO "postg
 
 
 COMMENT ON FUNCTION "public"."clean_certificate_code"("typed" "text") IS 'Internal: a typed certificate code in upper case without spaces (S1-E8-12).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."clean_country_codes"("codes" "text"[]) RETURNS "text"[]
+    LANGUAGE "plpgsql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $_$
+declare
+  cleaned text[];
+begin
+  -- Step 1: capitals, trimmed, each once, in alphabetical order.
+  cleaned := coalesce(array(
+    select distinct upper(btrim(code)) from unnest(coalesce(codes, '{}'::text[])) as code
+    order by 1), '{}'::text[]);
+  -- Step 2: every one a two-letter code, and not too many.
+  if exists (select 1 from unnest(cleaned) as code where code !~ '^[A-Z]{2}$') then
+    raise exception 'That isn''t a country code.' using errcode = 'check_violation', hint = 'invalid_country';
+  end if;
+  if cardinality(cleaned) > 60 then
+    raise exception 'Choose at most 60 countries.' using errcode = 'check_violation', hint = 'too_many_countries';
+  end if;
+  return cleaned;
+end;
+$_$;
+
+
+ALTER FUNCTION "public"."clean_country_codes"("codes" "text"[]) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."clean_country_codes"("codes" "text"[]) IS 'Internal: country codes in capitals, each once, sorted; refuses anything else (COUNTRY-1).';
 
 
 
@@ -22240,6 +22310,28 @@ ALTER FUNCTION "public"."copy_classic_first_published_year"() OWNER TO "postgres
 
 
 COMMENT ON FUNCTION "public"."copy_classic_first_published_year"() IS 'Trigger: copies a classic''s first publication year from classic_works onto its story (6 Nov 2026).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."copy_hidden_countries_to_new_edition"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  if new.edition_of_story_id is not null then
+    select original.hidden_in_countries into new.hidden_in_countries
+    from public.stories as original where original.id = new.edition_of_story_id;
+    new.hidden_in_countries := coalesce(new.hidden_in_countries, '{}'::text[]);
+  end if;
+  return new;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."copy_hidden_countries_to_new_edition"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."copy_hidden_countries_to_new_edition"() IS 'Internal trigger: a new edition starts hidden in the same countries as its original (COUNTRY-1).';
 
 
 
@@ -25773,7 +25865,9 @@ CREATE OR REPLACE FUNCTION "public"."featured_stories_now"() RETURNS "jsonb"
     and public.featured_ineligible_reason(stories.id) is null
     -- CLAUDE.md rule 18: never above the reader's rating; rule 6: never across a block.
     and public.rating_allows(stories.rating)
-    and not exists (select 1 from blocked where blocked.person_id = stories.user_id);
+    and not exists (select 1 from blocked where blocked.person_id = stories.user_id)
+    -- COUNTRY-1: never a story hidden in the reader's country.
+    and not public.story_hidden_here(stories.hidden_in_countries, stories.user_id);
 $$;
 
 
@@ -27965,6 +28059,10 @@ begin
       return null;
     end if;
     if public.is_blocked_with(story.user_id) then
+      return null;
+    end if;
+    -- COUNTRY-1: nor in a country where the writer (or staff, for a classic) hid it.
+    if public.story_hidden_here(story.hidden_in_countries, story.user_id) then
       return null;
     end if;
   end if;
@@ -30975,6 +31073,8 @@ declare
     then list_key::uuid end;
   -- MARKETS-2c: the language filter as a list of codes ("sv,en"), or null for every language.
   wanted_languages text[] := case when language is not null then string_to_array(language, ',') end;
+  -- COUNTRY-1: where the reader is, read once for the whole list (null when unknown).
+  reader_country text := public.viewer_country();
   search_terms tsquery;
   search_pattern text;
 begin
@@ -31030,6 +31130,12 @@ begin
     -- CLAUDE.md rules 18 and 6: the rating, and blocks, unless it is the caller's own story.
     and (stories.user_id = caller_id
          or (stories.rating = any (allowed_ratings) and not (stories.user_id = any (blocked_ids))))
+    -- COUNTRY-1: not in a country where it is hidden, in every list, the Library included; the
+    -- writer still sees their own. A story hidden nowhere passes on the first test.
+    and (cardinality(stories.hidden_in_countries) = 0
+         or stories.user_id = caller_id
+         or reader_country is null
+         or not (reader_country = any (stories.hidden_in_countries)))
     -- GAPS-6: for a reading list, only the stories in it are looked at.
     and (list_kind <> 'reading_list' or stories.id in (
           select entries.story_id from public.reading_list_stories as entries
@@ -31070,7 +31176,7 @@ $_$;
 ALTER FUNCTION "public"."listed_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."listed_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text") IS 'Internal: the stories in a list this reader may see, after the filters (S1-E5-01, GAPS-6).';
+COMMENT ON FUNCTION "public"."listed_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text") IS 'Internal: the stories in a list this reader may see, after the filters (S1-E5-01, GAPS-6, COUNTRY-1).';
 
 
 
@@ -37815,7 +37921,9 @@ CREATE OR REPLACE FUNCTION "public"."profile_story_cards"("writer_id" "uuid", "i
     -- S1-E8-11: a class-only story isn't on the writer's public profile.
     and (is_owner or not raw.class_only)
     -- NEW-1: unlisted and private stories aren't on the writer's public profile.
-    and (is_owner or raw.visibility = 'public');
+    and (is_owner or raw.visibility = 'public')
+    -- COUNTRY-1: nor a story hidden in the reader's country.
+    and not public.story_hidden_here(raw.hidden_in_countries, raw.user_id);
 $$;
 
 
@@ -39648,6 +39756,23 @@ CREATE OR REPLACE FUNCTION "public"."reader_visible_story"("story_slug" "text") 
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
+  select anywhere.* from public.reader_visible_story_anywhere(story_slug) as anywhere
+  -- COUNTRY-1: not in a country where it is hidden (never for the writer).
+  where not public.story_hidden_here(anywhere.hidden_in_countries, anywhere.user_id);
+$$;
+
+
+ALTER FUNCTION "public"."reader_visible_story"("story_slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."reader_visible_story"("story_slug" "text") IS 'Internal: the story behind an address when the caller may read it here (S1-E4-01a, COUNTRY-1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."reader_visible_story_anywhere"("story_slug" "text") RETURNS SETOF "public"."stories"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
   select shown.* from public.stories
   cross join lateral public.story_as_shown(stories) as shown
   where stories.slug = story_slug
@@ -39664,10 +39789,10 @@ CREATE OR REPLACE FUNCTION "public"."reader_visible_story"("story_slug" "text") 
 $$;
 
 
-ALTER FUNCTION "public"."reader_visible_story"("story_slug" "text") OWNER TO "postgres";
+ALTER FUNCTION "public"."reader_visible_story_anywhere"("story_slug" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."reader_visible_story"("story_slug" "text") IS 'Internal: the story behind an address when the caller may read it (S1-E4-01a).';
+COMMENT ON FUNCTION "public"."reader_visible_story_anywhere"("story_slug" "text") IS 'Internal: the story behind an address when the caller may read it, the country aside (S1-E4-01a, COUNTRY-1).';
 
 
 
@@ -47052,6 +47177,40 @@ COMMENT ON FUNCTION "public"."set_my_story_cover_look"("story_slug" "text", "sty
 
 
 
+CREATE OR REPLACE FUNCTION "public"."set_my_story_hidden_countries"("story_slug" "text", "countries" "text"[]) RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target_story_id uuid;
+  cleaned text[] := public.clean_country_codes(countries);
+begin
+  -- Step 1: a signed-in writer who may write, and their own live story.
+  if (select auth.uid()) is null then
+    raise exception 'Sign in to change a story.' using errcode = 'insufficient_privilege';
+  end if;
+  if not public.is_active_member() then
+    return jsonb_build_object('outcome', 'not_active');
+  end if;
+  target_story_id := public.my_live_story_id(story_slug);
+  if target_story_id is null then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  -- Step 2: save it on every edition. Library entries and follows stay as they are; readers
+  -- there simply stop seeing the story until it is shown there again.
+  perform public.set_story_family_hidden_countries(target_story_id, cleaned);
+  return jsonb_build_object('outcome', 'ok');
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_my_story_hidden_countries"("story_slug" "text", "countries" "text"[]) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_my_story_hidden_countries"("story_slug" "text", "countries" "text"[]) IS 'The writer sets the countries where their story is hidden (COUNTRY-1, board D07).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."set_my_story_visibility"("story_slug" "text", "wanted" "public"."story_visibility") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -47533,6 +47692,25 @@ ALTER FUNCTION "public"."set_story_class"("story_slug" "text", "class_slug" "tex
 
 
 COMMENT ON FUNCTION "public"."set_story_class"("story_slug" "text", "class_slug" "text") IS 'The writer shares their own story only with one of their classes, or makes it public again (S1-E8-11).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."set_story_family_hidden_countries"("target_story_id" "uuid", "countries" "text"[]) RETURNS "void"
+    LANGUAGE "sql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  update public.stories set hidden_in_countries = countries
+  where stories.id = (select coalesce(original.edition_of_story_id, original.id)
+                      from public.stories as original where original.id = target_story_id)
+     or stories.edition_of_story_id = (select coalesce(original.edition_of_story_id, original.id)
+                      from public.stories as original where original.id = target_story_id);
+$$;
+
+
+ALTER FUNCTION "public"."set_story_family_hidden_countries"("target_story_id" "uuid", "countries" "text"[]) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_story_family_hidden_countries"("target_story_id" "uuid", "countries" "text"[]) IS 'Internal: sets the countries where a story is hidden on every edition of it (COUNTRY-1, TRANSLATE-1a).';
 
 
 
@@ -51547,6 +51725,32 @@ COMMENT ON FUNCTION "public"."story_has_readable_chapter"("target_story_id" "uui
 
 
 
+CREATE OR REPLACE FUNCTION "public"."story_hidden_here"("hidden_in_countries" "text"[], "writer_id" "uuid") RETURNS boolean
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  -- Step 1: most stories are hidden nowhere; the country isn't needed for them.
+  if cardinality(hidden_in_countries) = 0 then
+    return false;
+  end if;
+  -- Step 2: the writer always sees their own story, wherever they are.
+  if writer_id = (select auth.uid()) then
+    return false;
+  end if;
+  -- Step 3: hidden when the reader's country is on the list; an unknown country isn't.
+  return coalesce(public.viewer_country() = any (hidden_in_countries), false);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."story_hidden_here"("hidden_in_countries" "text"[], "writer_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_hidden_here"("hidden_in_countries" "text"[], "writer_id" "uuid") IS 'Internal: true when the story is hidden in the reader''s country, never for its writer (COUNTRY-1).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."story_ideas"("story_slug" "text") RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -52867,6 +53071,23 @@ ALTER FUNCTION "public"."story_translation_chapters"("story_slug" "text") OWNER 
 
 
 COMMENT ON FUNCTION "public"."story_translation_chapters"("story_slug" "text") IS 'A writer''s own later language edition: every chapter of the story with its translation''s code, title and status, if started (TRANSLATE-1a).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."story_unavailable_here"("story_slug" "text") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select exists (
+    select 1 from public.reader_visible_story_anywhere(story_slug) as anywhere
+    where public.story_hidden_here(anywhere.hidden_in_countries, anywhere.user_id));
+$$;
+
+
+ALTER FUNCTION "public"."story_unavailable_here"("story_slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_unavailable_here"("story_slug" "text") IS 'True when the story would open but is hidden in the reader''s country, for the B11 page (COUNTRY-1).';
 
 
 
@@ -54940,7 +55161,7 @@ COMMENT ON FUNCTION "public"."username_skeleton"("name" "text") IS 'The look-ali
 
 
 
-CREATE OR REPLACE FUNCTION "public"."verified_signup_country"("token" "text") RETURNS "text"
+CREATE OR REPLACE FUNCTION "public"."verified_country_token"("token" "text", "max_age_seconds" integer) RETURNS "text"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $_$
@@ -54948,15 +55169,16 @@ declare
   parts text[] := string_to_array(coalesce(token, ''), '.');
   secret text;
   issued_at bigint;
+  now_seconds bigint := extract(epoch from now())::bigint;
 begin
   -- Step 1: the shape: version, country, time in seconds, 64-character signature.
-  if array_length(parts, 1) <> 4 or parts[1] <> 'v1' or parts[2] !~ '^[A-Z]{2}$'
+  if array_length(parts, 1) is distinct from 4 or parts[1] <> 'v1' or parts[2] !~ '^[A-Z]{2}$'
     or parts[3] !~ '^\d{1,12}$' or parts[4] !~ '^[0-9a-f]{64}$' then
     return null;
   end if;
-  -- Step 2: at most 10 minutes old (and not from the future, beyond a minute of clock drift).
+  -- Step 2: young enough (and not from the future, beyond a minute of clock drift).
   issued_at := parts[3]::bigint;
-  if issued_at < extract(epoch from now())::bigint - 600 or issued_at > extract(epoch from now())::bigint + 60 then
+  if issued_at < now_seconds - max_age_seconds or issued_at > now_seconds + 60 then
     return null;
   end if;
   -- Step 3: the signature, with the secret from Vault; without the secret nothing is trusted.
@@ -54970,6 +55192,21 @@ begin
   return parts[2];
 end;
 $_$;
+
+
+ALTER FUNCTION "public"."verified_country_token"("token" "text", "max_age_seconds" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."verified_country_token"("token" "text", "max_age_seconds" integer) IS 'Internal: the country in a genuine country token no older than the seconds given, else null (S1-E2-10, COUNTRY-1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."verified_signup_country"("token" "text") RETURNS "text"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select public.verified_country_token(token, 600);
+$$;
 
 
 ALTER FUNCTION "public"."verified_signup_country"("token" "text") OWNER TO "postgres";
@@ -55046,6 +55283,33 @@ ALTER FUNCTION "public"."verify_certificate"("code" "text") OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."verify_certificate"("code" "text") IS 'Public: whether a certificate code is valid, revoked or no longer available, never the name (S1-E8-12).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."viewer_country"() RETURNS "text"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  connection_country text;
+begin
+  -- Step 1: the connection's country, when the app sent a genuine token (the board's rule).
+  connection_country := public.verified_country_token(
+    nullif(current_setting('request.headers', true), '')::jsonb ->> 'x-viewer-country', 3600);
+  if connection_country is not null then
+    return connection_country;
+  end if;
+  -- Step 2: otherwise the member's own country, so a missing token doesn't open a hidden story
+  -- to a member who lives where it is hidden.
+  return (select profiles.country_code from public.profiles where profiles.id = (select auth.uid()));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."viewer_country"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."viewer_country"() IS 'Internal: the country of the reader''s connection (signed header), else the member''s own country, else null (COUNTRY-1).';
 
 
 
@@ -63598,6 +63862,10 @@ CREATE OR REPLACE TRIGGER "stories_clear_hidden_presentation" BEFORE UPDATE OF "
 
 
 
+CREATE OR REPLACE TRIGGER "stories_copy_hidden_countries" BEFORE INSERT ON "public"."stories" FOR EACH ROW EXECUTE FUNCTION "public"."copy_hidden_countries_to_new_edition"();
+
+
+
 CREATE OR REPLACE TRIGGER "stories_editions_follow_cover_look" AFTER UPDATE OF "cover_style", "cover_title_font" ON "public"."stories" FOR EACH ROW EXECUTE FUNCTION "public"."stories_editions_follow_cover_look"();
 
 
@@ -69410,6 +69678,11 @@ GRANT ALL ON FUNCTION "public"."admin_set_classic_chapters"("target_story_id" "u
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_set_classic_hidden_countries"("target_story_id" "uuid", "countries" "text"[]) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_set_classic_hidden_countries"("target_story_id" "uuid", "countries" "text"[]) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_set_contest_placing"("target_entry_id" "uuid", "wanted_placing" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_set_contest_placing"("target_entry_id" "uuid", "wanted_placing" "text") TO "authenticated";
 
@@ -70616,6 +70889,10 @@ REVOKE ALL ON FUNCTION "public"."clean_certificate_code"("typed" "text") FROM PU
 
 
 
+REVOKE ALL ON FUNCTION "public"."clean_country_codes"("codes" "text"[]) FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."clean_mail_text"("raw_text" "text", "longest" integer) FROM PUBLIC;
 
 
@@ -70870,6 +71147,10 @@ GRANT ALL ON FUNCTION "public"."conversation_with"("other_handle" "text") TO "au
 
 
 REVOKE ALL ON FUNCTION "public"."copy_classic_first_published_year"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."copy_hidden_countries_to_new_edition"() FROM PUBLIC;
 
 
 
@@ -73366,6 +73647,10 @@ REVOKE ALL ON FUNCTION "public"."reader_visible_story"("story_slug" "text") FROM
 
 
 
+REVOKE ALL ON FUNCTION "public"."reader_visible_story_anywhere"("story_slug" "text") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."reading_list"("list_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."reading_list"("list_id" "uuid") TO "anon";
 GRANT ALL ON FUNCTION "public"."reading_list"("list_id" "uuid") TO "authenticated";
@@ -74279,6 +74564,11 @@ GRANT ALL ON FUNCTION "public"."set_my_story_cover_look"("story_slug" "text", "s
 
 
 
+REVOKE ALL ON FUNCTION "public"."set_my_story_hidden_countries"("story_slug" "text", "countries" "text"[]) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_my_story_hidden_countries"("story_slug" "text", "countries" "text"[]) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."set_my_story_visibility"("story_slug" "text", "wanted" "public"."story_visibility") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_my_story_visibility"("story_slug" "text", "wanted" "public"."story_visibility") TO "authenticated";
 
@@ -74346,6 +74636,10 @@ GRANT ALL ON FUNCTION "public"."set_space_welcome_note"("slug" "text", "note" "t
 
 REVOKE ALL ON FUNCTION "public"."set_story_class"("story_slug" "text", "class_slug" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_story_class"("story_slug" "text", "class_slug" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."set_story_family_hidden_countries"("target_story_id" "uuid", "countries" "text"[]) FROM PUBLIC;
 
 
 
@@ -74915,6 +75209,10 @@ REVOKE ALL ON FUNCTION "public"."story_has_readable_chapter"("target_story_id" "
 
 
 
+REVOKE ALL ON FUNCTION "public"."story_hidden_here"("hidden_in_countries" "text"[], "writer_id" "uuid") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."story_ideas"("story_slug" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."story_ideas"("story_slug" "text") TO "authenticated";
 
@@ -75089,6 +75387,12 @@ REVOKE ALL ON FUNCTION "public"."story_tags_reach_editions"() FROM PUBLIC;
 
 REVOKE ALL ON FUNCTION "public"."story_translation_chapters"("story_slug" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."story_translation_chapters"("story_slug" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."story_unavailable_here"("story_slug" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."story_unavailable_here"("story_slug" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."story_unavailable_here"("story_slug" "text") TO "authenticated";
 
 
 
@@ -75350,6 +75654,10 @@ REVOKE ALL ON FUNCTION "public"."use_sign_up_invite"("code" "text", "new_user_id
 
 
 
+REVOKE ALL ON FUNCTION "public"."verified_country_token"("token" "text", "max_age_seconds" integer) FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."verified_signup_country"("token" "text") FROM PUBLIC;
 
 
@@ -75361,6 +75669,10 @@ REVOKE ALL ON FUNCTION "public"."verified_signup_ips"("token" "text") FROM PUBLI
 REVOKE ALL ON FUNCTION "public"."verify_certificate"("code" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."verify_certificate"("code" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."verify_certificate"("code" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."viewer_country"() FROM PUBLIC;
 
 
 

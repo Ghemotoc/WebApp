@@ -13,12 +13,15 @@
  *     explains why (useStoryPreview → get_link_preview(), only when the chapter answered nothing);
  *   - MissingTranslationNotice for a chapter this language edition doesn't have yet
  *     (TRANSLATE-1b), and AppOnlyNotice when the writer chose "In the app only" (S1-E4-09);
+ *   - UnavailableHereNotice (board B11) when the story is hidden in the reader's country
+ *     (COUNTRY-1, useUnavailableHere → story_unavailable_here());
  *   - otherwise "This chapter isn't available", with the way home.
- * What it calls: useChapter, useStoryPreview, ChapterReading and the notices above.
+ * What it calls: useChapter, ChapterReading, ChapterMissing (loaded only when needed) and the
+ * notices above.
  */
 import { lazy, Suspense, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router';
+import { useParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
@@ -26,17 +29,17 @@ import { parseSpot, type SpotRange } from '@/lib/chapter-blocks';
 
 import type { ReaderChapter } from '../api/chapter';
 import { useChapter } from '../hooks/useChapter';
-import { useStoryPreview } from '../hooks/useStoryPreview';
 
 import { ChapterReading } from './ChapterReading';
 
 /**
- * "No preview for this story", loaded only for a signed-out visitor on a 16+ or 18+ chapter, so it
- * stays out of every other reader's cold load (the 1,300 KB script budget, S1-E4-01b).
+ * Why a chapter can't be shown (no preview, not in your country, or not available): loaded only
+ * when the chapter answered nothing, so it stays out of a reader's cold load (the 1,300 KB script
+ * budget, S1-E4-01b; COUNTRY-1).
  */
-const NoPreviewNotice = lazy(async () => {
-  const module = await import('./NoPreviewNotice');
-  return { default: module.NoPreviewNotice };
+const ChapterMissing = lazy(async () => {
+  const module = await import('./ChapterMissing');
+  return { default: module.ChapterMissing };
 });
 
 /** The short preview and log-in prompt for a signed-out visitor (S1-E4-04): a signed-in reader
@@ -58,48 +61,6 @@ const MissingTranslationNotice = lazy(async () => {
   return { default: module.MissingTranslationNotice };
 });
 
-/** "This chapter isn't available", with the way home. */
-function ChapterUnavailable() {
-  const { t } = useTranslation('reading');
-  return (
-    <div className="flex flex-col items-start gap-3 rounded-card border border-border bg-surface px-8 py-10">
-      <h1 className="m-0 font-heading text-[26px] font-bold text-heading">
-        {t('reader.unavailableTitle')}
-      </h1>
-      <p className="m-0 text-base text-body">{t('reader.unavailableBody')}</p>
-      <Link
-        to="/"
-        className="inline-flex h-11 items-center rounded-full button-main px-5 text-sm font-semibold no-underline"
-      >
-        {t('storyPage.goHome')}
-      </Link>
-    </div>
-  );
-}
-
-/**
- * When the chapter can't be shown: for a signed-out visitor on a 16+ or 18+ story, why (Q6);
- * otherwise "not available".
- */
-function ChapterMissing({ storySlug, chapterCode }: { storySlug: string; chapterCode: string }) {
-  const { t } = useTranslation('reading');
-  const { hidden, isSettled } = useStoryPreview(storySlug, chapterCode, true);
-  if (!isSettled) return null;
-  if (hidden !== null) {
-    return (
-      <Suspense fallback={null}>
-        <NoPreviewNotice preview={hidden} />
-      </Suspense>
-    );
-  }
-  return (
-    <>
-      <title>{t('reader.unavailableTitle')}</title>
-      <ChapterUnavailable />
-    </>
-  );
-}
-
 /**
  * What the page shows once the read has answered: the chapter, the teaser, the app only notice
  * or why not.
@@ -111,7 +72,11 @@ function ChapterShown(props: {
   spot: SpotRange | null;
 }) {
   if (props.chapter === null) {
-    return <ChapterMissing storySlug={props.storySlug} chapterCode={props.chapterCode} />;
+    return (
+      <Suspense fallback={null}>
+        <ChapterMissing storySlug={props.storySlug} chapterCode={props.chapterCode} />
+      </Suspense>
+    );
   }
   // TRANSLATE-1b: this language edition doesn't have the chapter yet.
   if (props.chapter.missingTranslation !== null) {

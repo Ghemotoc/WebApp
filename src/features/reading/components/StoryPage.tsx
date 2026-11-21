@@ -14,6 +14,8 @@
  * doodles since bundle G4.
  * A signed-out visitor on a 16+ or 18+ story gets its title and NoPreviewNotice instead of "not
  * available" (S1-E4-04; they count as under 16, Q6).
+ * A story hidden in the reader's country gets board B11's "This page isn't available here"
+ * (UnavailableHereNotice; useUnavailableHere → story_unavailable_here(); COUNTRY-1).
  * A story in several languages (TRANSLATE-1b): useOpeningEdition moves the reader to the language
  * the story should open in (their own earlier choice, the page's language, a language they read,
  * then the original), and the header, chapter list and side column show the language parts.
@@ -26,6 +28,8 @@ import { Link, useParams } from 'react-router';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
+import { UnavailableHereNotice } from '@/features/country-block/components/UnavailableHereNotice';
+import { useUnavailableHere } from '@/features/country-block/hooks/useUnavailableHere';
 import { StorySuggestions } from '@/features/suggestions/components/StorySuggestions';
 
 import type { StoryPageData } from '../api/storyPage';
@@ -64,7 +68,10 @@ function StoryUnavailable() {
 function StoryMissing({ storySlug }: { storySlug: string }) {
   const { t } = useTranslation('reading');
   const { hidden, isSettled } = useStoryPreview(storySlug, null, true);
-  if (!isSettled) return null;
+  // COUNTRY-1: a story hidden in the reader's country gets board B11's page instead.
+  const country = useUnavailableHere(storySlug, true);
+  if (!isSettled || !country.isSettled) return null;
+  if (country.isHere) return <UnavailableHereNotice />;
   if (hidden !== null) return <NoPreviewNotice preview={hidden} />;
   return (
     <>

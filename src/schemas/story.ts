@@ -247,6 +247,11 @@ export const storySettingsSchema = newStoryShape
     visibility: z.enum(storyVisibilities),
     /** "In the app only" (S1-E3-08, GAPS-15); saved through its own function. */
     isAppOnly: z.boolean(),
+    /**
+     * The countries where the story is hidden (COUNTRY-1, board D07): two-letter codes, at most
+     * 60; saved through its own function, which cleans them again.
+     */
+    hiddenInCountries: z.array(z.string().regex(/^[A-Z]{2}$/)).max(60),
   })
   .superRefine(labelRules);
 

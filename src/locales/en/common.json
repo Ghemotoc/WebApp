@@ -274,5 +274,11 @@
   },
   "sheet": {
     "close": "Close"
+  },
+  "hiddenCountries": {
+    "groupLabel": "Countries where this story is hidden",
+    "addLabel": "Add a country",
+    "choose": "Choose a country",
+    "hint": "Readers in these countries can’t find or open this story, and aren’t told why. Select a country again to show the story there."
   }
 }

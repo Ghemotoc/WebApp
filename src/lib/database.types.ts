@@ -9015,6 +9015,7 @@ export type Database = {
           edition_of_story_id: string | null;
           first_published_at: string | null;
           first_published_year: number | null;
+          hidden_in_countries: string[];
           id: string;
           is_app_only: boolean;
           is_fan_fiction: boolean;
@@ -9070,6 +9071,7 @@ export type Database = {
             edition_of_story_id: string | null;
             first_published_at: string | null;
             first_published_year: number | null;
+            hidden_in_countries: string[];
             id: string;
             is_app_only: boolean;
             is_fan_fiction: boolean;
@@ -9131,6 +9133,7 @@ export type Database = {
           edition_of_story_id?: string | null;
           first_published_at?: string | null;
           first_published_year?: number | null;
+          hidden_in_countries?: string[];
           id?: string;
           is_app_only?: boolean;
           is_fan_fiction?: boolean;
@@ -9179,6 +9182,7 @@ export type Database = {
           edition_of_story_id?: string | null;
           first_published_at?: string | null;
           first_published_year?: number | null;
+          hidden_in_countries?: string[];
           id?: string;
           is_app_only?: boolean;
           is_fan_fiction?: boolean;
@@ -12465,6 +12469,10 @@ export type Database = {
         Args: { chapter_list: Json; target_story_id: string };
         Returns: Json;
       };
+      admin_set_classic_hidden_countries: {
+        Args: { countries: string[]; target_story_id: string };
+        Returns: Json;
+      };
       admin_set_contest_placing: {
         Args: { target_entry_id: string; wanted_placing: string };
         Returns: undefined;
@@ -12604,6 +12612,7 @@ export type Database = {
           edition_of_story_id: string | null;
           first_published_at: string | null;
           first_published_year: number | null;
+          hidden_in_countries: string[];
           id: string;
           is_app_only: boolean;
           is_fan_fiction: boolean;
@@ -13887,6 +13896,7 @@ export type Database = {
       classics_account_id: { Args: Record<PropertyKey, never>; Returns: string };
       clean_bible_tags: { Args: { raw_tags: Json }; Returns: string[] };
       clean_certificate_code: { Args: { typed: string }; Returns: string };
+      clean_country_codes: { Args: { codes: string[] }; Returns: string[] };
       clean_mail_text: { Args: { longest: number; raw_text: string }; Returns: string };
       clean_reading_list_name: { Args: { typed_name: string }; Returns: string };
       clear_map_positions: { Args: { story_slug: string }; Returns: Json };
@@ -15282,6 +15292,7 @@ export type Database = {
           edition_of_story_id: string | null;
           first_published_at: string | null;
           first_published_year: number | null;
+          hidden_in_countries: string[];
           id: string;
           is_app_only: boolean;
           is_fan_fiction: boolean;
@@ -16699,6 +16710,65 @@ export type Database = {
           edition_of_story_id: string | null;
           first_published_at: string | null;
           first_published_year: number | null;
+          hidden_in_countries: string[];
+          id: string;
+          is_app_only: boolean;
+          is_fan_fiction: boolean;
+          is_parody: boolean;
+          language_code: string;
+          last_chapter_published_at: string | null;
+          picture_sharing_enabled: boolean;
+          quote_cards_enabled: boolean;
+          rank_badge_tag_ids: string[] | null;
+          rating: Database['public']['Enums']['story_rating'];
+          rating_reasons: Database['public']['Enums']['story_rating_reason'][];
+          slug: string;
+          title: string;
+          title_hidden_at: string | null;
+          updated_at: string;
+          user_id: string;
+          visibility: Database['public']['Enums']['story_visibility'];
+          writing_prompt_id: string | null;
+        }[];
+        SetofOptions: {
+          from: '*';
+          to: 'stories';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
+      reader_visible_story_anywhere: {
+        Args: { story_slug: string };
+        Returns: {
+          ai_disclosure: Database['public']['Enums']['ai_disclosure'];
+          ai_undisclosed_labelled_at: string | null;
+          blurb: string;
+          card_colour: string | null;
+          category_id: string;
+          class_only: boolean;
+          class_space_id: string | null;
+          classic_author_id: string | null;
+          comment_audience: string;
+          comments_enabled: boolean;
+          comments_paused_until: string | null;
+          completion_status: Database['public']['Enums']['completion_status'];
+          content_note: string;
+          cover_accent: string | null;
+          cover_background: string | null;
+          cover_design: string | null;
+          cover_hidden_at: string | null;
+          cover_kind: Database['public']['Enums']['cover_kind'];
+          cover_square_path: string | null;
+          cover_style: Database['public']['Enums']['cover_style'];
+          cover_tall_path: string | null;
+          cover_title_font: Database['public']['Enums']['cover_title_font'];
+          created_at: string;
+          deals_with_abuse_or_coercion: boolean;
+          deleted_at: string | null;
+          edition_of_story_id: string | null;
+          first_published_at: string | null;
+          first_published_year: number | null;
+          hidden_in_countries: string[];
           id: string;
           is_app_only: boolean;
           is_fan_fiction: boolean;
@@ -17416,6 +17486,10 @@ export type Database = {
         };
         Returns: Json;
       };
+      set_my_story_hidden_countries: {
+        Args: { countries: string[]; story_slug: string };
+        Returns: Json;
+      };
       set_my_story_visibility: {
         Args: { story_slug: string; wanted: Database['public']['Enums']['story_visibility'] };
         Returns: Json;
@@ -17452,6 +17526,10 @@ export type Database = {
       };
       set_space_welcome_note: { Args: { note: string; slug: string }; Returns: Json };
       set_story_class: { Args: { class_slug?: string; story_slug: string }; Returns: Json };
+      set_story_family_hidden_countries: {
+        Args: { countries: string[]; target_story_id: string };
+        Returns: undefined;
+      };
       set_story_in_reading_list: {
         Args: { is_in: boolean; list_id: string; story_slug: string };
         Returns: Json;
@@ -18170,6 +18248,7 @@ export type Database = {
           edition_of_story_id: string | null;
           first_published_at: string | null;
           first_published_year: number | null;
+          hidden_in_countries: string[];
           id: string;
           is_app_only: boolean;
           is_fan_fiction: boolean;
@@ -18254,6 +18333,10 @@ export type Database = {
       story_follower_count_of: { Args: { target_story_id: string }; Returns: number };
       story_has_copied_work_note: { Args: { target_story_id: string }; Returns: boolean };
       story_has_readable_chapter: { Args: { target_story_id: string }; Returns: boolean };
+      story_hidden_here: {
+        Args: { hidden_in_countries: string[]; writer_id: string };
+        Returns: boolean;
+      };
       story_ideas: { Args: { story_slug: string }; Returns: Json };
       story_language_choices: {
         Args: Record<PropertyKey, never>;
@@ -18376,6 +18459,7 @@ export type Database = {
         }[];
       };
       story_translation_chapters: { Args: { story_slug: string }; Returns: Json };
+      story_unavailable_here: { Args: { story_slug: string }; Returns: boolean };
       story_visibility_allows: {
         Args: {
           story_visibility: Database['public']['Enums']['story_visibility'];
@@ -18579,6 +18663,7 @@ export type Database = {
       use_platform_invite: { Args: { code: string; new_user_id: string }; Returns: undefined };
       use_sign_up_invite: { Args: { code: string; new_user_id: string }; Returns: undefined };
       username_skeleton: { Args: { name: string }; Returns: string };
+      verified_country_token: { Args: { max_age_seconds: number; token: string }; Returns: string };
       verified_signup_country: { Args: { token: string }; Returns: string };
       verified_signup_ips: {
         Args: { token: string };
@@ -18588,6 +18673,7 @@ export type Database = {
         }[];
       };
       verify_certificate: { Args: { code: string }; Returns: Json };
+      viewer_country: { Args: Record<PropertyKey, never>; Returns: string };
       visible_story_by_slug: {
         Args: { story_slug: string };
         Returns: {

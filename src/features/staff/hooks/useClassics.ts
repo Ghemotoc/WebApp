@@ -18,6 +18,7 @@ import {
   publishClassic,
   saveClassicWork,
   setClassicChapters,
+  setClassicHiddenCountries,
   unpublishClassic,
   type ClassicAuthorChoice,
   type ClassicChapterDraft,
@@ -47,7 +48,8 @@ export type ClassicChange =
   | { kind: 'save'; storyId: string | null; details: ClassicDetails }
   | { kind: 'text'; storyId: string; chapters: ClassicChapterDraft[] }
   | { kind: 'publish'; storyId: string }
-  | { kind: 'unpublish'; storyId: string; reason: string };
+  | { kind: 'unpublish'; storyId: string; reason: string }
+  | { kind: 'hiddenCountries'; storyId: string; countries: string[] };
 
 /**
  * Sends one change to the database.
@@ -60,6 +62,9 @@ async function applyChange(change: ClassicChange): Promise<ClassicWork> {
   if (change.kind === 'save') return saveClassicWork(client, change.storyId, change.details);
   if (change.kind === 'text') return setClassicChapters(client, change.storyId, change.chapters);
   if (change.kind === 'publish') return publishClassic(client, change.storyId);
+  // COUNTRY-1: the countries where the work is hidden.
+  if (change.kind === 'hiddenCountries')
+    return setClassicHiddenCountries(client, change.storyId, change.countries);
   return unpublishClassic(client, change.storyId, change.reason);
 }
 

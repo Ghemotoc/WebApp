@@ -618,5 +618,9 @@
     "listLabel": "Comments",
     "showOlder": "Show older",
     "loadFailed": "The comments couldn’t load. Check your connection and try again."
+  },
+  "whereItShows": {
+    "heading": "Where it shows",
+    "intro": "Hide this story in countries you choose. A reader’s connection decides it, so it works as a block, not a lock: a VPN can get around it."
   }
 }

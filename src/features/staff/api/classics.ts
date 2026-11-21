@@ -93,6 +93,8 @@ export interface ClassicWork extends ClassicDetails {
   wasPublished: boolean;
   /** False for a work imported from a research list until staff save its details (16b). */
   detailsChecked: boolean;
+  /** The countries where readers can't find or open it (COUNTRY-1, board S29); empty for none. */
+  hiddenInCountries: string[];
   updatedAt: string;
 }
 
@@ -176,6 +178,7 @@ interface ClassicWorkRow {
   chapters: { code: string; title: string; word_count: number; status: Enums<'chapter_status'> }[];
   was_published: boolean;
   details_checked: boolean;
+  hidden_in_countries: string[];
   updated_at: string;
 }
 
@@ -216,6 +219,7 @@ function workFrom(row: ClassicWorkRow): ClassicWork {
     })),
     wasPublished: row.was_published,
     detailsChecked: row.details_checked,
+    hiddenInCountries: row.hidden_in_countries,
     updatedAt: row.updated_at,
   };
 }
@@ -384,6 +388,30 @@ export async function unpublishClassic(
 ): Promise<ClassicWork> {
   const row = await answerOf(
     client.rpc('admin_unpublish_classic', { target_story_id: storyId, reason_given: reason }),
+  );
+  return workFrom(row as unknown as ClassicWorkRow);
+}
+
+/**
+ * Sets the countries where a classic is hidden (bundle COUNTRY-1, board S29: Edit details ›
+ * Where it shows). The database writes it to every edition and to the audit log.
+ *
+ * @param client - the shared Supabase client
+ * @param storyId - the work's story id
+ * @param countries - two-letter codes; an empty list shows the work everywhere
+ * @returns the work
+ * Errors: throws ClassicsError (refused without the classics role, not_a_classic, a bad code).
+ */
+export async function setClassicHiddenCountries(
+  client: AppSupabaseClient,
+  storyId: string,
+  countries: string[],
+): Promise<ClassicWork> {
+  const row = await answerOf(
+    client.rpc('admin_set_classic_hidden_countries', {
+      target_story_id: storyId,
+      countries,
+    }),
   );
   return workFrom(row as unknown as ClassicWorkRow);
 }

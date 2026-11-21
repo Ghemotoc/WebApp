@@ -36,6 +36,11 @@ export interface StoryAnswers {
    * the 'app_only_stories' switch on; false for a new story.
    */
   isAppOnly: boolean;
+  /**
+   * The countries where readers can't find or open the story (COUNTRY-1, board D07); none for a
+   * new story, changed in its settings.
+   */
+  hiddenInCountries: string[];
   /** Whether readers may comment (S1-E3-05; enforced by S1-E6-01); on for a new story. */
   commentsEnabled: boolean;
   /**
