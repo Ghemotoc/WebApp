@@ -1,6 +1,7 @@
 -- Database tests for the reader's reading settings (story S1-E4-02).
 -- What it proves:
 -- - reading_settings is readable by its owner only (allowed and denied tests for its policy);
+-- - where the minutes left show (CALM-5): 'bar' unless the reader picks 'page', and nothing else;
 -- - a signed-out visitor can't save settings, and the table can't be written directly;
 -- - the first save creates the row, a later save replaces it, and a null size means "follow the
 --   device"; a size outside the slider's 14 to 28 is refused.
@@ -9,7 +10,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(9);
+select plan(12);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -46,6 +47,15 @@ select is((select font::text || ' ' || text_size::text || ' ' || line_spacing::t
   from public.reading_settings), 'serif 24 compact wide night', 'the reader reads back the settings they saved last');
 select is(pg_temp.refusal($$ select public.save_reading_settings('serif', 40::smallint, 'compact', 'wide', 'night') $$),
   '23514', 'a size outside 14 to 28 is refused');
+-- CALM-5: Time left sits in the chapter bar until the reader picks On the page.
+select is((select time_left from public.reading_settings), 'bar',
+  'a reader who never chose where the minutes left show has them in the chapter bar');
+select lives_ok($$ select public.save_reading_settings('serif', 24::smallint, 'compact', 'wide', 'night',
+  false, null, null, false, 'page') $$,
+  'a reader moves the minutes left onto the page');
+select is(pg_temp.refusal($$ select public.save_reading_settings('serif', 24::smallint, 'compact', 'wide', 'night',
+  false, null, null, false, 'corner') $$),
+  '23514', 'the minutes left can only be in the bar or on the page');
 select is(pg_temp.refusal($$ update public.reading_settings set theme = 'light' $$), '42501',
   'the table can''t be written directly, only through save_reading_settings()');
 

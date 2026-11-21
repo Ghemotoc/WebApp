@@ -5,8 +5,9 @@
  * What it proves:
  * - from the story page a reader opens a chapter: "Chapter 1 of 2", the title as the H1, "by
  *   <pen name> · <date> · n min read", the text as real HTML paragraphs in the story's language;
- *   Next chapter, Previous and Contents move between chapters and back to the story; a draft
- *   between them is skipped; the last chapter ends with "That's the latest chapter so far.";
+ *   "Next: chapter 2" at the chapter's end, the chapter navigation's Previous (named for its
+ *   chapter) and the chapter bar's Back move between chapters and back to the story (CALM-5); a
+ *   draft between them is skipped; the last chapter ends with "That's the latest chapter so far.";
  * - one read is counted per chapter per tab (a reload doesn't add one), never the writer's own;
  * - a signed-out visitor gets the teaser page instead of the reader (S1-E4-04; the teaser itself
  *   is tested in teaser.spec.ts);
@@ -74,9 +75,14 @@ async function openAsPersona(browser: Browser, persona: SignInPersonaName, path:
   return page;
 }
 
-/** The chapter navigation in the bar. */
+/** The chapter navigation under the paper (CALM-5): Previous, the dots and Next. */
 function chapterNav(page: Page) {
-  return page.getByRole('navigation', { name: 'Chapters' });
+  return page.getByRole('navigation', { name: 'Chapter navigation' });
+}
+
+/** The chapter bar over the chapter (CALM-5). */
+function chapterBar(page: Page) {
+  return page.getByTestId('chapter-bar');
 }
 
 test.describe('chapter reader (S1-E4-01a)', () => {
@@ -104,18 +110,23 @@ test.describe('chapter reader (S1-E4-01a)', () => {
     await expectNoDoodles(page);
 
     // Next skips the draft; the first chapter has no Previous.
-    await expect(chapterNav(page).getByRole('link', { name: 'Previous' })).toHaveCount(0);
-    await page.getByRole('link', { name: 'Read chapter 2' }).click();
+    await expect(chapterNav(page).getByRole('link', { name: /^Previous chapter/ })).toHaveCount(0);
+    await page.getByRole('link', { name: 'Next: chapter 2' }).click();
     await expect(page).toHaveURL(`/s/${slug}/readerc3`);
     await expect(page.locator('header').getByText('Chapter 2 of 2')).toBeVisible();
     await expect(page.getByText('End of chapter 2')).toBeVisible();
     await expect(page.getByText('That’s the latest chapter so far.')).toBeVisible();
-    await expect(chapterNav(page).getByRole('link', { name: 'Next chapter' })).toHaveCount(0);
+    await expect(chapterNav(page).getByRole('link', { name: /^Next chapter/ })).toHaveCount(0);
+    await expect(chapterBar(page).getByRole('link', { name: /^Next chapter/ })).toHaveCount(0);
 
-    // Previous and Contents.
-    await chapterNav(page).getByRole('link', { name: 'Previous' }).click();
+    // Previous, named for its chapter, and the bar's Back to the story.
+    await chapterNav(page)
+      .getByRole('link', { name: 'Previous chapter: Caietele bunicii' })
+      .click();
     await expect(page).toHaveURL(`/s/${slug}/readera1`);
-    await chapterNav(page).getByRole('link', { name: 'Contents' }).click();
+    await chapterBar(page)
+      .getByRole('link', { name: /^Back to / })
+      .click();
     await expect(page).toHaveURL(`/s/${slug}`);
   });
 
@@ -142,9 +153,9 @@ test.describe('chapter reader (S1-E4-01a)', () => {
     await page.goto(`/s/${slug}/readera1`);
     await expect(page.getByRole('heading', { level: 2, name: 'Caietele bunicii' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Log in to read on' })).toBeVisible();
-    // No reader bar, progress line or read counting for a visitor.
-    await expect(page.getByRole('navigation', { name: 'Chapters' })).toHaveCount(0);
-    await expect(page.getByRole('progressbar')).toHaveCount(0);
+    // No chapter bar or chapter navigation for a visitor.
+    await expect(page.getByTestId('chapter-bar')).toHaveCount(0);
+    await expect(page.getByRole('navigation', { name: 'Chapter navigation' })).toHaveCount(0);
   });
 
   test('a draft, and a 16+ story for kid_14_ok, are not available', async ({ browser }) => {

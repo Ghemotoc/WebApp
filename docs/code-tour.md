@@ -1483,10 +1483,13 @@ The covers bucket and the `picture_uploads` flag (off) are the contract for uplo
 ChapterReaderPage → useChapter → api/chapter.ts → get_chapter(story_slug, chapter_code)
   │                    reader_visible_story(): live, not moderated away, rating_allows(), not blocked
   │                    chapter_is_readable(): published, not deleted, not moderated away
-  │  ChapterBar ("Chapter n of N", Aa, Contents, Previous, Next, the progress line from useReadingProgress)
-  │  ReadingPaper (the sheet of paper the chapter sits on) · ReadingTimeLeft ("3 min left", G7d)
-  │  ChapterReaderHeader ("Chapter n of N", H1, "by … · date · n min read")
-  │  ChapterText (the Markdown as HTML, 19 px, in the story's language) → ChapterEnd
+  │  ChapterReading (CALM-5): the screen once the chapter may be read
+  │  ChapterBar (Back to the story, the title, "Chapter n of N · 3 min left", Aa, Next chapter)
+  │  ReadingPaper (the sheet of paper; full width on phones) → ChapterReaderHeader (H1 in Literata)
+  │     → ChapterText (the Markdown as HTML, 20 px, 17 px on phones) → ChapterEnd
+  │  ChapterNavigation (Previous, the dots, Next) → the 728 × 90 advert → ChapterComments
+  │  ReaderSideColumn from 1280 px: the open panel, AboutThisStory, the 300 × 250 advert
+  │  (below 1280 px About and the advert follow the comments; the panels open in ReaderSheet)
   ▼
 useRecordRead → record_chapter_read(): +1 on today's chapter_reads total, once per tab
 ```
@@ -1495,7 +1498,7 @@ Speed (S1-E4-01b): the route's loader in `src/app/router.tsx` calls `prefetchCha
 
 Copying (S1-E4-06a): the text sits in `ProtectedChapterText`, which cancels `contextmenu`, `copy`, `cut` and `dragstart` on the chapter text only (no `user-select: none`, so selecting, find and screen readers still work); `CopyNotice` under the chapter says it makes copying harder and can't stop screenshots (Q9), and `copyWording.test.ts` keeps "can't be copied" out of every locale file. The Publish panel tells the writer the same (`publish.webReadingNote`).
 
-Tests: `140-get-chapter.test.sql`, `141-chapter-reads.test.sql`, `hooks/useRecordRead.test.tsx`, `hooks/useReadingProgress.test.ts`, `components/ChapterReaderPage.test.tsx` (the banner's place), `e2e/chapter-reader.spec.ts`, `e2e/reader-performance.spec.ts` (2 seconds on a throttled phone, the script budget, 200% zoom), `components/ProtectedChapterText.test.tsx`, `copyWording.test.ts`, `e2e/copy-protection.spec.ts`.
+Tests: `140-get-chapter.test.sql`, `141-chapter-reads.test.sql`, `hooks/useRecordRead.test.tsx`, `hooks/useReadingProgress.test.ts`, `components/ChapterReaderPage.test.tsx` (the banner's place), `lib/chapterDots.test.ts`, `e2e/chapter-reader.spec.ts`, `e2e/reader-performance.spec.ts` (2 seconds on a throttled phone, the script budget, 200% zoom), `components/ProtectedChapterText.test.tsx`, `copyWording.test.ts`, `e2e/copy-protection.spec.ts`.
 
 ## A shared link, before and after it opens (S1-E4-04)
 
@@ -2076,9 +2079,9 @@ One search field finds stories, writers and tags, in Romanian and English, with 
 
 ## Reading settings (S1-E4-02; READ-4b)
 
-- On screen 3.5 a signed-in reader gets "Reading settings" in the chapter bar (`ReadingSettingsControl` → `ReadingSettingsPanel`): font (Inter, Serif, Dyslexia-friendly), text size (14 to 28 px), line spacing, line width and theme (Light, Sepia, Night).
+- On screen 3.5 a signed-in reader gets Aa, "Reading settings", in the chapter bar (`ReadingSettingsControl`). It doesn't hold the panel: `hooks/useReaderTools.ts` keeps whether it is open (closed by default, never at the same time as a paragraph's comments), and `ReaderToolPlace` opens `ReadingSettingsPanel` at the top of the side column from 1280 px or in the bottom sheet (`ReaderSheet`) below that (CALM-5). The panel: font (Inter, Serif, Dyslexia-friendly), text size (14 to 28 px), line spacing, line width, theme (Light, Sepia, Night), the comfort fields and Time left (In the bar or On the page, `reading_settings.time_left`, CALM-5).
 - How a change travels: the panel calls `change()` in `useReadingSettings`, which replaces the cached settings at once (so the text changes straight away) and saves the whole set 600 ms later → `save_reading_settings()` → `reading_settings` (one row per reader). Another device reads the row when the chapter opens.
-- How the text gets its look: `useReadingLook` joins the settings with the device's own text size (the page's root font size, read once; 19 px at the normal 16) and puts CSS variables (`--reading-font-size` and so on) on the box around the text; `src/styles/index.css` reads them in `.tmc-chapter-text--reader`. Every theme puts the whole chapter on a sheet of paper, `.tmc-reading-page` (bundle G7d): Light and Night on the story paper (`.tmc-reading-page--paper`; Night with `data-theme="night"`, so it reuses the night tokens and gets the dark paper), Sepia on its own warm paper. The dyslexia-friendly font is OpenDyslexic (`--font-dyslexia`) and the serif is Literata (`--font-story`).
+- How the text gets its look: `useReadingLook` joins the settings with the device's own text size (the page's root font size, read once; 20 px at the normal 16, 17 px on phones under 600 px, CALM-5) and puts CSS variables (`--reading-font-size` and so on) on the box around the text; `src/styles/index.css` reads them in `.tmc-chapter-text--reader`. Every theme puts the whole chapter on a sheet of paper, `.tmc-reading-page` (bundle G7d): Light and Night on the story paper (`.tmc-reading-page--paper`; Night with `data-theme="night"`, so it reuses the night tokens and gets the dark paper), Sepia on its own warm paper. The dyslexia-friendly font is OpenDyslexic (`--font-dyslexia`) and the serif is Literata (`--font-story`).
 - The row is readable by its owner only. Tests: `supabase/tests/database/180-reading-settings.test.sql`, `src/features/reading/lib/readingStyle.test.ts`, `e2e/reading-settings.spec.ts`.
 
 ## Reading place and comfort (IDEAS-1 part a)
@@ -2359,11 +2362,11 @@ The app draws no doodles, stickers or hand-drawn icons anywhere (Robert, 7 Nov 2
 
 ## Comments on a paragraph (S1-E6-06; WRITE-5f)
 
-- Start at `src/features/reading/components/ChapterReaderPage.tsx`: `useParagraphCommentCounts` asks `paragraph_comment_counts()` for the count beside each paragraph and puts it in `ParagraphCommentsContext`.
+- Start at `src/features/reading/components/ChapterReading.tsx` and `hooks/useReaderTools.ts`: `useParagraphCommentCounts` asks `paragraph_comment_counts()` for the count beside each paragraph and puts it in `ParagraphCommentsContext`.
 - `ChapterText` draws each top-level paragraph in a `.tmc-paragraph-row` with the addon the reader passes in, `ParagraphCommentMarker`. Its block number is the same one the share links use (`src/lib/chapter-blocks.ts` and `chapter_blocks()` in SQL).
-- Pressing a marker fetches `src/features/comments/components/ParagraphThread.tsx` (through `LazyParagraphThread`), which reads `paragraph_comments()` and posts with `post_paragraph_comment()`. Replies, reactions, downvotes and the Report button are the ordinary comment pieces. From 1280 px (bundle G7d2) the thread opens in a sticky side column beside the paper instead of under the paragraph: `ParagraphCommentsPanel` draws the column, `LazyParagraphThread` puts the thread into it through a portal when `hooks/useIsWideReader.ts` says the window is wide, and the thread takes focus when the reader opened it (not when a `#paragraph-4` link did).
+- Pressing a marker fetches `src/features/comments/components/ParagraphThread.tsx` (through `LazyParagraphThread`), which reads `paragraph_comments()` and posts with `post_paragraph_comment()`. Replies, reactions, downvotes and the Report button are the ordinary comment pieces. Where it opens (CALM-5): from 1280 px at the top of the sticky side column "Reading tools" (`ReaderSideColumn`), through a portal when `hooks/useIsWideReader.ts` says the window is wide, taking focus when the reader opened it (not when a `#paragraph-4` link did); below 1280 px in the bottom sheet, `ReaderSheet`, a modal `<dialog>`. Its head is the paragraph's opening words and Close, with no title or count. The marker sits in the left margin from 1024 px and at the paragraph's top right corner below that, and the open paragraph is tinted (`.tmc-paragraph-row--open`).
 - How a comment stays on its paragraph: it stores the paragraph's number and a fingerprint of its words (`paragraph_key_of()`). `paragraph_now()` finds the paragraph with the same fingerprint nearest that number in the chapter as published now; none means "an earlier version" (`EarlierVersionComments`).
-- The thread sits inside the protected text, so `data-paragraph-thread` tells the copy protection and the "Share quote" bar to leave it alone.
+- The thread is drawn outside the protected text (in the side column or the sheet); `data-paragraph-thread` still tells the copy protection and the "Share quote" bar to leave it alone.
 
 ## Story Atlas: a story's plan (S1-E17-01 to S1-E17-06; ATLAS-a)
 

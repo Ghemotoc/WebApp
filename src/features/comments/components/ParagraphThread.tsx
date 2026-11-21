@@ -1,34 +1,34 @@
 /**
- * ParagraphThread: the comments on one paragraph, opened from its marker (story S1-E6-06; board
- * 3.5).
+ * ParagraphThread: the comments on one paragraph, opened from its count in the margin (story
+ * S1-E6-06; the simplified design, bundle CALM-5, design handover Step 4, "Comments on a
+ * paragraph"; boards New-Reader and New-PhoneReader; design system ParagraphComments).
  *
- * Board values: a white card (20 px corners, #DED3E4 border, 18 px by 20 px inside) across the
- * whole row under the paragraph, labelled "Comments on paragraph N"; the eyebrow title
- * "{n} comments on this paragraph" (or "No comments on this paragraph yet") with Close beside
- * it, the comments with fine lines between them, then the box "Comment on this paragraph" with
- * its Post button. The thread for an earlier version lists the comments left on paragraphs the
- * writer has since changed, and has no box: there is no paragraph left to comment on. Escape
- * and Close shut it and hand focus back to what opened it. No doodles (DoD: none on the reader).
- * It sits inside the chapter text, so data-paragraph-thread tells the copy protection and the
- * "Share quote" bar that these are readers' words, not the writer's.
+ * No title, no count and no paragraph number (Robert, 20 Nov 2026): the head is a small comment
+ * mark, the paragraph's opening words in Literata italic ending in an ellipsis, and Close (×).
+ * Then the comments, each with its avatar, fine lines between them, and the box to comment on the
+ * paragraph. The thread for an earlier version lists the comments left on paragraphs the writer
+ * has since changed: its head says so in words, and it has no box, as there is no paragraph left
+ * to comment on. Escape and Close shut it and hand focus back to what opened it.
+ * Where it sits: from 1280 px in the reader's side column, as a glass card that takes focus when
+ * the reader opened it (it sits away from its button); below that in the reader's bottom sheet,
+ * which is the glass itself. LazyParagraphThread decides which.
+ * data-paragraph-thread tells the copy protection and the "Share quote" bar that these are
+ * readers' words, not the writer's.
  * While the writer has paused new comments, the box at the foot gives way to the same line as
  * under the chapter ("New comments are paused until …") and Reply is hidden (bundle CALM-8; the
  * design handover's Step 4, points 6 and 7); the comments already there can still be read.
- * From 1280 px it opens in the reader's side column instead (bundle G7d2; board ReaderComments):
- * a glass card titled "31 comments on paragraph 3", which takes focus when the reader opened it,
- * because it sits away from its button. LazyParagraphThread decides where it goes.
- * Who uses it: ParagraphCommentMarker and EarlierVersionComments (src/features/reading/), which
- * fetch this file only when a reader opens a thread.
+ * Who uses it: ParagraphCommentMarker and EarlierVersionComments (src/features/reading/), through
+ * LazyParagraphThread, which fetches this file only when a reader opens a thread.
  * What it calls: useParagraphComments → paragraph_comments(); CommentItem (each comment, with its
  * replies, reactions and Report button); CommentComposer (posting on the paragraph);
  * CommentsPausedLine (during a pause).
  */
 import { useEffect, useRef, useState, type RefObject } from 'react';
 
-import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import type { ChapterAddress } from '@/features/reading/api/likes';
 import type { ParagraphPlace } from '@/features/reading/api/paragraphComments';
+import { CommentIcon } from '@/features/reading/components/ReaderIcons';
 import { runningPauseEnd } from '@/lib/comment-pause';
 
 import type { ParagraphThread as ParagraphThreadData } from '../api/paragraphComments';
@@ -52,59 +52,80 @@ export interface ParagraphThreadProps {
   isInSidePanel?: boolean;
   /** True when the thread should take focus as it opens (the side column, opened by the reader). */
   takesFocus?: boolean;
+  /** The paragraph's opening words, ending in an ellipsis, for the head (not for 'earlier'). */
+  openingWords?: string;
 }
 
-/** A translation key and its values. */
-type TextKey = [string, Record<string, unknown>];
-
-/** The region's label and the title over the comments. */
-interface ThreadTexts {
-  label: TextKey;
-  title: TextKey;
-}
-
-/** The card under the paragraph (board 3.5): white, a fine border, across the whole row. */
-const inlineCard =
-  'tmc-paragraph-thread col-span-full mt-3 rounded-[20px] border border-border bg-surface px-5 py-[18px]';
-
-/** The card in the side column (board ReaderComments): glass, rounder, no focus outline. */
+/** The card in the side column (board New-Reader): glass, round corners, no focus outline. */
 const sidePanelCard = 'glass-pill rounded-[24px] px-5 py-[18px] outline-none';
 
-/** The side column's title, a small heading-weight line ("31 comments on paragraph 3"). */
-const sidePanelTitle = 'm-0 font-heading text-[17px] font-bold text-heading';
+/** In the bottom sheet the sheet is the glass, so the thread adds only the focus rule. */
+const sheetCard = 'outline-none';
+
+/** The head's Close: a round 44 px icon button (handover Step 4, point 4). */
+const closeButton =
+  'inline-flex size-11 shrink-0 items-center justify-center rounded-full text-body hover:bg-tint -mr-2 -mt-1';
+
+/** The × in Close, 18 px. */
+function CloseMark() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 18 18" width="18" height="18" fill="none">
+      <path
+        d="M4.5 4.5l9 9M13.5 4.5l-9 9"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+/** What the head needs. */
+interface ThreadHeadProps {
+  place: ParagraphPlace;
+  /** The paragraph's opening words, or undefined for the earlier version. */
+  openingWords: string | undefined;
+  /** The earlier version's comment count, once loaded. */
+  total: number | null;
+  onClose: () => void;
+}
 
 /**
- * The thread's label and title, in words.
+ * The head: the comment mark, what the comments are on, and Close.
  *
- * @param place - the paragraph, or 'earlier'
- * @param total - how many comments the reader may read on it
- * @param isInSidePanel - true in the side column, where the title names the paragraph
- * @returns the translation keys and values for the region label and the title
+ * @returns the head row
  */
-function threadTexts(place: ParagraphPlace, total: number, isInSidePanel: boolean): ThreadTexts {
-  if (place === 'earlier') {
-    return {
-      label: ['paragraph.earlierLabel', {}],
-      title: ['paragraph.earlierTitle', { count: total }],
-    };
-  }
-  if (total === 0) {
-    const emptyTitle: TextKey = isInSidePanel
-      ? ['paragraph.sideEmptyTitle', { number: place }]
-      : ['paragraph.emptyTitle', {}];
-    return { label: ['paragraph.label', { number: place }], title: emptyTitle };
-  }
-  // In the side column the title names the paragraph, as it sits away from it (board ReaderComments).
-  if (isInSidePanel) {
-    return {
-      label: ['paragraph.label', { number: place }],
-      title: ['paragraph.sideTitle', { count: total, number: place }],
-    };
-  }
-  return {
-    label: ['paragraph.label', { number: place }],
-    title: ['paragraph.title', { count: total }],
-  };
+function ThreadHead({ place, openingWords, total, onClose }: ThreadHeadProps) {
+  const { t } = useCommentsTranslation();
+  return (
+    <div className="flex items-start gap-2.5">
+      <span
+        aria-hidden="true"
+        className="mt-1 grid size-8 shrink-0 place-items-center rounded-full bg-tint text-heading"
+      >
+        <CommentIcon />
+      </span>
+      {place === 'earlier' ? (
+        <p className="m-0 min-w-0 flex-1 pt-1.5 text-[15px] leading-[22px] font-semibold text-heading">
+          {total === null
+            ? t('paragraph.earlierLabel')
+            : t('paragraph.earlierTitle', { count: total })}
+        </p>
+      ) : (
+        <blockquote className="tmc-thread-quote m-0 min-w-0 flex-1 border-l-2 border-thread pl-3 font-story text-[15px] leading-[22px] text-body italic">
+          {openingWords}
+        </blockquote>
+      )}
+      <button
+        type="button"
+        aria-label={t('paragraph.close')}
+        onClick={onClose}
+        className={closeButton}
+      >
+        <CloseMark />
+      </button>
+    </div>
+  );
 }
 
 /**
@@ -199,10 +220,47 @@ function ThreadFoot({ address, place, thread, pauseEnd }: ThreadFootProps) {
   );
 }
 
+/** What the list of comments needs. */
+interface ThreadBodyProps extends Pick<ParagraphThreadProps, 'address' | 'place'> {
+  thread: ParagraphThreadData | null;
+  loadFailed: boolean;
+  /** True while the writer's pause of new comments runs (CALM-8): Reply is hidden. */
+  isPaused: boolean;
+}
+
+/**
+ * The comments, or why there are none to show yet: a short wait, a plain error or "none yet".
+ *
+ * @returns the list or a line saying why it is empty
+ */
+function ThreadBody({ address, place, thread, loadFailed, isPaused }: ThreadBodyProps) {
+  const { t } = useCommentsTranslation();
+  if (loadFailed) return <Notice tone="error">{t('section.loadFailed')}</Notice>;
+  if (thread === null)
+    return <p className="m-0 mt-3 text-sm text-meta">{t('paragraph.loading')}</p>;
+  if (thread.comments.length === 0) {
+    if (place === 'earlier') return null;
+    return <p className="m-0 mt-3 text-sm text-meta">{t('paragraph.emptyTitle')}</p>;
+  }
+  return (
+    <div className="mt-2 divide-y divide-hairline">
+      {thread.comments.map((comment) => (
+        <CommentItem
+          key={comment.id}
+          address={address}
+          comment={comment}
+          isInParagraphThread
+          isPaused={isPaused}
+        />
+      ))}
+    </div>
+  );
+}
+
 /**
  * Renders the thread.
  *
- * @returns the thread card, a plain message when it can't be read, or nothing while it loads
+ * @returns the thread card, a plain message when it can't be read, or a short wait while it loads
  */
 export function ParagraphThread(props: ParagraphThreadProps) {
   const { id, address, place, onClose } = props;
@@ -210,42 +268,34 @@ export function ParagraphThread(props: ParagraphThreadProps) {
   const takesFocus = props.takesFocus === true;
   const { t } = useCommentsTranslation();
   const { thread, loadFailed } = useParagraphComments(address, place);
-  const texts = threadTexts(place, thread?.total ?? 0, isInSidePanel);
   const pauseEnd = pauseEndOf(thread);
   const sectionRef = useRef<HTMLElement>(null);
   useThreadKeyboard(sectionRef, onClose, takesFocus);
+  const label =
+    place === 'earlier' ? t('paragraph.earlierLabel') : t('paragraph.label', { number: place });
 
   return (
     <section
       id={id}
-      aria-label={t(...texts.label)}
+      aria-label={label}
       ref={sectionRef}
       tabIndex={takesFocus ? -1 : undefined}
       data-paragraph-thread=""
-      className={isInSidePanel ? sidePanelCard : inlineCard}
+      className={isInSidePanel ? sidePanelCard : sheetCard}
     >
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className={isInSidePanel ? sidePanelTitle : 'm-0 eyebrow'}>
-          {thread === null ? t('paragraph.loading') : t(...texts.title)}
-        </p>
-        <Button variant="secondary" onClick={onClose}>
-          {t('paragraph.close')}
-        </Button>
-      </div>
-      {loadFailed && <Notice tone="error">{t('section.loadFailed')}</Notice>}
-      {thread !== null && thread.comments.length > 0 && (
-        <div className="divide-y divide-hairline">
-          {thread.comments.map((comment) => (
-            <CommentItem
-              key={comment.id}
-              address={address}
-              comment={comment}
-              isInParagraphThread
-              isPaused={pauseEnd !== null}
-            />
-          ))}
-        </div>
-      )}
+      <ThreadHead
+        place={place}
+        openingWords={props.openingWords}
+        total={thread?.total ?? null}
+        onClose={onClose}
+      />
+      <ThreadBody
+        address={address}
+        place={place}
+        thread={thread}
+        loadFailed={loadFailed}
+        isPaused={pauseEnd !== null}
+      />
       <ThreadFoot address={address} place={place} thread={thread} pauseEnd={pauseEnd} />
     </section>
   );

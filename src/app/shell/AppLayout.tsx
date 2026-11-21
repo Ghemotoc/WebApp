@@ -43,7 +43,11 @@
  * time (useIsNarrowScreen), so the page never holds two "Main" navigations.
  * Every header floats over the page however far it scrolls (NAV-1, Robert, 10 Nov 2026): it is
  * sticky, and `scroll-padding-top` in src/styles/index.css keeps anchors and focus below it.
+ * A page that draws its own bar (the reader's chapter bar, CALM-5) says so through
+ * PageHeaderContext, and on a narrow screen header A then steps aside, so one bar floats over
+ * the paper.
  */
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useLocation } from 'react-router';
 
@@ -71,6 +75,7 @@ import { WriteLink } from '@/features/writing/components/WriteLink';
 
 import { AccountNotices } from './AccountNotices';
 import { FocusHeader } from './FocusHeader';
+import { PageHeaderContext } from './pageHeaderContext';
 import { Footer } from './Footer';
 import { PhoneHeader } from './PhoneHeader';
 import { TabBar } from './TabBar';
@@ -110,9 +115,10 @@ function WideHeader({ hasSearch }: { hasSearch: boolean }) {
 /**
  * Picks the header for the window's width and the page on screen.
  *
- * @returns the header, and whether the floating tab bar is on screen
+ * @param isOwnedByPage - true while the page draws its own narrow-screen bar (CALM-5)
+ * @returns the header (null when the page draws its own), and whether the tab bar is on screen
  */
-function useShellHeader() {
+function useShellHeader(isOwnedByPage: boolean) {
   const isNarrow = useIsNarrowScreen();
   const { pathname } = useLocation();
   if (!isNarrow) {
@@ -121,6 +127,8 @@ function useShellHeader() {
   }
   const screen = shellScreenFor(pathname);
   if (screen.kind === 'focus') {
+    // CALM-5: the reader's chapter bar is the only bar while reading on a phone.
+    if (isOwnedByPage) return { header: null, hasTabBar: false };
     return {
       header: <FocusHeader titleKey={screen.titleKey} backTo={screen.backTo} />,
       hasTabBar: false,
@@ -149,8 +157,10 @@ export function AppLayout() {
   // Check again any picture whose check couldn't run when it was uploaded (S1-E10-05).
   const { userId } = useSession();
   usePendingPictureRetry(userId);
+  // Whether the page draws its own narrow-screen bar (the reader's chapter bar, CALM-5).
+  const [isHeaderOwnedByPage, setIsHeaderOwnedByPage] = useState(false);
   // Header A, header B with the tab bar, or the website top bar (bundle G4 SHELL).
-  const { header, hasTabBar } = useShellHeader();
+  const { header, hasTabBar } = useShellHeader(isHeaderOwnedByPage);
 
   // No background of its own: the page colour and the still colour blobs behind every page come
   // from src/styles/index.css (bundle G1), and a background here would hide them.
@@ -174,18 +184,20 @@ export function AppLayout() {
       {/* The notice banner staff publish from Website › Notice banners (S1-E11-10). */}
       <NoticeStrip />
       <main id="main" tabIndex={-1} className="flex-1 focus:outline-none">
-        {/* While maintenance mode is on, the maintenance page replaces all of this (S1-E1-05). */}
-        <MaintenanceGate>
-          {/* While the account waits to be deleted, the closing page replaces the rest (S1-E13-03). */}
-          <AccountClosingGate>
-            {/* While the person waits on the list, the holding page replaces the rest (WAITLIST-1). */}
-            <WaitlistGate>
-              {/* The account notices: Terms, country, username, age check, consent, sanctions. */}
-              <AccountNotices />
-              <Outlet />
-            </WaitlistGate>
-          </AccountClosingGate>
-        </MaintenanceGate>
+        <PageHeaderContext.Provider value={setIsHeaderOwnedByPage}>
+          {/* While maintenance mode is on, the maintenance page replaces all of this (S1-E1-05). */}
+          <MaintenanceGate>
+            {/* While the account waits to be deleted, the closing page replaces the rest (S1-E13-03). */}
+            <AccountClosingGate>
+              {/* While the person waits on the list, the holding page replaces the rest (WAITLIST-1). */}
+              <WaitlistGate>
+                {/* The account notices: Terms, country, username, age check, consent, sanctions. */}
+                <AccountNotices />
+                <Outlet />
+              </WaitlistGate>
+            </AccountClosingGate>
+          </MaintenanceGate>
+        </PageHeaderContext.Provider>
       </main>
       {/* "Show when I'm online": a beat a minute, only while switched on (S1-E13-01). */}
       <PresenceHeartbeat />

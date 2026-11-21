@@ -4,12 +4,13 @@
  *
  * The markers sit inside ChapterText, which knows nothing about stories or comments; the reader
  * puts the chapter's address, the counts and which thread is open here around the text. Only
- * one thread is open at a time (board 3.5). From 1280 px the open thread sits in the side column
- * beside the paper (bundle G7d2; board ReaderComments), so the context also carries that column's
- * element. Kept in its own small file: the reader imports it,
- * and the thread itself is fetched later.
- * Who uses it: ChapterReaderPage (provides it), ParagraphCommentMarker, EarlierVersionComments,
- * LazyParagraphThread and ParagraphCommentsPanel (read it).
+ * one thread is open at a time, and never while Reading settings are open (CALM-5;
+ * hooks/useReaderTools.ts). From 1280 px the open thread sits at the top of the side column beside
+ * the paper (ReaderSideColumn), so the context also carries that column's slot; below that it
+ * opens in the bottom sheet. Kept in its own small file: the reader imports it, and the thread
+ * itself is fetched later.
+ * Who uses it: ChapterReading (provides it, from useReaderTools), ParagraphCommentMarker,
+ * EarlierVersionComments and LazyParagraphThread (read it).
  */
 import { createContext } from 'react';
 
@@ -25,8 +26,8 @@ export interface ParagraphComments {
   /** Opens a thread (closing any other), or closes it with null. */
   setOpenPlace: (place: ParagraphPlace | null) => void;
   /**
-   * The side column's element, where the thread opens from 1280 px, or null while it isn't drawn
-   * (narrower windows put the thread under its paragraph).
+   * The side column's slot, where the thread opens from 1280 px, or null while it isn't drawn
+   * (narrower windows open the thread in the bottom sheet).
    */
   sidePanel: HTMLElement | null;
   /**

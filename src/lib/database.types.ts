@@ -7258,6 +7258,7 @@ export type Database = {
           reading_ruler: boolean;
           text_size: number | null;
           theme: Database['public']['Enums']['reading_theme'];
+          time_left: string;
           updated_at: string;
           user_id: string;
         };
@@ -7274,6 +7275,7 @@ export type Database = {
           reading_ruler?: boolean;
           text_size?: number | null;
           theme?: Database['public']['Enums']['reading_theme'];
+          time_left?: string;
           updated_at?: string;
           user_id: string;
         };
@@ -7289,6 +7291,7 @@ export type Database = {
           reading_ruler?: boolean;
           text_size?: number | null;
           theme?: Database['public']['Enums']['reading_theme'];
+          time_left?: string;
           updated_at?: string;
           user_id?: string;
         };
@@ -17234,6 +17237,7 @@ export type Database = {
           wanted_reading_ruler?: boolean;
           wanted_text_size: number;
           wanted_theme: Database['public']['Enums']['reading_theme'];
+          wanted_time_left?: string;
         };
         Returns: undefined;
       };

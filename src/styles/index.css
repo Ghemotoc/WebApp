@@ -1430,41 +1430,107 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 .tmc-habit-progress::-moz-progress-bar {
   background: var(--primary);
 }
-/* Paragraph comments on the reader (S1-E6-06; board 3.5): each paragraph shares a row with its
-   comment marker, 44 px wide with 8 px between on phones and 64 px with 16 px on wide screens.
-   The column appears only once the marker is drawn (the counts have arrived and comments are
-   on), so the paragraph's own element never changes. The thread spans the whole row under the
-   paragraph (col-span-full). */
+/* Paragraph comments on the reader (S1-E6-06; the simplified design, bundle CALM-5, handover
+   Step 4, points 1 to 3; boards New-Reader and New-PhoneReader). The marker sits over the
+   paragraph's edge, so the text keeps the whole column and never moves when the counts arrive:
+   below 1024 px a small 28 px white pill at the paragraph's top right corner with a 44 px touch
+   area (::after), from 1024 px the comment mark and the number in the accent colour in the
+   paper's left margin, beside the first line. A paragraph without comments keeps a quiet plus in
+   the same place. The open paragraph is tinted with a 9% wash of the thread colour. On a narrow
+   screen the paragraph scrolls to just under the chapter bar before its sheet opens
+   (scroll-margin-top). */
 .tmc-chapter-text .tmc-paragraph-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  align-items: start;
+  position: relative;
+  scroll-margin-top: 84px;
 }
-.tmc-chapter-text .tmc-paragraph-row:has(> .tmc-paragraph-marker) {
-  grid-template-columns: minmax(0, 1fr) 44px;
-  column-gap: 8px;
+.tmc-chapter-text .tmc-paragraph-row > p {
+  margin: 0;
+}
+.tmc-paragraph-row--open > p {
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--thread) 9%, transparent);
+  box-shadow: 0 0 0 10px color-mix(in srgb, var(--thread) 9%, transparent);
+}
+.tmc-paragraph-marker {
+  position: absolute;
+  top: -18px;
+  right: -14px;
+  display: inline-flex;
+  height: 28px;
+  min-width: 28px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+  color: var(--heading);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: normal;
+  cursor: pointer;
+}
+/* The 44 px touch area round the 28 px pill (WCAG 2.5.8 asks for 24 px; DoD asks for 44). */
+.tmc-paragraph-marker::after {
+  content: '';
+  position: absolute;
+  inset: -8px -4px;
+}
+.tmc-paragraph-marker--add {
+  padding: 0 7px;
+  color: var(--meta);
+  opacity: 0.75;
+}
+.tmc-paragraph-marker[aria-expanded='true'] {
+  background: var(--tint);
+  color: var(--heading);
+  opacity: 1;
 }
 @media (min-width: 1024px) {
-  .tmc-chapter-text .tmc-paragraph-row:has(> .tmc-paragraph-marker) {
-    grid-template-columns: minmax(0, 1fr) 64px;
-    column-gap: 16px;
+  .tmc-paragraph-marker {
+    top: calc((var(--reading-line-height, 1.7) * var(--reading-font-size, 20px) - 32px) / 2);
+    right: auto;
+    left: -60px;
+    height: 32px;
+    min-width: 44px;
+    padding: 0 8px;
+    background: none;
+    box-shadow: none;
+    color: var(--accent);
+    font-size: 14px;
+  }
+  .tmc-paragraph-marker::after {
+    inset: -6px 0;
+  }
+  .tmc-paragraph-marker:hover {
+    background: var(--tint);
+  }
+  /* The plus stays out of the way until the paragraph is pointed at or the plus has focus. */
+  .tmc-paragraph-marker--add {
+    color: var(--meta);
+    opacity: 0;
+  }
+  .tmc-paragraph-row:hover > .tmc-paragraph-marker--add,
+  .tmc-paragraph-marker--add:focus-visible {
+    opacity: 1;
   }
 }
-/* The thread is readers' words in the interface's look, not the chapter's: the body font at
-   16 px, whatever the reader chose for the text. Names keep their own colour and no underline;
-   links inside comments keep the link look. */
-.tmc-chapter-text .tmc-paragraph-thread {
-  font-family: var(--font-body);
-  font-size: 16px;
-  line-height: 1.5;
-  letter-spacing: normal;
+@media (hover: none) and (min-width: 1024px) {
+  .tmc-paragraph-marker--add {
+    opacity: 0.75;
+  }
 }
-.tmc-chapter-text .tmc-paragraph-thread a.no-underline {
-  color: var(--ink);
-  text-decoration: none;
-}
-.tmc-chapter-text .tmc-paragraph-thread a.no-underline:hover {
-  text-decoration: underline;
+/* The head of a paragraph's comments: the paragraph's opening words, two lines at most. */
+.tmc-thread-quote {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 /* ProseMirror's own needs: the placeholder-free empty paragraph still takes a line. */
 .tmc-chapter-text .ProseMirror {
@@ -1527,6 +1593,64 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
   --link: #5e2378;
   --border: #c9b392;
   --hairline: #e3d3b8;
+}
+/* The reader's row (bundle CALM-5; handover Step 3; board New-Reader): the chapter on the left
+   and, from 1280 px, the 360 px side column "Reading tools" 48 px away, which stays in view under
+   the chapter bar as the reader scrolls. --reader-bar-top is where the chapter bar sticks: under
+   the website's top bar from 1024 px, 12 px from the top (clear of the notch) below that, where
+   the bar is the only one while reading (handover Step 2). */
+:root {
+  --reader-bar-top: calc(12px + env(safe-area-inset-top));
+}
+@media (min-width: 1024px) {
+  :root {
+    --reader-bar-top: 96px;
+  }
+}
+.tmc-chapter-bar {
+  top: var(--reader-bar-top);
+}
+/* Below 1024 px the bar sits 12 px from each edge of the screen (board New-PhoneReader), so it
+   reaches past the page column's side space. */
+@media (max-width: 1023px) {
+  .tmc-chapter-bar {
+    margin-inline: calc(12px - (clamp(16px, 4vw, 64px) + 10px));
+  }
+}
+@media (min-width: 1280px) {
+  .tmc-reader-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    align-items: start;
+    gap: 48px;
+  }
+  .tmc-reader-side {
+    position: sticky;
+    top: calc(var(--reader-bar-top) + 72px);
+    max-height: calc(100dvh - var(--reader-bar-top) - 88px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+/* The reader's bottom sheet's scrim (handover Step 4, point 4): light by day, darker at night. */
+.tmc-reader-sheet::backdrop {
+  background: rgb(20 10 30 / 0.16);
+}
+:root[data-theme='night'] .tmc-reader-sheet::backdrop {
+  background: rgb(0 0 0 / 0.5);
+}
+/* On phones the paper fills the screen's width (handover Step 3, phones; board New-PhoneReader):
+   it reaches past the page column's side space to both edges, with square corners and no shadow,
+   so only its top and bottom show the page colour. 24 px inside, as on the board. */
+@media (max-width: 599px) {
+  .tmc-reading-page {
+    --reading-page-pad: 24px;
+    margin-inline: calc(-1 * (clamp(16px, 4vw, 64px) + 10px));
+    width: auto;
+    max-width: none !important;
+    border-radius: 0;
+    box-shadow: none;
+  }
 }
 /* Two classes, so this also beats the quote and list margins above. */
 .tmc-chapter-text.tmc-chapter-text--reader > * + * {

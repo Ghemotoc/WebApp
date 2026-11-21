@@ -14,17 +14,22 @@ import {
 } from './readingStyle';
 
 describe('the device text size', () => {
-  it('is 19 px when the device uses the normal 16 px', () => {
-    expect(deviceTextSize(16)).toBe(19);
+  it('is 20 px on a wide screen when the device uses the normal 16 px', () => {
+    expect(deviceTextSize(16, 1440)).toBe(20);
+  });
+
+  it('starts at 17 px on a phone (CALM-5)', () => {
+    expect(deviceTextSize(16, 390)).toBe(17);
   });
 
   it('grows with a device set to larger text, up to 28 px', () => {
-    expect(deviceTextSize(20)).toBe(24);
-    expect(deviceTextSize(40)).toBe(28);
+    expect(deviceTextSize(20, 1440)).toBe(25);
+    expect(deviceTextSize(40, 1440)).toBe(28);
   });
 
-  it('falls back to 19 px when the size can not be read', () => {
-    expect(deviceTextSize(Number.NaN)).toBe(19);
+  it('falls back to the starting size when the size can not be read', () => {
+    expect(deviceTextSize(Number.NaN, 1440)).toBe(20);
+    expect(deviceTextSize(Number.NaN, 390)).toBe(17);
   });
 });
 
@@ -54,8 +59,8 @@ describe('the reading text style', () => {
     expect(clampTextSize(31)).toBe(28);
   });
 
-  it('keeps the 80 px column for comment markers beside each line width', () => {
-    expect(readingColumnWidth('medium')).toBe(760);
-    expect(readingColumnWidth('narrow')).toBe(640);
+  it('gives the text its own width, with no column kept for comment counts (CALM-5)', () => {
+    expect(readingColumnWidth('medium')).toBe(680);
+    expect(readingColumnWidth('narrow')).toBe(560);
   });
 });

@@ -44409,7 +44409,7 @@ COMMENT ON FUNCTION "public"."save_reading_position"("story_slug" "text", "chapt
 
 
 
-CREATE OR REPLACE FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_theme" "public"."reading_theme", "wanted_night_by_clock" boolean DEFAULT false, "wanted_night_from" time without time zone DEFAULT NULL::time without time zone, "wanted_night_until" time without time zone DEFAULT NULL::time without time zone, "wanted_reading_ruler" boolean DEFAULT false) RETURNS "void"
+CREATE OR REPLACE FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_theme" "public"."reading_theme", "wanted_night_by_clock" boolean DEFAULT false, "wanted_night_from" time without time zone DEFAULT NULL::time without time zone, "wanted_night_until" time without time zone DEFAULT NULL::time without time zone, "wanted_reading_ruler" boolean DEFAULT false, "wanted_time_left" "text" DEFAULT 'bar'::"text") RETURNS "void"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
@@ -44420,12 +44420,13 @@ begin
   if caller is null then
     raise exception 'Log in to save your reading settings.' using errcode = '42501';
   end if;
-  -- Step 2: one row per reader, replaced as a whole.
+  -- Step 2: one row per reader, replaced as a whole. The column's check refuses any time_left
+  -- other than 'bar' or 'page'; a null falls back to the default 'bar'.
   insert into public.reading_settings (user_id, font, text_size, line_spacing, line_width, theme,
-    night_by_clock, night_from, night_until, reading_ruler)
+    night_by_clock, night_from, night_until, reading_ruler, time_left)
   values (caller, wanted_font, wanted_text_size, wanted_line_spacing, wanted_line_width, wanted_theme,
     coalesce(wanted_night_by_clock, false), wanted_night_from, wanted_night_until,
-    coalesce(wanted_reading_ruler, false))
+    coalesce(wanted_reading_ruler, false), coalesce(wanted_time_left, 'bar'))
   on conflict (user_id) do update
     set font = excluded.font,
         text_size = excluded.text_size,
@@ -44435,15 +44436,16 @@ begin
         night_by_clock = excluded.night_by_clock,
         night_from = excluded.night_from,
         night_until = excluded.night_until,
-        reading_ruler = excluded.reading_ruler;
+        reading_ruler = excluded.reading_ruler,
+        time_left = excluded.time_left;
 end;
 $$;
 
 
-ALTER FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_theme" "public"."reading_theme", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean) OWNER TO "postgres";
+ALTER FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_theme" "public"."reading_theme", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean, "wanted_time_left" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_theme" "public"."reading_theme", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean) IS 'Keeps the caller''s reading settings for every device (S1-E4-02; IDEAS-1 part a).';
+COMMENT ON FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_theme" "public"."reading_theme", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean, "wanted_time_left" "text") IS 'Keeps the caller''s reading settings for every device (S1-E4-02; IDEAS-1 part a; CALM-5 time_left).';
 
 
 
@@ -58111,7 +58113,9 @@ CREATE TABLE IF NOT EXISTS "public"."reading_settings" (
     "night_from" time without time zone,
     "night_until" time without time zone,
     "reading_ruler" boolean DEFAULT false NOT NULL,
-    CONSTRAINT "reading_settings_text_size_check" CHECK ((("text_size" >= 14) AND ("text_size" <= 28)))
+    "time_left" "text" DEFAULT 'bar'::"text" NOT NULL,
+    CONSTRAINT "reading_settings_text_size_check" CHECK ((("text_size" >= 14) AND ("text_size" <= 28))),
+    CONSTRAINT "reading_settings_time_left_choice" CHECK (("time_left" = ANY (ARRAY['bar'::"text", 'page'::"text"])))
 );
 
 
@@ -58136,6 +58140,10 @@ COMMENT ON COLUMN "public"."reading_settings"."night_until" IS 'When Night by th
 
 
 COMMENT ON COLUMN "public"."reading_settings"."reading_ruler" IS 'The reading ruler: a soft band over the line being read (IDEA-20261031-8).';
+
+
+
+COMMENT ON COLUMN "public"."reading_settings"."time_left" IS 'Where the minutes left in a chapter show: bar (the chapter bar''s meta line, the default) or page (the floating pill at the foot). CALM-5; Robert, 20 Nov 2026, 12:28 UTC.';
 
 
 
@@ -73516,8 +73524,8 @@ GRANT ALL ON FUNCTION "public"."save_reading_position"("story_slug" "text", "cha
 
 
 
-REVOKE ALL ON FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_theme" "public"."reading_theme", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean) FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_theme" "public"."reading_theme", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean) TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_theme" "public"."reading_theme", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean, "wanted_time_left" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_theme" "public"."reading_theme", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean, "wanted_time_left" "text") TO "authenticated";
 
 
 

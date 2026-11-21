@@ -1,9 +1,11 @@
 /**
  * ChapterReaderHeader: the top of a chapter (story S1-E4-01a; board 3.5).
  *
- * Board values: the eyebrow "Chapter 14 of 15" (the eyebrow style), the chapter title as the page's
- * H1 (Funnel Display 800, 36 to 64 px), and the meta line "by <pen name> · 9 Oct 2026 ·
- * 3 min read" in 14 px. An edited chapter adds "edited <date>" (S1-E3-03, Q10). The pen name
+ * The simplified design (bundle CALM-5; design handover Step 3; boards New-Reader and
+ * New-PhoneReader): the eyebrow "Chapter 14 of 15" (the eyebrow style; "of N" and the last
+ * chapter's mark wait for CALM-6), the chapter title as the page's H1 in the story's own type,
+ * Literata 600 at 32/38 px (28/34 px on phones), and the meta line "by <pen name> · 9 Oct 2026 ·
+ * 3 min read" in 14 px, 32 px above the text. An edited chapter adds "edited <date>" (S1-E3-03, Q10). The pen name
  * links to the writer's profile once profiles exist (S1-E5-05); until then it is plain text.
  * A translated classic in a story with several languages adds "Translated from <language> by
  * <name>" after the author (TRANSLATE-1b; board TrReader).
@@ -52,12 +54,12 @@ export function ChapterReaderHeader({ chapter }: { chapter: ReaderChapter }) {
   const { t, i18n } = useTranslation('reading');
   const parts = metaParts(chapter, i18n.language, t);
   return (
-    <header className="flex flex-col gap-3.5 pb-9 lg:pr-20">
+    <header className="flex flex-col gap-2 pb-8">
       <Eyebrow>{t('reader.kicker', { number: chapter.number, total: chapter.total })}</Eyebrow>
       <h1
         id="chapter-title"
         lang={chapter.story.languageCode}
-        className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-extrabold tracking-[-0.025em] break-words"
+        className="m-0 font-story text-[28px] leading-[34px] font-semibold tracking-normal break-words text-heading min-[600px]:text-[32px] min-[600px]:leading-[38px]"
       >
         {chapter.title === '' ? t('reader.untitled') : chapter.title}
       </h1>

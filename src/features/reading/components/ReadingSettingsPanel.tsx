@@ -1,12 +1,14 @@
 /**
- * ReadingSettingsPanel: the "Reading settings" card under the chapter bar's button (story
- * S1-E4-02; board 3.5 Reader).
+ * ReadingSettingsPanel: what Aa opens, "Reading settings" (story S1-E4-02; board 3.5 Reader;
+ * the simplified design, bundle CALM-5).
  *
- * Board values: a white 24 px-radius card about 360 px wide with the heading and a close button,
- * then Font, Text size, Line spacing, Line width and Theme, and a line saying the settings are
- * saved to the account. The card lines up with the button's right edge, because the button sits
- * at the right of the bar since bundle G7d, and a card opening rightwards would leave a phone's
- * screen. Every change shows on the chapter at once. No doodles: this is the
+ * Values: the heading and a Close ×, then Font, Text size, Line spacing, Line width and Theme,
+ * Night by the clock and the reading ruler, Time left, and a line saying the settings are saved
+ * to the account. Where it opens (CALM-5; handover Step 4, point 8): from 1280 px as a glass
+ * panel at the top of the reader's side column, above About this story; below 1280 px inside the
+ * reader's bottom sheet (ReaderSheet). It never opens on load. Every change shows on the chapter
+ * at once. Time left (point 10) is a segmented control: In the bar, the default, or On the page.
+ * No doodles: this is the
  * chapter reader (DoD design rules). The board's "Later, in the apps: any font on your device"
  * block is left out until the desktop and phone apps exist (docs/board-fixes.md).
  * Reading comfort (IDEAS-1 part a): Atkinson Hyperlegible joins the fonts (IDEA-20261031-6);
@@ -14,14 +16,16 @@
  * The Theme chips show the chapter's theme: while the clock has turned it to Night, a pick by
  * hand counts for this chapter only (useChapterTheme), so the usual theme stays as it was.
  * The card scrolls inside itself when it is taller than the window, as it is on a phone.
- * Who uses it: ReadingSettingsControl. What it calls: useReadingSettings (the reader's
- * settings), which saves to the account, and useChapterTheme.
+ * Who uses it: ReaderToolPlace, loaded the first time Aa is pressed. What it calls:
+ * useReadingSettings (the reader's settings), which saves to the account, and useChapterTheme.
  */
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { CheckIcon } from '@/components/icons/CheckIcon';
 import { ChoiceChips } from '@/components/ui/ChoiceChips';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
+import { cn } from '@/lib/utils';
 
 import type {
   ReadingFont,
@@ -29,6 +33,7 @@ import type {
   ReadingLineWidth,
   ReadingSettings,
   ReadingTheme,
+  ReadingTimeLeftPlace,
 } from '../api/readingSettings';
 import { pickThemeForChapter, useChapterTheme } from '../hooks/useChapterTheme';
 import { useReadingSettings } from '../hooks/useReadingSettings';
@@ -51,6 +56,8 @@ export interface ReadingSettingsPanelProps {
   /** The open chapter, whose theme a pick by hand may change for this chapter only. */
   chapterCode: string;
   onClose: () => void;
+  /** True inside the bottom sheet (below 1280 px), which draws the glass itself. */
+  isInSheet: boolean;
 }
 
 /** What a group of chips needs. */
@@ -135,6 +142,25 @@ function SettingChoices({ settings, change }: ChoicesProps) {
   );
 }
 
+/** Time left: the minutes in the chapter bar (the default) or the pill on the page (CALM-5). */
+function TimeLeftChoice({ settings, change }: ChoicesProps) {
+  const { t } = useTranslation('reading');
+  const options: { value: ReadingTimeLeftPlace; label: string }[] = [
+    { value: 'bar', label: t('settings.timeLeftBar') },
+    { value: 'page', label: t('settings.timeLeftPage') },
+  ];
+  return (
+    <SegmentedControl
+      legend={t('settings.timeLeft')}
+      name="reading-time-left"
+      options={options}
+      value={settings.timeLeft}
+      onChange={(value) => change({ timeLeft: value })}
+      isFullWidth
+    />
+  );
+}
+
 /** The line at the bottom: saved to the account, or why it wasn't. */
 function SaveNote({ saveFailed }: { saveFailed: boolean }) {
   const { t } = useTranslation('reading');
@@ -168,6 +194,7 @@ export function ReadingSettingsPanel({
   deviceSize,
   chapterCode,
   onClose,
+  isInSheet,
 }: ReadingSettingsPanelProps) {
   const { t } = useTranslation('reading');
   const { settings, change, saveFailed } = useReadingSettings();
@@ -179,13 +206,14 @@ export function ReadingSettingsPanel({
     <section
       id={id}
       aria-labelledby={`${id}-title`}
-      className="tmc-rise absolute top-14 right-0 z-[5] flex max-h-[calc(100dvh-140px)] w-[min(360px,calc(100vw-32px))] flex-col gap-[18px] overflow-y-auto rounded-card border border-border bg-surface p-[22px] shadow-popover"
+      // In the side column it is its own glass panel; in the sheet the sheet is the glass.
+      className={cn('flex flex-col gap-[18px]', !isInSheet && 'glass-pill rounded-card p-[22px]')}
     >
       <div className="flex items-center justify-between gap-2">
         <h2
           id={`${id}-title`}
           tabIndex={-1}
-          className="m-0 font-heading text-xl font-bold text-heading outline-none"
+          className="m-0 type-subheading text-heading outline-none"
         >
           {t('settings.title')}
         </h2>
@@ -207,6 +235,7 @@ export function ReadingSettingsPanel({
       <SettingChoices settings={settings} change={change} />
       <ThemeChoice settings={settings} change={change} chapterCode={chapterCode} />
       <ReadingComfortFields settings={settings} change={change} />
+      <TimeLeftChoice settings={settings} change={change} />
       <SaveNote saveFailed={saveFailed} />
     </section>
   );

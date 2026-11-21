@@ -19,6 +19,14 @@ export type ReadingLineWidth = Database['public']['Enums']['reading_line_width']
 /** The theme choices for the chapter text. */
 export type ReadingTheme = Database['public']['Enums']['reading_theme'];
 
+/**
+ * Where the minutes left in a chapter show (CALM-5; Robert, 20 Nov 2026, 12:28 UTC): 'bar' at the
+ * end of the chapter bar's meta line (the default), or 'page' as the floating pill at the foot.
+ * The database keeps it as text with a check constraint (reading_settings_time_left_choice), so
+ * there is no generated enum to read; these are the constraint's two values.
+ */
+export type ReadingTimeLeftPlace = 'bar' | 'page';
+
 /** One reader's settings. */
 export interface ReadingSettings {
   font: ReadingFont;
@@ -35,11 +43,14 @@ export interface ReadingSettings {
   nightUntil: string | null;
   /** The reading ruler: a soft band over the line being read. */
   readingRuler: boolean;
+  /** Where the minutes left show (CALM-5). */
+  timeLeft: ReadingTimeLeftPlace;
 }
 
-/** What a reader has before choosing anything: the database's defaults. */
+/** What a reader has before choosing anything: the database's defaults (reading_settings). */
 export const defaultReadingSettings: ReadingSettings = {
-  font: 'sans',
+  // Literata, the story font, as the simplified design's paper draws it (CALM-5, handover Step 3).
+  font: 'serif',
   textSize: null,
   lineSpacing: 'normal',
   lineWidth: 'medium',
@@ -48,6 +59,7 @@ export const defaultReadingSettings: ReadingSettings = {
   nightFrom: null,
   nightUntil: null,
   readingRuler: false,
+  timeLeft: 'bar',
 };
 
 /**
@@ -72,7 +84,7 @@ export async function fetchReadingSettings(client: AppSupabaseClient): Promise<R
   const { data, error } = await client
     .from('reading_settings')
     .select(
-      'font, text_size, line_spacing, line_width, theme, night_by_clock, night_from, night_until, reading_ruler',
+      'font, text_size, line_spacing, line_width, theme, night_by_clock, night_from, night_until, reading_ruler, time_left',
     )
     .maybeSingle();
   if (error !== null) throw new Error(`Could not read your reading settings: ${error.message}`);
@@ -87,6 +99,8 @@ export async function fetchReadingSettings(client: AppSupabaseClient): Promise<R
     nightFrom: shortTime(data.night_from),
     nightUntil: shortTime(data.night_until),
     readingRuler: data.reading_ruler,
+    // Anything but 'page' reads as the default, so the bar never loses its minutes by mistake.
+    timeLeft: data.time_left === 'page' ? 'page' : 'bar',
   };
 }
 
@@ -113,6 +127,7 @@ export async function saveReadingSettings(
     wanted_night_from: settings.nightFrom as string,
     wanted_night_until: settings.nightUntil as string,
     wanted_reading_ruler: settings.readingRuler,
+    wanted_time_left: settings.timeLeft,
   });
   if (error !== null) throw new Error(`Could not save your reading settings: ${error.message}`);
 }
