@@ -41,6 +41,7 @@ import { minutesLeft } from '../lib/readingTimeLeft';
 import { toSharedChapter } from '../lib/toSharedChapter';
 
 import { ChapterBar } from './ChapterBar';
+import { readingSettingsPanelId } from './ReadingSettingsControl';
 import { ChapterComments } from './ChapterComments';
 import { ChapterNavigation } from './ChapterNavigation';
 import { CopyNotice } from './CopyNotice';
@@ -232,8 +233,10 @@ export function ChapterReading(props: { chapter: ReaderChapter; spot: SpotRange 
   const { t } = useTranslation('reading');
   const screen = useChapterScreen(chapter);
   const { hasText, look, isWide, tools, story } = screen;
+  // While the place's file loads, an empty stand-in carries the panel's id, so Aa's aria-controls
+  // never points at nothing (axe: aria-valid-attr-value).
   const settingsPanel = tools.isSettingsOpen ? (
-    <Suspense fallback={null}>
+    <Suspense fallback={<div id={readingSettingsPanelId} hidden />}>
       <ReaderToolPlace
         isInSideColumn={isWide}
         deviceSize={look.deviceSize}

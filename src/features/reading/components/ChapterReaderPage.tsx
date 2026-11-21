@@ -28,9 +28,7 @@ import type { ReaderChapter } from '../api/chapter';
 import { useChapter } from '../hooks/useChapter';
 import { useStoryPreview } from '../hooks/useStoryPreview';
 
-import { AppOnlyNotice } from './AppOnlyNotice';
 import { ChapterReading } from './ChapterReading';
-import { TeaserPage } from './TeaserPage';
 
 /**
  * "No preview for this story", loaded only for a signed-out visitor on a 16+ or 18+ chapter, so it
@@ -39,6 +37,19 @@ import { TeaserPage } from './TeaserPage';
 const NoPreviewNotice = lazy(async () => {
   const module = await import('./NoPreviewNotice');
   return { default: module.NoPreviewNotice };
+});
+
+/** The short preview and log-in prompt for a signed-out visitor (S1-E4-04): a signed-in reader
+ * never sees it, so it stays out of their cold load (the 1,300 KB script budget, S1-E4-01b). */
+const TeaserPage = lazy(async () => {
+  const module = await import('./TeaserPage');
+  return { default: module.TeaserPage };
+});
+
+/** "In the app only" (S1-E4-09): rare on the web, so fetched only when needed. */
+const AppOnlyNotice = lazy(async () => {
+  const module = await import('./AppOnlyNotice');
+  return { default: module.AppOnlyNotice };
 });
 
 /** The screen for a chapter not translated yet: rare, so fetched only when needed (TRANSLATE-1b). */
@@ -114,8 +125,20 @@ function ChapterShown(props: {
     );
   }
   // GAPS-15: the writer chose "In the app only" and it applies, so no text came (S1-E4-09).
-  if (props.chapter.appOnly) return <AppOnlyNotice chapter={props.chapter} />;
-  if (props.chapter.isTeaser) return <TeaserPage chapter={props.chapter} />;
+  if (props.chapter.appOnly) {
+    return (
+      <Suspense fallback={null}>
+        <AppOnlyNotice chapter={props.chapter} />
+      </Suspense>
+    );
+  }
+  if (props.chapter.isTeaser) {
+    return (
+      <Suspense fallback={null}>
+        <TeaserPage chapter={props.chapter} />
+      </Suspense>
+    );
+  }
   return <ChapterReading chapter={props.chapter} spot={props.spot} />;
 }
 
