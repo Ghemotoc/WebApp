@@ -24,7 +24,6 @@ import { Link, useParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
-import { UnavailableHereNotice } from '@/features/country-block/components/UnavailableHereNotice';
 import { useUnavailableHere } from '@/features/country-block/hooks/useUnavailableHere';
 import { parseSpot, type SpotRange } from '@/lib/chapter-blocks';
 
@@ -38,6 +37,13 @@ import { ChapterReading } from './ChapterReading';
  * "No preview for this story", loaded only for a signed-out visitor on a 16+ or 18+ chapter, so it
  * stays out of every other reader's cold load (the 1,300 KB script budget, S1-E4-01b).
  */
+/** The "not available in your country" page (COUNTRY-1, board B11): few readers ever see it, so
+ * it loads only when needed and stays out of the reader's bundle budget (345 KB). */
+const UnavailableHereNotice = lazy(async () => {
+  const module = await import('@/features/country-block/components/UnavailableHereNotice');
+  return { default: module.UnavailableHereNotice };
+});
+
 const NoPreviewNotice = lazy(async () => {
   const module = await import('./NoPreviewNotice');
   return { default: module.NoPreviewNotice };
@@ -91,7 +97,13 @@ function ChapterMissing({ storySlug, chapterCode }: { storySlug: string; chapter
   // COUNTRY-1: a story hidden in the reader's country gets board B11's page instead.
   const country = useUnavailableHere(storySlug, true);
   if (!isSettled || !country.isSettled) return null;
-  if (country.isHere) return <UnavailableHereNotice />;
+  if (country.isHere) {
+    return (
+      <Suspense fallback={null}>
+        <UnavailableHereNotice />
+      </Suspense>
+    );
+  }
   if (hidden !== null) {
     return (
       <Suspense fallback={null}>
