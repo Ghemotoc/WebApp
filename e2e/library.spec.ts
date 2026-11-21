@@ -112,7 +112,7 @@ test.describe('library and continue reading (S1-E4-03)', () => {
     // Step 3: the Library and the story page offer it too.
     await again.goto('/library');
     const card = again.getByRole('article', { name: 'Raftul bibliotecii' });
-    await expect(card).toContainText('Chapter 1 of 2');
+    await expect(card).toContainText('Chapter 1');
     await expect(card.getByRole('link', { name: 'Continue Raftul bibliotecii' })).toHaveAttribute(
       'href',
       `/s/${storySlug}/libre2e1`,

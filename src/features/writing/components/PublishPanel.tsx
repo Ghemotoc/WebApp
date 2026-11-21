@@ -8,6 +8,10 @@
  * chapter shows "Scheduled for …, local time." with "Cancel schedule". A published one shows
  * "Published …" with "Update chapter" (Q10). Under all three: "Unpublish chapter", red, usable
  * only when published, with its note.
+ * CALM-6 (the last chapter): "This is the last chapter" (LastChapterSwitch) under the date and
+ * time of a draft and under "Scheduled for …"; on the latest published chapter the switch until it
+ * is on, then the plain line "This is the last chapter.". A chapter after a marked one says so
+ * above the main button, and the main button names the chapter: "Publish chapter 15".
  * Who uses it: EditorAside, given the state and actions by ChapterEditorPage
  * (useChapterPublishing). Problems show under the buttons in a role="alert" line.
  */
@@ -17,12 +21,17 @@ import { Button } from '@/components/ui/Button';
 import { DateTimeField } from '@/components/ui/DateTimeField';
 import { defaultScheduleFields, formatLocalDateTime, localTimeToInstant } from '@/lib/local-time';
 
+import type { ChapterLastState } from '../api/lastChapter';
 import type { PublishAction, PublishingState, PublishProblem } from '../hooks/useChapterPublishing';
 import { useEditorTranslation } from '../registerEditorTranslations';
+
+import { LastChapterSwitch } from './LastChapterSwitch';
 
 /** What the panel needs. */
 export interface PublishPanelProps {
   state: PublishingState;
+  /** CALM-6: the last-chapter mark; null while it loads (the switch then waits). */
+  lastState: ChapterLastState | null;
   problem: PublishProblem | null;
   isBusy: boolean;
   onAction: (action: PublishAction) => void;
@@ -64,8 +73,26 @@ function WhenChoice({
   );
 }
 
-/** A draft: when, the date and time, Preview and the publish button. */
+/**
+ * The main button's words: "Publish chapter 15" once the chapter's number is known (CALM-6).
+ *
+ * @returns the text
+ */
+function mainButtonText(
+  t: ReturnType<typeof useEditorTranslation>['t'],
+  isLater: boolean,
+  lastState: ChapterLastState | null,
+): string {
+  if (lastState === null) return isLater ? t('publish.scheduleButton') : t('publish.publishButton');
+  const number = lastState.number;
+  return isLater
+    ? t('publish.scheduleNumbered', { number })
+    : t('publish.publishNumbered', { number });
+}
+
+/** A draft: when, the date and time, the last-chapter switch, Preview and the publish button. */
 function DraftControls({
+  lastState,
   isBusy,
   onAction,
   onPreview,
@@ -73,12 +100,17 @@ function DraftControls({
   const { t } = useEditorTranslation();
   const [isLater, setLater] = useState(false);
   const [fields, setFields] = useState(() => defaultScheduleFields(new Date()));
+  // CALM-6: off each time the panel opens, except in a later language edition whose original
+  // chapter is marked. Null until the writer presses it, so a late answer can still set it.
+  const [pickedLast, setPickedLast] = useState<boolean | null>(null);
+  const canMark = lastState?.canMark === true;
+  const asLast = canMark && (pickedLast ?? lastState.originalIsLast);
 
   /** Publish now, or schedule the date and time on the writer's own clock (Robert, 20 Nov 2026, 18:19 UTC); a bad date asks again. */
   function submit() {
-    if (!isLater) return onAction({ kind: 'publish' });
+    if (!isLater) return onAction({ kind: 'publish', asLast });
     const at = localTimeToInstant(fields.date, fields.time);
-    onAction(at === null ? { kind: 'schedule', at: new Date(0) } : { kind: 'schedule', at });
+    onAction({ kind: 'schedule', at: at ?? new Date(0), asLast });
   }
 
   return (
@@ -95,12 +127,25 @@ function DraftControls({
           skippedHourNote={(time) => t('publish.skippedHourNote', { time })}
         />
       )}
+      {canMark && (
+        <LastChapterSwitch
+          isOn={asLast}
+          onToggle={() => setPickedLast(!asLast)}
+          number={lastState.number}
+        />
+      )}
+      {/* CALM-6: a chapter after the marked one takes the mark off when it goes out. */}
+      {lastState !== null && lastState.markedNumber !== null && (
+        <p className="m-0 text-[13px] leading-normal text-body">
+          {t('publish.markedBefore', { number: lastState.markedNumber })}
+        </p>
+      )}
       <div className="flex flex-wrap gap-2">
         <Button variant="secondary" onClick={onPreview}>
           {t('publish.preview')}
         </Button>
         <Button onClick={submit} disabled={isBusy}>
-          {isLater ? t('publish.scheduleButton') : t('publish.publishButton')}
+          {mainButtonText(t, isLater, lastState)}
         </Button>
       </div>
       <p className="m-0 text-[13px] leading-normal text-meta">{t('publish.goLiveNote')}</p>
@@ -110,12 +155,13 @@ function DraftControls({
   );
 }
 
-/** Scheduled: when, and "Cancel schedule". */
+/** Scheduled: when, the last-chapter switch (a press saves at once), and "Cancel schedule". */
 function ScheduledControls({
   state,
+  lastState,
   isBusy,
   onAction,
-}: Pick<PublishPanelProps, 'state' | 'isBusy' | 'onAction'>) {
+}: Pick<PublishPanelProps, 'state' | 'lastState' | 'isBusy' | 'onAction'>) {
   const { t, i18n } = useEditorTranslation();
   const when =
     state.scheduledFor === null ? '' : formatLocalDateTime(state.scheduledFor, i18n.language);
@@ -124,6 +170,14 @@ function ScheduledControls({
       <p className="m-0 rounded-card bg-tint px-3.5 py-3 text-[15px] font-semibold text-heading">
         {t('publish.scheduledFor', { when })}
       </p>
+      {lastState !== null && (lastState.isLast || lastState.canMark) && (
+        <LastChapterSwitch
+          isOn={lastState.isLast}
+          onToggle={() => onAction({ kind: 'setLast', isLast: !lastState.isLast })}
+          number={lastState.number}
+          isDisabled={isBusy}
+        />
+      )}
       <Button
         variant="secondary"
         onClick={() => onAction({ kind: 'cancelSchedule' })}
@@ -136,9 +190,35 @@ function ScheduledControls({
   );
 }
 
-/** Published: since when, and "Update chapter" (Q10). */
+/**
+ * The latest published chapter's mark (CALM-6): the switch while it is off, then the plain line.
+ * Once on it comes off only by setting the story back to Ongoing in Story settings.
+ */
+function PublishedLastMark({
+  lastState,
+  isBusy,
+  onAction,
+}: Pick<PublishPanelProps, 'lastState' | 'isBusy' | 'onAction'>) {
+  const { t } = useEditorTranslation();
+  if (lastState === null) return null;
+  if (lastState.isLast) {
+    return <p className="m-0 text-[15px] font-semibold text-heading">{t('publish.lastMarked')}</p>;
+  }
+  if (!lastState.canMark) return null;
+  return (
+    <LastChapterSwitch
+      isOn={false}
+      onToggle={() => onAction({ kind: 'setLast', isLast: true })}
+      number={lastState.number}
+      isDisabled={isBusy}
+    />
+  );
+}
+
+/** Published: since when, the last-chapter mark, and "Update chapter" (Q10). */
 function PublishedControls({
   state,
+  lastState,
   isBusy,
   onAction,
   onPreview,
@@ -151,6 +231,7 @@ function PublishedControls({
       <p className="m-0 rounded-card bg-(--success-bg) px-3.5 py-3 text-[15px] font-semibold text-(--success-text)">
         {t('publish.published', { when })}
       </p>
+      <PublishedLastMark lastState={lastState} isBusy={isBusy} onAction={onAction} />
       <div className="flex flex-wrap gap-2">
         <Button variant="secondary" onClick={onPreview}>
           {t('publish.preview')}
@@ -199,6 +280,7 @@ export function PublishPanel(props: PublishPanelProps) {
     <div className="flex flex-col gap-3.5">
       {props.state.status === 'draft' && (
         <DraftControls
+          lastState={props.lastState}
           isBusy={props.isBusy}
           onAction={props.onAction}
           onPreview={props.onPreview}

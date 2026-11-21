@@ -158,7 +158,7 @@ test.describe('epic S1-E3 journeys', () => {
     const slug = new URL(page.url()).pathname.split('/')[3] ?? '';
     await writeChapter(page, 'Dimineața', 'Bunica notează vremea în fiecare dimineață.');
     const publishPanel = page.getByRole('region', { name: 'Publish' });
-    await publishPanel.getByRole('button', { name: 'Publish chapter', exact: true }).click();
+    await publishPanel.getByRole('button', { name: /^Publish chapter \d+$/ }).click();
     await expect(publishPanel.getByText(/^Published /)).toBeVisible();
     expect(await readerTitles(browser, slug)).toEqual(['Dimineața']);
 

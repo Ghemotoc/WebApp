@@ -197,7 +197,7 @@
     "label": "Stare",
     "ongoing": "În curs",
     "completed": "Terminată",
-    "hint": "Apare pe cardul poveștii. Cititorii pot filtra după ea.",
+    "hint": "Apare pe cardul poveștii. Cititorii pot filtra după ea. Dacă o treci înapoi la În curs, se scoate marcajul de ultim capitol.",
     "filterLabel": "Arată",
     "all": "Toate poveștile"
   },

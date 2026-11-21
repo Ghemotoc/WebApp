@@ -2,8 +2,8 @@
  * ChapterReaderHeader: the top of a chapter (story S1-E4-01a; board 3.5).
  *
  * The simplified design (bundle CALM-5; design handover Step 3; boards New-Reader and
- * New-PhoneReader): the eyebrow "Chapter 14 of 15" (the eyebrow style; "of N" and the last
- * chapter's mark wait for CALM-6), the chapter title as the page's H1 in the story's own type,
+ * New-PhoneReader): the eyebrow "Chapter 14 of 15" (the eyebrow style; "of 15" only while the
+ * writer has marked a last chapter, else "Chapter 14", CALM-6), the chapter title as the page's H1 in the story's own type,
  * Literata 600 at 32/38 px (28/34 px on phones), and the meta line "by <pen name> · 9 Oct 2026 ·
  * 3 min read" in 14 px, 32 px above the text. An edited chapter adds "edited <date>" (S1-E3-03, Q10). The pen name
  * links to the writer's profile once profiles exist (S1-E5-05); until then it is plain text.
@@ -19,6 +19,7 @@ import { languageNameIn } from '@/lib/language-names';
 import { formatLocalShortDate } from '@/lib/local-time';
 
 import type { ReaderChapter } from '../api/chapter';
+import { chapterPlaceText } from '../lib/chapterPlace';
 
 /** The meta line's parts after "by <name>". */
 function metaParts(chapter: ReaderChapter, language: string, t: TFunction<'reading'>) {
@@ -55,7 +56,7 @@ export function ChapterReaderHeader({ chapter }: { chapter: ReaderChapter }) {
   const parts = metaParts(chapter, i18n.language, t);
   return (
     <header className="flex flex-col gap-2 pb-8">
-      <Eyebrow>{t('reader.kicker', { number: chapter.number, total: chapter.total })}</Eyebrow>
+      <Eyebrow>{chapterPlaceText(t, chapter.number, chapter.lastChapterNumber)}</Eyebrow>
       <h1
         id="chapter-title"
         lang={chapter.story.languageCode}

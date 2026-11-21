@@ -127,8 +127,8 @@ insert into discarded select public.set_library_shelf('lib2', 'reading');
 select is((public.my_library() -> 'counts') || jsonb_build_object('first', public.my_library() #>> '{continue_reading,0,story,slug}'),
   '{"reading": 1, "saved": 0, "finished": 1, "first": "lib2"}'::jsonb,
   'the Library counts each shelf and offers the latest story to continue');
-select is(public.my_library() #> '{places,lib1}', '{"number": 2, "total": 2}'::jsonb,
-  'each card knows the chapter the reader reached');
+select is(public.my_library() #> '{places,lib1}', '{"number": 2, "total": 2, "last_chapter_number": null}'::jsonb,
+  'each card knows the chapter the reader reached, with no "of N" while no chapter is marked last (CALM-6)');
 
 /* ---------- 4. Blocks and follows ---------- */
 

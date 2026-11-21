@@ -108,7 +108,9 @@ test.describe('publish, update, unpublish and schedule (S1-E3-03)', () => {
     await expect(preview.locator('strong')).toHaveText('notează');
     await preview.getByRole('button', { name: 'Close' }).click();
 
-    await publishPanel(page).getByRole('button', { name: 'Publish chapter', exact: true }).click();
+    await publishPanel(page)
+      .getByRole('button', { name: /^Publish chapter \d+$/ })
+      .click();
     await expect(publishPanel(page).getByText(/^Published /)).toBeVisible();
     await expect(
       page.getByRole('navigation').getByText('Published', { exact: true }),
@@ -155,7 +157,7 @@ test.describe('publish, update, unpublish and schedule (S1-E3-03)', () => {
     const page = await openEditor(browser, 'publish1');
     await publishPanel(page).getByRole('button', { name: 'Unpublish chapter' }).click();
     await expect(
-      publishPanel(page).getByRole('button', { name: 'Publish chapter', exact: true }),
+      publishPanel(page).getByRole('button', { name: /^Publish chapter \d+$/ }),
     ).toBeVisible();
     await expect(page.getByRole('navigation').getByText('Draft', { exact: true })).toBeVisible();
     await visitor.goto(`/s/${slug}`);
@@ -193,7 +195,7 @@ test.describe('publish, update, unpublish and schedule (S1-E3-03)', () => {
     await expectAccessibleAt(page, [390, 1440]);
 
     await panel.getByRole('button', { name: 'Cancel schedule' }).click();
-    await expect(panel.getByRole('button', { name: 'Publish chapter', exact: true })).toBeVisible();
+    await expect(panel.getByRole('button', { name: /^Publish chapter \d+$/ })).toBeVisible();
 
     // Schedule again, then let its time come and run the every-minute job.
     await panel.getByRole('radio', { name: 'Schedule for later' }).check();

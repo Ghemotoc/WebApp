@@ -95,7 +95,7 @@ test.describe('the web teaser and link previews (S1-E4-04)', () => {
     await openAsVisitor(page, chapterAddress);
     // The story card: the title as the page's heading, the pen name and the blurb.
     await expect(page.getByRole('heading', { level: 1, name: 'Stația meteo' })).toBeVisible();
-    await expect(page.getByText('Shared with you · chapter 1 of 2')).toBeVisible();
+    await expect(page.getByText('Shared with you · chapter 1', { exact: true })).toBeVisible();
     await expect(page.getByText('Lia Scrie').first()).toBeVisible();
     await expect(page.getByText('Bunica mea notează vremea în fiecare dimineață')).toBeVisible();
     // The chapter: its heading, the first two paragraphs and never the third.

@@ -111,6 +111,30 @@ function chapterListEdition(story: StoryPageData): ChapterListEdition | null {
 }
 
 /**
+ * The chapter list, after the "In the app only" notice when that applies.
+ *
+ * @returns the notice and the list
+ */
+function StoryChapters({ story }: { story: StoryPageData }) {
+  const { t } = useTranslation('reading');
+  return (
+    <>
+      {/* GAPS-15 (S1-E3-08): the chapters open in the app; the list stays to browse. */}
+      {story.appOnly && (
+        <Notice tone="info">{t('storyPage.appOnly', { writer: story.writer.displayName })}</Notice>
+      )}
+      <StoryChapterList
+        chapters={story.chapters}
+        isOwner={story.isOwner}
+        storySlug={story.slug}
+        edition={chapterListEdition(story)}
+        nextChapter={story.nextChapter}
+      />
+    </>
+  );
+}
+
+/**
  * Renders the page.
  *
  * @returns the story screen, a wait, or "not available"
@@ -153,18 +177,7 @@ export function StoryPage() {
           {/* A moderator confirmed this story copies a published work (S1-E10-08). */}
           <CopiedWorkNote storyId={story.id} />
           <StoryHeader story={story} />
-          {/* GAPS-15 (S1-E3-08): the chapters open in the app; the list stays to browse. */}
-          {story.appOnly && (
-            <Notice tone="info">
-              {t('storyPage.appOnly', { writer: story.writer.displayName })}
-            </Notice>
-          )}
-          <StoryChapterList
-            chapters={story.chapters}
-            isOwner={story.isOwner}
-            storySlug={story.slug}
-            edition={chapterListEdition(story)}
-          />
+          <StoryChapters story={story} />
           {/* The parts of the plan the writer shares (S1-E17-33). */}
           <StoryWorldLinks storySlug={story.slug} />
           <StoryAdSlot story={story} />

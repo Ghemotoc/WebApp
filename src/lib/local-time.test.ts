@@ -8,6 +8,7 @@ import { describe, expect, it } from 'vitest';
 import { inTimeZone } from '@/test/viewerTimeZone';
 
 import {
+  chapterDayWording,
   defaultScheduleFields,
   formatCalendarDate,
   formatCalendarShortDate,
@@ -223,6 +224,58 @@ describe('skippedHourRunTime (DESIGN, 20 Nov 2026, 20:09 UTC)', () => {
     inTimeZone('Europe/Bucharest', () => {
       expect(skippedHourRunTime('2026-03-29', '03:30')).toBe('04:30');
       expect(skippedHourRunTime('2026-03-29', '04:30')).toBeNull();
+    });
+  });
+});
+
+describe('chapterDayWording: the day a scheduled chapter comes out (CALM-6)', () => {
+  // Monday 23 November 2026, 10:00 in Bucharest (08:00 UTC; UTC+2 in winter).
+  const monday = new Date('2026-11-23T08:00:00Z');
+  const bucharest = 'Europe/Bucharest';
+
+  it('says today for later the same day', () => {
+    expect(chapterDayWording(new Date('2026-11-23T20:00:00Z'), monday, 'en', bucharest)).toEqual({
+      kind: 'today',
+    });
+  });
+
+  it('says tomorrow for the next day on the viewer’s clock, even while it is still today in UTC', () => {
+    // 22:30 UTC on Monday is 00:30 on Tuesday in Bucharest, and still Monday in London.
+    expect(chapterDayWording(new Date('2026-11-23T22:30:00Z'), monday, 'en', bucharest)).toEqual({
+      kind: 'tomorrow',
+    });
+    expect(
+      chapterDayWording(new Date('2026-11-23T22:30:00Z'), monday, 'en', 'Europe/London'),
+    ).toEqual({ kind: 'today' });
+  });
+
+  it('names the weekday for 2 to 6 days ahead', () => {
+    const thursday = new Date('2026-11-26T08:00:00Z');
+    expect(chapterDayWording(thursday, monday, 'en', bucharest)).toEqual({
+      kind: 'weekday',
+      weekday: 'Thursday',
+    });
+    expect(chapterDayWording(thursday, monday, 'ro', bucharest)).toEqual({
+      kind: 'weekday',
+      weekday: 'joi',
+    });
+  });
+
+  it('gives the date, the British way, from 7 days ahead', () => {
+    const nextMonday = new Date('2026-11-30T08:00:00Z');
+    expect(chapterDayWording(nextMonday, monday, 'en', bucharest)).toEqual({
+      kind: 'date',
+      date: '30 November',
+    });
+    expect(chapterDayWording(nextMonday, monday, 'ro', bucharest)).toEqual({
+      kind: 'date',
+      date: '30 noiembrie',
+    });
+  });
+
+  it('counts a time already past as today', () => {
+    expect(chapterDayWording(new Date('2026-11-22T08:00:00Z'), monday, 'en', bucharest)).toEqual({
+      kind: 'today',
     });
   });
 });

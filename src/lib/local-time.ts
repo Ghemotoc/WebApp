@@ -234,3 +234,66 @@ export function formatCalendarDate(day: string, language: string): string {
 export function formatCalendarShortDate(day: string, language: string): string {
   return formatLocalShortDate(calendarDayMoment(day), language, 'UTC');
 }
+
+/** How the day a scheduled chapter comes out is said (CALM-6): the four forms the handover names. */
+export type ChapterDayWording =
+  | { kind: 'today' }
+  | { kind: 'tomorrow' }
+  | { kind: 'weekday'; weekday: string }
+  | { kind: 'date'; date: string };
+
+/**
+ * A moment's calendar day on the viewer's clock as a whole-day number, so two days subtract.
+ *
+ * @param instant - any moment
+ * @param timeZone - an IANA zone for tests; left out, the browser's own zone is used
+ * @returns days since 1 January 1970 on that calendar
+ */
+function calendarDayNumber(instant: Date, timeZone?: string): number {
+  // en-CA writes the date as YYYY-MM-DD, which Date.parse reads as midnight UTC.
+  const day = new Intl.DateTimeFormat('en-CA', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(instant);
+  return Math.round(Date.parse(`${day}T00:00:00Z`) / 86_400_000);
+}
+
+/**
+ * Says the day a scheduled chapter comes out, for "Next chapter Thursday" and "Last chapter
+ * tomorrow" (CALM-6, design handover "The last chapter"): "today", "tomorrow", the weekday for 2
+ * to 6 days ahead or the date from 7 days ("27 November"). Counted on the viewer's own calendar:
+ * the handover said Romania time, but Robert's later rule for scheduled chapters is "All of them
+ * in local time" (20 Nov 2026, 18:19 UTC).
+ *
+ * @param scheduledFor - when the chapter goes out
+ * @param now - the moment to count from (the page passes new Date())
+ * @param language - the interface language ("ro" or "en")
+ * @param timeZone - an IANA zone for tests; left out, the browser's own zone is used
+ * @returns the wording; a time already past counts as today
+ */
+export function chapterDayWording(
+  scheduledFor: Date,
+  now: Date,
+  language: string,
+  timeZone?: string,
+): ChapterDayWording {
+  // Step 1: how many of the viewer's days ahead it is.
+  const daysAhead = calendarDayNumber(scheduledFor, timeZone) - calendarDayNumber(now, timeZone);
+  if (daysAhead <= 0) return { kind: 'today' };
+  if (daysAhead === 1) return { kind: 'tomorrow' };
+  // Step 2: within the week, the weekday's name.
+  const locale = dateLocaleFor(language);
+  if (daysAhead < 7) {
+    const weekday = new Intl.DateTimeFormat(locale, { timeZone, weekday: 'long' }).format(
+      scheduledFor,
+    );
+    return { kind: 'weekday', weekday };
+  }
+  // Step 3: further ahead, the day and the month.
+  const date = new Intl.DateTimeFormat(locale, { timeZone, day: 'numeric', month: 'long' }).format(
+    scheduledFor,
+  );
+  return { kind: 'date', date };
+}
