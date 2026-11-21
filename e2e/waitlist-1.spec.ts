@@ -133,6 +133,8 @@ test.describe('the waiting list (WAITLIST-1)', () => {
     await page.goto('/write');
     await expect(page.getByRole('heading', { name: 'You’re on the list' })).toBeVisible();
     await expect(page.getByRole('radio', { name: 'Write' })).toBeChecked();
+    // The heads-up that we may ask them to confirm who they are later (WAITLIST-2).
+    await expect(page.getByText('We may ask you to confirm your identity later.')).toBeVisible();
     await page.getByRole('link', { name: /Settings: emails, news and account/ }).click();
     await expect(page).toHaveURL(/\/settings/);
     await expect(page.getByRole('heading', { name: 'You’re on the list' })).toHaveCount(0);

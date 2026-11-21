@@ -10923,6 +10923,9 @@ export type Database = {
           id: string;
           interest: Database['public']['Enums']['waitlist_interest'];
           joined_at: string;
+          staff_alert_attempts: number;
+          staff_alert_claimed_at: string | null;
+          staff_alert_sent_at: string | null;
           updated_at: string;
           user_id: string;
         };
@@ -10934,6 +10937,9 @@ export type Database = {
           id?: string;
           interest?: Database['public']['Enums']['waitlist_interest'];
           joined_at?: string;
+          staff_alert_attempts?: number;
+          staff_alert_claimed_at?: string | null;
+          staff_alert_sent_at?: string | null;
           updated_at?: string;
           user_id: string;
         };
@@ -10944,6 +10950,9 @@ export type Database = {
           id?: string;
           interest?: Database['public']['Enums']['waitlist_interest'];
           joined_at?: string;
+          staff_alert_attempts?: number;
+          staff_alert_claimed_at?: string | null;
+          staff_alert_sent_at?: string | null;
           updated_at?: string;
           user_id?: string;
         };
@@ -17131,6 +17140,7 @@ export type Database = {
       run_retention_jobs: { Args: Record<PropertyKey, never>; Returns: number };
       run_storage_sweep: { Args: Record<PropertyKey, never>; Returns: boolean };
       run_support_email_worker: { Args: Record<PropertyKey, never>; Returns: boolean };
+      run_waitlist_alert_worker: { Args: Record<PropertyKey, never>; Returns: boolean };
       running_comment_pause: {
         Args: {
           story: Omit<
@@ -18554,6 +18564,14 @@ export type Database = {
       };
       vote_forum_post: { Args: { post_id: string; vote: string }; Returns: string };
       wait_minutes_until_free: { Args: { oldest_in_window: string }; Returns: number };
+      waitlist_alert_worker_claim: {
+        Args: { batch_size?: number; worker_key: string };
+        Returns: Json;
+      };
+      waitlist_alert_worker_mark_sent: {
+        Args: { entry_ids: string[]; worker_key: string };
+        Returns: number;
+      };
       waitlist_interest_matches: {
         Args: { answer: Database['public']['Enums']['waitlist_interest']; wanted: string };
         Returns: boolean;

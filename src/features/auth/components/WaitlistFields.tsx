@@ -6,6 +6,7 @@
  *    in first (Staff › Waitlist). Drawn as ChoiceChips (a radio group).
  * 2. "Send me occasional news": a separate opt-in, never ticked for the person (consent; Law
  *    506/2004). The database keeps it only for someone 18 or over (Q50), so the label says so.
+ * 3. A quiet line: we may ask them to confirm their identity later (WAITLIST-2).
  * Who shows it: SignUpForm, only while the 'waitlist' flag is on and the person has no invite
  * code (an invite skips the queue, so its question isn't needed).
  * What it calls: nothing; the answers go with the sign-up (api/signUp.ts, waitlistData()).
@@ -20,10 +21,10 @@ import type { useSignUpForm } from '../hooks/useSignUpForm';
 const interests = ['write', 'read', 'both'] as const;
 
 /**
- * Renders the question and the news box.
+ * Renders the question, the news box and the identity note.
  *
  * @param props.form - the sign-up form's state
- * @returns the two fields
+ * @returns the fields and the note
  */
 export function WaitlistFields({ form }: { form: ReturnType<typeof useSignUpForm> }) {
   const { t } = useTranslation('auth');
@@ -61,6 +62,9 @@ export function WaitlistFields({ form }: { form: ReturnType<typeof useSignUpForm
           {t('signUp.waitlist.news')}
         </label>
       </div>
+      {/* 3. A heads-up, not a step: we may ask people to confirm who they are later (Robert,
+          21 Nov 2026, 06:59 UTC; WAITLIST-2). The wording is on the lawyer's list. */}
+      <p className="m-0 text-[13px] text-meta">{t('signUp.waitlist.identityNote')}</p>
     </>
   );
 }

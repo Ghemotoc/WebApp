@@ -92,7 +92,7 @@ function LogOutButton() {
 }
 
 /**
- * The page's opening: the heading, when they joined and what comes next.
+ * The page's opening: the heading, when they joined, what comes next and the identity note.
  *
  * @param props.joinedAt - when the person joined the list
  * @param props.nextLine - what happens next
@@ -115,6 +115,9 @@ function HoldingIntro({ joinedAt, nextLine }: { joinedAt: string; nextLine: stri
       </h1>
       <p className="m-0 text-body">{t('waitlist.holding.joined', { date: joinedDay })}</p>
       <p className="m-0 text-body">{nextLine}</p>
+      {/* A heads-up, not a step: we may ask people to confirm who they are later (Robert,
+          21 Nov 2026, 06:59 UTC; WAITLIST-2). The wording is on the lawyer's list. */}
+      <p className="m-0 text-[13px] text-meta">{t('waitlist.holding.identityNote')}</p>
     </div>
   );
 }

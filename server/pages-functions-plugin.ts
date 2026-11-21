@@ -26,6 +26,8 @@
  * same value the tests put in the local Vault; the link goes to Mailpit) and
  * POST /api/opening-list and POST /api/opening-emails (server/opening-list.ts, G5a: "Tell me when
  * you open here", signed with NOTICE_SECRET; the emails go to Mailpit),
+ * POST /api/waitlist-alerts (server/waitlist-alerts.ts, WAITLIST-2: one staff email for each new
+ * person on the waiting list, with the notification worker's key; the emails go to Mailpit),
  * GET /s/… (server/link-preview.ts, S1-E4-04: the shared link's Open Graph tags, read from the
  * local Supabase with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY, as on Cloudflare).
  * GET /c/… (server/landing-preview.ts, S1-E11-14: a landing page's Open Graph tags, the same way).
@@ -71,6 +73,7 @@ import {
 import { handlePicturePreview } from './picture-preview.ts';
 import { handleNotice } from './notice.ts';
 import { handleOpeningEmails, handleOpeningList } from './opening-list.ts';
+import { handleWaitlistAlerts } from './waitlist-alerts.ts';
 import {
   handleNotificationEmails,
   handleUnsubscribe,
@@ -329,7 +332,7 @@ function databaseHandlerFor(
 }
 
 /**
- * The handlers for "Tell me when you open here" (G5a): joining the list, signed with NOTICE_SECRET
+ * The handlers for "Tell me when you open here" (G5a) and the waiting list's staff emails (WAITLIST-2): joining the list, signed with NOTICE_SECRET
  * (the same value the tests put in the local Vault), and the opening email worker, with the
  * notification worker's settings. Both send to Mailpit. The country is LOCAL_FAKE_COUNTRY, or the
  * X-Fake-Country header a test sends ("XX" for a connection with no country).
@@ -344,6 +347,10 @@ function openingListHandlerFor(
 ): FunctionHandler | null {
   if (url === '/api/opening-emails') {
     return (request) => handleOpeningEmails(request, notificationEmailOptions(environment));
+  }
+  // The staff email for each new person on the waiting list (WAITLIST-2), with the same options.
+  if (url === '/api/waitlist-alerts') {
+    return (request) => handleWaitlistAlerts(request, notificationEmailOptions(environment));
   }
   if (url !== '/api/opening-list') return null;
   return (request) =>

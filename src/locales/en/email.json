@@ -163,5 +163,16 @@
     "openBody": "Good news: {{productName}} is now open in {{country}}, as you asked us to tell you. Sign up within 7 days, then we delete your address from this list.",
     "openAction": "Sign up: {{signUpLink}}",
     "openOnce": "This is the only email you’ll get about it."
+  },
+  "waitlistAlert": {
+    "subject": "New on the waiting list: @{{handle}} · {{productName}}",
+    "body": "@{{handle}} has confirmed their email and is waiting to be let in.",
+    "details": "Country: {{country}}\nCame to: {{interest}}\nJoined: {{joinedAt}}",
+    "action": "Let them in from Staff › Waitlist: {{staffLink}}",
+    "why": "You get one email for each new person on the waiting list. To send these to another mailbox, change “Email for new people on the waiting list” in Staff › Settings.",
+    "interestWrite": "write",
+    "interestRead": "read",
+    "interestBoth": "write and read",
+    "countryUnknown": "not known"
   }
 }
