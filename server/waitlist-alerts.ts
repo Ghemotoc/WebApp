@@ -1,7 +1,7 @@
 /**
  * The staff email for each new person on the waiting list (bundle WAITLIST-2, story S1-E2-24;
  * Robert, 21 Nov 2026, 06:59 UTC: people join the waiting list "and then I get the emails", and
- * 07:05 UTC: "yes, hello@themagiccoffin.com. One per person.").
+ * 07:05 UTC: "yes, [the support address]. One per person.").
  *
  * How it works (handleWaitlistAlerts, POST /api/waitlist-alerts):
  * 1. the database wakes us every 5 minutes while an email is due (run_waitlist_alert_worker(),
@@ -9,7 +9,7 @@
  * 2. waitlist_alert_worker_claim() hands over the people who confirmed their email and wait, each
  *    with the mailbox setting (waitlist_alert_email);
  * 3. one email per person goes to that mailbox, or to the support address from the brand config
- *    when the setting is empty (today hello@themagiccoffin.com; CLAUDE.md, "Names and domains are
+ *    when the setting is empty (CLAUDE.md, "Names and domains are
  *    settings, not code");
  * 4. waitlist_alert_worker_mark_sent() marks what left; a failed email stays due and is tried
  *    again, at most 5 times.

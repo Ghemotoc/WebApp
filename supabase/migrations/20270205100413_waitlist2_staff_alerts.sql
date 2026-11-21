@@ -1,7 +1,7 @@
 /*
  * Migration: an email to staff for every new person on the waiting list (bundle WAITLIST-2,
  * story S1-E2-24; Robert, 21 Nov 2026, 06:59 UTC, Builder (2) thread: people join the waiting
- * list "and then I get the emails", and 07:05 UTC: "yes, hello@themagiccoffin.com. One per person.").
+ * list "and then I get the emails", and 07:05 UTC: "yes, [the support address]. One per person.").
  *
  * How it works:
  * - Someone signs up without a code while the waiting list is on (WAITLIST-1) and confirms their
@@ -12,7 +12,7 @@
  *   by-hand setting is needed. The worker claims the due entries, sends one email per person to the
  *   staff mailbox and marks what left (server/waitlist-alerts.ts).
  * - The mailbox is the setting waitlist_alert_email. Empty means the support address from the
- *   brand config (VITE_BRAND_SUPPORT_EMAIL, today hello@themagiccoffin.com); an address is never
+ *   brand config (VITE_BRAND_SUPPORT_EMAIL); an address is never
  *   written here (CLAUDE.md, "Names and domains are settings, not code"). Staff › Settings edits it.
  * - People already waiting when this ships are marked as alerted, so the mailbox doesn't get a
  *   burst of old sign-ups.
