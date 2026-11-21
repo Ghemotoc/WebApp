@@ -31,7 +31,7 @@
  * Privacy: no personal data. is_last is a fact about a chapter that readers see anyway.
  * Who calls it: src/features/writing/hooks/useChapterPublishing.ts (publish, schedule, the
  *   switch); the reader, story page, Library and Discover reads.
- * Tests: supabase/tests/database/390-last-chapter.test.sql.
+ * Tests: supabase/tests/database/392-last-chapter.test.sql.
  */
 
 /* ---------- 1. The mark ---------- */
@@ -51,7 +51,7 @@ create unique index chapters_one_last_per_story on public.chapters (story_id)
 /*
  * mark_completed_stories_last: for every story already Completed that has no mark yet, marks its
  * published chapter with the highest position. Run once here; kept as a function so the
- * database tests can prove it (390-last-chapter.test.sql).
+ * database tests can prove it (392-last-chapter.test.sql).
  * Inputs: none. Returns: how many chapters it marked.
  */
 create function public.mark_completed_stories_last()

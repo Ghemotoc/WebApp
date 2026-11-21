@@ -1473,7 +1473,7 @@ src/features/reading/lib/chapterPlace.ts: "Chapter 14 of 15" only while a chapte
   src/lib/local-time.ts, the reader's own calendar) in ChapterEnd, AboutThisStory, StoryChapterList
 ```
 
-Tests: `supabase/tests/database/390-last-chapter.test.sql`, `src/features/writing/components/PublishPanel.test.tsx`, `src/lib/local-time.test.ts`, `e2e/last-chapter.spec.ts`.
+Tests: `supabase/tests/database/392-last-chapter.test.sql`, `src/features/writing/components/PublishPanel.test.tsx`, `src/lib/local-time.test.ts`, `e2e/last-chapter.spec.ts`.
 
 Managing chapters (S1-E3-04), at `/write/s/<slug>/chapters` ("Manage chapters" on a story card, or the story in the editor's breadcrumb):
 
