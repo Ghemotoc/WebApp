@@ -140,7 +140,8 @@
       "march_target_return_rate": "Rata de revenire (%)",
       "rank_badge_min_stories": "Insigne de clasament: câte povești trebuie să aibă o etichetă ca o copertă să arate locul în ea",
       "picture_allowed_kinds": "Tipuri de imagini permise (apar la fiecare încărcare)",
-      "picture_reject_reasons": "Motive pentru respingerea unei imagini (etichetele sunt în textele interfeței)"
+      "picture_reject_reasons": "Motive pentru respingerea unei imagini (etichetele sunt în textele interfeței)",
+      "waitlist_alert_email": "Email pentru persoanele noi de pe lista de așteptare (gol: adresa de suport)"
     }
   },
   "discover": {

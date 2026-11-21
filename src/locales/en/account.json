@@ -435,7 +435,8 @@
       "saveFailed": "We couldn’t save that. Check your connection and try again.",
       "settingsLink": "Settings: emails, news and account",
       "logOut": "Log out",
-      "logOutFailed": "We couldn’t log you out. Check your connection and try again."
+      "logOutFailed": "We couldn’t log you out. Check your connection and try again.",
+      "identityNote": "We may ask you to confirm your identity later."
     }
   }
 }

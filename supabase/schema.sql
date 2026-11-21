@@ -43764,6 +43764,39 @@ COMMENT ON FUNCTION "public"."run_support_email_worker"() IS 'Internal: calls th
 
 
 
+CREATE OR REPLACE FUNCTION "public"."run_waitlist_alert_worker"() RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $_$
+declare
+  worker_url text;
+  worker_key text;
+begin
+  select decrypted_secret into worker_url from vault.decrypted_secrets where name = 'email_worker_url';
+  select decrypted_secret into worker_key from vault.decrypted_secrets where name = 'email_worker_key';
+  if coalesce(worker_url, '') = '' or coalesce(worker_key, '') = ''
+     or not exists (select 1 from public.waitlist_entries as entry
+                    join auth.users as account on account.id = entry.user_id
+                    where entry.admitted_at is null and entry.staff_alert_sent_at is null
+                      and entry.staff_alert_attempts < 5 and account.email_confirmed_at is not null) then
+    return false;
+  end if;
+  perform net.http_post(
+    url := regexp_replace(worker_url, '/api/[^/?]*$', '/api/waitlist-alerts'),
+    headers := jsonb_build_object('Authorization', 'Bearer ' || worker_key, 'Content-Type', 'application/json'),
+    body := '{}'::jsonb);
+  return true;
+end;
+$_$;
+
+
+ALTER FUNCTION "public"."run_waitlist_alert_worker"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."run_waitlist_alert_worker"() IS 'Internal: calls the waiting list alert worker through pg_net when a staff email is due (WAITLIST-2); pg_cron every 5 minutes.';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."running_comment_pause"("story" "public"."stories") RETURNS timestamp with time zone
     LANGUAGE "sql" STABLE
     SET "search_path" TO ''
@@ -54781,6 +54814,78 @@ COMMENT ON FUNCTION "public"."wait_minutes_until_free"("oldest_in_window" timest
 
 
 
+CREATE OR REPLACE FUNCTION "public"."waitlist_alert_worker_claim"("worker_key" "text", "batch_size" integer DEFAULT 50) RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  claimed jsonb := '[]'::jsonb;
+  alert_to text := coalesce(public.setting_value('waitlist_alert_email') #>> '{}', '');
+  due record;
+begin
+  -- Step 1: only our worker may ask.
+  if not public.email_worker_key_matches(worker_key) then
+    raise exception 'Not allowed.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 2: the oldest due entries nobody else is sending.
+  for due in
+    select entry.id, entry.interest, entry.joined_at, entry.staff_alert_attempts,
+           profile.handle, profile.country_code
+    from public.waitlist_entries as entry
+    join public.profiles as profile on profile.id = entry.user_id
+    join auth.users as account on account.id = entry.user_id
+    where entry.admitted_at is null and entry.staff_alert_sent_at is null
+      and entry.staff_alert_attempts < 5 and account.email_confirmed_at is not null
+      and (entry.staff_alert_claimed_at is null or entry.staff_alert_claimed_at < now() - interval '15 minutes')
+    order by entry.joined_at
+    limit least(greatest(coalesce(batch_size, 50), 1), 100)
+    for update of entry skip locked
+  loop
+    -- Step 3: claim it, so a second worker run doesn't send it too.
+    update public.waitlist_entries
+    set staff_alert_claimed_at = now(), staff_alert_attempts = due.staff_alert_attempts + 1
+    where id = due.id;
+    claimed := claimed || jsonb_build_array(jsonb_build_object(
+      'id', due.id, 'handle', due.handle, 'country_code', due.country_code,
+      'interest', due.interest, 'joined_at', due.joined_at, 'alert_to', alert_to));
+  end loop;
+  return claimed;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."waitlist_alert_worker_claim"("worker_key" "text", "batch_size" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."waitlist_alert_worker_claim"("worker_key" "text", "batch_size" integer) IS 'The waiting list alert worker claims the staff emails due now, one per new person (WAITLIST-2).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."waitlist_alert_worker_mark_sent"("worker_key" "text", "entry_ids" "uuid"[]) RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  marked integer;
+begin
+  if not public.email_worker_key_matches(worker_key) then
+    raise exception 'Not allowed.' using errcode = 'insufficient_privilege';
+  end if;
+  update public.waitlist_entries set staff_alert_sent_at = now()
+  where id = any(entry_ids) and staff_alert_sent_at is null;
+  get diagnostics marked = row_count;
+  return marked;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."waitlist_alert_worker_mark_sent"("worker_key" "text", "entry_ids" "uuid"[]) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."waitlist_alert_worker_mark_sent"("worker_key" "text", "entry_ids" "uuid"[]) IS 'The waiting list alert worker marks the staff emails that left (WAITLIST-2).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."waitlist_interest_matches"("answer" "public"."waitlist_interest", "wanted" "text") RETURNS boolean
     LANGUAGE "sql" IMMUTABLE
     SET "search_path" TO ''
@@ -59220,6 +59325,9 @@ CREATE TABLE IF NOT EXISTS "public"."waitlist_entries" (
     "admitted_by_code" boolean DEFAULT false NOT NULL,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "staff_alert_sent_at" timestamp with time zone,
+    "staff_alert_claimed_at" timestamp with time zone,
+    "staff_alert_attempts" integer DEFAULT 0 NOT NULL,
     CONSTRAINT "waitlist_entries_code_means_admitted" CHECK (((NOT "admitted_by_code") OR ("admitted_at" IS NOT NULL)))
 );
 
@@ -59229,6 +59337,10 @@ ALTER TABLE "public"."waitlist_entries" OWNER TO "postgres";
 
 COMMENT ON TABLE "public"."waitlist_entries" IS 'kind: user_action
 One person who signed up while the waiting list was on, what they come for and when they were let in (WAITLIST-1, S1-E2-24).';
+
+
+
+COMMENT ON COLUMN "public"."waitlist_entries"."staff_alert_sent_at" IS 'When the staff email about this new person on the list left (WAITLIST-2).';
 
 
 
@@ -73448,6 +73560,10 @@ REVOKE ALL ON FUNCTION "public"."run_support_email_worker"() FROM PUBLIC;
 
 
 
+REVOKE ALL ON FUNCTION "public"."run_waitlist_alert_worker"() FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."running_comment_pause"("story" "public"."stories") FROM PUBLIC;
 
 
@@ -74896,6 +75012,18 @@ GRANT ALL ON FUNCTION "public"."vote_forum_post"("post_id" "uuid", "vote" "text"
 
 
 REVOKE ALL ON FUNCTION "public"."wait_minutes_until_free"("oldest_in_window" timestamp with time zone) FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."waitlist_alert_worker_claim"("worker_key" "text", "batch_size" integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."waitlist_alert_worker_claim"("worker_key" "text", "batch_size" integer) TO "anon";
+GRANT ALL ON FUNCTION "public"."waitlist_alert_worker_claim"("worker_key" "text", "batch_size" integer) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."waitlist_alert_worker_mark_sent"("worker_key" "text", "entry_ids" "uuid"[]) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."waitlist_alert_worker_mark_sent"("worker_key" "text", "entry_ids" "uuid"[]) TO "anon";
+GRANT ALL ON FUNCTION "public"."waitlist_alert_worker_mark_sent"("worker_key" "text", "entry_ids" "uuid"[]) TO "authenticated";
 
 
 

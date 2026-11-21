@@ -382,6 +382,12 @@ describe('SignUpPage with the waiting list (WAITLIST-1)', () => {
     expect(screen.queryByLabelText('Invitation code')).not.toBeInTheDocument();
   });
 
+  it('says that we may ask the person to confirm their identity later (WAITLIST-2)', () => {
+    waitlistFlags();
+    openSignUp('/sign-up');
+    expect(screen.getByText('We may ask you to confirm your identity later.')).toBeInTheDocument();
+  });
+
   it('asks "write, read or both" before sending anything', async () => {
     waitlistFlags();
     openSignUp('/sign-up');

@@ -163,5 +163,16 @@
     "openBody": "Vești bune: {{productName}} s-a deschis în {{country}}, așa cum ne-ai rugat să-ți spunem. Înscrie-te în cel mult 7 zile; după aceea îți ștergem adresa de pe această listă.",
     "openAction": "Înscrie-te: {{signUpLink}}",
     "openOnce": "Este singurul email pe care îl primești despre asta."
+  },
+  "waitlistAlert": {
+    "subject": "Nou pe lista de așteptare: @{{handle}} · {{productName}}",
+    "body": "@{{handle}} și-a confirmat adresa de email și așteaptă să intre.",
+    "details": "Țara: {{country}}\nA venit să: {{interest}}\nS-a înscris: {{joinedAt}}",
+    "action": "Lasă-l să intre din Staff › Listă de așteptare: {{staffLink}}",
+    "why": "Primești câte un email pentru fiecare persoană nouă de pe lista de așteptare. Ca să le primești în altă căsuță, schimbă „Email pentru persoanele noi de pe lista de așteptare” în Staff › Setări.",
+    "interestWrite": "scrie",
+    "interestRead": "citească",
+    "interestBoth": "scrie și citească",
+    "countryUnknown": "necunoscută"
   }
 }

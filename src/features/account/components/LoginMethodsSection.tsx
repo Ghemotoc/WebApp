@@ -72,6 +72,9 @@ export function LoginMethodsSection() {
   const login = useLoginMethods();
   const isSocialLoginOn = flags.isOn('social_login', false);
   const isPasskeyLoginOn = flags.isOn('passkey_login', false);
+  // While only adults may join there is no age check (adults_only; WAITLIST-2, Robert, 21 Nov
+  // 2026: "the Yoti thing needs to disappear"), so the line about it stays hidden.
+  const isAgeCheckOn = !flags.isOn('adults_only', true);
   const rows = useLoginMethodRows(login, { isSocialLoginOn, isPasskeyLoginOn, lastWayNoteId });
   const { methods } = login;
   if (!isSocialLoginOn && !isPasskeyLoginOn && !hasSomethingConnected(methods)) return null;
@@ -89,7 +92,9 @@ export function LoginMethodsSection() {
         {t('heading')}
       </h2>
       <p className="m-0 text-body">{t('intro')}</p>
-      <p className="m-0 rounded-2xl bg-tint px-4 py-3 text-sm text-body">{t('ageLine')}</p>
+      {isAgeCheckOn && (
+        <p className="m-0 rounded-2xl bg-tint px-4 py-3 text-sm text-body">{t('ageLine')}</p>
+      )}
       {login.loadFailed && <Notice tone="error">{t('loadFailed')}</Notice>}
       <ul
         aria-label={t('listLabel')}
