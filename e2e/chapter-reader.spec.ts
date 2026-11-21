@@ -3,7 +3,7 @@
  *
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase started first).
  * What it proves:
- * - from the story page a reader opens a chapter: "Chapter 1 of 2", the title as the H1, "by
+ * - from the story page a reader opens a chapter: "Chapter 1" (no "of 2" while no chapter is marked last, CALM-6), the title as the H1, "by
  *   <pen name> · <date> · n min read", the text as real HTML paragraphs in the story's language;
  *   "Next: chapter 2" at the chapter's end, the chapter navigation's Previous (named for its
  *   chapter) and the chapter bar's Back move between chapters and back to the story (CALM-5); a
@@ -98,7 +98,7 @@ test.describe('chapter reader (S1-E4-01a)', () => {
     await expect(page).toHaveURL(`/s/${slug}/readera1`);
 
     // The header: the place, the title as H1, the meta line.
-    await expect(page.locator('header').getByText('Chapter 1 of 2')).toBeVisible();
+    await expect(page.locator('header').getByText('Chapter 1', { exact: true })).toBeVisible();
     await expect(page.getByRole('heading', { level: 1, name: 'Caietele bunicii' })).toBeVisible();
     await expect(page.getByText('by Lia Scrie · 9 Oct 2026 · 3 min read')).toBeVisible();
 
@@ -113,7 +113,7 @@ test.describe('chapter reader (S1-E4-01a)', () => {
     await expect(chapterNav(page).getByRole('link', { name: /^Previous chapter/ })).toHaveCount(0);
     await page.getByRole('link', { name: 'Next: chapter 2' }).click();
     await expect(page).toHaveURL(`/s/${slug}/readerc3`);
-    await expect(page.locator('header').getByText('Chapter 2 of 2')).toBeVisible();
+    await expect(page.locator('header').getByText('Chapter 2', { exact: true })).toBeVisible();
     await expect(page.getByText('End of chapter 2')).toBeVisible();
     await expect(page.getByText('That’s the latest chapter so far.')).toBeVisible();
     await expect(chapterNav(page).getByRole('link', { name: /^Next chapter/ })).toHaveCount(0);

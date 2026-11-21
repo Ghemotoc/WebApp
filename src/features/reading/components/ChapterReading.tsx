@@ -84,7 +84,11 @@ function chapterTitle(story: StoryPageData | null, code: string | null): string 
 function StoryFacts({ chapter, story }: { chapter: ReaderChapter; story: StoryPageData | null }) {
   return (
     <>
-      <AboutThisStory story={story} chapterTotal={chapter.total} />
+      <AboutThisStory
+        story={story}
+        chapterTotal={chapter.total}
+        nextChapter={chapter.nextChapter}
+      />
       <PageAdSlot
         pageKey="chapter"
         position={2}

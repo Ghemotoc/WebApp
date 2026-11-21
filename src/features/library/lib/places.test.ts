@@ -18,6 +18,7 @@ function placeAt(percent: number, nextCode: string | null = 'chap0015'): StoryPl
     chapterCode: 'chap0014',
     number: 14,
     total: 15,
+    lastChapterNumber: 15,
     percent,
     deviceKind: 'phone',
     savedAt: '2026-11-02T10:00:00Z',

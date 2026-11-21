@@ -5,7 +5,7 @@
  * Who runs it: `npm run test:e2e` (Supabase started first).
  * What it proves:
  * - a signed-in reader is greeted by name in the h1 under a dated eyebrow, and sees Continue
- *   reading with "Chapter 2 of 2" and "Chapter 2 is out"; Continue opens the chapter;
+ *   reading with "Chapter 2" (no "of N" until a last chapter is marked, CALM-6) and "Chapter 2 is out"; Continue opens the chapter;
  * - a writer sees their latest draft and opens it in the editor, and the gold "Start a new story"
  *   card leads to the new story page;
  * - a visitor sees the plain heading and none of the cards;
@@ -92,7 +92,7 @@ test.describe('Discover greeting, cards and five shelves (S1-E5-12)', () => {
     await expect(page.getByText(/^Read · /)).toBeVisible();
     const dashboard = page.getByRole('complementary', { name: 'Dashboard' });
     const continueCard = dashboard.getByRole('link', { name: /Farul de pe dig/ });
-    await expect(continueCard).toContainText('Chapter 1 of 2');
+    await expect(continueCard).toContainText('Chapter 1');
     await expect(continueCard).toContainText('Chapter 2 is out');
     await continueCard.click();
     await expect(page).toHaveURL(/\/s\/cards-e2e-far\/dcarde21$/);

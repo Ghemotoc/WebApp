@@ -9,7 +9,7 @@
  * (S1-E3-07, after March). The teaser's doodles went with bundle G4 (no doodles in the liquid
  * glass design).
  * Who uses it: TeaserPage. What it reads: the story page's data (get_story_page()) and the
- * chapter's number and total.
+ * chapter's number; "of 15" only while the writer has marked a last chapter (CALM-6).
  */
 import { useTranslation } from 'react-i18next';
 
@@ -25,7 +25,8 @@ import type { StoryPageData } from '../api/storyPage';
 interface TeaserStoryCardProps {
   story: StoryPageData;
   chapterNumber: number;
-  chapterTotal: number;
+  /** CALM-6: the marked last chapter's number, or null for "chapter 1" without "of N". */
+  lastChapterNumber: number | null;
 }
 
 /**
@@ -57,7 +58,7 @@ function TeaserCover({ story }: { story: TeaserStoryCardProps['story'] }) {
  *
  * @returns the story's card, with the page's H1
  */
-export function TeaserStoryCard({ story, chapterNumber, chapterTotal }: TeaserStoryCardProps) {
+export function TeaserStoryCard({ story, chapterNumber, lastChapterNumber }: TeaserStoryCardProps) {
   const { t } = useTranslation('reading');
   return (
     <section
@@ -67,7 +68,11 @@ export function TeaserStoryCard({ story, chapterNumber, chapterTotal }: TeaserSt
       {/* The pen name is beside the cover, so the cover shows the title only, as on the board. */}
       <TeaserCover story={story} />
       <div className="flex min-w-0 flex-col gap-2.5 lg:pr-16">
-        <Eyebrow>{t('teaser.shared', { number: chapterNumber, total: chapterTotal })}</Eyebrow>
+        <Eyebrow>
+          {lastChapterNumber === null
+            ? t('teaser.sharedNumberOnly', { number: chapterNumber })
+            : t('teaser.shared', { number: chapterNumber, total: lastChapterNumber })}
+        </Eyebrow>
         <h1
           id="teaser-story-title"
           lang={story.languageCode}

@@ -70,6 +70,8 @@
     "preview": "Previzualizare",
     "publishButton": "Publică capitolul",
     "scheduleButton": "Programează capitolul",
+    "publishNumbered": "Publică capitolul {{number}}",
+    "scheduleNumbered": "Programează capitolul {{number}}",
     "goLiveNote": "Când capitolul apare, povestea ta devine publică și urmăritorii tăi primesc o notificare.",
     "scheduledFor": "Programat pentru {{when}}, ora locală.",
     "cancelSchedule": "Anulează programarea",
@@ -86,9 +88,14 @@
       "badTime": "Alege o dată și o oră din viitor, cel mult peste un an.",
       "notActive": "Contul nu poate publica încă.",
       "originalNotPublished": "Publică mai întâi capitolul original.",
+      "notLast": "Un capitol de după el e deja publicat sau programat, așa că acesta nu poate fi ultimul.",
       "failed": "Nu am putut face asta. Verifică conexiunea și încearcă din nou."
     },
-    "webReadingNote": "Cititorii conectați pot citi capitolul în browser până apar aplicațiile. Copierea e mai grea, dar capturile de ecran funcționează în continuare pe web."
+    "webReadingNote": "Cititorii conectați pot citi capitolul în browser până apar aplicațiile. Copierea e mai grea, dar capturile de ecran funcționează în continuare pe web.",
+    "lastSwitch": "Acesta e ultimul capitol",
+    "lastHint": "Cititorii văd „din {{number}}”, iar povestea devine Terminată când apare acest capitol.",
+    "lastMarked": "Acesta e ultimul capitol.",
+    "markedBefore": "Capitolul {{number}} e marcat ca ultimul. Dacă îl publici pe acesta, marcajul se scoate."
   },
   "details": {
     "heading": "Detaliile poveștii",

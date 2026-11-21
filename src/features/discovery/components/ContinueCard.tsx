@@ -73,11 +73,17 @@ export function ContinueCard({ item }: { item: ContinueReadingCardData }) {
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <span className="font-semibold break-words text-heading">{story.title}</span>
           <span className="text-[13px] text-body">
-            {t('cards.continueWhere', {
-              writer: story.writer.displayName,
-              number: place.number,
-              total: place.total,
-            })}
+            {/* CALM-6: "of N" only while the writer has marked a last chapter. */}
+            {place.lastChapterNumber === null
+              ? t('cards.continueWhereNumberOnly', {
+                  writer: story.writer.displayName,
+                  number: place.number,
+                })
+              : t('cards.continueWhere', {
+                  writer: story.writer.displayName,
+                  number: place.number,
+                  total: place.lastChapterNumber,
+                })}
           </span>
           <ChapterProgress percent={place.percent} number={place.number} />
           {newChapterNumber !== null && (

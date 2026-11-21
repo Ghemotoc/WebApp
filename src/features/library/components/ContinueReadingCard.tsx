@@ -115,7 +115,10 @@ export function ContinueReadingCard({ item }: { item: ContinueReadingItem }) {
             {story.writer.displayName}
           </Link>
           {' · '}
-          {t('continue.where', { number: place.number, total: place.total })}
+          {/* CALM-6: "of N" only while the writer has marked a last chapter. */}
+          {place.lastChapterNumber === null
+            ? t('continue.whereNumberOnly', { number: place.number })
+            : t('continue.where', { number: place.number, total: place.lastChapterNumber })}
         </p>
         <div aria-hidden="true" className="h-1.5 w-full overflow-hidden rounded-full bg-tint">
           <div className="h-full rounded-full bg-accent" style={{ width: `${place.percent}%` }} />

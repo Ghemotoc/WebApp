@@ -32,6 +32,8 @@ export interface StoryPlace {
   /** The chapter's number among the readable chapters, and how many there are. */
   number: number;
   total: number;
+  /** CALM-6: the marked last chapter's number for "of N", or null (then "Chapter n" only). */
+  lastChapterNumber: number | null;
   /** How far through that chapter, 0 to 100. */
   percent: number;
   deviceKind: DeviceKind;
@@ -51,7 +53,17 @@ export interface LibraryOverview {
   counts: Record<LibraryShelf, number>;
   continueReading: ContinueReadingItem[];
   /** "Chapter n of N" for each story with a place, by the story's address. */
-  places: Record<string, { number: number; total: number }>;
+  places: Record<string, CardPlace>;
+}
+
+/**
+ * A card's place: the chapter reached and the readable total (the progress line), and the marked
+ * last chapter's number for "of N", or null (CALM-6).
+ */
+export interface CardPlace {
+  number: number;
+  total: number;
+  lastChapterNumber: number | null;
 }
 
 /** A writer the reader follows. */
@@ -80,6 +92,8 @@ export interface PlaceRow {
   chapter_code: string;
   number: number;
   total: number;
+  /** CALM-6: missing from answers saved before it. */
+  last_chapter_number?: number | null;
   percent: number;
   device_kind: DeviceKind;
   saved_at: string;
@@ -97,11 +111,32 @@ export function toPlace(row: PlaceRow): StoryPlace {
     chapterCode: row.chapter_code,
     number: row.number,
     total: row.total,
+    lastChapterNumber: row.last_chapter_number ?? null,
     percent: row.percent,
     deviceKind: row.device_kind,
     savedAt: row.saved_at,
     nextCode: row.next_code,
   };
+}
+
+/**
+ * The cards' places in the app's shape.
+ *
+ * @param rows - my_library()'s places, by the story's address
+ * @returns the same, with lastChapterNumber
+ */
+function toCardPlaces(
+  rows: Record<string, { number: number; total: number; last_chapter_number?: number | null }>,
+): Record<string, CardPlace> {
+  const places: Record<string, CardPlace> = {};
+  for (const [slug, row] of Object.entries(rows)) {
+    places[slug] = {
+      number: row.number,
+      total: row.total,
+      lastChapterNumber: row.last_chapter_number ?? null,
+    };
+  }
+  return places;
 }
 
 /**
@@ -117,7 +152,7 @@ export async function fetchLibraryOverview(client: AppSupabaseClient): Promise<L
   const answer = data as unknown as {
     counts: Record<LibraryShelf, number>;
     continue_reading: { story: ListedStoryRow; place: PlaceRow }[];
-    places: Record<string, { number: number; total: number }>;
+    places: Record<string, { number: number; total: number; last_chapter_number?: number | null }>;
   };
   return {
     counts: answer.counts,
@@ -125,7 +160,7 @@ export async function fetchLibraryOverview(client: AppSupabaseClient): Promise<L
       story: toListedStory(item.story),
       place: toPlace(item.place),
     })),
-    places: answer.places,
+    places: toCardPlaces(answer.places),
   };
 }
 

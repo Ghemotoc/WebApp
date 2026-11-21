@@ -21,6 +21,7 @@ import {
   type EditionFacts,
   type StoryEdition,
 } from './editions';
+import { nextChapterFrom, type NextChapter, type NextChapterRow } from './chapter';
 
 /** One chapter in the story page's list (S1-E3-03). */
 export interface StoryPageChapter {
@@ -50,6 +51,10 @@ export interface StoryPageData {
   categorySlug: string;
   tags: string[];
   completionStatus: 'ongoing' | 'completed';
+  /** CALM-6: the marked last chapter's number for "of N", or null while none is marked. */
+  lastChapterNumber: number | null;
+  /** CALM-6: the next scheduled chapter, for "Next chapter Thursday"; null when none is. */
+  nextChapter: NextChapter | null;
   commentsEnabled: boolean;
   /**
    * When the writer's pause of new comments ends, while one runs (bundle CALM-8); null otherwise.
@@ -118,6 +123,9 @@ interface StoryPageRow {
   category_slug: string;
   tags: string[];
   completion_status: 'ongoing' | 'completed';
+  /** CALM-6: missing from answers saved before it. */
+  last_chapter_number?: number | null;
+  next_chapter?: NextChapterRow | null;
   comments_enabled: boolean;
   /** CALM-8: missing from a database without the pause, so it may be absent. */
   comments_paused_until?: string | null;
@@ -226,6 +234,21 @@ function drawnCoverFrom(cover: StoryPageRow['cover']): StoryPageData['drawnCover
 }
 
 /**
+ * The last-chapter facts in the app's shape (CALM-6).
+ *
+ * @param row - get_story_page()'s answer; older answers lack both fields
+ * @returns lastChapterNumber and nextChapter
+ */
+function lastChapterFactsFrom(
+  row: StoryPageRow,
+): Pick<StoryPageData, 'lastChapterNumber' | 'nextChapter'> {
+  return {
+    lastChapterNumber: row.last_chapter_number ?? null,
+    nextChapter: nextChapterFrom(row.next_chapter),
+  };
+}
+
+/**
  * Reads the page for a story's public address.
  *
  * @param client - the shared Supabase client
@@ -251,6 +274,7 @@ export async function fetchStoryPage(
     categorySlug: row.category_slug,
     tags: row.tags,
     completionStatus: row.completion_status,
+    ...lastChapterFactsFrom(row),
     commentsEnabled: row.comments_enabled,
     commentsPausedUntil: row.comments_paused_until ?? null,
     coverKind: cover.kind,

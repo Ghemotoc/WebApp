@@ -1451,6 +1451,30 @@ get_story_page(): public while story_has_readable_chapter(); 'chapters' from sto
   → StoryChapterList on /s/<slug>
 ```
 
+The last chapter (CALM-6; Robert's decision card "A switch when publishing", 20 Nov 2026):
+
+```
+PublishPanel → LastChapterSwitch "This is the last chapter" (a draft, a scheduled chapter, the
+  │  latest published one); "Chapter 14 is marked as the last…" above the button; "Publish chapter 15"
+  ▼
+useChapterPublishing → api/lastChapter.ts: my_chapter_last_state() (what the panel shows),
+  publish_chapter(code, as_last), schedule_chapter(code, at, as_last), set_chapter_last(code, on)
+  ▼                                                     …_calm6_last_chapter.sql
+chapters.is_last (one live mark per story, index chapters_one_last_per_story)
+chapter_publish_now(): a marked chapter going out turns the story Completed (publish_due_chapters too)
+check_last_chapter_mark(): the mark comes off, and the story is Ongoing again, after unpublish,
+  cancel, delete, or a chapter published, scheduled, moved or restored after it
+update_my_story(): Ongoing clears the mark; Completed by hand marks nothing
+story_last_chapter_number() → last_chapter_number in get_chapter(), get_story_page(),
+  latest_place_json() and my_library(); next_chapter_json() → next_chapter
+  ▼
+src/features/reading/lib/chapterPlace.ts: "Chapter 14 of 15" only while a chapter is marked,
+  else "Chapter 14"; "Next chapter Thursday" / "Last chapter Thursday" (chapterDayWording() in
+  src/lib/local-time.ts, the reader's own calendar) in ChapterEnd, AboutThisStory, StoryChapterList
+```
+
+Tests: `supabase/tests/database/390-last-chapter.test.sql`, `src/features/writing/components/PublishPanel.test.tsx`, `src/lib/local-time.test.ts`, `e2e/last-chapter.spec.ts`.
+
 Managing chapters (S1-E3-04), at `/write/s/<slug>/chapters` ("Manage chapters" on a story card, or the story in the editor's breadcrumb):
 
 ```

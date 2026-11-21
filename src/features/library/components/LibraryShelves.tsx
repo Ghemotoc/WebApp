@@ -27,7 +27,12 @@ import type { DrawnCoverChoice } from '@/components/covers/coverDesigns';
 import { StoryCoverArt } from '@/features/pictures/components/StoryCoverArt';
 import { useMyStories } from '@/features/writing/hooks/useMyStories';
 
-import { libraryShelves, type LibraryOverview, type LibraryShelf } from '../api/library';
+import {
+  libraryShelves,
+  type CardPlace,
+  type LibraryOverview,
+  type LibraryShelf,
+} from '../api/library';
 import { liveOwnStories } from '../lib/ownStories';
 import { useLibraryTranslation } from '../registerLibraryTranslations';
 
@@ -39,11 +44,29 @@ type LibraryTab = LibraryShelf | 'mine';
 /** The chips in the order they show: the three reading shelves, then My stories. */
 const libraryTabs: readonly LibraryTab[] = [...libraryShelves, 'mine'];
 
+/**
+ * The card's line under the title: "Not started", "Chapter 3 of 15" while the writer has marked
+ * a last chapter, or "Chapter 3" (CALM-6).
+ *
+ * @param t - the library namespace's translate function
+ * @param place - the reader's place, or undefined
+ * @returns the text
+ */
+function cardPlaceText(
+  t: ReturnType<typeof useLibraryTranslation>['t'],
+  place: CardPlace | undefined,
+): string {
+  if (place === undefined) return t('shelves.notStarted');
+  if (place.lastChapterNumber === null)
+    return t('shelves.chapterNumberOnly', { number: place.number });
+  return t('shelves.chapterOf', { number: place.number, total: place.lastChapterNumber });
+}
+
 /** One card: the cover, the title, the writer and how far the reader got. */
 function LibraryStoryCard(props: {
   story: ListedStory;
   cover: DrawnCoverChoice;
-  place: { number: number; total: number } | undefined;
+  place: CardPlace | undefined;
   /** True on the Reading chip, where each cover carries its progress line. */
   showsProgress: boolean;
 }) {
@@ -54,10 +77,7 @@ function LibraryStoryCard(props: {
     showsProgress && place !== undefined && place.total > 0
       ? (place.number / place.total) * 100
       : undefined;
-  const progress =
-    place === undefined
-      ? t('shelves.notStarted')
-      : t('shelves.chapterOf', { number: place.number, total: place.total });
+  const progress = cardPlaceText(t, place);
   return (
     <StoryCard
       title={story.title}

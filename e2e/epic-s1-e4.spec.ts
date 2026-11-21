@@ -118,7 +118,7 @@ test.describe('epic check: reading (S1-E4-QA)', () => {
   }) => {
     const page = await openAs(browser, 'teen_17', `/s/${slug}`);
     await page.getByRole('link', { name: 'Caietele bunicii' }).click();
-    await expect(page.locator('header').getByText('Chapter 1 of 2')).toBeVisible();
+    await expect(page.locator('header').getByText('Chapter 1', { exact: true })).toBeVisible();
     await expect(page.locator('.tmc-chapter-text p')).toHaveCount(3);
     // Copying is off on the text, and the notice says what it can and can't do.
     expect(await copyFirstParagraph(page)).toBe('before');
@@ -158,7 +158,7 @@ test.describe('epic check: reading (S1-E4-QA)', () => {
     );
     const visitor = await visitorContext.newPage();
     await visitor.goto(firstChapter);
-    await expect(visitor.getByText('Shared with you · chapter 1 of 2')).toBeVisible();
+    await expect(visitor.getByText('Shared with you · chapter 1', { exact: true })).toBeVisible();
     await expect(visitor.locator('.tmc-chapter-text p')).toHaveCount(2);
     expect(await copyFirstParagraph(visitor)).toBe('before');
     expect(readsOf('epicfou1')).toBe('0');

@@ -11,7 +11,8 @@
  * - Saving the draft: save_chapter_draft(code, title, body, expected_version) → {status: saved,
  *   version, saved_at, word_count} | conflict | not_active | not_found.
  * - Publishing (S1-E3-03): publish_chapter, update_published_chapter, unpublish_chapter,
- *   schedule_chapter(code, publish_at) and cancel_schedule, each answering {outcome: ok | …}.
+ *   schedule_chapter(code, publish_at, as_last) and cancel_schedule, each answering
+ *   {outcome: ok | …}. The last-chapter mark (CALM-6) is in lastChapter.ts.
  * Readers never read these rows: they go through get_chapter() (S1-E4-01a, ADR 0004).
  */
 import type { Database } from '@/lib/database.types';
@@ -238,7 +239,9 @@ export type ChapterActionOutcome =
   | 'wrong_state'
   | 'bad_time'
   // A translated chapter can't go live before its original does (TRANSLATE-1).
-  | 'original_not_published';
+  | 'original_not_published'
+  // CALM-6: the last-chapter mark refused, a later chapter is already out or scheduled.
+  | 'not_last';
 
 /** The publishing functions, each taking the chapter's code. */
 type ChapterAction =
@@ -253,6 +256,7 @@ const knownOutcomes: readonly string[] = [
   'wrong_state',
   'bad_time',
   'original_not_published',
+  'not_last',
 ];
 
 /**
@@ -262,7 +266,7 @@ const knownOutcomes: readonly string[] = [
  * @returns the outcome
  * Errors: throws on anything else.
  */
-function toActionOutcome(data: unknown): ChapterActionOutcome {
+export function toActionOutcome(data: unknown): ChapterActionOutcome {
   const outcome = (data as { outcome?: string } | null)?.outcome;
   if (outcome !== undefined && knownOutcomes.includes(outcome))
     return outcome as ChapterActionOutcome;
@@ -295,17 +299,21 @@ export async function runChapterAction(
  * @param client - the shared Supabase client
  * @param code - the chapter's code
  * @param publishAt - when it goes live
- * @returns the outcome; 'bad_time' when it isn't in the future or is more than a year ahead
+ * @param asLast - true when the writer turned on "This is the last chapter" (CALM-6)
+ * @returns the outcome; 'bad_time' when it isn't in the future or is more than a year ahead,
+ *   'not_last' when a later chapter is already out or scheduled
  * Errors: throws when the database can't be reached.
  */
 export async function scheduleChapter(
   client: AppSupabaseClient,
   code: string,
   publishAt: Date,
+  asLast = false,
 ): Promise<ChapterActionOutcome> {
   const { data, error } = await client.rpc('schedule_chapter', {
     chapter_code: code,
     publish_at: publishAt.toISOString(),
+    as_last: asLast,
   });
   if (error !== null) throw new Error(`Could not schedule the chapter: ${error.message}`);
   return toActionOutcome(data);

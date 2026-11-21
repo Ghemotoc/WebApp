@@ -8,8 +8,9 @@
  * then Share (S1-E4-05, fetched when the row nears the screen) and "Report chapter" (the shared
  * ReportButton, S1-E10-01, reportable type "chapter" with the chapter's row ID) as text buttons.
  * After the latest chapter: "That's the latest chapter so far." with a way back to the story, and
- * More by and Stories like this, fetched when the end comes near (S1-E15-06). "Last chapter next
- * Thursday" and "That's the end of the story." wait for the last chapter's mark (CALM-6).
+ * More by and Stories like this, fetched when the end comes near (S1-E15-06). CALM-6: after the
+ * chapter the writer marked as the last, "That's the end of the story." instead; while a chapter
+ * is scheduled, "Next chapter Thursday" (or "Last chapter Thursday") under it.
  * Who uses it: ChapterReaderPage. What it calls: LikeButton, ShareButtonWhenNear, ReportButton,
  * ChapterClassPointsWhenNear and StorySuggestionsWhenNear.
  */
@@ -22,6 +23,7 @@ import { StorySuggestionsWhenNear } from '@/features/suggestions/components/Stor
 import { ShareButtonWhenNear } from '@/features/sharing/components/ShareButtonWhenNear';
 
 import type { ReaderChapter } from '../api/chapter';
+import { nextChapterText } from '../lib/chapterPlace';
 import { toSharedChapter } from '../lib/toSharedChapter';
 
 import { LikeButton } from './LikeButton';
@@ -63,8 +65,28 @@ function WayOn({ chapter }: { chapter: ReaderChapter }) {
           <ForwardArrowIcon />
         </Link>
       ) : (
-        <p className="m-0 text-[15px] text-body">{t('reader.latestChapter')}</p>
+        <NoNextYet chapter={chapter} />
       )}
+    </div>
+  );
+}
+
+/**
+ * After the latest chapter (CALM-6): "That's the end of the story." after the marked last chapter,
+ * else "That's the latest chapter so far.", with "Next chapter Thursday" while one is scheduled.
+ */
+function NoNextYet({ chapter }: { chapter: ReaderChapter }) {
+  const { t, i18n } = useTranslation('reading');
+  const isEnd = chapter.lastChapterNumber !== null && chapter.number === chapter.lastChapterNumber;
+  const nextLine = isEnd
+    ? null
+    : nextChapterText(t, chapter.nextChapter, i18n.language, new Date());
+  return (
+    <div className="flex flex-col gap-1">
+      <p className="m-0 text-[15px] text-body">
+        {isEnd ? t('reader.endOfStory') : t('reader.latestChapter')}
+      </p>
+      {nextLine !== null && <p className="m-0 text-[15px] text-meta">{nextLine}</p>}
     </div>
   );
 }

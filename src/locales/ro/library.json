@@ -12,6 +12,7 @@
     "heading": "Continuă lectura",
     "by": "de",
     "where": "Capitolul {{number}} din {{total}}",
+    "whereNumberOnly": "Capitolul {{number}}",
     "progress": "{{percent}}% din capitolul {{number}}",
     "stopped": "Te-ai oprit {{position}} capitolului {{number}} pe {{device}}, {{when}}.",
     "positions": {
@@ -41,6 +42,7 @@
     "saved": "Păstrate pentru mai târziu",
     "finished": "Terminate",
     "chapterOf": "Capitolul {{number}} din {{total}}",
+    "chapterNumberOnly": "Capitolul {{number}}",
     "notStarted": "Neîncepută",
     "empty": {
       "reading": "Încă nimic aici. Deschide orice capitol și povestea ajunge pe acest raft.",

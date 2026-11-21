@@ -168,13 +168,13 @@ test.describe('reading settings (S1-E4-02)', () => {
     await page.setViewportSize({ width: 1280, height: 400 });
     // Step 1: the default, in the bar, and no floating pill.
     const barMeta = page.getByTestId('chapter-bar-meta');
-    await expect(barMeta).toHaveText('Chapter 1 of 1 · 1 min left');
+    await expect(barMeta).toHaveText('Chapter 1 · 1 min left');
     await expect(page.getByTestId('reading-time-left')).toHaveCount(0);
     // Step 2: On the page: the pill comes back and the bar keeps only the place.
     await page.getByRole('button', { name: 'Reading settings' }).click();
     const panel = page.getByRole('region', { name: 'Reading settings' });
     await panel.locator('label', { hasText: 'On the page' }).click();
-    await expect(barMeta).toHaveText('Chapter 1 of 1');
+    await expect(barMeta).toHaveText('Chapter 1');
     await expect(page.getByTestId('reading-time-left')).toHaveText('1 min left');
     await expect
       .poll(() =>
