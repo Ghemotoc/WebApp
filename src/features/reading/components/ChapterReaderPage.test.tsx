@@ -125,7 +125,7 @@ describe('the chapter reader’s ad slot', () => {
     expect(container.querySelector('[data-ad]')).toBeNull();
   });
 
-  it('puts a banner below the chapter, after its text, never inside it', () => {
+  it('puts a banner below the chapter, after its text, never inside it', async () => {
     slots = [
       {
         slot_key: 'chapter_end',
@@ -143,6 +143,8 @@ describe('the chapter reader’s ad slot', () => {
       },
     ];
     const { container } = renderReader();
+    // The parts under the paper draw one frame after the text (useAfterFirstPaint).
+    await screen.findByText('From us');
     const slot = container.querySelector('[data-ad="wide"]');
     const text = container.querySelector('.tmc-chapter-text');
     const article = container.querySelector('article');
