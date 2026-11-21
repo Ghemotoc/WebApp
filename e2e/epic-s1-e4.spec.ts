@@ -5,7 +5,7 @@
  * It adds no feature: it walks the epic's main journeys across its March stories, in a real browser.
  * - Journey 1, a signed-in reader (S1-E3-05 × S1-E4-01a × S1-E4-06a): teen_17 opens the story
  *   page, goes into chapter one, can't copy its text (the notice says so honestly), reads on to
- *   chapter two, reaches "That's the latest chapter so far." and goes back through Contents; each
+ *   chapter two, reaches "That's the latest chapter so far." and goes back through the chapter bar; each
  *   chapter's read is counted once.
  * - Journey 2, a shared link (S1-E4-04 × S1-E4-06a × S1-E4-01a): the link's HTML carries the
  *   preview; a signed-out visitor gets the story card and the teaser, can't copy it either, and
@@ -125,11 +125,14 @@ test.describe('epic check: reading (S1-E4-QA)', () => {
     await expect(
       page.getByText(/That makes copying harder, but it can’t stop screenshots\./),
     ).toBeVisible();
-    // On to chapter two, the last one, and back through Contents.
-    await page.getByRole('link', { name: 'Read chapter 2' }).click();
+    // On to chapter two, the last one, and back to the story from the chapter bar (CALM-5).
+    await page.getByRole('link', { name: 'Next: chapter 2' }).click();
     await expect(page.getByRole('heading', { level: 1, name: 'Vântul' })).toBeVisible();
     await expect(page.getByText('That’s the latest chapter so far.')).toBeVisible();
-    await page.getByRole('link', { name: 'Contents' }).click();
+    await page
+      .getByTestId('chapter-bar')
+      .getByRole('link', { name: /^Back to / })
+      .click();
     await expect(page).toHaveURL(new RegExp(`/s/${slug}$`));
     expect(readsOf('epicfou1')).toBe('1');
     expect(readsOf('epicfou2')).toBe('1');
@@ -164,7 +167,7 @@ test.describe('epic check: reading (S1-E4-QA)', () => {
     // Signed in, the same address is the whole chapter in the reader.
     const reader = await openAs(browser, 'teen_17', firstChapter);
     await expect(reader.locator('.tmc-chapter-text p')).toHaveCount(3);
-    await expect(reader.getByRole('navigation', { name: 'Chapters' })).toBeVisible();
+    await expect(reader.getByRole('navigation', { name: 'Chapter navigation' })).toBeVisible();
   });
 
   test('journey 3: at 16+, teen_17 reads; the under-16s and the visitor don’t', async ({
@@ -202,13 +205,13 @@ test.describe('epic check: reading (S1-E4-QA)', () => {
       await test.step(`the reader at ${width} px`, async () => {
         const page = await readerContext.newPage();
         await checkScreen(page, view);
-        // From 768 px the chapter links sit in the bar; on a phone they move to the end of the
-        // chapter, where "Read chapter 2" leads on (rulebook; bundle G7d).
-        if (width >= 768) {
-          await expect(page.getByRole('navigation', { name: 'Capitole' })).toBeVisible();
-        } else {
-          await expect(page.getByRole('link', { name: /Citește capitolul 2/ })).toBeVisible();
-        }
+        // At every width the chapter bar sits over the chapter, the chapter navigation follows
+        // the paper and "Următorul: capitolul 2" leads on at the chapter's end (CALM-5).
+        await expect(page.getByTestId('chapter-bar')).toBeVisible();
+        await expect(
+          page.getByRole('navigation', { name: 'Navigare între capitole' }),
+        ).toBeVisible();
+        await expect(page.getByRole('link', { name: 'Următorul: capitolul 2' })).toBeVisible();
         await page.close();
       });
       await test.step(`the teaser at ${width} px`, async () => {

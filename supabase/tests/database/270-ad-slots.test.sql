@@ -8,7 +8,10 @@
 --   of ours comes first;
 -- - the choice uses only the page's context: a signed-out visitor and a signed-in reader get the
 --   same ads, and "Why this ad?" echoes only category, tag and language;
--- - a class space, a class-only story and an unknown page get no slot (Q70).
+-- - the reader has its two slots, the 728 × 90 banner and the 300 × 250 side box, and the side box
+--   never carries the ad network (CALM-5);
+-- - a class space, a class-only story (its page and its chapters) and an unknown page get no slot
+--   (Q70).
 -- Personas: adult_writer (…01), teen_17 (…02), teacher (…07).
 -- Test data: a live landing page and a class space with one class-only story, made here; rolled
 -- back.
@@ -16,7 +19,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(13);
+select plan(16);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -84,6 +87,17 @@ select ok(
               where slot -> 'ad' ->> 'key' = 'house:classics'),
   'the classics page never advertises the classics');
 
+-- CALM-5: the reader's two slots, the banner under the chapter navigation and the side box.
+insert into kept values ('chapter', public.page_ads('chapter', '{"category": "fiction", "language": "ro"}'));
+select is(
+  (select string_agg((slot ->> 'slot_key') || ':' || (slot ->> 'format'), ' ' order by (slot ->> 'position')::integer)
+   from kept, jsonb_array_elements(words) as slot where label = 'chapter'),
+  'chapter_end:wide chapter_side:side_box',
+  'the reader has the banner first and the side box second');
+select ok(
+  (select coalesce(words -> 1 -> 'ad' ->> 'kind', '') <> 'network' from kept where label = 'chapter'),
+  'the reader''s side box never carries the ad network');
+
 /* ---------- 3. Only the page's context (criterion 2) ---------- */
 
 reset role;
@@ -101,6 +115,8 @@ select is(
 select is(public.page_ads('space', '{"space_slug": "clasa-reclame"}'), '[]'::jsonb, 'a class space has no slot');
 select is(public.page_ads('story', jsonb_build_object('story_slug', (select words #>> '{}' from kept where label = 'class_story'))), '[]'::jsonb,
   'a story shared only with a class has no slot');
+select is(public.page_ads('chapter', jsonb_build_object('story_slug', (select words #>> '{}' from kept where label = 'class_story'))), '[]'::jsonb,
+  'a chapter of a story shared only with a class has neither reader slot');
 select is(public.page_ads('settings'), '[]'::jsonb, 'a page that isn''t public has no slot');
 
 select * from finish();

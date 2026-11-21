@@ -74,11 +74,7 @@
   },
   "reader": {
     "documentTitle": "{{chapter}} · {{story}}",
-    "chaptersNav": "Capitole",
-    "contents": "Cuprins",
-    "previous": "Înapoi",
     "next": "Capitolul următor",
-    "progress": "Cât ai citit din capitol",
     "kicker": "Capitolul {{number}} din {{total}}",
     "by": "de",
     "minutes_one": "{{count}} minut de citit",
@@ -90,7 +86,7 @@
     "edited": "modificat {{date}}",
     "untitled": "Capitol fără titlu",
     "endOfChapter": "Sfârșitul capitolului {{number}}",
-    "readNext": "Citește capitolul {{number}}",
+    "readNext": "Următorul: capitolul {{number}}",
     "latestChapter": "Acesta e cel mai nou capitol de până acum.",
     "backToStory": "Înapoi la poveste",
     "signIn": "Intră",
@@ -114,8 +110,26 @@
       "earlier_one": "{{count}} comentariu la o versiune mai veche a capitolului",
       "earlier_few": "{{count}} comentarii la o versiune mai veche a capitolului",
       "earlier_other": "{{count}} de comentarii la o versiune mai veche a capitolului",
-      "panelLabel": "Comentarii la paragrafe",
-      "panelHint": "Apasă bula de lângă un paragraf ca să citești ce au spus alții despre el și să adaugi comentariul tău."
+      "sheetLabel": "Comentarii la acest paragraf",
+      "earlierSheetLabel": "Comentarii la o versiune mai veche"
+    },
+    "chapterBar": "Capitol",
+    "backTo": "Înapoi la {{story}}",
+    "chapterNavigation": "Navigare între capitole",
+    "previousChapter": "Capitolul anterior",
+    "previousChapterNamed": "Capitolul anterior: {{title}}",
+    "nextChapter": "Capitolul următor",
+    "nextChapterNamed": "Capitolul următor: {{title}}",
+    "commentOnChapter": "Comentează capitolul",
+    "tools": "Unelte de citire",
+    "about": {
+      "title": "Despre poveste",
+      "chapters_one": "capitol",
+      "chapters_few": "capitole",
+      "chapters_other": "de capitole",
+      "words_one": "cuvânt până acum",
+      "words_few": "cuvinte până acum",
+      "words_other": "de cuvinte până acum"
     }
   },
   "teaser": {
@@ -193,7 +207,10 @@
     "ruler": "Riglă de citire",
     "rulerHint": "O bandă discretă urmărește rândul pe care îl citești. Mișcă cursorul peste text sau folosește tastele săgeată sus și jos.",
     "saved": "Salvate în contul tău, deci se aplică pe toate dispozitivele tale. Mărimea textului pornește de la setarea dispozitivului tău.",
-    "saveFailed": "Nu am putut salva setările de citire. Se aplică în continuare aici; verifică-ți conexiunea și schimbă din nou o setare ca să încercăm iar."
+    "saveFailed": "Nu am putut salva setările de citire. Se aplică în continuare aici; verifică-ți conexiunea și schimbă din nou o setare ca să încercăm iar.",
+    "timeLeft": "Timp rămas",
+    "timeLeftBar": "În bară",
+    "timeLeftPage": "Pe pagină"
   },
   "embed": {
     "removed": "[Scos de echipa de moderare]",

@@ -90,7 +90,7 @@ export function MissingTranslationNotice({ chapter, missing }: MissingTranslatio
   return (
     <>
       <title>{t('missing.documentTitle', { title, story: chapter.story.title })}</title>
-      <ChapterBar chapter={chapter} progress={0} deviceSize={null} />
+      <ChapterBar chapter={chapter} minutesLeft={null} settings={null} />
       <section
         aria-labelledby="missing-translation-title"
         className="mx-auto mt-6 flex w-full max-w-[880px] flex-col items-start gap-3.5 rounded-[32px] border border-border bg-surface px-6 py-8 shadow-card sm:px-9"

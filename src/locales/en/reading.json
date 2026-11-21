@@ -74,11 +74,7 @@
   },
   "reader": {
     "documentTitle": "{{chapter}} · {{story}}",
-    "chaptersNav": "Chapters",
-    "contents": "Contents",
-    "previous": "Previous",
     "next": "Next chapter",
-    "progress": "Chapter progress",
     "kicker": "Chapter {{number}} of {{total}}",
     "by": "by",
     "minutes_one": "{{count}} min read",
@@ -90,7 +86,7 @@
     "edited": "edited {{date}}",
     "untitled": "Untitled chapter",
     "endOfChapter": "End of chapter {{number}}",
-    "readNext": "Read chapter {{number}}",
+    "readNext": "Next: chapter {{number}}",
     "latestChapter": "That’s the latest chapter so far.",
     "backToStory": "Back to the story",
     "signIn": "Get in",
@@ -114,8 +110,26 @@
       "earlier_one": "{{count}} comment on an earlier version of this chapter",
       "earlier_few": "{{count}} comments on an earlier version of this chapter",
       "earlier_other": "{{count}} comments on an earlier version of this chapter",
-      "panelLabel": "Paragraph comments",
-      "panelHint": "Choose the speech bubble beside a paragraph to read what others said about it and add your own comment."
+      "sheetLabel": "Comments on this paragraph",
+      "earlierSheetLabel": "Comments on an earlier version"
+    },
+    "chapterBar": "Chapter",
+    "backTo": "Back to {{story}}",
+    "chapterNavigation": "Chapter navigation",
+    "previousChapter": "Previous chapter",
+    "previousChapterNamed": "Previous chapter: {{title}}",
+    "nextChapter": "Next chapter",
+    "nextChapterNamed": "Next chapter: {{title}}",
+    "commentOnChapter": "Comment on the chapter",
+    "tools": "Reading tools",
+    "about": {
+      "title": "About this story",
+      "chapters_one": "chapter",
+      "chapters_few": "chapters",
+      "chapters_other": "chapters",
+      "words_one": "word so far",
+      "words_few": "words so far",
+      "words_other": "words so far"
     }
   },
   "teaser": {
@@ -193,7 +207,10 @@
     "ruler": "Reading ruler",
     "rulerHint": "A soft band follows the line you’re reading. Move the pointer over the text, or use the Up and Down arrow keys.",
     "saved": "Saved to your account, so they apply on all your devices. Text size starts from your device’s own setting.",
-    "saveFailed": "We couldn’t save your reading settings. They still apply here; check your connection and change one again to retry."
+    "saveFailed": "We couldn’t save your reading settings. They still apply here; check your connection and change one again to retry.",
+    "timeLeft": "Time left",
+    "timeLeftBar": "In the bar",
+    "timeLeftPage": "On the page"
   },
   "embed": {
     "removed": "[Removed by the moderation team]",

@@ -5,8 +5,10 @@
  * What it proves:
  * - teacher opens a paragraph's marker, comments on that paragraph only, and the marker counts
  *   it; the thread closes with Close or Escape and hands focus back; the main list says "On
- *   paragraph 2" (criterion 1); at 1280 px and wider the thread opens in the side column beside
- *   the paper and takes focus, and below that it opens under its paragraph (bundle G7d2);
+ *   paragraph 2" (criterion 1); at 1280 px and wider the thread opens in the side column
+ *   "Reading tools" beside the paper and takes focus, and below that it opens in the bottom sheet,
+ *   a dialog that keeps focus inside (bundle CALM-5); its head is the paragraph's opening words
+ *   and Close, with no title or count;
  * - the writer puts a new paragraph first: the comment follows its paragraph to number 3; the
  *   writer changes its words: the comment moves to "comments on an earlier version", which opens
  *   without a box to comment in (criterion 2);
@@ -93,17 +95,18 @@ test.describe('comments on a paragraph (S1-E6-06)', () => {
     await expect(marker).toHaveAccessibleName('Comment on this paragraph');
     await marker.click();
     await expect(marker).toHaveAttribute('aria-expanded', 'true');
-    // At 1280 px (Desktop Chrome) the thread opens in the side column and takes focus (G7d2).
-    const panel = page.getByRole('complementary', { name: 'Paragraph comments' });
+    // At 1280 px (Desktop Chrome) the thread opens in the side column and takes focus (CALM-5).
+    const panel = page.getByRole('complementary', { name: 'Reading tools' });
     const thread = panel.getByRole('region', { name: 'Comments on paragraph 2' });
-    await expect(thread).toContainText('No comments on paragraph 2 yet');
+    await expect(thread).toContainText('No comments on this paragraph yet');
+    // Its head: the paragraph's opening words, no title or count.
+    await expect(thread.locator('blockquote')).toHaveText('The lift stopped between floors.');
     await expect(thread).toBeFocused();
     await thread
       .getByRole('textbox', { name: 'Comment on this paragraph' })
       .fill('That lift scared me.');
     await thread.getByRole('button', { name: 'Post comment' }).click();
     await expect(thread.getByRole('article', { name: 'teacher' })).toContainText('That lift');
-    await expect(thread).toContainText('1 comment on paragraph 2');
     await expect(marker).toHaveAccessibleName('1 comment on this paragraph');
     // The other paragraphs have none, and the main list says where the comment is.
     await expect(markerOf(page, 1)).toHaveAccessibleName('Comment on this paragraph');
@@ -124,19 +127,22 @@ test.describe('comments on a paragraph (S1-E6-06)', () => {
     await page.context().close();
   });
 
-  test('below 1280 px the thread opens under its paragraph, with no side column', async ({
+  test('below 1280 px the thread opens in the bottom sheet, with no side column', async ({
     browser,
   }) => {
     const page = await openAs(browser, 'teacher');
     await page.setViewportSize({ width: 1024, height: 800 });
-    await expect(page.getByTestId('paragraph-comments-panel')).toBeHidden();
+    await expect(page.getByTestId('reader-side-column')).toHaveCount(0);
     const marker = markerOf(page, 1);
     await marker.click();
-    // The thread sits inside the chapter text, right after its paragraph's marker.
-    const thread = page.locator('.tmc-chapter-text').getByRole('region', {
-      name: 'Comments on paragraph 1',
-    });
+    // The sheet is a modal dialog holding the thread; focus moves inside it.
+    const sheet = page.getByRole('dialog', { name: 'Comments on this paragraph' });
+    const thread = sheet.getByRole('region', { name: 'Comments on paragraph 1' });
     await expect(thread).toContainText('No comments on this paragraph yet');
+    await expect(thread).toBeFocused();
+    // Close gives focus back to the marker.
+    await sheet.getByRole('button', { name: 'Close' }).click();
+    await expect(sheet).toHaveCount(0);
     await expect(marker).toBeFocused();
     await page.context().close();
   });

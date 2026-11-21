@@ -2,7 +2,8 @@
  * The reader's icons, drawn as inline SVG from board 3.5 (story S1-E4-01a). Plain icons, not
  * doodles: the reader has no doodles at all (DoD design rules), and arrows are plain icons
  * anyway. Each is hidden from screen readers; the link around it carries the name.
- * Who uses it: ChapterBar, ChapterEnd, LikeButton and the reading settings (S1-E4-02).
+ * Who uses it: ChapterBar, ChapterEnd, ChapterNavigation, LikeButton, the paragraph comments and
+ * the reading settings (S1-E4-02; CALM-5).
  */
 import type { SVGProps } from 'react';
 
@@ -25,16 +26,31 @@ function Frame(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-/** A bulleted list: "Contents". */
-export function ContentsIcon() {
+/** A full arrow pointing back: the chapter bar's Back (CALM-5, design system FocusBar). */
+export function BackArrowIcon() {
   return (
-    <Frame strokeWidth="1.9">
-      <line x1="8" x2="21" y1="6" y2="6" />
-      <line x1="8" x2="21" y1="12" y2="12" />
-      <line x1="8" x2="21" y1="18" y2="18" />
-      <line x1="3" x2="3.01" y1="6" y2="6" />
-      <line x1="3" x2="3.01" y1="12" y2="12" />
-      <line x1="3" x2="3.01" y1="18" y2="18" />
+    <Frame>
+      <path d="M19 12H5" />
+      <path d="m12 19-7-7 7-7" />
+    </Frame>
+  );
+}
+
+/** A full arrow pointing on: "Next chapter" and "Next: chapter 15" (CALM-5). */
+export function ForwardArrowIcon() {
+  return (
+    <Frame width="16" height="16">
+      <path d="M5 12h14" />
+      <path d="m12 5 7 7-7 7" />
+    </Frame>
+  );
+}
+
+/** The comment mark: a speech bubble (CALM-5, design system ParagraphComments). */
+export function CommentIcon({ size = 16 }: { size?: number }) {
+  return (
+    <Frame width={size} height={size}>
+      <path d="M4 5h16v11H9l-5 4z" />
     </Frame>
   );
 }

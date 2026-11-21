@@ -1,135 +1,114 @@
 /**
- * ChapterBar: the glass bar above a chapter (story S1-E4-01a; board 3.5; liquid glass look from
- * bundle G7d, board WebReaderV1 and the rulebook's "Reader bar").
+ * ChapterBar: the slim glass bar that floats over a chapter as the reader scrolls (story
+ * S1-E4-01a; the simplified design, bundle CALM-5; design handover Step 2, "The chapter bar";
+ * design system FocusBar; boards New-Reader and New-PhoneReader).
  *
- * Layout: "‹ <story title>" back to the story page on the left; "Chapter 2 of 4" centred (from
- * 1280 px, where the bar has room for it); on the right "Aa Reading settings" for a signed-in
- * reader (S1-E4-02, ReadingSettingsControl), then a navigation named "Chapters" with Contents,
- * Previous (both glass) and "Next chapter ›" (solid). Under them runs the progress line in the
- * theme's accent colour; it reaches 100% once the last line of the text is on screen, so it is
- * full by the time the reader is at the comments (rulebook). 44 px targets.
- * Previous and Next are left out at the first and last chapter, so no control does nothing.
- * On a phone the bar keeps only Back, the story name and Aa (rulebook, "On a phone, the reader's
- * top bar keeps only Back, the story name and Aa"): the chapter links move to the end of the
- * chapter, where ChapterEnd already offers the next one.
- * A story in several languages adds "Read in: <language>" before Aa, on every screen size
- * (TRANSLATE-1b; boards TrReader and PhoneTrReader); it keeps the chapter.
+ * Layout, five controls or fewer: Back (a round button named "Back to <story>"), the story's
+ * title with the meta line "Chapter 14 of 15 · 3 min left" under it, centred, then Aa (Reading
+ * settings, for a signed-in reader) and, from 768 px, a quiet "Next chapter". A story in several
+ * languages keeps its "Read in" switch before Aa (TRANSLATE-1b). The title and the meta line end
+ * in an ellipsis when long.
+ * Time left (handover Step 4, points 11 and 12): while the reader keeps it "In the bar", the meta
+ * line ends with the minutes and counts down as they scroll (minutesLeft() from
+ * lib/readingTimeLeft.ts, the same as the pill), and drops them once the last line is on screen.
+ * It is not a live region, so screen readers aren't interrupted. The minutes are the progress, so
+ * there is no progress line, and Previous and Contents are gone: Previous lives in the chapter
+ * navigation under the paper and Back leads to the story page with every chapter.
+ * Where it sits: sticky, under the website's top bar from 1024 px; on phones and tablets it is
+ * the only bar while reading (the shell draws no header of its own, useReaderOwnsHeader), 12 px
+ * from each edge and clear of the notch.
  * Who uses it: ChapterReaderPage and MissingTranslationNotice. What it calls:
  * ReadingSettingsControl and ReadInSwitch; the rest are links.
  */
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
+import { usePageOwnsNarrowHeader } from '@/app/shell/pageHeaderContext';
+
 import type { ReaderChapter } from '../api/chapter';
 
-import { ReadingSettingsControl } from './ReadingSettingsControl';
 import { LazyReadInSwitch } from './LazyReadInSwitch';
-import { BackIcon, ContentsIcon, ForwardIcon } from './ReaderIcons';
-
-/** The classes shared by the glass links. */
-const glassLink =
-  'inline-flex h-11 items-center gap-1.5 rounded-full button-glass pr-[18px] pl-3 text-[15px] font-semibold no-underline';
+import { BackArrowIcon, ForwardArrowIcon } from './ReaderIcons';
+import { ReadingSettingsControl, type ReadingSettingsControlProps } from './ReadingSettingsControl';
 
 /** What the bar needs. */
 export interface ChapterBarProps {
   chapter: ReaderChapter;
-  /** How far through the text the reader is, 0 to 100. */
-  progress: number;
-  /** The text size that follows the device, or null to leave out Reading settings (visitors). */
-  deviceSize: number | null;
+  /** The minutes left to show at the end of the meta line, or null to show none. */
+  minutesLeft: number | null;
+  /** Aa's state and what it does, or null to leave Aa out (visitors, a missing translation). */
+  settings: ReadingSettingsControlProps | null;
 }
 
-/** Contents, Previous and Next chapter; from 768 px only (on a phone they sit under the text). */
-function ChapterNavigation({ chapter }: { chapter: ReaderChapter }) {
-  const { t } = useTranslation('reading');
-  const storyAddress = `/s/${chapter.story.slug}`;
-  return (
-    <nav
-      aria-label={t('reader.chaptersNav')}
-      className="hidden flex-wrap justify-end gap-2 md:flex"
-    >
-      <Link to={storyAddress} className={glassLink}>
-        <ContentsIcon />
-        {t('reader.contents')}
-      </Link>
-      {chapter.previousCode !== null && (
-        <Link to={`${storyAddress}/${chapter.previousCode}`} className={glassLink}>
-          <BackIcon />
-          {t('reader.previous')}
-        </Link>
-      )}
-      {chapter.nextCode !== null && (
-        <Link
-          to={`${storyAddress}/${chapter.nextCode}`}
-          className="inline-flex h-11 items-center gap-1.5 rounded-full button-main pr-3 pl-5 text-[15px] font-semibold no-underline"
-        >
-          {t('reader.next')}
-          <ForwardIcon />
-        </Link>
-      )}
-    </nav>
-  );
-}
+/** The round 44 px quiet icon button's classes, shared by Back. */
+const iconButton =
+  'inline-flex size-11 shrink-0 items-center justify-center rounded-full text-heading no-underline hover:bg-tint';
 
-/** The line under the bar that fills as the reader scrolls through the text. */
-function ProgressLine({ progress }: { progress: number }) {
+/**
+ * The meta line under the title: "Chapter 14 of 15", then " · 3 min left" while there are
+ * minutes to show.
+ *
+ * @param chapter - the chapter being read
+ * @param minutesLeft - the minutes left, or null
+ * @returns the line's words
+ */
+function useMetaLine(chapter: ReaderChapter, minutesLeft: number | null): string {
   const { t } = useTranslation('reading');
-  return (
-    <div
-      role="progressbar"
-      aria-label={t('reader.progress')}
-      aria-valuenow={progress}
-      aria-valuemin={0}
-      aria-valuemax={100}
-      className="mx-3 mt-2.5 h-1 overflow-hidden rounded-t-full bg-tint"
-    >
-      <div className="h-full rounded-full bg-accent" style={{ width: `${progress}%` }} />
-    </div>
-  );
+  const where = t('reader.kicker', { number: chapter.number, total: chapter.total });
+  if (minutesLeft === null) return where;
+  return `${where} · ${t('reader.minutesLeft', { count: minutesLeft })}`;
 }
 
 /**
  * Renders the bar.
  *
- * @returns the glass bar with the links and the progress line
+ * @returns the floating glass bar
  */
-export function ChapterBar({ chapter, progress, deviceSize }: ChapterBarProps) {
+export function ChapterBar({ chapter, minutesLeft, settings }: ChapterBarProps) {
   const { t } = useTranslation('reading');
-  // On a phone a story in several languages puts its controls on a second row, so "Read in"
-  // never covers the title (board PhoneTrReader); one language keeps the single row.
-  const phoneColumns =
-    chapter.editions.length > 1
-      ? 'grid-cols-1 md:grid-cols-[minmax(0,1fr)_auto]'
-      : 'grid-cols-[minmax(0,1fr)_auto]';
-  const phoneControls =
-    chapter.editions.length > 1 ? 'justify-start md:justify-end' : 'justify-end';
+  const storyAddress = `/s/${chapter.story.slug}`;
+  const metaLine = useMetaLine(chapter, minutesLeft);
+  // On phones and tablets this is the only bar while reading (handover Step 2).
+  usePageOwnsNarrowHeader();
   return (
-    <div className="glass-pill relative z-[2] rounded-[28px] px-2.5 pt-2.5">
-      <div
-        className={`grid items-center gap-2.5 xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] ${phoneColumns}`}
+    <nav
+      aria-label={t('reader.chapterBar')}
+      data-testid="chapter-bar"
+      className="tmc-chapter-bar glass-float sticky z-20 flex items-center gap-1 rounded-full p-1.5"
+    >
+      {/* Back to the story page, which lists every chapter. */}
+      <Link
+        to={storyAddress}
+        aria-label={t('reader.backTo', { story: chapter.story.title })}
+        className={iconButton}
       >
-        <Link
-          to={`/s/${chapter.story.slug}`}
-          className="inline-flex min-h-11 min-w-0 items-center gap-1.5 justify-self-start rounded-full pr-[18px] pl-3 text-[15px] font-semibold break-words text-heading no-underline hover:underline"
+        <BackArrowIcon />
+      </Link>
+      {/* The title in the story's own language, so a screen reader says it right (WCAG 3.1.2). */}
+      <p className="m-0 min-w-0 flex-1 text-center text-[15px] leading-5 font-semibold text-heading">
+        <span lang={chapter.story.languageCode} className="block truncate">
+          {chapter.story.title}
+        </span>
+        <span
+          data-testid="chapter-bar-meta"
+          className="block truncate text-[13px] leading-[18px] font-normal text-meta"
         >
-          <BackIcon />
-          {/* The story's own language, so a screen reader pronounces the title right (WCAG 3.1.2). */}
-          <span lang={chapter.story.languageCode}>{chapter.story.title}</span>
+          {metaLine}
+        </span>
+      </p>
+      {/* TRANSLATE-1b: nothing for a story in one language (Robert, 16 Nov 2026). */}
+      <LazyReadInSwitch editions={chapter.editions} chapterNumber={chapter.number} />
+      {settings !== null && <ReadingSettingsControl {...settings} />}
+      {/* A quiet Next chapter ends the bar from 768 px; phones keep three controls. */}
+      {chapter.nextCode !== null && (
+        <Link
+          to={`${storyAddress}/${chapter.nextCode}`}
+          className="hidden h-11 shrink-0 items-center gap-1.5 rounded-full button-glass px-4 text-[15px] font-semibold no-underline md:inline-flex"
+        >
+          {t('reader.next')}
+          <ForwardArrowIcon />
         </Link>
-        {/* "Chapter 2 of 4" centred, with no chapter dots (rulebook, "Reader bar"). */}
-        <p className="m-0 hidden text-[15px] whitespace-nowrap text-body xl:block">
-          {t('reader.kicker', { number: chapter.number, total: chapter.total })}
-        </p>
-        <div className={`flex flex-wrap items-center gap-2 ${phoneControls}`}>
-          {/* TRANSLATE-1b: nothing for a story in one language (Robert, 16 Nov 2026). */}
-          <LazyReadInSwitch editions={chapter.editions} chapterNumber={chapter.number} />
-          {deviceSize !== null && (
-            <ReadingSettingsControl deviceSize={deviceSize} chapterCode={chapter.code} />
-          )}
-          <ChapterNavigation chapter={chapter} />
-        </div>
-      </div>
-      <ProgressLine progress={progress} />
-    </div>
+      )}
+    </nav>
   );
 }

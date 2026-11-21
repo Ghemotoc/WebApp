@@ -2,8 +2,8 @@
  * LikeButton: "Like this chapter" / "Liked" with the public count, after the chapter (story
  * S1-E6-03; board 3.5, the first button in the row under "End of chapter").
  *
- * Board values: a 48 px pill with a heart; not liked, a white pill with a #672786 border and text;
- * liked, filled #481C5F with white text and a filled heart. It is a toggle: aria-pressed says
+ * Look (the simplified design, CALM-5; board New-Reader): a quiet 44 px button with a heart; liked,
+ * the tint with the heart filled in. It is a toggle: aria-pressed says
  * whether the reader likes it, so the state never rests on colour alone, and the count is part of
  * the name ("Like this chapter 12 likes": the visible words, so speech input matches, WCAG 2.5.3). Signed out, it is a "Get in to like" link with the
  * count. A read-only account is told why it can't like. Nothing shows while the state loads.
@@ -19,9 +19,9 @@ import { useChapterLike } from '../hooks/useChapterLike';
 
 import { HeartIcon } from './ReaderIcons';
 
-/** The pill's shared shape (board: 48 px high, 20 px each side). */
+/** The quiet button's shape (the simplified design, CALM-5: 44 px high, the quiet glass). */
 const pillShape =
-  'inline-flex h-12 items-center gap-2 rounded-full px-5 text-[15px] font-semibold no-underline';
+  'inline-flex h-11 items-center gap-2 rounded-full px-4 text-[15px] font-semibold no-underline';
 
 /**
  * Renders the button, the log-in link or nothing.
@@ -35,10 +35,7 @@ export function LikeButton({ address }: { address: ChapterAddress }) {
   const count = like.state.likeCount;
   if (!like.isSignedIn) {
     return (
-      <Link
-        to="/sign-in"
-        className={cn(pillShape, 'border border-link bg-surface text-link hover:bg-tint')}
-      >
+      <Link to="/sign-in" className={cn(pillShape, 'button-glass text-heading')}>
         <HeartIcon isFilled={false} />
         {t('likes.logIn')}
         <span className="font-medium">{t('likes.count', { count })}</span>
@@ -55,10 +52,9 @@ export function LikeButton({ address }: { address: ChapterAddress }) {
         onClick={like.toggle}
         className={cn(
           pillShape,
-          'cursor-pointer border disabled:cursor-wait',
-          isLiked
-            ? 'border-chip-on bg-chip-on text-chip-on-text'
-            : 'border-link bg-surface text-link hover:bg-tint',
+          'cursor-pointer disabled:cursor-wait',
+          // Liked: the tint with the heart filled in, so the state never rests on colour alone.
+          isLiked ? 'bg-tint text-heading' : 'button-glass text-heading',
         )}
       >
         <HeartIcon isFilled={isLiked} />

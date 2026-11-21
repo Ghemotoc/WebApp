@@ -7,7 +7,9 @@
  * letter spacing; rulebook: "Dyslexia-friendly font = OpenDyslexic", G7d) and Atkinson
  * Hyperlegible (IDEAS-1 part a, IDEA-20261031-6). All are served from our own files in
  * src/styles/fonts.css, and a browser fetches a font's files only once text uses it. Text size
- * 14 to 28 px, 19 px by default; line spacing 1.5, 1.7 or 2; line width about 560, 680 or 780 px.
+ * 14 to 28 px; line spacing 1.5, 1.7 or 2; line width about 560, 680 or 780 px. The simplified design
+ * (CALM-5; handover Step 3, the reader) starts the text at 20 px (Literata 20/34) on wide screens
+ * and 17 px (17/28) under 600 px; readers change it in Aa.
  * The device's own text size (S1-E4-02, third criterion): browsers and phones that make text
  * larger raise the page's root font size above 16 px, so the default 19 px grows by the same
  * share until the reader picks a size of their own.
@@ -24,8 +26,11 @@ import type {
 /** The board's slider. */
 export const smallestTextSize = 14;
 export const largestTextSize = 28;
-/** The reader's size at the browser's normal 16 px. */
-const defaultTextSize = 19;
+/** The reader's size at the browser's normal 16 px: 20 px from 600 px wide, 17 px on phones (CALM-5). */
+const defaultTextSize = 20;
+const defaultPhoneTextSize = 17;
+/** Below this width the phone size applies (the paper's own phone breakpoint, index.css). */
+const phoneWidth = 600;
 const browserNormalSize = 16;
 
 /** Each font's CSS family and letter spacing. */
@@ -63,11 +68,13 @@ export function clampTextSize(size: number): number {
  * The size that follows the device's text setting.
  *
  * @param rootFontSize - the page's root font size in px (16 unless the device enlarges text)
- * @returns 19 px at 16, and the same share larger or smaller, from 14 to 28
+ * @param windowWidth - the window's width in px, as phones start smaller (CALM-5)
+ * @returns 20 px at 16 (17 px under 600 px wide), and the same share larger or smaller, from 14 to 28
  */
-export function deviceTextSize(rootFontSize: number): number {
-  if (!Number.isFinite(rootFontSize) || rootFontSize <= 0) return defaultTextSize;
-  return clampTextSize((defaultTextSize * rootFontSize) / browserNormalSize);
+export function deviceTextSize(rootFontSize: number, windowWidth = phoneWidth): number {
+  const startSize = windowWidth < phoneWidth ? defaultPhoneTextSize : defaultTextSize;
+  if (!Number.isFinite(rootFontSize) || rootFontSize <= 0) return startSize;
+  return clampTextSize((startSize * rootFontSize) / browserNormalSize);
 }
 
 /**
@@ -110,12 +117,13 @@ export function readingTextStyle(
 }
 
 /**
- * How wide the chapter column may grow: the text width plus the board's 80 px right-hand column
- * kept free for paragraph comment markers.
+ * How wide the chapter column may grow: the text width alone. Since CALM-5 a paragraph's comment
+ * count sits in the paper's left margin (wide screens) or on the paragraph's corner (phones), so
+ * no column is kept free beside the text any more.
  *
  * @param lineWidth - the reader's line width
  * @returns the column's maximum width in px
  */
 export function readingColumnWidth(lineWidth: ReadingLineWidth): number {
-  return lineWidths[lineWidth] + 80;
+  return lineWidths[lineWidth];
 }

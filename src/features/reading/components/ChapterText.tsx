@@ -17,7 +17,8 @@
  * so a passage or picture can be shared as a link to its spot, and a shared passage is highlighted.
  * A picture readers may share gets the Share button the reader passes in (pictureShare).
  * Paragraph comments (S1-E6-06): when the reader passes paragraphAddon, each top-level paragraph
- * sits in a two-column row (.tmc-paragraph-row) with the addon (the comment marker) beside it.
+ * sits in a row (.tmc-paragraph-row) with the addon (the comment marker) placed over its edge
+ * (CALM-5: in the left margin from 1024 px, at the top right corner below that).
  * Poems (MUST-2): with isPoem, lib/poemStanzas.ts draws stanzas and lines, styled by `.tmc-poem`.
  * Look: the shared `.tmc-chapter-text` styles (src/styles/index.css), board 4.3 and 3.5.
  * Who uses it: ChapterPreviewDialog (src/features/writing/); the chapter reader.

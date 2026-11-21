@@ -11,6 +11,9 @@
  * - with the device set to larger text, the default size follows it until the reader picks one,
  *   and "Use my device's size" brings it back (third criterion);
  * - Escape closes the panel and puts focus back on its button; a visitor has no settings button;
+ * - time left sits in the chapter bar by default; "On the page" puts back the floating pill and
+ *   takes the minutes out of the bar, and the choice is saved (CALM-5, handover Step 4, points 11
+ *   and 12); Reading settings and a paragraph's comments are never open together;
  * - the open panel passes axe at 390 px in ro and en, in the night theme, and fits at 320 px.
  * Test data: adult_writer's story "Ploaia de joi" with one chapter; pending_check reads it
  *   (no other spec reads as pending_check in the reader). All removed afterwards.
@@ -106,7 +109,7 @@ test.describe('reading settings (S1-E4-02)', () => {
     await panel.getByRole('radio', { name: 'Wide' }).first().click();
     await expect.poll(() => textStyle(page, 'lineHeight')).toBe('48px');
     await panel.getByRole('radio', { name: 'Narrow' }).click();
-    await expect(page.locator('article')).toHaveCSS('max-width', '640px');
+    await expect(page.locator('article')).toHaveCSS('max-width', '560px');
     await panel.getByRole('radio', { name: 'Sepia' }).click();
     await expect(page.locator('.tmc-reading-page--sepia')).toHaveCSS(
       'background-color',
@@ -132,14 +135,14 @@ test.describe('reading settings (S1-E4-02)', () => {
   }) => {
     runSql(`delete from public.reading_settings where user_id = '${readerId}';`);
     const page = await openChapter(browser, { rootFontSize: 20 });
-    await expect.poll(() => textStyle(page, 'fontSize')).toBe('24px');
+    await expect.poll(() => textStyle(page, 'fontSize')).toBe('25px');
     await page.getByRole('button', { name: 'Reading settings' }).click();
     const panel = page.getByRole('region', { name: 'Reading settings' });
-    await expect(panel).toContainText('24 px, from the device');
+    await expect(panel).toContainText('25 px, from the device');
     await panel.getByLabel('Text size').fill('16');
     await expect.poll(() => textStyle(page, 'fontSize')).toBe('16px');
     await panel.getByRole('button', { name: 'Use the device’s size' }).click();
-    await expect.poll(() => textStyle(page, 'fontSize')).toBe('24px');
+    await expect.poll(() => textStyle(page, 'fontSize')).toBe('25px');
   });
 
   test('Escape closes the panel and focus goes back to its button; visitors have no settings', async ({
@@ -157,6 +160,37 @@ test.describe('reading settings (S1-E4-02)', () => {
     await visitor.goto(chapterPath);
     await expect(visitor.getByRole('heading', { level: 1 })).toBeVisible();
     await expect(visitor.getByRole('button', { name: 'Reading settings' })).toHaveCount(0);
+  });
+
+  test('time left shows in the bar until the reader puts it on the page', async ({ browser }) => {
+    runSql(`delete from public.reading_settings where user_id = '${readerId}';`);
+    const page = await openChapter(browser);
+    await page.setViewportSize({ width: 1280, height: 400 });
+    // Step 1: the default, in the bar, and no floating pill.
+    const barMeta = page.getByTestId('chapter-bar-meta');
+    await expect(barMeta).toHaveText('Chapter 1 of 1 · 1 min left');
+    await expect(page.getByTestId('reading-time-left')).toHaveCount(0);
+    // Step 2: On the page: the pill comes back and the bar keeps only the place.
+    await page.getByRole('button', { name: 'Reading settings' }).click();
+    const panel = page.getByRole('region', { name: 'Reading settings' });
+    await panel.locator('label', { hasText: 'On the page' }).click();
+    await expect(barMeta).toHaveText('Chapter 1 of 1');
+    await expect(page.getByTestId('reading-time-left')).toHaveText('1 min left');
+    await expect
+      .poll(() =>
+        runSql(
+          `select time_left from public.reading_settings where user_id = '${readerId}';`,
+        ).trim(),
+      )
+      .toBe('page');
+    // Step 3: a paragraph's comments close Reading settings (never both open).
+    await page.locator('.tmc-paragraph-marker').first().click();
+    await expect(panel).toBeHidden();
+    await expect(page.getByRole('button', { name: 'Reading settings' })).toHaveAttribute(
+      'aria-expanded',
+      'false',
+    );
+    await page.context().close();
   });
 
   for (const language of ['ro', 'en'] as const) {

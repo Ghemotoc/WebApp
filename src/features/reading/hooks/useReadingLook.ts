@@ -49,13 +49,14 @@ export function readingPageFor(theme: ReadingTheme): ReadingPage {
  * @param chapterCode - the open chapter, whose theme may come from the clock or a pick by hand
  * @returns textVariables (a style with the CSS variables), columnWidth (px), page (the theme's
  *   box), deviceSize (the size that follows the device), isSignedIn and hasRuler (the reading
- *   ruler is on)
+ *   ruler is on) and timeLeft (where the minutes left show, CALM-5)
  */
 export function useReadingLook(chapterCode: string) {
   const { settings, isSignedIn } = useReadingSettings();
   const { theme } = useChapterTheme(settings, chapterCode);
   // The device's size is read once: it changes only when the reader changes their device setting.
-  const [deviceSize] = useState(() => deviceTextSize(readRootFontSize()));
+  // Phones start at 17 px and wider windows at 20 px (CALM-5, handover Step 3).
+  const [deviceSize] = useState(() => deviceTextSize(readRootFontSize(), window.innerWidth));
   const textStyle = readingTextStyle(settings, deviceSize);
   const textVariables = {
     '--reading-font-family': textStyle.fontFamily,
@@ -70,5 +71,7 @@ export function useReadingLook(chapterCode: string) {
     deviceSize,
     isSignedIn,
     hasRuler: isSignedIn && settings.readingRuler,
+    // Where the minutes left show (CALM-5): the bar unless the reader picked On the page.
+    timeLeft: settings.timeLeft,
   };
 }
