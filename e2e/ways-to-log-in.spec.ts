@@ -291,6 +291,8 @@ test.describe('ways to log in', () => {
     await page.goto('/settings#ways-to-log-in');
     const panel = page.locator('#ways-to-log-in');
     await expect(panel.getByRole('heading', { name: 'Ways to log in' })).toBeVisible();
+    // While only adults may join there is no age check, so the line about it is hidden (WAITLIST-2).
+    await expect(panel.getByText('You still need the age check.', { exact: false })).toHaveCount(0);
     await expect(
       panel.getByRole('listitem').filter({ hasText: 'Email and password' }),
     ).toContainText('Connected');

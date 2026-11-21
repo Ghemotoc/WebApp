@@ -140,7 +140,8 @@
       "march_target_return_rate": "Return rate (%)",
       "rank_badge_min_stories": "Rank badges: fewest stories a tag needs before a cover shows a rank in it",
       "picture_allowed_kinds": "Kinds of picture allowed (shown on every upload screen)",
-      "picture_reject_reasons": "Reasons for rejecting a picture (labels in interface text)"
+      "picture_reject_reasons": "Reasons for rejecting a picture (labels in interface text)",
+      "waitlist_alert_email": "Email for new people on the waiting list (empty: the support address)"
     }
   },
   "discover": {

@@ -435,7 +435,8 @@
       "saveFailed": "Nu am putut salva. Verifică-ți conexiunea și încearcă din nou.",
       "settingsLink": "Setări: emailuri, noutăți și cont",
       "logOut": "Deconectează-te",
-      "logOutFailed": "Nu te-am putut deconecta. Verifică-ți conexiunea și încearcă din nou."
+      "logOutFailed": "Nu te-am putut deconecta. Verifică-ți conexiunea și încearcă din nou.",
+      "identityNote": "Este posibil să îți cerem mai târziu să îți confirmi identitatea."
     }
   }
 }

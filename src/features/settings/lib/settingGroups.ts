@@ -77,7 +77,11 @@ export const settingGroups: { id: string; keys: string[] }[] = [
   },
   {
     id: 'notifications',
-    keys: ['notification_follower_group_hours', 'notification_reaction_group_minutes'],
+    keys: [
+      'notification_follower_group_hours',
+      'notification_reaction_group_minutes',
+      'waitlist_alert_email',
+    ],
   },
   {
     id: 'retention',
