@@ -10,7 +10,7 @@
  * - the same reader connecting from Sweden reads the chapter;
  * - the page has no serious axe issue at phone and desktop width, by day and at night.
  * The database rules (who may set it, lists, the Library, old or forged tokens, classics) are in
- * supabase/tests/database/392-hide-in-countries.test.sql.
+ * supabase/tests/database/393-hide-in-countries.test.sql.
  * How the country is faked: the local Pages Functions read the X-Fake-Country header
  * (server/pages-functions-plugin.ts) and sign it with the e2e secret, which this spec puts in Vault.
  * Test data: the seed's adult_writer and teacher, reading in English, and one chapter this spec

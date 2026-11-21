@@ -780,6 +780,9 @@ begin
       -- CMS-1e: readers see only approved tags; a waiting one shows only in the writer's settings.
       where story_tags.story_id = story.id and tags.status = 'approved'), '[]'::jsonb),
     'completion_status', story.completion_status,
+    -- CALM-6: "of N" only while a last chapter is marked, and the next scheduled chapter.
+    'last_chapter_number', public.story_last_chapter_number(story.id),
+    'next_chapter', public.next_chapter_json(story.id),
     'comments_enabled', story.comments_enabled,
     -- CALM-8: the end of a running pause of new comments; null when none runs or it has passed.
     'comments_paused_until', public.running_comment_pause(story),
