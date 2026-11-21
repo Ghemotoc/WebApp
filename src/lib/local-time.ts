@@ -286,10 +286,14 @@ export function chapterDayWording(
   // Step 2: within the week, the weekday's name.
   const locale = dateLocaleFor(language);
   if (daysAhead < 7) {
-    const weekday = new Intl.DateTimeFormat(locale, { timeZone, weekday: 'long' }).format(scheduledFor);
+    const weekday = new Intl.DateTimeFormat(locale, { timeZone, weekday: 'long' }).format(
+      scheduledFor,
+    );
     return { kind: 'weekday', weekday };
   }
   // Step 3: further ahead, the day and the month.
-  const date = new Intl.DateTimeFormat(locale, { timeZone, day: 'numeric', month: 'long' }).format(scheduledFor);
+  const date = new Intl.DateTimeFormat(locale, { timeZone, day: 'numeric', month: 'long' }).format(
+    scheduledFor,
+  );
   return { kind: 'date', date };
 }
