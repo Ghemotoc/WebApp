@@ -118,6 +118,7 @@ describe('storySettingsSchema: pausing new comments (CALM-8)', () => {
       cardColour: null,
       visibility: 'public',
       isAppOnly: false,
+      hiddenInCountries: [],
     });
   }
 
@@ -129,5 +130,26 @@ describe('storySettingsSchema: pausing new comments (CALM-8)', () => {
 
   it('refuses any other length', () => {
     expect(settingsWith('2w').success).toBe(false);
+  });
+
+  it('takes two-letter country codes for where the story is hidden (COUNTRY-1)', () => {
+    const answers = {
+      ...good,
+      completionStatus: 'ongoing',
+      commentsEnabled: true,
+      commentAudience: 'everyone',
+      commentPause: null,
+      quoteCardsEnabled: true,
+      pictureSharingEnabled: true,
+      cardColour: null,
+      visibility: 'public',
+      isAppOnly: false,
+    };
+    expect(
+      storySettingsSchema.safeParse({ ...answers, hiddenInCountries: ['MD', 'NO'] }).success,
+    ).toBe(true);
+    expect(
+      storySettingsSchema.safeParse({ ...answers, hiddenInCountries: ['Moldova'] }).success,
+    ).toBe(false);
   });
 });
