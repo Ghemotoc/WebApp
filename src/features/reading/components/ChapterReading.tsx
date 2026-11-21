@@ -99,20 +99,43 @@ function StoryFacts({ chapter, story }: { chapter: ReaderChapter; story: StoryPa
  * What follows the paper: the chapter navigation, the copy notice, the "Share quote" watcher, the
  * 728 × 90 advert (S1-E12-01) and the comments (S1-E6-01).
  *
+ * The copy notice and the "Share quote" watcher listen for a copy or a selection from the first
+ * paint, so a reader who selects at once is never missed. The navigation, the advert and the
+ * comments wait for `hasPainted` (useAfterFirstPaint), so the text paints first on a slow phone.
+ *
  * @returns the parts in reading order
  */
-function UnderThePaper(props: { chapter: ReaderChapter; story: StoryPageData | null }) {
-  const { chapter, story } = props;
+function UnderThePaper(props: {
+  chapter: ReaderChapter;
+  story: StoryPageData | null;
+  hasPainted: boolean;
+}) {
+  const { chapter, story, hasPainted } = props;
   const sharedChapter = useMemo(() => toSharedChapter(chapter), [chapter]);
   return (
     <>
-      <ChapterNavigation
-        chapter={chapter}
-        previousTitle={chapterTitle(story, chapter.previousCode)}
-        nextTitle={chapterTitle(story, chapter.nextCode)}
-      />
+      {hasPainted && (
+        <ChapterNavigation
+          chapter={chapter}
+          previousTitle={chapterTitle(story, chapter.previousCode)}
+          nextTitle={chapterTitle(story, chapter.nextCode)}
+        />
+      )}
       <CopyNotice penName={chapter.story.writer.displayName} />
       <QuoteShareWatcher chapter={sharedChapter} />
+      {hasPainted && <TheRestUnderThePaper chapter={chapter} />}
+    </>
+  );
+}
+
+/**
+ * The 728 × 90 advert and the comments, drawn once the text has painted.
+ *
+ * @returns the advert and the comments
+ */
+function TheRestUnderThePaper({ chapter }: { chapter: ReaderChapter }) {
+  return (
+    <>
       <PageAdSlot
         pageKey="chapter"
         position={1}
@@ -221,10 +244,23 @@ function useChapterScreen(chapter: ReaderChapter) {
   // Handover Step 4, point 11: the minutes left sit in the bar unless the reader chose the page.
   const isTimeInBar = hasText && look.timeLeft === 'bar';
   const barMinutes = isTimeInBar ? minutesLeft(chapter.minutesToRead, track.progress) : null;
-  // The parts under the paper wait one frame, so the first paragraph paints sooner on a slow
+  // Most parts under the paper wait one frame, so the first paragraph paints sooner on a slow
   // phone (useAfterFirstPaint; the S1-E4-01b budget).
-  const showUnderPaper = useAfterFirstPaint() && hasText;
-  return { hasText, track, look, isWide, setThreadSlot, tools, story, barMinutes, showUnderPaper };
+  const hasPainted = useAfterFirstPaint();
+  // Below 1280 px, About this story and its advert follow the comments, once the text has painted.
+  const hasFactsBelow = hasText && hasPainted && !isWide;
+  return {
+    hasText,
+    track,
+    look,
+    isWide,
+    setThreadSlot,
+    tools,
+    story,
+    barMinutes,
+    hasPainted,
+    hasFactsBelow,
+  };
 }
 
 /**
@@ -236,7 +272,7 @@ export function ChapterReading(props: { chapter: ReaderChapter; spot: SpotRange 
   const { chapter } = props;
   const { t } = useTranslation('reading');
   const screen = useChapterScreen(chapter);
-  const { hasText, look, isWide, tools, story, showUnderPaper } = screen;
+  const { hasText, look, isWide, tools, story, hasPainted } = screen;
   // While the place's file loads, an empty stand-in carries the panel's id, so Aa's aria-controls
   // never points at nothing (axe: aria-valid-attr-value).
   const settingsPanel = tools.isSettingsOpen ? (
@@ -267,8 +303,8 @@ export function ChapterReading(props: { chapter: ReaderChapter; spot: SpotRange 
       <ParagraphCommentsContext.Provider value={tools.paragraphComments}>
         <ReaderRow side={side}>
           <PaperWithText chapter={chapter} spot={props.spot} look={look} track={screen.track} />
-          {showUnderPaper && <UnderThePaper chapter={chapter} story={story} />}
-          {showUnderPaper && !isWide && (
+          {hasText && <UnderThePaper chapter={chapter} story={story} hasPainted={hasPainted} />}
+          {screen.hasFactsBelow && (
             <div className="mx-auto mt-10 flex w-full max-w-[760px] flex-col gap-6">
               <StoryFacts chapter={chapter} story={story} />
             </div>
