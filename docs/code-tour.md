@@ -1488,6 +1488,7 @@ ChapterReaderPage → useChapter → api/chapter.ts → get_chapter(story_slug, 
   │  ReadingPaper (the sheet of paper; full width on phones) → ChapterReaderHeader (H1 in Literata)
   │     → ChapterText (the Markdown as HTML, 20 px, 17 px on phones) → ChapterEnd
   │  ChapterNavigation (Previous, the dots, Next) → the 728 × 90 advert → ChapterComments
+  │     (these and About this story wait one frame, useAfterFirstPaint, so the text paints first)
   │  ReaderSideColumn from 1280 px: the open panel, AboutThisStory, the 300 × 250 advert
   │  (below 1280 px About and the advert follow the comments; the panels open in ReaderSheet)
   ▼
