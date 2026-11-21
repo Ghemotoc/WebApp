@@ -14,6 +14,9 @@
  * Never stored, never logged: the message, the email, the IP address (CLAUDE.md rule 12). A
  * signed-in person's username and user ID travel in the staff email only (the story's third
  * criterion), so staff can find the account; never the year of birth or the age check.
+ * A bug report from the trial's "Report a bug" panel (TRIAL-FEEDBACK) comes the same way, with
+ * the topic 'bug_report': its kind, page, browser and screen size go at the top of the message,
+ * so the ticket and the staff email both show them.
  * Who calls it: functions/api/contact.ts on Cloudflare, the Vite plugin locally.
  */
 import { contactRequestSchema, type ContactRequest } from '../src/schemas/contact';
@@ -63,7 +66,34 @@ const topicWords: Record<ContactRequest['topic'], string> = {
   account: 'Account problem',
   data_request: 'Data request',
   other: 'Other',
+  bug_report: 'Bug report',
 };
+
+/** A bug report's kind in staff words (board J31's three choices). */
+const bugKindWords: Record<NonNullable<ContactRequest['bugKind']>, string> = {
+  broke: 'Something broke',
+  looks_wrong: 'Something looks wrong',
+  idea: 'An idea',
+};
+
+/**
+ * The message as staff read it. A bug report starts with what it is and where it happened
+ * (TRIAL-FEEDBACK); every other message is the person's words as they wrote them.
+ *
+ * @param message - the checked message
+ * @returns the text for the ticket and the staff email
+ */
+export function messageForStaff(message: ContactRequest): string {
+  if (message.topic !== 'bug_report' || message.bugKind === undefined) return message.message;
+  const details = message.pageContext;
+  const lines = [
+    `Kind: ${bugKindWords[message.bugKind]}`,
+    `Page: ${details?.pagePath ?? 'unknown'}`,
+    `Browser: ${details?.browser ?? 'unknown'}`,
+    `Screen: ${details?.screenSize ?? 'unknown'}`,
+  ];
+  return `${lines.join('\n')}\n\n${message.message}`;
+}
 
 /** The acknowledgement in the sender's language ("we reply within one month", Q10f). */
 const acknowledgements = {
@@ -124,7 +154,7 @@ export async function saveContactTicket(
   // Step 2: the fields the database reads, signed exactly as sent.
   const payload = JSON.stringify({
     topic: message.topic,
-    message: message.message,
+    message: messageForStaff(message),
     email: message.email,
     language: message.language,
     sentAt: now.toISOString(),
@@ -170,7 +200,7 @@ export function staffEmail(
     to: supportEmail,
     replyTo: message.email,
     subject: `[${reference}] ${topicWords[message.topic]}`,
-    text: `${who}\nLanguage: ${message.language}\nTopic: ${topicWords[message.topic]}\n\n${message.message}\n`,
+    text: `${who}\nLanguage: ${message.language}\nTopic: ${topicWords[message.topic]}\n\n${messageForStaff(message)}\n`,
   };
 }
 

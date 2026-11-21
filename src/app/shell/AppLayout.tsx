@@ -70,6 +70,8 @@ import { PresenceHeartbeat } from '@/features/privacy/components/PresenceHeartbe
 import { useSession } from '@/features/auth/hooks/useSession';
 import { usePendingPictureRetry } from '@/features/pictures/hooks/usePictures';
 import { NoticeStrip } from '@/features/website/components/NoticeStrip';
+import { DesktopOnlyGate } from '@/features/trial/components/DesktopOnlyGate';
+import { TrialFeedback } from '@/features/trial/components/TrialFeedback';
 import { WaitlistGate } from '@/features/waitlist/components/WaitlistGate';
 import { WriteLink } from '@/features/writing/components/WriteLink';
 
@@ -165,46 +167,51 @@ export function AppLayout() {
   // No background of its own: the page colour and the still colour blobs behind every page come
   // from src/styles/index.css (bundle G1), and a background here would hide them.
   return (
-    // With the tab bar on screen, the frame leaves room at its foot so the footer's last line is
-    // never hidden under it: 64 px bar + 14 px gap + 26 px air, plus a phone's home bar.
-    <div
-      className={`flex min-h-dvh flex-col text-ink ${hasTabBar ? 'pb-[calc(104px+env(safe-area-inset-bottom))]' : ''}`}
-    >
-      <a
-        href="#main"
-        className="sr-only z-40 rounded-full bg-surface-solid px-4 py-2 focus:not-sr-only focus:absolute focus:top-2 focus:left-2"
+    // While the trial runs on computers only, a phone or tablet sees one page instead (TRIAL-DESKTOP).
+    <DesktopOnlyGate>
+      {/* With the tab bar on screen, the frame leaves room at its foot so the footer's last line is
+        never hidden under it: 64 px bar + 14 px gap + 26 px air, plus a phone's home bar. */}
+      <div
+        className={`flex min-h-dvh flex-col text-ink ${hasTabBar ? 'pb-[calc(104px+env(safe-area-inset-bottom))]' : ''}`}
       >
-        {t('shell.skipToContent')}
-      </a>
-      {/* The approved emblem in the browser tab (BRAND-1b). */}
-      <BrandTabIcon />
-      {header}
-      {/* "You're offline" and "You're back online" (S1-E1-05). */}
-      <OfflineBanner />
-      {/* The notice banner staff publish from Website › Notice banners (S1-E11-10). */}
-      <NoticeStrip />
-      <main id="main" tabIndex={-1} className="flex-1 focus:outline-none">
-        <PageHeaderContext.Provider value={setIsHeaderOwnedByPage}>
-          {/* While maintenance mode is on, the maintenance page replaces all of this (S1-E1-05). */}
-          <MaintenanceGate>
-            {/* While the account waits to be deleted, the closing page replaces the rest (S1-E13-03). */}
-            <AccountClosingGate>
-              {/* While the person waits on the list, the holding page replaces the rest (WAITLIST-1). */}
-              <WaitlistGate>
-                {/* The account notices: Terms, country, username, age check, consent, sanctions. */}
-                <AccountNotices />
-                <Outlet />
-              </WaitlistGate>
-            </AccountClosingGate>
-          </MaintenanceGate>
-        </PageHeaderContext.Provider>
-      </main>
-      {/* "Show when I'm online": a beat a minute, only while switched on (S1-E13-01). */}
-      <PresenceHeartbeat />
-      <ActiveMinutesCounter />
-      <Footer endSlot={<LanguageSelect id="language-select-footer" isLabelVisible />} />
-      {/* The floating tab bar, on narrow browse pages only (handoff "App header and tab bar"). */}
-      {hasTabBar && <TabBar />}
-    </div>
+        <a
+          href="#main"
+          className="sr-only z-40 rounded-full bg-surface-solid px-4 py-2 focus:not-sr-only focus:absolute focus:top-2 focus:left-2"
+        >
+          {t('shell.skipToContent')}
+        </a>
+        {/* The approved emblem in the browser tab (BRAND-1b). */}
+        <BrandTabIcon />
+        {header}
+        {/* "You're offline" and "You're back online" (S1-E1-05). */}
+        <OfflineBanner />
+        {/* The notice banner staff publish from Website › Notice banners (S1-E11-10). */}
+        <NoticeStrip />
+        <main id="main" tabIndex={-1} className="flex-1 focus:outline-none">
+          <PageHeaderContext.Provider value={setIsHeaderOwnedByPage}>
+            {/* While maintenance mode is on, the maintenance page replaces all of this (S1-E1-05). */}
+            <MaintenanceGate>
+              {/* While the account waits to be deleted, the closing page replaces the rest (S1-E13-03). */}
+              <AccountClosingGate>
+                {/* While the person waits on the list, the holding page replaces the rest (WAITLIST-1). */}
+                <WaitlistGate>
+                  {/* The account notices: Terms, country, username, age check, consent, sanctions. */}
+                  <AccountNotices />
+                  <Outlet />
+                </WaitlistGate>
+              </AccountClosingGate>
+            </MaintenanceGate>
+          </PageHeaderContext.Provider>
+        </main>
+        {/* "Show when I'm online": a beat a minute, only while switched on (S1-E13-01). */}
+        <PresenceHeartbeat />
+        <ActiveMinutesCounter />
+        <Footer endSlot={<LanguageSelect id="language-select-footer" isLabelVisible />} />
+        {/* The floating tab bar, on narrow browse pages only (handoff "App header and tab bar"). */}
+        {hasTabBar && <TabBar />}
+        {/* "Report a bug" on the right edge, for members while the trial runs (TRIAL-FEEDBACK). */}
+        <TrialFeedback />
+      </div>
+    </DesktopOnlyGate>
   );
 }

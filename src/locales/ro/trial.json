@@ -1,0 +1,28 @@
+{
+  "bugReport": {
+    "tab": "Raportează o eroare",
+    "title": "Raportează o eroare",
+    "kindLabel": "Ce este?",
+    "kinds": {
+      "broke": "Ceva nu merge",
+      "looks_wrong": "Ceva arată greșit",
+      "idea": "O idee"
+    },
+    "message": "Ce s-a întâmplat?",
+    "whatWeSend": "Trimitem și adresa paginii, browserul și dimensiunea ecranului tău. Nu scrie parole sau alte date private.",
+    "send": "Trimite",
+    "cancel": "Anulează",
+    "sentBody": "Mulțumim. Am primit raportul și îl vom citi. Dacă avem nevoie de mai multe, îți scriem pe email.",
+    "close": "Închide",
+    "unsent": "Nu am putut trimite raportul. Textul tău a rămas aici. Încearcă din nou peste câteva minute."
+  },
+  "computerOnly": {
+    "documentTitle": "Deocamdată, testul merge pe calculator · {{productName}}",
+    "heading": "Deocamdată, testul merge pe calculator",
+    "body": "Deschide acest link pe un laptop sau pe un desktop.",
+    "copyLink": "Copiază linkul",
+    "copied": "Link copiat.",
+    "copyFailed": "Nu am putut copia linkul. Copiază-l din bara de adrese.",
+    "later": "Telefoanele și tabletele vin mai târziu."
+  }
+}

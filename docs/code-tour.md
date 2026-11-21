@@ -186,6 +186,7 @@ Every section, in the order it was built (QA-5, finding R4). Search this list fo
 - ["Tell me when you open here" (G5a)](#tell-me-when-you-open-here-g5a)
 - [The Writers' hub and Resources (G9a)](#the-writers-hub-and-resources-g9a)
 - [The simplified design: foundations (CALM-1)](#the-simplified-design-foundations-calm-1)
+- [The trial: Report a bug and computers only (TRIAL-1)](#the-trial-report-a-bug-and-computers-only-trial-1)
 
 </details>
 
@@ -2955,3 +2956,10 @@ of a side notch when the phone is turned sideways (env(safe-area-inset-left) and
 ```
 
 - Tests: `scripts/token-contrast.test.ts` (the flat button, the thread, the mesh colours, and text and links on the mesh in every look), `src/lib/browserBarColour.test.ts` (the bars follow every switch, the staff beige included), `src/features/staff/components/StaffBrowserBars.test.tsx`, `scripts/theme-init.test.ts` (the first-paint script gives both bars the right colour, and its colours and the metas in `index.html` match `--paper` in `tokens.css`, day and night) and `src/components/covers/DrawnCover.test.tsx`. The real-phone check (Safari on an iPhone, Chrome on Android, day and night) is by hand, before the pull request is marked ready.
+
+## The trial: Report a bug and computers only (TRIAL-1)
+
+Two switches for the invited-adults trial, both off until staff turn them on in Staff › Settings (migration `20270205100414_trial1_feedback_and_desktop.sql`; boards J30 to J33). The code lives in `src/features/trial/`.
+
+- Report a bug (`trial_feedback`): `AppLayout` → `TrialFeedback` loads `MemberTrialFeedback` (which reads the flags) only once someone is signed in, and that loads `BugReportTab` only while the flag is on, so a visitor's first download carries almost none of it. The tab sits on the right edge, halfway down. It opens `BugReportPanel` (the shared `Sheet`), with `BugReportForm`: what it is (three chips), what happened, and Send. `useBugReport()` → `sendContactMessage()` → POST /api/contact with the topic `bug_report`, the kind and `currentPageContext()` (`lib/pageContext.ts`: the path without its query or hash, the browser as a name and version, the window and screen sizes). `server/contact.ts` (`messageForStaff()`) puts those details above the words, in the staff email and in the ticket; `submit_contact_ticket()` files it under Bug as "Bug report".
+- Computers only (`desktop_only`): `AppLayout` sits inside `DesktopOnlyGate`. On a touch-first device (`lib/touchFirstDevice.ts`: a finger as the main pointer and no mouse or trackpad, never the window's width) it loads `TouchDeviceGate`, which reads the flags; while the flag is on it shows `ComputerOnlyPage` ("For now, the test runs on a computer", Copy link) instead of the whole frame. `lib/openOnPhones.ts` keeps the Legal centre, Contact us, the report form, the email link's landing page, a new password and unsubscribe open. Staff pages have their own frame and stay open.
