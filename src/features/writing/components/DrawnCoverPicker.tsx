@@ -85,7 +85,7 @@ function CoverTile({
         isDecorative
         className="w-full"
       />
-      <span className="text-[11px] leading-tight text-meta" aria-hidden="true">
+      <span className="text-xs leading-tight text-meta" aria-hidden="true">
         {designName}
       </span>
       {design.isNew === true && (

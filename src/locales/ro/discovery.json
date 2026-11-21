@@ -113,8 +113,8 @@
     "showSlide": "Arată povestea {{position}}: {{title}}",
     "previous": "Povestea anterioară",
     "next": "Povestea următoare",
-    "pause": "Oprește derularea poveștilor",
-    "pauseShort": "Oprește"
+    "pause": "Oprește prezentarea",
+    "play": "Pornește prezentarea"
   },
   "writersToFollow": {
     "eyebrow": "În ascensiune",

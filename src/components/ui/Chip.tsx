@@ -2,11 +2,12 @@
  * Chip: a choice the reader can switch on and off, such as a filter (story S1-E1-03; DoD pill
  * system).
  *
- * The rule: clear grey glass (button-glass) with a #8E7B99 border (3:1) and ink text, 36 px tall
+ * The rule: clear grey glass (button-glass) with a control-border edge (#725F88 by day since CALM-1b, 3:1) and ink text, 36 px tall
  * with a 44 px touch target, a visible focus ring, and the selected state shown by a tick and
  * aria-pressed, never by colour alone; a pressed chip takes the "on" fill with its glass sheen
  * (bundle G3 COMPONENTS, handoff: "Every pill is liquid glass"). It stays 36 px tall as the DoD pill
  * system says, so filter rows keep their room; its touch target is the handoff's 44 px.
+ * Its edge is 0.5 px (canvas v38; Robert via DESIGN, 20 Nov 2026, 21:03 UTC; CALM-1b).
  * Who uses it: filters on Discover and Search, tabs in the admin site.
  */
 import type { ReactNode } from 'react';
@@ -52,7 +53,7 @@ export function Chip({
         // max-w-full with the truncating span below: a chip whose text a member typed as one very
         // long word (a detail's name) shortens with an ellipsis and never pushes the page
         // sideways (rule 21; GAPS-1 break test). Its full text stays the accessible name.
-        "relative inline-flex h-9 max-w-full items-center justify-center gap-1.5 rounded-full border px-3.5 font-body text-sm leading-none font-semibold whitespace-nowrap after:absolute after:inset-x-0 after:top-1/2 after:h-11 after:-translate-y-1/2 after:content-['']",
+        "relative inline-flex h-9 max-w-full items-center justify-center gap-1.5 rounded-full border-[0.5px] px-3.5 font-body text-sm leading-none font-semibold whitespace-nowrap after:absolute after:inset-x-0 after:top-1/2 after:h-11 after:-translate-y-1/2 after:content-['']",
         isDisabled && 'cursor-not-allowed opacity-60',
         isPressed ? 'border-chip-on bg-chip-on text-chip-on-text' : 'button-glass',
       )}

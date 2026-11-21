@@ -2,7 +2,7 @@
  * TextInput: a labelled one-line text field, with an optional hint and error (story S1-E1-03).
  *
  * Handoff values (bundle G3): 48 px tall, 14 px radius, the --field fill, 16 px horizontal padding
- * (field-box in index.css). The border is #8E7B99 (3:1),
+ * (field-box in index.css). The border is the control-border token (#725F88 by day since CALM-1b, 3:1),
  * not the boards' paler #DED3E4, so the field's edge meets WCAG 2.2, 1.4.11 (docs/board-fixes.md).
  * The hint and the error are linked with aria-describedby so screen readers read them with the
  * field; an error also sets aria-invalid. Typed or pasted ş and ţ become ș and ț straight away

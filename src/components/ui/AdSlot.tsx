@@ -48,7 +48,7 @@ export function AdSlot({ format, labelKind, children }: AdSlotProps) {
       data-ad={format}
       className={`relative box-border flex items-center justify-center rounded-ad border border-dashed border-dashed-border bg-panel px-4 text-sm font-medium text-meta ${formatClasses[format]}`}
     >
-      <span className="absolute top-3 left-3.5 inline-flex h-6 items-center rounded-full border border-meta px-2.5 text-[11px] font-bold tracking-[0.12em] text-body uppercase">
+      <span className="absolute top-3 left-3.5 inline-flex h-6 items-center rounded-full border border-meta px-2.5 text-xs font-bold tracking-[0.12em] text-body uppercase">
         {labelKind === 'ad' ? t('ads.labelAd') : t('ads.labelSponsored')}
       </span>
       <span className="text-center">{children}</span>

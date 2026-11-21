@@ -2,7 +2,7 @@
  * Textarea: a labelled multi-line text field (story S1-E1-03).
  *
  * Board values: at least 96 px tall, 20 px radius, 14 by 18 px padding, line height 1.5, resizes
- * vertically. Border #8E7B99 for 3:1 contrast, as for TextInput (docs/board-fixes.md).
+ * vertically. Border --control-border (#725F88 by day since CALM-1b) for 3:1 contrast, as for TextInput (docs/board-fixes.md).
  * Typed or pasted ş and ţ become ș and ț straight away (CLAUDE.md rule 4; S1-E1-04).
  * Who uses it: comments (S1-E6-01), reports (S1-E10-01) and staff notes.
  */

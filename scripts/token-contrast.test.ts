@@ -230,13 +230,23 @@ describe('design token contrast', () => {
     expect(failingPairs(themes.staffNight)).toEqual([]);
   });
 
-  it('uses the Lilac mist colours of the approved design by day (bundle G1)', () => {
+  it('uses the Lilac mist colours of the approved design by day (bundle G1; CALM-1b, canvas v38)', () => {
     expect(themes.light.get('paper')).toBe('#f3eefb');
     expect(themes.light.get('ink')).toBe('#24133a');
     expect(themes.light.get('heading')).toBe('#2a0e33');
-    expect(themes.light.get('body')).toBe('#584a6e');
-    expect(themes.light.get('link')).toBe('#4b4fa8');
+    expect(themes.light.get('body')).toBe('#4a3e60');
+    expect(themes.light.get('link')).toBe('#3d4290');
+    expect(themes.light.get('control-border')).toBe('#725f88');
     expect(themes.light.get('focus-ring')).toBe('#48125d');
+  });
+
+  it('takes the canvas v38 muted text, edges and pressed quiet button at night and in staff (CALM-1b)', () => {
+    expect(themes.night.get('body')).toBe('#d6d6d6');
+    expect(themes.night.get('control-border')).toBe('#a3a3a8');
+    expect(themes.night.get('pill-gold-text')).toBe('#fff4e4');
+    expect(themes.night.get('quiet-pressed-bg')).toBe('#f5f5f5');
+    expect(themes.night.get('quiet-pressed-text')).toBe('#111113');
+    expect(themes.staffLight.get('body')).toBe('#4f443a');
   });
 
   it('draws eyebrows black by day and white at night, never gold (Robert, 7 Nov 2026)', () => {

@@ -4,7 +4,8 @@
  * The rule: a pastel tint, a soft border and dark text of the same hue (text at least 7:1 in light
  * mode), content centred with equal padding, 24 px tall, 12 px bold text. Six tones from the
  * boards: plum, sage, gold, sky, neutral, blush. A pill holding a whole sentence may wrap (canWrap). Night mode swaps in dark tints with light text
- * (src/styles/tokens.css). Interactive choices are Chips, not pills.
+ * (src/styles/tokens.css). The edge is 0.5 px (canvas v38; CALM-1b). Interactive choices are
+ * Chips, not pills.
  * Who uses it: story labels, statuses, "Staff", ratings and so on.
  */
 import type { ReactNode } from 'react';
@@ -46,7 +47,7 @@ export function InfoPill({ tone, children, canWrap = false }: InfoPillProps) {
     : 'h-6 leading-none whitespace-nowrap';
   return (
     <span
-      className={`inline-flex items-center justify-center gap-1.5 rounded-full border px-2.5 text-xs font-bold ${shapeClasses} ${toneClasses[tone]}`}
+      className={`inline-flex items-center justify-center gap-1.5 rounded-full border-[0.5px] px-2.5 text-xs font-bold ${shapeClasses} ${toneClasses[tone]}`}
     >
       {children}
     </span>

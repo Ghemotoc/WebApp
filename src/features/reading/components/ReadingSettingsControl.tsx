@@ -74,7 +74,7 @@ export function ReadingSettingsControl({
         <span aria-hidden="true" className="font-heading text-[17px] font-bold">
           {t('settings.buttonSample')}
         </span>
-        <span className="mt-0.5 text-[11px] font-semibold">{t('settings.button')}</span>
+        <span className="mt-0.5 text-xs font-semibold">{t('settings.button')}</span>
       </button>
       {isOpen && (
         // While the panel's file loads, an empty stand-in carries its id, so aria-controls

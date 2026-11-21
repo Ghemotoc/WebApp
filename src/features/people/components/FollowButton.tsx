@@ -3,7 +3,8 @@
  * story (story S1-E6-05; boards 6.1 Profile and 3.4 Story).
  *
  * A toggle button: aria-pressed says whether the reader follows, and "Following" carries a tick
- * so the state never rests on colour alone (DoD pills and chips). Its accessible name names what
+ * so the state never rests on colour alone (DoD pills and chips). It is always the quiet button;
+ * pressed, it shows the filled look (CALM-1b, canvas v38). Its accessible name names what
  * is followed ("Follow Ana Pop": the visible words, then the name for screen readers). Signed out, it is a "Get in to follow" link instead. A
  * read-only account (for example under 18 during the invited test) is told why it can't follow.
  * Nothing shows while the target can't be seen (a block, a hidden story).
@@ -60,8 +61,10 @@ export function FollowButton({ target, targetLabel }: FollowButtonProps) {
   const isFollowing = follow.state.following;
   return (
     <div className="flex flex-col items-start gap-1.5">
+      {/* Always the quiet button: pressed (Following) reverses it to the filled look in index.css,
+          so Follow stays quiet beside a page's one main button (canvas v38; CALM-1b). */}
       <Button
-        variant={isFollowing ? 'secondary' : 'primary'}
+        variant="secondary"
         aria-pressed={isFollowing}
         disabled={follow.isSaving}
         onClick={follow.toggle}
