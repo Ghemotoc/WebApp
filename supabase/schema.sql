@@ -58102,7 +58102,7 @@ What a person said they like to read and write, and topics (S1-E2-06). Explicit 
 CREATE TABLE IF NOT EXISTS "public"."reading_settings" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "user_id" "uuid" NOT NULL,
-    "font" "public"."reading_font" DEFAULT 'sans'::"public"."reading_font" NOT NULL,
+    "font" "public"."reading_font" DEFAULT 'serif'::"public"."reading_font" NOT NULL,
     "text_size" smallint,
     "line_spacing" "public"."reading_line_spacing" DEFAULT 'normal'::"public"."reading_line_spacing" NOT NULL,
     "line_width" "public"."reading_line_width" DEFAULT 'medium'::"public"."reading_line_width" NOT NULL,
