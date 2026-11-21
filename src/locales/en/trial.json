@@ -1,0 +1,28 @@
+{
+  "bugReport": {
+    "tab": "Report a bug",
+    "title": "Report a bug",
+    "kindLabel": "What is it?",
+    "kinds": {
+      "broke": "Something broke",
+      "looks_wrong": "Something looks wrong",
+      "idea": "An idea"
+    },
+    "message": "What happened?",
+    "whatWeSend": "We also send the page address, your browser and your screen size. Don’t write passwords or other private details.",
+    "send": "Send",
+    "cancel": "Cancel",
+    "sentBody": "Thank you. We have your report and will read it. If we need more, we write to you by email.",
+    "close": "Close",
+    "unsent": "We couldn’t send the report. Your text is still here. Try again in a few minutes."
+  },
+  "computerOnly": {
+    "documentTitle": "For now, the test runs on a computer · {{productName}}",
+    "heading": "For now, the test runs on a computer",
+    "body": "Open this link on a laptop or desktop.",
+    "copyLink": "Copy link",
+    "copied": "Link copied.",
+    "copyFailed": "We couldn’t copy the link. Copy it from the address bar.",
+    "later": "Phones and tablets are coming later."
+  }
+}

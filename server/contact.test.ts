@@ -7,9 +7,12 @@
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { contactRequestSchema } from '../src/schemas/contact';
+
 import {
   handleContact,
   makeContactReference,
+  messageForStaff,
   saveContactTicket,
   staffEmail,
   type OutgoingEmail,
@@ -196,5 +199,76 @@ describe('saving the message as a support ticket (S1-E11-13)', () => {
     });
     expect(await response.json()).toEqual({ reference: 'C-2026-0482' });
     expect(mail.sent).toHaveLength(2);
+  });
+});
+
+describe('a trial bug report (TRIAL-FEEDBACK)', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  const bugReport = {
+    ...message,
+    topic: 'bug_report',
+    bugKind: 'looks_wrong',
+    message: 'The cover title runs off the card.',
+    language: 'en',
+    pageContext: {
+      pagePath: '/stories/turnul',
+      browser: 'Firefox 133 on Windows',
+      screenSize: '1440 × 900 window, 1920 × 1080 screen',
+    },
+  };
+
+  it('puts its kind, page, browser and screen above the words in the staff email', async () => {
+    const mail = recorder();
+    const response = await handleContact(postJson(bugReport), {
+      supportEmail: 'hello@example.test',
+      productName: 'Example Stories',
+      sendEmail: mail.sendEmail,
+      randomDigits: digits,
+      now,
+    });
+    expect(response.status).toBe(200);
+    const staff = mail.sent[0]?.email;
+    expect(staff?.subject).toBe('[C-2026-0482] Bug report');
+    expect(staff?.text).toContain(
+      'Kind: Something looks wrong\nPage: /stories/turnul\nBrowser: Firefox 133 on Windows\nScreen: 1440 × 900 window, 1920 × 1080 screen\n\nThe cover title runs off the card.',
+    );
+  });
+
+  it('saves the same details in the ticket', async () => {
+    const fetchMock = vi.fn(() => Promise.resolve(new Response('1042', { status: 200 })));
+    vi.stubGlobal('fetch', fetchMock);
+    await saveContactTicket(
+      contactRequestSchema.parse(bugReport),
+      { supabaseUrl: 'http://db.test', anonKey: 'anon', secret: 'secret' },
+      now,
+    );
+    const call = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    const sent = JSON.parse(String(call[1].body)) as { payload: string };
+    const payload = JSON.parse(sent.payload) as { topic: string; message: string };
+    expect(payload.topic).toBe('bug_report');
+    expect(payload.message.startsWith('Kind: Something looks wrong\nPage: /stories/turnul')).toBe(
+      true,
+    );
+  });
+
+  it('refuses a bug report without its page details, and a question that carries them', async () => {
+    const mail = recorder();
+    const options = {
+      supportEmail: 'x@y.test',
+      productName: 'Example Stories',
+      sendEmail: mail.sendEmail,
+    };
+    const withoutPage = { ...bugReport, pageContext: undefined };
+    const questionWithPage = { ...message, pageContext: bugReport.pageContext };
+    expect((await handleContact(postJson(withoutPage), options)).status).toBe(400);
+    expect((await handleContact(postJson(questionWithPage), options)).status).toBe(400);
+    expect(mail.sent).toHaveLength(0);
+  });
+
+  it('leaves every other message as the person wrote it', () => {
+    expect(messageForStaff(contactRequestSchema.parse(message))).toBe(message.message);
   });
 });

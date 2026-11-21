@@ -21592,10 +21592,12 @@ CREATE OR REPLACE FUNCTION "public"."contact_topic_subject"("topic" "text", "lan
   select case
     when language = 'en' then case topic
       when 'question' then 'Question' when 'account' then 'Account problem'
-      when 'data_request' then 'Data request' else 'Other' end
+      when 'data_request' then 'Data request' when 'bug_report' then 'Bug report'
+      else 'Other' end
     else case topic
       when 'question' then 'Întrebare' when 'account' then 'Problemă cu contul'
-      when 'data_request' then 'Cerere privind datele' else 'Altceva' end
+      when 'data_request' then 'Cerere privind datele' when 'bug_report' then 'Raport de eroare'
+      else 'Altceva' end
   end;
 $$;
 
@@ -21603,7 +21605,7 @@ $$;
 ALTER FUNCTION "public"."contact_topic_subject"("topic" "text", "language" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."contact_topic_subject"("topic" "text", "language" "text") IS 'Internal: a Contact us ticket''s subject from its topic (S1-E11-13).';
+COMMENT ON FUNCTION "public"."contact_topic_subject"("topic" "text", "language" "text") IS 'Internal: a Contact us ticket''s subject from its topic (S1-E11-13; bug_report since TRIAL-1).';
 
 
 
@@ -52708,16 +52710,19 @@ begin
   if (fields ->> 'sentAt')::timestamptz < now() - interval '15 minutes' then
     raise exception 'This message is too old to save.' using errcode = 'insufficient_privilege';
   end if;
-  -- Step 2: who wrote, and in which language.
+  -- Step 2: who wrote, and in which language (MARKETS-2a: sv, da, nb read in English).
   sender_email := btrim(fields ->> 'email');
-  -- MARKETS-2a: the written language for the page's language (sv, da, nb read in English).
   sender_language := public.written_language_for(fields ->> 'language');
   sender_account_id := public.account_for_email(sender_email);
   -- Step 3: the ticket, its first message and the first history line.
   insert into public.support_tickets (requester_user_id, requester_email, language, subject, channel, category)
   values (sender_account_id, sender_email, sender_language,
     public.contact_topic_subject(fields ->> 'topic', sender_language), 'contact_form',
-    case when fields ->> 'topic' = 'account' then 'account'::public.support_ticket_category else 'other' end)
+    -- TRIAL-1: a bug report goes under Bug, so staff can filter the trial's reports.
+    case fields ->> 'topic'
+      when 'account' then 'account'::public.support_ticket_category
+      when 'bug_report' then 'bug'::public.support_ticket_category
+      else 'other'::public.support_ticket_category end)
   returning * into new_ticket;
   insert into public.support_ticket_messages (ticket_id, kind, author_user_id, body, channel)
   values (new_ticket.id, 'from_requester', sender_account_id, public.clean_mail_text(fields ->> 'message', 4000), 'contact_form');
@@ -52731,7 +52736,7 @@ $$;
 ALTER FUNCTION "public"."submit_contact_ticket"("payload" "text", "signature" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."submit_contact_ticket"("payload" "text", "signature" "text") IS 'Saves a Contact us message, signed by our server, as a support ticket (S1-E11-13 criterion 1).';
+COMMENT ON FUNCTION "public"."submit_contact_ticket"("payload" "text", "signature" "text") IS 'Saves a Contact us message or a trial bug report as a support ticket, signed by our server (S1-E11-13; TRIAL-1).';
 
 
 
