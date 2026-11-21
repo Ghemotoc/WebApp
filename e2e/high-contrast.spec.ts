@@ -94,14 +94,17 @@ test.describe('Settings › Appearance: High contrast (CONTRAST-1)', () => {
       return {
         page: getComputedStyle(document.documentElement).backgroundColor,
         blobs: getComputedStyle(document.body, '::before').backgroundImage,
-        card: cardStyle.backgroundImage,
+        card: cardStyle.backgroundColor,
+        cardImage: cardStyle.backgroundImage,
         cardBlur: cardStyle.backdropFilter,
         text: getComputedStyle(document.body).color,
       };
     });
     expect(drawn.page).toBe('rgb(255, 255, 255)');
     expect(drawn.blobs).toBe('none');
-    expect(drawn.card).toBe('linear-gradient(rgb(255, 255, 255), rgb(255, 255, 255))');
+    // Since CALM-1c the card is the one box surface: a flat fill, no glass image (white here).
+    expect(drawn.card).toBe('rgb(255, 255, 255)');
+    expect(drawn.cardImage).toBe('none');
     expect(drawn.cardBlur).toBe('none');
     expect(drawn.text).toBe('rgb(0, 0, 0)');
 

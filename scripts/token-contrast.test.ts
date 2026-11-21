@@ -337,7 +337,25 @@ describe('design token contrast', () => {
   });
 
   it('defines the same tokens in both themes', () => {
-    expect([...themes.night.keys()].sort()).toEqual([...themes.light.keys()].sort());
+    // The box surface and its edge are see-through at night (dark glass, CALM-1c), so the reader
+    // above skips them there; their solid night look-alike is --surface-box-solid.
+    const seeThroughAtNight = new Set(['surface-box', 'line-box']);
+    const lightKeys = [...themes.light.keys(), 'surface-box-solid'].filter(
+      (name) => !seeThroughAtNight.has(name),
+    );
+    expect([...themes.night.keys()].sort()).toEqual(lightKeys.sort());
+  });
+
+  it('keeps muted text and links readable on the box surface by day (CALM-1c)', () => {
+    const box = themes.light.get('surface-box') ?? '';
+    expect(contrastRatio(themes.light.get('body') ?? '', box)).toBeGreaterThanOrEqual(4.5);
+    expect(contrastRatio(themes.light.get('link') ?? '', box)).toBeGreaterThanOrEqual(4.5);
+    expect(contrastRatio(themes.light.get('heading') ?? '', box)).toBeGreaterThanOrEqual(7);
+  });
+
+  it('keeps muted text readable on the night box surface (CALM-1c)', () => {
+    const box = themes.night.get('surface-box-solid') ?? '';
+    expect(contrastRatio(themes.night.get('body') ?? '', box)).toBeGreaterThanOrEqual(4.5);
   });
 
   it('every look meets WCAG 2.2 AA by day (bundle G2 THEMES)', () => {

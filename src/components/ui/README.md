@@ -5,6 +5,7 @@ The shared building blocks every screen uses, one component per file. Built by S
 | Component | What it is |
 | --- | --- |
 | `Button` (+ `buttonStyles.ts`) | Primary (the theme accent's gradient, `button-main`), secondary (grey glass, `button-glass`), text and destructive buttons, 44, 48 or 52 px; `isLoading` keeps the label, adds a spinner and disables it (G3) |
+| `DateTimeField` | The one date and time field: a date box and a time box on the viewer's own clock, a quiet note and the skipped-hour note (CALM-1c) |
 | `SegmentedControl` | A few choices in a recessed track with a white water bubble that slides to the picked one: a radio group, arrow keys move (G3) |
 | `Select` | The one drop-down style (only as wide as its longest option, 44 px, 14 px chevron) |
 | `TextInput`, `Textarea`, `SearchInput` | Labelled fields with hints and errors linked for screen readers; 48 px tall with a 14 px radius (`field-box`, G3) |
