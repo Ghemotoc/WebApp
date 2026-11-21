@@ -48,8 +48,15 @@ export function useReadingProgress(textRef: RefObject<HTMLElement | null>, isRea
     measure();
     window.addEventListener('scroll', measure, { passive: true });
     window.addEventListener('resize', measure);
+    // The text also grows without a scroll: the story font arrives, or the reader changes the size
+    // in Aa. Measuring then keeps a short chapter from reading as finished before it is (CALM-5
+    // break test: on a phone the bar dropped "1 min left" with half the chapter still below).
+    // (Old browsers and the unit tests' jsdom have no ResizeObserver; scrolling still measures.)
+    const watcher = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(measure);
+    if (watcher !== null && textRef.current !== null) watcher.observe(textRef.current);
     return () => {
       cancelAnimationFrame(frame);
+      watcher?.disconnect();
       window.removeEventListener('scroll', measure);
       window.removeEventListener('resize', measure);
     };

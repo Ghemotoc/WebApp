@@ -1446,6 +1446,11 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 .tmc-chapter-text .tmc-paragraph-row > p {
   margin: 0;
 }
+/* A word longer than the line (a long address, a made-up word) breaks instead of pushing the page
+   sideways (CLAUDE.md rule 21; CALM-5 break test: at 390 px the page was 674 px wide). */
+.tmc-chapter-text--reader {
+  overflow-wrap: break-word;
+}
 .tmc-paragraph-row--open > p {
   border-radius: 4px;
   background: color-mix(in srgb, var(--thread) 9%, transparent);
