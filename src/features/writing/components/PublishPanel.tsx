@@ -14,13 +14,8 @@
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
-import { TextInput } from '@/components/ui/TextInput';
-import {
-  defaultScheduleFields,
-  formatLocalDateTime,
-  localTimeToInstant,
-  skippedHourRunTime,
-} from '@/lib/local-time';
+import { DateTimeField } from '@/components/ui/DateTimeField';
+import { defaultScheduleFields, formatLocalDateTime, localTimeToInstant } from '@/lib/local-time';
 
 import type { PublishAction, PublishingState, PublishProblem } from '../hooks/useChapterPublishing';
 import { useEditorTranslation } from '../registerEditorTranslations';
@@ -69,21 +64,6 @@ function WhenChoice({
   );
 }
 
-/**
- * A quiet note when the typed time falls in the hour the clocks skip: it says the hour it will
- * really run (DESIGN thread, 20 Nov 2026, 20:09 UTC). Shows nothing for an ordinary time.
- */
-function SkippedHourNote({ date, time }: { date: string; time: string }) {
-  const { t } = useEditorTranslation();
-  const runTime = skippedHourRunTime(date, time);
-  if (runTime === null) return null;
-  return (
-    <p className="m-0 w-full text-[13px] text-meta" role="status">
-      {t('publish.skippedHourNote', { time: runTime })}
-    </p>
-  );
-}
-
 /** A draft: when, the date and time, Preview and the publish button. */
 function DraftControls({
   isBusy,
@@ -105,28 +85,15 @@ function DraftControls({
     <div className="flex flex-col gap-3">
       <WhenChoice isLater={isLater} onChange={setLater} />
       {isLater && (
-        <div className="flex flex-wrap gap-2.5">
-          <div className="min-w-[140px] flex-1">
-            <TextInput
-              id="chapter-publish-date"
-              type="date"
-              label={t('publish.date')}
-              value={fields.date}
-              onChange={(event) => setFields({ ...fields, date: event.target.value })}
-            />
-          </div>
-          <div className="min-w-[110px] flex-1">
-            <TextInput
-              id="chapter-publish-time"
-              type="time"
-              label={t('publish.time')}
-              value={fields.time}
-              onChange={(event) => setFields({ ...fields, time: event.target.value })}
-            />
-          </div>
-          <p className="m-0 w-full text-[13px] text-meta">{t('publish.zoneNote')}</p>
-          <SkippedHourNote date={fields.date} time={fields.time} />
-        </div>
+        <DateTimeField
+          id="chapter-publish"
+          value={fields}
+          onChange={setFields}
+          dateLabel={t('publish.date')}
+          timeLabel={t('publish.time')}
+          note={t('publish.zoneNote')}
+          skippedHourNote={(time) => t('publish.skippedHourNote', { time })}
+        />
       )}
       <div className="flex flex-wrap gap-2">
         <Button variant="secondary" onClick={onPreview}>
