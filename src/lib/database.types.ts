@@ -1847,6 +1847,7 @@ export type Database = {
           edited_at: string | null;
           first_published_at: string | null;
           id: string;
+          is_last: boolean;
           is_poem: boolean;
           last_published_at: string | null;
           position: number;
@@ -1863,8 +1864,9 @@ export type Database = {
           word_count: number;
           chapter_gate_outcome: string | null;
           chapter_publish_now: undefined | null;
+          mark_chapter_last: undefined | null;
         };
-        ComputedFields: 'chapter_gate_outcome' | 'chapter_publish_now';
+        ComputedFields: 'chapter_gate_outcome' | 'chapter_publish_now' | 'mark_chapter_last';
         Insert: {
           code: string;
           created_at?: string;
@@ -1876,6 +1878,7 @@ export type Database = {
           edited_at?: string | null;
           first_published_at?: string | null;
           id?: string;
+          is_last?: boolean;
           is_poem?: boolean;
           last_published_at?: string | null;
           position: number;
@@ -1902,6 +1905,7 @@ export type Database = {
           edited_at?: string | null;
           first_published_at?: string | null;
           id?: string;
+          is_last?: boolean;
           is_poem?: boolean;
           last_published_at?: string | null;
           position?: number;
@@ -13419,6 +13423,10 @@ export type Database = {
           was_position: number;
         }[];
       };
+      chapter_number_through: {
+        Args: { target_story_id: string; through_position: number };
+        Returns: number;
+      };
       chapter_of_story: {
         Args: { chapter_code: string; target_story_id: string };
         Returns: string;
@@ -13528,6 +13536,7 @@ export type Database = {
       check_forum_thread_title: { Args: { title: string }; Returns: string };
       check_handle: { Args: { candidate: string }; Returns: string };
       check_invite: { Args: { code: string }; Returns: string };
+      check_last_chapter_mark: { Args: { target_story_id: string }; Returns: undefined };
       check_pen_name: { Args: { candidate: string }; Returns: string };
       check_space_text: { Args: { field: string; value: string }; Returns: string };
       check_story_basics: {
@@ -14893,6 +14902,10 @@ export type Database = {
         Args: { birthday_month: number; greeting_day: string; joined_at: string };
         Returns: string;
       };
+      has_chapter_out_after: {
+        Args: { after_position: number; target_story_id: string };
+        Returns: boolean;
+      };
       has_html_tag: { Args: { body: string }; Returns: boolean };
       has_invisible_characters: { Args: { name: string }; Returns: boolean };
       has_parental_consent: { Args: { target_user_id: string }; Returns: boolean };
@@ -15418,6 +15431,16 @@ export type Database = {
         Args: { current_result: Database['public']['Enums']['age_check_result']; decision: string };
         Returns: Database['public']['Enums']['age_check_result'];
       };
+      mark_chapter_last: {
+        Args: {
+          chapter: Omit<
+            Database['public']['Tables']['chapters']['Row'],
+            Database['public']['Tables']['chapters']['ComputedFields']
+          >;
+        };
+        Returns: undefined;
+      };
+      mark_completed_stories_last: { Args: Record<PropertyKey, never>; Returns: number };
       mark_conversation_read: { Args: { other_handle: string }; Returns: undefined };
       mark_forum_thread_answer: {
         Args: { post_number?: number; thread_number: number };
@@ -15669,6 +15692,7 @@ export type Database = {
         };
         Returns: Json;
       };
+      my_chapter_last_state: { Args: { chapter_code: string }; Returns: Json };
       my_chapter_plan: {
         Args: { chapter_code: string };
         Returns: {
@@ -15779,6 +15803,7 @@ export type Database = {
           edited_at: string | null;
           first_published_at: string | null;
           id: string;
+          is_last: boolean;
           is_poem: boolean;
           last_published_at: string | null;
           position: number;
@@ -15993,6 +16018,7 @@ export type Database = {
       };
       network_ads_barred: { Args: { context: Json }; Returns: boolean };
       new_certificate_code: { Args: Record<PropertyKey, never>; Returns: string };
+      next_chapter_json: { Args: { target_story_id: string }; Returns: Json };
       next_class_lock_at: { Args: Record<PropertyKey, never>; Returns: string };
       next_notice_reference: { Args: { notice_kind: string }; Returns: string };
       no_thanks_pause_ends: {
@@ -16474,7 +16500,7 @@ export type Database = {
         Args: { areas: string[]; as_preview: boolean; target_story_id: string };
         Returns: Json;
       };
-      publish_chapter: { Args: { chapter_code: string }; Returns: Json };
+      publish_chapter: { Args: { as_last?: boolean; chapter_code: string }; Returns: Json };
       publish_class_competition: {
         Args: { results: Json; target_competition_id: string };
         Returns: Json;
@@ -16573,6 +16599,7 @@ export type Database = {
           edited_at: string | null;
           first_published_at: string | null;
           id: string;
+          is_last: boolean;
           is_poem: boolean;
           last_published_at: string | null;
           position: number;
@@ -16608,6 +16635,7 @@ export type Database = {
           edited_at: string | null;
           first_published_at: string | null;
           id: string;
+          is_last: boolean;
           is_poem: boolean;
           last_published_at: string | null;
           position: number;
@@ -17322,7 +17350,10 @@ export type Database = {
         Returns: undefined;
       };
       say_no_thanks_to_request: { Args: { sender_handle: string }; Returns: Json };
-      schedule_chapter: { Args: { chapter_code: string; publish_at: string }; Returns: Json };
+      schedule_chapter: {
+        Args: { as_last?: boolean; chapter_code: string; publish_at: string };
+        Returns: Json;
+      };
       scrub_error_text: { Args: { max_length: number; raw_text: string }; Returns: string };
       scrub_route_path: { Args: { raw_path: string }; Returns: string };
       search_fold: { Args: { raw_text: string }; Returns: string };
@@ -17372,6 +17403,7 @@ export type Database = {
         Args: { chapter_code: string; character_id: string; is_present: boolean };
         Returns: Json;
       };
+      set_chapter_last: { Args: { chapter_code: string; is_last: boolean }; Returns: Json };
       set_chapter_order: {
         Args: { chapter_codes: string[]; moved_chapter_code?: string; story_slug: string };
         Returns: Json;
@@ -18314,6 +18346,7 @@ export type Database = {
         }[];
       };
       story_languages: { Args: { story_slug: string }; Returns: Json };
+      story_last_chapter_number: { Args: { target_story_id: string }; Returns: number };
       story_library_state: { Args: { story_slug: string }; Returns: Json };
       story_like_total: { Args: { target_story_id: string }; Returns: number };
       story_link_targets: { Args: { story_slug: string }; Returns: Json };

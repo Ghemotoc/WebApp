@@ -26,6 +26,7 @@ import { Link } from 'react-router';
 import { usePageOwnsNarrowHeader } from '@/app/shell/pageHeaderContext';
 
 import type { ReaderChapter } from '../api/chapter';
+import { chapterPlaceText } from '../lib/chapterPlace';
 
 import { LazyReadInSwitch } from './LazyReadInSwitch';
 import { BackArrowIcon, ForwardArrowIcon } from './ReaderIcons';
@@ -54,7 +55,7 @@ const iconButton =
  */
 function useMetaLine(chapter: ReaderChapter, minutesLeft: number | null): string {
   const { t } = useTranslation('reading');
-  const where = t('reader.kicker', { number: chapter.number, total: chapter.total });
+  const where = chapterPlaceText(t, chapter.number, chapter.lastChapterNumber);
   if (minutesLeft === null) return where;
   return `${where} · ${t('reader.minutesLeft', { count: minutesLeft })}`;
 }

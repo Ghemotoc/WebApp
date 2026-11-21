@@ -76,6 +76,7 @@
     "documentTitle": "{{chapter}} · {{story}}",
     "next": "Next chapter",
     "kicker": "Chapter {{number}} of {{total}}",
+    "kickerNumberOnly": "Chapter {{number}}",
     "by": "by",
     "minutes_one": "{{count}} min read",
     "minutes_few": "{{count}} min read",
@@ -88,6 +89,15 @@
     "endOfChapter": "End of chapter {{number}}",
     "readNext": "Next: chapter {{number}}",
     "latestChapter": "That’s the latest chapter so far.",
+    "endOfStory": "That’s the end of the story.",
+    "nextChapterDay": "Next chapter {{day}}",
+    "lastChapterDay": "Last chapter {{day}}",
+    "chapterDay": {
+      "today": "today",
+      "tomorrow": "tomorrow",
+      "weekday": "{{weekday}}",
+      "date": "{{date}}"
+    },
     "backToStory": "Back to the story",
     "signIn": "Get in",
     "unavailableTitle": "This chapter isn’t available",
@@ -134,6 +144,7 @@
   },
   "teaser": {
     "shared": "Shared with you · chapter {{number}} of {{total}}",
+    "sharedNumberOnly": "Shared with you · chapter {{number}}",
     "chapterEyebrow": "Chapter {{number}}",
     "firstPart": "You’re reading the first part",
     "moreChapters_one": "{{count}} more chapter",

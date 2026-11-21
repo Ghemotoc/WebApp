@@ -13,6 +13,8 @@
  * In a later language edition (TRANSLATE-1b; board TrStory) the list holds every chapter of the
  * story: one that isn't translated yet carries the pill "<language> only for now" and opens the
  * "not translated yet" notice, and the heading row says "4 of 6 in English".
+ * CALM-6: while a chapter is scheduled, the heading row also says when it comes: "Next chapter
+ * Thursday", or "Last chapter Thursday" when it is the one the writer marked as the last.
  * Who uses it: StoryPage. What it calls: useStoryLibraryState → story_library_state(), the same
  * place "Continue chapter n" uses.
  */
@@ -26,7 +28,9 @@ import { languageNameIn, languageOwnName } from '@/lib/language-names';
 import { formatLocalDate } from '@/lib/local-time';
 
 import type { EditionFacts } from '../api/editions';
+import type { NextChapter } from '../api/chapter';
 import type { StoryPageChapter } from '../api/storyPage';
+import { nextChapterText } from '../lib/chapterPlace';
 import { useEditionsTranslation } from '../registerEditionsTranslations';
 
 /** What a later language edition tells the list (TRANSLATE-1b); null for any other story. */
@@ -141,6 +145,7 @@ export function StoryChapterList({
   isOwner,
   storySlug,
   edition = null,
+  nextChapter = null,
 }: {
   chapters: StoryPageChapter[];
   isOwner: boolean;
@@ -148,6 +153,8 @@ export function StoryChapterList({
   storySlug: string;
   /** For a story in several languages: the edition on screen (TRANSLATE-1b). */
   edition?: ChapterListEdition | null;
+  /** CALM-6: the next scheduled chapter, or null. */
+  nextChapter?: NextChapter | null;
 }) {
   const { t, i18n } = useTranslation('reading');
   const { t: editionsText } = useEditionsTranslation();
@@ -156,6 +163,7 @@ export function StoryChapterList({
   // The reader's latest place in the story; null signed out or before they read.
   const { state } = useStoryLibraryState(storySlug);
   const place = state?.place ?? null;
+  const nextLine = nextChapterText(t, nextChapter, i18n.language, new Date());
   return (
     <section
       aria-labelledby="story-chapters-heading"
@@ -174,6 +182,7 @@ export function StoryChapterList({
             })}
           </p>
         )}
+        {nextLine !== null && <p className="m-0 text-[13px] text-meta">{nextLine}</p>}
       </div>
       {chapters.length === 0 && isOwner && (
         <p className="m-0 text-sm text-body">{t('storyPage.noChaptersOwner')}</p>

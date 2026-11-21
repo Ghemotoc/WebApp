@@ -76,6 +76,7 @@
     "documentTitle": "{{chapter}} · {{story}}",
     "next": "Capitolul următor",
     "kicker": "Capitolul {{number}} din {{total}}",
+    "kickerNumberOnly": "Capitolul {{number}}",
     "by": "de",
     "minutes_one": "{{count}} minut de citit",
     "minutes_few": "{{count}} minute de citit",
@@ -88,6 +89,15 @@
     "endOfChapter": "Sfârșitul capitolului {{number}}",
     "readNext": "Următorul: capitolul {{number}}",
     "latestChapter": "Acesta e cel mai nou capitol de până acum.",
+    "endOfStory": "Acesta e sfârșitul poveștii.",
+    "nextChapterDay": "Următorul capitol {{day}}",
+    "lastChapterDay": "Ultimul capitol {{day}}",
+    "chapterDay": {
+      "today": "azi",
+      "tomorrow": "mâine",
+      "weekday": "{{weekday}}",
+      "date": "pe {{date}}"
+    },
     "backToStory": "Înapoi la poveste",
     "signIn": "Intră",
     "unavailableTitle": "Capitolul nu este disponibil",
@@ -134,6 +144,7 @@
   },
   "teaser": {
     "shared": "Trimis ție · capitolul {{number}} din {{total}}",
+    "sharedNumberOnly": "Trimis ție · capitolul {{number}}",
     "chapterEyebrow": "Capitolul {{number}}",
     "firstPart": "Citești prima parte",
     "moreChapters_one": "Încă un capitol",

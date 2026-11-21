@@ -3,14 +3,16 @@
  * "Publish").
  *
  * Who calls it: ChapterEditorPage. What it calls: api/chapters.ts → publish_chapter(),
- * schedule_chapter(), cancel_schedule(), update_published_chapter() and unpublish_chapter().
+ * schedule_chapter(), cancel_schedule(), update_published_chapter() and unpublish_chapter();
+ * api/lastChapter.ts → the "This is the last chapter" switch and what the panel shows about it
+ * (CALM-6).
  * Before publishing, scheduling or updating, it asks the autosave to save and checks that
  * everything is saved, so what goes live is exactly what the writer sees (decided 23 Oct 2026,
  * Q10: edits reach readers only through "Update chapter").
  * It keeps the chapter's status itself after each action, because the editor's copy of the
  * chapter is loaded once and never refetched while it is open.
  */
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
@@ -24,13 +26,21 @@ import {
   type ChapterStatus,
   type MyChapter,
 } from '../api/chapters';
+import {
+  fetchChapterLastState,
+  publishChapter,
+  setChapterLast,
+  type ChapterLastState,
+} from '../api/lastChapter';
 
 import { myStoriesKey } from './useMyStories';
 
 /** What the panel can do. */
 export type PublishAction =
-  | { kind: 'publish' }
-  | { kind: 'schedule'; at: Date }
+  | { kind: 'publish'; asLast: boolean }
+  | { kind: 'schedule'; at: Date; asLast: boolean }
+  // CALM-6: the switch on a chapter already scheduled or out.
+  | { kind: 'setLast'; isLast: boolean }
   | { kind: 'cancelSchedule' }
   | { kind: 'update' }
   | { kind: 'unpublish' };
@@ -44,7 +54,7 @@ export interface PublishingState {
 
 /** The message under the buttons: a refusal or a failure, as a key in editor.json. */
 export type PublishProblem =
-  'notSaved' | 'empty' | 'badTime' | 'notActive' | 'originalNotPublished' | 'failed';
+  'notSaved' | 'empty' | 'badTime' | 'notActive' | 'originalNotPublished' | 'notLast' | 'failed';
 
 /** What the hook needs from the autosave. */
 export interface AutosaveForPublishing {
@@ -64,6 +74,7 @@ function stateAfter(action: PublishAction, current: PublishingState): Publishing
     case 'unpublish':
       return { ...current, status: 'draft', scheduledFor: null };
     case 'update':
+    case 'setLast':
       return current;
   }
 }
@@ -75,15 +86,18 @@ function problemFor(outcome: ChapterActionOutcome): PublishProblem {
   if (outcome === 'not_active') return 'notActive';
   // A translated chapter opened in the full editor: its original is still a draft (TRANSLATE-1).
   if (outcome === 'original_not_published') return 'originalNotPublished';
+  // CALM-6: a later chapter is already out or scheduled.
+  if (outcome === 'not_last') return 'notLast';
   return 'failed';
 }
 
 /** Sends one action to the database. */
 async function send(code: string, action: PublishAction): Promise<ChapterActionOutcome> {
   const client = await requireClient();
-  if (action.kind === 'schedule') return scheduleChapter(client, code, action.at);
+  if (action.kind === 'schedule') return scheduleChapter(client, code, action.at, action.asLast);
+  if (action.kind === 'publish') return publishChapter(client, code, action.asLast);
+  if (action.kind === 'setLast') return setChapterLast(client, code, action.isLast);
   const functionName = {
-    publish: 'publish_chapter',
     cancelSchedule: 'cancel_schedule',
     update: 'update_published_chapter',
     unpublish: 'unpublish_chapter',
@@ -96,7 +110,8 @@ async function send(code: string, action: PublishAction): Promise<ChapterActionO
  *
  * @param chapter - the chapter as the editor loaded it
  * @param autosave - saveNow and isAllSaved from useAutosave
- * @returns state, problem (or null), isBusy, and run(action)
+ * @returns state, lastState (the mark, CALM-6; null while it loads), problem (or null), isBusy
+ *   and run(action)
  */
 export function useChapterPublishing(chapter: MyChapter, autosave: AutosaveForPublishing) {
   const [state, setState] = useState<PublishingState>(() => ({
@@ -107,6 +122,12 @@ export function useChapterPublishing(chapter: MyChapter, autosave: AutosaveForPu
   const [problem, setProblem] = useState<PublishProblem | null>(null);
   const { userId } = useSession();
   const queryClient = useQueryClient();
+  // CALM-6: what the panel shows about the last-chapter mark, read again after every action.
+  const lastStateKey = ['chapterLastState', chapter.code] as const;
+  const lastState = useQuery({
+    queryKey: lastStateKey,
+    queryFn: async () => fetchChapterLastState(await requireClient(), chapter.code),
+  });
 
   const mutation = useMutation({
     mutationFn: async (action: PublishAction) => {
@@ -128,12 +149,14 @@ export function useChapterPublishing(chapter: MyChapter, autosave: AutosaveForPu
       if (action.kind === 'schedule') trackEvent('chapter_scheduled', {});
       // Your writing shows the chapter's status and "Only you can see this story" from this.
       await queryClient.invalidateQueries({ queryKey: myStoriesKey(userId) });
+      await queryClient.invalidateQueries({ queryKey: lastStateKey });
     },
     onError: () => setProblem('failed'),
   });
 
   return {
     state,
+    lastState: (lastState.data ?? null) satisfies ChapterLastState | null,
     problem,
     isBusy: mutation.isPending,
     run: (action: PublishAction) => mutation.mutate(action),

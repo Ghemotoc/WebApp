@@ -17,6 +17,7 @@ import { Link } from 'react-router';
 import { cn } from '@/lib/utils';
 
 import type { ReaderChapter } from '../api/chapter';
+import { chapterPlaceText } from '../lib/chapterPlace';
 import { chapterDots, type ChapterDot } from '../lib/chapterDots';
 
 import { BackIcon, ForwardIcon } from './ReaderIcons';
@@ -86,7 +87,7 @@ export function ChapterNavigation({ chapter, previousTitle, nextTitle }: Chapter
           ))}
         </span>
         <span className="sr-only">
-          {t('reader.kicker', { number: chapter.number, total: chapter.total })}
+          {chapterPlaceText(t, chapter.number, chapter.lastChapterNumber)}
         </span>
       </div>
       {chapter.nextCode !== null ? (

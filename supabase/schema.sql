@@ -12864,6 +12864,7 @@ CREATE TABLE IF NOT EXISTS "public"."chapters" (
     "published_word_count" integer,
     "is_poem" boolean DEFAULT false NOT NULL,
     "translation_of_chapter_id" "uuid",
+    "is_last" boolean DEFAULT false NOT NULL,
     CONSTRAINT "chapters_code_shape" CHECK (("code" ~ '^[a-z0-9]{8}$'::"text")),
     CONSTRAINT "chapters_draft_title_length" CHECK (("char_length"("draft_title") <= 120)),
     CONSTRAINT "chapters_draft_version_positive" CHECK (("draft_version" >= 1)),
@@ -12907,6 +12908,10 @@ COMMENT ON COLUMN "public"."chapters"."is_poem" IS 'True when the chapter is a p
 
 
 COMMENT ON COLUMN "public"."chapters"."translation_of_chapter_id" IS 'For a chapter of a later language edition: the first edition''s chapter it translates. Null for every other chapter (TRANSLATE-1a).';
+
+
+
+COMMENT ON COLUMN "public"."chapters"."is_last" IS 'The writer marked this as the story''s last chapter when publishing or scheduling it (CALM-6; Robert, 20 Nov 2026, 12:43 UTC). Readers see "of N" only while a marked chapter is published or scheduled.';
 
 
 
@@ -16268,6 +16273,8 @@ begin
     return jsonb_build_object('outcome', 'wrong_state');
   end if;
   update public.chapters set status = 'draft', scheduled_for = null where chapters.id = chapter.id;
+  -- CALM-6, step 7: the chapter is no longer scheduled, so the last-chapter mark may come off.
+  perform public.check_last_chapter_mark(chapter.story_id);
   return jsonb_build_object('outcome', 'ok');
 end;
 $$;
@@ -17167,6 +17174,26 @@ COMMENT ON FUNCTION "public"."chapter_move_notes"("story_slug" "text") IS 'The c
 
 
 
+CREATE OR REPLACE FUNCTION "public"."chapter_number_through"("target_story_id" "uuid", "through_position" integer) RETURNS integer
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select count(*)::integer
+  from public.chapters
+  where chapters.story_id = target_story_id
+    and chapters.deleted_at is null
+    and chapters.position <= through_position
+    and (chapters.status = 'scheduled' or public.chapter_is_readable(chapters.id));
+$$;
+
+
+ALTER FUNCTION "public"."chapter_number_through"("target_story_id" "uuid", "through_position" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."chapter_number_through"("target_story_id" "uuid", "through_position" integer) IS 'Internal: how many of a story''s live chapters up to a position are out or scheduled, the number readers see (CALM-6).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."chapter_of_story"("target_story_id" "uuid", "chapter_code" "text") RETURNS "uuid"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -17377,6 +17404,11 @@ begin
     first_published_at = coalesce(stories.first_published_at, published_time),
     last_chapter_published_at = published_time
   where stories.id = chapter.story_id;
+  -- CALM-6: the marked last chapter is out, so the story is Completed. The mark is read from the
+  -- table, because publish_chapter() may have set it after reading `chapter`.
+  if exists (select 1 from public.chapters where chapters.id = chapter.id and chapters.is_last) then
+    update public.stories set completion_status = 'completed' where stories.id = chapter.story_id;
+  end if;
   insert into public.chapter_revisions (chapter_id, user_id, created_by_user_id, reason, title, body)
   values (chapter.id, chapter.user_id, chapter.user_id, 'published', chapter.draft_title, chapter.draft_body);
   insert into public.jobs (kind, payload) values ('chapter_published',
@@ -18408,6 +18440,43 @@ ALTER FUNCTION "public"."check_invite"("code" "text") OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."check_invite"("code" "text") IS 'Answers valid, ended or unknown for a platform invite or a class code; never the invite itself (S1-E2-01, IDEAS-3c).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."check_last_chapter_mark"("target_story_id" "uuid") RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  marked public.chapters;
+begin
+  -- Step 1: the marked chapter, a live one first (a deleted one still holds its old mark).
+  select * into marked from public.chapters
+  where chapters.story_id = target_story_id and chapters.is_last
+  order by chapters.deleted_at nulls first
+  limit 1;
+  if not found then
+    return;
+  end if;
+  -- Step 2: the mark still holds while the chapter is live, out or scheduled, and last.
+  if marked.deleted_at is null
+     and marked.status in ('published', 'scheduled')
+     and not public.has_chapter_out_after(target_story_id, marked.position) then
+    return;
+  end if;
+  -- Step 3: otherwise it comes off every chapter of the story and the story is Ongoing again.
+  update public.chapters set is_last = false
+  where chapters.story_id = target_story_id and chapters.is_last;
+  update public.stories set completion_status = 'ongoing'
+  where stories.id = target_story_id;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."check_last_chapter_mark"("target_story_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."check_last_chapter_mark"("target_story_id" "uuid") IS 'Internal: takes the last-chapter mark off and sets the story Ongoing when the mark no longer holds (CALM-6).';
 
 
 
@@ -23849,6 +23918,8 @@ begin
   end if;
   update public.chapters set deleted_at = now() where chapters.id = chapter.id;
   perform public.renumber_story_chapters(chapter.story_id);
+  -- CALM-6, step 7: a deleted chapter holds no mark, so the last-chapter mark may come off.
+  perform public.check_last_chapter_mark(chapter.story_id);
   return jsonb_build_object('outcome', 'ok',
     'purge_on', ((now() + make_interval(days => purge_days)) at time zone 'Europe/Bucharest')::date);
 end;
@@ -27708,6 +27779,8 @@ begin
           select 1 from public.chapters as translations
           where translations.story_id = story.id and translations.translation_of_chapter_id = gaps.source_id
             and public.chapter_is_readable(translations.id))), 0),
+      -- CALM-6: "of N" only while a last chapter is marked, counted in the first edition.
+      'last_chapter_number', public.story_last_chapter_number(first_edition.id),
       'translator_name', (select works.translator_name from public.classic_works as works
         where works.story_id = story.id),
       'previous_number', earlier_place,
@@ -27738,6 +27811,10 @@ begin
     'title', chapter.published_title,
     'number', place,
     'total', array_length(source_ids, 1),
+    -- CALM-6: "of N" only while a last chapter is marked (null otherwise), and the next
+    -- scheduled chapter for "Next chapter Thursday". Numbers count in the first edition.
+    'last_chapter_number', public.story_last_chapter_number(first_edition.id),
+    'next_chapter', public.next_chapter_json(first_edition.id),
     'previous_code', case when place > 1 then
       public.edition_chapter_code(story.id, first_edition.id, source_ids[place - 1]) end,
     'next_code', case when place < array_length(source_ids, 1) then
@@ -28005,6 +28082,9 @@ begin
       -- CMS-1e: readers see only approved tags; a waiting one shows only in the writer's settings.
       where story_tags.story_id = story.id and tags.status = 'approved'), '[]'::jsonb),
     'completion_status', story.completion_status,
+    -- CALM-6: "of N" only while a last chapter is marked, and the next scheduled chapter.
+    'last_chapter_number', public.story_last_chapter_number(story.id),
+    'next_chapter', public.next_chapter_json(story.id),
     'comments_enabled', story.comments_enabled,
     -- CALM-8: the end of a running pause of new comments; null when none runs or it has passed.
     'comments_paused_until', public.running_comment_pause(story),
@@ -28291,6 +28371,26 @@ ALTER FUNCTION "public"."handle_new_auth_user"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."handle_new_auth_user"() IS 'Trigger on auth.users: refuses a banned email or a throwaway domain, then checks a sign-up and creates the profile, or leaves a provider account for finish_social_sign_up() (S1-E2-01, 02, 04, 09, 10, S1-E11-17, S1-E10-06, ADMIN-2 part f1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."has_chapter_out_after"("target_story_id" "uuid", "after_position" integer) RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select exists (
+    select 1 from public.chapters as later
+    where later.story_id = target_story_id
+      and later.deleted_at is null
+      and later.position > after_position
+      and later.status in ('published', 'scheduled'));
+$$;
+
+
+ALTER FUNCTION "public"."has_chapter_out_after"("target_story_id" "uuid", "after_position" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."has_chapter_out_after"("target_story_id" "uuid", "after_position" integer) IS 'Internal: a later live chapter is already published or scheduled (CALM-6).';
 
 
 
@@ -30536,6 +30636,8 @@ CREATE OR REPLACE FUNCTION "public"."latest_place_json"("target_story_id" "uuid"
     'chapter_code', chapters.code,
     'number', place.number,
     'total', place.total,
+    -- CALM-6: "of N" only while a last chapter is marked; total stays for the progress line.
+    'last_chapter_number', public.story_last_chapter_number(chapters.story_id),
     'percent', positions.percent,
     'device_kind', positions.device_kind,
     'saved_at', positions.updated_at,
@@ -31498,6 +31600,54 @@ ALTER FUNCTION "public"."mark_case_notices_decided"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."mark_case_notices_decided"() IS 'Trigger: a decided case decides and closes its public notices (S1-E10-02).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."mark_chapter_last"("chapter" "public"."chapters") RETURNS "void"
+    LANGUAGE "sql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  -- The other mark first, so the unique index never sees two.
+  update public.chapters set is_last = false
+  where chapters.story_id = chapter.story_id and chapters.is_last and chapters.id <> chapter.id;
+  update public.chapters set is_last = true where chapters.id = chapter.id;
+$$;
+
+
+ALTER FUNCTION "public"."mark_chapter_last"("chapter" "public"."chapters") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."mark_chapter_last"("chapter" "public"."chapters") IS 'Internal: marks a chapter as its story''s last and clears any other mark (CALM-6).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."mark_completed_stories_last"() RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  marked_count integer;
+begin
+  update public.chapters set is_last = true
+  where chapters.id in (
+    select distinct on (chapters.story_id) chapters.id
+    from public.chapters
+    join public.stories on stories.id = chapters.story_id
+    where stories.completion_status = 'completed'
+      and chapters.status = 'published' and chapters.deleted_at is null
+      and not exists (select 1 from public.chapters as marked
+                      where marked.story_id = stories.id and marked.is_last and marked.deleted_at is null)
+    order by chapters.story_id, chapters.position desc);
+  get diagnostics marked_count = row_count;
+  return marked_count;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."mark_completed_stories_last"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."mark_completed_stories_last"() IS 'Internal, run once by the CALM-6 migration: marks the highest published chapter of every Completed story without a mark.';
 
 
 
@@ -32511,6 +32661,8 @@ begin
   update public.chapters set position = neighbour.position where chapters.id = chapter.id;
   update public.chapters set position = chapter.position where chapters.id = neighbour.id;
   perform public.record_chapter_moves(chapter.story_id, positions_before, chapter.id);
+  -- CALM-6, step 7: a chapter out or scheduled may now come after the marked one, so the last-chapter mark may come off.
+  perform public.check_last_chapter_mark(chapter.story_id);
   return jsonb_build_object('outcome', 'ok');
 end;
 $$;
@@ -32900,6 +33052,48 @@ ALTER FUNCTION "public"."my_chapter_comments"("older_than" timestamp with time z
 
 
 COMMENT ON FUNCTION "public"."my_chapter_comments"("older_than" timestamp with time zone, "only_story_slug" "text", "page_size" integer, "older_than_id" "uuid") IS 'One page of the comments readers wrote under the caller''s published chapters, newest first (GAPS-5; S1-E3-07).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."my_chapter_last_state"("chapter_code" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  chapter public.chapters;
+  marked public.chapters;
+begin
+  -- Step 1: the caller's own live chapter.
+  if caller_id is null then
+    raise exception 'Sign in to see a chapter.' using errcode = 'insufficient_privilege';
+  end if;
+  select * into chapter from public.chapters
+  where chapters.code = chapter_code and chapters.user_id = caller_id and chapters.deleted_at is null;
+  if not found then
+    return null;
+  end if;
+  -- Step 2: the story's live mark, if any.
+  select * into marked from public.chapters
+  where chapters.story_id = chapter.story_id and chapters.is_last and chapters.deleted_at is null;
+  -- Step 3: the answer.
+  return jsonb_build_object(
+    'number', public.chapter_number_through(chapter.story_id, chapter.position)
+      + case when chapter.status = 'draft' then 1 else 0 end,
+    'is_last', chapter.is_last,
+    'can_mark', not public.has_chapter_out_after(chapter.story_id, chapter.position),
+    'marked_number', case when marked.id is not null and marked.position < chapter.position
+      then public.chapter_number_through(marked.story_id, marked.position) end,
+    'original_is_last', coalesce((select originals.is_last from public.chapters as originals
+      where originals.id = chapter.translation_of_chapter_id and originals.deleted_at is null), false));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."my_chapter_last_state"("chapter_code" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."my_chapter_last_state"("chapter_code" "text") IS 'The publish panel''s view of the last-chapter mark for the caller''s own chapter: {number, is_last, can_mark, marked_number, original_is_last}, or null (CALM-6).';
 
 
 
@@ -33444,7 +33638,9 @@ begin
     limit 4
   ) as found;
   -- Step 3: "Chapter n of N" for every card.
-  select coalesce(jsonb_object_agg(found.slug, jsonb_build_object('number', found.place -> 'number', 'total', found.place -> 'total')), '{}'::jsonb)
+  select coalesce(jsonb_object_agg(found.slug, jsonb_build_object('number', found.place -> 'number', 'total', found.place -> 'total',
+    -- CALM-6: "of N" only while a last chapter is marked.
+    'last_chapter_number', found.place -> 'last_chapter_number')), '{}'::jsonb)
   into places
   from (
     select stories.slug, public.latest_place_json(stories.id) as place
@@ -34962,6 +35158,29 @@ ALTER FUNCTION "public"."new_certificate_code"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."new_certificate_code"() IS 'Internal: a fresh unique certificate code such as CL27-7K4M-Q9 (S1-E8-12).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."next_chapter_json"("target_story_id" "uuid") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select jsonb_build_object(
+    'number', public.chapter_number_through(scheduled.story_id, scheduled.position),
+    'scheduled_for', scheduled.scheduled_for,
+    'is_last', scheduled.is_last)
+  from public.chapters as scheduled
+  where scheduled.story_id = target_story_id
+    and scheduled.status = 'scheduled' and scheduled.deleted_at is null
+  order by scheduled.position
+  limit 1;
+$$;
+
+
+ALTER FUNCTION "public"."next_chapter_json"("target_story_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."next_chapter_json"("target_story_id" "uuid") IS 'Internal: the story''s next scheduled chapter {number, scheduled_for, is_last}, or null (CALM-6).';
 
 
 
@@ -38004,7 +38223,7 @@ COMMENT ON FUNCTION "public"."public_plan_relationships"("target_story_id" "uuid
 
 
 
-CREATE OR REPLACE FUNCTION "public"."publish_chapter"("chapter_code" "text") RETURNS "jsonb"
+CREATE OR REPLACE FUNCTION "public"."publish_chapter"("chapter_code" "text", "as_last" boolean DEFAULT false) RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
@@ -38012,6 +38231,7 @@ declare
   chapter public.chapters := public.my_live_chapter(chapter_code);
   refusal text := public.chapter_gate_outcome(chapter);
 begin
+  -- Step 1: the caller's own live chapter, a draft or scheduled one with words in it.
   if refusal is not null then
     return jsonb_build_object('outcome', refusal);
   end if;
@@ -38028,16 +38248,26 @@ begin
         and originals.status = 'published' and originals.deleted_at is null) then
     return jsonb_build_object('outcome', 'original_not_published');
   end if;
+  -- Step 2 (CALM-6): the mark only fits a chapter with nothing out or scheduled after it.
+  if as_last then
+    if public.has_chapter_out_after(chapter.story_id, chapter.position) then
+      return jsonb_build_object('outcome', 'not_last');
+    end if;
+    perform public.mark_chapter_last(chapter);
+  end if;
+  -- Step 3: out now; a marked chapter turns the story Completed (chapter_publish_now()).
   perform public.chapter_publish_now(chapter);
+  -- Step 4 (CALM-6, step 7): a chapter out after the marked one takes that mark off.
+  perform public.check_last_chapter_mark(chapter.story_id);
   return jsonb_build_object('outcome', 'ok', 'published_at', now());
 end;
 $$;
 
 
-ALTER FUNCTION "public"."publish_chapter"("chapter_code" "text") OWNER TO "postgres";
+ALTER FUNCTION "public"."publish_chapter"("chapter_code" "text", "as_last" boolean) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."publish_chapter"("chapter_code" "text") IS 'Puts the caller''s own chapter live now: {outcome: ok | not_active | not_found | empty | wrong_state} (S1-E3-03).';
+COMMENT ON FUNCTION "public"."publish_chapter"("chapter_code" "text", "as_last" boolean) IS 'Puts the caller''s own chapter live now, as the last when as_last: {outcome: ok | not_active | not_found | empty | wrong_state | original_not_published | not_last} (S1-E3-03, CALM-6).';
 
 
 
@@ -43260,6 +43490,8 @@ begin
     position = (select coalesce(max(others.position), 0) + 1 from public.chapters as others
                 where others.story_id = chapter.story_id and others.deleted_at is null)
   where chapters.id = chapter.id;
+  -- CALM-6, step 7: a restored chapter comes back at the end, after any marked one, so the last-chapter mark may come off.
+  perform public.check_last_chapter_mark(chapter.story_id);
   return jsonb_build_object('outcome', 'ok');
 end;
 $$;
@@ -44647,7 +44879,7 @@ COMMENT ON FUNCTION "public"."say_no_thanks_to_request"("sender_handle" "text") 
 
 
 
-CREATE OR REPLACE FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone) RETURNS "jsonb"
+CREATE OR REPLACE FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone, "as_last" boolean DEFAULT false) RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
@@ -44655,6 +44887,7 @@ declare
   chapter public.chapters := public.my_live_chapter(chapter_code);
   refusal text := public.chapter_gate_outcome(chapter);
 begin
+  -- Step 1: the caller's own live chapter, not yet out, with words in it and a time ahead.
   if refusal is not null then
     return jsonb_build_object('outcome', refusal);
   end if;
@@ -44674,16 +44907,26 @@ begin
         and originals.status = 'published' and originals.deleted_at is null) then
     return jsonb_build_object('outcome', 'original_not_published');
   end if;
+  -- Step 2 (CALM-6): the mark only fits a chapter with nothing out or scheduled after it.
+  if as_last then
+    if public.has_chapter_out_after(chapter.story_id, chapter.position) then
+      return jsonb_build_object('outcome', 'not_last');
+    end if;
+    perform public.mark_chapter_last(chapter);
+  end if;
+  -- Step 3: scheduled.
   update public.chapters set status = 'scheduled', scheduled_for = publish_at where chapters.id = chapter.id;
+  -- Step 4 (CALM-6, step 7): a chapter scheduled after the marked one takes that mark off.
+  perform public.check_last_chapter_mark(chapter.story_id);
   return jsonb_build_object('outcome', 'ok', 'scheduled_for', publish_at);
 end;
 $$;
 
 
-ALTER FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone) OWNER TO "postgres";
+ALTER FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone, "as_last" boolean) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone) IS 'Schedules the caller''s own draft chapter: {outcome: ok | not_active | not_found | empty | wrong_state | bad_time} (S1-E3-03).';
+COMMENT ON FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone, "as_last" boolean) IS 'Schedules the caller''s own draft chapter, as the last when as_last: {outcome: ok | not_active | not_found | empty | wrong_state | bad_time | original_not_published | not_last} (S1-E3-03, CALM-6).';
 
 
 
@@ -45671,6 +45914,48 @@ COMMENT ON FUNCTION "public"."set_chapter_character_present"("chapter_code" "tex
 
 
 
+CREATE OR REPLACE FUNCTION "public"."set_chapter_last"("chapter_code" "text", "is_last" boolean) RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  chapter public.chapters := public.my_live_chapter(chapter_code);
+  refusal text := public.chapter_gate_outcome(chapter);
+begin
+  -- Step 1: the same owner and account checks as publish_chapter().
+  if refusal is not null then
+    return jsonb_build_object('outcome', refusal);
+  end if;
+  -- Step 2: a draft never holds the mark, and a published chapter's mark doesn't come off here.
+  if chapter.status = 'draft' or (chapter.status = 'published' and not is_last) then
+    return jsonb_build_object('outcome', 'wrong_state');
+  end if;
+  -- Step 3: a scheduled chapter's switch going off.
+  if not is_last then
+    update public.chapters set is_last = false where chapters.id = chapter.id;
+    return jsonb_build_object('outcome', 'ok');
+  end if;
+  -- Step 4: on, only with nothing out or scheduled after it.
+  if public.has_chapter_out_after(chapter.story_id, chapter.position) then
+    return jsonb_build_object('outcome', 'not_last');
+  end if;
+  perform public.mark_chapter_last(chapter);
+  -- Step 5: a chapter already out completes the story now.
+  if chapter.status = 'published' then
+    update public.stories set completion_status = 'completed' where stories.id = chapter.story_id;
+  end if;
+  return jsonb_build_object('outcome', 'ok');
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_chapter_last"("chapter_code" "text", "is_last" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_chapter_last"("chapter_code" "text", "is_last" boolean) IS 'The last-chapter switch on the caller''s own scheduled or latest published chapter: {outcome: ok | not_active | not_found | not_last | wrong_state} (CALM-6).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."set_chapter_order"("story_slug" "text", "chapter_codes" "text"[], "moved_chapter_code" "text" DEFAULT NULL::"text") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -45714,6 +45999,8 @@ begin
   where chapters.code = ordered.code and chapters.story_id = target_story_id;
   -- Step 4: record every chapter whose number changed.
   perform public.record_chapter_moves(target_story_id, positions_before, picked_chapter_id);
+  -- CALM-6, step 7: a chapter out or scheduled may now come after the marked one, so the last-chapter mark may come off.
+  perform public.check_last_chapter_mark(target_story_id);
   return jsonb_build_object('outcome', 'ok');
 end;
 $$;
@@ -51557,6 +51844,25 @@ COMMENT ON FUNCTION "public"."story_languages"("story_slug" "text") IS 'A writer
 
 
 
+CREATE OR REPLACE FUNCTION "public"."story_last_chapter_number"("target_story_id" "uuid") RETURNS integer
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select public.chapter_number_through(marked.story_id, marked.position)
+  from public.chapters as marked
+  where marked.story_id = target_story_id
+    and marked.is_last and marked.deleted_at is null
+    and marked.status in ('published', 'scheduled');
+$$;
+
+
+ALTER FUNCTION "public"."story_last_chapter_number"("target_story_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_last_chapter_number"("target_story_id" "uuid") IS 'Internal: the number of the story''s marked last chapter while it is out or scheduled, else null (CALM-6).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."story_library_state"("story_slug" "text") RETURNS "jsonb"
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -53830,6 +54136,8 @@ begin
     return jsonb_build_object('outcome', 'wrong_state');
   end if;
   update public.chapters set status = 'draft', unpublished_at = now() where chapters.id = chapter.id;
+  -- CALM-6, step 7: the chapter is no longer out, so the last-chapter mark may come off.
+  perform public.check_last_chapter_mark(chapter.story_id);
   return jsonb_build_object('outcome', 'ok');
 end;
 $$;
@@ -54317,6 +54625,13 @@ begin
     -- Why it is 16+ or 18+ (SPONSORS-f); empty for a younger rating.
     rating_reasons = public.story_rating_reasons_from(new_labels)
   where stories.id = target_story_id;
+
+  -- CALM-6, step 8: back to Ongoing takes the last-chapter mark off. Completed set by hand
+  -- marks nothing, so readers see Completed but no "of N".
+  if changes ->> 'completion_status' = 'ongoing' then
+    update public.chapters set is_last = false
+    where chapters.story_id = target_story_id and chapters.is_last;
+  end if;
 
   -- Step 5: the tags, when given.
   if changes ? 'tag_names' then
@@ -61412,6 +61727,10 @@ CREATE INDEX "chapter_scenes_story_id_idx" ON "public"."chapter_scenes" USING "b
 
 
 CREATE INDEX "chapter_scenes_user_id_fk_idx" ON "public"."chapter_scenes" USING "btree" ("user_id");
+
+
+
+CREATE UNIQUE INDEX "chapters_one_last_per_story" ON "public"."chapters" USING "btree" ("story_id") WHERE ("is_last" AND ("deleted_at" IS NULL));
 
 
 
@@ -70126,6 +70445,10 @@ GRANT ALL ON FUNCTION "public"."chapter_move_notes"("story_slug" "text") TO "aut
 
 
 
+REVOKE ALL ON FUNCTION "public"."chapter_number_through"("target_story_id" "uuid", "through_position" integer) FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."chapter_of_story"("target_story_id" "uuid", "chapter_code" "text") FROM PUBLIC;
 
 
@@ -70298,6 +70621,10 @@ GRANT ALL ON FUNCTION "public"."check_handle"("candidate" "text") TO "anon";
 REVOKE ALL ON FUNCTION "public"."check_invite"("code" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."check_invite"("code" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."check_invite"("code" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."check_last_chapter_mark"("target_story_id" "uuid") FROM PUBLIC;
 
 
 
@@ -71614,6 +71941,10 @@ REVOKE ALL ON FUNCTION "public"."handle_new_auth_user"() FROM PUBLIC;
 
 
 
+REVOKE ALL ON FUNCTION "public"."has_chapter_out_after"("target_story_id" "uuid", "after_position" integer) FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."has_html_tag"("body" "text") FROM PUBLIC;
 
 
@@ -72086,6 +72417,14 @@ REVOKE ALL ON FUNCTION "public"."mark_case_notices_decided"() FROM PUBLIC;
 
 
 
+REVOKE ALL ON FUNCTION "public"."mark_chapter_last"("chapter" "public"."chapters") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."mark_completed_stories_last"() FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."mark_conversation_read"("other_handle" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."mark_conversation_read"("other_handle" "text") TO "authenticated";
 
@@ -72306,6 +72645,11 @@ GRANT ALL ON FUNCTION "public"."my_certificates"() TO "authenticated";
 
 REVOKE ALL ON FUNCTION "public"."my_chapter_comments"("older_than" timestamp with time zone, "only_story_slug" "text", "page_size" integer, "older_than_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."my_chapter_comments"("older_than" timestamp with time zone, "only_story_slug" "text", "page_size" integer, "older_than_id" "uuid") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."my_chapter_last_state"("chapter_code" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."my_chapter_last_state"("chapter_code" "text") TO "authenticated";
 
 
 
@@ -72639,6 +72983,10 @@ REVOKE ALL ON FUNCTION "public"."network_ads_barred"("context" "jsonb") FROM PUB
 
 
 REVOKE ALL ON FUNCTION "public"."new_certificate_code"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."next_chapter_json"("target_story_id" "uuid") FROM PUBLIC;
 
 
 
@@ -73069,8 +73417,8 @@ REVOKE ALL ON FUNCTION "public"."public_plan_relationships"("target_story_id" "u
 
 
 
-REVOKE ALL ON FUNCTION "public"."publish_chapter"("chapter_code" "text") FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."publish_chapter"("chapter_code" "text") TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."publish_chapter"("chapter_code" "text", "as_last" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."publish_chapter"("chapter_code" "text", "as_last" boolean) TO "authenticated";
 
 
 
@@ -73940,8 +74288,8 @@ GRANT ALL ON FUNCTION "public"."say_no_thanks_to_request"("sender_handle" "text"
 
 
 
-REVOKE ALL ON FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone) FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone) TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone, "as_last" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone, "as_last" boolean) TO "authenticated";
 
 
 
@@ -74049,6 +74397,11 @@ GRANT ALL ON FUNCTION "public"."set_certificate_printed_name"("certificate_id" "
 
 REVOKE ALL ON FUNCTION "public"."set_chapter_character_present"("chapter_code" "text", "character_id" "uuid", "is_present" boolean) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_chapter_character_present"("chapter_code" "text", "character_id" "uuid", "is_present" boolean) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."set_chapter_last"("chapter_code" "text", "is_last" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_chapter_last"("chapter_code" "text", "is_last" boolean) TO "authenticated";
 
 
 
@@ -74872,6 +75225,10 @@ GRANT ALL ON FUNCTION "public"."story_language_choices"() TO "authenticated";
 
 REVOKE ALL ON FUNCTION "public"."story_languages"("story_slug" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."story_languages"("story_slug" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."story_last_chapter_number"("target_story_id" "uuid") FROM PUBLIC;
 
 
 

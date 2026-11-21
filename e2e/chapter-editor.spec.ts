@@ -66,7 +66,7 @@ test.describe('chapter editor (S1-E3-02a)', () => {
     const card = page.getByRole('article', { name: 'Stația meteo' });
     await card.getByRole('button', { name: 'Write chapter one' }).click();
     await expect(page).toHaveURL(new RegExp(`/write/s/${slug}/c/[a-z0-9]{8}$`));
-    await expect(page.getByText('Chapter 1')).toBeVisible();
+    await expect(page.getByText('Chapter 1', { exact: true })).toBeVisible();
     await expect(page.getByRole('region', { name: 'Saving' }).getByRole('status')).toHaveText(
       'Nothing to save yet.',
     );

@@ -12,6 +12,7 @@
     "heading": "Continue reading",
     "by": "by",
     "where": "Chapter {{number}} of {{total}}",
+    "whereNumberOnly": "Chapter {{number}}",
     "progress": "{{percent}}% through chapter {{number}}",
     "stopped": "You stopped {{position}} chapter {{number}} on your {{device}}, {{when}}.",
     "positions": {
@@ -41,6 +42,7 @@
     "saved": "Saved for later",
     "finished": "Finished",
     "chapterOf": "Chapter {{number}} of {{total}}",
+    "chapterNumberOnly": "Chapter {{number}}",
     "notStarted": "Not started",
     "empty": {
       "reading": "Nothing here yet. Open any chapter and the story joins this shelf.",

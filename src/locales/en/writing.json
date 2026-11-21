@@ -197,7 +197,7 @@
     "label": "Status",
     "ongoing": "Ongoing",
     "completed": "Completed",
-    "hint": "Shown on your story card. Readers can filter by it.",
+    "hint": "Shown on your story card. Readers can filter by it. Setting it back to Ongoing takes the last-chapter mark off.",
     "filterLabel": "Show",
     "all": "Every story"
   },

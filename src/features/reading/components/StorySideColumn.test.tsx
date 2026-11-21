@@ -37,6 +37,8 @@ function storyWith(changes: Partial<StoryPageData>): StoryPageData {
     categorySlug: 'literary',
     tags: [],
     completionStatus: 'ongoing',
+    lastChapterNumber: null,
+    nextChapter: null,
     commentsEnabled: true,
     commentsPausedUntil: null,
     coverKind: 'automatic',

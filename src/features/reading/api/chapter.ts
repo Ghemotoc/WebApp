@@ -39,6 +39,32 @@ export interface MissingTranslation {
   previousNumber: number | null;
 }
 
+/** The story's next scheduled chapter (CALM-6). */
+export interface NextChapter {
+  number: number;
+  scheduledFor: string;
+  /** It is the chapter the writer marked as the last: "Last chapter Thursday". */
+  isLast: boolean;
+}
+
+/** The database's JSON for the next scheduled chapter. */
+export interface NextChapterRow {
+  number: number;
+  scheduled_for: string;
+  is_last: boolean;
+}
+
+/**
+ * The next scheduled chapter in the app's shape.
+ *
+ * @param row - next_chapter from get_chapter() or get_story_page(); missing in older answers
+ * @returns the chapter, or null
+ */
+export function nextChapterFrom(row: NextChapterRow | null | undefined): NextChapter | null {
+  if (row === null || row === undefined) return null;
+  return { number: row.number, scheduledFor: row.scheduled_for, isLast: row.is_last };
+}
+
 /** One chapter as the reader shows it. */
 export interface ReaderChapter {
   story: {
@@ -55,6 +81,13 @@ export interface ReaderChapter {
   /** Its number among the chapters readers can open (1, 2, 3…), and how many there are. */
   number: number;
   total: number;
+  /**
+   * CALM-6: the number of the chapter the writer marked as the last, for "Chapter 14 of 15";
+   * null while no chapter is marked, and readers then see "Chapter 14" only.
+   */
+  lastChapterNumber: number | null;
+  /** CALM-6: the next scheduled chapter, for "Next chapter Thursday"; null when none is. */
+  nextChapter: NextChapter | null;
   previousCode: string | null;
   nextCode: string | null;
   publishedAt: string | null;
@@ -110,6 +143,9 @@ interface ChapterRow {
   title: string;
   number: number;
   total: number;
+  /** CALM-6: missing from answers saved before it (prefetch caches). */
+  last_chapter_number?: number | null;
+  next_chapter?: NextChapterRow | null;
   previous_code: string | null;
   next_code: string | null;
   published_at: string | null;
@@ -138,6 +174,7 @@ interface MissingChapterRow {
   total: number;
   original: { slug: string; language_code: string; code: string; title: string | null };
   translated_through: number;
+  last_chapter_number?: number | null;
   translator_name: string | null;
   previous_number: number | null;
   previous_code: string | null;
@@ -169,6 +206,8 @@ function missingChapterFrom(row: MissingChapterRow): ReaderChapter {
     title: row.original.title ?? '',
     number: row.number,
     total: row.total,
+    lastChapterNumber: row.last_chapter_number ?? null,
+    nextChapter: null,
     previousCode: row.previous_code,
     nextCode: null,
     publishedAt: null,
@@ -231,6 +270,8 @@ export async function fetchChapter(
     title: row.title,
     number: row.number,
     total: row.total,
+    lastChapterNumber: row.last_chapter_number ?? null,
+    nextChapter: nextChapterFrom(row.next_chapter),
     previousCode: row.previous_code,
     nextCode: row.next_code,
     publishedAt: row.published_at,

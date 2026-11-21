@@ -85,7 +85,7 @@ export function TeaserPage({ chapter }: { chapter: ReaderChapter }) {
         <TeaserStoryCard
           story={story}
           chapterNumber={chapter.number}
-          chapterTotal={chapter.total}
+          lastChapterNumber={chapter.lastChapterNumber}
         />
       )}
       {/* TRANSLATE-1b: a visitor can change language too; nothing for a story in one language. */}

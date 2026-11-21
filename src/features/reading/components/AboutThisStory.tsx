@@ -5,14 +5,17 @@
  * A subheading and a list split by hairlines: how many chapters are out and how many words they
  * hold so far, the number in bold ("15 chapters", "31.4k words so far"). From 1280 px it sits in
  * the side column, under any open panel and above the 300 × 250 advert; narrower, it follows the
- * chapter's comments. Two of the board's lines wait: reads stay the writer's own (S1-E3-07;
- * docs/board-fixes.md), and "Next chapter Thursday" comes with the last chapter's mark (CALM-6).
+ * chapter's comments. While a chapter is scheduled, a last row says when: "Next chapter Thursday"
+ * or "Last chapter Thursday" (CALM-6). One board line waits: reads stay the writer's own
+ * (S1-E3-07; docs/board-fixes.md).
  * Who uses it: ChapterReaderPage (ReaderSideColumn and the narrow layout). What it reads: the
  * story page's chapters (get_story_page(), through useStoryPage), counted here.
  */
 import { useTranslation } from 'react-i18next';
 
+import type { NextChapter } from '../api/chapter';
 import type { StoryPageData } from '../api/storyPage';
+import { nextChapterText } from '../lib/chapterPlace';
 
 /** What the facts need. */
 export interface AboutThisStoryProps {
@@ -20,6 +23,8 @@ export interface AboutThisStoryProps {
   story: StoryPageData | null;
   /** How many chapters readers can open, from the chapter itself. */
   chapterTotal: number;
+  /** CALM-6: the next scheduled chapter, from the chapter itself; null when none is. */
+  nextChapter: NextChapter | null;
 }
 
 /**
@@ -42,11 +47,12 @@ function wordsSoFar(story: StoryPageData | null): number | null {
  *
  * @returns the section
  */
-export function AboutThisStory({ story, chapterTotal }: AboutThisStoryProps) {
+export function AboutThisStory({ story, chapterTotal, nextChapter }: AboutThisStoryProps) {
   const { t, i18n } = useTranslation('reading');
   // Step 1: large numbers shortened the reader's way ("31.4K", "31,4 K").
   const shortNumber = new Intl.NumberFormat(i18n.language, { notation: 'compact' });
   const words = wordsSoFar(story);
+  const nextLine = nextChapterText(t, nextChapter, i18n.language, new Date());
   return (
     <section aria-labelledby="about-this-story" data-testid="about-this-story">
       <h2 id="about-this-story" className="m-0 mb-2 type-subheading text-heading">
@@ -64,6 +70,7 @@ export function AboutThisStory({ story, chapterTotal }: AboutThisStoryProps) {
             {t('reader.about.words', { count: words })}
           </li>
         )}
+        {nextLine !== null && <li className="border-t border-hairline py-2.5">{nextLine}</li>}
       </ul>
     </section>
   );
