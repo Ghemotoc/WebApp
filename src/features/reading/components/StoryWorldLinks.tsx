@@ -4,7 +4,8 @@
  * areas show … and none for areas that are off").
  *
  * Nothing shows while nothing is shared, or for a reader the story's rules keep out (the
- * database answers the same for both). The links are pills in one wrapping row; no doodles.
+ * database answers the same for both). Since CALM-7c (board New-Story): the line "The story's
+ * world", the heading "Shared by the writer" and the links as quiet buttons in one wrapping row.
  * Texts live in reading.json, so the story page doesn't load all of Story Atlas's texts.
  * Who uses it: StoryPage. What it calls: usePublicPlan (get_public_story_plan()) and
  * lib/publicPlanAreas.ts from src/features/atlas.
@@ -26,12 +27,13 @@ export function StoryWorldLinks({ storySlug }: { storySlug: string }) {
   const { plan } = usePublicPlan(storySlug);
   if (!plan || plan.areas.length === 0) return null;
   return (
-    <section aria-labelledby="story-world-heading" className="flex flex-col gap-3">
-      <h2 id="story-world-heading" className="m-0 font-heading text-[22px] font-bold text-heading">
-        {t('storyPage.world.heading')}
+    <section aria-labelledby="story-world-heading" className="flex flex-col gap-2">
+      {/* Board New-Story: the meta line "The story's world" over the heading, no eyebrow. */}
+      <p className="m-0 text-[13px] leading-[18px] text-body">{t('storyPage.world.heading')}</p>
+      <h2 id="story-world-heading" className="m-0 type-heading text-heading">
+        {t('storyPage.world.sharedHeading')}
       </h2>
-      <p className="m-0 text-sm text-body">{t('storyPage.world.hint')}</p>
-      <ul className="m-0 flex list-none flex-wrap gap-2 p-0">
+      <ul className="m-0 flex list-none flex-wrap gap-2.5 p-0 pt-2">
         {plan.areas.map((area) => (
           <li key={area}>
             <Link

@@ -1,20 +1,21 @@
 /**
- * StoryHeader: the cover, pills, title, writer, blurb and tags at the top of the story page
- * (story S1-E3-05; board Story 3.4, the story header).
+ * StoryHeader: the story page's hero (story S1-E3-05; since bundle CALM-7c, board New-Story and
+ * the simplified design handover, Step 3, "Story page").
  *
- * Board values: a 220 × 308 cover with the words beside it (36 px apart, wrapping under the
- * cover on narrow screens), the pill row (Fiction, Ongoing only while the story is still being
- * written, the rating and label pills from S1-E3-06; "Web and app" joins with S1-E3-08), the H1 in Funnel Display 800 at
- * clamp(36px, 4.4vw, 64px), "by <name>" at 16 px, the blurb at 17 px / 1.6 up to 640 px wide,
- * the content note box when the writer left one (S1-E3-06: readers see it before they open the
- * story), the tag chips, each a link to its tag page (S1-E5-01), "Follow story" (S1-E6-05) and,
- * under the writer's name, the stats row (StoryStats, S1-E5-03). Under the cover, the rank badges
- * (RankBadges, CMS-1g). Under the stats, "Start reading" or "Continue chapter n" and the
- * Library drop-down (StoryReadingActions, S1-E4-03), then Follow and, since IDEAS-1c, Share for the
- * whole story (StoryShareButton).
- * A story in several languages (TRANSLATE-1b; board TrStory) adds the "Read in" switch beside
- * the title, "Translated from <language> by <name>" under a classic's author, and under the blurb
- * the note saying which language is shown and which others exist (StoryLanguageNote).
+ * The page's one glass hero (Hero): the 240 px cover on the left (the rank badges under it,
+ * CMS-1g) and, on the right, in the board's order:
+ *   - the meta line "Fiction · Ongoing · No AI · 13+" (lib/storyLabelFacts.ts; it replaces the
+ *     pill row and StoryLabelPills here), with the ranking place after it (S1-E15-05);
+ *   - the title in the display style, with the "Read in" switch beside it (TRANSLATE-1b), then
+ *     "by <name>" as a link to the profile and, for a translated classic, who translated it;
+ *   - the numbers as a second meta line (StoryStats, S1-E5-03);
+ *   - the blurb, the note on which language is shown (StoryLanguageNote), the tags as text links
+ *     to their tag pages (S1-E5-01);
+ *   - "Start reading" or "Continue chapter n" (main) and the Library drop-down
+ *     (StoryReadingActions, S1-E4-03), Follow (S1-E6-05) and Share (IDEAS-1c), and the line on
+ *     what following does.
+ * The board's story-level Like is left out: likes are per chapter (handover, On hold). The content
+ * note moved to "Labels from the writer" (StoryLabels), where the board has it.
  * Who uses it: StoryPage.
  */
 import { useTranslation } from 'react-i18next';
@@ -23,7 +24,8 @@ import { Link } from 'react-router';
 import { resolveCoverChoice } from '@/components/covers/automaticCover';
 import { DrawnCover } from '@/components/covers/DrawnCover';
 import { StoryCoverArt } from '@/features/pictures/components/StoryCoverArt';
-import { InfoPill } from '@/components/ui/InfoPill';
+import { Hero } from '@/components/ui/Hero';
+import { MetaLine } from '@/components/ui/MetaLine';
 import { listAddress, plainList } from '@/features/discovery/lib/listAddresses';
 import { StoryReadingActions } from '@/features/library/components/StoryReadingActions';
 import { FollowButton } from '@/features/people/components/FollowButton';
@@ -36,13 +38,14 @@ import type { StoryPageData } from '../api/storyPage';
 
 import { ReadInSwitch } from './ReadInSwitch';
 import { StoryLanguageNote, TranslationCredit } from './StoryLanguageNote';
+import { storyLabelFacts } from '../lib/storyLabelFacts';
+
 import { RankingPlacePill } from './RankingPlacePill';
-import { StoryLabelPills } from './StoryLabelPills';
 import { StoryStats } from './StoryStats';
 
 /**
- * The story's tags, each a link to the page of stories with that tag (S1-E5-01). They are links
- * that look like chips, because each opens a page (DoD pill system).
+ * The story's tags as plain text links, each to the page of stories with that tag (S1-E5-01;
+ * board New-Story: links 16 px apart, 15 px, in the ink colour).
  *
  * @param tags - the story's tags, as the writer typed them
  * @returns the list, or nothing when the story has no tags
@@ -54,12 +57,16 @@ function StoryTagLinks({ tags }: { tags: string[] }) {
   const { showTag } = useTagCatalogue();
   if (tags.length === 0) return null;
   return (
-    <ul aria-label={t('storyPage.tags')} className="m-0 flex list-none flex-wrap gap-2 p-0">
+    <ul
+      aria-label={t('storyPage.tags')}
+      className="m-0 flex list-none flex-wrap gap-x-4 gap-y-1 p-0"
+    >
       {tags.map((tag) => (
         <li key={tag}>
+          {/* The 24 px minimum target (rule 9) comes from the line box and the padding. */}
           <Link
             to={listAddress(plainList('tag', tag))}
-            className="relative inline-flex h-9 items-center rounded-full border border-control-border bg-surface px-3.5 text-sm leading-none font-semibold text-heading no-underline after:absolute after:inset-x-0 after:top-1/2 after:h-11 after:-translate-y-1/2 after:content-[''] hover:bg-tint"
+            className="inline-flex min-h-6 items-center text-[15px] text-ink underline-offset-2 hover:underline"
           >
             {showTag(tag)}
           </Link>
@@ -87,31 +94,17 @@ function sharedStoryOf(story: StoryPageData): SharedStory {
 }
 
 /**
- * The pill row: the category, the ranking place (S1-E15-05), "Ongoing" while the story is still being written, and the rating
- * and label pills (S1-E3-06). A finished story shows no status pill (Robert, 6 Nov 2026:
- * "Completed" is a filter, not a tag on pages); the "Status" row under "Labels from the writer"
- * still says it.
+ * The hero's first meta line ("Fiction · Ongoing · No AI · 13+", CALM-7c; it replaces the pill
+ * row), with the ranking place (S1-E15-05, "#3 in Fantasy") after it when the story has one.
  *
- * @returns the pills
+ * @returns the line
  */
-function StoryPills({ story }: { story: StoryPageData }) {
+function StoryLabelLine({ story }: { story: StoryPageData }) {
   const { t } = useTranslation('reading');
   return (
-    <div className="flex flex-wrap gap-1.5">
-      <InfoPill tone="plum">
-        {t(`categories.${story.categorySlug}`, {
-          ns: 'writing',
-          defaultValue: story.categorySlug,
-        })}
-      </InfoPill>
-      {/* S1-E15-05: "#3 in Fantasy", when the story is in its category's first 100. */}
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+      <MetaLine facts={storyLabelFacts(story, t)} />
       <RankingPlacePill storySlug={story.slug} />
-      {story.completionStatus === 'ongoing' && (
-        <InfoPill tone="sage">{t('status.ongoing', { ns: 'writing' })}</InfoPill>
-      )}
-      {/* GAPS-15: the board's "App only" pill, once the switch for it is on (S1-E3-08). */}
-      {story.appOnly && <InfoPill tone="sky">{t('storyPage.appOnlyPill')}</InfoPill>}
-      <StoryLabelPills labels={story.labels} />
     </div>
   );
 }
@@ -123,6 +116,7 @@ function StoryPills({ story }: { story: StoryPageData }) {
  * @returns the actions
  */
 function StoryActions({ story }: { story: StoryPageData }) {
+  const { t } = useTranslation('reading');
   return (
     <>
       <StoryReadingActions
@@ -133,7 +127,7 @@ function StoryActions({ story }: { story: StoryPageData }) {
         isOwner={story.isOwner}
       />
       {story.isPublic && (
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5">
           {!story.isOwner && (
             <FollowButton target={{ kind: 'story', slug: story.slug }} targetLabel={story.title} />
           )}
@@ -141,7 +135,28 @@ function StoryActions({ story }: { story: StoryPageData }) {
           <StoryShareButton story={sharedStoryOf(story)} />
         </div>
       )}
+      {/* Board New-Story: what following does, under the buttons. */}
+      {story.isPublic && !story.isOwner && (
+        <p className="m-0 text-[13px] leading-[18px] text-body">{t('storyPage.followNote')}</p>
+      )}
     </>
+  );
+}
+
+/**
+ * The writer's name after "by": a link to their profile (board New-Story), or plain text for a
+ * classic, whose author has no account (S1-E5-06).
+ *
+ * @returns the name
+ */
+function WriterName({ writer }: { writer: StoryPageData['writer'] }) {
+  if (writer.classicAuthor !== null) {
+    return <span className="font-semibold text-heading">{writer.displayName}</span>;
+  }
+  return (
+    <Link to={`/u/${encodeURIComponent(writer.handle)}`} className="font-semibold text-link">
+      {writer.displayName}
+    </Link>
   );
 }
 
@@ -157,8 +172,9 @@ function StoryTitleBlock({ story }: { story: StoryPageData }) {
     <>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <h1
+          id="story-title"
           lang={story.languageCode}
-          className="m-0 min-w-0 flex-[1_1_240px] text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-extrabold tracking-[-0.025em] break-words"
+          className="m-0 min-w-0 flex-[1_1_240px] type-display break-words text-heading"
         >
           {story.title}
         </h1>
@@ -166,8 +182,7 @@ function StoryTitleBlock({ story }: { story: StoryPageData }) {
       </div>
       <div className="flex flex-col gap-1">
         <p className="m-0 text-base text-body">
-          {t('storyPage.by')}{' '}
-          <strong className="font-bold text-heading">{story.writer.displayName}</strong>
+          {t('storyPage.by')} <WriterName writer={story.writer} />
         </p>
         <TranslationCredit story={story} />
       </div>
@@ -176,59 +191,49 @@ function StoryTitleBlock({ story }: { story: StoryPageData }) {
 }
 
 /**
- * Renders the header.
+ * Renders the header: the page's one glass hero (Hero, CALM-4), with the cover on the left and the
+ * words on the right from 900 px, the words under the cover on narrower screens (board New-Story).
  *
- * @returns the header block
+ * @returns the hero
  */
 export function StoryHeader({ story }: { story: StoryPageData }) {
-  const { t } = useTranslation('reading');
   const cover = resolveCoverChoice(story);
   return (
-    // Board Story 3.4: the cover on the left and the words beside it, wrapping under the cover
-    // on narrow screens (Robert, 6 Nov 2026: title, Start reading, Follow and blurb beside the
-    // cover on desktop).
-    <header className="flex flex-wrap items-start gap-9">
-      {/* Step 1: the cover, with the story's ranks in its tags under it (CMS-1g). */}
-      <div className="flex flex-[0_0_220px] flex-col gap-3">
-        <StoryCoverArt
-          story={story}
-          className="w-[220px]"
-          drawn={
-            <DrawnCover
-              title={story.title}
-              penName={story.writer.displayName}
-              choice={cover}
-              size="card"
-              isDecorative
-              className="w-[220px]"
-            />
-          }
-        />
-        <RankBadges slug={story.slug} />
-      </div>
-      {/* Step 2: the words, beside the cover (or under it on narrow screens). */}
-      <div className="flex min-w-0 flex-[1_1_360px] flex-col gap-4">
-        <StoryPills story={story} />
-        <StoryTitleBlock story={story} />
-        <StoryStats story={story} />
-        <StoryActions story={story} />
-        {story.blurb !== '' && (
-          <p
-            lang={story.languageCode}
-            className="m-0 max-w-[640px] text-[17px] leading-[1.6] text-body"
-          >
-            {story.blurb}
-          </p>
-        )}
-        <StoryLanguageNote story={story} />
-        {story.labels.contentNote !== '' && (
-          <div className="flex max-w-[640px] flex-col gap-1 rounded-card border border-border bg-tint px-4 py-3">
-            <p className="m-0 eyebrow">{t('storyPage.contentNoteHeading')}</p>
-            <p className="m-0 text-[15px] leading-normal text-body">{story.labels.contentNote}</p>
-          </div>
-        )}
-        <StoryTagLinks tags={story.tags} />
-      </div>
-    </header>
+    <Hero labelledBy="story-title">
+      <header className="grid items-start gap-8 min-[900px]:grid-cols-[240px_minmax(0,1fr)] min-[900px]:gap-12">
+        {/* Step 1: the cover, with the story's ranks in its tags under it (CMS-1g). */}
+        <div className="flex w-[240px] max-w-full flex-col gap-3">
+          <StoryCoverArt
+            story={story}
+            className="w-full"
+            drawn={
+              <DrawnCover
+                title={story.title}
+                penName={story.writer.displayName}
+                choice={cover}
+                size="card"
+                isDecorative
+                className="w-full"
+              />
+            }
+          />
+          <RankBadges slug={story.slug} />
+        </div>
+        {/* Step 2: the words, in the board's order. */}
+        <div className="flex min-w-0 flex-col gap-4">
+          <StoryLabelLine story={story} />
+          <StoryTitleBlock story={story} />
+          <StoryStats story={story} />
+          {story.blurb !== '' && (
+            <p lang={story.languageCode} className="m-0 max-w-[62ch] text-base text-body">
+              {story.blurb}
+            </p>
+          )}
+          <StoryLanguageNote story={story} />
+          <StoryTagLinks tags={story.tags} />
+          <StoryActions story={story} />
+        </div>
+      </header>
+    </Hero>
   );
 }

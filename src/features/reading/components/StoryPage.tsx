@@ -1,17 +1,17 @@
 /**
- * StoryPage: a story's public page, screen 3.4 (story S1-E3-05 starts it;
- * design/boards/Story.dc.html).
+ * StoryPage: a story's public page, screen 3.4 (story S1-E3-05 starts it; since bundle CALM-7c,
+ * board New-Story and the simplified design handover, Step 3, "Story page"; page template: shelf
+ * page).
  *
  * Who shows it: the router, at /s/:storySlug; shared links, story cards and Your writing's "See
  * story page" lead here.
- * What it shows (liquid glass board StoryPage, bundle G7): the breadcrumb "Discover / category /
- * title" (StoryBreadcrumb), then two columns from 1024 px. The main column holds the header
- * (cover, pills, title, "by <pen name>", numbers, Start reading and Library, Follow and Share, the
- * blurb and the tags), the chapter list, "The story's world" (S1-E17-33) and the wide ad slot
- * (S1-E12-01; none on a class-only story, Q70). The side column holds the writer card and "Labels
- * from the writer", then Report. Below both columns: "More by" and "Stories like this"
- * (StorySuggestions, S1-E15-06). The owner sees a note while nothing is published yet. No
- * doodles since bundle G4.
+ * What it shows, top to bottom: the breadcrumb "Read / category / title" (StoryBreadcrumb); the
+ * page's one glass hero (StoryHeader: cover, meta lines, title, blurb, tags and the buttons); then
+ * two columns from 1024 px. The main column holds the chapters (StoryChapterList), "Shared by
+ * the writer" (StoryWorldLinks, S1-E17-33) and "Labels from the writer" (StoryLabels). The side
+ * column, "About this story" (StorySideColumn), holds the writer, the advert (S1-E12-01; none on a
+ * class-only story, Q70) and Report. Below both: "More by" and "Stories like this"
+ * (StorySuggestions, S1-E15-06). The owner sees a note while nothing is published yet.
  * A signed-out visitor on a 16+ or 18+ story gets its title and NoPreviewNotice instead of "not
  * available" (S1-E4-04; they count as under 16, Q6).
  * A story hidden in the reader's country gets board B11's "This page isn't available here"
@@ -27,7 +27,6 @@ import { Link, useParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
-import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
 import { UnavailableHereNotice } from '@/features/country-block/components/UnavailableHereNotice';
 import { useUnavailableHere } from '@/features/country-block/hooks/useUnavailableHere';
 import { StorySuggestions } from '@/features/suggestions/components/StorySuggestions';
@@ -42,6 +41,7 @@ import { StoryBreadcrumb } from './StoryBreadcrumb';
 import { StoryChapterList, type ChapterListEdition } from './StoryChapterList';
 import { CopiedWorkNote } from './CopiedWorkNote';
 import { StoryHeader } from './StoryHeader';
+import { StoryLabels } from './StoryLabels';
 import { StorySideColumn } from './StorySideColumn';
 import { StoryWorldLinks } from './StoryWorldLinks';
 
@@ -78,31 +78,6 @@ function StoryMissing({ storySlug }: { storySlug: string }) {
       <title>{t('storyPage.unavailableTitle')}</title>
       <StoryUnavailable />
     </>
-  );
-}
-
-/**
- * The page's one ad slot, chosen from the story's category and language only (S1-E12-01); the
- * server leaves it out on a class-only story (Q70).
- *
- * @param props.story - the story the page shows
- * @returns the slot, or nothing
- */
-function StoryAdSlot({
-  story,
-}: {
-  story: { slug: string; categorySlug: string; languageCode: string };
-}) {
-  return (
-    <PageAdSlot
-      pageKey="story"
-      position={1}
-      context={{
-        storySlug: story.slug,
-        category: story.categorySlug,
-        language: story.languageCode,
-      }}
-    />
   );
 }
 
@@ -170,28 +145,27 @@ export function StoryPage() {
   }
 
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-8 pt-10 pb-7">
+    <PageContainer className="tmc-rise flex flex-col gap-10 pt-8 pb-16">
       <title>{t('storyPage.documentTitle', { title: story.title })}</title>
       {story.isOwner && !story.isPublic && (
         <Notice tone="info">{t('storyPage.notPublicYet')}</Notice>
       )}
       {/* Discover / category / title (G7): the way back, and to the category page. */}
       <StoryBreadcrumb title={story.title} categorySlug={story.categorySlug} />
-      {/* Two columns only from 1024 px: at 768 px the side cards would be squeezed to about
-          220 px and their label rows (140 px labels) would push the page sideways (rule 21). */}
-      <div className="flex flex-col gap-10 lg:flex-row lg:items-start">
-        <div className="relative flex min-w-0 flex-[999_1_620px] flex-col gap-12">
-          {/* A moderator confirmed this story copies a published work (S1-E10-08). */}
-          <CopiedWorkNote storyId={story.id} />
-          <StoryHeader story={story} />
+      {/* A moderator confirmed this story copies a published work (S1-E10-08). */}
+      <CopiedWorkNote storyId={story.id} />
+      {/* The page's one glass hero (board New-Story). */}
+      <StoryHeader story={story} />
+      {/* Two columns only from 1024 px: at 768 px a 320 px side column would squeeze the label
+          rows (140 px labels) and push the page sideways (rule 21). */}
+      <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-16">
+        <div className="flex min-w-0 flex-col gap-12">
           <StoryChapters story={story} />
           {/* The parts of the plan the writer shares (S1-E17-33). */}
           <StoryWorldLinks storySlug={story.slug} />
-          <StoryAdSlot story={story} />
+          <StoryLabels story={story} />
         </div>
-        <div className="relative w-full flex-[1_1_300px] lg:max-w-[340px]">
-          <StorySideColumn story={story} />
-        </div>
+        <StorySideColumn story={story} />
       </div>
       {/* "More by" and "Stories like this" (S1-E15-06), across the page's width. */}
       <StorySuggestions storySlug={story.slug} />

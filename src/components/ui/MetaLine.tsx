@@ -30,6 +30,8 @@ export interface MetaLineProps {
   facts: readonly MetaFact[];
   /** Extra classes, such as a margin. */
   className?: string;
+  /** The list's accessible name, when a screen reader needs one ("Story numbers"). */
+  label?: string;
 }
 
 /** The classes for each kind of fact. */
@@ -45,15 +47,16 @@ const factClasses: Record<MetaFactKind, string> = {
  *
  * @param props.facts - the facts to show
  * @param props.className - extra classes
+ * @param props.label - the list's accessible name, if any
  * @returns a list styled as one line, or nothing when there are no facts
  */
-export function MetaLine({ facts, className }: MetaLineProps) {
+export function MetaLine({ facts, className, label }: MetaLineProps) {
   // Step 1: leave out facts with no words, so the line never shows two dots in a row.
   const shownFacts = facts.filter((fact) => fact.text.trim() !== '');
   if (shownFacts.length === 0) return null;
   // Step 2: one list item per fact; CSS draws the middot before every item but the first.
   return (
-    <ul className={`meta-line ${className ?? ''}`.trim()}>
+    <ul aria-label={label} className={`meta-line ${className ?? ''}`.trim()}>
       {shownFacts.map((fact, index) => (
         <li key={`${index}-${fact.text}`} className={factClasses[fact.kind ?? 'fact']}>
           {fact.text}

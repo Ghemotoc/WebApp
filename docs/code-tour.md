@@ -1359,11 +1359,15 @@ delete_my_story(): deleted_at = now(); restore within content_purge_days (30);
   │  null unless: not deleted, first_published_at set (or the caller owns it) and
   │  not is_moderated_away('story', id) (Lane C's contract) and rating_allows(rating) (S1-E3-06)
   ▼
-StoryHeader (cover from resolveCoverChoice() on the left, and beside it the pills ("Ongoing"
-only while unfinished), title, "by <pen name>", the buttons, blurb and tags) and
-StorySideColumn (the writer, "Labels from the writer" with "First published": a classic's
-first_published_year, copied from classic_works by a trigger, or the year of first_published_at;
-and for readers Lane C's shared
+StoryHeader, the page's one glass Hero (CALM-7c, board New-Story): the cover from
+resolveCoverChoice() on the left, and beside it the meta line from lib/storyLabelFacts.ts
+("Fiction · Ongoing · No AI · 13+"; "Ongoing" only while unfinished), the title, "by <pen name>",
+the numbers (StoryStats, a MetaLine named "Story numbers"), blurb, tags as links and the buttons;
+then StoryChapterList ("15 chapters", two columns, the state in words) and StoryLabels
+("Labels from the writer" with "First published": a classic's first_published_year, copied from
+classic_works by a trigger, or the year of first_published_at; the content note under it);
+StorySideColumn ("About this story": the writer, the advert in StoryAdSlot and for readers
+Lane C's shared
 <ReportButton itemType="story"> → report_item('story', id), S1-E10-01)
 ```
 
@@ -1387,8 +1391,9 @@ get_story_page(slug): readers get null unless rating_allows(rating) (the owner i
   rating_allows(): age_band() from the year of birth; 18+ also needs the Yoti "18 or over"
   result once adults_only is off (proposal, 23 Oct 2026); a visitor counts as under 16 (L14)
   ▼
-StoryLabelPills (src/features/reading/) on the preview, the writer's card and the story page;
-StorySideColumn adds the Rating, Labels and AI rows; StoryHeader shows the content note
+StoryLabelPills (src/features/reading/) on the preview and the writer's card; on the story page
+the same labels are the hero's meta line (lib/storyLabelFacts.ts, CALM-7c), and StoryLabels
+adds the Fan fiction, Parody, Rating and AI use rows and the content note
 Staff: admin_raise_story_rating() (never lowers; audit_log; a 'statement_of_reasons_needed'
   job for S1-E10-04) and admin_set_ai_undisclosed_label() (after confirmed reports, Q24);
   the staff screen is S1-E11-08. The jobs table (platform) is the queue other stories read.
