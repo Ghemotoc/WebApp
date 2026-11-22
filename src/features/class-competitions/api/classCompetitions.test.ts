@@ -33,6 +33,8 @@ describe('classCompetitionsFrom', () => {
         name: 'Spring stories',
         starts_on: '2027-03-01',
         ends_on: '2027-03-15',
+        starts_at: '2027-03-01T06:00:00+00:00',
+        ends_at: '2027-03-15T21:59:00+00:00',
         phase: 'open',
         criteria: [criterion],
         is_entrant: false,
@@ -43,6 +45,8 @@ describe('classCompetitionsFrom', () => {
       published: [],
     });
     expect(read?.role).toBe('pupil');
+    expect(read?.running?.startsAt).toBe('2027-03-01T06:00:00+00:00');
+    expect(read?.running?.endsAt).toBe('2027-03-15T21:59:00+00:00');
     expect(read?.running?.canJoin).toBe(true);
     expect(read?.running?.entrantCount).toBeNull();
     expect(read?.running?.criteria[0]).toEqual({

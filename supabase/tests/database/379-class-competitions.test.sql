@@ -15,7 +15,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(63);
+select plan(67);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -57,10 +57,10 @@ create function pg_temp.criteria() returns jsonb language sql as $$
             "outcomes": ["Folosește dialogul ca să arate un personaj", "Cel mult cinci greșeli de ortografie"]},
            {"label": "Poveste", "max_points": 20, "description": "Cum e construită povestea.",
             "outcomes": ["Are început, mijloc și sfârșit"]}]'::jsonb $$;
--- A competition's details from today for a week, with the criteria given.
+-- A competition's details from now for a week, with the criteria given.
 create function pg_temp.details(name text, criteria jsonb) returns jsonb language sql as $$
-  select jsonb_build_object('name', name, 'starts_on', pg_temp.today(),
-                            'ends_on', pg_temp.today() + 7, 'criteria', criteria) $$;
+  select jsonb_build_object('name', name, 'starts_at', now(),
+                            'ends_at', now() + interval '7 days', 'criteria', criteria) $$;
 grant execute on all functions in schema pg_temp to anon, authenticated;
 
 /* ---------- 1. A class with three pupils ---------- */
@@ -123,14 +123,14 @@ select is(pg_temp.hint_of(format($$select public.save_class_competition('clasa-a
 /* ---------- 4. Dates ---------- */
 
 select is(pg_temp.hint_of(format($$select public.save_class_competition('clasa-a-ix-a-c', %L)$$,
-    pg_temp.details('Concurs', pg_temp.criteria()) || jsonb_build_object('ends_on', pg_temp.today() - 1))),
+    pg_temp.details('Concurs', pg_temp.criteria()) || jsonb_build_object('ends_at', now() - interval '1 day'))),
   'competition:dates', 'the end can''t come before the start');
 select is(pg_temp.hint_of(format($$select public.save_class_competition('clasa-a-ix-a-c', %L)$$,
-    pg_temp.details('Concurs', pg_temp.criteria()) || jsonb_build_object('starts_on', pg_temp.today() - 2))),
+    pg_temp.details('Concurs', pg_temp.criteria()) || jsonb_build_object('starts_at', now() - interval '2 days'))),
   'competition:dates', 'a new competition can''t start in the past');
 select is(pg_temp.hint_of(format($$select public.save_class_competition('clasa-a-ix-a-c', %L)$$,
-    pg_temp.details('Concurs', pg_temp.criteria()) || jsonb_build_object('ends_on',
-      (select (locks_at at time zone 'Europe/Bucharest')::date from public.spaces where slug = 'clasa-a-ix-a-c')))),
+    pg_temp.details('Concurs', pg_temp.criteria()) || jsonb_build_object('ends_at',
+      (select locks_at from public.spaces where slug = 'clasa-a-ix-a-c')))),
   'competition:dates', 'it must end before the class closes');
 
 /* ---------- 5. The teacher starts one; only the teacher ---------- */
@@ -163,6 +163,26 @@ select is(jsonb_array_length(public.class_competitions('clasa-a-ix-a-c') -> 'run
   'and the criteria are replaced, not added to');
 select public.save_class_competition('clasa-a-ix-a-c',
   pg_temp.details('Concursul de toamnă', pg_temp.criteria()), pg_temp.kept_id('competition'));
+-- CALM-7d: a start and an end are moments; the days follow them.
+select is((public.class_competitions('clasa-a-ix-a-c') -> 'running' ->> 'starts_at')::timestamptz, now(),
+  'the class page answers the moment it opens');
+select is((public.class_competitions('clasa-a-ix-a-c') -> 'running' ->> 'ends_on')::date,
+  ((now() + interval '7 days') at time zone 'Europe/Bucharest')::date,
+  'and its last day is the day of the moment it closes');
+select is(public.save_class_competition('clasa-a-ix-a-c',
+    pg_temp.details('Concursul de toamnă', pg_temp.criteria()) || jsonb_build_object('starts_at', now() + interval '1 hour'),
+    pg_temp.kept_id('competition')) -> 'running' ->> 'phase', 'upcoming',
+  'a competition opening later is upcoming until its moment');
+select pg_temp.as_postgres();
+update public.class_competitions set starts_at = now() - interval '1 hour', ends_at = now()
+  where id = pg_temp.kept_id('competition');
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
+select is(public.class_competitions('clasa-a-ix-a-c') -> 'running' ->> 'phase', 'judging',
+  'and it closes for judging at the moment it ends');
+select pg_temp.as_postgres();
+update public.class_competitions set starts_at = now(), ends_at = now() + interval '7 days'
+  where id = pg_temp.kept_id('competition');
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
 
 /* ---------- 6. Pupils see everything from the start and choose to join ---------- */
 

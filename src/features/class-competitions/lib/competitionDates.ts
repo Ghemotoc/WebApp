@@ -1,39 +1,67 @@
 /**
- * competitionDates: the dates the competition form starts with (bundle CLASS-POINTS, part 2;
- * story S1-E8-15). The database decides what is allowed (first day from today, last day before
- * the class closes); these are only a sensible starting point.
+ * competitionDates: the moments the competition form starts with, and how its date and time
+ * fields turn into moments (bundle CLASS-POINTS, part 2, story S1-E8-15; a date and a time on
+ * the teacher's own clock since CALM-7d, part 3). The database decides what is allowed (a start
+ * from today, an end before the class locks); these are only a sensible starting point.
  *
- * Who calls it: CompetitionFormPage. What it calls: nothing.
+ * Who calls it: CompetitionFormPage. What it calls: localFieldsFor() and localTimeToInstant()
+ * from src/lib/local-time.ts.
  */
+import type { DateTimeValue } from '@/components/ui/DateTimeField';
+import { localFieldsFor, localTimeToInstant } from '@/lib/local-time';
 
 /** How many days a new competition runs unless the teacher changes the dates. */
 const defaultLengthInDays = 14;
 
-/**
- * A date as the YYYY-MM-DD text a date field and the database use.
- *
- * @param date - a date built in UTC
- * @returns the day as text
- */
-function dayOf(date: Date): string {
-  return date.toISOString().slice(0, 10);
+/** The time a competition's end starts at in the form: the end of its last day. */
+const defaultEndTime = '23:59';
+
+/** The start and the end, as the form's two date and time fields hold them. */
+export interface CompetitionMomentFields {
+  starts: DateTimeValue;
+  ends: DateTimeValue;
 }
 
 /**
- * The first and last day a new competition's form starts with: today and two weeks later.
- * "Today" comes from the database (class_competitions() → today), not from the device's clock:
- * a teacher's laptop set to another time zone, or opened just after midnight, would otherwise
- * start on a day the database calls the past and refuses.
+ * The fields a new competition's form starts with: open from now, closing at 23:59 two weeks
+ * later, both on the teacher's own clock. Starting "now" means the competition opens as soon as it
+ * is saved, as a first day of "today" did before.
  *
- * @param today - today as YYYY-MM-DD where class weeks are counted
- * @returns the two days as YYYY-MM-DD; both empty when today isn't a date
+ * @param now - the current moment
+ * @returns the two fields
  */
-export function defaultDates(today: string): { startsOn: string; endsOn: string } {
-  const [year, month, day] = today.split('-').map(Number);
-  if (year === undefined || month === undefined || day === undefined) {
-    return { startsOn: '', endsOn: '' };
-  }
-  const end = new Date(Date.UTC(year, month - 1, day + defaultLengthInDays));
-  if (Number.isNaN(end.getTime())) return { startsOn: '', endsOn: '' };
-  return { startsOn: today, endsOn: dayOf(end) };
+export function defaultMomentFields(now: Date): CompetitionMomentFields {
+  const lastDay = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate() + defaultLengthInDays,
+    12,
+  );
+  return {
+    starts: localFieldsFor(now),
+    ends: { date: localFieldsFor(lastDay).date, time: defaultEndTime },
+  };
+}
+
+/**
+ * The fields for a competition already saved.
+ *
+ * @param startsAt - its start (ISO)
+ * @param endsAt - its end (ISO)
+ * @returns the two fields, on the viewer's own clock
+ */
+export function savedMomentFields(startsAt: string, endsAt: string): CompetitionMomentFields {
+  return { starts: localFieldsFor(new Date(startsAt)), ends: localFieldsFor(new Date(endsAt)) };
+}
+
+/**
+ * The moment one field means, ready for save_class_competition().
+ *
+ * @param fields - the typed date and time, on the viewer's own clock
+ * @returns the ISO moment, or null when it isn't a real date and time (the database then answers
+ *   competition:dates)
+ */
+export function momentOf(fields: DateTimeValue): string | null {
+  const instant = localTimeToInstant(fields.date, fields.time);
+  return instant === null ? null : instant.toISOString();
 }

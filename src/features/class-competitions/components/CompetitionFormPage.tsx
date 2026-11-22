@@ -3,7 +3,8 @@
  * or changes one nobody joined yet (bundle CLASS-POINTS, part 2; stories S1-E8-15 criteria 1 to
  * 4 and S1-E8-19).
  *
- * What it shows: the name, the first and last day, the criteria editor, the teacher's templates
+ * What it shows: the name, the start and the end (each a date and a time on the teacher's own
+ * clock in the shared DateTimeField, CALM-7d), the criteria editor, the teacher's templates
  * ("Use template" above the criteria, "Save as template" under them) and "Start the
  * competition". Anyone but the class's teacher is told the page is the teacher's; a competition
  * pupils already joined is locked. Plain page, no doodles, no ads.
@@ -18,29 +19,34 @@ import { Button } from '@/components/ui/Button';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
+import { DateTimeField } from '@/components/ui/DateTimeField';
 import { TextInput } from '@/components/ui/TextInput';
 import type { Space } from '@/features/spaces/api/spaces';
 import { SpaceBreadcrumb } from '@/features/spaces/components/SpaceBreadcrumb';
 import { useSpace } from '@/features/spaces/hooks/useSpaces';
+import { deviceTimeZone } from '@/lib/local-time';
 
 import type { Criterion, RunningCompetition } from '../api/classCompetitions';
 import { useClassCompetitions, useSaveCompetition } from '../hooks/useClassCompetitions';
-import { defaultDates } from '../lib/competitionDates';
+import {
+  defaultMomentFields,
+  momentOf,
+  savedMomentFields,
+  type CompetitionMomentFields,
+} from '../lib/competitionDates';
 import { copiedCriteria, emptyCriterion } from '../lib/criteriaDraft';
 import { useClassCompetitionsTranslation } from '../registerClassCompetitionsTranslations';
 
 import { CriteriaEditor } from './CriteriaEditor';
 import { SaveAsTemplate, TemplatePicker } from './CriteriaTemplateTools';
 
-/** The name and the two days, as the form holds them. */
-interface Details {
+/** The name and the two moments' fields, as the form holds them. */
+interface Details extends CompetitionMomentFields {
   name: string;
-  startsOn: string;
-  endsOn: string;
 }
 
 /**
- * The name and the two date fields.
+ * The name and the start and end fields.
  *
  * @param props.details - what is typed so far
  * @param props.onChange - takes the changed details
@@ -60,25 +66,23 @@ function DetailsFields(props: { details: Details; onChange: (details: Details) =
         value={details.name}
         onChange={(event) => onChange({ ...details, name: event.target.value })}
       />
-      <div className="grid gap-4 sm:grid-cols-2">
-        <TextInput
-          id="competition-starts"
-          type="date"
-          label={t('form.startsOn')}
-          required
-          value={details.startsOn}
-          onChange={(event) => onChange({ ...details, startsOn: event.target.value })}
-        />
-        <TextInput
-          id="competition-ends"
-          type="date"
-          label={t('form.endsOn')}
-          hint={t('form.datesHint')}
-          required
-          value={details.endsOn}
-          onChange={(event) => onChange({ ...details, endsOn: event.target.value })}
-        />
-      </div>
+      <DateTimeField
+        id="competition-starts"
+        value={details.starts}
+        onChange={(starts) => onChange({ ...details, starts })}
+        dateLabel={t('form.startsOn')}
+        timeLabel={t('form.startTime')}
+        skippedHourNote={(time) => t('form.skippedHourNote', { time })}
+      />
+      <DateTimeField
+        id="competition-ends"
+        value={details.ends}
+        onChange={(ends) => onChange({ ...details, ends })}
+        dateLabel={t('form.endsOn')}
+        timeLabel={t('form.endTime')}
+        note={t('form.datesHint', { zone: deviceTimeZone() })}
+        skippedHourNote={(time) => t('form.skippedHourNote', { time })}
+      />
     </div>
   );
 }
@@ -106,8 +110,6 @@ interface CompetitionFormProps {
   slug: string;
   /** The competition to change, or null for a new one. */
   current: RunningCompetition | null;
-  /** Today as the database counts it, for a new competition's first day. */
-  today: string;
 }
 
 /**
@@ -115,14 +117,14 @@ interface CompetitionFormProps {
  *
  * @returns the form
  */
-function CompetitionForm({ slug, current, today }: CompetitionFormProps) {
+function CompetitionForm({ slug, current }: CompetitionFormProps) {
   const { t } = useClassCompetitionsTranslation();
   const navigate = useNavigate();
   const saver = useSaveCompetition();
   const [details, setDetails] = useState<Details>(() =>
     current === null
-      ? { name: '', ...defaultDates(today) }
-      : { name: current.name, startsOn: current.startsOn, endsOn: current.endsOn },
+      ? { name: '', ...defaultMomentFields(new Date()) }
+      : { name: current.name, ...savedMomentFields(current.startsAt, current.endsAt) },
   );
   const [criteria, setCriteria] = useState<Criterion[]>(() =>
     current === null ? [emptyCriterion()] : current.criteria,
@@ -131,7 +133,16 @@ function CompetitionForm({ slug, current, today }: CompetitionFormProps) {
   /** Saves the competition, then goes back to the class page, where its card now shows. */
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const request = { slug, competitionId: current?.id ?? null, ...details, criteria };
+    // The typed dates and times become moments; one that isn't real goes as null and the
+    // database answers competition:dates, which the form shows.
+    const request = {
+      slug,
+      competitionId: current?.id ?? null,
+      name: details.name,
+      startsAt: momentOf(details.starts),
+      endsAt: momentOf(details.ends),
+      criteria,
+    };
     const saved = await saver.save(request).catch(() => undefined);
     if (saved !== undefined) await navigate(`/spaces/${slug}`);
   }
@@ -190,14 +201,7 @@ function TeacherForm({ slug }: { slug: string }) {
     );
   }
   // The key rebuilds the form when the competition it edits changes.
-  return (
-    <CompetitionForm
-      key={running?.id ?? 'new'}
-      slug={slug}
-      current={running}
-      today={competitions.today}
-    />
-  );
+  return <CompetitionForm key={running?.id ?? 'new'} slug={slug} current={running} />;
 }
 
 /**

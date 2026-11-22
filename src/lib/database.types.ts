@@ -2221,11 +2221,13 @@ export type Database = {
         Row: {
           created_at: string;
           ended_at: string | null;
+          ends_at: string;
           ends_on: string;
           id: string;
           name: string;
           published_at: string | null;
           space_id: string;
+          starts_at: string;
           starts_on: string;
           updated_at: string;
           user_id: string;
@@ -2240,11 +2242,13 @@ export type Database = {
         Insert: {
           created_at?: string;
           ended_at?: string | null;
+          ends_at: string;
           ends_on: string;
           id?: string;
           name: string;
           published_at?: string | null;
           space_id: string;
+          starts_at: string;
           starts_on: string;
           updated_at?: string;
           user_id: string;
@@ -2252,11 +2256,13 @@ export type Database = {
         Update: {
           created_at?: string;
           ended_at?: string | null;
+          ends_at?: string;
           ends_on?: string;
           id?: string;
           name?: string;
           published_at?: string | null;
           space_id?: string;
+          starts_at?: string;
           starts_on?: string;
           updated_at?: string;
           user_id?: string;
@@ -13599,11 +13605,13 @@ export type Database = {
         Returns: {
           created_at: string;
           ended_at: string | null;
+          ends_at: string;
           ends_on: string;
           id: string;
           name: string;
           published_at: string | null;
           space_id: string;
+          starts_at: string;
           starts_on: string;
           updated_at: string;
           user_id: string;
@@ -13620,11 +13628,13 @@ export type Database = {
         Returns: {
           created_at: string;
           ended_at: string | null;
+          ends_at: string;
           ends_on: string;
           id: string;
           name: string;
           published_at: string | null;
           space_id: string;
+          starts_at: string;
           starts_on: string;
           updated_at: string;
           user_id: string;

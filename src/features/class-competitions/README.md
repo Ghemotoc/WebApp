@@ -25,7 +25,8 @@ the Readers' choice pen names and the pupil's own result, nothing else.
   class page, the form and the results agree.
 - `lib/criteriaDraft.ts`: pure helpers for editing a list of criteria and for totals;
   `lib/typedScores.ts`: reading the score fields; `lib/competitionDates.ts`: the form's starting
-  dates, counted from the database's today, not the device's clock.
+  moments (open from now, closing at 23:59 two weeks later) and how its date and time fields
+  become moments (CALM-7d, part 3).
 - On a class page: `ClassCompetitionCard` (the running competition with `CriteriaList`, the
   pupil's `PupilControls` or the teacher's `TeacherControls`, then one `WinnerCard` per confirmed
   competition). In the class's settings: `ClassGradeCard` (the school year).

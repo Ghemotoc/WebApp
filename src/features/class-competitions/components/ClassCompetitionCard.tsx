@@ -17,8 +17,8 @@ import { Link } from 'react-router';
 
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
-import { dayText } from '@/features/class-points/lib/classPointsDates';
 import { ReportButton } from '@/features/reporting/components/ReportButton';
+import { formatLocalDayAndTime } from '@/lib/local-time';
 
 import type { ClassCompetitions, RunningCompetition } from '../api/classCompetitions';
 import { useClassCompetitions } from '../hooks/useClassCompetitions';
@@ -39,12 +39,12 @@ const cardClasses =
  */
 function PhaseLine({ competition }: { competition: RunningCompetition }) {
   const { t, i18n } = useClassCompetitionsTranslation();
-  const day = (date: string) => dayText(date, i18n.language);
+  const moment = (instant: string) => formatLocalDayAndTime(new Date(instant), i18n.language);
   if (competition.phase === 'upcoming') {
-    return <>{t('card.phase.upcoming', { date: day(competition.startsOn) })}</>;
+    return <>{t('card.phase.upcoming', { date: moment(competition.startsAt) })}</>;
   }
   if (competition.phase === 'open') {
-    return <>{t('card.phase.open', { date: day(competition.endsOn) })}</>;
+    return <>{t('card.phase.open', { date: moment(competition.endsAt) })}</>;
   }
   return <>{t('card.phase.judging')}</>;
 }
@@ -59,7 +59,8 @@ function RunningCard({ competitions, slug }: { competitions: ClassCompetitions; 
   const competition = competitions.running;
   if (competition === null) return null;
   const isTeacher = competitions.role === 'teacher';
-  const day = (date: string) => dayText(date, i18n.language);
+  // CALM-7d: both moments on the viewer's own clock ("Monday 1 March, 08:00").
+  const moment = (instant: string) => formatLocalDayAndTime(new Date(instant), i18n.language);
   return (
     <section aria-labelledby="class-competition-heading" className={cardClasses}>
       <Eyebrow>{t('card.eyebrow')}</Eyebrow>
@@ -70,7 +71,7 @@ function RunningCard({ competitions, slug }: { competitions: ClassCompetitions; 
         {competition.name}
       </h2>
       <p className="m-0 text-sm text-body">
-        {t('card.dates', { start: day(competition.startsOn), end: day(competition.endsOn) })}
+        {t('card.dates', { start: moment(competition.startsAt), end: moment(competition.endsAt) })}
       </p>
       <p className="m-0 font-semibold text-ink">
         <PhaseLine competition={competition} />

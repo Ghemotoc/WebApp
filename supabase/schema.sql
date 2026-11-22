@@ -18863,7 +18863,10 @@ CREATE TABLE IF NOT EXISTS "public"."class_competitions" (
     "published_at" timestamp with time zone,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "starts_at" timestamp with time zone NOT NULL,
+    "ends_at" timestamp with time zone NOT NULL,
     CONSTRAINT "class_competitions_dates_in_order" CHECK (("ends_on" >= "starts_on")),
+    CONSTRAINT "class_competitions_moments_in_order" CHECK (("ends_at" > "starts_at")),
     CONSTRAINT "class_competitions_name_length" CHECK ((("char_length"("name") >= 1) AND ("char_length"("name") <= 120)))
 );
 
@@ -18873,6 +18876,14 @@ ALTER TABLE "public"."class_competitions" OWNER TO "postgres";
 
 COMMENT ON TABLE "public"."class_competitions" IS 'kind: user_content; reportable: class_competition
 A competition a teacher runs in their class: a name, dates and criteria (S1-E8-15). Read through class_competitions(); pupils choose to join.';
+
+
+
+COMMENT ON COLUMN "public"."class_competitions"."starts_at" IS 'The moment the competition opens; starts_on is its day (CALM-7d).';
+
+
+
+COMMENT ON COLUMN "public"."class_competitions"."ends_at" IS 'The moment the competition closes for judging; ends_on is its day (CALM-7d).';
 
 
 
@@ -19117,8 +19128,8 @@ CREATE OR REPLACE FUNCTION "public"."class_competition_phase"("target" "public".
     AS $$
   select case
     when target.published_at is not null then 'published'
-    when target.ended_at is not null or public.class_today() > target.ends_on then 'judging'
-    when public.class_today() < target.starts_on then 'upcoming'
+    when target.ended_at is not null or now() >= target.ends_at then 'judging'
+    when now() < target.starts_at then 'upcoming'
     else 'open' end;
 $$;
 
@@ -19148,7 +19159,9 @@ begin
     and not public.space_is_locked(space) and public.is_active_member();
   return jsonb_build_object(
     'id', competition.id, 'name', competition.name,
-    'starts_on', competition.starts_on, 'ends_on', competition.ends_on, 'phase', phase,
+    'starts_on', competition.starts_on, 'ends_on', competition.ends_on,
+    -- CALM-7d: the moments, which members read on their own clock.
+    'starts_at', competition.starts_at, 'ends_at', competition.ends_at, 'phase', phase,
     'criteria', public.class_competition_criteria_json(competition.id),
     'is_entrant', case when not is_teacher then is_entrant end,
     'can_join', may_take_part and not is_entrant,
@@ -19268,6 +19281,27 @@ ALTER FUNCTION "public"."class_competitions"("slug" "text") OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."class_competitions"("slug" "text") IS 'Class competitions on a class page: the running one with its criteria, and the Winner cards (S1-E8-15).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."class_competitions_set_days"() RETURNS "trigger"
+    LANGUAGE "plpgsql"
+    SET "search_path" TO ''
+    AS $$
+declare
+  class_zone text := coalesce(public.setting_value('class_points_timezone') #>> '{}', 'Europe/Bucharest');
+begin
+  new.starts_on := (new.starts_at at time zone class_zone)::date;
+  new.ends_on := (new.ends_at at time zone class_zone)::date;
+  return new;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."class_competitions_set_days"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."class_competitions_set_days"() IS 'Trigger: keeps a class competition''s days in step with its moments (CALM-7d).';
 
 
 
@@ -44452,8 +44486,8 @@ declare
   caller_id uuid := (select auth.uid());
   clean_name text;
   clean_criteria jsonb;
-  first_day date;
-  last_day date;
+  first_moment timestamptz;
+  last_moment timestamptz;
   existing public.class_competitions;
   saved_id uuid;
 begin
@@ -44466,31 +44500,33 @@ begin
   if space.class_grade is null then
     raise exception 'Say which school year the class is first.' using errcode = 'check_violation', hint = 'competition:grade';
   end if;
-  -- Step 2: the name, the criteria and the dates.
+  -- Step 2: the name, the criteria and the two moments (CALM-7d: a date and a time each).
   clean_name := public.check_class_plain_text(details ->> 'name', 120, 'competition:name');
   clean_criteria := public.check_class_criteria(details -> 'criteria');
   begin
-    first_day := (details ->> 'starts_on')::date;
-    last_day := (details ->> 'ends_on')::date;
+    first_moment := (details ->> 'starts_at')::timestamptz;
+    last_moment := (details ->> 'ends_at')::timestamptz;
   exception when others then
-    first_day := null;
+    first_moment := null;
   end;
-  if first_day is null or last_day is null or last_day < first_day
-     or (space.locks_at is not null and last_day >= (space.locks_at at time zone
-           coalesce(public.setting_value('class_points_timezone') #>> '{}', 'Europe/Bucharest'))::date) then
+  if first_moment is null or last_moment is null or last_moment <= first_moment
+     or (space.locks_at is not null and last_moment >= space.locks_at) then
     raise exception 'Choose a start and an end before the class closes.' using errcode = 'check_violation', hint = 'competition:dates';
   end if;
   -- Step 3: a new competition, or one that nobody has joined yet.
   if target_competition_id is null then
-    if first_day < public.class_today() then
+    -- Any moment of today still counts, as the first day did before (the form starts at now).
+    if (first_moment at time zone coalesce(public.setting_value('class_points_timezone') #>> '{}',
+          'Europe/Bucharest'))::date < public.class_today() then
       raise exception 'A competition can''t start in the past.' using errcode = 'check_violation', hint = 'competition:dates';
     end if;
     if exists (select 1 from public.class_competitions as competitions
                where competitions.space_id = space.id and competitions.published_at is null) then
       raise exception 'This class already has a competition running.' using errcode = 'check_violation', hint = 'competition:exists';
     end if;
-    insert into public.class_competitions (user_id, space_id, name, starts_on, ends_on)
-    values (caller_id, space.id, clean_name, first_day, last_day)
+    -- The trigger class_competitions_set_days fills starts_on and ends_on from the moments.
+    insert into public.class_competitions (user_id, space_id, name, starts_at, ends_at)
+    values (caller_id, space.id, clean_name, first_moment, last_moment)
     returning id into saved_id;
   else
     existing := public.class_competition_for_teacher(target_competition_id);
@@ -44503,7 +44539,7 @@ begin
              where entrants.competition_id = existing.id)) then
       raise exception 'Pupils have joined, so it can''t change.' using errcode = 'check_violation', hint = 'competition:started';
     end if;
-    update public.class_competitions set name = clean_name, starts_on = first_day, ends_on = last_day
+    update public.class_competitions set name = clean_name, starts_at = first_moment, ends_at = last_moment
     where class_competitions.id = existing.id;
     delete from public.class_competition_criteria as criteria where criteria.competition_id = existing.id;
     saved_id := existing.id;
@@ -44517,7 +44553,7 @@ begin
   -- Step 5: the class's log.
   perform public.log_space_action(space,
     case when target_competition_id is null then 'competition_started' else 'competition_changed' end,
-    null, null, null, jsonb_build_object('name', clean_name, 'starts_on', first_day, 'ends_on', last_day));
+    null, null, null, jsonb_build_object('name', clean_name, 'starts_at', first_moment, 'ends_at', last_moment));
   return public.class_competitions(slug);
 end;
 $$;
@@ -63164,6 +63200,10 @@ CREATE OR REPLACE TRIGGER "class_competitions_refuse_user_id_change" BEFORE UPDA
 
 
 
+CREATE OR REPLACE TRIGGER "class_competitions_set_days" BEFORE INSERT OR UPDATE OF "starts_at", "ends_at" ON "public"."class_competitions" FOR EACH ROW EXECUTE FUNCTION "public"."class_competitions_set_days"();
+
+
+
 CREATE OR REPLACE TRIGGER "class_competitions_set_updated_at" BEFORE UPDATE ON "public"."class_competitions" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
@@ -70767,6 +70807,10 @@ GRANT ALL ON FUNCTION "public"."class_competition_scoring"("target_competition_i
 
 REVOKE ALL ON FUNCTION "public"."class_competitions"("slug" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."class_competitions"("slug" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."class_competitions_set_days"() FROM PUBLIC;
 
 
 
