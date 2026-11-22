@@ -1,7 +1,7 @@
 {
   "documentTitle": "Library",
   "title": "Library",
-  "intro": "Carry on from where you stopped. Your place in every chapter is saved on every device you log in on.",
+  "intro": "Carry on from where you stopped. The place in every chapter is saved on every device you log in on.",
   "signedOut": {
     "title": "Keep a library",
     "body": "Log in to save stories for later and carry on from where you stopped, on any device.",
@@ -11,8 +11,8 @@
   "continue": {
     "heading": "Continue reading",
     "by": "by",
-    "where": "Chapter {{number}} of {{total}}",
-    "whereNumberOnly": "Chapter {{number}}",
+    "where": "chapter {{number}} of {{total}}",
+    "whereNumberOnly": "chapter {{number}}",
     "progress": "{{percent}}% through chapter {{number}}",
     "stopped": "You stopped {{position}} chapter {{number}} on your {{device}}, {{when}}.",
     "positions": {
@@ -29,21 +29,19 @@
     "completed": "Completed story",
     "button": "Continue",
     "buttonLabel": "Continue {{title}}",
-    "contents": "Contents",
-    "contentsLabel": "Contents of {{title}}",
     "empty": "Stories you start reading show here, with your place in them."
   },
   "shelves": {
     "eyebrow": "Shelves",
     "heading": "Stories in the library",
     "choose": "Shelf",
-    "option": "{{name}} ({{count}})",
+    "option": "{{name}} · {{count}}",
     "reading": "Reading",
     "saved": "Saved for later",
     "finished": "Finished",
-    "chapterOf": "Chapter {{number}} of {{total}}",
-    "chapterNumberOnly": "Chapter {{number}}",
-    "notStarted": "Not started",
+    "chapterOf": "chapter {{number}} of {{total}}",
+    "chapterNumberOnly": "chapter {{number}}",
+    "notStarted": "not started",
     "empty": {
       "reading": "Nothing here yet. Open any chapter and the story joins this shelf.",
       "saved": "Nothing saved for later. Use “Library” on a story’s page to save it.",
@@ -55,19 +53,23 @@
       "draft": "Draft",
       "ongoing": "Ongoing",
       "completed": "Completed",
-      "yourWriting": "Open Writing for numbers, comments and every story tool",
       "newStory": "Start a new story",
-      "loadFailed": "We couldn’t load your stories. Check your connection and try again."
+      "loadFailed": "We couldn’t load your stories. Check your connection and try again.",
+      "openWrite": "Open Write"
+    },
+    "tabs": {
+      "reading": "Reading",
+      "saved": "Saved",
+      "finished": "Finished"
     }
   },
   "following": {
-    "eyebrow": "Following",
     "heading": "What you follow",
-    "intro": "You get a notification when they publish something new.",
-    "writers": "Writers ({{count}})",
-    "stories": "Stories ({{count}})",
-    "lastUpdate": "Last update {{when}}",
-    "nothingYet": "Nothing published yet",
+    "intro": "A notification comes when they publish something new.",
+    "writers": "Writers · {{count}}",
+    "stories": "Stories · {{count}}",
+    "lastUpdate": "last update {{when}}",
+    "nothingYet": "nothing published yet",
     "noWriters": "You don’t follow any writers yet. Use “Follow” on a writer’s profile.",
     "noStories": "You don’t follow any stories yet. Use “Follow story” on a story’s page.",
     "new": "New",
@@ -82,9 +84,8 @@
   "startReading": "Start reading",
   "continueChapter": "Continue chapter {{number}}",
   "habit": {
-    "eyebrow": "Private",
     "heading": "Reading days",
-    "offBody": "Keep a private count of the days you read, with a daily target if you want one. Nobody else sees it. No badges, no pressure.",
+    "offBody": "Count the days you read and set a daily target. Only you see it.",
     "turnOn": "Turn it on",
     "daysThisWeek_one": "You read on {{count}} day this week.",
     "daysThisWeek_few": "You read on {{count}} days this week.",
@@ -116,7 +117,8 @@
     "turnOffYes": "Yes, turn it off",
     "keepIt": "Keep it",
     "changeFailed": "That didn’t work. Check your connection and try again.",
-    "loadFailed": "Reading days couldn’t be loaded."
+    "loadFailed": "Reading days couldn’t be loaded.",
+    "offHeading": "Keep a private reading streak"
   },
   "thanks": {
     "button": "Tell the writer you finished it",
@@ -194,5 +196,11 @@
     "full": "Full",
     "shelvesUsed": "{{filled}} of {{shelves}} bookshelves · {{books}} books each on the free plan",
     "findStories": "Find stories for {{name}}"
+  },
+  "offline": {
+    "heading": "Downloaded to read offline",
+    "state": "Comes with the apps",
+    "body": "Offline reading comes with the {{productName}} apps for computers and phones, after the March 2027 test. Downloads stay locked inside the app, so they can’t be opened as files anywhere else, and they’re removed after 30 days or straight away when you log out.",
+    "website": "Nothing to download on the website. Until the apps arrive, you read online here, on any device you log in on."
   }
 }

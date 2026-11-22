@@ -1,7 +1,7 @@
 {
   "documentTitle": "Bibliotecă",
   "title": "Bibliotecă",
-  "intro": "Continuă de unde ai rămas. Locul tău în fiecare capitol e păstrat pe orice dispozitiv pe care intri în cont.",
+  "intro": "Continuă de unde ai rămas. Locul din fiecare capitol e păstrat pe orice dispozitiv pe care intri în cont.",
   "signedOut": {
     "title": "Păstrează o bibliotecă",
     "body": "Intră în cont ca să păstrezi povești pentru mai târziu și să continui de unde ai rămas, pe orice dispozitiv.",
@@ -11,8 +11,8 @@
   "continue": {
     "heading": "Continuă lectura",
     "by": "de",
-    "where": "Capitolul {{number}} din {{total}}",
-    "whereNumberOnly": "Capitolul {{number}}",
+    "where": "capitolul {{number}} din {{total}}",
+    "whereNumberOnly": "capitolul {{number}}",
     "progress": "{{percent}}% din capitolul {{number}}",
     "stopped": "Te-ai oprit {{position}} capitolului {{number}} pe {{device}}, {{when}}.",
     "positions": {
@@ -29,21 +29,19 @@
     "completed": "Poveste încheiată",
     "button": "Continuă",
     "buttonLabel": "Continuă {{title}}",
-    "contents": "Cuprins",
-    "contentsLabel": "Cuprins pentru {{title}}",
     "empty": "Poveștile pe care începi să le citești apar aici, cu locul unde ai rămas."
   },
   "shelves": {
     "eyebrow": "Rafturi",
     "heading": "Povești din bibliotecă",
     "choose": "Raft",
-    "option": "{{name}} ({{count}})",
+    "option": "{{name}} · {{count}}",
     "reading": "Citesc acum",
     "saved": "Păstrate pentru mai târziu",
     "finished": "Terminate",
-    "chapterOf": "Capitolul {{number}} din {{total}}",
-    "chapterNumberOnly": "Capitolul {{number}}",
-    "notStarted": "Neîncepută",
+    "chapterOf": "capitolul {{number}} din {{total}}",
+    "chapterNumberOnly": "capitolul {{number}}",
+    "notStarted": "neîncepută",
     "empty": {
       "reading": "Încă nimic aici. Deschide orice capitol și povestea ajunge pe acest raft.",
       "saved": "Nimic păstrat pentru mai târziu. Folosește „Bibliotecă” pe pagina unei povești ca s-o păstrezi.",
@@ -55,19 +53,23 @@
       "draft": "Ciornă",
       "ongoing": "În curs",
       "completed": "Terminată",
-      "yourWriting": "Deschide Scrieri pentru cifre, comentarii și uneltele poveștii",
       "newStory": "Începe o poveste nouă",
-      "loadFailed": "Nu ți-am putut încărca poveștile. Verifică-ți conexiunea și încearcă din nou."
+      "loadFailed": "Nu ți-am putut încărca poveștile. Verifică-ți conexiunea și încearcă din nou.",
+      "openWrite": "Deschide Scrie"
+    },
+    "tabs": {
+      "reading": "Citesc acum",
+      "saved": "Păstrate",
+      "finished": "Terminate"
     }
   },
   "following": {
-    "eyebrow": "Urmărești",
     "heading": "Ce urmărești",
     "intro": "Primești o notificare când publică ceva nou.",
-    "writers": "Scriitori ({{count}})",
-    "stories": "Povești ({{count}})",
-    "lastUpdate": "Ultima actualizare {{when}}",
-    "nothingYet": "Nimic publicat încă",
+    "writers": "Scriitori · {{count}}",
+    "stories": "Povești · {{count}}",
+    "lastUpdate": "ultima actualizare {{when}}",
+    "nothingYet": "nimic publicat încă",
     "noWriters": "Încă nu urmărești niciun scriitor. Folosește „Urmărește” pe profilul unui scriitor.",
     "noStories": "Încă nu urmărești nicio poveste. Folosește „Urmărește povestea” pe pagina unei povești.",
     "new": "Nou",
@@ -82,9 +84,8 @@
   "startReading": "Începe lectura",
   "continueChapter": "Continuă capitolul {{number}}",
   "habit": {
-    "eyebrow": "Privat",
     "heading": "Zile de citit",
-    "offBody": "Ține o socoteală privată a zilelor în care citești, cu o țintă zilnică dacă vrei una. Nu o vede nimeni altcineva. Fără insigne, fără presiune.",
+    "offBody": "Numără zilele în care citești și pune-ți o țintă zilnică. Doar tu o vezi.",
     "turnOn": "Pornește",
     "daysThisWeek_one": "Săptămâna asta ai citit într-o zi.",
     "daysThisWeek_few": "Săptămâna asta ai citit în {{count}} zile.",
@@ -116,7 +117,8 @@
     "turnOffYes": "Da, oprește",
     "keepIt": "Păstrează",
     "changeFailed": "N-a mers. Verifică conexiunea și încearcă din nou.",
-    "loadFailed": "Zilele de citit nu s-au putut încărca."
+    "loadFailed": "Zilele de citit nu s-au putut încărca.",
+    "offHeading": "Ține o serie privată de zile de citit"
   },
   "thanks": {
     "button": "Spune că ai terminat povestea",
@@ -194,5 +196,11 @@
     "full": "Plin",
     "shelvesUsed": "{{filled}} din {{shelves}} rafturi · câte {{books}} cărți pe fiecare în planul gratuit",
     "findStories": "Caută povești pentru {{name}}"
+  },
+  "offline": {
+    "heading": "Descărcate pentru citit offline",
+    "state": "Vine cu aplicațiile",
+    "body": "Cititul offline vine cu aplicațiile {{productName}} pentru calculatoare și telefoane, după testul din martie 2027. Descărcările rămân încuiate în aplicație, așa că nu pot fi deschise ca fișiere în altă parte, și sunt șterse după 30 de zile sau imediat ce ieși din cont.",
+    "website": "Pe site nu ai nimic de descărcat. Până apar aplicațiile, citești online aici, pe orice dispozitiv pe care intri în cont."
   }
 }

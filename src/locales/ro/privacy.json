@@ -35,16 +35,16 @@
   },
   "libraryNote": {
     "only_me": {
-      "lead": "Privat.",
-      "body": "Doar tu vezi biblioteca."
+      "lead": "Privat",
+      "body": "Doar tu vezi această bibliotecă"
     },
     "people_i_follow": {
-      "lead": "Împărtășit.",
-      "body": "Oamenii pe care îi urmărești îți văd biblioteca pe profil."
+      "lead": "Împărtășit",
+      "body": "Oamenii pe care îi urmărești văd această bibliotecă pe profilul tău"
     },
     "everyone": {
-      "lead": "Public.",
-      "body": "Oricine îți vede biblioteca pe profil."
+      "lead": "Public",
+      "body": "Oricine vede această bibliotecă pe profilul tău"
     },
     "change": "Schimbă",
     "changeLabel": "Schimbă cine poate vedea biblioteca"

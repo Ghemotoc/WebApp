@@ -1,15 +1,17 @@
 /**
- * LibraryPage: the reader's library, screen 3.7 (story S1-E4-03; design/boards/Library.dc.html).
+ * LibraryPage: the reader's library, screen 3.7 (story S1-E4-03; board
+ * design/boards/simplified/New-Library.dc.html since bundle CALM-7c, the shelf page template).
  *
  * Who shows it: the router, at /library; the top bar's "Library" link leads here.
- * What it shows, top to bottom as on the board: "Library", the line about the
- * place being kept on every device and who can see the library, with Change (S1-E4-03, third
- * criterion: private by default; S1-E13-01 adds the choice); ContinueReading; LibraryShelves (Reading, Saved for
- * later, Finished); ReadingListsCard; ReadingHabitNote (the private reading streak, IDEAS-1b); FollowingSection. A signed-out visitor gets a card asking them to log in.
- * The wide ad slot comes after the shelves, for signed-in readers only (S1-E12-01).
- * Since GAPS-6 the reader's own reading lists come after the shelves (ReadingListsCard; the
- * board's "Your lists"). Not yet, as noted in docs/board-fixes.md: "Downloaded to read offline"
- * (the apps, S1-E4-08).
+ * What it shows, top to bottom as on the board:
+ *   1. "Library", the line about the place being kept on every device, and the meta line saying
+ *      who can see the library, with Change (S1-E4-03, third criterion; S1-E13-01).
+ *   2. ContinueReading, the page's one glass hero.
+ *   3. The ad slot (S1-E12-01), then LibraryShelves (Reading, Saved, Finished).
+ *   4. ReadingListsCard, the bookshelves (GAPS-6, CALM-4).
+ *   5. Two columns from 900 px: FollowingSection on the left; on the right MyStoriesShelf
+ *      ("Written by you", NAV-1), OfflineReadingNote and ReadingHabitNote (IDEAS-1b).
+ * A signed-out visitor gets a card asking them to log in.
  * What it calls: useLibraryOverview → my_library(); the sections call their own reads.
  */
 import { Link } from 'react-router';
@@ -26,6 +28,8 @@ import { useLibraryTranslation } from '../registerLibraryTranslations';
 import { ContinueReading } from './ContinueReading';
 import { FollowingSection } from './FollowingSection';
 import { LibraryShelves } from './LibraryShelves';
+import { MyStoriesShelf } from './MyStoriesShelf';
+import { OfflineReadingNote } from './OfflineReadingNote';
 import { ReadingHabitNote } from './ReadingHabitNote';
 import { ReadingListsCard } from './ReadingListsCard';
 
@@ -33,14 +37,9 @@ import { ReadingListsCard } from './ReadingListsCard';
 function LibraryHeader() {
   const { t } = useLibraryTranslation();
   return (
-    <header className="relative flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-      <div className="flex max-w-[640px] flex-col gap-2">
-        {/* The large title of the glass pages (bundle G7d2; board Library), as on the list pages. */}
-        <h1 className="m-0 font-heading text-[clamp(40px,5.6vw,72px)] leading-[0.98] font-bold tracking-[-0.03em] text-heading">
-          {t('title')}
-        </h1>
-        <p className="m-0 text-base leading-relaxed text-body">{t('intro')}</p>
-      </div>
+    <header className="flex flex-col gap-2">
+      <h1 className="m-0 type-display text-heading">{t('title')}</h1>
+      <p className="m-0 max-w-[62ch] type-body text-body">{t('intro')}</p>
       <LibraryVisibilityLine />
     </header>
   );
@@ -51,9 +50,7 @@ function SignedOutLibrary() {
   const { t } = useLibraryTranslation();
   return (
     <div className="flex flex-col items-start gap-3 rounded-card border border-border bg-surface px-8 py-10">
-      <h2 className="m-0 font-heading text-[26px] font-bold text-heading">
-        {t('signedOut.title')}
-      </h2>
+      <h2 className="m-0 type-heading text-heading">{t('signedOut.title')}</h2>
       <p className="m-0 text-base text-body">{t('signedOut.body')}</p>
       <Link
         to="/sign-in"
@@ -61,6 +58,20 @@ function SignedOutLibrary() {
       >
         {t('signedOut.logIn')}
       </Link>
+    </div>
+  );
+}
+
+/** The lower part of the page: what the reader follows, beside their own writing and notes. */
+function LibraryColumns() {
+  return (
+    <div className="grid grid-cols-1 items-start gap-12 min-[900px]:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] min-[900px]:gap-16">
+      <FollowingSection />
+      <div className="flex min-w-0 flex-col gap-12">
+        <MyStoriesShelf />
+        <OfflineReadingNote />
+        <ReadingHabitNote />
+      </div>
     </div>
   );
 }
@@ -74,12 +85,11 @@ function SignedInLibrary() {
   return (
     <>
       <ContinueReading items={overview.continueReading} />
-      <LibraryShelves overview={overview} />
-      <ReadingListsCard />
       {/* The page's one ad slot; a library has no single category, so it sends no context. */}
       <PageAdSlot pageKey="library" position={1} />
-      <ReadingHabitNote />
-      <FollowingSection />
+      <LibraryShelves overview={overview} />
+      <ReadingListsCard />
+      <LibraryColumns />
     </>
   );
 }
@@ -93,7 +103,7 @@ export function LibraryPage() {
   const { t } = useLibraryTranslation();
   const { userId, isKnown } = useSession();
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-12 pt-10 pb-14">
+    <PageContainer className="tmc-rise flex flex-col gap-14 pt-10 pb-16">
       <title>{t('documentTitle')}</title>
       <LibraryHeader />
       {isKnown && (userId === null ? <SignedOutLibrary /> : <SignedInLibrary />)}

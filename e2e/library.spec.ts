@@ -8,7 +8,7 @@
  *   to go back there, and the Library's "Continue reading" shows the story with "Continue" and
  *   the story page says "Continue chapter 1" (first criterion);
  * - the story page's Library drop-down saves a story for later; the Library's shelves show
- *   Reading, Saved for later and Finished with their sizes, and the shelf's See all page lists it
+ *   Reading, Saved and Finished with their sizes, and the shelf's See all page lists it
  *   (second and fifth criteria);
  * - a visitor gets a log-in card, never anyone's library (third criterion);
  * - the Library passes axe at 390 px, light, ro and en, and it draws no doodle
@@ -111,8 +111,11 @@ test.describe('library and continue reading (S1-E4-03)', () => {
     await expect(again.getByRole('button', { name: 'Go back there' })).toBeHidden();
     // Step 3: the Library and the story page offer it too.
     await again.goto('/library');
-    const card = again.getByRole('article', { name: 'Raftul bibliotecii' });
-    await expect(card).toContainText('Chapter 1');
+    const card = again
+      .getByRole('region', { name: 'Continue reading' })
+      .getByRole('listitem')
+      .filter({ has: again.getByRole('heading', { name: 'Raftul bibliotecii' }) });
+    await expect(card).toContainText('chapter 1');
     await expect(card.getByRole('link', { name: 'Continue Raftul bibliotecii' })).toHaveAttribute(
       'href',
       `/s/${storySlug}/libre2e1`,
@@ -133,9 +136,9 @@ test.describe('library and continue reading (S1-E4-03)', () => {
       )
       .toBe('saved');
     await page.goto('/library');
-    const shelves = page.getByRole('radiogroup', { name: 'Shelf' });
-    await expect(shelves.getByRole('radio', { name: 'Reading (0)' })).toBeChecked();
-    await shelves.getByRole('radio', { name: 'Saved for later (1)' }).click();
+    const shelves = page.getByRole('group', { name: 'Shelf' });
+    await expect(shelves.getByRole('radio', { name: 'Reading · 0' })).toBeChecked();
+    await shelves.getByText('Saved · 1').click();
     await expect(page.getByRole('link', { name: /Raftul bibliotecii/ }).first()).toBeVisible();
     await page.goto('/library/saved');
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Saved for later');
@@ -173,8 +176,8 @@ test.describe('library and continue reading (S1-E4-03)', () => {
     // Step 2: the Library on a phone, with nothing scrolling sideways.
     const page = await openAs(browser, 'teen_17', '/library');
     await page.setViewportSize({ width: 390, height: 900 });
-    await expect(page.getByRole('heading', { level: 3, name: 'Stories (1)' })).toBeVisible();
-    await expect(page.getByRole('heading', { level: 3, name: 'Writers (1)' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 3, name: 'Stories · 1' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 3, name: 'Writers · 1' })).toBeVisible();
     const pageWidth = await page.evaluate(() => document.documentElement.scrollWidth);
     expect(pageWidth).toBeLessThanOrEqual(390);
     await page.context().close();

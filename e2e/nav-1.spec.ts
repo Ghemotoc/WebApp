@@ -5,7 +5,7 @@
  * What it proves:
  * - the account menu starts with the person's name and @username, which opens their public
  *   profile, then "Edit profile", which opens Settings › Profile;
- * - the Library has a "Written by you" chip with the writer's own stories, drafts included, and a card
+ * - the Library has a "Written by you" section with the writer's own stories, drafts included, and a card
  *   opens the story's chapters in the writing tools;
  * - the Library's Written by you shelf and the open account menu pass axe at 390 px, light, ro and en.
  * Test data: a draft story "Ciorna din raft" for adult_writer, removed afterwards.
@@ -75,15 +75,17 @@ test.describe('getting around as a writer (NAV-1)', () => {
     browser,
   }) => {
     const page = await openAsWriter(browser, '/library');
-    const chips = page.getByRole('radiogroup', { name: 'Shelf' });
-    await chips.getByRole('radio', { name: /^Written by you \(\d+\)$/ }).click();
+    const mine = page.getByRole('region', { name: 'Written by you' });
     // The draft is there, marked Draft, and opens its chapters in the writing tools.
-    const draftCard = page.getByRole('link', { name: /Ciorna din raft/ }).first();
-    await expect(draftCard).toContainText('Draft');
-    await expect(draftCard).toHaveAttribute('href', `/write/s/${draftSlug}/chapters`);
+    const draftRow = mine.getByRole('listitem').filter({ hasText: 'Ciorna din raft' }).first();
+    await expect(draftRow).toContainText('Draft');
+    await expect(draftRow.getByRole('link', { name: /Ciorna din raft/ })).toHaveAttribute(
+      'href',
+      `/write/s/${draftSlug}/chapters`,
+    );
     await expect(
-      page.getByRole('link', {
-        name: 'Open Writing for numbers, comments and every story tool',
+      mine.getByRole('link', {
+        name: 'Open Write',
       }),
     ).toHaveAttribute('href', '/write');
     await page.context().close();
@@ -98,9 +100,8 @@ test.describe('getting around as a writer (NAV-1)', () => {
         page,
         { address: '/library', width: 390, theme: 'light', language },
         async (screen) => {
-          const chipName =
-            language === 'ro' ? /^Scrise de tine \(\d+\)$/ : /^Written by you \(\d+\)$/;
-          await screen.getByRole('radio', { name: chipName }).click();
+          const sectionName = language === 'ro' ? 'Scrise de tine' : 'Written by you';
+          await expect(screen.getByRole('region', { name: sectionName })).toBeVisible();
           await expect(screen.getByRole('link', { name: /Ciorna din raft/ }).first()).toBeVisible();
         },
       );

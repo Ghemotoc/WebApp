@@ -1,112 +1,114 @@
 /**
  * ContinueReadingCard: one story to carry on with, in "Continue reading" (story S1-E4-03; board
- * 3.7 Library).
+ * New-Library, bundle CALM-7c).
  *
- * Board values: a white card with the cover (the small "tile" size, so the full title still fits;
- * DoD covers), the title in Funnel Display, "by <writer> · Chapter 14 of 15", a progress line through
- * the chapter, "You stopped halfway through chapter 14 on your phone, yesterday", then either
- * "Chapter 15 is out" (sage) or "Completed story", and the Continue button.
- * Liquid glass look (bundle G7d2; board Library): a glass card with 28 px corners, a 96 px cover,
- * the progress line in the theme's accent, and a glass Contents link (the story page) beside the
- * solid Continue button.
- * The progress line is drawn for sighted readers; its words are in the sentence under it, so the
+ * Board values: a 120 px cover beside the words, 24 px apart; the title as a subheading linking
+ * to the story page; the meta line "by <writer> · chapter 14 of 15"; the 4 px thread line (at
+ * most 360 px wide) for how far into the chapter; "You stopped halfway through chapter 14 on your
+ * computer, yesterday."; the state in bold ("Chapter 15 is out", "Completed story"); then
+ * Continue and the quiet Following. Continue is the main button only on the first story.
+ * The thread line is drawn for sighted readers; its words are in the sentence under it, so the
  * line itself is hidden from screen readers.
- * Who uses it: ContinueReading.
+ * Who uses it: ContinueReading. What it calls: FollowButton (follow or unfollow the story).
  */
 import { Link } from 'react-router';
 
 import { resolveCoverChoice } from '@/components/covers/automaticCover';
 import { DrawnCover } from '@/components/covers/DrawnCover';
+import { MetaLine } from '@/components/ui/MetaLine';
 import { timeAgo } from '@/features/comments/lib/timeAgo';
+import { FollowButton } from '@/features/people/components/FollowButton';
 import { StoryCoverArt } from '@/features/pictures/components/StoryCoverArt';
 
 import type { ContinueReadingItem } from '../api/library';
 import { continueAddress, newChapterNumber, placeWithinChapter } from '../lib/places';
 import { useLibraryTranslation } from '../registerLibraryTranslations';
 
-/** The line under the progress: what came out since, or that the story is complete. */
+/** The state in bold: what came out since, or that the story is complete; nothing otherwise. */
 function StoryNews({ item }: { item: ContinueReadingItem }) {
   const { t } = useLibraryTranslation();
   const newNumber = newChapterNumber(item.place);
-  if (newNumber !== null) {
-    return (
-      <p className="m-0 text-[13px] font-semibold text-(--success-text)">
-        {t('continue.nextOut', { number: newNumber })}
-      </p>
-    );
-  }
-  if (item.story.completionStatus === 'completed') {
-    return <p className="m-0 text-[13px] text-body">{t('continue.completed')}</p>;
-  }
-  return <span />;
+  // Step 1: pick the words; a story with neither news shows no line at all.
+  let text = '';
+  if (newNumber !== null) text = t('continue.nextOut', { number: newNumber });
+  else if (item.story.completionStatus === 'completed') text = t('continue.completed');
+  return <MetaLine className="mt-1" facts={[{ text, kind: 'state' }]} />;
 }
 
-/** The small cover: the "tile" size keeps the full title on a 96 px cover (DoD covers). */
+/** The 120 px cover (the "tile" label keeps the full title on a small cover, DoD covers). */
 function ContinueCover({ story }: { story: ContinueReadingItem['story'] }) {
   return (
     <StoryCoverArt
       story={story}
-      className="w-[96px] shrink-0 self-start"
+      className="w-[96px] shrink-0 self-start min-[600px]:w-[120px]"
       drawn={
         <DrawnCover
           title={story.title}
           choice={resolveCoverChoice(story)}
           size="tile"
           isDecorative
-          className="w-[96px] shrink-0"
+          className="w-[96px] shrink-0 min-[600px]:w-[120px]"
         />
       }
     />
   );
 }
 
-/** Contents (the story page, glass) and Continue (back to the reader's place, solid). */
-function ContinueLinks({ item }: { item: ContinueReadingItem }) {
+/** Continue (back to the reader's place) and the quiet Following for the story. */
+function ContinueActions({ item, isFirst }: { item: ContinueReadingItem; isFirst: boolean }) {
   const { t } = useLibraryTranslation();
   const { story, place } = item;
+  // Only the first story's Continue is the page's main button (handover Step 3, Library).
+  const look = isFirst ? 'button-main' : 'button-glass';
   return (
-    <div className="flex flex-wrap gap-2">
-      <Link
-        to={`/s/${story.slug}`}
-        aria-label={t('continue.contentsLabel', { title: story.title })}
-        className="inline-flex h-11 items-center rounded-full button-glass px-5 text-sm font-semibold no-underline"
-      >
-        {t('continue.contents')}
-      </Link>
+    <div className="mt-3.5 flex flex-wrap items-start gap-2">
       <Link
         to={continueAddress(story.slug, place)}
         aria-label={t('continue.buttonLabel', { title: story.title })}
-        className="inline-flex h-11 items-center rounded-full button-main px-5 text-sm font-semibold no-underline"
+        className={`inline-flex h-11 items-center rounded-full ${look} px-5 text-sm font-semibold no-underline`}
       >
         {t('continue.button')}
       </Link>
+      <FollowButton target={{ kind: 'story', slug: story.slug }} targetLabel={story.title} />
     </div>
   );
+}
+
+/** "chapter 14 of 15", or "chapter 14" while the writer has marked no last chapter (CALM-6). */
+function useWhereText(place: ContinueReadingItem['place']): string {
+  const { t } = useLibraryTranslation();
+  if (place.lastChapterNumber === null)
+    return t('continue.whereNumberOnly', { number: place.number });
+  return t('continue.where', { number: place.number, total: place.lastChapterNumber });
 }
 
 /**
  * Renders the card.
  *
  * @param props.item - the story and the reader's place in it
- * @returns the card
+ * @param props.isFirst - true for the first story, whose Continue is the main button
+ * @returns the list item
  */
-export function ContinueReadingCard({ item }: { item: ContinueReadingItem }) {
+export function ContinueReadingCard({
+  item,
+  isFirst,
+}: {
+  item: ContinueReadingItem;
+  isFirst: boolean;
+}) {
   const { t, i18n } = useLibraryTranslation();
   const { story, place } = item;
+  const where = useWhereText(place);
   return (
-    <article
-      aria-labelledby={`continue-${story.slug}`}
-      className="flex gap-4 glass-pill rounded-[28px] p-4 sm:gap-5 sm:p-5"
-    >
+    <li className="flex items-start gap-4 min-[600px]:gap-6">
       <ContinueCover story={story} />
-      <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-        <h3
-          id={`continue-${story.slug}`}
-          className="m-0 font-heading text-[22px] leading-tight font-bold break-words text-heading"
-        >
-          {story.title}
+      <div className="flex min-w-0 flex-1 flex-col">
+        <h3 className="m-0 type-subheading break-words text-heading">
+          <Link to={`/s/${story.slug}`} className="text-inherit no-underline hover:underline">
+            {story.title}
+          </Link>
         </h3>
-        <p className="m-0 text-[13px] text-meta">
+        <p className="m-0 mt-0.5 type-meta">
           {t('continue.by')}{' '}
           <Link
             to={`/u/${encodeURIComponent(story.writer.handle)}`}
@@ -115,15 +117,15 @@ export function ContinueReadingCard({ item }: { item: ContinueReadingItem }) {
             {story.writer.displayName}
           </Link>
           {' · '}
-          {/* CALM-6: "of N" only while the writer has marked a last chapter. */}
-          {place.lastChapterNumber === null
-            ? t('continue.whereNumberOnly', { number: place.number })
-            : t('continue.where', { number: place.number, total: place.lastChapterNumber })}
+          {where}
         </p>
-        <div aria-hidden="true" className="h-1.5 w-full overflow-hidden rounded-full bg-tint">
-          <div className="h-full rounded-full bg-accent" style={{ width: `${place.percent}%` }} />
+        <div
+          aria-hidden="true"
+          className="mt-3 mb-2.5 h-1 w-full max-w-[360px] overflow-hidden rounded-full bg-(--hairline)"
+        >
+          <div className="h-full bg-(--thread)" style={{ width: `${place.percent}%` }} />
         </div>
-        <p className="m-0 text-[13px] leading-normal text-body">
+        <p className="m-0 type-body text-body">
           {t('continue.stopped', {
             position: t(`continue.positions.${placeWithinChapter(place.percent)}`),
             number: place.number,
@@ -131,11 +133,9 @@ export function ContinueReadingCard({ item }: { item: ContinueReadingItem }) {
             when: timeAgo(place.savedAt, i18n.language),
           })}
         </p>
-        <div className="mt-1 flex flex-wrap items-center justify-between gap-3">
-          <StoryNews item={item} />
-          <ContinueLinks item={item} />
-        </div>
+        <StoryNews item={item} />
+        <ContinueActions item={item} isFirst={isFirst} />
       </div>
-    </article>
+    </li>
   );
 }

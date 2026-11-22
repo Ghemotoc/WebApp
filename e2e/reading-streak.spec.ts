@@ -91,10 +91,16 @@ test.describe('the private reading streak (IDEAS-1 part b)', () => {
   }) => {
     // Step 1: off at first, with nothing counted.
     const library = await openAs(browser, 'editor', '/library');
-    const note = library.getByRole('region', { name: 'Reading days' });
+    // The section's heading invites while it is off and names it once on (CALM-7c), so the
+    // steps hold the section by its id, which the reminder links to.
+    const note = library.locator('#reading-days');
+    await expect(
+      note.getByRole('heading', { level: 2, name: 'Keep a private reading streak' }),
+    ).toBeVisible();
     await expect(note.getByRole('button', { name: 'Turn it on' })).toBeVisible();
     expect(editorStreak()).toBe('');
     await note.getByRole('button', { name: 'Turn it on' }).click();
+    await expect(library.getByRole('region', { name: 'Reading days' })).toBeVisible();
     await expect(
       note.getByText('No reading counted yet this week.', { exact: false }),
     ).toBeVisible();
@@ -141,7 +147,7 @@ test.describe('the private reading streak (IDEAS-1 part b)', () => {
 
   test('an under-18 can’t pick a reminder in quiet hours', async ({ browser }) => {
     const page = await openAs(browser, 'teen_17', '/library');
-    const note = page.getByRole('region', { name: 'Reading days' });
+    const note = page.locator('#reading-days');
     await note.getByRole('button', { name: 'Turn it on' }).click();
     await note.getByLabel('Daily target, in minutes').fill('10');
     await note.getByLabel('Remind me if I haven’t reached it').check();
@@ -167,7 +173,7 @@ test.describe('the private reading streak (IDEAS-1 part b)', () => {
 
   test('turning it off deletes the target, the reminder and the minutes', async ({ browser }) => {
     const page = await openAs(browser, 'editor', '/library#reading-days');
-    const note = page.getByRole('region', { name: 'Reading days' });
+    const note = page.locator('#reading-days');
     await note.getByRole('button', { name: 'Turn off and delete the minutes' }).click();
     await expect(note.getByText('This deletes your target, your reminder')).toBeVisible();
     await note.getByRole('button', { name: 'Yes, turn it off' }).click();
