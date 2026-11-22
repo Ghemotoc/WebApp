@@ -1,6 +1,6 @@
 /**
- * FeaturedBand: Featured this week, the band at the top of Discover (story S1-E5-10, bundle
- * LOOK-4a; board Discover, the big slider).
+ * FeaturedBand: Featured this week, the Read page's one glass hero (story S1-E5-10, bundle
+ * LOOK-4a; since CALM-7c the simplified board New-Read, "Hero: today's featured carousel").
  *
  * Staff pick up to five stories (Stories › Featured); the band shows the ones this reader may
  * see, one at a time, in the staff's order. With no picks the band is not drawn at all: there is
@@ -9,10 +9,15 @@
  * time named "2 of 3: title", dots, arrows and a pause button. It turns by itself every 7 seconds
  * but never under reduced motion, when paused, or while the focus or pointer is inside it; while
  * it turns, changes aren't announced (aria-live off), and once it stops they are (polite).
+ * Since CALM-7c it wears the shared Hero's look (heroClasses) without the old corner glow; it
+ * stays its own section because a carousel needs its role description and name.
  * Who shows it: DiscoverPage. What it calls: useFeaturedStories → featured_stories_now(),
  * useFeaturedRotation, FeaturedSlide and FeaturedControls.
  */
 import { useEffect, useRef } from 'react';
+
+import { heroClasses } from '@/components/ui/Hero';
+import { cn } from '@/lib/utils';
 
 import { useFeaturedRotation } from '../hooks/useFeaturedRotation';
 import { useFeaturedStories } from '../hooks/useFeaturedStories';
@@ -64,16 +69,9 @@ export function FeaturedBand() {
       aria-label={t('featured.label')}
       data-testid="featured-band"
       ref={bandRef}
-      className="relative overflow-hidden rounded-[36px] border border-border bg-surface px-[clamp(20px,3vw,32px)] pt-[clamp(20px,3vw,32px)] pb-5 shadow-card lg:col-start-1"
+      className={cn(heroClasses, 'lg:col-start-1')}
     >
-      {/* The board's soft colour glow in the top right corner, drawn as a radial gradient in the
-          theme's third background colour rather than a blur filter (no heavy effects; Robert,
-          7 Nov 2026, 21:49). Decoration only. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-[120px] -right-20 size-[380px] rounded-full bg-[radial-gradient(closest-side,var(--blob-3),transparent)] opacity-60"
-      />
-      <div aria-live={rotation.isTurning ? 'off' : 'polite'} className="relative">
+      <div aria-live={rotation.isTurning ? 'off' : 'polite'}>
         <FeaturedSlide story={story} position={rotation.index + 1} count={stories.length} />
       </div>
       {stories.length > 1 && (

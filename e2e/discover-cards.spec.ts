@@ -4,11 +4,12 @@
  *
  * Who runs it: `npm run test:e2e` (Supabase started first).
  * What it proves:
- * - a signed-in reader is greeted by name in the h1 under a dated eyebrow, and sees Continue
- *   reading with "Chapter 2" (no "of N" until a last chapter is marked, CALM-6) and "Chapter 2 is out"; Continue opens the chapter;
- * - a writer sees their latest draft and opens it in the editor, and the gold "Start a new story"
- *   card leads to the new story page;
- * - a visitor sees the plain heading and none of the cards;
+ * - a signed-in reader sees the page titled "Read" with the greeting in the line under it
+ *   (CALM-7c), and the side column's Continue reading with "Chapter 1" (no "of N" until a last
+ *   chapter is marked, CALM-6) and "chapter 2 is out"; Continue opens the chapter;
+ * - a writer sees their latest draft and opens it in the editor, and "Start a new story" leads
+ *   to the new story page;
+ * - a visitor sees the same heading and no side column;
  * - Discover with the cards passes axe and doesn't scroll sideways at 390, 768 and 1440 px.
  * Test data: one story of the spec's own by adult_writer with two chapters out (one a week ago,
  * one yesterday) and a draft third chapter, and teacher's place in chapter 1 three days ago; all
@@ -86,15 +87,17 @@ test.describe('Discover greeting, cards and five shelves (S1-E5-12)', () => {
 
   test('a reader is greeted by name and carries on where they stopped', async ({ browser }) => {
     const page = await openAs(browser, 'teacher', '/discover');
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-      /^(Good (morning|afternoon|evening), .+\.|Happy .+!)$/,
-    );
-    await expect(page.getByText(/^Read · /)).toBeVisible();
-    const dashboard = page.getByRole('complementary', { name: 'Dashboard' });
-    const continueCard = dashboard.getByRole('link', { name: /Farul de pe dig/ });
-    await expect(continueCard).toContainText('Chapter 1');
-    await expect(continueCard).toContainText('Chapter 2 is out');
-    await continueCard.click();
+    // CALM-7c: the page is titled "Read"; the date and the greeting sit in the line under it.
+    await expect(page.getByRole('heading', { level: 1, name: 'Read' })).toBeVisible();
+    await expect(
+      page.getByText(/^(Good (morning|afternoon|evening), .+\.|Happy .+!)$/),
+    ).toBeVisible();
+    const column = page.getByRole('complementary', { name: /^For / });
+    const continueSection = column.getByRole('region', { name: 'Continue reading' });
+    await expect(continueSection).toContainText('Farul de pe dig');
+    await expect(continueSection).toContainText('Chapter 1');
+    await expect(continueSection).toContainText('chapter 2 is out');
+    await continueSection.getByRole('link', { name: 'Continue Farul de pe dig' }).click();
     await expect(page).toHaveURL(/\/s\/cards-e2e-far\/dcarde21$/);
     await page.context().close();
   });
@@ -104,25 +107,24 @@ test.describe('Discover greeting, cards and five shelves (S1-E5-12)', () => {
       where user_id = '${adultWriterId}' and status = 'draft' and code <> 'dcarde23';
       update public.chapters set updated_at = now() where code = 'dcarde23';`);
     const page = await openAs(browser, 'adult_writer', '/discover');
-    const dashboard = page.getByRole('complementary', { name: 'Dashboard' });
-    const draft = dashboard.getByRole('link', { name: /Draft/ });
-    await expect(draft).toContainText('Lumina de pe mare');
-    await expect(draft).toContainText('Farul de pe dig · 1,240 words');
-    await expect(dashboard.getByRole('link', { name: /Start a new story/ })).toHaveAttribute(
+    const column = page.getByRole('complementary', { name: /^For / });
+    const draft = column.getByRole('region', { name: 'Draft' });
+    await expect(draft.getByRole('link', { name: 'Lumina de pe mare' })).toBeVisible();
+    await expect(draft).toContainText('Farul de pe dig');
+    await expect(draft).toContainText('1,240 words');
+    await expect(column.getByRole('link', { name: /Start a new story/ })).toHaveAttribute(
       'href',
       '/write/new',
     );
-    await draft.click();
+    await draft.getByRole('link', { name: 'Open draft' }).click();
     await expect(page).toHaveURL(/\/write\/s\/cards-e2e-far\/c\/dcarde23$/);
     await page.context().close();
   });
 
-  test('a visitor sees the plain heading and no cards', async ({ browser }) => {
+  test('a visitor sees the plain heading and no side column', async ({ browser }) => {
     const page = await openAs(browser, null, '/discover');
-    await expect(
-      page.getByRole('heading', { level: 1, name: 'Find the next story' }),
-    ).toBeVisible();
-    await expect(page.getByRole('complementary', { name: 'Dashboard' })).toHaveCount(0);
+    await expect(page.getByRole('heading', { level: 1, name: 'Read' })).toBeVisible();
+    await expect(page.getByRole('complementary', { name: /^For |^Dashboard$/ })).toHaveCount(0);
     await page.context().close();
   });
 
@@ -132,7 +134,7 @@ test.describe('Discover greeting, cards and five shelves (S1-E5-12)', () => {
       await useSessionInBrowser(context, (await signInPersona('teacher')).session);
       const page = await context.newPage();
       await checkScreen(page, { address: '/discover', width, theme: 'light', language: 'en' });
-      await expect(page.getByRole('complementary', { name: 'Dashboard' })).toBeVisible();
+      await expect(page.getByRole('complementary', { name: /^For / })).toBeVisible();
       await context.close();
     });
   }

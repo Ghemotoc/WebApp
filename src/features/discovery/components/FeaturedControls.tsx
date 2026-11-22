@@ -2,9 +2,9 @@
  * FeaturedControls: the dots, arrows and pause button under Featured this week (story S1-E5-10;
  * board Discover, "Controls").
  *
- * Board values (liquid glass board Discover, bundle G7): a row under the slide with the dots on the
- * left (44 px targets, an 8 px bar that widens for the current story) and, on the right, the glass
- * Pause pill with its words, then the round previous and next buttons. Each dot is a button that
+ * Board values (simplified board New-Read, CALM-7c): one row under the slide, in the board's
+ * order: the quiet Pause pill with its words, the round Previous button, the dots (44 px targets,
+ * an 8 px dot that widens for the current story) and the round Next button. Each dot is a button that
  * shows one story (marked aria-current); the arrows step through them and the pill stops or starts
  * the band turning by itself. The pill says what it will do, "Pause slideshow" or "Play
  * slideshow" (canvas v38; Robert via DESIGN, 20 Nov 2026, 21:03 UTC; CALM-1b), and its visible
@@ -36,63 +36,81 @@ const roundButton =
   'inline-flex size-11 cursor-pointer items-center justify-center rounded-full button-glass';
 
 /**
+ * The dots, one button per story (44 px targets around an 8 px dot that widens for the current
+ * story, drawn in the thread colour).
+ *
+ * @param props.titles - the stories' titles, for each dot's name
+ * @param props.index - the story showing now
+ * @param props.goTo - shows one story
+ * @returns the dots
+ */
+function SlideDots({
+  titles,
+  index,
+  goTo,
+}: Pick<FeaturedControlsProps, 'titles' | 'index' | 'goTo'>) {
+  const { t } = useDiscoveryTranslation();
+  return (
+    <div className="flex items-center">
+      {titles.map((title, dotIndex) => (
+        <button
+          key={title + String(dotIndex)}
+          type="button"
+          aria-label={t('featured.showSlide', { position: dotIndex + 1, title })}
+          aria-current={dotIndex === index ? 'true' : undefined}
+          onClick={() => goTo(dotIndex)}
+          className="inline-flex size-11 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent"
+        >
+          <span
+            aria-hidden="true"
+            className={
+              dotIndex === index
+                ? 'h-2 w-6 rounded-full bg-(--thread)'
+                : 'size-2 rounded-full bg-control-border'
+            }
+          />
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/**
  * Renders the controls.
  *
  * @returns the control bar
  */
 export function FeaturedControls(props: FeaturedControlsProps) {
-  const { titles, index, isPaused } = props;
+  const { isPaused } = props;
   const { t } = useDiscoveryTranslation();
   return (
-    <div className="relative mt-4 flex flex-wrap items-center justify-between gap-3">
-      <div className="flex items-center">
-        {titles.map((title, dotIndex) => (
-          <button
-            key={title + String(dotIndex)}
-            type="button"
-            aria-label={t('featured.showSlide', { position: dotIndex + 1, title })}
-            aria-current={dotIndex === index ? 'true' : undefined}
-            onClick={() => props.goTo(dotIndex)}
-            className="inline-flex size-11 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent"
-          >
-            <span
-              aria-hidden="true"
-              className={
-                dotIndex === index
-                  ? 'h-2 w-6 rounded-full bg-primary'
-                  : 'size-2 rounded-full bg-control-border'
-              }
-            />
-          </button>
-        ))}
-      </div>
-      <div className="flex items-center gap-1.5">
-        {/* The pill names the next action: Play while paused, Pause while turning. */}
-        <button
-          type="button"
-          onClick={props.togglePause}
-          className="inline-flex h-11 cursor-pointer items-center gap-1.5 rounded-full button-glass px-4 text-sm font-semibold"
-        >
-          {isPaused ? <PlayIcon /> : <PauseIcon />}
-          {isPaused ? t('featured.play') : t('featured.pause')}
-        </button>
-        <button
-          type="button"
-          aria-label={t('featured.previous')}
-          onClick={props.previous}
-          className={roundButton}
-        >
-          <ChevronLeftIcon size={18} />
-        </button>
-        <button
-          type="button"
-          aria-label={t('featured.next')}
-          onClick={props.next}
-          className={roundButton}
-        >
-          <ChevronRightIcon size={18} />
-        </button>
-      </div>
+    <div className="mt-2 flex flex-wrap items-center gap-1.5">
+      {/* The pill names the next action: Play while paused, Pause while turning. */}
+      <button
+        type="button"
+        onClick={props.togglePause}
+        className="inline-flex h-11 cursor-pointer items-center gap-1.5 rounded-full button-glass px-4 text-sm font-semibold"
+      >
+        {isPaused ? <PlayIcon /> : <PauseIcon />}
+        {isPaused ? t('featured.play') : t('featured.pause')}
+      </button>
+      <button
+        type="button"
+        aria-label={t('featured.previous')}
+        onClick={props.previous}
+        className={roundButton}
+      >
+        <ChevronLeftIcon size={18} />
+      </button>
+      <SlideDots titles={props.titles} index={props.index} goTo={props.goTo} />
+      <button
+        type="button"
+        aria-label={t('featured.next')}
+        onClick={props.next}
+        className={roundButton}
+      >
+        <ChevronRightIcon size={18} />
+      </button>
     </div>
   );
 }
