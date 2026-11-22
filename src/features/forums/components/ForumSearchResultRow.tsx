@@ -30,9 +30,10 @@ export function ForumSearchResultRow({ result }: { result: ForumSearchResult }) 
   const address = postAddress(result.forumSlug, result.threadNumber, result.postNumber);
   return (
     <li className="flex flex-col gap-2 border-t border-border px-5 py-4 first:border-t-0 md:px-7">
-      <p className="m-0 text-[13px] font-bold text-ink">
+      {/* A span, not a paragraph: the kind and the title read as two lines, not with a gap. */}
+      <span className="block text-[13px] font-bold text-ink">
         {isThread ? t('search.kindThread') : t('search.kindPost', { number: result.postNumber })}
-      </p>
+      </span>
       <Link
         to={address}
         className="font-heading text-lg leading-snug font-bold break-words text-heading underline-offset-2 hover:underline"
