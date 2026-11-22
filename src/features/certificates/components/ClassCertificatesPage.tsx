@@ -13,7 +13,6 @@
  */
 import { useParams, useSearchParams } from 'react-router';
 
-import { MetaLine } from '@/components/ui/MetaLine';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import type { Space } from '@/features/spaces/api/spaces';
@@ -57,13 +56,13 @@ function SignedCertificates({ slug }: { slug: string }) {
           >
             <span className="font-semibold text-ink">{certificate.studentName}</span>
             <span className="text-body">{certificate.programmeName}</span>
-            {/* The result in bold and "Revoked" in red, as words (CALM-9f; was two pills). */}
-            <MetaLine
-              facts={[
-                { text: t(`results.${certificate.result}`), kind: 'state' },
-                { text: certificate.isRevoked ? t('class.revoked') : '', kind: 'urgent' },
-              ]}
-            />
+            {/* The result in bold and "Revoked" in red, as words (CALM-9f; was two pills).
+                Plain spans rather than MetaLine, so each row stays one list item without a
+                list inside it. */}
+            <span className="font-semibold text-ink">{t(`results.${certificate.result}`)}</span>
+            {certificate.isRevoked && (
+              <span className="font-bold text-destructive">{t('class.revoked')}</span>
+            )}
             <span className="text-sm text-body">{certificate.code}</span>
           </li>
         ))}
