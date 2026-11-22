@@ -58,7 +58,7 @@ export function LoginMethodRow(props: LoginMethodRowProps) {
         {'brandLogo' in props.icon ? (
           <img src={props.icon.brandLogo} alt="" aria-hidden="true" width={22} height={22} />
         ) : (
-          <ActionIcon name={props.icon.lineIcon} size={22} className="text-[#1d1a20]" />
+          <ActionIcon name={props.icon.lineIcon} size={22} className="text-(--ink-on-white)" />
         )}
       </span>
       <span className="flex min-w-0 flex-[1_1_220px] flex-col gap-[3px]">

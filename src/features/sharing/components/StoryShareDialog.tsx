@@ -79,7 +79,7 @@ function StoryChatPreview({ story }: { story: SharedStory }) {
         <span
           aria-hidden="true"
           data-testid="story-preview-colour"
-          className="size-14 flex-none rounded-lg border border-[rgba(38,20,46,0.14)]"
+          className="size-14 flex-none rounded-lg border border-(--swatch-edge)"
           style={{ backgroundColor: storyPreviewColour(story) }}
         />
         <div className="flex min-w-0 flex-col gap-1">

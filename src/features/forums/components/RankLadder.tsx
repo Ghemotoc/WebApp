@@ -2,7 +2,7 @@
  * RankLadder: the four ranks as an ordered list inside the rank card (story S1-E8-09; board 6.1).
  *
  * Board values: rows 8 px apart with 8 px × 12 px padding and 12 px corners, 14 px text; a 10 px
- * dot (filled plum when reached, white with a #B9A9C2 ring when not), the rank's name in a glass
+ * dot (filled in the thread colour when reached, white with a control-border ring when not; tokens only, CALM-7a), the rank's name in a glass
  * text pill (no sticker: bundle G4; DESIGN thread, 8 Nov 2026), and the rule at the right in
  * 13 px meta text. The current rank's row sits on the #F1EAF4 tint in bold plum. A fine line between rows pairs each
  * name with its rule (DoD, label rows). Reached or not is said in words for screen readers, not
@@ -41,7 +41,7 @@ function LadderRow({ rung, current }: { rung: RankRung; current: WriterRank }) {
         aria-hidden="true"
         className={cn(
           'size-2.5 flex-none rounded-full',
-          isReached ? 'bg-[#672786]' : 'border-2 border-[#B9A9C2] bg-surface',
+          isReached ? 'bg-thread' : 'border-2 border-control-border bg-surface',
         )}
       />
       <span className="flex-1">

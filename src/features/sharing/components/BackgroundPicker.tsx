@@ -54,7 +54,7 @@ function Swatch(props: {
   label: string;
   onChoose: () => void;
 }) {
-  const tickColour = props.background.isLight ? 'text-[#2A0E33]' : 'text-white';
+  const tickColour = props.background.isLight ? 'text-(--ink-on-light)' : 'text-white';
   return (
     <button
       type="button"

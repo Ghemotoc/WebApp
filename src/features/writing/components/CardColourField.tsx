@@ -67,7 +67,7 @@ export function CardColourField({ value, onChange }: CardColourFieldProps) {
         {preview !== null && (
           <span
             aria-hidden="true"
-            className="inline-block size-8 rounded-full border border-[rgba(38,20,46,0.14)]"
+            className="inline-block size-8 rounded-full border border-(--swatch-edge)"
             style={{ backgroundColor: preview }}
           />
         )}

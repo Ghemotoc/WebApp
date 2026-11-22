@@ -16,11 +16,11 @@ import type { SetStoryAnswer, StoryAnswers, StoryFieldErrors } from '../hooks/st
 import { FormSection } from './FormSection';
 import { TagInput } from './TagInput';
 
-/** The board's dot colour for each category. */
+/** The board's dot colour for each category, from the tokens (CALM-7a: no colours in a page). */
 const categoryDots: Record<string, string> = {
-  fiction: '#4D1B5E',
-  poetry: '#2E4A8C',
-  nonfiction_essays: '#2F6B4F',
+  fiction: 'var(--category-fiction)',
+  poetry: 'var(--category-poetry)',
+  nonfiction_essays: 'var(--category-essays)',
 };
 
 /** What the section needs. */

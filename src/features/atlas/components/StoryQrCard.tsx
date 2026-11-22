@@ -62,7 +62,7 @@ function QrFigure({ address, path }: { address: string; path: string }) {
         <rect width={drawing.size} height={drawing.size} fill="#fff" />
         <path d={drawing.path} fill="#000" />
       </svg>
-      <figcaption className="max-w-[168px] text-center text-xs break-all text-[#141114]">
+      <figcaption className="max-w-[168px] text-center text-xs break-all text-(--ink-on-white)">
         {path}
       </figcaption>
     </figure>
