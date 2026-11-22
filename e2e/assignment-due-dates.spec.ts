@@ -1,14 +1,15 @@
 /**
- * Due dates for class assignments in a real browser (bundle MUST-1, part d; IDEA-20261108-8).
+ * Due dates for class assignments in a real browser (bundle MUST-1, part d; IDEA-20261108-8; a
+ * date and a time on the teacher's own clock since CALM-7d, part 2).
  *
  * Who runs it: `npm run test:e2e` (Supabase started first).
  * What it proves:
- * - the teacher sets a due date in the thread's "Who has replied" panel, and the thread then shows
- *   "Due <day>" (criterion 1);
+ * - the teacher sets a due date in the thread's "Who has replied" panel (the time starts at 23:59),
+ *   and the thread then shows "Due <day>, <time>" (criterion 1);
  * - a student in the class sees the assignment in the "Assignments" card on the class space page
  *   (criterion 2);
  * - the class space page with the card passes axe at 390, 768 and 1440 px, light and night.
- * The reminder the day before and the late marks are proved in the database test
+ * The reminder in the day before and the late marks are proved in the database test
  * (349-assignment-due-dates), where the clock can be fixed.
  * Test data: the teacher persona starts the class "Clasa a IX-a teme" with one thread; kid_14_ok
  * joins it. The `adults_only` flag is switched off for the student (Playwright runs one worker)
@@ -80,10 +81,10 @@ async function openAs(browser: Browser, persona: SignInPersonaName, address: str
   return page;
 }
 
-/** Five days from today in Romanian time, as the date field writes it ("2026-11-15"). */
+/** Five days from today on the test machine's clock, as the date field writes it ("2026-11-15"). */
 function fiveDaysAhead(): string {
   const later = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000);
-  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Bucharest' }).format(later);
+  return new Intl.DateTimeFormat('en-CA').format(later);
 }
 
 test.describe('due dates for class assignments (MUST-1d)', () => {
@@ -104,10 +105,11 @@ test.describe('due dates for class assignments (MUST-1d)', () => {
     const page = await openAs(browser, 'teacher', threadAddress);
     const panel = page.getByRole('region', { name: 'Who has replied' });
     await panel.getByLabel('Due date').fill(fiveDaysAhead());
+    await expect(panel.getByLabel('Due time')).toHaveValue('23:59');
     await panel.getByRole('button', { name: 'Save date' }).click();
     await expect(panel.getByRole('status')).toHaveText('Saved.');
-    // Criterion 1: the thread says when it is due, under its title.
-    await expect(page.getByText(/^Due \w+day \d{1,2} \w{3}$/)).toBeVisible();
+    // Criterion 1: the thread says when it is due, under its title, on the reader's own clock.
+    await expect(page.getByText(/^Due \w+day \d{1,2} \w{3}, 23:59$/)).toBeVisible();
     await page.context().close();
   });
 

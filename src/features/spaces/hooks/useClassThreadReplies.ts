@@ -39,13 +39,13 @@ export function useClassThreadReplies(threadId: string, isInSpace: boolean) {
  * thread's "Due" line, the panel and the class space's list agree at once.
  *
  * @param threadId - the thread's ID
- * @returns TanStack Query's mutation: mutate(dueOn), with null to clear it
+ * @returns TanStack Query's mutation: mutate(dueAt), with null to clear it
  */
 export function useSaveThreadDueDate(threadId: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (dueOn: string | null) =>
-      saveThreadDueDate(await requireClient(), threadId, dueOn),
+    mutationFn: async (dueAt: string | null) =>
+      saveThreadDueDate(await requireClient(), threadId, dueAt),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: [forumsQueryKey] }),
   });
 }

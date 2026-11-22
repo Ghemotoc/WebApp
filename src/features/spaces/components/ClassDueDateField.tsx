@@ -1,28 +1,28 @@
 /**
- * ClassDueDateField: the teacher sets, changes or clears a class assignment's due date (bundle
- * MUST-1, part d; IDEA-20261108-8).
+ * ClassDueDateField: the teacher sets, changes or clears when a class assignment is due (bundle
+ * MUST-1, part d, IDEA-20261108-8; a date, a time and the teacher's own time zone since CALM-7d,
+ * part 2: "assignment due -> DateTimeField (date, time, zone, member local)", DESIGN 21 Nov 2026,
+ * approved by Robert).
  *
- * A labelled date field with Save, and Clear once a date is set. The field never offers a day
- * already gone, and the database refuses one too (hint due_in_past). Once saved, the thread shows
- * "Due Friday 14 Nov", the class space lists it, and students who haven't replied get one reminder
- * the day before.
+ * The shared DateTimeField with Save, and Remove once a moment is set. The database refuses a
+ * moment already past (hint due_in_past). Once saved, the thread shows "Due Friday 14 Nov, 08:00"
+ * on each member's own clock, the class space lists it, and students who haven't replied get one
+ * reminder in the day before.
  * Who shows it: ClassRepliesPanel, which only the teacher (or someone acting for them) sees.
- * What it calls: useSaveThreadDueDate → set_forum_thread_due_date().
+ * What it calls: DateTimeField, deviceTimeZone(), the helpers in lib/assignmentDue.ts and
+ * useSaveThreadDueDate → set_forum_thread_due_date().
  */
-import { useId, useState, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 
 import { Button } from '@/components/ui/Button';
+import { DateTimeField } from '@/components/ui/DateTimeField';
 import { Notice } from '@/components/ui/Notice';
-import { TextInput } from '@/components/ui/TextInput';
+import { deviceTimeZone } from '@/lib/local-time';
 
 import { DueDateError } from '../api/classThreadReplies';
 import { useSaveThreadDueDate } from '../hooks/useClassThreadReplies';
+import { dueAtOf, dueFieldsOf } from '../lib/assignmentDue';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
-
-/** Today in Romanian time, as the date field writes it ("2026-11-14"): the earliest day offered. */
-function romanianToday(): string {
-  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Bucharest' }).format(new Date());
-}
 
 /**
  * The plain words for a refused save.
@@ -41,45 +41,45 @@ function failureKey(error: unknown): string {
  * Renders the field.
  *
  * @param props.threadId - the thread's ID
- * @param props.dueOn - the date already set, or null
+ * @param props.dueAt - the moment already set (ISO), or null
  * @returns the form
  */
-export function ClassDueDateField({ threadId, dueOn }: { threadId: string; dueOn: string | null }) {
+export function ClassDueDateField({ threadId, dueAt }: { threadId: string; dueAt: string | null }) {
   const { t } = useSpacesTranslation();
-  const fieldId = useId();
-  const [day, setDay] = useState(dueOn ?? '');
+  const [fields, setFields] = useState(dueFieldsOf(dueAt));
   const saving = useSaveThreadDueDate(threadId);
+  // The moment the typed date and time mean; null while the date is empty or not a real one.
+  const chosenMoment = dueAtOf(fields);
 
-  /** Save: sends the chosen day; an empty field does nothing (Clear removes a date). */
+  /** Save: sends the chosen moment; without one it does nothing (Remove takes a date off). */
   const save = (event: FormEvent) => {
     event.preventDefault();
-    if (day === '') return;
-    saving.mutate(day);
+    if (chosenMoment === null) return;
+    saving.mutate(chosenMoment);
   };
 
-  /** Clear: takes the date off, so the thread is no longer an assignment with a date. */
+  /** Remove: takes the date off, so the thread is no longer an assignment with a date. */
   const clear = () => {
-    setDay('');
+    setFields(dueFieldsOf(null));
     saving.mutate(null);
   };
 
   return (
     <form onSubmit={save} className="flex flex-col gap-3">
-      <TextInput
-        id={fieldId}
-        type="date"
-        label={t('classReplies.due.label')}
-        hint={t('classReplies.due.hint')}
-        min={romanianToday()}
-        value={day}
-        onChange={(event) => setDay(event.target.value)}
-        className="w-fit"
+      <DateTimeField
+        id="class-due"
+        value={fields}
+        onChange={setFields}
+        dateLabel={t('classReplies.due.label')}
+        timeLabel={t('classReplies.due.time')}
+        note={t('classReplies.due.hint', { zone: deviceTimeZone() })}
+        skippedHourNote={(time) => t('classReplies.due.skippedHourNote', { time })}
       />
       <div className="flex flex-wrap gap-3">
-        <Button type="submit" disabled={saving.isPending || day === ''}>
+        <Button type="submit" disabled={saving.isPending || chosenMoment === null}>
           {t('classReplies.due.save')}
         </Button>
-        {dueOn !== null && (
+        {dueAt !== null && (
           <Button variant="secondary" onClick={clear} disabled={saving.isPending}>
             {t('classReplies.due.clear')}
           </Button>

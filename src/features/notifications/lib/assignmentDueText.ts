@@ -1,8 +1,8 @@
 /**
- * What the "assignment due tomorrow" notification says (bundle MUST-1, part d; IDEA-20261108-8).
+ * What the "assignment due soon" notification says (bundle MUST-1, part d; IDEA-20261108-8).
  *
- * A student in a class space who hasn't replied to an assignment gets one row the day before it
- * is due: "Reminder: “Tema 1” is due tomorrow." The action opens the thread.
+ * A student in a class space who hasn't replied to an assignment gets one row in the 24 hours before it
+ * is due (CALM-7d): "Reminder: “Tema 1” is due within a day." The action opens the thread.
  * Who calls it: notificationText.ts, through its table of kinds with words of their own.
  */
 import type { TFunction } from 'i18next';

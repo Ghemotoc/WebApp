@@ -6,7 +6,7 @@
  * has replied to carry a "Replied" pill (text, not colour alone). With no open assignment the card
  * stays away, so a class that doesn't use due dates sees nothing new.
  * Who shows it: SpacePage, above the threads of a class space the viewer may read.
- * What it calls: useClassAssignments → class_space_assignments(); dueDayText.
+ * What it calls: useClassAssignments → class_space_assignments(); dueMomentText.
  */
 import { Link } from 'react-router';
 
@@ -15,7 +15,7 @@ import { Notice } from '@/components/ui/Notice';
 
 import type { Space } from '../api/spaces';
 import { useClassAssignments } from '../hooks/useClassAssignments';
-import { dueDayText } from '../lib/assignmentDue';
+import { dueMomentText } from '../lib/assignmentDue';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
 /**
@@ -54,7 +54,7 @@ export function ClassAssignmentsCard({ space }: { space: Space }) {
               {assignment.title}
             </Link>
             <span className="flex flex-wrap items-center gap-2 text-sm text-body">
-              {t('classAssignments.due', { day: dueDayText(assignment.dueOn, i18n.language) })}
+              {t('classAssignments.due', { day: dueMomentText(assignment.dueAt, i18n.language) })}
               {assignment.hasReplied && (
                 <InfoPill tone="sage">{t('classAssignments.replied')}</InfoPill>
               )}

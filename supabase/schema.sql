@@ -19615,19 +19615,19 @@ CREATE OR REPLACE FUNCTION "public"."class_space_assignments"("slug" "text") RET
       'number', forum_threads.thread_number,
       'forum_slug', forums.slug,
       'title', forum_threads.title,
-      'due_on', forum_threads.due_on,
+      'due_at', forum_threads.due_at,
       'has_replied', exists (select 1 from public.forum_posts
                              where forum_posts.thread_id = forum_threads.id
                                and forum_posts.user_id = (select auth.uid())
                                and forum_posts.deleted_at is null))
-    order by forum_threads.due_on, forum_threads.thread_number), '[]'::jsonb)
+    order by forum_threads.due_at, forum_threads.thread_number), '[]'::jsonb)
   from public.spaces
   join public.forums on forums.space_id = spaces.id and forums.deleted_at is null
   join public.forum_threads on forum_threads.forum_id = forums.id
   where spaces.slug = class_space_assignments.slug
     and spaces.kind = 'class'
     and public.space_may_read(spaces)
-    and forum_threads.due_on >= public.romania_today()
+    and forum_threads.due_at > now()
     and public.forum_thread_is_shown(forum_threads);
 $$;
 
@@ -19635,7 +19635,7 @@ $$;
 ALTER FUNCTION "public"."class_space_assignments"("slug" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."class_space_assignments"("slug" "text") IS 'The open assignments of a class space, soonest first, with whether the caller replied (MUST-1d).';
+COMMENT ON FUNCTION "public"."class_space_assignments"("slug" "text") IS 'The open assignments of a class space, soonest first, with whether the caller replied (MUST-1d, CALM-7d).';
 
 
 
@@ -19766,7 +19766,7 @@ CREATE OR REPLACE FUNCTION "public"."class_thread_replies"("target_thread_id" "u
     AS $$
 declare
   class_space public.spaces;
-  due date;
+  due timestamptz;
 begin
   -- Step 1: find the class space the thread lives in (a space's forum carries its space_id).
   select spaces.* into class_space
@@ -19780,8 +19780,8 @@ begin
   if class_space.id is null or not public.space_may_act(class_space, 'members') then
     return null;
   end if;
-  -- MUST-1d: the assignment's due date, to mark the replies that came after it.
-  select forum_threads.due_on into due from public.forum_threads
+  -- MUST-1d: the assignment's due moment, to mark the replies that came after it.
+  select forum_threads.due_at into due from public.forum_threads
   where forum_threads.id = target_thread_id;
   -- Step 3: every active member but the owner, marked by whether they have a live post here.
   return (
@@ -19792,9 +19792,9 @@ begin
                      where forum_posts.thread_id = target_thread_id
                        and forum_posts.user_id = space_members.user_id
                        and forum_posts.deleted_at is null) as has_replied,
-             -- MUST-1d: a first reply on a later day than the due date is "after the due date"
-             -- (Romanian calendar); only this teacher-only panel shows it.
-             coalesce(due < (select min(forum_posts.created_at at time zone 'Europe/Bucharest')::date
+             -- MUST-1d, CALM-7d: a first reply after the due moment is "after the due date";
+             -- only this teacher-only panel shows it.
+             coalesce(due < (select min(forum_posts.created_at)
                              from public.forum_posts
                              where forum_posts.thread_id = target_thread_id
                                and forum_posts.user_id = space_members.user_id
@@ -19807,7 +19807,7 @@ begin
         and profiles.deleted_at is null
     )
     select jsonb_build_object(
-      'due_on', due,
+      'due_at', due,
       'replied', coalesce(jsonb_agg(jsonb_build_object('handle', handle, 'display_name', display_name,
                                                        'is_late', is_late)
                    order by lower(display_name), handle) filter (where has_replied), '[]'::jsonb),
@@ -26561,7 +26561,7 @@ CREATE TABLE IF NOT EXISTS "public"."forum_threads" (
     "bumped_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "answer_post_id" "uuid",
     "continues_in_thread_id" "uuid",
-    "due_on" "date",
+    "due_at" timestamp with time zone,
     CONSTRAINT "forum_threads_lock_is_whole" CHECK (((("locked_at" IS NULL) AND ("lock_reason" IS NULL)) OR (("locked_at" IS NOT NULL) AND ("lock_reason" IS NOT NULL) AND ("btrim"("lock_reason") <> ''::"text") AND ("char_length"("lock_reason") <= 500)))),
     CONSTRAINT "forum_threads_next_is_another" CHECK (("continues_in_thread_id" IS DISTINCT FROM "id")),
     CONSTRAINT "forum_threads_next_needs_lock" CHECK ((("continues_in_thread_id" IS NULL) OR ("locked_at" IS NOT NULL))),
@@ -26617,7 +26617,7 @@ COMMENT ON COLUMN "public"."forum_threads"."continues_in_thread_id" IS 'Where th
 
 
 
-COMMENT ON COLUMN "public"."forum_threads"."due_on" IS 'The day a class assignment is due (Romanian time); set only by the class''s teacher through set_forum_thread_due_date(); null for every other thread (MUST-1d).';
+COMMENT ON COLUMN "public"."forum_threads"."due_at" IS 'The moment a class assignment is due; set only by the class''s teacher through set_forum_thread_due_date(); null for every other thread (MUST-1d, CALM-7d).';
 
 
 
@@ -27388,8 +27388,8 @@ CREATE OR REPLACE FUNCTION "public"."forum_thread_header_json"("target" "public"
     'view_count', coalesce((select views.total from public.forum_thread_views as views
                             where views.thread_id = target.id), 0),
     'last_post_number', target.last_post_number,
-    -- MUST-1d: the day a class assignment is due (null for every other thread).
-    'due_on', target.due_on,
+    -- MUST-1d, CALM-7d: the moment a class assignment is due (null for every other thread).
+    'due_at', target.due_at,
     'is_sticky', target.is_sticky,
     'lock', case when target.locked_at is null then null
                  else jsonb_build_object('locked_at', target.locked_at, 'reason', target.lock_reason,
@@ -45348,22 +45348,24 @@ declare
   sent integer := 0;
   local_moment timestamp := run_at at time zone 'Europe/Bucharest';
 begin
-  -- Step 0: forget reminders 30 days after their due date (storage limitation, GDPR art. 5(1)(e)).
-  delete from public.assignment_reminders where assignment_reminders.due_on < local_moment::date - 30;
+  -- Step 0: forget reminders 30 days after their due moment (storage limitation, GDPR art. 5(1)(e)).
+  delete from public.assignment_reminders where assignment_reminders.due_at < run_at - interval '30 days';
   -- Step 1: never during quiet hours (22:00 to 07:00).
   if public.is_in_quiet_hours(local_moment::time) then
     return 0;
   end if;
-  -- Step 2: each student who hasn't replied to an assignment due tomorrow and wasn't reminded.
+  -- Step 2: each student who hasn't replied to an assignment due in the next 24 hours and wasn't
+  -- reminded. The first run outside quiet hours inside that window sends it.
   for due_student in
-    select forum_threads.id as thread_id, forum_threads.due_on, spaces.id as space_id,
+    select forum_threads.id as thread_id, forum_threads.due_at, spaces.id as space_id,
            space_members.user_id
     from public.forum_threads
     join public.forums on forums.id = forum_threads.forum_id
     join public.spaces on spaces.id = forums.space_id and spaces.kind = 'class'
     join public.space_members on space_members.space_id = spaces.id
     join public.profiles on profiles.id = space_members.user_id
-    where forum_threads.due_on = local_moment::date + 1
+    where forum_threads.due_at > run_at
+      and forum_threads.due_at <= run_at + interval '24 hours'
       and forum_threads.deleted_at is null
       and forum_threads.locked_at is null
       and spaces.deleted_at is null
@@ -45378,12 +45380,12 @@ begin
       and not exists (select 1 from public.assignment_reminders as reminders
                       where reminders.thread_id = forum_threads.id
                         and reminders.user_id = space_members.user_id
-                        and reminders.due_on = forum_threads.due_on)
+                        and reminders.due_at = forum_threads.due_at)
   loop
-    -- Step 3: remember it first, so a second run in the same hour sends nothing; when another run
-    -- got there first, the row already exists and nothing is sent.
-    insert into public.assignment_reminders (user_id, thread_id, due_on)
-    values (due_student.user_id, due_student.thread_id, due_student.due_on)
+    -- Step 3: remember it first, so a second run sends nothing; when another run got there
+    -- first, the row already exists and nothing is sent.
+    insert into public.assignment_reminders (user_id, thread_id, due_at)
+    values (due_student.user_id, due_student.thread_id, due_student.due_at)
     on conflict do nothing;
     if not found then
       continue;
@@ -45400,7 +45402,7 @@ $$;
 ALTER FUNCTION "public"."send_assignment_reminders"("run_at" timestamp with time zone) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."send_assignment_reminders"("run_at" timestamp with time zone) IS 'Hourly job: one reminder the day before an assignment is due to each student who hasn''t replied, never in quiet hours (MUST-1d).';
+COMMENT ON FUNCTION "public"."send_assignment_reminders"("run_at" timestamp with time zone) IS 'Hourly job: one reminder in the 24 hours before an assignment is due to each student who hasn''t replied, never in quiet hours (MUST-1d, CALM-7d).';
 
 
 
@@ -46360,7 +46362,7 @@ COMMENT ON FUNCTION "public"."set_class_points"("slug" "text", "turn_on" boolean
 
 
 
-CREATE OR REPLACE FUNCTION "public"."set_forum_thread_due_date"("target_thread_id" "uuid", "due" "date") RETURNS "void"
+CREATE OR REPLACE FUNCTION "public"."set_forum_thread_due_date"("target_thread_id" "uuid", "due" timestamp with time zone) RETURNS "void"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
@@ -46378,21 +46380,21 @@ begin
   if public.space_is_locked(class_space) then
     raise exception 'The class is locked.' using errcode = 'insufficient_privilege', hint = 'class_locked';
   end if;
-  -- Step 3: a new date can't be a day already gone; clearing is always allowed.
-  if due is not null and due < public.romania_today() then
-    raise exception 'Choose today or a later day.' using errcode = 'check_violation', hint = 'due_in_past';
+  -- Step 3: a new moment can't be one already past; clearing is always allowed.
+  if due is not null and due <= now() then
+    raise exception 'Choose a later moment.' using errcode = 'check_violation', hint = 'due_in_past';
   end if;
   -- Step 4: save it.
-  update public.forum_threads set due_on = due, updated_at = now()
+  update public.forum_threads set due_at = due, updated_at = now()
   where forum_threads.id = target_thread_id;
 end;
 $$;
 
 
-ALTER FUNCTION "public"."set_forum_thread_due_date"("target_thread_id" "uuid", "due" "date") OWNER TO "postgres";
+ALTER FUNCTION "public"."set_forum_thread_due_date"("target_thread_id" "uuid", "due" timestamp with time zone) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."set_forum_thread_due_date"("target_thread_id" "uuid", "due" "date") IS 'Sets or clears a class assignment''s due date; teacher only, never a day already gone (MUST-1d).';
+COMMENT ON FUNCTION "public"."set_forum_thread_due_date"("target_thread_id" "uuid", "due" timestamp with time zone) IS 'Sets or clears a class assignment''s due moment; teacher only, never one already past (MUST-1d, CALM-7d).';
 
 
 
@@ -56864,9 +56866,9 @@ CREATE TABLE IF NOT EXISTS "public"."assignment_reminders" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "user_id" "uuid" NOT NULL,
     "thread_id" "uuid" NOT NULL,
-    "due_on" "date" NOT NULL,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "due_at" timestamp with time zone NOT NULL
 );
 
 
@@ -56874,7 +56876,7 @@ ALTER TABLE "public"."assignment_reminders" OWNER TO "postgres";
 
 
 COMMENT ON TABLE "public"."assignment_reminders" IS 'kind: platform
-The "due tomorrow" reminders already sent: one per student, assignment and due date, so the hourly job never sends twice; deleted 30 days after the due date (MUST-1d). Personal data: the link between a student and an assignment.';
+The assignment reminders already sent: one per student, assignment and due moment, so the hourly job never sends twice; deleted 30 days after the due moment (MUST-1d, CALM-7d). Personal data: the link between a student and an assignment.';
 
 
 
@@ -60111,7 +60113,7 @@ ALTER TABLE ONLY "public"."assignment_reminders"
 
 
 ALTER TABLE ONLY "public"."assignment_reminders"
-    ADD CONSTRAINT "assignment_reminders_thread_id_user_id_due_on_key" UNIQUE ("thread_id", "user_id", "due_on");
+    ADD CONSTRAINT "assignment_reminders_thread_id_user_id_due_at_key" UNIQUE ("thread_id", "user_id", "due_at");
 
 
 
@@ -62138,7 +62140,7 @@ CREATE INDEX "forum_threads_continues_in_thread_id_fk_idx" ON "public"."forum_th
 
 
 
-CREATE INDEX "forum_threads_due_on_idx" ON "public"."forum_threads" USING "btree" ("due_on") WHERE ("due_on" IS NOT NULL);
+CREATE INDEX "forum_threads_due_at_idx" ON "public"."forum_threads" USING "btree" ("due_at") WHERE ("due_at" IS NOT NULL);
 
 
 
@@ -74495,8 +74497,8 @@ GRANT ALL ON FUNCTION "public"."set_class_points"("slug" "text", "turn_on" boole
 
 
 
-REVOKE ALL ON FUNCTION "public"."set_forum_thread_due_date"("target_thread_id" "uuid", "due" "date") FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."set_forum_thread_due_date"("target_thread_id" "uuid", "due" "date") TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."set_forum_thread_due_date"("target_thread_id" "uuid", "due" timestamp with time zone) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_forum_thread_due_date"("target_thread_id" "uuid", "due" timestamp with time zone) TO "authenticated";
 
 
 

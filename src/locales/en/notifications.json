@@ -108,7 +108,7 @@
     "forumReply_one": "replied in “{{title}}”.",
     "forumReply_few": "replied in “{{title}}”.",
     "forumReply_other": "replied in “{{title}}”.",
-    "assignmentDue": "“{{title}}” is due tomorrow."
+    "assignmentDue": "“{{title}}” is due within a day."
   },
   "grouped": {
     "reactions_one": "{{count}} reaction",

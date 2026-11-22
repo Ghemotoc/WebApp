@@ -5,14 +5,14 @@
  * Board values: the title in Funnel Display at 36 to 48 px, the line under it in 14 px with
  * the starter's name as a link (no doodle since bundle G4). A thread staff hid shows its starter a note; nobody else sees it.
  * A class assignment shows its due day under the title, "Due Friday 14 Nov" (MUST-1d).
- * Who uses it: ThreadPage. What it calls: ForumBreadcrumb, ReportButton (rule 6), dueDayText.
+ * Who uses it: ThreadPage. What it calls: ForumBreadcrumb, ReportButton (rule 6), dueMomentText.
  */
 import { Trans } from 'react-i18next';
 import { Link } from 'react-router';
 
 import { InfoPill } from '@/components/ui/InfoPill';
 import { ReportButton } from '@/features/reporting/components/ReportButton';
-import { dueDayText } from '@/features/spaces/lib/assignmentDue';
+import { dueMomentText } from '@/features/spaces/lib/assignmentDue';
 
 import type { ForumEntry } from '../api/forumIndex';
 import type { ForumThreadHeader } from '../api/forumThreads';
@@ -68,10 +68,10 @@ export function ThreadHeader({ thread, path }: { thread: ForumThreadHeader; path
       <ForumBreadcrumb path={path} current={thread.title} space={thread.space} />
       {/* A title with no spaces in it wraps instead of pushing the page sideways (rule 21). */}
       <h1 className="page-title max-w-[1100px] [overflow-wrap:anywhere]">{thread.title}</h1>
-      {thread.dueOn !== null && (
+      {thread.dueAt !== null && (
         <p className="m-0">
           <InfoPill tone="gold">
-            {t('thread.due', { day: dueDayText(thread.dueOn, i18n.language) })}
+            {t('thread.due', { day: dueMomentText(thread.dueAt, i18n.language) })}
           </InfoPill>
         </p>
       )}

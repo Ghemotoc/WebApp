@@ -2,19 +2,20 @@
  * A class space's open assignments (bundle MUST-1, part d; IDEA-20261108-8).
  *
  * Who calls it: hooks/useClassAssignments.ts. What it calls next: class_space_assignments() in
- * supabase/migrations/…_must1d_assignment_due_dates.sql, which answers only for someone who may
+ * supabase/migrations/…_must1d_assignment_due_dates.sql (a due moment since
+ * …_calm7d2_assignment_due_time.sql), which answers only for someone who may
  * read the space, soonest first.
  */
 import type { Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
 
-/** One open assignment: a thread with a due day. */
+/** One open assignment: a thread with a due moment. */
 export interface ClassAssignment {
   number: number;
   forumSlug: string;
   title: string;
-  /** The due day ("2026-11-14", Romanian calendar). */
-  dueOn: string;
+  /** The due moment (ISO). */
+  dueAt: string;
   /** The reader has a live post in the thread. */
   hasReplied: boolean;
 }
@@ -27,12 +28,12 @@ export interface ClassAssignment {
  */
 function assignmentFrom(entry: Json): ClassAssignment | null {
   if (entry === null || typeof entry !== 'object' || Array.isArray(entry)) return null;
-  if (typeof entry['due_on'] !== 'string') return null;
+  if (typeof entry['due_at'] !== 'string') return null;
   return {
     number: Number(entry['number']),
     forumSlug: String(entry['forum_slug']),
     title: String(entry['title']),
-    dueOn: entry['due_on'],
+    dueAt: entry['due_at'],
     hasReplied: entry['has_replied'] === true,
   };
 }
@@ -42,7 +43,7 @@ function assignmentFrom(entry: Json): ClassAssignment | null {
  *
  * @param client - the Supabase client
  * @param slug - the class space's address
- * @returns the assignments due today or later, soonest first; empty when there are none or the
+ * @returns the assignments not yet due, soonest first; empty when there are none or the
  *   reader may not read the space
  * @throws the database error when the call fails
  */
