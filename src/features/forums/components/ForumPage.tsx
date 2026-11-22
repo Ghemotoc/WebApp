@@ -56,7 +56,12 @@ function ForumChildren({ entries, forum }: { entries: ForumEntry[]; forum: Forum
       </h2>
       <ul className="m-0 list-none p-0">
         {children.map((child) => (
-          <ForumRow key={child.id} forum={child} subforums={childrenOf(entries, child.id)} />
+          <ForumRow
+            key={child.id}
+            forum={child}
+            subforums={childrenOf(entries, child.id)}
+            isInCard
+          />
         ))}
       </ul>
     </section>

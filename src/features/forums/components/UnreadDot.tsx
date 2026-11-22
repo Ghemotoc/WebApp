@@ -6,6 +6,8 @@
  * (#8E7B99) rather than the board's paler #CBBBD3, so it keeps 3:1 against the card (WCAG 1.4.11;
  * docs/board-fixes.md). The circle is hidden from screen readers and the words are said instead,
  * so the state never rests on colour alone.
+ * Since CALM-7c (board simplified/New-Together) it is an 8 px dot in the thread colour, or an
+ * 8 px ring with a 1.5 px control border edge.
  * Who uses it: ForumRow, ThreadRow and the legend on the forum index.
  */
 import { cn } from '@/lib/utils';
@@ -23,8 +25,8 @@ export function UnreadCircle({ isNew }: { isNew: boolean }) {
     <span
       aria-hidden="true"
       className={cn(
-        'inline-block size-3 shrink-0 rounded-full',
-        isNew ? 'bg-link' : 'border-2 border-control-border bg-transparent',
+        'inline-block size-2 shrink-0 rounded-full border-[1.5px]',
+        isNew ? 'border-thread bg-thread' : 'border-control-border bg-transparent',
       )}
     />
   );

@@ -2,11 +2,15 @@
  * SpacesCard: the forum index's "Spaces" card: the four spaces with the latest activity,
  * "Create a space" and "See all 12 spaces" (bundle FORUMS-2, part a; S1-E8-06; board 5.1's
  * aside).
- * Who shows it: the forums' ForumsPage, beside the categories. What it calls: useSpaceList.
+ * Since CALM-7c (board simplified/New-Together) it sits on the page, not on a card: "Run by
+ * members" as a meta line over the subheading, the intro, hairline rows, then "Create a space"
+ * (quiet), "Join a class" and "See 37 spaces" (text buttons).
+ * Who shows it: the forums' ForumsPage and ForumPage, beside the categories. What it calls:
+ * useSpaceList.
  */
 import { Link } from 'react-router';
 
-import { Eyebrow } from '@/components/ui/Eyebrow';
+import { buttonClassName } from '@/components/ui/buttonStyles';
 import { Notice } from '@/components/ui/Notice';
 
 import { useSpaceList } from '../hooks/useSpaces';
@@ -17,8 +21,8 @@ import { SpaceRow } from './SpaceRow';
 /** How many spaces the card shows. */
 const cardSize = 4;
 
-/** The link style the card's two links share. */
-const cardLink = 'inline-flex min-h-6 items-center text-sm font-semibold text-link underline';
+/** The look of the two text links under the rows. */
+const textLink = buttonClassName({ variant: 'text' });
 
 /**
  * Renders the card.
@@ -29,24 +33,15 @@ export function SpacesCard() {
   const { t } = useSpacesTranslation();
   const list = useSpaceList(cardSize);
   return (
-    <section
-      aria-labelledby="spaces-card-heading"
-      className="overflow-hidden rounded-card border border-border bg-surface"
-    >
-      <div className="flex flex-col gap-1 border-b border-border px-5 py-4 md:px-6">
-        <Eyebrow>{t('eyebrow')}</Eyebrow>
-        <h2 id="spaces-card-heading" className="m-0 font-heading text-xl font-bold text-heading">
-          {t('title')}
-        </h2>
-        <p className="m-0 text-sm text-body">{t('intro')}</p>
-      </div>
-      {list.loadFailed && (
-        <div className="p-4">
-          <Notice tone="error">{t('loadFailed')}</Notice>
-        </div>
-      )}
+    <section aria-labelledby="spaces-card-heading" className="flex flex-col">
+      <p className="m-0 type-meta">{t('eyebrow')}</p>
+      <h2 id="spaces-card-heading" className="m-0 mt-0.5 mb-1.5 type-subheading">
+        {t('title')}
+      </h2>
+      <p className="m-0 mb-1 text-body">{t('intro')}</p>
+      {list.loadFailed && <Notice tone="error">{t('loadFailed')}</Notice>}
       {list.spaces !== null && list.spaces.length === 0 && (
-        <p className="m-0 px-5 py-4 text-sm text-body md:px-6">{t('empty')}</p>
+        <p className="m-0 text-body">{t('empty')}</p>
       )}
       {list.spaces !== null && list.spaces.length > 0 && (
         <ul className="m-0 list-none p-0">
@@ -55,18 +50,16 @@ export function SpacesCard() {
           ))}
         </ul>
       )}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border px-5 py-4 md:px-6">
-        <div className="flex flex-wrap items-center gap-4">
-          <Link to="/spaces/new" className={cardLink}>
-            {t('create')}
-          </Link>
-          {/* Board ClassSpace: students type their teacher's code in Forums › Join a class. */}
-          <Link to="/class" className={cardLink}>
-            {t('joinClassLink')}
-          </Link>
-        </div>
+      <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-1">
+        <Link to="/spaces/new" className={buttonClassName({ variant: 'secondary' })}>
+          {t('create')}
+        </Link>
+        {/* Board ClassSpace: students type their teacher's code in Forums › Join a class. */}
+        <Link to="/class" className={textLink}>
+          {t('joinClassLink')}
+        </Link>
         {list.total > 0 && (
-          <Link to="/spaces" className={cardLink}>
+          <Link to="/spaces" className={textLink}>
             {t('seeAll', { count: list.total })}
           </Link>
         )}
