@@ -7,7 +7,7 @@
  */
 import { useTranslation } from 'react-i18next';
 
-import { InfoPill } from '@/components/ui/InfoPill';
+import { StateWord } from '@/components/ui/StateWord';
 
 /**
  * Renders the label, with a little space after it when it sits inside a line of text.
@@ -19,7 +19,7 @@ export function AfterTheTestLabel() {
   return (
     // The label is interface text, so it carries the interface language even inside an English text.
     <span lang={i18n.language} className="mr-2 inline-flex align-middle">
-      <InfoPill tone="sky">{t('afterTheTest.label')}</InfoPill>
+      <StateWord>{t('afterTheTest.label')}</StateWord>
     </span>
   );
 }

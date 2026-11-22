@@ -24,6 +24,8 @@ The shared building blocks every screen uses, one component per file. Built by S
 | `Shelf` (+ `useShelfScroll`, `ShelfArrows`, `ViewMoreCard`) | One sideways line of at most 20 stories: 5 whole covers from 1024 px, 4 from 600 px, 2.3 on phones, no fade, no scrollbar; Previous and Next beside "View 54" only when it overflows, aria-disabled at the ends; phones swipe and snap (CALM-4) |
 | `AdSlot` | Banner, portrait, side box and in-list card ad slots, labelled "Ad" or "Sponsored" |
 | `PageContainer` | The centred column (at most 1260 px), 10 px inside the navigation bar on each side (GLASS-4) |
+| `MetaLine` | A line of facts joined by middots, a state first in bold, in place of information pills (CALM-2) |
+| `StateWord` | One state on its own as a bold word ("This device", "Connected"), where a pill used to stand (CALM-9d) |
 | `choiceRowStyles` | `choiceRowClassName`: one choice of a settings radio group as a glass row, the chosen one with a plum border (G11b) |
 
 Colours come from `src/styles/tokens.css` (light and night). The liquid glass looks shared by many components (`button-main`, `button-glass`, `field-box`, the card rim, the segmented track and bubble, avatar beads and the sheen on "on" states) are in `src/styles/index.css` (bundle G3 COMPONENTS). Member avatars are plain flat circles in one of seven cover palette colours, picked at random on joining and changeable in Settings › Profile › Circle colour (`src/features/avatars/lib/beadColours.ts`, CALM-3). Icons in `src/components/icons/` are plain line SVGs in the current text colour (`NavIcon` for the header and tab bar, bundle G4); the liquid glass design has no doodles (Robert, 7 Nov 2026).
