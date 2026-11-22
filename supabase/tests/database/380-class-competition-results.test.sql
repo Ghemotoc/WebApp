@@ -62,10 +62,10 @@ create function pg_temp.criteria() returns jsonb language sql as $$
             "outcomes": ["Folosește dialogul ca să arate un personaj", "Cel mult cinci greșeli de ortografie"]},
            {"label": "Poveste", "max_points": 20, "description": "Cum e construită povestea.",
             "outcomes": ["Are început, mijloc și sfârșit"]}]'::jsonb $$;
--- A competition's details from today for a week, with the criteria given.
+-- A competition's details from now for a week, with the criteria given.
 create function pg_temp.details(name text, criteria jsonb) returns jsonb language sql as $$
-  select jsonb_build_object('name', name, 'starts_on', pg_temp.today(),
-                            'ends_on', pg_temp.today() + 7, 'criteria', criteria) $$;
+  select jsonb_build_object('name', name, 'starts_at', now(),
+                            'ends_at', now() + interval '7 days', 'criteria', criteria) $$;
 grant execute on all functions in schema pg_temp to anon, authenticated;
 
 -- The SQLSTATE a statement raises, or null when it runs.

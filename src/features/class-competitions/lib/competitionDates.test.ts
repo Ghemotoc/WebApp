@@ -1,22 +1,36 @@
 /**
- * Tests for competitionDates (bundle CLASS-POINTS, part 2): the dates a new competition's form
- * starts with.
+ * Tests for competitionDates (bundle CLASS-POINTS, part 2; CALM-7d, part 3): the moments a new
+ * competition's form starts with, and how the fields turn into moments and back.
  */
 import { describe, expect, it } from 'vitest';
 
-import { defaultDates } from './competitionDates';
+import { defaultMomentFields, momentOf, savedMomentFields } from './competitionDates';
 
 describe('competitionDates', () => {
-  it('starts a new competition on the database’s today and ends it two weeks later', () => {
-    expect(defaultDates('2027-01-25')).toEqual({ startsOn: '2027-01-25', endsOn: '2027-02-08' });
+  it('opens a new competition now and closes it at 23:59 two weeks later', () => {
+    const now = new Date(2027, 0, 25, 9, 41);
+    expect(defaultMomentFields(now)).toEqual({
+      starts: { date: '2027-01-25', time: '09:41' },
+      ends: { date: '2027-02-08', time: '23:59' },
+    });
   });
 
   it('crosses a year end', () => {
-    expect(defaultDates('2026-12-20').endsOn).toBe('2027-01-03');
+    expect(defaultMomentFields(new Date(2026, 11, 20, 8, 0)).ends.date).toBe('2027-01-03');
   });
 
-  it('leaves both days empty when today is not a date', () => {
-    expect(defaultDates('')).toEqual({ startsOn: '', endsOn: '' });
-    expect(defaultDates('soon')).toEqual({ startsOn: '', endsOn: '' });
+  it('gives no moment for a field that is not a real date and time', () => {
+    expect(momentOf({ date: '', time: '09:00' })).toBeNull();
+    expect(momentOf({ date: '2027-02-30', time: '09:00' })).toBeNull();
+  });
+
+  it('turns the fields into moments and back', () => {
+    const startsAt = momentOf({ date: '2027-03-01', time: '08:00' });
+    const endsAt = momentOf({ date: '2027-03-15', time: '23:59' });
+    expect(startsAt).not.toBeNull();
+    expect(savedMomentFields(startsAt ?? '', endsAt ?? '')).toEqual({
+      starts: { date: '2027-03-01', time: '08:00' },
+      ends: { date: '2027-03-15', time: '23:59' },
+    });
   });
 });

@@ -34,9 +34,9 @@ export type CompetitionPhase = 'upcoming' | 'open' | 'judging' | 'published';
 export interface RunningCompetition {
   id: string;
   name: string;
-  /** Dates as YYYY-MM-DD. */
-  startsOn: string;
-  endsOn: string;
+  /** The moments it opens and closes (ISO; CALM-7d), read on the viewer's own clock. */
+  startsAt: string;
+  endsAt: string;
   phase: CompetitionPhase;
   criteria: Criterion[];
   /** A pupil: whether they joined. Always false for the teacher. */
@@ -81,8 +81,6 @@ export interface ClassCompetitions {
   /** False below the 8th grade: every entrant is a Contestant. */
   areWinnersAllowed: boolean;
   isArchived: boolean;
-  /** Today as YYYY-MM-DD where class weeks are counted; the form's first day starts here. */
-  today: string;
   running: RunningCompetition | null;
   published: WinnerCardData[];
 }
@@ -147,8 +145,8 @@ function runningFrom(value: Json | undefined): RunningCompetition | null {
   return {
     id: textOf(entry.id),
     name: textOf(entry.name),
-    startsOn: textOf(entry.starts_on),
-    endsOn: textOf(entry.ends_on),
+    startsAt: textOf(entry.starts_at),
+    endsAt: textOf(entry.ends_at),
     phase: phaseFrom(entry.phase),
     criteria: listOf(entry.criteria).map(criterionFrom),
     isEntrant: entry.is_entrant === true,
@@ -223,7 +221,6 @@ export function classCompetitionsFrom(value: Json): ClassCompetitions | null {
     grade: typeof answer.grade === 'number' ? answer.grade : null,
     areWinnersAllowed: answer.winners_allowed === true,
     isArchived: answer.is_archived === true,
-    today: textOf(answer.today),
     running: runningFrom(answer.running),
     published: listOf(answer.published).map(cardFrom),
   };
@@ -269,8 +266,9 @@ export interface CompetitionDetails {
   /** The competition to change, or null for a new one. */
   competitionId: string | null;
   name: string;
-  startsOn: string;
-  endsOn: string;
+  /** The moments (ISO), or null when a field isn't a real date and time; the database refuses those. */
+  startsAt: string | null;
+  endsAt: string | null;
   criteria: Criterion[];
 }
 
@@ -305,8 +303,8 @@ export async function saveClassCompetition(
     slug: details.slug,
     details: {
       name: details.name,
-      starts_on: details.startsOn,
-      ends_on: details.endsOn,
+      starts_at: details.startsAt,
+      ends_at: details.endsAt,
       criteria: criteriaToJson(details.criteria),
     },
     target_competition_id: details.competitionId ?? undefined,
