@@ -39,7 +39,6 @@ export function ForgotPasswordPage() {
   return (
     <AuthCard
       documentTitle={t('forgot.documentTitle')}
-      eyebrow={t('forgot.eyebrow')}
       heading={request.hasSent ? t('forgot.sentHeading') : t('forgot.heading')}
       intro={
         request.hasSent ? t('forgot.sentBody', { email: request.email.trim() }) : t('forgot.body')

@@ -397,7 +397,7 @@ Supabase emails supabase/templates/confirmation.html (Mailpit locally)
 / (home). /setup stays for an account made before 25 Oct 2026 without a username (next section)
 ```
 
-Beside the form, `SignUpHero` shows the four benefits with line icons; under both, `SignUpWhatNext` previews what can come after "Create account" (confirm the email, the Yoti age check only while `adults_only` is off, and the too-young refusal), with no buttons (LOOK-6).
+Beside the form, `SignUpHero` shows the four benefits with line icons; under both, `SignUpWhatNext` previews what can come after "Create account" (confirm the email, the Yoti age check only while `adults_only` is off, and the too-young refusal), with no buttons (LOOK-6; rows since CALM-9e).
 
 ## The country from the connection (S1-E2-10)
 
