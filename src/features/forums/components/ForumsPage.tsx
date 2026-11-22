@@ -16,12 +16,14 @@
  * Bundle FORUMS-2, part a adds the Spaces card in the side column (SpacesCard, S1-E8-06).
  * The page's two ad slots (S1-E12-01): the wide one after the first category, as the board draws
  * it, and a side box in the side column.
+ * Since CALM-7c (board simplified/New-Together): a meta line with the thread count over the
+ * display title, no cards around the categories (a heading row and hairline rows, like a shelf),
+ * and a 300 px side column 56 px away whose sections sit on the page, only New for you on a box.
  * What it calls: useForumIndex → forum_index(); lib/forumTree.ts puts it in order;
  * MarkReadButton, UnreadLegend and NewForYou.
  */
 import { Fragment } from 'react';
 
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 
@@ -40,15 +42,15 @@ import { MarkReadButton } from './MarkReadButton';
 import { NewForYou } from './NewForYou';
 import { UnreadCircle } from './UnreadDot';
 
-/** The heading block: the eyebrow with the count, the title and the intro. */
+/** The heading block: the thread count, the title and the intro (board New-Together). */
 function ForumsHeader({ threadCount }: { threadCount: number }) {
   const { t } = useForumsTranslation();
   return (
-    <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-      <div className="flex max-w-[680px] flex-col gap-3">
-        <Eyebrow>{t('eyebrow', { count: threadCount })}</Eyebrow>
-        <h1 className="page-title">{t('title')}</h1>
-        <p className="m-0 text-lg leading-relaxed text-body">{t('intro')}</p>
+    <header className="flex flex-wrap items-end justify-between gap-6">
+      <div className="flex max-w-[640px] flex-col">
+        <p className="m-0 mb-1.5 type-meta">{t('eyebrow', { count: threadCount })}</p>
+        <h1 className="m-0 type-display">{t('title')}</h1>
+        <p className="m-0 mt-3 text-body">{t('intro')}</p>
       </div>
       {/* The board puts the page's actions at the right of the heading on a wide screen. */}
       <div className="shrink-0">
@@ -68,7 +70,7 @@ function UnreadLegend() {
   const { userId } = useSession();
   if (userId === null) return null;
   return (
-    <p className="m-0 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-body">
+    <p className="m-0 flex flex-wrap items-center gap-x-5 gap-y-2 type-meta">
       <span className="inline-flex items-center gap-2">
         <UnreadCircle isNew />
         {t('unread.new')}
@@ -103,7 +105,7 @@ function ForumCategories({
         </Fragment>
       ))}
       <UnreadLegend />
-      <p className="m-0 text-sm text-body">{t('neverClose')}</p>
+      <p className="m-0 type-meta">{t('neverClose')}</p>
     </>
   );
 }
@@ -121,12 +123,15 @@ export function ForumsPage() {
   return (
     <PageContainer className="flex flex-col gap-8 py-10">
       <ForumsHeader threadCount={threadCount} />
-      <ForumSearchForm />
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
-        <div className="flex min-w-0 flex-col gap-6">
+      {/* Two columns from 900 px: the forums, and a 300 px side column 56 px away (the board). */}
+      <div className="grid gap-10 min-[900px]:grid-cols-[minmax(0,1fr)_300px] min-[900px]:items-start min-[900px]:gap-14">
+        <div className="flex min-w-0 flex-col gap-10">
+          <div className="max-w-[560px]">
+            <ForumSearchForm />
+          </div>
           <ForumCategories groups={groups} loadFailed={loadFailed} />
         </div>
-        <aside className="flex flex-col gap-6">
+        <aside className="flex min-w-0 flex-col gap-10">
           <NewForYou />
           <SpacesCard />
           <ForumRulesCard />

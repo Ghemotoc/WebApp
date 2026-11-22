@@ -5,11 +5,11 @@
  * Shown only to a signed-in reader. Its accessible name starts with its words and adds what it
  * marks ("Mark as read: Writing craft"), so several on one page can be told apart (WCAG 2.5.3).
  * A failure says so in plain words beside it.
- * Liquid glass (bundle G8a; board Forums): every one is a grey glass pill with a tick.
+ * Since CALM-7c (board New-Together) it has no tick: the board-wide one and a forum's are quiet
+ * buttons, a category's is a text button in its heading row.
  * Who uses it: ForumsPage, ForumCategorySection and ForumPage. What it calls: useMarkForumsRead
  * → mark_forums_read().
  */
-import { CheckIcon } from '@/components/icons/CheckIcon';
 import { Button } from '@/components/ui/Button';
 import { useSession } from '@/features/auth/hooks/useSession';
 
@@ -22,14 +22,17 @@ export interface MarkReadButtonProps {
   forumSlug: string | null;
   /** Its name, for the accessible name; unused for the whole board. */
   forumName?: string;
+  /** How it looks: a quiet button (the default) or a text button beside a category heading. */
+  look?: 'quiet' | 'text';
 }
 
 /**
  * Renders the button, or nothing for a visitor.
  *
+ * @param props.look - a quiet button or a text button
  * @returns the button and any failure
  */
-export function MarkReadButton({ forumSlug, forumName = '' }: MarkReadButtonProps) {
+export function MarkReadButton({ forumSlug, forumName = '', look = 'quiet' }: MarkReadButtonProps) {
   const { t } = useForumsTranslation();
   const { userId } = useSession();
   const marking = useMarkForumsRead();
@@ -38,12 +41,11 @@ export function MarkReadButton({ forumSlug, forumName = '' }: MarkReadButtonProp
   return (
     <span className="inline-flex flex-wrap items-center gap-2">
       <Button
-        variant="secondary"
+        variant={look === 'text' ? 'text' : 'secondary'}
         aria-label={isWholeBoard ? undefined : t('unread.markLabel', { name: forumName })}
         disabled={marking.isRunning}
         onClick={() => marking.run(forumSlug)}
       >
-        <CheckIcon />
         {t(isWholeBoard ? 'unread.markAll' : 'unread.mark')}
       </Button>
       {marking.failed && (

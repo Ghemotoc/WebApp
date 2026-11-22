@@ -17,6 +17,12 @@ S1-E8-02; board 5.2 Forum thread).
 - Liquid glass (bundle G8a; boards Forums, Forum, ForumThread, ForumNew): the large `page-title`
   on every forum page with its actions at the heading's right, glass "Mark as read" pills with a
   tick, glass buttons for a post's actions and the rules card beside the new-thread form.
+- The simplified index (CALM-7c, board simplified/New-Together): `ForumsPage` has the thread count
+  as a meta line over the display title, categories without cards (`ForumCategorySection`: a
+  heading row with "Mark as read" as a text button, hairline `ForumRow`s with meta lines and an
+  8 px `UnreadDot`), and a 300 px side column where only `NewForYou` sits on a box; `SpacesCard`
+  and `ForumRulesCard` sit on the page. `MarkReadButton` takes `look` (quiet or text) and has no
+  tick.
 - Threads and posts (part b): `api/forumThreads.ts` (`forum_thread_list()`, `forum_thread()`),
   `api/forumWrites.ts` (start, reply, edit, delete, earlier versions), `hooks/useForumThreads.ts`,
   `hooks/useForumWrites.ts`, `lib/forumFailures.ts`, `lib/forumDates.ts`, `lib/forumPeople.ts`;

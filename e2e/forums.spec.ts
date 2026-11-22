@@ -86,7 +86,7 @@ test.describe('forum categories and subforums (FORUMS-1a, S1-E8-01)', () => {
     await expect(
       firstChapters.getByRole('link', { name: 'School and everyday life' }),
     ).toBeVisible();
-    await expect(firstChapters.getByText('Threads')).toBeVisible();
+    await expect(firstChapters.getByText('0 threads')).toBeVisible();
     await expect(firstChapters.getByText('No posts yet')).toBeVisible();
     await expect(page.getByText('They never close on their own', { exact: false })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Forum rules in short' })).toBeVisible();
