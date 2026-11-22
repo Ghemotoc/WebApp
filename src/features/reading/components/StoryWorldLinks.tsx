@@ -27,9 +27,12 @@ export function StoryWorldLinks({ storySlug }: { storySlug: string }) {
   const { plan } = usePublicPlan(storySlug);
   if (!plan || plan.areas.length === 0) return null;
   return (
-    <section aria-labelledby="story-world-heading" className="flex flex-col gap-2">
-      {/* Board New-Story: the meta line "The story's world" over the heading, no eyebrow. */}
-      <p className="m-0 text-[13px] leading-[18px] text-body">{t('storyPage.world.heading')}</p>
+    <section aria-labelledby="story-world-name" className="flex flex-col gap-2">
+      {/* Board New-Story: the meta line "The story's world" over the heading, no eyebrow. It
+          also names the region, so screen readers keep hearing "The story's world". */}
+      <p id="story-world-name" className="m-0 text-[13px] leading-[18px] text-body">
+        {t('storyPage.world.heading')}
+      </p>
       <h2 id="story-world-heading" className="m-0 type-heading text-heading">
         {t('storyPage.world.sharedHeading')}
       </h2>
