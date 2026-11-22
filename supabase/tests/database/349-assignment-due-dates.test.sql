@@ -1,12 +1,13 @@
--- Database tests for due dates on class assignments (bundle MUST-1, part d; IDEA-20261108-8).
+-- Database tests for due dates on class assignments (bundle MUST-1, part d; IDEA-20261108-8;
+-- a due moment with a time since CALM-7d, part 2).
 -- What it proves:
 -- - the teacher sets a due date on a class thread, and the thread shows it (criterion 1);
 -- - a student, someone outside the class and a thread outside any class can't have one, and a day
---   already gone is refused;
+--   already past is refused;
 -- - the class space lists open assignments soonest first, with whether the caller replied
 --   (criterion 2);
--- - the day before, a student who hasn't replied gets one reminder, never during quiet hours and
---   never twice; one who replied gets none (criterion 3);
+-- - in the 24 hours before, a student who hasn't replied gets one reminder, never during quiet
+--   hours and never twice; one who replied gets none (criterion 3);
 -- - a reply after the due date is marked for the teacher only (criterion 4);
 -- - assignment_reminders: a student reads their own rows (allowed) and nobody else's (denied).
 -- Personas: adult_writer (…01), kid_14_ok (…03), kid_14_waiting (…04), teacher (…07). Rolled back.
@@ -14,7 +15,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(19);
+select plan(20);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -40,6 +41,12 @@ grant execute on all functions in schema pg_temp to anon, authenticated;
 -- Minors take part in a class, so this test runs with the age gate on (as in test 285).
 update public.feature_flags set is_enabled = false where key = 'adults_only';
 update public.settings set value = '50'::jsonb where key = 'forum_post_hourly_limit_new_account';
+
+-- Fixed moments, in Romanian time, so the test reads the same whenever it runs.
+create function pg_temp.romanian(day date, at_time time) returns timestamptz language sql as $$
+  select (day + at_time) at time zone 'Europe/Bucharest';
+$$;
+grant execute on all functions in schema pg_temp to anon, authenticated;
 
 create temporary table kept (name text primary key, value text) on commit drop;
 grant all on kept to anon, authenticated;
@@ -69,23 +76,23 @@ insert into kept select 'other_id', id::text from public.forum_threads
 /* ---------- 1. Setting a due date ---------- */
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
-select lives_ok(format('select public.set_forum_thread_due_date(%L, public.romania_today() + 5)',
+select lives_ok(format('select public.set_forum_thread_due_date(%L, pg_temp.romanian(public.romania_today() + 5, ''12:00''))',
     (select value from kept where name = 'first_id')),
   'the teacher gives an assignment a due date');
-select lives_ok(format('select public.set_forum_thread_due_date(%L, public.romania_today() + 1)',
+select lives_ok(format('select public.set_forum_thread_due_date(%L, pg_temp.romanian(public.romania_today() + 1, ''12:00''))',
     (select value from kept where name = 'second_id')),
   'and another one, due sooner');
-select is((public.forum_thread((select value from kept where name = 'first')::bigint) -> 'thread' ->> 'due_on')::date,
-  public.romania_today() + 5, 'the thread shows its due date');
-select is(pg_temp.error_hint(format('select public.set_forum_thread_due_date(%L, public.romania_today() - 1)',
+select is((public.forum_thread((select value from kept where name = 'first')::bigint) -> 'thread' ->> 'due_at')::timestamptz,
+  pg_temp.romanian(public.romania_today() + 5, '12:00'), 'the thread shows its due moment');
+select is(pg_temp.error_hint(format('select public.set_forum_thread_due_date(%L, now() - interval ''1 minute'')',
     (select value from kept where name = 'first_id'))),
-  'due_in_past', 'a day already gone is refused');
-select is(pg_temp.error_hint(format('select public.set_forum_thread_due_date(%L, public.romania_today() + 3)',
+  'due_in_past', 'a moment already past is refused');
+select is(pg_temp.error_hint(format('select public.set_forum_thread_due_date(%L, now() + interval ''3 days'')',
     (select value from kept where name = 'other_id'))),
   'not_teacher', 'a thread outside any class can''t have one, even for its own writer');
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000003');
-select is(pg_temp.error_hint(format('select public.set_forum_thread_due_date(%L, public.romania_today() + 3)',
+select is(pg_temp.error_hint(format('select public.set_forum_thread_due_date(%L, now() + interval ''3 days'')',
     (select value from kept where name = 'first_id'))),
   'not_teacher', 'a student can''t set one');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
@@ -106,13 +113,15 @@ select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 select is(public.class_space_assignments('clasa-a-viii-a'), '[]'::jsonb,
   'someone outside the class sees none');
 
-/* ---------- 3. The reminder the day before ---------- */
+/* ---------- 3. The reminder in the 24 hours before ---------- */
 
 select pg_temp.as_postgres();
 select is(public.send_assignment_reminders(((public.romania_today() + time '23:30') at time zone 'Europe/Bucharest')),
   0, 'nothing is sent during quiet hours');
+select is(public.send_assignment_reminders(((public.romania_today() + time '07:30') at time zone 'Europe/Bucharest')),
+  0, 'nothing is sent more than 24 hours before the moment');
 select is(public.send_assignment_reminders(((public.romania_today() + time '17:00') at time zone 'Europe/Bucharest')),
-  1, 'outside them, one student is reminded the day before');
+  1, 'outside them, one student is reminded of the assignment due within a day');
 select is((select count(*)::integer from public.notifications
            where kind = 'assignment_due' and user_id = '00000000-0000-4000-8000-000000000004'
              and forum_thread_id = (select value::uuid from kept where name = 'second_id')),
@@ -134,10 +143,10 @@ select is((select count(*)::integer from public.assignment_reminders), 0,
 
 /* ---------- 5. Late replies, for the teacher only ---------- */
 
--- The second assignment's due date moves back to two days ago (staff-side, to stand in for time
+-- The second assignment's due moment moves back to two days ago (staff-side, to stand in for time
 -- passing), so kid_14_ok's reply from today now came after it.
 select pg_temp.as_postgres();
-update public.forum_threads set due_on = public.romania_today() - 2
+update public.forum_threads set due_at = now() - interval '2 days'
   where id = (select value::uuid from kept where name = 'second_id');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
 select is((select string_agg((entry ->> 'handle') || ':' || (entry ->> 'is_late'), ',' order by entry ->> 'handle')

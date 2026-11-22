@@ -24,7 +24,7 @@ describe('fetchClassThreadReplies', () => {
       data: {
         replied: [{ handle: 'radu.c', display_name: 'Radu', is_late: true }],
         not_yet: [{ handle: 'ioana.v' }],
-        due_on: '2026-11-13',
+        due_at: '2026-11-13T21:59:00+00:00',
       },
     });
     const replies = await fetchClassThreadReplies(client, 'thread-1');
@@ -32,7 +32,7 @@ describe('fetchClassThreadReplies', () => {
     expect(replies).toEqual({
       replied: [{ handle: 'radu.c', displayName: 'Radu', isLate: true }],
       notYet: [{ handle: 'ioana.v', displayName: 'ioana.v' }],
-      dueOn: '2026-11-13',
+      dueAt: '2026-11-13T21:59:00+00:00',
     });
   });
 

@@ -517,12 +517,14 @@
     "late": "after the due date",
     "due": {
       "label": "Due date",
-      "hint": "The class sees it on the thread, and anyone who hasn’t replied gets one reminder the day before.",
+      "time": "Due time",
+      "hint": "On this device’s clock ({{zone}}). The class sees it on the thread, and anyone who hasn’t replied gets one reminder in the day before.",
+      "skippedHourNote": "That time does not exist on that day because the clocks go forward. It will be due at {{time}}.",
       "save": "Save date",
       "clear": "Remove date",
       "saved": "Saved.",
       "failures": {
-        "due_in_past": "Choose today or a later day.",
+        "due_in_past": "Choose a moment that hasn’t passed yet.",
         "class_locked": "The class is locked, so its dates stay as they are.",
         "not_teacher": "Only the class’s teacher can set a due date.",
         "unknown": "We couldn’t save the date. Try again."

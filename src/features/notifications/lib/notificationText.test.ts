@@ -588,7 +588,7 @@ describe('notificationText', () => {
     expect(notificationText(englishT(), goneRow, null).href).toBeNull();
   });
 
-  it('an assignment due tomorrow is a reminder that opens the thread (MUST-1d)', () => {
+  it('an assignment due within a day is a reminder that opens the thread (MUST-1d)', () => {
     const dueRow: AppNotification = {
       ...newChapter,
       kind: 'assignment_due',
@@ -600,7 +600,7 @@ describe('notificationText', () => {
     };
     const text = notificationText(englishT(), dueRow, null);
     expect(text.who).toBe('Reminder:');
-    expect(text.what).toBe('“Tema 1” is due tomorrow.');
+    expect(text.what).toBe('“Tema 1” is due within a day.');
     expect(text.href).toBe('/forums/space-clasa-a-viii-a/12');
   });
 

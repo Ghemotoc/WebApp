@@ -108,7 +108,7 @@
     "forumReply_one": "a răspuns în „{{title}}”.",
     "forumReply_few": "au răspuns în „{{title}}”.",
     "forumReply_other": "au răspuns în „{{title}}”.",
-    "assignmentDue": "„{{title}}” are termen mâine."
+    "assignmentDue": "„{{title}}” are termen în mai puțin de o zi."
   },
   "grouped": {
     "reactions_one": "{{count}} reacție",

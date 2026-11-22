@@ -3,7 +3,9 @@
  *
  * Who calls it: hooks/useClassThreadReplies.ts. What it calls next: class_thread_replies() in
  * supabase/migrations/…_ideas3_b_who_has_replied.sql (with the due date and the late marks since
- * …_must1d_assignment_due_dates.sql, MUST-1d), and set_forum_thread_due_date() for the due date. The database decides who may see the lists
+ * …_must1d_assignment_due_dates.sql, MUST-1d, and a due moment since
+ * …_calm7d2_assignment_due_time.sql), and set_forum_thread_due_date() for the due moment. The
+ * database decides who may see the lists
  * (the teacher, or someone holding the class's "members" power) and answers null for everyone
  * else; this file only reads its answer.
  */
@@ -25,8 +27,8 @@ export interface ClassReply extends ClassMemberName {
 export interface ClassThreadReplies {
   replied: ClassReply[];
   notYet: ClassMemberName[];
-  /** The assignment's due day ("2026-11-14"), or null when it has none (MUST-1d). */
-  dueOn: string | null;
+  /** The assignment's due moment (ISO), or null when it has none (MUST-1d, CALM-7d). */
+  dueAt: string | null;
 }
 
 /** Why saving a due date failed, as the field explains it. */
@@ -68,7 +70,7 @@ export async function fetchClassThreadReplies(
   return {
     replied: repliesFrom(data['replied']),
     notYet: membersFrom(data['not_yet']),
-    dueOn: typeof data['due_on'] === 'string' ? data['due_on'] : null,
+    dueAt: typeof data['due_at'] === 'string' ? data['due_at'] : null,
   };
 }
 
@@ -98,22 +100,22 @@ export class DueDateError extends Error {
 }
 
 /**
- * Sets or clears a class assignment's due date (the teacher only; the database checks).
+ * Sets or clears a class assignment's due moment (the teacher only; the database checks).
  *
  * @param client - the Supabase client
  * @param threadId - the thread's ID
- * @param dueOn - the day ("2026-11-14"), or null to clear it
+ * @param dueAt - the moment (ISO), or null to clear it
  * @throws DueDateError saying why it was refused
  */
 export async function saveThreadDueDate(
   client: AppSupabaseClient,
   threadId: string,
-  dueOn: string | null,
+  dueAt: string | null,
 ): Promise<void> {
   const { error } = await client.rpc('set_forum_thread_due_date', {
     target_thread_id: threadId,
-    // Null clears the date; the generated type doesn't know a date argument may be null.
-    due: dueOn as string,
+    // Null clears the date; the generated type doesn't know a timestamptz argument may be null.
+    due: dueAt as string,
   });
   if (error === null) return;
   const known: DueDateFailure[] = ['due_in_past', 'class_locked', 'not_teacher'];

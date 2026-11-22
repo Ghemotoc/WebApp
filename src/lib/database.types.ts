@@ -545,7 +545,7 @@ export type Database = {
       assignment_reminders: {
         Row: {
           created_at: string;
-          due_on: string;
+          due_at: string;
           id: string;
           thread_id: string;
           updated_at: string;
@@ -554,7 +554,7 @@ export type Database = {
         ComputedFields: never;
         Insert: {
           created_at?: string;
-          due_on: string;
+          due_at: string;
           id?: string;
           thread_id: string;
           updated_at?: string;
@@ -562,7 +562,7 @@ export type Database = {
         };
         Update: {
           created_at?: string;
-          due_on?: string;
+          due_at?: string;
           id?: string;
           thread_id?: string;
           updated_at?: string;
@@ -4548,7 +4548,7 @@ export type Database = {
           continues_in_thread_id: string | null;
           created_at: string;
           deleted_at: string | null;
-          due_on: string | null;
+          due_at: string | null;
           forum_id: string;
           id: string;
           is_sticky: boolean;
@@ -4593,7 +4593,7 @@ export type Database = {
           continues_in_thread_id?: string | null;
           created_at?: string;
           deleted_at?: string | null;
-          due_on?: string | null;
+          due_at?: string | null;
           forum_id: string;
           id?: string;
           is_sticky?: boolean;
@@ -4613,7 +4613,7 @@ export type Database = {
           continues_in_thread_id?: string | null;
           created_at?: string;
           deleted_at?: string | null;
-          due_on?: string | null;
+          due_at?: string | null;
           forum_id?: string;
           id?: string;
           is_sticky?: boolean;
@@ -14819,7 +14819,7 @@ export type Database = {
           continues_in_thread_id: string | null;
           created_at: string;
           deleted_at: string | null;
-          due_on: string | null;
+          due_at: string | null;
           forum_id: string;
           id: string;
           is_sticky: boolean;

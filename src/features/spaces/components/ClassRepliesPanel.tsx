@@ -118,7 +118,7 @@ export function ClassRepliesPanel({
           />
         </div>
       )}
-      <ClassDueDateField threadId={threadId} dueOn={replies.dueOn} />
+      <ClassDueDateField threadId={threadId} dueAt={replies.dueAt} />
     </section>
   );
 }

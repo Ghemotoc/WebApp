@@ -119,8 +119,8 @@ export interface ForumThreadHeader {
   lastPostAt: string;
   /** How many times the thread was opened (GAPS-16d): a total only, never who. */
   viewCount: number;
-  /** A class assignment's due day ("2026-11-14", Romanian calendar), or null (MUST-1d). */
-  dueOn: string | null;
+  /** A class assignment's due moment (ISO), or null (MUST-1d; a moment since CALM-7d). */
+  dueAt: string | null;
   /** Pinned to the top of its forum by a moderator (S1-E8-05). */
   isSticky: boolean;
   /** Null while open; when and why the moderation team locked it (S1-E8-05). */
@@ -371,7 +371,7 @@ function headerFrom(row: JsonObject): ForumThreadHeader {
     writerCount: Number(row['writer_count']),
     lastPostAt: String(row['last_post_at']),
     viewCount: Number(row['view_count'] ?? 0),
-    dueOn: typeof row['due_on'] === 'string' ? row['due_on'] : null,
+    dueAt: typeof row['due_at'] === 'string' ? row['due_at'] : null,
     isSticky: row['is_sticky'] === true,
     lock: lockFrom(row['lock']),
     canReply: row['can_reply'] === true,
