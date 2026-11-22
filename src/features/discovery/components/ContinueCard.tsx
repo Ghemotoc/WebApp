@@ -1,27 +1,29 @@
 /**
- * ContinueCard: "Continue reading" on Discover, the reader's latest unfinished story (story
- * S1-E5-12, bundle LOOK-4b; board Discover, "Your dashboard").
+ * ContinueCard: "Continue reading" in the Read page's side column, the reader's latest unfinished
+ * story (story S1-E5-12, bundle LOOK-4b; since CALM-7c the simplified board New-Read).
  *
- * Board values (liquid glass board Discover, bundle G7): a glass card in the side column with the
- * eyebrow, then a row with the cover (64 px, the "tile" size so the full title fits; DoD covers)
- * beside the title, "by <writer> · Chapter 14 of 15" and a thin accent progress line through the
- * chapter, then "Chapter 15 is out" (sage) when a newer chapter came out after the reader last
- * read, and the full-width Continue button. The whole card is one link, as on the board, so it
- * holds no other link. The progress line is drawn for sighted readers and its words sit in hidden
- * text beside it.
- * Who shows it: DiscoverCards. What it calls: the Library's continueAddress (where Continue leads).
+ * Board values: no card around it (Step 3: no cards around sections). The heading, then a row
+ * with the cover (64 px, the "tile" size so the full title fits; DoD covers) beside the title as a
+ * link, the writer, the meta line "Chapter 14 of 15 · **chapter 15 is out**" (the state only
+ * when a newer chapter came out after the reader last read; "of N" only while the writer has
+ * marked a last chapter, CALM-6), the 2 px thread line for how far into the chapter, and a quiet
+ * Continue (the page's one main button is the hero's "Read the story"). The thread line is drawn
+ * for sighted readers and its words sit in hidden text beside it.
+ * Who shows it: ReadSideColumn. What it calls: the Library's continueAddress (where Continue
+ * leads) and MetaLine.
  */
 import { Link } from 'react-router';
 
 import { resolveCoverChoice } from '@/components/covers/automaticCover';
 import { DrawnCover } from '@/components/covers/DrawnCover';
+import { MetaLine, type MetaFact } from '@/components/ui/MetaLine';
 import { continueAddress } from '@/features/library/lib/places';
 import { StoryCoverArt } from '@/features/pictures/components/StoryCoverArt';
 
 import type { ContinueReadingCardData } from '../api/discoverCards';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
 
-/** The 64 px cover. */
+/** The 64 px cover, decorative: the title is the link beside it. */
 function CardCover({ story }: { story: ContinueReadingCardData['story'] }) {
   return (
     <StoryCoverArt
@@ -40,13 +42,13 @@ function CardCover({ story }: { story: ContinueReadingCardData['story'] }) {
   );
 }
 
-/** The progress line, with its words for screen readers. */
+/** The 2 px thread line, with its words for screen readers. */
 function ChapterProgress({ percent, number }: { percent: number; number: number }) {
   const { t } = useDiscoveryTranslation();
   return (
     <>
-      <div aria-hidden="true" className="mt-1 h-[5px] w-full overflow-hidden rounded-full bg-tint">
-        <div className="h-full rounded-full bg-primary" style={{ width: `${percent}%` }} />
+      <div aria-hidden="true" className="mt-1 h-0.5 w-full max-w-[220px] bg-(--hairline)">
+        <div className="h-full bg-(--thread)" style={{ width: `${percent}%` }} />
       </div>
       <span className="sr-only">{t('cards.progress', { percent, number })}</span>
     </>
@@ -54,48 +56,65 @@ function ChapterProgress({ percent, number }: { percent: number; number: number 
 }
 
 /**
- * Renders the card.
+ * The meta line's facts: where the reader is, then the new chapter as a state.
+ *
+ * @param item - the story, the place and the new chapter's number
+ * @param t - the discovery namespace's translate function
+ * @returns the facts
+ */
+function placeFacts(
+  item: ContinueReadingCardData,
+  t: ReturnType<typeof useDiscoveryTranslation>['t'],
+): MetaFact[] {
+  const { place, newChapterNumber } = item;
+  // Step 1: "Chapter 14 of 15", or "Chapter 14" while no last chapter is marked (CALM-6).
+  const where =
+    place.lastChapterNumber === null
+      ? t('cards.continueWhereNumberOnly', { number: place.number })
+      : t('cards.continueWhere', { number: place.number, total: place.lastChapterNumber });
+  const facts: MetaFact[] = [{ text: where }];
+  // Step 2: "chapter 15 is out" in bold when a newer chapter came out.
+  if (newChapterNumber !== null) {
+    facts.push({ text: t('cards.newChapter', { number: newChapterNumber }), kind: 'state' });
+  }
+  return facts;
+}
+
+/**
+ * Renders the section.
  *
  * @param props.item - the story, the reader's place and the new chapter's number, if any
- * @returns the card, one link
+ * @returns the section
  */
 export function ContinueCard({ item }: { item: ContinueReadingCardData }) {
   const { t } = useDiscoveryTranslation();
-  const { story, place, newChapterNumber } = item;
+  const { story, place } = item;
   return (
-    <Link
-      to={continueAddress(story.slug, place)}
-      className="flex flex-col gap-3 rounded-[28px] border border-border bg-surface p-[18px] text-inherit no-underline shadow-card"
-    >
-      <span className="eyebrow">{t('cards.continueEyebrow')}</span>
-      <div className="flex items-center gap-3">
+    <section aria-labelledby="read-continue-heading" className="flex flex-col gap-3">
+      <h2 id="read-continue-heading" className="m-0 type-subheading">
+        {t('cards.continueEyebrow')}
+      </h2>
+      <div className="flex items-start gap-3">
         <CardCover story={story} />
-        <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <span className="font-semibold break-words text-heading">{story.title}</span>
-          <span className="text-[13px] text-body">
-            {/* CALM-6: "of N" only while the writer has marked a last chapter. */}
-            {place.lastChapterNumber === null
-              ? t('cards.continueWhereNumberOnly', {
-                  writer: story.writer.displayName,
-                  number: place.number,
-                })
-              : t('cards.continueWhere', {
-                  writer: story.writer.displayName,
-                  number: place.number,
-                  total: place.lastChapterNumber,
-                })}
-          </span>
+        <div className="flex min-w-0 flex-1 flex-col items-start gap-1">
+          <Link
+            to={`/s/${story.slug}`}
+            className="font-semibold break-words text-heading no-underline hover:underline"
+          >
+            {story.title}
+          </Link>
+          <span className="type-meta">{story.writer.displayName}</span>
+          <MetaLine facts={placeFacts(item, t)} />
           <ChapterProgress percent={place.percent} number={place.number} />
-          {newChapterNumber !== null && (
-            <span className="text-[13px] font-semibold text-(--success-text)">
-              {t('cards.newChapter', { number: newChapterNumber })}
-            </span>
-          )}
+          <Link
+            to={continueAddress(story.slug, place)}
+            aria-label={t('cards.continueLabel', { title: story.title })}
+            className="mt-2 inline-flex h-11 items-center rounded-full button-glass px-5 font-semibold no-underline"
+          >
+            {t('cards.continueButton')}
+          </Link>
         </div>
       </div>
-      <span className="inline-flex h-[46px] items-center justify-center rounded-full button-main px-[18px] font-semibold">
-        {t('cards.continueButton')}
-      </span>
-    </Link>
+    </section>
   );
 }

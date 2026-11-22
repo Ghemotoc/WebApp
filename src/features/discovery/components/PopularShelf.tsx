@@ -60,7 +60,6 @@ export function PopularShelf() {
   const request: ListRequest = { ...plainList('popular'), popularIn: country };
   return (
     <DiscoverShelf
-      eyebrow={t('lists.popularEyebrow')}
       title={t('lists.popular')}
       request={request}
       toolbar={<PopularToolbar request={request} onChange={setPicked} />}

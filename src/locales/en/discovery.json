@@ -1,14 +1,15 @@
 {
   "discover": {
     "documentTitle": "Read · {{productName}}",
-    "eyebrow": "Read",
-    "heading": "Find the next story",
     "intro": "New chapters from writers on {{productName}}, by category and tag. Nothing here is picked from what you read.",
     "loadFailed": "We couldn’t load the stories. Check your connection and try again.",
     "empty": "No stories are published yet. Be the first: start writing.",
     "writeLink": "Start writing",
     "howRanking": "How ranking works",
-    "eyebrowDated": "Read · {{date}}"
+    "title": "Read",
+    "followedUpdates_one": "Writers you follow updated {{count}} story this week",
+    "followedUpdates_other": "Writers you follow updated {{count}} stories this week",
+    "followedUpdates_few": "Writers you follow updated {{count}} stories this week"
   },
   "lists": {
     "following": "New from writers you follow",
@@ -114,7 +115,15 @@
     "previous": "Previous story",
     "next": "Next story",
     "pause": "Pause slideshow",
-    "play": "Play slideshow"
+    "play": "Play slideshow",
+    "newChapter": "New chapter",
+    "by": "by",
+    "chapters_one": "{{count}} chapter",
+    "chapters_other": "{{count}} chapters",
+    "addToLibrary": "Add to library",
+    "inLibrary": "In library",
+    "addFailed": "That didn’t save. Check your connection and try again.",
+    "chapters_few": "{{count}} chapters"
   },
   "writersToFollow": {
     "eyebrow": "Rising",
@@ -127,26 +136,27 @@
   "cards": {
     "label": "Dashboard",
     "continueEyebrow": "Continue reading",
-    "continueWhere": "by {{writer}} · Chapter {{number}} of {{total}}",
-    "continueWhereNumberOnly": "by {{writer}} · Chapter {{number}}",
+    "continueWhere": "Chapter {{number}} of {{total}}",
+    "continueWhereNumberOnly": "Chapter {{number}}",
     "progress": "{{percent}}% through chapter {{number}}.",
-    "newChapter": "Chapter {{number}} is out",
+    "newChapter": "chapter {{number}} is out",
     "continueButton": "Continue",
     "draftEyebrow": "Draft",
     "untitled": "Chapter {{number}}, untitled",
     "words_one": "{{formatted}} word",
     "words_few": "{{formatted}} words",
     "words_other": "{{formatted}} words",
-    "draftMeta": "{{story}} · {{words}} · saved {{when}}",
     "openDraft": "Open draft",
-    "writeEyebrow": "Write",
     "newStoryTitle": "Start a new story",
     "newStoryText": "A poem, an essay or chapter one of something new. Nobody sees it until you publish.",
-    "newStoryLink": "New story"
+    "labelFor": "For {{name}}",
+    "continueLabel": "Continue {{title}}",
+    "savedWhen": "saved {{when}}"
   },
   "risingWriters": {
     "eyebrow": "Rising",
-    "title": "New and rising writers"
+    "title": "New and rising writers",
+    "writes": "Writes {{category}}"
   },
   "popularIn": {
     "label": "Popular in",

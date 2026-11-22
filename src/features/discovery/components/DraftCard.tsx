@@ -1,15 +1,15 @@
 /**
- * DraftCard: "Your draft" on Discover, the member's draft chapter saved most recently (story
- * S1-E5-12, bundle LOOK-4b; board Discover, "Your dashboard").
+ * DraftCard: the member's latest draft in the Read page's side column (story S1-E5-12, bundle
+ * LOOK-4b; since CALM-7c the simplified board New-Read).
  *
- * Board values (liquid glass board Discover, bundle G7): a glass card in the side column with the
- * eyebrow, the draft's title in Funnel Display at 20 px ("Chapter 1, untitled" when it has none),
- * "<story> · 1,240 words · saved yesterday" and "Open draft" drawn as an outlined pill.
- * The whole card is one link to the chapter editor.
- * Who shows it: DiscoverCards. What it calls: timeAgo for "saved 2 days ago".
+ * Board values: no card around it. The heading "Draft", the draft's title as a link to the
+ * chapter editor ("Chapter 1, untitled" when it has none), the meta line "<story> · 1,240 words ·
+ * saved yesterday" and a quiet "Open draft".
+ * Who shows it: ReadSideColumn. What it calls: timeAgo for "saved 2 days ago" and MetaLine.
  */
 import { Link } from 'react-router';
 
+import { MetaLine } from '@/components/ui/MetaLine';
 import { timeAgo } from '@/features/comments/lib/timeAgo';
 import { dateLocaleFor } from '@/lib/romania-time';
 
@@ -17,40 +17,45 @@ import type { DraftCardData } from '../api/discoverCards';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
 
 /**
- * Renders the card.
+ * Renders the section.
  *
  * @param props.draft - the draft chapter and its story
- * @returns the card, one link
+ * @returns the section
  */
 export function DraftCard({ draft }: { draft: DraftCardData }) {
   const { t, i18n } = useDiscoveryTranslation();
+  const editorAddress = `/write/s/${encodeURIComponent(draft.storySlug)}/c/${draft.chapterCode}`;
   // Step 1: the title, or "Chapter n, untitled" while the writer hasn't given one.
   const title =
     draft.title.trim() === '' ? t('cards.untitled', { number: draft.number }) : draft.title;
-  // Step 2: the line under it, with the words counted the reader's way.
+  // Step 2: the facts, with the words counted the reader's way.
   const words = t('cards.words', {
     count: draft.wordCount,
     formatted: new Intl.NumberFormat(dateLocaleFor(i18n.language)).format(draft.wordCount),
   });
+  const facts = [
+    { text: draft.storyTitle },
+    { text: words },
+    { text: t('cards.savedWhen', { when: timeAgo(draft.savedAt, i18n.language) }) },
+  ];
   return (
-    <Link
-      to={`/write/s/${encodeURIComponent(draft.storySlug)}/c/${draft.chapterCode}`}
-      className="flex flex-col gap-2 rounded-[28px] border border-border bg-surface p-[18px] text-inherit no-underline shadow-card"
-    >
-      <span className="eyebrow">{t('cards.draftEyebrow')}</span>
-      <span className="font-heading text-xl leading-[1.15] font-bold break-words text-heading">
+    <section aria-labelledby="read-draft-heading" className="flex flex-col items-start gap-2">
+      <h2 id="read-draft-heading" className="m-0 type-subheading">
+        {t('cards.draftEyebrow')}
+      </h2>
+      <Link
+        to={editorAddress}
+        className="font-semibold break-words text-heading no-underline hover:underline"
+      >
         {title}
-      </span>
-      <span className="text-[13px] text-body">
-        {t('cards.draftMeta', {
-          story: draft.storyTitle,
-          words,
-          when: timeAgo(draft.savedAt, i18n.language),
-        })}
-      </span>
-      <span className="mt-1 inline-flex h-11 items-center self-start rounded-full border border-control-border px-[18px] text-sm font-semibold text-ink">
+      </Link>
+      <MetaLine facts={facts} />
+      <Link
+        to={editorAddress}
+        className="mt-1 inline-flex h-11 items-center rounded-full button-glass px-5 font-semibold no-underline"
+      >
         {t('cards.openDraft')}
-      </span>
-    </Link>
+      </Link>
+    </section>
   );
 }

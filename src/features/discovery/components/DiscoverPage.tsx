@@ -1,42 +1,41 @@
 /**
- * DiscoverPage: Discover, screen 3.1 (stories S1-E5-01 and S1-E5-12; design/boards/Discover.dc.html).
+ * DiscoverPage: Read, screen 3.1 at /discover (stories S1-E5-01 and S1-E5-12; since CALM-7c the
+ * simplified board New-Read, page template "shelf page").
  *
- * Who shows it: the router, at /discover; the top bar's "Discover" link.
+ * Who shows it: the router, at /discover; the top bar's and the tab bar's "Read".
  * What it shows, top to bottom:
- * - the heading: for a visitor "Discover" and "Find your next story"; for someone signed in the
- *   dated eyebrow and "Good morning, <name>." (GreetingHeading; S1-E2-13, S1-E5-12). The line
- *   under it links "How ranking works" (the terms'
- *   ranking section, DSA art. 27; S1-E5-03);
- * - Featured this week (S1-E5-10), when staff picked stories this reader may see, with "Your
- *   dashboard" for a member beside it from 1024 px (DiscoverCards, S1-E5-12): Continue reading,
- *   Your draft and "Start a new story", each only when it has something to show;
- * - the shelves in the order of the public setting discover_shelves (S1-E5-03, Q46: changed
+ * - ReadHeader: the title "Read", the meta line (the date and, for someone signed in, the
+ *   greeting and how many stories by writers they follow were updated this week) and the line
+ *   with "How ranking works" (the terms' ranking section, DSA art. 27; S1-E5-03);
+ * - Featured this week (S1-E5-10) as the page's one glass hero, when staff picked stories this
+ *   reader may see;
+ * - the rows in the order of the public setting discover_shelves (S1-E5-03, Q46: changed
  *   without a release). Since LOOK-4b (Robert, 6 Nov 2026, D5) it holds the board's five: New from
  *   writers you follow (signed in), Popular, New and rising, Public-domain classics and Writers to
  *   follow this week (S1-E5-11). The other words (picked, shared, new, completed, updated,
- *   categories) still work if staff put them back.
- * Every shelf is one line of at most 20 with "View more" (CLAUDE.md rule 20), and the database
- * leaves out what this reader may not see: ratings above their age (rule 18), writers either side
- * blocks, drafts and moderated stories. Nothing is chosen from what the reader has read (no
- * personalised feed in Stage 1; S1-E5-09's legal note); the cards show only the member's own
- * places and drafts.
- * Popular ranks by totals only (reads, likes, comments; never downvotes), the same for everyone.
- * The wide ad slot sits after the first shelf (S1-E12-01; board 3.1), then, for a member with
+ *   categories) still work if staff put them back. Rows have a plain heading, no eyebrow (CALM-7c);
+ * - for a member, the side column "For Lia" (ReadSideColumn): Continue reading, the latest draft,
+ *   "Start a new story" and New and rising writers. From 1024 px it sits beside the hero and the
+ *   rows; narrower, it comes after the rows (board). For a member the writers move from the rows
+ *   into the side column, so they show once.
+ * Every row is one line of at most 20 with "View" (CLAUDE.md rule 20), and the database leaves out
+ * what this reader may not see: ratings above their age (rule 18), writers either side of a block,
+ * drafts and moderated stories. Nothing is chosen from what the reader has read (no personalised
+ * feed in Stage 1; S1-E5-09's legal note); the side column shows only the member's own places and
+ * drafts. Popular ranks by totals only (reads, likes, comments; never downvotes), the same for
+ * everyone. The wide ad slot sits after the first row (S1-E12-01; board), then, for a member with
  * "Suggestions from reading" on, "Because you read" (BecauseYouReadShelf, S1-E15-06).
- * What it calls: FeaturedBand, GreetingHeading,
- * DiscoverCards, DiscoverShelf (useStoryShelf → browse_stories()) and RisingWritersShelf.
- * */
+ * What it calls: ReadHeader, FeaturedBand, ReadSideColumn, DiscoverShelf (useStoryShelf →
+ * browse_stories()), PopularShelf and RisingWritersShelf.
+ */
 import { Fragment } from 'react';
 import { Link } from 'react-router';
 
 import { EmptyState } from '@/components/ui/EmptyState';
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { brand } from '@/config/brand';
 import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
-import { useMyNames } from '@/features/account/hooks/useMyNames';
-import { displayName } from '@/features/account/lib/nameRules';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { usePublicSettings } from '@/features/flags/hooks/usePublicSettings';
 import { BecauseYouReadShelf } from '@/features/suggestions/components/BecauseYouReadShelf';
@@ -47,11 +46,11 @@ import { useStoryShelf } from '../hooks/useStoryShelf';
 import { discoverListKinds, plainList } from '../lib/listAddresses';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
 
-import { DiscoverCards } from './DiscoverCards';
 import { DiscoverShelf } from './DiscoverShelf';
 import { FeaturedBand } from './FeaturedBand';
-import { GreetingHeading } from './GreetingHeading';
 import { PopularShelf } from './PopularShelf';
+import { ReadHeader } from './ReadHeader';
+import { ReadSideColumn } from './ReadSideColumn';
 import { RisingWritersShelf } from './RisingWritersShelf';
 
 /**
@@ -71,9 +70,9 @@ function shelfKindFrom(word: string): ListKind | null {
 }
 
 /**
- * Whether a word of the setting can draw anything for this reader: "categories", "writers" and
- * known lists can; the follows shelf and "Picked for you" only for someone signed in; an unknown
- * word never. Used so the ad slot follows the first shelf the reader can actually get, not an
+ * Whether a word of the setting can draw anything for this reader: "categories" and known lists
+ * can; the follows shelf and "Picked for you" only for someone signed in; "writers" only for a
+ * visitor (a member has them in the side column); an unknown word never. Used so the ad slot follows the first shelf the reader can actually get, not an
  * empty place (a visitor's ad sat straight under the heading before).
  *
  * @param word - from discover_shelves
@@ -81,57 +80,12 @@ function shelfKindFrom(word: string): ListKind | null {
  * @returns true when the word may draw a shelf
  */
 function shelfCanShow(word: string, isSignedIn: boolean): boolean {
-  if (word === 'categories' || word === 'writers') return true;
+  if (word === 'categories') return true;
+  // CALM-7c: a member meets these writers in the side column, so the row is for visitors only.
+  if (word === 'writers') return !isSignedIn;
   const kind = shelfKindFrom(word);
   if (kind === null) return false;
   return isSignedIn || (kind !== 'following' && kind !== 'picked');
-}
-
-/** The h1's type, the same for the visitor's heading and the greeting (board 3.1). */
-const headingClass =
-  'm-0 min-w-0 font-heading text-[clamp(36px,4.4vw,54px)] leading-[1.02] font-bold tracking-[-0.02em] break-words text-heading';
-
-/**
- * The visitor's eyebrow and heading, also shown while a member's name loads.
- *
- * @returns the eyebrow and the h1
- */
-function VisitorHeading() {
-  const { t } = useDiscoveryTranslation();
-  return (
-    <>
-      <Eyebrow>{t('discover.eyebrow')}</Eyebrow>
-      <h1 className={headingClass}>{t('discover.heading')}</h1>
-    </>
-  );
-}
-
-/**
- * The heading block: eyebrow, heading (a greeting for someone signed in) and the line under it.
- *
- * @returns the header
- */
-function DiscoverHeader() {
-  const { t } = useDiscoveryTranslation();
-  const { names } = useMyNames();
-  // The pen name, or the username; null for a visitor or while it loads (rule 5: no real name).
-  const name = names === null ? null : displayName(names.handle, names.penName);
-  return (
-    <header className="flex flex-col gap-2">
-      {/* No seasonal doodle beside it since bundle G4: the seasonal looks carry the season. */}
-      {name === null ? (
-        <VisitorHeading />
-      ) : (
-        <GreetingHeading name={name} className={headingClass} />
-      )}
-      <p className="m-0 max-w-[640px] text-[17px] leading-relaxed text-body">
-        {t('discover.intro', { productName: brand.productName })}{' '}
-        <Link to="/legal/terms#section-5" className="font-semibold underline underline-offset-2">
-          {t('discover.howRanking')}
-        </Link>
-      </p>
-    </header>
-  );
 }
 
 /**
@@ -149,7 +103,6 @@ function ShelfFromSetting({ word, isSignedIn }: { word: string; isSignedIn: bool
     return categories.map((category) => (
       <DiscoverShelf
         key={category.slug}
-        eyebrow={t('lists.categoryEyebrow')}
         title={t(`categories.${category.slug}`, { ns: 'writing' })}
         request={plainList('category', category.slug)}
       />
@@ -166,9 +119,9 @@ function ShelfFromSetting({ word, isSignedIn }: { word: string; isSignedIn: bool
   if (kind === 'popular') return <PopularShelf />;
   return (
     <DiscoverShelf
-      eyebrow={t(`lists.${kind}Eyebrow`)}
       title={t(`lists.${kind}`)}
       request={plainList(kind)}
+      isFollowingRow={kind === 'following'}
     />
   );
 }
@@ -243,27 +196,25 @@ function DiscoverShelves() {
  */
 export function DiscoverPage() {
   const { t } = useDiscoveryTranslation();
+  const { userId } = useSession();
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-[30px] pt-10 pb-14">
+    <PageContainer className="tmc-rise flex flex-col gap-10 pt-10 pb-16">
       <title>{t('discover.documentTitle', { productName: brand.productName })}</title>
-      <DiscoverHeader />
-      {/* No search field of its own since bundle G4 SHELL: the top bar's search pill (from
-          1024 px) and the tab bar's Search button (narrower) open the Search page (S1-E5-04).
-          No category chips since bundle G7: the board has no genre bar on Discover (design
-          rulebook, "Discover"); the genre pages are a click away from every story card's tags
-          and from Search. */}
-      {/* The heading sits above both columns. From 1024 px the side column (Continue reading,
-          Your draft, Start a new story) starts level with the carousel and spans the shelves'
-          rows too; the 1fr second row takes its extra height, so the shelves follow the carousel
-          straight away. Without a side column the main column takes the whole width. */}
-      <div className="grid grid-cols-1 items-start gap-[28px] lg:has-[>[data-discover-side]]:grid-cols-[minmax(0,1fr)_300px] lg:has-[>[data-discover-side]]:grid-rows-[auto_1fr]">
+      <ReadHeader />
+      {/* No search field of its own (bundle G4 SHELL: the top bar and the tab bar open Search)
+          and no genre chips (Robert, 20 Nov 2026: Read has no genre chip bar). */}
+      {/* From 1024 px the side column starts level with the hero and spans the rows too; the 1fr
+          second row takes its extra height, so the rows follow the hero straight away. It comes
+          last in the page's order, so narrower it sits under the rows (board). Without a side
+          column the main column takes the whole width. */}
+      <div className="grid grid-cols-1 items-start gap-10 lg:has-[>[data-discover-side]]:grid-cols-[minmax(0,1fr)_300px] lg:has-[>[data-discover-side]]:grid-rows-[auto_1fr]">
         {/* Featured this week, picked by staff (S1-E5-10); not drawn when nothing is picked. */}
         <FeaturedBand />
-        {/* Continue reading, Your draft and Start a new story, for a member (S1-E5-12). */}
-        <DiscoverCards />
         <div className="min-w-0 lg:col-start-1">
           <DiscoverShelves />
         </div>
+        {/* For a member: Continue reading, the draft, Start a new story and the writers. */}
+        {userId !== null && <ReadSideColumn />}
       </div>
     </PageContainer>
   );

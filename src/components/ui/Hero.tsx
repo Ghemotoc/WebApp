@@ -24,19 +24,20 @@ export interface HeroProps {
 }
 
 /**
+ * The hero's look on its own, for a section that must stay its own element (the Read page's
+ * featured carousel needs its own role description and name; CALM-7c).
+ */
+export const heroClasses =
+  'flex flex-col gap-4 rounded-card border border-[var(--glass-border)] bg-[var(--surface-glass)] p-6 shadow-popover backdrop-blur-[24px] backdrop-saturate-[1.8] min-[900px]:p-10';
+
+/**
  * Renders the hero.
  *
  * @returns the section
  */
 export function Hero({ children, labelledBy, className }: HeroProps) {
   return (
-    <section
-      aria-labelledby={labelledBy}
-      className={cn(
-        'flex flex-col gap-4 rounded-card border border-[var(--glass-border)] bg-[var(--surface-glass)] p-6 shadow-popover backdrop-blur-[24px] backdrop-saturate-[1.8] min-[900px]:p-10',
-        className,
-      )}
-    >
+    <section aria-labelledby={labelledBy} className={cn(heroClasses, className)}>
       {children}
     </section>
   );

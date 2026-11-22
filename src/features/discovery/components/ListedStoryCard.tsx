@@ -57,9 +57,15 @@ function LanguageTags({ languages }: { languages: ListedStory['languages'] }) {
  *
  * @param props.story - the story
  * @param props.cover - the cover this list gives it
+ * @param props.metaLine - the line under the title when the row wants its own (the follows row's
+ *   "poppyverse · 2 hours ago", CALM-7c); the writer and the chapter count otherwise
  * @returns the card, one link to the story page
  */
-export function ListedStoryCard(props: { story: ListedStory; cover: DrawnCoverChoice }) {
+export function ListedStoryCard(props: {
+  story: ListedStory;
+  cover: DrawnCoverChoice;
+  metaLine?: string;
+}) {
   const { story, cover } = props;
   const { t } = useDiscoveryTranslation();
   // "Ion Creangă · Translated by Ana Vlad": only a translated classic has a second credit.
@@ -73,7 +79,7 @@ export function ListedStoryCard(props: { story: ListedStory; cover: DrawnCoverCh
   return (
     <StoryCard
       title={story.title}
-      metaLine={t('card.meta', { writer: writerLine, count: story.chapterCount })}
+      metaLine={props.metaLine ?? t('card.meta', { writer: writerLine, count: story.chapterCount })}
       cover={cover}
       href={`/s/${story.slug}`}
       wrapCover={(drawn) => <StoryCoverArt story={story} drawn={drawn} className="w-full" />}

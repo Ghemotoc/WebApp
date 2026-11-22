@@ -1,14 +1,15 @@
 {
   "discover": {
     "documentTitle": "Citește · {{productName}}",
-    "eyebrow": "Citește",
-    "heading": "Găsește următoarea poveste",
     "intro": "Capitole noi de la scriitorii de pe {{productName}}, pe categorii și etichete. Nimic de aici nu e ales după ce citești.",
     "loadFailed": "Nu am putut încărca poveștile. Verifică conexiunea și încearcă din nou.",
     "empty": "Încă nu e publicată nicio poveste. Fii primul: începe să scrii.",
     "writeLink": "Începe să scrii",
     "howRanking": "Cum facem clasamentul",
-    "eyebrowDated": "Citește · {{date}}"
+    "title": "Citește",
+    "followedUpdates_one": "Scriitorii pe care îi urmărești au actualizat {{count}} poveste săptămâna asta",
+    "followedUpdates_few": "Scriitorii pe care îi urmărești au actualizat {{count}} povești săptămâna asta",
+    "followedUpdates_other": "Scriitorii pe care îi urmărești au actualizat {{count}} de povești săptămâna asta"
   },
   "lists": {
     "following": "Noutăți de la scriitorii pe care îi urmărești",
@@ -114,7 +115,15 @@
     "previous": "Povestea anterioară",
     "next": "Povestea următoare",
     "pause": "Oprește prezentarea",
-    "play": "Pornește prezentarea"
+    "play": "Pornește prezentarea",
+    "newChapter": "Capitol nou",
+    "by": "de",
+    "chapters_one": "{{count}} capitol",
+    "chapters_few": "{{count}} capitole",
+    "chapters_other": "{{count}} de capitole",
+    "addToLibrary": "Adaugă în bibliotecă",
+    "inLibrary": "În bibliotecă",
+    "addFailed": "Nu s-a salvat. Verifică conexiunea și încearcă din nou."
   },
   "writersToFollow": {
     "eyebrow": "În ascensiune",
@@ -127,26 +136,27 @@
   "cards": {
     "label": "Panou",
     "continueEyebrow": "Continuă lectura",
-    "continueWhere": "de {{writer}} · Capitolul {{number}} din {{total}}",
-    "continueWhereNumberOnly": "de {{writer}} · Capitolul {{number}}",
+    "continueWhere": "Capitolul {{number}} din {{total}}",
+    "continueWhereNumberOnly": "Capitolul {{number}}",
     "progress": "{{percent}}% din capitolul {{number}}.",
-    "newChapter": "A apărut capitolul {{number}}",
+    "newChapter": "a apărut capitolul {{number}}",
     "continueButton": "Continuă",
     "draftEyebrow": "Ciornă",
     "untitled": "Capitolul {{number}}, fără titlu",
     "words_one": "{{formatted}} cuvânt",
     "words_few": "{{formatted}} cuvinte",
     "words_other": "{{formatted}} de cuvinte",
-    "draftMeta": "{{story}} · {{words}} · salvată {{when}}",
     "openDraft": "Deschide ciorna",
-    "writeEyebrow": "Scrie",
     "newStoryTitle": "Începe o poveste nouă",
     "newStoryText": "O poezie, un eseu sau primul capitol al unei povești noi. Nimeni nu vede nimic până nu publici.",
-    "newStoryLink": "Poveste nouă"
+    "labelFor": "Pentru {{name}}",
+    "continueLabel": "Continuă {{title}}",
+    "savedWhen": "salvată {{when}}"
   },
   "risingWriters": {
     "eyebrow": "În ascensiune",
-    "title": "Scriitori noi și în ascensiune"
+    "title": "Scriitori noi și în ascensiune",
+    "writes": "Scrie {{category}}"
   },
   "popularIn": {
     "label": "Populare în",
