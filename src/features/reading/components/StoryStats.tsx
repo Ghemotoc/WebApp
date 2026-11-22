@@ -1,43 +1,28 @@
 /**
  * StoryStats: the line of numbers under the writer's name on the story page (story S1-E5-03;
- * board Story 3.4, "Story numbers").
+ * since bundle CALM-7c, board New-Story: "418 likes · 640 comments · 15 chapters · 31.4k words ·
+ * Updated 16 Oct 2026").
  *
- * Board values: a list with no bullets, gaps of 8 px by 20 px, 14 px meta text, each number after
- * a 20 px line icon (ActionIcon, since NO-DOODLES) that screen readers skip. It shows likes, comments,
- * published chapters and the last update. The board's reads are left out: read totals are the
- * writer's own (S1-E3-07; docs/board-fixes.md). Large numbers are shortened the reader's way
- * ("1.2K", "1,2 K"). Only on a story readers can see.
+ * It is a MetaLine (facts joined by middots, no icons) named "Story numbers" for screen readers.
+ * It shows likes, comments, published chapters, the words in them and the last update. The
+ * board's reads are left out: read totals are the writer's own (S1-E3-07; docs/board-fixes.md).
+ * Large numbers are shortened the reader's way ("1.2K", "1,2 K"). Only on a story readers can see.
  * Who uses it: StoryHeader. Its numbers come from get_story_page() (story_like_total(),
- * story_comment_total()).
+ * story_comment_total(), each chapter's word_count).
  */
 import { useTranslation } from 'react-i18next';
 
-import { ActionIcon, type ActionIconName } from '@/components/icons/ActionIcon';
+import { MetaLine, type MetaFact } from '@/components/ui/MetaLine';
 import { formatLocalDate } from '@/lib/local-time';
 
 import type { StoryPageData } from '../api/storyPage';
+import { publishedWordTotal } from '../lib/storyPageNumbers';
 
 /**
- * One number with its icon.
- *
- * @param props.icon - which line icon
- * @param props.text - the words, with the number in them
- * @returns the list item
- */
-function StatItem({ icon, text }: { icon: ActionIconName; text: string }) {
-  return (
-    <li className="inline-flex items-center gap-1.5">
-      <ActionIcon name={icon} size={20} className="block flex-none" />
-      {text}
-    </li>
-  );
-}
-
-/**
- * Renders the row.
+ * Renders the line.
  *
  * @param props.story - the story page
- * @returns the list, or nothing while no chapter is published
+ * @returns the line, or nothing while no chapter is published
  */
 export function StoryStats({ story }: { story: StoryPageData }) {
   const { t, i18n } = useTranslation('reading');
@@ -46,32 +31,19 @@ export function StoryStats({ story }: { story: StoryPageData }) {
   const shortNumber = new Intl.NumberFormat(i18n.language, { notation: 'compact' });
   const publishedChapters = story.chapters.filter((chapter) => chapter.status === 'published');
   const { likes, comments } = story.stats;
-  // Step 2: the list; "Updated" only once a chapter has a date.
-  return (
-    <ul
-      aria-label={t('storyPage.statsLabel')}
-      className="m-0 flex list-none flex-wrap gap-x-5 gap-y-2 p-0 text-sm text-meta"
-    >
-      <StatItem
-        icon={'heart'}
-        text={t('storyPage.likes', { count: likes, value: shortNumber.format(likes) })}
-      />
-      <StatItem
-        icon={'comment'}
-        text={t('storyPage.comments', { count: comments, value: shortNumber.format(comments) })}
-      />
-      <StatItem
-        icon={'book'}
-        text={t('storyPage.chapterCount', { count: publishedChapters.length })}
-      />
-      {story.lastChapterPublishedAt !== null && (
-        <StatItem
-          icon={'clock'}
-          text={t('storyPage.updated', {
-            date: formatLocalDate(new Date(story.lastChapterPublishedAt), i18n.language),
-          })}
-        />
-      )}
-    </ul>
-  );
+  const words = publishedWordTotal(story);
+  // Step 2: the facts; words only when every chapter has a count, "Updated" once one has a date.
+  const facts: MetaFact[] = [
+    { text: t('storyPage.likes', { count: likes, value: shortNumber.format(likes) }) },
+    { text: t('storyPage.comments', { count: comments, value: shortNumber.format(comments) }) },
+    { text: t('storyPage.chapterCount', { count: publishedChapters.length }) },
+  ];
+  if (words !== null && words > 0) {
+    facts.push({ text: t('storyPage.words', { count: words, value: shortNumber.format(words) }) });
+  }
+  if (story.lastChapterPublishedAt !== null) {
+    const date = formatLocalDate(new Date(story.lastChapterPublishedAt), i18n.language);
+    facts.push({ text: t('storyPage.updated', { date }) });
+  }
+  return <MetaLine label={t('storyPage.statsLabel')} facts={facts} />;
 }

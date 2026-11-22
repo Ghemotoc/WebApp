@@ -1,36 +1,32 @@
 /**
- * StorySideColumn: the writer card, "Labels from the writer" and "Report this story" beside the
- * story (story S1-E3-05; board Story 3.4, the side column).
+ * StorySideColumn: "About this story" beside the story (story S1-E3-05; since bundle CALM-7c,
+ * board New-Story and the handover's Step 3, "Side column").
  *
- * Board values: the writer card (name, 22 px, the bio, Follow and "See profile"; S1-E5-05 and
- * S1-E6-05; the writer's numbers stay on the profile), the label rows with a fine line between them (LabelRows: language,
- * rating, labels, AI, status, first published (6 Nov 2026), comments; "Where to read" joins with S1-E3-08) and the "Report
- * this story" link. While the writer has paused new comments, the comments row says until when, in
- * the reader's own local time (bundles CALM-8 and CALM-8b). The content note sits in StoryHeader, under the blurb. No doodles since bundle G4.
+ * From 1024 px it sits to the right of the chapters; narrower, it moves under the labels. No
+ * cards: the writer (the line "The writer", the name as a link to the profile, the handle, the
+ * rank pill, IDEAS-3a, the bio, Follow, S1-E6-05, and "See profile", S1-E5-05, then the line on
+ * who can see followers), "About this edition" for a story in several languages (TRANSLATE-1b),
+ * the box advert (S1-E12-01; none on a class-only story, Q70) and "Report this story".
+ * The board's follower and read numbers wait for get_story_page() to send them (a follow-up).
+ * A public-domain classic shows its real author, the source edition and the translator instead of
+ * the writer (S1-E5-06, S1-E11-16).
  * Report button (CLAUDE.md rule 6): Lane C's shared <ReportButton> (S1-E10-01; architecture
  * 1.7.11), which opens the one report dialog for this story. Not shown to the story's owner, who
  * can't report their own story (the database refuses it too).
- * A public-domain classic shows its real author instead of the writer card (S1-E5-06). The
- * writer card shows the writer's gold rank pill under the handle (IDEAS-3a).
- * A story in several languages adds "About this edition" under the labels (AboutEditionCard,
- * TRANSLATE-1b); a story in one language keeps only the Language row here (Robert, 16 Nov 2026).
+ * "Labels from the writer" moved to the main column (StoryLabels), where the board has it.
  * Who uses it: StoryPage.
  */
-import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
-import { Eyebrow } from '@/components/ui/Eyebrow';
-import { LabelRows } from '@/components/ui/LabelRows';
+import { MetaLine } from '@/components/ui/MetaLine';
 import { FollowButton } from '@/features/people/components/FollowButton';
 import { ReportButton } from '@/features/reporting/components/ReportButton';
-import { runningPauseEnd } from '@/lib/comment-pause';
-import { formatLocalDayAndTime } from '@/lib/local-time';
-import { ratingMinimumAge } from '@/schemas/story';
 
 import type { ClassicAuthor, StoryPageData } from '../api/storyPage';
 import { ProfileRankChip } from '@/features/forums/components/ProfileRankChip';
 
+import { StoryAdSlot } from './StoryAdSlot';
 import { AboutEditionCard } from './StoryLanguageNote';
 
 /**
@@ -75,14 +71,16 @@ function ClassicSource({ author }: { author: ClassicAuthor }) {
 function ClassicAuthorCard({ author }: { author: ClassicAuthor }) {
   const { t } = useTranslation('reading');
   return (
-    <div className="flex flex-col gap-2 rounded-card border border-border bg-surface p-6 shadow-card">
-      <Eyebrow>{t('storyPage.authorEyebrow')}</Eyebrow>
-      <h2 className="m-0 font-heading text-[22px] font-bold text-heading">{author.name}</h2>
+    <section aria-labelledby="story-author-heading" className="flex flex-col gap-2">
+      <p className="m-0 text-[13px] leading-[18px] text-body">{t('storyPage.authorEyebrow')}</p>
+      <h2 id="story-author-heading" className="m-0 type-subheading text-heading">
+        {author.name}
+      </h2>
       <p className="m-0 text-[15px] leading-normal text-body">
         {t('storyPage.classicAuthorNote', { year: author.diedYear })}
       </p>
       <ClassicSource author={author} />
-    </div>
+    </section>
   );
 }
 
@@ -96,19 +94,27 @@ function WriterCard({ writer, isOwner }: { writer: StoryPageData['writer']; isOw
   const { t } = useTranslation('reading');
   const profileHref = `/u/${encodeURIComponent(writer.handle)}`;
   return (
-    <div className="relative flex flex-col gap-2 rounded-card border border-border bg-surface p-6 shadow-card">
-      {/* Kept to its own width, so the mug in the corner never shares a box with the text. */}
-      <div className="w-fit">
-        <Eyebrow>{t('storyPage.writerEyebrow')}</Eyebrow>
+    <section aria-labelledby="story-writer-heading" className="flex flex-col gap-2">
+      <p className="m-0 text-[13px] leading-[18px] text-body">{t('storyPage.writerEyebrow')}</p>
+      {/* The name links to the profile; the handle sits under it as a meta line. */}
+      <div className="flex flex-col">
+        <Link
+          id="story-writer-heading"
+          to={profileHref}
+          className="type-subheading text-heading no-underline hover:underline"
+        >
+          {writer.displayName}
+        </Link>
+        <MetaLine facts={[{ text: `@${writer.handle}` }]} />
       </div>
-      <h2 className="m-0 font-heading text-[22px] font-bold text-heading">{writer.displayName}</h2>
-      <p className="m-0 text-[13px] text-meta">@{writer.handle}</p>
-      {/* IDEAS-3a: the writer's gold rank pill, as on their profile (profile_rank()). */}
-      <ProfileRankChip handle={writer.handle} />
+      {/* IDEAS-3a: the writer's rank pill, as on their profile (profile_rank()); it stays a pill, only as wide as its words. */}
+      <div className="w-fit">
+        <ProfileRankChip handle={writer.handle} />
+      </div>
       {writer.bio !== '' && (
         <p className="m-0 text-[15px] leading-normal break-words text-body">{writer.bio}</p>
       )}
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-1">
+      <div className="flex flex-wrap items-center gap-2 pt-2">
         {!isOwner && (
           <FollowButton
             target={{ kind: 'writer', handle: writer.handle }}
@@ -117,83 +123,17 @@ function WriterCard({ writer, isOwner }: { writer: StoryPageData['writer']; isOw
         )}
         <Link
           to={profileHref}
-          className="text-sm font-semibold text-link underline hover:text-link-hover"
+          className="inline-flex h-11 items-center px-3 text-sm font-semibold text-link underline hover:text-link-hover"
         >
           {t('storyPage.seeProfile')}
         </Link>
       </div>
-    </div>
+      {/* Board New-Story: followers are counted in public, but only the writer sees who. */}
+      <p className="m-0 text-[13px] leading-[18px] text-body">
+        {t('storyPage.followersPublicNote', { name: writer.displayName })}
+      </p>
+    </section>
   );
-}
-
-/** The rating row: "16+ · hidden from readers under 16"; All ages and 13+ say only the name. */
-function ratingRowText(rating: StoryPageData['labels']['rating'], t: TFunction<'reading'>) {
-  const name = t(`rating.${rating}`, { ns: 'writing' });
-  // Nobody under 13 has an account, so 13+ hides the story from no reader (docs/board-fixes.md).
-  if (rating === 'all_ages' || rating === '13_plus') return name;
-  return t('storyPage.ratingHidden', { rating: name, age: ratingMinimumAge[rating] });
-}
-
-/** The labels row: "Fan fiction", "Parody", both, or "None". */
-function labelsRowText(labels: StoryPageData['labels'], t: TFunction<'reading'>) {
-  const names: string[] = [];
-  if (labels.isFanFiction) names.push(t('pills.fanFiction', { ns: 'writing' }));
-  if (labels.isParody) names.push(t('pills.parody', { ns: 'writing' }));
-  return names.length === 0 ? t('storyPage.noLabels') : names.join(' · ');
-}
-
-/** The AI row: the writer's answer, or the staff label when one was added (Q24). */
-function aiRowText(labels: StoryPageData['labels'], t: TFunction<'reading'>) {
-  if (labels.aiUndisclosedLabelled) return t('aiDisclosure.undisclosed', { ns: 'writing' });
-  return t(`aiDisclosure.${labels.aiDisclosure}`, { ns: 'writing' });
-}
-
-/**
- * The year shown as "First published" (Robert, 6 Nov 2026): for a classic, the year the work was
- * first published anywhere, as staff saved it (none while it isn't confirmed); for a writer's own
- * story, the year its first chapter went out here, so it fills itself in the moment the story
- * starts.
- *
- * @param story - the story page's data
- * @returns the year, or null while nothing is published yet (the row is then left out)
- */
-function firstPublishedYear(story: StoryPageData): number | null {
-  // Step 1: a classic shows only its real publication year, never the day we added it here;
-  // a classic whose year isn't confirmed yet shows no row.
-  const classicAuthor = story.writer.classicAuthor;
-  if (classicAuthor !== null) return classicAuthor.firstPublishedYear;
-  // Step 2: otherwise the year of the first published chapter, in the reader's own time zone.
-  if (story.firstPublishedAt === null) return null;
-  return new Date(story.firstPublishedAt).getFullYear();
-}
-
-/**
- * The "First published" row, or nothing while the story has no published chapter.
- *
- * @returns zero or one label row
- */
-function firstPublishedRows(story: StoryPageData, t: TFunction<'reading'>) {
-  const year = firstPublishedYear(story);
-  if (year === null) return [];
-  return [{ label: t('storyPage.firstPublishedLabel'), value: String(year) }];
-}
-
-/**
- * The comments row: "Off", "On", or while the writer has paused new comments, "Paused until
- * Saturday 21 November, 18:40" (bundle CALM-8; the reader's own time, CALM-8b), the end written the way the paused
- * line under a chapter writes it.
- *
- * @param story - the story page's data
- * @param t - the reading namespace's translate function
- * @param language - the interface language, for the date
- * @returns the row's value
- */
-function commentsRowText(story: StoryPageData, t: TFunction<'reading'>, language: string) {
-  if (!story.commentsEnabled) return t('storyPage.commentsOff');
-  // The page was read a little while ago, so a pause that has ended since counts as none.
-  const pauseEnd = runningPauseEnd(story.commentsPausedUntil, new Date());
-  if (pauseEnd === null) return t('storyPage.commentsOn');
-  return t('storyPage.commentsPaused', { when: formatLocalDayAndTime(pauseEnd, language) });
 }
 
 /**
@@ -202,50 +142,18 @@ function commentsRowText(story: StoryPageData, t: TFunction<'reading'>, language
  * @returns the side column
  */
 export function StorySideColumn({ story }: { story: StoryPageData }) {
-  const { t, i18n } = useTranslation('reading');
+  const { t } = useTranslation('reading');
   return (
-    <aside className="flex flex-col gap-5">
+    <aside aria-label={t('storyPage.sideColumnLabel')} className="flex flex-col gap-10">
       {story.writer.classicAuthor === null ? (
         <WriterCard writer={story.writer} isOwner={story.isOwner} />
       ) : (
         <ClassicAuthorCard author={story.writer.classicAuthor} />
       )}
-      <div className="flex flex-col gap-3 rounded-card border border-border bg-surface p-6 shadow-card">
-        <h2 className="m-0 eyebrow">{t('storyPage.labelsHeading')}</h2>
-        <LabelRows
-          rows={[
-            {
-              label: t('storyPage.languageLabel'),
-              value: (
-                <span lang={story.languageCode}>
-                  {t(`languages.${story.languageCode}`, {
-                    ns: 'writing',
-                    defaultValue: story.languageCode,
-                  })}
-                </span>
-              ),
-            },
-            {
-              label: t('storyPage.ratingLabel'),
-              value: ratingRowText(story.labels.rating, t),
-            },
-            { label: t('storyPage.labelsLabel'), value: labelsRowText(story.labels, t) },
-            { label: t('storyPage.aiLabel'), value: aiRowText(story.labels, t) },
-            {
-              label: t('storyPage.statusLabel'),
-              value: t(`status.${story.completionStatus}`, { ns: 'writing' }),
-            },
-            ...firstPublishedRows(story, t),
-            {
-              label: t('storyPage.commentsLabel'),
-              value: commentsRowText(story, t, i18n.language),
-            },
-          ]}
-        />
-      </div>
       {/* TRANSLATE-1b: only for a story in several languages. */}
       <AboutEditionCard story={story} />
-      {/* The Report row shows only to readers: the owner can't report their own story. */}
+      <StoryAdSlot story={story} />
+      {/* Report shows only to readers: the owner can't report their own story. */}
       {!story.isOwner && (
         <div className="relative flex items-center">
           <ReportButton itemType="story" itemReference={story.id} itemLabel={story.title} />

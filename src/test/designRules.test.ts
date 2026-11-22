@@ -163,8 +163,6 @@ const infoPillUsers = new Set([
   '/src/features/people/components/ProfileStories.tsx',
   '/src/features/privacy/components/AudienceRadios.tsx',
   '/src/features/reading/components/RankingPlacePill.tsx',
-  '/src/features/reading/components/StoryChapterList.tsx',
-  '/src/features/reading/components/StoryHeader.tsx',
   '/src/features/reading/components/StoryLabelPills.tsx',
   '/src/features/reading/components/TeaserStoryCard.tsx',
   '/src/features/safety/components/SafetyChecksPanel.tsx',

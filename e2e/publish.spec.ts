@@ -122,7 +122,7 @@ test.describe('publish, update, unpublish and schedule (S1-E3-03)', () => {
     await expectAccessibleAt(page, [390, 1440]);
 
     await visitor.goto(`/s/${slug}`);
-    const chapters = visitor.getByRole('region', { name: /Capitole|Chapters/ });
+    const chapters = visitor.getByRole('region', { name: /capitol|chapter/i });
     await expect(chapters.getByText('Caietele bunicii')).toBeVisible();
     await expectAccessibleAt(visitor, [390, 1440]);
   });

@@ -1,27 +1,27 @@
 /**
- * StoryChapterList: "Chapters" on the story page (story S1-E3-03; board Story 3.4, the chapter
- * list).
+ * StoryChapterList: the chapters on the story page (story S1-E3-03; since bundle CALM-7c, board
+ * New-Story and the handover's Step 3, "Chapters").
  *
- * Board values: a card with the eyebrow "Chapters" and one row per chapter, a fine line between
- * rows: "Chapter n", the title in Funnel Display, and the published date (with "Edited …" when the
- * writer updated it). Readers see only published chapters; the owner's preview also lists drafts
- * and scheduled chapters with a pill. A published chapter's title links to the chapter reader
- * (S1-E4-01a); a draft or scheduled one stays plain text, because readers can't open it.
- * "You are here" (IDEAS-1 part a, IDEA-20261031-4): a signed-in reader's latest place in the
- * story is marked beside its chapter, in words ("You are here, 42%"), and the mark is a link that
- * opens the chapter at that place (the address ends "#resume", which the reader jumps to).
- * In a later language edition (TRANSLATE-1b; board TrStory) the list holds every chapter of the
- * story: one that isn't translated yet carries the pill "<language> only for now" and opens the
- * "not translated yet" notice, and the heading row says "4 of 6 in English".
- * CALM-6: while a chapter is scheduled, the heading row also says when it comes: "Next chapter
- * Thursday", or "Last chapter Thursday" when it is the one the writer marked as the last.
+ * The heading counts the chapters ("15 chapters"), with a meta line beside it: "4 of 6 in
+ * English" while a later language edition is behind (TRANSLATE-1b), and when the next chapter
+ * comes, "Next chapter Thursday" or "Last chapter Thursday" (CALM-6). No card around it.
+ * Then one row per chapter, split by the hairline, in two columns from 900 px: the number, the
+ * title, and a meta line with the state first in bold and the date. Readers see only published
+ * chapters, whose titles link to the reader (S1-E4-01a); the owner's preview also lists drafts
+ * and scheduled chapters, as plain text with "Draft" or "Scheduled" in words, not pills. A chapter
+ * out this week says "New". A chapter not translated yet says "<language> only for now" and
+ * opens the "not translated yet" notice.
+ * "You are here" (IDEAS-1 part a, IDEA-20261031-4): a signed-in reader's latest place is marked
+ * in their chapter's row, in bold words ("You are here, 42%"), as a link that opens the chapter
+ * at that place (the address ends "#resume"). It stands in for the board's "Reading", because it
+ * also says how far in.
  * Who uses it: StoryPage. What it calls: useStoryLibraryState → story_library_state(), the same
  * place "Continue chapter n" uses.
  */
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
-import { InfoPill } from '@/components/ui/InfoPill';
+import { MetaLine, type MetaFact } from '@/components/ui/MetaLine';
 import type { StoryPlace } from '@/features/library/api/library';
 import { useStoryLibraryState } from '@/features/library/hooks/useStoryLibraryState';
 import { languageNameIn, languageOwnName } from '@/lib/language-names';
@@ -31,6 +31,7 @@ import type { EditionFacts } from '../api/editions';
 import type { NextChapter } from '../api/chapter';
 import type { StoryPageChapter } from '../api/storyPage';
 import { nextChapterText } from '../lib/chapterPlace';
+import { isNewChapter } from '../lib/storyPageNumbers';
 import { useEditionsTranslation } from '../registerEditionsTranslations';
 
 /** What a later language edition tells the list (TRANSLATE-1b); null for any other story. */
@@ -40,7 +41,7 @@ export interface ChapterListEdition {
   facts: EditionFacts;
 }
 
-/** The "You are here" link beside the chapter the reader stopped in. */
+/** The "You are here" link in the row of the chapter the reader stopped in, in bold words. */
 function YouAreHere(props: { place: StoryPlace; storySlug: string; chapterNumber: number }) {
   const { t } = useTranslation('reading');
   const { place, storySlug, chapterNumber } = props;
@@ -48,53 +49,72 @@ function YouAreHere(props: { place: StoryPlace; storySlug: string; chapterNumber
     <Link
       to={`/s/${storySlug}/${place.chapterCode}#resume`}
       aria-label={t('storyPage.youAreHereLink', { percent: place.percent, number: chapterNumber })}
-      className="relative inline-flex h-8 items-center justify-center rounded-full border border-control-border bg-surface px-3 text-[13px] leading-none font-semibold text-heading after:absolute after:inset-x-0 after:top-1/2 after:h-11 after:-translate-y-1/2 after:content-[''] hover:bg-tint"
+      className="inline-flex min-h-6 items-center font-bold text-ink underline-offset-2 hover:underline"
     >
       {t('storyPage.youAreHere', { percent: place.percent })}
     </Link>
   );
 }
 
-/** The date line under a chapter's title. */
-function ChapterDates({ chapter }: { chapter: StoryPageChapter }) {
+/**
+ * The words after the title: the state first in bold (Draft, Scheduled for the owner; New for a
+ * chapter out this week), "<language> only for now" for a chapter not translated yet
+ * (TRANSLATE-1b), then the dates.
+ *
+ * @returns the facts
+ */
+function useChapterFacts(chapter: StoryPageChapter, originalLanguage: string | null): MetaFact[] {
   const { t, i18n } = useTranslation('reading');
-  const parts: string[] = [];
+  const { t: editionsText } = useEditionsTranslation();
+  const facts: MetaFact[] = [];
+  // Step 1: the state, in words, never a pill (handover Step 3).
+  if (chapter.status === 'draft') facts.push({ text: t('storyPage.draftChapter'), kind: 'state' });
+  if (chapter.status === 'scheduled') {
+    facts.push({ text: t('storyPage.scheduledChapter'), kind: 'state' });
+  }
+  if (isNewChapter(chapter, new Date())) {
+    facts.push({ text: t('storyPage.newChapter'), kind: 'state' });
+  }
+  if (!chapter.isTranslated && originalLanguage !== null) {
+    facts.push({
+      text: editionsText('onlyForNow', { language: languageOwnName(originalLanguage) }),
+    });
+  }
+  // Step 2: the dates, on the reader's own calendar (CALM-8b).
   if (chapter.publishedAt !== null) {
-    parts.push(
-      t('storyPage.publishedOn', {
-        date: formatLocalDate(new Date(chapter.publishedAt), i18n.language),
-      }),
-    );
+    facts.push({ text: formatLocalDate(new Date(chapter.publishedAt), i18n.language) });
   }
   if (chapter.editedAt !== null) {
-    parts.push(
-      t('storyPage.editedOn', {
-        date: formatLocalDate(new Date(chapter.editedAt), i18n.language),
-      }),
-    );
+    const date = formatLocalDate(new Date(chapter.editedAt), i18n.language);
+    facts.push({ text: t('storyPage.editedOn', { date }) });
   }
-  if (parts.length === 0) return null;
-  return <p className="m-0 text-[13px] text-meta">{parts.join(' · ')}</p>;
+  return facts;
 }
 
 /** The title: a link to the reader when the chapter is published, plain text otherwise. */
 function ChapterTitle({ chapter, storySlug }: { chapter: StoryPageChapter; storySlug: string }) {
   const { t } = useTranslation('reading');
   const title = chapter.title === '' ? t('storyPage.untitledChapter') : chapter.title;
+  const className = 'text-[15px] leading-5 font-semibold break-words text-heading';
+  if (chapter.status !== 'published') {
+    return (
+      <span data-chapter-title className={className}>
+        {title}
+      </span>
+    );
+  }
   return (
-    <p className="m-0 font-heading text-lg font-bold break-words text-heading">
-      {chapter.status === 'published' ? (
-        <Link to={`/s/${storySlug}/${chapter.code}`} className="text-heading hover:underline">
-          {title}
-        </Link>
-      ) : (
-        title
-      )}
-    </p>
+    <Link
+      data-chapter-title
+      to={`/s/${storySlug}/${chapter.code}`}
+      className={`${className} no-underline hover:underline`}
+    >
+      {title}
+    </Link>
   );
 }
 
-/** One row: the number, the title, a pill for the owner's unpublished chapters, the dates. */
+/** One row (board New-Story): the number, the title, then the state and the date. */
 function ChapterRow(props: {
   chapter: StoryPageChapter;
   storySlug: string;
@@ -103,36 +123,47 @@ function ChapterRow(props: {
   originalLanguage: string | null;
 }) {
   const { chapter, storySlug, place, originalLanguage } = props;
-  const { t } = useTranslation('reading');
-  const { t: editionsText } = useEditionsTranslation();
+  const facts = useChapterFacts(chapter, originalLanguage);
   const isHere =
     place !== null && place.chapterCode === chapter.code && chapter.status === 'published';
   return (
-    <li className="flex flex-col gap-1 border-t border-border py-3.5 first:border-t-0 first:pt-0">
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="text-[13px] font-semibold text-meta">
-          {t('storyPage.chapterNumber', { number: chapter.number })}
-        </span>
-        {chapter.status === 'draft' && (
-          <InfoPill tone="neutral">{t('storyPage.draftChapter')}</InfoPill>
-        )}
-        {chapter.status === 'scheduled' && (
-          <InfoPill tone="gold">{t('storyPage.scheduledChapter')}</InfoPill>
-        )}
-        {isHere && (
-          <YouAreHere place={place} storySlug={storySlug} chapterNumber={chapter.number} />
-        )}
-        {/* TRANSLATE-1b: this edition doesn't have the chapter yet. */}
-        {!chapter.isTranslated && originalLanguage !== null && (
-          <InfoPill tone="neutral">
-            {editionsText('onlyForNow', { language: languageOwnName(originalLanguage) })}
-          </InfoPill>
-        )}
+    <li className="grid break-inside-avoid grid-cols-[28px_minmax(0,1fr)] items-baseline gap-x-2.5 border-t border-(--hairline) py-3">
+      <span className="text-[13px] text-body tabular-nums">{chapter.number}</span>
+      <div className="flex min-w-0 flex-col gap-1">
+        <ChapterTitle chapter={chapter} storySlug={storySlug} />
+        <div className="flex flex-wrap items-center gap-x-2 text-[13px] leading-[18px]">
+          {isHere && (
+            <YouAreHere place={place} storySlug={storySlug} chapterNumber={chapter.number} />
+          )}
+          <MetaLine facts={facts} />
+        </div>
       </div>
-      <ChapterTitle chapter={chapter} storySlug={storySlug} />
-      <ChapterDates chapter={chapter} />
     </li>
   );
+}
+
+/**
+ * The meta line beside the heading: "4 of 6 in English" while this language edition is behind
+ * (TRANSLATE-1b), and when the next chapter comes (CALM-6).
+ *
+ * @returns the facts
+ */
+function useHeadingFacts(edition: ChapterListEdition | null, nextChapter: NextChapter | null) {
+  const { t, i18n } = useTranslation('reading');
+  const { t: editionsText } = useEditionsTranslation();
+  const facts: MetaFact[] = [];
+  if (edition !== null && edition.facts.chaptersHere < edition.facts.chaptersInStory) {
+    facts.push({
+      text: editionsText('chaptersIn', {
+        count: edition.facts.chaptersHere,
+        total: edition.facts.chaptersInStory,
+        language: languageNameIn(edition.languageCode, i18n.language),
+      }),
+    });
+  }
+  const nextLine = nextChapterText(t, nextChapter, i18n.language, new Date());
+  if (nextLine !== null) facts.push({ text: nextLine });
+  return facts;
 }
 
 /**
@@ -156,38 +187,25 @@ export function StoryChapterList({
   /** CALM-6: the next scheduled chapter, or null. */
   nextChapter?: NextChapter | null;
 }) {
-  const { t, i18n } = useTranslation('reading');
-  const { t: editionsText } = useEditionsTranslation();
-  // "4 of 6 in English": only while this edition is behind the story.
-  const isBehind = edition !== null && edition.facts.chaptersHere < edition.facts.chaptersInStory;
+  const { t } = useTranslation('reading');
   // The reader's latest place in the story; null signed out or before they read.
   const { state } = useStoryLibraryState(storySlug);
   const place = state?.place ?? null;
-  const nextLine = nextChapterText(t, nextChapter, i18n.language, new Date());
+  const headingFacts = useHeadingFacts(edition, nextChapter);
   return (
-    <section
-      aria-labelledby="story-chapters-heading"
-      className="flex flex-col gap-3 rounded-card border border-border bg-surface p-6 shadow-card"
-    >
-      <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-1">
-        <h2 id="story-chapters-heading" className="m-0 w-fit eyebrow">
-          {t('storyPage.chaptersHeading')}
+    <section aria-labelledby="story-chapters-heading" className="flex flex-col gap-3">
+      {/* The heading counts the chapters listed ("15 chapters"), with the facts beside it. */}
+      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+        <h2 id="story-chapters-heading" className="m-0 type-heading text-heading">
+          {t('storyPage.chapterCount', { count: chapters.length })}
         </h2>
-        {isBehind && (
-          <p className="m-0 text-[13px] text-meta">
-            {editionsText('chaptersIn', {
-              count: edition.facts.chaptersHere,
-              total: edition.facts.chaptersInStory,
-              language: languageNameIn(edition.languageCode, i18n.language),
-            })}
-          </p>
-        )}
-        {nextLine !== null && <p className="m-0 text-[13px] text-meta">{nextLine}</p>}
+        <MetaLine facts={headingFacts} />
       </div>
       {chapters.length === 0 && isOwner && (
         <p className="m-0 text-sm text-body">{t('storyPage.noChaptersOwner')}</p>
       )}
-      <ol className="m-0 list-none p-0">
+      {/* Two columns from 900 px, as on the board; one on narrower screens. */}
+      <ol className="m-0 list-none gap-x-12 p-0 min-[900px]:columns-2">
         {chapters.map((chapter) => (
           <ChapterRow
             key={chapter.code}

@@ -1,5 +1,6 @@
 /**
- * The "Comments" row beside the story (story S1-E3-05; bundle CALM-8): Off, On, or while the
+ * The "Comments" row in "Labels from the writer" (story S1-E3-05; bundle CALM-8; in the main
+ * column since CALM-7c): Off, On, or while the
  * writer has paused new comments, until when, in the reader's own local time (CALM-8b), so a reader knows before opening a
  * chapter.
  */
@@ -13,13 +14,7 @@ import { inTimeZone, pinViewerTimeZone } from '@/test/viewerTimeZone';
 
 import type { StoryPageData } from '../api/storyPage';
 
-import { StorySideColumn } from './StorySideColumn';
-
-// The column's other parts read the database; this test is about the label rows only.
-vi.mock('@/features/people/components/FollowButton', () => ({ FollowButton: () => null }));
-vi.mock('@/features/forums/components/ProfileRankChip', () => ({ ProfileRankChip: () => null }));
-vi.mock('@/features/reporting/components/ReportButton', () => ({ ReportButton: () => null }));
-vi.mock('./StoryLanguageNote', () => ({ AboutEditionCard: () => null }));
+import { StoryLabels } from './StoryLabels';
 
 /**
  * A published story in one language, with comments on and no pause unless a test says otherwise.
@@ -67,7 +62,7 @@ function storyWith(changes: Partial<StoryPageData>): StoryPageData {
 }
 
 /**
- * Draws the column and reads the Comments row's value.
+ * Draws the labels and reads the Comments row's value.
  *
  * @param story - the story page's data
  * @param language - the interface language
@@ -76,7 +71,7 @@ function storyWith(changes: Partial<StoryPageData>): StoryPageData {
 function commentsRowOf(story: StoryPageData, language: SupportedLanguage) {
   renderWithProviders(
     <MemoryRouter>
-      <StorySideColumn story={story} />
+      <StoryLabels story={story} />
     </MemoryRouter>,
     language,
   );
@@ -84,7 +79,7 @@ function commentsRowOf(story: StoryPageData, language: SupportedLanguage) {
   return label.nextElementSibling?.textContent;
 }
 
-describe('StorySideColumn, the Comments row', () => {
+describe('StoryLabels, the Comments row', () => {
   // A reader in Stockholm, an hour behind Romania in November.
   pinViewerTimeZone('Europe/Stockholm');
 
