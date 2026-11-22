@@ -139,11 +139,30 @@ async function dragBetween(
   await page.mouse.up();
 }
 
-/** The centre of an element on the screen. */
-async function centreOf(page: Page, selector: string) {
+/** The centre of an element on the screen, read once. */
+async function centreNow(page: Page, selector: string) {
   const box = await page.locator(selector).boundingBox();
   if (box === null) throw new Error(`${selector} is not on the screen`);
   return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+}
+
+/**
+ * The centre of an element once it has stopped moving. The map's zoom follows its width
+ * ("Fit"), so a scrollbar appearing or a re-layout after "Arrange for me" can move every
+ * card a moment after it is drawn; a drag aimed at the old place then misses (it made this
+ * test flaky in CI). Two reads 100 ms apart that agree mean the card has settled.
+ */
+async function centreOf(page: Page, selector: string) {
+  let previous = await centreNow(page, selector);
+  // Step 1: read again until two reads in a row agree, for up to about 3 seconds.
+  for (let attempt = 0; attempt < 30; attempt += 1) {
+    await page.waitForTimeout(100);
+    const current = await centreNow(page, selector);
+    if (current.x === previous.x && current.y === previous.y) return current;
+    previous = current;
+  }
+  // Step 2: it never settled, so say so instead of dragging to a guess.
+  throw new Error(`${selector} kept moving on the screen`);
 }
 
 /** One relationship to add: from whom, which kind, which relationship, to whom. */
