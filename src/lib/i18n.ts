@@ -7,6 +7,8 @@
  * drop-downs and saving the choice to the account live in src/features/language/ (S1-E1-04); main.tsx
  * starts this instance in the language this browser last chose (src/lib/language-preference.ts).
  *
+ * Romanian is bundled; English downloads only when someone reads in English, or in a Nordic language
+ * whose missing keys fall back to it (src/lib/i18n-loading.ts; the reader speed fix, 21 Nov 2026).
  * Where things come in from: src/locales/<language>/common.json, legal.json (the Legal centre,
  * S1-E14-01) and auth.json (sign-up and sign-in, S1-E2-01), account.json (setup and Settings, S1-E2-04), writing.json (the writer screens, S1-E3-01), reading.json (the story page and reader, S1-E3-05); editor.json (the chapter editor, S1-E3-02a) loads with the editor instead (src/features/writing/registerEditorTranslations.ts); email.json is for the emails only (Auth, S1-E11-19, and notifications, S1-E7-02)
  * (scripts/build-auth-email-templates.ts) (the /design page adds its own
@@ -31,17 +33,12 @@ import {
   isInterfaceLanguage,
   type InterfaceLanguage,
 } from '@/schemas/interfaceLanguages';
-import englishAccount from '@/locales/en/account.json';
-import englishAuth from '@/locales/en/auth.json';
-import englishCommon from '@/locales/en/common.json';
-import englishLegal from '@/locales/en/legal.json';
+import { loadEnglishBeforeSwitching, preloadedResources } from '@/lib/i18n-loading';
 import romanianAccount from '@/locales/ro/account.json';
 import romanianAuth from '@/locales/ro/auth.json';
 import romanianCommon from '@/locales/ro/common.json';
 import romanianLegal from '@/locales/ro/legal.json';
 // Lane A: writing and reading (S1-E3, S1-E4).
-import englishReading from '@/locales/en/reading.json';
-import englishWriting from '@/locales/en/writing.json';
 import romanianReading from '@/locales/ro/reading.json';
 import romanianWriting from '@/locales/ro/writing.json';
 
@@ -92,41 +89,44 @@ function nordicTranslations(): Record<string, Record<string, Record<string, unkn
   return grouped;
 }
 
-/** All translations, grouped by language and then by namespace (one JSON file per namespace). */
-const translations = {
-  ro: {
-    common: romanianCommon,
-    legal: romanianLegal,
-    auth: romanianAuth,
-    account: romanianAccount,
-    writing: romanianWriting,
-    reading: romanianReading,
-  },
-  en: {
-    common: englishCommon,
-    legal: englishLegal,
-    auth: englishAuth,
-    account: englishAccount,
-    writing: englishWriting,
-    reading: englishReading,
-  },
+/**
+ * The Romanian text, bundled with the app: everyone's first language and the fallback for a missing
+ * key (decided 17 Oct 2026, 11:48). English is not here: it downloads only when someone reads in
+ * English (src/lib/i18n-loading.ts; the reader speed fix, 21 Nov 2026).
+ */
+const romanianTranslations = {
+  common: romanianCommon,
+  legal: romanianLegal,
+  auth: romanianAuth,
+  account: romanianAccount,
+  writing: romanianWriting,
+  reading: romanianReading,
 };
 
 /**
  * Creates and starts a translation instance.
  *
  * @param language - the language to start in; defaults to Romanian
- * @returns a ready instance. Resources are bundled, so initialisation finishes synchronously and the
- *   first render already has the right text (no flash of translation keys).
+ * @returns a ready instance. Romanian is bundled and English is in already when main.tsx (or a test)
+ *   loaded it first, so initialisation finishes synchronously and the first render already has the
+ *   right text (no flash of translation keys). Switching to English later downloads its files
+ *   first, and changeLanguage() finishes once they are in (loadEnglishBeforeSwitching).
  * Errors: none expected; i18next logs a warning for a missing key rather than throwing.
  */
 export function createI18n(language: SupportedLanguage = defaultLanguage): I18nInstance {
   // A fresh instance, so tests can render in English without changing the app's language.
   const instance = i18next.createInstance();
 
-  // Connect it to React and start it with the bundled translations.
+  // Connect it to React and start it with what is here already: the Nordic files, Romanian, and
+  // English if it was loaded before.
   void instance.use(initReactI18next).init({
-    resources: { ...nordicTranslations(), ...translations },
+    // Each language gets a fresh top level per instance, so a feature's text added to one instance
+    // (namespace-translations adds ro and en together) never makes another skip it.
+    resources: {
+      ...nordicTranslations(),
+      ro: { ...romanianTranslations },
+      ...preloadedResources(),
+    },
     lng: language,
     // Romanian and English fall back to Romanian, as before; a Nordic key not translated yet reads
     // in English (MARKETS-2a), then Romanian as the last resort.
@@ -143,6 +143,8 @@ export function createI18n(language: SupportedLanguage = defaultLanguage): I18nI
     },
   });
 
+  // A later switch to English (or a Nordic language) downloads the English text first.
+  loadEnglishBeforeSwitching(instance);
   return instance;
 }
 

@@ -15,7 +15,8 @@ import { AppProviders } from '@/app/AppProviders';
 import { appRoutes } from '@/app/router';
 import { installCallRecorder } from '@/features/errors/lib/callRecorder';
 import { installGlobalErrorHandlers } from '@/features/errors/lib/installGlobalErrorHandlers';
-import { createI18n, syncDocumentLanguage } from '@/lib/i18n';
+import { createI18n, syncDocumentLanguage, type SupportedLanguage } from '@/lib/i18n';
+import { loadInterfaceLanguage } from '@/lib/i18n-loading';
 import { installInterfaceTextOverrides } from '@/lib/interface-text-overrides';
 import { readDeviceLanguage } from '@/lib/language-preference';
 import '@/styles/index.css';
@@ -38,7 +39,17 @@ installCallRecorder();
 // Step 3: start the translations in the language this browser last chose (Romanian on a first
 // visit, whatever the browser's own language; S1-E1-04) and keep <html lang> in step with it.
 // A signed-in account's language is applied a moment later by useAccountLanguage in AppLayout.
-const i18n = createI18n(readDeviceLanguage());
+// Romanian is bundled; English downloads first when this browser last chose it (the reader speed
+// fix, 21 Nov 2026), so the first screen is never half one language. If that download fails, the
+// app starts in Romanian rather than show nothing, and the language menu can try again.
+const startingLanguage: SupportedLanguage = await loadInterfaceLanguage(readDeviceLanguage()).then(
+  () => readDeviceLanguage(),
+  (error: unknown) => {
+    console.error('The English text could not load, so the app starts in Romanian.', error);
+    return 'ro';
+  },
+);
+const i18n = createI18n(startingLanguage);
 syncDocumentLanguage(i18n);
 // Then, in the background, lay the admins' published text over the files (S1-E11-18). The first
 // screen never waits for it, and if the read fails the file text stays.
