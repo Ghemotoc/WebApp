@@ -16,13 +16,15 @@ import { useForumsTranslation } from '../registerForumsTranslations';
 /**
  * Renders the section.
  *
- * @returns a section with the reminder and the link
+ * @returns a block with the heading, the reminder and the link
  */
 export function BeforeYouPost() {
   const { t } = useForumsTranslation();
   return (
-    <section aria-labelledby="before-you-post-heading" className="flex flex-col gap-2">
-      <h2 id="before-you-post-heading" className="m-0 type-subheading">
+    // A plain block, not a named region: a region named "Before you post" would answer to the
+    // label "Post" too and be mistaken for the post field.
+    <div className="flex flex-col gap-2">
+      <h2 className="m-0 type-subheading">
         {t('beforePost.title')}
       </h2>
       <p className="m-0 text-body">{t('beforePost.text')}</p>
@@ -33,6 +35,6 @@ export function BeforeYouPost() {
       >
         {t('rules.guidelines')}
       </Link>
-    </section>
+    </div>
   );
 }
