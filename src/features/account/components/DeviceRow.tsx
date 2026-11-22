@@ -8,7 +8,7 @@
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
-import { InfoPill } from '@/components/ui/InfoPill';
+import { StateWord } from '@/components/ui/StateWord';
 import type { MySession } from '@/features/auth/api/sessions';
 import { describeDevice } from '@/features/auth/lib/deviceName';
 import { formatLegalDate } from '@/features/legal/lib/legalDocumentList';
@@ -46,7 +46,7 @@ export function DeviceRow({ session, isBusy, onEnd }: DeviceRowProps) {
       <div className="flex min-w-0 flex-col gap-1">
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-sm font-semibold text-ink">{label}</span>
-          {session.isCurrent && <InfoPill tone="sage">{t('devices.thisDevice')}</InfoPill>}
+          {session.isCurrent && <StateWord>{t('devices.thisDevice')}</StateWord>}
         </div>
         <span className="text-[13px] text-meta">
           {t('devices.lastActive', { date: formatLegalDate(session.lastActiveAt, i18n.language) })}

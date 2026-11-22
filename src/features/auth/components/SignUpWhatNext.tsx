@@ -1,23 +1,19 @@
 /**
- * SignUpWhatNext: "What you might see next", the cards under the sign-up screen that show what
- * can happen after "Create account" (board 2.1, Main.dc.html; bundle LOOK-6).
+ * SignUpWhatNext: "What you might see next", the rows under the sign-up screen that show what
+ * can happen after "Create account" (board 2.1, bundle LOOK-6; rows since CALM-9e, board H01).
  *
  * Only the cards that are true for the current set-up are shown: confirming the email always;
  * the Yoti age check only while the `adults_only` flag is off (in the invited adults' test there
  * is no age check, decided 17 Oct 2026, 12:44); and the "too young" card says "under 18" in that
  * test and "under 13" once sign-up is open to everyone aged 13 and up.
- * The cards preview other screens, so they hold no buttons.
- * Who uses it: SignUpPage. What it calls: the auth locale texts and ActionIcon's line icons.
+ * The rows preview other screens, so they hold no buttons.
+ * Who uses it: SignUpPage. What it calls: the auth locale texts.
  */
 import { useTranslation } from 'react-i18next';
 
-import { ActionIcon, type ActionIconName } from '@/components/icons/ActionIcon';
-import { Eyebrow } from '@/components/ui/Eyebrow';
-
-/** One preview card: its icon, title and the line under it. */
+/** One preview row: its title and the line under it. */
 interface PreviewCard {
   key: string;
-  icon: ActionIconName;
   title: string;
   body: string;
 }
@@ -34,7 +30,6 @@ function usePreviewCards(isAdultsOnly: boolean): PreviewCard[] {
   const cards: PreviewCard[] = [
     {
       key: 'email',
-      icon: 'mail',
       title: t('signUp.next.email.title'),
       body: t('signUp.next.email.body'),
     },
@@ -43,7 +38,6 @@ function usePreviewCards(isAdultsOnly: boolean): PreviewCard[] {
   if (!isAdultsOnly) {
     cards.push({
       key: 'ageCheck',
-      icon: 'picture',
       title: t('signUp.next.ageCheck.title'),
       body: t('signUp.next.ageCheck.body'),
     });
@@ -51,7 +45,6 @@ function usePreviewCards(isAdultsOnly: boolean): PreviewCard[] {
   // Step 3: a short preview of the refusal the form shows (AgeRefusal), in its own words.
   cards.push({
     key: 'tooYoung',
-    icon: 'shield',
     title: isAdultsOnly ? t('signUp.next.under18.title') : t('signUp.next.under13.title'),
     body: isAdultsOnly ? t('signUp.next.under18.body') : t('signUp.next.under13.body'),
   });
@@ -62,39 +55,30 @@ function usePreviewCards(isAdultsOnly: boolean): PreviewCard[] {
  * Renders the section.
  *
  * @param props.isAdultsOnly - true while only invited adults may join
- * @returns the heading and the cards
+ * @returns the heading, the quiet line under it and the rows
  */
 export function SignUpWhatNext({ isAdultsOnly }: { isAdultsOnly: boolean }) {
   const { t } = useTranslation('auth');
   const cards = usePreviewCards(isAdultsOnly);
   return (
-    <section aria-labelledby="sign-up-next-heading" className="flex flex-col gap-5 pt-10">
-      <div className="flex items-center gap-8">
-        <div className="flex min-w-0 flex-col gap-2">
-          <Eyebrow>{t('signUp.next.eyebrow')}</Eyebrow>
-          <h2
-            id="sign-up-next-heading"
-            className="m-0 font-heading text-[28px] font-bold tracking-[-0.01em] text-primary"
-          >
-            {t('signUp.next.heading')}
-          </h2>
-        </div>
+    <section aria-labelledby="sign-up-next-heading" className="flex flex-col gap-4 pt-10">
+      {/* Board H01 (CALM-9e): the heading, then "After you press Create account" as a quiet
+          line under it, where the eyebrow used to sit above. */}
+      <div className="flex flex-col gap-1">
+        <h2 id="sign-up-next-heading" className="m-0 type-heading">
+          {t('signUp.next.heading')}
+        </h2>
+        <p className="m-0 text-[13px] text-meta">{t('signUp.next.note')}</p>
       </div>
-      <ul className="m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(min(100%,320px),1fr))] gap-5 p-0">
-        {cards.map((card) => (
+      {/* One row each, with a fine line between rows (DoD: label rows); no cards or icons. */}
+      <ul className="m-0 flex list-none flex-col p-0">
+        {cards.map((card, index) => (
           <li
             key={card.key}
-            className="flex flex-col gap-2.5 rounded-card border border-border bg-surface p-6 shadow-card"
+            className={`flex flex-col gap-1 py-4 ${index === 0 ? 'pt-0' : 'border-t border-border'}`}
           >
-            {/* The board's icon on a soft plum square; decorative. */}
-            <span
-              aria-hidden="true"
-              className="inline-flex size-11 items-center justify-center rounded-2xl bg-tint"
-            >
-              <ActionIcon name={card.icon} size={22} className="text-heading" />
-            </span>
-            <h3 className="m-0 font-heading text-xl font-bold text-heading">{card.title}</h3>
-            <p className="m-0 text-[15px] leading-relaxed text-body">{card.body}</p>
+            <h3 className="m-0 text-base font-bold text-heading">{card.title}</h3>
+            <p className="m-0 text-[15px] leading-relaxed text-meta">{card.body}</p>
           </li>
         ))}
       </ul>

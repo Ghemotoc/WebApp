@@ -79,7 +79,6 @@ export function ResetPasswordPage() {
   return (
     <AuthCard
       documentTitle={t('reset.documentTitle')}
-      eyebrow={t('forgot.eyebrow')}
       heading={t(texts.heading)}
       intro={texts.intro === undefined ? undefined : t(texts.intro)}
     >

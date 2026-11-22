@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router';
 
 import { Eyebrow } from '@/components/ui/Eyebrow';
-import { InfoPill } from '@/components/ui/InfoPill';
+import { StateWord } from '@/components/ui/StateWord';
 
 import type { LegalSection } from '../lib/parseLegalDocument';
 
@@ -140,7 +140,7 @@ export function LegalSectionCard({
       {/* Labels for the whole section: proposed, and applies only after the invited test. */}
       {(section.isProposed || section.isAfterTheTest) && (
         <div className="flex flex-wrap gap-2">
-          {section.isProposed && <InfoPill tone="neutral">{t('proposedSection')}</InfoPill>}
+          {section.isProposed && <StateWord>{t('proposedSection')}</StateWord>}
           {section.isAfterTheTest && <AfterTheTestLabel />}
         </div>
       )}

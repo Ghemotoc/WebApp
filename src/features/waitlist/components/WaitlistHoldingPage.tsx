@@ -8,7 +8,8 @@
  * "write, read or both" answer, which they can change; their avatar (AvatarBuilderSection, the
  * same as Settings › Profile); the kinds of stories they like (LikesSettingsSection); and links to
  * Settings (emails, occasional news, delete the account) and to log out.
- * There is no board for it: it follows the Settings sections' cards. No doodles beside the text.
+ * Board H08 (the simplified design, CALM-9e): the heading, a meta line and the Settings sections'
+ * cards. No doodles beside the text.
  * Who shows it: WaitlistGate. What it calls: useMyNames for the username; the sections call their
  * own hooks.
  */
@@ -17,7 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
-import { Eyebrow } from '@/components/ui/Eyebrow';
+import { MetaLine } from '@/components/ui/MetaLine';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { useMyNames } from '@/features/account/hooks/useMyNames';
@@ -109,12 +110,19 @@ function HoldingIntro({ joinedAt, nextLine }: { joinedAt: string; nextLine: stri
   }).format(new Date(joinedAt));
   return (
     <div className="flex max-w-[720px] flex-col gap-2">
-      <Eyebrow>{t('waitlist.holding.eyebrow')}</Eyebrow>
-      <h1 className="m-0 font-heading text-[34px] font-bold text-heading">
+      <h1 className="m-0 type-title break-words lg:type-display">
         {t('waitlist.holding.heading')}
       </h1>
-      <p className="m-0 text-body">{t('waitlist.holding.joined', { date: joinedDay })}</p>
-      <p className="m-0 text-body">{nextLine}</p>
+      {/* Board H08 (CALM-9e): when they joined, in bold, and "Founding member" as one meta line
+          under the heading, where the eyebrow used to sit above it. Everyone on the waiting list
+          is a founding member (WAITLIST-1). */}
+      <MetaLine
+        facts={[
+          { text: t('waitlist.holding.joined', { date: joinedDay }), kind: 'state' },
+          { text: t('waitlist.foundingMember') },
+        ]}
+      />
+      <p className="m-0 text-meta">{nextLine}</p>
       {/* A heads-up, not a step: we may ask people to confirm who they are later (Robert,
           21 Nov 2026, 06:59 UTC; WAITLIST-2). The wording is on the lawyer's list. */}
       <p className="m-0 text-[13px] text-meta">{t('waitlist.holding.identityNote')}</p>

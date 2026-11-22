@@ -14,7 +14,7 @@
 import { Link, useParams } from 'react-router';
 
 import { Eyebrow } from '@/components/ui/Eyebrow';
-import { InfoPill } from '@/components/ui/InfoPill';
+import { StateWord } from '@/components/ui/StateWord';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 
@@ -67,7 +67,7 @@ function LoadedTicket({
             {ticket.subject}
           </h1>
         </div>
-        <InfoPill tone={pill.tone}>{t(`list.states.${pill.state}`)}</InfoPill>
+        <StateWord>{t(`list.states.${pill.state}`)}</StateWord>
       </div>
       <TicketMessageList messages={items} label={t('ticket.messagesLabel')} layout="chat" />
       {ticket.mergedInto !== null && (

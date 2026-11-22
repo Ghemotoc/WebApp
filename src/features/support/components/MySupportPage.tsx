@@ -12,7 +12,7 @@
 import { Link } from 'react-router';
 
 import { Eyebrow } from '@/components/ui/Eyebrow';
-import { InfoPill } from '@/components/ui/InfoPill';
+import { StateWord } from '@/components/ui/StateWord';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { useSession } from '@/features/auth/hooks/useSession';
@@ -54,7 +54,7 @@ function TicketRow({ ticket }: { ticket: MyTicketSummary }) {
         </div>
       </td>
       <td className="px-4 py-3.5 align-top">
-        <InfoPill tone={pill.tone}>{t(`list.states.${pill.state}`)}</InfoPill>
+        <StateWord>{t(`list.states.${pill.state}`)}</StateWord>
       </td>
       <td className="px-4 py-3.5 align-top text-sm text-body">{when}</td>
     </tr>

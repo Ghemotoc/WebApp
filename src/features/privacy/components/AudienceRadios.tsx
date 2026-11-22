@@ -4,14 +4,14 @@
  *
  * The choice is saved the moment one is picked. It shows at once and goes back if the save fails,
  * so it never looks stuck (as MessageSettingsSection, S1-E9-04). The under-18 default carries the
- * "Default for under 18" pill, as on the board; the pill is information, not a control. Each
+ * "Default for under 18" in bold (a pill until CALM-9d); it is information, not a control. Each
  * choice is a glass row and the chosen one has a plum border (choiceRowStyles, G11b).
  * Who uses it: PrivacySettingsSection. What it calls: the onSave it is given.
  */
 import { useState } from 'react';
 
 import { choiceRowClassName } from '@/components/ui/choiceRowStyles';
-import { InfoPill } from '@/components/ui/InfoPill';
+import { StateWord } from '@/components/ui/StateWord';
 
 import { usePrivacyTranslation } from '../registerPrivacyTranslations';
 
@@ -24,7 +24,7 @@ interface AudienceRadiosProps<Choice extends string> {
   choices: readonly Choice[];
   /** The label of each choice. */
   labelOf: (choice: Choice) => string;
-  /** The choice an under-18 starts on, which gets the pill; left out when everyone starts alike. */
+  /** The choice an under-18 starts on, which gets the words; left out when everyone starts alike. */
   under18Default?: Choice;
   saved: Choice;
   isSaving: boolean;
@@ -65,9 +65,7 @@ export function AudienceRadios<Choice extends string>(props: AudienceRadiosProps
             />
             {labelOf(choice)}
           </span>
-          {choice === under18Default && (
-            <InfoPill tone="plum">{t('settings.defaultForUnder18')}</InfoPill>
-          )}
+          {choice === under18Default && <StateWord>{t('settings.defaultForUnder18')}</StateWord>}
         </label>
       ))}
       <p id={`${name}-hint`} className="m-0 text-[13px] text-meta">

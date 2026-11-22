@@ -21,7 +21,6 @@
 import { useTranslation } from 'react-i18next';
 import { Link, Navigate, useParams } from 'react-router';
 
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { useFeatureFlags } from '@/features/flags/hooks/useFeatureFlags';
 import { useLegalVersions } from '@/features/legal/hooks/useLegalVersions';
@@ -133,7 +132,7 @@ function signUpSubheadingKey(joinsWaitlist: boolean, waitsForMarket: boolean): s
 }
 
 /**
- * The card's eyebrow, heading and the line under it: sign-up, the waiting list, or the waiting list
+ * The card's heading and the line under it (no eyebrow since CALM-9e, board H01): sign-up, the waiting list, or the waiting list
  * for a country that isn't open yet (MARKETS-2b).
  *
  * @param props.joinsWaitlist - whether this sign-up joins the waiting list
@@ -144,11 +143,10 @@ function SignUpHeading(props: { joinsWaitlist: boolean; waitsForMarket: boolean 
   const { t } = useTranslation('auth');
   return (
     <div className="flex flex-col gap-2">
-      <Eyebrow>{t('signUp.eyebrow')}</Eyebrow>
       <h2 id="sign-up-heading" className="m-0 font-heading text-[30px] font-bold text-heading">
         {t(props.joinsWaitlist ? 'signUp.waitlist.heading' : 'signUp.heading')}
       </h2>
-      <p className="m-0 text-body">
+      <p className="m-0 text-meta">
         {t(signUpSubheadingKey(props.joinsWaitlist, props.waitsForMarket))}
       </p>
     </div>
