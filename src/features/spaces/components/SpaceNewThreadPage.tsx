@@ -3,14 +3,17 @@
  * part a; S1-E8-06; the forums' new-thread card in the space).
  *
  * Who shows it: the router; "New thread" on a space's page links here.
- * What it shows: the breadcrumb (Forums › Spaces › the space › New thread), then the forums'
+ * What it shows: the space and "New thread", then the forums'
  * NewThreadForm on the space's own forum; signed out, a link to log in; someone who can't post
  * in the space, the way back to join it. The database checks again (refuse_space_writer()).
- * What it calls: useSpace → space_page(); NewThreadForm → start_forum_thread().
+ * Simplified design (bundle CALM-9b; board simplified F09): the space's name in a meta line above
+ * "New thread", the form on the page and the space's rules beside it, 2.2 to 1 from 1024 px; on
+ * phones and tablets the focus bar's back arrow stands in for the breadcrumb.
+ * What it calls: useSpace → space_page(); NewThreadForm → start_forum_thread(); SpaceRulesCard.
  */
 import { Link, useParams } from 'react-router';
 
-import { Eyebrow } from '@/components/ui/Eyebrow';
+import { MetaLine } from '@/components/ui/MetaLine';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { useSession } from '@/features/auth/hooks/useSession';
@@ -20,8 +23,8 @@ import type { Space } from '../api/spaces';
 import { useSpace } from '../hooks/useSpaces';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
-import { SpaceBreadcrumb } from './SpaceBreadcrumb';
 import { SpaceNotFound } from './SpaceNotFound';
+import { SpaceRulesCard } from './SpaceRulesCard';
 
 /**
  * What goes in the card: the form, or why there is none.
@@ -53,7 +56,7 @@ function SpaceNewThreadBody({ space }: { space: Space }) {
 /**
  * Renders the page.
  *
- * @returns the breadcrumb and the card, or a "not here" note
+ * @returns the heading, the form and the rules, or a "not here" note
  */
 export function SpaceNewThreadPage() {
   const { t } = useSpacesTranslation();
@@ -66,16 +69,17 @@ export function SpaceNewThreadPage() {
       {space === null && <SpaceNotFound />}
       {space !== undefined && space !== null && (
         <>
-          <SpaceBreadcrumb space={space} current={t('newThread.eyebrow')} />
-          <section className="flex max-w-[760px] flex-col gap-5 rounded-card border border-border bg-surface p-5 md:p-7">
-            <div className="flex flex-col gap-1">
-              <Eyebrow>{t('newThread.eyebrow')}</Eyebrow>
-              <h1 className="m-0 font-heading text-[28px] leading-tight font-extrabold text-heading">
-                {t('newThread.heading', { space: space.name })}
-              </h1>
-            </div>
-            <SpaceNewThreadBody space={space} />
-          </section>
+          <header className="flex max-w-[860px] flex-col gap-2">
+            <MetaLine facts={[{ text: space.name }]} />
+            <h1 className="page-title">{t('newThread.heading')}</h1>
+          </header>
+          {/* The form on the page, the space's rules beside it from 1024 px (board F09). */}
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,2.2fr)_minmax(0,1fr)] lg:items-start lg:gap-14">
+            <section aria-label={t('newThread.eyebrow')} className="flex min-w-0 flex-col gap-6">
+              <SpaceNewThreadBody space={space} />
+            </section>
+            <SpaceRulesCard space={space} />
+          </div>
         </>
       )}
     </PageContainer>
