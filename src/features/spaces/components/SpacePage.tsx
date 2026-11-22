@@ -112,8 +112,9 @@ function SpaceContent({ space }: { space: Space }) {
     <>
       <SpaceBreadcrumb current={space.name} />
       <SpaceHeaderCard space={space} />
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
-        <div className="flex min-w-0 flex-col gap-6">
+      {/* CALM-9b (board simplified F08): 2.4 to 1 from 1024 px, 56 px apart. */}
+      <div className="grid gap-10 lg:grid-cols-[minmax(0,2.4fr)_minmax(0,1fr)] lg:items-start lg:gap-14">
+        <div className="flex min-w-0 flex-col gap-10">
           <SpaceHandoverOffer space={space} />
           <SpaceWelcomeNote space={space} />
           {space.isLocked && (
@@ -131,7 +132,7 @@ function SpaceContent({ space }: { space: Space }) {
             <PageAdSlot pageKey="space" position={1} context={{ spaceSlug: space.slug }} />
           )}
         </div>
-        <aside className="flex flex-col gap-6">
+        <aside className="flex flex-col gap-10">
           {space.joining === 'approve' && space.kind === 'open' && (
             <SpaceRequestsCard space={space} />
           )}

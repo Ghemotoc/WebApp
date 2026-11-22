@@ -1,7 +1,7 @@
 /**
  * SpaceRunsCard: "Who runs it": the owner, the moderators with their powers, and that our
  * moderation team can act in any space (bundle FORUMS-2, parts a and b; S1-E8-06 and S1-E8-07;
- * the board's side card).
+ * the board's side card). Since CALM-9b a plain section on the page, under the space's rules.
  * Who shows it: SpacePage. What it calls: useSpaceModerators → space_moderators(); the owner comes
  * with the space.
  */
@@ -52,15 +52,11 @@ export function SpaceRunsCard({ space }: { space: Space }) {
   const moderators = useSpaceModerators(space.slug);
   const listFormat = new Intl.ListFormat(i18n.language, { type: 'conjunction' });
   return (
-    <section
-      aria-labelledby="space-runs-heading"
-      className="flex flex-col gap-3 rounded-card border border-border bg-surface px-6 py-5"
-    >
-      <div className="flex items-center justify-between gap-4">
-        <h2 id="space-runs-heading" className="m-0 font-heading text-xl font-bold text-heading">
-          {t('runs.title')}
-        </h2>
-      </div>
+    // CALM-9b (board simplified F08): on the page under the rules, not on a card.
+    <section aria-labelledby="space-runs-heading" className="flex flex-col gap-2">
+      <h2 id="space-runs-heading" className="m-0 type-subheading">
+        {t('runs.title')}
+      </h2>
       <ul className="m-0 list-none p-0">
         <RunsPerson person={space.owner} role={t('runs.owner')} />
         {(moderators.data ?? []).map((moderator) => (
