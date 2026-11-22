@@ -195,7 +195,7 @@ async function readerTitles(browser: Browser): Promise<string[]> {
   const context = await browser.newContext();
   const page = await context.newPage();
   await page.goto(`/s/${slug}`);
-  const chapters = page.getByRole('region', { name: /capitole|chapters/i });
+  const chapters = page.getByRole('region', { name: /capitol|chapter/i });
   await expect(chapters).toBeVisible();
   // Each row's title is its heading-font line (StoryChapterList).
   const titles = await chapters.locator('[data-chapter-title]').allTextContents();
