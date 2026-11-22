@@ -7,7 +7,8 @@
   "switcher": {
     "label": "Story",
     "newStory": "New story",
-    "write": "Write"
+    "write": "Write",
+    "storyPage": "Story page"
   },
   "empty": {
     "title": "Plan a first story",
@@ -103,7 +104,7 @@
     "label": "Story Atlas sections",
     "glance": "At a glance",
     "characters": "Characters",
-    "connections": "Connections",
+    "connections": "Relationships",
     "bible": "Story world",
     "storyline": "Storyline",
     "ideas": "Ideas",
@@ -253,8 +254,8 @@
     "failed": "That didn’t save. Check your connection and try again."
   },
   "connections": {
-    "heading": "Connections",
-    "documentTitle": "Connections in {{title}}: Story Atlas",
+    "heading": "Relationships",
+    "documentTitle": "Relationships in {{title}}: Story Atlas",
     "noCharacters": "Add at least two characters first, then connect them here.",
     "openCharacters": "Open the characters",
     "kinds": {
@@ -342,7 +343,7 @@
       "reverseHint": "Shows on {{to}}’s sheet, for example “goddaughter of”.",
       "firstStandIn": "the first character",
       "secondStandIn": "the other character",
-      "open": "Add a connection"
+      "open": "Add a relationship"
     },
     "list": {
       "heading": "Relationships",
@@ -940,7 +941,7 @@
     },
     "character": {
       "back": "Characters",
-      "connections": "Connections",
+      "connections": "Relationships",
       "notShown": "This character isn’t shown here."
     },
     "world": {
@@ -953,5 +954,8 @@
       "none": "No events to show yet."
     },
     "byline": "by {{name}} · shared by the writer"
+  },
+  "breadcrumb": {
+    "label": "Where you are"
   }
 }

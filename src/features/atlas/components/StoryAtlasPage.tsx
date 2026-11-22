@@ -15,7 +15,6 @@ import { useEffect } from 'react';
 import { useParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
-import { PageContainer } from '@/components/ui/PageContainer';
 import { useSession } from '@/features/auth/hooks/useSession';
 import type { MyStory } from '@/features/writing/api/stories';
 import { useMyStories } from '@/features/writing/hooks/useMyStories';
@@ -26,7 +25,7 @@ import { rememberPlannedStory } from '../lib/lastPlannedStory';
 import { writeAddressFor } from '../lib/writeAddress';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
-import { AtlasTopBar } from './AtlasTopBar';
+import { AtlasFrame } from './AtlasFrame';
 import { AtAGlance } from './AtAGlance';
 
 /** What shows under the bar: a wait, a plain message or the page. */
@@ -69,14 +68,16 @@ export function StoryAtlasPage() {
 
   if (!isKnown) return null;
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-8 pt-10 pb-12">
+    <AtlasFrame
+      slug={storySlug}
+      writeAddress={writeAddressFor(story)}
+      section="glance"
+      showsChrome={userId !== null}
+    >
       <title>
         {page ? t('documentTitle', { title: page.story.title }) : t('homeDocumentTitle')}
       </title>
-      {userId !== null && (
-        <AtlasTopBar slug={storySlug} writeAddress={writeAddressFor(story)} section="glance" />
-      )}
       <AtlasBody isSignedIn={userId !== null} page={page} loadFailed={loadFailed} story={story} />
-    </PageContainer>
+    </AtlasFrame>
   );
 }

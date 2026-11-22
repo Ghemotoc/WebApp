@@ -188,7 +188,14 @@
     "chapterCount_other": "{{count}} chapters",
     "manageChapters": "Manage chapters",
     "languages": "Languages",
-    "plan": "Plan",
+    "atlas": "Story Atlas",
+    "inAtlas": "In the Atlas:",
+    "atlasParts": {
+      "characters": "Characters",
+      "relationships": "Relationships",
+      "world": "Story world",
+      "storyline": "Storyline"
+    },
     "notPublishedYet": "Not published yet",
     "chaptersPublished_one": "{{count}} chapter published",
     "chaptersPublished_few": "{{count}} chapters published",

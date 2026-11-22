@@ -8,12 +8,11 @@
  * then the same PublicPlanView readers get, with the items that wait
  * for a chapter marked instead of left out (S1-E17-35) and no Report buttons. Only the writer
  * sees it. Who calls it: src/app/router.tsx. What it calls: usePlanPreview, PublicPlanHero,
- * PublicPlanView and AtlasTopBar.
+ * PublicPlanView and AtlasFrame.
  */
 import { Link, useParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
-import { PageContainer } from '@/components/ui/PageContainer';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { useMyStories } from '@/features/writing/hooks/useMyStories';
 
@@ -23,7 +22,7 @@ import { areaFromPath } from '../lib/publicPlanAreas';
 import { writeAddressFor } from '../lib/writeAddress';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
-import { AtlasTopBar } from './AtlasTopBar';
+import { AtlasFrame } from './AtlasFrame';
 import { PublicPlanHero } from './PublicPlanHero';
 import { PublicPlanView } from './PublicPlanView';
 
@@ -80,12 +79,14 @@ export function PlanPreviewPage() {
 
   if (!isKnown) return null;
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-8 pt-10 pb-12">
+    <AtlasFrame
+      slug={storySlug}
+      writeAddress={writeAddressFor(story)}
+      section="readers"
+      showsChrome={userId !== null}
+    >
       <title>{t('readers.preview.documentTitle', { title: story?.title ?? '' })}</title>
       {userId === null && <p className="m-0 text-body">{t('signedOut')}</p>}
-      {userId !== null && (
-        <AtlasTopBar slug={storySlug} writeAddress={writeAddressFor(story)} section="readers" />
-      )}
       {loadFailed && <Notice tone="error">{t('loadFailed')}</Notice>}
       {preview === null && <Notice tone="error">{t('notFound')}</Notice>}
       {preview && (
@@ -94,6 +95,6 @@ export function PlanPreviewPage() {
           <PreviewBody slug={storySlug} plan={preview.plan} isPublished={preview.isPublished} />
         </>
       )}
-    </PageContainer>
+    </AtlasFrame>
   );
 }

@@ -1,30 +1,34 @@
 /**
- * AtlasTopBar: the glass bar at the top of every Story Atlas page (stories S1-E17-01, S1-E17-02
- * and S1-E17-30; bundle G10 ATLAS, part a: the liquid glass boards draw it as one glass card).
+ * AtlasTopBar: the card at the top of every Story Atlas page (stories S1-E17-01, S1-E17-02 and
+ * S1-E17-30; redrawn in bundle CALM-9a, boards D01 and E20 to E34, approved by Robert on 22 Nov
+ * 2026 after "it's harder to find the relationship page, and add characters, find the story").
  *
- * The first row holds the "Story Atlas" eyebrow and the story switcher on the left, and the search
- * box, "Write" (the same story's chapters in the writer section, so "Plan" and "Write" sit side by
- * side, S1-E17 notes) and "New story" (the usual New story form, which comes back to the new
- * story's plan, S1-E17-01) on the right. The second row is the sections (AtlasSectionNav), on one
- * line. On a phone the first row's parts stack.
- * Who uses it: every Story Atlas page (StoryAtlasPage, CharactersPage, ConnectionsPage, BiblePage,
- * StorylinePage, IdeasPage, MarketingPage, ReaderViewPage, PlanPreviewPage and AtlasSearchPage).
- * What it calls: StorySwitcher, AtlasSearchBox and AtlasSectionNav.
+ * Left: where the writer is, as a breadcrumb ("Story Atlas / <story picker>"), then the text links
+ * "Story page" (the reader's page of this story), "Write" (the same story's chapters, so "Story
+ * Atlas" and "Write" sit side by side, S1-E17 notes) and "New story" (the usual New story form,
+ * which comes back to the new story's plan, S1-E17-01).
+ * Right: the search box and the two adds writers look for most, "New character" and "Add a
+ * relationship". A page whose own main button already does one of them leaves it out here, so
+ * the same button never shows twice (Characters drops New character, Relationships drops Add a
+ * relationship).
+ * The sections menu is not part of the bar: AtlasFrame puts it at the side on a desktop and under
+ * the bar on tablets and phones.
+ * Who uses it: AtlasFrame. What it calls: StorySwitcher, AtlasSearchBox and AtlasNewCharacter.
  */
 import { Link } from 'react-router';
 
 import { ActionIcon } from '@/components/icons/ActionIcon';
-import { Eyebrow } from '@/components/ui/Eyebrow';
+import { buttonClassName } from '@/components/ui/buttonStyles';
 
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
+import { AtlasNewCharacter } from './AtlasNewCharacter';
 import { AtlasSearchBox } from './AtlasSearchBox';
-import { AtlasSectionNav, type AtlasSection } from './AtlasSectionNav';
+import type { AtlasSection } from './AtlasSectionNav';
 import { StorySwitcher } from './StorySwitcher';
 
-/** The pill links' shared look: grey glass, the add and "go elsewhere" actions (handoff, Buttons). */
-const pillLink =
-  'inline-flex h-11 shrink-0 items-center gap-2 rounded-full button-glass px-5 text-sm font-semibold whitespace-nowrap no-underline';
+/** The text links' look: the underlined text button (CALM-2). */
+const textLink = buttonClassName({ variant: 'text' });
 
 /**
  * Renders the bar.
@@ -32,7 +36,7 @@ const pillLink =
  * @param props.slug - the story open now
  * @param props.writeAddress - where "Write" goes: the latest chapter, or the chapter list
  * @param props.section - the Story Atlas section open now, or null on the search page
- * @returns the glass card with the two rows
+ * @returns the card with the breadcrumb, the links and the adds
  */
 export function AtlasTopBar({
   slug,
@@ -43,30 +47,62 @@ export function AtlasTopBar({
   writeAddress: string;
   section: AtlasSection | null;
 }) {
+  return (
+    <div className="flex min-w-0 flex-wrap items-center justify-between gap-x-6 gap-y-3 rounded-card border border-border bg-surface px-[18px] py-3 shadow-card">
+      <AtlasWhereYouAre slug={slug} writeAddress={writeAddress} />
+      <AtlasTopActions slug={slug} section={section} />
+    </div>
+  );
+}
+
+/** The breadcrumb with the story picker, then Story page, Write and New story. */
+function AtlasWhereYouAre({ slug, writeAddress }: { slug: string; writeAddress: string }) {
   const { t } = useAtlasTranslation();
   return (
-    <div className="flex min-w-0 flex-col gap-3.5 rounded-card border border-border bg-surface px-[18px] py-4 shadow-card">
-      <div className="flex flex-wrap items-center justify-between gap-3.5">
-        {/* Left: where the writer is. */}
-        <div className="flex min-w-0 flex-wrap items-center gap-3">
-          <Eyebrow>{t('eyebrow')}</Eyebrow>
-          <StorySwitcher currentSlug={slug} />
-        </div>
-        {/* Right: search this story, then go and write or start another story. */}
-        <div className="flex min-w-0 flex-wrap items-center gap-2">
-          {/* The search page has its own wide bar, so the small box stays out there. */}
-          {section !== null && <AtlasSearchBox slug={slug} />}
-          <Link to={writeAddress} className={pillLink}>
-            <ActionIcon name="pen" />
-            {t('switcher.write')}
-          </Link>
-          <Link to="/write/new?from=plan" className={pillLink}>
-            <ActionIcon name="plus" />
-            {t('switcher.newStory')}
-          </Link>
-        </div>
+    <div className="flex min-w-0 flex-wrap items-center gap-x-5 gap-y-2">
+      <nav aria-label={t('breadcrumb.label')} className="flex min-w-0 items-center gap-2">
+        <Link to="/plan" className="text-sm font-semibold whitespace-nowrap text-ink no-underline">
+          {t('eyebrow')}
+        </Link>
+        {/* The slash is a separator only, so screen readers skip it. */}
+        <span aria-hidden="true" className="text-meta">
+          /
+        </span>
+        <StorySwitcher currentSlug={slug} />
+      </nav>
+      <div className="flex flex-wrap items-center gap-x-4">
+        <Link to={`/s/${slug}`} className={textLink}>
+          {t('switcher.storyPage')}
+        </Link>
+        <Link to={writeAddress} className={textLink}>
+          {t('switcher.write')}
+        </Link>
+        <Link to="/write/new?from=plan" className={textLink}>
+          {t('switcher.newStory')}
+        </Link>
       </div>
-      <AtlasSectionNav slug={slug} current={section} />
+    </div>
+  );
+}
+
+/** Search, then New character and Add a relationship unless the page already has that button. */
+function AtlasTopActions({ slug, section }: { slug: string; section: AtlasSection | null }) {
+  const { t } = useAtlasTranslation();
+  return (
+    <div className="flex min-w-0 flex-wrap items-start gap-2">
+      {/* The search page has its own wide bar, so the small box stays out there. */}
+      {section !== null && <AtlasSearchBox slug={slug} />}
+      {section !== 'characters' && <AtlasNewCharacter slug={slug} />}
+      {section !== 'connections' && (
+        // ?add=1 opens the Relationships page with its add form already open.
+        <Link
+          to={`/plan/s/${slug}/connections?add=1`}
+          className={buttonClassName({ variant: 'secondary' })}
+        >
+          <ActionIcon name="link" />
+          {t('connections.add.open')}
+        </Link>
+      )}
     </div>
   );
 }

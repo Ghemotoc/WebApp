@@ -171,6 +171,45 @@ const drawings = {
       <path d="m10 9 5 3-5 3z" />
     </>
   ),
+  // Story Atlas: a folded map (CALM-9a, board D01).
+  map: (
+    <>
+      <path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z" />
+      <path d="M9 4v14" />
+      <path d="M15 6v14" />
+    </>
+  ),
+  // New character: a person with a plus (CALM-9a, board E21).
+  personPlus: (
+    <>
+      <circle cx="9" cy="8" r="3.5" />
+      <path d="M2.5 20a6.5 6.5 0 0 1 13 0" />
+      <path d="M19 8v6" />
+      <path d="M16 11h6" />
+    </>
+  ),
+  // A story's start page in the Atlas ("At a glance"): a house (CALM-9a).
+  home: (
+    <>
+      <path d="M4 11 12 4l8 7" />
+      <path d="M6 10v10h12V10" />
+    </>
+  ),
+  // Ideas: a spark of eight short rays (CALM-9a).
+  spark: (
+    <>
+      <path d="M12 3v4" />
+      <path d="M12 17v4" />
+      <path d="M3 12h4" />
+      <path d="M17 12h4" />
+      <path d="m6 6 2.5 2.5" />
+      <path d="m15.5 15.5 2.5 2.5" />
+      <path d="m18 6-2.5 2.5" />
+      <path d="M8.5 15.5 6 18" />
+    </>
+  ),
+  // Marketing: a star (CALM-9a).
+  star: <path d="m12 3 2.8 5.8 6.2.9-4.5 4.4 1 6.3L12 17.5 6.5 20.4l1-6.3L3 9.7l6.2-.9z" />,
   // Link: two chain links (bundle GAPS-16b; board 5.2's formatting toolbar).
   link: (
     <>

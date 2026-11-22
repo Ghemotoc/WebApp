@@ -13,7 +13,6 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
-import { PageContainer } from '@/components/ui/PageContainer';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { useMyStories } from '@/features/writing/hooks/useMyStories';
 
@@ -23,7 +22,7 @@ import { writeAddressFor } from '../lib/writeAddress';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { AtlasPageHeading } from './AtlasPageHeading';
-import { AtlasTopBar } from './AtlasTopBar';
+import { AtlasFrame } from './AtlasFrame';
 import { CastCards } from './CastCards';
 import { CastList } from './CastList';
 import { CastToolbar } from './CastToolbar';
@@ -131,13 +130,15 @@ export function CharactersPage() {
 
   if (!isKnown) return null;
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-8 pt-10 pb-12">
+    <AtlasFrame
+      slug={storySlug}
+      writeAddress={writeAddressFor(story)}
+      section="characters"
+      showsChrome={userId !== null}
+    >
       <title>
         {cast ? t('characters.documentTitle', { title: cast.storyTitle }) : t('homeDocumentTitle')}
       </title>
-      {userId !== null && (
-        <AtlasTopBar slug={storySlug} writeAddress={writeAddressFor(story)} section="characters" />
-      )}
       {userId === null && <p className="m-0 text-body">{t('signedOut')}</p>}
       {loadFailed && <Notice tone="error">{t('loadFailed')}</Notice>}
       {cast === null && <Notice tone="error">{t('notFound')}</Notice>}
@@ -147,6 +148,6 @@ export function CharactersPage() {
           <CastBody slug={storySlug} cast={cast} characterId={characterId} />
         </>
       )}
-    </PageContainer>
+    </AtlasFrame>
   );
 }
