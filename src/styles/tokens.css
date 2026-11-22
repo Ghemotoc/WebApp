@@ -806,7 +806,8 @@
  * The staff area: its own flat, warm beige look with no purple, so staff always know they are in
  * the admin site (handoff, Staff tab; rulebook 3). StaffLayout puts data-area="staff" on its root,
  * so these values replace the member ones for everything inside it. Cards are flat (no glass) and
- * the background has no colour blobs. At night it takes the members' monochrome greys, flat.
+ * the background has no colour blobs. At night it is pure black and grey, flat, with amber kept for
+ * warnings (staff night, 22 Nov 2026; the block after this one).
  */
 [data-area='staff'] {
   /* The staff area's logo is its neutral ink, never purple (handoff, Staff tab). */
@@ -871,64 +872,121 @@
 }
 
 [data-theme='night'] [data-area='staff'] {
-  /* Staff at night: the members' monochrome night, flat (no glass, no galaxy), with the same
-     cobalt main buttons (bundle NIGHT-1; Robert, 8 Nov 2026: "every theme, members, staff"). */
+  /* Staff at night: pure black and grey, flat, desktop only (staff night design files, DESIGN,
+     22 Nov 2026; approved by Robert 22 Nov 2026, 05:54 UTC: "I like how it looks in dark"). There
+     is no cobalt and no other hue: the main button is the near-white fill with dark text, cards
+     are three steps of grey on a black page, nothing casts a shadow, and the one colour left is
+     amber #FFC98A, kept for warnings and anything destructive so it still stands out. */
   --logo: #f5f5f5;
-  --paper: #111113;
+  --paper: #000000;
   /* No galaxy here, so the phone's bars keep the flat page colour (CALM-1). */
-  --browser-bar: #111113;
-  --surface: #1f1f21;
-  --surface-glass: #1f1f21;
-  --tint: #2a2a2d;
-  --panel: #232326;
-  --panel-border: #3a3a3d;
-  --nav-glass: #1f1f21;
-  --glass-border: #3a3a3d;
-  --glass-highlight: rgba(255, 255, 255, 0.08);
-  --field: #1f1f21;
+  --browser-bar: #000000;
+  --night-sky: #000000;
+  --blob-1: #000000;
+  --blob-2: #000000;
+  --blob-3: #000000;
+  --surface: #161616;
+  --surface-glass: #161616;
+  --surface-box: #161616;
+  --surface-box-solid: #161616;
+  --line-box: #3a3a3a;
+  --tint: #242424;
+  --panel: #121212;
+  --panel-border: #3a3a3a;
+  --nav-glass: #161616;
+  --glass-border: #3a3a3a;
+  --glass-highlight: transparent;
+  --field: #0e0e0e;
+  --story-paper: #121212;
+  --story-ink: #f5f5f5;
+  --cover-edge: #3a3a3a;
 
   --ink: #f5f5f5;
+  --ink-on-light: #111113;
   --heading: #ffffff;
-  --body: #cccccc;
-  --meta: #cccccc;
+  --body: #c4c4c4;
+  --meta: #c4c4c4;
   --eyebrow: #ffffff;
   --link: #ffffff;
-  --link-hover: #cccccc;
-  --destructive: #ff9aa8;
+  --link-hover: #d6d6d6;
+  --destructive: #ffc98a;
 
   --primary: #f5f5f5;
   --on-primary: #111113;
   --chip-on: #f5f5f5;
   --chip-on-text: #111113;
-  --accent: #5b95ee;
-  --accent-deep: #111113;
+  --accent: #d6d6d6;
+  --accent-deep: #000000;
   --thread: #f5f5f5;
-  /* The same flat cobalt as the members' night (the simplified design, CALM-1). */
-  --plum-from: #0047ab;
-  --plum-to: #0047ab;
-  --on-plum: #ffffff;
-  --plum-hover-from: #2663b8;
-  --plum-hover-to: #2663b8;
+  --gold: #f5f5f5;
+  --on-gold: #111113;
+  /* The main button: the near-white fill with dark text, a light grey on hover and press. */
+  --plum-from: #f5f5f5;
+  --plum-to: #f5f5f5;
+  --on-plum: #111113;
+  --plum-hover-from: #d6d6d6;
+  --plum-hover-to: #d6d6d6;
+  --quiet-pressed-bg: #f5f5f5;
+  --quiet-pressed-hover: #ffffff;
+  --quiet-pressed-text: #111113;
+  --tab-current: var(--ink);
 
-  --border: #3a3a3d;
-  --hairline: #2a2a2d;
-  --control-border: #8a8a8e;
+  --border: #3a3a3a;
+  --hairline: #262626;
+  --control-border: #8e8e94;
   --dashed-border: #6e6e72;
   --focus-ring: #ffffff;
-  --focus-halo: rgba(17, 17, 19, 0.9);
+  --focus-halo: rgba(0, 0, 0, 0.9);
 
-  --info-bg: #2e2e30;
-  --info-border: #5a5a5e;
+  /* Every pill is grey: staff read the word, not the colour. */
+  --info-bg: #1e1e1e;
+  --info-border: #5a5a5a;
   --info-text: #f5f5f5;
-  --pill-plum-bg: #2a2a2d;
-  --pill-plum-border: #5a5a5e;
+  --pill-plum-bg: #1e1e1e;
+  --pill-plum-border: #5a5a5a;
   --pill-plum-text: #f5f5f5;
-  --pill-neutral-bg: #262629;
-  --pill-neutral-border: #5a5a5e;
+  --pill-neutral-bg: #1e1e1e;
+  --pill-neutral-border: #5a5a5a;
   --pill-neutral-text: #e6e6e6;
+  --pill-sage-bg: #1e1e1e;
+  --pill-sage-border: #5a5a5a;
+  --pill-sage-text: #f5f5f5;
+  --pill-sky-bg: #1e1e1e;
+  --pill-sky-border: #5a5a5a;
+  --pill-sky-text: #f5f5f5;
+  /* Gold and blush pills mark something that needs a look, so they take the amber warning. */
+  --pill-gold-bg: #161616;
+  --pill-gold-border: #ffc98a;
+  --pill-gold-text: #ffc98a;
+  --pill-blush-bg: #161616;
+  --pill-blush-border: #ffc98a;
+  --pill-blush-text: #ffc98a;
 
-  --progress-from: #cccccc;
-  --progress-to: #ffffff;
+  /* Notices: success is grey; a warning or an error is the amber edge and text on a grey box. */
+  --success-bg: #1e1e1e;
+  --success-border: #5a5a5a;
+  --success-text: #f5f5f5;
+  --warning-bg: #161616;
+  --warning-border: #ffc98a;
+  --warning-text: #ffc98a;
+  --error-bg: #161616;
+  --error-border: #ffc98a;
+  --error-text: #ffc98a;
+
+  --progress-from: #8a8a8a;
+  --progress-to: #f5f5f5;
+  --track: #262626;
+
+  /* Flat: no glass film, no rim and no shadow anywhere in the staff area at night. */
+  --lg-rim: #3a3a3a;
+  --lg-card-bg: none;
+  --lg-float-bg: none;
+  --lg-card-shadow: none;
+  --lg-card-shadow-hover: none;
+  --lg-dark-shadow: none;
+  --shadow-nav: none;
+  --shadow-card: none;
+  --shadow-popover: none;
 }
 
 /*
