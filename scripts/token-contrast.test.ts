@@ -260,18 +260,39 @@ describe('design token contrast', () => {
     expect(themes.night.get('plum-to')).toBe('#0047ab');
   });
 
-  it('draws the main button in one flat colour, plum by day and cobalt at night (CALM-1)', () => {
+  it('draws the main button in one flat colour, plum by day and cobalt at night for members (CALM-1)', () => {
     // Robert, 20 Nov 2026: flat plum #48125D, replacing the 11 Nov Revolver button.
     expect(themes.light.get('plum-from')).toBe('#48125d');
     expect(themes.light.get('plum-to')).toBe('#48125d');
     expect(themes.light.get('plum-hover-from')).toBe('#672786');
     expect(themes.light.get('plum-hover-to')).toBe('#672786');
-    for (const night of [themes.night, themes.staffNight]) {
-      expect(night.get('plum-from')).toBe('#0047ab');
-      expect(night.get('plum-to')).toBe('#0047ab');
-      expect(night.get('plum-hover-from')).toBe('#2663b8');
-      expect(night.get('plum-hover-to')).toBe('#2663b8');
-    }
+    expect(themes.night.get('plum-from')).toBe('#0047ab');
+    expect(themes.night.get('plum-to')).toBe('#0047ab');
+    expect(themes.night.get('plum-hover-from')).toBe('#2663b8');
+    expect(themes.night.get('plum-hover-to')).toBe('#2663b8');
+  });
+
+  it('draws staff at night in pure black and grey, with amber kept for warnings (staff night, Robert, 22 Nov 2026)', () => {
+    const staffNight = themes.staffNight;
+    // Black page, grey cards and a near-white main button with dark text: no cobalt.
+    expect(staffNight.get('paper')).toBe('#000000');
+    expect(staffNight.get('surface')).toBe('#161616');
+    expect(staffNight.get('plum-to')).toBe('#f5f5f5');
+    expect(staffNight.get('on-plum')).toBe('#111113');
+    // Amber #FFC98A is the only hue: warnings, errors and destructive actions.
+    expect(staffNight.get('warning-text')).toBe('#ffc98a');
+    expect(staffNight.get('error-text')).toBe('#ffc98a');
+    expect(staffNight.get('destructive')).toBe('#ffc98a');
+    // Every other colour the staff night block sets is a grey: its red, green and blue are within
+    // 8 of each other (#111113 and #8E8E94 are the cool greys the member night uses too).
+    const hues = [...staffNightTokens.values()]
+      .filter((value) => /^#[0-9a-f]{6}$/i.test(value))
+      .filter((value) => value.toLowerCase() !== '#ffc98a')
+      .filter((value) => {
+        const channels = [1, 3, 5].map((start) => parseInt(value.slice(start, start + 2), 16));
+        return Math.max(...channels) - Math.min(...channels) > 8;
+      });
+    expect(hues).toEqual([]);
   });
 
   it("draws the thread in each look's own accent by day and white at night (CALM-1)", () => {

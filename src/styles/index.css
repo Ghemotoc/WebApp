@@ -891,6 +891,12 @@ dialog.bg-surface,
   background-color: var(--border);
 }
 
+/* Staff at night is pure black and grey (staff night, Robert, 22 Nov 2026), so the quiet button is
+   the grey tint alone, without the faint purple film the day button mixes in. */
+[data-theme='night'] [data-area='staff'] .button-glass {
+  background-color: var(--tint);
+}
+
 /*
  * Staff pages stay exactly as they were before the 20 to 21 Nov defaults (Robert, 21 Nov 2026,
  * 06:08 UTC: "Staff should remain the same"; canvas v40 notes; CALM-1c). A pressed quiet button
