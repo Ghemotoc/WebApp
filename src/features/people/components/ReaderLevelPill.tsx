@@ -1,12 +1,12 @@
 /**
- * ReaderLevelPill: a person's reading level as a plain glass text pill, "Bookworm", beside their
- * writing rank above the pen name (bundle G7a; the Profile board's second `tag`).
+ * ReaderLevelPill: a person's reading level as a plain badge, "Bookworm", beside their writing
+ * rank above the pen name (bundle G7a; the Profile board's second `tag`; Badge since CALM-7a).
  *
  * Shown only when there is a level and its owner shows it on their profile; the owner sees their
  * own hidden level in the Reading level card instead, so the header looks the way others see it.
  * Who uses it: ProfileHeader. What it calls: useProfileReaderLevel → profile_reader_level().
  */
-import { GlassTag } from '@/components/ui/GlassTag';
+import { Badge } from '@/components/ui/Badge';
 
 import { useProfileReaderLevel } from '../hooks/useReaderLevel';
 import { usePeopleTranslation } from '../registerPeopleTranslations';
@@ -41,13 +41,13 @@ export function ReaderLevelPill({ handle }: { handle: string }) {
   const reading = useProfileReaderLevel(handle).data ?? null;
   if (reading === null || reading.level === null || !reading.isShown) return null;
   return (
-    <GlassTag
+    <Badge
       icon={<BookIcon />}
       title={t('readerLevel.pillTitle')}
       hiddenPrefix={t('readerLevel.prefix')}
       testId="reader-level-pill"
     >
       {t(`readerLevel.names.${reading.level}`)}
-    </GlassTag>
+    </Badge>
   );
 }

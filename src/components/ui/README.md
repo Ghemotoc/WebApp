@@ -15,7 +15,7 @@ The shared building blocks every screen uses, one component per file. Built by S
 | `ChoiceChips` | Pick one of a few choices: a radiogroup of chips with arrow-key moves, a tick on the chosen one, dashed when disabled (S1-E3-01) |
 | `LabelRows` is used by the story page's "Labels from the writer" (S1-E3-05) |
 | `Card`, `LabelRows`, `Eyebrow`, `EmptyState`, `Notice` | Glass panels (every `rounded-card bg-surface border-border` gets the glass rim, G3), label and value rows with fine lines, eyebrow labels, empty states, coloured messages |
-| `GlassTag` | The plain glass text pill for a writing rank and a reading level: a 14 px icon, the name and a hidden prefix for screen readers (G7a) |
+| `Badge` | An earned or identity mark (writing rank, reading level): a flat 28 px pill on the box surface with an optional 14 px icon, the name and a hidden prefix for screen readers (CALM-7a; replaces the G7a glass tag) |
 | `Tabs` | A tablist whose chosen tab is bold in the link colour, no underline bar; long rows wrap (G3) |
 | `StoryCard` | One story in a row: the cover at its column's width, then the title and meta line, all one link; an optional 2 px progress line for Continue reading (CALM-4) |
 | `Hero` and `Meter` | The one glass panel at the top of a page (padding 40 px, 24 px under 900 px) and its 2 px progress line, a `role="meter"` with the value in words (CALM-4) |

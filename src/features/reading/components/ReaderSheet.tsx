@@ -31,11 +31,14 @@ export interface ReaderSheetProps {
   children: ReactNode;
 }
 
-/** The sheet's classes: glass at the bottom edge, the 70dvh cap and the home bar's room. */
+/**
+ * The sheet's classes: the one box surface at the bottom edge, the 70dvh cap and the home bar's
+ * room. The sheet never paints its own colour (Robert, 21 Nov 2026, 15:58 UTC; CALM-7a): box-surface
+ * gives the warm off-white by day and the dark glass, with its blur, at night (index.css).
+ */
 const sheetClasses = [
-  'tmc-reader-sheet m-0 mt-auto max-h-[70dvh] w-full max-w-none overflow-y-auto',
-  'rounded-t-[24px] rounded-b-none border border-b-0 border-[var(--glass-border)]',
-  'bg-[color-mix(in_srgb,var(--surface)_94%,transparent)] p-0 text-body shadow-popover backdrop-blur-[24px] backdrop-saturate-[1.8]',
+  'tmc-reader-sheet box-surface m-0 mt-auto max-h-[70dvh] w-full max-w-none overflow-y-auto',
+  'rounded-t-[24px] rounded-b-none p-0 text-body shadow-popover',
 ].join(' ');
 
 /**

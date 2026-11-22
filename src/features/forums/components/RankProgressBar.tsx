@@ -42,7 +42,7 @@ export function RankProgressBar({ rank, name }: RankProgressBarProps) {
         aria-valuemax={100}
         className="h-2 overflow-hidden rounded-full bg-tint"
       >
-        <div className="h-full rounded-full bg-[#672786]" style={{ width: `${percent}%` }} />
+        <div className="h-full rounded-full bg-thread" style={{ width: `${percent}%` }} />
       </div>
       <p className="m-0 text-[13px] text-meta">
         {t(wordsKey, {

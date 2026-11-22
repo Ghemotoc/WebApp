@@ -460,14 +460,12 @@
  */
 .segmented-track {
   background-color: var(--track);
-  box-shadow: inset 0 1px 3px rgb(20 10 30 / 0.12);
 }
 
 .segmented-bubble {
   background-color: var(--bubble);
-  box-shadow:
-    inset 0 1px 0 var(--glass-highlight),
-    0 4px 12px -6px rgb(20 10 30 / 0.35);
+  /* Flat (CALM-7a, canvas v47): the design system's soft rest shadow, no top edge light. */
+  box-shadow: var(--lg-card-shadow);
   transition:
     left 280ms ease-out,
     top 280ms ease-out,
@@ -745,17 +743,15 @@ dialog.bg-surface,
   background-color: var(--nav-glass);
   background-image: var(--lg-card-bg);
   border: 1px solid var(--glass-border);
-  box-shadow:
-    inset 0 1px 0 var(--glass-highlight),
-    inset 0 -3px 8px rgb(42 14 51 / 0.06),
-    var(--shadow-nav);
+  /* Flat (CALM-7a, canvas v47): no top edge light and no inner shade, only the nav shadow. */
+  box-shadow: var(--shadow-nav);
 }
 
 /*
  * Floating bars (top bar, phone header, tab bar, focus header): the website's navbar island
  * (GLASS-2; the website's .lg-light with data-solid, its look once the page scrolls). Near-solid
- * white that thins a little downwards, the strong blur, the bright rim, a white top edge, a soft
- * inner shade and the violet drop shadow. Here the bar spans the width instead of being centred,
+ * white in one even fill (flat since CALM-7a, canvas v47), the strong blur, the bright rim and a
+ * soft drop shadow. Here the bar spans the width instead of being centred,
  * so the space is used (Robert, 11 Nov 2026).
  */
 @utility glass-float {
@@ -853,17 +849,14 @@ dialog.bg-surface,
 /*
  * "On" states (bundle G3 COMPONENTS; handoff: "Every pill is liquid glass. Plum is for finishing
  * actions and 'on' states"). Every pressed chip, chosen reason and other bg-chip-on fill keeps its
- * tested colour and gains a soft glass sheen along its top: a faint white wash that fades out
- * above the text, so the text's contrast does not change, plus a one-pixel top highlight.
+ * tested colour as one flat fill: the sheen and top highlight it had in the liquid glass bundles
+ * went in CALM-7a (canvas v47: no 3D bevel or shine anywhere).
  */
 .bg-chip-on {
-  /* The website's dark sheen on "on" pills (GLASS-2): it fades out above the text's middle and
-     only darkens below, so the white text keeps its contrast. */
+  /* --lg-dark-sheen is see-through since CALM-7a, so the fill stays flat. */
   background-image: var(--lg-dark-sheen);
-  --tw-inset-shadow: inset 0 1px 0 rgb(255 255 255 / 0.42), inset 0 -3px 8px rgb(0 0 0 / 0.22);
-  box-shadow:
-    var(--tw-inset-shadow),
-    0 8px 18px -10px rgb(42 14 51 / 0.45);
+  /* Flat since CALM-7a (canvas v47): no top highlight, inner shade or coloured shadow. */
+  box-shadow: none;
 }
 
 /*
@@ -939,7 +932,8 @@ dialog.bg-surface,
 /*
  * Cards (bundle G3 COMPONENTS; handoff "Cards and status": cards are liquid glass, radius --r-lg).
  * Every plain card (rounded-card, bg-surface and the soft border-border edge) takes the bright glass
- * rim and a one-pixel highlight along its top edge, so it reads as a pane of glass over the blobs.
+ * rim. Its one-pixel top highlight reads --glass-highlight, which is see-through on member pages
+ * since CALM-7a (canvas v47: no bevel); the staff area keeps its own value.
  * A card with a status border (border-destructive and so on) keeps it: the selector only matches
  * border-border. The staff area stays flat, with its plain border and no highlight.
  */
@@ -949,10 +943,10 @@ dialog.bg-surface,
 }
 
 /*
- * 3D liquid glass on every member card (GLASS-2; Robert, 11 Nov 2026: "the same on this app like
- * on the main website"). The recipe is the website's .surface-card: white that thins downwards
- * (--lg-card-bg), a strong blur of what lies behind, the bright rim, a white top edge, a soft
- * inner shade along the bottom and a violet drop shadow. This reverses the 7 Nov 2026 rule of
+ * Glass on every member card (GLASS-2; Robert, 11 Nov 2026: "the same on this app like
+ * on the main website"), made flat in CALM-7a (canvas v47): one even see-through fill
+ * (--lg-card-bg), a strong blur of what lies behind, the bright rim and a soft drop shadow, with no
+ * white top edge and no inner shade. CALM-1c then paints most cards the box surface (below). This reverses the 7 Nov 2026 rule of
  * blur only on dialogs and pop-overs; to stay light on weaker devices the blur drops to 8 px
  * under 1024 px wide, as the website does, and "Reduce transparency" turns it off. A link or
  * button drawn as a card lifts its shadow on hover. The staff area stays flat.
@@ -1101,12 +1095,11 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 
 /*
  * The big coloured bands are glass too (GLASS-2; Robert, 11 Nov 2026: "the big coloured sections,
- * they also are in glass"). A deep band keeps its colour under the website's dark sheen, a white
- * rim at 28% and the deep drop shadow, as the website's .cta-room does. A tinted band (gold, sage
- * and the rest) keeps its tint under a white wash that thins downwards, a bright rim, a white top
- * edge and a soft violet shadow, as the website's .tint-card does. Cards inside a deep band are
- * clear glass: a faint white wash and a white top edge. Text colours stay as they are, so contrast
- * is unchanged: the washes are at most 16% white over colours chosen for 7:1.
+ * they also are in glass"), flat since CALM-7a (canvas v47: no 3D bevel or shine). A deep band
+ * keeps its colour, a white rim at 28% and the soft drop shadow. A tinted band (gold, sage and the
+ * rest) keeps its tint, a bright rim and the soft shadow, with no wash. Cards inside a deep band
+ * are clear glass: one faint even white wash. Text colours stay as they are, so contrast is
+ * unchanged: the wash is 8% white over colours chosen for 7:1.
  */
 .glass-band-deep,
 .rounded-3xl.bg-primary:not([data-area='staff'] *) {
@@ -1117,14 +1110,15 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 
 .glass-band-tint,
 :is(.rounded-card, .rounded-2xl, [class*='rounded-[2']).bg-tint:not([data-area='staff'] *) {
-  background-image: linear-gradient(180deg, rgb(255 255 255 / 0.4), rgb(255 255 255 / 0) 65%);
+  /* Flat since CALM-7a (canvas v47): the tint alone, no white wash fading downwards. */
+  background-image: none;
   border: 1px solid rgb(255 255 255 / 0.75);
   box-shadow: var(--lg-card-shadow);
 }
 
 .glass-band-inner {
-  background-image: linear-gradient(180deg, rgb(255 255 255 / 0.1), rgb(255 255 255 / 0.03));
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.3);
+  /* One even faint wash, no top edge light (CALM-7a, canvas v47). */
+  background-image: linear-gradient(rgb(255 255 255 / 0.08), rgb(255 255 255 / 0.08));
 }
 
 /*
@@ -1218,7 +1212,7 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
     backdrop-filter: none;
   }
 
-  /* The cards' 3D glass turns solid: the colour it looks like, no blur (GLASS-2). */
+  /* The cards' glass turns solid: the colour it looks like, no blur (GLASS-2). */
   :is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surface.border-border:not(
       dialog,
       .shadow-popover,
@@ -1728,6 +1722,11 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
     overflow-y: auto;
     overscroll-behavior: contain;
   }
+}
+/* The reader's bottom sheet sits on the screen's bottom edge, so it has no bottom edge line (the
+   box surface draws all four sides; CALM-7a). */
+.tmc-reader-sheet.box-surface {
+  border-bottom-width: 0;
 }
 /* The reader's bottom sheet's scrim (handover Step 4, point 4): light by day, darker at night. */
 .tmc-reader-sheet::backdrop {

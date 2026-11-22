@@ -52,7 +52,7 @@ export function AvatarColourSwatches({ part, draft, onChoose }: AvatarColourSwat
               aria-label={t('builder.choice', { part: partName, choice: colourName })}
               title={colourName}
               onClick={() => onChoose(part, colour)}
-              className={`inline-flex size-11 items-center justify-center rounded-full border border-[rgba(38,20,46,0.14)] ${
+              className={`inline-flex size-11 items-center justify-center rounded-full border border-(--swatch-edge) ${
                 isChosen ? 'ring-2 ring-link ring-offset-2 ring-offset-surface' : ''
               }`}
               style={{ backgroundColor: `#${colour}` }}
