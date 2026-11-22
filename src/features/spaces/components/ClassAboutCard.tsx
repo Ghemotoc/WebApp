@@ -6,11 +6,11 @@
  * with the code), then what happens at the end of the school year and, when the class has a lock
  * date, the day it locks. Plain words, no doodles, the same panel style as the rules card.
  * Who shows it: SpacePage, in the side column of a class space.
- * What it calls: lockDateText() in api/classTools.ts for the date.
+ * What it calls: lockMomentText() in api/classTools.ts for the lock date and time, on the viewer's own clock.
  */
 import { Eyebrow } from '@/components/ui/Eyebrow';
 
-import { lockDateText } from '../api/classTools';
+import { lockMomentText } from '../api/classTools';
 import type { Space } from '../api/spaces';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
@@ -48,7 +48,7 @@ export function ClassAboutCard({ space }: { space: Space }) {
       <p className="m-0 text-sm text-body">{t('classSpace.yearEndText')}</p>
       {space.locksAt !== null && !space.isLocked && (
         <p className="m-0 text-sm text-body">
-          {t('classSpace.locksOn', { date: lockDateText(space.locksAt, i18n.language) })}
+          {t('classSpace.locksOn', { date: lockMomentText(space.locksAt, i18n.language) })}
         </p>
       )}
     </section>

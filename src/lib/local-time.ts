@@ -65,6 +65,16 @@ export function formatLocalDateTime(instant: Date, language: string, timeZone?: 
   }).format(instant);
 }
 
+/**
+ * The viewer's own time zone, as the browser names it ("Europe/Bucharest"), for the note under a
+ * date and time field (CALM-7d: DESIGN, 21 Nov 2026, "date, time, zone, member local").
+ *
+ * @returns the IANA zone name, or "UTC" when the browser gives none
+ */
+export function deviceTimeZone(): string {
+  return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+}
+
 /** Two digits, for the "YYYY-MM-DD" and "HH:MM" text the date and time fields use. */
 function twoDigits(value: number): string {
   return String(value).padStart(2, '0');

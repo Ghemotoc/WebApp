@@ -3,21 +3,24 @@
  * S1-E8-11: at the end of the school year a class space locks, so nobody can post, and every
  * member can still read it; board ClassSpace, "Lock the space now" and "Unlock the space").
  *
- * What it shows: the day the space locks (new classes lock on the next 1 July), a date field to
- * change it, "Lock the space now", and once locked, a note and "Unlock the space" (not for an
- * archived class, which stays locked for good: CLASSES-d). Plain card
- * style, no doodles.
+ * What it shows: the moment the space locks (new classes lock on the next 1 July), the shared
+ * date and time field to change it (CALM-7d: a date, a time and the viewer's own time zone, as
+ * every member date field since CALM-1c), "Lock the space now", and once locked, a note and
+ * "Unlock the space" (not for an archived class, which stays locked for good: CLASSES-d). Plain
+ * card style, no doodles.
  * Who shows it: SpaceSettingsPage, for a class space, to whoever holds its settings power (the
  * teacher, a space moderator given it, our moderation team). The database checks again.
- * What it calls: useClassLock → set_class_lock(); the date helpers in api/classTools.ts.
+ * What it calls: useClassLock → set_class_lock(); the lock helpers in api/classTools.ts and
+ * DateTimeField.
  */
 import { type FormEvent, useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
+import { DateTimeField } from '@/components/ui/DateTimeField';
 import { Notice } from '@/components/ui/Notice';
-import { TextInput } from '@/components/ui/TextInput';
+import { deviceTimeZone } from '@/lib/local-time';
 
-import { lockDateText, lockDayOf, lockTimeOf } from '../api/classTools';
+import { lockFieldsOf, lockMomentText, lockTimeOf } from '../api/classTools';
 import type { Space } from '../api/spaces';
 import { useClassLock } from '../hooks/useClassTools';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
@@ -45,12 +48,12 @@ function LockDateForm({
   onSaved: () => void;
 }) {
   const { t, i18n } = useSpacesTranslation();
-  const [day, setDay] = useState(lockDayOf(space.locksAt));
+  const [fields, setFields] = useState(lockFieldsOf(space.locksAt));
 
-  /** Saves the picked day (or no day, which leaves the class unlocked with no date). */
+  /** Saves the picked moment (or no date, which leaves the class unlocked with no date). */
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const changed = await locking.change(day === '' ? null : lockTimeOf(day)).catch(() => null);
+    const changed = await locking.change(lockTimeOf(fields)).catch(() => null);
     if (changed !== null) onSaved();
   }
 
@@ -65,16 +68,16 @@ function LockDateForm({
       <p className="m-0 text-body">
         {space.locksAt === null
           ? t('classLock.noDate')
-          : t('classLock.locksOn', { date: lockDateText(space.locksAt, i18n.language) })}
+          : t('classLock.locksOn', { date: lockMomentText(space.locksAt, i18n.language) })}
       </p>
-      <TextInput
-        id="class-lock-day"
-        type="date"
-        label={t('classLock.date')}
-        hint={t('classLock.dateHint')}
-        value={day}
-        onChange={(event) => setDay(event.target.value)}
-        className="w-fit"
+      <DateTimeField
+        id="class-lock"
+        value={fields}
+        onChange={setFields}
+        dateLabel={t('classLock.date')}
+        timeLabel={t('classLock.time')}
+        note={t('classLock.dateHint', { zone: deviceTimeZone() })}
+        skippedHourNote={(time) => t('classLock.skippedHourNote', { time })}
       />
       <div className="flex flex-wrap gap-3">
         <Button type="submit" disabled={locking.isRunning}>

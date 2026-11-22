@@ -9,8 +9,11 @@
  * …_classes_d_pilot_setup.sql. The database checks every rule (who holds which power, the
  * lock date); this file only reads its answers and turns refusals into ClassToolError.
  */
+import type { DateTimeValue } from '@/components/ui/DateTimeField';
 import type { Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
+import { localFieldsFor, localTimeToInstant } from '@/lib/local-time';
+import { dateLocaleFor } from '@/lib/romania-time';
 
 import { spaceErrorFrom, type SpaceSettings } from './spaces';
 
@@ -162,35 +165,49 @@ export async function fetchClassWaitingMembers(
   return Array.isArray(data) ? data.map(waitingMemberFrom) : [];
 }
 
-/** Class spaces lock at the start of a day in Romania (S1-E8-11; the school year is Romanian). */
-const lockTimeZone = 'Europe/Bucharest';
-
 /**
- * The day a lock time falls on in Romania, as the date field holds it.
+ * The lock form's starting values: the saved lock moment on the viewer's own clock, or an empty
+ * date with midnight when there is none (CALM-7d: the teacher picks a date and a time on their own
+ * clock, as every member date field does since CALM-1c).
  *
  * @param locksAt - the lock time from the database (ISO), or null
- * @returns "YYYY-MM-DD", or an empty string when there is no lock time
+ * @returns { date: "YYYY-MM-DD" or "", time: "HH:MM" }
  */
-export function lockDayOf(locksAt: string | null): string {
-  if (locksAt === null) return '';
-  // The Canadian English format writes dates as YYYY-MM-DD, the date field's own format.
-  return new Intl.DateTimeFormat('en-CA', {
-    timeZone: lockTimeZone,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).format(new Date(locksAt));
+export function lockFieldsOf(locksAt: string | null): DateTimeValue {
+  if (locksAt === null) return { date: '', time: '00:00' };
+  return localFieldsFor(new Date(locksAt));
 }
 
 /**
- * The lock time for a day picked in the date field: the start of that day, Romanian time.
- * Postgres reads the time zone name itself, so summer and winter time are always right.
+ * The moment the lock form's date and time mean, ready for set_class_lock().
  *
- * @param day - "YYYY-MM-DD" from the date field
- * @returns the time to send to set_class_lock()
+ * @param fields - the typed date and time, on the viewer's own clock
+ * @returns the ISO moment, or null when the date is empty or not a real date and time
  */
-export function lockTimeOf(day: string): string {
-  return `${day} 00:00:00 ${lockTimeZone}`;
+export function lockTimeOf(fields: DateTimeValue): string | null {
+  const instant = localTimeToInstant(fields.date, fields.time);
+  return instant === null ? null : instant.toISOString();
+}
+
+/** Staff screens still read lock dates on Romania's calendar until CALM-9 redraws them. */
+const lockTimeZone = 'Europe/Bucharest';
+
+/**
+ * A lock moment as a member reads it, on their own clock: "1 July 2027 at 00:00" or "1 iulie 2027 la 00:00" (CALM-7d; the
+ * viewer's local time, CALM-8b).
+ *
+ * @param locksAt - the lock time (ISO)
+ * @param language - the interface language
+ * @param timeZone - an IANA zone for tests; left out, the browser's own zone is used
+ * @returns the long date and the time
+ */
+export function lockMomentText(locksAt: string, language: string, timeZone?: string): string {
+  return new Intl.DateTimeFormat(dateLocaleFor(language), {
+    dateStyle: 'long',
+    timeStyle: 'short',
+    hourCycle: 'h23',
+    timeZone,
+  }).format(new Date(locksAt));
 }
 
 /**

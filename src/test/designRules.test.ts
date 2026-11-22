@@ -81,8 +81,7 @@ const plainDateInputExceptions = [
   '/src/features/messages/components/MessageEmailSettings.tsx', // a time of day on its own
   '/src/features/moderation/components/AddShiftForm.tsx', // staff: the on-call rota
   '/src/features/interface-text/components/LocaleTextPanel.tsx', // staff: interface text
-  // CALM-7d moves these three onto DateTimeField with a time and a time zone; take them out then.
-  '/src/features/spaces/components/ClassLockCard.tsx',
+  // CALM-7d moves these two onto DateTimeField with a time and a time zone; take them out then.
   '/src/features/spaces/components/ClassDueDateField.tsx',
   '/src/features/class-competitions/components/CompetitionFormPage.tsx',
 ];

@@ -99,7 +99,9 @@ test.describe('class tools (CLASSES-b, S1-E8-11)', () => {
     await expect(page).toHaveURL(new RegExp(`${classAddress}$`));
     await expect(page.getByRole('heading', { level: 1, name: className })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'How a class space starts' })).toBeVisible();
-    await expect(page.getByText(/It locks on (1 July|July 1), \d{4}/)).toBeVisible();
+    // The lock moment (the start of 1 July, Romanian time) shows on the browser's own clock, with
+    // its time (CALM-7d), so the day depends on where the browser is.
+    await expect(page.getByText(/It locks on .+ \d{4} at \d{2}:\d{2}\./)).toBeVisible();
     await page.context().close();
     code = makeCode();
   });
@@ -140,7 +142,16 @@ test.describe('class tools (CLASSES-b, S1-E8-11)', () => {
   }) => {
     const teacher = await openAs(browser, 'teacher', `${classAddress}/settings`);
     const card = teacher.getByRole('region', { name: 'When the class locks' });
-    await expect(card.getByLabel('Lock date')).toHaveValue(/^\d{4}-07-01$/);
+    // A new class locks at the start of 1 July, Romanian time (UTC+3 in summer). The form shows
+    // that moment on the browser's own clock (CALM-7d), so read the two boxes back as a moment.
+    await expect(card.getByLabel('Lock date')).toHaveValue(/^\d{4}-\d{2}-\d{2}$/);
+    const typedDate = await card.getByLabel('Lock date').inputValue();
+    const typedTime = await card.getByLabel('Lock time').inputValue();
+    const lockMoment = await teacher.evaluate(
+      ([date, time]) => new Date(`${date}T${time}`).toISOString(),
+      [typedDate, typedTime],
+    );
+    expect(lockMoment).toMatch(/^\d{4}-06-30T21:00:00\.000Z$/);
     await card.getByRole('button', { name: 'Lock the space now' }).click();
     await expect(card.getByText('The space is locked.', { exact: false })).toBeVisible();
 
