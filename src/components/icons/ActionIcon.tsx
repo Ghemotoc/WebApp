@@ -209,9 +209,7 @@ const drawings = {
     </>
   ),
   // Marketing: a star (CALM-9a).
-  star: (
-    <path d="m12 3 2.8 5.8 6.2.9-4.5 4.4 1 6.3L12 17.5 6.5 20.4l1-6.3L3 9.7l6.2-.9z" />
-  ),
+  star: <path d="m12 3 2.8 5.8 6.2.9-4.5 4.4 1 6.3L12 17.5 6.5 20.4l1-6.3L3 9.7l6.2-.9z" />,
   // Link: two chain links (bundle GAPS-16b; board 5.2's formatting toolbar).
   link: (
     <>
