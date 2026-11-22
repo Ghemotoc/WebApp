@@ -1,19 +1,21 @@
 /**
- * HubPrompt: the prompt of the week on the Writers' hub (bundle GAPS-12c; board WritersHub,
- * "Prompt of the week").
+ * HubPrompt: the prompt of the week on the Home page, the Writers' hub (bundle GAPS-12c; since
+ * CALM-7c the left of "Tools for the next chapter" on the simplified board New-Home: a small
+ * heading, the prompt as a quote, a meta line and a quiet button, with no card around it).
  *
  * The card shows this week's prompt in the reader's language, how many writers started a story
  * from it and how long it still runs, then "Write from this prompt" (the new-story screen, which
  * remembers the prompt) and "Another prompt", which pages through the earlier ones and back to
  * the first. An earlier prompt can still be written from; it only loses "ends in". With no prompt
  * yet the card stays away, so the hub never shows an empty box.
- * Who shows it: WritersHubPage. What it calls: useHubPrompts → writers_hub_prompts().
+ * Who shows it: HubToolsSection. What it calls: useHubPrompts → writers_hub_prompts().
  */
 import { useState } from 'react';
 import { Link } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
 import { buttonClassName } from '@/components/ui/buttonStyles';
+import { MetaLine } from '@/components/ui/MetaLine';
 import { Notice } from '@/components/ui/Notice';
 
 import type { HubPrompt as HubPromptRow } from '../api/hubPrompts';
@@ -41,7 +43,7 @@ function PromptFacts({ prompt, now }: { prompt: HubPromptRow; now: Date }) {
     );
   }
   if (facts.length === 0) return null;
-  return <p className="m-0 text-sm text-meta">{facts.join(' · ')}</p>;
+  return <MetaLine facts={facts.map((text) => ({ text }))} />;
 }
 
 /**
@@ -61,33 +63,27 @@ export function HubPrompt({ now }: { now: Date }) {
   if (prompt === undefined) return null;
   const words = i18n.language === 'ro' ? prompt.promptRo : prompt.promptEn;
   return (
-    <section
-      aria-labelledby="hub-prompt"
-      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card md:p-8"
-    >
-      <h2 id="hub-prompt" className="eyebrow m-0">
+    <section aria-labelledby="hub-prompt" className="flex flex-col gap-3">
+      <h3 id="hub-prompt" className="m-0 type-subheading">
         {prompt.isCurrent ? t('hub.prompt.eyebrow') : t('hub.prompt.earlierEyebrow')}
-      </h2>
+      </h3>
       {/* Announced when "Another prompt" swaps the words, so a screen reader hears the new one. */}
-      <p
+      <blockquote
         aria-live="polite"
-        className="m-0 font-heading text-[clamp(22px,2.6vw,28px)] leading-snug font-bold break-words text-heading"
+        className="m-0 border-l-2 border-thread pl-4 font-story text-[19px] leading-snug break-words text-heading italic"
       >
         {words}
-      </p>
+      </blockquote>
       <PromptFacts prompt={prompt} now={now} />
-      <div className="flex flex-wrap gap-3">
+      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2">
         <Link
           to={`/write/new?prompt=${prompt.promptId}`}
-          className={buttonClassName({ variant: 'primary' })}
+          className={buttonClassName({ variant: 'secondary' })}
         >
           {t('hub.prompt.write')}
         </Link>
         {prompts.length > 1 && (
-          <Button
-            variant="secondary"
-            onClick={() => setShownIndex((shownIndex + 1) % prompts.length)}
-          >
+          <Button variant="text" onClick={() => setShownIndex((shownIndex + 1) % prompts.length)}>
             {t('hub.prompt.another')}
           </Button>
         )}

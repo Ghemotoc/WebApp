@@ -15,8 +15,8 @@ export const howToKeyPrefix = 'how-to-';
 /** The address of the writers' rights page, /help/writers-rights. */
 export const writersRightsKey = 'writers-rights';
 
-/** How many guides the hub's row shows at a time (the board's two). */
-export const guidesPerPage = 2;
+/** How many guides the Home page shows at a time (board New-Home: three rows, CALM-7c). */
+export const guidesPerPage = 3;
 
 /**
  * Keeps only the how-to guides, in the order the CMS gives them.

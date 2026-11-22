@@ -28,21 +28,19 @@ describe('howToGuides', () => {
 describe('guidesOnPage', () => {
   const guides = howToGuides(pages);
 
-  it('shows two guides on the first page and the one left on the last', () => {
-    expect(guidesOnPage(guides, 0).shown).toHaveLength(2);
-    expect(guidesOnPage(guides, 1).shown.map((guide) => guide.entryKey)).toEqual([
-      'how-to-messages',
-    ]);
+  it('shows three guides on a page, so three guides fit on the first', () => {
+    expect(guidesOnPage(guides, 0).shown).toHaveLength(3);
   });
 
-  it('keeps an arrow press inside the row at either end', () => {
+  it('keeps an arrow press inside the list at either end', () => {
     expect(guidesOnPage(guides, -1).pageIndex).toBe(0);
-    expect(guidesOnPage(guides, 9).pageIndex).toBe(1);
+    expect(guidesOnPage(guides, 9).pageIndex).toBe(0);
   });
 
   it('counts at least one page, even with no guides', () => {
     expect(guidePageCount(0)).toBe(1);
-    expect(guidePageCount(3)).toBe(2);
+    expect(guidePageCount(3)).toBe(1);
     expect(guidePageCount(4)).toBe(2);
+    expect(guidePageCount(7)).toBe(3);
   });
 });

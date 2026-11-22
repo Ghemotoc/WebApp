@@ -120,24 +120,25 @@ test.describe('the Writers’ hub and Resources (G9a)', () => {
     // Step 1: the logo in the top bar leads to the signed-in home.
     await page.getByRole('banner').getByRole('link').first().click();
     await expect(page).toHaveURL(/\/hub$/);
-    await expect(
-      page.getByRole('heading', { level: 1, name: 'Everything for the next chapter.' }),
-    ).toBeVisible();
-    // Step 2: the two buttons under the heading.
-    await expect(page.getByRole('link', { name: 'Start writing' })).toHaveAttribute(
+    // CALM-7c: the hero greets the writer by name.
+    await expect(page.getByRole('heading', { level: 1, name: /^Welcome back/ })).toBeVisible();
+    // Step 2: a new writer has no draft, so "Start a new story" is the hero's main button.
+    await expect(page.getByRole('link', { name: 'Start a new story' })).toHaveAttribute(
       'href',
       '/write/new',
     );
-    // Step 3: the contests block is there, whatever other specs left open.
-    await expect(page.getByRole('heading', { level: 2, name: /^Contest/ }).first()).toBeVisible();
-    // Step 4: the guides come two at a time; Previous is off at the start, Next moves on.
+    // Step 3: the contests section is there, whatever other specs left open.
+    await expect(
+      page.getByRole('heading', { level: 2, name: 'Open for entries now' }),
+    ).toBeVisible();
+    // Step 4: the guides come three at a time; Previous is off at the start, Next moves on.
     const guides = page.getByRole('region', { name: 'How-to guides' });
     await expect(guides.getByRole('link')).toHaveCount(3);
     const previous = guides.getByRole('button', { name: 'Previous guides' });
     await expect(previous).toBeDisabled();
     await guides.getByRole('button', { name: 'Next guides' }).click();
     await expect(previous).toBeEnabled();
-    await expect(guides.getByText('Guides 3 to 4 of 15')).toBeAttached();
+    await expect(guides.getByText('Guides 4 to 6 of 15')).toBeAttached();
     // Step 5: the tools.
     await expect(page.getByRole('link', { name: /Story Atlas/ })).toHaveAttribute('href', '/plan');
     await expectNoDoodles(page);
