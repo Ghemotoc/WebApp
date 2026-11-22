@@ -7,13 +7,14 @@
  *   today", with a progress bar), the target and reminder (ReadingHabitSettings) and "Turn off and
  *   delete my minutes", which asks once before deleting.
  * Only the reader sees it: it is never a public badge (criterion 1). No doodles: a quiet note.
+ * Simplified look (bundle CALM-7c, board New-Library): no card, the section heading "Keep a
+ * private reading streak" while it is off and "Reading days" once it is on, then the quiet
+ * "Turn it on".
  * Who uses it: LibraryPage. What it calls: useReadingHabit (my_reading_habit() and the changes).
  */
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import type { ReadingHabit } from '@/features/reading-habit/api/readingHabit';
 import { useReadingHabit } from '@/features/reading-habit/hooks/useReadingHabit';
@@ -112,7 +113,7 @@ function HabitOff({ start }: { start: ReturnType<typeof useReadingHabit>['start'
   const { t } = useLibraryTranslation();
   return (
     <>
-      <p className="m-0 max-w-[640px] text-base text-body">{t('habit.offBody')}</p>
+      <p className="m-0 type-body text-body">{t('habit.offBody')}</p>
       {start.isError && <Notice tone="error">{t('habit.changeFailed')}</Notice>}
       <div>
         <Button variant="secondary" disabled={start.isPending} onClick={() => start.mutate()}>
@@ -126,7 +127,7 @@ function HabitOff({ start }: { start: ReturnType<typeof useReadingHabit>['start'
 /**
  * Renders the note.
  *
- * @returns the card, or nothing while loading
+ * @returns the section, or nothing while loading
  */
 export function ReadingHabitNote() {
   const { t } = useLibraryTranslation();
@@ -134,22 +135,22 @@ export function ReadingHabitNote() {
   const { habit, loadFailed } = readingHabit;
   if (loadFailed) return <Notice tone="error">{t('habit.loadFailed')}</Notice>;
   if (habit === undefined) return null;
+  // The heading invites while the streak is off, and names it once it is on (board New-Library).
+  const heading = habit === null ? t('habit.offHeading') : t('habit.heading');
   return (
-    <section id="reading-days" aria-labelledby="reading-days-heading">
-      <Card className="flex flex-col gap-4">
-        <Eyebrow>{t('habit.eyebrow')}</Eyebrow>
-        <h2
-          id="reading-days-heading"
-          className="m-0 font-heading text-[26px] font-bold text-heading"
-        >
-          {t('habit.heading')}
-        </h2>
-        {habit === null ? (
-          <HabitOff start={readingHabit.start} />
-        ) : (
-          <HabitOn habit={habit} save={readingHabit.save} stop={readingHabit.stop} />
-        )}
-      </Card>
+    <section
+      id="reading-days"
+      aria-labelledby="reading-days-heading"
+      className="flex min-w-0 flex-col items-start gap-3.5"
+    >
+      <h2 id="reading-days-heading" className="m-0 type-heading">
+        {heading}
+      </h2>
+      {habit === null ? (
+        <HabitOff start={readingHabit.start} />
+      ) : (
+        <HabitOn habit={habit} save={readingHabit.save} stop={readingHabit.stop} />
+      )}
     </section>
   );
 }

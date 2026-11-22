@@ -1,26 +1,26 @@
 /**
- * MyStoriesShelf: the "My stories" shelf in the Library, the writer's own stories, drafts
- * included (bundle NAV-1; Robert, 6 Nov 2026, 18:40 UTC: "It's a bit confusing to see your
- * stories. Like, you need to go and press on Write so you can see them. I'd rather see them
- * connected to library").
+ * MyStoriesShelf: "Written by you" in the Library, the writer's own stories, drafts included
+ * (bundle NAV-1; Robert, 6 Nov 2026, 18:40 UTC: "It's a bit confusing to see your stories. Like,
+ * you need to go and press on Write so you can see them. I'd rather see them connected to
+ * library").
  *
- * It is the shared Shelf like the other library shelves: one scrolling line of at most 20, with a
- * "View more" card when there are more (CLAUDE.md rule 20). Each card opens the story's chapter
- * list in the writing tools (/write/s/<story>/chapters), where the writer can open any chapter in
- * the editor. Under the shelf, a link goes to "Writing" (/write) for the dashboard, the
- * numbers and "+ New story". A deleted story (still restorable for 30 days) is left out, as on
- * "Writing".
- * Who shows it: LibraryShelves, when the "My stories" chip is chosen.
- * What it calls: useMyStories (the writing feature's read of the writer's own stories).
+ * Simplified look (bundle CALM-7c, board New-Library): its own section in the right-hand column,
+ * with "Open Write" at the top right and one row per story split by the hairline: a 56 px cover,
+ * the title linking to the story's chapters in the writing tools (/write/s/<story>/chapters), and
+ * a meta line with the state in bold while it is a draft, then who can read it ("Draft ·
+ * Private", "Ongoing · Public"). A deleted story (still restorable for 30 days) is left out, as
+ * on Write. With no stories, a line says where they will appear and links to a new story.
+ * Who shows it: LibraryPage. What it calls: useMyStories (the writing feature's read of the
+ * writer's own stories).
  */
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
 import { automaticCoverFor, designsForRow } from '@/components/covers/automaticCover';
 import type { DrawnCoverChoice } from '@/components/covers/coverDesigns';
-import { EmptyState } from '@/components/ui/EmptyState';
+import { DrawnCover } from '@/components/covers/DrawnCover';
+import { MetaLine, type MetaFact } from '@/components/ui/MetaLine';
 import { Notice } from '@/components/ui/Notice';
-import { Shelf } from '@/components/ui/Shelf';
-import { StoryCard } from '@/components/ui/StoryCard';
 import { StoryCoverArt } from '@/features/pictures/components/StoryCoverArt';
 import type { MyStory } from '@/features/writing/api/stories';
 import { useMyStories } from '@/features/writing/hooks/useMyStories';
@@ -29,84 +29,120 @@ import { liveOwnStories } from '../lib/ownStories';
 import { useLibraryTranslation } from '../registerLibraryTranslations';
 
 /**
- * The line under a card's cover: "Draft" until the first chapter is published, then Ongoing or
- * Completed (S1-E3-05).
+ * The row's meta line: "Draft" in bold until the first chapter is published, else Ongoing or
+ * Completed (S1-E3-05); then who can read it (NEW-1).
  *
  * @param story - the writer's story
  * @param t - the library translations
- * @returns the line, in the reader's language
+ * @param visibilityText - who can read it, already translated
+ * @returns the facts, in reading order
  */
-function statusLine(story: MyStory, t: (key: string) => string): string {
-  if (story.firstPublishedAt === null) return t('shelves.mine.draft');
-  return t(`shelves.mine.${story.completionStatus}`);
+function storyFacts(
+  story: MyStory,
+  t: (key: string) => string,
+  visibilityText: string,
+): MetaFact[] {
+  if (story.firstPublishedAt === null) {
+    return [{ text: t('shelves.mine.draft'), kind: 'state' }, { text: visibilityText }];
+  }
+  return [{ text: t(`shelves.mine.${story.completionStatus}`) }, { text: visibilityText }];
 }
 
-/** One card: the story's cover and title, linking to its chapters in the writing tools. */
-function MyStoryCard({ story, cover }: { story: MyStory; cover: DrawnCoverChoice }) {
+/** One row: the cover, the title linking to its chapters, and its meta line. */
+function MyStoryRow({ story, cover }: { story: MyStory; cover: DrawnCoverChoice }) {
   const { t } = useLibraryTranslation();
+  const { t: tWriting } = useTranslation('writing');
+  const visibilityText = tWriting(`visibility.options.${story.visibility}`);
   return (
-    <StoryCard
-      title={story.title}
-      metaLine={statusLine(story, t)}
-      cover={cover}
-      href={`/write/s/${encodeURIComponent(story.slug)}/chapters`}
-      wrapCover={(drawn) => <StoryCoverArt story={story} drawn={drawn} className="w-full" />}
-    />
+    <li className="flex items-center gap-3.5 border-t border-(--hairline) py-3">
+      <StoryCoverArt
+        story={story}
+        className="w-14 shrink-0"
+        drawn={
+          <DrawnCover
+            title={story.title}
+            choice={cover}
+            size="tile"
+            isDecorative
+            className="w-14 shrink-0"
+          />
+        }
+      />
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <Link
+          to={`/write/s/${encodeURIComponent(story.slug)}/chapters`}
+          className="font-semibold break-words text-heading no-underline hover:underline"
+        >
+          {story.title}
+        </Link>
+        <MetaLine facts={storyFacts(story, t, visibilityText)} />
+      </div>
+    </li>
   );
 }
 
-/** The link to "Writing", under the shelf or in the empty state. */
-function YourWritingLink() {
+/** The section's heading with "Open Write" at the top right. */
+function WrittenByYouHeading() {
   const { t } = useLibraryTranslation();
   return (
-    <Link to="/write" className="self-start text-sm font-semibold text-link underline">
-      {t('shelves.mine.yourWriting')}
-    </Link>
+    <div className="mb-1 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+      <h2 id="library-mine-heading" className="m-0 type-heading">
+        {t('shelves.mine.label')}
+      </h2>
+      <Link
+        to="/write"
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline"
+      >
+        {t('shelves.mine.openWrite')}
+      </Link>
+    </div>
   );
 }
 
-/**
- * Renders the shelf.
- *
- * @returns the writer's stories, an empty state with a way to start one, or a plain error
- */
-export function MyStoriesShelf() {
+/** The rows, or what to do when there are none yet. */
+function WrittenByYouBody() {
   const { t } = useLibraryTranslation();
   const { stories, isKnown, loadFailed } = useMyStories();
-
   // Step 1: a failed read says so in plain words; nothing shows while it loads.
   if (loadFailed) return <Notice tone="error">{t('shelves.mine.loadFailed')}</Notice>;
   if (!isKnown) return null;
-
   // Step 2: no stories yet: say where they will appear and how to start one.
   const live = liveOwnStories(stories);
   if (live.length === 0) {
     return (
-      <div className="flex flex-col gap-3">
-        <EmptyState title={t('shelves.mine.label')} description={t('shelves.empty.mine')} />
-        <Link to="/write/new" className="self-start text-sm font-semibold text-link underline">
+      <div className="flex flex-col items-start gap-2">
+        <p className="m-0 type-body text-body">{t('shelves.empty.mine')}</p>
+        <Link to="/write/new" className="text-sm font-semibold text-link underline">
           {t('shelves.mine.newStory')}
         </Link>
       </div>
     );
   }
-
-  // Step 3: the shelf, with covers worked out per row so neighbours never share a design (S1-E3-13).
+  // Step 3: one row per story, covers worked out together so neighbours differ (S1-E3-13).
   const covers = designsForRow(live);
   return (
-    <div className="flex flex-col gap-3">
-      <Shelf
-        title={t('shelves.mine.label')}
-        seeAllHref="/write"
-        totalCount={live.length}
-        items={live.map((story, index) => ({
-          key: story.slug,
-          content: (
-            <MyStoryCard story={story} cover={covers[index] ?? automaticCoverFor(story.id)} />
-          ),
-        }))}
-      />
-      <YourWritingLink />
-    </div>
+    <ul className="m-0 list-none p-0">
+      {live.map((story, index) => (
+        <MyStoryRow
+          key={story.slug}
+          story={story}
+          cover={covers[index] ?? automaticCoverFor(story.id)}
+        />
+      ))}
+    </ul>
+  );
+}
+
+/**
+ * Renders the section.
+ *
+ * @returns "Written by you" with its rows, an empty line with a way to start, or a plain error
+ */
+export function MyStoriesShelf() {
+  return (
+    <section aria-labelledby="library-mine-heading" className="flex min-w-0 flex-col">
+      <WrittenByYouHeading />
+      <WrittenByYouBody />
+    </section>
   );
 }

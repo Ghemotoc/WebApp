@@ -2104,7 +2104,7 @@ One search field finds stories, writers and tags, in Romanian and English, with 
 
 ## The library and the reader's place (S1-E4-03; READ-4a)
 
-- Screen 3.7 is `/library` (`src/features/library/components/LibraryPage.tsx`): "Continue reading" (`my_library()`), the shelves (Reading, Saved for later, Finished, each `browse_stories('library', <shelf>)` with its See all page at `/library/<shelf>`) and "What you follow" (`my_follows()`).
+- Screen 3.7 is `/library` (`src/features/library/components/LibraryPage.tsx`): "Continue reading" (`my_library()`), the shelves (Reading, Saved, Finished in a segmented control, each `browse_stories('library', <shelf>)` with its See all page at `/library/<shelf>`), the bookshelves, and two columns: "What you follow" (`my_follows()`) beside "Written by you", the offline reading note and Reading days (simplified design, CALM-7c).
 - How a place travels: the reader screen (`ChapterReaderPage`) measures the progress (`useReadingProgress`), `useSavedPlace` saves it 3 seconds after scrolling stops and when the reader leaves → `save_reading_position()` → `reading_positions` (one row per chapter) and `library_entries` (the story joins Reading, and Finished at the end of a completed story). Next time, `my_place_in_chapter()` brings it back and `SavedPlaceOffer` offers "Go back there".
 - The story page's "Start reading" / "Continue chapter n" and the Library drop-down are `StoryReadingActions` → `story_library_state()` and `set_library_shelf()`.
 - Both tables are readable by their owner only; nobody else ever sees what someone reads. Tests: `supabase/tests/database/179-library.test.sql`, `e2e/library.spec.ts`.
@@ -2131,7 +2131,7 @@ Robert's picks of 31 Oct 2026, ideas 4, 6, 7 and 8 (`/mnt/project-files/feature-
 
 Idea IDEA-20261031-13, with Robert's comments of 31 Oct 2026.
 
-- Where it lives: `src/features/reading-habit/` holds the calls (`api/readingHabit.ts`), the hooks and the rules; the Library shows it as "Your reading days" (`src/features/library/components/ReadingHabitNote.tsx` and `ReadingHabitSettings.tsx`).
+- Where it lives: `src/features/reading-habit/` holds the calls (`api/readingHabit.ts`), the hooks and the rules; the Library shows it as "Reading days" (`src/features/library/components/ReadingHabitNote.tsx` and `ReadingHabitSettings.tsx`).
 - How a minute travels: the chapter reader calls `useReadingMinutes()`. Only while the streak is on, once a minute, if the tab is visible and the reader scrolled, pressed a key or touched in the last two minutes (`lib/activeReading.ts`), it calls `add_reading_minute()` → `reading_minutes` (one row per reader per day, on the reader's own clock; a second minute within 45 seconds is ignored, so two tabs can't count double).
 - How the note reads it: `my_reading_habit()` returns the target, the reminder, the days read since Monday and today's minutes. `start_reading_habit()`, `save_reading_habit()` and `stop_reading_habit()` change it; stopping deletes the minutes too.
 - The reminder: the pg_cron job `send-reading-reminders` (every five minutes, `send_reading_reminders()`) sends one in-app `reading_reminder` notification a day to a reader short of their target at their chosen time. Never the next day, never by email, and never between 22:00 and 07:00 for anyone under 18 (quiet hours, Q50); the save refuses such a time too.

@@ -1,11 +1,17 @@
 /**
- * ContinueReading: the "Continue reading" cards at the top of the Library (story S1-E4-03,
- * first criterion; board 3.7 Library).
+ * ContinueReading: "Continue reading", the glass hero at the top of the Library (story S1-E4-03,
+ * first criterion; board New-Library, bundle CALM-7c).
  *
- * Up to four stories from the Reading shelf, the most recently read first, two to a row on wide
- * screens and one on phones. With nothing to continue, one line says how stories get here.
- * Who uses it: LibraryPage, with the overview from my_library().
+ * Up to four stories from the Reading shelf, the most recently read first, two to a row from
+ * 900 px and one on narrower screens, 40 px apart. It is the page's one Hero (handover Step 2:
+ * only the hero is glass). Only the first story's Continue is the main button; the others are
+ * quiet, so the page keeps one main action (DoD: one main button a screen). With nothing to
+ * continue, one line says how stories get here.
+ * Who uses it: LibraryPage, with the overview from my_library(). What it calls: Hero and
+ * ContinueReadingCard.
  */
+import { Hero } from '@/components/ui/Hero';
+
 import type { ContinueReadingItem } from '../api/library';
 import { useLibraryTranslation } from '../registerLibraryTranslations';
 
@@ -15,29 +21,24 @@ import { ContinueReadingCard } from './ContinueReadingCard';
  * Renders the section.
  *
  * @param props.items - the stories to continue, with their places
- * @returns the section
+ * @returns the hero
  */
 export function ContinueReading({ items }: { items: ContinueReadingItem[] }) {
   const { t } = useLibraryTranslation();
   return (
-    <section aria-labelledby="library-continue-heading" className="flex flex-col gap-4">
-      <div className="flex items-center gap-8">
-        <h2
-          id="library-continue-heading"
-          className="m-0 font-heading text-[clamp(30px,3.4vw,44px)] leading-tight font-bold tracking-[-0.02em] text-heading"
-        >
-          {t('continue.heading')}
-        </h2>
-      </div>
+    <Hero labelledBy="library-continue-heading">
+      <h2 id="library-continue-heading" className="m-0 type-heading text-heading">
+        {t('continue.heading')}
+      </h2>
       {items.length === 0 ? (
-        <p className="m-0 text-[15px] text-body">{t('continue.empty')}</p>
+        <p className="m-0 type-body text-body">{t('continue.empty')}</p>
       ) : (
-        <div className="grid gap-5 lg:grid-cols-2">
-          {items.map((item) => (
-            <ContinueReadingCard key={item.story.slug} item={item} />
+        <ul className="m-0 grid list-none grid-cols-1 gap-10 p-0 min-[900px]:grid-cols-2">
+          {items.map((item, index) => (
+            <ContinueReadingCard key={item.story.slug} item={item} isFirst={index === 0} />
           ))}
-        </div>
+        </ul>
       )}
-    </section>
+    </Hero>
   );
 }

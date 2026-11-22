@@ -147,7 +147,6 @@ const infoPillUsers = new Set([
   '/src/features/legal/components/LegalDocumentView.tsx',
   '/src/features/legal/components/LegalSectionCard.tsx',
   '/src/features/legal/components/LegalVersionHistory.tsx',
-  '/src/features/library/components/FollowingSection.tsx',
   '/src/features/library/components/ReadingListPage.tsx',
   '/src/features/moderation/components/AccountSanctions.tsx',
   '/src/features/moderation/components/AppealCard.tsx',

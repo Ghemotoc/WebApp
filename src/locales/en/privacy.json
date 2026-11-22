@@ -35,16 +35,16 @@
   },
   "libraryNote": {
     "only_me": {
-      "lead": "Private.",
-      "body": "Only you can see the library."
+      "lead": "Private",
+      "body": "Only you can see this library"
     },
     "people_i_follow": {
-      "lead": "Shared.",
-      "body": "People you follow can see your library on your profile."
+      "lead": "Shared",
+      "body": "People you follow can see this library on your profile"
     },
     "everyone": {
-      "lead": "Public.",
-      "body": "Everyone can see your library on your profile."
+      "lead": "Public",
+      "body": "Everyone can see this library on your profile"
     },
     "change": "Change",
     "changeLabel": "Change who can see the library"

@@ -155,7 +155,7 @@ test.describe('privacy settings (S1-E13-01)', () => {
     await expect(library.getByRole('radio', { name: 'Everyone' })).toBeChecked();
     // Step 2: the Library page says so.
     await page.goto('/library');
-    await expect(page.getByText('Everyone can see your library on your profile.')).toBeVisible();
+    await expect(page.getByText('Everyone can see this library on your profile')).toBeVisible();
     // Step 3: a signed-out visitor sees the shelf on teacher's profile and its See all page.
     const visitor = await openAs(browser, null, '/u/teacher');
     await expect(visitor.getByRole('heading', { name: 'teacher’s library' })).toBeVisible();

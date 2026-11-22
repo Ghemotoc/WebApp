@@ -1,12 +1,13 @@
 /**
  * FollowingSection: "What you follow", the writers and stories the reader follows, each with its
- * Following button (story S1-E4-03; board 3.7 Library; follows from S1-E6-05).
+ * Following button (story S1-E4-03; board New-Library, bundle CALM-7c; follows from S1-E6-05).
  *
- * Board values: two white cards side by side (stacked on phones), "Writers (4)" and "Stories (4)",
- * one row per follow with a fine line between rows: the initial or the cover, the name, a line
- * about the latest chapter, a "New" pill for a story updated in the last 7 days, and the shared
- * FollowButton (which unfollows in place). The board's "Notification settings" link, after the
- * line about notifications, opens Settings at its notifications part (GAPS-6).
+ * Board values: the heading with "Notification settings" at the top right (Settings at its
+ * notifications part, GAPS-6), the line "A notification comes when they publish something new.",
+ * then "Writers · 4" and "Stories · 4" as subheadings over rows split by the hairline. A writer
+ * row: the avatar, the name and when they last published. A story row: a 48 px cover, the title,
+ * a meta line with "New" in bold for a story updated in the last 7 days, the writer and the last
+ * update. Each row ends with the shared FollowButton (which unfollows in place). No cards.
  * Who uses it: LibraryPage. What it calls: useMyFollows → my_follows().
  */
 import type { ReactNode } from 'react';
@@ -14,8 +15,7 @@ import { Link } from 'react-router';
 
 import { resolveCoverChoice } from '@/components/covers/automaticCover';
 import { DrawnCover } from '@/components/covers/DrawnCover';
-import { Eyebrow } from '@/components/ui/Eyebrow';
-import { InfoPill } from '@/components/ui/InfoPill';
+import { MetaLine, type MetaFact } from '@/components/ui/MetaLine';
 import { PersonAvatar } from '@/features/avatars/components/PersonAvatar';
 import { timeAgo } from '@/features/comments/lib/timeAgo';
 import type { ListedStory } from '@/features/discovery/api/storyLists';
@@ -51,7 +51,7 @@ function useLastUpdate() {
 function WriterRow({ writer }: { writer: FollowedWriter }) {
   const lastUpdate = useLastUpdate();
   return (
-    <li className="flex items-center gap-3 border-t border-border py-3 first:border-t-0">
+    <li className="flex items-center gap-3.5 border-t border-(--hairline) py-3">
       <PersonAvatar name={writer.displayName} handle={writer.handle} />
       <div className="flex min-w-0 flex-1 flex-col">
         <Link
@@ -60,7 +60,7 @@ function WriterRow({ writer }: { writer: FollowedWriter }) {
         >
           {writer.displayName}
         </Link>
-        <span className="text-[13px] text-meta">{lastUpdate(writer.lastPublishedAt)}</span>
+        <MetaLine facts={[{ text: lastUpdate(writer.lastPublishedAt) }]} />
       </div>
       <FollowButton
         target={{ kind: 'writer', handle: writer.handle }}
@@ -75,43 +75,66 @@ function StoryRow({ story }: { story: ListedStory }) {
   const { t } = useLibraryTranslation();
   const lastUpdate = useLastUpdate();
   const updated = story.lastChapterPublishedAt;
-  const isNew = isRecent(updated);
+  // "New" in bold first for a story updated in the last 7 days (the meta line's state).
+  const facts: MetaFact[] = [
+    { text: isRecent(updated) ? t('following.new') : '', kind: 'state' },
+    { text: story.writer.displayName },
+    { text: lastUpdate(updated) },
+  ];
   return (
-    <li className="flex items-center gap-3 border-t border-border py-3 first:border-t-0">
+    <li className="flex items-center gap-3.5 border-t border-(--hairline) py-3">
       <DrawnCover
         title={story.title}
         choice={resolveCoverChoice(story)}
         size="tile"
         isDecorative
-        className="w-[48px] shrink-0"
+        className="w-12 shrink-0"
       />
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <Link
           to={`/s/${story.slug}`}
           className="font-semibold break-words text-heading no-underline hover:underline"
         >
           {story.title}
         </Link>
-        <span className="text-[13px] text-meta">
-          {story.writer.displayName} · {lastUpdate(updated)}
-        </span>
+        <MetaLine facts={facts} />
       </div>
-      {isNew && <InfoPill tone="gold">{t('following.new')}</InfoPill>}
       <FollowButton target={{ kind: 'story', slug: story.slug }} targetLabel={story.title} />
     </li>
   );
 }
 
-/** A card with a heading and its rows, or the line that says how to fill it. */
-function FollowCard(props: { heading: string; emptyText: string; children: ReactNode[] }) {
+/** A subheading and its rows, or the line that says how to fill them. */
+function FollowGroup(props: { heading: string; emptyText: string; children: ReactNode[] }) {
   return (
-    <div className="flex min-w-0 flex-col gap-2 rounded-card border border-border bg-surface p-5 shadow-card">
-      <h3 className="m-0 font-heading text-lg font-bold text-heading">{props.heading}</h3>
+    <div className="flex min-w-0 flex-col">
+      <h3 className="m-0 mb-1 type-subheading">{props.heading}</h3>
       {props.children.length === 0 ? (
-        <p className="m-0 text-sm text-body">{props.emptyText}</p>
+        <p className="m-0 type-body text-body">{props.emptyText}</p>
       ) : (
         <ul className="m-0 list-none p-0">{props.children}</ul>
       )}
+    </div>
+  );
+}
+
+/** The heading with "Notification settings" at the top right, and the line under it. */
+function FollowingHeading() {
+  const { t } = useLibraryTranslation();
+  return (
+    <div className="flex flex-col gap-1">
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+        <h2 id="library-following-heading" className="m-0 type-heading">
+          {t('following.heading')}
+        </h2>
+        <Link
+          to="/settings#notifications"
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline"
+        >
+          {t('following.notificationSettings')}
+        </Link>
+      </div>
+      <p className="m-0 type-body text-body">{t('following.intro')}</p>
     </div>
   );
 }
@@ -126,45 +149,24 @@ export function FollowingSection() {
   const { follows } = useMyFollows();
   if (follows === null) return null;
   return (
-    <section aria-labelledby="library-following-heading" className="flex flex-col gap-4">
-      <div className="flex items-center gap-8">
-        <div className="flex min-w-0 flex-col gap-1">
-          <Eyebrow>{t('following.eyebrow')}</Eyebrow>
-          <h2
-            id="library-following-heading"
-            className="m-0 font-heading text-[28px] font-bold text-heading"
-          >
-            {t('following.heading')}
-          </h2>
-          <p className="m-0 text-sm text-body">
-            {t('following.intro')}{' '}
-            <Link
-              to="/settings#notifications"
-              className="inline-flex min-h-6 items-center font-semibold text-link underline underline-offset-2"
-            >
-              {t('following.notificationSettings')}
-            </Link>
-          </p>
-        </div>
-      </div>
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-        <FollowCard
-          heading={t('following.writers', { count: follows.writers.length })}
-          emptyText={t('following.noWriters')}
-        >
-          {follows.writers.map((writer) => (
-            <WriterRow key={writer.handle} writer={writer} />
-          ))}
-        </FollowCard>
-        <FollowCard
-          heading={t('following.stories', { count: follows.stories.length })}
-          emptyText={t('following.noStories')}
-        >
-          {follows.stories.map((story) => (
-            <StoryRow key={story.slug} story={story} />
-          ))}
-        </FollowCard>
-      </div>
+    <section aria-labelledby="library-following-heading" className="flex min-w-0 flex-col gap-7">
+      <FollowingHeading />
+      <FollowGroup
+        heading={t('following.writers', { count: follows.writers.length })}
+        emptyText={t('following.noWriters')}
+      >
+        {follows.writers.map((writer) => (
+          <WriterRow key={writer.handle} writer={writer} />
+        ))}
+      </FollowGroup>
+      <FollowGroup
+        heading={t('following.stories', { count: follows.stories.length })}
+        emptyText={t('following.noStories')}
+      >
+        {follows.stories.map((story) => (
+          <StoryRow key={story.slug} story={story} />
+        ))}
+      </FollowGroup>
     </section>
   );
 }
