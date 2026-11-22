@@ -389,7 +389,6 @@
     "sheetUntil": "This code works until {{expires}}."
   },
   "joinClass": {
-    "eyebrow": "Class invite",
     "title": "Join a class",
     "checking": "Checking the code…",
     "join": "Join the class",
@@ -407,7 +406,6 @@
     "codeEmpty": "Type the code from the teacher.",
     "check": "Find the class",
     "enterIntro": "Type the code the teacher wrote on the board or shared. It looks like <example>K4TQ-72BX-9MNA</example>.",
-    "formEyebrow": "Class space",
     "privacyNote": "Only the class name shows before joining. Class spaces are private: nobody outside the class can see their posts or stories.",
     "invitedBody": "You’re invited to this class space. Only class members can see it. Members share stories with the class and talk in its threads.",
     "notNow": "Not now"
@@ -448,7 +446,6 @@
     }
   },
   "classSpace": {
-    "eyebrow": "About class spaces",
     "lockedTitle": "This space is locked.",
     "lockedText": "Class spaces lock at the end of the school year, and nobody can post here any more. You can still read everything in it for as long as you have an account, and you keep your own stories and drafts.",
     "howTitle": "How a class space starts",

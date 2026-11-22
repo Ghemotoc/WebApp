@@ -7,7 +7,6 @@
   },
   "my": {
     "documentTitle": "Diplome",
-    "eyebrow": "Scris",
     "title": "Diplome",
     "intro": "Diplome din programele clasei tale. Deschide una ca s-o tipărești sau s-o salvezi ca PDF pentru portofoliul școlar.",
     "empty": "Încă nu ai diplome. Când cadrul didactic aprobă rezultatele unui program al clasei, diploma ta apare aici.",
@@ -86,7 +85,6 @@
   },
   "verify": {
     "documentTitle": "Verifică o diplomă",
-    "eyebrow": "Diplome",
     "title": "Verifică o diplomă",
     "intro": "Scrie codul tipărit pe diplomă. Îți arătăm dacă e valabilă, programul, rezultatul și data, niciodată numele elevului.",
     "codeLabel": "Codul diplomei",
@@ -149,7 +147,6 @@
     "otherProgramme": "Semnează alt program"
   },
   "settingsCard": {
-    "eyebrow": "Program al clasei",
     "title": "Diplome",
     "body": "Aprobă rezultatele unui program și fiecare elev primește o diplomă în Diplome.",
     "link": "Deschide diplomele"

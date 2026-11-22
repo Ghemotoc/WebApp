@@ -1,6 +1,5 @@
 {
   "card": {
-    "eyebrow": "Class points",
     "pupilTitle_one": "{{count}} point to give this week",
     "pupilTitle_few": "{{count}} points to give this week",
     "pupilTitle_other": "{{count}} points to give this week",
@@ -18,7 +17,6 @@
     "loadFailed": "We couldn’t load class points. Check the connection and try again."
   },
   "settings": {
-    "eyebrow": "Class points",
     "title": "Points from classmates and the teacher",
     "intro": "Each pupil gets {{budget}} points a week to give to classmates’ chapters, at most {{cap}} to one chapter. The teacher gives points too. Totals stay with the teacher, and nobody sees a ranking.",
     "isOn": "Class points are on.",

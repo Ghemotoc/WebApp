@@ -13,7 +13,6 @@
  */
 import { Link } from 'react-router';
 
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 
 import type { ClassPointsSummary } from '../api/classPoints';
@@ -86,7 +85,6 @@ export function ClassPointsCard({ slug }: { slug: string }) {
   if (summary === undefined || summary === null || !summary.isEnabled) return null;
   return (
     <section aria-labelledby="class-points-heading" className={cardClasses}>
-      <Eyebrow>{t('card.eyebrow')}</Eyebrow>
       {summary.role === 'teacher' ? <TeacherLines slug={slug} /> : <PupilLines summary={summary} />}
     </section>
   );

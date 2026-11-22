@@ -14,7 +14,6 @@ import { type FormEvent, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { TextInput } from '@/components/ui/TextInput';
@@ -239,11 +238,8 @@ export function CriteriaTemplatesPage() {
       <title>{t('templates.documentTitle')}</title>
       <SpaceBreadcrumb space={{ slug: spaceSlug, name }} current={t('templates.title')} />
       <header className="flex flex-col gap-2">
-        <Eyebrow>{name}</Eyebrow>
-        <h1 className="m-0 font-heading text-[clamp(32px,4vw,48px)] leading-[1.05] font-extrabold text-heading">
-          {t('templates.title')}
-        </h1>
-        <p className="m-0 max-w-[640px] text-body">{t('templates.intro')}</p>
+        <h1 className="m-0 type-title break-words lg:type-display">{t('templates.title')}</h1>
+        <p className="m-0 max-w-[640px] text-meta">{t('templates.intro')}</p>
       </header>
       <TemplatesBody />
     </PageContainer>

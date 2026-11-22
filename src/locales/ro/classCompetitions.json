@@ -1,6 +1,5 @@
 {
   "card": {
-    "eyebrow": "Concursul clasei",
     "loadFailed": "Nu am putut încărca concursul clasei. Verifică conexiunea și încearcă din nou.",
     "startTitle": "Concursul clasei",
     "startBody": "Stabilește criterii de notare, lasă elevii să se înscrie și evaluează lucrările. Profesorul confirmă un singur Câștigător. Nu există clasament.",
@@ -58,7 +57,6 @@
     "readersChoice": "Alegerea cititorilor"
   },
   "grade": {
-    "eyebrow": "Concursul clasei",
     "title": "Anul școlar",
     "intro": "Un concurs al clasei are nevoie de anul școlar. Sub clasa a VIII-a nu există Câștigător și nici Finalist: fiecare elev înscris este Concurent.",
     "label": "Anul școlar",

@@ -1,6 +1,5 @@
 {
   "card": {
-    "eyebrow": "Puncte în clasă",
     "pupilTitle_one": "{{count}} punct de dat săptămâna aceasta",
     "pupilTitle_few": "{{count}} puncte de dat săptămâna aceasta",
     "pupilTitle_other": "{{count}} de puncte de dat săptămâna aceasta",
@@ -18,7 +17,6 @@
     "loadFailed": "Nu am putut încărca punctele clasei. Verifică conexiunea și încearcă din nou."
   },
   "settings": {
-    "eyebrow": "Puncte în clasă",
     "title": "Puncte de la colegi și de la profesor",
     "intro": "Fiecare elev primește {{budget}} puncte pe săptămână ca să le dea capitolelor colegilor, cel mult {{cap}} unui capitol. Și profesorul dă puncte. Totalurile rămân la profesor și nimeni nu vede un clasament.",
     "isOn": "Punctele în clasă sunt pornite.",

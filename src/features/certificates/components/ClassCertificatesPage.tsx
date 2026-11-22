@@ -13,7 +13,6 @@
  */
 import { useParams, useSearchParams } from 'react-router';
 
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { MetaLine } from '@/components/ui/MetaLine';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
@@ -216,10 +215,7 @@ export function ClassCertificatesPage() {
       <title>{t('class.documentTitle', { name })}</title>
       <SpaceBreadcrumb space={{ slug: spaceSlug, name }} current={t('class.title')} />
       <header className="flex flex-col gap-2">
-        <Eyebrow>{name}</Eyebrow>
-        <h1 className="m-0 font-heading text-[clamp(32px,4vw,48px)] leading-[1.05] font-extrabold text-heading">
-          {t('class.title')}
-        </h1>
+        <h1 className="m-0 type-title break-words lg:type-display">{t('class.title')}</h1>
       </header>
       <ClassCertificatesBody slug={spaceSlug} space={space.data} />
     </PageContainer>

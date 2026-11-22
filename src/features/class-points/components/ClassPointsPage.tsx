@@ -10,7 +10,6 @@
  */
 import { Link, useParams } from 'react-router';
 
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import type { Space } from '@/features/spaces/api/spaces';
@@ -83,11 +82,8 @@ export function ClassPointsPage() {
       <title>{t('table.documentTitle', { name })}</title>
       <SpaceBreadcrumb space={{ slug: spaceSlug, name }} current={t('table.title')} />
       <header className="flex flex-col gap-2">
-        <Eyebrow>{name}</Eyebrow>
-        <h1 className="m-0 font-heading text-[clamp(32px,4vw,48px)] leading-[1.05] font-extrabold text-heading">
-          {t('table.title')}
-        </h1>
-        <p className="m-0 max-w-[640px] text-body">{t('table.intro')}</p>
+        <h1 className="m-0 type-title break-words lg:type-display">{t('table.title')}</h1>
+        <p className="m-0 max-w-[640px] text-meta">{t('table.intro')}</p>
       </header>
       <ClassPointsBody space={space.data} />
     </PageContainer>

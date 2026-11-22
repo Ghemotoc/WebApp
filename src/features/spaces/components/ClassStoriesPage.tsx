@@ -9,7 +9,6 @@
  */
 import { useParams } from 'react-router';
 
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { StoryGrid } from '@/features/discovery/components/StoryGrid';
@@ -42,10 +41,7 @@ export function ClassStoriesPage() {
       <title>{t('classStories.documentTitle', { name })}</title>
       <SpaceBreadcrumb space={{ slug: spaceSlug, name }} current={t('classStories.title')} />
       <header className="flex flex-col gap-2">
-        <Eyebrow>{name}</Eyebrow>
-        <h1 className="m-0 font-heading text-[clamp(32px,4vw,48px)] leading-[1.05] font-extrabold text-heading">
-          {t('classStories.title')}
-        </h1>
+        <h1 className="m-0 type-title break-words lg:type-display">{t('classStories.title')}</h1>
         <p className="m-0 text-body">{t('classStories.note', { name })}</p>
       </header>
       {read.isError && <Notice tone="error">{t('classStories.loadFailed')}</Notice>}

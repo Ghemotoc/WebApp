@@ -387,7 +387,6 @@
     },
     "confirm": {
       "documentTitle": "School address · {{productName}}",
-      "eyebrow": "Teacher badge",
       "approved": "It shows on the profile, and class spaces can now be opened.",
       "waiting_for_staff": "A moderator now checks that the address belongs to a school. The answer arrives in notifications.",
       "expired": "Ask for a new one in Settings.",

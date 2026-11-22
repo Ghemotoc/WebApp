@@ -168,7 +168,7 @@ function InviteCard({ code }: { code: string }) {
 
   const hasJoinedWaiting = joining.joined !== null && !joining.joined.canRead;
   return (
-    <ClassJoinCard eyebrow={t('joinClass.eyebrow')} title={className ?? t('joinClass.title')}>
+    <ClassJoinCard title={className ?? t('joinClass.title')}>
       {hasJoinedWaiting ? (
         <Notice tone="success">{t('joinClass.joinedWaiting', { name: className ?? '' })}</Notice>
       ) : (
@@ -189,7 +189,7 @@ export function JoinClassPage() {
   return (
     <PageContainer className="flex flex-col py-10 md:py-14">
       {code === '' ? (
-        <ClassJoinCard eyebrow={t('joinClass.formEyebrow')} title={t('joinClass.title')}>
+        <ClassJoinCard title={t('joinClass.title')}>
           <ClassCodeForm />
         </ClassJoinCard>
       ) : (

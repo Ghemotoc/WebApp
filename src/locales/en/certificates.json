@@ -7,7 +7,6 @@
   },
   "my": {
     "documentTitle": "Certificates",
-    "eyebrow": "Writing",
     "title": "Certificates",
     "intro": "Certificates from your class programmes. Open one to print it or save it as a PDF for your school portfolio.",
     "empty": "You have no certificates yet. When your teacher approves a class programme’s results, yours appears here.",
@@ -86,7 +85,6 @@
   },
   "verify": {
     "documentTitle": "Check a certificate",
-    "eyebrow": "Certificates",
     "title": "Check a certificate",
     "intro": "Type the code printed on a certificate. We show whether it is valid, the programme, the result and the date, never the student’s name.",
     "codeLabel": "Certificate code",
@@ -149,7 +147,6 @@
     "otherProgramme": "Sign another programme"
   },
   "settingsCard": {
-    "eyebrow": "Class programme",
     "title": "Certificates",
     "body": "Approve a programme’s results and each student gets a certificate under Certificates.",
     "link": "Open certificates"

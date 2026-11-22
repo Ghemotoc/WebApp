@@ -9,7 +9,6 @@
  */
 import { Link } from 'react-router';
 
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { MetaLine } from '@/components/ui/MetaLine';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
@@ -90,11 +89,8 @@ export function MyCertificatesPage() {
     <PageContainer className="flex max-w-[860px] flex-col gap-6 py-12">
       <title>{t('my.documentTitle')}</title>
       <header className="flex flex-col gap-3">
-        <Eyebrow>{t('my.eyebrow')}</Eyebrow>
-        <h1 className="m-0 font-heading text-[clamp(32px,4vw,48px)] leading-[1.05] font-extrabold text-heading">
-          {t('my.title')}
-        </h1>
-        <p className="m-0 text-body">{t('my.intro')}</p>
+        <h1 className="m-0 type-title break-words lg:type-display">{t('my.title')}</h1>
+        <p className="m-0 text-meta">{t('my.intro')}</p>
       </header>
       {isKnown && userId === null && (
         <p className="m-0 text-body">

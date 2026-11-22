@@ -15,7 +15,6 @@
  */
 import { Link } from 'react-router';
 
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { ReportButton } from '@/features/reporting/components/ReportButton';
 import { formatLocalDayAndTime } from '@/lib/local-time';
@@ -63,7 +62,6 @@ function RunningCard({ competitions, slug }: { competitions: ClassCompetitions; 
   const moment = (instant: string) => formatLocalDayAndTime(new Date(instant), i18n.language);
   return (
     <section aria-labelledby="class-competition-heading" className={cardClasses}>
-      <Eyebrow>{t('card.eyebrow')}</Eyebrow>
       <h2
         id="class-competition-heading"
         className="m-0 font-heading text-2xl font-bold text-heading"
@@ -109,7 +107,6 @@ function StartCard({ competitions, slug }: { competitions: ClassCompetitions; sl
   const hasGrade = competitions.grade !== null;
   return (
     <section aria-labelledby="class-competition-heading" className={cardClasses}>
-      <Eyebrow>{t('card.eyebrow')}</Eyebrow>
       <h2
         id="class-competition-heading"
         className="m-0 font-heading text-2xl font-bold text-heading"

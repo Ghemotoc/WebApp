@@ -11,7 +11,7 @@
  */
 import { Link } from 'react-router';
 
-import { Eyebrow } from '@/components/ui/Eyebrow';
+import { MetaLine } from '@/components/ui/MetaLine';
 
 import type { WinnerCardData } from '../api/classCompetitions';
 import { useClassCompetitionsTranslation } from '../registerClassCompetitionsTranslations';
@@ -84,7 +84,15 @@ export function WinnerCard({ card, slug, isTeacher }: WinnerCardProps) {
       aria-labelledby={headingId}
       className="flex flex-col gap-2 rounded-card border border-border bg-surface px-6 py-5 shadow-card"
     >
-      <Eyebrow>{card.winner === null ? t('winner.noWinnerEyebrow') : t('winner.eyebrow')}</Eyebrow>
+      {/* "Winner" or "Results" as a bold state word above the name (CALM-9f; was an eyebrow). */}
+      <MetaLine
+        facts={[
+          {
+            text: card.winner === null ? t('winner.noWinnerEyebrow') : t('winner.eyebrow'),
+            kind: 'state',
+          },
+        ]}
+      />
       <h2 id={headingId} className="m-0 text-base font-semibold text-ink">
         {card.name}
       </h2>

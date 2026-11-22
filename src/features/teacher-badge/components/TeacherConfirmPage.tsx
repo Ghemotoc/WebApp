@@ -8,15 +8,14 @@
  * What it says: the badge is granted (a .edu.ro address), the address is confirmed and a moderator
  * will check the school (any other), or the link has expired or no longer works. The heading
  * names the outcome, so a colour never says it alone. Works signed out, on any device.
- * Board values: one centred glass card with 40 px corners, a round icon, the eyebrow, the heading,
- * one line under it and one main button. Plain page: no doodles.
+ * Board values: one centred glass card with 40 px corners, a round icon, the heading (no eyebrow
+ * since CALM-9f, board H15), one line under it and one main button. Plain page: no doodles.
  */
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router';
 
 import { ActionIcon } from '@/components/icons/ActionIcon';
 import { buttonClassName } from '@/components/ui/buttonStyles';
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { cn } from '@/lib/utils';
 
@@ -105,11 +104,7 @@ export function TeacherConfirmPage() {
         {state !== 'checking' && <OutcomeIcon isGood={isGood} />}
         {/* The heading and the line change once the link is checked, so they are read out. */}
         <div className="flex flex-col gap-2" aria-live="polite">
-          <Eyebrow>{t('teacherBadge.confirm.eyebrow')}</Eyebrow>
-          <h1
-            id="teacher-confirm-heading"
-            className="m-0 font-heading text-[30px] leading-tight font-bold text-heading md:text-[36px]"
-          >
+          <h1 id="teacher-confirm-heading" className="m-0 type-title break-words lg:type-display">
             {t(`teacherBadge.confirm.headings.${state}`)}
           </h1>
           {state !== 'checking' && (

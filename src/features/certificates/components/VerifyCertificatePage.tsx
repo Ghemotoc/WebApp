@@ -12,7 +12,6 @@ import { type FormEvent, useState } from 'react';
 import { useSearchParams } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { LabelRows } from '@/components/ui/LabelRows';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
@@ -79,11 +78,8 @@ export function VerifyCertificatePage() {
     <PageContainer className="flex max-w-[720px] flex-col gap-6 py-12">
       <title>{t('verify.documentTitle')}</title>
       <header className="flex flex-col gap-3">
-        <Eyebrow>{t('verify.eyebrow')}</Eyebrow>
-        <h1 className="m-0 font-heading text-[clamp(32px,4vw,48px)] leading-[1.05] font-extrabold text-heading">
-          {t('verify.title')}
-        </h1>
-        <p className="m-0 text-body">{t('verify.intro')}</p>
+        <h1 className="m-0 type-title break-words lg:type-display">{t('verify.title')}</h1>
+        <p className="m-0 text-meta">{t('verify.intro')}</p>
       </header>
       <form className="flex flex-wrap items-end gap-3" onSubmit={submit}>
         <TextInput
