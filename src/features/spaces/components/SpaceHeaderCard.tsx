@@ -12,7 +12,7 @@
  * The owner sees "Space settings" where others see Report (nobody reports their own space; rule 6
  * for everyone else). "Share" (GAPS-10) opens the link, "Copy link" and a QR code; a class space
  * has none.
- * Who shows it: SpacePage. What it calls: SpaceBannerBand, SpaceLogo, SpacePills,
+ * Who shows it: SpacePage. What it calls: SpaceBannerBand, SpaceLogo, SpaceFacts,
  * SpaceJoinActions, SpaceShareButton, SpaceToolLinks, ReportButton.
  */
 import type { CSSProperties } from 'react';
@@ -30,7 +30,7 @@ import { useSpacesTranslation } from '../registerSpacesTranslations';
 import { SpaceBannerBand } from './SpaceBannerBand';
 import { SpaceJoinActions } from './SpaceJoinActions';
 import { SpaceLogo } from './SpaceLogo';
-import { SpacePills } from './SpacePills';
+import { SpaceFacts } from './SpaceFacts';
 import { SpaceShareButton } from './SpaceShareButton';
 import { SpaceToolLinks } from './SpaceToolLinks';
 
@@ -143,7 +143,7 @@ export function SpaceHeaderCard({ space }: { space: Space }) {
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-x-5 gap-y-2.5 px-5 py-4 text-sm text-body md:px-11">
-        <SpacePills space={space} />
+        <SpaceFacts space={space} />
         <SpaceNumbers space={space} />
       </div>
     </section>

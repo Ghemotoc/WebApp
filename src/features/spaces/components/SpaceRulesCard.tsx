@@ -1,17 +1,22 @@
 /**
- * SpaceRulesCard: "Set by the owner" › "Space rules", numbered, then "The community guidelines
- * apply here too" (bundle FORUMS-2, part a; S1-E8-06 criterion 1; the board's side card).
- * Who shows it: SpacePage. What it calls: nothing; the rules come with the space.
+ * SpaceRulesCard: "Space rules", numbered, then "The community guidelines apply here too" (bundle
+ * FORUMS-2, part a; S1-E8-06 criterion 1; the board's side card).
+ * Since CALM-9b (board simplified F08 and F09) it sits on the page, not on a panel: a
+ * subheading, the owner's rules as a numbered list, the guidelines line in the meta colour and
+ * the link to it as a text button. The "Set by the owner" eyebrow is gone (COPY-1: the heading
+ * says it).
+ * Who shows it: SpacePage and SpaceNewThreadPage. What it calls: nothing; the rules come with the
+ * space.
  */
 import { Link } from 'react-router';
 
-import { Eyebrow } from '@/components/ui/Eyebrow';
+import { buttonClassName } from '@/components/ui/buttonStyles';
 
 import type { Space } from '../api/spaces';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
 /**
- * Renders the card.
+ * Renders the section.
  *
  * @param props.space - the space
  * @returns the section with the owner's rules, or a note that there are none
@@ -19,29 +24,22 @@ import { useSpacesTranslation } from '../registerSpacesTranslations';
 export function SpaceRulesCard({ space }: { space: Space }) {
   const { t } = useSpacesTranslation();
   return (
-    <section
-      aria-labelledby="space-rules-heading"
-      className="flex flex-col gap-3 rounded-card border border-panel-border bg-panel px-6 py-5"
-    >
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex min-w-0 flex-col gap-3">
-          <Eyebrow>{t('rules.eyebrow')}</Eyebrow>
-          <h2 id="space-rules-heading" className="m-0 font-heading text-2xl font-bold text-heading">
-            {t('rules.title')}
-          </h2>
-        </div>
-      </div>
-      {space.rules.length === 0 && <p className="m-0 text-sm text-body">{t('rules.none')}</p>}
+    <section aria-labelledby="space-rules-heading" className="flex flex-col gap-2">
+      <h2 id="space-rules-heading" className="m-0 type-subheading">
+        {t('rules.title')}
+      </h2>
+      {space.rules.length === 0 && <p className="m-0 text-body">{t('rules.none')}</p>}
       {space.rules.length > 0 && (
-        <ol className="m-0 flex list-decimal flex-col gap-2 pl-5 text-sm break-words text-body">
+        <ol className="m-0 flex list-decimal flex-col gap-1.5 pl-5 break-words text-body">
           {space.rules.map((rule, index) => (
             <li key={`${index}-${rule}`}>{rule}</li>
           ))}
         </ol>
       )}
+      {/* The link flush with the words above it, as on the board. */}
       <Link
         to="/legal/guidelines"
-        className="inline-flex min-h-6 items-center text-sm text-link underline"
+        className={`${buttonClassName({ variant: 'text' })} -ml-3 self-start`}
       >
         {t('rules.guidelines')}
       </Link>
