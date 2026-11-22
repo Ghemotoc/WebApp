@@ -146,10 +146,8 @@ const infoPillUsers = new Set([
   '/src/features/moderator-mail/components/MailStatusPill.tsx',
   '/src/features/moderator-mail/components/StaffMailInboxPage.tsx',
   '/src/features/notifications/components/NotificationRow.tsx',
-  '/src/features/people/components/ProfileStories.tsx',
   '/src/features/privacy/components/AudienceRadios.tsx',
   '/src/features/reading/components/RankingPlacePill.tsx',
-  '/src/features/reading/components/StoryLabelPills.tsx',
   '/src/features/reading/components/TeaserStoryCard.tsx',
   '/src/features/safety/components/SafetyChecksPanel.tsx',
   '/src/features/settings/components/AgeRulesSection.tsx',
@@ -174,14 +172,11 @@ const infoPillUsers = new Set([
   '/src/features/staff/components/stories/StaffStoryResults.tsx',
   '/src/features/staff/hooks/useStaffStoryWords.ts',
   '/src/features/statements/components/MyReportRow.tsx',
-  '/src/features/story-languages/components/LanguagesTable.tsx',
-  '/src/features/story-languages/components/TranslationChapterList.tsx',
   '/src/features/support/components/FirstReplyPill.tsx',
   '/src/features/support/components/MySupportPage.tsx',
   '/src/features/support/components/MySupportTicketPage.tsx',
   '/src/features/support/components/StaffSupportInboxPage.tsx',
   '/src/features/support/lib/ticketStatusPill.ts',
-  '/src/features/tags/components/RankBadges.tsx',
   '/src/features/teacher-badge/components/TeacherBadgePill.tsx',
   '/src/features/waitlist/components/FoundingMemberPill.tsx',
   '/src/features/website/api/staff/listPageBackgrounds.ts',
@@ -194,7 +189,6 @@ const infoPillUsers = new Set([
   '/src/features/writing/components/ChapterPictureNodeView.tsx',
   '/src/features/writing/components/DrawnCoverPicker.tsx',
   '/src/features/writing/components/ManagedChapterRow.tsx',
-  '/src/features/writing/components/StoryPreviewAside.tsx',
 ]);
 
 /** Starts with any of the given path prefixes. */
