@@ -1393,7 +1393,7 @@ get_story_page(slug): readers get null unless rating_allows(rating) (the owner i
   rating_allows(): age_band() from the year of birth; 18+ also needs the Yoti "18 or over"
   result once adults_only is off (proposal, 23 Oct 2026); a visitor counts as under 16 (L14)
   ▼
-StoryLabelPills (src/features/reading/) on the preview and the writer's card; on the story page
+a meta line on the writer's preview (writing/lib/storyPreviewFacts.ts, CALM-9c); on the story page
 the same labels are the hero's meta line (lib/storyLabelFacts.ts, CALM-7c), and StoryLabels
 adds the Fan fiction, Parody, Rating and AI use rows and the content note
 Staff: admin_raise_story_rating() (never lowers; audit_log; a 'statement_of_reasons_needed'

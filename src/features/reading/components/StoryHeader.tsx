@@ -5,7 +5,7 @@
  * The page's one glass hero (Hero): the 240 px cover on the left (the rank badges under it,
  * CMS-1g) and, on the right, in the board's order:
  *   - the meta line "Fiction · Ongoing · No AI · 13+" (lib/storyLabelFacts.ts; it replaces the
- *     pill row and StoryLabelPills here), with the ranking place after it (S1-E15-05);
+ *     pill row and StoryLabelPills here, retired in CALM-9c), with the ranking place after it (S1-E15-05);
  *   - the title in the display style, with the "Read in" switch beside it (TRANSLATE-1b), then
  *     "by <name>" as a link to the profile and, for a translated classic, who translated it;
  *   - the numbers as a second meta line (StoryStats, S1-E5-03);

@@ -12,7 +12,6 @@
  */
 import { Link } from 'react-router';
 
-import { InfoPill } from '@/components/ui/InfoPill';
 import { buttonClassName } from '@/components/ui/buttonStyles';
 import { languageOwnName } from '@/lib/language-names';
 
@@ -67,7 +66,10 @@ function LanguageRow({ language }: { language: StoryLanguage }) {
       >
         <span className="flex flex-wrap items-center gap-2 md:flex-col md:items-start md:gap-1">
           <span lang={language.languageCode}>{languageOwnName(language.languageCode)}</span>
-          {language.isFirstEdition && <InfoPill tone="neutral">{t('table.original')}</InfoPill>}
+          {/* CALM-9c: "Original" is a quiet word under the language, not a pill. */}
+          {language.isFirstEdition && (
+            <span className="text-[13px] font-normal text-meta">{t('table.original')}</span>
+          )}
         </span>
       </th>
       <Cell label={t('table.title')}>
@@ -92,9 +94,10 @@ function LanguageRow({ language }: { language: StoryLanguage }) {
         })}
       </Cell>
       <Cell label={t('table.status')}>
-        <InfoPill tone={language.isPublic ? 'sage' : 'gold'}>
+        {/* CALM-9c: the state is a bold word, as a meta line's state. */}
+        <span className="font-bold text-ink">
           {language.isPublic ? t('table.published') : t('table.draft')}
-        </InfoPill>
+        </span>
       </Cell>
       <td className="px-3 py-1 align-middle max-md:px-0 max-md:pt-2 md:py-4">
         <LanguageAction language={language} />

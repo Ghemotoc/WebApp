@@ -14,12 +14,11 @@ import { usePeopleTranslation } from '../registerPeopleTranslations';
 
 import { designsForRow, resolveCoverChoice } from '@/components/covers/automaticCover';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { InfoPill } from '@/components/ui/InfoPill';
 import { Shelf } from '@/components/ui/Shelf';
 import { StoryCard } from '@/components/ui/StoryCard';
 import { StoryCoverArt } from '@/features/pictures/components/StoryCoverArt';
 
-import type { WriterProfile } from '../api/writerProfile';
+import type { ProfileStory, WriterProfile } from '../api/writerProfile';
 
 /**
  * Renders the shelf, or the empty state when nothing is published.
@@ -35,6 +34,16 @@ export function ProfileStories({ profile }: { profile: WriterProfile }) {
     return <EmptyState title={t('profile.noStoriesTitle')} description={description} />;
   }
   const covers = designsForRow(profile.stories);
+  /**
+   * The words under a cover: "Ongoing · 12 chapters" while the story is being written, else the
+   * chapters alone (Robert, 6 Nov 2026: only "Ongoing" shows; "Completed" is a filter). Since
+   * CALM-9c "Ongoing" is part of the meta line, not a pill.
+   */
+  const storyMeta = (story: ProfileStory) => {
+    const chapters = t('profile.storyMeta', { count: story.chapterCount });
+    if (story.completionStatus !== 'ongoing') return chapters;
+    return `${t('status.ongoing', { ns: 'writing' })} · ${chapters}`;
+  };
   return (
     <Shelf
       eyebrow={t('profile.storiesEyebrow')}
@@ -45,16 +54,10 @@ export function ProfileStories({ profile }: { profile: WriterProfile }) {
         content: (
           <StoryCard
             title={story.title}
-            metaLine={t('profile.storyMeta', { count: story.chapterCount })}
+            metaLine={storyMeta(story)}
             cover={covers[index] ?? resolveCoverChoice(story)}
             href={`/s/${story.slug}`}
             wrapCover={(drawn) => <StoryCoverArt story={story} drawn={drawn} className="w-full" />}
-            // Robert, 6 Nov 2026: only "Ongoing" shows as a pill; "Completed" is a filter.
-            pill={
-              story.completionStatus === 'ongoing' ? (
-                <InfoPill tone="sage">{t('status.ongoing', { ns: 'writing' })}</InfoPill>
-              ) : undefined
-            }
           />
         ),
       }))}

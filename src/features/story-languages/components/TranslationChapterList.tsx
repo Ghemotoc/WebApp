@@ -2,28 +2,20 @@
  * TranslationChapterList: the original's chapters with where each translation stands (bundle
  * TRANSLATE-1c; Robert, 16 Nov 2026).
  *
- * What it shows, per chapter: its number and the original's title, a pill (Not started, Draft,
- * Scheduled, Published), "Original not published" when the original is still a draft (the
+ * What it shows, per chapter: its number and the original's title, a meta line (Not started, Draft,
+ * Scheduled or Published in bold since CALM-9c), "Original not published" when the original is still a draft (the
  * translation can be written, but not published yet), and one button: "Translate" the first
  * time, "Continue" after that. The button opens the side-by-side editor.
  * Who shows it: TranslateChaptersPage. What it calls: hooks/useTranslationChapters.ts.
  * Plain rows with a 1 px line between them (DoD design rules).
  */
 import { Button } from '@/components/ui/Button';
-import { InfoPill } from '@/components/ui/InfoPill';
+import { MetaLine } from '@/components/ui/MetaLine';
 import { Notice } from '@/components/ui/Notice';
 
 import type { TranslationChapter } from '../api/storyLanguages';
 import type { useTranslationChapters } from '../hooks/useTranslationChapters';
 import { useStoryLanguagesTranslation } from '../registerStoryLanguagesTranslations';
-
-/** The pill tone of each status. */
-const statusTones = {
-  notStarted: 'neutral',
-  draft: 'gold',
-  scheduled: 'sky',
-  published: 'sage',
-} as const;
 
 /** What one row needs. */
 interface ChapterRowProps {
@@ -49,12 +41,13 @@ function ChapterRow({ chapter, originalLanguageCode, isOpening, onOpen }: Chapte
           {chapter.originalTitle === '' ? t('chapters.untitled') : chapter.originalTitle}
         </span>
       </div>
-      <div className="flex flex-wrap items-center gap-2">
-        <InfoPill tone={statusTones[status]}>{t(`chapters.status.${status}`)}</InfoPill>
-        {!chapter.isOriginalPublished && (
-          <InfoPill tone="neutral">{t('chapters.originalNotPublished')}</InfoPill>
-        )}
-      </div>
+      {/* CALM-9c: the state in bold, then "Original not published", as one meta line. */}
+      <MetaLine
+        facts={[
+          { text: t(`chapters.status.${status}`), kind: 'state' },
+          { text: chapter.isOriginalPublished ? '' : t('chapters.originalNotPublished') },
+        ]}
+      />
       <Button
         type="button"
         variant={isStarted ? 'secondary' : 'primary'}

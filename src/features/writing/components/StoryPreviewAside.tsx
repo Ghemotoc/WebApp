@@ -2,10 +2,10 @@
  * StoryPreviewAside: "How readers will see it", the live story card next to the form (story
  * S1-E3-01; board NewStory 4.2, the right-hand aside).
  *
- * Board values: a card with the 300 px cover, the title at 28 px with the pen name, then the
- * chips (category, language, the label pills from S1-E3-06; where-to-read joins with S1-E3-08),
- * the rating banner when the story is 13+, 16+ or 18+ (S1-E3-06), the blurb and the tag line,
- * with an "Only you" lock pill at the top. Under the card: the line about deleting the story
+ * Board values: a card with the 300 px cover, the title at 28 px with the pen name, then one
+ * meta line (category, language and the labels from S1-E3-06; storyPreviewFacts, CALM-9c), the
+ * rating banner when the story is 13+, 16+ or 18+ (S1-E3-06), the blurb and the tag line, with
+ * "Only you" in bold at the top. Under the card: the line about deleting the story
  * later.
  * Who uses it: NewStoryPage, and StorySettingsPage without the line about deleting later
  * (the delete card is on that page; G9d). On phones it drops below the form.
@@ -15,12 +15,12 @@ import { useTranslation } from 'react-i18next';
 import { automaticCoverFor } from '@/components/covers/automaticCover';
 import { DrawnCover } from '@/components/covers/DrawnCover';
 import { Eyebrow } from '@/components/ui/Eyebrow';
-import { InfoPill } from '@/components/ui/InfoPill';
-import { StoryLabelPills } from '@/features/reading/components/StoryLabelPills';
+import { MetaLine } from '@/components/ui/MetaLine';
 import { ratingMinimumAge } from '@/schemas/story';
 import { TagNames } from '@/features/tags/components/TagNames';
 
 import type { StoryAnswers } from '../hooks/storyAnswers';
+import { storyPreviewFacts } from '../lib/storyPreviewFacts';
 
 /** What the aside needs. */
 export interface StoryPreviewAsideProps {
@@ -58,7 +58,8 @@ export function StoryPreviewAside({
     <aside className="relative flex flex-col gap-3 md:sticky md:top-28">
       <div className="flex items-center justify-between gap-3">
         <Eyebrow>{t('preview.eyebrow')}</Eyebrow>
-        <InfoPill tone="neutral">{t('preview.onlyYou')}</InfoPill>
+        {/* CALM-9c: "Only you" is a bold word, as a meta line's state, not a pill. */}
+        <span className="text-[13px] font-bold text-ink">{t('preview.onlyYou')}</span>
       </div>
       <div className="flex flex-col gap-3 rounded-card border border-border bg-surface p-5 shadow-card">
         {/* A skipped cover shows the automatic design the story gets from its ID (S1-E3-13). */}
@@ -75,17 +76,8 @@ export function StoryPreviewAside({
           {shownTitle}
         </h2>
         <p className="m-0 text-[13px] text-meta">{penName}</p>
-        <div className="flex flex-wrap gap-1.5">
-          <InfoPill tone="plum">
-            {t(`categories.${answers.categorySlug}`, { defaultValue: answers.categorySlug })}
-          </InfoPill>
-          <InfoPill tone="neutral">
-            <span lang={answers.languageCode}>
-              {t(`languages.${answers.languageCode}`, { defaultValue: answers.languageCode })}
-            </span>
-          </InfoPill>
-          <StoryLabelPills labels={{ ...answers, aiUndisclosedLabelled: false }} />
-        </div>
+        {/* CALM-9c: the story's labels as one meta line, as the story page shows them. */}
+        <MetaLine facts={storyPreviewFacts(answers, t)} />
         <RatingBanner rating={answers.rating} />
         <p className="m-0 text-sm leading-normal text-body">
           {answers.blurb.trim() === '' ? t('preview.noBlurb') : answers.blurb}
