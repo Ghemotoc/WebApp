@@ -1,160 +1,145 @@
 /**
- * FollowersChart: "Followers over time" on the writer dashboard (story S1-E3-07; board
- * WriterDashboard 4.1).
+ * FollowersChart: the followers card on the Write page, a line graph with a time range menu
+ * (bundle CALM-7b; Robert, 20 Nov 2026, 12:07 UTC: "followers as a line graph with a time range
+ * menu, like LinkedIn"; design handover Step 4; board New-Write, "147 followers").
  *
- * Board values: a white card, eyebrow, the 26 px heading with the follower count, "+n this
- * week" in green, eight bars 200 px high (gold, this week in plum) with the number above each and
- * the week's Monday below ("< 5" above a bar from fewer than 5), and the note "Weeks start on Monday." The chart is one image with a
- * text alternative listing every week's number (WCAG 1.1.1); the numbers on it are hidden from
- * screen readers so they aren't read twice. A week with new followers from 1 to 4 reads "fewer
- * than 5" and gets a short bar that never shows its real size (criterion 2).
- * Who uses it: WriterDashboardTop. Its numbers come from writer_dashboard() (followers_by_week).
+ * Board values: the heading with the total ("147 followers", or "Fewer than 5 followers" from 1
+ * to 4), a meta line with the state first ("+21 this week", "fewer than 5 this week", nothing at
+ * 0) and "Followers over time", the "Time range" drop-down at the right (Last 7, 30, 90 or 365
+ * days, 90 when the page opens, not saved), then the line and a caption saying what one point is.
+ * The heading and the meta line always state the numbers, so the drawing is never the only place
+ * a number lives; a hidden table repeats every point for screen readers.
+ * Who uses it: WriterDashboardTop. What it calls: useFollowersLine → writer_followers_line(), and
+ * FollowersLinePlot and FollowersTable to draw it.
  */
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Eyebrow } from '@/components/ui/Eyebrow';
-import { dateLocaleFor } from '@/lib/romania-time';
+import { MetaLine, type MetaFact } from '@/components/ui/MetaLine';
+import { Notice } from '@/components/ui/Notice';
+import { Select } from '@/components/ui/Select';
 
-import type { FollowersWeek } from '../api/dashboard';
-import { barHeightPercent, formatShownCount } from '../lib/dashboardNumbers';
+import type { ShownCount } from '../api/dashboard';
+import {
+  defaultFollowersRange,
+  followersRanges,
+  stepOf,
+  type FollowersRange,
+} from '../api/followersLine';
+import { useFollowersLine } from '../hooks/useFollowersLine';
+import { formatShownCount } from '../lib/dashboardNumbers';
+
+import { FollowersLinePlot } from './FollowersLinePlot';
+import { FollowersTable } from './FollowersTable';
+
+/** What the card needs. */
+export interface FollowersChartProps {
+  /** Every follower, for the heading; null for "fewer than 5". */
+  allTimeFollowers: ShownCount;
+  /** New follows since Monday; null for "fewer than 5". */
+  thisWeek: ShownCount;
+}
 
 /**
- * A week's Monday as "5 Oct". It is a stored calendar day with no clock, so it is written as it
- * is, in UTC, and reads the same day for every viewer (Robert, 20 Nov 2026, 18:36 UTC).
+ * The heading's words: "147 followers", or "Fewer than 5 followers".
  *
- * @param weekStart - YYYY-MM-DD
- * @param language - the interface language
- * @returns the short date
+ * @param allTimeFollowers - the total
+ * @returns the heading
  */
-function weekLabel(weekStart: string, language: string): string {
-  return new Intl.DateTimeFormat(dateLocaleFor(language), {
-    timeZone: 'UTC',
-    day: 'numeric',
-    month: 'short',
-  }).format(new Date(`${weekStart}T12:00:00Z`));
-}
-
-/** One bar with its number above it. */
-function WeekBar({
-  value,
-  height,
-  isThisWeek,
-}: {
-  value: string;
-  height: number;
-  isThisWeek: boolean;
-}) {
-  return (
-    <div className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-1.5">
-      <span aria-hidden="true" className="text-center text-xs font-semibold text-body">
-        {value}
-      </span>
-      <div
-        aria-hidden="true"
-        className={isThisWeek ? 'w-full rounded-t-lg bg-primary' : 'w-full rounded-t-lg bg-gold'}
-        style={{ height: `${height}%` }}
-      />
-    </div>
-  );
-}
-
-/** The card's heading row: the follower count and "+n this week". */
-function FollowersHeading({
-  allTimeFollowers,
-  thisWeek,
-}: {
-  allTimeFollowers: number | null;
-  thisWeek: number | null;
-}) {
+function useHeading(allTimeFollowers: ShownCount): string {
   const { t, i18n } = useTranslation('writing');
-  const fewer = t('dashboard.fewerThanFive');
-  // The heading can't say an exact number below 5 either.
-  const heading =
-    allTimeFollowers === null
-      ? t('dashboard.followers.headingFew')
-      : t('dashboard.followers.heading', {
-          count: allTimeFollowers,
-          value: formatShownCount(allTimeFollowers, i18n.language, fewer),
-        });
-  return (
-    <div className="flex flex-wrap items-end justify-between gap-2">
-      <div className="flex flex-col gap-1.5">
-        <Eyebrow>{t('dashboard.followers.eyebrow')}</Eyebrow>
-        <h2
-          id="dashboard-followers-heading"
-          className="m-0 font-heading text-[26px] font-bold text-heading"
-        >
-          {heading}
-        </h2>
-      </div>
-      {thisWeek !== null && thisWeek > 0 && (
-        <span className="text-sm font-semibold text-[var(--success-text)]">
-          {t('dashboard.followers.thisWeek', {
-            value: formatShownCount(thisWeek, i18n.language, fewer),
-          })}
-        </span>
-      )}
-    </div>
-  );
+  if (allTimeFollowers === null) return t('dashboard.followers.headingFew');
+  return t('dashboard.followers.heading', {
+    count: allTimeFollowers,
+    value: formatShownCount(allTimeFollowers, i18n.language, ''),
+  });
 }
 
-/** What the chart needs. */
-export interface FollowersChartProps {
-  weeks: FollowersWeek[];
-  /** All-time followers, for the heading (the tiles may show the last 30 days). */
-  allTimeFollowers: number | null;
+/**
+ * The meta line's facts: the week's change first, as a state, then "Followers over time".
+ *
+ * @param thisWeek - new follows since Monday
+ * @returns the facts
+ */
+function useMetaFacts(thisWeek: ShownCount): MetaFact[] {
+  const { t, i18n } = useTranslation('writing');
+  const label: MetaFact = { text: t('dashboard.followers.eyebrow') };
+  if (thisWeek === 0) return [label];
+  const change =
+    thisWeek === null
+      ? t('dashboard.followers.thisWeekFew')
+      : t('dashboard.followers.thisWeek', { value: formatShownCount(thisWeek, i18n.language, '') });
+  return [{ text: change, kind: 'state' }, label];
+}
+
+/** The "Time range" drop-down, with its label read by screen readers only (board). */
+function RangeMenu({
+  range,
+  onChange,
+}: {
+  range: FollowersRange;
+  onChange: (range: FollowersRange) => void;
+}) {
+  const { t } = useTranslation('writing');
+  return (
+    <Select
+      id="followers-range"
+      label={t('dashboard.followers.rangeLabel')}
+      placement="form"
+      options={followersRanges.map((days) => ({
+        value: String(days),
+        label: t(`dashboard.followers.ranges.${days}`),
+      }))}
+      value={String(range)}
+      onChange={(value) => {
+        // Only the four offered values come back from the drop-down.
+        const chosen = followersRanges.find((days) => String(days) === value);
+        if (chosen !== undefined) onChange(chosen);
+      }}
+    />
+  );
 }
 
 /**
  * Renders the card.
  *
- * @param props.weeks - the last 8 weeks, oldest first
- * @param props.allTimeFollowers - the follower count for the heading
+ * @param props.allTimeFollowers - the total for the heading
+ * @param props.thisWeek - the week's new follows for the meta line
  * @returns the card
  */
-export function FollowersChart({ weeks, allTimeFollowers }: FollowersChartProps) {
-  const { t, i18n } = useTranslation('writing');
-  // Step 1: each week's words, and the tallest week for the bars' scale.
-  const values = weeks.map((week) =>
-    formatShownCount(week.total, i18n.language, t('dashboard.fewerThanFive')),
-  );
-  // Above a narrow bar "fewer than 5" is shortened ("< 5"); the chart's text alternative says it in full.
-  const barValues = weeks.map((week) =>
-    formatShownCount(week.total, i18n.language, t('dashboard.fewerShort')),
-  );
-  const tallest = Math.max(5, ...weeks.map((week) => week.total ?? 0));
-  // Step 2: the card: heading, bars, week labels and the note.
+export function FollowersChart({ allTimeFollowers, thisWeek }: FollowersChartProps) {
+  const { t } = useTranslation('writing');
+  // Step 1: the range (90 days when the page opens; not saved) and its points.
+  const [range, setRange] = useState<FollowersRange>(defaultFollowersRange);
+  const { points, loadFailed } = useFollowersLine(range);
+  const step = stepOf(range);
+  const heading = useHeading(allTimeFollowers);
+  const facts = useMetaFacts(thisWeek);
+  // Step 2: the heading row, then the line with its caption and hidden table.
   return (
     <section
       aria-labelledby="dashboard-followers-heading"
-      className="flex flex-col gap-[18px] rounded-3xl border border-border bg-surface px-[26px] py-6 shadow-card"
+      className="flex flex-col gap-5 rounded-3xl border border-border bg-surface px-[26px] py-6 shadow-card"
     >
-      <FollowersHeading
-        allTimeFollowers={allTimeFollowers}
-        thisWeek={weeks.at(-1)?.total ?? null}
-      />
-      <div
-        role="img"
-        aria-label={t('dashboard.followers.chartLabel', { values: values.join(', ') })}
-        className="flex h-[200px] items-end gap-2.5 border-b border-border px-0.5"
-      >
-        {weeks.map((week, index) => (
-          <WeekBar
-            key={week.weekStart}
-            value={barValues[index] ?? ''}
-            height={barHeightPercent(week.total, tallest)}
-            isThisWeek={index === weeks.length - 1}
-          />
-        ))}
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="flex min-w-0 flex-col gap-1">
+          <h2 id="dashboard-followers-heading" className="type-heading m-0 text-heading">
+            {heading}
+          </h2>
+          <MetaLine facts={facts} />
+        </div>
+        <RangeMenu range={range} onChange={setRange} />
       </div>
-      <div aria-hidden="true" className="-mt-2 flex gap-2.5 px-0.5">
-        {weeks.map((week) => (
-          <span key={week.weekStart} className="min-w-0 flex-1 text-center text-xs text-meta">
-            {weekLabel(week.weekStart, i18n.language)}
-          </span>
-        ))}
-      </div>
-      <p className="m-0 text-sm text-meta">{t('dashboard.followers.note')}</p>
+      {loadFailed && <Notice tone="error">{t('dashboard.followers.loadFailed')}</Notice>}
+      {points !== null && (
+        <figure className="m-0 flex flex-col gap-2">
+          <FollowersLinePlot points={points} step={step} range={range} />
+          <FollowersTable points={points} step={step} range={range} />
+          <figcaption className="text-sm text-meta">
+            {t(`dashboard.followers.note.${step}`)}
+          </figcaption>
+        </figure>
+      )}
     </section>
   );
 }

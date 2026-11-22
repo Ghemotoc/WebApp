@@ -513,8 +513,54 @@
       "heading_other": "{{value}} followers",
       "headingFew": "Fewer than 5 followers",
       "thisWeek": "+{{value}} this week",
-      "chartLabel": "New followers per week, last 8 weeks: {{values}}",
-      "note": "New followers each week. Weeks start on Monday."
+      "thisWeekFew": "fewer than 5 this week",
+      "rangeLabel": "Time range",
+      "ranges": {
+        "7": "Last 7 days",
+        "30": "Last 30 days",
+        "90": "Last 90 days",
+        "365": "Last 365 days"
+      },
+      "rangesInSentence": {
+        "7": "last 7 days",
+        "30": "last 30 days",
+        "90": "last 90 days",
+        "365": "last 365 days"
+      },
+      "plotName": "Followers over time, {{range}}",
+      "note": {
+        "day": "Followers at the end of each day.",
+        "week": "Followers at the end of each week. Weeks start on Monday.",
+        "month": "Followers at the end of each month."
+      },
+      "tableCaption": {
+        "day": "Followers at the end of each day, {{range}}",
+        "week": "Followers at the end of each week, {{range}}",
+        "month": "Followers at the end of each month, {{range}}"
+      },
+      "whenColumn": {
+        "day": "Day",
+        "week": "Week of",
+        "month": "Month"
+      },
+      "totalColumn": "Followers",
+      "gainedColumn": {
+        "day": "New that day",
+        "week": "New that week",
+        "month": "New that month"
+      },
+      "tipTotal_one": "{{value}} follower",
+      "tipTotal_few": "{{value}} followers",
+      "tipTotal_other": "{{value}} followers",
+      "tipTotalFew": "fewer than 5 followers",
+      "tipWhen": {
+        "day": "{{date}}",
+        "week": "week of {{date}}",
+        "month": "{{date}}"
+      },
+      "tipGained": "+{{value}}",
+      "tipGainedFew": "fewer than 5 new",
+      "loadFailed": "The followers line couldn't load. Try again in a moment."
     },
     "notPublished": {
       "eyebrow": "Drafts and scheduled",

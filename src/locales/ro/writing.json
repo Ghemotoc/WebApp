@@ -513,8 +513,54 @@
       "heading_other": "{{value}} de urmăritori",
       "headingFew": "Mai puțin de 5 urmăritori",
       "thisWeek": "+{{value}} săptămâna asta",
-      "chartLabel": "Urmăritori noi pe săptămână, ultimele 8 săptămâni: {{values}}",
-      "note": "Urmăritori noi în fiecare săptămână. Săptămânile încep lunea."
+      "thisWeekFew": "mai puțin de 5 săptămâna asta",
+      "rangeLabel": "Perioada",
+      "ranges": {
+        "7": "Ultimele 7 zile",
+        "30": "Ultimele 30 de zile",
+        "90": "Ultimele 90 de zile",
+        "365": "Ultimele 365 de zile"
+      },
+      "rangesInSentence": {
+        "7": "ultimele 7 zile",
+        "30": "ultimele 30 de zile",
+        "90": "ultimele 90 de zile",
+        "365": "ultimele 365 de zile"
+      },
+      "plotName": "Urmăritori în timp, {{range}}",
+      "note": {
+        "day": "Urmăritori la sfârșitul fiecărei zile.",
+        "week": "Urmăritori la sfârșitul fiecărei săptămâni. Săptămânile încep lunea.",
+        "month": "Urmăritori la sfârșitul fiecărei luni."
+      },
+      "tableCaption": {
+        "day": "Urmăritori la sfârșitul fiecărei zile, {{range}}",
+        "week": "Urmăritori la sfârșitul fiecărei săptămâni, {{range}}",
+        "month": "Urmăritori la sfârșitul fiecărei luni, {{range}}"
+      },
+      "whenColumn": {
+        "day": "Ziua",
+        "week": "Săptămâna din",
+        "month": "Luna"
+      },
+      "totalColumn": "Urmăritori",
+      "gainedColumn": {
+        "day": "Noi în ziua aceea",
+        "week": "Noi în săptămâna aceea",
+        "month": "Noi în luna aceea"
+      },
+      "tipTotal_one": "{{value}} urmăritor",
+      "tipTotal_few": "{{value}} urmăritori",
+      "tipTotal_other": "{{value}} de urmăritori",
+      "tipTotalFew": "mai puțin de 5 urmăritori",
+      "tipWhen": {
+        "day": "{{date}}",
+        "week": "săptămâna din {{date}}",
+        "month": "{{date}}"
+      },
+      "tipGained": "+{{value}}",
+      "tipGainedFew": "mai puțin de 5 noi",
+      "loadFailed": "Graficul urmăritorilor nu s-a putut încărca. Încearcă din nou peste câteva momente."
     },
     "notPublished": {
       "eyebrow": "Ciorne și programate",

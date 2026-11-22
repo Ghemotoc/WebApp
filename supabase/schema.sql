@@ -56017,11 +56017,15 @@ begin
       'shares', public.shown_count(totals.shares),
       -- The chart's heading always counts every follower, whatever the period.
       'followers_all_time', public.shown_count((select count(*) from public.follows_users
-        where follows_users.followed_user_id = caller_id))),
+        where follows_users.followed_user_id = caller_id)),
+      -- "+21 this week" beside it: new follows since Monday, Romania time (CALM-7b).
+      'followers_this_week', public.shown_count((select count(*) from public.follows_users
+        where follows_users.followed_user_id = caller_id
+          and (follows_users.created_at at time zone 'Europe/Bucharest')::date
+            >= date_trunc('week', (now() at time zone 'Europe/Bucharest')::date)::date))),
     'first_published_at', (select min(chapters.first_published_at) from public.chapters
       join public.stories on stories.id = chapters.story_id
       where stories.user_id = caller_id and stories.deleted_at is null and chapters.deleted_at is null),
-    'followers_by_week', public.writer_followers_by_week(caller_id),
     'chapters', public.writer_dashboard_chapters(caller_id),
     'latest_comments', public.writer_latest_comments(caller_id));
 end;
@@ -56097,31 +56101,63 @@ COMMENT ON FUNCTION "public"."writer_follow_state"("wanted_handle" "text") IS 'A
 
 
 
-CREATE OR REPLACE FUNCTION "public"."writer_followers_by_week"("writer_id" "uuid") RETURNS "jsonb"
-    LANGUAGE "sql" STABLE SECURITY DEFINER
+CREATE OR REPLACE FUNCTION "public"."writer_followers_line"("range_days" integer) RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
-  with weeks as (
-    select generate_series(
-      date_trunc('week', (now() at time zone 'Europe/Bucharest')::date) - interval '7 weeks',
-      date_trunc('week', (now() at time zone 'Europe/Bucharest')::date),
-      interval '1 week')::date as week_start
+declare
+  caller_id uuid := (select auth.uid());
+  -- Today in Romania, the day every point is counted against.
+  today date := (now() at time zone 'Europe/Bucharest')::date;
+  -- One point per day, week or month, by the range (handover Step 4).
+  step text;
+  points jsonb;
+begin
+  -- Step 1: a signed-in writer and one of the four ranges.
+  if caller_id is null then
+    raise exception 'Log in to see your numbers.' using errcode = 'insufficient_privilege';
+  end if;
+  if range_days is null or range_days not in (7, 30, 90, 365) then
+    raise exception 'Unknown time range.' using errcode = 'invalid_parameter_value';
+  end if;
+  step := case when range_days <= 30 then 'day' when range_days = 90 then 'week' else 'month' end;
+
+  -- Step 2: the periods, from the one holding the range's first day to the one holding today,
+  -- and for each the followers by its end and the new follows inside it.
+  with periods as (
+    select period_start::date as starts_on,
+      (period_start + ('1 ' || step)::interval)::date as ends_before
+    from generate_series(
+      date_trunc(step, (today - (range_days - 1))::timestamp),
+      date_trunc(step, today::timestamp),
+      ('1 ' || step)::interval) as period_start
+  ),
+  follow_days as (
+    select (follows_users.created_at at time zone 'Europe/Bucharest')::date as followed_on
+    from public.follows_users
+    where follows_users.followed_user_id = caller_id
   )
   select jsonb_agg(jsonb_build_object(
-    'week_start', weeks.week_start,
-    'total', public.shown_count((select count(*) from public.follows_users
-      where follows_users.followed_user_id = writer_id
-        and (follows_users.created_at at time zone 'Europe/Bucharest')::date >= weeks.week_start
-        and (follows_users.created_at at time zone 'Europe/Bucharest')::date < weeks.week_start + 7))
-  ) order by weeks.week_start)
-  from weeks;
+      'starts_on', periods.starts_on,
+      'total', public.shown_count((select count(*) from follow_days
+        where follow_days.followed_on < periods.ends_before)),
+      'gained', public.shown_count((select count(*) from follow_days
+        where follow_days.followed_on >= periods.starts_on
+          and follow_days.followed_on < periods.ends_before)))
+    order by periods.starts_on)
+  into points
+  from periods;
+
+  -- Step 3: the answer.
+  return jsonb_build_object('points', coalesce(points, '[]'::jsonb));
+end;
 $$;
 
 
-ALTER FUNCTION "public"."writer_followers_by_week"("writer_id" "uuid") OWNER TO "postgres";
+ALTER FUNCTION "public"."writer_followers_line"("range_days" integer) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."writer_followers_by_week"("writer_id" "uuid") IS 'Internal: new followers per week for the writer dashboard chart (S1-E3-07).';
+COMMENT ON FUNCTION "public"."writer_followers_line"("range_days" integer) IS 'The signed-in writer''s followers over the last 7, 30, 90 or 365 days, counts only, each rounded by shown_count() (CALM-7b).';
 
 
 
@@ -75787,7 +75823,8 @@ GRANT ALL ON FUNCTION "public"."writer_follow_state"("wanted_handle" "text") TO 
 
 
 
-REVOKE ALL ON FUNCTION "public"."writer_followers_by_week"("writer_id" "uuid") FROM PUBLIC;
+REVOKE ALL ON FUNCTION "public"."writer_followers_line"("range_days" integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."writer_followers_line"("range_days" integer) TO "authenticated";
 
 
 
