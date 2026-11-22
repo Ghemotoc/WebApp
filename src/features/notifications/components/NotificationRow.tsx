@@ -3,7 +3,7 @@
  *
  * Board values (Notifications, liquid glass redesign, bundle G8d): 16 by 20 px padding, a hairline
  * between rows, unread rows on a faint tint with a plum dot, a 15 px line "<b>who</b> what", the
- * quote under it, then the time, a grouped pill ("12 reactions"), "Always on" with a padlock for
+ * quote under it, then the time, a grouped count in bold ("12 reactions", a pill until CALM-9d), "Always on" with a padlock for
  * a decision and the one action in bold. A "new rank"
  * row also names the rank in its pill (bundle G4; DESIGN thread, 8 Nov 2026: no sticker).
  * Opening a row marks it as read. A row whose item is gone (no address) is plain text.
@@ -17,7 +17,7 @@
 import { Link } from 'react-router';
 
 import { ActionIcon } from '@/components/icons/ActionIcon';
-import { InfoPill } from '@/components/ui/InfoPill';
+import { StateWord } from '@/components/ui/StateWord';
 import { timeAgo } from '@/features/comments/lib/timeAgo';
 import { PersonAvatar } from '@/features/avatars/components/PersonAvatar';
 import { RankChip } from '@/features/forums/components/RankChip';
@@ -61,14 +61,14 @@ function RowWords({
       )}
       <span className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[13px] text-meta">
         <time dateTime={notification.at}>{timeAgo(notification.at, i18n.language)}</time>
-        {text.grouped !== null && <InfoPill tone="neutral">{text.grouped}</InfoPill>}
+        {text.grouped !== null && <StateWord>{text.grouped}</StateWord>}
         {/* The rank just reached, in the same pill as on the profile (IDEAS-3a). */}
         {notification.writerRank !== null && <RankChip rank={notification.writerRank} />}
         {notification.isRequired && (
-          <InfoPill tone="plum">
+          <StateWord>
             <ActionIcon name="lock" size={14} />
             {t('alwaysOn')}
-          </InfoPill>
+          </StateWord>
         )}
         {text.actionLabel !== null && (
           <span className="font-bold text-link underline">{text.actionLabel}</span>

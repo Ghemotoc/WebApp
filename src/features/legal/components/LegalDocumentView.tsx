@@ -2,7 +2,7 @@
  * LegalDocumentView: one legal document, as on board 7.2 (story S1-E14-01).
  *
  * Who uses it: LegalCentrePage, once the versions have loaded.
- * What it shows, top to bottom: the title and the board's one-line introduction; the status pills
+ * What it shows, top to bottom: the title and the board's one-line introduction; the status line
  * (draft, version, date, languages); notes when the text is a draft translation, when it is shown in
  * English because the reader's language has none yet, and what "After the invited test" means; the
  * document's own "In short"; the sections in a two-column grid on wide screens; the version history.
@@ -10,7 +10,7 @@
  */
 import { useTranslation } from 'react-i18next';
 
-import { InfoPill } from '@/components/ui/InfoPill';
+import { MetaLine } from '@/components/ui/MetaLine';
 import { Notice } from '@/components/ui/Notice';
 import { brand } from '@/config/brand';
 
@@ -33,9 +33,10 @@ interface LegalDocumentViewProps {
 }
 
 /**
- * The status pills under the title: draft or checked, version, date and languages.
+ * The status line under the title: draft or checked, version, date and languages (a meta line
+ * since CALM-9d).
  *
- * @returns a labelled list of pills
+ * @returns a labelled meta line
  */
 function LegalStatusPills({ chosen }: Pick<LegalDocumentViewProps, 'chosen'>) {
   const { t, i18n } = useTranslation('legal');
@@ -43,29 +44,22 @@ function LegalStatusPills({ chosen }: Pick<LegalDocumentViewProps, 'chosen'>) {
   const hasBothLanguages = ['ro', 'en'].every((language) =>
     history[0]?.languages.includes(language),
   );
+  // CALM-9d: one meta line, the draft or checked state first in bold, then the facts.
   return (
-    <ul aria-label={t('status.label')} className="m-0 flex list-none flex-wrap gap-2 p-0">
-      <li className="max-w-full">
-        <InfoPill tone="gold" canWrap>
-          {current.is_lawyer_reviewed ? t('status.reviewed') : t('status.draft')}
-        </InfoPill>
-      </li>
-      <li>
-        <InfoPill tone="neutral">
-          {t('status.version', { version: current.version_label })}
-        </InfoPill>
-      </li>
-      <li>
-        <InfoPill tone="neutral">
-          {t('status.updated', { date: formatLegalDate(current.published_at, i18n.language) })}
-        </InfoPill>
-      </li>
-      {hasBothLanguages && (
-        <li>
-          <InfoPill tone="neutral">{t('status.bothLanguages')}</InfoPill>
-        </li>
-      )}
-    </ul>
+    <MetaLine
+      label={t('status.label')}
+      facts={[
+        {
+          text: current.is_lawyer_reviewed ? t('status.reviewed') : t('status.draft'),
+          kind: 'state',
+        },
+        { text: t('status.version', { version: current.version_label }) },
+        {
+          text: t('status.updated', { date: formatLegalDate(current.published_at, i18n.language) }),
+        },
+        { text: hasBothLanguages ? t('status.bothLanguages') : '' },
+      ]}
+    />
   );
 }
 

@@ -3,7 +3,7 @@
  * "Ways to log in").
  *
  * Shows the way's logo (the provider's own, from its brand kit) or a line icon, its name and a short detail, a Connected or Not connected
- * pill and, when there is one, its button (Connect, Disconnect, "Add a passkey", "Set a password").
+ * state (a bold word since CALM-9d) and, when there is one, its button (Connect, Disconnect, "Add a passkey", "Set a password").
  * A Disconnect that would remove the last way in is disabled and points at the note that says why
  * (aria-describedby), as the board does.
  * Who shows it: LoginMethodsSection.
@@ -12,7 +12,7 @@ import { useLoginMethodsTranslation } from '@/features/account/registerLoginMeth
 
 import { ActionIcon, type ActionIconName } from '@/components/icons/ActionIcon';
 import { Button } from '@/components/ui/Button';
-import { InfoPill } from '@/components/ui/InfoPill';
+import { StateWord } from '@/components/ui/StateWord';
 
 /** The row's button, when it has one. */
 export interface LoginMethodAction {
@@ -38,7 +38,7 @@ interface LoginMethodRowProps {
   icon: LoginMethodIcon;
   name: string;
   detail: string;
-  /** Connected or not; null for the "Add another passkey" row, which has no pill. */
+  /** Connected or not; null for the "Add another passkey" row, which has no state. */
   isConnected: boolean | null;
   action: LoginMethodAction | null;
   isBusy: boolean;
@@ -66,9 +66,7 @@ export function LoginMethodRow(props: LoginMethodRowProps) {
         <span className="text-sm text-meta">{props.detail}</span>
       </span>
       {props.isConnected !== null && (
-        <InfoPill tone={props.isConnected ? 'sage' : 'neutral'}>
-          {props.isConnected ? t('connected') : t('notConnected')}
-        </InfoPill>
+        <StateWord>{props.isConnected ? t('connected') : t('notConnected')}</StateWord>
       )}
       {action !== null && (
         <Button

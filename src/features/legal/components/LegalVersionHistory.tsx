@@ -3,12 +3,12 @@
  * section 8: "Older versions stay on this page, in Romanian and English").
  *
  * Board 7.2 "Version history": a row per version on the panel colour with "Version 0.1 · date" and
- * a gold "Draft" pill while no lawyer has checked it, then the note about sign-up and Settings.
+ * "Draft" in bold (a gold pill until CALM-9d) while no lawyer has checked it, then the note about sign-up and Settings.
  * Who uses it: LegalDocumentView, under the sections.
  */
 import { useTranslation } from 'react-i18next';
 
-import { InfoPill } from '@/components/ui/InfoPill';
+import { StateWord } from '@/components/ui/StateWord';
 
 import type { LegalVersionSummary } from '../lib/chooseLegalVersion';
 import { formatLegalDate } from '../lib/legalDocumentList';
@@ -45,7 +45,7 @@ export function LegalVersionHistory({ history }: LegalVersionHistoryProps) {
                 date: formatLegalDate(version.publishedAt, i18n.language),
               })}
             </span>
-            {!version.isLawyerReviewed && <InfoPill tone="gold">{t('history.draft')}</InfoPill>}
+            {!version.isLawyerReviewed && <StateWord>{t('history.draft')}</StateWord>}
           </li>
         ))}
       </ul>

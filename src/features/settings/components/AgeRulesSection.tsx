@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
 import { ChoiceChips } from '@/components/ui/ChoiceChips';
-import { InfoPill } from '@/components/ui/InfoPill';
+import { StateWord } from '@/components/ui/StateWord';
 import { Notice } from '@/components/ui/Notice';
 import { LogTable, type LogTableRow } from '@/features/staff/components/logs/LogTable';
 import { placeName, ruleNeedsReview, type AgeRule } from '@/lib/age-rules';
@@ -65,7 +65,7 @@ function useRuleRows(rules: AgeRule[], onEdit: (rule: AgeRule) => void): LogTabl
         t(`ageRules.confidences.${rule.confidence}`),
         <span key="status" className="inline-flex flex-wrap gap-1.5">
           {t(`ageRules.statuses.${rule.status}`)}
-          {ruleNeedsReview(rule) && <InfoPill tone="gold">{t('ageRules.checkAgain')}</InfoPill>}
+          {ruleNeedsReview(rule) && <StateWord>{t('ageRules.checkAgain')}</StateWord>}
         </span>,
         rule.notes,
         // The visible word stays short so the button fits a phone; the accessible name still
