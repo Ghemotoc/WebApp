@@ -5,12 +5,13 @@
  * Board values: the title in Funnel Display at 36 to 48 px, the line under it in 14 px with
  * the starter's name as a link (no doodle since bundle G4). A thread staff hid shows its starter a note; nobody else sees it.
  * A class assignment shows its due day under the title, "Due Friday 14 Nov" (MUST-1d).
+ * CALM-9b: the due moment is a deadline in a meta line (bold, in the warning colour), not a pill.
  * Who uses it: ThreadPage. What it calls: ForumBreadcrumb, ReportButton (rule 6), dueMomentText.
  */
 import { Trans } from 'react-i18next';
 import { Link } from 'react-router';
 
-import { InfoPill } from '@/components/ui/InfoPill';
+import { MetaLine } from '@/components/ui/MetaLine';
 import { ReportButton } from '@/features/reporting/components/ReportButton';
 import { dueMomentText } from '@/features/spaces/lib/assignmentDue';
 
@@ -69,11 +70,14 @@ export function ThreadHeader({ thread, path }: { thread: ForumThreadHeader; path
       {/* A title with no spaces in it wraps instead of pushing the page sideways (rule 21). */}
       <h1 className="page-title max-w-[1100px] [overflow-wrap:anywhere]">{thread.title}</h1>
       {thread.dueAt !== null && (
-        <p className="m-0">
-          <InfoPill tone="gold">
-            {t('thread.due', { day: dueMomentText(thread.dueAt, i18n.language) })}
-          </InfoPill>
-        </p>
+        <MetaLine
+          facts={[
+            {
+              text: t('thread.due', { day: dueMomentText(thread.dueAt, i18n.language) }),
+              kind: 'deadline',
+            },
+          ]}
+        />
       )}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <StartedByLine thread={thread} />

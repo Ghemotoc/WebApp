@@ -159,7 +159,7 @@
   },
   "newThread": {
     "eyebrow": "Discuție nouă",
-    "heading": "Începe o discuție în {{forum}}",
+    "heading": "Discuție nouă",
     "post": "Publică discuția",
     "cancel": "Renunță",
     "logIn": "Intră ca să începi o discuție."
@@ -419,5 +419,9 @@
       "title": "Cum funcționează voturile",
       "text": "Toată lumea vede voturile pozitive. Voturile negative sunt private. Nu apar niciodată ca scor. Îi ajută doar pe moderatori să găsească postările de verificat."
     }
+  },
+  "beforePost": {
+    "title": "Înainte să postezi",
+    "text": "Comentează textul, nu persoana care l-a scris. Păstrează pentru tine adresa, școala și numărul de telefon. Fiecare mesaj are un buton de raportare."
   }
 }

@@ -159,7 +159,7 @@
   },
   "newThread": {
     "eyebrow": "New thread",
-    "heading": "Start a thread in {{forum}}",
+    "heading": "New thread",
     "post": "Post the thread",
     "cancel": "Cancel",
     "logIn": "Get in to start a thread."
@@ -419,5 +419,9 @@
       "title": "How votes work",
       "text": "Everyone can see upvotes. Downvotes are private. They never show as a score. They only help moderators find posts to check."
     }
+  },
+  "beforePost": {
+    "title": "Before you post",
+    "text": "Comment on the writing, not the writer. Keep your address, school and phone number private. Every post has Report."
   }
 }

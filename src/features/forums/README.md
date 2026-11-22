@@ -76,3 +76,8 @@ The database half is `supabase/migrations/…_forums1_a_forum_categories.sql` an
   pill in `ForumPostCard.tsx`, `ThreadAnswerNote.tsx` at the top of the thread and "Answered" in
   `ThreadRow.tsx`. `NewThreadForm` also takes an `initialBody`, which a chapter passage fills
   ("Discuss in the forums", built in `src/features/sharing/`).
+- The simplified design for the forum pages (CALM-9b, boards simplified F02 to F05): a thread's
+  row (`ThreadRow.tsx`), the search results, a post's header and the rules strip say Pinned,
+  Locked, Answered, Staff, Thread starter and the post kind as bold words or in a meta line
+  instead of pills; a class thread's due day is a deadline in a meta line. The new thread page
+  puts the form on the page with `BeforeYouPost.tsx` beside it.

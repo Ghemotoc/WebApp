@@ -15,6 +15,7 @@ import { useId, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
+import { buttonClassName } from '@/components/ui/buttonStyles';
 import { Notice } from '@/components/ui/Notice';
 import { TextInput } from '@/components/ui/TextInput';
 import { PersonalDetailsGateNote } from '@/features/privacy/components/PersonalDetailsNote';
@@ -92,10 +93,8 @@ export function NewThreadForm({ forumSlug, cancelTo, initialBody = '' }: NewThre
       <PersonalDetailsGateNote gate={gate} isSending={starting.isRunning} />
       {messages.general !== null && <Notice tone="error">{messages.general}</Notice>}
       <div className="flex flex-wrap justify-end gap-3">
-        <Link
-          to={cancelTo}
-          className="inline-flex h-11 items-center rounded-full button-glass px-5 text-sm font-semibold no-underline"
-        >
+        {/* CALM-9b (board F04): Cancel is a text button beside the one main action. */}
+        <Link to={cancelTo} className={buttonClassName({ variant: 'text' })}>
           {t('newThread.cancel')}
         </Link>
         <Button type="submit" disabled={starting.isRunning}>

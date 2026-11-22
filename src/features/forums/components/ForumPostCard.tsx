@@ -2,14 +2,14 @@
  * ForumPostCard: one post in a thread (bundle FORUMS-1, part b; S1-E8-02; board 5.2).
  *
  * Board values: a white card with 24 px corners; a 40 px round avatar (PersonAvatar, LOOK-7), the
- * name (15 px bold) as a link to the profile, "Thread starter" and "Staff" pills, the time ("14
+ * name (15 px bold) as a link to the profile, "Thread starter" and "Staff" (bold words since CALM-9b), the time ("14
  * Oct, 19:02 · Edited 14 Oct, 19:20", 12 px), the post's number at the right as its permalink
  * ("#1", criterion 3), the words in 15 px, then the actions. A deleted or removed post keeps its
  * number with a marker, so the numbers never shift. Each card is a real <article> named "Post 3 by
  * poppyverse", with an id (post-3) a permalink scrolls to. Part c draws a reply's quotes above its
  * words, each linking back to the quoted post (S1-E8-03). Under the words sits the author's forum
  * signature, only from 768 px up: phones hide it (S1-E8-08 criterion 2; Q25). Beside the name sits
- * the author's rank (RankChip, S1-E8-09). IDEAS-3f adds an "Answer" pill on the reply the thread's
+ * the author's rank (RankChip, S1-E8-09). IDEAS-3f adds "Answer" on the reply the thread's
  * starter marked "This answered it" (IDEA-20261102-8). GAPS-10: a reply its space's moderators
  * hid says so to the people who still see it, a reply moved from another thread is marked
  * "Moved here", a quote links to wherever the quoted post is now, and the space's owner and
@@ -20,7 +20,6 @@
 import { lazy, Suspense, useId, useState } from 'react';
 import { Link } from 'react-router';
 
-import { InfoPill } from '@/components/ui/InfoPill';
 import { PersonAvatar } from '@/features/avatars/components/PersonAvatar';
 
 import type { ForumPost } from '../api/forumThreads';
@@ -71,7 +70,17 @@ function handleOf(post: ForumPost): string | null {
 }
 
 /**
- * The avatar, the name with its pills, the time and the permalink.
+ * One state beside the author's name ("Thread starter"): a bold word, as a meta line's state.
+ *
+ * @param props.children - the translated word
+ * @returns the word
+ */
+function PostState({ children }: { children: string }) {
+  return <span className="text-[13px] font-bold text-ink">{children}</span>;
+}
+
+/**
+ * The avatar, the name with its states, the time and the permalink.
  *
  * @returns the post's header
  */
@@ -96,12 +105,11 @@ function PostHeader({ post, forumSlug, threadNumber }: ForumPostCardProps) {
           )}
           {/* The author's writer rank beside the name (S1-E8-09 criterion 5). */}
           {post.authorRank !== null && <RankChip rank={post.authorRank} />}
-          {post.author?.isStaff === true && <InfoPill tone="sky">{t('staff')}</InfoPill>}
-          {post.isStarter && <InfoPill tone="plum">{t('person.starter')}</InfoPill>}
+          {/* CALM-9b (board simplified F05): Staff, Thread starter and Answer are bold words. */}
+          {post.author?.isStaff === true && <PostState>{t('staff')}</PostState>}
+          {post.isStarter && <PostState>{t('person.starter')}</PostState>}
           {/* IDEAS-3f: the reply that answered the thread, while everyone can read it. */}
-          {post.isAnswer && post.state === 'live' && (
-            <InfoPill tone="sage">{t('answer.pill')}</InfoPill>
-          )}
+          {post.isAnswer && post.state === 'live' && <PostState>{t('answer.pill')}</PostState>}
         </div>
         <p className="m-0 text-xs text-meta">
           <time dateTime={post.createdAt}>{created}</time>

@@ -5,11 +5,11 @@
  * Shows whether it is a thread (its title matched) or a post, the thread's title as a link to the
  * post itself (?post=N, which the thread page scrolls to), where and by whom it was written, and
  * the start of its words. A deleted account shows as "Deleted account"; a user ID never.
+ * CALM-9b (board simplified F02): no pill; "Thread" or "Post #3" is a bold word above the title,
+ * the state that goes first in a meta line.
  * Who uses it: ForumSearchPage.
  */
 import { Link } from 'react-router';
-
-import { InfoPill } from '@/components/ui/InfoPill';
 
 import type { ForumSearchResult } from '../api/forumSearch';
 import { postAddress } from '../lib/forumAddresses';
@@ -30,10 +30,9 @@ export function ForumSearchResultRow({ result }: { result: ForumSearchResult }) 
   const address = postAddress(result.forumSlug, result.threadNumber, result.postNumber);
   return (
     <li className="flex flex-col gap-2 border-t border-border px-5 py-4 first:border-t-0 md:px-7">
-      <span className="flex">
-        <InfoPill tone={isThread ? 'plum' : 'neutral'}>
-          {isThread ? t('search.kindThread') : t('search.kindPost', { number: result.postNumber })}
-        </InfoPill>
+      {/* A span, not a paragraph: the kind and the title read as two lines, not with a gap. */}
+      <span className="block text-[13px] font-bold text-ink">
+        {isThread ? t('search.kindThread') : t('search.kindPost', { number: result.postNumber })}
       </span>
       <Link
         to={address}
