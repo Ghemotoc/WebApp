@@ -13,8 +13,9 @@
  * - Delete asks twice (S1-E17-05);
  * - the switcher moves between stories and /plan lists the plans, the story open last first
  *   (S1-E17-02, G10a);
- * - "Plan" sits beside "Story settings" on Your writing; another writer can't open someone
- *   else's plan;
+ * - "Story Atlas" sits beside "Continue chapter n" on Writing, with the line "In the Atlas:
+ *   Characters · Relationships · Story world · Storyline" under it (CALM-9a); another writer can't
+ *   open someone else's plan;
  * - the page passes axe, doesn't scroll sideways and draws no doodle at 390, 768 and
  *   1440 px, light and night, Romanian and English.
  * Test data: adult_writer makes "Atlas test" stories (deleted at the end); suspended_user (whose
@@ -152,12 +153,20 @@ test.describe('Story Atlas at a glance (S1-E17-01 to S1-E17-06)', () => {
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', '/write');
-    // "Plan" sits beside "Story settings" on each story card.
-    await page
-      .getByRole('article')
-      .filter({ hasText: 'Atlas test: harta nopții' })
-      .getByRole('link', { name: 'Plan', exact: true })
-      .click();
+    // "Story Atlas" sits on each story card, and its Atlas line links straight to each part.
+    const card = page.getByRole('article').filter({ hasText: 'Atlas test: harta nopții' });
+    const atlasParts = card.getByRole('list', { name: 'In the Atlas:' });
+    await expect(atlasParts.getByRole('link', { name: 'Relationships' })).toHaveAttribute(
+      'href',
+      /\/plan\/s\/[^/]+\/connections$/,
+    );
+    await expect(atlasParts.getByRole('link')).toHaveText([
+      'Characters',
+      'Relationships',
+      'Story world',
+      'Storyline',
+    ]);
+    await card.getByRole('link', { name: 'Story Atlas', exact: true }).click();
     await expect(page).toHaveURL(/\/plan\/s\//);
     await page.getByLabel('Story', { exact: true }).selectOption('statia-meteo-seed01');
     await expect(page).toHaveURL(/\/plan\/s\/statia-meteo-seed01$/);
@@ -180,7 +189,7 @@ test.describe('Story Atlas at a glance (S1-E17-01 to S1-E17-06)', () => {
     await page
       .getByRole('article')
       .filter({ hasText: 'Atlas test: harta nopții' })
-      .getByRole('link', { name: 'Plan', exact: true })
+      .getByRole('link', { name: 'Story Atlas', exact: true })
       .click();
     const deleteSection = page.getByRole('region', { name: 'Delete this story' });
     await deleteSection.getByRole('button', { name: 'Delete story' }).click();

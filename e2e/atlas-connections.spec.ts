@@ -12,7 +12,9 @@
  *   it, a category switch hides its lines, a card opens the sheet, and on a phone the map fits
  *   the width and, zoomed in, scrolls inside its own region while the page doesn't (S1-E17-15);
  * - a card dragged to an empty spot keeps its place, Arrange for me puts it back, and a card
- *   dropped on another opens Add a connection with both picked (G10b2);
+ *   dropped on another opens Add a relationship with both picked (G10b2);
+ * - "Add a relationship" in the top bar of another Atlas page opens this page with the form open,
+ *   and the page is called Relationships (CALM-9a);
  * - the family tree puts generations top to bottom with partners side by side, "Include turned
  *   or made" counts makers, "Whose tree" shows one family and a note says how many characters
  *   are left off (S1-E17-16, G10b2);
@@ -109,17 +111,17 @@ async function openAs(
   return page;
 }
 
-/** Opens "Add a connection" on the Connections page, unless it is open already. */
+/** Opens "Add a relationship" on the Relationships page, unless it is open already. */
 async function openAddForm(page: Page) {
   const form = page.getByRole('region', { name: 'Add a relationship', exact: true });
-  const opener = page.getByRole('button', { name: 'Add a connection' });
+  const opener = page.getByRole('button', { name: 'Add a relationship' });
   await expect(opener).toBeVisible();
   if ((await opener.getAttribute('aria-expanded')) !== 'true') await opener.click();
   await expect(form).toBeVisible();
   return form;
 }
 
-/** Switches the Connections page to one of its views: Map, Family tree or List. */
+/** Switches the Relationships page to one of its views: Map, Family tree or List. */
 async function showView(page: Page, name: 'Map' | 'Family tree' | 'List') {
   // The radio itself is visually hidden; a person clicks the segment's label.
   await page.getByRole('group', { name: 'View' }).getByText(name, { exact: true }).click();
@@ -241,11 +243,26 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     await page.context().close();
   });
 
+  test('Add a relationship in the top bar opens the Relationships page with its form open', async ({
+    browser,
+  }) => {
+    const page = await openAs(browser, 'adult_writer', `${planAddress}/characters`);
+    await page.getByRole('link', { name: 'Add a relationship' }).click();
+    await expect(page).toHaveURL(/\/connections\?add=1$/);
+    await expect(page.getByRole('heading', { name: 'Relationships', level: 1 })).toBeVisible();
+    await expect(
+      page.getByRole('region', { name: 'Add a relationship', exact: true }),
+    ).toBeVisible();
+    // On its own page the top bar leaves the add out: the page's button does it.
+    await expect(page.getByRole('link', { name: 'Add a relationship' })).toHaveCount(0);
+    await page.context().close();
+  });
+
   test('the map draws every relationship, hides a category and opens a sheet', async ({
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', `${planAddress}/connections`);
-    await expect(page.getByRole('link', { name: 'Connections' })).toHaveAttribute(
+    await expect(page.getByRole('link', { name: 'Relationships' })).toHaveAttribute(
       'aria-current',
       'page',
     );
@@ -304,7 +321,7 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     await page.context().close();
   });
 
-  test('a dragged card keeps its place, and dropped on another opens Add a connection', async ({
+  test('a dragged card keeps its place, and dropped on another opens Add a relationship', async ({
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', `${planAddress}/connections`);

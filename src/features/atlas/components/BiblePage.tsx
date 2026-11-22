@@ -12,7 +12,6 @@
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
-import { PageContainer } from '@/components/ui/PageContainer';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { useMyStories } from '@/features/writing/hooks/useMyStories';
 
@@ -22,7 +21,7 @@ import { writeAddressFor } from '../lib/writeAddress';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { AtlasPageHeading } from './AtlasPageHeading';
-import { AtlasTopBar } from './AtlasTopBar';
+import { AtlasFrame } from './AtlasFrame';
 import { BibleContents } from './BibleContents';
 import { BibleEntryView } from './BibleEntryView';
 import { BibleSectionsManager } from './BibleSectionsManager';
@@ -100,13 +99,15 @@ export function BiblePage() {
 
   if (!isKnown) return null;
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-8 pt-10 pb-12">
+    <AtlasFrame
+      slug={storySlug}
+      writeAddress={writeAddressFor(story)}
+      section="bible"
+      showsChrome={userId !== null}
+    >
       <title>
         {bible ? t('bible.documentTitle', { title: bible.storyTitle }) : t('homeDocumentTitle')}
       </title>
-      {userId !== null && (
-        <AtlasTopBar slug={storySlug} writeAddress={writeAddressFor(story)} section="bible" />
-      )}
       {userId === null && <p className="m-0 text-body">{t('signedOut')}</p>}
       {loadFailed && <Notice tone="error">{t('loadFailed')}</Notice>}
       {bible === null && <Notice tone="error">{t('notFound')}</Notice>}
@@ -116,6 +117,6 @@ export function BiblePage() {
           <BibleBody slug={storySlug} bible={bible} entryId={entryId} />
         </>
       )}
-    </PageContainer>
+    </AtlasFrame>
   );
 }

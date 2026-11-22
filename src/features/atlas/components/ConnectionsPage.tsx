@@ -1,12 +1,14 @@
 /**
- * ConnectionsPage: /plan/s/:storySlug/connections, how a story's characters are connected in
- * Story Atlas (stories S1-E17-14 to S1-E17-16).
+ * ConnectionsPage: /plan/s/:storySlug/connections, the Relationships page: how a story's
+ * characters are connected in Story Atlas (stories S1-E17-14 to S1-E17-16; called "Connections"
+ * until bundle CALM-9a renamed it, Robert, 22 Nov 2026).
  *
  * The Story Atlas top bar, then a switch between three views (bundle G10 ATLAS, part b2, board
  * AtlasConnections): the relationship map (drag, zoom, Focus on, Arrange for me), the family tree
  * (with "Add to this tree", GAPS-3) and the List, which is also the map's version for screen readers (S1-E17-15). "Add a
  * connection" opens the form above the views, and a card dropped on another opens it with both
- * characters picked. With fewer than two characters the page points to the Characters page
+ * characters picked; ?add=1 in the address (the "Add a relationship" button in the top bar of every
+ * other Atlas page) opens it straight away. With fewer than two characters the page points to the Characters page
  * instead. Only the writer sees any of it.
  * Who calls it: src/app/router.tsx (loaded only when a writer opens it). What it calls:
  * useStoryCast → story_cast(), useRelationshipChangers → the relationship functions, and
@@ -15,9 +17,9 @@
 import { useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router';
 
+import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
-import { PageContainer } from '@/components/ui/PageContainer';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { useMyStories } from '@/features/writing/hooks/useMyStories';
@@ -31,7 +33,7 @@ import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { AtlasPageHeading } from './AtlasPageHeading';
 import { AddRelationshipForm } from './AddRelationshipForm';
-import { AtlasTopBar } from './AtlasTopBar';
+import { AtlasFrame } from './AtlasFrame';
 import { ConnectionsMapView } from './ConnectionsMapView';
 import { FamilyTreeView } from './FamilyTreeView';
 import { ItemVisibilityControls } from './ItemVisibilityControls';
@@ -132,6 +134,7 @@ function ConnectionsHeader({
           aria-controls="atlas-add-connection"
           onClick={() => onPanel({ isOpen: !panel.isOpen, opening: panel.opening + 1 })}
         >
+          <ActionIcon name="link" />
           {t('connections.add.open')}
         </Button>
       </div>
@@ -205,7 +208,12 @@ function ConnectionsBody({ slug, cast }: { slug: string; cast: StoryCast }) {
   const { t } = useAtlasTranslation();
   const { relate } = useRelationshipChangers(slug);
   const { view, setView } = useConnectionsView();
-  const [panel, setPanel] = useState<AddPanel>({ isOpen: false, opening: 0 });
+  // Arriving from "Add a relationship" elsewhere in the Atlas (?add=1) opens the form at once.
+  const [searchParams] = useSearchParams();
+  const [panel, setPanel] = useState<AddPanel>({
+    isOpen: searchParams.get('add') === '1',
+    opening: 0,
+  });
   // Each card and box opens that character's sheet.
   const sheetAddress = (characterId: string) => `/plan/s/${slug}/characters/${characterId}`;
   if (cast.characters.length < 2) {
@@ -247,7 +255,7 @@ function ConnectionsBody({ slug, cast }: { slug: string; cast: StoryCast }) {
 /**
  * Renders the page.
  *
- * @returns the Connections page, a wait or a plain message
+ * @returns the Relationships page, a wait or a plain message
  */
 export function ConnectionsPage() {
   const { t } = useAtlasTranslation();
@@ -259,13 +267,15 @@ export function ConnectionsPage() {
 
   if (!isKnown) return null;
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-8 pt-10 pb-12">
+    <AtlasFrame
+      slug={storySlug}
+      writeAddress={writeAddressFor(story)}
+      section="connections"
+      showsChrome={userId !== null}
+    >
       <title>
         {cast ? t('connections.documentTitle', { title: cast.storyTitle }) : t('homeDocumentTitle')}
       </title>
-      {userId !== null && (
-        <AtlasTopBar slug={storySlug} writeAddress={writeAddressFor(story)} section="connections" />
-      )}
       {userId === null && <p className="m-0 text-body">{t('signedOut')}</p>}
       {loadFailed && <Notice tone="error">{t('loadFailed')}</Notice>}
       {cast === null && <Notice tone="error">{t('notFound')}</Notice>}
@@ -275,6 +285,6 @@ export function ConnectionsPage() {
           <ConnectionsBody slug={storySlug} cast={cast} />
         </>
       )}
-    </PageContainer>
+    </AtlasFrame>
   );
 }

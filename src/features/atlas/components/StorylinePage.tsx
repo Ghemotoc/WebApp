@@ -16,7 +16,6 @@ import { useState } from 'react';
 import { useParams, useSearchParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
-import { PageContainer } from '@/components/ui/PageContainer';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { useMyStories } from '@/features/writing/hooks/useMyStories';
@@ -35,7 +34,7 @@ import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { AddActForm } from './AddActForm';
 import { AtlasPageHeading } from './AtlasPageHeading';
-import { AtlasTopBar } from './AtlasTopBar';
+import { AtlasFrame } from './AtlasFrame';
 import { ChapterBoard } from './ChapterBoard';
 import { PovLanesView } from './PovLanesView';
 import { TimelineView } from './TimelineView';
@@ -134,15 +133,17 @@ export function StorylinePage() {
 
   if (!isKnown) return null;
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-8 pt-10 pb-12">
+    <AtlasFrame
+      slug={storySlug}
+      writeAddress={writeAddressFor(story)}
+      section="storyline"
+      showsChrome={userId !== null}
+    >
       <title>
         {storyline
           ? t('storyline.documentTitle', { title: storyline.storyTitle })
           : t('homeDocumentTitle')}
       </title>
-      {userId !== null && (
-        <AtlasTopBar slug={storySlug} writeAddress={writeAddressFor(story)} section="storyline" />
-      )}
       {userId === null && <p className="m-0 text-body">{t('signedOut')}</p>}
       {loadFailed && <Notice tone="error">{t('loadFailed')}</Notice>}
       {storyline === null && <Notice tone="error">{t('notFound')}</Notice>}
@@ -160,6 +161,6 @@ export function StorylinePage() {
           <StorylineBody slug={storySlug} storyline={storyline} view={view} />
         </>
       )}
-    </PageContainer>
+    </AtlasFrame>
   );
 }

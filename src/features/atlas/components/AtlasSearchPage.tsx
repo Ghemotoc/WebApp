@@ -13,7 +13,6 @@
 import { useParams, useSearchParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
-import { PageContainer } from '@/components/ui/PageContainer';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { useMyStories } from '@/features/writing/hooks/useMyStories';
 
@@ -25,7 +24,7 @@ import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { AtlasPageHeading } from './AtlasPageHeading';
 import { AtlasSearchBox } from './AtlasSearchBox';
-import { AtlasTopBar } from './AtlasTopBar';
+import { AtlasFrame } from './AtlasFrame';
 import { SearchResultItem } from './SearchResultItem';
 
 /** The results, one section per type, or a plain line when there are none. */
@@ -105,17 +104,21 @@ export function AtlasSearchPage() {
 
   if (!isKnown) return null;
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-8 pt-10 pb-12">
+    <AtlasFrame
+      slug={storySlug}
+      writeAddress={writeAddressFor(story)}
+      section={null}
+      showsChrome={userId !== null}
+    >
       <title>{t('search.documentTitle', { query })}</title>
       {userId === null && <p className="m-0 text-body">{t('signedOut')}</p>}
       {userId !== null && (
         <>
-          <AtlasTopBar slug={storySlug} writeAddress={writeAddressFor(story)} section={null} />
           <AtlasPageHeading title={t('search.heading')} />
           <AtlasSearchBox key={query} slug={storySlug} isPageBar />
           <SearchBody slug={storySlug} query={query} />
         </>
       )}
-    </PageContainer>
+    </AtlasFrame>
   );
 }

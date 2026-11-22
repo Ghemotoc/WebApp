@@ -5,16 +5,13 @@
  * The filter matches names and "also known as" without minding accents (lib/castGroups.ts); its
  * label is for screen readers and its placeholder says what it matches. "New character" is a grey
  * glass add button (handoff: every add action is grey glass); a failure says so in plain words.
- * Who uses it: CharactersPage. What it calls: SearchInput and the create function it is given.
+ * Who uses it: CharactersPage. What it calls: SearchInput and NewCharacterButton, with the create function it is given.
  */
-import { useState } from 'react';
-
-import { ActionIcon } from '@/components/icons/ActionIcon';
-import { Button } from '@/components/ui/Button';
-import { Notice } from '@/components/ui/Notice';
 import { SearchInput } from '@/components/ui/SearchInput';
 
 import { useAtlasTranslation } from '../registerAtlasTranslations';
+
+import { NewCharacterButton } from './NewCharacterButton';
 
 /** What the toolbar needs. */
 export interface CastToolbarProps {
@@ -23,33 +20,6 @@ export interface CastToolbarProps {
   onFilterChange: (filter: string) => void;
   /** Makes a character and opens its sheet; throws when it can't. */
   onCreate: () => Promise<void>;
-}
-
-/** "New character", with a plain message when it couldn't be made. */
-function NewCharacterButton({ onCreate }: { onCreate: () => Promise<void> }) {
-  const { t } = useAtlasTranslation();
-  const [isCreating, setIsCreating] = useState(false);
-  const [failed, setFailed] = useState(false);
-
-  /** Makes the character; a failure says so and lets the writer try again. */
-  async function create() {
-    setIsCreating(true);
-    setFailed(false);
-    await onCreate().catch(() => setFailed(true));
-    setIsCreating(false);
-  }
-
-  return (
-    <div className="flex flex-col items-end gap-2">
-      <Button variant="secondary" disabled={isCreating} onClick={() => void create()}>
-        <ActionIcon name="plus" />
-        {t('characters.newCharacter')}
-      </Button>
-      <div aria-live="polite">
-        {failed && <Notice tone="error">{t('characters.createFailed')}</Notice>}
-      </div>
-    </div>
-  );
 }
 
 /**

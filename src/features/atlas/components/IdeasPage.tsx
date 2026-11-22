@@ -13,7 +13,6 @@ import { useState } from 'react';
 import { useParams, useSearchParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
-import { PageContainer } from '@/components/ui/PageContainer';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { useMyStories } from '@/features/writing/hooks/useMyStories';
@@ -26,7 +25,7 @@ import { writeAddressFor } from '../lib/writeAddress';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { AtlasPageHeading } from './AtlasPageHeading';
-import { AtlasTopBar } from './AtlasTopBar';
+import { AtlasFrame } from './AtlasFrame';
 import { IdeaItem } from './IdeaItem';
 import { IdeaQuickAdd } from './IdeaQuickAdd';
 
@@ -100,13 +99,15 @@ export function IdeasPage() {
 
   if (!isKnown) return null;
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-8 pt-10 pb-12">
+    <AtlasFrame
+      slug={storySlug}
+      writeAddress={writeAddressFor(story)}
+      section="ideas"
+      showsChrome={userId !== null}
+    >
       <title>
         {ideas ? t('ideas.documentTitle', { title: ideas.storyTitle }) : t('homeDocumentTitle')}
       </title>
-      {userId !== null && (
-        <AtlasTopBar slug={storySlug} writeAddress={writeAddressFor(story)} section="ideas" />
-      )}
       {userId === null && <p className="m-0 text-body">{t('signedOut')}</p>}
       {loadFailed && <Notice tone="error">{t('loadFailed')}</Notice>}
       {ideas === null && <Notice tone="error">{t('notFound')}</Notice>}
@@ -117,6 +118,6 @@ export function IdeasPage() {
           <IdeaList slug={storySlug} ideas={ideas} />
         </>
       )}
-    </PageContainer>
+    </AtlasFrame>
   );
 }

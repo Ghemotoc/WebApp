@@ -7,12 +7,11 @@
  * switches and every character with what readers see of it on the left; "Spoilers stay safe" and
  * "Preview as a reader" on the right. Only the writer sees it.
  * Who calls it: src/app/router.tsx. What it calls: usePlanVisibility, usePlanPreview (whether
- * the story is published), PublicAreaSwitches, ReaderCharactersList and AtlasTopBar.
+ * the story is published), PublicAreaSwitches, ReaderCharactersList and AtlasFrame.
  */
 import { Link, useParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
-import { PageContainer } from '@/components/ui/PageContainer';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { useMyStories } from '@/features/writing/hooks/useMyStories';
 
@@ -21,7 +20,7 @@ import { usePlanVisibility } from '../hooks/usePlanVisibility';
 import { writeAddressFor } from '../lib/writeAddress';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
-import { AtlasTopBar } from './AtlasTopBar';
+import { AtlasFrame } from './AtlasFrame';
 import { PublicAreaSwitches } from './PublicAreaSwitches';
 import { ReaderCharactersList } from './ReaderCharactersList';
 
@@ -94,15 +93,17 @@ export function ReaderViewPage() {
 
   if (!isKnown) return null;
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-8 pt-10 pb-12">
+    <AtlasFrame
+      slug={storySlug}
+      writeAddress={writeAddressFor(story)}
+      section="readers"
+      showsChrome={userId !== null}
+    >
       <title>{t('readers.documentTitle', { title: storyTitle })}</title>
       {userId === null && <p className="m-0 text-body">{t('signedOut')}</p>}
-      {userId !== null && (
-        <AtlasTopBar slug={storySlug} writeAddress={writeAddressFor(story)} section="readers" />
-      )}
       {loadFailed && <Notice tone="error">{t('loadFailed')}</Notice>}
       {visibility === null && <Notice tone="error">{t('notFound')}</Notice>}
       {visibility && <ReaderViewBody slug={storySlug} title={storyTitle} />}
-    </PageContainer>
+    </AtlasFrame>
   );
 }

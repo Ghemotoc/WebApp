@@ -188,7 +188,14 @@
     "chapterCount_other": "{{count}} de capitole",
     "manageChapters": "Gestionează capitolele",
     "languages": "Limbi",
-    "plan": "Plănuiește",
+    "atlas": "Story Atlas",
+    "inAtlas": "În Atlas:",
+    "atlasParts": {
+      "characters": "Personaje",
+      "relationships": "Relații",
+      "world": "Lumea poveștii",
+      "storyline": "Firul poveștii"
+    },
     "notPublishedYet": "Încă nepublicată",
     "chaptersPublished_one": "{{count}} capitol publicat",
     "chaptersPublished_few": "{{count}} capitole publicate",

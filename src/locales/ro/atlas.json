@@ -7,7 +7,8 @@
   "switcher": {
     "label": "Povestea",
     "newStory": "Poveste nouă",
-    "write": "Scrie"
+    "write": "Scrie",
+    "storyPage": "Pagina poveștii"
   },
   "empty": {
     "title": "Plănuiește prima poveste",
@@ -103,7 +104,7 @@
     "label": "Secțiunile Story Atlas",
     "glance": "Pe scurt",
     "characters": "Personaje",
-    "connections": "Legături",
+    "connections": "Relații",
     "bible": "Lumea poveștii",
     "storyline": "Firul poveștii",
     "ideas": "Idei",
@@ -253,8 +254,8 @@
     "failed": "Nu s-a salvat. Verifică-ți conexiunea și încearcă din nou."
   },
   "connections": {
-    "heading": "Legături",
-    "documentTitle": "Legături în {{title}}: Story Atlas",
+    "heading": "Relații",
+    "documentTitle": "Relații în {{title}}: Story Atlas",
     "noCharacters": "Adaugă mai întâi cel puțin două personaje, apoi leagă-le aici.",
     "openCharacters": "Deschide personajele",
     "kinds": {
@@ -313,7 +314,7 @@
       "other": "Altele"
     },
     "add": {
-      "heading": "Adaugă o legătură",
+      "heading": "Adaugă o relație",
       "hint": "Se citește de la primul personaj la al doilea: „Ana e părinte pentru Vali”.",
       "from": "Personaj",
       "to": "Celălalt personaj",
@@ -342,11 +343,11 @@
       "reverseHint": "Apare pe fișa personajului {{to}}, de exemplu „fină pentru”.",
       "firstStandIn": "primul personaj",
       "secondStandIn": "celălalt personaj",
-      "open": "Adaugă o legătură"
+      "open": "Adaugă o relație"
     },
     "list": {
-      "heading": "Legături",
-      "sheetHeading": "Legături",
+      "heading": "Relații",
+      "sheetHeading": "Relații",
       "none": "Încă nu ai legături.",
       "delete": "Șterge",
       "confirm": "Ștergi „{{sentence}}”?",
@@ -940,7 +941,7 @@
     },
     "character": {
       "back": "Personaje",
-      "connections": "Legături",
+      "connections": "Relații",
       "notShown": "Acest personaj nu apare aici."
     },
     "world": {
@@ -953,5 +954,8 @@
       "none": "Niciun eveniment de arătat încă."
     },
     "byline": "de {{name}} · împărtășit de autor"
+  },
+  "breadcrumb": {
+    "label": "Unde ești"
   }
 }

@@ -6,18 +6,20 @@
  * story, the 120 px cover on the left (64 px on phones) and beside it the title, the meta line
  * ("Fiction · Ongoing · No AI · 6 chapters published", writerStoryFacts), the blurb, the tags, the
  * line "Only you can see this story until you publish its first chapter" while nothing is
- * published, and the buttons: "Write chapter one" or "Continue chapter n" (S1-E3-02a), "Manage
- * chapters" (S1-E3-04), "Story settings" (S1-E3-05) and "Plan" (Story Atlas) as quiet buttons,
- * "See story page" as a text button. They are all quiet, because "Continue draft" at the top is the
- * page's one main button. Under them, once a chapter exists, the numbers per chapter
+ * published, and the actions (bundle CALM-9a, board D01): "Write chapter one" or "Continue
+ * chapter n" (S1-E3-02a) and "Story Atlas" as quiet buttons (quiet, because "Continue draft" at the
+ * top is the page's one main button), then "Manage chapters" (S1-E3-04), "Story settings"
+ * (S1-E3-05) and "See story page" as text links, and the line "In the Atlas: Characters ·
+ * Relationships · Story world · Storyline" (StoryCardAtlasLine). Under them, once a chapter exists, the numbers per chapter
  * (ChapterStatsTable, S1-E3-07).
- * Who uses it: YourWritingPage. What it calls: writerStoryFacts, ChapterStatsTable.
+ * Who uses it: YourWritingPage. What it calls: writerStoryFacts, StoryCardAtlasLine, ChapterStatsTable.
  */
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
 import type { DrawnCoverChoice } from '@/components/covers/coverDesigns';
 import { DrawnCover } from '@/components/covers/DrawnCover';
+import { ActionIcon } from '@/components/icons/ActionIcon';
 import { buttonClassName } from '@/components/ui/buttonStyles';
 import { MetaLine } from '@/components/ui/MetaLine';
 import { StoryCoverArt } from '@/features/pictures/components/StoryCoverArt';
@@ -29,6 +31,7 @@ import { writerStoryFacts } from '../lib/writerStoryFacts';
 
 import { ChapterStatsTable } from './ChapterStatsTable';
 import { NewChapterButton } from './NewChapterButton';
+import { StoryCardAtlasLine } from './StoryCardAtlasLine';
 
 /** What the card needs: the story and the cover to draw (YourWritingPage works it out per row). */
 export interface WriterStoryCardProps {
@@ -39,8 +42,11 @@ export interface WriterStoryCardProps {
   chapterNumbers: DashboardChapter[];
 }
 
-/** The quiet button's classes, shared by the links below. */
+/** The quiet button's classes, for "Continue chapter n" and "Story Atlas". */
 const quietLink = buttonClassName({ variant: 'secondary' });
+
+/** The text link's classes, for the card's other links. */
+const textLink = buttonClassName({ variant: 'text' });
 
 /** "Write chapter one" (it makes the chapter on the way) or "Continue chapter n", both quiet. */
 function WriteChapterLink({
@@ -54,34 +60,44 @@ function WriteChapterLink({
   if (latestChapter === undefined) return <NewChapterButton slug={slug} variant="secondary" />;
   return (
     <Link to={`/write/s/${slug}/c/${latestChapter.code}`} className={quietLink}>
+      <ActionIcon name="pen" />
       {t('storyCard.continueChapter', { number: latestChapter.position })}
     </Link>
   );
 }
 
-/** The story's buttons: write, manage chapters, settings, plan, then "See story page". */
+/**
+ * The story's actions (bundle CALM-9a, board D01, approved by Robert on 22 Nov 2026): "Continue
+ * chapter n" and "Story Atlas" as quiet buttons with their icons, because they are the two places a
+ * writer goes most; "Manage chapters", "Story settings" and "See story page" as text links; and
+ * under them the line "In the Atlas: Characters · Relationships · Story world · Storyline".
+ */
 function StoryCardLinks({ story }: { story: MyStory }) {
   const { t } = useTranslation('writing');
   const { slug } = story;
   const latestChapter = story.chapters.at(-1);
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <WriteChapterLink slug={slug} latestChapter={latestChapter} />
-      {latestChapter !== undefined && (
-        <Link to={`/write/s/${slug}/chapters`} className={quietLink}>
-          {t('storyCard.manageChapters')}
+    <div className="flex flex-col gap-2">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+        <WriteChapterLink slug={slug} latestChapter={latestChapter} />
+        {/* The story's side in Story Atlas, beside "Write" (S1-E17 notes). */}
+        <Link to={`/plan/s/${slug}`} className={quietLink}>
+          <ActionIcon name="map" />
+          {t('storyCard.atlas')}
         </Link>
-      )}
-      <Link to={`/write/s/${slug}/settings`} className={quietLink}>
-        {t('storyCard.settings')}
-      </Link>
-      {/* "Plan" beside "Write": the story's side in Story Atlas (S1-E17 notes). */}
-      <Link to={`/plan/s/${slug}`} className={quietLink}>
-        {t('storyCard.plan')}
-      </Link>
-      <Link to={`/s/${slug}`} className={buttonClassName({ variant: 'text' })}>
-        {t('storyCard.seePage')}
-      </Link>
+        {latestChapter !== undefined && (
+          <Link to={`/write/s/${slug}/chapters`} className={textLink}>
+            {t('storyCard.manageChapters')}
+          </Link>
+        )}
+        <Link to={`/write/s/${slug}/settings`} className={textLink}>
+          {t('storyCard.settings')}
+        </Link>
+        <Link to={`/s/${slug}`} className={textLink}>
+          {t('storyCard.seePage')}
+        </Link>
+      </div>
+      <StoryCardAtlasLine slug={slug} />
     </div>
   );
 }

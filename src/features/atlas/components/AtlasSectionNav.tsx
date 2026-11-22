@@ -1,18 +1,22 @@
 /**
- * AtlasSectionNav: the row of Story Atlas sections under the top bar (stories S1-E17-06 and
- * S1-E17-08, S1-E17-15, S1-E17-17, S1-E17-22, S1-E17-27, S1-E17-29 and S1-E17-32): At a glance,
- * Characters, Connections, Bible, Storyline, Ideas, Marketing and Readers (what readers can see).
+ * AtlasSectionNav: the Story Atlas sections (stories S1-E17-06 and S1-E17-08, S1-E17-15,
+ * S1-E17-17, S1-E17-22, S1-E17-27, S1-E17-29 and S1-E17-32): At a glance, Characters,
+ * Relationships, Story world, Storyline, Ideas, Marketing and Readers (what readers can see).
  *
- * Real links with aria-current on the one open now, so a screen reader says where the writer is;
- * the open one also sits on a soft tint and is bold, so it shows by shape and weight, not colour
- * alone (WCAG 1.4.1). The row stays on one line (bundle G10a, board AtlasStory: the glass top bar's
- * second row): the text steps down a size on a phone, and a row still wider than the screen
- * scrolls sideways, keeping its scrollbar because it has no arrows (DoD scroll rule); each link
- * scrolls into view when the keyboard reaches it.
- * Who uses it: AtlasTopBar.
+ * Redrawn in bundle CALM-9a (board D01 and the Atlas boards E20 to E34, approved by Robert on
+ * 22 Nov 2026 after "it's harder to find the relationship page"): each section has its line icon
+ * beside its name, and the open one carries a 3 px thread-colour bar on its left edge and bold
+ * text, so it shows by shape and weight, not colour alone (WCAG 1.4.1). "Connections" is called
+ * "Relationships" everywhere, the word the page itself already used.
+ * Two layouts, one list: on a desktop (from 1024 px) AtlasFrame shows it as a side menu, one
+ * section a line; on tablets and phones it is one line that scrolls sideways, keeping its scrollbar
+ * because it has no arrows (DoD scroll rule).
+ * Real links with aria-current on the one open now, so a screen reader says where the writer is.
+ * Who uses it: AtlasFrame. What it calls: ActionIcon.
  */
 import { Link } from 'react-router';
 
+import { ActionIcon, type ActionIconName } from '@/components/icons/ActionIcon';
 import { cn } from '@/lib/utils';
 
 import { useAtlasTranslation } from '../registerAtlasTranslations';
@@ -29,7 +33,7 @@ export type AtlasSection =
   | 'readers';
 
 /** Each section's address after /plan/s/<slug>. */
-const sectionPaths: Record<AtlasSection, string> = {
+const atlasSectionPaths: Record<AtlasSection, string> = {
   glance: '',
   characters: '/characters',
   connections: '/connections',
@@ -41,45 +45,97 @@ const sectionPaths: Record<AtlasSection, string> = {
   readers: '/readers',
 };
 
+/** Each section's icon, as the board draws the side menu (CALM-9a). */
+const sectionIcons: Record<AtlasSection, ActionIconName> = {
+  glance: 'home',
+  characters: 'people',
+  connections: 'link',
+  bible: 'globe',
+  storyline: 'list',
+  ideas: 'spark',
+  marketing: 'star',
+  readers: 'eye',
+};
+
+/** The sections in menu order. */
+const sections: AtlasSection[] = [
+  'glance',
+  'characters',
+  'connections',
+  'bible',
+  'storyline',
+  'ideas',
+  'marketing',
+  'readers',
+];
+
+/** How the list is laid out: a side menu (desktop) or a sideways line (tablet and phone). */
+export type AtlasNavLayout = 'side' | 'line';
+
 /**
  * Renders the sections.
  *
  * @param props.slug - the story open now
  * @param props.current - the section open now, or null when none is (the search page)
- * @returns the navigation row
+ * @param props.layout - "side" for the desktop menu, "line" for the scrolling line
+ * @returns the navigation
  */
-export function AtlasSectionNav({ slug, current }: { slug: string; current: AtlasSection | null }) {
+export function AtlasSectionNav({
+  slug,
+  current,
+  layout,
+}: {
+  slug: string;
+  current: AtlasSection | null;
+  layout: AtlasNavLayout;
+}) {
   const { t } = useAtlasTranslation();
-  const sections: AtlasSection[] = [
-    'glance',
-    'characters',
-    'connections',
-    'bible',
-    'storyline',
-    'ideas',
-    'marketing',
-    'readers',
-  ];
+  // The side menu stacks the links; the line keeps them on one row that scrolls.
+  const listLayout =
+    layout === 'side' ? 'flex-col gap-0.5' : 'flex-nowrap gap-1 overflow-x-auto pb-1';
   return (
     <nav aria-label={t('nav.label')}>
-      <ul className="m-0 flex list-none flex-nowrap gap-1 overflow-x-auto p-0">
+      <ul className={cn('m-0 flex list-none p-0', listLayout)}>
         {sections.map((section) => (
           <li key={section} className="shrink-0">
-            <Link
-              to={`/plan/s/${slug}${sectionPaths[section]}`}
-              aria-current={section === current ? 'page' : undefined}
-              className={cn(
-                'inline-flex min-h-[38px] items-center rounded-xl px-2.5 text-[13px] whitespace-nowrap no-underline sm:text-sm',
-                section === current
-                  ? 'bg-tint font-bold text-heading'
-                  : 'font-medium text-ink hover:bg-tint',
-              )}
-            >
-              {t(`nav.${section}`)}
-            </Link>
+            <SectionLink
+              address={`/plan/s/${slug}${atlasSectionPaths[section]}`}
+              section={section}
+              isCurrent={section === current}
+              label={t(`nav.${section}`)}
+            />
           </li>
         ))}
       </ul>
     </nav>
+  );
+}
+
+/** One section's link: its icon and name; the open one gets the thread bar and bold text. */
+function SectionLink({
+  address,
+  section,
+  isCurrent,
+  label,
+}: {
+  address: string;
+  section: AtlasSection;
+  isCurrent: boolean;
+  label: string;
+}) {
+  return (
+    <Link
+      to={address}
+      aria-current={isCurrent ? 'page' : undefined}
+      className={cn(
+        'flex min-h-11 items-center gap-2.5 rounded-lg px-3 text-sm whitespace-nowrap no-underline',
+        isCurrent
+          ? 'bg-tint font-bold text-heading shadow-[inset_3px_0_0_var(--thread)]'
+          : 'font-medium text-ink hover:bg-tint',
+      )}
+    >
+      <ActionIcon name={sectionIcons[section]} />
+      {label}
+    </Link>
   );
 }

@@ -15,7 +15,6 @@
 import { useParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
-import { PageContainer } from '@/components/ui/PageContainer';
 import { useMyNames } from '@/features/account/hooks/useMyNames';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { useMyStories } from '@/features/writing/hooks/useMyStories';
@@ -29,7 +28,7 @@ import { writeAddressFor } from '../lib/writeAddress';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { AtlasPageHeading } from './AtlasPageHeading';
-import { AtlasTopBar } from './AtlasTopBar';
+import { AtlasFrame } from './AtlasFrame';
 import { BackCoverPreview } from './BackCoverPreview';
 import { MarketingFields } from './MarketingFields';
 import { StoryQrCard } from './StoryQrCard';
@@ -124,11 +123,13 @@ export function MarketingPage() {
 
   if (!isKnown) return null;
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-8 pt-10 pb-12">
+    <AtlasFrame
+      slug={storySlug}
+      writeAddress={writeAddressFor(story)}
+      section="marketing"
+      showsChrome={userId !== null}
+    >
       <title>{title ?? t('homeDocumentTitle')}</title>
-      {userId !== null && (
-        <AtlasTopBar slug={storySlug} writeAddress={writeAddressFor(story)} section="marketing" />
-      )}
       <MarketingMessages
         isSignedIn={userId !== null}
         loadFailed={plan.loadFailed || marketing.loadFailed}
@@ -137,6 +138,6 @@ export function MarketingPage() {
       {plan.page && marketing.notes && (
         <MarketingBody slug={storySlug} page={plan.page} notes={marketing.notes} />
       )}
-    </PageContainer>
+    </AtlasFrame>
   );
 }
