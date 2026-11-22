@@ -16,10 +16,11 @@
     "submit": "Caută",
     "clear": "Șterge",
     "hintLead": "Nu e nevoie de diacritice.",
-    "hint": "„povesti” găsește și „povești”. Se potrivesc și terminațiile cuvintelor în română și engleză, așa că „poveste” și „povestea” contează ca același cuvânt."
+    "hint": "„povesti” găsește și „povești”. Se potrivesc și terminațiile cuvintelor în română și engleză, așa că „poveste” și „povestea” contează ca același cuvânt.",
+    "clearLabel": "Golește căutarea"
   },
   "groups": {
-    "label": "Arată rezultatele pentru",
+    "label": "Arată",
     "stories": "Povești",
     "writers": "Scriitori",
     "tags": "Etichete",
@@ -38,7 +39,11 @@
     "stories_one": "o poveste",
     "stories_few": "{{count}} povești",
     "stories_other": "{{count}} de povești",
-    "writerHandle": "@{{handle}}"
+    "chapters_one": "{{count}} capitol",
+    "chapters_few": "{{count}} capitole",
+    "chapters_other": "{{count}} de capitole",
+    "writerHandle": "@{{handle}}",
+    "tagLink": "#{{tag}}"
   },
   "empty": {
     "title": "Niciun rezultat pentru „{{term}}”",
@@ -55,5 +60,8 @@
     "loadingMore": "Se încarcă…",
     "none": "Nu s-a găsit nimic.",
     "count": "Rezultate: {{count}}"
+  },
+  "rows": {
+    "seeAll": "Vezi {{title}}"
   }
 }

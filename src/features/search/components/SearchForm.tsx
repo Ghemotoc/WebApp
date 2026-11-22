@@ -4,14 +4,17 @@
  * Submitting opens /search?q=…, so the term lives in the address and the back button works.
  * "Clear" empties the field and puts the focus back in it. The hint under the field says
  * diacritics aren't needed (board 3.2).
- * Look (bundle G7c; board Search): the field and its buttons sit together in one glass pill, the
- * field itself without its own border, so the pill reads as one search bar. On a phone the
- * buttons stay in the pill beside the field.
+ * Look (bundle G7c; board Search): the field and its buttons sit together in one round pill, the
+ * field itself without its own border, so the pill reads as one search bar. Clear is a round ×
+ * named "Clear the search", shown once there is text (bundle CALM-7c; board
+ * simplified/New-PhoneSearch). On a phone the board has no Search button: the keyboard's search
+ * key sends the form, so the button only shows from 768 px.
  * Who uses it: SearchPage. What it calls: the router.
  */
 import { useId, useRef, useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router';
 
+import { CrossIcon } from '@/components/icons/CrossIcon';
 import { Button } from '@/components/ui/Button';
 import { SearchInput } from '@/components/ui/SearchInput';
 
@@ -60,22 +63,22 @@ export function SearchForm({ initialTerm = '', showsHint = false }: SearchFormPr
             className="h-13 w-full rounded-full border-0 bg-transparent pr-3 pl-13 font-body text-base text-ink"
           />
         </div>
-        <Button type="submit" size="lg">
-          {t('form.submit')}
-        </Button>
         {term !== '' && (
-          <Button
+          <button
             type="button"
-            variant="secondary"
-            size="lg"
+            aria-label={t('form.clearLabel')}
+            className="inline-flex size-11 shrink-0 items-center justify-center rounded-full text-heading hover:bg-tint"
             onClick={() => {
               setTerm('');
               field.current?.focus();
             }}
           >
-            {t('form.clear')}
-          </Button>
+            <CrossIcon size={18} />
+          </button>
         )}
+        <Button type="submit" size="lg" className="max-md:hidden">
+          {t('form.submit')}
+        </Button>
       </div>
       {showsHint && (
         <p id={`${id}-hint`} className="m-0 px-5 text-sm leading-normal text-body">

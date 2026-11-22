@@ -16,10 +16,11 @@
     "submit": "Search",
     "clear": "Clear",
     "hintLead": "No need for diacritics.",
-    "hint": "“povesti” also finds “povești”. Romanian and English word endings match too, so “poveste” and “povestea” count as the same word."
+    "hint": "“povesti” also finds “povești”. Romanian and English word endings match too, so “poveste” and “povestea” count as the same word.",
+    "clearLabel": "Clear the search"
   },
   "groups": {
-    "label": "Show results for",
+    "label": "Show",
     "stories": "Stories",
     "writers": "Writers",
     "tags": "Tags",
@@ -38,7 +39,11 @@
     "stories_one": "{{count}} story",
     "stories_few": "{{count}} stories",
     "stories_other": "{{count}} stories",
-    "writerHandle": "@{{handle}}"
+    "chapters_one": "{{count}} chapter",
+    "chapters_few": "{{count}} chapters",
+    "chapters_other": "{{count}} chapters",
+    "writerHandle": "@{{handle}}",
+    "tagLink": "#{{tag}}"
   },
   "empty": {
     "title": "No results for “{{term}}”",
@@ -55,5 +60,8 @@
     "loadingMore": "Loading…",
     "none": "Nothing found.",
     "count": "Results: {{count}}"
+  },
+  "rows": {
+    "seeAll": "See {{title}}"
   }
 }

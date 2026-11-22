@@ -6,8 +6,9 @@
  * What it shows: the eyebrow and "Results for “…”" (or "Search" with no term), the search field
  * with the diacritics hint, then SearchResults. A term under 2 letters says so instead of
  * searching. The term lives in the address, so a search can be shared.
- * Look (bundle G7c; board Search): the eyebrow, the title and the glass search bar sit centred
- * above the results.
+ * Look (bundle G7c; board Search): the title and the search bar sit centred above the results.
+ * On phones the title is for screen readers only and the field sits at the top (bundle CALM-7c;
+ * board simplified/New-PhoneSearch).
  * Board differences: the board's Forum posts group waits for the forums (S1-E8-10); its ad slot
  * waits for S1-E12; tags take the third group (the story's criteria: stories, writers, tags). The
  * board's Stories, People, Forums and Spaces switch and its recent searches are not built (the
@@ -50,14 +51,12 @@ export function SearchPage() {
   const term = (search.get('q') ?? '').trim();
   const heading = term === '' ? t('page.heading') : t('page.resultsFor', { term });
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-8 pt-10 pb-14">
+    <PageContainer className="tmc-rise flex flex-col gap-8 pt-10 pb-14 max-md:gap-5 max-md:pt-4">
       <title>{t('page.documentTitle', { productName: brand.productName })}</title>
       {/* The title and the glass search bar, centred (board Search, bundle G7c). */}
-      <div className="mx-auto flex w-full max-w-[900px] flex-col gap-7">
-        <header className="flex flex-col items-center gap-3 text-center">
-          <h1 className="m-0 min-w-0 font-heading text-[clamp(36px,5.2vw,64px)] leading-[1.02] font-bold tracking-[-0.03em] break-words text-heading">
-            {heading}
-          </h1>
+      <div className="mx-auto flex w-full max-w-[900px] flex-col gap-7 max-md:gap-3">
+        <header className="flex flex-col items-center gap-3 text-center max-md:sr-only">
+          <h1 className="m-0 min-w-0 break-words type-display">{heading}</h1>
         </header>
         {/* A new term starts the field afresh, so the key is the term. */}
         <SearchForm key={term} initialTerm={term} showsHint />

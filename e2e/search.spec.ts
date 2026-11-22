@@ -8,6 +8,8 @@
  * - more than 20 stories make one line of 20 with "View more", which opens every story found,
  *   sorted by best match (criterion 4);
  * - the Writers group finds a writer by username and opens their profile;
+ * - on a phone the results are rows of at most 20 with See all, and writer rows have Follow
+ *   (bundle CALM-7c);
  * - a search that finds nothing says so and offers Discover;
  * - the search pages pass axe at 390, 768 and 1440 px, light and night, ro and en.
  * Test data: 22 stories of the spec's own by teacher (one of them 16+), removed afterwards.
@@ -95,12 +97,29 @@ test.describe('search (S1-E5-04)', () => {
 
   test('the Writers group finds a writer by username and opens their profile', async ({ page }) => {
     await page.goto('/search?q=teacher');
-    await page.getByRole('button', { name: /^Writers/ }).click();
+    await page.getByRole('group', { name: 'Show' }).getByText('Writers', { exact: true }).click();
     await page
       .getByRole('link', { name: /@teacher/ })
       .first()
       .click();
     await expect(page).toHaveURL(/\/u\/teacher$/);
+  });
+
+  test('on a phone the results are rows with See all, and writers have Follow', async ({
+    page,
+  }) => {
+    // Handover Step 3, "Search on phones" (CALM-7c): rows under 768 px, at most 20, then See all.
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(`/search?q=${foldedWord}`);
+    const stories = page.getByRole('list', { name: '21 stories' });
+    // Only the rows themselves: each row's meta lines are lists too.
+    await expect(stories.locator(':scope > li')).toHaveCount(20);
+    await page.getByRole('link', { name: 'See 21 stories' }).click();
+    await expect(page).toHaveURL(new RegExp(`/search/stories\\?q=${foldedWord}`));
+    await page.goto('/search?q=teacher');
+    await page.getByRole('group', { name: 'Show' }).getByText('Writers', { exact: true }).click();
+    const writers = page.getByRole('list', { name: /writer/ });
+    await expect(writers.getByRole('link', { name: /follow/i }).first()).toBeVisible();
   });
 
   test('a search that finds nothing says so and offers Discover', async ({ page }) => {
