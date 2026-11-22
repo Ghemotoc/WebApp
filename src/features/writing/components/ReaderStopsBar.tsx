@@ -45,7 +45,7 @@ export function ReaderStopsBar({ stops }: { stops: ReaderStops }) {
   const readers = formatShownCount(stops.readers, i18n.language, t('dashboard.fewerThanFive'));
   return (
     <div className="flex flex-col gap-3">
-      <h3 className="m-0 text-lg font-bold text-heading">{t('insights.stopsHeading')}</h3>
+      <h3 className="m-0 type-subheading text-heading">{t('insights.stopsHeading')}</h3>
       <p className="m-0 text-sm text-body">{t('insights.stopsIntro')}</p>
       {stops.tenths === null ? (
         <p className="m-0 text-sm text-body">{t('insights.stopsFewer')}</p>

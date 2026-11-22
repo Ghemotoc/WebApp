@@ -1,58 +1,56 @@
 /**
- * DashboardTotals: "How readers respond", the five tiles at the top of the writer dashboard
+ * DashboardTotals: "How readers respond", the five figures on the glass hero at the top of the writer dashboard
  * (story S1-E3-07; board WriterDashboard 4.1, "Totals for all stories").
  *
- * Board values: an eyebrow, the 28 px heading, a "Last 30 days / All time" glass switch
- * (SegmentedControl, bundle G9 WRITING, part b), five tiles (24 px corners, the label in the
- * eyebrow style with a 20 px line icon beside it, the number in 40 px Funnel Display below, a 14 px
- * note) and the lilac "These are totals only" panel.
+ * Simplified look (bundle CALM-7c, board simplified/New-Write): the page's one glass hero
+ * (`Hero`), with the heading and the "Last 30 days / All time" switch (SegmentedControl) on one
+ * line, then five figures in a row (two a line on phones), each under a 2 px thread line: a label,
+ * the number in 32/38 Funnel Display and a meta line; then "These are totals only" as a meta line.
+ * No tiles, icons or eyebrows.
  * A count from fewer than 5 readers reads "fewer than 5" (criterion 2); the numbers are totals,
  * never a list of readers (criterion 3).
  * Who uses it: WriterDashboardTop. Its numbers come from useWriterDashboard (writer_dashboard()).
  */
 import { useTranslation } from 'react-i18next';
 
-import { ActionIcon, type ActionIconName } from '@/components/icons/ActionIcon';
-import { Eyebrow } from '@/components/ui/Eyebrow';
+import { Hero } from '@/components/ui/Hero';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { formatLocalDate } from '@/lib/local-time';
 
 import type { DashboardPeriod, WriterDashboard } from '../api/dashboard';
 import { formatShownCount, formatShownPercent } from '../lib/dashboardNumbers';
 
-/** One tile: label, value, icon and note. */
+/** One figure: label, value and note. */
 interface TileContent {
   label: string;
   value: string;
-  icon: ActionIconName;
   note: string;
   /** True when the value is words ("fewer than 5"), which take a smaller size than a number. */
   isWords?: boolean;
 }
 
 /**
- * One tile, as the liquid glass Write board draws it (bundle G9 WRITING, part b): the label and a
- * small line icon share the top row, so the number below has the tile's whole width and words
- * such as "fewer than 5" don't squeeze beside an icon.
+ * One figure: its label, the number (words such as "fewer than 5" a size smaller) and the note,
+ * under the thread line.
+ *
+ * @param props.tile - the figure
+ * @returns one list item
  */
 function StatTile({ tile }: { tile: TileContent }) {
   return (
-    <div className="flex flex-col gap-1.5 rounded-3xl border border-border bg-surface px-[22px] py-5 shadow-card">
-      <span className="flex items-center justify-between gap-2">
-        <Eyebrow>{tile.label}</Eyebrow>
-        <ActionIcon name={tile.icon} size={20} className="block flex-none text-heading" />
-      </span>
+    <li className="flex min-w-0 flex-col gap-0.5 border-t-2 border-thread pt-3">
+      <span className="text-sm font-semibold text-heading">{tile.label}</span>
       <span
         className={
           tile.isWords === true
-            ? 'font-heading text-[26px] leading-tight font-extrabold text-ink'
-            : 'font-heading text-[40px] leading-none font-extrabold tracking-[-0.02em] text-ink'
+            ? 'font-heading text-[22px] leading-[30px] font-bold text-heading'
+            : 'font-heading text-[32px] leading-[38px] font-bold text-heading'
         }
       >
         {tile.value}
       </span>
-      <span className="text-sm leading-[1.45] text-body">{tile.note}</span>
-    </div>
+      <span className="type-meta">{tile.note}</span>
+    </li>
   );
 }
 
@@ -77,7 +75,7 @@ function readsNote(
 }
 
 /**
- * The five tiles' words and numbers.
+ * The five figures' words and numbers.
  *
  * @param dashboard - the numbers
  * @param language - the interface language
@@ -97,31 +95,26 @@ function tilesFor(
     {
       label: t('dashboard.totals.reads'),
       value: count(totals.reads),
-      icon: 'eye',
       note: readsNote(dashboard, language, t),
     },
     {
       label: t('dashboard.totals.readThrough'),
       value: formatShownPercent(totals.readThrough, language, fewer),
-      icon: 'book',
       note: t('dashboard.totals.readThroughNote'),
     },
     {
       label: t('dashboard.totals.likes'),
       value: count(totals.likes),
-      icon: 'heart',
       note: t('dashboard.totals.likesAcross', { count: totals.likedChapters }),
     },
     {
       label: t('dashboard.totals.comments'),
       value: count(totals.comments),
-      icon: 'comment',
       note: t('dashboard.totals.commentsNote'),
     },
     {
       label: t('dashboard.totals.followers'),
       value: count(totals.followers),
-      icon: 'people',
       note: t(isLast30 ? 'dashboard.totals.followersLast30' : 'dashboard.totals.followersNote'),
     },
   ];
@@ -129,17 +122,14 @@ function tilesFor(
   return tiles.map((tile) => ({ ...tile, isWords: tile.value === fewer }));
 }
 
-/** The lilac "These are totals only" panel (board, "Privacy rule for the numbers"). */
+/** "These are totals only" as a meta line under the figures (board, "Privacy rule for the numbers"). */
 function TotalsOnlyNote() {
   const { t } = useTranslation('writing');
   return (
-    <div className="mt-4 flex items-start gap-3.5 rounded-[20px] bg-tint px-5 py-4">
-      <ActionIcon name="shield" size={24} className="mt-0.5 block flex-none text-heading" />
-      <p className="m-0 text-[15px] leading-[1.6] text-ink">
-        <strong className="font-bold">{t('dashboard.totals.privacyStrong')}</strong>{' '}
-        {t('dashboard.totals.privacy')}
-      </p>
-    </div>
+    <p className="m-0 max-w-[90ch] type-meta">
+      <strong className="font-semibold text-heading">{t('dashboard.totals.privacyStrong')}</strong>{' '}
+      {t('dashboard.totals.privacy')}
+    </p>
   );
 }
 
@@ -162,18 +152,11 @@ export function DashboardTotals({ dashboard, period, onPeriodChange }: Dashboard
   const { t, i18n } = useTranslation('writing');
   const tiles = tilesFor(dashboard, i18n.language, t);
   return (
-    <section aria-labelledby="dashboard-totals-heading" className="relative">
-      <div className="mb-[18px] flex flex-wrap items-end justify-between gap-3">
-        <div className="flex flex-col gap-1.5">
-          <Eyebrow>{t('dashboard.totals.eyebrow')}</Eyebrow>
-          <h2
-            id="dashboard-totals-heading"
-            className="m-0 font-heading text-[28px] font-bold tracking-[-0.01em] text-heading"
-          >
-            {t('dashboard.totals.heading')}
-          </h2>
-        </div>
-        {/* The board's glass switch: a radio group with the white bubble under the pick. */}
+    <Hero labelledBy="dashboard-totals-heading" className="gap-6">
+      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+        <h2 id="dashboard-totals-heading" className="m-0 type-heading text-heading">
+          {t('dashboard.totals.heading')}
+        </h2>
         <SegmentedControl
           legend={t('dashboard.totals.periodLabel')}
           isLegendVisible={false}
@@ -186,12 +169,13 @@ export function DashboardTotals({ dashboard, period, onPeriodChange }: Dashboard
           onChange={onPeriodChange}
         />
       </div>
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,180px),1fr))] gap-4">
+      {/* Five figures in a row from 1024 px, two a line on phones (board New-Write). */}
+      <ul className="m-0 grid list-none grid-cols-2 gap-6 p-0 md:grid-cols-3 lg:grid-cols-5">
         {tiles.map((tile) => (
           <StatTile key={tile.label} tile={tile} />
         ))}
-      </div>
+      </ul>
       <TotalsOnlyNote />
-    </section>
+    </Hero>
   );
 }

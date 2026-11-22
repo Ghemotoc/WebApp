@@ -24,7 +24,7 @@ export function LovedLines({ lines }: { lines: LovedLine[] }) {
   const shown = (count: number | null) => formatShownCount(count, i18n.language, fewer);
   return (
     <div className="flex flex-col gap-3">
-      <h3 className="m-0 text-lg font-bold text-heading">{t('insights.lovedHeading')}</h3>
+      <h3 className="m-0 type-subheading text-heading">{t('insights.lovedHeading')}</h3>
       {lines.length === 0 ? (
         <p className="m-0 text-sm text-body">{t('insights.lovedEmpty')}</p>
       ) : (

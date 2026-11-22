@@ -1,7 +1,8 @@
 /**
  * WriterDashboardTop: the writer dashboard's upper half (story S1-E3-07; board WriterDashboard
- * 4.1): "How readers respond" with its five tiles, then the followers line (CALM-7b) and "Not
- * published yet" side by side (one column on a phone).
+ * 4.1): "How readers respond" with its five figures (the page's one glass hero since CALM-7c),
+ * then the followers line (CALM-7b) and "Not published yet" side by side from 1024 px, 64 px apart
+ * (board simplified/New-Write; one column below).
  *
  * Who uses it: YourWritingPage, once the writer has a story. What it calls: DashboardTotals,
  * FollowersChart and NotPublishedYet; the numbers come in from useWriterDashboard.
@@ -36,7 +37,7 @@ export function WriterDashboardTop({
   return (
     <>
       <DashboardTotals dashboard={dashboard} period={period} onPeriodChange={onPeriodChange} />
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,380px),1fr))] gap-5">
+      <div className="grid items-start gap-12 lg:grid-cols-2 lg:gap-16">
         <FollowersChart
           allTimeFollowers={dashboard.totals.followersAllTime}
           thisWeek={dashboard.totals.followersThisWeek}

@@ -1,5 +1,5 @@
 /**
- * FollowersChart: the followers card on the Write page, a line graph with a time range menu
+ * FollowersChart: the followers section on the Write page, a line graph with a time range menu
  * (bundle CALM-7b; Robert, 20 Nov 2026, 12:07 UTC: "followers as a line graph with a time range
  * menu, like LinkedIn"; design handover Step 4; board New-Write, "147 followers").
  *
@@ -8,7 +8,8 @@
  * 0) and "Followers over time", the "Time range" drop-down at the right (Last 7, 30, 90 or 365
  * days, 90 when the page opens, not saved), then the line and a caption saying what one point is.
  * The heading and the meta line always state the numbers, so the drawing is never the only place
- * a number lives; a hidden table repeats every point for screen readers.
+ * a number lives; a hidden table repeats every point for screen readers. Since CALM-7c it sits on
+ * the page with no card around it (board simplified/New-Write).
  * Who uses it: WriterDashboardTop. What it calls: useFollowersLine → writer_followers_line(), and
  * FollowersLinePlot and FollowersTable to draw it.
  */
@@ -117,10 +118,7 @@ export function FollowersChart({ allTimeFollowers, thisWeek }: FollowersChartPro
   const facts = useMetaFacts(thisWeek);
   // Step 2: the heading row, then the line with its caption and hidden table.
   return (
-    <section
-      aria-labelledby="dashboard-followers-heading"
-      className="flex flex-col gap-5 rounded-3xl border border-border bg-surface px-[26px] py-6 shadow-card"
-    >
+    <section aria-labelledby="dashboard-followers-heading" className="flex min-w-0 flex-col gap-5">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex min-w-0 flex-col gap-1">
           <h2 id="dashboard-followers-heading" className="type-heading m-0 text-heading">
@@ -135,9 +133,7 @@ export function FollowersChart({ allTimeFollowers, thisWeek }: FollowersChartPro
         <figure className="m-0 flex flex-col gap-2">
           <FollowersLinePlot points={points} step={step} range={range} />
           <FollowersTable points={points} step={step} range={range} />
-          <figcaption className="text-sm text-meta">
-            {t(`dashboard.followers.note.${step}`)}
-          </figcaption>
+          <figcaption className="type-meta">{t(`dashboard.followers.note.${step}`)}</figcaption>
         </figure>
       )}
     </section>

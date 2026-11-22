@@ -5,13 +5,15 @@
  * The writer picks a chapter from a drop-down (the first published one is chosen at the start).
  * Everything here is a total: no reader is ever named, and small numbers show as "fewer than 5"
  * (S1-E3-07's rule), so a writer can't work out who stopped where.
- * Who shows it: YourWritingPage, between "Story by story" and "Latest on your chapters".
+ * Simplified look (bundle CALM-7c, board simplified/New-Write): "Only you see this" as a meta
+ * line over the plain heading, no eyebrow; the two panels stack, because the section shares its row
+ * with the latest comments from 1024 px.
+ * Who shows it: YourWritingPage, after "Story by story", beside "Latest on your chapters".
  * What it calls: useChapterInsights, then LovedLines and ReaderStopsBar.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { Select, type SelectOption } from '@/components/ui/Select';
 
@@ -52,7 +54,7 @@ function InsightsBody({ chapter }: { chapter: DashboardChapter }) {
   if (loadFailed) return <Notice tone="error">{t('insights.loadFailed')}</Notice>;
   if (isLoading || insights === null) return null;
   return (
-    <div className="grid gap-8 md:grid-cols-2">
+    <div className="flex flex-col gap-8">
       <LovedLines lines={insights.lovedLines} />
       <ReaderStopsBar stops={insights.stops} />
     </div>
@@ -82,16 +84,14 @@ export function ChapterInsights({ chapters, storyTitles }: ChapterInsightsProps)
     }),
   }));
   return (
-    <section aria-labelledby="chapter-insights-heading" className="flex flex-col gap-5">
+    <section aria-labelledby="chapter-insights-heading" className="flex min-w-0 flex-col gap-5">
       <div className="flex flex-col gap-1">
-        <Eyebrow>{t('insights.eyebrow')}</Eyebrow>
-        <h2
-          id="chapter-insights-heading"
-          className="m-0 font-heading text-[30px] font-bold text-heading"
-        >
+        {/* What used to be the eyebrow, "Only you see this", as the meta line over the heading. */}
+        <p className="m-0 type-meta">{t('insights.eyebrow')}</p>
+        <h2 id="chapter-insights-heading" className="m-0 type-heading text-heading">
           {t('insights.heading')}
         </h2>
-        <p className="m-0 text-body">{t('insights.intro')}</p>
+        <p className="m-0 type-body text-body">{t('insights.intro')}</p>
       </div>
       <Select
         id="chapter-insights-chapter"

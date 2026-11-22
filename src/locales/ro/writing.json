@@ -4,11 +4,9 @@
   },
   "yourWriting": {
     "documentTitle": "Scrieri · {{productName}}",
-    "eyebrow": "Scrie · panoul scriitorului",
     "heading": "Scrieri",
     "intro": "Vezi cum merge fiecare poveste, reia ciornele și citește ce au spus cititorii.",
-    "newStory": "+ Poveste nouă",
-    "storiesEyebrow": "Povești",
+    "newStory": "Poveste nouă",
     "storiesHeading": "Poveste cu poveste",
     "signedOut": "Conectează-te ca să vezi poveștile.",
     "empty": {
@@ -190,7 +188,11 @@
     "chapterCount_other": "{{count}} de capitole",
     "manageChapters": "Gestionează capitolele",
     "languages": "Limbi",
-    "plan": "Plănuiește"
+    "plan": "Plănuiește",
+    "notPublishedYet": "Încă nepublicată",
+    "chaptersPublished_one": "{{count}} capitol publicat",
+    "chaptersPublished_few": "{{count}} capitole publicate",
+    "chaptersPublished_other": "{{count}} de capitole publicate"
   },
   "status": {
     "heading": "Stare și comentarii",
@@ -292,7 +294,6 @@
     "undo": "Anulează ștergerea"
   },
   "recentlyDeleted": {
-    "eyebrow": "Anulare",
     "heading": "Șterse recent",
     "intro": "Poveștile șterse sunt ascunse imediat și șterse definitiv după 30 de zile. Până atunci poți reveni.",
     "goneOn": "Dispare definitiv pe {{date}}"
@@ -483,7 +484,6 @@
     "fewerShort": "< 5",
     "loadFailed": "Nu ți-am putut încărca cifrele. Reîncarcă pagina ca să încerci din nou.",
     "totals": {
-      "eyebrow": "Toate poveștile",
       "heading": "Cum răspund cititorii",
       "periodLabel": "Perioada",
       "last30Days": "Ultimele 30 de zile",
@@ -563,12 +563,11 @@
       "loadFailed": "Graficul urmăritorilor nu s-a putut încărca. Încearcă din nou peste câteva momente."
     },
     "notPublished": {
-      "eyebrow": "Ciorne și programate",
       "heading": "Încă nepublicate",
       "empty": "Nimic în așteptare: toate capitolele sunt publicate.",
       "untitled": "Capitolul {{number}}, fără titlu",
       "titled": "Capitolul {{number}}: {{title}}",
-      "draftMeta": "{{story}} · {{words}} · salvat {{when}}",
+      "savedWhen": "salvat {{when}}",
       "scheduledMeta": "Se publică {{when}}, ora locală",
       "edit": "Editează",
       "reschedule": "Reprogramează"
@@ -587,7 +586,6 @@
     },
     "noNumbersYet": "Încă nu sunt cifre.",
     "comments": {
-      "eyebrow": "Comentarii",
       "heading": "Cele mai noi la capitole",
       "onChapter": "la capitolul {{number}} · {{when}}",
       "reply": "Răspunde",

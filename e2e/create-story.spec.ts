@@ -58,9 +58,9 @@ test.describe('create a story (S1-E3-01)', () => {
     const page = await openAsPersona(browser, 'adult_writer', '/write');
     await page.setViewportSize({ width: 390, height: 900 });
 
-    // The Write button is the current page; "+ New story" opens the form.
+    // The Write button is the current page; "New story" opens the form.
     await expect(page.getByRole('link', { name: 'Write' })).toHaveAttribute('aria-current', 'page');
-    await page.getByRole('link', { name: '+ New story' }).click();
+    await page.getByRole('link', { name: 'New story', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Start a new story' })).toBeVisible();
 
     // No upload tab while picture_uploads is off (decided 23 Oct 2026).
