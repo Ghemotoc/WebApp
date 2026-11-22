@@ -3,11 +3,31 @@
  *
  * Who loads it: Vitest, through `test.setupFiles` in vite.config.ts.
  * What it adds: the jest-dom matchers (for example `toBeInTheDocument()`), a clean page after
- * each test so one test's screen never leaks into the next, and a matchMedia stand-in (S1-E1-03).
+ * each test so one test's screen never leaks into the next, a matchMedia stand-in (S1-E1-03), and
+ * the English text up front, so a test can make an English instance at once (the app downloads it
+ * only when it is needed; src/lib/i18n-loading.ts).
  */
 import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
 import { afterEach } from 'vitest';
+
+import { registerPreloadedLanguage } from '@/lib/i18n-loading';
+import englishAccount from '@/locales/en/account.json';
+import englishAuth from '@/locales/en/auth.json';
+import englishCommon from '@/locales/en/common.json';
+import englishLegal from '@/locales/en/legal.json';
+import englishReading from '@/locales/en/reading.json';
+import englishWriting from '@/locales/en/writing.json';
+
+// Tests make English instances straight away (createI18n('en')), so English is here from the start.
+registerPreloadedLanguage('en', {
+  common: englishCommon,
+  legal: englishLegal,
+  auth: englishAuth,
+  account: englishAccount,
+  writing: englishWriting,
+  reading: englishReading,
+});
 
 afterEach(() => {
   cleanup();
