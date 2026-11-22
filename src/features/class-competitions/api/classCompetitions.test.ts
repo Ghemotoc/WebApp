@@ -45,8 +45,6 @@ describe('classCompetitionsFrom', () => {
       published: [],
     });
     expect(read?.role).toBe('pupil');
-    expect(read?.running?.startsAt).toBe('2027-03-01T06:00:00+00:00');
-    expect(read?.running?.endsAt).toBe('2027-03-15T21:59:00+00:00');
     expect(read?.running?.canJoin).toBe(true);
     expect(read?.running?.entrantCount).toBeNull();
     expect(read?.running?.criteria[0]).toEqual({
@@ -56,6 +54,23 @@ describe('classCompetitionsFrom', () => {
       description: 'How the text is written.',
       outcomes: ['uses dialogue to show character'],
     });
+  });
+
+  it('reads the moments a running competition opens and closes (CALM-7d)', () => {
+    const read = classCompetitionsFrom({
+      role: 'pupil',
+      running: {
+        id: 'k1',
+        name: 'Spring stories',
+        starts_at: '2027-03-01T06:00:00+00:00',
+        ends_at: '2027-03-15T21:59:00+00:00',
+        phase: 'upcoming',
+        criteria: [],
+      },
+      published: [],
+    });
+    expect(read?.running?.startsAt).toBe('2027-03-01T06:00:00+00:00');
+    expect(read?.running?.endsAt).toBe('2027-03-15T21:59:00+00:00');
   });
 
   it('reads a Winner card with pen names only and the viewer’s own result', () => {
