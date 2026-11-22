@@ -64,7 +64,6 @@
     "waitsForAccount": "Ești în această clasă. Poți citi și posta după ce contul tău e gata, de exemplu după ce un părinte și-a dat acordul."
   },
   "rules": {
-    "eyebrow": "Stabilite de cine a creat spațiul",
     "title": "Regulile spațiului",
     "none": "Încă nu există reguli.",
     "guidelines": "Regulile comunității se aplică și aici."
@@ -157,7 +156,7 @@
   },
   "newThread": {
     "eyebrow": "Discuție nouă",
-    "heading": "Discuție nouă în {{space}}",
+    "heading": "Discuție nouă",
     "cannotPost": "Încă nu poți posta în acest spațiu. Întoarce-te la spațiu ca să intri în el."
   },
   "failures": {

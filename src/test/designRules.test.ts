@@ -154,7 +154,6 @@ const infoPillUsers = new Set([
   '/src/features/safety/components/SafetyChecksPanel.tsx',
   '/src/features/settings/components/AgeRulesSection.tsx',
   '/src/features/spaces/components/ClassAssignmentsCard.tsx',
-  '/src/features/spaces/components/SpacePills.tsx',
   '/src/features/sponsors/components/staff/BlockedCategoriesSection.tsx',
   '/src/features/sponsors/components/staff/CampaignList.tsx',
   '/src/features/sponsors/components/staff/placements/PlacementGrid.tsx',

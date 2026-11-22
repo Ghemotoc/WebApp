@@ -19,7 +19,7 @@ Each space owns one hidden forum, so its threads reuse the forums feature (`Thre
 - `components/SpacesPage.tsx` (`/spaces`) with a glass `SpaceCard` per space (G8b); `SpacesCard`
   on the forum index with `SpaceRow`.
 - `components/SpacePage.tsx` (`/spaces/:spaceSlug`): `SpaceBreadcrumb`, `SpaceHeaderCard`
-  (`SpaceBannerBand`, `SpaceLogo`, `SpacePills`, `SpaceJoinActions`, Report: everything on the
+  (`SpaceBannerBand`, `SpaceLogo`, `SpaceFacts`, `SpaceJoinActions`, Report: everything on the
   banner, in the colour that reads on it; G8b), the forums' `ThreadList`,
   `SpaceRequestsCard`, `SpaceRulesCard` and `SpaceRunsCard`.
 - `components/NewSpacePage.tsx` (`/spaces/new`) and `SpaceSettingsPage.tsx`

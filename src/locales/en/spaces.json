@@ -64,7 +64,6 @@
     "waitsForAccount": "You’re in this class. You can read and post once your account is ready, for example when a parent has agreed."
   },
   "rules": {
-    "eyebrow": "Set by the owner",
     "title": "Space rules",
     "none": "The owner hasn’t written any rules yet.",
     "guidelines": "The community guidelines apply here too."
@@ -157,7 +156,7 @@
   },
   "newThread": {
     "eyebrow": "New thread",
-    "heading": "New thread in {{space}}",
+    "heading": "New thread",
     "cannotPost": "You can’t post in this space yet. Go back to the space to join it."
   },
   "failures": {
