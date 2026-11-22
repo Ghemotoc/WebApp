@@ -24,9 +24,7 @@ export function BeforeYouPost() {
     // A plain block, not a named region: a region named "Before you post" would answer to the
     // label "Post" too and be mistaken for the post field.
     <div className="flex flex-col gap-2">
-      <h2 className="m-0 type-subheading">
-        {t('beforePost.title')}
-      </h2>
+      <h2 className="m-0 type-subheading">{t('beforePost.title')}</h2>
       <p className="m-0 text-body">{t('beforePost.text')}</p>
       {/* The text button sits flush with the words above it, as on the board. */}
       <Link
