@@ -31,29 +31,33 @@ export interface FollowersTableProps {
 export function FollowersTable({ points, step, range }: FollowersTableProps) {
   const { t, i18n } = useTranslation('writing');
   const fewer = t('dashboard.fewerThanFive');
+  // The wrapper is what hides the table: overflow:hidden doesn't clip a table box, so
+  // sr-only on the <table> itself let it widen a phone screen (e2e/narrow-screens.spec.ts).
   return (
-    <table className="sr-only">
-      <caption>
-        {t(`dashboard.followers.tableCaption.${step}`, {
-          range: t(`dashboard.followers.rangesInSentence.${range}`),
-        })}
-      </caption>
-      <thead>
-        <tr>
-          <th scope="col">{t(`dashboard.followers.whenColumn.${step}`)}</th>
-          <th scope="col">{t('dashboard.followers.totalColumn')}</th>
-          <th scope="col">{t(`dashboard.followers.gainedColumn.${step}`)}</th>
-        </tr>
-      </thead>
-      <tbody>
-        {points.map((point) => (
-          <tr key={point.startsOn}>
-            <th scope="row">{pointDate(point.startsOn, step, i18n.language)}</th>
-            <td>{formatShownCount(point.total, i18n.language, fewer)}</td>
-            <td>{formatShownCount(point.gained, i18n.language, fewer)}</td>
+    <div className="sr-only">
+      <table>
+        <caption>
+          {t(`dashboard.followers.tableCaption.${step}`, {
+            range: t(`dashboard.followers.rangesInSentence.${range}`),
+          })}
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">{t(`dashboard.followers.whenColumn.${step}`)}</th>
+            <th scope="col">{t('dashboard.followers.totalColumn')}</th>
+            <th scope="col">{t(`dashboard.followers.gainedColumn.${step}`)}</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {points.map((point) => (
+            <tr key={point.startsOn}>
+              <th scope="row">{pointDate(point.startsOn, step, i18n.language)}</th>
+              <td>{formatShownCount(point.total, i18n.language, fewer)}</td>
+              <td>{formatShownCount(point.gained, i18n.language, fewer)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
