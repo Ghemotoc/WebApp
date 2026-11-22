@@ -23,7 +23,7 @@ Year of birth (S1-E2-02):
 Logging in (S1-E2-05):
 
 - `components/SignInPage.tsx` with `SignInForm`, `PasswordInput` (Show / Hide) and `SignInMessage`: `/sign-in` (board 2.2). `hooks/useSignInForm.ts` holds the answers.
-- `components/ForgotPasswordPage.tsx` (`/forgot-password`, `hooks/useResetRequest.ts`, `SendProblem`) and `ResetPasswordPage.tsx` with `NewPasswordForm` (`/reset-password`, `hooks/useNewPasswordForm.ts`). `AuthCard` is the card all three share.
+- `components/ForgotPasswordPage.tsx` (`/forgot-password`, `hooks/useResetRequest.ts`, `SendProblem`) and `ResetPasswordPage.tsx` with `NewPasswordForm` (`/reset-password`, `hooks/useNewPasswordForm.ts`). `AuthCard` is the card all three share: since CALM-9e (boards H01 to H08) it has no eyebrow, only the heading and a quieter line, and `SignUpWhatNext` shows rows with fine lines instead of cards.
 - `components/AccountMenu.tsx`: the top bar's account button: your name and @username (opens your public profile), Edit profile (Settings › Profile), Settings and Log out (NAV-1); `AccountLinks` shows "Log in" and "Join for free" while signed out.
 - `api/signIn.ts` (log in with the pause, log-in and reset links, new password, log out), `api/sessions.ts` (`list_my_sessions()`, `end_my_session()`), `lib/emailHash.ts`, `lib/deviceName.ts`.
 - Settings › Signed-in devices lives in `src/features/account/` (`SignedInDevicesSection`, `DeviceRow`, `hooks/useMySessions.ts`).

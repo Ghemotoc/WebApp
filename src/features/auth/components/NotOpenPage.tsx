@@ -38,7 +38,6 @@ export function NotOpenPage() {
   return (
     <AuthCard
       documentTitle={t('notOpen.documentTitle')}
-      eyebrow={t('notOpen.eyebrow')}
       heading={t('notOpen.heading')}
       intro={
         countryName === null || countryName === undefined

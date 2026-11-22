@@ -8,8 +8,7 @@
  * link that needs the browser the sign-up started in. "Continue" goes to the home page: the
  * username was chosen on the sign-up form (S1-E2-04), and an older account without one is asked
  * for it by the "Choose a username" notice. A used or expired link says so.
- * Look (bundle G6, board ConfirmEmail): the shared glass AuthCard with an eyebrow, the heading and
- * one line; a used link adds a glass "Sign up again" button, because signing up again is the fix.
+ * Look (board H03, CALM-9e): the shared AuthCard with the heading and one line, no eyebrow; a used link adds a glass "Sign up again" button, because signing up again is the fix.
  * The board's age check step strip is left out: the March test is for adults only (17 Oct 2026).
  * Who shows it: the router. What it calls: api/signUp.ts → confirmEmail().
  */
@@ -49,18 +48,10 @@ function useConfirmation(tokenHash: string | null): ConfirmationState {
 }
 
 /** The card's words for each state, as locale keys. */
-const cardText: Record<ConfirmationState, { eyebrow: string; heading: string; body?: string }> = {
-  checking: { eyebrow: 'confirm.eyebrow', heading: 'confirm.checkingHeading' },
-  done: {
-    eyebrow: 'confirm.doneEyebrow',
-    heading: 'confirm.doneHeading',
-    body: 'confirm.doneBody',
-  },
-  failed: {
-    eyebrow: 'confirm.eyebrow',
-    heading: 'confirm.failedHeading',
-    body: 'confirm.failedBody',
-  },
+const cardText: Record<ConfirmationState, { heading: string; body?: string }> = {
+  checking: { heading: 'confirm.checkingHeading' },
+  done: { heading: 'confirm.doneHeading', body: 'confirm.doneBody' },
+  failed: { heading: 'confirm.failedHeading', body: 'confirm.failedBody' },
 };
 
 /**
@@ -77,7 +68,6 @@ export function ConfirmEmailPage() {
   return (
     <AuthCard
       documentTitle={t('confirm.documentTitle')}
-      eyebrow={t(text.eyebrow)}
       heading={t(text.heading)}
       intro={text.body === undefined ? undefined : t(text.body)}
     >

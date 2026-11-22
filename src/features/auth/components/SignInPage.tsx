@@ -42,7 +42,6 @@ export function SignInPage() {
   return (
     <AuthCard
       documentTitle={t('signIn.documentTitle')}
-      eyebrow={t('signIn.eyebrow')}
       heading={t('signIn.heading')}
       intro={t('signIn.subheading')}
     >

@@ -104,7 +104,6 @@ export function OpenHerePage() {
   return (
     <AuthCard
       documentTitle={t('openHere.documentTitle')}
-      eyebrow={t('openHere.eyebrow')}
       heading={t(words.heading)}
       intro={words.body === null ? undefined : t(words.body, words.values)}
     >
