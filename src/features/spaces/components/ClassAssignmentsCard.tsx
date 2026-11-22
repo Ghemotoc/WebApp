@@ -3,14 +3,14 @@
  * to come, soonest first (bundle MUST-1, part d; IDEA-20261108-8).
  *
  * Each row links to the thread and says when it is due ("Due Friday 14 Nov"); the ones the reader
- * has replied to carry a "Replied" pill (text, not colour alone). With no open assignment the card
+ * has replied to carry "Replied" in bold words (text, not colour alone). With no open assignment the card
  * stays away, so a class that doesn't use due dates sees nothing new.
  * Who shows it: SpacePage, above the threads of a class space the viewer may read.
  * What it calls: useClassAssignments → class_space_assignments(); dueMomentText.
  */
 import { Link } from 'react-router';
 
-import { InfoPill } from '@/components/ui/InfoPill';
+import { MetaLine } from '@/components/ui/MetaLine';
 import { Notice } from '@/components/ui/Notice';
 
 import type { Space } from '../api/spaces';
@@ -53,12 +53,17 @@ export function ClassAssignmentsCard({ space }: { space: Space }) {
             >
               {assignment.title}
             </Link>
-            <span className="flex flex-wrap items-center gap-2 text-sm text-body">
-              {t('classAssignments.due', { day: dueMomentText(assignment.dueAt, i18n.language) })}
-              {assignment.hasReplied && (
-                <InfoPill tone="sage">{t('classAssignments.replied')}</InfoPill>
-              )}
-            </span>
+            {/* "Replied" first in bold, then the due moment, as one meta line (CALM-9f). */}
+            <MetaLine
+              facts={[
+                { text: assignment.hasReplied ? t('classAssignments.replied') : '', kind: 'state' },
+                {
+                  text: t('classAssignments.due', {
+                    day: dueMomentText(assignment.dueAt, i18n.language),
+                  }),
+                },
+              ]}
+            />
           </li>
         ))}
       </ul>

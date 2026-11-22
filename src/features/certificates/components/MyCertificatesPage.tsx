@@ -10,7 +10,7 @@
 import { Link } from 'react-router';
 
 import { Eyebrow } from '@/components/ui/Eyebrow';
-import { InfoPill } from '@/components/ui/InfoPill';
+import { MetaLine } from '@/components/ui/MetaLine';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { useSession } from '@/features/auth/hooks/useSession';
@@ -31,12 +31,13 @@ function CertificateRow({ certificate }: { certificate: MyCertificate }) {
   const language = certificateLanguageOf(i18n.language);
   return (
     <li className="flex flex-col gap-2 rounded-card border border-border bg-surface p-5">
-      <div className="flex flex-wrap items-center gap-2">
-        <InfoPill tone={certificate.result === 'participant' ? 'sky' : 'gold'}>
-          {t(`results.${certificate.result}`)}
-        </InfoPill>
-        {certificate.isRevoked && <InfoPill tone="blush">{t('my.revoked')}</InfoPill>}
-      </div>
+      {/* The result in bold and "Revoked" in red, as words (CALM-9f; was two pills). */}
+      <MetaLine
+        facts={[
+          { text: t(`results.${certificate.result}`), kind: 'state' },
+          { text: certificate.isRevoked ? t('my.revoked') : '', kind: 'urgent' },
+        ]}
+      />
       <h2 className="m-0 font-heading text-xl font-bold text-heading">
         <Link to={`/certificates/${certificate.id}`} className="text-link underline">
           {t('my.open', { programme: certificate.programmeName })}
