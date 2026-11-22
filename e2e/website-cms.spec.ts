@@ -54,7 +54,7 @@ test.describe('Website CMS (S1-E11-06, S1-E11-10, S1-E11-12, S1-E5-08)', () => {
   test('a visitor reads the home page from the CMS', async ({ browser }) => {
     const page = await openAs(browser, null, '/', 'ro');
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Scrie povești. Fii citit.');
-    await expect(page.getByText('Yoti face verificarea vârstei.', { exact: false })).toBeVisible();
+    await expect(page.getByText('Îți cerem doar anul nașterii', { exact: false })).toBeVisible();
     // The questions open one at a time.
     await page.getByText('Ce e un spațiu de clasă?').click();
     await expect(

@@ -99,7 +99,7 @@ test.describe('the home page hero', () => {
     // The safety row is a list named by the safety heading; its last item links to the questions.
     const safetyRow = page.getByRole('list', { name: 'Cum avem grijă de toți' });
     await expect(
-      safetyRow.getByText('Yoti face verificarea vârstei.', { exact: false }),
+      safetyRow.getByText('Îți cerem doar anul nașterii', { exact: false }),
     ).toBeVisible();
     await safetyRow.getByRole('link', { name: 'Cum avem grijă de toți' }).click();
     await expect(page).toHaveURL(/#questions$/);
