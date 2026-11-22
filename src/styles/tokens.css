@@ -468,6 +468,15 @@
   --atlas-line-allies: #9fd3a8;
   --atlas-line-conflict: #f2a7b3;
   --atlas-line-other: #c6d0da;
+
+  /* Ink on a white or light patch that stays light at night (the QR square, a pale swatch), and
+     the category dots, kept as they were by day (CALM-7a). The member night colours wait for
+     DESIGN's new night (Robert, 22 Nov 2026, 05:57 UTC), so these don't change yet. */
+  --ink-on-white: #1d1a20;
+  --ink-on-light: #2a0e33;
+  --category-fiction: #4d1b5e;
+  --category-poetry: #2e4a8c;
+  --category-essays: #2f6b4f;
 }
 
 /* Phones, tablets and any window under 1024 px: the softer portrait galaxy (canvas v123). */
@@ -802,6 +811,8 @@
 [data-area='staff'] {
   /* The staff area's logo is its neutral ink, never purple (handoff, Staff tab). */
   --logo: #2b2119;
+  /* Ink on a light patch is the same neutral ink in the staff area: no purple there. */
+  --ink-on-light: #2b2119;
   --paper: #f3ece0;
   --surface: #fbf8f2;
   --surface-glass: #fbf8f2;
