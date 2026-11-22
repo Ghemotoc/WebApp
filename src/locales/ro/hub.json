@@ -1,17 +1,10 @@
 {
   "hub": {
     "documentTitle": "Spațiul scriitorilor · {{productName}}",
-    "eyebrow": "Spațiul scriitorilor · {{day}}",
     "heading": "Tot ce trebuie pentru următorul capitol.",
-    "intro": "Concursuri deschise, ghiduri pas cu pas și instrumentele pentru a plănui și a împărtăși povești.",
-    "startWriting": "Începe să scrii",
-    "resources": "Resurse",
     "signedOut": "Conectează-te ca să vezi concursurile, ghidurile și instrumentele de scris.",
-    "signedOutEyebrow": "Spațiul scriitorilor",
     "logIn": "Intră",
     "contests": {
-      "eyebrow": "Concurs · deschis acum",
-      "emptyEyebrow": "Concursuri",
       "closesToday": "Se închide azi",
       "closesIn_one": "Se închide într-o zi",
       "closesIn_few": "Se închide în {{count}} zile",
@@ -27,7 +20,8 @@
       "open": "Vezi concursul",
       "openLabel": "Vezi concursul: {{name}}",
       "none": "Niciun concurs nu primește înscrieri acum. Concursurile noi apar aici.",
-      "loadFailed": "Nu am putut încărca concursurile. Verifică conexiunea și încearcă din nou."
+      "loadFailed": "Nu am putut încărca concursurile. Verifică conexiunea și încearcă din nou.",
+      "heading": "Deschise acum pentru înscrieri"
     },
     "prompt": {
       "eyebrow": "Tema săptămânii",
@@ -46,13 +40,11 @@
     },
     "guides": {
       "eyebrow": "Ghiduri pas cu pas",
-      "seeEvery": "Vezi fiecare ghid",
       "previous": "Ghidurile de dinainte",
       "next": "Ghidurile următoare",
-      "regionLabel": "Ghiduri pas cu pas, câte două. Săgețile le arată pe următoarele două.",
       "position": "Ghidurile de la {{first}} la {{last}} din {{total}}",
-      "steps": "Pas cu pas",
-      "none": "Ghidurile sunt pe drum. Până atunci, Centrul de ajutor are răspunsurile."
+      "none": "Ghidurile sunt pe drum. Până atunci, Centrul de ajutor are răspunsurile.",
+      "kind": "Ghid"
     },
     "tools": {
       "eyebrow": "Instrumente",
@@ -63,7 +55,9 @@
       "downloadTitle": "Descarcă poveștile",
       "downloadLine": "Copii Word, PDF și EPUB",
       "helpTitle": "Centrul de ajutor",
-      "helpLine": "Răspunsuri la întrebările frecvente"
+      "helpLine": "Răspunsuri la întrebările frecvente",
+      "heading": "Unelte pentru capitolul următor",
+      "guidesLink": "Ghiduri"
     },
     "calls": {
       "eyebrow": "Apeluri de texte",
@@ -128,7 +122,16 @@
       "earned": "Obținută",
       "notYet": "Încă nu",
       "note": "Se numără din salvările din editor. Nimeni altcineva nu vede asta.",
-      "loadFailed": "Nu am putut încărca luna de scris. Verifică conexiunea și încearcă din nou."
+      "loadFailed": "Nu am putut încărca luna de scris. Verifică conexiunea și încearcă din nou.",
+      "daysInRow_one": "{{count}} zi la rând",
+      "daysInRow_few": "{{count}} zile la rând",
+      "daysInRow_other": "{{count}} de zile la rând",
+      "pace_one": "{{formatted}} cuvânt pe zi te ține în ritm",
+      "pace_few": "{{formatted}} cuvinte pe zi te țin în ritm",
+      "pace_other": "{{formatted}} de cuvinte pe zi te țin în ritm",
+      "goalReached": "Ținta lunii e atinsă",
+      "seeBadges": "Vezi insignele",
+      "barLabel": "{{percent}}% din ținta lunii de scris"
     },
     "path": {
       "eyebrow": "Traseu de învățare",
@@ -174,6 +177,53 @@
         "declined": "Ai refuzat. Nimic nu apare."
       },
       "withdraw": "Scoate comentariul"
+    },
+    "home": {
+      "dayLine": "Luna de scris, ziua {{day}}",
+      "welcome": "Bine ai revenit, {{name}}.",
+      "welcomeNoName": "Bine ai revenit.",
+      "waiting": "Capitolul {{number}} din {{story}} te așteaptă.",
+      "contestsClosing_one": "{{count}} concurs se încheie luna aceasta.",
+      "contestsClosing_few": "{{count}} concursuri se încheie luna aceasta.",
+      "contestsClosing_other": "{{count}} de concursuri se încheie luna aceasta.",
+      "fresh": "O poveste, o poezie sau un eseu. Nimeni nu le vede până nu le publici.",
+      "keepWriting": "Scrie mai departe capitolul {{number}}",
+      "newStory": "Începe o poveste nouă"
+    },
+    "continue": {
+      "heading": "Continuă lectura",
+      "openLibrary": "Deschide biblioteca",
+      "place": "{{writer}} · capitolul {{number}} din {{total}}",
+      "placeNumberOnly": "{{writer}} · capitolul {{number}}"
+    },
+    "drafts": {
+      "heading": "Ciorne",
+      "write": "Scrie",
+      "draft": "Ciornă",
+      "scheduled": "Programată",
+      "private": "Privată",
+      "unlisted": "Nelistată",
+      "public": "Publică",
+      "chapter": "Capitolul {{number}}",
+      "editedWhen": "modificată {{when}}",
+      "chapters_one": "{{count}} capitol",
+      "chapters_few": "{{count}} capitole",
+      "chapters_other": "{{count}} de capitole",
+      "none": "Nimic în lucru. O poveste nouă începe din Scrie.",
+      "loadFailed": "Nu am putut încărca ciornele. Verifică conexiunea și încearcă din nou."
+    },
+    "following": {
+      "heading": "Nou de la scriitorii pe care îi urmărești",
+      "read": "Citește"
+    },
+    "talk": {
+      "heading": "Despre povești",
+      "together": "Împreună",
+      "newPosts_one": "{{count}} mesaj nou",
+      "newPosts_few": "{{count}} mesaje noi",
+      "newPosts_other": "{{count}} de mesaje noi",
+      "empty": "Nimic nou în Împreună de la ultima vizită.",
+      "loadFailed": "Nu am putut încărca Împreună. Verifică conexiunea și încearcă din nou."
     }
   },
   "hubStaff": {

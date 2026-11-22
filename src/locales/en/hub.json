@@ -1,17 +1,10 @@
 {
   "hub": {
     "documentTitle": "Writers’ hub · {{productName}}",
-    "eyebrow": "Writers’ hub · {{day}}",
     "heading": "Everything for the next chapter.",
-    "intro": "Open contests, step-by-step guides and the tools for planning and sharing stories.",
-    "startWriting": "Start writing",
-    "resources": "Resources",
     "signedOut": "Log in to see contests, guides and writing tools.",
-    "signedOutEyebrow": "Writers’ hub",
     "logIn": "Get in",
     "contests": {
-      "eyebrow": "Contest · open now",
-      "emptyEyebrow": "Contests",
       "closesToday": "Closes today",
       "closesIn_one": "Closes in {{count}} day",
       "closesIn_few": "Closes in {{count}} days",
@@ -27,7 +20,8 @@
       "open": "See the contest",
       "openLabel": "See the contest: {{name}}",
       "none": "No contest is open for entries right now. New contests show here.",
-      "loadFailed": "We couldn’t load the contests. Check the connection and try again."
+      "loadFailed": "We couldn’t load the contests. Check the connection and try again.",
+      "heading": "Open for entries now"
     },
     "prompt": {
       "eyebrow": "Prompt of the week",
@@ -46,13 +40,11 @@
     },
     "guides": {
       "eyebrow": "How-to guides",
-      "seeEvery": "See every guide",
       "previous": "Previous guides",
       "next": "Next guides",
-      "regionLabel": "How-to guides, two at a time. The arrows show the next two.",
       "position": "Guides {{first}} to {{last}} of {{total}}",
-      "steps": "Step by step",
-      "none": "The guides are on their way. Meanwhile, the Help centre has the answers."
+      "none": "The guides are on their way. Meanwhile, the Help centre has the answers.",
+      "kind": "Guide"
     },
     "tools": {
       "eyebrow": "Tools",
@@ -63,7 +55,9 @@
       "downloadTitle": "Download stories",
       "downloadLine": "Word, PDF and EPUB copies",
       "helpTitle": "Help centre",
-      "helpLine": "Answers to common questions"
+      "helpLine": "Answers to common questions",
+      "heading": "Tools for the next chapter",
+      "guidesLink": "Guides"
     },
     "calls": {
       "eyebrow": "Calls for submissions",
@@ -128,7 +122,16 @@
       "earned": "Earned",
       "notYet": "Not yet",
       "note": "Counted from saves in the editor. Nobody else sees this.",
-      "loadFailed": "We couldn’t load the writing month. Check the connection and try again."
+      "loadFailed": "We couldn’t load the writing month. Check the connection and try again.",
+      "daysInRow_one": "{{count}} day in a row",
+      "daysInRow_few": "{{count}} days in a row",
+      "daysInRow_other": "{{count}} days in a row",
+      "pace_one": "{{formatted}} word a day keeps you on track",
+      "pace_few": "{{formatted}} words a day keep you on track",
+      "pace_other": "{{formatted}} words a day keep you on track",
+      "goalReached": "Goal reached this month",
+      "seeBadges": "See the badges",
+      "barLabel": "{{percent}}% of the writing month goal"
     },
     "path": {
       "eyebrow": "Learning path",
@@ -174,6 +177,53 @@
         "declined": "You declined. Nothing shows."
       },
       "withdraw": "Take the comment down"
+    },
+    "home": {
+      "dayLine": "Writing month, day {{day}}",
+      "welcome": "Welcome back, {{name}}.",
+      "welcomeNoName": "Welcome back.",
+      "waiting": "Chapter {{number}} of {{story}} is waiting for you.",
+      "contestsClosing_one": "{{count}} contest closes this month.",
+      "contestsClosing_few": "{{count}} contests close this month.",
+      "contestsClosing_other": "{{count}} contests close this month.",
+      "fresh": "A story, a poem or an essay. Nobody sees it until you publish.",
+      "keepWriting": "Keep writing chapter {{number}}",
+      "newStory": "Start a new story"
+    },
+    "continue": {
+      "heading": "Continue reading",
+      "openLibrary": "Open library",
+      "place": "{{writer}} · chapter {{number}} of {{total}}",
+      "placeNumberOnly": "{{writer}} · chapter {{number}}"
+    },
+    "drafts": {
+      "heading": "Drafts",
+      "write": "Write",
+      "draft": "Draft",
+      "scheduled": "Scheduled",
+      "private": "Private",
+      "unlisted": "Unlisted",
+      "public": "Public",
+      "chapter": "Chapter {{number}}",
+      "editedWhen": "edited {{when}}",
+      "chapters_one": "{{count}} chapter",
+      "chapters_few": "{{count}} chapters",
+      "chapters_other": "{{count}} chapters",
+      "none": "Nothing in progress. A new story starts from Write.",
+      "loadFailed": "We couldn’t load the drafts. Check the connection and try again."
+    },
+    "following": {
+      "heading": "New from writers you follow",
+      "read": "Read"
+    },
+    "talk": {
+      "heading": "Talk about stories",
+      "together": "Together",
+      "newPosts_one": "{{count}} new post",
+      "newPosts_few": "{{count}} new posts",
+      "newPosts_other": "{{count}} new posts",
+      "empty": "Nothing new in Together since the last visit.",
+      "loadFailed": "We couldn’t load Together. Check the connection and try again."
     }
   },
   "hubStaff": {

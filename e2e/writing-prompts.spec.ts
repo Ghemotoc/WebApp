@@ -115,7 +115,8 @@ test.describe('the prompt of the week (GAPS-12c)', () => {
         on writing_prompts.id = stories.writing_prompt_id where stories.title = '${storyTitle}';`).trim(),
     ).toBe(thisWeek.en);
     await page.goto('/hub');
-    await expect(card.getByText('1 scriitor a încercat-o · se încheie în 6 zile')).toBeVisible();
+    await expect(card.getByText('1 scriitor a încercat-o')).toBeVisible();
+    await expect(card.getByText('se încheie în 6 zile')).toBeVisible();
     await page.context().close();
   });
 

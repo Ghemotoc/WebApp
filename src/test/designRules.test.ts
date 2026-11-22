@@ -136,8 +136,6 @@ const infoPillUsers = new Set([
   '/src/features/forums/components/ThreadRulesStrip.tsx',
   '/src/features/forums/components/staff/ForumAdminRow.tsx',
   '/src/features/hub/components/HubCalls.tsx',
-  '/src/features/hub/components/HubContests.tsx',
-  '/src/features/hub/components/HubGuides.tsx',
   '/src/features/hub/components/HubSpotlight.tsx',
   '/src/features/hub/components/staff/CallItem.tsx',
   '/src/features/hub/components/staff/SessionItem.tsx',

@@ -47,17 +47,32 @@ export interface ShelfProps {
   toolbar?: ReactNode;
   /** The section's id, for links to it from elsewhere on the page ("#trending"). */
   anchorId?: string;
+  /**
+   * A link at the top right, before the arrows, such as the Home page's "Open library" (CALM-7c,
+   * board New-Home). The caller draws it (a text button).
+   */
+  headerAction?: ReactNode;
+  /**
+   * How many covers show from 600 px when the row sits in a half-width column (the Home page's
+   * two columns, board New-Home: 3 beside the drafts, 4 beside "Talk about stories"). Phones keep
+   * 2.3. Left out, the row shows 4 from 600 px and 5 from 1024 px.
+   */
+  coversInColumn?: 3 | 4;
 }
 
 /**
  * The row's grid: one column per cover, sized so 5, 4 or 2.3 covers fill the row. The variables
  * are the design system's (.gh-shelf__row in bundle.css); Tailwind's arbitrary properties set them.
  */
-const listClasses = [
-  '[--per-page:2.3] [--gap:16px] min-[600px]:[--per-page:4] min-[600px]:[--gap:24px] min-[1024px]:[--per-page:5]',
-  'grid auto-cols-[calc((100%-(var(--per-page)-1)*var(--gap))/var(--per-page))] grid-flow-col gap-(--gap)',
-  'm-0 list-none p-0',
-].join(' ');
+const rowGridClasses =
+  'grid auto-cols-[calc((100%-(var(--per-page)-1)*var(--gap))/var(--per-page))] grid-flow-col gap-(--gap) m-0 list-none p-0';
+
+/** The covers in view at each width: a full-width row, or one in a half-width column. */
+const perPageClasses = {
+  full: '[--per-page:2.3] [--gap:16px] min-[600px]:[--per-page:4] min-[600px]:[--gap:24px] min-[1024px]:[--per-page:5]',
+  3: '[--per-page:2.3] [--gap:16px] min-[600px]:[--per-page:3] min-[600px]:[--gap:24px]',
+  4: '[--per-page:2.3] [--gap:16px] min-[600px]:[--per-page:4] min-[600px]:[--gap:24px]',
+} as const;
 
 /** The scrolling region around the list: no scroll bar, snapping to covers, smooth only with motion. */
 const regionClasses =
@@ -88,11 +103,13 @@ function ShelfRow({
   title,
   items,
   viewMore,
+  perPage,
 }: {
   rowRef: RefObject<HTMLDivElement | null>;
   title: string;
   items: ShelfItem[];
   viewMore?: ReactNode;
+  perPage: keyof typeof perPageClasses;
 }) {
   const { t } = useTranslation();
   return (
@@ -103,7 +120,7 @@ function ShelfRow({
       aria-label={t('shelf.regionLabel', { title })}
       className={regionClasses}
     >
-      <ul className={listClasses}>
+      <ul className={`${perPageClasses[perPage]} ${rowGridClasses}`}>
         {/* Each item is "relative", so nothing absolutely positioned inside a card (a
             screen-reader-only label, a badge) can escape the row and widen the page (17 CHECK). */}
         {items.map((item) => (
@@ -130,6 +147,8 @@ export function Shelf({
   totalCount,
   toolbar,
   anchorId,
+  headerAction,
+  coversInColumn,
 }: ShelfProps) {
   const headingId = useId();
   const rowRef = useRef<HTMLDivElement>(null);
@@ -150,6 +169,7 @@ export function Shelf({
           </h2>
         </div>
         <div className="flex flex-none items-center gap-1">
+          {headerAction}
           {hasMore && <SeeAllLink href={seeAllHref} count={listSize} title={title} />}
           {state.overflows && (
             <ShelfArrows
@@ -166,6 +186,7 @@ export function Shelf({
         rowRef={rowRef}
         title={title}
         items={visibleItems}
+        perPage={coversInColumn ?? 'full'}
         viewMore={
           hasMore ? (
             <ViewMoreCard href={seeAllHref} shelfTitle={title} totalCount={listSize} />
