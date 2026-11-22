@@ -115,12 +115,12 @@ async function openDashboard(browser: Browser, width = 1440): Promise<Page> {
   return page;
 }
 
-/** A tile, found by its label inside "How readers respond". */
+/** A figure (its list item), found by its label inside "How readers respond" (CALM-7c). */
 function tileValue(page: Page, label: string) {
   return page
     .getByRole('region', { name: 'How readers respond' })
     .getByText(label, { exact: true })
-    .locator('xpath=../..');
+    .locator('xpath=..');
 }
 
 test.describe('The writer dashboard', () => {

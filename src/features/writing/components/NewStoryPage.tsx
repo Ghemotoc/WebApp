@@ -1,7 +1,7 @@
 /**
  * NewStoryPage: "Start a new story", screen 4.2 (story S1-E3-01; design/boards/NewStory.dc.html).
  *
- * Who shows it: the router, at /write/new; the "+ New story" button on /write leads here.
+ * Who shows it: the router, at /write/new; the "New story" button on /write leads here.
  * What it shows: the back link, the eyebrow, the heading and intro, then the form sections
  * (the basics, category and tags, cover, labels) and the action bar, with the live preview
  * beside them (below them on phones). The board's "Status and comments" section lives in story

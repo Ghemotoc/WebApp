@@ -27,6 +27,9 @@ export interface NewChapterButtonProps {
   /** A small icon before the words (Manage chapters' plus). */
   icon?: ReactNode;
   size?: 'md' | 'lg';
+  /** The main button by default; the quiet one where the page already has its main button
+   * (a story row on Write, CALM-7c). */
+  variant?: 'primary' | 'secondary';
 }
 
 /**
@@ -34,7 +37,13 @@ export interface NewChapterButtonProps {
  *
  * @returns the button and, when something went wrong, the message
  */
-export function NewChapterButton({ slug, label, icon, size = 'md' }: NewChapterButtonProps) {
+export function NewChapterButton({
+  slug,
+  label,
+  icon,
+  size = 'md',
+  variant = 'primary',
+}: NewChapterButtonProps) {
   const { t } = useTranslation('writing');
   const { userId } = useSession();
   const queryClient = useQueryClient();
@@ -50,7 +59,12 @@ export function NewChapterButton({ slug, label, icon, size = 'md' }: NewChapterB
   const failed = create.isError || (create.data !== undefined && create.data.outcome !== 'ok');
   return (
     <>
-      <Button size={size} onClick={() => create.mutate()} disabled={create.isPending}>
+      <Button
+        size={size}
+        variant={variant}
+        onClick={() => create.mutate()}
+        disabled={create.isPending}
+      >
         {icon}
         {label ?? t('storyCard.writeChapterOne')}
       </Button>

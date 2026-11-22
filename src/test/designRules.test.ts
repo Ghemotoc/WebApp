@@ -206,12 +206,9 @@ const infoPillUsers = new Set([
   '/src/features/writing/components/ChapterEditorPage.tsx',
   '/src/features/writing/components/ChapterEmbedNodeView.tsx',
   '/src/features/writing/components/ChapterPictureNodeView.tsx',
-  '/src/features/writing/components/ChapterStatsTable.tsx',
   '/src/features/writing/components/DrawnCoverPicker.tsx',
   '/src/features/writing/components/ManagedChapterRow.tsx',
-  '/src/features/writing/components/NotPublishedYet.tsx',
   '/src/features/writing/components/StoryPreviewAside.tsx',
-  '/src/features/writing/components/WriterStoryCard.tsx',
 ]);
 
 /** Starts with any of the given path prefixes. */

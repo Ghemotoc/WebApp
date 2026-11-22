@@ -3,7 +3,7 @@
  * S1-E3-01; design/boards/WriterDashboard.dc.html).
  *
  * Who shows it: the router, at /write; the top bar's "Write" button leads here.
- * What it shows: the header with "+ New story", then "Story by story" with one WriterStoryCard
+ * What it shows: the header with "New story", then "Story by story" with one WriterStoryCard
  * per live story (filtered by Ongoing or Completed, S1-E3-05), or an empty state, and "Recently
  * deleted" with undo when a story was deleted in the last 30 days (S1-E3-05). Once the writer has
  * a story, the writer dashboard (S1-E3-07) joins it: "Continue draft" in the header, the tiles,
@@ -13,14 +13,18 @@
  * What it calls: useMyStories (stories through stories_select_own) and useWriterDashboard
  * (writer_dashboard()). After creating a story, NewStoryPage lands here with a "saved" notice
  * (router state).
+ * Simplified look (bundle CALM-7c, board simplified/New-Write): the display title with the line
+ * under it and "Continue draft" (the page's one main button) and "New story" (quiet) at the right;
+ * "How readers respond" is the one glass hero; sections have plain headings, no eyebrows, no cards
+ * and no info pills.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router';
 
 import { automaticCoverFor, designsForRow } from '@/components/covers/automaticCover';
+import { buttonClassName } from '@/components/ui/buttonStyles';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
@@ -53,7 +57,7 @@ function liveStoriesFor(stories: MyStory[], filter: StatusFilter): MyStory[] {
   );
 }
 
-/** The board's "Continue draft": the most recently saved draft or scheduled chapter's editor. */
+/** The board's "Continue draft", the page's one main button: the most recent draft's editor. */
 function ContinueDraftLink({ chapters }: { chapters: DashboardChapter[] }) {
   const { t } = useTranslation('writing');
   const latest = waitingChapters(chapters).find((chapter) => chapter.status === 'draft');
@@ -61,7 +65,7 @@ function ContinueDraftLink({ chapters }: { chapters: DashboardChapter[] }) {
   return (
     <Link
       to={`/write/s/${latest.storySlug}/c/${latest.chapterCode}`}
-      className="inline-flex h-12 items-center rounded-full button-glass px-6 text-[15px] font-semibold whitespace-nowrap no-underline"
+      className={buttonClassName({ variant: 'primary' })}
     >
       {t('dashboard.continueDraft')}
     </Link>
@@ -69,17 +73,14 @@ function ContinueDraftLink({ chapters }: { chapters: DashboardChapter[] }) {
 }
 
 /**
- * The "+ New story" link. In the header it is a grey glass pill, like every other add button in
- * the liquid glass design (design decision, 7 Nov 2026; Write board, bundle G9 WRITING, part b);
- * in the empty state, where it is the only thing to do, it is the main button.
+ * The "New story" link. In the header it is the quiet button beside "Continue draft" (board
+ * simplified/New-Write); in the empty state, where it is the only thing to do, it is the main
+ * button.
  */
-function NewStoryLink({ label, look }: { label: string; look: 'glass' | 'main' }) {
-  const lookClass = look === 'glass' ? 'button-glass' : 'button-main';
+function NewStoryLink({ label, look }: { label: string; look: 'quiet' | 'main' }) {
+  const variant = look === 'quiet' ? 'secondary' : 'primary';
   return (
-    <Link
-      to="/write/new"
-      className={`inline-flex h-12 items-center rounded-full ${lookClass} px-6 text-[15px] font-semibold whitespace-nowrap no-underline`}
-    >
+    <Link to="/write/new" className={buttonClassName({ variant })}>
       {label}
     </Link>
   );
@@ -140,7 +141,7 @@ function StoriesBody({
   // Automatic covers come from each story's ID; two neighbours never share a design (S1-E3-13).
   const covers = designsForRow(stories);
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col">
       {stories.map((story, index) => (
         <WriterStoryCard
           key={story.id}
@@ -153,7 +154,7 @@ function StoriesBody({
   );
 }
 
-/** The page's header: eyebrow, heading, intro, "Continue draft" and "+ New story". */
+/** The page's header: the title, the line under it, "Continue draft" and "New story". */
 function YourWritingHeader({
   isSignedIn,
   chapters,
@@ -163,25 +164,22 @@ function YourWritingHeader({
 }) {
   const { t } = useTranslation('writing');
   return (
-    <header className="relative flex flex-wrap items-end justify-between gap-6">
-      <div className="flex max-w-[640px] flex-col gap-2">
-        <Eyebrow>{t('yourWriting.eyebrow')}</Eyebrow>
-        <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-extrabold tracking-[-0.025em]">
-          {t('yourWriting.heading')}
-        </h1>
-        <p className="m-0 text-lg leading-[1.6] text-body">{t('yourWriting.intro')}</p>
+    <header className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+      <div className="flex min-w-0 flex-col gap-2">
+        <h1 className="m-0 type-display text-heading">{t('yourWriting.heading')}</h1>
+        <p className="m-0 max-w-[62ch] type-body text-body">{t('yourWriting.intro')}</p>
       </div>
       {isSignedIn && (
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-2.5">
           <ContinueDraftLink chapters={chapters} />
-          <NewStoryLink label={t('yourWriting.newStory')} look="glass" />
+          <NewStoryLink label={t('yourWriting.newStory')} look="quiet" />
         </div>
       )}
     </header>
   );
 }
 
-/** "Story by story": the heading, the status filter and the stories with their numbers. */
+/** "Story by story": the heading with the status filter at its right, then the stories. */
 function StoriesSection({
   writing,
   chapterNumbers,
@@ -192,14 +190,13 @@ function StoriesSection({
   const { t } = useTranslation('writing');
   const [filter, setFilter] = useState<StatusFilter>('all');
   return (
-    <section className="flex flex-col gap-5">
-      <div className="relative flex flex-col gap-1 pr-24">
-        <Eyebrow>{t('yourWriting.storiesEyebrow')}</Eyebrow>
-        <h2 className="m-0 font-heading text-[30px] font-bold text-heading">
+    <section aria-labelledby="writing-stories-heading" className="flex flex-col gap-6">
+      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+        <h2 id="writing-stories-heading" className="m-0 type-heading text-heading">
           {t('yourWriting.storiesHeading')}
         </h2>
+        {writing.isSignedIn && <StatusFilterSwitch value={filter} onChange={setFilter} />}
       </div>
-      {writing.isSignedIn && <StatusFilterSwitch value={filter} onChange={setFilter} />}
       <StoriesBody writing={writing} filter={filter} chapterNumbers={chapterNumbers} />
     </section>
   );
@@ -270,7 +267,7 @@ export function YourWritingPage() {
   const hasStories = writing.isSignedIn && liveStories.length > 0;
 
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-10 pt-12 pb-7">
+    <PageContainer className="tmc-rise flex flex-col gap-12 pt-12 pb-7">
       <title>{t('yourWriting.documentTitle')}</title>
       <YourWritingHeader isSignedIn={writing.isSignedIn} chapters={chapters} />
       {justCreated && <Notice tone="success">{t('yourWriting.created')}</Notice>}
@@ -286,10 +283,11 @@ export function YourWritingPage() {
       )}
       <StoriesSection writing={writing} chapterNumbers={chapters} />
       {hasStories && dashboard !== null && (
-        <>
+        // Lines and stops beside the latest comments from 1024 px (board New-Write).
+        <div className="grid items-start gap-12 lg:grid-cols-2 lg:gap-16">
           <ChapterInsights chapters={chapters} storyTitles={titlesBySlug(liveStories)} />
           <LatestComments comments={dashboard.latestComments} />
-        </>
+        </div>
       )}
       <RecentlyDeleted stories={deletedStories} />
     </PageContainer>

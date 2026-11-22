@@ -2,27 +2,30 @@
  * WriterStoryCard: one of the writer's own stories on "Writing" (story S1-E3-01; board
  * WriterDashboard 4.1, "Story by story").
  *
- * Board values: a card with the 96 × 130 drawn cover on the left, the title in Funnel Display, the
- * blurb, the chips (category, Ongoing or Completed from S1-E3-05, the language, the label pills
- * from S1-E3-06), the tags, the
- * lock line "Only you can see this story until you publish its first chapter" while nothing is
- * published, and the buttons: "Write chapter one" or "Continue chapter n" (S1-E3-02a), "Story
- * settings" and "See story page" (S1-E3-05); "Manage chapters" (S1-E3-04). Under it, once a chapter
- * exists, the numbers per chapter (ChapterStatsTable, S1-E3-07).
- * Who uses it: YourWritingPage.
+ * Simplified look (bundle CALM-7c, board simplified/New-Write): no card. A hairline above each
+ * story, the 120 px cover on the left (64 px on phones) and beside it the title, the meta line
+ * ("Fiction · Ongoing · No AI · 6 chapters published", writerStoryFacts), the blurb, the tags, the
+ * line "Only you can see this story until you publish its first chapter" while nothing is
+ * published, and the buttons: "Write chapter one" or "Continue chapter n" (S1-E3-02a), "Manage
+ * chapters" (S1-E3-04), "Story settings" (S1-E3-05) and "Plan" (Story Atlas) as quiet buttons,
+ * "See story page" as a text button. They are all quiet, because "Continue draft" at the top is the
+ * page's one main button. Under them, once a chapter exists, the numbers per chapter
+ * (ChapterStatsTable, S1-E3-07).
+ * Who uses it: YourWritingPage. What it calls: writerStoryFacts, ChapterStatsTable.
  */
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
 import type { DrawnCoverChoice } from '@/components/covers/coverDesigns';
 import { DrawnCover } from '@/components/covers/DrawnCover';
+import { buttonClassName } from '@/components/ui/buttonStyles';
+import { MetaLine } from '@/components/ui/MetaLine';
 import { StoryCoverArt } from '@/features/pictures/components/StoryCoverArt';
-import { InfoPill } from '@/components/ui/InfoPill';
-import { StoryLabelPills } from '@/features/reading/components/StoryLabelPills';
 import { TagNames } from '@/features/tags/components/TagNames';
 
 import type { DashboardChapter } from '../api/dashboard';
 import type { MyStory } from '../api/stories';
+import { writerStoryFacts } from '../lib/writerStoryFacts';
 
 import { ChapterStatsTable } from './ChapterStatsTable';
 import { NewChapterButton } from './NewChapterButton';
@@ -36,47 +39,10 @@ export interface WriterStoryCardProps {
   chapterNumbers: DashboardChapter[];
 }
 
-/** "Write chapter one" or "Continue chapter n" (S1-E3-02a), "Manage chapters" once there is a chapter (S1-E3-04), "Story settings" and "See story page" (S1-E3-05). */
-function StoryCardLinks({ story }: { story: MyStory }) {
-  const { t } = useTranslation('writing');
-  const { slug } = story;
-  const latestChapter = story.chapters.at(-1);
-  return (
-    <div className="mt-1 flex flex-wrap items-center gap-3">
-      <WriteChapterLink slug={slug} latestChapter={latestChapter} />
-      {latestChapter !== undefined && (
-        <Link
-          to={`/write/s/${slug}/chapters`}
-          className="inline-flex h-11 items-center rounded-full button-glass px-5 text-sm font-semibold no-underline"
-        >
-          {t('storyCard.manageChapters')}
-        </Link>
-      )}
-      <Link
-        to={`/write/s/${slug}/settings`}
-        className="inline-flex h-11 items-center rounded-full button-glass px-5 text-sm font-semibold no-underline"
-      >
-        {t('storyCard.settings')}
-      </Link>
-      {/* "Plan" beside "Write": the story's side in Story Atlas (S1-E17 notes). */}
-      <Link
-        to={`/plan/s/${slug}`}
-        className="inline-flex h-11 items-center rounded-full button-glass px-5 text-sm font-semibold no-underline"
-      >
-        {t('storyCard.plan')}
-      </Link>
-      {/* A glass pill like its neighbours, as the Write board draws it (G9 WRITING, part b). */}
-      <Link
-        to={`/s/${slug}`}
-        className="inline-flex h-11 items-center rounded-full button-glass px-5 text-sm font-semibold no-underline"
-      >
-        {t('storyCard.seePage')}
-      </Link>
-    </div>
-  );
-}
+/** The quiet button's classes, shared by the links below. */
+const quietLink = buttonClassName({ variant: 'secondary' });
 
-/** The primary button: a new story's "Write chapter one" makes the chapter on the way (NewChapterButton). */
+/** "Write chapter one" (it makes the chapter on the way) or "Continue chapter n", both quiet. */
 function WriteChapterLink({
   slug,
   latestChapter,
@@ -85,91 +51,102 @@ function WriteChapterLink({
   latestChapter: MyStory['chapters'][number] | undefined;
 }) {
   const { t } = useTranslation('writing');
-  if (latestChapter === undefined) return <NewChapterButton slug={slug} />;
+  if (latestChapter === undefined) return <NewChapterButton slug={slug} variant="secondary" />;
   return (
-    <Link
-      to={`/write/s/${slug}/c/${latestChapter.code}`}
-      className="inline-flex h-11 items-center rounded-full button-main px-5 text-sm font-semibold no-underline"
-    >
+    <Link to={`/write/s/${slug}/c/${latestChapter.code}`} className={quietLink}>
       {t('storyCard.continueChapter', { number: latestChapter.position })}
     </Link>
   );
 }
 
-/** The card's top row: cover, title, blurb, pills, tags and buttons. */
-function StoryCardSummary({ story, cover }: { story: MyStory; cover: DrawnCoverChoice }) {
+/** The story's buttons: write, manage chapters, settings, plan, then "See story page". */
+function StoryCardLinks({ story }: { story: MyStory }) {
+  const { t } = useTranslation('writing');
+  const { slug } = story;
+  const latestChapter = story.chapters.at(-1);
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <WriteChapterLink slug={slug} latestChapter={latestChapter} />
+      {latestChapter !== undefined && (
+        <Link to={`/write/s/${slug}/chapters`} className={quietLink}>
+          {t('storyCard.manageChapters')}
+        </Link>
+      )}
+      <Link to={`/write/s/${slug}/settings`} className={quietLink}>
+        {t('storyCard.settings')}
+      </Link>
+      {/* "Plan" beside "Write": the story's side in Story Atlas (S1-E17 notes). */}
+      <Link to={`/plan/s/${slug}`} className={quietLink}>
+        {t('storyCard.plan')}
+      </Link>
+      <Link to={`/s/${slug}`} className={buttonClassName({ variant: 'text' })}>
+        {t('storyCard.seePage')}
+      </Link>
+    </div>
+  );
+}
+
+/** The cover, decorative because the title sits beside it as text (DoD covers). */
+function StoryCardCover({ story, cover }: { story: MyStory; cover: DrawnCoverChoice }) {
+  const coverWidth = 'w-16 shrink-0 self-start md:w-[120px]';
+  return (
+    <StoryCoverArt
+      story={story}
+      className={coverWidth}
+      drawn={
+        <DrawnCover
+          title={story.title}
+          choice={cover}
+          size="tile"
+          isDecorative
+          className={coverWidth}
+        />
+      }
+    />
+  );
+}
+
+/** The words beside the cover: title, meta line, blurb, tags, the lock line and the buttons. */
+function StoryCardSummary({ story }: { story: MyStory }) {
   const { t } = useTranslation('writing');
   return (
-    // GLASS-4: on the narrowest phones (under 360 px) the cover and the gap shrink, so the
-    // "Write chapter one" button fits beside the cover instead of spilling past the card.
-    <div className="flex gap-5 max-[359px]:gap-3">
-      <StoryCoverArt
-        story={story}
-        className="w-24 shrink-0 self-start max-[359px]:w-14"
-        drawn={
-          <DrawnCover
-            title={story.title}
-            choice={cover}
-            size="tile"
-            isDecorative
-            className="w-24 shrink-0 self-start max-[359px]:w-14"
-          />
-        }
-      />
-      <div className="flex min-w-0 flex-1 flex-col gap-2">
-        <h3
-          id={`story-${story.id}-title`}
-          className="m-0 font-heading text-[22px] leading-[1.1] font-bold text-heading break-words"
-        >
+    <div className="flex min-w-0 flex-1 flex-col gap-2.5">
+      <div className="flex flex-col gap-1">
+        <h3 id={`story-${story.id}-title`} className="m-0 type-subheading break-words text-heading">
           {story.title}
         </h3>
-        {story.blurb !== '' && (
-          <p className="m-0 text-sm leading-normal text-body">{story.blurb}</p>
-        )}
-        <div className="flex flex-wrap gap-1.5">
-          <InfoPill tone="plum">
-            {t(`categories.${story.categorySlug}`, { defaultValue: story.categorySlug })}
-          </InfoPill>
-          {/* Robert, 6 Nov 2026: only "Ongoing" shows as a pill; the Completed filter above the
-              list still finds the finished ones. */}
-          {story.completionStatus === 'ongoing' && (
-            <InfoPill tone="sage">{t('status.ongoing')}</InfoPill>
-          )}
-          <InfoPill tone="neutral">
-            <span lang={story.languageCode}>
-              {t(`languages.${story.languageCode}`, { defaultValue: story.languageCode })}
-            </span>
-          </InfoPill>
-          <StoryLabelPills
-            labels={{ ...story, aiUndisclosedLabelled: story.aiUndisclosedLabelledAt !== null }}
-          />
-        </div>
-        {story.tags.length > 0 && (
-          <p className="m-0 text-[13px] text-meta">
-            <TagNames tags={story.tags} />
-          </p>
-        )}
-        {story.firstPublishedAt === null && (
-          <p className="m-0 text-[13px] text-meta">{t('yourWriting.onlyYou')}</p>
-        )}
-        <StoryCardLinks story={story} />
+        <MetaLine facts={writerStoryFacts(story, t)} />
       </div>
+      {story.blurb !== '' && <p className="m-0 max-w-[72ch] type-body text-body">{story.blurb}</p>}
+      {story.tags.length > 0 && (
+        <p className="m-0 type-meta">
+          <TagNames tags={story.tags} />
+        </p>
+      )}
+      {story.firstPublishedAt === null && (
+        <p className="m-0 type-meta">{t('yourWriting.onlyYou')}</p>
+      )}
+      <StoryCardLinks story={story} />
     </div>
   );
 }
 
 /**
- * Renders the card.
+ * Renders the story.
  *
- * @returns the story card
+ * @param props - the story, its cover and its chapters' numbers
+ * @returns the article, with the chapter table once a chapter exists
  */
 export function WriterStoryCard({ story, cover, chapterNumbers }: WriterStoryCardProps) {
   return (
     <article
       aria-labelledby={`story-${story.id}-title`}
-      className="flex flex-col gap-5 rounded-card border border-border bg-surface p-5 shadow-card max-[359px]:p-3"
+      className="flex flex-col gap-4 border-t border-hairline pt-6 pb-8"
     >
-      <StoryCardSummary story={story} cover={cover} />
+      <div className="flex gap-4 md:gap-7">
+        <StoryCardCover story={story} cover={cover} />
+        <StoryCardSummary story={story} />
+      </div>
       {chapterNumbers.length > 0 && (
         <ChapterStatsTable storyTitle={story.title} chapters={chapterNumbers} />
       )}

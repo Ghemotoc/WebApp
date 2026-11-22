@@ -4,11 +4,9 @@
   },
   "yourWriting": {
     "documentTitle": "Writing · {{productName}}",
-    "eyebrow": "Write · writer dashboard",
     "heading": "Writing",
-    "intro": "See how each story is doing, pick up your drafts and read what readers said.",
-    "newStory": "+ New story",
-    "storiesEyebrow": "Stories",
+    "intro": "See how each story is doing, pick up drafts and read what readers said.",
+    "newStory": "New story",
     "storiesHeading": "Story by story",
     "signedOut": "Log in to see stories.",
     "empty": {
@@ -190,7 +188,11 @@
     "chapterCount_other": "{{count}} chapters",
     "manageChapters": "Manage chapters",
     "languages": "Languages",
-    "plan": "Plan"
+    "plan": "Plan",
+    "notPublishedYet": "Not published yet",
+    "chaptersPublished_one": "{{count}} chapter published",
+    "chaptersPublished_few": "{{count}} chapters published",
+    "chaptersPublished_other": "{{count}} chapters published"
   },
   "status": {
     "heading": "Status and comments",
@@ -292,7 +294,6 @@
     "undo": "Undo"
   },
   "recentlyDeleted": {
-    "eyebrow": "Undo",
     "heading": "Recently deleted",
     "intro": "Deleted stories are hidden straight away and deleted for good after 30 days. Until then you can undo.",
     "goneOn": "Gone for good on {{date}}"
@@ -483,7 +484,6 @@
     "fewerShort": "< 5",
     "loadFailed": "We couldn’t load your numbers. Refresh the page to try again.",
     "totals": {
-      "eyebrow": "Every story",
       "heading": "How readers respond",
       "periodLabel": "Time period",
       "last30Days": "Last 30 days",
@@ -563,12 +563,11 @@
       "loadFailed": "The followers line couldn't load. Try again in a moment."
     },
     "notPublished": {
-      "eyebrow": "Drafts and scheduled",
       "heading": "Not published yet",
       "empty": "Nothing waiting: every chapter is out.",
       "untitled": "Chapter {{number}}, untitled",
       "titled": "Chapter {{number}}: {{title}}",
-      "draftMeta": "{{story}} · {{words}} · saved {{when}}",
+      "savedWhen": "saved {{when}}",
       "scheduledMeta": "Publishes {{when}}, local time",
       "edit": "Edit",
       "reschedule": "Reschedule"
@@ -587,7 +586,6 @@
     },
     "noNumbersYet": "No numbers yet.",
     "comments": {
-      "eyebrow": "Comments",
       "heading": "Latest on the chapters",
       "onChapter": "on chapter {{number}} · {{when}}",
       "reply": "Reply",

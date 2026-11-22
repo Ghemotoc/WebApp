@@ -1313,8 +1313,10 @@ The word lists start in `content/username-word-lists/` and reach the database th
 ## Creating a story (S1-E3-01)
 
 ```
-/write (YourWritingPage) → "+ New story" → /write/new (NewStoryPage)      src/features/writing/
+/write (YourWritingPage) → "New story"    → /write/new (NewStoryPage)      src/features/writing/
 /write → "More comments" → /write/comments (ChapterCommentsPage, GAPS-5)   useMyChapterComments → my_chapter_comments()
+  │  the simplified look (CALM-7c): the figures on one glass Hero, each story a hairline row
+  │     with one meta line (lib/writerStoryFacts.ts), quiet buttons, "Continue draft" the main one
   │  the choices: useStoryFormOptions → api/stories.ts → open_story_languages(), categories
   │  typing: StoryBasicsSection, CategoryTagsSection (TagInput merges look-alikes with
   │     lib/tags.ts, the same rule as the database's normalise_tag()), CoverSection

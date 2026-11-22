@@ -5,7 +5,9 @@
  * The commenter's picture or initial, their name as a link to their profile, "on chapter n · 2
  * hours ago" (with the story's title on the page of every comment), the words, and "Reply", a
  * link to the comments under that chapter. A comment cut short ends in "…": the chapter holds
- * the rest. Who uses it: LatestComments and ChapterCommentsPage. What it calls: PersonAvatar and
+ * the rest. On Write it is a row split by the hairline (look "row", bundle CALM-7c, board
+ * simplified/New-Write); /write/comments keeps the card until CALM-9.
+ * Who uses it: LatestComments and ChapterCommentsPage. What it calls: PersonAvatar and
  * timeAgo.
  */
 import { useTranslation } from 'react-i18next';
@@ -23,7 +25,15 @@ export interface WriterCommentCardProps {
   storyTitle?: string;
   /** True when the words were cut short. */
   isShortened?: boolean;
+  /** "card" (the comments page) or "row": hairline-split rows on Write (CALM-7c). */
+  look?: 'card' | 'row';
 }
+
+/** The list item's classes for each look. */
+const lookClasses = {
+  card: 'flex min-w-0 flex-col gap-3 rounded-3xl border border-border bg-surface p-5 shadow-card',
+  row: 'flex min-w-0 flex-col gap-1.5 border-t border-hairline py-3.5 first:border-t-0',
+} as const;
 
 /**
  * Renders the card as a list item.
@@ -34,6 +44,7 @@ export function WriterCommentCard({
   comment,
   storyTitle,
   isShortened = false,
+  look = 'card',
 }: WriterCommentCardProps) {
   const { t, i18n } = useTranslation('writing');
   const when = timeAgo(comment.createdAt, i18n.language);
@@ -46,10 +57,7 @@ export function WriterCommentCard({
           when,
         });
   return (
-    <li
-      data-testid="writer-comment"
-      className="flex min-w-0 flex-col gap-3 rounded-3xl border border-border bg-surface p-5 shadow-card"
-    >
+    <li data-testid="writer-comment" className={lookClasses[look]}>
       <span className="flex items-center gap-3">
         <PersonAvatar name={comment.displayName} handle={comment.handle} />
         <span className="flex min-w-0 flex-col">
