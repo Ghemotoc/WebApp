@@ -3009,3 +3009,9 @@ story_hidden_here()       stories.hidden_in_countries holds that country; never 
 - Staff: Classics › a classic's "Where it shows" (`ClassicCountriesPanel`) → `admin_set_classic_hidden_countries()`, logged as `classics.hidden_countries_changed`.
 - Reader: when the story page or the reader gets nothing back, `useUnavailableHere()` → `story_unavailable_here()` says whether the country is the only reason, and `UnavailableHereNotice` (board B11) shows instead of "not available".
 - Every edition of a story shares the list (`set_story_family_hidden_countries()`, and the insert trigger `stories_copy_hidden_countries` for a new edition).
+
+### The followers line on the writer dashboard (CALM-7b)
+
+- `/write` › "Followers over time": `FollowersChart` (heading "147 followers", "+21 this week" from `writer_dashboard()`'s `followers_this_week`, and a Time range menu of 7, 30, 90 or 365 days, 90 by default) → `useFollowersLine` → `api/followersLine.ts` → `writer_followers_line(range_days)` (migration `calm7b_followers_line`).
+- The function counts the signed-in writer's own current followers at the end of each day (7 and 30 days), week (90 days, weeks start on Monday) or month (365 days), on Romania's calendar, with "fewer than 5" (null) below five. No table or policy; tested in `394-followers-line.test.sql`. It replaces `writer_followers_by_week()` and the weekly bars.
+- `FollowersLinePlot` draws the line (`lib/followersLineGeometry.ts`, dates from `lib/followersLabels.ts`); a pointer or the arrow keys, Home, End and Escape (`usePointPicker`) move the tooltip. The drawing is hidden from screen readers; `FollowersTable` gives them the same numbers.

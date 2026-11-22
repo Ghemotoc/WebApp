@@ -29,6 +29,8 @@ export interface DashboardTotals {
   shares: ShownCount;
   /** Every follower, whatever the period (the chart's heading). */
   followersAllTime: ShownCount;
+  /** New follows since Monday, Romania time ("+21 this week" beside the heading; CALM-7b). */
+  followersThisWeek: ShownCount;
 }
 
 /** One chapter's row in a story's table, and in "Not published yet". */
@@ -52,13 +54,6 @@ export interface DashboardChapter {
   shares: ShownCount;
 }
 
-/** One bar of "Followers over time". */
-export interface FollowersWeek {
-  /** The week's Monday, YYYY-MM-DD (Romanian date). */
-  weekStart: string;
-  total: ShownCount;
-}
-
 /** One of the "Latest on your chapters" cards. */
 export interface LatestComment {
   displayName: string;
@@ -76,7 +71,6 @@ export interface WriterDashboard {
   totals: DashboardTotals;
   /** When the writer's first chapter went out ("Since chapter 1 on 5 September"); null before. */
   firstPublishedAt: string | null;
-  followersByWeek: FollowersWeek[];
   chapters: DashboardChapter[];
   latestComments: LatestComment[];
 }
@@ -115,6 +109,7 @@ function totalsFrom(row: JsonObject): DashboardTotals {
     followers: countFrom(row.followers),
     shares: countFrom(row.shares),
     followersAllTime: countFrom(row.followers_all_time),
+    followersThisWeek: countFrom(row.followers_this_week),
   };
 }
 
@@ -166,10 +161,6 @@ export function dashboardFrom(data: unknown): WriterDashboard {
     period: row.period === 'last_30_days' ? 'last_30_days' : 'all',
     totals: totalsFrom((row.totals ?? {}) as JsonObject),
     firstPublishedAt: textOrNull(row.first_published_at),
-    followersByWeek: list(row.followers_by_week).map((week) => ({
-      weekStart: String(week.week_start),
-      total: countFrom(week.total),
-    })),
     chapters: list(row.chapters).map(chapterFrom),
     latestComments: list(row.latest_comments).map(commentFrom),
   };

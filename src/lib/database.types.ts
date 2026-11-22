@@ -18772,7 +18772,7 @@ export type Database = {
       writer_dashboard: { Args: { period?: string }; Returns: Json };
       writer_dashboard_chapters: { Args: { writer_id: string }; Returns: Json };
       writer_follow_state: { Args: { wanted_handle: string }; Returns: Json };
-      writer_followers_by_week: { Args: { writer_id: string }; Returns: Json };
+      writer_followers_line: { Args: { range_days: number }; Returns: Json };
       writer_latest_comments: { Args: { writer_id: string }; Returns: Json };
       writer_loved_lines: { Args: { target_chapter_id: string; writer_id: string }; Returns: Json };
       writer_reader_stops: {

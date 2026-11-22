@@ -184,6 +184,29 @@ test.describe('The writer dashboard', () => {
     await page.context().close();
   });
 
+  test('the followers line is named for its range and carries its numbers in a table', async ({
+    browser,
+  }) => {
+    const page = await openDashboard(browser);
+    // CALM-7b: the drawing is one named picture; a hidden table gives the same numbers.
+    const plot = page.getByRole('img', { name: 'Followers over time, last 90 days' });
+    await expect(plot).toBeVisible();
+    await expect(
+      page.getByRole('table', { name: 'Followers at the end of each week, last 90 days' }),
+    ).toBeAttached();
+    // A shorter range switches to one point a day.
+    await page.getByLabel('Time range').selectOption({ label: 'Last 7 days' });
+    await expect(page.getByRole('img', { name: 'Followers over time, last 7 days' })).toBeVisible();
+    const days = page.getByRole('table', { name: 'Followers at the end of each day, last 7 days' });
+    await expect(days.getByRole('row')).toHaveCount(8);
+    // The keyboard moves the tooltip: End shows the newest day, with five followers.
+    const weekPlot = page.getByRole('img', { name: 'Followers over time, last 7 days' });
+    await weekPlot.focus();
+    await page.keyboard.press('End');
+    await expect(weekPlot.locator('b')).toHaveText('5 followers');
+    await page.context().close();
+  });
+
   test('"Lines and stops" shows the most-loved line and where readers stop, as totals', async ({
     browser,
   }) => {

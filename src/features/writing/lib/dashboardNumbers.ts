@@ -42,18 +42,3 @@ export function formatShownPercent(
   if (percent === null) return fewerThanFive;
   return new Intl.NumberFormat(dateLocaleFor(language), { style: 'percent' }).format(percent / 100);
 }
-
-/**
- * The height of a bar in the followers chart, as a share of the tallest week.
- *
- * @param total - the week's new followers (null for "fewer than 5": drawn as a small bar)
- * @param tallest - the largest weekly total shown
- * @returns a percentage from 0 to 100
- */
-export function barHeightPercent(total: ShownCount, tallest: number): number {
-  // A "fewer than 5" week gets a short bar of about 2.5 followers, never its real height.
-  if (total === 0) return 0;
-  const value = total ?? 2.5;
-  if (tallest <= 0) return 12;
-  return Math.max(4, Math.round((Math.min(value, tallest) / tallest) * 100));
-}

@@ -3,7 +3,7 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { barHeightPercent, formatShownCount, formatShownPercent } from './dashboardNumbers';
+import { formatShownCount, formatShownPercent } from './dashboardNumbers';
 
 describe('formatShownCount', () => {
   it('shows "fewer than 5" for a count that comes from fewer than 5 readers', () => {
@@ -27,19 +27,5 @@ describe('formatShownPercent', () => {
 
   it('shows "fewer than 5" when fewer than 5 readers kept a place', () => {
     expect(formatShownPercent(null, 'en', 'fewer than 5')).toBe('fewer than 5');
-  });
-});
-
-describe('barHeightPercent', () => {
-  it('draws the tallest week at full height', () => {
-    expect(barHeightPercent(20, 20)).toBe(100);
-  });
-
-  it('draws a "fewer than 5" week as a short bar that says nothing exact', () => {
-    expect(barHeightPercent(null, 20)).toBe(13);
-  });
-
-  it('draws an empty chart with no bars', () => {
-    expect(barHeightPercent(0, 0)).toBe(0);
   });
 });
