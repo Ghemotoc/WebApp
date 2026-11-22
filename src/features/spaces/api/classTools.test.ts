@@ -14,7 +14,8 @@ import {
   createClassSpace,
   fetchClassWaitingMembers,
   lockDateText,
-  lockDayOf,
+  lockFieldsOf,
+  lockMomentText,
   lockTimeOf,
   setClassLock,
 } from './classTools';
@@ -125,20 +126,31 @@ describe('fetchClassWaitingMembers', () => {
 });
 
 describe('the lock date helpers', () => {
-  it('reads the day a lock falls on in Romania, even when it is still the evening before in UTC', () => {
-    // 1 July 2027, 00:00 in Bucharest (summer time) is 30 June, 21:00 UTC.
-    expect(lockDayOf('2027-06-30T21:00:00Z')).toBe('2027-07-01');
+  it('fills the form with the lock moment on the viewer’s own clock', () => {
+    const lockAt = new Date(2027, 6, 1, 8, 30);
+    expect(lockFieldsOf(lockAt.toISOString())).toEqual({ date: '2027-07-01', time: '08:30' });
   });
 
-  it('gives an empty date field when there is no lock date', () => {
-    expect(lockDayOf(null)).toBe('');
+  it('starts an empty form at midnight when there is no lock date', () => {
+    expect(lockFieldsOf(null)).toEqual({ date: '', time: '00:00' });
   });
 
-  it('asks Postgres for the start of the picked day, Romanian time', () => {
-    expect(lockTimeOf('2027-07-01')).toBe('2027-07-01 00:00:00 Europe/Bucharest');
+  it('sends the moment the typed date and time mean on the viewer’s clock', () => {
+    const expected = new Date(2027, 6, 1, 8, 30).toISOString();
+    expect(lockTimeOf({ date: '2027-07-01', time: '08:30' })).toBe(expected);
   });
 
-  it('writes the lock date as people read it, in the interface language', () => {
+  it('sends no date when the date field is empty', () => {
+    expect(lockTimeOf({ date: '', time: '00:00' })).toBeNull();
+  });
+
+  it('writes the lock moment as people read it, with the date and the time', () => {
+    expect(lockMomentText('2027-06-30T21:00:00Z', 'en', 'Europe/Bucharest')).toBe(
+      '1 July 2027 at 00:00',
+    );
+  });
+
+  it('writes the date alone on Romania’s calendar for the staff list', () => {
     expect(lockDateText('2027-06-30T21:00:00Z', 'en-GB')).toBe('1 July 2027');
   });
 });
