@@ -8,6 +8,7 @@
  */
 import { useId, useState, type FormEvent } from 'react';
 
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { TextInput } from '@/components/ui/TextInput';
@@ -73,14 +74,14 @@ export function PostEditForm({ post, threadTitle, onDone }: PostEditFormProps) {
         problem={messages.body}
       />
       {messages.general !== null && <Notice tone="error">{messages.general}</Notice>}
-      <div className="flex flex-wrap justify-end gap-3">
-        <Button variant="secondary" onClick={onDone}>
-          {t('post.cancel')}
-        </Button>
+      <ButtonRow>
         <Button type="submit" disabled={editing.isRunning}>
           {t('post.save')}
         </Button>
-      </div>
+        <Button variant="secondary" onClick={onDone}>
+          {t('post.cancel')}
+        </Button>
+      </ButtonRow>
     </form>
   );
 }

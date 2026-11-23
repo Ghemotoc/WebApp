@@ -15,6 +15,7 @@
  */
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { TextInput } from '@/components/ui/TextInput';
@@ -233,14 +234,14 @@ export function EpubDialog({
         </p>
         <EpubFields story={story} values={values} />
         <MakingStatus state={state} />
-        <div className="flex flex-wrap justify-end gap-2">
-          <Button type="button" size="lg" variant="secondary" onClick={onClose}>
-            {t('epub.cancel')}
-          </Button>
+        <ButtonRow>
           <Button type="submit" size="lg" disabled={isMaking}>
             {t('epub.make')}
           </Button>
-        </div>
+          <Button type="button" size="lg" variant="secondary" onClick={onClose}>
+            {t('epub.cancel')}
+          </Button>
+        </ButtonRow>
       </form>
     </dialog>
   );

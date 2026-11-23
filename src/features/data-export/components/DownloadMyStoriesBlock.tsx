@@ -201,8 +201,9 @@ export function DownloadMyStoriesBlock() {
   const { t } = useDataExportTranslation();
   const { stories, isKnown, loadFailed } = useLiveStories();
   // The "ready" notification links to #download-my-stories; the block grows once the stories
-  // arrive, so it is brought into view again then.
-  useScrollToHash(isKnown);
+  // arrive, so it is brought into view again then. Only that address: #download-my-data belongs
+  // to Settings, which brings the whole group's top into view.
+  useScrollToHash(isKnown, 'download-my-stories');
   return (
     <div
       id="download-my-stories"

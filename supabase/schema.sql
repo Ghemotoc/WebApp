@@ -27936,9 +27936,13 @@ begin
     'hides_text', story.rating in ('16_plus', '18_plus'),
     -- Only a public story is for search engines; an unlisted one is shared by its link only.
     'is_listed', story.visibility = 'public',
+    'is_app_only', public.story_app_only_applies(story.is_app_only),
+    'is_hidden_somewhere', cardinality(story.hidden_in_countries) > 0,
     'blurb', story.blurb,
+    -- The username links to the profile; a classic's author has none (S1-E5-06).
     'writer', (select jsonb_build_object(
-        'display_name', public.story_writer_name(story.id, profiles.handle, profiles.pen_name))
+        'display_name', public.story_writer_name(story.id, profiles.handle, profiles.pen_name),
+        'handle', case when story.classic_author_id is null then profiles.handle end)
       from public.profiles where profiles.id = story.user_id),
     'cover', jsonb_build_object(
       'kind', story.cover_kind, 'design', story.cover_design,
@@ -27946,7 +27950,11 @@ begin
         -- CALM-4: how the cover is drawn and the title's font.
         'style', story.cover_style, 'title_font', story.cover_title_font),
     'category_slug', (select categories.slug from public.categories where categories.id = story.category_id),
+    'genre', public.story_genre_name(story.id, story.language_code),
     'tags', public.story_search_tags(story.id, story.language_code),
+    'first_published_at', story.first_published_at,
+    'updated_at', greatest(story.updated_at, story.last_chapter_published_at),
+    'editions', public.story_public_editions(story),
     'chapter', chapter_part);
 end;
 $$;
@@ -27955,7 +27963,7 @@ $$;
 ALTER FUNCTION "public"."get_link_preview"("story_slug" "text", "chapter_code" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."get_link_preview"("story_slug" "text", "chapter_code" "text") IS 'S1-E4-04, S1-E11-36: a story''s public details for link previews and search tags, the same for every rating; never the user ID or chapter text.';
+COMMENT ON FUNCTION "public"."get_link_preview"("story_slug" "text", "chapter_code" "text") IS 'S1-E4-04, S1-E11-36, CALM-9s: a story''s public details for link previews, search tags and the story footer, the same for every rating; never the user ID, an age or chapter text.';
 
 
 
@@ -48750,6 +48758,8 @@ CREATE OR REPLACE FUNCTION "public"."sitemap_entries"() RETURNS TABLE("path" "te
       and stories.visibility = 'public' and not stories.class_only
       and not public.story_app_only_applies(stories.is_app_only)
       and not public.is_moderated_away('story', stories.id)
+      -- CALM-9s: a story hidden in any country stays out, as search engines list worldwide.
+      and cardinality(stories.hidden_in_countries) = 0
   )
   limit 50000;
 $$;
@@ -51834,6 +51844,31 @@ COMMENT ON FUNCTION "public"."story_follower_count_of"("target_story_id" "uuid")
 
 
 
+CREATE OR REPLACE FUNCTION "public"."story_genre_name"("target_story_id" "uuid", "story_language" "text") RETURNS "text"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(
+           (select tag_names.name from public.tag_names
+            where tag_names.tag_id = tags.id and tag_names.language_code = story_language
+            limit 1),
+           tags.name)
+  from public.story_tags
+  join public.tags on tags.id = story_tags.tag_id
+  where story_tags.story_id = target_story_id
+    and tags.status = 'approved' and tags.is_recommended
+  order by story_tags.created_at, tags.name
+  limit 1;
+$$;
+
+
+ALTER FUNCTION "public"."story_genre_name"("target_story_id" "uuid", "story_language" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_genre_name"("target_story_id" "uuid", "story_language" "text") IS 'CALM-9s: a story''s first approved recommended tag in its language, the genre in its footer sentence.';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."story_has_copied_work_note"("target_story_id" "uuid") RETURNS boolean
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -52473,6 +52508,34 @@ ALTER FUNCTION "public"."story_plan_visibility"("story_slug" "text") OWNER TO "p
 
 
 COMMENT ON FUNCTION "public"."story_plan_visibility"("story_slug" "text") IS 'The writer''s own "What readers can see" switches for one story (S1-E17-32).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."story_public_editions"("edition" "public"."stories") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(
+    jsonb_agg(jsonb_build_object('slug', family.slug, 'language_code', family.language_code)
+              order by family.edition_of_story_id nulls first, family.created_at),
+    '[]'::jsonb)
+  from public.stories as family
+  where coalesce(family.edition_of_story_id, family.id)
+          = coalesce(edition.edition_of_story_id, edition.id)
+    and family.visibility = 'public' and not family.class_only
+    and public.edition_is_readable(family)
+    -- A story in one language has no alternates.
+    and exists (select 1 from public.stories as other
+                where coalesce(other.edition_of_story_id, other.id)
+                        = coalesce(edition.edition_of_story_id, edition.id)
+                  and other.id <> edition.id and other.deleted_at is null);
+$$;
+
+
+ALTER FUNCTION "public"."story_public_editions"("edition" "public"."stories") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_public_editions"("edition" "public"."stories") IS 'CALM-9s: a story family''s public readable editions (slug and language) for hreflang links.';
 
 
 
@@ -54081,6 +54144,8 @@ declare
   words_so_far integer := 0;
   kept text[] := '{}';
   first_words text[];
+  -- TRIAL-WALL: the smaller of the setting and half the chapter, at least one word.
+  allowed_words integer := greatest(1, least(word_limit, public.word_total(coalesce(chapter_body, '')) / 2));
 begin
   foreach paragraph in array paragraphs loop
     paragraph_words := public.word_total(paragraph);
@@ -54089,7 +54154,7 @@ begin
       continue;
     end if;
     -- Step 2: keep the whole paragraph while it still fits.
-    if words_so_far + paragraph_words <= word_limit then
+    if words_so_far + paragraph_words <= allowed_words then
       kept := kept || btrim(paragraph, E' \t\n\r');
       words_so_far := words_so_far + paragraph_words;
       continue;
@@ -54097,7 +54162,7 @@ begin
     -- Step 3: the first paragraph alone is too long: cut it at the limit and mark the cut.
     if words_so_far = 0 then
       first_words := regexp_split_to_array(btrim(paragraph, E' \t\n\r'), E'\\s+');
-      kept := kept || (array_to_string(first_words[1:word_limit], ' ') || '…');
+      kept := kept || (array_to_string(first_words[1:allowed_words], ' ') || '…');
     end if;
     -- Step 4: stop at the first paragraph that doesn't fit.
     exit;
@@ -54110,7 +54175,7 @@ $$;
 ALTER FUNCTION "public"."teaser_of"("chapter_body" "text", "word_limit" integer) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."teaser_of"("chapter_body" "text", "word_limit" integer) IS 'The first whole paragraphs of a chapter up to a word limit, for signed-out visitors (S1-E4-04).';
+COMMENT ON FUNCTION "public"."teaser_of"("chapter_body" "text", "word_limit" integer) IS 'The first whole paragraphs of a chapter up to a word limit or half the chapter, for signed-out visitors (S1-E4-04, TRIAL-WALL).';
 
 
 
@@ -75445,6 +75510,10 @@ REVOKE ALL ON FUNCTION "public"."story_follower_count_of"("target_story_id" "uui
 
 
 
+REVOKE ALL ON FUNCTION "public"."story_genre_name"("target_story_id" "uuid", "story_language" "text") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."story_has_copied_work_note"("target_story_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."story_has_copied_work_note"("target_story_id" "uuid") TO "anon";
 GRANT ALL ON FUNCTION "public"."story_has_copied_work_note"("target_story_id" "uuid") TO "authenticated";
@@ -75531,6 +75600,10 @@ REVOKE ALL ON FUNCTION "public"."story_plan_chapters"("plan_story_id" "uuid") FR
 
 REVOKE ALL ON FUNCTION "public"."story_plan_visibility"("story_slug" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."story_plan_visibility"("story_slug" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."story_public_editions"("edition" "public"."stories") FROM PUBLIC;
 
 
 

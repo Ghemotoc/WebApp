@@ -4,15 +4,28 @@
  * (A and B) and the floating tab bar.
  */
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 
 import { AppProviders } from '@/app/AppProviders';
 import { appRoutes } from '@/app/router';
 import { brand } from '@/config/brand';
+import { useSession } from '@/features/auth/hooks/useSession';
 import { replaceAppearance } from '@/features/theme/lib/appearanceStore';
 import { createI18n } from '@/lib/i18n';
 import { THEME_STORAGE_KEY } from '@/lib/theme';
+
+vi.mock('@/features/auth/hooks/useSession', () => ({ useSession: vi.fn() }));
+
+/** Signs a member in for the test (the top bar shows Library, Together and search only to members). */
+function signIn() {
+  vi.mocked(useSession).mockReturnValue({ userId: 'member-1', isKnown: true });
+}
+
+beforeEach(() => {
+  // A visitor by default: nobody is signed in.
+  vi.mocked(useSession).mockReturnValue({ userId: null, isKnown: true });
+});
 
 /** Draws the app at an address (home by default) in English. */
 function renderApp(address = '/') {
@@ -71,7 +84,12 @@ describe('the app shell', () => {
   it('says "An app by" with the company name from the brand config in the footer', () => {
     renderApp();
 
-    expect(screen.getByText(`An app by ${brand.companyName}`)).toBeInTheDocument();
+    expect(screen.getByText(/An app by/)).toHaveTextContent(`An app by ${brand.companyName}`);
+    // The company name opens the company's own site (Robert, 23 Nov 2026).
+    expect(screen.getByRole('link', { name: brand.companyName })).toHaveAttribute(
+      'href',
+      brand.companySiteUrl,
+    );
   });
 
   it("switches to night mode from the footer's Night mode button and remembers it on this device", () => {
@@ -117,7 +135,8 @@ describe('the app shell', () => {
 
 describe('the shell on a wide window (bundle G4 SHELL)', () => {
   it('has the website top bar with the search pill and no language menu', () => {
-    renderApp();
+    signIn();
+    renderApp('/discover');
 
     expect(screen.getByRole('search', { name: 'Search' })).toBeInTheDocument();
     // The language menu sits only in the footer and in Settings (bundle FIX-3).
@@ -133,6 +152,7 @@ describe('the shell on a wide window (bundle G4 SHELL)', () => {
   });
 
   it('lists Home, Read, Library and Together in the top bar, Home first (bundle CALM-2)', () => {
+    signIn();
     renderApp('/discover');
 
     const topBar = screen.getByRole('navigation', { name: 'Main' });
@@ -140,22 +160,36 @@ describe('the shell on a wide window (bundle G4 SHELL)', () => {
       .getAllByRole('link')
       .map((link) => link.textContent);
     expect(names).toEqual(['Home', 'Read', 'Library', 'Together']);
-    expect(within(topBar).getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
+    // A member's Home is their own home page (CALM-1).
+    expect(within(topBar).getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/hub');
     expect(within(topBar).getByRole('link', { name: 'Read' })).toHaveAttribute(
       'aria-current',
       'page',
     );
   });
+
+  it('shows a visitor only Home and Read, and no search (TRIAL-WALL, Robert 23 Nov 2026)', () => {
+    renderApp('/discover');
+
+    const topBar = screen.getByRole('navigation', { name: 'Main' });
+    const names = within(topBar)
+      .getAllByRole('link')
+      .map((link) => link.textContent);
+    expect(names).toEqual(['Home', 'Read']);
+    expect(within(topBar).getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
+    expect(screen.queryByRole('search', { name: 'Search' })).not.toBeInTheDocument();
+  });
 });
 
 describe('the shell on a narrow window (bundle G4 SHELL)', () => {
   it('gives a browsing page header B and the floating tab bar, with the current tab marked', () => {
+    signIn();
     useNarrowWindow();
     renderApp('/discover');
 
     expect(screen.getByRole('link', { name: `${brand.productName}, Home` })).toHaveAttribute(
       'href',
-      '/',
+      '/hub',
     );
     const tabBar = screen.getByRole('navigation', { name: 'Main' });
     const readTab = within(tabBar).getByRole('link', { name: 'Read' });

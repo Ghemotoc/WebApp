@@ -12,6 +12,7 @@
  * two is ever drawn). On a tablet it stays 620 px wide in the middle, as on the DiscoverTablet
  * board, rather than stretching across. It is fixed to the bottom and keeps clear of a phone's home bar
  * (env(safe-area-inset-bottom)); AppLayout pads the page so nothing hides under it.
+ * A signed-out visitor sees only Read and Write, without Search (TRIAL-WALL, 23 Nov 2026).
  * Who uses it: AppLayout, below 1024 px, on header B pages only (never while typing or reading).
  * What it calls: React Router's NavLink, NavIcon, useFocusClearOfTabBar (keeps the focused
  * control out from under the bar).
@@ -20,7 +21,9 @@ import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router';
 
+import { linksFor } from '@/app/navigation';
 import { NavIcon, type NavIconName } from '@/components/icons/NavIcon';
+import { useSession } from '@/features/auth/hooks/useSession';
 
 import { useFocusClearOfTabBar } from './useFocusClearOfTabBar';
 
@@ -29,14 +32,16 @@ interface Tab {
   href: string;
   icon: NavIconName;
   labelKey: string;
+  /** Shown only to a signed-in member (TRIAL-WALL). */
+  isForMembers?: boolean;
 }
 
 /** The four tabs, in the board's order. Every page exists (Write opens a log-in card for a visitor). */
 const tabs: readonly Tab[] = [
   { href: '/discover', icon: 'discover', labelKey: 'nav.read' },
-  { href: '/library', icon: 'library', labelKey: 'nav.library' },
+  { href: '/library', icon: 'library', labelKey: 'nav.library', isForMembers: true },
   { href: '/write', icon: 'write', labelKey: 'nav.write' },
-  { href: '/forums', icon: 'forums', labelKey: 'nav.together' },
+  { href: '/forums', icon: 'forums', labelKey: 'nav.together', isForMembers: true },
 ];
 
 /**
@@ -87,6 +92,9 @@ export function TabBar() {
   // A control the keyboard lands on is never left hidden under the bar (WCAG 2.2, 2.4.11).
   const barRef = useRef<HTMLElement>(null);
   useFocusClearOfTabBar(barRef);
+  // A visitor sees Read and Write only, with no Search button (TRIAL-WALL; Robert, 23 Nov 2026).
+  const { userId } = useSession();
+  const isSignedIn = userId !== null;
   return (
     <nav
       ref={barRef}
@@ -94,7 +102,7 @@ export function TabBar() {
       className="fixed inset-x-3.5 bottom-[calc(14px+env(safe-area-inset-bottom))] z-20 mx-auto flex max-w-[620px] items-center gap-3"
     >
       <ul className="glass-float m-0 flex h-16 min-w-0 flex-1 list-none items-center rounded-full p-1">
-        {tabs.map((tab) => (
+        {linksFor(tabs, isSignedIn).map((tab) => (
           <li key={tab.href} className="flex min-w-0 flex-1">
             <NavLink to={tab.href} className={tabClasses}>
               {({ isActive }) => (
@@ -108,14 +116,16 @@ export function TabBar() {
           </li>
         ))}
       </ul>
-      <NavLink to="/search" aria-label={t('shell.search')} className={searchButtonClasses}>
-        {({ isActive }) => (
-          <>
-            <NavIcon name="search" size={24} />
-            <CurrentLine isActive={isActive} />
-          </>
-        )}
-      </NavLink>
+      {isSignedIn && (
+        <NavLink to="/search" aria-label={t('shell.search')} className={searchButtonClasses}>
+          {({ isActive }) => (
+            <>
+              <NavIcon name="search" size={24} />
+              <CurrentLine isActive={isActive} />
+            </>
+          )}
+        </NavLink>
+      )}
     </nav>
   );
 }

@@ -7,6 +7,7 @@
  * Who shows it: TranslateChaptersPage. What it calls: hooks/useEditionDetails.ts →
  * update_story_language().
  */
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { Textarea } from '@/components/ui/Textarea';
@@ -69,11 +70,11 @@ export function EditionDetailsForm({ edition }: { edition: StoryLanguage }) {
             {t(`details.${form.message}`)}
           </Notice>
         )}
-        <div className="flex justify-end">
+        <ButtonRow>
           <Button type="submit" size="lg" variant="secondary" disabled={form.isSaving}>
             {form.isSaving ? t('details.saving') : t('details.save')}
           </Button>
-        </div>
+        </ButtonRow>
       </form>
     </section>
   );
