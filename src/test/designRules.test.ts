@@ -17,6 +17,9 @@
  *   5. No 3D bevel or shine on member screens (canvas v47 is flat): the top edge light and the dark
  *      sheen are transparent in every member theme, and no CSS draws an inset bottom bevel. The
  *      staff area keeps its own token set, untouched (Robert, 21 Nov 2026, 06:09 UTC).
+ *   6. No member screen is rounder than the design: boxes are 24 px (rounded-card), tiles 12 px
+ *      (rounded-field), pills fully round; a class never names a 25 to 40 px corner (NIGHT-2;
+ *      Robert, 23 Nov 2026: "still quite a few rounded areas"). Staff screens are left out.
  * Who runs it: Vitest (`npm test`), in CI on every pull request. Its sister guard is
  * src/test/noDoodles.test.ts.
  */
@@ -258,6 +261,17 @@ describe('the design rules are the defaults', () => {
         .filter(({ line }) => bevel.test(line))
         .map(({ line }) => `${path}: ${line.trim()}`),
     );
+    expect(offenders).toEqual([]);
+  });
+
+  it('no member screen names a corner rounder than a box (24 px)', () => {
+    const tooRound = /rounded(-[tblr]{1,2})?-\[(2[5-9]|3\d|40)px\]/;
+    // The floating top bar is a pill in the design (gh-topbar); 36 px keeps it a pill when it wraps.
+    const pills = ['/src/app/shell/TopBar.tsx'];
+    const offenders = codeFiles()
+      .filter(([path]) => !isStaffFile(path) && !pills.includes(path))
+      .filter(([, text]) => tooRound.test(text))
+      .map(([path]) => path);
     expect(offenders).toEqual([]);
   });
 });

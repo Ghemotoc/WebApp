@@ -67,7 +67,7 @@ function usePlayback() {
 /** The box shown instead of a card that was removed or couldn't be read. */
 function EmbedPlaceholder({ text }: { text: string }) {
   return (
-    <div className="my-7 flex min-h-24 items-center justify-center rounded-[16px] border border-dashed border-control-border bg-paper px-6 py-6 text-center">
+    <div className="my-7 flex min-h-24 items-center justify-center rounded-field border border-dashed border-control-border bg-paper px-6 py-6 text-center">
       <p className="m-0 text-[15px] font-semibold text-heading">{text}</p>
     </div>
   );
@@ -146,7 +146,7 @@ export function ChapterEmbed(props: ChapterEmbedProps) {
       role="group"
       aria-label={t(`embed.groupLabel.${kind}`, { service })}
       data-chapter-embed={embedId}
-      className="my-7 flex flex-wrap overflow-hidden rounded-[16px] border border-border bg-surface"
+      className="my-7 flex flex-wrap overflow-hidden rounded-field border border-border bg-surface"
     >
       <EmbedPlayer
         kind={kind}

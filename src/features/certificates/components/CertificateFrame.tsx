@@ -87,10 +87,10 @@ export function CertificateFrame({
     <div
       data-certificate-colour={look.colour}
       data-certificate-pattern-name={look.pattern}
-      className={`certificate-frame relative overflow-hidden rounded-[26px] ${isCompact ? 'p-4' : 'p-4 sm:p-8'} ${className}`}
+      className={`certificate-frame relative overflow-hidden rounded-card ${isCompact ? 'p-4' : 'p-4 sm:p-8'} ${className}`}
       style={{ background: certificateFrameBackground(look.colour) }}
     >
-      <div className="certificate-paper relative overflow-hidden rounded-[18px] border border-white/95 bg-white/90 text-[#2A1E14] shadow-[inset_0_1px_0_#FFFFFF,0_20px_40px_-18px_rgba(0,0,0,0.5)]">
+      <div className="certificate-paper relative overflow-hidden rounded-field border border-white/95 bg-white/90 text-[#2A1E14] shadow-[inset_0_1px_0_#FFFFFF,0_20px_40px_-18px_rgba(0,0,0,0.5)]">
         <PatternLayer look={look} patternId={patternId} />
         <div className="relative">{children}</div>
       </div>

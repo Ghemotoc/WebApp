@@ -56,21 +56,19 @@ const dayPaper = paperIn("[data-theme='light']");
 const nightPaper = paperIn("[data-theme='night']");
 
 /**
- * The night sky's edge colours tokens.css gives the phone's bars at night (--browser-bar): the
- * first for wide windows, the second for phones and tablets under 1024 px.
+ * The colour tokens.css gives the phone's bars at night (--browser-bar, its first setting): the
+ * flat night page since NIGHT-2, the same on wide windows and on phones under 1024 px.
  */
-const nightBarColours = [...tokensCss.matchAll(/--browser-bar:\s*(#[0-9a-f]{6})\s*;/gi)].map(
-  (match) => match[1],
-);
-const nightBarWide = nightBarColours[0] ?? '';
-const nightBarPhone = nightBarColours[1] ?? '';
+const nightBar = /--browser-bar:\s*(#[0-9a-f]{6})\s*;/i.exec(tokensCss)?.[1] ?? '';
+const nightBarWide = nightBar;
+const nightBarPhone = nightBar;
 
 /** The media query theme-init.js and tokens.css use for phones and tablets. */
 const phoneQuery = '(max-width: 1023px)';
 
 /**
- * The bar colour the loaded style sheet gives: the night sky's edge at night, except in high
- * contrast and on the staff area's frame, which draw no galaxy (tokens.css, --browser-bar).
+ * The bar colour the loaded style sheet gives: --browser-bar at night, except in high contrast
+ * and on the staff area's frame, which set their own (tokens.css).
  *
  * @param attributes - the attributes theme-init.js set on <html>
  * @param onStaffFrame - true when the colour is read from the staff area's frame
@@ -296,22 +294,22 @@ describe("public/theme-init.js gives a phone's bars the page colour (CALM-1)", (
     expect(paint.barsAfterLoad).toEqual([dayPaper, dayPaper]);
   });
 
-  it("gives both bars the night sky's edge colour for a device in dark mode", () => {
+  it('gives both bars the night page colour for a device in dark mode', () => {
     const paint = firstPaintBy(written, device('a device in dark mode'));
     expect(paint.barsBeforeLoad).toEqual([nightBarWide, nightBarWide]);
     expect(paint.barsAfterLoad).toEqual([nightBarWide, nightBarWide]);
   });
 
-  it('gives a reader who chose night the night sky on both bars, even on a light phone', () => {
+  it('gives a reader who chose night the night page colour on both bars, even on a light phone', () => {
     const onPhone = { stored: { 'theme-preference': 'night' }, matching: [phoneQuery] };
     const paint = firstPaintBy(written, onPhone);
     expect(paint.barsBeforeLoad).toEqual([nightBarPhone, nightBarPhone]);
     expect(paint.barsAfterLoad).toEqual([nightBarPhone, nightBarPhone]);
   });
 
-  it('never gives the night bars black, so they blend into the dark blue sky', () => {
-    expect(nightBarWide).not.toBe(nightPaper);
-    expect(nightBarPhone).not.toBe(nightPaper);
+  it('gives the night bars the flat night page colour, so no seam shows (NIGHT-2)', () => {
+    expect(nightBar).toBe(nightPaper);
+    expect(nightBar).toBe('#0e0e10');
   });
 
   it("gives a look its own page colour once the style sheet has loaded (Sorbet's peach)", () => {
@@ -369,12 +367,12 @@ describe('the first-paint colours match tokens.css, day and night (CALM-1)', () 
     return meta.exec(indexHtml)?.[1];
   }
 
-  it("names tokens.css's day --paper and the phone's night sky in index.html's theme-color metas", () => {
+  it("names tokens.css's day --paper and the night bar colour in index.html's theme-color metas", () => {
     expect(indexHtmlBarColour('light')).toBe(dayPaper);
     expect(indexHtmlBarColour('dark')).toBe(nightBarPhone);
   });
 
-  it("uses tokens.css's day --paper and night sky colours in theme-init.js before the style sheet loads", () => {
+  it("uses tokens.css's day --paper and night bar colours in theme-init.js before the style sheet loads", () => {
     // Before the load event the script can only use its own plain colours.
     expect(firstPaintBy(written, device('a first visit')).barsBeforeLoad[0]).toBe(dayPaper);
     expect(firstPaintBy(written, device('a device in dark mode')).barsBeforeLoad[0]).toBe(

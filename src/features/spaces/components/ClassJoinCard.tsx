@@ -26,7 +26,7 @@ export function ClassJoinCard({ title, children }: ClassJoinCardProps) {
   return (
     <section
       aria-labelledby="class-join-heading"
-      className="mx-auto flex w-full max-w-[640px] flex-col gap-5 rounded-[28px] border border-border bg-surface p-6 shadow-card md:p-8"
+      className="mx-auto flex w-full max-w-[640px] flex-col gap-5 rounded-card border border-border bg-surface p-6 shadow-card md:p-8"
     >
       <div className="flex flex-col gap-2">
         <h1 id="class-join-heading" className="m-0 type-title break-words lg:type-display">

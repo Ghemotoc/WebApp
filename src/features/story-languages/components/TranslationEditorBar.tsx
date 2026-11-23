@@ -35,7 +35,7 @@ export function TranslationEditorBar(props: TranslationEditorBarProps) {
   const { edition, place, isPublished, isBusy, onSave, onPublish } = props;
   const { t } = useStoryLanguagesTranslation();
   return (
-    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-[28px] border border-border bg-surface px-5 py-2.5 shadow-card">
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-card border border-border bg-surface px-5 py-2.5 shadow-card">
       <Link
         to={`/write/s/${edition.slug}/translate`}
         lang={edition.languageCode}

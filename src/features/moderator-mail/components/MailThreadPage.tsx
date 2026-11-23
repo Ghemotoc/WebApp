@@ -26,7 +26,7 @@ import { MailReplyForm } from './MailReplyForm';
 import { MailStatusPill } from './MailStatusPill';
 
 /** The glass card the board draws around the messages and around the answer box. */
-const glassCard = 'rounded-[28px] border border-border bg-surface p-5 shadow-card md:p-7';
+const glassCard = 'rounded-card border border-border bg-surface p-5 shadow-card md:p-7';
 
 /**
  * The eyebrow, the subject and the status.

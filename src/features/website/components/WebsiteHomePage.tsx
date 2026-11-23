@@ -12,7 +12,7 @@
  * text from the locale files. The shelves keep to ratings, blocks and removed content
  * (S1-E5-01) and end with "View more" (S1-E5-09).
  * Who shows it: the router for "/". What it calls: useWebsiteContent for the home page and the
- * questions, HomeShelves, the four bands and HomeFooterColumns.
+ * questions, HomeShelves and the four bands; the shared footer follows (NIGHT-2).
  */
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -35,7 +35,6 @@ import { hasBand } from '../lib/homeBands';
 import { AppsBand } from './AppsBand';
 import { CommunityBand } from './CommunityBand';
 import { FirstStoryBand } from './FirstStoryBand';
-import { HomeFooterColumns } from './HomeFooterColumns';
 import { HomeHero } from './HomeHero';
 import { HomeShelves } from './HomeShelves';
 import { QuestionList } from './QuestionList';
@@ -167,7 +166,6 @@ function HomeSections({ entry }: { entry: ParsedEntry<HomePageContent> }) {
       <HomeShelves />
       <HomeBands page={page} language={languageCode} />
       <HomeQuestions page={page} questions={questions} />
-      <HomeFooterColumns note={page.footerNote ?? ''} language={languageCode} />
     </>
   );
 }

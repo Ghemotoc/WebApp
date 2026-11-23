@@ -66,7 +66,7 @@ function EditionLink(props: { edition: StoryEdition; onPick: (edition: StoryEdit
         to={editionAddress(edition)}
         aria-current={edition.isCurrent ? 'true' : undefined}
         onClick={() => onPick(edition)}
-        className={`flex min-h-[52px] items-center justify-between gap-3 rounded-[14px] px-3.5 py-2 text-heading no-underline hover:bg-tint ${edition.isCurrent ? 'bg-tint' : ''}`}
+        className={`flex min-h-[52px] items-center justify-between gap-3 rounded-field px-3.5 py-2 text-heading no-underline hover:bg-tint ${edition.isCurrent ? 'bg-tint' : ''}`}
       >
         <span className="flex min-w-0 flex-col">
           <span lang={edition.languageCode} className="text-sm font-bold">

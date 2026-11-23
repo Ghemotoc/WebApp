@@ -50,7 +50,7 @@ export function NotificationList({ notifications, ownHandle, onOpen }: Notificat
           >
             {t(`days.${group}`)}
           </h2>
-          <ul className="m-0 list-none overflow-hidden rounded-[28px] border border-border bg-surface p-0 shadow-card">
+          <ul className="m-0 list-none overflow-hidden rounded-card border border-border bg-surface p-0 shadow-card">
             {items.map((item) => (
               <NotificationRow
                 key={item.id}

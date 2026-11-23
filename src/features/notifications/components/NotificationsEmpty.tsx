@@ -17,7 +17,7 @@ import { useNotificationsTranslation } from '../registerNotificationsTranslation
 export function NotificationsEmpty() {
   const { t } = useNotificationsTranslation();
   return (
-    <div className="relative flex flex-col items-center gap-3 rounded-[28px] border border-border bg-surface px-8 py-12 text-center shadow-card">
+    <div className="relative flex flex-col items-center gap-3 rounded-card border border-border bg-surface px-8 py-12 text-center shadow-card">
       <h2 className="m-0 text-2xl font-bold">{t('empty.title')}</h2>
       <p className="m-0 max-w-[420px] text-base leading-relaxed text-body">{t('empty.body')}</p>
     </div>

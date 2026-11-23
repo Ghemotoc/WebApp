@@ -33,7 +33,7 @@ export interface ProofWayProps {
 function WhatWeDoWithIt() {
   const { t } = useTranslation('account');
   return (
-    <div className="flex flex-col gap-1.5 rounded-[16px] bg-tint p-4">
+    <div className="flex flex-col gap-1.5 rounded-field bg-tint p-4">
       <strong className="text-[15px] font-bold text-ink">
         {t('teacherBadge.proof.whatTitle')}
       </strong>
@@ -75,7 +75,7 @@ export function ProofWay({ idPrefix, isSending, failure, onSend }: ProofWayProps
           accept="image/jpeg,image/png,application/pdf"
           aria-describedby={`${inputId}-hint`}
           disabled={isSending}
-          className="min-h-12 w-full rounded-[16px] border border-dashed border-control-border bg-surface px-4 py-2.5 text-[15px] text-ink file:mr-3 file:h-9 file:rounded-full file:border file:border-control-border file:bg-surface file:px-4 file:font-semibold file:text-heading"
+          className="min-h-12 w-full rounded-field border border-dashed border-control-border bg-surface px-4 py-2.5 text-[15px] text-ink file:mr-3 file:h-9 file:rounded-full file:border file:border-control-border file:bg-surface file:px-4 file:font-semibold file:text-heading"
           onChange={(event) => setFile(event.target.files?.[0] ?? null)}
         />
         <p id={`${inputId}-hint`} className="m-0 text-[13px] text-meta">

@@ -40,7 +40,7 @@ export function WayPicker({ idPrefix, chosen, onChoose }: WayPickerProps) {
           <label
             key={way}
             className={cn(
-              'grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 rounded-[18px] border bg-surface p-4 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-(--focus-ring)',
+              'grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 rounded-field border bg-surface p-4 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-(--focus-ring)',
               way === chosen ? 'border-2 border-primary' : 'border-border',
             )}
           >

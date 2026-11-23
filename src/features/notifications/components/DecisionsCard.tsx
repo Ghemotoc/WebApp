@@ -23,7 +23,7 @@ export function DecisionsCard() {
   return (
     <section
       aria-labelledby="notification-decisions-heading"
-      className="flex flex-col gap-2.5 rounded-[28px] border border-border bg-surface p-6 shadow-card"
+      className="flex flex-col gap-2.5 rounded-card border border-border bg-surface p-6 shadow-card"
     >
       <h2
         id="notification-decisions-heading"
