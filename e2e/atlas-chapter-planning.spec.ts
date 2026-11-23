@@ -260,7 +260,11 @@ test.describe('Story Atlas chapter planning (S1-E17-23 to S1-E17-26)', () => {
       const context = await browser.newContext();
       await useSessionInBrowser(context, (await signInPersona('suspended_user')).session);
       const page = await context.newPage();
-      await checkScreen(page, view);
+      // The type folds under "More details" (CALM-9, D05): it is opened before axe runs, so axe
+      // checks the folded fields too. The fold is found by what it holds, in either language.
+      await checkScreen(page, view, async (screen) => {
+        await screen.locator('details:has(#atlas-chapter-kind) > summary').click();
+      });
       await expect(page.locator('#atlas-chapter-kind')).toBeVisible();
       await expectNoDoodles(page);
       await context.close();
