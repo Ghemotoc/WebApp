@@ -37,9 +37,19 @@ export async function goToNewStoryStep(page: Page, stepTitle: (typeof newStorySt
 
 /**
  * Opens the last step, where the rating, the AI answer and "Create and write chapter one" are.
+ * Works in English and Romanian: it presses "Next" ("Mai departe") until there is none left.
  *
- * @param page - the page on /write/new, in English, with a title filled in
+ * @param page - the page on /write/new, with a title filled in
  */
 export async function goToLastNewStoryStep(page: Page) {
-  await goToNewStoryStep(page, 'Labels, rating and AI');
+  const openStepTitle = page.locator('li[aria-current="step"] h2');
+  const nextButton = page.getByRole('button', { name: /^(Next|Mai departe): / });
+  for (let presses = 0; presses < newStorySteps.length; presses += 1) {
+    // The last step has no "Next", so stop once it is gone.
+    if ((await nextButton.count()) === 0) return;
+    const openNow = await openStepTitle.textContent();
+    await nextButton.click();
+    // Wait for the next step to open before looking again (a missing title keeps it here).
+    await expect(openStepTitle).not.toHaveText(openNow ?? '');
+  }
 }

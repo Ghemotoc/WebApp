@@ -18,6 +18,7 @@
 import { expect, test, type Browser } from '@playwright/test';
 
 import { checkScreen } from './support/accessibility';
+import { goToLastNewStoryStep } from './support/newStoryWizard';
 import { runSql } from './support/database';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
@@ -105,6 +106,8 @@ test.describe('the prompt of the week (GAPS-12c)', () => {
     await expect(page.getByText('Scrii pornind de la tema aceasta')).toBeVisible();
     await expect(page.getByText(thisWeek.ro)).toBeVisible();
     await page.getByRole('textbox', { name: 'Titlu' }).fill(storyTitle);
+    // The rating and the AI answer sit on the wizard's last step (CALM-9, board D02).
+    await goToLastNewStoryStep(page);
     await page.getByRole('radio', { name: 'Toate vârstele', exact: true }).click();
     await page.getByRole('radio', { name: 'Fără AI', exact: true }).click();
     await page.getByRole('button', { name: 'Creează și scrie primul capitol' }).click();
