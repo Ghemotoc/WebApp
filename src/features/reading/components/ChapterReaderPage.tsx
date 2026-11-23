@@ -119,8 +119,9 @@ export function ChapterReaderPage() {
   // A shared passage's spot (S1-E4-11); anything that isn't one is read as no spot.
   const sharedSpot = useMemo(() => parseSpot(spot), [spot]);
   const { chapter, isLoaded, loadFailed } = useChapter(storySlug, chapterCode);
-  // CALM-9s: the footer under the reader says what the story is, as on the story page.
-  useStoryStatement(storySlug);
+  // CALM-9s: the footer under the reader says what the story is, as on the story page, but only
+  // when this reader may see the chapter (a rating or a missing chapter keeps it out).
+  useStoryStatement(storySlug, isLoaded && chapter !== null);
 
   if (loadFailed) {
     return (

@@ -128,8 +128,9 @@ export function StoryPage() {
   const { story, isLoaded, loadFailed } = useStoryPage(storySlug);
   // TRANSLATE-1b: a story in several languages opens in this reader's language.
   useOpeningEdition(story);
-  // CALM-9s: the footer says what this story is, for readers and search engines.
-  useStoryStatement(storySlug);
+  // CALM-9s: the footer says what this story is, for readers and search engines, once the
+  // reader may see the story at all.
+  useStoryStatement(storySlug, isLoaded && story !== null);
 
   if (loadFailed) {
     return (
