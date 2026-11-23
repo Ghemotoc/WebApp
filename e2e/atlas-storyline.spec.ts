@@ -180,6 +180,10 @@ async function dragCard(
   await page.mouse.move(from.x + 30, from.y + 30, { steps: 4 });
   // Held over the upper part of the other card, so the dragged card lands in front of it.
   await page.mouse.move(onto.x + onto.width / 2, onto.y + 5, { steps: 12 });
+  // dnd-kit works out what the pointer is over on its own frame, after the move: letting go
+  // before the landing gap shows can drop the card on nothing, so wait for the gap first, as a
+  // person would see it before letting go.
+  await expect(page.getByTestId('atlas-board-gap')).toBeVisible();
   if (whileHeld !== undefined) await whileHeld();
   await page.mouse.up();
 }
