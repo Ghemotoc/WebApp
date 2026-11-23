@@ -70,7 +70,9 @@ export function StoryFooterAbout({ statement }: { statement: StoryStatement }) {
         ))}
       </p>
       {statement.facts.isMature && <p className="mt-4 mb-0 text-ink">{words.matureReaders}.</p>}
-      {statement.blurb.trim() !== '' && <p className="mt-4 mb-0 text-ink-muted">{statement.blurb}</p>}
+      {statement.blurb.trim() !== '' && (
+        <p className="mt-4 mb-0 text-ink-muted">{statement.blurb}</p>
+      )}
       <p className="mt-4 mb-0 type-meta text-ink-muted">
         {statementSiteLine(words, brand.productName)}
       </p>
