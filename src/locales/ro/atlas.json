@@ -385,13 +385,29 @@
       "zoomIn": "Mărește",
       "fit": "Potrivește",
       "zoomNow": "{{percent}}%",
-      "offMap": "Încă nu sunt pe hartă: {{names}}"
+      "offMap": "Încă nu sunt pe hartă: {{names}}",
+      "key": "Fiecare categorie are culoarea ei. Linii continue: familie și aliați. Punctate: dragoste și altele. Întrerupte: conflict. Puncte fine: descendență.",
+      "coloursButton": "Culorile categoriilor",
+      "coloursIntro": "Alege o culoare pentru fiecare categorie. Harta și lista o urmează.",
+      "colourFor": "Culoarea pentru {{category}}",
+      "colourFailed": "Culoarea nu a fost salvată. Verifică conexiunea și încearcă din nou.",
+      "swatches": {
+        "blue": "Albastru",
+        "pink": "Roz",
+        "yellow": "Galben",
+        "aqua": "Turcoaz",
+        "orange": "Portocaliu",
+        "violet": "Violet",
+        "green": "Verde",
+        "red": "Roșu"
+      }
     },
     "tree": {
       "heading": "Arborele familiei",
-      "hint": "Făcut din „Părinte pentru”, „Frate sau soră cu”, „Partener(ă) sau soț(ie) pentru” și „Văr sau vară cu”. Generațiile mai vechi sunt sus.",
+      "hint": "Făcut din „Părinte pentru”, „Partener(ă) sau soț(ie) pentru” și „Frate sau soră cu”. Partenerii stau unul lângă altul, copiii atârnă de linia lor, iar frații și surorile au o acoladă comună.",
       "includeMade": "Include și transformările sau creațiile",
       "region": "Arborele familiei; pe ecrane mici se derulează în lateral",
+      "swipe": "Glisează în lateral ca să vezi tot arborele.",
       "none": "Încă nu sunt legături de familie. Adaugă „Părinte pentru”, „Frate sau soră cu”, „Partener(ă) sau soț(ie) pentru” sau „Văr sau vară cu” ca să apară arborele.",
       "leftOff_one": "{{count}} personaj fără legături de familie nu apare.",
       "leftOff_few": "{{count}} personaje fără legături de familie nu apar.",
@@ -400,11 +416,6 @@
       "generation": "Generația {{number}}: {{names}}",
       "whose": "Al cui arbore",
       "everyFamily": "Toate familiile",
-      "legend": "Tipuri de linii",
-      "lineParent": "Părinte",
-      "lineSibling": "Frate sau soră",
-      "linePartner": "Partener(ă)",
-      "lineCousin": "Văr sau vară",
       "add": {
         "open": "Adaugă în arbore",
         "heading": "Adaugă în arbore: {{name}}",

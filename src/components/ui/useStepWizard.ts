@@ -3,8 +3,8 @@
  * rule for every page: "Long forms are wizards: one step open, done steps fold to a one-line
  * summary with a check, later steps wait below"; boards D02 New story and H08 Waitlist).
  *
- * Who calls it: a page with a long form (NewStoryPage today), which hands the result to
- * StepWizard. What it calls: nothing; it only keeps two numbers.
+ * Who calls it: a page with a long form (NewStoryPage and the waiting list's holding page, H08),
+ * which hands the result to StepWizard. What it calls: nothing; it only keeps two numbers.
  */
 import { useState } from 'react';
 
@@ -18,13 +18,18 @@ export interface StepWizardState {
   openStep: (index: number) => void;
   /** Opens the step after the open one ("Next" and "Skip this step"). */
   goToNextStep: () => void;
+  /** Folds every step as done, with none open (the last step's "Done" on a wizard that has no
+   * page button of its own, H08). Change still opens any step again. */
+  finish: () => void;
+  /** Whether finish() was called and no step has been opened since. */
+  isFinished: boolean;
 }
 
 /**
  * Keeps the wizard's place.
  *
  * @param stepCount - how many steps the wizard has
- * @returns the open step, the furthest step and the two ways to move
+ * @returns the open step, the furthest step and the ways to move
  */
 export function useStepWizard(stepCount: number): StepWizardState {
   const [openIndex, setOpenIndex] = useState(0);
@@ -44,5 +49,18 @@ export function useStepWizard(stepCount: number): StepWizardState {
     setFurthestIndex((current) => Math.max(current, nextIndex));
   }
 
-  return { openIndex, furthestIndex, openStep, goToNextStep };
+  function finish() {
+    // An open index past the last step leaves every step folded; all of them count as reached.
+    setOpenIndex(stepCount);
+    setFurthestIndex(stepCount - 1);
+  }
+
+  return {
+    openIndex,
+    furthestIndex,
+    openStep,
+    goToNextStep,
+    finish,
+    isFinished: openIndex >= stepCount,
+  };
 }

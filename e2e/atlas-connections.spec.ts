@@ -17,7 +17,8 @@
  *   and the page is called Relationships (CALM-9a);
  * - the family tree puts generations top to bottom with partners side by side, "Include turned
  *   or made" counts makers, "Whose tree" shows one family and a note says how many characters
- *   are left off (S1-E17-16, G10b2);
+ *   are left off (S1-E17-16, G10b2); the key says how the tree is drawn, and on a phone the tree
+ *   scrolls sideways inside its box, opened on the chosen character (CALM-9, board E26);
  * - a character's gender picks the family word (mother, son), told from the child on the child's
  *   own sheet, and "Add to this tree" adds a relative from the tree itself, once: a double click
  *   saves once, the same relationship again is refused, and a long name stays in its box
@@ -311,6 +312,58 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     await page.context().close();
   });
 
+  test('a category colour picked under Category colours is kept for the story (CALM-9, E25)', async ({
+    browser,
+  }) => {
+    const page = await openAs(browser, 'adult_writer', `${planAddress}/connections`);
+    const map = page.getByTestId('atlas-relationship-map');
+    await expect(map.locator('[data-category="conflict"]')).toHaveCount(1);
+    // Conflict starts orange, its default.
+    await expect(map.locator('[data-category="conflict"]')).toHaveAttribute(
+      'data-colour',
+      'var(--atlas-swatch-orange)',
+    );
+    // Open the fold and pick Red for Conflict.
+    await page.getByText('Category colours', { exact: true }).click();
+    const conflictColours = page.getByRole('radiogroup', { name: 'Colour for Conflict' });
+    await expect(conflictColours.getByRole('radio', { name: 'Orange' })).toHaveAttribute(
+      'aria-checked',
+      'true',
+    );
+    await conflictColours.getByRole('radio', { name: 'Red' }).click();
+    await expect(conflictColours.getByRole('radio', { name: 'Red' })).toHaveAttribute(
+      'aria-checked',
+      'true',
+    );
+    await expect(map.locator('[data-category="conflict"]')).toHaveAttribute(
+      'data-colour',
+      'var(--atlas-swatch-red)',
+    );
+    // Arrow keys move along the group and choose, as in any radio group: Red to Blue.
+    await page.keyboard.press('ArrowRight');
+    await expect(conflictColours.getByRole('radio', { name: 'Blue' })).toBeFocused();
+    await expect(conflictColours.getByRole('radio', { name: 'Blue' })).toHaveAttribute(
+      'aria-checked',
+      'true',
+    );
+    // The choice is saved on the story: after a reload it is still there.
+    await expect
+      .poll(() =>
+        runSql(
+          `select plans.relationship_colours ->> 'conflict' from public.story_plans as plans
+           join public.stories on stories.id = plans.story_id
+           where stories.slug = 'statia-meteo-seed01';`,
+        ).trim(),
+      )
+      .toBe('blue');
+    await page.reload();
+    await expect(map.locator('[data-category="conflict"]')).toHaveAttribute(
+      'data-colour',
+      'var(--atlas-swatch-blue)',
+    );
+    await page.context().close();
+  });
+
   test('on a phone the map fits, and zoomed in it scrolls inside its region', async ({
     browser,
   }) => {
@@ -404,13 +457,43 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
       'Generation 1: Mara',
       'Generation 2: Lupul',
     ]);
+    // The key says how the tree is drawn, in words (CALM-9, board E26).
     await expect(
-      treeCard.getByRole('list', { name: 'Line styles' }).getByRole('listitem'),
-    ).toHaveText(['Parent', 'Sibling', 'Partner', 'Cousin']);
-    // Each box opens the sheet.
-    await expect(
-      page.getByTestId('atlas-family-tree').getByRole('link', { name: 'Mara', exact: true }),
-    ).toHaveAttribute('href', `${planAddress}/characters/${cast.mara}`);
+      treeCard.getByText(
+        'Built from “Parent of”, “Partner or spouse of” and “Sibling of”. Partners sit side by side, children hang from their line, and brothers and sisters share a bracket.',
+      ),
+    ).toBeVisible();
+    // Each card opens the sheet; the chosen character's card is ringed.
+    const maraCard = page.getByTestId('atlas-family-tree').getByRole('link', { name: /^Mara\b/ });
+    await expect(maraCard).toHaveAttribute('href', `${planAddress}/characters/${cast.mara}`);
+    await expect(maraCard).toHaveClass(/var\(--thread\)/);
+    await page.context().close();
+  });
+
+  test('on a phone the family tree scrolls sideways and opens on the chosen character', async ({
+    browser,
+  }) => {
+    const page = await openAs(browser, 'adult_writer', `${planAddress}/connections?view=tree`);
+    await page.setViewportSize({ width: 390, height: 844 });
+    const treeCard = page.getByRole('region', { name: 'Family tree', exact: true });
+    await treeCard.getByLabel('Whose tree', { exact: true }).selectOption({ label: 'Vali' });
+    await expect(treeCard.getByText('Swipe sideways to see the whole tree.')).toBeVisible();
+    // The chosen character's card sits inside the scrolling box's visible width.
+    const drawing = page.getByTestId('atlas-family-tree');
+    const valiCard = drawing.getByRole('link', { name: /^Vali\b/ });
+    await expect
+      .poll(async () => {
+        const box = await drawing.boundingBox();
+        const card = await valiCard.boundingBox();
+        if (box === null || card === null) return false;
+        return card.x >= box.x && card.x + card.width <= box.x + box.width;
+      })
+      .toBe(true);
+    // The page itself never scrolls sideways (CLAUDE.md rule 21).
+    const pageScrolls = await page.evaluate(
+      () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
+    );
+    expect(pageScrolls).toBe(false);
     await page.context().close();
   });
 
@@ -591,7 +674,8 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     const longName = 'Pneumonoultramicroscopicsilicovolcanoconiosis'.repeat(2).slice(0, 80);
     runSql(`update public.story_characters set name = '${longName}' where id = '${cast.lupul}'`);
     await page.reload();
-    const longBox = treeCard.getByRole('link', { name: longName, exact: true });
+    // The card's name is the character's name, then their role.
+    const longBox = treeCard.getByRole('link', { name: new RegExp(`^${longName}\\b`) });
     await expect(longBox).toBeVisible();
     expect(await longBox.evaluate((box) => box.scrollWidth <= box.clientWidth + 1)).toBe(true);
     runSql(`update public.story_characters set name = 'Lupul' where id = '${cast.lupul}'`);

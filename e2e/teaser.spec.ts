@@ -101,7 +101,10 @@ test.describe('the web teaser and link previews (S1-E4-04)', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'Stația meteo' })).toBeVisible();
     await expect(page.getByText('Shared with you · chapter 1', { exact: true })).toBeVisible();
     await expect(page.getByText('Lia Scrie').first()).toBeVisible();
-    await expect(page.getByText('Bunica mea notează vremea în fiecare dimineață')).toBeVisible();
+    // In the page's main part: the footer's story statement repeats the blurb (CALM-9s).
+    await expect(
+      page.getByRole('main').getByText('Bunica mea notează vremea în fiecare dimineață'),
+    ).toBeVisible();
     // The chapter: its heading and the first 40 words of the first paragraph, never the rest
     // (TRIAL-WALL: a short preview, then sign in).
     await expect(page.getByRole('heading', { level: 2, name: 'Caietele bunicii' })).toBeVisible();
@@ -190,8 +193,11 @@ test.describe('the web teaser and link previews (S1-E4-04)', () => {
     const story = await request.get(`/s/${slug}`);
     const storyHtml = await story.text();
     expect(story.headers()['x-robots-tag']).toBeUndefined();
-    expect(storyHtml).toContain('"@type":"CreativeWork"');
-    expect(storyHtml).toContain('"author":{"@type":"Person","name":"Lia Scrie"}');
+    // A story in a story category is a Book; the writer links to their profile (CALM-9s).
+    expect(storyHtml).toContain('"@type":"Book"');
+    expect(storyHtml).toMatch(
+      /"author":\{"@type":"Person","name":"Lia Scrie","url":"[^"]+\/u\/[^"]+"\}/,
+    );
     expect(storyHtml).not.toContain('Vântul bate');
     // A 16+ story: the same details as any story, never its rating (S1-E11-36).
     rateStory('16_plus');
@@ -204,11 +210,12 @@ test.describe('the web teaser and link previews (S1-E4-04)', () => {
     );
     expect(sixteenHtml).not.toContain('16+');
     expect(sixteenHtml).not.toContain('Vântul bate');
-    // An 18+ story: the same, with "For mature readers" and still no rating.
+    // An 18+ story: the same, with "For mature readers" and still no rating. Its story page
+    // describes it with the story statement (CALM-9s): the sentence, then the mature note.
     rateStory('18_plus');
     const eighteenHtml = await (await request.get(`/s/${slug}`)).text();
     expect(eighteenHtml).toMatch(
-      /<meta property="og:description" content="de Lia Scrie · Pentru cititori maturi · [^"·]+ · Bunica mea/,
+      /<meta property="og:description" content="Stația meteo [^"]+ de Lia Scrie\. Pentru cititori maturi\. Bunica mea/,
     );
     expect(eighteenHtml).not.toContain('18+');
   });

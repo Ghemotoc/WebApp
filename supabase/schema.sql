@@ -27936,9 +27936,13 @@ begin
     'hides_text', story.rating in ('16_plus', '18_plus'),
     -- Only a public story is for search engines; an unlisted one is shared by its link only.
     'is_listed', story.visibility = 'public',
+    'is_app_only', public.story_app_only_applies(story.is_app_only),
+    'is_hidden_somewhere', cardinality(story.hidden_in_countries) > 0,
     'blurb', story.blurb,
+    -- The username links to the profile; a classic's author has none (S1-E5-06).
     'writer', (select jsonb_build_object(
-        'display_name', public.story_writer_name(story.id, profiles.handle, profiles.pen_name))
+        'display_name', public.story_writer_name(story.id, profiles.handle, profiles.pen_name),
+        'handle', case when story.classic_author_id is null then profiles.handle end)
       from public.profiles where profiles.id = story.user_id),
     'cover', jsonb_build_object(
       'kind', story.cover_kind, 'design', story.cover_design,
@@ -27946,7 +27950,11 @@ begin
         -- CALM-4: how the cover is drawn and the title's font.
         'style', story.cover_style, 'title_font', story.cover_title_font),
     'category_slug', (select categories.slug from public.categories where categories.id = story.category_id),
+    'genre', public.story_genre_name(story.id, story.language_code),
     'tags', public.story_search_tags(story.id, story.language_code),
+    'first_published_at', story.first_published_at,
+    'updated_at', greatest(story.updated_at, story.last_chapter_published_at),
+    'editions', public.story_public_editions(story),
     'chapter', chapter_part);
 end;
 $$;
@@ -27955,7 +27963,7 @@ $$;
 ALTER FUNCTION "public"."get_link_preview"("story_slug" "text", "chapter_code" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."get_link_preview"("story_slug" "text", "chapter_code" "text") IS 'S1-E4-04, S1-E11-36: a story''s public details for link previews and search tags, the same for every rating; never the user ID or chapter text.';
+COMMENT ON FUNCTION "public"."get_link_preview"("story_slug" "text", "chapter_code" "text") IS 'S1-E4-04, S1-E11-36, CALM-9s: a story''s public details for link previews, search tags and the story footer, the same for every rating; never the user ID, an age or chapter text.';
 
 
 
@@ -41536,6 +41544,27 @@ COMMENT ON FUNCTION "public"."register_sponsor_creative"("target_path" "text") I
 
 
 
+CREATE OR REPLACE FUNCTION "public"."relationship_colours_are_valid"("colours" "jsonb") RETURNS boolean
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select jsonb_typeof(colours) = 'object'
+    and not exists (
+      select 1 from jsonb_each(colours) as entries
+      where entries.key not in ('family', 'love', 'lineage', 'allies', 'conflict', 'other')
+        or jsonb_typeof(entries.value) <> 'string'
+        or (entries.value #>> '{}') not in
+          ('blue', 'pink', 'yellow', 'aqua', 'orange', 'violet', 'green', 'red'));
+$$;
+
+
+ALTER FUNCTION "public"."relationship_colours_are_valid"("colours" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."relationship_colours_are_valid"("colours" "jsonb") IS 'True when a relationship colours map holds only known categories and swatches (CALM-9, E25).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."story_character_relationships" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "story_id" "uuid" NOT NULL,
@@ -47555,6 +47584,39 @@ COMMENT ON FUNCTION "public"."set_rank_badge_tags"("story_slug" "text", "tag_nam
 
 
 
+CREATE OR REPLACE FUNCTION "public"."set_relationship_colour"("story_slug" "text", "category" "text", "colour" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target_story_id uuid;
+  saved jsonb;
+begin
+  -- Step 1: a signed-in writer and their own live story.
+  if (select auth.uid()) is null then
+    raise exception 'Sign in to change your plan.' using errcode = 'insufficient_privilege';
+  end if;
+  target_story_id := public.my_live_story_id(story_slug);
+  if target_story_id is null then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  -- Step 2: the new colour; the column's check refuses an unknown category or swatch.
+  update public.story_plans
+  set relationship_colours = relationship_colours || jsonb_build_object(category, colour)
+  where story_plans.story_id = target_story_id
+  returning relationship_colours into saved;
+  return jsonb_build_object('outcome', 'ok', 'relationship_colours', saved);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_relationship_colour"("story_slug" "text", "category" "text", "colour" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_relationship_colour"("story_slug" "text", "category" "text", "colour" "text") IS 'Saves the colour of one relationship category on one of the caller''s stories (CALM-9, E25).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."set_shows_online_status"("should_show" boolean) RETURNS "void"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -48696,6 +48758,8 @@ CREATE OR REPLACE FUNCTION "public"."sitemap_entries"() RETURNS TABLE("path" "te
       and stories.visibility = 'public' and not stories.class_only
       and not public.story_app_only_applies(stories.is_app_only)
       and not public.is_moderated_away('story', stories.id)
+      -- CALM-9s: a story hidden in any country stays out, as search engines list worldwide.
+      and cardinality(stories.hidden_in_countries) = 0
   )
   limit 50000;
 $$;
@@ -51373,8 +51437,9 @@ begin
     return jsonb_build_object('outcome', 'not_found');
   end if;
 
-  -- Step 2: the characters, the writer's own fields with their places, the chapters to pick from
-  -- and the relationships between the characters, with their notes (the writer's own).
+  -- Step 2: the characters, the writer's own fields with their places, the chapters to pick from,
+  -- the relationships between the characters, with their notes (the writer's own), and the
+  -- colours picked for the relationship categories.
   return (select jsonb_build_object(
     'outcome', 'ok',
     'story', jsonb_build_object('id', stories.id, 'slug', stories.slug, 'title', stories.title),
@@ -51393,7 +51458,10 @@ begin
       from public.chapters where chapters.story_id = stories.id and chapters.deleted_at is null), '[]'::jsonb),
     'relationships', coalesce((
       select jsonb_agg(public.relationship_json(links, true) order by links.created_at)
-      from public.story_character_relationships as links where links.story_id = stories.id), '[]'::jsonb))
+      from public.story_character_relationships as links where links.story_id = stories.id), '[]'::jsonb),
+    'relationship_colours', coalesce((
+      select story_plans.relationship_colours from public.story_plans
+      where story_plans.story_id = stories.id), '{}'::jsonb))
     from public.stories where stories.id = target_story_id);
 end;
 $$;
@@ -51402,7 +51470,7 @@ $$;
 ALTER FUNCTION "public"."story_cast"("story_slug" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."story_cast"("story_slug" "text") IS 'The cast of one of the caller''s stories: its characters, custom fields, chapters and relationships (S1-E17-08 to S1-E17-16).';
+COMMENT ON FUNCTION "public"."story_cast"("story_slug" "text") IS 'The cast of one of the caller''s stories: its characters, custom fields, chapters, relationships and relationship colours (S1-E17-08 to S1-E17-16; CALM-9, E25).';
 
 
 
@@ -51773,6 +51841,31 @@ ALTER FUNCTION "public"."story_follower_count_of"("target_story_id" "uuid") OWNE
 
 
 COMMENT ON FUNCTION "public"."story_follower_count_of"("target_story_id" "uuid") IS 'Internal: a story''s public follower count (S1-E6-05).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."story_genre_name"("target_story_id" "uuid", "story_language" "text") RETURNS "text"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(
+           (select tag_names.name from public.tag_names
+            where tag_names.tag_id = tags.id and tag_names.language_code = story_language
+            limit 1),
+           tags.name)
+  from public.story_tags
+  join public.tags on tags.id = story_tags.tag_id
+  where story_tags.story_id = target_story_id
+    and tags.status = 'approved' and tags.is_recommended
+  order by story_tags.created_at, tags.name
+  limit 1;
+$$;
+
+
+ALTER FUNCTION "public"."story_genre_name"("target_story_id" "uuid", "story_language" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_genre_name"("target_story_id" "uuid", "story_language" "text") IS 'CALM-9s: a story''s first approved recommended tag in its language, the genre in its footer sentence.';
 
 
 
@@ -52415,6 +52508,34 @@ ALTER FUNCTION "public"."story_plan_visibility"("story_slug" "text") OWNER TO "p
 
 
 COMMENT ON FUNCTION "public"."story_plan_visibility"("story_slug" "text") IS 'The writer''s own "What readers can see" switches for one story (S1-E17-32).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."story_public_editions"("edition" "public"."stories") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(
+    jsonb_agg(jsonb_build_object('slug', family.slug, 'language_code', family.language_code)
+              order by family.edition_of_story_id nulls first, family.created_at),
+    '[]'::jsonb)
+  from public.stories as family
+  where coalesce(family.edition_of_story_id, family.id)
+          = coalesce(edition.edition_of_story_id, edition.id)
+    and family.visibility = 'public' and not family.class_only
+    and public.edition_is_readable(family)
+    -- A story in one language has no alternates.
+    and exists (select 1 from public.stories as other
+                where coalesce(other.edition_of_story_id, other.id)
+                        = coalesce(edition.edition_of_story_id, edition.id)
+                  and other.id <> edition.id and other.deleted_at is null);
+$$;
+
+
+ALTER FUNCTION "public"."story_public_editions"("edition" "public"."stories") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_public_editions"("edition" "public"."stories") IS 'CALM-9s: a story family''s public readable editions (slug and language) for hreflang links.';
 
 
 
@@ -59708,11 +59829,13 @@ CREATE TABLE IF NOT EXISTS "public"."story_plans" (
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "public_areas" "text"[] DEFAULT '{}'::"text"[] NOT NULL,
+    "relationship_colours" "jsonb" DEFAULT '{}'::"jsonb" NOT NULL,
     CONSTRAINT "story_plans_linked_project_label_length" CHECK (("char_length"("linked_project_label") <= 60)),
     CONSTRAINT "story_plans_linked_project_url_web" CHECK ((("linked_project_url" = ''::"text") OR (("linked_project_url" ~* '^https?://[^\s]+$'::"text") AND ("char_length"("linked_project_url") <= 2000)))),
     CONSTRAINT "story_plans_logline_length" CHECK (("char_length"("logline") <= 400)),
     CONSTRAINT "story_plans_public_areas_known" CHECK (("public_areas" <@ ARRAY['characters'::"text", 'relationship_map'::"text", 'family_tree'::"text", 'bible'::"text", 'timeline'::"text"])),
     CONSTRAINT "story_plans_publishing_route_known" CHECK (("publishing_route" = ANY (ARRAY['undecided'::"text", 'serial_here'::"text", 'complete_here'::"text", 'here_and_elsewhere'::"text"]))),
+    CONSTRAINT "story_plans_relationship_colours_known" CHECK ("public"."relationship_colours_are_valid"("relationship_colours")),
     CONSTRAINT "story_plans_series_name_length" CHECK (("char_length"("series_name") <= 120)),
     CONSTRAINT "story_plans_word_target_range" CHECK ((("word_target" >= 1) AND ("word_target" <= 5000000))),
     CONSTRAINT "story_plans_writing_status_known" CHECK (("writing_status" = ANY (ARRAY['planning'::"text", 'drafting'::"text", 'revising'::"text", 'editing'::"text", 'finished'::"text", 'on_hold'::"text"])))
@@ -59740,6 +59863,10 @@ COMMENT ON COLUMN "public"."story_plans"."publishing_route" IS 'How the writer m
 
 
 COMMENT ON COLUMN "public"."story_plans"."public_areas" IS 'The plan''s areas readers see once the story is published (S1-E17-32); none by default.';
+
+
+
+COMMENT ON COLUMN "public"."story_plans"."relationship_colours" IS 'The swatch the writer picked for each relationship category, only those changed (CALM-9, E25).';
 
 
 
@@ -74783,6 +74910,11 @@ GRANT ALL ON FUNCTION "public"."set_rank_badge_tags"("story_slug" "text", "tag_n
 
 
 
+REVOKE ALL ON FUNCTION "public"."set_relationship_colour"("story_slug" "text", "category" "text", "colour" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_relationship_colour"("story_slug" "text", "category" "text", "colour" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."set_shows_online_status"("should_show" boolean) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_shows_online_status"("should_show" boolean) TO "authenticated";
 
@@ -75378,6 +75510,10 @@ REVOKE ALL ON FUNCTION "public"."story_follower_count_of"("target_story_id" "uui
 
 
 
+REVOKE ALL ON FUNCTION "public"."story_genre_name"("target_story_id" "uuid", "story_language" "text") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."story_has_copied_work_note"("target_story_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."story_has_copied_work_note"("target_story_id" "uuid") TO "anon";
 GRANT ALL ON FUNCTION "public"."story_has_copied_work_note"("target_story_id" "uuid") TO "authenticated";
@@ -75464,6 +75600,10 @@ REVOKE ALL ON FUNCTION "public"."story_plan_chapters"("plan_story_id" "uuid") FR
 
 REVOKE ALL ON FUNCTION "public"."story_plan_visibility"("story_slug" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."story_plan_visibility"("story_slug" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."story_public_editions"("edition" "public"."stories") FROM PUBLIC;
 
 
 

@@ -181,6 +181,9 @@ test.describe('Contests (S1-E11-15)', () => {
     // Reduce motion stops the fade-in, so axe measures the colours the page settles on: a CI run
     // caught the settings text mid-fade and read it as low contrast (as in checkScreen).
     await page.emulateMedia({ reducedMotion: 'reduce' });
+    // Back to the top: pressing Enter can leave the page scrolled so a chip sits under the sticky
+    // top bar, and axe then measures it as an obscured target (a CI run on 23 Nov 2026 caught it).
+    await page.evaluate(() => window.scrollTo(0, 0));
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])
       .analyze();

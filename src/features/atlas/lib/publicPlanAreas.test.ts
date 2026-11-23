@@ -36,6 +36,7 @@ const plan: PublicPlan = {
     fields: [],
     chapters: [],
     relationships: [],
+    relationshipColours: {},
   },
   characterGuards: {},
   sections: [

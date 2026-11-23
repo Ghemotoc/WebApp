@@ -385,13 +385,29 @@
       "zoomIn": "Zoom in",
       "fit": "Fit",
       "zoomNow": "{{percent}}%",
-      "offMap": "Not on the map yet: {{names}}"
+      "offMap": "Not on the map yet: {{names}}",
+      "key": "Each category has its own colour. Solid lines: family and allies. Dotted: love and other. Dashed: conflict. Fine dots: lineage.",
+      "coloursButton": "Category colours",
+      "coloursIntro": "Pick a colour for each category. The map and the list follow it.",
+      "colourFor": "Colour for {{category}}",
+      "colourFailed": "The colour wasn’t saved. Check the connection and try again.",
+      "swatches": {
+        "blue": "Blue",
+        "pink": "Pink",
+        "yellow": "Yellow",
+        "aqua": "Aqua",
+        "orange": "Orange",
+        "violet": "Violet",
+        "green": "Green",
+        "red": "Red"
+      }
     },
     "tree": {
       "heading": "Family tree",
-      "hint": "Built from “Parent of”, “Sibling of”, “Partner or spouse of” and “Cousin of”. Older generations at the top.",
+      "hint": "Built from “Parent of”, “Partner or spouse of” and “Sibling of”. Partners sit side by side, children hang from their line, and brothers and sisters share a bracket.",
       "includeMade": "Include turned or made",
       "region": "Family tree; scrolls sideways on small screens",
+      "swipe": "Swipe sideways to see the whole tree.",
       "none": "No family links yet. Add “Parent of”, “Sibling of”, “Partner or spouse of” or “Cousin of” to draw the tree.",
       "leftOff_one": "{{count}} character with no family links is left off.",
       "leftOff_few": "{{count}} characters with no family links are left off.",
@@ -400,11 +416,6 @@
       "generation": "Generation {{number}}: {{names}}",
       "whose": "Whose tree",
       "everyFamily": "Every family",
-      "legend": "Line styles",
-      "lineParent": "Parent",
-      "lineSibling": "Sibling",
-      "linePartner": "Partner",
-      "lineCousin": "Cousin",
       "add": {
         "open": "Add to this tree",
         "heading": "Add to {{name}}’s tree",

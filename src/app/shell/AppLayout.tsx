@@ -59,6 +59,8 @@ import { ActiveMinutesCounter } from '@/features/analytics/components/ActiveMinu
 import { AccountLinks } from '@/features/auth/components/AccountLinks';
 import { BrandTabIcon } from '@/features/branding/components/BrandTabIcon';
 import { LanguageSelect } from '@/features/language/components/LanguageSelect';
+import type { StoryStatement } from '@/features/reading/api/storyStatement';
+import { StoryFooterAbout } from '@/features/reading/components/StoryFooterAbout';
 import { useTrackRoutePattern } from '@/features/errors/hooks/useTrackRoutePattern';
 import { useAccountLanguage } from '@/features/language/hooks/useAccountLanguage';
 import { useFirstVisitLanguage } from '@/features/language/hooks/useFirstVisitLanguage';
@@ -78,6 +80,7 @@ import { PageGates } from './PageGates';
 import { FocusHeader } from './FocusHeader';
 import { PageHeaderContext } from './pageHeaderContext';
 import { Footer } from './Footer';
+import { FooterAboutContext } from './footerAboutContext';
 import { PhoneHeader } from './PhoneHeader';
 import { TabBar } from './TabBar';
 import { TopBar } from './TopBar';
@@ -160,6 +163,8 @@ export function AppLayout() {
   usePendingPictureRetry(userId);
   // Whether the page draws its own narrow-screen bar (the reader's chapter bar, CALM-5).
   const [isHeaderOwnedByPage, setIsHeaderOwnedByPage] = useState(false);
+  // The story statement a story's page puts in the footer, or null (CALM-9s).
+  const [storyStatement, setStoryStatement] = useState<StoryStatement | null>(null);
   // Header A, header B with the tab bar, or the website top bar (bundle G4 SHELL).
   const { header, hasTabBar } = useShellHeader(isHeaderOwnedByPage);
 
@@ -188,13 +193,21 @@ export function AppLayout() {
         <NoticeStrip />
         <main id="main" tabIndex={-1} className="flex-1 focus:outline-none">
           <PageHeaderContext.Provider value={setIsHeaderOwnedByPage}>
-            <PageGates />
+            <FooterAboutContext.Provider value={setStoryStatement}>
+              <PageGates />
+            </FooterAboutContext.Provider>
           </PageHeaderContext.Provider>
         </main>
         {/* "Show when I'm online": a beat a minute, only while switched on (S1-E13-01). */}
         <PresenceHeartbeat />
         <ActiveMinutesCounter />
-        <Footer endSlot={<LanguageSelect id="language-select-footer" />} />
+        {/* On a story's pages the footer starts with the story statement (CALM-9s). */}
+        <Footer
+          about={
+            storyStatement === null ? undefined : <StoryFooterAbout statement={storyStatement} />
+          }
+          endSlot={<LanguageSelect id="language-select-footer" />}
+        />
         {/* The floating tab bar, on narrow browse pages only (handoff "App header and tab bar"). */}
         {hasTabBar && <TabBar />}
         {/* "Report a bug" on the right edge, for members while the trial runs (TRIAL-FEEDBACK). */}

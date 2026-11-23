@@ -225,6 +225,9 @@ async function castFrom(
       cousinRemoved: link.cousin_removed,
       note: '',
     })),
+    // Readers' maps draw the categories' default colours; the writer's picks stay on their own
+    // map (CALM-9, board E25 shows only the writer's map).
+    relationshipColours: {},
   };
   return { cast, guards };
 }
