@@ -1467,8 +1467,9 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 }
 .tmc-chapter-text blockquote {
   margin: 18px 0 0;
-  padding-left: 18px;
-  border-left: 3px solid var(--border);
+  padding: 12px 16px;
+  border-radius: var(--radius-field);
+  background: var(--tint);
   color: var(--body);
 }
 .tmc-chapter-text ul,
@@ -1504,15 +1505,14 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
   color: var(--link);
   text-decoration: underline;
 }
-/* A shared passage opened from its link (S1-E4-11): a soft tint with a bar in the focus colour,
-   never colour alone (the notice above the text says it is highlighted). The tint keeps the
-   text's own colour readable in every theme; the passage takes focus without an outline of its
-   own, as the bar already marks it. */
+/* A shared passage opened from its link (S1-E4-11): a soft tinted box, never a side bar
+   (NO-BARS, Robert, 23 Nov 2026). Colour is not the only sign: the notice above the text says it
+   is highlighted. The tint keeps the text's own colour readable in every theme; the passage takes
+   focus without an outline of its own, as the box and the notice already mark it. */
 .tmc-chapter-text .tmc-shared-passage {
   margin-inline: -12px;
-  padding: 6px 12px 6px 9px;
-  border-left: 3px solid var(--focus-ring);
-  border-radius: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-field);
   background: var(--info-bg);
   scroll-margin: 96px;
 }

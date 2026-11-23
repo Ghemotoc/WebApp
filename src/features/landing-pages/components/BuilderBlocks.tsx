@@ -148,7 +148,7 @@ function Entries(props: BuilderBlockProps) {
 function Quote({ block, language }: BuilderBlockProps) {
   const source = wordsOf(block, language, 'source');
   return (
-    <figure className="m-0 flex flex-col gap-2 border-l-4 border-primary py-2 pl-5">
+    <figure className="m-0 flex flex-col gap-2 rounded-field bg-tint px-5 py-4">
       <blockquote className="m-0 font-heading text-[22px] leading-snug text-heading">
         <p className="m-0 [overflow-wrap:anywhere]">{wordsOf(block, language, 'quote')}</p>
       </blockquote>
