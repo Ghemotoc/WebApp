@@ -38,7 +38,7 @@ export function EmailChoicesCard() {
   return (
     <section
       aria-labelledby="notification-choices-heading"
-      className="flex flex-col gap-3 rounded-[28px] border border-border bg-surface p-6 shadow-card"
+      className="flex flex-col gap-3 rounded-card border border-border bg-surface p-6 shadow-card"
     >
       <h2
         id="notification-choices-heading"

@@ -2,7 +2,8 @@
  * ChatListItem: one row of the Chats list: the person, when, and the last message's first words
  * (story S1-E9-01; board Messages 5.5).
  *
- * The open chat has the board's gold bar on the left and aria-current="page". Unread chats are
+ * The open chat sits on a soft tint and has aria-current="page" (no side bar; NO-BARS, Robert,
+ * 23 Nov 2026). Unread chats are
  * bold with a plum dot and say "new messages" to screen readers, so colour is never the only
  * sign. A removed last message reads "[Removed by the moderation team]". The online dot follows
  * the name while the other person shows as online to the reader (S1-E13-01).
@@ -64,13 +65,13 @@ export function ChatListItem(props: {
   const preview = usePreview(chat);
   // A link being shared travels with the reader into the chat they pick (GAPS-7a).
   const shared = useSharedLink();
-  const openStyle = isOpen ? 'border-l-gold bg-tint' : 'border-l-transparent';
+  const openStyle = isOpen ? 'bg-tint' : '';
   return (
     <li className="border-b border-border last:border-b-0">
       <Link
         to={`/messages/${chat.otherHandle}${shared.query}`}
         aria-current={isOpen ? 'page' : undefined}
-        className={`flex min-h-[64px] items-center gap-3 border-l-4 px-4 py-3 text-ink no-underline hover:bg-tint ${openStyle}`}
+        className={`flex min-h-[64px] items-center gap-3 px-4 py-3 text-ink no-underline hover:bg-tint ${openStyle}`}
       >
         <ChatAvatar name={chat.otherDisplayName} handle={chat.otherHandle} />
         <span className="flex min-w-0 flex-1 flex-col gap-0.5">

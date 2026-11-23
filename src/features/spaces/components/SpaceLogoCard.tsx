@@ -42,7 +42,7 @@ function LogoPreview({ space }: { space: Space }) {
         <img
           src={view.url}
           alt={t('logo.previewAlt')}
-          className="size-24 flex-none rounded-[25px] border border-border object-cover"
+          className="size-24 flex-none rounded-card border border-border object-cover"
         />
       )}
       <Notice tone={state === 'visible' ? 'success' : 'info'}>{t(`logo.${state}`)}</Notice>

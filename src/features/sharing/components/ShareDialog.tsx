@@ -46,7 +46,7 @@ function ChatPreview({ chapter }: { chapter: SharedChapter }) {
   return (
     <div className="flex flex-col gap-2">
       <h3 className="m-0 eyebrow">{t('dialog.previewHeading')}</h3>
-      <div className="flex flex-col gap-1 rounded-[14px] border border-border bg-paper p-4">
+      <div className="flex flex-col gap-1 rounded-field border border-border bg-paper p-4">
         <p className="m-0 text-xs text-meta">{brand.siteDomain}</p>
         <p className="m-0 text-[15px] font-semibold text-heading">
           {t('dialog.previewTitle', { story: chapter.storyTitle, writer: chapter.writerName })}

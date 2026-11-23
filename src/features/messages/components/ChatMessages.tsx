@@ -76,7 +76,7 @@ function MessageItem({ message, otherName }: { message: ChatMessage; otherName: 
     <li className={`flex flex-col gap-1 ${sideStyle}`}>
       <div className="flex max-w-full items-start gap-2">
         <p
-          className={`m-0 max-w-[min(520px,85vw)] rounded-[18px] px-4 py-2.5 text-[15px] leading-relaxed break-words whitespace-pre-line ${bubbleStyle}`}
+          className={`m-0 max-w-[min(520px,85vw)] rounded-field px-4 py-2.5 text-[15px] leading-relaxed break-words whitespace-pre-line ${bubbleStyle}`}
         >
           {message.body === null ? (
             <em>{t('chat.removed')}</em>

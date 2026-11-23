@@ -39,7 +39,7 @@ const choiceClasses =
 const swatchClasses = `${choiceClasses} h-11 w-11 rounded-full`;
 
 /** A pattern tile: the board's 56 px square with 14 px corners. */
-const tileClasses = `${choiceClasses} h-14 w-14 rounded-[14px]`;
+const tileClasses = `${choiceClasses} h-14 w-14 rounded-field`;
 
 /**
  * The colour swatches.

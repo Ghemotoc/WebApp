@@ -5,10 +5,10 @@
  * Why (Robert, 20 Nov 2026, 13:10 UTC: "at the moment it shows black on website on phone"): a
  * phone browser paints its status bar and toolbars in the theme-color the page names, and in
  * black (dark mode) or white when it names none. index.html names #f3eefb for a light device and
- * #111113 for a dark one, but the member can pick night on a light phone, light on a dark one, or
+ * #0e0e10 for a dark one, but the member can pick night on a light phone, light on a dark one, or
  * a look with its own page colour (Sorbet's peach, for example). So whenever the theme, the look
  * or high contrast changes, both metas are set to --paper as tokens.css works it out on <html>:
- * a reader in night mode on a light phone then gets #111113, and Sorbet gets its own colour.
+ * a reader in night mode on a light phone then gets #0e0e10, and Sorbet gets its own colour.
  *
  * The staff area paints its own flat beige (or its own night and high contrast colours) over the
  * member's page: its frame carries data-area="staff" and sets --paper again (tokens.css). While
@@ -30,8 +30,8 @@ export const THEME_COLOUR_META_SELECTOR = 'meta[name="theme-color"]';
 export const PAGE_COLOUR_TOKEN = '--paper';
 
 /**
- * The bar colour token in src/styles/tokens.css: set only at night, where the galaxy's dark blue
- * edge, not --paper, is what the member sees next to the bars (Robert, 20 Nov 2026, 16:04 UTC).
+ * The bar colour token in src/styles/tokens.css: set only at night, to the flat night page
+ * colour (Robert, 20 Nov 2026, 16:04 UTC; flat since NIGHT-2).
  */
 export const BROWSER_BAR_TOKEN = '--browser-bar';
 
@@ -57,7 +57,7 @@ function pageColourElement(): HTMLElement {
  *   the style sheet has not loaded yet
  */
 export function readPageColour(root: HTMLElement = pageColourElement()): string {
-  // The night sky's edge colour wins where tokens.css sets one; every other look uses --paper.
+  // --browser-bar wins where tokens.css sets one (night); every other look uses --paper.
   const style = getComputedStyle(root);
   const barColour = style.getPropertyValue(BROWSER_BAR_TOKEN).trim();
   if (barColour !== '') return barColour;

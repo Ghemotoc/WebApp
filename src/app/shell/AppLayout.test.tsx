@@ -74,22 +74,44 @@ describe('the app shell', () => {
     expect(screen.getByText(`An app by ${brand.companyName}`)).toBeInTheDocument();
   });
 
-  it('switches to night mode from the footer drop-down and remembers it on this device', () => {
+  it("switches to night mode from the footer's Night mode button and remembers it on this device", () => {
     renderApp();
 
-    fireEvent.change(screen.getByRole('combobox', { name: 'Mode' }), {
-      target: { value: 'night' },
-    });
+    fireEvent.click(screen.getByRole('button', { name: 'Night mode' }));
 
     expect(document.documentElement.dataset.theme).toBe('night');
     expect(window.localStorage.getItem(THEME_STORAGE_KEY)).toBe('night');
+    expect(screen.getByRole('button', { name: 'Night mode' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
   });
 
   it('follows the device by default (light in this test, whose device is not in dark mode)', () => {
     renderApp();
 
-    expect(screen.getByRole('combobox', { name: 'Mode' })).toHaveValue('device');
+    expect(screen.getByRole('button', { name: 'Night mode' })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    );
     expect(document.documentElement.dataset.theme).toBe('light');
+  });
+
+  it('shows the three footer columns from the design files (NIGHT-2)', () => {
+    renderApp();
+
+    const footer = screen.getByRole('contentinfo');
+    for (const name of ['Read', 'Write and talk', 'Help and legal']) {
+      expect(within(footer).getByRole('navigation', { name })).toBeInTheDocument();
+    }
+    expect(within(footer).getByRole('link', { name: 'Report without an account' })).toHaveAttribute(
+      'href',
+      '/report',
+    );
+    expect(within(footer).getByRole('link', { name: 'Join a class' })).toHaveAttribute(
+      'href',
+      '/class',
+    );
   });
 });
 

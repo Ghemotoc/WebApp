@@ -5,8 +5,9 @@
  * Who shows it: the router, at /write/s/:storySlug/translate/:chapterCode. "Translate" and
  * "Continue" in a language's chapter list lead here.
  * What it shows: the bar (TranslationEditorBar), the chapter's title in this language, the
- * paragraph pairs (ParagraphPairs), what the last action led to, the tip from the handoff and a
- * link to the full editor for headings and pictures.
+ * original and the translation as two papers side by side (SideBySidePapers), what the last
+ * action led to, the tip from the handoff and a link to the full editor for headings and
+ * pictures. Phones translate nothing (CALM-9, board D09): they get PhoneTranslateNotice instead.
  * What it calls: hooks/useTranslationEditor.ts (save_chapter_draft(), publish_chapter()).
  * Only the writer translates their own story (Robert, 16 Nov 2026, 12:20 UTC).
  * No doodles: an editor screen, like the chapter editor.
@@ -25,11 +26,11 @@ import {
   type TranslationDraft,
   type TranslationOutcome,
 } from '../hooks/useTranslationEditor';
-import { translatedCount } from '../lib/paragraphs';
 import { useStoryLanguagesTranslation } from '../registerStoryLanguagesTranslations';
 
 import { LoadProblem } from './LoadProblem';
-import { ParagraphPairs } from './ParagraphPairs';
+import { PhoneTranslateNotice } from './PhoneTranslateNotice';
+import { SideBySidePapers } from './SideBySidePapers';
 import { TranslationEditorBar } from './TranslationEditorBar';
 
 /** The outcomes that are good news; the rest are shown as problems. */
@@ -49,7 +50,7 @@ function OutcomeNotice({ outcome, language }: { outcome: TranslationOutcome; lan
 function EditorFootnotes({ draft }: { draft: TranslationDraft }) {
   const { t } = useStoryLanguagesTranslation();
   return (
-    <div className="flex flex-col gap-1 text-[13px] text-meta">
+    <div className="flex flex-col gap-1 text-[13px] text-meta max-md:hidden">
       <p className="m-0">{t('editor.tip')}</p>
       <p className="m-0">
         <Link
@@ -64,7 +65,7 @@ function EditorFootnotes({ draft }: { draft: TranslationDraft }) {
   );
 }
 
-/** The card: the chapter's title in this language and the paragraph pairs. */
+/** The card: the chapter's title in this language and the two papers. Hidden on phones. */
 function EditorCard(props: {
   draft: TranslationDraft;
   editor: ReturnType<typeof useTranslationActions>;
@@ -74,7 +75,7 @@ function EditorCard(props: {
   const { source } = props.draft;
   const language = languageOwnName(source.languageCode);
   return (
-    <section className="flex flex-col gap-6 rounded-card border border-border bg-surface p-5 shadow-card md:p-7">
+    <section className="flex flex-col gap-6 rounded-card border border-border bg-surface p-7 shadow-card max-md:hidden">
       <TextInput
         id="translation-chapter-title"
         label={t('editor.chapterTitle', { language })}
@@ -87,7 +88,7 @@ function EditorCard(props: {
       {editor.originalParagraphs.length === 0 ? (
         <p className="m-0 text-body">{t('editor.noParagraphs')}</p>
       ) : (
-        <ParagraphPairs
+        <SideBySidePapers
           original={{
             languageCode: source.original.languageCode,
             languageName: languageOwnName(source.original.languageCode),
@@ -98,7 +99,6 @@ function EditorCard(props: {
             languageName: language,
             fields: editor.state.fields,
           }}
-          translatedCount={translatedCount(editor.state.fields)}
           onChange={editor.setField}
         />
       )}
@@ -133,6 +133,11 @@ function LoadedEditor({ draft }: { draft: TranslationDraft }) {
         isBusy={editor.isBusy}
         onSave={editor.save}
         onPublish={editor.publish}
+      />
+      <PhoneTranslateNotice
+        originalSlug={source.original.storySlug}
+        chapterNumber={chapter.position}
+        languageName={language}
       />
       <EditorCard draft={draft} editor={editor} />
       {editor.outcome !== null && <OutcomeNotice outcome={editor.outcome} language={language} />}

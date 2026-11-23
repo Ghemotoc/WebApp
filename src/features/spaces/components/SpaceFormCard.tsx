@@ -28,7 +28,7 @@ interface SpaceFormCardProps {
 
 /** The glass card's own classes. */
 const cardClasses =
-  'flex max-w-[760px] flex-col gap-6 rounded-[28px] border border-border bg-surface p-5 shadow-card md:p-8';
+  'flex max-w-[760px] flex-col gap-6 rounded-card border border-border bg-surface p-5 shadow-card md:p-8';
 
 /**
  * Renders the card.

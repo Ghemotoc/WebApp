@@ -112,7 +112,7 @@ function ThreadHead({ place, openingWords, total, onClose }: ThreadHeadProps) {
             : t('paragraph.earlierTitle', { count: total })}
         </p>
       ) : (
-        <blockquote className="tmc-thread-quote m-0 min-w-0 flex-1 border-l-2 border-thread pl-3 font-story text-[15px] leading-[22px] text-body italic">
+        <blockquote className="tmc-thread-quote m-0 min-w-0 flex-1 rounded-field bg-tint px-3 py-2 font-story text-[15px] leading-[22px] text-body italic">
           {openingWords}
         </blockquote>
       )}

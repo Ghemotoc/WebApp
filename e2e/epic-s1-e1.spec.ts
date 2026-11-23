@@ -42,9 +42,8 @@ const personaIds: Record<PersonaName, string> = {
 };
 
 /** The page background in each theme, from src/styles/tokens.css: Lilac mist by day (--paper);
- * at night the night sky's edge on a wide window (--browser-bar, #0e1538), so a phone's bars
- * and over-scroll match the galaxy instead of showing black (CALM-1; Robert, 20 Nov 2026). */
-const paperColour = { light: 'rgb(243, 238, 251)', night: 'rgb(14, 21, 56)' };
+ * at night the flat night page (--browser-bar, #0e0e10; NIGHT-2, Robert, 22 Nov 2026). */
+const paperColour = { light: 'rgb(243, 238, 251)', night: 'rgb(14, 14, 16)' };
 
 /** The home heading in each language. */
 const homeHeading = {
@@ -97,10 +96,7 @@ test.describe('journey 1: a visitor switches language and theme (S1-E1-01, 03, 0
 
     // English and Night, both from the footer (the top bar has neither; bundle FIX-3).
     await page.getByRole('contentinfo').getByRole('combobox', { name: 'Limbă' }).selectOption('en');
-    await page
-      .getByRole('contentinfo')
-      .getByRole('combobox', { name: 'Mode' })
-      .selectOption('night');
+    await page.getByRole('contentinfo').getByRole('button', { name: 'Night mode' }).click();
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(homeHeading.en);
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'night');
     expect(await pageBackground(page)).toBe(paperColour.night);

@@ -498,7 +498,7 @@
    * Body text is Inter at 15 px with a 1.5 line height (handoff: --font-ui).
    */
   html {
-    /* --browser-bar is set only at night, where it is the night sky's edge colour (tokens.css). */
+    /* --browser-bar is set only at night, where it is the flat night page colour (tokens.css). */
     background-color: var(--browser-bar, var(--paper));
     color: var(--ink);
     font-family: var(--font-body);
@@ -677,9 +677,8 @@ body::before {
 }
 
 /*
- * At night the blobs give way to the "galaxy F" sky (bundle NIGHT-1; Robert, 8 Nov 2026, 12:30
- * UTC): a static vector picture of soft lights, kept in one variable (--night-sky in tokens.css)
- * so it can be swapped in one line. It is an SVG, so it stays sharp at any size.
+ * At night the blobs give way to one flat page colour (NIGHT-2; Robert, 22 Nov 2026: no galaxy,
+ * no glows, no gradients), kept in one variable (--night-sky in tokens.css).
  */
 [data-theme='night'] body::before {
   background: var(--night-sky);
@@ -708,7 +707,9 @@ dialog.bg-surface,
 }
 
 [data-area='staff'] dialog.bg-surface,
-[data-area='staff'] .bg-surface.shadow-popover {
+[data-area='staff'] .bg-surface.shadow-popover,
+[data-theme='night'] dialog.bg-surface,
+[data-theme='night'] .bg-surface.shadow-popover {
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
 }
@@ -1128,14 +1129,28 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 }
 
 /*
- * At night the deep band is white (the monochrome night makes --primary white), so it takes the
- * light glass recipe instead of the dark sheen, and its gold first button, white at night too,
+ * At night a deep band is one quiet box (NIGHT-2; night design file: "Hero and bands: one quiet
+ * box each, no purple and no glow"): the box colour with its grey edge, no sheen and no shadow.
+ * The band's own --primary and --on-primary are set to the box and the soft white text, so the
+ * band and everything in it that reads them follow. Its gold first button, white at night,
  * becomes the main button (GLASS-2 break test: it vanished white on white).
  */
 [data-theme='night'] :is(.glass-band-deep, .rounded-3xl.bg-primary) {
-  background-image: linear-gradient(180deg, rgb(255 255 255 / 0.4), rgb(255 255 255 / 0) 65%);
-  border-color: rgb(255 255 255 / 0.75);
-  box-shadow: var(--lg-card-shadow);
+  --primary: var(--surface-box);
+  --on-primary: var(--ink);
+  background-image: none;
+  border-color: var(--line-box);
+  box-shadow: none;
+}
+
+/* A tinted band at night: the box with its line, no white rim (NIGHT-2). */
+[data-theme='night']
+  :is(
+    .glass-band-tint,
+    :is(.rounded-card, .rounded-2xl, [class*='rounded-[2']).bg-tint:not([data-area='staff'] *)
+  ) {
+  border-color: var(--line-box);
+  box-shadow: none;
 }
 
 [data-theme='night'] .glass-band-inner {
@@ -1435,8 +1450,9 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 }
 .tmc-chapter-text blockquote {
   margin: 18px 0 0;
-  padding-left: 18px;
-  border-left: 3px solid var(--border);
+  padding: 12px 16px;
+  border-radius: var(--radius-field);
+  background: var(--tint);
   color: var(--body);
 }
 .tmc-chapter-text ul,
@@ -1472,15 +1488,14 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
   color: var(--link);
   text-decoration: underline;
 }
-/* A shared passage opened from its link (S1-E4-11): a soft tint with a bar in the focus colour,
-   never colour alone (the notice above the text says it is highlighted). The tint keeps the
-   text's own colour readable in every theme; the passage takes focus without an outline of its
-   own, as the bar already marks it. */
+/* A shared passage opened from its link (S1-E4-11): a soft tinted box, never a side bar
+   (NO-BARS, Robert, 23 Nov 2026). Colour is not the only sign: the notice above the text says it
+   is highlighted. The tint keeps the text's own colour readable in every theme; the passage takes
+   focus without an outline of its own, as the box and the notice already mark it. */
 .tmc-chapter-text .tmc-shared-passage {
   margin-inline: -12px;
-  padding: 6px 12px 6px 9px;
-  border-left: 3px solid var(--focus-ring);
-  border-radius: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-field);
   background: var(--info-bg);
   scroll-margin: 96px;
 }

@@ -64,14 +64,15 @@ export interface BrandEnvironment {
 
 /**
  * Today's values, used whenever a variable is not set.
- * Sources: working name "Ghemotoc" (decided 16 Oct 2026); working site and contact and support
- * address (decided 17 Oct 2026, 12:50); the privacy address is the same until the company exists
+ * Sources: working name "Ghemotoc" (decided 16 Oct 2026); the site ghemotoc.tech, with ghemotoc.com
+ * forwarding to it (Robert bought both, 23 Nov 2026; it replaces the working site of 17 Oct 2026,
+ * 12:50); the contact and support address (decided 17 Oct 2026, 12:50); the privacy address is the same until the company exists
  * (decided 17 Oct 2026, 19:43, Q16), and so is the authorities' address; handle @ghemotoc everywhere (architecture.md, section 1.2);
  * the footer line "An app by The Magic Coffin" (canvas comment, 16 Oct 2026).
  */
 export const brandDefaults: Readonly<Omit<Brand, 'siteUrl'>> = {
   productName: 'Ghemotoc',
-  siteDomain: 'ghemotoc.themagiccoffin.com',
+  siteDomain: 'ghemotoc.tech',
   contactEmail: 'hello@themagiccoffin.com',
   supportEmail: 'hello@themagiccoffin.com',
   privacyEmail: 'hello@themagiccoffin.com',

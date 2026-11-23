@@ -4,7 +4,8 @@
  *
  * What it shows: a back link with the story's title in this language (to the language's chapter
  * list), "Chapter 1 · Fifteen" (the original chapter's title), "Save draft" and "Publish in
- * <language>" ("Publish changes" once the chapter is live).
+ * <language>" ("Publish changes" once the chapter is live). On phones the two buttons are hidden:
+ * a phone doesn't translate (CALM-9, board D09).
  * Who shows it: TranslationEditorPage. It only draws; the page's hook does the saving.
  */
 import { Link } from 'react-router';
@@ -35,7 +36,7 @@ export function TranslationEditorBar(props: TranslationEditorBarProps) {
   const { edition, place, isPublished, isBusy, onSave, onPublish } = props;
   const { t } = useStoryLanguagesTranslation();
   return (
-    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-[28px] border border-border bg-surface px-5 py-2.5 shadow-card">
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-card border border-border bg-surface px-5 py-2.5 shadow-card">
       <Link
         to={`/write/s/${edition.slug}/translate`}
         lang={edition.languageCode}
@@ -48,7 +49,7 @@ export function TranslationEditorBar(props: TranslationEditorBarProps) {
       <h1 className="m-0 flex-[1_1_160px] font-body text-sm font-normal tracking-normal text-meta md:text-center">
         {place}
       </h1>
-      <div className="flex flex-[1_1_auto] flex-wrap justify-end gap-2">
+      <div className="flex flex-[1_1_auto] flex-wrap justify-end gap-2 max-md:hidden">
         <Button type="button" variant="secondary" disabled={isBusy} onClick={onSave}>
           {t('editor.saveDraft')}
         </Button>

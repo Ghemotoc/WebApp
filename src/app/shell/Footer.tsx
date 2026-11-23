@@ -1,60 +1,108 @@
 /**
- * Footer: the bottom of every public screen (story S1-E1-03).
+ * Footer: the bottom of every member and public screen (story S1-E1-03; redrawn in NIGHT-2 from
+ * the footer on every page of the design files, Robert, 23 Nov 2026).
  *
- * Board values (Discover and others): a 1 px top line, 14 px meta text, the footer links in a
- * wrapping row, then the "An app by …" line and the drop-downs in a second row.
+ * Design values: a 1 px hairline on top; a few words about the site (or, on a story's pages, the
+ * story's sentence and blurb), then three columns of links (Read, Write and talk, Help and legal),
+ * four across from 1024 px, two from 640 px and the words above two columns on phones; then
+ * "An app by …", the Night mode button and the language drop-down, placed as each size draws them.
+ * Headings are 15 px semibold, links 15 px at least 32 px tall with a 44 px row.
  * Decisions: the company name comes from the brand config ("An app by {{companyName}}", canvas
- * comment, 16 Oct 2026); the Device / Light / Night drop-down lives here (Robert, 17 Oct 2026);
- * the end slot holds the language drop-down from S1-E1-04. Links appear only when their page
- * exists (src/app/navigation.ts).
- * Who uses it: AppLayout.
+ * comment, 16 Oct 2026); the full Device / Light / Night choice stays in Settings › Appearance and
+ * the staff footer; the end slot holds the language drop-down from S1-E1-04. Links are listed in
+ * src/app/navigation.ts and appear only when their page exists.
+ * Who uses it: AppLayout. What it calls: FooterLinkColumn and NightModeButton.
  */
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
-import { footerNavigation } from '@/app/navigation';
+import { type FooterColumn, footerColumns } from '@/app/navigation';
 import { PageContainer } from '@/components/ui/PageContainer';
-import { ThemeSelect } from '@/features/theme/components/ThemeSelect';
+import { NightModeButton } from '@/features/theme/components/NightModeButton';
 
 /** What the footer needs. */
 export interface FooterProps {
-  /** Extra controls beside the theme drop-down, such as the language drop-down. */
+  /** The words in the first place; the site's own words when left out. */
+  about?: ReactNode;
+  /** Extra controls after the Night mode button, such as the language drop-down. */
   endSlot?: ReactNode;
 }
 
 /**
- * Renders the footer.
+ * One column: its heading and its links, each a named navigation landmark.
  *
+ * @param props.column - the column's heading key and links
+ * @returns the column
+ */
+function FooterLinkColumn({ column }: { column: FooterColumn }) {
+  const { t } = useTranslation();
+  return (
+    <nav aria-label={t(column.titleKey)}>
+      <h2 className="m-0 font-body text-[15px] leading-5 font-semibold text-heading">
+        {t(column.titleKey)}
+      </h2>
+      <ul className="mt-2.5 mb-0 flex list-none flex-col gap-0.5 p-0">
+        {column.links.map((link) => (
+          <li key={link.href}>
+            {/* 32 px tall in a 44 px reach: the column's 2 px gaps add up to the touch target. */}
+            <Link
+              to={link.href}
+              className="inline-flex min-h-8 items-center text-[15px] text-ink no-underline hover:underline"
+            >
+              {t(link.labelKey)}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
+/**
+ * Renders the footer. One grid holds every part, so each screen size only moves the parts around
+ * (the design files' footer at 1440, 768 and 390 px):
+ * - phones: the words across the top, then two columns (Read and Write and talk, then Help and
+ *   legal beside Night mode and the language), then "An app by …" at the bottom;
+ * - from 640 px: two columns (the words beside Read, then Write and talk beside Help and legal),
+ *   then a bottom row with "An app by …" on the left and the controls on the right;
+ * - from 1024 px: the words and the three columns in one line of four, then the same bottom row.
+ *
+ * @param props.about - the words in the first place; the site's own words when left out
+ * @param props.endSlot - extra controls after the Night mode button, such as the language drop-down
  * @returns the footer
  */
-export function Footer({ endSlot }: FooterProps) {
+export function Footer({ about, endSlot }: FooterProps) {
   const { t } = useTranslation();
 
   return (
     <footer className="mt-18">
       <PageContainer>
-        {/* The top line spans the content column only, as on the boards, not the side padding. */}
-        <div className="flex flex-col gap-2 border-t border-border pt-6 pb-10 text-sm text-meta">
-          {footerNavigation.length > 0 && (
-            <nav aria-label={t('shell.footerNavigation')}>
-              <ul className="m-0 flex list-none flex-wrap gap-x-6 p-0">
-                {footerNavigation.map((item) => (
-                  <li key={item.href}>
-                    <Link to={item.href} className="inline-flex min-h-11 items-center text-body">
-                      {t(item.labelKey)}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          )}
-          <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
-            <p className="m-0">{t('shell.madeBy')}</p>
-            <div className="flex flex-wrap items-center gap-4">
-              {endSlot}
-              <ThemeSelect />
+        {/* The top line spans the content column only, as in the design, not the side padding. */}
+        <div className="border-t border-hairline pt-7 pb-10 sm:pt-8 lg:pt-10 lg:pb-12">
+          <div className="grid grid-cols-2 gap-x-5 gap-y-7 sm:gap-8 lg:grid-cols-[minmax(0,1.6fr)_repeat(3,minmax(0,1fr))]">
+            {/* Step 1: the words: the whole width on phones, the first column from 640 px. */}
+            <div className="col-span-2 sm:col-span-1">
+              {about ?? (
+                <p className="m-0 max-w-[46ch] text-[15px] leading-6 text-body">
+                  {t('shell.footer.about')}
+                </p>
+              )}
             </div>
+            {/* Step 2: the three columns of links. */}
+            {footerColumns.map((column) => (
+              <FooterLinkColumn key={column.titleKey} column={column} />
+            ))}
+            {/* Step 3: Night mode and the language: beside Help and legal on phones, at the right
+                of the bottom row from 640 px (order-last puts it after "An app by …"). */}
+            <div className="flex flex-col items-start gap-3 self-start sm:order-last sm:flex-row sm:flex-wrap sm:items-center sm:self-center sm:justify-self-end lg:col-span-2">
+              <NightModeButton />
+              {endSlot}
+            </div>
+            {/* Step 4: the maker's line: the last line on phones, the left of the bottom row after. */}
+            <p className="col-span-2 m-0 self-center text-[13px] leading-[18px] text-meta sm:col-span-1 lg:col-span-2">
+              {t('shell.madeBy')}
+            </p>
           </div>
         </div>
       </PageContainer>

@@ -169,7 +169,7 @@ export function TagInput({ tags, onChange, errorMessage }: TagInputProps) {
       <label htmlFor={id} className="text-sm font-semibold text-ink">
         {t('newStory.tags')}
       </label>
-      <div className="flex flex-wrap items-center gap-2 rounded-[28px] border border-control-border bg-surface p-2">
+      <div className="flex flex-wrap items-center gap-2 rounded-card border border-control-border bg-surface p-2">
         {tags.map((tag) => (
           <TagChip
             key={tag}

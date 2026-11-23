@@ -103,12 +103,14 @@ test.describe('home page bands, forums and footer (LOOK-3)', () => {
     await page.context().close();
   });
 
-  test('the big footer’s columns link to the rows on the page', async ({ browser }) => {
+  test('the footer’s columns link to the Read page and the help and legal pages (NIGHT-2)', async ({
+    browser,
+  }) => {
     const page = await openHome(browser);
-    const read = page.getByRole('navigation', { name: 'Read' });
-    await expect(read.getByRole('link', { name: 'Completed stories' })).toHaveAttribute(
+    const read = page.getByRole('contentinfo').getByRole('navigation', { name: 'Read' });
+    await expect(read.getByRole('link', { name: 'Trending this week' })).toHaveAttribute(
       'href',
-      '#completed',
+      '/discover/all/popular',
     );
     await expect(page.getByRole('navigation', { name: 'Help and legal' })).toBeVisible();
     await page.context().close();

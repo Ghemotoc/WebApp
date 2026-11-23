@@ -80,7 +80,7 @@ function AppealForm({
     <form
       noValidate
       onSubmit={handleSubmit}
-      className="flex flex-col gap-3 rounded-[14px] bg-panel p-4"
+      className="flex flex-col gap-3 rounded-field bg-panel p-4"
     >
       <Textarea
         id={fieldId}

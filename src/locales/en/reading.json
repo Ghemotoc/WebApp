@@ -81,7 +81,11 @@
     "parodyLabel": "Parody",
     "whereToReadLabel": "Where to read",
     "followersPublicNote": "The number of followers is public. Only {{name}} can see who they are.",
-    "sideColumnLabel": "About this story"
+    "sideColumnLabel": "About this story",
+    "showAllChapters_one": "Show {{count}} chapter",
+    "showAllChapters_few": "Show all {{count}} chapters",
+    "showAllChapters_other": "Show all {{count}} chapters",
+    "showFewerChapters": "Show fewer chapters"
   },
   "reader": {
     "documentTitle": "{{chapter}} · {{story}}",

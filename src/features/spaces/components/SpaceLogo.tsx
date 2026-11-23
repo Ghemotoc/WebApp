@@ -17,8 +17,8 @@ import { useSpaceLogoView } from '../hooks/useSpaceLogo';
 /** The classes for each size. */
 const sizeClasses = {
   large:
-    'size-16 rounded-[18px] shadow-[0_0_0_4px_rgba(255,255,255,0.25)] md:size-24 md:rounded-[25px]',
-  small: 'size-12 rounded-[14px] border border-border',
+    'size-16 rounded-field shadow-[0_0_0_4px_rgba(255,255,255,0.25)] md:size-24 md:rounded-card',
+  small: 'size-12 rounded-field border border-border',
 };
 
 /**

@@ -51,7 +51,7 @@ export function PhoneHeader() {
       <div
         role="group"
         aria-label={t('shell.accountTools')}
-        className="glass-float pointer-events-auto flex min-h-13 flex-wrap items-center justify-end gap-1 rounded-[26px] p-1"
+        className="glass-float pointer-events-auto flex min-h-13 flex-wrap items-center justify-end gap-1 rounded-card p-1"
       >
         {/* Messages, Notifications, then the account, in the top bar's order (CALM-2). */}
         <MessagesHeaderLink />

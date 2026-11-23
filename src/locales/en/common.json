@@ -10,8 +10,20 @@
     "skipToContent": "Skip to content",
     "pageTitle": "{{title}} · {{productName}}",
     "mainNavigation": "Main",
-    "footerNavigation": "Footer",
     "madeBy": "An app by {{companyName}}",
+    "footer": {
+      "about": "A free website for writing and reading stories, poems and essays. Writers keep the rights to their work, and there are no tracking ads. In Romanian and English, starting in Romania.",
+      "read": "Read",
+      "trending": "Trending this week",
+      "writeAndTalk": "Write and talk",
+      "startWriting": "Start writing",
+      "firstStory": "Start a first story",
+      "helpAndLegal": "Help and legal",
+      "newWriters": "New writers",
+      "joinClass": "Join a class",
+      "legal": "Legal",
+      "reportWithoutAccount": "Report without an account"
+    },
     "search": "Search",
     "searchLabel": "Search stories, writers and Together",
     "back": "Back",
@@ -68,7 +80,8 @@
     "label": "Mode",
     "device": "Device",
     "light": "Light",
-    "night": "Night"
+    "night": "Night",
+    "nightMode": "Night mode"
   },
   "language": {
     "label": "Language",
@@ -249,15 +262,6 @@
     "threadLine_one": "Started by {{name}} · {{count}} reply",
     "threadLine_few": "Started by {{name}} · {{count}} replies",
     "threadLine_other": "Started by {{name}} · {{count}} replies",
-    "footer": {
-      "label": "About {{productName}}",
-      "read": "Read",
-      "writeAndTalk": "Write and talk",
-      "helpAndLegal": "Help and legal",
-      "newWriters": "New writers",
-      "startWriting": "Start writing",
-      "firstStory": "Start a first story"
-    },
     "questionsEyebrow": "Questions",
     "moreHelp": {
       "lead": "Something else?",

@@ -114,7 +114,7 @@ export function ClassGradeCard({ slug }: { slug: string }) {
   return (
     <section
       aria-labelledby="class-grade-heading"
-      className="flex w-full max-w-[760px] flex-col gap-3 rounded-[28px] border border-border bg-surface p-6"
+      className="flex w-full max-w-[760px] flex-col gap-3 rounded-card border border-border bg-surface p-6"
     >
       <h2 id="class-grade-heading" className="m-0 font-heading text-2xl font-bold text-heading">
         {t('grade.title')}

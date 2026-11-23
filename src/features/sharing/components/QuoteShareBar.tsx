@@ -89,7 +89,7 @@ export function QuoteShareBar({ chapter }: { chapter: SharedChapter }) {
     <>
       {selection !== null && !isOpen && (
         <div className="fixed inset-x-0 bottom-4 z-30 flex justify-center px-4">
-          <div className="flex max-w-full flex-wrap items-center gap-3 rounded-[28px] border border-border bg-surface px-4 py-2 shadow-popover">
+          <div className="flex max-w-full flex-wrap items-center gap-3 rounded-card border border-border bg-surface px-4 py-2 shadow-popover">
             <QuotePart
               selection={selection}
               onQuote={() => {
