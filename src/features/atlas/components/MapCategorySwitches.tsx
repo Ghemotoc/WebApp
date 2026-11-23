@@ -1,47 +1,26 @@
 /**
  * MapCategorySwitches: the relationship map's category switches, which double as its legend
- * (story S1-E17-15: each category has its own colour and line style, so meaning never rests on
- * colour alone; each switch shows a sample of its line, and turning one off hides its lines).
- * Who uses it: RelationshipMap. What it calls: the shared Chip and the category helpers.
+ * (story S1-E17-15: turning one off hides its lines). Each switch shows its category's colour as
+ * a dot beside the name (CALM-9, board E25), in the colour the writer picked.
+ * Who uses it: RelationshipMap. What it calls: the shared Chip and CategoryDot.
  */
 import { Chip } from '@/components/ui/Chip';
 
 import {
-  lineStyles,
   relationshipCategories,
   type RelationshipCategory,
+  type RelationshipColours,
 } from '../lib/relationshipCategories';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
-/** A short sample of one category's line, for its switch. */
-function LineSample({ category }: { category: RelationshipCategory }) {
-  const style = lineStyles[category];
-  return (
-    // The sample sits on the card's colour, so it shows on a switched-on (dark) chip too.
-    <svg
-      aria-hidden="true"
-      width="32"
-      height="14"
-      viewBox="0 0 32 14"
-      className="shrink-0 rounded-full bg-surface"
-    >
-      <line
-        x1="4"
-        y1="7"
-        x2="28"
-        y2="7"
-        stroke={style.colour}
-        strokeWidth={style.width}
-        strokeDasharray={style.dashes}
-      />
-    </svg>
-  );
-}
+import { CategoryDot } from './CategoryDot';
 
 /** What the switches need. */
 export interface MapCategorySwitchesProps {
   hiddenCategories: RelationshipCategory[];
   onChange: (hiddenCategories: RelationshipCategory[]) => void;
+  /** The colours the writer picked, for the dots. */
+  colours: RelationshipColours;
 }
 
 /**
@@ -49,7 +28,11 @@ export interface MapCategorySwitchesProps {
  *
  * @returns the labelled group of switches
  */
-export function MapCategorySwitches({ hiddenCategories, onChange }: MapCategorySwitchesProps) {
+export function MapCategorySwitches({
+  hiddenCategories,
+  onChange,
+  colours,
+}: MapCategorySwitchesProps) {
   const { t } = useAtlasTranslation();
 
   /** Turns one category's lines on or off. */
@@ -73,7 +56,7 @@ export function MapCategorySwitches({ hiddenCategories, onChange }: MapCategoryS
           isPressed={!hiddenCategories.includes(category)}
           onPressedChange={(isShown) => toggle(category, isShown)}
         >
-          <LineSample category={category} />
+          <CategoryDot category={category} colours={colours} />
           {t(`connections.categories.${category}`)}
         </Chip>
       ))}

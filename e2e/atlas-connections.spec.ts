@@ -312,6 +312,58 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     await page.context().close();
   });
 
+  test('a category colour picked under Category colours is kept for the story (CALM-9, E25)', async ({
+    browser,
+  }) => {
+    const page = await openAs(browser, 'adult_writer', `${planAddress}/connections`);
+    const map = page.getByTestId('atlas-relationship-map');
+    await expect(map.locator('[data-category="conflict"]')).toHaveCount(1);
+    // Conflict starts orange, its default.
+    await expect(map.locator('[data-category="conflict"]')).toHaveAttribute(
+      'data-colour',
+      'var(--atlas-swatch-orange)',
+    );
+    // Open the fold and pick Red for Conflict.
+    await page.getByText('Category colours', { exact: true }).click();
+    const conflictColours = page.getByRole('radiogroup', { name: 'Colour for Conflict' });
+    await expect(conflictColours.getByRole('radio', { name: 'Orange' })).toHaveAttribute(
+      'aria-checked',
+      'true',
+    );
+    await conflictColours.getByRole('radio', { name: 'Red' }).click();
+    await expect(conflictColours.getByRole('radio', { name: 'Red' })).toHaveAttribute(
+      'aria-checked',
+      'true',
+    );
+    await expect(map.locator('[data-category="conflict"]')).toHaveAttribute(
+      'data-colour',
+      'var(--atlas-swatch-red)',
+    );
+    // Arrow keys move along the group and choose, as in any radio group: Red to Blue.
+    await page.keyboard.press('ArrowRight');
+    await expect(conflictColours.getByRole('radio', { name: 'Blue' })).toBeFocused();
+    await expect(conflictColours.getByRole('radio', { name: 'Blue' })).toHaveAttribute(
+      'aria-checked',
+      'true',
+    );
+    // The choice is saved on the story: after a reload it is still there.
+    await expect
+      .poll(() =>
+        runSql(
+          `select plans.relationship_colours ->> 'conflict' from public.story_plans as plans
+           join public.stories on stories.id = plans.story_id
+           where stories.slug = 'statia-meteo-seed01';`,
+        ).trim(),
+      )
+      .toBe('blue');
+    await page.reload();
+    await expect(map.locator('[data-category="conflict"]')).toHaveAttribute(
+      'data-colour',
+      'var(--atlas-swatch-blue)',
+    );
+    await page.context().close();
+  });
+
   test('on a phone the map fits, and zoomed in it scrolls inside its region', async ({
     browser,
   }) => {

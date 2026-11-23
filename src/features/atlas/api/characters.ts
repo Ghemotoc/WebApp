@@ -10,7 +10,8 @@
  * - the places of the writer's own details are in api/characterDetails.ts (GAPS-1);
  * - set_character_picture() and remove_character_picture(), with the upload and file delete in
  *   src/features/pictures/api/pictures.ts (S1-E17-11);
- * - add_character_relationship() and delete_character_relationship() (S1-E17-14).
+ * - add_character_relationship() and delete_character_relationship() (S1-E17-14);
+ * - set_relationship_colour(): a category's colour on the map (CALM-9, board E25).
  * Characters are private: only their writer can read them (story_characters_select_own).
  */
 import { toCharacterField, type CharacterField, type CharacterFieldRow } from './characterDetails';
@@ -22,6 +23,13 @@ import type { AppSupabaseClient } from '@/lib/supabase';
 import { checkedAnswer } from './checkedAnswer';
 import { pictureViewsFromJson, type PictureView } from '@/features/pictures/api/pictures';
 import { deleteStoredPicture } from '@/features/pictures/api/pictureUploads';
+
+import {
+  toRelationshipColours,
+  type RelationshipCategory,
+  type RelationshipColours,
+  type RelationshipSwatch,
+} from '../lib/relationshipCategories';
 
 /** The groups of the cast list, in the order they show (S1-E17-08). */
 export const characterRoles = [
@@ -133,6 +141,8 @@ export interface StoryCast {
   fields: CharacterField[];
   chapters: { code: string; position: number; title: string }[];
   relationships: CharacterRelationship[];
+  /** The colours the writer picked for the relationship categories (CALM-9, board E25). */
+  relationshipColours: RelationshipColours;
 }
 
 /** The cache key of one story's cast. */
@@ -175,6 +185,7 @@ interface StoryCastRow {
     cousin_removed: number | null;
     note: string;
   }[];
+  relationship_colours: unknown;
 }
 
 /**
@@ -242,6 +253,7 @@ export async function fetchStoryCast(
       cousinRemoved: link.cousin_removed,
       note: link.note,
     })),
+    relationshipColours: toRelationshipColours(row.relationship_colours),
   };
 }
 
@@ -471,6 +483,32 @@ export async function moveOnMap(client: AppSupabaseClient, characterId: string, 
     y: Math.round(place.y),
   });
   okAnswer(answer, 'move the card');
+}
+
+/**
+ * Saves the colour of one relationship category on this story (CALM-9, board E25: "Save the
+ * choice per story").
+ *
+ * @param client - the shared Supabase client
+ * @param slug - the story's address
+ * @param category - the category
+ * @param swatch - the swatch the writer picked
+ * @returns the story's colours as saved
+ * @throws when the database refuses it or the story isn't the writer's
+ */
+export async function setRelationshipColour(
+  client: AppSupabaseClient,
+  slug: string,
+  category: RelationshipCategory,
+  swatch: RelationshipSwatch,
+): Promise<RelationshipColours> {
+  const answer = await client.rpc('set_relationship_colour', {
+    story_slug: slug,
+    category,
+    colour: swatch,
+  });
+  const data = okAnswer(answer, 'save the colour');
+  return toRelationshipColours(data.relationship_colours);
 }
 
 /**
