@@ -77,14 +77,31 @@ function AvatarBuilder({ handle, saved }: { handle: string; saved: AvatarRecipe 
 }
 
 /**
- * Renders the section.
+ * Renders the section: a card with its own heading on Settings › Profile, or only the intro and
+ * the builder inside a wizard step, whose title already names it (the holding page, CALM-9 H08).
  *
  * @param props.handle - the signed-in person's username
+ * @param props.isInsideStep - true inside a StepWizard step: no card and no heading of its own
  * @returns the section
  */
-export function AvatarBuilderSection({ handle }: { handle: string }) {
+export function AvatarBuilderSection({
+  handle,
+  isInsideStep = false,
+}: {
+  handle: string;
+  isInsideStep?: boolean;
+}) {
   const { t } = useAvatarsTranslation();
   const saved = useAvatarRecipe(handle);
+  const body = (
+    <>
+      <p className="m-0 text-ink-muted">{t('builder.intro')}</p>
+      {saved.isError && <p className="m-0 text-ink-muted">{t('builder.failures.unreachable')}</p>}
+      {saved.isSuccess && <AvatarBuilder handle={handle} saved={saved.data} />}
+    </>
+  );
+  // Inside a step: the step's title is the heading, so the builder sits straight in the step.
+  if (isInsideStep) return <div className="flex flex-col gap-4">{body}</div>;
   return (
     <section
       aria-labelledby="settings-avatar-heading"
@@ -96,9 +113,7 @@ export function AvatarBuilderSection({ handle }: { handle: string }) {
       >
         {t('builder.heading')}
       </h2>
-      <p className="m-0 text-ink-muted">{t('builder.intro')}</p>
-      {saved.isError && <p className="m-0 text-ink-muted">{t('builder.failures.unreachable')}</p>}
-      {saved.isSuccess && <AvatarBuilder handle={handle} saved={saved.data} />}
+      {body}
     </section>
   );
 }
