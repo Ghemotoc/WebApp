@@ -620,7 +620,7 @@
     },
     "board": {
       "heading": "Chapter board",
-      "hint": "Drag a card, or use Earlier and Later. Published chapters ask first.",
+      "hint": "Drag a card by its grip (on a phone or tablet, press and hold it), or use its menu: Earlier, Later, Previous act, Next act. Moving a chapter that’s already published asks first.",
       "noAct": "No act",
       "empty": "No chapters here yet.",
       "chapterNumber": "Chapter {{number}}",
@@ -636,6 +636,8 @@
       "addChapterIn": "Add chapter to {{name}}",
       "addFailed": "We couldn’t add the chapter. Try again in a moment.",
       "moveFailed": "We couldn’t move the chapter, so the board shows the order as it is saved now.",
+      "becomesChapter": "Becomes chapter {{number}}",
+      "landsHere": "Lands here",
       "acts": {
         "add": "Add act",
         "name": "Act name",
@@ -662,10 +664,6 @@
         "later": "Later",
         "previousAct": "Previous act",
         "nextAct": "Next act",
-        "earlierNamed": "Move {{title}} earlier",
-        "laterNamed": "Move {{title}} later",
-        "previousActNamed": "Move {{title}} to the previous act",
-        "nextActNamed": "Move {{title}} to the next act",
         "group": "Move {{title}}"
       },
       "confirm": {
