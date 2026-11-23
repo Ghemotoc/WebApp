@@ -14,6 +14,7 @@ import { Link } from 'react-router';
 
 import { buttonClassName } from '@/components/ui/buttonStyles';
 import { languageOwnName } from '@/lib/language-names';
+import { cn } from '@/lib/utils';
 
 import type { StoryLanguage } from '../api/storyLanguages';
 import { useStoryLanguagesTranslation } from '../registerStoryLanguagesTranslations';
@@ -44,14 +45,21 @@ function LanguageAction({ language }: { language: StoryLanguage }) {
       </Link>
     );
   }
+  // CALM-9, board D08: translating needs the original and the translation side by side, so on a
+  // phone the button becomes a line saying where it works (the editor says the same, D09).
   return (
-    <Link
-      to={`/write/s/${language.slug}/translate`}
-      aria-label={t('table.translateLabel', { language: name })}
-      className={look}
-    >
-      {t('table.translate')}
-    </Link>
+    <>
+      <span className="text-[13px] leading-[18px] text-meta sm:hidden">
+        {t('table.translateOnBiggerScreen')}
+      </span>
+      <Link
+        to={`/write/s/${language.slug}/translate`}
+        aria-label={t('table.translateLabel', { language: name })}
+        className={cn(look, 'max-sm:hidden')}
+      >
+        {t('table.translate')}
+      </Link>
+    </>
   );
 }
 

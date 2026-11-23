@@ -30,7 +30,8 @@
     "open": "Deschide",
     "openLabel": "Deschide capitolele poveștii {{title}}",
     "translate": "Tradu",
-    "translateLabel": "Tradu în {{language}}"
+    "translateLabel": "Tradu în {{language}}",
+    "translateOnBiggerScreen": "Tradu pe o tabletă sau pe un calculator"
   },
   "add": {
     "eyebrow": "Adaugă o limbă",
@@ -108,13 +109,10 @@
     "publish": "Publică în {{language}}",
     "publishChanges": "Publică modificările",
     "working": "Se lucrează…",
-    "original": "Original",
-    "translation": "Traducere",
-    "progress": "{{language}} · {{count}} din {{total}} paragrafe",
+    "progress": "{{count}} din {{total}} cuvinte până acum",
     "chapterTitle": "Titlul capitolului în {{language}}",
-    "paragraphNumber": "Paragraful {{number}}",
     "translateParagraph": "Tradu paragraful {{number}}",
-    "tip": "Paragrafele stau unul lângă altul. Un paragraf lăsat gol apare cititorilor în original până când îl traduci.",
+    "tip": "Originalul și traducerea stau una lângă alta. Un paragraf lăsat gol apare cititorilor în original până când îl traduci.",
     "fullEditor": "Deschide în editorul complet",
     "fullEditorHint": "Pentru titluri, imagini și alte formatări.",
     "noParagraphs": "Capitolul original nu are încă text.",
@@ -130,6 +128,17 @@
       "notActive": "Acest cont nu poate publica încă.",
       "tooLong": "Textul este prea lung pentru a fi salvat.",
       "failed": "Nu s-a salvat. Verifică conexiunea și încearcă din nou."
+    },
+    "originalHead": "Original {{language}}",
+    "translationHead": "Traducere {{language}}",
+    "wordCount_one": "{{count}} cuvânt",
+    "wordCount_few": "{{count}} cuvinte",
+    "wordCount_other": "{{count}} de cuvinte",
+    "scrollTogether": "Derulează ambele părți împreună",
+    "phone": {
+      "heading": "Tradu pe un ecran mai mare",
+      "line": "Traducerea unui capitol merge pe tabletă sau calculator, unde originalul și traducerea încap una lângă alta. Ciorna capitolului {{number}} în {{language}} este salvată.",
+      "back": "Înapoi la limbi"
     }
   }
 }
