@@ -1,6 +1,6 @@
 /**
- * LanguagesTable and ParagraphPairs: what the writer sees of a story's languages and of a chapter
- * side by side (bundle TRANSLATE-1c; Robert, 16 Nov 2026).
+ * LanguagesTable and SideBySidePapers: what the writer sees of a story's languages and of a
+ * chapter side by side (bundle TRANSLATE-1c; Robert, 16 Nov 2026; CALM-9 boards D08 and D09).
  */
 import { fireEvent, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
@@ -11,7 +11,7 @@ import { renderWithProviders } from '@/test/renderWithProviders';
 import type { StoryLanguage } from '../api/storyLanguages';
 
 import { LanguagesTable } from './LanguagesTable';
-import { ParagraphPairs } from './ParagraphPairs';
+import { SideBySidePapers } from './SideBySidePapers';
 
 const languages: StoryLanguage[] = [
   {
@@ -61,14 +61,16 @@ describe('LanguagesTable', () => {
       'href',
       '/write/s/the-weather-station/translate',
     );
+    // CALM-9, D08: a phone is told where translating works (the link is hidden there by CSS).
+    expect(within(english).getByText('Translate on a tablet or computer')).toBeInTheDocument();
   });
 });
 
-describe('ParagraphPairs', () => {
-  it('puts a field beside every paragraph of the original and counts the translated ones', () => {
+describe('SideBySidePapers', () => {
+  it('puts the translation beside the original, counts words and scrolls together by default', () => {
     const onChange = vi.fn();
     renderWithProviders(
-      <ParagraphPairs
+      <SideBySidePapers
         original={{
           languageCode: 'ro',
           languageName: 'Română',
@@ -79,12 +81,17 @@ describe('ParagraphPairs', () => {
           languageName: 'English',
           fields: ['Grandmother notes the weather.', ''],
         }}
-        translatedCount={1}
         onChange={onChange}
       />,
       'en',
     );
-    expect(screen.getByText('English · 1 of 2 paragraphs')).toBeInTheDocument();
+    // "Bunica notează vremea." + "Azi a nins." is 6 words; the one translated paragraph has 4.
+    expect(screen.getByText('4 of 6 words so far')).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Original Română' })).toHaveTextContent('6 words');
+    expect(screen.getByRole('region', { name: 'Translation English' })).toHaveTextContent(
+      '4 words',
+    );
+    expect(screen.getByRole('checkbox', { name: 'Scroll both sides together' })).toBeChecked();
     expect(screen.getByText('Azi a nins.')).toHaveAttribute('lang', 'ro');
     expect(screen.getByRole('textbox', { name: 'Translate paragraph 1' })).toHaveValue(
       'Grandmother notes the weather.',

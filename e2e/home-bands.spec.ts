@@ -110,7 +110,7 @@ test.describe('home page bands, forums and footer (LOOK-3)', () => {
     const read = page.getByRole('contentinfo').getByRole('navigation', { name: 'Read' });
     await expect(read.getByRole('link', { name: 'Trending this week' })).toHaveAttribute(
       'href',
-      '/discover',
+      '/discover/all/popular',
     );
     await expect(page.getByRole('navigation', { name: 'Help and legal' })).toBeVisible();
     await page.context().close();
