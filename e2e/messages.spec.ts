@@ -98,7 +98,8 @@ test.describe('private messages (S1-E9-01)', () => {
     await expect(
       chatOn(page).getByText('Of course. Send them over whenever you like.'),
     ).toBeVisible();
-    await expect(page.getByText('Text only. You can’t send pictures or files.')).toBeVisible();
+    // CALM-9 (board E13): the "Text only…" line under the box is gone.
+    await expect(page.getByText('Text only. You can’t send pictures or files.')).toHaveCount(0);
     // Step 2: a new message appears in the chat.
     await page.getByLabel('Message to teacher').fill('Here are my answers for Friday.');
     await page.getByRole('button', { name: 'Send' }).click();

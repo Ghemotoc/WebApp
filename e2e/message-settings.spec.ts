@@ -119,12 +119,18 @@ test.describe('message settings and Delete chat (S1-E9-04)', () => {
 
   test('Delete chat removes the chat for one person only', async ({ browser }) => {
     const page = await openAs(browser, 'adult_writer', '/messages/teacher');
-    await page.getByRole('button', { name: 'Delete chat' }).click();
-    const dialog = page.getByRole('dialog', { name: 'Delete this chat?' });
+    // CALM-9 (board E13): a confirm popup that takes focus and closes with Escape.
+    const deleteButton = page.getByRole('button', { name: 'Delete chat' });
+    await deleteButton.click();
+    const dialog = page.getByRole('alertdialog', { name: 'Delete this chat?' });
     await expect(dialog).toContainText(
-      'When both of you delete it, the messages are deleted for good.',
+      /It goes from your messages straight away\. When .+ deletes it too, the messages are gone for good\./,
     );
-    await dialog.getByRole('button', { name: 'Delete chat' }).click();
+    await expect(dialog.getByRole('button', { name: 'Keep the chat' })).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(dialog).toBeHidden();
+    await deleteButton.click();
+    await dialog.getByRole('button', { name: 'Delete the chat' }).click();
     await expect(page).toHaveURL(/\/messages$/);
     await expect(page.locator('a[href="/messages/teacher"]')).toHaveCount(0);
     const teacher = await openAs(browser, 'teacher', '/messages');
