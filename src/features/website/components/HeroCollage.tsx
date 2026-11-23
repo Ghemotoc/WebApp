@@ -129,7 +129,7 @@ function RightsCard({
       {/* The eyebrow's type in the card's dark text: dark gold on gold would be unreadable. */}
       <p className="eyebrow-type m-0">{withBrand(card.eyebrow)}</p>
       <p className="m-0 font-heading type-long leading-[1.05] font-bold">{withBrand(card.title)}</p>
-      <p className="m-0 type-meta leading-snug">{withBrand(card.body)}</p>
+      <p className="m-0 type-meta leading-snug text-on-gold">{withBrand(card.body)}</p>
     </div>
   );
 }

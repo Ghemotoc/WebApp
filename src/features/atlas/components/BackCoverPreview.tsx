@@ -40,7 +40,7 @@ function BackCover({ text }: { text: BackCoverText }) {
     >
       <p
         id="atlas-back-cover-title"
-        className="m-0 font-heading type-heading leading-tight font-bold break-words"
+        className="m-0 font-heading type-heading leading-tight font-bold break-words text-on-primary"
       >
         {text.title}
       </p>

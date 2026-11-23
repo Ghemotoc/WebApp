@@ -41,6 +41,16 @@ import romanianReading from '../src/locales/ro/reading.json';
 import romanianWriting from '../src/locales/ro/writing.json';
 
 import { parseSpot, type SpotRange } from '../src/lib/chapter-blocks.ts';
+import {
+  shortenForDescription,
+  statementPageTitle,
+  statementSentence,
+  statementSiteLine,
+  statementText,
+  storyTypeOf,
+  type StoryStatementFacts,
+  type StoryStatementWords,
+} from '../src/lib/story-statement.ts';
 
 import { linkPreviewPalette } from './link-preview-palette.ts';
 import {
@@ -85,6 +95,19 @@ export interface LinkPreview {
    * noindex, as a chapter does (S1-E11-36).
    */
   isListed: boolean;
+  /** "In the app only" while it applies (GAPS-15): kept out of search engines (CALM-9s). */
+  isAppOnly: boolean;
+  /** True when the story is hidden in at least one country: kept out of search engines (CALM-9s). */
+  isHiddenSomewhere: boolean;
+  /** The story's genre, its first recommended tag in its language, or null (CALM-9s). */
+  genre: string | null;
+  /** The writer's username for the profile link; null for a classic, whose author has none. */
+  writerHandle: string | null;
+  /** When the story was first published and last changed, for the JSON-LD dates. */
+  firstPublishedAt: string | null;
+  updatedAt: string | null;
+  /** The story's public editions (slug and language), for hreflang; empty in one language. */
+  editions: { slug: string; languageCode: string }[];
   /** True when the address names a chapter. */
   isChapter: boolean;
   /** The shared passage as one plain line (S1-E4-11), or null. */
@@ -158,11 +181,18 @@ interface PreviewRow {
   hides_text: boolean;
   is_listed: boolean;
   blurb: string | null;
-  writer: { display_name: string } | null;
+  writer: { display_name: string; handle?: string | null } | null;
   cover: { kind: string; background: string | null } | null;
   category_slug: string | null;
   tags: string[] | null;
   chapter: { code: string; title: string | null } | null;
+  // CALM-9s: the story footer's details (older databases leave them out).
+  is_app_only?: boolean;
+  is_hidden_somewhere?: boolean;
+  genre?: string | null;
+  first_published_at?: string | null;
+  updated_at?: string | null;
+  editions?: { slug: string; language_code: string }[] | null;
 }
 
 /**
@@ -227,6 +257,30 @@ function previewFromRow(row: PreviewRow): Omit<LinkPreview, 'isChapter' | 'passa
     chapterTitle: row.chapter?.title ?? null,
     categorySlug: row.category_slug ?? null,
     tags: row.tags ?? [],
+    ...searchDetailsFromRow(row),
+  };
+}
+
+/**
+ * The parts of the row search engines read (CALM-9s): where the story can be read, its genre,
+ * the writer's profile, its dates and its other language editions. Older rows without them
+ * read as a plain public story in one language.
+ *
+ * @param row - what get_link_preview() answered
+ * @returns the search details of the preview
+ */
+function searchDetailsFromRow(row: PreviewRow) {
+  return {
+    isAppOnly: row.is_app_only ?? false,
+    isHiddenSomewhere: row.is_hidden_somewhere ?? false,
+    genre: row.genre ?? null,
+    writerHandle: row.writer?.handle ?? null,
+    firstPublishedAt: row.first_published_at ?? null,
+    updatedAt: row.updated_at ?? null,
+    editions: (row.editions ?? []).map((edition) => ({
+      slug: edition.slug,
+      languageCode: edition.language_code,
+    })),
   };
 }
 
@@ -335,29 +389,166 @@ export function previewText(preview: LinkPreview): { title: string; description:
 }
 
 /**
- * The schema.org description of a story page: its title, blurb, pen name, category and tags, never
- * its text (Q36, S1-E11-36).
+ * The story statement's words in the story's language (CALM-9s): the reading namespace's
+ * storyFooter keys, Romanian unless the story is in English, like the rest of the preview.
+ *
+ * @param languageCode - the story's language
+ * @returns the words
+ */
+function statementWords(languageCode: string): StoryStatementWords {
+  return languageCode === 'en' ? englishReading.storyFooter : romanianReading.storyFooter;
+}
+
+/**
+ * The facts the story statement is made of (CALM-9s).
  *
  * @param preview - the story's preview
- * @param pageUrl - the page's address
- * @returns a <script type="application/ld+json"> element
+ * @returns the title, category, genre, writer, language and whether it is 18+
  */
-function structuredData(preview: LinkPreview, pageUrl: string): string {
-  const data: Record<string, unknown> = {
+export function statementFacts(preview: LinkPreview): StoryStatementFacts {
+  return {
+    title: preview.title,
+    categorySlug: preview.categorySlug,
+    genre: preview.genre,
+    writerName: preview.writerName ?? '',
+    languageCode: preview.languageCode,
+    isMature: preview.rating === '18_plus',
+  };
+}
+
+/**
+ * Whether the page carries the story statement: a public story read on the web everywhere. An
+ * unlisted, app-only or country-hidden story keeps the site's own footer words (CALM-9s).
+ *
+ * @param preview - the story's preview
+ * @returns true when the statement may be shown and indexed
+ */
+export function carriesStatement(preview: LinkPreview): boolean {
+  return preview.isListed && !preview.isAppOnly && !preview.isHiddenSomewhere;
+}
+
+/**
+ * The story page's description: the statement and the blurb, shortened to what search engines
+ * show (CALM-9s). A chapter or a shared passage keeps the link preview's own description.
+ *
+ * @param preview - the story's preview
+ * @param siteName - the product's name
+ * @returns the description as plain text
+ */
+export function pageDescription(preview: LinkPreview, siteName: string): string {
+  if (preview.isChapter || preview.passage !== null || !carriesStatement(preview)) {
+    return previewText(preview).description;
+  }
+  const words = statementWords(preview.languageCode);
+  return shortenForDescription(
+    statementText(statementFacts(preview), words, siteName, preview.blurb ?? ''),
+  );
+}
+
+/**
+ * The page's <title>: "Title by pen name, genre, site" for a story page that carries the
+ * statement (CALM-9s); the link preview's title otherwise.
+ *
+ * @param preview - the story's preview
+ * @param siteName - the product's name
+ * @returns the title
+ */
+export function pageTitle(preview: LinkPreview, siteName: string): string {
+  if (preview.isChapter || !carriesStatement(preview)) return previewText(preview).title;
+  const words = statementWords(preview.languageCode);
+  return statementPageTitle(statementFacts(preview), words, siteName, categoryName(preview));
+}
+
+/**
+ * The trail from Read to the story, as schema.org BreadcrumbList: Read, the category, the story.
+ *
+ * @param preview - the story's preview
+ * @param page - the page's address and the site's origin
+ * @returns the list as a plain object
+ */
+function breadcrumbData(preview: LinkPreview, page: { url: string; origin: string }) {
+  const trail: { name: string; item: string }[] = [
+    { name: statementWords(preview.languageCode).breadcrumbRead, item: `${page.origin}/discover` },
+  ];
+  const category = categoryName(preview);
+  if (category !== null && preview.categorySlug !== null) {
+    trail.push({ name: category, item: `${page.origin}/discover/c/${preview.categorySlug}` });
+  }
+  trail.push({ name: preview.title, item: page.url });
+  return {
     '@context': 'https://schema.org',
-    '@type': 'CreativeWork',
+    '@type': 'BreadcrumbList',
+    itemListElement: trail.map((step, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      ...step,
+    })),
+  };
+}
+
+/**
+ * The schema.org description of a story page (CALM-9s): a Book for a story, a CreativeWork for a
+ * poem or an essay, with its title, statement, writer and profile, genre, tags, language, dates,
+ * that it is free, and the site as publisher; then the BreadcrumbList. Never its text, a real name
+ * or an age (Q36, S1-E11-36).
+ *
+ * @param preview - the story's preview
+ * @param page - the page's address, the site's name and origin
+ * @returns two <script type="application/ld+json"> elements
+ */
+function structuredData(
+  preview: LinkPreview,
+  page: { url: string; siteName: string; origin: string },
+): string {
+  const work: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': storyTypeOf(preview.categorySlug) === 'story' ? 'Book' : 'CreativeWork',
     name: preview.title,
     inLanguage: preview.languageCode,
-    url: pageUrl,
+    url: page.url,
+    description: pageDescription(preview, page.siteName),
+    isAccessibleForFree: true,
+    publisher: { '@type': 'Organization', name: page.siteName, url: page.origin },
   };
-  if (preview.blurb !== null) data.description = preview.blurb;
-  if (preview.writerName !== null) data.author = { '@type': 'Person', name: preview.writerName };
-  const category = categoryName(preview);
-  if (category !== null) data.genre = category;
-  if (preview.tags.length > 0) data.keywords = preview.tags.join(', ');
-  // "<" is written as < so a title can never close the script element early.
-  const json = JSON.stringify(data).replaceAll('<', '\\u003c');
-  return `<script type="application/ld+json">${json}</script>`;
+  if (preview.writerName !== null) {
+    const author: Record<string, string> = { '@type': 'Person', name: preview.writerName };
+    if (preview.writerHandle !== null) author.url = `${page.origin}/u/${preview.writerHandle}`;
+    work.author = author;
+  }
+  const genre = preview.genre ?? categoryName(preview);
+  if (genre !== null) work.genre = genre;
+  if (preview.tags.length > 0) work.keywords = preview.tags.join(', ');
+  if (preview.firstPublishedAt !== null) work.datePublished = preview.firstPublishedAt;
+  if (preview.updatedAt !== null) work.dateModified = preview.updatedAt;
+  return [work, breadcrumbData(preview, page)]
+    .map((data) => {
+      // "<" is written as \u003c so a title can never close the script element early.
+      const json = JSON.stringify(data).replaceAll('<', '\\u003c');
+      return `<script type="application/ld+json">${json}</script>`;
+    })
+    .join('\n    ');
+}
+
+/**
+ * The hreflang links of a story in several languages: one per public edition (TRANSLATE-1;
+ * CALM-9s), the first edition also as x-default.
+ *
+ * @param preview - the story's preview
+ * @param origin - the site's origin
+ * @returns the link tags, or an empty list for a story in one language
+ */
+function languageLinksFor(preview: LinkPreview, origin: string): string[] {
+  if (preview.editions.length < 2) return [];
+  const links = preview.editions.map(
+    (edition) =>
+      `<link rel="alternate" hreflang="${escapeHtml(edition.languageCode)}" href="${escapeHtml(`${origin}/s/${edition.slug}`)}">`,
+  );
+  // The first edition stands for every other language (x-default).
+  const firstSlug = preview.editions[0]?.slug ?? preview.slug;
+  links.push(
+    `<link rel="alternate" hreflang="x-default" href="${escapeHtml(`${origin}/s/${firstSlug}`)}">`,
+  );
+  return links;
 }
 
 /**
@@ -400,13 +591,16 @@ function keywordTagsFor(preview: LinkPreview): string[] {
 }
 
 /**
- * Whether search engines may list the page: a public story's own page only (Q36; S1-E11-36).
+ * Whether search engines may list the page: a public story's own page only (Q36; S1-E11-36),
+ * read on the web and shown in every country (CALM-9s).
  *
  * @param preview - the story's preview
- * @returns true for the page of a public story; false for a chapter or an unlisted story
+ * @returns true for the page of such a story; false for a chapter, or an unlisted, app-only or
+ *   country-hidden story
  */
 export function isIndexable(preview: LinkPreview): boolean {
-  return preview.isListed && !preview.isChapter;
+  // CALM-9s: an app-only or country-hidden story stays out too.
+  return carriesStatement(preview) && !preview.isChapter;
 }
 
 /**
@@ -420,7 +614,8 @@ export function headTagsFor(
   preview: LinkPreview,
   page: { url: string; siteName: string; origin: string },
 ): string {
-  const { title, description } = previewText(preview);
+  const { title } = previewText(preview);
+  const description = pageDescription(preview, page.siteName);
   const tags = [
     `<meta name="description" content="${escapeHtml(description)}">`,
     ...keywordTagsFor(preview),
@@ -436,8 +631,10 @@ export function headTagsFor(
   ];
   // Only story pages are indexable; chapters carry noindex and no structured data (Q36).
   // An unlisted story is shared by its link only, so it is noindex too (S1-E11-36).
-  if (isIndexable(preview)) tags.push(structuredData(preview, page.url));
-  else tags.push('<meta name="robots" content="noindex">');
+  // CALM-9s: an app-only or country-hidden story is noindex as well, with no structured data.
+  if (isIndexable(preview)) {
+    tags.push(...languageLinksFor(preview, page.origin), structuredData(preview, page));
+  } else tags.push('<meta name="robots" content="noindex">');
   return tags.join('\n    ');
 }
 
@@ -455,6 +652,52 @@ export function injectIntoHead(html: string, title: string | null, tags: string)
       ? html
       : html.replace(/<title>[^<]*<\/title>/, `<title>${escapeHtml(title)}</title>`);
   return withTitle.replace('</head>', `    ${tags}\n  </head>`);
+}
+
+/**
+ * The story statement as visible HTML for the page before the app starts (CALM-9s): the sentence
+ * with the title in <cite>, "For mature readers." for 18+, the blurb and the site's line, in a
+ * <footer> inside the app's root. Search engines and answer engines that don't run JavaScript read
+ * the same words the footer shows; the app replaces it when it starts, with the same words. It is
+ * never hidden text.
+ *
+ * @param preview - the story's preview
+ * @param siteName - the product's name
+ * @returns the HTML, or an empty text when the page keeps the site's own footer words
+ */
+export function visibleStatementFor(preview: LinkPreview, siteName: string): string {
+  if (!carriesStatement(preview)) return '';
+  const words = statementWords(preview.languageCode);
+  // Step 1: the sentence, with the title as a <cite> and the writer as a profile link.
+  const sentence = statementSentence(statementFacts(preview), words, siteName)
+    .map((piece) => {
+      if (piece.kind === 'title') return `<cite>${escapeHtml(piece.text)}</cite>`;
+      if (piece.kind === 'writer' && preview.writerHandle !== null) {
+        return `<a href="/u/${escapeHtml(preview.writerHandle)}">${escapeHtml(piece.text)}</a>`;
+      }
+      return escapeHtml(piece.text);
+    })
+    .join('');
+  // Step 2: the paragraphs, each only when there is something to say.
+  const paragraphs = [sentence];
+  if (preview.rating === '18_plus') paragraphs.push(escapeHtml(`${words.matureReaders}.`));
+  if (preview.blurb !== null && preview.blurb.trim() !== '')
+    paragraphs.push(escapeHtml(preview.blurb));
+  paragraphs.push(escapeHtml(statementSiteLine(words, siteName)));
+  const body = paragraphs.map((paragraph) => `<p>${paragraph}</p>`).join('');
+  return `<footer lang="${escapeHtml(preview.languageCode)}">${body}</footer>`;
+}
+
+/**
+ * Puts HTML inside the app's root element, where it shows until the app starts.
+ *
+ * @param html - the app's index.html
+ * @param content - the HTML to show, or an empty text to leave the page as it is
+ * @returns the changed page
+ */
+export function injectIntoRoot(html: string, content: string): string {
+  if (content === '') return html;
+  return html.replace('<div id="root"></div>', `<div id="root">${content}</div>`);
 }
 
 /**
@@ -514,7 +757,10 @@ export async function handleSharedLink(request: Request, host: SharedLinkHost): 
     origin: url.origin,
   });
   if (!isIndexable(preview)) headers.set('X-Robots-Tag', 'noindex');
-  return new Response(injectIntoHead(html, previewText(preview).title, tags), {
+  // Step 5: the title and, for a story that carries it, the visible statement (CALM-9s).
+  const siteName = siteNameOf(html);
+  const withHead = injectIntoHead(html, pageTitle(preview, siteName), tags);
+  return new Response(injectIntoRoot(withHead, visibleStatementFor(preview, siteName)), {
     status: page.status,
     headers,
   });
