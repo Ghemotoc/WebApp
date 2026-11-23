@@ -54,7 +54,7 @@ Decisions with dates and sources are in docs/decisions.md. Stories are in docs/s
 - "Ghemotoc" is a working name until the name and domain are bought. Never hard-code the product name, domain, email addresses or handle in components, emails, SQL or tests.
 - Read them from one place: `src/config/brand.ts` (front end, from VITE_ environment variables) and the `settings` table or Edge Function secrets (back end). Renaming the product must be a change to that one place plus the locale files.
 - Staff Google sign-in (after March) accepts only accounts on the Google Workspace domain in `STAFF_EMAIL_DOMAIN`, today `themagiccoffin.com`.
-- Today's values (decided 17 Oct 2026, 12:50): contact and support email `hello@themagiccoffin.com`; working site `ghemotoc.themagiccoffin.com` once hosting is chosen, until the product's own domain is bought.
+- Today's values: contact and support email `hello@themagiccoffin.com` (decided 17 Oct 2026, 12:50); site `ghemotoc.tech`, with `ghemotoc.com` forwarding to it and the old `ghemotoc.themagiccoffin.com` forwarding too (Robert, 23 Nov 2026).
 
 ## Conventions
 - Database: snake_case, plural table names, uuid primary keys, created_at/updated_at timestamptz, soft delete with deleted_at; the owner column is user_id, other people get role names (reporter_user_id).
