@@ -15,7 +15,7 @@
  *   title with "No preview for this story".
  * - Journey 4, the epic's screens at 390, 768 and 1440 px, at night and in Romanian (each
  *   story's own spec covers the other views): the reader with the copy notice, the teaser and
- *   the "No preview" notice; axe finds nothing serious, nothing scrolls sideways and no doodle
+ *   the "For mature readers" question on an 18+ chapter (CALM-9m); axe finds nothing serious, nothing scrolls sideways and no doodle
  *   is drawn.
  * The database half is supabase/tests/database/093-epic-s1-e4.test.sql.
  * Test data: seed personas; the seed story's chapters are removed and the story put back after.
@@ -227,9 +227,10 @@ test.describe('epic check: reading (S1-E4-QA)', () => {
       await test.step(`the notice at ${width} px`, async () => {
         const page = await visitorContext.newPage();
         await checkScreen(page, { address: firstChapter, width, theme: 'night', language: 'ro' });
-        await expect(
-          page.getByRole('heading', { name: 'Nicio previzualizare pentru această poveste' }),
-        ).toBeVisible();
+        // An 18+ chapter asks a visitor "I'm 18 or over" first and shows no chapter text until
+        // they answer (CALM-9m: 18+ stories stay findable, the answer stays in the browser).
+        await expect(page.getByRole('heading', { name: 'Pentru cititori maturi' })).toBeVisible();
+        await expect(page.locator('.tmc-chapter-text p')).toHaveCount(0);
         await page.close();
       });
     }
