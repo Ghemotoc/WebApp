@@ -7,7 +7,8 @@
  * line "It goes from your messages straight away. When [name] deletes it too, the messages are
  * gone for good." and the buttons "Keep the chat" and "Delete the chat" (danger colour). It is a
  * native <dialog> opened with showModal(), so focus moves inside and Escape keeps the chat;
- * "Keep the chat" is the first button, so it takes focus first (the safe choice).
+ * focus starts on "Keep the chat", the safe choice, put there after showModal() because the
+ * main button comes first (design books item 8).
  *
  * The chat goes for the reader only and the other person isn't told; if someone writes again,
  * the chat comes back with only the new messages. Once both have deleted it, the nightly
@@ -106,7 +107,12 @@ function DeleteChatDialog(props: DeleteChatDialogProps) {
   useEffect(() => {
     const dialog = dialogRef.current;
     if (dialog === null) return;
-    if (props.isOpen && !dialog.open) dialog.showModal();
+    if (props.isOpen && !dialog.open) {
+      dialog.showModal();
+      // The main button now comes first (design books item 8), so the focus is put on the
+      // safe choice by hand instead of on the first button.
+      dialog.querySelector<HTMLElement>('[data-safe-choice]')?.focus();
+    }
     if (!props.isOpen && dialog.open) dialog.close();
   }, [props.isOpen]);
 
@@ -135,7 +141,7 @@ function DeleteChatDialog(props: DeleteChatDialogProps) {
           <Button variant="destructive" disabled={props.isDeleting} onClick={props.onConfirm}>
             {t(props.isDeleting ? 'deleteChat.deleting' : 'deleteChat.confirm')}
           </Button>
-          <Button variant="secondary" onClick={props.onClose}>
+          <Button variant="secondary" onClick={props.onClose} data-safe-choice>
             {t('deleteChat.cancel')}
           </Button>
         </ButtonRow>
