@@ -146,18 +146,42 @@ function bookOrder(): string {
     where story_id = (select id from public.stories where slug = '${slug}') and deleted_at is null`);
 }
 
+/** Opens a card's "…" menu and picks one of its moves (CALM-9, board E28). */
+async function moveByMenu(page: Page, title: string, move: string) {
+  await page.getByRole('button', { name: `Move ${title}`, exact: true }).click();
+  await page.getByRole('menuitem', { name: move, exact: true }).click();
+}
+
+/** Opens a card's menu and says whether one of its moves is unavailable, then closes it. */
+async function expectMoveUnavailable(page: Page, title: string, move: string) {
+  await page.getByRole('button', { name: `Move ${title}`, exact: true }).click();
+  await expect(page.getByRole('menuitem', { name: move, exact: true })).toBeDisabled();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('menu')).toHaveCount(0);
+}
+
 /**
- * Drags one card onto another. Playwright's dragTo doesn't fire HTML5 drops here, so the events
- * are sent by hand with one DataTransfer, as a real drag does (the same as atlas-bible.spec.ts).
+ * Drags one card onto the top of another with the mouse, as a person would: press near the grip,
+ * move a few steps, hold over the other card, then let go. `whileHeld` runs before the drop, so
+ * a test can look at the landing gap.
  */
-async function dragCard(page: Page, fromTitle: string, ontoTitle: string) {
-  const cardOf = (title: string) =>
-    page.getByTestId('atlas-board-card').filter({ hasText: title }).locator('[draggable="true"]');
-  const dataTransfer = await page.evaluateHandle(() => new DataTransfer());
-  await cardOf(fromTitle).dispatchEvent('dragstart', { dataTransfer });
-  await cardOf(ontoTitle).dispatchEvent('dragover', { dataTransfer });
-  await cardOf(ontoTitle).dispatchEvent('drop', { dataTransfer });
-  await cardOf(fromTitle).dispatchEvent('dragend', { dataTransfer });
+async function dragCard(
+  page: Page,
+  fromTitle: string,
+  ontoTitle: string,
+  whileHeld?: () => Promise<void>,
+) {
+  const cardOf = (title: string) => page.getByTestId('atlas-board-card').filter({ hasText: title });
+  const from = await cardOf(fromTitle).boundingBox();
+  const onto = await cardOf(ontoTitle).boundingBox();
+  if (from === null || onto === null) throw new Error('a card is not on screen');
+  await page.mouse.move(from.x + 16, from.y + 20);
+  await page.mouse.down();
+  await page.mouse.move(from.x + 30, from.y + 30, { steps: 4 });
+  // Held over the upper part of the other card, so the dragged card lands in front of it.
+  await page.mouse.move(onto.x + onto.width / 2, onto.y + 5, { steps: 12 });
+  if (whileHeld !== undefined) await whileHeld();
+  await page.mouse.up();
 }
 
 test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
@@ -199,7 +223,7 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', storylineAddress);
-    await page.getByRole('button', { name: 'Move Calmul earlier' }).click();
+    await moveByMenu(page, 'Calmul', 'Earlier');
     await expect.poll(() => columnTitles(page, 'Act I')).toEqual(['Calmul', 'Furtuna']);
     await expect(page.getByRole('alertdialog')).toHaveCount(0);
     expect(bookOrder()).toBe('Calmul,Furtuna,Zorii');
@@ -207,11 +231,11 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
     await expect(page.getByTestId('atlas-board-card').filter({ hasText: 'Calmul' })).toContainText(
       'Chapter 1',
     );
-    await expect(page.getByRole('button', { name: 'Move Calmul earlier' })).toBeDisabled();
-    await page.getByRole('button', { name: 'Move Calmul to the next act' }).click();
+    await expectMoveUnavailable(page, 'Calmul', 'Earlier');
+    await moveByMenu(page, 'Calmul', 'Next act');
     await expect.poll(() => columnTitles(page, 'Act II')).toEqual(['Calmul']);
     expect(bookOrder()).toBe('Furtuna,Calmul,Zorii');
-    await expect(page.getByRole('button', { name: 'Move Zorii to the next act' })).toBeDisabled();
+    await expectMoveUnavailable(page, 'Zorii', 'Next act');
     await page.context().close();
   });
 
@@ -220,7 +244,11 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
   }) => {
     const page = await openAs(browser, 'adult_writer', storylineAddress);
     await expect.poll(() => columnTitles(page, 'Act I')).toEqual(['Furtuna']);
-    await dragCard(page, 'Zorii', 'Furtuna');
+    // While held, a dashed gap opens where the card will land; Zorii is the epilogue, so it has
+    // no number to become.
+    await dragCard(page, 'Zorii', 'Furtuna', async () => {
+      await expect(page.getByTestId('atlas-board-gap')).toHaveText('Lands here');
+    });
     const question = page.getByRole('alertdialog', { name: 'Change the order readers see?' });
     await expect(question).toBeVisible();
     await question.getByRole('button', { name: 'Keep the order' }).click();
@@ -231,7 +259,7 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
     await expect.poll(() => columnTitles(page, 'Act I')).toEqual(['Zorii', 'Furtuna']);
     expect(bookOrder()).toBe('Zorii,Furtuna,Calmul');
     // Back again with a button: Furtuna earlier also changes what readers see.
-    await page.getByRole('button', { name: 'Move Furtuna earlier' }).click();
+    await moveByMenu(page, 'Furtuna', 'Earlier');
     await question.getByRole('button', { name: 'Move it' }).click();
     await expect.poll(() => columnTitles(page, 'Act I')).toEqual(['Furtuna', 'Zorii']);
     expect(bookOrder()).toBe('Furtuna,Zorii,Calmul');

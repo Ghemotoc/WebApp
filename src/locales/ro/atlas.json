@@ -591,7 +591,7 @@
     },
     "board": {
       "heading": "Panoul capitolelor",
-      "hint": "Trage un card sau folosește Mai devreme și Mai târziu. Capitolele publicate întreabă întâi.",
+      "hint": "Trage un card de mâner (pe telefon sau tabletă, ține-l apăsat) sau folosește meniul lui: Mai devreme, Mai târziu, Actul anterior, Actul următor. Mutarea unui capitol deja publicat întreabă întâi.",
       "noAct": "Fără act",
       "empty": "Încă nu e niciun capitol aici.",
       "chapterNumber": "Capitolul {{number}}",
@@ -607,6 +607,8 @@
       "addChapterIn": "Adaugă capitol în {{name}}",
       "addFailed": "Nu am putut adăuga capitolul. Încearcă din nou peste puțin timp.",
       "moveFailed": "Nu am putut muta capitolul, așa că panoul arată ordinea salvată acum.",
+      "becomesChapter": "Devine capitolul {{number}}",
+      "landsHere": "Ajunge aici",
       "acts": {
         "add": "Adaugă act",
         "name": "Numele actului",
@@ -633,10 +635,6 @@
         "later": "Mai târziu",
         "previousAct": "Actul anterior",
         "nextAct": "Actul următor",
-        "earlierNamed": "Mută {{title}} mai devreme",
-        "laterNamed": "Mută {{title}} mai târziu",
-        "previousActNamed": "Mută {{title}} în actul anterior",
-        "nextActNamed": "Mută {{title}} în actul următor",
         "group": "Mută {{title}}"
       },
       "confirm": {
