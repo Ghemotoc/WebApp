@@ -109,7 +109,7 @@ export function MissingTranslationNotice({ chapter, missing }: MissingTranslatio
         >
           {title}
         </h1>
-        <p className="m-0 max-w-[640px] text-base leading-[1.6] text-body">
+        <p className="m-0 text-base leading-[1.6] text-body">
           {progressSentence !== '' && `${progressSentence} `}
           {t('missing.body', { number: chapter.number, original, language })}
         </p>
