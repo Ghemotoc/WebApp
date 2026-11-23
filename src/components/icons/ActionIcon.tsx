@@ -16,8 +16,8 @@
  * hand-drawn icon set, every screen that used it (the home page hero and safety lines, sign-up,
  * log-in ways, story stats, the writer dashboard, the chapter editor's insert buttons, forum
  * locks, the messages rules note, export status and the profile's safety card); and the forum
- * reply's formatting toolbar (GAPS-16b: link, quote, list); and a landing page's steps (target,
- * pen, book; CALM-9, board A10).
+ * reply's formatting toolbar (GAPS-16b: link, quote, list); Story Atlas's "Category colours"
+ * (palette, CALM-9, board E25); and a landing page's steps (target, pen, book; CALM-9, board A10).
  */
 import type { SVGProps } from 'react';
 
@@ -245,6 +245,13 @@ const drawings = {
     <>
       <path d="M8 6h13M8 12h13M8 18h13" />
       <path d="M3 6h.01M3 12h.01M3 18h.01" />
+    </>
+  ),
+  // Palette: a painter's palette with three paint dots (CALM-9, board E25's "Category colours").
+  palette: (
+    <>
+      <path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-1 2-2 0-.6-.3-1-.6-1.4-.3-.4-.6-.8-.6-1.4 0-1.1.9-2 2-2H17a4 4 0 0 0 4-4c0-4.1-4-7.2-9-7.2z" />
+      <path d="M7.5 11.5h.01M10 7.5h.01M15 7.5h.01" />
     </>
   ),
 } as const;

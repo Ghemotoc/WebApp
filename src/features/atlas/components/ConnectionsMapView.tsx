@@ -8,8 +8,10 @@
  * message says so. Dropping a card on another opens "Add a connection" with both picked (the
  * onConnect prop). The buttons are the alternatives to dragging (DoD: dragging has a button
  * alternative): Arrange for me, and Add a connection above the views.
- * Who uses it: ConnectionsPage. What it calls: useRelationshipChangers (move, arrange) and
- * RelationshipMap.
+ * The map also carries "Category colours", where the writer picks each category's colour (CALM-9,
+ * board E25), saved on the story through useRelationshipColour.
+ * Who uses it: ConnectionsPage. What it calls: useRelationshipChangers (move, arrange),
+ * useRelationshipColour and RelationshipMap.
  */
 import { useState } from 'react';
 
@@ -19,6 +21,7 @@ import { Select } from '@/components/ui/Select';
 
 import type { MapPlace, StoryCast } from '../api/characters';
 import { useRelationshipChangers } from '../hooks/useRelationshipChangers';
+import { useRelationshipColour } from '../hooks/useRelationshipColour';
 import type { RelationshipWords } from '../hooks/useRelationshipWords';
 import { splitMapCast } from '../lib/relationshipMap';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
@@ -57,6 +60,43 @@ function usePendingPlaces(cast: StoryCast) {
   };
 }
 
+/** "Focus on" and "Arrange for me", above the map. */
+function MapToolbar({
+  onMap,
+  words,
+  focusId,
+  onFocus,
+  canArrange,
+  onArrange,
+}: {
+  onMap: string[];
+  words: RelationshipWords;
+  focusId: string;
+  onFocus: (focusId: string) => void;
+  canArrange: boolean;
+  onArrange: () => void;
+}) {
+  const { t } = useAtlasTranslation();
+  return (
+    <div className="flex flex-wrap items-end justify-between gap-4">
+      <Select
+        id="atlas-map-focus"
+        label={t('connections.map.focusOn')}
+        isLabelVisible
+        options={[
+          { value: '', label: t('connections.map.everyone') },
+          ...onMap.map((id) => ({ value: id, label: words.nameOf(id) })),
+        ]}
+        value={focusId}
+        onChange={onFocus}
+      />
+      <Button type="button" variant="secondary" disabled={!canArrange} onClick={onArrange}>
+        {t('connections.map.arrange')}
+      </Button>
+    </div>
+  );
+}
+
 /**
  * Renders the toolbar and the map.
  *
@@ -71,6 +111,7 @@ export function ConnectionsMapView({
 }: ConnectionsMapViewProps) {
   const { t } = useAtlasTranslation();
   const { move, arrange } = useRelationshipChangers(slug);
+  const { pickColour } = useRelationshipColour(slug);
   const [focusId, setFocusId] = useState('');
   const [failure, setFailure] = useState<string | null>(null);
   const pending = usePendingPlaces(cast);
@@ -98,22 +139,14 @@ export function ConnectionsMapView({
 
   return (
     <div className="flex min-w-0 flex-col gap-4">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <Select
-          id="atlas-map-focus"
-          label={t('connections.map.focusOn')}
-          isLabelVisible
-          options={[
-            { value: '', label: t('connections.map.everyone') },
-            ...onMap.map((id) => ({ value: id, label: words.nameOf(id) })),
-          ]}
-          value={focusId}
-          onChange={setFocusId}
-        />
-        <Button type="button" variant="secondary" disabled={!hasMovedCards} onClick={onArrange}>
-          {t('connections.map.arrange')}
-        </Button>
-      </div>
+      <MapToolbar
+        onMap={onMap}
+        words={words}
+        focusId={focusId}
+        onFocus={setFocusId}
+        canArrange={hasMovedCards}
+        onArrange={onArrange}
+      />
       <p className="m-0 type-body text-ink-muted">{t('connections.map.dragHint')}</p>
       <div aria-live="polite">{failure !== null && <Notice tone="error">{failure}</Notice>}</div>
       <RelationshipMap
@@ -123,6 +156,7 @@ export function ConnectionsMapView({
         dragActions={{ onMove, onConnect }}
         focusId={focusId === '' ? null : focusId}
         pendingPlaces={pending.places}
+        onPickColour={pickColour}
       />
     </div>
   );
