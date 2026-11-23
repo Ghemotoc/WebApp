@@ -152,12 +152,13 @@ test.describe('Downloads and privacy (IDEAS-2a)', () => {
       const page = await openSettings(browser, 'adult_writer', 'privacy');
       await page.setViewportSize({ width, height: 900 });
       const panel = page.locator('#privacy');
-      // The page opened at 1440 px; narrowing it leaves the old scroll position somewhere in the
-      // middle of the panel, which no person sees. Bring the panel's top back below the header
-      // first, as following the #privacy link does.
-      await panel.evaluate((element) => element.scrollIntoView({ block: 'start' }));
       await panel.getByText('How long we keep things').click();
       await expect(panel.getByText(/Notifications:/)).toBeVisible();
+      // Back to the top of the page before axe looks. The page opened at 1440 px, and narrowing it
+      // and opening the list leave the scroll position wherever they happen to; a control then
+      // sitting under the sticky top bar reads as "partly covered", which no person on this page
+      // sees. At the top, nothing is under the bar, so the check is the same on every run.
+      await page.evaluate(() => window.scrollTo(0, 0));
       // Reduce motion ends every animation at once, so axe measures the colours the screen
       // settles on, not a fade half-way through (as in e2e/support/accessibility.ts; FINAL-1).
       await page.emulateMedia({ reducedMotion: 'reduce' });
