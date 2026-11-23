@@ -69,13 +69,15 @@ export function TopBar({
     // NAV-1 (Robert, 10 Nov 2026): the bar floats over the page however far it scrolls. The
     // header's own box lets clicks through to the page around the pill; the pill takes them.
     // The website's numbers: 16 px from the top with 12 px inside at rest, 10 px and 8 px scrolled.
+    // CALM-9 (Robert's canvas comments of 23 Nov 2026): the bar is up to 1376 px wide, wider than
+    // the 1280 px page column, with 32 px of side space at 1440 px.
     <header
       data-scrolled={isScrolled}
-      className="top-bar pointer-events-none sticky top-0 z-30 px-[clamp(16px,4vw,64px)]"
+      className="top-bar pointer-events-none sticky top-0 z-30 px-[clamp(16px,2.2vw,32px)]"
     >
       <div
         data-solid={isScrolled}
-        className="top-bar-pill glass-float pointer-events-auto mx-auto flex max-w-[1280px] flex-wrap items-center gap-x-4 gap-y-2.5 rounded-[36px] pr-2 pl-5"
+        className="top-bar-pill glass-float pointer-events-auto mx-auto flex max-w-[1376px] flex-wrap items-center gap-x-4 gap-y-2.5 rounded-[36px] pr-2 pl-5"
       >
         <Link
           to={homeAddress}

@@ -104,9 +104,13 @@ describe('the app shell', () => {
     for (const name of ['Read', 'Write and talk', 'Help and legal']) {
       expect(within(footer).getByRole('navigation', { name })).toBeInTheDocument();
     }
-    expect(within(footer).getByRole('link', { name: 'Report content' })).toHaveAttribute(
+    expect(within(footer).getByRole('link', { name: 'Report without an account' })).toHaveAttribute(
       'href',
       '/report',
+    );
+    expect(within(footer).getByRole('link', { name: 'Join a class' })).toHaveAttribute(
+      'href',
+      '/class',
     );
   });
 });

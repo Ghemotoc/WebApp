@@ -84,7 +84,7 @@ test.describe('Website pages by country and language (LOCALISE-1)', () => {
       await route.continue();
     });
     await page.goto('/');
-    await page.getByRole('contentinfo').getByRole('link', { name: 'Termeni' }).click();
+    await page.getByRole('contentinfo').getByRole('link', { name: 'Informații legale' }).click();
     await expect(page).toHaveURL(/\/legal\/terms$/);
     await expect(page.getByRole('navigation', { name: 'Documente legale' })).toBeVisible();
   });
