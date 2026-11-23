@@ -280,5 +280,12 @@
     "addLabel": "Adaugă o țară",
     "choose": "Alege o țară",
     "hint": "Cititorii din aceste țări nu pot găsi sau deschide povestea și nu li se spune de ce. Selectează din nou o țară ca povestea să apară acolo."
+  },
+  "wizard": {
+    "next": "Mai departe: {{step}}",
+    "skip": "Sari peste pasul ăsta",
+    "change": "Schimbă",
+    "changeStep": "Schimbă {{step}}",
+    "done": ", gata"
   }
 }

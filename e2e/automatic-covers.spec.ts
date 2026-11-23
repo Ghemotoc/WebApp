@@ -14,6 +14,7 @@
  */
 import { expect, test, type Browser } from '@playwright/test';
 
+import { goToLastNewStoryStep, goToNewStoryStep } from './support/newStoryWizard';
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
 import { signInPersona, useSessionInBrowser } from './support/personas';
@@ -49,6 +50,9 @@ test.describe('automatic covers (S1-E3-13)', () => {
     browser,
   }) => {
     const page = await openAsWriter(browser, '/write/new');
+    // The cover is the wizard's third step (CALM-9, board D02); the basics need a title first.
+    await page.getByRole('textbox', { name: 'Title' }).fill('Scurt');
+    await goToNewStoryStep(page, 'Cover');
 
     // The automatic-cover box, with the design the story would get.
     await expect(
@@ -75,14 +79,17 @@ test.describe('automatic covers (S1-E3-13)', () => {
     await expect(rightNow).toBeVisible();
 
     // The title changes nothing: the same design is named after typing a long title.
+    await page.getByRole('button', { name: 'Change The basics' }).click();
     await page.getByRole('textbox', { name: 'Title' }).fill(title);
+    await page.getByRole('radio', { name: 'Română' }).click();
+    await goToNewStoryStep(page, 'Cover');
     await expect(
       page.getByText(`Right now: ${namedDesign ?? ''}, picked for you automatically.`),
     ).toBeVisible();
 
     // Create with the automatic cover: the card on Your writing draws the same design, with the
     // full title, and the database stores nothing for the cover.
-    await page.getByRole('radio', { name: 'Română' }).click();
+    await goToLastNewStoryStep(page);
     // Every story needs a rating and an AI answer before it saves (S1-E3-06).
     await page.getByRole('radio', { name: 'All ages', exact: true }).click();
     await page.getByRole('radio', { name: 'No AI', exact: true }).click();

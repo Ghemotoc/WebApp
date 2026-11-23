@@ -73,6 +73,8 @@ export interface MyStory {
   isAppOnly: boolean;
   /** The countries where the story is hidden (COUNTRY-1); empty when it shows everywhere. */
   hiddenInCountries: string[];
+  /** The countries the story takes place in (CALM-9, board D02); empty when not said. */
+  setInCountries: string[];
   commentsEnabled: boolean;
   /** Who may comment while comments are on (MUST-1a). */
   commentAudience: CommentAudience;
@@ -244,7 +246,7 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
   const { data, error } = await client
     .from('stories')
     .select(
-      'id, slug, title, blurb, language_code, cover_kind, cover_design, cover_background, cover_accent, cover_style, cover_title_font, cover_tall_path, first_published_at, created_at, completion_status, visibility, is_app_only, hidden_in_countries, comments_enabled, comment_audience, comments_paused_until, quote_cards_enabled, picture_sharing_enabled, card_colour, deleted_at, rating, is_fan_fiction, is_parody, deals_with_abuse_or_coercion, content_note, ai_disclosure, rating_reasons, ai_undisclosed_labelled_at, categories(slug), story_tags(tags(name)), chapters(code, position, status)',
+      'id, slug, title, blurb, language_code, cover_kind, cover_design, cover_background, cover_accent, cover_style, cover_title_font, cover_tall_path, first_published_at, created_at, completion_status, visibility, is_app_only, hidden_in_countries, set_in_countries, comments_enabled, comment_audience, comments_paused_until, quote_cards_enabled, picture_sharing_enabled, card_colour, deleted_at, rating, is_fan_fiction, is_parody, deals_with_abuse_or_coercion, content_note, ai_disclosure, rating_reasons, ai_undisclosed_labelled_at, categories(slug), story_tags(tags(name)), chapters(code, position, status)',
     )
     // A story in several languages shows once, as its original; its other languages are on its
     // Languages page (TRANSLATE-1c). A removed language still comes back, so "Recently deleted"
@@ -274,6 +276,7 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
     visibility: row.visibility,
     isAppOnly: row.is_app_only,
     hiddenInCountries: row.hidden_in_countries,
+    setInCountries: row.set_in_countries,
     commentsEnabled: row.comments_enabled,
     commentAudience: row.comment_audience === 'followers' ? 'followers' : 'everyone',
     commentsPausedUntil: row.comments_paused_until,
@@ -354,7 +357,58 @@ export async function updateMyStory(
   const appOnlyOutcome = await setMyStoryAppOnly(client, slug, settings.isAppOnly);
   // COUNTRY-1: then the countries where it is hidden.
   if (appOnlyOutcome !== 'ok') return appOnlyOutcome;
-  return setMyStoryHiddenCountries(client, slug, settings.hiddenInCountries);
+  const hiddenOutcome = await setMyStoryHiddenCountries(client, slug, settings.hiddenInCountries);
+  // CALM-9 (board D02): then the countries it is set in.
+  if (hiddenOutcome !== 'ok') return hiddenOutcome;
+  return setMyStorySetInCountries(client, slug, settings.setInCountries);
+}
+
+/**
+ * Saves the countries the writer's own story takes place in ("Set in"; CALM-9, board D02). The
+ * database writes it to every edition of the story.
+ *
+ * @param client - the shared Supabase client
+ * @param slug - the story's public address
+ * @param countries - two-letter codes, at most five; an empty list clears it
+ * @returns the outcome
+ * Errors: throws when the database refuses a code or the count, or can't be reached.
+ */
+export async function setMyStorySetInCountries(
+  client: AppSupabaseClient,
+  slug: string,
+  countries: string[],
+): Promise<SettingsOutcome> {
+  const { data, error } = await client.rpc('set_my_story_set_in_countries', {
+    story_slug: slug,
+    countries,
+  });
+  if (error !== null)
+    throw new Error(`Could not save the countries the story is set in: ${error.message}`);
+  return toSettingsOutcome(data);
+}
+
+/**
+ * Saves the two new story answers create_story() doesn't take: who can read it (step 4 of the
+ * wizard, NEW-1) and "Set in" (step 2, CALM-9), each only when the writer changed it from the
+ * start (public, no countries), so a plain story makes no extra calls.
+ *
+ * @param client - the shared Supabase client
+ * @param slug - the new story's address, from createStory()
+ * @param input - the checked answers
+ * @returns 'ok', or the first outcome that wasn't
+ * Errors: throws when a save is refused or the database can't be reached.
+ */
+export async function saveNewStoryExtras(
+  client: AppSupabaseClient,
+  slug: string,
+  input: Pick<NewStoryInput, 'visibility' | 'setInCountries'>,
+): Promise<SettingsOutcome> {
+  if (input.visibility !== 'public') {
+    const visibilityOutcome = await setMyStoryVisibility(client, slug, input.visibility);
+    if (visibilityOutcome !== 'ok') return visibilityOutcome;
+  }
+  if (input.setInCountries.length === 0) return 'ok';
+  return setMyStorySetInCountries(client, slug, input.setInCountries);
 }
 
 /**

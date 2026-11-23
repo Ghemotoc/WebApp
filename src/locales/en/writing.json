@@ -23,14 +23,14 @@
     "back": "Writer dashboard",
     "eyebrow": "Write · new story",
     "heading": "Start a new story",
-    "intro": "Fill in the basics, then write chapter one. You can change this later in story settings.",
+    "intro": "Five short steps, then you write chapter one. Everything can change later in story settings.",
     "basics": "The basics",
     "title": "Title",
     "blurb": "Blurb",
     "blurbHint": "One or two sentences: who the story is about and what happens. {{count}} of {{max}} characters.",
     "language": "Language of the story (required)",
     "languageHint": "Choose the language your story is written in. More languages open once we have moderators who read them.",
-    "categoryAndTags": "Category and tags",
+    "categoryAndTags": "Category, tags and setting",
     "category": "Category",
     "tags": "Tags",
     "tagsHint": "{{count}} of {{max}} tags. Separate them with commas. Capital letters and diacritics don’t matter, and a tag typed in another language becomes its name in yours. A new tag shows to readers once our team approves it.",
@@ -51,7 +51,25 @@
     "allSuggestions_one": "Show {{count}} suggestion",
     "allSuggestions_few": "Show the {{count}} suggestions",
     "allSuggestions_other": "Show the {{count}} suggestions",
-    "fewerSuggestions": "Show fewer suggestions"
+    "fewerSuggestions": "Show fewer suggestions",
+    "stepsLabel": "Steps to start a story",
+    "steps": {
+      "basics": "The basics",
+      "categoryTags": "Category, tags and setting",
+      "cover": "Cover",
+      "whoCanRead": "Who can read it",
+      "labels": "Labels, rating and AI"
+    },
+    "summary": {
+      "noTitle": "No title yet",
+      "tags_one": "{{count}} tag",
+      "tags_few": "{{count}} tags",
+      "tags_other": "{{count}} tags",
+      "setIn": "Set in {{countries}}",
+      "coverAutomatic": "Automatic cover",
+      "coverDrawn": "Drawn cover",
+      "coverUpload": "Your picture"
+    }
   },
   "categories": {
     "fiction": "Fiction",
@@ -176,7 +194,9 @@
     "abuseNeedsNote": "Add a content note for a story about abuse or coercion.",
     "contentNoteTooLong": "A content note can have at most {{max}} characters.",
     "chapterCreateFailed": "The story was saved, but we couldn’t open chapter one. Open it from Writing.",
-    "ratingReasonsMissing": "Tick at least one reason why it is 16+ or 18+."
+    "ratingReasonsMissing": "Tick at least one reason why it is 16+ or 18+.",
+    "setInInvalid": "Choose a country from the list.",
+    "setInTooMany": "A story can be set in at most 5 countries."
   },
   "storyCard": {
     "settings": "Story settings",
@@ -673,5 +693,14 @@
   "whereItShows": {
     "heading": "Where it shows",
     "intro": "Hide this story in countries you choose. A reader’s connection decides it, so it works as a block, not a lock: a VPN can get around it."
+  },
+  "setIn": {
+    "label": "Set in",
+    "search": "Search for a country",
+    "hint": "Where the story takes place. {{count}} of {{max}} countries.",
+    "full": "{{max}} of {{max}} countries. Remove one to add another.",
+    "remove": "Remove {{country}}",
+    "groupLabel": "Countries the story is set in",
+    "preview": "Set in {{countries}}"
   }
 }
