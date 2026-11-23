@@ -1,9 +1,12 @@
 /**
- * Floating navigation bar: the page column sits 10 px inside the bar (GLASS-4; Robert, 12 Nov 2026).
+ * Floating navigation bar: the page column sits inside the bar (GLASS-4; Robert, 12 Nov 2026), and
+ * the bar is wider than the column (CALM-9; Robert's canvas comments of 23 Nov 2026: a 1376 px
+ * header over 1280 px of content).
  *
  * What this proves, in a real browser:
- * - from 1024 px (the website top bar) the page column (PageContainer) starts 10 px after the
- *   bar's left edge and ends 10 px before its right edge, so the bar reads as floating;
+ * - from 1024 px (the website top bar) the page column (PageContainer) sits at least 10 px inside
+ *   the bar on each side, the same on both sides, so the bar reads as floating;
+ * - at 1440 and 1920 px the bar is 1376 px wide and the column 1280 px;
  * - under 1024 px (the phone header's floating pills) the column stays at least 10 px inside them;
  * - on the narrowest phones (320 px) the Write and Legal pages still fit: nothing pushes the page
  *   sideways (CLAUDE.md rule 21). Before GLASS-4's fit fixes the "Write chapter one" button and
@@ -37,7 +40,7 @@ async function measureInset(page: Page, barSelector: string): Promise<ColumnInse
 }
 
 for (const width of [1920, 1440, 1024]) {
-  test(`at ${String(width)} px the page column sits 10 px inside the navigation bar on each side`, async ({
+  test(`at ${String(width)} px the page column sits inside the navigation bar, the same on each side`, async ({
     browser,
   }) => {
     const context = await browser.newContext({ viewport: { width, height: 900 } });
@@ -45,9 +48,34 @@ for (const width of [1920, 1440, 1024]) {
     await page.goto('/discover');
     await expect(page.locator('.top-bar-pill')).toBeVisible();
     const inset = await measureInset(page, '.top-bar-pill');
-    // Half a pixel of rounding is allowed; a missing inset (0) or a doubled one (20) is not.
-    expect(Math.abs(inset.left - 10)).toBeLessThanOrEqual(0.5);
-    expect(Math.abs(inset.right - 10)).toBeLessThanOrEqual(0.5);
+    // At least 10 px in from each edge, and centred under the bar (half a pixel of rounding).
+    expect(inset.left).toBeGreaterThanOrEqual(10);
+    expect(inset.right).toBeGreaterThanOrEqual(10);
+    expect(Math.abs(inset.left - inset.right)).toBeLessThanOrEqual(0.5);
+    await context.close();
+  });
+}
+
+for (const width of [1920, 1440]) {
+  test(`at ${String(width)} px the bar is 1376 px wide over a 1280 px column`, async ({
+    browser,
+  }) => {
+    const context = await browser.newContext({ viewport: { width, height: 900 } });
+    const page = await context.newPage();
+    await page.goto('/discover');
+    await expect(page.locator('.top-bar-pill')).toBeVisible();
+    const widths = await page.evaluate(() => {
+      const bar = document.querySelector('.top-bar-pill');
+      const column = document.querySelector('main [data-page-column], [data-page-column]');
+      if (bar === null || column === null)
+        throw new Error('The bar or the page column is missing.');
+      const style = getComputedStyle(column);
+      const columnBox = column.getBoundingClientRect();
+      const padding = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+      return { bar: bar.getBoundingClientRect().width, column: columnBox.width - padding };
+    });
+    expect(Math.abs(widths.bar - 1376)).toBeLessThanOrEqual(0.5);
+    expect(Math.abs(widths.column - 1280)).toBeLessThanOrEqual(0.5);
     await context.close();
   });
 }

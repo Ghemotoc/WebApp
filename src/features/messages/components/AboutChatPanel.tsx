@@ -74,7 +74,9 @@ export function AboutChatPanel({ chat }: { chat: Conversation }) {
         <p className="m-0 text-body">{t(followLineKey(chat))}</p>
       </div>
       <MySettingRows />
-      {chat.status !== null && !chat.isRequestToMe && <DeleteChatControl handle={chat.handle} />}
+      {chat.status !== null && !chat.isRequestToMe && (
+        <DeleteChatControl handle={chat.handle} name={chat.displayName} />
+      )}
       <div className="mt-4 flex flex-col gap-1 rounded-card bg-panel p-4">
         <h3 className="m-0 text-sm font-semibold text-heading">{t('about.privacyTitle')}</h3>
         <p className="m-0 text-body">{t('about.privacy')}</p>

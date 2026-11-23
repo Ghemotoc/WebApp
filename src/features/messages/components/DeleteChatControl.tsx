@@ -3,6 +3,12 @@
  * Messages 5.5: "This removes the chat for you. When both of you delete it, the messages are
  * deleted for good.").
  *
+ * The confirmation is CALM-9 board E13's popup: an alertdialog titled "Delete this chat?", the
+ * line "It goes from your messages straight away. When [name] deletes it too, the messages are
+ * gone for good." and the buttons "Keep the chat" and "Delete the chat" (danger colour). It is a
+ * native <dialog> opened with showModal(), so focus moves inside and Escape keeps the chat;
+ * "Keep the chat" is the first button, so it takes focus first (the safe choice).
+ *
  * The chat goes for the reader only and the other person isn't told; if someone writes again,
  * the chat comes back with only the new messages. Once both have deleted it, the nightly
  * clean-up deletes the messages for good (purge_deleted_chats()). After deleting, the reader is
@@ -10,13 +16,12 @@
  * Who shows it: AboutChatPanel, for a chat that has started and isn't a request to the reader.
  * What it calls: useDeleteChat → delete_conversation().
  */
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
-import { PeopleDialog } from '@/features/people/components/PeopleDialog';
 
 import { useDeleteChat } from '../hooks/useMessageSettings';
 import { useMessagesTranslation } from '../registerMessagesTranslations';
@@ -25,9 +30,10 @@ import { useMessagesTranslation } from '../registerMessagesTranslations';
  * Renders the button, its explanation and the confirmation.
  *
  * @param props.handle - the other person's username
+ * @param props.name - the other person's pen name or username, as the chat shows it
  * @returns the control
  */
-export function DeleteChatControl({ handle }: { handle: string }) {
+export function DeleteChatControl({ handle, name }: { handle: string; name: string }) {
   const { t } = useMessagesTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const deleting = useDeleteChat();
@@ -62,28 +68,77 @@ export function DeleteChatControl({ handle }: { handle: string }) {
         {t('deleteChat.button')}
       </Button>
       <p className="m-0 text-sm text-body">{t('deleteChat.explain')}</p>
-      <PeopleDialog
+      <DeleteChatDialog
         isOpen={isOpen}
+        name={name}
+        hasFailed={deleting.hasFailed}
+        isDeleting={deleting.isDeleting}
         onClose={close}
-        eyebrow={t('deleteChat.eyebrow')}
-        title={t('deleteChat.title')}
-        closeLabel={t('deleteChat.close')}
-      >
-        <p className="m-0 text-body">{t('deleteChat.explain')}</p>
-        {deleting.hasFailed && <Notice tone="error">{t('deleteChat.failed')}</Notice>}
-        <div className="flex flex-wrap justify-end gap-3">
-          <Button variant="secondary" onClick={close}>
+        onConfirm={() => void confirm()}
+      />
+    </div>
+  );
+}
+
+/** What the confirmation needs. */
+interface DeleteChatDialogProps {
+  isOpen: boolean;
+  /** The other person's name, said in the line under the title. */
+  name: string;
+  hasFailed: boolean;
+  isDeleting: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+}
+
+/**
+ * The "Delete this chat?" popup (CALM-9, board E13).
+ *
+ * @param props - whether it is open, the name, the deleting state and the two actions
+ * @returns the native <dialog> with role alertdialog
+ */
+function DeleteChatDialog(props: DeleteChatDialogProps) {
+  const { t } = useMessagesTranslation();
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  // Open and close the native dialog as the prop changes; showModal() traps focus inside.
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (dialog === null) return;
+    if (props.isOpen && !dialog.open) dialog.showModal();
+    if (!props.isOpen && dialog.open) dialog.close();
+  }, [props.isOpen]);
+
+  return (
+    <dialog
+      ref={dialogRef}
+      role="alertdialog"
+      aria-labelledby="delete-chat-heading"
+      aria-describedby="delete-chat-body"
+      onClose={props.onClose}
+      className="m-auto w-[min(480px,calc(100vw-32px))] rounded-card border border-border bg-surface p-7 text-ink shadow-card backdrop:bg-ink/45"
+    >
+      <div className="flex flex-col gap-3.5">
+        <h2
+          id="delete-chat-heading"
+          className="m-0 font-heading text-[26px] leading-[1.15] font-bold text-heading"
+        >
+          {t('deleteChat.title')}
+        </h2>
+        <p id="delete-chat-body" className="m-0 text-base leading-relaxed text-body">
+          {t('deleteChat.body', { name: props.name })}
+        </p>
+        {/* A failed attempt keeps the popup open with a plain message. */}
+        {props.hasFailed && <Notice tone="error">{t('deleteChat.failed')}</Notice>}
+        <div className="mt-1.5 flex flex-wrap justify-end gap-2">
+          <Button variant="secondary" onClick={props.onClose}>
             {t('deleteChat.cancel')}
           </Button>
-          <Button
-            variant="destructive"
-            disabled={deleting.isDeleting}
-            onClick={() => void confirm()}
-          >
-            {t(deleting.isDeleting ? 'deleteChat.deleting' : 'deleteChat.confirm')}
+          <Button variant="destructive" disabled={props.isDeleting} onClick={props.onConfirm}>
+            {t(props.isDeleting ? 'deleteChat.deleting' : 'deleteChat.confirm')}
           </Button>
         </div>
-      </PeopleDialog>
-    </div>
+      </div>
+    </dialog>
   );
 }

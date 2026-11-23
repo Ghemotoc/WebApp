@@ -3,9 +3,11 @@
  *
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase started first).
  * What it proves:
- * - adult_writer creates a story with tags "Fantezie" and "fantezie": one tag, shown as
- *   "Fantasy" in the English interface (CMS-1e), a drawn cover
+ * - adult_writer goes through the five-step wizard (CALM-9, board D02) and creates a story with
+ *   tags "Fantezie" and "fantezie": one tag, shown as "Fantasy" in the English interface (CMS-1e),
+ *   set in Romania (its own field, not a tag), a drawn cover
  *   with a long title at phone width, recoloured within the palette, and sees it on Your writing;
+ * - Next refuses to leave the basics without a title;
  * - the upload tab is not offered while picture_uploads is off (no uploads in the demo);
  * - teen_17 (read-only while the test is adults only) can't create a story and never sees
  *   adult_writer's new story;
@@ -18,6 +20,7 @@ import { expect, test, type Browser } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
+import { goToLastNewStoryStep, goToNewStoryStep } from './support/newStoryWizard';
 import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
@@ -73,7 +76,21 @@ test.describe('create a story (S1-E3-01)', () => {
     await page.getByRole('textbox', { name: 'Title' }).fill(longTitle);
     await page.getByLabel('Blurb').fill('O vară în atelierul bunicului din Ploiești.');
     await page.getByRole('radio', { name: 'Română' }).click();
+    await expect(page.locator('li[aria-current="step"] h2')).toHaveText('The basics');
+
+    // Step 2: category, tags and setting. The basics fold to their summary with a Change button.
+    await goToNewStoryStep(page, 'Category, tags and setting');
+    await expect(page.getByText(`${longTitle} · Română`)).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Change The basics' })).toBeVisible();
     await page.getByRole('radio', { name: 'Fiction' }).click();
+
+    // "Set in" (board D02): Romania is a country chip with a pin, not a tag, and the preview says
+    // so on its own line.
+    const setInField = page.getByRole('combobox', { name: 'Set in' });
+    await setInField.fill('Romania');
+    await setInField.press('Enter');
+    await expect(page.getByRole('button', { name: 'Remove Romania' })).toBeVisible();
+    await expect(page.getByRole('complementary').getByText('Set in Romania')).toBeVisible();
 
     // Tags: Fantezie and fantezie are one tag, the recommended Fantasy, named in the interface
     // language (CMS-1e); the counter says so.
@@ -82,15 +99,16 @@ test.describe('create a story (S1-E3-01)', () => {
     await tagField.press('Enter');
     await tagField.fill('fantezie');
     await tagField.press('Enter');
-    await tagField.fill('set in Romania');
-    await tagField.press('Enter');
     await expect(
       page.getByRole('button', { name: 'Remove tag Fantasy', exact: true }),
     ).toBeVisible();
     await expect(
       page.getByRole('button', { name: 'Remove tag Fantezie', exact: true }),
     ).toHaveCount(0);
-    await expect(page.getByText('2 of 10 tags.', { exact: false })).toBeVisible();
+    await expect(page.getByText('1 of 10 tags.', { exact: false })).toBeVisible();
+
+    // Step 3: the cover.
+    await goToNewStoryStep(page, 'Cover');
 
     // A drawn cover: Starry night, recoloured to a Sky background; the preview carries the
     // full long title with no clipping, and the pen name.
@@ -112,6 +130,10 @@ test.describe('create a story (S1-E3-01)', () => {
       390,
     );
 
+    // Step 4 can be skipped (the story stays public); step 5 holds the labels.
+    await goToNewStoryStep(page, 'Who can read it');
+    await page.getByRole('button', { name: 'Skip this step' }).click();
+    await expect(page.locator('li[aria-current="step"] h2')).toHaveText('Labels, rating and AI');
     // Every story needs a rating and an AI answer before it saves (S1-E3-06).
     await page.getByRole('radio', { name: 'All ages', exact: true }).click();
     await page.getByRole('radio', { name: 'No AI', exact: true }).click();
@@ -123,12 +145,13 @@ test.describe('create a story (S1-E3-01)', () => {
     await page.goto('/write');
     const card = page.getByRole('article', { name: longTitle });
     await expect(card).toBeVisible();
-    await expect(card.getByText('Fantasy · Set in Romania')).toBeVisible();
+    await expect(card.getByText('Fantasy', { exact: true })).toBeVisible();
     await expect(
       card.getByText('Only you can see this story until you publish its first chapter.'),
     ).toBeVisible();
 
-    // In the database: owned by adult_writer's user ID, with the chosen cover and one tag.
+    // In the database: owned by adult_writer's user ID, with the chosen cover, one tag and
+    // Romania in "Set in".
     expect(
       runSql(
         `select user_id || ' ' || cover_kind || ' ' || cover_design || ' ' || cover_background
@@ -139,7 +162,12 @@ test.describe('create a story (S1-E3-01)', () => {
       runSql(
         `select count(*) from public.story_tags where story_id = (select id from public.stories where title = '${longTitle}')`,
       ),
-    ).toBe('2');
+    ).toBe('1');
+    expect(
+      runSql(
+        `select array_to_string(set_in_countries, ',') from public.stories where title = '${longTitle}'`,
+      ),
+    ).toBe('RO');
   });
 
   test('teen_17 cannot create a story and does not see adult_writer’s new story', async ({
@@ -152,6 +180,7 @@ test.describe('create a story (S1-E3-01)', () => {
 
     await page.goto('/write/new');
     await page.getByRole('textbox', { name: 'Title' }).fill('Fata care repara radiouri (teen)');
+    await goToLastNewStoryStep(page);
     // Every story needs a rating and an AI answer before it saves (S1-E3-06).
     await page.getByRole('radio', { name: 'All ages', exact: true }).click();
     await page.getByRole('radio', { name: 'No AI', exact: true }).click();
@@ -164,8 +193,10 @@ test.describe('create a story (S1-E3-01)', () => {
 
   test('the form refuses an empty title before asking the database', async ({ browser }) => {
     const page = await openAsPersona(browser, 'adult_writer', '/write/new');
-    await page.getByRole('button', { name: 'Create and write chapter one' }).click();
+    // The wizard's first step won't move on without a title (CALM-9, board D02).
+    await page.getByRole('button', { name: 'Next: Category, tags and setting' }).click();
     await expect(page.getByText('Give the story a title.')).toBeVisible();
+    await expect(page.locator('li[aria-current="step"] h2')).toHaveText('The basics');
     await expect(page.getByRole('textbox', { name: 'Title' })).toHaveAttribute(
       'aria-invalid',
       'true',

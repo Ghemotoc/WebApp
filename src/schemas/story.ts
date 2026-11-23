@@ -145,6 +145,15 @@ function labelRules(labels: LabelsForRules, context: z.RefinementCtx) {
   }
 }
 
+/** Who can read a story (NEW-1): everyone, anyone with the link, or only the writer. */
+export const storyVisibilities = ['public', 'unlisted', 'private'] as const;
+
+/** One of storyVisibilities. */
+export type StoryVisibility = (typeof storyVisibilities)[number];
+
+/** At most this many countries in "Set in" (CALM-9, board D02; stories_set_in_countries_are_codes). */
+export const MAXIMUM_SET_IN_COUNTRIES = 5;
+
 /** The answers on the new story form, before the rules that span fields. */
 const newStoryShape = z.object({
   // The form makes the story's ID (crypto.randomUUID()) so the automatic cover is known before
@@ -164,6 +173,15 @@ const newStoryShape = z.object({
     // Look-alikes count as one tag, so two of them are a mistake the form prevents.
     .refine((tags) => new Set(tags.map(normaliseTag)).size === tags.length, 'errors.duplicateTag'),
   cover: storyCoverSchema,
+  /**
+   * Where the story takes place (CALM-9, board D02 "Set in"): two-letter codes, at most five;
+   * saved through set_my_story_set_in_countries(), which cleans them again.
+   */
+  setInCountries: z
+    .array(z.string().regex(/^[A-Z]{2}$/, 'errors.setInInvalid'))
+    .max(MAXIMUM_SET_IN_COUNTRIES, 'errors.setInTooMany'),
+  /** Who can read it (NEW-1); the wizard's step 4, saved through its own function. */
+  visibility: z.enum(storyVisibilities),
   ...storyLabelsShape,
 });
 
@@ -188,12 +206,6 @@ export const cardColourKeys = [
   'sage',
   'paper',
 ] as const;
-
-/** Who can read a story (NEW-1): everyone, anyone with the link, or only the writer. */
-export const storyVisibilities = ['public', 'unlisted', 'private'] as const;
-
-/** One of storyVisibilities. */
-export type StoryVisibility = (typeof storyVisibilities)[number];
 
 /**
  * Who may add comments while they are on (MUST-1a; the check on stories.comment_audience):
@@ -243,8 +255,6 @@ export const storySettingsSchema = newStoryShape
     pictureSharingEnabled: z.boolean(),
     /** The palette colour readers' new cards start in, or null for our default (IDEAS-1c). */
     cardColour: z.enum(cardColourKeys).nullable(),
-    /** Who can read it (NEW-1); saved through its own function. */
-    visibility: z.enum(storyVisibilities),
     /** "In the app only" (S1-E3-08, GAPS-15); saved through its own function. */
     isAppOnly: z.boolean(),
     /**
