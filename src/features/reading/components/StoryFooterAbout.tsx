@@ -62,8 +62,8 @@ export function StoryFooterAbout({ statement }: { statement: StoryStatement }) {
   const pieces = statementSentence(statement.facts, words, brand.productName);
 
   return (
-    // break-words: a title or name that is one long word stays inside a 390 px screen.
-    <div className="max-w-[46ch] text-[15px] leading-6 break-words">
+    // overflow-wrap anywhere and min-w-0: a title or name that is one long word wraps inside a 390 px screen instead of widening the footer.
+    <div className="w-full max-w-[46ch] min-w-0 text-[15px] leading-6 [overflow-wrap:anywhere]">
       <p className="m-0 text-ink">
         {pieces.map((piece, index) => (
           <SentencePiece key={index} piece={piece} writerHandle={statement.writerHandle} />

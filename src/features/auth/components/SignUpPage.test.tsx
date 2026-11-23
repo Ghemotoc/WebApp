@@ -36,6 +36,7 @@ function marchFlags() {
   vi.mocked(useFeatureFlags).mockReturnValue({
     isOn: (key: string) => key === 'invite_only' || key === 'adults_only',
     isLoaded: true,
+    hasFailed: false,
   });
 }
 
@@ -337,6 +338,7 @@ describe('the country you live in (MARKETS-1)', () => {
     vi.mocked(useFeatureFlags).mockReturnValue({
       isOn: (key: string) => key === 'invite_only',
       isLoaded: true,
+      hasFailed: false,
     });
     openSignUp('/join/GOOD');
     fillForm();
@@ -354,6 +356,7 @@ describe('SignUpPage with the waiting list (WAITLIST-1)', () => {
     vi.mocked(useFeatureFlags).mockReturnValue({
       isOn: (key: string) => ['invite_only', 'adults_only', 'waitlist'].includes(key),
       isLoaded: true,
+      hasFailed: false,
     });
   }
 

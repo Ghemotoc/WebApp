@@ -21,7 +21,6 @@ import { expect, test } from '@playwright/test';
 import { checkScreen, everyView } from './support/accessibility';
 import { runSql } from './support/database';
 import { expectNoDoodles } from './support/noDoodles';
-import { signInPersona, useSessionInBrowser } from './support/personas';
 
 const adultWriterId = '00000000-0000-4000-8000-000000000001';
 
@@ -66,12 +65,12 @@ test.describe('the home page hero', () => {
   test.beforeAll(seedStories);
   test.afterAll(cleanUp);
 
-  test('the cover wall shows only All ages and 13+ stories, even to an adult', async ({
+  test('the cover wall shows a signed-out visitor only All ages and 13+ stories', async ({
     browser,
   }) => {
-    // adult_writer may read 16+ and 18+ stories, so only the wall's own rule can hide them.
+    // Members skip the website home for the Writers' hub (TRIAL-WALL), so the wall is checked
+    // as a signed-out visitor sees it.
     const context = await browser.newContext();
-    await useSessionInBrowser(context, (await signInPersona('adult_writer')).session);
     const page = await context.newPage();
     await page.goto('/');
 

@@ -14,7 +14,15 @@
 export const homeAddressPattern = /\/$|\/[a-z]{2}\/[a-z]{2}$/;
 
 /**
- * The whole home page address on this website and no other: used where a journey must prove it
- * stayed on our own site (the log-in page never follows `next` to another website).
+ * Where a signed-in member lands from the home page: the same addresses, or the hub, because a
+ * member skips the website home (TRIAL-WALL, Robert, 23 Nov 2026). Which one a journey sees
+ * depends on whether the forward has happened yet.
  */
-export const ownHomeAddressPattern = /^http:\/\/[^/]+\/([a-z]{2}\/[a-z]{2})?$/;
+export const memberHomeAddressPattern = /\/$|\/[a-z]{2}\/[a-z]{2}$|\/hub$/;
+
+/**
+ * The whole home page address on this website and no other, or the hub a signed-in member is
+ * sent on to (TRIAL-WALL): used where a journey must prove it stayed on our own site (the log-in
+ * page never follows `next` to another website).
+ */
+export const ownHomeAddressPattern = /^http:\/\/[^/]+\/([a-z]{2}\/[a-z]{2}|hub)?$/;

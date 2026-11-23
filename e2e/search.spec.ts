@@ -3,7 +3,8 @@
  *
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase started first).
  * What it proves:
- * - from Discover, a visitor searches without diacritics and finds the stories (criteria 1 and 2);
+ * - from Discover, a member searches without diacritics and finds the stories (criteria 1 and 2;
+ *   the top bar's search is for members only since TRIAL-WALL);
  * - a 16+ story never appears for a visitor (criterion 3);
  * - more than 20 stories make one line of 20 with "View more", which opens every story found,
  *   sorted by best match (criterion 4);
@@ -18,6 +19,7 @@ import { expect, test } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
+import { signInPersona, useSessionInBrowser } from './support/personas';
 
 // Fixed words, not a time stamp: Playwright builds the test titles in every worker, so a title
 // that holds a changing word isn't found again ("Test not found in the worker process").
@@ -60,19 +62,26 @@ test.describe('search (S1-E5-04)', () => {
     ] as const);
   });
 
-  test('a visitor searches from Discover without diacritics and finds the stories', async ({
+  test('a member searches from Discover without diacritics and finds the stories', async ({
     page,
   }) => {
+    // The top bar's search shows only to a signed-in member (TRIAL-WALL, Robert, 23 Nov 2026).
+    await useSessionInBrowser(page.context(), (await signInPersona('adult_writer')).session);
     await page.goto('/discover');
-    // The top bar's search pill (bundle G4 SHELL): Enter opens the Search page.
-    const topBarSearch = page.getByRole('banner').getByRole('searchbox', {
-      name: 'Search stories, writers and Together',
-    });
-    await topBarSearch.fill(foldedWord);
+    // The top bar's search pill (bundle G4 SHELL): Enter opens the Search page. The member's own
+    // account language takes over from the English set above once the profile loads, which
+    // redraws the bar, so the search box is found by its role alone and typed into until the
+    // word stays put.
+    const topBarSearch = page.getByRole('banner').getByRole('searchbox');
+    await expect(async () => {
+      await topBarSearch.fill(foldedWord);
+      await expect(topBarSearch).toHaveValue(foldedWord, { timeout: 1000 });
+    }).toPass();
     await topBarSearch.press('Enter');
     await expect(page).toHaveURL(new RegExp(`/search\\?q=${foldedWord}$`));
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText(`Results for “${foldedWord}”`);
-    await expect(page.getByRole('heading', { name: '21 stories' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1 })).toContainText(foldedWord);
+    // An adult member also sees the 16+ story, so all 22 are found (a visitor's 21 are below).
+    await expect(page.getByRole('heading', { name: /^22 / })).toBeVisible();
     await expect(
       page.getByRole('link', { name: new RegExp(`${word} 1\\b`) }).first(),
     ).toBeVisible();

@@ -95,7 +95,7 @@ The app follows the decision or the DoD rule on the right; the boards still draw
 | Reader (3.5) | Previous and Next chapter on every chapter | Left out at the first and last chapter, so no link does nothing; after the last chapter: "That's the latest chapter so far." and "Back to the story" (S1-E4-01a) |
 | Reader (3.5) | The writer's name links to their profile | Plain text until profiles exist (S1-E5-05) |
 | Reader (3.5) | Signed-out visitors | They get the teaser page (board 3.8) instead of the reader (S1-E4-04) |
-| Teaser (3.8) | A sample teaser of about 200 words | The first whole paragraphs up to 600 words, cut on the server (decided 23 Oct 2026); the text fades out only when the chapter goes on |
+| Teaser (3.8) | A sample teaser of about 200 words | The first whole paragraphs up to 40 words and at most half the chapter, cut on the server (TRIAL-WALL, 23 Nov 2026; 600 words from 23 Oct 2026); the text fades out only when the chapter goes on |
 | Teaser (3.8) | "Join for free to read on", sign up with Google, Apple or Microsoft, the Yoti check, parents for under-16s, and a "Join for free" button | "Log in to read on" with the March wording: a test for invited adults, log in or join with the invitation's link; "Log in" and "Back to the story" (decided 17 Oct 2026, 12:44). The board's copy comes back with the public launch |
 | Teaser (3.8) | "About the apps" link under the apps line | The line stays without the link until there is an apps page (S1-E16-01) |
 | Teaser (3.8) | "15 chapters" and "1.2k reads" pills on the story card | Category and status only: public numbers wait for S1-E3-07 |

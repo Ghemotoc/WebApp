@@ -54144,6 +54144,8 @@ declare
   words_so_far integer := 0;
   kept text[] := '{}';
   first_words text[];
+  -- TRIAL-WALL: the smaller of the setting and half the chapter, at least one word.
+  allowed_words integer := greatest(1, least(word_limit, public.word_total(coalesce(chapter_body, '')) / 2));
 begin
   foreach paragraph in array paragraphs loop
     paragraph_words := public.word_total(paragraph);
@@ -54152,7 +54154,7 @@ begin
       continue;
     end if;
     -- Step 2: keep the whole paragraph while it still fits.
-    if words_so_far + paragraph_words <= word_limit then
+    if words_so_far + paragraph_words <= allowed_words then
       kept := kept || btrim(paragraph, E' \t\n\r');
       words_so_far := words_so_far + paragraph_words;
       continue;
@@ -54160,7 +54162,7 @@ begin
     -- Step 3: the first paragraph alone is too long: cut it at the limit and mark the cut.
     if words_so_far = 0 then
       first_words := regexp_split_to_array(btrim(paragraph, E' \t\n\r'), E'\\s+');
-      kept := kept || (array_to_string(first_words[1:word_limit], ' ') || '…');
+      kept := kept || (array_to_string(first_words[1:allowed_words], ' ') || '…');
     end if;
     -- Step 4: stop at the first paragraph that doesn't fit.
     exit;
@@ -54173,7 +54175,7 @@ $$;
 ALTER FUNCTION "public"."teaser_of"("chapter_body" "text", "word_limit" integer) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."teaser_of"("chapter_body" "text", "word_limit" integer) IS 'The first whole paragraphs of a chapter up to a word limit, for signed-out visitors (S1-E4-04).';
+COMMENT ON FUNCTION "public"."teaser_of"("chapter_body" "text", "word_limit" integer) IS 'The first whole paragraphs of a chapter up to a word limit or half the chapter, for signed-out visitors (S1-E4-04, TRIAL-WALL).';
 
 
 

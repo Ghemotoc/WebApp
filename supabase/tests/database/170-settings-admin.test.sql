@@ -59,7 +59,7 @@ select lives_ok($$ select public.admin_set_setting('rate_limits', jsonb_set(valu
   'and one part of it can change');
 reset role;
 select ok(exists (select 1 from public.audit_log where action = 'settings.value' and target_id = 'teaser_length'
-                  and before_values ->> 'value' = '600' and after_values ->> 'value' = '300'),
+                  and before_values ->> 'value' = '40' and after_values ->> 'value' = '300'),
   'a setting change is logged with before and after');
 
 /* ---------- Categories ---------- */
