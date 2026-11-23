@@ -6,8 +6,8 @@
  * the number readers know it by. Drafts, scheduled and unpublished chapters move without a
  * question (lib/chapterMoves.ts, needsMoveQuestion).
  * It follows DeleteChapterDialog: a native <dialog> with role="alertdialog", focus stays
- * inside, Escape keeps the order, and focus starts on "Keep the order", the safe choice, because
- * showModal() focuses the first button.
+ * inside, Escape keeps the order, and focus starts on "Keep the order", the safe choice, put
+ * there after showModal() because the main button comes first (design books item 8).
  * Who uses it: ManageChaptersPage. What it calls: onConfirm, which the page turns into
  * move_chapter() or set_chapter_order() through useManageChapters.
  */
@@ -39,7 +39,12 @@ export function MoveChapterDialog({ move, onConfirm, onClose }: MoveChapterDialo
   useEffect(() => {
     const dialog = dialogRef.current;
     if (dialog === null) return;
-    if (isOpen && !dialog.open) dialog.showModal();
+    if (isOpen && !dialog.open) {
+      dialog.showModal();
+      // The main button now comes first (design books item 8), so the focus is put on the
+      // safe choice by hand instead of on the first button.
+      dialog.querySelector<HTMLElement>('[data-safe-choice]')?.focus();
+    }
     if (!isOpen && dialog.open) dialog.close();
   }, [isOpen]);
 
@@ -69,7 +74,7 @@ export function MoveChapterDialog({ move, onConfirm, onClose }: MoveChapterDialo
           <Button size="lg" onClick={onConfirm}>
             {t('manageChapters.moveDialog.confirm')}
           </Button>
-          <Button size="lg" variant="secondary" onClick={onClose}>
+          <Button size="lg" variant="secondary" onClick={onClose} data-safe-choice>
             {t('manageChapters.moveDialog.keep')}
           </Button>
         </ButtonRow>
