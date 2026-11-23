@@ -425,9 +425,9 @@
       "documentTitle": "You’re on the list · {{productName}}",
       "heading": "You’re on the list",
       "joined": "You joined on {{date}}",
-      "next": "We let people in a few at a time, writers first. When your place comes up, we’ll email you to say you’re in. Until then you can’t write, read or post yet, but you can get your profile ready.",
-      "nextClosed": "We’re not open in {{country}} yet. Once it opens, we’ll email you to say you’re in. Until then you can’t write, read or post yet, but you can get your profile ready.",
-      "nextClosedUnknown": "We’re not open in your country yet. Once it opens, we’ll email you to say you’re in. Until then you can’t write, read or post yet, but you can get your profile ready.",
+      "next": "We let people in a few at a time, writers first. When your place comes up, we’ll email you to say you’re in. Until then you can’t write, read or post yet, but you can get your profile ready in three short steps. Each one is optional.",
+      "nextClosed": "We’re not open in {{country}} yet. Once it opens, we’ll email you to say you’re in. Until then you can’t write, read or post yet, but you can get your profile ready in three short steps. Each one is optional.",
+      "nextClosedUnknown": "We’re not open in your country yet. Once it opens, we’ll email you to say you’re in. Until then you can’t write, read or post yet, but you can get your profile ready in three short steps. Each one is optional.",
       "interestLabel": "What do you want to do here?",
       "saved": "Saved.",
       "saveFailed": "We couldn’t save that. Check your connection and try again.",
@@ -435,6 +435,19 @@
       "logOut": "Log out",
       "logOutFailed": "We couldn’t log you out. Check your connection and try again.",
       "identityNote": "We may ask you to confirm your identity later."
+    },
+    "steps": {
+      "label": "Steps to get the profile ready",
+      "interest": "What you want to do here",
+      "avatar": "Your avatar",
+      "likes": "What you like",
+      "done": "Done",
+      "finished": "The profile is ready. Change any step here or in Settings.",
+      "summary": {
+        "avatarSaved": "Avatar saved",
+        "initials": "Initials show for now",
+        "likes": "Picks can change any time"
+      }
     }
   }
 }

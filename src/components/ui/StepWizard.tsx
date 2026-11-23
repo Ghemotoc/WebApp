@@ -12,7 +12,7 @@
  * - A later step shows only its number and title, in muted text.
  * Keyboard: every button is a real button; when a step opens, focus moves to its title, so a
  * keyboard or screen reader user lands at the start of the new step.
- * Who uses it: NewStoryPage (D02). What it calls: nothing; useStepWizard keeps its place and the
+ * Who uses it: NewStoryPage (D02) and the waiting list's WaitlistProfileSteps (H08). What it calls: nothing; useStepWizard keeps its place and the
  * page decides what "Next" checks first.
  */
 import { useEffect, useRef, type ReactNode, type RefObject } from 'react';

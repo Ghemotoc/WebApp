@@ -40,7 +40,11 @@ function Harness() {
       onOpenStep={wizard.openStep}
       onNext={wizard.goToNextStep}
       onSkip={wizard.goToNextStep}
-      lastStepActions={<button type="button">Create</button>}
+      lastStepActions={
+        <button type="button" onClick={wizard.finish}>
+          Create
+        </button>
+      }
     />
   );
 }
@@ -75,5 +79,19 @@ describe('StepWizard', () => {
     expect(screen.getAllByRole('listitem')[0]).toHaveAttribute('aria-current', 'step');
     // The step reached before stays done, with its own Change button.
     expect(screen.getByRole('button', { name: 'Change Cover' })).toBeInTheDocument();
+  });
+
+  it('folds every step as done after finish, and Change opens one again', () => {
+    renderWithProviders(<Harness />, 'en');
+    fireEvent.click(screen.getByRole('button', { name: 'Next: Cover' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Next: Labels' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Create' }));
+    // No step is open: each one shows its Change button instead of its fields.
+    expect(screen.queryByText('Label fields')).not.toBeInTheDocument();
+    for (const listItem of screen.getAllByRole('listitem')) {
+      expect(listItem).not.toHaveAttribute('aria-current');
+    }
+    fireEvent.click(screen.getByRole('button', { name: 'Change Labels' }));
+    expect(screen.getByText('Label fields')).toBeInTheDocument();
   });
 });
