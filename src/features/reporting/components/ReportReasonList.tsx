@@ -35,7 +35,9 @@ export function ReportReasonList({ chosen, onChoose, errorMessage }: ReportReaso
       aria-describedby={errorMessage === undefined ? hintId : `${hintId} ${errorId}`}
       aria-invalid={errorMessage === undefined ? undefined : true}
     >
-      <legend className="mb-3 p-0 text-sm font-semibold text-ink">{t('dialog.whatIsWrong')}</legend>
+      <legend className="mb-3 p-0 type-body font-semibold text-ink">
+        {t('dialog.whatIsWrong')}
+      </legend>
       <div className="flex flex-wrap gap-2">
         {reportReasons.map((reason) => {
           const isChosen = reason === chosen;
@@ -43,10 +45,10 @@ export function ReportReasonList({ chosen, onChoose, errorMessage }: ReportReaso
             <label
               key={reason}
               className={cn(
-                "relative inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border px-3.5 text-sm leading-none whitespace-nowrap after:absolute after:inset-x-0 after:top-1/2 after:h-11 after:-translate-y-1/2 after:content-[''] has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-(--focus-ring)",
+                "relative inline-flex h-9 cursor-pointer items-center gap-2 rounded-full border px-4 type-body leading-none whitespace-nowrap after:absolute after:inset-x-0 after:top-1/2 after:h-11 after:-translate-y-1/2 after:content-[''] has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-(--focus-ring)",
                 isChosen
-                  ? 'border-chip-on bg-chip-on font-bold text-chip-on-text'
-                  : 'border-control-border bg-surface font-semibold text-heading hover:bg-tint',
+                  ? 'border-chip-on bg-chip-on font-semibold text-chip-on-text'
+                  : 'border-control-border bg-surface font-semibold text-ink-heading hover:bg-tint',
               )}
             >
               <input
@@ -62,11 +64,11 @@ export function ReportReasonList({ chosen, onChoose, errorMessage }: ReportReaso
           );
         })}
       </div>
-      <p id={hintId} className="m-0 min-h-5 text-sm text-meta">
+      <p id={hintId} className="m-0 min-h-5 type-body text-ink-muted">
         {chosen === null ? t('dialog.pickOne') : t(`reasons.${chosen}.hint`)}
       </p>
       {errorMessage !== undefined && (
-        <p id={errorId} className="m-0 text-sm text-destructive">
+        <p id={errorId} className="m-0 type-body text-destructive">
           {errorMessage}
         </p>
       )}

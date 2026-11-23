@@ -47,7 +47,7 @@ function SharedState(props: {
       : t('storyClass.sharedWith', { name: share.sharedWith.name });
   return (
     <>
-      <p className="m-0 text-sm text-body">{text}</p>
+      <p className="m-0 type-body text-ink-muted">{text}</p>
       <div>
         <Button
           type="button"
@@ -72,7 +72,7 @@ function PublicState(props: {
   const [classSlug, setClassSlug] = useState(share.choices[0]?.slug ?? '');
   return (
     <>
-      <p className="m-0 text-sm text-body">{t('storyClass.publicNow')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('storyClass.publicNow')}</p>
       <Select
         id="story-class"
         label={t('storyClass.pick')}
@@ -109,7 +109,9 @@ export function StoryClassCard({ slug }: { slug: string }) {
   if (!share.isClassOnly && share.choices.length === 0) return null;
   return (
     <FormSection legend={t('storyClass.legend')}>
-      <p className="m-0 max-w-[640px] text-sm leading-normal text-body">{t('storyClass.intro')}</p>
+      <p className="m-0 max-w-[640px] type-body leading-normal text-ink-muted">
+        {t('storyClass.intro')}
+      </p>
       {share.isClassOnly ? (
         <SharedState share={share} change={change} />
       ) : (

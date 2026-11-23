@@ -19,7 +19,7 @@ import { isTouchDevice, telephoneHref } from '../lib/phoneLink';
  */
 function PhoneNumber({ phoneNumber, label }: { phoneNumber: string; label: string }) {
   const { t } = useTranslation('safety');
-  const classes = 'font-heading text-[22px] font-bold text-heading';
+  const classes = 'font-heading type-heading font-bold text-ink-heading';
   if (isTouchDevice(typeof window === 'undefined' ? undefined : window.matchMedia)) {
     return (
       <a
@@ -49,18 +49,18 @@ export function SafetyContactRow({ contact }: { contact: SafetyContact }) {
       : contact.openingHours;
   return (
     <li className="flex flex-col gap-1 border-t border-border py-3 first:border-t-0 first:pt-0">
-      <span className="text-[13px] font-semibold text-meta">{t(`kinds.${contact.kind}`)}</span>
+      <span className="type-meta font-semibold text-ink-muted">{t(`kinds.${contact.kind}`)}</span>
       <span className="text-ink">{contact.label}</span>
       {contact.phoneNumber !== null && (
         <PhoneNumber phoneNumber={contact.phoneNumber} label={contact.label} />
       )}
-      {openingHours !== null && <span className="text-sm text-meta">{openingHours}</span>}
+      {openingHours !== null && <span className="type-body text-ink-muted">{openingHours}</span>}
       {contact.link !== null && (
         <a
           href={contact.link}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm font-semibold text-link underline"
+          className="type-body font-semibold text-link underline"
         >
           {t('block.officialSite', { label: contact.label })}
         </a>

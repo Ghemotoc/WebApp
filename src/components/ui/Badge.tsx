@@ -42,7 +42,7 @@ export function Badge({ icon, title, hiddenPrefix, children, testId }: BadgeProp
       title={title}
       data-testid={testId}
       data-badge=""
-      className="relative inline-flex h-7 items-center justify-center gap-1.5 rounded-full border-[0.5px] border-(--line-box) bg-(--surface-box) px-2.5 text-xs leading-none font-semibold whitespace-nowrap text-ink"
+      className="relative inline-flex h-7 items-center justify-center gap-2 rounded-full border-[0.5px] border-(--line-box) bg-(--surface-box) px-3 type-meta leading-none font-semibold whitespace-nowrap text-ink"
     >
       {/* Step 1: the icon, if any, is decoration: the words carry the meaning. */}
       {icon === undefined ? null : (

@@ -86,12 +86,12 @@ export function HouseAdCreative({ ad, isStacked }: { ad: SlotAd; isStacked: bool
   return (
     <>
       <span className={isStacked ? 'min-w-0' : 'min-w-0 flex-[1_1_200px]'}>
-        <span className="block text-[15px] font-bold break-words text-ink">{words.title}</span>
-        <span className="mt-0.5 block text-[13px] text-body">{words.line ?? t('house.from')}</span>
+        <span className="block type-body font-semibold break-words text-ink">{words.title}</span>
+        <span className="mt-1 block type-meta text-ink-muted">{words.line ?? t('house.from')}</span>
       </span>
       <Link
         to={words.address}
-        className="inline-flex h-10 flex-none items-center rounded-full border border-control-border bg-surface px-4 text-sm font-semibold text-heading no-underline focus-visible:outline-2 focus-visible:outline-offset-2"
+        className="inline-flex h-10 flex-none items-center rounded-full border border-control-border bg-surface px-4 type-body font-semibold text-ink-heading no-underline focus-visible:outline-2 focus-visible:outline-offset-2"
       >
         {words.action}
       </Link>

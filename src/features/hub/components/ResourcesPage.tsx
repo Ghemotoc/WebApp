@@ -47,11 +47,13 @@ function RightsCard() {
     >
       <h2
         id="resources-rights"
-        className="m-0 font-heading text-[24px] font-extrabold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('resources.rights.heading')}
       </h2>
-      <p className="m-0 max-w-[640px] leading-relaxed text-body">{t('resources.rights.body')}</p>
+      <p className="m-0 max-w-[640px] leading-relaxed text-ink-muted">
+        {t('resources.rights.body')}
+      </p>
       <Link to={`/help/${writersRightsKey}`} className="self-start text-link underline">
         {t('resources.rights.link')}
       </Link>
@@ -77,17 +79,17 @@ function GuidesSection() {
     <section aria-labelledby="resources-guides" className="flex flex-col gap-3">
       <h2
         id="resources-guides"
-        className="m-0 font-heading text-[24px] font-extrabold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('resources.guides.heading')}
       </h2>
-      <p className="m-0 text-body">
+      <p className="m-0 text-ink-muted">
         {t('resources.guides.intro', { productName: brand.productName })}
       </p>
       {/* Step 2: a plain message when the guides can't be read, or a line while there are none. */}
       {pages.readFailed && <Notice tone="error">{t('resources.guides.loadFailed')}</Notice>}
       {pages.isLoaded && guides.length === 0 && (
-        <p className="m-0 text-body">{t('resources.guides.none')}</p>
+        <p className="m-0 text-ink-muted">{t('resources.guides.none')}</p>
       )}
       {guides.length > 0 && <ResourcesLinkList links={guides} />}
     </section>
@@ -107,18 +109,18 @@ export function ResourcesPage() {
     line: t(`resources.more.${link.key}Line`, { productName: brand.productName }),
   }));
   return (
-    <PageContainer className="flex max-w-[820px] flex-col gap-8 pt-10 pb-16">
+    <PageContainer className="flex max-w-[820px] flex-col gap-8 pt-8 pb-16">
       <title>{t('resources.documentTitle', { productName: brand.productName })}</title>
       <header className="flex flex-col gap-2">
         <h1 className="page-title">{t('resources.heading')}</h1>
-        <p className="m-0 text-lg leading-relaxed text-body">{t('resources.intro')}</p>
+        <p className="m-0 type-long leading-relaxed text-ink-muted">{t('resources.intro')}</p>
       </header>
       <RightsCard />
       <GuidesSection />
       <section aria-labelledby="resources-more" className="flex flex-col gap-3">
         <h2
           id="resources-more"
-          className="m-0 font-heading text-[24px] font-extrabold text-heading"
+          className="m-0 font-heading type-heading font-bold text-ink-heading"
         >
           {t('resources.more.heading')}
         </h2>

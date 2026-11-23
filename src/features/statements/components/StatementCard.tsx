@@ -47,10 +47,13 @@ export function StatementCard({
       className="flex flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card"
     >
       <div className="flex flex-col gap-1">
-        <h3 id={`statement-${statement.reference}`} className="m-0 text-xl font-bold text-heading">
+        <h3
+          id={`statement-${statement.reference}`}
+          className="m-0 type-subheading font-bold text-ink-heading"
+        >
           {t(`decisions.titles.${statement.action}`)}
         </h3>
-        <p className="m-0 text-sm text-meta">
+        <p className="m-0 type-body text-ink-muted">
           {t('decisions.meta', {
             date: readableDate(statement.issuedAt, i18n.language),
             reference: statement.reference,

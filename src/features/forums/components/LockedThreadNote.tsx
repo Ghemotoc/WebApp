@@ -29,27 +29,30 @@ export function LockedThreadNote({ lock }: { lock: ForumThreadLock }) {
   return (
     <section
       aria-labelledby="locked-heading"
-      className="rounded-card border border-dashed border-control-border bg-surface p-5 md:p-6"
+      className="rounded-card border border-dashed border-control-border bg-surface p-4 md:p-6"
     >
-      <div className="flex flex-wrap items-start gap-4 rounded-2xl bg-panel p-5">
-        <span className="flex size-11 flex-none items-center justify-center rounded-full border border-border bg-surface text-heading">
+      <div className="flex flex-wrap items-start gap-4 rounded-card bg-panel p-4">
+        <span className="flex size-11 flex-none items-center justify-center rounded-full border border-border bg-surface text-ink-heading">
           <ActionIcon name="lock" size={22} />
         </span>
-        <div className="flex min-w-0 flex-[1_1_320px] flex-col gap-1.5">
-          <h2 id="locked-heading" className="m-0 font-heading text-xl font-bold text-heading">
+        <div className="flex min-w-0 flex-[1_1_320px] flex-col gap-2">
+          <h2
+            id="locked-heading"
+            className="m-0 font-heading type-subheading font-bold text-ink-heading"
+          >
             {t('locked.heading')}
           </h2>
-          <p className="m-0 text-[15px] leading-relaxed text-body">
+          <p className="m-0 type-body leading-relaxed text-ink-muted">
             {t('locked.byTeam', {
               date: threadDay(lock.lockedAt, i18n.language),
               reason: lock.reason,
             })}
           </p>
-          <p className="m-0 text-[15px] leading-relaxed text-body">{t('locked.stillRead')}</p>
+          <p className="m-0 type-body leading-relaxed text-ink-muted">{t('locked.stillRead')}</p>
           {lock.next !== null && (
             <Link
               to={`/forums/${lock.next.forumSlug}/${lock.next.number}`}
-              className="inline-block max-w-full self-start py-2.5 text-[15px] font-semibold [overflow-wrap:anywhere] text-link underline"
+              className="inline-block max-w-full self-start py-3 type-body font-semibold [overflow-wrap:anywhere] text-link underline"
             >
               {t('locked.goTo', { title: lock.next.title })}
             </Link>

@@ -83,7 +83,7 @@ function ActionChips({
       aria-describedby={problem === 'action_missing' ? 'decision-action-error' : undefined}
       aria-invalid={problem === 'action_missing' ? true : undefined}
     >
-      <legend className="mb-3 p-0 text-sm font-semibold text-ink">{t('case.form.legend')}</legend>
+      <legend className="mb-3 p-0 type-body font-semibold text-ink">{t('case.form.legend')}</legend>
       <div className="flex flex-wrap gap-2">
         {offeredActions.map((action) => {
           const isChosen = action === chosen;
@@ -91,10 +91,10 @@ function ActionChips({
             <label
               key={action}
               className={cn(
-                "relative inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border px-3.5 text-sm leading-none whitespace-nowrap after:absolute after:inset-x-0 after:top-1/2 after:h-11 after:-translate-y-1/2 after:content-[''] has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-(--focus-ring)",
+                "relative inline-flex h-9 cursor-pointer items-center gap-2 rounded-full border px-4 type-body leading-none whitespace-nowrap after:absolute after:inset-x-0 after:top-1/2 after:h-11 after:-translate-y-1/2 after:content-[''] has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-(--focus-ring)",
                 isChosen
-                  ? 'border-chip-on bg-chip-on font-bold text-chip-on-text'
-                  : 'border-control-border bg-surface font-semibold text-heading hover:bg-tint',
+                  ? 'border-chip-on bg-chip-on font-semibold text-chip-on-text'
+                  : 'border-control-border bg-surface font-semibold text-ink-heading hover:bg-tint',
               )}
             >
               <input
@@ -111,7 +111,7 @@ function ActionChips({
         })}
       </div>
       {problem === 'action_missing' && (
-        <p id="decision-action-error" role="alert" className="m-0 text-sm text-destructive">
+        <p id="decision-action-error" role="alert" className="m-0 type-body text-destructive">
           {t('case.form.actionMissing')}
         </p>
       )}
@@ -151,7 +151,7 @@ function SuspensionDays({
         ]}
       />
       {problem === 'days_missing' && (
-        <p role="alert" className="m-0 text-sm text-destructive">
+        <p role="alert" className="m-0 type-body text-destructive">
           {t('case.form.daysMissing')}
         </p>
       )}
@@ -207,7 +207,7 @@ function MessageField({
         onChange={(event) => onChange(event.target.value)}
       />
       {problem === 'message_missing' && (
-        <p role="alert" className="m-0 text-sm text-destructive">
+        <p role="alert" className="m-0 type-body text-destructive">
           {t('case.form.messageMissing')}
         </p>
       )}
@@ -242,7 +242,7 @@ function NoteField({
         onChange={(event) => onChange(event.target.value)}
       />
       {problem === 'note_missing' && (
-        <p role="alert" className="m-0 text-sm text-destructive">
+        <p role="alert" className="m-0 type-body text-destructive">
           {t('case.form.noteMissing')}
         </p>
       )}
@@ -284,9 +284,12 @@ export function DecisionForm({ itemType, onDecide, isDeciding, failure }: Decisi
       noValidate
       onSubmit={handleSubmit}
       aria-labelledby="decision-heading"
-      className="flex flex-col gap-5 rounded-card border border-border bg-surface p-6 shadow-card"
+      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card"
     >
-      <h2 id="decision-heading" className="m-0 font-heading text-[24px] font-bold text-heading">
+      <h2
+        id="decision-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
+      >
         {t('case.form.heading')}
       </h2>
       <ActionChips
@@ -306,7 +309,7 @@ export function DecisionForm({ itemType, onDecide, isDeciding, failure }: Decisi
           {t(isDeciding ? 'case.form.sending' : 'case.form.send')}
         </Button>
       </div>
-      <p className="m-0 text-sm text-meta">{t('case.form.nextSteps')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('case.form.nextSteps')}</p>
     </form>
   );
 }

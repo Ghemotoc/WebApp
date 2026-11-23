@@ -78,14 +78,17 @@ export function PrintedNameForm({ certificate }: { certificate: MyCertificate })
   return (
     <section
       aria-labelledby="printed-name-heading"
-      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-5"
+      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-4"
     >
-      <h2 id="printed-name-heading" className="m-0 font-heading text-xl font-bold text-heading">
+      <h2
+        id="printed-name-heading"
+        className="m-0 font-heading type-subheading font-bold text-ink-heading"
+      >
         {t('name.title')}
       </h2>
-      <p className="m-0 text-body">{t('name.intro')}</p>
+      <p className="m-0 text-ink-muted">{t('name.intro')}</p>
       {isNameDeleted(certificate) ? (
-        <p className="m-0 text-body">{t('name.deleted')}</p>
+        <p className="m-0 text-ink-muted">{t('name.deleted')}</p>
       ) : (
         <form className="flex flex-col gap-4" onSubmit={save}>
           <TextInput
@@ -98,7 +101,7 @@ export function PrintedNameForm({ certificate }: { certificate: MyCertificate })
             onChange={(event) => setName(event.target.value)}
           />
           {certificate.nameDeletedOn !== null && (
-            <p className="m-0 text-sm text-body">
+            <p className="m-0 type-body text-ink-muted">
               {t('name.deletesOn', { date: certificateDate(certificate.nameDeletedOn, language) })}
             </p>
           )}

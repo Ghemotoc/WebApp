@@ -98,13 +98,13 @@ export function AddEventForm({ onAdd }: { onAdd: (event: NewStoryEvent) => Promi
 
   return (
     <form
-      className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface px-6 py-[22px] shadow-card"
+      className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface px-6 py-6 shadow-card"
       onSubmit={(submitted) => {
         submitted.preventDefault();
         void add();
       }}
     >
-      <h2 className="m-0 font-heading text-[22px] font-bold text-heading">
+      <h2 className="m-0 font-heading type-heading font-bold text-ink-heading">
         {t('storyline.timeline.add.heading')}
       </h2>
       <EventBoxes typed={typed} setTyped={setTyped} />

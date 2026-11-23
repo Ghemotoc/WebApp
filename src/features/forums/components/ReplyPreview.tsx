@@ -27,13 +27,13 @@ export function ReplyPreview({ text }: { text: string }) {
     <section
       id={replyPreviewId}
       aria-labelledby="reply-preview-heading"
-      className="flex flex-col gap-2 rounded-2xl border border-dashed border-control-border bg-paper px-[18px] py-3.5"
+      className="flex flex-col gap-2 rounded-card border border-dashed border-control-border bg-paper px-4 py-4"
     >
       <h3 id="reply-preview-heading" className="eyebrow m-0">
         {t('reply.previewHeading')}
       </h3>
       {text.trim() === '' ? (
-        <p className="m-0 text-[15px] text-meta">{t('reply.previewEmpty')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('reply.previewEmpty')}</p>
       ) : (
         <ForumPostText text={text} />
       )}

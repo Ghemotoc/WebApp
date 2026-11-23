@@ -62,9 +62,9 @@ function CardFacts({ chapter, povName }: { chapter: StorylineChapter; povName: s
   // Board E28: the line never wraps; a very long name is cut with an ellipsis instead.
   return (
     <>
-      <p className="m-0 truncate text-[13px] text-meta">{`${teller} · ${words}${published}`}</p>
+      <p className="m-0 truncate type-meta">{`${teller} · ${words}${published}`}</p>
       {chapter.worldDate !== '' && (
-        <p className="m-0 truncate text-[13px] text-meta">
+        <p className="m-0 truncate type-meta">
           {t('storyline.board.worldDate', { date: chapter.worldDate })}
         </p>
       )}
@@ -80,7 +80,7 @@ function CardTitle({
 }: Pick<BoardCardFaceProps, 'slug' | 'chapter' | 'isCopy'>) {
   const { t } = useAtlasTranslation();
   const title = chapter.title === '' ? t('storyline.board.untitled') : chapter.title;
-  const classes = 'text-base leading-snug font-bold break-words text-heading';
+  const classes = 'type-label break-words text-ink-heading';
   if (isCopy === true) return <span className={classes}>{title}</span>;
   return (
     <Link
@@ -100,12 +100,12 @@ function CardTitle({
 export function BoardCardFace({ slug, chapter, label, povName, menu, isCopy }: BoardCardFaceProps) {
   const { t } = useAtlasTranslation();
   return (
-    <div className="flex flex-col gap-1.5 p-3.5">
-      <div className="flex items-start gap-1.5">
+    <div className="flex flex-col gap-2 p-4">
+      <div className="flex items-start gap-2">
         {/* The grip only shows that the card can be dragged: the whole card is the handle. */}
         <span
           aria-hidden="true"
-          className="-ml-1.5 grid h-8 w-6 flex-none cursor-grab place-items-center text-meta"
+          className="-ml-2 grid h-8 w-6 flex-none cursor-grab place-items-center text-ink-muted"
         >
           <ActionIcon name="grip" size={16} />
         </span>

@@ -27,7 +27,7 @@ export function SpaceBreadcrumb({ space, current }: SpaceBreadcrumbProps) {
   const { t } = useSpacesTranslation();
   return (
     <nav aria-label={t('space.breadcrumb')}>
-      <ol className="m-0 flex list-none flex-wrap items-center gap-2 p-0 text-sm text-body">
+      <ol className="m-0 flex list-none flex-wrap items-center gap-2 p-0 type-body text-ink-muted">
         <li>
           <Link to="/forums" className={stepLink}>
             {t('space.forums')}

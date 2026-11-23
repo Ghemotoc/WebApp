@@ -53,7 +53,7 @@ function KeepPrivateBox({
 
   return (
     <div className="flex flex-col gap-1">
-      <label className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-heading">
+      <label className="inline-flex min-h-11 items-center gap-2 type-body font-semibold text-ink-heading">
         <input
           type="checkbox"
           className="h-5 w-5"

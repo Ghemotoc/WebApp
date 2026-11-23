@@ -40,7 +40,7 @@ function UpvoteCount({ count }: { count: number }) {
   const { t, i18n } = useForumsTranslation();
   if (count === 0) return null;
   return (
-    <span className="inline-flex h-9 items-center gap-1.5 text-sm font-semibold text-body">
+    <span className="inline-flex h-9 items-center gap-2 type-body font-semibold text-ink-muted">
       <ArrowDownIcon className="rotate-180" />
       <span aria-hidden="true">{new Intl.NumberFormat(i18n.language).format(count)}</span>
       <span className="sr-only">{t('votes.count', { count })}</span>
@@ -72,7 +72,7 @@ export function PostVotes({ postId, postNumber, votes }: PostVotesProps) {
         onPressedChange={() => press('up')}
         accessibleName={t('votes.upvoteLabel', { count: votes.up, number: postNumber })}
       >
-        <span className="inline-flex items-center gap-1.5">
+        <span className="inline-flex items-center gap-2">
           <ArrowDownIcon className="rotate-180" />
           {new Intl.NumberFormat(i18n.language).format(votes.up)}
         </span>
@@ -86,14 +86,14 @@ export function PostVotes({ postId, postNumber, votes }: PostVotesProps) {
         onClick={() => press('down')}
         className={cn(
           'inline-flex size-11 items-center justify-center rounded-full border',
-          isDown ? 'border-chip-on bg-chip-on text-chip-on-text' : 'button-glass text-body',
+          isDown ? 'border-chip-on bg-chip-on text-chip-on-text' : 'button-glass text-ink-muted',
         )}
       >
         <ArrowDownIcon />
       </button>
-      {isDown && <span className="text-sm text-body">{t('votes.private')}</span>}
+      {isDown && <span className="type-body text-ink-muted">{t('votes.private')}</span>}
       {voting.failed && (
-        <span role="alert" className="text-sm font-semibold text-destructive">
+        <span role="alert" className="type-body font-semibold text-destructive">
           {t('votes.failed')}
         </span>
       )}

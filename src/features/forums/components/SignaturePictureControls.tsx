@@ -40,7 +40,7 @@ function PicturePreview({ mine }: { mine: MySignature }) {
         <img
           src={view.url}
           alt={t('signature.previewAlt')}
-          className="size-14 shrink-0 rounded-xl border border-border object-cover"
+          className="size-14 shrink-0 rounded-field border border-border object-cover"
         />
       )}
       <Notice tone={picture.state === 'visible' ? 'success' : 'info'}>

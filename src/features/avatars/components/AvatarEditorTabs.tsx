@@ -53,7 +53,7 @@ export function AvatarEditorTabs({ draft, onChoose }: AvatarEditorTabsProps) {
   const [tabKey, setTabKey] = useState<AvatarTabKey>('face');
   const tab = avatarTabs.find((candidate) => candidate.key === tabKey) ?? avatarTabs[0];
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       {/* Step 1: the tabs, and the open tab's tiles and swatches. */}
       <Tabs
         label={t('builder.tabsLabel')}
@@ -65,7 +65,7 @@ export function AvatarEditorTabs({ draft, onChoose }: AvatarEditorTabsProps) {
         selected={tab.key}
         onSelect={setTabKey}
       >
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-4">
           {tab.parts.map((part) =>
             isColourPart(part) ? (
               <AvatarColourSwatches key={part} part={part} draft={draft} onChoose={onChoose} />
@@ -76,7 +76,7 @@ export function AvatarEditorTabs({ draft, onChoose }: AvatarEditorTabsProps) {
         </div>
       </Tabs>
       {/* Step 2: the background colour, outside the tabs so it stays put whichever tab is open. */}
-      <div className="flex flex-col gap-5 border-t border-border pt-4">
+      <div className="flex flex-col gap-4 border-t border-border pt-4">
         {avatarPartsUnderTabs.map((part) => (
           <AvatarColourSwatches key={part} part={part} draft={draft} onChoose={onChoose} />
         ))}

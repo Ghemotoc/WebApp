@@ -76,14 +76,14 @@ function WhyThisAd({ slot }: { slot: PageAdSlot }) {
         aria-expanded={isOpen}
         aria-controls={explanationId}
         onClick={() => setIsOpen((open) => !open)}
-        className="inline-flex min-h-11 items-center gap-1.5 self-start border-0 bg-transparent p-0 text-sm font-semibold text-link"
+        className="inline-flex min-h-11 items-center gap-2 self-start border-0 bg-transparent p-0 type-body font-semibold text-link"
       >
         {t('why.button')}
       </button>
       <p
         id={explanationId}
         hidden={!isOpen}
-        className="m-0 max-w-[60ch] rounded-xl border border-border bg-surface px-3.5 py-3 text-sm leading-relaxed text-ink"
+        className="m-0 max-w-[60ch] rounded-field border border-border bg-surface px-4 py-3 type-body leading-relaxed text-ink"
       >
         {whyThisAd(t, slot, i18n.language)}
       </p>
@@ -109,9 +109,9 @@ export function AdBox({ slot }: { slot: PageAdSlot }) {
       className={`gap-1 ${wrapperClasses[slot.format]}`}
     >
       <div
-        className={`box-border flex gap-3 rounded-2xl border border-border bg-surface px-4 py-3.5 ${formatClasses[slot.format]}`}
+        className={`box-border flex gap-3 rounded-card border border-border bg-surface px-4 py-4 ${formatClasses[slot.format]}`}
       >
-        <span className="inline-flex h-6 flex-none items-center justify-center rounded-full border border-(--pill-neutral-border) bg-(--pill-neutral-bg) px-2.5 text-xs leading-none font-bold tracking-[0.12em] text-(--pill-neutral-text) uppercase">
+        <span className="inline-flex h-6 flex-none items-center justify-center rounded-full border border-(--pill-neutral-border) bg-(--pill-neutral-bg) px-3 type-meta leading-none font-semibold tracking-[0.12em] text-(--pill-neutral-text) uppercase">
           {t(labelKeys[ad.label])}
         </span>
         <AdCreative ad={ad} isStacked={isStacked} />

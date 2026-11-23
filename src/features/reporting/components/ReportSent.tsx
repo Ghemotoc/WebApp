@@ -30,12 +30,12 @@ export function ReportSent({ receipt, onClose }: { receipt: ReportReceipt; onClo
   }).format(new Date(receipt.receivedAt));
   return (
     <div role="status" className="flex flex-col gap-4">
-      <p className="m-0 inline-flex items-center gap-2 font-heading text-[22px] font-bold text-heading">
+      <p className="m-0 inline-flex items-center gap-2 font-heading type-heading font-bold text-ink-heading">
         <CheckIcon />
         {t('sent.heading')}
       </p>
-      <p className="m-0 text-body">{t('sent.body')}</p>
-      <p className="m-0 text-sm text-meta">
+      <p className="m-0 text-ink-muted">{t('sent.body')}</p>
+      <p className="m-0 type-body text-ink-muted">
         {t('sent.reference', { reference: receipt.reference, receivedAt })}
       </p>
       <div>

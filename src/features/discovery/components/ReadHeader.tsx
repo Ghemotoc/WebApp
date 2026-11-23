@@ -55,7 +55,7 @@ export function ReadHeader() {
         {name !== null && <GreetingFact name={name} />}
         {name !== null && <FollowedUpdatesFact />}
       </ul>
-      <p className="m-0 max-w-[62ch] type-body text-body">
+      <p className="m-0 max-w-[62ch] type-body text-ink-muted">
         {t('discover.intro', { productName: brand.productName })}{' '}
         <Link to="/legal/terms#section-5" className="font-semibold underline underline-offset-2">
           {t('discover.howRanking')}

@@ -136,7 +136,7 @@ function DrawingFields(props: {
         errorMessage={props.missing?.alt === true ? t('pictureDialog.missingAlt') : undefined}
       />
       <PictureRulesNote id="chapter-drawing-rules" />
-      <p className="m-0 text-sm text-body">{t('drawingDialog.savedNote')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('drawingDialog.savedNote')}</p>
     </>
   );
 }
@@ -198,7 +198,7 @@ export function DrawingInsertDialog(props: DrawingInsertDialogProps) {
       >
         <h2
           id="chapter-drawing-heading"
-          className="m-0 font-heading text-[22px] font-bold text-heading"
+          className="m-0 font-heading type-heading font-bold text-ink-heading"
         >
           {t('drawingDialog.heading')}
         </h2>
@@ -210,7 +210,7 @@ export function DrawingInsertDialog(props: DrawingInsertDialogProps) {
         <DrawingFields alt={drawing.alt} missing={drawing.missing} onAltChange={drawing.setAlt} />
         <div aria-live="polite">
           {uploading.isUploading && (
-            <p className="m-0 text-sm text-body">{t('drawingDialog.uploading')}</p>
+            <p className="m-0 type-body text-ink-muted">{t('drawingDialog.uploading')}</p>
           )}
           {failure !== null && <Notice tone="error">{tCommon(failure.key, failure.values)}</Notice>}
         </div>

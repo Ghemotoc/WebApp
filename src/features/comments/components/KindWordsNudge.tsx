@@ -39,17 +39,17 @@ export function KindWordsNudge({ onEdit, onSendAnyway, isSending }: KindWordsNud
     <div
       role="group"
       aria-labelledby={questionId}
-      className="flex flex-col gap-3 rounded-2xl border border-(--info-border) bg-(--info-bg) px-[18px] py-3.5 text-(--info-text)"
+      className="flex flex-col gap-3 rounded-card border border-(--info-border) bg-(--info-bg) px-4 py-4 text-(--info-text)"
     >
       <p
         id={questionId}
         ref={questionRef}
         tabIndex={-1}
-        className="m-0 text-[15px] font-semibold outline-none"
+        className="m-0 type-body font-semibold outline-none"
       >
         {t('nudge.question')}
       </p>
-      <p className="m-0 text-sm">{t('nudge.explain')}</p>
+      <p className="m-0 type-body">{t('nudge.explain')}</p>
       <div className="flex flex-wrap gap-3">
         <Button variant="secondary" onClick={onEdit}>
           {t('nudge.edit')}

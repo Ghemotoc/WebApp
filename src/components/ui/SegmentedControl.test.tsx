@@ -29,9 +29,9 @@ describe('SegmentedControl', () => {
     expect(screen.getAllByRole('radio')).toHaveLength(3);
     const night = screen.getByRole('radio', { name: 'Night' });
     expect(night).toBeChecked();
-    expect(night.closest('label')).toHaveClass('font-bold');
+    expect(night.closest('label')).toHaveClass('font-semibold');
     expect(screen.getByRole('radio', { name: 'Light' }).closest('label')).toHaveClass(
-      'font-medium',
+      'font-normal',
     );
   });
 

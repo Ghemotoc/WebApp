@@ -29,7 +29,7 @@ function SettingGroup(props: { id: string; keys: string[]; state: SettingsAdminS
   const headingId = `values-${props.id}`;
   return (
     <div className="flex flex-col gap-3" role="group" aria-labelledby={headingId}>
-      <h3 id={headingId} className="m-0 text-base font-bold text-heading">
+      <h3 id={headingId} className="m-0 type-body font-bold text-ink-heading">
         {t(`values.groups.${props.id}`)}
       </h3>
       <ul className="m-0 grid list-none gap-x-6 gap-y-4 p-0 md:grid-cols-2 xl:grid-cols-3">

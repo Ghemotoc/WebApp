@@ -41,7 +41,7 @@ export function FormSection() {
           onChange={setSortOrder}
         />
       </div>
-      <div className="grid max-w-[560px] gap-5">
+      <div className="grid max-w-[560px] gap-4">
         <TextInput id="design-pen-name" label={t('forms.inputLabel')} hint={t('forms.inputHint')} />
         <TextInput
           id="design-pen-name-error"
@@ -52,7 +52,7 @@ export function FormSection() {
         <Textarea id="design-comment" label={t('forms.textareaLabel')} />
         {/* The tooltip pattern (S1-E2-02): hover, focus or tap; Escape closes it. */}
         <div className="relative flex items-center gap-2">
-          <span className="text-sm font-semibold text-ink">{t('forms.tooltipLabel')}</span>
+          <span className="type-body font-semibold text-ink">{t('forms.tooltipLabel')}</span>
           <InfoTooltip
             tooltipId="design-tooltip"
             buttonLabel={t('forms.tooltipButton')}

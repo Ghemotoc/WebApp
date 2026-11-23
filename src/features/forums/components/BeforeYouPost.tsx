@@ -25,7 +25,7 @@ export function BeforeYouPost() {
     // label "Post" too and be mistaken for the post field.
     <div className="flex flex-col gap-2">
       <h2 className="m-0 type-subheading">{t('beforePost.title')}</h2>
-      <p className="m-0 text-body">{t('beforePost.text')}</p>
+      <p className="m-0 text-ink-muted">{t('beforePost.text')}</p>
       {/* The text button sits flush with the words above it, as on the board. */}
       <Link
         to="/legal/guidelines"

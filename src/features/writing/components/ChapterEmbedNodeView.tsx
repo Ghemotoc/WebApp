@@ -27,12 +27,13 @@ import { EmbedLinkChange } from './EmbedLinkChange';
 /** The card's words, once its service is known. */
 function CardDetails({ view, title }: { view: EmbedView | undefined; title: string }) {
   const { t } = useEditorTranslation();
-  if (view === undefined) return <p className="m-0 text-sm text-meta">{t('embed.loading')}</p>;
+  if (view === undefined)
+    return <p className="m-0 type-body text-ink-muted">{t('embed.loading')}</p>;
   if (view.state === 'removed') {
     return (
       <div className="flex flex-col items-start gap-2">
         <InfoPill tone="blush">{t('embed.removed')}</InfoPill>
-        <p className="m-0 text-sm text-body">{t('embed.removedNote')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('embed.removedNote')}</p>
       </div>
     );
   }
@@ -41,11 +42,11 @@ function CardDetails({ view, title }: { view: EmbedView | undefined; title: stri
   return (
     <>
       <p className="m-0 eyebrow">{t(`embed.eyebrow.${kind}`, { service })}</p>
-      <p className="m-0 font-heading text-xl leading-tight font-bold text-ink">
+      <p className="m-0 font-heading type-subheading leading-tight font-bold text-ink">
         {view.title ?? (title === '' ? service : title)}
       </p>
-      <p className="m-0 text-sm text-body">{t(`embed.readersSee.${kind}`, { service })}</p>
-      <p className="m-0 text-[13px] text-meta">{t('embed.nothingLoads', { service })}</p>
+      <p className="m-0 type-body text-ink-muted">{t(`embed.readersSee.${kind}`, { service })}</p>
+      <p className="m-0 type-meta text-ink-muted">{t('embed.nothingLoads', { service })}</p>
     </>
   );
 }
@@ -69,7 +70,7 @@ export function ChapterEmbedNodeView({ node, updateAttributes, deleteNode }: Nod
       contentEditable={false}
       role="group"
       aria-label={t('embed.label')}
-      className="my-7 flex flex-wrap overflow-hidden rounded-field border border-border bg-surface text-[15px] leading-normal"
+      className="my-6 flex flex-wrap overflow-hidden rounded-field border border-border bg-surface type-body leading-normal"
     >
       <div
         aria-hidden="true"
@@ -81,9 +82,9 @@ export function ChapterEmbedNodeView({ node, updateAttributes, deleteNode }: Nod
           </svg>
         </span>
       </div>
-      <div className="flex min-w-0 flex-[1_1_280px] flex-col gap-1.5 px-5 py-4">
+      <div className="flex min-w-0 flex-[1_1_280px] flex-col gap-2 px-4 py-4">
         <CardDetails view={view} title={title} />
-        {loadFailed && <p className="m-0 text-sm text-destructive">{t('embed.notLoaded')}</p>}
+        {loadFailed && <p className="m-0 type-body text-destructive">{t('embed.notLoaded')}</p>}
         {chapterId !== null && (
           <div className="mt-1">
             <EmbedLinkChange

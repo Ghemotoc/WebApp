@@ -47,7 +47,7 @@ export function SignInPage() {
     >
       <OtherWaysToLogIn onSignedIn={() => void navigate(nextPath)} />
       <SignInForm form={form} />
-      <p className="m-0 text-sm text-body">
+      <p className="m-0 type-body text-ink-muted">
         {t('signIn.newHere')}{' '}
         <Link to="/sign-up" className="text-link underline">
           {t('signIn.join')}

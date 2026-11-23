@@ -38,7 +38,7 @@ function LogList({ space }: { space: Space }) {
     <SpaceFormCard eyebrow={space.name} title={t('log.title')} intro={t('log.intro')}>
       {log.loadFailed && <Notice tone="error">{t('log.loadFailed')}</Notice>}
       {log.entries !== null && log.entries.length === 0 && (
-        <p className="m-0 text-sm text-body">{t('log.empty')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('log.empty')}</p>
       )}
       {log.entries !== null && log.entries.length > 0 && (
         <ol className="m-0 list-none p-0">
@@ -69,7 +69,7 @@ export function SpaceLogPage() {
   const read = useSpace(spaceSlug);
   const space = read.data;
   return (
-    <PageContainer className="flex flex-col gap-6 py-10">
+    <PageContainer className="flex flex-col gap-6 py-8">
       {read.isError && <Notice tone="error">{t('space.loadFailed')}</Notice>}
       {space === null && <SpaceNotFound />}
       {space !== undefined && space !== null && (

@@ -37,7 +37,7 @@ interface BuilderBlockProps {
  */
 function BlockHeading({ block, language }: BuilderBlockProps) {
   return (
-    <h2 className="m-0 font-heading text-[26px] font-bold text-heading">
+    <h2 className="m-0 font-heading type-heading font-bold text-ink-heading">
       {wordsOf(block, language, 'heading')}
     </h2>
   );
@@ -51,7 +51,7 @@ function BlockHeading({ block, language }: BuilderBlockProps) {
 function PictureText(props: BuilderBlockProps) {
   const { block, language } = props;
   return (
-    <section className="grid items-center gap-5 md:grid-cols-2">
+    <section className="grid items-center gap-4 md:grid-cols-2">
       <LandingPicture
         block={block}
         language={language}
@@ -93,7 +93,7 @@ function StepTop({ position, language }: { position: number; language: LandingLa
     <>
       <span
         aria-hidden="true"
-        className="inline-flex size-12 shrink-0 items-center justify-center rounded-full bg-tint text-heading"
+        className="inline-flex size-12 shrink-0 items-center justify-center rounded-full bg-tint text-ink-heading"
       >
         <ActionIcon name={stepIconFor(position)} size={24} />
       </span>
@@ -124,14 +124,14 @@ function Entries(props: BuilderBlockProps) {
         {entries.map((entry, position) => (
           <li
             key={`${String(position)}-${entry.title}`}
-            className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface p-5 shadow-card"
+            className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface p-4 shadow-card"
           >
             {isSteps && <StepTop position={position} language={language} />}
             <div className="flex min-w-0 flex-col gap-1">
-              <h3 className="m-0 text-lg font-semibold text-ink [overflow-wrap:anywhere]">
+              <h3 className="m-0 type-long font-bold text-ink [overflow-wrap:anywhere]">
                 {entry.title}
               </h3>
-              <p className="m-0 text-body [overflow-wrap:anywhere]">{entry.body}</p>
+              <p className="m-0 text-ink-muted [overflow-wrap:anywhere]">{entry.body}</p>
             </div>
           </li>
         ))}
@@ -148,11 +148,11 @@ function Entries(props: BuilderBlockProps) {
 function Quote({ block, language }: BuilderBlockProps) {
   const source = wordsOf(block, language, 'source');
   return (
-    <figure className="m-0 flex flex-col gap-2 rounded-field bg-tint px-5 py-4">
-      <blockquote className="m-0 font-heading text-[22px] leading-snug text-heading">
+    <figure className="m-0 flex flex-col gap-2 rounded-field bg-tint px-4 py-4">
+      <blockquote className="m-0 font-heading type-heading leading-snug text-ink-heading">
         <p className="m-0 [overflow-wrap:anywhere]">{wordsOf(block, language, 'quote')}</p>
       </blockquote>
-      {source !== '' && <figcaption className="text-meta">{source}</figcaption>}
+      {source !== '' && <figcaption className="text-ink-muted">{source}</figcaption>}
     </figure>
   );
 }
@@ -168,7 +168,7 @@ function CallToAction(props: BuilderBlockProps) {
   return (
     <section className="flex flex-col items-start gap-3 rounded-card border border-border bg-surface p-6 shadow-card">
       <BlockHeading {...props} />
-      {body !== '' && <p className="m-0 text-body">{body}</p>}
+      {body !== '' && <p className="m-0 text-ink-muted">{body}</p>}
       <a href={safeLandingLink(block.link)} className={buttonClassName({ variant: 'primary' })}>
         {wordsOf(block, language, 'button_label')}
       </a>

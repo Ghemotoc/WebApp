@@ -57,7 +57,7 @@ export function PlanSelectField({
         descriptionId={hint === undefined ? undefined : `${id}-hint`}
       />
       {hint !== undefined && (
-        <p id={`${id}-hint`} className="m-0 text-sm text-meta">
+        <p id={`${id}-hint`} className="m-0 type-body text-ink-muted">
           {hint}
         </p>
       )}

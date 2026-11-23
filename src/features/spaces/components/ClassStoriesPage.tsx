@@ -37,16 +37,16 @@ export function ClassStoriesPage() {
   const stories = read.data ?? [];
   const name = space.data?.name ?? '';
   return (
-    <PageContainer className="flex flex-col gap-6 py-10">
+    <PageContainer className="flex flex-col gap-6 py-8">
       <title>{t('classStories.documentTitle', { name })}</title>
       <SpaceBreadcrumb space={{ slug: spaceSlug, name }} current={t('classStories.title')} />
       <header className="flex flex-col gap-2">
         <h1 className="m-0 type-title break-words lg:type-display">{t('classStories.title')}</h1>
-        <p className="m-0 text-body">{t('classStories.note', { name })}</p>
+        <p className="m-0 text-ink-muted">{t('classStories.note', { name })}</p>
       </header>
       {read.isError && <Notice tone="error">{t('classStories.loadFailed')}</Notice>}
       {read.isSuccess && stories.length === 0 && (
-        <p className="m-0 text-body">{t('classStories.empty')}</p>
+        <p className="m-0 text-ink-muted">{t('classStories.empty')}</p>
       )}
       {stories.length > 0 && (
         <StoryGrid stories={stories} hasMore={false} isLoadingMore={false} onLoadMore={doNothing} />

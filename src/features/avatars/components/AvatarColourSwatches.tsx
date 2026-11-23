@@ -31,8 +31,8 @@ export function AvatarColourSwatches({ part, draft, onChoose }: AvatarColourSwat
   const { t } = useAvatarsTranslation();
   const partName = t(`parts.${part}`);
   return (
-    <div className="flex flex-col gap-1.5">
-      <span id={`avatar-part-${part}`} className="text-[13px] font-semibold text-body">
+    <div className="flex flex-col gap-2">
+      <span id={`avatar-part-${part}`} className="type-meta font-semibold text-ink-muted">
         {partName}
       </span>
       <div

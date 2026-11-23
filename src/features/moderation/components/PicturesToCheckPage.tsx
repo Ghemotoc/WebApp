@@ -30,11 +30,12 @@ import { PictureToCheckCard } from './PictureToCheckCard';
 function PicturesList({ state }: { state: ReturnType<typeof usePicturesToCheck> }) {
   const { t } = useTranslation('moderation');
   if (state.loadFailure === 'not_allowed')
-    return <p className="m-0 text-body">{t('pictures.notAllowed')}</p>;
+    return <p className="m-0 text-ink-muted">{t('pictures.notAllowed')}</p>;
   if (state.loadFailure !== null)
     return <Notice tone="error">{t(`failures.${state.loadFailure}`)}</Notice>;
-  if (state.isLoading) return <p className="m-0 text-meta">{t('pictures.loading')}</p>;
-  if (state.pictures.length === 0) return <p className="m-0 text-body">{t('pictures.none')}</p>;
+  if (state.isLoading) return <p className="m-0 text-ink-muted">{t('pictures.loading')}</p>;
+  if (state.pictures.length === 0)
+    return <p className="m-0 text-ink-muted">{t('pictures.none')}</p>;
   return (
     <ul className="m-0 flex list-none flex-col gap-6 p-0" aria-label={t('pictures.listLabel')}>
       {state.pictures.map((picture) => (
@@ -61,16 +62,16 @@ export function PicturesToCheckPage() {
   const { t } = useTranslation('moderation');
   const state = usePicturesToCheck();
   return (
-    <PageContainer className="flex flex-col gap-6 pt-12 pb-7">
+    <PageContainer className="flex flex-col gap-6 pt-12 pb-6">
       <title>{t('pictures.documentTitle')}</title>
       <div className="flex max-w-[720px] flex-col gap-2">
         <Eyebrow>{t('queue.eyebrow')}</Eyebrow>
-        <h1 className="m-0 font-heading text-[34px] font-bold text-heading">
+        <h1 className="m-0 font-heading type-title font-bold text-ink-heading">
           {t('pictures.heading')}
         </h1>
-        <p className="m-0 text-body">{t('pictures.intro')}</p>
-        <p className="m-0 text-body">{t('pictures.guidance')}</p>
-        <p className="m-0 text-meta">{t('pictures.openedNote')}</p>
+        <p className="m-0 text-ink-muted">{t('pictures.intro')}</p>
+        <p className="m-0 text-ink-muted">{t('pictures.guidance')}</p>
+        <p className="m-0 text-ink-muted">{t('pictures.openedNote')}</p>
       </div>
       <div aria-live="polite">
         {state.decisionFailure !== null && (

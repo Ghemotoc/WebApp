@@ -63,13 +63,13 @@ export function FeaturedStoriesBlock({ block, language, stories }: FeaturedStori
         />
       ) : (
         <section className="flex flex-col gap-2">
-          <h2 className="m-0 font-heading text-[26px] font-bold text-heading">{heading}</h2>
-          <p className="m-0 text-sm text-meta">
+          <h2 className="m-0 font-heading type-heading font-bold text-ink-heading">{heading}</h2>
+          <p className="m-0 type-body text-ink-muted">
             {stories === null ? t('featured.previewNote') : t('featured.none')}
           </p>
         </section>
       )}
-      {intro !== '' && <p className="m-0 text-body">{intro}</p>}
+      {intro !== '' && <p className="m-0 text-ink-muted">{intro}</p>}
     </div>
   );
 }

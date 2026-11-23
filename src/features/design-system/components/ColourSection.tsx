@@ -18,8 +18,8 @@ export function ColourSection() {
 
   return (
     <DesignSection id="colours" title={t('sections.colours')}>
-      <p className="m-0 max-w-[720px] text-body">{t('colours.intro')}</p>
-      <div className="grid gap-5 md:grid-cols-2">
+      <p className="m-0 max-w-[720px] text-ink-muted">{t('colours.intro')}</p>
+      <div className="grid gap-4 md:grid-cols-2">
         <ColourPanel theme="light" />
         <ColourPanel theme="night" />
       </div>

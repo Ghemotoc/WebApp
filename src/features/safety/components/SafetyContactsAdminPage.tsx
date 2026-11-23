@@ -107,7 +107,7 @@ function CountryContacts(props: { state: PageState; countryCode: string; canAct:
           </Button>
         </div>
       )}
-      {contacts.length === 0 && <p className="m-0 text-body">{t('admin.noContacts')}</p>}
+      {contacts.length === 0 && <p className="m-0 text-ink-muted">{t('admin.noContacts')}</p>}
       <ul className="m-0 flex list-none flex-col gap-4 p-0" aria-label={t('admin.listLabel')}>
         {contacts.map((contact) => (
           <SafetyContactAdminCard
@@ -176,20 +176,20 @@ export function SafetyContactsAdminPage() {
     (area) => area.area === 'safety_contacts' && area.access === 'act',
   );
   return (
-    <PageContainer className="flex flex-col gap-6 pt-12 pb-7">
+    <PageContainer className="flex flex-col gap-6 pt-12 pb-6">
       <title>{t('admin.documentTitle')}</title>
       <div className="flex max-w-[720px] flex-col gap-2">
         <Eyebrow>{t('admin.eyebrow')}</Eyebrow>
-        <h1 className="m-0 font-heading text-[34px] font-bold text-heading">
+        <h1 className="m-0 font-heading type-title font-bold text-ink-heading">
           {t('admin.heading')}
         </h1>
-        <p className="m-0 text-body">{t(canAct ? 'admin.intro' : 'admin.introReadOnly')}</p>
+        <p className="m-0 text-ink-muted">{t(canAct ? 'admin.intro' : 'admin.introReadOnly')}</p>
       </div>
       {state.loadFailure !== null && (
         <Notice tone="error">{t(`admin.failures.${state.loadFailure}`)}</Notice>
       )}
       {state.isLoading && state.loadFailure === null && (
-        <p className="m-0 text-meta">{t('admin.loading')}</p>
+        <p className="m-0 text-ink-muted">{t('admin.loading')}</p>
       )}
       {!state.isLoading && state.loadFailure === null && <PageBody state={state} canAct={canAct} />}
     </PageContainer>

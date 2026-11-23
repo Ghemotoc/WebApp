@@ -45,7 +45,7 @@ function ProfileAction({ profile }: { profile: WriterProfile }) {
     return (
       <Link
         to="/settings"
-        className="inline-flex h-11 items-center justify-center rounded-full button-glass px-5 text-sm font-semibold no-underline"
+        className="inline-flex h-11 items-center justify-center rounded-full button-glass px-4 type-body font-semibold no-underline"
       >
         {t('profile.editProfile')}
       </Link>
@@ -72,7 +72,7 @@ function HandleLine({ profile }: { profile: WriterProfile }) {
           date: formatJoinedMonth(profile.joinedAt, i18n.language),
         });
   return (
-    <p className="m-0 flex flex-wrap items-center gap-2 text-[15px] break-words text-meta">
+    <p className="m-0 flex flex-wrap items-center gap-2 type-body break-words text-ink-muted">
       {words}
       <OnlineDot isOnline={online.has(profile.handle.toLowerCase())} />
     </p>
@@ -84,13 +84,13 @@ function ProfileBio({ profile }: { profile: WriterProfile }) {
   const { t } = usePeopleTranslation();
   if (profile.isLimited) {
     return (
-      <p className="m-0 max-w-[640px] text-base text-meta">
+      <p className="m-0 max-w-[640px] type-body text-ink-muted">
         {t('profile.limitedNote', { name: profile.displayName })}
       </p>
     );
   }
   return (
-    <p className="m-0 max-w-[640px] text-lg leading-[1.6] break-words whitespace-pre-line text-body">
+    <p className="m-0 max-w-[640px] type-long leading-[1.6] break-words whitespace-pre-line text-ink-muted">
       {profile.bio === '' ? t('profile.noBio') : profile.bio}
     </p>
   );
@@ -116,7 +116,7 @@ export function ProfileHeader({ profile }: { profile: WriterProfile }) {
             <ReaderLevelPill handle={profile.handle} />
           </div>
         )}
-        <h1 className="m-0 min-w-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-extrabold tracking-[-0.025em] break-words text-heading">
+        <h1 className="m-0 min-w-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-bold tracking-[-0.025em] break-words text-ink-heading">
           {profile.displayName}
         </h1>
         <HandleLine profile={profile} />
@@ -138,13 +138,13 @@ export function ProfileHeader({ profile }: { profile: WriterProfile }) {
           <Link
             to={`/messages/${profile.handle}`}
             aria-label={t('profile.messageLabel', { name: profile.displayName })}
-            className="inline-flex h-11 items-center justify-center rounded-full button-glass px-5 text-sm font-semibold no-underline"
+            className="inline-flex h-11 items-center justify-center rounded-full button-glass px-4 type-body font-semibold no-underline"
           >
             {t('profile.message')}
           </Link>
         )}
         {profile.canMessage === false && !profile.iBlocked && (
-          <p className="m-0 max-w-[260px] text-sm text-meta">
+          <p className="m-0 max-w-[260px] type-body text-ink-muted">
             {t('profile.notTakingMessages', { name: profile.displayName })}
           </p>
         )}

@@ -49,7 +49,7 @@ export function SearchForm({ initialTerm = '', showsHint = false }: SearchFormPr
 
   return (
     <form role="search" onSubmit={handleSubmit} className="flex flex-col gap-3">
-      <div className="glass-pill flex items-center gap-2 rounded-full p-1.5">
+      <div className="glass-pill flex items-center gap-2 rounded-full p-2">
         <div className="min-w-0 flex-1">
           {/* No border of its own: the glass pill around it is the field's edge. */}
           <SearchInput
@@ -60,14 +60,14 @@ export function SearchForm({ initialTerm = '', showsHint = false }: SearchFormPr
             value={term}
             aria-describedby={showsHint ? `${id}-hint` : undefined}
             onChange={(event) => setTerm(event.target.value)}
-            className="h-13 w-full rounded-full border-0 bg-transparent pr-3 pl-13 font-body text-base text-ink"
+            className="h-13 w-full rounded-full border-0 bg-transparent pr-3 pl-12 font-body type-body text-ink"
           />
         </div>
         {term !== '' && (
           <button
             type="button"
             aria-label={t('form.clearLabel')}
-            className="inline-flex size-11 shrink-0 items-center justify-center rounded-full text-heading hover:bg-tint"
+            className="inline-flex size-11 shrink-0 items-center justify-center rounded-full text-ink-heading hover:bg-tint"
             onClick={() => {
               setTerm('');
               field.current?.focus();
@@ -81,8 +81,8 @@ export function SearchForm({ initialTerm = '', showsHint = false }: SearchFormPr
         </Button>
       </div>
       {showsHint && (
-        <p id={`${id}-hint`} className="m-0 px-5 text-sm leading-normal text-body">
-          <strong className="text-heading">{t('form.hintLead')}</strong> {t('form.hint')}
+        <p id={`${id}-hint`} className="m-0 px-4 type-body leading-normal text-ink-muted">
+          <strong className="text-ink-heading">{t('form.hintLead')}</strong> {t('form.hint')}
         </p>
       )}
     </form>

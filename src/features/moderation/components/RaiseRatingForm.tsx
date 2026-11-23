@@ -49,11 +49,13 @@ export function RaiseRatingForm(props: RaiseRatingFormProps) {
     });
   }
   return (
-    <form onSubmit={submit} className="flex flex-col gap-3 rounded-[12px] border border-border p-4">
+    <form onSubmit={submit} className="flex flex-col gap-3 rounded-field border border-border p-4">
       <fieldset className="m-0 flex flex-col gap-2 border-0 p-0">
-        <legend className="mb-1 font-semibold text-heading">{t('pictures.raiseQuestion')}</legend>
+        <legend className="mb-1 font-semibold text-ink-heading">
+          {t('pictures.raiseQuestion')}
+        </legend>
         {props.options.map((option) => (
-          <label key={option} className="flex min-h-11 items-center gap-3 text-body">
+          <label key={option} className="flex min-h-11 items-center gap-3 text-ink-muted">
             <input
               type="radio"
               name={groupName}

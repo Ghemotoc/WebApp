@@ -40,7 +40,7 @@ export function PassageLinkButton({
   const [outcome, setOutcome] = useState<CopyOutcome>('none');
   if (blocks === null) return null;
   if (blocks.last - blocks.first >= MAXIMUM_SHARED_BLOCKS) {
-    return <p className="m-0 py-2.5 text-sm text-body">{t('button.passageTooLong')}</p>;
+    return <p className="m-0 py-3 type-body text-ink-muted">{t('button.passageTooLong')}</p>;
   }
 
   /** Copies the link, says so, and counts the share in the background. */
@@ -63,7 +63,7 @@ export function PassageLinkButton({
       >
         {t('button.passageLink')}
       </Button>
-      <span role="status" className="text-sm text-body">
+      <span role="status" className="type-body text-ink-muted">
         {outcome === 'copied' && t('button.passageCopied')}
         {outcome === 'failed' && t('button.passageCopyFailed')}
       </span>

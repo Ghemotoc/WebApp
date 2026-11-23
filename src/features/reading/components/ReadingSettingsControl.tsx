@@ -46,8 +46,8 @@ export function ReadingSettingsControl({ isOpen, onToggle }: ReadingSettingsCont
       aria-controls={isOpen ? readingSettingsPanelId : undefined}
       onClick={onToggle}
       className={cn(
-        'inline-flex size-11 shrink-0 items-center justify-center rounded-full font-heading text-[17px] leading-none font-bold',
-        isOpen ? 'bg-tint text-heading' : 'text-heading hover:bg-tint',
+        'inline-flex size-11 shrink-0 items-center justify-center rounded-full font-heading type-long leading-none font-bold',
+        isOpen ? 'bg-tint text-ink-heading' : 'text-ink-heading hover:bg-tint',
       )}
     >
       <span aria-hidden="true">{t('settings.buttonSample')}</span>

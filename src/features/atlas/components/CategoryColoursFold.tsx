@@ -111,8 +111,8 @@ function SwatchRow({
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-hairline py-2.5 last:border-b-0">
-      <span className="flex min-w-[9rem] items-center gap-2 text-sm font-semibold text-ink">
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-hairline py-2 last:border-b-0">
+      <span className="flex min-w-[9rem] items-center gap-2 type-body font-semibold text-ink">
         <CategoryDot category={category} colours={colours} />
         {categoryName}
       </span>
@@ -160,7 +160,7 @@ export function CategoryColoursFold({ colours, onPick }: CategoryColoursFoldProp
         {t('connections.map.coloursButton')}
       </summary>
       <div className="mt-2 flex flex-col gap-2 rounded-card border border-hairline p-4">
-        <p className="m-0 text-sm text-body">{t('connections.map.coloursIntro')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('connections.map.coloursIntro')}</p>
         {relationshipCategories.map((category) => (
           <SwatchRow key={category} category={category} colours={colours} onPick={pick} />
         ))}

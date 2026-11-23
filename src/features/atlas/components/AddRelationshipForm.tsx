@@ -286,7 +286,7 @@ export function AddRelationshipForm({
         void add();
       }}
     >
-      <p className="m-0 text-sm text-meta">{t('connections.add.hint')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('connections.add.hint')}</p>
       <RelationshipPickers
         idPrefix={idPrefix}
         cast={cast}

@@ -57,7 +57,7 @@ export function SheetPartsControls({ slug, characterId, fields }: SheetPartsCont
   ];
   return (
     <div className="flex flex-col gap-2">
-      <p id={`atlas-parts-${characterId}`} className="m-0 text-sm font-semibold text-heading">
+      <p id={`atlas-parts-${characterId}`} className="m-0 type-body font-semibold text-ink-heading">
         {t('readers.parts.label')}
       </p>
       <div

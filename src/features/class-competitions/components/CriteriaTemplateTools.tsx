@@ -53,7 +53,7 @@ export function TemplatePicker({ slug, onUse }: TemplatePickerProps) {
   return (
     <div className="flex flex-col gap-3">
       {templates.length === 0 ? (
-        <p className="m-0 text-sm text-body">{t('form.templateEmpty')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('form.templateEmpty')}</p>
       ) : (
         <div className="flex flex-wrap items-end gap-3">
           <Select

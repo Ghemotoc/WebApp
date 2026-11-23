@@ -43,7 +43,7 @@ function ParentCopyFiles({ opened }: { opened: Extract<OpenedParentCopy, { outco
       <ul className="m-0 flex list-none flex-col gap-2 p-0">
         {opened.files.map((file) => (
           <li key={file.fileName} className="flex flex-wrap items-center gap-3">
-            <span className="min-w-0 break-all text-body">
+            <span className="min-w-0 break-all text-ink-muted">
               {t('parent.fileLine', {
                 name: file.displayName,
                 size: fileSizeText(file.fileSize ?? 0, i18n.language),
@@ -91,13 +91,13 @@ export function ParentCopyPanel({
   const closed = closedKey(link, opened);
   return (
     <>
-      <p className="m-0 text-body">
+      <p className="m-0 text-ink-muted">
         {t('parent.copyIntro', { reference: link.reference, handle: link.handle })}
       </p>
       {closed !== null && <Notice tone="info">{t(closed)}</Notice>}
       {closed === null && opened?.outcome !== 'ok' && (
         <>
-          <p className="m-0 text-body">{t('parent.copyOnce')}</p>
+          <p className="m-0 text-ink-muted">{t('parent.copyOnce')}</p>
           <Button className="self-start" disabled={isOpening} onClick={onOpen}>
             {t('parent.openButton')}
           </Button>

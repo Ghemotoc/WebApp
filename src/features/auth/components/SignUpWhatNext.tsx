@@ -61,14 +61,14 @@ export function SignUpWhatNext({ isAdultsOnly }: { isAdultsOnly: boolean }) {
   const { t } = useTranslation('auth');
   const cards = usePreviewCards(isAdultsOnly);
   return (
-    <section aria-labelledby="sign-up-next-heading" className="flex flex-col gap-4 pt-10">
+    <section aria-labelledby="sign-up-next-heading" className="flex flex-col gap-4 pt-8">
       {/* Board H01 (CALM-9e): the heading, then "After you press Create account" as a quiet
           line under it, where the eyebrow used to sit above. */}
       <div className="flex flex-col gap-1">
         <h2 id="sign-up-next-heading" className="m-0 type-heading">
           {t('signUp.next.heading')}
         </h2>
-        <p className="m-0 text-[13px] text-meta">{t('signUp.next.note')}</p>
+        <p className="m-0 type-meta text-ink-muted">{t('signUp.next.note')}</p>
       </div>
       {/* One row each, with a fine line between rows (DoD: label rows); no cards or icons. */}
       <ul className="m-0 flex list-none flex-col p-0">
@@ -77,8 +77,8 @@ export function SignUpWhatNext({ isAdultsOnly }: { isAdultsOnly: boolean }) {
             key={card.key}
             className={`flex flex-col gap-1 py-4 ${index === 0 ? 'pt-0' : 'border-t border-border'}`}
           >
-            <h3 className="m-0 text-base font-bold text-heading">{card.title}</h3>
-            <p className="m-0 text-[15px] leading-relaxed text-meta">{card.body}</p>
+            <h3 className="m-0 type-body font-bold text-ink-heading">{card.title}</h3>
+            <p className="m-0 type-body leading-relaxed text-ink-muted">{card.body}</p>
           </li>
         ))}
       </ul>

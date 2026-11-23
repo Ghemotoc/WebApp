@@ -46,7 +46,7 @@ export function PenNameField({
       : refusalMessage(t, 'penName', outcome, waitingDays);
 
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2">
       <TextInput
         id={id}
         label={t('penName.label')}

@@ -43,8 +43,8 @@ function MessageAudienceLine({ settings }: { settings: PrivacySettings }) {
   registerMessagesTranslations(useTranslation().i18n);
   return (
     <div className="flex flex-col gap-1 border-t border-border pt-4">
-      <p className="m-0 text-[15px] font-semibold text-ink">{t('messages.legend')}</p>
-      <p className="m-0 flex flex-wrap items-center gap-x-3 text-[15px] text-body">
+      <p className="m-0 type-body font-semibold text-ink">{t('messages.legend')}</p>
+      <p className="m-0 flex flex-wrap items-center gap-x-3 type-body text-ink-muted">
         <span>{t(`about.audience.${settings.messageAudience}`, { ns: 'messages' })}</span>
         <Link
           to="/settings#messages"
@@ -169,14 +169,14 @@ export function PrivacySettingsSection() {
       aria-labelledby="settings-privacy-heading"
       className="flex scroll-mt-24 flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card"
     >
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         <h2
           id="settings-privacy-heading"
-          className="m-0 font-heading text-[22px] font-bold text-heading"
+          className="m-0 font-heading type-heading font-bold text-ink-heading"
         >
           {t('settings.heading')}
         </h2>
-        <p className="m-0 text-body">{t('settings.intro')}</p>
+        <p className="m-0 text-ink-muted">{t('settings.intro')}</p>
       </div>
       <PrivacyBody />
     </section>

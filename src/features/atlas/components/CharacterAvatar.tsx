@@ -37,7 +37,9 @@ export function CharacterAvatar({
       alt={size === 'large' ? character.pictureAlt : ''}
       className={cn(
         'shrink-0 object-cover',
-        size === 'small' ? 'size-10 rounded-full' : 'aspect-[4/5] w-full max-w-[190px] rounded-3xl',
+        size === 'small'
+          ? 'size-10 rounded-full'
+          : 'aspect-[4/5] w-full max-w-[190px] rounded-card',
       )}
     />
   );

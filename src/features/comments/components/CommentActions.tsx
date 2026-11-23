@@ -48,7 +48,7 @@ function DeleteQuestion(props: { onDelete: () => void; onKeep: () => void; isBus
       aria-label={t('comment.deleteConfirm')}
       className="flex flex-wrap items-center gap-2"
     >
-      <span className="text-sm font-semibold text-ink">{t('comment.deleteConfirm')}</span>
+      <span className="type-body font-semibold text-ink">{t('comment.deleteConfirm')}</span>
       <Button variant="destructive" disabled={props.isBusy} onClick={props.onDelete}>
         {t('comment.deleteYes')}
       </Button>
@@ -72,7 +72,7 @@ function DeleteControl({ address, comment }: { address: ChapterAddress; comment:
   return (
     <>
       {!isAsking && (
-        <Button variant="text" className="px-3 text-meta" onClick={() => setIsAsking(true)}>
+        <Button variant="text" className="px-3 text-ink-muted" onClick={() => setIsAsking(true)}>
           {t('comment.delete')}
           <span className="sr-only"> {t('comment.reportLabel', { name })}</span>
         </Button>
@@ -85,7 +85,7 @@ function DeleteControl({ address, comment }: { address: ChapterAddress; comment:
         />
       )}
       {deleting.failure !== null && (
-        <span role="alert" className="text-sm text-destructive">
+        <span role="alert" className="type-body text-destructive">
           {t(`failures.${deleting.failure.failure}`)}
         </span>
       )}
@@ -122,7 +122,7 @@ function ReplyButton({ name, onReply }: { name: string; onReply: () => void }) {
   return (
     <Button
       variant="text"
-      className="px-3 font-semibold text-heading no-underline"
+      className="px-3 font-semibold text-ink-heading no-underline"
       onClick={onReply}
     >
       {t('comment.reply')}
@@ -146,8 +146,8 @@ export function CommentActions({ address, comment, onReply, before }: CommentAct
     onReply !== null,
   );
   return (
-    <div className="mt-2.5 flex flex-col gap-1.5">
-      <div className="flex flex-wrap items-center gap-1.5">
+    <div className="mt-3 flex flex-col gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         {before}
         {mayReply && onReply !== null && <ReplyButton name={name} onReply={onReply} />}
         {mayDownvote && <DownvoteButton address={address} comment={comment} />}
@@ -163,7 +163,7 @@ export function CommentActions({ address, comment, onReply, before }: CommentAct
         )}
       </div>
       {mayDownvote && comment.isDownvotedByMe && (
-        <p className="m-0 text-[13px] text-body">{t('downvote.sent')}</p>
+        <p className="m-0 type-meta text-ink-muted">{t('downvote.sent')}</p>
       )}
     </div>
   );

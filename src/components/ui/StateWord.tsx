@@ -36,7 +36,7 @@ export function StateWord({
 }) {
   return (
     <span
-      className={`inline-flex items-center gap-1.5 text-[13px] leading-snug font-bold ${stateClasses[kind]}`}
+      className={`inline-flex items-center gap-2 type-meta leading-snug font-semibold ${stateClasses[kind]}`}
     >
       {children}
     </span>

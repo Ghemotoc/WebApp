@@ -22,9 +22,9 @@ export interface EmptyStateProps {
  */
 export function EmptyState({ title, description, action }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-start gap-3 rounded-card border border-border bg-surface px-8 py-10">
-      <h2 className="m-0 text-[26px] font-bold">{title}</h2>
-      <p className="m-0 text-base text-body">{description}</p>
+    <div className="flex flex-col items-start gap-3 rounded-card border border-border bg-surface px-8 py-8">
+      <h2 className="m-0 type-heading font-bold">{title}</h2>
+      <p className="m-0 type-body text-ink-muted">{description}</p>
       {action}
     </div>
   );

@@ -45,14 +45,14 @@ export function DraftCard({ draft }: { draft: DraftCardData }) {
       </h2>
       <Link
         to={editorAddress}
-        className="font-semibold break-words text-heading no-underline hover:underline"
+        className="font-semibold break-words text-ink-heading no-underline hover:underline"
       >
         {title}
       </Link>
       <MetaLine facts={facts} />
       <Link
         to={editorAddress}
-        className="mt-1 inline-flex h-11 items-center rounded-full button-glass px-5 font-semibold no-underline"
+        className="mt-1 inline-flex h-11 items-center rounded-full button-glass px-4 font-semibold no-underline"
       >
         {t('cards.openDraft')}
       </Link>

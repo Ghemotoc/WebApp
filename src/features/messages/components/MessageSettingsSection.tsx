@@ -56,7 +56,7 @@ function AudienceChoices({ settings, saving }: ChoicesProps) {
       className="m-0 flex flex-col gap-3 border-0 p-0"
       aria-describedby="message-audience-hint"
     >
-      <legend className="mb-2 p-0 text-[15px] font-semibold text-ink">
+      <legend className="mb-2 p-0 type-body font-semibold text-ink">
         {t('settings.whoLegend')}
       </legend>
       {audiences.map((audience) => (
@@ -75,7 +75,7 @@ function AudienceChoices({ settings, saving }: ChoicesProps) {
           </span>
         </label>
       ))}
-      <p id="message-audience-hint" className="m-0 text-[13px] text-meta">
+      <p id="message-audience-hint" className="m-0 type-meta text-ink-muted">
         {t(settings.ageGroup === 'adult' ? 'settings.adultHint' : 'settings.under18Hint')}
       </p>
     </fieldset>
@@ -119,14 +119,16 @@ function MessageChoices() {
   if (settings.data === undefined) return null;
   return (
     <>
-      {settings.data.ageGroup !== 'adult' && <p className="m-0 text-body">{t('rules.minors')}</p>}
+      {settings.data.ageGroup !== 'adult' && (
+        <p className="m-0 text-ink-muted">{t('rules.minors')}</p>
+      )}
       {saving.hasFailed && <Notice tone="error">{t('settings.saveFailed')}</Notice>}
       <AudienceChoices settings={settings.data} saving={saving} />
       {settings.data.ageGroup === 'teen' && (
         <AdultsSwitch settings={settings.data} saving={saving} />
       )}
       <MessageEmailSettings choices={settings.data.email} />
-      <p className="m-0 border-t border-border pt-4 text-sm text-body">
+      <p className="m-0 border-t border-border pt-4 type-body text-ink-muted">
         {t('settings.deleteNote')}
       </p>
     </>
@@ -146,15 +148,15 @@ export function MessageSettingsSection() {
       aria-labelledby="settings-messages-heading"
       className="flex scroll-mt-24 flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card"
     >
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         <Eyebrow>{t('settings.eyebrow')}</Eyebrow>
         <h2
           id="settings-messages-heading"
-          className="m-0 font-heading text-[22px] font-bold text-heading"
+          className="m-0 font-heading type-heading font-bold text-ink-heading"
         >
           {t('settings.heading')}
         </h2>
-        <p className="m-0 text-body">{t('settings.intro')}</p>
+        <p className="m-0 text-ink-muted">{t('settings.intro')}</p>
       </div>
       <MessageChoices />
     </section>

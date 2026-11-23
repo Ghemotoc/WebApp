@@ -38,7 +38,8 @@ interface SignUpCardFlowProps {
 export function SignUpCardFlow(props: SignUpCardFlowProps) {
   const { t } = useTranslation('auth');
   const { gateReason, form } = props;
-  if (gateReason === 'checking') return <p className="m-0 text-body">{t('invite.checking')}</p>;
+  if (gateReason === 'checking')
+    return <p className="m-0 text-ink-muted">{t('invite.checking')}</p>;
   if (gateReason !== null) {
     return <InviteGate reason={gateReason} codeFromAddress={props.inviteCode} />;
   }

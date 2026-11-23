@@ -38,12 +38,12 @@ export function ArchivedStoriesSection() {
     >
       <h2
         id="archived-stories-heading"
-        className="m-0 font-heading text-[24px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('heading')}
       </h2>
-      <p className="m-0 text-body">{t('intro', { date: keptUntil })}</p>
-      <p className="m-0 text-[13px] text-meta">{t('pictures')}</p>
+      <p className="m-0 text-ink-muted">{t('intro', { date: keptUntil })}</p>
+      <p className="m-0 type-meta text-ink-muted">{t('pictures')}</p>
       <ArchivedStoriesForm lockedAtStart={archive.data.locked} />
     </section>
   );

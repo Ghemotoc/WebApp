@@ -331,7 +331,7 @@ export function ChapterReading(props: { chapter: ReaderChapter; spot: SpotRange 
           <PaperWithText chapter={chapter} spot={props.spot} look={look} track={screen.track} />
           {hasText && <UnderThePaper chapter={chapter} story={story} hasPainted={hasPainted} />}
           {screen.hasFactsBelow && (
-            <div className="mx-auto mt-10 flex w-full max-w-[760px] flex-col gap-6">
+            <div className="mx-auto mt-8 flex w-full max-w-[760px] flex-col gap-6">
               <StoryFacts chapter={chapter} story={story} />
             </div>
           )}

@@ -99,7 +99,7 @@ export function ContinueCard({ item }: { item: ContinueReadingCardData }) {
         <div className="flex min-w-0 flex-1 flex-col items-start gap-1">
           <Link
             to={`/s/${story.slug}`}
-            className="font-semibold break-words text-heading no-underline hover:underline"
+            className="font-semibold break-words text-ink-heading no-underline hover:underline"
           >
             {story.title}
           </Link>
@@ -109,7 +109,7 @@ export function ContinueCard({ item }: { item: ContinueReadingCardData }) {
           <Link
             to={continueAddress(story.slug, place)}
             aria-label={t('cards.continueLabel', { title: story.title })}
-            className="mt-2 inline-flex h-11 items-center rounded-full button-glass px-5 font-semibold no-underline"
+            className="mt-2 inline-flex h-11 items-center rounded-full button-glass px-4 font-semibold no-underline"
           >
             {t('cards.continueButton')}
           </Link>

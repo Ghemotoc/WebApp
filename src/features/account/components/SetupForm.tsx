@@ -47,7 +47,7 @@ export function SetupForm({
   }
 
   return (
-    <form noValidate className="flex flex-col gap-5" onSubmit={(event) => void handleSubmit(event)}>
+    <form noValidate className="flex flex-col gap-4" onSubmit={(event) => void handleSubmit(event)}>
       <HandleField
         id="setup-handle"
         value={form.handle}

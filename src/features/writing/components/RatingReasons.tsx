@@ -55,12 +55,12 @@ export function RatingReasons({ answers, errors, set }: RatingReasonsProps) {
       className="m-0 flex flex-col gap-3 border-0 p-0"
       aria-describedby="story-rating-reasons-hint"
     >
-      <legend className="mb-1 p-0 font-semibold text-heading">
+      <legend className="mb-1 p-0 font-semibold text-ink-heading">
         {t('labels.reasons', { rating: t(`rating.${rating}`) })} {t('labels.required')}
       </legend>
       <p
         id="story-rating-reasons-hint"
-        className={hasError ? 'm-0 text-sm text-destructive' : 'm-0 text-sm text-body'}
+        className={hasError ? 'm-0 type-body text-destructive' : 'm-0 type-body text-ink-muted'}
       >
         {hasError ? t(errors.ratingReasons ?? '') : t('labels.reasonsHint')}
       </p>

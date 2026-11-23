@@ -109,7 +109,7 @@ export function OpenHerePage() {
     >
       <Link
         to="/"
-        className="inline-flex h-11 w-fit items-center rounded-full button-main px-5 text-sm font-semibold no-underline"
+        className="inline-flex h-11 w-fit items-center rounded-full button-main px-4 type-body font-semibold no-underline"
       >
         {t('openHere.home')}
       </Link>

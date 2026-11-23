@@ -52,7 +52,7 @@ export function Switch({
       disabled={isDisabled}
       onClick={onToggle}
       className={cn(
-        'inline-flex h-11 shrink-0 items-center gap-2 rounded-full px-1 text-sm font-semibold text-heading disabled:opacity-60',
+        'inline-flex h-11 shrink-0 items-center gap-2 rounded-full px-1 type-body font-semibold text-ink-heading disabled:opacity-60',
         className,
       )}
     >

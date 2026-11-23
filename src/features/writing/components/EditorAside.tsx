@@ -27,7 +27,7 @@ function Panel({ label, children }: { label: string; children: React.ReactNode }
   return (
     <section
       aria-label={label}
-      className="relative flex flex-col gap-3.5 rounded-card border border-border bg-surface p-5 shadow-card"
+      className="relative flex flex-col gap-4 rounded-card border border-border bg-surface p-4 shadow-card"
     >
       {children}
     </section>
@@ -43,7 +43,7 @@ function StoryDetailsPanel({ story }: { story: MyStory }) {
     <Panel label={t('details.heading')}>
       <div className="flex w-fit flex-col gap-1">
         <Eyebrow>{t('details.heading')}</Eyebrow>
-        <p className="m-0 text-[13px] text-meta">{t('details.intro')}</p>
+        <p className="m-0 type-meta text-ink-muted">{t('details.intro')}</p>
       </div>
       <LabelRows
         rows={[
@@ -64,14 +64,14 @@ function StoryDetailsPanel({ story }: { story: MyStory }) {
       {/* self-start keeps the link's box to its words, so the space beside it isn't a link. */}
       <Link
         to={`/write/s/${story.slug}/settings`}
-        className="inline-flex min-h-11 items-center self-start text-sm font-semibold"
+        className="inline-flex min-h-11 items-center self-start type-body font-semibold"
       >
         {t('details.change')}
       </Link>
       {/* Story Atlas, the story's planning side (S1-E17-01: "Plan this story" beside the usual next step). */}
       <Link
         to={`/plan/s/${story.slug}`}
-        className="inline-flex min-h-11 items-center self-start text-sm font-semibold"
+        className="inline-flex min-h-11 items-center self-start type-body font-semibold"
       >
         {t('details.plan')}
       </Link>
@@ -118,7 +118,7 @@ export function EditorAside(props: EditorAsideProps) {
   const { saveState, story } = props;
   const { t } = useEditorTranslation();
   return (
-    <aside className="flex flex-col gap-5">
+    <aside className="flex flex-col gap-4">
       <Panel label={t('saving.heading')}>
         <div className="w-fit">
           <Eyebrow>{t('saving.heading')}</Eyebrow>
@@ -127,7 +127,7 @@ export function EditorAside(props: EditorAsideProps) {
         {saveState.kind === 'conflict' && (
           <ConflictActions onKeepMine={props.onKeepMine} onCompare={props.onCompare} />
         )}
-        <p className="m-0 text-[13px] leading-normal text-meta">{t('saving.explain')}</p>
+        <p className="m-0 type-meta leading-normal text-ink-muted">{t('saving.explain')}</p>
       </Panel>
       <Panel label={t('publish.heading')}>
         <div className="w-fit">

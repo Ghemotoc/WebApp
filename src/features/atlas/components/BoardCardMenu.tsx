@@ -80,7 +80,7 @@ function MoveItem({
         onDone();
         onMove();
       }}
-      className="flex min-h-11 w-full items-center rounded-field px-3 text-left text-sm text-heading hover:bg-tint aria-disabled:cursor-not-allowed aria-disabled:text-meta aria-disabled:hover:bg-transparent"
+      className="flex min-h-11 w-full items-center rounded-field px-3 text-left type-body text-ink-heading hover:bg-tint aria-disabled:cursor-not-allowed aria-disabled:text-ink-muted aria-disabled:hover:bg-transparent"
     >
       {label}
     </button>
@@ -128,7 +128,7 @@ export function BoardCardMenu({ title, ...moves }: BoardCardMenuProps) {
           event.preventDefault();
           setIsOpen(true);
         }}
-        className="grid size-11 cursor-pointer place-items-center rounded-full text-meta hover:bg-tint hover:text-heading"
+        className="grid size-11 cursor-pointer place-items-center rounded-full text-ink-muted hover:bg-tint hover:text-ink-heading"
       >
         <ActionIcon name="more" size={20} />
       </button>
@@ -144,7 +144,7 @@ export function BoardCardMenu({ title, ...moves }: BoardCardMenuProps) {
             else if (event.key === 'Tab') setIsOpen(false);
             else moveFocus(event, menuRef.current);
           }}
-          className="absolute top-full right-0 z-20 mt-1 flex w-52 flex-col gap-0.5 rounded-card border border-border bg-surface p-1.5 shadow-popover"
+          className="absolute top-full right-0 z-20 mt-1 flex w-52 flex-col gap-1 rounded-card border border-border bg-surface p-2 shadow-popover"
         >
           {items.map((item) => (
             <MoveItem

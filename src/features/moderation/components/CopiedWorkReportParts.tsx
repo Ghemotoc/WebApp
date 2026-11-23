@@ -26,9 +26,9 @@ import { ReasonForm } from './ReasonForm';
 function PassageColumn({ heading, text }: { heading: string; text: string | null }) {
   const { t } = useTranslation('moderation');
   return (
-    <div className="flex min-w-0 flex-col gap-1.5">
-      <h4 className="m-0 text-sm font-semibold text-heading">{heading}</h4>
-      <blockquote className="m-0 rounded-[12px] border border-border bg-panel p-3 text-[15px] whitespace-pre-line text-body">
+    <div className="flex min-w-0 flex-col gap-2">
+      <h4 className="m-0 type-body font-bold text-ink-heading">{heading}</h4>
+      <blockquote className="m-0 rounded-field border border-border bg-panel p-3 type-body whitespace-pre-line text-ink-muted">
         {text ?? t('copied.notGiven')}
       </blockquote>
     </div>
@@ -59,7 +59,7 @@ export function CopiedWorkComparison({ report }: { report: CaseReport }) {
   const { t } = useTranslation('moderation');
   return (
     <div className="flex flex-col gap-2">
-      <p className="m-0 text-sm text-body">
+      <p className="m-0 type-body text-ink-muted">
         <span className="font-semibold">{t('copied.source')}: </span>
         {sourceLine(report.copySource) ?? t('copied.notGiven')}
       </p>
@@ -84,11 +84,11 @@ function QuestionAndAnswer({ report }: { report: CaseReport }) {
   if (report.detailQuestion === null) return null;
   return (
     <>
-      <p className="m-0 text-sm text-body">
+      <p className="m-0 type-body text-ink-muted">
         <span className="font-semibold">{t('copied.asked')}: </span>
         {report.detailQuestion}
       </p>
-      <p className="m-0 text-sm text-body">
+      <p className="m-0 type-body text-ink-muted">
         <span className="font-semibold">{t('copied.answer')}: </span>
         {report.detailAnswer ?? t('copied.waiting')}
       </p>

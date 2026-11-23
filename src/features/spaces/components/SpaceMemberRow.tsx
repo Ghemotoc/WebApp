@@ -118,9 +118,9 @@ export function SpaceMemberRow({
 
   return (
     <li className="flex flex-col gap-2 border-b border-border py-4 last:border-b-0">
-      <span className="text-base font-semibold break-words text-heading">{name}</span>
-      <span className="text-sm text-body">{place}</span>
-      <span className="text-[13px] text-meta">
+      <span className="type-body font-semibold break-words text-ink-heading">{name}</span>
+      <span className="type-body text-ink-muted">{place}</span>
+      <span className="type-meta text-ink-muted">
         {t('members.joined', { date: threadDay(member.joinedAt, i18n.language) })}
       </span>
       {mayRemove && !isRemoving && (

@@ -74,7 +74,7 @@ function CoverTile({
       onClick={onPick}
       onKeyDown={onKeyDown}
       className={cn(
-        'relative flex flex-col items-center gap-1 rounded-xl border-2 bg-transparent p-1 text-center',
+        'relative flex flex-col items-center gap-1 rounded-field border-2 bg-transparent p-1 text-center',
         isChosen ? 'border-link' : 'border-transparent hover:border-border',
       )}
     >
@@ -85,7 +85,7 @@ function CoverTile({
         isDecorative
         className="w-full"
       />
-      <span className="text-xs leading-tight text-meta" aria-hidden="true">
+      <span className="type-meta leading-tight text-ink-muted" aria-hidden="true">
         {designName}
       </span>
       {design.isNew === true && (
@@ -123,7 +123,7 @@ export function DrawnCoverPicker({ choice, onPick }: DrawnCoverPickerProps) {
     <div
       role="radiogroup"
       aria-label={t('cover.designs')}
-      className="grid grid-cols-[repeat(auto-fill,minmax(76px,1fr))] gap-1.5"
+      className="grid grid-cols-[repeat(auto-fill,minmax(76px,1fr))] gap-2"
     >
       {coverDesigns.map((design, index) => {
         const isChosen = choice?.design === design.key;

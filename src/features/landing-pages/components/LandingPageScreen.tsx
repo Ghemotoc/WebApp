@@ -38,15 +38,15 @@ export function LandingPageScreen() {
   const language = i18n.language.startsWith('ro') ? 'ro' : 'en';
   if (page.isError) {
     return (
-      <PageContainer className="pt-12 pb-7">
+      <PageContainer className="pt-12 pb-6">
         <Notice tone="error">{t('loadFailed')}</Notice>
       </PageContainer>
     );
   }
   if (page.data === undefined) {
     return (
-      <PageContainer className="pt-12 pb-7">
-        <p className="m-0 text-meta">{t('loading')}</p>
+      <PageContainer className="pt-12 pb-6">
+        <p className="m-0 text-ink-muted">{t('loading')}</p>
       </PageContainer>
     );
   }

@@ -28,13 +28,13 @@ export function HubMonth() {
     <section
       id={monthBadgesAnchor}
       aria-labelledby="hub-month-badges"
-      className="flex scroll-mt-24 flex-col gap-2 rounded-card border border-border bg-surface p-5 shadow-card"
+      className="flex scroll-mt-24 flex-col gap-2 rounded-card border border-border bg-surface p-4 shadow-card"
     >
       <h2 id="hub-month-badges" className="m-0 type-subheading">
         {t('hub.month.badgesHeading')}
       </h2>
       <MonthBadges badges={month.badges} />
-      <p className="m-0 text-[13px] text-meta">{t('hub.month.note')}</p>
+      <p className="m-0 type-meta text-ink-muted">{t('hub.month.note')}</p>
     </section>
   );
 }
@@ -52,16 +52,16 @@ function MonthBadges({ badges }: { badges: HubMonthNumbers['badges'] }) {
       {monthBadgeKeys.map((key) => (
         <li
           key={key}
-          className="flex items-center justify-between gap-4 border-b border-border py-2.5 last:border-b-0"
+          className="flex items-center justify-between gap-4 border-b border-border py-3 last:border-b-0"
         >
-          <span className="text-sm text-body">{t(`hub.month.badges.${key}`)}</span>
+          <span className="type-body text-ink-muted">{t(`hub.month.badges.${key}`)}</span>
           {badges[key] ? (
-            <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-heading">
+            <span className="inline-flex items-center gap-2 type-body font-semibold text-ink-heading">
               <CheckIcon aria-hidden="true" />
               {t('hub.month.earned')}
             </span>
           ) : (
-            <span className="text-sm text-meta">{t('hub.month.notYet')}</span>
+            <span className="type-body text-ink-muted">{t('hub.month.notYet')}</span>
           )}
         </li>
       ))}

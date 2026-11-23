@@ -20,10 +20,10 @@ function ResultList({ heading, results }: { heading: string; results: LandingRes
   if (results.length === 0) return null;
   return (
     <div className="flex flex-col gap-2">
-      <h3 className="m-0 font-heading text-[20px] font-bold text-heading">{heading}</h3>
-      <ul className="m-0 flex flex-col gap-2 pl-5">
+      <h3 className="m-0 font-heading type-subheading font-bold text-ink-heading">{heading}</h3>
+      <ul className="m-0 flex flex-col gap-2 pl-4">
         {results.map((result) => (
-          <li key={`${result.pen_name}-${result.story?.slug ?? ''}`} className="text-body">
+          <li key={`${result.pen_name}-${result.story?.slug ?? ''}`} className="text-ink-muted">
             <span className="font-semibold text-ink">{result.pen_name}</span>
             {result.story !== null && (
               <>
@@ -53,7 +53,7 @@ export function ContestResultsBlock({ results }: { results: LandingResult[] }) {
     <section aria-labelledby="contest-results-heading" className="flex flex-col gap-4">
       <h2
         id="contest-results-heading"
-        className="m-0 font-heading text-[26px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('results.heading')}
       </h2>

@@ -57,14 +57,17 @@ export function SafetyChecksPanel({ checks }: { checks: SafetyContactCheck[] }) 
   return (
     <section
       aria-labelledby="safety-checks-heading"
-      className="flex flex-col gap-3 rounded-card border border-border bg-surface p-5"
+      className="flex flex-col gap-3 rounded-card border border-border bg-surface p-4"
     >
-      <h2 id="safety-checks-heading" className="m-0 font-heading text-xl font-bold text-heading">
+      <h2
+        id="safety-checks-heading"
+        className="m-0 font-heading type-subheading font-bold text-ink-heading"
+      >
         {t('admin.checks.heading')}
       </h2>
-      <p className="m-0 text-sm text-body">{t('admin.checks.intro')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('admin.checks.intro')}</p>
       {checks.length === 0 ? (
-        <p className="m-0 text-body">{t('admin.checks.none')}</p>
+        <p className="m-0 text-ink-muted">{t('admin.checks.none')}</p>
       ) : (
         <ul className="m-0 list-none p-0">
           {checks.map((check) => (

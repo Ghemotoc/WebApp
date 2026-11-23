@@ -84,7 +84,9 @@ export function DiscoverShelf({
         title={title}
         toolbar={toolbar}
         anchorId={anchorId}
-        items={[{ key: 'empty', content: <p className="m-0 text-base text-body">{emptyNote}</p> }]}
+        items={[
+          { key: 'empty', content: <p className="m-0 type-body text-ink-muted">{emptyNote}</p> },
+        ]}
       />
     );
   }

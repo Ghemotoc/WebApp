@@ -42,8 +42,8 @@ function SponsorPicture({ ad, alt, isStacked }: { ad: SlotAd; alt: string; isSta
       loading="lazy"
       className={
         isStacked
-          ? 'aspect-[4/3] w-full rounded-xl object-cover'
-          : 'h-[72px] w-24 flex-none rounded-xl object-cover max-[700px]:h-14 max-[700px]:w-[74px]'
+          ? 'aspect-[4/3] w-full rounded-field object-cover'
+          : 'h-[72px] w-24 flex-none rounded-field object-cover max-[700px]:h-14 max-[700px]:w-[74px]'
       }
     />
   );
@@ -65,8 +65,8 @@ export function SponsorAdCreative({ ad, isStacked }: { ad: SlotAd; isStacked: bo
     <>
       <SponsorPicture ad={ad} alt={words.alt} isStacked={isStacked} />
       <span className={isStacked ? 'min-w-0' : 'min-w-0 flex-[1_1_200px]'}>
-        <span className="block text-[15px] font-bold break-words text-ink">{words.line}</span>
-        <span className="mt-0.5 block text-[13px] text-body">
+        <span className="block type-body font-semibold break-words text-ink">{words.line}</span>
+        <span className="mt-1 block type-meta text-ink-muted">
           {t('sponsor.from', { name: ad.sponsor_name ?? '' })}
         </span>
         {ad.discount_code != null && <DiscountCode code={ad.discount_code} />}
@@ -77,7 +77,7 @@ export function SponsorAdCreative({ ad, isStacked }: { ad: SlotAd; isStacked: bo
           target="_blank"
           rel="sponsored nofollow noopener noreferrer"
           onClick={() => countSponsorEvent(ad.key, 'click')}
-          className="inline-flex h-10 flex-none items-center rounded-full border border-control-border bg-surface px-4 text-sm font-semibold text-heading no-underline focus-visible:outline-2 focus-visible:outline-offset-2"
+          className="inline-flex h-10 flex-none items-center rounded-full border border-control-border bg-surface px-4 type-body font-semibold text-ink-heading no-underline focus-visible:outline-2 focus-visible:outline-offset-2"
         >
           {t('sponsor.visit')}
           <span className="sr-only"> {t('sponsor.newTab')}</span>

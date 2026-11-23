@@ -20,7 +20,7 @@ export function MailBackLink({ to, label }: { to: string; label: string }) {
   return (
     <Link
       to={to}
-      className="inline-flex min-h-6 w-fit items-center gap-1.5 text-sm font-semibold text-link underline"
+      className="inline-flex min-h-6 w-fit items-center gap-2 type-body font-semibold text-link underline"
     >
       <NavIcon name="back" size={16} />
       {label}

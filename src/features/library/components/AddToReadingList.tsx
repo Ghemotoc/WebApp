@@ -56,7 +56,9 @@ function BookshelfRows(props: {
           </Button>
         </li>
       </ul>
-      {props.choices.length === 0 && <p className="m-0 text-sm text-body">{t('lists.add.none')}</p>}
+      {props.choices.length === 0 && (
+        <p className="m-0 type-body text-ink-muted">{t('lists.add.none')}</p>
+      )}
       <p className="m-0 type-meta">
         {t('lists.add.limitNote', { shelves: limits.shelves, books: limits.books })}
       </p>

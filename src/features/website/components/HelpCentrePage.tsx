@@ -51,10 +51,10 @@ function HelpHeader({
   return (
     <header className="flex flex-col items-center gap-3 text-center">
       <Eyebrow>{t('website.help.eyebrow')}</Eyebrow>
-      <h1 className="m-0 font-heading text-[clamp(32px,4vw,48px)] font-extrabold text-heading">
+      <h1 className="m-0 font-heading text-[clamp(32px,4vw,48px)] font-bold text-ink-heading">
         {t('website.help.heading')}
       </h1>
-      <p className="m-0 max-w-[620px] text-body">{t('website.help.intro')}</p>
+      <p className="m-0 max-w-[620px] text-ink-muted">{t('website.help.intro')}</p>
       {/* role="search" names the landmark; the results change as the visitor types, so the form
           is never sent anywhere. */}
       <form
@@ -85,10 +85,10 @@ function PopularQuestions({ questions }: { questions: ParsedEntry<QuestionConten
   if (questions.length === 0) return null;
   return (
     <section aria-labelledby="help-questions" className="flex min-w-0 flex-col gap-3">
-      <h2 id="help-questions" className="m-0 font-heading text-[28px] font-extrabold text-heading">
+      <h2 id="help-questions" className="m-0 font-heading type-heading font-bold text-ink-heading">
         {t('website.help.questions')}
       </h2>
-      <div className="rounded-card border border-border bg-surface px-5 shadow-card [&_li:last-child]:border-b-0">
+      <div className="rounded-card border border-border bg-surface px-4 shadow-card [&_li:last-child]:border-b-0">
         <QuestionList questions={questions} groupName="help-questions" />
       </div>
       <QuestionsStructuredData questions={questions} />
@@ -116,7 +116,7 @@ export function HelpCentrePage() {
   const isSearching = query.trim() !== '';
   const matchCount = shownPages.length + shownQuestions.length;
   return (
-    <PageContainer className="flex flex-col gap-10 pt-10 pb-16">
+    <PageContainer className="flex flex-col gap-8 pt-8 pb-16">
       <title>{t('website.help.documentTitle')}</title>
       <HelpHeader query={query} onQueryChange={setQuery} />
       {(pages.readFailed || questions.readFailed) && (
@@ -125,12 +125,12 @@ export function HelpCentrePage() {
       {/* Step 2: say how many match, for screen readers and, when nothing does, for everyone. */}
       <p
         role="status"
-        className={isSearching && matchCount === 0 ? 'm-0 text-center text-body' : 'sr-only'}
+        className={isSearching && matchCount === 0 ? 'm-0 text-center text-ink-muted' : 'sr-only'}
       >
         {isSearching ? t('website.help.searchResults', { count: matchCount }) : ''}
       </p>
       <HelpTopicTiles pages={shownPages} />
-      <div className="grid items-start gap-10 lg:grid-cols-2">
+      <div className="grid items-start gap-8 lg:grid-cols-2">
         <PopularQuestions questions={shownQuestions} />
         <HelpStillStuck />
       </div>

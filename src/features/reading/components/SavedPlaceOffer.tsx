@@ -66,9 +66,9 @@ export function SavedPlaceOffer({
   return (
     <div
       role="status"
-      className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-tint px-4 py-3"
+      className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-card border border-border bg-tint px-4 py-3"
     >
-      <p className="m-0 text-sm text-body">{t('reader.savedPlace', { percent })}</p>
+      <p className="m-0 type-body text-ink-muted">{t('reader.savedPlace', { percent })}</p>
       <Button variant="secondary" onClick={goBack}>
         {t('reader.goToSavedPlace')}
       </Button>

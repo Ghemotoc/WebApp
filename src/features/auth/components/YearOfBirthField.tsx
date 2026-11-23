@@ -41,9 +41,9 @@ export function YearOfBirthField({
   const errorId = problem === undefined ? undefined : 'sign-up-birth-year-error';
   const describedBy = ['sign-up-birth-year-why', errorId].filter(Boolean).join(' ');
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2">
       <div className="relative flex items-center gap-2">
-        <label htmlFor="sign-up-birth-year" className="text-sm font-semibold text-ink">
+        <label htmlFor="sign-up-birth-year" className="type-body font-semibold text-ink">
           {t('signUp.birthYear.label')}
         </label>
         <InfoTooltip
@@ -61,7 +61,7 @@ export function YearOfBirthField({
           aria-describedby={describedBy}
           aria-invalid={problem === undefined ? undefined : true}
           onChange={(event) => onChange(event.target.value)}
-          className="h-11 w-auto cursor-pointer appearance-none rounded-full border border-control-border bg-surface pr-9 pl-4 font-body text-sm font-semibold text-ink"
+          className="h-11 w-auto cursor-pointer appearance-none rounded-full border border-control-border bg-surface pr-9 pl-4 font-body type-body font-semibold text-ink"
         >
           <option value="">{t('signUp.birthYear.placeholder')}</option>
           {listBirthYears().map((year) => (
@@ -73,10 +73,10 @@ export function YearOfBirthField({
         <ChevronDownIcon className="pointer-events-none absolute top-1/2 right-3.5 -translate-y-1/2 text-ink" />
       </span>
       {includesAgeCheck && (
-        <p className="m-0 pl-5 text-[13px] text-meta">{t('signUp.birthYear.ageCheckLine')}</p>
+        <p className="m-0 pl-4 type-meta text-ink-muted">{t('signUp.birthYear.ageCheckLine')}</p>
       )}
       {problem !== undefined && (
-        <p id={errorId} className="m-0 text-sm text-destructive">
+        <p id={errorId} className="m-0 type-body text-destructive">
           {t(problem)}
         </p>
       )}

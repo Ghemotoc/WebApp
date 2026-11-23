@@ -19,11 +19,11 @@ export function AdSection() {
 
   return (
     <DesignSection id="ad-formats" title={t('sections.ads')}>
-      <p className="m-0 max-w-[720px] text-body">{t('ads.intro')}</p>
+      <p className="m-0 max-w-[720px] text-ink-muted">{t('ads.intro')}</p>
       <AdSlot format="banner" labelKind="ad">
         {t('ads.banner')}
       </AdSlot>
-      <div className="flex flex-wrap items-start gap-5">
+      <div className="flex flex-wrap items-start gap-4">
         <AdSlot format="card" labelKind="sponsored">
           {t('ads.card')}
         </AdSlot>

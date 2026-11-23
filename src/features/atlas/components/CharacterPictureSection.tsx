@@ -51,7 +51,7 @@ function PictureStateNote({ character }: { character: StoryCharacter }) {
   const { t } = useAtlasTranslation();
   const state = character.picture?.state;
   if (state === undefined)
-    return <p className="m-0 text-sm text-meta">{t('characters.picture.none')}</p>;
+    return <p className="m-0 type-body text-ink-muted">{t('characters.picture.none')}</p>;
   if (state === 'visible') return null;
   return <Notice tone="info">{t(`characters.picture.${state}`)}</Notice>;
 }

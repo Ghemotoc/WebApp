@@ -24,22 +24,22 @@ export function WriterResultCard({ writer }: { writer: FoundWriter }) {
   return (
     <Link
       to={`/u/${encodeURIComponent(writer.handle)}`}
-      className={`flex h-full flex-col gap-1.5 rounded-card border border-border bg-surface p-5 text-body no-underline shadow-card hover:bg-tint w-full`}
+      className={`flex h-full flex-col gap-2 rounded-card border border-border bg-surface p-4 text-ink-muted no-underline shadow-card hover:bg-tint w-full`}
     >
       {/* The avatar beside the name, 36 px as in every list (design system Avatar). */}
       <span className="flex min-w-0 items-center gap-3">
         <PersonAvatar name={writer.displayName} handle={writer.handle} size="medium" />
-        <span className="min-w-0 font-heading text-lg leading-tight font-bold break-words text-heading">
+        <span className="min-w-0 font-heading type-long leading-tight font-bold break-words text-ink-heading">
           {writer.displayName}
         </span>
       </span>
-      <span className="text-sm text-meta">
+      <span className="type-body text-ink-muted">
         {t('results.writerHandle', { handle: writer.handle })}
       </span>
       {writer.bio !== '' && (
-        <span className="line-clamp-3 text-sm leading-normal">{writer.bio}</span>
+        <span className="line-clamp-3 type-body leading-normal">{writer.bio}</span>
       )}
-      <span className="mt-auto text-sm font-semibold text-heading">
+      <span className="mt-auto type-body font-semibold text-ink-heading">
         {t('results.stories', { count: writer.storyCount })}
       </span>
     </Link>

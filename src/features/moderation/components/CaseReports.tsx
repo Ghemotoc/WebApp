@@ -51,8 +51,8 @@ function ReportCard({
   }).format(new Date(report.createdAt));
   return (
     <li className="flex flex-col gap-2 rounded-card border border-border bg-surface p-4">
-      <p className="m-0 font-semibold text-heading">{t(`reasons.${report.reason}`)}</p>
-      <p className="m-0 text-sm text-meta">
+      <p className="m-0 font-semibold text-ink-heading">{t(`reasons.${report.reason}`)}</p>
+      <p className="m-0 type-body text-ink-muted">
         {t('case.reportBy', {
           reference: report.reference,
           handle,
@@ -60,7 +60,7 @@ function ReportCard({
           when,
         })}
       </p>
-      <blockquote className="m-0 border-l-4 border-(--pill-gold-border) pl-3 text-body">
+      <blockquote className="m-0 border-l-4 border-(--pill-gold-border) pl-3 text-ink-muted">
         {report.details === null || report.details === '' ? t('case.noDetails') : report.details}
       </blockquote>
       {/* A copied-work report: the passage and the source side by side (S1-E10-08). */}
@@ -114,10 +114,13 @@ export function CaseReports({
   const { t } = useTranslation('moderation');
   return (
     <section aria-labelledby="case-reports-heading" className="flex flex-col gap-4">
-      <h2 id="case-reports-heading" className="m-0 font-heading text-[24px] font-bold text-heading">
+      <h2
+        id="case-reports-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
+      >
         {t('case.reportsHeading')}
       </h2>
-      {reports.length === 0 && <p className="m-0 text-body">{t('case.noReports')}</p>}
+      {reports.length === 0 && <p className="m-0 text-ink-muted">{t('case.noReports')}</p>}
       {sanctions.pauseFailure !== null && (
         <Notice tone="error">{t(`failures.${sanctions.pauseFailure}`)}</Notice>
       )}
@@ -132,7 +135,7 @@ export function CaseReports({
           />
         ))}
       </ul>
-      {reports.length > 0 && <p className="m-0 text-sm text-meta">{t('case.anonymous')}</p>}
+      {reports.length > 0 && <p className="m-0 type-body text-ink-muted">{t('case.anonymous')}</p>}
     </section>
   );
 }

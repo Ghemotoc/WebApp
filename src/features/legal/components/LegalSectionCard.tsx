@@ -46,7 +46,7 @@ function LegalSectionNote({
 }) {
   return (
     <div className="col-span-full flex flex-col gap-2 pt-4">
-      <h3 lang={textLanguage} className="m-0 font-heading text-[22px] font-bold text-heading">
+      <h3 lang={textLanguage} className="m-0 font-heading type-heading font-bold text-ink-heading">
         {section.title}
       </h3>
       <LegalMarkdown markdown={section.fullMarkdown} language={textLanguage} />
@@ -63,15 +63,15 @@ function LegalSectionNote({
 function LegalFullTextBox({ section, isLawyerReviewed, textLanguage }: LegalSectionCardProps) {
   const { t } = useTranslation('legal');
   return (
-    <div className="mt-auto rounded-2xl border border-dashed border-dashed-border bg-paper p-4">
-      <p className="m-0 mb-2 text-sm font-semibold text-meta">
+    <div className="mt-auto rounded-card border border-dashed border-dashed-border bg-paper p-4">
+      <p className="m-0 mb-2 type-body font-semibold text-ink-muted">
         {isLawyerReviewed ? t('fullText') : t('fullTextDraft')}
       </p>
       <div
         role="region"
         tabIndex={0}
         aria-label={t('fullTextRegion', { title: section.title })}
-        className="max-h-[260px] overflow-y-auto pr-2 text-[15px]"
+        className="max-h-[260px] overflow-y-auto pr-2 type-body"
       >
         <LegalMarkdown markdown={section.fullMarkdown} language={textLanguage} />
       </div>
@@ -124,7 +124,7 @@ export function LegalSectionCard({
         {section.number !== null && (
           <span
             aria-hidden="true"
-            className="inline-flex size-[34px] shrink-0 items-center justify-center rounded-full bg-tint font-heading font-bold text-heading"
+            className="inline-flex size-[34px] shrink-0 items-center justify-center rounded-full bg-tint font-heading font-bold text-ink-heading"
           >
             {section.number}
           </span>
@@ -132,7 +132,7 @@ export function LegalSectionCard({
         <h3
           id={titleId}
           lang={textLanguage}
-          className="m-0 font-heading text-[22px] font-bold text-heading"
+          className="m-0 font-heading type-heading font-bold text-ink-heading"
         >
           {section.title}
         </h3>

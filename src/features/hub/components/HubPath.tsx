@@ -36,7 +36,7 @@ function ContinueLink({ steps }: { steps: LearningStep[] }) {
   return (
     <Link
       to={`/hub/path?day=${nextDay ?? 1}`}
-      className="inline-flex h-11 items-center justify-center self-start rounded-full button-glass px-5 text-sm font-semibold no-underline"
+      className="inline-flex h-11 items-center justify-center self-start rounded-full button-glass px-4 type-body font-semibold no-underline"
     >
       {label}
     </Link>
@@ -59,20 +59,20 @@ export function HubPath() {
       aria-labelledby="hub-path"
       className="flex flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card md:p-8"
     >
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         <p className="eyebrow m-0">{t('hub.path.eyebrow')}</p>
         <h2
           id="hub-path"
-          className="m-0 font-heading text-[26px] leading-tight font-bold text-heading"
+          className="m-0 font-heading type-heading leading-tight font-bold text-ink-heading"
         >
           {t('hub.path.heading')}
         </h2>
-        <p className="m-0 text-body">{t('hub.path.intro')}</p>
+        <p className="m-0 text-ink-muted">{t('hub.path.intro')}</p>
       </div>
       <PathStepList steps={steps} currentDay={null} />
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
         <ContinueLink steps={steps} />
-        <span className="text-sm text-meta">
+        <span className="type-body text-ink-muted">
           {t('hub.path.progress', { done: doneCount, total: steps.length })}
         </span>
       </div>

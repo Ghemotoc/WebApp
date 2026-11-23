@@ -31,10 +31,10 @@ export function CalmSection() {
   return (
     <DesignSection id="calm" title={t('sections.calm')}>
       <Hero labelledBy="design-hero-title" className="max-w-[720px]">
-        <h3 id="design-hero-title" className="m-0 type-heading text-heading">
+        <h3 id="design-hero-title" className="m-0 type-heading text-ink-heading">
           {t('calm.heroTitle')}
         </h3>
-        <p className="m-0 text-body">{t('calm.heroText')}</p>
+        <p className="m-0 text-ink-muted">{t('calm.heroText')}</p>
         <Meter
           label={t('calm.meterLabel')}
           value={sampleRead}

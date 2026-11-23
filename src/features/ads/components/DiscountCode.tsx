@@ -32,10 +32,10 @@ export function DiscountCode({ code }: { code: string }) {
     }
   };
   return (
-    <span className="mt-1.5 flex flex-wrap items-center gap-2 text-[13px] text-body">
+    <span className="mt-2 flex flex-wrap items-center gap-2 type-meta text-ink-muted">
       <span>
         {t('sponsor.code')}{' '}
-        <code className="rounded-md border border-border px-1.5 py-0.5 font-mono font-semibold text-ink">
+        <code className="rounded-field border border-border px-2 py-1 font-mono font-semibold text-ink">
           {code}
         </code>
       </span>
@@ -43,11 +43,11 @@ export function DiscountCode({ code }: { code: string }) {
         type="button"
         onClick={() => void copy()}
         aria-label={t('sponsor.copyLabel', { code })}
-        className="inline-flex min-h-8 items-center rounded-full border border-control-border bg-surface px-3 text-[13px] font-semibold text-heading focus-visible:outline-2 focus-visible:outline-offset-2"
+        className="inline-flex min-h-8 items-center rounded-full border border-control-border bg-surface px-3 type-meta font-semibold text-ink-heading focus-visible:outline-2 focus-visible:outline-offset-2"
       >
         {t('sponsor.copy')}
       </button>
-      <span role="status" className="text-meta">
+      <span role="status" className="text-ink-muted">
         {outcome === 'copied' && t('sponsor.copied')}
         {outcome === 'failed' && t('sponsor.copyFailed')}
       </span>

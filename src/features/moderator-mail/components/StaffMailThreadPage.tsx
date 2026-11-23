@@ -40,7 +40,7 @@ function ThreadControls({
   const { t } = useMailTranslation();
   const [assignee, setAssignee] = useState(thread.assignedHandle ?? '');
   return (
-    <div className="flex flex-wrap items-end gap-4 rounded-card border border-border bg-surface p-5">
+    <div className="flex flex-wrap items-end gap-4 rounded-card border border-border bg-surface p-4">
       <div className="flex flex-wrap items-end gap-3">
         <TextInput
           id="mail-assignee"
@@ -85,18 +85,18 @@ function ThreadControls({
 function StaffThreadBody({ state }: { state: ReturnType<typeof useStaffThread> }) {
   const { t } = useMailTranslation();
   if (state.loadFailure === 'not_allowed')
-    return <p className="m-0 text-body">{t('staff.notAllowed')}</p>;
+    return <p className="m-0 text-ink-muted">{t('staff.notAllowed')}</p>;
   if (state.thread.isError) return <Notice tone="error">{t('staff.loadFailed')}</Notice>;
   if (state.thread.isPending) return null;
   const thread = state.thread.data;
-  if (thread === null) return <p className="m-0 text-body">{t('thread.notFound')}</p>;
+  if (thread === null) return <p className="m-0 text-ink-muted">{t('thread.notFound')}</p>;
   return (
     <div className="flex max-w-[860px] flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <h1 className="m-0 font-heading text-[30px] font-bold break-words text-heading">
+        <h1 className="m-0 font-heading type-title font-bold break-words text-ink-heading">
           {thread.subject}
         </h1>
-        <p className="m-0 text-sm text-meta">
+        <p className="m-0 type-body text-ink-muted">
           {t('staff.threadMeta', {
             reference: thread.reference,
             handle: thread.memberHandle ?? '',
@@ -134,11 +134,14 @@ export function StaffMailThreadPage() {
   const { reference = '' } = useParams();
   const state = useStaffThread(reference);
   return (
-    <PageContainer className="flex flex-col gap-6 pt-12 pb-7">
+    <PageContainer className="flex flex-col gap-6 pt-12 pb-6">
       <title>{t('thread.documentTitle', { reference })}</title>
       <Eyebrow>{t('staff.eyebrow')}</Eyebrow>
       <StaffThreadBody state={state} />
-      <Link to="/staff/moderator-mail" className="w-fit text-sm font-semibold text-link underline">
+      <Link
+        to="/staff/moderator-mail"
+        className="w-fit type-body font-semibold text-link underline"
+      >
         {t('staff.back')}
       </Link>
     </PageContainer>

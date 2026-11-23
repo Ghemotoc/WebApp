@@ -61,11 +61,11 @@ export function CannedReplyPicker({ ticket, insert }: CannedReplyPickerProps) {
         <Button variant="secondary" disabled={chosenId === ''} onClick={insertChosen}>
           {t('staff.canned.insert')}
         </Button>
-        <Link to="/staff/support/canned" className="text-sm font-semibold text-link underline">
+        <Link to="/staff/support/canned" className="type-body font-semibold text-link underline">
           {t('staff.canned.manageLink')}
         </Link>
       </div>
-      <p className="m-0 text-sm text-meta" aria-live="polite">
+      <p className="m-0 type-body text-ink-muted" aria-live="polite">
         {insertedTitle === null ? '' : t('staff.canned.inserted', { title: insertedTitle })}
       </p>
     </div>

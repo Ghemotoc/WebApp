@@ -83,7 +83,7 @@ export function PictureUploadField({
   const message = outcome === null ? null : outcomeMessage(outcome);
   return (
     <div className="flex flex-col gap-2">
-      <label htmlFor={inputId} className="text-sm font-semibold text-ink">
+      <label htmlFor={inputId} className="type-body font-semibold text-ink">
         {label}
       </label>
       <input
@@ -92,7 +92,7 @@ export function PictureUploadField({
         accept={accept}
         aria-describedby={`${hintId} ${pictureRulesIds(rulesId)}`}
         disabled={isUploading}
-        className="min-h-11 text-sm text-body file:mr-3 file:h-11 file:rounded-full file:border file:border-control-border file:bg-surface file:px-4 file:font-semibold file:text-heading"
+        className="min-h-11 type-body text-ink-muted file:mr-3 file:h-11 file:rounded-full file:border file:border-control-border file:bg-surface file:px-4 file:font-semibold file:text-ink-heading"
         onChange={(event) => {
           const file = event.target.files?.[0];
           if (file !== undefined) onPick(file);
@@ -100,12 +100,12 @@ export function PictureUploadField({
           event.target.value = '';
         }}
       />
-      <p id={hintId} className="m-0 text-[13px] text-meta">
+      <p id={hintId} className="m-0 type-meta text-ink-muted">
         {hint}
       </p>
       <PictureRulesNote id={rulesId} />
       <div aria-live="polite">
-        {isUploading && <p className="m-0 text-sm text-body">{t('pictures.uploading')}</p>}
+        {isUploading && <p className="m-0 type-body text-ink-muted">{t('pictures.uploading')}</p>}
         {!isUploading && message !== null && (
           <Notice tone={message.tone}>{t(message.key, message.values)}</Notice>
         )}

@@ -64,12 +64,14 @@ function TreeCards({
           {/* The chosen character's card has a 2 px ring in the thread colour (board E26). */}
           <MaybeLink
             to={addressOf(box.id)}
-            className={`flex size-full min-w-0 flex-col justify-center rounded-[14px] bg-paper px-3.5 py-2 no-underline hover:bg-tint ${box.id === rootId ? 'shadow-[inset_0_0_0_2px_var(--thread)]' : 'shadow-[inset_0_0_0_1px_var(--border)]'}`}
+            className={`flex size-full min-w-0 flex-col justify-center rounded-field bg-paper px-3 py-2 no-underline hover:bg-tint ${box.id === rootId ? 'shadow-[inset_0_0_0_2px_var(--thread)]' : 'shadow-[inset_0_0_0_1px_var(--border)]'}`}
           >
             {/* Long words stay inside the card: one line each, cut with an ellipsis. The link
                 still reads the whole name and line. */}
-            <span className="truncate text-sm font-bold text-heading">{words.nameOf(box.id)}</span>
-            <span className="truncate text-xs text-meta">{lineOf(box.id)}</span>
+            <span className="truncate type-body font-semibold text-ink-heading">
+              {words.nameOf(box.id)}
+            </span>
+            <span className="truncate type-meta text-ink-muted">{lineOf(box.id)}</span>
           </MaybeLink>
         </li>
       ))}
@@ -131,7 +133,7 @@ export function FamilyTreeDrawing({ tree, rootId, ...cardProps }: FamilyTreeDraw
           <TreeCards {...cardProps} layout={layout} rootId={rootId} />
         </div>
       </div>
-      {isWider && <p className="m-0 text-sm text-meta">{t('connections.tree.swipe')}</p>}
+      {isWider && <p className="m-0 type-body text-ink-muted">{t('connections.tree.swipe')}</p>}
     </div>
   );
 }

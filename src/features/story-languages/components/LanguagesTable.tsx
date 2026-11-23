@@ -22,8 +22,8 @@ import { useStoryLanguagesTranslation } from '../registerStoryLanguagesTranslati
 /** A cell: a table cell from 768 px, a labelled line on a phone. */
 function Cell({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <td className="px-3 py-1 align-middle text-sm text-body max-md:block max-md:px-0 md:py-4">
-      <span className="mr-2 text-[13px] font-semibold text-meta md:hidden">{label}</span>
+    <td className="px-3 py-1 align-middle type-body text-ink-muted max-md:block max-md:px-0 md:py-4">
+      <span className="mr-2 type-meta font-semibold text-ink-muted md:hidden">{label}</span>
       {children}
     </td>
   );
@@ -49,7 +49,7 @@ function LanguageAction({ language }: { language: StoryLanguage }) {
   // phone the button becomes a line saying where it works (the editor says the same, D09).
   return (
     <>
-      <span className="text-[13px] leading-[18px] text-meta sm:hidden">
+      <span className="type-meta leading-[18px] text-ink-muted sm:hidden">
         {t('table.translateOnBiggerScreen')}
       </span>
       <Link
@@ -67,16 +67,16 @@ function LanguageAction({ language }: { language: StoryLanguage }) {
 function LanguageRow({ language }: { language: StoryLanguage }) {
   const { t } = useStoryLanguagesTranslation();
   return (
-    <tr className="border-t border-border max-md:flex max-md:flex-col max-md:gap-0.5 max-md:py-4">
+    <tr className="border-t border-border max-md:flex max-md:flex-col max-md:gap-1 max-md:py-4">
       <th
         scope="row"
-        className="px-3 py-1 text-left align-middle text-sm font-bold text-heading max-md:px-0 md:py-4"
+        className="px-3 py-1 text-left align-middle type-body font-semibold text-ink-heading max-md:px-0 md:py-4"
       >
         <span className="flex flex-wrap items-center gap-2 md:flex-col md:items-start md:gap-1">
           <span lang={language.languageCode}>{languageOwnName(language.languageCode)}</span>
           {/* CALM-9c: "Original" is a quiet word under the language, not a pill. */}
           {language.isFirstEdition && (
-            <span className="text-[13px] font-normal text-meta">{t('table.original')}</span>
+            <span className="type-meta font-normal text-ink-muted">{t('table.original')}</span>
           )}
         </span>
       </th>
@@ -103,7 +103,7 @@ function LanguageRow({ language }: { language: StoryLanguage }) {
       </Cell>
       <Cell label={t('table.status')}>
         {/* CALM-9c: the state is a bold word, as a meta line's state. */}
-        <span className="font-bold text-ink">
+        <span className="font-semibold text-ink">
           {language.isPublic ? t('table.published') : t('table.draft')}
         </span>
       </Cell>
@@ -123,7 +123,7 @@ export function LanguagesTable({ languages }: { languages: StoryLanguage[] }) {
   const { t } = useStoryLanguagesTranslation();
   const headings = ['language', 'title', 'translatedBy', 'chapters', 'status'] as const;
   return (
-    <section className="rounded-card border border-border bg-surface px-5 py-2 shadow-card md:px-2.5">
+    <section className="rounded-card border border-border bg-surface px-4 py-2 shadow-card md:px-3">
       <table className="w-full border-collapse max-md:block">
         <caption className="sr-only">{t('table.caption')}</caption>
         <thead className="max-md:sr-only">
@@ -132,7 +132,7 @@ export function LanguagesTable({ languages }: { languages: StoryLanguage[] }) {
               <th
                 key={heading}
                 scope="col"
-                className="px-3 py-4 text-left eyebrow-type text-heading"
+                className="px-3 py-4 text-left eyebrow-type text-ink-heading"
               >
                 {t(`table.${heading}`)}
               </th>

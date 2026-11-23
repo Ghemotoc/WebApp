@@ -52,20 +52,20 @@ function CommentHeader({ comment }: { comment: ChapterComment }) {
     <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
       <Link
         to={`/u/${comment.author.handle}`}
-        className="text-[15px] font-bold text-ink no-underline hover:underline"
+        className="type-body font-semibold text-ink no-underline hover:underline"
       >
         {comment.author.displayName}
       </Link>
       {comment.isWriter && (
-        <span className="inline-flex h-6 items-center justify-center gap-1.5 self-center rounded-full border border-border bg-tint px-2.5 text-xs leading-none font-bold whitespace-nowrap text-heading">
+        <span className="inline-flex h-6 items-center justify-center gap-2 self-center rounded-full border border-border bg-tint px-3 type-meta leading-none font-semibold whitespace-nowrap text-ink-heading">
           {t('comment.writer')}
         </span>
       )}
-      <time dateTime={comment.createdAt} className="text-[13px] text-meta">
+      <time dateTime={comment.createdAt} className="type-meta text-ink-muted">
         {timeAgo(comment.createdAt, i18n.language)}
       </time>
       {comment.isSpoiler && comment.body !== null && (
-        <span className="inline-flex h-6 items-center justify-center self-center rounded-full border border-border bg-paper px-2.5 text-xs leading-none font-bold whitespace-nowrap text-body">
+        <span className="inline-flex h-6 items-center justify-center self-center rounded-full border border-border bg-paper px-3 type-meta leading-none font-semibold whitespace-nowrap text-ink-muted">
           {t('comment.spoiler')}
         </span>
       )}
@@ -83,7 +83,7 @@ function ParagraphLabel({ paragraph }: { paragraph: ChapterComment['paragraph'] 
   const { t } = useCommentsTranslation();
   if (paragraph === null) return null;
   return (
-    <p className="m-0 mb-1 text-[13px] font-semibold text-link">
+    <p className="m-0 mb-1 type-meta font-semibold text-link">
       {paragraph === 'earlier'
         ? t('comment.onEarlierVersion')
         : t('comment.onParagraph', { number: paragraph })}
@@ -154,10 +154,7 @@ export function CommentItem({
   return (
     <article
       aria-label={name}
-      className={cn(
-        'flex gap-3.5',
-        isReply ? 'mt-4 border-t border-hairline pt-4 pl-[18px]' : 'py-5',
-      )}
+      className={cn('flex gap-4', isReply ? 'mt-4 border-t border-hairline pt-4 pl-4' : 'py-4')}
     >
       {/* 32 px on a comment and a reply alike (CALM-3, design system Avatar/README.md). */}
       <PersonAvatar name={name} handle={comment.author.handle} size="small" />

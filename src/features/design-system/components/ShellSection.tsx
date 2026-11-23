@@ -22,7 +22,7 @@ export function ShellSection() {
 
   return (
     <DesignSection id="top-bar" title={t('sections.shell')}>
-      <p className="m-0 max-w-[720px] text-body">{t('shell.topBarNote')}</p>
+      <p className="m-0 max-w-[720px] text-ink-muted">{t('shell.topBarNote')}</p>
       <div className="-mx-[calc(clamp(16px,4vw,64px)+10px)]">
         <TopBar
           navigationItems={boardPrimaryNavigation}
@@ -31,7 +31,7 @@ export function ShellSection() {
           hasSearch={false}
         />
       </div>
-      <p className="m-0 max-w-[720px] text-body">{t('shell.staffBarNote')}</p>
+      <p className="m-0 max-w-[720px] text-ink-muted">{t('shell.staffBarNote')}</p>
       <div className="-mx-[calc(clamp(16px,4vw,64px)+10px)]">
         <StaffBar
           navigationItems={boardStaffNavigation}
@@ -40,7 +40,7 @@ export function ShellSection() {
           onSignOut={() => undefined}
         />
       </div>
-      <p className="m-0 text-[13px] text-meta">{t('common:staff.everyActionLogged')}</p>
+      <p className="m-0 type-meta text-ink-muted">{t('common:staff.everyActionLogged')}</p>
     </DesignSection>
   );
 }

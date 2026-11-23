@@ -71,7 +71,7 @@ export function BugReportForm({ isSending, hasFailed, onSend, onCancel }: BugRep
         value={message}
         onChange={(event) => setMessage(event.target.value)}
       />
-      <p className="m-0 type-meta text-meta">{t('bugReport.whatWeSend')}</p>
+      <p className="m-0 type-meta text-ink-muted">{t('bugReport.whatWeSend')}</p>
       {hasFailed && (
         <p role="alert" className="m-0 type-meta text-destructive">
           {t('bugReport.unsent')}

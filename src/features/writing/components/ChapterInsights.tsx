@@ -84,14 +84,14 @@ export function ChapterInsights({ chapters, storyTitles }: ChapterInsightsProps)
     }),
   }));
   return (
-    <section aria-labelledby="chapter-insights-heading" className="flex min-w-0 flex-col gap-5">
+    <section aria-labelledby="chapter-insights-heading" className="flex min-w-0 flex-col gap-4">
       <div className="flex flex-col gap-1">
         {/* What used to be the eyebrow, "Only you see this", as the meta line over the heading. */}
         <p className="m-0 type-meta">{t('insights.eyebrow')}</p>
-        <h2 id="chapter-insights-heading" className="m-0 type-heading text-heading">
+        <h2 id="chapter-insights-heading" className="m-0 type-heading text-ink-heading">
           {t('insights.heading')}
         </h2>
-        <p className="m-0 type-body text-body">{t('insights.intro')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('insights.intro')}</p>
       </div>
       <Select
         id="chapter-insights-chapter"

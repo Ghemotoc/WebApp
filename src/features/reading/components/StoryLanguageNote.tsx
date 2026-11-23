@@ -35,7 +35,7 @@ export function TranslationCredit({ story }: { story: StoryPageData }) {
   const facts = story.edition;
   if (facts === null || facts.isOriginal || facts.translatorName === null) return null;
   return (
-    <p className="m-0 text-sm break-words text-body">
+    <p className="m-0 type-body break-words text-ink-muted">
       {t('editions.translatedFromBy', {
         language: languageNameIn(facts.originalLanguage, i18n.language),
         name: facts.translatorName,
@@ -81,8 +81,8 @@ export function StoryLanguageNote({ story }: { story: StoryPageData }) {
   // "because this page is in English" is true only when the page and the edition agree.
   const matchesPage = i18n.language.slice(0, 2) === story.languageCode.slice(0, 2);
   return (
-    <p className="m-0 flex max-w-[640px] items-start gap-2.5 rounded-2xl bg-tint px-3.5 py-2.5 text-sm text-body">
-      <ActionIcon name="info" size={16} className="mt-0.5 flex-none" />
+    <p className="m-0 flex max-w-[640px] items-start gap-3 rounded-card bg-tint px-4 py-3 type-body text-ink-muted">
+      <ActionIcon name="info" size={16} className="mt-1 flex-none" />
       <span>{t(matchesPage ? 'shownForPage' : 'shown', values)}</span>
     </p>
   );
@@ -159,8 +159,8 @@ export function AboutEditionCard({ story }: { story: StoryPageData }) {
           { label: t('about.alsoIn'), value: <AlsoInLinks others={others} /> },
         ]}
       />
-      <p className="m-0 text-[13px] leading-normal text-meta">
-        <strong className="font-semibold text-heading">{t('countedOnceTitle')}</strong>{' '}
+      <p className="m-0 type-meta leading-normal text-ink-muted">
+        <strong className="font-semibold text-ink-heading">{t('countedOnceTitle')}</strong>{' '}
         {t('countedOnceBody')}
       </p>
     </div>

@@ -39,7 +39,7 @@ export function SpaceReplyNote({ space }: { space: ForumThreadSpace }) {
   const read = useSpace(space.slug);
   const viewer = read.data?.viewer;
   return (
-    <p className="m-0 text-base text-body">
+    <p className="m-0 type-body text-ink-muted">
       <Trans
         t={t}
         i18nKey={noteKey(viewer)}

@@ -57,7 +57,7 @@ function LikesForm({ onboarding, state }: LikesFormProps) {
   return (
     <form
       noValidate
-      className="flex flex-col gap-5"
+      className="flex flex-col gap-4"
       onSubmit={(event) => void handleSubmit(event).catch(errorShownByHook)}
     >
       <RegionSelect
@@ -91,7 +91,7 @@ export function LikesSettingsSection({ isInsideStep = false }: { isInsideStep?: 
   const { onboarding } = state;
   const body = (
     <>
-      <p className="m-0 text-body">{t('onboarding.settings.intro')}</p>
+      <p className="m-0 text-ink-muted">{t('onboarding.settings.intro')}</p>
       {state.loadFailed && <Notice tone="error">{t('onboarding.loadFailed')}</Notice>}
       {onboarding != null && <LikesForm onboarding={onboarding} state={state} />}
     </>
@@ -105,7 +105,7 @@ export function LikesSettingsSection({ isInsideStep = false }: { isInsideStep?: 
     >
       <h2
         id="settings-likes-heading"
-        className="m-0 font-heading text-[22px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('onboarding.settings.heading')}
       </h2>

@@ -36,35 +36,35 @@ function BackCover({ text }: { text: BackCoverText }) {
     <figure
       aria-labelledby="atlas-back-cover-title"
       data-testid="atlas-back-cover"
-      className="m-0 flex aspect-[2/3] w-full max-w-[420px] flex-col gap-3.5 self-center overflow-hidden rounded-3xl bg-primary px-[30px] py-8 text-on-primary shadow-card"
+      className="m-0 flex aspect-[2/3] w-full max-w-[420px] flex-col gap-4 self-center overflow-hidden rounded-card bg-primary px-8 py-8 text-on-primary shadow-card"
     >
       <p
         id="atlas-back-cover-title"
-        className="m-0 font-heading text-[26px] leading-tight font-bold break-words"
+        className="m-0 font-heading type-heading leading-tight font-bold break-words text-on-primary"
       >
         {text.title}
       </p>
       {text.logline !== '' && (
-        <p className="m-0 font-[family-name:var(--font-story)] text-[15px] leading-[1.6] break-words whitespace-pre-line italic">
+        <p className="m-0 font-[family-name:var(--font-story)] type-body leading-[1.6] break-words whitespace-pre-line italic">
           {text.logline}
         </p>
       )}
       {text.blurb !== '' && (
-        <p className="m-0 font-[family-name:var(--font-story)] text-sm leading-[1.6] break-words whitespace-pre-line">
+        <p className="m-0 font-[family-name:var(--font-story)] type-body leading-[1.6] break-words whitespace-pre-line">
           {text.blurb}
         </p>
       )}
-      {!hasWords && <p className="m-0 text-sm">{t('marketing.backCover.empty')}</p>}
+      {!hasWords && <p className="m-0 type-body">{t('marketing.backCover.empty')}</p>}
       {/* The foot of the cover: who the book is for, then who wrote it. */}
-      <div className="mt-auto flex flex-col gap-3.5">
+      <div className="mt-auto flex flex-col gap-4">
         {text.comparableTitles !== '' && (
-          <p className="m-0 flex flex-col gap-1 text-sm break-words whitespace-pre-line">
+          <p className="m-0 flex flex-col gap-1 type-body break-words whitespace-pre-line">
             <span className="eyebrow-type">{t('marketing.backCover.forReadersOf')}</span>
             {text.comparableTitles}
           </p>
         )}
         {text.writerName !== '' && (
-          <p data-testid="atlas-back-cover-byline" className="m-0 text-sm break-words">
+          <p data-testid="atlas-back-cover-byline" className="m-0 type-body break-words">
             {t('marketing.backCover.byline', { name: text.writerName })}
           </p>
         )}
@@ -87,13 +87,13 @@ export function BackCoverPreview({ text }: { text: BackCoverText }) {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2
           id="atlas-back-cover-heading"
-          className="m-0 font-heading text-[22px] font-bold text-heading"
+          className="m-0 font-heading type-heading font-bold text-ink-heading"
         >
           {t('marketing.backCover.heading')}
         </h2>
         <Button
           variant="secondary"
-          className="h-9 px-4 text-[13px]"
+          className="h-9 px-4 type-meta"
           aria-expanded={isOpen}
           aria-controls="atlas-back-cover-panel"
           onClick={() => setIsOpen(!isOpen)}

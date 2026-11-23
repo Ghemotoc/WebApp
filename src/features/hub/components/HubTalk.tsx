@@ -41,7 +41,9 @@ export function HubTalk() {
         </Link>
       </div>
       {loadFailed && <Notice tone="error">{t('hub.talk.loadFailed')}</Notice>}
-      {!loadFailed && shown.length === 0 && <p className="m-0 text-body">{t('hub.talk.empty')}</p>}
+      {!loadFailed && shown.length === 0 && (
+        <p className="m-0 text-ink-muted">{t('hub.talk.empty')}</p>
+      )}
       <ul className="m-0 list-none p-0">
         {shown.map((thread) => (
           <li
@@ -50,7 +52,7 @@ export function HubTalk() {
           >
             <Link
               to={postAddress(thread.forumSlug, thread.number, thread.firstUnreadPost)}
-              className="font-semibold break-words text-heading no-underline hover:underline"
+              className="font-semibold break-words text-ink-heading no-underline hover:underline"
             >
               {thread.title}
             </Link>

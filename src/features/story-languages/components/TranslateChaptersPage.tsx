@@ -44,15 +44,15 @@ function EditionHeader({ edition }: { edition: StoryLanguage }) {
       <Eyebrow>{t('chapters.eyebrow', { language })}</Eyebrow>
       <h1
         lang={edition.languageCode}
-        className="m-0 text-[clamp(32px,4vw,56px)] leading-[1.02] font-extrabold tracking-[-0.025em] break-words"
+        className="m-0 text-[clamp(32px,4vw,56px)] leading-[1.02] font-bold tracking-[-0.025em] break-words"
       >
         {edition.title}
       </h1>
-      <p className="m-0 text-lg leading-relaxed text-body">{t('chapters.intro')}</p>
+      <p className="m-0 type-long leading-relaxed text-ink-muted">{t('chapters.intro')}</p>
       {edition.isPublic && (
         <Link
           to={`/s/${edition.slug}`}
-          className="inline-flex min-h-11 items-center self-start text-sm font-semibold"
+          className="inline-flex min-h-11 items-center self-start type-body font-semibold"
         >
           {t('chapters.seePage')}
         </Link>
@@ -66,14 +66,14 @@ function EditionBody({ languages, edition }: EditionBodyProps) {
   const list = useTranslationChapters(edition.slug);
   const original = languages.editions[0];
   return (
-    <div className="flex flex-col gap-7 lg:flex-row lg:items-start">
-      <div className="flex min-w-0 lg:flex-[999_1_520px] flex-col gap-7">
+    <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+      <div className="flex min-w-0 lg:flex-[999_1_520px] flex-col gap-6">
         <TranslationChapterList
           list={list}
           originalLanguageCode={original?.languageCode ?? edition.languageCode}
         />
       </div>
-      <div className="flex w-full lg:flex-[1_1_320px] flex-col gap-7 lg:max-w-[400px]">
+      <div className="flex w-full lg:flex-[1_1_320px] flex-col gap-6 lg:max-w-[400px]">
         {/* The key starts the form again with the saved words when another language opens. */}
         <EditionDetailsForm key={edition.slug} edition={edition} />
         <RemoveLanguageCard
@@ -99,7 +99,7 @@ function EditionState({ languages, storySlug }: { languages: StoryLanguages; sto
     return (
       <>
         <LanguagesBreadcrumb story={original} />
-        <p className="m-0 text-body">{t('chapters.notAnEdition')}</p>
+        <p className="m-0 text-ink-muted">{t('chapters.notAnEdition')}</p>
         <Link
           to={`/write/s/${original.slug}/languages`}
           className="inline-flex min-h-11 items-center self-start font-semibold"
@@ -128,7 +128,7 @@ export function TranslateChaptersPage() {
   const { storySlug = '' } = useParams();
   const state = useStoryLanguages(storySlug);
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-7 pt-10 pb-7">
+    <PageContainer className="tmc-rise flex flex-col gap-6 pt-8 pb-6">
       <LoadProblem {...state} isMissing={state.languages === null} kind="story" />
       {state.languages !== null && (
         <EditionState languages={state.languages} storySlug={storySlug} />

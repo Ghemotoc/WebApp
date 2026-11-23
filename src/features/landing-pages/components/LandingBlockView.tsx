@@ -48,7 +48,7 @@ function TextSection({ block, language, extras, isPreview }: LandingBlockViewPro
   const body = wordsOf(block, language, 'body');
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="m-0 font-heading text-[26px] font-bold text-heading">
+      <h2 className="m-0 font-heading type-heading font-bold text-ink-heading">
         {wordsOf(block, language, 'heading')}
       </h2>
       <LandingPicture
@@ -78,7 +78,7 @@ function KeyDates({ block, language }: BlockProps) {
   ];
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="m-0 font-heading text-[26px] font-bold text-heading">
+      <h2 className="m-0 font-heading type-heading font-bold text-ink-heading">
         {wordsOf(block, language, 'heading')}
       </h2>
       {/* Label and value rows with a fine line between them (definition of done, design rules). */}
@@ -88,14 +88,14 @@ function KeyDates({ block, language }: BlockProps) {
             key={row.label}
             className="flex flex-wrap justify-between gap-2 border-b border-hairline py-2"
           >
-            <dt className="text-meta">{row.label}</dt>
+            <dt className="text-ink-muted">{row.label}</dt>
             <dd className="m-0 font-semibold text-ink">
               {row.value === '' ? '' : formatCalendarDate(row.value, language)}
             </dd>
           </div>
         ))}
       </dl>
-      {note !== '' && <p className="m-0 text-body">{note}</p>}
+      {note !== '' && <p className="m-0 text-ink-muted">{note}</p>}
     </section>
   );
 }
@@ -110,14 +110,14 @@ function WhoCanEnter({ block, language }: BlockProps) {
   const groups = block.age_groups ?? [];
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="m-0 font-heading text-[26px] font-bold text-heading">
+      <h2 className="m-0 font-heading type-heading font-bold text-ink-heading">
         {wordsOf(block, language, 'heading')}
       </h2>
       <ul className="m-0 flex list-none flex-wrap gap-2 p-0" aria-label={t('ageGroupsLabel')}>
         {groups.map((group) => (
           <li
             key={group}
-            className="inline-flex h-6 items-center rounded-full border border-(--pill-sage-border) bg-(--pill-sage-bg) px-3 text-sm leading-none text-(--pill-sage-text)"
+            className="inline-flex h-6 items-center rounded-full border border-(--pill-sage-border) bg-(--pill-sage-bg) px-3 type-body leading-none text-(--pill-sage-text)"
           >
             {t(`ageGroups.${group}`)}
           </li>
@@ -137,7 +137,7 @@ function Rules({ block, language }: BlockProps) {
   const body = wordsOf(block, language, 'body');
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="m-0 font-heading text-[26px] font-bold text-heading">
+      <h2 className="m-0 font-heading type-heading font-bold text-ink-heading">
         {wordsOf(block, language, 'heading')}
       </h2>
       {body !== '' && <CmsMarkdown markdown={body} language={language} />}
@@ -162,10 +162,10 @@ function Questions({ block, language }: BlockProps) {
   const items = block[language].items ?? [];
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="m-0 font-heading text-[26px] font-bold text-heading">
+      <h2 className="m-0 font-heading type-heading font-bold text-ink-heading">
         {wordsOf(block, language, 'heading')}
       </h2>
-      <div className="flex flex-col rounded-card border border-border bg-surface px-5 shadow-card">
+      <div className="flex flex-col rounded-card border border-border bg-surface px-4 shadow-card">
         {items.map((item, position) => (
           <details
             key={`${String(position)}-${item.question}`}
@@ -176,7 +176,7 @@ function Questions({ block, language }: BlockProps) {
               {item.question}
               <span
                 aria-hidden="true"
-                className="text-2xl leading-none transition-transform group-open:rotate-45 motion-reduce:transition-none"
+                className="type-heading leading-none transition-transform group-open:rotate-45 motion-reduce:transition-none"
               >
                 +
               </span>

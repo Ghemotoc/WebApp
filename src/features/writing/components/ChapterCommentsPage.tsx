@@ -36,7 +36,7 @@ function CommentsHeader() {
     <header className="flex flex-col gap-4">
       <Link
         to="/write"
-        className="inline-flex h-9 items-center gap-1.5 self-start rounded-full border border-control-border bg-surface px-4 text-[13px] font-semibold text-heading no-underline hover:bg-tint"
+        className="inline-flex h-9 items-center gap-2 self-start rounded-full border border-control-border bg-surface px-4 type-meta font-semibold text-ink-heading no-underline hover:bg-tint"
       >
         <span aria-hidden="true">←</span>
         {t('allComments.back')}
@@ -44,7 +44,7 @@ function CommentsHeader() {
       <div className="flex max-w-[640px] flex-col gap-2">
         <Eyebrow>{t('allComments.eyebrow')}</Eyebrow>
         <h1 className="page-title">{t('allComments.heading')}</h1>
-        <p className="m-0 text-lg leading-relaxed text-body">{t('allComments.lead')}</p>
+        <p className="m-0 type-long leading-relaxed text-ink-muted">{t('allComments.lead')}</p>
       </div>
     </header>
   );
@@ -88,7 +88,7 @@ function CommentsBody() {
       <StoryFilter stories={list.stories} chosen={chosenStory} onChoose={setChosenStory} />
       {/* Step 1: a plain line when nobody has commented yet (or not on this story). */}
       {list.isLoaded && list.comments.length === 0 && (
-        <p className="m-0 text-body">{t('dashboard.comments.empty')}</p>
+        <p className="m-0 text-ink-muted">{t('dashboard.comments.empty')}</p>
       )}
       {/* Step 2: the comments, newest first, one column so long comments stay easy to read. */}
       {list.comments.length > 0 && (
@@ -131,11 +131,11 @@ export function ChapterCommentsPage() {
   const { userId, isKnown } = useSession();
   if (!isKnown) return null;
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-8 pt-10 pb-16">
+    <PageContainer className="tmc-rise flex flex-col gap-8 pt-8 pb-16">
       <title>{t('allComments.documentTitle')}</title>
       <CommentsHeader />
       {userId === null ? (
-        <p className="m-0 text-body">{t('yourWriting.signedOut')}</p>
+        <p className="m-0 text-ink-muted">{t('yourWriting.signedOut')}</p>
       ) : (
         <CommentsBody />
       )}

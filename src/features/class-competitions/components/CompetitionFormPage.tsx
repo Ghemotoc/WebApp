@@ -96,8 +96,8 @@ function DetailsFields(props: { details: Details; onChange: (details: Details) =
 function FormSection(props: { heading: string; intro?: string; children: React.ReactNode }) {
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="m-0 font-heading text-2xl font-bold text-heading">{props.heading}</h2>
-      {props.intro !== undefined && <p className="m-0 text-body">{props.intro}</p>}
+      <h2 className="m-0 font-heading type-heading font-bold text-ink-heading">{props.heading}</h2>
+      {props.intro !== undefined && <p className="m-0 text-ink-muted">{props.intro}</p>}
       {props.children}
     </section>
   );
@@ -149,7 +149,7 @@ function CompetitionForm({ slug, current }: CompetitionFormProps) {
   return (
     <form
       onSubmit={save}
-      className="flex flex-col gap-8 rounded-card border border-border bg-surface p-5 shadow-card md:p-6"
+      className="flex flex-col gap-8 rounded-card border border-border bg-surface p-4 shadow-card md:p-6"
     >
       <DetailsFields details={details} onChange={setDetails} />
       <FormSection heading={t('form.templateHeading')}>
@@ -192,7 +192,7 @@ function TeacherForm({ slug }: { slug: string }) {
   if (competitions.grade === null || isLocked) {
     return (
       <div className="flex flex-col items-start gap-3">
-        <p className="m-0 text-body">{t(isLocked ? 'form.locked' : 'card.needsGrade')}</p>
+        <p className="m-0 text-ink-muted">{t(isLocked ? 'form.locked' : 'card.needsGrade')}</p>
         <Link to={`/spaces/${slug}`} className="font-semibold text-link underline">
           {t('form.backToClass')}
         </Link>
@@ -214,7 +214,7 @@ function FormBody({ space }: { space: Space | null | undefined }) {
   const { t } = useClassCompetitionsTranslation();
   if (space === undefined || space === null) return null;
   if (space.kind !== 'class' || space.viewer.membership !== 'owner') {
-    return <p className="m-0 text-body">{t('form.teacherOnly')}</p>;
+    return <p className="m-0 text-ink-muted">{t('form.teacherOnly')}</p>;
   }
   return <TeacherForm slug={space.slug} />;
 }
@@ -232,12 +232,12 @@ export function CompetitionFormPage() {
   const name = space.data?.name ?? '';
   const title = t(running === null ? 'form.titleNew' : 'form.titleEdit');
   return (
-    <PageContainer className="flex max-w-[860px] flex-col gap-6 py-10">
+    <PageContainer className="flex max-w-[860px] flex-col gap-6 py-8">
       <title>{t('form.documentTitle', { name })}</title>
       <SpaceBreadcrumb space={{ slug: spaceSlug, name }} current={title} />
       <header className="flex flex-col gap-2">
         <h1 className="m-0 type-title break-words lg:type-display">{title}</h1>
-        <p className="m-0 max-w-[640px] text-meta">{t('form.intro')}</p>
+        <p className="m-0 max-w-[640px] text-ink-muted">{t('form.intro')}</p>
       </header>
       <FormBody space={space.data} />
     </PageContainer>

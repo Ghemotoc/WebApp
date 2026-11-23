@@ -57,10 +57,13 @@ export function CustomisationChangeForm({ item, reference }: CustomisationChange
 
   return (
     <section aria-labelledby={`${fieldId}-heading`} className="flex flex-col gap-3">
-      <h2 id={`${fieldId}-heading`} className="m-0 font-heading text-xl font-bold text-heading">
+      <h2
+        id={`${fieldId}-heading`}
+        className="m-0 font-heading type-subheading font-bold text-ink-heading"
+      >
         {t('signature.staff.title')}
       </h2>
-      <p className="m-0 text-[15px] text-body">
+      <p className="m-0 type-body text-ink-muted">
         {t(item === 'signature' ? 'signature.staff.signatureIntro' : 'signature.staff.bannerIntro')}
       </p>
       <form noValidate className="flex flex-col gap-3" onSubmit={handleSubmit}>

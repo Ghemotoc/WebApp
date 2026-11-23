@@ -47,7 +47,7 @@ export function CertificateSealChoices({ look, onChange, space }: CertificateSea
     label: t(`look.crestColourChoices.${choice}`),
   }));
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <ChoiceChips
         label={t('look.seal')}
         isLabelVisible

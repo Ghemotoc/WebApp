@@ -30,11 +30,11 @@ export function ChapterPlanMoreDetails({ plan, changers }: ChapterPlanMoreDetail
   const { t } = useAtlasTranslation();
   return (
     <details className="border-t border-border pt-3">
-      <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-heading">
+      <summary className="flex min-h-11 cursor-pointer items-center type-body font-semibold text-ink-heading">
         {t('chapterPlan.moreDetails')}
       </summary>
       <div className="flex flex-col gap-4 pt-2">
-        <p className="m-0 text-[13px] text-meta">{t('chapterPlan.moreDetailsLine')}</p>
+        <p className="m-0 type-meta text-ink-muted">{t('chapterPlan.moreDetailsLine')}</p>
         <ChapterPlanBasics plan={plan} save={changers.saveFields} />
         <ChapterPlanSetting fields={plan.fields} save={changers.saveFields} />
         <ChapterScenesSection

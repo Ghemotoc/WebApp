@@ -26,16 +26,18 @@ export function AgeCheckResultSummary({ check }: { check: MyAgeCheck }) {
   const method = check.method === null ? null : t(`ageCheck.methods.${check.method}`);
 
   return (
-    <div className="flex flex-col gap-2 rounded-2xl border border-border bg-tint p-5">
-      <h2 className="m-0 font-heading text-[22px] font-bold text-heading">
+    <div className="flex flex-col gap-2 rounded-card border border-border bg-tint p-4">
+      <h2 className="m-0 font-heading type-heading font-bold text-ink-heading">
         {t('ageCheck.confirmed', { result: t(`ageCheck.results.${check.result}`) })}
       </h2>
       {date !== null && method !== null ? (
-        <p className="m-0 text-sm text-meta">{t('ageCheck.confirmedMeta', { date, method })}</p>
+        <p className="m-0 type-body text-ink-muted">
+          {t('ageCheck.confirmedMeta', { date, method })}
+        </p>
       ) : null}
       {/* Yoti deletes the selfie after the check; we never had it. */}
       {check.method === 'facial_estimation' ? (
-        <p className="m-0 text-body">{t('ageCheck.photoDeleted')}</p>
+        <p className="m-0 text-ink-muted">{t('ageCheck.photoDeleted')}</p>
       ) : null}
     </div>
   );

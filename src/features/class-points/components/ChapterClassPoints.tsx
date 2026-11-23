@@ -30,9 +30,9 @@ import { TeacherPointsForm } from './TeacherPointsForm';
 function ClassmatePart({ chapterId, points }: { chapterId: string; points: ChapterPoints }) {
   const { t } = useClassPointsTranslation();
   if (points.giving === null) return null;
-  if (points.isLocked) return <p className="m-0 text-body">{t('chapter.give.locked')}</p>;
+  if (points.isLocked) return <p className="m-0 text-ink-muted">{t('chapter.give.locked')}</p>;
   if (!points.giving.canGive)
-    return <p className="m-0 text-body">{t('chapter.give.notOffered')}</p>;
+    return <p className="m-0 text-ink-muted">{t('chapter.give.notOffered')}</p>;
   return <GivePointsForm chapterId={chapterId} giving={points.giving} />;
 }
 
@@ -45,11 +45,11 @@ function TeacherPart({ chapterId, points }: { chapterId: string; points: Chapter
   const { t } = useClassPointsTranslation();
   return (
     <div className="flex flex-col gap-4">
-      <p className="m-0 text-body">
+      <p className="m-0 text-ink-muted">
         {t('chapter.teacher.classTotal', { count: points.received?.total ?? 0 })}
       </p>
       {points.isLocked ? (
-        <p className="m-0 text-body">{t('chapter.give.locked')}</p>
+        <p className="m-0 text-ink-muted">{t('chapter.give.locked')}</p>
       ) : (
         <TeacherPointsForm
           kind="chapter"
@@ -79,16 +79,18 @@ export function ChapterClassPoints({ chapterId }: { chapterId: string }) {
   return (
     <section
       aria-labelledby="chapter-class-points-heading"
-      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-5 font-body shadow-card md:p-6"
+      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-4 font-body shadow-card md:p-6"
     >
       <header className="flex flex-col gap-1">
         <h2
           id="chapter-class-points-heading"
-          className="m-0 font-heading text-2xl font-bold text-heading"
+          className="m-0 font-heading type-heading font-bold text-ink-heading"
         >
           {t('chapter.heading')}
         </h2>
-        <p className="m-0 text-sm text-meta">{t('chapter.inClass', { name: points.className })}</p>
+        <p className="m-0 type-body text-ink-muted">
+          {t('chapter.inClass', { name: points.className })}
+        </p>
       </header>
       {points.role === 'classmate' && <ClassmatePart chapterId={chapterId} points={points} />}
       {points.role === 'writer' && <ReceivedPoints points={points} />}

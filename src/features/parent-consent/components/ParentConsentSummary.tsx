@@ -41,7 +41,7 @@ function dateInWords(value: string, language: string): string {
 function PlainList({ keys }: { keys: string[] }) {
   const { t } = useParentConsentTranslation();
   return (
-    <ul className="m-0 flex list-disc flex-col gap-1.5 pl-5 text-body">
+    <ul className="m-0 flex list-disc flex-col gap-2 pl-4 text-ink-muted">
       {keys.map((key) => (
         <li key={key}>{t(`summary.${key}`)}</li>
       ))}
@@ -72,12 +72,12 @@ export function ParentConsentSummary() {
     >
       <h2
         id="parent-consent-summary-heading"
-        className="m-0 font-heading text-[24px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('summary.heading')}
       </h2>
       <p className="m-0 font-semibold text-ink">{t(`summary.${words.dateKey}`, { date })}</p>
-      <p className="m-0 text-body">{t(`summary.${words.introKey}`)}</p>
+      <p className="m-0 text-ink-muted">{t(`summary.${words.introKey}`)}</p>
       <PlainList keys={words.listKeys} />
     </section>
   );

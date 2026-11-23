@@ -33,15 +33,15 @@ export function PublicPlanNav({
   const { t } = useAtlasTranslation();
   return (
     <nav aria-label={t('publicPlan.navLabel')}>
-      <ul className="m-0 inline-flex max-w-full list-none flex-wrap gap-1 rounded-[24px] border border-border bg-surface p-1.5 shadow-card">
+      <ul className="m-0 inline-flex max-w-full list-none flex-wrap gap-1 rounded-card border border-border bg-surface p-2 shadow-card">
         {areas.map((area) => (
           <li key={area}>
             <Link
               to={`${base}/${areaPaths[area]}`}
               aria-current={area === current ? 'page' : undefined}
               className={cn(
-                'inline-flex h-11 items-center rounded-full px-5 text-sm font-semibold no-underline',
-                area === current ? 'bg-primary text-on-primary' : 'text-heading hover:bg-tint',
+                'inline-flex h-11 items-center rounded-full px-4 type-body font-semibold no-underline',
+                area === current ? 'bg-primary text-on-primary' : 'text-ink-heading hover:bg-tint',
               )}
             >
               {t(`publicPlan.areas.${area}`)}

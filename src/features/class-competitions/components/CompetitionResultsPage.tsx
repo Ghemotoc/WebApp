@@ -51,10 +51,10 @@ function ResultWords({ entrant }: { entrant: ScoringEntrant }) {
 function PublishedResults({ scoring }: { scoring: CompetitionScoring }) {
   const { t } = useClassCompetitionsTranslation();
   const max = maxTotal(scoring.criteria);
-  const cell = 'border-t border-border px-3 py-2.5 text-left align-top';
+  const cell = 'border-t border-border px-3 py-3 text-left align-top';
   return (
-    <div className="flex flex-col gap-4 rounded-card border border-border bg-surface p-5 shadow-card md:p-6">
-      <p className="m-0 text-body">{t('scoring.published')}</p>
+    <div className="flex flex-col gap-4 rounded-card border border-border bg-surface p-4 shadow-card md:p-6">
+      <p className="m-0 text-ink-muted">{t('scoring.published')}</p>
       {/* A region the keyboard can scroll, so a narrow phone never scrolls the page sideways. */}
       <div
         role="region"
@@ -62,12 +62,12 @@ function PublishedResults({ scoring }: { scoring: CompetitionScoring }) {
         tabIndex={0}
         className="overflow-x-auto"
       >
-        <table className="w-full border-collapse text-[15px] text-body">
+        <table className="w-full border-collapse type-body text-ink-muted">
           <caption className="sr-only">{t('scoring.tableCaption')}</caption>
           <thead>
             <tr>
               {(['columnPupil', 'columnResult', 'columnTotal'] as const).map((column) => (
-                <th key={column} scope="col" className="px-3 py-2 text-left text-sm text-ink">
+                <th key={column} scope="col" className="px-3 py-2 text-left type-body text-ink">
                   {t(`scoring.${column}`)}
                 </th>
               ))}
@@ -106,10 +106,10 @@ function PublishedResults({ scoring }: { scoring: CompetitionScoring }) {
 function ScoringBody({ scoring }: { scoring: CompetitionScoring }) {
   const { t } = useClassCompetitionsTranslation();
   if (scoring.phase === 'upcoming' || scoring.phase === 'open') {
-    return <p className="m-0 text-body">{t('scoring.notYet')}</p>;
+    return <p className="m-0 text-ink-muted">{t('scoring.notYet')}</p>;
   }
   if (scoring.entrants.length === 0) {
-    return <p className="m-0 text-body">{t('scoring.noEntrants')}</p>;
+    return <p className="m-0 text-ink-muted">{t('scoring.noEntrants')}</p>;
   }
   if (scoring.phase === 'published') return <PublishedResults scoring={scoring} />;
   return (
@@ -139,8 +139,8 @@ function ResultsBody({ competitionId }: { competitionId: string }) {
   if (read.isError) {
     const failure = competitionFailureOf(read.error)?.failure;
     if (failure === 'not_allowed')
-      return <p className="m-0 text-body">{t('scoring.teacherOnly')}</p>;
-    if (failure === 'missing') return <p className="m-0 text-body">{t('failures.missing')}</p>;
+      return <p className="m-0 text-ink-muted">{t('scoring.teacherOnly')}</p>;
+    if (failure === 'missing') return <p className="m-0 text-ink-muted">{t('failures.missing')}</p>;
     return <Notice tone="error">{t('scoring.loadFailed')}</Notice>;
   }
   if (read.data === undefined) return null;
@@ -162,12 +162,12 @@ export function CompetitionResultsPage() {
   // The competition's name once it has loaded; the class's name until then.
   const name = scoring?.name ?? className;
   return (
-    <PageContainer className="flex max-w-[860px] flex-col gap-6 py-10">
+    <PageContainer className="flex max-w-[860px] flex-col gap-6 py-8">
       <title>{t('scoring.documentTitle', { name })}</title>
       <SpaceBreadcrumb space={{ slug: spaceSlug, name: className }} current={title} />
       <header className="flex flex-col gap-2">
         <h1 className="m-0 type-title break-words lg:type-display">{title}</h1>
-        {!isPublished && <p className="m-0 max-w-[640px] text-meta">{t('scoring.intro')}</p>}
+        {!isPublished && <p className="m-0 max-w-[640px] text-ink-muted">{t('scoring.intro')}</p>}
       </header>
       <ResultsBody competitionId={competitionId} />
     </PageContainer>

@@ -29,7 +29,7 @@ export interface BoardCardProps extends Omit<BoardCardMenuProps, 'title'> {
 
 /** The card's look: lifted on the board, a faint outline while its copy is being dragged. */
 function cardClasses(isDragged: boolean): string {
-  const base = 'touch-manipulation rounded-[20px] border select-none [-webkit-touch-callout:none]';
+  const base = 'touch-manipulation rounded-card border select-none [-webkit-touch-callout:none]';
   if (isDragged) {
     // Board E28: the old place shows a faint outline (opacity .45, an inset 2 px line ring).
     return `${base} border-transparent bg-transparent opacity-45 shadow-[inset_0_0_0_2px_var(--border)]`;

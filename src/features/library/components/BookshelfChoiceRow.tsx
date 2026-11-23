@@ -28,7 +28,7 @@ export interface BookshelfChoiceRowProps {
 
 /** The round 44 px button at the end of the row. */
 const buttonClasses =
-  'inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-control-border text-heading hover:bg-tint aria-disabled:cursor-not-allowed aria-disabled:border-dashed aria-disabled:border-dashed-border aria-disabled:text-meta aria-disabled:hover:bg-transparent';
+  'inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-control-border text-ink-heading hover:bg-tint aria-disabled:cursor-not-allowed aria-disabled:border-dashed aria-disabled:border-dashed-border aria-disabled:text-ink-muted aria-disabled:hover:bg-transparent';
 
 /**
  * Renders the row.
@@ -65,7 +65,7 @@ export function BookshelfChoiceRow({ choice, places, onChange }: BookshelfChoice
     <li className="flex min-h-11 items-center gap-3 py-3">
       <span className="flex min-w-0 flex-1 flex-col">
         {/* "anywhere" lets a name that is one long word wrap inside a phone's width (GAPS-6). */}
-        <span className="type-label [overflow-wrap:anywhere] text-heading">{choice.name}</span>
+        <span className="type-label [overflow-wrap:anywhere] text-ink-heading">{choice.name}</span>
         <span className="type-meta">
           {isFull ? t('lists.add.rowFull', count) : t('lists.add.rowCount', count)}
         </span>

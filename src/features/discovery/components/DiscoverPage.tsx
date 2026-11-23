@@ -175,7 +175,7 @@ function DiscoverShelves() {
     shelfCanShow(word, isSignedIn),
   );
   return (
-    <div className="flex flex-col gap-14">
+    <div className="flex flex-col gap-12">
       {words.map((word, index) => (
         <Fragment key={word}>
           <ShelfFromSetting word={word} isSignedIn={isSignedIn} />
@@ -198,7 +198,7 @@ export function DiscoverPage() {
   const { t } = useDiscoveryTranslation();
   const { userId } = useSession();
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-10 pt-10 pb-16">
+    <PageContainer className="tmc-rise flex flex-col gap-8 pt-8 pb-16">
       <title>{t('discover.documentTitle', { productName: brand.productName })}</title>
       <ReadHeader />
       {/* No search field of its own (bundle G4 SHELL: the top bar and the tab bar open Search)
@@ -207,7 +207,7 @@ export function DiscoverPage() {
           second row takes its extra height, so the rows follow the hero straight away. It comes
           last in the page's order, so narrower it sits under the rows (board). Without a side
           column the main column takes the whole width. */}
-      <div className="grid grid-cols-1 items-start gap-10 lg:has-[>[data-discover-side]]:grid-cols-[minmax(0,1fr)_300px] lg:has-[>[data-discover-side]]:grid-rows-[auto_1fr]">
+      <div className="grid grid-cols-1 items-start gap-8 lg:has-[>[data-discover-side]]:grid-cols-[minmax(0,1fr)_300px] lg:has-[>[data-discover-side]]:grid-rows-[auto_1fr]">
         {/* Featured this week, picked by staff (S1-E5-10); not drawn when nothing is picked. */}
         <FeaturedBand />
         <div className="min-w-0 lg:col-start-1">

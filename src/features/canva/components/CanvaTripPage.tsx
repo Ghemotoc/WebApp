@@ -29,9 +29,11 @@ export function CanvaTripPage({ children, backSlug }: CanvaTripPageProps) {
   const { t } = useTranslation('writing');
   const backAddress = backSlug === null ? '/write' : `/write/s/${backSlug}/settings`;
   return (
-    <PageContainer className="flex flex-col gap-4 pt-12 pb-7">
+    <PageContainer className="flex flex-col gap-4 pt-12 pb-6">
       <title>{t('canva.documentTitle')}</title>
-      <h1 className="m-0 font-heading text-[34px] font-bold text-heading">{t('canva.heading')}</h1>
+      <h1 className="m-0 font-heading type-title font-bold text-ink-heading">
+        {t('canva.heading')}
+      </h1>
       <div aria-live="polite" className="flex max-w-[640px] flex-col gap-3">
         {children}
       </div>

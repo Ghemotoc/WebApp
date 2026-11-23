@@ -15,7 +15,7 @@ import { useParentConsentTranslation } from '../registerParentConsentTranslation
 export function ContactLine() {
   const { t } = useParentConsentTranslation();
   return (
-    <p className="m-0 text-sm text-meta">
+    <p className="m-0 type-body text-ink-muted">
       {t('parent.questions')}{' '}
       <Link to="/contact" className="text-link underline hover:text-link-hover">
         {t('parent.contactUs')}

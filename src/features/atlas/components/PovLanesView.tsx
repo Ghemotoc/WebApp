@@ -41,14 +41,14 @@ function TellerCounts({
       {tellers.map((teller) => (
         <li
           key={teller.id}
-          className="flex min-w-0 flex-col gap-1 rounded-3xl border border-border bg-surface px-[18px] py-3.5 shadow-card"
+          className="flex min-w-0 flex-col gap-1 rounded-card border border-border bg-surface px-4 py-4 shadow-card"
         >
-          <span className="text-[13px] break-words text-meta">
+          <span className="type-meta break-words text-ink-muted">
             {teller.name === null
               ? t('storyline.lanes.toldByNarrator')
               : t('storyline.lanes.chaptersBy', { name: teller.name })}
           </span>
-          <b className="font-heading text-2xl font-extrabold text-heading">
+          <b className="font-heading type-heading font-bold text-ink-heading">
             {chapters.filter((chapter) => isToldBy(chapter, teller.id)).length}
           </b>
         </li>
@@ -71,17 +71,17 @@ function LaneRow({
 }) {
   return (
     <tr data-testid="atlas-lane-row" className="border-b border-hairline last:border-b-0">
-      <th scope="row" className="px-3.5 py-2 font-semibold">
+      <th scope="row" className="px-4 py-2 font-semibold">
         <Link
           to={`/write/s/${slug}/c/${chapter.code}`}
-          className="text-heading no-underline hover:underline"
+          className="text-ink-heading no-underline hover:underline"
         >
           {label}
           {chapter.title === '' ? '' : `: ${chapter.title}`}
         </Link>
       </th>
       {tellers.map((character) => (
-        <td key={character.id} className="px-1.5 py-2 text-center align-middle">
+        <td key={character.id} className="px-2 py-2 text-center align-middle">
           {isToldBy(chapter, character.id) && (
             <PlanningStatusPill status={chapter.planningStatus} />
           )}
@@ -106,25 +106,25 @@ function LanesTable({
       aria-labelledby="atlas-lanes-caption"
       className="max-w-full overflow-x-auto rounded-card border border-border bg-surface p-2 shadow-card"
     >
-      <table className="mx-auto border-collapse text-left text-sm">
+      <table className="mx-auto border-collapse text-left type-body">
         <caption id="atlas-lanes-caption" className="sr-only">
           {t('storyline.lanes.caption')}
         </caption>
         <thead>
           <tr className="border-b border-hairline">
-            <th scope="col" className="px-3.5 py-2.5 font-semibold text-heading">
+            <th scope="col" className="px-4 py-3 font-semibold text-ink-heading">
               {t('storyline.lanes.chapterColumn')}
             </th>
             {tellers.map((character) => (
               <th
                 key={character.id}
                 scope="col"
-                className="min-w-[104px] px-1.5 py-2.5 text-center font-semibold break-words text-heading"
+                className="min-w-[104px] px-2 py-3 text-center font-semibold break-words text-ink-heading"
               >
                 {character.name ?? t('chapterPlan.narrator')}
                 {/* The Narrator is nobody in the cast, so the column says so (board AtlasPov). */}
                 {character.name === null && (
-                  <span className="block text-[13px] font-medium text-meta">
+                  <span className="block type-meta font-normal text-ink-muted">
                     {t('chapterPlan.narratorOutside')}
                   </span>
                 )}
@@ -157,8 +157,9 @@ export function PovLanesView({ slug, storyline, labelOf }: PovLanesViewProps) {
   const { t } = useAtlasTranslation();
   const tellers = laneTellers(storyline.characters, storyline.chapters);
   if (storyline.chapters.length === 0)
-    return <p className="m-0 text-body">{t('storyline.lanes.noChapters')}</p>;
-  if (tellers.length === 0) return <p className="m-0 text-body">{t('storyline.lanes.none')}</p>;
+    return <p className="m-0 text-ink-muted">{t('storyline.lanes.noChapters')}</p>;
+  if (tellers.length === 0)
+    return <p className="m-0 text-ink-muted">{t('storyline.lanes.none')}</p>;
   return (
     <div className="flex min-w-0 flex-col gap-4">
       <TellerCounts tellers={tellers} chapters={storyline.chapters} />

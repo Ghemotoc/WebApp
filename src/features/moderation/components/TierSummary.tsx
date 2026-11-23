@@ -42,13 +42,13 @@ export function TierSummary({ openCases }: { openCases: QueueCase[] }) {
         return (
           <li
             key={tier}
-            className={`flex flex-col gap-1 rounded-card border border-border border-l-4 bg-surface p-5 shadow-card ${edgeOf[tier]}`}
+            className={`flex flex-col gap-1 rounded-card border border-border border-l-4 bg-surface p-4 shadow-card ${edgeOf[tier]}`}
           >
             <span className="eyebrow">{t(`tiers.${tier}`)}</span>
-            <span className="font-heading text-[26px] font-bold text-heading">
+            <span className="font-heading type-heading font-bold text-ink-heading">
               {t('tierSummary.open', { count })}
             </span>
-            <span className="text-sm text-body">{t(`tierSummary.${tier}`)}</span>
+            <span className="type-body text-ink-muted">{t(`tierSummary.${tier}`)}</span>
           </li>
         );
       })}

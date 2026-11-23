@@ -15,7 +15,7 @@ import { safeMarkdownElements } from '@/components/ui/safeMarkdownElements';
 
 /** How a comment's paragraphs look; links are SafeMarkdown's own (SafeLink). */
 const components: Components = {
-  p: ({ children }) => <p className="m-0 mt-1.5 first:mt-0">{children}</p>,
+  p: ({ children }) => <p className="m-0 mt-2 first:mt-0">{children}</p>,
 };
 
 /**
@@ -26,7 +26,7 @@ const components: Components = {
  */
 export function CommentText({ text }: { text: string }) {
   return (
-    <div className="mt-1.5 text-base leading-[1.6] break-words text-ink">
+    <div className="mt-2 type-body leading-[1.6] break-words text-ink">
       <SafeMarkdown text={text} elements={safeMarkdownElements.comment} components={components} />
     </div>
   );

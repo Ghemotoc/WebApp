@@ -48,21 +48,23 @@ function isKeptAddress(url: string): boolean {
 /** Headings sit under the entry's title, so every level the writer types becomes h3 or h4. */
 const components: Components = {
   h1: ({ children }) => (
-    <h3 className="m-0 font-heading text-xl font-bold text-heading">{children}</h3>
+    <h3 className="m-0 font-heading type-subheading font-bold text-ink-heading">{children}</h3>
   ),
   h2: ({ children }) => (
-    <h3 className="m-0 font-heading text-xl font-bold text-heading">{children}</h3>
+    <h3 className="m-0 font-heading type-subheading font-bold text-ink-heading">{children}</h3>
   ),
   h3: ({ children }) => (
-    <h4 className="m-0 font-heading text-lg font-bold text-heading">{children}</h4>
+    <h4 className="m-0 font-heading type-long font-bold text-ink-heading">{children}</h4>
   ),
   h4: ({ children }) => (
-    <h4 className="m-0 font-heading text-lg font-bold text-heading">{children}</h4>
+    <h4 className="m-0 font-heading type-long font-bold text-ink-heading">{children}</h4>
   ),
   ul: ({ children }) => <ul className="m-0 list-disc pl-6">{children}</ul>,
   ol: ({ children }) => <ol className="m-0 list-decimal pl-6">{children}</ol>,
   blockquote: ({ children }) => (
-    <blockquote className="m-0 rounded-field bg-tint px-4 py-3 text-body">{children}</blockquote>
+    <blockquote className="m-0 rounded-field bg-tint px-4 py-3 text-ink-muted">
+      {children}
+    </blockquote>
   ),
   p: ({ children }) => <p className="m-0">{children}</p>,
 };
@@ -92,7 +94,7 @@ export function BibleMarkdown({ text }: { text: string }) {
   // against its public items only (S1-E17-32).
   const { slug, index, isLoaded } = useCrossLinks();
   return (
-    <div className="flex flex-col gap-3 text-base leading-[1.6] break-words text-ink">
+    <div className="flex flex-col gap-3 type-body leading-[1.6] break-words text-ink">
       <SafeMarkdown
         text={withCrossLinks(text)}
         elements={safeMarkdownElements.storyWorldEntry}

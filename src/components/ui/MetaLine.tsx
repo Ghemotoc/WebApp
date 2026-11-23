@@ -37,9 +37,9 @@ export interface MetaLineProps {
 /** The classes for each kind of fact. */
 const factClasses: Record<MetaFactKind, string> = {
   fact: '',
-  state: 'font-bold text-ink',
-  deadline: 'font-bold text-(--warning-text)',
-  urgent: 'font-bold text-destructive',
+  state: 'font-semibold text-ink',
+  deadline: 'font-semibold text-(--warning-text)',
+  urgent: 'font-semibold text-destructive',
 };
 
 /**

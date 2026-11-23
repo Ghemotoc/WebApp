@@ -43,11 +43,11 @@ export function QuestionList({ questions, groupName }: QuestionListProps) {
             lang={entry.languageCode}
             className="group py-4"
           >
-            <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 font-heading text-lg font-bold text-heading">
+            <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 font-heading type-long font-bold text-ink-heading">
               {withBrand(entry.content.question)}
               <span
                 aria-hidden="true"
-                className="text-2xl leading-none transition-transform group-open:rotate-45 motion-reduce:transition-none"
+                className="type-heading leading-none transition-transform group-open:rotate-45 motion-reduce:transition-none"
               >
                 +
               </span>

@@ -33,7 +33,7 @@ export function ProfileAvatar({ name, handle }: { name: string; handle: string }
         aria-hidden="true"
         data-avatar-bead
         style={beadStyleFor(handle, look.data?.initialsColour ?? null)}
-        className="avatar-bead inline-flex size-full items-center justify-center rounded-full font-body text-[34px] font-semibold sm:text-[44px]"
+        className="avatar-bead inline-flex size-full items-center justify-center rounded-full font-body type-title font-semibold sm:type-display"
       >
         {/* The initials sit in their own box, one line high, so only the letters count as text. */}
         <span className="avatar-bead-initials">{initialsOf(name)}</span>

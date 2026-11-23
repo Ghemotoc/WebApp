@@ -71,7 +71,7 @@ function AddChapterButton({ name, onAdd }: { name: string; onAdd: () => Promise<
     <div className="flex flex-col gap-2">
       <Button
         variant="secondary"
-        className="h-9 self-start px-4 text-[13px]"
+        className="h-9 self-start px-4 type-meta"
         aria-label={t('storyline.board.addChapterIn', { name })}
         onClick={() => {
           setFailed(false);
@@ -96,7 +96,7 @@ function LandingGap({ label }: { label: string }) {
       ref={setNodeRef}
       aria-hidden="true"
       data-testid="atlas-board-gap"
-      className="grid min-h-16 place-items-center rounded-[20px] border-2 border-dashed border-(--accent) px-3 text-center text-sm font-semibold text-(--accent)"
+      className="grid min-h-16 place-items-center rounded-card border-2 border-dashed border-(--accent) px-3 text-center type-label text-(--accent)"
     >
       {label}
     </li>
@@ -181,14 +181,11 @@ export function BoardColumnSection(props: BoardColumnSectionProps) {
     <section aria-labelledby={headingId} data-testid="atlas-board-column" className="min-w-0">
       <div ref={setNodeRef} className={columnClasses(isTargeted)}>
         <div className="flex items-baseline justify-between gap-2">
-          <h2
-            id={headingId}
-            className="m-0 min-w-0 font-heading text-lg font-bold break-words text-heading"
-          >
+          <h2 id={headingId} className="m-0 min-w-0 type-subheading break-words text-ink-heading">
             {name}
           </h2>
           {/* How many chapters the act holds; the list below says the same to a screen reader. */}
-          <span aria-hidden="true" className="text-sm text-meta">
+          <span aria-hidden="true" className="type-meta">
             {column.chapters.length}
           </span>
         </div>
@@ -202,7 +199,7 @@ export function BoardColumnSection(props: BoardColumnSectionProps) {
           />
         )}
         {column.chapters.length === 0 && !isTargeted && (
-          <p className="m-0 text-sm text-meta">{t('storyline.board.empty')}</p>
+          <p className="m-0 type-body text-ink-muted">{t('storyline.board.empty')}</p>
         )}
         <ColumnCards {...props} column={column} />
         <AddChapterButton name={name} onAdd={async () => props.addChapter(column.actId)} />

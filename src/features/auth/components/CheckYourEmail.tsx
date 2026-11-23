@@ -69,18 +69,18 @@ export function CheckYourEmail({
         {/* The board's mail icon on a soft plum square; decorative. */}
         <span
           aria-hidden="true"
-          className="inline-flex size-14 flex-none items-center justify-center rounded-2xl bg-tint text-heading"
+          className="inline-flex size-14 flex-none items-center justify-center rounded-card bg-tint text-ink-heading"
         >
           <ActionIcon name="mail" size={28} />
         </span>
-        <h3 className="m-0 min-w-0 font-heading text-[22px] font-bold text-heading">
+        <h3 className="m-0 min-w-0 font-heading type-heading font-bold text-ink-heading">
           {t(joinsWaitlist ? 'signUp.sent.waitlistHeading' : 'signUp.sent.heading')}
         </h3>
       </div>
-      <p className="m-0 text-body">{t(bodyKey(isLinkSignUp, joinsWaitlist), { email })}</p>
+      <p className="m-0 text-ink-muted">{t(bodyKey(isLinkSignUp, joinsWaitlist), { email })}</p>
       {/* On the list: confirming the email keeps the place; staff let people in (WAITLIST-1). */}
-      {joinsWaitlist && <p className="m-0 text-body">{t('signUp.sent.waitlistNext')}</p>}
-      <p className="m-0 text-sm text-meta">{t('signUp.sent.spam')}</p>
+      {joinsWaitlist && <p className="m-0 text-ink-muted">{t('signUp.sent.waitlistNext')}</p>}
+      <p className="m-0 type-body text-ink-muted">{t('signUp.sent.spam')}</p>
       <Button
         variant="secondary"
         className="self-start"
@@ -89,9 +89,11 @@ export function CheckYourEmail({
       >
         {t('signUp.sent.resend')}
       </Button>
-      {resendState === 'sent' && <p className="m-0 text-sm text-body">{t('signUp.sent.resent')}</p>}
+      {resendState === 'sent' && (
+        <p className="m-0 type-body text-ink-muted">{t('signUp.sent.resent')}</p>
+      )}
       {resendState === 'failed' && (
-        <p className="m-0 text-sm text-destructive">{t('signUp.errors.tooManyAttempts')}</p>
+        <p className="m-0 type-body text-destructive">{t('signUp.errors.tooManyAttempts')}</p>
       )}
     </div>
   );

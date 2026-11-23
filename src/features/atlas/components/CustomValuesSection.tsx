@@ -48,7 +48,7 @@ export function CustomValuesSection({
   const hasShownFields = unplaced.some((field) => !field.isHidden);
   return (
     <FoldingCard title={heading} hint={detailNames(unplaced)}>
-      {!hasShownFields && <p className="m-0 text-body">{t('characters.custom.none')}</p>}
+      {!hasShownFields && <p className="m-0 text-ink-muted">{t('characters.custom.none')}</p>}
       <OwnDetailBoxes character={character} fields={unplaced} saveValue={saveValue} />
       <AddDetailForm
         slug={slug}
@@ -58,7 +58,7 @@ export function CustomValuesSection({
       />
       <Link
         to={`/plan/s/${slug}#atlas-fields-heading`}
-        className="inline-flex min-h-11 items-center self-start text-sm text-link underline"
+        className="inline-flex min-h-11 items-center self-start type-body text-link underline"
       >
         {t('characters.custom.manage')}
       </Link>

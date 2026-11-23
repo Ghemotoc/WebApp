@@ -99,10 +99,12 @@ export function NameWordsSection(props: NameWordsSectionProps) {
           />
         </div>
       </div>
-      <p className="m-0 text-sm text-meta" aria-live="polite">
+      <p className="m-0 type-body text-ink-muted" aria-live="polite">
         {t('words.showing', { shown: state.words.length, total: state.wordTotal })}
       </p>
-      {state.words.length === 0 && <p className="m-0 text-sm text-body">{t('words.empty')}</p>}
+      {state.words.length === 0 && (
+        <p className="m-0 type-body text-ink-muted">{t('words.empty')}</p>
+      )}
       <ul className="m-0 flex list-none flex-wrap gap-2 p-0" aria-label={t('words.listLabel')}>
         {state.words.map((word) => (
           <li key={word.id}>

@@ -63,15 +63,17 @@ export function StoryFooterAbout({ statement }: { statement: StoryStatement }) {
 
   return (
     // overflow-wrap anywhere and min-w-0: a title or name that is one long word wraps inside a 390 px screen instead of widening the footer.
-    <div className="w-full max-w-[46ch] min-w-0 text-[15px] leading-6 [overflow-wrap:anywhere]">
+    <div className="w-full max-w-[46ch] min-w-0 type-body [overflow-wrap:anywhere]">
       <p className="m-0 text-ink">
         {pieces.map((piece, index) => (
           <SentencePiece key={index} piece={piece} writerHandle={statement.writerHandle} />
         ))}
       </p>
       {statement.facts.isMature && <p className="mt-4 mb-0 text-ink">{words.matureReaders}.</p>}
-      {statement.blurb.trim() !== '' && <p className="mt-4 mb-0 text-body">{statement.blurb}</p>}
-      <p className="mt-4 mb-0 text-[13px] leading-[18px] text-meta">
+      {statement.blurb.trim() !== '' && (
+        <p className="mt-4 mb-0 text-ink-muted">{statement.blurb}</p>
+      )}
+      <p className="mt-4 mb-0 type-meta text-ink-muted">
         {statementSiteLine(words, brand.productName)}
       </p>
     </div>

@@ -19,7 +19,7 @@ import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
 
 /** The quiet button's look, shared by the button and the link it turns into. */
 const quietButton =
-  'inline-flex h-11 cursor-pointer items-center rounded-full button-glass px-5 font-semibold no-underline';
+  'inline-flex h-11 cursor-pointer items-center rounded-full button-glass px-4 font-semibold no-underline';
 
 /**
  * Renders the button, the link, or nothing.

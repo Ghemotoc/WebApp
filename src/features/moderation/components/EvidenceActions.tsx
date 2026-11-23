@@ -90,7 +90,7 @@ export function EvidenceActions(props: EvidenceActionsProps) {
   const canClose = !evidence.accountClosed && !evidence.uploaderIsStaff;
   return (
     <div className="flex flex-col gap-3">
-      <p className="m-0 text-sm text-body">
+      <p className="m-0 type-body text-ink-muted">
         {evidence.accountClosed ? t('abuseEvidence.accountClosed') : t('abuseEvidence.accountOpen')}
       </p>
       {evidence.uploaderIsStaff && (

@@ -65,7 +65,7 @@ export function ChapterPreviewDialog({
       onClose={onClose}
       className="m-auto w-[min(94vw,820px)] rounded-card border border-border bg-surface p-[clamp(20px,4vw,48px)] text-ink shadow-card backdrop:bg-ink/40"
     >
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p id="chapter-preview-heading" className="m-0 eyebrow">
             {t('preview.heading')}
@@ -74,10 +74,10 @@ export function ChapterPreviewDialog({
             {t('preview.close')}
           </Button>
         </div>
-        <p className="m-0 text-[13px] text-meta">{t('preview.note')}</p>
+        <p className="m-0 type-meta text-ink-muted">{t('preview.note')}</p>
         <h2
           lang={language}
-          className="m-0 font-heading text-[clamp(28px,3.4vw,40px)] font-extrabold text-heading"
+          className="m-0 font-heading text-[clamp(28px,3.4vw,40px)] font-bold text-ink-heading"
         >
           {title}
         </h2>

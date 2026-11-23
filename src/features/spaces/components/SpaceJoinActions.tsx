@@ -99,7 +99,7 @@ export function SpaceJoinActions({ space }: { space: Space }) {
     return (
       <Link
         to="/sign-in"
-        className="inline-flex h-12 items-center rounded-full button-main px-5 text-[15px] font-semibold no-underline"
+        className="inline-flex h-12 items-center rounded-full button-main px-4 type-body font-semibold no-underline"
       >
         {t('join.logIn')}
       </Link>
@@ -108,7 +108,7 @@ export function SpaceJoinActions({ space }: { space: Space }) {
   return (
     <div className="flex flex-col items-start gap-2 md:items-end">
       <MembershipButton space={space} membership={membership} />
-      <p aria-live="polite" className="m-0 text-sm text-body md:text-right">
+      <p aria-live="polite" className="m-0 type-body text-ink-muted md:text-right">
         {t(noteKeyFor(space), { owner })}
       </p>
       {membership.failure !== null && (

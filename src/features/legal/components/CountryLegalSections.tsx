@@ -31,7 +31,7 @@ export const countryLegalEntryKey = 'legal-your-country';
 
 /** The classes of each <details> box, so both look the same. */
 const detailsClasses =
-  'rounded-card border border-border bg-surface p-5 [&_summary]:cursor-pointer [&_summary]:font-heading [&_summary]:text-[20px] [&_summary]:font-bold [&_summary]:text-heading';
+  'rounded-card border border-border bg-surface p-4 [&_summary]:cursor-pointer [&_summary]:font-heading [&_summary]:type-subheading [&_summary]:font-bold [&_summary]:text-ink-heading';
 
 /**
  * The ages that apply in a place, in sentences.
@@ -41,7 +41,7 @@ const detailsClasses =
 function RuleInWords({ rule, place }: { rule: AgeRule; place: string }) {
   const { t } = useTranslation('legal');
   return (
-    <div className="mt-3 flex flex-col gap-2 text-body">
+    <div className="mt-3 flex flex-col gap-2 text-ink-muted">
       <p className="m-0">
         {t('country.joinFrom', { place, age: rule.minimumAge })}{' '}
         {rule.parentalConsentBelow > rule.minimumAge
@@ -51,7 +51,7 @@ function RuleInWords({ rule, place }: { rule: AgeRule; place: string }) {
       {rule.signupBlockedBelow !== null && (
         <p className="m-0">{t('country.blockedBelow', { age: rule.signupBlockedBelow })}</p>
       )}
-      {rule.status === 'to_verify' && <p className="m-0 text-meta">{t('country.toVerify')}</p>}
+      {rule.status === 'to_verify' && <p className="m-0 text-ink-muted">{t('country.toVerify')}</p>}
     </div>
   );
 }
@@ -98,7 +98,7 @@ export function CountryLegalSections() {
       <YourCountry country={countryCode} rules={rules} />
       <details className={detailsClasses}>
         <summary>{t('country.agesHeading')}</summary>
-        <p className="mt-3 mb-3 text-body">{t('country.agesIntro')}</p>
+        <p className="mt-3 mb-3 text-ink-muted">{t('country.agesIntro')}</p>
         <AgesByCountryTable rules={rules} />
       </details>
     </div>

@@ -33,15 +33,15 @@ export function SpaceHandoverOffer({ space }: { space: Space }) {
   return (
     <section
       aria-labelledby="space-handover-offer-heading"
-      className="flex flex-col gap-3 rounded-card border border-border bg-surface px-6 py-5"
+      className="flex flex-col gap-3 rounded-card border border-border bg-surface px-6 py-4"
     >
       <h2
         id="space-handover-offer-heading"
-        className="m-0 font-heading text-xl font-bold text-heading"
+        className="m-0 font-heading type-subheading font-bold text-ink-heading"
       >
         {t('handover.offerTitle', { name, space: space.name })}
       </h2>
-      <p className="m-0 text-[15px] text-body">{t('handover.offerText', { name })}</p>
+      <p className="m-0 type-body text-ink-muted">{t('handover.offerText', { name })}</p>
       <div className="flex flex-wrap gap-3">
         <Button
           disabled={answering.isRunning}

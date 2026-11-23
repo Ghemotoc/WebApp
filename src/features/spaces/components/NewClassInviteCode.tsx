@@ -41,8 +41,8 @@ function InviteLinkField({ link }: { link: string }) {
   }
 
   return (
-    <div className="flex flex-col gap-1.5">
-      <label htmlFor="class-invite-link" className="text-sm font-semibold text-ink">
+    <div className="flex flex-col gap-2">
+      <label htmlFor="class-invite-link" className="type-body font-semibold text-ink">
         {t('classInvite.linkLabel')}
       </label>
       <div className="flex flex-wrap gap-2">
@@ -52,14 +52,14 @@ function InviteLinkField({ link }: { link: string }) {
           readOnly
           value={link}
           onFocus={(event) => event.target.select()}
-          className="h-12 min-w-0 flex-1 field-box px-4 font-body text-[15px]"
+          className="h-12 min-w-0 flex-1 field-box px-4 font-body type-body"
         />
         <Button variant="secondary" onClick={() => void copyLink()}>
           {t(copyState === 'copied' ? 'classInvite.copied' : 'classInvite.copy')}
         </Button>
       </div>
       {copyState === 'failed' && (
-        <p className="m-0 text-sm text-destructive">{t('classInvite.copyFailed')}</p>
+        <p className="m-0 type-body text-destructive">{t('classInvite.copyFailed')}</p>
       )}
     </div>
   );
@@ -90,19 +90,19 @@ export function NewClassInviteCode({
   return (
     <div
       role="status"
-      className="flex flex-col gap-3 rounded-card border border-(--success-border) bg-(--success-bg) p-5"
+      className="flex flex-col gap-3 rounded-card border border-(--success-border) bg-(--success-bg) p-4"
     >
       <p className="m-0 font-semibold text-(--success-text)">
         {t('classInvite.made', { name: className, expires, count: invite.admits })}
       </p>
       <div className="flex flex-wrap items-center gap-4">
-        <p className="m-0 font-heading text-[28px] font-bold tracking-[0.06em] break-all text-heading">
+        <p className="m-0 font-heading type-heading font-bold tracking-[0.06em] break-all text-ink-heading">
           {invite.code}
         </p>
         <ClassInviteQrCode link={invite.link} className="block size-40 shrink-0" />
       </div>
       <InviteLinkField link={invite.link} />
-      <p className="m-0 text-sm text-ink">
+      <p className="m-0 type-body text-ink">
         <strong>{t('classInvite.copyNow')}</strong> {t('classInvite.notAgain')}
       </p>
       <div className="flex flex-wrap gap-3">

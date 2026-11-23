@@ -52,8 +52,8 @@ export function ForumQuoteBlock({ quote, postAddress }: ForumQuoteBlockProps) {
     </Link>
   );
   return (
-    <blockquote className="m-0 flex flex-col gap-1.5 rounded-2xl bg-panel px-4 py-3 text-[15px] leading-normal text-body">
-      <p className="m-0 text-sm font-semibold text-ink">
+    <blockquote className="m-0 flex flex-col gap-2 rounded-card bg-panel px-4 py-3 type-body leading-normal text-ink-muted">
+      <p className="m-0 type-body font-semibold text-ink">
         {name === null ? (
           <>
             {t('quote.fromPost')} {link}:

@@ -40,19 +40,19 @@ export function SpaceRow({ space, isCompact = false }: SpaceRowProps) {
         'flex items-start gap-3',
         isCompact
           ? 'border-t border-hairline py-3 first:border-t-0'
-          : 'border-b border-border px-5 py-4 last:border-b-0 md:px-6',
+          : 'border-b border-border px-4 py-4 last:border-b-0 md:px-6',
       )}
     >
       <SpaceLogo space={space} size="small" />
-      <div className="flex min-w-0 flex-col gap-1.5">
+      <div className="flex min-w-0 flex-col gap-2">
         <Link
           to={`/spaces/${space.slug}`}
-          className="inline-flex min-h-6 items-center font-semibold break-words text-heading underline-offset-2 hover:underline"
+          className="inline-flex min-h-6 items-center font-semibold break-words text-ink-heading underline-offset-2 hover:underline"
         >
           {space.name}
         </Link>
         {!isCompact && space.description !== '' && (
-          <p className="m-0 text-sm break-words text-body">{space.description}</p>
+          <p className="m-0 type-body break-words text-ink-muted">{space.description}</p>
         )}
         {isCompact ? (
           <MetaLine

@@ -32,7 +32,7 @@ export function WayPicker({ idPrefix, chosen, onChoose }: WayPickerProps) {
   const { t } = useTranslation('account');
   return (
     <fieldset className="m-0 min-w-0 border-0 p-0">
-      <legend className="mb-3 p-0 text-sm font-semibold text-ink">
+      <legend className="mb-3 p-0 type-body font-semibold text-ink">
         {t('teacherBadge.wayLegend')}
       </legend>
       <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,320px),1fr))] gap-3">
@@ -50,12 +50,12 @@ export function WayPicker({ idPrefix, chosen, onChoose }: WayPickerProps) {
               value={way}
               checked={way === chosen}
               onChange={() => onChoose(way)}
-              className="row-span-2 mt-0.5 size-6 shrink-0 cursor-pointer accent-(--link)"
+              className="row-span-2 mt-1 size-6 shrink-0 cursor-pointer accent-(--link)"
             />
-            <span className="block text-base font-bold text-ink">
+            <span className="block type-body font-semibold text-ink">
               {t(`teacherBadge.ways.${way}.title`)}
             </span>
-            <span className="mt-1 block text-sm leading-relaxed text-body">
+            <span className="mt-1 block type-body leading-relaxed text-ink-muted">
               {t(`teacherBadge.ways.${way}.text`)}
             </span>
           </label>

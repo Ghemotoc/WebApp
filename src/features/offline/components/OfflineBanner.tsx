@@ -27,12 +27,12 @@ export function OfflineBanner() {
   return (
     <div role="status">
       {!isOnline && (
-        <p className="m-0 bg-primary px-5 py-3 text-center text-[15px] leading-normal font-medium text-on-primary">
+        <p className="m-0 bg-primary px-4 py-3 text-center type-body leading-normal font-normal text-on-primary">
           {t('offline.offline')}
         </p>
       )}
       {isOnline && isJustBackOnline && (
-        <p className="m-0 border-y border-(--success-border) bg-(--success-bg) px-5 py-3 text-center text-[15px] leading-normal font-medium text-(--success-text)">
+        <p className="m-0 border-y border-(--success-border) bg-(--success-bg) px-4 py-3 text-center type-body leading-normal font-normal text-(--success-text)">
           {t('offline.backOnline')}
         </p>
       )}

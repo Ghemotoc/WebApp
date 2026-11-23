@@ -119,7 +119,7 @@ function InsertMenuPanel(props: InsertMenuPanelProps) {
     <div
       ref={panelRef}
       style={{ left: shift }}
-      className="absolute top-[54px] left-0 z-20 w-[min(340px,calc(100vw-32px))] rounded-[24px] border border-border bg-surface p-2 shadow-popover"
+      className="absolute top-[54px] left-0 z-20 w-[min(340px,calc(100vw-32px))] rounded-card border border-border bg-surface p-2 shadow-popover"
     >
       <div
         ref={menuRef}
@@ -129,7 +129,7 @@ function InsertMenuPanel(props: InsertMenuPanelProps) {
         aria-label={t('insert.menuLabel')}
         aria-describedby={footnote === undefined ? undefined : footnoteId}
         onKeyDown={onKeyDown}
-        className="flex flex-col gap-0.5"
+        className="flex flex-col gap-1"
       >
         {items.map((item) => (
           <button
@@ -141,17 +141,17 @@ function InsertMenuPanel(props: InsertMenuPanelProps) {
               onPicked();
               item.onPick();
             }}
-            className="flex min-h-14 w-full items-start gap-3 rounded-2xl px-3.5 py-2.5 text-left hover:bg-tint focus-visible:bg-tint"
+            className="flex min-h-14 w-full items-start gap-3 rounded-card px-4 py-3 text-left hover:bg-tint focus-visible:bg-tint"
           >
             <span
               aria-hidden="true"
-              className="inline-flex size-9 shrink-0 items-center justify-center rounded-xl bg-tint text-heading"
+              className="inline-flex size-9 shrink-0 items-center justify-center rounded-field bg-tint text-ink-heading"
             >
               <ActionIcon name={item.icon} size={20} />
             </span>
-            <span className="flex flex-col gap-0.5">
-              <span className="text-[15px] font-semibold text-ink">{item.label}</span>
-              <span className="text-[13px] leading-snug text-meta">{item.note}</span>
+            <span className="flex flex-col gap-1">
+              <span className="type-body font-semibold text-ink">{item.label}</span>
+              <span className="type-meta leading-snug text-ink-muted">{item.note}</span>
             </span>
           </button>
         ))}
@@ -159,7 +159,7 @@ function InsertMenuPanel(props: InsertMenuPanelProps) {
       {footnote !== undefined && (
         <p
           id={footnoteId}
-          className="m-0 mt-1 border-t border-hairline px-3.5 pt-2.5 pb-1.5 text-[13px] leading-normal text-meta"
+          className="m-0 mt-1 border-t border-hairline px-4 pt-3 pb-2 type-meta leading-normal text-ink-muted"
         >
           {footnote}
         </p>
@@ -209,8 +209,8 @@ export function InsertMenu({ items, footnote }: { items: InsertMenuItem[]; footn
             setOpen(true);
           }
         }}
-        className={`inline-flex h-11 items-center gap-1.5 rounded-full px-3.5 text-sm font-semibold ${
-          isOpen ? 'bg-primary text-on-primary' : 'text-heading hover:bg-tint'
+        className={`inline-flex h-11 items-center gap-2 rounded-full px-4 type-body font-semibold ${
+          isOpen ? 'bg-primary text-on-primary' : 'text-ink-heading hover:bg-tint'
         }`}
       >
         {t('insert.button')}

@@ -98,12 +98,12 @@ function PickedQuotes({
   if (quotes.length === 0) return null;
   return (
     <div role="group" aria-label={t('reply.quotesLabel')} className="flex flex-col gap-3">
-      <div className="flex flex-wrap items-center gap-x-3 text-sm text-body">
+      <div className="flex flex-wrap items-center gap-x-3 type-body text-ink-muted">
         <span>{t('reply.quoted', { count: quotes.length })}</span>
         <button
           type="button"
           onClick={target.quotePicks.clear}
-          className="inline-flex h-11 items-center px-1.5 text-sm font-semibold text-link underline"
+          className="inline-flex h-11 items-center px-2 type-body font-semibold text-link underline"
         >
           {t('reply.removeQuotes')}
         </button>
@@ -138,11 +138,11 @@ function NoBumpBox({ checked, onChange }: { checked: boolean; onChange: (next: b
         aria-describedby="no-bump-note"
         className="size-6 flex-none cursor-pointer accent-primary"
       />
-      <div className="flex flex-col gap-0.5">
-        <label htmlFor="no-bump" className="cursor-pointer text-[15px] font-semibold text-ink">
+      <div className="flex flex-col gap-1">
+        <label htmlFor="no-bump" className="cursor-pointer type-body font-semibold text-ink">
           {t('reply.noBump')}
         </label>
-        <p id="no-bump-note" className="m-0 text-[13px] text-meta">
+        <p id="no-bump-note" className="m-0 type-meta text-ink-muted">
           {t('reply.noBumpNote')}
         </p>
       </div>
@@ -232,7 +232,7 @@ function ReplyFields({ target }: { target: ReplyTarget }) {
 function CannotReplyNote({ space }: { space: ForumThreadSpace | null }) {
   const { t } = useForumsTranslation();
   if (space !== null) return <SpaceReplyNote space={space} />;
-  return <p className="m-0 text-base text-body">{t('reply.notActive')}</p>;
+  return <p className="m-0 type-body text-ink-muted">{t('reply.notActive')}</p>;
 }
 
 /**
@@ -262,17 +262,17 @@ export function ReplyForm({
   return (
     <section
       aria-labelledby="reply-heading"
-      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-5 shadow-card md:p-6"
+      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-4 shadow-card md:p-6"
     >
       <div className="flex flex-col gap-1">
-        <h2 id="reply-heading" className="m-0 font-heading text-2xl font-bold text-heading">
+        <h2 id="reply-heading" className="m-0 font-heading type-heading font-bold text-ink-heading">
           {t('reply.heading')}
         </h2>
       </div>
       {isKnown && userId === null && (
         <Link
           to="/sign-in"
-          className="inline-flex h-11 items-center self-start rounded-full button-glass px-5 text-sm font-semibold no-underline"
+          className="inline-flex h-11 items-center self-start rounded-full button-glass px-4 type-body font-semibold no-underline"
         >
           {t('reply.logIn')}
         </Link>

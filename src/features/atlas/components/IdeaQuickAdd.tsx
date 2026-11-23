@@ -49,7 +49,7 @@ export function IdeaQuickAdd({ onAdd }: IdeaQuickAddProps) {
   return (
     <form
       aria-labelledby="atlas-idea-add-heading"
-      className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface px-5 py-5 shadow-card md:px-7"
+      className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface px-4 py-4 shadow-card md:px-6"
       onSubmit={(submitted) => {
         submitted.preventDefault();
         void add();
@@ -57,7 +57,7 @@ export function IdeaQuickAdd({ onAdd }: IdeaQuickAddProps) {
     >
       <h2
         id="atlas-idea-add-heading"
-        className="m-0 font-heading text-[22px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('ideas.add.heading')}
       </h2>

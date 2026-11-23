@@ -35,13 +35,13 @@ export function SpacesCard() {
   return (
     <section aria-labelledby="spaces-card-heading" className="flex flex-col">
       <p className="m-0 type-meta">{t('eyebrow')}</p>
-      <h2 id="spaces-card-heading" className="m-0 mt-0.5 mb-1.5 type-subheading">
+      <h2 id="spaces-card-heading" className="m-0 mt-1 mb-2 type-subheading">
         {t('title')}
       </h2>
-      <p className="m-0 mb-1 text-body">{t('intro')}</p>
+      <p className="m-0 mb-1 text-ink-muted">{t('intro')}</p>
       {list.loadFailed && <Notice tone="error">{t('loadFailed')}</Notice>}
       {list.spaces !== null && list.spaces.length === 0 && (
-        <p className="m-0 text-body">{t('empty')}</p>
+        <p className="m-0 text-ink-muted">{t('empty')}</p>
       )}
       {list.spaces !== null && list.spaces.length > 0 && (
         <ul className="m-0 list-none p-0">
@@ -50,7 +50,7 @@ export function SpacesCard() {
           ))}
         </ul>
       )}
-      <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-1">
+      <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1">
         <Link to="/spaces/new" className={buttonClassName({ variant: 'secondary' })}>
           {t('create')}
         </Link>

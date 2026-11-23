@@ -29,10 +29,10 @@ function WorldEntryRow({ entry, base }: { entry: PublicEntry; base: string }) {
     >
       <Link
         to={`${base}/world/${entry.id}`}
-        className="flex min-h-11 items-center justify-between gap-3 font-heading text-xl font-bold text-heading no-underline hover:underline"
+        className="flex min-h-11 items-center justify-between gap-3 font-heading type-subheading font-bold text-ink-heading no-underline hover:underline"
       >
         <span className="min-w-0 break-words">{entry.title}</span>
-        <ChevronRightIcon className="flex-none text-meta" />
+        <ChevronRightIcon className="flex-none text-ink-muted" />
       </Link>
       {(entry.tags.length > 0 || entry.showFrom !== null) && (
         <div className="flex flex-wrap gap-2">
@@ -68,19 +68,19 @@ export function PublicWorld({
   const { t } = useAtlasTranslation();
   const nameOf = useBibleSectionName();
   if (plan.sections.length === 0)
-    return <p className="m-0 text-body">{t('publicPlan.world.none')}</p>;
+    return <p className="m-0 text-ink-muted">{t('publicPlan.world.none')}</p>;
   return (
     <div className="flex flex-col gap-6">
       {plan.sections.map((section) => (
         <section
           key={section.id}
           aria-labelledby={`atlas-world-section-${section.id}`}
-          className="flex min-w-0 flex-col gap-4 rounded-card border border-border bg-surface px-5 py-6 shadow-card md:px-7"
+          className="flex min-w-0 flex-col gap-4 rounded-card border border-border bg-surface px-4 py-6 shadow-card md:px-6"
         >
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2
               id={`atlas-world-section-${section.id}`}
-              className="m-0 font-heading text-[26px] font-extrabold break-words text-heading"
+              className="m-0 font-heading type-heading font-bold break-words text-ink-heading"
             >
               {nameOf(section)}
             </h2>

@@ -32,11 +32,11 @@ export function ForumLatestPost({ post }: { post: LatestPost | null }) {
   facts.push({ text: post.writerName });
   facts.push({ text: timeAgo(post.postedAt, i18n.language) });
   return (
-    <div className="flex min-w-0 flex-col gap-0.5">
+    <div className="flex min-w-0 flex-col gap-1">
       <span className="sr-only">{t('latestPost')}</span>
       <Link
         to={post.threadAddress}
-        className="text-[15px] leading-5 font-semibold break-words text-heading no-underline hover:underline"
+        className="type-body leading-5 font-semibold break-words text-ink-heading no-underline hover:underline"
       >
         {post.threadTitle}
       </Link>

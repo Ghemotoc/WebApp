@@ -66,20 +66,20 @@ export function PublicPlanHero({
 }) {
   const { t } = useAtlasTranslation();
   return (
-    <header className="flex min-w-0 items-center gap-5 rounded-card border border-border bg-surface px-6 py-7 shadow-card md:gap-6 md:px-10 md:py-9">
+    <header className="flex min-w-0 items-center gap-4 rounded-card border border-border bg-surface px-6 py-6 shadow-card md:gap-6 md:px-8 md:py-8">
       <HeroCover plan={plan} />
       <div className="flex min-w-0 flex-col gap-2">
         <p className="m-0 eyebrow">{t('publicPlan.eyebrow')}</p>
-        <h1 className="m-0 text-[clamp(32px,4vw,48px)] leading-[1.02] font-extrabold tracking-[-0.025em] break-words">
+        <h1 className="m-0 text-[clamp(32px,4vw,48px)] leading-[1.02] font-bold tracking-[-0.025em] break-words">
           {storyAddress === null ? (
             plan.storyTitle
           ) : (
-            <Link to={storyAddress} className="text-heading no-underline hover:underline">
+            <Link to={storyAddress} className="text-ink-heading no-underline hover:underline">
               {plan.storyTitle}
             </Link>
           )}
         </h1>
-        <p className="m-0 text-sm break-words text-body" data-testid="atlas-public-byline">
+        <p className="m-0 type-body break-words text-ink-muted" data-testid="atlas-public-byline">
           {t('publicPlan.byline', { name: plan.writerName })}
         </p>
       </div>

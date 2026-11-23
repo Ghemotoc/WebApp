@@ -41,11 +41,11 @@ export function ThreadFollowButton({ threadNumber, isFollowing }: ThreadFollowBu
         {isFollowing && <CheckIcon />}
         {t(isFollowing ? 'thread.follow.following' : 'thread.follow.follow')}
       </Button>
-      <p className="m-0 text-sm text-body">
+      <p className="m-0 type-body text-ink-muted">
         {t(isFollowing ? 'thread.follow.hintOn' : 'thread.follow.hintOff')}
       </p>
       {following.failed && (
-        <p role="alert" className="m-0 text-sm font-semibold text-destructive">
+        <p role="alert" className="m-0 type-body font-semibold text-destructive">
           {t('thread.follow.failed')}
         </p>
       )}

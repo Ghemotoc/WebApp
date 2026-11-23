@@ -44,7 +44,8 @@ function OpenCharacter({
   const character = cast.characters.find((candidate) => candidate.id === characterId);
 
   // Step 1: an address for a character that no longer exists (deleted, or a typo).
-  if (character === undefined) return <p className="m-0 text-body">{t('characters.notFound')}</p>;
+  if (character === undefined)
+    return <p className="m-0 text-ink-muted">{t('characters.notFound')}</p>;
 
   // Step 2: the sheet, saving each change as the writer makes it.
   return (
@@ -139,7 +140,7 @@ export function CharactersPage() {
       <title>
         {cast ? t('characters.documentTitle', { title: cast.storyTitle }) : t('homeDocumentTitle')}
       </title>
-      {userId === null && <p className="m-0 text-body">{t('signedOut')}</p>}
+      {userId === null && <p className="m-0 text-ink-muted">{t('signedOut')}</p>}
       {loadFailed && <Notice tone="error">{t('loadFailed')}</Notice>}
       {cast === null && <Notice tone="error">{t('notFound')}</Notice>}
       {cast !== undefined && cast !== null && (

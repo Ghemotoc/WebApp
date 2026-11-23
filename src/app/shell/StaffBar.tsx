@@ -36,8 +36,8 @@ export interface StaffBarProps {
 function staffLinkClasses({ isActive }: { isActive: boolean }): string {
   const shared = 'inline-flex min-h-11 items-center border-b-2 no-underline';
   return isActive
-    ? `${shared} border-gold font-bold text-heading`
-    : `${shared} border-transparent text-body`;
+    ? `${shared} border-gold font-semibold text-ink-heading`
+    : `${shared} border-transparent text-ink-muted`;
 }
 
 /**
@@ -66,17 +66,17 @@ export function StaffBar({
     <header className="pointer-events-none sticky top-0 z-30 px-[clamp(16px,4vw,64px)] pt-[calc(24px+env(safe-area-inset-top))]">
       <Island
         aria-label={hasLinks ? t('staff.navigation') : undefined}
-        className="glass-float pointer-events-auto mx-auto flex max-w-[1280px] flex-wrap items-center gap-x-6 gap-y-4 rounded-nav py-2.5 pr-2.5 pl-6"
+        className="glass-float pointer-events-auto mx-auto flex max-w-[1280px] flex-wrap items-center gap-x-6 gap-y-4 rounded-nav py-3 pr-3 pl-6"
       >
-        <span className="inline-flex min-h-11 items-center gap-2.5">
+        <span className="inline-flex min-h-11 items-center gap-3">
           {/* The emblem and the name, as in the public top bar (LOGO-1: the logo on every platform). */}
-          <span className="inline-flex font-heading text-[22px] font-extrabold tracking-[-0.01em] text-heading">
+          <span className="inline-flex font-heading type-heading font-bold tracking-[-0.01em] text-ink-heading">
             <BrandMark />
           </span>
           <InfoPill tone="plum">{t('staff.pill')}</InfoPill>
         </span>
         {hasLinks && (
-          <ul className="m-0 flex flex-[1_1_420px] list-none flex-wrap justify-center gap-x-[26px] gap-y-1 p-0 text-[15px]">
+          <ul className="m-0 flex flex-[1_1_420px] list-none flex-wrap justify-center gap-x-6 gap-y-1 p-0 type-body">
             {navigationItems.map((item) => (
               <li key={item.labelKey}>
                 <NavLink to={item.href} end className={staffLinkClasses}>
@@ -87,11 +87,11 @@ export function StaffBar({
           </ul>
         )}
         {/* Wraps on narrow phones, so nothing pushes the page sideways (CLAUDE.md rule 21). */}
-        <div className="ml-auto flex flex-wrap items-center justify-end gap-2.5">
+        <div className="ml-auto flex flex-wrap items-center justify-end gap-3">
           {endSlot}
           <span className="flex flex-col items-end leading-tight">
-            <span className="text-sm font-semibold text-ink">{staffName}</span>
-            <span className="text-xs font-semibold text-(--success-text)">{roleLabel}</span>
+            <span className="type-body font-semibold text-ink">{staffName}</span>
+            <span className="type-meta font-semibold text-(--success-text)">{roleLabel}</span>
           </span>
           <Button variant="secondary" onClick={onSignOut}>
             {t('staff.signOut')}

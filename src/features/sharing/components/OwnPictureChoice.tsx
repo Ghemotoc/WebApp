@@ -53,7 +53,7 @@ export function OwnPictureChoice({ own, isChosen, onChoose }: OwnPictureChoicePr
         </div>
       )}
       {own.state !== null && own.state !== 'visible' && (
-        <p role="status" className="m-0 text-sm text-body">
+        <p role="status" className="m-0 type-body text-ink-muted">
           {t(waitingLineKeys[own.state])}
         </p>
       )}

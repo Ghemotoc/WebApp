@@ -26,12 +26,15 @@ function WhatHappensNext() {
   return (
     <section
       aria-labelledby="notice-next-heading"
-      className="flex flex-col gap-3 rounded-card border border-border bg-surface p-5"
+      className="flex flex-col gap-3 rounded-card border border-border bg-surface p-4"
     >
-      <h2 id="notice-next-heading" className="m-0 font-heading text-xl font-bold text-heading">
+      <h2
+        id="notice-next-heading"
+        className="m-0 font-heading type-subheading font-bold text-ink-heading"
+      >
         {t('next.heading')}
       </h2>
-      <ol className="m-0 flex list-decimal flex-col gap-2 pl-5 text-[15px] text-body">
+      <ol className="m-0 flex list-decimal flex-col gap-2 pl-4 type-body text-ink-muted">
         {nextSteps.map((step) => (
           <li key={step}>{t(`next.steps.${step}`)}</li>
         ))}
@@ -52,12 +55,15 @@ function HaveAnAccount() {
   return (
     <section
       aria-labelledby="notice-account-heading"
-      className="flex flex-col gap-2 rounded-card border border-border bg-surface p-5"
+      className="flex flex-col gap-2 rounded-card border border-border bg-surface p-4"
     >
-      <h2 id="notice-account-heading" className="m-0 font-heading text-xl font-bold text-heading">
+      <h2
+        id="notice-account-heading"
+        className="m-0 font-heading type-subheading font-bold text-ink-heading"
+      >
         {t('account.heading')}
       </h2>
-      <p className="m-0 text-[15px] text-body">{t('account.body')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('account.body')}</p>
       <Link to="/sign-in" className="inline-flex min-h-6 items-center text-link underline">
         {t('account.logIn')}
       </Link>
@@ -75,12 +81,15 @@ function YourDetails() {
   return (
     <section
       aria-labelledby="notice-details-heading"
-      className="flex flex-col gap-2 rounded-card border border-border bg-surface p-5"
+      className="flex flex-col gap-2 rounded-card border border-border bg-surface p-4"
     >
-      <h2 id="notice-details-heading" className="m-0 font-heading text-xl font-bold text-heading">
+      <h2
+        id="notice-details-heading"
+        className="m-0 font-heading type-subheading font-bold text-ink-heading"
+      >
         {t('details.heading')}
       </h2>
-      <p className="m-0 text-[15px] text-body">{t('details.body')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('details.body')}</p>
       <Link to="/legal/privacy" className="inline-flex min-h-6 items-center text-link underline">
         {t('details.privacy')}
       </Link>
@@ -95,7 +104,7 @@ function YourDetails() {
  */
 export function NoticeSideColumn() {
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <WhatHappensNext />
       <SafetyContactsBlock />
       <HaveAnAccount />

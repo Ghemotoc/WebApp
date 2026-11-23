@@ -50,8 +50,8 @@ function ColourChoices({ look, onChange }: CertificateLookPickerProps) {
   const { t } = useCertificatesTranslation();
   return (
     <fieldset className="m-0 flex flex-col gap-2 border-0 p-0">
-      <legend className="mb-2 text-sm font-semibold text-ink">{t('look.colour')}</legend>
-      <div className="flex flex-wrap gap-2.5">
+      <legend className="mb-2 type-body font-semibold text-ink">{t('look.colour')}</legend>
+      <div className="flex flex-wrap gap-3">
         {certificateColours.map((colour) => (
           <label
             key={colour}
@@ -114,8 +114,8 @@ function PatternChoices({ look, onChange }: CertificateLookPickerProps) {
   const { t } = useCertificatesTranslation();
   return (
     <fieldset className="m-0 flex flex-col gap-2 border-0 p-0">
-      <legend className="mb-2 text-sm font-semibold text-ink">{t('look.pattern')}</legend>
-      <div className="flex flex-wrap gap-2.5">
+      <legend className="mb-2 type-body font-semibold text-ink">{t('look.pattern')}</legend>
+      <div className="flex flex-wrap gap-3">
         {certificatePatterns.map((pattern) => (
           <label
             key={pattern}
@@ -132,7 +132,7 @@ function PatternChoices({ look, onChange }: CertificateLookPickerProps) {
             <PatternTile pattern={pattern} look={look} />
             <span className="sr-only">{t(`look.patterns.${pattern}`)}</span>
             {pattern === 'none' && look.pattern !== 'none' && (
-              <span aria-hidden="true" className="text-xs text-meta">
+              <span aria-hidden="true" className="type-meta text-ink-muted">
                 {t('look.noneShort')}
               </span>
             )}
@@ -140,7 +140,7 @@ function PatternChoices({ look, onChange }: CertificateLookPickerProps) {
           </label>
         ))}
       </div>
-      <p className="m-0 text-sm text-meta">{t('look.patternHint')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('look.patternHint')}</p>
     </fieldset>
   );
 }
@@ -178,14 +178,14 @@ export function CertificateLookPicker({
       <div className="flex flex-col gap-1">
         <h3
           id="certificate-look-heading"
-          className="m-0 font-heading text-xl font-bold text-heading"
+          className="m-0 font-heading type-subheading font-bold text-ink-heading"
         >
           {t('look.title')}
         </h3>
-        <p className="m-0 text-sm text-body">{t('look.intro')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('look.intro')}</p>
       </div>
       <div className="grid items-start gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,280px)]">
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-4">
           <ColourChoices look={look} onChange={onChange} />
           <PatternChoices look={look} onChange={onChange} />
           <CertificateSealChoices look={look} onChange={onChange} space={space} />
@@ -196,8 +196,8 @@ export function CertificateLookPicker({
             className="flex flex-col items-center gap-2 px-4 py-6 text-center"
           >
             <CertificateSeal look={look} size="small" crestUrl={crestUrl} />
-            <p className="m-0 font-heading text-lg font-bold">{t('look.previewName')}</p>
-            <p className="m-0 text-sm break-words">
+            <p className="m-0 font-heading type-long font-bold">{t('look.previewName')}</p>
+            <p className="m-0 type-body break-words">
               {programmeName.trim() || t('look.previewProgramme')}
             </p>
           </div>

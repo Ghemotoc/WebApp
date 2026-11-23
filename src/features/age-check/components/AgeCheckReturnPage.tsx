@@ -39,8 +39,8 @@ const giveUpAfterMs = 60_000;
 function Message({ heading, body }: { heading: string; body: string }) {
   return (
     <div className="flex flex-col gap-2">
-      <h1 className="m-0 font-heading text-[28px] font-bold text-heading">{heading}</h1>
-      <p className="m-0 text-body">{body}</p>
+      <h1 className="m-0 font-heading type-heading font-bold text-ink-heading">{heading}</h1>
+      <p className="m-0 text-ink-muted">{body}</p>
     </div>
   );
 }
@@ -109,13 +109,13 @@ function PassedMessage({ check, offerDocument }: { check: MyAgeCheck; offerDocum
       <AgeCheckResultSummary check={check} />
       {offerDocument ? (
         <div className="flex flex-col gap-3">
-          <p className="m-0 text-body">{t('ageCheck.return.adultYearBody')}</p>
+          <p className="m-0 text-ink-muted">{t('ageCheck.return.adultYearBody')}</p>
           <StartAgeCheckButton label={t('ageCheck.return.useDocument')} variant="secondary" />
         </div>
       ) : null}
       <Link
         to="/"
-        className="inline-flex h-12 items-center self-start rounded-full button-main px-6 text-[15px] font-semibold no-underline"
+        className="inline-flex h-12 items-center self-start rounded-full button-main px-6 type-body font-semibold no-underline"
       >
         {t('ageCheck.continue')}
       </Link>
@@ -141,11 +141,11 @@ export function AgeCheckReturnPage() {
   }, []);
 
   return (
-    <PageContainer className="tmc-rise flex justify-center pt-12 pb-7">
+    <PageContainer className="tmc-rise flex justify-center pt-12 pb-6">
       <title>{t('ageCheck.return.documentTitle')}</title>
-      <section className="flex w-full max-w-[560px] flex-col gap-5 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card">
+      <section className="flex w-full max-w-[560px] flex-col gap-4 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card">
         {isKnown && userId === null ? (
-          <p className="m-0 text-body">{t('ageCheck.signedOut')}</p>
+          <p className="m-0 text-ink-muted">{t('ageCheck.signedOut')}</p>
         ) : null}
         {loadFailed ? <Notice tone="error">{t('ageCheck.loadFailed')}</Notice> : null}
         {check != null ? (

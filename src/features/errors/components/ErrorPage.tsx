@@ -32,40 +32,40 @@ export function ErrorPage() {
   const errorCode = useReportedErrorCode(thrown, pattern);
 
   return (
-    <PageContainer className="flex justify-center pt-12 pb-7">
+    <PageContainer className="flex justify-center pt-12 pb-6">
       <title>{t('errorPage.documentTitle')}</title>
       <section
         aria-labelledby="error-page-heading"
-        className="flex w-full max-w-[560px] flex-col items-start gap-3.5 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
+        className="flex w-full max-w-[560px] flex-col items-start gap-4 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
       >
-        <h1 id="error-page-heading" className="m-0 font-heading text-[28px] font-bold text-ink">
+        <h1 id="error-page-heading" className="m-0 font-heading type-heading font-bold text-ink">
           {t('errorPage.heading')}
         </h1>
-        <p className="m-0 text-base text-body">{t('errorPage.body')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('errorPage.body')}</p>
         {errorCode !== null && (
           <InfoPill tone="neutral">
             <span className="font-mono">{t('errorPage.code', { code: errorCode })}</span>
           </InfoPill>
         )}
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-3">
           {/* A fresh load also fetches a newer build, which fixes most errors after a release. */}
           <Button size="lg" onClick={() => window.location.reload()}>
             {t('errorPage.tryAgain')}
           </Button>
           <a
             href="/"
-            className="inline-flex h-12 items-center rounded-full button-glass px-[22px] text-[15px] font-semibold no-underline"
+            className="inline-flex h-12 items-center rounded-full button-glass px-6 type-body font-semibold no-underline"
           >
             {t('errorPage.goHome')}
           </a>
           <Link
             to="/legal/contact"
-            className="inline-flex min-h-12 items-center px-2 text-[15px] font-semibold text-link hover:text-link-hover"
+            className="inline-flex min-h-12 items-center px-2 type-body font-semibold text-link hover:text-link-hover"
           >
             {t('errorPage.contactUs')}
           </Link>
         </div>
-        <p className="m-0 mt-1 w-full rounded-2xl border border-dashed border-dashed-border px-4 py-3.5 text-sm leading-normal text-body">
+        <p className="m-0 mt-1 w-full rounded-card border border-dashed border-dashed-border px-4 py-4 type-body leading-normal text-ink-muted">
           <b className="text-ink">{t('errorPage.whatWeSendLabel')}</b> {t('errorPage.whatWeSend')}
         </p>
       </section>

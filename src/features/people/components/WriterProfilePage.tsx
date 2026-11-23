@@ -46,15 +46,15 @@ import { ReaderLevelPanel } from './ReaderLevelPanel';
 function ProfileUnavailable() {
   const { t } = usePeopleTranslation();
   return (
-    <div className="flex flex-col items-start gap-3 rounded-card border border-border bg-surface px-8 py-10">
+    <div className="flex flex-col items-start gap-3 rounded-card border border-border bg-surface px-8 py-8">
       <title>{t('profile.unavailableTitle')}</title>
-      <h1 className="m-0 font-heading text-[26px] font-bold text-heading">
+      <h1 className="m-0 font-heading type-heading font-bold text-ink-heading">
         {t('profile.unavailableTitle')}
       </h1>
-      <p className="m-0 text-base text-body">{t('profile.unavailableBody')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('profile.unavailableBody')}</p>
       <Link
         to="/"
-        className="inline-flex h-11 items-center rounded-full button-main px-5 text-sm font-semibold no-underline"
+        className="inline-flex h-11 items-center rounded-full button-main px-4 type-body font-semibold no-underline"
       >
         {t('profile.goHome')}
       </Link>
@@ -101,7 +101,7 @@ function ProfileSideColumn({
   const hasAnyCard = showsSafetyCard || showsSignature || showsRank || showsReaderLevel;
   if (!hasAnyCard) return null;
   return (
-    <div className="flex w-full flex-col gap-5 lg:max-w-[340px] lg:flex-[1_1_300px]">
+    <div className="flex w-full flex-col gap-4 lg:max-w-[340px] lg:flex-[1_1_300px]">
       {/* The rank card comes first, as on the board (S1-E8-09). */}
       {showsRank && <RankPanel handle={profile.handle} name={profile.displayName} />}
       {/* The reading level card sits under the rank card, as on the board (G7a). */}
@@ -127,7 +127,7 @@ export function WriterProfilePage() {
 
   if (loadFailed) {
     return (
-      <PageContainer className="pt-12 pb-7">
+      <PageContainer className="pt-12 pb-6">
         <Notice tone="error">{t('profile.loadFailed')}</Notice>
       </PageContainer>
     );
@@ -135,21 +135,21 @@ export function WriterProfilePage() {
   if (!isLoaded) return null;
   if (profile === null) {
     return (
-      <PageContainer className="tmc-rise pt-12 pb-7">
+      <PageContainer className="tmc-rise pt-12 pb-6">
         <ProfileUnavailable />
       </PageContainer>
     );
   }
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-10 pt-10 pb-7">
+    <PageContainer className="tmc-rise flex flex-col gap-8 pt-8 pb-6">
       <title>
         {t('profile.documentTitle', { name: profile.displayName, handle: profile.handle })}
       </title>
       <ProfileHeader profile={profile} />
-      <div className="flex flex-col gap-10 lg:flex-row lg:items-start">
+      <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
         <div className="min-w-0 lg:flex-[999_1_620px]">
           {!profile.iBlocked && (
-            <div className="flex flex-col gap-10">
+            <div className="flex flex-col gap-8">
               <ProfileStories profile={profile} />
               {/* The library shelf, when the owner lets this reader see it (S1-E13-01). */}
               <ProfileLibrary profile={profile} />

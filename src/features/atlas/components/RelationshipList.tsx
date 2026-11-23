@@ -99,12 +99,14 @@ function RelationshipRow({
         )}
       </div>
       {relationship.note !== '' && (
-        <p className="m-0 text-sm break-words whitespace-pre-line text-body">{relationship.note}</p>
+        <p className="m-0 type-body break-words whitespace-pre-line text-ink-muted">
+          {relationship.note}
+        </p>
       )}
       {extra?.(relationship, sentence)}
       {isAsking && (
         <div className="flex flex-col gap-2">
-          <p ref={question} tabIndex={-1} className="m-0 text-body">
+          <p ref={question} tabIndex={-1} className="m-0 text-ink-muted">
             {t('connections.list.confirm', { sentence })}
           </p>
           <div className="flex flex-wrap gap-3">
@@ -139,7 +141,7 @@ export function RelationshipList({
 }: RelationshipListProps) {
   const { t } = useAtlasTranslation();
   if (relationships.length === 0) {
-    return <p className="m-0 text-body">{t('connections.list.none')}</p>;
+    return <p className="m-0 text-ink-muted">{t('connections.list.none')}</p>;
   }
   return (
     <ul className="m-0 list-none p-0">

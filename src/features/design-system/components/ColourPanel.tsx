@@ -50,16 +50,16 @@ export function ColourPanel({ theme }: { theme: 'light' | 'night' }) {
     <div
       ref={panelRef}
       data-theme={theme}
-      className="rounded-card border border-border bg-paper p-5"
+      className="rounded-card border border-border bg-paper p-4"
     >
-      <h3 className="m-0 mb-4 text-xl font-bold">{t(`colours.${theme}`)}</h3>
+      <h3 className="m-0 mb-4 type-subheading font-bold">{t(`colours.${theme}`)}</h3>
       <ul className="m-0 grid list-none gap-2 p-0">
         {contrastPairs.map((pair) => {
           const ratio = ratios[`${pair.foreground}/${pair.background}`];
           return (
             <li
               key={`${pair.foreground}/${pair.background}`}
-              className="flex items-center justify-between gap-3 rounded-xl border-2 px-3 py-2 text-sm"
+              className="flex items-center justify-between gap-3 rounded-field border-2 px-3 py-2 type-body"
               style={{
                 backgroundColor: `var(--${pair.background})`,
                 color: pair.minimumRatio === 3 ? 'var(--ink)' : `var(--${pair.foreground})`,

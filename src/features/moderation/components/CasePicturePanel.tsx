@@ -28,15 +28,15 @@ import { useCasePicture } from '../hooks/useCaseClaim';
 function PictureView({ picture, isMatch }: { picture: CasePicture; isMatch: boolean }) {
   const { t } = useTranslation('moderation');
   const [isShown, setIsShown] = useState(false);
-  if (isMatch) return <p className="m-0 text-body">{t('picture.matchHidden')}</p>;
-  if (!picture.canSee) return <p className="m-0 text-body">{t('picture.reviewersOnly')}</p>;
-  if (picture.url === null) return <p className="m-0 text-body">{t('picture.unreadable')}</p>;
+  if (isMatch) return <p className="m-0 text-ink-muted">{t('picture.matchHidden')}</p>;
+  if (!picture.canSee) return <p className="m-0 text-ink-muted">{t('picture.reviewersOnly')}</p>;
+  if (picture.url === null) return <p className="m-0 text-ink-muted">{t('picture.unreadable')}</p>;
   return (
     <div className="flex flex-col items-start gap-3">
       <img
         src={picture.url}
         alt={t('picture.alt')}
-        className={`max-h-[320px] max-w-full rounded-[12px] border border-border ${isShown ? '' : 'blur-xl'}`}
+        className={`max-h-[320px] max-w-full rounded-field border border-border ${isShown ? '' : 'blur-xl'}`}
       />
       <Button variant="secondary" onClick={() => setIsShown(!isShown)} aria-pressed={isShown}>
         {isShown ? t('picture.hide') : t('picture.show')}
@@ -61,9 +61,12 @@ export function CasePicturePanel({ caseId }: { caseId: string }) {
   return (
     <section
       aria-labelledby="case-picture-heading"
-      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-5"
+      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-4"
     >
-      <h2 id="case-picture-heading" className="m-0 font-heading text-lg font-bold text-heading">
+      <h2
+        id="case-picture-heading"
+        className="m-0 font-heading type-long font-bold text-ink-heading"
+      >
         {t('picture.heading')}
       </h2>
       <PictureView picture={picture} isMatch={isMatch} />
@@ -96,7 +99,7 @@ export function CasePicturePanel({ caseId }: { caseId: string }) {
               ]),
         ]}
       />
-      <p className="m-0 text-[13px] text-meta">{t('picture.decisionHint')}</p>
+      <p className="m-0 type-meta text-ink-muted">{t('picture.decisionHint')}</p>
     </section>
   );
 }

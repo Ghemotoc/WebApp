@@ -87,7 +87,7 @@ function CaseHeader({ theCase }: { theCase: QueueCase }) {
   return (
     <div className="flex max-w-[720px] flex-col gap-3">
       <Eyebrow>{t('case.eyebrow')}</Eyebrow>
-      <h1 className="m-0 font-heading text-[34px] font-bold text-heading">
+      <h1 className="m-0 font-heading type-title font-bold text-ink-heading">
         {t('case.heading', { reference: theCase.reference })}
       </h1>
       <div className="flex flex-wrap items-center gap-2">
@@ -98,9 +98,9 @@ function CaseHeader({ theCase }: { theCase: QueueCase }) {
           {t(`statuses.${theCase.status}`)}
         </InfoPill>
       </div>
-      <p className="m-0 text-body">{summaryText(theCase, t, i18n.language)}</p>
-      <p className="m-0 text-body">
-        <span className="font-semibold text-heading">{t('case.reported')}: </span>
+      <p className="m-0 text-ink-muted">{summaryText(theCase, t, i18n.language)}</p>
+      <p className="m-0 text-ink-muted">
+        <span className="font-semibold text-ink-heading">{t('case.reported')}: </span>
         {theCase.reportedHandle === null
           ? t('case.noHandle')
           : t('case.reportedAccount', {
@@ -175,13 +175,13 @@ function CaseBody({
 }) {
   const { t } = useTranslation('moderation');
   if (caseState.loadFailure === 'not_allowed') {
-    return <p className="m-0 text-body">{t('case.notAllowed')}</p>;
+    return <p className="m-0 text-ink-muted">{t('case.notAllowed')}</p>;
   }
   if (caseState.loadFailure !== null) {
     return <Notice tone="error">{t(`failures.${caseState.loadFailure}`)}</Notice>;
   }
-  if (caseState.isLoading) return <p className="m-0 text-meta">{t('case.loading')}</p>;
-  if (caseState.theCase === null) return <p className="m-0 text-body">{t('case.notFound')}</p>;
+  if (caseState.isLoading) return <p className="m-0 text-ink-muted">{t('case.loading')}</p>;
+  if (caseState.theCase === null) return <p className="m-0 text-ink-muted">{t('case.notFound')}</p>;
   const theCase = caseState.theCase;
   return (
     <>
@@ -221,11 +221,11 @@ export function CasePage() {
   const caseState = useCase(caseId);
   const sanctions = useSanctions(caseId, caseState.theCase?.reportedUserId ?? null);
   return (
-    <PageContainer className="flex flex-col gap-6 pt-12 pb-7">
+    <PageContainer className="flex flex-col gap-6 pt-12 pb-6">
       <title>
         {t('case.documentTitle', { reference: caseState.theCase?.reference ?? caseId.slice(0, 8) })}
       </title>
-      <Link to="/staff/moderation" className="w-fit text-sm font-semibold text-link underline">
+      <Link to="/staff/moderation" className="w-fit type-body font-semibold text-link underline">
         {t('case.back')}
       </Link>
       <CaseBody caseState={caseState} sanctions={sanctions} />

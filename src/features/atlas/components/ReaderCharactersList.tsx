@@ -32,12 +32,12 @@ export function ReaderCharactersList({
     <section aria-labelledby="atlas-reader-characters" className="flex min-w-0 flex-col gap-3">
       <h2
         id="atlas-reader-characters"
-        className="m-0 font-heading text-[22px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('readers.characters.heading')}
       </h2>
       {cast.characters.length === 0 && (
-        <p className="m-0 text-body">{t('readers.characters.none')}</p>
+        <p className="m-0 text-ink-muted">{t('readers.characters.none')}</p>
       )}
       {cast.characters.length > 0 && (
         <ul className="m-0 flex list-none flex-col overflow-hidden rounded-card border border-border bg-surface p-0 shadow-card">

@@ -53,13 +53,13 @@ function RowWords({
   const { t, i18n } = useNotificationsTranslation();
   return (
     <>
-      <span className="text-[15px] leading-normal text-ink">
+      <span className="type-body leading-normal text-ink">
         <b>{text.who}</b> {text.what}
       </span>
       {text.quote !== null && text.quote !== '' && (
-        <span className="text-[15px] leading-[1.55] text-body">“{text.quote}”</span>
+        <span className="type-body leading-[1.55] text-ink-muted">“{text.quote}”</span>
       )}
-      <span className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[13px] text-meta">
+      <span className="flex flex-wrap items-center gap-x-3 gap-y-2 type-meta text-ink-muted">
         <time dateTime={notification.at}>{timeAgo(notification.at, i18n.language)}</time>
         {text.grouped !== null && <StateWord>{text.grouped}</StateWord>}
         {/* The rank just reached, in the same pill as on the profile (IDEAS-3a). */}
@@ -71,7 +71,7 @@ function RowWords({
           </StateWord>
         )}
         {text.actionLabel !== null && (
-          <span className="font-bold text-link underline">{text.actionLabel}</span>
+          <span className="font-semibold text-link underline">{text.actionLabel}</span>
         )}
       </span>
     </>
@@ -101,11 +101,11 @@ export function NotificationRow({ notification, ownHandle, onOpen }: Notificatio
   const { t } = useNotificationsTranslation();
   const text = notificationText(t, notification, ownHandle);
   const isUnread = !notification.isRead;
-  const wordsClasses = 'flex min-w-0 flex-1 flex-col gap-1.5 text-inherit no-underline';
+  const wordsClasses = 'flex min-w-0 flex-1 flex-col gap-2 text-inherit no-underline';
   return (
     <li
       className={cn(
-        'flex items-start gap-3.5 border-t border-hairline px-5 py-4 first:border-t-0',
+        'flex items-start gap-4 border-t border-hairline px-4 py-4 first:border-t-0',
         isUnread ? 'bg-tint/40' : 'bg-surface',
       )}
     >
@@ -117,7 +117,7 @@ export function NotificationRow({ notification, ownHandle, onOpen }: Notificatio
       ) : (
         <Link
           to={text.href}
-          className={cn(wordsClasses, 'rounded-lg hover:[&_b]:underline')}
+          className={cn(wordsClasses, 'rounded-field hover:[&_b]:underline')}
           onClick={() => {
             if (isUnread) onOpen(notification.id);
           }}

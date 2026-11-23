@@ -48,13 +48,13 @@ export function AdultMessagesSwitch({ id, onboarding, state }: AdultMessagesSwit
           disabled={state.isSaving}
           aria-describedby={hintId}
           onChange={(event) => void change(event.target.checked)}
-          className="mt-0.5 size-6 shrink-0 cursor-pointer accent-(--link)"
+          className="mt-1 size-6 shrink-0 cursor-pointer accent-(--link)"
         />
-        <label htmlFor={id} className="text-[15px] text-body">
+        <label htmlFor={id} className="type-body text-ink-muted">
           {t('onboarding.safety.messagesSwitch')}
         </label>
       </div>
-      <p id={hintId} className="m-0 text-[13px] text-meta">
+      <p id={hintId} className="m-0 type-meta text-ink-muted">
         {t('onboarding.safety.messagesTeenBody')}
       </p>
     </div>

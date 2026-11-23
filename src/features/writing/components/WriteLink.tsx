@@ -31,7 +31,7 @@ export function WriteLink() {
   return (
     <NavLink
       to="/write"
-      className="button-glass inline-flex h-11 items-center gap-2 rounded-full px-5 text-[15px] leading-5 font-semibold whitespace-nowrap no-underline aria-[current=page]:ring-2 aria-[current=page]:ring-thread"
+      className="button-glass inline-flex h-11 items-center gap-2 rounded-full px-4 type-body leading-5 font-semibold whitespace-nowrap no-underline aria-[current=page]:ring-2 aria-[current=page]:ring-thread"
     >
       <NavIcon name="write" size={16} strokeWidth={2} />
       {t('nav.write')}

@@ -40,9 +40,9 @@ function SelectedPassage({
   const { t } = useTranslation('reporting');
   if (passage === null || passage === undefined) return null;
   return (
-    <div className="flex flex-col gap-1.5">
-      <p className="m-0 text-sm font-semibold text-ink">{t('copied.selected')}</p>
-      <blockquote className="m-0 max-h-40 overflow-y-auto rounded-[12px] border border-border bg-panel p-3 text-[15px] whitespace-pre-line text-body">
+    <div className="flex flex-col gap-2">
+      <p className="m-0 type-body font-semibold text-ink">{t('copied.selected')}</p>
+      <blockquote className="m-0 max-h-40 overflow-y-auto rounded-field border border-border bg-panel p-3 type-body whitespace-pre-line text-ink-muted">
         {passage}
       </blockquote>
       {onRemove !== undefined && (
@@ -71,8 +71,8 @@ export function CopySourceFields({
   const { t } = useTranslation('reporting');
   return (
     <fieldset className="m-0 flex flex-col gap-4 rounded-card border border-border p-4">
-      <legend className="px-1 text-sm font-semibold text-ink">{t('copied.legend')}</legend>
-      <p className="m-0 text-sm text-body">{t('copied.titleHelps')}</p>
+      <legend className="px-1 type-body font-semibold text-ink">{t('copied.legend')}</legend>
+      <p className="m-0 type-body text-ink-muted">{t('copied.titleHelps')}</p>
       <SelectedPassage passage={selectedPassage} onRemove={onRemovePassage} />
       <div className="grid gap-4 md:grid-cols-2">
         <TextInput

@@ -32,11 +32,11 @@ function NoticeHeader() {
   return (
     <div className="flex max-w-[760px] flex-col gap-3">
       <Eyebrow>{t('eyebrow')}</Eyebrow>
-      <h1 className="m-0 font-heading text-[clamp(32px,4vw,52px)] leading-[1.02] font-extrabold tracking-[-0.02em] text-heading">
+      <h1 className="m-0 font-heading text-[clamp(32px,4vw,52px)] leading-[1.02] font-bold tracking-[-0.02em] text-ink-heading">
         {t('heading')}
       </h1>
-      <p className="m-0 text-lg leading-[1.6] text-body">{t('intro')}</p>
-      <p className="m-0 text-body">{t('contactPoint')}</p>
+      <p className="m-0 type-long leading-[1.6] text-ink-muted">{t('intro')}</p>
+      <p className="m-0 text-ink-muted">{t('contactPoint')}</p>
     </div>
   );
 }
@@ -53,7 +53,7 @@ export function NoticePage() {
   const form = useNoticeForm();
   const language = writtenLanguageFor(i18n.language);
   return (
-    <PageContainer className="flex flex-col gap-8 pt-12 pb-7">
+    <PageContainer className="flex flex-col gap-8 pt-12 pb-6">
       <title>{t('documentTitle')}</title>
       <NoticeHeader />
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">

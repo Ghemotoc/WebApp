@@ -19,7 +19,7 @@ import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 /** The interactive chip's look (the pill system: white, #8E7B99 border, plum text, 36 px). */
 const chipLink =
-  "relative inline-flex h-9 items-center rounded-full border border-control-border bg-surface px-3.5 text-sm leading-none font-semibold text-heading no-underline hover:bg-tint after:absolute after:inset-x-0 after:top-1/2 after:h-11 after:-translate-y-1/2 after:content-['']";
+  "relative inline-flex h-9 items-center rounded-full border border-control-border bg-surface px-4 type-body leading-none font-semibold text-ink-heading no-underline hover:bg-tint after:absolute after:inset-x-0 after:top-1/2 after:h-11 after:-translate-y-1/2 after:content-['']";
 
 /**
  * Renders the chips.
@@ -37,7 +37,7 @@ export function CrossLinkChips({ texts }: { texts: string[] }) {
   if (names.length === 0 || !isLoaded) return null;
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span aria-hidden="true" className="text-sm text-meta">
+      <span aria-hidden="true" className="type-body text-ink-muted">
         {t('links.chipsLabel')}
       </span>
       <ul className="m-0 flex list-none flex-wrap gap-2 p-0" aria-label={t('links.chipsLabel')}>

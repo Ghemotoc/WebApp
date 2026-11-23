@@ -27,10 +27,10 @@ export function LabelRows({ rows }: { rows: LabelRow[] }) {
       {rows.map((row, index) => (
         <div
           key={row.label}
-          className={`grid grid-cols-[minmax(0,140px)_minmax(0,1fr)] gap-4 py-2.5 ${index === 0 ? 'pt-0' : 'border-t border-border'}`}
+          className={`grid grid-cols-[minmax(0,140px)_minmax(0,1fr)] gap-4 py-3 ${index === 0 ? 'pt-0' : 'border-t border-border'}`}
         >
-          <dt className="text-sm text-meta">{row.label}</dt>
-          <dd className="m-0 text-sm text-ink">{row.value}</dd>
+          <dt className="type-body text-ink-muted">{row.label}</dt>
+          <dd className="m-0 type-body text-ink">{row.value}</dd>
         </div>
       ))}
     </dl>

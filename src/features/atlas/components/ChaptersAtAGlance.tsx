@@ -26,29 +26,29 @@ export function ChaptersAtAGlance({ page }: { page: StoryPlanPage }) {
   return (
     <section
       aria-labelledby="atlas-chapters-heading"
-      className="flex min-w-0 flex-col gap-2 rounded-card border border-border bg-surface px-6 py-[22px] shadow-card"
+      className="flex min-w-0 flex-col gap-2 rounded-card border border-border bg-surface px-6 py-6 shadow-card"
     >
       <h2 id="atlas-chapters-heading" className="eyebrow m-0">
         {t('chapters.heading')}
       </h2>
       {chapterCount === 0 ? (
         <>
-          <p className="m-0 text-body">{t('chapters.none')}</p>
+          <p className="m-0 text-ink-muted">{t('chapters.none')}</p>
           <div className="self-start">
             <NewChapterButton slug={slug} />
           </div>
         </>
       ) : (
         <>
-          <p className="m-0 font-heading text-[30px] leading-[1.1] font-extrabold text-heading">
+          <p className="m-0 font-heading type-title leading-[1.1] font-bold text-ink-heading">
             {t('chapters.count', { count: chapterCount })}
           </p>
-          <p className="m-0 text-sm text-meta">
+          <p className="m-0 type-body text-ink-muted">
             {t('chapters.published', { published: publishedCount })}
           </p>
           <Link
             to={`/write/s/${slug}/chapters`}
-            className="inline-flex min-h-11 items-center self-start text-sm font-semibold"
+            className="inline-flex min-h-11 items-center self-start type-body font-semibold"
           >
             {t('chapters.manage')}
           </Link>

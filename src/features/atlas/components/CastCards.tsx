@@ -20,18 +20,18 @@ function CastCard({ slug, character }: { slug: string; character: StoryCharacter
   const { t } = useAtlasTranslation();
   const summary = character.sheet.summary ?? '';
   return (
-    <li className="relative flex min-w-0 flex-col items-center gap-2.5 rounded-card border border-border bg-surface p-[22px] text-center shadow-card hover:bg-tint">
-      <h3 className="m-0 font-heading text-lg leading-[1.2] font-bold break-words text-heading">
+    <li className="relative flex min-w-0 flex-col items-center gap-3 rounded-card border border-border bg-surface p-6 text-center shadow-card hover:bg-tint">
+      <h3 className="m-0 font-heading type-long leading-[1.2] font-bold break-words text-ink-heading">
         {/* The link covers the whole card (after:inset-0), so anywhere on it opens the sheet. */}
         <Link
           to={`/plan/s/${slug}/characters/${character.id}`}
-          className="text-heading no-underline after:absolute after:inset-0 after:rounded-card hover:underline"
+          className="text-ink-heading no-underline after:absolute after:inset-0 after:rounded-card hover:underline"
         >
           {character.name}
         </Link>
       </h3>
       <InfoPill tone="plum">{t(`characters.role.${character.role}`)}</InfoPill>
-      {summary !== '' && <p className="m-0 text-sm break-words text-meta">{summary}</p>}
+      {summary !== '' && <p className="m-0 type-body break-words text-ink-muted">{summary}</p>}
     </li>
   );
 }
@@ -56,9 +56,11 @@ export function CastCards({
   const { t } = useAtlasTranslation();
   // Role order, then name order inside each role, as the sheet's side list shows them.
   const ordered = groupCast(characters, filter).flatMap((group) => group.characters);
-  if (characters.length === 0) return <p className="m-0 text-body">{t('characters.none')}</p>;
+  if (characters.length === 0) return <p className="m-0 text-ink-muted">{t('characters.none')}</p>;
   if (ordered.length === 0) {
-    return <p className="m-0 text-body">{t('characters.noMatch', { filter: filter.trim() })}</p>;
+    return (
+      <p className="m-0 text-ink-muted">{t('characters.noMatch', { filter: filter.trim() })}</p>
+    );
   }
   return (
     <ul

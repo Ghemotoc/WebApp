@@ -30,10 +30,10 @@ export function AgesByCountryTable({ rules }: { rules: AgeRule[] }) {
       tabIndex={0}
       className="max-w-full overflow-x-auto"
     >
-      <table className="w-full border-collapse text-sm">
+      <table className="w-full border-collapse type-body">
         <caption className="sr-only">{t('country.agesHeading')}</caption>
         <thead>
-          <tr className="border-b border-border text-left text-meta">
+          <tr className="border-b border-border text-left text-ink-muted">
             <th scope="col" className="py-2 pr-4 font-semibold">
               {t('country.columns.place')}
             </th>
@@ -51,7 +51,7 @@ export function AgesByCountryTable({ rules }: { rules: AgeRule[] }) {
         <tbody>
           {rows.map(({ rule, name }) => (
             <tr key={rule.id} className="border-b border-border">
-              <th scope="row" className="py-2 pr-4 text-left font-normal text-body">
+              <th scope="row" className="py-2 pr-4 text-left font-normal text-ink-muted">
                 {name}
               </th>
               <td className="py-2 pr-4">{rule.minimumAge}</td>

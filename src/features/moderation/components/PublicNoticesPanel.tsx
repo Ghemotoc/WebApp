@@ -60,13 +60,13 @@ function AlertState({ alert }: { alert: OnCallAlert }) {
       : t('orders.onCall', { handle: alert.onCallHandle });
   if (alert.acknowledgedAt !== null) {
     return (
-      <span className="text-sm text-meta">
+      <span className="type-body text-ink-muted">
         {who} {t('orders.acknowledged', { when: timeOf(alert.acknowledgedAt) })}
       </span>
     );
   }
   return (
-    <span className="flex flex-wrap items-center gap-2 text-sm text-meta">
+    <span className="flex flex-wrap items-center gap-2 type-body text-ink-muted">
       {who}
       {alert.escalatedAt !== null &&
         ` ${t('orders.escalated', { when: timeOf(alert.escalatedAt) })}`}
@@ -101,12 +101,15 @@ function RecentOrders({ alerts }: { alerts: OnCallAlert[] }) {
   if (recent.length === 0) return null;
   return (
     <section aria-labelledby="queue-orders-heading" className="flex flex-col gap-2">
-      <h2 id="queue-orders-heading" className="m-0 font-heading text-xl font-bold text-heading">
+      <h2
+        id="queue-orders-heading"
+        className="m-0 font-heading type-subheading font-bold text-ink-heading"
+      >
         {t('notices.ordersHeading')}
       </h2>
       <ul className="m-0 flex list-none flex-col gap-2 p-0">
         {recent.map((alert) => (
-          <li key={alert.id} className="flex flex-col gap-1 text-body">
+          <li key={alert.id} className="flex flex-col gap-1 text-ink-muted">
             <span>
               {t('notices.orderAlert', {
                 reference: alert.noticeReference ?? '',
@@ -149,16 +152,16 @@ function UnmatchedCard({ notice, queue }: { notice: UnmatchedNotice; queue: Queu
       : t(`reasons.${notice.reason ?? 'other'}`);
   return (
     <li className="flex flex-col gap-2 rounded-card border border-border bg-surface p-4">
-      <p className="m-0 font-semibold text-heading">
+      <p className="m-0 font-semibold text-ink-heading">
         {notice.reference} · {title}
       </p>
-      <p className="m-0 text-sm text-meta">
+      <p className="m-0 type-body text-ink-muted">
         {notice.deadlineAt === null
           ? t('notices.receivedAt', { when: timeOf(notice.receivedAt) })
           : t('notices.actBy', { when: timeOf(notice.deadlineAt) })}
       </p>
-      <code className="text-sm break-all text-body">{notice.contentUrl}</code>
-      <p className="m-0 text-body whitespace-pre-line">{notice.explanation}</p>
+      <code className="type-body break-all text-ink-muted">{notice.contentUrl}</code>
+      <p className="m-0 text-ink-muted whitespace-pre-line">{notice.explanation}</p>
       {isClosing ? (
         <ReasonForm
           id={`close-${notice.reference}`}
@@ -206,11 +209,11 @@ export function PublicNoticesPanel() {
         <section aria-labelledby="queue-unmatched-heading" className="flex flex-col gap-3">
           <h2
             id="queue-unmatched-heading"
-            className="m-0 font-heading text-xl font-bold text-heading"
+            className="m-0 font-heading type-subheading font-bold text-ink-heading"
           >
             {t('notices.unmatchedHeading')}
           </h2>
-          <p className="m-0 text-body">{t('notices.unmatchedIntro')}</p>
+          <p className="m-0 text-ink-muted">{t('notices.unmatchedIntro')}</p>
           {queue.closeFailure !== null && (
             <Notice tone="error">{t(`failures.${queue.closeFailure}`)}</Notice>
           )}

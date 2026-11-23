@@ -57,9 +57,9 @@ export function LessMotionRow({ isOn, onToggle }: LessMotionRowProps) {
   const hintKey = isDeviceAsking ? 'lessMotionDeviceHint' : 'lessMotionHint';
   return (
     <div className="flex min-h-[52px] items-center justify-between gap-4">
-      <span className="flex min-w-0 flex-col gap-0.5">
-        <span className="text-[15px] font-bold text-ink">{t('lessMotionLabel')}</span>
-        <span id="appearance-less-motion-hint" className="text-[13px] text-meta">
+      <span className="flex min-w-0 flex-col gap-1">
+        <span className="type-body font-semibold text-ink">{t('lessMotionLabel')}</span>
+        <span id="appearance-less-motion-hint" className="type-meta text-ink-muted">
           {t(hintKey)}
         </span>
       </span>

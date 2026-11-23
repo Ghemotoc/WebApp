@@ -92,7 +92,7 @@ export function AtlasSectionNav({
   const { t } = useAtlasTranslation();
   // The side menu stacks the links; the line keeps them on one row that scrolls.
   const listLayout =
-    layout === 'side' ? 'flex-col gap-0.5' : 'flex-nowrap gap-1 overflow-x-auto pb-1';
+    layout === 'side' ? 'flex-col gap-1' : 'flex-nowrap gap-1 overflow-x-auto pb-1';
   return (
     <nav aria-label={t('nav.label')}>
       <ul className={cn('m-0 flex list-none p-0', listLayout)}>
@@ -128,8 +128,8 @@ function SectionLink({
       to={address}
       aria-current={isCurrent ? 'page' : undefined}
       className={cn(
-        'flex min-h-11 items-center gap-2.5 rounded-lg px-3 text-sm whitespace-nowrap no-underline',
-        isCurrent ? 'bg-tint font-semibold text-heading' : 'font-medium text-ink hover:bg-tint',
+        'flex min-h-11 items-center gap-3 rounded-field px-3 type-body whitespace-nowrap no-underline',
+        isCurrent ? 'bg-tint font-semibold text-ink-heading' : 'font-normal text-ink hover:bg-tint',
       )}
     >
       <ActionIcon name={sectionIcons[section]} />

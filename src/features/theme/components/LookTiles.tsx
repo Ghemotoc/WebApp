@@ -33,10 +33,10 @@ function LookSwatch({ look, isPicked }: { look: YearRoundLook; isPicked: boolean
   const ring = isPicked ? 'shadow-[0_0_0_3px_var(--focus-ring)]' : 'border border-control-border';
   return (
     // The ring sits outside the swatch, so it takes the page's colours, not the tile's look.
-    <span aria-hidden="true" className={`relative block h-[76px] w-[112px] rounded-2xl ${ring}`}>
+    <span aria-hidden="true" className={`relative block h-[76px] w-[112px] rounded-card ${ring}`}>
       <span
         data-look-swatch={look}
-        className="look-swatch absolute inset-0 overflow-hidden rounded-2xl"
+        className="look-swatch absolute inset-0 overflow-hidden rounded-card"
       >
         <span className="absolute inset-x-3 bottom-3 h-[18px] rounded-full border border-white/90 bg-accent" />
       </span>
@@ -59,13 +59,13 @@ export function LookTiles({ picked, onPick }: LookTilesProps) {
   return (
     <fieldset className="m-0 flex flex-col gap-3 border-0 p-0">
       <legend className="sr-only">{t('themeLegend')}</legend>
-      <div className="flex flex-wrap gap-x-3.5 gap-y-4">
+      <div className="flex flex-wrap gap-x-4 gap-y-4">
         {yearRoundLooks.map((look) => {
           const isPicked = look === picked;
           return (
             <label
               key={look}
-              className="flex w-[112px] cursor-pointer flex-col items-center gap-2 rounded-2xl text-center text-[13px] text-ink has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-4 has-[:focus-visible]:outline-(--focus-ring)"
+              className="flex w-[112px] cursor-pointer flex-col items-center gap-2 rounded-card text-center type-meta text-ink has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-4 has-[:focus-visible]:outline-(--focus-ring)"
             >
               <input
                 type="radio"
@@ -76,7 +76,9 @@ export function LookTiles({ picked, onPick }: LookTilesProps) {
                 className="sr-only"
               />
               <LookSwatch look={look} isPicked={isPicked} />
-              <span className={isPicked ? 'font-bold' : 'font-medium'}>{t(`looks.${look}`)}</span>
+              <span className={isPicked ? 'font-semibold' : 'font-normal'}>
+                {t(`looks.${look}`)}
+              </span>
             </label>
           );
         })}

@@ -25,10 +25,10 @@ import { AvatarImage } from './AvatarImage';
  * 32 px in comments, 36 px in bars and lists, the initials in Inter 600 at 12 and 13 px).
  */
 const sizeClasses = {
-  small: 'size-8 text-[12px]',
-  medium: 'size-9 text-[13px]',
-  large: 'size-9 text-[13px]',
-  xlarge: 'size-12 text-[17px]',
+  small: 'size-8 type-meta',
+  medium: 'size-9 type-meta',
+  large: 'size-9 type-meta',
+  xlarge: 'size-12 type-long',
 } as const;
 
 /** What the avatar needs. */

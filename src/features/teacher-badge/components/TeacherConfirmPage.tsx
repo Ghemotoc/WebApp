@@ -52,7 +52,7 @@ function OutcomeIcon({ isGood }: { isGood: boolean }) {
       aria-hidden="true"
       className={cn(
         'flex size-14 items-center justify-center rounded-full',
-        isGood ? 'bg-primary text-on-primary' : 'border border-border bg-surface text-heading',
+        isGood ? 'bg-primary text-on-primary' : 'border border-border bg-surface text-ink-heading',
       )}
     >
       <ActionIcon name={isGood ? 'check' : 'info'} size={24} />
@@ -95,11 +95,11 @@ export function TeacherConfirmPage() {
   const state = useConfirmState(token);
   const isGood = state === 'approved' || state === 'waiting_for_staff';
   return (
-    <PageContainer className="flex justify-center py-10 md:py-14">
+    <PageContainer className="flex justify-center py-8 md:py-12">
       <title>{t('teacherBadge.confirm.documentTitle')}</title>
       <section
         aria-labelledby="teacher-confirm-heading"
-        className="flex w-full max-w-[640px] flex-col gap-6 rounded-card border border-border bg-surface p-6 shadow-card md:p-10"
+        className="flex w-full max-w-[640px] flex-col gap-6 rounded-card border border-border bg-surface p-6 shadow-card md:p-8"
       >
         {state !== 'checking' && <OutcomeIcon isGood={isGood} />}
         {/* The heading and the line change once the link is checked, so they are read out. */}
@@ -108,7 +108,7 @@ export function TeacherConfirmPage() {
             {t(`teacherBadge.confirm.headings.${state}`)}
           </h1>
           {state !== 'checking' && (
-            <p className="m-0 text-base leading-relaxed text-body">
+            <p className="m-0 type-body leading-relaxed text-ink-muted">
               {t(`teacherBadge.confirm.${state}`)}
             </p>
           )}

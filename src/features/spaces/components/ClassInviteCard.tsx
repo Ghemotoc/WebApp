@@ -35,12 +35,12 @@ import { errorShownByHook } from '@/lib/errorShownByHook';
  */
 function InviteStatusLine({ status }: { status: ClassInviteStatus | null }) {
   const { t, i18n } = useSpacesTranslation();
-  if (status === null) return <p className="m-0 text-body">{t('classInvite.none')}</p>;
+  if (status === null) return <p className="m-0 text-ink-muted">{t('classInvite.none')}</p>;
   const until = new Intl.DateTimeFormat(i18n.language, { dateStyle: 'long' }).format(
     new Date(status.expiresAt),
   );
   return (
-    <p className="m-0 text-body">
+    <p className="m-0 text-ink-muted">
       {t('classInvite.working', { until, used: status.used, count: status.admits })}
     </p>
   );
@@ -128,7 +128,9 @@ export function ClassInviteCard({ space }: { space: Space }) {
         className="flex flex-col gap-4"
       >
         <ClassInviteFields values={values} onChange={setValues} />
-        {working !== null && <p className="m-0 text-sm text-meta">{t('classInvite.resetNote')}</p>}
+        {working !== null && (
+          <p className="m-0 type-body text-ink-muted">{t('classInvite.resetNote')}</p>
+        )}
         {problem !== null && <Notice tone="error">{problem}</Notice>}
         {changes.failure !== null && (
           <Notice tone="error">{t(`classInvite.failures.${changes.failure.failure}`)}</Notice>

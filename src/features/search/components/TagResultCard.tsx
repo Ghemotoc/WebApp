@@ -26,12 +26,14 @@ export function TagResultCard({ tag }: { tag: FoundTag }) {
   return (
     <Link
       to={listAddress(plainList('tag', tag.name))}
-      className={`flex h-full flex-col gap-1 rounded-card border border-border bg-surface p-5 no-underline shadow-card hover:bg-tint w-full`}
+      className={`flex h-full flex-col gap-1 rounded-card border border-border bg-surface p-4 no-underline shadow-card hover:bg-tint w-full`}
     >
-      <span className="font-heading text-lg leading-tight font-bold break-words text-heading">
+      <span className="font-heading type-long leading-tight font-bold break-words text-ink-heading">
         {showTag(tag.name)}
       </span>
-      <span className="text-sm text-meta">{t('results.stories', { count: tag.storyCount })}</span>
+      <span className="type-body text-ink-muted">
+        {t('results.stories', { count: tag.storyCount })}
+      </span>
     </Link>
   );
 }

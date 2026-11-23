@@ -59,8 +59,8 @@ function EvidencePack({
   const [isAsking, setIsAsking] = useState(false);
   return (
     <div className="flex flex-col gap-3">
-      <h3 className="m-0 text-base font-semibold text-heading">{t('safeguarding.packHeading')}</h3>
-      <p className="m-0 text-sm text-body">{t('safeguarding.packIntro')}</p>
+      <h3 className="m-0 type-body font-bold text-ink-heading">{t('safeguarding.packHeading')}</h3>
+      <p className="m-0 type-body text-ink-muted">{t('safeguarding.packIntro')}</p>
       {safeguarding.packFailure !== null && (
         <Notice tone="error">{t(`failures.${safeguarding.packFailure}`)}</Notice>
       )}
@@ -100,12 +100,15 @@ export function SafeguardingPanel({ caseId, reference }: { caseId: string; refer
   return (
     <section
       aria-labelledby="safeguarding-heading"
-      className="flex flex-col gap-5 rounded-card border border-border bg-surface p-6 shadow-card"
+      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card"
     >
-      <h2 id="safeguarding-heading" className="m-0 font-heading text-[24px] font-bold text-heading">
+      <h2
+        id="safeguarding-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
+      >
         {t('safeguarding.heading')}
       </h2>
-      <ol className="m-0 flex flex-col gap-1.5 pl-5 text-body">
+      <ol className="m-0 flex flex-col gap-2 pl-4 text-ink-muted">
         {checklistSteps.map((step) => (
           <li key={step}>{t(`safeguarding.steps.${step}`)}</li>
         ))}

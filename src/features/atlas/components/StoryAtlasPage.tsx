@@ -41,7 +41,7 @@ function AtlasBody({
   story: MyStory | undefined;
 }) {
   const { t } = useAtlasTranslation();
-  if (!isSignedIn) return <p className="m-0 text-body">{t('signedOut')}</p>;
+  if (!isSignedIn) return <p className="m-0 text-ink-muted">{t('signedOut')}</p>;
   if (loadFailed) return <Notice tone="error">{t('loadFailed')}</Notice>;
   if (page === undefined) return null;
   if (page === null) return <Notice tone="error">{t('notFound')}</Notice>;

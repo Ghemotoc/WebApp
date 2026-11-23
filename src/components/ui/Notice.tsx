@@ -37,9 +37,9 @@ export function Notice({ tone, title, children }: NoticeProps) {
   return (
     <div
       role={tone === 'error' ? 'alert' : 'status'}
-      className={`rounded-2xl border px-4 py-3.5 text-sm leading-normal ${toneClasses[tone]}`}
+      className={`rounded-card border px-4 py-4 type-body leading-normal ${toneClasses[tone]}`}
     >
-      {title !== undefined && <strong className="font-bold">{title} </strong>}
+      {title !== undefined && <strong className="font-semibold">{title} </strong>}
       {children}
     </div>
   );

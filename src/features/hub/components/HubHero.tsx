@@ -65,7 +65,7 @@ function WaitingLine({
   if (closingCount > 0) parts.push(t('hub.home.contestsClosing', { count: closingCount }));
   // Step 2: nothing waits, so the line invites a first piece instead.
   if (parts.length === 0) parts.push(t('hub.home.fresh'));
-  return <p className="m-0 max-w-[52ch] text-body">{parts.join(' ')}</p>;
+  return <p className="m-0 max-w-[52ch] text-ink-muted">{parts.join(' ')}</p>;
 }
 
 /**

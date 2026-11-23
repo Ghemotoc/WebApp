@@ -43,7 +43,7 @@ export function TagSuggestions({ recommended, chosen, onAdd, isFull }: TagSugges
   const shown = showsAll ? open : open.slice(0, FIRST_SUGGESTIONS);
   return (
     <div className="flex flex-col gap-2">
-      <p id="tag-suggestions-label" className="m-0 text-[13px] font-semibold text-ink">
+      <p id="tag-suggestions-label" className="m-0 type-meta font-semibold text-ink">
         {t('newStory.suggestedTags')}
       </p>
       <ul
@@ -56,7 +56,7 @@ export function TagSuggestions({ recommended, chosen, onAdd, isFull }: TagSugges
               type="button"
               aria-label={t('newStory.addSuggestedTag', { tag })}
               onClick={() => onAdd(tag)}
-              className="relative inline-flex h-9 items-center gap-1.5 rounded-full border border-control-border bg-surface px-3.5 text-sm leading-none font-semibold text-heading after:absolute after:inset-x-0 after:top-1/2 after:h-11 after:-translate-y-1/2 after:content-[''] hover:bg-tint"
+              className="relative inline-flex h-9 items-center gap-2 rounded-full border border-control-border bg-surface px-4 type-body leading-none font-semibold text-ink-heading after:absolute after:inset-x-0 after:top-1/2 after:h-11 after:-translate-y-1/2 after:content-[''] hover:bg-tint"
             >
               <span aria-hidden="true">+</span>
               {tag}
@@ -69,7 +69,7 @@ export function TagSuggestions({ recommended, chosen, onAdd, isFull }: TagSugges
           type="button"
           aria-expanded={showsAll}
           onClick={() => setShowsAll(!showsAll)}
-          className="inline-flex min-h-6 items-center self-start text-sm text-link underline"
+          className="inline-flex min-h-6 items-center self-start type-body text-link underline"
         >
           {showsAll
             ? t('newStory.fewerSuggestions')

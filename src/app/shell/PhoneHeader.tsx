@@ -36,12 +36,12 @@ export function PhoneHeader() {
     // header's own box lets clicks through to the page between them.
     // The page draws under a phone's status bar (viewport-fit=cover, bundle CALM-1), so the pills
     // sit 16 px below the notch or status bar, not under it (env() is 0 where there is none).
-    <header className="pointer-events-none sticky top-0 z-30 flex items-center justify-between gap-2 px-3.5 pt-[calc(16px+env(safe-area-inset-top))]">
+    <header className="pointer-events-none sticky top-0 z-30 flex items-center justify-between gap-2 px-4 pt-[calc(16px+env(safe-area-inset-top))]">
       {/* The logo pill: the way home, named for screen readers as on the board. */}
       <Link
         to={homeAddress}
         aria-label={t('shell.home', { productName: brand.productName })}
-        className="glass-float pointer-events-auto inline-flex h-13 items-center rounded-full pr-4 pl-2.5 font-heading text-[19px] font-bold text-heading no-underline"
+        className="glass-float pointer-events-auto inline-flex h-13 items-center rounded-full pr-4 pl-3 font-heading type-subheading font-bold text-ink-heading no-underline"
       >
         <BrandMark />
       </Link>

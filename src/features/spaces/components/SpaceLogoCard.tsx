@@ -35,7 +35,7 @@ function LogoPreview({ space }: { space: Space }) {
   const { t } = useSpacesTranslation();
   const view = useSpaceLogoView(space).data ?? null;
   const state = space.logoPicture?.state;
-  if (state === undefined) return <p className="m-0 text-sm text-body">{t('logo.none')}</p>;
+  if (state === undefined) return <p className="m-0 type-body text-ink-muted">{t('logo.none')}</p>;
   return (
     <div className="flex flex-wrap items-center gap-4">
       {view?.url != null && (
@@ -89,7 +89,7 @@ export function SpaceLogoCard({ space }: { space: Space }) {
       <div aria-live="polite">
         {remove.isError && <Notice tone="error">{t('logo.removeFailed')}</Notice>}
         {remove.isSuccess && space.logoPicture === null && (
-          <p className="m-0 text-sm text-body">{t('logo.removedNotice')}</p>
+          <p className="m-0 type-body text-ink-muted">{t('logo.removedNotice')}</p>
         )}
       </div>
     </SpaceFormCard>

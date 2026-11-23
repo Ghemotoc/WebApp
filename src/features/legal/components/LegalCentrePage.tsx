@@ -35,7 +35,7 @@ function LegalDocumentLoader({ documentSlug }: { documentSlug: LegalDocumentSlug
   const versions = useLegalVersions(documentSlug);
 
   // Step 1: still loading.
-  if (versions.isPending) return <p className="m-0 text-body">{t('loading')}</p>;
+  if (versions.isPending) return <p className="m-0 text-ink-muted">{t('loading')}</p>;
   // Step 2: the database couldn't be reached; say so and offer to try again.
   if (versions.isError) {
     return (
@@ -74,15 +74,15 @@ export function LegalCentrePage() {
   const documentTitle = knownSlug === null ? t('eyebrow') : t(`documents.${knownSlug}.name`);
 
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-6 pt-12 pb-7">
+    <PageContainer className="tmc-rise flex flex-col gap-6 pt-12 pb-6">
       <title>{t('documentTitle', { documentTitle })}</title>
       {/* The board's header. */}
       <div className="flex flex-col gap-3">
         <Eyebrow>{t('eyebrow')}</Eyebrow>
-        <h1 className="m-0 text-[clamp(32px,4vw,52px)] leading-[1.02] font-extrabold tracking-[-0.02em] break-words">
+        <h1 className="m-0 text-[clamp(32px,4vw,52px)] leading-[1.02] font-bold tracking-[-0.02em] break-words">
           {t('heading')}
         </h1>
-        <p className="m-0 max-w-[720px] text-lg leading-[1.6] text-body">{t('lead')}</p>
+        <p className="m-0 max-w-[720px] type-long leading-[1.6] text-ink-muted">{t('lead')}</p>
       </div>
       <LegalDocumentNav />
       {knownSlug === null ? (
@@ -93,7 +93,7 @@ export function LegalCentrePage() {
       {/* The contact page points at the Contact us form (S1-E14-04) and carries the helplines for
           the visitor's country (S1-E10-13a, Q9d). */}
       {knownSlug === 'contact' && (
-        <p className="m-0 text-body">
+        <p className="m-0 text-ink-muted">
           {t('contactUs.text')}{' '}
           <Link to="/contact" className="font-semibold text-link underline">
             {t('contactUs.link')}
@@ -102,7 +102,7 @@ export function LegalCentrePage() {
       )}
       {/* The public report form and the removal-order contact point (S1-E10-02). */}
       {knownSlug === 'contact' && (
-        <p className="m-0 text-body">
+        <p className="m-0 text-ink-muted">
           {t('reportForm.text')}{' '}
           <Link to="/report" className="font-semibold text-link underline">
             {t('reportForm.link')}

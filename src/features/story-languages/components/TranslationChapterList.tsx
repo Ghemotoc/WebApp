@@ -34,10 +34,10 @@ function ChapterRow({ chapter, originalLanguageCode, isOpening, onOpen }: Chapte
   return (
     <li className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-border py-4 first:border-t-0">
       <div className="flex min-w-0 flex-[1_1_240px] flex-col gap-1">
-        <span className="text-[13px] font-semibold text-meta">
+        <span className="type-meta font-semibold text-ink-muted">
           {t('chapters.chapterNumber', { number: chapter.number })}
         </span>
-        <span lang={originalLanguageCode} className="font-semibold break-words text-heading">
+        <span lang={originalLanguageCode} className="font-semibold break-words text-ink-heading">
           {chapter.originalTitle === '' ? t('chapters.untitled') : chapter.originalTitle}
         </span>
       </div>
@@ -90,12 +90,12 @@ export function TranslationChapterList({
     >
       <h2
         id="translation-chapters-heading"
-        className="m-0 font-heading text-lg font-bold text-heading"
+        className="m-0 font-heading type-long font-bold text-ink-heading"
       >
         {t('chapters.listHeading')}
       </h2>
       {list.startFailed && <Notice tone="error">{t('chapters.startFailed')}</Notice>}
-      {list.chapters.length === 0 && <p className="m-0 text-body">{t('chapters.empty')}</p>}
+      {list.chapters.length === 0 && <p className="m-0 text-ink-muted">{t('chapters.empty')}</p>}
       <ol className="m-0 flex list-none flex-col p-0">
         {list.chapters.map((chapter) => (
           <ChapterRow

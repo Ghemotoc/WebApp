@@ -26,10 +26,10 @@ import { useForumsTranslation } from '../registerForumsTranslations';
 function NewThreadRow({ thread }: { thread: ForumNewThread }) {
   const { t } = useForumsTranslation();
   return (
-    <li className="flex flex-col gap-0.5 border-t border-hairline py-3 first:border-t-0">
+    <li className="flex flex-col gap-1 border-t border-hairline py-3 first:border-t-0">
       <Link
         to={postAddress(thread.forumSlug, thread.number, thread.firstUnreadPost)}
-        className="text-[15px] leading-5 font-semibold break-words text-heading no-underline hover:underline"
+        className="type-body leading-5 font-semibold break-words text-ink-heading no-underline hover:underline"
       >
         {thread.title}
       </Link>
@@ -58,12 +58,12 @@ export function NewForYou() {
       className="flex flex-col rounded-card border border-border bg-surface p-6"
     >
       <p className="m-0 type-meta">{t('newForYou.eyebrow')}</p>
-      <h2 id="forums-new-heading" className="m-0 mt-0.5 mb-1 type-subheading">
+      <h2 id="forums-new-heading" className="m-0 mt-1 mb-1 type-subheading">
         {t('newForYou.heading')}
       </h2>
-      {loadFailed && <p className="m-0 mt-1 text-body">{t('newForYou.loadFailed')}</p>}
+      {loadFailed && <p className="m-0 mt-1 text-ink-muted">{t('newForYou.loadFailed')}</p>}
       {threads !== null && threads.length === 0 && (
-        <p className="m-0 mt-1 text-body">{t('newForYou.empty')}</p>
+        <p className="m-0 mt-1 text-ink-muted">{t('newForYou.empty')}</p>
       )}
       {threads !== null && threads.length > 0 && (
         <>

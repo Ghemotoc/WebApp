@@ -23,17 +23,17 @@ export function DecisionsCard() {
   return (
     <section
       aria-labelledby="notification-decisions-heading"
-      className="flex flex-col gap-2.5 rounded-card border border-border bg-surface p-6 shadow-card"
+      className="flex flex-col gap-3 rounded-card border border-border bg-surface p-6 shadow-card"
     >
       <h2
         id="notification-decisions-heading"
-        className="m-0 flex items-center gap-2.5 font-heading text-lg font-bold text-heading"
+        className="m-0 flex items-center gap-3 font-heading type-long font-bold text-ink-heading"
       >
         <ActionIcon name="shield" size={20} className="flex-none" />
         {t('decisionsCard.heading')}
       </h2>
-      <p className="m-0 text-sm leading-relaxed text-body">{t('decisionsCard.body')}</p>
-      <Link to="/my-reports" className="w-fit text-sm font-semibold text-link underline">
+      <p className="m-0 type-body leading-relaxed text-ink-muted">{t('decisionsCard.body')}</p>
+      <Link to="/my-reports" className="w-fit type-body font-semibold text-link underline">
         {t('decisionsCard.link')}
       </Link>
     </section>

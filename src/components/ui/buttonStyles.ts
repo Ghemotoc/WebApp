@@ -26,9 +26,9 @@ export const buttonStyles = cva(
       // design's Button rules). lg and xl only add a little side room now, so older calls keep
       // working while every button shares one height.
       size: {
-        md: 'h-11 px-5 text-[15px] leading-5',
-        lg: 'h-11 px-6 text-[15px] leading-5',
-        xl: 'h-11 px-6 text-[15px] leading-5',
+        md: 'h-11 px-4 type-body leading-5',
+        lg: 'h-11 px-6 type-body leading-5',
+        xl: 'h-11 px-6 type-body leading-5',
       },
     },
     // A text button sits flush with the text around it: the size's side padding would otherwise

@@ -66,7 +66,7 @@ export function NoticeKindPicker({ kind, onChoose, errorMessage }: NoticeKindPic
       />
       {/* The group's own description is grey; an error needs the error colour. */}
       {errorMessage !== undefined && (
-        <p id="notice-kind-error" className="m-0 text-sm text-destructive">
+        <p id="notice-kind-error" className="m-0 type-body text-destructive">
           {errorMessage}
         </p>
       )}

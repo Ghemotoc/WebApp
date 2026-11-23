@@ -52,7 +52,7 @@ export function PasswordStrengthMeter({ password, id }: { password: string; id: 
   const isTooShort = [...password].length < minimumPasswordLength;
   const word = isTooShort ? t('passwordStrength.tooShort') : t(`passwordStrength.${strength}`);
   return (
-    <div className="mt-1.5 flex flex-col gap-1.5" data-password-strength={strength}>
+    <div className="mt-2 flex flex-col gap-2" data-password-strength={strength}>
       <div aria-hidden="true" className="h-1 overflow-hidden rounded-full bg-(--track)">
         <span
           data-strength-fill
@@ -60,7 +60,11 @@ export function PasswordStrengthMeter({ password, id }: { password: string; id: 
           style={{ width: `${filledPercent}%`, backgroundColor: stepColour[strength] }}
         />
       </div>
-      <p id={id} aria-live="polite" className="m-0 flex items-center gap-1.5 text-[13px] text-body">
+      <p
+        id={id}
+        aria-live="polite"
+        className="m-0 flex items-center gap-2 type-meta text-ink-muted"
+      >
         {stepsWithTick.has(strength) && <CheckIcon />}
         <span>
           {t('passwordStrength.label')}: <strong>{word}</strong>

@@ -219,7 +219,7 @@ function KnownListPage({ kind, listKey }: { kind: ListRequest['kind']; listKey: 
         <>
           <StoryListFilters request={request} sortOrder={sortOrder} onChange={changeRequest} />
           <PopularInNote request={request} rankedCountry={list.popularIn} />
-          <p className="m-0 text-sm text-meta">{t('seeAll.ratingNote')}</p>
+          <p className="m-0 type-body text-ink-muted">{t('seeAll.ratingNote')}</p>
           {/* The classics list's wide banner sits high, above the stories (G7e). */}
           {request.kind === 'classics' && listAdSlot(request)}
           <ListResults
@@ -256,7 +256,7 @@ export function StoryListPage() {
     searchTerm: isSearch ? (search.get('q') ?? '') : undefined,
   });
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-8 pt-10 pb-14">
+    <PageContainer className="tmc-rise flex flex-col gap-8 pt-8 pb-12">
       {list === null ? (
         <UnknownList />
       ) : (

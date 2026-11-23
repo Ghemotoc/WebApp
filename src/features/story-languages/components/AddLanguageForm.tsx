@@ -99,23 +99,23 @@ export function AddLanguageForm({ storySlug, languages }: AddLanguageFormProps) 
   return (
     <section
       aria-labelledby="add-language-heading"
-      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card md:p-7"
+      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card md:p-6"
     >
       <div className="flex flex-col gap-2">
         <Eyebrow>{t('add.eyebrow')}</Eyebrow>
         <h2
           id="add-language-heading"
-          className="m-0 font-heading text-[22px] font-bold text-heading"
+          className="m-0 font-heading type-heading font-bold text-ink-heading"
         >
           {t('add.heading')}
         </h2>
       </div>
       {isAtLimit && (
-        <p className="m-0 text-body">
+        <p className="m-0 text-ink-muted">
           {t('add.problems.tooMany', { max: languages.languagesMax })}
         </p>
       )}
-      {!isAtLimit && left.length === 0 && <p className="m-0 text-body">{t('add.noneLeft')}</p>}
+      {!isAtLimit && left.length === 0 && <p className="m-0 text-ink-muted">{t('add.noneLeft')}</p>}
       {!isAtLimit && left.length > 0 && (
         <form
           noValidate
@@ -126,8 +126,8 @@ export function AddLanguageForm({ storySlug, languages }: AddLanguageFormProps) 
           }}
         >
           <AddLanguageFields form={form} left={left} />
-          <p className="m-0 text-[13px] text-meta">{t('add.translateYourself')}</p>
-          <p className="m-0 text-[13px] text-meta">{t('add.chaptersAppear')}</p>
+          <p className="m-0 type-meta text-ink-muted">{t('add.translateYourself')}</p>
+          <p className="m-0 type-meta text-ink-muted">{t('add.chaptersAppear')}</p>
           {form.problem !== null && (
             <Notice tone="error">
               {t(`add.problems.${form.problem}`, { max: languages.languagesMax })}

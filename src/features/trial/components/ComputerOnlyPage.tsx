@@ -41,20 +41,20 @@ export function ComputerOnlyPage() {
   }
 
   return (
-    <div className="flex min-h-dvh items-center justify-center px-4 py-10">
+    <div className="flex min-h-dvh items-center justify-center px-4 py-8">
       <title>{t('computerOnly.documentTitle', { productName: brand.productName })}</title>
       <section
         aria-labelledby="computer-only-heading"
-        className="flex w-full max-w-[600px] flex-col items-start gap-5 rounded-card border border-border bg-surface p-[clamp(20px,5vw,40px)]"
+        className="flex w-full max-w-[600px] flex-col items-start gap-4 rounded-card border border-border bg-surface p-[clamp(20px,5vw,40px)]"
       >
         <BrandMark />
         <h1
           id="computer-only-heading"
-          className="m-0 type-title text-heading min-[1024px]:type-display"
+          className="m-0 type-title text-ink-heading min-[1024px]:type-display"
         >
           {t('computerOnly.heading')}
         </h1>
-        <p className="m-0 type-body text-meta">{t('computerOnly.body')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('computerOnly.body')}</p>
         {/* The button and its answer sit together, so the empty answer leaves only a small gap. */}
         <div className="flex flex-col items-start gap-2">
           <Button onClick={() => void copyLink()}>
@@ -62,12 +62,12 @@ export function ComputerOnlyPage() {
             {t('computerOnly.copyLink')}
           </Button>
           {/* Read out when it changes, so a screen reader hears that the link was copied. */}
-          <p role="status" className="m-0 type-meta text-body">
+          <p role="status" className="m-0 type-meta text-ink-muted">
             {copyState === 'copied' && t('computerOnly.copied')}
             {copyState === 'failed' && t('computerOnly.copyFailed')}
           </p>
         </div>
-        <p className="m-0 type-meta text-meta">{t('computerOnly.later')}</p>
+        <p className="m-0 type-meta text-ink-muted">{t('computerOnly.later')}</p>
       </section>
     </div>
   );

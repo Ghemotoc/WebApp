@@ -33,11 +33,11 @@ import { SafetyContactRow } from './SafetyContactRow';
 function ContactsForCountry({ countryCode }: { countryCode: string | null }) {
   const { t, i18n } = useTranslation('safety');
   const { contacts, isLoading, hasNone, loadFailed } = useSafetyContacts(countryCode);
-  if (isLoading) return <p className="m-0 text-sm text-meta">{t('block.loading')}</p>;
+  if (isLoading) return <p className="m-0 type-body text-ink-muted">{t('block.loading')}</p>;
   if (countryCode !== null && contacts.length > 0) {
     return (
       <>
-        <p className="m-0 text-sm text-meta">
+        <p className="m-0 type-body text-ink-muted">
           {t('block.forCountry', { country: countryName(countryCode, i18n.language) })}
         </p>
         <ul className="m-0 list-none p-0">
@@ -51,10 +51,10 @@ function ContactsForCountry({ countryCode }: { countryCode: string | null }) {
   // No row for this country (or no country, or the read failed): the fallback.
   return (
     <div className="flex flex-col gap-1">
-      <p className="m-0 font-heading text-[22px] font-bold text-heading">
+      <p className="m-0 font-heading type-heading font-bold text-ink-heading">
         {t('block.fallbackCall')}
       </p>
-      <p className="m-0 text-sm text-body">
+      <p className="m-0 type-body text-ink-muted">
         {hasNone || loadFailed ? t('block.fallbackNoRow') : t('block.fallbackUnknown')}
       </p>
       <InternationalDirectories />
@@ -82,7 +82,9 @@ function InternationalDirectories() {
   );
   return (
     <>
-      <p className="m-0 mt-3 text-sm text-meta">{t('block.international', { date: checkedOn })}</p>
+      <p className="m-0 mt-3 type-body text-ink-muted">
+        {t('block.international', { date: checkedOn })}
+      </p>
       <ul className="m-0 list-none p-0">
         {contacts.map((contact) => (
           <SafetyContactRow key={contact.id} contact={contact} />
@@ -108,12 +110,15 @@ export function SafetyContactsBlock() {
   return (
     <section
       aria-labelledby="safety-contacts-heading"
-      className="flex flex-col gap-4 rounded-card border border-(--warning-border) bg-(--warning-bg) p-5"
+      className="flex flex-col gap-4 rounded-card border border-(--warning-border) bg-(--warning-bg) p-4"
     >
-      <h2 id="safety-contacts-heading" className="m-0 font-heading text-xl font-bold text-heading">
+      <h2
+        id="safety-contacts-heading"
+        className="m-0 font-heading type-subheading font-bold text-ink-heading"
+      >
         {t('block.heading')}
       </h2>
-      <p className="m-0 text-sm text-body">{t('block.intro')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('block.intro')}</p>
       {visitor.isKnown ? <ContactsForCountry countryCode={countryCode} /> : null}
       <CountryPicker chosen={chosenCountry} onChoose={setChosenCountry} />
     </section>

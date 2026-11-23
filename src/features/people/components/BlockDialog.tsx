@@ -53,7 +53,7 @@ export function BlockDialog({ isOpen, onClose, handle }: BlockDialogProps) {
       title={t('blockDialog.title', { handle })}
       closeLabel={t('blockDialog.close')}
     >
-      <p className="m-0 text-body">{t('blockDialog.body')}</p>
+      <p className="m-0 text-ink-muted">{t('blockDialog.body')}</p>
       {block.hasFailed && <Notice tone="error">{t('blockDialog.failed')}</Notice>}
       <ButtonRow>
         <Button

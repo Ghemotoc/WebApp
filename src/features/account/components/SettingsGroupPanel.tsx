@@ -73,7 +73,7 @@ function ProfileGroup({ account, names }: { account: LoadedAccount; names: Loade
   if (handle === null) {
     return (
       <>
-        <p className="m-0 text-body">
+        <p className="m-0 text-ink-muted">
           {t('settings.noHandle')}{' '}
           <Link to="/setup" className="text-link underline">
             {t('notice.action')}

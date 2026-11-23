@@ -57,7 +57,7 @@ function LiftedCard(props: { slug: string; storyline: Storyline; code: string | 
   const teller = chapter.povIsNarrator ? t('chapterPlan.narrator') : (character?.name ?? null);
   return (
     // Tilted 2.5 degrees with a deep shadow, as if picked up off the board.
-    <div className="rotate-[2.5deg] cursor-grabbing rounded-[20px] border border-border bg-surface shadow-popover">
+    <div className="rotate-[2.5deg] cursor-grabbing rounded-card border border-border bg-surface shadow-popover">
       <BoardCardFace
         slug={props.slug}
         chapter={chapter}
@@ -104,7 +104,7 @@ export function ChapterBoard({ slug, storyline, refresh, addChapter }: ChapterBo
         {gapLabel}
       </p>
       <DndContext {...drag.contextProps}>
-        <div className="grid min-w-0 items-start gap-x-[18px] gap-y-8 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid min-w-0 items-start gap-x-4 gap-y-8 md:grid-cols-2 xl:grid-cols-4">
           {columns.map((column, columnIndex) => (
             <BoardColumnSection
               key={column.actId ?? 'no-act'}

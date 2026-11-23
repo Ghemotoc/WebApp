@@ -16,7 +16,7 @@ export function OrDivider({ label }: { label: string }) {
   return (
     <div
       aria-hidden="true"
-      className="flex items-center gap-[14px] text-[13px] font-semibold text-meta"
+      className="flex items-center gap-4 type-meta font-semibold text-ink-muted"
     >
       <span className="h-px flex-1 bg-border" />
       {label}

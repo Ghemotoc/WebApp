@@ -50,7 +50,7 @@ function QuoteCardButtons({ actions }: { actions: ReturnType<typeof useQuoteCard
   const { t } = useTranslation('sharing');
   return (
     <>
-      <p role="status" className="m-0 min-h-5 text-sm text-body">
+      <p role="status" className="m-0 min-h-5 type-body text-ink-muted">
         {actions.status}
       </p>
       <ButtonRow className="border-t border-border pt-4">
@@ -64,7 +64,7 @@ function QuoteCardButtons({ actions }: { actions: ReturnType<typeof useQuoteCard
         >
           {t('quote.copyImage')}
         </Button>
-        <p className="m-0 text-sm text-body">{t('quote.limitShort')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('quote.limitShort')}</p>
       </ButtonRow>
     </>
   );

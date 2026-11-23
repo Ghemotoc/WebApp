@@ -36,7 +36,7 @@ export function GlassList({
     <div className="flex min-w-0 flex-col gap-2">
       <Heading
         id={id}
-        className="m-0 px-[18px] text-[13px] font-semibold tracking-[0.08em] text-meta uppercase"
+        className="m-0 px-4 type-meta font-semibold tracking-[0.08em] text-ink-muted uppercase"
       >
         {label}
       </Heading>

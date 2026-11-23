@@ -38,13 +38,13 @@ interface TileContent {
  */
 function StatTile({ tile }: { tile: TileContent }) {
   return (
-    <li className="flex min-w-0 flex-col gap-0.5 border-t-2 border-thread pt-3">
-      <span className="text-sm font-semibold text-heading">{tile.label}</span>
+    <li className="flex min-w-0 flex-col gap-1 border-t-2 border-thread pt-3">
+      <span className="type-body font-semibold text-ink-heading">{tile.label}</span>
       <span
         className={
           tile.isWords === true
-            ? 'font-heading text-[22px] leading-[30px] font-bold text-heading'
-            : 'font-heading text-[32px] leading-[38px] font-bold text-heading'
+            ? 'font-heading type-heading leading-[30px] font-bold text-ink-heading'
+            : 'font-heading type-title leading-[38px] font-bold text-ink-heading'
         }
       >
         {tile.value}
@@ -127,7 +127,9 @@ function TotalsOnlyNote() {
   const { t } = useTranslation('writing');
   return (
     <p className="m-0 max-w-[90ch] type-meta">
-      <strong className="font-semibold text-heading">{t('dashboard.totals.privacyStrong')}</strong>{' '}
+      <strong className="font-semibold text-ink-heading">
+        {t('dashboard.totals.privacyStrong')}
+      </strong>{' '}
       {t('dashboard.totals.privacy')}
     </p>
   );
@@ -154,7 +156,7 @@ export function DashboardTotals({ dashboard, period, onPeriodChange }: Dashboard
   return (
     <Hero labelledBy="dashboard-totals-heading" className="gap-6">
       <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
-        <h2 id="dashboard-totals-heading" className="m-0 type-heading text-heading">
+        <h2 id="dashboard-totals-heading" className="m-0 type-heading text-ink-heading">
           {t('dashboard.totals.heading')}
         </h2>
         <SegmentedControl

@@ -30,7 +30,7 @@ export function MoveToSafeguarding({ caseId }: { caseId: string }) {
   if (hasMoved) return <Notice tone="success">{t('safeguarding.moved')}</Notice>;
   return (
     <div className="flex flex-col gap-3">
-      <p className="m-0 text-sm text-body">{t('safeguarding.moveIntro')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('safeguarding.moveIntro')}</p>
       {moveFailure !== null && <Notice tone="error">{t(`failures.${moveFailure}`)}</Notice>}
       {isAsking ? (
         <ReasonForm

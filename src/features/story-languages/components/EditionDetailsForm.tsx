@@ -34,7 +34,10 @@ export function EditionDetailsForm({ edition }: { edition: StoryLanguage }) {
       aria-labelledby="edition-details-heading"
       className="flex flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card"
     >
-      <h2 id="edition-details-heading" className="m-0 font-heading text-lg font-bold text-heading">
+      <h2
+        id="edition-details-heading"
+        className="m-0 font-heading type-long font-bold text-ink-heading"
+      >
         {t('details.heading')}
       </h2>
       <form

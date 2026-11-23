@@ -33,12 +33,14 @@ export interface ProofWayProps {
 function WhatWeDoWithIt() {
   const { t } = useTranslation('account');
   return (
-    <div className="flex flex-col gap-1.5 rounded-field bg-tint p-4">
-      <strong className="text-[15px] font-bold text-ink">
+    <div className="flex flex-col gap-2 rounded-field bg-tint p-4">
+      <strong className="type-body font-semibold text-ink">
         {t('teacherBadge.proof.whatTitle')}
       </strong>
-      <p className="m-0 text-sm leading-relaxed text-body">{t('teacherBadge.proof.whatText')}</p>
-      <p className="m-0 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-sm leading-relaxed text-body">
+      <p className="m-0 type-body leading-relaxed text-ink-muted">
+        {t('teacherBadge.proof.whatText')}
+      </p>
+      <p className="m-0 flex flex-wrap items-center gap-x-2 gap-y-2 type-body leading-relaxed text-ink-muted">
         {t('teacherBadge.proof.untilThen')} <TeacherBadgePill isPending />
       </p>
     </div>
@@ -65,8 +67,8 @@ export function ProofWay({ idPrefix, isSending, failure, onSend }: ProofWayProps
 
   return (
     <div className="flex max-w-[680px] flex-col gap-4">
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor={inputId} className="text-sm font-semibold text-ink">
+      <div className="flex flex-col gap-2">
+        <label htmlFor={inputId} className="type-body font-semibold text-ink">
           {t('teacherBadge.proof.label')}
         </label>
         <input
@@ -75,10 +77,10 @@ export function ProofWay({ idPrefix, isSending, failure, onSend }: ProofWayProps
           accept="image/jpeg,image/png,application/pdf"
           aria-describedby={`${inputId}-hint`}
           disabled={isSending}
-          className="min-h-12 w-full rounded-field border border-dashed border-control-border bg-surface px-4 py-2.5 text-[15px] text-ink file:mr-3 file:h-9 file:rounded-full file:border file:border-control-border file:bg-surface file:px-4 file:font-semibold file:text-heading"
+          className="min-h-12 w-full rounded-field border border-dashed border-control-border bg-surface px-4 py-3 type-body text-ink file:mr-3 file:h-9 file:rounded-full file:border file:border-control-border file:bg-surface file:px-4 file:font-semibold file:text-ink-heading"
           onChange={(event) => setFile(event.target.files?.[0] ?? null)}
         />
-        <p id={`${inputId}-hint`} className="m-0 text-[13px] text-meta">
+        <p id={`${inputId}-hint`} className="m-0 type-meta text-ink-muted">
           {t('teacherBadge.proof.hint')}
         </p>
       </div>

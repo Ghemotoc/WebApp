@@ -39,10 +39,13 @@ export function ChatHeader({ chat }: { chat: Conversation }) {
     <header className="flex flex-wrap items-center gap-3 border-b border-border p-4">
       <ChatAvatar name={name} handle={chat.handle} />
       <div className="flex min-w-0 flex-1 flex-col">
-        <h2 id="chat-heading" className="m-0 truncate font-heading text-xl font-bold text-heading">
+        <h2
+          id="chat-heading"
+          className="m-0 truncate font-heading type-subheading font-bold text-ink-heading"
+        >
           {name}
         </h2>
-        <p className="m-0 flex items-center gap-2 truncate text-sm text-meta">
+        <p className="m-0 flex items-center gap-2 truncate type-body text-ink-muted">
           @{chat.handle}
           <OnlineDot isOnline={online.has(chat.handle.toLowerCase())} />
         </p>
@@ -51,7 +54,7 @@ export function ChatHeader({ chat }: { chat: Conversation }) {
       <div className="flex items-center gap-2">
         <Button
           variant="secondary"
-          className="h-9 px-3.5 text-[13px]"
+          className="h-9 px-4 type-meta"
           aria-haspopup="dialog"
           aria-label={t('block.open', { name })}
           onClick={() => setIsBlockOpen(true)}

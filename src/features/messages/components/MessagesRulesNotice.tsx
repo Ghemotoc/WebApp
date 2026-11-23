@@ -26,8 +26,8 @@ export function MessagesRulesNotice() {
   if (settings.data === undefined) return null;
   const isUnder18 = settings.data.ageGroup !== 'adult';
   return (
-    <div className="flex gap-3 rounded-card border border-border bg-tint p-4 text-sm leading-relaxed text-ink">
-      <ActionIcon name="shield" size={22} className="mt-0.5 flex-none text-heading" />
+    <div className="flex gap-3 rounded-card border border-border bg-tint p-4 type-body leading-relaxed text-ink">
+      <ActionIcon name="shield" size={22} className="mt-1 flex-none text-ink-heading" />
       <div className="flex flex-col gap-1">
         <p className="m-0">
           {isUnder18 && <strong className="font-semibold">{t('rules.minors')} </strong>}

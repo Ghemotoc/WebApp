@@ -141,14 +141,14 @@ export function ChapterReaderPage() {
 
   if (loadFailed) {
     return (
-      <PageContainer className="pt-12 pb-7">
+      <PageContainer className="pt-12 pb-6">
         <Notice tone="error">{t('reader.loadFailed')}</Notice>
       </PageContainer>
     );
   }
   if (!isLoaded) return null;
   return (
-    <PageContainer className="tmc-rise flex flex-col pt-3 pb-12 lg:pt-7">
+    <PageContainer className="tmc-rise flex flex-col pt-3 pb-12 lg:pt-6">
       <ChapterShown
         storySlug={storySlug}
         chapterCode={chapterCode}

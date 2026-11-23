@@ -69,7 +69,7 @@ export function DeleteChatControl({ handle, name }: { handle: string; name: stri
       >
         {t('deleteChat.button')}
       </Button>
-      <p className="m-0 text-sm text-body">{t('deleteChat.explain')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('deleteChat.explain')}</p>
       <DeleteChatDialog
         isOpen={isOpen}
         name={name}
@@ -123,21 +123,21 @@ function DeleteChatDialog(props: DeleteChatDialogProps) {
       aria-labelledby="delete-chat-heading"
       aria-describedby="delete-chat-body"
       onClose={props.onClose}
-      className="m-auto w-[min(480px,calc(100vw-32px))] rounded-card border border-border bg-surface p-7 text-ink shadow-card backdrop:bg-ink/45"
+      className="m-auto w-[min(480px,calc(100vw-32px))] rounded-card border border-border bg-surface p-6 text-ink shadow-card backdrop:bg-ink/45"
     >
-      <div className="flex flex-col gap-3.5">
+      <div className="flex flex-col gap-4">
         <h2
           id="delete-chat-heading"
-          className="m-0 font-heading text-[26px] leading-[1.15] font-bold text-heading"
+          className="m-0 font-heading type-heading leading-[1.15] font-bold text-ink-heading"
         >
           {t('deleteChat.title')}
         </h2>
-        <p id="delete-chat-body" className="m-0 text-base leading-relaxed text-body">
+        <p id="delete-chat-body" className="m-0 type-body leading-relaxed text-ink-muted">
           {t('deleteChat.body', { name: props.name })}
         </p>
         {/* A failed attempt keeps the popup open with a plain message. */}
         {props.hasFailed && <Notice tone="error">{t('deleteChat.failed')}</Notice>}
-        <ButtonRow className="mt-1.5">
+        <ButtonRow className="mt-2">
           <Button variant="destructive" disabled={props.isDeleting} onClick={props.onConfirm}>
             {t(props.isDeleting ? 'deleteChat.deleting' : 'deleteChat.confirm')}
           </Button>

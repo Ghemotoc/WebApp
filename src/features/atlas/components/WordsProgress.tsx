@@ -30,15 +30,15 @@ export function WordsProgress({
   return (
     <section
       aria-labelledby="atlas-words-heading"
-      className="flex min-w-0 flex-col gap-2 rounded-card border border-border bg-surface px-6 py-[22px] shadow-card"
+      className="flex min-w-0 flex-col gap-2 rounded-card border border-border bg-surface px-6 py-6 shadow-card"
     >
       <h2 id="atlas-words-heading" className="eyebrow m-0">
         {t('words.heading')}
       </h2>
-      <p className="m-0 font-heading text-[30px] leading-[1.1] font-extrabold text-heading">
+      <p className="m-0 font-heading type-title leading-[1.1] font-bold text-ink-heading">
         {numbers.format(wordsWritten)}
       </p>
-      <p id="atlas-words-percent" className="m-0 text-sm text-meta">
+      <p id="atlas-words-percent" className="m-0 type-body text-ink-muted">
         {t('words.count', {
           written: numbers.format(wordsWritten),
           target: numbers.format(wordTarget),

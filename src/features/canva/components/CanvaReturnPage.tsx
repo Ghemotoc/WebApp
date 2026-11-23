@@ -18,7 +18,7 @@ import { CanvaTripPage } from './CanvaTripPage';
 /** The message for the state. */
 function ReturnMessage({ state }: { state: CanvaReturnState }) {
   const { t } = useTranslation('writing');
-  if (state.kind === 'working') return <p className="m-0 text-body">{t('canva.working')}</p>;
+  if (state.kind === 'working') return <p className="m-0 text-ink-muted">{t('canva.working')}</p>;
   if (state.kind === 'cancelled') return <Notice tone="info">{t('canva.cancelled')}</Notice>;
   if (state.kind === 'failed') {
     return <Notice tone="error">{t(state.message.key, state.message.values)}</Notice>;

@@ -168,7 +168,7 @@ function useMapContents(
 function OffMapLine({ offMap, words }: { offMap: string[]; words: RelationshipWords }) {
   const { t } = useAtlasTranslation();
   return (
-    <p className="m-0 text-sm text-meta">
+    <p className="m-0 type-body text-ink-muted">
       {t('connections.map.offMap', { names: offMap.map((id) => words.nameOf(id)).join(', ') })}
     </p>
   );
@@ -197,7 +197,7 @@ function MapKey({
       {onPickColour !== undefined && (
         <CategoryColoursFold colours={colours} onPick={onPickColour} />
       )}
-      <p className="m-0 text-sm text-meta">{t('connections.map.key')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('connections.map.key')}</p>
     </>
   );
 }
@@ -235,7 +235,7 @@ export function RelationshipMap({
         colours={cast.relationshipColours}
         onPickColour={onPickColour}
       />
-      {onMap.length === 0 && <p className="m-0 text-body">{t('connections.map.none')}</p>}
+      {onMap.length === 0 && <p className="m-0 text-ink-muted">{t('connections.map.none')}</p>}
       {/* Step 2: the map scrolls inside its own region; the region can be focused and scrolled
           by keyboard (DoD: a sideways list without arrows keeps its scrollbar). */}
       <div

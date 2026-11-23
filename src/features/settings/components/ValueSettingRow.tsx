@@ -33,7 +33,7 @@ interface ValueSettingRowProps {
  */
 function SettingKey({ label, settingKey }: { label: string; settingKey: string }) {
   return (
-    <p className="m-0 text-xs text-meta">
+    <p className="m-0 type-meta text-ink-muted">
       {label} <code className="break-all">{settingKey}</code>
     </p>
   );

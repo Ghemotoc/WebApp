@@ -53,7 +53,7 @@ function TimelineChapterItem({
       <div className="flex flex-wrap items-start justify-between gap-2">
         <Link
           to={`/write/s/${slug}/c/${chapter.code}`}
-          className="min-w-0 font-bold break-words text-heading no-underline hover:underline"
+          className="min-w-0 font-semibold break-words text-ink-heading no-underline hover:underline"
         >
           {label}: {chapter.title === '' ? t('storyline.board.untitled') : chapter.title}
         </Link>
@@ -90,7 +90,7 @@ function UndatedChapters({
           />
         ))}
       </GlassList>
-      <p className="m-0 px-[18px] text-sm text-meta">
+      <p className="m-0 px-4 type-body text-ink-muted">
         {chapters.length === 0
           ? t('storyline.timeline.undatedNone')
           : t('storyline.timeline.undatedHint')}
@@ -109,9 +109,11 @@ export function TimelineView(props: TimelineViewProps) {
   const { slug, storyline, labelOf } = props;
   const items = timelineItems(storyline.chapters, storyline.events);
   return (
-    <div className="grid min-w-0 items-start gap-7 lg:grid-cols-[minmax(0,1fr)_380px]">
+    <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
       <div className="flex min-w-0 flex-col gap-4">
-        {items.length === 0 && <p className="m-0 text-body">{t('storyline.timeline.empty')}</p>}
+        {items.length === 0 && (
+          <p className="m-0 text-ink-muted">{t('storyline.timeline.empty')}</p>
+        )}
         <div className="relative">
           {/* The rail the dots sit on; decoration only, and left out on a phone. */}
           <span
@@ -120,7 +122,7 @@ export function TimelineView(props: TimelineViewProps) {
           />
           <ol
             aria-label={t('storyline.timeline.listLabel')}
-            className="relative m-0 flex list-none flex-col gap-3.5 p-0"
+            className="relative m-0 flex list-none flex-col gap-4 p-0"
           >
             {items.map((item) =>
               item.type === 'event' ? (
@@ -142,10 +144,7 @@ export function TimelineView(props: TimelineViewProps) {
           </ol>
         </div>
       </div>
-      <aside
-        aria-label={t('storyline.timeline.sideLabel')}
-        className="flex min-w-0 flex-col gap-[18px]"
-      >
+      <aside aria-label={t('storyline.timeline.sideLabel')} className="flex min-w-0 flex-col gap-4">
         <AddEventForm onAdd={props.addEvent} />
         <UndatedChapters
           slug={slug}

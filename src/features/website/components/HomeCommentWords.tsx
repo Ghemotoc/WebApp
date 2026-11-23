@@ -18,7 +18,7 @@ const elements = ['p', 'br', 'strong', 'em'];
 
 /** Paragraphs without the browser's own margins, a small gap between two. */
 const components: Components = {
-  p: ({ children }) => <p className="m-0 mt-1.5 first:mt-0">{children}</p>,
+  p: ({ children }) => <p className="m-0 mt-2 first:mt-0">{children}</p>,
 };
 
 /**

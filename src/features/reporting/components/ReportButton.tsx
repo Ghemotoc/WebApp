@@ -44,7 +44,7 @@ export type ReportButtonLook = 'text' | 'pill' | 'icon';
 /** The Button variant and extra classes for each look. */
 const lookStyles: Record<ReportButtonLook, { variant: 'text' | 'secondary'; className: string }> = {
   text: { variant: 'text', className: '' },
-  pill: { variant: 'secondary', className: 'h-9 px-3.5 text-[13px]' },
+  pill: { variant: 'secondary', className: 'h-9 px-4 type-meta' },
   icon: { variant: 'secondary', className: 'size-9 shrink-0 px-0' },
 };
 

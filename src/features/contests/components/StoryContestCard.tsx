@@ -32,13 +32,13 @@ function DisqualifiedEntry({ option }: { option: ContestEntryOption }) {
   const { t } = useContestTranslation();
   return (
     <div className="flex flex-col gap-1">
-      <p className="m-0 text-sm text-body">
+      <p className="m-0 type-body text-ink-muted">
         {t('card.disqualified', {
           title: option.entry?.story_title ?? '',
           reference: option.entry?.statement_reference ?? '',
         })}
       </p>
-      <Link to="/my-reports" className="w-fit text-sm font-semibold text-link underline">
+      <Link to="/my-reports" className="w-fit type-body font-semibold text-link underline">
         {t('card.readDecision')}
       </Link>
     </div>
@@ -64,7 +64,7 @@ function ContestAction({
   if (option.entry?.is_this_story === true) {
     return (
       <div className="flex flex-wrap items-center gap-3">
-        <p className="m-0 text-sm font-semibold text-ink">{t('card.entered')}</p>
+        <p className="m-0 type-body font-semibold text-ink">{t('card.entered')}</p>
         <Button
           type="button"
           variant="secondary"
@@ -79,7 +79,7 @@ function ContestAction({
   // Step 2: another of their stories is entered: one entry per writer (proposal).
   if (option.entry !== null) {
     return (
-      <p className="m-0 text-sm text-body">
+      <p className="m-0 type-body text-ink-muted">
         {t('card.otherStory', { title: option.entry.story_title })}
       </p>
     );
@@ -88,8 +88,8 @@ function ContestAction({
   if (option.problems.length > 0) {
     return (
       <div className="flex flex-col gap-1">
-        <p className="m-0 text-sm text-body">{t('card.cantEnter')}</p>
-        <ul className="m-0 pl-5 text-sm text-body">
+        <p className="m-0 type-body text-ink-muted">{t('card.cantEnter')}</p>
+        <ul className="m-0 pl-4 type-body text-ink-muted">
           {option.problems.map((problem) => (
             <li key={problem}>{t(`card.problems.${problem}`)}</li>
           ))}
@@ -123,8 +123,8 @@ function ContestBlock({
   const name = contestNameIn(option, i18n.language);
   return (
     <div className="flex flex-col gap-2 border-t border-hairline pt-4 first:border-t-0 first:pt-0">
-      <h3 className="m-0 font-heading text-[18px] font-bold text-heading">{name}</h3>
-      <p className="m-0 text-sm text-body">
+      <h3 className="m-0 font-heading type-long font-bold text-ink-heading">{name}</h3>
+      <p className="m-0 type-body text-ink-muted">
         {t('card.closesOn', { date: contestDayInWords(option.closes_on, i18n.language) })}
         {option.word_limit === null
           ? ''
@@ -132,7 +132,7 @@ function ContestBlock({
       </p>
       <Link
         to={`/c/${option.page_slug}`}
-        className="w-fit text-sm font-semibold text-link underline"
+        className="w-fit type-body font-semibold text-link underline"
       >
         {t('card.about', { name })}
       </Link>
@@ -169,7 +169,7 @@ export function StoryContestCard({ slug }: { slug: string }) {
   if (options.length === 0) return null;
   return (
     <FormSection legend={t('card.legend')}>
-      <p className="m-0 max-w-[640px] text-sm leading-normal text-body">{t('card.intro')}</p>
+      <p className="m-0 max-w-[640px] type-body leading-normal text-ink-muted">{t('card.intro')}</p>
       <div aria-live="polite" className="flex flex-col gap-4">
         {options.map((option) => (
           <ContestBlock key={option.id} option={option} contests={contests} />

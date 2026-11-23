@@ -114,7 +114,7 @@ export function WaitlistProfileSteps(props: WaitlistProfileStepsProps) {
         lastStepActions={doneButton}
       />
       {/* A polite live region, so a screen reader hears that the steps are finished. */}
-      <p role="status" className="m-0 text-body">
+      <p role="status" className="m-0 text-ink-muted">
         {wizard.isFinished ? t('waitlist.steps.finished') : null}
       </p>
     </div>

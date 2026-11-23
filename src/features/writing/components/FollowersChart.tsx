@@ -118,10 +118,10 @@ export function FollowersChart({ allTimeFollowers, thisWeek }: FollowersChartPro
   const facts = useMetaFacts(thisWeek);
   // Step 2: the heading row, then the line with its caption and hidden table.
   return (
-    <section aria-labelledby="dashboard-followers-heading" className="flex min-w-0 flex-col gap-5">
+    <section aria-labelledby="dashboard-followers-heading" className="flex min-w-0 flex-col gap-4">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex min-w-0 flex-col gap-1">
-          <h2 id="dashboard-followers-heading" className="type-heading m-0 text-heading">
+          <h2 id="dashboard-followers-heading" className="type-heading m-0 text-ink-heading">
             {heading}
           </h2>
           <MetaLine facts={facts} />

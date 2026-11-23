@@ -93,7 +93,8 @@
   /* Muted text and links deepened for contrast (canvas v38 contrast audit, Robert via DESIGN, 20 Nov 2026, 21:03 UTC; CALM-1b). */
   --body: #4a3e60;
   --meta: #4a3e60;
-  --eyebrow: #141114;
+  /* Kickers share the heading colour (one colour set for text, Robert, 23 Nov 2026, 14:46 UTC). */
+  --eyebrow: #2a0e33;
   --link: #3d4290;
   --link-hover: #2a0e33;
   --destructive: #a3122a;
@@ -101,11 +102,11 @@
   /* Accents and actions. No strong yellow anywhere, a soft honey tint at most (rulebook 6). */
   --gold: #f3dc9b;
   /* Text on the honey fill (count badges, the current sign-up step): about 12:1. */
-  --on-gold: #26142e;
+  --on-gold: #2a0e33;
   --primary: #48125d;
-  --on-primary: #ffffff;
+  --on-primary: #fbf7ec;
   --chip-on: #48125d;
-  --chip-on-text: #ffffff;
+  --chip-on-text: #fbf7ec;
   /* The theme accent (buttons, active tab, bars, dots, switches, the logo): Lilac mist is plum.
      Bundle G2 sets one per theme (Robert, 7 Nov 2026, 17:52 and 18:44); at night it is the light
      cobalt #5B95EE (NIGHT-1). */
@@ -255,7 +256,7 @@
    * is checked for white text at 4.5:1 or more at both ends (contrast-pairs.ts). Staff choosing
    * their own band colours waits for GENRE-LOOK-1 (rulebook, line 75).
    */
-  --band-text: #ffffff;
+  --band-text: #fbf7ec;
   --band-plum-from: #702963;
   --band-plum-to: #43143b;
   --band-sage-from: #005c42;
@@ -398,7 +399,7 @@
 
   /* Dark reading paper with light text (NIGHT-2). */
   --story-paper: #141416;
-  --story-ink: #e6e6e6;
+  --story-ink: #e8e8ea;
 
   /* The cover hairline is white at night, so a dark cover keeps its shape on the night page. */
   --cover-edge: rgba(255, 255, 255, 0.16);
@@ -755,6 +756,11 @@
   --plum-hover-to: #5a4c26;
   --primary: #946b00;
   --chip-on: #946b00;
+  /* The one colour set's light text (#fbf7ec) reads at 4.497:1 on this gold, just under WCAG
+     AA's 4.5:1, so summer's main buttons and picked chips keep pure white (5.1:1) and the
+     accent #946b00 stays as Robert chose it (7 Nov 2026). */
+  --on-primary: #ffffff;
+  --chip-on-text: #ffffff;
   /* A shade darker than the accent: 4.5:1 on the centre of the paler mesh (CALM-1). */
   --link: #835e00;
   --link-hover: #3d2c00;
@@ -1390,11 +1396,11 @@
 /* Tailwind classes from the tokens: bg-paper, text-ink, border-control-border and so on. */
 @theme inline {
   /* Featured this week on Discover (S1-E5-10; board Discover): the board's dark plum card with
-   * light text, the same in both themes; #faf8f5 on #2a0e33 is about 16:1, on #672786 about 9:1. */
+   * light text, the same in both themes; #fbf7ec on #2a0e33 is about 16:1, on #672786 about 9:1. */
   --color-featured-from: #2a0e33;
   --color-featured-via: #481c5f;
   --color-featured-to: #672786;
-  --color-on-featured: #faf8f5;
+  --color-on-featured: #fbf7ec;
   --color-on-featured-soft: #e5d7ea;
   --color-paper: var(--paper);
   /* Cards paint the see-through glass; --surface stays the solid look-alike for the contrast test. */
@@ -1411,6 +1417,14 @@
   --color-panel: var(--panel);
   --color-panel-border: var(--panel-border);
   --color-ink: var(--ink);
+  /*
+   * The text colours of the design books (Robert, approved 23 Nov 2026, 13:25 UTC): ink,
+   * ink-muted, ink-heading, link and the state colours, nothing else. ink-muted is the muted text
+   * (--body and --meta are the same value in every theme) and ink-heading the heading colour;
+   * member screens use these names, and heading, body and meta stay for the staff screens.
+   */
+  --color-ink-muted: var(--meta);
+  --color-ink-heading: var(--heading);
   --color-heading: var(--heading);
   --color-body: var(--body);
   --color-meta: var(--meta);
@@ -1461,15 +1475,16 @@
   --text-h4: 19px;
 
   /*
-   * Radii (the simplified design, Robert, 20 Nov 2026; the design system's radius tokens):
-   * covers 4 px at every size, because a cover is a book and not an app tile (rounded-cover);
-   * cards, sheets, dialogs, side panels and the hero 24 px (rounded-card); text fields, menu rows
-   * and small tiles 12 px (rounded-field); pills fully round. The floating bars (--radius-nav) and
-   * the adverts (--radius-ad) keep the liquid glass values until their own bundles redraw them.
+   * Radii (the design books, Robert, approved 23 Nov 2026, 13:25 UTC; replaces the 24 px cards of
+   * 20 Nov 2026): three only. Fully round for buttons, chips, pills and the floating bars
+   * (rounded-full, and rounded-nav, which is the same); 16 px for cards, sheets, dialogs, side
+   * panels, adverts and the hero (rounded-card, rounded-ad); 12 px for text fields, menu rows and
+   * small tiles (rounded-field). Covers keep their 4 px (rounded-cover): a cover is drawn as a book,
+   * not as an interface box (CALM-4).
    */
-  --radius-nav: 2.1rem;
-  --radius-card: 24px;
-  --radius-ad: 24px;
+  --radius-nav: 9999px;
+  --radius-card: 16px;
+  --radius-ad: 16px;
   --radius-cover: 4px;
   --radius-field: 12px;
 }

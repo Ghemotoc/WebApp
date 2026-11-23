@@ -42,21 +42,21 @@ function TicketRow({ ticket }: { ticket: MyTicketSummary }) {
   const pill = ticketStatusPill(ticket.status, ticket.teamRepliedLast);
   return (
     <tr className="border-b border-border last:border-b-0">
-      <td className="px-4 py-3.5 align-top">
+      <td className="px-4 py-4 align-top">
         <Link
           to={`/support/${String(ticket.number)}`}
-          className="font-bold break-words text-link underline"
+          className="font-semibold break-words text-link underline"
         >
           {ticket.subject}
         </Link>
-        <div className="text-[13px] text-meta">
+        <div className="type-meta text-ink-muted">
           {t('list.requestNumber', { number: ticket.number })}
         </div>
       </td>
-      <td className="px-4 py-3.5 align-top">
+      <td className="px-4 py-4 align-top">
         <StateWord>{t(`list.states.${pill.state}`)}</StateWord>
       </td>
-      <td className="px-4 py-3.5 align-top text-sm text-body">{when}</td>
+      <td className="px-4 py-4 align-top type-body text-ink-muted">{when}</td>
     </tr>
   );
 }
@@ -71,19 +71,19 @@ function SignedInList() {
   const tickets = useMyTickets(true);
   if (tickets.isError) return <Notice tone="error">{t('list.loadFailed')}</Notice>;
   if (tickets.isPending) return null;
-  if (tickets.data.length === 0) return <p className="m-0 text-body">{t('list.empty')}</p>;
+  if (tickets.data.length === 0) return <p className="m-0 text-ink-muted">{t('list.empty')}</p>;
   return (
     <div className="overflow-x-auto rounded-card border border-border bg-surface p-2 shadow-card">
       <table aria-label={t('list.title')} className="w-full border-collapse text-left">
         <thead>
-          <tr className="border-b border-border text-[13px] text-meta">
-            <th scope="col" className="px-4 py-2.5 font-semibold">
+          <tr className="border-b border-border type-meta text-ink-muted">
+            <th scope="col" className="px-4 py-3 font-semibold">
               {t('list.columns.subject')}
             </th>
-            <th scope="col" className="px-4 py-2.5 font-semibold">
+            <th scope="col" className="px-4 py-3 font-semibold">
               {t('list.columns.status')}
             </th>
-            <th scope="col" className="px-4 py-2.5 font-semibold">
+            <th scope="col" className="px-4 py-3 font-semibold">
               {t('list.columns.lastUpdate')}
             </th>
           </tr>
@@ -109,15 +109,15 @@ function SupportHeader({ isSignedIn }: { isSignedIn: boolean }) {
     <header className="flex flex-wrap items-end justify-between gap-4">
       <div className="flex max-w-[720px] flex-col gap-4">
         <Eyebrow>{t('eyebrow')}</Eyebrow>
-        <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-extrabold tracking-[-0.025em]">
+        <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-bold tracking-[-0.025em]">
           {t('list.title')}
         </h1>
-        <p className="m-0 text-lg leading-relaxed text-body">{t('list.intro')}</p>
+        <p className="m-0 type-long leading-relaxed text-ink-muted">{t('list.intro')}</p>
       </div>
       {isSignedIn && (
         <Link
           to="/support/new"
-          className="inline-flex h-11 w-fit items-center rounded-full button-main px-5 text-sm font-semibold no-underline"
+          className="inline-flex h-11 w-fit items-center rounded-full button-main px-4 type-body font-semibold no-underline"
         >
           {t('list.write')}
         </Link>

@@ -69,17 +69,17 @@ export function NoticeReceived({ sent, answer, language, onAgain }: NoticeReceiv
         id="notice-received-heading"
         ref={headingRef}
         tabIndex={-1}
-        className="m-0 font-heading text-[26px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('received.heading')}
       </h2>
-      <p className="m-0 text-body">
+      <p className="m-0 text-ink-muted">
         {t(isOrder ? 'received.orderBody' : 'received.body', {
           reference: answer.reference,
           time,
         })}
       </p>
-      <p className="m-0 text-body">{t(lineKey, lineValues)}</p>
+      <p className="m-0 text-ink-muted">{t(lineKey, lineValues)}</p>
       <div className="flex flex-wrap gap-3">
         <Button variant="secondary" onClick={onAgain}>
           {t('received.again')}

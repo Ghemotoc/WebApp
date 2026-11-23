@@ -85,8 +85,8 @@ function WaitingRow({ chapter, storyTitle }: WaitingRowProps) {
   );
   const detail = detailFacts(chapter, isScheduled, t, i18n.language);
   return (
-    <li className="flex items-center gap-4 border-t border-hairline py-3.5 first:border-t-0">
-      <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+    <li className="flex items-center gap-4 border-t border-hairline py-4 first:border-t-0">
+      <span className="flex min-w-0 flex-1 flex-col gap-1">
         <MetaLine
           facts={[
             {
@@ -98,7 +98,7 @@ function WaitingRow({ chapter, storyTitle }: WaitingRowProps) {
         />
         <Link
           to={editorAddress}
-          className="text-[15px] leading-5 font-semibold break-words text-heading no-underline hover:underline"
+          className="type-body leading-5 font-semibold break-words text-ink-heading no-underline hover:underline"
         >
           {title}
         </Link>
@@ -133,11 +133,11 @@ export function NotPublishedYet({ chapters, storyTitles }: NotPublishedYetProps)
   const waiting = waitingChapters(chapters);
   return (
     <section aria-labelledby="dashboard-waiting-heading" className="flex min-w-0 flex-col gap-2">
-      <h2 id="dashboard-waiting-heading" className="m-0 type-heading text-heading">
+      <h2 id="dashboard-waiting-heading" className="m-0 type-heading text-ink-heading">
         {t('dashboard.notPublished.heading')}
       </h2>
       {waiting.length === 0 ? (
-        <p className="m-0 type-body text-body">{t('dashboard.notPublished.empty')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('dashboard.notPublished.empty')}</p>
       ) : (
         <ul className="m-0 list-none p-0">
           {waiting.map((chapter) => (

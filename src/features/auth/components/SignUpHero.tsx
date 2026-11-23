@@ -29,27 +29,29 @@ const benefits = [
 export function SignUpHero() {
   const { t } = useTranslation('auth');
   return (
-    <div className="flex max-w-[600px] flex-col gap-5">
+    <div className="flex max-w-[600px] flex-col gap-4">
       <MetaLine facts={[{ text: t('signUp.hero.tagMarch'), kind: 'state' }]} />
-      <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-extrabold tracking-[-0.025em] break-words">
+      <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-bold tracking-[-0.025em] break-words">
         {t('signUp.hero.headingStart')} {t('signUp.hero.headingEnd')}
       </h1>
-      <p className="m-0 text-lg leading-[1.6] text-body">{t('signUp.hero.lead')}</p>
-      <ul className="m-0 mt-3 flex list-none flex-col gap-[22px] p-0">
+      <p className="m-0 type-long leading-[1.6] text-ink-muted">{t('signUp.hero.lead')}</p>
+      <ul className="m-0 mt-3 flex list-none flex-col gap-6 p-0">
         {benefits.map(({ key, icon }) => (
           <li key={key} className="flex items-start gap-4">
             {/* The board's icon in a white rounded square; decorative. */}
             <span
               aria-hidden="true"
-              className="inline-flex size-12 flex-none items-center justify-center rounded-2xl border border-border bg-surface text-heading"
+              className="inline-flex size-12 flex-none items-center justify-center rounded-card border border-border bg-surface text-ink-heading"
             >
-              <ActionIcon name={icon} size={24} className="text-heading" />
+              <ActionIcon name={icon} size={24} className="text-ink-heading" />
             </span>
             <span className="flex flex-col gap-1">
-              <span className="font-heading text-[19px] font-bold text-heading">
+              <span className="font-heading type-subheading font-bold text-ink-heading">
                 {t(`signUp.hero.benefits.${key}.title`)}
               </span>
-              <span className="text-base text-body">{t(`signUp.hero.benefits.${key}.body`)}</span>
+              <span className="type-body text-ink-muted">
+                {t(`signUp.hero.benefits.${key}.body`)}
+              </span>
             </span>
           </li>
         ))}

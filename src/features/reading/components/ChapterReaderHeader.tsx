@@ -60,13 +60,13 @@ export function ChapterReaderHeader({ chapter }: { chapter: ReaderChapter }) {
       <h1
         id="chapter-title"
         lang={chapter.story.languageCode}
-        className="m-0 font-story text-[28px] leading-[34px] font-semibold tracking-normal break-words text-heading min-[600px]:text-[32px] min-[600px]:leading-[38px]"
+        className="m-0 font-story type-heading leading-[34px] font-semibold tracking-normal break-words text-ink-heading min-[600px]:type-title min-[600px]:leading-[38px]"
       >
         {chapter.title === '' ? t('reader.untitled') : chapter.title}
       </h1>
-      <p className="m-0 text-sm text-meta">
+      <p className="m-0 type-body text-ink-muted">
         {t('reader.by')}{' '}
-        <span className="font-semibold text-heading">{chapter.story.writer.displayName}</span>
+        <span className="font-semibold text-ink-heading">{chapter.story.writer.displayName}</span>
         {parts.map((part) => ` · ${part}`).join('')}
       </p>
     </header>

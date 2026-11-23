@@ -29,7 +29,7 @@ export function LegalVersionHistory({ history }: LegalVersionHistoryProps) {
     <section aria-labelledby="legal-version-history" className="flex flex-col gap-3">
       <h3
         id="legal-version-history"
-        className="m-0 font-heading text-[22px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('history.heading')}
       </h3>
@@ -37,9 +37,9 @@ export function LegalVersionHistory({ history }: LegalVersionHistoryProps) {
         {history.map((version) => (
           <li
             key={version.versionLabel}
-            className="flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-panel px-4 py-3"
+            className="flex flex-wrap items-center justify-between gap-2 rounded-card bg-panel px-4 py-3"
           >
-            <span className="text-body">
+            <span className="text-ink-muted">
               {t('history.item', {
                 version: version.versionLabel,
                 date: formatLegalDate(version.publishedAt, i18n.language),
@@ -49,7 +49,7 @@ export function LegalVersionHistory({ history }: LegalVersionHistoryProps) {
           </li>
         ))}
       </ul>
-      <p className="m-0 text-sm text-meta">{t('history.note')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('history.note')}</p>
     </section>
   );
 }

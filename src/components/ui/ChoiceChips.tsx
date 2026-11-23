@@ -64,10 +64,10 @@ function nextIndexFor(key: string, options: ChoiceOption[], currentIndex: number
 /** The classes for a chip in each state. */
 function chipClasses(isChosen: boolean, isDisabled: boolean): string {
   return cn(
-    "relative inline-flex h-9 items-center justify-center gap-1.5 rounded-full border px-3.5 font-body text-sm leading-none font-semibold whitespace-nowrap after:absolute after:inset-x-0 after:top-1/2 after:h-11 after:-translate-y-1/2 after:content-['']",
+    "relative inline-flex h-9 items-center justify-center gap-2 rounded-full border px-4 font-body type-body leading-none font-semibold whitespace-nowrap after:absolute after:inset-x-0 after:top-1/2 after:h-11 after:-translate-y-1/2 after:content-['']",
     isChosen && 'border-chip-on bg-chip-on text-chip-on-text',
-    !isChosen && !isDisabled && 'border-control-border bg-surface text-heading hover:bg-tint',
-    isDisabled && 'cursor-not-allowed border-dashed border-dashed-border bg-panel text-meta',
+    !isChosen && !isDisabled && 'border-control-border bg-surface text-ink-heading hover:bg-tint',
+    isDisabled && 'cursor-not-allowed border-dashed border-dashed-border bg-panel text-ink-muted',
   );
 }
 
@@ -75,7 +75,7 @@ function chipClasses(isChosen: boolean, isDisabled: boolean): string {
 function labelClasses(isVisible: boolean, isEyebrow: boolean): string {
   if (!isVisible) return 'sr-only';
   if (isEyebrow) return 'eyebrow';
-  return 'text-sm font-semibold text-ink';
+  return 'type-body font-semibold text-ink';
 }
 
 /** One chip of the group. */
@@ -180,7 +180,7 @@ export function ChoiceChips({
         ))}
       </div>
       {description !== undefined && (
-        <p id={descriptionId} className="m-0 text-[13px] text-meta">
+        <p id={descriptionId} className="m-0 type-meta text-ink-muted">
           {description}
         </p>
       )}

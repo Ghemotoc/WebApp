@@ -40,7 +40,7 @@ export function LastChapterSwitch({
     <div className="flex flex-col gap-1">
       <div className="flex items-center justify-between gap-3">
         {/* The visible label; the switch carries the same words as its accessible name. */}
-        <span aria-hidden="true" className="text-[15px] text-ink">
+        <span aria-hidden="true" className="type-body text-ink">
           {t('publish.lastSwitch')}
         </span>
         <Switch
@@ -51,7 +51,7 @@ export function LastChapterSwitch({
           describedBy={hintId}
         />
       </div>
-      <p id={hintId} className="m-0 text-[13px] leading-normal text-meta">
+      <p id={hintId} className="m-0 type-meta leading-normal text-ink-muted">
         {t('publish.lastHint', { number })}
       </p>
     </div>

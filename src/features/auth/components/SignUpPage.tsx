@@ -143,10 +143,10 @@ function SignUpHeading(props: { joinsWaitlist: boolean; waitsForMarket: boolean 
   const { t } = useTranslation('auth');
   return (
     <div className="flex flex-col gap-2">
-      <h2 id="sign-up-heading" className="m-0 font-heading text-[30px] font-bold text-heading">
+      <h2 id="sign-up-heading" className="m-0 font-heading type-title font-bold text-ink-heading">
         {t(props.joinsWaitlist ? 'signUp.waitlist.heading' : 'signUp.heading')}
       </h2>
-      <p className="m-0 text-meta">
+      <p className="m-0 text-ink-muted">
         {t(signUpSubheadingKey(props.joinsWaitlist, props.waitsForMarket))}
       </p>
     </div>
@@ -182,13 +182,13 @@ export function SignUpPage() {
   if (market.isClosed && !isWaitlistOn) return <Navigate to="/not-open" replace />;
 
   return (
-    <PageContainer className="tmc-rise flex flex-col pt-12 pb-7">
+    <PageContainer className="tmc-rise flex flex-col pt-12 pb-6">
       <title>{t('signUp.documentTitle')}</title>
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,460px),1fr))] gap-14">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,460px),1fr))] gap-12">
         <SignUpHero />
         <section
           aria-labelledby="sign-up-heading"
-          className="flex w-full max-w-[480px] flex-col gap-5 justify-self-center rounded-card border border-border bg-surface p-8 shadow-card"
+          className="flex w-full max-w-[480px] flex-col gap-4 justify-self-center rounded-card border border-border bg-surface p-8 shadow-card"
         >
           <SignUpSteps includesAgeCheck={!isAdultsOnly} />
           <SignUpHeading joinsWaitlist={joinsWaitlist} waitsForMarket={waitsForMarket} />
@@ -201,7 +201,7 @@ export function SignUpPage() {
             includesAgeCheck={!isAdultsOnly}
           />
           {/* "Already have an account? Log in" (S1-E2-05). */}
-          <p className="m-0 text-sm text-body">
+          <p className="m-0 type-body text-ink-muted">
             {t('signIn.haveAccount')}{' '}
             <Link to="/sign-in" className="text-link underline">
               {t('signIn.logInLink')}

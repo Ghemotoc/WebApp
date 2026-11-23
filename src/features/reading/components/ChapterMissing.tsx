@@ -31,14 +31,14 @@ const NoPreviewNotice = lazy(async () => {
 function ChapterUnavailable() {
   const { t } = useTranslation('reading');
   return (
-    <div className="flex flex-col items-start gap-3 rounded-card border border-border bg-surface px-8 py-10">
-      <h1 className="m-0 font-heading text-[26px] font-bold text-heading">
+    <div className="flex flex-col items-start gap-3 rounded-card border border-border bg-surface px-8 py-8">
+      <h1 className="m-0 font-heading type-heading font-bold text-ink-heading">
         {t('reader.unavailableTitle')}
       </h1>
-      <p className="m-0 text-base text-body">{t('reader.unavailableBody')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('reader.unavailableBody')}</p>
       <Link
         to="/"
-        className="inline-flex h-11 items-center rounded-full button-main px-5 text-sm font-semibold no-underline"
+        className="inline-flex h-11 items-center rounded-full button-main px-4 type-body font-semibold no-underline"
       >
         {t('storyPage.goHome')}
       </Link>

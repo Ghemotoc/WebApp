@@ -81,7 +81,7 @@ function Tick({
   return (
     <label
       htmlFor={id}
-      className="flex min-h-6 cursor-pointer items-center gap-3 text-[15px] text-body"
+      className="flex min-h-6 cursor-pointer items-center gap-3 type-body text-ink-muted"
     >
       <input
         id={id}
@@ -131,10 +131,10 @@ export function MessageEmailSettings({ choices }: MessageEmailSettingsProps) {
       className="flex flex-col gap-3 border-t border-border pt-4"
       onSubmit={(event) => void submit(event)}
     >
-      <h3 id="message-emails-heading" className="m-0 text-[17px] font-semibold text-heading">
+      <h3 id="message-emails-heading" className="m-0 type-long font-bold text-ink-heading">
         {t('emails.heading')}
       </h3>
-      <p className="m-0 text-[15px] text-body">{t('emails.intro')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('emails.intro')}</p>
       <Tick
         id="message-emails-on"
         label={t('emails.emailsLabel')}
@@ -149,7 +149,7 @@ export function MessageEmailSettings({ choices }: MessageEmailSettingsProps) {
         describedBy="message-quiet-hint"
         onChange={(checked) => change({ quietHoursOn: checked })}
       />
-      <p id="message-quiet-hint" className="m-0 text-[13px] text-meta">
+      <p id="message-quiet-hint" className="m-0 type-meta text-ink-muted">
         {draft.mustKeepQuietHours ? t('emails.under18Hint') : t('emails.quietHint')}
       </p>
       {showsHours && <QuietHourFields draft={draft} change={change} />}
@@ -184,7 +184,7 @@ function SaveOutcome({
         </Notice>
       )}
       {isSaved && (
-        <p role="status" className="m-0 text-[15px] text-body">
+        <p role="status" className="m-0 type-body text-ink-muted">
           {t('emails.saved')}
         </p>
       )}

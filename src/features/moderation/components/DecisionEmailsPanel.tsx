@@ -31,10 +31,13 @@ export function DecisionEmailsPanel() {
       aria-labelledby="decision-emails-heading"
       className="flex max-w-[720px] flex-col gap-3"
     >
-      <h2 id="decision-emails-heading" className="m-0 font-heading text-xl font-bold text-heading">
+      <h2
+        id="decision-emails-heading"
+        className="m-0 font-heading type-subheading font-bold text-ink-heading"
+      >
         {t('decisionEmails.heading', { count: emails.waitingCount })}
       </h2>
-      <p className="m-0 text-body">{t('decisionEmails.intro')}</p>
+      <p className="m-0 text-ink-muted">{t('decisionEmails.intro')}</p>
       {emails.result !== null && (
         <Notice tone={emails.result.failed === 0 ? 'success' : 'error'}>
           {t('decisionEmails.result', { sent: emails.result.sent, failed: emails.result.failed })}

@@ -43,14 +43,14 @@ function WhyThisRow({ why }: { why: string }) {
         aria-expanded={isOpen}
         aria-controls={sentenceId}
         onClick={() => setIsOpen((open) => !open)}
-        className="inline-flex min-h-11 items-center self-start border-0 bg-transparent p-0 text-sm font-semibold text-link"
+        className="inline-flex min-h-11 items-center self-start border-0 bg-transparent p-0 type-body font-semibold text-link"
       >
         {t('suggestions.why')}
       </button>
       <p
         id={sentenceId}
         hidden={!isOpen}
-        className="m-0 max-w-[60ch] rounded-xl border border-border bg-surface px-3.5 py-3 text-sm leading-relaxed text-ink"
+        className="m-0 max-w-[60ch] rounded-field border border-border bg-surface px-4 py-3 type-body leading-relaxed text-ink"
       >
         {why}
       </p>

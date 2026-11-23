@@ -37,14 +37,14 @@ function CaseChatLine({ message }: { message: CaseChatMessage }) {
     : 'border border-border bg-paper';
   return (
     <li className={`flex flex-col gap-1 rounded-card p-3 ${lineStyle}`}>
-      <p className="m-0 flex flex-wrap items-center gap-2 text-sm text-meta">
-        <span className="font-semibold text-heading">@{message.fromHandle}</span>
+      <p className="m-0 flex flex-wrap items-center gap-2 type-body text-ink-muted">
+        <span className="font-semibold text-ink-heading">@{message.fromHandle}</span>
         <span>{sentAtText(message.sentAt, i18n.language)}</span>
         {message.isReported && (
           <span className="font-semibold text-destructive">{t('message.reported')}</span>
         )}
       </p>
-      <p className="m-0 break-words whitespace-pre-line text-body">{message.text}</p>
+      <p className="m-0 break-words whitespace-pre-line text-ink-muted">{message.text}</p>
     </li>
   );
 }
@@ -64,18 +64,21 @@ export function CaseMessagePanel({ caseId }: { caseId: string }) {
   return (
     <section
       aria-labelledby="case-message-heading"
-      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-5"
+      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-4"
     >
-      <h2 id="case-message-heading" className="m-0 font-heading text-lg font-bold text-heading">
+      <h2
+        id="case-message-heading"
+        className="m-0 font-heading type-long font-bold text-ink-heading"
+      >
         {t('message.heading')}
       </h2>
       {chat.between.length === 2 && (
-        <p className="m-0 text-body">
+        <p className="m-0 text-ink-muted">
           {t('message.between', { first: chat.between[0], second: chat.between[1] })}
         </p>
       )}
       {chat.messages.length === 0 ? (
-        <p className="m-0 text-body">{t('message.gone')}</p>
+        <p className="m-0 text-ink-muted">{t('message.gone')}</p>
       ) : (
         <ol aria-label={t('message.listLabel')} className="m-0 flex list-none flex-col gap-2 p-0">
           {chat.messages.map((message) => (
@@ -83,8 +86,8 @@ export function CaseMessagePanel({ caseId }: { caseId: string }) {
           ))}
         </ol>
       )}
-      <p className="m-0 text-[13px] text-meta">{t('message.loggedHint')}</p>
-      <p className="m-0 text-[13px] text-meta">{t('message.decisionHint')}</p>
+      <p className="m-0 type-meta text-ink-muted">{t('message.loggedHint')}</p>
+      <p className="m-0 type-meta text-ink-muted">{t('message.decisionHint')}</p>
     </section>
   );
 }

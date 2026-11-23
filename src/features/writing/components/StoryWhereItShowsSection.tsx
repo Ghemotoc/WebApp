@@ -31,7 +31,7 @@ export function StoryWhereItShowsSection({ answers, set }: StoryWhereItShowsSect
   const { t } = useTranslation('writing');
   return (
     <FormSection legend={t('whereItShows.heading')}>
-      <p className="m-0 text-sm text-meta">{t('whereItShows.intro')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('whereItShows.intro')}</p>
       <HiddenCountriesPicker
         hidden={answers.hiddenInCountries}
         onChange={(hidden) => set('hiddenInCountries', hidden)}

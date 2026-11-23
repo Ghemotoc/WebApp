@@ -81,10 +81,10 @@ export function OpeningListForm({ country }: OpeningListFormProps) {
 
   return (
     <form className="relative flex flex-col gap-4" noValidate onSubmit={form.handleSubmit}>
-      <h2 className="m-0 font-heading text-xl font-semibold text-heading">
+      <h2 className="m-0 font-heading type-subheading font-bold text-ink-heading">
         {t('notOpen.formHeading')}
       </h2>
-      <p className="m-0 text-body">{t('notOpen.formIntro')}</p>
+      <p className="m-0 text-ink-muted">{t('notOpen.formIntro')}</p>
       <TextInput
         id="opening-list-email"
         type="email"
@@ -138,7 +138,7 @@ function OutcomeNotice({ outcome }: { outcome: JoinOutcome | null }) {
     );
   }
   return (
-    <p role="alert" className="m-0 text-sm text-destructive">
+    <p role="alert" className="m-0 type-body text-destructive">
       {t(`notOpen.problems.${outcome}`)}
     </p>
   );

@@ -50,7 +50,7 @@ export function ReportPointsControl({ chapter, chapterName }: ReportPointsContro
   if (chapter.isReported) {
     return (
       // A state in bold words, not a pill (CALM-9f).
-      <span className="self-start text-[13px] font-bold text-ink">{t('table.reported')}</span>
+      <span className="self-start type-meta font-semibold text-ink">{t('table.reported')}</span>
     );
   }
   if (!isOpen) {

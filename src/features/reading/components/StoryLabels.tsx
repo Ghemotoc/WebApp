@@ -143,16 +143,16 @@ export function StoryLabels({ story }: { story: StoryPageData }) {
   const { t, i18n } = useTranslation('reading');
   return (
     <section aria-labelledby="story-labels-heading" className="flex flex-col gap-2">
-      <h2 id="story-labels-heading" className="m-0 type-heading text-heading">
+      <h2 id="story-labels-heading" className="m-0 type-heading text-ink-heading">
         {t('storyPage.labelsHeading')}
       </h2>
       <LabelRows rows={labelRowsFor(story, t, i18n.language)} />
       {story.labels.contentNote !== '' && (
         <>
-          <h3 className="mt-4 mb-0 type-subheading text-heading">
+          <h3 className="mt-4 mb-0 type-subheading text-ink-heading">
             {t('storyPage.contentNoteHeading')}
           </h3>
-          <p lang={story.languageCode} className="m-0 max-w-[62ch] text-base text-body">
+          <p lang={story.languageCode} className="m-0 max-w-[62ch] type-body text-ink-muted">
             {story.labels.contentNote}
           </p>
         </>

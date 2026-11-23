@@ -36,11 +36,11 @@ export function SignatureSettingsSection() {
     >
       <h2
         id="settings-signature-heading"
-        className="m-0 font-heading text-[22px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('signature.eyebrow')}
       </h2>
-      <p className="m-0 text-[15px] text-body">{t('signature.intro')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('signature.intro')}</p>
       {mine.isError && <Notice tone="error">{t('signature.loadFailed')}</Notice>}
       {mine.data?.changeRequest != null && (
         <ChangeRequestNotice

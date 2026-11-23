@@ -37,7 +37,7 @@ export function ClassInviteFields({
   const { t } = useSpacesTranslation();
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         <Select
           id="class-invite-days"
           label={t('classInvite.worksFor')}

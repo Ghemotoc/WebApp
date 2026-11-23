@@ -30,15 +30,15 @@ export function SpaceWelcomeNote({ space }: { space: Space }) {
   return (
     <section
       aria-labelledby="space-welcome-note-heading"
-      className="flex flex-col gap-3 rounded-card border border-border bg-surface px-6 py-5"
+      className="flex flex-col gap-3 rounded-card border border-border bg-surface px-6 py-4"
     >
       <h2
         id="space-welcome-note-heading"
-        className="m-0 font-heading text-xl font-bold text-heading"
+        className="m-0 font-heading type-subheading font-bold text-ink-heading"
       >
         {t('welcome.noteTitle', { space: space.name })}
       </h2>
-      <p className="m-0 text-[15px] break-words whitespace-pre-line text-body">{note}</p>
+      <p className="m-0 type-body break-words whitespace-pre-line text-ink-muted">{note}</p>
       <Button
         className="self-start"
         disabled={dismissing.isRunning}

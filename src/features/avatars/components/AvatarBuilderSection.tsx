@@ -52,12 +52,12 @@ function AvatarBuilder({ handle, saved }: { handle: string; saved: AvatarRecipe 
         <span className="avatar-picture relative inline-flex size-40 flex-none rounded-full bg-panel">
           <AvatarDrawing recipe={draft.draft} alt={t('builder.previewAlt')} className="size-full" />
         </span>
-        <p className="m-0 text-sm text-meta">
+        <p className="m-0 type-body text-ink-muted">
           {saved === null ? t('builder.showingInitials') : t('builder.showingAvatar')}
         </p>
       </div>
       {/* Step 2: the tabs of tiles and swatches, the buttons and the art's credit. */}
-      <div className="flex min-w-0 flex-1 flex-col gap-5">
+      <div className="flex min-w-0 flex-1 flex-col gap-4">
         <AvatarEditorTabs draft={draft.draft} onChoose={draft.choose} />
         <AvatarBuilderActions
           canUndo={draft.canUndo}
@@ -95,8 +95,8 @@ export function AvatarBuilderSection({
   const saved = useAvatarRecipe(handle);
   const body = (
     <>
-      <p className="m-0 text-body">{t('builder.intro')}</p>
-      {saved.isError && <p className="m-0 text-body">{t('builder.failures.unreachable')}</p>}
+      <p className="m-0 text-ink-muted">{t('builder.intro')}</p>
+      {saved.isError && <p className="m-0 text-ink-muted">{t('builder.failures.unreachable')}</p>}
       {saved.isSuccess && <AvatarBuilder handle={handle} saved={saved.data} />}
     </>
   );
@@ -109,7 +109,7 @@ export function AvatarBuilderSection({
     >
       <h2
         id="settings-avatar-heading"
-        className="m-0 font-heading text-[22px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('builder.heading')}
       </h2>

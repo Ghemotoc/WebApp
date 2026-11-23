@@ -30,13 +30,13 @@ export function CaseStatements({ caseId, isDecided }: { caseId: string; isDecide
     <section aria-labelledby="case-statements-heading" className="flex flex-col gap-4">
       <h2
         id="case-statements-heading"
-        className="m-0 font-heading text-[24px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('case.statementsHeading')}
       </h2>
       {loadFailure !== null && <Notice tone="error">{t(`failures.${loadFailure}`)}</Notice>}
       {loadFailure === null && statements.length === 0 && (
-        <p className="m-0 text-body">{t('case.noStatement')}</p>
+        <p className="m-0 text-ink-muted">{t('case.noStatement')}</p>
       )}
       {statements.map((statement) => (
         <StatementCard key={statement.reference} statement={statement} isStaffView />

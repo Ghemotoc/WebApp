@@ -86,7 +86,7 @@ export function GivePointsForm({ chapterId, giving }: GivePointsFormProps) {
         value={String(points)}
         onChange={(value) => setPoints(Number(value))}
       />
-      <p className="m-0 text-sm text-body">
+      <p className="m-0 type-body text-ink-muted">
         {t('chapter.give.left', { count: giving.budget, left: giving.left })}{' '}
         {t('chapter.give.resets', {
           date: dayText(lastDayBefore(giving.resetsOn), i18n.language),

@@ -59,7 +59,7 @@ function PictureCardButtons(props: {
   const isDisabled = actions.isWorking || !props.isReady;
   return (
     <>
-      <p role="status" className="m-0 min-h-5 text-sm text-body">
+      <p role="status" className="m-0 min-h-5 type-body text-ink-muted">
         {actions.status}
       </p>
       <ButtonRow className="border-t border-border pt-4">
@@ -85,8 +85,8 @@ function PictureCardButtons(props: {
 function PictureLinkLine({ link }: { link: string }) {
   const { t } = useTranslation('sharing');
   return (
-    <p className="m-0 text-sm break-all text-body">
-      <span className="font-semibold text-heading">{t('picture.linkLabel')}</span>{' '}
+    <p className="m-0 type-body break-all text-ink-muted">
+      <span className="font-semibold text-ink-heading">{t('picture.linkLabel')}</span>{' '}
       {printedLink(link)}
     </p>
   );
@@ -145,7 +145,7 @@ export function PictureCardDialog({
         altText={altText}
         canvasRef={canvasRef}
       />
-      {picture.failed && <p className="m-0 text-sm text-body">{t('picture.loadFailed')}</p>}
+      {picture.failed && <p className="m-0 type-body text-ink-muted">{t('picture.loadFailed')}</p>}
       <BackgroundPicker chosen={background} onChoose={setBackground} />
       <Textarea
         id="picture-alt-text"

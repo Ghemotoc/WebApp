@@ -29,25 +29,26 @@ export function PublicCast({ plan, base }: { plan: PublicPlan; base: string }) {
   const { t } = useAtlasTranslation();
   // The role groups, flattened: main characters first, each group in name order.
   const characters = groupCast(plan.cast.characters, '').flatMap((group) => group.characters);
-  if (characters.length === 0) return <p className="m-0 text-body">{t('publicPlan.cast.none')}</p>;
+  if (characters.length === 0)
+    return <p className="m-0 text-ink-muted">{t('publicPlan.cast.none')}</p>;
   return (
     <ul className="m-0 grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-2 lg:grid-cols-4">
       {characters.map((character) => (
         <li key={character.id} className="flex min-w-0 flex-col items-center gap-2">
           <Link
             to={`${base}/characters/${character.id}`}
-            className="flex h-full w-full min-w-0 flex-col items-center gap-2.5 rounded-card border border-border bg-surface px-5 py-6 text-center no-underline shadow-card hover:bg-tint"
+            className="flex h-full w-full min-w-0 flex-col items-center gap-3 rounded-card border border-border bg-surface px-4 py-6 text-center no-underline shadow-card hover:bg-tint"
           >
             <CharacterAvatar character={character} size="small" />
             {/* max-w-full: in a centred column a long word only breaks once its box is bounded. */}
             <b
-              className="max-w-full font-heading text-lg break-words text-heading"
+              className="max-w-full font-heading type-long break-words text-ink-heading"
               data-testid="atlas-public-character-name"
             >
               {character.name}
             </b>
             {/* One quiet line: a long answer stops at two lines, the full text is on the page. */}
-            <span className="line-clamp-2 max-w-full text-sm break-words text-meta">
+            <span className="line-clamp-2 max-w-full type-body break-words text-ink-muted">
               {(character.sheet.occupation ?? '') !== ''
                 ? character.sheet.occupation
                 : t(`characters.role.${character.role}`)}

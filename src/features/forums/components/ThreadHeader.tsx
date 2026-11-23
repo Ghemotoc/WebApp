@@ -39,7 +39,7 @@ function StartedByLine({ thread }: { thread: ForumThreadHeader }) {
       <Link to={`/u/${author.handle}`} className="text-link underline" />
     );
   return (
-    <p className="m-0 text-sm text-body">
+    <p className="m-0 type-body text-ink-muted">
       <Trans
         t={t}
         i18nKey="thread.startedBy"
@@ -90,7 +90,7 @@ export function ThreadHeader({ thread, path }: { thread: ForumThreadHeader; path
         )}
       </div>
       {thread.state === 'hidden' && (
-        <p className="m-0 text-sm font-semibold text-body">{t('thread.hiddenNote')}</p>
+        <p className="m-0 type-body font-semibold text-ink-muted">{t('thread.hiddenNote')}</p>
       )}
     </header>
   );

@@ -45,16 +45,16 @@ function ReminderCheckbox(props: { isChecked: boolean; onChange: (isChecked: boo
       <input
         id="reading-reminder"
         type="checkbox"
-        className="mt-0.5 h-5 w-5 shrink-0"
+        className="mt-1 h-5 w-5 shrink-0"
         checked={props.isChecked}
         aria-describedby="reading-reminder-hint"
         onChange={(event) => props.onChange(event.target.checked)}
       />
-      <div className="flex flex-col gap-0.5">
-        <label htmlFor="reading-reminder" className="text-[15px] font-semibold text-heading">
+      <div className="flex flex-col gap-1">
+        <label htmlFor="reading-reminder" className="type-body font-semibold text-ink-heading">
           {t('habit.remindMe')}
         </label>
-        <span id="reading-reminder-hint" className="text-[13px] leading-normal text-meta">
+        <span id="reading-reminder-hint" className="type-meta leading-normal text-ink-muted">
           {t('habit.remindHint')}
         </span>
       </div>
@@ -101,7 +101,7 @@ export function ReadingHabitSettings({ habit, save }: ReadingHabitSettingsProps)
   };
   return (
     <form className="flex flex-col gap-4" onSubmit={submit} noValidate>
-      <h3 className="m-0 font-heading text-lg font-bold text-heading">
+      <h3 className="m-0 font-heading type-long font-bold text-ink-heading">
         {t('habit.settingsHeading')}
       </h3>
       <div className="max-w-[240px]">

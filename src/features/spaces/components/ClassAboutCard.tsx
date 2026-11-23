@@ -27,25 +27,28 @@ export function ClassAboutCard({ space }: { space: Space }) {
   return (
     <section
       aria-labelledby="class-about-heading"
-      className="flex flex-col gap-3 rounded-card border border-panel-border bg-panel px-6 py-5"
+      className="flex flex-col gap-3 rounded-card border border-panel-border bg-panel px-6 py-4"
     >
-      <h2 id="class-about-heading" className="m-0 font-heading text-2xl font-bold text-heading">
+      <h2
+        id="class-about-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
+      >
         {t('classSpace.howTitle')}
       </h2>
-      <ol className="m-0 flex list-decimal flex-col gap-2 pl-5 text-sm text-body">
+      <ol className="m-0 flex list-decimal flex-col gap-2 pl-4 type-body text-ink-muted">
         {steps.map((step) => (
           <li key={step}>
-            <strong className="text-heading">{t(`classSpace.${step}Title`)}</strong>{' '}
+            <strong className="text-ink-heading">{t(`classSpace.${step}Title`)}</strong>{' '}
             {t(`classSpace.${step}Text`)}
           </li>
         ))}
       </ol>
-      <h3 className="m-0 mt-2 font-heading text-lg font-bold text-heading">
+      <h3 className="m-0 mt-2 font-heading type-long font-bold text-ink-heading">
         {t('classSpace.yearEndTitle')}
       </h3>
-      <p className="m-0 text-sm text-body">{t('classSpace.yearEndText')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('classSpace.yearEndText')}</p>
       {space.locksAt !== null && !space.isLocked && (
-        <p className="m-0 text-sm text-body">
+        <p className="m-0 type-body text-ink-muted">
           {t('classSpace.locksOn', { date: lockMomentText(space.locksAt, i18n.language) })}
         </p>
       )}

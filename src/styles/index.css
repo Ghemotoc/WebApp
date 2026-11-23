@@ -10,9 +10,10 @@
 @import './tokens.css';
 
 /*
- * The eyebrow label (the liquid glass design, approved 7 Nov 2026; bundle G1): Inter Bold, 11 px,
- * capitals, 0.18em tracking, black (white at night), never gold (Robert, 7 Nov 2026, 11:48,
- * replacing the 6 Nov dark gold at 12 px and 0.2em).
+ * The eyebrow label (the liquid glass design, approved 7 Nov 2026; bundle G1): Inter, capitals,
+ * 0.18em tracking, black (white at night), never gold (Robert, 7 Nov 2026, 11:48). Since the design
+ * books (Robert, approved 23 Nov 2026, 13:25 UTC) it is the kicker style, 12/16 at 600, because
+ * Inter is drawn at 400 and 600 only; it was Inter Bold at 11 px.
  * `eyebrow` is the whole look; `eyebrow-type` is the same type in another colour (for example the
  * meta-coloured "End of chapter" line). Every eyebrow in the app uses one of these two, so the
  * look changes in this one place. Text stays in sentence case in the locale files: the capitals
@@ -20,9 +21,9 @@
  */
 @utility eyebrow-type {
   font-family: var(--font-eyebrow);
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1.3;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
 }
@@ -47,31 +48,33 @@
 
 @utility eyebrow {
   font-family: var(--font-eyebrow);
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1.3;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--eyebrow);
 }
 
 /*
- * Type styles (the simplified design, Robert, 20 Nov 2026; bundle CALM-1): one short scale,
- * copied from the design system (design/simplified-system/README.md, "Type", and tokens.json).
- * The pages the simplified design draws use these instead of sizes of their own; no screen uses
- * more than five sizes, and tab labels and chart axes are the one extra size (12 px). The older
- * --text-h1 to --text-h4 (tokens.css) stay for the pages not redrawn yet (the sweep is CALM-9).
+ * Type styles (the simplified design, Robert, 20 Nov 2026, bundle CALM-1; fixed by the design
+ * books, Robert, approved 23 Nov 2026, 13:25 UTC): one short scale, and no other sizes. Member
+ * screens never type a size of their own (text-[15px], text-sm): src/test/designRules.test.ts
+ * fails the build when one does. Weights: Inter 400 and 600 only, Funnel Display 700 only.
  *   type-display     Funnel Display 48/52, 700: the one page title on wide screens
  *   type-title       Funnel Display 32/38, 700: a story's title; page titles on phones
- *   type-heading     Funnel Display 24/30, 600: section headings, with no eyebrow above them
- *   type-subheading  Funnel Display 20/26, 600: card, bookshelf, sheet and dialog titles
- *   type-body        Inter 15/24, 400: interface text, blurbs, comments
+ *   type-heading     Funnel Display 24/30, 700: section headings, with no eyebrow above them
+ *   type-subheading  Funnel Display 20/26, 700: card, bookshelf, sheet and dialog titles
+ *   type-long        Inter 17/28, 400: text people read for more than a few lines (forum posts,
+ *                    long comments, the story blurb, Help, Legal, question answers)
+ *   type-body        Inter 15/24, 400: interface text, short blurbs, comments
  *   type-label       Inter 15/20, 600: buttons, tabs, names
  *   type-meta        Inter 13/18, 400, in the muted text colour: meta lines, captions, times
- *   type-kicker      Inter 11/16, 700, capitals, 0.18em: at most one per page, in the kicker colour
+ *   type-kicker      Inter 12/16, 600, capitals, 0.18em: at most one per page, in the kicker colour
  *   type-reading     Literata 20/34, 400 (17/28 on phones): story text
  * As in the design system, the four heading styles take the heading colour, meta the muted
- * colour (--body) and the kicker the eyebrow colour; a text colour class still overrides them.
+ * colour (--body) and the kicker the eyebrow colour. They come first in the stylesheet, so a
+ * colour, font, weight or line-height class on the same element still wins over them.
  * The kicker's capitals come from CSS only: the locale text stays in sentence case and screen
  * readers read the words as written.
  */
@@ -97,7 +100,7 @@
   font-family: var(--font-heading);
   font-size: 24px;
   line-height: 30px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0;
   color: var(--heading);
 }
@@ -106,9 +109,17 @@
   font-family: var(--font-heading);
   font-size: 20px;
   line-height: 26px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0;
   color: var(--heading);
+}
+
+@utility type-long {
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 28px;
+  font-weight: 400;
+  letter-spacing: 0;
 }
 
 @utility type-body {
@@ -138,9 +149,9 @@
 
 @utility type-kicker {
   font-family: var(--font-eyebrow);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 16px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--eyebrow);
@@ -231,7 +242,7 @@
   padding: 8.3cqi 5.8cqi 7.5cqi;
   text-align: center;
   background: #faf8f5;
-  color: #26142e;
+  color: #2a0e33;
   border-radius: 2px;
   outline: 1px solid var(--book-accent);
   outline-offset: -3.3cqi;
@@ -561,6 +572,19 @@
     outline: 3px solid var(--focus-ring);
     outline-offset: 3px;
     box-shadow: 0 0 0 6px var(--focus-halo);
+  }
+
+  /*
+   * Buttons, chips, switches and fields draw in the page's own font (the design books, Robert,
+   * approved 23 Nov 2026, 13:25 UTC: no fallback to the browser's Arial). Tailwind's reset does
+   * this too; it is said here so it never depends on the reset.
+   */
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    letter-spacing: inherit;
   }
 
   /* Disabled controls (boards: button:disabled{opacity:0.55}). */
@@ -1630,7 +1654,7 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
     background: none;
     box-shadow: none;
     color: var(--accent);
-    font-size: 14px;
+    font-size: 13px;
   }
   .tmc-paragraph-marker::after {
     inset: -6px 0;

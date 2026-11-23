@@ -16,7 +16,7 @@ import { useSupportTranslation } from '../registerSupportTranslations';
 export function SignedOutLine() {
   const { t } = useSupportTranslation();
   return (
-    <p className="m-0 text-body">
+    <p className="m-0 text-ink-muted">
       {t('signedOut')}{' '}
       <Link to="/sign-in" className="text-link underline">
         {t('logIn')}

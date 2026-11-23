@@ -48,13 +48,13 @@ export function PostEditor({ id, label, value, onChange, problem }: PostEditorPr
     .filter((part) => part !== '')
     .join(' ');
   return (
-    <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-sm font-semibold text-ink">
+    <div className="flex flex-col gap-2">
+      <label htmlFor={id} className="type-body font-semibold text-ink">
         {label}
       </label>
       <div
         className={cn(
-          'rounded-[20px] border border-control-border bg-paper',
+          'rounded-card border border-control-border bg-paper',
           problem !== null && 'border-destructive',
         )}
       >
@@ -73,20 +73,20 @@ export function PostEditor({ id, label, value, onChange, problem }: PostEditorPr
             normaliseTypedText(event.target);
             onChange(event.target.value);
           }}
-          className="block min-h-36 w-full resize-y rounded-b-[20px] border-0 bg-transparent px-[18px] py-3.5 font-body text-[15px] leading-normal text-ink"
+          className="block min-h-36 w-full resize-y rounded-b-card border-0 bg-transparent px-4 py-4 font-body type-body leading-normal text-ink"
         />
       </div>
       <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-1">
-        <p id={`${id}-help`} className="m-0 text-[13px] text-meta">
+        <p id={`${id}-help`} className="m-0 type-meta text-ink-muted">
           {t('editor.help')}
         </p>
-        <p id={`${id}-counter`} className="m-0 text-[13px] text-meta">
+        <p id={`${id}-counter`} className="m-0 type-meta text-ink-muted">
           <span aria-hidden="true">{t('editor.counter', { count, limit })}</span>
           <span className="sr-only">{t('editor.counterLabel', { count, limit })}</span>
         </p>
       </div>
       {problem !== null && (
-        <p id={`${id}-problem`} className="m-0 text-sm font-semibold text-destructive">
+        <p id={`${id}-problem`} className="m-0 type-body font-semibold text-destructive">
           {problem}
         </p>
       )}

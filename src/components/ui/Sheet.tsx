@@ -29,7 +29,7 @@ export interface SheetProps {
 /** The panel's classes: glass, the corners, and where it sits at each width. */
 const sheetClasses = [
   'm-0 max-h-[85vh] w-full max-w-none overflow-y-auto border border-[var(--glass-border)]',
-  'bg-[var(--surface-glass)] p-0 text-body shadow-popover backdrop-blur-[24px] backdrop-saturate-[1.8]',
+  'bg-[var(--surface-glass)] p-0 text-ink-muted shadow-popover backdrop-blur-[24px] backdrop-saturate-[1.8]',
   'backdrop:bg-black/30',
   // Phones: a bottom sheet, its top corners rounded.
   'top-auto bottom-0 rounded-t-card rounded-b-none',
@@ -60,14 +60,14 @@ export function Sheet({ isOpen, onClose, title, children }: SheetProps) {
     <dialog ref={dialogRef} aria-labelledby={titleId} className={sheetClasses} onClose={onClose}>
       <div className="flex flex-col gap-4 p-6">
         <div className="flex items-start justify-between gap-4">
-          <h2 id={titleId} className="m-0 type-subheading text-heading">
+          <h2 id={titleId} className="m-0 type-subheading text-ink-heading">
             {title}
           </h2>
           <button
             type="button"
             onClick={onClose}
             aria-label={t('sheet.close')}
-            className="-m-2 inline-flex size-11 shrink-0 items-center justify-center rounded-full text-heading hover:bg-tint"
+            className="-m-2 inline-flex size-11 shrink-0 items-center justify-center rounded-full text-ink-heading hover:bg-tint"
           >
             <CrossIcon size={18} />
           </button>

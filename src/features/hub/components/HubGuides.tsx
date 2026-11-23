@@ -25,7 +25,7 @@ import { useHubTranslation } from '../registerHubTranslations';
 
 /** The round arrow buttons, as the shelves draw them (44 px, quiet). */
 const arrowClasses =
-  'inline-flex h-11 w-11 items-center justify-center rounded-full button-glass text-heading disabled:opacity-40';
+  'inline-flex h-11 w-11 items-center justify-center rounded-full button-glass text-ink-heading disabled:opacity-40';
 
 /**
  * Previous and Next, shown only when there is more than one page.
@@ -88,7 +88,7 @@ export function HubGuides() {
       <h3 id="hub-guides" className="sr-only">
         {t('hub.guides.eyebrow')}
       </h3>
-      {guides.length === 0 && <p className="m-0 text-body">{t('hub.guides.none')}</p>}
+      {guides.length === 0 && <p className="m-0 text-ink-muted">{t('hub.guides.none')}</p>}
       {/* Step 2: say which guides show, for screen readers, each time the arrows move. */}
       {guides.length > 0 && (
         <p role="status" className="sr-only">
@@ -111,7 +111,9 @@ export function HubGuides() {
               className="flex flex-col gap-1 py-3 text-ink no-underline hover:underline"
             >
               <span className="type-meta">{t('hub.guides.kind')}</span>
-              <span className="font-semibold text-heading">{withBrand(guide.content.title)}</span>
+              <span className="font-semibold text-ink-heading">
+                {withBrand(guide.content.title)}
+              </span>
             </Link>
           </li>
         ))}

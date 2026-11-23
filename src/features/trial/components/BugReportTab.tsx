@@ -39,7 +39,7 @@ export function BugReportTab() {
         }}
         aria-haspopup="dialog"
         data-bug-report-tab
-        className="button-main fixed top-[52%] right-0 z-30 flex min-w-11 rotate-180 items-center justify-center rounded-r-[12px] px-3 py-3.5 font-body text-[15px] leading-none font-semibold [writing-mode:vertical-rl] min-[600px]:top-[46%]"
+        className="button-main fixed top-[52%] right-0 z-30 flex min-w-11 rotate-180 items-center justify-center rounded-r-field px-3 py-4 font-body type-body leading-none font-semibold [writing-mode:vertical-rl] min-[600px]:top-[46%]"
       >
         {t('bugReport.tab')}
       </button>

@@ -46,7 +46,7 @@ export function CountrySetting({ names }: { names: MyNames }) {
   return (
     <div className="flex flex-col gap-3">
       <LabelRows rows={[{ label: t('country.label'), value }]} />
-      <p className="m-0 text-[13px] text-meta">{t('country.note')}</p>
+      <p className="m-0 type-meta text-ink-muted">{t('country.note')}</p>
       {isChanging ? (
         <CountryChangeForm
           idPrefix="settings"

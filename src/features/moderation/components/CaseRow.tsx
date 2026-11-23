@@ -55,7 +55,7 @@ export function CaseRow({ theCase }: { theCase: QueueCase }) {
         <Link
           to={`/staff/moderation/cases/${theCase.id}`}
           aria-label={t('queue.open', { reference: theCase.reference })}
-          className="font-heading text-lg font-bold text-link underline"
+          className="font-heading type-long font-bold text-link underline"
         >
           {theCase.reference}
         </Link>
@@ -77,8 +77,8 @@ export function CaseRow({ theCase }: { theCase: QueueCase }) {
             label: t('queue.columns.what'),
             value: (
               <span>
-                <span className="font-semibold text-heading">{reasonText(theCase, t)}</span>
-                <span className="block text-sm text-body">{theCase.itemSummary}</span>
+                <span className="font-semibold text-ink-heading">{reasonText(theCase, t)}</span>
+                <span className="block type-body text-ink-muted">{theCase.itemSummary}</span>
               </span>
             ),
           },

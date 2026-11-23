@@ -36,17 +36,17 @@ export function RankPanel({ handle, name }: RankPanelProps) {
   if (rank === null) return null;
   return (
     <Card>
-      <section aria-labelledby="profile-rank-heading" className="flex flex-col gap-3.5">
+      <section aria-labelledby="profile-rank-heading" className="flex flex-col gap-4">
         <div className="self-start">
           <Eyebrow>{t('rank.eyebrow')}</Eyebrow>
         </div>
         <h2
           id="profile-rank-heading"
-          className="m-0 font-heading text-[26px] font-bold text-heading"
+          className="m-0 font-heading type-heading font-bold text-ink-heading"
         >
           {t(`rank.names.${rank.rank}`)}
         </h2>
-        <p className="m-0 text-[15px] leading-[1.6] text-body">{t('rank.explainer')}</p>
+        <p className="m-0 type-body leading-[1.6] text-ink-muted">{t('rank.explainer')}</p>
         <RankLadder current={rank.rank} />
         <RankProgressBar rank={rank} name={name} />
       </section>

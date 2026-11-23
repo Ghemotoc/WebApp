@@ -41,7 +41,7 @@ function OpenButton({ look, onOpen }: { look: 'round' | 'pill'; onOpen: () => vo
       aria-label={t('list.newChat')}
       aria-haspopup="dialog"
       onClick={onOpen}
-      className="inline-flex size-11 flex-none cursor-pointer items-center justify-center rounded-full button-glass text-heading"
+      className="inline-flex size-11 flex-none cursor-pointer items-center justify-center rounded-full button-glass text-ink-heading"
     >
       <ActionIcon name="plus" size={18} />
     </button>

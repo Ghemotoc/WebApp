@@ -62,7 +62,7 @@ export function StoryGrid({ stories, hasMore, isLoadingMore, onLoadMore, ad }: S
   const covers = designsForRow(stories);
   return (
     <div className="flex flex-col items-center gap-8">
-      <ul className="m-0 grid w-full list-none grid-cols-[repeat(auto-fill,minmax(150px,1fr))] justify-items-center gap-x-5 gap-y-8 p-0 sm:grid-cols-[repeat(auto-fill,minmax(210px,1fr))]">
+      <ul className="m-0 grid w-full list-none grid-cols-[repeat(auto-fill,minmax(150px,1fr))] justify-items-center gap-x-4 gap-y-8 p-0 sm:grid-cols-[repeat(auto-fill,minmax(210px,1fr))]">
         {stories.map((story, index) => {
           const storyNumber = index + 1;
           const hasAdAfter =

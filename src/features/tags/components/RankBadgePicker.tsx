@@ -26,9 +26,9 @@ import { MAXIMUM_RANK_BADGES, pickedTags, togglePick } from '../lib/rankPick';
 function PickStatus({ picked }: { picked: string[] }) {
   const { t } = useTranslation('writing');
   if (picked.length === 0)
-    return <p className="m-0 text-sm text-body">{t('rankBadges.automatic')}</p>;
+    return <p className="m-0 type-body text-ink-muted">{t('rankBadges.automatic')}</p>;
   return (
-    <p className="m-0 text-sm text-body">
+    <p className="m-0 type-body text-ink-muted">
       {t('rankBadges.picked', { count: picked.length })}
       {picked.length >= MAXIMUM_RANK_BADGES && <> {t('rankBadges.full')}</>}
     </p>
@@ -99,9 +99,11 @@ export function RankBadgePicker({ slug }: { slug: string }) {
   const picked = pickedTags(entries);
   return (
     <FormSection legend={t('rankBadges.legend')}>
-      <p className="m-0 max-w-[640px] text-sm leading-normal text-body">{t('rankBadges.intro')}</p>
+      <p className="m-0 max-w-[640px] type-body leading-normal text-ink-muted">
+        {t('rankBadges.intro')}
+      </p>
       {ranks.isSuccess && entries.length === 0 && (
-        <p className="m-0 text-sm text-meta">{t('rankBadges.noTags')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('rankBadges.noTags')}</p>
       )}
       {entries.length > 0 && (
         <>

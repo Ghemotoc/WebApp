@@ -60,8 +60,8 @@ function SentNotice({ reference }: { reference: string }) {
 function DecisionNote({ reference }: { reference: string }) {
   const { t } = useMailTranslation();
   return (
-    <p className="m-0 flex items-start gap-2 rounded-field border border-border bg-panel px-4 py-3 text-sm text-body">
-      <ActionIcon name="info" size={16} className="mt-0.5 shrink-0" />
+    <p className="m-0 flex items-start gap-2 rounded-field border border-border bg-panel px-4 py-3 type-body text-ink-muted">
+      <ActionIcon name="info" size={16} className="mt-1 shrink-0" />
       <span>{t('new.about', { reference })}</span>
     </p>
   );
@@ -90,7 +90,7 @@ function NewMailForm({ decision }: { decision: string | null }) {
     <form
       noValidate
       onSubmit={handleSubmit}
-      className="flex max-w-[760px] flex-col gap-5 rounded-card border border-border bg-surface p-5 shadow-card md:p-7"
+      className="flex max-w-[760px] flex-col gap-4 rounded-card border border-border bg-surface p-4 shadow-card md:p-6"
     >
       {decision !== null && <DecisionNote reference={decision} />}
       <TextInput
@@ -109,7 +109,7 @@ function NewMailForm({ decision }: { decision: string | null }) {
         value={body}
         onChange={(event) => setBody(event.target.value)}
       />
-      <p className="m-0 text-[13px] text-meta">{t('new.suspendedNote')}</p>
+      <p className="m-0 type-meta text-ink-muted">{t('new.suspendedNote')}</p>
       <div aria-live="polite">
         {mail.failure !== null && (
           <Notice tone="error">
@@ -143,16 +143,16 @@ export function NewMailPage() {
   const { userId, isKnown } = useSession();
   const [searchParams] = useSearchParams();
   return (
-    <PageContainer className="flex flex-col gap-6 pt-10 pb-16">
+    <PageContainer className="flex flex-col gap-6 pt-8 pb-16">
       <title>{t('new.documentTitle')}</title>
       <MailBackLink to="/moderator-mail" label={t('back')} />
       <header className="flex max-w-[720px] flex-col gap-2">
         <Eyebrow>{t('eyebrow')}</Eyebrow>
         <h1 className="page-title">{t('new.title')}</h1>
-        <p className="m-0 text-lg leading-relaxed text-body">{t('new.intro')}</p>
+        <p className="m-0 type-long leading-relaxed text-ink-muted">{t('new.intro')}</p>
       </header>
       {isKnown && userId === null && (
-        <p className="m-0 text-body">
+        <p className="m-0 text-ink-muted">
           {t('signedOut')}{' '}
           <Link to="/sign-in" className="text-link underline">
             {t('logIn')}

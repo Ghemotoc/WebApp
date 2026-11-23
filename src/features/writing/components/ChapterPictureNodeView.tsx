@@ -54,7 +54,7 @@ function PictureWithState(props: {
       <span className="absolute top-3 left-3">
         <InfoPill tone={stateTone[state]}>{t(`picture.state.${state}`)}</InfoPill>
       </span>
-      {loadFailed && <p className="m-0 p-3 text-sm text-destructive">{t('picture.notLoaded')}</p>}
+      {loadFailed && <p className="m-0 p-3 type-body text-destructive">{t('picture.notLoaded')}</p>}
     </div>
   );
 }
@@ -77,7 +77,7 @@ export function ChapterPictureNodeView({ node, updateAttributes, deleteNode }: N
       as="figure"
       contentEditable={false}
       aria-label={t('picture.label')}
-      className="my-7 flex flex-col gap-3.5 rounded-card border border-border bg-paper p-4 text-[15px] leading-normal"
+      className="my-6 flex flex-col gap-4 rounded-card border border-border bg-paper p-4 type-body leading-normal"
     >
       <PictureWithState view={view} alt={alt} loadFailed={loadFailed} />
       <TextInput
@@ -90,10 +90,10 @@ export function ChapterPictureNodeView({ node, updateAttributes, deleteNode }: N
         hint={t('picture.altHint')}
         errorMessage={alt.trim() === '' ? t('picture.altMissing') : undefined}
       />
-      <div className="flex items-start gap-2.5 text-sm text-heading">
-        <ActionIcon name="shield" size={20} className="mt-0.5 shrink-0" />
+      <div className="flex items-start gap-3 type-body text-ink-heading">
+        <ActionIcon name="shield" size={20} className="mt-1 shrink-0" />
         <span>
-          <strong className="font-bold">{t(`picture.noteTitle.${state}`)}</strong>{' '}
+          <strong className="font-semibold">{t(`picture.noteTitle.${state}`)}</strong>{' '}
           {t(`picture.note.${state}`)}
         </span>
       </div>

@@ -36,7 +36,7 @@ function QueueBody({ queue }: { queue: ReturnType<typeof useModerationQueue> }) 
   const { t } = useTranslation('moderation');
   const openCases = useOpenCases();
   if (queue.loadFailure === 'not_allowed') {
-    return <p className="m-0 text-body">{t('queue.notAllowed')}</p>;
+    return <p className="m-0 text-ink-muted">{t('queue.notAllowed')}</p>;
   }
   if (queue.loadFailure !== null) {
     return <Notice tone="error">{t(`failures.${queue.loadFailure}`)}</Notice>;
@@ -63,14 +63,14 @@ export function ModerationQueuePage() {
   const { t } = useTranslation('moderation');
   const queue = useModerationQueue();
   return (
-    <PageContainer className="flex flex-col gap-6 pt-12 pb-7">
+    <PageContainer className="flex flex-col gap-6 pt-12 pb-6">
       <title>{t('queue.documentTitle')}</title>
       <div className="flex max-w-[720px] flex-col gap-2">
         <Eyebrow>{t('queue.eyebrow')}</Eyebrow>
-        <h1 className="m-0 font-heading text-[34px] font-bold text-heading">
+        <h1 className="m-0 font-heading type-title font-bold text-ink-heading">
           {t('queue.heading')}
         </h1>
-        <p className="m-0 text-body">{t('queue.intro')}</p>
+        <p className="m-0 text-ink-muted">{t('queue.intro')}</p>
       </div>
       <QueueBody queue={queue} />
     </PageContainer>

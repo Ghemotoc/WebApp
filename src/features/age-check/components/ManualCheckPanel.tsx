@@ -36,8 +36,8 @@ function AskForManualCheck() {
   });
   return (
     <div className="flex flex-col gap-3">
-      <p className="m-0 text-body">
-        <strong className="text-heading">{t('ageCheck.manual.stillNotWorking')}</strong>{' '}
+      <p className="m-0 text-ink-muted">
+        <strong className="text-ink-heading">{t('ageCheck.manual.stillNotWorking')}</strong>{' '}
         {t('ageCheck.manual.askLine')}
       </p>
       <Button

@@ -56,7 +56,7 @@ function ReadButton(props: { storySlug: string; firstChapterCode: string | null 
   return (
     <Link
       to={address}
-      className="inline-flex h-11 items-center rounded-full button-main px-5 text-sm font-semibold no-underline"
+      className="inline-flex h-11 items-center rounded-full button-main px-4 type-body font-semibold no-underline"
     >
       {words}
     </Link>
@@ -72,7 +72,7 @@ function LibraryChoice({ storySlug }: { storySlug: string }) {
     return (
       <Link
         to="/sign-in"
-        className="text-sm font-semibold text-link underline hover:text-link-hover"
+        className="type-body font-semibold text-link underline hover:text-link-hover"
       >
         {t('button.logIn')}
       </Link>
