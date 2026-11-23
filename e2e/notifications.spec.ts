@@ -91,8 +91,8 @@ test.describe('in-app notifications (S1-E7-01)', () => {
     browser,
   }) => {
     // The simplified design (bundle CALM-2; TopBar/README.md): something new shows one 8 px dot
-    // in the thread colour, never a number badge. At night the thread is white (#f5f5f5), 17:1
-    // on the night sky; the link's name ("Notifications, 3 new") carries the count, so the dot is
+    // in the thread colour, never a number badge. At night the thread is soft white (#e8e8ea,
+    // NIGHT-2), over 15:1 on the flat night page; the link's name ("Notifications, 3 new") carries the count, so the dot is
     // aria-hidden and never the only cue.
     const page = await openSignedIn(browser);
     await page
@@ -102,7 +102,7 @@ test.describe('in-app notifications (S1-E7-01)', () => {
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'night');
     const bell = page.getByRole('link', { name: /^Notifications, \d+ new$/ });
     const dot = bell.locator('[data-new-dot]');
-    await expect(dot).toHaveCSS('background-color', 'rgb(245, 245, 245)');
+    await expect(dot).toHaveCSS('background-color', 'rgb(232, 232, 234)');
     await expect(dot).toHaveCSS('width', '8px');
     await expect(bell).not.toContainText(/\d/);
     await page.context().close();

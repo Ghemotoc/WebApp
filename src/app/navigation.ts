@@ -44,7 +44,8 @@ export interface FooterColumn {
 /**
  * The footer's three columns, as every page's footer is drawn in the design files (NIGHT-2;
  * Robert, 23 Nov 2026: "the footer hasn't been updated"): Read, Write and talk, Help and legal.
- * The design's "About the apps", "For teachers" and "For partners" wait for their pages.
+ * The design's "About the apps", "For teachers" and "For partners" wait for their pages; search
+ * is left out because the top bar always has it.
  * Help and legal keeps every legal link the app had in its single footer row, because each must be
  * one tap from every page: Report content (S1-E10-02; DSA art. 16), the company and legal contacts
  * (S1-E14-02; DSA arts. 11 and 12) and the accessibility statement (S1-E14-03).
@@ -55,7 +56,6 @@ export const footerColumns: FooterColumn[] = [
     links: [
       { href: '/discover', labelKey: 'shell.footer.trending' },
       { href: '/library', labelKey: 'nav.library' },
-      { href: '/search', labelKey: 'shell.footer.search' },
     ],
   },
   {

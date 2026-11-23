@@ -139,7 +139,10 @@ test.describe('Page builder (S1-E11-34)', () => {
     await expect(page.getByRole('heading', { level: 2, name: 'How to start' })).toBeVisible();
     await expect(page.getByText('Write daily.')).toBeVisible();
     await expect(page.getByText('A writer')).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Start' })).toHaveAttribute('href', '/discover');
+    await expect(page.getByRole('link', { name: 'Start', exact: true })).toHaveAttribute(
+      'href',
+      '/discover',
+    );
   });
 
   for (const view of everyView(['/c/shown-builder-e2e'])) {
