@@ -6,9 +6,13 @@
  * community guidelines). The board's line about
  * under-16s needing a parent's consent stays out of the March copy, because S1-E2-03 is off for
  * the invited test and every claim must be true (Law 363/2007). The words come from the CMS.
- * Who shows it: WebsiteHomePage. What it calls: BandText, BandButtons.
+ * "New and rising writers" sits on the band's right in a box (board A02, Robert, 20 Nov 2026,
+ * 17:33; it left the rows on 23 Nov 2026), so the band has no empty half; for a visitor, Follow
+ * asks them to get in first. A member's own home (/hub) lists them in its Tools band (board A01).
+ * Who shows it: WebsiteHomePage. What it calls: BandText, BandButtons, RisingWritersList.
  */
 import { useSession } from '@/features/auth/hooks/useSession';
+import { RisingWritersList } from '@/features/discovery/components/RisingWritersList';
 import type { HomeBand } from '@/schemas/websiteContent';
 
 import { BandButtons } from './BandButtons';
@@ -29,7 +33,7 @@ export function FirstStoryBand({ band, language }: { band: HomeBand; language: s
       id="first-story"
       aria-labelledby="first-story-band-heading"
       lang={language}
-      className="scroll-mt-6 rounded-card bg-gold glass-band-tint p-[clamp(24px,4vw,56px)]"
+      className="grid scroll-mt-6 gap-10 rounded-card bg-gold glass-band-tint p-[clamp(24px,4vw,56px)] lg:grid-cols-2"
     >
       <div className="flex flex-col gap-6">
         <BandText band={band} headingId="first-story-band-heading" tone="gold" />
@@ -38,6 +42,13 @@ export function FirstStoryBand({ band, language }: { band: HomeBand; language: s
           first={{ label: band.button, to: writeAddress }}
           second={{ label: band.secondaryButton, to: '/legal/guidelines' }}
         />
+      </div>
+      {/* The writers in a box on the right, under the words on tablets and phones. */}
+      <div
+        id="writers"
+        className="box-surface scroll-mt-6 self-start rounded-card p-5 empty:hidden"
+      >
+        <RisingWritersList headingId="first-story-writers-heading" />
       </div>
     </section>
   );

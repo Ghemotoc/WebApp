@@ -9033,6 +9033,7 @@ export type Database = {
           rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
           rating_reasons: Database['public']['Enums']['story_rating_reason'][];
+          set_in_countries: string[];
           slug: string;
           title: string;
           title_hidden_at: string | null;
@@ -9089,6 +9090,7 @@ export type Database = {
             rank_badge_tag_ids: string[] | null;
             rating: Database['public']['Enums']['story_rating'];
             rating_reasons: Database['public']['Enums']['story_rating_reason'][];
+            set_in_countries: string[];
             slug: string;
             title: string;
             title_hidden_at: string | null;
@@ -9151,6 +9153,7 @@ export type Database = {
           rank_badge_tag_ids?: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
           rating_reasons?: Database['public']['Enums']['story_rating_reason'][];
+          set_in_countries?: string[];
           slug: string;
           title: string;
           title_hidden_at?: string | null;
@@ -9200,6 +9203,7 @@ export type Database = {
           rank_badge_tag_ids?: string[] | null;
           rating?: Database['public']['Enums']['story_rating'];
           rating_reasons?: Database['public']['Enums']['story_rating_reason'][];
+          set_in_countries?: string[];
           slug?: string;
           title?: string;
           title_hidden_at?: string | null;
@@ -12633,6 +12637,7 @@ export type Database = {
           rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
           rating_reasons: Database['public']['Enums']['story_rating_reason'][];
+          set_in_countries: string[];
           slug: string;
           title: string;
           title_hidden_at: string | null;
@@ -15317,6 +15322,7 @@ export type Database = {
           rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
           rating_reasons: Database['public']['Enums']['story_rating_reason'][];
+          set_in_countries: string[];
           slug: string;
           title: string;
           title_hidden_at: string | null;
@@ -16735,6 +16741,7 @@ export type Database = {
           rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
           rating_reasons: Database['public']['Enums']['story_rating_reason'][];
+          set_in_countries: string[];
           slug: string;
           title: string;
           title_hidden_at: string | null;
@@ -16793,6 +16800,7 @@ export type Database = {
           rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
           rating_reasons: Database['public']['Enums']['story_rating_reason'][];
+          set_in_countries: string[];
           slug: string;
           title: string;
           title_hidden_at: string | null;
@@ -17501,6 +17509,10 @@ export type Database = {
         Returns: Json;
       };
       set_my_story_hidden_countries: {
+        Args: { countries: string[]; story_slug: string };
+        Returns: Json;
+      };
+      set_my_story_set_in_countries: {
         Args: { countries: string[]; story_slug: string };
         Returns: Json;
       };
@@ -18278,6 +18290,7 @@ export type Database = {
           rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
           rating_reasons: Database['public']['Enums']['story_rating_reason'][];
+          set_in_countries: string[];
           slug: string;
           title: string;
           title_hidden_at: string | null;

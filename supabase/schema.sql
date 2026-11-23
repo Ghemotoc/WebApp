@@ -3416,6 +3416,7 @@ CREATE TABLE IF NOT EXISTS "public"."stories" (
     "cover_style" "public"."cover_style" DEFAULT 'label'::"public"."cover_style" NOT NULL,
     "cover_title_font" "public"."cover_title_font" DEFAULT 'reading'::"public"."cover_title_font" NOT NULL,
     "hidden_in_countries" "text"[] DEFAULT '{}'::"text"[] NOT NULL,
+    "set_in_countries" "text"[] DEFAULT '{}'::"text"[] NOT NULL,
     CONSTRAINT "stories_abuse_needs_rating_and_note" CHECK (((NOT "deals_with_abuse_or_coercion") OR (("rating" = ANY (ARRAY['16_plus'::"public"."story_rating", '18_plus'::"public"."story_rating"])) AND ("btrim"("content_note") <> ''::"text")))),
     CONSTRAINT "stories_blurb_length" CHECK (("char_length"("blurb") <= 500)),
     CONSTRAINT "stories_card_colour_on_palette" CHECK ((("card_colour" IS NULL) OR ("card_colour" = ANY (ARRAY['plum'::"text", 'violet'::"text", 'gold'::"text", 'ink'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text"])))),
@@ -3443,6 +3444,7 @@ END),
     CONSTRAINT "stories_hidden_in_countries_are_codes" CHECK ((("cardinality"("hidden_in_countries") <= 60) AND ("array_to_string"("hidden_in_countries", ','::"text") ~ '^([A-Z]{2}(,[A-Z]{2})*)?$'::"text"))),
     CONSTRAINT "stories_language_code_shape" CHECK (("language_code" ~ '^[a-z]{2}(-[A-Z]{2})?$'::"text")),
     CONSTRAINT "stories_rank_badge_tag_ids_check" CHECK ((("rank_badge_tag_ids" IS NULL) OR ("cardinality"("rank_badge_tag_ids") <= 3))),
+    CONSTRAINT "stories_set_in_countries_are_codes" CHECK ((("cardinality"("set_in_countries") <= 5) AND ("array_to_string"("set_in_countries", ','::"text") ~ '^([A-Z]{2}(,[A-Z]{2})*)?$'::"text"))),
     CONSTRAINT "stories_slug_shape" CHECK ((("slug" ~ '^[a-z0-9]+(-[a-z0-9]+)*$'::"text") AND ("char_length"("slug") <= 80))),
     CONSTRAINT "stories_title_length" CHECK ((("char_length"("btrim"("title")) >= 1) AND ("char_length"("btrim"("title")) <= 120)))
 );
@@ -3565,6 +3567,10 @@ COMMENT ON COLUMN "public"."stories"."cover_title_font" IS 'The title''s font on
 
 
 COMMENT ON COLUMN "public"."stories"."hidden_in_countries" IS 'The countries where readers can''t find or open the story, by the connection''s country (COUNTRY-1).';
+
+
+
+COMMENT ON COLUMN "public"."stories"."set_in_countries" IS 'The countries the story takes place in, at most five, shown as "Set in" (CALM-9, board D02).';
 
 
 
@@ -47270,6 +47276,48 @@ COMMENT ON FUNCTION "public"."set_my_story_hidden_countries"("story_slug" "text"
 
 
 
+CREATE OR REPLACE FUNCTION "public"."set_my_story_set_in_countries"("story_slug" "text", "countries" "text"[]) RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target_story_id uuid;
+  family_story_id uuid;
+  -- clean_country_codes() makes capitals, drops repeats and refuses anything not two letters.
+  cleaned text[] := public.clean_country_codes(countries);
+begin
+  -- Step 1: at most five countries (board D02).
+  if cardinality(cleaned) > 5 then
+    raise exception 'Choose at most 5 countries.' using errcode = 'check_violation', hint = 'too_many_countries';
+  end if;
+  -- Step 2: a signed-in writer who may write, and their own live story.
+  if (select auth.uid()) is null then
+    raise exception 'Sign in to change a story.' using errcode = 'insufficient_privilege';
+  end if;
+  if not public.is_active_member() then
+    return jsonb_build_object('outcome', 'not_active');
+  end if;
+  target_story_id := public.my_live_story_id(story_slug);
+  if target_story_id is null then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  -- Step 3: save it on the original and every edition, so each language says the same.
+  select coalesce(stories.edition_of_story_id, stories.id) into family_story_id
+  from public.stories where stories.id = target_story_id;
+  update public.stories set set_in_countries = cleaned
+  where stories.id = family_story_id or stories.edition_of_story_id = family_story_id;
+  return jsonb_build_object('outcome', 'ok');
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_my_story_set_in_countries"("story_slug" "text", "countries" "text"[]) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_my_story_set_in_countries"("story_slug" "text", "countries" "text"[]) IS 'The writer sets the countries their story takes place in, at most five (CALM-9, board D02).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."set_my_story_visibility"("story_slug" "text", "wanted" "public"."story_visibility") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -74712,6 +74760,11 @@ GRANT ALL ON FUNCTION "public"."set_my_story_cover_look"("story_slug" "text", "s
 
 REVOKE ALL ON FUNCTION "public"."set_my_story_hidden_countries"("story_slug" "text", "countries" "text"[]) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_my_story_hidden_countries"("story_slug" "text", "countries" "text"[]) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."set_my_story_set_in_countries"("story_slug" "text", "countries" "text"[]) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_my_story_set_in_countries"("story_slug" "text", "countries" "text"[]) TO "authenticated";
 
 
 

@@ -239,6 +239,20 @@
       "none": "Încă nu ai personaje.",
       "open": "Deschide personajele ({{count}})",
       "recentList": "Personaje · modificate recent"
+    },
+    "foldHints": {
+      "lookAndVoice": "Înfățișare, voce și ticuri",
+      "inside": "Dorințe, nevoi, temeri și secrete",
+      "inTheStory": "Arc și replici-cheie",
+      "relationships_one": "{{count}} relație",
+      "relationships_few": "{{count}} relații",
+      "relationships_other": "{{count}} de relații",
+      "chapters_one": "{{count}} capitol",
+      "chapters_few": "{{count}} capitole",
+      "chapters_other": "{{count}} de capitole",
+      "places_one": "{{count}} loc",
+      "places_few": "{{count}} locuri",
+      "places_other": "{{count}} de locuri"
     }
   },
   "fieldsSection": {
@@ -935,6 +949,14 @@
     "spoilers": {
       "heading": "Fără dezvăluiri",
       "body": "Alege capitolul de la care apare fiecare lucru. Cititorii care n-au ajuns acolo nu îl văd."
+    },
+    "summary": {
+      "private": "Păstrat privat",
+      "none": "Nicio parte din fișă nu e vizibilă",
+      "shared": "Vizibil: {{parts}}",
+      "ownDetails_one": "{{count}} detaliu propriu",
+      "ownDetails_few": "{{count}} detalii proprii",
+      "ownDetails_other": "{{count}} de detalii proprii"
     }
   },
   "publicPlan": {

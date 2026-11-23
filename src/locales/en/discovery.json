@@ -126,7 +126,6 @@
     "chapters_few": "{{count}} chapters"
   },
   "writersToFollow": {
-    "eyebrow": "Rising",
     "title": "Writers to follow this week",
     "growth_one": "+{{count}} follower this week",
     "growth_few": "+{{count}} followers this week",
@@ -154,8 +153,8 @@
     "savedWhen": "saved {{when}}"
   },
   "risingWriters": {
-    "eyebrow": "Rising",
     "title": "New and rising writers",
+    "bandTitle": "Draw inspiration from new and rising writers",
     "writes": "Writes {{category}}"
   },
   "popularIn": {

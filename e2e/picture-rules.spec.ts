@@ -14,6 +14,7 @@
  */
 import { expect, test, type Browser } from '@playwright/test';
 
+import { goToLastNewStoryStep } from './support/newStoryWizard';
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
@@ -38,6 +39,9 @@ async function openNewStoryAs(browser: Browser, persona: SignInPersonaName) {
   await context.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
   const page = await context.newPage();
   await page.goto('/write/new');
+  // The ratings are on the wizard's last step (CALM-9, board D02), reached once there is a title.
+  await page.getByRole('textbox', { name: 'Title' }).fill('Ratings by age');
+  await goToLastNewStoryStep(page);
   return page;
 }
 

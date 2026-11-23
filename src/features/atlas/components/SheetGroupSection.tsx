@@ -9,8 +9,10 @@
  * (bundle G10a, board AtlasCharacterSheet) and one on a phone.
  * Under the group's own fields come the writer's details placed in this group and "Add detail"
  * (bundle GAPS-1, same board).
+ * Basics stays an open card; Look and voice, Inside and In the story fold shut, each with a short
+ * hint beside its title (CALM-9, board E23).
  * Who uses it: CharacterSheet. What it calls: PlanTextField with the save it is given,
- * OwnDetailBoxes and AddDetailForm.
+ * OwnDetailBoxes, AddDetailForm and FoldingCard.
  */
 import type { ReactNode } from 'react';
 
@@ -26,6 +28,7 @@ import {
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { AddDetailForm } from './AddDetailForm';
+import { FoldingCard } from './FoldingCard';
 import { OwnDetailBoxes } from './OwnDetailBoxes';
 import { PlanTextField } from './PlanTextField';
 
@@ -68,8 +71,8 @@ export function SheetGroupSection(props: SheetGroupSectionProps) {
   const { slug, group, character, saveSheetField, before, children } = props;
   const { t } = useAtlasTranslation();
   const groupLabel = t(`characters.groups.${group}`);
-  return (
-    <FormSection legend={groupLabel}>
+  const contents = (
+    <>
       {before}
       <div className="grid gap-x-6 gap-y-4 md:grid-cols-2">
         {sheetGroups[group].map((key) => (
@@ -97,6 +100,13 @@ export function SheetGroupSection(props: SheetGroupSectionProps) {
         place={{ sheetGroup: group, ownGroup: null }}
         groupLabel={groupLabel}
       />
-    </FormSection>
+    </>
+  );
+  // Basics stays open as it was; the other three groups fold shut (CALM-9, board E23).
+  if (group === 'basics') return <FormSection legend={groupLabel}>{contents}</FormSection>;
+  return (
+    <FoldingCard title={groupLabel} hint={t(`characters.foldHints.${group}`)}>
+      {contents}
+    </FoldingCard>
   );
 }

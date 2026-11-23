@@ -12,6 +12,8 @@ import { useRelationshipChangers } from '../hooks/useRelationshipChangers';
 import { useRelationshipWords } from '../hooks/useRelationshipWords';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
+import { FoldingCard } from './FoldingCard';
+
 import { AddRelationshipForm } from './AddRelationshipForm';
 import { RelationshipList } from './RelationshipList';
 
@@ -41,16 +43,11 @@ export function CharacterRelationshipsSection({
     (relationship) => relationship.fromId === characterId || relationship.toId === characterId,
   );
   return (
-    <section
-      aria-labelledby="atlas-relationships-heading"
-      className="flex min-w-0 flex-col gap-4 rounded-card border border-border bg-surface px-7 py-[26px] shadow-card"
+    // Folds shut with the count beside the title (CALM-9, board E23: "[N] relationships").
+    <FoldingCard
+      title={t('connections.list.sheetHeading')}
+      hint={t('characters.foldHints.relationships', { count: mine.length })}
     >
-      <h2
-        id="atlas-relationships-heading"
-        className="m-0 font-heading text-[22px] font-bold text-heading"
-      >
-        {t('connections.list.sheetHeading')}
-      </h2>
       <RelationshipList
         relationships={mine}
         words={words}
@@ -70,6 +67,6 @@ export function CharacterRelationshipsSection({
           />
         </>
       )}
-    </section>
+    </FoldingCard>
   );
 }

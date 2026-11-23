@@ -3,14 +3,16 @@
  *
  * Who calls it: NewStoryPage. What it calls: the zod schema (src/schemas/story.ts) to check the
  * answers, then api/stories.ts → create_story(); on success the writer's story list is refreshed,
- * chapter one is made (api/chapters.ts → create_chapter(), S1-E3-02a) and the editor opens on it;
+ * who can read it and "Set in" are saved (saveNewStoryExtras(), CALM-9 board D02), chapter one is
+ * made (api/chapters.ts → create_chapter(), S1-E3-02a) and the editor opens on it;
  * a story made from Story Atlas (?from=plan) opens on its plan instead (S1-E17-01).
  * Errors: each field's mistake is a translation key; 'not_active' and a failed call become a
- * plain message at the top of the form.
+ * plain message at the top of the form. The wizard (CALM-9) checks the basics on "Next" with
+ * checkFields(), and opens the first step with a mistake when Create finds one.
  */
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, type QueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router';
+import { useNavigate, useSearchParams, type NavigateFunction } from 'react-router';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
 import { useSession } from '@/features/auth/hooks/useSession';
@@ -20,7 +22,7 @@ import { newStorySchema, type NewStoryInput } from '@/schemas/story';
 import { trackEvent } from '@/lib/analytics/track';
 
 import { createChapter } from '../api/chapters';
-import { createStory } from '../api/stories';
+import { createStory, saveNewStoryExtras } from '../api/stories';
 
 import { toStoryFieldErrors, type StoryAnswers, type StoryFieldErrors } from './storyAnswers';
 import { myStoriesKey } from './useMyStories';
@@ -47,6 +49,8 @@ function emptyAnswers(): StoryAnswers {
     // GAPS-15: a new story reads on the web and in the app; the choice is in its settings.
     isAppOnly: false,
     hiddenInCountries: [],
+    // CALM-9 (board D02): "Set in" starts empty; the writer adds countries in step 2.
+    setInCountries: [],
     commentsEnabled: true,
     // MUST-1a: the database starts a writer under 18 at Followers only; the new story form
     // doesn't show the setting (docs/board-fixes.md), so this is only the form's own default.
@@ -70,6 +74,80 @@ function emptyAnswers(): StoryAnswers {
 }
 
 /**
+ * Ties the new story to its prompt (GAPS-12c). The story is already made, so a failure here must
+ * not lose it: the writer goes on to chapter one and only the hub's count misses this story.
+ *
+ * @param queryClient - to refresh the hub's prompt counts
+ * @param storySlug - the new story's address
+ * @param promptId - the prompt the writer started from
+ */
+async function rememberPrompt(queryClient: QueryClient, storySlug: string, promptId: string) {
+  try {
+    await startStoryFromPrompt(await requireClient(), storySlug, promptId);
+    await queryClient.invalidateQueries({ queryKey: hubPromptsKey });
+  } catch (error) {
+    // Said in the console for whoever debugs it; there is nothing the writer could do about it.
+    console.warn('The story was made, but its prompt was not saved.', error);
+  }
+}
+
+/**
+ * Saves the wizard's answers create_story() doesn't take (who can read it, "Set in"; CALM-9).
+ *
+ * @returns false when that didn't work, so the page can send the writer to the story's settings
+ */
+async function saveExtrasSafely(storySlug: string, input: NewStoryInput): Promise<boolean> {
+  try {
+    return (await saveNewStoryExtras(await requireClient(), storySlug, input)) === 'ok';
+  } catch (error) {
+    console.warn(
+      'The story was made, but who can read it or where it is set was not saved.',
+      error,
+    );
+    return false;
+  }
+}
+
+/**
+ * Makes chapter one straight away and opens the editor on it (board 4.2's "Create and write
+ * chapter one"); if that fails the story is still there on Your writing, which says so.
+ *
+ * @param navigate - the router's navigate
+ * @param storySlug - the new story's address
+ */
+async function openChapterOne(navigate: NavigateFunction, storySlug: string) {
+  try {
+    const chapter = await createChapter(await requireClient(), storySlug);
+    if (chapter.outcome === 'ok') {
+      await navigate(`/write/s/${storySlug}/c/${chapter.code}`);
+      return;
+    }
+  } catch {
+    // Fall through to the list: the story exists and "Write chapter one" is there.
+  }
+  await navigate('/write', { state: { createdSlug: storySlug, chapterFailed: true } });
+}
+
+/**
+ * The mistakes among some of the answers (one wizard step's), as translation keys.
+ *
+ * @param answers - every answer so far
+ * @param fields - the answers to look at
+ * @returns one message key per field with a mistake; empty when they are all right
+ */
+function mistakesIn(
+  answers: StoryAnswers,
+  fields: readonly (keyof StoryAnswers)[],
+): StoryFieldErrors {
+  const result = newStorySchema.safeParse(answers);
+  if (result.success) return {};
+  const issues = result.error.issues.filter((issue) =>
+    fields.some((field) => field === issue.path[0]),
+  );
+  return toStoryFieldErrors(issues);
+}
+
+/**
  * Keeps the answers, checks them and creates the story.
  *
  * @returns answers, set (changes one field), errors, formError ('notActive' | 'createFailed'
@@ -89,21 +167,6 @@ export function useNewStoryForm() {
   // The hub's "Write from this prompt" links here with ?prompt=<ID> (GAPS-12c).
   const promptId = promptIdFrom(searchParams.get('prompt'));
 
-  /**
-   * Ties the new story to its prompt. The story is already made, so a failure here must not
-   * lose it: the writer goes on to chapter one and only the hub's count misses this story.
-   */
-  async function rememberPrompt(storySlug: string) {
-    if (promptId === null) return;
-    try {
-      await startStoryFromPrompt(await requireClient(), storySlug, promptId);
-      await queryClient.invalidateQueries({ queryKey: hubPromptsKey });
-    } catch (error) {
-      // Said in the console for whoever debugs it; there is nothing the writer could do about it.
-      console.warn('The story was made, but its prompt was not saved.', error);
-    }
-  }
-
   const create = useMutation({
     mutationFn: async (input: NewStoryInput) => createStory(await requireClient(), input),
     onSuccess: async (result, input) => {
@@ -113,8 +176,14 @@ export function useNewStoryForm() {
         return;
       }
       await queryClient.invalidateQueries({ queryKey: myStoriesKey(userId) });
+      // Step 3b (CALM-9): who can read it and "Set in". The story exists already, so if this
+      // fails the writer goes to its settings, where both show as saved and can be set again.
+      if (!(await saveExtrasSafely(result.slug, input))) {
+        await navigate(`/write/s/${result.slug}/settings`);
+        return;
+      }
       // A story started from the hub's "Write from this prompt" remembers its prompt (GAPS-12c).
-      await rememberPrompt(result.slug);
+      if (promptId !== null) await rememberPrompt(queryClient, result.slug, promptId);
       // The category only, never the story (docs/analytics-events.md).
       trackEvent('story_created', { category: input.categorySlug });
       // Step 4 (S1-E17-01): a story made from Story Atlas opens on its plan's at-a-glance page.
@@ -122,18 +191,8 @@ export function useNewStoryForm() {
         await navigate(`/plan/s/${result.slug}`);
         return;
       }
-      // Step 5: chapter one is made straight away and the editor opens on it (board 4.2's
-      // "Create and write chapter one"); if that fails the story is still there on Your writing.
-      try {
-        const chapter = await createChapter(await requireClient(), result.slug);
-        if (chapter.outcome === 'ok') {
-          await navigate(`/write/s/${result.slug}/c/${chapter.code}`);
-          return;
-        }
-      } catch {
-        // Fall through to the list: the story exists and "Write chapter one" is there.
-      }
-      await navigate('/write', { state: { createdSlug: result.slug, chapterFailed: true } });
+      // Step 5: chapter one, and the editor opens on it.
+      await openChapterOne(navigate, result.slug);
     },
     onError: () => setFormError('createFailed'),
   });
@@ -144,18 +203,36 @@ export function useNewStoryForm() {
     setErrors((current) => ({ ...current, [field]: undefined }));
   }
 
-  /** Checks every answer; sends them only when all are right. */
-  function submit() {
+  /**
+   * Checks only the fields given (one wizard step's), showing their mistakes.
+   *
+   * @param fields - the answers the step asks for
+   * @returns true when none of them has a mistake
+   */
+  function checkFields(fields: readonly (keyof StoryAnswers)[]): boolean {
+    const stepErrors = mistakesIn(answers, fields);
+    setErrors(stepErrors);
+    return Object.keys(stepErrors).length === 0;
+  }
+
+  /**
+   * Checks every answer; sends them only when all are right.
+   *
+   * @returns the fields with a mistake (empty when the answers were sent)
+   */
+  function submit(): (keyof StoryAnswers)[] {
     // Step 1: the shared rules; the database checks them again (architecture 1.7.1).
     const result = newStorySchema.safeParse(answers);
     if (!result.success) {
-      setErrors(toStoryFieldErrors(result.error.issues));
-      return;
+      const fieldErrors = toStoryFieldErrors(result.error.issues);
+      setErrors(fieldErrors);
+      return Object.keys(fieldErrors) as (keyof StoryAnswers)[];
     }
     // Step 2: send.
     setFormError(null);
     create.mutate(result.data);
+    return [];
   }
 
-  return { answers, set, errors, formError, submit, isSubmitting: create.isPending };
+  return { answers, set, errors, formError, checkFields, submit, isSubmitting: create.isPending };
 }
