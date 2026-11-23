@@ -1,6 +1,6 @@
 -- Database tests for the web teaser and link previews (story S1-E4-04).
 -- What it proves:
--- - teaser_length is a public setting of 150 words (TRIAL-WALL, 23 Nov 2026; 600 from 23 Oct);
+-- - teaser_length is a public setting of 40 words (TRIAL-WALL, 23 Nov 2026; 600 from 23 Oct);
 -- - teaser_of() keeps whole paragraphs up to the limit, cuts a too-long first paragraph at the
 --   limit with "…", never returns more than half a chapter (TRIAL-WALL) and skips empty blocks;
 -- - a signed-out visitor gets only the teaser from get_chapter() on All ages and 13+ stories,
@@ -50,8 +50,8 @@ update public.stories set first_published_at = now(), blurb = 'O stație meteo p
 where id in ('00000000-0000-4000-9000-000000000001', '00000000-0000-4000-9000-000000000003');
 
 -- 1. The setting.
-select is((select value #>> '{}' from public.settings where key = 'teaser_length'), '150',
-  'the teaser is 150 words (TRIAL-WALL, 23 Nov 2026)');
+select is((select value #>> '{}' from public.settings where key = 'teaser_length'), '40',
+  'the teaser is 40 words (TRIAL-WALL, 23 Nov 2026)');
 select ok((select is_public from public.settings where key = 'teaser_length'), 'and the setting is public');
 
 -- 2. teaser_of() on its own.
@@ -71,8 +71,8 @@ select is(public.teaser_of(null, 600), '', 'an empty chapter gives an empty teas
 -- 3. A signed-out visitor on an All ages story.
 select pg_temp.sign_out();
 select is(public.get_chapter('statia-meteo-seed01', 'teasera1') ->> 'is_teaser', 'true', 'a visitor gets the teaser');
-select is(pg_temp.words(public.get_chapter('statia-meteo-seed01', 'teasera1') ->> 'body'), 150,
-  'of 150 words, the first paragraph cut at the limit');
+select is(pg_temp.words(public.get_chapter('statia-meteo-seed01', 'teasera1') ->> 'body'), 40,
+  'of 40 words, the first paragraph cut at the limit');
 select ok((public.get_chapter('statia-meteo-seed01', 'teasera1') ->> 'body') not like '%ultimul%',
   'the rest of the text never reaches a signed-out browser');
 select is(public.get_chapter('statia-meteo-seed01', 'teasera1') ->> 'text_continues', 'true',

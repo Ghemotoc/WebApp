@@ -39,7 +39,7 @@ const personaIds: Partial<Record<SignInPersonaName, string>> = {
   kid_14_waiting: '00000000-0000-4000-8000-000000000004',
 };
 
-/** A 648-word first chapter: a visitor's preview is the first 150 words of the first paragraph (TRIAL-WALL). */
+/** A 648-word first chapter: a visitor's preview is the first 40 words of the first paragraph (TRIAL-WALL). */
 const longChapter = `repeat('Bunica notează vremea. ', 100) || chr(10) || chr(10)
   || repeat('Vântul bate dinspre munte. ', 62) || chr(10) || chr(10) || repeat('ultimul ', 100)`;
 

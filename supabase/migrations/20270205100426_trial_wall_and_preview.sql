@@ -12,9 +12,10 @@
  *    and the email-link pages back to the home page (src/features/trial/components/
  *    SignedOutGate.tsx). It is a front door, not a lock:
  *    no policy changes, so the database's rules stay as they are.
- * 2. Shortens the preview a signed-out visitor reads from 600 words (23 Oct 2026) to 150, about
- *    a minute: the setting changes only while it still holds the old default, so a length staff
- *    chose in Staff › Settings stays.
+ * 2. Shortens the preview a signed-out visitor reads from 600 words (23 Oct 2026) to 40, a few
+ *    lines (Robert, 23 Nov 2026, 11:02 UTC: "150 is too many. I would rather have 40"). The
+ *    setting changes only while it still holds the old default, so a length staff chose in
+ *    Staff › Settings stays.
  * 3. teaser_of() never hands over a whole chapter: the preview stops at half the chapter's words
  *    when that comes first, so a short chapter ends at "Sign in to keep reading" too.
  * Privacy: no new column, no new table, no personal data.
@@ -32,7 +33,7 @@ on conflict (key) do nothing;
 
 -- Step 2: a shorter preview, unless staff already chose a length of their own.
 update public.settings
-set value = '150'::jsonb
+set value = '40'::jsonb
 where key = 'teaser_length' and value = '600'::jsonb;
 
 /**
