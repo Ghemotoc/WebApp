@@ -182,6 +182,8 @@ test.describe('Story Atlas search, cross-links and "Mentioned in" (S1-E17-30, 31
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', `/plan/s/${slug}/characters/${anaId}`);
+    // "Mentioned in" folds shut until opened (CALM-9, board E23).
+    await page.getByRole('button', { name: /^Mentioned in/ }).click();
     const mentions = page.getByTestId('atlas-mentions');
     await expect(mentions.getByRole('listitem')).toHaveText([
       'Farulstory world entry',

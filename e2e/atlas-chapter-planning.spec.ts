@@ -210,6 +210,8 @@ test.describe('Story Atlas chapter planning (S1-E17-23 to S1-E17-26)', () => {
   }) => {
     const page = await openAs(browser, 'adult_writer', `/plan/s/${slug}/characters`);
     await page.getByRole('link', { name: 'Ana', exact: true }).click();
+    // Every card but Basics folds shut on the sheet (CALM-9, board E23): open "Appears in".
+    await page.getByRole('button', { name: /^Appears in/ }).click();
     const appears = page.getByRole('region', { name: 'Appears in' });
     await expect(appears.getByRole('listitem')).toHaveCount(1);
     await expect(appears.getByRole('listitem')).toContainText('point of view, present');

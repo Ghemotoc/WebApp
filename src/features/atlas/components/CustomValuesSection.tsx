@@ -7,17 +7,18 @@
  * show; a removed field's values stay in the database and show again when it is brought back.
  * "Add detail" adds one here; fields are removed and brought back in "Character fields" on the
  * at-a-glance page, which this section links to.
- * Who uses it: CharacterSheet. What it calls: OwnDetailBoxes with the save it is given and
- * AddDetailForm.
+ * It folds shut, with the fields' names as its hint (CALM-9, board E23).
+ * Who uses it: CharacterSheet. What it calls: OwnDetailBoxes with the save it is given,
+ * AddDetailForm and FoldingCard.
  */
 import { Link } from 'react-router';
 
-import { FormSection } from '@/features/writing/components/FormSection';
-
 import type { CharacterField, StoryCharacter } from '../api/characters';
+import { detailNames } from '../lib/detailNames';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { AddDetailForm } from './AddDetailForm';
+import { FoldingCard } from './FoldingCard';
 import { OwnDetailBoxes } from './OwnDetailBoxes';
 
 /** What the section needs. */
@@ -46,7 +47,7 @@ export function CustomValuesSection({
   const unplaced = fields.filter((field) => field.sheetGroup === null && field.ownGroup === null);
   const hasShownFields = unplaced.some((field) => !field.isHidden);
   return (
-    <FormSection legend={heading}>
+    <FoldingCard title={heading} hint={detailNames(unplaced)}>
       {!hasShownFields && <p className="m-0 text-body">{t('characters.custom.none')}</p>}
       <OwnDetailBoxes character={character} fields={unplaced} saveValue={saveValue} />
       <AddDetailForm
@@ -61,6 +62,6 @@ export function CustomValuesSection({
       >
         {t('characters.custom.manage')}
       </Link>
-    </FormSection>
+    </FoldingCard>
   );
 }

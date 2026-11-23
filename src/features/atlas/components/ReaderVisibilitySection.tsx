@@ -4,14 +4,18 @@
  *
  * A short line on how it works (only while Characters is public, and only once the story is
  * published), "Keep private", "Readers see it from" and the sheet's part switches, plus a link
- * to the story's "What readers can see" settings. No doodles: a working screen.
- * Who uses it: CharacterSheet. What it calls: ItemVisibilityControls and SheetPartsControls.
+ * to the story's "What readers can see" settings. No doodles: a working screen. The card folds
+ * shut with a summary of what is shared beside its title (CALM-9, board E23).
+ * Who uses it: CharacterSheet. What it calls: FoldingCard, useReaderSummary,
+ * ItemVisibilityControls and SheetPartsControls.
  */
 import { Link } from 'react-router';
 
 import type { CharacterField } from '../api/characters';
+import { useReaderSummary } from '../hooks/useReaderSummary';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
+import { FoldingCard } from './FoldingCard';
 import { ItemVisibilityControls } from './ItemVisibilityControls';
 import { SheetPartsControls } from './SheetPartsControls';
 
@@ -37,16 +41,12 @@ export function ReaderVisibilitySection({
 }) {
   const { t } = useAtlasTranslation();
   return (
-    <section
-      aria-labelledby="atlas-character-readers-heading"
-      className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface px-5 py-5 shadow-card md:px-7"
+    // Folds shut with a summary of what is shared beside the title (CALM-9, board E23).
+    <FoldingCard
+      title={t('readers.item.heading')}
+      hint={useReaderSummary(slug, characterId)}
+      contentClassName="gap-3"
     >
-      <h3
-        id="atlas-character-readers-heading"
-        className="m-0 font-heading text-[22px] font-bold text-heading"
-      >
-        {t('readers.item.heading')}
-      </h3>
       <p className="m-0 text-sm text-body">
         {t('readers.item.characterHint')}{' '}
         <Link to={`/plan/s/${slug}/readers`} className="font-semibold text-link">
@@ -55,6 +55,6 @@ export function ReaderVisibilitySection({
       </p>
       <ItemVisibilityControls slug={slug} itemId={characterId} itemName={name} allowsGuard />
       <SheetPartsControls slug={slug} characterId={characterId} fields={fields} />
-    </section>
+    </FoldingCard>
   );
 }
