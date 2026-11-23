@@ -70,7 +70,7 @@ export function HubPrompt({ now }: { now: Date }) {
       {/* Announced when "Another prompt" swaps the words, so a screen reader hears the new one. */}
       <blockquote
         aria-live="polite"
-        className="m-0 border-l-2 border-thread pl-4 font-story text-[19px] leading-snug break-words text-heading italic"
+        className="m-0 rounded-field bg-tint px-4 py-3 font-story text-[19px] leading-snug break-words text-heading italic"
       >
         {words}
       </blockquote>

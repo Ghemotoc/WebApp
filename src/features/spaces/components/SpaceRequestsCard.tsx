@@ -48,7 +48,7 @@ function RequestNote({ note, name }: { note: SpaceJoinNote; name: string }) {
     <div className="flex flex-col items-start gap-1">
       <blockquote
         aria-label={t('requests.noteLabel', { name })}
-        className="m-0 border-l-2 border-border pl-3 text-sm break-words whitespace-pre-line text-body"
+        className="m-0 rounded-field bg-tint px-3 py-2 text-sm break-words whitespace-pre-line text-body"
       >
         {note.text}
       </blockquote>

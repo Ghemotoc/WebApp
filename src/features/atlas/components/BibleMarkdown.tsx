@@ -62,9 +62,7 @@ const components: Components = {
   ul: ({ children }) => <ul className="m-0 list-disc pl-6">{children}</ul>,
   ol: ({ children }) => <ol className="m-0 list-decimal pl-6">{children}</ol>,
   blockquote: ({ children }) => (
-    <blockquote className="m-0 border-l-4 border-control-border pl-4 text-body">
-      {children}
-    </blockquote>
+    <blockquote className="m-0 rounded-field bg-tint px-4 py-3 text-body">{children}</blockquote>
   ),
   p: ({ children }) => <p className="m-0">{children}</p>,
 };
