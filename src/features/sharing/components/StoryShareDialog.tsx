@@ -14,6 +14,7 @@
  */
 import { useTranslation } from 'react-i18next';
 
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
 import { brand } from '@/config/brand';
 
@@ -121,9 +122,9 @@ export function StoryShareDialog({ isOpen, onClose, story, wasCopied }: StorySha
         <p className="m-0 type-body text-ink-muted">{t('dialog.deviceNote')}</p>
       </div>
       <StoryChatPreview story={story} />
-      <div className="flex justify-end border-t border-border pt-4">
+      <ButtonRow className="border-t border-border pt-4">
         <Button onClick={onClose}>{t('dialog.done')}</Button>
-      </div>
+      </ButtonRow>
     </SharingModal>
   );
 }

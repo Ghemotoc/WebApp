@@ -99,9 +99,9 @@ test.describe('a signed-in person', () => {
     const secondDevice = await browser.newContext();
     await useSessionInBrowser(secondDevice, (await signInPersona('adult_writer')).session);
     const secondPage = await secondDevice.newPage();
+    // A member skips the website home for the Writers' hub (TRIAL-WALL); the footer shows the language.
     await secondPage.goto('/');
 
-    await expect(secondPage.getByRole('heading', { level: 1 })).toHaveText(englishHeading);
     await expect(footerLanguage(secondPage, 'Language')).toHaveValue('en');
 
     await firstDevice.close();

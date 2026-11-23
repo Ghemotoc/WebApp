@@ -67,9 +67,8 @@ test.describe('forum categories and subforums (FORUMS-1a, S1-E8-01)', () => {
   test.afterAll(cleanUp);
 
   test('a visitor reads the forum index, category by category', async ({ browser }) => {
-    const page = await openAs(browser, null, '/discover');
-    await page.getByRole('banner').getByRole('link', { name: 'Together', exact: true }).click();
-    await expect(page).toHaveURL(/\/forums$/);
+    // The visitor's top bar has no Together link since TRIAL-WALL, so they open the address.
+    const page = await openAs(browser, null, '/forums');
     await expect(page.getByRole('heading', { level: 1, name: 'Together' })).toBeVisible();
     // The starting categories, pinned in the board's order (Q45).
     const categories = page.getByRole('heading', { level: 2 });

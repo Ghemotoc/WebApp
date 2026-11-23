@@ -9100,6 +9100,7 @@ export type Database = {
             writing_prompt_id: string | null;
           } | null;
           story_edition_json: Json | null;
+          story_public_editions: Json | null;
         };
         ComputedFields:
           | 'admin_story_cover_json'
@@ -9111,7 +9112,8 @@ export type Database = {
           | 'edition_is_readable'
           | 'running_comment_pause'
           | 'story_as_shown'
-          | 'story_edition_json';
+          | 'story_edition_json'
+          | 'story_public_editions';
         Insert: {
           ai_disclosure?: Database['public']['Enums']['ai_disclosure'];
           ai_undisclosed_labelled_at?: string | null;
@@ -18362,6 +18364,10 @@ export type Database = {
       story_family_ids: { Args: { target_story_id: string }; Returns: string[] };
       story_follow_state: { Args: { story_slug: string }; Returns: Json };
       story_follower_count_of: { Args: { target_story_id: string }; Returns: number };
+      story_genre_name: {
+        Args: { story_language: string; target_story_id: string };
+        Returns: string;
+      };
       story_has_copied_work_note: { Args: { target_story_id: string }; Returns: boolean };
       story_has_readable_chapter: { Args: { target_story_id: string }; Returns: boolean };
       story_hidden_here: {
@@ -18416,6 +18422,15 @@ export type Database = {
       story_plan: { Args: { story_slug: string }; Returns: Json };
       story_plan_chapters: { Args: { plan_story_id: string }; Returns: Json };
       story_plan_visibility: { Args: { story_slug: string }; Returns: Json };
+      story_public_editions: {
+        Args: {
+          edition: Omit<
+            Database['public']['Tables']['stories']['Row'],
+            Database['public']['Tables']['stories']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
       story_rank_in_tag: {
         Args: { tag_name: string; target_story_id: string };
         Returns: {

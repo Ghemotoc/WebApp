@@ -115,7 +115,7 @@ test.describe('Story Atlas search, cross-links and "Mentioned in" (S1-E17-30, 31
     await page.getByRole('button', { name: 'Search', exact: true }).click();
     const chapters = page.getByRole('region', { name: 'Chapters (1)' });
     await expect(chapters.locator('mark')).toHaveText('Ștefan');
-    await expect(chapters.locator('mark')).toHaveCSS('font-weight', '700');
+    await expect(chapters.locator('mark')).toHaveCSS('font-weight', '600');
     await chapters.getByRole('link', { name: 'Furtuna' }).click();
     await expect(page).toHaveURL(new RegExp(`/write/s/${slug}/c/e2esrch1$`));
     await page.context().close();

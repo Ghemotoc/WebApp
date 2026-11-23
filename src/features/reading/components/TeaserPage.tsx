@@ -6,7 +6,8 @@
  * - TeaserStoryCard: the cover, "Shared with you · chapter n of N", the story's title (the H1),
  *   the pen name, the blurb and the pills;
  * - the chapter: "Chapter n", its title, "n minutes to read · You're reading the first part" and
- *   the teaser, the first whole paragraphs up to 600 words (decided 23 Oct 2026), cut by
+ *   the teaser, the first whole paragraphs up to 40 words and never more than half the chapter
+ *   (TRIAL-WALL, 23 Nov 2026; 600 words from 23 Oct 2026), cut by
  *   get_chapter() on the server so the rest never reaches the browser. When the chapter goes on,
  *   the text fades out at the bottom with a CSS mask (the words stay real text, readable by
  *   screen readers);

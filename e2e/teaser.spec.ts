@@ -6,7 +6,8 @@
  * the same server/link-preview.ts as Cloudflare does for /s/….
  * What it proves:
  * - a signed-out visitor on a shared chapter sees the story (title, pen name, blurb), the first
- *   whole paragraphs up to 600 words and never the rest, then the prompt to log in; a signed-in
+ *   part up to 40 words (TRIAL-WALL, 23 Nov 2026; 600 before) and never the rest, then the
+ *   prompt to log in; a signed-in
  *   reader gets the whole chapter;
  * - on a 16+ story a visitor sees the title and "No preview for this story" naming the rating,
  *   never any text, on the chapter and the story page;
@@ -100,11 +101,16 @@ test.describe('the web teaser and link previews (S1-E4-04)', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'Stația meteo' })).toBeVisible();
     await expect(page.getByText('Shared with you · chapter 1', { exact: true })).toBeVisible();
     await expect(page.getByText('Lia Scrie').first()).toBeVisible();
-    await expect(page.getByText('Bunica mea notează vremea în fiecare dimineață')).toBeVisible();
-    // The chapter: its heading, the first two paragraphs and never the third.
+    // In the page's main part: the footer's story statement repeats the blurb (CALM-9s).
+    await expect(
+      page.getByRole('main').getByText('Bunica mea notează vremea în fiecare dimineață'),
+    ).toBeVisible();
+    // The chapter: its heading and the first 40 words of the first paragraph, never the rest
+    // (TRIAL-WALL: a short preview, then sign in).
     await expect(page.getByRole('heading', { level: 2, name: 'Caietele bunicii' })).toBeVisible();
     await expect(page.getByText('You’re reading the first part')).toBeVisible();
-    await expect(page.locator('.tmc-chapter-text p')).toHaveCount(2);
+    await expect(page.locator('.tmc-chapter-text p')).toHaveCount(1);
+    expect(await page.content()).not.toContain('Vântul bate');
     expect(await page.content()).not.toContain('ultimul');
     // The prompt.
     await expect(page.getByText('1 more chapter')).toBeVisible();
@@ -187,8 +193,11 @@ test.describe('the web teaser and link previews (S1-E4-04)', () => {
     const story = await request.get(`/s/${slug}`);
     const storyHtml = await story.text();
     expect(story.headers()['x-robots-tag']).toBeUndefined();
-    expect(storyHtml).toContain('"@type":"CreativeWork"');
-    expect(storyHtml).toContain('"author":{"@type":"Person","name":"Lia Scrie"}');
+    // A story in a story category is a Book; the writer links to their profile (CALM-9s).
+    expect(storyHtml).toContain('"@type":"Book"');
+    expect(storyHtml).toMatch(
+      /"author":\{"@type":"Person","name":"Lia Scrie","url":"[^"]+\/u\/[^"]+"\}/,
+    );
     expect(storyHtml).not.toContain('Vântul bate');
     // A 16+ story: the same details as any story, never its rating (S1-E11-36).
     rateStory('16_plus');
@@ -201,11 +210,12 @@ test.describe('the web teaser and link previews (S1-E4-04)', () => {
     );
     expect(sixteenHtml).not.toContain('16+');
     expect(sixteenHtml).not.toContain('Vântul bate');
-    // An 18+ story: the same, with "For mature readers" and still no rating.
+    // An 18+ story: the same, with "For mature readers" and still no rating. Its story page
+    // describes it with the story statement (CALM-9s): the sentence, then the mature note.
     rateStory('18_plus');
     const eighteenHtml = await (await request.get(`/s/${slug}`)).text();
     expect(eighteenHtml).toMatch(
-      /<meta property="og:description" content="de Lia Scrie · Pentru cititori maturi · [^"·]+ · Bunica mea/,
+      /<meta property="og:description" content="Stația meteo [^"]+ de Lia Scrie\. Pentru cititori maturi\. Bunica mea/,
     );
     expect(eighteenHtml).not.toContain('18+');
   });

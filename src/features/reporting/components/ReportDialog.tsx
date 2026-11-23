@@ -20,6 +20,7 @@ import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { Textarea } from '@/components/ui/Textarea';
@@ -93,14 +94,14 @@ function DetailsField(props: {
 function FormButtons(props: { onCancel: () => void; isSending: boolean }) {
   const { t } = useTranslation('reporting');
   return (
-    <div className="flex flex-wrap justify-end gap-3">
-      <Button variant="secondary" onClick={props.onCancel}>
-        {t('dialog.cancel')}
-      </Button>
+    <ButtonRow>
       <Button type="submit" disabled={props.isSending}>
         {t(props.isSending ? 'dialog.sending' : 'dialog.send')}
       </Button>
-    </div>
+      <Button variant="secondary" onClick={props.onCancel}>
+        {t('dialog.cancel')}
+      </Button>
+    </ButtonRow>
   );
 }
 

@@ -44,6 +44,7 @@ import { StoryHeader } from './StoryHeader';
 import { StoryLabels } from './StoryLabels';
 import { StorySideColumn } from './StorySideColumn';
 import { StoryWorldLinks } from './StoryWorldLinks';
+import { useStoryStatement } from '../hooks/useStoryStatement';
 
 /** "This story isn't available", with the way home. */
 function StoryUnavailable() {
@@ -127,6 +128,9 @@ export function StoryPage() {
   const { story, isLoaded, loadFailed } = useStoryPage(storySlug);
   // TRANSLATE-1b: a story in several languages opens in this reader's language.
   useOpeningEdition(story);
+  // CALM-9s: the footer says what this story is, for readers and search engines, once the
+  // reader may see the story at all.
+  useStoryStatement(storySlug, isLoaded && story !== null);
 
   if (loadFailed) {
     return (

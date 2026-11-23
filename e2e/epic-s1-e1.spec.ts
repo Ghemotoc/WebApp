@@ -133,9 +133,12 @@ test.describe('journeys 2 to 4: the personas (S1-E1-02 × S1-E1-04)', () => {
     expect((await client.rpc('set_my_locale', { new_locale: 'en' })).error).toBeNull();
     expect((await client.rpc('is_active_member')).data).toBe(true);
 
-    // Device 1 opens in English, then they switch to Română from the footer.
+    // Device 1 opens in English, then they switch to Română from the footer. A member skips the
+    // website home for the Writers' hub (TRIAL-WALL), so the footer's language menu is the proof.
     const firstDevice = await openAsPersona(browser, 'adult_writer');
-    await expect(firstDevice.page.getByRole('heading', { level: 1 })).toHaveText(homeHeading.en);
+    await expect(
+      firstDevice.page.getByRole('contentinfo').getByRole('combobox', { name: 'Language' }),
+    ).toHaveValue('en');
     await firstDevice.page
       .getByRole('contentinfo')
       .getByRole('combobox', { name: 'Language' })
@@ -144,7 +147,9 @@ test.describe('journeys 2 to 4: the personas (S1-E1-02 × S1-E1-04)', () => {
 
     // Device 2 opens in Romanian.
     const secondDevice = await openAsPersona(browser, 'adult_writer');
-    await expect(secondDevice.page.getByRole('heading', { level: 1 })).toHaveText(homeHeading.ro);
+    await expect(
+      secondDevice.page.getByRole('contentinfo').getByRole('combobox', { name: 'Limbă' }),
+    ).toHaveValue('ro');
     await firstDevice.context.close();
     await secondDevice.context.close();
   });
@@ -204,7 +209,9 @@ test.describe('journeys 2 to 4: the personas (S1-E1-02 × S1-E1-04)', () => {
         .selectOption('en');
       await expect(firstDevice.page.getByText('Language saved to the account.')).toBeAttached();
       const secondDevice = await openAsPersona(browser, persona);
-      await expect(secondDevice.page.getByRole('heading', { level: 1 })).toHaveText(homeHeading.en);
+      await expect(
+        secondDevice.page.getByRole('contentinfo').getByRole('combobox', { name: 'Language' }),
+      ).toHaveValue('en');
       await firstDevice.context.close();
       await secondDevice.context.close();
     });

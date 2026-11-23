@@ -13,6 +13,7 @@
  */
 import { useState } from 'react';
 
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
@@ -93,10 +94,7 @@ export function DeleteAccountConfirm({
       <DownloadStoriesFirst />
       {mustLogInAgain ? <ConfirmLogIn /> : <Notice tone="success">{t('confirm.confirmed')}</Notice>}
       {showsFailure && <Notice tone="error">{t(`confirm.failures.${failureKey}`)}</Notice>}
-      <div className="flex flex-wrap justify-end gap-3">
-        <Button variant="secondary" onClick={onKeep}>
-          {t('confirm.keep')}
-        </Button>
+      <ButtonRow>
         {!mustLogInAgain && (
           <Button
             variant="destructive"
@@ -106,7 +104,10 @@ export function DeleteAccountConfirm({
             {t('confirm.delete')}
           </Button>
         )}
-      </div>
+        <Button variant="secondary" onClick={onKeep}>
+          {t('confirm.keep')}
+        </Button>
+      </ButtonRow>
     </div>
   );
 }

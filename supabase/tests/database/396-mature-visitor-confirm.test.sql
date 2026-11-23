@@ -44,8 +44,8 @@ select is(public.get_chapter('statia-meteo-seed01', 'matur396') ->> 'body', '',
 select pg_temp.visitor(true);
 select is(public.get_chapter('statia-meteo-seed01', 'matur396') ->> 'needs_adult_answer', 'false',
   'after the answer the reader doesn''t ask again');
-select is(public.get_chapter('statia-meteo-seed01', 'matur396') ->> 'body', 'Primul rând al poveștii.',
-  'and sends the text as for any story (the teaser, here the whole short chapter)');
+select is(public.get_chapter('statia-meteo-seed01', 'matur396') ->> 'body', 'Primul rând…',
+  'and sends the teaser as for any story (at most half the chapter, TRIAL-WALL)');
 select is(public.rating_allows('18_plus'), false,
   'lists still leave 18+ out for visitors: their rating filter (rating_allows) is unchanged');
 
