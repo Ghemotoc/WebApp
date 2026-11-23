@@ -14,6 +14,7 @@
  */
 import { useTranslation } from 'react-i18next';
 
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
 import { StepWizard, type WizardStep } from '@/components/ui/StepWizard';
 import { useStepWizard } from '@/components/ui/useStepWizard';
@@ -94,11 +95,11 @@ export function WaitlistProfileSteps(props: WaitlistProfileStepsProps) {
   const wizard = useStepWizard(steps.length);
   // The last step ends with "Done"; the page has no other button to finish with.
   const doneButton = (
-    <div className="flex justify-end border-t border-hairline pt-5">
+    <ButtonRow className="border-t border-hairline pt-6">
       <Button type="button" onClick={wizard.finish}>
         {t('waitlist.steps.done')}
       </Button>
-    </div>
+    </ButtonRow>
   );
   return (
     <div className="flex max-w-[860px] flex-col gap-4">

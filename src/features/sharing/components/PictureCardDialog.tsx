@@ -12,6 +12,7 @@
 import { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
 import { Textarea } from '@/components/ui/Textarea';
 import type { SpotRange } from '@/lib/chapter-blocks';
@@ -61,17 +62,17 @@ function PictureCardButtons(props: {
       <p role="status" className="m-0 min-h-5 text-sm text-body">
         {actions.status}
       </p>
-      <div className="flex flex-wrap items-center justify-end gap-3 border-t border-border pt-4">
+      <ButtonRow className="border-t border-border pt-4">
+        <Button disabled={isDisabled} onClick={() => void actions.saveImage()}>
+          {t('picture.saveImage')}
+        </Button>
         <Button variant="secondary" onClick={() => void actions.copyLink()}>
           {t('picture.copyLink')}
         </Button>
         <Button variant="secondary" disabled={isDisabled} onClick={() => void actions.copyImage()}>
           {t('picture.copyImage')}
         </Button>
-        <Button disabled={isDisabled} onClick={() => void actions.saveImage()}>
-          {t('picture.saveImage')}
-        </Button>
-      </div>
+      </ButtonRow>
     </>
   );
 }

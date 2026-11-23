@@ -10,6 +10,7 @@
  */
 import { useMemo } from 'react';
 
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
 import { ShareLinkRow } from '@/features/sharing/components/ShareLinkRow';
 import { SharingModal } from '@/features/sharing/components/SharingModal';
@@ -107,10 +108,10 @@ export function SpaceShareDialog({ isOpen, onClose, name, link }: SpaceShareDial
       <ShareLinkRow link={link} wasCopied={null} />
       <SpaceQrCode link={link} />
       <p className="m-0 text-sm text-body">{t('share.privacy')}</p>
-      <div className="flex flex-wrap justify-end gap-3 border-t border-border pt-4">
-        <SystemShareButton name={name} link={link} />
+      <ButtonRow className="border-t border-border pt-4">
         <Button onClick={onClose}>{t('share.done')}</Button>
-      </div>
+        <SystemShareButton name={name} link={link} />
+      </ButtonRow>
     </SharingModal>
   );
 }

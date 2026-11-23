@@ -7,7 +7,8 @@
  * line "It goes from your messages straight away. When [name] deletes it too, the messages are
  * gone for good." and the buttons "Keep the chat" and "Delete the chat" (danger colour). It is a
  * native <dialog> opened with showModal(), so focus moves inside and Escape keeps the chat;
- * "Keep the chat" is the first button, so it takes focus first (the safe choice).
+ * focus starts on "Keep the chat", the safe choice, put there after showModal() because the
+ * main button comes first (design books item 8).
  *
  * The chat goes for the reader only and the other person isn't told; if someone writes again,
  * the chat comes back with only the new messages. Once both have deleted it, the nightly
@@ -19,6 +20,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
@@ -105,7 +107,12 @@ function DeleteChatDialog(props: DeleteChatDialogProps) {
   useEffect(() => {
     const dialog = dialogRef.current;
     if (dialog === null) return;
-    if (props.isOpen && !dialog.open) dialog.showModal();
+    if (props.isOpen && !dialog.open) {
+      dialog.showModal();
+      // The main button now comes first (design books item 8), so the focus is put on the
+      // safe choice by hand instead of on the first button.
+      dialog.querySelector<HTMLElement>('[data-safe-choice]')?.focus();
+    }
     if (!props.isOpen && dialog.open) dialog.close();
   }, [props.isOpen]);
 
@@ -130,14 +137,14 @@ function DeleteChatDialog(props: DeleteChatDialogProps) {
         </p>
         {/* A failed attempt keeps the popup open with a plain message. */}
         {props.hasFailed && <Notice tone="error">{t('deleteChat.failed')}</Notice>}
-        <div className="mt-1.5 flex flex-wrap justify-end gap-2">
-          <Button variant="secondary" onClick={props.onClose}>
-            {t('deleteChat.cancel')}
-          </Button>
+        <ButtonRow className="mt-1.5">
           <Button variant="destructive" disabled={props.isDeleting} onClick={props.onConfirm}>
             {t(props.isDeleting ? 'deleteChat.deleting' : 'deleteChat.confirm')}
           </Button>
-        </div>
+          <Button variant="secondary" onClick={props.onClose} data-safe-choice>
+            {t('deleteChat.cancel')}
+          </Button>
+        </ButtonRow>
       </div>
     </dialog>
   );

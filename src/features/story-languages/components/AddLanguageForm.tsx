@@ -10,6 +10,7 @@
  * Who shows it: StoryLanguagesPage. What it calls: hooks/useAddLanguage.ts, and the writing
  * feature's useStoryFormOptions for the open languages (story_language_choices()).
  */
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
@@ -132,14 +133,14 @@ export function AddLanguageForm({ storySlug, languages }: AddLanguageFormProps) 
               {t(`add.problems.${form.problem}`, { max: languages.languagesMax })}
             </Notice>
           )}
-          <div className="flex flex-wrap justify-end gap-3">
-            <Button type="button" size="lg" variant="secondary" onClick={form.reset}>
-              {t('add.cancel')}
-            </Button>
+          <ButtonRow>
             <Button type="submit" size="lg" disabled={form.isSending}>
               {form.isSending ? t('add.adding') : t('add.submit')}
             </Button>
-          </div>
+            <Button type="button" size="lg" variant="secondary" onClick={form.reset}>
+              {t('add.cancel')}
+            </Button>
+          </ButtonRow>
         </form>
       )}
     </section>

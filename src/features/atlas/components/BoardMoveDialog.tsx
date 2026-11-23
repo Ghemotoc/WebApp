@@ -4,12 +4,14 @@
  * Manage chapters does, S1-E3-04).
  *
  * A native <dialog> with role="alertdialog": focus stays inside and Escape keeps the order.
- * Focus starts on "Keep the order", the safe choice, which is the first button. Same shape as
+ * Focus starts on "Keep the order", the safe choice, put there after showModal() because the
+ * main button comes first (design books item 8). Same shape as
  * the writer section's DeleteChapterDialog.
  * Who uses it: ChapterBoard. What it calls: onConfirm and onClose (useBoardMoves).
  */
 import { useEffect, useRef } from 'react';
 
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
 
 import { useAtlasTranslation } from '../registerAtlasTranslations';
@@ -34,7 +36,12 @@ export function BoardMoveDialog({ isOpen, onConfirm, onClose }: BoardMoveDialogP
   useEffect(() => {
     const dialog = dialogRef.current;
     if (dialog === null) return;
-    if (isOpen && !dialog.open) dialog.showModal();
+    if (isOpen && !dialog.open) {
+      dialog.showModal();
+      // The main button now comes first (design books item 8), so the focus is put on the
+      // safe choice by hand instead of on the first button.
+      dialog.querySelector<HTMLElement>('[data-safe-choice]')?.focus();
+    }
     if (!isOpen && dialog.open) dialog.close();
   }, [isOpen]);
 
@@ -57,14 +64,14 @@ export function BoardMoveDialog({ isOpen, onConfirm, onClose }: BoardMoveDialogP
         <p id="atlas-board-move-body" className="m-0 text-base leading-relaxed text-body">
           {t('storyline.board.confirm.body')}
         </p>
-        <div className="mt-1.5 flex flex-wrap justify-end gap-2">
-          <Button size="lg" variant="secondary" onClick={onClose}>
-            {t('storyline.board.confirm.keep')}
-          </Button>
+        <ButtonRow className="mt-1.5">
           <Button size="lg" onClick={onConfirm}>
             {t('storyline.board.confirm.move')}
           </Button>
-        </div>
+          <Button size="lg" variant="secondary" onClick={onClose} data-safe-choice>
+            {t('storyline.board.confirm.keep')}
+          </Button>
+        </ButtonRow>
       </div>
     </dialog>
   );

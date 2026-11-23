@@ -12,6 +12,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
 
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { PeopleDialog } from '@/features/people/components/PeopleDialog';
@@ -68,10 +69,7 @@ export function ChatBlockDialog({ isOpen, onClose, handle, name }: ChatBlockDial
     >
       <p className="m-0 text-body">{t('block.body', { name })}</p>
       {block.hasFailed && <Notice tone="error">{t('block.failed')}</Notice>}
-      <div className="flex flex-wrap justify-end gap-3">
-        <Button variant="secondary" onClick={handleClose}>
-          {t('block.cancel')}
-        </Button>
+      <ButtonRow>
         <Button
           variant="destructive"
           disabled={block.isSaving}
@@ -79,7 +77,10 @@ export function ChatBlockDialog({ isOpen, onClose, handle, name }: ChatBlockDial
         >
           {block.isSaving ? t('block.saving') : t('block.confirm', { name })}
         </Button>
-      </div>
+        <Button variant="secondary" onClick={handleClose}>
+          {t('block.cancel')}
+        </Button>
+      </ButtonRow>
     </PeopleDialog>
   );
 }

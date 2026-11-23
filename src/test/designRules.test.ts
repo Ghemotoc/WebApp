@@ -20,6 +20,9 @@
  *   6. No member screen is rounder than the design: boxes are 24 px (rounded-card), tiles 12 px
  *      (rounded-field), pills fully round; a class never names a 25 to 40 px corner (NIGHT-2;
  *      Robert, 23 Nov 2026: "still quite a few rounded areas"). Staff screens are left out.
+ *   7. Form and dialog buttons sit on the left, the main one first (design books item 8, Robert,
+ *      23 Nov 2026, 13:25 UTC): a member file never pushes a row of buttons to the right edge with
+ *      justify-end; it uses ButtonRow (src/components/ui/ButtonRow.tsx). Staff screens are left out.
  * Who runs it: Vitest (`npm test`), in CI on every pull request. Its sister guard is
  * src/test/noDoodles.test.ts.
  */
@@ -271,6 +274,22 @@ describe('the design rules are the defaults', () => {
     const offenders = codeFiles()
       .filter(([path]) => !isStaffFile(path) && !pills.includes(path))
       .filter(([, text]) => tooRound.test(text))
+      .map(([path]) => path);
+    expect(offenders).toEqual([]);
+  });
+
+  it('no member form or dialog pushes its buttons to the right edge', () => {
+    // A justify-end row whose next line opens a button: the footer ButtonRow replaced (item 8).
+    const rightButtons = /justify-end[^\n]*>\s*\n\s*<(Button|Link)\b/;
+    // Not footers: the Share button under a chapter picture lines up with the picture's edge, and
+    // the translation editor's top bar keeps its actions at the right like the chapter editor's.
+    const notFooters = [
+      '/src/features/sharing/components/PictureShareButton.tsx',
+      '/src/features/story-languages/components/TranslationEditorBar.tsx',
+    ];
+    const offenders = codeFiles()
+      .filter(([path]) => !isStaffFile(path) && !notFooters.includes(path))
+      .filter(([, text]) => rightButtons.test(text))
       .map(([path]) => path);
     expect(offenders).toEqual([]);
   });
