@@ -79,14 +79,25 @@ function LikesForm({ onboarding, state }: LikesFormProps) {
 }
 
 /**
- * Renders the section.
+ * Renders the section: a card with its own heading in Settings, or only the intro and the form
+ * inside a wizard step, whose title already names it (the holding page, CALM-9 H08).
  *
+ * @param props.isInsideStep - true inside a StepWizard step: no card and no heading of its own
  * @returns the section, once the person's setup has loaded
  */
-export function LikesSettingsSection() {
+export function LikesSettingsSection({ isInsideStep = false }: { isInsideStep?: boolean }) {
   const { t } = useTranslation('account');
   const state = useMyOnboarding();
   const { onboarding } = state;
+  const body = (
+    <>
+      <p className="m-0 text-ink-muted">{t('onboarding.settings.intro')}</p>
+      {state.loadFailed && <Notice tone="error">{t('onboarding.loadFailed')}</Notice>}
+      {onboarding != null && <LikesForm onboarding={onboarding} state={state} />}
+    </>
+  );
+  // Inside a step: the step's title is the heading, so the form sits straight in the step.
+  if (isInsideStep) return <div className="flex flex-col gap-4">{body}</div>;
   return (
     <section
       aria-labelledby="settings-likes-heading"
@@ -98,9 +109,7 @@ export function LikesSettingsSection() {
       >
         {t('onboarding.settings.heading')}
       </h2>
-      <p className="m-0 text-ink-muted">{t('onboarding.settings.intro')}</p>
-      {state.loadFailed && <Notice tone="error">{t('onboarding.loadFailed')}</Notice>}
-      {onboarding != null && <LikesForm onboarding={onboarding} state={state} />}
+      {body}
     </section>
   );
 }

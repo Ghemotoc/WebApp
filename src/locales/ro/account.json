@@ -425,9 +425,9 @@
       "documentTitle": "Ești pe listă · {{productName}}",
       "heading": "Ești pe listă",
       "joined": "Te-ai înscris pe {{date}}",
-      "next": "Primim oamenii câte puțin, scriitorii mai întâi. Când îți vine rândul, îți scriem pe email că ai intrat. Până atunci nu poți încă scrie, citi sau posta, dar îți poți pregăti profilul.",
-      "nextClosed": "Încă nu suntem deschiși în {{country}}. Când se deschide, îți scriem pe e-mail că ai intrat. Până atunci nu poți scrie, citi sau posta, dar îți poți pregăti profilul.",
-      "nextClosedUnknown": "Încă nu suntem deschiși în țara ta. Când se deschide, îți scriem pe e-mail că ai intrat. Până atunci nu poți scrie, citi sau posta, dar îți poți pregăti profilul.",
+      "next": "Primim oamenii câte puțin, scriitorii mai întâi. Când îți vine rândul, îți scriem pe email că ai intrat. Până atunci nu poți încă scrie, citi sau posta, dar îți poți pregăti profilul în trei pași scurți. Fiecare e opțional.",
+      "nextClosed": "Încă nu suntem deschiși în {{country}}. Când se deschide, îți scriem pe e-mail că ai intrat. Până atunci nu poți scrie, citi sau posta, dar îți poți pregăti profilul în trei pași scurți. Fiecare e opțional.",
+      "nextClosedUnknown": "Încă nu suntem deschiși în țara ta. Când se deschide, îți scriem pe e-mail că ai intrat. Până atunci nu poți scrie, citi sau posta, dar îți poți pregăti profilul în trei pași scurți. Fiecare e opțional.",
       "interestLabel": "Ce vrei să faci aici?",
       "saved": "Salvat.",
       "saveFailed": "Nu am putut salva. Verifică-ți conexiunea și încearcă din nou.",
@@ -435,6 +435,19 @@
       "logOut": "Deconectează-te",
       "logOutFailed": "Nu te-am putut deconecta. Verifică-ți conexiunea și încearcă din nou.",
       "identityNote": "Este posibil să îți cerem mai târziu să îți confirmi identitatea."
+    },
+    "steps": {
+      "label": "Pașii pentru profil",
+      "interest": "Ce vrei să faci aici",
+      "avatar": "Avatarul tău",
+      "likes": "Ce îți place",
+      "done": "Gata",
+      "finished": "Profilul e gata. Poți schimba orice pas aici sau în Setări.",
+      "summary": {
+        "avatarSaved": "Avatar salvat",
+        "initials": "Deocamdată se văd inițialele",
+        "likes": "Alegerile se pot schimba oricând"
+      }
     }
   }
 }

@@ -23,13 +23,11 @@ import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { useMyNames } from '@/features/account/hooks/useMyNames';
 import { signOutHere } from '@/features/auth/api/signIn';
-import { AvatarBuilderSection } from '@/features/avatars/components/AvatarBuilderSection';
-import { LikesSettingsSection } from '@/features/onboarding/components/LikesSettingsSection';
 import { getSupabaseClient } from '@/lib/supabase';
 
 import type { WaitlistInterest } from '../api/waitlist';
 
-import { WaitlistInterestPicker } from './WaitlistInterestPicker';
+import { WaitlistProfileSteps } from './WaitlistProfileSteps';
 
 /** What the page needs. */
 interface WaitlistHoldingPageProps {
@@ -145,16 +143,7 @@ export function WaitlistHoldingPage(props: WaitlistHoldingPageProps) {
     <PageContainer className="flex flex-col gap-8 pt-12 pb-6">
       <title>{t('waitlist.holding.documentTitle')}</title>
       <HoldingIntro joinedAt={joinedAt} nextLine={nextLine} />
-      <section
-        aria-label={t('waitlist.holding.interestLabel')}
-        className="flex max-w-[860px] flex-col gap-3 rounded-card border border-border bg-surface p-6 shadow-card"
-      >
-        <WaitlistInterestPicker interest={interest} />
-      </section>
-      <div className="flex max-w-[860px] flex-col gap-6">
-        {handle !== null && <AvatarBuilderSection handle={handle} />}
-        <LikesSettingsSection />
-      </div>
+      <WaitlistProfileSteps interest={interest} handle={handle} />
       <div className="flex max-w-[860px] flex-wrap items-center gap-4">
         <Link to="/settings" className="text-link underline">
           {t('waitlist.holding.settingsLink')}

@@ -1,9 +1,11 @@
 /**
  * WaitlistInterestPicker: "What do you want to do here?" on the holding page, where someone
- * waiting can change the answer they gave at sign-up (bundle WAITLIST-1).
+ * waiting can change the answer they gave at sign-up (bundle WAITLIST-1). It sits in the first
+ * step of the profile wizard (CALM-9 H08), whose title asks the question, so its own label is
+ * for screen readers only.
  *
  * The choice saves as soon as it changes, and says so ("Saved") or that it couldn't save, in a
- * polite live region. Who shows it: WaitlistHoldingPage. What it calls: useSaveMyWaitlistInterest.
+ * polite live region. Who shows it: WaitlistProfileSteps. What it calls: useSaveMyWaitlistInterest.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -39,8 +41,7 @@ export function WaitlistInterestPicker({ interest }: { interest: WaitlistInteres
     <div className="flex flex-col gap-2">
       <ChoiceChips
         label={t('waitlist.holding.interestLabel')}
-        isLabelVisible
-        isLabelEyebrow
+        isLabelVisible={false}
         options={interests.map((value) => ({ value, label: t(`waitlist.interest.${value}`) }))}
         value={chosen}
         onChange={choose}
