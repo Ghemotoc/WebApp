@@ -36,7 +36,7 @@ function SetInChip({ code, onRemove }: { code: string; onRemove: () => void }) {
   const { t, i18n } = useTranslation('writing');
   const name = countryName(code, i18n.language);
   return (
-    <li className="inline-flex h-10 items-center gap-1.5 rounded-full border border-(--pill-plum-border) bg-(--pill-plum-bg) pl-3 text-sm leading-none font-semibold text-(--pill-plum-text)">
+    <li className="inline-flex h-10 items-center gap-2 rounded-full border border-(--pill-plum-border) bg-(--pill-plum-bg) pl-3 type-body leading-none font-semibold text-(--pill-plum-text)">
       <ActionIcon name="pin" size={14} />
       {name}
       <button
@@ -118,7 +118,7 @@ export function SetInCountriesField({
   return (
     <div className="flex flex-col gap-3">
       {/* The visible label; SearchInput carries the same words as the field's own label. */}
-      <span aria-hidden="true" className="text-sm font-semibold text-ink">
+      <span aria-hidden="true" className="type-body font-semibold text-ink">
         {t('setIn.label')}
       </span>
       {countries.length > 0 && (
@@ -150,11 +150,11 @@ export function SetInCountriesField({
           <option key={choice.code} value={choice.name} />
         ))}
       </datalist>
-      <p id={`${fieldId}-hint`} className="m-0 text-[13px] text-meta">
+      <p id={`${fieldId}-hint`} className="m-0 type-meta text-ink-muted">
         {hint}
       </p>
       {errorMessage !== undefined && (
-        <p role="alert" className="m-0 text-[13px] font-semibold text-destructive">
+        <p role="alert" className="m-0 type-meta font-semibold text-destructive">
           {errorMessage}
         </p>
       )}

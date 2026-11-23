@@ -74,7 +74,7 @@ export function SignUpForm({ form, includesAgeCheck }: SignUpFormProps) {
       aria-label={t('signUp.formLabel')}
       noValidate
       onSubmit={handleSubmit}
-      className="flex flex-col gap-[18px]"
+      className="flex flex-col gap-4"
     >
       <SignUpEmailField form={form} />
       <HandleField

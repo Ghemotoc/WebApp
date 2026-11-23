@@ -46,7 +46,7 @@ export function BugReportPanel({ isOpen, onClose }: BugReportPanelProps) {
     <Sheet isOpen={isOpen} onClose={close} title={t('bugReport.title')}>
       {report.isSent ? (
         <div className="flex flex-col items-start gap-4">
-          <p role="status" className="m-0 type-body text-body">
+          <p role="status" className="m-0 type-body text-ink-muted">
             {t('bugReport.sentBody')}
           </p>
           <Button variant="secondary" onClick={close}>

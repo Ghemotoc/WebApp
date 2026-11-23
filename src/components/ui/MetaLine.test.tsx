@@ -23,7 +23,7 @@ describe('MetaLine', () => {
       />,
     );
     expect(screen.getByText('Due tomorrow')).toHaveClass('text-(--warning-text)');
-    expect(screen.getByText('Draft')).toHaveClass('font-bold', 'text-ink');
+    expect(screen.getByText('Draft')).toHaveClass('font-semibold', 'text-ink');
   });
 
   it('leaves out empty facts and draws nothing when none are left', () => {

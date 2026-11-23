@@ -44,19 +44,20 @@ import { StoryHeader } from './StoryHeader';
 import { StoryLabels } from './StoryLabels';
 import { StorySideColumn } from './StorySideColumn';
 import { StoryWorldLinks } from './StoryWorldLinks';
+import { useStoryStatement } from '../hooks/useStoryStatement';
 
 /** "This story isn't available", with the way home. */
 function StoryUnavailable() {
   const { t } = useTranslation('reading');
   return (
-    <div className="flex flex-col items-start gap-3 rounded-card border border-border bg-surface px-8 py-10">
-      <h1 className="m-0 font-heading text-[26px] font-bold text-heading">
+    <div className="flex flex-col items-start gap-3 rounded-card border border-border bg-surface px-8 py-8">
+      <h1 className="m-0 font-heading type-heading font-bold text-ink-heading">
         {t('storyPage.unavailableTitle')}
       </h1>
-      <p className="m-0 text-base text-body">{t('storyPage.unavailableBody')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('storyPage.unavailableBody')}</p>
       <Link
         to="/"
-        className="inline-flex h-11 items-center rounded-full button-main px-5 text-sm font-semibold no-underline"
+        className="inline-flex h-11 items-center rounded-full button-main px-4 type-body font-semibold no-underline"
       >
         {t('storyPage.goHome')}
       </Link>
@@ -127,10 +128,13 @@ export function StoryPage() {
   const { story, isLoaded, loadFailed } = useStoryPage(storySlug);
   // TRANSLATE-1b: a story in several languages opens in this reader's language.
   useOpeningEdition(story);
+  // CALM-9s: the footer says what this story is, for readers and search engines, once the
+  // reader may see the story at all.
+  useStoryStatement(storySlug, isLoaded && story !== null);
 
   if (loadFailed) {
     return (
-      <PageContainer className="pt-12 pb-7">
+      <PageContainer className="pt-12 pb-6">
         <Notice tone="error">{t('storyPage.loadFailed')}</Notice>
       </PageContainer>
     );
@@ -138,14 +142,14 @@ export function StoryPage() {
   if (!isLoaded) return null;
   if (story === null) {
     return (
-      <PageContainer className="tmc-rise pt-12 pb-7">
+      <PageContainer className="tmc-rise pt-12 pb-6">
         <StoryMissing storySlug={storySlug} />
       </PageContainer>
     );
   }
 
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-10 pt-8 pb-16">
+    <PageContainer className="tmc-rise flex flex-col gap-8 pt-8 pb-16">
       <title>{t('storyPage.documentTitle', { title: story.title })}</title>
       {story.isOwner && !story.isPublic && (
         <Notice tone="info">{t('storyPage.notPublicYet')}</Notice>

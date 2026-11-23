@@ -43,13 +43,13 @@ function SpotlightCheckbox(props: { isChecked: boolean; onChange: (isChecked: bo
         checked={props.isChecked}
         aria-describedby="parent-consent-spotlight-hint"
         onChange={(event) => props.onChange(event.target.checked)}
-        className="mt-0.5 size-6 shrink-0 cursor-pointer accent-(--link)"
+        className="mt-1 size-6 shrink-0 cursor-pointer accent-(--link)"
       />
       <div className="flex flex-col gap-1">
-        <label htmlFor="parent-consent-spotlight" className="text-[15px] text-body">
+        <label htmlFor="parent-consent-spotlight" className="type-body text-ink-muted">
           {t('parent.spotlightBox')}
         </label>
-        <p id="parent-consent-spotlight-hint" className="m-0 text-sm text-meta">
+        <p id="parent-consent-spotlight-hint" className="m-0 type-body text-ink-muted">
           {t('parent.spotlightHint')}
         </p>
       </div>
@@ -70,7 +70,7 @@ function GuardianCheckbox(props: {
   const { t } = useParentConsentTranslation();
   const errorId = props.isMissing ? 'parent-consent-guardian-error' : undefined;
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2">
       <div className="flex items-start gap-3">
         <input
           id="parent-consent-guardian"
@@ -79,14 +79,14 @@ function GuardianCheckbox(props: {
           aria-describedby={errorId}
           aria-invalid={props.isMissing ? true : undefined}
           onChange={(event) => props.onChange(event.target.checked)}
-          className="mt-0.5 size-6 shrink-0 cursor-pointer accent-(--link)"
+          className="mt-1 size-6 shrink-0 cursor-pointer accent-(--link)"
         />
-        <label htmlFor="parent-consent-guardian" className="text-[15px] text-body">
+        <label htmlFor="parent-consent-guardian" className="type-body text-ink-muted">
           {t('parent.guardian')}
         </label>
       </div>
       {props.isMissing && (
-        <p id={errorId} className="m-0 text-sm text-destructive">
+        <p id={errorId} className="m-0 type-body text-destructive">
           {t('parent.guardianNeeded')}
         </p>
       )}
@@ -119,7 +119,7 @@ export function ParentAnswerForm({
 
   const date = formatLocalDate(new Date(deadline), i18n.language);
   return (
-    <div className="flex flex-col gap-4 border-t border-border pt-5">
+    <div className="flex flex-col gap-4 border-t border-border pt-4">
       <GuardianCheckbox
         isChecked={isGuardian}
         isMissing={isGuardianMissing}
@@ -138,7 +138,7 @@ export function ParentAnswerForm({
           {t('parent.disagree')}
         </Button>
       </div>
-      <p className="m-0 text-sm text-meta">{t('parent.deadline', { date })}</p>
+      <p className="m-0 type-body text-ink-muted">{t('parent.deadline', { date })}</p>
     </div>
   );
 }

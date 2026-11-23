@@ -84,18 +84,18 @@ function SpaceReport({ space }: { space: Space }) {
 function SpaceTitle({ space }: { space: Space }) {
   const { t } = useSpacesTranslation();
   return (
-    <div className="flex min-w-0 flex-[1_1_420px] flex-col gap-4 md:flex-row md:items-center md:gap-7">
+    <div className="flex min-w-0 flex-[1_1_420px] flex-col gap-4 md:flex-row md:items-center md:gap-6">
       <SpaceLogo space={space} size="large" />
-      <div className="flex min-w-0 flex-col gap-2.5">
+      <div className="flex min-w-0 flex-col gap-3">
         <Eyebrow>{t('space.eyebrow')}</Eyebrow>
         <h1
           id="space-title"
-          className="m-0 font-heading text-[30px] leading-[1.02] font-bold tracking-[-0.025em] break-words text-heading md:text-[clamp(36px,4.4vw,56px)]"
+          className="m-0 font-heading type-title leading-[1.02] font-bold tracking-[-0.025em] break-words text-ink-heading md:text-[clamp(36px,4.4vw,56px)]"
         >
           {space.name}
         </h1>
         {space.description !== '' && (
-          <p className="m-0 max-w-[680px] text-[17px] leading-relaxed break-words text-body">
+          <p className="m-0 max-w-[680px] type-long leading-relaxed break-words text-ink-muted">
             {space.description}
           </p>
         )}
@@ -128,7 +128,7 @@ export function SpaceHeaderCard({ space }: { space: Space }) {
         <SpaceBannerBand banner={space.banner} pictureUrl={pictureUrl} />
         <div
           data-banner-tone={tone}
-          className="genre-band relative flex flex-wrap items-center justify-between gap-x-8 gap-y-6 px-5 pt-7 pb-6 md:px-11 md:pt-11 md:pb-10"
+          className="genre-band relative flex flex-wrap items-center justify-between gap-x-8 gap-y-6 px-4 pt-6 pb-6 md:px-12 md:pt-12 md:pb-8"
           style={bandText as CSSProperties}
         >
           <SpaceTitle space={space} />
@@ -142,7 +142,7 @@ export function SpaceHeaderCard({ space }: { space: Space }) {
           </div>
         </div>
       </div>
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-2.5 px-5 py-4 text-sm text-body md:px-11">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-3 px-4 py-4 type-body text-ink-muted md:px-12">
         <SpaceFacts space={space} />
         <SpaceNumbers space={space} />
       </div>

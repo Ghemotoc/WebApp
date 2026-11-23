@@ -22,9 +22,9 @@ import { FollowersDialog } from './FollowersDialog';
 function Stat({ value, label }: { value: string; label: ReactNode }) {
   return (
     // The label comes first in the markup (a description list's order) and shows under the number.
-    <div className="flex flex-col-reverse gap-0.5">
-      <dt className="text-[13px] text-meta">{label}</dt>
-      <dd className="m-0 font-heading text-[26px] font-bold text-ink">{value}</dd>
+    <div className="flex flex-col-reverse gap-1">
+      <dt className="type-meta text-ink-muted">{label}</dt>
+      <dd className="m-0 font-heading type-heading font-bold text-ink">{value}</dd>
     </div>
   );
 }
@@ -46,7 +46,7 @@ function FollowersLabel({ profile, count }: { profile: WriterProfile; count: num
             type="button"
             onClick={() => setIsListOpen(true)}
             aria-haspopup="dialog"
-            className="inline-flex min-h-6 cursor-pointer items-center border-0 bg-transparent p-0 text-[13px] font-semibold text-link underline hover:text-link-hover"
+            className="inline-flex min-h-6 cursor-pointer items-center border-0 bg-transparent p-0 type-meta font-semibold text-link underline hover:text-link-hover"
           >
             {t('profile.seeFollowers')}
           </button>

@@ -33,11 +33,11 @@ export function SignedInDevicesSection() {
     >
       <h2
         id="settings-devices-heading"
-        className="m-0 font-heading text-[24px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('devices.heading')}
       </h2>
-      <p className="m-0 text-body">{t('devices.body')}</p>
+      <p className="m-0 text-ink-muted">{t('devices.body')}</p>
       {devices.loadFailed && <Notice tone="error">{t('devices.loadFailed')}</Notice>}
       <ul className="m-0 flex list-none flex-col p-0">
         {devices.sessions.map((session) => (
@@ -61,8 +61,8 @@ export function SignedInDevicesSection() {
       )}
       {devices.othersEnded && <Notice tone="success">{t('devices.signedOutOthers')}</Notice>}
       {devices.actionFailed && <Notice tone="error">{t('devices.actionFailed')}</Notice>}
-      <p className="m-0 text-[13px] text-meta">{t('devices.privacy')}</p>
-      <p className="m-0 text-[13px] text-meta">{t('devices.lagNote')}</p>
+      <p className="m-0 type-meta text-ink-muted">{t('devices.privacy')}</p>
+      <p className="m-0 type-meta text-ink-muted">{t('devices.lagNote')}</p>
     </section>
   );
 }

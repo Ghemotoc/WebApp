@@ -31,6 +31,7 @@ import { parseSpot, type SpotRange } from '@/lib/chapter-blocks';
 
 import type { ReaderChapter } from '../api/chapter';
 import { useChapter } from '../hooks/useChapter';
+import { useStoryStatement } from '../hooks/useStoryStatement';
 
 import { ChapterReading } from './ChapterReading';
 
@@ -134,17 +135,20 @@ export function ChapterReaderPage() {
   // A shared passage's spot (S1-E4-11); anything that isn't one is read as no spot.
   const sharedSpot = useMemo(() => parseSpot(spot), [spot]);
   const { chapter, isLoaded, loadFailed } = useChapter(storySlug, chapterCode);
+  // CALM-9s: the footer under the reader says what the story is, as on the story page, but only
+  // when this reader may see the chapter (a rating or a missing chapter keeps it out).
+  useStoryStatement(storySlug, isLoaded && chapter !== null);
 
   if (loadFailed) {
     return (
-      <PageContainer className="pt-12 pb-7">
+      <PageContainer className="pt-12 pb-6">
         <Notice tone="error">{t('reader.loadFailed')}</Notice>
       </PageContainer>
     );
   }
   if (!isLoaded) return null;
   return (
-    <PageContainer className="tmc-rise flex flex-col pt-3 pb-12 lg:pt-7">
+    <PageContainer className="tmc-rise flex flex-col pt-3 pb-12 lg:pt-6">
       <ChapterShown
         storySlug={storySlug}
         chapterCode={chapterCode}

@@ -84,11 +84,11 @@ function IdeaReading({ idea }: { idea: StoryIdea }) {
           new Date(idea.doneAt),
         );
   return (
-    <div className="flex min-w-0 flex-1 flex-col gap-1.5 pt-2.5">
+    <div className="flex min-w-0 flex-1 flex-col gap-2 pt-3">
       <p className="m-0 flex flex-wrap items-center gap-2">
         <InfoPill tone={kindTones[idea.kind]}>{t(`ideas.kinds.${idea.kind}`)}</InfoPill>
         {doneDate !== null && (
-          <span className="text-[13px] text-meta">{t('ideas.doneOn', { date: doneDate })}</span>
+          <span className="type-meta text-ink-muted">{t('ideas.doneOn', { date: doneDate })}</span>
         )}
       </p>
       {/* A done note is struck through and also says "Done on …", so it isn't shown by the line
@@ -96,14 +96,16 @@ function IdeaReading({ idea }: { idea: StoryIdea }) {
       <p
         data-testid="atlas-idea-body"
         className={cn(
-          'm-0 text-[15px] font-bold break-words text-heading',
+          'm-0 type-body font-semibold break-words text-ink-heading',
           idea.doneAt !== null && 'line-through opacity-70',
         )}
       >
         {idea.body}
       </p>
       {idea.outcome !== '' && (
-        <p className="m-0 text-sm break-words whitespace-pre-line text-body">{idea.outcome}</p>
+        <p className="m-0 type-body break-words whitespace-pre-line text-ink-muted">
+          {idea.outcome}
+        </p>
       )}
       <CrossLinkChips texts={[idea.body, idea.outcome]} />
     </div>
@@ -197,7 +199,7 @@ export function IdeaItem({ idea, save, remove }: IdeaItemProps) {
     <li
       id={`atlas-idea-${idea.id}`}
       data-testid="atlas-idea-item"
-      className="flex min-w-0 flex-col gap-3 border-b border-border px-3 py-3 last:border-b-0 sm:px-[18px]"
+      className="flex min-w-0 flex-col gap-3 border-b border-border px-3 py-3 last:border-b-0 sm:px-4"
     >
       <div className="flex min-w-0 flex-wrap items-start gap-x-3 gap-y-2">
         <div className="flex min-w-0 flex-1 basis-64 items-start gap-2">

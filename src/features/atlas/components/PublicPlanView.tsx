@@ -42,7 +42,7 @@ function CharactersArea({ plan, itemId, base, isPreview }: Omit<PublicPlanViewPr
   if (itemId === undefined) return <PublicCast plan={plan} base={base} />;
   const character = plan.cast.characters.find((candidate) => candidate.id === itemId);
   if (character === undefined)
-    return <p className="m-0 text-body">{t('publicPlan.character.notShown')}</p>;
+    return <p className="m-0 text-ink-muted">{t('publicPlan.character.notShown')}</p>;
   return <PublicCharacter plan={plan} character={character} base={base} isPreview={isPreview} />;
 }
 
@@ -51,7 +51,8 @@ function WorldArea({ plan, itemId, base, isPreview }: Omit<PublicPlanViewProps, 
   const { t } = useAtlasTranslation();
   if (itemId === undefined) return <PublicWorld plan={plan} base={base} isPreview={isPreview} />;
   const placed = findPublicEntry(plan, itemId);
-  if (placed === null) return <p className="m-0 text-body">{t('publicPlan.world.notShown')}</p>;
+  if (placed === null)
+    return <p className="m-0 text-ink-muted">{t('publicPlan.world.notShown')}</p>;
   return <PublicWorldEntry plan={plan} placed={placed} base={base} isPreview={isPreview} />;
 }
 

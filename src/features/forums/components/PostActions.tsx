@@ -103,7 +103,7 @@ function AnswerButton({ post, threadNumber }: { post: ForumPost; threadNumber: n
         {t(`answer.${key}`)}
       </Button>
       {marking.failure !== null && (
-        <span role="alert" className="text-sm font-semibold text-destructive">
+        <span role="alert" className="type-body font-semibold text-destructive">
           {t(`answer.failures.${marking.failure}`)}
         </span>
       )}
@@ -138,9 +138,9 @@ function DeleteQuestion({ post, forumSlug, onAskDelete }: PostActionsProps) {
       aria-label={t('post.deleteLabel', { number: post.number })}
       className="flex w-full flex-col gap-2"
     >
-      <p className="m-0 text-sm text-ink">{t('post.deleteQuestion')}</p>
+      <p className="m-0 type-body text-ink">{t('post.deleteQuestion')}</p>
       {deleting.failure !== null && (
-        <p className="m-0 text-sm font-semibold text-destructive">
+        <p className="m-0 type-body font-semibold text-destructive">
           {t(...failureText(deleting.failure))}
         </p>
       )}

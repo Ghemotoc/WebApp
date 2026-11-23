@@ -47,7 +47,7 @@ export function ReaderVisibilitySection({
       hint={useReaderSummary(slug, characterId)}
       contentClassName="gap-3"
     >
-      <p className="m-0 text-sm text-body">
+      <p className="m-0 type-body text-ink-muted">
         {t('readers.item.characterHint')}{' '}
         <Link to={`/plan/s/${slug}/readers`} className="font-semibold text-link">
           {t('readers.item.settingsLink')}

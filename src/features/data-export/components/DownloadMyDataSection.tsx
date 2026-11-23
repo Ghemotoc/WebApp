@@ -40,12 +40,12 @@ function IncludedList() {
   return (
     <div className="flex flex-col gap-2">
       <Eyebrow>{t('settings.includesLabel')}</Eyebrow>
-      <ul className="m-0 flex list-disc flex-col gap-1 pl-5 text-[15px] text-body">
+      <ul className="m-0 flex list-disc flex-col gap-1 pl-4 type-body text-ink-muted">
         {includedParts.map((part) => (
           <li key={part}>{t(`settings.includes.${part}`)}</li>
         ))}
       </ul>
-      <p className="m-0 text-sm text-meta">{t('settings.everythingNote')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('settings.everythingNote')}</p>
     </div>
   );
 }
@@ -80,19 +80,19 @@ export function DownloadMyDataSection({
       aria-labelledby="settings-download-my-data-heading"
       className="flex scroll-mt-24 flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card"
     >
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         <h2
           id="settings-download-my-data-heading"
-          className="m-0 font-heading text-[22px] font-bold text-heading"
+          className="m-0 font-heading type-heading font-bold text-ink-heading"
         >
           {t('settings.heading')}
         </h2>
-        <p className="m-0 text-body">{t('settings.intro')}</p>
+        <p className="m-0 text-ink-muted">{t('settings.intro')}</p>
       </div>
       <IncludedList />
       <StatusBody />
       {!hidesStoriesBlock && <DownloadMyStoriesBlock />}
-      <p className="m-0 rounded-2xl bg-tint px-4.5 py-4 text-[15px] leading-relaxed text-body">
+      <p className="m-0 rounded-card bg-tint px-4 py-4 type-body leading-relaxed text-ink-muted">
         {t('settings.minorsNote')}
       </p>
     </section>

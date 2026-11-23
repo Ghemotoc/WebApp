@@ -27,13 +27,13 @@ export function ContinueReading({ items }: { items: ContinueReadingItem[] }) {
   const { t } = useLibraryTranslation();
   return (
     <Hero labelledBy="library-continue-heading">
-      <h2 id="library-continue-heading" className="m-0 type-heading text-heading">
+      <h2 id="library-continue-heading" className="m-0 type-heading text-ink-heading">
         {t('continue.heading')}
       </h2>
       {items.length === 0 ? (
-        <p className="m-0 type-body text-body">{t('continue.empty')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('continue.empty')}</p>
       ) : (
-        <ul className="m-0 grid list-none grid-cols-1 gap-10 p-0 min-[900px]:grid-cols-2">
+        <ul className="m-0 grid list-none grid-cols-1 gap-8 p-0 min-[900px]:grid-cols-2">
           {items.map((item, index) => (
             <ContinueReadingCard key={item.story.slug} item={item} isFirst={index === 0} />
           ))}

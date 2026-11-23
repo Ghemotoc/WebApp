@@ -22,10 +22,10 @@ import { legalDocumentSlugs } from '../lib/legalDocumentList';
  */
 function linkClasses({ isActive }: { isActive: boolean }): string {
   const shared =
-    'inline-flex h-9 items-center justify-center gap-1.5 rounded-full border px-4 text-sm leading-none font-semibold no-underline';
+    'inline-flex h-9 items-center justify-center gap-2 rounded-full border px-4 type-body leading-none font-semibold no-underline';
   return isActive
     ? `${shared} border-heading bg-heading text-on-primary`
-    : `${shared} border-control-border bg-surface text-heading hover:bg-tint`;
+    : `${shared} border-control-border bg-surface text-ink-heading hover:bg-tint`;
 }
 
 /**
@@ -37,7 +37,7 @@ export function LegalDocumentNav() {
   const { t } = useTranslation('legal');
   return (
     <nav aria-label={t('documentsNavLabel')}>
-      <ul className="m-0 flex list-none flex-wrap gap-2 rounded-card border border-border bg-surface p-1.5">
+      <ul className="m-0 flex list-none flex-wrap gap-2 rounded-card border border-border bg-surface p-2">
         {legalDocumentSlugs.map((slug) => (
           // Each link is 36 px tall, well above the 24 px minimum target (WCAG 2.2, 2.5.8).
           <li key={slug} className="flex">

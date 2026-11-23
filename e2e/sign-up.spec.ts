@@ -18,7 +18,7 @@ import { expect, test, type Page } from '@playwright/test';
 
 import { checkScreen, everyView } from './support/accessibility';
 import { runSql } from './support/database';
-import { homeAddressPattern } from './support/homeAddress';
+import { memberHomeAddressPattern } from './support/homeAddress';
 import { appPathFromEmail, waitForEmail } from './support/mailpit';
 
 /** The seeded invite that works (supabase/seed.sql, supabase/README.md). */
@@ -153,7 +153,7 @@ test('an invited adult signs up, confirms the email from Mailpit and is confirme
     // "Continue" goes to the home page, with no "Choose a username" notice; the rest of setup
     // is offered instead (S1-E2-06).
     await page.getByRole('link', { name: 'Continue', exact: true }).click();
-    await expect(page).toHaveURL(homeAddressPattern);
+    await expect(page).toHaveURL(memberHomeAddressPattern);
     await expect(page.getByRole('heading', { name: 'Choose a username' })).toHaveCount(0);
     await expect(
       page.getByRole('heading', { name: 'Finish setting up your profile' }),

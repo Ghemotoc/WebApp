@@ -66,7 +66,7 @@ function ParentLine({ settings }: { settings: PrivacySettings }) {
   const asking = useAskParent();
   if (settings.parentSpotlight === 'not_needed' || !settings.canAskParent) return null;
   if (settings.parentSpotlight === 'agreed') {
-    return <p className="m-0 text-[13px] text-meta">{t('suggest.parentAgreed')}</p>;
+    return <p className="m-0 type-meta text-ink-muted">{t('suggest.parentAgreed')}</p>;
   }
   const isAsked = settings.parentSpotlight === 'asked';
   return (
@@ -76,7 +76,7 @@ function ParentLine({ settings }: { settings: PrivacySettings }) {
         <Notice tone="error">{t(`suggest.failures.${asking.failure}`)}</Notice>
       )}
       {asking.hasSent && (
-        <p className="m-0 text-[13px] text-meta" role="status">
+        <p className="m-0 type-meta text-ink-muted" role="status">
           {t('suggest.sent')}
         </p>
       )}

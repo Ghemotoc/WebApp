@@ -84,7 +84,7 @@ function SeeAllLink({ href, count, title }: { href: string; count: number; title
   return (
     <a
       href={href}
-      className="inline-flex min-h-11 items-center px-2 text-sm font-semibold text-link"
+      className="inline-flex min-h-11 items-center px-2 type-body font-semibold text-link"
     >
       {t('shelf.viewCount', { count })}{' '}
       <span className="sr-only">{t('shelf.inRow', { title })}</span>

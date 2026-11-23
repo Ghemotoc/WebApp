@@ -168,15 +168,15 @@ function SaveNote({ saveFailed }: { saveFailed: boolean }) {
     return (
       <p
         role="alert"
-        className="m-0 border-t border-hairline pt-3.5 text-[13px] leading-normal text-destructive"
+        className="m-0 border-t border-hairline pt-4 type-meta leading-normal text-destructive"
       >
         {t('settings.saveFailed')}
       </p>
     );
   }
   return (
-    <p className="m-0 flex gap-2 border-t border-hairline pt-3.5 text-[13px] leading-normal text-body">
-      <span className="mt-0.5 flex-none text-(--success-text)">
+    <p className="m-0 flex gap-2 border-t border-hairline pt-4 type-meta leading-normal text-ink-muted">
+      <span className="mt-1 flex-none text-(--success-text)">
         <CheckIcon />
       </span>
       {t('settings.saved')}
@@ -207,13 +207,13 @@ export function ReadingSettingsPanel({
       id={id}
       aria-labelledby={`${id}-title`}
       // In the side column it is its own glass panel; in the sheet the sheet is the glass.
-      className={cn('flex flex-col gap-[18px]', !isInSheet && 'glass-pill rounded-card p-[22px]')}
+      className={cn('flex flex-col gap-4', !isInSheet && 'glass-pill rounded-card p-6')}
     >
       <div className="flex items-center justify-between gap-2">
         <h2
           id={`${id}-title`}
           tabIndex={-1}
-          className="m-0 type-subheading text-heading outline-none"
+          className="m-0 type-subheading text-ink-heading outline-none"
         >
           {t('settings.title')}
         </h2>
@@ -221,7 +221,7 @@ export function ReadingSettingsPanel({
           type="button"
           aria-label={t('settings.close')}
           onClick={onClose}
-          className="-mr-2.5 inline-flex size-11 items-center justify-center rounded-full text-body hover:bg-tint"
+          className="-mr-3 inline-flex size-11 items-center justify-center rounded-full text-ink-muted hover:bg-tint"
         >
           <CloseIcon />
         </button>

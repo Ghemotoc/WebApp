@@ -34,7 +34,7 @@ export function DocumentFormatChoice({ value, onChange }: DocumentFormatChoicePr
       <legend className="mb-1 eyebrow">{t('stories.format.legend')}</legend>
       <div className="flex flex-wrap gap-x-6 gap-y-1">
         {formats.map((format) => (
-          <div key={format} className="flex min-h-11 items-center gap-2.5">
+          <div key={format} className="flex min-h-11 items-center gap-3">
             <input
               id={`download-format-${format}`}
               type="radio"
@@ -43,13 +43,13 @@ export function DocumentFormatChoice({ value, onChange }: DocumentFormatChoicePr
               checked={value === format}
               onChange={() => onChange(format)}
             />
-            <label htmlFor={`download-format-${format}`} className="text-[15px] text-heading">
+            <label htmlFor={`download-format-${format}`} className="type-body text-ink-heading">
               {t(`stories.format.${format}`)}
             </label>
           </div>
         ))}
       </div>
-      <span id="download-format-hint" className="text-sm text-meta">
+      <span id="download-format-hint" className="type-body text-ink-muted">
         {t('stories.format.hint')}
       </span>
     </fieldset>

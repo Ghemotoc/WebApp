@@ -27,18 +27,18 @@ export function RecentlyDeleted({ stories }: { stories: MyStory[] }) {
   if (stories.length === 0) return null;
   return (
     <section aria-labelledby="recently-deleted-heading" className="flex flex-col gap-2">
-      <h2 id="recently-deleted-heading" className="m-0 type-heading text-heading">
+      <h2 id="recently-deleted-heading" className="m-0 type-heading text-ink-heading">
         {t('recentlyDeleted.heading')}
       </h2>
-      <p className="m-0 type-body text-body">{t('recentlyDeleted.intro')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('recentlyDeleted.intro')}</p>
       <ul className="m-0 list-none p-0">
         {stories.map((story) => (
           <li
             key={story.id}
-            className="flex flex-wrap items-center justify-between gap-4 border-t border-hairline py-3.5 first:border-t-0"
+            className="flex flex-wrap items-center justify-between gap-4 border-t border-hairline py-4 first:border-t-0"
           >
-            <span className="flex min-w-0 flex-col gap-0.5">
-              <span className="text-[15px] leading-5 font-semibold break-words text-heading">
+            <span className="flex min-w-0 flex-col gap-1">
+              <span className="type-body leading-5 font-semibold break-words text-ink-heading">
                 {story.title}
               </span>
               <span className="type-meta">

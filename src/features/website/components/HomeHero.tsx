@@ -55,19 +55,19 @@ function HeroButtons({ page }: { page: HomePageContent }) {
   const { userId } = useSession();
   const writeAddress = userId === null ? '/sign-up' : '/write/new';
   const pill =
-    'inline-flex min-h-[52px] items-center gap-2.5 rounded-full text-base font-semibold no-underline';
+    'inline-flex min-h-[52px] items-center gap-3 rounded-full type-body font-semibold no-underline';
   return (
-    <div className="mt-1 flex flex-wrap items-center gap-3.5">
+    <div className="mt-1 flex flex-wrap items-center gap-4">
       <Link
         to={writeAddress}
-        className={`${pill} bg-primary pr-[30px] pl-[22px] text-on-primary hover:opacity-90`}
+        className={`${pill} bg-primary pr-8 pl-6 text-on-primary hover:opacity-90`}
       >
         <ActionIcon name="pen" size={22} className="flex-none" />
         {withBrand(page.primaryButton)}
       </Link>
       <Link
         to="/discover"
-        className={`${pill} border border-control-border bg-surface pr-7 pl-[22px] text-heading hover:bg-tint`}
+        className={`${pill} border border-control-border bg-surface pr-6 pl-6 text-ink-heading hover:bg-tint`}
       >
         <ActionIcon name="book" size={22} className="flex-none" />
         {withBrand(page.secondaryButton)}
@@ -83,10 +83,10 @@ function HeroButtons({ page }: { page: HomePageContent }) {
  */
 function HeroPoints({ points }: { points: string[] }) {
   return (
-    <ul className="m-0 mt-2 flex list-none flex-wrap gap-x-6 gap-y-2.5 p-0 text-[15px] text-ink">
+    <ul className="m-0 mt-2 flex list-none flex-wrap gap-x-6 gap-y-3 p-0 type-body text-ink">
       {points.map((point, index) => (
         <li key={point} className="inline-flex items-center gap-2">
-          <ActionIcon name={pointIcon(index)} size={20} className="flex-none text-heading" />
+          <ActionIcon name={pointIcon(index)} size={20} className="flex-none text-ink-heading" />
           {withBrand(point)}
         </li>
       ))}
@@ -105,13 +105,13 @@ export function HomeHero({ page, language }: HomeHeroProps) {
       {/* Step 1: the words, on the left (or on top on narrow screens). */}
       <div className="flex min-w-0 flex-[1_1_440px] flex-col gap-6">
         <Eyebrow>{withBrand(page.eyebrow)}</Eyebrow>
-        <h1 className="m-0 font-heading text-[clamp(46px,6vw,92px)] leading-[0.94] font-extrabold tracking-[-0.025em] break-words text-heading">
+        <h1 className="m-0 font-heading text-[clamp(46px,6vw,92px)] leading-[0.94] font-bold tracking-[-0.025em] break-words text-ink-heading">
           <HeadlineLines
             first={withBrand(page.headlineFirst)}
             second={withBrand(page.headlineSecond)}
           />
         </h1>
-        <p className="m-0 max-w-[560px] text-[19px] leading-[1.65] text-body">
+        <p className="m-0 max-w-[560px] type-subheading leading-[1.65] text-ink-muted">
           {withBrand(page.lede)}
         </p>
         <HeroButtons page={page} />

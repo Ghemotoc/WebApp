@@ -50,7 +50,7 @@ function ForumChildren({ entries, forum }: { entries: ForumEntry[]; forum: Forum
     >
       <h2
         id="forum-children-heading"
-        className="m-0 border-b border-border px-5 py-4 font-heading text-xl font-bold text-heading md:px-7"
+        className="m-0 border-b border-border px-4 py-4 font-heading type-subheading font-bold text-ink-heading md:px-6"
       >
         {t('forum.inside')}
       </h2>
@@ -87,7 +87,7 @@ function ForumContent({ entries, path }: { entries: ForumEntry[]; path: ForumEnt
           {category !== undefined && <Eyebrow>{category.name}</Eyebrow>}
           <h1 className="page-title">{forum.name}</h1>
           {forum.description !== '' && (
-            <p className="m-0 text-lg leading-relaxed text-body">{forum.description}</p>
+            <p className="m-0 type-long leading-relaxed text-ink-muted">{forum.description}</p>
           )}
         </div>
         <div className="shrink-0">
@@ -98,7 +98,9 @@ function ForumContent({ entries, path }: { entries: ForumEntry[]; path: ForumEnt
         <div className="flex min-w-0 flex-col gap-6">
           <ForumChildren entries={entries} forum={forum} />
           {forum.level > 0 && <ThreadList forumSlug={forum.slug} />}
-          {forum.level === 0 && <p className="m-0 text-base text-body">{t('list.categoryNote')}</p>}
+          {forum.level === 0 && (
+            <p className="m-0 type-body text-ink-muted">{t('list.categoryNote')}</p>
+          )}
         </div>
         {/* The same side column as the index (board Forum): new threads, spaces and the rules. */}
         <aside className="flex flex-col gap-6">
@@ -125,11 +127,11 @@ export function ForumPage() {
   const spaceSlug = spaceSlugOfForum(forumSlug);
   if (spaceSlug !== null) return <Navigate to={`/spaces/${spaceSlug}`} replace />;
   return (
-    <PageContainer className="flex flex-col gap-6 py-10">
+    <PageContainer className="flex flex-col gap-6 py-8">
       {loadFailed && <Notice tone="error">{t('loadFailed')}</Notice>}
       {entries !== null && path.length === 0 && (
         <div className="flex flex-col items-start gap-3">
-          <h1 className="m-0 text-3xl font-extrabold">{t('forum.notFound')}</h1>
+          <h1 className="m-0 type-title font-bold">{t('forum.notFound')}</h1>
           <Link to="/forums" className="inline-flex min-h-6 items-center text-link underline">
             {t('forum.back')}
           </Link>

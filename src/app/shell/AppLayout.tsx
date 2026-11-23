@@ -34,6 +34,8 @@
  * live in AccountNotices, at the top of <main> (MARKETS-1 split them out).
  * Deleting an account (S1-E13-03): AccountClosingGate swaps the notices and the page for the
  * closing-account page ("Keep account" or "Log out") while the account waits to be deleted.
+ * Members only (TRIAL-WALL): SignedOutGate, the outermost of the gates in PageGates, sends a
+ * signed-out visitor to the home page while the members_only flag is on (Read stays open as a preview).
  * The waiting list (WAITLIST-1): WaitlistGate, inside it, swaps them for the holding page while
  * the signed-in person still waits for their place.
  * Narrow screens (bundle G4 SHELL; handoff "App header and tab bar"): from 1024 px every page has
@@ -49,20 +51,20 @@
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Outlet, useLocation } from 'react-router';
+import { useLocation } from 'react-router';
 
 import { shellScreenFor } from '@/app/shellScreens';
 
 import { ActiveMinutesCounter } from '@/features/analytics/components/ActiveMinutesCounter';
-import { AccountClosingGate } from '@/features/account-deletion/components/AccountClosingGate';
 import { AccountLinks } from '@/features/auth/components/AccountLinks';
 import { BrandTabIcon } from '@/features/branding/components/BrandTabIcon';
 import { LanguageSelect } from '@/features/language/components/LanguageSelect';
+import type { StoryStatement } from '@/features/reading/api/storyStatement';
+import { StoryFooterAbout } from '@/features/reading/components/StoryFooterAbout';
 import { useTrackRoutePattern } from '@/features/errors/hooks/useTrackRoutePattern';
 import { useAccountLanguage } from '@/features/language/hooks/useAccountLanguage';
 import { useFirstVisitLanguage } from '@/features/language/hooks/useFirstVisitLanguage';
 import { useAccountAppearance } from '@/features/theme/hooks/useAccountAppearance';
-import { MaintenanceGate } from '@/features/maintenance/components/MaintenanceGate';
 import { MessagesHeaderLink } from '@/features/messages/components/MessagesHeaderLink';
 import { NotificationBell } from '@/features/notifications/components/NotificationBell';
 import { OfflineBanner } from '@/features/offline/components/OfflineBanner';
@@ -72,13 +74,13 @@ import { usePendingPictureRetry } from '@/features/pictures/hooks/usePictures';
 import { NoticeStrip } from '@/features/website/components/NoticeStrip';
 import { DesktopOnlyGate } from '@/features/trial/components/DesktopOnlyGate';
 import { TrialFeedback } from '@/features/trial/components/TrialFeedback';
-import { WaitlistGate } from '@/features/waitlist/components/WaitlistGate';
 import { WriteLink } from '@/features/writing/components/WriteLink';
 
-import { AccountNotices } from './AccountNotices';
+import { PageGates } from './PageGates';
 import { FocusHeader } from './FocusHeader';
 import { PageHeaderContext } from './pageHeaderContext';
 import { Footer } from './Footer';
+import { FooterAboutContext } from './footerAboutContext';
 import { PhoneHeader } from './PhoneHeader';
 import { TabBar } from './TabBar';
 import { TopBar } from './TopBar';
@@ -161,6 +163,8 @@ export function AppLayout() {
   usePendingPictureRetry(userId);
   // Whether the page draws its own narrow-screen bar (the reader's chapter bar, CALM-5).
   const [isHeaderOwnedByPage, setIsHeaderOwnedByPage] = useState(false);
+  // The story statement a story's page puts in the footer, or null (CALM-9s).
+  const [storyStatement, setStoryStatement] = useState<StoryStatement | null>(null);
   // Header A, header B with the tab bar, or the website top bar (bundle G4 SHELL).
   const { header, hasTabBar } = useShellHeader(isHeaderOwnedByPage);
 
@@ -189,24 +193,21 @@ export function AppLayout() {
         <NoticeStrip />
         <main id="main" tabIndex={-1} className="flex-1 focus:outline-none">
           <PageHeaderContext.Provider value={setIsHeaderOwnedByPage}>
-            {/* While maintenance mode is on, the maintenance page replaces all of this (S1-E1-05). */}
-            <MaintenanceGate>
-              {/* While the account waits to be deleted, the closing page replaces the rest (S1-E13-03). */}
-              <AccountClosingGate>
-                {/* While the person waits on the list, the holding page replaces the rest (WAITLIST-1). */}
-                <WaitlistGate>
-                  {/* The account notices: Terms, country, username, age check, consent, sanctions. */}
-                  <AccountNotices />
-                  <Outlet />
-                </WaitlistGate>
-              </AccountClosingGate>
-            </MaintenanceGate>
+            <FooterAboutContext.Provider value={setStoryStatement}>
+              <PageGates />
+            </FooterAboutContext.Provider>
           </PageHeaderContext.Provider>
         </main>
         {/* "Show when I'm online": a beat a minute, only while switched on (S1-E13-01). */}
         <PresenceHeartbeat />
         <ActiveMinutesCounter />
-        <Footer endSlot={<LanguageSelect id="language-select-footer" />} />
+        {/* On a story's pages the footer starts with the story statement (CALM-9s). */}
+        <Footer
+          about={
+            storyStatement === null ? undefined : <StoryFooterAbout statement={storyStatement} />
+          }
+          endSlot={<LanguageSelect id="language-select-footer" />}
+        />
         {/* The floating tab bar, on narrow browse pages only (handoff "App header and tab bar"). */}
         {hasTabBar && <TabBar />}
         {/* "Report a bug" on the right edge, for members while the trial runs (TRIAL-FEEDBACK). */}

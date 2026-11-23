@@ -123,7 +123,7 @@ export function MarketingFields(props: MarketingFieldsProps) {
   return (
     <>
       <FormSection legend={t('marketing.pitchHeading')}>
-        <p className="m-0 text-sm text-meta">{t('marketing.sharedHint')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('marketing.sharedHint')}</p>
         <PlanTextField
           id="atlas-marketing-logline"
           label={t('details.logline')}

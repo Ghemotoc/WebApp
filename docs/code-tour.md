@@ -1548,10 +1548,19 @@ Someone pastes `/s/<story>/<chapter>` into WhatsApp. Two things read it:
        og:image /link-previews/<cover colour>.png (scripts/make-link-preview-images.ts),
        noindex on chapters, JSON-LD with genre and keywords on story pages (Q36); every rating
        the same, 18+ adds "For mature readers", 16+ and 18+ never share text (S1-E11-36)
+     → a public story page (CALM-9s) also gets the story statement from src/lib/story-statement.ts
+       ("<Title> is a <genre> <type> published on <site> by <writer>." + the blurb) as its
+       description and og:description, the title "<Title> by <writer>, <genre>, <site>", JSON-LD
+       Book (CreativeWork for poems and essays) plus a BreadcrumbList, hreflang per edition, and
+       the same words as visible text in the page before the app starts. Unlisted, app-only and
+       country-hidden stories get noindex, no statement and no sitemap row.
 2. The visitor's browser: the same page, then the app starts as usual:
+   StoryPage and ChapterReaderPage → useStoryStatement → get_link_preview() → the footer's
+       about column becomes StoryFooterAbout (FooterAboutContext in AppLayout), the same
+       statement with the title in <cite> and the writer linked to /u/<handle>
    ChapterReaderPage → get_chapter() → is_teaser? → TeaserPage
        TeaserStoryCard (get_story_page()) · the teaser (teaser_of(): whole paragraphs up to
-       600 words, cut in the database) · SignUpPrompt · CopyNotice
+       40 words and at most half the chapter, cut in the database; TRIAL-WALL) · SignUpPrompt · CopyNotice
      → needs_adult_answer (an 18+ story, CALM-9m)? → AdultQuestionNotice: "I'm 18 or over,
        show it" keeps the answer in this browser (src/lib/visitorAdult.ts), every request then
        carries X-Visitor-Adult: yes, visitor_said_adult() reads it and the teaser comes as usual
@@ -1562,8 +1571,9 @@ An 18+ story's page opens for visitors (visitor_may_open_rating() in
 reader_visible_story_anywhere() and get_story_page()); lists keep leaving 18+ out for them, and a
 signed-in member's own age still decides (rating_allows()).
 
-Tests: `142-teaser.test.sql`, `396-mature-visitor-confirm.test.sql`, `server/link-preview.test.ts`,
-`src/lib/visitorAdult.test.ts`, `e2e/teaser.spec.ts`.
+Tests: `142-teaser.test.sql`, `395-story-footer-seo.test.sql`, `396-mature-visitor-confirm.test.sql`,
+`server/link-preview.test.ts`, `src/lib/story-statement.test.ts`, `src/lib/visitorAdult.test.ts`,
+`e2e/teaser.spec.ts`.
 
 ## A writer's profile, blocks and follows (S1-E5-05, S1-E6-05)
 
@@ -1883,7 +1893,7 @@ What the reading epic left in place. The epic report, `docs/epic-reports/S1-E4.m
 | Functions | `get_chapter()` (the teaser for visitors), `record_chapter_read()`, `get_link_preview()`, `is_blocked_with()` (a stub until S1-E5-05); internal `reader_visible_story()`, `teaser_of()`, `word_total()`; the setting `teaser_length` (600) | 4-01a, 4-04 |
 | Tests | `supabase/tests/database/140` to `142` and `093` (the epic), `server/link-preview.test.ts`, `e2e/epic-s1-e4.spec.ts` and each story's spec (`chapter-reader`, `reader-performance`, `copy-protection`, `teaser`) | each story, S1-E4-QA |
 
-**One main journey through the whole epic:** someone pastes `/s/<story>/<chapter>` into WhatsApp → the preview robot gets the page from `functions/s/[[path]].ts`, which asks `get_link_preview()` and writes the Open Graph tags (`server/link-preview.ts`) → a visitor opens it: the route's loader starts `get_chapter()` early (`prefetchChapter()`), which answers with `is_teaser` and the first 600 words → `TeaserPage` shows the story card, the teaser (copy off) and "Log in to read on" → signed in, the same address gives the whole chapter in `ChapterReaderPage`; `useRecordRead` adds one to today's total in `chapter_reads`. `e2e/epic-s1-e4.spec.ts` walks it in the browser and `093-epic-s1-e4.test.sql` in the database.
+**One main journey through the whole epic:** someone pastes `/s/<story>/<chapter>` into WhatsApp → the preview robot gets the page from `functions/s/[[path]].ts`, which asks `get_link_preview()` and writes the Open Graph tags (`server/link-preview.ts`) → a visitor opens it: the route's loader starts `get_chapter()` early (`prefetchChapter()`), which answers with `is_teaser` and the first 40 words (at most half the chapter) → `TeaserPage` shows the story card, the teaser (copy off) and "Log in to read on" → signed in, the same address gives the whole chapter in `ChapterReaderPage`; `useRecordRead` adds one to today's total in `chapter_reads`. `e2e/epic-s1-e4.spec.ts` walks it in the browser and `093-epic-s1-e4.test.sql` in the database.
 
 ## Epic S1-E6 at a glance (checked by S1-E6-QA)
 
@@ -2435,7 +2445,7 @@ The app draws no doodles, stickers or hand-drawn icons anywhere (Robert, 7 Nov 2
 
 - Start at `src/features/atlas/components/ConnectionsPage.tsx` (`/plan/s/:storySlug/connections`, the Relationships page, the third item in `AtlasSectionNav`). It reads the same `story_cast()` as the Characters page, whose answer now carries `relationships`.
 - One click: "Add relationship" in `AddRelationshipForm` → `useRelationshipChangers().relate` → `addRelationship()` in `api/characters.ts` → `add_character_relationship()` → a row in `story_character_relationships` (read back only by the writer, `story_character_relationships_select_own`) → the cast is refreshed and every view redraws.
-- `RelationshipMap` places the nodes with `lib/relationshipMap.ts` and draws each line in its category's colour and dash (`lib/relationshipCategories.ts`, colours `--atlas-line-*` in `src/styles/tokens.css`); the nodes are real links to the sheets, and `RelationshipList` under "All relationships" is the same data for screen readers.
+- `RelationshipMap` places the nodes with `lib/relationshipMap.ts` and draws each line in the colour the writer picked for its category and in the category's dash (`lib/relationshipCategories.ts`, swatches `--atlas-swatch-*` in `src/styles/tokens.css`, each 3:1 on the card by itself). Category colours (CALM-9, board E25): `CategoryColoursFold` under the chips saves a pick through `hooks/useRelationshipColour.ts` → `setRelationshipColour()` → `set_relationship_colour()` into `story_plans.relationship_colours`, which `story_cast()` returns; `CategoryDot` shows the colour on the chips and the list; the nodes are real links to the sheets, and `RelationshipList` under "All relationships" is the same data for screen readers.
 - `FamilyTreeView` builds the generations with `lib/familyTree.ts`; `FamilyTreeDrawing` lays them out with `lib/familyTreeLayout.ts` as a real tree (CALM-9, board E26: partners side by side, children hanging from the middle of their line, siblings under one dashed bracket), rings the chosen character and, on a narrow screen, scrolls to them with "Swipe sideways".
 - On each sheet, `CharacterRelationshipsSection` lists the character's relationships both ways and adds new ones.
 - The form (G10b): `RelationshipKindPickers` (Kind, then Relationship, from `lib/relationshipGroups.ts`), `CousinPickers` for "Cousin of", `RelationshipOwnWords` for "Other" (the label and the optional reverse label), and `RelationshipClashPanel` when `lib/relationshipClash.ts` finds a clash among the relationships already loaded. `useRelationshipWords` writes the sentences: which cousin through `lib/cousinWords.ts`, and an "Other" one with a reverse label from the side of the sheet it is on.
@@ -2463,7 +2473,8 @@ The app draws no doodles, stickers or hand-drawn icons anywhere (Robert, 7 Nov 2
 ## Story Atlas: the storyline (S1-E17-19 to S1-E17-22; ATLAS-f)
 
 - `/plan/s/:storySlug/storyline` is `StorylinePage`: a view switch (`SegmentedControl`: Board, Timeline, POV lanes, with the view's hint beside it, G10c1) remembered on the device by `lib/storylineView.ts`, then `ChapterBoard`, `TimelineView` or `PovLanesView`. One reading, `story_storyline()` through `useStoryline`, feeds all three.
-- The board's columns and moves are plain functions in `lib/boardColumns.ts` (one column per act, then "No act"; `orderAfterMove()` works out the book's new order). One click: "Move Calmul earlier" on a `BoardCard` → `useBoardMoves().move` → `placeChapterOnBoard()` in `api/storyline.ts` → `place_chapter_on_board()`. When published chapters would change order the database answers `needs_confirmation` and nothing moves until the writer says "Move it" in `BoardMoveDialog`, as Manage chapters asks (S1-E3-04).
+- The board's columns and moves are plain functions in `lib/boardColumns.ts` (one column per act, then "No act"; `orderAfterMove()` works out the book's new order). One click: "Earlier" in a `BoardCard`'s "…" menu (`BoardCardMenu`, CALM-9 board E28) → `useBoardMoves().move` → `placeChapterOnBoard()` in `api/storyline.ts` → `place_chapter_on_board()`. When published chapters would change order the database answers `needs_confirmation` and nothing moves until the writer says "Move it" in `BoardMoveDialog`, as Manage chapters asks (S1-E3-04).
+- Dragging a card (CALM-9, board E28) is dnd-kit, set up in `hooks/useBoardDrag.ts`: a mouse drag starts after 4 px, a touch after holding a quarter of a second. Each card and column is a drop zone ("card:<code>", "column:<act>"); `lib/boardDrag.ts` turns the zone under the pointer into a place and the number the card would get, which the dashed gap shows ("Becomes chapter 4") and a polite live region says. The lifted copy is `BoardCardFace` in a `DragOverlay`; the drop calls the same `move` as the menu.
 - Chapter numbers in the plan count only chapters of the type "chapter" (`chapterNumbers()`, used by the board, the timeline, the lanes and the writing view's list through `useChapterLabels`).
 - Timeline events live in `story_events` (`add_story_event()`, `update_story_event()`, `delete_story_event()`); `lib/timeline.ts` sorts them with dated chapters and lists the undated ones apart.
 

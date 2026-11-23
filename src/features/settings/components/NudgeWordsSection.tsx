@@ -70,10 +70,12 @@ function NudgeWordList({ state }: { state: NudgeWordsState }) {
   const { t } = useTranslation('settings');
   return (
     <>
-      <p className="m-0 text-sm text-meta" aria-live="polite">
+      <p className="m-0 type-body text-ink-muted" aria-live="polite">
         {t('words.showing', { shown: state.words.length, total: state.total })}
       </p>
-      {state.words.length === 0 && <p className="m-0 text-sm text-body">{t('nudge.empty')}</p>}
+      {state.words.length === 0 && (
+        <p className="m-0 type-body text-ink-muted">{t('nudge.empty')}</p>
+      )}
       <ul className="m-0 flex list-none flex-wrap gap-2 p-0" aria-label={t('nudge.listLabel')}>
         {state.words.map((word) => (
           <li key={word.id}>

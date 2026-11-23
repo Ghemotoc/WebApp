@@ -22,7 +22,7 @@ import { useClassPointsTranslation } from '../registerClassPointsTranslations';
 
 /** The card's own classes, as the other cards on a class page. */
 const cardClasses =
-  'flex flex-col gap-2 rounded-card border border-border bg-surface px-6 py-5 shadow-card';
+  'flex flex-col gap-2 rounded-card border border-border bg-surface px-6 py-4 shadow-card';
 
 /**
  * A pupil's week: the budget, what is left, when it resets and what they received.
@@ -36,15 +36,18 @@ function PupilLines({ summary }: { summary: ClassPointsSummary }) {
   const { left, resetsOn } = summary.week;
   return (
     <>
-      <h2 id="class-points-heading" className="m-0 font-heading text-2xl font-bold text-heading">
+      <h2
+        id="class-points-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
+      >
         {t('card.pupilTitle', { count: budget })}
       </h2>
       <p className="m-0 font-semibold text-ink">{t('card.left', { count: budget, left })}</p>
-      <p className="m-0 text-sm text-body">
+      <p className="m-0 type-body text-ink-muted">
         {t('card.resets', { date: dayText(resetsOn, i18n.language) })}{' '}
         {t('card.howTo', { cap: summary.cap })}
       </p>
-      <p className="m-0 text-sm text-body">
+      <p className="m-0 type-body text-ink-muted">
         {t('card.received', { count: summary.receivedTotal ?? 0 })}
       </p>
     </>
@@ -60,10 +63,13 @@ function TeacherLines({ slug }: { slug: string }) {
   const { t } = useClassPointsTranslation();
   return (
     <>
-      <h2 id="class-points-heading" className="m-0 font-heading text-2xl font-bold text-heading">
+      <h2
+        id="class-points-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
+      >
         {t('card.teacherTitle')}
       </h2>
-      <p className="m-0 text-sm text-body">{t('card.teacherBody')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('card.teacherBody')}</p>
       <Link to={`/spaces/${slug}/points`} className="w-fit font-semibold text-link underline">
         {t('card.openTable')}
       </Link>

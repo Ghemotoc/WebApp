@@ -48,9 +48,9 @@ export function SettingSwitchRow({
     <div className="flex flex-col gap-2 border-t border-border pt-4">
       <div className="flex items-center justify-between gap-4">
         {/* The words: the setting's name, and under it what it does. */}
-        <div className="flex min-w-0 flex-col gap-0.5">
-          <span className="text-[15px] font-bold text-heading">{label}</span>
-          <p id={hintId} className="m-0 text-[13px] text-meta">
+        <div className="flex min-w-0 flex-col gap-1">
+          <span className="type-body font-semibold text-ink-heading">{label}</span>
+          <p id={hintId} className="m-0 type-meta text-ink-muted">
             {hint}
           </p>
         </div>

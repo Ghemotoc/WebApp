@@ -72,7 +72,7 @@ export function PictureRulesNote({ id }: { id: string }) {
   // The row is `relative` so the tooltip opens under it, lined up with the field (InfoTooltip).
   return (
     <div className="relative flex items-center gap-2">
-      <p id={id} className="m-0 text-[13px] font-semibold text-body">
+      <p id={id} className="m-0 type-meta font-semibold text-ink-muted">
         {t('pictures.rules.headline')}
       </p>
       <InfoTooltip

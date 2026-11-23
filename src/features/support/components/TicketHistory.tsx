@@ -26,9 +26,9 @@ function HistoryItem({ entry }: { entry: TicketHistoryEntry }) {
   });
   const who = entry.actorHandle === null ? t('staff.history.system') : `@${entry.actorHandle}`;
   return (
-    <li className="flex flex-col gap-0.5 border-b border-border py-2 last:border-b-0">
-      <span className="text-sm text-body">{t('staff.history.line', { who, what })}</span>
-      <span className="text-sm text-meta">{when}</span>
+    <li className="flex flex-col gap-1 border-b border-border py-2 last:border-b-0">
+      <span className="type-body text-ink-muted">{t('staff.history.line', { who, what })}</span>
+      <span className="type-body text-ink-muted">{when}</span>
     </li>
   );
 }
@@ -43,11 +43,11 @@ export function TicketHistory({ history }: { history: TicketHistoryEntry[] }) {
   return (
     <section
       aria-labelledby="ticket-history-heading"
-      className="flex flex-col gap-2 rounded-card border border-border bg-surface p-5"
+      className="flex flex-col gap-2 rounded-card border border-border bg-surface p-4"
     >
       <h2
         id="ticket-history-heading"
-        className="m-0 font-heading text-[20px] font-bold text-heading"
+        className="m-0 font-heading type-subheading font-bold text-ink-heading"
       >
         {t('staff.history.heading')}
       </h2>

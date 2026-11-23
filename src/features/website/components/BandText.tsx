@@ -19,7 +19,7 @@ interface BandTextProps {
 
 /** The classes for each tone: label, heading and paragraph. */
 const toneClasses = {
-  page: { eyebrow: 'eyebrow', heading: 'text-heading', lede: 'text-body' },
+  page: { eyebrow: 'eyebrow', heading: 'text-ink-heading', lede: 'text-ink-muted' },
   dark: {
     eyebrow: 'eyebrow-type text-on-primary',
     heading: 'text-on-primary',
@@ -40,11 +40,11 @@ export function BandText({ band, headingId, tone }: BandTextProps) {
       <p className={`m-0 ${classes.eyebrow}`}>{withBrand(band.eyebrow)}</p>
       <h2
         id={headingId}
-        className={`m-0 font-heading text-[clamp(30px,3.6vw,48px)] leading-[1.05] font-extrabold tracking-[-0.02em] ${classes.heading}`}
+        className={`m-0 font-heading text-[clamp(30px,3.6vw,48px)] leading-[1.05] font-bold tracking-[-0.02em] ${classes.heading}`}
       >
         {withBrand(band.heading)}
       </h2>
-      <p className={`m-0 max-w-[560px] text-[17px] leading-relaxed ${classes.lede}`}>
+      <p className={`m-0 max-w-[560px] type-long leading-relaxed ${classes.lede}`}>
         {withBrand(band.lede)}
       </p>
     </div>

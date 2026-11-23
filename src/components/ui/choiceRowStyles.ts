@@ -11,4 +11,4 @@
  * when the radio inside is chosen, so the row needs no state of its own.
  */
 export const choiceRowClassName =
-  'flex min-h-12 cursor-pointer flex-wrap items-center justify-between gap-x-3 gap-y-1 rounded-[24px] border border-border bg-surface px-4 py-3 text-[15px] text-body has-[:checked]:border-primary has-[:checked]:shadow-[inset_0_0_0_0.5px_var(--color-primary)]';
+  'flex min-h-12 cursor-pointer flex-wrap items-center justify-between gap-x-3 gap-y-1 rounded-card border border-border bg-surface px-4 py-3 type-body text-ink-muted has-[:checked]:border-primary has-[:checked]:shadow-[inset_0_0_0_0.5px_var(--color-primary)]';

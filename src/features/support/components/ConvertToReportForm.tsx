@@ -68,7 +68,7 @@ export function ConvertToReportForm({ state }: { state: ReturnType<typeof useTic
 
   return (
     <form noValidate className="flex flex-col gap-3" onSubmit={submit}>
-      <h3 className="m-0 font-heading text-base font-bold text-heading">
+      <h3 className="m-0 font-heading type-body font-bold text-ink-heading">
         {t('staff.links.convertHeading')}
       </h3>
       <TextInput

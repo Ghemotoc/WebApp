@@ -133,8 +133,8 @@ export function AppealSection({ statement }: { statement: StatementOfReasons }) 
       <AppealState statement={statement} />
       {statement.canAppeal && !isFormOpen && (
         <div className="flex flex-col gap-2">
-          <p className="m-0 text-body">{t('appeals.until', { date: until })}</p>
-          <p className="m-0 text-sm text-body">{t('appeals.how')}</p>
+          <p className="m-0 text-ink-muted">{t('appeals.until', { date: until })}</p>
+          <p className="m-0 type-body text-ink-muted">{t('appeals.how')}</p>
           <div>
             <Button variant="secondary" onClick={() => setIsFormOpen(true)}>
               {t('appeals.open_form')}
@@ -146,9 +146,9 @@ export function AppealSection({ statement }: { statement: StatementOfReasons }) 
         <AppealForm statement={statement} onCancel={() => setIsFormOpen(false)} />
       )}
       {!statement.canChallenge && (
-        <p className="m-0 text-sm text-meta">{t('appeals.ended', { date: until })}</p>
+        <p className="m-0 type-body text-ink-muted">{t('appeals.ended', { date: until })}</p>
       )}
-      <Link to={mailAddress} className="w-fit text-sm font-semibold text-link underline">
+      <Link to={mailAddress} className="w-fit type-body font-semibold text-link underline">
         {t('appeals.askModerators')}
       </Link>
     </div>

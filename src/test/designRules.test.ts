@@ -17,16 +17,27 @@
  *   5. No 3D bevel or shine on member screens (canvas v47 is flat): the top edge light and the dark
  *      sheen are transparent in every member theme, and no CSS draws an inset bottom bevel. The
  *      staff area keeps its own token set, untouched (Robert, 21 Nov 2026, 06:09 UTC).
- *   6. No member screen is rounder than the design: boxes are 24 px (rounded-card), tiles 12 px
- *      (rounded-field), pills fully round; a class never names a 25 to 40 px corner (NIGHT-2;
- *      Robert, 23 Nov 2026: "still quite a few rounded areas"). Staff screens are left out.
- *   7. Form and dialog buttons sit on the left, the main one first (design books item 8, Robert,
- *      23 Nov 2026, 13:25 UTC): a member file never pushes a row of buttons to the right edge with
- *      justify-end; it uses ButtonRow (src/components/ui/ButtonRow.tsx). Staff screens are left out.
- *   8. A member form's button never greys out until something is typed (design books item 9,
- *      Robert, 23 Nov 2026, 13:25 UTC): pressed with a field empty, it says what is missing beside
- *      the field (src/lib/forms/useMissingField.ts). Disabled only while sending or saving. Staff
- *      screens keep their behaviour.
+ *   6. Three corners only: fully round (buttons, chips, pills, the floating bars), 16 px boxes
+ *      (rounded-card) and 12 px tiles and fields (rounded-field); covers keep rounded-cover. A class
+ *      never names its own corner (rounded-[20px], rounded-2xl).
+ * Rules 6 to 10 are the design books (Robert, approved 23 Nov 2026, 13:25 UTC; the rules doc's
+ * "Rules from the design books"), applied to member screens; staff screens keep their own look:
+ *   7. No hand-typed text size (text-[15px], text-sm): a member screen uses the ten type styles
+ *      in src/styles/index.css (type-display to type-reading).
+ *   8. Two weights for Inter (400 and 600) and one for Funnel Display (700): no font-medium,
+ *      font-extrabold, font-black, font-light or font-thin.
+ *   9. Space comes from the scale 4, 8, 12, 16, 24, 32, 48, 64 and 80 px: no padding, margin or gap
+ *      in between (p-2.5, gap-5) and none typed by hand (mt-[18px]).
+ *  10. Text colours are ink, ink-muted, ink-heading, link and the state colours: a member screen
+ *      writes text-ink-muted and text-ink-heading (not text-body, text-meta or text-heading), and
+ *      no component types a hex colour (a QR code's black on white is the one exception).
+ *  11. Form and dialog buttons sit on the left, the main one first (design books item 8): a member
+ *      file never pushes a row of buttons to the right edge with justify-end; it uses ButtonRow
+ *      (src/components/ui/ButtonRow.tsx). Staff screens are left out.
+ *  12. A member form's button never greys out until something is typed (design books item 9):
+ *      pressed with a field empty, it says what is missing beside the field
+ *      (src/lib/forms/useMissingField.ts). Disabled only while sending or saving. Staff screens
+ *      keep their behaviour.
  * Who runs it: Vitest (`npm test`), in CI on every pull request. Its sister guard is
  * src/test/noDoodles.test.ts.
  */
@@ -184,6 +195,20 @@ const infoPillUsers = new Set([
   '/src/features/writing/components/ManagedChapterRow.tsx',
 ]);
 
+/**
+ * The member files whose code matches a pattern (staff screens, the certificates and the
+ * provider's own sign-in buttons keep their own look).
+ *
+ * @param pattern - what a member file may not contain
+ * @returns the paths of the files that contain it
+ */
+function memberOffenders(pattern: RegExp): string[] {
+  return codeFiles()
+    .filter(([path]) => !isStaffFile(path) && !isListed(path, ownColourExceptions))
+    .filter(([, text]) => pattern.test(text))
+    .map(([path]) => path);
+}
+
 /** Starts with any of the given path prefixes. */
 function isListed(path: string, prefixes: string[]): boolean {
   return prefixes.some((prefix) => path.startsWith(prefix));
@@ -271,15 +296,55 @@ describe('the design rules are the defaults', () => {
     expect(offenders).toEqual([]);
   });
 
-  it('no member screen names a corner rounder than a box (24 px)', () => {
-    const tooRound = /rounded(-[tblr]{1,2})?-\[(2[5-9]|3\d|40)px\]/;
-    // The floating top bar is a pill in the design (gh-topbar); 36 px keeps it a pill when it wraps.
-    const pills = ['/src/app/shell/TopBar.tsx'];
-    const offenders = codeFiles()
-      .filter(([path]) => !isStaffFile(path) && !pills.includes(path))
-      .filter(([, text]) => tooRound.test(text))
-      .map(([path]) => path);
+  it('a member screen uses three corners only: full, card and field', () => {
+    const ownCorner = /\brounded(-(t|b|l|r|s|e|tl|tr|bl|br))?-(\[[^\]]+\]|sm|md|lg|xl|2xl|3xl)\b/;
+    expect(memberOffenders(ownCorner)).toEqual([]);
+  });
+
+  it('a member screen never types a text size of its own: it uses a type style', () => {
+    const ownSize =
+      /(^|[\s"'`:])text-(\[\d+(\.\d+)?(px|rem)\]|xs|sm|base|lg|xl|[2-9]xl)(?=[\s"'`}]|$)/m;
+    expect(memberOffenders(ownSize)).toEqual([]);
+  });
+
+  it('a member screen uses Inter at 400 and 600 and Funnel Display at 700 only', () => {
+    const otherWeight = /\bfont-(medium|extrabold|black|light|thin|extralight)\b/;
+    expect(memberOffenders(otherWeight)).toEqual([]);
+  });
+
+  it('a member screen takes its padding, margins and gaps from the spacing scale', () => {
+    const spacing =
+      '(p|px|py|pt|pr|pb|pl|ps|pe|m|mx|my|mt|mr|mb|ml|ms|me|gap|gap-x|gap-y|space-x|space-y)';
+    const offScale = new RegExp(
+      // pr-9 is the drop-down's 36 px (DoD, drop-downs: a 14 px chevron 14 px from the edge, 8 px gap).
+      `(^|[\\s"'\`:])-?(?!pr-9\\b)${spacing}-(0\\.5|1\\.5|2\\.5|3\\.5|5|7|9|10|11|13|14|15|18|22|28|36|40|44|52|56|60|72|96|\\[\\d+(\\.\\d+)?px\\])(?=[\\s"'\`}]|$)`,
+      'm',
+    );
+    expect(memberOffenders(offScale)).toEqual([]);
+  });
+
+  it('a member screen writes text in ink, ink-muted, ink-heading, link or a state colour', () => {
+    const oldName = /(^|[\s"'`:])(text|decoration)-(body|meta|heading)(?=[\s"'`}]|$)/m;
+    expect(memberOffenders(oldName)).toEqual([]);
+  });
+
+  it('no member component types a hex colour', () => {
+    // A QR code is pure black on pure white in every theme, so a phone can always read it.
+    const qrCodes = [
+      '/src/features/atlas/components/StoryQrCard.tsx',
+      '/src/features/spaces/components/SpaceShareDialog.tsx',
+      '/src/features/spaces/components/ClassInviteQrCode.tsx',
+    ];
+    const hexColour = /['"`]#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?([0-9a-fA-F]{2})?['"`]/;
+    const offenders = memberOffenders(hexColour).filter(
+      (path) => path.endsWith('.tsx') && !qrCodes.includes(path),
+    );
     expect(offenders).toEqual([]);
+  });
+
+  it('buttons and fields draw in the page font, never the browser default', () => {
+    const base = styleSheets.find(([path]) => path.endsWith('/index.css'))?.[1] ?? '';
+    expect(base).toMatch(/button,\s*input,\s*select,\s*textarea\s*\{\s*font: inherit;/);
   });
 
   it('no member form or dialog pushes its buttons to the right edge', () => {

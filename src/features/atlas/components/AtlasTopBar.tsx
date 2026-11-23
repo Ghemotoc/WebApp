@@ -48,7 +48,7 @@ export function AtlasTopBar({
   section: AtlasSection | null;
 }) {
   return (
-    <div className="flex min-w-0 flex-wrap items-center justify-between gap-x-6 gap-y-3 rounded-card border border-border bg-surface px-[18px] py-3 shadow-card">
+    <div className="flex min-w-0 flex-wrap items-center justify-between gap-x-6 gap-y-3 rounded-card border border-border bg-surface px-4 py-3 shadow-card">
       <AtlasWhereYouAre slug={slug} writeAddress={writeAddress} />
       <AtlasTopActions slug={slug} section={section} />
     </div>
@@ -59,13 +59,16 @@ export function AtlasTopBar({
 function AtlasWhereYouAre({ slug, writeAddress }: { slug: string; writeAddress: string }) {
   const { t } = useAtlasTranslation();
   return (
-    <div className="flex min-w-0 flex-wrap items-center gap-x-5 gap-y-2">
+    <div className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2">
       <nav aria-label={t('breadcrumb.label')} className="flex min-w-0 items-center gap-2">
-        <Link to="/plan" className="text-sm font-semibold whitespace-nowrap text-ink no-underline">
+        <Link
+          to="/plan"
+          className="type-body font-semibold whitespace-nowrap text-ink no-underline"
+        >
           {t('eyebrow')}
         </Link>
         {/* The slash is a separator only, so screen readers skip it. */}
-        <span aria-hidden="true" className="text-meta">
+        <span aria-hidden="true" className="text-ink-muted">
           /
         </span>
         <StorySwitcher currentSlug={slug} />

@@ -57,14 +57,14 @@ export function ClosingAccountPage({ deleteAfter, reason }: ClosingAccountPagePr
     void navigate('/');
   };
   return (
-    <PageContainer className="flex max-w-[640px] flex-col gap-5 pt-12 pb-7">
-      <h1 className="m-0 font-heading text-[32px] font-bold text-heading">
+    <PageContainer className="flex max-w-[640px] flex-col gap-4 pt-12 pb-6">
+      <h1 className="m-0 font-heading type-title font-bold text-ink-heading">
         {t('closing.heading')}
       </h1>
-      <p className="m-0 text-body">
+      <p className="m-0 text-ink-muted">
         {t(isUnused ? 'closing.unusedBody' : 'closing.body', { date })}
       </p>
-      <p className="m-0 text-body">
+      <p className="m-0 text-ink-muted">
         {t(isUnused ? 'closing.unusedChoices' : 'closing.changeMind')}
       </p>
       {keep.isError && <Notice tone="error">{t('closing.keepFailed')}</Notice>}

@@ -39,14 +39,14 @@ function BannerPreview({ space }: { space: Space }) {
   const view = useSpaceBannerView(space).data ?? null;
   const state = space.bannerPicture?.state;
   if (state === undefined)
-    return <p className="m-0 text-sm text-body">{t('bannerPicture.none')}</p>;
+    return <p className="m-0 type-body text-ink-muted">{t('bannerPicture.none')}</p>;
   return (
     <div className="flex flex-col gap-3">
       {view?.url != null && (
         <img
           src={view.url}
           alt={t('bannerPicture.previewAlt')}
-          className="h-24 w-full max-w-[480px] rounded-xl border border-border object-cover"
+          className="h-24 w-full max-w-[480px] rounded-field border border-border object-cover"
         />
       )}
       <Notice tone={state === 'visible' ? 'success' : 'info'}>{t(`bannerPicture.${state}`)}</Notice>
@@ -101,7 +101,7 @@ export function SpaceBannerPictureCard({ space }: { space: Space }) {
       <div aria-live="polite">
         {remove.isError && <Notice tone="error">{t('bannerPicture.removeFailed')}</Notice>}
         {remove.isSuccess && space.bannerPicture === null && (
-          <p className="m-0 text-sm text-body">{t('bannerPicture.removedNotice')}</p>
+          <p className="m-0 type-body text-ink-muted">{t('bannerPicture.removedNotice')}</p>
         )}
       </div>
     </SpaceFormCard>

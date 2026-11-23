@@ -162,9 +162,9 @@ export function FamilyTreeView({ addressOf, cast, words, onAdd }: FamilyTreeView
         />
       )}
       {/* The key, in words, between the controls and the tree (board E26). */}
-      <p className="m-0 text-sm text-meta">{t('connections.tree.hint')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('connections.tree.hint')}</p>
       {tree.generations.length === 0 && (
-        <p className="m-0 text-body">{t('connections.tree.none')}</p>
+        <p className="m-0 text-ink-muted">{t('connections.tree.none')}</p>
       )}
       {tree.generations.length > 0 && (
         <FamilyTreeDrawing
@@ -176,7 +176,7 @@ export function FamilyTreeView({ addressOf, cast, words, onAdd }: FamilyTreeView
         />
       )}
       {tree.leftOffCount > 0 && (
-        <p className="m-0 text-sm text-meta">
+        <p className="m-0 type-body text-ink-muted">
           {t('connections.tree.leftOff', { count: tree.leftOffCount })}
         </p>
       )}

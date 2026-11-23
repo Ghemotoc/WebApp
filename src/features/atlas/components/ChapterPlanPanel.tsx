@@ -46,16 +46,16 @@ export function ChapterPlanPanel({ slug, chapterCode, wordCount }: ChapterPlanPa
       <div className="flex flex-col gap-1">
         <h2
           id="atlas-chapter-plan-heading"
-          className="m-0 font-heading text-[22px] font-bold text-heading"
+          className="m-0 font-heading type-heading font-bold text-ink-heading"
         >
           {t('chapterPlan.heading')}
         </h2>
-        <p className="m-0 text-sm text-meta">{t('chapterPlan.privateNote')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('chapterPlan.privateNote')}</p>
         {/* 44 px tall so it stays a full touch target when the floating Back button sits near
             it on a phone (WCAG 2.5.8; CLAUDE.md rule 9). */}
         <Link
           to={`/plan/s/${slug}`}
-          className="inline-flex min-h-11 items-center text-sm font-semibold"
+          className="inline-flex min-h-11 items-center type-body font-semibold"
         >
           {t('chapterPlan.openPlan')}
         </Link>

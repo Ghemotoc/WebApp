@@ -25,7 +25,7 @@ import { DeleteAccountConfirm } from './DeleteAccountConfirm';
 function DownloadFirstLine() {
   const { t } = useAccountDeletionTranslation();
   return (
-    <p className="m-0 text-body">
+    <p className="m-0 text-ink-muted">
       {t('settings.downloadFirstBefore')}{' '}
       <a href="#download-my-data" className="text-link underline">
         {t('settings.downloadFirstLink')}
@@ -49,8 +49,8 @@ function SectionBody() {
   const { deletionDays, signedInRecently } = deletion.data;
   return (
     <>
-      <p className="m-0 text-body">{t('settings.intro', { count: deletionDays })}</p>
-      <p className="m-0 text-body">{t('settings.storiesLine')}</p>
+      <p className="m-0 text-ink-muted">{t('settings.intro', { count: deletionDays })}</p>
+      <p className="m-0 text-ink-muted">{t('settings.storiesLine')}</p>
       <DownloadFirstLine />
       {isConfirming ? (
         <DeleteAccountConfirm
@@ -63,7 +63,7 @@ function SectionBody() {
           {t('settings.start')}
         </Button>
       )}
-      <p className="m-0 text-sm text-meta">
+      <p className="m-0 type-body text-ink-muted">
         {t('settings.webRoute', { address: `${brand.siteDomain}/delete-account` })}
       </p>
     </>
@@ -85,7 +85,7 @@ export function DeleteAccountSection() {
     >
       <h2
         id="settings-delete-account-heading"
-        className="m-0 font-heading text-[22px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('settings.heading')}
       </h2>

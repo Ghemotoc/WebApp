@@ -24,9 +24,9 @@ import { PlanGuardPill } from './PlanGuardPill';
 export function PublicTimeline({ plan, isPreview }: { plan: PublicPlan; isPreview: boolean }) {
   const { t } = useAtlasTranslation();
   if (plan.events.length === 0)
-    return <p className="m-0 text-body">{t('publicPlan.timeline.none')}</p>;
+    return <p className="m-0 text-ink-muted">{t('publicPlan.timeline.none')}</p>;
   return (
-    <ol className="m-0 flex list-none flex-col rounded-card border border-border bg-surface px-5 py-2 shadow-card md:px-7">
+    <ol className="m-0 flex list-none flex-col rounded-card border border-border bg-surface px-4 py-2 shadow-card md:px-6">
       {plan.events.map((event) => (
         <li
           key={event.id}
@@ -35,15 +35,15 @@ export function PublicTimeline({ plan, isPreview }: { plan: PublicPlan; isPrevie
         >
           <div className="flex flex-wrap items-center gap-2">
             {event.displayDate !== '' && (
-              <span className="text-sm text-meta">{event.displayDate}</span>
+              <span className="type-body text-ink-muted">{event.displayDate}</span>
             )}
             <PlanGuardPill guard={event.showFrom} />
           </div>
-          <h2 className="m-0 font-heading text-lg font-bold break-words text-heading">
+          <h2 className="m-0 font-heading type-long font-bold break-words text-ink-heading">
             {event.title}
           </h2>
           {event.description !== '' && (
-            <p className="m-0 text-sm break-words whitespace-pre-line text-body">
+            <p className="m-0 type-body break-words whitespace-pre-line text-ink-muted">
               <CrossLinkText text={event.description} />
             </p>
           )}

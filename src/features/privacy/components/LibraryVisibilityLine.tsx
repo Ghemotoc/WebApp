@@ -26,7 +26,7 @@ export function LibraryVisibilityLine() {
   // builds its own list because its last part is a link, which MetaLine (text only) can't hold.
   return (
     <ul className="meta-line">
-      <li className="font-bold text-ink">{t(`libraryNote.${audience}.lead`)}</li>
+      <li className="font-semibold text-ink">{t(`libraryNote.${audience}.lead`)}</li>
       <li>{t(`libraryNote.${audience}.body`)}</li>
       <li>
         <Link

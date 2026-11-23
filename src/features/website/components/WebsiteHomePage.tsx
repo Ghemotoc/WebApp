@@ -11,15 +11,17 @@
  * heading is empty is left out. Shelf titles, the footer's columns and the top bar are interface
  * text from the locale files. The shelves keep to ratings, blocks and removed content
  * (S1-E5-01) and end with "View more" (S1-E5-09).
+ * A signed-in member is sent to the Writers' hub instead (TRIAL-WALL, 23 Nov 2026).
  * Who shows it: the router for "/". What it calls: useWebsiteContent for the home page and the
  * questions, HomeShelves and the four bands; the shared footer follows (NIGHT-2).
  */
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
+import { Link, Navigate } from 'react-router';
 
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
+import { useSession } from '@/features/auth/hooks/useSession';
 import { PageContainer } from '@/components/ui/PageContainer';
 import {
   homePageContentSchema,
@@ -71,7 +73,7 @@ function MoreHelpLinks() {
   const { t } = useTranslation();
   return (
     <nav aria-labelledby="more-help-lead" className="flex flex-col gap-1">
-      <p id="more-help-lead" className="m-0 text-body">
+      <p id="more-help-lead" className="m-0 text-ink-muted">
         {t('website.moreHelp.lead')}
       </p>
       <ul className="m-0 flex list-none flex-col p-0">
@@ -79,7 +81,7 @@ function MoreHelpLinks() {
           <li key={link.href}>
             <Link
               to={link.href}
-              className="inline-flex min-h-11 items-center font-semibold text-heading underline-offset-4 hover:underline"
+              className="inline-flex min-h-11 items-center font-semibold text-ink-heading underline-offset-4 hover:underline"
             >
               {t(link.labelKey)}
             </Link>
@@ -115,7 +117,7 @@ function HomeQuestions({
         <Eyebrow>{t('website.questionsEyebrow')}</Eyebrow>
         <h2
           id="questions-heading"
-          className="m-0 font-heading text-[clamp(28px,3vw,40px)] font-extrabold text-heading"
+          className="m-0 font-heading text-[clamp(28px,3vw,40px)] font-bold text-ink-heading"
         >
           {withBrand(page.questionsHeading)}
         </h2>
@@ -192,14 +194,19 @@ export function WebsiteHomePage() {
   const { t } = useTranslation();
   const { entries, readFailed } = useWebsiteContent('home_page', homePageContentSchema);
   const homePage = entries.find((entry) => entry.entryKey === 'home');
+  const { userId } = useSession();
+  // A signed-in member who opens the site's address goes to their own home, the Writers' hub
+  // (Robert, 23 Nov 2026: "when people are signed in and they go to [the site], they don't go to
+  // their signed out page, they go to the signed in page for home").
+  if (userId !== null) return <Navigate to="/hub" replace />;
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-14 pt-12 pb-16">
+    <PageContainer className="tmc-rise flex flex-col gap-12 pt-12 pb-16">
       <title>{homeDocumentTitle(homePage?.content.search?.title ?? '', t)}</title>
       {homePage !== undefined && <HomeSections entry={homePage} />}
       {homePage === undefined && readFailed && (
         <>
           {/* No copy at all: say so plainly, and still show the stories. */}
-          <h1 className="m-0 font-heading text-[40px] font-extrabold text-heading">
+          <h1 className="m-0 font-heading type-display font-bold text-ink-heading">
             {t('home.welcome')}
           </h1>
           <Notice tone="error">{t('website.readFailed')}</Notice>

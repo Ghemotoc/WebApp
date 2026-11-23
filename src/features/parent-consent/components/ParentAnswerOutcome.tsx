@@ -47,7 +47,7 @@ function WithdrawControl(props: { isAnswering: boolean; onWithdraw: () => void }
       aria-labelledby="parent-consent-withdraw-question"
       className="flex flex-col gap-3"
     >
-      <p id="parent-consent-withdraw-question" className="m-0 font-semibold text-heading">
+      <p id="parent-consent-withdraw-question" className="m-0 font-semibold text-ink-heading">
         {t('parent.withdrawConfirm')}
       </p>
       <div className="flex flex-wrap gap-3">

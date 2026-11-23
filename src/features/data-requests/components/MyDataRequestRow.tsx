@@ -30,8 +30,9 @@ interface MyDataRequestRowProps {
 function IdentityQuestion({ request, isAnswering, onAnswer }: MyDataRequestRowProps) {
   const { t } = useDataRequestsTranslation();
   if (request.identity === 'confirmed')
-    return <p className="m-0 text-body">{t('mine.confirmed')}</p>;
-  if (request.identity === 'denied') return <p className="m-0 text-body">{t('mine.denied')}</p>;
+    return <p className="m-0 text-ink-muted">{t('mine.confirmed')}</p>;
+  if (request.identity === 'denied')
+    return <p className="m-0 text-ink-muted">{t('mine.denied')}</p>;
   if (request.identity !== 'asked' || !request.isOpen) return null;
   return (
     <div className="flex flex-col gap-2">
@@ -69,22 +70,24 @@ export function MyDataRequestRow({ request, isAnswering, onAnswer }: MyDataReque
   const dateOf = (calendarDate: string) => formatCalendarDate(calendarDate, i18n.language);
   return (
     <li className="flex flex-col gap-2 border-b border-border py-3 last:border-b-0">
-      <p className="m-0 font-semibold text-heading">
+      <p className="m-0 font-semibold text-ink-heading">
         {t('mine.title', {
           reference: request.reference,
           type: t(`mine.types.${request.requestType}`),
         })}
       </p>
-      <p className="m-0 text-sm text-meta">
+      <p className="m-0 type-body text-ink-muted">
         {t('mine.received', { date: dateOf(request.receivedOn) })}
       </p>
-      <p className="m-0 text-body">
+      <p className="m-0 text-ink-muted">
         {request.isOpen
           ? t('mine.deadline', { date: dateOf(request.deadline) })
           : t('mine.answered')}
       </p>
       {request.isOpen && request.extensionReason !== null && (
-        <p className="m-0 text-body">{t('mine.extended', { reason: request.extensionReason })}</p>
+        <p className="m-0 text-ink-muted">
+          {t('mine.extended', { reason: request.extensionReason })}
+        </p>
       )}
       <IdentityQuestion request={request} isAnswering={isAnswering} onAnswer={onAnswer} />
       <MyDataRequestFiles files={request.files} />

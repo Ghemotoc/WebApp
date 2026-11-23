@@ -70,13 +70,13 @@ function MessageItem({ message, otherName }: { message: ChatMessage; otherName: 
   const time = timeOf(message.at, i18n.language);
   const sideStyle = message.fromMe ? 'items-end' : 'items-start';
   const bubbleStyle = message.fromMe
-    ? 'rounded-br-md bg-primary text-on-primary'
-    : 'rounded-bl-md border border-border bg-surface text-ink';
+    ? 'rounded-br-field bg-primary text-on-primary'
+    : 'rounded-bl-field border border-border bg-surface text-ink';
   return (
     <li className={`flex flex-col gap-1 ${sideStyle}`}>
       <div className="flex max-w-full items-start gap-2">
         <p
-          className={`m-0 max-w-[min(520px,85vw)] rounded-field px-4 py-2.5 text-[15px] leading-relaxed break-words whitespace-pre-line ${bubbleStyle}`}
+          className={`m-0 max-w-[min(520px,85vw)] rounded-field px-4 py-3 type-body leading-relaxed break-words whitespace-pre-line ${bubbleStyle}`}
         >
           {message.body === null ? (
             <em>{t('chat.removed')}</em>
@@ -93,7 +93,7 @@ function MessageItem({ message, otherName }: { message: ChatMessage; otherName: 
           />
         )}
       </div>
-      <p className="m-0 text-xs text-meta">
+      <p className="m-0 type-meta text-ink-muted">
         {message.fromMe ? t('chat.you') : otherName} · {time}
       </p>
     </li>
@@ -128,7 +128,7 @@ export function ChatMessages({
         return [
           <li
             key={`day-${day}`}
-            className="self-center rounded-full border border-border bg-tint px-3 py-1 text-xs font-semibold text-heading"
+            className="self-center rounded-full border border-border bg-tint px-3 py-1 type-meta font-semibold text-ink-heading"
           >
             {day}
           </li>,

@@ -64,7 +64,7 @@ export function FinishedThanksButton({ storySlug, isSent }: FinishedThanksButton
         </Button>
       )}
       {!isSent && (
-        <p id={`finished-thanks-hint-${storySlug}`} className="m-0 text-sm text-body">
+        <p id={`finished-thanks-hint-${storySlug}`} className="m-0 type-body text-ink-muted">
           {t('thanks.hint')}
         </p>
       )}

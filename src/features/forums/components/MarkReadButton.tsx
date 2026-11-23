@@ -49,7 +49,7 @@ export function MarkReadButton({ forumSlug, forumName = '', look = 'quiet' }: Ma
         {t(isWholeBoard ? 'unread.markAll' : 'unread.mark')}
       </Button>
       {marking.failed && (
-        <span role="alert" className="text-sm font-semibold text-destructive">
+        <span role="alert" className="type-body font-semibold text-destructive">
           {t('unread.markFailed')}
         </span>
       )}

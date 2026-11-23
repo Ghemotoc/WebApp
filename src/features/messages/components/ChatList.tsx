@@ -49,7 +49,7 @@ function ChatRows({
   const online = useOnlineHandles(shown.map((chat) => chat.otherHandle));
   if (shown.length === 0) {
     return (
-      <p className="m-0 px-4 py-6 text-sm text-meta">
+      <p className="m-0 px-4 py-6 type-body text-ink-muted">
         {t(view === 'requests' ? 'list.requestsEmpty' : 'list.empty')}
       </p>
     );
@@ -123,7 +123,7 @@ export function ChatList({ openHandle }: { openHandle: string | null }) {
       </div>
       <div className="px-4">
         {view === 'requests' ? (
-          <p className="m-0 text-sm text-meta">{t('list.requestsHint')}</p>
+          <p className="m-0 type-body text-ink-muted">{t('list.requestsHint')}</p>
         ) : (
           <MessagesRulesNotice />
         )}

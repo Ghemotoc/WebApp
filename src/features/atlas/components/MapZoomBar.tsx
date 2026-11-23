@@ -45,7 +45,7 @@ export function MapZoomBar({ zoomControls }: { zoomControls: ReturnType<typeof u
       >
         +
       </Button>
-      <span aria-live="polite" className="text-sm text-meta">
+      <span aria-live="polite" className="type-body text-ink-muted">
         {t('connections.map.zoomNow', { percent: Math.round(zoom * 100) })}
       </span>
     </div>

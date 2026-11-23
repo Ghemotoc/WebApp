@@ -41,14 +41,14 @@ export function SafetySection({ page, language, hasQuestions }: SafetySectionPro
     <ul
       aria-label={heading}
       lang={language}
-      className="m-0 flex list-none flex-wrap items-center gap-x-7 gap-y-1 p-0 text-sm text-body"
+      className="m-0 flex list-none flex-wrap items-center gap-x-6 gap-y-1 p-0 type-body text-ink-muted"
     >
       {page.safetyLines.map((line, index) => (
         <li key={line} className="inline-flex min-h-8 items-center gap-2">
           <ActionIcon
             name={lineIcons[index] ?? 'shield'}
             size={20}
-            className="flex-none text-heading"
+            className="flex-none text-ink-heading"
           />
           {withBrand(line)}
         </li>

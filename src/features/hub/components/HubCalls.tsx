@@ -33,21 +33,21 @@ function CallRow({ call, now }: { call: SubmissionCall; now: Date }) {
   const closing =
     daysLeft === 0 ? t('hub.calls.closesToday') : t('hub.calls.closesIn', { count: daysLeft });
   return (
-    <li className="flex min-w-0 flex-col items-start gap-1.5 border-b border-border py-3.5 first:pt-0 last:border-b-0 last:pb-0">
+    <li className="flex min-w-0 flex-col items-start gap-2 border-b border-border py-4 first:pt-0 last:border-b-0 last:pb-0">
       <a
         href={call.linkUrl}
         target="_blank"
         rel="nofollow noopener noreferrer"
         aria-label={t('hub.calls.openLabel', { title })}
-        className="max-w-full font-heading text-[17px] font-bold wrap-anywhere text-link underline"
+        className="max-w-full font-heading type-long font-bold wrap-anywhere text-link underline"
       >
         {title}
       </a>
-      <p className="m-0 text-sm wrap-anywhere text-body">
+      <p className="m-0 type-body wrap-anywhere text-ink-muted">
         {isRomanian ? call.detailsRo : call.detailsEn}
       </p>
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-sm text-meta">{closing}</span>
+        <span className="type-body text-ink-muted">{closing}</span>
         {call.isPaid && <InfoPill tone="sage">{t('hub.calls.paid')}</InfoPill>}
       </div>
     </li>
@@ -70,13 +70,13 @@ export function HubCalls({ now }: { now: Date }) {
       <h2 id="hub-calls" className="eyebrow m-0">
         {t('hub.calls.eyebrow')}
       </h2>
-      <div className="flex flex-col gap-3 rounded-card border border-border bg-surface p-5 shadow-card">
+      <div className="flex flex-col gap-3 rounded-card border border-border bg-surface p-4 shadow-card">
         <ul className="m-0 flex min-w-0 list-none flex-col p-0">
           {calls.map((call) => (
             <CallRow key={call.id} call={call} now={now} />
           ))}
         </ul>
-        <p className="m-0 text-[13px] text-meta">{t('hub.calls.outsideNote')}</p>
+        <p className="m-0 type-meta text-ink-muted">{t('hub.calls.outsideNote')}</p>
       </div>
     </section>
   );

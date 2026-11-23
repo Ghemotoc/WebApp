@@ -32,20 +32,20 @@ export function MaintenancePage({ onCheckAgain, isChecking }: MaintenancePagePro
   const { t } = useTranslation();
 
   return (
-    <PageContainer className="flex justify-center pt-12 pb-7">
+    <PageContainer className="flex justify-center pt-12 pb-6">
       <title>{t('maintenance.documentTitle', { productName: brand.productName })}</title>
       <section
         aria-labelledby="maintenance-heading"
-        className="flex w-full max-w-[560px] flex-col items-start gap-3.5 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
+        className="flex w-full max-w-[560px] flex-col items-start gap-4 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
       >
-        <h1 id="maintenance-heading" className="m-0 font-heading text-[28px] font-bold text-ink">
+        <h1 id="maintenance-heading" className="m-0 font-heading type-heading font-bold text-ink">
           {t('maintenance.heading', { productName: brand.productName })}
         </h1>
-        <p className="m-0 text-base text-body">{t('maintenance.body')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('maintenance.body')}</p>
         <Button size="lg" onClick={onCheckAgain} disabled={isChecking} aria-busy={isChecking}>
           {isChecking ? t('maintenance.checking') : t('maintenance.checkAgain')}
         </Button>
-        <p className="m-0 mt-2 w-full border-t border-hairline pt-3.5 text-[15px] text-body">
+        <p className="m-0 mt-2 w-full border-t border-hairline pt-4 type-body text-ink-muted">
           {t('maintenance.staffLine')}{' '}
           <Link
             to="/sign-in"

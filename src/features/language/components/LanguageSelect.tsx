@@ -67,7 +67,7 @@ export function LanguageSelect({ id, isLabelVisible = false }: LanguageSelectPro
           is announced only; a failure is also shown, because the person may want to try again. */}
       <span
         role="status"
-        className={saveStatus === 'keptOnDevice' ? 'max-w-60 text-[13px] text-body' : 'sr-only'}
+        className={saveStatus === 'keptOnDevice' ? 'max-w-60 type-meta text-ink-muted' : 'sr-only'}
       >
         {messageKey === null ? '' : t(messageKey)}
       </span>

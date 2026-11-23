@@ -215,7 +215,8 @@ test.describe('ways to log in', () => {
     const handle = `social_joins_${stamp}`;
     const page = await openSignedIn(browser, email, keptAnswers(1990, handle));
     await page.goto('/auth/social-return');
-    await expect(page).toHaveURL(/\/$|\/[a-z]{2}\/[a-z]{2}$|\/setup$|\/discover$/);
+    // A signed-in member skips the website home and lands on the hub (TRIAL-WALL).
+    await expect(page).toHaveURL(/\/$|\/[a-z]{2}\/[a-z]{2}$|\/setup$|\/discover$|\/hub$/);
     expect(
       runSql(
         `select handle from public.profiles join auth.users on users.id = profiles.id where users.email = '${email}'`,

@@ -57,15 +57,15 @@ export function UnsubscribePage() {
   const result = useUnsubscribe();
   const isDone = result.data === true;
   return (
-    <PageContainer className="tmc-rise flex max-w-[640px] flex-col gap-5 pt-12 pb-7">
+    <PageContainer className="tmc-rise flex max-w-[640px] flex-col gap-4 pt-12 pb-6">
       <title>{t('unsubscribe.documentTitle')}</title>
       <div className="flex flex-col gap-2">
         <Eyebrow>{t('unsubscribe.eyebrow')}</Eyebrow>
-        <h1 className="m-0 font-heading text-[34px] font-bold text-heading">
+        <h1 className="m-0 font-heading type-title font-bold text-ink-heading">
           {t('unsubscribe.heading')}
         </h1>
       </div>
-      <p className="m-0 text-body">{t('unsubscribe.intro')}</p>
+      <p className="m-0 text-ink-muted">{t('unsubscribe.intro')}</p>
       {unsubscribeKey === '' ? (
         <Notice tone="error">{t('unsubscribe.missingKey')}</Notice>
       ) : (

@@ -61,11 +61,11 @@ export function CharacterSheetHeader(props: CharacterSheetHeaderProps) {
   const { t } = useAtlasTranslation();
   const summary = character.sheet.summary ?? '';
   return (
-    <div className="flex min-w-0 flex-col gap-6 rounded-card border border-border bg-surface p-6 shadow-card md:flex-row md:p-7">
-      <div className="flex min-w-0 flex-1 flex-col gap-2.5">
+    <div className="flex min-w-0 flex-col gap-6 rounded-card border border-border bg-surface p-6 shadow-card md:flex-row md:p-6">
+      <div className="flex min-w-0 flex-1 flex-col gap-3">
         <h2
           id="atlas-character-heading"
-          className="m-0 font-heading text-[clamp(28px,3vw,40px)] leading-[1.05] font-extrabold break-words text-heading"
+          className="m-0 font-heading text-[clamp(28px,3vw,40px)] leading-[1.05] font-bold break-words text-ink-heading"
         >
           {character.name}
         </h2>
@@ -74,7 +74,7 @@ export function CharacterSheetHeader(props: CharacterSheetHeaderProps) {
           <PointOfViewPill characterId={character.id} />
           <FirstAppearancePill cast={cast} character={character} />
         </div>
-        {summary !== '' && <p className="m-0 text-[17px] break-words text-meta">{summary}</p>}
+        {summary !== '' && <p className="m-0 type-long break-words text-ink-muted">{summary}</p>}
       </div>
       <CharacterPictureSection
         character={character}

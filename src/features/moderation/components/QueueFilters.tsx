@@ -120,7 +120,7 @@ export function QueueFilters({ filters, onChange }: QueueFiltersProps) {
     <div
       role="group"
       aria-label={t('queue.filtersLabel')}
-      className="flex flex-wrap items-end gap-4 rounded-card border border-border bg-surface p-5 shadow-card"
+      className="flex flex-wrap items-end gap-4 rounded-card border border-border bg-surface p-4 shadow-card"
     >
       <Select
         id="queue-tier"

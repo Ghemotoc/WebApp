@@ -17,6 +17,6 @@
  */
 export function navTrackLinkClasses({ isActive }: { isActive: boolean }): string {
   const shared =
-    'nav-track-link relative z-[1] inline-flex min-h-10 min-w-11 items-center justify-center gap-2 rounded-full border border-transparent px-4 text-sm whitespace-nowrap text-ink no-underline hover:text-heading';
-  return isActive ? `${shared} font-bold` : `${shared} font-medium`;
+    'nav-track-link relative z-[1] inline-flex min-h-10 min-w-11 items-center justify-center gap-2 rounded-full border border-transparent px-4 type-body whitespace-nowrap text-ink no-underline hover:text-ink-heading';
+  return isActive ? `${shared} font-semibold` : `${shared} font-normal`;
 }

@@ -23,7 +23,7 @@ import { ThreadRow } from './ThreadRow';
 
 /** The link style of "Start a thread". */
 const startLink =
-  'inline-flex h-11 items-center rounded-full button-main px-5 text-sm font-semibold no-underline';
+  'inline-flex h-11 items-center rounded-full button-main px-4 type-body font-semibold no-underline';
 
 /**
  * "Start a thread", or the way to log in first.
@@ -67,12 +67,15 @@ export interface ThreadListProps {
 function ThreadListHeading({ forumSlug, startAddress, note, canStart = true }: ThreadListProps) {
   const { t } = useForumsTranslation();
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4 md:px-7">
-      <h2 id="thread-list-heading" className="m-0 font-heading text-xl font-bold text-heading">
+    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-4 md:px-6">
+      <h2
+        id="thread-list-heading"
+        className="m-0 font-heading type-subheading font-bold text-ink-heading"
+      >
         {t('list.heading')}
       </h2>
       {canStart && <StartThreadLink startAddress={startAddress ?? `/forums/${forumSlug}/new`} />}
-      {note !== undefined && <p className="m-0 w-full text-sm text-body">{note}</p>}
+      {note !== undefined && <p className="m-0 w-full type-body text-ink-muted">{note}</p>}
     </div>
   );
 }
@@ -97,12 +100,12 @@ export function ThreadList({ forumSlug, startAddress, note, canStart = true }: T
         canStart={canStart}
       />
       {list.loadFailed && (
-        <div className="p-5">
+        <div className="p-4">
           <Notice tone="error">{t('list.loadFailed')}</Notice>
         </div>
       )}
       {list.threads !== null && list.threads.length === 0 && (
-        <p className="m-0 px-5 py-5 text-base text-body md:px-7">{t('forum.noThreads')}</p>
+        <p className="m-0 px-4 py-4 type-body text-ink-muted md:px-6">{t('forum.noThreads')}</p>
       )}
       {list.threads !== null && list.threads.length > 0 && (
         <ul className="m-0 list-none p-0">

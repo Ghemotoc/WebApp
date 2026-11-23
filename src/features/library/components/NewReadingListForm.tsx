@@ -67,7 +67,7 @@ export function NewReadingListForm(props: NewReadingListFormProps) {
     <form
       ref={form}
       onSubmit={(event) => void submit(event)}
-      className="flex flex-col gap-3 rounded-card border border-border bg-surface p-5"
+      className="flex flex-col gap-3 rounded-card border border-border bg-surface p-4"
     >
       <TextInput
         id={`${props.idPrefix}-name`}

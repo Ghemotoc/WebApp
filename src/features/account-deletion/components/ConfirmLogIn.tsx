@@ -85,7 +85,7 @@ export function ConfirmLogIn() {
   return (
     <div className="flex flex-col gap-3">
       <Eyebrow>{t('confirm.logInAgainLabel')}</Eyebrow>
-      <p className="m-0 text-sm text-meta">{t('confirm.logInAgainHint')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('confirm.logInAgainHint')}</p>
       {methods.providers.length > 0 && (
         <SocialButtons
           groupLabel={t('confirm.otherWays')}

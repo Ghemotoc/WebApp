@@ -37,7 +37,7 @@ export function PictureFileField({
       : 'chapter-picture-file-hint chapter-picture-file-error';
   return (
     <div className="flex flex-col gap-2">
-      <label htmlFor="chapter-picture-file" className="text-sm font-semibold text-ink">
+      <label htmlFor="chapter-picture-file" className="type-body font-semibold text-ink">
         {t('pictureDialog.fileLabel')}
       </label>
       <input
@@ -47,15 +47,15 @@ export function PictureFileField({
         aria-describedby={describedBy}
         aria-invalid={errorMessage === undefined ? undefined : true}
         disabled={isDisabled}
-        className="min-h-11 max-w-full text-sm text-body file:mr-3 file:h-11 file:rounded-full file:border file:border-control-border file:bg-surface file:px-4 file:font-semibold file:text-heading"
+        className="min-h-11 max-w-full type-body text-ink-muted file:mr-3 file:h-11 file:rounded-full file:border file:border-control-border file:bg-surface file:px-4 file:font-semibold file:text-ink-heading"
         onChange={(event) => onPick(event.target.files?.[0] ?? null)}
       />
       {file !== null && <span className="sr-only">{file.name}</span>}
-      <p id="chapter-picture-file-hint" className="m-0 text-[13px] text-meta">
+      <p id="chapter-picture-file-hint" className="m-0 type-meta text-ink-muted">
         {t('pictureDialog.fileHint')}
       </p>
       {errorMessage !== undefined && (
-        <p id="chapter-picture-file-error" className="m-0 text-sm font-semibold text-destructive">
+        <p id="chapter-picture-file-error" className="m-0 type-body font-semibold text-destructive">
           {errorMessage}
         </p>
       )}

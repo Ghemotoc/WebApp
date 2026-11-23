@@ -47,14 +47,14 @@ export function HubSpotlight() {
         <div className="flex min-w-0 flex-col">
           <Link
             to={`/u/${encodeURIComponent(spotlight.handle)}`}
-            className="max-w-full font-heading text-[22px] leading-tight font-bold wrap-anywhere text-link underline"
+            className="max-w-full font-heading type-heading leading-tight font-bold wrap-anywhere text-link underline"
           >
             {spotlight.displayName}
           </Link>
-          <span className="text-sm wrap-anywhere text-meta">@{spotlight.handle}</span>
+          <span className="type-body wrap-anywhere text-ink-muted">@{spotlight.handle}</span>
         </div>
       </div>
-      <p className="m-0 text-base wrap-anywhere text-body">{reason}</p>
+      <p className="m-0 type-body wrap-anywhere text-ink-muted">{reason}</p>
       {/* Nobody follows themselves: the picked writer sees the card without the button. */}
       {!spotlight.isMe && (
         <div className="flex flex-wrap items-center gap-3">

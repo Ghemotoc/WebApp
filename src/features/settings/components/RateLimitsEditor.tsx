@@ -77,7 +77,7 @@ function ActionLimits({ action, typed, onType }: ActionLimitsProps) {
   return (
     <li className="border-t border-border pt-3 first:border-t-0 first:pt-0">
       <div role="group" aria-labelledby={`limit-${action}`} className="flex flex-col gap-2">
-        <h3 id={`limit-${action}`} className="m-0 text-sm font-bold text-heading">
+        <h3 id={`limit-${action}`} className="m-0 type-body font-bold text-ink-heading">
           {t(`rateLimits.actions.${action}`, { defaultValue: action })}
         </h3>
         <div className="flex flex-wrap gap-3">

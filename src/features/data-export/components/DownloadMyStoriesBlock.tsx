@@ -105,7 +105,7 @@ function StoriesStatus({ stories, wasReused }: { stories: LiveStory[]; wasReused
   const run = useStoriesExportRun();
   if (run.phase === 'running') {
     return (
-      <p role="status" className="m-0 rounded-2xl bg-tint px-4.5 py-4 text-[15px] text-body">
+      <p role="status" className="m-0 rounded-card bg-tint px-4 py-4 type-body text-ink-muted">
         {t('stories.preparing')}
       </p>
     );
@@ -176,7 +176,7 @@ function StoriesForm({ stories }: { stories: LiveStory[] }) {
           {t('stories.get')}
         </Button>
       </div>
-      <span className="text-sm leading-normal text-meta">{t('stories.hint')}</span>
+      <span className="type-body leading-normal text-ink-muted">{t('stories.hint')}</span>
       <StoriesStatus stories={stories} wasReused={wasReused} />
       {chosenCompleted !== undefined && (
         <EpubSection key={chosenCompleted.id} story={chosenCompleted} />
@@ -201,18 +201,21 @@ export function DownloadMyStoriesBlock() {
   const { t } = useDataExportTranslation();
   const { stories, isKnown, loadFailed } = useLiveStories();
   // The "ready" notification links to #download-my-stories; the block grows once the stories
-  // arrive, so it is brought into view again then.
-  useScrollToHash(isKnown);
+  // arrive, so it is brought into view again then. Only that address: #download-my-data belongs
+  // to Settings, which brings the whole group's top into view.
+  useScrollToHash(isKnown, 'download-my-stories');
   return (
     <div
       id="download-my-stories"
-      className="flex scroll-mt-24 flex-col gap-3 border-t border-border pt-5.5"
+      className="flex scroll-mt-24 flex-col gap-3 border-t border-border pt-6"
     >
-      <h3 className="m-0 font-heading text-xl font-bold text-heading">{t('stories.heading')}</h3>
-      <p className="m-0 text-[15px] leading-relaxed text-body">{t('stories.intro')}</p>
+      <h3 className="m-0 font-heading type-subheading font-bold text-ink-heading">
+        {t('stories.heading')}
+      </h3>
+      <p className="m-0 type-body leading-relaxed text-ink-muted">{t('stories.intro')}</p>
       {loadFailed && <Notice tone="error">{t('stories.loadFailed')}</Notice>}
       {isKnown && !loadFailed && stories.length === 0 && (
-        <p className="m-0 text-[15px] text-body">{t('stories.none')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('stories.none')}</p>
       )}
       {stories.length > 0 && <StoriesForm stories={stories} />}
     </div>

@@ -61,11 +61,11 @@ function ContinueActions({ item, isFirst }: { item: ContinueReadingItem; isFirst
   // Only the first story's Continue is the page's main button (handover Step 3, Library).
   const look = isFirst ? 'button-main' : 'button-glass';
   return (
-    <div className="mt-3.5 flex flex-wrap items-start gap-2">
+    <div className="mt-4 flex flex-wrap items-start gap-2">
       <Link
         to={continueAddress(story.slug, place)}
         aria-label={t('continue.buttonLabel', { title: story.title })}
-        className={`inline-flex h-11 items-center rounded-full ${look} px-5 text-sm font-semibold no-underline`}
+        className={`inline-flex h-11 items-center rounded-full ${look} px-4 type-body font-semibold no-underline`}
       >
         {t('continue.button')}
       </Link>
@@ -103,12 +103,12 @@ export function ContinueReadingCard({
     <li className="flex items-start gap-4 min-[600px]:gap-6">
       <ContinueCover story={story} />
       <div className="flex min-w-0 flex-1 flex-col">
-        <h3 className="m-0 type-subheading break-words text-heading">
+        <h3 className="m-0 type-subheading break-words text-ink-heading">
           <Link to={`/s/${story.slug}`} className="text-inherit no-underline hover:underline">
             {story.title}
           </Link>
         </h3>
-        <p className="m-0 mt-0.5 type-meta">
+        <p className="m-0 mt-1 type-meta">
           {t('continue.by')}{' '}
           <Link
             to={`/u/${encodeURIComponent(story.writer.handle)}`}
@@ -121,11 +121,11 @@ export function ContinueReadingCard({
         </p>
         <div
           aria-hidden="true"
-          className="mt-3 mb-2.5 h-1 w-full max-w-[360px] overflow-hidden rounded-full bg-(--hairline)"
+          className="mt-3 mb-3 h-1 w-full max-w-[360px] overflow-hidden rounded-full bg-(--hairline)"
         >
           <div className="h-full bg-(--thread)" style={{ width: `${place.percent}%` }} />
         </div>
-        <p className="m-0 type-body text-body">
+        <p className="m-0 type-body text-ink-muted">
           {t('continue.stopped', {
             position: t(`continue.positions.${placeWithinChapter(place.percent)}`),
             number: place.number,

@@ -111,9 +111,12 @@ export function NoticeForm({ language, isSending, failure, onSend }: NoticeFormP
       noValidate
       onSubmit={handleSubmit}
       aria-labelledby="notice-form-heading"
-      className="relative flex flex-col gap-5 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
+      className="relative flex flex-col gap-4 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
     >
-      <h2 id="notice-form-heading" className="m-0 font-heading text-[24px] font-bold text-heading">
+      <h2
+        id="notice-form-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
+      >
         {t(isOrder ? 'order.heading' : 'form.heading')}
       </h2>
       <NoticeKindPicker
@@ -135,7 +138,7 @@ export function NoticeForm({ language, isSending, failure, onSend }: NoticeFormP
         <Button type="submit" size="lg" disabled={isSending}>
           {t(sendLabelKey(isSending, isOrder))}
         </Button>
-        <span className="text-sm text-meta">{t('form.aPersonReads')}</span>
+        <span className="type-body text-ink-muted">{t('form.aPersonReads')}</span>
       </div>
     </form>
   );

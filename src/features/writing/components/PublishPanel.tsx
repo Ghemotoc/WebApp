@@ -52,12 +52,12 @@ function WhenChoice({
     { value: true, label: t('publish.later') },
   ];
   return (
-    <fieldset className="m-0 flex flex-col gap-0.5 border-0 p-0">
+    <fieldset className="m-0 flex flex-col gap-1 border-0 p-0">
       <legend className="sr-only">{t('publish.whenLabel')}</legend>
       {options.map((option) => (
         <label
           key={option.label}
-          className="flex min-h-11 cursor-pointer items-center gap-2.5 text-[15px] text-ink"
+          className="flex min-h-11 cursor-pointer items-center gap-3 type-body text-ink"
         >
           <input
             type="radio"
@@ -136,7 +136,7 @@ function DraftControls({
       )}
       {/* CALM-6: a chapter after the marked one takes the mark off when it goes out. */}
       {lastState !== null && lastState.markedNumber !== null && (
-        <p className="m-0 text-[13px] leading-normal text-body">
+        <p className="m-0 type-meta leading-normal text-ink-muted">
           {t('publish.markedBefore', { number: lastState.markedNumber })}
         </p>
       )}
@@ -148,9 +148,9 @@ function DraftControls({
           {mainButtonText(t, isLater, lastState)}
         </Button>
       </div>
-      <p className="m-0 text-[13px] leading-normal text-meta">{t('publish.goLiveNote')}</p>
+      <p className="m-0 type-meta leading-normal text-ink-muted">{t('publish.goLiveNote')}</p>
       {/* Readers are on the web until the apps exist (S1-E4-06a; Q9: "makes copying harder"). */}
-      <p className="m-0 text-[13px] leading-normal text-meta">{t('publish.webReadingNote')}</p>
+      <p className="m-0 type-meta leading-normal text-ink-muted">{t('publish.webReadingNote')}</p>
     </div>
   );
 }
@@ -167,7 +167,7 @@ function ScheduledControls({
     state.scheduledFor === null ? '' : formatLocalDateTime(state.scheduledFor, i18n.language);
   return (
     <div className="flex flex-col gap-3">
-      <p className="m-0 rounded-card bg-tint px-3.5 py-3 text-[15px] font-semibold text-heading">
+      <p className="m-0 rounded-card bg-tint px-4 py-3 type-body font-semibold text-ink-heading">
         {t('publish.scheduledFor', { when })}
       </p>
       {lastState !== null && (lastState.isLast || lastState.canMark) && (
@@ -202,7 +202,9 @@ function PublishedLastMark({
   const { t } = useEditorTranslation();
   if (lastState === null) return null;
   if (lastState.isLast) {
-    return <p className="m-0 text-[15px] font-semibold text-heading">{t('publish.lastMarked')}</p>;
+    return (
+      <p className="m-0 type-body font-semibold text-ink-heading">{t('publish.lastMarked')}</p>
+    );
   }
   if (!lastState.canMark) return null;
   return (
@@ -228,7 +230,7 @@ function PublishedControls({
     state.lastPublishedAt === null ? '' : formatLocalDateTime(state.lastPublishedAt, i18n.language);
   return (
     <div className="flex flex-col gap-3">
-      <p className="m-0 rounded-card bg-(--success-bg) px-3.5 py-3 text-[15px] font-semibold text-(--success-text)">
+      <p className="m-0 rounded-card bg-(--success-bg) px-4 py-3 type-body font-semibold text-(--success-text)">
         {t('publish.published', { when })}
       </p>
       <PublishedLastMark lastState={lastState} isBusy={isBusy} onAction={onAction} />
@@ -240,7 +242,7 @@ function PublishedControls({
           {t('publish.updateButton')}
         </Button>
       </div>
-      <p className="m-0 text-[13px] leading-normal text-meta">{t('publish.updateNote')}</p>
+      <p className="m-0 type-meta leading-normal text-ink-muted">{t('publish.updateNote')}</p>
     </div>
   );
 }
@@ -254,7 +256,7 @@ function UnpublishControls({
   const { t } = useEditorTranslation();
   const isPublished = state.status === 'published';
   return (
-    <div className="flex flex-col gap-2 border-t border-border pt-3.5">
+    <div className="flex flex-col gap-2 border-t border-border pt-4">
       <Button
         variant="destructive"
         onClick={() => onAction({ kind: 'unpublish' })}
@@ -262,7 +264,7 @@ function UnpublishControls({
       >
         {t('publish.unpublish')}
       </Button>
-      <p className="m-0 text-[13px] leading-normal text-meta">
+      <p className="m-0 type-meta leading-normal text-ink-muted">
         {isPublished ? t('publish.unpublishNotePublished') : t('publish.unpublishNoteDraft')}
       </p>
     </div>
@@ -277,7 +279,7 @@ function UnpublishControls({
 export function PublishPanel(props: PublishPanelProps) {
   const { t } = useEditorTranslation();
   return (
-    <div className="flex flex-col gap-3.5">
+    <div className="flex flex-col gap-4">
       {props.state.status === 'draft' && (
         <DraftControls
           lastState={props.lastState}
@@ -289,7 +291,7 @@ export function PublishPanel(props: PublishPanelProps) {
       {props.state.status === 'scheduled' && <ScheduledControls {...props} />}
       {props.state.status === 'published' && <PublishedControls {...props} />}
       {props.problem !== null && (
-        <p role="alert" className="m-0 text-sm text-destructive">
+        <p role="alert" className="m-0 type-body text-destructive">
           {t(`publish.problems.${props.problem}`)}
         </p>
       )}

@@ -31,12 +31,12 @@ function StartedFromTicket({ state }: { state: ReturnType<typeof useTicketLinks>
       aria-label={t('staff.links.startedLabel')}
     >
       {links.notices.map((notice) => (
-        <li key={notice.reference} className="text-sm text-body">
+        <li key={notice.reference} className="type-body text-ink-muted">
           {t('staff.links.noticeLine', { reference: notice.reference })}
         </li>
       ))}
       {links.dataRequests.map((request) => (
-        <li key={request.id} className="text-sm text-body">
+        <li key={request.id} className="type-body text-ink-muted">
           <Link to={`/staff/data-requests/${request.id}`}>
             {t('staff.links.requestLine', {
               reference: request.reference,
@@ -61,9 +61,12 @@ export function TicketLinksPanel({ ticket }: { ticket: StaffTicket }) {
   return (
     <section
       aria-labelledby="ticket-links-heading"
-      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-5"
+      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-4"
     >
-      <h2 id="ticket-links-heading" className="m-0 font-heading text-[20px] font-bold text-heading">
+      <h2
+        id="ticket-links-heading"
+        className="m-0 font-heading type-subheading font-bold text-ink-heading"
+      >
         {t('staff.links.heading')}
       </h2>
       <StartedFromTicket state={state} />

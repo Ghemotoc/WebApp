@@ -30,8 +30,8 @@ export function ModeratedItemNotice({ sanctions }: { sanctions: ReturnType<typeo
   }
   return (
     <div className="flex flex-col gap-3 rounded-card border border-border bg-surface p-4">
-      <p className="m-0 font-semibold text-heading">{t(`moderatedItem.${item.state}`)}</p>
-      <p className="m-0 text-sm text-body">{t('moderatedItem.explain')}</p>
+      <p className="m-0 font-semibold text-ink-heading">{t(`moderatedItem.${item.state}`)}</p>
+      <p className="m-0 type-body text-ink-muted">{t('moderatedItem.explain')}</p>
       {sanctions.restoreFailure !== null && (
         <Notice tone="error">{t(`failures.${sanctions.restoreFailure}`)}</Notice>
       )}

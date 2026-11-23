@@ -67,7 +67,7 @@ function RenameForm({ list }: { list: ReadingListDetails }) {
         <Button type="submit" variant="secondary" isLoading={isSaving}>
           {t('lists.page.saveName')}
         </Button>
-        <span aria-live="polite" className="text-sm text-meta">
+        <span aria-live="polite" className="type-body text-ink-muted">
           {isSaved ? t('lists.page.saved') : ''}
         </span>
       </div>
@@ -105,7 +105,7 @@ function AudienceChoice({ list }: { list: ReadingListDetails }) {
         onChange={choose}
         descriptionId="reading-list-audience-hint"
       />
-      <p id="reading-list-audience-hint" className="m-0 text-sm text-meta">
+      <p id="reading-list-audience-hint" className="m-0 type-body text-ink-muted">
         {t('lists.page.audienceHint')}
       </p>
       <div aria-live="polite">
@@ -130,7 +130,7 @@ function EntryRows({ list }: { list: ReadingListDetails }) {
 
   return (
     <div className="flex flex-col gap-2">
-      <h3 className="m-0 font-heading text-lg font-bold text-heading">
+      <h3 className="m-0 font-heading type-long font-bold text-ink-heading">
         {t('lists.page.entriesHeading')}
       </h3>
       <ul className="m-0 list-none p-0">
@@ -139,7 +139,7 @@ function EntryRows({ list }: { list: ReadingListDetails }) {
             key={entry.slug}
             className="flex items-center justify-between gap-3 border-t border-border py-2 first:border-t-0"
           >
-            <span className="min-w-0 break-words text-heading">{entry.title}</span>
+            <span className="min-w-0 break-words text-ink-heading">{entry.title}</span>
             <Button
               variant="text"
               className="shrink-0"
@@ -179,11 +179,11 @@ export function ReadingListOwnerTools({ list }: { list: ReadingListDetails }) {
   return (
     <section
       aria-labelledby="reading-list-tools-heading"
-      className="flex flex-col gap-6 rounded-card border border-border bg-surface p-5 shadow-card"
+      className="flex flex-col gap-6 rounded-card border border-border bg-surface p-4 shadow-card"
     >
       <h2
         id="reading-list-tools-heading"
-        className="m-0 font-heading text-[22px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('lists.page.toolsHeading')}
       </h2>

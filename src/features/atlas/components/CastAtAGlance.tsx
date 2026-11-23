@@ -26,7 +26,7 @@ export function CastAtAGlance({ page }: { page: StoryPlanPage }) {
   return (
     <div className="flex min-w-0 flex-col gap-3">
       {page.cast.recent.length === 0 ? (
-        <p className="m-0 px-[18px] text-body">{t('characters.glance.none')}</p>
+        <p className="m-0 px-4 text-ink-muted">{t('characters.glance.none')}</p>
       ) : (
         <GlassList id="atlas-cast-glance" label={t('characters.glance.recentList')}>
           {page.cast.recent.map((character) => (
@@ -43,7 +43,7 @@ export function CastAtAGlance({ page }: { page: StoryPlanPage }) {
       )}
       <Link
         to={castAddress}
-        className="inline-flex h-11 items-center self-start rounded-full button-glass px-5 text-sm font-semibold no-underline"
+        className="inline-flex h-11 items-center self-start rounded-full button-glass px-4 type-body font-semibold no-underline"
       >
         {t('characters.glance.open', { count: page.cast.count })}
       </Link>

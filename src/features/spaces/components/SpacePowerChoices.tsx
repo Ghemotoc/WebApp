@@ -48,7 +48,7 @@ export function SpacePowerChoices({
     >
       <legend className="mb-2 p-0 eyebrow">{legend}</legend>
       {errorMessage !== undefined && (
-        <p id={`${groupId}-error`} className="m-0 text-sm text-destructive">
+        <p id={`${groupId}-error`} className="m-0 type-body text-destructive">
           {errorMessage}
         </p>
       )}
@@ -59,16 +59,16 @@ export function SpacePowerChoices({
             <input
               id={inputId}
               type="checkbox"
-              className="mt-0.5 h-5 w-5 flex-none"
+              className="mt-1 h-5 w-5 flex-none"
               checked={value.includes(power)}
               aria-describedby={`${inputId}-note`}
               onChange={(event) => onChange(togglePower(value, power, event.target.checked))}
             />
-            <div className="flex flex-col gap-0.5">
-              <label htmlFor={inputId} className="text-[15px] font-semibold text-heading">
+            <div className="flex flex-col gap-1">
+              <label htmlFor={inputId} className="type-body font-semibold text-ink-heading">
                 {t(`moderators.powers.${power}`)}
               </label>
-              <span id={`${inputId}-note`} className="text-sm text-body">
+              <span id={`${inputId}-note`} className="type-body text-ink-muted">
                 {t(`moderators.powerNotes.${power}`)}
               </span>
             </div>

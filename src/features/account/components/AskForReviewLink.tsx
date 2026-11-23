@@ -20,7 +20,7 @@ export function AskForReviewLink({ name }: { name: string }) {
   const message = `${t('falseHit.emailSubject')}: ${name}`;
   const href = `/contact?topic=account&message=${encodeURIComponent(message)}`;
   return (
-    <p className="m-0 text-[13px] text-meta">
+    <p className="m-0 type-meta text-ink-muted">
       {t('falseHit.text')}{' '}
       <Link to={href} className="text-link underline">
         {t('falseHit.link')}

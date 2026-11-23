@@ -36,17 +36,17 @@ export function TranslationEditorBar(props: TranslationEditorBarProps) {
   const { edition, place, isPublished, isBusy, onSave, onPublish } = props;
   const { t } = useStoryLanguagesTranslation();
   return (
-    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-card border border-border bg-surface px-5 py-2.5 shadow-card">
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-card border border-border bg-surface px-4 py-3 shadow-card">
       <Link
         to={`/write/s/${edition.slug}/translate`}
         lang={edition.languageCode}
-        className="inline-flex min-h-11 min-w-0 flex-[1_1_160px] items-center gap-2 text-sm font-bold break-words text-heading no-underline"
+        className="inline-flex min-h-11 min-w-0 flex-[1_1_160px] items-center gap-2 type-body font-semibold break-words text-ink-heading no-underline"
       >
         <ChevronLeftIcon aria-hidden="true" className="shrink-0" />
         {edition.title}
       </Link>
       {/* The page's heading: small, as on the board, but still the h1 a screen reader lands on. */}
-      <h1 className="m-0 flex-[1_1_160px] font-body text-sm font-normal tracking-normal text-meta md:text-center">
+      <h1 className="m-0 flex-[1_1_160px] font-body type-body font-normal tracking-normal text-ink-muted md:text-center">
         {place}
       </h1>
       <div className="flex flex-[1_1_auto] flex-wrap justify-end gap-2 max-md:hidden">

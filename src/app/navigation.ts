@@ -12,6 +12,24 @@
 export interface NavigationItem {
   href: string;
   labelKey: string;
+  /** Shown only to a signed-in member (TRIAL-WALL: Library and Together leave a visitor's bar). */
+  isForMembers?: boolean;
+}
+
+/**
+ * The links a signed-out visitor sees: every link but those for members (Robert, 23 Nov 2026:
+ * "library and together should disappear fully from the navbar when they are signed out").
+ *
+ * @param items - the full list
+ * @param isSignedIn - whether someone is signed in
+ * @returns the list as is for a member, without the members' links for a visitor
+ */
+export function linksFor<Item extends { isForMembers?: boolean }>(
+  items: readonly Item[],
+  isSignedIn: boolean,
+): Item[] {
+  if (isSignedIn) return [...items];
+  return items.filter((item) => item.isForMembers !== true);
 }
 
 /**
@@ -25,14 +43,15 @@ export const homeNavigationPlaceholder = '#home';
  * Top bar links, in the simplified design's order (bundle CALM-2; the DESIGN handover, Step 2,
  * "Top bar"): Home, Read, Library and Together. Read is the page at /discover (S1-E5-01) and
  * Together the page at /forums (FORUMS-1a, S1-E8-01): only the words changed, the addresses stay
- * (a new address is on hold). Library is S1-E4-03; a visitor gets a log-in card there. Messages
+ * (a new address is on hold). Library is S1-E4-03. Library and Together show only to members
+ * (TRIAL-WALL, Robert, 23 Nov 2026). Messages
  * (S1-E9-01) is not in the track any more: it is an icon button beside the bell (MessagesHeaderLink).
  */
 export const primaryNavigation: NavigationItem[] = [
   { href: homeNavigationPlaceholder, labelKey: 'nav.home' },
   { href: '/discover', labelKey: 'nav.read' },
-  { href: '/library', labelKey: 'nav.library' },
-  { href: '/forums', labelKey: 'nav.together' },
+  { href: '/library', labelKey: 'nav.library', isForMembers: true },
+  { href: '/forums', labelKey: 'nav.together', isForMembers: true },
 ];
 
 /** One column of footer links: its heading's locale key and its links. */

@@ -38,9 +38,9 @@ export function CategoriesSection() {
               key={slug}
               className="flex flex-wrap items-center justify-between gap-2 border-t border-border pt-2 first:border-t-0 first:pt-0"
             >
-              <span className="text-sm text-ink">
+              <span className="type-body text-ink">
                 {name}{' '}
-                <span className="text-meta">
+                <span className="text-ink-muted">
                   ({t('categories.position', { position: index + 1, total: slugs.length })})
                 </span>
               </span>

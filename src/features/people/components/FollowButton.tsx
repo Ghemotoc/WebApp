@@ -52,7 +52,7 @@ export function FollowButton({ target, targetLabel }: FollowButtonProps) {
     return (
       <Link
         to="/sign-in"
-        className="inline-flex h-11 items-center justify-center rounded-full button-glass px-5 text-sm font-semibold no-underline"
+        className="inline-flex h-11 items-center justify-center rounded-full button-glass px-4 type-body font-semibold no-underline"
       >
         {t('follow.logIn')}
       </Link>
@@ -60,7 +60,7 @@ export function FollowButton({ target, targetLabel }: FollowButtonProps) {
   }
   const isFollowing = follow.state.following;
   return (
-    <div className="flex flex-col items-start gap-1.5">
+    <div className="flex flex-col items-start gap-2">
       {/* Always the quiet button: pressed (Following) reverses it to the filled look in index.css,
           so Follow stays quiet beside a page's one main button (canvas v38; CALM-1b). */}
       <Button
@@ -75,7 +75,7 @@ export function FollowButton({ target, targetLabel }: FollowButtonProps) {
         <span className="sr-only"> {targetLabel}</span>
       </Button>
       {follow.failure !== null && (
-        <p role="alert" className="m-0 text-sm text-destructive">
+        <p role="alert" className="m-0 type-body text-destructive">
           {t(follow.failure === 'read_only' ? 'follow.readOnly' : 'follow.failed')}
         </p>
       )}

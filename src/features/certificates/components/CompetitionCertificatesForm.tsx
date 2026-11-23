@@ -58,7 +58,7 @@ function ConfirmedResultsList({ entrants }: { entrants: CompetitionCertificateEn
   const { t } = useCertificatesTranslation();
   return (
     <section aria-labelledby="competition-certificates-heading" className="flex flex-col gap-2">
-      <h3 id="competition-certificates-heading" className="m-0 text-sm font-semibold text-ink">
+      <h3 id="competition-certificates-heading" className="m-0 type-body font-bold text-ink">
         {t('class.competitionResultsTitle')}
       </h3>
       <ul className="m-0 flex list-none flex-col p-0">
@@ -116,14 +116,14 @@ export function CompetitionCertificatesForm({
   if (entrants.length === 0) {
     return (
       <div className="flex flex-col gap-3">
-        <p className="m-0 text-body">{t('class.noEntrants')}</p>
+        <p className="m-0 text-ink-muted">{t('class.noEntrants')}</p>
         {otherProgramme}
       </div>
     );
   }
   return (
     <form className="flex flex-col gap-4" onSubmit={approve}>
-      <p className="m-0 text-body">{t('class.fromCompetition', { name: competitionName })}</p>
+      <p className="m-0 text-ink-muted">{t('class.fromCompetition', { name: competitionName })}</p>
       <ConfirmedResultsList entrants={entrants} />
       <CertificateLookPicker
         look={look}
@@ -131,7 +131,7 @@ export function CompetitionCertificatesForm({
         programmeName={competitionName}
         space={{ slug, spaceId }}
       />
-      <p className="m-0 text-sm text-body">{t('class.competitionIntro')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('class.competitionIntro')}</p>
       <Button type="submit" className="self-start" disabled={issuing.isRunning}>
         {t('class.approve')}
       </Button>

@@ -50,17 +50,17 @@ function PreviewWords({ story }: { story: SharedStory }) {
   if (showsTitleOnly(story.rating)) {
     return (
       <>
-        <p className="m-0 text-[15px] font-semibold text-heading">{story.title}</p>
-        <p className="m-0 text-sm text-body">{ratingLabels[story.rating]}</p>
+        <p className="m-0 type-body font-semibold text-ink-heading">{story.title}</p>
+        <p className="m-0 type-body text-ink-muted">{ratingLabels[story.rating]}</p>
       </>
     );
   }
   return (
     <>
-      <p className="m-0 text-[15px] font-semibold text-heading">
+      <p className="m-0 type-body font-semibold text-ink-heading">
         {t('dialog.previewTitle', { story: story.title, writer: story.writerName })}
       </p>
-      {story.blurb !== '' && <p className="m-0 text-sm text-body">{story.blurb}</p>}
+      {story.blurb !== '' && <p className="m-0 type-body text-ink-muted">{story.blurb}</p>}
     </>
   );
 }
@@ -80,15 +80,15 @@ function StoryChatPreview({ story }: { story: SharedStory }) {
         <span
           aria-hidden="true"
           data-testid="story-preview-colour"
-          className="size-14 flex-none rounded-lg border border-(--swatch-edge)"
+          className="size-14 flex-none rounded-field border border-(--swatch-edge)"
           style={{ backgroundColor: storyPreviewColour(story) }}
         />
         <div className="flex min-w-0 flex-col gap-1">
-          <p className="m-0 text-xs text-meta">{brand.siteDomain}</p>
+          <p className="m-0 type-meta text-ink-muted">{brand.siteDomain}</p>
           <PreviewWords story={story} />
         </div>
       </div>
-      <p className="m-0 text-sm text-body">
+      <p className="m-0 type-body text-ink-muted">
         {showsTitleOnly(story.rating)
           ? t('story.titleOnlyNote', { rating: ratingLabels[story.rating] })
           : t('story.friendNote')}
@@ -119,7 +119,7 @@ export function StoryShareDialog({ isOpen, onClose, story, wasCopied }: StorySha
       <div className="flex flex-col gap-2">
         <h3 className="m-0 eyebrow">{t('dialog.otherWays')}</h3>
         <SendInMessagesLink link={link} countedChapter={null} />
-        <p className="m-0 text-sm text-body">{t('dialog.deviceNote')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('dialog.deviceNote')}</p>
       </div>
       <StoryChatPreview story={story} />
       <ButtonRow className="border-t border-border pt-4">

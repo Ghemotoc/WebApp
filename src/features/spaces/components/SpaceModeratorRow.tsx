@@ -39,9 +39,9 @@ export function SpaceModeratorRow({ moderator, onChange, isRunning }: SpaceModer
   const name = nameOf(person, t('row.ownerDeleted'));
   const isChanged = !samePowers(powers, moderator.powers);
   return (
-    <li className="flex flex-col gap-3 rounded-[20px] border border-border p-4">
-      <span className="text-base font-semibold break-words text-heading">
-        {name} <span className="font-normal text-meta">@{person.handle}</span>
+    <li className="flex flex-col gap-3 rounded-card border border-border p-4">
+      <span className="type-body font-semibold break-words text-ink-heading">
+        {name} <span className="font-normal text-ink-muted">@{person.handle}</span>
       </span>
       <SpacePowerChoices
         legend={t('moderators.powersOf', { name })}

@@ -70,12 +70,12 @@ export function LandingPageView({
       )}
       {/* Step 2: the theme band with the page's one h1. */}
       <header
-        className={`flex flex-col gap-3 rounded-3xl border p-6 sm:p-10 ${themeBands[content.theme]}`}
+        className={`flex flex-col gap-3 rounded-card border p-6 sm:p-8 ${themeBands[content.theme]}`}
       >
-        <h1 className="m-0 font-heading text-[34px] leading-tight font-bold break-words sm:text-[44px]">
+        <h1 className="m-0 font-heading type-title leading-tight font-bold break-words sm:type-display">
           {hero === undefined ? '' : wordsOf(hero, language, 'title')}
         </h1>
-        {intro !== '' && <p className="m-0 max-w-[640px] text-lg">{intro}</p>}
+        {intro !== '' && <p className="m-0 max-w-[640px] type-long">{intro}</p>}
         {hero !== undefined && (
           <LandingPicture
             block={hero}
@@ -86,7 +86,7 @@ export function LandingPageView({
         )}
       </header>
       {/* Step 3: every other block, in the order the admin set. */}
-      <div className="flex max-w-[760px] min-w-0 flex-col gap-10">
+      <div className="flex max-w-[760px] min-w-0 flex-col gap-8">
         {rest.map((block) => (
           <LandingBlockView
             key={block.id}

@@ -72,7 +72,7 @@ export function ReadSideColumn() {
     <aside
       aria-label={label}
       data-discover-side=""
-      className="flex min-w-0 flex-col gap-10 lg:col-start-2 lg:row-span-2 lg:row-start-1"
+      className="flex min-w-0 flex-col gap-8 lg:col-start-2 lg:row-span-2 lg:row-start-1"
     >
       {continueReading !== null && <ContinueCard item={continueReading} />}
       {draft !== null && <DraftCard draft={draft} />}

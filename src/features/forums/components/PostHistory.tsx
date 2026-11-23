@@ -24,23 +24,23 @@ export function PostHistory({ postId, id }: { postId: string; id: string }) {
   const { t, i18n } = useForumsTranslation();
   const history = usePostHistory(postId, true);
   return (
-    <section id={id} className="flex flex-col gap-3 rounded-2xl border border-border bg-panel p-4">
-      <p className="m-0 text-[13px] font-semibold text-body">{t('post.historyHeading')}</p>
+    <section id={id} className="flex flex-col gap-3 rounded-card border border-border bg-panel p-4">
+      <p className="m-0 type-meta font-semibold text-ink-muted">{t('post.historyHeading')}</p>
       {history.loadFailed && (
-        <p className="m-0 text-sm text-destructive">{t('post.historyFailed')}</p>
+        <p className="m-0 type-body text-destructive">{t('post.historyFailed')}</p>
       )}
       {history.versions !== null && (
         <ol className="m-0 flex list-none flex-col gap-3 p-0">
           {history.versions.map((version) => (
             <li
               key={version.writtenAt}
-              className="flex flex-col gap-1.5 border-t border-border pt-3 first:border-t-0 first:pt-0"
+              className="flex flex-col gap-2 border-t border-border pt-3 first:border-t-0 first:pt-0"
             >
-              <p className="m-0 text-[13px] text-meta">
+              <p className="m-0 type-meta text-ink-muted">
                 {t('post.historyWritten', { time: postTime(version.writtenAt, i18n.language) })}
               </p>
               {version.title !== null && (
-                <p className="m-0 text-sm font-semibold text-ink">
+                <p className="m-0 type-body font-semibold text-ink">
                   {t('post.historyTitle', { title: version.title })}
                 </p>
               )}

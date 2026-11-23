@@ -46,7 +46,7 @@ export function DownvoteButton({ address, comment }: DownvoteButtonProps) {
         <span className="sr-only"> {t('comment.reportLabel', { name })}</span>
       </Chip>
       {downvote.failure !== null && (
-        <span role="alert" className="text-sm text-destructive">
+        <span role="alert" className="type-body text-destructive">
           {t(
             `downvote.failures.${downvote.failure.failure === 'read_only' ? 'read_only' : 'other'}`,
           )}

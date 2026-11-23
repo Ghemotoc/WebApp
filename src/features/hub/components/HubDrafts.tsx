@@ -90,7 +90,7 @@ function DraftRow(props: {
       <div className="flex min-w-0 flex-col gap-1">
         <Link
           to={href}
-          className="font-semibold break-words text-heading no-underline hover:underline"
+          className="font-semibold break-words text-ink-heading no-underline hover:underline"
         >
           {story.title}
         </Link>
@@ -139,7 +139,7 @@ export function HubDrafts() {
           {t('hub.drafts.write')}
         </Link>
       </div>
-      {shown.length === 0 && <p className="m-0 text-body">{t('hub.drafts.none')}</p>}
+      {shown.length === 0 && <p className="m-0 text-ink-muted">{t('hub.drafts.none')}</p>}
       <ul className="m-0 list-none p-0">
         {/* Step 2: the latest draft opens the editor; the other stories open their chapters. */}
         {shown.map((story, index) => {

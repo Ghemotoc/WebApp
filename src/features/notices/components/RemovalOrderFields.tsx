@@ -28,7 +28,7 @@ export function RemovalOrderFields({ draft, problems, onChange }: NoticeFieldsPr
   const messageFor = useProblemMessage();
   return (
     <>
-      <p className="m-0 text-[15px] text-body">{t('order.intro')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('order.intro')}</p>
       <div className="grid gap-4 md:grid-cols-2">
         <TextInput
           id="notice-authority"

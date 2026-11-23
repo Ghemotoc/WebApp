@@ -52,10 +52,10 @@ function EntryReading({ entry }: Pick<BibleEntryViewProps, 'entry'>) {
         </ul>
       )}
       {entry.body.trim() === '' ? (
-        <p className="m-0 text-body">{t('bible.entry.empty')}</p>
+        <p className="m-0 text-ink-muted">{t('bible.entry.empty')}</p>
       ) : (
         // Board AtlasWorld: the entry reads at 17 px on a line no wider than 700 px.
-        <div className="max-w-[700px] [&>div]:text-[17px] [&>div]:leading-[1.7]">
+        <div className="max-w-[700px] [&>div]:type-long [&>div]:leading-[1.7]">
           <BibleMarkdown text={entry.body} />
         </div>
       )}
@@ -76,7 +76,7 @@ function EntryTopRow({
   const section = bible.sections.find((candidate) => candidate.id === entry.sectionId);
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <p className="m-0 text-sm text-meta">
+      <p className="m-0 type-body text-ink-muted">
         {isEditing && t('bible.entry.editing')}
         {!isEditing &&
           section !== undefined &&
@@ -101,11 +101,11 @@ function EntryReadersSection({ entry }: { entry: BibleEntry }) {
     >
       <h3
         id="atlas-bible-entry-readers-heading"
-        className="m-0 font-heading text-lg font-bold text-heading"
+        className="m-0 font-heading type-long font-bold text-ink-heading"
       >
         {t('readers.item.heading')}
       </h3>
-      <p className="m-0 text-sm text-body">{t('readers.item.entryHint')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('readers.item.entryHint')}</p>
       <ItemVisibilityControls slug={slug} itemId={entry.id} itemName={entry.title} allowsGuard />
     </section>
   );
@@ -122,7 +122,7 @@ export function BibleEntryView({ bible, entry, startsEditing, save, remove }: Bi
   return (
     <article
       aria-labelledby="atlas-bible-entry-heading"
-      className="flex min-w-0 flex-col gap-4 rounded-card border border-border bg-surface px-5 py-6 shadow-card sm:px-11 sm:py-9"
+      className="flex min-w-0 flex-col gap-4 rounded-card border border-border bg-surface px-4 py-6 shadow-card sm:px-12 sm:py-8"
     >
       <EntryTopRow
         bible={bible}
@@ -132,7 +132,7 @@ export function BibleEntryView({ bible, entry, startsEditing, save, remove }: Bi
       />
       <h2
         id="atlas-bible-entry-heading"
-        className="m-0 min-w-0 font-heading text-[clamp(26px,3vw,36px)] leading-[1.1] font-extrabold break-words text-heading"
+        className="m-0 min-w-0 font-heading text-[clamp(26px,3vw,36px)] leading-[1.1] font-bold break-words text-ink-heading"
       >
         {entry.title}
       </h2>
@@ -148,7 +148,7 @@ export function BibleEntryView({ bible, entry, startsEditing, save, remove }: Bi
       >
         <h3
           id="atlas-bible-entry-delete-heading"
-          className="m-0 font-heading text-lg font-bold text-heading"
+          className="m-0 font-heading type-long font-bold text-ink-heading"
         >
           {t('bible.entry.delete.heading')}
         </h3>

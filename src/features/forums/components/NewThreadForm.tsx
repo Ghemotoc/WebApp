@@ -71,7 +71,7 @@ export function NewThreadForm({ forumSlug, cancelTo, initialBody = '' }: NewThre
   }
 
   return (
-    <form onSubmit={first.submit} className="flex flex-col gap-5">
+    <form onSubmit={first.submit} className="flex flex-col gap-4">
       <TextInput
         id={titleId}
         label={t('editor.title')}

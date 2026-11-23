@@ -42,22 +42,22 @@ export function GlassListRow({
         to={to}
         aria-current={isCurrent ? 'page' : undefined}
         className={cn(
-          'flex min-h-[60px] items-center gap-3.5 px-[18px] py-2.5 text-heading no-underline hover:bg-tint',
+          'flex min-h-[60px] items-center gap-4 px-4 py-3 text-ink-heading no-underline hover:bg-tint',
           isCurrent && 'bg-tint',
         )}
       >
-        <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <span className="flex min-w-0 flex-1 flex-col gap-1">
           <span
-            className={cn('text-[15px] break-words', isCurrent ? 'font-bold' : 'font-semibold')}
+            className={cn('type-body break-words', isCurrent ? 'font-semibold' : 'font-semibold')}
           >
             {title}
           </span>
           {line !== undefined && line !== '' && (
-            <span className="text-[13px] break-words text-meta">{line}</span>
+            <span className="type-meta break-words text-ink-muted">{line}</span>
           )}
         </span>
         {end !== undefined && <span className="shrink-0">{end}</span>}
-        <ChevronRightIcon aria-hidden="true" className="shrink-0 text-meta" />
+        <ChevronRightIcon aria-hidden="true" className="shrink-0 text-ink-muted" />
       </Link>
     </li>
   );

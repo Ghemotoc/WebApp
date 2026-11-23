@@ -46,12 +46,12 @@ export function PublicConnections({ plan, kind, base, isPreview }: PublicConnect
       <section aria-labelledby="atlas-public-list-heading" className="flex flex-col gap-2">
         <h2
           id="atlas-public-list-heading"
-          className="m-0 font-heading text-[22px] font-bold text-heading"
+          className="m-0 font-heading type-heading font-bold text-ink-heading"
         >
           {t('connections.list.heading')}
         </h2>
         {plan.cast.relationships.length === 0 && (
-          <p className="m-0 text-body">{t('connections.list.none')}</p>
+          <p className="m-0 text-ink-muted">{t('connections.list.none')}</p>
         )}
         <ul className="m-0 list-none p-0">
           {plan.cast.relationships.map((relationship) => (

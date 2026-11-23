@@ -46,10 +46,10 @@ const toneClasses: Record<
   },
   band: {
     // Display font, 20/28, in the band's text colour (board A01, 23 Nov 2026).
-    heading: 'font-heading text-xl leading-7 font-bold text-on-primary',
+    heading: 'font-heading type-subheading leading-7 font-bold text-on-primary',
     row: 'border-on-primary/14',
     name: 'text-on-primary',
-    meta: 'text-[13px] leading-[18px] text-on-primary/72',
+    meta: 'type-meta leading-[18px] text-on-primary/72',
   },
 };
 

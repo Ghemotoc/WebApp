@@ -54,7 +54,7 @@ function MyStoryRow({ story, cover }: { story: MyStory; cover: DrawnCoverChoice 
   const { t: tWriting } = useTranslation('writing');
   const visibilityText = tWriting(`visibility.options.${story.visibility}`);
   return (
-    <li className="flex items-center gap-3.5 border-t border-(--hairline) py-3">
+    <li className="flex items-center gap-4 border-t border-(--hairline) py-3">
       <StoryCoverArt
         story={story}
         className="w-14 shrink-0"
@@ -68,10 +68,10 @@ function MyStoryRow({ story, cover }: { story: MyStory; cover: DrawnCoverChoice 
           />
         }
       />
-      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+      <div className="flex min-w-0 flex-1 flex-col gap-1">
         <Link
           to={`/write/s/${encodeURIComponent(story.slug)}/chapters`}
-          className="font-semibold break-words text-heading no-underline hover:underline"
+          className="font-semibold break-words text-ink-heading no-underline hover:underline"
         >
           {story.title}
         </Link>
@@ -91,7 +91,7 @@ function WrittenByYouHeading() {
       </h2>
       <Link
         to="/write"
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline"
+        className="inline-flex min-h-11 items-center type-body font-semibold text-link underline"
       >
         {t('shelves.mine.openWrite')}
       </Link>
@@ -111,8 +111,8 @@ function WrittenByYouBody() {
   if (live.length === 0) {
     return (
       <div className="flex flex-col items-start gap-2">
-        <p className="m-0 type-body text-body">{t('shelves.empty.mine')}</p>
-        <Link to="/write/new" className="text-sm font-semibold text-link underline">
+        <p className="m-0 type-body text-ink-muted">{t('shelves.empty.mine')}</p>
+        <Link to="/write/new" className="type-body font-semibold text-link underline">
           {t('shelves.mine.newStory')}
         </Link>
       </div>

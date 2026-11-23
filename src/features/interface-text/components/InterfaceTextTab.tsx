@@ -42,8 +42,8 @@ function KeyRow({
   return (
     <li className="flex flex-wrap items-center justify-between gap-3 border-b border-hairline py-2">
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className="font-mono text-xs break-all text-meta">{entry.textKey}</span>
-        <span lang={language} className="break-words text-body">
+        <span className="font-mono type-meta break-all text-ink-muted">{entry.textKey}</span>
+        <span lang={language} className="break-words text-ink-muted">
           {shown}
         </span>
       </span>
@@ -89,7 +89,7 @@ function KeyList({
           }}
         />
       </div>
-      <p className="m-0 text-sm text-meta" aria-live="polite">
+      <p className="m-0 type-body text-ink-muted" aria-live="polite">
         {t('interfaceText.count', {
           shown: Math.min(shownCount, matches.length),
           total: matches.length,

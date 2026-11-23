@@ -31,7 +31,7 @@ import { ReactionIcon } from './ReactionIcon';
 
 /** The chip's shape: 36 px tall, its ::after layer making the touch target 44 px (DoD). */
 const chipShape =
-  "relative inline-flex h-9 items-center justify-center gap-1.5 rounded-full border px-3.5 text-sm leading-none font-semibold whitespace-nowrap after:absolute after:inset-x-0 after:top-1/2 after:h-11 after:-translate-y-1/2 after:content-['']";
+  "relative inline-flex h-9 items-center justify-center gap-2 rounded-full border px-4 type-body leading-none font-semibold whitespace-nowrap after:absolute after:inset-x-0 after:top-1/2 after:h-11 after:-translate-y-1/2 after:content-['']";
 
 /** The kinds that have a chip: picked at least once, in the board's order. */
 function pickedKinds(reactions: Reactions): ReactionKind[] {
@@ -57,7 +57,7 @@ function ReactionChip(props: {
     : t('reactions.chip', { name, count });
   const look = props.isMine
     ? 'border-chip-on bg-chip-on text-chip-on-text'
-    : 'border-control-border bg-surface text-heading';
+    : 'border-control-border bg-surface text-ink-heading';
   // Step 1: a visitor can't react, so the chip only says how many.
   if (props.onPick === null) {
     return (
@@ -115,7 +115,7 @@ function ReactionPicker(props: {
           onKeyDown={closeOnEscape}
           className={cn(
             'inline-flex h-11 w-11 items-center justify-center rounded-full',
-            props.mine === kind ? 'bg-chip-on text-chip-on-text' : 'text-heading hover:bg-tint',
+            props.mine === kind ? 'bg-chip-on text-chip-on-text' : 'text-ink-heading hover:bg-tint',
           )}
         >
           <ReactionIcon kind={kind} size={18} />
@@ -157,7 +157,7 @@ export function CommentReactions({
   };
   return (
     <div className="flex basis-full flex-col items-start sm:basis-auto">
-      <div className="flex flex-wrap items-center gap-1.5">
+      <div className="flex flex-wrap items-center gap-2">
         {pickedKinds(reactions).map((kind) => (
           <ReactionChip
             key={kind}
@@ -174,7 +174,7 @@ export function CommentReactions({
             aria-label={t('reactions.add')}
             aria-expanded={isPickerOpen}
             onClick={() => setIsPickerOpen(!isPickerOpen)}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-dashed border-control-border text-body hover:bg-tint"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-dashed border-control-border text-ink-muted hover:bg-tint"
           >
             <PlusIcon />
           </button>
@@ -182,7 +182,7 @@ export function CommentReactions({
       </div>
       {isPickerOpen && <ReactionPicker mine={reactions.mine} onPick={pick} onClose={closePicker} />}
       {reacting.failure !== null && (
-        <p role="alert" className="m-0 mt-1 text-sm text-destructive">
+        <p role="alert" className="m-0 mt-1 type-body text-destructive">
           {t(
             `reactions.failures.${reacting.failure.failure === 'read_only' ? 'read_only' : 'other'}`,
           )}

@@ -44,7 +44,9 @@ export function SaveNote({ id, status, invalidMessage }: SaveNoteProps) {
       id={id}
       aria-live="polite"
       className={
-        isProblem ? 'm-0 min-h-5 text-sm text-destructive' : 'm-0 min-h-5 text-[13px] text-meta'
+        isProblem
+          ? 'm-0 min-h-5 type-body text-destructive'
+          : 'm-0 min-h-5 type-meta text-ink-muted'
       }
     >
       {noteFor(status, invalidMessage, t)}

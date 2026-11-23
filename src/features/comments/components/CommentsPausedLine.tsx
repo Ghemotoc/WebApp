@@ -57,7 +57,7 @@ function ResumeNow({ address, onResumed }: Pick<CommentsPausedLineProps, 'addres
         {t('section.resumeNow')}
       </Button>
       {resume.failure !== null && (
-        <p role="alert" className="m-0 basis-full text-sm text-destructive">
+        <p role="alert" className="m-0 basis-full type-body text-destructive">
           {t(failureKeys[resume.failure])}
         </p>
       )}
@@ -82,7 +82,7 @@ export function CommentsPausedLine({
   const when = formatLocalDayAndTime(end, i18n.language);
   return (
     <div className={cn('flex flex-wrap items-center gap-x-3 gap-y-1', className)}>
-      <p className="m-0 text-[15px] text-body">{t('section.paused', { when })}</p>
+      <p className="m-0 type-body text-ink-muted">{t('section.paused', { when })}</p>
       {canResume && <ResumeNow address={address} onResumed={onResumed} />}
     </div>
   );

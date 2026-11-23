@@ -52,7 +52,7 @@ export function DeadlineLabel({ theCase }: { theCase: QueueCase }) {
   // A decided case: when it was decided, not a countdown.
   if (theCase.status === 'decided' && theCase.decidedAt !== null) {
     return (
-      <time dateTime={theCase.decidedAt} className="text-sm text-meta">
+      <time dateTime={theCase.decidedAt} className="type-body text-ink-muted">
         {t('deadline.decidedOn', { when: fullMoment(theCase.decidedAt) })}
       </time>
     );
@@ -62,7 +62,9 @@ export function DeadlineLabel({ theCase }: { theCase: QueueCase }) {
     <time
       dateTime={theCase.deadlineAt}
       title={fullMoment(theCase.deadlineAt)}
-      className={isOverdue ? 'text-sm font-bold text-destructive' : 'text-sm text-body'}
+      className={
+        isOverdue ? 'type-body font-semibold text-destructive' : 'type-body text-ink-muted'
+      }
     >
       {openDeadlineText(theCase.deadlineAt, now, t)}
     </time>

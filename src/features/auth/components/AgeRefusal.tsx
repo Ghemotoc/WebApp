@@ -51,10 +51,10 @@ export function AgeRefusal(props: AgeRefusalProps) {
   const text = useRefusalText(props);
   return (
     <div role="alert" className="flex flex-col gap-3 border-t-[3px] border-destructive pt-4">
-      <h3 className="m-0 font-heading text-[22px] font-bold text-heading">
+      <h3 className="m-0 font-heading type-heading font-bold text-ink-heading">
         {t('signUp.refusal.heading')}
       </h3>
-      <p className="m-0 text-body">{text}</p>
+      <p className="m-0 text-ink-muted">{text}</p>
       <Link to="/legal/terms" className="self-start text-link underline hover:text-link-hover">
         {t('signUp.refusal.readWhoCanJoin')}
       </Link>

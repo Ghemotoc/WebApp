@@ -104,7 +104,7 @@ export function MessageComposer({
           onChange={(event) => gate.whileEditing(setBody)(event.target.value)}
           aria-describedby={missing.isShown ? 'message-body-missing' : undefined}
           aria-invalid={missing.isShown ? true : undefined}
-          className="min-h-11 min-w-0 flex-1 resize-y rounded-[22px] border border-control-border bg-surface px-4 py-2.5 text-[15px] text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus-ring)"
+          className="min-h-11 min-w-0 flex-1 resize-y rounded-card border border-control-border bg-surface px-4 py-3 type-body text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus-ring)"
         />
         <Button type="submit" disabled={isSending}>
           <ActionIcon name="send" size={16} />

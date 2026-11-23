@@ -15,9 +15,9 @@ import type { NotificationCategory } from '../api/notifications';
 
 /** The icon and the circle's colours for each kind of notification. */
 const iconFor: Record<NotificationCategory, { name: ActionIconName; circle: string }> = {
-  stories: { name: 'book', circle: 'border border-border bg-surface text-heading' },
-  replies: { name: 'comment', circle: 'border border-border bg-surface text-heading' },
-  follows: { name: 'person', circle: 'border border-border bg-surface text-heading' },
+  stories: { name: 'book', circle: 'border border-border bg-surface text-ink-heading' },
+  replies: { name: 'comment', circle: 'border border-border bg-surface text-ink-heading' },
+  follows: { name: 'person', circle: 'border border-border bg-surface text-ink-heading' },
   staff: { name: 'shield', circle: 'bg-primary text-on-primary' },
 };
 

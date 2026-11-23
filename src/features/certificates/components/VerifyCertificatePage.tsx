@@ -79,7 +79,7 @@ export function VerifyCertificatePage() {
       <title>{t('verify.documentTitle')}</title>
       <header className="flex flex-col gap-3">
         <h1 className="m-0 type-title break-words lg:type-display">{t('verify.title')}</h1>
-        <p className="m-0 text-meta">{t('verify.intro')}</p>
+        <p className="m-0 text-ink-muted">{t('verify.intro')}</p>
       </header>
       <form className="flex flex-wrap items-end gap-3" onSubmit={submit}>
         <TextInput

@@ -1,116 +1,74 @@
 /**
- * BoardCard: one chapter on the chapter board (story S1-E17-19: "each card shows its label
- * (Prologue, Chapter 3, Epilogue…), title, POV, status, words against target and in-world date").
+ * BoardCard: one chapter on the chapter board (story S1-E17-19; CALM-9, board E28).
  *
- * A small glass card (bundle G10 ATLAS, part c1; board AtlasStoryline): the label and the planning
- * status pill on top, the title as a link to the chapter in the writing view, then one grey line
- * of facts ("POV: Ana · 4 words · Published"), where "Published" is the word itself, so it is
- * never confused with the planning status. The card can be
- * dragged, and its four move buttons do the same by keyboard or on a phone (WCAG 2.5.7).
- * Who uses it: BoardColumnSection. What it calls: the move and drag handlers it is given.
+ * The card is a drag source and a drop zone (dnd-kit, set up in hooks/useBoardDrag.ts). The whole
+ * card is the handle, so a writer can press and hold anywhere on it on a phone; the six-dot grip
+ * says so. While it is dragged, the card stays in its place as a faint outline and a lifted copy
+ * follows the pointer (ChapterBoard's DragOverlay). Its "…" menu (BoardCardMenu) does the same
+ * four moves by keyboard or with one tap (WCAG 2.5.7).
+ * Who uses it: BoardColumnSection. What it calls: BoardCardFace, BoardCardMenu and dnd-kit.
  */
-import type { DragEvent } from 'react';
-import { Link } from 'react-router';
+import { useDraggable, useDroppable } from '@dnd-kit/core';
 
 import type { StorylineChapter } from '../api/storyline';
+import { cardDropId } from '../lib/boardDrag';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
-import { BoardCardMoves, type BoardCardMovesProps } from './BoardCardMoves';
-import { PlanningStatusPill } from './PlanningStatusPill';
+import { BoardCardFace } from './BoardCardFace';
+import { BoardCardMenu, type BoardCardMenuProps } from './BoardCardMenu';
 
-/** What the card needs. */
-export interface BoardCardProps extends Omit<BoardCardMovesProps, 'title'> {
+/** What the card needs: what it shows and its four move handlers. */
+export interface BoardCardProps extends Omit<BoardCardMenuProps, 'title'> {
   slug: string;
   chapter: StorylineChapter;
   /** "Chapter 3", "Prologue" … */
   label: string;
   /** The point-of-view character's name, or null. */
   povName: string | null;
-  onDragStart: () => void;
-  onDropOnCard: (event: DragEvent<HTMLElement>) => void;
 }
 
-/** The words written, against the target when there is one. */
-function WordsLine({ chapter }: { chapter: StorylineChapter }) {
-  const { t, i18n } = useAtlasTranslation();
-  const numbers = new Intl.NumberFormat(i18n.language);
-  if (chapter.wordTarget === null) {
-    return (
-      <>
-        {t('storyline.board.words', {
-          count: chapter.wordCount,
-          words: numbers.format(chapter.wordCount),
-        })}
-      </>
-    );
+/** The card's look: lifted on the board, a faint outline while its copy is being dragged. */
+function cardClasses(isDragged: boolean): string {
+  const base = 'touch-manipulation rounded-card border select-none [-webkit-touch-callout:none]';
+  if (isDragged) {
+    // Board E28: the old place shows a faint outline (opacity .45, an inset 2 px line ring).
+    return `${base} border-transparent bg-transparent opacity-45 shadow-[inset_0_0_0_2px_var(--border)]`;
   }
-  return (
-    <>
-      {t('chapterPlan.wordsOfTarget', {
-        words: numbers.format(chapter.wordCount),
-        target: numbers.format(chapter.wordTarget),
-      })}
-    </>
-  );
-}
-
-/** The grey line of facts: who tells it, the words and, when it is out, "Published". */
-function CardFacts({ chapter, povName }: { chapter: StorylineChapter; povName: string | null }) {
-  const { t } = useAtlasTranslation();
-  return (
-    <p className="m-0 text-[13px] break-words text-meta">
-      {povName === null ? t('storyline.board.noPov') : t('storyline.board.pov', { name: povName })}
-      {' · '}
-      <WordsLine chapter={chapter} />
-      {chapter.status === 'published' && ` · ${t('storyline.board.published')}`}
-      {chapter.worldDate !== '' && (
-        <span className="block">{t('storyline.board.worldDate', { date: chapter.worldDate })}</span>
-      )}
-    </p>
-  );
+  return `${base} cursor-grab border-border bg-surface shadow-card`;
 }
 
 /**
  * Renders the card.
  *
- * @returns the list item with the chapter's details and its move buttons
+ * @returns the list item with the chapter's details and its menu
  */
 export function BoardCard(props: BoardCardProps) {
   const { t } = useAtlasTranslation();
   const { slug, chapter, label, povName } = props;
   const title = chapter.title === '' ? t('storyline.board.untitled') : chapter.title;
+  // The card is dragged by its code, and other cards are dropped on it by "card:<code>".
+  const draggable = useDraggable({ id: chapter.code });
+  const droppable = useDroppable({ id: cardDropId(chapter.code) });
   return (
     <li
+      ref={(node) => {
+        draggable.setNodeRef(node);
+        droppable.setNodeRef(node);
+      }}
       id={`atlas-board-card-${chapter.code}`}
       tabIndex={-1}
       data-testid="atlas-board-card"
-      className="rounded-[20px] border border-border bg-surface shadow-card"
+      className={cardClasses(draggable.isDragging)}
+      // Only the pointer listeners: the keyboard moves the card through its menu instead.
+      {...draggable.listeners}
     >
-      {/* The card is a drag source and a drop zone; the move buttons do the same by keyboard. */}
-      <div
-        role="presentation"
-        draggable
-        onDragStart={(event) => {
-          event.dataTransfer.setData('text/plain', chapter.code);
-          props.onDragStart();
-        }}
-        onDragOver={(event) => event.preventDefault()}
-        onDrop={props.onDropOnCard}
-        className="flex cursor-grab flex-col gap-2 p-3.5"
-      >
-        <div className="flex flex-wrap items-center justify-between gap-1.5">
-          <span className="text-[13px] font-bold text-meta">{label}</span>
-          <PlanningStatusPill status={chapter.planningStatus} />
-        </div>
-        <Link
-          to={`/write/s/${slug}/c/${chapter.code}`}
-          className="self-start text-base leading-snug font-bold break-words text-heading no-underline hover:underline"
-        >
-          {title}
-        </Link>
-        <CardFacts chapter={chapter} povName={povName} />
-        <BoardCardMoves title={title} {...props} />
-      </div>
+      <BoardCardFace
+        slug={slug}
+        chapter={chapter}
+        label={label}
+        povName={povName}
+        menu={<BoardCardMenu title={title} {...props} />}
+      />
     </li>
   );
 }

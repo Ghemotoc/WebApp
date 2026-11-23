@@ -33,8 +33,8 @@ function HabitSummary({ habit }: { habit: ReadingHabit }) {
   if (habit.target === null) {
     return (
       <div className="flex flex-col gap-1">
-        <p className="m-0 text-lg font-semibold text-heading">{days}</p>
-        <p className="m-0 text-base text-body">
+        <p className="m-0 type-long font-semibold text-ink-heading">{days}</p>
+        <p className="m-0 type-body text-ink-muted">
           {t('habit.minutesToday', { count: habit.minutesToday })}
         </p>
       </div>
@@ -43,8 +43,8 @@ function HabitSummary({ habit }: { habit: ReadingHabit }) {
   const isMet = habit.minutesToday >= habit.target;
   return (
     <div className="flex flex-col gap-2">
-      <p className="m-0 text-lg font-semibold text-heading">{days}</p>
-      <p className="m-0 text-base text-body">
+      <p className="m-0 type-long font-semibold text-ink-heading">{days}</p>
+      <p className="m-0 type-body text-ink-muted">
         {t('habit.minutesOfTarget', { minutes: habit.minutesToday, target: habit.target })}
         {isMet && ` ${t('habit.targetMet')}`}
       </p>
@@ -73,7 +73,7 @@ function TurnOff({ stop }: { stop: ReturnType<typeof useReadingHabit>['stop'] })
   }
   return (
     <div role="group" aria-label={t('habit.turnOff')} className="flex flex-col gap-3">
-      <p className="m-0 text-sm text-body">{t('habit.turnOffConfirm')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('habit.turnOffConfirm')}</p>
       <div className="flex flex-wrap gap-3">
         <Button variant="destructive" disabled={stop.isPending} onClick={() => stop.mutate()}>
           {t('habit.turnOffYes')}
@@ -98,7 +98,7 @@ function HabitOn(props: {
   return (
     <>
       <HabitSummary habit={props.habit} />
-      <p className="m-0 text-[13px] text-meta">{t('habit.privateNote')}</p>
+      <p className="m-0 type-meta text-ink-muted">{t('habit.privateNote')}</p>
       <hr className="m-0 border-border" />
       <ReadingHabitSettings key={savedKey} habit={props.habit} save={props.save} />
       <hr className="m-0 border-border" />
@@ -113,7 +113,7 @@ function HabitOff({ start }: { start: ReturnType<typeof useReadingHabit>['start'
   const { t } = useLibraryTranslation();
   return (
     <>
-      <p className="m-0 type-body text-body">{t('habit.offBody')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('habit.offBody')}</p>
       {start.isError && <Notice tone="error">{t('habit.changeFailed')}</Notice>}
       <div>
         <Button variant="secondary" disabled={start.isPending} onClick={() => start.mutate()}>
@@ -141,7 +141,7 @@ export function ReadingHabitNote() {
     <section
       id="reading-days"
       aria-labelledby="reading-days-heading"
-      className="flex min-w-0 flex-col items-start gap-3.5"
+      className="flex min-w-0 flex-col items-start gap-4"
     >
       <h2 id="reading-days-heading" className="m-0 type-heading">
         {heading}

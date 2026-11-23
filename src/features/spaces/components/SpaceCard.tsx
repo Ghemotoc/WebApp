@@ -28,26 +28,26 @@ export function SpaceCard({ space }: { space: Space }) {
   const posting = t(space.posting === 'members' ? 'card.postingMembers' : 'card.postingAnyone');
   const members = t('space.members', { count: space.memberCount });
   return (
-    <li className="relative flex flex-col gap-3 rounded-card border border-border bg-surface p-5 shadow-card transition-shadow hover:shadow-lg md:p-6">
-      <div className="flex items-center gap-3.5">
+    <li className="relative flex flex-col gap-3 rounded-card border border-border bg-surface p-4 shadow-card transition-shadow hover:shadow-lg md:p-6">
+      <div className="flex items-center gap-4">
         <SpaceLogo space={space} size="small" />
-        <div className="flex min-w-0 flex-col gap-0.5">
+        <div className="flex min-w-0 flex-col gap-1">
           <Link
             to={`/spaces/${space.slug}`}
-            className="font-heading text-xl leading-tight font-bold break-words text-heading no-underline after:absolute after:inset-0 after:rounded-card hover:underline"
+            className="font-heading type-subheading leading-tight font-bold break-words text-ink-heading no-underline after:absolute after:inset-0 after:rounded-card hover:underline"
           >
             {space.name}
           </Link>
-          <span className="text-sm text-meta">{t('card.meta', { members, posting })}</span>
+          <span className="type-body text-ink-muted">{t('card.meta', { members, posting })}</span>
         </div>
       </div>
       {space.description !== '' && (
-        <p className="m-0 line-clamp-3 text-[15px] leading-relaxed break-words text-body">
+        <p className="m-0 line-clamp-3 type-body leading-relaxed break-words text-ink-muted">
           {space.description}
         </p>
       )}
       {space.latestActivityAt !== '' && (
-        <span className="mt-auto text-sm text-meta">
+        <span className="mt-auto type-body text-ink-muted">
           {t('card.latest', { when: postTime(space.latestActivityAt, i18n.language) })}
         </span>
       )}

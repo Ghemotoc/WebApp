@@ -26,15 +26,17 @@ export function CaseList({ cases, isLoading }: CaseListProps) {
   return (
     <section aria-labelledby="cases-heading" className="flex flex-col gap-4">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 id="cases-heading" className="m-0 font-heading text-[24px] font-bold text-heading">
+        <h2 id="cases-heading" className="m-0 font-heading type-heading font-bold text-ink-heading">
           {t('queue.listHeading')}
         </h2>
-        <p className="m-0 text-sm text-meta">{t('queue.grouped')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('queue.grouped')}</p>
       </div>
-      {isLoading && <p className="m-0 text-meta">{t('queue.loading')}</p>}
-      {!isLoading && cases.length === 0 && <p className="m-0 text-body">{t('queue.none')}</p>}
+      {isLoading && <p className="m-0 text-ink-muted">{t('queue.loading')}</p>}
+      {!isLoading && cases.length === 0 && <p className="m-0 text-ink-muted">{t('queue.none')}</p>}
       {!isLoading && cases.length > 0 && (
-        <p className="m-0 text-sm text-meta">{t('queue.showing', { count: cases.length })}</p>
+        <p className="m-0 type-body text-ink-muted">
+          {t('queue.showing', { count: cases.length })}
+        </p>
       )}
       <ul className="m-0 flex list-none flex-col gap-4 p-0">
         {cases.map((theCase) => (

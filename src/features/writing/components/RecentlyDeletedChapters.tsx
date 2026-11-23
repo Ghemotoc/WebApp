@@ -38,32 +38,32 @@ export function RecentlyDeletedChapters({
   return (
     <section
       aria-labelledby="deleted-chapters-heading"
-      className="relative flex flex-col gap-2.5 rounded-card bg-panel px-[26px] py-[22px] max-sm:px-4"
+      className="relative flex flex-col gap-3 rounded-card bg-panel px-6 py-6 max-sm:px-4"
     >
       <div className="flex flex-col gap-1">
         <h2
           id="deleted-chapters-heading"
-          className="m-0 w-fit font-heading text-[22px] font-bold text-heading"
+          className="m-0 w-fit font-heading type-heading font-bold text-ink-heading"
         >
           {t('manageChapters.deleted.heading')}
         </h2>
-        <p className="m-0 text-sm text-body">{t('manageChapters.deleted.intro')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('manageChapters.deleted.intro')}</p>
       </div>
       {chapters.length === 0 && (
-        <p className="m-0 text-sm text-meta">{t('manageChapters.deleted.empty')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('manageChapters.deleted.empty')}</p>
       )}
       {chapters.length > 0 && (
-        <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
+        <ul className="m-0 flex list-none flex-col gap-3 p-0">
           {chapters.map((chapter) => (
             <li
               key={chapter.code}
-              className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-2xl border border-border bg-surface px-4 py-3"
+              className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-card border border-border bg-surface px-4 py-3"
             >
-              <span className="flex min-w-0 flex-col gap-0.5">
-                <span className="text-base font-semibold break-words text-ink">
+              <span className="flex min-w-0 flex-col gap-1">
+                <span className="type-body font-semibold break-words text-ink">
                   {chapter.title === '' ? t('manageChapters.untitled') : chapter.title}
                 </span>
-                <span className="text-sm text-meta">
+                <span className="type-body text-ink-muted">
                   {deletedMeta(t, chapter.deletedAt ?? '', i18n.language)}
                 </span>
               </span>

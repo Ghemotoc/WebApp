@@ -48,7 +48,7 @@ function Bookshelf({ list, books }: { list: ReadingList; books: number }) {
         <h3 id={headingId} className="m-0 type-subheading min-w-0 break-words">
           <Link
             to={readingListAddress(list.id)}
-            className="text-heading no-underline hover:underline"
+            className="text-ink-heading no-underline hover:underline"
           >
             {list.name}
           </Link>
@@ -77,10 +77,10 @@ function BookshelvesHeader({
   return (
     <div className="flex flex-wrap items-end justify-between gap-4">
       <div className="flex min-w-0 flex-col gap-1">
-        <h2 id="library-lists-heading" className="m-0 type-heading text-heading">
+        <h2 id="library-lists-heading" className="m-0 type-heading text-ink-heading">
           {t('lists.heading')}
         </h2>
-        <p className="m-0 text-sm text-body">{t('lists.intro')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('lists.intro')}</p>
         <p className="m-0 type-meta">
           {t('lists.shelvesUsed', {
             filled: shelfCount,
@@ -129,7 +129,7 @@ export function ReadingListsCard() {
         />
       )}
       {lists.length === 0 ? (
-        <p className="m-0 text-sm text-body">{t('lists.empty')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('lists.empty')}</p>
       ) : (
         // Bookshelves sit 48 px apart (gap-12), with no plank under them (Robert, 20 Nov 2026).
         <ul className="m-0 flex list-none flex-col gap-12 p-0">

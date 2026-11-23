@@ -47,11 +47,11 @@ function editionAddress(edition: StoryEdition): string {
 function EditionNote({ edition }: { edition: StoryEdition }) {
   const { t } = useEditionsTranslation();
   if (edition.isOriginal) {
-    return <span className="text-[13px] text-meta">{t('original')}</span>;
+    return <span className="type-meta text-ink-muted">{t('original')}</span>;
   }
   if (edition.translatorName === null) return null;
   return (
-    <span className="text-[13px] break-words text-meta">
+    <span className="type-meta break-words text-ink-muted">
       {t('translatedBy', { name: edition.translatorName })}
     </span>
   );
@@ -66,10 +66,10 @@ function EditionLink(props: { edition: StoryEdition; onPick: (edition: StoryEdit
         to={editionAddress(edition)}
         aria-current={edition.isCurrent ? 'true' : undefined}
         onClick={() => onPick(edition)}
-        className={`flex min-h-[52px] items-center justify-between gap-3 rounded-field px-3.5 py-2 text-heading no-underline hover:bg-tint ${edition.isCurrent ? 'bg-tint' : ''}`}
+        className={`flex min-h-[52px] items-center justify-between gap-3 rounded-field px-4 py-2 text-ink-heading no-underline hover:bg-tint ${edition.isCurrent ? 'bg-tint' : ''}`}
       >
         <span className="flex min-w-0 flex-col">
-          <span lang={edition.languageCode} className="text-sm font-bold">
+          <span lang={edition.languageCode} className="type-body font-semibold">
             {languageOwnName(edition.languageCode)}
           </span>
           <EditionNote edition={edition} />
@@ -158,7 +158,7 @@ export function ReadInSwitch({ editions, chapterNumber }: ReadInSwitchProps) {
         aria-expanded={isOpen}
         aria-controls={listId}
         onClick={toggle}
-        className="inline-flex h-11 cursor-pointer items-center gap-1.5 rounded-full button-glass px-3.5 text-sm font-semibold whitespace-nowrap text-heading"
+        className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-full button-glass px-4 type-body font-semibold whitespace-nowrap text-ink-heading"
       >
         <ActionIcon name="globe" size={15} className="flex-none" />
         <span>{t('readIn', { language: languageOwnName(current.languageCode) })}</span>
@@ -170,15 +170,15 @@ export function ReadInSwitch({ editions, chapterNumber }: ReadInSwitchProps) {
         id={listId}
         aria-label={t('readInList')}
         hidden={!isOpen}
-        className={`absolute top-full z-20 mt-2 flex w-[280px] max-w-[calc(100vw-32px)] flex-col gap-0.5 rounded-[24px] border border-border bg-[var(--surface)] p-2 shadow-popover ${hangsFromLeft ? 'left-0' : 'right-0'}`}
+        className={`absolute top-full z-20 mt-2 flex w-[280px] max-w-[calc(100vw-32px)] flex-col gap-1 rounded-card border border-border bg-[var(--surface)] p-2 shadow-popover ${hangsFromLeft ? 'left-0' : 'right-0'}`}
       >
-        <ul className="m-0 flex list-none flex-col gap-0.5 p-0">
+        <ul className="m-0 flex list-none flex-col gap-1 p-0">
           {editions.map((edition) => (
             <EditionLink key={edition.slug} edition={edition} onPick={pick} />
           ))}
         </ul>
         {chapterNumber !== null && (
-          <p className="m-0 px-3.5 pt-2 pb-1 text-[13px] text-meta">
+          <p className="m-0 px-4 pt-2 pb-1 type-meta text-ink-muted">
             {t('staysOnChapter', { number: chapterNumber })}
           </p>
         )}

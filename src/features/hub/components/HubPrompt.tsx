@@ -75,13 +75,13 @@ export function HubPrompt({ now }: { now: Date }) {
       <figure className="m-0 flex flex-col">
         <span
           aria-hidden="true"
-          className="h-10 font-story text-[64px] leading-[1] font-semibold text-accent"
+          className="h-10 font-story type-display leading-[1] font-semibold text-accent"
         >
           “
         </span>
         <blockquote
           aria-live="polite"
-          className="m-0 font-story text-[21px] leading-[31px] break-words text-heading italic sm:text-[26px] sm:leading-[38px]"
+          className="m-0 font-story type-subheading leading-[31px] break-words text-ink-heading italic sm:type-heading sm:leading-[38px]"
         >
           {words}
         </blockquote>

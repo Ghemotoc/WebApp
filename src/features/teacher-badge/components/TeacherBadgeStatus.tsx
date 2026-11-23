@@ -63,7 +63,7 @@ export function TeacherBadgeStatus({ teacherCheck }: { teacherCheck: MyTeacherCh
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-field bg-tint p-4">
       {line.pill !== null && <TeacherBadgePill isPending={line.pill === 'pending'} />}
-      <p className="m-0 flex-[1_1_320px] text-[15px] leading-relaxed text-ink">{line.text}</p>
+      <p className="m-0 flex-[1_1_320px] type-body leading-relaxed text-ink">{line.text}</p>
     </div>
   );
 }

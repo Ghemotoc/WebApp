@@ -26,13 +26,13 @@ export function SettingsSection({ id, heading, intro, children }: SettingsSectio
     <section
       id={id}
       aria-labelledby={headingId}
-      className="flex scroll-mt-24 flex-col gap-4 rounded-card border border-border bg-surface p-5 sm:p-6"
+      className="flex scroll-mt-24 flex-col gap-4 rounded-card border border-border bg-surface p-4 sm:p-6"
     >
       <div className="flex flex-col gap-1">
-        <h2 id={headingId} className="m-0 font-heading text-[22px] font-bold text-heading">
+        <h2 id={headingId} className="m-0 font-heading type-heading font-bold text-ink-heading">
           {heading}
         </h2>
-        <p className="m-0 max-w-[720px] text-sm text-body">{intro}</p>
+        <p className="m-0 max-w-[720px] type-body text-ink-muted">{intro}</p>
       </div>
       {children}
     </section>

@@ -68,7 +68,7 @@ export function TwoStepDelete(props: TwoStepDeleteProps) {
       )}
       {isAsking && (
         <>
-          <p ref={question} tabIndex={-1} className="m-0 text-body">
+          <p ref={question} tabIndex={-1} className="m-0 text-ink-muted">
             {props.question}
           </p>
           <div className="flex flex-wrap gap-3">

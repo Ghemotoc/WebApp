@@ -54,7 +54,9 @@ function WaysCount({ methods }: { methods: MyLoginMethods }) {
     <p
       id={lastWayNoteId}
       role="status"
-      className={isLast ? 'm-0 text-sm font-semibold text-destructive' : 'm-0 text-sm text-meta'}
+      className={
+        isLast ? 'm-0 type-body font-semibold text-destructive' : 'm-0 type-body text-ink-muted'
+      }
     >
       {isLast ? t('lastWay') : t('count', { count })}
     </p>
@@ -87,18 +89,20 @@ export function LoginMethodsSection() {
     >
       <h2
         id="settings-login-methods-heading"
-        className="m-0 font-heading text-[24px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('heading')}
       </h2>
-      <p className="m-0 text-body">{t('intro')}</p>
+      <p className="m-0 text-ink-muted">{t('intro')}</p>
       {isAgeCheckOn && (
-        <p className="m-0 rounded-2xl bg-tint px-4 py-3 text-sm text-body">{t('ageLine')}</p>
+        <p className="m-0 rounded-card bg-tint px-4 py-3 type-body text-ink-muted">
+          {t('ageLine')}
+        </p>
       )}
       {login.loadFailed && <Notice tone="error">{t('loadFailed')}</Notice>}
       <ul
         aria-label={t('listLabel')}
-        className="m-0 list-none rounded-2xl border border-border p-0"
+        className="m-0 list-none rounded-card border border-border p-0"
       >
         {rows.map(({ key, ...row }) => (
           <LoginMethodRow key={key} {...row} isBusy={login.isBusy} />

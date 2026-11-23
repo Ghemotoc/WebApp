@@ -97,10 +97,10 @@ function PointTip({
         style={{ left, top: percentOf(chartBox.top, chartBox.height) }}
       />
       <span
-        className="absolute -translate-x-1/2 rounded-lg bg-surface px-2.5 py-1.5 text-[13px] leading-[18px] whitespace-nowrap text-ink shadow-popover"
+        className="absolute -translate-x-1/2 rounded-field bg-surface px-3 py-2 type-meta leading-[18px] whitespace-nowrap text-ink shadow-popover"
         style={{ left, top: `calc(${top} - 64px)` }}
       >
-        <b className="font-semibold text-heading">{words.total}</b>
+        <b className="font-semibold text-ink-heading">{words.total}</b>
         <br />
         {words.detail}
       </span>
@@ -124,7 +124,7 @@ function GridLines({ values, top }: { values: number[]; top: number }) {
               y2={y}
               className="stroke-(--hairline)"
             />
-            <text x={28} y={y + 4} textAnchor="end" className="fill-body text-[12px]">
+            <text x={28} y={y + 4} textAnchor="end" className="fill-body type-meta">
               {formatShownCount(value, i18n.language, '')}
             </text>
           </g>
@@ -156,7 +156,7 @@ function AxisDates({
             x={places[index]?.x ?? 0}
             y={194}
             textAnchor="middle"
-            className={cn('fill-body text-[12px]', !isEnd && 'max-sm:hidden')}
+            className={cn('fill-body type-meta', !isEnd && 'max-sm:hidden')}
           >
             {axisDate(points[index]?.startsOn ?? '', step, i18n.language)}
           </text>
@@ -189,7 +189,7 @@ function LineMarks({ places, latest }: { places: PlacedPoint[]; latest: string }
             strokeWidth={2}
             className="fill-(--thread) stroke-(--surface)"
           />
-          <text x={end.x + 10} y={end.y + 4} className="fill-heading text-[13px] font-semibold">
+          <text x={end.x + 10} y={end.y + 4} className="fill-heading type-meta font-semibold">
             {latest}
           </text>
         </>
@@ -249,7 +249,7 @@ export function FollowersLinePlot({ points, step, range }: FollowersLinePlotProp
       onPointerDown={pickNearest}
       onBlur={() => picker.choose(null)}
       onPointerLeave={() => picker.choose(null)}
-      className="relative rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus-ring)"
+      className="relative rounded-field focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus-ring)"
     >
       <svg
         viewBox={`0 0 ${chartBox.width} ${chartBox.height}`}

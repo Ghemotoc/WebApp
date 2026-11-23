@@ -40,7 +40,7 @@ function EmailValue({ requester, revealedEmail, revealFailed, onReveal }: Reques
       <Button variant="secondary" onClick={onReveal}>
         {t('staff.requester.showEmail')}
       </Button>
-      <span className="text-sm text-meta">{t('staff.requester.emailHint')}</span>
+      <span className="type-body text-ink-muted">{t('staff.requester.emailHint')}</span>
       {revealFailed && <Notice tone="error">{t('staff.requester.emailFailed')}</Notice>}
     </span>
   );
@@ -88,7 +88,7 @@ export function RequesterPanel(props: RequesterPanelProps) {
   return (
     <section
       aria-labelledby="ticket-requester-heading"
-      className="flex flex-col gap-3 rounded-card border border-border bg-surface p-5"
+      className="flex flex-col gap-3 rounded-card border border-border bg-surface p-4"
     >
       {isUnder16(props.requester) && (
         <Notice tone="warning" title={t('staff.under16.title')}>
@@ -97,7 +97,7 @@ export function RequesterPanel(props: RequesterPanelProps) {
       )}
       <h2
         id="ticket-requester-heading"
-        className="m-0 font-heading text-[20px] font-bold text-heading"
+        className="m-0 font-heading type-subheading font-bold text-ink-heading"
       >
         {t('staff.requester.heading')}
       </h2>

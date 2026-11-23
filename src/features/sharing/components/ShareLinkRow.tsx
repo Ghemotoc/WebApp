@@ -41,11 +41,11 @@ export function ShareLinkRow({ link, wasCopied }: ShareLinkRowProps) {
           readOnly
           value={link}
           onFocus={(event) => event.target.select()}
-          className="h-11 min-w-0 flex-1 basis-56 rounded-full border border-control-border bg-paper px-4 text-sm text-ink"
+          className="h-11 min-w-0 flex-1 basis-56 rounded-full border border-control-border bg-paper px-4 type-body text-ink"
         />
         <Button onClick={() => void copyText(link).then(setCopied)}>{t('dialog.copy')}</Button>
       </div>
-      <p role="status" className="m-0 min-h-5 text-sm text-body">
+      <p role="status" className="m-0 min-h-5 type-body text-ink-muted">
         {status}
       </p>
     </div>

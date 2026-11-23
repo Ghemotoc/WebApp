@@ -48,7 +48,7 @@ function SwitchControls({ slug, summary, isRunning, onChange }: SwitchControlsPr
           {summary.isEnabled ? t('settings.turnOff') : t('settings.turnOn')}
         </Button>
       ) : (
-        <p className="m-0 text-body">{t('settings.archived')}</p>
+        <p className="m-0 text-ink-muted">{t('settings.archived')}</p>
       )}
       {summary.isEnabled && (
         <Link to={`/spaces/${slug}/points`} className="w-fit font-semibold text-link underline">
@@ -87,11 +87,11 @@ export function ClassPointsSettingsCard({ slug }: { slug: string }) {
     >
       <h2
         id="class-points-settings-heading"
-        className="m-0 font-heading text-2xl font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('settings.title')}
       </h2>
-      <p className="m-0 text-body">
+      <p className="m-0 text-ink-muted">
         {t('settings.intro', { budget: summary.budget, cap: summary.cap })}
       </p>
       <p className="m-0 font-semibold text-ink">

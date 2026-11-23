@@ -385,7 +385,22 @@
       "zoomIn": "Mărește",
       "fit": "Potrivește",
       "zoomNow": "{{percent}}%",
-      "offMap": "Încă nu sunt pe hartă: {{names}}"
+      "offMap": "Încă nu sunt pe hartă: {{names}}",
+      "key": "Fiecare categorie are culoarea ei. Linii continue: familie și aliați. Punctate: dragoste și altele. Întrerupte: conflict. Puncte fine: descendență.",
+      "coloursButton": "Culorile categoriilor",
+      "coloursIntro": "Alege o culoare pentru fiecare categorie. Harta și lista o urmează.",
+      "colourFor": "Culoarea pentru {{category}}",
+      "colourFailed": "Culoarea nu a fost salvată. Verifică conexiunea și încearcă din nou.",
+      "swatches": {
+        "blue": "Albastru",
+        "pink": "Roz",
+        "yellow": "Galben",
+        "aqua": "Turcoaz",
+        "orange": "Portocaliu",
+        "violet": "Violet",
+        "green": "Verde",
+        "red": "Roșu"
+      }
     },
     "tree": {
       "heading": "Arborele familiei",
@@ -605,7 +620,7 @@
     },
     "board": {
       "heading": "Panoul capitolelor",
-      "hint": "Trage un card sau folosește Mai devreme și Mai târziu. Capitolele publicate întreabă întâi.",
+      "hint": "Trage un card de mâner (pe telefon sau tabletă, ține-l apăsat) sau folosește meniul lui: Mai devreme, Mai târziu, Actul anterior, Actul următor. Mutarea unui capitol deja publicat întreabă întâi.",
       "noAct": "Fără act",
       "empty": "Încă nu e niciun capitol aici.",
       "chapterNumber": "Capitolul {{number}}",
@@ -621,6 +636,8 @@
       "addChapterIn": "Adaugă capitol în {{name}}",
       "addFailed": "Nu am putut adăuga capitolul. Încearcă din nou peste puțin timp.",
       "moveFailed": "Nu am putut muta capitolul, așa că panoul arată ordinea salvată acum.",
+      "becomesChapter": "Devine capitolul {{number}}",
+      "landsHere": "Ajunge aici",
       "acts": {
         "add": "Adaugă act",
         "name": "Numele actului",
@@ -647,10 +664,6 @@
         "later": "Mai târziu",
         "previousAct": "Actul anterior",
         "nextAct": "Actul următor",
-        "earlierNamed": "Mută {{title}} mai devreme",
-        "laterNamed": "Mută {{title}} mai târziu",
-        "previousActNamed": "Mută {{title}} în actul anterior",
-        "nextActNamed": "Mută {{title}} în actul următor",
         "group": "Mută {{title}}"
       },
       "confirm": {

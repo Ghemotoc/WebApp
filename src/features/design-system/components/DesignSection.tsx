@@ -19,8 +19,8 @@ export interface DesignSectionProps {
  */
 export function DesignSection({ id, title, children }: DesignSectionProps) {
   return (
-    <section id={id} aria-labelledby={`${id}-heading`} className="mt-14 flex flex-col gap-5">
-      <h2 id={`${id}-heading`} className="m-0 text-[30px] font-bold tracking-[-0.01em]">
+    <section id={id} aria-labelledby={`${id}-heading`} className="mt-12 flex flex-col gap-4">
+      <h2 id={`${id}-heading`} className="m-0 type-title font-bold tracking-[-0.01em]">
         {title}
       </h2>
       {children}

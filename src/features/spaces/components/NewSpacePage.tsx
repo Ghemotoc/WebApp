@@ -134,7 +134,7 @@ function NewSpaceBody() {
   if (!isKnown) return null;
   if (userId === null)
     return (
-      <p className="m-0 text-base text-body">
+      <p className="m-0 type-body text-ink-muted">
         <Link to="/sign-in" className="text-link underline">
           {t('form.logIn')}
         </Link>
@@ -161,7 +161,7 @@ function NewSpaceBody() {
 export function NewSpacePage() {
   const { t } = useSpacesTranslation();
   return (
-    <PageContainer className="flex flex-col gap-6 py-10">
+    <PageContainer className="flex flex-col gap-6 py-8">
       <SpaceBreadcrumb current={t('form.title')} />
       <NewSpaceBody />
     </PageContainer>

@@ -30,18 +30,18 @@ export function StoryWorldLinks({ storySlug }: { storySlug: string }) {
     <section aria-labelledby="story-world-name" className="flex flex-col gap-2">
       {/* Board New-Story: the meta line "The story's world" over the heading, no eyebrow. It
           also names the region, so screen readers keep hearing "The story's world". */}
-      <p id="story-world-name" className="m-0 text-[13px] leading-[18px] text-body">
+      <p id="story-world-name" className="m-0 type-meta leading-[18px] text-ink-muted">
         {t('storyPage.world.heading')}
       </p>
-      <h2 id="story-world-heading" className="m-0 type-heading text-heading">
+      <h2 id="story-world-heading" className="m-0 type-heading text-ink-heading">
         {t('storyPage.world.sharedHeading')}
       </h2>
-      <ul className="m-0 flex list-none flex-wrap gap-2.5 p-0 pt-2">
+      <ul className="m-0 flex list-none flex-wrap gap-3 p-0 pt-2">
         {plan.areas.map((area) => (
           <li key={area}>
             <Link
               to={`${readerPlanBase(plan.storySlug)}/${areaPaths[area]}`}
-              className="inline-flex h-11 items-center rounded-full button-glass px-5 text-sm font-semibold no-underline"
+              className="inline-flex h-11 items-center rounded-full button-glass px-4 type-body font-semibold no-underline"
             >
               {t(`storyPage.world.areas.${area}`)}
             </Link>

@@ -27,12 +27,12 @@ export function TeacherPointsShown({ teacher }: { teacher: TeacherPoints }) {
         {t('chapter.teacher.shown', { points: teacher.points })}
       </p>
       {teacher.note !== null && (
-        <div className="flex flex-col gap-1.5 rounded-card border border-border bg-panel p-4">
-          <h3 className="m-0 text-sm font-semibold text-ink">{t('chapter.teacher.noteHeading')}</h3>
-          <p className="m-0 text-body [overflow-wrap:anywhere] whitespace-pre-line">
+        <div className="flex flex-col gap-2 rounded-card border border-border bg-panel p-4">
+          <h3 className="m-0 type-body font-bold text-ink">{t('chapter.teacher.noteHeading')}</h3>
+          <p className="m-0 text-ink-muted [overflow-wrap:anywhere] whitespace-pre-line">
             {teacher.note}
           </p>
-          <p className="m-0 text-sm text-meta">{t('chapter.teacher.noteAudience')}</p>
+          <p className="m-0 type-body text-ink-muted">{t('chapter.teacher.noteAudience')}</p>
           <span className="self-start">
             <ReportButton
               itemType="class_teacher_note"

@@ -24,11 +24,11 @@ export function ClassCertificatesCard({ slug }: { slug: string }) {
     >
       <h2
         id="class-certificates-heading"
-        className="m-0 font-heading text-2xl font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('settingsCard.title')}
       </h2>
-      <p className="m-0 text-body">{t('settingsCard.body')}</p>
+      <p className="m-0 text-ink-muted">{t('settingsCard.body')}</p>
       <Link to={`/spaces/${slug}/certificates`} className="w-fit font-semibold text-link underline">
         {t('settingsCard.link')}
       </Link>

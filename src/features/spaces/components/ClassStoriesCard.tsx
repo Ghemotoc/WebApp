@@ -36,12 +36,15 @@ export function ClassStoriesCard({ space }: { space: Space }) {
     return (
       <section
         aria-labelledby="class-stories-heading"
-        className="flex flex-col gap-2 rounded-card border border-border bg-surface px-6 py-5 shadow-card"
+        className="flex flex-col gap-2 rounded-card border border-border bg-surface px-6 py-4 shadow-card"
       >
-        <h2 id="class-stories-heading" className="m-0 font-heading text-2xl font-bold text-heading">
+        <h2
+          id="class-stories-heading"
+          className="m-0 font-heading type-heading font-bold text-ink-heading"
+        >
           {t('classStories.title')}
         </h2>
-        <p className="m-0 text-sm text-body">{t('classStories.empty')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('classStories.empty')}</p>
       </section>
     );
   }
@@ -58,7 +61,7 @@ export function ClassStoriesCard({ space }: { space: Space }) {
           ),
         }))}
       />
-      <p className="m-0 text-sm text-body">{t('classStories.note', { name: space.name })}</p>
+      <p className="m-0 type-body text-ink-muted">{t('classStories.note', { name: space.name })}</p>
     </div>
   );
 }

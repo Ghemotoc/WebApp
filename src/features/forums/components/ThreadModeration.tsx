@@ -109,9 +109,12 @@ export function ThreadModeration({ thread }: { thread: ForumThreadHeader }) {
   return (
     <section
       aria-labelledby="moderation-heading"
-      className="flex flex-col gap-3 rounded-card border border-border bg-surface p-5"
+      className="flex flex-col gap-3 rounded-card border border-border bg-surface p-4"
     >
-      <h2 id="moderation-heading" className="m-0 font-heading text-xl font-bold text-heading">
+      <h2
+        id="moderation-heading"
+        className="m-0 font-heading type-subheading font-bold text-ink-heading"
+      >
         {t('moderation.heading')}
       </h2>
       <Textarea

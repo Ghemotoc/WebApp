@@ -35,9 +35,9 @@ function FlagRow({ flag, isChanging, onToggle }: FlagRowProps) {
   return (
     <li className="flex flex-col gap-3 border-t border-border pt-4 first:border-t-0 first:pt-0 sm:flex-row sm:items-start sm:justify-between">
       <div className="flex min-w-0 flex-col gap-1">
-        <h3 className="m-0 text-base font-bold text-heading">{name}</h3>
-        <p className="m-0 text-sm text-body">{description}</p>
-        <p className="m-0 text-xs text-meta">
+        <h3 className="m-0 type-body font-bold text-ink-heading">{name}</h3>
+        <p className="m-0 type-body text-ink-muted">{description}</p>
+        <p className="m-0 type-meta text-ink-muted">
           {t('flags.keyLabel')} <code className="break-all">{flag.key}</code>
         </p>
       </div>

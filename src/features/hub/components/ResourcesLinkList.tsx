@@ -30,13 +30,15 @@ export function ResourcesLinkList({ links }: { links: ResourcesLink[] }) {
         <li key={link.href} lang={link.lang} className="border-b border-hairline last:border-b-0">
           <Link
             to={link.href}
-            className="flex min-h-14 items-center gap-4 px-5 py-3.5 text-ink no-underline hover:bg-tint"
+            className="flex min-h-14 items-center gap-4 px-4 py-4 text-ink no-underline hover:bg-tint"
           >
-            <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-              <span className="font-semibold text-heading">{link.title}</span>
-              {link.line !== undefined && <span className="text-sm text-meta">{link.line}</span>}
+            <span className="flex min-w-0 flex-1 flex-col gap-1">
+              <span className="font-semibold text-ink-heading">{link.title}</span>
+              {link.line !== undefined && (
+                <span className="type-body text-ink-muted">{link.line}</span>
+              )}
             </span>
-            <ChevronRightIcon className="shrink-0 text-meta" />
+            <ChevronRightIcon className="shrink-0 text-ink-muted" />
           </Link>
         </li>
       ))}

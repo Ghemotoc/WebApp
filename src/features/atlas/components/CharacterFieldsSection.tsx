@@ -18,15 +18,18 @@ import type { CharacterField } from '../api/characters';
 import { useStoryCast } from '../hooks/useStoryCast';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
+/** The heading's look: Funnel Display in the type scale (design books, 23 Nov 2026). */
+const sectionHeadingClass = 'm-0 font-heading type-heading font-bold text-ink-heading';
+
 /** One field's row: its name, and Remove or Bring back. */
 function FieldRow({ field, onToggle }: { field: CharacterField; onToggle: () => void }) {
   const { t } = useAtlasTranslation();
   return (
     <li className="flex flex-wrap items-center justify-between gap-3 border-b border-border py-2 last:border-b-0">
-      <span className="min-w-0 break-words text-body">
+      <span className="min-w-0 break-words text-ink-muted">
         {field.name}
         {field.isHidden && (
-          <span className="block text-sm text-meta">{t('fieldsSection.removedNote')}</span>
+          <span className="block type-body text-ink-muted">{t('fieldsSection.removedNote')}</span>
         )}
       </span>
       <Button variant="secondary" onClick={onToggle}>
@@ -70,13 +73,13 @@ export function CharacterFieldsSection({ slug }: { slug: string }) {
   return (
     <section
       aria-labelledby="atlas-fields-heading"
-      className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface px-7 py-[26px] shadow-card"
+      className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface px-6 py-6 shadow-card"
     >
-      <h2 id="atlas-fields-heading" className="m-0 font-heading text-[22px] font-bold text-heading">
+      <h2 id="atlas-fields-heading" className={sectionHeadingClass}>
         {t('fieldsSection.heading')}
       </h2>
-      <p className="m-0 text-sm text-meta">{t('fieldsSection.hint')}</p>
-      {fields.length === 0 && <p className="m-0 text-body">{t('fieldsSection.none')}</p>}
+      <p className="m-0 type-body text-ink-muted">{t('fieldsSection.hint')}</p>
+      {fields.length === 0 && <p className="m-0 text-ink-muted">{t('fieldsSection.none')}</p>}
       {fields.length > 0 && (
         <ul className="m-0 list-none p-0">
           {fields.map((field) => (

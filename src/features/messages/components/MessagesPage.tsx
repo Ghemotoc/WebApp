@@ -42,8 +42,10 @@ function PickAChat() {
   const { t } = useMessagesTranslation();
   return (
     <div className="hidden flex-col items-start gap-3 p-8 lg:col-span-2 lg:flex">
-      <h2 className="m-0 font-heading text-[22px] font-bold text-heading">{t('chat.pickTitle')}</h2>
-      <p className="m-0 max-w-[460px] text-body">{t('chat.pick')}</p>
+      <h2 className="m-0 font-heading type-heading font-bold text-ink-heading">
+        {t('chat.pickTitle')}
+      </h2>
+      <p className="m-0 max-w-[460px] text-ink-muted">{t('chat.pick')}</p>
       <NewChatButton look="pill" />
     </div>
   );
@@ -71,7 +73,7 @@ function MessagesCard({ handle }: { handle: string | null }) {
         <>
           <Link
             to={`/messages${shared.query}`}
-            className="inline-flex min-h-11 w-fit items-center gap-1.5 px-4 text-sm font-semibold text-link underline lg:hidden"
+            className="inline-flex min-h-11 w-fit items-center gap-2 px-4 type-body font-semibold text-link underline lg:hidden"
           >
             <NavIcon name="back" size={16} />
             {t('chat.back')}
@@ -116,10 +118,10 @@ function SharedLinkNotice({ hasOpenChat }: { hasOpenChat: boolean }) {
 function MessagesHeader({ isSignedIn }: { isSignedIn: boolean }) {
   const { t } = useMessagesTranslation();
   return (
-    <header className="flex flex-col gap-5 pt-14 md:flex-row md:items-end md:justify-between">
+    <header className="flex flex-col gap-4 pt-12 md:flex-row md:items-end md:justify-between">
       <div className="flex max-w-[720px] flex-col gap-2">
         <h1 className="page-title">{t('title')}</h1>
-        <p className="m-0 text-lg leading-relaxed text-body">{t('lead')}</p>
+        <p className="m-0 type-long leading-relaxed text-ink-muted">{t('lead')}</p>
       </div>
       {isSignedIn && (
         <Link
@@ -149,7 +151,7 @@ export function MessagesPage() {
       <title>{t('documentTitle')}</title>
       <MessagesHeader isSignedIn={isSignedIn} />
       {isKnown && userId === null && (
-        <p className="m-0 text-body">
+        <p className="m-0 text-ink-muted">
           {t('signedOut')}{' '}
           <Link to="/sign-in" className="text-link underline">
             {t('logIn')}

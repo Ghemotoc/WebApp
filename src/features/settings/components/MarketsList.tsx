@@ -48,8 +48,8 @@ function MarketItem({ market, state, canOpenMarket }: MarketItemProps) {
       .catch(errorShownByHook);
   return (
     <li className="flex min-w-0 flex-col gap-2 rounded-card border border-border p-4">
-      <h4 className="m-0 text-base font-bold text-heading">{name}</h4>
-      <p className="m-0 text-sm text-body">
+      <h4 className="m-0 type-body font-bold text-ink-heading">{name}</h4>
+      <p className="m-0 type-body text-ink-muted">
         {t('markets.marketLanguages', { list: languages })} ·{' '}
         <a href="#age-rules" className="text-link underline">
           {t('markets.ages')}
@@ -92,10 +92,10 @@ export function MarketsList(props: { state: MarketsAdminState; canOpenMarket: bo
   const { t } = useTranslation('settings');
   return (
     <div className="flex flex-col gap-3">
-      <h3 className="m-0 font-heading text-lg font-bold text-heading">
+      <h3 className="m-0 font-heading type-long font-bold text-ink-heading">
         {t('markets.marketsHeading')}
       </h3>
-      <p className="m-0 text-sm text-body">{t('markets.marketsNote')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('markets.marketsNote')}</p>
       <ul className="m-0 grid list-none gap-4 p-0 md:grid-cols-2">
         {props.state.markets.map((market) => (
           <MarketItem

@@ -64,7 +64,7 @@ export function SpaceNewThreadPage() {
   const read = useSpace(spaceSlug);
   const space = read.data;
   return (
-    <PageContainer className="flex flex-col gap-6 py-10">
+    <PageContainer className="flex flex-col gap-6 py-8">
       {read.isError && <Notice tone="error">{t('space.loadFailed')}</Notice>}
       {space === null && <SpaceNotFound />}
       {space !== undefined && space !== null && (
@@ -74,7 +74,7 @@ export function SpaceNewThreadPage() {
             <h1 className="page-title">{t('newThread.heading')}</h1>
           </header>
           {/* The form on the page, the space's rules beside it from 1024 px (board F09). */}
-          <div className="grid gap-10 lg:grid-cols-[minmax(0,2.2fr)_minmax(0,1fr)] lg:items-start lg:gap-14">
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,2.2fr)_minmax(0,1fr)] lg:items-start lg:gap-12">
             <section aria-label={t('newThread.eyebrow')} className="flex min-w-0 flex-col gap-6">
               <SpaceNewThreadBody space={space} />
             </section>

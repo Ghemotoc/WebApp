@@ -42,12 +42,12 @@ function SignedCertificates({ slug }: { slug: string }) {
     <section aria-labelledby="signed-certificates-heading" className="flex flex-col gap-3">
       <h2
         id="signed-certificates-heading"
-        className="m-0 font-heading text-2xl font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('class.issuedTitle')}
       </h2>
       {read.isError && <Notice tone="error">{t('class.loadFailed')}</Notice>}
-      {read.data?.length === 0 && <p className="m-0 text-body">{t('class.issuedEmpty')}</p>}
+      {read.data?.length === 0 && <p className="m-0 text-ink-muted">{t('class.issuedEmpty')}</p>}
       <ul className="m-0 flex list-none flex-col p-0">
         {(read.data ?? []).map((certificate) => (
           <li
@@ -55,15 +55,15 @@ function SignedCertificates({ slug }: { slug: string }) {
             className="flex flex-wrap items-center gap-3 border-b border-border py-2"
           >
             <span className="font-semibold text-ink">{certificate.studentName}</span>
-            <span className="text-body">{certificate.programmeName}</span>
+            <span className="text-ink-muted">{certificate.programmeName}</span>
             {/* The result in bold and "Revoked" in red, as words (CALM-9f; was two pills).
                 Plain spans rather than MetaLine, so each row stays one list item without a
                 list inside it. */}
             <span className="font-semibold text-ink">{t(`results.${certificate.result}`)}</span>
             {certificate.isRevoked && (
-              <span className="font-bold text-destructive">{t('class.revoked')}</span>
+              <span className="font-semibold text-destructive">{t('class.revoked')}</span>
             )}
-            <span className="text-sm text-body">{certificate.code}</span>
+            <span className="type-body text-ink-muted">{certificate.code}</span>
           </li>
         ))}
       </ul>
@@ -101,7 +101,7 @@ function ManualResults({ space, startLook }: { space: Space; startLook: Certific
   const members = useSpaceMembers(space.slug, true);
   const students = studentsOf(members.data ?? []);
   if (members.isSuccess && students.length === 0) {
-    return <p className="m-0 text-body">{t('class.noStudents')}</p>;
+    return <p className="m-0 text-ink-muted">{t('class.noStudents')}</p>;
   }
   if (students.length === 0) return null;
   return (
@@ -189,7 +189,7 @@ function ClassCertificatesBody({ slug, space }: { slug: string; space: Space | n
   const { t } = useCertificatesTranslation();
   if (space === undefined || space === null) return null;
   if (space.viewer.membership !== 'owner') {
-    return <p className="m-0 text-body">{t('class.failures.teacher_only')}</p>;
+    return <p className="m-0 text-ink-muted">{t('class.failures.teacher_only')}</p>;
   }
   return (
     <>
@@ -210,7 +210,7 @@ export function ClassCertificatesPage() {
   const space = useSpace(spaceSlug);
   const name = space.data?.name ?? '';
   return (
-    <PageContainer className="flex max-w-[860px] flex-col gap-6 py-10">
+    <PageContainer className="flex max-w-[860px] flex-col gap-6 py-8">
       <title>{t('class.documentTitle', { name })}</title>
       <SpaceBreadcrumb space={{ slug: spaceSlug, name }} current={t('class.title')} />
       <header className="flex flex-col gap-2">

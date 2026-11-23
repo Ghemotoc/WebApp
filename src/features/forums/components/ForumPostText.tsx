@@ -18,7 +18,7 @@ import { safeMarkdownElements } from '@/components/ui/safeMarkdownElements';
 const components: Components = {
   p: ({ children }) => <p className="m-0 mt-3 first:mt-0">{children}</p>,
   blockquote: ({ children }) => (
-    <blockquote className="m-0 mt-3 rounded-2xl bg-panel px-4 py-3 text-body first:mt-0">
+    <blockquote className="m-0 mt-3 rounded-card bg-panel px-4 py-3 text-ink-muted first:mt-0">
       {children}
     </blockquote>
   ),
@@ -34,7 +34,7 @@ const components: Components = {
  */
 export function ForumPostText({ text }: { text: string }) {
   return (
-    <div className="text-[15px] leading-[1.65] break-words text-ink">
+    <div className="type-body leading-[1.65] break-words text-ink">
       <SafeMarkdown text={text} elements={safeMarkdownElements.forumPost} components={components} />
     </div>
   );

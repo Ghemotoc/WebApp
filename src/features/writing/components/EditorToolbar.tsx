@@ -132,7 +132,7 @@ export function EditorToolbar({ editor, wordCount, onLink, chapterId }: EditorTo
     <div
       role="toolbar"
       aria-label={t('toolbar.label')}
-      className="flex flex-wrap items-center gap-0.5 rounded-full border border-border bg-surface p-1"
+      className="flex flex-wrap items-center gap-1 rounded-full border border-border bg-surface p-1"
     >
       {actions.map((action, index) => {
         const name = t(`toolbar.${action.key}`);
@@ -151,7 +151,7 @@ export function EditorToolbar({ editor, wordCount, onLink, chapterId }: EditorTo
             onKeyDown={(event) => handleKeyDown(event, index)}
             onFocus={() => setFocusedIndex(index)}
             className={`inline-flex size-11 items-center justify-center rounded-full ${
-              isOn === true ? 'bg-tint text-link' : 'text-heading hover:bg-tint'
+              isOn === true ? 'bg-tint text-link' : 'text-ink-heading hover:bg-tint'
             }`}
           >
             {action.icon}
@@ -159,7 +159,9 @@ export function EditorToolbar({ editor, wordCount, onLink, chapterId }: EditorTo
         );
       })}
       <ChapterInsertControls editor={editor} chapterId={chapterId} />
-      <span className="ml-auto px-4 text-sm text-meta">{t('wordCount', { count: wordCount })}</span>
+      <span className="ml-auto px-4 type-body text-ink-muted">
+        {t('wordCount', { count: wordCount })}
+      </span>
     </div>
   );
 }

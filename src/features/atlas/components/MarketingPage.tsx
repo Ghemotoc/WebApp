@@ -56,8 +56,8 @@ function MarketingBody({
       <AtlasPageHeading title={t('marketing.heading')} />
       {/* Board AtlasMarketing: the fields and the QR code on the left, the back cover beside
           them from 1024 px and under them on smaller screens. */}
-      <div className="flex min-w-0 flex-col gap-7 lg:flex-row lg:items-start">
-        <div className="flex min-w-0 flex-1 flex-col gap-[18px]">
+      <div className="flex min-w-0 flex-col gap-6 lg:flex-row lg:items-start">
+        <div className="flex min-w-0 flex-1 flex-col gap-4">
           <MarketingFields
             slug={slug}
             page={page}
@@ -97,7 +97,7 @@ function MarketingMessages({
   const { t } = useAtlasTranslation();
   return (
     <>
-      {!isSignedIn && <p className="m-0 text-body">{t('signedOut')}</p>}
+      {!isSignedIn && <p className="m-0 text-ink-muted">{t('signedOut')}</p>}
       {loadFailed && <Notice tone="error">{t('loadFailed')}</Notice>}
       {isNotFound && <Notice tone="error">{t('notFound')}</Notice>}
     </>

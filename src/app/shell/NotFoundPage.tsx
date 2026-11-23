@@ -24,11 +24,11 @@ export function NotFoundPage() {
   const { t } = useTranslation();
 
   return (
-    <PageContainer className="tmc-rise flex justify-center pt-12 pb-10">
+    <PageContainer className="tmc-rise flex justify-center pt-12 pb-8">
       <title>{t('notFound.documentTitle')}</title>
       <section
         aria-labelledby="not-found-heading"
-        className="flex w-full max-w-[820px] flex-col items-center gap-5 text-center"
+        className="flex w-full max-w-[820px] flex-col items-center gap-4 text-center"
       >
         {/* The orb is decoration only: the eyebrow and heading say it in words. */}
         <div
@@ -40,11 +40,11 @@ export function NotFoundPage() {
         <Eyebrow>{t('notFound.eyebrow')}</Eyebrow>
         <h1
           id="not-found-heading"
-          className="m-0 font-heading text-[clamp(32px,5vw,56px)] leading-[1.05] font-extrabold text-heading"
+          className="m-0 font-heading text-[clamp(32px,5vw,56px)] leading-[1.05] font-bold text-ink-heading"
         >
           {t('notFound.heading')}
         </h1>
-        <p className="m-0 max-w-[600px] text-lg text-body">{t('notFound.body')}</p>
+        <p className="m-0 max-w-[600px] type-long text-ink-muted">{t('notFound.body')}</p>
         <div className="flex flex-wrap justify-center gap-3">
           <Link to="/search" className={buttonClassName({ size: 'lg' })}>
             <SearchIcon size={18} />

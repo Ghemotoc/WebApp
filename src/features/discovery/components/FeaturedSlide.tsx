@@ -100,13 +100,13 @@ export function FeaturedSlide({ story, position, count }: FeaturedSlideProps) {
       role="group"
       aria-roledescription={t('featured.slide')}
       aria-label={t('featured.slideLabel', { position, count, title: story.title })}
-      className="flex flex-col gap-6 sm:flex-row sm:items-start sm:gap-10"
+      className="flex flex-col gap-6 sm:flex-row sm:items-start sm:gap-8"
     >
       <SlideCover story={story} />
       <div className="flex min-w-0 flex-1 flex-col items-start gap-3">
         <MetaLine facts={stateFacts} />
         <h2 className="m-0 type-display break-words">{story.title}</h2>
-        <p className="m-0 type-body text-body">
+        <p className="m-0 type-body text-ink-muted">
           {t('featured.by')}{' '}
           <Link
             to={`/u/${encodeURIComponent(story.writer.handle)}`}
@@ -117,7 +117,7 @@ export function FeaturedSlide({ story, position, count }: FeaturedSlideProps) {
         </p>
         <MetaLine facts={storyFacts} />
         {story.blurb !== '' && (
-          <p className="m-0 max-w-[62ch] type-body text-body">{story.blurb}</p>
+          <p className="m-0 max-w-[62ch] type-body text-ink-muted">{story.blurb}</p>
         )}
         <div className="mt-2 flex flex-wrap items-center gap-3">
           <Link

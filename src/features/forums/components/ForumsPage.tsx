@@ -48,9 +48,9 @@ function ForumsHeader({ threadCount }: { threadCount: number }) {
   return (
     <header className="flex flex-wrap items-end justify-between gap-6">
       <div className="flex max-w-[640px] flex-col">
-        <p className="m-0 mb-1.5 type-meta">{t('eyebrow', { count: threadCount })}</p>
+        <p className="m-0 mb-2 type-meta">{t('eyebrow', { count: threadCount })}</p>
         <h1 className="m-0 type-display">{t('title')}</h1>
-        <p className="m-0 mt-3 text-body">{t('intro')}</p>
+        <p className="m-0 mt-3 text-ink-muted">{t('intro')}</p>
       </div>
       {/* The board puts the page's actions at the right of the heading on a wide screen. */}
       <div className="shrink-0">
@@ -70,7 +70,7 @@ function UnreadLegend() {
   const { userId } = useSession();
   if (userId === null) return null;
   return (
-    <p className="m-0 flex flex-wrap items-center gap-x-5 gap-y-2 type-meta">
+    <p className="m-0 flex flex-wrap items-center gap-x-4 gap-y-2 type-meta">
       <span className="inline-flex items-center gap-2">
         <UnreadCircle isNew />
         {t('unread.new')}
@@ -94,7 +94,7 @@ function ForumCategories({
   const { t } = useForumsTranslation();
   if (loadFailed) return <Notice tone="error">{t('loadFailed')}</Notice>;
   if (groups === null) return null;
-  if (groups.length === 0) return <p className="m-0 text-base text-body">{t('empty')}</p>;
+  if (groups.length === 0) return <p className="m-0 type-body text-ink-muted">{t('empty')}</p>;
   return (
     <>
       {groups.map((group, index) => (
@@ -121,17 +121,17 @@ export function ForumsPage() {
   // The eyebrow counts the threads in every forum and subforum (categories hold none).
   const threadCount = (entries ?? []).reduce((total, entry) => total + entry.threadCount, 0);
   return (
-    <PageContainer className="flex flex-col gap-8 py-10">
+    <PageContainer className="flex flex-col gap-8 py-8">
       <ForumsHeader threadCount={threadCount} />
       {/* Two columns from 900 px: the forums, and a 300 px side column 56 px away (the board). */}
-      <div className="grid gap-10 min-[900px]:grid-cols-[minmax(0,1fr)_300px] min-[900px]:items-start min-[900px]:gap-14">
-        <div className="flex min-w-0 flex-col gap-10">
+      <div className="grid gap-8 min-[900px]:grid-cols-[minmax(0,1fr)_300px] min-[900px]:items-start min-[900px]:gap-12">
+        <div className="flex min-w-0 flex-col gap-8">
           <div className="max-w-[560px]">
             <ForumSearchForm />
           </div>
           <ForumCategories groups={groups} loadFailed={loadFailed} />
         </div>
-        <aside className="flex min-w-0 flex-col gap-10">
+        <aside className="flex min-w-0 flex-col gap-8">
           <NewForYou />
           <SpacesCard />
           <ForumRulesCard />

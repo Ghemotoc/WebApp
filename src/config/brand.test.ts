@@ -33,6 +33,7 @@ describe('readBrand', () => {
       VITE_BRAND_AUTHORITIES_EMAIL: 'authorities@example.com',
       VITE_BRAND_SOCIAL_HANDLE: '@test',
       VITE_BRAND_COMPANY_NAME: 'Test Company',
+      VITE_BRAND_COMPANY_SITE_URL: 'https://company.example.com',
     });
 
     expect(brand).toEqual({
@@ -45,6 +46,7 @@ describe('readBrand', () => {
       authoritiesEmail: 'authorities@example.com',
       socialHandle: '@test',
       companyName: 'Test Company',
+      companySiteUrl: 'https://company.example.com',
     });
   });
 

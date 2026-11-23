@@ -34,7 +34,8 @@ function CrestState({ slug }: { slug: string }) {
   const crest = useClassCertificateCrest(slug);
   if (crest.isPending) return null;
   const view = crest.data ?? null;
-  if (view === null) return <p className="m-0 text-sm text-body">{t('look.crestStates.none')}</p>;
+  if (view === null)
+    return <p className="m-0 type-body text-ink-muted">{t('look.crestStates.none')}</p>;
   return (
     <div className="flex flex-wrap items-center gap-3 rounded-field border border-dashed border-control-border p-3">
       {view.url !== null && (
@@ -44,7 +45,7 @@ function CrestState({ slug }: { slug: string }) {
           className="size-11 flex-none rounded-full border border-border bg-white object-contain"
         />
       )}
-      <p className="m-0 flex-1 text-sm text-body">{t(`look.crestStates.${view.state}`)}</p>
+      <p className="m-0 flex-1 type-body text-ink-muted">{t(`look.crestStates.${view.state}`)}</p>
     </div>
   );
 }

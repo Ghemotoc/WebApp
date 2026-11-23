@@ -42,8 +42,8 @@ function SwatchRow({
 }) {
   const { t } = useTranslation('writing');
   return (
-    <div className="flex flex-col gap-1.5">
-      <span className="text-[13px] font-semibold text-body">{label}</span>
+    <div className="flex flex-col gap-2">
+      <span className="type-meta font-semibold text-ink-muted">{label}</span>
       <div role="radiogroup" aria-label={label} className="flex flex-wrap gap-2">
         {coverColourKeys.map((colour) => {
           const isChosen = colour === value;
@@ -87,7 +87,7 @@ export function CoverColourSwatches({ choice, onChange }: CoverColourSwatchesPro
 
   return (
     <div className="flex flex-col gap-4">
-      <h3 className="m-0 font-heading text-[19px] font-bold text-heading">
+      <h3 className="m-0 font-heading type-subheading font-bold text-ink-heading">
         {t('cover.changeColours')}
       </h3>
       <SwatchRow
@@ -102,8 +102,8 @@ export function CoverColourSwatches({ choice, onChange }: CoverColourSwatchesPro
         value={choice.accent}
         onPick={(accent) => onChange({ ...choice, accent })}
       />
-      <p className="m-0 text-[13px] text-meta">{accentNote}</p>
-      <p className="m-0 text-[13px] text-meta">{t('cover.autoContrast')}</p>
+      <p className="m-0 type-meta text-ink-muted">{accentNote}</p>
+      <p className="m-0 type-meta text-ink-muted">{t('cover.autoContrast')}</p>
     </div>
   );
 }

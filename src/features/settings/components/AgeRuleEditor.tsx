@@ -60,7 +60,7 @@ export function AgeRuleEditor({ rule, state, onClose }: AgeRuleEditorProps) {
       aria-label={t('ageRules.editorLabel')}
       className="flex flex-col gap-4 rounded-card border border-border p-4"
     >
-      <h3 className="m-0 text-base font-bold text-heading">
+      <h3 className="m-0 type-body font-bold text-ink-heading">
         {isNew ? t('ageRules.add') : t('ageRules.editing', { name: rule.name })}
       </h3>
       <AgeRuleFieldList fields={fields} isNew={isNew} onChange={changeField} />

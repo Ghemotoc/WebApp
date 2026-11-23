@@ -67,10 +67,10 @@ export function RenameChapterForm({
         onKeyDown={(event) => {
           if (event.key === 'Escape') onCancel();
         }}
-        className="h-11 min-w-0 flex-[1_1_220px] rounded-full border border-link bg-surface px-4 font-heading text-[17px] font-bold text-ink"
+        className="h-11 min-w-0 flex-[1_1_220px] rounded-full border border-link bg-surface px-4 font-heading type-long font-bold text-ink"
       />
       <Button type="submit">{t('manageChapters.save')}</Button>
-      <Button variant="text" className="px-3.5 no-underline" onClick={onCancel}>
+      <Button variant="text" className="px-4 no-underline" onClick={onCancel}>
         {t('manageChapters.cancel')}
       </Button>
     </form>

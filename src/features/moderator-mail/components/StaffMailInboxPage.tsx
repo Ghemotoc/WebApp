@@ -48,7 +48,7 @@ function InboxRow({ thread }: { thread: MailThreadSummary }) {
           {t(`statuses.${thread.status}`)}
         </InfoPill>
       </div>
-      <p className="m-0 text-sm text-meta">
+      <p className="m-0 type-body text-ink-muted">
         {t('staff.rowMeta', {
           reference: thread.reference,
           handle: thread.memberHandle ?? '',
@@ -56,7 +56,7 @@ function InboxRow({ thread }: { thread: MailThreadSummary }) {
           date: when,
         })}
       </p>
-      <p className="m-0 text-sm text-body">{assigned}</p>
+      <p className="m-0 type-body text-ink-muted">{assigned}</p>
     </li>
   );
 }
@@ -78,7 +78,7 @@ function InboxFiltersRow({
     <div
       role="group"
       aria-label={t('staff.filtersLabel')}
-      className="flex flex-wrap items-end gap-4 rounded-card border border-border bg-surface p-5 shadow-card"
+      className="flex flex-wrap items-end gap-4 rounded-card border border-border bg-surface p-4 shadow-card"
     >
       <Select
         id="mail-status"
@@ -117,10 +117,12 @@ function InboxFiltersRow({
 function InboxList({ state }: { state: ReturnType<typeof useStaffInbox> }) {
   const { t } = useMailTranslation();
   if (state.failure === 'not_allowed')
-    return <p className="m-0 text-body">{t('staff.notAllowed')}</p>;
+    return <p className="m-0 text-ink-muted">{t('staff.notAllowed')}</p>;
   if (state.failure !== null) return <Notice tone="error">{t('staff.loadFailed')}</Notice>;
-  if (state.inbox.data === undefined) return <p className="m-0 text-meta">{t('staff.loading')}</p>;
-  if (state.inbox.data.length === 0) return <p className="m-0 text-body">{t('staff.empty')}</p>;
+  if (state.inbox.data === undefined)
+    return <p className="m-0 text-ink-muted">{t('staff.loading')}</p>;
+  if (state.inbox.data.length === 0)
+    return <p className="m-0 text-ink-muted">{t('staff.empty')}</p>;
   return (
     <ul className="m-0 flex list-none flex-col gap-3 p-0" aria-label={t('staff.listLabel')}>
       {state.inbox.data.map((thread) => (
@@ -139,14 +141,14 @@ export function StaffMailInboxPage() {
   const { t } = useMailTranslation();
   const state = useStaffInbox();
   return (
-    <PageContainer className="flex flex-col gap-6 pt-12 pb-7">
+    <PageContainer className="flex flex-col gap-6 pt-12 pb-6">
       <title>{t('staff.documentTitle')}</title>
       <div className="flex max-w-[720px] flex-col gap-2">
         <Eyebrow>{t('staff.eyebrow')}</Eyebrow>
-        <h1 className="m-0 font-heading text-[34px] font-bold text-heading">
+        <h1 className="m-0 font-heading type-title font-bold text-ink-heading">
           {t('staff.heading')}
         </h1>
-        <p className="m-0 text-body">{t('staff.intro')}</p>
+        <p className="m-0 text-ink-muted">{t('staff.intro')}</p>
       </div>
       <InboxFiltersRow filters={state.filters} onChange={state.setFilters} />
       <InboxList state={state} />

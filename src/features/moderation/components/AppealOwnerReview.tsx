@@ -34,7 +34,7 @@ export function AppealOwnerReview({ appeal, isMarking, onMarkReviewed }: AppealO
       <InfoPill tone={appeal.needsOwnerReview ? 'gold' : 'neutral'}>
         {t('appeals.sameDecider')}
       </InfoPill>
-      <p className="m-0 text-sm text-body">
+      <p className="m-0 type-body text-ink-muted">
         {appeal.needsOwnerReview ? t('appeals.ownerReviewNeeded') : t('appeals.ownerReviewed')}
       </p>
       {appeal.mayMarkReviewed && (

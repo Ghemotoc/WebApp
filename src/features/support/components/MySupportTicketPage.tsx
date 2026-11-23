@@ -63,7 +63,7 @@ function LoadedTicket({
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="flex min-w-0 flex-col gap-2">
           <Eyebrow>{t('list.requestNumber', { number: ticket.number })}</Eyebrow>
-          <h1 className="m-0 font-heading text-[clamp(28px,3.4vw,40px)] leading-[1.05] font-bold break-words text-heading">
+          <h1 className="m-0 font-heading text-[clamp(28px,3.4vw,40px)] leading-[1.05] font-bold break-words text-ink-heading">
             {ticket.subject}
           </h1>
         </div>
@@ -71,14 +71,14 @@ function LoadedTicket({
       </div>
       <TicketMessageList messages={items} label={t('ticket.messagesLabel')} layout="chat" />
       {ticket.mergedInto !== null && (
-        <p className="m-0 text-body">
+        <p className="m-0 text-ink-muted">
           <Link to={`/support/${String(ticket.mergedInto)}`}>
             {t('ticket.mergedInto', { number: ticket.mergedInto })}
           </Link>
         </p>
       )}
       {ticket.status === 'closed' && ticket.mergedInto === null && (
-        <p className="m-0 text-body">{t('ticket.closed', { number: ticket.number })}</p>
+        <p className="m-0 text-ink-muted">{t('ticket.closed', { number: ticket.number })}</p>
       )}
       {ticket.status !== 'closed' && <ReplyCard ticket={ticket} state={state} />}
     </div>
@@ -94,7 +94,7 @@ function ReplyCard({ ticket, state }: { ticket: MyTicket; state: ReturnType<type
   const { t } = useSupportTranslation();
   return (
     <div className="flex flex-col gap-3">
-      <div className="rounded-card border border-border bg-surface p-5 shadow-card">
+      <div className="rounded-card border border-border bg-surface p-4 shadow-card">
         <SupportReplyForm
           id="support-reply"
           label={t('ticket.replyLabel')}
@@ -106,7 +106,7 @@ function ReplyCard({ ticket, state }: { ticket: MyTicket; state: ReturnType<type
         />
       </div>
       {ticket.status === 'solved' && (
-        <p className="m-0 text-sm text-meta">{t('ticket.reopenNote')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('ticket.reopenNote')}</p>
       )}
     </div>
   );
@@ -121,7 +121,8 @@ function TicketBody({ state }: { state: ReturnType<typeof useMyTicket> }) {
   const { t } = useSupportTranslation();
   if (state.ticket.isError) return <Notice tone="error">{t('ticket.loadFailed')}</Notice>;
   if (state.ticket.isPending) return null;
-  if (state.ticket.data === null) return <p className="m-0 text-body">{t('ticket.notFound')}</p>;
+  if (state.ticket.data === null)
+    return <p className="m-0 text-ink-muted">{t('ticket.notFound')}</p>;
   return <LoadedTicket ticket={state.ticket.data} state={state} />;
 }
 

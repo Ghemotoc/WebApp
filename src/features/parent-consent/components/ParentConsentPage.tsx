@@ -32,7 +32,7 @@ import { useParentConsentTranslation } from '../registerParentConsentTranslation
 
 /** The class of a link drawn as a secondary button. */
 const linkButtonClass =
-  'inline-flex h-11 items-center self-start rounded-full button-glass px-5 text-sm font-semibold no-underline';
+  'inline-flex h-11 items-center self-start rounded-full button-glass px-4 type-body font-semibold no-underline';
 
 /** useMyParentConsent's result, passed down once. */
 type Consent = ReturnType<typeof useMyParentConsent>;
@@ -119,7 +119,7 @@ function ConsentBody({ state, consent }: { state: Consent; consent: MyParentCons
   if (consent.status === 'agreed' && !consent.needsConsent)
     return <AgreedPanel consent={consent} />;
   if (consent.canSend) return <AskingPanel state={state} consent={consent} />;
-  return <p className="m-0 text-body">{t('nothingToDo')}</p>;
+  return <p className="m-0 text-ink-muted">{t('nothingToDo')}</p>;
 }
 
 /**
@@ -135,7 +135,7 @@ function ParentConsentCardBody() {
   if (userId === null) {
     return (
       <div className="flex flex-col gap-3">
-        <p className="m-0 text-body">{t('signedOut')}</p>
+        <p className="m-0 text-ink-muted">{t('signedOut')}</p>
         <Link to="/sign-in" className={linkButtonClass}>
           {t('logIn')}
         </Link>
@@ -144,7 +144,7 @@ function ParentConsentCardBody() {
   }
   if (state.loadFailed) return <Notice tone="error">{t('loadFailed')}</Notice>;
   if (state.consent === undefined) return null;
-  if (state.consent === null) return <p className="m-0 text-body">{t('nothingToDo')}</p>;
+  if (state.consent === null) return <p className="m-0 text-ink-muted">{t('nothingToDo')}</p>;
   return <ConsentBody state={state} consent={state.consent} />;
 }
 
@@ -156,21 +156,21 @@ function ParentConsentCardBody() {
 export function ParentConsentPage() {
   const { t } = useParentConsentTranslation();
   return (
-    <PageContainer className="tmc-rise flex justify-center pt-12 pb-7">
+    <PageContainer className="tmc-rise flex justify-center pt-12 pb-6">
       <title>{t('documentTitle')}</title>
       <section
         aria-labelledby="parent-consent-heading"
-        className="flex w-full max-w-[640px] flex-col gap-5 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
+        className="flex w-full max-w-[640px] flex-col gap-4 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
       >
         <div className="flex flex-col gap-2">
           <Eyebrow>{t('eyebrow')}</Eyebrow>
           <h1
             id="parent-consent-heading"
-            className="m-0 font-heading text-[30px] font-bold text-heading"
+            className="m-0 font-heading type-title font-bold text-ink-heading"
           >
             {t('heading')}
           </h1>
-          <p className="m-0 text-body">{t('intro')}</p>
+          <p className="m-0 text-ink-muted">{t('intro')}</p>
         </div>
         <ParentConsentCardBody />
       </section>

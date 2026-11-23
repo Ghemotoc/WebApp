@@ -161,7 +161,7 @@ export function StoryListFilters({ request, sortOrder, onChange }: StoryListFilt
   const { t } = useDiscoveryTranslation();
   const categoryOptions = useCategoryOptions();
   return (
-    <div role="group" aria-label={t('seeAll.filtersLabel')} className="flex flex-col gap-5">
+    <div role="group" aria-label={t('seeAll.filtersLabel')} className="flex flex-col gap-4">
       {request.kind !== 'category' && categoryOptions.length > 1 && (
         <ChoiceChips
           label={t('seeAll.category')}

@@ -36,7 +36,7 @@ export function ExplanationField({
 }: ExplanationFieldProps) {
   const errorId = `${id}-error`;
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2">
       <Textarea
         id={id}
         label={label}
@@ -49,7 +49,7 @@ export function ExplanationField({
         onChange={(event) => onChange(event.target.value)}
       />
       {errorMessage !== undefined && (
-        <p id={errorId} className="m-0 text-sm text-destructive">
+        <p id={errorId} className="m-0 type-body text-destructive">
           {errorMessage}
         </p>
       )}
@@ -74,7 +74,7 @@ export function GoodFaithCheckbox({
   const { t } = useTranslation('notices');
   const errorId = errorMessage === undefined ? undefined : 'notice-good-faith-error';
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2">
       <div className="flex items-start gap-3">
         <input
           id="notice-good-faith"
@@ -83,14 +83,14 @@ export function GoodFaithCheckbox({
           aria-describedby={errorId}
           aria-invalid={errorMessage === undefined ? undefined : true}
           onChange={(event) => onChange(event.target.checked)}
-          className="mt-0.5 size-6 shrink-0 cursor-pointer accent-(--link)"
+          className="mt-1 size-6 shrink-0 cursor-pointer accent-(--link)"
         />
-        <label htmlFor="notice-good-faith" className="text-[15px] text-body">
+        <label htmlFor="notice-good-faith" className="type-body text-ink-muted">
           {t('form.goodFaith')}
         </label>
       </div>
       {errorMessage !== undefined && (
-        <p id={errorId} className="m-0 text-sm text-destructive">
+        <p id={errorId} className="m-0 type-body text-destructive">
           {errorMessage}
         </p>
       )}

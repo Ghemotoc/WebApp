@@ -59,7 +59,9 @@ export function EmailCodesForm({
   return (
     <form noValidate className="flex flex-col gap-3" onSubmit={handleSubmit}>
       <Notice tone="info">{t('email.pending', { email: newEmail })}</Notice>
-      <h3 className="m-0 font-heading text-lg font-bold text-heading">{t('email.codesHeading')}</h3>
+      <h3 className="m-0 font-heading type-long font-bold text-ink-heading">
+        {t('email.codesHeading')}
+      </h3>
       <EmailCodeField
         id="settings-current-email-code"
         label={t('email.currentCodeLabel')}

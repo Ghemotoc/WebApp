@@ -22,9 +22,9 @@ export function ReportSection() {
   const { t } = useTranslation('design');
   return (
     <DesignSection id="report" title={t('report.title')}>
-      <p className="m-0 max-w-[720px] text-body">{t('report.intro')}</p>
-      <div className="flex flex-wrap items-center gap-4 rounded-card border border-border bg-surface p-5">
-        <span className="text-body">{t('report.sampleItem')}</span>
+      <p className="m-0 max-w-[720px] text-ink-muted">{t('report.intro')}</p>
+      <div className="flex flex-wrap items-center gap-4 rounded-card border border-border bg-surface p-4">
+        <span className="text-ink-muted">{t('report.sampleItem')}</span>
         <ReportButton itemType="profile" itemReference="adult_writer" itemLabel="@adult_writer" />
       </div>
     </DesignSection>

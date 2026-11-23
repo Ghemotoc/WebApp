@@ -33,7 +33,7 @@ function OpenLinkedProject({ label, address }: { label: string; address: string 
       href={address}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex min-h-11 items-center self-start text-sm font-semibold break-words"
+      className="inline-flex min-h-11 items-center self-start type-body font-semibold break-words"
     >
       {t('linked.open', { label })} <span className="sr-only">{t('linked.newTab')}</span>
     </a>
@@ -49,7 +49,7 @@ export function LinkedProjectSection({ page, savePlan }: LinkedProjectSectionPro
   const { t } = useAtlasTranslation();
   return (
     <FormSection legend={t('linked.heading')}>
-      <p className="m-0 text-sm text-meta">{t('linked.hint')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('linked.hint')}</p>
       <PlanTextField
         id="atlas-linked-label"
         label={t('linked.label')}

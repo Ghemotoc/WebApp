@@ -49,10 +49,10 @@ function ShiftRow({
   const [isRemoving, setIsRemoving] = useState(false);
   return (
     <li className="flex flex-col gap-2 border-t border-border py-3 first:border-t-0">
-      <p className="m-0 text-body">
-        <span className="font-semibold text-heading">@{shift.handle}</span>{' '}
+      <p className="m-0 text-ink-muted">
+        <span className="font-semibold text-ink-heading">@{shift.handle}</span>{' '}
         {t('onCall.shiftTimes', { from: timeOf(shift.startsAt), to: timeOf(shift.endsAt) })}
-        {shift.isNow && <span className="ml-2 text-sm text-meta">{t('onCall.now')}</span>}
+        {shift.isNow && <span className="ml-2 type-body text-ink-muted">{t('onCall.now')}</span>}
       </p>
       {canEdit && !isRemoving && (
         <div>
@@ -99,13 +99,18 @@ export function OnCallShiftList({
   return (
     <>
       <section aria-labelledby="on-call-shifts-heading" className="flex flex-col gap-2">
-        <h2 id="on-call-shifts-heading" className="m-0 font-heading text-xl font-bold text-heading">
+        <h2
+          id="on-call-shifts-heading"
+          className="m-0 font-heading type-subheading font-bold text-ink-heading"
+        >
           {t('onCall.shiftsHeading')}
         </h2>
         {rota.removeFailure !== null && (
           <Notice tone="error">{t(`failures.${rota.removeFailure}`)}</Notice>
         )}
-        {rotaData.shifts.length === 0 && <p className="m-0 text-body">{t('onCall.noShifts')}</p>}
+        {rotaData.shifts.length === 0 && (
+          <p className="m-0 text-ink-muted">{t('onCall.noShifts')}</p>
+        )}
         <ul className="m-0 list-none p-0">
           {rotaData.shifts.map((shift) => (
             <ShiftRow key={shift.id} shift={shift} canEdit={rotaData.canEdit} rota={rota} />
@@ -113,13 +118,16 @@ export function OnCallShiftList({
         </ul>
       </section>
       <section aria-labelledby="on-call-gaps-heading" className="flex flex-col gap-2">
-        <h2 id="on-call-gaps-heading" className="m-0 font-heading text-xl font-bold text-heading">
+        <h2
+          id="on-call-gaps-heading"
+          className="m-0 font-heading type-subheading font-bold text-ink-heading"
+        >
           {t('onCall.gapsHeading')}
         </h2>
         {rotaData.gaps.length === 0 ? (
-          <p className="m-0 text-body">{t('onCall.noGaps')}</p>
+          <p className="m-0 text-ink-muted">{t('onCall.noGaps')}</p>
         ) : (
-          <ul className="m-0 flex flex-col gap-1 pl-5 text-body">
+          <ul className="m-0 flex flex-col gap-1 pl-4 text-ink-muted">
             {rotaData.gaps.map((gap) => (
               <li key={gap.startsAt}>
                 {t('onCall.gap', { from: timeOf(gap.startsAt), to: timeOf(gap.endsAt) })}

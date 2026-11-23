@@ -20,7 +20,7 @@ const licenceAddress = 'https://creativecommons.org/licenses/by/4.0/';
 export function AvatarArtCredit() {
   const { t } = useAvatarsTranslation();
   return (
-    <p className="m-0 text-[13px] leading-normal text-meta">
+    <p className="m-0 type-meta leading-normal text-ink-muted">
       {t('builder.credit')}{' '}
       <a
         href={licenceAddress}

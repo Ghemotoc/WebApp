@@ -4,8 +4,9 @@
  *
  * - Characters with at least one relationship are glass cards, joined by labelled lines
  *   (lib/relationshipMap.ts). The rest are named under the map as "Not on the map yet".
- * - Each category has its own colour and line style; the category switches double as the legend,
- *   and turning one off hides its lines.
+ * - Each category has a colour the writer picks under "Category colours" (CALM-9, board E25; the
+ *   writer's map only) and a line style as the second cue; the category switches double as the
+ *   legend, each with its colour dot, and turning one off hides its lines.
  * - Every card is a real link to the character's sheet (or, on a readers' page, their public page
  *   while Characters is public), so it can be reached by keyboard.
  * - On the writer's map the cards can be dragged: dropped on empty map a card stays there, dropped
@@ -14,7 +15,8 @@
  * - "− Fit +" zooms; the map scrolls inside its own focusable region, so the page never does.
  * - The drawing is hidden from screen readers: the same relationships are in the List view.
  * Who uses it: ConnectionsPage (through ConnectionsMapView) and PublicConnections. What it calls:
- * the layout helpers, useCardDrag, useMapZoom, MapLines, MapCards and MapZoomBar.
+ * the layout helpers, useCardDrag, useMapZoom, MapLines, MapCards, MapZoomBar, MapCategorySwitches
+ * and CategoryColoursFold.
  */
 import { useState, type ReactNode } from 'react';
 
@@ -22,7 +24,12 @@ import type { CharacterRelationship, MapPlace, StoryCast } from '../api/characte
 import { useCardDrag, type CardDragActions } from '../hooks/useCardDrag';
 import { useMapZoom } from '../hooks/useMapZoom';
 import type { RelationshipWords } from '../hooks/useRelationshipWords';
-import { categoryOf, type RelationshipCategory } from '../lib/relationshipCategories';
+import {
+  categoryOf,
+  type RelationshipCategory,
+  type RelationshipColours,
+  type RelationshipSwatch,
+} from '../lib/relationshipCategories';
 import {
   layoutRelationshipMap,
   splitMapCast,
@@ -31,6 +38,7 @@ import {
 } from '../lib/relationshipMap';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
+import { CategoryColoursFold } from './CategoryColoursFold';
 import { MapCards } from './MapCards';
 import { MapCategorySwitches } from './MapCategorySwitches';
 import { MapLines } from './MapLines';
@@ -48,6 +56,8 @@ export interface RelationshipMapProps {
   focusId?: string | null;
   /** Places just dropped and not yet saved, so a card doesn't jump back while it saves. */
   pendingPlaces?: ReadonlyMap<string, MapPlace>;
+  /** Saves a category's colour; left out on a readers' map, which has no colour picker. */
+  onPickColour?: (category: RelationshipCategory, swatch: RelationshipSwatch) => Promise<void>;
 }
 
 /** The character in focus and everyone linked to them by a shown line, or null for everyone. */
@@ -105,12 +115,14 @@ function MapCanvas({
   zoom,
   words,
   focusId,
+  colours,
   cards,
 }: {
   layout: MapLayout;
   zoom: number;
   words: RelationshipWords;
   focusId: string | null;
+  colours: RelationshipColours;
   cards: ReactNode;
 }) {
   return (
@@ -122,10 +134,71 @@ function MapCanvas({
         className="absolute top-0 left-0 origin-top-left"
         style={{ width: layout.width, height: layout.height, transform: `scale(${zoom})` }}
       >
-        <MapLines layout={layout} words={words} focusId={focusId} />
+        <MapLines layout={layout} words={words} focusId={focusId} colours={colours} />
         {cards}
       </div>
     </div>
+  );
+}
+
+/**
+ * What the map draws: the lines whose category is switched on, who is on the map (every
+ * relationship decides that, so cards don't come and go with the switches) and the layout.
+ *
+ * @returns the shown relationships, the characters on and off the map, and the drawing
+ */
+function useMapContents(
+  cast: StoryCast,
+  hiddenCategories: RelationshipCategory[],
+  pendingPlaces: ReadonlyMap<string, MapPlace> | undefined,
+  dragActions: CardDragActions | undefined,
+) {
+  const shown = cast.relationships.filter(
+    (relationship) => !hiddenCategories.includes(categoryOf(relationship.kind)),
+  );
+  const { onMap, offMap } = splitMapCast(
+    cast.characters.map((character) => character.id),
+    cast.relationships,
+  );
+  const cards = cardInputs(cast, onMap, pendingPlaces);
+  return { shown, onMap, offMap, ...useMapDrawing(cards, shown, dragActions) };
+}
+
+/** "Not on the map yet": the characters with no relationship. */
+function OffMapLine({ offMap, words }: { offMap: string[]; words: RelationshipWords }) {
+  const { t } = useAtlasTranslation();
+  return (
+    <p className="m-0 type-body text-ink-muted">
+      {t('connections.map.offMap', { names: offMap.map((id) => words.nameOf(id)).join(', ') })}
+    </p>
+  );
+}
+
+/** Above the map: the category switches, "Category colours" (writer only) and the key. */
+function MapKey({
+  hiddenCategories,
+  onHiddenChange,
+  colours,
+  onPickColour,
+}: {
+  hiddenCategories: RelationshipCategory[];
+  onHiddenChange: (hiddenCategories: RelationshipCategory[]) => void;
+  colours: RelationshipColours;
+  onPickColour: RelationshipMapProps['onPickColour'];
+}) {
+  const { t } = useAtlasTranslation();
+  return (
+    <>
+      <MapCategorySwitches
+        hiddenCategories={hiddenCategories}
+        onChange={onHiddenChange}
+        colours={colours}
+      />
+      {onPickColour !== undefined && (
+        <CategoryColoursFold colours={colours} onPick={onPickColour} />
+      )}
+      <p className="m-0 type-body text-ink-muted">{t('connections.map.key')}</p>
+    </>
   );
 }
 
@@ -141,26 +214,28 @@ export function RelationshipMap({
   dragActions,
   focusId = null,
   pendingPlaces,
+  onPickColour,
 }: RelationshipMapProps) {
   const { t } = useAtlasTranslation();
   const [hiddenCategories, setHiddenCategories] = useState<RelationshipCategory[]>([]);
-  // Step 1: the lines whose category is switched on. Every relationship decides who is on the
-  // map, so cards don't come and go with the switches.
-  const shown = cast.relationships.filter(
-    (relationship) => !hiddenCategories.includes(categoryOf(relationship.kind)),
+  // Step 1: the lines shown, who is on the map, and the drawing with its drag and zoom.
+  const { shown, onMap, offMap, layout, drag, zoomControls } = useMapContents(
+    cast,
+    hiddenCategories,
+    pendingPlaces,
+    dragActions,
   );
-  const { onMap, offMap } = splitMapCast(
-    cast.characters.map((character) => character.id),
-    cast.relationships,
-  );
-  const cards = cardInputs(cast, onMap, pendingPlaces);
-  const { layout, drag, zoomControls } = useMapDrawing(cards, shown, dragActions);
   const { zoom, regionRef } = zoomControls;
 
   return (
     <div className="flex min-w-0 flex-col gap-4">
-      <MapCategorySwitches hiddenCategories={hiddenCategories} onChange={setHiddenCategories} />
-      {onMap.length === 0 && <p className="m-0 text-body">{t('connections.map.none')}</p>}
+      <MapKey
+        hiddenCategories={hiddenCategories}
+        onHiddenChange={setHiddenCategories}
+        colours={cast.relationshipColours}
+        onPickColour={onPickColour}
+      />
+      {onMap.length === 0 && <p className="m-0 text-ink-muted">{t('connections.map.none')}</p>}
       {/* Step 2: the map scrolls inside its own region; the region can be focused and scrolled
           by keyboard (DoD: a sideways list without arrows keeps its scrollbar). */}
       <div
@@ -176,6 +251,7 @@ export function RelationshipMap({
           zoom={zoom}
           words={words}
           focusId={focusId}
+          colours={cast.relationshipColours}
           cards={
             <MapCards
               addressOf={addressOf}
@@ -188,11 +264,7 @@ export function RelationshipMap({
         />
       </div>
       {onMap.length > 0 && <MapZoomBar zoomControls={zoomControls} />}
-      {onMap.length > 0 && offMap.length > 0 && (
-        <p className="m-0 text-sm text-meta">
-          {t('connections.map.offMap', { names: offMap.map((id) => words.nameOf(id)).join(', ') })}
-        </p>
-      )}
+      {onMap.length > 0 && offMap.length > 0 && <OffMapLine offMap={offMap} words={words} />}
     </div>
   );
 }

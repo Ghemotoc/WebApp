@@ -6,7 +6,9 @@
  * Delete asks once more ("Delete “Ana is the parent of Vali”?") with Yes and Keep, and the focus
  * moves to the question so a screen reader hears it (Story Atlas principle: nothing is deleted
  * without a second, confirming click). The list's rows have a fine line between them (DoD: label
- * rows). Who uses it: CharacterRelationshipsSection and ConnectionsPage.
+ * rows). On the Connections page each sentence starts with its category's colour dot (CALM-9,
+ * board E25: the colour shows "on the list labels").
+ * Who uses it: CharacterRelationshipsSection and ConnectionsPage.
  */
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 
@@ -15,7 +17,10 @@ import { Notice } from '@/components/ui/Notice';
 
 import type { CharacterRelationship } from '../api/characters';
 import type { RelationshipWords } from '../hooks/useRelationshipWords';
+import { categoryOf, type RelationshipColours } from '../lib/relationshipCategories';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
+
+import { CategoryDot } from './CategoryDot';
 
 /** What the list needs. */
 export interface RelationshipListProps {
@@ -27,11 +32,33 @@ export interface RelationshipListProps {
   extra?: (relationship: CharacterRelationship, sentence: string) => ReactNode;
   /** The sheet's character, so an "Other" relationship reads from their side (G10b). */
   viewpointId?: string;
+  /** The writer's category colours: when given, each sentence starts with its colour dot. */
+  colours?: RelationshipColours;
 }
 
 /** What one row needs: the list's props, for one relationship. */
 interface RelationshipRowProps extends Omit<RelationshipListProps, 'relationships'> {
   relationship: CharacterRelationship;
+}
+
+/** The sentence, after its category's colour dot when the colours are given. */
+function RowSentence({
+  relationship,
+  sentence,
+  colours,
+}: {
+  relationship: CharacterRelationship;
+  sentence: string;
+  colours: RelationshipColours | undefined;
+}) {
+  return (
+    <span className="flex min-w-0 items-center gap-2 break-words text-ink">
+      {colours !== undefined && (
+        <CategoryDot category={categoryOf(relationship.kind)} colours={colours} />
+      )}
+      {sentence}
+    </span>
+  );
 }
 
 /** One relationship's row: the sentence, the note, and Delete with its question. */
@@ -41,6 +68,7 @@ function RelationshipRow({
   onDelete,
   extra,
   viewpointId,
+  colours,
 }: RelationshipRowProps) {
   const { t } = useAtlasTranslation();
   const [isAsking, setIsAsking] = useState(false);
@@ -62,7 +90,7 @@ function RelationshipRow({
   return (
     <li className="flex flex-col gap-2 border-b border-hairline py-3 last:border-b-0">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <span className="min-w-0 break-words text-ink">{sentence}</span>
+        <RowSentence relationship={relationship} sentence={sentence} colours={colours} />
         {!isAsking && (
           <Button variant="secondary" onClick={() => setIsAsking(true)}>
             {t('connections.list.delete')}
@@ -71,12 +99,14 @@ function RelationshipRow({
         )}
       </div>
       {relationship.note !== '' && (
-        <p className="m-0 text-sm break-words whitespace-pre-line text-body">{relationship.note}</p>
+        <p className="m-0 type-body break-words whitespace-pre-line text-ink-muted">
+          {relationship.note}
+        </p>
       )}
       {extra?.(relationship, sentence)}
       {isAsking && (
         <div className="flex flex-col gap-2">
-          <p ref={question} tabIndex={-1} className="m-0 text-body">
+          <p ref={question} tabIndex={-1} className="m-0 text-ink-muted">
             {t('connections.list.confirm', { sentence })}
           </p>
           <div className="flex flex-wrap gap-3">
@@ -107,10 +137,11 @@ export function RelationshipList({
   onDelete,
   extra,
   viewpointId,
+  colours,
 }: RelationshipListProps) {
   const { t } = useAtlasTranslation();
   if (relationships.length === 0) {
-    return <p className="m-0 text-body">{t('connections.list.none')}</p>;
+    return <p className="m-0 text-ink-muted">{t('connections.list.none')}</p>;
   }
   return (
     <ul className="m-0 list-none p-0">
@@ -122,6 +153,7 @@ export function RelationshipList({
           onDelete={onDelete}
           extra={extra}
           viewpointId={viewpointId}
+          colours={colours}
         />
       ))}
     </ul>

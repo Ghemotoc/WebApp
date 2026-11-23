@@ -29,9 +29,26 @@ const chapterPreview: LinkPreview = {
   chapterTitle: 'Caietele bunicii',
   categorySlug: null,
   tags: [],
+  isAppOnly: false,
+  isHiddenSomewhere: false,
+  genre: null,
+  writerHandle: 'adult_writer',
+  firstPublishedAt: '2026-11-01T10:00:00Z',
+  updatedAt: '2026-11-20T10:00:00Z',
+  editions: [],
   isChapter: true,
   passage: null,
   picture: null,
+};
+
+/** The same story's own page: public, Fiction, with the genre "Mister" and two tags (CALM-9s). */
+const storyPage: LinkPreview = {
+  ...chapterPreview,
+  chapterTitle: null,
+  isChapter: false,
+  categorySlug: 'fiction',
+  genre: 'Mister',
+  tags: ['familie', 'vreme'],
 };
 
 /** A host that serves indexHtml and answers with the given preview (or throws). */
@@ -161,30 +178,93 @@ describe('the page a shared link serves', () => {
     expect(response.headers.get('ETag')).toBeNull();
   });
 
-  it('describes a story page for search engines with its title, blurb, pen name, category and tags', async () => {
-    const { response, html } = await open('/s/statia-meteo', {
-      ...chapterPreview,
-      chapterTitle: null,
-      isChapter: false,
-      categorySlug: 'fiction',
-      tags: ['familie', 'vreme'],
-    });
+  it('describes a story page for search engines with the story statement, writer, dates and trail (CALM-9s)', async () => {
+    const { response, html } = await open('/s/statia-meteo', storyPage);
     expect(html).toContain('<meta name="keywords" content="Ficțiune, familie, vreme">');
     expect(html).toContain('<link rel="canonical" href="https://example.com/s/statia-meteo">');
     expect(response.headers.get('X-Robots-Tag')).toBeNull();
     expect(html).not.toContain('noindex');
-    const json = /<script type="application\/ld\+json">(.*)<\/script>/.exec(html)?.[1] ?? '{}';
-    expect(JSON.parse(json)).toEqual({
+    const statement =
+      'Stația meteo este o poveste din genul mister, publicată pe Brand de Lia Scrie. Bunica notează vremea.';
+    expect(html).toContain(`<meta name="description" content="${statement}">`);
+    expect(html).toContain(`<meta property="og:description" content="${statement}">`);
+    expect(html).toContain('<title>Stația meteo de Lia Scrie, Mister, Brand</title>');
+    const [work, trail] = [
+      ...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g),
+    ].map((match) => JSON.parse(match[1] ?? '') as Record<string, unknown>);
+    expect(work).toEqual({
       '@context': 'https://schema.org',
-      '@type': 'CreativeWork',
+      '@type': 'Book',
       name: 'Stația meteo',
-      description: 'Bunica notează vremea.',
-      author: { '@type': 'Person', name: 'Lia Scrie' },
-      genre: 'Ficțiune',
+      description: statement,
+      author: { '@type': 'Person', name: 'Lia Scrie', url: 'https://example.com/u/adult_writer' },
+      genre: 'Mister',
       keywords: 'familie, vreme',
       inLanguage: 'ro',
       url: 'https://example.com/s/statia-meteo',
+      datePublished: '2026-11-01T10:00:00Z',
+      dateModified: '2026-11-20T10:00:00Z',
+      isAccessibleForFree: true,
+      publisher: { '@type': 'Organization', name: 'Brand', url: 'https://example.com' },
     });
+    expect(trail).toMatchObject({
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { position: 1, name: 'Citește', item: 'https://example.com/discover' },
+        { position: 2, name: 'Ficțiune', item: 'https://example.com/discover/c/fiction' },
+        { position: 3, name: 'Stația meteo', item: 'https://example.com/s/statia-meteo' },
+      ],
+    });
+  });
+
+  it('shows the statement as real text before the app starts, never hidden (CALM-9s)', async () => {
+    const { html } = await open('/s/statia-meteo', storyPage);
+    expect(html).toContain(
+      '<div id="root"><footer lang="ro"><p><cite>Stația meteo</cite> este o poveste din genul mister, publicată pe Brand de <a href="/u/adult_writer">Lia Scrie</a>.</p><p>Bunica notează vremea.</p><p>Brand este un site gratuit pentru a scrie și a citi povești, poezii și eseuri.</p></footer></div>',
+    );
+  });
+
+  it('calls a poem a poem, an essay an essay, and adds only "For mature readers" for 18+', async () => {
+    const poem = await open('/s/statia-meteo', {
+      ...storyPage,
+      languageCode: 'en',
+      categorySlug: 'nonfiction_essays',
+      genre: null,
+      rating: '18_plus',
+    });
+    expect(poem.html).toContain(
+      '<meta name="description" content="Stația meteo is an essay published on Brand by Lia Scrie. For mature readers. Bunica notează vremea.">',
+    );
+    expect(poem.html).not.toContain('18');
+    const json =
+      /<script type="application\/ld\+json">(.*?)<\/script>/.exec(poem.html)?.[1] ?? '{}';
+    expect(JSON.parse(json)).toMatchObject({ '@type': 'CreativeWork' });
+  });
+
+  it('links every language edition with hreflang (CALM-9s)', async () => {
+    const { html } = await open('/s/statia-meteo', {
+      ...storyPage,
+      editions: [
+        { slug: 'statia-meteo', languageCode: 'ro' },
+        { slug: 'the-weather-station', languageCode: 'en' },
+      ],
+    });
+    expect(html).toContain(
+      '<link rel="alternate" hreflang="en" href="https://example.com/s/the-weather-station">',
+    );
+    expect(html).toContain(
+      '<link rel="alternate" hreflang="x-default" href="https://example.com/s/statia-meteo">',
+    );
+  });
+
+  it('keeps an app-only or country-hidden story out of search engines, with the site footer (CALM-9s)', async () => {
+    for (const hidden of [{ isAppOnly: true }, { isHiddenSomewhere: true }]) {
+      const { response, html } = await open('/s/statia-meteo', { ...storyPage, ...hidden });
+      expect(html).toContain('<meta name="robots" content="noindex">');
+      expect(html).not.toContain('application/ld+json');
+      expect(html).toContain('<div id="root"></div>');
+      expect(response.headers.get('X-Robots-Tag')).toBe('noindex');
+    }
   });
 
   it('previews an unlisted story from its link but keeps it out of search engines', async () => {

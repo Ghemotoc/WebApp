@@ -32,14 +32,14 @@ function SpoilerBody({ text }: { text: string }) {
     );
   }
   return (
-    <div className="mt-2 flex flex-wrap items-center gap-3 rounded-2xl bg-tint px-4 py-3">
-      <span className="text-[15px] text-body">{t('comment.spoilerNote')}</span>
+    <div className="mt-2 flex flex-wrap items-center gap-3 rounded-card bg-tint px-4 py-3">
+      <span className="type-body text-ink-muted">{t('comment.spoilerNote')}</span>
       <button
         type="button"
         aria-expanded={false}
         aria-controls={wordsId}
         onClick={() => setIsShown(true)}
-        className="h-11 cursor-pointer rounded-full border border-link bg-surface px-[18px] text-sm font-semibold text-link hover:bg-tint"
+        className="h-11 cursor-pointer rounded-full border border-link bg-surface px-4 type-body font-semibold text-link hover:bg-tint"
       >
         {t('comment.showSpoiler')}
       </button>
@@ -56,7 +56,7 @@ export function CommentBody({ comment }: { comment: ChapterComment }) {
   const { t } = useCommentsTranslation();
   if (comment.state === 'removed' || comment.state === 'deleted' || comment.body === null) {
     return (
-      <p className="m-0 mt-1.5 text-[15px] text-meta italic">
+      <p className="m-0 mt-2 type-body text-ink-muted italic">
         {t(comment.state === 'removed' ? 'comment.removed' : 'comment.deleted')}
       </p>
     );
@@ -69,7 +69,7 @@ export function CommentBody({ comment }: { comment: ChapterComment }) {
         <CommentText text={comment.body} />
       )}
       {comment.state === 'hidden' && (
-        <p className="m-0 mt-1.5 text-[13px] text-meta">{t('comment.hiddenNote')}</p>
+        <p className="m-0 mt-2 type-meta text-ink-muted">{t('comment.hiddenNote')}</p>
       )}
     </>
   );

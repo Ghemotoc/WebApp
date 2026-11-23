@@ -97,7 +97,7 @@ export function EmbedInsertDialog(props: EmbedInsertDialogProps) {
       <form onSubmit={(event) => void submit(event)} noValidate className="flex flex-col gap-4">
         <h2
           id="chapter-embed-heading"
-          className="m-0 font-heading text-[22px] font-bold text-heading"
+          className="m-0 font-heading type-heading font-bold text-ink-heading"
         >
           {t(`embedDialog.heading.${kind}`)}
         </h2>
@@ -114,9 +114,11 @@ export function EmbedInsertDialog(props: EmbedInsertDialogProps) {
           hint={t(`embedDialog.linkHint.${kind}`)}
           errorMessage={fieldError}
         />
-        <p className="m-0 text-sm text-body">{t('embedDialog.privacyNote')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('embedDialog.privacyNote')}</p>
         <div aria-live="polite">
-          {adding.isAdding && <p className="m-0 text-sm text-body">{t('embedDialog.adding')}</p>}
+          {adding.isAdding && (
+            <p className="m-0 type-body text-ink-muted">{t('embedDialog.adding')}</p>
+          )}
           {failure !== null && <Notice tone="error">{t(failure.key, failure.values)}</Notice>}
         </div>
         <div className="flex flex-wrap gap-3">

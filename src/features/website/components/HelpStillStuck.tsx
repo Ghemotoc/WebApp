@@ -32,7 +32,7 @@ export function HelpStillStuck() {
     <section aria-labelledby="help-still-stuck" className="flex flex-col gap-3">
       <h2
         id="help-still-stuck"
-        className="m-0 font-heading text-[28px] font-extrabold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('website.help.stillStuck.heading')}
       </h2>
@@ -41,17 +41,17 @@ export function HelpStillStuck() {
           <li key={link.key} className="border-b border-hairline last:border-b-0">
             <Link
               to={link.href}
-              className="flex min-h-16 items-center gap-4 px-5 py-4 text-ink no-underline hover:bg-tint"
+              className="flex min-h-16 items-center gap-4 px-4 py-4 text-ink no-underline hover:bg-tint"
             >
-              <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                <span className="font-semibold text-heading">
+              <span className="flex min-w-0 flex-1 flex-col gap-1">
+                <span className="font-semibold text-ink-heading">
                   {t(`website.help.stillStuck.${link.key}Title`)}
                 </span>
-                <span className="text-sm text-meta">
+                <span className="type-body text-ink-muted">
                   {t(`website.help.stillStuck.${link.key}Line`, { productName: brand.productName })}
                 </span>
               </span>
-              <ChevronRightIcon className="shrink-0 text-meta" />
+              <ChevronRightIcon className="shrink-0 text-ink-muted" />
             </Link>
           </li>
         ))}

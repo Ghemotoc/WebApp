@@ -44,7 +44,7 @@ function DeleteAct({
   }
   return (
     <div role="group" aria-label={t('storyline.board.acts.delete')} className="flex flex-col gap-2">
-      <p className="m-0 text-sm text-body">
+      <p className="m-0 type-body text-ink-muted">
         {chapterCount === 0
           ? t('storyline.board.acts.deleteQuestionEmpty', { name: act.name })
           : t('storyline.board.acts.deleteQuestion', { name: act.name, count: chapterCount })}
@@ -67,7 +67,7 @@ function EditActButton({ name, onOpen }: { name: string; onOpen: () => void }) {
   return (
     <Button
       variant="secondary"
-      className="h-8 self-start px-3 text-xs"
+      className="h-8 self-start px-3 type-meta"
       aria-label={t('storyline.board.acts.editNamed', { name })}
       onClick={onOpen}
     >

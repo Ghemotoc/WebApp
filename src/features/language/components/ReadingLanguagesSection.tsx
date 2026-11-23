@@ -69,7 +69,7 @@ function ReadingLanguagesForm({ state, codes }: ReadingLanguagesFormProps) {
       onSubmit={(event) => void handleSubmit(event).catch(errorShownByHook)}
     >
       <fieldset className="m-0 flex flex-wrap gap-x-6 gap-y-3 border-0 p-0">
-        <legend className="mb-2 p-0 font-semibold text-heading">
+        <legend className="mb-2 p-0 font-semibold text-ink-heading">
           {t('language.readingLegend')}
         </legend>
         {codes.map((code) => (
@@ -108,12 +108,12 @@ function ReadingLanguagesForm({ state, codes }: ReadingLanguagesFormProps) {
 function ReadingIntro() {
   const { t, i18n } = useTranslation();
   if (i18n.language === 'en')
-    return <p className="m-0 text-body">{t('language.readingIntroEnglish')}</p>;
+    return <p className="m-0 text-ink-muted">{t('language.readingIntroEnglish')}</p>;
   // The interface language's name in the interface language ("română", "svenska").
   const interfaceName =
     new Intl.DisplayNames([i18n.language], { type: 'language' }).of(i18n.language) ?? i18n.language;
   return (
-    <p className="m-0 text-body">{t('language.readingIntro', { interface: interfaceName })}</p>
+    <p className="m-0 text-ink-muted">{t('language.readingIntro', { interface: interfaceName })}</p>
   );
 }
 
@@ -135,7 +135,7 @@ export function ReadingLanguagesSection() {
     >
       <h2
         id="settings-reading-languages-heading"
-        className="m-0 font-heading text-[22px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('language.readingHeading')}
       </h2>

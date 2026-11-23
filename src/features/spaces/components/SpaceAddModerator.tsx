@@ -57,10 +57,13 @@ export function SpaceAddModerator({ onAdd, isRunning }: SpaceAddModeratorProps) 
   return (
     <form
       aria-labelledby={`${fieldId}-heading`}
-      className="flex flex-col gap-4 border-t border-border pt-5"
+      className="flex flex-col gap-4 border-t border-border pt-4"
       onSubmit={(event) => void submit(event)}
     >
-      <h3 id={`${fieldId}-heading`} className="m-0 font-heading text-xl font-bold text-heading">
+      <h3
+        id={`${fieldId}-heading`}
+        className="m-0 font-heading type-subheading font-bold text-ink-heading"
+      >
         {t('moderators.addTitle')}
       </h3>
       <TextInput

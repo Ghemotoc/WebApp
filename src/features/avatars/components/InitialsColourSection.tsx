@@ -42,7 +42,7 @@ function PreviewCircle({ initials, colour }: { initials: string; colour: BeadCol
     <span
       aria-hidden="true"
       style={beadStyleFor('', colour)}
-      className="avatar-bead inline-flex size-[72px] flex-none items-center justify-center rounded-full font-body text-[24px] font-semibold"
+      className="avatar-bead inline-flex size-[72px] flex-none items-center justify-center rounded-full font-body type-heading font-semibold"
     >
       <span className="avatar-bead-initials">{initials}</span>
     </span>
@@ -66,7 +66,7 @@ function ColourChoices({
   const groupName = useId();
   return (
     <fieldset className="m-0 flex min-w-0 flex-col gap-3 border-0 p-0">
-      <legend className="mb-3 p-0 text-[13px] font-semibold text-heading">
+      <legend className="mb-3 p-0 type-meta font-semibold text-ink-heading">
         {t('initials.choicesLabel')}
       </legend>
       <div className="flex flex-wrap gap-1">
@@ -133,8 +133,8 @@ function SaveRow({
           {t('initials.buildAvatar')}
         </Button>
       </div>
-      <div role="status" className="min-h-5 text-sm">
-        {saving.isSaved && <span className="text-body">{t('initials.saved')}</span>}
+      <div role="status" className="min-h-5 type-body">
+        {saving.isSaved && <span className="text-ink-muted">{t('initials.saved')}</span>}
         {saving.failure !== null && (
           <span className="text-destructive">{t(`builder.failures.${saving.failure}`)}</span>
         )}
@@ -166,16 +166,16 @@ export function InitialsColourSection({ handle, name }: InitialsColourSectionPro
     >
       <h2
         id="initials-colour-heading"
-        className="m-0 font-heading text-[22px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('initials.heading')}
       </h2>
-      <p className="m-0 text-body">{t('initials.intro')}</p>
+      <p className="m-0 text-ink-muted">{t('initials.intro')}</p>
       {look.isError && <Notice tone="error">{t('builder.failures.unreachable')}</Notice>}
-      <div className="flex flex-col items-start gap-7 sm:flex-row sm:items-center">
+      <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
         <div className="flex flex-none flex-col items-center gap-2">
           <PreviewCircle initials={initials} colour={chosen} />
-          <span className="text-[13px] text-meta">{t('initials.preview')}</span>
+          <span className="type-meta text-ink-muted">{t('initials.preview')}</span>
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-4">
           <ColourChoices

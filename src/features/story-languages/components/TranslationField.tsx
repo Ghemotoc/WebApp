@@ -59,7 +59,7 @@ export function TranslationField({
         lang={languageCode}
         rows={2}
         value={value}
-        className="block w-full resize-none overflow-hidden border-0 bg-transparent p-0 font-story text-[17px] leading-relaxed text-body outline-none placeholder:text-meta"
+        className="block w-full resize-none overflow-hidden border-0 bg-transparent p-0 font-story type-long leading-relaxed text-ink-muted outline-none placeholder:text-ink-muted"
         onChange={handleChange}
       />
     </div>

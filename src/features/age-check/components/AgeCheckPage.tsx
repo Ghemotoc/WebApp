@@ -27,7 +27,7 @@ import { ManualCheckPanel } from './ManualCheckPanel';
 
 /** The class of a link drawn as a secondary button. */
 const linkButtonClass =
-  'inline-flex h-11 items-center self-start rounded-full button-glass px-5 text-sm font-semibold no-underline';
+  'inline-flex h-11 items-center self-start rounded-full button-glass px-4 type-body font-semibold no-underline';
 
 /**
  * What a check that can't start shows: its result when there is one, otherwise "nothing to do"
@@ -43,8 +43,8 @@ function NoCheckToDo({ check }: { check: MyAgeCheck }) {
   }
   return (
     <div className="flex flex-col gap-3">
-      <p className="m-0 text-body">{t('ageCheck.nothingToDo')}</p>
-      <p className="m-0 text-body">{t('ageCheck.birthYearInSettings')}</p>
+      <p className="m-0 text-ink-muted">{t('ageCheck.nothingToDo')}</p>
+      <p className="m-0 text-ink-muted">{t('ageCheck.birthYearInSettings')}</p>
       <Link to="/settings" className={linkButtonClass}>
         {t('ageCheck.openSettings')}
       </Link>
@@ -65,7 +65,7 @@ function AgeCheckCardBody() {
   if (userId === null) {
     return (
       <div className="flex flex-col gap-3">
-        <p className="m-0 text-body">{t('ageCheck.signedOut')}</p>
+        <p className="m-0 text-ink-muted">{t('ageCheck.signedOut')}</p>
         <Link to="/sign-in" className={linkButtonClass}>
           {t('ageCheck.logIn')}
         </Link>
@@ -74,7 +74,7 @@ function AgeCheckCardBody() {
   }
   if (loadFailed) return <Notice tone="error">{t('ageCheck.loadFailed')}</Notice>;
   if (check === undefined) return null;
-  if (check === null) return <p className="m-0 text-body">{t('ageCheck.nothingToDo')}</p>;
+  if (check === null) return <p className="m-0 text-ink-muted">{t('ageCheck.nothingToDo')}</p>;
   if (!check.canStart) return <NoCheckToDo check={check} />;
   return (
     <>
@@ -96,24 +96,24 @@ export function AgeCheckPage() {
   const intro = check?.threshold === 18 ? t('ageCheck.intro18') : t('ageCheck.intro13');
 
   return (
-    <PageContainer className="tmc-rise grid gap-6 pt-12 pb-7 min-[1000px]:grid-cols-[minmax(0,1fr)_360px] min-[1000px]:items-start">
+    <PageContainer className="tmc-rise grid gap-6 pt-12 pb-6 min-[1000px]:grid-cols-[minmax(0,1fr)_360px] min-[1000px]:items-start">
       <title>{t('ageCheck.documentTitle')}</title>
       <section
         aria-labelledby="age-check-heading"
-        className="flex flex-col gap-5 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
+        className="flex flex-col gap-4 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
       >
         <div className="flex flex-col gap-2">
           <Eyebrow>{t('ageCheck.eyebrow')}</Eyebrow>
           <h1
             id="age-check-heading"
-            className="m-0 font-heading text-[30px] font-bold text-heading"
+            className="m-0 font-heading type-title font-bold text-ink-heading"
           >
             {t('ageCheck.heading')}
           </h1>
-          <p className="m-0 text-body">{intro}</p>
+          <p className="m-0 text-ink-muted">{intro}</p>
         </div>
         <AgeCheckCardBody />
-        <p className="m-0 text-sm text-meta">{t('ageCheck.byYoti')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('ageCheck.byYoti')}</p>
       </section>
       <AgeCheckSteps />
     </PageContainer>

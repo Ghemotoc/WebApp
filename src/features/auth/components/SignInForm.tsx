@@ -56,7 +56,7 @@ export function SignInForm({ form }: { form: ReturnType<typeof useSignInForm> })
         />
         <Link
           to="/forgot-password"
-          className="inline-flex min-h-11 items-center self-start text-sm text-link underline"
+          className="inline-flex min-h-11 items-center self-start type-body text-link underline"
         >
           {t('signIn.forgot')}
         </Link>

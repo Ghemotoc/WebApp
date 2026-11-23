@@ -77,10 +77,10 @@ export function AbuseImageEvidencePanel({ caseId }: { caseId: string }) {
   });
   return (
     <section aria-labelledby="abuse-evidence-heading" className="flex flex-col gap-3">
-      <h3 id="abuse-evidence-heading" className="m-0 text-base font-semibold text-heading">
+      <h3 id="abuse-evidence-heading" className="m-0 type-body font-bold text-ink-heading">
         {t('abuseEvidence.heading')}
       </h3>
-      <p className="m-0 text-sm text-body">{t('abuseEvidence.intro')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('abuseEvidence.intro')}</p>
       <LabelRows rows={factRows(state.evidence, t, format)} />
       <EvidenceActions caseId={caseId} evidence={state.evidence} state={state} />
     </section>

@@ -33,7 +33,7 @@ function stateDate(chapter: DashboardChapter, language: string): string | null {
 }
 
 /** The header cell style: 13 px semibold in the meta colour, over the table's one darker line. */
-const headerCell = 'border-b border-border py-2 pr-3 text-[13px] leading-[18px] font-semibold';
+const headerCell = 'border-b border-border py-2 pr-3 type-meta leading-[18px] font-semibold';
 
 /** A body cell: 12 px above and below, the hairline under it. */
 const bodyCell = 'py-3 pr-3 align-top';
@@ -48,7 +48,7 @@ function ChapterStatsRow({ chapter }: { chapter: DashboardChapter }) {
   const date = stateDate(chapter, i18n.language);
   return (
     <tr className="border-b border-hairline">
-      <th scope="row" className={`${bodyCell} text-left font-semibold text-heading`}>
+      <th scope="row" className={`${bodyCell} text-left font-semibold text-ink-heading`}>
         {t('dashboard.table.row', { number: chapter.position, title })}
       </th>
       <td className={bodyCell}>
@@ -67,7 +67,7 @@ function ChapterStatsRow({ chapter }: { chapter: DashboardChapter }) {
           <td className={`${bodyCell} pr-0 text-right`}>{count(chapter.comments)}</td>
         </>
       ) : (
-        <td colSpan={4} className={`${bodyCell} text-meta`}>
+        <td colSpan={4} className={`${bodyCell} text-ink-muted`}>
           {t('dashboard.table.notPublished')}
         </td>
       )}
@@ -97,9 +97,9 @@ export function ChapterStatsTable({ storyTitle, chapters }: ChapterStatsTablePro
       aria-label={t('dashboard.table.regionLabel', { title: storyTitle })}
       className="overflow-x-auto"
     >
-      <table className="w-full min-w-[640px] caption-bottom border-collapse text-[15px] leading-5 tabular-nums">
-        <caption className="pt-2.5 text-left type-meta">{t('dashboard.table.caption')}</caption>
-        <thead className="text-meta">
+      <table className="w-full min-w-[640px] caption-bottom border-collapse type-body leading-5 tabular-nums">
+        <caption className="pt-3 text-left type-meta">{t('dashboard.table.caption')}</caption>
+        <thead className="text-ink-muted">
           <tr>
             <th scope="col" className={`${headerCell} text-left`}>
               {t('dashboard.table.chapter')}

@@ -32,7 +32,7 @@ function SignaturePicture({ signature, name, size }: SignatureBodyProps) {
   const { t } = useForumsTranslation();
   const view = useSignaturePictureView(signature.picture).data ?? null;
   if (view?.url == null) return null;
-  const sizeClass = size === 'card' ? 'size-14 rounded-xl' : 'size-10 rounded-lg';
+  const sizeClass = size === 'card' ? 'size-14 rounded-field' : 'size-10 rounded-field';
   return (
     <img
       src={view.url}
@@ -51,14 +51,14 @@ export function SignatureBody(props: SignatureBodyProps) {
   const { signature, size } = props;
   const textClass =
     size === 'card'
-      ? 'text-[15px] leading-[1.55] text-ink'
-      : 'text-[13px] leading-normal text-meta';
+      ? 'type-body leading-[1.55] text-ink'
+      : 'type-meta leading-normal text-ink-muted';
   const boxClass =
     size === 'card'
-      ? 'rounded-2xl border border-border bg-paper p-4'
+      ? 'rounded-card border border-border bg-paper p-4'
       : 'border-t border-dashed border-border pt-3';
   return (
-    <div className={`flex items-start gap-3.5 ${boxClass}`}>
+    <div className={`flex items-start gap-4 ${boxClass}`}>
       <SignaturePicture {...props} />
       {signature.text !== null && (
         <p className={`m-0 min-w-0 break-words whitespace-pre-line ${textClass}`}>

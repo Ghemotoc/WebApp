@@ -27,7 +27,7 @@ export interface FieldProblemProps {
 export function FieldProblem({ id, isShown, children }: FieldProblemProps) {
   if (!isShown) return null;
   return (
-    <p id={id} className="m-0 text-sm text-destructive">
+    <p id={id} className="m-0 type-body text-destructive">
       {children}
     </p>
   );

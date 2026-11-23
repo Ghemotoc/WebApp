@@ -76,7 +76,7 @@ function handleOf(post: ForumPost): string | null {
  * @returns the word
  */
 function PostState({ children }: { children: string }) {
-  return <span className="text-[13px] font-bold text-ink">{children}</span>;
+  return <span className="type-meta font-semibold text-ink">{children}</span>;
 }
 
 /**
@@ -94,11 +94,11 @@ function PostHeader({ post, forumSlug, threadNumber }: ForumPostCardProps) {
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         <div className="flex flex-wrap items-center gap-2">
           {post.author === null ? (
-            <span className="text-[15px] font-bold text-meta">{name}</span>
+            <span className="type-body font-semibold text-ink-muted">{name}</span>
           ) : (
             <Link
               to={`/u/${post.author.handle}`}
-              className="text-[15px] font-bold text-ink no-underline hover:underline"
+              className="type-body font-semibold text-ink no-underline hover:underline"
             >
               {name}
             </Link>
@@ -111,7 +111,7 @@ function PostHeader({ post, forumSlug, threadNumber }: ForumPostCardProps) {
           {/* IDEAS-3f: the reply that answered the thread, while everyone can read it. */}
           {post.isAnswer && post.state === 'live' && <PostState>{t('answer.pill')}</PostState>}
         </div>
-        <p className="m-0 text-xs text-meta">
+        <p className="m-0 type-meta text-ink-muted">
           <time dateTime={post.createdAt}>{created}</time>
           {post.editedAt !== null && (
             <>
@@ -127,7 +127,7 @@ function PostHeader({ post, forumSlug, threadNumber }: ForumPostCardProps) {
       </div>
       <Link
         to={postAddress(forumSlug, threadNumber, post.number)}
-        className="inline-flex min-h-6 items-center text-sm font-semibold text-link no-underline hover:underline"
+        className="inline-flex min-h-6 items-center type-body font-semibold text-link no-underline hover:underline"
       >
         <span className="sr-only">{t('post.permalinkPrefix')} </span>
         {t('post.permalink', { number: post.number })}
@@ -144,13 +144,13 @@ function PostHeader({ post, forumSlug, threadNumber }: ForumPostCardProps) {
 function PostBody({ post, forumSlug, threadNumber }: ForumPostCardProps) {
   const { t } = useForumsTranslation();
   if (post.state === 'deleted')
-    return <p className="m-0 text-[15px] text-meta italic">{t('post.deleted')}</p>;
+    return <p className="m-0 type-body text-ink-muted italic">{t('post.deleted')}</p>;
   if (post.state === 'removed')
-    return <p className="m-0 text-[15px] text-meta italic">{t('post.removed')}</p>;
+    return <p className="m-0 type-body text-ink-muted italic">{t('post.removed')}</p>;
   return (
     <div className="flex flex-col gap-3">
       {post.state === 'hidden' && (
-        <p className="m-0 text-sm font-semibold text-body">
+        <p className="m-0 type-body font-semibold text-ink-muted">
           {t(post.hiddenBy === 'space' ? 'post.hiddenBySpaceNote' : 'post.hiddenNote')}
         </p>
       )}
@@ -198,7 +198,7 @@ export function ForumPostCard(props: ForumPostCardProps) {
       id={`post-${post.number}`}
       tabIndex={-1}
       aria-label={t('post.label', { number: post.number, name })}
-      className="flex scroll-mt-24 flex-col gap-4 rounded-card border border-border bg-surface p-5 shadow-card md:p-6"
+      className="flex scroll-mt-24 flex-col gap-4 rounded-card border border-border bg-surface p-4 shadow-card md:p-6"
     >
       <PostHeader {...props} />
       {mode === 'editing' ? (

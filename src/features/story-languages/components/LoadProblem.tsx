@@ -35,7 +35,7 @@ export function LoadProblem({
 }: LoadProblemProps) {
   const { t } = useStoryLanguagesTranslation();
   if (!isKnown) return null;
-  if (!isSignedIn) return <p className="m-0 text-body">{t('page.signedOut')}</p>;
+  if (!isSignedIn) return <p className="m-0 text-ink-muted">{t('page.signedOut')}</p>;
   if (loadFailed) {
     return (
       <Notice tone="error">{t(kind === 'story' ? 'page.loadFailed' : 'editor.loadFailed')}</Notice>

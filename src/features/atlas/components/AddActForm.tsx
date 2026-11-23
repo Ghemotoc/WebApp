@@ -59,7 +59,7 @@ export function AddActForm({ slug }: { slug: string }) {
 
   if (!isOpen) {
     return (
-      <Button variant="secondary" className="h-9 px-4 text-[13px]" onClick={() => setIsOpen(true)}>
+      <Button variant="secondary" className="h-9 px-4 type-meta" onClick={() => setIsOpen(true)}>
         <ActionIcon name="plus" size={14} />
         {t('storyline.board.acts.add')}
       </Button>

@@ -45,12 +45,12 @@ function CannedList({
 }) {
   const { t } = useSupportTranslation();
   if (state.loadFailure === 'not_allowed')
-    return <p className="m-0 text-body">{t('staff.notAllowed')}</p>;
+    return <p className="m-0 text-ink-muted">{t('staff.notAllowed')}</p>;
   if (state.loadFailure !== null) return <Notice tone="error">{t('staff.loadFailed')}</Notice>;
   if (state.replies.data === undefined)
-    return <p className="m-0 text-meta">{t('staff.loading')}</p>;
+    return <p className="m-0 text-ink-muted">{t('staff.loading')}</p>;
   if (state.replies.data.length === 0)
-    return <p className="m-0 text-body">{t('staff.canned.empty')}</p>;
+    return <p className="m-0 text-ink-muted">{t('staff.canned.empty')}</p>;
   return (
     <ul className="m-0 flex list-none flex-col gap-3 p-0" aria-label={t('staff.canned.listLabel')}>
       {state.replies.data.map((reply) => (
@@ -78,14 +78,14 @@ export function CannedRepliesPage() {
   // Which reply is open for changing: its ID, "new" for the add form, or null.
   const [editingId, setEditingId] = useState<string | null>(null);
   return (
-    <PageContainer className="flex flex-col gap-6 pt-12 pb-7">
+    <PageContainer className="flex flex-col gap-6 pt-12 pb-6">
       <title>{t('staff.canned.documentTitle')}</title>
       <div className="flex max-w-[720px] flex-col gap-2">
         <Eyebrow>{t('staff.eyebrow')}</Eyebrow>
-        <h1 className="m-0 font-heading text-[34px] font-bold text-heading">
+        <h1 className="m-0 font-heading type-title font-bold text-ink-heading">
           {t('staff.canned.heading')}
         </h1>
-        <p className="m-0 text-body">{t('staff.canned.intro', placeholderWords)}</p>
+        <p className="m-0 text-ink-muted">{t('staff.canned.intro', placeholderWords)}</p>
       </div>
       <div aria-live="polite">
         {state.changeFailure !== null && (
@@ -93,7 +93,7 @@ export function CannedRepliesPage() {
         )}
       </div>
       {editingId === 'new' ? (
-        <Card className="flex max-w-[720px] flex-col gap-3 p-5">
+        <Card className="flex max-w-[720px] flex-col gap-3 p-4">
           <CannedReplyForm
             initial={newDraft}
             isBusy={state.isChanging}
@@ -107,7 +107,7 @@ export function CannedRepliesPage() {
         </Button>
       )}
       <CannedList state={state} editingId={editingId} setEditingId={setEditingId} />
-      <Link to="/staff/support" className="w-fit text-sm font-semibold text-link underline">
+      <Link to="/staff/support" className="w-fit type-body font-semibold text-link underline">
         {t('staff.canned.back')}
       </Link>
     </PageContainer>

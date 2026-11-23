@@ -48,7 +48,7 @@ function NewThreadBody({ forum }: { forum: ForumEntry }) {
   if (!isKnown) return null;
   if (userId === null)
     return (
-      <p className="m-0 text-base text-body">
+      <p className="m-0 type-body text-ink-muted">
         <Link to="/sign-in" className="text-link underline">
           {t('newThread.logIn')}
         </Link>
@@ -78,10 +78,10 @@ export function NewThreadPage() {
   const spaceSlug = spaceSlugOfForum(forumSlug);
   if (spaceSlug !== null) return <Navigate to={`/spaces/${spaceSlug}/new`} replace />;
   return (
-    <PageContainer className="flex flex-col gap-6 py-10">
+    <PageContainer className="flex flex-col gap-6 py-8">
       {loadFailed && <Notice tone="error">{t('loadFailed')}</Notice>}
       {entries !== null && forum === undefined && (
-        <h1 className="m-0 text-3xl font-extrabold">{t('forum.notFound')}</h1>
+        <h1 className="m-0 type-title font-bold">{t('forum.notFound')}</h1>
       )}
       {forum !== undefined && (
         <>
@@ -90,7 +90,7 @@ export function NewThreadPage() {
             <h1 className="page-title">{t('newThread.heading')}</h1>
           </header>
           {/* The form on the page, "Before you post" beside it from 1024 px (board F04). */}
-          <div className="grid gap-10 lg:grid-cols-[minmax(0,2.2fr)_minmax(0,1fr)] lg:items-start lg:gap-14">
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,2.2fr)_minmax(0,1fr)] lg:items-start lg:gap-12">
             <section aria-label={t('newThread.eyebrow')} className="flex min-w-0 flex-col gap-6">
               <NewThreadBody forum={forum} />
             </section>

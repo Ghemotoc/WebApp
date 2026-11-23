@@ -14,7 +14,7 @@ describe('HeadlineLines', () => {
         <HeadlineLines first="Write freely." second="Get read." />
       </h1>,
     );
-    expect(screen.getByText('Write freely.')).toHaveClass('text-heading');
+    expect(screen.getByText('Write freely.')).toHaveClass('text-ink-heading');
     expect(screen.getByText('Get read.')).toHaveClass('text-accent');
     // The gold underline was a decorative SVG; nothing draws one now.
     expect(container.querySelector('svg')).toBeNull();

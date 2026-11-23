@@ -72,12 +72,12 @@ export function EpubSection({
   return (
     <section
       aria-labelledby={words.headingId}
-      className="flex flex-col gap-2.5 rounded-2xl bg-tint px-4.5 py-4"
+      className="flex flex-col gap-3 rounded-card bg-tint px-4 py-4"
     >
-      <h4 id={words.headingId} className="m-0 font-heading text-lg font-bold text-heading">
+      <h4 id={words.headingId} className="m-0 font-heading type-long font-bold text-ink-heading">
         {t(words.heading)}
       </h4>
-      <p className="m-0 text-[15px] leading-relaxed text-body">{t(words.intro)}</p>
+      <p className="m-0 type-body leading-relaxed text-ink-muted">{t(words.intro)}</p>
       <div>
         <Button
           variant="secondary"

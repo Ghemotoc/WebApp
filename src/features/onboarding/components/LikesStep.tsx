@@ -48,8 +48,8 @@ export function LikesStep({ onboarding, state, onNext, isLast }: LikesStepProps)
   }
 
   return (
-    <div className="flex flex-col gap-5">
-      <p className="m-0 text-body">{t('onboarding.likes.intro')}</p>
+    <div className="flex flex-col gap-4">
+      <p className="m-0 text-ink-muted">{t('onboarding.likes.intro')}</p>
       <LikesFields value={preferences} onChange={setPreferences} />
       {state.saveFailed && <Notice tone="error">{t('onboarding.saveFailed')}</Notice>}
       <div className="flex flex-wrap gap-3">

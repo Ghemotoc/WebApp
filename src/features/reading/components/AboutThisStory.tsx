@@ -55,22 +55,24 @@ export function AboutThisStory({ story, chapterTotal, nextChapter }: AboutThisSt
   const nextLine = nextChapterText(t, nextChapter, i18n.language, new Date());
   return (
     <section aria-labelledby="about-this-story" data-testid="about-this-story">
-      <h2 id="about-this-story" className="m-0 mb-2 type-subheading text-heading">
+      <h2 id="about-this-story" className="m-0 mb-2 type-subheading text-ink-heading">
         {t('reader.about.title')}
       </h2>
       {/* Step 2: one fact a row, split by hairlines (DoD: label rows have a fine line between). */}
-      <ul className="m-0 list-none p-0 text-[15px] leading-5 text-body">
-        <li className="border-t border-hairline py-2.5">
-          <strong className="font-semibold text-heading">{shortNumber.format(chapterTotal)}</strong>{' '}
+      <ul className="m-0 list-none p-0 type-body leading-5 text-ink-muted">
+        <li className="border-t border-hairline py-3">
+          <strong className="font-semibold text-ink-heading">
+            {shortNumber.format(chapterTotal)}
+          </strong>{' '}
           {t('reader.about.chapters', { count: chapterTotal })}
         </li>
         {words !== null && (
-          <li className="border-t border-hairline py-2.5">
-            <strong className="font-semibold text-heading">{shortNumber.format(words)}</strong>{' '}
+          <li className="border-t border-hairline py-3">
+            <strong className="font-semibold text-ink-heading">{shortNumber.format(words)}</strong>{' '}
             {t('reader.about.words', { count: words })}
           </li>
         )}
-        {nextLine !== null && <li className="border-t border-hairline py-2.5">{nextLine}</li>}
+        {nextLine !== null && <li className="border-t border-hairline py-3">{nextLine}</li>}
       </ul>
     </section>
   );

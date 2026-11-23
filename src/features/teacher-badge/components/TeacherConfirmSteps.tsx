@@ -23,24 +23,24 @@ export function TeacherConfirmSteps() {
   const { t } = useTranslation('account');
   return (
     <div className="flex flex-col gap-2">
-      <h2 className="m-0 font-heading text-lg font-bold text-heading">
+      <h2 className="m-0 font-heading type-long font-bold text-ink-heading">
         {t('teacherBadge.confirm.nextHeading')}
       </h2>
-      <ol className="m-0 list-none divide-y divide-border rounded-[20px] border border-border bg-surface p-0">
+      <ol className="m-0 list-none divide-y divide-border rounded-card border border-border bg-surface p-0">
         {stepKeys.map((key, index) => (
           <li key={key} className="flex items-center gap-3 px-4 py-3">
             {/* Step 1 is done, so it carries a tick; the others carry their number. */}
             <span
               aria-hidden="true"
-              className="flex size-8 flex-none items-center justify-center rounded-full border border-border bg-surface-solid text-sm font-bold text-heading"
+              className="flex size-8 flex-none items-center justify-center rounded-full border border-border bg-surface-solid type-body font-semibold text-ink-heading"
             >
               {index === 0 ? <ActionIcon name="check" size={16} /> : index + 1}
             </span>
             <span className="flex flex-col">
-              <span className="font-semibold text-heading">
+              <span className="font-semibold text-ink-heading">
                 {t(`teacherBadge.confirm.steps.${key}Title`)}
               </span>
-              <span className="text-sm text-body">
+              <span className="type-body text-ink-muted">
                 {t(`teacherBadge.confirm.steps.${key}Note`)}
               </span>
             </span>

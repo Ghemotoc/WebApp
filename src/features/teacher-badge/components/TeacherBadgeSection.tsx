@@ -44,11 +44,11 @@ export function TeacherBadgeSection() {
     >
       <h2
         id="settings-teacher-heading"
-        className="m-0 font-heading text-[22px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('teacherBadge.settings.heading')}
       </h2>
-      <p className="m-0 text-body">{t('teacherBadge.settings.intro')}</p>
+      <p className="m-0 text-ink-muted">{t('teacherBadge.settings.intro')}</p>
       <TeacherBadgePanel idPrefix="settings" teacherCheck={teacherCheck} state={state} />
     </section>
   );

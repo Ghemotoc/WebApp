@@ -134,7 +134,7 @@ export function StoryLabelsSection({ answers, errors, set }: StoryLabelsSectionP
   const { t } = useTranslation('writing');
   return (
     <FormSection legend={t('labels.heading')}>
-      <p className="m-0 -mt-2 text-sm leading-normal text-body">{t('labels.intro')}</p>
+      <p className="m-0 -mt-2 type-body leading-normal text-ink-muted">{t('labels.intro')}</p>
       <LabelTicks answers={answers} set={set} />
       <Textarea
         id="story-content-note"

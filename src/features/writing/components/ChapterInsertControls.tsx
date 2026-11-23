@@ -93,7 +93,7 @@ function InsertButton(props: { label: string; icon: ActionIconName; onClick: () 
       aria-label={props.label}
       title={props.label}
       onClick={props.onClick}
-      className="inline-flex size-11 items-center justify-center rounded-full text-heading hover:bg-tint"
+      className="inline-flex size-11 items-center justify-center rounded-full text-ink-heading hover:bg-tint"
     >
       <ActionIcon name={props.icon} size={20} aria-hidden="true" />
     </button>
@@ -153,7 +153,7 @@ export function ChapterInsertControls({ editor, chapterId }: ChapterInsertContro
   if (!hasPictures && !hasEmbeds) return null;
   return (
     <>
-      <span aria-hidden="true" className="mx-1.5 h-6 w-px bg-border" />
+      <span aria-hidden="true" className="mx-2 h-6 w-px bg-border" />
       {hasPictures && (
         <InsertButton
           label={t('insert.pictureButton')}

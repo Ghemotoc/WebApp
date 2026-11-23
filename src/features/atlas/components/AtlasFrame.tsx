@@ -48,11 +48,11 @@ export function AtlasFrame({
   // Signed out: the content alone, which says the plan is only for its writer.
   if (!showsChrome) {
     return (
-      <PageContainer className="tmc-rise flex flex-col gap-8 pt-10 pb-12">{children}</PageContainer>
+      <PageContainer className="tmc-rise flex flex-col gap-8 pt-8 pb-12">{children}</PageContainer>
     );
   }
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-6 pt-10 pb-12">
+    <PageContainer className="tmc-rise flex flex-col gap-6 pt-8 pb-12">
       <AtlasTopBar slug={slug} writeAddress={writeAddress} section={section} />
       <div className="flex min-w-0 flex-col gap-6 lg:flex-row lg:items-start lg:gap-12">
         {/* Desktop: the side menu, kept in view while the content scrolls. */}

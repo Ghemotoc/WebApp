@@ -60,8 +60,8 @@ export function SpaceModeratorsCard({ space }: { space: Space }) {
       headingLevel="h2"
       headingId="space-moderators-heading"
     >
-      <p className="m-0 text-[15px] text-body">{t('moderators.intro')}</p>
-      <p aria-live="polite" className="m-0 text-sm text-body">
+      <p className="m-0 type-body text-ink-muted">{t('moderators.intro')}</p>
+      <p aria-live="polite" className="m-0 type-body text-ink-muted">
         {setting.outcome !== null && t(outcomeKeys[setting.outcome], { name: lastName })}
       </p>
       {setting.failure !== null && (
@@ -69,7 +69,7 @@ export function SpaceModeratorsCard({ space }: { space: Space }) {
       )}
       {moderators.isError && <Notice tone="error">{t('moderators.loadFailed')}</Notice>}
       {moderators.isSuccess && list.length === 0 && (
-        <p className="m-0 text-sm text-body">{t('moderators.none')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('moderators.none')}</p>
       )}
       {list.length > 0 && (
         <ul className="m-0 flex list-none flex-col gap-4 p-0">

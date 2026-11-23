@@ -32,9 +32,9 @@ export function PhoneTranslateNotice({
 }: PhoneTranslateNoticeProps) {
   const { t } = useStoryLanguagesTranslation();
   return (
-    <section className="flex flex-col items-start gap-3 rounded-card border border-border bg-surface p-5 md:hidden">
-      <h2 className="m-0 text-xl">{t('editor.phone.heading')}</h2>
-      <p className="m-0 text-body">
+    <section className="flex flex-col items-start gap-3 rounded-card border border-border bg-surface p-4 md:hidden">
+      <h2 className="m-0 type-subheading">{t('editor.phone.heading')}</h2>
+      <p className="m-0 text-ink-muted">
         {t('editor.phone.line', { number: chapterNumber, language: languageName })}
       </p>
       <Link

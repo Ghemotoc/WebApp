@@ -165,16 +165,19 @@ export function defaultChoiceFor(key: CoverDesignKey): DrawnCoverChoice {
   return { design: key, background: design.background, accent: design.accent };
 }
 
-/** The two title colours; whichever contrasts more with the surface is used. */
-const darkText = '#26142E';
-const lightText = '#FAF8F5';
+/**
+ * The two title colours; whichever contrasts more with the surface is used. cover-ink and
+ * on-action-main from the one colour set for text (Robert, 23 Nov 2026, 14:46 UTC).
+ */
+const darkText = '#2A0E33';
+const lightText = '#FBF7EC';
 
 /**
  * Picks dark or light title text for a surface colour, so the title always reads at 4.5:1
  * (S1-E3-01 acceptance criterion; every palette colour clears 4.5:1 with one of the two).
  *
  * @param surfaceHex - the colour the title sits on
- * @returns '#26142E' or '#FAF8F5'
+ * @returns '#2A0E33' or '#FBF7EC'
  */
 export function titleColourOn(surfaceHex: string): string {
   return contrastRatio(surfaceHex, darkText) >= contrastRatio(surfaceHex, lightText)

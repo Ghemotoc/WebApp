@@ -71,7 +71,7 @@ export function FoldingCard({
   return (
     <section
       aria-labelledby={titleId}
-      className="flex min-w-0 flex-col rounded-card border border-border bg-surface px-5 py-4 shadow-card md:px-7"
+      className="flex min-w-0 flex-col rounded-card border border-border bg-surface px-4 py-4 shadow-card md:px-6"
     >
       <Heading className="m-0">
         {/* One button opens and shuts the card; the hint is read after the title. */}
@@ -81,17 +81,17 @@ export function FoldingCard({
           aria-controls={contentId}
           aria-describedby={hint === undefined ? undefined : hintId}
           onClick={() => setIsOpen((wasOpen) => !wasOpen)}
-          className="flex min-h-11 w-full cursor-pointer items-center gap-3 border-0 bg-transparent p-0 text-left text-heading focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus-ring)"
+          className="flex min-h-11 w-full cursor-pointer items-center gap-3 border-0 bg-transparent p-0 text-left text-ink-heading focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus-ring)"
         >
           <span className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-3 gap-y-1">
             <span
               id={titleId}
-              className="font-heading text-[22px] leading-[1.15] font-bold wrap-anywhere"
+              className="font-heading type-heading leading-[1.15] font-bold wrap-anywhere"
             >
               {title}
             </span>
             {hint !== undefined && (
-              <span id={hintId} className="text-sm font-normal text-meta wrap-anywhere">
+              <span id={hintId} className="type-body font-normal text-ink-muted wrap-anywhere">
                 {hint}
               </span>
             )}

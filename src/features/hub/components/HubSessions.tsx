@@ -28,11 +28,13 @@ import { useHubTranslation } from '../registerHubTranslations';
  */
 function DateTile({ month, day }: { month: string; day: string }) {
   return (
-    <div className="flex size-14 shrink-0 flex-col items-center justify-center rounded-xl border border-border bg-surface-soft">
-      <span className="text-xs leading-none font-bold tracking-[0.12em] text-meta uppercase">
+    <div className="flex size-14 shrink-0 flex-col items-center justify-center rounded-field border border-border bg-surface-soft">
+      <span className="type-meta leading-none font-semibold tracking-[0.12em] text-ink-muted uppercase">
         {month}
       </span>
-      <span className="font-heading text-xl leading-tight font-bold text-heading">{day}</span>
+      <span className="font-heading type-subheading leading-tight font-bold text-ink-heading">
+        {day}
+      </span>
     </div>
   );
 }
@@ -61,11 +63,11 @@ function SessionRow({ session, state }: { session: HubSession; state: HubSession
     <li className="flex min-w-0 flex-wrap items-center gap-4 border-b border-border py-4 first:pt-0 last:border-b-0 last:pb-0">
       <DateTile month={start.month} day={start.day} />
       <div className="flex min-w-0 flex-[1_1_220px] flex-col gap-1">
-        <h3 className="m-0 font-heading text-[17px] font-bold wrap-anywhere text-heading">
+        <h3 className="m-0 font-heading type-long font-bold wrap-anywhere text-ink-heading">
           {title}
         </h3>
-        <p className="m-0 text-sm text-body">{facts}</p>
-        <p className="m-0 text-sm wrap-anywhere text-meta">
+        <p className="m-0 type-body text-ink-muted">{facts}</p>
+        <p className="m-0 type-body wrap-anywhere text-ink-muted">
           {place}
           {session.linkUrl !== null && (
             <>
@@ -83,7 +85,7 @@ function SessionRow({ session, state }: { session: HubSession; state: HubSession
           )}
         </p>
         {session.isReminded && (
-          <p className="m-0 text-[13px] text-meta">{t('hub.sessions.reminderSet')}</p>
+          <p className="m-0 type-meta text-ink-muted">{t('hub.sessions.reminderSet')}</p>
         )}
       </div>
       <Button
@@ -119,7 +121,7 @@ export function HubSessions() {
       <h2 id="hub-sessions-heading" className="eyebrow m-0">
         {t('hub.sessions.eyebrow')}
       </h2>
-      <div className="flex flex-col gap-3 rounded-card border border-border bg-surface p-5 shadow-card">
+      <div className="flex flex-col gap-3 rounded-card border border-border bg-surface p-4 shadow-card">
         <ul className="m-0 flex min-w-0 list-none flex-col p-0">
           {state.sessions.map((session) => (
             <SessionRow key={session.id} session={session} state={state} />
@@ -128,7 +130,7 @@ export function HubSessions() {
         <div aria-live="polite">
           {state.changeFailed && <Notice tone="error">{t('hub.sessions.remindFailed')}</Notice>}
         </div>
-        <p className="m-0 text-[13px] text-meta">{t('hub.sessions.timeNote')}</p>
+        <p className="m-0 type-meta text-ink-muted">{t('hub.sessions.timeNote')}</p>
       </div>
     </section>
   );

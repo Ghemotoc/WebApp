@@ -32,7 +32,7 @@ export interface ReaderLevelPanelProps {
 function HiddenNote() {
   const { t } = usePeopleTranslation();
   return (
-    <p className="m-0 text-[13px] text-meta">
+    <p className="m-0 type-meta text-ink-muted">
       {t('readerLevel.hiddenNote')}{' '}
       <Link to="/settings#privacy" className="font-semibold text-link underline">
         {t('readerLevel.hiddenLink')}
@@ -54,17 +54,17 @@ export function ReaderLevelPanel({ handle, name }: ReaderLevelPanelProps) {
     reading.level === null ? t('readerLevel.noLevelYet') : t(`readerLevel.names.${reading.level}`);
   return (
     <Card>
-      <section aria-labelledby="profile-reader-level-heading" className="flex flex-col gap-3.5">
+      <section aria-labelledby="profile-reader-level-heading" className="flex flex-col gap-4">
         <div className="self-start">
           <Eyebrow>{t('readerLevel.eyebrow')}</Eyebrow>
         </div>
         <h2
           id="profile-reader-level-heading"
-          className="m-0 font-heading text-[26px] font-bold text-heading"
+          className="m-0 font-heading type-heading font-bold text-ink-heading"
         >
           {heading}
         </h2>
-        <p className="m-0 text-[15px] leading-[1.6] text-body">{t('readerLevel.explainer')}</p>
+        <p className="m-0 type-body leading-[1.6] text-ink-muted">{t('readerLevel.explainer')}</p>
         <ReaderLevelLadder current={reading.level} />
         <ReaderLevelProgressBar reading={reading} name={name} />
         {reading.isOwn && !reading.isShown && <HiddenNote />}

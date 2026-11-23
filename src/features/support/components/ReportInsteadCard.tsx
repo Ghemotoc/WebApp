@@ -18,13 +18,13 @@ export function ReportInsteadCard() {
   return (
     <section
       aria-labelledby="support-report-heading"
-      className="flex flex-col gap-1.5 rounded-card border border-border bg-surface px-6 py-5 shadow-card"
+      className="flex flex-col gap-2 rounded-card border border-border bg-surface px-6 py-4 shadow-card"
     >
-      <h2 id="support-report-heading" className="m-0 text-base font-bold text-heading">
+      <h2 id="support-report-heading" className="m-0 type-body font-bold text-ink-heading">
         {t('list.reportHeading')}
       </h2>
-      <p className="m-0 text-sm text-meta">{t('list.reportText')}</p>
-      <Link to="/report" className="w-fit text-sm font-semibold text-link underline">
+      <p className="m-0 type-body text-ink-muted">{t('list.reportText')}</p>
+      <Link to="/report" className="w-fit type-body font-semibold text-link underline">
         {t('list.reportLink')}
       </Link>
     </section>

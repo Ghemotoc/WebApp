@@ -88,8 +88,10 @@ export function Tabs<Key extends string>(props: TabsProps<Key>) {
               tabIndex={isSelected ? 0 : -1}
               onClick={() => onSelect(tab.key)}
               onKeyDown={handleKeyDown}
-              className={`min-h-11 flex-none rounded-full px-3.5 text-sm whitespace-nowrap ${
-                isSelected ? 'font-bold text-link' : 'font-medium text-body hover:text-heading'
+              className={`min-h-11 flex-none rounded-full px-4 type-body whitespace-nowrap ${
+                isSelected
+                  ? 'font-semibold text-link'
+                  : 'font-normal text-ink-muted hover:text-ink-heading'
               }`}
             >
               {tab.label}

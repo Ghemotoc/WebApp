@@ -32,7 +32,7 @@ function ClassPointsBody({ space }: { space: Space | null | undefined }) {
   const { t } = useClassPointsTranslation();
   if (space === undefined || space === null) return null;
   if (space.kind !== 'class' || space.viewer.membership !== 'owner') {
-    return <p className="m-0 text-body">{t('table.teacherOnly')}</p>;
+    return <p className="m-0 text-ink-muted">{t('table.teacherOnly')}</p>;
   }
   return <TeacherTable slug={space.slug} />;
 }
@@ -52,16 +52,16 @@ function TeacherTable({ slug }: { slug: string }) {
   if (read.data === null) {
     return (
       <div className="flex flex-col items-start gap-3">
-        <p className="m-0 text-body">{t('table.off')}</p>
+        <p className="m-0 text-ink-muted">{t('table.off')}</p>
         <Link to={`/spaces/${slug}/settings`} className="font-semibold text-link underline">
           {t('table.openSettings')}
         </Link>
       </div>
     );
   }
-  if (read.data.length === 0) return <p className="m-0 text-body">{t('table.empty')}</p>;
+  if (read.data.length === 0) return <p className="m-0 text-ink-muted">{t('table.empty')}</p>;
   return (
-    <div className="rounded-card border border-border bg-surface p-5 shadow-card md:p-6">
+    <div className="rounded-card border border-border bg-surface p-4 shadow-card md:p-6">
       <ClassPointsTable pupils={read.data} />
     </div>
   );
@@ -78,12 +78,12 @@ export function ClassPointsPage() {
   const space = useSpace(spaceSlug);
   const name = space.data?.name ?? '';
   return (
-    <PageContainer className="flex max-w-[860px] flex-col gap-6 py-10">
+    <PageContainer className="flex max-w-[860px] flex-col gap-6 py-8">
       <title>{t('table.documentTitle', { name })}</title>
       <SpaceBreadcrumb space={{ slug: spaceSlug, name }} current={t('table.title')} />
       <header className="flex flex-col gap-2">
         <h1 className="m-0 type-title break-words lg:type-display">{t('table.title')}</h1>
-        <p className="m-0 max-w-[640px] text-meta">{t('table.intro')}</p>
+        <p className="m-0 max-w-[640px] text-ink-muted">{t('table.intro')}</p>
       </header>
       <ClassPointsBody space={space.data} />
     </PageContainer>

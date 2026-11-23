@@ -36,13 +36,13 @@ export function PathStepList({ steps, currentDay }: PathStepListProps) {
             to={`/hub/path?day=${step.day}`}
             aria-current={step.day === currentDay ? 'step' : undefined}
             className={cn(
-              'flex min-h-11 items-center gap-3 py-2 text-[15px] text-link no-underline hover:underline',
+              'flex min-h-11 items-center gap-3 py-2 type-body text-link no-underline hover:underline',
               step.day === currentDay && 'font-semibold',
             )}
           >
             <span
               aria-hidden="true"
-              className="inline-flex size-7 flex-none items-center justify-center rounded-full border border-border text-[13px] font-bold text-heading"
+              className="inline-flex size-7 flex-none items-center justify-center rounded-full border border-border type-meta font-semibold text-ink-heading"
             >
               {step.isDone ? <CheckIcon /> : step.day}
             </span>

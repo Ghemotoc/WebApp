@@ -28,8 +28,8 @@ function ManyLanguagesCard() {
   const { t } = useStoryLanguagesTranslation();
   return (
     <aside className="flex w-full md:flex-[1_1_280px] flex-col gap-2 rounded-card border border-border bg-surface p-6 shadow-card md:max-w-[340px]">
-      <h2 className="m-0 font-heading text-lg font-bold text-heading">{t('side.heading')}</h2>
-      <p className="m-0 text-sm leading-relaxed text-body">{t('side.body')}</p>
+      <h2 className="m-0 font-heading type-long font-bold text-ink-heading">{t('side.heading')}</h2>
+      <p className="m-0 type-body leading-relaxed text-ink-muted">{t('side.body')}</p>
     </aside>
   );
 }
@@ -37,8 +37,8 @@ function ManyLanguagesCard() {
 /** The table and the form, with the card beside them. */
 function LanguagesBody({ languages }: { languages: StoryLanguages }) {
   return (
-    <div className="flex flex-col gap-7 md:flex-row md:items-start">
-      <div className="flex min-w-0 md:flex-[999_1_520px] flex-col gap-7">
+    <div className="flex flex-col gap-6 md:flex-row md:items-start">
+      <div className="flex min-w-0 md:flex-[999_1_520px] flex-col gap-6">
         <LanguagesTable languages={languages.editions} />
         <AddLanguageForm storySlug={languages.firstEditionSlug} languages={languages} />
       </div>
@@ -59,15 +59,15 @@ export function StoryLanguagesPage() {
   // The original is the first row; its title names the story in the breadcrumb and the tab.
   const original = state.languages?.editions[0];
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-7 pt-10 pb-7">
+    <PageContainer className="tmc-rise flex flex-col gap-6 pt-8 pb-6">
       <title>{t('page.documentTitle', { story: original?.title ?? '' })}</title>
       {original !== undefined && <LanguagesBreadcrumb story={original} />}
       <header className="flex max-w-[760px] flex-col gap-2">
         <Eyebrow>{t('page.eyebrow')}</Eyebrow>
-        <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-extrabold tracking-[-0.025em]">
+        <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-bold tracking-[-0.025em]">
           {t('page.heading')}
         </h1>
-        <p className="m-0 text-lg leading-relaxed text-body">{t('page.intro')}</p>
+        <p className="m-0 type-long leading-relaxed text-ink-muted">{t('page.intro')}</p>
       </header>
       <LoadProblem {...state} isMissing={state.languages === null} kind="story" />
       {state.languages !== null && <LanguagesBody languages={state.languages} />}

@@ -27,7 +27,7 @@ interface HeadlineLinesProps {
 export function HeadlineLines({ first, second }: HeadlineLinesProps) {
   return (
     <>
-      <span className="block text-heading">{first}</span>{' '}
+      <span className="block text-ink-heading">{first}</span>{' '}
       <span className="block text-accent" data-headline-line="second">
         {second}
       </span>

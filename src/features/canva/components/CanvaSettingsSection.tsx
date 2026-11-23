@@ -19,14 +19,14 @@ import { useCanvaConnection } from '../hooks/useCanvaConnection';
 function ConnectionState({ canva }: { canva: ReturnType<typeof useCanvaConnection> }) {
   const { t, i18n } = useTranslation('writing');
   if (canva.connectedSince === null) {
-    return <p className="m-0 text-body">{t('canva.settings.notConnected')}</p>;
+    return <p className="m-0 text-ink-muted">{t('canva.settings.notConnected')}</p>;
   }
   const since = new Intl.DateTimeFormat(i18n.language, { dateStyle: 'long' }).format(
     new Date(canva.connectedSince),
   );
   return (
     <>
-      <p className="m-0 text-body">{t('canva.settings.connected', { date: since })}</p>
+      <p className="m-0 text-ink-muted">{t('canva.settings.connected', { date: since })}</p>
       {canva.disconnectFailed && (
         <Notice tone="error">{t('canva.settings.disconnectFailed')}</Notice>
       )}
@@ -57,7 +57,7 @@ export function CanvaSettingsSection() {
     >
       <h2
         id="settings-canva-heading"
-        className="m-0 font-heading text-[22px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('canva.settings.heading')}
       </h2>

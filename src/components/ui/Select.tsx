@@ -87,7 +87,7 @@ export function Select({
     <span className="inline-flex max-w-full min-w-0 flex-wrap items-center gap-2">
       <label
         htmlFor={id}
-        className={isLabelVisible ? 'text-[13px] font-semibold text-body' : 'sr-only'}
+        className={isLabelVisible ? 'type-meta font-semibold text-ink-muted' : 'sr-only'}
       >
         {label}
       </label>
@@ -97,7 +97,7 @@ export function Select({
           value={value}
           aria-describedby={descriptionId}
           onChange={handleChange}
-          className="h-11 w-auto max-w-full cursor-pointer appearance-none text-ellipsis rounded-full border border-control-border bg-surface pr-9 pl-4 font-body text-sm font-semibold text-ink"
+          className="h-11 w-auto max-w-full cursor-pointer appearance-none text-ellipsis rounded-full border border-control-border bg-surface pr-9 pl-4 font-body type-body font-semibold text-ink"
         >
           {groups === undefined ? (
             <SelectOptions options={options} />
@@ -112,7 +112,7 @@ export function Select({
         <ChevronDownIcon
           className={cn(
             'pointer-events-none absolute top-1/2 right-3.5 -translate-y-1/2',
-            placement === 'bar' ? 'text-heading' : 'text-ink',
+            placement === 'bar' ? 'text-ink-heading' : 'text-ink',
           )}
         />
       </span>

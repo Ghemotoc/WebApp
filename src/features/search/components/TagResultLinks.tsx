@@ -24,12 +24,12 @@ export function TagResultLinks({ tags, headingId }: { tags: FoundTag[]; headingI
   const { t } = useSearchTranslation();
   const { showTag } = useTagCatalogue();
   return (
-    <ul aria-labelledby={headingId} className="m-0 flex list-none flex-wrap gap-x-5 p-0">
+    <ul aria-labelledby={headingId} className="m-0 flex list-none flex-wrap gap-x-4 p-0">
       {tags.map((tag) => (
         <li key={tag.name}>
           <Link
             to={listAddress(plainList('tag', tag.name))}
-            className="inline-flex min-h-11 items-center text-[15px] font-semibold text-link underline"
+            className="inline-flex min-h-11 items-center type-body font-semibold text-link underline"
           >
             {t('results.tagLink', { tag: showTag(tag.name) })}
           </Link>

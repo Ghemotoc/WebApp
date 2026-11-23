@@ -33,7 +33,7 @@ export function FirstStoryBand({ band, language }: { band: HomeBand; language: s
       id="first-story"
       aria-labelledby="first-story-band-heading"
       lang={language}
-      className="grid scroll-mt-6 gap-10 rounded-card bg-gold glass-band-tint p-[clamp(24px,4vw,56px)] lg:grid-cols-2"
+      className="grid scroll-mt-6 gap-8 rounded-card bg-gold glass-band-tint p-[clamp(24px,4vw,56px)] lg:grid-cols-2"
     >
       <div className="flex flex-col gap-6">
         <BandText band={band} headingId="first-story-band-heading" tone="gold" />
@@ -46,7 +46,7 @@ export function FirstStoryBand({ band, language }: { band: HomeBand; language: s
       {/* The writers in a box on the right, under the words on tablets and phones. */}
       <div
         id="writers"
-        className="box-surface scroll-mt-6 self-start rounded-card p-5 empty:hidden"
+        className="box-surface scroll-mt-6 self-start rounded-card p-4 empty:hidden"
       >
         <RisingWritersList headingId="first-story-writers-heading" />
       </div>

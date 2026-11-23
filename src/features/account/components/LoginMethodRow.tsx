@@ -53,7 +53,7 @@ export function LoginMethodRow(props: LoginMethodRowProps) {
   const { t } = useLoginMethodsTranslation();
   const { action } = props;
   return (
-    <li className="flex flex-wrap items-center gap-x-4 gap-y-3 border-t border-border px-[18px] py-4 first:border-t-0">
+    <li className="flex flex-wrap items-center gap-x-4 gap-y-3 border-t border-border px-4 py-4 first:border-t-0">
       <span className="inline-flex h-10 w-10 flex-none items-center justify-center rounded-full bg-white">
         {'brandLogo' in props.icon ? (
           <img src={props.icon.brandLogo} alt="" aria-hidden="true" width={22} height={22} />
@@ -61,9 +61,9 @@ export function LoginMethodRow(props: LoginMethodRowProps) {
           <ActionIcon name={props.icon.lineIcon} size={22} className="text-(--ink-on-white)" />
         )}
       </span>
-      <span className="flex min-w-0 flex-[1_1_220px] flex-col gap-[3px]">
-        <span className="text-[15px] font-bold text-heading">{props.name}</span>
-        <span className="text-sm text-meta">{props.detail}</span>
+      <span className="flex min-w-0 flex-[1_1_220px] flex-col gap-1">
+        <span className="type-body font-semibold text-ink-heading">{props.name}</span>
+        <span className="type-body text-ink-muted">{props.detail}</span>
       </span>
       {props.isConnected !== null && (
         <StateWord>{props.isConnected ? t('connected') : t('notConnected')}</StateWord>

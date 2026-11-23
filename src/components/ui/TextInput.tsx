@@ -48,27 +48,27 @@ export function TextInput({
   }
 
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2">
       {/* wrap-anywhere: a label a member typed as one long word (a detail's name on a character
           sheet) breaks inside its column and never pushes the page sideways (rule 21). */}
-      <label htmlFor={id} className="text-sm font-semibold wrap-anywhere text-ink">
+      <label htmlFor={id} className="type-body font-semibold wrap-anywhere text-ink">
         {label}
       </label>
       <input
         id={id}
         aria-describedby={describedBy}
         aria-invalid={errorMessage === undefined ? undefined : true}
-        className={cn('field-box h-12 px-4 font-body text-[15px]', className)}
+        className={cn('field-box h-12 px-4 font-body type-body', className)}
         {...inputProps}
         onChange={handleChange}
       />
       {hint !== undefined && (
-        <p id={hintId} className="text-[13px] text-meta">
+        <p id={hintId} className="type-meta text-ink-muted">
           {hint}
         </p>
       )}
       {errorMessage !== undefined && (
-        <p id={errorId} className="text-sm text-destructive">
+        <p id={errorId} className="type-body text-destructive">
           {errorMessage}
         </p>
       )}

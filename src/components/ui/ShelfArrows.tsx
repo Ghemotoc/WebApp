@@ -29,7 +29,7 @@ export interface ShelfArrowsProps {
 
 /** The classes both arrows share: quiet, a 44 px target, dimmed at an end. */
 const arrowClasses =
-  'inline-flex h-11 w-11 items-center justify-center rounded-full text-heading hover:bg-tint aria-disabled:cursor-default aria-disabled:text-control-border aria-disabled:hover:bg-transparent';
+  'inline-flex h-11 w-11 items-center justify-center rounded-full text-ink-heading hover:bg-tint aria-disabled:cursor-default aria-disabled:text-control-border aria-disabled:hover:bg-transparent';
 
 /** One arrow. A press at the end does nothing, because the button says it is disabled. */
 function ShelfArrow({

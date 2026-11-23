@@ -85,11 +85,11 @@ export function LegalDocumentView({ documentSlug, chosen }: LegalDocumentViewPro
         <h2
           id="legal-document-title"
           lang={current.language}
-          className="m-0 font-heading text-[30px] font-bold text-heading"
+          className="m-0 font-heading type-title font-bold text-ink-heading"
         >
           {fillBrandTokens(current.title, brand)}
         </h2>
-        <p className="m-0 max-w-[720px] text-[17px] text-body">
+        <p className="m-0 max-w-[720px] type-long text-ink-muted">
           {t(`documents.${documentSlug}.intro`)}
         </p>
         <LegalStatusPills chosen={chosen} />
@@ -100,12 +100,12 @@ export function LegalDocumentView({ documentSlug, chosen }: LegalDocumentViewPro
       {hasAfterTheTestParts && <Notice tone="info">{t('afterTheTest.explanation')}</Notice>}
       {/* The document's own summary, then every section. */}
       <div className="flex flex-col gap-3 rounded-card border border-border bg-surface p-6 shadow-card">
-        <h3 className="m-0 font-heading text-[22px] font-bold text-heading">
+        <h3 className="m-0 font-heading type-heading font-bold text-ink-heading">
           {t('summaryHeading')}
         </h3>
         <LegalMarkdown markdown={parsed.summaryMarkdown} language={current.language} />
       </div>
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,460px),1fr))] gap-5">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,460px),1fr))] gap-4">
         {parsed.sections.map((section) => (
           <LegalSectionCard
             key={`${section.number ?? 'note'}-${section.title}`}

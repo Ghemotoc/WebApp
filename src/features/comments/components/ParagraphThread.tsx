@@ -57,14 +57,14 @@ export interface ParagraphThreadProps {
 }
 
 /** The card in the side column (board New-Reader): glass, round corners, no focus outline. */
-const sidePanelCard = 'glass-pill rounded-[24px] px-5 py-[18px] outline-none';
+const sidePanelCard = 'glass-pill rounded-card px-4 py-4 outline-none';
 
 /** In the bottom sheet the sheet is the glass, so the thread adds only the focus rule. */
 const sheetCard = 'outline-none';
 
 /** The head's Close: a round 44 px icon button (handover Step 4, point 4). */
 const closeButton =
-  'inline-flex size-11 shrink-0 items-center justify-center rounded-full text-body hover:bg-tint -mr-2 -mt-1';
+  'inline-flex size-11 shrink-0 items-center justify-center rounded-full text-ink-muted hover:bg-tint -mr-2 -mt-1';
 
 /** The × in Close, 18 px. */
 function CloseMark() {
@@ -98,21 +98,21 @@ interface ThreadHeadProps {
 function ThreadHead({ place, openingWords, total, onClose }: ThreadHeadProps) {
   const { t } = useCommentsTranslation();
   return (
-    <div className="flex items-start gap-2.5">
+    <div className="flex items-start gap-3">
       <span
         aria-hidden="true"
-        className="mt-1 grid size-8 shrink-0 place-items-center rounded-full bg-tint text-heading"
+        className="mt-1 grid size-8 shrink-0 place-items-center rounded-full bg-tint text-ink-heading"
       >
         <CommentIcon />
       </span>
       {place === 'earlier' ? (
-        <p className="m-0 min-w-0 flex-1 pt-1.5 text-[15px] leading-[22px] font-semibold text-heading">
+        <p className="m-0 min-w-0 flex-1 pt-2 type-body leading-[22px] font-semibold text-ink-heading">
           {total === null
             ? t('paragraph.earlierLabel')
             : t('paragraph.earlierTitle', { count: total })}
         </p>
       ) : (
-        <blockquote className="tmc-thread-quote m-0 min-w-0 flex-1 rounded-field bg-tint px-3 py-2 font-story text-[15px] leading-[22px] text-body italic">
+        <blockquote className="tmc-thread-quote m-0 min-w-0 flex-1 rounded-field bg-tint px-3 py-2 font-story type-body leading-[22px] text-ink-muted italic">
           {openingWords}
         </blockquote>
       )}
@@ -194,7 +194,7 @@ function ThreadFoot({ address, place, thread, pauseEnd }: ThreadFootProps) {
   // the line then takes the focus, so the writer isn't left on a button that has gone.
   const [hasResumed, setHasResumed] = useState(false);
   if (place === 'earlier') {
-    return <p className="m-0 mt-3 text-sm text-meta">{t('paragraph.earlierNote')}</p>;
+    return <p className="m-0 mt-3 type-body text-ink-muted">{t('paragraph.earlierNote')}</p>;
   }
   // CALM-8: the same line as under the chapter, where the box was; nobody can post during a pause.
   if (thread !== null && pauseEnd !== null) {
@@ -211,7 +211,7 @@ function ThreadFoot({ address, place, thread, pauseEnd }: ThreadFootProps) {
   // MUST-1a: on a followers-only story, someone who doesn't follow the writer sees why. Until the
   // thread loads, the box shows; the database refuses a comment it mustn't take.
   if (thread !== null && !thread.audienceAllowsMe) {
-    return <p className="m-0 mt-3 text-sm text-meta">{t('section.followersOnly')}</p>;
+    return <p className="m-0 mt-3 type-body text-ink-muted">{t('section.followersOnly')}</p>;
   }
   return (
     <div className="mt-3 border-t border-hairline pt-4">
@@ -237,10 +237,10 @@ function ThreadBody({ address, place, thread, loadFailed, isPaused }: ThreadBody
   const { t } = useCommentsTranslation();
   if (loadFailed) return <Notice tone="error">{t('section.loadFailed')}</Notice>;
   if (thread === null)
-    return <p className="m-0 mt-3 text-sm text-meta">{t('paragraph.loading')}</p>;
+    return <p className="m-0 mt-3 type-body text-ink-muted">{t('paragraph.loading')}</p>;
   if (thread.comments.length === 0) {
     if (place === 'earlier') return null;
-    return <p className="m-0 mt-3 text-sm text-meta">{t('paragraph.emptyTitle')}</p>;
+    return <p className="m-0 mt-3 type-body text-ink-muted">{t('paragraph.emptyTitle')}</p>;
   }
   return (
     <div className="mt-2 divide-y divide-hairline">

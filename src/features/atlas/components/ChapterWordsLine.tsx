@@ -39,7 +39,7 @@ export function ChapterWordsLine(props: ChapterWordsLineProps) {
         <p
           aria-live="polite"
           data-testid="atlas-chapter-words"
-          className="m-0 text-sm font-semibold text-heading"
+          className="m-0 type-body font-semibold text-ink-heading"
         >
           {t('chapterPlan.wordsOfTarget', { words, target: numbers.format(target) })}
         </p>

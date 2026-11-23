@@ -19,19 +19,22 @@ export function SupportContactsList({ contacts }: { contacts: SupportContacts })
   const { t } = useTranslation('moderation');
   return (
     <div className="flex flex-col gap-3">
-      <h3 className="m-0 text-base font-semibold text-heading">
+      <h3 className="m-0 type-body font-bold text-ink-heading">
         {t('safeguarding.contactsHeading', { country: contacts.countryCode })}
       </h3>
       {contacts.isFallback && (
-        <p className="m-0 text-sm text-meta">{t('safeguarding.contactsFallback')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('safeguarding.contactsFallback')}</p>
       )}
       {contacts.contacts.length === 0 && (
-        <p className="m-0 text-body">{t('safeguarding.noContacts')}</p>
+        <p className="m-0 text-ink-muted">{t('safeguarding.noContacts')}</p>
       )}
       <ul className="m-0 flex list-none flex-col gap-2 p-0">
         {contacts.contacts.map((contact) => (
-          <li key={`${contact.kind}-${contact.label}`} className="flex flex-col gap-0.5 text-body">
-            <span className="text-sm text-meta">
+          <li
+            key={`${contact.kind}-${contact.label}`}
+            className="flex flex-col gap-1 text-ink-muted"
+          >
+            <span className="type-body text-ink-muted">
               {t(`safeguarding.kinds.${contact.kind}`, { defaultValue: contact.kind })}
             </span>
             <span className="font-semibold text-ink">
@@ -49,14 +52,14 @@ export function SupportContactsList({ contacts }: { contacts: SupportContacts })
               )}
             </span>
             {contact.openingHours !== null && (
-              <span className="text-sm text-meta">{contact.openingHours}</span>
+              <span className="type-body text-ink-muted">{contact.openingHours}</span>
             )}
             {contact.link !== null && (
               <a
                 href={contact.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-fit text-sm text-link underline"
+                className="w-fit type-body text-link underline"
               >
                 {contact.link}
               </a>

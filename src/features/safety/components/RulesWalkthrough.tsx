@@ -98,15 +98,15 @@ export function RulesWalkthrough({ walkthrough, onClosed }: RulesWalkthroughProp
     <div
       role="group"
       aria-labelledby={groupLabelId}
-      className="flex flex-col gap-3 rounded-2xl border border-(--info-border) bg-(--info-bg) px-[18px] py-3.5 text-(--info-text)"
+      className="flex flex-col gap-3 rounded-card border border-(--info-border) bg-(--info-bg) px-4 py-4 text-(--info-text)"
     >
-      <p id={groupLabelId} className="m-0 text-sm">
+      <p id={groupLabelId} className="m-0 type-body">
         {t('rulesWalkthrough.intro')}{' '}
         <span className="font-semibold">
           {t('rulesWalkthrough.progress', { current: step + 1, total: walkthrough.cards.length })}
         </span>
       </p>
-      <h3 ref={titleRef} tabIndex={-1} className="m-0 text-[17px] font-semibold outline-none">
+      <h3 ref={titleRef} tabIndex={-1} className="m-0 type-long font-bold outline-none">
         {card.title}
       </h3>
       <CmsMarkdown markdown={card.body} language={card.language} />

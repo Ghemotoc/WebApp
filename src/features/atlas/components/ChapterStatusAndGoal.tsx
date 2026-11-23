@@ -36,8 +36,8 @@ function GoalProgress({ wordCount, goal }: { wordCount: number; goal: number }) 
     goal: numbers.format(goal),
   });
   return (
-    <div className="flex flex-col gap-1.5">
-      <p className="m-0 text-[13px] font-semibold text-heading">{label}</p>
+    <div className="flex flex-col gap-2">
+      <p className="m-0 type-meta font-semibold text-ink-heading">{label}</p>
       {/* A real meter, named by the line above, so a screen reader hears the same words. */}
       <meter
         aria-label={label}

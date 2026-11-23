@@ -37,12 +37,12 @@ function StepList() {
   return (
     <div className="flex flex-col gap-3">
       <Eyebrow>{t('page.stepsLabel')}</Eyebrow>
-      <ol className="m-0 flex list-none flex-col gap-3 p-0 text-body">
+      <ol className="m-0 flex list-none flex-col gap-3 p-0 text-ink-muted">
         {steps.map((step, index) => (
-          <li key={step} className="flex items-start gap-3.5">
+          <li key={step} className="flex items-start gap-4">
             <span
               aria-hidden="true"
-              className="flex size-8 flex-none items-center justify-center rounded-full bg-tint font-bold text-heading"
+              className="flex size-8 flex-none items-center justify-center rounded-full bg-tint font-semibold text-ink-heading"
             >
               {index + 1}
             </span>
@@ -65,22 +65,26 @@ export function DeleteAccountPage() {
   if (!isKnown) return null;
   if (userId !== null) return <Navigate to="/settings#delete-account" replace />;
   return (
-    <PageContainer className="flex max-w-[720px] flex-col pt-10 pb-10">
+    <PageContainer className="flex max-w-[720px] flex-col pt-8 pb-8">
       <title>{t('page.title')}</title>
-      <section className="flex flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card sm:px-10 sm:py-9">
-        <h1 className="m-0 font-heading text-[32px] font-bold text-heading">{t('page.heading')}</h1>
-        <p className="m-0 text-body">{t('page.intro')}</p>
+      <section className="flex flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card sm:px-8 sm:py-8">
+        <h1 className="m-0 font-heading type-title font-bold text-ink-heading">
+          {t('page.heading')}
+        </h1>
+        <p className="m-0 text-ink-muted">{t('page.intro')}</p>
         <StepList />
-        <p className="m-0 rounded-2xl bg-tint px-4 py-3 text-sm text-body">
+        <p className="m-0 rounded-card bg-tint px-4 py-3 type-body text-ink-muted">
           {t('page.after', { count: deletionDays })}
         </p>
         <Link
           to="/sign-in"
-          className="inline-flex h-12 w-fit items-center rounded-full button-main px-6 text-[15px] font-semibold"
+          className="inline-flex h-12 w-fit items-center rounded-full button-main px-6 type-body font-semibold"
         >
           {t('page.logIn')}
         </Link>
-        <p className="m-0 text-sm text-meta">{t('page.noAccess', { email: brand.supportEmail })}</p>
+        <p className="m-0 type-body text-ink-muted">
+          {t('page.noAccess', { email: brand.supportEmail })}
+        </p>
       </section>
     </PageContainer>
   );

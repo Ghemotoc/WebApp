@@ -37,7 +37,7 @@ export function HeaderSearch() {
       role="search"
       aria-label={t('shell.search')}
       onSubmit={openSearch}
-      className="flex h-11 min-w-0 flex-[1_1_200px] items-center gap-2 rounded-full border border-control-border bg-(--field) px-4 text-meta focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-(--focus-ring)"
+      className="flex h-11 min-w-0 flex-[1_1_200px] items-center gap-2 rounded-full border border-control-border bg-(--field) px-4 text-ink-muted focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-(--focus-ring)"
     >
       <NavIcon name="search" size={18} />
       <label htmlFor={fieldId} className="sr-only">
@@ -50,7 +50,7 @@ export function HeaderSearch() {
         value={words}
         onChange={(event) => setWords(event.target.value)}
         placeholder={t('shell.searchLabel')}
-        className="min-w-0 flex-1 border-0 bg-transparent font-body text-sm text-ink placeholder:text-meta focus:outline-none"
+        className="min-w-0 flex-1 border-0 bg-transparent font-body type-body text-ink placeholder:text-ink-muted focus:outline-none"
       />
     </form>
   );

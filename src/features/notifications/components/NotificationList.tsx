@@ -42,11 +42,11 @@ export function NotificationList({ notifications, ownHandle, onOpen }: Notificat
         <section
           key={group}
           aria-labelledby={`notifications-${group}`}
-          className="flex flex-col gap-2.5"
+          className="flex flex-col gap-3"
         >
           <h2
             id={`notifications-${group}`}
-            className="m-0 font-heading text-lg font-bold text-heading"
+            className="m-0 font-heading type-long font-bold text-ink-heading"
           >
             {t(`days.${group}`)}
           </h2>

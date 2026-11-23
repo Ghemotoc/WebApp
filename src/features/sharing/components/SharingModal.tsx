@@ -37,7 +37,7 @@ function CloseButton(props: { label: string; onClick: () => void }) {
       type="button"
       aria-label={props.label}
       onClick={props.onClick}
-      className="inline-flex size-11 flex-none cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-body hover:bg-ink/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus-ring)"
+      className="inline-flex size-11 flex-none cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-ink-muted hover:bg-ink/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus-ring)"
     >
       <svg
         width="20"
@@ -84,18 +84,18 @@ export function SharingModal(props: SharingModalProps) {
       className="m-auto w-full rounded-card border border-border bg-surface p-[clamp(20px,5vw,28px)] text-ink shadow-card backdrop:bg-ink/50"
     >
       {props.isOpen && (
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-4">
           <div className="flex items-start gap-3">
             <div className="flex min-w-0 flex-1 flex-col gap-1">
               {props.eyebrow !== undefined && <p className="m-0 eyebrow">{props.eyebrow}</p>}
               <h2
                 id={titleId}
-                className="m-0 font-heading text-[26px] leading-tight font-bold text-heading"
+                className="m-0 font-heading type-heading leading-tight font-bold text-ink-heading"
               >
                 {props.title}
               </h2>
               {props.description !== undefined && (
-                <p id={descriptionId} className="m-0 text-sm text-body">
+                <p id={descriptionId} className="m-0 type-body text-ink-muted">
                   {props.description}
                 </p>
               )}

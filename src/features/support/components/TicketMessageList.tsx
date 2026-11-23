@@ -46,16 +46,16 @@ function ChatBubbleItem({ message }: { message: TicketMessageItem }) {
   const isOwn = message.tone === 'person';
   const sideStyle = isOwn ? 'items-end self-end' : 'items-start self-start';
   const bubbleStyle = isOwn
-    ? 'rounded-[22px_22px_6px_22px] bg-primary text-on-primary'
-    : 'rounded-[22px_22px_22px_6px] border border-border bg-surface text-ink shadow-card';
+    ? 'rounded-card rounded-br-field bg-primary text-on-primary'
+    : 'rounded-card rounded-bl-field border border-border bg-surface text-ink shadow-card';
   return (
     <li className={`flex max-w-[min(560px,88%)] flex-col gap-1 ${sideStyle}`}>
       <p
-        className={`m-0 px-[18px] py-3.5 text-[15px] leading-relaxed break-words whitespace-pre-line ${bubbleStyle}`}
+        className={`m-0 px-4 py-4 type-body leading-relaxed break-words whitespace-pre-line ${bubbleStyle}`}
       >
         {message.body}
       </p>
-      <p className="m-0 text-[13px] text-meta">
+      <p className="m-0 type-meta text-ink-muted">
         {/* The name in its own span, so it reads (and can be found) as one piece. */}
         <span>{message.author}</span> · <time dateTime={message.at}>{when}</time>
       </p>
@@ -78,11 +78,11 @@ function MessageItem({ message }: { message: TicketMessageItem }) {
     <li
       className={`flex flex-col gap-2 rounded-card border border-border p-4 ${toneClasses[message.tone]}`}
     >
-      <p className="m-0 text-sm text-meta">
-        <span className="font-semibold text-heading">{message.author}</span> · {when}
+      <p className="m-0 type-body text-ink-muted">
+        <span className="font-semibold text-ink-heading">{message.author}</span> · {when}
         {message.detail !== undefined && ` · ${message.detail}`}
       </p>
-      <p className="m-0 whitespace-pre-line break-words text-body">{message.body}</p>
+      <p className="m-0 whitespace-pre-line break-words text-ink-muted">{message.body}</p>
     </li>
   );
 }
@@ -107,7 +107,7 @@ export function TicketMessageList({
   // The chat sits in one glass card, as on the board; the staff cards stand on their own.
   const listStyle =
     layout === 'chat'
-      ? 'gap-4 rounded-card border border-border bg-surface p-5 shadow-card sm:p-6'
+      ? 'gap-4 rounded-card border border-border bg-surface p-4 shadow-card sm:p-6'
       : 'gap-3';
   return (
     <ol className={`m-0 flex list-none flex-col p-0 ${listStyle}`} aria-label={label}>

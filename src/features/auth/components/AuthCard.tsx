@@ -28,17 +28,17 @@ interface AuthCardProps {
  */
 export function AuthCard({ documentTitle, heading, intro, children }: AuthCardProps) {
   return (
-    <PageContainer className="tmc-rise relative flex justify-center pt-12 pb-7">
+    <PageContainer className="tmc-rise relative flex justify-center pt-12 pb-6">
       <title>{documentTitle}</title>
       <section
         aria-labelledby="auth-card-heading"
-        className="flex w-full max-w-[520px] flex-col gap-5 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
+        className="flex w-full max-w-[520px] flex-col gap-4 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
       >
         <div className="flex flex-col gap-2">
           <h1 id="auth-card-heading" className="m-0 type-title break-words lg:type-display">
             {heading}
           </h1>
-          {intro !== undefined && <p className="m-0 text-meta">{intro}</p>}
+          {intro !== undefined && <p className="m-0 text-ink-muted">{intro}</p>}
         </div>
         {children}
       </section>

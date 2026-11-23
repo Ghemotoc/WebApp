@@ -62,14 +62,14 @@ export function HandleField(props: HandleFieldProps) {
   const isRefused = status.outcome !== null && status.outcome !== 'ok';
 
   return (
-    <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-sm font-semibold text-ink">
+    <div className="flex flex-col gap-2">
+      <label htmlFor={id} className="type-body font-semibold text-ink">
         {t('handle.label')}
       </label>
       <div className="relative">
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-[15px] text-meta"
+          className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 type-body text-ink-muted"
         >
           @
         </span>
@@ -87,7 +87,7 @@ export function HandleField(props: HandleFieldProps) {
           aria-describedby={`${id}-status ${id}-hint`}
           aria-invalid={isRefused ? true : undefined}
           className={cn(
-            'h-12 w-full field-box pr-4 pl-8 font-body text-[15px]',
+            'h-12 w-full field-box pr-4 pl-8 font-body type-body',
             isRefused && 'border-destructive',
           )}
         />
@@ -96,14 +96,14 @@ export function HandleField(props: HandleFieldProps) {
         id={`${id}-status`}
         aria-live="polite"
         className={cn(
-          'm-0 min-h-5 text-sm font-semibold',
+          'm-0 min-h-5 type-body font-semibold',
           status.isGood ? 'text-(--success-text)' : 'text-destructive',
         )}
       >
         {status.text}
       </p>
       {canAskForReview(status.outcome) && <AskForReviewLink name={value} />}
-      <p id={`${id}-hint`} className="m-0 text-[13px] text-meta">
+      <p id={`${id}-hint`} className="m-0 type-meta text-ink-muted">
         {hint}
       </p>
     </div>

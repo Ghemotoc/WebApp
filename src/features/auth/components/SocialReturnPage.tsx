@@ -28,7 +28,7 @@ function ActionLink({ to, label }: { to: string; label: string }) {
   return (
     <Link
       to={to}
-      className="inline-flex h-11 items-center rounded-full button-main px-5 text-sm font-semibold no-underline"
+      className="inline-flex h-11 items-center rounded-full button-main px-4 type-body font-semibold no-underline"
     >
       {label}
     </Link>
@@ -90,7 +90,7 @@ function SocialReturnBody() {
 
   if (settled.isPending) {
     return (
-      <p role="status" className="m-0 text-body">
+      <p role="status" className="m-0 text-ink-muted">
         {t('socialReturn.checking')}
       </p>
     );
@@ -108,7 +108,7 @@ function SocialReturnBody() {
 export function SocialReturnPage() {
   const { t } = useTranslation('auth');
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-4 pt-12 pb-7">
+    <PageContainer className="tmc-rise flex flex-col gap-4 pt-12 pb-6">
       <title>{t('socialReturn.documentTitle')}</title>
       <SocialReturnBody />
     </PageContainer>

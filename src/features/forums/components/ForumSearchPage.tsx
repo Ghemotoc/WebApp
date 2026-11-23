@@ -39,14 +39,20 @@ function SearchResults({
   term: string;
 }) {
   const { t } = useForumsTranslation();
-  if (!search.isSearching) return <p className="m-0 text-base text-body">{t('search.tooShort')}</p>;
+  if (!search.isSearching)
+    return <p className="m-0 type-body text-ink-muted">{t('search.tooShort')}</p>;
   if (search.loadFailed) return <Notice tone="error">{t('search.loadFailed')}</Notice>;
   if (search.results === null) return null;
   if (search.results.length === 0)
-    return <p className="m-0 text-base text-body">{t('search.none', { term: term.trim() })}</p>;
+    return (
+      <p className="m-0 type-body text-ink-muted">{t('search.none', { term: term.trim() })}</p>
+    );
   return (
     <section aria-labelledby="forum-results-heading" className="flex flex-col gap-4">
-      <h2 id="forum-results-heading" className="m-0 font-heading text-2xl font-bold text-heading">
+      <h2
+        id="forum-results-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
+      >
         {t('search.results')}
       </h2>
       <ol className="m-0 list-none overflow-hidden rounded-card border border-border bg-surface p-0 shadow-card">
@@ -79,7 +85,7 @@ export function ForumSearchPage() {
   const query = forumSearchFromAddress(parameters);
   const search = useForumSearch(query);
   return (
-    <PageContainer className="flex flex-col gap-6 py-10">
+    <PageContainer className="flex flex-col gap-6 py-8">
       <ForumBreadcrumb path={[]} current={t('search.title')} />
       <h1 className="page-title">{t('search.title')}</h1>
       {/* A new address (a new search) starts the form afresh from it. */}

@@ -25,9 +25,10 @@ import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
-import { primaryNavigation, type NavigationItem } from '@/app/navigation';
+import { linksFor, primaryNavigation, type NavigationItem } from '@/app/navigation';
 import { brand } from '@/config/brand';
 import { BrandMark } from '@/features/branding/components/BrandMark';
+import { useSession } from '@/features/auth/hooks/useSession';
 import { useHomeAddress } from '@/features/hub/hooks/useHomeAddress';
 
 import { HeaderSearch } from './HeaderSearch';
@@ -62,6 +63,10 @@ export function TopBar({
   const { t } = useTranslation();
   // Signed in, the logo opens the Writers' hub; signed out, the public home page (G9a).
   const homeAddress = useHomeAddress();
+  // A visitor sees no members' links (Library, Together) and no search (TRIAL-WALL).
+  const { userId } = useSession();
+  const isSignedIn = userId !== null;
+  const visibleItems = linksFor(navigationItems, isSignedIn);
   // Tight and nearly solid once the page has scrolled under the bar; roomier and clearer at the top.
   const isScrolled = usePageScrolled();
 
@@ -77,24 +82,24 @@ export function TopBar({
     >
       <div
         data-solid={isScrolled}
-        className="top-bar-pill glass-float pointer-events-auto mx-auto flex max-w-[1376px] flex-wrap items-center gap-x-4 gap-y-2.5 rounded-[36px] pr-2 pl-5"
+        className="top-bar-pill glass-float pointer-events-auto mx-auto flex max-w-[1376px] flex-wrap items-center gap-x-4 gap-y-3 rounded-full pr-2 pl-4"
       >
         <Link
           to={homeAddress}
           aria-label={t('shell.home', { productName: brand.productName })}
-          className="inline-flex min-h-11 items-center font-heading text-[22px] font-extrabold tracking-[-0.01em] text-heading no-underline"
+          className="inline-flex min-h-11 items-center font-heading type-heading font-bold tracking-[-0.01em] text-ink-heading no-underline"
         >
           <BrandMark />
         </Link>
-        {navigationItems.length > 0 && (
+        {visibleItems.length > 0 && (
           <nav aria-label={navigationLabel ?? t('shell.mainNavigation')}>
-            <NavTrack items={navigationItems} end={navigationEnd} />
+            <NavTrack items={visibleItems} end={navigationEnd} />
           </nav>
         )}
-        {hasSearch && <HeaderSearch />}
+        {hasSearch && isSignedIn && <HeaderSearch />}
         {/* Wraps when the window is only just wide enough, so the end slot never
             pushes the page sideways (S1-E2-05; CLAUDE.md rule 21). */}
-        <div className="ml-auto flex flex-wrap items-center justify-end gap-1.5">{endSlot}</div>
+        <div className="ml-auto flex flex-wrap items-center justify-end gap-2">{endSlot}</div>
       </div>
     </header>
   );

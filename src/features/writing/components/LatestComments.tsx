@@ -32,7 +32,7 @@ export function LatestComments({ comments }: { comments: LatestComment[] }) {
   return (
     <section aria-labelledby="dashboard-comments-heading" className="flex min-w-0 flex-col gap-1">
       <div className="flex flex-wrap items-center justify-between gap-x-6">
-        <h2 id="dashboard-comments-heading" className="m-0 type-heading text-heading">
+        <h2 id="dashboard-comments-heading" className="m-0 type-heading text-ink-heading">
           {t('dashboard.comments.heading')}
         </h2>
         {comments.length > 0 && (
@@ -42,7 +42,7 @@ export function LatestComments({ comments }: { comments: LatestComment[] }) {
         )}
       </div>
       {comments.length === 0 ? (
-        <p className="m-0 type-body text-body">{t('dashboard.comments.empty')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('dashboard.comments.empty')}</p>
       ) : (
         <ul className="m-0 list-none p-0">
           {comments.map((comment) => (

@@ -44,10 +44,10 @@ export function TimelineRow({ kind, date, sortValue, children }: TimelineRowProp
   return (
     <li
       data-testid="atlas-timeline-item"
-      className="relative flex flex-col gap-1.5 sm:flex-row sm:items-start sm:gap-[18px]"
+      className="relative flex flex-col gap-2 sm:flex-row sm:items-start sm:gap-4"
     >
-      <p className="m-0 text-sm break-words text-meta sm:w-[120px] sm:shrink-0 sm:pt-3.5 sm:text-right">
-        {date !== '' && <b className="font-bold text-heading">{date}</b>}
+      <p className="m-0 type-body break-words text-ink-muted sm:w-[120px] sm:shrink-0 sm:pt-4 sm:text-right">
+        {date !== '' && <b className="font-semibold text-ink-heading">{date}</b>}
         {date !== '' && sortText !== null && <span className="sm:hidden"> · </span>}
         {sortText !== null && (
           <span className="sm:block">{t('storyline.timeline.sortLine', { value: sortText })}</span>
@@ -60,7 +60,7 @@ export function TimelineRow({ kind, date, sortValue, children }: TimelineRowProp
           kind === 'event' ? 'bg-gold' : 'bg-primary',
         )}
       />
-      <div className="flex min-w-0 flex-1 flex-col gap-2 rounded-3xl border border-border bg-surface px-[18px] py-3.5 shadow-card">
+      <div className="flex min-w-0 flex-1 flex-col gap-2 rounded-card border border-border bg-surface px-4 py-4 shadow-card">
         {children}
       </div>
     </li>

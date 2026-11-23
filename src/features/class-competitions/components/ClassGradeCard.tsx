@@ -116,12 +116,15 @@ export function ClassGradeCard({ slug }: { slug: string }) {
       aria-labelledby="class-grade-heading"
       className="flex w-full max-w-[760px] flex-col gap-3 rounded-card border border-border bg-surface p-6"
     >
-      <h2 id="class-grade-heading" className="m-0 font-heading text-2xl font-bold text-heading">
+      <h2
+        id="class-grade-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
+      >
         {t('grade.title')}
       </h2>
-      <p className="m-0 text-body">{t('grade.intro')}</p>
+      <p className="m-0 text-ink-muted">{t('grade.intro')}</p>
       {competitions.isArchived ? (
-        <p className="m-0 text-body">{t('grade.archived')}</p>
+        <p className="m-0 text-ink-muted">{t('grade.archived')}</p>
       ) : (
         <GradeFields
           saved={saved}

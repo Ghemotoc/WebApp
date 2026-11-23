@@ -28,7 +28,7 @@ export function StorySuggestions({ storySlug }: { storySlug: string }) {
   // The writer's name comes from the row's own cards, which are all by the same writer.
   const writerName = moreByWriter?.stories[0]?.writer.displayName ?? '';
   return (
-    <div className="flex min-w-0 flex-col gap-10">
+    <div className="flex min-w-0 flex-col gap-8">
       {moreByWriter !== null && (
         <SuggestionShelf
           anchorId="more-by-writer"

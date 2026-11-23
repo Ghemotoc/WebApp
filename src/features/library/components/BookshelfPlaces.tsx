@@ -42,7 +42,7 @@ function FindStoriesPlace({ name }: { name: string }) {
     <Link
       to="/discover"
       aria-label={t('lists.findStories', { name })}
-      className={`${ghostClasses} text-meta hover:bg-tint hover:text-heading`}
+      className={`${ghostClasses} text-ink-muted hover:bg-tint hover:text-ink-heading`}
     >
       <ActionIcon name="plus" size={20} />
     </Link>

@@ -55,7 +55,7 @@ function YouAreHere(props: { place: StoryPlace; storySlug: string; chapterNumber
     <Link
       to={`/s/${storySlug}/${place.chapterCode}#resume`}
       aria-label={t('storyPage.youAreHereLink', { percent: place.percent, number: chapterNumber })}
-      className="inline-flex min-h-6 items-center font-bold text-ink underline-offset-2 hover:underline"
+      className="inline-flex min-h-6 items-center font-semibold text-ink underline-offset-2 hover:underline"
     >
       {t('storyPage.youAreHere', { percent: place.percent })}
     </Link>
@@ -101,7 +101,7 @@ function useChapterFacts(chapter: StoryPageChapter, originalLanguage: string | n
 function ChapterTitle({ chapter, storySlug }: { chapter: StoryPageChapter; storySlug: string }) {
   const { t } = useTranslation('reading');
   const title = chapter.title === '' ? t('storyPage.untitledChapter') : chapter.title;
-  const className = 'text-[15px] leading-5 font-semibold break-words text-heading';
+  const className = 'type-body leading-5 font-semibold break-words text-ink-heading';
   if (chapter.status !== 'published') {
     return (
       <span data-chapter-title className={className}>
@@ -136,12 +136,12 @@ function ChapterRow(props: {
     place !== null && place.chapterCode === chapter.code && chapter.status === 'published';
   return (
     <li
-      className={`grid break-inside-avoid grid-cols-[28px_minmax(0,1fr)] items-baseline gap-x-2.5 border-t border-(--hairline) py-3 ${isFolded ? 'min-[600px]:hidden' : ''}`}
+      className={`grid break-inside-avoid grid-cols-[28px_minmax(0,1fr)] items-baseline gap-x-3 border-t border-(--hairline) py-3 ${isFolded ? 'min-[600px]:hidden' : ''}`}
     >
-      <span className="text-[13px] text-body tabular-nums">{chapter.number}</span>
+      <span className="type-meta text-ink-muted tabular-nums">{chapter.number}</span>
       <div className="flex min-w-0 flex-col gap-1">
         <ChapterTitle chapter={chapter} storySlug={storySlug} />
-        <div className="flex flex-wrap items-center gap-x-2 text-[13px] leading-[18px]">
+        <div className="flex flex-wrap items-center gap-x-2 type-meta leading-[18px]">
           {isHere && (
             <YouAreHere place={place} storySlug={storySlug} chapterNumber={chapter.number} />
           )}
@@ -167,7 +167,7 @@ function FoldButton(props: { total: number; isOpen: boolean; onToggle: () => voi
       aria-expanded={isOpen}
       aria-controls="story-chapter-rows"
       onClick={onToggle}
-      className="hidden min-h-11 items-center self-start text-sm font-semibold text-ink underline underline-offset-2 min-[600px]:inline-flex"
+      className="hidden min-h-11 items-center self-start type-body font-semibold text-ink underline underline-offset-2 min-[600px]:inline-flex"
     >
       {isOpen ? t('storyPage.showFewerChapters') : t('storyPage.showAllChapters', { count: total })}
     </button>
@@ -231,13 +231,13 @@ export function StoryChapterList({
     <section aria-labelledby="story-chapters-heading" className="flex flex-col gap-3">
       {/* The heading counts the chapters listed ("15 chapters"), with the facts beside it. */}
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-        <h2 id="story-chapters-heading" className="m-0 type-heading text-heading">
+        <h2 id="story-chapters-heading" className="m-0 type-heading text-ink-heading">
           {t('storyPage.chapterCount', { count: chapters.length })}
         </h2>
         <MetaLine facts={headingFacts} />
       </div>
       {chapters.length === 0 && isOwner && (
-        <p className="m-0 text-sm text-body">{t('storyPage.noChaptersOwner')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('storyPage.noChaptersOwner')}</p>
       )}
       {/* Two columns from 900 px, as on the board; one on narrower screens. */}
       <ol id="story-chapter-rows" className="m-0 list-none gap-x-12 p-0 min-[900px]:columns-2">

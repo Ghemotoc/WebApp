@@ -25,9 +25,11 @@ import { useSpacesTranslation } from '../registerSpacesTranslations';
 function RunsPerson({ person, role }: { person: ForumPerson; role: string }) {
   const { t } = useSpacesTranslation();
   return (
-    <li className="flex flex-col border-b border-border py-2 text-sm last:border-b-0">
+    <li className="flex flex-col border-b border-border py-2 type-body last:border-b-0">
       {person === null ? (
-        <span className="font-semibold text-heading">{nameOf(person, t('row.ownerDeleted'))}</span>
+        <span className="font-semibold text-ink-heading">
+          {nameOf(person, t('row.ownerDeleted'))}
+        </span>
       ) : (
         <Link
           to={`/u/${person.handle}`}
@@ -36,7 +38,7 @@ function RunsPerson({ person, role }: { person: ForumPerson; role: string }) {
           {person.displayName}
         </Link>
       )}
-      <span className="text-meta">{role}</span>
+      <span className="text-ink-muted">{role}</span>
     </li>
   );
 }
@@ -69,7 +71,7 @@ export function SpaceRunsCard({ space }: { space: Space }) {
           />
         ))}
       </ul>
-      <p className="m-0 text-[13px] text-body">{t('runs.note')}</p>
+      <p className="m-0 type-meta text-ink-muted">{t('runs.note')}</p>
     </section>
   );
 }

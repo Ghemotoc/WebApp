@@ -33,16 +33,14 @@ export function ReceivedPoints({ points }: { points: ChapterClassPoints }) {
       </p>
       {received.notes.length > 0 && (
         <div className="flex flex-col gap-2">
-          <h3 className="m-0 text-sm font-semibold text-ink">
-            {t('chapter.received.notesHeading')}
-          </h3>
+          <h3 className="m-0 type-body font-bold text-ink">{t('chapter.received.notesHeading')}</h3>
           <ul className="m-0 flex list-none flex-col gap-2 p-0">
             {received.notes.map((note) => (
               <li
                 key={note.id}
                 className="flex flex-wrap items-center gap-3 rounded-card border border-border bg-panel px-4 py-3"
               >
-                <span className="min-w-0 flex-1 text-body [overflow-wrap:anywhere]">
+                <span className="min-w-0 flex-1 text-ink-muted [overflow-wrap:anywhere]">
                   {note.note}
                 </span>
                 <ReportButton

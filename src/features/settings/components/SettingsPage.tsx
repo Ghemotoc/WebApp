@@ -59,7 +59,7 @@ function OnThisPage() {
   const { t } = useTranslation('settings');
   return (
     <nav aria-label={t('jumpTo')}>
-      <ul className="m-0 flex list-none flex-wrap gap-x-4 gap-y-1 p-0 text-sm">
+      <ul className="m-0 flex list-none flex-wrap gap-x-4 gap-y-1 p-0 type-body">
         {sectionIds.map(([id, labelKey]) => (
           <li key={id}>
             <a href={`#${id}`} className="inline-flex min-h-6 items-center text-link underline">
@@ -107,11 +107,11 @@ function SettingsHeader() {
     <div className="flex max-w-[720px] flex-col gap-2">
       <title>{t('documentTitle')}</title>
       <Eyebrow>{t('eyebrow')}</Eyebrow>
-      <h1 className="m-0 font-heading text-[34px] font-bold text-heading">{t('heading')}</h1>
-      <p className="m-0 text-body">{t('intro')}</p>
+      <h1 className="m-0 font-heading type-title font-bold text-ink-heading">{t('heading')}</h1>
+      <p className="m-0 text-ink-muted">{t('intro')}</p>
       <Link
         to="/staff/audit-log?action=settings."
-        className="inline-flex min-h-6 items-center text-sm text-link underline"
+        className="inline-flex min-h-6 items-center type-body text-link underline"
       >
         {t('auditLink')}
       </Link>
@@ -132,7 +132,7 @@ function SettingsSections({ canOpenMarket }: { canOpenMarket: boolean }) {
       <OnThisPage />
       <SettingsFailureNotice failure={state.loadFailure} />
       {state.isLoading && state.loadFailure === null && (
-        <p className="m-0 text-meta">{t('loading')}</p>
+        <p className="m-0 text-ink-muted">{t('loading')}</p>
       )}
       {!state.isLoading && state.loadFailure === null && (
         <>
@@ -165,7 +165,7 @@ export function SettingsPage() {
   const hasArea = (area: string) =>
     access.areas.some((allowed) => allowed.area === area && allowed.access === 'act');
   return (
-    <PageContainer className="flex flex-col gap-6 pt-12 pb-7">
+    <PageContainer className="flex flex-col gap-6 pt-12 pb-6">
       <SettingsHeader />
       {isKnown && !hasArea('settings') && <Notice tone="error">{t('failures.not_allowed')}</Notice>}
       {isKnown && hasArea('settings') && (

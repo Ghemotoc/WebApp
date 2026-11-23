@@ -38,23 +38,23 @@ interface GroupListView {
 function GroupListLayout({ term, view }: { term: string; view: GroupListView }) {
   const { t } = useSearchTranslation();
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-8 pt-10 pb-14">
+    <PageContainer className="tmc-rise flex flex-col gap-8 pt-8 pb-12">
       <title>{`${view.title} · ${brand.productName}`}</title>
-      <Link to={searchAddress(term)} className="w-fit text-sm text-link underline-offset-2">
+      <Link to={searchAddress(term)} className="w-fit type-body text-link underline-offset-2">
         {t('seeAll.backToSearch')}
       </Link>
       <header className="flex flex-col gap-2">
         <Eyebrow>{view.eyebrow}</Eyebrow>
-        <h1 className="m-0 font-heading text-[clamp(32px,5vw,52px)] leading-[1.05] font-extrabold break-words text-heading">
+        <h1 className="m-0 font-heading text-[clamp(32px,5vw,52px)] leading-[1.05] font-bold break-words text-ink-heading">
           {view.title}
         </h1>
-        <p aria-live="polite" className="m-0 min-h-6 text-base text-body">
+        <p aria-live="polite" className="m-0 min-h-6 type-body text-ink-muted">
           {view.total === null ? '' : t('seeAll.count', { count: view.total })}
         </p>
       </header>
       {view.loadFailed && <Notice tone="error">{t('page.loadFailed')}</Notice>}
-      {view.total === 0 && <p className="m-0 text-body">{t('seeAll.none')}</p>}
-      <ul className="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-5 p-0">
+      {view.total === 0 && <p className="m-0 text-ink-muted">{t('seeAll.none')}</p>}
+      <ul className="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4 p-0">
         {view.cards.map((card) => (
           <li key={card.key}>{card.content}</li>
         ))}

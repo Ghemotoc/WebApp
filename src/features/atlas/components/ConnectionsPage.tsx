@@ -77,11 +77,11 @@ function AddConnectionPanel({
     <section
       id="atlas-add-connection"
       aria-labelledby="atlas-add-relationship-heading"
-      className="flex min-w-0 flex-col gap-4 rounded-card border border-border bg-surface px-7 py-[26px] shadow-card"
+      className="flex min-w-0 flex-col gap-4 rounded-card border border-border bg-surface px-6 py-6 shadow-card"
     >
       <h2
         id="atlas-add-relationship-heading"
-        className="m-0 font-heading text-[22px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('connections.add.heading')}
       </h2>
@@ -170,7 +170,7 @@ function ConnectionsViewCard({
   return (
     <section
       aria-label={t(viewHeadings[view])}
-      className="flex min-w-0 flex-col gap-4 rounded-card border border-border bg-surface px-4 py-5 shadow-card sm:px-7 sm:py-[26px]"
+      className="flex min-w-0 flex-col gap-4 rounded-card border border-border bg-surface px-4 py-4 shadow-card sm:px-6 sm:py-6"
     >
       {view === 'map' && (
         <ConnectionsMapView
@@ -188,6 +188,7 @@ function ConnectionsViewCard({
         <RelationshipList
           relationships={cast.relationships}
           words={words}
+          colours={cast.relationshipColours}
           onDelete={unrelate}
           extra={(relationship, sentence) => (
             <ItemVisibilityControls
@@ -219,7 +220,7 @@ function ConnectionsBody({ slug, cast }: { slug: string; cast: StoryCast }) {
   if (cast.characters.length < 2) {
     return (
       <div className="flex flex-col gap-3">
-        <p className="m-0 text-body">{t('connections.noCharacters')}</p>
+        <p className="m-0 text-ink-muted">{t('connections.noCharacters')}</p>
         <Link to={`/plan/s/${slug}/characters`} className="self-start font-semibold text-link">
           {t('connections.openCharacters')}
         </Link>
@@ -276,7 +277,7 @@ export function ConnectionsPage() {
       <title>
         {cast ? t('connections.documentTitle', { title: cast.storyTitle }) : t('homeDocumentTitle')}
       </title>
-      {userId === null && <p className="m-0 text-body">{t('signedOut')}</p>}
+      {userId === null && <p className="m-0 text-ink-muted">{t('signedOut')}</p>}
       {loadFailed && <Notice tone="error">{t('loadFailed')}</Notice>}
       {cast === null && <Notice tone="error">{t('notFound')}</Notice>}
       {cast !== undefined && cast !== null && (

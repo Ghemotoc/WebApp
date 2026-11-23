@@ -50,7 +50,7 @@ export function AudienceRadios<Choice extends string>(props: AudienceRadiosProps
 
   return (
     <fieldset className="m-0 flex flex-col gap-3 border-0 p-0" aria-describedby={`${name}-hint`}>
-      <legend className="mb-2 p-0 text-[15px] font-semibold text-ink">{legend}</legend>
+      <legend className="mb-2 p-0 type-body font-semibold text-ink">{legend}</legend>
       {choices.map((choice) => (
         <label key={choice} className={choiceRowClassName}>
           <span className="flex items-center gap-3">
@@ -68,7 +68,7 @@ export function AudienceRadios<Choice extends string>(props: AudienceRadiosProps
           {choice === under18Default && <StateWord>{t('settings.defaultForUnder18')}</StateWord>}
         </label>
       ))}
-      <p id={`${name}-hint`} className="m-0 text-[13px] text-meta">
+      <p id={`${name}-hint`} className="m-0 type-meta text-ink-muted">
         {hint}
       </p>
     </fieldset>

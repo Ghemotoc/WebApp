@@ -41,14 +41,14 @@ function EntrantGuide({ entrant }: { entrant: ScoringEntrant }) {
   const { t } = useClassCompetitionsTranslation();
   const guide = { classPoints: entrant.classPoints, teacherPoints: entrant.teacherPoints };
   return (
-    <div className="flex flex-col gap-1.5 text-sm text-body">
+    <div className="flex flex-col gap-2 type-body text-ink-muted">
       <p className="m-0">{t('scoring.guide', guide)}</p>
       {entrant.chapters.length === 0 ? (
         <p className="m-0">{t('scoring.noChapters')}</p>
       ) : (
         <>
           <p className="m-0 font-semibold text-ink">{t('scoring.chapters')}</p>
-          <ul className="m-0 flex list-disc flex-col gap-1 pl-5">
+          <ul className="m-0 flex list-disc flex-col gap-1 pl-4">
             {entrant.chapters.map((chapter) => (
               <li key={chapter.id} className="wrap-anywhere">
                 {t('winner.chapterLink', { chapter: chapter.title, story: chapter.storyTitle })}
@@ -78,17 +78,17 @@ interface CriterionScoreRowProps {
 function CriterionScoreRow({ fieldId, criterion, typed, onType }: CriterionScoreRowProps) {
   const { t } = useClassCompetitionsTranslation();
   return (
-    <div className="grid gap-3 rounded-2xl border border-border px-4 py-3 sm:grid-cols-[minmax(0,1fr)_180px] sm:items-start">
-      <fieldset className="m-0 flex min-w-0 flex-col gap-1.5 border-0 p-0">
+    <div className="grid gap-3 rounded-card border border-border px-4 py-3 sm:grid-cols-[minmax(0,1fr)_180px] sm:items-start">
+      <fieldset className="m-0 flex min-w-0 flex-col gap-2 border-0 p-0">
         <legend className="p-0 font-semibold text-ink">{criterion.label}</legend>
-        <p className="m-0 text-sm text-body">{criterion.description}</p>
+        <p className="m-0 type-body text-ink-muted">{criterion.description}</p>
         {criterion.outcomes.map((outcome, index) => (
           <label
             key={index}
-            className="flex min-h-6 cursor-pointer items-start gap-2 text-sm text-body"
+            className="flex min-h-6 cursor-pointer items-start gap-2 type-body text-ink-muted"
           >
             {/* Uncontrolled on purpose: a tick is the teacher's working note, never saved. */}
-            <input type="checkbox" className="mt-0.5 size-4 shrink-0 accent-primary" />
+            <input type="checkbox" className="mt-1 size-4 shrink-0 accent-primary" />
             <span className="wrap-anywhere">{outcome}</span>
           </label>
         ))}
@@ -157,13 +157,16 @@ export function EntrantScoreCard({ competitionId, criteria, entrant }: EntrantSc
     <form
       onSubmit={save}
       aria-labelledby={headingId}
-      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-5 shadow-card md:p-6"
+      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-4 shadow-card md:p-6"
     >
-      <h3 id={headingId} className="m-0 font-heading text-xl font-bold wrap-anywhere text-heading">
+      <h3
+        id={headingId}
+        className="m-0 font-heading type-subheading font-bold wrap-anywhere text-ink-heading"
+      >
         {entrant.displayName}
       </h3>
       <EntrantGuide entrant={entrant} />
-      <p className="m-0 text-[13px] text-meta">{t('scoring.checklistHint')}</p>
+      <p className="m-0 type-meta text-ink-muted">{t('scoring.checklistHint')}</p>
       {criteria.map((criterion) => (
         <CriterionScoreRow
           key={criterion.id}

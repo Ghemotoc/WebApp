@@ -50,7 +50,7 @@ export function CharacterAppearancesSection({
     <FoldingCard title={t('chapterPlan.appearsIn.heading')} hint={hint} contentClassName="gap-3">
       {loadFailed && <Notice tone="error">{t('chapterPlan.appearsIn.loadFailed')}</Notice>}
       {appearances?.length === 0 && (
-        <p className="m-0 text-sm text-meta">{t('chapterPlan.appearsIn.none')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('chapterPlan.appearsIn.none')}</p>
       )}
       {appearances !== undefined && appearances !== null && appearances.length > 0 && (
         <ul className="m-0 flex list-none flex-col gap-1 p-0">
@@ -65,7 +65,7 @@ export function CharacterAppearancesSection({
                   title: appearance.title === '' ? t('chapterPlan.untitled') : appearance.title,
                 })}
               </Link>
-              <span className="text-sm text-meta">{t(roleKey(appearance))}</span>
+              <span className="type-body text-ink-muted">{t(roleKey(appearance))}</span>
             </li>
           ))}
         </ul>

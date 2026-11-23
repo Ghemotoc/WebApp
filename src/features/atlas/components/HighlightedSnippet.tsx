@@ -21,7 +21,7 @@ export function HighlightedSnippet({ snippet, query }: { snippet: string; query:
         part.isMatch ? (
           <mark
             key={place}
-            className="bg-transparent font-bold text-heading underline decoration-2 underline-offset-2"
+            className="bg-transparent font-semibold text-ink-heading underline decoration-2 underline-offset-2"
           >
             {part.text}
           </mark>

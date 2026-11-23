@@ -54,14 +54,14 @@ function QuotePart({ selection, onQuote }: { selection: QuoteSelection; onQuote:
   const { t } = useTranslation('sharing');
   if (!selection.fits) {
     return (
-      <p className="m-0 py-2.5 text-sm text-body">
+      <p className="m-0 py-3 type-body text-ink-muted">
         {t('button.quoteTooLong', { count: selection.length })}
       </p>
     );
   }
   return (
     <>
-      <span className="text-sm text-body">
+      <span className="type-body text-ink-muted">
         {t('button.quoteCount', { count: selection.length })}
       </span>
       <Button onMouseDown={(event) => event.preventDefault()} onClick={onQuote}>

@@ -35,11 +35,11 @@ export function RequestActions({ otherName, isAnswering, failure, onAnswer }: Re
   const answer = (chosen: RequestAnswer) => void onAnswer(chosen).catch(errorShownByHook);
   return (
     <div className="flex flex-col gap-3 border-t border-border p-4">
-      <h3 className="m-0 text-base font-semibold text-heading">
+      <h3 className="m-0 type-body font-bold text-ink-heading">
         {t('request.title', { name: otherName })}
       </h3>
-      <p className="m-0 text-sm text-body">{t('request.explain')}</p>
-      <p className="m-0 text-sm text-body">{t('request.noThanksExplain')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('request.explain')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('request.noThanksExplain')}</p>
       <div className="flex flex-wrap gap-3">
         <Button disabled={isAnswering} onClick={() => answer('accept')}>
           {t('request.accept')}

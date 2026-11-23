@@ -53,7 +53,7 @@ function MemberList({ space }: { space: Space }) {
   const list = members.data ?? [];
   return (
     <SpaceFormCard eyebrow={space.name} title={t('members.title')} intro={t('members.intro')}>
-      <p aria-live="polite" className="m-0 text-sm text-body">
+      <p aria-live="polite" className="m-0 type-body text-ink-muted">
         {removing.isDone && t('members.removed', { name: lastName })}
       </p>
       {removing.failure !== null && (
@@ -88,7 +88,7 @@ export function SpaceMembersPage() {
   const read = useSpace(spaceSlug);
   const space = read.data;
   return (
-    <PageContainer className="flex flex-col gap-6 py-10">
+    <PageContainer className="flex flex-col gap-6 py-8">
       {read.isError && <Notice tone="error">{t('space.loadFailed')}</Notice>}
       {space === null && <SpaceNotFound />}
       {space !== undefined && space !== null && (

@@ -144,12 +144,15 @@ export function AddShiftForm({
       aria-labelledby="add-shift-heading"
       className="flex max-w-[560px] flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card"
     >
-      <h2 id="add-shift-heading" className="m-0 font-heading text-xl font-bold text-heading">
+      <h2
+        id="add-shift-heading"
+        className="m-0 font-heading type-subheading font-bold text-ink-heading"
+      >
         {t('onCall.addHeading')}
       </h2>
       <ShiftInputs fields={fields} people={rotaData.people} onChange={change} />
       {isMissing && (
-        <p role="alert" className="m-0 text-sm text-destructive">
+        <p role="alert" className="m-0 type-body text-destructive">
           {t('onCall.missing')}
         </p>
       )}

@@ -44,7 +44,7 @@ export function ArrivedCoverNote({ story }: ArrivedCoverNoteProps) {
           />
         }
       />
-      <p className="m-0 min-w-0 flex-1 text-[15px] text-body">{t('canva.arrived')}</p>
+      <p className="m-0 min-w-0 flex-1 type-body text-ink-muted">{t('canva.arrived')}</p>
     </div>
   );
 }

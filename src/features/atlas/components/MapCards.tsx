@@ -69,16 +69,18 @@ function MapCard({
       <MaybeLink
         to={addressOf(node.id)}
         isNativeDragOff={drag !== null}
-        className="flex size-full flex-col items-center justify-center gap-1 overflow-hidden rounded-[24px] border border-border bg-surface px-3 py-2 text-center no-underline shadow-card select-none"
+        className="flex size-full flex-col items-center justify-center gap-1 overflow-hidden rounded-card border border-border bg-surface px-3 py-2 text-center no-underline shadow-card select-none"
       >
         {/* A picture only when there is one: no initials circle (G10a). */}
         {visiblePictureUrl(character) !== null && (
           <CharacterAvatar character={character} size="small" />
         )}
-        <span className="max-w-full text-sm font-semibold break-words text-heading">
+        <span className="max-w-full type-body font-semibold break-words text-ink-heading">
           {character.name}
         </span>
-        {summary !== '' && <span className="max-w-full truncate text-xs text-meta">{summary}</span>}
+        {summary !== '' && (
+          <span className="max-w-full truncate type-meta text-ink-muted">{summary}</span>
+        )}
       </MaybeLink>
     </li>
   );

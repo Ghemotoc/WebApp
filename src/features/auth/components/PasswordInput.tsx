@@ -54,8 +54,8 @@ export function PasswordInput({
   const { hintId, errorId, describedBy } = describedByIds(id, hint, errorMessage);
 
   return (
-    <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-sm font-semibold text-ink">
+    <div className="flex flex-col gap-2">
+      <label htmlFor={id} className="type-body font-semibold text-ink">
         {label}
       </label>
       <div className="relative">
@@ -65,7 +65,7 @@ export function PasswordInput({
           aria-describedby={describedBy}
           aria-invalid={errorMessage === undefined ? undefined : true}
           className={cn(
-            'h-12 w-full field-box pr-20 pl-4 font-body text-[15px]',
+            'h-12 w-full field-box pr-20 pl-4 font-body type-body',
             errorMessage !== undefined && 'border-destructive',
             // Hidden dots sit evenly apart; shown text keeps its normal spacing.
             !isShown && 'tracking-[0.18em]',
@@ -78,18 +78,18 @@ export function PasswordInput({
           aria-pressed={isShown}
           aria-label={isShown ? t('signIn.hidePasswordLabel') : t('signIn.showPasswordLabel')}
           onClick={() => setIsShown(!isShown)}
-          className="absolute top-0 right-1 h-11 rounded-full px-3 text-sm font-semibold text-link hover:text-link-hover"
+          className="absolute top-0 right-1 h-11 rounded-full px-3 type-body font-semibold text-link hover:text-link-hover"
         >
           {isShown ? t('signIn.hidePassword') : t('signIn.showPassword')}
         </button>
       </div>
       {hint !== undefined && (
-        <p id={hintId} className="m-0 text-[13px] text-meta">
+        <p id={hintId} className="m-0 type-meta text-ink-muted">
           {hint}
         </p>
       )}
       {errorMessage !== undefined && (
-        <p id={errorId} className="m-0 text-sm text-destructive">
+        <p id={errorId} className="m-0 type-body text-destructive">
           {errorMessage}
         </p>
       )}

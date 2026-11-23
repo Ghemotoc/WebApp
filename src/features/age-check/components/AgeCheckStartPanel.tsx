@@ -19,11 +19,12 @@ import { StartAgeCheckButton } from './StartAgeCheckButton';
  */
 function MethodCard({ title, note, body }: { title: string; note?: string; body: string }) {
   return (
-    <li className="flex flex-col gap-1 rounded-2xl border border-border bg-surface p-4">
-      <p className="m-0 font-semibold text-heading">
-        {title} {note === undefined ? null : <span className="font-normal text-meta">{note}</span>}
+    <li className="flex flex-col gap-1 rounded-card border border-border bg-surface p-4">
+      <p className="m-0 font-semibold text-ink-heading">
+        {title}{' '}
+        {note === undefined ? null : <span className="font-normal text-ink-muted">{note}</span>}
       </p>
-      <p className="m-0 text-sm text-body">{body}</p>
+      <p className="m-0 type-body text-ink-muted">{body}</p>
     </li>
   );
 }
@@ -36,15 +37,15 @@ function MethodCard({ title, note, body }: { title: string; note?: string; body:
 export function AgeCheckStartPanel() {
   const { t } = useTranslation('account');
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <section aria-labelledby="age-check-methods-heading" className="flex flex-col gap-3">
         <h2
           id="age-check-methods-heading"
-          className="m-0 font-heading text-[20px] font-bold text-heading"
+          className="m-0 font-heading type-subheading font-bold text-ink-heading"
         >
           {t('ageCheck.methodsHeading')}
         </h2>
-        <p className="m-0 text-body">{t('ageCheck.methodsIntro')}</p>
+        <p className="m-0 text-ink-muted">{t('ageCheck.methodsIntro')}</p>
         <ul className="m-0 flex list-none flex-col gap-3 p-0">
           <MethodCard
             title={t('ageCheck.selfieTitle')}
@@ -56,11 +57,12 @@ export function AgeCheckStartPanel() {
       </section>
       <div className="flex flex-col gap-2">
         <StartAgeCheckButton label={t('ageCheck.start')} />
-        <p className="m-0 text-sm text-meta">{t('ageCheck.startHint')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('ageCheck.startHint')}</p>
       </div>
       {/* Criterion 5 and CLAUDE.md rule 5: only the result, its date and its method are kept. */}
-      <p className="m-0 rounded-2xl bg-tint p-4 text-sm text-body">
-        <strong className="text-heading">{t('ageCheck.keptLabel')}</strong> {t('ageCheck.keptBody')}
+      <p className="m-0 rounded-card bg-tint p-4 type-body text-ink-muted">
+        <strong className="text-ink-heading">{t('ageCheck.keptLabel')}</strong>{' '}
+        {t('ageCheck.keptBody')}
       </p>
     </div>
   );

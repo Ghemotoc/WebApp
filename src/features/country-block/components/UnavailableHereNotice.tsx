@@ -18,22 +18,22 @@ import { Link } from 'react-router';
 export function UnavailableHereNotice() {
   const { t } = useTranslation('reading');
   return (
-    <div className="flex flex-col items-start gap-[14px]">
+    <div className="flex flex-col items-start gap-4">
       <title>{t('unavailableHere.title')}</title>
-      <h1 className="m-0 font-heading text-[clamp(32px,5vw,48px)] leading-[1.1] font-bold text-heading">
+      <h1 className="m-0 font-heading text-[clamp(32px,5vw,48px)] leading-[1.1] font-bold text-ink-heading">
         {t('unavailableHere.title')}
       </h1>
-      <p className="m-0 text-base text-body">{t('unavailableHere.body')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('unavailableHere.body')}</p>
       <div className="flex flex-wrap items-center gap-3">
         <Link
           to="/"
-          className="inline-flex h-11 items-center rounded-full button-main px-5 text-sm font-semibold no-underline"
+          className="inline-flex h-11 items-center rounded-full button-main px-4 type-body font-semibold no-underline"
         >
           {t('unavailableHere.goHome')}
         </Link>
         <Link
           to="/search"
-          className="inline-flex h-11 items-center rounded-full button-glass px-5 text-sm font-semibold no-underline"
+          className="inline-flex h-11 items-center rounded-full button-glass px-4 type-body font-semibold no-underline"
         >
           {t('unavailableHere.search')}
         </Link>

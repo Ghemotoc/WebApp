@@ -82,7 +82,7 @@ export function NavTrack({ items, end }: NavTrackProps) {
   return (
     <ul
       ref={trackRef}
-      className="segmented-track nav-track relative m-0 flex list-none flex-wrap items-center gap-0.5 rounded-full p-1"
+      className="segmented-track nav-track relative m-0 flex list-none flex-wrap items-center gap-1 rounded-full p-1"
     >
       {box !== null && (
         <li

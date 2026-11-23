@@ -113,7 +113,7 @@ export function MailReplyForm({
       </div>
       <div className="flex flex-wrap items-center justify-between gap-3">
         {hint !== undefined && (
-          <p id={`${id}-hint`} className="m-0 text-[13px] text-meta">
+          <p id={`${id}-hint`} className="m-0 type-meta text-ink-muted">
             {hint}
           </p>
         )}

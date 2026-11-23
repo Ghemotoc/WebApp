@@ -51,13 +51,13 @@ function Paper({ heading, wordCount, scrollBox, isEditable, children }: PaperPro
         isEditable && 'focus-within:ring-2 focus-within:ring-primary',
       )}
     >
-      <p className="m-0 border-b border-border px-6 py-3 text-[13px] text-meta">
-        <span className="font-bold text-heading">{heading}</span>
+      <p className="m-0 border-b border-border px-6 py-3 type-meta text-ink-muted">
+        <span className="font-semibold text-ink-heading">{heading}</span>
         {' · '}
         {t('editor.wordCount', { count: wordCount })}
       </p>
       {/* relative: the paragraphs measure their offsetTop from this box (useScrollTogether). */}
-      <div ref={scrollBox} className="relative max-h-[70vh] overflow-y-auto px-6 pt-5 pb-1">
+      <div ref={scrollBox} className="relative max-h-[70vh] overflow-y-auto px-6 pt-4 pb-1">
         {children}
       </div>
     </section>
@@ -78,7 +78,7 @@ function OriginalText({
       key={index}
       data-paragraph={index}
       lang={languageCode}
-      className="m-0 pb-4 font-story text-[17px] leading-relaxed break-words whitespace-pre-line text-body"
+      className="m-0 pb-4 font-story type-long leading-relaxed break-words whitespace-pre-line text-ink-muted"
     >
       {text}
     </p>
@@ -103,7 +103,7 @@ export function SideBySidePapers({ original, translation, onChange }: SideBySide
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="grid grid-cols-2 gap-5">
+      <div className="grid grid-cols-2 gap-4">
         <Paper
           heading={t('editor.originalHead', { language: original.languageName })}
           wordCount={originalWords}
@@ -130,8 +130,8 @@ export function SideBySidePapers({ original, translation, onChange }: SideBySide
           ))}
         </Paper>
       </div>
-      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 text-[13px]">
-        <label className="inline-flex min-h-11 items-center gap-2 font-semibold text-heading">
+      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 type-meta">
+        <label className="inline-flex min-h-11 items-center gap-2 font-semibold text-ink-heading">
           <input
             type="checkbox"
             className="size-5 accent-primary"
@@ -140,7 +140,7 @@ export function SideBySidePapers({ original, translation, onChange }: SideBySide
           />
           {t('editor.scrollTogether')}
         </label>
-        <p role="status" className="m-0 font-semibold text-meta">
+        <p role="status" className="m-0 font-semibold text-ink-muted">
           {t('editor.progress', { count: translatedWords, total: originalWords })}
         </p>
       </div>

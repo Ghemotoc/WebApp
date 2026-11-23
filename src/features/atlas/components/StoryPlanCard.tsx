@@ -59,7 +59,7 @@ export function StoryPlanCard({
   return (
     <article
       aria-labelledby={headingId}
-      className="relative flex min-w-0 items-start gap-[18px] rounded-card border border-border bg-surface p-[18px] shadow-card hover:bg-tint"
+      className="relative flex min-w-0 items-start gap-4 rounded-card border border-border bg-surface p-4 shadow-card hover:bg-tint"
     >
       <StoryCoverArt
         story={story}
@@ -78,18 +78,18 @@ export function StoryPlanCard({
         <PlanPills story={story} plan={plan} />
         <h2
           id={headingId}
-          className="m-0 font-heading text-[22px] leading-[1.15] font-bold break-words text-heading"
+          className="m-0 font-heading type-heading leading-[1.15] font-bold break-words text-ink-heading"
         >
           {/* The link covers the whole card (after:inset-0), so anywhere on it opens the plan. */}
           <Link
             to={`/plan/s/${story.slug}`}
-            className="text-heading no-underline after:absolute after:inset-0 after:rounded-card hover:underline"
+            className="text-ink-heading no-underline after:absolute after:inset-0 after:rounded-card hover:underline"
           >
             {story.title}
           </Link>
         </h2>
         {plan.logline !== '' && (
-          <p className="m-0 text-sm leading-normal break-words text-meta">{plan.logline}</p>
+          <p className="m-0 type-body leading-normal break-words text-ink-muted">{plan.logline}</p>
         )}
         <PlanWordsBar
           id={`atlas-plan-words-${story.id}`}

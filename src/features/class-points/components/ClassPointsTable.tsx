@@ -60,7 +60,7 @@ function ChapterLine({ chapter }: { chapter: TableChapter }) {
         >
           {name}
         </Link>
-        <span className="text-sm text-body">
+        <span className="type-body text-ink-muted">
           {t('table.chapterClass', { count: chapter.classPoints })},{' '}
           {chapter.teacherPoints === null
             ? t('table.chapterNoTeacher')
@@ -84,17 +84,17 @@ function PupilRows({ pupil }: { pupil: TablePupil }) {
       <tr className="border-t border-border">
         <th scope="row" className="py-3 pr-3 text-left align-top font-semibold text-ink">
           <span className="[overflow-wrap:anywhere]">{pupil.displayName}</span>{' '}
-          <span className="font-normal text-meta">@{pupil.handle}</span>
+          <span className="font-normal text-ink-muted">@{pupil.handle}</span>
         </th>
-        <td className="px-3 py-3 text-right align-top text-body">
+        <td className="px-3 py-3 text-right align-top text-ink-muted">
           {pupil.classPoints === 0 ? t('table.noClassPoints') : pupil.classPoints}
         </td>
-        <td className="py-3 pl-3 text-right align-top text-body">{pupil.teacherPoints}</td>
+        <td className="py-3 pl-3 text-right align-top text-ink-muted">{pupil.teacherPoints}</td>
       </tr>
       <tr>
         <td colSpan={3} className="pb-4">
           {pupil.chapters.length === 0 ? (
-            <p className="m-0 text-sm text-meta">{t('table.noChapters')}</p>
+            <p className="m-0 type-body text-ink-muted">{t('table.noChapters')}</p>
           ) : (
             <ul
               aria-label={`${t('table.columns.work')}: ${pupil.displayName}`}
@@ -121,7 +121,7 @@ export function ClassPointsTable({ pupils }: { pupils: TablePupil[] }) {
   const { t } = useClassPointsTranslation();
   const [sort, setSort] = useState<PupilSort>('name');
   return (
-    <table className="w-full border-collapse text-[15px]">
+    <table className="w-full border-collapse type-body">
       <caption className="sr-only">{t('table.caption')}</caption>
       <thead>
         <tr>
@@ -136,8 +136,8 @@ export function ClassPointsTable({ pupils }: { pupils: TablePupil[] }) {
                 type="button"
                 onClick={() => setSort(column.sort)}
                 className={cn(
-                  'min-h-6 rounded-sm text-sm font-semibold underline-offset-4 hover:underline',
-                  sort === column.sort ? 'text-heading underline' : 'text-body',
+                  'min-h-6 rounded-field type-body font-semibold underline-offset-4 hover:underline',
+                  sort === column.sort ? 'text-ink-heading underline' : 'text-ink-muted',
                 )}
               >
                 {t(`table.columns.${column.labelKey}`)}

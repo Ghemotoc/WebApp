@@ -33,7 +33,7 @@ export function ProfileSignatureCard({ handle, name }: ProfileSignatureCardProps
   if (signature === null) return null;
   return (
     <Card>
-      <section aria-labelledby="profile-signature-heading" className="flex flex-col gap-3.5">
+      <section aria-labelledby="profile-signature-heading" className="flex flex-col gap-4">
         <p aria-hidden="true" className="m-0 eyebrow">
           {t('signature.eyebrow')}
         </p>
@@ -41,7 +41,7 @@ export function ProfileSignatureCard({ handle, name }: ProfileSignatureCardProps
           {t('signature.eyebrow')}
         </h2>
         <SignatureBody signature={signature} name={name} size="card" />
-        <p className="m-0 text-[13px] leading-normal text-meta">
+        <p className="m-0 type-meta leading-normal text-ink-muted">
           {t('signature.whereItShows', { handle })}
         </p>
       </section>

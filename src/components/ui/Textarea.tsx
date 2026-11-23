@@ -51,10 +51,10 @@ export function Textarea({
   }
 
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2">
       {/* wrap-anywhere: a label a member typed as one long word (a detail's name on a character
           sheet) breaks inside its column and never pushes the page sideways (rule 21). */}
-      <label htmlFor={id} className="text-sm font-semibold wrap-anywhere text-ink">
+      <label htmlFor={id} className="type-body font-semibold wrap-anywhere text-ink">
         {label}
       </label>
       <textarea
@@ -62,19 +62,19 @@ export function Textarea({
         aria-describedby={describedBy}
         aria-invalid={errorMessage === undefined ? undefined : true}
         className={cn(
-          'field-box min-h-24 resize-y px-4 py-3 font-body text-base leading-normal',
+          'field-box min-h-24 resize-y px-4 py-3 font-body type-body leading-normal',
           className,
         )}
         {...textareaProps}
         onChange={handleChange}
       />
       {hint !== undefined && (
-        <p id={hintId} className="text-[13px] text-meta">
+        <p id={hintId} className="type-meta text-ink-muted">
           {hint}
         </p>
       )}
       {errorMessage !== undefined && (
-        <p id={errorId} className="text-sm text-destructive">
+        <p id={errorId} className="type-body text-destructive">
           {errorMessage}
         </p>
       )}

@@ -84,7 +84,7 @@ export function ListedStoryCard(props: {
       href={`/s/${story.slug}`}
       wrapCover={(drawn) => <StoryCoverArt story={story} drawn={drawn} className="w-full" />}
       pill={
-        <span className="flex flex-wrap gap-1.5">
+        <span className="flex flex-wrap gap-2">
           {/* Robert, 6 Nov 2026: only "Ongoing" shows as a pill; "Completed" is a filter. */}
           {story.completionStatus === 'ongoing' && (
             <InfoPill tone="sage">{t('status.ongoing', { ns: 'writing' })}</InfoPill>

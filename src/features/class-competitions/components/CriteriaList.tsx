@@ -18,22 +18,24 @@ export function CriteriaList({ criteria }: { criteria: Criterion[] }) {
   const { t } = useClassCompetitionsTranslation();
   return (
     <div className="flex flex-col gap-3">
-      <h3 className="m-0 font-heading text-lg font-bold text-heading">{t('criteria.heading')}</h3>
+      <h3 className="m-0 font-heading type-long font-bold text-ink-heading">
+        {t('criteria.heading')}
+      </h3>
       <ol className="m-0 flex list-none flex-col gap-3 p-0">
         {criteria.map((criterion, index) => (
           <li
             key={criterion.id ?? index}
-            className="flex flex-col gap-1.5 rounded-2xl border border-border px-4 py-3"
+            className="flex flex-col gap-2 rounded-card border border-border px-4 py-3"
           >
             <p className="m-0 font-semibold text-ink">
               {criterion.label}{' '}
-              <span className="font-normal text-meta">
+              <span className="font-normal text-ink-muted">
                 ({t('criteria.points', { count: criterion.maxPoints })})
               </span>
             </p>
-            <p className="m-0 text-sm text-body">{criterion.description}</p>
-            <p className="m-0 text-sm font-semibold text-ink">{t('criteria.mustHave')}</p>
-            <ul className="m-0 flex list-disc flex-col gap-1 pl-5 text-sm text-body">
+            <p className="m-0 type-body text-ink-muted">{criterion.description}</p>
+            <p className="m-0 type-body font-semibold text-ink">{t('criteria.mustHave')}</p>
+            <ul className="m-0 flex list-disc flex-col gap-1 pl-4 type-body text-ink-muted">
               {criterion.outcomes.map((outcome, outcomeIndex) => (
                 <li key={outcomeIndex}>{outcome}</li>
               ))}

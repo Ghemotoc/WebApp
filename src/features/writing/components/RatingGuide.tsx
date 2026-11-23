@@ -27,28 +27,28 @@ export function RatingGuide({ chosen }: { chosen: StoryRating | null }) {
   const { t } = useTranslation('writing');
   return (
     <div className="flex flex-col gap-3">
-      <ul className="m-0 list-none overflow-hidden rounded-2xl border border-border p-0">
+      <ul className="m-0 list-none overflow-hidden rounded-card border border-border p-0">
         {storyRatings.map((rating, index) => (
           <li
             key={rating}
             aria-current={rating === chosen ? 'true' : undefined}
-            className={`flex items-start gap-4 px-3.5 py-2.5 ${
+            className={`flex items-start gap-4 px-4 py-3 ${
               index === 0 ? '' : 'border-t border-border'
             } ${rating === chosen ? 'bg-tint' : 'bg-surface'}`}
           >
             {/* The board's 70 px name column, so the four descriptions line up. */}
-            <span className="w-[70px] flex-none text-[13px] font-bold text-heading">
+            <span className="w-[70px] flex-none type-meta font-semibold text-ink-heading">
               {t(`rating.${rating}`)}
             </span>
-            <span className="flex min-w-0 flex-col gap-0.5 text-[13px] leading-normal">
-              <span className="font-bold text-ink">{t(`labels.guide.${rating}.who`)}</span>
-              <span className="text-body">{t(`labels.guide.${rating}.what`)}</span>
+            <span className="flex min-w-0 flex-col gap-1 type-meta leading-normal">
+              <span className="font-semibold text-ink">{t(`labels.guide.${rating}.who`)}</span>
+              <span className="text-ink-muted">{t(`labels.guide.${rating}.what`)}</span>
             </span>
           </li>
         ))}
       </ul>
       {/* The rule above every rating (16 Oct 2026; Q17), then the guide that explains them. */}
-      <p className="m-0 text-[13px] leading-normal text-meta">
+      <p className="m-0 type-meta leading-normal text-ink-muted">
         {t('labels.guideRule')}{' '}
         <Link to="/help/how-to-ratings-and-labels" className="font-semibold text-link underline">
           {t('labels.ratingsLink')}

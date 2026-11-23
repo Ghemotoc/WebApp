@@ -16,7 +16,7 @@ import { expect, test, type Browser } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { homeAddressPattern } from './support/homeAddress';
+import { memberHomeAddressPattern } from './support/homeAddress';
 import { signInPersona, useSessionInBrowser } from './support/personas';
 
 /** The persona these tests change; no other test file uses it. */
@@ -89,7 +89,7 @@ test.describe('usernames and pen names (S1-E2-04)', () => {
     await expect(page.getByText('@ms.popescu is free.')).toBeVisible();
     await page.getByLabel('Pen name (optional)').fill('Doamna Popescu');
     await page.getByRole('button', { name: 'Save and continue' }).click();
-    await expect(page).toHaveURL(homeAddressPattern);
+    await expect(page).toHaveURL(memberHomeAddressPattern);
     await expect(page.getByRole('heading', { name: 'Choose a username' })).toHaveCount(0);
     expect(runSql(`select account_state('${personaId}')`)).toBe('active');
     expect(runSql(`select pen_name from public.profiles where id = '${personaId}'`)).toBe(

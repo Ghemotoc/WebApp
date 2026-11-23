@@ -23,7 +23,8 @@ function BlockedList() {
   const block = useBlock();
   if (loadFailed) return <Notice tone="error">{t('settings.blockedLoadFailed')}</Notice>;
   if (!isLoaded) return null;
-  if (accounts.length === 0) return <p className="m-0 text-body">{t('settings.blockedEmpty')}</p>;
+  if (accounts.length === 0)
+    return <p className="m-0 text-ink-muted">{t('settings.blockedEmpty')}</p>;
   return (
     <>
       {block.hasFailed && <Notice tone="error">{t('safety.unblockFailed')}</Notice>}
@@ -37,7 +38,7 @@ function BlockedList() {
               to={`/u/${encodeURIComponent(account.handle)}`}
               className="text-link underline hover:text-link-hover"
             >
-              {account.displayName} <span className="text-meta">@{account.handle}</span>
+              {account.displayName} <span className="text-ink-muted">@{account.handle}</span>
             </Link>
             <Button
               variant="secondary"
@@ -68,7 +69,7 @@ export function BlockedAccountsSection() {
     >
       <h2
         id="settings-blocked-heading"
-        className="m-0 font-heading text-[22px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('settings.blockedHeading')}
       </h2>

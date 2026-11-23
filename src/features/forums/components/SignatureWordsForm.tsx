@@ -81,7 +81,7 @@ export function SignatureWordsForm({ savedText, pictureId, save }: SignatureWord
       />
       <p
         aria-live="polite"
-        className={`m-0 text-[13px] ${message.isOver ? 'text-destructive' : 'text-meta'}`}
+        className={`m-0 type-meta ${message.isOver ? 'text-destructive' : 'text-ink-muted'}`}
       >
         {t(message.key, message.values)}
       </p>

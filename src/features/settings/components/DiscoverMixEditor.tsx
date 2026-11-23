@@ -53,7 +53,7 @@ function ShownShelf({ word, index, total, onMove, onHide }: ShownShelfProps) {
   const name = t(`discover.shelves.${word}`, { defaultValue: word });
   return (
     <li className="flex flex-wrap items-center justify-between gap-2 border-t border-border pt-2 first:border-t-0 first:pt-0">
-      <span className="text-sm text-ink">
+      <span className="type-body text-ink">
         {index + 1}. {name}
       </span>
       <span className="flex flex-wrap gap-2">
@@ -94,7 +94,7 @@ function ShownShelf({ word, index, total, onMove, onHide }: ShownShelfProps) {
 function HiddenShelves({ hidden, onShow }: { hidden: string[]; onShow: (word: string) => void }) {
   const { t } = useTranslation('settings');
   if (hidden.length === 0)
-    return <p className="m-0 text-sm text-meta">{t('discover.noneHidden')}</p>;
+    return <p className="m-0 type-body text-ink-muted">{t('discover.noneHidden')}</p>;
   return (
     <ul className="m-0 flex list-none flex-wrap gap-2 p-0">
       {hidden.map((word) => {
@@ -138,7 +138,7 @@ export function DiscoverMixEditor({ state }: { state: SettingsAdminState }) {
   };
   return (
     <SettingsSection id="discover" heading={t('sections.discover')} intro={t('discover.intro')}>
-      <h3 className="m-0 text-base font-bold text-heading">{t('discover.shown')}</h3>
+      <h3 className="m-0 type-body font-bold text-ink-heading">{t('discover.shown')}</h3>
       <ol className="m-0 flex list-none flex-col gap-2 p-0">
         {words.map((word, index) => (
           <ShownShelf
@@ -151,7 +151,7 @@ export function DiscoverMixEditor({ state }: { state: SettingsAdminState }) {
           />
         ))}
       </ol>
-      <h3 className="m-0 text-base font-bold text-heading">{t('discover.hidden')}</h3>
+      <h3 className="m-0 type-body font-bold text-ink-heading">{t('discover.hidden')}</h3>
       <HiddenShelves hidden={hidden} onShow={(word) => change([...words, word])} />
       {words.length === 0 && <Notice tone="error">{t('discover.atLeastOne')}</Notice>}
       <SaveFeedback isSaved={isSaved} failure={failure} />

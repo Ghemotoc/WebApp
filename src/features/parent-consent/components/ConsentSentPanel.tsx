@@ -29,7 +29,7 @@ export interface ConsentSentPanelProps {
 
 /** The class of a link drawn as a secondary button. */
 const linkButtonClass =
-  'inline-flex h-11 items-center rounded-full button-glass px-5 text-sm font-semibold no-underline';
+  'inline-flex h-11 items-center rounded-full button-glass px-4 type-body font-semibold no-underline';
 
 /**
  * Renders the panel.
@@ -53,11 +53,13 @@ export function ConsentSentPanel({
         {t('sentBody', { email: consent.parentEmail ?? '' })}
       </Notice>
       <div className="flex flex-col gap-1">
-        <p className="m-0 font-semibold text-heading">{t('meanwhile')}</p>
-        <p className="m-0 text-body">{t('opensAfter')}</p>
+        <p className="m-0 font-semibold text-ink-heading">{t('meanwhile')}</p>
+        <p className="m-0 text-ink-muted">{t('opensAfter')}</p>
       </div>
-      {deadline !== null && <p className="m-0 text-body">{t('deadline', { date: deadline })}</p>}
-      {resendState === 'sent' && <p className="m-0 text-sm text-meta">{t('sentAgain')}</p>}
+      {deadline !== null && (
+        <p className="m-0 text-ink-muted">{t('deadline', { date: deadline })}</p>
+      )}
+      {resendState === 'sent' && <p className="m-0 type-body text-ink-muted">{t('sentAgain')}</p>}
       {resendState !== null && resendState !== 'sent' && (
         <Notice tone="error">{t(`failures.${resendState}`)}</Notice>
       )}

@@ -69,7 +69,7 @@ export function NewChapterButton({
         {label ?? t('storyCard.writeChapterOne')}
       </Button>
       {failed && (
-        <p role="alert" className="m-0 w-full text-sm text-destructive">
+        <p role="alert" className="m-0 w-full type-body text-destructive">
           {create.data?.outcome === 'not_active'
             ? t('newStory.notActive')
             : t('errors.chapterCreateFailed')}

@@ -42,9 +42,9 @@ export function ConfirmedButton(props: ConfirmedButtonProps) {
     <div
       role="group"
       aria-label={props.label}
-      className="flex flex-col gap-2 rounded-2xl border border-border px-4 py-3"
+      className="flex flex-col gap-2 rounded-card border border-border px-4 py-3"
     >
-      <p className="m-0 text-body">{props.question}</p>
+      <p className="m-0 text-ink-muted">{props.question}</p>
       <div className="flex flex-wrap gap-3">
         <Button
           disabled={props.isDisabled}

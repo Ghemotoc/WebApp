@@ -51,7 +51,7 @@ export function AccountLinks() {
   return (
     <Link
       to="/sign-in"
-      className="inline-flex h-11 items-center rounded-full button-main px-5 text-sm font-semibold whitespace-nowrap no-underline"
+      className="inline-flex h-11 items-center rounded-full button-main px-4 type-body font-semibold whitespace-nowrap no-underline"
     >
       {t('nav.getIn')}
     </Link>

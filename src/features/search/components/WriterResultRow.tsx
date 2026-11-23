@@ -28,10 +28,10 @@ export function WriterResultRow({ writer }: { writer: FoundWriter }) {
   return (
     <li className="flex items-center gap-3 border-t border-hairline py-3 first:border-t-0">
       <PersonAvatar name={writer.displayName} handle={writer.handle} size="medium" />
-      <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+      <span className="flex min-w-0 flex-1 flex-col gap-1">
         <Link
           to={`/u/${encodeURIComponent(writer.handle)}`}
-          className="text-[15px] leading-5 font-semibold break-words text-heading no-underline hover:underline"
+          className="type-body leading-5 font-semibold break-words text-ink-heading no-underline hover:underline"
         >
           {writer.displayName}
         </Link>

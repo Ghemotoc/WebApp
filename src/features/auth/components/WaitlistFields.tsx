@@ -56,15 +56,15 @@ export function WaitlistFields({ form }: { form: ReturnType<typeof useSignUpForm
           type="checkbox"
           checked={answers.newsEmails}
           onChange={(event) => setField('newsEmails', event.target.checked)}
-          className="mt-0.5 size-6 shrink-0 cursor-pointer accent-(--link)"
+          className="mt-1 size-6 shrink-0 cursor-pointer accent-(--link)"
         />
-        <label htmlFor="sign-up-news" className="text-[15px] text-body">
+        <label htmlFor="sign-up-news" className="type-body text-ink-muted">
           {t('signUp.waitlist.news')}
         </label>
       </div>
       {/* 3. A heads-up, not a step: we may ask people to confirm who they are later (Robert,
           21 Nov 2026, 06:59 UTC; WAITLIST-2). The wording is on the lawyer's list. */}
-      <p className="m-0 text-[13px] text-meta">{t('signUp.waitlist.identityNote')}</p>
+      <p className="m-0 type-meta text-ink-muted">{t('signUp.waitlist.identityNote')}</p>
     </>
   );
 }

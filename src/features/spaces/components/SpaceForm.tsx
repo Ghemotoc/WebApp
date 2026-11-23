@@ -54,13 +54,13 @@ function WhoJoinsBox() {
   return (
     <section
       aria-labelledby="space-who-joins"
-      className="flex flex-col gap-2 rounded-[20px] bg-tint px-5 py-4"
+      className="flex flex-col gap-2 rounded-card bg-tint px-4 py-4"
     >
-      <h2 id="space-who-joins" className="m-0 text-base font-semibold text-heading">
+      <h2 id="space-who-joins" className="m-0 type-body font-bold text-ink-heading">
         {t('form.whoJoins')}
       </h2>
-      <p className="m-0 text-sm text-body">{t('form.whoJoinsText')}</p>
-      <p className="m-0 text-sm text-body">{t('form.whoJoinsTurning16')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('form.whoJoinsText')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('form.whoJoinsTurning16')}</p>
     </section>
   );
 }
@@ -71,12 +71,12 @@ function ClassSpaceBox() {
   return (
     <section
       aria-labelledby="space-class-note"
-      className="flex flex-col gap-2 rounded-[20px] bg-tint px-5 py-4"
+      className="flex flex-col gap-2 rounded-card bg-tint px-4 py-4"
     >
-      <h2 id="space-class-note" className="m-0 text-base font-semibold text-heading">
+      <h2 id="space-class-note" className="m-0 type-body font-bold text-ink-heading">
         {t('form.classTitle')}
       </h2>
-      <p className="m-0 text-sm text-body">{t('form.classText')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('form.classText')}</p>
     </section>
   );
 }
@@ -226,7 +226,7 @@ export function SpaceForm(props: SpaceFormProps) {
         </Button>
         <Link
           to={props.cancelTo}
-          className="inline-flex h-11 items-center rounded-full button-glass px-5 text-sm font-semibold no-underline"
+          className="inline-flex h-11 items-center rounded-full button-glass px-4 type-body font-semibold no-underline"
         >
           {t('form.cancel')}
         </Link>

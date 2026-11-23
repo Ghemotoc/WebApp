@@ -35,7 +35,7 @@ export function TeacherStep({ onFinish, isFinishing }: TeacherStepProps) {
   const { teacherCheck } = state;
   return (
     <div className="flex flex-col gap-6">
-      <p className="m-0 max-w-[680px] text-body">{t('teacherBadge.intro')}</p>
+      <p className="m-0 max-w-[680px] text-ink-muted">{t('teacherBadge.intro')}</p>
       {state.loadFailed && <Notice tone="error">{t('onboarding.loadFailed')}</Notice>}
       {teacherCheck != null && (
         <TeacherBadgePanel idPrefix="onboarding" teacherCheck={teacherCheck} state={state} />

@@ -115,13 +115,13 @@ export function SafetyContactAdminCard(props: SafetyContactAdminCardProps) {
       {/* The kind as a small line, not a pill: a pill never wraps, and "Raportează materiale cu
           abuz sexual asupra copiilor" is wider than a phone (rule 21). */}
       <div className="flex flex-col gap-1">
-        <span className="text-[13px] font-semibold text-meta">{t(`kinds.${contact.kind}`)}</span>
-        <h3 className="m-0 font-heading text-lg font-bold break-words text-heading">
+        <span className="type-meta font-semibold text-ink-muted">{t(`kinds.${contact.kind}`)}</span>
+        <h3 className="m-0 font-heading type-long font-bold break-words text-ink-heading">
           {contact.label}
         </h3>
       </div>
       <ContactDetails contact={contact} />
-      {contact.note !== null && <p className="m-0 text-sm text-body">{contact.note}</p>}
+      {contact.note !== null && <p className="m-0 type-body text-ink-muted">{contact.note}</p>}
       {canAct && !isRemoving && (
         <div className="flex flex-wrap gap-3">
           <Button

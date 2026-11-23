@@ -35,14 +35,14 @@ export function AgeCheckNotice() {
       >
         <h2
           id="age-check-notice-title"
-          className="m-0 font-heading text-[24px] font-bold text-heading"
+          className="m-0 font-heading type-heading font-bold text-ink-heading"
         >
           {t('ageCheck.notice.heading')}
         </h2>
-        <p className="m-0 text-body">{t('ageCheck.notice.body')}</p>
+        <p className="m-0 text-ink-muted">{t('ageCheck.notice.body')}</p>
         <Link
           to="/age-check"
-          className="inline-flex h-11 items-center self-start rounded-full button-main px-5 text-sm font-semibold no-underline"
+          className="inline-flex h-11 items-center self-start rounded-full button-main px-4 type-body font-semibold no-underline"
         >
           {t('ageCheck.notice.action')}
         </Link>

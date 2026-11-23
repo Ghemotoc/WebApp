@@ -73,7 +73,7 @@ export function ConfirmEmailPage() {
     >
       {/* Screen readers hear "Confirming your email…" while the token is with Supabase. */}
       {state === 'checking' && (
-        <p role="status" className="m-0 text-body">
+        <p role="status" className="m-0 text-ink-muted">
           {t('confirm.checking')}
         </p>
       )}

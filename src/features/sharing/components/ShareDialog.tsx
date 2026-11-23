@@ -48,18 +48,18 @@ function ChatPreview({ chapter }: { chapter: SharedChapter }) {
     <div className="flex flex-col gap-2">
       <h3 className="m-0 eyebrow">{t('dialog.previewHeading')}</h3>
       <div className="flex flex-col gap-1 rounded-field border border-border bg-paper p-4">
-        <p className="m-0 text-xs text-meta">{brand.siteDomain}</p>
-        <p className="m-0 text-[15px] font-semibold text-heading">
+        <p className="m-0 type-meta text-ink-muted">{brand.siteDomain}</p>
+        <p className="m-0 type-body font-semibold text-ink-heading">
           {t('dialog.previewTitle', { story: chapter.storyTitle, writer: chapter.writerName })}
         </p>
-        <p className="m-0 text-sm text-body">
+        <p className="m-0 type-body text-ink-muted">
           {t('dialog.previewChapter', {
             number: chapter.chapterNumber,
             chapter: chapter.chapterTitle,
           })}
         </p>
       </div>
-      <p className="m-0 text-sm text-body">{t('dialog.friendNote')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('dialog.friendNote')}</p>
     </div>
   );
 }
@@ -90,8 +90,8 @@ export function ShareDialog({ isOpen, onClose, chapter, wasCopied }: ShareDialog
       <div className="flex flex-col gap-2">
         <h3 className="m-0 eyebrow">{t('dialog.otherWays')}</h3>
         <SendInMessagesLink link={link} countedChapter={chapter.address} />
-        <p className="m-0 text-sm text-body">{t('dialog.quoteHint')}</p>
-        <p className="m-0 text-sm text-body">{t('dialog.deviceNote')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('dialog.quoteHint')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('dialog.deviceNote')}</p>
       </div>
       <ChatPreview chapter={chapter} />
       <ButtonRow className="border-t border-border pt-4">

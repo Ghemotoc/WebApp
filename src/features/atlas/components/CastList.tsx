@@ -36,7 +36,7 @@ export function CastList({ slug, characters, filter, openCharacterId }: CastList
   return (
     <nav aria-label={t('characters.heading')} className="flex min-w-0 flex-col gap-4">
       {groups.length === 0 && (
-        <p className="m-0 text-body">{t('characters.noMatch', { filter: filter.trim() })}</p>
+        <p className="m-0 text-ink-muted">{t('characters.noMatch', { filter: filter.trim() })}</p>
       )}
       {groups.map((group) => (
         <GlassList

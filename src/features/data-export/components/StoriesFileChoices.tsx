@@ -43,24 +43,24 @@ export function StoriesFileChoices({ choices, onChange }: StoriesFileChoicesProp
       {choiceKeys.map(({ choice, key }) => (
         <div
           key={choice}
-          className="flex min-h-11 items-start gap-3 border-t border-hairline py-2.5 first-of-type:border-t-0"
+          className="flex min-h-11 items-start gap-3 border-t border-hairline py-3 first-of-type:border-t-0"
         >
           <input
             id={`download-include-${key}`}
             type="checkbox"
-            className="mt-0.5 h-5 w-5 shrink-0"
+            className="mt-1 h-5 w-5 shrink-0"
             checked={choices[choice]}
             aria-describedby={`download-include-${key}-hint`}
             onChange={(changed) => onChange({ ...choices, [choice]: changed.target.checked })}
           />
-          <div className="flex flex-col gap-0.5">
+          <div className="flex flex-col gap-1">
             <label
               htmlFor={`download-include-${key}`}
-              className="text-[15px] font-semibold text-heading"
+              className="type-body font-semibold text-ink-heading"
             >
               {t(`stories.include.${key}`)}
             </label>
-            <span id={`download-include-${key}-hint`} className="text-sm text-meta">
+            <span id={`download-include-${key}-hint`} className="type-body text-ink-muted">
               {t(`stories.include.${key}Hint`)}
             </span>
           </div>

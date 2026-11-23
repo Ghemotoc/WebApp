@@ -33,11 +33,11 @@ export function ClassAssignmentsCard({ space }: { space: Space }) {
   return (
     <section
       aria-labelledby="class-assignments-heading"
-      className="flex flex-col gap-3 rounded-card border border-border bg-surface px-6 py-5 shadow-card"
+      className="flex flex-col gap-3 rounded-card border border-border bg-surface px-6 py-4 shadow-card"
     >
       <h2
         id="class-assignments-heading"
-        className="m-0 font-heading text-2xl font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('classAssignments.title')}
       </h2>

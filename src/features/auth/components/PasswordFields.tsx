@@ -44,7 +44,7 @@ function MatchLine({
   return (
     <p
       aria-live="polite"
-      className={`m-0 flex min-h-5 items-center gap-1.5 pl-5 text-[13px] font-semibold ${isMatch ? 'text-(--success-text)' : 'text-meta'}`}
+      className={`m-0 flex min-h-5 items-center gap-2 pl-4 type-meta font-semibold ${isMatch ? 'text-(--success-text)' : 'text-ink-muted'}`}
     >
       {isMatch && <CheckIcon />}
       {confirmPassword !== '' &&
@@ -63,7 +63,7 @@ export function PasswordFields(props: PasswordFieldsProps) {
   if (props.method === 'link') {
     return (
       <div className="flex flex-col gap-1">
-        <p className="m-0 text-sm text-body">{t('signUp.linkNote')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('signUp.linkNote')}</p>
         <Button
           variant="text"
           className="self-start"
